@@ -36,7 +36,6 @@ import javax.xml.bind.Unmarshaller;
 
 import org.codehaus.jettison.json.JSONException;
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
@@ -59,6 +58,8 @@ import org.orcid.jaxb.model.record.WorkExternalIdentifier;
 import org.orcid.jaxb.model.record.WorkExternalIdentifierId;
 import org.orcid.jaxb.model.record.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.record.summary.ActivitiesSummary;
+import org.orcid.jaxb.model.record.summary.EducationSummary;
+import org.orcid.jaxb.model.record.summary.EmploymentSummary;
 import org.orcid.jaxb.model.record.summary.FundingGroup;
 import org.orcid.jaxb.model.record.summary.FundingSummary;
 import org.orcid.jaxb.model.record.summary.WorkGroup;
@@ -89,9 +90,7 @@ public class MemberV2Test {
     @Value("${org.orcid.web.testClient2.clientId}")
     public String client2ClientId;
     @Value("${org.orcid.web.testClient2.clientSecret}")
-    public String client2ClientSecret;
-    @Value("${org.orcid.web.testUser1.orcidId}")
-    public String testUser1OrcidId;
+    public String client2ClientSecret;    
     @Value("${org.orcid.web.testUser1.username}")
     public String user1UserName;
     @Value("${org.orcid.web.testUser1.password}")
@@ -112,16 +111,43 @@ public class MemberV2Test {
     @Resource
     private OauthHelper oauthHelper;
 
-    @Before
-    public void before() {
-        webDriver = new FirefoxDriver();
-        webDriverHelper = new WebDriverHelper(webDriver, webBaseUrl, redirectUri);
-        oauthHelper.setWebDriverHelper(webDriverHelper);
-    }
+    static String accessToken = null;        
 
     @After
-    public void after() {
-        webDriver.quit();
+    public void after() throws JSONException, InterruptedException, URISyntaxException {
+        //Remove all activities
+        String token = getAccessToken();
+        ClientResponse activitiesResponse = memberV2ApiClient.viewActivities(user1OrcidId, token);
+        assertNotNull(activitiesResponse);
+        ActivitiesSummary summary = activitiesResponse.getEntity(ActivitiesSummary.class);
+        assertNotNull(summary);
+        if(!summary.getEducations().isEmpty()) {
+            for(EducationSummary education : summary.getEducations()) {
+                memberV2ApiClient.deleteEducationXml(user1OrcidId, education.getPutCode(), token);
+            }
+        }
+        
+        if(!summary.getEmployments().isEmpty()) {
+            for(EmploymentSummary employment : summary.getEmployments()) {
+                memberV2ApiClient.deleteEmploymentXml(user1OrcidId, employment.getPutCode(), token);
+            }
+        }
+        
+        if(!summary.getFundings().getFundingGroup().isEmpty()) {
+            for(FundingGroup group : summary.getFundings().getFundingGroup()) {
+                for(FundingSummary funding : group.getFundingSummary()) {
+                    memberV2ApiClient.deleteFundingXml(user1OrcidId, funding.getPutCode(), token);
+                }
+            }
+        }
+        
+        if(!summary.getWorks().getWorkGroup().isEmpty()) {
+            for(WorkGroup group : summary.getWorks().getWorkGroup()) {
+                for(WorkSummary work : group.getWorkSummary()) {
+                    memberV2ApiClient.deleteWorkXml(user1OrcidId, work.getPutCode(), token);
+                }
+            }
+        }
     }
 
     @Test
@@ -135,7 +161,7 @@ public class MemberV2Test {
         Work workToCreate = (Work) unmarshallFromPath("/record_2.0_rc1/samples/work-2.0_rc1.xml", Work.class);
         workToCreate.setPutCode(null);
         String accessToken = getAccessToken();
-        ClientResponse postResponse = memberV2ApiClient.createWorkXml(testUser1OrcidId, workToCreate, accessToken);
+        ClientResponse postResponse = memberV2ApiClient.createWorkXml(user1OrcidId, workToCreate, accessToken);
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         String locationPath = postResponse.getLocation().getPath();
@@ -151,7 +177,7 @@ public class MemberV2Test {
         assertEquals(Response.Status.OK.getStatusCode(), getAfterUpdateResponse.getStatus());
         Work gotAfterUpdateWork = getAfterUpdateResponse.getEntity(Work.class);
         assertEquals("updated title", gotAfterUpdateWork.getWorkTitle().getTitle().getContent());
-        ClientResponse deleteResponse = memberV2ApiClient.deleteWorkXml(testUser1OrcidId, gotWork.getPutCode(), accessToken);
+        ClientResponse deleteResponse = memberV2ApiClient.deleteWorkXml(user1OrcidId, gotWork.getPutCode(), accessToken);
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), deleteResponse.getStatus());
     }
 
@@ -161,7 +187,7 @@ public class MemberV2Test {
         workToCreate.setPutCode(null);
         workToCreate.setVisibility(Visibility.PUBLIC);
         String accessToken = getAccessToken();
-        ClientResponse postResponse = memberV2ApiClient.createWorkXml(testUser1OrcidId, workToCreate, accessToken);
+        ClientResponse postResponse = memberV2ApiClient.createWorkXml(user1OrcidId, workToCreate, accessToken);
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         String locationPath = postResponse.getLocation().getPath();
@@ -178,7 +204,7 @@ public class MemberV2Test {
         assertEquals(Response.Status.OK.getStatusCode(), getAfterUpdateResponse.getStatus());
         Work gotAfterUpdateWork = getAfterUpdateResponse.getEntity(Work.class);
         assertEquals("common:title", gotAfterUpdateWork.getWorkTitle().getTitle().getContent());
-        ClientResponse deleteResponse = memberV2ApiClient.deleteWorkXml(testUser1OrcidId, gotWork.getPutCode(), accessToken);
+        ClientResponse deleteResponse = memberV2ApiClient.deleteWorkXml(user1OrcidId, gotWork.getPutCode(), accessToken);
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), deleteResponse.getStatus());
     }
 
@@ -188,7 +214,7 @@ public class MemberV2Test {
         education.setPutCode(null);
         education.setVisibility(Visibility.PUBLIC);
         String accessToken = getAccessToken();
-        ClientResponse postResponse = memberV2ApiClient.createEducationXml(testUser1OrcidId, education, accessToken);
+        ClientResponse postResponse = memberV2ApiClient.createEducationXml(user1OrcidId, education, accessToken);
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         String locationPath = postResponse.getLocation().getPath();
@@ -207,7 +233,7 @@ public class MemberV2Test {
         Education gotAfterUpdateEducation = getAfterUpdateResponse.getEntity(Education.class);
         assertEquals("updated dept. name", gotAfterUpdateEducation.getDepartmentName());
         assertEquals("updated role title", gotAfterUpdateEducation.getRoleTitle());
-        ClientResponse deleteResponse = memberV2ApiClient.deleteEducationXml(testUser1OrcidId, gotEducation.getPutCode(), accessToken);
+        ClientResponse deleteResponse = memberV2ApiClient.deleteEducationXml(user1OrcidId, gotEducation.getPutCode(), accessToken);
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), deleteResponse.getStatus());
     }
 
@@ -217,7 +243,7 @@ public class MemberV2Test {
         education.setPutCode(null);
         education.setVisibility(Visibility.PUBLIC);
         String accessToken = getAccessToken();
-        ClientResponse postResponse = memberV2ApiClient.createEducationXml(testUser1OrcidId, education, accessToken);
+        ClientResponse postResponse = memberV2ApiClient.createEducationXml(user1OrcidId, education, accessToken);
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         String locationPath = postResponse.getLocation().getPath();
@@ -237,7 +263,7 @@ public class MemberV2Test {
         Education gotAfterUpdateEducation = getAfterUpdateResponse.getEntity(Education.class);
         assertEquals("education:department-name", gotAfterUpdateEducation.getDepartmentName());
         assertEquals("education:role-title", gotAfterUpdateEducation.getRoleTitle());
-        ClientResponse deleteResponse = memberV2ApiClient.deleteEducationXml(testUser1OrcidId, gotEducation.getPutCode(), accessToken);
+        ClientResponse deleteResponse = memberV2ApiClient.deleteEducationXml(user1OrcidId, gotEducation.getPutCode(), accessToken);
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), deleteResponse.getStatus());
     }
 
@@ -247,7 +273,7 @@ public class MemberV2Test {
         employment.setPutCode(null);
         employment.setVisibility(Visibility.PUBLIC);
         String accessToken = getAccessToken();
-        ClientResponse postResponse = memberV2ApiClient.createEmploymentXml(testUser1OrcidId, employment, accessToken);
+        ClientResponse postResponse = memberV2ApiClient.createEmploymentXml(user1OrcidId, employment, accessToken);
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         String locationPath = postResponse.getLocation().getPath();
@@ -266,7 +292,7 @@ public class MemberV2Test {
         Employment gotAfterUpdateEmployment = getAfterUpdateResponse.getEntity(Employment.class);
         assertEquals("updated dept. name", gotAfterUpdateEmployment.getDepartmentName());
         assertEquals("updated role title", gotAfterUpdateEmployment.getRoleTitle());
-        ClientResponse deleteResponse = memberV2ApiClient.deleteEmploymentXml(testUser1OrcidId, gotEmployment.getPutCode(), accessToken);
+        ClientResponse deleteResponse = memberV2ApiClient.deleteEmploymentXml(user1OrcidId, gotEmployment.getPutCode(), accessToken);
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), deleteResponse.getStatus());
     }
 
@@ -276,7 +302,7 @@ public class MemberV2Test {
         employment.setPutCode(null);
         employment.setVisibility(Visibility.PUBLIC);
         String accessToken = getAccessToken();
-        ClientResponse postResponse = memberV2ApiClient.createEmploymentXml(testUser1OrcidId, employment, accessToken);
+        ClientResponse postResponse = memberV2ApiClient.createEmploymentXml(user1OrcidId, employment, accessToken);
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         String locationPath = postResponse.getLocation().getPath();
@@ -296,7 +322,7 @@ public class MemberV2Test {
         Employment gotAfterUpdateEmployment = getAfterUpdateResponse.getEntity(Employment.class);
         assertEquals("affiliation:department-name", gotAfterUpdateEmployment.getDepartmentName());
         assertEquals("affiliation:role-title", gotAfterUpdateEmployment.getRoleTitle());
-        ClientResponse deleteResponse = memberV2ApiClient.deleteEmploymentXml(testUser1OrcidId, gotEmployment.getPutCode(), accessToken);
+        ClientResponse deleteResponse = memberV2ApiClient.deleteEmploymentXml(user1OrcidId, gotEmployment.getPutCode(), accessToken);
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), deleteResponse.getStatus());
     }
 
@@ -306,7 +332,7 @@ public class MemberV2Test {
         funding.setPutCode(null);
         funding.setVisibility(Visibility.PUBLIC);
         String accessToken = getAccessToken();
-        ClientResponse postResponse = memberV2ApiClient.createFundingXml(testUser1OrcidId, funding, accessToken);
+        ClientResponse postResponse = memberV2ApiClient.createFundingXml(user1OrcidId, funding, accessToken);
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         String locationPath = postResponse.getLocation().getPath();
@@ -328,7 +354,7 @@ public class MemberV2Test {
         assertEquals("Updated title", gotAfterUpdateFunding.getTitle().getTitle().getContent());
         assertEquals("Updated translated title", gotAfterUpdateFunding.getTitle().getTranslatedTitle().getContent());
         assertEquals("es", gotAfterUpdateFunding.getTitle().getTranslatedTitle().getLanguageCode());
-        ClientResponse deleteResponse = memberV2ApiClient.deleteFundingXml(testUser1OrcidId, gotFunding.getPutCode(), accessToken);
+        ClientResponse deleteResponse = memberV2ApiClient.deleteFundingXml(user1OrcidId, gotFunding.getPutCode(), accessToken);
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), deleteResponse.getStatus());
     }
 
@@ -338,7 +364,7 @@ public class MemberV2Test {
         funding.setPutCode(null);
         funding.setVisibility(Visibility.PUBLIC);
         String accessToken = getAccessToken();
-        ClientResponse postResponse = memberV2ApiClient.createFundingXml(testUser1OrcidId, funding, accessToken);
+        ClientResponse postResponse = memberV2ApiClient.createFundingXml(user1OrcidId, funding, accessToken);
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         String locationPath = postResponse.getLocation().getPath();
@@ -361,7 +387,7 @@ public class MemberV2Test {
         assertEquals("common:title", gotAfterUpdateFunding.getTitle().getTitle().getContent());
         assertEquals("common:translated-title", gotAfterUpdateFunding.getTitle().getTranslatedTitle().getContent());
         assertEquals("en", gotAfterUpdateFunding.getTitle().getTranslatedTitle().getLanguageCode());
-        ClientResponse deleteResponse = memberV2ApiClient.deleteFundingXml(testUser1OrcidId, gotFunding.getPutCode(), accessToken);
+        ClientResponse deleteResponse = memberV2ApiClient.deleteFundingXml(user1OrcidId, gotFunding.getPutCode(), accessToken);
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), deleteResponse.getStatus());
     }
 
@@ -385,8 +411,8 @@ public class MemberV2Test {
 
         String accessToken = getAccessToken();
 
-        memberV2ApiClient.createEducationXml(testUser1OrcidId, education, accessToken);
-        memberV2ApiClient.createEmploymentXml(testUser1OrcidId, employment, accessToken);
+        memberV2ApiClient.createEducationXml(user1OrcidId, education, accessToken);
+        memberV2ApiClient.createEmploymentXml(user1OrcidId, employment, accessToken);
         /**
          * Add 4 fundings 1 and 2 get grouped together 3 in another group
          * because it have different ext ids 4 in another group because it
@@ -394,7 +420,7 @@ public class MemberV2Test {
          * **/
 
         // Add 1, the default funding
-        memberV2ApiClient.createFundingXml(testUser1OrcidId, funding, accessToken);
+        memberV2ApiClient.createFundingXml(user1OrcidId, funding, accessToken);
 
         funding.getTitle().getTitle().setContent("Funding # 2");
         FundingExternalIdentifier fExtId3 = new FundingExternalIdentifier();
@@ -402,7 +428,7 @@ public class MemberV2Test {
         fExtId3.setValue("extId3Value");
         funding.getExternalIdentifiers().getExternalIdentifier().add(fExtId3);
         // Add 2, with the same ext ids +1
-        memberV2ApiClient.createFundingXml(testUser1OrcidId, funding, accessToken);
+        memberV2ApiClient.createFundingXml(user1OrcidId, funding, accessToken);
 
         funding.getTitle().getTitle().setContent("Funding # 3");
         FundingExternalIdentifier fExtId4 = new FundingExternalIdentifier();
@@ -411,12 +437,12 @@ public class MemberV2Test {
         funding.getExternalIdentifiers().getExternalIdentifier().clear();
         funding.getExternalIdentifiers().getExternalIdentifier().add(fExtId4);
         // Add 3, with different ext ids
-        memberV2ApiClient.createFundingXml(testUser1OrcidId, funding, accessToken);
+        memberV2ApiClient.createFundingXml(user1OrcidId, funding, accessToken);
 
         funding.getTitle().getTitle().setContent("Funding # 4");
         funding.getExternalIdentifiers().getExternalIdentifier().clear();
         // Add 4 without ext ids
-        memberV2ApiClient.createFundingXml(testUser1OrcidId, funding, accessToken);
+        memberV2ApiClient.createFundingXml(user1OrcidId, funding, accessToken);
 
         /**
          * Add 4 works 1 and 2 get grouped together 3 in another group because
@@ -424,7 +450,7 @@ public class MemberV2Test {
          * any ext ids
          **/
         // Add 1, the default work
-        memberV2ApiClient.createWorkXml(testUser1OrcidId, work, accessToken);
+        memberV2ApiClient.createWorkXml(user1OrcidId, work, accessToken);
 
         work.getWorkTitle().getTitle().setContent("Work # 2");
         WorkExternalIdentifier wExtId2 = new WorkExternalIdentifier();
@@ -432,7 +458,7 @@ public class MemberV2Test {
         wExtId2.setWorkExternalIdentifierId(new WorkExternalIdentifierId("doi-ext-id"));
         work.getExternalIdentifiers().getExternalIdentifier().add(wExtId2);
         // Add 2, with the same ext ids +1
-        memberV2ApiClient.createWorkXml(testUser1OrcidId, work, accessToken);
+        memberV2ApiClient.createWorkXml(user1OrcidId, work, accessToken);
 
         work.getWorkTitle().getTitle().setContent("Work # 3");
         WorkExternalIdentifier wExtId3 = new WorkExternalIdentifier();
@@ -441,12 +467,12 @@ public class MemberV2Test {
         work.getWorkExternalIdentifiers().getExternalIdentifier().clear();
         work.getWorkExternalIdentifiers().getExternalIdentifier().add(wExtId3);
         // Add 3, with different ext ids
-        memberV2ApiClient.createWorkXml(testUser1OrcidId, work, accessToken);
+        memberV2ApiClient.createWorkXml(user1OrcidId, work, accessToken);
 
         work.getWorkTitle().getTitle().setContent("Work # 4");
         work.getWorkExternalIdentifiers().getExternalIdentifier().clear();
         // Add 4, without ext ids
-        memberV2ApiClient.createWorkXml(testUser1OrcidId, work, accessToken);
+        memberV2ApiClient.createWorkXml(user1OrcidId, work, accessToken);
 
         /**
          * Now, get the summaries and verify the following: - Education summary
@@ -458,7 +484,7 @@ public class MemberV2Test {
          * with one work with ext ids -- One group with one work without ext ids
          **/
 
-        ClientResponse activitiesResponse = memberV2ApiClient.viewActivities(testUser1OrcidId, accessToken);
+        ClientResponse activitiesResponse = memberV2ApiClient.viewActivities(user1OrcidId, accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), activitiesResponse.getStatus());
         ActivitiesSummary activities = activitiesResponse.getEntity(ActivitiesSummary.class);
         assertNotNull(activities);
@@ -467,14 +493,14 @@ public class MemberV2Test {
         assertEquals("education:department-name", activities.getEducations().get(0).getDepartmentName());
         assertEquals(new FuzzyDate(1848, 2, 2), activities.getEducations().get(0).getStartDate());
         assertEquals(new FuzzyDate(1848, 2, 2), activities.getEducations().get(0).getEndDate());
-        memberV2ApiClient.deleteEducationXml(testUser1OrcidId, activities.getEducations().get(0).getPutCode(), accessToken);
+        memberV2ApiClient.deleteEducationXml(user1OrcidId, activities.getEducations().get(0).getPutCode(), accessToken);
 
         assertEquals(1, activities.getEmployments().size());
         assertEquals("affiliation:role-title", activities.getEmployments().get(0).getRoleTitle());
         assertEquals("affiliation:department-name", activities.getEmployments().get(0).getDepartmentName());
         assertEquals(new FuzzyDate(1848, 2, 2), activities.getEmployments().get(0).getStartDate());
         assertEquals(new FuzzyDate(1848, 2, 2), activities.getEmployments().get(0).getEndDate());
-        memberV2ApiClient.deleteEmploymentXml(testUser1OrcidId, activities.getEmployments().get(0).getPutCode(), accessToken);
+        memberV2ApiClient.deleteEmploymentXml(user1OrcidId, activities.getEmployments().get(0).getPutCode(), accessToken);
 
         assertNotNull(activities.getFundings());
         assertEquals(3, activities.getFundings().getFundingGroup().size());
@@ -509,7 +535,7 @@ public class MemberV2Test {
 
             // delete activities in that group
             for (FundingSummary summary : group.getFundingSummary()) {
-                memberV2ApiClient.deleteFundingXml(testUser1OrcidId, summary.getPutCode(), accessToken);
+                memberV2ApiClient.deleteFundingXml(user1OrcidId, summary.getPutCode(), accessToken);
             }
         }
 
@@ -543,13 +569,20 @@ public class MemberV2Test {
 
             // delete activities in that group
             for (WorkSummary summary : group.getWorkSummary()) {
-                memberV2ApiClient.deleteWorkXml(testUser1OrcidId, summary.getPutCode(), accessToken);
+                memberV2ApiClient.deleteWorkXml(user1OrcidId, summary.getPutCode(), accessToken);
             }
         }
     }
 
     private String getAccessToken() throws InterruptedException, JSONException {
-        return oauthHelper.obtainAccessToken(client1ClientId, client1ClientSecret, ScopePathType.ACTIVITIES_UPDATE.value(), user1UserName, user1Password, redirectUri);
+        if(accessToken == null) {
+            webDriver = new FirefoxDriver();
+            webDriverHelper = new WebDriverHelper(webDriver, webBaseUrl, redirectUri);
+            oauthHelper.setWebDriverHelper(webDriverHelper);
+            accessToken = oauthHelper.obtainAccessToken(client1ClientId, client1ClientSecret, ScopePathType.ACTIVITIES_UPDATE.value(), user1UserName, user1Password, redirectUri);
+            webDriver.quit();
+        }
+        return accessToken;
     }
 
     public Activity unmarshallFromPath(String path, Class<? extends Activity> type) {
