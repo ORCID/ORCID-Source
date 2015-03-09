@@ -17,11 +17,9 @@
 package org.orcid.integration.blackbox.api;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
-import static org.junit.matchers.JUnitMatchers.containsString;
-import static org.junit.matchers.JUnitMatchers.either;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -461,91 +459,72 @@ public class MemberV2Test {
         assertEquals(Response.Status.OK.getStatusCode(), activitiesResponse.getStatus());
         ActivitiesSummary activities = activitiesResponse.getEntity(ActivitiesSummary.class);
         assertNotNull(activities);
-        assertEquals(1, activities.getEducations().size());
-        assertEquals("education:role-title", activities.getEducations().get(0).getRoleTitle());
-        assertEquals("education:department-name", activities.getEducations().get(0).getDepartmentName());
-        assertEquals(new FuzzyDate(1848, 2, 2), activities.getEducations().get(0).getStartDate());
-        assertEquals(new FuzzyDate(1848, 2, 2), activities.getEducations().get(0).getEndDate());
-        memberV2ApiClient.deleteEducationXml(user1OrcidId, activities.getEducations().get(0).getPutCode(), accessToken);
-
-        assertEquals(1, activities.getEmployments().size());
-        assertEquals("affiliation:role-title", activities.getEmployments().get(0).getRoleTitle());
-        assertEquals("affiliation:department-name", activities.getEmployments().get(0).getDepartmentName());
-        assertEquals(new FuzzyDate(1848, 2, 2), activities.getEmployments().get(0).getStartDate());
-        assertEquals(new FuzzyDate(1848, 2, 2), activities.getEmployments().get(0).getEndDate());
-        memberV2ApiClient.deleteEmploymentXml(user1OrcidId, activities.getEmployments().get(0).getPutCode(), accessToken);
-
-        assertNotNull(activities.getFundings());
-        assertEquals(3, activities.getFundings().getFundingGroup().size());
-
+        assertFalse(activities.getEducations().isEmpty());
+        
+        boolean found = false;
+        for(EducationSummary summary : activities.getEducations()) {
+            if(summary.getRoleTitle().equals("education:role-title")) {                
+                assertEquals("education:department-name", summary.getDepartmentName());
+                assertEquals(new FuzzyDate(1848, 2, 2), summary.getStartDate());
+                assertEquals(new FuzzyDate(1848, 2, 2), summary.getEndDate());
+                found = true;
+                break;
+            }
+        }
+        
+        assertTrue("Education not found", found);
+                
+        assertFalse(activities.getEmployments().isEmpty());        
+        found = false;
+        for(EmploymentSummary summary : activities.getEmployments()) {
+            if(summary.getRoleTitle().equals("affiliation:role-title")) {
+                assertEquals("affiliation:department-name", summary.getDepartmentName());
+                assertEquals(new FuzzyDate(1848, 2, 2), summary.getStartDate());
+                assertEquals(new FuzzyDate(1848, 2, 2), summary.getEndDate());
+                found = true;
+                break;
+            }
+        }
+        
+        assertTrue("Employment not found", found);
+        
+        
+        assertNotNull(activities.getFundings());        
+        boolean found1 = false, found2 = false, found3 = false, found4 = false;
         for (FundingGroup group : activities.getFundings().getFundingGroup()) {
-            // Check the group that contains the funding without ext ids
-            if (group.getIdentifiers().getIdentifier().isEmpty()) {
-                assertEquals(1, group.getFundingSummary().size());
-                assertNotNull(group.getFundingSummary().get(0).getPutCode());
-                assertEquals("Funding # 4", group.getFundingSummary().get(0).getTitle().getTitle().getContent());
-                assertEquals(new FuzzyDate(1848, 2, 2), group.getFundingSummary().get(0).getStartDate());
-                assertEquals(new FuzzyDate(1848, 2, 2), group.getFundingSummary().get(0).getEndDate());
-            } else if (group.getFundingSummary().size() == 1) {
-                // Check the group that contains one funding
-                assertEquals(1, group.getFundingSummary().size());
-                assertNotNull(group.getFundingSummary().get(0).getPutCode());
-                assertEquals("Funding # 3", group.getFundingSummary().get(0).getTitle().getTitle().getContent());
-                assertEquals(new FuzzyDate(1848, 2, 2), group.getFundingSummary().get(0).getStartDate());
-                assertEquals(new FuzzyDate(1848, 2, 2), group.getFundingSummary().get(0).getEndDate());
-                assertEquals(1, group.getIdentifiers().getIdentifier().size());
-                assertEquals("extId4Value", group.getIdentifiers().getIdentifier().get(0).getExternalIdentifierId());
-                assertEquals(FundingExternalIdentifierType.GRANT_NUMBER.name(), group.getIdentifiers().getIdentifier().get(0).getExternalIdentifierType());
-            } else {
-                // Check the group that contains two fundings
-                assertEquals(2, group.getFundingSummary().size());
-                assertEquals(3, group.getIdentifiers().getIdentifier().size());
-                assertNotNull(group.getFundingSummary().get(0).getDisplayIndex());
-                assertNotNull(group.getFundingSummary().get(1).getDisplayIndex());
-                assertThat(group.getFundingSummary().get(0).getTitle().getTitle().getContent(), either(containsString("common:title")).or(containsString("Funding # 2")));
-                assertThat(group.getFundingSummary().get(1).getTitle().getTitle().getContent(), either(containsString("common:title")).or(containsString("Funding # 2")));
-            }
-
-            // delete activities in that group
-            for (FundingSummary summary : group.getFundingSummary()) {
-                memberV2ApiClient.deleteFundingXml(user1OrcidId, summary.getPutCode(), accessToken);
+            for(FundingSummary summary : group.getFundingSummary()) {
+                if(summary.getTitle().getTitle().getContent().equals("common:title")) {
+                    found1 = true;
+                } else if(summary.getTitle().getTitle().getContent().equals("Funding # 2")) {
+                    found2 = true;
+                } else if(summary.getTitle().getTitle().getContent().equals("Funding # 3")) {
+                    found3 = true;
+                } else if(summary.getTitle().getTitle().getContent().equals("Funding # 4")) {
+                    found4 = true;
+                }
             }
         }
 
+        assertTrue("One of the fundings was not found: 1(" + found1 + ") 2(" + found2 + ") 3(" + found3 + ") 4(" + found4 + ")", found1 == found2 == found3 == found4 == true);
+        
         assertNotNull(activities.getWorks());
-        assertEquals(3, activities.getWorks().getWorkGroup().size());
-
+        
+        found1 = found2 = found3 = found4 = false;
         for (WorkGroup group : activities.getWorks().getWorkGroup()) {
-            // Check the group that contains the work without ext ids
-            if (group.getIdentifiers().getIdentifier().isEmpty()) {
-                assertEquals(1, group.getWorkSummary().size());
-                assertNotNull(group.getWorkSummary().get(0).getPutCode());
-                assertEquals("Work # 4", group.getWorkSummary().get(0).getTitle().getTitle().getContent());
-            } else if (group.getWorkSummary().size() == 1) {
-                // Check the group that contains one work
-                assertEquals(1, group.getWorkSummary().size());
-                assertNotNull(group.getWorkSummary().get(0).getPutCode());
-                assertEquals("Work # 3", group.getWorkSummary().get(0).getTitle().getTitle().getContent());
-                assertEquals(1, group.getWorkSummary().get(0).getExternalIdentifiers().getExternalIdentifier().size());
-                assertEquals("eid-ext-id", group.getWorkSummary().get(0).getExternalIdentifiers().getExternalIdentifier().get(0).getWorkExternalIdentifierId()
-                        .getContent());
-                assertEquals(WorkExternalIdentifierType.EID.name(), group.getWorkSummary().get(0).getExternalIdentifiers().getExternalIdentifier().get(0)
-                        .getWorkExternalIdentifierType().name());
-            } else {
-                // Check the group that contains two works
-                assertEquals(2, group.getWorkSummary().size());
-                assertEquals(2, group.getIdentifiers().getIdentifier().size());
-                assertNotNull(group.getWorkSummary().get(0).getDisplayIndex());
-                assertNotNull(group.getWorkSummary().get(1).getDisplayIndex());
-                assertThat(group.getWorkSummary().get(0).getTitle().getTitle().getContent(), either(containsString("common:title")).or(containsString("Work # 2")));
-                assertThat(group.getWorkSummary().get(1).getTitle().getTitle().getContent(), either(containsString("common:title")).or(containsString("Work # 2")));
-            }
-
-            // delete activities in that group
-            for (WorkSummary summary : group.getWorkSummary()) {
-                memberV2ApiClient.deleteWorkXml(user1OrcidId, summary.getPutCode(), accessToken);
+            for(WorkSummary summary : group.getWorkSummary()) {
+                if(summary.getTitle().getTitle().getContent().equals("common:title")) {
+                    found1 = true;
+                } else if(summary.getTitle().getTitle().getContent().equals("Work # 2")) {
+                    found2 = true;
+                } else if(summary.getTitle().getTitle().getContent().equals("Work # 3")) {
+                    found3 = true;
+                } else if(summary.getTitle().getTitle().getContent().equals("Work # 4")) {
+                    found4 = true;
+                }
             }
         }
+        
+        assertTrue("One of the works was not found: 1(" + found1 + ") 2(" + found2 + ") 3(" + found3 + ") 4(" + found4 + ")", found1 == found2 == found3 == found4 == true);
     }
 
     private String getAccessToken() throws InterruptedException, JSONException {

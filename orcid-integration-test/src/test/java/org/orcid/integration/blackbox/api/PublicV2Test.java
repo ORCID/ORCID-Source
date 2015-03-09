@@ -19,9 +19,7 @@ package org.orcid.integration.blackbox.api;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.matchers.JUnitMatchers.containsString;
-import static org.junit.matchers.JUnitMatchers.either;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -238,32 +236,58 @@ public class PublicV2Test {
         ActivitiesSummary summary = activitiesResponse.getEntity(ActivitiesSummary.class);
         assertNotNull(summary);
         assertFalse(summary.getEducations().isEmpty());
-        assertEquals(2, summary.getEducations().size());
-        assertThat(summary.getEducations().get(0).getRoleTitle(), either(containsString("Education # 0")).or(containsString("Education # 3")));
-        assertThat(summary.getEducations().get(1).getRoleTitle(), either(containsString("Education # 0")).or(containsString("Education # 3")));
-
+        boolean found0 = false, found3 = false;
+        for(EducationSummary education : summary.getEducations()) {
+            if(education.getDepartmentName().equals("Education # 0")) {
+                found0 = true;
+            } else if (education.getDepartmentName().equals("Education # 3")) {
+                found3 = true;
+            }
+        }
+        
+        assertTrue("One of the educations was not found: 0(" + found0 + ") 3(" + found3 + ")", found0 == found3 == true);
+        
         assertFalse(summary.getEmployments().isEmpty());
-        assertEquals(2, summary.getEmployments().size());
-        assertThat(summary.getEmployments().get(0).getRoleTitle(), either(containsString("Employment # 0")).or(containsString("Employment # 3")));
-        assertThat(summary.getEmployments().get(1).getRoleTitle(), either(containsString("Employment # 0")).or(containsString("Employment # 3")));
-
+        found0 = found3 = false;
+        for(EmploymentSummary employment : summary.getEmployments()) {
+            if(employment.getDepartmentName().equals("Employment # 0")) {
+                found0 = true;
+            } else if (employment.getDepartmentName().equals("Employment # 3")) {
+                found3 = true;
+            }
+        }
+        
+        assertTrue("One of the employments was not found: 0(" + found0 + ") 3(" + found3 + ")", found0 == found3 == true);
+        
         assertNotNull(summary.getFundings());
-        assertEquals(2, summary.getFundings().getFundingGroup().size());
-        assertEquals(1, summary.getFundings().getFundingGroup().get(0).getFundingSummary().size());
-        assertThat(summary.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getTitle().getTitle().getContent(), either(containsString("Funding # 0"))
-                .or(containsString("Funding # 3")));
-        assertEquals(1, summary.getFundings().getFundingGroup().get(1).getFundingSummary().size());
-        assertThat(summary.getFundings().getFundingGroup().get(1).getFundingSummary().get(0).getTitle().getTitle().getContent(), either(containsString("Funding # 0"))
-                .or(containsString("Funding # 3")));
-
+        found0 = found3 = false;
+        for(FundingGroup group : summary.getFundings().getFundingGroup()) {
+            for(FundingSummary funding : group.getFundingSummary()) {
+                if(funding.getTitle().getTitle().getContent().equals("Funding # 0")) {
+                    found0 = true;
+                } else if(funding.getTitle().getTitle().getContent().equals("Funding # 3")) {
+                    found3 = true;
+                }
+            }
+        }
+        
+        assertTrue("One of the fundings was not found: 0(" + found0 + ") 3(" + found3 + ")", found0 == found3 == true);
+        
         assertNotNull(summary.getWorks());
-        assertEquals(2, summary.getWorks().getWorkGroup().size());
-        assertEquals(1, summary.getWorks().getWorkGroup().get(0).getWorkSummary().size());
-        assertThat(summary.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getTitle().getTitle().getContent(),
-                either(containsString("Work # 0")).or(containsString("Work # 3")));
-        assertEquals(1, summary.getWorks().getWorkGroup().get(1).getWorkSummary().size());
-        assertThat(summary.getWorks().getWorkGroup().get(1).getWorkSummary().get(0).getTitle().getTitle().getContent(),
-                either(containsString("Work # 0")).or(containsString("Work # 3")));
+        found0 = found3 = false;
+        for(WorkGroup group : summary.getWorks().getWorkGroup()) {
+            for(WorkSummary work : group.getWorkSummary()) {
+                if(work.getTitle().getTitle().getContent().equals("Work # 0")) {
+                    found0 = true;
+                } else if(work.getTitle().getTitle().getContent().equals("Work # 3")) {
+                    found3 = true;
+                }
+            }
+        }
+        
+        assertTrue("One of the works was not found: 0(" + found0 + ") 3(" + found3 + ")", found0 == found3 == true);
+        
+
     }
 
     /**
