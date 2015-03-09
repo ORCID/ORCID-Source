@@ -7410,7 +7410,7 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
                         if(is_authorize) {
                             orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'Sign-In' , 'OAuth ' + orcidGA.buildClientString($scope.clientGroupName, $scope.clientName)]);
                             for(var i = 0; i < $scope.requestScopes.length; i++) {
-                                orcidGA.gaPush(['_trackEvent', 'RegGrowth', auth_scope_prefix + $scope.requestScopes[i] + ', OAuth ' + orcidGA.buildClientString($scope.clientGroupName, $scope.clientName)]);
+                                orcidGA.gaPush(['_trackEvent', 'RegGrowth', auth_scope_prefix + $scope.requestScopes[i], 'OAuth ' + orcidGA.buildClientString($scope.clientGroupName, $scope.clientName)]);
                             }
                         } else {
                             //Fire GA authorize-deny
