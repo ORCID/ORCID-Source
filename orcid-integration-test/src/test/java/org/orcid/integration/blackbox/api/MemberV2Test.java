@@ -90,7 +90,7 @@ public class MemberV2Test {
     @Value("${org.orcid.web.testClient2.clientId}")
     public String client2ClientId;
     @Value("${org.orcid.web.testClient2.clientSecret}")
-    public String client2ClientSecret;    
+    public String client2ClientSecret;
     @Value("${org.orcid.web.testUser1.username}")
     public String user1UserName;
     @Value("${org.orcid.web.testUser1.password}")
@@ -111,43 +111,16 @@ public class MemberV2Test {
     @Resource
     private OauthHelper oauthHelper;
 
-    static String accessToken = null;        
+    static String accessToken = null;
+
+    @After
+    public void before() throws JSONException, InterruptedException, URISyntaxException {
+        cleanActivities();
+    }
 
     @After
     public void after() throws JSONException, InterruptedException, URISyntaxException {
-        //Remove all activities
-        String token = getAccessToken();
-        ClientResponse activitiesResponse = memberV2ApiClient.viewActivities(user1OrcidId, token);
-        assertNotNull(activitiesResponse);
-        ActivitiesSummary summary = activitiesResponse.getEntity(ActivitiesSummary.class);
-        assertNotNull(summary);
-        if(!summary.getEducations().isEmpty()) {
-            for(EducationSummary education : summary.getEducations()) {
-                memberV2ApiClient.deleteEducationXml(user1OrcidId, education.getPutCode(), token);
-            }
-        }
-        
-        if(!summary.getEmployments().isEmpty()) {
-            for(EmploymentSummary employment : summary.getEmployments()) {
-                memberV2ApiClient.deleteEmploymentXml(user1OrcidId, employment.getPutCode(), token);
-            }
-        }
-        
-        if(!summary.getFundings().getFundingGroup().isEmpty()) {
-            for(FundingGroup group : summary.getFundings().getFundingGroup()) {
-                for(FundingSummary funding : group.getFundingSummary()) {
-                    memberV2ApiClient.deleteFundingXml(user1OrcidId, funding.getPutCode(), token);
-                }
-            }
-        }
-        
-        if(!summary.getWorks().getWorkGroup().isEmpty()) {
-            for(WorkGroup group : summary.getWorks().getWorkGroup()) {
-                for(WorkSummary work : group.getWorkSummary()) {
-                    memberV2ApiClient.deleteWorkXml(user1OrcidId, work.getPutCode(), token);
-                }
-            }
-        }
+        cleanActivities();
     }
 
     @Test
@@ -554,7 +527,8 @@ public class MemberV2Test {
                 assertNotNull(group.getWorkSummary().get(0).getPutCode());
                 assertEquals("Work # 3", group.getWorkSummary().get(0).getTitle().getTitle().getContent());
                 assertEquals(1, group.getWorkSummary().get(0).getExternalIdentifiers().getExternalIdentifier().size());
-                assertEquals("eid-ext-id", group.getWorkSummary().get(0).getExternalIdentifiers().getExternalIdentifier().get(0).getWorkExternalIdentifierId().getContent());
+                assertEquals("eid-ext-id", group.getWorkSummary().get(0).getExternalIdentifiers().getExternalIdentifier().get(0).getWorkExternalIdentifierId()
+                        .getContent());
                 assertEquals(WorkExternalIdentifierType.EID.name(), group.getWorkSummary().get(0).getExternalIdentifiers().getExternalIdentifier().get(0)
                         .getWorkExternalIdentifierType().name());
             } else {
@@ -575,11 +549,12 @@ public class MemberV2Test {
     }
 
     private String getAccessToken() throws InterruptedException, JSONException {
-        if(accessToken == null) {
+        if (accessToken == null) {
             webDriver = new FirefoxDriver();
             webDriverHelper = new WebDriverHelper(webDriver, webBaseUrl, redirectUri);
             oauthHelper.setWebDriverHelper(webDriverHelper);
-            accessToken = oauthHelper.obtainAccessToken(client1ClientId, client1ClientSecret, ScopePathType.ACTIVITIES_UPDATE.value(), user1UserName, user1Password, redirectUri);
+            accessToken = oauthHelper.obtainAccessToken(client1ClientId, client1ClientSecret, ScopePathType.ACTIVITIES_UPDATE.value(), user1UserName, user1Password,
+                    redirectUri);
             webDriver.quit();
         }
         return accessToken;
@@ -611,6 +586,42 @@ public class MemberV2Test {
             return unmarshaller.unmarshal(reader);
         } catch (JAXBException e) {
             throw new RuntimeException("Unable to unmarshall orcid message" + e);
+        }
+    }
+
+    public void cleanActivities() throws JSONException, InterruptedException, URISyntaxException {
+        // Remove all activities
+        String token = getAccessToken();
+        ClientResponse activitiesResponse = memberV2ApiClient.viewActivities(user1OrcidId, token);
+        assertNotNull(activitiesResponse);
+        ActivitiesSummary summary = activitiesResponse.getEntity(ActivitiesSummary.class);
+        assertNotNull(summary);
+        if (!summary.getEducations().isEmpty()) {
+            for (EducationSummary education : summary.getEducations()) {
+                memberV2ApiClient.deleteEducationXml(user1OrcidId, education.getPutCode(), token);
+            }
+        }
+
+        if (!summary.getEmployments().isEmpty()) {
+            for (EmploymentSummary employment : summary.getEmployments()) {
+                memberV2ApiClient.deleteEmploymentXml(user1OrcidId, employment.getPutCode(), token);
+            }
+        }
+
+        if (!summary.getFundings().getFundingGroup().isEmpty()) {
+            for (FundingGroup group : summary.getFundings().getFundingGroup()) {
+                for (FundingSummary funding : group.getFundingSummary()) {
+                    memberV2ApiClient.deleteFundingXml(user1OrcidId, funding.getPutCode(), token);
+                }
+            }
+        }
+
+        if (!summary.getWorks().getWorkGroup().isEmpty()) {
+            for (WorkGroup group : summary.getWorks().getWorkGroup()) {
+                for (WorkSummary work : group.getWorkSummary()) {
+                    memberV2ApiClient.deleteWorkXml(user1OrcidId, work.getPutCode(), token);
+                }
+            }
         }
     }
 
