@@ -16,23 +16,23 @@
  */
 package org.orcid.api.t1.server;
 
-import static org.orcid.api.common.OrcidApiConstants.AFFILIATIONS_PATH;
-import static org.orcid.api.common.OrcidApiConstants.APPLICATION_RDFXML;
-import static org.orcid.api.common.OrcidApiConstants.BIO_PATH;
-import static org.orcid.api.common.OrcidApiConstants.BIO_SEARCH_PATH;
-import static org.orcid.api.common.OrcidApiConstants.CLIENT_PATH;
-import static org.orcid.api.common.OrcidApiConstants.EXPERIMENTAL_RDF_V1;
-import static org.orcid.api.common.OrcidApiConstants.EXTERNAL_IDENTIFIER_PATH;
-import static org.orcid.api.common.OrcidApiConstants.FUNDING_PATH;
-import static org.orcid.api.common.OrcidApiConstants.ORCID_JSON;
-import static org.orcid.api.common.OrcidApiConstants.ORCID_XML;
-import static org.orcid.api.common.OrcidApiConstants.PROFILE_GET_PATH;
-import static org.orcid.api.common.OrcidApiConstants.STATUS_PATH;
-import static org.orcid.api.common.OrcidApiConstants.TEXT_N3;
-import static org.orcid.api.common.OrcidApiConstants.TEXT_TURTLE;
-import static org.orcid.api.common.OrcidApiConstants.VND_ORCID_JSON;
-import static org.orcid.api.common.OrcidApiConstants.VND_ORCID_XML;
-import static org.orcid.api.common.OrcidApiConstants.WORKS_PATH;
+import static org.orcid.core.api.OrcidApiConstants.AFFILIATIONS_PATH;
+import static org.orcid.core.api.OrcidApiConstants.APPLICATION_RDFXML;
+import static org.orcid.core.api.OrcidApiConstants.BIO_PATH;
+import static org.orcid.core.api.OrcidApiConstants.BIO_SEARCH_PATH;
+import static org.orcid.core.api.OrcidApiConstants.CLIENT_PATH;
+import static org.orcid.core.api.OrcidApiConstants.EXPERIMENTAL_RDF_V1;
+import static org.orcid.core.api.OrcidApiConstants.EXTERNAL_IDENTIFIER_PATH;
+import static org.orcid.core.api.OrcidApiConstants.FUNDING_PATH;
+import static org.orcid.core.api.OrcidApiConstants.ORCID_JSON;
+import static org.orcid.core.api.OrcidApiConstants.ORCID_XML;
+import static org.orcid.core.api.OrcidApiConstants.PROFILE_GET_PATH;
+import static org.orcid.core.api.OrcidApiConstants.STATUS_PATH;
+import static org.orcid.core.api.OrcidApiConstants.TEXT_N3;
+import static org.orcid.core.api.OrcidApiConstants.TEXT_TURTLE;
+import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_JSON;
+import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_XML;
+import static org.orcid.core.api.OrcidApiConstants.WORKS_PATH;
 
 import java.net.URI;
 import java.net.URISyntaxException;

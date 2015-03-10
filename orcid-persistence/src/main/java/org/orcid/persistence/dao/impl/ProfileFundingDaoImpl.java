@@ -35,6 +35,23 @@ public class ProfileFundingDaoImpl extends GenericDaoImpl<ProfileFundingEntity, 
     }
 
     /**
+     * Find and retrieve a profile funding that have the given id and belongs to the given user
+     * 
+     * @param userOrcid
+     *            The owner of the funding
+     * @param profileFundingId
+     *            The id of the element
+     * @return a profile funding entity that have the give id and belongs to the given user 
+     * */
+    @Override
+    public ProfileFundingEntity getProfileFunding(String userOrcid, String profileFundingId) {
+        Query query = entityManager.createQuery("from ProfileFundingEntity where profile.id=:userOrcid and id=:profileFundingId");
+        query.setParameter("userOrcid", userOrcid);
+        query.setParameter("profileFundingId", Long.valueOf(profileFundingId));
+        return (ProfileFundingEntity) query.getSingleResult();
+    }
+    
+    /**
      * Removes the relationship that exists between a funding and a profile.
      * 
      * @param profileFundingId
@@ -209,5 +226,12 @@ public class ProfileFundingDaoImpl extends GenericDaoImpl<ProfileFundingEntity, 
         Query query = entityManager.createNativeQuery("DELETE FROM profile_funding WHERE client_source_id=:clientSourceId");
         query.setParameter("clientSourceId", clientSourceId);
         query.executeUpdate();
+    }
+    
+    @Override
+    public List<ProfileFundingEntity> getByUser(String userOrcid) {
+        TypedQuery<ProfileFundingEntity> query = entityManager.createQuery("from ProfileFundingEntity where profile.id=:userOrcid", ProfileFundingEntity.class);
+        query.setParameter("userOrcid", userOrcid);
+        return query.getResultList();
     }
 }

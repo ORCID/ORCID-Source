@@ -18,7 +18,7 @@ package org.orcid.api.notifications.server;
 
 import javax.ws.rs.Path;
 
-import org.orcid.api.common.OrcidApiConstants;
+import org.orcid.core.api.OrcidApiConstants;
 
 /**
  * 

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<person:person xmlns:common="http://www.orcid.org/ns/common"
+	xmlns:person="http://www.orcid.org/ns/person" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.orcid.org/ns/person ../person-2.0_rc1.xsd ">
+	<person:personal-details>
+		<person:given-names>person:given-names</person:given-names>
+		<person:family-name>person:family-name</person:family-name>
+		<person:credit-name visibility="private">person:credit-name</person:credit-name>
+		<person:other-names visibility="private">
+			<person:otherName>person:otherName</person:otherName>
+		</person:other-names>
+	</person:personal-details>
+	<person:biography visibility="private">person:biography</person:biography>
+	<person:researcher-urls visibility="private">
+		<person:researcher-url>
+			<person:url-name>person:url-name</person:url-name>
+			<person:url>http://tempuri.org</person:url>
+		</person:researcher-url>
+	</person:researcher-urls>
+	<person:contact-details>
+		<person:email current="true" primary="true" source="0000-0000-0000-0000"
+			source-client-id="APP-0000000000000000" verified="false" visibility="private">person@email.com</person:email>
+		<person:address>
+			<common:country visibility="private">AF</common:country>
+		</person:address>
+	</person:contact-details>
+	<person:keywords visibility="private">
+		<person:keyword />
+	</person:keywords>
+	<person:external-identifiers visibility="private">
+		<person:external-identifier>
+			<person:external-id-common-name />
+			<person:external-id-reference />
+			<person:external-id-url>http://tempuri.org</person:external-id-url>
+			<common:source>
+				<common:source-orcid>
+					<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
+					<common:path>8888-8888-8888-8880</common:path>
+					<common:host>orcid.org</common:host>
+				</common:source-orcid>
+				<common:source-name />
+			</common:source>
+		</person:external-identifier>
+	</person:external-identifiers>
+	<person:delegation visibility="private">
+		<person:given-permission-to>
+			<person:delegation-details>
+				<person:approvalDate>2001-12-31T12:00:00</person:approvalDate>
+				<person:delegateSummary>
+					<common:orcid-identifier>
+						<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
+						<common:path>8888-8888-8888-8880</common:path>
+						<common:host>orcid.org</common:host>
+					</common:orcid-identifier>
+					<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
+					<person:creditName visibility="private">person:creditName</person:creditName>
+				</person:delegateSummary>
+			</person:delegation-details>
+		</person:given-permission-to>
+		<person:given-permission-by>
+			<person:delegation-details>
+				<person:approvalDate>2001-12-31T12:00:00</person:approvalDate>
+				<person:delegateSummary>
+					<common:orcid-identifier>
+						<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
+						<common:path>8888-8888-8888-8880</common:path>
+						<common:host>orcid.org</common:host>
+					</common:orcid-identifier>
+					<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
+					<person:creditName visibility="private">person:creditName</person:creditName>
+				</person:delegateSummary>
+			</person:delegation-details>
+		</person:given-permission-by>
+	</person:delegation>
+	<person:applications visibility="private">
+		<person:application-summary>
+			<common:application-orcid>
+				<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
+				<common:path>8888-8888-8888-8880</common:path>
+				<common:host>orcid.org</common:host>
+			</common:application-orcid>
+			<person:application-name />
+			<person:application-website>http://tempuri.org</person:application-website>
+			<person:approval-date>2001-12-31T12:00:00</person:approval-date>
+			<person:scope-paths>
+				<person:scopePath>/authenticate</person:scopePath>
+			</person:scope-paths>
+			<common:application-group-orcid>
+				<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
+				<common:path>8888-8888-8888-8880</common:path>
+				<common:host>orcid.org</common:host>
+			</common:application-group-orcid>
+			<person:application-group-name>person:application-group-name</person:application-group-name>
+		</person:application-summary>
+	</person:applications>
+</person:person>

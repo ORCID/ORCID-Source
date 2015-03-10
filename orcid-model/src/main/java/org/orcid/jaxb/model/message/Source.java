@@ -59,7 +59,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(propOrder = { "sourceOrcid", "sourceClientId", "sourceName", "sourceDate" })
 @XmlRootElement(name = "source")
 public class Source implements Serializable {
-
+    public static String NULL_SOURCE_PROFILE = "NOT_DEFINED";
     /**
      * 
      */

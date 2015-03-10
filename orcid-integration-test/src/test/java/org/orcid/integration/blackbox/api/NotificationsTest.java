@@ -25,16 +25,15 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 
 import javax.annotation.Resource;
-import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
 import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.orcid.integration.api.helper.OauthHelper;
 import org.orcid.integration.api.notifications.NotificationsApiClientImpl;
 import org.orcid.integration.api.t2.T2OAuthAPIService;
 import org.orcid.jaxb.model.message.ScopePathType;
@@ -44,7 +43,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.core.util.MultivaluedMapImpl;
 
 /**
  * 
@@ -68,9 +66,12 @@ public class NotificationsTest {
     @Resource
     private NotificationsApiClientImpl notificationsClient;
 
+    @Resource
+    private OauthHelper oauthHelper;
+
     @Test
     public void testGetNotificationToken() throws JSONException {
-        String accessToken = getAccessToken();
+        String accessToken = oauthHelper.getClientCredentialsAccessToken(client1ClientId, client1ClientSecret, ScopePathType.PREMIUM_NOTIFICATION);
         assertNotNull(accessToken);
     }
 
@@ -78,27 +79,14 @@ public class NotificationsTest {
     public void createAddActivitiesNotification() throws JSONException {
         NotificationAddActivities notification = unmarshallFromPath("/notification-add-activities.xml");
         notification.setPutCode(null);
-        String accessToken = getAccessToken();
+        String accessToken = oauthHelper.getClientCredentialsAccessToken(client1ClientId, client1ClientSecret, ScopePathType.PREMIUM_NOTIFICATION);
+
         ClientResponse response = notificationsClient.addAddActivitiesNotificationXml(testUser1OrcidId, notification, accessToken);
         assertNotNull(response);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
         String locationPath = response.getLocation().getPath();
         assertTrue("Location header path should match pattern, but was " + locationPath,
-                locationPath.matches(".*/v1.0/4444-4444-4444-4444/notifications/add-activities/\\d+"));
-    }
-
-    private String getAccessToken() throws JSONException {
-        MultivaluedMap<String, String> params = new MultivaluedMapImpl();
-        params.add("client_id", client1ClientId);
-        params.add("client_secret", client1ClientSecret);
-        params.add("grant_type", "client_credentials");
-        params.add("scope", ScopePathType.PREMIUM_NOTIFICATION.value());
-        ClientResponse clientResponse = t2OAuthClient.obtainOauth2TokenPost("client_credentials", params);
-        assertEquals(200, clientResponse.getStatus());
-        String body = clientResponse.getEntity(String.class);
-        JSONObject jsonObject = new JSONObject(body);
-        String accessToken = (String) jsonObject.get("access_token");
-        return accessToken;
+                locationPath.matches(".*/v1.0/" + testUser1OrcidId + "/notifications/add-activities/\\d+"));
     }
 
     public NotificationAddActivities unmarshallFromPath(String path) {

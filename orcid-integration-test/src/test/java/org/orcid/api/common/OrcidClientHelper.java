@@ -21,8 +21,6 @@ import java.net.URISyntaxException;
 
 import javax.ws.rs.core.UriBuilder;
 
-import org.orcid.jaxb.model.message.OrcidMessage;
-
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
@@ -106,6 +104,9 @@ public class OrcidClientHelper {
 
     private URI resolveUri(URI uri) {
         try {
+            if(uri.getHost() != null){
+                return uri;
+            }
             return new URI(baseUri.toString().concat(uri.toString()));
         } catch (URISyntaxException e) {
             throw new RuntimeException("Calculated URI is invalid. Please check the settings.", e);

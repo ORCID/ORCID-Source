@@ -54,22 +54,6 @@
 
     <build>
         <finalName>orcid-model</finalName>
-        <plugins>
-            <plugin>
-                <groupId>com.mycila.maven-license-plugin</groupId>
-                <artifactId>maven-license-plugin</artifactId>
-                <configuration>
-                    <mapping>
-                        <xjb>XML_STYLE</xjb>
-                    </mapping>
-                    <excludes>
-                        <exclude>**/src/main/resources/**/*.xsd</exclude>
-                        <exclude>**/rebel.xml</exclude>
-                        <exclude>**/.gitignore</exclude>	
-                    </excludes>
-                </configuration>
-            </plugin>
-        </plugins>
     </build>
 
 

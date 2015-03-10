@@ -25,6 +25,17 @@ import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 public interface ProfileFundingDao extends GenericDao<ProfileFundingEntity, Long> {
 
     /**
+     * Find and retrieve a profile funding that have the given id and belongs to the given user
+     * 
+     * @param userOrcid
+     *            The owner of the funding
+     * @param profileFundingId
+     *            The id of the element
+     * @return a profile funding entity that have the give id and belongs to the given user 
+     * */
+    public ProfileFundingEntity getProfileFunding(String userOrcid, String profileFundingId);
+    
+    /**
      * Removes the relationship that exists between a funding and a profile.
      * 
      * @param profileFundingId
@@ -108,4 +119,6 @@ public interface ProfileFundingDao extends GenericDao<ProfileFundingEntity, Long
     void setFundingExternalIdentifiersInJson(BigInteger id, String extIdsJson);    
     
     void removeFundingByClientSourceId(String clientSourceId);
+    
+    List<ProfileFundingEntity> getByUser(String userOrcid);
 }

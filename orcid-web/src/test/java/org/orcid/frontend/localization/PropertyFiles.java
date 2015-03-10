@@ -16,12 +16,9 @@
  */
 package org.orcid.frontend.localization;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.io.StringReader;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
@@ -34,9 +31,8 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.zip.ZipException;
 
-import org.junit.Test;
-
 import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.utils.Classpath;
 import org.orcid.core.utils.Classpath.FileFilter;

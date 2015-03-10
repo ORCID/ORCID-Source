@@ -61,6 +61,7 @@
     <client_redirect_uri client_details_id="4444-4444-4444-4443" redirect_uri="http://www.4444-4444-4444-4443.com/redirect/oauth" redirect_uri_type="default"/>
     <client_redirect_uri client_details_id="4444-4444-4444-4444" redirect_uri="http://www.4444-4444-4444-4444.com/redirect/oauth" redirect_uri_type="default"/>
     <client_redirect_uri client_details_id="4444-4444-4444-4445" redirect_uri="http://www.4444-4444-4444-4445.com/redirect/oauth" redirect_uri_type="default"/>
+    <client_redirect_uri client_details_id="4444-4444-4444-4445" redirect_uri="http://localhost:8080/orcid-web/oauth/playground" redirect_uri_type="default"/>
     <client_redirect_uri client_details_id="4444-4444-4444-4498" redirect_uri="http://www.4444-4444-4444-4498.com/redirect/oauth" redirect_uri_type="default"/>
     <client_redirect_uri client_details_id="4444-4444-4444-4498" redirect_uri="http://www.4444-4444-4444-4498.com/redirect/oauth/grant_read_wizard" predefined_client_redirect_scope="/funding/read-limited" redirect_uri_type="grant-read-wizard"/>
 
@@ -82,6 +83,7 @@
     <client_scope client_details_id="4444-4444-4444-4445" scope_type="/funding/read-limited"/>
     <client_scope client_details_id="4444-4444-4444-4445" scope_type="/affiliations/read-limited"/>
     <client_scope client_details_id="4444-4444-4444-4445" scope_type="/premium-notification"/>
+    <client_scope client_details_id="4444-4444-4444-4445" scope_type="/activities/update"/>
     <client_scope client_details_id="4444-4444-4444-4498" scope_type="/authenticate"/>
     
     

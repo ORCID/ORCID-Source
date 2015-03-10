@@ -317,6 +317,10 @@
 	
 	<bean id="adminManager" class="org.orcid.core.manager.impl.AdminManagerImpl" />
 
+	<bean id="affiliationsManager" class="org.orcid.core.manager.impl.AffiliationsManagerImpl" />
+	
+	<bean id="orcidSecurityManager" class="org.orcid.core.manager.impl.OrcidSecurityManagerImpl" />
+
 	<bean id="messageSource"
 		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
 		<property name="basenames" value="classpath:i18n/email,classpath:i18n/javascript,classpath:i18n/messages" />
@@ -465,6 +469,25 @@
 	<bean id="jpaJaxbNotificationAdapter" class="org.orcid.core.adapter.impl.JpaJaxbNotificationAdapterImpl">
 	    <property name="mapperFacade" ref="mapperFacade" />
 	</bean>
+	<bean id="workMapperFacade" factory-bean="&amp;mapperFacadeFactory" factory-method="getWorkMapperFacade"/>
+    <bean id="jpaJaxbWorkAdapter" class="org.orcid.core.adapter.impl.JpaJaxbWorkAdapterImpl">
+        <property name="mapperFacade" ref="workMapperFacade" />
+    </bean>
+	
+	<bean id="fundingMapperFacade" factory-bean="&amp;mapperFacadeFactory" factory-method="getFundingMapperFacade"/>
+	<bean id="jpaJaxbFundingAdapter" class="org.orcid.core.adapter.impl.JpaJaxbFundingAdapterImpl">
+        <property name="mapperFacade" ref="fundingMapperFacade" />
+    </bean>
+	
+	<bean id="educationMapperFacade" factory-bean="&amp;mapperFacadeFactory" factory-method="getEducationMapperFacade"/>
+	<bean id="jpaJaxbEducationAdapter" class="org.orcid.core.adapter.impl.JpaJaxbEducationAdapterImpl">
+        <property name="mapperFacade" ref="educationMapperFacade" />
+    </bean>
+	
+	<bean id="employmentMapperFacade" factory-bean="&amp;mapperFacadeFactory" factory-method="getEmploymentMapperFacade"/>
+	<bean id="jpaJaxbEmploymentAdapter" class="org.orcid.core.adapter.impl.JpaJaxbEmploymentAdapterImpl">
+        <property name="mapperFacade" ref="employmentMapperFacade" />
+    </bean>
 	
 	<!-- Geonames username -->
 	<bean id="geonamesUser" class="java.lang.String">

@@ -19,6 +19,8 @@ package org.orcid.core.manager;
 import java.util.List;
 
 import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.jaxb.model.record.Funding;
+import org.orcid.jaxb.model.record.summary.FundingSummary;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 
 public interface ProfileFundingManager {
@@ -100,6 +102,56 @@ public interface ProfileFundingManager {
      * */
     ProfileFundingEntity getProfileFundingEntity(String profileFundingId);
     
-    public boolean updateToMaxDisplay(String orcid, String workId);
+    boolean updateToMaxDisplay(String orcid, String workId);
+    
+    /**
+     * Get a funding based on the orcid and funding id
+     * @param orcid
+     *          The funding owner
+     * @param fundingId
+     *          The funding id
+     * @return the Funding          
+     * */
+    Funding getFunding(String orcid, String fundingId);
+    
+    /**
+     * Get a funding summary based on the orcid and funding id
+     * @param orcid
+     *          The funding owner
+     * @param fundingId
+     *          The funding id
+     * @return the FundingSummary          
+     * */
+    FundingSummary getSummary(String orcid, String fundingId);
+    
+    /**
+     * Add a new funding to the given user
+     * @param orcid
+     *          The user to add the funding
+     * @param funding
+     *          The funding to add
+     * @return the added funding                  
+     * */
+    Funding createFunding(String orcid, Funding funding);
+    
+    /**
+     * Updates a funding that belongs to the given user
+     * @param orcid
+     *          The user
+     * @param funding
+     *          The funding to update
+     * @return the updated funding                  
+     * */
+    Funding updateFunding(String orcid, Funding funding);
+    
+    /**
+     * Deletes a given funding, if and only if, the client that requested the delete is the source of the funding
+     * @param orcid
+     *          the funding owner
+     * @param fundingId
+     *          The funding id                 
+     * @return true if the funding was deleted, false otherwise
+     * */
+    boolean checkSourceAndDelete(String orcid, String fundingId);
     
 }

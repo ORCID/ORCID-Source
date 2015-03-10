@@ -24,6 +24,11 @@ import org.orcid.jaxb.model.message.FuzzyDate;
 @Embeddable
 public class EndDateEntity extends FuzzyDateEntity {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -3305842000377366372L;
+
     public EndDateEntity(FuzzyDate fuzzyDate) {
         super(fuzzyDate);
     }

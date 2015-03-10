@@ -36,6 +36,7 @@ import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.notification.Notification;
+import org.orcid.jaxb.model.record.Activity;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -83,13 +84,28 @@ public class OrcidApiAuthorizationSecurityAspect {
     public void checkPermissionsWithNotificationId(AccessControl accessControl, String orcid, Long id) {
         permissionChecker.checkPermissions(getAuthentication(), accessControl.requiredScope(), orcid);
     }
-
-    @Before("@annotation(accessControl) && args(uriInfo, orcid, notification)")
-    public void checkPermissionsWithNotificationId(AccessControl accessControl, UriInfo uriInfo, String orcid, Notification notification) {
+    
+    @Before("@annotation(accessControl) && args(orcid, id)")
+    public void checkPermissionsWithId(AccessControl accessControl, String orcid, String id) {
         permissionChecker.checkPermissions(getAuthentication(), accessControl.requiredScope(), orcid);
     }
 
-    @Before("@annotation(accessControl) && args(uriInfo , orcid, webhookUri)")
+    @Before("@annotation(accessControl) && args(uriInfo, orcid, notification)")
+    public void checkPermissionsWithNotification(AccessControl accessControl, UriInfo uriInfo, String orcid, Notification notification) {
+        permissionChecker.checkPermissions(getAuthentication(), accessControl.requiredScope(), orcid);
+    }
+    
+    @Before("@annotation(accessControl) && args(orcid, activity)")
+    public void checkPermissionsWithWork(AccessControl accessControl, String orcid, Activity activity) {
+        permissionChecker.checkPermissions(getAuthentication(), accessControl.requiredScope(), orcid);
+    }
+    
+    @Before("@annotation(accessControl) && args(orcid, putCode, activity)")
+    public void checkPermissionsWithWork(AccessControl accessControl, String orcid, String putCode, Activity activity) {
+        permissionChecker.checkPermissions(getAuthentication(), accessControl.requiredScope(), orcid);
+    }
+
+    @Before("@annotation(accessControl) && args(uriInfo, orcid, webhookUri)")
     public void checkPermissionsWithOrcidAndWebhookUri(AccessControl accessControl, UriInfo uriInfo, String orcid, String webhookUri) {
         permissionChecker.checkPermissions(getAuthentication(), accessControl.requiredScope(), orcid);
     }

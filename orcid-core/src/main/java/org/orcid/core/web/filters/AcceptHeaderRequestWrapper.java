@@ -35,7 +35,11 @@ public class AcceptHeaderRequestWrapper extends HttpServletRequestWrapper {
 
     public AcceptHeaderRequestWrapper(HttpServletRequest request, String accepts) {
         super(request);
-        this.accepts = accepts;
+        String contentType = request.getHeader("Content-Type");
+        if (accepts == null && contentType != null)
+            this.accepts = contentType;
+        else
+            this.accepts = accepts;
     }
 
     @SuppressWarnings("unchecked")

@@ -16,7 +16,7 @@
  */
 package org.orcid.api.notifications.server.delegator.impl;
 
-import static org.orcid.api.common.OrcidApiConstants.STATUS_OK_MESSAGE;
+import static org.orcid.core.api.OrcidApiConstants.STATUS_OK_MESSAGE;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -26,8 +26,8 @@ import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import org.orcid.api.common.exception.OrcidNotFoundException;
 import org.orcid.api.notifications.server.delegator.NotificationsApiServiceDelegator;
+import org.orcid.core.exception.OrcidNotFoundException;
 import org.orcid.core.exception.OrcidNotificationAlreadyReadException;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.SourceManager;

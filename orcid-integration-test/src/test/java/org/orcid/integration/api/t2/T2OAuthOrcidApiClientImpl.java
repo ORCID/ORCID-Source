@@ -16,7 +16,7 @@
  */
 package org.orcid.integration.api.t2;
 
-import static org.orcid.api.common.OrcidApiConstants.*;
+import static org.orcid.core.api.OrcidApiConstants.*;
 
 import java.net.URI;
 import java.net.URISyntaxException;

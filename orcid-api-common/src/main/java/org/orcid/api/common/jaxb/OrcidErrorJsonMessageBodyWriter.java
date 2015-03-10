@@ -29,7 +29,7 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.ext.MessageBodyWriter;
 import javax.ws.rs.ext.Provider;
 
-import org.orcid.api.common.OrcidApiConstants;
+import org.orcid.core.api.OrcidApiConstants;
 import org.orcid.jaxb.model.error.OrcidError;
 
 /**

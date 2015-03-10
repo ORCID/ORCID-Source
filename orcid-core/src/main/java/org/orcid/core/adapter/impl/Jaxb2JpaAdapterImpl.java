@@ -65,7 +65,6 @@ import org.orcid.jaxb.model.message.ExternalIdentifiers;
 import org.orcid.jaxb.model.message.FamilyName;
 import org.orcid.jaxb.model.message.Funding;
 import org.orcid.jaxb.model.message.FundingContributors;
-import org.orcid.jaxb.model.message.FundingExternalIdentifiers;
 import org.orcid.jaxb.model.message.FundingList;
 import org.orcid.jaxb.model.message.FundingTitle;
 import org.orcid.jaxb.model.message.FuzzyDate;
@@ -99,7 +98,6 @@ import org.orcid.jaxb.model.message.TranslatedTitle;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkContributors;
 import org.orcid.jaxb.model.message.WorkExternalIdentifiers;
-import org.orcid.jaxb.model.message.WorkSource;
 import org.orcid.jaxb.model.message.WorkTitle;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.GenericDao;
@@ -124,6 +122,7 @@ import org.orcid.persistence.jpa.entities.SecurityQuestionEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.jpa.entities.StartDateEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
+import org.orcid.pojo.FundingExternalIdentifiers;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.DateUtils;
 import org.orcid.utils.OrcidStringUtils;
@@ -1024,11 +1023,13 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
      * @param fundingExternalIdentifiers
      * @return a json string containig the external identifiers
      * */
-    private String getFundingExternalIdentifiersJson(FundingExternalIdentifiers fundingExternalIdentifiers) {
+    private String getFundingExternalIdentifiersJson(org.orcid.jaxb.model.message.FundingExternalIdentifiers fundingExternalIdentifiers) {
         if (fundingExternalIdentifiers == null) {
             return null;
         }
-        return JsonUtils.convertToJsonString(fundingExternalIdentifiers);
+        //Transform the message external identifiers to core external identifiers
+        FundingExternalIdentifiers fei = FundingExternalIdentifiers.fromMessagePojo(fundingExternalIdentifiers);
+        return JsonUtils.convertToJsonString(fei);
     }
     
 
@@ -1081,10 +1082,10 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
      * @param orcidGrant
      * @return a OrgEntity based on the provided OrcidGrant
      * */
-    private OrgEntity getOrgEntity(Funding orcidGrant) {
-        if (orcidGrant != null) {
+    private OrgEntity getOrgEntity(Funding orcidFunding) {
+        if (orcidFunding != null) {
             OrgEntity orgEntity = new OrgEntity();
-            Organization organization = orcidGrant.getOrganization();
+            Organization organization = orcidFunding.getOrganization();
             orgEntity.setName(organization.getName());
             OrganizationAddress address = organization.getAddress();
             orgEntity.setCity(address.getCity());
@@ -1102,7 +1103,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     private SourceEntity getSource(Source source) {
         if (source != null) {
             String sourcePath = source.retrieveSourcePath();
-            if (StringUtils.isNotEmpty(sourcePath) && !sourcePath.equals(WorkSource.NULL_SOURCE_PROFILE)) {
+            if (StringUtils.isNotEmpty(sourcePath) && !sourcePath.equals(Source.NULL_SOURCE_PROFILE)) {
                 ClientDetailsEntity cde = clientDetailsDao.find(sourcePath);
                 if (cde != null && cde.getClientType() != null) {
                     return new SourceEntity(cde);

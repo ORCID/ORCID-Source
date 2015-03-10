@@ -17,7 +17,6 @@
 package org.orcid.core.manager.impl;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.validation.Schema;
