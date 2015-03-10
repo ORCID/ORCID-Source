@@ -458,14 +458,15 @@ public class PublicV2Test {
 
     private void createActivities() throws JSONException, InterruptedException, URISyntaxException {
         String accessToken = getAccessToken();
+        long time = System.currentTimeMillis();
         Work workToCreate = (Work) unmarshallFromPath("/record_2.0_rc1/samples/work-2.0_rc1.xml", Work.class);
 
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 4; i++) {            
             workToCreate.setPutCode(null);
             workToCreate.getWorkTitle().getTitle().setContent("Work # " + i);
             workToCreate.getExternalIdentifiers().getExternalIdentifier().clear();
             WorkExternalIdentifier wExtId = new WorkExternalIdentifier();
-            wExtId.setWorkExternalIdentifierId(new WorkExternalIdentifierId("Work Id " + i));
+            wExtId.setWorkExternalIdentifierId(new WorkExternalIdentifierId(time + " Work Id " + i));
             wExtId.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
             workToCreate.getExternalIdentifiers().getExternalIdentifier().add(wExtId);
             if (i == 0 || i == 3)
@@ -487,7 +488,7 @@ public class PublicV2Test {
             fundingToCreate.getExternalIdentifiers().getExternalIdentifier().clear();
             FundingExternalIdentifier fExtId = new FundingExternalIdentifier();
             fExtId.setType(FundingExternalIdentifierType.GRANT_NUMBER);
-            fExtId.setValue("Funding Id " + i);
+            fExtId.setValue(time + " funding Id " + i);
             fundingToCreate.getExternalIdentifiers().getExternalIdentifier().add(fExtId);
             if (i == 0 || i == 3)
                 fundingToCreate.setVisibility(org.orcid.jaxb.model.record.Visibility.PUBLIC);

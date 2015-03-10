@@ -95,10 +95,8 @@ public class MemberV2Test {
     public String user1Password;
     @Value("${org.orcid.web.testUser1.orcidId}")
     public String user1OrcidId;
-
     @Resource(name = "t2OAuthClient")
-    private T2OAuthAPIService<ClientResponse> t2OAuthClient;
-
+    private T2OAuthAPIService<ClientResponse> t2OAuthClient;        
     @Resource
     private MemberV2ApiClientImpl memberV2ApiClient;
 
@@ -111,7 +109,7 @@ public class MemberV2Test {
 
     static String accessToken = null;
 
-    @After
+    @After    
     public void before() throws JSONException, InterruptedException, URISyntaxException {
         cleanActivities();
     }
@@ -129,8 +127,14 @@ public class MemberV2Test {
 
     @Test
     public void createViewUpdateAndDeleteWork() throws JSONException, InterruptedException, URISyntaxException {
+        long time = System.currentTimeMillis();
         Work workToCreate = (Work) unmarshallFromPath("/record_2.0_rc1/samples/work-2.0_rc1.xml", Work.class);
         workToCreate.setPutCode(null);
+        workToCreate.getExternalIdentifiers().getExternalIdentifier().clear();
+        WorkExternalIdentifier wExtId = new WorkExternalIdentifier();
+        wExtId.setWorkExternalIdentifierId(new WorkExternalIdentifierId("Work Id " + time));
+        wExtId.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
+        workToCreate.getExternalIdentifiers().getWorkExternalIdentifier().add(wExtId);
         String accessToken = getAccessToken();
         ClientResponse postResponse = memberV2ApiClient.createWorkXml(user1OrcidId, workToCreate, accessToken);
         assertNotNull(postResponse);
@@ -154,9 +158,15 @@ public class MemberV2Test {
 
     @Test
     public void testUpdateWorkWithProfileCreationTokenWhenClaimedAndNotSource() throws JSONException, InterruptedException, URISyntaxException {
+        long time = System.currentTimeMillis();
         Work workToCreate = (Work) unmarshallFromPath("/record_2.0_rc1/samples/work-2.0_rc1.xml", Work.class);
         workToCreate.setPutCode(null);
         workToCreate.setVisibility(Visibility.PUBLIC);
+        workToCreate.getExternalIdentifiers().getExternalIdentifier().clear();
+        WorkExternalIdentifier wExtId = new WorkExternalIdentifier();
+        wExtId.setWorkExternalIdentifierId(new WorkExternalIdentifierId("Work Id " + time));
+        wExtId.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
+        workToCreate.getExternalIdentifiers().getWorkExternalIdentifier().add(wExtId);
         String accessToken = getAccessToken();
         ClientResponse postResponse = memberV2ApiClient.createWorkXml(user1OrcidId, workToCreate, accessToken);
         assertNotNull(postResponse);
@@ -299,9 +309,15 @@ public class MemberV2Test {
 
     @Test
     public void createViewUpdateAndDeleteFunding() throws JSONException, InterruptedException, URISyntaxException {
+        long time = System.currentTimeMillis();
         Funding funding = (Funding) unmarshallFromPath("/record_2.0_rc1/samples/funding-2.0_rc1.xml", Funding.class);
         funding.setPutCode(null);
         funding.setVisibility(Visibility.PUBLIC);
+        funding.getExternalIdentifiers().getExternalIdentifier().clear();
+        FundingExternalIdentifier fExtId = new FundingExternalIdentifier();
+        fExtId.setType(FundingExternalIdentifierType.GRANT_NUMBER);
+        fExtId.setValue("Funding Id " + time);
+        funding.getExternalIdentifiers().getExternalIdentifier().add(fExtId);
         String accessToken = getAccessToken();
         ClientResponse postResponse = memberV2ApiClient.createFundingXml(user1OrcidId, funding, accessToken);
         assertNotNull(postResponse);
@@ -331,9 +347,15 @@ public class MemberV2Test {
 
     @Test
     public void testUpdateFundingWithProfileCreationTokenWhenClaimedAndNotSource() throws JSONException, InterruptedException, URISyntaxException {
+        long time = System.currentTimeMillis();
         Funding funding = (Funding) unmarshallFromPath("/record_2.0_rc1/samples/funding-2.0_rc1.xml", Funding.class);
         funding.setPutCode(null);
         funding.setVisibility(Visibility.PUBLIC);
+        funding.getExternalIdentifiers().getExternalIdentifier().clear();
+        FundingExternalIdentifier fExtId = new FundingExternalIdentifier();
+        fExtId.setType(FundingExternalIdentifierType.GRANT_NUMBER);
+        fExtId.setValue("Funding Id " + time);
+        funding.getExternalIdentifiers().getExternalIdentifier().add(fExtId);
         String accessToken = getAccessToken();
         ClientResponse postResponse = memberV2ApiClient.createFundingXml(user1OrcidId, funding, accessToken);
         assertNotNull(postResponse);
@@ -364,6 +386,7 @@ public class MemberV2Test {
 
     @Test
     public void testViewActivitiesSummaries() throws JSONException, InterruptedException, URISyntaxException {
+        long time = System.currentTimeMillis();
         Education education = (Education) unmarshallFromPath("/record_2.0_rc1/samples/education-2.0_rc1.xml", Education.class);
         education.setPutCode(null);
         education.setVisibility(Visibility.PUBLIC);
@@ -375,10 +398,19 @@ public class MemberV2Test {
         Funding funding = (Funding) unmarshallFromPath("/record_2.0_rc1/samples/funding-2.0_rc1.xml", Funding.class);
         funding.setPutCode(null);
         funding.setVisibility(Visibility.PUBLIC);
+        funding.getExternalIdentifiers().getExternalIdentifier().clear();
+        FundingExternalIdentifier fExtId = new FundingExternalIdentifier();
+        fExtId.setType(FundingExternalIdentifierType.GRANT_NUMBER);
+        fExtId.setValue("Funding Id " + time);
+        funding.getExternalIdentifiers().getExternalIdentifier().add(fExtId);
 
         Work work = (Work) unmarshallFromPath("/record_2.0_rc1/samples/work-2.0_rc1.xml", Work.class);
         work.setPutCode(null);
-        work.setVisibility(Visibility.PUBLIC);
+        work.getExternalIdentifiers().getExternalIdentifier().clear();
+        WorkExternalIdentifier wExtId = new WorkExternalIdentifier();
+        wExtId.setWorkExternalIdentifierId(new WorkExternalIdentifierId("Work Id " + time));
+        wExtId.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
+        work.getExternalIdentifiers().getWorkExternalIdentifier().add(wExtId);
 
         String accessToken = getAccessToken();
 
@@ -396,7 +428,7 @@ public class MemberV2Test {
         funding.getTitle().getTitle().setContent("Funding # 2");
         FundingExternalIdentifier fExtId3 = new FundingExternalIdentifier();
         fExtId3.setType(FundingExternalIdentifierType.GRANT_NUMBER);
-        fExtId3.setValue("extId3Value");
+        fExtId3.setValue("extId3Value" + time);
         funding.getExternalIdentifiers().getExternalIdentifier().add(fExtId3);
         // Add 2, with the same ext ids +1
         memberV2ApiClient.createFundingXml(user1OrcidId, funding, accessToken);
@@ -404,7 +436,7 @@ public class MemberV2Test {
         funding.getTitle().getTitle().setContent("Funding # 3");
         FundingExternalIdentifier fExtId4 = new FundingExternalIdentifier();
         fExtId4.setType(FundingExternalIdentifierType.GRANT_NUMBER);
-        fExtId4.setValue("extId4Value");
+        fExtId4.setValue("extId4Value" + time);
         funding.getExternalIdentifiers().getExternalIdentifier().clear();
         funding.getExternalIdentifiers().getExternalIdentifier().add(fExtId4);
         // Add 3, with different ext ids
@@ -426,7 +458,7 @@ public class MemberV2Test {
         work.getWorkTitle().getTitle().setContent("Work # 2");
         WorkExternalIdentifier wExtId2 = new WorkExternalIdentifier();
         wExtId2.setWorkExternalIdentifierType(WorkExternalIdentifierType.DOI);
-        wExtId2.setWorkExternalIdentifierId(new WorkExternalIdentifierId("doi-ext-id"));
+        wExtId2.setWorkExternalIdentifierId(new WorkExternalIdentifierId("doi-ext-id" + time));
         work.getExternalIdentifiers().getExternalIdentifier().add(wExtId2);
         // Add 2, with the same ext ids +1
         memberV2ApiClient.createWorkXml(user1OrcidId, work, accessToken);
@@ -434,7 +466,7 @@ public class MemberV2Test {
         work.getWorkTitle().getTitle().setContent("Work # 3");
         WorkExternalIdentifier wExtId3 = new WorkExternalIdentifier();
         wExtId3.setWorkExternalIdentifierType(WorkExternalIdentifierType.EID);
-        wExtId3.setWorkExternalIdentifierId(new WorkExternalIdentifierId("eid-ext-id"));
+        wExtId3.setWorkExternalIdentifierId(new WorkExternalIdentifierId("eid-ext-id" + time));
         work.getWorkExternalIdentifiers().getExternalIdentifier().clear();
         work.getWorkExternalIdentifiers().getExternalIdentifier().add(wExtId3);
         // Add 3, with different ext ids
