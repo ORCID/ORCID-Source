@@ -20,8 +20,9 @@ import javax.annotation.Resource;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.api.common.exception.OrcidNotFoundException;
 import org.orcid.api.notifications.server.delegator.NotificationsApiServiceDelegator;
+import org.orcid.core.exception.OrcidNotFoundException;
+import org.orcid.core.utils.SecurityContextTestUtils;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.test.DBUnitTest;
 import org.springframework.test.context.ContextConfiguration;

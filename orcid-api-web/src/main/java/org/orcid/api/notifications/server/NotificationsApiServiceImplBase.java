@@ -16,14 +16,14 @@
  */
 package org.orcid.api.notifications.server;
 
-import static org.orcid.api.common.OrcidApiConstants.ADD_ACTIVITIES_PATH;
-import static org.orcid.api.common.OrcidApiConstants.ADD_ACTIVITIES_VIEW_PATH;
-import static org.orcid.api.common.OrcidApiConstants.ADD_ACTIVITIES_FLAG_AS_ARCHIVED_PATH;
-import static org.orcid.api.common.OrcidApiConstants.ORCID_JSON;
-import static org.orcid.api.common.OrcidApiConstants.ORCID_XML;
-import static org.orcid.api.common.OrcidApiConstants.STATUS_PATH;
-import static org.orcid.api.common.OrcidApiConstants.VND_ORCID_JSON;
-import static org.orcid.api.common.OrcidApiConstants.VND_ORCID_XML;
+import static org.orcid.core.api.OrcidApiConstants.ADD_ACTIVITIES_FLAG_AS_ARCHIVED_PATH;
+import static org.orcid.core.api.OrcidApiConstants.ADD_ACTIVITIES_PATH;
+import static org.orcid.core.api.OrcidApiConstants.ADD_ACTIVITIES_VIEW_PATH;
+import static org.orcid.core.api.OrcidApiConstants.ORCID_JSON;
+import static org.orcid.core.api.OrcidApiConstants.ORCID_XML;
+import static org.orcid.core.api.OrcidApiConstants.STATUS_PATH;
+import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_JSON;
+import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_XML;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;

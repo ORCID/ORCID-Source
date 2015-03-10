@@ -16,11 +16,11 @@
  */
 package org.orcid.api.t2.server.delegator.impl;
 
-import static org.orcid.api.common.OrcidApiConstants.AFFILIATIONS_PATH;
-import static org.orcid.api.common.OrcidApiConstants.FUNDING_PATH;
-import static org.orcid.api.common.OrcidApiConstants.PROFILE_GET_PATH;
-import static org.orcid.api.common.OrcidApiConstants.STATUS_OK_MESSAGE;
-import static org.orcid.api.common.OrcidApiConstants.WORKS_PATH;
+import static org.orcid.core.api.OrcidApiConstants.AFFILIATIONS_PATH;
+import static org.orcid.core.api.OrcidApiConstants.FUNDING_PATH;
+import static org.orcid.core.api.OrcidApiConstants.PROFILE_GET_PATH;
+import static org.orcid.core.api.OrcidApiConstants.STATUS_OK_MESSAGE;
+import static org.orcid.core.api.OrcidApiConstants.WORKS_PATH;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -34,10 +34,10 @@ import javax.ws.rs.core.UriInfo;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.exception.ConstraintViolationException;
 import org.orcid.api.common.delegator.impl.OrcidApiServiceDelegatorImpl;
-import org.orcid.api.common.exception.OrcidBadRequestException;
-import org.orcid.api.common.exception.OrcidForbiddenException;
-import org.orcid.api.common.exception.OrcidNotFoundException;
 import org.orcid.api.t2.server.delegator.T2OrcidApiServiceDelegator;
+import org.orcid.core.exception.OrcidBadRequestException;
+import org.orcid.core.exception.OrcidForbiddenException;
+import org.orcid.core.exception.OrcidNotFoundException;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.ProfileEntityManager;

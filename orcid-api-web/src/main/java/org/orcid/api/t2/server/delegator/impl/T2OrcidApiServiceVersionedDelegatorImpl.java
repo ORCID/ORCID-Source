@@ -23,9 +23,9 @@ import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import org.orcid.api.common.exception.OrcidBadRequestException;
-import org.orcid.api.common.exception.OrcidNotFoundException;
 import org.orcid.api.t2.server.delegator.T2OrcidApiServiceDelegator;
+import org.orcid.core.exception.OrcidBadRequestException;
+import org.orcid.core.exception.OrcidNotFoundException;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.manager.ValidationBehaviour;
 import org.orcid.core.manager.ValidationManager;

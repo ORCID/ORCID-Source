@@ -28,6 +28,7 @@
         <website>www.4444-4444-4444-4445.com</website>
         <short-description>Andrew Timothy (1912–9 December 1990) was an Anglican priest and BBC Radio announcer, who is best remembered for being the original announcer of the comedy series The Goon Show.</short-description>
         <redirect-uris>
+            <redirect-uri type="default">http://localhost:8080/orcid-web/oauth/playground</redirect-uri>
             <redirect-uri type="default">http://www.4444-4444-4444-4445.com/redirect/oauth</redirect-uri>
         </redirect-uris>
         <client-id>4444-4444-4444-4445</client-id>

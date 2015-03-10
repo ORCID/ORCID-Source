@@ -27,8 +27,8 @@ import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
-import org.orcid.api.common.exception.OrcidInvalidScopeException;
 import org.orcid.core.constants.OauthTokensConstants;
+import org.orcid.core.exception.OrcidInvalidScopeException;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.dao.OrcidOauth2AuthoriziationCodeDetailDao;
 import org.orcid.persistence.jpa.entities.OrcidOauth2AuthoriziationCodeDetail;

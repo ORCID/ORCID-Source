@@ -16,9 +16,9 @@
  */
 package org.orcid.api.common.writer.rdf;
 
-import static org.orcid.api.common.OrcidApiConstants.APPLICATION_RDFXML;
-import static org.orcid.api.common.OrcidApiConstants.TEXT_N3;
-import static org.orcid.api.common.OrcidApiConstants.TEXT_TURTLE;
+import static org.orcid.core.api.OrcidApiConstants.APPLICATION_RDFXML;
+import static org.orcid.core.api.OrcidApiConstants.TEXT_N3;
+import static org.orcid.core.api.OrcidApiConstants.TEXT_TURTLE;
 
 import java.io.IOException;
 import java.io.InputStream;

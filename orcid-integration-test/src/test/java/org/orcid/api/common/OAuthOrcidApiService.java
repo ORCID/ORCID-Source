@@ -22,7 +22,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import static org.orcid.api.common.OrcidApiConstants.*;
+import static org.orcid.core.api.OrcidApiConstants.*;
 
 /**
  * An interface representing read-only access to the Orcid

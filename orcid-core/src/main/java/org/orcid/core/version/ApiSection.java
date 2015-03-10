@@ -22,5 +22,5 @@ package org.orcid.core.version;
  *
  */
 public enum ApiSection {
-    NOTIFICATIONS, DEFAULT;
+    NOTIFICATIONS, V1, V2;
 }

@@ -19,6 +19,8 @@ package org.orcid.core.manager;
 import java.util.ArrayList;
 
 import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.jaxb.model.record.Work;
+import org.orcid.jaxb.model.record.summary.WorkSummary;
 import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
 
 public interface ProfileWorkManager {
@@ -35,6 +37,8 @@ public interface ProfileWorkManager {
      * @return true if the relationship was deleted
      * */
     boolean removeWork(String clientOrcid, String workId);
+    
+    boolean checkSourceAndRemoveWork(String orcid, String workId);
 
     /**
      * Removes the relationship that exists between a work and a profile.
@@ -92,6 +96,10 @@ public interface ProfileWorkManager {
      * */
     ProfileWorkEntity getProfileWork(String clientOrcid, String workId);
     
+    Work getWork(String orcid, String workId);
+    
+    WorkSummary getWorkSummary(String orcid, String workId);
+    
     /**
      * Creates a new profile entity relationship between the provided work and
      * the given profile.
@@ -118,6 +126,10 @@ public interface ProfileWorkManager {
      * @param workId
      * @return
      */
-    public boolean updateToMaxDisplay(String orcid, String workId);
+    boolean updateToMaxDisplay(String orcid, String workId);
+    
+    Work createWork(String orcid, Work work);
+
+    Work updateWork(String orcid, Work work);
 
 }
