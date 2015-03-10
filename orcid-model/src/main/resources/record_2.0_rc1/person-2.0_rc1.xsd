@@ -59,7 +59,6 @@
 				<xs:element name="applications" type="person:applications"
 					minOccurs="0" maxOccurs="1" />
 			</xs:sequence>
-			<xs:attribute name="scope" type="common:scope" use="optional" />
 		</xs:complexType>
 	</xs:element>
 	<xs:complexType name="personal-details">

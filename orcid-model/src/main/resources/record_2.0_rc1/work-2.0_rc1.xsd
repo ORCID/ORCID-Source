@@ -165,7 +165,6 @@
 			<xs:element maxOccurs="unbounded" minOccurs="0"
 				name="work-external-identifier" type="work:external-identifier" />
 		</xs:sequence>
-		<xs:attribute name="scope" type="common:scope" use="optional" />
 	</xs:complexType>
 	<xs:complexType name="external-identifier">
 		<xs:annotation>

@@ -83,7 +83,7 @@ public class JpaJaxbWorkAdapterTest {
         assertEquals(02, publicationDateEntity.getMonth().intValue());
         assertEquals(02, publicationDateEntity.getDay().intValue());
         assertEquals(
-                "{\"workExternalIdentifier\":[{\"workExternalIdentifierType\":\"AGR\",\"workExternalIdentifierId\":{\"content\":\"work:external-identifier-id\"}}],\"scope\":null}",
+                "{\"workExternalIdentifier\":[{\"workExternalIdentifierType\":\"AGR\",\"workExternalIdentifierId\":{\"content\":\"work:external-identifier-id\"}}]}",
                 workEntity.getExternalIdentifiersJson());
         assertEquals("http://tempuri.org", workEntity.getWorkUrl());
         assertEquals(
@@ -175,7 +175,7 @@ public class JpaJaxbWorkAdapterTest {
         work.setWorkType(WorkType.ARTISTIC_PERFORMANCE);
         work.setWorkUrl("work:url");         
         work.setContributorsJson("{\"contributor\":[]}");
-        work.setExternalIdentifiersJson("{\"workExternalIdentifier\":[{\"workExternalIdentifierType\":\"AGR\",\"workExternalIdentifierId\":{\"content\":\"123\"}}],\"scope\":null}");        
+        work.setExternalIdentifiersJson("{\"workExternalIdentifier\":[{\"workExternalIdentifierType\":\"AGR\",\"workExternalIdentifierId\":{\"content\":\"123\"}}]}");        
         
         result.setWork(work);                
         return result;

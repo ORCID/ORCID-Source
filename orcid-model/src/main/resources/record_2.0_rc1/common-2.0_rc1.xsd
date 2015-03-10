@@ -818,19 +818,6 @@
 		</xs:restriction>
 	</xs:simpleType>
 
-	<xs:simpleType name="scope">
-		<xs:annotation>
-			<xs:documentation>Indicates the special privledges that the API
-				client has for this item. i.e., can it read limited data or update
-				the value.
-			</xs:documentation>
-		</xs:annotation>
-		<xs:restriction base="xs:string">
-			<xs:enumeration value="read-limited" />
-			<xs:enumeration value="update" />
-		</xs:restriction>
-	</xs:simpleType>
-
 	<xs:simpleType name="put-code">
 		<xs:annotation>
 			<xs:documentation>The put-code attribute is present only when reading

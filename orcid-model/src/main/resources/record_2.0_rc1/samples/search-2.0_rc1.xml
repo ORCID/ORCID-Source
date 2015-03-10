@@ -50,7 +50,7 @@
 				<history:verified-email>true</history:verified-email>
 				<history:verified-primary-email>true</history:verified-primary-email>
 			</history:history>
-			<person:person scope="read-limited">
+			<person:person>
 				<person:personal-details>
 					<person:given-names>person:given-names</person:given-names>
 					<person:family-name>person:family-name</person:family-name>
@@ -224,7 +224,7 @@
 							<common:subtitle />
 							<common:translated-title language-code="en">common:translated-title</common:translated-title>
 						</work:title>
-						<work:external-identifiers scope="read-limited">
+						<work:external-identifiers>
 							<work:work-external-identifier>
 								<work:external-identifier-type>agr</work:external-identifier-type>
 								<work:external-identifier-id>work:external-identifier-id</work:external-identifier-id>
@@ -277,7 +277,7 @@
 					</funding:funding-summary>
 				</activities:fundings>
 			</activities:activities-summary>
-			<internal:internal scope="read-limited" visibility="private">
+			<internal:internal visibility="private">
 				<internal:security-details>
 					<internal:encrypted-password />
 					<internal:security-question-id>0</internal:security-question-id>
