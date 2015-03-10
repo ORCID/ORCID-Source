@@ -43,8 +43,8 @@ public class Date implements ErrorsInterface, Required, Serializable {
 
     private boolean required = true;
     private String getRequiredMessage;
-
-    private DatatypeFactory datatypeFactory = null;
+    
+    private transient DatatypeFactory datatypeFactory = null;
 
     public Date() {
         try {
