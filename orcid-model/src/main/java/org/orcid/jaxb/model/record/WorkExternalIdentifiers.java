@@ -29,7 +29,6 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
@@ -59,8 +58,6 @@ public class WorkExternalIdentifiers implements Serializable, ExternalIdentifier
     private static final long serialVersionUID = 1L;
     @XmlElement(name = "work-external-identifier", namespace = "http://www.orcid.org/ns/work")
     protected List<WorkExternalIdentifier> workExternalIdentifier;
-    @XmlAttribute
-    protected Scope scope;
 
     public WorkExternalIdentifiers() {
 
@@ -106,27 +103,6 @@ public class WorkExternalIdentifiers implements Serializable, ExternalIdentifier
         return getWorkExternalIdentifier();
     }      
 
-    /**
-     * Gets the value of the scope property.
-     * 
-     * @return possible object is {@link Scope }
-     * 
-     */
-    public Scope getScope() {
-        return scope;
-    }
-
-    /**
-     * Sets the value of the scope property.
-     * 
-     * @param value
-     *            allowed object is {@link Scope }
-     * 
-     */
-    public void setScope(Scope value) {
-        this.scope = value;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -138,9 +114,6 @@ public class WorkExternalIdentifiers implements Serializable, ExternalIdentifier
 
         WorkExternalIdentifiers that = (WorkExternalIdentifiers) o;
 
-        if (scope != that.scope) {
-            return false;
-        }
         if (workExternalIdentifier == null) {
             if (that.workExternalIdentifier != null)
                 return false;
@@ -159,7 +132,6 @@ public class WorkExternalIdentifiers implements Serializable, ExternalIdentifier
     @Override
     public int hashCode() {
         int result = workExternalIdentifier != null ? workExternalIdentifier.hashCode() : 0;
-        result = 31 * result + (scope != null ? scope.hashCode() : 0);
         return result;
     }
 }

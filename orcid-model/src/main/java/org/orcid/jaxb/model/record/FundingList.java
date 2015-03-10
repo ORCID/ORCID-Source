@@ -32,7 +32,6 @@ import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
@@ -61,8 +60,6 @@ public class FundingList implements ActivitiesContainer, Serializable {
     private static final long serialVersionUID = 1L;
     @XmlElement
     protected List<Funding> fundings;
-    @XmlAttribute
-    protected Scope scope;
 
     /**
      * Gets the value of the Fundings property.
@@ -97,27 +94,6 @@ public class FundingList implements ActivitiesContainer, Serializable {
         this.fundings = fundings;
     }
 
-    /**
-     * Gets the value of the scope property.
-     * 
-     * @return possible object is {@link Scope }
-     * 
-     */
-    public Scope getScope() {
-        return scope;
-    }
-
-    /**
-     * Sets the value of the scope property.
-     * 
-     * @param value
-     *            allowed object is {@link Scope }
-     * 
-     */
-    public void setScope(Scope value) {
-        this.scope = value;
-    }
-
     @Override
     public Map<String, ? extends Activity> retrieveActivitiesAsMap() {
         Map<String, Funding> map = new HashMap<>();
@@ -150,9 +126,6 @@ public class FundingList implements ActivitiesContainer, Serializable {
         if (fundings != null ? !fundings.equals(that.fundings) : that.fundings != null) {
             return false;
         }
-        if (scope != that.scope) {
-            return false;
-        }
 
         return true;
     }
@@ -160,7 +133,6 @@ public class FundingList implements ActivitiesContainer, Serializable {
     @Override
     public int hashCode() {
         int result = fundings != null ? fundings.hashCode() : 0;
-        result = 31 * result + (scope != null ? scope.hashCode() : 0);
         return result;
     }
 
