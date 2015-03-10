@@ -20,6 +20,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -137,7 +138,8 @@ public class PublicV2Test {
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         String path = postResponse.getLocation().getPath();
         String putCode = path.substring(path.lastIndexOf('/') + 1, path.length());
-        ClientResponse getWorkResponse = publicV2ApiClient.viewWorkXml(user1OrcidId, putCode);
+        ClientResponse getWorkResponse = publicV2ApiClient.viewWorkXml(user1OrcidId, putCode);        
+        checkResponse(getWorkResponse);        
         assertNotNull(getWorkResponse);
         Work work = getWorkResponse.getEntity(Work.class);
         assertNotNull(work);
@@ -145,6 +147,7 @@ public class PublicV2Test {
 
         ClientResponse getWorkSummaryResponse = publicV2ApiClient.viewWorkSummaryXml(user1OrcidId, putCode);
         assertNotNull(getWorkSummaryResponse);
+        checkResponse(getWorkSummaryResponse);
         WorkSummary summary = getWorkSummaryResponse.getEntity(WorkSummary.class);
         assertNotNull(summary);
         assertEquals("common:title", summary.getTitle().getTitle().getContent());
@@ -158,19 +161,21 @@ public class PublicV2Test {
 
         String accessToken = getAccessToken();
         ClientResponse postResponse = memberV2ApiClient.createFundingXml(user1OrcidId, fundingToCreate, accessToken);
-        assertNotNull(postResponse);
+        assertNotNull(postResponse);        
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         String path = postResponse.getLocation().getPath();
         String putCode = path.substring(path.lastIndexOf('/') + 1, path.length());
 
         ClientResponse getFundingResponse = publicV2ApiClient.viewFundingXml(user1OrcidId, putCode);
         assertNotNull(getFundingResponse);
+        checkResponse(getFundingResponse);
         Funding funding = getFundingResponse.getEntity(Funding.class);
         assertNotNull(funding);
         assertEquals("common:title", funding.getTitle().getTitle().getContent());
 
         ClientResponse getFundingSummaryResponse = publicV2ApiClient.viewFundingSummaryXml(user1OrcidId, putCode);
         assertNotNull(getFundingSummaryResponse);
+        checkResponse(getFundingSummaryResponse);
         FundingSummary summary = getFundingSummaryResponse.getEntity(FundingSummary.class);
         assertNotNull(summary);
         assertEquals("common:title", summary.getTitle().getTitle().getContent());
@@ -191,12 +196,14 @@ public class PublicV2Test {
 
         ClientResponse getEmploymentResponse = publicV2ApiClient.viewEmploymentXml(user1OrcidId, putCode);
         assertNotNull(getEmploymentResponse);
+        checkResponse(getEmploymentResponse);
         Employment employment = getEmploymentResponse.getEntity(Employment.class);
         assertNotNull(employment);
         assertEquals("affiliation:department-name", employment.getDepartmentName());
 
         ClientResponse getEmploymentSummaryResponse = publicV2ApiClient.viewEmploymentSummaryXml(user1OrcidId, putCode);
         assertNotNull(getEmploymentSummaryResponse);
+        checkResponse(getEmploymentSummaryResponse);
         EmploymentSummary summary = getEmploymentSummaryResponse.getEntity(EmploymentSummary.class);
         assertNotNull(summary);
         assertEquals("affiliation:department-name", summary.getDepartmentName());
@@ -217,14 +224,16 @@ public class PublicV2Test {
 
         ClientResponse getEducationResponse = publicV2ApiClient.viewEducationXml(user1OrcidId, putCode);
         assertNotNull(getEducationResponse);
+        checkResponse(getEducationResponse);
         Education education = getEducationResponse.getEntity(Education.class);
         assertNotNull(education);
         assertEquals("education:department-name", education.getDepartmentName());
 
         ClientResponse getEducationSummaryResponse = publicV2ApiClient.viewEducationSummaryXml(user1OrcidId, putCode);
         assertNotNull(getEducationSummaryResponse);
+        checkResponse(getEducationSummaryResponse);
         EducationSummary summary = getEducationSummaryResponse.getEntity(EducationSummary.class);
-        assertNotNull(summary);
+        assertNotNull(summary);        
         assertEquals("education:department-name", summary.getDepartmentName());
     }
 
@@ -235,6 +244,7 @@ public class PublicV2Test {
         assertNotNull(activitiesResponse);
         ActivitiesSummary summary = activitiesResponse.getEntity(ActivitiesSummary.class);
         assertNotNull(summary);
+        assertNotNull("There are no educations, please verify users default visibility is public", summary.getEducations());
         assertFalse(summary.getEducations().getSummaries().isEmpty());
         boolean found0 = false, found3 = false;
         for(EducationSummary education : summary.getEducations().getSummaries()) {
@@ -245,8 +255,9 @@ public class PublicV2Test {
             }
         }
         
-        assertTrue("One of the educations was not found: 0(" + found0 + ") 3(" + found3 + ")", found0 == found3 == true);
+        assertTrue("One of the educations was not found: 0(" + found0 + ") 3(" + found3 + "), please verify users default visibility is public", found0 == found3 == true);
         
+        assertNotNull("There are no employment, please verify users default visibility is public", summary.getEmployments());
         assertFalse(summary.getEmployments().getSummaries().isEmpty());
         found0 = found3 = false;
         for(EmploymentSummary employment : summary.getEmployments().getSummaries()) {
@@ -257,7 +268,7 @@ public class PublicV2Test {
             }
         }
         
-        assertTrue("One of the employments was not found: 0(" + found0 + ") 3(" + found3 + ")", found0 == found3 == true);
+        assertTrue("One of the employments was not found: 0(" + found0 + ") 3(" + found3 + "), please verify users default visibility is public", found0 == found3 == true);
         
         assertNotNull(summary.getFundings());
         found0 = found3 = false;
@@ -271,7 +282,7 @@ public class PublicV2Test {
             }
         }
         
-        assertTrue("One of the fundings was not found: 0(" + found0 + ") 3(" + found3 + ")", found0 == found3 == true);
+        assertTrue("One of the fundings was not found: 0(" + found0 + ") 3(" + found3 + "), please verify users default visibility is public", found0 == found3 == true);
         
         assertNotNull(summary.getWorks());
         found0 = found3 = false;
@@ -285,7 +296,7 @@ public class PublicV2Test {
             }
         }
         
-        assertTrue("One of the works was not found: 0(" + found0 + ") 3(" + found3 + ")", found0 == found3 == true);
+        assertTrue("One of the works was not found: 0(" + found0 + ") 3(" + found3 + "), please verify users default visibility is public", found0 == found3 == true);
         
 
     }
@@ -568,6 +579,12 @@ public class PublicV2Test {
                     memberV2ApiClient.deleteWorkXml(user1OrcidId, work.getPutCode(), token);
                 }
             }
+        }
+    }
+    
+    private void checkResponse(ClientResponse response) {
+        if(Response.Status.UNAUTHORIZED.getStatusCode() == response.getStatus()) {
+            fail("Activity is not public, please verify users default visibility is public");
         }
     }
 }
