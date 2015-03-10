@@ -1465,15 +1465,18 @@ orcidNgModule.filter('externalIdentifierHtml', function(){
         var output = '';
 
         if (externalIdentifier == null) return output;
+        
         var type = externalIdentifier.type.value;
         
-        if (type != null) output += type + ": ";        
+        //If type is set always come: "grant_number"
+        if (type != null) output += om.get('funding.add.external_id.value.label.grant') + ": ";        
         
         var value = null;        
-        if(externalIdentifier.value != null)
-            value = externalIdentifier.value.value;
+        if(externalIdentifier.value != null){
+        	value = externalIdentifier.value.value;
+        }            
         
-        var link = null;        
+        var link = null;
         if(externalIdentifier.url != null)
             link = externalIdentifier.url.value;
        
