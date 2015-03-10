@@ -22,5 +22,5 @@
     <developerMessage>Invalid incoming message: invalid notification type MADEUP_NOTIFICATION_TYPE</developerMessage>
     <userMessage>There is a problem with the message being sent to ORCID</userMessage>
     <errorCode>123</errorCode>
-    <moreInfo>http://support.orcid.org/knowledgebase/articles/116874-orcid-api-guide</moreInfo>
+    <moreInfo>http://members.orcid.org/api/api-error-codes</moreInfo>
 </error>
