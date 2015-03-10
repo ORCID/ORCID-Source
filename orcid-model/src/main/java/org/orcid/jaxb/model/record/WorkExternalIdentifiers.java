@@ -35,6 +35,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 /**
  * <p>
@@ -50,6 +51,7 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType( propOrder = { "workExternalIdentifier" })
 @XmlRootElement(name = "external-identifiers")
+@JsonIgnoreProperties("scope")
 public class WorkExternalIdentifiers implements Serializable, ExternalIdentifiersContainer {
 
     /**
