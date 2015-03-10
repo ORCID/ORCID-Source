@@ -272,7 +272,7 @@
 			</funding:summary>
 		</activities:fundings>
 	</activities:activities-summary>
-	<internal:internal scope="read-limited" visibility="private">
+	<internal:internal visibility="private">
 		<internal:security-details>
 			<internal:encrypted-password />
 			<internal:security-question-id>0</internal:security-question-id>
