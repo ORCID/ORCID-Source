@@ -65,7 +65,6 @@
 				</xs:element>
 				<xs:element minOccurs="0" name="salesforce-dd" type="internal:salesforce-id" />
 			</xs:sequence>
-			<xs:attribute name="scope" type="common:scope" use="optional" />
 			<xs:attribute name="visibility" type="common:visibility" />
 		</xs:complexType>
 	</xs:element>
