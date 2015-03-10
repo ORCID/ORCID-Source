@@ -23,7 +23,6 @@
     xmlns:education="http://www.orcid.org/ns/education" xmlns:funding="http://www.orcid.org/ns/funding"
     xmlns:work="http://www.orcid.org/ns/work" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.orcid.org/ns/activities ../activities-2.0_rc1.xsd ">
-    <activities:educations/>
     <activities:employments>
         <affiliation:employment-summary
             put-code="0" visibility="public">

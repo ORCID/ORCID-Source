@@ -459,10 +459,10 @@ public class MemberV2Test {
         assertEquals(Response.Status.OK.getStatusCode(), activitiesResponse.getStatus());
         ActivitiesSummary activities = activitiesResponse.getEntity(ActivitiesSummary.class);
         assertNotNull(activities);
-        assertFalse(activities.getEducations().isEmpty());
+        assertFalse(activities.getEducations().getSummaries().isEmpty());
         
         boolean found = false;
-        for(EducationSummary summary : activities.getEducations()) {
+        for(EducationSummary summary : activities.getEducations().getSummaries()) {
             if(summary.getRoleTitle().equals("education:role-title")) {                
                 assertEquals("education:department-name", summary.getDepartmentName());
                 assertEquals(new FuzzyDate(1848, 2, 2), summary.getStartDate());
@@ -474,9 +474,9 @@ public class MemberV2Test {
         
         assertTrue("Education not found", found);
                 
-        assertFalse(activities.getEmployments().isEmpty());        
+        assertFalse(activities.getEmployments().getSummaries().isEmpty());        
         found = false;
-        for(EmploymentSummary summary : activities.getEmployments()) {
+        for(EmploymentSummary summary : activities.getEmployments().getSummaries()) {
             if(summary.getRoleTitle().equals("affiliation:role-title")) {
                 assertEquals("affiliation:department-name", summary.getDepartmentName());
                 assertEquals(new FuzzyDate(1848, 2, 2), summary.getStartDate());
@@ -575,19 +575,19 @@ public class MemberV2Test {
         assertNotNull(activitiesResponse);
         ActivitiesSummary summary = activitiesResponse.getEntity(ActivitiesSummary.class);
         assertNotNull(summary);
-        if (!summary.getEducations().isEmpty()) {
-            for (EducationSummary education : summary.getEducations()) {
+        if (summary.getEducations() != null && !summary.getEducations().getSummaries().isEmpty()) {
+            for (EducationSummary education : summary.getEducations().getSummaries()) {
                 memberV2ApiClient.deleteEducationXml(user1OrcidId, education.getPutCode(), token);
             }
         }
 
-        if (!summary.getEmployments().isEmpty()) {
-            for (EmploymentSummary employment : summary.getEmployments()) {
+        if (summary.getEmployments() != null && !summary.getEmployments().getSummaries().isEmpty()) {
+            for (EmploymentSummary employment : summary.getEmployments().getSummaries()) {
                 memberV2ApiClient.deleteEmploymentXml(user1OrcidId, employment.getPutCode(), token);
             }
         }
 
-        if (!summary.getFundings().getFundingGroup().isEmpty()) {
+        if (summary.getFundings() != null && !summary.getFundings().getFundingGroup().isEmpty()) {
             for (FundingGroup group : summary.getFundings().getFundingGroup()) {
                 for (FundingSummary funding : group.getFundingSummary()) {
                     memberV2ApiClient.deleteFundingXml(user1OrcidId, funding.getPutCode(), token);
@@ -595,7 +595,7 @@ public class MemberV2Test {
             }
         }
 
-        if (!summary.getWorks().getWorkGroup().isEmpty()) {
+        if (summary.getWorks() != null && !summary.getWorks().getWorkGroup().isEmpty()) {
             for (WorkGroup group : summary.getWorks().getWorkGroup()) {
                 for (WorkSummary work : group.getWorkSummary()) {
                     memberV2ApiClient.deleteWorkXml(user1OrcidId, work.getPutCode(), token);

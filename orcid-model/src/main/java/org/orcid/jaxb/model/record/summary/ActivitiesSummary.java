@@ -32,7 +32,6 @@ import java.util.Map;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
@@ -57,27 +56,29 @@ import org.orcid.jaxb.model.record.RecordUtil;
 public class ActivitiesSummary implements Serializable, ActivitiesContainer {
 
     private static final long serialVersionUID = 1L;
-    @XmlElementWrapper(name = "educations", namespace = "http://www.orcid.org/ns/activities")
-    @XmlElement(name = "education-summary", namespace = "http://www.orcid.org/ns/education")
-    protected List<EducationSummary> educations;
-    @XmlElementWrapper(name = "employments", namespace = "http://www.orcid.org/ns/activities")
-    @XmlElement(name = "employment-summary", namespace = "http://www.orcid.org/ns/employment")
-    protected List<EmploymentSummary> employments;
+    @XmlElement(name = "educations", namespace = "http://www.orcid.org/ns/activities")
+    protected Educations educations;
+    @XmlElement(name = "employments", namespace = "http://www.orcid.org/ns/activities")
+    protected Employments employments;
     @XmlElement(name = "works", namespace = "http://www.orcid.org/ns/activities")
     protected Works works;
     @XmlElement(name = "fundings", namespace = "http://www.orcid.org/ns/activities")
     protected Fundings fundings;
 
-    public List<EducationSummary> getEducations() {
-        if (educations == null)
-            educations = new ArrayList<EducationSummary>();
+    public Educations getEducations() {
         return educations;
     }
 
-    public List<EmploymentSummary> getEmployments() {
-        if (employments == null)
-            employments = new ArrayList<EmploymentSummary>();
+    public void setEducations(Educations educations) {
+        this.educations = educations;
+    }
+
+    public Employments getEmployments() {
         return employments;
+    }
+
+    public void setEmployments(Employments employments) {
+        this.employments = employments;
     }
 
     public Works getWorks() {
@@ -176,12 +177,16 @@ public class ActivitiesSummary implements Serializable, ActivitiesContainer {
             }
         }
         // Set education
-        for (EducationSummary education : educations) {
-            activities.put(education.getPutCode(), education);
+        if (educations != null) {
+            for (EducationSummary education : educations.getSummaries()) {
+                activities.put(education.getPutCode(), education);
+            }
         }
         // Set employment
-        for (EmploymentSummary employment : employments) {
-            activities.put(employment.getPutCode(), employment);
+        if (employments != null) {
+            for (EmploymentSummary employment : employments.getSummaries()) {
+                activities.put(employment.getPutCode(), employment);
+            }
         }
         return activities;
     }
