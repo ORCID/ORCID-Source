@@ -5686,6 +5686,15 @@ ul.oauth-scopes li{
     white-space: pre-wrap;
 }
 
+.truncate-anchor {
+  width: 80%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display:  inline-block;
+  vertical-align: bottom;
+}
+
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */

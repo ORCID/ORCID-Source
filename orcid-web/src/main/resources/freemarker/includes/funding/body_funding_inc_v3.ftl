@@ -158,8 +158,9 @@
                                         </span>
                                     </span>
                                  </li>
+                                 
                                  <li ng-show="group.getActive().url.value">
-                                 	<@orcid.msg 'manual_funding_form_contents.label_url'/>: <a href="{{group.getActive().url.value}}" ng-bind="group.getActive().url.value" target="_blank"></a>
+                                 	<@orcid.msg 'manual_funding_form_contents.label_url'/>: <a href="{{group.getActive().url.value}}" class="truncate-anchor" ng-bind="group.getActive().url.value" target="_blank"></a>
                                  </li>
                              </ul>
                          </div>
