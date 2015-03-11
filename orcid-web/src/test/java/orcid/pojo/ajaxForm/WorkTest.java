@@ -25,6 +25,8 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
+import net.sf.ehcache.util.MemoryEfficientByteArrayOutputStream;
+
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.junit.Test;
 import org.orcid.jaxb.model.message.OrcidMessage;
@@ -74,6 +76,14 @@ public class WorkTest extends XMLTestCase {
             assertEquals(curOw.toString(), curOw2.toString());           
         }
         
+    }
+    
+    @Test
+    public void testSerializeWork() throws Exception {
+        InputStream inputStream = WorkTest.class.getResourceAsStream("/orcid-work.xml");
+        OrcidWork orcidWork = (OrcidWork) unmarshaller.unmarshal(inputStream);
+        Work work =  Work.minimizedValueOf(orcidWork);
+        MemoryEfficientByteArrayOutputStream.serialize(work);
     }
 
     private OrcidMessage getOrcidMessage(String s) throws JAXBException {
