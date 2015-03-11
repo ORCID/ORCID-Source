@@ -18,7 +18,6 @@ package org.orcid.api.t2.server.delegator;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -32,7 +31,6 @@ import java.util.List;
 import java.util.Set;
 
 import javax.annotation.Resource;
-import javax.persistence.NoResultException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import javax.xml.bind.JAXBContext;
@@ -49,7 +47,6 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.orcid.core.exception.OrcidBadRequestException;
-import org.orcid.core.exception.OrcidNotFoundException;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.oauth.OrcidOAuth2Authentication;
 import org.orcid.jaxb.model.message.Affiliation;
