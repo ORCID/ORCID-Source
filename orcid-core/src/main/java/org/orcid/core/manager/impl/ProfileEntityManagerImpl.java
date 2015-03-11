@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.annotation.Resource;
+import javax.persistence.NoResultException;
 
 import org.orcid.core.adapter.JpaJaxbEducationAdapter;
 import org.orcid.core.adapter.JpaJaxbEmploymentAdapter;
@@ -292,11 +293,14 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
 
     @Override
     @Transactional
-    public ActivitiesSummary getPublicActivitiesSummary(String orcid) {
+    public ActivitiesSummary getPublicActivitiesSummary(String orcid) {        
         return getActivitiesSummary(orcid, true);
     }
 
     public ActivitiesSummary getActivitiesSummary(String orcid, boolean justPublic) {
+        if(!orcidExists(orcid)) {
+            throw new NoResultException();            
+        }
         ActivitiesSummary activities = new ActivitiesSummary();
         ProfileEntity profileEntity = this.findByOrcid(orcid);
         // Set Affiliations

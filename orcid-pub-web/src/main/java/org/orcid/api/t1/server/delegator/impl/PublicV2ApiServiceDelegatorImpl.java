@@ -87,7 +87,7 @@ public class PublicV2ApiServiceDelegatorImpl implements PublicV2ApiServiceDelega
     }
 
     @Override
-    public Response viewWork(String orcid, String putCode) {
+    public Response viewWork(String orcid, String putCode) {        
         Work w = profileWorkManager.getWork(orcid, putCode);
         orcidSecurityManager.checkVisibility(w);
         return Response.ok(w).build();

@@ -356,6 +356,5 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
         response = t2OrcidApiServiceDelegatorLatest.unregisterWebhook(mockedUriInfo, "4444-4444-4444-4447", "www.webhook.com");
         assertNotNull(response);
         assertEquals(HttpStatus.SC_NO_CONTENT, response.getStatus());
-    }
-
+    }    
 }
