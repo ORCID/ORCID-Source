@@ -7690,6 +7690,28 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
     $scope.toggleLongDescription = function(orcid_scope) {
         $scope.showLongDescription[orcid_scope] = !$scope.showLongDescription[orcid_scope];
     };
+
+    document.onkeydown = function(e) {
+	    e = e || window.event;
+	    if (e.keyCode == 13) {
+	    	if ( typeof location.search.split('client_id=')[1] == undefined ){ //There is no clientID information
+		    	if (window.location.hash == '#show_login' || window.location.hash == '#show_register'){
+		    		if ($scope.showRegisterForm == true){
+			    		$scope.registerAndAuthorize();			    		
+			    	}else{
+			    		$scope.loginAndAuthorize();
+			    	}	
+		    	}else{
+		    		console.log('Something wrong is happening');
+		    	}
+			}else{
+	    		$scope.authorize();	
+	    	}
+	    }
+    };
+    
+    
+    
 }]);
 
 
