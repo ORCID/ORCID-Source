@@ -163,6 +163,9 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
         } else if(LockedException.class.isAssignableFrom(t.getClass())){
             OrcidMessage entity = getLegacyOrcidEntity("Account locked", t);
             return Response.status(Response.Status.CONFLICT).entity(entity).build();
+        } else if(NoResultException.class.isAssignableFrom(t.getClass()) ) {
+            OrcidMessage entity = getLegacyOrcidEntity("Not found", t);
+            return Response.status(Response.Status.NOT_FOUND).entity(entity).build();
         } else {
             OrcidMessage entity = getLegacy500OrcidEntity(t);
             return Response.serverError().entity(entity).build();
