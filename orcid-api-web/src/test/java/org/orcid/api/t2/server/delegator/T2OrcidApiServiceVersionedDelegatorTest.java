@@ -418,6 +418,5 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
         } catch(OrcidBadRequestException obe) {
             assertTrue(obe.getMessage().contains("Last modified date should not be specified when creating a profile"));
         }
-    }
-    
+    }        
 }
