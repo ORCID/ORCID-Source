@@ -1481,12 +1481,11 @@ orcidNgModule.filter('externalIdentifierHtml', function(){
         	link = 'http://' + link;
 
         if (link != null && value != null){        	
-            output += "<a href='" + link + "' target='_blank'>" + value + "</a>";
-        	
+            output += "<a href='" + link + "' class='truncate-anchor' target='_blank'>" + value + "</a>";        	
         }else if(value != null){
-            output = output + " " + value;        
-        }else if(link != null){   
-            output = om.get('funding.add.external_id.url.label.grant') + ": <a href='" + link + "' target='_blank'>" + link + "</a>";
+            output = output + " " + value;
+        }else if(link != null){        	
+            output = om.get('funding.add.external_id.url.label.grant') + ": <a href='" + link + "' class='truncate-anchor' target='_blank'>" + link + "</a>";
         }
       
         if (length > 1 && !last) output = output + ',';
@@ -3259,7 +3258,7 @@ orcidNgModule.controller('FundingCtrl',['$scope', '$compile', '$filter', 'fundin
     $scope.privacyHelp = {};
     $scope.editTranslatedTitle = false;
     $scope.lastIndexedTerm = null;
-    $scope.showElement = {};
+    $scope.showElement = {};    
     $scope.emptyExtId = {
             "errors": [],
             "type": {
@@ -3324,7 +3323,7 @@ orcidNgModule.controller('FundingCtrl',['$scope', '$compile', '$filter', 'fundin
 
     $scope.showDetailsMouseClick = function(key, $event) {
         $event.stopPropagation();
-        $scope.moreInfo[key]=!$scope.moreInfo[key];
+        $scope.moreInfo[key] = !$scope.moreInfo[key];
     };
 
     $scope.closeMoreInfo = function(key) {
