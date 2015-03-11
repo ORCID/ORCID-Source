@@ -18,6 +18,7 @@ package org.orcid.api.t2.server.delegator;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -51,12 +52,17 @@ import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.oauth.OrcidOAuth2Authentication;
 import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.Affiliations;
+import org.orcid.jaxb.model.message.Claimed;
+import org.orcid.jaxb.model.message.CompletionDate;
 import org.orcid.jaxb.model.message.ContactDetails;
+import org.orcid.jaxb.model.message.CreationMethod;
 import org.orcid.jaxb.model.message.CreditName;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.GivenNames;
+import org.orcid.jaxb.model.message.LastModifiedDate;
 import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.OrcidBio;
+import org.orcid.jaxb.model.message.OrcidHistory;
 import org.orcid.jaxb.model.message.OrcidIdentifier;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
@@ -64,6 +70,7 @@ import org.orcid.jaxb.model.message.OrcidWorks;
 import org.orcid.jaxb.model.message.PersonalDetails;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.message.Source;
+import org.orcid.jaxb.model.message.SubmissionDate;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.test.DBUnitTest;
@@ -358,4 +365,59 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
         assertEquals(HttpStatus.SC_NO_CONTENT, response.getStatus());
     }
 
+    @Test
+    public void testCreateProfileWithInvalidHistoryElements() {
+        OrcidMessage orcidMessage = createStubOrcidMessage();
+        orcidMessage.setMessageVersion("1.2");        
+        //Claimed should be null
+        try {
+            OrcidHistory history = new OrcidHistory();
+            history.setClaimed(new Claimed(false));
+            orcidMessage.getOrcidProfile().setOrcidHistory(history);
+            t2OrcidApiServiceDelegatorLatest.createProfile(mockedUriInfo, orcidMessage);
+        } catch(OrcidBadRequestException obe) {
+            assertTrue(obe.getMessage().contains("Claimed status should not be specified when creating a profile"));
+        }
+        
+        //Creation method should be null
+        try {
+            OrcidHistory history = new OrcidHistory();
+            history.setCreationMethod(CreationMethod.API);
+            orcidMessage.getOrcidProfile().setOrcidHistory(history);
+            t2OrcidApiServiceDelegatorLatest.createProfile(mockedUriInfo, orcidMessage);
+        } catch(OrcidBadRequestException obe) {
+            assertTrue(obe.getMessage().contains("Creation method should not be specified when creating a profile"));
+        }
+        
+        //Completion date should be null
+        try {
+            OrcidHistory history = new OrcidHistory();
+            history.setCompletionDate(new CompletionDate());
+            orcidMessage.getOrcidProfile().setOrcidHistory(history);
+            t2OrcidApiServiceDelegatorLatest.createProfile(mockedUriInfo, orcidMessage);
+        } catch(OrcidBadRequestException obe) {
+            assertTrue(obe.getMessage().contains("Completion date should not be specified when creating a profile"));
+        }
+        
+        //Submission date should be null
+        try {
+            OrcidHistory history = new OrcidHistory();
+            history.setSubmissionDate(new SubmissionDate());
+            orcidMessage.getOrcidProfile().setOrcidHistory(history);
+            t2OrcidApiServiceDelegatorLatest.createProfile(mockedUriInfo, orcidMessage);
+        } catch(OrcidBadRequestException obe) {
+            assertTrue(obe.getMessage().contains("Submission date should not be specified when creating a profile"));
+        }
+        
+        //Last modified date should be null
+        try {
+            OrcidHistory history = new OrcidHistory();
+            history.setLastModifiedDate(new LastModifiedDate());
+            orcidMessage.getOrcidProfile().setOrcidHistory(history);
+            t2OrcidApiServiceDelegatorLatest.createProfile(mockedUriInfo, orcidMessage);
+        } catch(OrcidBadRequestException obe) {
+            assertTrue(obe.getMessage().contains("Last modified date should not be specified when creating a profile"));
+        }
+    }
+    
 }
