@@ -61,11 +61,11 @@ import org.codehaus.jackson.annotate.JsonValue;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = { "activities" })
-@XmlRootElement(name = "activities")
+@XmlRootElement(name = "activities", namespace = "http://www.orcid.org/ns/notification")
 public class Activities implements Serializable {
 
     private final static long serialVersionUID = 1L;
-    @XmlElement(name = "activity", required = true)
+    @XmlElement(name = "activity", namespace = "http://www.orcid.org/ns/notification", required = true)
     protected List<Activity> activities;
 
     public Activities() {

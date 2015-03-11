@@ -27,6 +27,7 @@ import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
@@ -44,10 +45,10 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;choice>
- *           &lt;element ref="{http://www.orcid.org/ns/orcid}orcidId" minOccurs="0"/>
- *           &lt;element ref="{http://www.orcid.org/ns/orcid}clientId" minOccurs="0"/>
+ *           &lt;element ref="{http://www.orcid.org/ns/common}orcid-id" minOccurs="0"/>
+ *           &lt;element ref="{http://www.orcid.org/ns/common}client-id" minOccurs="0"/>
  *         &lt;/choice>
- *         &lt;element ref="{http://www.orcid.org/ns/orcid}sourceName" minOccurs="0"/>
+ *         &lt;element ref="{http://www.orcid.org/ns/common}source-name" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -62,8 +63,11 @@ import javax.xml.bind.annotation.XmlType;
 public class Source implements Serializable {
 
     private final static long serialVersionUID = 1L;
+    @XmlElement(name = "client-id", namespace = "http://www.orcid.org/ns/common")
     protected ClientId clientId;
+    @XmlElement(name = "orcid-id", namespace = "http://www.orcid.org/ns/common")
     protected OrcidId orcidId;
+    @XmlElement(name = "source-name", namespace = "http://www.orcid.org/ns/common")
     protected String sourceName;
 
     /**

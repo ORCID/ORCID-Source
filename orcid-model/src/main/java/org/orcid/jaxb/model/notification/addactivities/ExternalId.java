@@ -31,8 +31,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.orcid.jaxb.model.common.ExternalIdType;
 
@@ -49,8 +47,8 @@ import org.orcid.jaxb.model.common.ExternalIdType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element ref="{http://www.orcid.org/ns/orcid}externalIdType"/>
- *         &lt;element ref="{http://www.orcid.org/ns/orcid}externalIdValue"/>
+ *         &lt;element ref="{http://www.orcid.org/ns/common}external-id-type"/>
+ *         &lt;element ref="{http://www.orcid.org/ns/common}external-id-value"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -61,13 +59,13 @@ import org.orcid.jaxb.model.common.ExternalIdType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = { "externalIdType", "externalIdValue" })
-@XmlRootElement(name = "externalId")
+@XmlRootElement(name = "external-id")
 public class ExternalId implements Serializable {
 
     private final static long serialVersionUID = 1L;
-    @XmlElement(required = true)
+    @XmlElement(name = "external-id-type", namespace = "http://www.orcid.org/ns/common", required = true)
     protected ExternalIdType externalIdType;
-    @XmlElement(required = true)
+    @XmlElement(name = "external-id-value", namespace = "http://www.orcid.org/ns/common", required = true)
     @XmlSchemaType(name = "anyURI")
     protected String externalIdValue;
 

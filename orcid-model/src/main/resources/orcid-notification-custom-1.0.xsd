@@ -1,27 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified"
-	targetNamespace="http://www.orcid.org/ns/orcid" xmlns:orcid="http://www.orcid.org/ns/orcid"
+	targetNamespace="http://www.orcid.org/ns/notification" xmlns:notification="http://www.orcid.org/ns/notification"
+	xmlns:common="http://www.orcid.org/ns/common"
 	xmlns:xs="http://www.w3.org/2001/XMLSchema"
 	xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" vc:minVersion="1.1">
-	<xs:include schemaLocation="orcid-common-1.0.xsd"/>
+	<xs:import namespace="http://www.orcid.org/ns/common" schemaLocation="orcid-common-1.0.xsd" />
 	<xs:element name="notification">
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref="orcid:notificationType"/>
+				<xs:element ref="notification:notification-type"/>
 				<xs:element type="xs:string" name="subject"/>
-				<xs:element type="xs:string" name="bodyText"/>
-				<xs:element type="xs:string" name="bodyHtml"/>
-				<xs:element ref="orcid:createdDate" minOccurs="0"/>
-				<xs:element ref="orcid:sentDate"/>
-				<xs:element ref="orcid:readDate" minOccurs="0"/>
-				<xs:element ref="orcid:archivedDate" minOccurs="0"/>
-				<xs:element ref="orcid:source" minOccurs="0"/>
+				<xs:element type="xs:string" name="body-text"/>
+				<xs:element type="xs:string" name="body-html"/>
+				<xs:element ref="common:created-date" minOccurs="0"/>
+				<xs:element ref="common:sent-date"/>
+				<xs:element ref="common:read-date" minOccurs="0"/>
+				<xs:element ref="common:archived-date" minOccurs="0"/>
+				<xs:element ref="common:source" minOccurs="0"/>
 			</xs:sequence>
-            <xs:attributeGroup ref="orcid:putCode"/>
-            <xs:attributeGroup ref="orcid:lang"/>
+            <xs:attributeGroup ref="common:put-code"/>
+            <xs:attributeGroup ref="common:lang"/>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name="notificationType">
+	<xs:element name="notification-type">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
 				<xs:enumeration value="CUSTOM"/>
