@@ -216,10 +216,13 @@ public class PublicProfileController extends BaseWorkspaceController {
         for (String id : affIds) {
             Affiliation aff = affMap.get(id);
             // ONLY SHARE THE PUBLIC AFFILIATIONS!
-            if (aff != null && aff.getVisibility().equals(Visibility.PUBLIC)) {
-                affs.add(AffiliationForm.valueOf(aff));
+            if (aff != null && aff.getVisibility().equals(Visibility.PUBLIC)) {                
+                AffiliationForm form = AffiliationForm.valueOf(aff);
+                form.setCountryForDisplay(getMessage(buildInternationalizationKey(CountryIsoEntity.class, aff.getOrganization().getAddress().getCountry().name())));
+                affs.add(form);
             }
         }
+        
         return affs;
     }
 
