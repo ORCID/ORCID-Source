@@ -426,6 +426,13 @@ public class PublicV2Test {
         assertEquals("org.orcid.core.exception.OrcidUnauthorizedException: The activity is not public", result.getDeveloperMessage());
     }
 
+    @Test
+    public void testNotFoundReturn404() throws InterruptedException, JSONException {
+        ClientResponse response = publicV2ApiClient.viewActivities("0000-0000-0000-0000");     
+        assertNotNull(response);
+        assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
+    }
+    
     private String getAccessToken() throws InterruptedException, JSONException {
         if (accessToken == null) {
             webDriver = new FirefoxDriver();
