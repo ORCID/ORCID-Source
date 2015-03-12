@@ -151,7 +151,7 @@
                                      ng-bind-html='ie | workExternalIdentifierHtml:$first:$last:work.workExternalIdentifiers.length'></span>
                                     </span>
                                  </li>
-                                 <li ng-show="work.url.value"><@orcid.msg 'common.url' />: <a href="{{work.url.value | urlWithHttp}}" target="_blank">{{work.url.value}}</a></li>
+                                 <li ng-show="work.url.value"><@orcid.msg 'common.url' />: <a href="{{work.url.value | urlWithHttp}}" class="truncate-anchor" target="_blank">{{work.url.value}}</a></li>
 
                              </ul>
                          </div>
