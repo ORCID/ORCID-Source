@@ -7693,19 +7693,15 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
 
     document.onkeydown = function(e) {
 	    e = e || window.event;
-	    if (e.keyCode == 13) {
-	    	if ( typeof location.search.split('client_id=')[1] == undefined ){ //There is no clientID information
-		    	if (window.location.hash == '#show_login' || window.location.hash == '#show_register'){
-		    		if ($scope.showRegisterForm == true){
-			    		$scope.registerAndAuthorize();			    		
-			    	}else{
-			    		$scope.loginAndAuthorize();
-			    	}	
+	    if (e.keyCode == 13) {	    	
+	    	if ( typeof location.search.split('client_id=')[1] == 'undefined' ){ //There is no clientID information		    	
+	    		if ($scope.showRegisterForm == true){
+		    		$scope.registerAndAuthorize();		    		
 		    	}else{
-		    		console.log('Something wrong is happening');
-		    	}
+		    		$scope.loginAndAuthorize();		    		
+		    	}		    	
 			}else{
-	    		$scope.authorize();	
+	    		$scope.authorize();
 	    	}
 	    }
     };
