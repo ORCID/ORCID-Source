@@ -61,7 +61,6 @@ public class ProfileFundingEntity extends BaseEntity<Long> implements Comparable
     private FundingType type;
     private String organizationDefinedType;
     private String currencyCode;
-    private String amount;
     private String url;
     private String contributorsJson;
     private String externalIdentifiersJson;
@@ -170,15 +169,6 @@ public class ProfileFundingEntity extends BaseEntity<Long> implements Comparable
 
     public void setCurrencyCode(String currencyCode) {
         this.currencyCode = currencyCode;
-    }
-
-    @Column(name = "amount")
-    public String getAmount() {
-        return amount;
-    }
-
-    public void setAmount(String amount) {
-        this.amount = amount;
     }
 
     @Column(name = "url")
@@ -295,12 +285,7 @@ public class ProfileFundingEntity extends BaseEntity<Long> implements Comparable
         int compareStarts = compareStarts(startDate, other.getStartDate());
         if (compareStarts != 0) {
             return compareStarts;
-        }
-
-        int compareAmounts = compareStrings(amount, other.getAmount());
-        if (compareAmounts != 0) {
-            return compareAmounts;
-        }
+        }        
 
         int compareNumericAmounts = compareObjectsNullSafe(numericAmount, other.getNumericAmount());
         if (compareNumericAmounts != 0) {
@@ -388,8 +373,7 @@ public class ProfileFundingEntity extends BaseEntity<Long> implements Comparable
         endDate = null;
         visibility = null;
         description = null;
-        currencyCode = null;
-        amount = null;
+        currencyCode = null;        
         numericAmount = null;
         contributorsJson = null;
         url = null;
