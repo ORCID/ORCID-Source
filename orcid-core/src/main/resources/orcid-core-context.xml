@@ -86,6 +86,9 @@
 							value="${org.orcid.core.passwordEncryptionSaltSize:16}" />
 						<property name="poolSize" 
 							value="${org.orcid.core.passwordEncryptionPoolSize:16}" />
+						<property name="provider">
+							<bean class="org.bouncycastle.jce.provider.BouncyCastleProvider" />
+						</property>
 					</bean>
 				</property>
 			</bean>
