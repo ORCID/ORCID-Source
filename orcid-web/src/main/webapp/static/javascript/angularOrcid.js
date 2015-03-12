@@ -4026,11 +4026,12 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
                 for (j in parsed) {
                     (function (cur) {
                         bibtexEntry = parsed[j].entryType.toLowerCase();
+                        console.log(bibtexEntry);
                         if(bibtexEntry != 'preamble' && bibtexEntry != 'comment'){ //Filtering @PREAMBLE and @COMMENT
-                            worksSrvc.getBlankWork(function(data) {
+                            worksSrvc.getBlankWork(function(data) {                            	
                                 populateWorkAjaxForm(cur,data);
                                 $scope.worksFromBibtex.push(data);
-                                $scope.bibtexCancelLink = true;
+                                $scope.bibtexCancelLink = true;                                
                             });
                         }
                     })(parsed[j]);
@@ -8058,13 +8059,6 @@ orcidNgModule.controller('headerCtrl',['$scope', '$window', function ($scope, $w
 		}
 	}
 	
-	
-	
-	
-	
-	
-	
-	
 }]);
 
 orcidNgModule.directive('resize', function ($window) {
@@ -8096,3 +8090,10 @@ orcidNgModule.directive('resize', function ($window) {
 		});
 	}
 });
+
+orcidNgModule.filter('formatBibtexType', function () {
+    return function (text) {
+		var str = text.replace(/[\-?_?]/, ' ');
+		return str.toUpperCase();
+    };
+})

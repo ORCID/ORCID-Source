@@ -414,6 +414,7 @@
 					   		  <div class="row full-height-row">	  
 			        	       	  <div class="col-md-9">
 			        	          	<h3 class="workspace-title bibtex-work-title"><span>{{work.title.value}}</span></h3>
+			        	          	<span>{{work.workType.value | formatBibtexType}}</span>
 			        	          </div>
 			        	          <div class="col-md-3 bibtex-options-menu">
 			        	          	<ul>
