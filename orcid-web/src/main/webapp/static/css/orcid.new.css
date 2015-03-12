@@ -5686,6 +5686,10 @@ ul.oauth-scopes li{
     white-space: pre-wrap;
 }
 
+.oneStepWidth .id-banner .oid{
+	border: none;
+}
+
 .truncate-anchor {
   width: 80%;
   white-space: nowrap;
@@ -6872,7 +6876,6 @@ ul.oauth-scopes li{
 		padding-top: 10px;
 	}
 	
-	
 }
 
 @media (min-width : 768px) and (max-width : 991px) { /* Tablet */
@@ -6965,12 +6968,7 @@ ul.oauth-scopes li{
 	
 	.workspace-top{
 		border-top: 0;
-	}
-	/*
-	.editTablePadCell35 .email-verified{
-		padding-left: 15px;
-	}
-	*/
+	}	
 	
 	/* Login */
 	
@@ -7049,7 +7047,7 @@ ul.oauth-scopes li{
 	}
 }
 
-@media (min-width : 499px) and (max-width: 767px){ 
+@media (min-width : 500px) and (max-width: 767px){ 
        
     
     /* Fix to overwrite bootstrap styling */
@@ -7061,6 +7059,10 @@ ul.oauth-scopes li{
     .col-xs-3-fix{
         width: 25% !important;
         float: left !important;
+    }
+    
+    .col-xs-offset-3-fix{
+    	margin-left: 25%;
     }
 }
 

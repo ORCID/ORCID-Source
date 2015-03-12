@@ -82,17 +82,12 @@
 				   	</span>			   		
 			   	</div>
         	</div>
-        	
+        	<!-- Forgot Password -->
             <div class="row">
 	            <div class="control-group"> 
-			    	<div id="oauth-login-reset" class="col-md-offset-3 col-md-9 col-sm-offset-3 col-sm-3 col-xs-12">
+			    	<div id="oauth-login-reset" class="col-md-offset-3 col-md-9 col-sm-offset-3 col-sm-9 col-xs-offset-3-fix col-xs-9">
 				        <a href="<@spring.url '/reset-password'/>"><@orcid.msg 'login.reset'/></a>
-				    </div>
-				    <!-- 
-				    <div id="oauth-login-register" class="col-md-offset-3 col-md-9 col-sm-6 col-xs-12">
-				       	<a class="reg" id="in-login-switch-form" ng-click="switchForm()"><@orcid.msg 'orcid.frontend.oauth.register'/></a>
-			    	</div>
-			    	 -->
+				    </div>				  
 		    	</div>
 	    	</div>
 	    	<div class="row">
