@@ -48,6 +48,7 @@ public abstract class AbstractT2ClientIntegrationTest {
 
     protected ClientResponse createFullOrcidXml() throws JAXBException {
         OrcidMessage message = getInternalFullOrcidMessage(OrcidClientDataHelper.ORCID_INTERNAL_NO_SPONSOR_XML);
+        message.getOrcidProfile().setOrcidHistory(null);
         ClientResponse response = t2Client.createProfileXML(message);
         return response;
     }
