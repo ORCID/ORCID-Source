@@ -452,8 +452,7 @@
 					<li class="last leaf"><@security.authorize
 						ifNotGranted="ROLE_USER, ROLE_ADMIN, ROLE_BASIC, ROLE_PREMIUM,
 						ROLE_BASIC_INSTITUTION, ROLE_PREMIUM_INSTITUTION">
-						<a href="<@spring.url " /signin" />" title=""><@orcid.msg
-						'public-layout.sign_in'/></a>
+						<a href="<@spring.url "/signin" />" title=""><@orcid.msg 'public-layout.sign_in'/></a>
 					</@security.authorize>
 					 
 					<@security.authorize ifAnyGranted="ROLE_USER, ROLE_ADMIN, ROLE_BASIC, ROLE_PREMIUM, ROLE_BASIC_INSTITUTION, ROLE_PREMIUM_INSTITUTION">
