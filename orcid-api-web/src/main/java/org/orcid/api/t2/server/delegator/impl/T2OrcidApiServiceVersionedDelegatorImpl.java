@@ -33,6 +33,7 @@ import org.orcid.core.manager.impl.ValidationManagerImpl;
 import org.orcid.core.security.DeprecatedException;
 import org.orcid.core.version.OrcidMessageVersionConverterChain;
 import org.orcid.jaxb.model.message.Email;
+import org.orcid.jaxb.model.message.OrcidHistory;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.ProfileDao;
@@ -191,7 +192,7 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
     @Override
     public Response createProfile(UriInfo uriInfo, OrcidMessage orcidMessage) {
         Response response = null;
-        validateIncomingMessage(orcidMessage);
+        validateRegistrationMessage(orcidMessage);
         OrcidMessage upgradedMessage = upgradeMessage(orcidMessage);
         response = t2OrcidApiServiceDelegator.createProfile(uriInfo, upgradedMessage);
         return response;
@@ -249,6 +250,37 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
         return t2OrcidApiServiceDelegator.unregisterWebhook(uriInfo, orcid, webhookUri);
     }
 
+    private void validateRegistrationMessage(OrcidMessage orcidMessage) {
+        try {
+            if(orcidMessage != null && orcidMessage.getOrcidProfile() != null && orcidMessage.getOrcidProfile().getOrcidHistory() != null) {
+                OrcidHistory history = orcidMessage.getOrcidProfile().getOrcidHistory();
+                if(history.getClaimed() != null) {
+                    throw new OrcidValidationException(new Throwable("Claimed status should not be specified when creating a profile"));
+                } else if(history.getCreationMethod() != null) {
+                    throw new OrcidValidationException(new Throwable("Creation method should not be specified when creating a profile"));
+                } else if(history.getCompletionDate() != null) {
+                    throw new OrcidValidationException(new Throwable("Completion date should not be specified when creating a profile"));
+                } else if(history.getSubmissionDate() != null) {
+                    throw new OrcidValidationException(new Throwable("Submission date should not be specified when creating a profile"));
+                } else if(history.getLastModifiedDate() != null) {
+                    throw new OrcidValidationException(new Throwable("Last modified date should not be specified when creating a profile"));
+                }
+            }
+            validateIncomingMessage(orcidMessage);
+        } catch (OrcidValidationException e) {
+            Throwable cause = e.getCause();
+            if (cause == null) {
+                cause = e;
+            } else {
+                Throwable underlyingCause = cause.getCause();
+                if (underlyingCause != null) {
+                    cause = underlyingCause;
+                }
+            }
+            throw new OrcidBadRequestException("Invalid incoming message: " + cause.toString());
+        }
+    }
+    
     private void validateIncomingMessage(OrcidMessage orcidMessage) {
         try {
             incomingValidationManager.validateMessage(orcidMessage);
