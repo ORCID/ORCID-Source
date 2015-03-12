@@ -276,7 +276,7 @@ public class ProfileDaoTest extends DBUnitTest {
         ClientDetailsEntity client = new ClientDetailsEntity();
         client.setId(clientOrcid);
         String groupOrcid = "4444-4444-4444-4441";
-        client.setGroupProfile(new ProfileEntity(groupOrcid));
+        client.setGroupProfileId(groupOrcid);
 
         clientDetailsDao.persist(client);
         clientDetailsDao.flush();

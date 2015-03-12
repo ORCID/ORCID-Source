@@ -17,6 +17,7 @@
 package org.orcid.core.manager.impl;
 
 import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertFalse;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -41,6 +42,7 @@ import org.orcid.persistence.dao.WebhookDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.WebhookEntity;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.test.annotation.DirtiesContext;
 
 @DirtiesContext
@@ -80,10 +82,10 @@ public class WebhookManagerImplTest extends BaseTest {
         ProfileEntity profile = new ProfileEntity();
         profile.setId("0000-0000-0000-0001");
         clientDetails = new ClientDetailsEntity();
-        clientDetails.setGroupProfile(profile);
+        clientDetails.setGroupProfileId(profile.getId());
         clientDetails.setId("123456789");
 
-        assertNotNull(clientDetails.getGroupProfile());
+        assertFalse(PojoUtil.isEmpty(clientDetails.getGroupProfileId()));
         assertNotNull(clientDetails.getId());
 
         testProfile = new ProfileEntity("4444-4444-4444-4444");

@@ -37,6 +37,7 @@ import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.persistence.dao.ResearcherUrlDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.RedirectUri;
 import org.orcid.pojo.ajaxForm.SSOCredentials;
@@ -203,9 +204,12 @@ public class DeveloperToolsController extends BaseWorkspaceController {
     boolean resetClientSecret(@RequestBody String clientId) {
         //Verify this client belongs to the user
         ClientDetailsEntity clientDetails = clientDetailsManager.findByClientId(clientId);
-        if(clientDetails == null || clientDetails.getGroupProfile() == null)
+        if(clientDetails == null)
             return false;
-        if(!clientDetails.getGroupProfile().getId().equals(getCurrentUserOrcid()))
+        ProfileEntity groupProfile = profileEntityManager.findByOrcid(clientDetails.getGroupProfileId());
+        if(groupProfile == null)
+            return false;
+        if(!groupProfile.getId().equals(getCurrentUserOrcid()))
             return false;               
         return orcidSSOManager.resetClientSecret(clientId);
     }

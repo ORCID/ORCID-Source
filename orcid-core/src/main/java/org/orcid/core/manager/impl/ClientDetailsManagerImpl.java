@@ -74,8 +74,8 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
     private EncryptionManager encryptionManager;
 
     @Resource
-    private ProfileDao profileDao;        
-    
+    private ProfileDao profileDao;
+
     @Resource
     private AppIdGenerationManager appIdGenerationManager;
 
@@ -292,7 +292,7 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
         clientDetailsEntity.setClientRegisteredRedirectUris(getClientRegisteredRedirectUris(clientRegisteredRedirectUris, clientDetailsEntity));
         clientDetailsEntity.setPersistentTokensEnabled(true);
         clientDetailsEntity.setClientGrantedAuthorities(getClientGrantedAuthorities(clientGrantedAuthorities, clientDetailsEntity));
-        clientDetailsEntity.setGroupProfile(profileEntity);
+        clientDetailsEntity.setGroupProfileId(profileEntity.getId());
         return createClientDetails(clientDetailsEntity);
     }
 
@@ -405,9 +405,10 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
     public boolean exists(String clientId) {
         return clientDetailsDao.exists(clientId);
     }
-    
+
     /**
      * Verifies if a client belongs to the given group id
+     * 
      * @param clientId
      * @param groupId
      * @return true if clientId belongs to groupId
@@ -416,15 +417,28 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
     public boolean belongsTo(String clientId, String groupId) {
         return clientDetailsDao.belongsTo(clientId, groupId);
     }
-    
+
     /**
      * Fetch all clients that belongs to a group
+     * 
      * @param groupId
-     *  Group id
+     *            Group id
      * @return A list containing all clients that belongs to the given group
      * */
     @Override
     public List<ClientDetailsEntity> findByGroupId(String groupId) {
         return clientDetailsDao.findByGroupId(groupId);
+    }
+
+    /**
+     * Get the public profile that belongs to the given orcid ID
+     * 
+     * @param ownerId
+     *            The user or group id
+     * @return the public client that belongs to the given user
+     * */
+    @Override
+    public ClientDetailsEntity getPublicClient(String ownerId) {
+        return clientDetailsDao.getPublicClient(ownerId);
     }
 }

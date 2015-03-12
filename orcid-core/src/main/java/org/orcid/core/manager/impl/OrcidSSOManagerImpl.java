@@ -130,17 +130,9 @@ public class OrcidSSOManagerImpl implements OrcidSSOManager {
         return clientDetailsEntity;
     }
 
-    @Override
-    @Transactional
+    @Override    
     public ClientDetailsEntity getUserCredentials(String orcid) {
-        ProfileEntity userProfile = profileDao.find(orcid);
-        SortedSet<ClientDetailsEntity> clients = userProfile.getClients();
-        if (clients.isEmpty()) {
-            return null;
-        }
-        // XXX always first?
-        ClientDetailsEntity existingClientDetails = clients.first();
-        clientDetailsDao.detatch(existingClientDetails);
+        ClientDetailsEntity existingClientDetails = clientDetailsManager.getPublicClient(orcid);
         if (existingClientDetails != null) {
             SortedSet<ClientRedirectUriEntity> allRedirectUris = existingClientDetails.getClientRegisteredRedirectUris();
             SortedSet<ClientRedirectUriEntity> onlySSORedirectUris = new TreeSet<ClientRedirectUriEntity>();
