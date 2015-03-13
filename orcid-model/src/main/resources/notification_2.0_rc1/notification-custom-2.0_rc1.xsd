@@ -9,7 +9,13 @@
 	<xs:element name="notification">
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref="notification:notification-type"/>
+				<xs:element name="notification-type">
+			        <xs:simpleType>
+			            <xs:restriction base="xs:string">
+			                <xs:enumeration value="CUSTOM"/>
+			            </xs:restriction>
+			        </xs:simpleType>
+			    </xs:element>
 				<xs:element type="xs:string" name="subject"/>
 				<xs:element type="xs:string" name="body-text"/>
 				<xs:element type="xs:string" name="body-html"/>
@@ -22,12 +28,5 @@
             <xs:attribute name="put-code" type="common:put-code" use="optional" />
             <xs:attribute ref="xml:lang" use="optional" />
 		</xs:complexType>
-	</xs:element>
-	<xs:element name="notification-type">
-		<xs:simpleType>
-			<xs:restriction base="xs:string">
-				<xs:enumeration value="CUSTOM"/>
-			</xs:restriction>
-		</xs:simpleType>
 	</xs:element>
 </xs:schema>

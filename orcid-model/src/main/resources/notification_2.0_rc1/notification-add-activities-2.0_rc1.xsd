@@ -8,9 +8,9 @@
 	<xs:element name="notification">
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref="notification:notification-type"/>
-				<xs:element ref="notification:authorization-url"/>
-				<xs:element ref="notification:activities"/>
+				<xs:element name="notification-type" type="notification:notification-type"/>
+				<xs:element name="authorization-url" type="notification:authorization-url"/>
+				<xs:element name="activities" type="notification:activities"/>
 				<xs:element ref="common:created-date" minOccurs="0"/>
 				<xs:element ref="common:sent-date" minOccurs="0"/>
 				<xs:element ref="common:read-date" minOccurs="0"/>
@@ -20,131 +20,115 @@
             <xs:attribute name="put-code" type="common:put-code" use="optional" />
 		</xs:complexType>
 	</xs:element>
-	<xs:element name="notification-type">
-		<xs:simpleType>
-			<xs:restriction base="xs:string">
-				<xs:enumeration value="ADD_ACTIVITIES"/>
-			</xs:restriction>
-		</xs:simpleType>
-	</xs:element>
-	<xs:element name="authorization-url">
-		<xs:complexType>
+	<xs:simpleType name="notification-type">
+	   <xs:restriction base="xs:string">
+			<xs:enumeration value="ADD_ACTIVITIES"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="authorization-url">
 			<xs:sequence>
 				<xs:element name="uri" type="xs:anyURI"/>
 				<xs:element name="path" type="xs:string"/>
 				<xs:element name="host" type="xs:string"/>
 			</xs:sequence>
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="activities">
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element maxOccurs="unbounded" ref="notification:activity"/>
-			</xs:sequence>
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="activity">
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element ref="notification:activity-type"/>
-				<xs:element ref="notification:activity-name"/>
-				<xs:element minOccurs="0" ref="notification:external-id"/>
-			</xs:sequence>
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="activity-type">
-        <xs:simpleType>
-            <xs:restriction base="xs:string">
-                <xs:enumeration value="EDUCATION"></xs:enumeration>
-                <xs:enumeration value="EMPLOYMENT"></xs:enumeration>
-                <xs:enumeration value="FUNDING"></xs:enumeration>
-                <xs:enumeration value="WORK"></xs:enumeration>
-            </xs:restriction>
-        </xs:simpleType>
-    </xs:element>
-	<xs:element name="activity-name" type="xs:string"/>
-	<xs:element name="external-id">
-        <xs:complexType>
-            <xs:sequence>
-                <xs:element ref="notification:external-id-type"/>
-                <xs:element ref="notification:external-id-value"/>
-            </xs:sequence>
-        </xs:complexType>
-    </xs:element>
-    <xs:element name="external-id-type">
-        <xs:simpleType>
-            <xs:restriction base="xs:string">
-                <xs:enumeration value="AGR">
-                    <xs:annotation>
-                        <xs:documentation>Agricola</xs:documentation>
-                    </xs:annotation>
-                </xs:enumeration>
-                <xs:enumeration value="ARXIV"/>
-                <xs:enumeration value="ASIN"/>
-                <xs:enumeration value="ASIN_TLD"/>
-                <xs:enumeration value="BIBCODE"/>
-                <xs:enumeration value="CBA">
-                    <xs:annotation>
-                        <xs:documentation>Chinese Biological Abstracts</xs:documentation>
-                    </xs:annotation>
-                </xs:enumeration>
-                <xs:enumeration value="CIT">
-                    <xs:annotation>
-                        <xs:documentation>CiteSeer</xs:documentation>
-                    </xs:annotation>
-                </xs:enumeration>
-                <xs:enumeration value="CTX">
-                    <xs:annotation>
-                        <xs:documentation>CiteXplore submission</xs:documentation>
-                    </xs:annotation>
-                </xs:enumeration>
-                <xs:enumeration value="DOI"/>
-                <xs:enumeration value="EID"/>
-                <xs:enumeration value="ETHOS">
-                    <xs:annotation>
-                        <xs:documentation>EThOS Peristent ID</xs:documentation>
-                    </xs:annotation>
-                </xs:enumeration>
-                <xs:enumeration value="HANDLE"/>
-                <xs:enumeration value="HIR">
-                    <xs:annotation>
-                        <xs:documentation>NHS Evidence</xs:documentation>
-                    </xs:annotation>
-                </xs:enumeration>
-                <xs:enumeration value="ISBN"/>
-                <xs:enumeration value="ISSN"/>
-                <xs:enumeration value="JFM"/>
-                <xs:enumeration value="JSTOR"/>
-                <xs:enumeration value="LCCN"/>
-                <xs:enumeration value="MR"/>
-                <xs:enumeration value="OCLC"/>
-                <xs:enumeration value="OL"/>
-                <xs:enumeration value="OSTI"/>
-                <xs:enumeration value="OTHER_ID"/>
-                <xs:enumeration value="PAT">
-                    <xs:annotation>
-                        <xs:documentation>Patent number prefixed with ISO 3611 two letter country code</xs:documentation>
-                    </xs:annotation>
-                </xs:enumeration>
-                <xs:enumeration value="PMC"/>
-                <xs:enumeration value="PMID"/>
-                <xs:enumeration value="RFC"/>
-                <xs:enumeration value="SOURCE_WORK_ID">
-                    <xs:annotation>
-                        <xs:documentation>Non-standard ID with meaning only in the system from which the work data were sourced</xs:documentation>
-                    </xs:annotation>
-                </xs:enumeration>
-                <xs:enumeration value="SSRN"/>
-                <xs:enumeration value="URI"/>
-                <xs:enumeration value="URN"/>
-                <xs:enumeration value="WOSUID">
-                    <xs:annotation>
-                        <xs:documentation>Web of Science™ identifier</xs:documentation>
-                    </xs:annotation>
-                </xs:enumeration>
-                <xs:enumeration value="ZBL"/>
-            </xs:restriction>
-        </xs:simpleType>
-    </xs:element>
-    <xs:element name="external-id-value" type="xs:anyURI"/>
+	</xs:complexType>
+	<xs:complexType name="activities">
+		<xs:sequence>
+			<xs:element name="activity" type="notification:activity" maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="activity">
+		<xs:sequence>
+			<xs:element name="activity-type" type="notification:activity-type"/>
+			<xs:element name="activity-name" type="xs:string"/>
+			<xs:element name="external-id" type="notification:external-id" minOccurs="0" />
+		</xs:sequence>
+	</xs:complexType>
+    <xs:simpleType name="activity-type">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="EDUCATION"></xs:enumeration>
+            <xs:enumeration value="EMPLOYMENT"></xs:enumeration>
+            <xs:enumeration value="FUNDING"></xs:enumeration>
+            <xs:enumeration value="WORK"></xs:enumeration>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="external-id">
+        <xs:sequence>
+            <xs:element name="external-id-type" type="notification:external-id-type"/>
+            <xs:element name="external-id-value" type="xs:anyURI"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:simpleType name="external-id-type">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="AGR">
+                <xs:annotation>
+                    <xs:documentation>Agricola</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="ARXIV"/>
+            <xs:enumeration value="ASIN"/>
+            <xs:enumeration value="ASIN_TLD"/>
+            <xs:enumeration value="BIBCODE"/>
+            <xs:enumeration value="CBA">
+                <xs:annotation>
+                    <xs:documentation>Chinese Biological Abstracts</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="CIT">
+                <xs:annotation>
+                    <xs:documentation>CiteSeer</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="CTX">
+                <xs:annotation>
+                    <xs:documentation>CiteXplore submission</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="DOI"/>
+            <xs:enumeration value="EID"/>
+            <xs:enumeration value="ETHOS">
+                <xs:annotation>
+                    <xs:documentation>EThOS Peristent ID</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="HANDLE"/>
+            <xs:enumeration value="HIR">
+                <xs:annotation>
+                    <xs:documentation>NHS Evidence</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="ISBN"/>
+            <xs:enumeration value="ISSN"/>
+            <xs:enumeration value="JFM"/>
+            <xs:enumeration value="JSTOR"/>
+            <xs:enumeration value="LCCN"/>
+            <xs:enumeration value="MR"/>
+            <xs:enumeration value="OCLC"/>
+            <xs:enumeration value="OL"/>
+            <xs:enumeration value="OSTI"/>
+            <xs:enumeration value="OTHER_ID"/>
+            <xs:enumeration value="PAT">
+                <xs:annotation>
+                    <xs:documentation>Patent number prefixed with ISO 3611 two letter country code</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="PMC"/>
+            <xs:enumeration value="PMID"/>
+            <xs:enumeration value="RFC"/>
+            <xs:enumeration value="SOURCE_WORK_ID">
+                <xs:annotation>
+                    <xs:documentation>Non-standard ID with meaning only in the system from which the work data were sourced</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="SSRN"/>
+            <xs:enumeration value="URI"/>
+            <xs:enumeration value="URN"/>
+            <xs:enumeration value="WOSUID">
+                <xs:annotation>
+                    <xs:documentation>Web of Science™ identifier</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="ZBL"/>
+        </xs:restriction>
+    </xs:simpleType>
 </xs:schema>
