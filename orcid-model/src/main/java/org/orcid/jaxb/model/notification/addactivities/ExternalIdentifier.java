@@ -32,8 +32,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 
-import org.orcid.jaxb.model.common.ExternalIdType;
-
 /**
  * <p>
  * Java class for anonymous complex type.
@@ -47,8 +45,8 @@ import org.orcid.jaxb.model.common.ExternalIdType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element ref="{http://www.orcid.org/ns/common}external-id-type"/>
- *         &lt;element ref="{http://www.orcid.org/ns/common}external-id-value"/>
+ *         &lt;element ref="{http://www.orcid.org/ns/activities}external-identifier-type"/>
+ *         &lt;element ref="{http://www.orcid.org/ns/activities}external-identifier-id"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -58,36 +56,36 @@ import org.orcid.jaxb.model.common.ExternalIdType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "externalIdType", "externalIdValue" })
+@XmlType(name = "", propOrder = { "externalIdentifierType", "externalIdentifierId" })
 @XmlRootElement(name = "external-id")
-public class ExternalId implements Serializable {
+public class ExternalIdentifier implements Serializable {
 
     private final static long serialVersionUID = 1L;
-    @XmlElement(name = "external-id-type", namespace = "http://www.orcid.org/ns/notification", required = true)
-    protected ExternalIdType externalIdType;
-    @XmlElement(name = "external-id-value", namespace = "http://www.orcid.org/ns/notification", required = true)
+    @XmlElement(name = "external-identifier-type", namespace = "http://www.orcid.org/ns/activities", required = true)
+    protected String externalIdentifierType;
+    @XmlElement(name = "external-identifier-id", namespace = "http://www.orcid.org/ns/activities", required = true)
     @XmlSchemaType(name = "anyURI")
-    protected String externalIdValue;
+    protected String externalIdentifierId;
 
     /**
      * Gets the value of the externalIdType property.
      * 
-     * @return possible object is {@link ExternalIdType }
+     * @return possible object is {@link String }
      * 
      */
-    public ExternalIdType getExternalIdType() {
-        return externalIdType;
+    public String getExternalIdentifierType() {
+        return externalIdentifierType;
     }
 
     /**
      * Sets the value of the externalIdType property.
      * 
      * @param value
-     *            allowed object is {@link ExternalIdType }
+     *            allowed object is {@link String }
      * 
      */
-    public void setExternalIdType(ExternalIdType value) {
-        this.externalIdType = value;
+    public void setExternalIdType(String value) {
+        this.externalIdentifierType = value;
     }
 
     /**
@@ -96,8 +94,8 @@ public class ExternalId implements Serializable {
      * @return possible object is {@link String }
      * 
      */
-    public String getExternalIdValue() {
-        return externalIdValue;
+    public String getExternalIdentifierId() {
+        return externalIdentifierId;
     }
 
     /**
@@ -107,8 +105,8 @@ public class ExternalId implements Serializable {
      *            allowed object is {@link String }
      * 
      */
-    public void setExternalIdValue(String value) {
-        this.externalIdValue = value;
+    public void setExternalIdentifierId(String value) {
+        this.externalIdentifierId = value;
     }
 
 }

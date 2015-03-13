@@ -29,10 +29,10 @@
         <notification:activity>
             <notification:activity-type>WORK</notification:activity-type>
             <notification:activity-name>A Really Interesting Research Article</notification:activity-name>
-            <notification:external-id>
-                <notification:external-id-type>DOI</notification:external-id-type>
-                <notification:external-id-value>http://10.5555/12345ABCDE</notification:external-id-value>
-            </notification:external-id>
+            <notification:external-identifier>
+                <activities:external-identifier-type>doi</activities:external-identifier-type>
+                <activities:external-identifier-id>http://10.5555/12345ABCDE</activities:external-identifier-id>
+            </notification:external-identifier>
         </notification:activity>
         <notification:activity>
             <notification:activity-type>EMPLOYMENT</notification:activity-type>

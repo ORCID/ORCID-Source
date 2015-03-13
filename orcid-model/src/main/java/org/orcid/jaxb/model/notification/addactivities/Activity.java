@@ -56,7 +56,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "activityType", "activityName", "externalId" })
+@XmlType(name = "", propOrder = { "activityType", "activityName", "externalIdentifier" })
 @XmlRootElement(name = "activity")
 public class Activity implements Serializable {
 
@@ -65,8 +65,8 @@ public class Activity implements Serializable {
     protected ActivityType activityType;
     @XmlElement(name = "activity-name", namespace = "http://www.orcid.org/ns/notification", required = true)
     protected String activityName;
-    @XmlElement(name = "external-id", namespace = "http://www.orcid.org/ns/notification", required = true)
-    protected ExternalId externalId;
+    @XmlElement(name = "external-identifier", namespace = "http://www.orcid.org/ns/notification", required = true)
+    protected ExternalIdentifier externalIdentifier;
 
     /**
      * Gets the value of the activityType property.
@@ -113,22 +113,22 @@ public class Activity implements Serializable {
     /**
      * Gets the value of the externalId property.
      * 
-     * @return possible object is {@link ExternalId }
+     * @return possible object is {@link ExternalIdentifier }
      * 
      */
-    public ExternalId getExternalId() {
-        return externalId;
+    public ExternalIdentifier getExternalIdentifier() {
+        return externalIdentifier;
     }
 
     /**
      * Sets the value of the externalId property.
      * 
      * @param value
-     *            allowed object is {@link ExternalId }
+     *            allowed object is {@link ExternalIdentifier }
      * 
      */
-    public void setExternalId(ExternalId value) {
-        this.externalId = value;
+    public void setExternalIdentifier(ExternalIdentifier value) {
+        this.externalIdentifier = value;
     }
 
 }

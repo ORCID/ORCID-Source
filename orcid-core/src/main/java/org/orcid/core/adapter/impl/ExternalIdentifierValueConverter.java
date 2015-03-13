@@ -14,18 +14,26 @@
  *
  * =============================================================================
  */
-package org.orcid.jaxb.model.common;
+package org.orcid.core.adapter.impl;
 
-import javax.xml.bind.annotation.XmlEnum;
+import ma.glasnost.orika.converter.BidirectionalConverter;
+import ma.glasnost.orika.metadata.Type;
 
 /**
  * 
  * @author Will Simpson
  *
  */
-@XmlEnum
-public enum ExternalIdType {
+public final class ExternalIdentifierValueConverter extends BidirectionalConverter<String, String> {
 
-    AGR, ARXIV, ASIN, ASIN_TLD, BIBCODE, CBA, CIT, CTX, DOI, EID, ETHOS, HANDLE, HIR, ISBN, ISSN, JFM, JSTOR, LCCN, MR, OCLC, OL, OSTI, OTHER_ID, PAT, PMC, PMID, RFC, SOURCE_WORK_ID, SSRN, URI, URN, WOSUID, ZBL;
+    @Override
+    public String convertTo(String source, Type<String> destinationType) {
+        return source.toUpperCase().replace("-", "_");
+    }
+
+    @Override
+    public String convertFrom(String source, Type<String> destinationType) {
+        return source.toLowerCase().replace("_", "-");
+    }
 
 }
