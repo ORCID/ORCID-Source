@@ -114,7 +114,7 @@
 
     <!--  Notifications API -->
     <bean id="notificationsApiServiceDelegator" class="org.orcid.api.notifications.server.delegator.impl.NotificationsApiServiceDelegatorImpl" />
-    <bean id="notificationsApiServiceImplV1_0" class="org.orcid.api.notifications.server.NotificationsApiServiceImplV1_0">
+    <bean id="notificationsApiServiceImplV2_0_rc1" class="org.orcid.api.notifications.server.NotificationsApiServiceImplV2_0_rc1">
         <property name="serviceDelegator" ref="notificationsApiServiceDelegator"/>
     </bean>
 

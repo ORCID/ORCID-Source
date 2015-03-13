@@ -41,7 +41,7 @@ import org.orcid.jaxb.model.notification.NotificationType;
 
 public class MarshallingTest {
 
-    private static final String SAMPLE_PATH = "/notification-2.0_rc1/samples/notification-add-activities-2.0_rc1.xml";
+    private static final String SAMPLE_PATH = "/notification_2.0_rc1/samples/notification-add-activities-2.0_rc1.xml";
 
     @Test
     public void testMarshalling() throws JAXBException, IOException {

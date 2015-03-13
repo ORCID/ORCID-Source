@@ -25,7 +25,7 @@ import org.orcid.core.api.OrcidApiConstants;
  * @author Will Simpson
  * 
  */
-@Path("/v1.0" + OrcidApiConstants.NOTIFICATIONS_PATH)
-public class NotificationsApiServiceImplV1_0 extends NotificationsApiServiceImplBase {
+@Path("/v2.0_rc1" + OrcidApiConstants.NOTIFICATIONS_PATH)
+public class NotificationsApiServiceImplV2_0_rc1 extends NotificationsApiServiceImplBase {
 
 }

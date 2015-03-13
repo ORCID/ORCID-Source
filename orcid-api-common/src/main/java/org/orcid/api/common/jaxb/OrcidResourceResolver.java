@@ -43,12 +43,10 @@ public class OrcidResourceResolver implements LSResourceResolver {
     }
 
     private String buildResourcePath(String systemId) {
-        StringBuilder resourcePath = new StringBuilder("/");
-        if(systemId.startsWith("common-")){
-            resourcePath.append( "record_2.0_rc1/");
+        if(systemId.startsWith("../common_")){
+            return systemId.substring(2, systemId.length());
         }
-        resourcePath.append(systemId);
-        return resourcePath.toString();
+        return "/" + systemId;
     }
 
     private boolean shouldLoadFromClasspath(String systemId) {
