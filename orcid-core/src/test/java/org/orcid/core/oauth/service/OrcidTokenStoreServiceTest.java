@@ -116,7 +116,8 @@ public class OrcidTokenStoreServiceTest extends DBUnitTest {
         parameters.put("response_type", "bearer");
         OAuth2Request request = new OAuth2Request(Collections.<String, String> emptyMap(), clientId, Collections.<GrantedAuthority> emptyList(), true, new HashSet<String>(Arrays.asList("/orcid-profile/read-limited")), Collections.<String> emptySet(), null, Collections.<String> emptySet(), Collections.<String, Serializable> emptyMap());
         
-        ProfileEntity profileEntity = profileEntityManager.findByOrcid("4444-4444-4444-4444");
+        Date lastModified = profileEntityManager.getLastModified("4444-4444-4444-4444");
+        ProfileEntity profileEntity = profileEntityManager.findByOrcid("4444-4444-4444-4444", lastModified.getTime());
         OrcidOauth2UserAuthentication userAuthentication = new OrcidOauth2UserAuthentication(profileEntity, true);
 
         OAuth2Authentication authentication = new OAuth2Authentication(request, userAuthentication);
@@ -186,7 +187,8 @@ public class OrcidTokenStoreServiceTest extends DBUnitTest {
         parameters.put("response_type", "bearer");
         OAuth2Request request = new OAuth2Request(Collections.<String, String> emptyMap(), clientId, Collections.<GrantedAuthority> emptyList(), true, new HashSet<String>(Arrays.asList("/orcid-profile/read-limited")), Collections.<String> emptySet(), null, Collections.<String> emptySet(), Collections.<String, Serializable> emptyMap());
 
-        ProfileEntity profileEntity = profileEntityManager.findByOrcid("4444-4444-4444-4444");
+        Date lastModified = profileEntityManager.getLastModified("4444-4444-4444-4444");
+        ProfileEntity profileEntity = profileEntityManager.findByOrcid("4444-4444-4444-4444", lastModified.getTime());
         OrcidOauth2UserAuthentication userAuthentication = new OrcidOauth2UserAuthentication(profileEntity, true);
 
         OAuth2Authentication authentication = new OAuth2Authentication(request, userAuthentication);

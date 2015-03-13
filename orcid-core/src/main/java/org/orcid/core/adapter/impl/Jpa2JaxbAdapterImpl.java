@@ -751,7 +751,8 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
 
                         // add group information                        
                         if (!PojoUtil.isEmpty(acceptedClient.getGroupProfileId())) {
-                            ProfileEntity groupEntity = profileEntityManager.findByOrcid(acceptedClient.getGroupProfileId()); 
+                            Date lastModified = profileEntityManager.getLastModified(acceptedClient.getGroupProfileId());
+                            ProfileEntity groupEntity = profileEntityManager.findByOrcid(acceptedClient.getGroupProfileId(), lastModified.getTime()); 
                             applicationSummary.setApplicationGroupOrcid(new ApplicationOrcid(groupEntity.getId()));
                             applicationSummary.setApplicationGroupName(new ApplicationName(getGroupDisplayName(groupEntity)));
                         }

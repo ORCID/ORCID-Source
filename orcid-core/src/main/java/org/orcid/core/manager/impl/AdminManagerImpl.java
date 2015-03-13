@@ -114,9 +114,11 @@ public class AdminManagerImpl implements AdminManager {
     @Transactional
     public boolean deprecateProfile(ProfileDeprecationRequest result, String deprecatedOrcid, String primaryOrcid) throws Exception {        
         // Get deprecated profile
-        ProfileEntity deprecated = profileEntityManager.findByOrcid(deprecatedOrcid);
+        Date lastModified = profileEntityManager.getLastModified(deprecatedOrcid);
+        ProfileEntity deprecated = profileEntityManager.findByOrcid(deprecatedOrcid, lastModified.getTime());
         // Get primary profile
-        ProfileEntity primary = profileEntityManager.findByOrcid(primaryOrcid);        
+        lastModified = profileEntityManager.getLastModified(primaryOrcid);
+        ProfileEntity primary = profileEntityManager.findByOrcid(primaryOrcid, lastModified.getTime());        
         
         // If both users exists
         if (deprecated != null && primary != null) {

@@ -17,6 +17,7 @@
 package org.orcid.frontend.web.controllers;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeMap;
@@ -133,7 +134,8 @@ public class ManageMembersController extends BaseController {
             if (profileEntityManager.orcidExists(orcid)) {
                 GroupType groupType = profileEntityManager.getGroupType(orcid);
                 if (groupType != null) {
-                    ProfileEntity memberProfile = profileEntityManager.findByOrcid(orcid);
+                    Date lastModified = profileEntityManager.getLastModified(orcid);
+                    ProfileEntity memberProfile = profileEntityManager.findByOrcid(orcid, lastModified.getTime());
                     group = Group.fromProfileEntity(memberProfile);
                 } else {
                     group.getErrors().add(getMessage("manage_members.orcid_is_not_a_member"));

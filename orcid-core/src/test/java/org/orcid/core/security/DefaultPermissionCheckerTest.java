@@ -20,6 +20,7 @@ import static org.junit.Assert.fail;
 
 import java.security.AccessControlException;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -76,16 +77,16 @@ public class DefaultPermissionCheckerTest extends DBUnitTest {
         removeDBUnitData(Arrays.asList("/data/Oauth2TokenDetailsData.xml", "/data/ClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/SecurityQuestionEntityData.xml"));
     }
 
-    @Test
+    @Test    
+    @Rollback    
     @Transactional
-    @Rollback
     public void testCheckUserPermissionsAuthenticationScopesOrcidAndOrcidMessage() throws Exception {
         Set<String> resourceIds = new HashSet<String>(Arrays.asList("orcid"));
         HashSet<GrantedAuthority> grantedAuthorities = new HashSet<GrantedAuthority>(Arrays.asList(new SimpleGrantedAuthority("ROLE_CLIENT")));
         AuthorizationRequest request = new AuthorizationRequest("4444-4444-4444-4441", Arrays.asList("/orcid-bio/external-identifiers/create"));
         request.setAuthorities(grantedAuthorities);
         request.setResourceIds(resourceIds);
-        ProfileEntity entity = profileEntityManager.findByOrcid("4444-4444-4444-4446");
+        ProfileEntity entity = profileEntityManager.findByOrcid("4444-4444-4444-4446", System.currentTimeMillis());
         OrcidOauth2UserAuthentication oauth2UserAuthentication = new OrcidOauth2UserAuthentication(entity, true);
         OAuth2Authentication oAuth2Authentication = new OrcidOAuth2Authentication(request, oauth2UserAuthentication, "made-up-token");
         ScopePathType requiredScope = ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE;
@@ -103,7 +104,8 @@ public class DefaultPermissionCheckerTest extends DBUnitTest {
         AuthorizationRequest request = new AuthorizationRequest("4444-4444-4444-4441", Arrays.asList("/orcid-bio/external-identifiers/create"));
         request.setAuthorities(grantedAuthorities);
         request.setResourceIds(resourceIds);
-        ProfileEntity entity = profileEntityManager.findByOrcid("4444-4444-4444-4445");
+        Date lastModified = profileEntityManager.getLastModified("4444-4444-4444-4445");
+        ProfileEntity entity = profileEntityManager.findByOrcid("4444-4444-4444-4445", lastModified.getTime());
         OrcidOauth2UserAuthentication oauth2UserAuthentication = new OrcidOauth2UserAuthentication(entity, true);
         OAuth2Authentication oAuth2Authentication = new OrcidOAuth2Authentication(request, oauth2UserAuthentication, "made-up-token");
         ScopePathType requiredScope = ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE;

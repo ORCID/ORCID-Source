@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.Date;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -202,7 +203,8 @@ public class AdminController extends BaseController {
     @RequestMapping(value = { "/deprecate-profile/check-orcid.json", "/deactivate-profile/check-orcid.json" }, method = RequestMethod.GET)
     public @ResponseBody
     ProfileDetails checkOrcidToDeprecate(@RequestParam("orcid") String orcid) {
-        ProfileEntity profile = profileEntityManager.findByOrcid(orcid);
+        java.util.Date lastModified = profileEntityManager.getLastModified(orcid);
+        ProfileEntity profile = profileEntityManager.findByOrcid(orcid, lastModified.getTime());
         ProfileDetails profileDetails = new ProfileDetails();
         if (profile != null) {
             if (profile.getPrimaryRecord() != null) {
@@ -492,8 +494,9 @@ public class AdminController extends BaseController {
             result.getErrors().add(getMessage("admin.lock_profile.error.not_found", orcidOrEmail));
             return result;
         }          
-        
-        ProfileEntity profile = profileEntityManager.findByOrcid(orcid);
+
+        Date lastModified = profileEntityManager.getLastModified(orcid);
+        ProfileEntity profile = profileEntityManager.findByOrcid(orcid, lastModified.getTime());
         
         // If the account is already locked
         if(profile.isAccountNonLocked() == false) { 
@@ -523,7 +526,8 @@ public class AdminController extends BaseController {
             return result;
         }          
         
-        ProfileEntity profile = profileEntityManager.findByOrcid(orcid);
+        Date lastModified = profileEntityManager.getLastModified(orcid);
+        ProfileEntity profile = profileEntityManager.findByOrcid(orcid, lastModified.getTime());
         
         // If the account is not locked
         if(profile.isAccountNonLocked()) { 

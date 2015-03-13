@@ -19,6 +19,7 @@ package org.orcid.core.manager.impl;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -57,6 +58,7 @@ import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -82,7 +84,8 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     private JpaJaxbWorkAdapter jpaJaxbWorkAdapter;
 
     @Override
-    public ProfileEntity findByOrcid(String orcid) {
+    @Cacheable(value = "profile-entity", key = "#orcid.concat('-').concat(#lastModified)")
+    public ProfileEntity findByOrcid(String orcid, long lastModified) {
         return profileDao.find(orcid);
     }
 
@@ -302,7 +305,8 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
             throw new NoResultException();            
         }
         ActivitiesSummary activities = new ActivitiesSummary();
-        ProfileEntity profileEntity = this.findByOrcid(orcid);
+        Date lastModified = getLastModified(orcid);
+        ProfileEntity profileEntity = this.findByOrcid(orcid, lastModified.getTime());
         // Set Affiliations
         Set<OrgAffiliationRelationEntity> affiliations = profileEntity.getOrgAffiliationRelations();
         Educations educations = new Educations();
@@ -418,6 +422,11 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
 
         return result;
     }
+    
+    public Date getLastModified(String orcid) {
+        return profileDao.retrieveLastModifiedDate(orcid);
+    }
+    
 }
 
 class GroupableActivityComparator implements Comparator<GroupableActivity> {

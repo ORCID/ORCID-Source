@@ -18,6 +18,7 @@ package org.orcid.core.oauth.service;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -334,7 +335,8 @@ public class OrcidTokenStoreServiceImpl implements TokenStore {
             Object principal = authentication.getPrincipal();
             if (principal instanceof ProfileEntity) {
                 ProfileEntity profileEntity = (ProfileEntity) authentication.getPrincipal();
-                profileEntity = profileEntityManager.findByOrcid(profileEntity.getId());
+                Date lastModified = profileEntityManager.getLastModified(profileEntity.getId());
+                profileEntity = profileEntityManager.findByOrcid(profileEntity.getId(), lastModified.getTime());
                 detail.setProfile(profileEntity);
             }
         }

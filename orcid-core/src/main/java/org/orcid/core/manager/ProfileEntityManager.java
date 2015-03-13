@@ -16,6 +16,7 @@
  */
 package org.orcid.core.manager;
 
+import java.util.Date;
 import java.util.List;
 
 import org.orcid.jaxb.model.clientgroup.ClientType;
@@ -32,7 +33,7 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
  */
 public interface ProfileEntityManager {
 
-    ProfileEntity findByOrcid(String orcid);
+    ProfileEntity findByOrcid(String orcid, long lastModified);
 
     boolean orcidExists(String orcid);
 
@@ -71,4 +72,6 @@ public interface ProfileEntityManager {
     ActivitiesSummary getActivitiesSummary(String orcid);
     
     ActivitiesSummary getPublicActivitiesSummary(String orcid);
+    
+    Date getLastModified(String orcid);
 }

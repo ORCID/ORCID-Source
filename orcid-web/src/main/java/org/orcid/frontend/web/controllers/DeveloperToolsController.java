@@ -18,6 +18,7 @@ package org.orcid.frontend.web.controllers;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -206,7 +207,8 @@ public class DeveloperToolsController extends BaseWorkspaceController {
         ClientDetailsEntity clientDetails = clientDetailsManager.findByClientId(clientId);
         if(clientDetails == null)
             return false;
-        ProfileEntity groupProfile = profileEntityManager.findByOrcid(clientDetails.getGroupProfileId());
+        Date lastModified = profileEntityManager.getLastModified(clientDetails.getGroupProfileId());
+        ProfileEntity groupProfile = profileEntityManager.findByOrcid(clientDetails.getGroupProfileId(), lastModified.getTime());
         if(groupProfile == null)
             return false;
         if(!groupProfile.getId().equals(getCurrentUserOrcid()))

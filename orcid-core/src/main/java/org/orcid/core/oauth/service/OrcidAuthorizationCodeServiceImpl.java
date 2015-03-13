@@ -20,6 +20,7 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -144,7 +145,8 @@ public class OrcidAuthorizationCodeServiceImpl extends RandomValueAuthorizationC
             OrcidProfileUserDetails userDetails = (OrcidProfileUserDetails) principal;
             String effectiveOrcid = userDetails.getOrcid();
             if (effectiveOrcid != null) {
-                entity = profileEntityManager.findByOrcid(effectiveOrcid);
+                Date lastModified = profileEntityManager.getLastModified(effectiveOrcid);
+                entity = profileEntityManager.findByOrcid(effectiveOrcid, lastModified.getTime());
             }
         }
 

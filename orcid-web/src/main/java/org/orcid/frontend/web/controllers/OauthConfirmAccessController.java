@@ -19,6 +19,7 @@ package org.orcid.frontend.web.controllers;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -195,7 +196,8 @@ public class OauthConfirmAccessController extends BaseController {
                     if (clientDetails.getClientType() == null) {
                         clientGroupName = PUBLIC_CLIENT_GROUP_NAME;
                     } else if (!PojoUtil.isEmpty(clientDetails.getGroupProfileId())) {
-                        ProfileEntity groupProfile = profileEntityManager.findByOrcid(clientDetails.getGroupProfileId());
+                        Date lastModified = profileEntityManager.getLastModified(clientDetails.getGroupProfileId());
+                        ProfileEntity groupProfile = profileEntityManager.findByOrcid(clientDetails.getGroupProfileId(), lastModified.getTime());
                         clientGroupName = groupProfile.getCreditName();
                     }
                     // If the group name is empty, use the same as the client
@@ -263,7 +265,8 @@ public class OauthConfirmAccessController extends BaseController {
         if (clientDetails.getClientType() == null) {
             clientGroupName = PUBLIC_CLIENT_GROUP_NAME;
         } else if (!PojoUtil.isEmpty(clientDetails.getGroupProfileId())) {
-            ProfileEntity groupProfile = profileEntityManager.findByOrcid(clientDetails.getGroupProfileId());
+            Date lastModified = profileEntityManager.getLastModified(clientDetails.getGroupProfileId());
+            ProfileEntity groupProfile = profileEntityManager.findByOrcid(clientDetails.getGroupProfileId(), lastModified.getTime());
             clientGroupName = groupProfile.getCreditName();
         }
 

@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.annotation.Resource;
+import javax.persistence.NoResultException;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -132,7 +133,7 @@ public class ClientDetailsManagerTest extends DBUnitTest {
         checkClientDetails(clientDetails);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NoResultException.class)
     @Rollback
     @Transactional
     public void testCreateClientDetailsWithNonExistentOrcid() throws Exception {

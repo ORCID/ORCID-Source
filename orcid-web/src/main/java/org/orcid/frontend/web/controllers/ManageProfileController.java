@@ -272,7 +272,9 @@ public class ManageProfileController extends BaseWorkspaceController {
             permission.setApprovalDate(new Date());
             givenPermissionToDao.merge(permission);
             OrcidProfile currentUser = getEffectiveProfile();
-            ProfileEntity delegateProfile = profileEntityManager.findByOrcid(delegateOrcid);
+            Date lastModified = profileEntityManager.getLastModified(delegateOrcid);
+            long time = (lastModified == null) ? 0 : lastModified.getTime();
+            ProfileEntity delegateProfile = profileEntityManager.findByOrcid(delegateOrcid, time);
             DelegationDetails details = new DelegationDetails();
             details.setApprovalDate(new ApprovalDate(DateUtils.convertToXMLGregorianCalendar(permission.getApprovalDate())));
             DelegateSummary summary = new DelegateSummary();
@@ -1022,7 +1024,8 @@ public class ManageProfileController extends BaseWorkspaceController {
                         permission.setApprovalDate(new Date());
                         givenPermissionToDao.merge(permission);
                         OrcidProfile currentUser = getEffectiveProfile();
-                        ProfileEntity delegateProfile = profileEntityManager.findByOrcid(trustedOrcid);
+                        Date lastModified = profileEntityManager.getLastModified(trustedOrcid);
+                        ProfileEntity delegateProfile = profileEntityManager.findByOrcid(trustedOrcid, lastModified.getTime());
                         DelegationDetails details = new DelegationDetails();
                         details.setApprovalDate(new ApprovalDate(DateUtils.convertToXMLGregorianCalendar(permission.getApprovalDate())));
                         DelegateSummary summary = new DelegateSummary();

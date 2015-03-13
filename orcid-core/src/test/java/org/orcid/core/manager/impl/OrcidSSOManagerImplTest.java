@@ -55,8 +55,6 @@ public class OrcidSSOManagerImplTest extends BaseTest {
             "/data/Oauth2TokenDetailsData.xml");
 
     private String orcid1 = "4444-4444-4444-444X";
-    private String name = "SSO Name";
-    private String description = "SSO Description";
 
     @Resource
     OrcidSSOManager orcidSSOManager;

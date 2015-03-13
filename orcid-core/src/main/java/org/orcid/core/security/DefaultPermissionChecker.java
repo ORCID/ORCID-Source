@@ -318,7 +318,8 @@ public class DefaultPermissionChecker implements PermissionChecker {
                         + " do NOT match.");
             }
 
-            profileEntityManager.findByOrcid(messageOrcid);
+            Date lastModified = profileEntityManager.getLastModified(messageOrcid);
+            profileEntityManager.findByOrcid(messageOrcid, lastModified.getTime());
             if (!profileEntityManager.existsAndNotClaimedAndBelongsTo(messageOrcid, authorizationRequest.getClientId())) {
                 throw new AccessControlException("You cannot update this profile as it has been claimed, or you are not the owner.");
             }

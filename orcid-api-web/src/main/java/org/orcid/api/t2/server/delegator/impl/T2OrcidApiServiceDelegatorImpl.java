@@ -455,7 +455,8 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
             throw new OrcidBadRequestException(String.format("Webhook uri:%s is syntactically incorrect", webhookUri));
         }
 
-        ProfileEntity profile = profileEntityManager.findByOrcid(orcid);
+        Date lastModified = profileEntityManager.getLastModified(orcid);
+        ProfileEntity profile = profileEntityManager.findByOrcid(orcid, lastModified.getTime());
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         ClientDetailsEntity clientDetails = null;
         String clientId = null;
@@ -500,7 +501,8 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
     @Override
     @AccessControl(requiredScope = ScopePathType.WEBHOOK)
     public Response unregisterWebhook(UriInfo uriInfo, String orcid, String webhookUri) {
-        ProfileEntity profile = profileEntityManager.findByOrcid(orcid);
+        Date lastModified = profileEntityManager.getLastModified(orcid);
+        ProfileEntity profile = profileEntityManager.findByOrcid(orcid, lastModified.getTime());
         if (profile != null) {
             WebhookEntityPk webhookPk = new WebhookEntityPk(profile, webhookUri);
             WebhookEntity webhook = webhookDao.find(webhookPk);

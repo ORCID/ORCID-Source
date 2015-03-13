@@ -50,6 +50,7 @@ import org.orcid.persistence.jpa.entities.ClientSecretEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.oauth2.common.exceptions.InvalidClientException;
 import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
 import org.springframework.transaction.annotation.Transactional;
@@ -135,7 +136,8 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
     @Override
     public ClientDetailsEntity createClientDetails(String groupOrcid, String name, String description, String website, ClientType clientType, Set<String> clientScopes,
             Set<String> clientResourceIds, Set<String> clientAuthorizedGrantTypes, Set<RedirectUri> clientRegisteredRedirectUris, List<String> clientGrantedAuthorities) {
-        ProfileEntity groupProfileEntity = profileEntityManager.findByOrcid(groupOrcid);
+        Date lastModified = profileEntityManager.getLastModified(groupOrcid);
+        ProfileEntity groupProfileEntity = profileEntityManager.findByOrcid(groupOrcid, lastModified.getTime());
         if (groupProfileEntity == null) {
             throw new IllegalArgumentException("ORCID does not exist for " + groupOrcid + " cannot continue");
         } else {
@@ -180,8 +182,8 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
     public ClientDetailsEntity createClientDetails(String orcid, String name, String description, String website, String clientId, String clientSecret,
             ClientType clientType, Set<String> clientScopes, Set<String> clientResourceIds, Set<String> clientAuthorizedGrantTypes,
             Set<RedirectUri> clientRegisteredRedirectUris, List<String> clientGrantedAuthorities) {
-
-        ProfileEntity profileEntity = profileEntityManager.findByOrcid(orcid);
+        Date lastModified = profileEntityManager.getLastModified(orcid);
+        ProfileEntity profileEntity = profileEntityManager.findByOrcid(orcid, lastModified.getTime());
         if (profileEntity == null) {
             throw new IllegalArgumentException("The ORCID does not exist for " + orcid);
         }
