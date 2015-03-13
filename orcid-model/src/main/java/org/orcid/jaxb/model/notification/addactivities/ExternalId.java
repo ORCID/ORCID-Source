@@ -63,9 +63,9 @@ import org.orcid.jaxb.model.common.ExternalIdType;
 public class ExternalId implements Serializable {
 
     private final static long serialVersionUID = 1L;
-    @XmlElement(name = "external-id-type", namespace = "http://www.orcid.org/ns/common", required = true)
+    @XmlElement(name = "external-id-type", namespace = "http://www.orcid.org/ns/notification", required = true)
     protected ExternalIdType externalIdType;
-    @XmlElement(name = "external-id-value", namespace = "http://www.orcid.org/ns/common", required = true)
+    @XmlElement(name = "external-id-value", namespace = "http://www.orcid.org/ns/notification", required = true)
     @XmlSchemaType(name = "anyURI")
     protected String externalIdValue;
 

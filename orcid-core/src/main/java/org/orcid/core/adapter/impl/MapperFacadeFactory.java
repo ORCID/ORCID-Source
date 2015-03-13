@@ -24,7 +24,6 @@ import ma.glasnost.orika.converter.ConverterFactory;
 import ma.glasnost.orika.impl.DefaultMapperFactory;
 import ma.glasnost.orika.metadata.ClassMapBuilder;
 
-import org.orcid.jaxb.model.common.Source;
 import org.orcid.jaxb.model.notification.addactivities.Activity;
 import org.orcid.jaxb.model.notification.addactivities.NotificationAddActivities;
 import org.orcid.jaxb.model.notification.amended.NotificationAmended;
@@ -76,7 +75,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         mapCommonFields(mapperFactory.classMap(NotificationAmendedEntity.class, NotificationAmended.class)).register();
         mapperFactory.classMap(NotificationActivityEntity.class, Activity.class).field("externalIdType", "externalId.externalIdType")
                 .field("externalIdValue", "externalId.externalIdValue").byDefault().register();
-        mapperFactory.classMap(SourceEntity.class, Source.class).field("sourceClient.id", "clientId.path").byDefault().register();
+        addV2SourceMapping(mapperFactory);
         return mapperFactory.getMapperFacade();
     }
 

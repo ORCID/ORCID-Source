@@ -4,7 +4,8 @@
 	xmlns:common="http://www.orcid.org/ns/common"
 	xmlns:xs="http://www.w3.org/2001/XMLSchema"
 	xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" vc:minVersion="1.1">
-	<xs:import namespace="http://www.orcid.org/ns/common" schemaLocation="orcid-common-1.0.xsd" />
+	<xs:import namespace="http://www.orcid.org/ns/common" schemaLocation="../common-2.0_rc1/common-2.0_rc1.xsd" />
+	<xs:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="../xml.xsd"/>
 	<xs:element name="notification">
 		<xs:complexType>
 			<xs:sequence>
@@ -18,8 +19,8 @@
 				<xs:element ref="common:archived-date" minOccurs="0"/>
 				<xs:element ref="common:source" minOccurs="0"/>
 			</xs:sequence>
-            <xs:attributeGroup ref="common:put-code"/>
-            <xs:attributeGroup ref="common:lang"/>
+            <xs:attribute name="put-code" type="common:put-code" use="optional" />
+            <xs:attribute ref="xml:lang" use="optional" />
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="notification-type">

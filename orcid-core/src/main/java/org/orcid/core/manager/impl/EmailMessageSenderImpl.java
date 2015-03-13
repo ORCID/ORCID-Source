@@ -34,11 +34,11 @@ import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.TemplateManager;
-import org.orcid.jaxb.model.common.ClientId;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.notification.Notification;
 import org.orcid.jaxb.model.notification.addactivities.NotificationAddActivities;
 import org.orcid.jaxb.model.notification.amended.NotificationAmended;
+import org.orcid.jaxb.model.record.SourceClientId;
 import org.orcid.persistence.dao.NotificationDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.slf4j.Logger;
@@ -108,7 +108,7 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
             if (notification.getSource() == null) {
                 orcidMessageCount++;
             } else {
-                ClientId clientId = notification.getSource().getClientId();
+                SourceClientId clientId = notification.getSource().getSourceClientId();
                 if (clientId != null) {
                     memberIds.add(clientId.getPath());
                 }

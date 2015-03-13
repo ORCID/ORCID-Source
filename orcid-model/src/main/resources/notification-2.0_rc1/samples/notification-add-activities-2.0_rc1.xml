@@ -17,7 +17,7 @@
     =============================================================================
 
 -->
-<notification:notification put-code="1" xsi:schemaLocation="http://www.orcid.org/ns/notification ../notification-add-activities-2.0_rc1.xsd" xmlns:common="http://www.orcid.org/ns/common" xmlns:notification="http://www.orcid.org/ns/notification" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<notification:notification put-code="1" xsi:schemaLocation="http://www.orcid.org/ns/notification ../notification-add-activities-2.0_rc1.xsd" xmlns:work="http://www.orcid.org/ns/work" xmlns:deprecated="http://www.orcid.org/ns/deprecated" xmlns:person="http://www.orcid.org/ns/person" xmlns:employment="http://www.orcid.org/ns/employment" xmlns:funding="http://www.orcid.org/ns/funding" xmlns:common="http://www.orcid.org/ns/common" xmlns:education="http://www.orcid.org/ns/education" xmlns:history="http://www.orcid.org/ns/history" xmlns:record="http://www.orcid.org/ns/record" xmlns:notification="http://www.orcid.org/ns/notification" xmlns:activities="http://www.orcid.org/ns/activities" xmlns:internal="http://www.orcid.org/ns/internal" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:preferences="http://www.orcid.org/ns/preferences">
     <notification:notification-type>ADD_ACTIVITIES</notification:notification-type>
     <notification:authorization-url>
         <!-- API user can specify just the path if they want. -->
@@ -29,10 +29,10 @@
         <notification:activity>
             <notification:activity-type>WORK</notification:activity-type>
             <notification:activity-name>A Really Interesting Research Article</notification:activity-name>
-            <common:external-id>
-                <common:external-id-type>DOI</common:external-id-type>
-                <common:external-id-value>http://10.5555/12345ABCDE</common:external-id-value>
-            </common:external-id>
+            <notification:external-id>
+                <notification:external-id-type>DOI</notification:external-id-type>
+                <notification:external-id-value>http://10.5555/12345ABCDE</notification:external-id-value>
+            </notification:external-id>
         </notification:activity>
         <notification:activity>
             <notification:activity-type>EMPLOYMENT</notification:activity-type>
@@ -45,11 +45,11 @@
     <common:sent-date>2014-01-01T14:45:32</common:sent-date>
     <common:source>
         <!--  Read only for API user - will only be able to see notifications for which they are the source -->
-        <common:client-id>
+        <common:source-client-id>
             <common:uri>http://orcid.org/client/APP-U4UKCNSSIM1OCVQY</common:uri>
             <common:path>APP-U4UKCNSSIM1OCVQY</common:path>
             <common:host>orcid.org</common:host>
-        </common:client-id>
+        </common:source-client-id>
         <common:source-name>Member 1</common:source-name>
     </common:source>
 </notification:notification>

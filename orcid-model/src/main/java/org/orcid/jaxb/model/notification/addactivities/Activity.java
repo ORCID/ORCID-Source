@@ -65,7 +65,7 @@ public class Activity implements Serializable {
     protected ActivityType activityType;
     @XmlElement(name = "activity-name", namespace = "http://www.orcid.org/ns/notification", required = true)
     protected String activityName;
-    @XmlElement(name = "external-id", namespace = "http://www.orcid.org/ns/common", required = true)
+    @XmlElement(name = "external-id", namespace = "http://www.orcid.org/ns/notification", required = true)
     protected ExternalId externalId;
 
     /**
