@@ -24,7 +24,7 @@ import ma.glasnost.orika.metadata.Type;
  * @author Will Simpson
  *
  */
-public final class ExternalIdentifierValueConverter extends BidirectionalConverter<String, String> {
+public final class ExternalIdentifierTypeConverter extends BidirectionalConverter<String, String> {
 
     @Override
     public String convertTo(String source, Type<String> destinationType) {
