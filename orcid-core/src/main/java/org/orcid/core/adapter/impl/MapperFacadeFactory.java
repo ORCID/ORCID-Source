@@ -24,6 +24,10 @@ import ma.glasnost.orika.converter.ConverterFactory;
 import ma.glasnost.orika.impl.DefaultMapperFactory;
 import ma.glasnost.orika.metadata.ClassMapBuilder;
 
+import org.orcid.jaxb.model.common.FuzzyDate;
+import org.orcid.jaxb.model.common.PublicationDate;
+import org.orcid.jaxb.model.common.SourceClientId;
+import org.orcid.jaxb.model.common.SourceOrcid;
 import org.orcid.jaxb.model.notification.addactivities.Activity;
 import org.orcid.jaxb.model.notification.addactivities.NotificationAddActivities;
 import org.orcid.jaxb.model.notification.amended.NotificationAmended;
@@ -32,10 +36,6 @@ import org.orcid.jaxb.model.record.Education;
 import org.orcid.jaxb.model.record.Employment;
 import org.orcid.jaxb.model.record.Funding;
 import org.orcid.jaxb.model.record.FundingContributors;
-import org.orcid.jaxb.model.record.FuzzyDate;
-import org.orcid.jaxb.model.record.PublicationDate;
-import org.orcid.jaxb.model.record.SourceClientId;
-import org.orcid.jaxb.model.record.SourceOrcid;
 import org.orcid.jaxb.model.record.Work;
 import org.orcid.jaxb.model.record.WorkContributors;
 import org.orcid.jaxb.model.record.WorkExternalIdentifier;
@@ -234,10 +234,10 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     }
 
     private void addV2SourceMapping(MapperFactory mapperFactory) {
-        mapperFactory.classMap(org.orcid.jaxb.model.record.Source.class, SourceEntity.class).fieldAToB("sourceOrcid.path", "sourceProfile.id")
-                .fieldAToB("sourceClientId.path", "sourceClient.id").customize(new CustomMapper<org.orcid.jaxb.model.record.Source, SourceEntity>() {
+        mapperFactory.classMap(org.orcid.jaxb.model.common.Source.class, SourceEntity.class).fieldAToB("sourceOrcid.path", "sourceProfile.id")
+                .fieldAToB("sourceClientId.path", "sourceClient.id").customize(new CustomMapper<org.orcid.jaxb.model.common.Source, SourceEntity>() {
                     @Override
-                    public void mapBtoA(SourceEntity sourceEntity, org.orcid.jaxb.model.record.Source source, MappingContext context) {
+                    public void mapBtoA(SourceEntity sourceEntity, org.orcid.jaxb.model.common.Source source, MappingContext context) {
                         String sourceId = sourceEntity.getSourceId();
                         if (OrcidStringUtils.isClientId(sourceId)) {
                             source.setSourceClientId(new SourceClientId(sourceId));

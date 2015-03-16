@@ -26,6 +26,8 @@ import javax.annotation.Resource;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.orcid.jaxb.model.common.Source;
+import org.orcid.jaxb.model.common.SourceClientId;
 import org.orcid.jaxb.model.notification.Notification;
 import org.orcid.jaxb.model.notification.NotificationType;
 import org.orcid.jaxb.model.notification.addactivities.Activities;
@@ -35,8 +37,6 @@ import org.orcid.jaxb.model.notification.addactivities.AuthorizationUrl;
 import org.orcid.jaxb.model.notification.addactivities.ExternalIdentifier;
 import org.orcid.jaxb.model.notification.addactivities.NotificationAddActivities;
 import org.orcid.jaxb.model.notification.custom.NotificationCustom;
-import org.orcid.jaxb.model.record.Source;
-import org.orcid.jaxb.model.record.SourceClientId;
 import org.orcid.persistence.jpa.entities.NotificationActivityEntity;
 import org.orcid.persistence.jpa.entities.NotificationAddActivitiesEntity;
 import org.orcid.persistence.jpa.entities.NotificationCustomEntity;

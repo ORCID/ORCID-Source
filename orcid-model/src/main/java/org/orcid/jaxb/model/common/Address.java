@@ -21,14 +21,18 @@
 // Generated on: 2013.08.19 at 01:44:12 PM BST 
 //
 
-package org.orcid.jaxb.model.record;
+package org.orcid.jaxb.model.common;
 
 import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+
+import org.orcid.jaxb.model.record.City;
+import org.orcid.jaxb.model.record.Region;
 
 /**
  * <p>

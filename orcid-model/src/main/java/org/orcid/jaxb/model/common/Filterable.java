@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.jaxb.model.record;
+package org.orcid.jaxb.model.common;
 
 /**
  * 

@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.jaxb.model.record;
+package org.orcid.jaxb.model.common;
 
 /**
  * @author Declan Newman (declan) Date: 16/03/2012

@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.jaxb.model.record;
+package org.orcid.jaxb.model.common;
 
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;

@@ -21,7 +21,7 @@
 // Generated on: 2012.01.18 at 10:32:14 AM GMT 
 //
 
-package org.orcid.jaxb.model.record;
+package org.orcid.jaxb.model.common;
 
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;

@@ -21,13 +21,16 @@
 // Generated on: 2012.08.02 at 04:23:52 PM BST 
 //
 
-package org.orcid.jaxb.model.record;
+package org.orcid.jaxb.model.common;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+
+import org.orcid.jaxb.model.record.SequenceType;
+
 import java.io.Serializable;
 
 /**
