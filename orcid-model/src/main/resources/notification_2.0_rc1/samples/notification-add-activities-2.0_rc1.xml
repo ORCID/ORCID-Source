@@ -17,7 +17,7 @@
     =============================================================================
 
 -->
-<notification:notification put-code="1" xsi:schemaLocation="http://www.orcid.org/ns/notification ../notification-add-activities-2.0_rc1.xsd" xmlns:work="http://www.orcid.org/ns/work" xmlns:deprecated="http://www.orcid.org/ns/deprecated" xmlns:person="http://www.orcid.org/ns/person" xmlns:employment="http://www.orcid.org/ns/employment" xmlns:funding="http://www.orcid.org/ns/funding" xmlns:common="http://www.orcid.org/ns/common" xmlns:education="http://www.orcid.org/ns/education" xmlns:history="http://www.orcid.org/ns/history" xmlns:record="http://www.orcid.org/ns/record" xmlns:notification="http://www.orcid.org/ns/notification" xmlns:activities="http://www.orcid.org/ns/activities" xmlns:internal="http://www.orcid.org/ns/internal" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:preferences="http://www.orcid.org/ns/preferences">
+<notification:notification put-code="1" xsi:schemaLocation="http://www.orcid.org/ns/notification ../notification-add-activities-2.0_rc1.xsd" xmlns:common="http://www.orcid.org/ns/common" xmlns:notification="http://www.orcid.org/ns/notification" xmlns:activities="http://www.orcid.org/ns/activities" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <notification:notification-type>ADD_ACTIVITIES</notification:notification-type>
     <notification:authorization-url>
         <!-- API user can specify just the path if they want. -->
