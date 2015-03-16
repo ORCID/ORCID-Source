@@ -60,7 +60,10 @@ public class MigrateFundingAmountToANumericValue {
             protected void doInTransactionWithoutResult(TransactionStatus status) {
                 List<ProfileFundingEntity> allEntityesWithAmount = profileFundingDao.getProfileFundingWithAmount();
                 for(ProfileFundingEntity entity : allEntityesWithAmount) {
-                    String amount = entity.getAmount();
+                    //Amount filed was removed by card https://trello.com/c/WxbJLlCt/1884-remove-the-amount-field-from-the-profilefundingentity-since-we-now-use-the-bigdecimal-numericamount
+                    //String amount = entity.getAmount();
+                    //So, lets leave this empty just in case we need a rollback later
+                    String amount = "";
                     String currencyCode = entity.getCurrencyCode();
                     ProfileEntity profile = entity.getProfile();
                     Locale locale = getLocaleFromProfile(profile);

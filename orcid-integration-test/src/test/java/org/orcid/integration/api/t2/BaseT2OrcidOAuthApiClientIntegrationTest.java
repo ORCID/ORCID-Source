@@ -133,6 +133,7 @@ public abstract class BaseT2OrcidOAuthApiClientIntegrationTest {
 
     protected ClientResponse createNewOrcidUsingAccessToken() throws Exception {
         OrcidMessage profile = orcidClientDataHelper.createFromXML(OrcidClientDataHelper.ORCID_INTERNAL_NO_SPONSOR_XML);
+        profile.getOrcidProfile().setOrcidHistory(null);
         ClientResponse clientResponse = oauthT2Client1_2_rc6.createProfileXML(profile, accessToken);
         // assign orcid any time it's created for use in tear-down
         this.orcid = orcidClientDataHelper.extractOrcidFromResponseCreated(clientResponse);
