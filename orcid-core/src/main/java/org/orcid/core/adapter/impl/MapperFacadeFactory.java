@@ -70,7 +70,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     public MapperFacade getObject() throws Exception {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
         ConverterFactory converterFactory = mapperFactory.getConverterFactory();
-        converterFactory.registerConverter("externalIdentifierIdConverter", new ExternalIdentifierValueConverter());
+        converterFactory.registerConverter("externalIdentifierIdConverter", new ExternalIdentifierTypeConverter());
         mapCommonFields(mapperFactory.classMap(NotificationCustomEntity.class, NotificationCustom.class)).register();
         mapCommonFields(mapperFactory.classMap(NotificationAddActivitiesEntity.class, NotificationAddActivities.class)).field("authorizationUrl", "authorizationUrl.uri")
                 .field("notificationActivities", "activities.activities").register();
