@@ -593,12 +593,14 @@ public class T2OrcidApiClientIntegrationTest extends AbstractT2ClientIntegration
 
     private ClientResponse createFullOrcidJSON() throws JAXBException {
         OrcidMessage message = getInternalFullOrcidMessage(OrcidClientDataHelper.ORCID_INTERNAL_NO_SPONSOR_XML);
+        message.getOrcidProfile().setOrcidHistory(null);        
         ClientResponse response = t2Client1_2_rc6.createProfileJson(message);
         return response;
     }
 
     private ClientResponse createSponsor() throws JAXBException {
         OrcidMessage message = getInternalSponsor();
+        message.getOrcidProfile().setOrcidHistory(null);
         ClientResponse response = t2Client1_2_rc6.createProfileJson(message);
         return response;
     }

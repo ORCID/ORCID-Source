@@ -329,6 +329,7 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
 
         // test creating a record works with token
         OrcidMessage message = orcidClientDataHelper.createFromXML(OrcidClientDataHelper.ORCID_INTERNAL_NO_SPONSOR_XML);
+        message.getOrcidProfile().setOrcidHistory(null);
         ClientResponse clientResponse = oauthT2Client1_2_rc6.createProfileXML(message, accessToken);
         assertEquals(201, clientResponse.getStatus());
         MultivaluedMap<String, String> map = clientResponse.getHeaders();
