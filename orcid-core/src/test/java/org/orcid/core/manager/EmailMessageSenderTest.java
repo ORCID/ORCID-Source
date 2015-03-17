@@ -29,8 +29,9 @@ import javax.annotation.Resource;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.orcid.core.BaseTest;
-import org.orcid.jaxb.model.common.ClientId;
 import org.orcid.jaxb.model.common.Source;
+import org.orcid.jaxb.model.common.SourceClientId;
+import org.orcid.jaxb.model.common.SourceName;
 import org.orcid.jaxb.model.message.FamilyName;
 import org.orcid.jaxb.model.message.GivenNames;
 import org.orcid.jaxb.model.message.OrcidBio;
@@ -75,8 +76,8 @@ public class EmailMessageSenderTest extends BaseTest {
         activities1.getActivities().add(createActivity(ActivityType.WORK, "Work 2"));
         notification1.setCreatedDate(DateUtils.convertToXMLGregorianCalendar("2014-07-10T13:39:31"));
         Source source1 = new Source();
-        source1.setSourceName("Super Institution 1");
-        source1.setClientId(new ClientId("APP-5555-5555-5555-5555"));
+        source1.setSourceName(new SourceName("Super Institution 1"));
+        source1.setSourceClientId(new SourceClientId("APP-5555-5555-5555-5555"));
         notification1.setSource(source1);
         notifications.add(notification1);
 
@@ -86,8 +87,8 @@ public class EmailMessageSenderTest extends BaseTest {
         activities2.getActivities().add(createActivity(ActivityType.EMPLOYMENT, "Employment 1"));
         notification2.setCreatedDate(DateUtils.convertToXMLGregorianCalendar("2014-08-17T10:22:15"));
         Source source2 = new Source();
-        source2.setSourceName("Super Institution 1");
-        source2.setClientId(new ClientId("APP-5555-5555-5555-5555"));
+        source2.setSourceName(new SourceName("Super Institution 1"));
+        source2.setSourceClientId(new SourceClientId("APP-5555-5555-5555-5555"));
         notification2.setSource(source2);
         notifications.add(notification2);
 
@@ -98,9 +99,9 @@ public class EmailMessageSenderTest extends BaseTest {
         activities3.getActivities().add(createActivity(ActivityType.WORK, "Work 4"));
         notification3.setCreatedDate(DateUtils.convertToXMLGregorianCalendar("2014-07-10T08:53:56"));
         Source source3 = new Source();
-        source3.setSourceName("Lovely Publisher 1");
+        source3.setSourceName(new SourceName("Lovely Publisher 1"));
         notification3.setSource(source3);
-        source3.setClientId(new ClientId("APP-ABCD-ABCD-ABCD-ABCD"));
+        source3.setSourceClientId(new SourceClientId("APP-ABCD-ABCD-ABCD-ABCD"));
         notifications.add(notification3);
 
         NotificationCustom notification4 = new NotificationCustom();

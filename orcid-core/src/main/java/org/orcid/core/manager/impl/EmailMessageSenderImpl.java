@@ -34,7 +34,7 @@ import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.TemplateManager;
-import org.orcid.jaxb.model.common.ClientId;
+import org.orcid.jaxb.model.common.SourceClientId;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.notification.Notification;
 import org.orcid.jaxb.model.notification.addactivities.NotificationAddActivities;
@@ -108,7 +108,7 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
             if (notification.getSource() == null) {
                 orcidMessageCount++;
             } else {
-                ClientId clientId = notification.getSource().getClientId();
+                SourceClientId clientId = notification.getSource().getSourceClientId();
                 if (clientId != null) {
                     memberIds.add(clientId.getPath());
                 }

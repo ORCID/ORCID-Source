@@ -28,9 +28,9 @@ import javax.xml.bind.Unmarshaller;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.orcid.jaxb.model.common.Iso3166Country;
+import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.jaxb.model.record.Education;
-import org.orcid.jaxb.model.record.Iso3166Country;
-import org.orcid.jaxb.model.record.Visibility;
 import org.orcid.jaxb.model.record.summary.EducationSummary;
 import org.orcid.persistence.jpa.entities.EndDateEntity;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
@@ -107,7 +107,7 @@ public class JpaJaxbEducationAdapterTest {
         assertNotNull(education.getOrganization().getAddress());
         assertEquals("org:city", education.getOrganization().getAddress().getCity());
         assertEquals("org:region", education.getOrganization().getAddress().getRegion());
-        assertEquals(org.orcid.jaxb.model.record.Iso3166Country.US, education.getOrganization().getAddress().getCountry());
+        assertEquals(org.orcid.jaxb.model.common.Iso3166Country.US, education.getOrganization().getAddress().getCountry());
         assertNotNull(education.getSource());        
         assertNotNull(education.getSource().getSourceOrcid());
         assertEquals("APP-000000001", education.getSource().getSourceOrcid().getPath());

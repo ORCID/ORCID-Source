@@ -33,6 +33,16 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.orcid.jaxb.model.common.Country;
+import org.orcid.jaxb.model.common.CreatedDate;
+import org.orcid.jaxb.model.common.LastModifiedDate;
+import org.orcid.jaxb.model.common.PublicationDate;
+import org.orcid.jaxb.model.common.Source;
+import org.orcid.jaxb.model.common.Title;
+import org.orcid.jaxb.model.common.Url;
+import org.orcid.jaxb.model.common.Visibility;
+import org.orcid.jaxb.model.common.VisibilityType;
+
 
 /**
  * <p>

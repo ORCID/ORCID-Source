@@ -19,7 +19,7 @@ package org.orcid.core.manager;
 import java.io.Writer;
 import java.util.List;
 
-import org.orcid.jaxb.model.record.OrganizationHolder;
+import org.orcid.jaxb.model.common.OrganizationHolder;
 import org.orcid.persistence.jpa.entities.AmbiguousOrgEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
 
