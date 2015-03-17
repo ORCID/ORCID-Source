@@ -413,11 +413,12 @@
 					   	
 					   	
 					   	<!-- Bibtex Import Results List -->
-					   	<div ng-repeat="work in worksFromBibtex" ng-cloak class="bottomBuffer">
+					   	<div ng-repeat="work in worksFromBibtex" ng-cloak class="bottomBuffer">					   	
 					   		  <div class="row full-height-row">	  
-			        	       	  <div class="col-md-9">
+			        	       	  <div class="col-md-9 col-sm-9 col-xs-9">
 			        	          	<h3 ng-show="{{work.title.value != null}}" class="workspace-title bibtex-work-title">{{work.title.value}}</h3>
 			        	          	<h3 ng-show="{{work.title.value == null}}" class="workspace-title bibtex-work-title bibtex-content-missing">&lt;<@orcid.msg 'workspace.bibtexImporter.work.title_missing' />&gt;</h3>
+			        	          	
 			        	          	
 			        	          	<!-- Work Category --> 
 			        	          	<span class="info-detail" ng-show="{{work.workCategory.value.length > 0}}">{{work.workCategory.value | formatBibtexOutput}}</span>
@@ -427,24 +428,21 @@
 			        	          	<span class="info-detail" ng-show="{{work.workType.value.length > 0}}">{{work.workType.value | formatBibtexOutput}}</span>
 			        	          	<span class="bibtex-content-missing small-missing-info" ng-show="{{work.workType.value.length == 0}}">&lt;<@orcid.msg 'workspace.bibtexImporter.work.type_missing' />&gt;</span>
 			        	          	
-			        	          	<!-- External Identifier (at least one) 
-			        	          	
+			        	          	<!-- External identifiers -->
 			        	          	<span class="info-detail" ng-show="{{work.workExternalIdentifiers[0].workExternalIdentifierType.value.length > 0}}">
 			        	          		<span ng-repeat='ie in work.workExternalIdentifiers'><span
 		                                     ng-bind-html='ie | workExternalIdentifierHtml:$first:$last:work.workExternalIdentifiers.length'></span>
 		                                </span>
 			        	          	</span>
 			        	          	<span class="info-detail bibtex-content-missing" ng-show="{{work.workExternalIdentifiers[0].workExternalIdentifierType.value.length == 0}}"">&lt;<@orcid.msg 'workspace.bibtexImporter.work.external_id_missing' />&gt;</span>
-			        	          	
-			        	          	-->
-			        	          	
-			        	          </div>
-			        	          <div class="col-md-3 bibtex-options-menu">
+			        	          
+			        	          </div>			        	          
+			        	          <div class="col-md-3 col-sm-3 col-xs-3 bibtex-options-menu">			        	          	
 			        	          	<ul>
 			        	          		<li><a ng-click="rmWorkFromBibtex(work)" class="ignore glyphicon glyphicon-trash" title="Ignore"></a></li>
-			        	          		
-			        	          		<li><a ng-click="addWorkFromBibtex(work)" class="save glyphicon glyphicon-floppy-disk" title="Save"></a></li>
-			        	          		<li><a ng-click="addWorkFromBibtex(work)" class="save glyphicon glyphicon-pencil" title="Edit"></a></li>
+			        	          		<li><a ng-show="{{work.title.value != null && work.workCategory.value.length > 0 && work.workType.value.length > 0 && work.workExternalIdentifiers[0].workExternalIdentifierType.value.length > 0}}" ng-click="addWorkFromBibtex(work)" class="save glyphicon glyphicon-floppy-disk" title="Save"></a></li>
+			        	          		<li><a ng-show="{{work.title.value == null || work.workCategory.value.length == 0 || work.workType.value.length == 0 || work.workExternalIdentifiers[0].workExternalIdentifierType.value.length == 0}}" ng-click="editWorkFromBibtex(work)" class="save glyphicon glyphicon-pencil" title="Edit"></a></li>
+			        	          		<li><span ng-show="{{work.title.value == null || work.workCategory.value.length == 0 || work.workType.value.length == 0 || work.workExternalIdentifiers[0].workExternalIdentifierType.value.length == 0}}"><i class="glyphicon glyphicon-exclamation-sign"></i><@orcid.msg 'workspace.bibtexImporter.work.warning' /></span></li>
 			        	          	</ul>
 		        	          	 </div>
 	        	          	 </div>

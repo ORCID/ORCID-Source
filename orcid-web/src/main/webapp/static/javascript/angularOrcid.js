@@ -997,7 +997,7 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
                 };
             },
             putWork: function(work,sucessFunc, failFunc) {
-                console.log(work);
+                //console.log(work);
                 $.ajax({
                     url: getBaseUri() + '/works/work.json',
                     contentType: 'application/json;charset=UTF-8',
@@ -1006,6 +1006,7 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
                     data: angular.toJson(work),
                     success: function(data) {
                         sucessFunc(data);
+                        console.log(data);
                     }
                 }).fail(function(){
                     failFunc();
@@ -4052,10 +4053,18 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
         if($scope.worksFromBibtex.length == 0) $scope.bibtexCancelLink = false;
     };
 
-    $scope.addWorkFromBibtex = function(work) {
+    $scope.editWorkFromBibtex = function(work) {
         $scope.bibtextWorkIndex = $scope.worksFromBibtex.indexOf(work);
         $scope.bibtextWork = true;
-        $scope.addWorkModal($scope.worksFromBibtex[$scope.bibtextWorkIndex]);
+        $scope.addWorkModal($scope.worksFromBibtex[$scope.bibtextWorkIndex]);        
+        
+    };
+    
+    $scope.addWorkFromBibtex = function(work) {
+    	$scope.bibtextWorkIndex = $scope.worksFromBibtex.indexOf(work);    	
+    	$scope.editWork = $scope.worksFromBibtex[$scope.bibtextWorkIndex];
+    	$scope.bibtextWork = true;    	        
+        $scope.putWork();        
     };
 
     $scope.openBibTextWizard = function () {
@@ -4073,7 +4082,7 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     // Check for the various File API support.
     if (window.File && window.FileReader && window.FileList && window.Blob) {
         $scope.canReadFiles = true;
-    }
+    };
 
     $scope.toggleClickPrivacyHelp = function(key) {
         if (!document.documentElement.className.contains('no-touch'))
@@ -4226,14 +4235,18 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
         $scope.addingWork = true;
         $scope.editWork.errors.length = 0;
         worksSrvc.putWork($scope.editWork,
-            function(data){
-                if (data.errors.length == 0){
-                    $.colorbox.close();
-                    $scope.addingWork = false;
-
-                    if($scope.bibtextWork == true){
+            function(data){        	    
+                if (data.errors.length == 0) {
+                	if ($scope.bibtextWork == false){
+                		$.colorbox.close();
+                		$scope.addingWork = false;
+                	} else {
                         $scope.worksFromBibtex.splice($scope.bibtextWorkIndex, 1);
                         $scope.bibtextWork = false;
+                        $scope.addingWork = false;
+                        $scope.$apply();
+                        $.colorbox.close();
+                        $scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);
                     }
                 } else {
                     $scope.editWork = data;
