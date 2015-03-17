@@ -27,7 +27,7 @@ import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.OrgManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.jaxb.model.message.Visibility;
-import org.orcid.jaxb.model.record.AffiliationType;
+import org.orcid.jaxb.model.message.AffiliationType;
 import org.orcid.jaxb.model.record.Education;
 import org.orcid.jaxb.model.record.Employment;
 import org.orcid.jaxb.model.record.summary.EducationSummary;

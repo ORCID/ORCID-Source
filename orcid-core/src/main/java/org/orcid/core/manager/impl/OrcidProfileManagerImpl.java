@@ -1589,6 +1589,9 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
                     if(orgEntity.getOrgDisambiguated() != null) {
                         //Update the desambiguated org
                         org.setDisambiguatedOrganization(adapter.getDisambiguatedOrganization(orgEntity.getOrgDisambiguated()));
+                    } else {
+                        //Null the disambiguated organization
+                        org.setDisambiguatedOrganization(null);
                     }
                 }
             }
