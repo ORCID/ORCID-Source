@@ -771,16 +771,19 @@ public class NotificationManagerImpl implements NotificationManager {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Notification> findByOrcid(String orcid, boolean includeArchived, int firstResult, int maxResults) {
         return notificationAdapter.toNotification(notificationDao.findByOrcid(orcid, includeArchived, firstResult, maxResults));
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Notification findById(Long id) {
         return notificationAdapter.toNotification(notificationDao.find(id));
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Notification findByOrcidAndId(String orcid, Long id) {
         return notificationAdapter.toNotification(notificationDao.findByOricdAndId(orcid, id));
     }
