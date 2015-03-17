@@ -3925,7 +3925,7 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     $scope.delCountVerify = 0;
     $scope.bulkDeleteCount = 0;
     $scope.bulkDeleteSubmit = false;
-
+    
     $scope.sortState = new ActSortState(GroupedActivities.ABBR_WORK);
     $scope.sort = function(key) {
         $scope.sortState.sortBy(key);
@@ -4026,9 +4026,9 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
                 for (j in parsed) {
                     (function (cur) {
                         bibtexEntry = parsed[j].entryType.toLowerCase();
-                        console.log(bibtexEntry);
+                        
                         if(bibtexEntry != 'preamble' && bibtexEntry != 'comment'){ //Filtering @PREAMBLE and @COMMENT
-                            worksSrvc.getBlankWork(function(data) {                            	
+                            worksSrvc.getBlankWork(function(data) {
                                 populateWorkAjaxForm(cur,data);
                                 $scope.worksFromBibtex.push(data);
                                 $scope.bibtexCancelLink = true;                                
@@ -4036,9 +4036,11 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
                         }
                     })(parsed[j]);
                 };
+                
             });
                $scope.textFiles = null;
                $scope.bibtexParsingError = false;
+               
         } catch (err) {
             $scope.bibtexParsingError = true;
         };
@@ -8091,9 +8093,9 @@ orcidNgModule.directive('resize', function ($window) {
 	}
 });
 
-orcidNgModule.filter('formatBibtexType', function () {
+orcidNgModule.filter('formatBibtexOutput', function () {
     return function (text) {
 		var str = text.replace(/[\-?_?]/, ' ');
 		return str.toUpperCase();
     };
-})
+});

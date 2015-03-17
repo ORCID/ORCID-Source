@@ -5699,6 +5699,15 @@ ul.oauth-scopes li{
   vertical-align: bottom;
 }
 
+.bibtex-content-missing{
+	background-color: #F5C120;
+	color: #494A4C;
+}
+
+.small-missing-info{
+	font-size: 12px;
+}
+
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
