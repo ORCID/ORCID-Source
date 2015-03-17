@@ -23,11 +23,15 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
 import javax.ws.rs.ext.Provider;
 
-import org.codehaus.jackson.jaxrs.Annotations;
-import org.codehaus.jackson.jaxrs.JacksonJaxbJsonProvider;
-import org.codehaus.jackson.map.DeserializationConfig.Feature;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.SerializationConfig;
+
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
+import com.fasterxml.jackson.jaxrs.cfg.Annotations;
+
+
+
 
 /**
  * @author Will Simpson
@@ -53,8 +57,8 @@ public class OrcidJacksonJaxbJsonProviderPretty extends JacksonJaxbJsonProvider 
     }
     
     private void configureAll() {
-        configure(Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
-        configure(SerializationConfig.Feature.INDENT_OUTPUT, true);
+        configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
+        configure(SerializationFeature.INDENT_OUTPUT, true);
     }
 
 }

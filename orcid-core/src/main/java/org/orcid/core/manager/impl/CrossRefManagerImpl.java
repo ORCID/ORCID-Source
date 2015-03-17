@@ -23,13 +23,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.codehaus.jackson.jaxrs.JacksonJsonProvider;
 import org.orcid.core.crossref.CrossRefMetadata;
 import org.orcid.core.manager.CrossRefManager;
 import org.orcid.core.utils.ContentTypeFromTextToJsonClientFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.GenericType;
 import com.sun.jersey.api.client.WebResource;

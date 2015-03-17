@@ -16,14 +16,14 @@
  */
 package org.orcid.api.common.jaxb;
 
-import org.codehaus.jackson.jaxrs.Annotations;
-import org.codehaus.jackson.jaxrs.JacksonJaxbJsonProvider;
-import org.codehaus.jackson.map.DeserializationConfig.Feature;
-import org.codehaus.jackson.map.ObjectMapper;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
 import javax.ws.rs.ext.Provider;
+
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.jaxrs.cfg.Annotations;
+import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
 
 import static org.orcid.core.api.OrcidApiConstants.*;
 
@@ -37,17 +37,17 @@ public class OrcidJacksonJaxbJsonProvider extends JacksonJaxbJsonProvider {
 
     public OrcidJacksonJaxbJsonProvider() {
         super();
-        configure(Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
+        configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
     }
 
     public OrcidJacksonJaxbJsonProvider(Annotations... annotationsToUse) {
         super(annotationsToUse);
-        configure(Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
+        configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
     }
 
     public OrcidJacksonJaxbJsonProvider(ObjectMapper mapper, Annotations[] annotationsToUse) {
         super(mapper, annotationsToUse);
-        configure(Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
+        configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
     }
 
 }

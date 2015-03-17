@@ -43,7 +43,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.validator.routines.UrlValidator;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.OrcidProfileManager;
@@ -76,6 +75,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.servlet.support.RequestContextUtils;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class BaseController {
 
