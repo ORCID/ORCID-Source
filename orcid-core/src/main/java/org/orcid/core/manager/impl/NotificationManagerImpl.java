@@ -500,6 +500,7 @@ public class NotificationManagerImpl implements NotificationManager {
     }
 
     @Override
+    @Transactional
     public void sendApiRecordCreationEmail(String toEmail, OrcidProfile createdProfile) {
 
         Source source = null;
