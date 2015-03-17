@@ -28,10 +28,10 @@ import javax.xml.bind.Unmarshaller;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.orcid.jaxb.model.common.Iso3166Country;
+import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.jaxb.model.record.Employment;
 import org.orcid.jaxb.model.record.Employment;
-import org.orcid.jaxb.model.record.Iso3166Country;
-import org.orcid.jaxb.model.record.Visibility;
 import org.orcid.jaxb.model.record.summary.EmploymentSummary;
 import org.orcid.persistence.jpa.entities.EndDateEntity;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
@@ -109,7 +109,7 @@ public class JpaJaxbEmploymentAdapterTest {
         assertNotNull(employment.getOrganization().getAddress());
         assertEquals("org:city", employment.getOrganization().getAddress().getCity());
         assertEquals("org:region", employment.getOrganization().getAddress().getRegion());
-        assertEquals(org.orcid.jaxb.model.record.Iso3166Country.US, employment.getOrganization().getAddress().getCountry());
+        assertEquals(org.orcid.jaxb.model.common.Iso3166Country.US, employment.getOrganization().getAddress().getCountry());
         assertNotNull(employment.getSource());        
         assertNotNull(employment.getSource().getSourceOrcid());
         assertEquals("APP-000000001", employment.getSource().getSourceOrcid().getPath());

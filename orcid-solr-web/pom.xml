@@ -78,6 +78,7 @@
                     </mapping>
                     <excludes>
                         <exclude>**/src/main/webapp/**</exclude>
+                        <exclude>**/rebel.xml</exclude>
                     </excludes>
                 </configuration>
                 <executions>

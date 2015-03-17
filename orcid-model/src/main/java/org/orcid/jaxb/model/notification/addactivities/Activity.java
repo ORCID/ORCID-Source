@@ -24,14 +24,12 @@
 package org.orcid.jaxb.model.notification.addactivities;
 
 import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * <p>
@@ -46,9 +44,9 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element ref="{http://www.orcid.org/ns/orcid}activityType"/>
- *         &lt;element ref="{http://www.orcid.org/ns/orcid}activityName"/>
- *         &lt;element ref="{http://www.orcid.org/ns/orcid}externalId" minOccurs="0"/>
+ *         &lt;element ref="{http://www.orcid.org/ns/notification}activity-type"/>
+ *         &lt;element ref="{http://www.orcid.org/ns/notification}activity-name"/>
+ *         &lt;element ref="{http://www.orcid.org/ns/common}external-id" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -58,16 +56,17 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "activityType", "activityName", "externalId" })
+@XmlType(name = "", propOrder = { "activityType", "activityName", "externalIdentifier" })
 @XmlRootElement(name = "activity")
 public class Activity implements Serializable {
 
     private final static long serialVersionUID = 1L;
-    @XmlElement(required = true)
+    @XmlElement(name = "activity-type", namespace = "http://www.orcid.org/ns/notification", required = true)
     protected ActivityType activityType;
-    @XmlElement(required = true)
+    @XmlElement(name = "activity-name", namespace = "http://www.orcid.org/ns/notification", required = true)
     protected String activityName;
-    protected ExternalId externalId;
+    @XmlElement(name = "external-identifier", namespace = "http://www.orcid.org/ns/notification", required = true)
+    protected ExternalIdentifier externalIdentifier;
 
     /**
      * Gets the value of the activityType property.
@@ -114,22 +113,22 @@ public class Activity implements Serializable {
     /**
      * Gets the value of the externalId property.
      * 
-     * @return possible object is {@link ExternalId }
+     * @return possible object is {@link ExternalIdentifier }
      * 
      */
-    public ExternalId getExternalId() {
-        return externalId;
+    public ExternalIdentifier getExternalIdentifier() {
+        return externalIdentifier;
     }
 
     /**
      * Sets the value of the externalId property.
      * 
      * @param value
-     *            allowed object is {@link ExternalId }
+     *            allowed object is {@link ExternalIdentifier }
      * 
      */
-    public void setExternalId(ExternalId value) {
-        this.externalId = value;
+    public void setExternalIdentifier(ExternalIdentifier value) {
+        this.externalIdentifier = value;
     }
 
 }

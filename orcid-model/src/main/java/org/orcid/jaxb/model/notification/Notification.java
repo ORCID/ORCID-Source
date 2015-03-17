@@ -49,13 +49,13 @@ import org.orcid.jaxb.model.notification.NotificationType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element ref="{http://www.orcid.org/ns/orcid}putCode" minOccurs="0"/>
- *         &lt;element ref="{http://www.orcid.org/ns/orcid}notificationType"/>
- *         &lt;element name="createdDate" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0"/>
- *         &lt;element name="sentDate" type="{http://www.w3.org/2001/XMLSchema}dateTime"/>
- *         &lt;element name="readDate" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0"/>
- *         &lt;element name="archivedDate" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0"/>
- *         &lt;element ref="{http://www.orcid.org/ns/orcid}source" minOccurs="0"/>
+ *         &lt;element ref="{http://www.orcid.org/ns/common}put-code" minOccurs="0"/>
+ *         &lt;element ref="{http://www.orcid.org/ns/notification}notification-type"/>
+ *         &lt;element name="created-date" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0"/>
+ *         &lt;element name="sent-date" type="{http://www.w3.org/2001/XMLSchema}dateTime"/>
+ *         &lt;element name="read-date" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0"/>
+ *         &lt;element name="archived-date" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0"/>
+ *         &lt;element ref="{http://www.orcid.org/ns/common}source" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -69,19 +69,23 @@ import org.orcid.jaxb.model.notification.NotificationType;
 abstract public class Notification implements Serializable {
 
     private final static long serialVersionUID = 1L;
-    @XmlAttribute
+    @XmlAttribute(name = "put-code")
     protected Long putCode;
-    @XmlElement(required = true)
+    @XmlElement(name = "notification-type", namespace = "http://www.orcid.org/ns/notification", required = true)
     protected NotificationType notificationType;
+    @XmlElement(name = "created-date", namespace = "http://www.orcid.org/ns/common")
     @XmlSchemaType(name = "dateTime")
     protected XMLGregorianCalendar createdDate;
-    @XmlElement(required = true)
+    @XmlElement(name = "sent-date", namespace = "http://www.orcid.org/ns/common")
     @XmlSchemaType(name = "dateTime")
     protected XMLGregorianCalendar sentDate;
+    @XmlElement(name = "read-date", namespace = "http://www.orcid.org/ns/common")
     @XmlSchemaType(name = "dateTime")
     protected XMLGregorianCalendar readDate;
+    @XmlElement(name = "archived-date", namespace = "http://www.orcid.org/ns/common")
     @XmlSchemaType(name = "dateTime")
     protected XMLGregorianCalendar archivedDate;
+    @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected Source source;
 
     /**

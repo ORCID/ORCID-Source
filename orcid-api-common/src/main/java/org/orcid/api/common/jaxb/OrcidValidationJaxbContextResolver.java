@@ -66,7 +66,7 @@ public class OrcidValidationJaxbContextResolver implements ContextResolver<Unmar
     private static final Logger logger = Logger.getLogger(OrcidValidationJaxbContextResolver.class);
     private static final Map<Class<?>, String> SCHEMA_FILENAME_PREFIX_BY_CLASS = new HashMap<>();
     static {
-        SCHEMA_FILENAME_PREFIX_BY_CLASS.put(NotificationAddActivities.class, "orcid-notification-add-activities-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS.put(NotificationAddActivities.class, "notification_2.0_rc1/notification-add-activities-");
         SCHEMA_FILENAME_PREFIX_BY_CLASS.put(Work.class, "record_2.0_rc1/work-");
         SCHEMA_FILENAME_PREFIX_BY_CLASS.put(Funding.class, "record_2.0_rc1/funding-");
         SCHEMA_FILENAME_PREFIX_BY_CLASS.put(Education.class, "record_2.0_rc1/education-");

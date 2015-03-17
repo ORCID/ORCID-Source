@@ -41,6 +41,8 @@ import org.orcid.jaxb.model.notification.NotificationType;
 
 public class MarshallingTest {
 
+    private static final String SAMPLE_PATH = "/notification_2.0_rc1/samples/notification-add-activities-2.0_rc1.xml";
+
     @Test
     public void testMarshalling() throws JAXBException, IOException {
         NotificationAddActivities notification = getNotification();
@@ -50,13 +52,14 @@ public class MarshallingTest {
         assertEquals("2014-01-01T14:45:32", notification.getSentDate().toXMLFormat());
 
         // Back the other way
-        String expected = IOUtils.toString(getClass().getResourceAsStream("/notification-add-activities.xml"), "UTF-8");
+        String expected = IOUtils.toString(getClass().getResourceAsStream(SAMPLE_PATH), "UTF-8");
         Pattern pattern = Pattern.compile("<!--.*?-->\\s*", Pattern.DOTALL);
         expected = pattern.matcher(expected).replaceAll("");
         JAXBContext context = JAXBContext.newInstance("org.orcid.jaxb.model.notification.addactivities");
         Marshaller marshaller = context.createMarshaller();
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-        marshaller.setProperty(Marshaller.JAXB_SCHEMA_LOCATION, "http://www.orcid.org/ns/orcid ../../../../orcid-model/src/main/resources/orcid-notification-add-activities-1.0.xsd");
+        marshaller.setProperty(Marshaller.JAXB_SCHEMA_LOCATION,
+                "http://www.orcid.org/ns/notification ../notification-add-activities-2.0_rc1.xsd");
         StringWriter writer = new StringWriter();
         marshaller.marshal(notification, writer);
         String result = writer.toString();
@@ -66,7 +69,7 @@ public class MarshallingTest {
     private NotificationAddActivities getNotification() throws JAXBException {
         JAXBContext context = JAXBContext.newInstance("org.orcid.jaxb.model.notification.addactivities");
         Unmarshaller unmarshaller = context.createUnmarshaller();
-        InputStream inputStream = MarshallingTest.class.getResourceAsStream("/notification-add-activities.xml");
+        InputStream inputStream = MarshallingTest.class.getResourceAsStream(SAMPLE_PATH);
         return (NotificationAddActivities) unmarshaller.unmarshal(inputStream);
     }
 

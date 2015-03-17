@@ -34,7 +34,7 @@
     </bean>
     
 	<bean id="notificationsClient" class="org.orcid.integration.api.notifications.NotificationsApiClientImpl">
-        <constructor-arg value="${org.orcid.api.baseUri}/v1.0"/>
+        <constructor-arg value="${org.orcid.api.baseUri}/v2.0_rc1"/>
         <constructor-arg ref="jerseyClient"/>
     </bean>
     
