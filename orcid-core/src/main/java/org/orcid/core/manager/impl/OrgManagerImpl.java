@@ -25,6 +25,7 @@ import org.orcid.core.manager.OrgManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.jaxb.model.common.OrganizationHolder;
 import org.orcid.jaxb.model.message.Iso3166Country;
+import org.orcid.jaxb.model.message.Organization;
 import org.orcid.persistence.dao.OrgDao;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
 import org.orcid.persistence.jpa.entities.AmbiguousOrgEntity;
@@ -158,5 +159,20 @@ public class OrgManagerImpl implements OrgManager {
                     .getDisambiguatedOrganizationIdentifier(), organization.getDisambiguatedOrganization().getDisambiguationSource()));
         }
         return createUpdate(orgEntity);        
+    }
+    
+    @Override
+    public OrgEntity getOrgEntity(Organization org) {
+        String name = org.getName();
+        String city = "";
+        String region = "";
+        Iso3166Country country = null;
+        if(org.getAddress() != null) {
+            city = org.getAddress().getCity();
+            region = org.getAddress().getRegion();
+            country = org.getAddress().getCountry();
+                    
+        }
+        return orgDao.findByNameCityRegionAndCountry(name, city, region, country);        
     }
 }

@@ -42,7 +42,7 @@ public enum AffiliationType implements Serializable {
 
     public String value() {
         return value;
-    }
+    }       
 
     public static AffiliationType fromValue(String v) {
         for (AffiliationType c : AffiliationType.values()) {

@@ -19,7 +19,7 @@ package org.orcid.persistence.dao;
 import java.util.List;
 
 import org.orcid.jaxb.model.message.Visibility;
-import org.orcid.jaxb.model.record.AffiliationType;
+import org.orcid.jaxb.model.message.AffiliationType;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 
 public interface OrgAffiliationRelationDao extends GenericDao<OrgAffiliationRelationEntity, Long> {

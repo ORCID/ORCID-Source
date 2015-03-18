@@ -18,7 +18,7 @@ package org.orcid.core.manager;
 
 import java.util.List;
 
-import org.orcid.jaxb.model.record.AffiliationType;
+import org.orcid.jaxb.model.message.AffiliationType;
 import org.orcid.jaxb.model.record.Education;
 import org.orcid.jaxb.model.record.Employment;
 import org.orcid.jaxb.model.record.summary.EducationSummary;
