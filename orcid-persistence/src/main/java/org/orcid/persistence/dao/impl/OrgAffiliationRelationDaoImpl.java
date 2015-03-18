@@ -23,7 +23,7 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import org.orcid.jaxb.model.message.Visibility;
-import org.orcid.jaxb.model.record.AffiliationType;
+import org.orcid.jaxb.model.message.AffiliationType;
 import org.orcid.persistence.dao.OrgAffiliationRelationDao;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -172,9 +172,9 @@ public class OrgAffiliationRelationDaoImpl extends GenericDaoImpl<OrgAffiliation
      * */
     @Override
     public List<OrgAffiliationRelationEntity> getByUserAndType(String userOrcid, AffiliationType type) {
-        TypedQuery<OrgAffiliationRelationEntity> query = entityManager.createQuery("from OrgAffiliationRelationEntity where profile.id=:userOrcid and affiliationType.value=:affiliationType", OrgAffiliationRelationEntity.class);
+        TypedQuery<OrgAffiliationRelationEntity> query = entityManager.createQuery("from OrgAffiliationRelationEntity where profile.id=:userOrcid and affiliationType=:affiliationType", OrgAffiliationRelationEntity.class);
         query.setParameter("userOrcid", userOrcid);
-        query.setParameter("affiliationType", type.value());
+        query.setParameter("affiliationType", type);
         return query.getResultList();
     }
     

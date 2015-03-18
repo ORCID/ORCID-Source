@@ -51,14 +51,18 @@ import org.orcid.core.exception.OrcidBadRequestException;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.oauth.OrcidOAuth2Authentication;
 import org.orcid.jaxb.model.message.Affiliation;
+import org.orcid.jaxb.model.message.AffiliationType;
 import org.orcid.jaxb.model.message.Affiliations;
 import org.orcid.jaxb.model.message.Claimed;
 import org.orcid.jaxb.model.message.CompletionDate;
 import org.orcid.jaxb.model.message.ContactDetails;
 import org.orcid.jaxb.model.message.CreationMethod;
 import org.orcid.jaxb.model.message.CreditName;
+import org.orcid.jaxb.model.message.DisambiguatedOrganization;
 import org.orcid.jaxb.model.message.Email;
+import org.orcid.jaxb.model.message.FuzzyDate;
 import org.orcid.jaxb.model.message.GivenNames;
+import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.LastModifiedDate;
 import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.OrcidBio;
@@ -67,11 +71,15 @@ import org.orcid.jaxb.model.message.OrcidIdentifier;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWorks;
+import org.orcid.jaxb.model.message.Organization;
+import org.orcid.jaxb.model.message.OrganizationAddress;
 import org.orcid.jaxb.model.message.PersonalDetails;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.message.Source;
 import org.orcid.jaxb.model.message.SubmissionDate;
 import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.persistence.dao.OrgAffiliationRelationDao;
+import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.test.DBUnitTest;
 import org.springframework.security.core.GrantedAuthority;
@@ -100,6 +108,9 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
     @Resource(name = "t2OrcidApiServiceDelegatorLatest")
     private T2OrcidApiServiceDelegator t2OrcidApiServiceDelegatorLatest;
 
+    @Resource
+    private OrgAffiliationRelationDao orgAffiliationDao;
+    
     @Mock
     private UriInfo mockedUriInfo;
 
@@ -316,14 +327,19 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
     }
 
     private void setUpSecurityContext() {
+        setUpSecurityContext("4444-4444-4444-4441");
+    }
+    
+    private void setUpSecurityContext(String userOrcid) {
         SecurityContextImpl securityContext = new SecurityContextImpl();
         OrcidOAuth2Authentication mockedAuthentication = mock(OrcidOAuth2Authentication.class);
         securityContext.setAuthentication(mockedAuthentication);
         SecurityContextHolder.setContext(securityContext);
-        when(mockedAuthentication.getPrincipal()).thenReturn(new ProfileEntity("4444-4444-4444-4441"));
+        when(mockedAuthentication.getPrincipal()).thenReturn(new ProfileEntity(userOrcid));
         Set<String> scopes = new HashSet<String>();
-        scopes.add(ScopePathType.ORCID_WORKS_CREATE.value());
-        OAuth2Request authorizationRequest = new OAuth2Request(Collections.<String, String> emptyMap(), "4444-4444-4444-4441",
+        scopes.add(ScopePathType.ACTIVITIES_UPDATE.value());
+        scopes.add(ScopePathType.ACTIVITIES_READ_LIMITED.value());
+        OAuth2Request authorizationRequest = new OAuth2Request(Collections.<String, String> emptyMap(), userOrcid,
                 Collections.<GrantedAuthority> emptyList(), true, scopes, Collections.<String> emptySet(), null, Collections.<String> emptySet(),
                 Collections.<String, Serializable> emptyMap());                
         when(mockedAuthentication.getOAuth2Request()).thenReturn(authorizationRequest);
@@ -418,5 +434,150 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
         } catch(OrcidBadRequestException obe) {
             assertTrue(obe.getMessage().contains("Last modified date should not be specified when creating a profile"));
         }
-    }        
+    }
+    
+    @Test
+    public void addAffiliationTest() {
+        setUpSecurityContext();
+        OrcidMessage orcidMessage = new OrcidMessage();
+        orcidMessage.setMessageVersion("1.2_rc6");
+        OrcidProfile orcidProfile = new OrcidProfile();
+        orcidMessage.setOrcidProfile(orcidProfile);
+        orcidProfile.setOrcidIdentifier(new OrcidIdentifier("4444-4444-4444-4441"));
+        OrcidActivities orcidActivities = new OrcidActivities();
+        orcidProfile.setOrcidActivities(orcidActivities);
+        
+        Affiliations affiliations = new Affiliations();
+        
+        Affiliation affiliation = new Affiliation();
+        affiliation.setStartDate(new FuzzyDate(2010, 01, 01));
+        affiliation.setEndDate(new FuzzyDate(2015, 01, 01));
+        affiliation.setDepartmentName("Dep Name");        
+        affiliation.setRoleTitle("Role Title");
+        affiliation.setType(AffiliationType.EDUCATION);
+        Organization organization = new Organization();
+        organization.setName("My Org");
+        OrganizationAddress add = new OrganizationAddress();
+        add.setCity("My City");
+        add.setCountry(Iso3166Country.US);       
+        organization.setAddress(add);
+        affiliation.setOrganization(organization);
+        
+        affiliations.getAffiliation().add(affiliation);
+        orcidActivities.setAffiliations(affiliations);
+        
+        Response response = t2OrcidApiServiceDelegatorLatest.addAffiliations(mockedUriInfo, "4444-4444-4444-4441", orcidMessage);
+        assertNotNull(response);
+        assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
+        assertEquals(1, orgAffiliationDao.getByUserAndType("4444-4444-4444-4441", org.orcid.jaxb.model.message.AffiliationType.EDUCATION).size());
+    }      
+    
+    @Test
+    public void preventDuplicatedAffiliationsTest() {
+        setUpSecurityContext("4444-4444-4444-4446");
+        OrcidMessage orcidMessage = buildMessageWithAffiliation(AffiliationType.EDUCATION, "My dept", "My Role", "4444-4444-4444-4446");
+        
+        Response response = t2OrcidApiServiceDelegatorLatest.addAffiliations(mockedUriInfo, "4444-4444-4444-4446", orcidMessage);
+        assertNotNull(response);
+        assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());                       
+        assertEquals(1, orgAffiliationDao.getByUserAndType("4444-4444-4444-4446", org.orcid.jaxb.model.message.AffiliationType.EDUCATION).size());        
+        
+        orcidMessage = buildMessageWithAffiliation(AffiliationType.EDUCATION, "My dept", "My Role", "4444-4444-4444-4446");
+        response = t2OrcidApiServiceDelegatorLatest.addAffiliations(mockedUriInfo, "4444-4444-4444-4446", orcidMessage);
+        assertNotNull(response);
+        assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
+        
+        assertEquals(1, orgAffiliationDao.getByUserAndType("4444-4444-4444-4446", org.orcid.jaxb.model.message.AffiliationType.EDUCATION).size());               
+    }
+    
+    @Test
+    public void preventDuplicatedAffiliations2Test() {
+        setUpSecurityContext("4444-4444-4444-4499");
+        OrcidMessage orcidMessage = buildMessageWithAffiliation(AffiliationType.EDUCATION, "My dept", "My Role", "4444-4444-4444-4499");
+        
+        //Set an existing organization, but, with a bad disambiguated org 
+        Organization organization = new Organization();
+        organization.setName("An institution");
+        OrganizationAddress orgAdd = new OrganizationAddress();
+        orgAdd.setCity("London");
+        orgAdd.setCountry(Iso3166Country.GB);                
+        DisambiguatedOrganization dorg = new DisambiguatedOrganization();
+        dorg.setDisambiguatedOrganizationIdentifier("XXX");
+        dorg.setDisambiguationSource("123456");                
+        organization.setAddress(orgAdd);
+        organization.setDisambiguatedOrganization(dorg);        
+        orcidMessage.getOrcidProfile().getOrcidActivities().getAffiliations().getAffiliation().get(0).setOrganization(organization);
+                
+        Response response = t2OrcidApiServiceDelegatorLatest.addAffiliations(mockedUriInfo, "4444-4444-4444-4499", orcidMessage);
+        assertNotNull(response);
+        assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());                       
+        assertEquals(1, orgAffiliationDao.getByUserAndType("4444-4444-4444-4499", org.orcid.jaxb.model.message.AffiliationType.EDUCATION).size());        
+        
+        orcidMessage = buildMessageWithAffiliation(AffiliationType.EDUCATION, "My dept", "My Role", "4444-4444-4444-4499");
+        
+        //Set an existing organization, but, with a bad disambiguated org 
+        organization = new Organization();
+        organization.setName("An institution");
+        orgAdd = new OrganizationAddress();
+        orgAdd.setCity("London");
+        orgAdd.setCountry(Iso3166Country.GB);                
+        dorg = new DisambiguatedOrganization();
+        dorg.setDisambiguatedOrganizationIdentifier("YYY");
+        dorg.setDisambiguationSource("654321");                
+        organization.setAddress(orgAdd);
+        organization.setDisambiguatedOrganization(dorg);        
+        orcidMessage.getOrcidProfile().getOrcidActivities().getAffiliations().getAffiliation().get(0).setOrganization(organization);
+        
+        response = t2OrcidApiServiceDelegatorLatest.addAffiliations(mockedUriInfo, "4444-4444-4444-4499", orcidMessage);
+        assertNotNull(response);
+        assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
+        
+        assertEquals(1, orgAffiliationDao.getByUserAndType("4444-4444-4444-4499", org.orcid.jaxb.model.message.AffiliationType.EDUCATION).size());    
+        
+        OrgAffiliationRelationEntity orgEntity = orgAffiliationDao.getByUserAndType("4444-4444-4444-4499", org.orcid.jaxb.model.message.AffiliationType.EDUCATION).get(0);
+        assertNotNull(orgEntity);
+        assertNotNull(orgEntity.getOrg());
+        assertEquals("An institution", orgEntity.getOrg().getName());
+        assertEquals("London", orgEntity.getOrg().getCity());
+        assertEquals(Iso3166Country.GB, orgEntity.getOrg().getCountry());
+        assertEquals(Long.valueOf(1), orgEntity.getOrg().getId());
+        assertNotNull(orgEntity.getOrg().getOrgDisambiguated());
+        assertEquals("London", orgEntity.getOrg().getOrgDisambiguated().getCity());
+        assertEquals(Iso3166Country.GB, orgEntity.getOrg().getOrgDisambiguated().getCountry());
+        assertEquals(Long.valueOf(1), orgEntity.getOrg().getOrgDisambiguated().getId());
+    }
+    
+    private OrcidMessage buildMessageWithAffiliation(AffiliationType type, String dept, String role, String orcid) {
+        OrcidMessage orcidMessage = new OrcidMessage();
+        orcidMessage.setMessageVersion("1.2_rc6");
+        OrcidProfile orcidProfile = new OrcidProfile();
+        orcidMessage.setOrcidProfile(orcidProfile);
+        orcidProfile.setOrcidIdentifier(new OrcidIdentifier(orcid));
+        OrcidActivities orcidActivities = new OrcidActivities();
+        orcidProfile.setOrcidActivities(orcidActivities);
+        
+        Affiliations affiliations = new Affiliations();
+        
+        Affiliation affiliation = new Affiliation();
+        affiliation.setStartDate(new FuzzyDate(2010, 01, 01));
+        affiliation.setEndDate(new FuzzyDate(2015, 01, 01));
+        affiliation.setDepartmentName(dept);        
+        affiliation.setRoleTitle(role);
+        affiliation.setType(type);
+        Organization organization = new Organization();
+        organization.setName("My Org");
+        OrganizationAddress add = new OrganizationAddress();
+        add.setCity("My City");
+        add.setCountry(Iso3166Country.US);       
+        organization.setAddress(add);
+        DisambiguatedOrganization dorg = new DisambiguatedOrganization();
+        dorg.setDisambiguatedOrganizationIdentifier("disambiguated org ID");
+        dorg.setDisambiguationSource("THESOURCE");
+        organization.setDisambiguatedOrganization(dorg);
+        affiliation.setOrganization(organization);
+        
+        affiliations.getAffiliation().add(affiliation);
+        orcidActivities.setAffiliations(affiliations);
+        return orcidMessage;
+    }
 }

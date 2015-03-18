@@ -48,7 +48,7 @@ public class NotificationJsonMessageBodyWriter implements MessageBodyWriter<Noti
 
     @Override
     public long getSize(Notification notification, Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
-        OrcidJacksonJaxbJsonProviderPretty jaxbJsonProvider = new OrcidJacksonJaxbJsonProviderPretty();
+        OrcidJacksonJaxbJsonProvider jaxbJsonProvider = new OrcidJacksonJaxbJsonProvider();
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         try {
             jaxbJsonProvider.writeTo(notification, type, genericType, annotations, mediaType, null, bos);
@@ -61,7 +61,7 @@ public class NotificationJsonMessageBodyWriter implements MessageBodyWriter<Noti
     @Override
     public void writeTo(Notification notification, Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType,
             MultivaluedMap<String, Object> httpHeaders, OutputStream entityStream) throws IOException, WebApplicationException {
-        OrcidJacksonJaxbJsonProviderPretty jaxbJsonProvider = new OrcidJacksonJaxbJsonProviderPretty();
+        OrcidJacksonJaxbJsonProvider jaxbJsonProvider = new OrcidJacksonJaxbJsonProvider();
         jaxbJsonProvider.writeTo(notification, type, genericType, annotations, mediaType, httpHeaders, entityStream);
     }
 
