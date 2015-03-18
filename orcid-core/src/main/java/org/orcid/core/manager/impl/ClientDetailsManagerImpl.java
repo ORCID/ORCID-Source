@@ -32,6 +32,7 @@ import org.apache.commons.lang.time.DateUtils;
 import org.orcid.core.manager.AppIdGenerationManager;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.EncryptionManager;
+import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.RedirectUri;
@@ -78,6 +79,9 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
 
     @Resource
     private AppIdGenerationManager appIdGenerationManager;
+    
+    @Resource(name = "profileEntityCacheManager")
+    ProfileEntityCacheManager profileEntityCacheManager;
 
     /**
      * Load a client by the client id. This method must NOT return null.
@@ -135,8 +139,7 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
     @Override
     public ClientDetailsEntity createClientDetails(String groupOrcid, String name, String description, String website, ClientType clientType, Set<String> clientScopes,
             Set<String> clientResourceIds, Set<String> clientAuthorizedGrantTypes, Set<RedirectUri> clientRegisteredRedirectUris, List<String> clientGrantedAuthorities) {
-        Date lastModified = profileEntityManager.getLastModified(groupOrcid);
-        ProfileEntity groupProfileEntity = profileEntityManager.findByOrcid(groupOrcid, lastModified.getTime());
+        ProfileEntity groupProfileEntity = profileEntityCacheManager.retrieve(groupOrcid);
         if (groupProfileEntity == null) {
             throw new IllegalArgumentException("ORCID does not exist for " + groupOrcid + " cannot continue");
         } else {
@@ -180,9 +183,8 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
     @Override
     public ClientDetailsEntity createClientDetails(String orcid, String name, String description, String website, String clientId, String clientSecret,
             ClientType clientType, Set<String> clientScopes, Set<String> clientResourceIds, Set<String> clientAuthorizedGrantTypes,
-            Set<RedirectUri> clientRegisteredRedirectUris, List<String> clientGrantedAuthorities) {
-        Date lastModified = profileEntityManager.getLastModified(orcid);
-        ProfileEntity profileEntity = profileEntityManager.findByOrcid(orcid, lastModified.getTime());
+            Set<RedirectUri> clientRegisteredRedirectUris, List<String> clientGrantedAuthorities) {        
+        ProfileEntity profileEntity = profileEntityCacheManager.retrieve(orcid);
         if (profileEntity == null) {
             throw new IllegalArgumentException("The ORCID does not exist for " + orcid);
         }

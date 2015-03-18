@@ -18,7 +18,6 @@ package org.orcid.frontend.web.controllers;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -32,6 +31,7 @@ import org.apache.commons.validator.routines.UrlValidator;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.OrcidSSOManager;
+import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.jaxb.model.message.OrcidProfile;
@@ -71,6 +71,9 @@ public class DeveloperToolsController extends BaseWorkspaceController {
     
     @Resource
     private ClientDetailsManager clientDetailsManager;
+    
+    @Resource(name = "profileEntityCacheManager")
+    ProfileEntityCacheManager profileEntityCacheManager;
     
     @RequestMapping
     public ModelAndView manageDeveloperTools() {
@@ -207,8 +210,7 @@ public class DeveloperToolsController extends BaseWorkspaceController {
         ClientDetailsEntity clientDetails = clientDetailsManager.findByClientId(clientId);
         if(clientDetails == null)
             return false;
-        Date lastModified = profileEntityManager.getLastModified(clientDetails.getGroupProfileId());
-        ProfileEntity groupProfile = profileEntityManager.findByOrcid(clientDetails.getGroupProfileId(), lastModified.getTime());
+        ProfileEntity groupProfile = profileEntityCacheManager.retrieve(clientDetails.getGroupProfileId());
         if(groupProfile == null)
             return false;
         if(!groupProfile.getId().equals(getCurrentUserOrcid()))

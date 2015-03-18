@@ -34,6 +34,7 @@ import org.orcid.core.manager.ExternalIdentifierManager;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.OtherNameManager;
+import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileFundingManager;
 import org.orcid.core.manager.ProfileKeywordManager;
@@ -110,15 +111,15 @@ public class AdminManagerImpl implements AdminManager {
     @Resource
     private ProfileKeywordManager profileKeywordManager;
     
+    @Resource(name = "profileEntityCacheManager")
+    ProfileEntityCacheManager profileEntityCacheManager;
+    
     @Override    
     @Transactional
     public boolean deprecateProfile(ProfileDeprecationRequest result, String deprecatedOrcid, String primaryOrcid) throws Exception {        
         // Get deprecated profile
-        Date lastModified = profileEntityManager.getLastModified(deprecatedOrcid);
-        ProfileEntity deprecated = profileEntityManager.findByOrcid(deprecatedOrcid, lastModified.getTime());
-        // Get primary profile
-        lastModified = profileEntityManager.getLastModified(primaryOrcid);
-        ProfileEntity primary = profileEntityManager.findByOrcid(primaryOrcid, lastModified.getTime());        
+        ProfileEntity deprecated = profileEntityCacheManager.retrieve(deprecatedOrcid);
+        ProfileEntity primary = profileEntityCacheManager.retrieve(primaryOrcid);        
         
         // If both users exists
         if (deprecated != null && primary != null) {
@@ -138,6 +139,8 @@ public class AdminManagerImpl implements AdminManager {
                     boolean wasDeprecated = profileEntityManager.deprecateProfile(deprecated, primary);
                     // If it was successfully deprecated
                     if (wasDeprecated) {
+                        //Refresh it from cache
+                        deprecated = profileEntityCacheManager.retrieve(deprecatedOrcid);
                         LOGGER.info("Account {} was deprecated to primary account: {}", deprecated.getId(), primary.getId());
                         // Remove works
                         if (deprecated.getProfileWorks() != null) {

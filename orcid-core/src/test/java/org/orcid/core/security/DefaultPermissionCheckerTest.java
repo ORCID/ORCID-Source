@@ -20,7 +20,6 @@ import static org.junit.Assert.fail;
 
 import java.security.AccessControlException;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -33,6 +32,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.oauth.OrcidOAuth2Authentication;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
@@ -67,6 +67,9 @@ public class DefaultPermissionCheckerTest extends DBUnitTest {
     @Resource
     private OrcidOauth2TokenDetailService tokenDetailService; 
 
+    @Resource(name = "profileEntityCacheManager")
+    ProfileEntityCacheManager profileEntityCacheManager;
+    
     @BeforeClass
     public static void initDBUnitData() throws Exception {
         initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SourceClientDetailsEntityData.xml","/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/Oauth2TokenDetailsData.xml"));
@@ -86,7 +89,7 @@ public class DefaultPermissionCheckerTest extends DBUnitTest {
         AuthorizationRequest request = new AuthorizationRequest("4444-4444-4444-4441", Arrays.asList("/orcid-bio/external-identifiers/create"));
         request.setAuthorities(grantedAuthorities);
         request.setResourceIds(resourceIds);
-        ProfileEntity entity = profileEntityManager.findByOrcid("4444-4444-4444-4446", System.currentTimeMillis());
+        ProfileEntity entity = profileEntityCacheManager.retrieve("4444-4444-4444-4446");
         OrcidOauth2UserAuthentication oauth2UserAuthentication = new OrcidOauth2UserAuthentication(entity, true);
         OAuth2Authentication oAuth2Authentication = new OrcidOAuth2Authentication(request, oauth2UserAuthentication, "made-up-token");
         ScopePathType requiredScope = ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE;
@@ -104,8 +107,7 @@ public class DefaultPermissionCheckerTest extends DBUnitTest {
         AuthorizationRequest request = new AuthorizationRequest("4444-4444-4444-4441", Arrays.asList("/orcid-bio/external-identifiers/create"));
         request.setAuthorities(grantedAuthorities);
         request.setResourceIds(resourceIds);
-        Date lastModified = profileEntityManager.getLastModified("4444-4444-4444-4445");
-        ProfileEntity entity = profileEntityManager.findByOrcid("4444-4444-4444-4445", lastModified.getTime());
+        ProfileEntity entity = profileEntityCacheManager.retrieve("4444-4444-4444-4445");
         OrcidOauth2UserAuthentication oauth2UserAuthentication = new OrcidOauth2UserAuthentication(entity, true);
         OAuth2Authentication oAuth2Authentication = new OrcidOAuth2Authentication(request, oauth2UserAuthentication, "made-up-token");
         ScopePathType requiredScope = ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE;

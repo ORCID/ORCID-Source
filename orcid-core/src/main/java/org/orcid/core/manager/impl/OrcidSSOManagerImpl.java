@@ -17,7 +17,6 @@
 package org.orcid.core.manager.impl;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +31,7 @@ import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.OrcidSSOManager;
+import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.RedirectUri;
@@ -74,6 +74,9 @@ public class OrcidSSOManagerImpl implements OrcidSSOManager {
     
     @Resource
     private OrcidProfileManager orcidProfileManager;
+    
+    @Resource(name = "profileEntityCacheManager")
+    ProfileEntityCacheManager profileEntityCacheManager;
 
     private final static String SSO_REDIRECT_URI_TYPE = RedirectUriType.SSO_AUTHENTICATION.value();
     private final static String SSO_SCOPE = ScopePathType.AUTHENTICATE.value();
@@ -82,8 +85,7 @@ public class OrcidSSOManagerImpl implements OrcidSSOManager {
     @Override
     @Transactional
     public ClientDetailsEntity grantSSOAccess(String orcid, String name, String description, String website, Set<String> redirectUris) {
-        Date lastModified = profileEntityManager.getLastModified(orcid);
-        ProfileEntity profileEntity = profileEntityManager.findByOrcid(orcid, lastModified.getTime());
+        ProfileEntity profileEntity = profileEntityCacheManager.retrieve(orcid);
         if (profileEntity == null) {
             throw new IllegalArgumentException("ORCID does not exist for " + orcid + " cannot continue");
         }
@@ -161,8 +163,7 @@ public class OrcidSSOManagerImpl implements OrcidSSOManager {
     @Override
     @Transactional
     public void revokeSSOAccess(String orcid) {
-        Date lastModified = profileEntityManager.getLastModified(orcid);
-        ProfileEntity profileEntity = profileEntityManager.findByOrcid(orcid, lastModified.getTime());
+        ProfileEntity profileEntity = profileEntityCacheManager.retrieve(orcid);
         if (profileEntity == null) {
             throw new IllegalArgumentException("ORCID does not exist for " + orcid + " cannot continue");
         } else {
@@ -268,8 +269,7 @@ public class OrcidSSOManagerImpl implements OrcidSSOManager {
     @Override
     @Transactional
     public ClientDetailsEntity updateUserCredentials(String orcid, String name, String description, String website, Set<String> redirectUris) {
-        Date lastModified = profileEntityManager.getLastModified(orcid);
-        ProfileEntity profileEntity = profileEntityManager.findByOrcid(orcid, lastModified.getTime());
+        ProfileEntity profileEntity = profileEntityCacheManager.retrieve(orcid);
         if (profileEntity == null) {
             throw new IllegalArgumentException("ORCID does not exist for " + orcid + " cannot continue");
         } else {

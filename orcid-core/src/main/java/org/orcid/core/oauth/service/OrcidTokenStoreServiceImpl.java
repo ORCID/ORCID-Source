@@ -18,7 +18,6 @@ package org.orcid.core.oauth.service;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -30,6 +29,7 @@ import javax.annotation.Resource;
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.constants.OauthTokensConstants;
 import org.orcid.core.manager.ClientDetailsManager;
+import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.oauth.OrcidOAuth2Authentication;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
@@ -77,6 +77,9 @@ public class OrcidTokenStoreServiceImpl implements TokenStore {
 
     @Resource
     private ProfileDao profileDao;
+    
+    @Resource(name = "profileEntityCacheManager")
+    ProfileEntityCacheManager profileEntityCacheManager;
 
     private static final AuthenticationKeyGenerator KEY_GENERATOR = new DefaultAuthenticationKeyGenerator();
 
@@ -335,8 +338,7 @@ public class OrcidTokenStoreServiceImpl implements TokenStore {
             Object principal = authentication.getPrincipal();
             if (principal instanceof ProfileEntity) {
                 ProfileEntity profileEntity = (ProfileEntity) authentication.getPrincipal();
-                Date lastModified = profileEntityManager.getLastModified(profileEntity.getId());
-                profileEntity = profileEntityManager.findByOrcid(profileEntity.getId(), lastModified.getTime());
+                profileEntity = profileEntityCacheManager.retrieve(profileEntity.getId());
                 detail.setProfile(profileEntity);
             }
         }

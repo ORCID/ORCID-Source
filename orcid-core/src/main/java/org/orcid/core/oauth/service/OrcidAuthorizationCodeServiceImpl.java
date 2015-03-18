@@ -20,7 +20,6 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -30,6 +29,7 @@ import javax.persistence.NoResultException;
 
 import org.orcid.core.constants.OauthTokensConstants;
 import org.orcid.core.manager.ClientDetailsManager;
+import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.oauth.OrcidOauth2AuthInfo;
 import org.orcid.core.oauth.OrcidOauth2UserAuthentication;
@@ -77,6 +77,9 @@ public class OrcidAuthorizationCodeServiceImpl extends RandomValueAuthorizationC
     
     @Resource
     private ProfileDao profileDao;
+    
+    @Resource(name = "profileEntityCacheManager")
+    ProfileEntityCacheManager profileEntityCacheManager;
     
     private static final Logger LOGGER = LoggerFactory.getLogger(OrcidAuthorizationCodeServiceImpl.class);
 
@@ -145,8 +148,7 @@ public class OrcidAuthorizationCodeServiceImpl extends RandomValueAuthorizationC
             OrcidProfileUserDetails userDetails = (OrcidProfileUserDetails) principal;
             String effectiveOrcid = userDetails.getOrcid();
             if (effectiveOrcid != null) {
-                Date lastModified = profileEntityManager.getLastModified(effectiveOrcid);
-                entity = profileEntityManager.findByOrcid(effectiveOrcid, lastModified.getTime());
+                entity = profileEntityCacheManager.retrieve(effectiveOrcid);
             }
         }
 

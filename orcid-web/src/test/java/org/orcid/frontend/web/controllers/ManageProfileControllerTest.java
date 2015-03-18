@@ -44,6 +44,7 @@ import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidIndexManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.OtherNameManager;
+import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileKeywordManager;
 import org.orcid.core.manager.ResearcherUrlManager;
@@ -91,6 +92,9 @@ public class ManageProfileControllerTest extends BaseControllerTest {
     @Resource(name = "adminController")
     AdminController adminController;
 
+    @Resource(name = "profileEntityCacheManager")
+    ProfileEntityCacheManager profileEntityCacheManager;
+    
     @Mock
     private OrcidIndexManager mockOrcidIndexManager;
 
@@ -252,7 +256,7 @@ public class ManageProfileControllerTest extends BaseControllerTest {
     public void testAddDelegateSendsEmailToOnlyNewDelegates() throws Exception {
         ProfileEntity delegateProfile = new ProfileEntity("5555-5555-5555-555X");        
         delegateProfile.setCreditName("Test Delegate Credit Name");        
-        when(profileEntityManager.findByOrcid("5555-5555-5555-555X", 0)).thenReturn(delegateProfile);
+        when(profileEntityCacheManager.retrieve("5555-5555-5555-555X")).thenReturn(delegateProfile);
         ManageDelegate addDelegate = new ManageDelegate();
         addDelegate.setDelegateToManage("5555-5555-5555-555X");
         addDelegate.setPassword("password");

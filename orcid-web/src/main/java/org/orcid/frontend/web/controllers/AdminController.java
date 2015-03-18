@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.Date;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -35,6 +34,7 @@ import org.orcid.core.manager.ExternalIdentifierManager;
 import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidClientGroupManager;
+import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileWorkManager;
 import org.orcid.jaxb.model.clientgroup.GroupType;
@@ -102,6 +102,9 @@ public class AdminController extends BaseController {
     @Resource
     private AdminManager adminManager;
 
+    @Resource(name = "profileEntityCacheManager")
+    ProfileEntityCacheManager profileEntityCacheManager;
+    
     public ProfileEntityManager getProfileEntityManager() {
         return profileEntityManager;
     }
@@ -203,8 +206,7 @@ public class AdminController extends BaseController {
     @RequestMapping(value = { "/deprecate-profile/check-orcid.json", "/deactivate-profile/check-orcid.json" }, method = RequestMethod.GET)
     public @ResponseBody
     ProfileDetails checkOrcidToDeprecate(@RequestParam("orcid") String orcid) {
-        java.util.Date lastModified = profileEntityManager.getLastModified(orcid);
-        ProfileEntity profile = profileEntityManager.findByOrcid(orcid, lastModified.getTime());
+        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         ProfileDetails profileDetails = new ProfileDetails();
         if (profile != null) {
             if (profile.getPrimaryRecord() != null) {
@@ -495,8 +497,7 @@ public class AdminController extends BaseController {
             return result;
         }          
 
-        Date lastModified = profileEntityManager.getLastModified(orcid);
-        ProfileEntity profile = profileEntityManager.findByOrcid(orcid, lastModified.getTime());
+        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         
         // If the account is already locked
         if(profile.isAccountNonLocked() == false) { 
@@ -526,8 +527,7 @@ public class AdminController extends BaseController {
             return result;
         }          
         
-        Date lastModified = profileEntityManager.getLastModified(orcid);
-        ProfileEntity profile = profileEntityManager.findByOrcid(orcid, lastModified.getTime());
+        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         
         // If the account is not locked
         if(profile.isAccountNonLocked()) { 

@@ -33,7 +33,7 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
  */
 public interface ProfileEntityManager {
 
-    ProfileEntity findByOrcid(String orcid, long lastModified);
+    ProfileEntity findByOrcid(String orcid);
 
     boolean orcidExists(String orcid);
 

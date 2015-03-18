@@ -22,7 +22,6 @@ import static junit.framework.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
-import java.util.Date;
 
 import javax.annotation.Resource;
 
@@ -31,6 +30,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.test.DBUnitTest;
@@ -46,6 +46,9 @@ import org.springframework.transaction.annotation.Transactional;
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
 public class ProfileEntityManagerImplTest extends DBUnitTest {
 
+    @Resource(name = "profileEntityCacheManager")
+    ProfileEntityCacheManager profileEntityCacheManager;
+    
     @BeforeClass
     public static void initDBUnitData() throws Exception {
         initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml"));
@@ -69,8 +72,7 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
     @Rollback(true)
     public void testFindByOrcid() throws Exception {
         String harrysOrcid = "4444-4444-4444-4444";
-        Date lastModified = profileEntityManager.getLastModified(harrysOrcid);
-        ProfileEntity profileEntity = profileEntityManager.findByOrcid(harrysOrcid, lastModified.getTime());
+        ProfileEntity profileEntity = profileEntityCacheManager.retrieve(harrysOrcid);
         assertNotNull(profileEntity);
         assertEquals("Harry", profileEntity.getGivenNames());
         assertEquals("Secombe", profileEntity.getFamilyName());
@@ -81,15 +83,12 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
     @Transactional("transactionManager")
     @Rollback(true)
     public void testDeprecateProfile() throws Exception {
-        Date lastModified = profileEntityManager.getLastModified("4444-4444-4444-4441");
-        ProfileEntity profileEntityToDeprecate = profileEntityManager.findByOrcid("4444-4444-4444-4441", lastModified.getTime());
-        lastModified = profileEntityManager.getLastModified("4444-4444-4444-4442");
-        ProfileEntity primaryProfileEntity = profileEntityManager.findByOrcid("4444-4444-4444-4442", lastModified.getTime());
+        ProfileEntity profileEntityToDeprecate = profileEntityCacheManager.retrieve("4444-4444-4444-4441");
+        ProfileEntity primaryProfileEntity = profileEntityCacheManager.retrieve("4444-4444-4444-4442");
         assertNull(profileEntityToDeprecate.getPrimaryRecord());
         boolean result = profileEntityManager.deprecateProfile(profileEntityToDeprecate, primaryProfileEntity);
         assertTrue(result);
-        lastModified = profileEntityManager.getLastModified("4444-4444-4444-4441");
-        profileEntityToDeprecate = profileEntityManager.findByOrcid("4444-4444-4444-4441", lastModified.getTime());
+        profileEntityToDeprecate = profileEntityCacheManager.retrieve("4444-4444-4444-4441");
         assertNotNull(profileEntityToDeprecate.getPrimaryRecord());
         assertEquals("4444-4444-4444-4442", profileEntityToDeprecate.getPrimaryRecord().getId());
     }

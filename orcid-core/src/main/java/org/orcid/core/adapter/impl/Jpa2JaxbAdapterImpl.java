@@ -34,6 +34,7 @@ import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.constants.DefaultPreferences;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.LoadOptions;
+import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.security.DefaultPermissionChecker;
 import org.orcid.core.security.PermissionChecker;
@@ -107,6 +108,9 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
 
     @Resource
     private ProfileEntityManager profileEntityManager;
+    
+    @Resource(name = "profileEntityCacheManager")
+    ProfileEntityCacheManager profileEntityCacheManager;
     
     public Jpa2JaxbAdapterImpl() {
         try {
@@ -751,8 +755,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
 
                         // add group information                        
                         if (!PojoUtil.isEmpty(acceptedClient.getGroupProfileId())) {
-                            Date lastModified = profileEntityManager.getLastModified(acceptedClient.getGroupProfileId());
-                            ProfileEntity groupEntity = profileEntityManager.findByOrcid(acceptedClient.getGroupProfileId(), lastModified.getTime()); 
+                            ProfileEntity groupEntity = profileEntityCacheManager.retrieve(acceptedClient.getGroupProfileId()); 
                             applicationSummary.setApplicationGroupOrcid(new ApplicationOrcid(groupEntity.getId()));
                             applicationSummary.setApplicationGroupName(new ApplicationName(getGroupDisplayName(groupEntity)));
                         }

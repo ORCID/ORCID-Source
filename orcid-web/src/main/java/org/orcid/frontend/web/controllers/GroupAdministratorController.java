@@ -20,7 +20,6 @@ import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +33,7 @@ import org.orcid.core.exception.OrcidClientGroupManagementException;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.OrcidClientGroupManager;
 import org.orcid.core.manager.OrcidSSOManager;
+import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ThirdPartyLinkManager;
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
@@ -85,6 +85,9 @@ public class GroupAdministratorController extends BaseWorkspaceController {
     
     @Resource
     private ProfileEntityManager profileEntityManager;
+    
+    @Resource(name = "profileEntityCacheManager")
+    ProfileEntityCacheManager profileEntityCacheManager;
 
     @RequestMapping
     public ModelAndView manageClients() {
@@ -398,8 +401,7 @@ public class GroupAdministratorController extends BaseWorkspaceController {
         ClientDetailsEntity clientDetails = clientDetailsManager.findByClientId(clientId);
         if(clientDetails == null)
             return false;
-        Date lastModified = profileEntityManager.getLastModified(clientDetails.getGroupProfileId());
-        ProfileEntity groupProfile = profileEntityManager.findByOrcid(clientDetails.getGroupProfileId(), lastModified.getTime());
+        ProfileEntity groupProfile = profileEntityCacheManager.retrieve(clientDetails.getGroupProfileId());
         if(groupProfile == null)
             return false;
         if(!groupProfile.getId().equals(getCurrentUserOrcid()))

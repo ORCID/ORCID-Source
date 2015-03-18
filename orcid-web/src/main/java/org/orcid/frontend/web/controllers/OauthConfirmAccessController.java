@@ -19,7 +19,6 @@ package org.orcid.frontend.web.controllers;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -34,6 +33,7 @@ import org.orcid.core.constants.OauthTokensConstants;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.OrcidProfileManager;
+import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.oauth.service.OrcidAuthorizationEndpoint;
 import org.orcid.jaxb.model.message.CreationMethod;
@@ -99,6 +99,9 @@ public class OauthConfirmAccessController extends BaseController {
     private RegistrationController registrationController;
     @Resource
     private ProfileEntityManager profileEntityManager;
+    
+    @Resource(name = "profileEntityCacheManager")
+    ProfileEntityCacheManager profileEntityCacheManager;
 
     private static String REDIRECT_URI_ERROR = "/oauth/error/redirect-uri-mismatch?client_id={0}";
         
@@ -195,9 +198,8 @@ public class OauthConfirmAccessController extends BaseController {
                     // If client type is null it means it is a public client
                     if (clientDetails.getClientType() == null) {
                         clientGroupName = PUBLIC_CLIENT_GROUP_NAME;
-                    } else if (!PojoUtil.isEmpty(clientDetails.getGroupProfileId())) {
-                        Date lastModified = profileEntityManager.getLastModified(clientDetails.getGroupProfileId());
-                        ProfileEntity groupProfile = profileEntityManager.findByOrcid(clientDetails.getGroupProfileId(), lastModified.getTime());
+                    } else if (!PojoUtil.isEmpty(clientDetails.getGroupProfileId())) {                        
+                        ProfileEntity groupProfile = profileEntityCacheManager.retrieve(clientDetails.getGroupProfileId());
                         clientGroupName = groupProfile.getCreditName();
                     }
                     // If the group name is empty, use the same as the client
@@ -265,8 +267,7 @@ public class OauthConfirmAccessController extends BaseController {
         if (clientDetails.getClientType() == null) {
             clientGroupName = PUBLIC_CLIENT_GROUP_NAME;
         } else if (!PojoUtil.isEmpty(clientDetails.getGroupProfileId())) {
-            Date lastModified = profileEntityManager.getLastModified(clientDetails.getGroupProfileId());
-            ProfileEntity groupProfile = profileEntityManager.findByOrcid(clientDetails.getGroupProfileId(), lastModified.getTime());
+            ProfileEntity groupProfile = profileEntityCacheManager.retrieve(clientDetails.getGroupProfileId());
             clientGroupName = groupProfile.getCreditName();
         }
 

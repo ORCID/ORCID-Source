@@ -17,7 +17,6 @@
 package org.orcid.frontend.web.controllers;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeMap;
@@ -28,6 +27,7 @@ import org.orcid.core.exception.OrcidClientGroupManagementException;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.OrcidClientGroupManager;
+import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.GroupType;
@@ -81,6 +81,9 @@ public class ManageMembersController extends BaseController {
     @Resource
     private GroupAdministratorController groupAdministratorController;
 
+    @Resource(name = "profileEntityCacheManager")
+    ProfileEntityCacheManager profileEntityCacheManager;
+    
     public OrcidClientGroupManager getOrcidClientGroupManager() {
         return orcidClientGroupManager;
     }
@@ -134,8 +137,7 @@ public class ManageMembersController extends BaseController {
             if (profileEntityManager.orcidExists(orcid)) {
                 GroupType groupType = profileEntityManager.getGroupType(orcid);
                 if (groupType != null) {
-                    Date lastModified = profileEntityManager.getLastModified(orcid);
-                    ProfileEntity memberProfile = profileEntityManager.findByOrcid(orcid, lastModified.getTime());
+                    ProfileEntity memberProfile = profileEntityCacheManager.retrieve(orcid);
                     group = Group.fromProfileEntity(memberProfile);
                 } else {
                     group.getErrors().add(getMessage("manage_members.orcid_is_not_a_member"));
