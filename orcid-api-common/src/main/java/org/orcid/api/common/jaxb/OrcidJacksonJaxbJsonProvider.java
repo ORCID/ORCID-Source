@@ -35,19 +35,19 @@ import org.codehaus.jackson.map.SerializationConfig;
 @Provider
 @Consumes({ VND_ORCID_JSON, ORCID_JSON, "text/orcid+json" })
 @Produces({ VND_ORCID_JSON, ORCID_JSON, "text/orcid+json" })
-public class OrcidJacksonJaxbJsonProviderPretty extends JacksonJaxbJsonProvider {
+public class OrcidJacksonJaxbJsonProvider extends JacksonJaxbJsonProvider {
 
-    public OrcidJacksonJaxbJsonProviderPretty() {
+    public OrcidJacksonJaxbJsonProvider() {
         super();
         configureAll();
     }
 
-    public OrcidJacksonJaxbJsonProviderPretty(Annotations... annotationsToUse) {
+    public OrcidJacksonJaxbJsonProvider(Annotations... annotationsToUse) {
         super(annotationsToUse);
         configureAll();
     }
 
-    public OrcidJacksonJaxbJsonProviderPretty(ObjectMapper mapper, Annotations[] annotationsToUse) {
+    public OrcidJacksonJaxbJsonProvider(ObjectMapper mapper, Annotations[] annotationsToUse) {
         super(mapper, annotationsToUse);
         configureAll();
     }
