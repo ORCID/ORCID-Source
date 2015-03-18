@@ -39,11 +39,13 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonPropertyOrder;
 
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @XmlType(propOrder = { "uri", "path", "host" })
 @JsonPropertyOrder({ "uri", "path", "host" })
+@JsonIgnoreProperties({ "value", "valueAsString" })
 public class OrcidIdBase implements Serializable {
     private static final long serialVersionUID = 1L;
 
