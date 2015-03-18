@@ -25,11 +25,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.Test;
+import org.orcid.jaxb.model.common.Title;
 import org.orcid.jaxb.model.record.FundingExternalIdentifier;
 import org.orcid.jaxb.model.record.FundingExternalIdentifierType;
 import org.orcid.jaxb.model.record.FundingExternalIdentifiers;
 import org.orcid.jaxb.model.record.FundingTitle;
-import org.orcid.jaxb.model.record.Title;
 import org.orcid.jaxb.model.record.summary.FundingSummary;
 
 public class ActivitiesGroupGenerator_GroupingFundingsTest extends ActivitiesGroupGeneratorBaseTest {

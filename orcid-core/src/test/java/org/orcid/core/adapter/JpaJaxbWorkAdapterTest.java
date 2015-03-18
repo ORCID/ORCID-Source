@@ -99,7 +99,7 @@ public class JpaJaxbWorkAdapterTest {
         assertNotNull(pw);
         Work w = jpaJaxbWorkAdapter.toWork(pw);
         assertNotNull(w);
-        assertEquals(org.orcid.jaxb.model.record.Iso3166Country.CR.value(), w.getCountry().getValue().value());
+        assertEquals(org.orcid.jaxb.model.common.Iso3166Country.CR.value(), w.getCountry().getValue().value());
         assertEquals("work:citation", w.getWorkCitation().getCitation());
         assertEquals("work:description", w.getShortDescription());
         assertEquals("work:journalTitle", w.getJournalTitle().getContent());

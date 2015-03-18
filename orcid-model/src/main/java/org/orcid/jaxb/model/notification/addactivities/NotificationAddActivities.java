@@ -45,13 +45,13 @@ import org.orcid.jaxb.model.notification.Notification;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element ref="{http://www.orcid.org/ns/orcid}putCode" minOccurs="0"/>
- *         &lt;element ref="{http://www.orcid.org/ns/orcid}notificationType"/>
- *         &lt;element ref="{http://www.orcid.org/ns/orcid}authorizationUrl"/>
- *         &lt;element ref="{http://www.orcid.org/ns/orcid}activities"/>
- *         &lt;element ref="{http://www.orcid.org/ns/orcid}createdDate" minOccurs="0"/>
- *         &lt;element ref="{http://www.orcid.org/ns/orcid}sentDate" minOccurs="0"/>
- *         &lt;element ref="{http://www.orcid.org/ns/orcid}source" minOccurs="0"/>
+ *         &lt;element ref="{http://www.orcid.org/ns/common}put-code" minOccurs="0"/>
+ *         &lt;element ref="{http://www.orcid.org/ns/notification}notification-type"/>
+ *         &lt;element ref="{http://www.orcid.org/ns/notification}authorization-url"/>
+ *         &lt;element ref="{http://www.orcid.org/ns/notification}activities"/>
+ *         &lt;element ref="{http://www.orcid.org/ns/common}created-date" minOccurs="0"/>
+ *         &lt;element ref="{http://www.orcid.org/ns/common}sent-date" minOccurs="0"/>
+ *         &lt;element ref="{http://www.orcid.org/ns/common}source" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -62,13 +62,13 @@ import org.orcid.jaxb.model.notification.Notification;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = { "putCode", "notificationType", "authorizationUrl", "activities", "createdDate", "sentDate", "readDate", "archivedDate", "source" })
-@XmlRootElement(name = "notification")
+@XmlRootElement(name = "notification", namespace = "http://www.orcid.org/ns/notification")
 public class NotificationAddActivities extends Notification {
 
     private final static long serialVersionUID = 1L;
-    @XmlElement(required = true)
+    @XmlElement(name = "authorization-url", namespace = "http://www.orcid.org/ns/notification", required = true)
     protected AuthorizationUrl authorizationUrl;
-    @XmlElement(required = true)
+    @XmlElement(namespace = "http://www.orcid.org/ns/notification", required = true)
     protected Activities activities;
     @XmlTransient
     protected String subject;

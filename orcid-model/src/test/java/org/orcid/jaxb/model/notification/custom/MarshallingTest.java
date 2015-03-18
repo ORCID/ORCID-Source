@@ -51,7 +51,7 @@ public class MarshallingTest {
     private NotificationCustom getNotification() throws JAXBException {
         JAXBContext context = JAXBContext.newInstance("org.orcid.jaxb.model.notification.custom");
         Unmarshaller unmarshaller = context.createUnmarshaller();
-        InputStream inputStream = MarshallingTest.class.getResourceAsStream("/notification-custom.xml");
+        InputStream inputStream = MarshallingTest.class.getResourceAsStream("/notification_2.0_rc1/samples/notification-custom-2.0_rc1.xml");
         return (NotificationCustom) unmarshaller.unmarshal(inputStream);
     }
 

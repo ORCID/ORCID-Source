@@ -16,6 +16,10 @@
  */
 package org.orcid.jaxb.model.record;
 
+import org.orcid.jaxb.model.common.CreatedDate;
+import org.orcid.jaxb.model.common.Filterable;
+import org.orcid.jaxb.model.common.LastModifiedDate;
+
 /**
  * 
  * @author Will Simpson

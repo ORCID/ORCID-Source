@@ -57,7 +57,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = { "uri", "path", "host" })
-@XmlRootElement(name = "authorizationUrl")
+@XmlRootElement(name = "authorization-url", namespace="http://www.orcid.org/ns/notification")
 public class AuthorizationUrl implements Serializable {
 
     private final static long serialVersionUID = 1L;

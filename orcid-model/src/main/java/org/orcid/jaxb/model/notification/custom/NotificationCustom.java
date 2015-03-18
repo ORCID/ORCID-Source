@@ -47,16 +47,16 @@ import org.orcid.jaxb.model.notification.Notification;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element ref="{http://www.orcid.org/ns/orcid}putCode" minOccurs="0"/>
- *         &lt;element ref="{http://www.orcid.org/ns/orcid}notificationType"/>
+ *         &lt;element ref="{http://www.orcid.org/ns/common}put-code" minOccurs="0"/>
+ *         &lt;element ref="{http://www.orcid.org/ns/notification}notification-type"/>
  *         &lt;element name="subject" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="bodyText" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="bodyHtml" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="createdDate" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0"/>
- *         &lt;element name="sentDate" type="{http://www.w3.org/2001/XMLSchema}dateTime"/>
- *         &lt;element name="readDate" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0"/>
- *         &lt;element name="archivedDate" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0"/>
- *         &lt;element ref="{http://www.orcid.org/ns/orcid}source" minOccurs="0"/>
+ *         &lt;element name="body-text" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="body-html" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="created-date" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0"/>
+ *         &lt;element name="sent-date" type="{http://www.w3.org/2001/XMLSchema}dateTime"/>
+ *         &lt;element name="read-date" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0"/>
+ *         &lt;element name="archived-date" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0"/>
+ *         &lt;element ref="{http://www.orcid.org/ns/common}source" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -67,15 +67,15 @@ import org.orcid.jaxb.model.notification.Notification;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = { "putCode", "notificationType", "subject", "bodyText", "bodyHtml", "createdDate", "sentDate", "readDate", "archivedDate", "source" })
-@XmlRootElement(name = "notification")
+@XmlRootElement(name = "notification", namespace = "http://www.orcid.org/ns/notification")
 public class NotificationCustom extends Notification implements Serializable {
 
     private final static long serialVersionUID = 1L;
     @XmlElement(required = true)
     protected String subject;
-    @XmlElement(required = true)
+    @XmlElement(name = "body-text", required = true)
     protected String bodyText;
-    @XmlElement(required = true)
+    @XmlElement(name = "body-html", required = true)
     protected String bodyHtml;
     @XmlAttribute(name = "lang", namespace = "http://www.w3.org/XML/1998/namespace")
     protected String lang;

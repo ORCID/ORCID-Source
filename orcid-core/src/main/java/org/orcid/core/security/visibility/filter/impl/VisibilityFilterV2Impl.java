@@ -26,7 +26,7 @@ import org.orcid.core.exception.OrcidForbiddenException;
 import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.security.visibility.filter.VisibilityFilterV2;
-import org.orcid.jaxb.model.record.Filterable;
+import org.orcid.jaxb.model.common.Filterable;
 import org.orcid.jaxb.model.record.Group;
 import org.orcid.jaxb.model.record.GroupableActivity;
 import org.orcid.jaxb.model.record.summary.ActivitiesSummary;
