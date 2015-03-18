@@ -4066,6 +4066,37 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     	$scope.bibtextWork = true;    	        
         $scope.putWork();        
     };
+    
+    $scope.saveAllFromBibtex = function(){
+    	var works = $scope.worksFromBibtex;
+    	
+    	angular.forEach( works, function( work, key ) {    
+    		//console.log(work);
+    		if ( work.title.value != null
+    				&& work.workCategory.value.length > 0
+    				&& work.workType.value.length > 0
+    				&& work.workExternalIdentifiers[0].workExternalIdentifierType.value.length > 0 ) {    					
+		    			$.ajax({
+		                    url: getBaseUri() + '/works/work.json',
+		                    contentType: 'application/json;charset=UTF-8',
+		                    dataType: 'json',
+		                    type: 'POST',
+		                    data: angular.toJson(work),
+		                    success: function(data) {
+		                    	index = works.indexOf(work);
+		                    	works.splice(index, 1);
+		                    	$scope.worksFromBibtex = works;
+		                		$scope.$apply();
+		                		//Review
+		                		$scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);		                    	
+		                    }
+		                }).fail(function(){
+		                    //Something really sad is happening :(
+		                });
+    		}    		
+    	});  
+    	
+    }
 
     $scope.openBibTextWizard = function () {
         $scope.bibtexParsingError = false;
@@ -4077,7 +4108,7 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     $scope.bibtextCancel = function(){
         $scope.worksFromBibtex = null;
         $scope.bibtexCancelLink = false;
-    };
+    };    
 
     // Check for the various File API support.
     if (window.File && window.FileReader && window.FileList && window.Blob) {
