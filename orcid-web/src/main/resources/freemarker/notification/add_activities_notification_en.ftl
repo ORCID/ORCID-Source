@@ -28,7 +28,7 @@
 </style>
 <body data-baseurl="<@spring.url '/'/>">
 <div>
-    ${notification.source.sourceName} has ${notification.activities.activities?size}
+    ${notification.source.sourceName.content} has ${notification.activities.activities?size}
     <#if notification.activities.activities?size == 1>
         activity
     <#else>
