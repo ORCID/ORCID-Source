@@ -4761,7 +4761,7 @@ ul.toggle-menu li:hover ul{
 	vertical-align: text-top;
 }
 
-.bibtex-options-menu ul li a {
+.bibtex-options-menu ul li a.bibtex-button {
 	background: #C9C9CA;
 	border-radius: 50px;
 	height: 30px;
@@ -4770,7 +4770,7 @@ ul.toggle-menu li:hover ul{
 	color: #494A4C;
 }
 
-.bibtex-options-menu ul li a:hover {
+.bibtex-options-menu ul li a.bibtex-button:hover {
 	background-color: rgb(166, 206, 57);
 	color: #FFF;
 }
