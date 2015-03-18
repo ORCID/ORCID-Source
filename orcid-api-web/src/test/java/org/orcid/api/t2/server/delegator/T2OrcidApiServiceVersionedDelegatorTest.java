@@ -475,14 +475,14 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
     @Test
     public void preventDuplicatedAffiliationsTest() {
         setUpSecurityContext("4444-4444-4444-4446");
-        OrcidMessage orcidMessage = buildMessageWithAffiliation(AffiliationType.EDUCATION, "My dept", "My Role");
+        OrcidMessage orcidMessage = buildMessageWithAffiliation(AffiliationType.EDUCATION, "My dept", "My Role", "4444-4444-4444-4446");
         
         Response response = t2OrcidApiServiceDelegatorLatest.addAffiliations(mockedUriInfo, "4444-4444-4444-4446", orcidMessage);
         assertNotNull(response);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());                       
         assertEquals(1, orgAffiliationDao.getByUserAndType("4444-4444-4444-4446", org.orcid.jaxb.model.message.AffiliationType.EDUCATION).size());        
         
-        orcidMessage = buildMessageWithAffiliation(AffiliationType.EDUCATION, "My dept", "My Role");
+        orcidMessage = buildMessageWithAffiliation(AffiliationType.EDUCATION, "My dept", "My Role", "4444-4444-4444-4446");
         response = t2OrcidApiServiceDelegatorLatest.addAffiliations(mockedUriInfo, "4444-4444-4444-4446", orcidMessage);
         assertNotNull(response);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
@@ -495,8 +495,8 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
     
     @Test
     public void preventDuplicatedAffiliations2Test() {
-        setUpSecurityContext("4444-4444-4444-4446");
-        OrcidMessage orcidMessage = buildMessageWithAffiliation(AffiliationType.EDUCATION, "My dept", "My Role");
+        setUpSecurityContext("4444-4444-4444-4499");
+        OrcidMessage orcidMessage = buildMessageWithAffiliation(AffiliationType.EDUCATION, "My dept", "My Role", "4444-4444-4444-4499");
         
         //Set an existing organization, but, with a bad disambiguated org 
         Organization organization = new Organization();
@@ -511,14 +511,12 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
         organization.setDisambiguatedOrganization(dorg);        
         orcidMessage.getOrcidProfile().getOrcidActivities().getAffiliations().getAffiliation().get(0).setOrganization(organization);
                 
-        Response response = t2OrcidApiServiceDelegatorLatest.addAffiliations(mockedUriInfo, "4444-4444-4444-4446", orcidMessage);
+        Response response = t2OrcidApiServiceDelegatorLatest.addAffiliations(mockedUriInfo, "4444-4444-4444-4499", orcidMessage);
         assertNotNull(response);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());                       
-        assertEquals(1, orgAffiliationDao.getByUserAndType("4444-4444-4444-4446", org.orcid.jaxb.model.message.AffiliationType.EDUCATION).size());        
+        assertEquals(1, orgAffiliationDao.getByUserAndType("4444-4444-4444-4499", org.orcid.jaxb.model.message.AffiliationType.EDUCATION).size());        
         
-        
-        
-        orcidMessage = buildMessageWithAffiliation(AffiliationType.EDUCATION, "My dept", "My Role");
+        orcidMessage = buildMessageWithAffiliation(AffiliationType.EDUCATION, "My dept", "My Role", "4444-4444-4444-4499");
         
         //Set an existing organization, but, with a bad disambiguated org 
         organization = new Organization();
@@ -533,13 +531,13 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
         organization.setDisambiguatedOrganization(dorg);        
         orcidMessage.getOrcidProfile().getOrcidActivities().getAffiliations().getAffiliation().get(0).setOrganization(organization);
         
-        response = t2OrcidApiServiceDelegatorLatest.addAffiliations(mockedUriInfo, "4444-4444-4444-4446", orcidMessage);
+        response = t2OrcidApiServiceDelegatorLatest.addAffiliations(mockedUriInfo, "4444-4444-4444-4499", orcidMessage);
         assertNotNull(response);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
         
-        assertEquals(1, orgAffiliationDao.getByUserAndType("4444-4444-4444-4446", org.orcid.jaxb.model.message.AffiliationType.EDUCATION).size());    
+        assertEquals(1, orgAffiliationDao.getByUserAndType("4444-4444-4444-4499", org.orcid.jaxb.model.message.AffiliationType.EDUCATION).size());    
         
-        OrgAffiliationRelationEntity orgEntity = orgAffiliationDao.getByUserAndType("4444-4444-4444-4446", org.orcid.jaxb.model.message.AffiliationType.EDUCATION).get(0);
+        OrgAffiliationRelationEntity orgEntity = orgAffiliationDao.getByUserAndType("4444-4444-4444-4499", org.orcid.jaxb.model.message.AffiliationType.EDUCATION).get(0);
         assertNotNull(orgEntity);
         assertNotNull(orgEntity.getOrg());
         assertEquals("An institution", orgEntity.getOrg().getName());
@@ -555,12 +553,12 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
     
     
     
-    private OrcidMessage buildMessageWithAffiliation(AffiliationType type, String dept, String role) {
+    private OrcidMessage buildMessageWithAffiliation(AffiliationType type, String dept, String role, String orcid) {
         OrcidMessage orcidMessage = new OrcidMessage();
         orcidMessage.setMessageVersion("1.2_rc6");
         OrcidProfile orcidProfile = new OrcidProfile();
         orcidMessage.setOrcidProfile(orcidProfile);
-        orcidProfile.setOrcidIdentifier(new OrcidIdentifier("4444-4444-4444-4446"));
+        orcidProfile.setOrcidIdentifier(new OrcidIdentifier(orcid));
         OrcidActivities orcidActivities = new OrcidActivities();
         orcidProfile.setOrcidActivities(orcidActivities);
         
