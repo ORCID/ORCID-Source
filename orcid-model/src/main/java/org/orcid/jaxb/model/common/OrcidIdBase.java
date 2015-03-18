@@ -33,27 +33,21 @@ package org.orcid.jaxb.model.common;
  * =============================================================================
  */
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlMixed;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
-import org.apache.commons.lang3.StringUtils;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonPropertyOrder;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(propOrder = { "value", "uri", "path", "host" })
-@JsonPropertyOrder({"value", "valueAsString", "uri", "path", "host"})
+@XmlType(propOrder = { "uri", "path", "host" })
+@JsonPropertyOrder({ "uri", "path", "host" })
+@JsonIgnoreProperties({ "value", "valueAsString" })
 public class OrcidIdBase implements Serializable {
     private static final long serialVersionUID = 1L;
-
-    protected List<String> values;
 
     protected String uri;
 
@@ -66,7 +60,6 @@ public class OrcidIdBase implements Serializable {
     }
 
     public OrcidIdBase(OrcidIdBase other) {
-        this.values = other.values;
         this.uri = other.uri;
         this.path = other.path;
         this.host = other.host;
@@ -76,43 +69,7 @@ public class OrcidIdBase implements Serializable {
         this.path = path;
     }
 
-    @XmlMixed
-    @JsonSerialize(using = OrcidIdSerializer.class)
-    @Deprecated
-    public List<String> getValue() {
-        if (values != null) {
-            String combinedValues = StringUtils.join(values.toArray());
-            if (StringUtils.isBlank(combinedValues)) {
-                return null;
-            }
-        }
-        return values;
-    }
-
-    public void setValue(List<String> values) {
-        this.values = values;
-    }
-
-    @XmlTransient
-    @Deprecated
-    public String getValueAsString() {
-        if (values != null && !values.isEmpty() && StringUtils.isNotBlank(values.get(0))) {
-            return values.get(0);
-        }
-        return null;
-    }
-
-    @Deprecated
-    public void setValueAsString(String value) {
-        if (values == null) {
-            values = new ArrayList<>(1);
-        } else {
-            values.clear();
-        }
-        values.add(value);
-    }
-
-    @XmlElement(namespace="http://www.orcid.org/ns/common")
+    @XmlElement(namespace = "http://www.orcid.org/ns/common")
     public String getUri() {
         return uri;
     }
@@ -121,7 +78,7 @@ public class OrcidIdBase implements Serializable {
         this.uri = uri;
     }
 
-    @XmlElement(namespace="http://www.orcid.org/ns/common")
+    @XmlElement(namespace = "http://www.orcid.org/ns/common")
     public String getPath() {
         if (path != null) {
             return path;
@@ -136,7 +93,7 @@ public class OrcidIdBase implements Serializable {
         this.path = path;
     }
 
-    @XmlElement(namespace="http://www.orcid.org/ns/common")
+    @XmlElement(namespace = "http://www.orcid.org/ns/common")
     public String getHost() {
         return host;
     }

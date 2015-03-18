@@ -16,6 +16,8 @@
  */
 package org.orcid.core.adapter.impl;
 
+import javax.annotation.Resource;
+
 import ma.glasnost.orika.CustomMapper;
 import ma.glasnost.orika.MapperFacade;
 import ma.glasnost.orika.MapperFactory;
@@ -24,6 +26,7 @@ import ma.glasnost.orika.converter.ConverterFactory;
 import ma.glasnost.orika.impl.DefaultMapperFactory;
 import ma.glasnost.orika.metadata.ClassMapBuilder;
 
+import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.jaxb.model.common.FuzzyDate;
 import org.orcid.jaxb.model.common.PublicationDate;
 import org.orcid.jaxb.model.common.SourceClientId;
@@ -65,6 +68,9 @@ import org.springframework.beans.factory.FactoryBean;
  * 
  */
 public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
+
+    @Resource
+    private OrcidUrlManager orcidUrlManager;
 
     @Override
     public MapperFacade getObject() throws Exception {
@@ -240,9 +246,15 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
                     public void mapBtoA(SourceEntity sourceEntity, org.orcid.jaxb.model.common.Source source, MappingContext context) {
                         String sourceId = sourceEntity.getSourceId();
                         if (OrcidStringUtils.isClientId(sourceId)) {
-                            source.setSourceClientId(new SourceClientId(sourceId));
+                            SourceClientId sourceClientId = new SourceClientId(sourceId);
+                            sourceClientId.setHost(orcidUrlManager.getBaseHost());
+                            sourceClientId.setUri(orcidUrlManager.getBaseUrl() + "/client/" + sourceId);
+                            source.setSourceClientId(sourceClientId);
                         } else {
-                            source.setSourceOrcid(new SourceOrcid(sourceId));
+                            SourceOrcid sourceOrcid = new SourceOrcid(sourceId);
+                            sourceOrcid.setHost(orcidUrlManager.getBaseHost());
+                            sourceOrcid.setUri(orcidUrlManager.getBaseUriHttp() + "/" + sourceId);
+                            source.setSourceOrcid(sourceOrcid);
                         }
                     }
                 }).byDefault().register();
