@@ -348,7 +348,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         Works result = new Works();
         // Group all works
         for (WorkSummary work : works) {
-            if (justPublic && !work.getVisibility().equals(org.orcid.jaxb.model.record.Visibility.PUBLIC)) {
+            if (justPublic && !work.getVisibility().equals(org.orcid.jaxb.model.common.Visibility.PUBLIC)) {
                 // If it is just public and the work is not public, just ignore
                 // it
             } else {
@@ -387,7 +387,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         ActivitiesGroupGenerator groupGenerator = new ActivitiesGroupGenerator();
         Fundings result = new Fundings();
         for (FundingSummary funding : fundings) {
-            if (justPublic && !funding.getVisibility().equals(org.orcid.jaxb.model.record.Visibility.PUBLIC)) {
+            if (justPublic && !funding.getVisibility().equals(org.orcid.jaxb.model.common.Visibility.PUBLIC)) {
                 // If it is just public and the funding is not public, just
                 // ignore it
             } else {

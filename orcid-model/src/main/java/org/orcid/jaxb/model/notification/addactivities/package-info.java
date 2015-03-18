@@ -21,6 +21,9 @@
 // Generated on: 2014.11.24 at 04:27:39 PM GMT 
 //
 
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://www.orcid.org/ns/orcid", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
+@javax.xml.bind.annotation.XmlSchema(namespace = "http://www.orcid.org/ns/notification", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED, xmlns = {
+        @javax.xml.bind.annotation.XmlNs(prefix = "notification", namespaceURI = "http://www.orcid.org/ns/notification"),
+        @javax.xml.bind.annotation.XmlNs(prefix = "common", namespaceURI = "http://www.orcid.org/ns/common"),
+        @javax.xml.bind.annotation.XmlNs(prefix = "activities", namespaceURI = "http://www.orcid.org/ns/activities"), })
 package org.orcid.jaxb.model.notification.addactivities;
 

@@ -4730,18 +4730,38 @@ ul.toggle-menu li:hover ul{
 	border: 1px solid #c9cacb;
 }
 
+.bibtex-options-menu{
+	padding-left: 0;
+}
+
 .bibtex-options-menu ul {
 	margin: 0;
+	padding: 0;
 	list-style-type: none;
+	float: right; 
 }
 
 .bibtex-options-menu ul li {
 	display: inline-block;
 	float: right;
-	margin-left: 5px;
+	margin-left: 5px;	
 }
 
-.bibtex-options-menu ul li a {
+.bibtex-options-menu ul li span{
+	font-size: 13px;
+	vertical-align: sub;
+  	line-height: 37px;
+  	color: #338caf;
+  	margin-right: 5px;
+}
+
+.bibtex-options-menu ul li span i{
+	color: #F5C120;
+	margin-right: 3px;
+	vertical-align: text-top;
+}
+
+.bibtex-options-menu ul li a.bibtex-button {
 	background: #C9C9CA;
 	border-radius: 50px;
 	height: 30px;
@@ -4750,7 +4770,7 @@ ul.toggle-menu li:hover ul{
 	color: #494A4C;
 }
 
-.bibtex-options-menu ul li a:hover {
+.bibtex-options-menu ul li a.bibtex-button:hover {
 	background-color: rgb(166, 206, 57);
 	color: #FFF;
 }
@@ -5697,6 +5717,18 @@ ul.oauth-scopes li{
   text-overflow: ellipsis;
   display:  inline-block;
   vertical-align: bottom;
+}
+
+.bibtex-content-missing{
+	background-color: #F5C120;
+	color: #494A4C;
+	display: block;
+	float: left;
+	margin: 0 5px 5px 0;
+}
+
+.small-missing-info{
+	font-size: 11px;
 }
 
 

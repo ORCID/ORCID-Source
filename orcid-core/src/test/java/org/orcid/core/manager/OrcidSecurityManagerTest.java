@@ -25,10 +25,10 @@ import org.orcid.core.BaseTest;
 import org.orcid.core.exception.OrcidForbiddenException;
 import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.utils.SecurityContextTestUtils;
+import org.orcid.jaxb.model.common.Source;
+import org.orcid.jaxb.model.common.SourceClientId;
+import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.record.Source;
-import org.orcid.jaxb.model.record.SourceClientId;
-import org.orcid.jaxb.model.record.Visibility;
 import org.orcid.jaxb.model.record.Work;
 
 /**

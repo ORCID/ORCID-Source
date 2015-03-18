@@ -518,7 +518,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         return source;
     }
 
-    private DisambiguatedOrganization getDisambiguatedOrganization(OrgDisambiguatedEntity orgDisambiguatedEntity) {
+    public DisambiguatedOrganization getDisambiguatedOrganization(OrgDisambiguatedEntity orgDisambiguatedEntity) {
         DisambiguatedOrganization disambiguatedOrganization = new DisambiguatedOrganization();
         disambiguatedOrganization.setDisambiguatedOrganizationIdentifier(orgDisambiguatedEntity.getSourceId());
         disambiguatedOrganization.setDisambiguationSource(orgDisambiguatedEntity.getSourceType());

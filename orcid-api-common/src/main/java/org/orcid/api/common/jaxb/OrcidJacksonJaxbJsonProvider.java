@@ -16,19 +16,21 @@
  */
 package org.orcid.api.common.jaxb;
 
-import org.codehaus.jackson.jaxrs.Annotations;
-import org.codehaus.jackson.jaxrs.JacksonJaxbJsonProvider;
-import org.codehaus.jackson.map.DeserializationConfig.Feature;
-import org.codehaus.jackson.map.ObjectMapper;
+import static org.orcid.core.api.OrcidApiConstants.ORCID_JSON;
+import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_JSON;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
 import javax.ws.rs.ext.Provider;
 
-import static org.orcid.core.api.OrcidApiConstants.*;
+import org.codehaus.jackson.jaxrs.Annotations;
+import org.codehaus.jackson.jaxrs.JacksonJaxbJsonProvider;
+import org.codehaus.jackson.map.DeserializationConfig.Feature;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.SerializationConfig;
 
 /**
- * @author Declan Newman (declan) Date: 12/04/2012
+ * @author Will Simpson
  */
 @Provider
 @Consumes({ VND_ORCID_JSON, ORCID_JSON, "text/orcid+json" })
@@ -37,17 +39,22 @@ public class OrcidJacksonJaxbJsonProvider extends JacksonJaxbJsonProvider {
 
     public OrcidJacksonJaxbJsonProvider() {
         super();
-        configure(Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
+        configureAll();
     }
 
     public OrcidJacksonJaxbJsonProvider(Annotations... annotationsToUse) {
         super(annotationsToUse);
-        configure(Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
+        configureAll();
     }
 
     public OrcidJacksonJaxbJsonProvider(ObjectMapper mapper, Annotations[] annotationsToUse) {
         super(mapper, annotationsToUse);
+        configureAll();
+    }
+    
+    private void configureAll() {
         configure(Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
+        configure(SerializationConfig.Feature.INDENT_OUTPUT, true);
     }
 
 }

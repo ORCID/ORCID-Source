@@ -34,30 +34,20 @@ public class OrcidResourceResolver implements LSResourceResolver {
 
     @Override
     public LSInput resolveResource(String type, String namespaceURI, String publicId, String systemId, String baseURI) {
-        if (shouldLoadFromClasspath(systemId)) {
-            OrcidLsInput lsInput = new OrcidLsInput(publicId, systemId, baseURI);
-            lsInput.setByteStream(getClass().getResourceAsStream(buildResourcePath(systemId)));
-            return lsInput;
-        }
-        return defaultResourceResolver.resolveResource(type, namespaceURI, publicId, systemId, baseURI);
+        OrcidLsInput lsInput = new OrcidLsInput(publicId, systemId, baseURI);
+        lsInput.setByteStream(getClass().getResourceAsStream(buildResourcePath(systemId)));
+        return lsInput;
     }
 
     private String buildResourcePath(String systemId) {
-        StringBuilder resourcePath = new StringBuilder("/");
-        if(systemId.startsWith("common-")){
-            resourcePath.append( "record_2.0_rc1/");
+        if (systemId.startsWith("../")) {
+            return systemId.substring(2, systemId.length());
         }
-        resourcePath.append(systemId);
-        return resourcePath.toString();
-    }
-
-    private boolean shouldLoadFromClasspath(String systemId) {
-        if (systemId != null) {
-            if (systemId.contains("common-") || systemId.equals("xml.xsd")) {
-                return true;
-            }
+        // XXX Going to have to this properly at some point!
+        else if (systemId.endsWith("-2.0_rc1.xsd")) {
+            return "/record_2.0_rc1/" + systemId;
         }
-        return false;
+        return "/" + systemId;
     }
 
 }

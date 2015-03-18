@@ -62,6 +62,7 @@ import org.orcid.core.manager.OrcidJaxbCopyManager;
 import org.orcid.core.manager.OrcidProfileCacheManager;
 import org.orcid.core.manager.OrcidProfileCleaner;
 import org.orcid.core.manager.OrcidProfileManager;
+import org.orcid.core.manager.OrgManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.security.OrcidWebRole;
 import org.orcid.core.security.visibility.aop.VisibilityControl;
@@ -99,6 +100,7 @@ import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
+import org.orcid.jaxb.model.message.Organization;
 import org.orcid.jaxb.model.message.PersonalDetails;
 import org.orcid.jaxb.model.message.Preferences;
 import org.orcid.jaxb.model.message.ScopePathType;
@@ -129,6 +131,7 @@ import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrcidGrantedAuthority;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
+import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
@@ -228,6 +231,9 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
 
     @Resource
     private WorkDao workDao;
+    
+    @Resource
+    private OrgManager orgManager;        
 
     @Value("${org.orcid.core.works.compare.useScopusWay:false}")
     private boolean compareWorksUsingScopusWay;
@@ -1562,6 +1568,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         String amenderOrcid = sourceManager.retrieveSourceOrcid();
         addSourceToAffiliations(updatedAffiliations, amenderOrcid);
         List<Affiliation> updatedAffiliationsList = updatedAffiliations.getAffiliation();
+        checkAndUpdateDisambiguatedOrganization(updatedAffiliationsList);
         checkForAlreadyExistingAffiliations(existingAffiliations, updatedAffiliationsList);
         persistAddedAffiliations(orcid, updatedAffiliationsList);
         profileDao.flush();
@@ -1571,6 +1578,26 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         }
     }
 
+    private void checkAndUpdateDisambiguatedOrganization(List<Affiliation> affiliations) {
+        if(affiliations != null && !affiliations.isEmpty()) {
+            for (Affiliation affiliation : affiliations) {
+                Organization org = affiliation.getOrganization();
+                OrgEntity orgEntity = orgManager.getOrgEntity(org);
+                //If the org exists
+                if(orgEntity != null) {
+                    //And it have a disambiguated org
+                    if(orgEntity.getOrgDisambiguated() != null) {
+                        //Update the desambiguated org
+                        org.setDisambiguatedOrganization(adapter.getDisambiguatedOrganization(orgEntity.getOrgDisambiguated()));
+                    } else {
+                        //Null the disambiguated organization
+                        org.setDisambiguatedOrganization(null);
+                    }
+                }
+            }
+        }        
+    }
+    
     /**
      * Adds a new {@link List&lt;org.orcid.jaxb.model.message.FundingList&lt;}
      * to the {@link} OrcidProfile} and returns the updated values

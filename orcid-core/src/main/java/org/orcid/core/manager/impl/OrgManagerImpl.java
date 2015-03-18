@@ -23,8 +23,9 @@ import javax.annotation.Resource;
 
 import org.orcid.core.manager.OrgManager;
 import org.orcid.core.manager.SourceManager;
+import org.orcid.jaxb.model.common.OrganizationHolder;
 import org.orcid.jaxb.model.message.Iso3166Country;
-import org.orcid.jaxb.model.record.OrganizationHolder;
+import org.orcid.jaxb.model.message.Organization;
 import org.orcid.persistence.dao.OrgDao;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
 import org.orcid.persistence.jpa.entities.AmbiguousOrgEntity;
@@ -147,9 +148,9 @@ public class OrgManagerImpl implements OrgManager {
             return null;
         
         OrgEntity orgEntity = new OrgEntity();
-        org.orcid.jaxb.model.record.Organization organization = holder.getOrganization();
+        org.orcid.jaxb.model.common.Organization organization = holder.getOrganization();
         orgEntity.setName(organization.getName());
-        org.orcid.jaxb.model.record.OrganizationAddress address = organization.getAddress();
+        org.orcid.jaxb.model.common.OrganizationAddress address = organization.getAddress();
         orgEntity.setCity(address.getCity());
         orgEntity.setRegion(address.getRegion());
         orgEntity.setCountry(Iso3166Country.fromValue(address.getCountry().value()));
@@ -158,5 +159,20 @@ public class OrgManagerImpl implements OrgManager {
                     .getDisambiguatedOrganizationIdentifier(), organization.getDisambiguatedOrganization().getDisambiguationSource()));
         }
         return createUpdate(orgEntity);        
+    }
+    
+    @Override
+    public OrgEntity getOrgEntity(Organization org) {
+        String name = org.getName();
+        String city = "";
+        String region = "";
+        Iso3166Country country = null;
+        if(org.getAddress() != null) {
+            city = org.getAddress().getCity();
+            region = org.getAddress().getRegion();
+            country = org.getAddress().getCountry();
+                    
+        }
+        return orgDao.findByNameCityRegionAndCountry(name, city, region, country);        
     }
 }

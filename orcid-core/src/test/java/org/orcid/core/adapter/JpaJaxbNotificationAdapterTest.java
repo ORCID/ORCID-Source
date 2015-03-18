@@ -26,18 +26,17 @@ import javax.annotation.Resource;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.jaxb.model.common.ClientId;
-import org.orcid.jaxb.model.common.ExternalIdType;
 import org.orcid.jaxb.model.common.Source;
+import org.orcid.jaxb.model.common.SourceClientId;
 import org.orcid.jaxb.model.notification.Notification;
+import org.orcid.jaxb.model.notification.NotificationType;
 import org.orcid.jaxb.model.notification.addactivities.Activities;
 import org.orcid.jaxb.model.notification.addactivities.Activity;
 import org.orcid.jaxb.model.notification.addactivities.ActivityType;
 import org.orcid.jaxb.model.notification.addactivities.AuthorizationUrl;
-import org.orcid.jaxb.model.notification.addactivities.ExternalId;
+import org.orcid.jaxb.model.notification.addactivities.ExternalIdentifier;
 import org.orcid.jaxb.model.notification.addactivities.NotificationAddActivities;
 import org.orcid.jaxb.model.notification.custom.NotificationCustom;
-import org.orcid.jaxb.model.notification.NotificationType;
 import org.orcid.persistence.jpa.entities.NotificationActivityEntity;
 import org.orcid.persistence.jpa.entities.NotificationAddActivitiesEntity;
 import org.orcid.persistence.jpa.entities.NotificationCustomEntity;
@@ -100,8 +99,8 @@ public class JpaJaxbNotificationAdapterTest {
         notification.setAuthorizationUrl(url);
         Source source = new Source();
         notification.setSource(source);
-        ClientId clientId = new ClientId();
-        source.setClientId(clientId);
+        SourceClientId clientId = new SourceClientId();
+        source.setSourceClientId(clientId);
         clientId.setPath("APP-5555-5555-5555-5555");
         url.setUri(authorizationUrlString);
         Activities activities = new Activities();
@@ -110,10 +109,10 @@ public class JpaJaxbNotificationAdapterTest {
         activities.getActivities().add(activity);
         activity.setActivityType(ActivityType.WORK);
         activity.setActivityName("Latest Research Article");
-        ExternalId extId = new ExternalId();
-        activity.setExternalId(extId);
-        extId.setExternalIdType(ExternalIdType.DOI);
-        extId.setExternalIdValue("1234/abc123");
+        ExternalIdentifier extId = new ExternalIdentifier();
+        activity.setExternalIdentifier(extId);
+        extId.setExternalIdType("doi");
+        extId.setExternalIdentifierId("1234/abc123");
 
         NotificationEntity notificationEntity = jpaJaxbNotificationAdapter.toNotificationEntity(notification);
 
@@ -131,7 +130,7 @@ public class JpaJaxbNotificationAdapterTest {
         NotificationActivityEntity activityEntity = activityEntities.iterator().next();
         assertEquals(ActivityType.WORK, activityEntity.getActivityType());
         assertEquals("Latest Research Article", activityEntity.getActivityName());
-        assertEquals(ExternalIdType.DOI, activityEntity.getExternalIdType());
+        assertEquals("DOI", activityEntity.getExternalIdType());
         assertEquals("1234/abc123", activityEntity.getExternalIdValue());
     }
 

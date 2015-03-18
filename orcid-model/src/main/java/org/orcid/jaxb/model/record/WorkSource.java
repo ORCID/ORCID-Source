@@ -28,6 +28,8 @@ import java.io.Serializable;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.orcid.jaxb.model.common.OrcidIdBase;
+
 @Deprecated
 @XmlRootElement(name = "source")
 public class WorkSource extends OrcidIdBase implements Serializable {

@@ -16,7 +16,7 @@
  */
 package org.orcid.core.manager;
 
-import org.orcid.jaxb.model.record.Filterable;
+import org.orcid.jaxb.model.common.Filterable;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 
 /**

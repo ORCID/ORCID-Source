@@ -16,6 +16,8 @@
  */
 package org.orcid.jaxb.model.record;
 
+import org.orcid.jaxb.model.common.Filterable;
+
 public interface GroupableActivity extends Filterable {
 
     ExternalIdentifiersContainer getExternalIdentifiers();

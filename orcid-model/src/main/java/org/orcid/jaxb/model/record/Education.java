@@ -24,12 +24,22 @@
 package org.orcid.jaxb.model.record;
 
 import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+
+import org.orcid.jaxb.model.common.CreatedDate;
+import org.orcid.jaxb.model.common.FuzzyDate;
+import org.orcid.jaxb.model.common.LastModifiedDate;
+import org.orcid.jaxb.model.common.Organization;
+import org.orcid.jaxb.model.common.OrganizationHolder;
+import org.orcid.jaxb.model.common.Source;
+import org.orcid.jaxb.model.common.Visibility;
+import org.orcid.jaxb.model.common.VisibilityType;
 
 /**
  * <p>
