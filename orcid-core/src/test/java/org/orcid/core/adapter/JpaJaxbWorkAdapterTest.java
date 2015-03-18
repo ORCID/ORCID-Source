@@ -92,7 +92,7 @@ public class JpaJaxbWorkAdapterTest {
         assertEquals("en", workEntity.getLanguageCode());
         assertEquals(Iso3166Country.AF, workEntity.getIso2Country());
     }
-    
+
     @Test
     public void fromProfileWorkEntityToWorkTest() {
         ProfileWorkEntity pw = getProfileWorkEntity();
@@ -120,8 +120,7 @@ public class JpaJaxbWorkAdapterTest {
         assertNotNull(workExtId.getWorkExternalIdentifierType());
         assertEquals(WorkExternalIdentifierType.AGR.value(), workExtId.getWorkExternalIdentifierType().value());
     }
-    
-    
+
     @Test
     public void fromProfileWorkEntityToWorkSummaryTest() {
         ProfileWorkEntity pw = getProfileWorkEntity();
@@ -138,7 +137,7 @@ public class JpaJaxbWorkAdapterTest {
         assertNotNull(workExtId.getWorkExternalIdentifierId());
         assertEquals("123", workExtId.getWorkExternalIdentifierId().getContent());
         assertNotNull(workExtId.getWorkExternalIdentifierType());
-        assertEquals(WorkExternalIdentifierType.AGR.value(), workExtId.getWorkExternalIdentifierType().value());        
+        assertEquals(WorkExternalIdentifierType.AGR.value(), workExtId.getWorkExternalIdentifierType().value());
     }
 
     private Work getWork() throws JAXBException {
@@ -147,7 +146,7 @@ public class JpaJaxbWorkAdapterTest {
         InputStream inputStream = getClass().getResourceAsStream("/record_2.0_rc1/samples/work-2.0_rc1.xml");
         return (Work) unmarshaller.unmarshal(inputStream);
     }
-    
+
     private ProfileWorkEntity getProfileWorkEntity() {
         Date date = new Date();
         ProfileWorkEntity result = new ProfileWorkEntity();
@@ -156,39 +155,28 @@ public class JpaJaxbWorkAdapterTest {
         result.setProfile(new ProfileEntity("0000-0000-0000-0001"));
         result.setVisibility(Visibility.LIMITED);
         result.setDisplayIndex(1234567890L);
-        
+
         WorkEntity work = new WorkEntity();
         work.setCitation("work:citation");
-        work.setCitationType(CitationType.BIBTEX);        
+        work.setCitationType(CitationType.BIBTEX);
         work.setDateCreated(date);
-        work.setDescription("work:description");        
+        work.setDescription("work:description");
         work.setId(12345L);
-        work.setIso2Country(org.orcid.jaxb.model.message.Iso3166Country.CR);        
+        work.setIso2Country(org.orcid.jaxb.model.message.Iso3166Country.CR);
         work.setJournalTitle("work:journalTitle");
         work.setLanguageCode("EN");
-        work.setLastModified(date);        
+        work.setLastModified(date);
         work.setPublicationDate(new PublicationDateEntity(2000, 1, 1));
         work.setSubtitle("work:subtitle");
         work.setTitle("work:title");
         work.setTranslatedTitle("work:translatedTitle");
         work.setTranslatedTitleLanguageCode("ES");
         work.setWorkType(WorkType.ARTISTIC_PERFORMANCE);
-        work.setWorkUrl("work:url");         
+        work.setWorkUrl("work:url");
         work.setContributorsJson("{\"contributor\":[]}");
-        work.setExternalIdentifiersJson("{\"workExternalIdentifier\":[{\"workExternalIdentifierType\":\"AGR\",\"workExternalIdentifierId\":{\"content\":\"123\"}}]}");        
-        
-        result.setWork(work);                
+        work.setExternalIdentifiersJson("{\"workExternalIdentifier\":[{\"workExternalIdentifierType\":\"AGR\",\"workExternalIdentifierId\":{\"content\":\"123\"}}]}");
+
+        result.setWork(work);
         return result;
     }
 }
-
-
-
-
-
-
-
-
-
-
-
