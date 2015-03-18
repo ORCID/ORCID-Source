@@ -37,7 +37,7 @@
                 <ul style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666; margin-left: 0;">
                     <#compress>
                     <#if amendedMessageCount gt 0><li>[${amendedMessageCount}] <#if amendedMessageCount == 1>notification<#else>notifications</#if> from ORCID member organizations that added or updated information on your record</li></#if>
-                    <#if addActivitiesMessageCount gt 0><li>[{$addActivitiesMessageCount}] <#if addActivitiesMessageCount == 1>Request<#else>Requests</#if> to add or update your ORCID record</li></#if>
+                    <#if addActivitiesMessageCount gt 0><li>[${addActivitiesMessageCount}] <#if addActivitiesMessageCount == 1>Request<#else>Requests</#if> to add or update your ORCID record</li></#if>
                     <#if orcidMessageCount gt 0><li>[${orcidMessageCount}] <#if orcidMessageCount == 1>notification<#else>notifications</#if> from ORCID</li></#if>
                     </#compress>
                 </ul>
