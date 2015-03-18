@@ -490,9 +490,6 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
         assertEquals(1, orgAffiliationDao.getByUserAndType("4444-4444-4444-4446", org.orcid.jaxb.model.message.AffiliationType.EDUCATION).size());               
     }
     
-    
-    
-    
     @Test
     public void preventDuplicatedAffiliations2Test() {
         setUpSecurityContext("4444-4444-4444-4499");
@@ -549,9 +546,6 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
         assertEquals(Iso3166Country.GB, orgEntity.getOrg().getOrgDisambiguated().getCountry());
         assertEquals(Long.valueOf(1), orgEntity.getOrg().getOrgDisambiguated().getId());
     }
-    
-    
-    
     
     private OrcidMessage buildMessageWithAffiliation(AffiliationType type, String dept, String role, String orcid) {
         OrcidMessage orcidMessage = new OrcidMessage();
