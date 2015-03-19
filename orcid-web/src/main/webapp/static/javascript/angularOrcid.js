@@ -3902,8 +3902,8 @@ orcidNgModule.controller('PublicWorkCtrl',['$scope', '$compile', '$filter', 'wor
 
 }]);
 
-orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrvc', 'workspaceSrvc', 'actBulkSrvc', 'commonSrvc', '$timeout', 
-                                      function ($scope, $compile, $filter, worksSrvc, workspaceSrvc, actBulkSrvc, commonSrvc, $timeout) {
+orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrvc', 'workspaceSrvc', 'actBulkSrvc', 'commonSrvc', '$timeout', '$q', 
+                                      function ($scope, $compile, $filter, worksSrvc, workspaceSrvc, actBulkSrvc, commonSrvc, $timeout, $q) {
     actBulkSrvc.initScope($scope);
     $scope.canReadFiles = false;
     $scope.showBibtexImportWizard = false;
@@ -4069,34 +4069,35 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     
     $scope.saveAllFromBibtex = function(){
     	var works = $scope.worksFromBibtex;
-    	
-    	angular.forEach( works, function( work, key ) {    
-    		//console.log(work);
+    	var prom = [];
+    	angular.forEach( works, function( work, key ) {    		
     		if ( work.title.value != null
-    				&& work.workCategory.value.length > 0
-    				&& work.workType.value.length > 0
-    				&& work.workExternalIdentifiers[0].workExternalIdentifierType.value.length > 0 ) {    					
-		    			$.ajax({
-		                    url: getBaseUri() + '/works/work.json',
-		                    contentType: 'application/json;charset=UTF-8',
-		                    dataType: 'json',
-		                    type: 'POST',
-		                    data: angular.toJson(work),
-		                    success: function(data) {
-		                    	index = works.indexOf(work);
-		                    	works.splice(index, 1);
-		                    	$scope.worksFromBibtex = works;
-		                		$scope.$apply();
-		                		//Review
-		                		$scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);		                    	
-		                    }
-		                }).fail(function(){
-		                    //Something really sad is happening :(
-		                });
-    		}    		
-    	});  
+				&& work.workCategory.value.length > 0
+				&& work.workType.value.length > 0) {
+    			prom.push(
+	    			$.ajax({
+	                    url: getBaseUri() + '/works/work.json',
+	                    contentType: 'application/json;charset=UTF-8',
+	                    dataType: 'json',
+	                    type: 'POST',
+	                    data: angular.toJson(work),
+	                    success: function(data) {
+	                    	index = works.indexOf(work);
+	                    	works.splice(index, 1);
+	                    	$scope.worksFromBibtex = works;
+	                		$scope.$apply();
+	                    }
+	                }).fail(function(){
+	                    //Something really sad is happening :(
+	                })
+    			);
+    		};    		
+    	}); 
     	
-    }
+    	$q.all(prom).then(function(){
+    		$scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);    		
+    	});
+    };
 
     $scope.openBibTextWizard = function () {
         $scope.bibtexParsingError = false;
