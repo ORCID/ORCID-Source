@@ -34,10 +34,8 @@ import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.test.DBUnitTest;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author: Declan Newman (declan) Date: 10/02/2012
@@ -68,8 +66,6 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
     }
 
     @Test
-    @Transactional("transactionManager")
-    @Rollback(true)
     public void testFindByOrcid() throws Exception {
         String harrysOrcid = "4444-4444-4444-4444";
         ProfileEntity profileEntity = profileEntityCacheManager.retrieve(harrysOrcid);
@@ -79,9 +75,7 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
         assertEquals(harrysOrcid, profileEntity.getId());
     }
 
-    @Test
-    @Transactional("transactionManager")
-    @Rollback(true)
+    @Test    
     public void testDeprecateProfile() throws Exception {
         ProfileEntity profileEntityToDeprecate = profileEntityCacheManager.retrieve("4444-4444-4444-4441");
         ProfileEntity primaryProfileEntity = profileEntityCacheManager.retrieve("4444-4444-4444-4442");

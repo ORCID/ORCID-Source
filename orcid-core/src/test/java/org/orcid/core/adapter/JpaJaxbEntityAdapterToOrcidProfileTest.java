@@ -287,8 +287,9 @@ public class JpaJaxbEntityAdapterToOrcidProfileTest extends DBUnitTest {
         assertNotNull(sponsor);
         assertEquals("S. Milligan", sponsor.getSourceName().getContent());
         assertEquals("4444-4444-4444-4441", sponsor.getSourceOrcid().getPath());
-        assertEquals(DateUtils.convertToDate("2012-06-29T15:31:00"), orcidHistory.getDeactivationDate().getValue().toGregorianCalendar().getTime());
         assertEquals(DateUtils.convertToDate("2011-07-02T15:31:00"), orcidHistory.getLastModifiedDate().getValue().toGregorianCalendar().getTime());
+        assertEquals(DateUtils.convertToDate("2011-06-29T15:31:00"), orcidHistory.getSubmissionDate().getValue().toGregorianCalendar().getTime());
+        assertEquals(DateUtils.convertToDate("2011-07-02T15:31:00"), orcidHistory.getCompletionDate().getValue().toGregorianCalendar().getTime());
     }
 
     private void checkOrcidProfile(OrcidBio orcidBio) {

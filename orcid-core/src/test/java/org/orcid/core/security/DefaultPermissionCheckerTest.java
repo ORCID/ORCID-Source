@@ -89,7 +89,7 @@ public class DefaultPermissionCheckerTest extends DBUnitTest {
         AuthorizationRequest request = new AuthorizationRequest("4444-4444-4444-4441", Arrays.asList("/orcid-bio/external-identifiers/create"));
         request.setAuthorities(grantedAuthorities);
         request.setResourceIds(resourceIds);
-        ProfileEntity entity = profileEntityCacheManager.retrieve("4444-4444-4444-4446");
+        ProfileEntity entity = profileEntityManager.findByOrcid("4444-4444-4444-4446");
         OrcidOauth2UserAuthentication oauth2UserAuthentication = new OrcidOauth2UserAuthentication(entity, true);
         OAuth2Authentication oAuth2Authentication = new OrcidOAuth2Authentication(request, oauth2UserAuthentication, "made-up-token");
         ScopePathType requiredScope = ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE;
@@ -107,7 +107,7 @@ public class DefaultPermissionCheckerTest extends DBUnitTest {
         AuthorizationRequest request = new AuthorizationRequest("4444-4444-4444-4441", Arrays.asList("/orcid-bio/external-identifiers/create"));
         request.setAuthorities(grantedAuthorities);
         request.setResourceIds(resourceIds);
-        ProfileEntity entity = profileEntityCacheManager.retrieve("4444-4444-4444-4445");
+        ProfileEntity entity = profileEntityManager.findByOrcid("4444-4444-4444-4445");
         OrcidOauth2UserAuthentication oauth2UserAuthentication = new OrcidOauth2UserAuthentication(entity, true);
         OAuth2Authentication oAuth2Authentication = new OrcidOAuth2Authentication(request, oauth2UserAuthentication, "made-up-token");
         ScopePathType requiredScope = ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE;

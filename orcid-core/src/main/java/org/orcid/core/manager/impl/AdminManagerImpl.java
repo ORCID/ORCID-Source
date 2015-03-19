@@ -124,9 +124,9 @@ public class AdminManagerImpl implements AdminManager {
         // If both users exists
         if (deprecated != null && primary != null) {
             // If account is already deprecated
-            if (deprecated.getPrimaryRecord() != null) {
+            if (deprecated.getDeprecatedDate() != null) {
                 result.getErrors().add(localeManager.resolveMessage("admin.profile_deprecation.errors.already_deprecated", deprecatedOrcid));
-            } else if (primary.getPrimaryRecord() != null) {
+            } else if (primary.getDeprecatedDate() != null) {
                 // If primary is deprecated
                 result.getErrors().add(localeManager.resolveMessage("admin.profile_deprecation.errors.primary_account_deprecated", primaryOrcid));
             } else {
@@ -192,7 +192,9 @@ public class AdminManagerImpl implements AdminManager {
                         }
                         
                         // Update deprecated profile
-                        deprecated.setDeactivationDate(new Date());
+                        Date deprecationDate = new Date();
+                        deprecated.setDeactivationDate(deprecationDate);
+                        deprecated.setDeprecatedDate(deprecationDate);
                         deprecated.setCreditName(null);
                         deprecated.setGivenNames("Given Names Deactivated");
                         deprecated.setFamilyName("Family Name Deactivated");

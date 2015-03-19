@@ -205,24 +205,29 @@ public class AdminController extends BaseController {
      * */
     @RequestMapping(value = { "/deprecate-profile/check-orcid.json", "/deactivate-profile/check-orcid.json" }, method = RequestMethod.GET)
     public @ResponseBody
-    ProfileDetails checkOrcidToDeprecate(@RequestParam("orcid") String orcid) {
-        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
+    ProfileDetails checkOrcidToDeprecate(@RequestParam("orcid") String orcid) {        
         ProfileDetails profileDetails = new ProfileDetails();
-        if (profile != null) {
-            if (profile.getPrimaryRecord() != null) {
-                profileDetails.getErrors().add(getMessage("admin.profile_deprecation.errors.already_deprecated", orcid));
-            } else if (profile.getDeactivationDate() != null) {
-                profileDetails.getErrors().add(getMessage("admin.profile_deactivation.errors.already_deactivated", orcid));
+        try {
+            ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
+            if (profile != null) {
+                if (profile.getDeprecatedDate() != null) {
+                    profileDetails.getErrors().add(getMessage("admin.profile_deprecation.errors.already_deprecated", orcid));
+                } else if (profile.getDeactivationDate() != null) {
+                    profileDetails.getErrors().add(getMessage("admin.profile_deactivation.errors.already_deactivated", orcid));
+                } else {
+                    profileDetails.setOrcid(profile.getId());
+                    profileDetails.setFamilyName(profile.getFamilyName());
+                    profileDetails.setGivenNames(profile.getGivenNames());
+                    if (profile.getPrimaryEmail() != null)
+                        profileDetails.setEmail(profile.getPrimaryEmail().getId());
+                }
             } else {
-                profileDetails.setOrcid(profile.getId());
-                profileDetails.setFamilyName(profile.getFamilyName());
-                profileDetails.setGivenNames(profile.getGivenNames());
-                if (profile.getPrimaryEmail() != null)
-                    profileDetails.setEmail(profile.getPrimaryEmail().getId());
+                profileDetails.getErrors().add(getMessage("admin.profile_deprecation.errors.inexisting_orcid", orcid));
             }
-        } else {
+        } catch(IllegalArgumentException iae) {
             profileDetails.getErrors().add(getMessage("admin.profile_deprecation.errors.inexisting_orcid", orcid));
         }
+        
         return profileDetails;
     }
 
@@ -476,9 +481,6 @@ public class AdminController extends BaseController {
     private boolean matchesOrcidPattern(String orcid) {
         return OrcidStringUtils.isValidOrcid(orcid);
     }
-    
-    
-    
     
     /**
      * Function to get the info of an account we want to lock

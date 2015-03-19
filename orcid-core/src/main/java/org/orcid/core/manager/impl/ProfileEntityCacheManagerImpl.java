@@ -1,3 +1,19 @@
+/**
+ * =============================================================================
+ *
+ * ORCID (R) Open Source
+ * http://orcid.org
+ *
+ * Copyright (c) 2012-2014 ORCID, Inc.
+ * Licensed under an MIT-Style License (MIT)
+ * http://orcid.org/open-source-license
+ *
+ * This copyright and license information (including a link to the full license)
+ * shall be included in its entirety in all copies or substantial portion of
+ * the software.
+ *
+ * =============================================================================
+ */
 package org.orcid.core.manager.impl;
 
 import java.util.Date;
@@ -31,7 +47,7 @@ public class ProfileEntityCacheManagerImpl implements ProfileEntityCacheManager 
     private static final Logger LOG = LoggerFactory.getLogger(ProfileEntityCacheManagerImpl.class);
 
     @Override
-    public ProfileEntity retrieve(String orcid) {
+    public ProfileEntity retrieve(String orcid) throws IllegalArgumentException {
         Object key = new OrcidCacheKey(orcid, releaseName);
         Date dbDate = retrieveLastModifiedDate(orcid);
         ProfileEntity profile = toProfileEntity(profileCache.get(key));
@@ -41,6 +57,8 @@ public class ProfileEntityCacheManagerImpl implements ProfileEntityCacheManager 
                     profile = toProfileEntity(profileCache.get(orcid));
                     if (needsFresh(dbDate, profile)) {
                         profile = profileEntityManager.findByOrcid(orcid);
+                        if(profile == null)
+                            throw new IllegalArgumentException("Invalid orcid " + orcid);
                         profileCache.put(new Element(key, profile));
                     }
                 }
@@ -98,11 +116,4 @@ public class ProfileEntityCacheManagerImpl implements ProfileEntityCacheManager 
             return true;
         return false;
     }
-
-    @Override
-    public ProfileEntity retrievePublic(String orcid) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
 }

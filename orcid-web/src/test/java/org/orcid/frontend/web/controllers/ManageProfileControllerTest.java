@@ -114,7 +114,7 @@ public class ManageProfileControllerTest extends BaseControllerTest {
     private GivenPermissionToDao givenPermissionToDao;
 
     @Mock
-    private ProfileEntityManager profileEntityManager;
+    private ProfileEntityManager profileEntityManager;        
 
     /**
      * The classes loaded from the app context are in fact proxies to the
@@ -256,7 +256,7 @@ public class ManageProfileControllerTest extends BaseControllerTest {
     public void testAddDelegateSendsEmailToOnlyNewDelegates() throws Exception {
         ProfileEntity delegateProfile = new ProfileEntity("5555-5555-5555-555X");        
         delegateProfile.setCreditName("Test Delegate Credit Name");        
-        when(profileEntityCacheManager.retrieve("5555-5555-5555-555X")).thenReturn(delegateProfile);
+        when(profileEntityManager.findByOrcid("5555-5555-5555-555X")).thenReturn(delegateProfile);
         ManageDelegate addDelegate = new ManageDelegate();
         addDelegate.setDelegateToManage("5555-5555-5555-555X");
         addDelegate.setPassword("password");
