@@ -26,7 +26,7 @@
                 Dear ${emailName},
             </p>
             <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
-                Thought you'd like to know... ${notification.source.sourceName} has updated your ORCID record.
+                Thought you'd like to know... ${notification.source.sourceName.content} has updated your ORCID record.
             </p>            
             <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666; white-space: pre;">
 Kind Regards,

@@ -790,6 +790,7 @@ public class NotificationManagerImpl implements NotificationManager {
     }
 
     @Override
+    @Transactional
     public Notification flagAsArchived(String orcid, Long id) throws OrcidNotificationAlreadyReadException {
         NotificationEntity notificationEntity = notificationDao.findByOricdAndId(orcid, id);
         if (notificationEntity == null) {
