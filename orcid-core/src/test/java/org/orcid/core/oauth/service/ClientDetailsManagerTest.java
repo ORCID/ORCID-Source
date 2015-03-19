@@ -133,7 +133,7 @@ public class ClientDetailsManagerTest extends DBUnitTest {
         checkClientDetails(clientDetails);
     }
 
-    @Test(expected = NoResultException.class)
+    @Test(expected = IllegalArgumentException.class)
     @Rollback
     @Transactional
     public void testCreateClientDetailsWithNonExistentOrcid() throws Exception {
