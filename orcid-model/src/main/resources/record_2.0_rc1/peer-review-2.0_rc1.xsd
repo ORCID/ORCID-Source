@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
 	xmlns:sch="http://purl.oclc.org/dsdl/schematron" elementFormDefault="qualified"
-	targetNamespace="http://www.orcid.org/ns/peer-review" xmlns:activities="http://www.orcid.org/ns/peer-review"
+	targetNamespace="http://www.orcid.org/ns/peer-review" xmlns:activities="http://www.orcid.org/ns/activities"
 	xmlns:common="http://www.orcid.org/ns/common" xmlns:work="http://www.orcid.org/ns/work"
 	xmlns:funding="http://www.orcid.org/ns/funding" xmlns:education="http://www.orcid.org/ns/education"
 	xmlns:employment="http://www.orcid.org/ns/employment"
@@ -74,18 +74,23 @@
 				</xs:element>
 				<xs:element name="url" type="common:url" minOccurs="0">
 					<xs:annotation>
-						<xs:documentation>A link to a representation of the review on the web.
+						<xs:documentation>A link to a representation of the review on the
+							web.
 						</xs:documentation>
 					</xs:annotation>
 				</xs:element>
-				<xs:element name="type" type="peer-review:type">
+				<xs:element name="type" type="peer-review:type" minOccurs="1" maxOccurs="1">
 					<xs:annotation>
-						<xs:documentation>The kind of review applied to the subject type reviewed</xs:documentation>
+						<xs:documentation>The kind of review applied to the subject type
+							reviewed
+						</xs:documentation>
 					</xs:annotation>
 				</xs:element>
-				<xs:element name="completion-date" type="common:fuzzy-date">
+				<xs:element name="completion-date" type="common:fuzzy-date" minOccurs="1" maxOccurs="1">
 					<xs:annotation>
-						<xs:documentation>The day of the month on which the review was completed </xs:documentation>
+						<xs:documentation>The day of the month on which the review was
+							completed
+						</xs:documentation>
 					</xs:annotation>
 				</xs:element>
 				<xs:element name="subject">
@@ -101,24 +106,29 @@
 							</xs:element>
 							<xs:element name="type" type="work:work-type">
 								<xs:annotation>
-									<xs:documentation>The nominal type of unique ID</xs:documentation>
+									<xs:documentation>The nominal type of unique ID
+									</xs:documentation>
 								</xs:annotation>
 							</xs:element>
 							<xs:element name="journal-title" type="work:journal-title"
 								minOccurs="0" maxOccurs="1">
 								<xs:annotation>
-									<xs:documentation>The name of the journal or conference or applicable object of which the review was a part.</xs:documentation>
+									<xs:documentation>The name of the journal or conference or
+										applicable object of which the review was a part.
+									</xs:documentation>
 								</xs:annotation>
 							</xs:element>
 							<xs:element name="title" type="work:work-title"
 								minOccurs="1">
 								<xs:annotation>
-									<xs:documentation>The title of the subject reviewed</xs:documentation>
+									<xs:documentation>The title of the subject reviewed
+									</xs:documentation>
 								</xs:annotation>
 							</xs:element>
 							<xs:element name="url" type="common:url" minOccurs="0">
 								<xs:annotation>
-									<xs:documentation>The URL of the subject reviewed.</xs:documentation>
+									<xs:documentation>The URL of the subject reviewed.
+									</xs:documentation>
 								</xs:annotation>
 							</xs:element>
 						</xs:sequence>
