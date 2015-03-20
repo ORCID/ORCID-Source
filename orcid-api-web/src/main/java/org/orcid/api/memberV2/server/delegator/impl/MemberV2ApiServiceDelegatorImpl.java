@@ -24,6 +24,7 @@ import java.net.URISyntaxException;
 import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
 
+import org.orcid.api.common.util.ActivityUtils;
 import org.orcid.api.memberV2.server.delegator.MemberV2ApiServiceDelegator;
 import org.orcid.core.exception.MismatchedPutCodeException;
 import org.orcid.core.manager.AffiliationsManager;
@@ -118,6 +119,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     public Response viewWork(String orcid, String putCode) {
         Work w = profileWorkManager.getWork(orcid, putCode);
         orcidSecurityManager.checkVisibility(w);
+        ActivityUtils.updatePutCodeToPath(w, orcid);
         return Response.ok(w).build();
     }
 
@@ -126,6 +128,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     public Response viewWorkSummary(String orcid, String putCode) {
         WorkSummary ws = profileWorkManager.getWorkSummary(orcid, putCode);
         orcidSecurityManager.checkVisibility(ws);
+        ActivityUtils.updatePutCodeToPath(ws, orcid);
         return Response.ok(ws).build();
     }
 
@@ -162,6 +165,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     public Response viewFunding(String orcid, String putCode) {
         Funding f = profileFundingManager.getFunding(orcid, putCode);
         orcidSecurityManager.checkVisibility(f);
+        ActivityUtils.updatePutCodeToPath(f, orcid);
         return Response.ok(f).build();
     }
 
@@ -170,6 +174,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     public Response viewFundingSummary(String orcid, String putCode) {
         FundingSummary fs = profileFundingManager.getSummary(orcid, putCode);
         orcidSecurityManager.checkVisibility(fs);
+        ActivityUtils.updatePutCodeToPath(fs, orcid);
         return Response.ok(fs).build();
     }
 
@@ -199,6 +204,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     public Response viewEducation(String orcid, String putCode) {
         Education e = affiliationsManager.getEducationAffiliation(orcid, putCode);
         orcidSecurityManager.checkVisibility(e);
+        ActivityUtils.updatePutCodeToPath(e, orcid);
         return Response.ok(e).build();
     }
 
@@ -207,6 +213,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     public Response viewEducationSummary(String orcid, String putCode) {
         EducationSummary es = affiliationsManager.getEducationSummary(orcid, putCode);
         orcidSecurityManager.checkVisibility(es);
+        ActivityUtils.updatePutCodeToPath(es, orcid);
         return Response.ok(es).build();
     }
 
@@ -236,6 +243,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     public Response viewEmployment(String orcid, String putCode) {
         Employment e = affiliationsManager.getEmploymentAffiliation(orcid, putCode);
         orcidSecurityManager.checkVisibility(e);
+        ActivityUtils.updatePutCodeToPath(e, orcid);
         return Response.ok(e).build();
     }
 
@@ -243,6 +251,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     public Response viewEmploymentSummary(String orcid, String putCode) {
         EmploymentSummary es = affiliationsManager.getEmploymentSummary(orcid, putCode);
         orcidSecurityManager.checkVisibility(es);
+        ActivityUtils.updatePutCodeToPath(es, orcid);
         return Response.ok(es).build();
     }
 
@@ -277,4 +286,6 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
         profileFundingManager.checkSourceAndDelete(orcid, putCode);
         return Response.noContent().build();
     }
+    
+    
 }

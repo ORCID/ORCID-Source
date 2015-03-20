@@ -29,6 +29,8 @@ public interface Activity extends Filterable {
 
     String getPutCode();
     
+    void setPutCode(String putCode);
+    
     CreatedDate getCreatedDate();
     
     void setCreatedDate(CreatedDate value);
