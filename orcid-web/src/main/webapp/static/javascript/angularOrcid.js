@@ -1481,15 +1481,16 @@ orcidNgModule.filter('externalIdentifierHtml', function(){
         if(externalIdentifier.url != null)
             link = externalIdentifier.url.value;
        
-        if (link.search(/^http[s]?\:\/\//) == -1)
-        	link = 'http://' + link;
-
-        if (link != null && value != null){        	
-            output += "<a href='" + link + "' class='truncate-anchor' target='_blank'>" + value + "</a>";        	
-        }else if(value != null){
-            output = output + " " + value;
-        }else if(link != null){        	
-            output = om.get('funding.add.external_id.url.label.grant') + ": <a href='" + link + "' class='truncate-anchor' target='_blank'>" + link + "</a>";
+        if(link != null) {
+        	if (link.search(/^http[s]?\:\/\//) == -1)
+            	link = 'http://' + link;
+        	if(value != null) {
+        		output += "<a href='" + link + "' class='truncate-anchor' target='_blank'>" + value + "</a>";
+        	} else {
+        		output = om.get('funding.add.external_id.url.label.grant') + ": <a href='" + link + "' class='truncate-anchor' target='_blank'>" + link + "</a>";
+        	}
+        } else if(value != null) {
+        	output = output + " " + value;
         }
       
         if (length > 1 && !last) output = output + ',';
