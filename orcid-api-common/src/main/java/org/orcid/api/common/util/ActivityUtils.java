@@ -21,6 +21,13 @@ import org.orcid.jaxb.model.record.Activity;
 import org.orcid.jaxb.model.record.Education;
 import org.orcid.jaxb.model.record.Employment;
 import org.orcid.jaxb.model.record.Funding;
+import org.orcid.jaxb.model.record.summary.ActivitiesSummary;
+import org.orcid.jaxb.model.record.summary.EducationSummary;
+import org.orcid.jaxb.model.record.summary.Educations;
+import org.orcid.jaxb.model.record.summary.EmploymentSummary;
+import org.orcid.jaxb.model.record.summary.Employments;
+import org.orcid.jaxb.model.record.summary.Fundings;
+import org.orcid.jaxb.model.record.summary.Works;
 
 public class ActivityUtils {
 
@@ -54,6 +61,39 @@ public class ActivityUtils {
 
         // Update the put code
         activity.setPutCode(newPutCode);
+    }
+    
+    /**
+     * In order to provide a more meaningful put code for activities, we will
+     * replace the actual put code for one that represent a path to the activity
+     * in the orcid record.
+     * 
+     * The new put code will follow this pattern:
+     * 
+     * /orcid/activity-type/putCode
+     * 
+     * @param ActivitiesSummary
+     *            An object that contains several elements to update the putCode element
+     * @param orcid
+     *            The activity owner
+     * */
+    public static void updatePutCodeToPath(ActivitiesSummary activitiesSummary, String orcid) {
+        Educations educations = activitiesSummary.getEducations();
+        Employments employments = activitiesSummary.getEmployments();
+        Fundings fundings = activitiesSummary.getFundings();
+        Works works = activitiesSummary.getWorks();
+        
+        if(educations != null && !educations.getSummaries().isEmpty()) {
+            for(EducationSummary summary : educations.getSummaries()) {
+                ActivityUtils.updatePutCodeToPath(summary, orcid);
+            }
+        }
+        
+        if(employments != null && !employments.getSummaries().isEmpty()) {
+            for(EmploymentSummary summary : employments.getSummaries()) {
+                ActivityUtils.updatePutCodeToPath(summary, orcid);
+            }
+        }
     }
 
 }
