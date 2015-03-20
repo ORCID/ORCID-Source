@@ -50,38 +50,77 @@
 	<xs:element name="peer-review">
 		<xs:complexType>
 			<xs:sequence>
-				<!-- reviewer id type - always assume ORCID iD -->
-				<xs:element ref="common:orcid-identifier" minOccurs="0"
-					maxOccurs="1" />
-				<!-- reviewer first name -->
-				<!-- reviewer middle name -->
-				<!-- reviewer family name -->
-				<xs:element name="role" type="peer-review:role" />
+				<xs:element name="role" type="peer-review:role">
+					<xs:annotation>
+						<xs:documentation>The role played by a person in their
+							contribution to a review.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
 				<!-- orcid orgs doesn't match specification -->
 				<xs:element name="organization" type="common:organization"
-					minOccurs="1" maxOccurs="1" />
-				<!-- review reference id (I believe this is a put code?) -->
-				<xs:element name="url" type="common:url" minOccurs="0" />
-				<xs:element name="type" type="peer-review:type" />
-				<xs:element name="completion-date" type="common:fuzzy-date" />
+					minOccurs="1" maxOccurs="1">
+					<xs:annotation>
+						<xs:documentation>The organization convening the review
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="external-identifiers" type="work:work-external-identifiers"
+					minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>The unique generated identifier of the review.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="url" type="common:url" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>A link to a representation of the review on the web.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="type" type="peer-review:type">
+					<xs:annotation>
+						<xs:documentation>The kind of review applied to the subject type reviewed</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="completion-date" type="common:fuzzy-date">
+					<xs:annotation>
+						<xs:documentation>The day of the month on which the review was completed </xs:documentation>
+					</xs:annotation>
+				</xs:element>
 				<xs:element name="subject">
 					<xs:complexType>
 						<xs:sequence>
 							<xs:element name="external-identifiers" type="work:work-external-identifiers"
 								minOccurs="0">
 								<xs:annotation>
-									<xs:documentation>Element containing the type and content of
-										the
-										citation for this work
+									<xs:documentation>The unique identifier of the subject being
+										reviewed.
 									</xs:documentation>
 								</xs:annotation>
 							</xs:element>
-							<xs:element name="type" type="work:work-type" />
-							<xs:element name="container" type="work:journal-title"
-								minOccurs="0" maxOccurs="1" />
+							<xs:element name="type" type="work:work-type">
+								<xs:annotation>
+									<xs:documentation>The nominal type of unique ID</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="journal-title" type="work:journal-title"
+								minOccurs="0" maxOccurs="1">
+								<xs:annotation>
+									<xs:documentation>The name of the journal or conference or applicable object of which the review was a part.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
 							<xs:element name="title" type="work:work-title"
-								minOccurs="1" />
-							<xs:element name="url" type="common:url" minOccurs="0" />
+								minOccurs="1">
+								<xs:annotation>
+									<xs:documentation>The title of the subject reviewed</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="url" type="common:url" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>The URL of the subject reviewed.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
 						</xs:sequence>
 					</xs:complexType>
 				</xs:element>
@@ -97,18 +136,49 @@
 		</xs:complexType>
 	</xs:element>
 
-
 	<xs:simpleType name="role">
 		<xs:annotation>
 			<xs:documentation>The role performed reviewer
 			</xs:documentation>
 		</xs:annotation>
 		<xs:restriction base="xs:string">
-			<xs:enumeration value="REVIEWER" />
-			<xs:enumeration value="EDITOR" />
-			<xs:enumeration value="MEMBER" />
-			<xs:enumeration value="CHAIR" />
-			<xs:enumeration value="ORGANIZER" />
+			<xs:enumeration value="REVIEWER">
+				<xs:annotation>
+					<xs:documentation>
+						A person who formally assess or examines an
+						output with a view to
+						commenting and evaluating it.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="EDITOR">
+				<xs:annotation>
+					<xs:documentation>A person who coordinates reviews and/or is
+						responsible for decision making on the content of a publication.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="MEMBER">
+				<xs:annotation>
+					<xs:documentation>A person participating in a process, committee or
+						activity.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="CHAIR">
+				<xs:annotation>
+					<xs:documentation>A person who coordinates reviews and/or is
+						responsible for decision making on the content of a conference.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="ORGANIZER">
+				<xs:annotation>
+					<xs:documentation>A person who makes arrangements or preparations
+						for an event or activity.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
 		</xs:restriction>
 	</xs:simpleType>
 
@@ -118,10 +188,22 @@
 			</xs:documentation>
 		</xs:annotation>
 		<xs:restriction base="xs:string">
-			<xs:enumeration value="REVIEW" />
-			<xs:enumeration value="EVALUATION" />
+			<xs:enumeration value="REVIEW">
+				<xs:annotation>
+					<xs:documentation>An expert assessment of a scholarly output that
+						contributes to a decision regarding on the object of the review.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="EVALUATION">
+				<xs:annotation>
+					<xs:documentation>
+						A post­peer review, expert evaluation of a
+						scholarly output.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
 		</xs:restriction>
 	</xs:simpleType>
-
 
 </xs:schema>
