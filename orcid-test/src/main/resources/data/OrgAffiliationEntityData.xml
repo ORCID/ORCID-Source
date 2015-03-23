@@ -132,4 +132,41 @@
             client_source_id="APP-5555555555555555"
             />
             
+	<org_affiliation_relation
+            id="7"
+            org_id="3"
+            orcid="4444-4444-4444-4446"
+            org_affiliation_relation_role="EDUCATION"
+            org_affiliation_relation_title="Researcher"
+            department="Education Dept # 2"
+            date_created="2010-07-02 15:31:00.00"
+            last_modified="2010-07-02 15:31:00.00"
+            start_year="2011"
+            start_month="09"
+            start_day="22"
+            end_year="2012"
+            end_month="11"
+            end_day="07"
+            visibility="PUBLIC"
+            client_source_id="APP-5555555555555555"
+            />     
+            
+	<org_affiliation_relation
+            id="8"
+            org_id="3"
+            orcid="4444-4444-4444-4446"
+            org_affiliation_relation_role="EMPLOYMENT"
+            org_affiliation_relation_title="Researcher"
+            department="Employment Dept # 2"
+            date_created="2010-07-02 15:31:00.00"
+            last_modified="2010-07-02 15:31:00.00"
+            start_year="2011"
+            start_month="09"
+            start_day="22"
+            end_year="2012"
+            end_month="11"
+            end_day="07"
+            visibility="PUBLIC"
+            client_source_id="APP-5555555555555555"
+            />                   
 </dataset>
