@@ -21,6 +21,7 @@ import static org.junit.Assert.*;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -41,19 +42,21 @@ import org.springframework.transaction.annotation.Transactional;
  * 
  */
 public class OrgManagerTest extends BaseTest {
+    private static final List<String> DATA_FILES = Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SubjectEntityData.xml", "/data/SourceClientDetailsEntityData.xml",
+            "/data/ProfileEntityData.xml", "/data/OrgsEntityData.xml");
 
     @Resource
     private OrgManager orgManager;
 
     @BeforeClass
     public static void initDBUnitData() throws Exception {
-        initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SubjectEntityData.xml", "/data/SourceClientDetailsEntityData.xml",
-                "/data/ProfileEntityData.xml"));
+        initDBUnitData(DATA_FILES);
     }
 
     @AfterClass
     public static void removeDBUnitData() throws Exception {
-        removeDBUnitData(Arrays.asList("/data/ProfileEntityData.xml", "/data/SubjectEntityData.xml", "/data/SecurityQuestionEntityData.xml"));
+        Collections.reverse(DATA_FILES);
+        removeDBUnitData(DATA_FILES);
     }
 
     @Test
