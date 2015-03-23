@@ -4,7 +4,7 @@
 	targetNamespace="http://www.orcid.org/ns/activities" xmlns:activities="http://www.orcid.org/ns/activities"
 	xmlns:common="http://www.orcid.org/ns/common" xmlns:work="http://www.orcid.org/ns/work"
 	xmlns:funding="http://www.orcid.org/ns/funding" xmlns:education="http://www.orcid.org/ns/education"
-	xmlns:employment="http://www.orcid.org/ns/employment">
+	xmlns:employment="http://www.orcid.org/ns/employment" xmlns:peer-review="http://www.orcid.org/ns/peer-review">
 	<xs:annotation>
 		<xs:documentation>
 			=============================================================================
@@ -45,6 +45,8 @@
 		schemaLocation="funding-2.0_rc1.xsd" />
 	<xs:import namespace="http://www.orcid.org/ns/work"
 		schemaLocation="work-2.0_rc1.xsd" />
+    <xs:import namespace="http://www.orcid.org/ns/peer-review"
+        schemaLocation="peer-review-2.0_rc1.xsd" />
 
 	<xs:element name="activities-summary">
 		<xs:complexType>
@@ -77,6 +79,19 @@
 						</xs:sequence>
 					</xs:complexType>
 				</xs:element>
+				<xs:element name="fundings" minOccurs="0" maxOccurs="1">
+					<xs:annotation>
+						<xs:documentation>Container for the funding received by the
+							researcher or contributor
+						</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element maxOccurs="unbounded" minOccurs="0" name="group"
+								type="activities:funding-group" />
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
 				<xs:element name="works" minOccurs="0" maxOccurs="1">
 					<xs:annotation>
 						<xs:documentation>Container for the Works published by the
@@ -91,19 +106,6 @@
 						</xs:sequence>
 					</xs:complexType>
 				</xs:element>
-				<xs:element name="fundings" minOccurs="0" maxOccurs="1">
-					<xs:annotation>
-						<xs:documentation>Container for the funding received by the
-							researcher or contributor
-						</xs:documentation>
-					</xs:annotation>
-					<xs:complexType>
-						<xs:sequence>
-							<xs:element maxOccurs="unbounded" minOccurs="0" name="group"
-								type="activities:funding-group" />
-						</xs:sequence>
-					</xs:complexType>
-				</xs:element>
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
@@ -115,36 +117,49 @@
 				<xs:element maxOccurs="unbounded" minOccurs="0"
 					ref="work:work-summary" />
 			</xs:sequence>
-		</xs:sequence>		
+		</xs:sequence>
 	</xs:complexType>
 
 	<xs:complexType name="funding-group">
 		<xs:sequence>
 			<xs:element name="identifiers" type="activities:identifiers"></xs:element>
 			<xs:sequence>
-				<xs:element maxOccurs="unbounded" minOccurs="0" ref="funding:summary" />
+				<xs:element maxOccurs="unbounded" minOccurs="0"
+					ref="funding:summary" />
 			</xs:sequence>
 		</xs:sequence>
 	</xs:complexType>
 
-	<xs:complexType name="identifiers">
+	<xs:complexType name="peer-review">
 		<xs:sequence>
-			<xs:element name="identifier" type="activities:identifier" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="identifiers" type="activities:identifiers"></xs:element>
+			<xs:sequence>
+				<xs:element maxOccurs="unbounded" minOccurs="0"
+					ref="peer-review:summary" />
+			</xs:sequence>
 		</xs:sequence>
 	</xs:complexType>
 
-    <xs:complexType name="identifier">
-        <xs:sequence>
-            <xs:element name="external-identifier-type" type="activities:identifier-types"
-                maxOccurs="1" />
-            <xs:element name="external-identifier-id" maxOccurs="1"
-                type="common:non-empty-string">
-                <xs:annotation>
-                    <xs:documentation>Value for the identifier</xs:documentation>
-                </xs:annotation>
-            </xs:element>
-        </xs:sequence>
-    </xs:complexType>
+
+	<xs:complexType name="identifiers">
+		<xs:sequence>
+			<xs:element name="identifier" type="activities:identifier"
+				minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="identifier">
+		<xs:sequence>
+			<xs:element name="external-identifier-type" type="activities:identifier-types"
+				maxOccurs="1" />
+			<xs:element name="external-identifier-id" maxOccurs="1"
+				type="common:non-empty-string">
+				<xs:annotation>
+					<xs:documentation>Value for the identifier</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
 
 	<xs:simpleType name="identifier-types">
 		<xs:union

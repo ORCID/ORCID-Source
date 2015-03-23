@@ -59,6 +59,50 @@
 			</common:end-date>
 		</affiliation:employment-summary>
 	</activities:employments>
+	<activities:fundings>
+		<activities:group>
+			<activities:identifiers>
+				<activities:identifier>
+					<activities:external-identifier-type>agr</activities:external-identifier-type>
+					<activities:external-identifier-id>activities:external-identifier-id</activities:external-identifier-id>
+				</activities:identifier>
+			</activities:identifiers>
+			<funding:summary put-code="0" visibility="private">
+				<common:created-date>2001-12-31T12:00:00</common:created-date>
+				<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
+				<common:source>
+					<common:source-orcid>
+						<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
+						<common:path>8888-8888-8888-8880</common:path>
+						<common:host>orcid.org</common:host>
+					</common:source-orcid>
+					<common:source-name />
+				</common:source>
+				<funding:title>
+					<common:title>common:title</common:title>
+					<common:translated-title language-code="en">common:translated-title</common:translated-title>
+				</funding:title>
+				<funding:external-identifiers>
+					<funding:externalIdentifier>
+						<funding:external-identifier-type>grant_number</funding:external-identifier-type>
+						<funding:external-identifier-value>funding:external-identifier-value</funding:external-identifier-value>
+						<funding:external-identifier-url>http://tempuri.org</funding:external-identifier-url>
+					</funding:externalIdentifier>
+				</funding:external-identifiers>
+				<funding:type>grant</funding:type>
+				<common:start-date>
+					<common:year>2014</common:year>
+					<common:month>12</common:month>
+					<common:day>20</common:day>
+				</common:start-date>
+				<common:end-date>
+					<common:year>2014</common:year>
+					<common:month>12</common:month>
+					<common:day>20</common:day>
+				</common:end-date>
+			</funding:summary>
+		</activities:group>
+	</activities:fundings>
 	<activities:works>
 		<activities:group>
 			<activities:identifiers>
@@ -98,49 +142,4 @@
 			</work:work-summary>
 		</activities:group>
 	</activities:works>
-	<activities:fundings>
-		<activities:group>
-			<activities:identifiers>
-				<activities:identifier>
-					<activities:external-identifier-type>agr</activities:external-identifier-type>
-					<activities:external-identifier-id>activities:external-identifier-id</activities:external-identifier-id>
-				</activities:identifier>
-			</activities:identifiers>
-			<funding:summary put-code="0"
-				visibility="private">
-				<common:created-date>2001-12-31T12:00:00</common:created-date>
-				<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
-				<common:source>
-					<common:source-orcid>
-						<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
-						<common:path>8888-8888-8888-8880</common:path>
-						<common:host>orcid.org</common:host>
-					</common:source-orcid>
-					<common:source-name />
-				</common:source>
-				<funding:title>
-					<common:title>common:title</common:title>
-					<common:translated-title language-code="en">common:translated-title</common:translated-title>
-				</funding:title>
-				<funding:external-identifiers>
-					<funding:externalIdentifier>
-						<funding:external-identifier-type>grant_number</funding:external-identifier-type>
-						<funding:external-identifier-value>funding:external-identifier-value</funding:external-identifier-value>
-						<funding:external-identifier-url>http://tempuri.org</funding:external-identifier-url>
-					</funding:externalIdentifier>
-				</funding:external-identifiers>
-				<funding:type>grant</funding:type>
-				<common:start-date>
-					<common:year>2014</common:year>
-					<common:month>12</common:month>
-					<common:day>20</common:day>
-				</common:start-date>
-				<common:end-date>
-					<common:year>2014</common:year>
-					<common:month>12</common:month>
-					<common:day>20</common:day>
-				</common:end-date>
-			</funding:summary>
-		</activities:group>
-	</activities:fundings>
 </activities:activities-summary>
