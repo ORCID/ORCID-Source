@@ -1481,15 +1481,16 @@ orcidNgModule.filter('externalIdentifierHtml', function(){
         if(externalIdentifier.url != null)
             link = externalIdentifier.url.value;
        
-        if (link.search(/^http[s]?\:\/\//) == -1)
-        	link = 'http://' + link;
-
-        if (link != null && value != null){        	
-            output += "<a href='" + link + "' class='truncate-anchor' target='_blank'>" + value + "</a>";        	
-        }else if(value != null){
-            output = output + " " + value;
-        }else if(link != null){        	
-            output = om.get('funding.add.external_id.url.label.grant') + ": <a href='" + link + "' class='truncate-anchor' target='_blank'>" + link + "</a>";
+        if(link != null) {
+        	if (link.search(/^http[s]?\:\/\//) == -1)
+            	link = 'http://' + link;
+        	if(value != null) {
+        		output += "<a href='" + link + "' class='truncate-anchor' target='_blank'>" + value + "</a>";
+        	} else {
+        		output = om.get('funding.add.external_id.url.label.grant') + ": <a href='" + link + "' class='truncate-anchor' target='_blank'>" + link + "</a>";
+        	}
+        } else if(value != null) {
+        	output = output + " " + value;
         }
       
         if (length > 1 && !last) output = output + ',';
@@ -5064,6 +5065,10 @@ orcidNgModule.controller('languageCtrl',['$scope', '$cookies', function ($scope,
     var productionLangList =
         [
             {
+                "value": "cs",
+                "label": "čeština"
+            },
+            {
                 "value": "en",
                 "label": "English"
             },
@@ -5102,11 +5107,11 @@ orcidNgModule.controller('languageCtrl',['$scope', '$cookies', function ($scope,
         ];
     var testingLangList =
         [
-         {
-             "value": "cs",
-             "label": "čeština"
-         },
-         {
+            {
+                "value": "cs",
+                "label": "čeština"
+            },
+            {
                 "value": "en",
                 "label": "English"
             },
@@ -8105,6 +8110,7 @@ orcidNgModule.directive('resize', function ($window) {
 		});
 	}
 });
+<<<<<<< HEAD
 
 orcidNgModule.filter('formatBibtexOutput', function () {
     return function (text) {
@@ -8112,3 +8118,5 @@ orcidNgModule.filter('formatBibtexOutput', function () {
 		return str.toUpperCase();
     };
 });
+=======
+>>>>>>> 45cda185f1ab9c4b1e69c3404f88610ae180e400
