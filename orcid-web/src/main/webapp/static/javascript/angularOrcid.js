@@ -5065,6 +5065,10 @@ orcidNgModule.controller('languageCtrl',['$scope', '$cookies', function ($scope,
     var productionLangList =
         [
             {
+                "value": "cs",
+                "label": "čeština"
+            },
+            {
                 "value": "en",
                 "label": "English"
             },
@@ -5103,11 +5107,11 @@ orcidNgModule.controller('languageCtrl',['$scope', '$cookies', function ($scope,
         ];
     var testingLangList =
         [
-         {
-             "value": "cs",
-             "label": "čeština"
-         },
-         {
+            {
+                "value": "cs",
+                "label": "čeština"
+            },
+            {
                 "value": "en",
                 "label": "English"
             },
@@ -8106,6 +8110,7 @@ orcidNgModule.directive('resize', function ($window) {
 		});
 	}
 });
+<<<<<<< HEAD
 
 orcidNgModule.filter('formatBibtexOutput', function () {
     return function (text) {
@@ -8113,3 +8118,5 @@ orcidNgModule.filter('formatBibtexOutput', function () {
 		return str.toUpperCase();
     };
 });
+=======
+>>>>>>> 45cda185f1ab9c4b1e69c3404f88610ae180e400
