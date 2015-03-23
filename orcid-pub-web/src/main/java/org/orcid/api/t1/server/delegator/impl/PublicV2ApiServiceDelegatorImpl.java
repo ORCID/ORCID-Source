@@ -84,6 +84,7 @@ public class PublicV2ApiServiceDelegatorImpl implements PublicV2ApiServiceDelega
     public Response viewActivities(String orcid) {
         ActivitiesSummary as = profileEntityManager.getPublicActivitiesSummary(orcid);
         visibilityFilter.filter(as);
+        ActivityUtils.updatePutCodeToPath(as, orcid);
         return Response.ok(as).build();
     }
 

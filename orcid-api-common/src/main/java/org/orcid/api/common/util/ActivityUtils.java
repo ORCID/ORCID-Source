@@ -26,7 +26,11 @@ import org.orcid.jaxb.model.record.summary.EducationSummary;
 import org.orcid.jaxb.model.record.summary.Educations;
 import org.orcid.jaxb.model.record.summary.EmploymentSummary;
 import org.orcid.jaxb.model.record.summary.Employments;
+import org.orcid.jaxb.model.record.summary.FundingGroup;
+import org.orcid.jaxb.model.record.summary.FundingSummary;
 import org.orcid.jaxb.model.record.summary.Fundings;
+import org.orcid.jaxb.model.record.summary.WorkGroup;
+import org.orcid.jaxb.model.record.summary.WorkSummary;
 import org.orcid.jaxb.model.record.summary.Works;
 
 public class ActivityUtils {
@@ -92,6 +96,26 @@ public class ActivityUtils {
         if(employments != null && !employments.getSummaries().isEmpty()) {
             for(EmploymentSummary summary : employments.getSummaries()) {
                 ActivityUtils.updatePutCodeToPath(summary, orcid);
+            }
+        }
+        
+        if(!fundings.getFundingGroup().isEmpty()) {
+            for(FundingGroup group : fundings.getFundingGroup()){
+                if(!group.getFundingSummary().isEmpty()) {
+                    for(FundingSummary summary : group.getFundingSummary()) {
+                        ActivityUtils.updatePutCodeToPath(summary, orcid);
+                    }
+                }                
+            }
+        }
+        
+        if(!works.getWorkGroup().isEmpty()) {
+            for(WorkGroup group : works.getWorkGroup()) {
+                if(!group.getWorkSummary().isEmpty()) {
+                    for(WorkSummary summary : group.getWorkSummary()) {
+                        ActivityUtils.updatePutCodeToPath(summary, orcid);
+                    }
+                }
             }
         }
     }
