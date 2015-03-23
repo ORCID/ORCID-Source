@@ -59,14 +59,14 @@ public class ActivityUtils {
             activityType = OrcidApiConstants.ACTIVITY_EMPLOYMENT;
         } else if (Funding.class.isInstance(activity) || FundingSummary.class.isInstance(activity)) {
             activityType = OrcidApiConstants.ACTIVITY_FUNDING;
-        } 
+        }
         // Build the new put code which contains the path to the activity
         String newPutCode = '/' + orcid + '/' + activityType + '/' + putCode;
 
         // Update the put code
         activity.setPutCode(newPutCode);
     }
-    
+
     /**
      * In order to provide a more meaningful put code for activities, we will
      * replace the actual put code for one that represent a path to the activity
@@ -77,7 +77,8 @@ public class ActivityUtils {
      * /orcid/activity-type/putCode
      * 
      * @param ActivitiesSummary
-     *            An object that contains several elements to update the putCode element
+     *            An object that contains several elements to update the putCode
+     *            element
      * @param orcid
      *            The activity owner
      * */
@@ -86,37 +87,54 @@ public class ActivityUtils {
         Employments employments = activitiesSummary.getEmployments();
         Fundings fundings = activitiesSummary.getFundings();
         Works works = activitiesSummary.getWorks();
-        
-        if(educations != null && !educations.getSummaries().isEmpty()) {
-            for(EducationSummary summary : educations.getSummaries()) {
+
+        if (educations != null && !educations.getSummaries().isEmpty()) {
+            for (EducationSummary summary : educations.getSummaries()) {
                 ActivityUtils.updatePutCodeToPath(summary, orcid);
             }
         }
-        
-        if(employments != null && !employments.getSummaries().isEmpty()) {
-            for(EmploymentSummary summary : employments.getSummaries()) {
+
+        if (employments != null && !employments.getSummaries().isEmpty()) {
+            for (EmploymentSummary summary : employments.getSummaries()) {
                 ActivityUtils.updatePutCodeToPath(summary, orcid);
             }
         }
-        
-        if(!fundings.getFundingGroup().isEmpty()) {
-            for(FundingGroup group : fundings.getFundingGroup()){
-                if(!group.getFundingSummary().isEmpty()) {
-                    for(FundingSummary summary : group.getFundingSummary()) {
-                        ActivityUtils.updatePutCodeToPath(summary, orcid);
-                    }
-                }                
-            }
-        }
-        
-        if(!works.getWorkGroup().isEmpty()) {
-            for(WorkGroup group : works.getWorkGroup()) {
-                if(!group.getWorkSummary().isEmpty()) {
-                    for(WorkSummary summary : group.getWorkSummary()) {
+
+        if (!fundings.getFundingGroup().isEmpty()) {
+            for (FundingGroup group : fundings.getFundingGroup()) {
+                if (!group.getFundingSummary().isEmpty()) {
+                    for (FundingSummary summary : group.getFundingSummary()) {
                         ActivityUtils.updatePutCodeToPath(summary, orcid);
                     }
                 }
             }
+        }
+
+        if (!works.getWorkGroup().isEmpty()) {
+            for (WorkGroup group : works.getWorkGroup()) {
+                if (!group.getWorkSummary().isEmpty()) {
+                    for (WorkSummary summary : group.getWorkSummary()) {
+                        ActivityUtils.updatePutCodeToPath(summary, orcid);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Check if the put code in the give activity is a path, and change it to be
+     * just the put code number
+     * 
+     * @param activity
+     *            The activity to update
+     * @param orcid
+     *            The activity owner
+     * */
+    public static void removePathFromPutCode(Activity activity, String orcid) {
+        String putCode = activity.getPutCode();
+        if (putCode != null && putCode.startsWith("/" + orcid)) {
+            putCode = putCode.substring(putCode.lastIndexOf('/') + 1);
+            activity.setPutCode(putCode);
         }
     }
 
