@@ -97,7 +97,8 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
 
     private static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml", "/data/SecurityQuestionEntityData.xml",
             "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/WorksEntityData.xml", "/data/ProfileWorksEntityData.xml",
-            "/data/ClientDetailsEntityData.xml", "/data/Oauth2TokenDetailsData.xml");
+            "/data/ClientDetailsEntityData.xml", "/data/Oauth2TokenDetailsData.xml", "/data/OrgsEntityData.xml", "/data/ProfileFundingEntityData.xml",
+            "/data/OrgAffiliationEntityData.xml");
 
     @Resource(name = "t2OrcidApiServiceDelegatorV1_2")
     private T2OrcidApiServiceDelegator t2OrcidApiServiceDelegatorV2_1;
@@ -138,9 +139,8 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
 
     @AfterClass
     public static void removeDBUnitData() throws Exception {
-        List<String> reversedDataFiles = new ArrayList<String>(Arrays.asList("/data/Oauth2TokenDetailsData.xml", "/data/ProfileWorksEntityData.xml",
-                "/data/WorksEntityData.xml", "/data/ClientDetailsEntityData.xml"));
-        removeDBUnitData(reversedDataFiles);
+        Collections.reverse(DATA_FILES);
+        removeDBUnitData(DATA_FILES);
     }
 
     @Test
@@ -480,14 +480,14 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
         Response response = t2OrcidApiServiceDelegatorLatest.addAffiliations(mockedUriInfo, "4444-4444-4444-4446", orcidMessage);
         assertNotNull(response);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());                       
-        assertEquals(1, orgAffiliationDao.getByUserAndType("4444-4444-4444-4446", org.orcid.jaxb.model.message.AffiliationType.EDUCATION).size());        
+        assertEquals(3, orgAffiliationDao.getByUserAndType("4444-4444-4444-4446", org.orcid.jaxb.model.message.AffiliationType.EDUCATION).size());        
         
         orcidMessage = buildMessageWithAffiliation(AffiliationType.EDUCATION, "My dept", "My Role", "4444-4444-4444-4446");
         response = t2OrcidApiServiceDelegatorLatest.addAffiliations(mockedUriInfo, "4444-4444-4444-4446", orcidMessage);
         assertNotNull(response);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
         
-        assertEquals(1, orgAffiliationDao.getByUserAndType("4444-4444-4444-4446", org.orcid.jaxb.model.message.AffiliationType.EDUCATION).size());               
+        assertEquals(3, orgAffiliationDao.getByUserAndType("4444-4444-4444-4446", org.orcid.jaxb.model.message.AffiliationType.EDUCATION).size());               
     }
     
     @Test

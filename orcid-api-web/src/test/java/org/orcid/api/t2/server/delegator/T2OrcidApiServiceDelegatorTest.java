@@ -22,8 +22,8 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -85,7 +85,8 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
 
     private static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml", "/data/SecurityQuestionEntityData.xml",
             "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/WorksEntityData.xml", "/data/ProfileWorksEntityData.xml",
-            "/data/ClientDetailsEntityData.xml", "/data/Oauth2TokenDetailsData.xml");
+            "/data/ClientDetailsEntityData.xml", "/data/Oauth2TokenDetailsData.xml", "/data/OrgsEntityData.xml", "/data/ProfileFundingEntityData.xml",
+            "/data/OrgAffiliationEntityData.xml");
 
     @Resource(name = "t2OrcidApiServiceDelegatorLatest")
     private T2OrcidApiServiceDelegator t2OrcidApiServiceDelegator;
@@ -115,9 +116,8 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
 
     @AfterClass
     public static void removeDBUnitData() throws Exception {
-        List<String> reversedDataFiles = new ArrayList<String>(Arrays.asList("/data/Oauth2TokenDetailsData.xml", "/data/ProfileWorksEntityData.xml",
-                "/data/WorksEntityData.xml", "/data/ClientDetailsEntityData.xml"));
-        removeDBUnitData(reversedDataFiles);
+        Collections.reverse(DATA_FILES);
+        removeDBUnitData(DATA_FILES);
     }
 
     @Test
