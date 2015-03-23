@@ -43,8 +43,8 @@
 		schemaLocation="activities-2.0_rc1.xsd" />
 	<xs:import namespace="http://www.orcid.org/ns/person"
 		schemaLocation="person-2.0_rc1.xsd" />
-	<xs:import namespace="http://www.orcid.org/ns/common"
-		schemaLocation="common-2.0_rc1.xsd" />
+    <xs:import namespace="http://www.orcid.org/ns/common"
+        schemaLocation="../common_2.0_rc1/common-2.0_rc1.xsd" />
 	<xs:import namespace="http://www.orcid.org/ns/deprecated"
 		schemaLocation="deprecated-2.0_rc1.xsd" />
 	<xs:import namespace="http://www.orcid.org/ns/history"

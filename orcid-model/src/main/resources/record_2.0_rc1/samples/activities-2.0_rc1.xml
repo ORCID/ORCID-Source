@@ -3,7 +3,8 @@
 	xmlns:activities="http://www.orcid.org/ns/activities"
 	xmlns:affiliation="http://www.orcid.org/ns/employment" xmlns:common="http://www.orcid.org/ns/common"
 	xmlns:education="http://www.orcid.org/ns/education" xmlns:funding="http://www.orcid.org/ns/funding"
-	xmlns:work="http://www.orcid.org/ns/work" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:work="http://www.orcid.org/ns/work" xmlns:peer-review="http://www.orcid.org/ns/peer-review"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.orcid.org/ns/activities ../activities-2.0_rc1.xsd ">
 	<activities:educations>
 		<education:education-summary put-code="0"
@@ -103,6 +104,32 @@
 			</funding:summary>
 		</activities:group>
 	</activities:fundings>
+	<activities:peer-reviews>
+		<activities:group>
+			<activities:identifiers>
+				<activities:identifier>
+					<activities:external-identifier-type>agr</activities:external-identifier-type>
+					<activities:external-identifier-id>activities:external-identifier-id</activities:external-identifier-id>
+				</activities:identifier>
+			</activities:identifiers>
+			<peer-review:summary put-code="12345" visibility="private">
+				<peer-review:role>REVIEWER</peer-review:role>
+				<peer-review:external-identifiers>
+					<work:work-external-identifier>
+						<work:external-identifier-type>agr</work:external-identifier-type>
+						<work:external-identifier-id>work:external-identifier-id
+						</work:external-identifier-id>
+					</work:work-external-identifier>
+				</peer-review:external-identifiers>
+				<peer-review:type>REVIEW</peer-review:type>
+				<peer-review:completion-date>
+					<common:year>1848</common:year>
+					<common:month>02</common:month>
+					<common:day>02</common:day>
+				</peer-review:completion-date>
+			</peer-review:summary>
+		</activities:group>
+	</activities:peer-reviews>
 	<activities:works>
 		<activities:group>
 			<activities:identifiers>

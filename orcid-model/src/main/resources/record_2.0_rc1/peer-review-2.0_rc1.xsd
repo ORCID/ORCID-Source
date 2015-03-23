@@ -36,8 +36,8 @@
 		</xs:appinfo>
 	</xs:annotation>
 
-	<xs:import namespace="http://www.orcid.org/ns/common"
-		schemaLocation="common-2.0_rc1.xsd" />
+    <xs:import namespace="http://www.orcid.org/ns/common"
+        schemaLocation="../common_2.0_rc1/common-2.0_rc1.xsd" />
 	<xs:import namespace="http://www.orcid.org/ns/employment"
 		schemaLocation="employment-2.0_rc1.xsd" />
 	<xs:import namespace="http://www.orcid.org/ns/education"

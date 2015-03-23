@@ -32,8 +32,8 @@
 			<sch:ns prefix="orcid" uri="http://www.orcid.org/ns/orcid" />
 		</xs:appinfo>
 	</xs:annotation>
-	<xs:import namespace="http://www.orcid.org/ns/common"
-		schemaLocation="common-2.0_rc1.xsd" />
+    <xs:import namespace="http://www.orcid.org/ns/common"
+        schemaLocation="../common_2.0_rc1/common-2.0_rc1.xsd" />
 	<xs:import namespace="http://www.orcid.org/ns/record"
 		schemaLocation="record-2.0_rc1.xsd" />
 

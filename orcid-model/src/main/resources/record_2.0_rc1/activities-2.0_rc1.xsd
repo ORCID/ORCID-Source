@@ -4,7 +4,8 @@
 	targetNamespace="http://www.orcid.org/ns/activities" xmlns:activities="http://www.orcid.org/ns/activities"
 	xmlns:common="http://www.orcid.org/ns/common" xmlns:work="http://www.orcid.org/ns/work"
 	xmlns:funding="http://www.orcid.org/ns/funding" xmlns:education="http://www.orcid.org/ns/education"
-	xmlns:employment="http://www.orcid.org/ns/employment" xmlns:peer-review="http://www.orcid.org/ns/peer-review">
+	xmlns:employment="http://www.orcid.org/ns/employment"
+	xmlns:peer-review="http://www.orcid.org/ns/peer-review">
 	<xs:annotation>
 		<xs:documentation>
 			=============================================================================
@@ -45,8 +46,8 @@
 		schemaLocation="funding-2.0_rc1.xsd" />
 	<xs:import namespace="http://www.orcid.org/ns/work"
 		schemaLocation="work-2.0_rc1.xsd" />
-    <xs:import namespace="http://www.orcid.org/ns/peer-review"
-        schemaLocation="peer-review-2.0_rc1.xsd" />
+	<xs:import namespace="http://www.orcid.org/ns/peer-review"
+		schemaLocation="peer-review-2.0_rc1.xsd" />
 
 	<xs:element name="activities-summary">
 		<xs:complexType>
@@ -92,6 +93,20 @@
 						</xs:sequence>
 					</xs:complexType>
 				</xs:element>
+				<xs:element name="peer-reviews" minOccurs="0" maxOccurs="1">
+					<xs:annotation>
+						<xs:documentation>Container for the funding received by the
+							researcher or contributor
+						</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element maxOccurs="unbounded" minOccurs="0" name="group"
+								type="activities:peer-review-group" />
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+
 				<xs:element name="works" minOccurs="0" maxOccurs="1">
 					<xs:annotation>
 						<xs:documentation>Container for the Works published by the
@@ -130,7 +145,7 @@
 		</xs:sequence>
 	</xs:complexType>
 
-	<xs:complexType name="peer-review">
+	<xs:complexType name="peer-review-group">
 		<xs:sequence>
 			<xs:element name="identifiers" type="activities:identifiers"></xs:element>
 			<xs:sequence>
