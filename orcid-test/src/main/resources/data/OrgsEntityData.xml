@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2014 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<dataset>
+	<org_disambiguated
+            id="1"
+            name="An Institution"
+            city="London"
+            country="GB"
+            source_id="abc456"
+            source_type="WDB"
+            popularity="1"
+            />
+            
+    <org_disambiguated
+            id="2"
+            name="Test Institution"
+            city="London"
+            country="GB"
+            source_id="def456"
+            source_type="WDB"
+            popularity="0"
+            />
+    
+    <org
+            id="1"
+            name="An institution"
+            city="London"
+            country="GB"
+            org_disambiguated_id="1"
+            />
+            
+    <org
+            id="2"
+            name="Another Institution"
+            city="Glasgow"
+            country="GB"
+            />
+            
+    <org
+            id="3"
+            name="Eine Institution"
+            city="Berlin"
+            country="DE"
+            />
+</dataset>            

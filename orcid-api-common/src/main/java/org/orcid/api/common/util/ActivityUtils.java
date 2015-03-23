@@ -53,13 +53,13 @@ public class ActivityUtils {
         String putCode = activity.getPutCode();
         String activityType = OrcidApiConstants.ACTIVITY_WORK;
 
-        if (Education.class.isInstance(activity)) {
+        if (Education.class.isInstance(activity) || EducationSummary.class.isInstance(activity)) {
             activityType = OrcidApiConstants.ACTIVITY_EDUCATION;
-        } else if (Employment.class.isInstance(activity)) {
+        } else if (Employment.class.isInstance(activity) || EmploymentSummary.class.isInstance(activity)) {
             activityType = OrcidApiConstants.ACTIVITY_EMPLOYMENT;
-        } else if (Funding.class.isInstance(activity)) {
+        } else if (Funding.class.isInstance(activity) || FundingSummary.class.isInstance(activity)) {
             activityType = OrcidApiConstants.ACTIVITY_FUNDING;
-        }
+        } 
         // Build the new put code which contains the path to the activity
         String newPutCode = '/' + orcid + '/' + activityType + '/' + putCode;
 
