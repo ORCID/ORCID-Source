@@ -20,6 +20,8 @@ import org.junit.runner.RunWith;
 import org.orcid.core.utils.SecurityContextTestUtils;
 import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.jaxb.model.message.ScopePathType;
+import org.orcid.jaxb.model.record.Education;
+import org.orcid.jaxb.model.record.Employment;
 import org.orcid.jaxb.model.record.Funding;
 import org.orcid.jaxb.model.record.Work;
 import org.orcid.jaxb.model.record.WorkType;
@@ -116,6 +118,28 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(funding.getTitle().getTitle());
         assertEquals("Private Funding", funding.getTitle().getTitle().getContent());
         assertEquals(Visibility.PRIVATE.value(), funding.getVisibility().value());
+    }
+    
+    @Test
+    public void testViewEducation() {
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.ACTIVITIES_READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        Response response = serviceDelegator.viewEducation("4444-4444-4444-4446", "6");
+        assertNotNull(response);
+        Education education = (Education)response.getEntity();
+        assertNotNull(education);
+        assertEquals("Education Dept # 1", education.getDepartmentName());
+        assertEquals(Visibility.PRIVATE.value(), education.getVisibility().value());
+    }
+    
+    @Test
+    public void testViewEmployment() {
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.ACTIVITIES_READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        Response response = serviceDelegator.viewEmployment("4444-4444-4444-4446", "5");
+        assertNotNull(response);
+        Employment employment = (Employment)response.getEntity();
+        assertNotNull(employment);
+        assertEquals("Employment Dept # 1", employment.getDepartmentName());
+        assertEquals(Visibility.PRIVATE.value(), employment.getVisibility().value());
     }
 }
 
