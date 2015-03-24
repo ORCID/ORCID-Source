@@ -8110,7 +8110,6 @@ orcidNgModule.directive('resize', function ($window) {
 		});
 	}
 });
-<<<<<<< HEAD
 
 orcidNgModule.filter('formatBibtexOutput', function () {
     return function (text) {
@@ -8118,5 +8117,3 @@ orcidNgModule.filter('formatBibtexOutput', function () {
 		return str.toUpperCase();
     };
 });
-=======
->>>>>>> 45cda185f1ab9c4b1e69c3404f88610ae180e400
