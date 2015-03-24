@@ -18,6 +18,7 @@
 -->
  <script type="text/ng-template" id="add-affiliation-modal">
     <div id="edit-affiliation" class="edit-affiliation colorbox-content">
+		<fn-form update-fn="addAffiliation()">
         <div class="row">
             <div class="col-md-9 col-sm-8 col-xs-12">
                 <h1 ng-show="addAffType == null || addAffType == undefined " class="lightbox-title pull-left">
@@ -188,5 +189,6 @@
                     </button>
                     <button id="" class="btn close-button" ng-click="closeModal()" type="reset"><@orcid.msg 'freemarker.btncancel' /></button>
                 </div>
+			</fn-form>
         </div>
 </script>

@@ -18,6 +18,7 @@
 -->
 <script type="text/ng-template" id="add-funding-modal">
     <div id="add-funding" class="add-funding colorbox-content">
+		<fn-form update-fn="putFunding()">
         <!-- Title -->
         <div class="row">
             <div class="col-md-9 col-sm-8 col-xs-9">
@@ -309,5 +310,6 @@
                 </div>
             </div>
         </div>
+		</fn-form>
     </div>
 </script>
