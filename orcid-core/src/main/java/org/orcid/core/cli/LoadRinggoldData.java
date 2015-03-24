@@ -24,8 +24,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -40,6 +43,7 @@ import org.orcid.persistence.dao.OrgDisambiguatedSolrDao;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.NullUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,6 +61,7 @@ public class LoadRinggoldData {
 
     private static final String RINGGOLD_CHARACTER_ENCODING = "UTF-8";
     private static final String RINGGOLD_SOURCE_TYPE = "RINGGOLD";
+    private static final String DN = "DN";
     private static final Logger LOGGER = LoggerFactory.getLogger(LoadRinggoldData.class);
     @Option(name = "-f", usage = "Path to CSV file containing Ringgold parents to load into DB")
     private File fileToLoad;
@@ -152,6 +157,7 @@ public class LoadRinggoldData {
         try (ZipFile zip = new ZipFile(zipFile)) {
             ZipEntry parentsEntry = null;
             ZipEntry deletedIdsEntry = null;
+            ZipEntry altNamesEntry = null;
             for (ZipEntry entry : Collections.list(zip.entries())) {
                 String entryName = entry.getName();
                 if (entryName.endsWith("_parents.csv")) {
@@ -162,10 +168,20 @@ public class LoadRinggoldData {
                     LOGGER.info("Found deleted ids file: " + entryName);
                     deletedIdsEntry = entry;
                 }
+                if(entryName.endsWith("alt_names.csv")) {
+                    LOGGER.info("Found alt names file: " + entryName);
+                    altNamesEntry = entry;
+                }
             }
             if (parentsEntry != null) {
                 Reader reader = getReader(zip, parentsEntry);
-                processReader(reader);
+                if(altNamesEntry != null) {
+                    Reader altNamesReader = getReader(zip, altNamesEntry);
+                    Map<String, String> altNames = processAltNamesFile(altNamesReader);
+                    processReader(reader, altNames);
+                } else {
+                    processReader(reader, null);
+                }                                    
             }
             if (deletedIdsEntry != null) {
                 Reader reader = getReader(zip, deletedIdsEntry);
@@ -184,7 +200,7 @@ public class LoadRinggoldData {
 
     private void processParentsCsv() {
         try (Reader reader = openFile(fileToLoad)) {
-            processReader(reader);
+            processReader(reader, null);
         } catch (IOException e) {
             throw new RuntimeException("Error reading csv file", e);
         }
@@ -209,11 +225,11 @@ public class LoadRinggoldData {
         return reader;
     }
 
-    private void processReader(Reader reader) throws IOException {
+    private void processReader(Reader reader, Map<String, String> altNames) throws IOException {
         try (CSVReader csvReader = createCSVReader(reader)) {
             String[] line;
             while ((line = csvReader.readNext()) != null) {
-                processLine(line);
+                processLine(line, altNames);
             }
         } finally {
             LOGGER.info("Number added={}, number updated={}, number unchanged={}, num skipped={}, total={}", new Object[] { numAdded, numUpdated, numUnchanged,
@@ -229,7 +245,7 @@ public class LoadRinggoldData {
         return new CSVReader(reader, ',', '"', 1);
     }
 
-    private void processLine(String[] line) {
+    private void processLine(String[] line, Map<String, String> altNames) {
         String pCode = line[1];
         String name = line[2];
         String extName = line[3];
@@ -248,9 +264,61 @@ public class LoadRinggoldData {
         }
         String type = line[9];
 
+        /**
+         * Look for the name in the alt names map, if there is one name, replace the one found in the parents file
+         * */
+        if(altNames.containsKey(pCode)) {            
+            if(!PojoUtil.isEmpty(altNames.get(pCode))) {
+                name = altNames.get(pCode);
+            } 
+        }
+        
         processOrg(pCode, name, city, state, country, type);
     }
 
+    private Map<String, String> processAltNamesFile(Reader reader) throws IOException {
+        Map<String, String> altNamesMap = new HashMap<String, String>();
+        Map<String, List<String[]>> dups = new HashMap<String, List<String[]>> ();
+        try (CSVReader csvReader = createCSVReader(reader)) {
+            String[] line;
+            while ((line = csvReader.readNext()) != null) {
+                if(!PojoUtil.isEmpty(line[7]) && DN.equals(line[7])) {
+                    if(altNamesMap.containsKey(line[0]))
+                        LOGGER.warn("Key {} already exists, but will be replaced with new values", new Object[] {line[0]});                    
+                    altNamesMap.put(line[0], line[1]);
+                    LOGGER.info("DN name {} found for pCode {}", new Object[] {line[1], line [0]});
+                    
+                    if(dups.containsKey(line[0])) {
+                        dups.get(line[0]).add(line);
+                    } else {
+                        List<String[]> dup = new ArrayList<String[]>();
+                        dup.add(line);
+                        dups.put(line[0], dup);
+                    }
+                }                
+            }
+        } finally {
+            LOGGER.info("Number added={}, number updated={}, number unchanged={}, num skipped={}, total={}", new Object[] { numAdded, numUpdated, numUnchanged,
+                    numSkipped, getTotal() });
+        }
+        
+        if(!dups.isEmpty()) {
+            LOGGER.info("-------------------------------------------------------------------------------------------------------------------");
+            LOGGER.info("pCode,name");
+            for(String key : dups.keySet()) {
+                List<String[]> lines = dups.get(key);
+                if(lines.size() > 1) {
+                    for(String[] line : lines) {
+                        LOGGER.info("{},\"{}\"", new Object[] {line[0], line[1]});
+                    }
+                }
+            }
+            LOGGER.info("-------------------------------------------------------------------------------------------------------------------");
+        }
+        
+        return altNamesMap;
+    }
+    
     private void processOrg(String pCode, String name, String city, String state, Iso3166Country country, String type) {
         OrgDisambiguatedEntity existingEntity = orgDisambiguatedDao.findBySourceIdAndSourceType(pCode, RINGGOLD_SOURCE_TYPE);
         if (existingEntity == null) {
