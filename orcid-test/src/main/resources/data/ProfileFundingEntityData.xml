@@ -1,0 +1,97 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2014 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<dataset>
+	<profile_funding 
+			id="1" 
+			orcid="4444-4444-4444-4443"
+			source_id="4444-4444-4444-4443" 
+			org_id="1" 
+			title="Grant # 1" 
+			type="SALARY_AWARD" 
+			currency_code="USD" 
+			numeric_amount="2500" 
+			visibility="LIMITED"
+			date_created="2013-10-22 11:09:28.636" 
+			last_modified="2013-10-22 11:09:28.636"
+		    display_index="1" 
+			/>
+			
+    <profile_funding 
+    		id="2" 
+    		orcid="4444-4444-4444-4443"
+    		source_id="4444-4444-4444-4443"
+    		org_id="2" 
+    		title="Grant # 2" 
+    		type="GRANT" 
+    		currency_code="CRC" 
+    		numeric_amount="1650.00" 
+    		visibility="PUBLIC" 
+			date_created="2013-10-22 11:09:28.636" 
+			last_modified="2013-10-22 11:09:28.636"
+			display_index="2"
+			/>
+    		
+    <profile_funding 
+    		id="3" 
+    		orcid="4444-4444-4444-4443" 
+    		source_id="4444-4444-4444-4441"
+    		org_id="3" 
+    		title="Grant # 3" 
+    		type="GRANT" 
+    		currency_code="CRC" 
+    		numeric_amount="1650000" 
+    		visibility="PRIVATE" 
+			date_created="2013-10-22 11:09:28.636" 
+			last_modified="2013-10-22 11:09:28.636"
+			display_index="3"
+			/>
+
+	<profile_funding 
+			id="4" 
+			orcid="4444-4444-4444-4446" 
+			org_id="1" 
+			title="Private Funding" 
+			type="SALARY_AWARD" 
+			currency_code="USD" 
+			numeric_amount="2500" 
+			visibility="PRIVATE" 
+			date_created="2014-07-03 15:31:00.00"
+            last_modified="2014-07-03 15:31:00.00"
+			client_source_id="APP-5555555555555555"
+			display_index="1"
+			/>
+			
+	<profile_funding 
+			id="5" 
+			orcid="4444-4444-4444-4446" 
+			org_id="1" 
+			title="Public Funding" 
+			type="SALARY_AWARD" 
+			currency_code="USD" 
+			numeric_amount="2500" 
+			visibility="PUBLIC" 
+			date_created="2014-07-03 15:31:00.00"
+            last_modified="2014-07-03 15:31:00.00"
+			source_id="4444-4444-4444-4446"
+			display_index="2"
+			/>  
+			
+			  		    	
+</dataset>

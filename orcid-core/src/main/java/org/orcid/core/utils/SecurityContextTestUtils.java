@@ -37,7 +37,7 @@ public class SecurityContextTestUtils {
     static public void setUpSecurityContext() {
         setUpSecurityContext(ScopePathType.ORCID_WORKS_CREATE);
     }
-
+    
     static public void setUpSecurityContext(ScopePathType... scopePathTypes) {
         setUpSecurityContext("4444-4444-4444-4441", scopePathTypes);
     }
