@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<peer-review:peer-review put-code="12345" visibility="private"
+	xmlns:common="http://www.orcid.org/ns/common" xmlns:peer-review="http://www.orcid.org/ns/peer-review"
+	xmlns:work="http://www.orcid.org/ns/work" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.orcid.org/ns/peer-review ../peer-review-2.0_rc1.xsd ">
+	<peer-review:role>REVIEWER</peer-review:role>
+	<peer-review:organization>
+		<common:name>common:name</common:name>
+		<common:address>
+			<common:city>common:city</common:city>
+			<common:region>common:region</common:region>
+			<common:country>AF</common:country>
+		</common:address>
+		<common:disambiguated-organization>
+			<common:disambiguated-organization-identifier>common:disambiguated-organization-identifier</common:disambiguated-organization-identifier>
+			<common:disambiguation-source>common:disambiguation-source</common:disambiguation-source>
+		</common:disambiguated-organization>
+	</peer-review:organization>
+	<peer-review:external-identifiers>
+		<work:work-external-identifier>
+			<work:external-identifier-type>agr</work:external-identifier-type>
+			<work:external-identifier-id>work:external-identifier-id</work:external-identifier-id>
+		</work:work-external-identifier>
+	</peer-review:external-identifiers>
+	<peer-review:url>peer-review:url</peer-review:url>
+	<peer-review:type>REVIEW</peer-review:type>
+	<peer-review:completion-date>
+		<common:year>1848</common:year>
+		<common:month>02</common:month>
+		<common:day>02</common:day>
+	</peer-review:completion-date>
+	<peer-review:subject>
+		<peer-review:external-identifiers>
+			<work:work-external-identifier>
+				<work:external-identifier-type>agr</work:external-identifier-type>
+				<work:external-identifier-id>work:external-identifier-id</work:external-identifier-id>
+			</work:work-external-identifier>
+		</peer-review:external-identifiers>
+		<peer-review:type>artistic-performance</peer-review:type>
+		<peer-review:journal-title />
+		<peer-review:title>
+			<common:title>common:title</common:title>
+			<common:subtitle />
+			<common:translated-title language-code="en">common:translated-title</common:translated-title>
+		</peer-review:title>
+		<peer-review:url>peer-review:url</peer-review:url>
+	</peer-review:subject>
+	<common:source>
+		<common:source-orcid>
+			<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
+			<common:path>8888-8888-8888-8880</common:path>
+			<common:host>orcid.org</common:host>
+		</common:source-orcid>
+		<common:source-name />
+	</common:source>
+	<common:created-date>2001-12-31T12:00:00</common:created-date>
+	<common:last-modified-date>2001-12-31T12:00:00
+	</common:last-modified-date>
+</peer-review:peer-review>
