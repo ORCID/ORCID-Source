@@ -85,7 +85,7 @@ public class OrcidValidationJaxbContextResolver implements ContextResolver<Unmar
             Unmarshaller unmarshaller = getJAXBContext().createUnmarshaller();
             String schemaFilenamePrefix = getSchemaFilenamePrefix(type);
             // Old OrcidMessage APIs - do not validate here as we will
-            // break "broke" inergrations
+            // break "broke" integrations 
             if (!type.equals(OrcidMessage.class)) {
                 if (schemaFilenamePrefix != null) {
                     Schema schema = getSchema(schemaFilenamePrefix);
