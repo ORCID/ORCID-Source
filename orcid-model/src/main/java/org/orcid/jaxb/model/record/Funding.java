@@ -93,6 +93,8 @@ public class Funding implements VisibilityType, Activity, Serializable, Organiza
     
     @XmlAttribute(name = "put-code")
     protected String putCode;
+    @XmlAttribute(name="path")
+    protected String path;
     @XmlAttribute
     protected Visibility visibility;
     
@@ -185,6 +187,27 @@ public class Funding implements VisibilityType, Activity, Serializable, Organiza
         this.putCode = putCode;
     }
 
+    /**
+     * Gets the value of the path property.
+     * 
+     * @return possible object is {@link Object }
+     * 
+     */
+    public String getPath() {
+        return path;
+    }
+
+    /**
+     * Sets the value of the path property.
+     * 
+     * @param path
+     *            allowed object is {@link Object }
+     * 
+     */
+    public void setPath(String path) {
+        this.path = path;
+    }
+    
     public FundingExternalIdentifiers getExternalIdentifiers() {
         return externalIdentifiers;
     }

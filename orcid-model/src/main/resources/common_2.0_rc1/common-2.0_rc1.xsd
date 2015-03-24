@@ -865,6 +865,16 @@
 		<xs:restriction base="xs:integer">
 		</xs:restriction>
 	</xs:simpleType>
+	
+	<xs:simpleType name="activity-path">
+		<xs:annotation>
+			<xs:documentation>The activity-path attribute is present only when reading
+				elements. It will be of the form /{orcid}/{activity-name}/{put-code}
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+		</xs:restriction>
+	</xs:simpleType>	
 
 	<xs:simpleType name="visibility">
 		<xs:annotation>
@@ -1543,6 +1553,7 @@
 		<xs:attribute name="put-code" type="common:put-code" use="optional" />
 		<xs:attribute name="visibility" type="common:visibility" />
 		<xs:attribute name="display-index" type="xs:string" use="optional" />
+		<xs:attribute name="path" type="common:activity-path" use="optional" />
 	</xs:complexType>
 
 </xs:schema>
