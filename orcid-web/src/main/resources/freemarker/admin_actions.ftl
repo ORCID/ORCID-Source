@@ -235,7 +235,7 @@
 			<div class="collapsible bottom-margin-small admin-modal" id="find_ids_section" style="display:none;">
 				<div class="form-group">
 					<label for="emails"><@orcid.msg 'admin.find_ids.label' /></label>
-					<input type="text" id="emails" ng-model="emails" placeholder="<@orcid.msg 'admin.find_ids.placeholder' />" class="input-xlarge" />
+					<input type="text" id="emails" ng-enter="findIds()" ng-model="emails" placeholder="<@orcid.msg 'admin.find_ids.placeholder' />" class="input-xlarge" />
 				</div>
 				<div class="controls save-btns pull-left">
 					<span id="find-ids" ng-click="findIds()" class="btn btn-primary"><@orcid.msg 'admin.find_ids.button'/></span>						
@@ -253,9 +253,9 @@
 			<div class="collapsible bottom-margin-small admin-modal" id="reset_password_section" style="display:none;">			
 				<div class="form-group">
 					<label for="orcid"><@orcid.msg 'admin.reset_password.orcid.label' /></label>
-					<input type="text" id="orcid" ng-model="params.orcidOrEmail" placeholder="<@orcid.msg 'admin.reset_password.orcid.placeholder' />" class="input-xlarge" />
+					<input type="text" id="orcid" ng-enter="confirmResetPassword()" ng-model="params.orcidOrEmail" placeholder="<@orcid.msg 'admin.reset_password.orcid.placeholder' />" class="input-xlarge" />
 					<label for="password"><@orcid.msg 'admin.reset_password.password.label' /></label>
-					<input type="text" id="password" ng-model="params.password" placeholder="<@orcid.msg 'admin.reset_password.password.placeholder' />" class="input-xlarge" />
+					<input type="text" id="password" ng-enter="confirmResetPassword()" ng-model="params.password" placeholder="<@orcid.msg 'admin.reset_password.password.placeholder' />" class="input-xlarge" />
 					<a href ng-click="randomString()" class="glyphicon glyphicon-random blue"></a>									
 					<div ng-show="result != ''">
 						<span class="orcid-error" ng-bind-html="result"></span><br />
@@ -280,7 +280,7 @@
 						<span class="orcid-error" ng-bind-html="result"></span><br />
 					</div>
 					<label for="email"><@orcid.msg 'admin.verify_email.title' /></label>
-					<input type="text" id="name" ng-model="email" placeholder="<@orcid.msg 'admin.verify_email.placeholder' />" class="input-xlarge" />																					
+					<input type="text" id="name" ng-enter="verifyEmail()" ng-model="email" placeholder="<@orcid.msg 'admin.verify_email.placeholder' />" class="input-xlarge" />																					
 				</div>
 				<div class="controls save-btns pull-left">
 					<span id="verify-email" ng-click="verifyEmail()" class="btn btn-primary"><@orcid.msg 'admin.verify_email.btn'/></span>						
@@ -306,7 +306,7 @@
 				<!-- Managed -->
 				<div class="form-group">
 					<label for="managed"><@orcid.msg 'admin.delegate.managed.label' /></label>
-					<input type="text" id="managed" placeholder="<@orcid.msg 'admin.delegate.managed.placeholder' />" class="input-xlarge" ng-model="request.managed.value" ng-change="checkClaimedStatus('managed')">				
+					<input type="text" id="managed" ng-enter="confirmDelegatesProcess()" placeholder="<@orcid.msg 'admin.delegate.managed.placeholder' />" class="input-xlarge" ng-model="request.managed.value" ng-change="checkClaimedStatus('managed')">				
 					<a href class="glyphicon glyphicon-ok green" ng-show="managed_verified"></a>					
 					<div id="invalid-managed" ng-show="request.managed.errors.length > 0" ng-cloak>
 						<span class="orcid-error" ng-repeat='error in request.managed.errors' ng-bind-html="error"></span><br />
@@ -315,7 +315,7 @@
 				<!-- Trusted -->
 				<div class="form-group">
 					<label for="trusted"><@orcid.msg 'admin.delegate.trusted.label' /></label>
-					<input type="text" id="trusted" placeholder="<@orcid.msg 'admin.delegate.trusted.placeholder' />" class="input-xlarge" ng-model="request.trusted.value" ng-change="checkClaimedStatus('trusted')">				
+					<input type="text" id="trusted" ng-enter="confirmDelegatesProcess()" placeholder="<@orcid.msg 'admin.delegate.trusted.placeholder' />" class="input-xlarge" ng-model="request.trusted.value" ng-change="checkClaimedStatus('trusted')">				
 					<a href class="glyphicon glyphicon-ok green" ng-show="trusted_verified"></a>					
 					<div id="invalid-trusted" ng-show="request.trusted.errors.length > 0" ng-cloak>
 						<span class="orcid-error" ng-repeat='error in request.trusted.errors' ng-bind-html="error"></span><br />
@@ -338,7 +338,7 @@
 			<div class="collapsible bottom-margin-small admin-modal" id="remove_security_question_section" style="display:none;">
 				<div class="form-group">
 					<label for="orcid"><@orcid.msg 'admin.remove_security_question.orcid.label' /></label>
-					<input type="text" id="orcid" ng-model="orcidOrEmail" placeholder="<@orcid.msg 'admin.remove_security_question.orcid.placeholder' />" class="input-xlarge" />					
+					<input type="text" id="orcid" ng-enter="confirmRemoveSecurityQuestion()" ng-model="orcidOrEmail" placeholder="<@orcid.msg 'admin.remove_security_question.orcid.placeholder' />" class="input-xlarge" />					
 					<div ng-show="result != ''">
 						<span class="orcid-error" ng-bind-html="result"></span><br />
 					</div>

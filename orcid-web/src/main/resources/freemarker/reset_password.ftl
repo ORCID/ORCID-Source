@@ -42,7 +42,7 @@
 			</#if>                         
             <h2>${springMacroRequestContext.getMessage("reset_password.h2ForgottenPassword")}</h2>
             <p><small>${springMacroRequestContext.getMessage("reset_password.labelenteremailaddress")} <a href="mailto:support@orcid.org">${springMacroRequestContext.getMessage("resend_claim.labelorg")}</a>.</small></p>      		
-        	<form id="password-reset-form" name="emailAddressForm" action="reset-password" method="post">
+        	<form id="password-reset-form" name="emailAddressForm" action="reset-password" method="post" ng-enter-submit>
         		<fieldset>
         			<div class="control-group">
             			<label for="givenNames" class="control-label">${springMacroRequestContext.getMessage("manage_bio_settings.emailaddress")} </label>

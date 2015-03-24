@@ -132,7 +132,7 @@
                             <div class="row bottom-row">
                                     <div class="col-md-12 add-email">
                                         <input type="email" placeholder="${springMacroRequestContext.getMessage("manage.add_another_email")}"
-                                            class="input-xlarge inline-input" ng-model="emailSrvc.inputEmail.value"
+                                            ng-enter="checkCredentials()" class="input-xlarge inline-input" ng-model="emailSrvc.inputEmail.value"
                                             required /> <span
                                             ng-click="checkCredentials()" class="btn btn-primary">${springMacroRequestContext.getMessage("manage.spanadd")}</span>
                                         <span class="orcid-error"
@@ -232,7 +232,7 @@
                             <div>
                                 <label for="passwordField" class="">${springMacroRequestContext.getMessage("change_password.oldpassword")}</label>
                                 <div class="relative">
-                                    <input id="passwordField" type="password" name="oldPassword"
+                                    <input id="passwordField" type="password" name="oldPassword" ng-enter="saveChangePassword()" 
                                         ng-model="changePasswordPojo.oldPassword" class="input-xlarge" />
                                     <span class="required">*</span>
                                 </div>
@@ -240,7 +240,7 @@
                             <div>
                                 <label for="passwordField" class="">${springMacroRequestContext.getMessage("change_password.newpassword")}</label>
                                 <div class="relative">
-                                    <input id="password" type="password" name="password"
+                                    <input id="password" type="password" name="password" ng-enter="saveChangePassword()" 
                                         ng-model="changePasswordPojo.password" class="input-xlarge" />
                                     <span class="required">*</span> <@orcid.passwordHelpPopup />
                                 </div>
@@ -250,7 +250,7 @@
                                 <div class="relative">
                                     <input id="retypedPassword" type="password"
                                         name="retypedPassword"
-                                        ng-model="changePasswordPojo.retypedPassword"
+                                        ng-model="changePasswordPojo.retypedPassword" ng-enter="saveChangePassword()" 
                                         class="input-xlarge" /> <span class="required">*</span>
                                 </div>
                             </div>
@@ -316,7 +316,8 @@
                                 <div class="relative">
                                     <input type="text" id="securityQuestionAnswer"
                                         name="securityQuestionAnswer" class="input-xlarge"
-                                        ng-model="securityQuestionPojo.securityAnswer">
+                                        ng-model="securityQuestionPojo.securityAnswer"
+                                        ng-enter="checkCredentials()">
                                 </div>
                             </div>
                             <div class="control-group">
@@ -603,7 +604,7 @@
 <script type="text/ng-template" id="check-password-modal">
     <div style="padding: 20px;"><h2><@orcid.msg 'check_password_modal.confirm_password' /></h2>
        <label for="check_password_modal.password" class=""><@orcid.msg 'check_password_modal.password' /></label>
-       <input id="check_password_modal.password" type="password" name="check_password_modal.password" ng-model="password" class="input-xlarge"/>
+       <input id="check_password_modal.password" type="password" name="check_password_modal.password" ng-model="password" ng-enter="submitModal()" class="input-xlarge"/>
        <br />
        <button id="bottom-submit" class="btn btn-primary" ng-click="submitModal()"><@orcid.msg 'check_password_modal.submit'/></button>
        <button class="btn" ng-click="closeModal()"><@orcid.msg 'check_password_modal.close'/></button>

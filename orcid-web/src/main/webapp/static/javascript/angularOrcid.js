@@ -8113,7 +8113,10 @@ orcidNgModule.filter('formatBibtexOutput', function () {
     };
 });
 
-//For forms submitted using the default submit function
+/*
+ * For forms submitted using the default submit function (Level: document)
+ * Not necessary to be inside an element
+ */
 orcidNgModule.directive('ngEnterSubmit', function($document) {
     return {
         restrict: 'A',
@@ -8128,8 +8131,9 @@ orcidNgModule.directive('ngEnterSubmit', function($document) {
     };
 });
 
-//For forms submitted using a custom function
 /*
+ * For forms submitted using a custom function, Level: Document
+ * 
  * Example:
  * <fn-form update-fn="theCustomFunction()">
  * 
@@ -8151,4 +8155,22 @@ orcidNgModule.directive('fnForm', function($document) {
                     
         }
     }
+});
+
+/* 
+ * http://stackoverflow.com/questions/15417125/submit-form-on-pressing-enter-with-angularjs
+ * Level: element
+ */
+orcidNgModule.directive('ngEnter', function() {
+    return function(scope, element, attrs) {
+        element.bind("keydown keypress", function(event) {
+            if(event.which === 13) {
+                scope.$apply(function(){
+                    scope.$eval(attrs.ngEnter, {'event': event});
+                });
+
+                event.preventDefault();
+            }
+        });
+    };
 });

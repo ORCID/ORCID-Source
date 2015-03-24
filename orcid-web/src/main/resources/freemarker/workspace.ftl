@@ -103,7 +103,7 @@
 	                 	     privateClick="setPrivacy('PRIVATE', $event)" />
 		        	   
 		        	      <div ng-repeat="otherNames in otherNamesForm.otherNames">
-		        	          <input type="text" ng-model="otherNames.value"></input>
+		        	          <input type="text" ng-model="otherNames.value" ng-enter="setOtherNamesForm()">
 		        	          <a ng-click="deleteKeyword(otherNames)" class="glyphicon glyphicon-trash grey"></a>
 		        	          <br />
 		        	          <span class="orcid-error" ng-show="otherNames.url.errors.length > 0">

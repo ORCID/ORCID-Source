@@ -90,9 +90,9 @@
         	   
         	   <!-- Edit -->
         	   <div ng-show="showEdit == true" ng-cloak>
-        	      <div ng-repeat="otherNames in otherNamesForm.otherNames">
-        	          <input type="text" ng-model="otherNames.value"></input
-        	          <a ng-click="deleteKeyword(otherNames)" class="glyphicon glyphicon-trash grey"></a>
+        	      <div ng-repeat="otherNames in otherNamesForm.otherNames" class="icon-inside-input">
+        	          <input type="text" ng-model="otherNames.value" ng-enter="setOtherNamesForm()">
+        	          <a ng-click="deleteKeyword(otherNames)" class="glyphicon glyphicon-trash grey icon-inside"></a>
         	          <span class="orcid-error" ng-show="otherNames.url.errors.length > 0">
 					     <div ng-repeat='error in otherNames.url.errors' ng-bind-html="error"></div>
 				      </span>
@@ -178,7 +178,7 @@
         	   <div ng-show="showEdit == true" ng-cloak>
         	      <div ng-repeat="keyword in keywordsForm.keywords">
         	      	  <div class="icon-inside-input">
-	        	          <input type="text" ng-model="keyword.value"></input>
+	        	          <input type="text" ng-model="keyword.value" ng-enter="setKeywordsForm()"></input>
 	        	          <a ng-click="deleteKeyword(keyword)" class="glyphicon glyphicon-trash grey icon-inside"></a>
         	          </div>
         	          <span class="orcid-error" ng-show="keyword.url.errors.length > 0">
@@ -227,8 +227,8 @@
 
         	   <div ng-show="showEdit == true" ng-cloak>
         	      <div ng-repeat="website in websitesForm.websites" class="mobile-box">
-        	          <input type="text" ng-model="website.name.value" placeholder="${springMacroRequestContext.getMessage("manual_work_form_contents.labeldescription")}"></input>
-        	          <input type="text" ng-model="website.url.value" placeholder="${springMacroRequestContext.getMessage("common.url")}" style="padding-right: 5px;"></input>
+        	          <input type="text" ng-model="website.name.value" ng-enter="setWebsitesForm()" placeholder="${springMacroRequestContext.getMessage("manual_work_form_contents.labeldescription")}"></input>
+        	          <input type="text" ng-model="website.url.value" ng-enter="setWebsitesForm()" placeholder="${springMacroRequestContext.getMessage("common.url")}" style="padding-right: 5px;"></input>
 	        	      <a ng-click="deleteWebsite(website)"><span class="glyphicon glyphicon-trash grey pull-right"></span></a>
 	        	      
         	          
