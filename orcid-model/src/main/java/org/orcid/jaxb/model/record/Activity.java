@@ -31,6 +31,10 @@ public interface Activity extends Filterable {
     
     void setPutCode(String putCode);
     
+    String getPath();
+    
+    void setPath(String path);
+    
     CreatedDate getCreatedDate();
     
     void setCreatedDate(CreatedDate value);

@@ -36,20 +36,16 @@ import org.orcid.jaxb.model.record.summary.Works;
 public class ActivityUtils {
 
     /**
-     * In order to provide a more meaningful put code for activities, we will
-     * replace the actual put code for one that represent a path to the activity
-     * in the orcid record.
-     * 
-     * The new put code will follow this pattern:
+     * Set the path attribute to an activity, it will look like
      * 
      * /orcid/activity-type/putCode
      * 
      * @param Activity
-     *            An object that contains a putCode element
+     *            An activity object
      * @param orcid
      *            The activity owner
      * */
-    public static void updatePutCodeToPath(Activity activity, String orcid) {
+    public static void setPathToActivity(Activity activity, String orcid) {
         String putCode = activity.getPutCode();
         String activityType = OrcidApiConstants.ACTIVITY_WORK;
 
@@ -60,29 +56,20 @@ public class ActivityUtils {
         } else if (Funding.class.isInstance(activity) || FundingSummary.class.isInstance(activity)) {
             activityType = OrcidApiConstants.ACTIVITY_FUNDING;
         }
-        // Build the new put code which contains the path to the activity
-        String newPutCode = '/' + orcid + '/' + activityType + '/' + putCode;
+        // Build the path string
+        String path = '/' + orcid + '/' + activityType + '/' + putCode;
 
-        // Update the put code
-        activity.setPutCode(newPutCode);
+        activity.setPath(path);
     }
 
     /**
-     * In order to provide a more meaningful put code for activities, we will
-     * replace the actual put code for one that represent a path to the activity
-     * in the orcid record.
-     * 
-     * The new put code will follow this pattern:
-     * 
-     * /orcid/activity-type/putCode
+     * Set the path attribute to all activities in the summary object
      * 
      * @param ActivitiesSummary
-     *            An object that contains several elements to update the putCode
-     *            element
      * @param orcid
      *            The activity owner
      * */
-    public static void updatePutCodeToPath(ActivitiesSummary activitiesSummary, String orcid) {
+    public static void setPathToActivity(ActivitiesSummary activitiesSummary, String orcid) {
         Educations educations = activitiesSummary.getEducations();
         Employments employments = activitiesSummary.getEmployments();
         Fundings fundings = activitiesSummary.getFundings();
@@ -90,13 +77,13 @@ public class ActivityUtils {
 
         if (educations != null && !educations.getSummaries().isEmpty()) {
             for (EducationSummary summary : educations.getSummaries()) {
-                ActivityUtils.updatePutCodeToPath(summary, orcid);
+                ActivityUtils.setPathToActivity(summary, orcid);
             }
         }
 
         if (employments != null && !employments.getSummaries().isEmpty()) {
             for (EmploymentSummary summary : employments.getSummaries()) {
-                ActivityUtils.updatePutCodeToPath(summary, orcid);
+                ActivityUtils.setPathToActivity(summary, orcid);
             }
         }
 
@@ -104,7 +91,7 @@ public class ActivityUtils {
             for (FundingGroup group : fundings.getFundingGroup()) {
                 if (!group.getFundingSummary().isEmpty()) {
                     for (FundingSummary summary : group.getFundingSummary()) {
-                        ActivityUtils.updatePutCodeToPath(summary, orcid);
+                        ActivityUtils.setPathToActivity(summary, orcid);
                     }
                 }
             }
@@ -114,28 +101,10 @@ public class ActivityUtils {
             for (WorkGroup group : works.getWorkGroup()) {
                 if (!group.getWorkSummary().isEmpty()) {
                     for (WorkSummary summary : group.getWorkSummary()) {
-                        ActivityUtils.updatePutCodeToPath(summary, orcid);
+                        ActivityUtils.setPathToActivity(summary, orcid);
                     }
                 }
             }
         }
-    }
-
-    /**
-     * Check if the put code in the give activity is a path, and change it to be
-     * just the put code number
-     * 
-     * @param activity
-     *            The activity to update
-     * @param orcid
-     *            The activity owner
-     * */
-    public static void removePathFromPutCode(Activity activity, String orcid) {
-        String putCode = activity.getPutCode();
-        if (putCode != null && putCode.startsWith("/" + orcid)) {
-            putCode = putCode.substring(putCode.lastIndexOf('/') + 1);
-            activity.setPutCode(putCode);
-        }
-    }
-
+    }    
 }

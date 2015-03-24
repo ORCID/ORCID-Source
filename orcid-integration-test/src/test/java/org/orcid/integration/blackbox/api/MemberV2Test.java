@@ -145,7 +145,6 @@ public class MemberV2Test {
         ClientResponse getResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
         Work gotWork = getResponse.getEntity(Work.class);
-        ActivityUtils.removePathFromPutCode(gotWork, user1OrcidId);
         assertEquals("common:title", gotWork.getWorkTitle().getTitle().getContent());
         gotWork.getWorkTitle().getTitle().setContent("updated title");
         ClientResponse putResponse = memberV2ApiClient.updateLocationXml(postResponse.getLocation(), accessToken, gotWork);
@@ -178,7 +177,6 @@ public class MemberV2Test {
         ClientResponse getResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
         Work gotWork = getResponse.getEntity(Work.class);
-        ActivityUtils.removePathFromPutCode(gotWork, user1OrcidId);
         assertEquals("common:title", gotWork.getWorkTitle().getTitle().getContent());
         gotWork.getWorkTitle().getTitle().setContent("updated title");
         String profileCreateToken = oauthHelper.getClientCredentialsAccessToken(client2ClientId, client2ClientSecret, ScopePathType.ORCID_PROFILE_CREATE);
@@ -205,8 +203,7 @@ public class MemberV2Test {
         assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v2.0_rc1/" + user1OrcidId + "/education/\\d+"));
         ClientResponse getResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
-        Education gotEducation = getResponse.getEntity(Education.class);
-        ActivityUtils.removePathFromPutCode(gotEducation, user1OrcidId);
+        Education gotEducation = getResponse.getEntity(Education.class);        
         assertEquals("education:department-name", gotEducation.getDepartmentName());
         assertEquals("education:role-title", gotEducation.getRoleTitle());
         gotEducation.setDepartmentName("updated dept. name");
@@ -236,7 +233,6 @@ public class MemberV2Test {
         ClientResponse getResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
         Education gotEducation = getResponse.getEntity(Education.class);
-        ActivityUtils.removePathFromPutCode(gotEducation, user1OrcidId);
         assertEquals("education:department-name", gotEducation.getDepartmentName());
         assertEquals("education:role-title", gotEducation.getRoleTitle());
         gotEducation.setDepartmentName("updated dept. name");
@@ -267,7 +263,6 @@ public class MemberV2Test {
         ClientResponse getResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
         Employment gotEmployment = getResponse.getEntity(Employment.class);
-        ActivityUtils.removePathFromPutCode(gotEmployment, user1OrcidId);
         assertEquals("affiliation:department-name", gotEmployment.getDepartmentName());
         assertEquals("affiliation:role-title", gotEmployment.getRoleTitle());
         gotEmployment.setDepartmentName("updated dept. name");
@@ -297,7 +292,6 @@ public class MemberV2Test {
         ClientResponse getResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
         Employment gotEmployment = getResponse.getEntity(Employment.class);
-        ActivityUtils.removePathFromPutCode(gotEmployment, user1OrcidId);
         assertEquals("affiliation:department-name", gotEmployment.getDepartmentName());
         assertEquals("affiliation:role-title", gotEmployment.getRoleTitle());
         gotEmployment.setDepartmentName("updated dept. name");
@@ -334,7 +328,6 @@ public class MemberV2Test {
         ClientResponse getResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
         Funding gotFunding = getResponse.getEntity(Funding.class);
-        ActivityUtils.removePathFromPutCode(gotFunding, user1OrcidId);
         assertEquals("common:title", gotFunding.getTitle().getTitle().getContent());
         assertEquals("common:translated-title", gotFunding.getTitle().getTranslatedTitle().getContent());
         assertEquals("en", gotFunding.getTitle().getTranslatedTitle().getLanguageCode());
@@ -373,7 +366,6 @@ public class MemberV2Test {
         ClientResponse getResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
         Funding gotFunding = getResponse.getEntity(Funding.class);
-        ActivityUtils.removePathFromPutCode(gotFunding, user1OrcidId);
         assertEquals("common:title", gotFunding.getTitle().getTitle().getContent());
         assertEquals("common:translated-title", gotFunding.getTitle().getTranslatedTitle().getContent());
         assertEquals("en", gotFunding.getTitle().getTranslatedTitle().getLanguageCode());
