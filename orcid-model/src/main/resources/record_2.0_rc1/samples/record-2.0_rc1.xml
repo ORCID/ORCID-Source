@@ -201,46 +201,7 @@
 				</common:end-date>
 			</affiliation:employment-summary>
 		</activities:employments>
-		<activities:works>
-			<activities:group>
-				<activities:identifiers>
-					<activities:identifier>
-						<activities:external-identifier-type>agr</activities:external-identifier-type>
-						<activities:external-identifier-id>work:external-identifier-id</activities:external-identifier-id>
-					</activities:identifier>
-				</activities:identifiers>
-				<work:work-summary put-code="0" visibility="private">
-					<common:created-date>2001-12-31T12:00:00</common:created-date>
-					<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
-					<common:source>
-						<common:source-orcid>
-							<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
-							<common:path>8888-8888-8888-8880</common:path>
-							<common:host>orcid.org</common:host>
 
-						</common:source-orcid>
-						<common:source-name />
-					</common:source>
-					<work:title>
-						<common:title>common:title</common:title>
-						<common:subtitle />
-						<common:translated-title language-code="en">common:translated-title</common:translated-title>
-					</work:title>
-					<work:external-identifiers>
-						<work:work-external-identifier>
-							<work:external-identifier-type>agr</work:external-identifier-type>
-							<work:external-identifier-id>work:external-identifier-id</work:external-identifier-id>
-						</work:work-external-identifier>
-					</work:external-identifiers>
-					<work:type>artistic-performance</work:type>
-					<common:publication-date>
-						<common:year>1848</common:year>
-						<common:month>02</common:month>
-						<common:day>02</common:day>
-					</common:publication-date>
-				</work:work-summary>
-			</activities:group>
-		</activities:works>
 		<activities:fundings>
 			<activities:group>
 				<activities:identifiers>
@@ -257,7 +218,6 @@
 							<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
 							<common:path>8888-8888-8888-8880</common:path>
 							<common:host>orcid.org</common:host>
-
 						</common:source-orcid>
 						<common:source-name />
 					</common:source>
@@ -286,6 +246,45 @@
 				</funding:summary>
 			</activities:group>
 		</activities:fundings>
+		<activities:works>
+			<activities:group>
+				<activities:identifiers>
+					<activities:identifier>
+						<activities:external-identifier-type>agr</activities:external-identifier-type>
+						<activities:external-identifier-id>work:external-identifier-id</activities:external-identifier-id>
+					</activities:identifier>
+				</activities:identifiers>
+				<work:work-summary put-code="0" visibility="private">
+					<common:created-date>2001-12-31T12:00:00</common:created-date>
+					<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
+					<common:source>
+						<common:source-orcid>
+							<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
+							<common:path>8888-8888-8888-8880</common:path>
+							<common:host>orcid.org</common:host>
+						</common:source-orcid>
+						<common:source-name />
+					</common:source>
+					<work:title>
+						<common:title>common:title</common:title>
+						<common:subtitle />
+						<common:translated-title language-code="en">common:translated-title</common:translated-title>
+					</work:title>
+					<work:external-identifiers>
+						<work:work-external-identifier>
+							<work:external-identifier-type>agr</work:external-identifier-type>
+							<work:external-identifier-id>work:external-identifier-id</work:external-identifier-id>
+						</work:work-external-identifier>
+					</work:external-identifiers>
+					<work:type>artistic-performance</work:type>
+					<common:publication-date>
+						<common:year>1848</common:year>
+						<common:month>02</common:month>
+						<common:day>02</common:day>
+					</common:publication-date>
+				</work:work-summary>
+			</activities:group>
+		</activities:works>
 	</activities:activities-summary>
 	<internal:internal visibility="private">
 		<internal:security-details>
@@ -306,7 +305,6 @@
 			<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
 			<common:path>8888-8888-8888-8880</common:path>
 			<common:host>orcid.org</common:host>
-
 		</common:group-orcid-identifier>
 		<internal:referred-by>internal:referred-by</internal:referred-by>
 		<internal:salesforce-dd>123456789012345</internal:salesforce-dd>

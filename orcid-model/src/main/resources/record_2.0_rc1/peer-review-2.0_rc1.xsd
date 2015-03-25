@@ -36,8 +36,8 @@
 		</xs:appinfo>
 	</xs:annotation>
 
-	<xs:import namespace="http://www.orcid.org/ns/common"
-		schemaLocation="common-2.0_rc1.xsd" />
+    <xs:import namespace="http://www.orcid.org/ns/common"
+        schemaLocation="../common_2.0_rc1/common-2.0_rc1.xsd" />
 	<xs:import namespace="http://www.orcid.org/ns/employment"
 		schemaLocation="employment-2.0_rc1.xsd" />
 	<xs:import namespace="http://www.orcid.org/ns/education"
@@ -79,14 +79,16 @@
 						</xs:documentation>
 					</xs:annotation>
 				</xs:element>
-				<xs:element name="type" type="peer-review:type" minOccurs="1" maxOccurs="1">
+				<xs:element name="type" type="peer-review:type"
+					minOccurs="1" maxOccurs="1">
 					<xs:annotation>
 						<xs:documentation>The kind of review applied to the subject type
 							reviewed
 						</xs:documentation>
 					</xs:annotation>
 				</xs:element>
-				<xs:element name="completion-date" type="common:fuzzy-date" minOccurs="1" maxOccurs="1">
+				<xs:element name="completion-date" type="common:fuzzy-date"
+					minOccurs="1" maxOccurs="1">
 					<xs:annotation>
 						<xs:documentation>The day of the month on which the review was
 							completed
@@ -143,6 +145,48 @@
 			<xs:attribute name="visibility" type="common:visibility" />
 			<xs:attribute name="put-code" type="common:put-code"
 				use="optional" />
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="summary">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="common:activity-summary">
+					<xs:sequence>
+						<xs:element name="role" type="peer-review:role">
+							<xs:annotation>
+								<xs:documentation>The role played by a person in their
+									contribution to a review.
+								</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<!-- orcid orgs doesn't match specification -->
+						<xs:element name="external-identifiers" type="work:work-external-identifiers"
+							minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>The unique generated identifier of the review.
+								</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="type" type="peer-review:type"
+							minOccurs="1" maxOccurs="1">
+							<xs:annotation>
+								<xs:documentation>The kind of review applied to the subject type
+									reviewed
+								</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="completion-date" type="common:fuzzy-date"
+							minOccurs="1" maxOccurs="1">
+							<xs:annotation>
+								<xs:documentation>The day of the month on which the review was
+									completed
+								</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:extension>
+			</xs:complexContent>
 		</xs:complexType>
 	</xs:element>
 

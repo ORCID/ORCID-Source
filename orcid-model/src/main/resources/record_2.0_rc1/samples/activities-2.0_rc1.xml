@@ -3,7 +3,8 @@
 	xmlns:activities="http://www.orcid.org/ns/activities"
 	xmlns:affiliation="http://www.orcid.org/ns/employment" xmlns:common="http://www.orcid.org/ns/common"
 	xmlns:education="http://www.orcid.org/ns/education" xmlns:funding="http://www.orcid.org/ns/funding"
-	xmlns:work="http://www.orcid.org/ns/work" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:work="http://www.orcid.org/ns/work" xmlns:peer-review="http://www.orcid.org/ns/peer-review"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.orcid.org/ns/activities ../activities-2.0_rc1.xsd ">
 	<activities:educations>
 		<education:education-summary put-code="0"
@@ -59,6 +60,76 @@
 			</common:end-date>
 		</affiliation:employment-summary>
 	</activities:employments>
+	<activities:fundings>
+		<activities:group>
+			<activities:identifiers>
+				<activities:identifier>
+					<activities:external-identifier-type>agr</activities:external-identifier-type>
+					<activities:external-identifier-id>activities:external-identifier-id</activities:external-identifier-id>
+				</activities:identifier>
+			</activities:identifiers>
+			<funding:summary put-code="0" visibility="private">
+				<common:created-date>2001-12-31T12:00:00</common:created-date>
+				<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
+				<common:source>
+					<common:source-orcid>
+						<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
+						<common:path>8888-8888-8888-8880</common:path>
+						<common:host>orcid.org</common:host>
+					</common:source-orcid>
+					<common:source-name />
+				</common:source>
+				<funding:title>
+					<common:title>common:title</common:title>
+					<common:translated-title language-code="en">common:translated-title</common:translated-title>
+				</funding:title>
+				<funding:external-identifiers>
+					<funding:externalIdentifier>
+						<funding:external-identifier-type>grant_number</funding:external-identifier-type>
+						<funding:external-identifier-value>funding:external-identifier-value</funding:external-identifier-value>
+						<funding:external-identifier-url>http://tempuri.org</funding:external-identifier-url>
+					</funding:externalIdentifier>
+				</funding:external-identifiers>
+				<funding:type>grant</funding:type>
+				<common:start-date>
+					<common:year>2014</common:year>
+					<common:month>12</common:month>
+					<common:day>20</common:day>
+				</common:start-date>
+				<common:end-date>
+					<common:year>2014</common:year>
+					<common:month>12</common:month>
+					<common:day>20</common:day>
+				</common:end-date>
+			</funding:summary>
+		</activities:group>
+	</activities:fundings>
+	<activities:peer-reviews>
+		<activities:group>
+			<activities:identifiers>
+				<activities:identifier>
+					<activities:external-identifier-type>agr</activities:external-identifier-type>
+					<activities:external-identifier-id>activities:external-identifier-id</activities:external-identifier-id>
+				</activities:identifier>
+			</activities:identifiers>
+			<peer-review:summary put-code="12345" visibility="private">
+				<peer-review:role>REVIEWER</peer-review:role>
+				<peer-review:external-identifiers>
+					<work:work-external-identifier>
+						<work:external-identifier-type>agr</work:external-identifier-type>
+						<work:external-identifier-id>work:external-identifier-id
+						</work:external-identifier-id>
+					</work:work-external-identifier>
+				</peer-review:external-identifiers>
+				<peer-review:type>REVIEW</peer-review:type>
+				<peer-review:completion-date>
+					<common:year>1848</common:year>
+					<common:month>02</common:month>
+					<common:day>02</common:day>
+				</peer-review:completion-date>
+			</peer-review:summary>
+		</activities:group>
+	</activities:peer-reviews>
 	<activities:works>
 		<activities:group>
 			<activities:identifiers>
@@ -98,49 +169,4 @@
 			</work:work-summary>
 		</activities:group>
 	</activities:works>
-	<activities:fundings>
-		<activities:group>
-			<activities:identifiers>
-				<activities:identifier>
-					<activities:external-identifier-type>agr</activities:external-identifier-type>
-					<activities:external-identifier-id>activities:external-identifier-id</activities:external-identifier-id>
-				</activities:identifier>
-			</activities:identifiers>
-			<funding:summary put-code="0"
-				visibility="private">
-				<common:created-date>2001-12-31T12:00:00</common:created-date>
-				<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
-				<common:source>
-					<common:source-orcid>
-						<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
-						<common:path>8888-8888-8888-8880</common:path>
-						<common:host>orcid.org</common:host>
-					</common:source-orcid>
-					<common:source-name />
-				</common:source>
-				<funding:title>
-					<common:title>common:title</common:title>
-					<common:translated-title language-code="en">common:translated-title</common:translated-title>
-				</funding:title>
-				<funding:external-identifiers>
-					<funding:externalIdentifier>
-						<funding:external-identifier-type>grant_number</funding:external-identifier-type>
-						<funding:external-identifier-value>funding:external-identifier-value</funding:external-identifier-value>
-						<funding:external-identifier-url>http://tempuri.org</funding:external-identifier-url>
-					</funding:externalIdentifier>
-				</funding:external-identifiers>
-				<funding:type>grant</funding:type>
-				<common:start-date>
-					<common:year>2014</common:year>
-					<common:month>12</common:month>
-					<common:day>20</common:day>
-				</common:start-date>
-				<common:end-date>
-					<common:year>2014</common:year>
-					<common:month>12</common:month>
-					<common:day>20</common:day>
-				</common:end-date>
-			</funding:summary>
-		</activities:group>
-	</activities:fundings>
 </activities:activities-summary>
