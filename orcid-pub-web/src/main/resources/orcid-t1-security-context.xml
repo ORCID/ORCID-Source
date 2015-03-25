@@ -69,7 +69,7 @@
         </property>
      </bean>
      
-    <bean id="orcidJsonMessageConverter" class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter">
+    <bean id="orcidJsonMessageConverter" class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
     <property name="supportedMediaTypes">
             <list value-type="org.springframework.http.MediaType">                
                 <bean class="org.springframework.http.MediaType">
@@ -88,7 +88,7 @@
         </property>    
     </bean>
     
-    <bean id="orcidXmlMessageConverter" class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter">
+    <bean id="orcidXmlMessageConverter" class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
     <property name="supportedMediaTypes">
             <list value-type="org.springframework.http.MediaType">
                 <bean class="org.springframework.http.MediaType">

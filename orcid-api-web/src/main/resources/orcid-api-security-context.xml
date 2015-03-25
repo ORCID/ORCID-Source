@@ -122,7 +122,7 @@
         </property>
      </bean>
     
-    <bean id="legacyOrcidJsonMessageConverter" class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter">
+    <bean id="legacyOrcidJsonMessageConverter" class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
         <property name="supportedMediaTypes">
             <list value-type="org.springframework.http.MediaType">                
                 <bean class="org.springframework.http.MediaType">
@@ -141,7 +141,7 @@
         </property>    
     </bean>
     
-    <bean id="orcidJsonMessageConverter" class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter">
+    <bean id="orcidJsonMessageConverter" class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
         <property name="supportedMediaTypes">
             <list value-type="org.springframework.http.MediaType">                
                 <bean class="org.springframework.http.MediaType">
@@ -162,7 +162,7 @@
     </bean>
     
     <!--  This is supposed to be an XML converter, but seems to be JSON! Leaving this the same for existing APIs. In future APIs it will be XML! -->
-    <bean id="legacyXmlMessageConverter" class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter">
+    <bean id="legacyXmlMessageConverter" class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
         <property name="supportedMediaTypes">
             <list value-type="org.springframework.http.MediaType">
                 <bean class="org.springframework.http.MediaType">
