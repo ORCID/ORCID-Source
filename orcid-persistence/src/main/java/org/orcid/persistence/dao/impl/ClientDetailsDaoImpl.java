@@ -108,7 +108,7 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
     
     @Override
     public boolean belongsTo(String clientId, String groupId) {
-        TypedQuery<ClientDetailsEntity> query = entityManager.createQuery("from ClientDetailsEntity where id = :clientId and groupProfile.id = :groupId", ClientDetailsEntity.class);
+        TypedQuery<ClientDetailsEntity> query = entityManager.createQuery("from ClientDetailsEntity where id = :clientId and groupProfileId = :groupId", ClientDetailsEntity.class);
         query.setParameter("clientId", clientId);
         query.setParameter("groupId", groupId);
         try {
@@ -131,7 +131,7 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
     @Override
     @SuppressWarnings("unchecked")
     public List<ClientDetailsEntity> findByGroupId(String groupId) {
-        Query query = entityManager.createQuery("from ClientDetailsEntity where groupProfile.id = :groupId");
+        Query query = entityManager.createQuery("from ClientDetailsEntity where groupProfileId = :groupId");
         query.setParameter("groupId", groupId);
         return query.getResultList();
     }
@@ -143,5 +143,25 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
         this.remove(clientDetailsEntity);
     }
     
+    /**
+     * Get the public client that belongs to the given orcid ID
+     * 
+     * @param ownerId
+     *            The user or group id
+     * @return the public client that belongs to the given user
+     * */
+    @Override
+    public ClientDetailsEntity getPublicClient(String ownerId) {
+        TypedQuery<ClientDetailsEntity> query = entityManager.createQuery("from ClientDetailsEntity where groupProfileId = :ownerId and clientType = :clientType", ClientDetailsEntity.class);
+        query.setParameter("ownerId", ownerId);
+        query.setParameter("clientType", ClientType.PUBLIC_CLIENT);
+        try {
+            return query.getSingleResult();
+        } catch(NoResultException nre) {
+            LOGGER.warn("There is not public client for " + ownerId);
+            return null;
+        }
+        
+    }
     
 }

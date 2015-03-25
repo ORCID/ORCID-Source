@@ -28,6 +28,7 @@ import java.util.Set;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
+import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.oauth.OrcidOAuth2Authentication;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
@@ -60,6 +61,9 @@ public class DefaultPermissionChecker implements PermissionChecker {
     @Resource
     private OrcidOauth2TokenDetailService orcidOauthTokenDetailService;
 
+    @Resource(name = "profileEntityCacheManager")
+    ProfileEntityCacheManager profileEntityCacheManager;
+    
     /**
      * Check the permissions for the given
      * {@link org.springframework.security.core.Authentication} object and the
@@ -318,7 +322,7 @@ public class DefaultPermissionChecker implements PermissionChecker {
                         + " do NOT match.");
             }
 
-            profileEntityManager.findByOrcid(messageOrcid);
+            profileEntityCacheManager.retrieve(messageOrcid);
             if (!profileEntityManager.existsAndNotClaimedAndBelongsTo(messageOrcid, authorizationRequest.getClientId())) {
                 throw new AccessControlException("You cannot update this profile as it has been claimed, or you are not the owner.");
             }

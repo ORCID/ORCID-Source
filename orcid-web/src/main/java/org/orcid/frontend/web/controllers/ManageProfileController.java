@@ -40,6 +40,7 @@ import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidSearchManager;
 import org.orcid.core.manager.OrcidSocialManager;
 import org.orcid.core.manager.OtherNameManager;
+import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileKeywordManager;
 import org.orcid.core.manager.ResearcherUrlManager;
@@ -155,6 +156,9 @@ public class ManageProfileController extends BaseWorkspaceController {
     @Resource
     private EmailManager emailManager;
 
+    @Resource(name = "profileEntityCacheManager")
+    ProfileEntityCacheManager profileEntityCacheManager;
+    
     public EncryptionManager getEncryptionManager() {
         return encryptionManager;
     }
@@ -272,7 +276,7 @@ public class ManageProfileController extends BaseWorkspaceController {
             permission.setApprovalDate(new Date());
             givenPermissionToDao.merge(permission);
             OrcidProfile currentUser = getEffectiveProfile();
-            ProfileEntity delegateProfile = profileEntityManager.findByOrcid(delegateOrcid);
+            ProfileEntity delegateProfile = profileEntityCacheManager.retrieve(delegateOrcid);
             DelegationDetails details = new DelegationDetails();
             details.setApprovalDate(new ApprovalDate(DateUtils.convertToXMLGregorianCalendar(permission.getApprovalDate())));
             DelegateSummary summary = new DelegateSummary();
@@ -1022,7 +1026,7 @@ public class ManageProfileController extends BaseWorkspaceController {
                         permission.setApprovalDate(new Date());
                         givenPermissionToDao.merge(permission);
                         OrcidProfile currentUser = getEffectiveProfile();
-                        ProfileEntity delegateProfile = profileEntityManager.findByOrcid(trustedOrcid);
+                        ProfileEntity delegateProfile = profileEntityCacheManager.retrieve(trustedOrcid);
                         DelegationDetails details = new DelegationDetails();
                         details.setApprovalDate(new ApprovalDate(DateUtils.convertToXMLGregorianCalendar(permission.getApprovalDate())));
                         DelegateSummary summary = new DelegateSummary();

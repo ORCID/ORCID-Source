@@ -24,6 +24,7 @@ import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -65,7 +66,7 @@ public class RemoveOrphanClients {
         List<ClientDetailsEntity> clientDetailsList = clientDetailsDao.getAll();
         for (ClientDetailsEntity clientDetailsEntity : clientDetailsList) {
             LOG.info("Checking client: {}", clientDetailsEntity.getId());
-            if (clientDetailsEntity.getGroupProfile() == null) {
+            if (PojoUtil.isEmpty(clientDetailsEntity.getGroupProfileId())) {
                 LOG.info("Found orphan client: {}", clientDetailsEntity.getId());
                 if (!dryRun) {
                     // Remove the client

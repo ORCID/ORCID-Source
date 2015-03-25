@@ -414,11 +414,11 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
                 // error.
                 throw new OrcidClientGroupManagementException("Unable to find client: " + clientId);
             } else {
-                if (!clientDetailsEntity.getGroupProfile().getId().equals(groupOrcid)) {
+                if (!PojoUtil.isEmpty(clientDetailsEntity.getGroupProfileId()) && !clientDetailsEntity.getGroupProfileId().equals(groupOrcid)) {
                     // If client belongs to another group, then raise an
                     // error.
                     throw new OrcidClientGroupManagementException(String.format("Client %s does not belong to group %s (actually belongs to group %s)", clientId,
-                            groupOrcid, clientDetailsEntity.getGroupProfile().getId()));
+                            groupOrcid, clientDetailsEntity.getGroupProfileId()));
                 }
                 // If the existing client is found, then update the client
                 // details from the incoming client, and save using the client
@@ -491,11 +491,11 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
                 // error.
                 throw new OrcidClientGroupManagementException("Unable to find client: " + clientId);
             } else {
-                if (!clientDetailsEntity.getGroupProfile().getId().equals(groupOrcid)) {
+                if (!PojoUtil.isEmpty(clientDetailsEntity.getGroupProfileId()) && !clientDetailsEntity.getGroupProfileId().equals(groupOrcid)) {
                     // If client belongs to another group, then raise an
                     // error.
                     throw new OrcidClientGroupManagementException(String.format("Client %s does not belong to group %s (actually belongs to group %s)", clientId,
-                            groupOrcid, clientDetailsEntity.getGroupProfile().getId()));
+                            groupOrcid, clientDetailsEntity.getGroupProfileId()));
                 }
                 // If the existing client is found, then update the client
                 // details from the incoming client
