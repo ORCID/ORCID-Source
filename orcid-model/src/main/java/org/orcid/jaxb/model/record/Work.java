@@ -93,6 +93,8 @@ public class Work implements VisibilityType, Activity, Serializable {
     protected String putCode;
     @XmlAttribute
     protected Visibility visibility;
+    @XmlAttribute(name="path")
+    protected String path;
     @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected LastModifiedDate lastModifiedDate;
     @XmlElement(namespace = "http://www.orcid.org/ns/common")
@@ -117,6 +119,27 @@ public class Work implements VisibilityType, Activity, Serializable {
      */
     public void setPutCode(String value) {
         this.putCode = value;
+    }
+
+    /**
+     * Gets the value of the path property.
+     * 
+     * @return possible object is {@link Object }
+     * 
+     */
+    public String getPath() {
+        return path;
+    }
+
+    /**
+     * Sets the value of the path property.
+     * 
+     * @param path
+     *            allowed object is {@link Object }
+     * 
+     */
+    public void setPath(String path) {
+        this.path = path;
     }
 
     /**

@@ -62,6 +62,8 @@ public class FundingSummary implements VisibilityType, Activity, GroupableActivi
 
     @XmlAttribute(name="put-code")
     protected String putCode;
+    @XmlAttribute(name="path")
+    protected String path;
     @XmlAttribute
     protected Visibility visibility;
     @XmlAttribute(name = "display-index")
@@ -139,6 +141,27 @@ public class FundingSummary implements VisibilityType, Activity, GroupableActivi
         this.putCode = putCode;
     }
 
+    /**
+     * Gets the value of the path property.
+     * 
+     * @return possible object is {@link Object }
+     * 
+     */
+    public String getPath() {
+        return path;
+    }
+
+    /**
+     * Sets the value of the path property.
+     * 
+     * @param path
+     *            allowed object is {@link Object }
+     * 
+     */
+    public void setPath(String path) {
+        this.path = path;
+    }
+    
     public Visibility getVisibility() {
         return visibility;
     }

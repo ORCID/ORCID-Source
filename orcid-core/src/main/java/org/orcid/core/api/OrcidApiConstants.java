@@ -63,5 +63,9 @@ public class OrcidApiConstants {
     public static final String HTML = "text/html; qs=1";
 
     public static final String STATUS_OK_MESSAGE = "OK I am here";
-
+        
+    public static final String ACTIVITY_EDUCATION = "education";
+    public static final String ACTIVITY_EMPLOYMENT = "employment";
+    public static final String ACTIVITY_FUNDING = "funding";
+    public static final String ACTIVITY_WORK = "work";    
 }       

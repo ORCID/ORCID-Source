@@ -19,6 +19,7 @@ package org.orcid.persistence.dao;
 import static org.junit.Assert.*;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -36,18 +37,21 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @ContextConfiguration(locations = { "classpath:orcid-persistence-context.xml" })
 public class OrgDisambiguatedDaoTest extends DBUnitTest {
 
+    private static final List<String> DATA_FILES = Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SubjectEntityData.xml", "/data/SourceClientDetailsEntityData.xml",
+            "/data/OrgsEntityData.xml", "/data/ProfileEntityData.xml", "/data/OrgAffiliationEntityData.xml"); 
+    
     @Resource
     private OrgDisambiguatedDao orgDisambiguatedDao;
 
     @BeforeClass
     public static void initDBUnitData() throws Exception {
-        initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SubjectEntityData.xml", "/data/SourceClientDetailsEntityData.xml",
-                "/data/ProfileEntityData.xml"));
+        initDBUnitData(DATA_FILES);
     }
 
     @AfterClass
     public static void removeDBUnitData() throws Exception {
-        removeDBUnitData(Arrays.asList("/data/ProfileEntityData.xml", "/data/SubjectEntityData.xml", "/data/SecurityQuestionEntityData.xml"));
+        Collections.reverse(DATA_FILES);
+        removeDBUnitData(DATA_FILES);
     }
 
     @Test

@@ -103,7 +103,8 @@ public class JpaJaxbEntityAdapterToOrcidProfileTest extends DBUnitTest {
 
     private static final List<String> DATA_FILES = Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SourceClientDetailsEntityData.xml",
             "/data/ProfileEntityData.xml", "/data/WorksEntityData.xml", "/data/ProfileWorksEntityData.xml", "/data/ClientDetailsEntityData.xml",
-            "/data/Oauth2TokenDetailsData.xml");
+            "/data/Oauth2TokenDetailsData.xml", "/data/OrgsEntityData.xml", "/data/ProfileFundingEntityData.xml",
+            "/data/OrgAffiliationEntityData.xml");
 
     @Autowired
     private GenericDao<ProfileEntity, String> profileDao;

@@ -76,6 +76,8 @@ public class Education implements Serializable, VisibilityType, Activity, Organi
 
     @XmlAttribute(name = "put-code")
     protected String putCode;
+    @XmlAttribute(name="path")
+    protected String path;
     @XmlAttribute
     protected Visibility visibility;
     
@@ -247,6 +249,27 @@ public class Education implements Serializable, VisibilityType, Activity, Organi
         this.putCode = value;
     }
 
+    /**
+     * Gets the value of the path property.
+     * 
+     * @return possible object is {@link Object }
+     * 
+     */
+    public String getPath() {
+        return path;
+    }
+
+    /**
+     * Sets the value of the path property.
+     * 
+     * @param path
+     *            allowed object is {@link Object }
+     * 
+     */
+    public void setPath(String path) {
+        this.path = path;
+    }
+    
     @Override
     public String retrieveSourcePath() {
         if (source == null) {
