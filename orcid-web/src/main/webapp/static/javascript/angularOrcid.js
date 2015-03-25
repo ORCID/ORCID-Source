@@ -997,7 +997,7 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
                 };
             },
             putWork: function(work,sucessFunc, failFunc) {
-                console.log(work);
+                //console.log(work);
                 $.ajax({
                     url: getBaseUri() + '/works/work.json',
                     contentType: 'application/json;charset=UTF-8',
@@ -1006,6 +1006,7 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
                     data: angular.toJson(work),
                     success: function(data) {
                         sucessFunc(data);
+                        console.log(data);
                     }
                 }).fail(function(){
                     failFunc();
@@ -1480,15 +1481,16 @@ orcidNgModule.filter('externalIdentifierHtml', function(){
         if(externalIdentifier.url != null)
             link = externalIdentifier.url.value;
        
-        if (link.search(/^http[s]?\:\/\//) == -1)
-        	link = 'http://' + link;
-
-        if (link != null && value != null){        	
-            output += "<a href='" + link + "' class='truncate-anchor' target='_blank'>" + value + "</a>";        	
-        }else if(value != null){
-            output = output + " " + value;
-        }else if(link != null){        	
-            output = om.get('funding.add.external_id.url.label.grant') + ": <a href='" + link + "' class='truncate-anchor' target='_blank'>" + link + "</a>";
+        if(link != null) {
+        	if (link.search(/^http[s]?\:\/\//) == -1)
+            	link = 'http://' + link;
+        	if(value != null) {
+        		output += "<a href='" + link + "' class='truncate-anchor' target='_blank'>" + value + "</a>";
+        	} else {
+        		output = om.get('funding.add.external_id.url.label.grant') + ": <a href='" + link + "' class='truncate-anchor' target='_blank'>" + link + "</a>";
+        	}
+        } else if(value != null) {
+        	output = output + " " + value;
         }
       
         if (length > 1 && !last) output = output + ',';
@@ -3925,7 +3927,7 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     $scope.delCountVerify = 0;
     $scope.bulkDeleteCount = 0;
     $scope.bulkDeleteSubmit = false;
-
+    
     $scope.sortState = new ActSortState(GroupedActivities.ABBR_WORK);
     $scope.sort = function(key) {
         $scope.sortState.sortBy(key);
@@ -4026,18 +4028,21 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
                 for (j in parsed) {
                     (function (cur) {
                         bibtexEntry = parsed[j].entryType.toLowerCase();
+                        
                         if(bibtexEntry != 'preamble' && bibtexEntry != 'comment'){ //Filtering @PREAMBLE and @COMMENT
                             worksSrvc.getBlankWork(function(data) {
                                 populateWorkAjaxForm(cur,data);
                                 $scope.worksFromBibtex.push(data);
-                                $scope.bibtexCancelLink = true;
+                                $scope.bibtexCancelLink = true;                                
                             });
                         }
                     })(parsed[j]);
                 };
+                
             });
                $scope.textFiles = null;
                $scope.bibtexParsingError = false;
+               
         } catch (err) {
             $scope.bibtexParsingError = true;
         };
@@ -4049,10 +4054,18 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
         if($scope.worksFromBibtex.length == 0) $scope.bibtexCancelLink = false;
     };
 
-    $scope.addWorkFromBibtex = function(work) {
+    $scope.editWorkFromBibtex = function(work) {
         $scope.bibtextWorkIndex = $scope.worksFromBibtex.indexOf(work);
         $scope.bibtextWork = true;
-        $scope.addWorkModal($scope.worksFromBibtex[$scope.bibtextWorkIndex]);
+        $scope.addWorkModal($scope.worksFromBibtex[$scope.bibtextWorkIndex]);        
+        
+    };
+    
+    $scope.addWorkFromBibtex = function(work) {
+    	$scope.bibtextWorkIndex = $scope.worksFromBibtex.indexOf(work);    	
+    	$scope.editWork = $scope.worksFromBibtex[$scope.bibtextWorkIndex];
+    	$scope.bibtextWork = true;    	        
+        $scope.putWork();        
     };
 
     $scope.openBibTextWizard = function () {
@@ -4070,7 +4083,7 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     // Check for the various File API support.
     if (window.File && window.FileReader && window.FileList && window.Blob) {
         $scope.canReadFiles = true;
-    }
+    };
 
     $scope.toggleClickPrivacyHelp = function(key) {
         if (!document.documentElement.className.contains('no-touch'))
@@ -4223,14 +4236,18 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
         $scope.addingWork = true;
         $scope.editWork.errors.length = 0;
         worksSrvc.putWork($scope.editWork,
-            function(data){
-                if (data.errors.length == 0){
-                    $.colorbox.close();
-                    $scope.addingWork = false;
-
-                    if($scope.bibtextWork == true){
+            function(data){        	    
+                if (data.errors.length == 0) {
+                	if ($scope.bibtextWork == false){
+                		$.colorbox.close();
+                		$scope.addingWork = false;
+                	} else {
                         $scope.worksFromBibtex.splice($scope.bibtextWorkIndex, 1);
                         $scope.bibtextWork = false;
+                        $scope.addingWork = false;
+                        $scope.$apply();
+                        $.colorbox.close();
+                        $scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);
                     }
                 } else {
                     $scope.editWork = data;
@@ -5048,6 +5065,10 @@ orcidNgModule.controller('languageCtrl',['$scope', '$cookies', function ($scope,
     var productionLangList =
         [
             {
+                "value": "cs",
+                "label": "čeština"
+            },
+            {
                 "value": "en",
                 "label": "English"
             },
@@ -5086,11 +5107,11 @@ orcidNgModule.controller('languageCtrl',['$scope', '$cookies', function ($scope,
         ];
     var testingLangList =
         [
-         {
-             "value": "cs",
-             "label": "čeština"
-         },
-         {
+            {
+                "value": "cs",
+                "label": "čeština"
+            },
+            {
                 "value": "en",
                 "label": "English"
             },
@@ -8058,13 +8079,6 @@ orcidNgModule.controller('headerCtrl',['$scope', '$window', function ($scope, $w
 		}
 	}
 	
-	
-	
-	
-	
-	
-	
-	
 }]);
 
 orcidNgModule.directive('resize', function ($window) {
@@ -8095,4 +8109,11 @@ orcidNgModule.directive('resize', function ($window) {
 			$scope.$apply();
 		});
 	}
+});
+
+orcidNgModule.filter('formatBibtexOutput', function () {
+    return function (text) {
+		var str = text.replace(/[\-?_?]/, ' ');
+		return str.toUpperCase();
+    };
 });

@@ -34,6 +34,7 @@ import org.orcid.core.manager.ExternalIdentifierManager;
 import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidClientGroupManager;
+import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileWorkManager;
 import org.orcid.jaxb.model.clientgroup.GroupType;
@@ -101,6 +102,9 @@ public class AdminController extends BaseController {
     @Resource
     private AdminManager adminManager;
 
+    @Resource(name = "profileEntityCacheManager")
+    ProfileEntityCacheManager profileEntityCacheManager;
+    
     public ProfileEntityManager getProfileEntityManager() {
         return profileEntityManager;
     }
@@ -201,24 +205,29 @@ public class AdminController extends BaseController {
      * */
     @RequestMapping(value = { "/deprecate-profile/check-orcid.json", "/deactivate-profile/check-orcid.json" }, method = RequestMethod.GET)
     public @ResponseBody
-    ProfileDetails checkOrcidToDeprecate(@RequestParam("orcid") String orcid) {
-        ProfileEntity profile = profileEntityManager.findByOrcid(orcid);
+    ProfileDetails checkOrcidToDeprecate(@RequestParam("orcid") String orcid) {        
         ProfileDetails profileDetails = new ProfileDetails();
-        if (profile != null) {
-            if (profile.getPrimaryRecord() != null) {
-                profileDetails.getErrors().add(getMessage("admin.profile_deprecation.errors.already_deprecated", orcid));
-            } else if (profile.getDeactivationDate() != null) {
-                profileDetails.getErrors().add(getMessage("admin.profile_deactivation.errors.already_deactivated", orcid));
+        try {
+            ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
+            if (profile != null) {
+                if (profile.getDeprecatedDate() != null) {
+                    profileDetails.getErrors().add(getMessage("admin.profile_deprecation.errors.already_deprecated", orcid));
+                } else if (profile.getDeactivationDate() != null) {
+                    profileDetails.getErrors().add(getMessage("admin.profile_deactivation.errors.already_deactivated", orcid));
+                } else {
+                    profileDetails.setOrcid(profile.getId());
+                    profileDetails.setFamilyName(profile.getFamilyName());
+                    profileDetails.setGivenNames(profile.getGivenNames());
+                    if (profile.getPrimaryEmail() != null)
+                        profileDetails.setEmail(profile.getPrimaryEmail().getId());
+                }
             } else {
-                profileDetails.setOrcid(profile.getId());
-                profileDetails.setFamilyName(profile.getFamilyName());
-                profileDetails.setGivenNames(profile.getGivenNames());
-                if (profile.getPrimaryEmail() != null)
-                    profileDetails.setEmail(profile.getPrimaryEmail().getId());
+                profileDetails.getErrors().add(getMessage("admin.profile_deprecation.errors.inexisting_orcid", orcid));
             }
-        } else {
+        } catch(IllegalArgumentException iae) {
             profileDetails.getErrors().add(getMessage("admin.profile_deprecation.errors.inexisting_orcid", orcid));
         }
+        
         return profileDetails;
     }
 
@@ -473,9 +482,6 @@ public class AdminController extends BaseController {
         return OrcidStringUtils.isValidOrcid(orcid);
     }
     
-    
-    
-    
     /**
      * Function to get the info of an account we want to lock
      * @param orcidOrEmail orcid or email of the account we want to lock
@@ -492,8 +498,8 @@ public class AdminController extends BaseController {
             result.getErrors().add(getMessage("admin.lock_profile.error.not_found", orcidOrEmail));
             return result;
         }          
-        
-        ProfileEntity profile = profileEntityManager.findByOrcid(orcid);
+
+        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         
         // If the account is already locked
         if(profile.isAccountNonLocked() == false) { 
@@ -523,7 +529,7 @@ public class AdminController extends BaseController {
             return result;
         }          
         
-        ProfileEntity profile = profileEntityManager.findByOrcid(orcid);
+        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         
         // If the account is not locked
         if(profile.isAccountNonLocked()) { 

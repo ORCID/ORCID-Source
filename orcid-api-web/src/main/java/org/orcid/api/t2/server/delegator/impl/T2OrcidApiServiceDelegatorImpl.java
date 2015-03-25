@@ -40,6 +40,7 @@ import org.orcid.core.exception.OrcidForbiddenException;
 import org.orcid.core.exception.OrcidNotFoundException;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.OrcidProfileManager;
+import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.security.aop.NonLocked;
 import org.orcid.core.security.visibility.aop.AccessControl;
@@ -95,6 +96,9 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
     @Resource
     private WebhookDao webhookDao;    
 
+    @Resource(name = "profileEntityCacheManager")
+    ProfileEntityCacheManager profileEntityCacheManager;
+    
     @Override
     public Response viewStatusText() {
         return Response.ok(STATUS_OK_MESSAGE).build();
@@ -455,7 +459,7 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
             throw new OrcidBadRequestException(String.format("Webhook uri:%s is syntactically incorrect", webhookUri));
         }
 
-        ProfileEntity profile = profileEntityManager.findByOrcid(orcid);
+        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         ClientDetailsEntity clientDetails = null;
         String clientId = null;
@@ -500,7 +504,7 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
     @Override
     @AccessControl(requiredScope = ScopePathType.WEBHOOK)
     public Response unregisterWebhook(UriInfo uriInfo, String orcid, String webhookUri) {
-        ProfileEntity profile = profileEntityManager.findByOrcid(orcid);
+        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         if (profile != null) {
             WebhookEntityPk webhookPk = new WebhookEntityPk(profile, webhookUri);
             WebhookEntity webhook = webhookDao.find(webhookPk);

@@ -77,7 +77,7 @@ public class NotificationsTest {
 
     @Test
     public void createAddActivitiesNotification() throws JSONException {
-        NotificationAddActivities notification = unmarshallFromPath("/notification-add-activities.xml");
+        NotificationAddActivities notification = unmarshallFromPath("/notification_2.0_rc1/samples/notification-add-activities-2.0_rc1.xml");
         notification.setPutCode(null);
         String accessToken = oauthHelper.getClientCredentialsAccessToken(client1ClientId, client1ClientSecret, ScopePathType.PREMIUM_NOTIFICATION);
 
@@ -86,7 +86,7 @@ public class NotificationsTest {
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
         String locationPath = response.getLocation().getPath();
         assertTrue("Location header path should match pattern, but was " + locationPath,
-                locationPath.matches(".*/v1.0/" + testUser1OrcidId + "/notifications/add-activities/\\d+"));
+                locationPath.matches(".*/v2.0_rc1/" + testUser1OrcidId + "/notifications/add-activities/\\d+"));
     }
 
     public NotificationAddActivities unmarshallFromPath(String path) {

@@ -158,4 +158,6 @@ public interface ClientDetailsManager extends ClientDetailsService {
      * @return A list containing all clients that belongs to the given group
      * */
     List<ClientDetailsEntity> findByGroupId(String groupId);
+    
+    ClientDetailsEntity getPublicClient(String ownerId);
 }

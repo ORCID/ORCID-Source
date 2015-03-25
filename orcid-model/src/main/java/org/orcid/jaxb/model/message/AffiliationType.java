@@ -19,6 +19,7 @@ package org.orcid.jaxb.model.message;
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlType;
+
 import java.io.Serializable;
 
 /**
@@ -42,6 +43,10 @@ public enum AffiliationType implements Serializable {
 
     public String value() {
         return value;
+    }
+    
+    public String getName() {
+        return this.name();
     }
 
     public static AffiliationType fromValue(String v) {

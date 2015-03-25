@@ -28,6 +28,12 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+
+import org.orcid.jaxb.model.common.ContributorAttributes;
+import org.orcid.jaxb.model.common.ContributorEmail;
+import org.orcid.jaxb.model.common.ContributorOrcid;
+import org.orcid.jaxb.model.common.CreditName;
+
 import java.io.Serializable;
 
 /**

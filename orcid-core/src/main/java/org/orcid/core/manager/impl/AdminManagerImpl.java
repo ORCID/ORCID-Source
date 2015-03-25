@@ -34,6 +34,7 @@ import org.orcid.core.manager.ExternalIdentifierManager;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.OtherNameManager;
+import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileFundingManager;
 import org.orcid.core.manager.ProfileKeywordManager;
@@ -110,20 +111,22 @@ public class AdminManagerImpl implements AdminManager {
     @Resource
     private ProfileKeywordManager profileKeywordManager;
     
+    @Resource(name = "profileEntityCacheManager")
+    ProfileEntityCacheManager profileEntityCacheManager;
+    
     @Override    
     @Transactional
     public boolean deprecateProfile(ProfileDeprecationRequest result, String deprecatedOrcid, String primaryOrcid) throws Exception {        
         // Get deprecated profile
-        ProfileEntity deprecated = profileEntityManager.findByOrcid(deprecatedOrcid);
-        // Get primary profile
-        ProfileEntity primary = profileEntityManager.findByOrcid(primaryOrcid);        
+        ProfileEntity deprecated = profileEntityCacheManager.retrieve(deprecatedOrcid);
+        ProfileEntity primary = profileEntityCacheManager.retrieve(primaryOrcid);        
         
         // If both users exists
         if (deprecated != null && primary != null) {
             // If account is already deprecated
-            if (deprecated.getPrimaryRecord() != null) {
+            if (deprecated.getDeprecatedDate() != null) {
                 result.getErrors().add(localeManager.resolveMessage("admin.profile_deprecation.errors.already_deprecated", deprecatedOrcid));
-            } else if (primary.getPrimaryRecord() != null) {
+            } else if (primary.getDeprecatedDate() != null) {
                 // If primary is deprecated
                 result.getErrors().add(localeManager.resolveMessage("admin.profile_deprecation.errors.primary_account_deprecated", primaryOrcid));
             } else {
@@ -136,6 +139,8 @@ public class AdminManagerImpl implements AdminManager {
                     boolean wasDeprecated = profileEntityManager.deprecateProfile(deprecated, primary);
                     // If it was successfully deprecated
                     if (wasDeprecated) {
+                        //Refresh it from cache
+                        deprecated = profileEntityCacheManager.retrieve(deprecatedOrcid);
                         LOGGER.info("Account {} was deprecated to primary account: {}", deprecated.getId(), primary.getId());
                         // Remove works
                         if (deprecated.getProfileWorks() != null) {
@@ -187,7 +192,9 @@ public class AdminManagerImpl implements AdminManager {
                         }
                         
                         // Update deprecated profile
-                        deprecated.setDeactivationDate(new Date());
+                        Date deprecationDate = new Date();
+                        deprecated.setDeactivationDate(deprecationDate);
+                        deprecated.setDeprecatedDate(deprecationDate);
                         deprecated.setCreditName(null);
                         deprecated.setGivenNames("Given Names Deactivated");
                         deprecated.setFamilyName("Family Name Deactivated");

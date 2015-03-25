@@ -31,12 +31,14 @@ import org.apache.commons.validator.routines.UrlValidator;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.OrcidSSOManager;
+import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.persistence.dao.ResearcherUrlDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.RedirectUri;
 import org.orcid.pojo.ajaxForm.SSOCredentials;
@@ -69,6 +71,9 @@ public class DeveloperToolsController extends BaseWorkspaceController {
     
     @Resource
     private ClientDetailsManager clientDetailsManager;
+    
+    @Resource(name = "profileEntityCacheManager")
+    ProfileEntityCacheManager profileEntityCacheManager;
     
     @RequestMapping
     public ModelAndView manageDeveloperTools() {
@@ -203,9 +208,12 @@ public class DeveloperToolsController extends BaseWorkspaceController {
     boolean resetClientSecret(@RequestBody String clientId) {
         //Verify this client belongs to the user
         ClientDetailsEntity clientDetails = clientDetailsManager.findByClientId(clientId);
-        if(clientDetails == null || clientDetails.getGroupProfile() == null)
+        if(clientDetails == null)
             return false;
-        if(!clientDetails.getGroupProfile().getId().equals(getCurrentUserOrcid()))
+        ProfileEntity groupProfile = profileEntityCacheManager.retrieve(clientDetails.getGroupProfileId());
+        if(groupProfile == null)
+            return false;
+        if(!groupProfile.getId().equals(getCurrentUserOrcid()))
             return false;               
         return orcidSSOManager.resetClientSecret(clientId);
     }

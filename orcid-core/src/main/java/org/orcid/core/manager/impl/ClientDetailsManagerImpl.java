@@ -32,6 +32,7 @@ import org.apache.commons.lang.time.DateUtils;
 import org.orcid.core.manager.AppIdGenerationManager;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.EncryptionManager;
+import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.RedirectUri;
@@ -74,10 +75,13 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
     private EncryptionManager encryptionManager;
 
     @Resource
-    private ProfileDao profileDao;        
-    
+    private ProfileDao profileDao;
+
     @Resource
     private AppIdGenerationManager appIdGenerationManager;
+    
+    @Resource(name = "profileEntityCacheManager")
+    ProfileEntityCacheManager profileEntityCacheManager;
 
     /**
      * Load a client by the client id. This method must NOT return null.
@@ -135,7 +139,7 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
     @Override
     public ClientDetailsEntity createClientDetails(String groupOrcid, String name, String description, String website, ClientType clientType, Set<String> clientScopes,
             Set<String> clientResourceIds, Set<String> clientAuthorizedGrantTypes, Set<RedirectUri> clientRegisteredRedirectUris, List<String> clientGrantedAuthorities) {
-        ProfileEntity groupProfileEntity = profileEntityManager.findByOrcid(groupOrcid);
+        ProfileEntity groupProfileEntity = profileEntityCacheManager.retrieve(groupOrcid);
         if (groupProfileEntity == null) {
             throw new IllegalArgumentException("ORCID does not exist for " + groupOrcid + " cannot continue");
         } else {
@@ -179,9 +183,8 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
     @Override
     public ClientDetailsEntity createClientDetails(String orcid, String name, String description, String website, String clientId, String clientSecret,
             ClientType clientType, Set<String> clientScopes, Set<String> clientResourceIds, Set<String> clientAuthorizedGrantTypes,
-            Set<RedirectUri> clientRegisteredRedirectUris, List<String> clientGrantedAuthorities) {
-
-        ProfileEntity profileEntity = profileEntityManager.findByOrcid(orcid);
+            Set<RedirectUri> clientRegisteredRedirectUris, List<String> clientGrantedAuthorities) {        
+        ProfileEntity profileEntity = profileEntityCacheManager.retrieve(orcid);
         if (profileEntity == null) {
             throw new IllegalArgumentException("The ORCID does not exist for " + orcid);
         }
@@ -292,7 +295,7 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
         clientDetailsEntity.setClientRegisteredRedirectUris(getClientRegisteredRedirectUris(clientRegisteredRedirectUris, clientDetailsEntity));
         clientDetailsEntity.setPersistentTokensEnabled(true);
         clientDetailsEntity.setClientGrantedAuthorities(getClientGrantedAuthorities(clientGrantedAuthorities, clientDetailsEntity));
-        clientDetailsEntity.setGroupProfile(profileEntity);
+        clientDetailsEntity.setGroupProfileId(profileEntity.getId());
         return createClientDetails(clientDetailsEntity);
     }
 
@@ -405,9 +408,10 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
     public boolean exists(String clientId) {
         return clientDetailsDao.exists(clientId);
     }
-    
+
     /**
      * Verifies if a client belongs to the given group id
+     * 
      * @param clientId
      * @param groupId
      * @return true if clientId belongs to groupId
@@ -416,15 +420,28 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
     public boolean belongsTo(String clientId, String groupId) {
         return clientDetailsDao.belongsTo(clientId, groupId);
     }
-    
+
     /**
      * Fetch all clients that belongs to a group
+     * 
      * @param groupId
-     *  Group id
+     *            Group id
      * @return A list containing all clients that belongs to the given group
      * */
     @Override
     public List<ClientDetailsEntity> findByGroupId(String groupId) {
         return clientDetailsDao.findByGroupId(groupId);
+    }
+
+    /**
+     * Get the public profile that belongs to the given orcid ID
+     * 
+     * @param ownerId
+     *            The user or group id
+     * @return the public client that belongs to the given user
+     * */
+    @Override
+    public ClientDetailsEntity getPublicClient(String ownerId) {
+        return clientDetailsDao.getPublicClient(ownerId);
     }
 }

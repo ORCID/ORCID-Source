@@ -26,10 +26,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -46,6 +44,7 @@ import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidIndexManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.OtherNameManager;
+import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileKeywordManager;
 import org.orcid.core.manager.ResearcherUrlManager;
@@ -59,9 +58,7 @@ import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.GivenPermissionToDao;
 import org.orcid.persistence.dao.ProfileDao;
-import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.persistence.jpa.entities.ProfileSummaryEntity;
 import org.orcid.persistence.jpa.entities.SecurityQuestionEntity;
 import org.orcid.pojo.ManageDelegate;
 import org.springframework.test.context.ContextConfiguration;
@@ -95,6 +92,9 @@ public class ManageProfileControllerTest extends BaseControllerTest {
     @Resource(name = "adminController")
     AdminController adminController;
 
+    @Resource(name = "profileEntityCacheManager")
+    ProfileEntityCacheManager profileEntityCacheManager;
+    
     @Mock
     private OrcidIndexManager mockOrcidIndexManager;
 
@@ -114,7 +114,7 @@ public class ManageProfileControllerTest extends BaseControllerTest {
     private GivenPermissionToDao givenPermissionToDao;
 
     @Mock
-    private ProfileEntityManager profileEntityManager;
+    private ProfileEntityManager profileEntityManager;        
 
     /**
      * The classes loaded from the app context are in fact proxies to the
@@ -254,8 +254,8 @@ public class ManageProfileControllerTest extends BaseControllerTest {
 
     @Test
     public void testAddDelegateSendsEmailToOnlyNewDelegates() throws Exception {
-        ProfileEntity delegateProfile = new ProfileEntity("5555-5555-5555-555X");
-        delegateProfile.setCreditName("Test Delegate Credit Name");
+        ProfileEntity delegateProfile = new ProfileEntity("5555-5555-5555-555X");        
+        delegateProfile.setCreditName("Test Delegate Credit Name");        
         when(profileEntityManager.findByOrcid("5555-5555-5555-555X")).thenReturn(delegateProfile);
         ManageDelegate addDelegate = new ManageDelegate();
         addDelegate.setDelegateToManage("5555-5555-5555-555X");

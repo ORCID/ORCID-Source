@@ -83,7 +83,7 @@ public class WebhookDaoTest extends DBUnitTest {
         ProfileEntity clientProfile = new ProfileEntity("4444-4444-4444-4449");
         profileDao.merge(clientProfile);
         ClientDetailsEntity clientDetails = new ClientDetailsEntity();
-        clientDetails.setGroupProfile(clientProfile);
+        clientDetails.setGroupProfileId(clientProfile.getId());
         clientDetails.setId(clientProfile.getId());
         clientDetailsDao.merge(clientDetails);
         WebhookEntity webhook = new WebhookEntity();

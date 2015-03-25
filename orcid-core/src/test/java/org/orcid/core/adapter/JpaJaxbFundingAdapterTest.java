@@ -29,10 +29,10 @@ import javax.xml.bind.Unmarshaller;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.orcid.jaxb.model.common.Iso3166Country;
+import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.jaxb.model.record.Funding;
 import org.orcid.jaxb.model.record.FundingType;
-import org.orcid.jaxb.model.record.Iso3166Country;
-import org.orcid.jaxb.model.record.Visibility;
 import org.orcid.jaxb.model.record.summary.FundingSummary;
 import org.orcid.persistence.jpa.entities.EndDateEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
@@ -83,7 +83,7 @@ public class JpaJaxbFundingAdapterTest {
 
         // Contributors
         assertEquals(
-                "{\"contributor\":[{\"contributorOrcid\":{\"value\":null,\"valueAsString\":null,\"uri\":\"http://orcid.org/8888-8888-8888-8880\",\"path\":\"8888-8888-8888-8880\",\"host\":\"orcid.org\"},\"creditName\":{\"content\":\"funding:credit-name\",\"visibility\":\"PRIVATE\"},\"contributorEmail\":{\"value\":\"funding@contributor.email\"},\"contributorAttributes\":{\"contributorRole\":\"LEAD\"}}]}",
+                "{\"contributor\":[{\"contributorOrcid\":{\"uri\":\"http://orcid.org/8888-8888-8888-8880\",\"path\":\"8888-8888-8888-8880\",\"host\":\"orcid.org\"},\"creditName\":{\"content\":\"funding:credit-name\",\"visibility\":\"PRIVATE\"},\"contributorEmail\":{\"value\":\"funding@contributor.email\"},\"contributorAttributes\":{\"contributorRole\":\"LEAD\"}}]}",
                 pfe.getContributorsJson());
 
         // External identifiers
@@ -122,7 +122,7 @@ public class JpaJaxbFundingAdapterTest {
         assertEquals("orcid.org", funding.getContributors().getContributor().get(0).getContributorOrcid().getHost());
         assertEquals("http://orcid.org/8888-8888-8888-8880", funding.getContributors().getContributor().get(0).getContributorOrcid().getUri());
         assertEquals("funding:creditName", funding.getContributors().getContributor().get(0).getCreditName().getContent());
-        assertEquals(org.orcid.jaxb.model.record.Visibility.PRIVATE, funding.getContributors().getContributor().get(0).getCreditName().getVisibility());
+        assertEquals(org.orcid.jaxb.model.common.Visibility.PRIVATE, funding.getContributors().getContributor().get(0).getCreditName().getVisibility());
         assertEquals("funding:description", funding.getDescription());
         assertNotNull(funding.getStartDate());
         assertEquals("01", funding.getStartDate().getDay().getValue());

@@ -229,6 +229,7 @@ the software.
                             <exclude>**/src/main/webapp/solr/**/*.xml</exclude>
                             <exclude>**/src/main/resources/cdn_url.txt</exclude>
                             <exclude>**/src/main/resources/record**/samples/**</exclude>
+                            <exclude>**/src/main/resources/common**/samples/**</exclude>
                             <exclude>**/src/main/resources/ehcache.xml</exclude>
                             <exclude>**/src/main/resources/ehcache.xsd</exclude>
                             <exclude>**/src/main/resources/release_name.txt</exclude>
@@ -926,7 +927,12 @@ the software.
                 <artifactId>jena-core</artifactId>
                 <version>2.10.1</version>
             </dependency>
-
+            <dependency>
+                <groupId>org.bouncycastle</groupId>
+                <artifactId>bcprov-jdk16</artifactId>
+                <version>1.46</version>
+            </dependency>
+            
             <!-- Test -->
             <dependency>
                 <groupId>org.jmock</groupId>

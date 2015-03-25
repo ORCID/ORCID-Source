@@ -16,12 +16,14 @@
  */
 package org.orcid.core.manager.impl;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+
 import org.springframework.beans.factory.annotation.Value;
 
 public class OrcidUrlManager {
 
     static String PROTOCALL_PATTREN = "http[s]{0,1}:\\/\\/";
-
 
     @Value("${org.orcid.core.baseUri}")
     private String baseUrl;
@@ -39,13 +41,21 @@ public class OrcidUrlManager {
     public void setBaseUrl(String baseUrl) {
         this.baseUrl = baseUrl;
     }
-    
+
     public String getBaseDomainRmProtocall() {
         return getBaseUrl().replaceAll(PROTOCALL_PATTREN, "");
     }
-    
+
     public String getBaseUriHttp() {
         return this.baseUrl.replace("https", "http");
+    }
+
+    public String getBaseHost() {
+        try {
+            return new URI(this.baseUrl).getHost();
+        } catch (URISyntaxException e) {
+            throw new RuntimeException("Problem parsing base URI: " + this.baseUrl, e);
+        }
     }
 
     public String getPubBaseUrl() {

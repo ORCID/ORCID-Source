@@ -16,6 +16,7 @@
  */
 package org.orcid.core.manager;
 
+import java.util.Date;
 import java.util.List;
 
 import org.orcid.jaxb.model.clientgroup.ClientType;
@@ -71,4 +72,6 @@ public interface ProfileEntityManager {
     ActivitiesSummary getActivitiesSummary(String orcid);
     
     ActivitiesSummary getPublicActivitiesSummary(String orcid);
+    
+    Date getLastModified(String orcid);
 }

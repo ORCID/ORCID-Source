@@ -29,6 +29,7 @@ import javax.annotation.Resource;
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.constants.OauthTokensConstants;
 import org.orcid.core.manager.ClientDetailsManager;
+import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.oauth.OrcidOAuth2Authentication;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
@@ -76,6 +77,9 @@ public class OrcidTokenStoreServiceImpl implements TokenStore {
 
     @Resource
     private ProfileDao profileDao;
+    
+    @Resource(name = "profileEntityCacheManager")
+    ProfileEntityCacheManager profileEntityCacheManager;
 
     private static final AuthenticationKeyGenerator KEY_GENERATOR = new DefaultAuthenticationKeyGenerator();
 
@@ -334,7 +338,7 @@ public class OrcidTokenStoreServiceImpl implements TokenStore {
             Object principal = authentication.getPrincipal();
             if (principal instanceof ProfileEntity) {
                 ProfileEntity profileEntity = (ProfileEntity) authentication.getPrincipal();
-                profileEntity = profileEntityManager.findByOrcid(profileEntity.getId());
+                profileEntity = profileEntityCacheManager.retrieve(profileEntity.getId());
                 detail.setProfile(profileEntity);
             }
         }

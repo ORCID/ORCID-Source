@@ -49,6 +49,8 @@ import org.orcid.jaxb.model.record.Education;
 import org.orcid.jaxb.model.record.Employment;
 import org.orcid.jaxb.model.record.Funding;
 import org.orcid.jaxb.model.record.Work;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.xml.sax.SAXException;
@@ -62,11 +64,12 @@ import org.xml.sax.SAXException;
 @Produces(value = { OrcidApiConstants.VND_ORCID_XML, OrcidApiConstants.ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
 @Consumes(value = { OrcidApiConstants.VND_ORCID_XML, OrcidApiConstants.ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
 public class OrcidValidationJaxbContextResolver implements ContextResolver<Unmarshaller> {
-
+    
+    
     private static final Logger logger = Logger.getLogger(OrcidValidationJaxbContextResolver.class);
     private static final Map<Class<?>, String> SCHEMA_FILENAME_PREFIX_BY_CLASS = new HashMap<>();
     static {
-        SCHEMA_FILENAME_PREFIX_BY_CLASS.put(NotificationAddActivities.class, "orcid-notification-add-activities-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS.put(NotificationAddActivities.class, "notification_2.0_rc1/notification-add-activities-");
         SCHEMA_FILENAME_PREFIX_BY_CLASS.put(Work.class, "record_2.0_rc1/work-");
         SCHEMA_FILENAME_PREFIX_BY_CLASS.put(Funding.class, "record_2.0_rc1/funding-");
         SCHEMA_FILENAME_PREFIX_BY_CLASS.put(Education.class, "record_2.0_rc1/education-");
@@ -81,10 +84,14 @@ public class OrcidValidationJaxbContextResolver implements ContextResolver<Unmar
         try {
             Unmarshaller unmarshaller = getJAXBContext().createUnmarshaller();
             String schemaFilenamePrefix = getSchemaFilenamePrefix(type);
-            if (schemaFilenamePrefix != null) {
-                Schema schema = getSchema(schemaFilenamePrefix);
-                unmarshaller.setSchema(schema);
-                unmarshaller.setEventHandler(new OrcidValidationHandler());
+            // Old OrcidMessage APIs - do not validate here as we will
+            // break "broke" integrations 
+            if (!type.equals(OrcidMessage.class)) {
+                if (schemaFilenamePrefix != null) {
+                    Schema schema = getSchema(schemaFilenamePrefix);
+                    unmarshaller.setSchema(schema);
+                    unmarshaller.setEventHandler(new OrcidValidationHandler());
+                }
             }
             return unmarshaller;
         } catch (JAXBException e) {
