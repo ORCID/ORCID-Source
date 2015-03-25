@@ -73,12 +73,14 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(summary.getWorks());
         assertEquals(1, summary.getWorks().getWorkGroup().size());
         assertEquals("5", summary.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getPutCode());
+        assertEquals("/4444-4444-4444-4446/work/5", summary.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getPath());
         assertEquals("Journal article A", summary.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getTitle().getTitle().getContent());
         
         // Check fundings
         assertNotNull(summary.getFundings());
         assertEquals(1, summary.getFundings().getFundingGroup().size());
         assertEquals("5", summary.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getPutCode());
+        assertEquals("/4444-4444-4444-4446/funding/5", summary.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getPath());
         assertEquals("Public Funding", summary.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getTitle().getTitle().getContent());
         
         // Check Educations
@@ -86,6 +88,7 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(summary.getEducations().getSummaries());
         assertEquals(1, summary.getEducations().getSummaries().size());
         assertEquals("7", summary.getEducations().getSummaries().get(0).getPutCode());
+        assertEquals("/4444-4444-4444-4446/education/7", summary.getEducations().getSummaries().get(0).getPath());
         assertEquals("Education Dept # 2", summary.getEducations().getSummaries().get(0).getDepartmentName());
 
         // Check Employments
@@ -93,6 +96,7 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(summary.getEmployments().getSummaries());
         assertEquals(1, summary.getEmployments().getSummaries().size());
         assertEquals("8", summary.getEmployments().getSummaries().get(0).getPutCode());
+        assertEquals("/4444-4444-4444-4446/employment/8", summary.getEmployments().getSummaries().get(0).getPath());
         assertEquals("Employment Dept # 2", summary.getEmployments().getSummaries().get(0).getDepartmentName());
     }
 
@@ -106,6 +110,7 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(work.getWorkTitle().getTitle());
         assertEquals("Journal article A", work.getWorkTitle().getTitle().getContent());
         assertEquals("5", work.getPutCode());
+        assertEquals("/4444-4444-4444-4446/work/5", work.getPath());
         assertEquals(WorkType.JOURNAL_ARTICLE, work.getWorkType());
     }
 
@@ -117,6 +122,8 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(funding);
         assertNotNull(funding.getTitle());
         assertNotNull(funding.getTitle().getTitle());
+        assertEquals("5", funding.getPutCode());
+        assertEquals("/4444-4444-4444-4446/funding/5", funding.getPath());
         assertEquals("Public Funding", funding.getTitle().getTitle().getContent());
         assertEquals(Visibility.PUBLIC.value(), funding.getVisibility().value());
     }
@@ -127,6 +134,8 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         Education education = (Education) response.getEntity();
         assertNotNull(education);
+        assertEquals("7", education.getPutCode());
+        assertEquals("/4444-4444-4444-4446/education/7", education.getPath());
         assertEquals("Education Dept # 2", education.getDepartmentName());
         assertEquals(Visibility.PUBLIC.value(), education.getVisibility().value());
     }
@@ -137,6 +146,8 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         Employment employment = (Employment) response.getEntity();
         assertNotNull(employment);
+        assertEquals("8", employment.getPutCode());
+        assertEquals("/4444-4444-4444-4446/employment/8", employment.getPath());
         assertEquals("Employment Dept # 2", employment.getDepartmentName());
         assertEquals(Visibility.PUBLIC.value(), employment.getVisibility().value());
     }

@@ -81,14 +81,17 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals(3, summary.getWorks().getWorkGroup().size());
         assertThat(summary.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getPutCode(),
                 anyOf(is("5"), is("6"), is("7")));
+        assertThat(summary.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getPath(), anyOf(is("/4444-4444-4444-4446/work/5"), is("/4444-4444-4444-4446/work/6"), is("/4444-4444-4444-4446/work/7")));
         assertThat(summary.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getTitle().getTitle().getContent(),
                 anyOf(is("Journal article A"), is("Journal article B"), is("Journal article C")));
-        assertThat(summary.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getPutCode(),
+        assertThat(summary.getWorks().getWorkGroup().get(1).getWorkSummary().get(0).getPutCode(),
                 anyOf(is("5"), is("6"), is("7")));
+        assertThat(summary.getWorks().getWorkGroup().get(1).getWorkSummary().get(0).getPath(), anyOf(is("/4444-4444-4444-4446/work/5"), is("/4444-4444-4444-4446/work/6"), is("/4444-4444-4444-4446/work/7")));
         assertThat(summary.getWorks().getWorkGroup().get(1).getWorkSummary().get(0).getTitle().getTitle().getContent(),
-                anyOf(is("Journal article A"), is("Journal article B"), is("Journal article C")));
-        assertThat(summary.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getPutCode(),
+                anyOf(is("Journal article A"), is("Journal article B"), is("Journal article C")));                        
+        assertThat(summary.getWorks().getWorkGroup().get(2).getWorkSummary().get(0).getPutCode(),
                 anyOf(is("5"), is("6"), is("7")));
+        assertThat(summary.getWorks().getWorkGroup().get(2).getWorkSummary().get(0).getPath(), anyOf(is("/4444-4444-4444-4446/work/5"), is("/4444-4444-4444-4446/work/6"), is("/4444-4444-4444-4446/work/7")));
         assertThat(summary.getWorks().getWorkGroup().get(2).getWorkSummary().get(0).getTitle().getTitle().getContent(),
                 anyOf(is("Journal article A"), is("Journal article B"), is("Journal article C")));
 
@@ -96,11 +99,16 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(summary.getFundings());
         assertEquals(2, summary.getFundings().getFundingGroup().size());
         assertThat(summary.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getPutCode(),
-                anyOf(is("4"), is("5")));
+                anyOf(is("4"), is("5")));        
+        assertThat(summary.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getPath(),
+                anyOf(is("/4444-4444-4444-4446/funding/4"), is("/4444-4444-4444-4446/funding/5")));
+        
         assertThat(summary.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getTitle().getTitle().getContent(),
                 anyOf(is("Private Funding"), is("Public Funding")));
         assertThat(summary.getFundings().getFundingGroup().get(1).getFundingSummary().get(0).getPutCode(),
                 anyOf(is("4"), is("5")));
+        assertThat(summary.getFundings().getFundingGroup().get(1).getFundingSummary().get(0).getPath(),
+                anyOf(is("/4444-4444-4444-4446/funding/4"), is("/4444-4444-4444-4446/funding/5")));
         assertThat(summary.getFundings().getFundingGroup().get(1).getFundingSummary().get(0).getTitle().getTitle().getContent(),
                 anyOf(is("Private Funding"), is("Limited Funding")));
 
@@ -109,6 +117,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(summary.getEducations().getSummaries());
         assertEquals(2, summary.getEducations().getSummaries().size());
         assertThat(summary.getEducations().getSummaries().get(0).getPutCode(), anyOf(is("6"), is("7")));
+        assertThat(summary.getEducations().getSummaries().get(0).getPath(), anyOf(is("/4444-4444-4444-4446/education/6"), is("/4444-4444-4444-4446/education/7")));
         assertThat(summary.getEducations().getSummaries().get(0).getDepartmentName(), anyOf(is("Education Dept # 1"), is("Education Dept # 2")));
 
         // Check Employments
@@ -116,6 +125,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(summary.getEmployments().getSummaries());
         assertEquals(2, summary.getEmployments().getSummaries().size());
         assertThat(summary.getEmployments().getSummaries().get(0).getPutCode(), anyOf(is("5"), is("8")));
+        assertThat(summary.getEmployments().getSummaries().get(0).getPath(), anyOf(is("/4444-4444-4444-4446/employment/5"), is("/4444-4444-4444-4446/employment/8")));
         assertThat(summary.getEmployments().getSummaries().get(0).getDepartmentName(), anyOf(is("Employment Dept # 1"), is("Employment Dept # 2")));
     }
 
@@ -130,6 +140,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(work.getWorkTitle().getTitle());
         assertEquals("Journal article A", work.getWorkTitle().getTitle().getContent());
         assertEquals("5", work.getPutCode());
+        assertEquals("/4444-4444-4444-4446/work/5", work.getPath());
         assertEquals(WorkType.JOURNAL_ARTICLE, work.getWorkType());
     }
 
@@ -142,6 +153,8 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(funding);
         assertNotNull(funding.getTitle());
         assertNotNull(funding.getTitle().getTitle());
+        assertEquals("4", funding.getPutCode());
+        assertEquals("/4444-4444-4444-4446/funding/4", funding.getPath());
         assertEquals("Private Funding", funding.getTitle().getTitle().getContent());
         assertEquals(Visibility.PRIVATE.value(), funding.getVisibility().value());
     }
@@ -153,6 +166,8 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         Education education = (Education) response.getEntity();
         assertNotNull(education);
+        assertEquals("6", education.getPutCode());
+        assertEquals("/4444-4444-4444-4446/education/6", education.getPath());
         assertEquals("Education Dept # 1", education.getDepartmentName());
         assertEquals(Visibility.PRIVATE.value(), education.getVisibility().value());
     }
@@ -163,7 +178,9 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         Response response = serviceDelegator.viewEmployment("4444-4444-4444-4446", "5");
         assertNotNull(response);
         Employment employment = (Employment) response.getEntity();
-        assertNotNull(employment);
+        assertNotNull(employment);        
+        assertEquals("5", employment.getPutCode());
+        assertEquals("/4444-4444-4444-4446/employment/5", employment.getPath());
         assertEquals("Employment Dept # 1", employment.getDepartmentName());
         assertEquals(Visibility.PRIVATE.value(), employment.getVisibility().value());
     }
