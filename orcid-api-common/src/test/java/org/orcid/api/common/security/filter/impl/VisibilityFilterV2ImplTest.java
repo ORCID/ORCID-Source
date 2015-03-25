@@ -16,7 +16,8 @@
  */
 package org.orcid.api.common.security.filter.impl;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
+import org.custommonkey.xmlunit.*;
 
 import java.io.IOException;
 
@@ -35,6 +36,7 @@ import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record.summary.ActivitiesSummary;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.xml.sax.SAXException;
 
 /**
  * 
@@ -60,7 +62,14 @@ public class VisibilityFilterV2ImplTest {
     public void testUnmarshall() throws JAXBException, IOException {
         ActivitiesSummary activitiesSummary = getActivitiesSummary("/activities-protected-full-latest.xml");
         String expected = IOUtils.toString(getClass().getResourceAsStream("/activities-protected-full-latest.xml"), "UTF-8").replaceAll("(?s)<!--.*?-->\n*", "");
-        assertEquals(expected, activitiesSummary.toString());
+        try {
+            XMLUnit.setIgnoreWhitespace(true);
+            Diff diff = new Diff(expected, activitiesSummary.toString());
+            assertTrue(diff.identical());
+        } catch (SAXException | IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 
     @Test
