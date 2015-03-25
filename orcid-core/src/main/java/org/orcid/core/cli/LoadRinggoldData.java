@@ -24,7 +24,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -278,43 +277,27 @@ public class LoadRinggoldData {
 
     private Map<String, String> processAltNamesFile(Reader reader) throws IOException {
         Map<String, String> altNamesMap = new HashMap<String, String>();
-        Map<String, List<String[]>> dups = new HashMap<String, List<String[]>> ();
         try (CSVReader csvReader = createCSVReader(reader)) {
             String[] line;
             while ((line = csvReader.readNext()) != null) {
                 if(!PojoUtil.isEmpty(line[7]) && DN.equals(line[7])) {
                     if(altNamesMap.containsKey(line[0]))
-                        LOGGER.warn("Key {} already exists, but will be replaced with new values", new Object[] {line[0]});                    
-                    altNamesMap.put(line[0], line[1]);
-                    LOGGER.info("DN name {} found for pCode {}", new Object[] {line[1], line [0]});
-                    
-                    if(dups.containsKey(line[0])) {
-                        dups.get(line[0]).add(line);
+                        LOGGER.warn("Key {} already exists, but will be replaced with new values", new Object[] {line[0]});       
+                    if(!PojoUtil.isEmpty(line[2])) {
+                        //If the ext_name is not null, use it
+                        altNamesMap.put(line[0], line[2]);    
+                        LOGGER.info("DN name {} found for pCode {}", new Object[] {line[2], line [0]});
                     } else {
-                        List<String[]> dup = new ArrayList<String[]>();
-                        dup.add(line);
-                        dups.put(line[0], dup);
-                    }
+                        //Else use the name
+                        altNamesMap.put(line[0], line[1]);
+                        LOGGER.info("DN name {} found for pCode {}", new Object[] {line[1], line [0]});
+                    }                                                                   
                 }                
             }
         } finally {
             LOGGER.info("Number added={}, number updated={}, number unchanged={}, num skipped={}, total={}", new Object[] { numAdded, numUpdated, numUnchanged,
                     numSkipped, getTotal() });
-        }
-        
-        if(!dups.isEmpty()) {
-            LOGGER.info("-------------------------------------------------------------------------------------------------------------------");
-            LOGGER.info("pCode,name");
-            for(String key : dups.keySet()) {
-                List<String[]> lines = dups.get(key);
-                if(lines.size() > 1) {
-                    for(String[] line : lines) {
-                        LOGGER.info("{},\"{}\"", new Object[] {line[0], line[1]});
-                    }
-                }
-            }
-            LOGGER.info("-------------------------------------------------------------------------------------------------------------------");
-        }
+        }        
         
         return altNamesMap;
     }
