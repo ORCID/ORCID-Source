@@ -30,14 +30,12 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
-import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.test.DBUnitTest;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author: Declan Newman (declan) Date: 10/02/2012
@@ -46,6 +44,9 @@ import org.springframework.transaction.annotation.Transactional;
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
 public class ProfileEntityManagerImplTest extends DBUnitTest {
 
+    @Resource(name = "profileEntityCacheManager")
+    ProfileEntityCacheManager profileEntityCacheManager;
+    
     @BeforeClass
     public static void initDBUnitData() throws Exception {
         initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml"));
@@ -65,27 +66,23 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
     }
 
     @Test
-    @Transactional("transactionManager")
-    @Rollback(true)
     public void testFindByOrcid() throws Exception {
         String harrysOrcid = "4444-4444-4444-4444";
-        ProfileEntity profileEntity = profileEntityManager.findByOrcid(harrysOrcid);
+        ProfileEntity profileEntity = profileEntityCacheManager.retrieve(harrysOrcid);
         assertNotNull(profileEntity);
         assertEquals("Harry", profileEntity.getGivenNames());
         assertEquals("Secombe", profileEntity.getFamilyName());
         assertEquals(harrysOrcid, profileEntity.getId());
     }
 
-    @Test
-    @Transactional("transactionManager")
-    @Rollback(true)
+    @Test    
     public void testDeprecateProfile() throws Exception {
-        ProfileEntity profileEntityToDeprecate = profileEntityManager.findByOrcid("4444-4444-4444-4441");
-        ProfileEntity primaryProfileEntity = profileEntityManager.findByOrcid("4444-4444-4444-4442");
+        ProfileEntity profileEntityToDeprecate = profileEntityCacheManager.retrieve("4444-4444-4444-4441");
+        ProfileEntity primaryProfileEntity = profileEntityCacheManager.retrieve("4444-4444-4444-4442");
         assertNull(profileEntityToDeprecate.getPrimaryRecord());
         boolean result = profileEntityManager.deprecateProfile(profileEntityToDeprecate, primaryProfileEntity);
         assertTrue(result);
-        profileEntityToDeprecate = profileEntityManager.findByOrcid("4444-4444-4444-4441");
+        profileEntityToDeprecate = profileEntityCacheManager.retrieve("4444-4444-4444-4441");
         assertNotNull(profileEntityToDeprecate.getPrimaryRecord());
         assertEquals("4444-4444-4444-4442", profileEntityToDeprecate.getPrimaryRecord().getId());
     }

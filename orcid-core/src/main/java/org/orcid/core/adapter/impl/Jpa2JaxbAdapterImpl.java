@@ -34,6 +34,8 @@ import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.constants.DefaultPreferences;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.LoadOptions;
+import org.orcid.core.manager.ProfileEntityCacheManager;
+import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.security.DefaultPermissionChecker;
 import org.orcid.core.security.PermissionChecker;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
@@ -104,6 +106,12 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     @Resource
     private LocaleManager localeManager;
 
+    @Resource
+    private ProfileEntityManager profileEntityManager;
+    
+    @Resource(name = "profileEntityCacheManager")
+    ProfileEntityCacheManager profileEntityCacheManager;
+    
     public Jpa2JaxbAdapterImpl() {
         try {
             datatypeFactory = DatatypeFactory.newInstance();
@@ -745,10 +753,11 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                         applicationSummary.setApplicationWebsite(new ApplicationWebsite(acceptedClient.getClientWebsite()));
                         applicationSummary.setApprovalDate(new ApprovalDate(DateUtils.convertToXMLGregorianCalendar(tokenDetail.getDateCreated())));
 
-                        // add group information
-                        if (acceptedClient.getGroupProfile() != null) {
-                            applicationSummary.setApplicationGroupOrcid(new ApplicationOrcid(acceptedClient.getGroupProfile().getId()));
-                            applicationSummary.setApplicationGroupName(new ApplicationName(getGroupDisplayName(acceptedClient.getGroupProfile())));
+                        // add group information                        
+                        if (!PojoUtil.isEmpty(acceptedClient.getGroupProfileId())) {
+                            ProfileEntity groupEntity = profileEntityCacheManager.retrieve(acceptedClient.getGroupProfileId()); 
+                            applicationSummary.setApplicationGroupOrcid(new ApplicationOrcid(groupEntity.getId()));
+                            applicationSummary.setApplicationGroupName(new ApplicationName(getGroupDisplayName(groupEntity)));
                         }
 
                         // Scopes

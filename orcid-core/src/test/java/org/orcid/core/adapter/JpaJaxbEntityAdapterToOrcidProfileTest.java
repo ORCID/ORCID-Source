@@ -103,7 +103,8 @@ public class JpaJaxbEntityAdapterToOrcidProfileTest extends DBUnitTest {
 
     private static final List<String> DATA_FILES = Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SourceClientDetailsEntityData.xml",
             "/data/ProfileEntityData.xml", "/data/WorksEntityData.xml", "/data/ProfileWorksEntityData.xml", "/data/ClientDetailsEntityData.xml",
-            "/data/Oauth2TokenDetailsData.xml");
+            "/data/Oauth2TokenDetailsData.xml", "/data/OrgsEntityData.xml", "/data/ProfileFundingEntityData.xml",
+            "/data/OrgAffiliationEntityData.xml");
 
     @Autowired
     private GenericDao<ProfileEntity, String> profileDao;
@@ -287,8 +288,9 @@ public class JpaJaxbEntityAdapterToOrcidProfileTest extends DBUnitTest {
         assertNotNull(sponsor);
         assertEquals("S. Milligan", sponsor.getSourceName().getContent());
         assertEquals("4444-4444-4444-4441", sponsor.getSourceOrcid().getPath());
-        assertEquals(DateUtils.convertToDate("2012-06-29T15:31:00"), orcidHistory.getDeactivationDate().getValue().toGregorianCalendar().getTime());
         assertEquals(DateUtils.convertToDate("2011-07-02T15:31:00"), orcidHistory.getLastModifiedDate().getValue().toGregorianCalendar().getTime());
+        assertEquals(DateUtils.convertToDate("2011-06-29T15:31:00"), orcidHistory.getSubmissionDate().getValue().toGregorianCalendar().getTime());
+        assertEquals(DateUtils.convertToDate("2011-07-02T15:31:00"), orcidHistory.getCompletionDate().getValue().toGregorianCalendar().getTime());
     }
 
     private void checkOrcidProfile(OrcidBio orcidBio) {

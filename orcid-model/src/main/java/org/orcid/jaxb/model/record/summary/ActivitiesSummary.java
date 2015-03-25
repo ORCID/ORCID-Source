@@ -51,7 +51,7 @@ import org.orcid.jaxb.model.record.RecordUtil;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "educations", "employments", "works", "fundings" })
+@XmlType(propOrder = { "educations", "employments", "fundings", "works" })
 @XmlRootElement(name = "activities-summary", namespace = "http://www.orcid.org/ns/activities")
 public class ActivitiesSummary implements Serializable, ActivitiesContainer {
 
@@ -60,10 +60,10 @@ public class ActivitiesSummary implements Serializable, ActivitiesContainer {
     protected Educations educations;
     @XmlElement(name = "employments", namespace = "http://www.orcid.org/ns/activities")
     protected Employments employments;
-    @XmlElement(name = "works", namespace = "http://www.orcid.org/ns/activities")
-    protected Works works;
     @XmlElement(name = "fundings", namespace = "http://www.orcid.org/ns/activities")
     protected Fundings fundings;
+    @XmlElement(name = "works", namespace = "http://www.orcid.org/ns/activities")
+    protected Works works;
 
     public Educations getEducations() {
         return educations;

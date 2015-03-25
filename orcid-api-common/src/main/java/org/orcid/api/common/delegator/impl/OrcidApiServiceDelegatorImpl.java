@@ -301,7 +301,7 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
         if (clientDetails == null) {
             return Response.status(Status.NOT_FOUND).build();
         }
-        String groupOrcid = clientDetails.getGroupProfile().getId();
+        String groupOrcid = clientDetails.getGroupProfileId();
         URI groupUri;
         try {
             groupUri = new URI(jpa2JaxbAdapter.getOrcidIdBase(groupOrcid).getUri());

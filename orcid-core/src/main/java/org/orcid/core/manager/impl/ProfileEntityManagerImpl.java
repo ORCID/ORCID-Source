@@ -19,6 +19,7 @@ package org.orcid.core.manager.impl;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -29,6 +30,7 @@ import org.orcid.core.adapter.JpaJaxbEducationAdapter;
 import org.orcid.core.adapter.JpaJaxbEmploymentAdapter;
 import org.orcid.core.adapter.JpaJaxbFundingAdapter;
 import org.orcid.core.adapter.JpaJaxbWorkAdapter;
+import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.utils.activities.ActivitiesGroup;
 import org.orcid.core.utils.activities.ActivitiesGroupGenerator;
@@ -81,6 +83,13 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     @Resource
     private JpaJaxbWorkAdapter jpaJaxbWorkAdapter;
 
+    @Resource(name = "profileEntityCacheManager")
+    ProfileEntityCacheManager profileEntityCacheManager;
+
+    /**
+     * Fetch a ProfileEntity from the database Instead of calling this function,
+     * use the cache profileEntityCacheManager whenever is possible
+     * */
     @Override
     public ProfileEntity findByOrcid(String orcid) {
         return profileDao.find(orcid);
@@ -167,10 +176,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
      * */
     @Override
     public boolean deprecateProfile(ProfileEntity deprecatedProfile, ProfileEntity primaryProfile) {
-        boolean result = profileDao.deprecateProfile(deprecatedProfile.getId(), primaryProfile.getId());
-        if (result)
-            profileDao.refresh(deprecatedProfile);
-        return result;
+        return profileDao.deprecateProfile(deprecatedProfile.getId(), primaryProfile.getId());        
     }
 
     /**
@@ -293,16 +299,16 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
 
     @Override
     @Transactional
-    public ActivitiesSummary getPublicActivitiesSummary(String orcid) {        
+    public ActivitiesSummary getPublicActivitiesSummary(String orcid) {
         return getActivitiesSummary(orcid, true);
     }
 
     public ActivitiesSummary getActivitiesSummary(String orcid, boolean justPublic) {
-        if(!orcidExists(orcid)) {
-            throw new NoResultException();            
+        if (!orcidExists(orcid)) {
+            throw new NoResultException();
         }
         ActivitiesSummary activities = new ActivitiesSummary();
-        ProfileEntity profileEntity = this.findByOrcid(orcid);
+        ProfileEntity profileEntity = profileEntityCacheManager.retrieve(orcid);
         // Set Affiliations
         Set<OrgAffiliationRelationEntity> affiliations = profileEntity.getOrgAffiliationRelations();
         Educations educations = new Educations();
@@ -321,10 +327,10 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
                 }
             }
         }
-        if(!educations.getSummaries().isEmpty()){
+        if (!educations.getSummaries().isEmpty()) {
             activities.setEducations(educations);
         }
-        if(!employments.getSummaries().isEmpty()){
+        if (!employments.getSummaries().isEmpty()) {
             activities.setEmployments(employments);
         }
         // Set works
@@ -418,6 +424,11 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
 
         return result;
     }
+
+    public Date getLastModified(String orcid) {
+        return profileDao.retrieveLastModifiedDate(orcid);
+    }
+
 }
 
 class GroupableActivityComparator implements Comparator<GroupableActivity> {

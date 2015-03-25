@@ -27,6 +27,7 @@ import org.orcid.core.exception.OrcidClientGroupManagementException;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.OrcidClientGroupManager;
+import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.GroupType;
@@ -80,6 +81,9 @@ public class ManageMembersController extends BaseController {
     @Resource
     private GroupAdministratorController groupAdministratorController;
 
+    @Resource(name = "profileEntityCacheManager")
+    ProfileEntityCacheManager profileEntityCacheManager;
+    
     public OrcidClientGroupManager getOrcidClientGroupManager() {
         return orcidClientGroupManager;
     }
@@ -133,7 +137,7 @@ public class ManageMembersController extends BaseController {
             if (profileEntityManager.orcidExists(orcid)) {
                 GroupType groupType = profileEntityManager.getGroupType(orcid);
                 if (groupType != null) {
-                    ProfileEntity memberProfile = profileEntityManager.findByOrcid(orcid);
+                    ProfileEntity memberProfile = profileEntityCacheManager.retrieve(orcid);
                     group = Group.fromProfileEntity(memberProfile);
                 } else {
                     group.getErrors().add(getMessage("manage_members.orcid_is_not_a_member"));

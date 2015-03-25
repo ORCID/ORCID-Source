@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.annotation.Resource;
+import javax.persistence.NoResultException;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;

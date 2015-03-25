@@ -26,6 +26,7 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import javax.annotation.Resource;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -35,7 +36,6 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -53,7 +53,7 @@ import org.springframework.util.StringUtils;
 @Entity
 @Table(name = "client_details")
 public class ClientDetailsEntity extends BaseEntity<String> implements ClientDetails, ProfileAware {
-
+    
     private static final long serialVersionUID = 1L;
 
     // Default is 20 years!
@@ -73,7 +73,7 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
     private SortedSet<ClientRedirectUriEntity> clientRegisteredRedirectUris;
     private List<ClientGrantedAuthorityEntity> clientGrantedAuthorities = Collections.emptyList();
     private Set<OrcidOauth2TokenDetail> tokenDetails;
-    private ProfileEntity groupProfile;
+    private String groupProfileId;
 
     private Set<CustomEmailEntity> customEmails = Collections.emptySet();
     private int accessTokenValiditySeconds = DEFAULT_TOKEN_VALIDITY;
@@ -195,20 +195,20 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
         this.tokenDetails = tokenDetails;
     }
 
-    @ManyToOne(cascade = { CascadeType.DETACH, CascadeType.REFRESH }, fetch = FetchType.EAGER)
+    @Column(name = "group_orcid")
     @JoinColumn(name = "group_orcid")
-    public ProfileEntity getGroupProfile() {
-        return groupProfile;
+    public String getGroupProfileId() {
+        return groupProfileId;
     }
 
-    public void setGroupProfile(ProfileEntity groupProfile) {
-        this.groupProfile = groupProfile;
+    public void setGroupProfileId(String groupProfileId) {
+        this.groupProfileId = groupProfileId;
     }
 
     @Override
     @Transient
-    public ProfileEntity getProfile() {
-        return getGroupProfile();
+    public ProfileEntity getProfile() {        
+        return new ProfileEntity(this.getGroupProfileId());
     }
 
     // Below are the overriden ClientDetails methods

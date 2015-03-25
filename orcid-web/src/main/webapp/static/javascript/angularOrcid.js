@@ -1481,15 +1481,16 @@ orcidNgModule.filter('externalIdentifierHtml', function(){
         if(externalIdentifier.url != null)
             link = externalIdentifier.url.value;
        
-        if (link.search(/^http[s]?\:\/\//) == -1)
-        	link = 'http://' + link;
-
-        if (link != null && value != null){        	
-            output += "<a href='" + link + "' class='truncate-anchor' target='_blank'>" + value + "</a>";        	
-        }else if(value != null){
-            output = output + " " + value;
-        }else if(link != null){        	
-            output = om.get('funding.add.external_id.url.label.grant') + ": <a href='" + link + "' class='truncate-anchor' target='_blank'>" + link + "</a>";
+        if(link != null) {
+        	if (link.search(/^http[s]?\:\/\//) == -1)
+            	link = 'http://' + link;
+        	if(value != null) {
+        		output += "<a href='" + link + "' class='truncate-anchor' target='_blank'>" + value + "</a>";
+        	} else {
+        		output = om.get('funding.add.external_id.url.label.grant') + ": <a href='" + link + "' class='truncate-anchor' target='_blank'>" + link + "</a>";
+        	}
+        } else if(value != null) {
+        	output = output + " " + value;
         }
       
         if (length > 1 && !last) output = output + ',';
@@ -3902,8 +3903,8 @@ orcidNgModule.controller('PublicWorkCtrl',['$scope', '$compile', '$filter', 'wor
 
 }]);
 
-orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrvc', 'workspaceSrvc', 'actBulkSrvc', 'commonSrvc', '$timeout', 
-                                      function ($scope, $compile, $filter, worksSrvc, workspaceSrvc, actBulkSrvc, commonSrvc, $timeout) {
+orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrvc', 'workspaceSrvc', 'actBulkSrvc', 'commonSrvc', '$timeout', '$q', 
+                                      function ($scope, $compile, $filter, worksSrvc, workspaceSrvc, actBulkSrvc, commonSrvc, $timeout, $q) {
     actBulkSrvc.initScope($scope);
     $scope.canReadFiles = false;
     $scope.showBibtexImportWizard = false;
@@ -4066,6 +4067,38 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     	$scope.bibtextWork = true;    	        
         $scope.putWork();        
     };
+    
+    $scope.saveAllFromBibtex = function(){
+    	var works = $scope.worksFromBibtex;
+    	var prom = [];
+    	angular.forEach( works, function( work, key ) {    		
+    		if ( work.title.value != null
+				&& work.workCategory.value.length > 0
+				&& work.workType.value.length > 0) {
+    			prom.push(
+	    			$.ajax({
+	                    url: getBaseUri() + '/works/work.json',
+	                    contentType: 'application/json;charset=UTF-8',
+	                    dataType: 'json',
+	                    type: 'POST',
+	                    data: angular.toJson(work),
+	                    success: function(data) {
+	                    	index = works.indexOf(work);
+	                    	works.splice(index, 1);
+	                    	$scope.worksFromBibtex = works;
+	                		$scope.$apply();
+	                    }
+	                }).fail(function(){
+	                    //Something really sad is happening :(
+	                })
+    			);
+    		};    		
+    	}); 
+    	
+    	$q.all(prom).then(function(){
+    		$scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);    		
+    	});
+    };
 
     $scope.openBibTextWizard = function () {
         $scope.bibtexParsingError = false;
@@ -4077,7 +4110,7 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     $scope.bibtextCancel = function(){
         $scope.worksFromBibtex = null;
         $scope.bibtexCancelLink = false;
-    };
+    };    
 
     // Check for the various File API support.
     if (window.File && window.FileReader && window.FileList && window.Blob) {
@@ -5064,6 +5097,10 @@ orcidNgModule.controller('languageCtrl',['$scope', '$cookies', function ($scope,
     var productionLangList =
         [
             {
+                "value": "cs",
+                "label": "čeština"
+            },
+            {
                 "value": "en",
                 "label": "English"
             },
@@ -5102,11 +5139,11 @@ orcidNgModule.controller('languageCtrl',['$scope', '$cookies', function ($scope,
         ];
     var testingLangList =
         [
-         {
-             "value": "cs",
-             "label": "čeština"
-         },
-         {
+            {
+                "value": "cs",
+                "label": "čeština"
+            },
+            {
                 "value": "en",
                 "label": "English"
             },
@@ -8114,8 +8151,8 @@ orcidNgModule.filter('formatBibtexOutput', function () {
 });
 
 /*
- * For forms submitted using the default submit function (Level: document)
- * Not necessary to be inside an element
+ * For forms submitted using the default submit function (Scope: document)
+ * Not necessary to be inside an element, for inputs use ngEnter
  */
 orcidNgModule.directive('ngEnterSubmit', function($document) {
     return {
@@ -8132,7 +8169,7 @@ orcidNgModule.directive('ngEnterSubmit', function($document) {
 });
 
 /*
- * For forms submitted using a custom function, Level: Document
+ * For forms submitted using a custom function, Scope: Document
  * 
  * Example:
  * <fn-form update-fn="theCustomFunction()">
@@ -8158,9 +8195,8 @@ orcidNgModule.directive('fnForm', function($document) {
     }
 });
 
-/* 
- * http://stackoverflow.com/questions/15417125/submit-form-on-pressing-enter-with-angularjs
- * Level: element
+/*
+ * Scope: element
  */
 orcidNgModule.directive('ngEnter', function() {
     return function(scope, element, attrs) {

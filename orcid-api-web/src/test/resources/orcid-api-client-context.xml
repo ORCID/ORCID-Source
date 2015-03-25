@@ -48,7 +48,7 @@
     </util:map>
     
     <util:set id="providers">
-        <value>org.codehaus.jackson.jaxrs.JacksonJaxbJsonProvider</value>
+        <value>com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider</value>
         <value>org.orcid.api.common.jaxb.OrcidJacksonJaxbJsonProvider</value>
     </util:set>
 
