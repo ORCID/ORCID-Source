@@ -400,7 +400,8 @@
 							   <div class="col-md-3 col-sm-3 col-xs-4">
 							   		<span class="bibtext-options">							   									   		
 									    <a class="bibtex-cancel" ng-click="openBibTextWizard()"><@orcid.msg 'workspace.bibtexImporter.cancel'/></a>			       
-									    <span class="import-label" ng-click="openFileDialog()"><@orcid.msg 'workspace.bibtexImporter.fileUpload'/></span>							           
+									    <span ng-hide="worksFromBibtex.length > 0" class="import-label" ng-click="openFileDialog()"><@orcid.msg 'workspace.bibtexImporter.fileUpload'/></span>
+									    <span ng-show="worksFromBibtex.length > 0" class="import-label" ng-click="saveAllFromBibtex()">Save all</span>									    							           
 										<input id="inputBibtex" type="file" class="upload-button" ng-model="textFiles" accept="*" update-fn="loadBibtexJs()"  app-file-text-reader multiple />
 									</span>								    
 							   </div>
@@ -434,15 +435,17 @@
 		                                     ng-bind-html='ie | workExternalIdentifierHtml:$first:$last:work.workExternalIdentifiers.length'></span>
 		                                </span>
 			        	          	</span>
-			        	          	<span class="info-detail bibtex-content-missing" ng-show="{{work.workExternalIdentifiers[0].workExternalIdentifierType.value.length == 0}}"">&lt;<@orcid.msg 'workspace.bibtexImporter.work.external_id_missing' />&gt;</span>
+			        	          	<!-- 
+			        	          		<span class="info-detail bibtex-content-missing" ng-show="{{work.workExternalIdentifiers[0].workExternalIdentifierType.value.length == 0}}"">&lt;<@orcid.msg 'workspace.bibtexImporter.work.external_id_missing' />&gt;</span>
+			        	          	 -->
 			        	          
 			        	          </div>			        	          
 			        	          <div class="col-md-3 col-sm-3 col-xs-3 bibtex-options-menu">			        	          	
 			        	          	<ul>
 			        	          		<li><a ng-click="rmWorkFromBibtex(work)" class="ignore glyphicon glyphicon-trash bibtex-button" title="Ignore"></a></li>
-			        	          		<li><a ng-show="{{work.title.value != null && work.workCategory.value.length > 0 && work.workType.value.length > 0 && work.workExternalIdentifiers[0].workExternalIdentifierType.value.length > 0}}" ng-click="addWorkFromBibtex(work)" class="save glyphicon glyphicon-floppy-disk bibtex-button" title="Save"></a></li>
-			        	          		<li><a ng-show="{{work.title.value == null || work.workCategory.value.length == 0 || work.workType.value.length == 0 || work.workExternalIdentifiers[0].workExternalIdentifierType.value.length == 0}}" ng-click="editWorkFromBibtex(work)" class="save glyphicon glyphicon-pencil bibtex-button" title="Edit"></a></li>
-			        	          		<li><span ng-show="{{work.title.value == null || work.workCategory.value.length == 0 || work.workType.value.length == 0 || work.workExternalIdentifiers[0].workExternalIdentifierType.value.length == 0}}"><a ng-click="editWorkFromBibtex(work)"><i class="glyphicon glyphicon-exclamation-sign"></i><@orcid.msg 'workspace.bibtexImporter.work.warning' /></a></span></li>
+			        	          		<li><a ng-show="{{work.title.value != null && work.workCategory.value.length > 0 && work.workType.value.length > 0}}" ng-click="addWorkFromBibtex(work)" class="save glyphicon glyphicon-floppy-disk bibtex-button" title="Save"></a></li>
+			        	          		<li><a ng-show="{{work.title.value == null || work.workCategory.value.length == 0 || work.workType.value.length == 0}}" ng-click="editWorkFromBibtex(work)" class="save glyphicon glyphicon-pencil bibtex-button" title="Edit"></a></li>
+			        	          		<li><span ng-show="{{work.title.value == null || work.workCategory.value.length == 0 || work.workType.value.length == 0}}"><a ng-click="editWorkFromBibtex(work)"><i class="glyphicon glyphicon-exclamation-sign"></i><@orcid.msg 'workspace.bibtexImporter.work.warning' /></a></span></li>
 			        	          	</ul>
 		        	          	 </div>
 	        	          	 </div>

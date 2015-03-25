@@ -723,7 +723,7 @@ bibToWorkTypeMap['booklet'] = [ 'other_output', 'other' ];
 bibToWorkTypeMap['conference'] = [ 'conference', 'conference-paper' ];
 bibToWorkTypeMap['inbook'] = [ 'publication', 'book-chapter' ];
 bibToWorkTypeMap['incollection'] = [ 'publication', 'book-chapter' ];
-bibToWorkTypeMap['inproceedings'] = [ 'conference', 'conference_paper' ];
+bibToWorkTypeMap['inproceedings'] = [ 'conference', 'conference-paper' ];
 bibToWorkTypeMap['manual'] = [ 'publication', 'manual' ];
 bibToWorkTypeMap['mastersthesis'] = [ 'publication',
         'supervised-student-publication' ];
