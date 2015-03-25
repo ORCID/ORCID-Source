@@ -33,8 +33,6 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.lang.StringUtils;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
@@ -53,6 +51,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
@@ -305,7 +305,7 @@ public class LoadFundRefData {
             JsonNode rootNode = m.readTree(jsonString);
             JsonNode nameNode = rootNode.path(propetyName);
             if (nameNode != null)
-                result = nameNode.getTextValue();
+                result = nameNode.asText();
         } catch (Exception e) {
 
         }
@@ -324,9 +324,9 @@ public class LoadFundRefData {
             if (arrayNode != null && arrayNode.isArray()) {
                 for (final JsonNode altNameNode : arrayNode) {
                     JsonNode langNode = altNameNode.get("lang");
-                    if (langNode != null && STATE_ABBREVIATION.equals(langNode.getTextValue())) {
+                    if (langNode != null && STATE_ABBREVIATION.equals(langNode.asText())) {
                         JsonNode nameNode = altNameNode.get("name");
-                        result = nameNode.getTextValue();
+                        result = nameNode.asText();
                         break;
                     }
                 }

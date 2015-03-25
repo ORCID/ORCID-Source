@@ -44,7 +44,8 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 import org.apache.commons.lang3.StringUtils;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
+
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @XmlType(propOrder = { "value", "uri", "path", "host" })

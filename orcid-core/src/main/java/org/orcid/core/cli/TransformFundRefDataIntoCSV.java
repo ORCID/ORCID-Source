@@ -20,8 +20,6 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.lang.StringUtils;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
@@ -39,6 +37,8 @@ import org.xml.sax.SAXException;
 
 import au.com.bytecode.opencsv.CSVWriter;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
@@ -303,7 +303,7 @@ public class TransformFundRefDataIntoCSV {
             JsonNode rootNode = m.readTree(jsonString);
             JsonNode nameNode = rootNode.path(propetyName);
             if (nameNode != null)
-                result = nameNode.getTextValue();
+                result = nameNode.asText();
         } catch (Exception e) {
 
         }
@@ -319,9 +319,9 @@ public class TransformFundRefDataIntoCSV {
             if (altNameNode != null && altNameNode.isArray()){
                 for(JsonNode node : altNameNode){
                     JsonNode type = node.path("lang"); 
-                    if(type != null && "abbr".equalsIgnoreCase(type.getTextValue())){
+                    if(type != null && "abbr".equalsIgnoreCase(type.asText())){
                         JsonNode state = node.path("name");
-                        result = state.getTextValue();
+                        result = state.asText();
                         break;
                     }
                 }

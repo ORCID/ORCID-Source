@@ -18,14 +18,20 @@ package org.orcid.api.common.jaxb;
 
 import static org.orcid.core.api.OrcidApiConstants.ORCID_JSON;
 import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_JSON;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
 import javax.ws.rs.ext.Provider;
+
+
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.jaxrs.cfg.Annotations;
 import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
+import com.fasterxml.jackson.jaxrs.cfg.Annotations;
+
+
+
 
 /**
  * @author Will Simpson
@@ -33,19 +39,19 @@ import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
 @Provider
 @Consumes({ VND_ORCID_JSON, ORCID_JSON, "text/orcid+json" })
 @Produces({ VND_ORCID_JSON, ORCID_JSON, "text/orcid+json" })
-public class OrcidJacksonJaxbJsonProvider extends JacksonJaxbJsonProvider {
+public class OrcidJacksonJaxbJsonProviderPretty extends JacksonJaxbJsonProvider {
 
-    public OrcidJacksonJaxbJsonProvider() {
+    public OrcidJacksonJaxbJsonProviderPretty() {
         super();
         configureAll();
     }
 
-    public OrcidJacksonJaxbJsonProvider(Annotations... annotationsToUse) {
+    public OrcidJacksonJaxbJsonProviderPretty(Annotations... annotationsToUse) {
         super(annotationsToUse);
         configureAll();
     }
 
-    public OrcidJacksonJaxbJsonProvider(ObjectMapper mapper, Annotations[] annotationsToUse) {
+    public OrcidJacksonJaxbJsonProviderPretty(ObjectMapper mapper, Annotations[] annotationsToUse) {
         super(mapper, annotationsToUse);
         configureAll();
     }
