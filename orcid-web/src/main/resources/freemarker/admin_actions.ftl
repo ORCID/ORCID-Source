@@ -131,18 +131,18 @@
 </script>
 
 <script type="text/ng-template" id="confirm-reactivation-modal">
-	<div style="padding:20px">
-    	<a id="cboxClose" class="btn pull-right close-button" ng-click="closeModal()">X</a>
-    	<h1><@orcid.msg 'admin.profile_reactivation.confirm'/></h1>
-		<div class="bottom-margin-small">
-	    	<span><@orcid.msg 'admin.profile_reactivation.confirm.message'/></span>
-			<br />
-			<span>{{orcidToReactivate}}</span>				    	
-		</div>
-		<div class="control-group">			
-			<button class="btn btn-primary" id="bottom-deactivate-profile" ng-click="reactivateAccount()"><@orcid.msg 'admin.profile_reactivation.reactivate_account'/></button>
-			<a href="" class="cancel-action" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel'/></a>
-		</div>
+	<div style="padding:20px">		
+    		<a id="cboxClose" class="btn pull-right close-button" ng-click="closeModal()">X</a>
+    		<h1><@orcid.msg 'admin.profile_reactivation.confirm'/></h1>
+			<div class="bottom-margin-small">
+		    	<span><@orcid.msg 'admin.profile_reactivation.confirm.message'/></span>
+				<br />
+				<span>{{orcidToReactivate}}</span>				    	
+			</div>
+			<div class="control-group">			
+				<button class="btn btn-primary" id="bottom-deactivate-profile" ng-click="reactivateAccount()"><@orcid.msg 'admin.profile_reactivation.reactivate_account'/></button>
+				<a href="" class="cancel-action" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel'/></a>
+			</div>		
 	</div>
 </script>
 
@@ -359,7 +359,7 @@
 			<div class="collapsible bottom-margin-small admin-modal" id="deprecation_modal" style="display:none;">		    	
 				<div class="form-group">
 					<label for="deprecated_orcid"><@orcid.msg 'admin.profile_deprecation.to_deprecate' /></label>
-					<input type="text" id="deprecated_orcid" placeholder="<@orcid.msg 'admin.profile_deprecation.placeholder.account_to_deprecate' />" class="form-control" ng-model="deprecatedAccount.orcid" ng-change="findAccountDetails('deprecated')">
+					<input type="text" id="deprecated_orcid" placeholder="<@orcid.msg 'admin.profile_deprecation.placeholder.account_to_deprecate' />" class="form-control" ng-enter="confirmDeprecateAccount()" ng-model="deprecatedAccount.orcid" ng-change="findAccountDetails('deprecated')">
 					<a href class="glyphicon glyphicon-ok green" ng-show="deprecated_verified"></a>					
 					<div id="invalid-regex-deprecated" ng-show="invalid_regex_deprecated" ng-cloak>
 						<span class="orcid-error"><@orcid.msg 'admin.profile_deprecation.errors.invalid_regex' /></span>
@@ -370,7 +370,7 @@
 				</div>
 				<div class="form-group">
 					<label for="deprecated_orcid"><@orcid.msg 'admin.profile_deprecation.primary' /></label>
-					<input type="text" id="primary_orcid" placeholder="<@orcid.msg 'admin.profile_deprecation.placeholder.primary_account' />" class="form-control" ng-model="primaryAccount.orcid" ng-change="findAccountDetails('primary')">				
+					<input type="text" id="primary_orcid" placeholder="<@orcid.msg 'admin.profile_deprecation.placeholder.primary_account' />" class="form-control" ng-enter="confirmDeprecateAccount()" ng-model="primaryAccount.orcid" ng-change="findAccountDetails('primary')">				
 					<a href class="glyphicon glyphicon-ok green" ng-show="primary_verified"></a>					
 					<div id="invalid-regex-primary" ng-show="invalid_regex_primary" ng-cloak>
 						<span class="orcid-error"><@orcid.msg 'admin.profile_deprecation.errors.invalid_regex' /></span><br />
@@ -395,7 +395,7 @@
 			<div class="collapsible bottom-margin-small admin-modal" id="deactivation_modal" style="display:none;">					    		
 	    		<div class="form-group">
 					<label for="orcid_to_deactivate"><@orcid.msg 'admin.profile_deactivation.to_deactivate' /></label>
-					<input type="text" id="orcid_to_deactivate" ng-model="orcidToDeactivate" placeholder="<@orcid.msg 'admin.profile_deactivation.placeholder.to_deactivate' />" class="form-control" />					
+					<input type="text" id="orcid_to_deactivate" ng-enter="confirmDeactivateAccount()" ng-model="orcidToDeactivate" placeholder="<@orcid.msg 'admin.profile_deactivation.placeholder.to_deactivate' />" class="form-control" />					
 					<div ng-show="deactivatedAccount.errors.length">
 						<span class="orcid-error" ng-repeat='error in deactivatedAccount.errors' ng-bind-html="error"></span><br />
 					</div>		
@@ -416,7 +416,7 @@
 			<div class="collapsible bottom-margin-small admin-modal" id="reactivation_modal" style="display:none;">					    		
 	    		<div class="form-group">
 					<label for="orcid_to_reactivate"><@orcid.msg 'admin.profile_reactivation.to_reactivate' /></label>
-					<input type="text" id="orcid_to_reactivate" ng-model="orcidToReactivate" placeholder="<@orcid.msg 'admin.profile_reactivation.placeholder.to_reactivate' />" class="form-control" />
+					<input type="text" id="orcid_to_reactivate" ng-enter="confirmReactivateAccount()" ng-model="orcidToReactivate" placeholder="<@orcid.msg 'admin.profile_reactivation.placeholder.to_reactivate' />" class="form-control" />
 					<div ng-show="reactivatedAccount.errors.length">
 						<span class="orcid-error" ng-repeat='error in reactivatedAccount.errors' ng-bind-html="error"></span><br />
 					</div>
@@ -438,7 +438,7 @@
 	    	<div class="form-group">
 	    		<p ng-show="message != ''">{{message}}</p>
 				<label for="orcid_to_lock"><@orcid.msg 'common.orcidOrEmail' /></label>
-				<input type="text" id="orcid_to_lock" ng-model="orcidToLock" placeholder="<@orcid.msg 'common.orcidOrEmail' />" class="input-xlarge" />
+				<input type="text" id="orcid_to_lock" ng-enter="checkProfileToLock()" ng-model="orcidToLock" placeholder="<@orcid.msg 'common.orcidOrEmail' />" class="input-xlarge" />
 				<div ng-show="profileDetails.errors.length">
 					<span class="orcid-error" ng-repeat="error in profileDetails.errors" ng-bind-html="error"></span><br />
 				</div>
@@ -460,7 +460,7 @@
 	    	<div class="form-group">
 	    		<p ng-show="message != ''">{{message}}</p>
 				<label for="orcid_to_unlock"><@orcid.msg 'common.orcidOrEmail' /></label>
-				<input type="text" id="orcid_to_unlock" ng-model="orcidToUnlock" placeholder="<@orcid.msg 'common.orcidOrEmail' />" class="input-xlarge" />
+				<input type="text" id="orcid_to_unlock" ng-enter="checkProfileToUnlock()" ng-model="orcidToUnlock" placeholder="<@orcid.msg 'common.orcidOrEmail' />" class="input-xlarge" />
 				<div ng-show="profileDetails.errors.length">
 					<span class="orcid-error" ng-repeat="error in profileDetails.errors" ng-bind-html="error"></span><br />
 				</div>

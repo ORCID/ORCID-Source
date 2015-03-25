@@ -8149,7 +8149,8 @@ orcidNgModule.directive('fnForm', function($document) {
         link: function(scope, elm, attrs) { 
             $document.bind("keydown", function(event) {
                 if (event.which === 13) {
-                        scope.updateFn();
+                      scope.updateFn();                      
+                      event.stopPropagation();
                 }
             });
                     
@@ -8164,12 +8165,12 @@ orcidNgModule.directive('fnForm', function($document) {
 orcidNgModule.directive('ngEnter', function() {
     return function(scope, element, attrs) {
         element.bind("keydown keypress", function(event) {
-            if(event.which === 13) {
+            if(event.which === 13) {            	
                 scope.$apply(function(){
                     scope.$eval(attrs.ngEnter, {'event': event});
                 });
-
                 event.preventDefault();
+                event.stopPropagation();
             }
         });
     };
