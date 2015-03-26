@@ -38,12 +38,9 @@ import org.orcid.jaxb.model.record.Activity;
 import org.orcid.jaxb.model.record.WorkExternalIdentifiers;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = {})
+@XmlType(propOrder = {"role","organization","externalIdentifiers","url","type","completionDate","subject"})
 @XmlRootElement(name = "peer-review", namespace = "http://www.orcid.org/ns/peer-review")
 public class PeerReview implements VisibilityType, Activity, Serializable, OrganizationHolder {
-    /**
-     * 
-     */
     private static final long serialVersionUID = -1112309604310926743L;
     @XmlElement(namespace = "http://www.orcid.org/ns/peer-review")
     protected Role role;
@@ -57,7 +54,9 @@ public class PeerReview implements VisibilityType, Activity, Serializable, Organ
     protected Type type;
     @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "completion-date")
     protected FuzzyDate completionDate;
-
+    @XmlElement(namespace = "http://www.orcid.org/ns/peer-review")
+    protected Subject subject;
+        
     @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected Source source;
     @XmlAttribute(name = "put-code")
@@ -167,6 +166,14 @@ public class PeerReview implements VisibilityType, Activity, Serializable, Organ
         this.createdDate = createdDate;
     }
 
+    public Subject getSubject() {
+        return subject;
+    }
+
+    public void setSubject(Subject subject) {
+        this.subject = subject;
+    }
+
     @Override
     public String retrieveSourcePath() {
         if (source != null) {
@@ -174,7 +181,7 @@ public class PeerReview implements VisibilityType, Activity, Serializable, Organ
         }
         return null;
     }
-    
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -188,6 +195,7 @@ public class PeerReview implements VisibilityType, Activity, Serializable, Organ
         result = prime * result + ((putCode == null) ? 0 : putCode.hashCode());
         result = prime * result + ((role == null) ? 0 : role.hashCode());
         result = prime * result + ((source == null) ? 0 : source.hashCode());
+        result = prime * result + ((subject == null) ? 0 : subject.hashCode());
         result = prime * result + ((type == null) ? 0 : type.hashCode());
         result = prime * result + ((url == null) ? 0 : url.hashCode());
         result = prime * result + ((visibility == null) ? 0 : visibility.hashCode());
@@ -245,6 +253,11 @@ public class PeerReview implements VisibilityType, Activity, Serializable, Organ
                 return false;
         } else if (!source.equals(other.source))
             return false;
+        if (subject == null) {
+            if (other.subject != null)
+                return false;
+        } else if (!subject.equals(other.subject))
+            return false;
         if (type != other.type)
             return false;
         if (url == null) {
@@ -255,5 +268,5 @@ public class PeerReview implements VisibilityType, Activity, Serializable, Organ
         if (visibility != other.visibility)
             return false;
         return true;
-    }
+    }        
 }

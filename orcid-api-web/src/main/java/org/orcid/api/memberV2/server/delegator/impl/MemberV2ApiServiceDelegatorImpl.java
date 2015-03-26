@@ -41,6 +41,7 @@ import org.orcid.jaxb.model.record.Education;
 import org.orcid.jaxb.model.record.Employment;
 import org.orcid.jaxb.model.record.Funding;
 import org.orcid.jaxb.model.record.Work;
+import org.orcid.jaxb.model.record.peer_review.PeerReview;
 import org.orcid.jaxb.model.record.summary.ActivitiesSummary;
 import org.orcid.jaxb.model.record.summary.EducationSummary;
 import org.orcid.jaxb.model.record.summary.EmploymentSummary;
@@ -286,6 +287,36 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     public Response deleteFunding(String orcid, String putCode) {
         profileFundingManager.checkSourceAndDelete(orcid, putCode);
         return Response.noContent().build();
+    }
+
+    @Override
+    public Response viewPeerReview(String orcid, String putCode) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Response viewPeerReviewSummary(String orcid, String putCode) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Response createPeerReview(String orcid, PeerReview peerReview) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Response updatePeerReview(String orcid, String putCode, PeerReview peerReview) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Response deletePeerReview(String orcid, String putCode) {
+        // TODO Auto-generated method stub
+        return null;
     }
     
     

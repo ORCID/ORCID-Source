@@ -29,7 +29,7 @@ import org.orcid.jaxb.model.record.WorkTitle;
 import org.orcid.jaxb.model.record.WorkType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = {})
+@XmlType(propOrder = {"externalIdentifiers","type","title","journalTitle","url"})
 @XmlRootElement(name = "subject")
 public class Subject {
     @XmlElement(name = "external-identifiers", namespace = "http://www.orcid.org/ns/work")
