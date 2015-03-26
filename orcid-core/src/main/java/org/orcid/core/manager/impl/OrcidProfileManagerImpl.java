@@ -65,6 +65,7 @@ import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.OrgManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.security.OrcidWebRole;
+import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.core.security.visibility.aop.VisibilityControl;
 import org.orcid.jaxb.model.message.ActivitiesVisibilityDefault;
 import org.orcid.jaxb.model.message.Affiliation;
@@ -231,9 +232,9 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
 
     @Resource
     private WorkDao workDao;
-    
+
     @Resource
-    private OrgManager orgManager;        
+    private OrgManager orgManager;
 
     @Value("${org.orcid.core.works.compare.useScopusWay:false}")
     private boolean compareWorksUsingScopusWay;
@@ -297,6 +298,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         addSourceToWorks(orcidProfile, amenderOrcid);
         addSourceToAffiliations(orcidProfile, amenderOrcid);
         addSourceToFundings(orcidProfile, amenderOrcid);
+        setDefaultVisibility(orcidProfile);
 
         ProfileEntity profileEntity = adapter.toProfileEntity(orcidProfile);
         encryptAndMapFieldsForProfileEntityPersistence(orcidProfile, profileEntity);
@@ -1448,7 +1450,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         OrcidProfile blankedOrcidProfile = new OrcidProfile();
 
         OrcidBio existingBio = existingOrcidProfile.getOrcidBio();
-        
+
         OrcidBio minimalBio = new OrcidBio();
 
         ContactDetails minimalContactDetails = new ContactDetails();
@@ -1465,7 +1467,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         // only names names from bio with a visibility setting
         PersonalDetails minimalPersonalDetails = new PersonalDetails();
         minimalPersonalDetails.setOtherNames(null);
-        minimalPersonalDetails.setCreditName(new CreditName());        
+        minimalPersonalDetails.setCreditName(new CreditName());
         minimalPersonalDetails.setGivenNames(new GivenNames("Given Names Deactivated"));
         minimalPersonalDetails.setFamilyName(new FamilyName("Family Name Deactivated"));
 
@@ -1579,25 +1581,25 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     }
 
     private void checkAndUpdateDisambiguatedOrganization(List<Affiliation> affiliations) {
-        if(affiliations != null && !affiliations.isEmpty()) {
+        if (affiliations != null && !affiliations.isEmpty()) {
             for (Affiliation affiliation : affiliations) {
                 Organization org = affiliation.getOrganization();
                 OrgEntity orgEntity = orgManager.getOrgEntity(org);
-                //If the org exists
-                if(orgEntity != null) {
-                    //And it have a disambiguated org
-                    if(orgEntity.getOrgDisambiguated() != null) {
-                        //Update the desambiguated org
+                // If the org exists
+                if (orgEntity != null) {
+                    // And it have a disambiguated org
+                    if (orgEntity.getOrgDisambiguated() != null) {
+                        // Update the desambiguated org
                         org.setDisambiguatedOrganization(adapter.getDisambiguatedOrganization(orgEntity.getOrgDisambiguated()));
                     } else {
-                        //Null the disambiguated organization
+                        // Null the disambiguated organization
                         org.setDisambiguatedOrganization(null);
                     }
                 }
             }
-        }        
+        }
     }
-    
+
     /**
      * Adds a new {@link List&lt;org.orcid.jaxb.model.message.FundingList&lt;}
      * to the {@link} OrcidProfile} and returns the updated values
@@ -1838,7 +1840,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         for (Funding updatedFunding : updatedFundingList) {
             ProfileFundingEntity profileFundingEntity = jaxb2JpaAdapter.getNewProfileFundingEntity(updatedFunding, profileEntity);
             // Save the profile grant
-            profileFundingDao.addProfileFunding(profileFundingEntity);            
+            profileFundingDao.addProfileFunding(profileFundingEntity);
         }
         orcidProfileCacheManager.remove(orcid);
     }
@@ -2206,4 +2208,58 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         return retrieveClaimedOrcidProfile(orcid);
     }
 
+    /**
+     * Sets the default visibility of each bio element present in the
+     * orcidProfile object
+     * 
+     * @param orcidProfile
+     * */
+    private void setDefaultVisibility(OrcidProfile orcidProfile) {
+        if (orcidProfile != null) {
+            if (orcidProfile.getOrcidBio() != null) {
+                OrcidBio bio = orcidProfile.getOrcidBio();
+                if (bio.getBiography() != null) {
+                    if (bio.getBiography().getVisibility() == null) {
+                        bio.getBiography().setVisibility(OrcidVisibilityDefaults.BIOGRAPHY_DEFAULT.getVisibility());
+                    }
+                }
+
+                if (bio.getExternalIdentifiers() != null) {
+                    if (bio.getExternalIdentifiers().getVisibility() == null) {
+                        bio.getExternalIdentifiers().setVisibility(OrcidVisibilityDefaults.EXTERNAL_IDENTIFIER_DEFAULT.getVisibility());
+                    }
+                }
+
+                if (bio.getKeywords() != null) {
+                    if (bio.getKeywords().getVisibility() == null) {
+                        bio.getKeywords().setVisibility(OrcidVisibilityDefaults.KEYWORD_DEFAULT.getVisibility());
+                    }
+                }
+
+                if (bio.getResearcherUrls() != null) {
+                    if (bio.getResearcherUrls().getVisibility() == null) {
+                        bio.getResearcherUrls().setVisibility(OrcidVisibilityDefaults.RESEARCHER_URLS_DEFAULT.getVisibility());
+                    }
+                }
+
+                if (bio.getPersonalDetails() != null) {
+                    if (bio.getPersonalDetails().getCreditName() != null) {
+                        if (bio.getPersonalDetails().getCreditName().getVisibility() == null) {
+                            bio.getPersonalDetails().getCreditName().setVisibility(OrcidVisibilityDefaults.CREDIT_NAME_DEFAULT.getVisibility());
+                        }
+                    }
+                }
+
+                if (bio.getContactDetails() != null) {
+                    if (bio.getContactDetails().getAddress() != null) {
+                        if (bio.getContactDetails().getAddress().getCountry() != null) {
+                            if (bio.getContactDetails().getAddress().getCountry().getVisibility() == null) {
+                                bio.getContactDetails().getAddress().getCountry().setVisibility(OrcidVisibilityDefaults.COUNTRY_DEFAULT.getVisibility());
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
