@@ -26,7 +26,8 @@
 			</div>
 		</div>
 		<div class="row">
-			<div class="col-md-12 col-sm-12 col-xs-12">	
+			<div class="col-md-12 col-sm-12 col-xs-12">
+				<fn-form update-fn="addMember()">	
 				<div class="control-group">
 	    			<label class="relative"><@orcid.msg 'manage_groups.group_name'/></label>
     				<div class="relative">
@@ -71,7 +72,8 @@
 					<button class="btn btn-primary" ng-click="addMember()"><@orcid.msg 'manage_groups.btnadd'/></button>
 					<a href="" class="cancel-action" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
 				</div>
-			</div>				
+				</fn-form>
+			</div>							
 		</div>
 	</div>
 </script>
@@ -164,7 +166,7 @@
 	    		</div>
 	    		<div class="form-group">
 					<label for="member_id"><@orcid.msg 'manage_member.member_id' /></label>
-					<input type="text" id="member_id" ng-model="member_id" placeholder="<@orcid.msg 'manage_member.orcid_or_email' />" class="input-xlarge" />					
+					<input type="text" id="member_id" ng-enter="findMember()" ng-model="member_id" placeholder="<@orcid.msg 'manage_member.orcid_or_email' />" class="input-xlarge" />					
 					<span class="orcid-error" ng-show="member.errors.length > 0 && member.groupOrcid == null">
 						<div ng-repeat='error in member.errors' ng-bind-html="error"></div>
 					</span>		
@@ -248,7 +250,7 @@
 	    		</div>
 	    		<div class="form-group">
 					<label for="client_id"><@orcid.msg 'admin.edit_client.client_id' /></label>
-					<input type="text" id="client_id" ng-model="client_id" placeholder="<@orcid.msg 'admin.edit_client.client_id.placeholder' />" class="input-xlarge" />					
+					<input type="text" id="client_id" ng-enter="searchClient()" ng-model="client_id" placeholder="<@orcid.msg 'admin.edit_client.client_id.placeholder' />" class="input-xlarge" />					
 					<span class="orcid-error" ng-show="client.errors.length > 0 && client.clientId == null">
 						<div ng-repeat='error in client.errors' ng-bind-html="error"></div>
 					</span>		

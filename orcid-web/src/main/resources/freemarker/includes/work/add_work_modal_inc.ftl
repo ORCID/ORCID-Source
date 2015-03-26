@@ -18,6 +18,7 @@
 -->
 <script type="text/ng-template" id="add-work-modal">
 	<div class="add-work colorbox-content">
+		<fn-form update-fn="putWork()">
 		<div class="lightbox-container-ie7">		
 		<!-- Title -->
 		<div class="row">			
@@ -312,6 +313,7 @@
 						<button id="" class="btn close-button" type="reset"  ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel' /></button>
 					</div>									
 				</div>
-			</div>			
+			</div>
+			</fn-form>			
 		</div>		
 </script>

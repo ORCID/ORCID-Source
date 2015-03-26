@@ -44,12 +44,12 @@
 		<!-- Edit Mode -->
 		<div class="names-edit" ng-show="showEdit == true" ng-cloak>
 		   <label for="firstName">${springMacroRequestContext.getMessage("manage_bio_settings.labelfirstname")}</label>
-		   <input type="text" ng-model="nameForm.givenNames.value" class="full-width-input"></input>
+		   <input type="text" ng-model="nameForm.givenNames.value" ng-enter="setNameForm()" class="full-width-input"></input>
 		   <span class="orcid-error" ng-show="nameForm.givenNames.errors.length > 0">
 			   <div ng-repeat='error in nameForm.givenNames.errors' ng-bind-html="error"></div>
 		   </span>
 		   <label for="lastName">${springMacroRequestContext.getMessage("manage_bio_settings.labellastname")}</label>
-		   <input type="text" ng-model="nameForm.familyName.value"  class="full-width-input"></input>
+		   <input type="text" ng-model="nameForm.familyName.value" ng-enter="setNameForm()" class="full-width-input"></input>
 		   <label for="creditName">${springMacroRequestContext.getMessage("manage_bio_settings.labelpublishedname")}</label>
 		   <@orcid.privacyToggle  angularModel="nameForm.creditNameVisibility.visibility"
 				             questionClick="toggleClickPrivacyHelp()"
@@ -58,7 +58,7 @@
 	                 	     limitedClick="setCreditNameVisibility('LIMITED', $event)" 
 	                 	     privateClick="setCreditNameVisibility('PRIVATE', $event)" />
 		        	   
-		   <input type="text" ng-model="nameForm.creditName.value" class="full-width-input"></input>
+		   <input type="text" ng-model="nameForm.creditName.value" ng-enter="setNameForm()" class="full-width-input"></input>
 		   <ul class="workspace-section-toolbar">
  				<li class="pull-right">
 		   			<button class="btn btn-primary" ng-click="setNameForm()"><@spring.message "freemarker.btnsavechanges"/></button>

@@ -8149,3 +8149,65 @@ orcidNgModule.filter('formatBibtexOutput', function () {
 		return str.toUpperCase();
     };
 });
+
+/*
+ * For forms submitted using the default submit function (Scope: document)
+ * Not necessary to be inside an element, for inputs use ngEnter
+ */
+orcidNgModule.directive('ngEnterSubmit', function($document) {
+    return {
+        restrict: 'A',
+        link: function(scope, element, attr) {
+        	$document.bind("keydown keypress", function(event) {
+                if (event.which === 13) {
+                   element.submit();
+                }
+            });
+
+        }
+    };
+});
+
+/*
+ * For forms submitted using a custom function, Scope: Document
+ * 
+ * Example:
+ * <fn-form update-fn="theCustomFunction()">
+ * 
+ * </fn-form>
+ * 
+ */
+orcidNgModule.directive('fnForm', function($document) {
+    return {
+        restrict: 'E',
+        scope: {
+            updateFn: '&'
+        },
+        link: function(scope, elm, attrs) { 
+            $document.bind("keydown", function(event) {
+                if (event.which === 13) {
+                      scope.updateFn();                      
+                      event.stopPropagation();
+                }
+            });
+                    
+        }
+    }
+});
+
+/*
+ * Scope: element
+ */
+orcidNgModule.directive('ngEnter', function() {
+    return function(scope, element, attrs) {
+        element.bind("keydown keypress", function(event) {
+            if(event.which === 13) {            	
+                scope.$apply(function(){
+                    scope.$eval(attrs.ngEnter, {'event': event});
+                });
+                event.preventDefault();
+                event.stopPropagation();
+            }
+        });
+    };
+});

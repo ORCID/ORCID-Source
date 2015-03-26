@@ -131,18 +131,18 @@
 </script>
 
 <script type="text/ng-template" id="confirm-reactivation-modal">
-	<div style="padding:20px">
-    	<a id="cboxClose" class="btn pull-right close-button" ng-click="closeModal()">X</a>
-    	<h1><@orcid.msg 'admin.profile_reactivation.confirm'/></h1>
-		<div class="bottom-margin-small">
-	    	<span><@orcid.msg 'admin.profile_reactivation.confirm.message'/></span>
-			<br />
-			<span>{{orcidToReactivate}}</span>				    	
-		</div>
-		<div class="control-group">			
-			<button class="btn btn-primary" id="bottom-deactivate-profile" ng-click="reactivateAccount()"><@orcid.msg 'admin.profile_reactivation.reactivate_account'/></button>
-			<a href="" class="cancel-action" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel'/></a>
-		</div>
+	<div style="padding:20px">		
+    		<a id="cboxClose" class="btn pull-right close-button" ng-click="closeModal()">X</a>
+    		<h1><@orcid.msg 'admin.profile_reactivation.confirm'/></h1>
+			<div class="bottom-margin-small">
+		    	<span><@orcid.msg 'admin.profile_reactivation.confirm.message'/></span>
+				<br />
+				<span>{{orcidToReactivate}}</span>				    	
+			</div>
+			<div class="control-group">			
+				<button class="btn btn-primary" id="bottom-deactivate-profile" ng-click="reactivateAccount()"><@orcid.msg 'admin.profile_reactivation.reactivate_account'/></button>
+				<a href="" class="cancel-action" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel'/></a>
+			</div>		
 	</div>
 </script>
 
@@ -235,7 +235,7 @@
 			<div class="collapsible bottom-margin-small admin-modal" id="find_ids_section" style="display:none;">
 				<div class="form-group">
 					<label for="emails"><@orcid.msg 'admin.find_ids.label' /></label>
-					<input type="text" id="emails" ng-model="emails" placeholder="<@orcid.msg 'admin.find_ids.placeholder' />" class="input-xlarge" />
+					<input type="text" id="emails" ng-enter="findIds()" ng-model="emails" placeholder="<@orcid.msg 'admin.find_ids.placeholder' />" class="input-xlarge" />
 				</div>
 				<div class="controls save-btns pull-left">
 					<span id="find-ids" ng-click="findIds()" class="btn btn-primary"><@orcid.msg 'admin.find_ids.button'/></span>						
@@ -253,9 +253,9 @@
 			<div class="collapsible bottom-margin-small admin-modal" id="reset_password_section" style="display:none;">			
 				<div class="form-group">
 					<label for="orcid"><@orcid.msg 'admin.reset_password.orcid.label' /></label>
-					<input type="text" id="orcid" ng-model="params.orcidOrEmail" placeholder="<@orcid.msg 'admin.reset_password.orcid.placeholder' />" class="input-xlarge" />
+					<input type="text" id="orcid" ng-enter="confirmResetPassword()" ng-model="params.orcidOrEmail" placeholder="<@orcid.msg 'admin.reset_password.orcid.placeholder' />" class="input-xlarge" />
 					<label for="password"><@orcid.msg 'admin.reset_password.password.label' /></label>
-					<input type="text" id="password" ng-model="params.password" placeholder="<@orcid.msg 'admin.reset_password.password.placeholder' />" class="input-xlarge" />
+					<input type="text" id="password" ng-enter="confirmResetPassword()" ng-model="params.password" placeholder="<@orcid.msg 'admin.reset_password.password.placeholder' />" class="input-xlarge" />
 					<a href ng-click="randomString()" class="glyphicon glyphicon-random blue"></a>									
 					<div ng-show="result != ''">
 						<span class="orcid-error" ng-bind-html="result"></span><br />
@@ -280,7 +280,7 @@
 						<span class="orcid-error" ng-bind-html="result"></span><br />
 					</div>
 					<label for="email"><@orcid.msg 'admin.verify_email.title' /></label>
-					<input type="text" id="name" ng-model="email" placeholder="<@orcid.msg 'admin.verify_email.placeholder' />" class="input-xlarge" />																					
+					<input type="text" id="name" ng-enter="verifyEmail()" ng-model="email" placeholder="<@orcid.msg 'admin.verify_email.placeholder' />" class="input-xlarge" />																					
 				</div>
 				<div class="controls save-btns pull-left">
 					<span id="verify-email" ng-click="verifyEmail()" class="btn btn-primary"><@orcid.msg 'admin.verify_email.btn'/></span>						
@@ -306,7 +306,7 @@
 				<!-- Managed -->
 				<div class="form-group">
 					<label for="managed"><@orcid.msg 'admin.delegate.managed.label' /></label>
-					<input type="text" id="managed" placeholder="<@orcid.msg 'admin.delegate.managed.placeholder' />" class="input-xlarge" ng-model="request.managed.value" ng-change="checkClaimedStatus('managed')">				
+					<input type="text" id="managed" ng-enter="confirmDelegatesProcess()" placeholder="<@orcid.msg 'admin.delegate.managed.placeholder' />" class="input-xlarge" ng-model="request.managed.value" ng-change="checkClaimedStatus('managed')">				
 					<a href class="glyphicon glyphicon-ok green" ng-show="managed_verified"></a>					
 					<div id="invalid-managed" ng-show="request.managed.errors.length > 0" ng-cloak>
 						<span class="orcid-error" ng-repeat='error in request.managed.errors' ng-bind-html="error"></span><br />
@@ -315,7 +315,7 @@
 				<!-- Trusted -->
 				<div class="form-group">
 					<label for="trusted"><@orcid.msg 'admin.delegate.trusted.label' /></label>
-					<input type="text" id="trusted" placeholder="<@orcid.msg 'admin.delegate.trusted.placeholder' />" class="input-xlarge" ng-model="request.trusted.value" ng-change="checkClaimedStatus('trusted')">				
+					<input type="text" id="trusted" ng-enter="confirmDelegatesProcess()" placeholder="<@orcid.msg 'admin.delegate.trusted.placeholder' />" class="input-xlarge" ng-model="request.trusted.value" ng-change="checkClaimedStatus('trusted')">				
 					<a href class="glyphicon glyphicon-ok green" ng-show="trusted_verified"></a>					
 					<div id="invalid-trusted" ng-show="request.trusted.errors.length > 0" ng-cloak>
 						<span class="orcid-error" ng-repeat='error in request.trusted.errors' ng-bind-html="error"></span><br />
@@ -338,7 +338,7 @@
 			<div class="collapsible bottom-margin-small admin-modal" id="remove_security_question_section" style="display:none;">
 				<div class="form-group">
 					<label for="orcid"><@orcid.msg 'admin.remove_security_question.orcid.label' /></label>
-					<input type="text" id="orcid" ng-model="orcidOrEmail" placeholder="<@orcid.msg 'admin.remove_security_question.orcid.placeholder' />" class="input-xlarge" />					
+					<input type="text" id="orcid" ng-enter="confirmRemoveSecurityQuestion()" ng-model="orcidOrEmail" placeholder="<@orcid.msg 'admin.remove_security_question.orcid.placeholder' />" class="input-xlarge" />					
 					<div ng-show="result != ''">
 						<span class="orcid-error" ng-bind-html="result"></span><br />
 					</div>
@@ -359,7 +359,7 @@
 			<div class="collapsible bottom-margin-small admin-modal" id="deprecation_modal" style="display:none;">		    	
 				<div class="form-group">
 					<label for="deprecated_orcid"><@orcid.msg 'admin.profile_deprecation.to_deprecate' /></label>
-					<input type="text" id="deprecated_orcid" placeholder="<@orcid.msg 'admin.profile_deprecation.placeholder.account_to_deprecate' />" class="form-control" ng-model="deprecatedAccount.orcid" ng-change="findAccountDetails('deprecated')">
+					<input type="text" id="deprecated_orcid" placeholder="<@orcid.msg 'admin.profile_deprecation.placeholder.account_to_deprecate' />" class="form-control" ng-enter="confirmDeprecateAccount()" ng-model="deprecatedAccount.orcid" ng-change="findAccountDetails('deprecated')">
 					<a href class="glyphicon glyphicon-ok green" ng-show="deprecated_verified"></a>					
 					<div id="invalid-regex-deprecated" ng-show="invalid_regex_deprecated" ng-cloak>
 						<span class="orcid-error"><@orcid.msg 'admin.profile_deprecation.errors.invalid_regex' /></span>
@@ -370,7 +370,7 @@
 				</div>
 				<div class="form-group">
 					<label for="deprecated_orcid"><@orcid.msg 'admin.profile_deprecation.primary' /></label>
-					<input type="text" id="primary_orcid" placeholder="<@orcid.msg 'admin.profile_deprecation.placeholder.primary_account' />" class="form-control" ng-model="primaryAccount.orcid" ng-change="findAccountDetails('primary')">				
+					<input type="text" id="primary_orcid" placeholder="<@orcid.msg 'admin.profile_deprecation.placeholder.primary_account' />" class="form-control" ng-enter="confirmDeprecateAccount()" ng-model="primaryAccount.orcid" ng-change="findAccountDetails('primary')">				
 					<a href class="glyphicon glyphicon-ok green" ng-show="primary_verified"></a>					
 					<div id="invalid-regex-primary" ng-show="invalid_regex_primary" ng-cloak>
 						<span class="orcid-error"><@orcid.msg 'admin.profile_deprecation.errors.invalid_regex' /></span><br />
@@ -395,7 +395,7 @@
 			<div class="collapsible bottom-margin-small admin-modal" id="deactivation_modal" style="display:none;">					    		
 	    		<div class="form-group">
 					<label for="orcid_to_deactivate"><@orcid.msg 'admin.profile_deactivation.to_deactivate' /></label>
-					<input type="text" id="orcid_to_deactivate" ng-model="orcidToDeactivate" placeholder="<@orcid.msg 'admin.profile_deactivation.placeholder.to_deactivate' />" class="form-control" />					
+					<input type="text" id="orcid_to_deactivate" ng-enter="confirmDeactivateAccount()" ng-model="orcidToDeactivate" placeholder="<@orcid.msg 'admin.profile_deactivation.placeholder.to_deactivate' />" class="form-control" />					
 					<div ng-show="deactivatedAccount.errors.length">
 						<span class="orcid-error" ng-repeat='error in deactivatedAccount.errors' ng-bind-html="error"></span><br />
 					</div>		
@@ -416,7 +416,7 @@
 			<div class="collapsible bottom-margin-small admin-modal" id="reactivation_modal" style="display:none;">					    		
 	    		<div class="form-group">
 					<label for="orcid_to_reactivate"><@orcid.msg 'admin.profile_reactivation.to_reactivate' /></label>
-					<input type="text" id="orcid_to_reactivate" ng-model="orcidToReactivate" placeholder="<@orcid.msg 'admin.profile_reactivation.placeholder.to_reactivate' />" class="form-control" />
+					<input type="text" id="orcid_to_reactivate" ng-enter="confirmReactivateAccount()" ng-model="orcidToReactivate" placeholder="<@orcid.msg 'admin.profile_reactivation.placeholder.to_reactivate' />" class="form-control" />
 					<div ng-show="reactivatedAccount.errors.length">
 						<span class="orcid-error" ng-repeat='error in reactivatedAccount.errors' ng-bind-html="error"></span><br />
 					</div>
@@ -438,7 +438,7 @@
 	    	<div class="form-group">
 	    		<p ng-show="message != ''">{{message}}</p>
 				<label for="orcid_to_lock"><@orcid.msg 'common.orcidOrEmail' /></label>
-				<input type="text" id="orcid_to_lock" ng-model="orcidToLock" placeholder="<@orcid.msg 'common.orcidOrEmail' />" class="input-xlarge" />
+				<input type="text" id="orcid_to_lock" ng-enter="checkProfileToLock()" ng-model="orcidToLock" placeholder="<@orcid.msg 'common.orcidOrEmail' />" class="input-xlarge" />
 				<div ng-show="profileDetails.errors.length">
 					<span class="orcid-error" ng-repeat="error in profileDetails.errors" ng-bind-html="error"></span><br />
 				</div>
@@ -460,7 +460,7 @@
 	    	<div class="form-group">
 	    		<p ng-show="message != ''">{{message}}</p>
 				<label for="orcid_to_unlock"><@orcid.msg 'common.orcidOrEmail' /></label>
-				<input type="text" id="orcid_to_unlock" ng-model="orcidToUnlock" placeholder="<@orcid.msg 'common.orcidOrEmail' />" class="input-xlarge" />
+				<input type="text" id="orcid_to_unlock" ng-enter="checkProfileToUnlock()" ng-model="orcidToUnlock" placeholder="<@orcid.msg 'common.orcidOrEmail' />" class="input-xlarge" />
 				<div ng-show="profileDetails.errors.length">
 					<span class="orcid-error" ng-repeat="error in profileDetails.errors" ng-bind-html="error"></span><br />
 				</div>

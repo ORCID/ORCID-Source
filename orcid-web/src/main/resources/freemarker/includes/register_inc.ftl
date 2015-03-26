@@ -18,7 +18,7 @@
 -->
 <#include "/common/browser-checks.ftl" />
 <div ng-controller="RegistrationCtrl" id="RegistrationCtr">
-<div>
+<fn-form update-fn="postRegister()">
 	<!-- span class="orcid-error" ng-show="register.errors.length > 0">
 		<div ng-repeat='error in register.errors' ng-bind-html="error"></div>
    	</span -->
@@ -159,7 +159,7 @@
     <div class="relative">
           <button type="submit" tabindex="10" class="btn btn-primary" ng-click="postRegister()">${springMacroRequestContext.getMessage("header.register")}</button>
     </div>  
-</div> 
+</fn-form>
 
 <script type="text/ng-template" id="duplicates">
 	<div class="lightbox-container" id="duplicates-records">
