@@ -151,4 +151,16 @@ public class PublicV2ApiServiceDelegatorImpl implements PublicV2ApiServiceDelega
         ActivityUtils.setPathToActivity(es, orcid);
         return Response.ok(es).build();
     }
+
+    @Override
+    public Response viewPeerReview(String orcid, String putCode) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Response viewPeerReviewSummary(String orcid, String putCode) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }
