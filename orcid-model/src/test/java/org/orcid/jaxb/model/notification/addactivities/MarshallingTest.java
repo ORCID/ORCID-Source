@@ -58,8 +58,7 @@ public class MarshallingTest {
         JAXBContext context = JAXBContext.newInstance("org.orcid.jaxb.model.notification.addactivities");
         Marshaller marshaller = context.createMarshaller();
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-        marshaller.setProperty(Marshaller.JAXB_SCHEMA_LOCATION,
-                "http://www.orcid.org/ns/notification ../notification-add-activities-2.0_rc1.xsd");
+        marshaller.setProperty(Marshaller.JAXB_SCHEMA_LOCATION, "http://www.orcid.org/ns/notification ../notification-add-activities-2.0_rc1.xsd");
         StringWriter writer = new StringWriter();
         marshaller.marshal(notification, writer);
         String result = writer.toString();
