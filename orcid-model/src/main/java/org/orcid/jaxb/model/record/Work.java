@@ -56,8 +56,8 @@ import org.orcid.jaxb.model.common.VisibilityType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "putCode", "title", "journalTitle", "shortDescription", "citation", "type", "publicationDate", "externalIdentifiers", "url",
-        "contributors", "source", "createdDate", "lastModifiedDate", "languageCode", "country" })
+@XmlType(propOrder = { "putCode", "path", "source", "createdDate", "lastModifiedDate", "title", "journalTitle", "shortDescription", "citation", "type", "publicationDate", "externalIdentifiers", "url",
+        "contributors", "languageCode", "country" })
 @XmlRootElement(name = "work", namespace = "http://www.orcid.org/ns/work")
 public class Work implements VisibilityType, Activity, Serializable {
 
