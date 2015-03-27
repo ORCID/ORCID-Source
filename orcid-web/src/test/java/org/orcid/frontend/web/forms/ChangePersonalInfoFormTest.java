@@ -16,14 +16,23 @@
  */
 package org.orcid.frontend.web.forms;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.apache.commons.io.IOUtils;
+import org.custommonkey.xmlunit.Diff;
+import org.custommonkey.xmlunit.ElementNameAndTextQualifier;
+import org.custommonkey.xmlunit.XMLAssert;
+import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Test;
 import org.orcid.jaxb.model.message.OrcidIdentifier;
 import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.persistence.aop.ProfileLastModifiedAspect;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ChangePersonalInfoFormTest {
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(ChangePersonalInfoFormTest.class);
 
     @Test
     public void testConvertFormToOrcidProfile() throws Exception {
@@ -42,10 +51,14 @@ public class ChangePersonalInfoFormTest {
         changePersonalInfoForm.setWebsiteUrl("www.bbc.co.uk");
         changePersonalInfoForm.setWebsiteUrlText("Ok this might not be my site");
         changePersonalInfoForm.mergeOrcidBioDetails(profile);
-
         String expected = IOUtils.toString(getClass().getResourceAsStream("change_personal_info_orcid_profile.xml"));
         String actual = profile.toString();
-        assertEquals(expected, actual);
+        XMLUnit.setIgnoreWhitespace(true);
+        Diff diff = new Diff(expected, actual);
+        diff.overrideElementQualifier(new ElementNameAndTextQualifier());
+        LOGGER.error(expected);
+        LOGGER.error(actual);
+        XMLAssert.assertXMLEqual(diff, true);
     }
 
     @Test
@@ -68,7 +81,12 @@ public class ChangePersonalInfoFormTest {
 
         String expected = IOUtils.toString(getClass().getResourceAsStream("change_personal_info_orcid_profile.xml"));
         String actual = profile.toString();
-        assertEquals(expected, actual);
+        XMLUnit.setIgnoreWhitespace(true);
+        Diff diff = new Diff(expected, actual);
+        diff.overrideElementQualifier(new ElementNameAndTextQualifier());
+        LOGGER.error(expected);
+        LOGGER.error(actual);
+        XMLAssert.assertXMLEqual(diff, true);
     }
 
     @Test
@@ -91,7 +109,12 @@ public class ChangePersonalInfoFormTest {
 
         String expected = IOUtils.toString(getClass().getResourceAsStream("change_personal_info_orcid_profile.xml"));
         String actual = profile.toString();
-        assertEquals(expected, actual);
+        XMLUnit.setIgnoreWhitespace(true);
+        Diff diff = new Diff(expected, actual);
+        diff.overrideElementQualifier(new ElementNameAndTextQualifier());
+        LOGGER.error(expected);
+        LOGGER.error(actual);
+        XMLAssert.assertXMLEqual(diff, true);
     }
 
 }
