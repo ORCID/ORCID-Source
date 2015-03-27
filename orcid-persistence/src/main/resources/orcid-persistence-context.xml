@@ -199,7 +199,6 @@
         <property name="propagationBehaviorName" value="PROPAGATION_REQUIRED" />
     </bean>
 
-
 	<!-- Statistics -->
 	<bean id="statisticsDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
 		<property name="driverClass" value="\${org.orcid.persistence.statistics.db.class}" />
@@ -300,9 +299,6 @@
         <property name="parser" ref="responseParser" />
     </bean>
     
-    
-    
-    
     <bean id="orgFundingSubTypeSolrServer" class="org.apache.solr.client.solrj.impl.HttpSolrServer">
         <constructor-arg value="\${org.orcid.persistence.solr.url}/fundingSubType" />
         <property name="soTimeout" value="\${org.orcid.persistence.solr.socketTimeout}" />
@@ -323,10 +319,6 @@
         <property name="maxTotalConnections" value="\${org.orcid.persistence.solr.defaultMaxConnectionsPerHost}" />
         <property name="parser" ref="responseParser" />
     </bean>
-    
-    
-    
-    
     
     <bean name="responseParser" class="org.apache.solr.client.solrj.impl.XMLResponseParser"></bean>
 

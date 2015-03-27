@@ -1,17 +1,23 @@
 package org.orcid.persistence.jpa.entities;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.record.peer_review.Role;
 import org.orcid.jaxb.model.record.peer_review.PeerReviewType;
+import org.orcid.utils.OrcidStringUtils;
 
 @Entity
 @Table(name = "peer_review")
 public class PeerReviewEntity extends BaseEntity<Long> implements ProfileAware, SourceAware {
-
-    private static final long serialVersionUID = -5834113137659672968L;
+    
+    private static final long serialVersionUID = -172752706595347541L;
     private Long id;
     private ProfileEntity profile;
     private Role role;
@@ -20,6 +26,7 @@ public class PeerReviewEntity extends BaseEntity<Long> implements ProfileAware, 
     private String url;
     private PeerReviewType type;
     private FuzzyDateEntity completionDate;
+    private PeerReviewSubjectEntity subject;
     private SourceEntity source;
     private Visibility visibility;
     
@@ -101,7 +108,45 @@ public class PeerReviewEntity extends BaseEntity<Long> implements ProfileAware, 
     }
     
     @Override
+    @Id
+    @ManyToOne(cascade = { CascadeType.REFRESH }, fetch = FetchType.EAGER)
+    @JoinColumn(name = "orcid", nullable = false)
     public ProfileEntity getProfile() {
         return profile;
-    }   
+    }  
+    
+    public PeerReviewSubjectEntity getSubject() {
+        return subject;
+    }
+
+    public void setSubject(PeerReviewSubjectEntity subject) {
+        this.subject = subject;
+    }
+
+    public int compareTo(PeerReviewEntity other) {        
+        if (other == null) {
+            throw new NullPointerException("Can't compare with null");
+        }
+        
+        int compareSubject = subject.compareTo(other.getSubject());
+        if(compareSubject != 0) {
+            return compareSubject;
+        }
+        
+        int urlCompare = OrcidStringUtils.compareStrings(url, other.getUrl());
+        if(urlCompare != 0) {
+            return urlCompare;
+        }
+        
+        return 0;
+    }
+    
+    public void clean() {
+        externalIdentifiersJson = null;
+        url = null;
+        type = null;
+        completionDate = null;
+        subject = null;
+        visibility = null;
+    }
 }
