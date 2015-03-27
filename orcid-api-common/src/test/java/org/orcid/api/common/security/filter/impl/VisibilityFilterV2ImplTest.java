@@ -41,7 +41,7 @@ import org.xml.sax.SAXException;
 /**
  * 
  * @author Will Simpson
- *
+ * 
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
@@ -59,17 +59,12 @@ public class VisibilityFilterV2ImplTest {
     }
 
     @Test
-    public void testUnmarshall() throws JAXBException, IOException {
+    public void testUnmarshall() throws JAXBException, IOException, SAXException {
         ActivitiesSummary activitiesSummary = getActivitiesSummary("/activities-protected-full-latest.xml");
         String expected = IOUtils.toString(getClass().getResourceAsStream("/activities-protected-full-latest.xml"), "UTF-8").replaceAll("(?s)<!--.*?-->\n*", "");
-        try {
-            XMLUnit.setIgnoreWhitespace(true);
-            Diff diff = new Diff(expected, activitiesSummary.toString());
-            assertTrue(diff.identical());
-        } catch (SAXException | IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        XMLUnit.setIgnoreWhitespace(true);
+        Diff diff = new Diff(expected, activitiesSummary.toString());
+        assertTrue(diff.identical());
     }
 
     @Test
