@@ -3,6 +3,16 @@
 	xmlns:common="http://www.orcid.org/ns/common" xmlns:education="http://www.orcid.org/ns/education"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.orcid.org/ns/education ../education-2.0_rc1.xsd ">
+	<common:created-date>2001-12-31T12:00:00</common:created-date>
+	<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
+    <common:source>
+        <common:source-orcid>
+            <common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
+            <common:path>8888-8888-8888-8880</common:path>
+            <common:host>orcid.org</common:host>
+        </common:source-orcid>
+        <common:source-name />
+    </common:source>
 	<education:department-name>education:department-name</education:department-name>
 	<education:role-title>education:role-title</education:role-title>
 	<common:start-date>
@@ -27,14 +37,4 @@
 			<common:disambiguation-source>common:disambiguation-source</common:disambiguation-source>
 		</common:disambiguated-organization>
 	</education:organization>
-	<common:source>
-		<common:source-orcid>
-			<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
-			<common:path>8888-8888-8888-8880</common:path>
-			<common:host>orcid.org</common:host>
-		</common:source-orcid>
-		<common:source-name />
-	</common:source>
-	<common:created-date>2001-12-31T12:00:00</common:created-date>
-	<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
 </education:education>

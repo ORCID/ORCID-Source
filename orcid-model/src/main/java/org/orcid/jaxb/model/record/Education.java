@@ -52,7 +52,7 @@ import org.orcid.jaxb.model.common.VisibilityType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "departmentName", "roleTitle", "startDate", "endDate", "organization", "source", "createdDate", "lastModifiedDate" })
+@XmlType(propOrder = { "putCode", "path", "source", "createdDate", "lastModifiedDate", "departmentName", "roleTitle", "startDate", "endDate", "organization"})
 @XmlRootElement(name = "education", namespace = "http://www.orcid.org/ns/education")
 public class Education implements Serializable, VisibilityType, Activity, OrganizationHolder {
 
