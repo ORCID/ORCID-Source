@@ -512,13 +512,12 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     public void setProfileWorks(SortedSet<ProfileWorkEntity> works) {
         this.profileWorks = works;
     }
-
     
     /**
      * @return the peer reviews
      * */
     @OneToMany(mappedBy = PROFILE, cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    @Sort(type = SortType.COMPARATOR, comparator = ProfileWorkEntityDisplayIndexComparatorDesc.class)
+    @Sort(type = SortType.NATURAL)
     public SortedSet<PeerReviewEntity> getPeerReviews() {
         return peerReviews;
     }
@@ -530,14 +529,6 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     public void setPeerReviews(SortedSet<PeerReviewEntity> peerReviews) {
         this.peerReviews = peerReviews;
     }
-    
-    
-    
-    
-    
-    
-    
-    
     
     /**
      * @return the researcherUrls

@@ -16,12 +16,19 @@
  */
 package org.orcid.persistence.jpa.entities;
 
+import javax.persistence.Basic;
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.orcid.jaxb.model.message.Visibility;
@@ -41,12 +48,15 @@ public class PeerReviewEntity extends BaseEntity<Long> implements ProfileAware, 
     private String externalIdentifiersJson;
     private String url;
     private PeerReviewType type;
-    private FuzzyDateEntity completionDate;
+    private CompletionDateEntity completionDate;
     private PeerReviewSubjectEntity subject;
     private SourceEntity source;
     private Visibility visibility;
     
     @Override
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "peer_review_seq")
+    @SequenceGenerator(name = "peer_review_seq", sequenceName = "peer_review_seq")
     public Long getId() {
         return id;
     }
@@ -59,6 +69,8 @@ public class PeerReviewEntity extends BaseEntity<Long> implements ProfileAware, 
         this.role = role;
     }
 
+    @ManyToOne(fetch = FetchType.EAGER, cascade = { CascadeType.DETACH, CascadeType.REFRESH })
+    @JoinColumn(name = "org_id", nullable = false)
     public OrgEntity getOrg() {
         return org;
     }
@@ -67,6 +79,7 @@ public class PeerReviewEntity extends BaseEntity<Long> implements ProfileAware, 
         this.org = org;
     }
 
+    @Column(name = "external_identifiers_json")
     public String getExternalIdentifiersJson() {
         return externalIdentifiersJson;
     }
@@ -75,6 +88,7 @@ public class PeerReviewEntity extends BaseEntity<Long> implements ProfileAware, 
         this.externalIdentifiersJson = externalIdentifiersJson;
     }
 
+    @Column(name = "url", length = 350)
     public String getUrl() {
         return url;
     }
@@ -83,6 +97,8 @@ public class PeerReviewEntity extends BaseEntity<Long> implements ProfileAware, 
         this.url = url;
     }
 
+    @Basic
+    @Enumerated(EnumType.STRING)    
     public PeerReviewType getType() {
         return type;
     }
@@ -91,11 +107,11 @@ public class PeerReviewEntity extends BaseEntity<Long> implements ProfileAware, 
         this.type = type;
     }
 
-    public FuzzyDateEntity getCompletionDate() {
+    public CompletionDateEntity getCompletionDate() {
         return completionDate;
     }
 
-    public void setCompletionDate(FuzzyDateEntity completionDate) {
+    public void setCompletionDate(CompletionDateEntity completionDate) {
         this.completionDate = completionDate;
     }
 
@@ -107,6 +123,8 @@ public class PeerReviewEntity extends BaseEntity<Long> implements ProfileAware, 
         this.source = source;
     }
 
+    @Basic
+    @Enumerated(EnumType.STRING)
     public Visibility getVisibility() {
         return visibility;
     }

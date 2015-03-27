@@ -136,5 +136,5 @@
 <!--
     Enable this in a post 1.1.83.x release
      <include file="/db/updates/remove_amount_field.xml" /> -->
-     <include file="/db/updates/peer_review.xml" />
+     <include file="/db/updates/peer-review.xml" />
 </databaseChangeLog>

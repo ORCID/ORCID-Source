@@ -43,7 +43,6 @@
 				<constraints nullable="false" />
 			</column>
 			
-			<column name="client_source_id" type="VARCHAR(20)"/>
 			<column name="completion_day" type="integer" />
 			<column name="completion_month" type="integer" />
 			<column name="completion_year" type="integer" />
@@ -52,7 +51,8 @@
 			<column name="source_id" type="VARCHAR(255)" />
 			<column name="url" type="VARCHAR(350)" />
 			<column name="visibility" type="VARCHAR(20)" />
-
+			<column name="client_source_id" type="VARCHAR(20)"/>
+			<column name="peer_review_subject_id" type="bigint"/>						        
         </createTable>
         
         <!-- peer_review_subject -->
@@ -67,20 +67,35 @@
 			<column name="title" type="VARCHAR(1000)">
 				<constraints nullable="false" />
 			</column>
-			<column name="translated_title" type="VARCHAR(1000)">
-				<constraints nullable="false" />
-			</column>			
-			<column name="type" type="VARCHAR(25)">
-				<constraints nullable="false" />
-			</column>
-			<column name="title_language_code" type="VARCHAR(10)">
+			<column name="work_type" type="VARCHAR(25)">
 				<constraints nullable="false" />
 			</column>
 			<column name="translated_title_language_code" type="VARCHAR(10)">
 				<constraints nullable="false" />
 			</column>
+			<column name="sub_title" type="VARCHAR(1000)" />
+			<column name="translated_title" type="VARCHAR(1000)" />			
 			<column name="url" type="VARCHAR(350)" />			
 		</createTable>
+		
+		<addForeignKeyConstraint constraintName="peer_review_org_id_fk" baseTableName="peer_review" baseColumnNames="org_id" referencedTableName="org" referencedColumnNames="id" />
+		<addForeignKeyConstraint constraintName="peer_review_subject_id_fk" baseTableName="peer_review" baseColumnNames="peer_review_subject_id" referencedTableName="peer_review_subject" referencedColumnNames="id" />
+    </changeSet>
+    
+    <changeSet id="CREATE-PEER-REVIEW-SEQUENCES" author="Angel Montenegro" dbms="postgresql">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<sequenceExists sequenceName="peer_review_seq"/>
+				<sequenceExists sequenceName="peer_review_subject_seq"/>
+			</not>
+		</preConditions>
+        <createSequence sequenceName="peer_review_seq" startValue="1000" />
+        <createSequence sequenceName="peer_review_subject_seq" startValue="1000"/>
+    </changeSet>
+    
+    <changeSet id="CREATE-AUTOCOLS" author="Angel Montenegro" dbms="hsqldb">    	
+        <addAutoIncrement tableName="peer_review" columnName="id" columnDataType="bigint"/>
+        <addAutoIncrement tableName="peer_review_subject" columnName="id" columnDataType="bigint"/>
     </changeSet>
     
 </databaseChangeLog>

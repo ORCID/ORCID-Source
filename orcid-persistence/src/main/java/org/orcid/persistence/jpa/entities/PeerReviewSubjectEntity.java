@@ -16,7 +16,15 @@
  */
 package org.orcid.persistence.jpa.entities;
 
+import javax.persistence.Basic;
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.orcid.jaxb.model.message.WorkType;
@@ -36,8 +44,11 @@ public class PeerReviewSubjectEntity extends BaseEntity<Long> {
     private String translatedTitle;
     private String translatedTitleLanguageCode;
     private String workUrl;
-
+    
     @Override
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "peer_review_subject_seq")
+    @SequenceGenerator(name = "peer_review_subject_seq", sequenceName = "peer_review_subject_seq")
     public Long getId() {
         return id;
     }
@@ -46,6 +57,7 @@ public class PeerReviewSubjectEntity extends BaseEntity<Long> {
         this.id = id;
     }
 
+    @Column(name = "external_identifiers_json")
     public String getExternalIdentifiersJson() {
         return externalIdentifiersJson;
     }
@@ -54,6 +66,9 @@ public class PeerReviewSubjectEntity extends BaseEntity<Long> {
         this.externalIdentifiersJson = externalIdentifiersJson;
     }
 
+    @Basic
+    @Enumerated(EnumType.STRING)
+    @Column(name = "work_type", length = 100)
     public WorkType getWorkType() {
         return workType;
     }
@@ -62,6 +77,7 @@ public class PeerReviewSubjectEntity extends BaseEntity<Long> {
         this.workType = workType;
     }
 
+    @Column(name = "journal_title")
     public String getJournalTitle() {
         return journalTitle;
     }
@@ -70,6 +86,7 @@ public class PeerReviewSubjectEntity extends BaseEntity<Long> {
         this.journalTitle = journalTitle;
     }
 
+    @Column(name = "title")
     public String getTitle() {
         return title;
     }
@@ -78,6 +95,7 @@ public class PeerReviewSubjectEntity extends BaseEntity<Long> {
         this.title = title;
     }
 
+    @Column(name = "translated_title")
     public String getTranslatedTitle() {
         return translatedTitle;
     }
@@ -86,6 +104,7 @@ public class PeerReviewSubjectEntity extends BaseEntity<Long> {
         this.translatedTitle = translatedTitle;
     }
 
+    @Column(name = "translated_title_language_code")
     public String getTranslatedTitleLanguageCode() {
         return translatedTitleLanguageCode;
     }
@@ -94,6 +113,7 @@ public class PeerReviewSubjectEntity extends BaseEntity<Long> {
         this.translatedTitleLanguageCode = translatedTitleLanguageCode;
     }
 
+    @Column(name = "url")
     public String getWorkUrl() {
         return workUrl;
     }
@@ -102,6 +122,7 @@ public class PeerReviewSubjectEntity extends BaseEntity<Long> {
         this.workUrl = workUrl;
     }
 
+    @Column(name = "sub_title")
     public String getSubTitle() {
         return subTitle;
     }
