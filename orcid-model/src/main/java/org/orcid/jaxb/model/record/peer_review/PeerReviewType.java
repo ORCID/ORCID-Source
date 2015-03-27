@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlType;
 
 @XmlType(name = "type")
 @XmlEnum
-public enum Type implements Serializable {
+public enum PeerReviewType implements Serializable {
     @XmlEnumValue("REVIEW")
     REVIEW("REVIEW"),
     @XmlEnumValue("EVALUATION")
@@ -32,7 +32,7 @@ public enum Type implements Serializable {
         
     private final String value;
 
-    Type(String v) {
+    PeerReviewType(String v) {
         value = v;
     }
 
@@ -40,8 +40,8 @@ public enum Type implements Serializable {
         return value;
     }
     
-    public static Type fromValue(String v) {
-        for (Type c : Type.values()) {
+    public static PeerReviewType fromValue(String v) {
+        for (PeerReviewType c : PeerReviewType.values()) {
             if (c.value.equals(v)) {
                 return c;
             }

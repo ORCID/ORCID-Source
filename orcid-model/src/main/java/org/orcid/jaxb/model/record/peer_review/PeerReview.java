@@ -51,7 +51,7 @@ public class PeerReview implements VisibilityType, Activity, Serializable, Organ
     @XmlElement(namespace = "http://www.orcid.org/ns/peer-review")
     protected Url url;
     @XmlElement(namespace = "http://www.orcid.org/ns/peer-review")
-    protected Type type;
+    protected PeerReviewType type;
     @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "completion-date")
     protected FuzzyDate completionDate;
     @XmlElement(namespace = "http://www.orcid.org/ns/peer-review")
@@ -102,11 +102,11 @@ public class PeerReview implements VisibilityType, Activity, Serializable, Organ
         this.url = url;
     }
 
-    public Type getType() {
+    public PeerReviewType getType() {
         return type;
     }
 
-    public void setType(Type type) {
+    public void setType(PeerReviewType type) {
         this.type = type;
     }
 
