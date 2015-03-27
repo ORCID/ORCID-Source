@@ -16,7 +16,6 @@
  */
 package org.orcid.frontend.web.forms;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -30,13 +29,18 @@ import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 
 import org.apache.commons.io.IOUtils;
+import org.custommonkey.xmlunit.Diff;
+import org.custommonkey.xmlunit.ElementNameAndTextQualifier;
+import org.custommonkey.xmlunit.XMLAssert;
+import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Test;
 import org.orcid.jaxb.model.message.OrcidProfile;
+import org.xml.sax.SAXException;
 
 public class PersonalInfoFormTest {
 
     @Test
-    public void testGetOrcidProfile() throws IOException {
+    public void testGetOrcidProfile() throws IOException, SAXException {
         PersonalInfoForm form = new PersonalInfoForm();
         form.setOrcid("4444-4444-4444-4446");
         form.setGivenNames("Johnny");
@@ -56,6 +60,10 @@ public class PersonalInfoFormTest {
         assertNotNull(profile);
         String expected = IOUtils.toString(getClass().getResourceAsStream("personal_info_orcid_profile.xml"), "UTF-8");
         String actual = profile.toString();
-        assertEquals(expected, actual);
+        XMLUnit.setIgnoreWhitespace(true);
+        Diff diff = new Diff(expected, actual);
+        diff.overrideElementQualifier(new ElementNameAndTextQualifier());
+        XMLAssert.assertXMLEqual(diff, true);
+
     }
 }
