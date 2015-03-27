@@ -16,6 +16,7 @@
  */
 package org.orcid.jaxb.model.notification.addactivities;
 
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -30,8 +31,11 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
 import org.apache.commons.io.IOUtils;
+import org.custommonkey.xmlunit.Diff;
+import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Test;
 import org.orcid.jaxb.model.notification.NotificationType;
+import org.xml.sax.SAXException;
 
 /**
  * 
@@ -44,7 +48,7 @@ public class MarshallingTest {
     private static final String SAMPLE_PATH = "/notification_2.0_rc1/samples/notification-add-activities-2.0_rc1.xml";
 
     @Test
-    public void testMarshalling() throws JAXBException, IOException {
+    public void testMarshalling() throws JAXBException, IOException, SAXException {
         NotificationAddActivities notification = getNotification();
         assertNotNull(notification);
         assertEquals(NotificationType.ADD_ACTIVITIES, notification.getNotificationType());
@@ -61,8 +65,9 @@ public class MarshallingTest {
         marshaller.setProperty(Marshaller.JAXB_SCHEMA_LOCATION, "http://www.orcid.org/ns/notification ../notification-add-activities-2.0_rc1.xsd");
         StringWriter writer = new StringWriter();
         marshaller.marshal(notification, writer);
-        String result = writer.toString();
-        assertEquals(expected, result);
+        XMLUnit.setIgnoreWhitespace(true);
+        Diff diff = new Diff(expected, writer.toString());
+        assertTrue(diff.identical());
     }
 
     private NotificationAddActivities getNotification() throws JAXBException {
