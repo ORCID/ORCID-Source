@@ -31,7 +31,7 @@
             <#if !(isPublicProfile??)>
                 <ul class="workspace-bar-menu">
                     <!-- Bulk Edit -->
-                    <li>
+                    <li ng-show="worksSrvc.groups.length > 1">
                         <a class="action-option works manage-button" ng-class="{'green-bg' : bulkEditShow == true}" ng-click="toggleBulkEdit()">
                             <span class="glyphicon glyphicon-pencil"></span><@orcid.msg 'groups.common.bulk_edit'/>
                         </a>
