@@ -502,8 +502,13 @@
 	<bean id="jpaJaxbEmploymentAdapter" class="org.orcid.core.adapter.impl.JpaJaxbEmploymentAdapterImpl">
         <property name="mapperFacade" ref="employmentMapperFacade" />
     </bean>
-	
-	<!-- Geonames username -->
+    
+    <bean id="peerReviewMapperFacade" factory-bean="&amp;mapperFacadeFactory" factory-method="getPeerReviewMapperFacade"/>
+	<bean id="jpaJaxbPeerReviewAdapter" class="org.orcid.core.adapter.impl.JpaJaxbPeerReviewAdapterImpl">
+        <property name="mapperFacade" ref="peerReviewMapperFacade" />
+    </bean>
+    
+    <!-- Geonames username -->
 	<bean id="geonamesUser" class="java.lang.String">
 		<constructor-arg value="orcid"/>
 	</bean>

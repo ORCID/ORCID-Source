@@ -44,6 +44,7 @@ import org.orcid.jaxb.model.record.WorkContributors;
 import org.orcid.jaxb.model.record.WorkExternalIdentifier;
 import org.orcid.jaxb.model.record.WorkExternalIdentifiers;
 import org.orcid.jaxb.model.record.peer_review.PeerReview;
+import org.orcid.jaxb.model.record.peer_review.PeerReviewSummary;
 import org.orcid.jaxb.model.record.summary.EducationSummary;
 import org.orcid.jaxb.model.record.summary.EmploymentSummary;
 import org.orcid.jaxb.model.record.summary.FundingSummary;
@@ -237,13 +238,43 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         return mapperFactory.getMapperFacade();
     }
     
-    public MapperFacade getPeerReviewMapperFacade() {
+    public MapperFacade getPeerReviewMapperFacade() {                
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
+        
+        ConverterFactory converterFactory = mapperFactory.getConverterFactory();
+        converterFactory.registerConverter("workExternalIdentifiersConverterId", new JsonOrikaConverter<WorkExternalIdentifiers>());
+        
         ClassMapBuilder<PeerReview, PeerReviewEntity> classMap = mapperFactory.classMap(PeerReview.class, PeerReviewEntity.class);
         classMap.byDefault();
+        classMap.field("putCode", "id");
+        classMap.field("organization.name", "org.name");
+        classMap.field("organization.address.city", "org.city");
+        classMap.field("organization.address.region", "org.region");
+        classMap.field("organization.address.country", "org.country");
+        classMap.field("organization.disambiguatedOrganization.disambiguatedOrganizationIdentifier", "org.orgDisambiguated.sourceId");
+        classMap.field("organization.disambiguatedOrganization.disambiguationSource", "org.orgDisambiguated.sourceType");
+        classMap.field("subject.putCode", "subject.id");
+        classMap.field("subject.type", "subject.workType");
+        classMap.field("subject.title.title.content", "subject.title");
+        classMap.field("subject.title.translatedTitle.content", "subject.translatedTitle");
+        classMap.field("subject.title.translatedTitle.languageCode", "subject.translatedTitleLanguageCode");
+        classMap.field("subject.title.subtitle.content", "subject.subtitle");
+        classMap.field("subject.journalTitle.content", "subject.journalTitle");
+        classMap.field("subject.url", "subject.workUrl");        
+        classMap.fieldMap("externalIdentifiers", "externalIdentifiersJson").converter("workExternalIdentifiersConverterId").add();
+        classMap.fieldMap("subject.externalIdentifiers", "subject.externalIdentifiersJson").converter("workExternalIdentifiersConverterId").add();
+        classMap.register();
+        
+        ClassMapBuilder<PeerReviewSummary, PeerReviewEntity> peerReviewSummaryClassMap = mapperFactory.classMap(PeerReviewSummary.class,
+                PeerReviewEntity.class);
+        peerReviewSummaryClassMap.byDefault();
+        peerReviewSummaryClassMap.fieldMap("externalIdentifiers", "externalIdentifiersJson").converter("workExternalIdentifiersConverterId").add();
+        peerReviewSummaryClassMap.register();
+        
+        addV2SourceMapping(mapperFactory);
         return mapperFactory.getMapperFacade();
     }
-
+    
     private ClassMapBuilder<?, ?> mapCommonFields(ClassMapBuilder<?, ?> builder) {
         return builder.field("dateCreated", "createdDate").field("id", "putCode").byDefault();
     }

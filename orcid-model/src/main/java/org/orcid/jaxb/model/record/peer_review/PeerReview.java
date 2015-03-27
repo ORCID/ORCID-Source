@@ -38,7 +38,7 @@ import org.orcid.jaxb.model.record.Activity;
 import org.orcid.jaxb.model.record.WorkExternalIdentifiers;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = {"role","organization","externalIdentifiers","url","type","completionDate","subject"})
+@XmlType(propOrder = { "role", "organization", "externalIdentifiers", "url", "type", "completionDate", "subject" })
 @XmlRootElement(name = "peer-review", namespace = "http://www.orcid.org/ns/peer-review")
 public class PeerReview implements VisibilityType, Activity, Serializable, OrganizationHolder {
     private static final long serialVersionUID = -1112309604310926743L;
@@ -56,7 +56,7 @@ public class PeerReview implements VisibilityType, Activity, Serializable, Organ
     protected FuzzyDate completionDate;
     @XmlElement(namespace = "http://www.orcid.org/ns/peer-review")
     protected Subject subject;
-        
+
     @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected Source source;
     @XmlAttribute(name = "put-code")
@@ -192,7 +192,6 @@ public class PeerReview implements VisibilityType, Activity, Serializable, Organ
         result = prime * result + ((lastModifiedDate == null) ? 0 : lastModifiedDate.hashCode());
         result = prime * result + ((organization == null) ? 0 : organization.hashCode());
         result = prime * result + ((path == null) ? 0 : path.hashCode());
-        result = prime * result + ((putCode == null) ? 0 : putCode.hashCode());
         result = prime * result + ((role == null) ? 0 : role.hashCode());
         result = prime * result + ((source == null) ? 0 : source.hashCode());
         result = prime * result + ((subject == null) ? 0 : subject.hashCode());
@@ -241,11 +240,6 @@ public class PeerReview implements VisibilityType, Activity, Serializable, Organ
                 return false;
         } else if (!path.equals(other.path))
             return false;
-        if (putCode == null) {
-            if (other.putCode != null)
-                return false;
-        } else if (!putCode.equals(other.putCode))
-            return false;
         if (role != other.role)
             return false;
         if (source == null) {
@@ -268,5 +262,43 @@ public class PeerReview implements VisibilityType, Activity, Serializable, Organ
         if (visibility != other.visibility)
             return false;
         return true;
-    }        
+    }
+
+    /**
+     * Indicates if two peer reviews are ORCID duplicated. Two peer review will
+     * be duplicated if they have the same subject, the same external
+     * identifiers, the same role, the same type and same completion date
+     * 
+     * @return true if the two peer reviews are duplicated according to ORCID
+     *         requirements
+     * */
+    public boolean isDuplicated(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        PeerReview other = (PeerReview) obj;
+        if (!subject.equals(other)) {
+            return false;
+        }
+
+        if (!externalIdentifiers.equals(other.getExternalIdentifiers())) {
+            return false;
+        }
+
+        if (!role.equals(other.getRole())) {
+            return false;
+        }
+
+        if (!type.equals(other.getType())) {
+            return false;
+        }
+
+        if (!completionDate.equals(other.getCompletionDate())) {
+            return false;
+        }
+        return true;
+    }
 }

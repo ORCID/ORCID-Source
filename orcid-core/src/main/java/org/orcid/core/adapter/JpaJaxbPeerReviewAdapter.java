@@ -7,7 +7,7 @@ import org.orcid.jaxb.model.record.peer_review.PeerReview;
 import org.orcid.jaxb.model.record.peer_review.PeerReviewSummary;
 import org.orcid.persistence.jpa.entities.PeerReviewEntity;
 
-public interface Jaxb2JpaPeerReviewAdapter {
+public interface JpaJaxbPeerReviewAdapter {
     PeerReviewEntity toPeerReviewEntity(PeerReview peerReview);
 
     PeerReview toPeerReview(PeerReviewEntity entity);

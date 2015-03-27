@@ -16,6 +16,7 @@ public class PeerReviewSubjectEntity extends BaseEntity<Long> {
     private WorkType workType;
     private String journalTitle;
     private String title;
+    private String subTitle;
     private String translatedTitle;
     private String translatedTitleLanguageCode;
     private String workUrl;
@@ -83,6 +84,14 @@ public class PeerReviewSubjectEntity extends BaseEntity<Long> {
 
     public void setWorkUrl(String workUrl) {
         this.workUrl = workUrl;
+    }
+
+    public String getSubTitle() {
+        return subTitle;
+    }
+
+    public void setSubTitle(String subTitle) {
+        this.subTitle = subTitle;
     }
 
     public int compareTo(PeerReviewSubjectEntity other) {

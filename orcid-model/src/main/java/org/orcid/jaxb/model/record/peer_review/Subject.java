@@ -18,6 +18,7 @@ package org.orcid.jaxb.model.record.peer_review;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
@@ -32,6 +33,8 @@ import org.orcid.jaxb.model.record.WorkType;
 @XmlType(propOrder = {"externalIdentifiers","type","title","journalTitle","url"})
 @XmlRootElement(name = "subject")
 public class Subject {
+    @XmlAttribute(name = "put-code")
+    protected String putCode;
     @XmlElement(name = "external-identifiers", namespace = "http://www.orcid.org/ns/work")
     protected WorkExternalIdentifiers externalIdentifiers;
     @XmlElement(namespace = "http://www.orcid.org/ns/work")
@@ -43,6 +46,14 @@ public class Subject {
     @XmlElement(namespace = "http://www.orcid.org/ns/peer-review")
     protected Url url;
 
+    public String getPutCode() {
+        return putCode;
+    }
+
+    public void setPutCode(String putCode) {
+        this.putCode = putCode;
+    }
+    
     public WorkExternalIdentifiers getExternalIdentifiers() {
         return externalIdentifiers;
     }
@@ -127,5 +138,5 @@ public class Subject {
         } else if (!url.equals(other.url))
             return false;
         return true;
-    }
+    }    
 }
