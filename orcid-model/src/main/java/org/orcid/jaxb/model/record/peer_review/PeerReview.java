@@ -38,7 +38,7 @@ import org.orcid.jaxb.model.record.Activity;
 import org.orcid.jaxb.model.record.WorkExternalIdentifiers;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "role", "organization", "externalIdentifiers", "url", "type", "completionDate", "subject", "source", "createdDate", "lastModifiedDate" })
+@XmlType(propOrder = { "role", "organization", "externalIdentifiers", "url", "type", "completionDate", "subject", "source", "lastModifiedDate", "createdDate"})
 @XmlRootElement(name = "peer-review", namespace = "http://www.orcid.org/ns/peer-review")
 public class PeerReview implements VisibilityType, Activity, Serializable, OrganizationHolder {
     private static final long serialVersionUID = -1112309604310926743L;
@@ -46,13 +46,13 @@ public class PeerReview implements VisibilityType, Activity, Serializable, Organ
     protected Role role;
     @XmlElement(required = true, namespace = "http://www.orcid.org/ns/peer-review")
     protected Organization organization;
-    @XmlElement(name = "external-identifiers", namespace = "http://www.orcid.org/ns/peer-review")
+    @XmlElement(namespace = "http://www.orcid.org/ns/peer-review", name = "external-identifiers")
     protected WorkExternalIdentifiers externalIdentifiers;
     @XmlElement(namespace = "http://www.orcid.org/ns/peer-review")
     protected Url url;
     @XmlElement(namespace = "http://www.orcid.org/ns/peer-review")
     protected PeerReviewType type;
-    @XmlElement(name = "completion-date", namespace = "http://www.orcid.org/ns/peer-review")
+    @XmlElement(namespace = "http://www.orcid.org/ns/peer-review", name = "completion-date")
     protected FuzzyDate completionDate;
     @XmlElement(namespace = "http://www.orcid.org/ns/peer-review")
     protected Subject subject;
@@ -65,9 +65,9 @@ public class PeerReview implements VisibilityType, Activity, Serializable, Organ
     protected Visibility visibility;
     @XmlAttribute(name = "path")
     protected String path;
-    @XmlElement(namespace = "http://www.orcid.org/ns/common")
+    @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "last-modified-date")
     protected LastModifiedDate lastModifiedDate;
-    @XmlElement(namespace = "http://www.orcid.org/ns/common")
+    @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "created-date")
     protected CreatedDate createdDate;
 
     public Role getRole() {
@@ -93,7 +93,7 @@ public class PeerReview implements VisibilityType, Activity, Serializable, Organ
     public void setExternalIdentifiers(WorkExternalIdentifiers externalIdentifiers) {
         this.externalIdentifiers = externalIdentifiers;
     }
-
+    
     public Url getUrl() {
         return url;
     }
@@ -109,7 +109,7 @@ public class PeerReview implements VisibilityType, Activity, Serializable, Organ
     public void setType(PeerReviewType type) {
         this.type = type;
     }
-
+    
     public FuzzyDate getCompletionDate() {
         return completionDate;
     }
@@ -125,23 +125,23 @@ public class PeerReview implements VisibilityType, Activity, Serializable, Organ
     public void setSource(Source source) {
         this.source = source;
     }
-
+    
     public String getPutCode() {
-        return putCode;
+        return putCode;        
     }
 
     public void setPutCode(String putCode) {
         this.putCode = putCode;
     }
-
+    
     public Visibility getVisibility() {
-        return visibility;
+        return visibility;        
     }
 
     public void setVisibility(Visibility visibility) {
         this.visibility = visibility;
     }
-
+    
     public String getPath() {
         return path;
     }
@@ -157,7 +157,7 @@ public class PeerReview implements VisibilityType, Activity, Serializable, Organ
     public void setLastModifiedDate(LastModifiedDate lastModifiedDate) {
         this.lastModifiedDate = lastModifiedDate;
     }
-
+    
     public CreatedDate getCreatedDate() {
         return createdDate;
     }
@@ -165,7 +165,7 @@ public class PeerReview implements VisibilityType, Activity, Serializable, Organ
     public void setCreatedDate(CreatedDate createdDate) {
         this.createdDate = createdDate;
     }
-
+    /*
     public Subject getSubject() {
         return subject;
     }
@@ -174,14 +174,15 @@ public class PeerReview implements VisibilityType, Activity, Serializable, Organ
         this.subject = subject;
     }
 
+     */
     @Override
     public String retrieveSourcePath() {
-        if (source != null) {
+        /*if (source != null) {
             return source.retrieveSourcePath();
-        }
+        }*/
         return null;
     }
-
+     
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -191,10 +192,9 @@ public class PeerReview implements VisibilityType, Activity, Serializable, Organ
         result = prime * result + ((externalIdentifiers == null) ? 0 : externalIdentifiers.hashCode());
         result = prime * result + ((lastModifiedDate == null) ? 0 : lastModifiedDate.hashCode());
         result = prime * result + ((organization == null) ? 0 : organization.hashCode());
-        result = prime * result + ((path == null) ? 0 : path.hashCode());
         result = prime * result + ((role == null) ? 0 : role.hashCode());
         result = prime * result + ((source == null) ? 0 : source.hashCode());
-        result = prime * result + ((subject == null) ? 0 : subject.hashCode());
+        //result = prime * result + ((subject == null) ? 0 : subject.hashCode());
         result = prime * result + ((type == null) ? 0 : type.hashCode());
         result = prime * result + ((url == null) ? 0 : url.hashCode());
         result = prime * result + ((visibility == null) ? 0 : visibility.hashCode());
@@ -210,6 +210,7 @@ public class PeerReview implements VisibilityType, Activity, Serializable, Organ
         if (getClass() != obj.getClass())
             return false;
         PeerReview other = (PeerReview) obj;
+        /*
         if (completionDate == null) {
             if (other.completionDate != null)
                 return false;
@@ -261,6 +262,7 @@ public class PeerReview implements VisibilityType, Activity, Serializable, Organ
             return false;
         if (visibility != other.visibility)
             return false;
+            */
         return true;
     }
 
@@ -279,6 +281,7 @@ public class PeerReview implements VisibilityType, Activity, Serializable, Organ
             return false;
         if (getClass() != obj.getClass())
             return false;
+        /*
         PeerReview other = (PeerReview) obj;
         if (!subject.equals(other)) {
             return false;
@@ -299,6 +302,7 @@ public class PeerReview implements VisibilityType, Activity, Serializable, Organ
         if (!completionDate.equals(other.getCompletionDate())) {
             return false;
         }
+        */
         return true;
     }
 }

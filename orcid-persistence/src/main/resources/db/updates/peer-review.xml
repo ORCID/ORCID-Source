@@ -33,6 +33,9 @@
 				<constraints nullable="false" primaryKey="true"
 					primaryKeyName="peer_review_pkey" />
 			</column>
+			<column name="orcid" type="VARCHAR(255)">
+				<constraints nullable="false" />
+			</column>
 			<column name="external_identifiers_json" type="text">
 				<constraints nullable="false" />
 			</column>
@@ -79,6 +82,7 @@
 		</createTable>
 		
 		<addForeignKeyConstraint constraintName="peer_review_org_id_fk" baseTableName="peer_review" baseColumnNames="org_id" referencedTableName="org" referencedColumnNames="id" />
+		<addForeignKeyConstraint constraintName="peer_review_orcid_fk" baseTableName="peer_review" baseColumnNames="orcid" referencedTableName="profile" referencedColumnNames="orcid" />
 		<addForeignKeyConstraint constraintName="peer_review_subject_id_fk" baseTableName="peer_review" baseColumnNames="peer_review_subject_id" referencedTableName="peer_review_subject" referencedColumnNames="id" />
     </changeSet>
     

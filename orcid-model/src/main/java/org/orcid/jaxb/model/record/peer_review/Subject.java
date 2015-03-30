@@ -31,11 +31,11 @@ import org.orcid.jaxb.model.record.WorkType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = {"externalIdentifiers","type","title","journalTitle","url"})
-@XmlRootElement(name = "subject")
+@XmlRootElement(name = "subject", namespace = "http://www.orcid.org/ns/peer-review")
 public class Subject {
     @XmlAttribute(name = "put-code")
     protected String putCode;
-    @XmlElement(name = "external-identifiers", namespace = "http://www.orcid.org/ns/work")
+    @XmlElement(name = "external-identifiers", namespace = "http://www.orcid.org/ns/peer-review")
     protected WorkExternalIdentifiers externalIdentifiers;
     @XmlElement(namespace = "http://www.orcid.org/ns/work")
     protected WorkType type;
@@ -43,7 +43,7 @@ public class Subject {
     protected WorkTitle title;
     @XmlElement(name = "journal-title", namespace = "http://www.orcid.org/ns/work")
     protected Title journalTitle;
-    @XmlElement(namespace = "http://www.orcid.org/ns/peer-review")
+    @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected Url url;
 
     public String getPutCode() {
