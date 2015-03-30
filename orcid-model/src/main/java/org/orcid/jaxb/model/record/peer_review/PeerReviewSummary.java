@@ -18,8 +18,12 @@ package org.orcid.jaxb.model.record.peer_review;
 
 import java.io.Serializable;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 import org.orcid.jaxb.model.common.CreatedDate;
 import org.orcid.jaxb.model.common.Filterable;
@@ -30,14 +34,17 @@ import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.jaxb.model.record.Activity;
 import org.orcid.jaxb.model.record.WorkExternalIdentifiers;
 
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(propOrder = { "role", "externalIdentifiers", "type", "completionDate", "source", "createdDate", "lastModifiedDate" })
+@XmlRootElement(name = "summary", namespace = "http://www.orcid.org/ns/peer-review")
 public class PeerReviewSummary implements Filterable, Activity, Serializable {
     
     private static final long serialVersionUID = -7769331531691171324L;
     @XmlElement(namespace = "http://www.orcid.org/ns/peer-review")
     protected Role role;
-    @XmlElement(name = "external-identifiers", namespace = "http://www.orcid.org/ns/work")
+    @XmlElement(name = "external-identifiers", namespace = "http://www.orcid.org/ns/peer-review")
     protected WorkExternalIdentifiers externalIdentifiers;
-    @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "completion-date")
+    @XmlElement(name = "completion-date", namespace = "http://www.orcid.org/ns/peer-review")
     protected FuzzyDate completionDate;
     @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected Source source;

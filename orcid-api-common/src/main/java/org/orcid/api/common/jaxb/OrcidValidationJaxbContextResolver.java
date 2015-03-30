@@ -49,8 +49,7 @@ import org.orcid.jaxb.model.record.Education;
 import org.orcid.jaxb.model.record.Employment;
 import org.orcid.jaxb.model.record.Funding;
 import org.orcid.jaxb.model.record.Work;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.orcid.jaxb.model.record.peer_review.PeerReview;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.xml.sax.SAXException;
@@ -74,6 +73,7 @@ public class OrcidValidationJaxbContextResolver implements ContextResolver<Unmar
         SCHEMA_FILENAME_PREFIX_BY_CLASS.put(Funding.class, "record_2.0_rc1/funding-");
         SCHEMA_FILENAME_PREFIX_BY_CLASS.put(Education.class, "record_2.0_rc1/education-");
         SCHEMA_FILENAME_PREFIX_BY_CLASS.put(Employment.class, "record_2.0_rc1/employment-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS.put(PeerReview.class, "record_2.0_rc1/peer-review-");
         SCHEMA_FILENAME_PREFIX_BY_CLASS.put(OrcidMessage.class, "orcid-message-");
     }
     private JAXBContext jaxbContext;

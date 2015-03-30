@@ -258,7 +258,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         classMap.field("subject.title.title.content", "subject.title");
         classMap.field("subject.title.translatedTitle.content", "subject.translatedTitle");
         classMap.field("subject.title.translatedTitle.languageCode", "subject.translatedTitleLanguageCode");
-        classMap.field("subject.title.subtitle.content", "subject.subtitle");
+        classMap.field("subject.title.subtitle.content", "subject.subTitle");
         classMap.field("subject.journalTitle.content", "subject.journalTitle");
         classMap.field("subject.url", "subject.workUrl");        
         classMap.fieldMap("externalIdentifiers", "externalIdentifiersJson").converter("workExternalIdentifiersConverterId").add();

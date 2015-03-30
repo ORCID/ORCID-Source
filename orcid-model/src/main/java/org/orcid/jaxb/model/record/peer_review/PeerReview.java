@@ -38,7 +38,7 @@ import org.orcid.jaxb.model.record.Activity;
 import org.orcid.jaxb.model.record.WorkExternalIdentifiers;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "role", "organization", "externalIdentifiers", "url", "type", "completionDate", "subject" })
+@XmlType(propOrder = { "role", "organization", "externalIdentifiers", "url", "type", "completionDate", "subject", "source", "createdDate", "lastModifiedDate" })
 @XmlRootElement(name = "peer-review", namespace = "http://www.orcid.org/ns/peer-review")
 public class PeerReview implements VisibilityType, Activity, Serializable, OrganizationHolder {
     private static final long serialVersionUID = -1112309604310926743L;
@@ -46,13 +46,13 @@ public class PeerReview implements VisibilityType, Activity, Serializable, Organ
     protected Role role;
     @XmlElement(required = true, namespace = "http://www.orcid.org/ns/peer-review")
     protected Organization organization;
-    @XmlElement(name = "external-identifiers", namespace = "http://www.orcid.org/ns/work")
+    @XmlElement(name = "external-identifiers", namespace = "http://www.orcid.org/ns/peer-review")
     protected WorkExternalIdentifiers externalIdentifiers;
     @XmlElement(namespace = "http://www.orcid.org/ns/peer-review")
     protected Url url;
     @XmlElement(namespace = "http://www.orcid.org/ns/peer-review")
     protected PeerReviewType type;
-    @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "completion-date")
+    @XmlElement(name = "completion-date", namespace = "http://www.orcid.org/ns/peer-review")
     protected FuzzyDate completionDate;
     @XmlElement(namespace = "http://www.orcid.org/ns/peer-review")
     protected Subject subject;

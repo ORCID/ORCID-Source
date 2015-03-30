@@ -20,7 +20,7 @@ import java.util.List;
 
 import org.orcid.persistence.jpa.entities.PeerReviewEntity;
 
-public interface PeerReviewDao {
+public interface PeerReviewDao extends GenericDao<PeerReviewEntity, Long> {
 
     /**
      * Find and retrieve a peer review that have the given id and belongs to the given user

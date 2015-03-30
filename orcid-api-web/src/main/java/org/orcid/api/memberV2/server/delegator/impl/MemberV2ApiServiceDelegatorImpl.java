@@ -30,6 +30,7 @@ import org.orcid.core.exception.MismatchedPutCodeException;
 import org.orcid.core.manager.AffiliationsManager;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.OrcidSecurityManager;
+import org.orcid.core.manager.PeerReviewManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileFundingManager;
 import org.orcid.core.manager.ProfileWorkManager;
@@ -42,6 +43,7 @@ import org.orcid.jaxb.model.record.Employment;
 import org.orcid.jaxb.model.record.Funding;
 import org.orcid.jaxb.model.record.Work;
 import org.orcid.jaxb.model.record.peer_review.PeerReview;
+import org.orcid.jaxb.model.record.peer_review.PeerReviewSummary;
 import org.orcid.jaxb.model.record.summary.ActivitiesSummary;
 import org.orcid.jaxb.model.record.summary.EducationSummary;
 import org.orcid.jaxb.model.record.summary.EmploymentSummary;
@@ -78,6 +80,9 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     @Resource
     private AffiliationsManager affiliationsManager;
 
+    @Resource
+    private PeerReviewManager peerReviewManager;
+    
     @Resource
     private WebhookDao webhookDao;
 
@@ -291,20 +296,24 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
 
     @Override
     public Response viewPeerReview(String orcid, String putCode) {
-        // TODO Auto-generated method stub
-        return null;
+        PeerReview peerReview = peerReviewManager.getPeerReview(orcid, putCode);
+        return Response.ok(peerReview).build();
     }
 
     @Override
     public Response viewPeerReviewSummary(String orcid, String putCode) {
-        // TODO Auto-generated method stub
-        return null;
+        PeerReviewSummary summary = peerReviewManager.getSummary(orcid, putCode);
+        return Response.ok(summary).build();
     }
 
     @Override
     public Response createPeerReview(String orcid, PeerReview peerReview) {
-        // TODO Auto-generated method stub
-        return null;
+        PeerReview newPeerReview = peerReviewManager.createPeerReview(orcid, peerReview);
+        try {
+            return Response.created(new URI(newPeerReview.getPutCode())).build();
+        } catch (URISyntaxException ex) {
+            throw new RuntimeException("Error creating URI for new work", ex);
+        }
     }
 
     @Override

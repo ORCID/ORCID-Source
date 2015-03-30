@@ -142,7 +142,6 @@ public class PeerReviewEntity extends BaseEntity<Long> implements ProfileAware, 
     }
     
     @Override
-    @Id
     @ManyToOne(cascade = { CascadeType.REFRESH }, fetch = FetchType.EAGER)
     @JoinColumn(name = "orcid", nullable = false)
     public ProfileEntity getProfile() {
