@@ -23,13 +23,40 @@
 	<div class="workspace-accordion" id="workspace-accordion">
 		<div id="workspace-peer-review" class="workspace-accordion-item workspace-accordion-active">
 			<div class="workspace-accordion-header"><a name='workspace-peer-review'></a>
-				
-			    <a href="" ng-click="workspaceSrvc.togglePeerReview()" class="toggle-text">
-			  		<i class="glyphicon-chevron-down glyphicon x0" ng-class="{'glyphicon-chevron-right':workspaceSrvc.displayPeerReview==false}"></i></a>
-			   	</a> 
-			    <a href="" ng-click="workspaceSrvc.togglePeerReview()" class="toggle-text"><@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.education'/></a>
-				<a href="" class="label btn-primary" ng-click="addPeerReviewModal()"><@orcid.msg 'manual_affiliation_form_contents.add_education_manually'/></a>
-				
+				<div class="row">
+					<div class="col-md-5 col-sm-2 col-xs-12">
+						 <div class="workspace-title">											
+						    <a href="" ng-click="workspaceSrvc.togglePeerReview()" class="toggle-text">
+						  		<i class="glyphicon-chevron-down glyphicon x075" ng-class="{'glyphicon-chevron-right':workspaceSrvc.displayPeerReview==false}"></i> Peer Review
+						  			(<span class="ng-binding">0</span>)
+						  		</a>						  		
+						   	</a>							    
+						</div>
+					</div>
+					<div class="col-md-7 col-sm-10 col-xs-12 action-button-bar">
+						<div class="menu-container">
+							<ul class="toggle-menu">
+						        <li ng-class="{'green-bg' : showBibtexImportWizard == true}"> 
+						            <span class="glyphicon glyphicon-plus"></span> Add Peer Reviews                                    
+						            <ul class="menu-options works">
+						                <!-- Search & Link -->
+						                <li>
+						                    <a class="action-option manage-button" ng-click="showWorkImportWizard()">
+						                        <span class="glyphicon glyphicon-cloud-upload"></span> Search &amp; link
+						                    </a>
+						                </li>                
+						                <!-- Add Manually -->
+						                <li>
+						                    <a class="action-option manage-button" ng-click="addWorkModal()">
+						                        <span class="glyphicon glyphicon-plus"></span> Add manually                                            
+						                    </a>
+						                </li>                                                                                
+						            </ul>
+						        </li>
+						    </ul>
+						</div>	
+					</div>	
+				</div>			
 			</div>
 			<div class="workspace-accordion-content" ng-show="1 == 1" >
 			<!-- <div class="workspace-accordion-content" ng-show="workspaceSrvc.displayPeerReview" >  -->

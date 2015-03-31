@@ -4531,12 +4531,69 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     }
 }]);
 
-orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'workspaceSrvc', 'commonSrvc', function ($scope, $compile, $filter, workspaceSrvc, commonSrvc){
+orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'workspaceSrvc', 'commonSrvc', 'peerReviewSrvc', function ($scope, $compile, $filter, workspaceSrvc, commonSrvc, peerReviewSrvc){
 	
-	
-	
-	
+	$scope.addPeerReviewModal = function(data){
+        if (data == undefined) {
+        	/* Temporaly removed to get the model launched
+        	peerReviewSrvc.getPeerReviewWork(function(data) {
+                $scope.editPeerReview = data;
+                $scope.$apply(function() {
+                    $scope.loadPeerReviewTypes();
+                    $scope.showAddPeerReviewModal();
+                });
+            });
+            */
+            $scope.showAddPeerReviewModal();
+        } else {
+            $scope.editPeerReview = data;            
+            $scope.loadPeerReviewTypes();
+            $scope.showAddPeerReviewModal();
+        }
+
+    };
+    
+    $scope.showAddPeerReviewModal = function(){
+        $scope.editTranslatedTitle = false;
+        $.colorbox({
+            scrolling: true,
+            html: $compile($('#add-peer-review-modal').html())($scope),
+            onLoad: function() {$('#cboxClose').remove();},
+            // start the colorbox off with the correct width
+            width: formColorBoxResize(),
+            onComplete: function() {
+                //resize to insure content fits
+            },
+            onClosed: function() {
+                //$scope.closeAllMoreInfo();
+                //$scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);
+            }
+        });
+    };
+    
 }]);
+
+
+orcidNgModule.factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
+    var peerReviewSrvc = {
+    		getBlankPeerReview: function(callback) {
+    			/*
+                $.ajax({
+                    url: getBaseUri() + '/peer-review/peer-review.json',
+                    dataType: 'json',
+                    success: function(data) {
+                        callback(data);
+                        $rootScope.$apply();
+                    }
+                }).fail(function() {
+                    console.log("Error fetching blank work");
+                });
+                */
+            } 
+    };
+    return peerReviewSrvc;
+}]);
+
 
 orcidNgModule.controller('SearchCtrl',['$scope', '$compile', function ($scope, $compile){
     $scope.hasErrors = false;
