@@ -1072,6 +1072,8 @@ orcidNgModule.factory("emailSrvc", function ($rootScope) {
             delEmail: null,
             primaryEmail: null,
             addEmail: function() {
+            	console.log('Adding: ');
+            	console.log(serv.inputEmail);
                 $.ajax({
                     url: getBaseUri() + '/account/addEmail.json',
                     data:  angular.toJson(serv.inputEmail),
@@ -1079,6 +1081,8 @@ orcidNgModule.factory("emailSrvc", function ($rootScope) {
                     type: 'POST',
                     dataType: 'json',
                     success: function(data) {
+                    	console.log('Added...');
+                    	console.log(data);
                         serv.inputEmail = data;
                         if (serv.inputEmail.errors.length == 0) {
                             serv.initInputEmail();
@@ -1094,14 +1098,17 @@ orcidNgModule.factory("emailSrvc", function ($rootScope) {
             getEmails: function(callback) {
                 $.ajax({
                     url: getBaseUri() + '/account/emails.json',
-                    //type: 'POST',
-                    //data: $scope.emailsPojo,
+                    type: 'GET',
                     dataType: 'json',
                     success: function(data) {
                         serv.emails = data;
-                        for (var i in data.emails)
-                            if (data.emails[i].primary)
+                        console.log('Requested: ');
+                        console.log(data);
+                        for (var i in data.emails){
+                            if (data.emails[i].primary){
                                 serv.primaryEmail = data.emails[i];
+                            }    
+                        }
                         $rootScope.$apply();
                         if (callback)
                            callback(data);
@@ -4522,6 +4529,13 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     	    angular.element('#inputBibtex').trigger('click');
     	}, 0);
     }
+}]);
+
+orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'workspaceSrvc', 'commonSrvc', function ($scope, $compile, $filter, workspaceSrvc, commonSrvc){
+	
+	
+	
+	
 }]);
 
 orcidNgModule.controller('SearchCtrl',['$scope', '$compile', function ($scope, $compile){

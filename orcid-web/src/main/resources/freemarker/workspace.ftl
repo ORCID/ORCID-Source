@@ -314,6 +314,10 @@
                 <#include "workspace_affiliations_body_list.ftl"/>
                 <!-- Fundings -->
                	<#include "workspace_fundings_body_list.ftl"/>
+               	<#if RequestParameters['peer']??>
+               		<!-- Peer Review -->]
+               		<#include "workspace_peer_review_body_list.ftl"/>
+ 				</#if>
 		        <!-- Works -->                
                 <div id="workspace-publications" class="workspace-accordion-item workspace-accordion-active" ng-controller="WorkCtrl">
                 	<div class="workspace-accordion-header">
