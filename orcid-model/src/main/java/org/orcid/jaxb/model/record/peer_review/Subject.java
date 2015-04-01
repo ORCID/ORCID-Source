@@ -33,27 +33,17 @@ import org.orcid.jaxb.model.record.WorkType;
 @XmlType(propOrder = {"externalIdentifiers","type","title","journalTitle","url"})
 @XmlRootElement(name = "subject", namespace = "http://www.orcid.org/ns/peer-review")
 public class Subject {
-    @XmlAttribute(name = "put-code")
-    protected String putCode;
     @XmlElement(name = "external-identifiers", namespace = "http://www.orcid.org/ns/peer-review")
     protected WorkExternalIdentifiers externalIdentifiers;
-    @XmlElement(namespace = "http://www.orcid.org/ns/work")
+    @XmlElement(namespace = "http://www.orcid.org/ns/peer-review")
     protected WorkType type;
-    @XmlElement(namespace = "http://www.orcid.org/ns/work")
+    @XmlElement(namespace = "http://www.orcid.org/ns/peer-review")
     protected WorkTitle title;
-    @XmlElement(name = "journal-title", namespace = "http://www.orcid.org/ns/work")
+    @XmlElement( namespace = "http://www.orcid.org/ns/peer-review", name = "journal-title")
     protected Title journalTitle;
-    @XmlElement(namespace = "http://www.orcid.org/ns/common")
+    @XmlElement(namespace = "http://www.orcid.org/ns/peer-review")
     protected Url url;
 
-    public String getPutCode() {
-        return putCode;
-    }
-
-    public void setPutCode(String putCode) {
-        this.putCode = putCode;
-    }
-    
     public WorkExternalIdentifiers getExternalIdentifiers() {
         return externalIdentifiers;
     }

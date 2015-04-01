@@ -213,8 +213,7 @@
 				</xs:annotation>
 			</xs:enumeration>
 		</xs:restriction>
-	</xs:simpleType>
-	
+	</xs:simpleType>	
 	
 	<xs:complexType name="subject">
 		<xs:sequence>			
@@ -254,9 +253,5 @@
 				</xs:annotation>
 			</xs:element>
 		</xs:sequence>
-	</xs:complexType>
-	
-	
-	
-
+	</xs:complexType>		
 </xs:schema>

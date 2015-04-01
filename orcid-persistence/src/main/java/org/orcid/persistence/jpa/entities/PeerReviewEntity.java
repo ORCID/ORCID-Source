@@ -28,12 +28,13 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.orcid.jaxb.model.message.Visibility;
-import org.orcid.jaxb.model.record.peer_review.Role;
 import org.orcid.jaxb.model.record.peer_review.PeerReviewType;
+import org.orcid.jaxb.model.record.peer_review.Role;
 import org.orcid.utils.OrcidStringUtils;
 
 @Entity
@@ -51,7 +52,7 @@ public class PeerReviewEntity extends BaseEntity<Long> implements ProfileAware, 
     private CompletionDateEntity completionDate;
     private PeerReviewSubjectEntity subject;
     private SourceEntity source;
-    private Visibility visibility;
+    private Visibility visibility;    
     
     @Override
     @Id
@@ -61,6 +62,8 @@ public class PeerReviewEntity extends BaseEntity<Long> implements ProfileAware, 
         return id;
     }
 
+    @Basic
+    @Enumerated(EnumType.STRING)
     public Role getRole() {
         return role;
     }
@@ -148,6 +151,8 @@ public class PeerReviewEntity extends BaseEntity<Long> implements ProfileAware, 
         return profile;
     }  
     
+    @OneToOne(mappedBy = "peerReview", cascade = CascadeType.ALL)
+    @JoinColumn(name = "peer_review_id")
     public PeerReviewSubjectEntity getSubject() {
         return subject;
     }

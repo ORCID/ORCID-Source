@@ -35,11 +35,14 @@
 			</column>
 			<column name="orcid" type="VARCHAR(255)">
 				<constraints nullable="false" />
-			</column>
+			</column>			
 			<column name="external_identifiers_json" type="text">
 				<constraints nullable="false" />
 			</column>
 			<column name="org_id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="role" type="VARCHAR(25)">
 				<constraints nullable="false" />
 			</column>
 			<column name="type" type="VARCHAR(25)">
@@ -48,21 +51,20 @@
 			
 			<column name="completion_day" type="integer" />
 			<column name="completion_month" type="integer" />
-			<column name="completion_year" type="integer" />
-			<column name="date_created" type="TIMESTAMP WITH TIME ZONE" />
-			<column name="last_modified" type="TIMESTAMP WITH TIME ZONE" />
+			<column name="completion_year" type="integer" />			
 			<column name="source_id" type="VARCHAR(255)" />
 			<column name="url" type="VARCHAR(350)" />
 			<column name="visibility" type="VARCHAR(20)" />
 			<column name="client_source_id" type="VARCHAR(20)"/>
-			<column name="peer_review_subject_id" type="bigint"/>						        
+			<column name="date_created" type="TIMESTAMP WITH TIME ZONE" />
+			<column name="last_modified" type="TIMESTAMP WITH TIME ZONE" />									       
         </createTable>
         
         <!-- peer_review_subject -->
-		<createTable tableName="peer_review_subject">
-			<column name="id" type="bigint">
+		<createTable tableName="peer_review_subject">			
+			<column name="peer_review_id" type="bigint">
 				<constraints nullable="false" primaryKey="true"
-					primaryKeyName="peer_review_subject_pkey" />
+					primaryKeyName="peer_review_subject_pkey"/>
 			</column>
 			<column name="external_identifiers_json" type="text">
 				<constraints nullable="false" />
@@ -78,12 +80,15 @@
 			</column>
 			<column name="sub_title" type="VARCHAR(1000)" />
 			<column name="translated_title" type="VARCHAR(1000)" />			
-			<column name="url" type="VARCHAR(350)" />			
+			<column name="url" type="VARCHAR(350)" />					
+			<column name="journal_title" type="VARCHAR(1000)" />
+			<column name="date_created" type="TIMESTAMP WITH TIME ZONE" />			
+			<column name="last_modified" type="TIMESTAMP WITH TIME ZONE" />
 		</createTable>
 		
 		<addForeignKeyConstraint constraintName="peer_review_org_id_fk" baseTableName="peer_review" baseColumnNames="org_id" referencedTableName="org" referencedColumnNames="id" />
 		<addForeignKeyConstraint constraintName="peer_review_orcid_fk" baseTableName="peer_review" baseColumnNames="orcid" referencedTableName="profile" referencedColumnNames="orcid" />
-		<addForeignKeyConstraint constraintName="peer_review_subject_id_fk" baseTableName="peer_review" baseColumnNames="peer_review_subject_id" referencedTableName="peer_review_subject" referencedColumnNames="id" />
+		<addForeignKeyConstraint constraintName="peer_review_id_fk" baseTableName="peer_review_subject" baseColumnNames="peer_review_id" referencedTableName="peer_review" referencedColumnNames="id" />				
     </changeSet>
     
     <changeSet id="CREATE-PEER-REVIEW-SEQUENCES" author="Angel Montenegro" dbms="postgresql">

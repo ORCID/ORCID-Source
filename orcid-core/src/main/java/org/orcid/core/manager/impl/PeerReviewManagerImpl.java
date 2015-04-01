@@ -77,9 +77,11 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
         ProfileEntity profile = profileDao.find(orcid);
         entity.setProfile(profile);
         setIncomingPrivacy(entity, profile);
+        //Set the entity in the peer review
+        entity.getSubject().setPeerReview(entity);
         
         peerReviewDao.persist(entity);        
-        return null;
+        return jpaJaxbPeerReviewAdapter.toPeerReview(entity);
     }
 
     @Override

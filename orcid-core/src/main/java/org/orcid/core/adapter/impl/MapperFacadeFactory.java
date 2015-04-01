@@ -49,6 +49,7 @@ import org.orcid.jaxb.model.record.summary.EducationSummary;
 import org.orcid.jaxb.model.record.summary.EmploymentSummary;
 import org.orcid.jaxb.model.record.summary.FundingSummary;
 import org.orcid.jaxb.model.record.summary.WorkSummary;
+import org.orcid.persistence.jpa.entities.CompletionDateEntity;
 import org.orcid.persistence.jpa.entities.EndDateEntity;
 import org.orcid.persistence.jpa.entities.NotificationActivityEntity;
 import org.orcid.persistence.jpa.entities.NotificationAddActivitiesEntity;
@@ -246,30 +247,32 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         
         ClassMapBuilder<PeerReview, PeerReviewEntity> classMap = mapperFactory.classMap(PeerReview.class, PeerReviewEntity.class);
         classMap.byDefault();
-        //classMap.field("putCode", "id");
+        classMap.field("putCode", "id");
+        classMap.field("url.value", "url");
         classMap.field("organization.name", "org.name");
         classMap.field("organization.address.city", "org.city");
         classMap.field("organization.address.region", "org.region");
         classMap.field("organization.address.country", "org.country");
         classMap.field("organization.disambiguatedOrganization.disambiguatedOrganizationIdentifier", "org.orgDisambiguated.sourceId");
         classMap.field("organization.disambiguatedOrganization.disambiguationSource", "org.orgDisambiguated.sourceType");
-        //classMap.field("subject.putCode", "subject.id");
-        //classMap.field("subject.type", "subject.workType");
-        //classMap.field("subject.title.title.content", "subject.title");
-        //classMap.field("subject.title.translatedTitle.content", "subject.translatedTitle");
-        //classMap.field("subject.title.translatedTitle.languageCode", "subject.translatedTitleLanguageCode");
-        //classMap.field("subject.title.subtitle.content", "subject.subTitle");
-        //classMap.field("subject.journalTitle.content", "subject.journalTitle");
-        //classMap.field("subject.url", "subject.workUrl");        
-        //classMap.fieldMap("externalIdentifiers", "externalIdentifiersJson").converter("workExternalIdentifiersConverterId").add();
-        //classMap.fieldMap("subject.externalIdentifiers", "subject.externalIdentifiersJson").converter("workExternalIdentifiersConverterId").add();
+        classMap.field("subject.type", "subject.workType");
+        classMap.field("subject.url.value", "subject.url");
+        classMap.field("subject.title.title.content", "subject.title");
+        classMap.field("subject.title.translatedTitle.content", "subject.translatedTitle");
+        classMap.field("subject.title.translatedTitle.languageCode", "subject.translatedTitleLanguageCode");
+        classMap.field("subject.title.subtitle.content", "subject.subTitle");
+        classMap.field("subject.journalTitle.content", "subject.journalTitle");
+        classMap.fieldMap("externalIdentifiers", "externalIdentifiersJson").converter("workExternalIdentifiersConverterId").add();
+        classMap.fieldMap("subject.externalIdentifiers", "subject.externalIdentifiersJson").converter("workExternalIdentifiersConverterId").add();
         classMap.register();
         
         ClassMapBuilder<PeerReviewSummary, PeerReviewEntity> peerReviewSummaryClassMap = mapperFactory.classMap(PeerReviewSummary.class,
                 PeerReviewEntity.class);
         peerReviewSummaryClassMap.byDefault();
-        //peerReviewSummaryClassMap.fieldMap("externalIdentifiers", "externalIdentifiersJson").converter("workExternalIdentifiersConverterId").add();
+        peerReviewSummaryClassMap.fieldMap("externalIdentifiers", "externalIdentifiersJson").converter("workExternalIdentifiersConverterId").add();
         peerReviewSummaryClassMap.register();
+        
+        mapperFactory.classMap(FuzzyDate.class, CompletionDateEntity.class).field("year.value", "year").field("month.value", "month").field("day.value", "day").register();
         
         addV2SourceMapping(mapperFactory);
         return mapperFactory.getMapperFacade();
