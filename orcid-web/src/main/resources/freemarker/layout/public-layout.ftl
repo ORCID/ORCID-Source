@@ -80,7 +80,7 @@
 						<button type="submit" class="search-button">
 							<i class="icon-orcid-search"></i>
 						</button>
-						<a href="<@spring.url " /orcid-search/search" />"
+						<a href="<@spring.url "/orcid-search/search" />"
 						class="settings-button" title="<@orcid.msg
 						'public-layout.search.advanced'/>"><i class="glyphicon glyphicon-cog"></i></a>
 					</div>
