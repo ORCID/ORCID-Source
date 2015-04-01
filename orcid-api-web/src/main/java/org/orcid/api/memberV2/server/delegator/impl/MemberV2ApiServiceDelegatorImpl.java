@@ -41,13 +41,13 @@ import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record.Education;
 import org.orcid.jaxb.model.record.Employment;
 import org.orcid.jaxb.model.record.Funding;
+import org.orcid.jaxb.model.record.PeerReview;
 import org.orcid.jaxb.model.record.Work;
-import org.orcid.jaxb.model.record.peer_review.PeerReview;
-import org.orcid.jaxb.model.record.peer_review.PeerReviewSummary;
 import org.orcid.jaxb.model.record.summary.ActivitiesSummary;
 import org.orcid.jaxb.model.record.summary.EducationSummary;
 import org.orcid.jaxb.model.record.summary.EmploymentSummary;
 import org.orcid.jaxb.model.record.summary.FundingSummary;
+import org.orcid.jaxb.model.record.summary.PeerReviewSummary;
 import org.orcid.jaxb.model.record.summary.WorkSummary;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.WebhookDao;
@@ -276,6 +276,9 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     @Override
     @AccessControl(requiredScope = ScopePathType.ACTIVITIES_UPDATE)
     public Response updateEmployment(String orcid, String putCode, Employment employment) {
+        if (!putCode.equals(employment.getPutCode())) {
+            throw new MismatchedPutCodeException("The put code in the URL was " + putCode + " whereas the one in the body was " + employment.getPutCode());
+        }
         Employment e = affiliationsManager.updateEmploymentAffiliation(orcid, employment);
         return Response.ok(e).build();
     }
@@ -295,18 +298,21 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     }
 
     @Override
+    @AccessControl(requiredScope = ScopePathType.ACTIVITIES_READ_LIMITED)
     public Response viewPeerReview(String orcid, String putCode) {
         PeerReview peerReview = peerReviewManager.getPeerReview(orcid, putCode);
         return Response.ok(peerReview).build();
     }
 
     @Override
+    @AccessControl(requiredScope = ScopePathType.ACTIVITIES_READ_LIMITED)
     public Response viewPeerReviewSummary(String orcid, String putCode) {
         PeerReviewSummary summary = peerReviewManager.getSummary(orcid, putCode);
         return Response.ok(summary).build();
     }
 
     @Override
+    @AccessControl(requiredScope = ScopePathType.ACTIVITIES_UPDATE)
     public Response createPeerReview(String orcid, PeerReview peerReview) {
         PeerReview newPeerReview = peerReviewManager.createPeerReview(orcid, peerReview);
         try {
@@ -317,15 +323,20 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     }
 
     @Override
+    @AccessControl(requiredScope = ScopePathType.ACTIVITIES_UPDATE)
     public Response updatePeerReview(String orcid, String putCode, PeerReview peerReview) {
-        // TODO Auto-generated method stub
-        return null;
+        if (!putCode.equals(peerReview.getPutCode())) {
+            throw new MismatchedPutCodeException("The put code in the URL was " + putCode + " whereas the one in the body was " + peerReview.getPutCode());
+        }
+        PeerReview updatedPeerReview = peerReviewManager.updatePeerReview(orcid, peerReview);
+        return Response.ok(updatedPeerReview).build();
     }
 
     @Override
+    @AccessControl(requiredScope = ScopePathType.ACTIVITIES_UPDATE)
     public Response deletePeerReview(String orcid, String putCode) {
-        // TODO Auto-generated method stub
-        return null;
+        peerReviewManager.checkSourceAndDelete(orcid, putCode);
+        return Response.noContent().build();
     }
     
     

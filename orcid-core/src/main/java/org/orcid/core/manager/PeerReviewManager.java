@@ -16,8 +16,8 @@
  */
 package org.orcid.core.manager;
 
-import org.orcid.jaxb.model.record.peer_review.PeerReview;
-import org.orcid.jaxb.model.record.peer_review.PeerReviewSummary;
+import org.orcid.jaxb.model.record.PeerReview;
+import org.orcid.jaxb.model.record.summary.PeerReviewSummary;
 
 public interface PeerReviewManager {
     /**

@@ -21,8 +21,8 @@ import javax.ws.rs.core.Response;
 import org.orcid.jaxb.model.record.Education;
 import org.orcid.jaxb.model.record.Employment;
 import org.orcid.jaxb.model.record.Funding;
+import org.orcid.jaxb.model.record.PeerReview;
 import org.orcid.jaxb.model.record.Work;
-import org.orcid.jaxb.model.record.peer_review.PeerReview;
 
 /**
  * 

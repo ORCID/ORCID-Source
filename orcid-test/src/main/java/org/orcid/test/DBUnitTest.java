@@ -49,7 +49,8 @@ public class DBUnitTest {
     private static final String[] tables = new String[] { "security_question", "profile", "orcid_social", "profile_event", "work", "work_external_identifier",
             "profile_work", "researcher_url", "given_permission_to", "external_identifier", "email", "email_event", "other_name", "profile_keyword", "profile_patent",
             "org_disambiguated", "org_disambiguated_external_identifier", "org", "org_affiliation_relation", "profile_funding", "funding_external_identifier", "address",
-            "institution", "affiliation", "notification", "client_details", "client_secret", "oauth2_token_detail", "custom_email", "webhook", "granted_authority", "orcid_props" };
+            "institution", "affiliation", "notification", "client_details", "client_secret", "oauth2_token_detail", "custom_email", "webhook", "granted_authority",
+            "orcid_props", "peer_review", "peer_review_subject" };
 
     private static ApplicationContext context = new ClassPathXmlApplicationContext(CONTEXT);
 
@@ -92,13 +93,15 @@ public class DBUnitTest {
         dataSet.addTable("notification_activity");
         dataSet.addTable("given_permission_to");
         dataSet.addTable("subject");
+        dataSet.addTable("peer_review");
+        dataSet.addTable("peer_review_subject");
         DatabaseOperation.DELETE.execute(connection, dataSet);
 
         QueryDataSet theRest = new QueryDataSet(connection);
         theRest.addTable("profile", "SELECT * FROM profile WHERE source_id IS NOT NULL AND source_id != orcid ORDER BY orcid DESC");
         theRest.addTable("client_details");
         theRest.addTable("client_secret");
-        theRest.addTable("custom_email");        
+        theRest.addTable("custom_email");
         DatabaseOperation.DELETE.execute(connection, theRest);
     }
 

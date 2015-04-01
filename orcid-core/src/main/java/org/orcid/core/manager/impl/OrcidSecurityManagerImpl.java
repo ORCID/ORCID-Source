@@ -34,6 +34,7 @@ import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record.Education;
 import org.orcid.jaxb.model.record.Employment;
 import org.orcid.jaxb.model.record.Funding;
+import org.orcid.jaxb.model.record.PeerReview;
 import org.orcid.jaxb.model.record.Work;
 import org.orcid.jaxb.model.record.summary.ActivitiesSummary;
 import org.orcid.jaxb.model.record.summary.EducationSummary;
@@ -110,6 +111,8 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
             readLimitedScopes.add(ScopePathType.FUNDING_READ_LIMITED.value());
         } else if (filterable instanceof Education || filterable instanceof Employment) {
             readLimitedScopes.add(ScopePathType.AFFILIATIONS_READ_LIMITED.value());
+        } else if (filterable instanceof PeerReview) {
+            readLimitedScopes.add(ScopePathType.PEER_REVIEW_READ_LIMITED.value());
         }
         readLimitedScopes.retainAll(requestedScopes);
         return readLimitedScopes;

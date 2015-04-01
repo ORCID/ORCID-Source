@@ -28,15 +28,19 @@ import org.orcid.core.manager.OrgManager;
 import org.orcid.core.manager.PeerReviewManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.jaxb.model.message.Visibility;
-import org.orcid.jaxb.model.record.peer_review.PeerReview;
-import org.orcid.jaxb.model.record.peer_review.PeerReviewSummary;
+import org.orcid.jaxb.model.record.PeerReview;
+import org.orcid.jaxb.model.record.summary.PeerReviewSummary;
+import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.PeerReviewDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.jpa.entities.PeerReviewEntity;
+import org.orcid.persistence.jpa.entities.PeerReviewSubjectEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
 
 public class PeerReviewManagerImpl implements PeerReviewManager {
 
@@ -62,6 +66,9 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
     
     @Resource
     private LocaleManager localeManager;
+    
+    @Resource
+    private GenericDao<PeerReviewSubjectEntity, Long> peerReviewSubjectDao;
     
     @Override
     public PeerReview getPeerReview(String orcid, String peerReviewId) {
@@ -106,15 +113,39 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
 
     @Override
     public PeerReview updatePeerReview(String orcid, PeerReview peerReview) {
-        // TODO Auto-generated method stub
-        return null;
+        PeerReviewEntity entity = peerReviewDao.getPeerReview(orcid, peerReview.getPutCode());
+        Visibility originalVisibility = entity.getVisibility();
+        SourceEntity existingSource = entity.getSource();
+        orcidSecurityManager.checkSource(existingSource);
+        jpaJaxbPeerReviewAdapter.toPeerReviewEntity(peerReview, entity);
+        entity.setVisibility(originalVisibility);
+        entity.setSource(existingSource);
+        
+        OrgEntity updatedOrganization = orgManager.getOrgEntity(peerReview);
+        entity.setOrg(updatedOrganization);
+        
+        entity = peerReviewDao.merge(entity);
+        return jpaJaxbPeerReviewAdapter.toPeerReview(entity); 
     }
 
-    @Override
+    @Override    
     public boolean checkSourceAndDelete(String orcid, String peerReviewId) {
         PeerReviewEntity pr = peerReviewDao.getPeerReview(orcid, peerReviewId);
         orcidSecurityManager.checkSource(pr.getSource());
-        return peerReviewDao.removePeerReview(orcid, peerReviewId);
+        
+        return deletePeerReview(pr, orcid);
+    }
+    
+    @Transactional
+    private boolean deletePeerReview(PeerReviewEntity entity, String orcid) {
+        Long subjectId = entity.getSubject().getId(); 
+        //Delete the peer review
+        boolean result = peerReviewDao.removePeerReview(orcid, entity.getId());        
+        if(result) {
+            //Delete the subject
+            peerReviewSubjectDao.remove(subjectId);
+        }
+        return result;
     }
     
     private void setIncomingPrivacy(PeerReviewEntity entity, ProfileEntity profile) {

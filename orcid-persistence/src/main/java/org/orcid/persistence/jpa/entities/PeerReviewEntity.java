@@ -28,12 +28,13 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.orcid.jaxb.model.message.Visibility;
-import org.orcid.jaxb.model.record.peer_review.PeerReviewType;
-import org.orcid.jaxb.model.record.peer_review.Role;
+import org.orcid.jaxb.model.record.PeerReviewType;
+import org.orcid.jaxb.model.record.Role;
 import org.orcid.utils.OrcidStringUtils;
 
 @Entity
@@ -150,7 +151,7 @@ public class PeerReviewEntity extends BaseEntity<Long> implements ProfileAware, 
         return profile;
     }  
     
-    @ManyToOne(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
+    @OneToOne(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, orphanRemoval = true)
     @JoinColumn(name = "peer_review_subject_id", nullable = false)
     public PeerReviewSubjectEntity getSubject() {
         return subject;

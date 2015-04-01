@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.jaxb.model.record.peer_review;
+package org.orcid.jaxb.model.record;
 
 import java.io.Serializable;
 

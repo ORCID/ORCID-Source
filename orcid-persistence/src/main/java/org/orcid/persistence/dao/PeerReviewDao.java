@@ -43,7 +43,7 @@ public interface PeerReviewDao extends GenericDao<PeerReviewEntity, Long> {
      *            The user orcid
      * @return true if the relationship was deleted
      * */
-    boolean removePeerReview(String userOrcid, String peerReviewId);     
+    boolean removePeerReview(String userOrcid, Long peerReviewId);     
     
     
     /**

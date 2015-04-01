@@ -23,6 +23,7 @@ import javax.persistence.TypedQuery;
 
 import org.orcid.persistence.dao.PeerReviewDao;
 import org.orcid.persistence.jpa.entities.PeerReviewEntity;
+import org.springframework.transaction.annotation.Transactional;
 
 public class PeerReviewDaoImpl extends GenericDaoImpl<PeerReviewEntity, Long> implements PeerReviewDao {
 
@@ -39,10 +40,11 @@ public class PeerReviewDaoImpl extends GenericDaoImpl<PeerReviewEntity, Long> im
     }
 
     @Override
-    public boolean removePeerReview(String userOrcid, String peerReviewId) {
+    @Transactional
+    public boolean removePeerReview(String userOrcid, Long peerReviewId) {
         Query query = entityManager.createQuery("delete from PeerReviewEntity where profile.id=:userOrcid and id=:peerReviewId");
         query.setParameter("userOrcid", userOrcid);
-        query.setParameter("peerReviewId", Long.valueOf(peerReviewId));
+        query.setParameter("peerReviewId", peerReviewId);
         return query.executeUpdate() > 0 ? true : false;
     }    
     

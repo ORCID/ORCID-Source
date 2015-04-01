@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.jaxb.model.record.peer_review;
+package org.orcid.jaxb.model.record;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -25,9 +25,6 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.orcid.jaxb.model.common.Title;
 import org.orcid.jaxb.model.common.Url;
-import org.orcid.jaxb.model.record.WorkExternalIdentifiers;
-import org.orcid.jaxb.model.record.WorkTitle;
-import org.orcid.jaxb.model.record.WorkType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = {"externalIdentifiers","type","title","journalTitle","url"})
