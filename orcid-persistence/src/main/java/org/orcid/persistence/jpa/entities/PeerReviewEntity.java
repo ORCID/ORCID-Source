@@ -28,7 +28,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -49,10 +48,10 @@ public class PeerReviewEntity extends BaseEntity<Long> implements ProfileAware, 
     private String externalIdentifiersJson;
     private String url;
     private PeerReviewType type;
-    private CompletionDateEntity completionDate;
-    private PeerReviewSubjectEntity subject;
+    private CompletionDateEntity completionDate;    
     private SourceEntity source;
     private Visibility visibility;    
+    private PeerReviewSubjectEntity subject;
     
     @Override
     @Id
@@ -151,8 +150,8 @@ public class PeerReviewEntity extends BaseEntity<Long> implements ProfileAware, 
         return profile;
     }  
     
-    @OneToOne(mappedBy = "peerReview", cascade = CascadeType.ALL)
-    @JoinColumn(name = "peer_review_id")
+    @ManyToOne(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
+    @JoinColumn(name = "peer_review_subject_id", nullable = false)
     public PeerReviewSubjectEntity getSubject() {
         return subject;
     }

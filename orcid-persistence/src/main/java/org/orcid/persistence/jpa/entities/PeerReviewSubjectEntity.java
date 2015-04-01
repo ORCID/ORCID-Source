@@ -17,17 +17,15 @@
 package org.orcid.persistence.jpa.entities;
 
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import org.orcid.jaxb.model.message.WorkType;
 import org.orcid.utils.OrcidStringUtils;
@@ -37,6 +35,7 @@ import org.orcid.utils.OrcidStringUtils;
 public class PeerReviewSubjectEntity extends BaseEntity<Long> {
 
     private static final long serialVersionUID = 4488839570068368532L;
+    private Long id;
     private String externalIdentifiersJson;
     private WorkType workType;
     private String journalTitle;
@@ -44,9 +43,20 @@ public class PeerReviewSubjectEntity extends BaseEntity<Long> {
     private String subTitle;
     private String translatedTitle;
     private String translatedTitleLanguageCode;
-    private String url;
-    private PeerReviewEntity peerReview;
-    
+    private String url;    
+        
+    @Override
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "peer_review_subject_seq")
+    @SequenceGenerator(name = "peer_review_subject_seq", sequenceName = "peer_review_subject_seq")   
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     @Column(name = "external_identifiers_json")
     public String getExternalIdentifiersJson() {
         return externalIdentifiersJson;
@@ -119,18 +129,7 @@ public class PeerReviewSubjectEntity extends BaseEntity<Long> {
 
     public void setSubTitle(String subTitle) {
         this.subTitle = subTitle;
-    }
-    
-    @Id
-    @OneToOne(fetch = FetchType.EAGER, cascade = { CascadeType.ALL })
-    @JoinColumn(name = "peer_review_id") 
-    public PeerReviewEntity getPeerReview() {
-        return peerReview;
-    }
-
-    public void setPeerReview(PeerReviewEntity peerReview) {
-        this.peerReview = peerReview;
-    }
+    }            
 
     public int compareTo(PeerReviewSubjectEntity other) {
         if (other == null) {
@@ -148,13 +147,5 @@ public class PeerReviewSubjectEntity extends BaseEntity<Long> {
         }
 
         return 0;
-    }
-
-    @Override
-    @Transient
-    public Long getId() {
-        if(peerReview == null)
-            return null;
-        return peerReview.getId();
-    }
+    }    
 }

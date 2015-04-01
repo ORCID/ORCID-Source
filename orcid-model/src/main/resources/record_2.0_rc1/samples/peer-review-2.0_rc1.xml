@@ -37,10 +37,10 @@
 			</work:work-external-identifier>
 		</peer-review:external-identifiers>
 		<peer-review:type>artistic-performance</peer-review:type>
-		<peer-review:journal-title />
+		<peer-review:journal-title>peer-review:journal title</peer-review:journal-title>
 		<peer-review:title>
 			<common:title>common:title</common:title>
-			<common:subtitle />
+			<common:subtitle>common:subtitle</common:subtitle>
 			<common:translated-title language-code="en">common:translated-title</common:translated-title>
 		</peer-review:title>
 		<peer-review:url>peer-review:url</peer-review:url>

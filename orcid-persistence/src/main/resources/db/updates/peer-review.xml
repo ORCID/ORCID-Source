@@ -35,7 +35,10 @@
 			</column>
 			<column name="orcid" type="VARCHAR(255)">
 				<constraints nullable="false" />
-			</column>			
+			</column>		
+			<column name="peer_review_subject_id" type="bigint">
+				<constraints nullable="false" />
+			</column>	
 			<column name="external_identifiers_json" type="text">
 				<constraints nullable="false" />
 			</column>
@@ -62,7 +65,7 @@
         
         <!-- peer_review_subject -->
 		<createTable tableName="peer_review_subject">			
-			<column name="peer_review_id" type="bigint">
+			<column name="id" type="bigint">
 				<constraints nullable="false" primaryKey="true"
 					primaryKeyName="peer_review_subject_pkey"/>
 			</column>
@@ -88,7 +91,7 @@
 		
 		<addForeignKeyConstraint constraintName="peer_review_org_id_fk" baseTableName="peer_review" baseColumnNames="org_id" referencedTableName="org" referencedColumnNames="id" />
 		<addForeignKeyConstraint constraintName="peer_review_orcid_fk" baseTableName="peer_review" baseColumnNames="orcid" referencedTableName="profile" referencedColumnNames="orcid" />
-		<addForeignKeyConstraint constraintName="peer_review_id_fk" baseTableName="peer_review_subject" baseColumnNames="peer_review_id" referencedTableName="peer_review" referencedColumnNames="id" />				
+		<addForeignKeyConstraint constraintName="peer_review_subject_fk" baseTableName="peer_review" baseColumnNames="peer_review_subject_id" referencedTableName="peer_review_subject" referencedColumnNames="id" />				
     </changeSet>
     
     <changeSet id="CREATE-PEER-REVIEW-SEQUENCES" author="Angel Montenegro" dbms="postgresql">
