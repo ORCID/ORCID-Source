@@ -47,7 +47,7 @@
 						                </li>                
 						                <!-- Add Manually -->
 						                <li>
-						                    <a class="action-option manage-button" ng-click="addWorkModal()">
+						                    <a class="action-option manage-button" ng-click="addPeerReviewModal()">
 						                        <span class="glyphicon glyphicon-plus"></span> Add manually                                            
 						                    </a>
 						                </li>                                                                                
