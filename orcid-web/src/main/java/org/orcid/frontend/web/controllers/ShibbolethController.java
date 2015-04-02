@@ -16,21 +16,19 @@
  */
 package org.orcid.frontend.web.controllers;
 
-import java.util.Collection;
-
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import org.orcid.frontend.web.exception.FeatureDisabledException;
 import org.orcid.persistence.dao.ShibbolethAccountDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ShibbolethAccountEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
@@ -51,15 +49,19 @@ public class ShibbolethController extends BaseController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ShibbolethController.class);
 
+    @Value("${org.orcid.shibboleth.enabled:false}")
+    private boolean enabled;
+
     @Resource
     private ShibbolethAccountDao shibbolethAccountDao;
 
-    @Resource//(name = "preAuthenticationManager")
+    @Resource
     private AuthenticationManager authenticationManager;
 
     @RequestMapping(value = { "/signin" }, method = RequestMethod.GET)
     public ModelAndView signinHandler(HttpServletRequest request, @RequestHeader("REMOTE_USER") String remoteUser,
             @RequestHeader("Shib-Identity-Provider") String shibIdentityProvider, ModelAndView mav) {
+        checkEnabled();
         // Check if the Shibboleth user is already linked to an ORCID account.
         // If so sign them in automatically.
         ShibbolethAccountEntity shibbolethAccountEntity = shibbolethAccountDao.findByRemoteUserAndShibIdentityProvider(remoteUser, shibIdentityProvider);
@@ -88,6 +90,7 @@ public class ShibbolethController extends BaseController {
     @RequestMapping(value = { "/link" }, method = RequestMethod.GET)
     public ModelAndView linkHandler(@RequestHeader("REMOTE_USER") String remoteUser, @RequestHeader("Shib-Identity-Provider") String shibIdentityProvider,
             ModelAndView mav) {
+        checkEnabled();
         ShibbolethAccountEntity shibbolethAccountEntity = shibbolethAccountDao.findByRemoteUserAndShibIdentityProvider(remoteUser, shibIdentityProvider);
         if (shibbolethAccountEntity != null) {
             return new ModelAndView("redirect:/my-orcid");
@@ -100,6 +103,12 @@ public class ShibbolethController extends BaseController {
         mav.setViewName("shib_link_complete");
         mav.addObject("remoteUser", remoteUser);
         return mav;
+    }
+    
+    private void checkEnabled() {
+        if (!enabled) {
+            throw new FeatureDisabledException();
+        }
     }
 
 }
