@@ -24,7 +24,7 @@
             <div>You have linked your Shibboleth account ${remoteUser}</div>
             <div>to your ORCID account ${effectiveUserOrcid}.</div>
             <div>You will now be able to signin to ORCID using Shibboleth.</div>
-            <div>You can now continue to your <a href="<@spring.url '/my-orcid'/>">ORCID record</a>.</div>
+            <div>You can now <a href="<@spring.url '/my-orcid'/>">continue to your ORCID record</a>.</div>
         </div>
     </form>
 </@public>
