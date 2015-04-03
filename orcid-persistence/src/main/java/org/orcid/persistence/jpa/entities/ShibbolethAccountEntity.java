@@ -27,6 +27,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * 
  * @author Will Simpson
@@ -56,6 +58,7 @@ public class ShibbolethAccountEntity extends BaseEntity<Long> implements Profile
     }
 
     @Override
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "orcid", nullable = false, updatable = false, insertable = true)
     public ProfileEntity getProfile() {

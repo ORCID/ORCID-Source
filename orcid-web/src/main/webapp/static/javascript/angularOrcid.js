@@ -4972,6 +4972,85 @@ orcidNgModule.controller('DelegatorsCtrl',['$scope', '$compile', function ($scop
 
 }]);
 
+//Controller for Shibboleth accounts
+orcidNgModule.controller('ShibbolethCtrl',['$scope', '$compile', function ShibbolethCtrl($scope, $compile){
+    $scope.showLoader = false;
+    $scope.sort = {
+        column: 'remoteUser',
+        descending: false
+    };
+
+    $scope.changeSorting = function(column) {
+        var sort = $scope.sort;
+        if (sort.column === column) {
+            sort.descending = !sort.descending;
+        } else {
+            sort.column = column;
+            sort.descending = false;
+        }
+    };
+
+    $scope.confirmRevoke = function(shibbolethRemoteUser, id) {
+        $scope.errors = [];
+        $scope.shibbolethRemoteUserToRevoke = shibbolethRemoteUser;
+        $scope.idToManage = id;
+        $.colorbox({
+            html : $compile($('#revoke-shibboleth-account-modal').html())($scope)
+
+        });
+        $.colorbox.resize();
+    };
+
+    $scope.revoke = function () {
+        var revokeShibbolethAccount = {};
+        revokeShibbolethAccount.idToManage = $scope.idToManage;
+        revokeShibbolethAccount.password = $scope.password;
+        $.ajax({
+            url: getBaseUri() + '/account/revokeShibbolethAccount.json',
+            type: 'POST',
+            data:  angular.toJson(revokeShibbolethAccount),
+            contentType: 'application/json;charset=UTF-8',
+            success: function(data) {
+                if(data.errors.length === 0){
+                    $scope.getShibbolethAccounts();
+                    $scope.$apply();
+                    $scope.closeModal();
+                }
+                else{
+                    $scope.errors = data.errors;
+                    $scope.$apply();
+                }
+            }
+        }).fail(function() {
+            // something bad is happening!
+            console.log("$ShibbolethCtrl.revoke() error");
+        });
+    };
+
+    $scope.getShibbolethAccounts = function() {
+        $.ajax({
+            url: getBaseUri() + '/account/shibbolethAccounts.json',
+            dataType: 'json',
+            success: function(data) {
+                $scope.shibbolethAccounts = data;
+                $scope.$apply();
+            }
+        }).fail(function() {
+            // something bad is happening!
+            console.log("error getting shibboleth accounts");
+        });
+    };
+
+    $scope.closeModal = function() {
+        $.colorbox.close();
+    };
+
+    // init
+    $scope.getShibbolethAccounts();
+
+}]);
+
+
 // Controller for notifications
 orcidNgModule.controller('NotificationsCtrl',['$scope', '$compile', 'notificationsSrvc', function ($scope, $compile, notificationsSrvc){
     $scope.displayBody = {};
