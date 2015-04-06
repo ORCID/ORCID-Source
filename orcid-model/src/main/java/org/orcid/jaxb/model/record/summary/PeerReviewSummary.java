@@ -37,7 +37,7 @@ import org.orcid.jaxb.model.record.Role;
 import org.orcid.jaxb.model.record.WorkExternalIdentifiers;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "role", "externalIdentifiers", "type", "completionDate", "source", "createdDate", "lastModifiedDate" })
+@XmlType(propOrder = { "role", "externalIdentifiers", "completionDate", "source", "createdDate", "lastModifiedDate" })
 @XmlRootElement(name = "summary", namespace = "http://www.orcid.org/ns/peer-review")
 public class PeerReviewSummary implements Filterable, Activity, GroupableActivity, Serializable {
     
