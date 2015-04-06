@@ -65,6 +65,17 @@ public class Date implements ErrorsInterface, Required, Serializable {
             d.setYear(fuzzyDate.getYear().getValue());
         return d;
     }
+    
+    public static Date valueOf(org.orcid.jaxb.model.common.FuzzyDate fuzzyDate) {
+        Date d = new Date();
+        if (fuzzyDate.getDay() != null && fuzzyDate.getDay().getValue() !=null)
+            d.setDay(fuzzyDate.getDay().getValue());
+        if (fuzzyDate.getMonth() != null && fuzzyDate.getMonth().getValue() !=null)
+            d.setMonth(fuzzyDate.getMonth().getValue());
+        if (fuzzyDate.getYear() != null && fuzzyDate.getYear().getValue() !=null)
+            d.setYear(fuzzyDate.getYear().getValue());
+        return d;
+    }
 
     public FuzzyDate toFuzzyDate() {
         PublicationDate pd = new PublicationDate();

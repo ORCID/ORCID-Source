@@ -63,7 +63,7 @@ public class PeerReviewForm implements ErrorsInterface, Serializable {
 
     private String countryForDisplay;
 
-    private Text disambiguatedFundingSourceId;
+    private Text disambiguatedOrganizationId;
 
     private Text disambiguationSource;
 
@@ -167,12 +167,12 @@ public class PeerReviewForm implements ErrorsInterface, Serializable {
         this.countryForDisplay = countryForDisplay;
     }
 
-    public Text getDisambiguatedFundingSourceId() {
-        return disambiguatedFundingSourceId;
+    public Text getDisambiguatedOrganizationId() {
+        return disambiguatedOrganizationId;
     }
 
-    public void setDisambiguatedFundingSourceId(Text disambiguatedFundingSourceId) {
-        this.disambiguatedFundingSourceId = disambiguatedFundingSourceId;
+    public void setDisambiguatedOrganizationId(Text disambiguatedOrganizationId) {
+        this.disambiguatedOrganizationId = disambiguatedOrganizationId;
     }
 
     public Text getDisambiguationSource() {
@@ -267,9 +267,9 @@ public class PeerReviewForm implements ErrorsInterface, Serializable {
         if (!PojoUtil.isEmpty(country)) {
             organizationAddress.setCountry(Iso3166Country.fromValue(country.getValue()));
         }
-        if (!PojoUtil.isEmpty(disambiguatedFundingSourceId)) {
+        if (!PojoUtil.isEmpty(disambiguatedOrganizationId)) {
             organization.setDisambiguatedOrganization(new DisambiguatedOrganization());
-            organization.getDisambiguatedOrganization().setDisambiguatedOrganizationIdentifier(disambiguatedFundingSourceId.getValue());
+            organization.getDisambiguatedOrganization().setDisambiguatedOrganizationIdentifier(disambiguatedOrganizationId.getValue());
             organization.getDisambiguatedOrganization().setDisambiguationSource(disambiguationSource.getValue());
         }
         peerReview.setOrganization(organization);
@@ -337,4 +337,100 @@ public class PeerReviewForm implements ErrorsInterface, Serializable {
 
         return peerReview;
     }
+
+    public static PeerReviewForm fromPeerReview(PeerReview peerReview) {
+        PeerReviewForm form = new PeerReviewForm();
+
+        // Put code
+        if (!PojoUtil.isEmpty(peerReview.getPutCode())) {
+            form.setPutCode(null);
+        }
+
+        // Visibility
+        if (peerReview.getVisibility() != null) {
+            form.setVisibility(peerReview.getVisibility());
+        }
+
+        // Completion date
+        if (!PojoUtil.isEmpty(peerReview.getCompletionDate())) {
+            form.setCompletionDate(Date.valueOf(peerReview.getCompletionDate()));
+        }
+
+        // Role
+        if (peerReview.getRole() != null) {
+            form.setRole(Text.valueOf(peerReview.getRole().value()));
+        }
+
+        // Type
+        if (peerReview.getType() != null) {
+            form.setType(Text.valueOf(peerReview.getType().value()));
+        }
+
+        // Url
+        if (!PojoUtil.isEmpty(peerReview.getUrl())) {
+            form.setUrl(Text.valueOf(peerReview.getUrl().getValue()));
+        }
+
+        // Org info
+        if (peerReview.getOrganization() != null) {
+            if (peerReview.getOrganization().getAddress() != null) {
+                if (!PojoUtil.isEmpty(peerReview.getOrganization().getAddress().getCity())) {
+                    form.setCity(Text.valueOf(peerReview.getOrganization().getAddress().getCity()));
+                }
+                if (peerReview.getOrganization().getAddress().getCountry() != null) {
+                    form.setCountry(Text.valueOf(peerReview.getOrganization().getAddress().getCountry().value()));
+                }
+                if (!PojoUtil.isEmpty(peerReview.getOrganization().getAddress().getRegion())) {
+                    form.setRegion(Text.valueOf(peerReview.getOrganization().getAddress().getRegion()));
+                }
+            }
+
+            if (peerReview.getOrganization().getDisambiguatedOrganization() != null) {
+                if (!PojoUtil.isEmpty(peerReview.getOrganization().getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier())) {
+                    form.setDisambiguatedOrganizationId(Text
+                            .valueOf(peerReview.getOrganization().getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier()));
+                }
+                if (!PojoUtil.isEmpty(peerReview.getOrganization().getDisambiguatedOrganization().getDisambiguationSource())) {
+                    form.setDisambiguationSource(Text.valueOf(peerReview.getOrganization().getDisambiguatedOrganization().getDisambiguationSource()));
+                }
+            }
+        }
+
+        // External ids
+        if(peerReview.getExternalIdentifiers() != null) {
+            List<org.orcid.jaxb.model.record.WorkExternalIdentifier> externalIdentifiers = peerReview.getExternalIdentifiers().getExternalIdentifier();
+            form.setExternalIdentifiers(new ArrayList<WorkExternalIdentifier>());
+            for(org.orcid.jaxb.model.record.WorkExternalIdentifier extId : externalIdentifiers) {                
+                form.getExternalIdentifiers().add(WorkExternalIdentifier.valueOf(extId));
+            }                                    
+        }        
+
+        // Subject
+        if(peerReview.getSubject() != null) {
+            PeerReviewSubjectForm subjectForm = new PeerReviewSubjectForm();
+            
+            subjectForm.setJournalTitle(null);
+            subjectForm.setPutCode(null);
+            subjectForm.setSubtitle(null);
+            subjectForm.setTitle(null);
+            subjectForm.setTranslatedTitle(null);
+            subjectForm.setUrl(null);
+            subjectForm.setWorkExternalIdentifiers(null);
+            subjectForm.setWorkType(null);
+            
+            form.setSubjectForm(subjectForm);
+        }        
+
+        // Source
+        form.setSource(null);
+
+        // Created Date
+        form.setCreatedDate(null);
+
+        // Last modified
+        form.setLastModified(null);
+
+        return form;
+    }
+
 }
