@@ -675,7 +675,7 @@ public class FundingsController extends BaseWorkspaceController {
             setError(funding.getFundingName(), "NotBlank.fundings.name");
         } else {
             if (funding.getFundingName().getValue().trim().length() > 1000) {
-                setError(funding.getFundingName(), "fundings.length_less_1000");
+                setError(funding.getFundingName(), "common.length_less_1000");
             }
         }
         return funding;
@@ -689,7 +689,7 @@ public class FundingsController extends BaseWorkspaceController {
             setError(funding.getFundingTitle().getTitle(), "NotBlank.fundings.title");
         } else {
             if (funding.getFundingTitle().getTitle().getValue().length() > 1000)
-                setError(funding.getFundingTitle().getTitle(), "fundings.length_less_1000");
+                setError(funding.getFundingTitle().getTitle(), "common.length_less_1000");
         }
         return funding;
     }
@@ -711,7 +711,7 @@ public class FundingsController extends BaseWorkspaceController {
                     setError(funding.getFundingTitle().getTranslatedTitle(), "manual_funding_form_contents.empty_code");
                 }
                 if (content.length() > 1000) {
-                    setError(funding.getFundingTitle().getTranslatedTitle(), "fundings.length_less_1000");
+                    setError(funding.getFundingTitle().getTranslatedTitle(), "common.length_less_1000");
                 }
             } else {
                 if (!StringUtils.isEmpty(code)) {
@@ -747,7 +747,7 @@ public class FundingsController extends BaseWorkspaceController {
             funding.getStartDate().setErrors(new ArrayList<String>());
             
             if(!PojoUtil.isEmpty(funding.getStartDate().getMonth()) && PojoUtil.isEmpty(funding.getStartDate().getYear())){
-                setError(funding.getStartDate(), "fundings.dates.invalid");
+                setError(funding.getStartDate(), "common.dates.invalid");
                 hasError = true;
             }                
         }
@@ -756,7 +756,7 @@ public class FundingsController extends BaseWorkspaceController {
             funding.getEndDate().setErrors(new ArrayList<String>());
             
             if(!PojoUtil.isEmpty(funding.getEndDate().getMonth()) && PojoUtil.isEmpty(funding.getEndDate().getYear())) {
-                setError(funding.getEndDate(), "fundings.dates.invalid");
+                setError(funding.getEndDate(), "common.dates.invalid");
                 hasError = true;
             }                
         }            
@@ -824,7 +824,7 @@ public class FundingsController extends BaseWorkspaceController {
             setError(funding.getCity(), "NotBlank.fundings.city");
         } else {
             if (funding.getCity().getValue().trim().length() > 1000) {
-                setError(funding.getCity(), "fundings.length_less_1000");
+                setError(funding.getCity(), "common.length_less_1000");
             }
         }
         return funding;
@@ -835,7 +835,7 @@ public class FundingsController extends BaseWorkspaceController {
     FundingForm validateRegion(@RequestBody FundingForm funding) {
         funding.getRegion().setErrors(new ArrayList<String>());
         if (funding.getRegion().getValue() != null && funding.getRegion().getValue().trim().length() > 1000) {
-            setError(funding.getRegion(), "fundings.length_less_1000");
+            setError(funding.getRegion(), "common.length_less_1000");
         }
         return funding;
     }

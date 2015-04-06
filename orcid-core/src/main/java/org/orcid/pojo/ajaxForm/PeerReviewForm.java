@@ -55,6 +55,8 @@ public class PeerReviewForm implements ErrorsInterface, Serializable {
 
     private Text type;
 
+    private Text orgName;
+    
     private Text city;
 
     private Text region;
@@ -229,6 +231,14 @@ public class PeerReviewForm implements ErrorsInterface, Serializable {
 
     public void setLastModified(Date lastModified) {
         this.lastModified = lastModified;
+    }    
+    
+    public Text getOrgName() {
+        return orgName;
+    }
+
+    public void setOrgName(Text orgName) {
+        this.orgName = orgName;
     }
 
     public PeerReview toPeerReview() {
@@ -259,8 +269,12 @@ public class PeerReviewForm implements ErrorsInterface, Serializable {
         Organization organization = new Organization();
         OrganizationAddress organizationAddress = new OrganizationAddress();
         organization.setAddress(organizationAddress);
-        if (!PojoUtil.isEmpty(city))
+        if(!PojoUtil.isEmpty(orgName)) {
+            organization.setName(orgName.getValue());
+        }
+        if (!PojoUtil.isEmpty(city)) {
             organizationAddress.setCity(city.getValue());
+        }
         if (!PojoUtil.isEmpty(region)) {
             organizationAddress.setRegion(region.getValue());
         }
@@ -343,7 +357,7 @@ public class PeerReviewForm implements ErrorsInterface, Serializable {
 
         // Put code
         if (!PojoUtil.isEmpty(peerReview.getPutCode())) {
-            form.setPutCode(null);
+            form.setPutCode(Text.valueOf(peerReview.getPutCode()));
         }
 
         // Visibility
@@ -373,6 +387,9 @@ public class PeerReviewForm implements ErrorsInterface, Serializable {
 
         // Org info
         if (peerReview.getOrganization() != null) {
+            if(!PojoUtil.isEmpty(peerReview.getOrganization().getName())) {
+                form.setOrgName(Text.valueOf(peerReview.getOrganization().getName()));
+            }
             if (peerReview.getOrganization().getAddress() != null) {
                 if (!PojoUtil.isEmpty(peerReview.getOrganization().getAddress().getCity())) {
                     form.setCity(Text.valueOf(peerReview.getOrganization().getAddress().getCity()));
@@ -409,26 +426,68 @@ public class PeerReviewForm implements ErrorsInterface, Serializable {
         if(peerReview.getSubject() != null) {
             PeerReviewSubjectForm subjectForm = new PeerReviewSubjectForm();
             
-            subjectForm.setJournalTitle(null);
-            subjectForm.setPutCode(null);
-            subjectForm.setSubtitle(null);
-            subjectForm.setTitle(null);
-            subjectForm.setTranslatedTitle(null);
-            subjectForm.setUrl(null);
-            subjectForm.setWorkExternalIdentifiers(null);
-            subjectForm.setWorkType(null);
+            if(!PojoUtil.isEmpty(peerReview.getSubject().getPutCode())) {
+                subjectForm.setPutCode(Text.valueOf(peerReview.getSubject().getPutCode()));
+            }            
+            
+            if(peerReview.getSubject().getJournalTitle() != null && !PojoUtil.isEmpty(peerReview.getSubject().getJournalTitle().getContent())) {
+                subjectForm.setJournalTitle(Text.valueOf(peerReview.getSubject().getJournalTitle().getContent()));
+            }
+                        
+            if(!PojoUtil.isEmpty(peerReview.getUrl())) {
+                subjectForm.setUrl(null);
+            }
+            
+            if(peerReview.getType() != null) {
+                subjectForm.setWorkType(Text.valueOf(peerReview.getType().value()));
+            }
+                        
+            if(peerReview.getSubject().getTitle() != null) {
+                if(peerReview.getSubject().getTitle().getTitle() != null && !PojoUtil.isEmpty(peerReview.getSubject().getTitle().getTitle().getContent())) {
+                    subjectForm.setTitle(Text.valueOf(peerReview.getSubject().getTitle().getTitle().getContent()));
+                }
+                
+                if(peerReview.getSubject().getTitle().getTranslatedTitle() != null && !PojoUtil.isEmpty(peerReview.getSubject().getTitle().getTranslatedTitle().getContent())) {
+                    TranslatedTitle translatedTitle = new TranslatedTitle();
+                    translatedTitle.setContent(peerReview.getSubject().getTitle().getTranslatedTitle().getContent());
+                    translatedTitle.setLanguageCode(peerReview.getSubject().getTitle().getTranslatedTitle().getLanguageCode());
+                    subjectForm.setTranslatedTitle(translatedTitle);
+                }
+                
+                if(peerReview.getSubject().getTitle().getSubtitle() != null && !PojoUtil.isEmpty(peerReview.getSubject().getTitle().getSubtitle().getContent())) {
+                    subjectForm.setSubtitle(Text.valueOf(peerReview.getSubject().getTitle().getSubtitle().getContent()));
+                }                
+            }
+            
+            if(peerReview.getExternalIdentifiers() != null) {
+                List<org.orcid.jaxb.model.record.WorkExternalIdentifier> extIds = peerReview.getExternalIdentifiers().getExternalIdentifier();
+                subjectForm.setWorkExternalIdentifiers(new ArrayList<WorkExternalIdentifier> ());
+                if(extIds != null) {
+                    for(org.orcid.jaxb.model.record.WorkExternalIdentifier extId : extIds) {
+                        subjectForm.getWorkExternalIdentifiers().add(WorkExternalIdentifier.valueOf(extId));
+                    }
+                }                
+            }                                   
             
             form.setSubjectForm(subjectForm);
         }        
 
         // Source
-        form.setSource(null);
+        if(peerReview.getSource() != null) {
+            form.setSource(peerReview.getSource().retrieveSourcePath());
+            if(peerReview.getSource().getSourceName() != null)
+                form.setSourceName(peerReview.getSource().getSourceName().getContent());
+        }        
 
         // Created Date
-        form.setCreatedDate(null);
+        if(peerReview.getCreatedDate() != null) {
+            form.setCreatedDate(Date.valueOf(peerReview.getCreatedDate()));
+        }        
 
         // Last modified
-        form.setLastModified(null);
+        if(peerReview.getLastModifiedDate() != null) {
+            form.setLastModified(Date.valueOf(peerReview.getLastModifiedDate()));
+        }        
 
         return form;
     }

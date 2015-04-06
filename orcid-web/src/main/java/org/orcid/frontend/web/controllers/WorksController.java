@@ -642,10 +642,10 @@ public class WorksController extends BaseWorkspaceController {
     Work workTitleValidate(@RequestBody Work work) {
         work.getTitle().setErrors(new ArrayList<String>());
         if (work.getTitle().getValue() == null || work.getTitle().getValue().trim().length() == 0) {
-            setError(work.getTitle(), "NotBlank.manualWork.title");
+            setError(work.getTitle(), "common.title.not_empty");
         } else {
             if (work.getTitle().getValue().trim().length() > 1000) {
-                setError(work.getTitle(), "manualWork.length_less_1000");
+                setError(work.getTitle(), "common.length_less_1000");
             }
         }
         return work;
@@ -657,7 +657,7 @@ public class WorksController extends BaseWorkspaceController {
         
         work.getSubtitle().setErrors(new ArrayList<String>());
         if (work.getSubtitle().getValue() != null && work.getSubtitle().getValue().length() > 1000) {
-            setError(work.getSubtitle(), "manualWork.length_less_1000");
+            setError(work.getSubtitle(), "common.length_less_1000");
         }
         return work;
     }
@@ -679,7 +679,7 @@ public class WorksController extends BaseWorkspaceController {
                 setError(work.getTranslatedTitle(), "manualWork.empty_code");
             }
             if (content.length() > 1000) {
-                setError(work.getTranslatedTitle(), "manualWork.length_less_1000");
+                setError(work.getTranslatedTitle(), "common.length_less_1000");
             }
         } else {
             if (!StringUtils.isEmpty(code)) {
@@ -701,7 +701,7 @@ public class WorksController extends BaseWorkspaceController {
     Work workJournalTitleValidate(@RequestBody Work work) {
         work.getJournalTitle().setErrors(new ArrayList<String>());
         if (work.getJournalTitle().getValue() != null && work.getJournalTitle().getValue().length() > 1000) {
-            setError(work.getJournalTitle(), "manualWork.length_less_1000");
+            setError(work.getJournalTitle(), "common.length_less_1000");
         }
         return work;
     }

@@ -18,6 +18,7 @@ package org.orcid.jaxb.model.record;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
@@ -39,7 +40,17 @@ public class Subject {
     protected Title journalTitle;
     @XmlElement(namespace = "http://www.orcid.org/ns/peer-review")
     protected Url url;
+    @XmlAttribute(name = "put-code")
+    protected String putCode;
 
+    public String getPutCode() {
+        return putCode;
+    }
+
+    public void setPutCode(String putCode) {
+        this.putCode = putCode;
+    }
+    
     public WorkExternalIdentifiers getExternalIdentifiers() {
         return externalIdentifiers;
     }

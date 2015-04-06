@@ -381,7 +381,7 @@ public class AffiliationsController extends BaseWorkspaceController {
             setError(affiliationForm.getAffiliationName(), "NotBlank.manualAffiliation.name");
         } else {
             if (affiliationForm.getAffiliationName().getValue().trim().length() > 1000) {
-                setError(affiliationForm.getAffiliationName(), "manualAffiliation.length_less_1000");
+                setError(affiliationForm.getAffiliationName(), "common.length_less_1000");
             }
         }
         return affiliationForm;
@@ -395,7 +395,7 @@ public class AffiliationsController extends BaseWorkspaceController {
             setError(affiliationForm.getCity(), "NotBlank.manualAffiliation.city");
         } else {
             if (affiliationForm.getCity().getValue().trim().length() > 1000) {
-                setError(affiliationForm.getCity(), "manualAffiliation.length_less_1000");
+                setError(affiliationForm.getCity(), "common.length_less_1000");
             }
         }
         return affiliationForm;
@@ -406,7 +406,7 @@ public class AffiliationsController extends BaseWorkspaceController {
     AffiliationForm regionValidate(@RequestBody AffiliationForm affiliationForm) {
         affiliationForm.getRegion().setErrors(new ArrayList<String>());
         if (affiliationForm.getRegion().getValue() != null && affiliationForm.getRegion().getValue().trim().length() > 1000) {
-            setError(affiliationForm.getRegion(), "manualAffiliation.length_less_1000");
+            setError(affiliationForm.getRegion(), "common.length_less_1000");
         }
         return affiliationForm;
     }
@@ -426,7 +426,7 @@ public class AffiliationsController extends BaseWorkspaceController {
     AffiliationForm departmentValidate(@RequestBody AffiliationForm affiliationForm) {
         affiliationForm.getDepartmentName().setErrors(new ArrayList<String>());
         if (affiliationForm.getDepartmentName().getValue() != null && affiliationForm.getDepartmentName().getValue().trim().length() > 1000) {
-            setError(affiliationForm.getDepartmentName(), "manualAffiliation.length_less_1000");
+            setError(affiliationForm.getDepartmentName(), "common.length_less_1000");
         }
         return affiliationForm;
     }
@@ -436,7 +436,7 @@ public class AffiliationsController extends BaseWorkspaceController {
     AffiliationForm roleTitleValidate(@RequestBody AffiliationForm affiliationForm) {
         affiliationForm.getRoleTitle().setErrors(new ArrayList<String>());
         if (!PojoUtil.isEmpty(affiliationForm.getRoleTitle()) && affiliationForm.getRoleTitle().getValue().trim().length() > 1000) {
-            setError(affiliationForm.getRoleTitle(), "manualAffiliation.length_less_1000");
+            setError(affiliationForm.getRoleTitle(), "common.length_less_1000");
         }
         return affiliationForm;
     }
