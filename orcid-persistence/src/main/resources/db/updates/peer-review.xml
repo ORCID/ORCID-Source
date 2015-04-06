@@ -45,10 +45,10 @@
 			<column name="org_id" type="bigint">
 				<constraints nullable="false" />
 			</column>
-			<column name="role" type="VARCHAR(25)">
+			<column name="peer_review_role" type="VARCHAR(25)">
 				<constraints nullable="false" />
 			</column>
-			<column name="type" type="VARCHAR(25)">
+			<column name="peer_review_type" type="VARCHAR(25)">
 				<constraints nullable="false" />
 			</column>
 			

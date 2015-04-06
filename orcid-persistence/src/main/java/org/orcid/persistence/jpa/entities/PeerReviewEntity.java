@@ -64,6 +64,7 @@ public class PeerReviewEntity extends BaseEntity<Long> implements ProfileAware, 
 
     @Basic
     @Enumerated(EnumType.STRING)
+    @Column(name = "peer_review_role")
     public Role getRole() {
         return role;
     }
@@ -101,7 +102,8 @@ public class PeerReviewEntity extends BaseEntity<Long> implements ProfileAware, 
     }
 
     @Basic
-    @Enumerated(EnumType.STRING)    
+    @Enumerated(EnumType.STRING)   
+    @Column(name = "peer_review_type")
     public PeerReviewType getType() {
         return type;
     }
