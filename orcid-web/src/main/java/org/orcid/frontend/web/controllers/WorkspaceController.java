@@ -345,7 +345,6 @@ public class WorkspaceController extends BaseWorkspaceController {
         otherNameManager.updateOtherNames(currentProfile.getOrcidIdentifier().getPath(), onf.toOtherNames());
         return onf;
     }
-
     
     /**
      * Retrieve all external identifiers as a json string
@@ -379,7 +378,6 @@ public class WorkspaceController extends BaseWorkspaceController {
         researcherUrlManager.updateResearcherUrls(currentProfile.getOrcidIdentifier().getPath(), ws.toResearcherUrls());
         return ws;
     }
-
 
     /**
      * Retrieve all external identifiers as a json string
@@ -425,8 +423,7 @@ public class WorkspaceController extends BaseWorkspaceController {
             }
         }
         return tpr;
-    }    
-    
+    }        
     
     /**
      * Reads the latest cache version from database, compare it against the

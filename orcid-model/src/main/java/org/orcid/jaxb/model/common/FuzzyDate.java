@@ -24,6 +24,7 @@
 package org.orcid.jaxb.model.common;
 
 import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -42,7 +43,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "fuzzyDate", propOrder = { "year", "month", "day" }, namespace="http://www.orcid.org/ns/common")
+@XmlType(name = "fuzzyDate", propOrder = { "year", "month", "day" }, namespace = "http://www.orcid.org/ns/common")
 @XmlSeeAlso({ PublicationDate.class })
 public class FuzzyDate implements Serializable {
 
@@ -67,11 +68,28 @@ public class FuzzyDate implements Serializable {
         this.month = month != null ? new Month(month) : null;
         this.day = day != null ? new Day(day) : null;
     }
-    
-    public FuzzyDate(FuzzyDate other){
+
+    public FuzzyDate(FuzzyDate other) {
         this.year = other.year;
         this.month = other.month;
         this.day = other.day;
+    }
+
+    public FuzzyDate(org.orcid.jaxb.model.message.FuzzyDate other) {
+        if (other == null)
+            throw new IllegalArgumentException("Invalid init parameter");
+        if (other.getYear() != null) {
+            this.year = new Year();
+            this.year.setValue(other.getYear().getValue());
+        }
+        if (other.getMonth() != null) {
+            this.month = new Month();
+            this.month.setValue(other.getMonth().getValue());
+        }
+        if (other.getDay() != null) {
+            this.day = new Day();
+            this.day.setValue(other.getDay().getValue());
+        }
     }
 
     /**
