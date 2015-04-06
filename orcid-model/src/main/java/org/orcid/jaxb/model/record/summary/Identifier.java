@@ -102,5 +102,5 @@ public class Identifier {
             result.setExternalIdentifierId(fundingExtId.getUrl().getValue());
         result.setExternalIdentifierType(fundingExtId.getType().name());
         return result;
-    }
+    }        
 }

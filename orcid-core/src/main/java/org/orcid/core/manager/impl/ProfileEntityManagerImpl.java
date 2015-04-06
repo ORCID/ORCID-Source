@@ -29,6 +29,7 @@ import javax.persistence.NoResultException;
 import org.orcid.core.adapter.JpaJaxbEducationAdapter;
 import org.orcid.core.adapter.JpaJaxbEmploymentAdapter;
 import org.orcid.core.adapter.JpaJaxbFundingAdapter;
+import org.orcid.core.adapter.JpaJaxbPeerReviewAdapter;
 import org.orcid.core.adapter.JpaJaxbWorkAdapter;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
@@ -52,6 +53,9 @@ import org.orcid.jaxb.model.record.summary.FundingGroup;
 import org.orcid.jaxb.model.record.summary.FundingSummary;
 import org.orcid.jaxb.model.record.summary.Fundings;
 import org.orcid.jaxb.model.record.summary.Identifier;
+import org.orcid.jaxb.model.record.summary.PeerReviewGroup;
+import org.orcid.jaxb.model.record.summary.PeerReviewSummary;
+import org.orcid.jaxb.model.record.summary.PeerReviews;
 import org.orcid.jaxb.model.record.summary.WorkGroup;
 import org.orcid.jaxb.model.record.summary.WorkSummary;
 import org.orcid.jaxb.model.record.summary.Works;
@@ -80,6 +84,9 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     @Resource
     private JpaJaxbFundingAdapter jpaJaxbFundingAdapter;
 
+    @Resource
+    private JpaJaxbPeerReviewAdapter jpaJaxbPeerReviewAdapter;
+    
     @Resource
     private JpaJaxbWorkAdapter jpaJaxbWorkAdapter;
 
@@ -332,16 +339,22 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         }
         if (!employments.getSummaries().isEmpty()) {
             activities.setEmployments(employments);
-        }
+        }        
+        // Set fundings
+        List<FundingSummary> fundingSummaries = jpaJaxbFundingAdapter.toFundingSummary(profileEntity.getProfileFunding());
+        Fundings fundings = groupFundings(fundingSummaries, justPublic);
+        activities.setFundings(fundings);                
+
+        //Set peer reviews
+        List<PeerReviewSummary> peerReviewSummaries = jpaJaxbPeerReviewAdapter.toPeerReviewSummary(profileEntity.getPeerReviews());
+        PeerReviews peerReviews = groupPeerReviews(peerReviewSummaries, justPublic);
+        activities.setPeerReviews(peerReviews);
+        
         // Set works
         List<WorkSummary> workSummaries = jpaJaxbWorkAdapter.toWorkSummary(profileEntity.getProfileWorks());
         Works works = groupWorks(workSummaries, justPublic);
         activities.setWorks(works);
-        // Set fundings
-        List<FundingSummary> fundingSummaries = jpaJaxbFundingAdapter.toFundingSummary(profileEntity.getProfileFunding());
-        Fundings fundings = groupFundings(fundingSummaries, justPublic);
-        activities.setFundings(fundings);
-
+        
         return activities;
     }
 
@@ -424,6 +437,45 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
 
         return result;
     }
+    
+    private PeerReviews groupPeerReviews(List<PeerReviewSummary> peerReviews, boolean justPublic) {
+        ActivitiesGroupGenerator groupGenerator = new ActivitiesGroupGenerator();
+        PeerReviews result = new PeerReviews();
+        for (PeerReviewSummary peerReview : peerReviews) {
+            if (justPublic && !peerReview.getVisibility().equals(org.orcid.jaxb.model.common.Visibility.PUBLIC)) {
+                // If it is just public and the funding is not public, just
+                // ignore it
+            } else {
+                groupGenerator.group(peerReview);
+            }
+        }
+        
+        List<ActivitiesGroup> groups = groupGenerator.getGroups();
+
+        for (ActivitiesGroup group : groups) {
+            Set<ExternalIdentifier> externalIdentifiers = group.getExternalIdentifiers();
+            Set<GroupableActivity> activities = group.getActivities();
+            PeerReviewGroup peerReviewGroup = new PeerReviewGroup();
+            // Fill the peer review groups with the external identifiers
+            for (ExternalIdentifier extId : externalIdentifiers) {
+                WorkExternalIdentifier workExtId = (WorkExternalIdentifier) extId;
+                peerReviewGroup.getIdentifiers().getIdentifier().add(Identifier.fromWorkExternalIdentifier(workExtId));
+            }
+
+            // Fill the peer review group with the list of activities
+            for (GroupableActivity activity : activities) {
+                PeerReviewSummary peerReviewSummary = (PeerReviewSummary) activity;
+                peerReviewGroup.getPeerReviewSummary().add(peerReviewSummary);
+            }
+
+            // Sort the peer reviews
+            Collections.sort(peerReviewGroup.getPeerReviewSummary(), new GroupableActivityComparator());
+
+            result.getPeerReviewGroup().add(peerReviewGroup);
+        }
+        
+        return result;
+    } 
 
     public Date getLastModified(String orcid) {
         return profileDao.retrieveLastModifiedDate(orcid);

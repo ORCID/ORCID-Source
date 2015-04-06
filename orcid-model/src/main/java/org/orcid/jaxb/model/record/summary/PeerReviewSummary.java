@@ -32,13 +32,14 @@ import org.orcid.jaxb.model.common.LastModifiedDate;
 import org.orcid.jaxb.model.common.Source;
 import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.jaxb.model.record.Activity;
+import org.orcid.jaxb.model.record.GroupableActivity;
 import org.orcid.jaxb.model.record.Role;
 import org.orcid.jaxb.model.record.WorkExternalIdentifiers;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "role", "externalIdentifiers", "type", "completionDate", "source", "createdDate", "lastModifiedDate" })
 @XmlRootElement(name = "summary", namespace = "http://www.orcid.org/ns/peer-review")
-public class PeerReviewSummary implements Filterable, Activity, Serializable {
+public class PeerReviewSummary implements Filterable, Activity, GroupableActivity, Serializable {
     
     private static final long serialVersionUID = -7769331531691171324L;
     @XmlElement(namespace = "http://www.orcid.org/ns/peer-review")
@@ -60,6 +61,8 @@ public class PeerReviewSummary implements Filterable, Activity, Serializable {
     protected String path;
     @XmlAttribute
     protected Visibility visibility;
+    @XmlAttribute(name = "display-index")
+    protected String displayIndex;
 
     public Role getRole() {
         return role;
@@ -131,6 +134,14 @@ public class PeerReviewSummary implements Filterable, Activity, Serializable {
 
     public void setVisibility(Visibility visibility) {
         this.visibility = visibility;
+    }
+    
+    public String getDisplayIndex() {
+        return displayIndex;
+    }
+
+    public void setDisplayIndex(String displayIndex) {
+        this.displayIndex = displayIndex;
     }
 
     @Override
@@ -206,5 +217,27 @@ public class PeerReviewSummary implements Filterable, Activity, Serializable {
         if (visibility != other.visibility)
             return false;
         return true;
+    }   
+
+    @Override
+    public int compareTo(GroupableActivity activity) {
+        Long index = Long.valueOf(this.getDisplayIndex() == null ? "0" : this.getDisplayIndex());
+        Long otherIndex = Long.valueOf(activity.getDisplayIndex() == null ? "0" : activity.getDisplayIndex());
+        if (index == null) {
+            if (otherIndex == null) {
+                return 0;
+            } else {
+                return -1;
+            }
+        } else {
+            if (otherIndex == null) {
+                return 1;
+            } else if (index instanceof Comparable) {
+                //Return opposite, since higher index goes first
+                return  index.compareTo(otherIndex) * -1;
+            } else {
+                return 0;
+            }
+        }
     }
 }
