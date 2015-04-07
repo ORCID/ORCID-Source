@@ -533,6 +533,7 @@ orcidNgModule.factory("workspaceSrvc", ['$rootScope', function ($rootScope) {
             displayFunding: true,
             displayPersonalInfo: true,
             displayWorks: true,
+            displayPeerReview: true,
             toggleEducation: function() {
                 serv.displayEducation = !serv.displayEducation;
             },
@@ -548,6 +549,10 @@ orcidNgModule.factory("workspaceSrvc", ['$rootScope', function ($rootScope) {
             toggleWorks: function() {
                 serv.displayWorks = !serv.displayWorks;
             },
+            togglePeerReview: function() {
+            	console.log('Click');
+            	serv.displayPeerReview = !serv.displayPeerReview;
+            },
             openEducation: function() {
                 serv.displayEducation = true;
             },
@@ -562,7 +567,11 @@ orcidNgModule.factory("workspaceSrvc", ['$rootScope', function ($rootScope) {
             },
             openWorks: function() {
                 serv.displayWorks = true;
+            },
+            openPeerReview: function() {
+                serv.displayPeerReview = true;
             }
+            
     };
     return serv;
 }]);
@@ -4532,7 +4541,7 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
 }]);
 
 orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'workspaceSrvc', 'commonSrvc', 'peerReviewSrvc', function ($scope, $compile, $filter, workspaceSrvc, commonSrvc, peerReviewSrvc){
-	
+	$scope.workspaceSrvc = workspaceSrvc;
 	$scope.addPeerReviewModal = function(data){
         if (data == undefined) {
         	/* Temporaly removed to get the model launched
@@ -4569,6 +4578,10 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
                 //$scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);
             }
         });
+    };
+    
+    $scope.closeModal = function() {
+        $.colorbox.close();
     };
     
 }]);
