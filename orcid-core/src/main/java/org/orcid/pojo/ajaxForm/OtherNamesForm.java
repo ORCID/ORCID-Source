@@ -54,8 +54,9 @@ public class OtherNamesForm implements ErrorsInterface, Serializable {
     public OtherNames toOtherNames() {
         OtherNames otherName = new OtherNames();
         List<OtherName> kList = new ArrayList<OtherName>();
-        for (Text text : this.otherNames) 
-            kList.add(text.toOtherName());
+        for (Text text : this.otherNames)
+            if (!PojoUtil.isEmpty(text))
+                kList.add(text.toOtherName());
         otherName.setOtherName(kList);
         otherName.setVisibility(this.getVisibility().getVisibility());
         return otherName;
