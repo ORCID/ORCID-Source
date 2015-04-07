@@ -1160,7 +1160,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         assertEquals(0, retrievedProfile.getOrcidBio().getPersonalDetails().getOtherNames().getOtherName().size());       
         assertEquals("Given Names Deactivated", retrievedProfile.getOrcidBio().getPersonalDetails().getGivenNames().getContent());
         assertEquals("Family Name Deactivated", retrievedProfile.getOrcidBio().getPersonalDetails().getFamilyName().getContent());
-        assertNull(retrievedProfile.getOrcidBio().getBiography());
+        assertNull(retrievedProfile.getOrcidBio().getBiography().getContent());
     }
 
     @Test

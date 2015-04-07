@@ -533,6 +533,7 @@ orcidNgModule.factory("workspaceSrvc", ['$rootScope', function ($rootScope) {
             displayFunding: true,
             displayPersonalInfo: true,
             displayWorks: true,
+            displayPeerReview: true,
             toggleEducation: function() {
                 serv.displayEducation = !serv.displayEducation;
             },
@@ -548,6 +549,10 @@ orcidNgModule.factory("workspaceSrvc", ['$rootScope', function ($rootScope) {
             toggleWorks: function() {
                 serv.displayWorks = !serv.displayWorks;
             },
+            togglePeerReview: function() {
+            	console.log('Click');
+            	serv.displayPeerReview = !serv.displayPeerReview;
+            },
             openEducation: function() {
                 serv.displayEducation = true;
             },
@@ -562,7 +567,11 @@ orcidNgModule.factory("workspaceSrvc", ['$rootScope', function ($rootScope) {
             },
             openWorks: function() {
                 serv.displayWorks = true;
+            },
+            openPeerReview: function() {
+                serv.displayPeerReview = true;
             }
+            
     };
     return serv;
 }]);
@@ -1072,6 +1081,8 @@ orcidNgModule.factory("emailSrvc", function ($rootScope) {
             delEmail: null,
             primaryEmail: null,
             addEmail: function() {
+            	console.log('Adding: ');
+            	console.log(serv.inputEmail);
                 $.ajax({
                     url: getBaseUri() + '/account/addEmail.json',
                     data:  angular.toJson(serv.inputEmail),
@@ -1079,6 +1090,8 @@ orcidNgModule.factory("emailSrvc", function ($rootScope) {
                     type: 'POST',
                     dataType: 'json',
                     success: function(data) {
+                    	console.log('Added...');
+                    	console.log(data);
                         serv.inputEmail = data;
                         if (serv.inputEmail.errors.length == 0) {
                             serv.initInputEmail();
@@ -1094,14 +1107,17 @@ orcidNgModule.factory("emailSrvc", function ($rootScope) {
             getEmails: function(callback) {
                 $.ajax({
                     url: getBaseUri() + '/account/emails.json',
-                    //type: 'POST',
-                    //data: $scope.emailsPojo,
+                    type: 'GET',
                     dataType: 'json',
                     success: function(data) {
                         serv.emails = data;
-                        for (var i in data.emails)
-                            if (data.emails[i].primary)
+                        console.log('Requested: ');
+                        console.log(data);
+                        for (var i in data.emails){
+                            if (data.emails[i].primary){
                                 serv.primaryEmail = data.emails[i];
+                            }    
+                        }
                         $rootScope.$apply();
                         if (callback)
                            callback(data);
@@ -4523,6 +4539,74 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     	}, 0);
     }
 }]);
+
+orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'workspaceSrvc', 'commonSrvc', 'peerReviewSrvc', function ($scope, $compile, $filter, workspaceSrvc, commonSrvc, peerReviewSrvc){
+	$scope.workspaceSrvc = workspaceSrvc;
+	$scope.addPeerReviewModal = function(data){
+        if (data == undefined) {
+        	/* Temporaly removed to get the model launched
+        	peerReviewSrvc.getPeerReviewWork(function(data) {
+                $scope.editPeerReview = data;
+                $scope.$apply(function() {
+                    $scope.loadPeerReviewTypes();
+                    $scope.showAddPeerReviewModal();
+                });
+            });
+            */
+            $scope.showAddPeerReviewModal();
+        } else {
+            $scope.editPeerReview = data;            
+            $scope.loadPeerReviewTypes();
+            $scope.showAddPeerReviewModal();
+        }
+
+    };
+    
+    $scope.showAddPeerReviewModal = function(){
+        $scope.editTranslatedTitle = false;
+        $.colorbox({
+            scrolling: true,
+            html: $compile($('#add-peer-review-modal').html())($scope),
+            onLoad: function() {$('#cboxClose').remove();},
+            // start the colorbox off with the correct width
+            width: formColorBoxResize(),
+            onComplete: function() {
+                //resize to insure content fits
+            },
+            onClosed: function() {
+                //$scope.closeAllMoreInfo();
+                //$scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);
+            }
+        });
+    };
+    
+    $scope.closeModal = function() {
+        $.colorbox.close();
+    };
+    
+}]);
+
+
+orcidNgModule.factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
+    var peerReviewSrvc = {
+    		getBlankPeerReview: function(callback) {
+    			/*
+                $.ajax({
+                    url: getBaseUri() + '/peer-review/peer-review.json',
+                    dataType: 'json',
+                    success: function(data) {
+                        callback(data);
+                        $rootScope.$apply();
+                    }
+                }).fail(function() {
+                    console.log("Error fetching blank work");
+                });
+                */
+            } 
+    };
+    return peerReviewSrvc;
+}]);
+
 
 orcidNgModule.controller('SearchCtrl',['$scope', '$compile', function ($scope, $compile){
     $scope.hasErrors = false;
