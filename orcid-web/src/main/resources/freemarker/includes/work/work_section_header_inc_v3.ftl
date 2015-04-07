@@ -39,7 +39,7 @@
                     <li class="hidden-xs"><!-- Workaround for mobile view -->
                         <div class="menu-container">
                             <ul class="toggle-menu">
-                                <li ng-class="{'green-bg' : showBibtexImportWizard == true}"> 
+                                <li ng-class="{'green-bg' : showBibtexImportWizard == true || workImportWizard == true}"> 
                                     <span class="glyphicon glyphicon-plus"></span>
                                     <@orcid.msg 'groups.common.add_works'/>
                                     <ul class="menu-options works">

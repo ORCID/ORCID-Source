@@ -2071,6 +2071,25 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input{
 	text-transform: uppercase;
 }
 
+.lightbox-title a i{
+	font-size: 12px;
+	vertical-align: top;
+}
+
+.work-import-wizard-title{
+	position: relative;
+}
+
+.work-import-wizard-popover{
+	position: absolute;
+	top: -145px;
+	left: 129px;
+}
+
+.work-import-wizard-popover > .popover-content{
+	white-space: normal !important;
+}
+
 .inline-list {
 	margin: 0;
 	padding: 0;
@@ -4776,9 +4795,9 @@ ul.toggle-menu li:hover ul{
 }
 
 /* Bulk Edit control / bibtex */
-
 .bulk-edit,
-.bibtex-box{
+.bibtex-box,
+.import-work-wizard{
 	height: auto;
 	display: inline-block;	
 	width: 100%;

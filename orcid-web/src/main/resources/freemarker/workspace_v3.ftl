@@ -323,7 +323,55 @@
 		        <!-- Works -->                
                 <div id="workspace-publications" class="workspace-accordion-item workspace-accordion-active" ng-controller="WorkCtrl" orcid-loaded="{{worksSrvc.worksToAddIds != null && worksSrvc.loading != true}}">
                     <#include "includes/work/work_section_header_inc_v3.ftl"/>
-					
+                    <!-- Work Import Wizard -->
+					<div ng-show="workImportWizard == true" class="import-work-wizard" ng-cloak>
+						
+						<#if ((workImportWizards)??)>
+							<div class="ie7fix-inner">
+								<div class="row">	
+									<div class="col-md-12 col-sm-12 col-xs-12">
+						           		<h1 class="lightbox-title work-import-wizard-title"><@orcid.msg 'workspace.link_works'/><a ng-mouseenter="toggleWorkImportHelp()" ng-mouseout="toggleWorkImportHelp()"><i class="glyphicon glyphicon-question-sign"></i></a></h1>
+						           		<div class="popover popover-tooltip top work-import-wizard-popover" ng-show="workImportHelp == true">
+                                          <div class="arrow"></div>
+                                          <div class="popover-content">                                                 
+                                              <@orcid.msg 'workspace.LinkResearchActivities.description'/>
+                                          </div>
+                                       </div>
+									</div>
+								</div>
+								
+								
+								<div class="row">
+									<div class="col-md-12 col-sm-12 col-xs-12">
+					    		    	<#list workImportWizards?sort_by("displayName") as thirdPartyDetails>
+					    		    		<h1>${thirdPartyDetails}</h1>		
+						        	       	<#assign redirect = (thirdPartyDetails.redirectUris.redirectUri[0].value) >
+					            	   		<#assign predefScopes = (thirdPartyDetails.redirectUris.redirectUri[0].scopeAsSingleString) >
+					                   		<strong><a ng-click="openImportWizardUrl('<@spring.url '/oauth/authorize?client_id=${thirdPartyDetails.clientId}&response_type=code&scope=${predefScopes}&redirect_uri=${redirect}'/>')">${thirdPartyDetails.displayName}</a></strong><br />
+					                 		<div class="justify">
+												<p>
+													${(thirdPartyDetails.shortDescription)!}
+												</p>
+											</div>
+					                   		<#if (thirdPartyDetails_has_next)>
+						                      	<hr/>
+											</#if>
+					                		</#list>
+									</div>
+								</div>
+								
+								                 
+					            <div class="row">
+									<div class="col-md-12 col-sm-12 col-xs-12">
+										<p>
+									   		<strong><@orcid.msg 'workspace.LinkResearchActivities.footer.title'/></strong>	    
+						        			<@orcid.msg 'workspace.LinkResearchActivities.footer.description1'/> <a href="<@orcid.msg 'workspace.LinkResearchActivities.footer.description.url'/>"><@orcid.msg 'workspace.LinkResearchActivities.footer.description.link'/></a> <@orcid.msg 'workspace.LinkResearchActivities.footer.description2'/>
+								    	</p>
+									</div>
+						        </div>
+							</div>						
+						</#if>
+					</div>
 					<!-- Bulk Edit -->					
 					<div ng-show="bulkEditShow && workspaceSrvc.displayWorks" ng-cloak>						
 						<div class="bulk-edit">
