@@ -23,12 +23,10 @@
 			<!-- Title -->
 			<div class="row">			
 				<div class="col-md-9 col-sm-8 col-xs-9">	
-					<h1 class="lightbox-title pull-left">
-						<!-- 
-						<div ng-show="editWork.putCode.value != null">
-							<@orcid.msg 'manual_work_form_contents.edit_work'/>
-						</div>
-						 -->
+					<h1 class="lightbox-title pull-left">						
+						<div ng-show="editPeerReview.putCode.value != null">
+							Edit Peer Review
+						</div>						 
 						<div>
 							Add Peer Review
 						</div>
@@ -44,21 +42,22 @@
 					<div class="control-group">
 			    		<label class="relative">Role</label>			    		
 			    		<div class="relative">
-				    		<!--<select id="peerReviewRole" name="peerReviewRole" class="input-xlarge" ng-model="something" ng-change="">-->
-							<select id="peerReviewRole" name="peerReviewRole" class="input-xlarge">
-				    			<option value="">Pick a role</option>								
-								<option value="">Reviewer</option>
-								<option value="">Editor</option>
-								<option value="">Member</option>
-								<option value="">Chair</option>
-								<option value="">Organizer</option>
-							</select> 
+				    		<select id="peerReviewRole" class="input-xlarge" name="peerReviewRole" ng-model="editPeerReview.role.value" ng-change="serverValidate('peer-review/roleValidate.json');">
+                            	<option value=""><@orcid.msg 'org.orcid.jaxb.model.record.Role.empty' /></option>
+                            	<#list peerReviewRoles?keys as key>
+                                	<option value="${key}">${peerReviewRoles[key]}</option>
+                            	</#list>
+                        	</select> 
 							<span class="required" ng-class="">*</span>
-							<span class="orcid-error" ng-show="">
-								<!-- <div ng-repeat='' ng-bind-html="error"></div> -->
+							<span class="orcid-error" ng-show="editPeerReview.role.errors.length > 0">
+								<div ng-repeat='error in editPeerReview.role.errors' ng-bind-html="error"></div>
 							</span>
 						</div>
 					</div>
+
+
+
+
 					<!-- TYPE -->
 					<div class="control-group">
 			    		<label class="relative">Type</label>			    		

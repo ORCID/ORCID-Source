@@ -4525,41 +4525,31 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     };
     
     $scope.showTooltip = function (key){    	
-        $scope.showElement[key] = true;
-    	
-    }
+        $scope.showElement[key] = true;    	
+    };
     
     $scope.hideTooltip = function (key){    	
     	$scope.showElement[key] = false;
-    }
+    };
     
     $scope.openFileDialog = function(){    	
     	$timeout(function() { //To avoid '$apply already in progress' error
     	    angular.element('#inputBibtex').trigger('click');
     	}, 0);
-    }
+    };
 }]);
 
 orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'workspaceSrvc', 'commonSrvc', 'peerReviewSrvc', function ($scope, $compile, $filter, workspaceSrvc, commonSrvc, peerReviewSrvc){
 	$scope.workspaceSrvc = workspaceSrvc;
-	$scope.addPeerReviewModal = function(data){
-        if (data == undefined) {
-        	/* Temporaly removed to get the model launched
-        	peerReviewSrvc.getPeerReviewWork(function(data) {
+	$scope.editPeerReview = null;
+	$scope.addPeerReviewModal = function(){        
+        	peerReviewSrvc.getBlankPeerReview(function(data) {
                 $scope.editPeerReview = data;
-                $scope.$apply(function() {
-                    $scope.loadPeerReviewTypes();
+                $scope.$apply(function() {                    
                     $scope.showAddPeerReviewModal();
                 });
             });
-            */
-            $scope.showAddPeerReviewModal();
-        } else {
-            $scope.editPeerReview = data;            
-            $scope.loadPeerReviewTypes();
-            $scope.showAddPeerReviewModal();
-        }
-
+            $scope.showAddPeerReviewModal();        
     };
     
     $scope.showAddPeerReviewModal = function(){
@@ -4584,24 +4574,40 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
         $.colorbox.close();
     };
     
+    $scope.serverValidate = function (relativePath) {
+        $.ajax({
+            url: getBaseUri() + '/' + relativePath,
+            type: 'POST',
+            data:  angular.toJson($scope.editPeerReview),
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            success: function(data) {
+                commonSrvc.copyErrorsLeft($scope.editPeerReview, data);                
+                $scope.$apply();
+            }
+        }).fail(function() {
+            // something bad is happening!
+            console.log("PeerReviewCtrl.serverValidate() error");
+        });
+    };
+    
 }]);
 
 
 orcidNgModule.factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
     var peerReviewSrvc = {
     		getBlankPeerReview: function(callback) {
-    			/*
-                $.ajax({
-                    url: getBaseUri() + '/peer-review/peer-review.json',
+    			$.ajax({
+                    url: getBaseUri() + '/peer-reviews/peer-review.json',
                     dataType: 'json',
                     success: function(data) {
+                    	console.log(angular.toJson(data));
                         callback(data);
                         $rootScope.$apply();
                     }
                 }).fail(function() {
                     console.log("Error fetching blank work");
-                });
-                */
+                });                
             } 
     };
     return peerReviewSrvc;

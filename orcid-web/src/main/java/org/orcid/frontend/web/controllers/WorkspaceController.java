@@ -58,6 +58,7 @@ import org.orcid.jaxb.model.message.SequenceType;
 import org.orcid.jaxb.model.message.Source;
 import org.orcid.jaxb.model.message.WorkCategory;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
+import org.orcid.jaxb.model.record.Role;
 import org.orcid.pojo.ThirdPartyRedirect;
 import org.orcid.pojo.ajaxForm.KeywordsForm;
 import org.orcid.pojo.ajaxForm.OtherNamesForm;
@@ -279,6 +280,15 @@ public class WorkspaceController extends BaseWorkspaceController {
         return lm.getLanguagesMap(localeManager.getLocale());
     }
 
+    @ModelAttribute("peerReviewRoles")
+    public Map<String, String> retrievePeerReviewRolesAsMap() {
+        Map<String, String> peerReviewRoles = new LinkedHashMap<String, String>();
+        for (Role role : Role.values()) {
+            peerReviewRoles.put(role.value(), getMessage(buildInternationalizationKey(Role.class, role.value())));
+        }
+        return FunctionsOverCollections.sortMapsByValues(peerReviewRoles);
+    }
+    
     @RequestMapping(value = {"/my-orcid3","/my-orcid", "/workspace"}, method = RequestMethod.GET)
     public ModelAndView viewWorkspace3(HttpServletRequest request, @RequestParam(value = "page", defaultValue = "1") int pageNo,
             @RequestParam(value = "maxResults", defaultValue = "200") int maxResults) {

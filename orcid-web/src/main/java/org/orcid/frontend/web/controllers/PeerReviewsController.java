@@ -24,7 +24,9 @@ import javax.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.locale.LocaleManager;
+import org.orcid.core.manager.PeerReviewManager;
 import org.orcid.frontend.web.util.LanguagesMap;
+import org.orcid.jaxb.model.record.PeerReview;
 import org.orcid.jaxb.model.record.PeerReviewType;
 import org.orcid.jaxb.model.record.Role;
 import org.orcid.pojo.ajaxForm.Date;
@@ -49,6 +51,9 @@ public class PeerReviewsController extends BaseWorkspaceController {
     @Resource
     private LocaleManager localeManager;
 
+    @Resource
+    private PeerReviewManager peerReviewManager;
+    
     @Resource(name = "languagesMap")
     private LanguagesMap lm;
 
@@ -134,8 +139,28 @@ public class PeerReviewsController extends BaseWorkspaceController {
         copyErrors(peerReview.getUrl(), peerReview);
         copyErrors(peerReview.getCompletionDate(), peerReview);
         
+        //If there are no errors, persist to DB
+        if(peerReview.getErrors().isEmpty()) {            
+            if(PojoUtil.isEmpty(peerReview.getPutCode())) {
+                addPeerReview(peerReview);
+            } else {
+                editPeerReview(peerReview);
+            }
+        }
         
         return peerReview;
+    }
+    
+    private PeerReviewForm addPeerReview(PeerReviewForm peerReviewForm) {
+        String userOrcid = getEffectiveUserOrcid();        
+        PeerReview peerReview = peerReviewForm.toPeerReview();        
+        peerReview = peerReviewManager.createPeerReview(userOrcid, peerReview);
+        peerReviewForm = PeerReviewForm.fromPeerReview(peerReview);
+        return peerReviewForm; 
+    }
+    
+    private void editPeerReview(PeerReviewForm peerReview) {
+        
     }
     
     private void removeEmptyExternalIds(PeerReviewForm peerReview) {
@@ -236,6 +261,22 @@ public class PeerReviewsController extends BaseWorkspaceController {
         
         return peerReview;
     }
+    
+    
+    
+    
+    @RequestMapping(value = "/peer-review/roleValidate.json", method = RequestMethod.POST)
+    public @ResponseBody
+    PeerReviewForm validateRole(@RequestBody PeerReviewForm peerReview) {
+        peerReview.getRole().setErrors(new ArrayList<String>());
+        if(PojoUtil.isEmpty(peerReview.getRole())) {            
+            setError(peerReview.getRole(), "peer_review.role.not_blank");            
+        }
+        
+        return peerReview;
+    }
+    
+    
     
 }
 

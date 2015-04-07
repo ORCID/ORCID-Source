@@ -44,7 +44,7 @@
 	<xs:element name="peer-review">
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element name="role" type="peer-review:role">
+				<xs:element name="role" type="peer-review:role" minOccurs="1" maxOccurs="1">
 					<xs:annotation>
 						<xs:documentation>The role played by a person in their
 							contribution to a review.
