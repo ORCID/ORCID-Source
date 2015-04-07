@@ -416,7 +416,7 @@ public class AffiliationsController extends BaseWorkspaceController {
     AffiliationForm countryValidate(@RequestBody AffiliationForm affiliationForm) {
         affiliationForm.getCountry().setErrors(new ArrayList<String>());
         if (affiliationForm.getCountry().getValue() == null || affiliationForm.getCountry().getValue().trim().length() == 0) {
-            setError(affiliationForm.getCountry(), "NotBlank.manualAffiliation.country");
+            setError(affiliationForm.getCountry(), "common.country.not_blank");
         }
         return affiliationForm;
     }

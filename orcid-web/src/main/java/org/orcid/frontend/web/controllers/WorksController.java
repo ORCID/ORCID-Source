@@ -642,7 +642,7 @@ public class WorksController extends BaseWorkspaceController {
     Work workTitleValidate(@RequestBody Work work) {
         work.getTitle().setErrors(new ArrayList<String>());
         if (work.getTitle().getValue() == null || work.getTitle().getValue().trim().length() == 0) {
-            setError(work.getTitle(), "common.title.not_empty");
+            setError(work.getTitle(), "common.title.not_blank");
         } else {
             if (work.getTitle().getValue().trim().length() > 1000) {
                 setError(work.getTitle(), "common.length_less_1000");

@@ -127,6 +127,13 @@ public class PeerReviewsController extends BaseWorkspaceController {
         validateCountry(peerReview);
         validateUrl(peerReview);
         validateCompletionDate(peerReview);
+        copyErrors(peerReview.getOrgName(), peerReview);
+        copyErrors(peerReview.getCity(), peerReview);
+        copyErrors(peerReview.getRegion(), peerReview);
+        copyErrors(peerReview.getCountry(), peerReview);
+        copyErrors(peerReview.getUrl(), peerReview);
+        copyErrors(peerReview.getCompletionDate(), peerReview);
+        
         
         return peerReview;
     }
@@ -189,7 +196,7 @@ public class PeerReviewsController extends BaseWorkspaceController {
     PeerReviewForm validateCountry(@RequestBody PeerReviewForm peerReview) {
         peerReview.getCountry().setErrors(new ArrayList<String>());
         if (peerReview.getCountry().getValue() == null || peerReview.getCountry().getValue().trim().length() == 0) {
-            setError(peerReview.getCountry(), "org.country.not_blank");
+            setError(peerReview.getCountry(), "common.country.not_empty");
         }
         return peerReview;
     }
@@ -221,7 +228,7 @@ public class PeerReviewsController extends BaseWorkspaceController {
         if(peerReview.getSubjectForm() != null) {
             peerReview.getSubjectForm().getTitle().setErrors(new ArrayList<String>());
             if(PojoUtil.isEmpty(peerReview.getSubjectForm().getTitle())) {
-                setError(peerReview.getSubjectForm().getTitle(), "common.title.not_empty");
+                setError(peerReview.getSubjectForm().getTitle(), "common.title.not_blank");
             } else if(peerReview.getSubjectForm().getTitle().getValue().length() > 100) {
                 setError(peerReview.getSubjectForm().getTitle(), "common.length_less_1000");
             }

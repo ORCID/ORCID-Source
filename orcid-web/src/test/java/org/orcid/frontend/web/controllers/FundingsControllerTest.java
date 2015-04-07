@@ -582,7 +582,7 @@ public class FundingsControllerTest extends BaseControllerTest {
         assertNotNull(funding);
         assertNotNull(funding.getErrors());
         assertEquals(1, funding.getErrors().size());
-        assertEquals(fundingController.getMessage("fundings.dates.invalid"), funding.getErrors().get(0));
+        assertEquals(fundingController.getMessage("common.dates.invalid"), funding.getErrors().get(0));
         
         //Check valid end date
         funding = getFundingForm();
@@ -593,7 +593,7 @@ public class FundingsControllerTest extends BaseControllerTest {
         assertNotNull(funding);
         assertNotNull(funding.getErrors());
         assertEquals(1, funding.getErrors().size());
-        assertEquals(fundingController.getMessage("fundings.dates.invalid"), funding.getErrors().get(0));
+        assertEquals(fundingController.getMessage("common.dates.invalid"), funding.getErrors().get(0));
         
         
         //Check end date is after start date

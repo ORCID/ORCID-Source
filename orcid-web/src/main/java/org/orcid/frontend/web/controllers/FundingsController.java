@@ -845,7 +845,7 @@ public class FundingsController extends BaseWorkspaceController {
     FundingForm validateCountry(@RequestBody FundingForm funding) {
         funding.getCountry().setErrors(new ArrayList<String>());
         if (funding.getCountry().getValue() == null || funding.getCountry().getValue().trim().length() == 0) {
-            setError(funding.getCountry(), "NotBlank.fundings.country");
+            setError(funding.getCountry(), "common.country.not_blank");
         }
         return funding;
     }
