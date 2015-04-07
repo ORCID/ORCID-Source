@@ -4601,8 +4601,7 @@ orcidNgModule.factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
                     url: getBaseUri() + '/peer-reviews/peer-review.json',
                     dataType: 'json',
                     success: function(data) {
-                    	console.log(angular.toJson(data));
-                        callback(data);
+                    	callback(data);
                         $rootScope.$apply();
                     }
                 }).fail(function() {

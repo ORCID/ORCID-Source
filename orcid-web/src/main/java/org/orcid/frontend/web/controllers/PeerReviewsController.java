@@ -178,7 +178,7 @@ public class PeerReviewsController extends BaseWorkspaceController {
         peerReview.setExternalIdentifiers(updatedExtIds);
     }
     
-    @RequestMapping(value = "/peer-review/orgNameValidate.json", method = RequestMethod.POST)
+    @RequestMapping(value = "/orgNameValidate.json", method = RequestMethod.POST)
     public @ResponseBody
     PeerReviewForm validateOrgName(@RequestBody PeerReviewForm peerReview) {
         peerReview.getOrgName().setErrors(new ArrayList<String>());
@@ -192,7 +192,7 @@ public class PeerReviewsController extends BaseWorkspaceController {
         return peerReview;
     }
     
-    @RequestMapping(value = "/peer-review/cityValidate.json", method = RequestMethod.POST)
+    @RequestMapping(value = "/cityValidate.json", method = RequestMethod.POST)
     public @ResponseBody
     PeerReviewForm validateCity(@RequestBody PeerReviewForm peerReview) {
         peerReview.getCity().setErrors(new ArrayList<String>());
@@ -206,7 +206,7 @@ public class PeerReviewsController extends BaseWorkspaceController {
         return peerReview;
     }
 
-    @RequestMapping(value = "/peer-review/regionValidate.json", method = RequestMethod.POST)
+    @RequestMapping(value = "/regionValidate.json", method = RequestMethod.POST)
     public @ResponseBody
     PeerReviewForm validateRegion(@RequestBody PeerReviewForm peerReview) {
         peerReview.getRegion().setErrors(new ArrayList<String>());
@@ -216,7 +216,7 @@ public class PeerReviewsController extends BaseWorkspaceController {
         return peerReview;
     }
 
-    @RequestMapping(value = "/peer-review/countryValidate.json", method = RequestMethod.POST)
+    @RequestMapping(value = "/countryValidate.json", method = RequestMethod.POST)
     public @ResponseBody
     PeerReviewForm validateCountry(@RequestBody PeerReviewForm peerReview) {
         peerReview.getCountry().setErrors(new ArrayList<String>());
@@ -226,14 +226,14 @@ public class PeerReviewsController extends BaseWorkspaceController {
         return peerReview;
     }
     
-    @RequestMapping(value = "/peer-review/urlValidate.json", method = RequestMethod.POST)
+    @RequestMapping(value = "/urlValidate.json", method = RequestMethod.POST)
     public @ResponseBody
     PeerReviewForm validateUrl(@RequestBody PeerReviewForm peerReview) {        
         validateUrl(peerReview.getUrl());
         return peerReview;
     }
     
-    @RequestMapping(value = "/peer-review/completionDateValidate.json", method = RequestMethod.POST)
+    @RequestMapping(value = "/completionDateValidate.json", method = RequestMethod.POST)
     public @ResponseBody
     PeerReviewForm validateCompletionDate(@RequestBody PeerReviewForm peerReview) {
         if(peerReview.getCompletionDate() != null){
@@ -247,7 +247,7 @@ public class PeerReviewsController extends BaseWorkspaceController {
         return peerReview;
     }
     
-    @RequestMapping(value = "/peer-review/subject/titleValidate.json", method = RequestMethod.POST)
+    @RequestMapping(value = "/subject/titleValidate.json", method = RequestMethod.POST)
     public @ResponseBody
     PeerReviewForm validateSubjectTitle(@RequestBody PeerReviewForm peerReview) {
         if(peerReview.getSubjectForm() != null) {
@@ -262,10 +262,7 @@ public class PeerReviewsController extends BaseWorkspaceController {
         return peerReview;
     }
     
-    
-    
-    
-    @RequestMapping(value = "/peer-review/roleValidate.json", method = RequestMethod.POST)
+    @RequestMapping(value = "/roleValidate.json", method = RequestMethod.POST)
     public @ResponseBody
     PeerReviewForm validateRole(@RequestBody PeerReviewForm peerReview) {
         peerReview.getRole().setErrors(new ArrayList<String>());

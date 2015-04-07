@@ -24,10 +24,10 @@
 			<div class="row">			
 				<div class="col-md-9 col-sm-8 col-xs-9">	
 					<h1 class="lightbox-title pull-left">						
-						<div ng-show="editPeerReview.putCode.value != null">
+						<div ng-show="editPeerReview.putCode.value != ''">
 							Edit Peer Review
 						</div>						 
-						<div>
+						<div ng-show="editPeerReview.putCode.value == ''">
 							Add Peer Review
 						</div>
 					</h1>
@@ -42,7 +42,7 @@
 					<div class="control-group">
 			    		<label class="relative">Role</label>			    		
 			    		<div class="relative">
-				    		<select id="peerReviewRole" class="input-xlarge" name="peerReviewRole" ng-model="editPeerReview.role.value" ng-change="serverValidate('peer-review/roleValidate.json');">
+				    		<select id="peerReviewRole" class="input-xlarge" name="peerReviewRole" ng-model="editPeerReview.role.value" ng-change="serverValidate('peer-reviews/roleValidate.json');">
                             	<option value=""><@orcid.msg 'org.orcid.jaxb.model.record.Role.empty' /></option>
                             	<#list peerReviewRoles?keys as key>
                                 	<option value="${key}">${peerReviewRoles[key]}</option>
@@ -54,26 +54,31 @@
 							</span>
 						</div>
 					</div>
-
-
-
-
 					<!-- TYPE -->
 					<div class="control-group">
 			    		<label class="relative">Type</label>			    		
 			    		<div class="relative">
-				    		<!--<select id="peerReviewRole" name="peerReviewRole" class="input-xlarge" ng-model="something" ng-change="">-->
-							<select id="peerReviewType" name="peerReviewType" class="input-xlarge">
-				    			<option value="">Pick a type</option>								
-								<option value="">Review</option>
-								<option value="">Evaluation</option>
-							</select> 
+				    		<select id="peerReviewType" class="input-xlarge" name="peerReviewType" ng-model="editPeerReview.type.value">
+                            	<option value=""><@orcid.msg 'org.orcid.jaxb.model.record.Type.empty' /></option>
+                            	<#list peerReviewTypes?keys as key>
+                                	<option value="${key}">${peerReviewTypes[key]}</option>
+                            	</#list>
+                        	</select> 
 							<span class="required" ng-class="">*</span>
-							<span class="orcid-error" ng-show="">
-								<!-- <div ng-repeat='' ng-bind-html="error"></div> -->
+							<span class="orcid-error" ng-show="editPeerReview.type.errors.length > 0">
+								<div ng-repeat='error in editPeerReview.type.errors' ng-bind-html="error"></div>
 							</span>
 						</div>
 					</div>
+
+
+
+
+
+
+
+
+
 					<!-- ORGANIZATION -->
 					
 					<span><strong>ORGANIZATION</strong></span>						

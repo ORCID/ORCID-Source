@@ -58,6 +58,7 @@ import org.orcid.jaxb.model.message.SequenceType;
 import org.orcid.jaxb.model.message.Source;
 import org.orcid.jaxb.model.message.WorkCategory;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
+import org.orcid.jaxb.model.record.PeerReviewType;
 import org.orcid.jaxb.model.record.Role;
 import org.orcid.pojo.ThirdPartyRedirect;
 import org.orcid.pojo.ajaxForm.KeywordsForm;
@@ -287,6 +288,15 @@ public class WorkspaceController extends BaseWorkspaceController {
             peerReviewRoles.put(role.value(), getMessage(buildInternationalizationKey(Role.class, role.value())));
         }
         return FunctionsOverCollections.sortMapsByValues(peerReviewRoles);
+    }
+    
+    @ModelAttribute("peerReviewTypes")
+    public Map<String, String> retrievePeerReviewTypesAsMap() {
+        Map<String, String> peerReviewTypes = new LinkedHashMap<String, String>();
+        for (PeerReviewType type : PeerReviewType.values()) {
+            peerReviewTypes.put(type.value(), getMessage(buildInternationalizationKey(PeerReviewType.class, type.value())));
+        }
+        return FunctionsOverCollections.sortMapsByValues(peerReviewTypes);
     }
     
     @RequestMapping(value = {"/my-orcid3","/my-orcid", "/workspace"}, method = RequestMethod.GET)
