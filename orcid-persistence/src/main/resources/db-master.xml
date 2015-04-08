@@ -131,8 +131,8 @@
     
     <include file="/db/updates/add_type_to_public_client.xml" />
     <include file="/db/updates/record-locked.xml" />
-
+    <include file="/db/updates/fix_profile_work_display_index.xml" />
     <include file="/db/updates/remove_amount_field.xml" />
-
     <include file="/db/updates/fix_blank_other_names.xml" />
+    <include file="/db/updates/shibboleth.xml" />
 </databaseChangeLog>
