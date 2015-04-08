@@ -3263,7 +3263,9 @@ orcidNgModule.controller('FundingCtrl',['$scope', '$compile', '$filter', 'fundin
     $scope.privacyHelp = {};
     $scope.editTranslatedTitle = false;
     $scope.lastIndexedTerm = null;
-    $scope.showElement = {};    
+    $scope.showElement = {};
+    $scope.fundingImportWizard = false;
+    $scope.wizardDescExpanded = {};
     $scope.emptyExtId = {
             "errors": [],
             "type": {
@@ -3721,11 +3723,22 @@ orcidNgModule.controller('FundingCtrl',['$scope', '$compile', '$filter', 'fundin
     
     
     $scope.showFundingImportWizard =  function() {
+    	$scope.fundingImportWizard = !$scope.fundingImportWizard;
+    	
+    	
+    	/*
         $.colorbox({
             html : $compile($('#import-funding-modal').html())($scope),
             onComplete: function() {$.colorbox.resize();}
         });
+        */
+    	
+    	
     };
+    
+    $scope.toggleWizardDesc = function(id){
+    	$scope.wizardDescExpanded[id] = !$scope.wizardDescExpanded[id];
+    }
     
     $scope.showTooltip = function (key){
         $scope.showElement[key] = true;
@@ -3928,7 +3941,7 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     $scope.bulkDeleteCount = 0;
     $scope.bulkDeleteSubmit = false;
     $scope.workImportWizard = false;
-    $scope.workImportHelp = false;    
+    $scope.wizardDescExpanded = {};
     
     $scope.sortState = new ActSortState(GroupedActivities.ABBR_WORK);
     $scope.sort = function(key) {
@@ -4526,12 +4539,9 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     	}, 0);
     }
     
-    $scope.toggleWorkImportHelp = function(){
-    	$scope.workImportHelp = !$scope.workImportHelp;    
-    }
-    
-    
-    
+    $scope.toggleWizardDesc = function(id){
+    	$scope.wizardDescExpanded[id] = !$scope.wizardDescExpanded[id];
+    }   
     
     
 }]);

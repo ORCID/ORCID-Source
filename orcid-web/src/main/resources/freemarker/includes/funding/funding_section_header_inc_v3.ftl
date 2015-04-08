@@ -36,7 +36,7 @@
                         <li class="hidden-xs">
                         	<div class="menu-container">
 		                    	<ul class="toggle-menu">
-		                    		<li ng-class="{'green-bg' : showBibtexImportWizard == true}">       
+		                    		<li ng-class="{'green-bg' : fundingImportWizard == true}">       
 				                    	<span class="glyphicon glyphicon-plus"></span>
 					                    <@orcid.msgCapFirst 'manual_funding_form_contents.add_grant' />    
 					                    <ul class="menu-options funding">
