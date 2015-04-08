@@ -101,6 +101,7 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
             } else if(sourceEntity.getSourceProfile() != null) {
                 source.setSourceOrcid(new SourceOrcid(sourceEntity.getSourceProfile().getId()));
             }
+            peerReview.setSource(source);
         }
         
         if(peerReviews != null) {
@@ -122,8 +123,6 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
         ProfileEntity profile = profileDao.find(orcid);
         entity.setProfile(profile);
         setIncomingPrivacy(entity, profile);
-        
-        
         peerReviewDao.persist(entity);        
         return jpaJaxbPeerReviewAdapter.toPeerReview(entity);
     }
