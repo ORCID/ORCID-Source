@@ -265,8 +265,7 @@ public class PeerReview implements VisibilityType, Activity, Serializable, Organ
 
     /**
      * Indicates if two peer reviews are ORCID duplicated. Two peer review will
-     * be duplicated if they have the same subject, the same external
-     * identifiers, the same role, the same type and same completion date
+     * be duplicated if they have the same source and share at least one external id
      * 
      * @return true if the two peer reviews are duplicated according to ORCID
      *         requirements
@@ -279,25 +278,31 @@ public class PeerReview implements VisibilityType, Activity, Serializable, Organ
         if (getClass() != obj.getClass())
             return false;
         PeerReview other = (PeerReview) obj;
-        if (!subject.equals(other)) {
+        
+        //Check if they have the same source
+        if(!source.equals(other.getSource())) {
             return false;
         }
-
-        if (!externalIdentifiers.equals(other.getExternalIdentifiers())) {
-            return false;
+        
+        //Check if they share at least one external identifier
+        if (externalIdentifiers == null || externalIdentifiers.getExternalIdentifier() == null || externalIdentifiers.getExternalIdentifier().isEmpty()) {
+            if(other.getExternalIdentifiers() != null && other.getExternalIdentifiers() != null && !other.getExternalIdentifiers().getExternalIdentifier().isEmpty()) {
+                return false;
+            }
+        } else {            
+            if(other.getExternalIdentifiers() == null || other.getExternalIdentifiers().getExternalIdentifier() == null || other.getExternalIdentifiers().getExternalIdentifier().isEmpty()) {
+                return false;
+            }
+            for(WorkExternalIdentifier thisExtId : externalIdentifiers.getExternalIdentifier()) {
+                for(WorkExternalIdentifier otherExtId : other.getExternalIdentifiers().getExternalIdentifier()) {
+                    if(thisExtId.equals(otherExtId)) {
+                        return true;
+                    }
+                }
+            }                        
         }
-
-        if (!role.equals(other.getRole())) {
-            return false;
-        }
-
-        if (!type.equals(other.getType())) {
-            return false;
-        }
-
-        if (!completionDate.equals(other.getCompletionDate())) {
-            return false;
-        }
-        return true;
+        
+        //If we get here, it means the source is the same, but, they dont share any external identifier
+        return false;
     }
 }

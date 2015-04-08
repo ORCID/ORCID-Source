@@ -21,12 +21,15 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.orcid.core.adapter.JpaJaxbPeerReviewAdapter;
-import org.orcid.core.exception.OrcidValidationException;
+import org.orcid.core.exception.OrcidDuplicatedActivityException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.OrgManager;
 import org.orcid.core.manager.PeerReviewManager;
 import org.orcid.core.manager.SourceManager;
+import org.orcid.jaxb.model.common.Source;
+import org.orcid.jaxb.model.common.SourceClientId;
+import org.orcid.jaxb.model.common.SourceOrcid;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.record.PeerReview;
 import org.orcid.jaxb.model.record.summary.PeerReviewSummary;
@@ -70,6 +73,9 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
     @Resource
     private GenericDao<PeerReviewSubjectEntity, Long> peerReviewSubjectDao;
     
+    @Resource
+    private OrcidUrlManager orcidUrlManager;
+    
     @Override
     public PeerReview getPeerReview(String orcid, String peerReviewId) {
         PeerReviewEntity peerReviewEntity = peerReviewDao.getPeerReview(orcid, peerReviewId); 
@@ -85,12 +91,24 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
     @Override
     public PeerReview createPeerReview(String orcid, PeerReview peerReview) {
         List<PeerReviewEntity> peerReviews = peerReviewDao.getByUser(orcid);
+        SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
+        
+        //Set the source to the peerReview before looking for duplicates
+        if(sourceEntity != null) {
+            Source source = new Source();
+            if(sourceEntity.getSourceClient() != null) {
+                source.setSourceClientId(new SourceClientId(sourceEntity.getSourceClient().getClientId()));
+            } else if(sourceEntity.getSourceProfile() != null) {
+                source.setSourceOrcid(new SourceOrcid(sourceEntity.getSourceProfile().getId()));
+            }
+        }
+        
         if(peerReviews != null) {
             for(PeerReviewEntity entity : peerReviews) {
                 PeerReview existing = jpaJaxbPeerReviewAdapter.toPeerReview(entity);
                 if(existing.isDuplicated(peerReview)) {
                     LOGGER.error("Trying to create a funding that is duplicated with " + entity.getId());
-                    throw new OrcidValidationException(localeManager.resolveMessage("api.error.duplicated"));
+                    throw new OrcidDuplicatedActivityException(localeManager.resolveMessage("api.error.duplicated"));
                 }
             }
         }
@@ -100,8 +118,7 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
         //Updates the give organization with the latest organization from database
         OrgEntity updatedOrganization = orgManager.getOrgEntity(peerReview);
         entity.setOrg(updatedOrganization);
-        
-        entity.setSource(sourceManager.retrieveSourceEntity());
+                
         ProfileEntity profile = profileDao.find(orcid);
         entity.setProfile(profile);
         setIncomingPrivacy(entity, profile);

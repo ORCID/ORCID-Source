@@ -25,7 +25,7 @@ import javax.annotation.Resource;
 
 import org.apache.commons.io.IOUtils;
 import org.orcid.core.adapter.JpaJaxbFundingAdapter;
-import org.orcid.core.exception.OrcidValidationException;
+import org.orcid.core.exception.OrcidDuplicatedActivityException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.OrgManager;
@@ -258,7 +258,7 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
             for(Funding exstingFunding : fundings) {
                 if(funding.isDuplicated(exstingFunding)) {
                     LOGGER.error("Trying to create a funding that is duplicated with " + funding.getPutCode());
-                    throw new OrcidValidationException(localeManager.resolveMessage("api.error.duplicated"));
+                    throw new OrcidDuplicatedActivityException(localeManager.resolveMessage("api.error.duplicated"));
                 }                    
             }
         }
