@@ -3517,7 +3517,6 @@ orcidNgModule.controller('FundingCtrl',['$scope', '$compile', '$filter', 'fundin
         }
     };
 
-
     $scope.selectOrgDefinedFundingSubType = function(subtype) {
         if (subtype != undefined && subtype != null) {
             $scope.editFunding.organizationDefinedFundingSubType.subtype.value = subtype.value;
@@ -3673,7 +3672,6 @@ orcidNgModule.controller('FundingCtrl',['$scope', '$compile', '$filter', 'fundin
         $scope.editFunding.externalIdentifiers.splice(index,1);
     };
 
-
     $scope.toggleTranslatedTitleModal = function(){
         $scope.editTranslatedTitle = !$scope.editTranslatedTitle;
         $('#translatedTitle').toggle();
@@ -3732,9 +3730,7 @@ orcidNgModule.controller('FundingCtrl',['$scope', '$compile', '$filter', 'fundin
         fundingSrvc.getEditable(putCode, function(bestMatch) {
             $scope.addFundingModal(bestMatch);
         });
-    };
-
-    
+    };    
     
     $scope.showFundingImportWizard =  function() {
         $.colorbox({
@@ -4542,11 +4538,15 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
 orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'workspaceSrvc', 'commonSrvc', 'peerReviewSrvc', function ($scope, $compile, $filter, workspaceSrvc, commonSrvc, peerReviewSrvc){
 	$scope.workspaceSrvc = workspaceSrvc;
 	$scope.editPeerReview = null;
+	$scope.disambiguatedOrganization = null;
+	
+	
 	$scope.addPeerReviewModal = function(){        
         	peerReviewSrvc.getBlankPeerReview(function(data) {
                 $scope.editPeerReview = data;
                 $scope.$apply(function() {                    
                     $scope.showAddPeerReviewModal();
+                    $scope.bindTypeaheadForOrgs();
                 });
             });
             $scope.showAddPeerReviewModal();        
@@ -4588,6 +4588,94 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
         }).fail(function() {
             // something bad is happening!
             console.log("PeerReviewCtrl.serverValidate() error");
+        });
+    };
+    
+    $scope.removeDisambiguatedOrganization = function() {
+        $scope.bindTypeaheadForOrgs();
+        if ($scope.disambiguatedOrganization != undefined) delete $scope.disambiguatedOrganization;
+        if ($scope.editPeerReview != undefined && $scope.editPeerReview.disambiguatedOrganizationSourceId != undefined) delete $scope.editPeerReview.disambiguatedOrganizationSourceId;
+    };
+    
+    $scope.unbindTypeaheadForOrgs = function () {
+        $('#organizationName').typeahead('destroy');
+    };
+    
+    $scope.bindTypeaheadForOrgs = function () {
+        var numOfResults = 100;
+        $("#organizationName").typeahead({
+            name: 'organizationName',
+            limit: numOfResults,
+            remote: {
+                replace: function () {
+                    var q = getBaseUri()+'/peer-reviews/disambiguated/name/';
+                    if ($('#organizationName').val()) {
+                        q += encodeURIComponent($('#organizationName').val());
+                    }
+                    q += '?limit=' + numOfResults;
+                    return q;
+                }
+            },
+            template: function (datum) {
+                   var forDisplay =
+                       '<span style=\'white-space: nowrap; font-weight: bold;\'>' + datum.value+ '</span>'
+                      +'<span style=\'font-size: 80%;\'>'
+                      + ' <br />' + datum.city;
+                   if(datum.region){
+                       forDisplay += ", " + datum.region;
+                   }
+                   if (datum.orgType != null && datum.orgType.trim() != '')
+                      forDisplay += ", " + datum.orgType;
+                   forDisplay += '</span><hr />';
+
+                   return forDisplay;
+            }
+        });
+        $("#organizationName").bind("typeahead:selected", function(obj, datum) {
+            $scope.selectOrganization(datum);
+            $scope.$apply();
+        });
+    };
+    
+    $scope.selectOrganization = function(datum) {
+        if (datum != undefined && datum != null) {
+            $scope.editPeerReview.orgName.value = datum.value;
+            if(datum.value)
+                $scope.editPeerReview.orgName.errors = [];
+            $scope.editPeerReview.city.value = datum.city;
+            if(datum.city)
+                $scope.editPeerReview.city.errors = [];
+            if(datum.region)
+            	$scope.editPeerReview.region.value = datum.region;
+
+            if(datum.country != undefined && datum.country != null) {
+                $scope.editPeerReview.country.value = datum.country;
+                $scope.editPeerReview.country.errors = [];
+            }
+
+            if (datum.disambiguatedOrganizationIdentifier != undefined && datum.disambiguatedOrganizationIdentifier != null) {
+                $scope.getDisambiguatedOrganization(datum.disambiguatedOrganizationIdentifier);
+                $scope.unbindTypeaheadForOrgs();
+            }
+        }
+    };
+    
+    $scope.getDisambiguatedOrganization = function(id) {
+        $.ajax({
+            url: getBaseUri() + '/peer-reviews/disambiguated/id/' + id,
+            dataType: 'json',
+            type: 'GET',
+            success: function(data) {
+                if (data != null) {
+                    console.log(data.sourceId);
+                    $scope.disambiguatedOrganization = data;
+                    $scope.editPeerReview.disambiguatedOrganizationSourceId = data.sourceId;
+                    $scope.editPeerReview.disambiguationSource = data.sourceType;
+                    $scope.$apply();
+                }
+            }
+        }).fail(function(){
+            console.log("error getDisambiguatedOrganization(id)");
         });
     };
     

@@ -48,7 +48,7 @@
                                 	<option value="${key}">${peerReviewRoles[key]}</option>
                             	</#list>
                         	</select> 
-							<span class="required" ng-class="">*</span>
+							<span class="required" ng-class="isValidClass(editPeerReview.role)">*</span>
 							<span class="orcid-error" ng-show="editPeerReview.role.errors.length > 0">
 								<div ng-repeat='error in editPeerReview.role.errors' ng-bind-html="error"></div>
 							</span>
@@ -58,13 +58,13 @@
 					<div class="control-group">
 			    		<label class="relative">Type</label>			    		
 			    		<div class="relative">
-				    		<select id="peerReviewType" class="input-xlarge" name="peerReviewType" ng-model="editPeerReview.type.value">
-                            	<option value=""><@orcid.msg 'org.orcid.jaxb.model.record.Type.empty' /></option>
+				    		<select id="peerReviewType" class="input-xlarge" name="peerReviewType" ng-model="editPeerReview.type.value" ng-change="serverValidate('peer-reviews/typeValidate.json');">
+                            	<option value=""><@orcid.msg 'org.orcid.jaxb.model.record.PeerReviewType.empty' /></option>
                             	<#list peerReviewTypes?keys as key>
                                 	<option value="${key}">${peerReviewTypes[key]}</option>
                             	</#list>
                         	</select> 
-							<span class="required" ng-class="">*</span>
+							<span class="required" ng-class="isValidClass(editPeerReview.type)">*</span>
 							<span class="orcid-error" ng-show="editPeerReview.type.errors.length > 0">
 								<div ng-repeat='error in editPeerReview.type.errors' ng-bind-html="error"></div>
 							</span>
@@ -74,58 +74,108 @@
 
 
 
-
-
-
-
-
 					<!-- ORGANIZATION -->
-					
-					<span><strong>ORGANIZATION</strong></span>						
-					<!-- Institution -->	
 					<div class="control-group">
-						<label>Institution</label>
-						<div class="relative">
+	                	<div class="control-group no-margin-bottom">
+    	                	<strong>FUNDING AGENCY</strong>
+	    	            </div>
+    	    	        <div class="control-group" ng-show="editPeerReview.disambiguatedOrganizationSourceId">
+        	    	        <label>Institution</label>
+            	    	    <span id="remove-disambiguated" class="pull-right">
+                	    	    <a ng-click="removeDisambiguatedOrganization()">
+                    	    	    <span class="glyphicon glyphicon-remove-sign"></span><@orcid.msg 'common.remove'/>
+	                        	</a>
+		                    </span>
+    		                <div class="relative" style="font-weight: strong;">
+        		                <span ng-bind="disambiguatedOrganization.value"></span>
+            		        </div>
+                		</div>
+	                	<div class="control-group">
+    	                	<span ng-hide="disambiguatedOrganization">
+        	                	   <label>Institution</label>
+            	        	</span>
+	                	    <span ng-show="disambiguatedOrganization">
+    	                    	<label>Display institution</label>
+        	            	</span>
+            	    	    <div class="relative">
+	                	        <input id="organizationName" class="input-xlarge" name="organizationName" type="text" ng-model="editPeerReview.orgName.value" placeholder="Type name. Select from the list to fill other fields" ng-change="serverValidate('peer-reviews/orgNameValidate.json')" ng-model-onblur/>
+    		                    <span class="required" ng-class="isValidClass(editPeerReview.orgName)">*</span>
+            		            <span class="orcid-error" ng-show="editPeerReview.orgName.errors.length > 0">
+                    	        	<div ng-repeat='error in editPeerReview.orgName.errors' ng-bind-html="error"></div>
+                        		</span>
+	    	                </div>
+    	    	        </div>
+                		<div class="control-group">
+		                    <label ng-hide="disambiguatedOrganization">City</label>
+        		            <label ng-show="disambiguatedOrganization">Display city</label>
+                		    <div class="relative">
+		                        <input name="city" type="text" class="input-xlarge"  ng-model="editPeerReview.city.value" placeholder="Add city" ng-change="serverValidate('peer-reviews/cityValidate.json')" ng-model-onblur/>
+        		                <span class="required" ng-class="isValidClass(editPeerReview.city)">*</span>
+                		        <span class="orcid-error" ng-show="editPeerReview.city.errors.length > 0">
+                        		    <div ng-repeat='error in editPeerReview.city.errors' ng-bind-html="error"></div>
+		                        </span>
+        		            </div>
+		                </div>
+        		        <div class="control-group">
+                		    <label ng-hide="disambiguatedOrganization">Region</label>
+		                    <label ng-show="disambiguatedOrganization">Display region</label>
+        		            <div class="relative">
+                		        <input name="region" type="text" class="input-xlarge"  ng-model="editPeerReview.region.value" placeholder="Add region" ng-change="serverValidate('peer-reviews/regionValidate.json')" ng-model-onblur/>
+		                        <span class="orcid-error" ng-show="editPeerReview.region.errors.length > 0">
+        	        	            <div ng-repeat='error in editPeerReview.region.errors' ng-bind-html="error"></div>
+            		            </span>
+                    		</div>
+                		</div>
+		                <div class="control-group">
+        		            <label ng-hide="disambiguatedOrganization">Country</label>
+                		    <label ng-show="disambiguatedOrganization">Display country</label>
+		                    <div class="relative">
+        		                <select id="country" class="input-xlarge" name="country" ng-model="editPeerReview.country.value" ng-change="serverValidate('peer-reviews/countryValidate.json')">
+                		            <option value=""><@orcid.msg 'org.orcid.persistence.jpa.entities.CountryIsoEntity.empty' /></option>
+									<#list isoCountries?keys as key>
+                                    	<option value="${key}">${isoCountries[key]}</option>
+									</#list>
+                        		</select>
+		                        <span class="required" ng-class="isValidClass(editPeerReview.country)">*</span>
+        		                <span class="orcid-error" ng-show="editPeerReview.country.errors.length > 0">
+                	        	    <div ng-repeat='error in editPeerReview.country.errors' ng-bind-html="error"></div>
+                    		    </span>
+                    		</div>
+                		</div>
+					</div>
 
-							<!--<input name="institution" type="text" class="input-xlarge"  ng-model="something" placeholder="Add institution" ng-change="" ng-model-onblur/>-->
-							<input name="institution" type="text" class="input-xlarge" placeholder="Add institution"/>
-							<span class="required" ng-class="">*</span>
-							<span class="orcid-error" ng-show="">
-								<!-- <div ng-repeat='' ng-bind-html="error"></div> -->
-							</span>
-						</div>
-					</div>
-					<!-- City -->
-					<div class="control-group">
-			    		<label class="relative">City</label>
-						<div class="relative">
-							<input name="city" type="text" class="input-xlarge" placeholder="Add city"/>
-							<span class="required" ng-class="">*</span>
-							<span class="orcid-error" ng-show="">
-								<!-- <div ng-repeat='' ng-bind-html="error"></div> -->
-								<div ng-bind-html="error"></div>
-							</span>
-						</div>
-					</div>
-									
-					<!-- State -->
-					<div class="control-group">
-			    		<label>Country</label>
-			    		<div class="relative">
-							<select id="country" name="country">
-	                            <option value=""><@orcid.msg 'org.orcid.persistence.jpa.entities.CountryIsoEntity.empty' /></option>
-	                            <#list isoCountries?keys as key>
-	                                    <option value="${key}">${isoCountries[key]}</option>
-	                            </#list>
-	                        </select>
-							<span class="required" ng-class="">*</span>
-						</div>
-						<span class="orcid-error" ng-show="">
-							<!-- <div ng-repeat='' ng-bind-html="error"></div> -->
-							<div ng-bind-html="error"></div>
-						</span>
-					</div>						
-					
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 					<!-- DATE -->				
 					<span><strong>COMPLETION DATE</strong></span>	
 					<div class="control-group">			    		

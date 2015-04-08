@@ -18,7 +18,9 @@ package org.orcid.frontend.web.controllers;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -29,6 +31,10 @@ import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.jaxb.model.record.PeerReview;
 import org.orcid.jaxb.model.record.PeerReviewType;
 import org.orcid.jaxb.model.record.Role;
+import org.orcid.persistence.dao.OrgDisambiguatedDao;
+import org.orcid.persistence.dao.OrgDisambiguatedSolrDao;
+import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
+import org.orcid.persistence.solr.entities.OrgDisambiguatedSolrDocument;
 import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.pojo.ajaxForm.PeerReviewForm;
 import org.orcid.pojo.ajaxForm.PeerReviewSubjectForm;
@@ -37,9 +43,11 @@ import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.TranslatedTitle;
 import org.orcid.pojo.ajaxForm.WorkExternalIdentifier;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
@@ -54,6 +62,12 @@ public class PeerReviewsController extends BaseWorkspaceController {
     @Resource
     private PeerReviewManager peerReviewManager;
     
+    @Resource
+    private OrgDisambiguatedSolrDao orgDisambiguatedSolrDao;
+
+    @Resource
+    private OrgDisambiguatedDao orgDisambiguatedDao;
+    
     @Resource(name = "languagesMap")
     private LanguagesMap lm;
 
@@ -67,7 +81,9 @@ public class PeerReviewsController extends BaseWorkspaceController {
     @RequestMapping(value = "/peer-review.json", method = RequestMethod.GET)
     public @ResponseBody
     PeerReviewForm getPeerReview() {
-        Text emptyText = Text.valueOf(StringUtils.EMPTY);
+        Text emptyTextRequired = Text.valueOf(StringUtils.EMPTY);
+        Text emptyTextNotRequired = Text.valueOf(StringUtils.EMPTY);
+        emptyTextNotRequired.setRequired(false);
         
         Date emptyDate = new Date();
         emptyDate.setDay(StringUtils.EMPTY);
@@ -87,29 +103,29 @@ public class PeerReviewsController extends BaseWorkspaceController {
         form.setCompletionDate(emptyDate);
         form.setCreatedDate(emptyDate);
                        
-        form.setCity(emptyText);
-        form.setRegion(emptyText);
-        form.setCountry(emptyText);
+        form.setCity(emptyTextRequired);
+        form.setRegion(emptyTextNotRequired);
+        form.setCountry(emptyTextRequired);
         form.setCountryForDisplay(StringUtils.EMPTY);
-        form.setDisambiguationSource(emptyText);
-        form.setDisambiguatedOrganizationId(emptyText);
+        form.setDisambiguationSource(emptyTextNotRequired);        
+        form.setOrgName(emptyTextRequired);
         
-        form.setPutCode(emptyText);
+        form.setPutCode(emptyTextNotRequired);
         form.setRole(Text.valueOf(Role.REVIEWER.value()));
         form.setType(Text.valueOf(PeerReviewType.REVIEW.value()));
-        form.setUrl(emptyText);
+        form.setUrl(emptyTextNotRequired);
         form.setExternalIdentifiers(Collections.<WorkExternalIdentifier> emptyList());
         
         PeerReviewSubjectForm subjectForm = new PeerReviewSubjectForm();
         subjectForm.setErrors(Collections.<String> emptyList());
-        subjectForm.setJournalTitle(emptyText);
-        subjectForm.setPutCode(emptyText);
-        subjectForm.setSubtitle(emptyText);
-        subjectForm.setTitle(emptyText);
+        subjectForm.setJournalTitle(emptyTextNotRequired);
+        subjectForm.setPutCode(emptyTextNotRequired);
+        subjectForm.setSubtitle(emptyTextNotRequired);
+        subjectForm.setTitle(emptyTextRequired);
         subjectForm.setTranslatedTitle(emptyTranslatedTitle);
-        subjectForm.setUrl(emptyText);
+        subjectForm.setUrl(emptyTextNotRequired);
         subjectForm.setWorkExternalIdentifiers(Collections.<WorkExternalIdentifier> emptyList());
-        subjectForm.setWorkType(emptyText);
+        subjectForm.setWorkType(emptyTextRequired);
         
         form.setSubjectForm(subjectForm);                
         return form;
@@ -273,8 +289,67 @@ public class PeerReviewsController extends BaseWorkspaceController {
         return peerReview;
     }
     
+    @RequestMapping(value = "/typeValidate.json", method = RequestMethod.POST)
+    public @ResponseBody
+    PeerReviewForm validateType(@RequestBody PeerReviewForm peerReview) {
+        peerReview.getType().setErrors(new ArrayList<String>());
+        if(PojoUtil.isEmpty(peerReview.getType())) {            
+            setError(peerReview.getType(), "peer_review.type.not_blank");            
+        }
+        
+        return peerReview;
+    }
     
     
+    
+    
+    
+    /**
+     * Typeahead
+     * */
+
+    /**
+     * Search DB for disambiguated affiliations to suggest to user
+     */
+    @RequestMapping(value = "/disambiguated/name/{query}", method = RequestMethod.GET)
+    public @ResponseBody
+    List<Map<String, String>> searchDisambiguated(@PathVariable("query") String query, @RequestParam(value = "limit") int limit) {
+        List<Map<String, String>> datums = new ArrayList<>();
+        for (OrgDisambiguatedSolrDocument orgDisambiguatedDocument : orgDisambiguatedSolrDao.getOrgs(query, 0, limit)) {
+            Map<String, String> datum = createDatumFromOrgDisambiguated(orgDisambiguatedDocument);
+            datums.add(datum);
+        }
+        return datums;
+    }
+
+    private Map<String, String> createDatumFromOrgDisambiguated(OrgDisambiguatedSolrDocument orgDisambiguatedDocument) {
+        Map<String, String> datum = new HashMap<>();
+        datum.put("value", orgDisambiguatedDocument.getOrgDisambiguatedName());
+        datum.put("city", orgDisambiguatedDocument.getOrgDisambiguatedCity());
+        datum.put("region", orgDisambiguatedDocument.getOrgDisambiguatedRegion());
+        datum.put("country", orgDisambiguatedDocument.getOrgDisambiguatedCountry());
+        datum.put("orgType", orgDisambiguatedDocument.getOrgDisambiguatedType());
+        datum.put("disambiguatedOrganizationIdentifier", Long.toString(orgDisambiguatedDocument.getOrgDisambiguatedId()));
+        return datum;
+    }
+
+    /**
+     * fetch disambiguated by id
+     */
+    @RequestMapping(value = "/disambiguated/id/{id}", method = RequestMethod.GET)
+    public @ResponseBody
+    Map<String, String> getDisambiguated(@PathVariable("id") Long id) {
+        OrgDisambiguatedEntity orgDisambiguatedEntity = orgDisambiguatedDao.find(id);
+        Map<String, String> datum = new HashMap<>();
+        datum.put("value", orgDisambiguatedEntity.getName());
+        datum.put("city", orgDisambiguatedEntity.getCity());
+        datum.put("region", orgDisambiguatedEntity.getRegion());
+        if (orgDisambiguatedEntity.getCountry() != null)
+            datum.put("country", orgDisambiguatedEntity.getCountry().value());
+        datum.put("sourceId", orgDisambiguatedEntity.getSourceId());
+        datum.put("sourceType", orgDisambiguatedEntity.getSourceType());
+        return datum;
+    }
 }
 
 

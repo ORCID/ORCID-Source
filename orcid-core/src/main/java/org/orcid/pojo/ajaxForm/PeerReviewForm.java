@@ -65,7 +65,7 @@ public class PeerReviewForm implements ErrorsInterface, Serializable {
 
     private String countryForDisplay;
 
-    private Text disambiguatedOrganizationId;
+    private Text disambiguatedOrganizationSourceId;
 
     private Text disambiguationSource;
 
@@ -169,12 +169,12 @@ public class PeerReviewForm implements ErrorsInterface, Serializable {
         this.countryForDisplay = countryForDisplay;
     }
 
-    public Text getDisambiguatedOrganizationId() {
-        return disambiguatedOrganizationId;
+    public Text getDisambiguatedOrganizationSourceId() {
+        return disambiguatedOrganizationSourceId;
     }
 
-    public void setDisambiguatedOrganizationId(Text disambiguatedOrganizationId) {
-        this.disambiguatedOrganizationId = disambiguatedOrganizationId;
+    public void setDisambiguatedOrganizationSourceId(Text disambiguatedOrganizationSourceId) {
+        this.disambiguatedOrganizationSourceId = disambiguatedOrganizationSourceId;
     }
 
     public Text getDisambiguationSource() {
@@ -281,9 +281,9 @@ public class PeerReviewForm implements ErrorsInterface, Serializable {
         if (!PojoUtil.isEmpty(country)) {
             organizationAddress.setCountry(Iso3166Country.fromValue(country.getValue()));
         }
-        if (!PojoUtil.isEmpty(disambiguatedOrganizationId)) {
+        if (!PojoUtil.isEmpty(disambiguatedOrganizationSourceId)) {
             organization.setDisambiguatedOrganization(new DisambiguatedOrganization());
-            organization.getDisambiguatedOrganization().setDisambiguatedOrganizationIdentifier(disambiguatedOrganizationId.getValue());
+            organization.getDisambiguatedOrganization().setDisambiguatedOrganizationIdentifier(disambiguatedOrganizationSourceId.getValue());
             organization.getDisambiguatedOrganization().setDisambiguationSource(disambiguationSource.getValue());
         }
         peerReview.setOrganization(organization);
@@ -404,7 +404,7 @@ public class PeerReviewForm implements ErrorsInterface, Serializable {
 
             if (peerReview.getOrganization().getDisambiguatedOrganization() != null) {
                 if (!PojoUtil.isEmpty(peerReview.getOrganization().getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier())) {
-                    form.setDisambiguatedOrganizationId(Text
+                    form.setDisambiguatedOrganizationSourceId(Text
                             .valueOf(peerReview.getOrganization().getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier()));
                 }
                 if (!PojoUtil.isEmpty(peerReview.getOrganization().getDisambiguatedOrganization().getDisambiguationSource())) {
