@@ -21,6 +21,7 @@ import org.orcid.jaxb.model.record.Activity;
 import org.orcid.jaxb.model.record.Education;
 import org.orcid.jaxb.model.record.Employment;
 import org.orcid.jaxb.model.record.Funding;
+import org.orcid.jaxb.model.record.PeerReview;
 import org.orcid.jaxb.model.record.summary.ActivitiesSummary;
 import org.orcid.jaxb.model.record.summary.EducationSummary;
 import org.orcid.jaxb.model.record.summary.Educations;
@@ -29,6 +30,7 @@ import org.orcid.jaxb.model.record.summary.Employments;
 import org.orcid.jaxb.model.record.summary.FundingGroup;
 import org.orcid.jaxb.model.record.summary.FundingSummary;
 import org.orcid.jaxb.model.record.summary.Fundings;
+import org.orcid.jaxb.model.record.summary.PeerReviewSummary;
 import org.orcid.jaxb.model.record.summary.WorkGroup;
 import org.orcid.jaxb.model.record.summary.WorkSummary;
 import org.orcid.jaxb.model.record.summary.Works;
@@ -55,6 +57,8 @@ public class ActivityUtils {
             activityType = OrcidApiConstants.ACTIVITY_EMPLOYMENT;
         } else if (Funding.class.isInstance(activity) || FundingSummary.class.isInstance(activity)) {
             activityType = OrcidApiConstants.ACTIVITY_FUNDING;
+        } else if (PeerReview.class.isInstance(activity) || PeerReviewSummary.class.isInstance(activity)) {
+            activityType = OrcidApiConstants.ACTIVITY_PEER_REVIEW;
         }
         // Build the path string
         String path = '/' + orcid + '/' + activityType + '/' + putCode;

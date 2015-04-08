@@ -69,5 +69,6 @@ public class OrcidApiConstants {
     public static final String ACTIVITY_EDUCATION = "education";
     public static final String ACTIVITY_EMPLOYMENT = "employment";
     public static final String ACTIVITY_FUNDING = "funding";
+    public static final String ACTIVITY_PEER_REVIEW = "peer-review";
     public static final String ACTIVITY_WORK = "work";    
 }       
