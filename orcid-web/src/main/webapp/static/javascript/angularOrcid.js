@@ -4540,6 +4540,7 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
 	$scope.editPeerReview = null;
 	$scope.disambiguatedOrganization = null;
 	$scope.addingPeerReview = false;
+	$scope.editTranslatedTitle = false;
 	
 	
 	$scope.addPeerReviewModal = function(){        
@@ -4706,6 +4707,12 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
         });
     };
     
+    $scope.toggleTranslatedTitleModal = function(){
+        $scope.editTranslatedTitle = !$scope.editTranslatedTitle;
+        $('#translatedTitle').toggle();
+        $.colorbox.resize();
+    };
+    
 }]);
 
 
@@ -4733,7 +4740,7 @@ orcidNgModule.factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
                     type: 'POST',
                     data: angular.toJson(peer_review),
                     success: function(data) {
-                        sucessFunc(data);
+                    	successFunc(data);
                         console.log(data);
                     }
                 }).fail(function(){

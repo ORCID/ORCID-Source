@@ -160,6 +160,7 @@ public class PeerReviewsController extends BaseWorkspaceController {
         validateCompletionDate(peerReview);
         validateSubjectType(peerReview);
         validateSubjectTitle(peerReview);
+        validateSubjectUrl(peerReview);
         copyErrors(peerReview.getOrgName(), peerReview);
         copyErrors(peerReview.getCity(), peerReview);
         copyErrors(peerReview.getRegion(), peerReview);
@@ -168,6 +169,7 @@ public class PeerReviewsController extends BaseWorkspaceController {
         copyErrors(peerReview.getCompletionDate(), peerReview);
         copyErrors(peerReview.getSubjectForm().getWorkType(), peerReview);
         copyErrors(peerReview.getSubjectForm().getTitle(), peerReview);
+        copyErrors(peerReview.getSubjectForm().getUrl(), peerReview);
         
         //If there are no errors, persist to DB
         if(peerReview.getErrors().isEmpty()) {            
@@ -320,6 +322,15 @@ public class PeerReviewsController extends BaseWorkspaceController {
             } 
         }
         
+        return peerReview;
+    }
+    
+    @RequestMapping(value = "/subject/urlValidate.json", method = RequestMethod.POST)
+    public @ResponseBody
+    PeerReviewForm validateSubjectUrl(@RequestBody PeerReviewForm peerReview) {        
+        if(peerReview.getSubjectForm() == null || PojoUtil.isEmpty(peerReview.getSubjectForm().getUrl()))
+            return peerReview;
+        validateUrl(peerReview.getSubjectForm().getUrl());
         return peerReview;
     }
     

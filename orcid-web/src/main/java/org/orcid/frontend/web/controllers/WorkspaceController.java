@@ -58,6 +58,7 @@ import org.orcid.jaxb.model.message.SequenceType;
 import org.orcid.jaxb.model.message.Source;
 import org.orcid.jaxb.model.message.WorkCategory;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
+import org.orcid.jaxb.model.message.WorkType;
 import org.orcid.jaxb.model.record.PeerReviewType;
 import org.orcid.jaxb.model.record.Role;
 import org.orcid.pojo.ThirdPartyRedirect;
@@ -164,7 +165,7 @@ public class WorkspaceController extends BaseWorkspaceController {
     }
 
     @ModelAttribute("workCategories")
-    public Map<String, String> retrieveWorkTypesAsMap() {
+    public Map<String, String> retrieveWorkCategoriesAsMap() {
         Map<String, String> workCategories = new LinkedHashMap<String, String>();
 
         for (WorkCategory workCategory : WorkCategory.values()) {
@@ -297,6 +298,15 @@ public class WorkspaceController extends BaseWorkspaceController {
             peerReviewTypes.put(type.value(), getMessage(buildInternationalizationKey(PeerReviewType.class, type.value())));
         }
         return FunctionsOverCollections.sortMapsByValues(peerReviewTypes);
+    }
+    
+    @ModelAttribute("workTypes")
+    public Map<String, String> retrieveWorkTypesAsMap() {
+        Map<String, String> types = new LinkedHashMap<String, String>();
+        for (WorkType type : WorkType.values()) {
+            types.put(type.value(), getMessage(buildInternationalizationKey(WorkType.class, type.value())));
+        }
+        return FunctionsOverCollections.sortMapsByValues(types);
     }
     
     @RequestMapping(value = {"/my-orcid3","/my-orcid", "/workspace"}, method = RequestMethod.GET)
