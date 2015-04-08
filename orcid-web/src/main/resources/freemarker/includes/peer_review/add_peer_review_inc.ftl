@@ -71,9 +71,6 @@
 						</div>
 					</div>
 
-
-
-
 					<!-- ORGANIZATION -->
 					<div class="control-group">
 	                	<div class="control-group no-margin-bottom">
@@ -143,96 +140,71 @@
                     		</div>
                 		</div>
 					</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 					<!-- DATE -->				
 					<span><strong>COMPLETION DATE</strong></span>	
 					<div class="control-group">			    		
 			    		<div class="relative">					    
-							<select id="year" name="month" class="col-md-4">
+							<select id="year" class="input-xlarge" name="year" ng-model="editPeerReview.completionDate.year">
 								<#list years?keys as key>
 									<option value="${key}">${years[key]}</option>
 								</#list>
 				    		</select>				    	
-							<select id="month" name="month" class="col-md-3">
+							<select id="month" class="input-xlarge" name="month" ng-model="editPeerReview.completionDate.month">
 								<#list months?keys as key>
 									<option value="${key}">${months[key]}</option>
 								</#list>
 				    		</select>
-							<select id="day" name="day"class="col-md-3">
+							<select id="day" class="input-xlarge" name="day" ng-model="editPeerReview.completionDate.day">
 								<#list days?keys as key>
 									<option value="${key}">${days[key]}</option>
 								</#list>
 				    		</select>								    
 			    		</div>
 					</div>
-					
 					<!-- External identifiers -->
-				    
-					<span><strong>EXTERNAL IDENTIFIERS</strong></span>						 
-					<div class="control-group">
-						<label class="relative">Identifier type</label>
-						<div class="relative">
-		    				<select id="idType" name="idType" class="input-xlarge">																						 
-								<option value=""><@orcid.msg 'org.orcid.jaxb.model.message.WorkExternalIdentifierType.empty' /></option>
-								<#list idTypes?keys as key>
-									<option value="${idTypes[key]}">${key}</option>
-								</#list>
-							</select> 
-							<a href ng-click="" class="glyphicon glyphicon-trash grey"></a>
-							<span class="orcid-error" ng-show="1 == 0">
-								<div ng-bind-html="error"></div>
-							</span>
-						</div>	
-					</div>								
+				    <span><strong>EXTERNAL IDENTIFIERS</strong></span>						 
+					
+					<div ng-repeat="extId in editPeerReview.externalIdentifiers"> 
+						<div class="control-group">
+							<label class="relative">Identifier type</label>
+							<div class="relative">
+			    				<select id="extIdType" class="input-xlarge" name="extIdType" ng-model="extId.workExternalIdentifierType.value">																					 
+									<option value=""><@orcid.msg 'org.orcid.jaxb.model.message.WorkExternalIdentifierType.empty' /></option>
+									<#list idTypes?keys as key>
+										<option value="${idTypes[key]}">${key}</option>
+									</#list>
+								</select> 
+								<a href ng-click="" class="glyphicon glyphicon-trash grey"></a>
+								<span class="orcid-error" ng-show="extId.workExternalIdentifierType.errors.length > 0">
+                	        	    <div ng-repeat='error in extId.workExternalIdentifierType.errors' ng-bind-html="error"></div>
+                    		    </span>
+							</div>	
+						</div>								
 						
-					<div class="control-group">
-						<label class="relative"><@orcid.msg 'manual_work_form_contents.labelID'/></label>
-				    	<div class="relative">
-							<input name="" type="text" class="input-xlarge"  />
-							<span class="orcid-error" ng-show="workExternalIdentifier.workExternalIdentifierId.errors.length > 0">
-								<div ng-repeat='error in workExternalIdentifier.workExternalIdentifierId.errors' ng-bind-html="error"></div>
-							</span>
-						</div>
-						<div class="add-item-link">			
-							<span><a href ng-click="addExternalIdentifier()"><i class="glyphicon glyphicon-plus-sign"></i> Add external identifier</a></span>
+						<div class="control-group">
+							<label class="relative">Identifier value</label>
+					    	<div class="relative">
+								<input id="extIdValue" name="extIdValue" type="text" class="input-xlarge"  ng-model="extId.workExternalIdentifierId.value"/>
+								<span class="orcid-error" ng-show="workExternalIdentifier.workExternalIdentifierId.errors.length > 0">
+									<div ng-repeat='error in workExternalIdentifier.workExternalIdentifierId.errors' ng-bind-html="error"></div>
+								</span>
+							</div>
+							<div class="add-item-link">			
+								<span><a href ng-click="addExternalIdentifier()"><i class="glyphicon glyphicon-plus-sign"></i> Add external identifier</a></span>
+							</div>
 						</div>
 					</div>
-					
-					
-					
 				</div>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 				<!-- Right column -->
 				<div class="col-md-6 col-sm-6 col-xs-12">
@@ -240,11 +212,11 @@
 					<div class="control-group">
 				    	<label class="relative">URL</label>
 				    	<div class="relative">
-							<!--<input name="url" type="text" class="input-xlarge"  ng-model="something" placeholder="Add URL" ng-change="" ng-model-onblur/>-->
-							<input name="url" type="text" class="input-xlarge" placeholder="Add URL"/>							
-							<span class="orcid-error" ng-show="">
-								<!-- <div ng-repeat='' ng-bind-html="error"></div> -->
-							</span>
+							<input id="url" class="input-xlarge" name="url" type="text" ng-model="editPeerReview.ur.value" placeholder="Type url." ng-change="serverValidate('peer-reviews/urlValidate.json')" ng-model-onblur/>
+							<span class="required" ng-class="isValidClass(editPeerReview.url)">*</span>
+            		        <span class="orcid-error" ng-show="editPeerReview.url.errors.length > 0">
+                    	    	<div ng-repeat='error in editPeerReview.url.errors' ng-bind-html="error"></div>
+                        	</span>
 						</div>
 					</div>
 					
@@ -354,7 +326,7 @@
 					</div>
 
 					<div class="control-group">
-                    	<button class="btn btn-primary" ng-click="addAffiliation()" ng-disabled="addingAffiliation" ng-class="{disabled:addingAffiliation}">
+                    	<button class="btn btn-primary" ng-click="addAPeerReview()" ng-disabled="addingPeerReview" ng-class="{disabled:addingPeerReview}">
 	                        <!--<span ng-show="" class="">Add to list</span>-->
 							<!--<span ng-show="" class="">Save changes</span>-->
                         	<span>Add to list</span>

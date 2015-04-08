@@ -225,7 +225,7 @@
 					</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="type" type="work:work-type">
+			<xs:element name="type" type="work:work-type" minOccurs="1" maxOccurs="1">
 				<xs:annotation>
 					<xs:documentation>The nominal type of unique ID
 					</xs:documentation>
@@ -240,13 +240,13 @@
 				</xs:annotation>
 			</xs:element>
 			<xs:element name="title" type="work:work-title"
-				minOccurs="1">
+				minOccurs="1" maxOccurs="1">
 				<xs:annotation>
 					<xs:documentation>The title of the subject reviewed
 					</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="url" type="common:url" minOccurs="0">
+			<xs:element name="url" type="common:url" minOccurs="0" maxOccurs="1">
 				<xs:annotation>
 					<xs:documentation>The URL of the subject reviewed.
 					</xs:documentation>

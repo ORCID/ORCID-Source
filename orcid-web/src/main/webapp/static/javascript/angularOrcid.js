@@ -4539,6 +4539,7 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
 	$scope.workspaceSrvc = workspaceSrvc;
 	$scope.editPeerReview = null;
 	$scope.disambiguatedOrganization = null;
+	$scope.addingPeerReview = false;
 	
 	
 	$scope.addPeerReviewModal = function(){        
@@ -4568,6 +4569,32 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
                 //$scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);
             }
         });
+    };
+    
+    $scope.addAPeerReview = function() {
+    	if ($scope.addingPeerReview) return; 
+        $scope.addingPeerReview = true;
+        $scope.editPeerReview.errors.length = 0;
+        peerReviewSrvc.postPeerReview($scope.editPeerReview,
+            function(data){        	    
+                if (data.errors.length == 0) {
+                	    $scope.addingPeerReview = false;
+                        $scope.$apply();
+                        $.colorbox.close();
+                        $scope.peerReviewSrvc.loadAbbrPeerReviews(peerReviewSrvc.constants.access_type.USER);                    
+                } else {
+                    $scope.editPeerReview = data;
+                    commonSrvc.copyErrorsLeft($scope.editPeerReview, data);
+                    $scope.addingPeerReview = false;
+                    $scope.$apply();
+                }
+            },
+            function() {
+                // something bad is happening!
+                $scope.addingPeerReview = false;
+                console.log("error creating peer review");
+            }
+        );
     };
     
     $scope.closeModal = function() {
@@ -4684,6 +4711,7 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
 
 orcidNgModule.factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
     var peerReviewSrvc = {
+    		constants: { 'access_type': { 'USER': 'user', 'ANONYMOUS': 'anonymous'}},
     		getBlankPeerReview: function(callback) {
     			$.ajax({
                     url: getBaseUri() + '/peer-reviews/peer-review.json',
@@ -4695,7 +4723,29 @@ orcidNgModule.factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
                 }).fail(function() {
                     console.log("Error fetching blank work");
                 });                
-            } 
+            },
+            
+            postPeerReview: function(peer_review, successFunc, failFunc) {
+            	$.ajax({
+                    url: getBaseUri() + '/peer-reviews/peer-review.json',
+                    contentType: 'application/json;charset=UTF-8',
+                    dataType: 'json',
+                    type: 'POST',
+                    data: angular.toJson(peer_review),
+                    success: function(data) {
+                        sucessFunc(data);
+                        console.log(data);
+                    }
+                }).fail(function(){
+                    failFunc();
+                });
+    		}, 
+    		
+    		loadAbbrPeerReviews: function(type) {
+    			console.log("loadAbbrPeerReviews: NOT IMPLEMENTE YET");
+    		}
+    
+    		
     };
     return peerReviewSrvc;
 }]);
