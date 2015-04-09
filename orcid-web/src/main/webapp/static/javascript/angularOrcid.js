@@ -4286,6 +4286,9 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
                     commonSrvc.copyErrorsLeft($scope.editWork, data);
                     $scope.addingWork = false;
                     $scope.$apply();
+                    // make sure colorbox is shown if there are errors
+                    if (!($("#colorbox").css("display")=="block"))
+                        $scope.addWorkModal(data);
                 }
             },
             function() {
