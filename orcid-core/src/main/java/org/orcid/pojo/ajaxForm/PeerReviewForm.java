@@ -352,7 +352,7 @@ public class PeerReviewForm implements ErrorsInterface, Serializable {
         return peerReview;
     }
 
-    public static PeerReviewForm fromPeerReview(PeerReview peerReview) {
+    public static PeerReviewForm valueOf(PeerReview peerReview) {
         PeerReviewForm form = new PeerReviewForm();
 
         // Put code

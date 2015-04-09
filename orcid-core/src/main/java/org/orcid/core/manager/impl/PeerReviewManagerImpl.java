@@ -16,6 +16,7 @@
  */
 package org.orcid.core.manager.impl;
 
+import java.util.Collection;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -88,6 +89,11 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
         return jpaJaxbPeerReviewAdapter.toPeerReviewSummary(peerReviewEntity);
     }
 
+    @Override
+    public List<PeerReview> toPeerReviewList(Collection<PeerReviewEntity> peerReviews) {
+        return jpaJaxbPeerReviewAdapter.toPeerReview(peerReviews);
+    }    
+    
     @Override
     public PeerReview createPeerReview(String orcid, PeerReview peerReview) {
         List<PeerReviewEntity> peerReviews = peerReviewDao.getByUser(orcid);

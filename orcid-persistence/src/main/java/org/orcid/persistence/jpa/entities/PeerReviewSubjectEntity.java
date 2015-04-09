@@ -16,6 +16,7 @@
  */
 package org.orcid.persistence.jpa.entities;
 
+import static org.orcid.utils.NullUtils.compareObjectsNullSafe;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -141,9 +142,29 @@ public class PeerReviewSubjectEntity extends BaseEntity<Long> {
             return titlesCompare;
         }
 
+        int subtitleCompare = OrcidStringUtils.compareStrings(subTitle, other.getSubTitle());
+        if(subtitleCompare != 0) {
+            return subtitleCompare;
+        }
+        
+        int typeCompare = compareObjectsNullSafe(workType, other.getWorkType());
+        if(typeCompare != 0) {
+            return typeCompare;
+        }
+        
+        int urlCompare =  OrcidStringUtils.compareStrings(url, other.getUrl());
+        if(urlCompare != 0) {
+            return urlCompare;
+        }
+        
         int journalTitleCompare = OrcidStringUtils.compareStrings(journalTitle, other.getJournalTitle());
         if (journalTitleCompare != 0) {
             return journalTitleCompare;
+        }
+        
+        int compareExternalIds = OrcidStringUtils.compareStrings(externalIdentifiersJson, other.getExternalIdentifiersJson());
+        if(compareExternalIds != 0) {
+            return compareExternalIds;
         }
 
         return 0;

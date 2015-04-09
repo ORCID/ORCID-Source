@@ -39,7 +39,7 @@ import org.orcid.utils.OrcidStringUtils;
 
 @Entity
 @Table(name = "peer_review")
-public class PeerReviewEntity extends BaseEntity<Long> implements ProfileAware, SourceAware {
+public class PeerReviewEntity extends BaseEntity<Long> implements Comparable<PeerReviewEntity>, ProfileAware, SourceAware {
     
     private static final long serialVersionUID = -172752706595347541L;
     private Long id;

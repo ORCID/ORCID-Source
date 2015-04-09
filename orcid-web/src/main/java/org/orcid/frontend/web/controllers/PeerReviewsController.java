@@ -20,20 +20,27 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.PeerReviewManager;
+import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.jaxb.model.record.PeerReview;
 import org.orcid.jaxb.model.record.PeerReviewType;
 import org.orcid.jaxb.model.record.Role;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
 import org.orcid.persistence.dao.OrgDisambiguatedSolrDao;
+import org.orcid.persistence.jpa.entities.CountryIsoEntity;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
+import org.orcid.persistence.jpa.entities.PeerReviewEntity;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.solr.entities.OrgDisambiguatedSolrDocument;
 import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.pojo.ajaxForm.PeerReviewForm;
@@ -42,6 +49,8 @@ import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.TranslatedTitle;
 import org.orcid.pojo.ajaxForm.WorkExternalIdentifier;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -56,6 +65,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller("peerReviewsController")
 @RequestMapping(value = { "/peer-reviews" })
 public class PeerReviewsController extends BaseWorkspaceController {
+    private static final Logger LOGGER = LoggerFactory.getLogger(PeerReviewsController.class);
+    private static final String PEER_REVIEW_MAP = "PEER_REVIEW_MAP";
+    
     @Resource
     private LocaleManager localeManager;
 
@@ -71,6 +83,9 @@ public class PeerReviewsController extends BaseWorkspaceController {
     @Resource(name = "languagesMap")
     private LanguagesMap lm;
 
+    @Resource(name = "profileEntityCacheManager")
+    ProfileEntityCacheManager profileEntityCacheManager;
+    
     public void setLocaleManager(LocaleManager localeManager) {
         this.localeManager = localeManager;
     }
@@ -139,6 +154,87 @@ public class PeerReviewsController extends BaseWorkspaceController {
         return form;
     }
     
+    
+    /**
+     * List fundings associated with a profile
+     * */
+    @RequestMapping(value = "/peer-review-ids.json", method = RequestMethod.GET)
+    public @ResponseBody
+    List<String> getPeerReviewIdsJson(HttpServletRequest request) {
+        // Get cached profile
+        List<String> fundingIds = createPeerReviewIdList(request);
+        return fundingIds;
+    }
+    
+    /**
+     * Create a funding id list and sorts a map associated with the list in in
+     * the session
+     * 
+     */
+    private List<String> createPeerReviewIdList(HttpServletRequest request) {
+        ProfileEntity profileEntity = profileEntityCacheManager.retrieve(getEffectiveUserOrcid());
+        
+        Set<PeerReviewEntity> peerReviewEntities = profileEntity.getPeerReviews();
+        List<PeerReview> peerReviews = null;
+        if(peerReviewEntities != null) {
+            peerReviews = peerReviewManager.toPeerReviewList(peerReviewEntities);
+        }
+        Map<String, String> languages = lm.buildLanguageMap(getUserLocale(), false);
+        HashMap<String, PeerReviewForm> peerReviewMap = new HashMap<>();
+        List<String> peerReviewIds = new ArrayList<String>();
+        
+        if (peerReviews != null) {
+            for (PeerReview peerReview : peerReviews) {
+                try {
+                    PeerReviewForm form = PeerReviewForm.valueOf(peerReview);
+                    
+                    if(form.getSubjectForm() != null && form.getSubjectForm().getTitle() != null) {
+                        // Set translated title language name
+                        if (!(form.getSubjectForm().getTranslatedTitle() == null) && !StringUtils.isEmpty(form.getSubjectForm().getTranslatedTitle().getLanguageCode())) {
+                            String languageName = languages.get(form.getSubjectForm().getTranslatedTitle().getLanguageCode());
+                            form.getSubjectForm().getTranslatedTitle().setLanguageName(languageName);
+                        }
+                    }
+                                                            
+                    form.setCountryForDisplay(getMessage(buildInternationalizationKey(CountryIsoEntity.class, peerReview.getOrganization().getAddress().getCountry().name())));
+                    peerReviewMap.put(peerReview.getPutCode(), form);
+                    peerReviewIds.add(peerReview.getPutCode());
+                } catch (Exception e) {
+                    LOGGER.error("Failed to parse as PeerReview. Put code" + peerReview.getPutCode(), e);
+                }
+            }
+            request.getSession().setAttribute(PEER_REVIEW_MAP, peerReviewMap);
+        }
+        return peerReviewIds;
+    }
+    
+    /**
+     * List peer reviews associated with a profile
+     * */
+    @SuppressWarnings("unchecked")
+    @RequestMapping(value = "/get-peer-reviews.json", method = RequestMethod.GET)
+    public @ResponseBody
+    List<PeerReviewForm> getPeerReviewsJson(HttpServletRequest request, @RequestParam(value = "peerReviewIds") String peerReviewIdsStr) {
+        List<PeerReviewForm> peerReviewList = new ArrayList<>();
+        PeerReviewForm peerReview = null;
+        String[] peerReviewIds = peerReviewIdsStr.split(",");
+
+        if (peerReviewIds != null) {
+            HashMap<String, PeerReviewForm> peerReviewMap = (HashMap<String, PeerReviewForm>) request.getSession().getAttribute(PEER_REVIEW_MAP);
+            // this should never happen, but just in case.
+            if (peerReviewMap == null) {
+                createPeerReviewIdList(request);
+                peerReviewMap = (HashMap<String, PeerReviewForm>) request.getSession().getAttribute(PEER_REVIEW_MAP);
+            }
+            for (String peerReviewId : peerReviewIds) {
+                peerReview = peerReviewMap.get(peerReviewId);
+                peerReviewList.add(peerReview);
+            }
+        }
+
+        return peerReviewList;
+    }
+
     /**
      * Persist a funding object on database
      * */
@@ -187,7 +283,7 @@ public class PeerReviewsController extends BaseWorkspaceController {
         String userOrcid = getEffectiveUserOrcid();        
         PeerReview peerReview = peerReviewForm.toPeerReview();        
         peerReview = peerReviewManager.createPeerReview(userOrcid, peerReview);
-        peerReviewForm = PeerReviewForm.fromPeerReview(peerReview);
+        peerReviewForm = PeerReviewForm.valueOf(peerReview);
         return peerReviewForm; 
     }
     
@@ -405,6 +501,10 @@ public class PeerReviewsController extends BaseWorkspaceController {
         datum.put("sourceId", orgDisambiguatedEntity.getSourceId());
         datum.put("sourceType", orgDisambiguatedEntity.getSourceType());
         return datum;
+    }
+    
+    public Locale getUserLocale() {
+        return localeManager.getLocale();
     }
 }
 

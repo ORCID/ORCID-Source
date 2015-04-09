@@ -77,12 +77,10 @@
 			</column>
 			<column name="work_type" type="VARCHAR(25)">
 				<constraints nullable="false" />
-			</column>
-			<column name="translated_title_language_code" type="VARCHAR(10)">
-				<constraints nullable="false" />
-			</column>
+			</column>					
 			<column name="sub_title" type="VARCHAR(1000)" />
-			<column name="translated_title" type="VARCHAR(1000)" />			
+			<column name="translated_title" type="VARCHAR(1000)" />
+			<column name="translated_title_language_code" type="VARCHAR(10)" />			
 			<column name="url" type="VARCHAR(350)" />					
 			<column name="journal_title" type="VARCHAR(1000)" />
 			<column name="date_created" type="TIMESTAMP WITH TIME ZONE" />			
