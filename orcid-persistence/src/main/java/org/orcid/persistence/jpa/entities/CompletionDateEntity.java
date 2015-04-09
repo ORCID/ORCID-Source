@@ -77,6 +77,5 @@ public class CompletionDateEntity extends FuzzyDateEntity implements Serializabl
     @Override
     public void setDay(Integer day) {
         super.setDay(day);
-    }
-
+    } 
 }

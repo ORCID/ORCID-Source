@@ -16,6 +16,7 @@
  */
 package org.orcid.persistence.jpa.entities;
 
+import static org.orcid.utils.NullUtils.compareObjectsNullSafe;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -167,16 +168,67 @@ public class PeerReviewEntity extends BaseEntity<Long> implements Comparable<Pee
         if (other == null) {
             throw new NullPointerException("Can't compare with null");
         }
-        
-        int compareSubject = subject.compareTo(other.getSubject());
-        if(compareSubject != 0) {
-            return compareSubject;
+                
+        int subjectCompare = compareObjectsNullSafe(subject, other.getSubject());
+        if(subjectCompare != 0) {
+            return subjectCompare;
+        }
+                
+        int typeCompare = compareObjectsNullSafe(type, other.getType());
+        if(typeCompare != 0) {
+            return typeCompare;
         }
         
+        int roleCompare = compareObjectsNullSafe(role, other.getRole());
+        if(roleCompare != 0) {
+            return roleCompare;
+        }
+        
+        int completionDateCompare = compareObjectsNullSafe((FuzzyDateEntity)completionDate, (FuzzyDateEntity)other.getCompletionDate());
+        if(completionDateCompare != 0) {
+            return completionDateCompare;
+        }
+              
         int urlCompare = OrcidStringUtils.compareStrings(url, other.getUrl());
         if(urlCompare != 0) {
             return urlCompare;
         }
+        
+        int extIdsCompare = OrcidStringUtils.compareStrings(externalIdentifiersJson, other.getExternalIdentifiersJson());
+        if(extIdsCompare != 0) {
+            return extIdsCompare;
+        }
+        
+        int compareOrgName = OrcidStringUtils.compareStrings(org.getName(), other.getOrg().getName());
+        if (compareOrgName != 0) {
+            return compareOrgName;
+        }
+
+        int compareOrgCountry = OrcidStringUtils.compareStrings(org.getCountry() == null ? null : org.getCountry().value(), other.getOrg().getCountry() == null ? null : other.getOrg()
+                .getCountry().value());
+        if (compareOrgCountry != 0) {
+            return compareOrgCountry;
+        }
+
+        int compareOrgCity = OrcidStringUtils.compareStrings(org.getCity(), other.getOrg().getCity());
+        if (compareOrgCity != 0) {
+            return compareOrgCity;
+        }
+        
+        if(source == null) {
+            if(other.getSource() != null) {
+                return -1;
+            }
+        } else {
+            if(other.getSource() == null) {
+                return 1;
+            } else {
+                int sourceCompare = OrcidStringUtils.compareStrings(source.getSourceId(), other.getSource().getSourceId());
+                if(sourceCompare != 0) {
+                    return sourceCompare;
+                }
+            }
+        }        
         
         return 0;
     }
@@ -185,8 +237,10 @@ public class PeerReviewEntity extends BaseEntity<Long> implements Comparable<Pee
         externalIdentifiersJson = null;
         url = null;
         type = null;
-        completionDate = null;
-        subject = null;
+        completionDate = null;        
         visibility = null;
+        if(subject != null) {
+            subject.clean();
+        }
     }
 }

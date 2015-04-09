@@ -17,6 +17,7 @@
 package org.orcid.persistence.jpa.entities;
 
 import static org.orcid.utils.NullUtils.compareObjectsNullSafe;
+
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -33,7 +34,7 @@ import org.orcid.utils.OrcidStringUtils;
 
 @Entity
 @Table(name = "peer_review_subject")
-public class PeerReviewSubjectEntity extends BaseEntity<Long> {
+public class PeerReviewSubjectEntity extends BaseEntity<Long> implements Comparable<PeerReviewSubjectEntity> {
 
     private static final long serialVersionUID = 4488839570068368532L;
     private Long id;
@@ -168,5 +169,14 @@ public class PeerReviewSubjectEntity extends BaseEntity<Long> {
         }
 
         return 0;
-    }    
+    }   
+    
+    public void clean() {
+        title = null;
+        subTitle = null;
+        url = null;
+        workType = null;
+        journalTitle = null;
+        externalIdentifiersJson = null;
+    }
 }
