@@ -5793,6 +5793,11 @@ ul.oauth-scopes li{
 	clear: bottom;
 }
 
+hr{
+	display: block;
+	clear: both;
+}
+
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
