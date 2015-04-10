@@ -1065,21 +1065,6 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
                 }
                 return count;
             },
-            workValidate: function(work,sucessFunc, failFunc) {
-                //console.log(work);
-                $.ajax({
-                    url: getBaseUri() + '/works/workValidate.json',
-                    contentType: 'application/json;charset=UTF-8',
-                    dataType: 'json',
-                    type: 'POST',
-                    data: angular.toJson(work),
-                    success: function(data) {
-                        sucessFunc(data);
-                    }
-                }).fail(function(){
-                    failFunc();
-                });
-            },
             worksValidate: function(works,sucessFunc, failFunc) {
                 //console.log(work);
                 $.ajax({
