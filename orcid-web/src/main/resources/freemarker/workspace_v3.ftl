@@ -323,7 +323,49 @@
 		        <!-- Works -->                
                 <div id="workspace-publications" class="workspace-accordion-item workspace-accordion-active" ng-controller="WorkCtrl" orcid-loaded="{{worksSrvc.worksToAddIds != null && worksSrvc.loading != true}}">
                     <#include "includes/work/work_section_header_inc_v3.ftl"/>
-					
+                    <!-- Work Import Wizard -->
+					<div ng-show="workImportWizard == true" class="work-import-wizard" ng-cloak>
+						
+						<#if ((workImportWizards)??)>
+							<div class="ie7fix-inner">
+								<div class="row">	
+									<div class="col-md-12 col-sm-12 col-xs-12">
+						           		<h1 class="lightbox-title wizard-header"><@orcid.msg 'workspace.link_works'/></h1>
+						           		<span ng-click="showWorkImportWizard()" class="close-wizard"><@orcid.msg 'workspace.LinkResearchActivities.hide_link_works'/></span>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-md-12 col-sm-12 col-xs-12">
+										<p class="wizard-content">
+							           		<@orcid.msg 'workspace.LinkResearchActivities.description'/> <@orcid.msg 'workspace.LinkResearchActivities.description.more_info'/>
+							           	</p>								
+						           	</div>
+								</div>
+								
+								
+								<div class="row wizards">
+									<div class="col-md-12 col-sm-12 col-xs-12">
+					    		    	<#list workImportWizards?sort_by("displayName") as thirdPartyDetails>					    		    				
+						        	       	<#assign redirect = (thirdPartyDetails.redirectUris.redirectUri[0].value) >
+					            	   		<#assign predefScopes = (thirdPartyDetails.redirectUris.redirectUri[0].scopeAsSingleString) >
+					                   		<strong><a ng-click="openImportWizardUrl('<@spring.url '/oauth/authorize?client_id=${thirdPartyDetails.clientId}&response_type=code&scope=${predefScopes}&redirect_uri=${redirect}'/>')">${thirdPartyDetails.displayName}</a></strong><br />					                   							                   		                		
+					                 		<div class="justify">												
+												<p class="wizard-description" ng-class="{'ellipsis-on' : wizardDescExpanded[${thirdPartyDetails.clientId}] == false || wizardDescExpanded[${thirdPartyDetails.clientId}] == null}">
+													${(thirdPartyDetails.shortDescription)!}													
+													<a ng-click="toggleWizardDesc(${thirdPartyDetails.clientId})" ng-show="wizardDescExpanded[${thirdPartyDetails.clientId}] == true"><span class="glyphicon glyphicon-chevron-down wizard-chevron"></span></a>
+												</p>												
+												<a ng-click="toggleWizardDesc(${thirdPartyDetails.clientId})" ng-show="wizardDescExpanded[${thirdPartyDetails.clientId}] == false || wizardDescExpanded[${thirdPartyDetails.clientId}] == null" class="toggle-wizard-desc"><span class="glyphicon glyphicon-chevron-right wizard-chevron"></span></a>
+												
+											</div>
+					                   		<#if (thirdPartyDetails_has_next)>
+						                      	<hr/>
+											</#if>
+					                		</#list>
+									</div>
+								</div>
+							</div>						
+						</#if>
+					</div>
 					<!-- Bulk Edit -->					
 					<div ng-show="bulkEditShow && workspaceSrvc.displayWorks" ng-cloak>						
 						<div class="bulk-edit">
@@ -640,47 +682,4 @@
 		</div>
 	</#if>
 </script>
-
-<script type="text/ng-template" id="import-funding-modal">
-    <#if ((fundingImportWizards)??)>		
-    	<div id="third-parties">
-			<div class="ie7fix-inner">
-			<div class="row">	
-				<div class="col-md-12 col-sm-12 col-xs-12">					
-					<a class="btn pull-right close-button" ng-click="closeModal()">X</a>
-	           		<h1 class="lightbox-title" style="text-transform: uppercase;"><@orcid.msg 'workspace.link_funding'/></h1>
-				</div>
-			</div>
-			<div class="row">
-				<div class="col-md-12 col-sm-12 col-xs-12">
-	    	    	<div class="justify">
-						<p><@orcid.msg 'workspace.LinkResearchActivities.description'/></p>
-					</div>            	    	           	
-    		    	<#list fundingImportWizards?sort_by("displayName") as thirdPartyDetails>
-	        	       	<#assign redirect = (thirdPartyDetails.redirectUris.redirectUri[0].value) >
-            	   		<#assign predefScopes = (thirdPartyDetails.redirectUris.redirectUri[0].scopeAsSingleString) >
-                   		<strong><a ng-click="openImportWizardUrl('<@spring.url '/oauth/authorize?client_id=${thirdPartyDetails.clientId}&response_type=code&scope=${predefScopes}&redirect_uri=${redirect}'/>')">${thirdPartyDetails.displayName}</a></strong><br />
-                 		<div class="justify">
-							<p>
-								${(thirdPartyDetails.shortDescription)!}
-							</p>
-						</div>
-                   		<#if (thirdPartyDetails_has_next)>
-	                      	<hr/>
-						</#if>
-                		</#list>
-				</div>
-			</div>                 
-            <div class="row footer">
-				<div class="col-md-12 col-sm-12 col-xs-12">
-					<p>
-				   		<strong><@orcid.msg 'workspace.LinkResearchActivities.footer.title'/></strong>	    
-	        			<@orcid.msg 'workspace.LinkResearchActivities.footer.description1'/> <a href="<@orcid.msg 'workspace.LinkResearchActivities.footer.description.url'/>"><@orcid.msg 'workspace.LinkResearchActivities.footer.description.link'/></a> <@orcid.msg 'workspace.LinkResearchActivities.footer.description2'/>
-			    	</p>
-				</div>
-	        </div>
-		</div>
-		</div>
-	</#if>
-</script>	
 </@protected>

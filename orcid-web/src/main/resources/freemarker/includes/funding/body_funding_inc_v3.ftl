@@ -20,7 +20,6 @@
     <li class="bottom-margin-small workspace-border-box card ng-scope" ng-repeat="group in fundingSrvc.groups | orderBy:sortState.predicate:sortState.reverse">
         <div class="work-list-container">
             <ul class="sources-edit-list">
-
                 <!-- Header -->
                 <li ng-show="editSources[group.groupId] == true" class="source-header" ng-class="{'source-active' : editSources[group.groupId] == true}" ng-model="group.activities">
                     <div class="sources-header">

@@ -3263,7 +3263,9 @@ orcidNgModule.controller('FundingCtrl',['$scope', '$compile', '$filter', 'fundin
     $scope.privacyHelp = {};
     $scope.editTranslatedTitle = false;
     $scope.lastIndexedTerm = null;
-    $scope.showElement = {};    
+    $scope.showElement = {};
+    $scope.fundingImportWizard = false;
+    $scope.wizardDescExpanded = {};
     $scope.emptyExtId = {
             "errors": [],
             "type": {
@@ -3721,11 +3723,22 @@ orcidNgModule.controller('FundingCtrl',['$scope', '$compile', '$filter', 'fundin
     
     
     $scope.showFundingImportWizard =  function() {
+    	$scope.fundingImportWizard = !$scope.fundingImportWizard;
+    	
+    	
+    	/*
         $.colorbox({
             html : $compile($('#import-funding-modal').html())($scope),
             onComplete: function() {$.colorbox.resize();}
         });
+        */
+    	
+    	
     };
+    
+    $scope.toggleWizardDesc = function(id){
+    	$scope.wizardDescExpanded[id] = !$scope.wizardDescExpanded[id];
+    }
     
     $scope.showTooltip = function (key){
         $scope.showElement[key] = true;
@@ -3927,6 +3940,8 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     $scope.delCountVerify = 0;
     $scope.bulkDeleteCount = 0;
     $scope.bulkDeleteSubmit = false;
+    $scope.workImportWizard = false;
+    $scope.wizardDescExpanded = {};
     
     $scope.sortState = new ActSortState(GroupedActivities.ABBR_WORK);
     $scope.sort = function(key) {
@@ -3942,6 +3957,7 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
         };
         $scope.bulkEditShow = !$scope.bulkEditShow;
         $scope.showBibtexImportWizard = false;
+        $scope.workImportWizard = false;
     };
 
     $scope.bulkApply = function(func) {
@@ -4105,6 +4121,7 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
         $scope.showBibtexImportWizard = !($scope.showBibtexImportWizard);
         $scope.bulkEditShow = false;
         $scope.worksFromBibtex = null;
+        $scope.workImportWizard = false;
     };
 
     $scope.bibtextCancel = function(){
@@ -4236,10 +4253,9 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     };
 
     $scope.showWorkImportWizard =  function() {
-        $.colorbox({
-            html : $compile($('#import-wizard-modal').html())($scope),
-            onComplete: function() {$.colorbox.resize();}
-        });
+    	$scope.bulkEditShow = false;
+    	$scope.showBibtexImportWizard = false;
+    	$scope.workImportWizard = !$scope.workImportWizard;
     };
 
     $scope.addWorkModal = function(data){
@@ -4522,6 +4538,12 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     	    angular.element('#inputBibtex').trigger('click');
     	}, 0);
     }
+    
+    $scope.toggleWizardDesc = function(id){
+    	$scope.wizardDescExpanded[id] = !$scope.wizardDescExpanded[id];
+    }   
+    
+    
 }]);
 
 orcidNgModule.controller('SearchCtrl',['$scope', '$compile', function ($scope, $compile){
