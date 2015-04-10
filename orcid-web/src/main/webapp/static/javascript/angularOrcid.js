@@ -4099,9 +4099,7 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     	var works = $scope.worksFromBibtex;
     	var prom = [];
     	angular.forEach( works, function( work, key ) {    		
-    		if ( work.title.value != null
-				&& work.workCategory.value.length > 0
-				&& work.workType.value.length > 0) {
+    		if (work.errors.length == 0) {
     			prom.push(
     			     worksSrvc.putWork(work,function(data) {
     			         if (data.errors.length == 0) {
