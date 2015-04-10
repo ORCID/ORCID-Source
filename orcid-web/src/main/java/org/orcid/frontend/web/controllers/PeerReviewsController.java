@@ -452,10 +452,6 @@ public class PeerReviewsController extends BaseWorkspaceController {
         return peerReview;
     }
     
-    
-    
-    
-    
     /**
      * Typeahead
      * */
@@ -507,22 +503,4 @@ public class PeerReviewsController extends BaseWorkspaceController {
         return localeManager.getLocale();
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
