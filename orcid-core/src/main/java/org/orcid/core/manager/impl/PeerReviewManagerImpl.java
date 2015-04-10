@@ -84,7 +84,7 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
     }
 
     @Override
-    public PeerReviewSummary getSummary(String orcid, String peerReviewId) {
+    public PeerReviewSummary getPeerReviewSummary(String orcid, String peerReviewId) {
         PeerReviewEntity peerReviewEntity = peerReviewDao.getPeerReview(orcid, peerReviewId); 
         return jpaJaxbPeerReviewAdapter.toPeerReviewSummary(peerReviewEntity);
     }

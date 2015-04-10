@@ -26,6 +26,7 @@ import org.orcid.api.t1.server.delegator.PublicV2ApiServiceDelegator;
 import org.orcid.core.manager.AffiliationsManager;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.OrcidSecurityManager;
+import org.orcid.core.manager.PeerReviewManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileFundingManager;
 import org.orcid.core.manager.ProfileWorkManager;
@@ -34,11 +35,13 @@ import org.orcid.core.security.visibility.filter.VisibilityFilterV2;
 import org.orcid.jaxb.model.record.Education;
 import org.orcid.jaxb.model.record.Employment;
 import org.orcid.jaxb.model.record.Funding;
+import org.orcid.jaxb.model.record.PeerReview;
 import org.orcid.jaxb.model.record.Work;
 import org.orcid.jaxb.model.record.summary.ActivitiesSummary;
 import org.orcid.jaxb.model.record.summary.EducationSummary;
 import org.orcid.jaxb.model.record.summary.EmploymentSummary;
 import org.orcid.jaxb.model.record.summary.FundingSummary;
+import org.orcid.jaxb.model.record.summary.PeerReviewSummary;
 import org.orcid.jaxb.model.record.summary.WorkSummary;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.WebhookDao;
@@ -59,6 +62,9 @@ public class PublicV2ApiServiceDelegatorImpl implements PublicV2ApiServiceDelega
 
     @Resource
     private AffiliationsManager affiliationsManager;
+    
+    @Resource
+    private PeerReviewManager peerReviewManager;
 
     @Resource
     private WebhookDao webhookDao;
@@ -154,13 +160,17 @@ public class PublicV2ApiServiceDelegatorImpl implements PublicV2ApiServiceDelega
 
     @Override
     public Response viewPeerReview(String orcid, String putCode) {
-        // TODO Auto-generated method stub
-        return null;
+        PeerReview peerReview = peerReviewManager.getPeerReview(orcid, putCode);
+        orcidSecurityManager.checkVisibility(peerReview);
+        ActivityUtils.setPathToActivity(peerReview, orcid);
+        return Response.ok(peerReview).build();
     }
 
     @Override
     public Response viewPeerReviewSummary(String orcid, String putCode) {
-        // TODO Auto-generated method stub
-        return null;
+        PeerReviewSummary summary = peerReviewManager.getPeerReviewSummary(orcid, putCode);
+        orcidSecurityManager.checkVisibility(summary);
+        ActivityUtils.setPathToActivity(summary, orcid);
+        return Response.ok(summary).build();
     }
 }

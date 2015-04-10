@@ -44,7 +44,7 @@ public interface PeerReviewManager {
      *            The peerReview id
      * @return the PeerReviewSummary
      * */
-    PeerReviewSummary getSummary(String orcid, String peerReviewId);
+    PeerReviewSummary getPeerReviewSummary(String orcid, String peerReviewId);
 
     /**
      * Add a new peerReview to the given user
