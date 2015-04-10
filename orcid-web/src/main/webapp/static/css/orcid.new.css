@@ -2071,6 +2071,11 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input{
 	text-transform: uppercase;
 }
 
+.lightbox-title a i{
+	font-size: 12px;
+	vertical-align: top;
+}
+
 .inline-list {
 	margin: 0;
 	padding: 0;
@@ -4777,9 +4782,10 @@ ul.toggle-menu li:hover ul{
 }
 
 /* Bulk Edit control / bibtex */
-
 .bulk-edit,
-.bibtex-box{
+.bibtex-box,
+.work-import-wizard,
+.funding-import-wizard{
 	height: auto;
 	display: inline-block;	
 	width: 100%;
@@ -5730,6 +5736,67 @@ ul.oauth-scopes li{
 
 .small-missing-info{
 	font-size: 11px;
+}
+
+/* Import Wizards */
+.wizard-content{
+	font-size: 13px;
+}
+
+.wizard-header{
+	display: inline;
+}
+
+
+.close-wizard{
+	padding: 2px 10px;
+	background: #C9C9CA;
+  	color: #494A4C;
+  	font-size: 11px;
+  	margin-left: 25px;
+  	display: inline;
+  	vertical-align: top;
+  	line-height: 21px;
+}
+
+.close-wizard:hover{
+	cursor: pointer;
+	background: rgb(166, 206, 57);
+	color: #FFF;
+}
+
+.work-import-wizard .glyphicon-remove{
+	line-height: 10px;
+  	vertical-align: bottom;
+}
+
+.wizard-chevron{
+	font-size: 12px;
+}
+
+.wizard-description{
+	display: inline;
+}
+
+.ellipsis-on{
+  max-width: 95%;
+  width: auto;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: inline-block;
+  float: left;
+}
+
+.toggle-wizard-desc{
+	display: inline;
+	float: left;
+	clear: bottom;
+}
+
+hr{
+	display: block;
+	clear: both;
 }
 
 

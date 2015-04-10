@@ -36,7 +36,7 @@
 		        </div>
 		    </div>
 		    <div class="control-group col-md-offset-3 col-md-9 col-sm-9 col-sm-offset-3 col-xs-12 submit-login">		        		        	
-	            <button id='form-sign-in-button' class="btn btn-primary" type="submit">${springMacroRequestContext.getMessage("login.signin")}</button>	            
+	            <button id='form-sign-in-button' class="btn btn-primary" type="submit">${springMacroRequestContext.getMessage("login.signin")}</button>
 	            <span id="ajax-loader" class="no-visible"><i id="ajax-loader" class="glyphicon glyphicon-refresh spin x2 green"></i></span>	            
 	            <#if (RequestParameters['alreadyClaimed'])??>
 			        <div class="alert"><@spring.message "orcid.frontend.security.already_claimed"/></div>
@@ -57,4 +57,13 @@
 		    </div>		    
 	    </div>
 	</form>
+	<#if (RequestParameters['shibboleth'])??>
+        <div class="row">
+            <div class="control-group col-md-offset-3 col-md-9 col-sm-9 col-sm-offset-3 col-xs-12">
+                <form class="form-shibboleth-sign-in" id="shibbolethSignInForm" action="<@spring.url '/shibboleth/link'/>" method="get">
+                    <button id='shibboleth-sign-in-button' class="btn btn-primary" type="submit">Sign in with Shibboleth</button>
+                </form>
+            </div>
+        </div>
+    </#if>  
 </@public>
