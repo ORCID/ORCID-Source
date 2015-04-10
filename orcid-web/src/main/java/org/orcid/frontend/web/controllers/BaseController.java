@@ -71,6 +71,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -136,7 +137,7 @@ public class BaseController {
 
     @Resource
     protected SourceManager sourceManager;
-    
+
     @Resource
     private ProfileEntityManager profileEntityManager;
 
@@ -276,7 +277,8 @@ public class BaseController {
 
     protected OrcidProfileUserDetails getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication instanceof UsernamePasswordAuthenticationToken && authentication.getPrincipal() instanceof OrcidProfileUserDetails) {
+        if ((authentication instanceof UsernamePasswordAuthenticationToken || authentication instanceof PreAuthenticatedAuthenticationToken)
+                && authentication.getPrincipal() instanceof OrcidProfileUserDetails) {
             return ((OrcidProfileUserDetails) authentication.getPrincipal());
         } else {
             return null;
@@ -640,11 +642,11 @@ public class BaseController {
     public void setShareThisKey(String key) {
         this.shareThisKey = key;
     }
-    
+
     @ModelAttribute("locked")
-    public boolean isLocked() {        
+    public boolean isLocked() {
         OrcidProfile profile = getEffectiveProfile();
-        if(profile == null)
+        if (profile == null)
             return false;
         return profile.isLocked();
     }

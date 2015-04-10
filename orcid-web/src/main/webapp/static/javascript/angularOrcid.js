@@ -3279,7 +3279,9 @@ orcidNgModule.controller('FundingCtrl',['$scope', '$compile', '$filter', 'fundin
     $scope.privacyHelp = {};
     $scope.editTranslatedTitle = false;
     $scope.lastIndexedTerm = null;
-    $scope.showElement = {};    
+    $scope.showElement = {};
+    $scope.fundingImportWizard = false;
+    $scope.wizardDescExpanded = {};
     $scope.emptyExtId = {
             "errors": [],
             "type": {
@@ -3733,11 +3735,22 @@ orcidNgModule.controller('FundingCtrl',['$scope', '$compile', '$filter', 'fundin
     };    
     
     $scope.showFundingImportWizard =  function() {
+    	$scope.fundingImportWizard = !$scope.fundingImportWizard;
+    	
+    	
+    	/*
         $.colorbox({
             html : $compile($('#import-funding-modal').html())($scope),
             onComplete: function() {$.colorbox.resize();}
         });
+        */
+    	
+    	
     };
+    
+    $scope.toggleWizardDesc = function(id){
+    	$scope.wizardDescExpanded[id] = !$scope.wizardDescExpanded[id];
+    }
     
     $scope.showTooltip = function (key){
         $scope.showElement[key] = true;
@@ -3939,6 +3952,8 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     $scope.delCountVerify = 0;
     $scope.bulkDeleteCount = 0;
     $scope.bulkDeleteSubmit = false;
+    $scope.workImportWizard = false;
+    $scope.wizardDescExpanded = {};
     
     $scope.sortState = new ActSortState(GroupedActivities.ABBR_WORK);
     $scope.sort = function(key) {
@@ -3954,6 +3969,7 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
         };
         $scope.bulkEditShow = !$scope.bulkEditShow;
         $scope.showBibtexImportWizard = false;
+        $scope.workImportWizard = false;
     };
 
     $scope.bulkApply = function(func) {
@@ -4117,6 +4133,7 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
         $scope.showBibtexImportWizard = !($scope.showBibtexImportWizard);
         $scope.bulkEditShow = false;
         $scope.worksFromBibtex = null;
+        $scope.workImportWizard = false;
     };
 
     $scope.bibtextCancel = function(){
@@ -4248,10 +4265,9 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     };
 
     $scope.showWorkImportWizard =  function() {
-        $.colorbox({
-            html : $compile($('#import-wizard-modal').html())($scope),
-            onComplete: function() {$.colorbox.resize();}
-        });
+    	$scope.bulkEditShow = false;
+    	$scope.showBibtexImportWizard = false;
+    	$scope.workImportWizard = !$scope.workImportWizard;
     };
 
     $scope.addWorkModal = function(data){
@@ -4533,6 +4549,11 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     	    angular.element('#inputBibtex').trigger('click');
     	}, 0);
     };
+
+    $scope.toggleWizardDesc = function(id){
+    	$scope.wizardDescExpanded[id] = !$scope.wizardDescExpanded[id];
+    };
+    
 }]);
 
 orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'workspaceSrvc', 'commonSrvc', 'peerReviewSrvc', function ($scope, $compile, $filter, workspaceSrvc, commonSrvc, peerReviewSrvc){
@@ -5213,6 +5234,85 @@ orcidNgModule.controller('DelegatorsCtrl',['$scope', '$compile', function ($scop
     $scope.getDelegators();
 
 }]);
+
+//Controller for Shibboleth accounts
+orcidNgModule.controller('ShibbolethCtrl',['$scope', '$compile', function ShibbolethCtrl($scope, $compile){
+    $scope.showLoader = false;
+    $scope.sort = {
+        column: 'remoteUser',
+        descending: false
+    };
+
+    $scope.changeSorting = function(column) {
+        var sort = $scope.sort;
+        if (sort.column === column) {
+            sort.descending = !sort.descending;
+        } else {
+            sort.column = column;
+            sort.descending = false;
+        }
+    };
+
+    $scope.confirmRevoke = function(shibbolethRemoteUser, id) {
+        $scope.errors = [];
+        $scope.shibbolethRemoteUserToRevoke = shibbolethRemoteUser;
+        $scope.idToManage = id;
+        $.colorbox({
+            html : $compile($('#revoke-shibboleth-account-modal').html())($scope)
+
+        });
+        $.colorbox.resize();
+    };
+
+    $scope.revoke = function () {
+        var revokeShibbolethAccount = {};
+        revokeShibbolethAccount.idToManage = $scope.idToManage;
+        revokeShibbolethAccount.password = $scope.password;
+        $.ajax({
+            url: getBaseUri() + '/account/revokeShibbolethAccount.json',
+            type: 'POST',
+            data:  angular.toJson(revokeShibbolethAccount),
+            contentType: 'application/json;charset=UTF-8',
+            success: function(data) {
+                if(data.errors.length === 0){
+                    $scope.getShibbolethAccounts();
+                    $scope.$apply();
+                    $scope.closeModal();
+                }
+                else{
+                    $scope.errors = data.errors;
+                    $scope.$apply();
+                }
+            }
+        }).fail(function() {
+            // something bad is happening!
+            console.log("$ShibbolethCtrl.revoke() error");
+        });
+    };
+
+    $scope.getShibbolethAccounts = function() {
+        $.ajax({
+            url: getBaseUri() + '/account/shibbolethAccounts.json',
+            dataType: 'json',
+            success: function(data) {
+                $scope.shibbolethAccounts = data;
+                $scope.$apply();
+            }
+        }).fail(function() {
+            // something bad is happening!
+            console.log("error getting shibboleth accounts");
+        });
+    };
+
+    $scope.closeModal = function() {
+        $.colorbox.close();
+    };
+
+    // init
+    $scope.getShibbolethAccounts();
+
+}]);
+
 
 // Controller for notifications
 orcidNgModule.controller('NotificationsCtrl',['$scope', '$compile', 'notificationsSrvc', function ($scope, $compile, notificationsSrvc){
