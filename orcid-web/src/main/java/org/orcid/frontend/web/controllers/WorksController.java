@@ -388,6 +388,25 @@ public class WorksController extends BaseWorkspaceController {
     @RequestMapping(value = "/work.json", method = RequestMethod.POST)
     public @ResponseBody
     Work postWork(HttpServletRequest request, @RequestBody Work work) throws Exception {
+        validateWork(work);
+        if (work.getErrors().size() == 0) {
+            if (work.getPutCode() != null)
+                updateWork(work);
+            else
+                addWork(work);
+        }
+        return work;
+    }
+
+    @RequestMapping(value = "/worksValidate.json", method = RequestMethod.POST)
+    public @ResponseBody List<Work> validatesWork(@RequestBody List<Work> works) {
+        for (Work work:works)
+            validateWork(work);
+        return works;
+    }
+
+    @RequestMapping(value = "/workValidate.json", method = RequestMethod.POST)
+    public @ResponseBody Work validateWork(@RequestBody Work work) {
         work.setErrors(new ArrayList<String>());
 
         if (work.getCitation() != null) {
@@ -443,14 +462,6 @@ public class WorksController extends BaseWorkspaceController {
         if (work.getPutCode() != null) {
            validateWorkId(work);
         }
-        
-        if (work.getErrors().size() == 0) {
-            if (work.getPutCode() != null)
-                updateWork(work);
-            else
-                addWork(work);
-        }
-
         return work;
     }
 
