@@ -75,11 +75,11 @@ public class ClientDetailsManagerTest extends DBUnitTest {
     @Transactional
     public void testLoadClientByClientId() throws Exception {
         List<ClientDetailsEntity> all = clientDetailsManager.getAll();
-        assertEquals(7, all.size());
+        assertEquals(8, all.size());
         for (ClientDetailsEntity clientDetailsEntity : all) {
             ClientDetails clientDetails = clientDetailsManager.loadClientByClientId(clientDetailsEntity.getId());
             assertNotNull(clientDetails);
-            if (!"APP-5555555555555555".equals(clientDetailsEntity.getId())) {
+            if (!"APP-5555555555555555".equals(clientDetailsEntity.getId()) && !"APP-6666666666666666".equals(clientDetailsEntity.getId()) ) {
                 checkClientDetails(clientDetails);
             }
         }
@@ -159,7 +159,7 @@ public class ClientDetailsManagerTest extends DBUnitTest {
     @Transactional
     public void testDeleteClientDetail() throws Exception {
         List<ClientDetailsEntity> all = clientDetailsManager.getAll();
-        assertEquals(7, all.size());
+        assertEquals(8, all.size());
         for (ClientDetailsEntity clientDetailsEntity : all) {
             if (!"APP-5555555555555555".equals(clientDetailsEntity.getId())) {
                 clientDetailsManager.deleteClientDetail(clientDetailsEntity.getId());
