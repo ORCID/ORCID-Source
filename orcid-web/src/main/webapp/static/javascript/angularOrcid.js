@@ -4096,26 +4096,21 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     };
     
     $scope.saveAllFromBibtex = function(){
-    	var works = $scope.worksFromBibtex;
-    	var prom = [];
-    	angular.forEach( works, function( work, key ) {    		
-    		if (work.errors.length == 0) {
-    			prom.push(
-    			     worksSrvc.putWork(work,function(data) {
-    			         if (data.errors.length == 0) {
-                            index = works.indexOf(work);
-                            works.splice(index, 1);
-                            $scope.worksFromBibtex = works;
-                            $scope.$apply();
-    			         }
-                     })
-    			);
-    		};    		
-    	}); 
-    	
-    	$q.all(prom).then(function(){
-    		$scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);    		
-    	});
+        var warksToSave =  new Array();
+        angular.forEach($scope.worksFromBibtex, function( work, key ) {
+            if (work.errors.length == 0) warksToSave.push(work);
+        });
+        var numToSave = warksToSave.length;
+        angular.forEach( warksToSave, function( work, key ) {
+            worksSrvc.putWork(work,function(data) {
+                    index = $scope.worksFromBibtex.indexOf(work);
+                    $scope.worksFromBibtex.splice(index, 1);
+                    $scope.$apply();
+                    numToSave--;
+                    if (numToSave == 0)
+                        $scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);
+            });
+        });
     };
 
     $scope.openBibTextWizard = function () {
