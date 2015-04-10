@@ -52,7 +52,6 @@ public class DBUnitTest {
             "institution", "affiliation", "notification", "client_details", "client_secret", "oauth2_token_detail", "custom_email", "webhook", "granted_authority",
             "orcid_props", "peer_review", "peer_review_subject", "shibboleth_account"};
 
-
     private static ApplicationContext context = new ClassPathXmlApplicationContext(CONTEXT);
 
     public static void initDBUnitData(List<String> flatXMLDataFiles) throws Exception {

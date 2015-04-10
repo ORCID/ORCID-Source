@@ -5747,7 +5747,6 @@ ul.oauth-scopes li{
 	display: inline;
 }
 
-
 .close-wizard{
 	padding: 2px 10px;
 	background: #C9C9CA;
@@ -5799,6 +5798,15 @@ hr{
 	clear: both;
 }
 
+/* Peer review */
+.add-peer-review{
+	width: 800px;
+}
+
+.inline-input{
+	display: inline;
+	margin: 0 10px 15px 0;
+}
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */

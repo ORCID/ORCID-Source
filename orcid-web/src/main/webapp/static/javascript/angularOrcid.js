@@ -4553,6 +4553,7 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     $scope.toggleWizardDesc = function(id){
     	$scope.wizardDescExpanded[id] = !$scope.wizardDescExpanded[id];
     };
+    
 }]);
 
 orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'workspaceSrvc', 'commonSrvc', 'peerReviewSrvc', function ($scope, $compile, $filter, workspaceSrvc, commonSrvc, peerReviewSrvc){
@@ -4571,7 +4572,7 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
                     $scope.bindTypeaheadForOrgs();
                 });
             });
-            $scope.showAddPeerReviewModal();        
+            //$scope.showAddPeerReviewModal();        
     };
     
     $scope.showAddPeerReviewModal = function(){
@@ -4732,6 +4733,15 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
         $('#translatedTitle').toggle();
         $.colorbox.resize();
     };
+
+    $scope.addExternalIdentifier = function () {
+        $scope.editPeerReview.externalIdentifiers.push({workExternalIdentifierId: {value: ""}, workExternalIdentifierType: {value: ""}});
+    };
+    
+    $scope.addSubjectExternalIdentifier = function () {
+    	$scope.editPeerReview.subjectForm.workExternalIdentifiers.push({workExternalIdentifierId: {value: ""}, workExternalIdentifierType: {value: ""}});
+    };
+    
 }]);
 
 
