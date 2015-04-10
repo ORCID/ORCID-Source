@@ -307,7 +307,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     @Override
     @AccessControl(requiredScope = ScopePathType.ACTIVITIES_READ_LIMITED)
     public Response viewPeerReviewSummary(String orcid, String putCode) {
-        PeerReviewSummary summary = peerReviewManager.getSummary(orcid, putCode);
+        PeerReviewSummary summary = peerReviewManager.getPeerReviewSummary(orcid, putCode);
         return Response.ok(summary).build();
     }
 

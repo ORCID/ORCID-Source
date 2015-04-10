@@ -255,6 +255,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         classMap.field("organization.address.country", "org.country");
         classMap.field("organization.disambiguatedOrganization.disambiguatedOrganizationIdentifier", "org.orgDisambiguated.sourceId");
         classMap.field("organization.disambiguatedOrganization.disambiguationSource", "org.orgDisambiguated.sourceType");
+        classMap.field("subject.putCode", "subject.id");
         classMap.field("subject.type", "subject.workType");
         classMap.field("subject.url.value", "subject.url");
         classMap.field("subject.title.title.content", "subject.title");
@@ -269,6 +270,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         ClassMapBuilder<PeerReviewSummary, PeerReviewEntity> peerReviewSummaryClassMap = mapperFactory.classMap(PeerReviewSummary.class,
                 PeerReviewEntity.class);
         peerReviewSummaryClassMap.byDefault();
+        peerReviewSummaryClassMap.field("putCode", "id");
         peerReviewSummaryClassMap.fieldMap("externalIdentifiers", "externalIdentifiersJson").converter("workExternalIdentifiersConverterId").add();
         peerReviewSummaryClassMap.register();
         

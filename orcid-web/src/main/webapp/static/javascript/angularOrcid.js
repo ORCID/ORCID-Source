@@ -4549,7 +4549,7 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     	    angular.element('#inputBibtex').trigger('click');
     	}, 0);
     };
-
+    
     $scope.toggleWizardDesc = function(id){
     	$scope.wizardDescExpanded[id] = !$scope.wizardDescExpanded[id];
     };
@@ -4733,7 +4733,7 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
         $('#translatedTitle').toggle();
         $.colorbox.resize();
     };
-    
+
     $scope.addExternalIdentifier = function () {
         $scope.editPeerReview.externalIdentifiers.push({workExternalIdentifierId: {value: ""}, workExternalIdentifierType: {value: ""}});
     };

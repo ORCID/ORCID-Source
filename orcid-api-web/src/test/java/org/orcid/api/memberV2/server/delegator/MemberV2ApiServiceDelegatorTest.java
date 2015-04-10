@@ -21,6 +21,7 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -33,15 +34,20 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.utils.SecurityContextTestUtils;
+import org.orcid.jaxb.model.common.Url;
 import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record.Education;
 import org.orcid.jaxb.model.record.Employment;
 import org.orcid.jaxb.model.record.Funding;
+import org.orcid.jaxb.model.record.PeerReview;
+import org.orcid.jaxb.model.record.Subject;
 import org.orcid.jaxb.model.record.Work;
 import org.orcid.jaxb.model.record.WorkType;
 import org.orcid.jaxb.model.record.summary.ActivitiesSummary;
+import org.orcid.jaxb.model.record.summary.PeerReviewSummary;
 import org.orcid.test.DBUnitTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -127,6 +133,20 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertThat(summary.getEmployments().getSummaries().get(0).getPutCode(), anyOf(is("5"), is("8")));
         assertThat(summary.getEmployments().getSummaries().get(0).getPath(), anyOf(is("/4444-4444-4444-4446/employment/5"), is("/4444-4444-4444-4446/employment/8")));
         assertThat(summary.getEmployments().getSummaries().get(0).getDepartmentName(), anyOf(is("Employment Dept # 1"), is("Employment Dept # 2")));
+        
+        // Check Peer reviews
+        assertNotNull(summary.getPeerReviews());
+        assertEquals(1, summary.getPeerReviews().getPeerReviewGroup().size());
+        PeerReviewSummary peerReviewSummary = summary.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0); 
+        assertEquals("1", peerReviewSummary.getPutCode());
+        assertNotNull(peerReviewSummary.getCompletionDate());
+        assertEquals("01", peerReviewSummary.getCompletionDate().getDay().getValue());
+        assertEquals("01", peerReviewSummary.getCompletionDate().getMonth().getValue());
+        assertEquals("2015", peerReviewSummary.getCompletionDate().getYear().getValue());
+        assertEquals("work:external-identifier-id#1", peerReviewSummary.getExternalIdentifiers().getExternalIdentifier().get(0).getWorkExternalIdentifierId().getContent());
+        assertEquals("REVIEWER", peerReviewSummary.getRole().value());
+        assertEquals("APP-5555555555555555", peerReviewSummary.getSource().retrieveSourcePath());
+        assertEquals("public", peerReviewSummary.getVisibility().value());        
     }
 
     @Test
@@ -183,5 +203,101 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals("/4444-4444-4444-4446/employment/5", employment.getPath());
         assertEquals("Employment Dept # 1", employment.getDepartmentName());
         assertEquals(Visibility.PRIVATE.value(), employment.getVisibility().value());
+    }
+    
+    @Test
+    public void testViewPeerReview() {
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.ACTIVITIES_READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        Response response = serviceDelegator.viewPeerReview("4444-4444-4444-4446", "1");
+        assertNotNull(response);
+        PeerReview peerReview= (PeerReview) response.getEntity();
+        assertNotNull(peerReview);
+        assertEquals("1", peerReview.getPutCode());
+        assertNotNull(peerReview.getCompletionDate());
+        assertEquals("01", peerReview.getCompletionDate().getDay().getValue());
+        assertEquals("01", peerReview.getCompletionDate().getMonth().getValue());
+        assertEquals("2015", peerReview.getCompletionDate().getYear().getValue());
+        assertEquals("work:external-identifier-id#1", peerReview.getExternalIdentifiers().getExternalIdentifier().get(0).getWorkExternalIdentifierId().getContent());
+        assertEquals("REVIEWER", peerReview.getRole().value());
+        assertEquals("APP-5555555555555555", peerReview.getSource().retrieveSourcePath());
+        assertEquals("public", peerReview.getVisibility().value());        
+        assertEquals("REVIEW", peerReview.getType().value());
+        assertEquals("http://peer_review.com", peerReview.getUrl().getValue());
+        Subject subject = peerReview.getSubject();
+        assertEquals("1", subject.getPutCode());
+        assertEquals("Peer Review # 1", subject.getTitle().getTitle().getContent());
+        assertEquals("Peer Review # 1 translated title", subject.getTitle().getTranslatedTitle().getContent());
+        assertEquals("es", subject.getTitle().getTranslatedTitle().getLanguageCode());
+        assertEquals("Peer Review # 1 subtitle", subject.getTitle().getSubtitle().getContent());
+        assertEquals("artistic-performance", subject.getType().value());
+        assertEquals("http://work.com", subject.getUrl().getValue());
+        assertEquals("Peer Review # 1 journal title", subject.getJournalTitle().getContent());        
+        assertNotNull(subject.getExternalIdentifiers());
+        assertEquals(1, subject.getExternalIdentifiers().getExternalIdentifier().size());
+        assertEquals("peer-review-subject:external-identifier-id#1", subject.getExternalIdentifiers().getExternalIdentifier().get(0).getWorkExternalIdentifierId().getContent());
+        assertEquals("agr", subject.getExternalIdentifiers().getExternalIdentifier().get(0).getWorkExternalIdentifierType().value());
+    }
+    
+    @Test
+    public void testViewPeerReviewSummary() {
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.ACTIVITIES_READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        Response response = serviceDelegator.viewPeerReviewSummary("4444-4444-4444-4446", "1");
+        assertNotNull(response);
+        PeerReviewSummary peerReview= (PeerReviewSummary) response.getEntity();
+        assertNotNull(peerReview);
+        assertEquals("1", peerReview.getPutCode());
+        assertNotNull(peerReview.getCompletionDate());
+        assertEquals("01", peerReview.getCompletionDate().getDay().getValue());
+        assertEquals("01", peerReview.getCompletionDate().getMonth().getValue());
+        assertEquals("2015", peerReview.getCompletionDate().getYear().getValue());
+        assertEquals("work:external-identifier-id#1", peerReview.getExternalIdentifiers().getExternalIdentifier().get(0).getWorkExternalIdentifierId().getContent());
+        assertEquals("REVIEWER", peerReview.getRole().value());
+        assertEquals("APP-5555555555555555", peerReview.getSource().retrieveSourcePath());
+        assertEquals("public", peerReview.getVisibility().value());                
+    }
+    
+    @Test
+    public void testUpdatePeerReview() {
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.ACTIVITIES_READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        Response response = serviceDelegator.viewPeerReview("4444-4444-4444-4446", "1");
+        assertNotNull(response);
+        PeerReview peerReview= (PeerReview) response.getEntity();
+        assertNotNull(peerReview);
+        peerReview.setUrl(new Url("http://updated.com/url"));
+        peerReview.getSubject().getTitle().getTitle().setContent("Updated Title");
+        serviceDelegator.updatePeerReview("4444-4444-4444-4446", "1", peerReview);
+        response = serviceDelegator.viewPeerReview("4444-4444-4444-4446", "1");
+        PeerReview updatedPeerReview= (PeerReview) response.getEntity();
+        assertNotNull(updatedPeerReview);
+        assertEquals("http://updated.com/url", updatedPeerReview.getUrl().getValue());
+        assertEquals("Updated Title", updatedPeerReview.getSubject().getTitle().getTitle().getContent());
+    }
+    
+    @Test
+    public void testUpdatePeerReviewWhenNotSource() {
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.ACTIVITIES_READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        Response response = serviceDelegator.viewPeerReview("4444-4444-4444-4447", "2");
+        assertNotNull(response);
+        PeerReview peerReview= (PeerReview) response.getEntity();
+        assertNotNull(peerReview);
+        assertEquals("http://peer_review.com/2", peerReview.getUrl().getValue());
+        assertEquals("APP-6666666666666666", peerReview.getSource().retrieveSourcePath());
+        
+        //Update the info
+        peerReview.setUrl(new Url("http://updated.com/url"));
+        peerReview.getSubject().getTitle().getTitle().setContent("Updated Title");
+        
+        //Try to update it
+        try {
+            response = serviceDelegator.updatePeerReview("4444-4444-4444-4447", "2", peerReview);
+            fail();
+        } catch(WrongSourceException wse) {
+            
+        }
+        response = serviceDelegator.viewPeerReview("4444-4444-4444-4447", "2");
+        peerReview= (PeerReview) response.getEntity();
+        assertNotNull(peerReview);
+        assertEquals("http://peer_review.com/2", peerReview.getUrl().getValue());
+        assertEquals("APP-6666666666666666", peerReview.getSource().retrieveSourcePath());
     }
 }

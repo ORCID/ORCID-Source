@@ -20,7 +20,7 @@
 <dataset>
 	<peer_review_subject 
 		id="1"
-		external_identifiers_json="{&quot;workExternalIdentifier&quot;:[{&quot;workExternalIdentifierType&quot;:&quot;AGR&quot;,&quot;workExternalIdentifierId&quot;:{&quot;content&quot;:&quot;peer-review:external-identifier-id#1&quot;}}]}"
+		external_identifiers_json="{&quot;workExternalIdentifier&quot;:[{&quot;workExternalIdentifierType&quot;:&quot;AGR&quot;,&quot;workExternalIdentifierId&quot;:{&quot;content&quot;:&quot;peer-review-subject:external-identifier-id#1&quot;}}]}"
 		title="Peer Review # 1"
 		work_type="ARTISTIC_PERFORMANCE"
 		sub_title="Peer Review # 1 subtitle"
@@ -30,5 +30,19 @@
 		journal_title="Peer Review # 1 journal title"
 		date_created="2015-01-01 00:00:00.00"
 		last_modified="2015-01-01 00:00:00.00"
-		/>			
+		/>	
+		
+	<peer_review_subject 
+		id="2"
+		external_identifiers_json="{&quot;workExternalIdentifier&quot;:[{&quot;workExternalIdentifierType&quot;:&quot;AGR&quot;,&quot;workExternalIdentifierId&quot;:{&quot;content&quot;:&quot;peer-review-subject:external-identifier-id#2&quot;}}]}"
+		title="Peer Review # 2"
+		work_type="ARTISTIC_PERFORMANCE"
+		sub_title="Peer Review # 2 subtitle"
+		translated_title="Peer Review # 2 translated title"
+		translated_title_language_code="es"
+		url="http://work.com"
+		journal_title="Peer Review # 2 journal title"
+		date_created="2015-01-01 00:00:00.00"
+		last_modified="2015-01-01 00:00:00.00"
+		/>	
 </dataset>
