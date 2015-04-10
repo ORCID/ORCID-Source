@@ -60,7 +60,7 @@ public class JpaJaxbWorkAdapterTest {
 
     @Test
     public void testToWorkEntity() throws JAXBException {
-        Work work = getWork();
+        Work work = getWork(true);
         assertNotNull(work);
         ProfileWorkEntity profileWorkEntity = jpaJaxbWorkAdapter.toProfileWorkEntity(work);
         assertNotNull(profileWorkEntity);
@@ -140,10 +140,14 @@ public class JpaJaxbWorkAdapterTest {
         assertEquals(WorkExternalIdentifierType.AGR.value(), workExtId.getWorkExternalIdentifierType().value());
     }
 
-    private Work getWork() throws JAXBException {
+    private Work getWork(boolean full) throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(new Class[] { Work.class });
         Unmarshaller unmarshaller = context.createUnmarshaller();
-        InputStream inputStream = getClass().getResourceAsStream("/record_2.0_rc1/samples/work-2.0_rc1.xml");
+        String name = "/record_2.0_rc1/samples/work-2.0_rc1.xml";
+        if(full) {
+            name = "/record_2.0_rc1/samples/work-full-2.0_rc1.xml";
+        }
+        InputStream inputStream = getClass().getResourceAsStream(name);
         return (Work) unmarshaller.unmarshal(inputStream);
     }
 

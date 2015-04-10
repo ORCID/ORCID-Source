@@ -54,7 +54,7 @@ public class JpaJaxbFundingAdapterTest {
 
     @Test
     public void toFundingEntityTest() throws JAXBException {
-        Funding f = getFunding();
+        Funding f = getFunding(true);
         assertNotNull(f);
         ProfileFundingEntity pfe = jpaJaxbFundingAdapter.toProfileFundingEntity(f);
         assertNotNull(pfe);
@@ -160,10 +160,14 @@ public class JpaJaxbFundingAdapterTest {
         assertEquals(Visibility.PRIVATE, summary.getVisibility());
     }
     
-    private Funding getFunding() throws JAXBException {
+    private Funding getFunding(boolean full) throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(new Class[] { Funding.class });
         Unmarshaller unmarshaller = context.createUnmarshaller();
-        InputStream inputStream = getClass().getResourceAsStream("/record_2.0_rc1/samples/funding-2.0_rc1.xml");
+        String name = "/record_2.0_rc1/samples/funding-2.0_rc1.xml";
+        if(full) {
+            name = "/record_2.0_rc1/samples/funding-full-2.0_rc1.xml";
+        }
+        InputStream inputStream = getClass().getResourceAsStream(name);
         return (Funding) unmarshaller.unmarshal(inputStream);
     }
 
