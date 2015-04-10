@@ -72,7 +72,7 @@ public class DBUnitTest {
     }
 
     private static void cleanClientSourcedProfiles(IDatabaseConnection connection) throws AmbiguousTableNameException, DatabaseUnitException, SQLException {
-        QueryDataSet dataSet = new QueryDataSet(connection);
+        QueryDataSet dataSet = new QueryDataSet(connection);                        
         dataSet.addTable(
                 "profile",
                 "SELECT p1.* FROM profile p1 LEFT JOIN client_details c ON c.group_orcid = p1.orcid LEFT JOIN profile p2 ON p1.source_id = p2.source_id WHERE p2.source_id IS NULL AND (c.client_details_id IS NULL OR p1.client_source_id IS NOT NULL)");
@@ -85,16 +85,16 @@ public class DBUnitTest {
         dataSet.addTable("external_identifier");
         dataSet.addTable("org");
         dataSet.addTable("org_affiliation_relation");
-        dataSet.addTable("profile_funding");
+        dataSet.addTable("peer_review_subject");
+        dataSet.addTable("peer_review");
+        dataSet.addTable("profile_funding");        
         dataSet.addTable("funding_external_identifier");
         dataSet.addTable("webhook");
         dataSet.addTable("oauth2_token_detail");
         dataSet.addTable("notification");
         dataSet.addTable("notification_activity");
         dataSet.addTable("given_permission_to");
-        dataSet.addTable("subject");
-        dataSet.addTable("peer_review");
-        dataSet.addTable("peer_review_subject");
+        dataSet.addTable("subject");        
         DatabaseOperation.DELETE.execute(connection, dataSet);
 
         QueryDataSet theRest = new QueryDataSet(connection);

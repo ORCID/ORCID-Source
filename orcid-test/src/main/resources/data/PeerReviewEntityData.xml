@@ -35,4 +35,22 @@
 		date_created="2015-01-01 00:00:00.00"
 		last_modified="2015-01-01 00:00:00.00"
 		/>
+		
+	<peer_review 
+		id="2"
+		orcid="4444-4444-4444-4447"
+		peer_review_subject_id="2"		
+		external_identifiers_json="{&quot;workExternalIdentifier&quot;:[{&quot;workExternalIdentifierType&quot;:&quot;AGR&quot;,&quot;workExternalIdentifierId&quot;:{&quot;content&quot;:&quot;work:external-identifier-id#2&quot;}}]}"
+		org_id="2"
+		peer_review_role="REVIEWER"
+		peer_review_type="REVIEW"
+		completion_day="2"
+		completion_month="2"
+		completion_year="2016"
+		url="http://peer_review.com/2"
+		visibility="PUBLIC"
+		client_source_id="APP-6666666666666666"
+		date_created="2015-01-01 00:00:00.00"
+		last_modified="2015-01-01 00:00:00.00"
+		/>		
 </dataset>
