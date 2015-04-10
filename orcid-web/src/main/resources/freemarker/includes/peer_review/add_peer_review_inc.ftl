@@ -24,10 +24,10 @@
 			<div class="row">			
 				<div class="col-md-9 col-sm-8 col-xs-9">	
 					<h1 class="lightbox-title pull-left">						
-						<div ng-show="editPeerReview.putCode.value != ''">
+						<div ng-show="editPeerReview.putCode.value != ''" ng-cloak>
 							Edit Peer Review
 						</div>						 
-						<div ng-show="editPeerReview.putCode.value == ''">
+						<div ng-show="editPeerReview.putCode.value == ''" ng-cloak>
 							Add Peer Review
 						</div>
 					</h1>
@@ -144,17 +144,17 @@
 					<span><strong>COMPLETION DATE</strong></span>	
 					<div class="control-group">			    		
 			    		<div class="relative">					    
-							<select id="year" class="input-xlarge" name="year" ng-model="editPeerReview.completionDate.year">
+							<select id="year" class="col-md-3 col-sm-3 col-xs-3 inline-input" name="year" ng-model="editPeerReview.completionDate.year">
 								<#list years?keys as key>
 									<option value="${key}">${years[key]}</option>
 								</#list>
 				    		</select>				    	
-							<select id="month" class="input-xlarge" name="month" ng-model="editPeerReview.completionDate.month">
+							<select id="month" class="col-md-4 col-sm-4 col-xs-4 inline-input" name="month" ng-model="editPeerReview.completionDate.month">
 								<#list months?keys as key>
 									<option value="${key}">${months[key]}</option>
 								</#list>
 				    		</select>
-							<select id="day" class="input-xlarge" name="day" ng-model="editPeerReview.completionDate.day">
+							<select id="day" class="col-md-3 col-sm-3 col-xs-3 inline-input" name="day" ng-model="editPeerReview.completionDate.day">
 								<#list days?keys as key>
 									<option value="${key}">${days[key]}</option>
 								</#list>
@@ -242,7 +242,7 @@
 								</span>
 							</div>
 							<div class="add-item-link">			
-								<span><a href ng-click="addExternalIdentifier()"><i class="glyphicon glyphicon-plus-sign"></i> Add external identifier</a></span>
+								<span><a href ng-click="addSubjectExternalIdentifier()"><i class="glyphicon glyphicon-plus-sign"></i> Add external identifier</a></span>
 							</div>
 						</div>	
 					</div>										 
@@ -358,4 +358,4 @@
 				</div>
 			</fn-form>			
 		</div>		
-</script>
+ </script>

@@ -4551,7 +4551,7 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
                     $scope.bindTypeaheadForOrgs();
                 });
             });
-            $scope.showAddPeerReviewModal();        
+            //$scope.showAddPeerReviewModal();        
     };
     
     $scope.showAddPeerReviewModal = function(){
@@ -4711,6 +4711,14 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
         $scope.editTranslatedTitle = !$scope.editTranslatedTitle;
         $('#translatedTitle').toggle();
         $.colorbox.resize();
+    };
+    
+    $scope.addExternalIdentifier = function () {
+        $scope.editPeerReview.externalIdentifiers.push({workExternalIdentifierId: {value: ""}, workExternalIdentifierType: {value: ""}});
+    };
+    
+    $scope.addSubjectExternalIdentifier = function () {
+    	$scope.editPeerReview.subjectForm.workExternalIdentifiers.push({workExternalIdentifierId: {value: ""}, workExternalIdentifierType: {value: ""}});
     };
     
 }]);

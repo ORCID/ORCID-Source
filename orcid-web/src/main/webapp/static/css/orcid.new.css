@@ -5732,6 +5732,16 @@ ul.oauth-scopes li{
 	font-size: 11px;
 }
 
+/* Peer review */
+.add-peer-review{
+	width: 800px;
+}
+
+.inline-input{
+	display: inline;
+	margin: 0 10px 15px 0;
+}
+
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */

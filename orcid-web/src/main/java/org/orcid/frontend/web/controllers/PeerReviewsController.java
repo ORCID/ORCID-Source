@@ -367,7 +367,7 @@ public class PeerReviewsController extends BaseWorkspaceController {
     PeerReviewForm validateCountry(@RequestBody PeerReviewForm peerReview) {
         peerReview.getCountry().setErrors(new ArrayList<String>());
         if (peerReview.getCountry().getValue() == null || peerReview.getCountry().getValue().trim().length() == 0) {
-            setError(peerReview.getCountry(), "common.country.not_empty");
+            setError(peerReview.getCountry(), "common.country.not_blank");
         }
         return peerReview;
     }
