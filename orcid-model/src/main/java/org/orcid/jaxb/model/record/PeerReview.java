@@ -293,16 +293,18 @@ public class PeerReview implements VisibilityType, Activity, Serializable, Organ
             if(other.getExternalIdentifiers() == null || other.getExternalIdentifiers().getExternalIdentifier() == null || other.getExternalIdentifiers().getExternalIdentifier().isEmpty()) {
                 return false;
             }
+            
+            if(externalIdentifiers.getExternalIdentifier().size() != other.getExternalIdentifiers().getExternalIdentifier().size()) {
+                return false;
+            }
+            
             for(WorkExternalIdentifier thisExtId : externalIdentifiers.getExternalIdentifier()) {
-                for(WorkExternalIdentifier otherExtId : other.getExternalIdentifiers().getExternalIdentifier()) {
-                    if(thisExtId.equals(otherExtId)) {
-                        return true;
-                    }
-                }
+                if(!other.getExternalIdentifiers().getExternalIdentifier().contains(thisExtId)) {
+                    return false;
+                }                                
             }                        
         }
         
-        //If we get here, it means the source is the same, but, they dont share any external identifier
-        return false;
+        return true;
     }
 }

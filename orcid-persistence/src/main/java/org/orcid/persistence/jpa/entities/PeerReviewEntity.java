@@ -54,6 +54,7 @@ public class PeerReviewEntity extends BaseEntity<Long> implements Comparable<Pee
     private SourceEntity source;
     private Visibility visibility;    
     private PeerReviewSubjectEntity subject;
+    private Long displayIndex; 
     
     @Override
     @Id
@@ -164,6 +165,23 @@ public class PeerReviewEntity extends BaseEntity<Long> implements Comparable<Pee
         this.subject = subject;
     }
 
+    /*
+     * Dictates the display order for peer reviews (and versions of peer reviews)
+     * peer reviews with higher numbers should be displayed first. 
+     * 
+     * Currently only updatable via ProfileWorkDaoImpl.updateToMaxDisplay
+     *
+     */
+
+    @Column(name = "display_index", updatable=false, insertable=false)
+    public Long getDisplayIndex() {
+        return displayIndex;
+    }
+
+    public void setDisplayIndex(Long displayIndex) {
+        this.displayIndex = displayIndex;
+    }
+    
     public int compareTo(PeerReviewEntity other) {        
         if (other == null) {
             throw new NullPointerException("Can't compare with null");

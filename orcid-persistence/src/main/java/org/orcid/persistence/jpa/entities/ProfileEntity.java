@@ -517,7 +517,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
      * @return the peer reviews
      * */
     @OneToMany(mappedBy = PROFILE, cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    @Sort(type = SortType.NATURAL)
+    @Sort(type = SortType.COMPARATOR, comparator = PeerReviewEntityDisplayIndexComparatorDesc.class)
     public SortedSet<PeerReviewEntity> getPeerReviews() {
         return peerReviews;
     }

@@ -253,5 +253,6 @@
 				</xs:annotation>
 			</xs:element>
 		</xs:sequence>
+		<xs:attribute name="put-code" type="common:put-code" use="optional" />
 	</xs:complexType>		
 </xs:schema>

@@ -498,8 +498,13 @@ public class MemberV2Test {
         
         String accessToken = getAccessToken();
 
-        memberV2ApiClient.createEducationXml(user1OrcidId, education, accessToken);
-        memberV2ApiClient.createEmploymentXml(user1OrcidId, employment, accessToken);
+        ClientResponse postResponse = memberV2ApiClient.createEducationXml(user1OrcidId, education, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+        
+        postResponse = memberV2ApiClient.createEmploymentXml(user1OrcidId, employment, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         /**
          * Add 4 fundings 1 and 2 get grouped together 3 in another group
          * because it have different ext ids 4 in another group because it
@@ -507,16 +512,21 @@ public class MemberV2Test {
          * **/
 
         // Add 1, the default funding
-        memberV2ApiClient.createFundingXml(user1OrcidId, funding, accessToken);
-
+        postResponse = memberV2ApiClient.createFundingXml(user1OrcidId, funding, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+        
         funding.getTitle().getTitle().setContent("Funding # 2");
         FundingExternalIdentifier fExtId3 = new FundingExternalIdentifier();
         fExtId3.setType(FundingExternalIdentifierType.GRANT_NUMBER);
         fExtId3.setValue("extId3Value" + time);
         funding.getExternalIdentifiers().getExternalIdentifier().add(fExtId3);
         // Add 2, with the same ext ids +1
-        memberV2ApiClient.createFundingXml(user1OrcidId, funding, accessToken);
-
+        postResponse = memberV2ApiClient.createFundingXml(user1OrcidId, funding, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+        
+        
         funding.getTitle().getTitle().setContent("Funding # 3");
         FundingExternalIdentifier fExtId4 = new FundingExternalIdentifier();
         fExtId4.setType(FundingExternalIdentifierType.GRANT_NUMBER);
@@ -524,29 +534,37 @@ public class MemberV2Test {
         funding.getExternalIdentifiers().getExternalIdentifier().clear();
         funding.getExternalIdentifiers().getExternalIdentifier().add(fExtId4);
         // Add 3, with different ext ids
-        memberV2ApiClient.createFundingXml(user1OrcidId, funding, accessToken);
-
+        postResponse = memberV2ApiClient.createFundingXml(user1OrcidId, funding, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());        
+        
         funding.getTitle().getTitle().setContent("Funding # 4");
         funding.getExternalIdentifiers().getExternalIdentifier().clear();
         // Add 4 without ext ids
-        memberV2ApiClient.createFundingXml(user1OrcidId, funding, accessToken);
-
+        postResponse = memberV2ApiClient.createFundingXml(user1OrcidId, funding, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+        
         /**
          * Add 4 works 1 and 2 get grouped together 3 in another group because
          * it have different ext ids 4 in another group because it doesnt have
          * any ext ids
          **/
         // Add 1, the default work
-        memberV2ApiClient.createWorkXml(user1OrcidId, work, accessToken);
-
+        postResponse = memberV2ApiClient.createWorkXml(user1OrcidId, work, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+        
         work.getWorkTitle().getTitle().setContent("Work # 2");
         WorkExternalIdentifier wExtId2 = new WorkExternalIdentifier();
         wExtId2.setWorkExternalIdentifierType(WorkExternalIdentifierType.DOI);
         wExtId2.setWorkExternalIdentifierId(new WorkExternalIdentifierId("doi-ext-id" + time));
         work.getExternalIdentifiers().getExternalIdentifier().add(wExtId2);
         // Add 2, with the same ext ids +1
-        memberV2ApiClient.createWorkXml(user1OrcidId, work, accessToken);
-
+        postResponse = memberV2ApiClient.createWorkXml(user1OrcidId, work, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+        
         work.getWorkTitle().getTitle().setContent("Work # 3");
         WorkExternalIdentifier wExtId3 = new WorkExternalIdentifier();
         wExtId3.setWorkExternalIdentifierType(WorkExternalIdentifierType.EID);
@@ -554,26 +572,16 @@ public class MemberV2Test {
         work.getWorkExternalIdentifiers().getExternalIdentifier().clear();
         work.getWorkExternalIdentifiers().getExternalIdentifier().add(wExtId3);
         // Add 3, with different ext ids
-        memberV2ApiClient.createWorkXml(user1OrcidId, work, accessToken);
-
+        postResponse = memberV2ApiClient.createWorkXml(user1OrcidId, work, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+        
         work.getWorkTitle().getTitle().setContent("Work # 4");
         work.getWorkExternalIdentifiers().getExternalIdentifier().clear();
         // Add 4, without ext ids
-        memberV2ApiClient.createWorkXml(user1OrcidId, work, accessToken);
-
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
+        postResponse = memberV2ApiClient.createWorkXml(user1OrcidId, work, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         
         /**
          * Add 4 peer reviews 1 and 2 get grouped together 3 in another group because
@@ -581,8 +589,10 @@ public class MemberV2Test {
          * any ext ids
          **/
         // Add 1, the default peer review
-        memberV2ApiClient.createPeerReviewXml(user1OrcidId, peerReview, accessToken);
-
+        postResponse = memberV2ApiClient.createPeerReviewXml(user1OrcidId, peerReview, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+        
         peerReview.getSubject().getTitle().getTitle().setContent("PeerReview # 2");
         peerReview.getCompletionDate().setDay(new Day(2));
         peerReview.getCompletionDate().setMonth(new Month(2));
@@ -593,8 +603,10 @@ public class MemberV2Test {
         pExtId2.setWorkExternalIdentifierId(new WorkExternalIdentifierId("doi-ext-id" + time));
         peerReview.getExternalIdentifiers().getExternalIdentifier().add(pExtId2);
         // Add 2, with the same ext ids +1
-        memberV2ApiClient.createPeerReviewXml(user1OrcidId, peerReview, accessToken);
-
+        postResponse = memberV2ApiClient.createPeerReviewXml(user1OrcidId, peerReview, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+        
         peerReview.getSubject().getTitle().getTitle().setContent("PeerReview # 3");
         peerReview.getCompletionDate().setDay(new Day(3));
         peerReview.getCompletionDate().setMonth(new Month(3));
@@ -606,8 +618,10 @@ public class MemberV2Test {
         peerReview.getExternalIdentifiers().getExternalIdentifier().clear();
         peerReview.getExternalIdentifiers().getExternalIdentifier().add(pExtId3);
         // Add 3, with different ext ids
-        memberV2ApiClient.createPeerReviewXml(user1OrcidId, peerReview, accessToken);
-
+        postResponse = memberV2ApiClient.createPeerReviewXml(user1OrcidId, peerReview, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+        
         peerReview.getSubject().getTitle().getTitle().setContent("PeerReview # 4");
         peerReview.getCompletionDate().setDay(new Day(4));
         peerReview.getCompletionDate().setMonth(new Month(4));
@@ -615,7 +629,9 @@ public class MemberV2Test {
         peerReview.setUrl(new Url("http://peer_review/4"));
         peerReview.getExternalIdentifiers().getExternalIdentifier().clear();
         // Add 4, without ext ids
-        memberV2ApiClient.createPeerReviewXml(user1OrcidId, peerReview, accessToken);
+        postResponse = memberV2ApiClient.createPeerReviewXml(user1OrcidId, peerReview, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         
         /**
          * Now, get the summaries and verify the following: - Education summary
@@ -745,6 +761,8 @@ public class MemberV2Test {
                 result = (Funding) obj;
             } else if (Work.class.equals(type)) {
                 result = (Work) obj;
+            } else if(PeerReview.class.equals(type)) {
+                result = (PeerReview) obj;
             }
             return result;
         } catch (IOException e) {

@@ -27,7 +27,7 @@ import org.orcid.jaxb.model.common.Title;
 import org.orcid.jaxb.model.common.Url;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = {"externalIdentifiers","type","title","journalTitle","url"})
+@XmlType(propOrder = {"externalIdentifiers","type","journalTitle","title","url"})
 @XmlRootElement(name = "subject", namespace = "http://www.orcid.org/ns/peer-review")
 public class Subject {
     @XmlElement(name = "external-identifiers", namespace = "http://www.orcid.org/ns/peer-review")
