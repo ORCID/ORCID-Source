@@ -185,7 +185,7 @@ public class FundingsController extends BaseWorkspaceController {
     }
 
     /**
-     * Returns a blank funding form
+     * Deletes a funding
      * */
     @RequestMapping(value = "/funding.json", method = RequestMethod.DELETE)
     public @ResponseBody

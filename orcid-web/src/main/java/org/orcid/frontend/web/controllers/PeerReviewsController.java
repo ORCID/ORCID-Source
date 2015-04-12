@@ -279,6 +279,31 @@ public class PeerReviewsController extends BaseWorkspaceController {
         return peerReview;
     }
     
+    
+    
+    
+    
+    /**
+     * Deletes a peer review
+     * */
+    @RequestMapping(value = "/peer-review.json", method = RequestMethod.DELETE)
+    public @ResponseBody
+    PeerReviewForm deletePeerReviewJson(HttpServletRequest request, @RequestBody PeerReviewForm peerReview) {
+        if(peerReview == null || PojoUtil.isEmpty(peerReview.getPutCode())) {
+            return null;
+        }
+        peerReviewManager.removePeerReview(getEffectiveUserOrcid(), peerReview.getPutCode().getValue());
+        return peerReview;
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
     private PeerReviewForm addPeerReview(PeerReviewForm peerReviewForm) {
         String userOrcid = getEffectiveUserOrcid();        
         PeerReview peerReview = peerReviewForm.toPeerReview();        
@@ -501,6 +526,12 @@ public class PeerReviewsController extends BaseWorkspaceController {
     
     public Locale getUserLocale() {
         return localeManager.getLocale();
+    }
+    
+    @RequestMapping(value = "/updateToMaxDisplay.json", method = RequestMethod.GET)
+    public @ResponseBody
+    boolean updateToMaxDisplay(HttpServletRequest request, @RequestParam(value = "putCode") String putCode) {        
+        return peerReviewManager.updateToMaxDisplay(getEffectiveUserOrcid(), putCode);
     }
 }
 

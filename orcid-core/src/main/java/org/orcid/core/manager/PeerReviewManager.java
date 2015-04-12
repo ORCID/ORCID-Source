@@ -88,4 +88,27 @@ public interface PeerReviewManager {
      * @return a list of PeerReview objects
      * */
     List<PeerReview> toPeerReviewList(Collection<PeerReviewEntity> peerReviews);
+
+    /**
+     * Deletes a given peerReview if and only if it belongs to the given user.
+     * If the peerReview exists but it doesn't belong to this user, it will not
+     * delete it
+     * 
+     * @param orcid
+     *            the peerReview owner
+     * @param peerReviewId
+     *            The peerReview id
+     * */
+    void removePeerReview(String orcid, String peerReviewId);
+
+    /**
+     * Updates the display index of a given peer review
+     * 
+     * @param orcid
+     *            The peerReview owner
+     * @param peerReviewId
+     *            The peerReview id
+     * @return true if it was able to update the display index
+     * */
+    boolean updateToMaxDisplay(String orcid, String peerReviewId);
 }
