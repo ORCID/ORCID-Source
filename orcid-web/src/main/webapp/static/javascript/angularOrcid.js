@@ -4742,6 +4742,17 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
     	$scope.editPeerReview.subjectForm.workExternalIdentifiers.push({workExternalIdentifierId: {value: ""}, workExternalIdentifierType: {value: ""}});
     };
     
+    $scope.deleteExternalIdentifier = function(obj) {
+        var index = $scope.editPeerReview.externalIdentifiers.indexOf(obj);
+        $scope.editPeerReview.externalIdentifiers.splice(index,1);
+    };
+    
+    $scope.deleteSubjectExternalIdentifier = function(obj) {
+        var index = $scope.editPeerReview.subjectForm.workExternalIdentifiers.indexOf(obj);
+        $scope.editPeerReview.subjectForm.workExternalIdentifiers.splice(index,1);
+        
+    };
+    
 }]);
 
 

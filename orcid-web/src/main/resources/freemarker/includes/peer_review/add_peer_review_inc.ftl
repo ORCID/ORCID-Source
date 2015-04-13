@@ -162,8 +162,7 @@
 			    		</div>
 					</div>
 					<!-- External identifiers -->
-				    <span><strong>EXTERNAL IDENTIFIERS</strong></span>						 
-					
+				    <span><strong>EXTERNAL IDENTIFIERS</strong></span>
 					<div ng-repeat="extId in editPeerReview.externalIdentifiers"> 
 						<div class="control-group">
 							<label class="relative">Identifier type</label>
@@ -174,7 +173,7 @@
 										<option value="${idTypes[key]}">${key}</option>
 									</#list>
 								</select> 
-								<a href ng-click="" class="glyphicon glyphicon-trash grey"></a>
+								<a href ng-click="deleteExternalIdentifier(extId)" class="glyphicon glyphicon-trash grey"></a>
 								<span class="orcid-error" ng-show="extId.workExternalIdentifierType.errors.length > 0">
                 	        	    <div ng-repeat='error in extId.workExternalIdentifierType.errors' ng-bind-html="error"></div>
                     		    </span>
@@ -189,7 +188,7 @@
 									<div ng-repeat='error in workExternalIdentifier.workExternalIdentifierId.errors' ng-bind-html="error"></div>
 								</span>
 							</div>
-							<div class="add-item-link">			
+							<div class="add-item-link" ng-show="$last">			
 								<span><a href ng-click="addExternalIdentifier()"><i class="glyphicon glyphicon-plus-sign"></i> Add external identifier</a></span>
 							</div>
 						</div>
@@ -225,7 +224,7 @@
 										<option value="${idTypes[key]}">${key}</option>
 									</#list>
 								</select> 
-								<a href ng-click="" class="glyphicon glyphicon-trash grey"></a>
+								<a href ng-click="deleteSubjectExternalIdentifier(extId)" class="glyphicon glyphicon-trash grey"></a>
 								<span class="orcid-error" ng-show="extId.workExternalIdentifierType.errors.length > 0">
 									<div ng-repeat='error in extId.workExternalIdentifierType.errors' ng-bind-html="error"></div>
 								</span>
@@ -241,7 +240,7 @@
 									<div ng-repeat='error in workExternalIdentifier.workExternalIdentifierId.errors' ng-bind-html="error"></div>
 								</span>
 							</div>
-							<div class="add-item-link">			
+							<div class="add-item-link" ng-show="$last">			
 								<span><a href ng-click="addSubjectExternalIdentifier()"><i class="glyphicon glyphicon-plus-sign"></i> Add external identifier</a></span>
 							</div>
 						</div>	
