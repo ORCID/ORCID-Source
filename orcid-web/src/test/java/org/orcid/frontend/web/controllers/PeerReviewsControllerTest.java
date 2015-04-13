@@ -34,6 +34,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -94,8 +95,13 @@ public class PeerReviewsControllerTest extends BaseControllerTest {
         return auth;
     }
 
+    @Before
+    public void init() {
+        orcidProfileManager.updateLastModifiedDate("4444-4444-4444-4446");
+    }
+    
     @BeforeClass
-    public static void beforeClass() throws Exception {
+    public static void beforeClass() throws Exception {        
         initDBUnitData(DATA_FILES);
     }
 
