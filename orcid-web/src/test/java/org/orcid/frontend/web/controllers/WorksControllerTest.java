@@ -39,6 +39,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.frontend.web.util.BaseControllerTest;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.OrcidWork;
@@ -67,10 +68,14 @@ public class WorksControllerTest extends BaseControllerTest {
     @Resource
     WorksController worksController;
 
+    @Resource
+    protected OrcidProfileManager orcidProfileManager;
+    
     private String _5000chars = null;
 
     @Before
     public void init() {
+        orcidProfileManager.updateLastModifiedDate("4444-4444-4444-4446");
         assertNotNull(worksController);
     }
 
