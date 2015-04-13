@@ -65,18 +65,18 @@ import com.google.common.collect.Lists;
 public class PeerReviewsControllerTest extends BaseControllerTest {
 
     private static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml", "/data/SecurityQuestionEntityData.xml",
-            "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", 
-            "/data/ClientDetailsEntityData.xml", "/data/OrgsEntityData.xml", "/data/OrgAffiliationEntityData.xml", "/data/PeerReviewSubjectEntityData.xml", "/data/PeerReviewEntityData.xml");
-    
+            "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/OrgsEntityData.xml",
+            "/data/OrgAffiliationEntityData.xml", "/data/PeerReviewSubjectEntityData.xml", "/data/PeerReviewEntityData.xml");
+
     @Resource
     protected OrcidProfileManager orcidProfileManager;
-    
+
     @Resource
-    protected PeerReviewsController peerReviewsController;        
+    protected PeerReviewsController peerReviewsController;
 
     @Mock
     private HttpServletRequest servletRequest;
-    
+
     @Override
     protected Authentication getAuthentication() {
         orcidProfile = orcidProfileManager.retrieveOrcidProfile("4444-4444-4444-4446");
@@ -93,7 +93,7 @@ public class PeerReviewsControllerTest extends BaseControllerTest {
         UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(details, "4444-4444-4444-4446", Arrays.asList(OrcidWebRole.ROLE_USER));
         return auth;
     }
-    
+
     @BeforeClass
     public static void beforeClass() throws Exception {
         initDBUnitData(DATA_FILES);
@@ -103,32 +103,32 @@ public class PeerReviewsControllerTest extends BaseControllerTest {
     public static void afterClass() throws Exception {
         removeDBUnitData(Lists.reverse(DATA_FILES));
     }
-    
+
     @Test
     public void testGetPeerReview() {
         HttpSession session = mock(HttpSession.class);
-        when(servletRequest.getSession()).thenReturn(session);        
+        when(servletRequest.getSession()).thenReturn(session);
         List<String> ids = peerReviewsController.getPeerReviewIdsJson(servletRequest);
         assertNotNull(ids);
-        
+
         assertEquals(1, ids.size());
         assertEquals("1", ids.get(0));
         PeerReviewForm peerReview = peerReviewsController.getPeerReviewJson("1");
-        assertNotNull(peerReview);        
+        assertNotNull(peerReview);
         assertEquals("http://peer_review.com", peerReview.getUrl().getValue());
     }
-    
+
     @Test
     public void testAddPeerReview() {
-        PeerReviewForm form = getForm();        
+        PeerReviewForm form = getForm();
         try {
-            PeerReviewForm newForm = peerReviewsController.postPeerReview(form);                                    
+            PeerReviewForm newForm = peerReviewsController.postPeerReview(form);
             assertNotNull(newForm);
             assertFalse(PojoUtil.isEmpty(newForm.getPutCode()));
-            
+
             String putCode = newForm.getPutCode().getValue();
             newForm = peerReviewsController.getPeerReviewJson(putCode);
-            
+
             assertEquals(newForm.getCity(), form.getCity());
             assertEquals(newForm.getRegion(), form.getRegion());
             assertEquals(newForm.getCountry(), form.getCountry());
@@ -140,9 +140,9 @@ public class PeerReviewsControllerTest extends BaseControllerTest {
             assertEquals(newForm.getType(), form.getType());
             assertEquals(newForm.getUrl(), form.getUrl());
             assertEquals(newForm.getVisibility(), form.getVisibility());
-        } catch(NullPointerException npe) {
+        } catch (NullPointerException npe) {
             fail();
-            
+
         }
     }
 
@@ -159,25 +159,25 @@ public class PeerReviewsControllerTest extends BaseControllerTest {
         assertTrue(form.getErrors().contains(peerReviewsController.getMessage("peer_review.subject.work_type.not_blank")));
         assertTrue(form.getErrors().contains(peerReviewsController.getMessage("common.title.not_blank")));
     }
-    
+
     @Test
     public void testDeletePeerReview() {
         HttpSession session = mock(HttpSession.class);
-        when(servletRequest.getSession()).thenReturn(session);        
+        when(servletRequest.getSession()).thenReturn(session);
         PeerReviewForm form = getForm();
-        PeerReviewForm newForm = peerReviewsController.postPeerReview(form);                                    
+        PeerReviewForm newForm = peerReviewsController.postPeerReview(form);
         assertNotNull(newForm);
         assertFalse(PojoUtil.isEmpty(newForm.getPutCode()));
-        
+
         String putCode = newForm.getPutCode().getValue();
         peerReviewsController.deletePeerReviewJson(servletRequest, newForm);
         PeerReviewForm deleted = peerReviewsController.getPeerReviewJson(putCode);
         assertNull(deleted);
     }
-    
+
     private PeerReviewForm getForm() {
         PeerReviewForm form = new PeerReviewForm();
-        form.setCity(Text.valueOf("The City"));        
+        form.setCity(Text.valueOf("The City"));
         form.setCountry(Text.valueOf("CR"));
         form.setOrgName(Text.valueOf("OrgName"));
         form.setRegion(Text.valueOf("The Region"));
@@ -185,32 +185,32 @@ public class PeerReviewsControllerTest extends BaseControllerTest {
         form.setType(Text.valueOf("EVALUATION"));
         form.setUrl(Text.valueOf("http://url.com"));
         form.setVisibility(Visibility.LIMITED);
-        
+
         Date completionDate = new Date();
         completionDate.setDay("01");
         completionDate.setMonth("01");
         completionDate.setYear("2015");
         form.setCompletionDate(completionDate);
-        
+
         WorkExternalIdentifier wei = new WorkExternalIdentifier();
         wei.setWorkExternalIdentifierId(Text.valueOf("extId1"));
         wei.setWorkExternalIdentifierType(Text.valueOf("bibcode"));
         List<WorkExternalIdentifier> extIds = new ArrayList<WorkExternalIdentifier>();
         extIds.add(wei);
         form.setExternalIdentifiers(extIds);
-        
+
         PeerReviewSubjectForm subjectForm = new PeerReviewSubjectForm();
         subjectForm.setJournalTitle(Text.valueOf("Journal Title"));
         subjectForm.setSubtitle(Text.valueOf("Subtitle"));
         subjectForm.setTitle(Text.valueOf("Title"));
-        
+
         TranslatedTitle translated = new TranslatedTitle();
         translated.setContent("Translated title");
         translated.setLanguageCode("es");
         subjectForm.setTranslatedTitle(translated);
         subjectForm.setUrl(Text.valueOf("http://subject.com"));
         subjectForm.setWorkExternalIdentifiers(extIds);
-        subjectForm.setWorkType(Text.valueOf("book-review"));                
+        subjectForm.setWorkType(Text.valueOf("book-review"));
         form.setSubjectForm(subjectForm);
         return form;
     }
