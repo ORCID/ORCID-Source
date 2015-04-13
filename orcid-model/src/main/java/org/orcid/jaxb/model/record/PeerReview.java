@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.apache.commons.lang.StringUtils;
 import org.orcid.jaxb.model.common.CreatedDate;
 import org.orcid.jaxb.model.common.FuzzyDate;
 import org.orcid.jaxb.model.common.LastModifiedDate;
@@ -286,7 +287,7 @@ public class PeerReview implements VisibilityType, Activity, Serializable, Organ
         
         //Check if they share at least one external identifier
         if (externalIdentifiers == null || externalIdentifiers.getExternalIdentifier() == null || externalIdentifiers.getExternalIdentifier().isEmpty()) {
-            if(other.getExternalIdentifiers() != null && other.getExternalIdentifiers() != null && !other.getExternalIdentifiers().getExternalIdentifier().isEmpty()) {
+            if(other.getExternalIdentifiers() != null && other.getExternalIdentifiers().getExternalIdentifier() != null && !other.getExternalIdentifiers().getExternalIdentifier().isEmpty()) {
                 return false;
             }
         } else {            
@@ -296,6 +297,13 @@ public class PeerReview implements VisibilityType, Activity, Serializable, Organ
             
             if(externalIdentifiers.getExternalIdentifier().size() != other.getExternalIdentifiers().getExternalIdentifier().size()) {
                 return false;
+            }
+            
+            //If the unique external identifier is empty, the comparison must return false, since two empty ext ids are not equals
+            if(externalIdentifiers.getExternalIdentifier().size() == 1) {
+                if((externalIdentifiers.getExternalIdentifier().get(0).getWorkExternalIdentifierId() == null && externalIdentifiers.getExternalIdentifier().get(0).getWorkExternalIdentifierType() == null)) {
+                    return false;
+                }
             }
             
             for(WorkExternalIdentifier thisExtId : externalIdentifiers.getExternalIdentifier()) {

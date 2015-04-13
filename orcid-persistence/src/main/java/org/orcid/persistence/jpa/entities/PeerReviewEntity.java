@@ -169,7 +169,7 @@ public class PeerReviewEntity extends BaseEntity<Long> implements Comparable<Pee
      * Dictates the display order for peer reviews (and versions of peer reviews)
      * peer reviews with higher numbers should be displayed first. 
      * 
-     * Currently only updatable via ProfileWorkDaoImpl.updateToMaxDisplay
+     * Currently only updatable via PeerReviewDaoImpl.updateToMaxDisplay
      *
      */
 
