@@ -338,6 +338,12 @@ public class PeerReviewsController extends BaseWorkspaceController {
                 }
             }
         }
+        
+        if(updatedExtIds.isEmpty()) {
+            WorkExternalIdentifier wei = new WorkExternalIdentifier();            
+            updatedExtIds.add(wei);
+        }
+        
         peerReview.setExternalIdentifiers(updatedExtIds);
     }
 
@@ -356,6 +362,12 @@ public class PeerReviewsController extends BaseWorkspaceController {
                 }
             }
         }
+        
+        if(updatedExtIds.isEmpty()) {
+            WorkExternalIdentifier wei = new WorkExternalIdentifier();            
+            updatedExtIds.add(wei);
+        }
+        
         peerReview.getSubjectForm().setWorkExternalIdentifiers(updatedExtIds);
     }
 
