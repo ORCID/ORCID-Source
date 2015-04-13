@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Resource;
+import javax.persistence.NoResultException;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
@@ -67,105 +68,108 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class PeerReviewsController extends BaseWorkspaceController {
     private static final Logger LOGGER = LoggerFactory.getLogger(PeerReviewsController.class);
     private static final String PEER_REVIEW_MAP = "PEER_REVIEW_MAP";
-    
+
     @Resource
     private LocaleManager localeManager;
 
     @Resource
     private PeerReviewManager peerReviewManager;
-    
+
     @Resource
     private OrgDisambiguatedSolrDao orgDisambiguatedSolrDao;
 
     @Resource
     private OrgDisambiguatedDao orgDisambiguatedDao;
-    
+
     @Resource(name = "languagesMap")
     private LanguagesMap lm;
 
     @Resource(name = "profileEntityCacheManager")
     ProfileEntityCacheManager profileEntityCacheManager;
-    
+
     public void setLocaleManager(LocaleManager localeManager) {
         this.localeManager = localeManager;
     }
-    
+
     /**
      * Returns a blank peer review form
      * */
     @RequestMapping(value = "/peer-review.json", method = RequestMethod.GET)
-    public @ResponseBody
-    PeerReviewForm getPeerReview() {
-        Text emptyTextRequired = Text.valueOf(StringUtils.EMPTY);
-        Text emptyTextNotRequired = Text.valueOf(StringUtils.EMPTY);
-        emptyTextNotRequired.setRequired(false);
-        
+    public @ResponseBody PeerReviewForm getEmptyPeerReview() {        
         Date emptyDate = new Date();
         emptyDate.setDay(StringUtils.EMPTY);
         emptyDate.setMonth(StringUtils.EMPTY);
         emptyDate.setYear(StringUtils.EMPTY);
-        
+
         TranslatedTitle emptyTranslatedTitle = new TranslatedTitle();
         emptyTranslatedTitle.setErrors(Collections.<String> emptyList());
         emptyTranslatedTitle.setContent(StringUtils.EMPTY);
         emptyTranslatedTitle.setLanguageCode(StringUtils.EMPTY);
         emptyTranslatedTitle.setLanguageName(StringUtils.EMPTY);
-        
+
         WorkExternalIdentifier emptyExternalId = new WorkExternalIdentifier();
         emptyExternalId.setErrors(new ArrayList<String>());
-        emptyExternalId.setWorkExternalIdentifierId(emptyTextNotRequired);
-        emptyExternalId.setWorkExternalIdentifierType(emptyTextNotRequired);
-        
+        emptyExternalId.setWorkExternalIdentifierId(Text.valueOf(StringUtils.EMPTY));
+        emptyExternalId.getWorkExternalIdentifierId().setRequired(false);
+        emptyExternalId.setWorkExternalIdentifierType(Text.valueOf(StringUtils.EMPTY));
+        emptyExternalId.getWorkExternalIdentifierType().setRequired(false);
+
         List<WorkExternalIdentifier> emptyExtIdsList = new ArrayList<WorkExternalIdentifier>();
         emptyExtIdsList.add(emptyExternalId);
-        
+
         PeerReviewForm form = new PeerReviewForm();
-                
+
         form.setErrors(Collections.<String> emptyList());
-        
+
         form.setCompletionDate(emptyDate);
         form.setCreatedDate(emptyDate);
-                       
-        form.setCity(emptyTextRequired);
-        form.setRegion(emptyTextNotRequired);
-        form.setCountry(emptyTextRequired);
+
+        form.setCity(Text.valueOf(StringUtils.EMPTY));
+        form.setRegion(Text.valueOf(StringUtils.EMPTY));
+        form.getRegion().setRequired(false);
+        form.setCountry(Text.valueOf(StringUtils.EMPTY));
         form.setCountryForDisplay(StringUtils.EMPTY);
-        form.setDisambiguationSource(emptyTextNotRequired);        
-        form.setOrgName(emptyTextRequired);
-        
-        form.setPutCode(emptyTextNotRequired);
+        form.setDisambiguationSource(Text.valueOf(StringUtils.EMPTY));
+        form.getDisambiguationSource().setRequired(false);
+        form.setOrgName(Text.valueOf(StringUtils.EMPTY));
+
+        form.setPutCode(Text.valueOf(StringUtils.EMPTY));
+        form.getPutCode().setRequired(false);
         form.setRole(Text.valueOf(Role.REVIEWER.value()));
         form.setType(Text.valueOf(PeerReviewType.REVIEW.value()));
-        form.setUrl(emptyTextNotRequired);
+        form.setUrl(Text.valueOf(StringUtils.EMPTY));
+        form.getUrl().setRequired(false);
         form.setExternalIdentifiers(emptyExtIdsList);
-        
+
         PeerReviewSubjectForm subjectForm = new PeerReviewSubjectForm();
         subjectForm.setErrors(Collections.<String> emptyList());
-        subjectForm.setJournalTitle(emptyTextNotRequired);
-        subjectForm.setPutCode(emptyTextNotRequired);
-        subjectForm.setSubtitle(emptyTextNotRequired);
-        subjectForm.setTitle(emptyTextRequired);
+        subjectForm.setJournalTitle(Text.valueOf(StringUtils.EMPTY));
+        subjectForm.getJournalTitle().setRequired(false);
+        subjectForm.setPutCode(Text.valueOf(StringUtils.EMPTY));
+        subjectForm.getPutCode().setRequired(false);
+        subjectForm.setSubtitle(Text.valueOf(StringUtils.EMPTY));
+        subjectForm.getSubtitle().setRequired(false);
+        subjectForm.setTitle(Text.valueOf(StringUtils.EMPTY));
         subjectForm.setTranslatedTitle(emptyTranslatedTitle);
-        subjectForm.setUrl(emptyTextNotRequired);
+        subjectForm.setUrl(Text.valueOf(StringUtils.EMPTY));
+        subjectForm.getUrl().setRequired(false);
         subjectForm.setWorkExternalIdentifiers(emptyExtIdsList);
-        subjectForm.setWorkType(emptyTextRequired);
-        
-        form.setSubjectForm(subjectForm);                
+        subjectForm.setWorkType(Text.valueOf(StringUtils.EMPTY));
+
+        form.setSubjectForm(subjectForm);
         return form;
     }
-    
-    
+
     /**
      * List fundings associated with a profile
      * */
     @RequestMapping(value = "/peer-review-ids.json", method = RequestMethod.GET)
-    public @ResponseBody
-    List<String> getPeerReviewIdsJson(HttpServletRequest request) {
+    public @ResponseBody List<String> getPeerReviewIdsJson(HttpServletRequest request) {
         // Get cached profile
         List<String> fundingIds = createPeerReviewIdList(request);
         return fundingIds;
     }
-    
+
     /**
      * Create a funding id list and sorts a map associated with the list in in
      * the session
@@ -173,30 +177,31 @@ public class PeerReviewsController extends BaseWorkspaceController {
      */
     private List<String> createPeerReviewIdList(HttpServletRequest request) {
         ProfileEntity profileEntity = profileEntityCacheManager.retrieve(getEffectiveUserOrcid());
-        
+
         Set<PeerReviewEntity> peerReviewEntities = profileEntity.getPeerReviews();
         List<PeerReview> peerReviews = null;
-        if(peerReviewEntities != null) {
+        if (peerReviewEntities != null) {
             peerReviews = peerReviewManager.toPeerReviewList(peerReviewEntities);
         }
         Map<String, String> languages = lm.buildLanguageMap(getUserLocale(), false);
         HashMap<String, PeerReviewForm> peerReviewMap = new HashMap<>();
         List<String> peerReviewIds = new ArrayList<String>();
-        
+
         if (peerReviews != null) {
             for (PeerReview peerReview : peerReviews) {
                 try {
                     PeerReviewForm form = PeerReviewForm.valueOf(peerReview);
-                    
-                    if(form.getSubjectForm() != null && form.getSubjectForm().getTitle() != null) {
+
+                    if (form.getSubjectForm() != null && form.getSubjectForm().getTitle() != null) {
                         // Set translated title language name
                         if (!(form.getSubjectForm().getTranslatedTitle() == null) && !StringUtils.isEmpty(form.getSubjectForm().getTranslatedTitle().getLanguageCode())) {
                             String languageName = languages.get(form.getSubjectForm().getTranslatedTitle().getLanguageCode());
                             form.getSubjectForm().getTranslatedTitle().setLanguageName(languageName);
                         }
                     }
-                                                            
-                    form.setCountryForDisplay(getMessage(buildInternationalizationKey(CountryIsoEntity.class, peerReview.getOrganization().getAddress().getCountry().name())));
+
+                    form.setCountryForDisplay(getMessage(buildInternationalizationKey(CountryIsoEntity.class, peerReview.getOrganization().getAddress().getCountry()
+                            .name())));
                     peerReviewMap.put(peerReview.getPutCode(), form);
                     peerReviewIds.add(peerReview.getPutCode());
                 } catch (Exception e) {
@@ -207,14 +212,13 @@ public class PeerReviewsController extends BaseWorkspaceController {
         }
         return peerReviewIds;
     }
-    
+
     /**
      * List peer reviews associated with a profile
      * */
     @SuppressWarnings("unchecked")
     @RequestMapping(value = "/get-peer-reviews.json", method = RequestMethod.GET)
-    public @ResponseBody
-    List<PeerReviewForm> getPeerReviewsJson(HttpServletRequest request, @RequestParam(value = "peerReviewIds") String peerReviewIdsStr) {
+    public @ResponseBody List<PeerReviewForm> getPeerReviewsJson(HttpServletRequest request, @RequestParam(value = "peerReviewIds") String peerReviewIdsStr) {
         List<PeerReviewForm> peerReviewList = new ArrayList<>();
         PeerReviewForm peerReview = null;
         String[] peerReviewIds = peerReviewIdsStr.split(",");
@@ -239,15 +243,14 @@ public class PeerReviewsController extends BaseWorkspaceController {
      * Persist a funding object on database
      * */
     @RequestMapping(value = "/peer-review.json", method = RequestMethod.POST)
-    public @ResponseBody
-    PeerReviewForm postPeerReview(@RequestBody PeerReviewForm peerReview) throws Exception {
+    public @ResponseBody PeerReviewForm postPeerReview(@RequestBody PeerReviewForm peerReview) {
         // Reset errors
         peerReview.setErrors(new ArrayList<String>());
         // Remove empty external identifiers
         removeEmptyExternalIds(peerReview);
         // Remove empty external identifiers on subject
         removeEmptyExternalIdsOnSubject(peerReview);
-        
+
         validateOrgName(peerReview);
         validateCity(peerReview);
         validateRegion(peerReview);
@@ -266,56 +269,63 @@ public class PeerReviewsController extends BaseWorkspaceController {
         copyErrors(peerReview.getSubjectForm().getWorkType(), peerReview);
         copyErrors(peerReview.getSubjectForm().getTitle(), peerReview);
         copyErrors(peerReview.getSubjectForm().getUrl(), peerReview);
-        
-        //If there are no errors, persist to DB
-        if(peerReview.getErrors().isEmpty()) {            
-            if(PojoUtil.isEmpty(peerReview.getPutCode())) {
-                addPeerReview(peerReview);
+
+        // If there are no errors, persist to DB
+        if (peerReview.getErrors().isEmpty()) {
+            if (PojoUtil.isEmpty(peerReview.getPutCode())) {
+                peerReview = addPeerReview(peerReview);
             } else {
-                editPeerReview(peerReview);
+                peerReview = editPeerReview(peerReview);
             }
         }
-        
+
         return peerReview;
     }
-    
-    
-    
-    
-    
+
+    /**
+     * List peer reviews associated with a profile
+     * */
+    @RequestMapping(value = "/get-peer-review.json", method = RequestMethod.GET)
+    public @ResponseBody PeerReviewForm getPeerReviewJson(@RequestParam(value = "peerReviewId") String peerReviewIdStr) {
+        PeerReviewForm result = null;
+        try {
+            PeerReview peerReview = peerReviewManager.getPeerReview(getEffectiveUserOrcid(), peerReviewIdStr);
+            if (peerReview != null) {
+                result = PeerReviewForm.valueOf(peerReview);
+            }
+        } catch(NoResultException nre) {
+            //There is no peer review with that id, just return a null one
+        }
+        return result;
+    }
+
     /**
      * Deletes a peer review
      * */
     @RequestMapping(value = "/peer-review.json", method = RequestMethod.DELETE)
-    public @ResponseBody
-    PeerReviewForm deletePeerReviewJson(HttpServletRequest request, @RequestBody PeerReviewForm peerReview) {
-        if(peerReview == null || PojoUtil.isEmpty(peerReview.getPutCode())) {
+    public @ResponseBody PeerReviewForm deletePeerReviewJson(HttpServletRequest request, @RequestBody PeerReviewForm peerReview) {
+        if (peerReview == null || PojoUtil.isEmpty(peerReview.getPutCode())) {
             return null;
         }
         peerReviewManager.removePeerReview(getEffectiveUserOrcid(), peerReview.getPutCode().getValue());
         return peerReview;
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
     private PeerReviewForm addPeerReview(PeerReviewForm peerReviewForm) {
-        String userOrcid = getEffectiveUserOrcid();        
-        PeerReview peerReview = peerReviewForm.toPeerReview();        
+        String userOrcid = getEffectiveUserOrcid();
+        PeerReview peerReview = peerReviewForm.toPeerReview();
         peerReview = peerReviewManager.createPeerReview(userOrcid, peerReview);
         peerReviewForm = PeerReviewForm.valueOf(peerReview);
-        return peerReviewForm; 
+        return peerReviewForm;
     }
-    
-    private void editPeerReview(PeerReviewForm peerReview) {
-        
+
+    private PeerReviewForm editPeerReview(PeerReviewForm peerReviewForm) {
+        String userOrcid = getEffectiveUserOrcid();
+        PeerReview peerReview = peerReviewForm.toPeerReview();
+        peerReview = peerReviewManager.updatePeerReview(userOrcid, peerReview);
+        return PeerReviewForm.valueOf(peerReview);
     }
-    
+
     private void removeEmptyExternalIds(PeerReviewForm peerReview) {
         List<WorkExternalIdentifier> extIds = peerReview.getExternalIdentifiers();
         List<WorkExternalIdentifier> updatedExtIds = new ArrayList<WorkExternalIdentifier>();
@@ -330,9 +340,9 @@ public class PeerReviewsController extends BaseWorkspaceController {
         }
         peerReview.setExternalIdentifiers(updatedExtIds);
     }
-    
+
     private void removeEmptyExternalIdsOnSubject(PeerReviewForm peerReview) {
-        if(peerReview.getSubjectForm() == null) {
+        if (peerReview.getSubjectForm() == null) {
             return;
         }
         List<WorkExternalIdentifier> extIds = peerReview.getSubjectForm().getWorkExternalIdentifiers();
@@ -348,10 +358,9 @@ public class PeerReviewsController extends BaseWorkspaceController {
         }
         peerReview.getSubjectForm().setWorkExternalIdentifiers(updatedExtIds);
     }
-    
+
     @RequestMapping(value = "/orgNameValidate.json", method = RequestMethod.POST)
-    public @ResponseBody
-    PeerReviewForm validateOrgName(@RequestBody PeerReviewForm peerReview) {
+    public @ResponseBody PeerReviewForm validateOrgName(@RequestBody PeerReviewForm peerReview) {
         peerReview.getOrgName().setErrors(new ArrayList<String>());
         if (PojoUtil.isEmpty(peerReview.getOrgName())) {
             setError(peerReview.getOrgName(), "org.name.not_blank");
@@ -362,13 +371,12 @@ public class PeerReviewsController extends BaseWorkspaceController {
         }
         return peerReview;
     }
-    
+
     @RequestMapping(value = "/cityValidate.json", method = RequestMethod.POST)
-    public @ResponseBody
-    PeerReviewForm validateCity(@RequestBody PeerReviewForm peerReview) {
+    public @ResponseBody PeerReviewForm validateCity(@RequestBody PeerReviewForm peerReview) {
         peerReview.getCity().setErrors(new ArrayList<String>());
         if (peerReview.getCity().getValue() == null || peerReview.getCity().getValue().trim().length() == 0) {
-            setError(peerReview.getCity(), "org.name.not_blank");
+            setError(peerReview.getCity(), "org.city.not_blank");
         } else {
             if (peerReview.getCity().getValue().trim().length() > 1000) {
                 setError(peerReview.getCity(), "common.length_less_1000");
@@ -378,8 +386,7 @@ public class PeerReviewsController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = "/regionValidate.json", method = RequestMethod.POST)
-    public @ResponseBody
-    PeerReviewForm validateRegion(@RequestBody PeerReviewForm peerReview) {
+    public @ResponseBody PeerReviewForm validateRegion(@RequestBody PeerReviewForm peerReview) {
         peerReview.getRegion().setErrors(new ArrayList<String>());
         if (peerReview.getRegion().getValue() != null && peerReview.getRegion().getValue().trim().length() > 1000) {
             setError(peerReview.getRegion(), "common.length_less_1000");
@@ -388,95 +395,75 @@ public class PeerReviewsController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = "/countryValidate.json", method = RequestMethod.POST)
-    public @ResponseBody
-    PeerReviewForm validateCountry(@RequestBody PeerReviewForm peerReview) {
+    public @ResponseBody PeerReviewForm validateCountry(@RequestBody PeerReviewForm peerReview) {
         peerReview.getCountry().setErrors(new ArrayList<String>());
         if (peerReview.getCountry().getValue() == null || peerReview.getCountry().getValue().trim().length() == 0) {
             setError(peerReview.getCountry(), "common.country.not_blank");
         }
         return peerReview;
     }
-    
+
     @RequestMapping(value = "/urlValidate.json", method = RequestMethod.POST)
-    public @ResponseBody
-    PeerReviewForm validateUrl(@RequestBody PeerReviewForm peerReview) {        
+    public @ResponseBody PeerReviewForm validateUrl(@RequestBody PeerReviewForm peerReview) {
         validateUrl(peerReview.getUrl());
         return peerReview;
     }
-    
+
     @RequestMapping(value = "/completionDateValidate.json", method = RequestMethod.POST)
-    public @ResponseBody
-    PeerReviewForm validateCompletionDate(@RequestBody PeerReviewForm peerReview) {
-        if(peerReview.getCompletionDate() != null){
-            peerReview.getCompletionDate().setErrors(new ArrayList<String>());
-            
-            if(!PojoUtil.isEmpty(peerReview.getCompletionDate().getMonth()) && PojoUtil.isEmpty(peerReview.getCompletionDate().getYear())){
-                setError(peerReview.getCompletionDate(), "common.dates.invalid");
-            }                
+    public @ResponseBody PeerReviewForm validateCompletionDate(@RequestBody PeerReviewForm peerReview) {
+        peerReview.getCompletionDate().setErrors(new ArrayList<String>());
+        if (!PojoUtil.isEmpty(peerReview.getCompletionDate().getMonth()) && PojoUtil.isEmpty(peerReview.getCompletionDate().getYear())) {
+            setError(peerReview.getCompletionDate(), "common.dates.invalid");
         }
-                    
         return peerReview;
     }
-    
+
     @RequestMapping(value = "/subject/titleValidate.json", method = RequestMethod.POST)
-    public @ResponseBody
-    PeerReviewForm validateSubjectTitle(@RequestBody PeerReviewForm peerReview) {
-        if(peerReview.getSubjectForm() != null) {
-            peerReview.getSubjectForm().getTitle().setErrors(new ArrayList<String>());
-            if(PojoUtil.isEmpty(peerReview.getSubjectForm().getTitle())) {
-                setError(peerReview.getSubjectForm().getTitle(), "common.title.not_blank");
-            } else if(peerReview.getSubjectForm().getTitle().getValue().length() > 100) {
-                setError(peerReview.getSubjectForm().getTitle(), "common.length_less_1000");
-            }
+    public @ResponseBody PeerReviewForm validateSubjectTitle(@RequestBody PeerReviewForm peerReview) {
+        peerReview.getSubjectForm().getTitle().setErrors(new ArrayList<String>());
+        if (PojoUtil.isEmpty(peerReview.getSubjectForm().getTitle())) {
+            setError(peerReview.getSubjectForm().getTitle(), "common.title.not_blank");
+        } else if (peerReview.getSubjectForm().getTitle().getValue().length() > 100) {
+            setError(peerReview.getSubjectForm().getTitle(), "common.length_less_1000");
         }
-        
         return peerReview;
     }
-    
+
     @RequestMapping(value = "/subject/typeValidate.json", method = RequestMethod.POST)
-    public @ResponseBody
-    PeerReviewForm validateSubjectType(PeerReviewForm peerReview) {
-        if(peerReview.getSubjectForm() != null) {
-            peerReview.getSubjectForm().getWorkType().setErrors(new ArrayList<String>());
-            if(PojoUtil.isEmpty(peerReview.getSubjectForm().getWorkType())) {
-                setError(peerReview.getSubjectForm().getWorkType(), "peer_review.subject.work_type.not_blank");
-            } 
-        }
-        
+    public @ResponseBody PeerReviewForm validateSubjectType(PeerReviewForm peerReview) {        
+        peerReview.getSubjectForm().getWorkType().setErrors(new ArrayList<String>());
+        if (PojoUtil.isEmpty(peerReview.getSubjectForm().getWorkType())) {
+            setError(peerReview.getSubjectForm().getWorkType(), "peer_review.subject.work_type.not_blank");
+        }        
         return peerReview;
     }
-    
+
     @RequestMapping(value = "/subject/urlValidate.json", method = RequestMethod.POST)
-    public @ResponseBody
-    PeerReviewForm validateSubjectUrl(@RequestBody PeerReviewForm peerReview) {        
-        if(peerReview.getSubjectForm() == null || PojoUtil.isEmpty(peerReview.getSubjectForm().getUrl()))
-            return peerReview;
+    public @ResponseBody PeerReviewForm validateSubjectUrl(@RequestBody PeerReviewForm peerReview) {        
         validateUrl(peerReview.getSubjectForm().getUrl());
         return peerReview;
     }
-    
+
     @RequestMapping(value = "/roleValidate.json", method = RequestMethod.POST)
-    public @ResponseBody
-    PeerReviewForm validateRole(@RequestBody PeerReviewForm peerReview) {
+    public @ResponseBody PeerReviewForm validateRole(@RequestBody PeerReviewForm peerReview) {
         peerReview.getRole().setErrors(new ArrayList<String>());
-        if(PojoUtil.isEmpty(peerReview.getRole())) {            
-            setError(peerReview.getRole(), "peer_review.role.not_blank");            
+        if (PojoUtil.isEmpty(peerReview.getRole())) {
+            setError(peerReview.getRole(), "peer_review.role.not_blank");
         }
-        
+
         return peerReview;
     }
-    
+
     @RequestMapping(value = "/typeValidate.json", method = RequestMethod.POST)
-    public @ResponseBody
-    PeerReviewForm validateType(@RequestBody PeerReviewForm peerReview) {
+    public @ResponseBody PeerReviewForm validateType(@RequestBody PeerReviewForm peerReview) {
         peerReview.getType().setErrors(new ArrayList<String>());
-        if(PojoUtil.isEmpty(peerReview.getType())) {            
-            setError(peerReview.getType(), "peer_review.type.not_blank");            
+        if (PojoUtil.isEmpty(peerReview.getType())) {
+            setError(peerReview.getType(), "peer_review.type.not_blank");
         }
-        
+
         return peerReview;
     }
-    
+
     /**
      * Typeahead
      * */
@@ -485,8 +472,7 @@ public class PeerReviewsController extends BaseWorkspaceController {
      * Search DB for disambiguated affiliations to suggest to user
      */
     @RequestMapping(value = "/disambiguated/name/{query}", method = RequestMethod.GET)
-    public @ResponseBody
-    List<Map<String, String>> searchDisambiguated(@PathVariable("query") String query, @RequestParam(value = "limit") int limit) {
+    public @ResponseBody List<Map<String, String>> searchDisambiguated(@PathVariable("query") String query, @RequestParam(value = "limit") int limit) {
         List<Map<String, String>> datums = new ArrayList<>();
         for (OrgDisambiguatedSolrDocument orgDisambiguatedDocument : orgDisambiguatedSolrDao.getOrgs(query, 0, limit)) {
             Map<String, String> datum = createDatumFromOrgDisambiguated(orgDisambiguatedDocument);
@@ -510,8 +496,7 @@ public class PeerReviewsController extends BaseWorkspaceController {
      * fetch disambiguated by id
      */
     @RequestMapping(value = "/disambiguated/id/{id}", method = RequestMethod.GET)
-    public @ResponseBody
-    Map<String, String> getDisambiguated(@PathVariable("id") Long id) {
+    public @ResponseBody Map<String, String> getDisambiguated(@PathVariable("id") Long id) {
         OrgDisambiguatedEntity orgDisambiguatedEntity = orgDisambiguatedDao.find(id);
         Map<String, String> datum = new HashMap<>();
         datum.put("value", orgDisambiguatedEntity.getName());
@@ -523,15 +508,13 @@ public class PeerReviewsController extends BaseWorkspaceController {
         datum.put("sourceType", orgDisambiguatedEntity.getSourceType());
         return datum;
     }
-    
+
     public Locale getUserLocale() {
         return localeManager.getLocale();
     }
-    
+
     @RequestMapping(value = "/updateToMaxDisplay.json", method = RequestMethod.GET)
-    public @ResponseBody
-    boolean updateToMaxDisplay(HttpServletRequest request, @RequestParam(value = "putCode") String putCode) {        
+    public @ResponseBody boolean updateToMaxDisplay(HttpServletRequest request, @RequestParam(value = "putCode") String putCode) {
         return peerReviewManager.updateToMaxDisplay(getEffectiveUserOrcid(), putCode);
     }
 }
-

@@ -114,4 +114,64 @@ public class PeerReviewSubjectForm implements ErrorsInterface, Serializable {
         this.workType = workType;
     }
 
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((journalTitle == null) ? 0 : journalTitle.hashCode());
+        result = prime * result + ((subtitle == null) ? 0 : subtitle.hashCode());
+        result = prime * result + ((title == null) ? 0 : title.hashCode());
+        result = prime * result + ((translatedTitle == null) ? 0 : translatedTitle.hashCode());
+        result = prime * result + ((url == null) ? 0 : url.hashCode());
+        result = prime * result + ((workExternalIdentifiers == null) ? 0 : workExternalIdentifiers.hashCode());
+        result = prime * result + ((workType == null) ? 0 : workType.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        PeerReviewSubjectForm other = (PeerReviewSubjectForm) obj;
+        if (journalTitle == null) {
+            if (other.journalTitle != null)
+                return false;
+        } else if (!journalTitle.equals(other.journalTitle))
+            return false;
+        if (subtitle == null) {
+            if (other.subtitle != null)
+                return false;
+        } else if (!subtitle.equals(other.subtitle))
+            return false;
+        if (title == null) {
+            if (other.title != null)
+                return false;
+        } else if (!title.equals(other.title))
+            return false;
+        if (translatedTitle == null) {
+            if (other.translatedTitle != null)
+                return false;
+        } else if (!translatedTitle.equals(other.translatedTitle))
+            return false;
+        if (url == null) {
+            if (other.url != null)
+                return false;
+        } else if (!url.equals(other.url))
+            return false;
+        if (workExternalIdentifiers == null) {
+            if (other.workExternalIdentifiers != null)
+                return false;
+        } else if (!workExternalIdentifiers.equals(other.workExternalIdentifiers))
+            return false;
+        if (workType == null) {
+            if (other.workType != null)
+                return false;
+        } else if (!workType.equals(other.workType))
+            return false;
+        return true;
+    }        
 }

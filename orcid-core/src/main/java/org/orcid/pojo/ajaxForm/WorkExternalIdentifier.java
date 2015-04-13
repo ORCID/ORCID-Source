@@ -99,5 +99,34 @@ public class WorkExternalIdentifier implements ErrorsInterface, Serializable {
         this.workExternalIdentifierType = workExternalIdentifierType;
     }
 
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((workExternalIdentifierId == null) ? 0 : workExternalIdentifierId.hashCode());
+        result = prime * result + ((workExternalIdentifierType == null) ? 0 : workExternalIdentifierType.hashCode());
+        return result;
+    }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        WorkExternalIdentifier other = (WorkExternalIdentifier) obj;
+        if (workExternalIdentifierId == null) {
+            if (other.workExternalIdentifierId != null)
+                return false;
+        } else if (!workExternalIdentifierId.equals(other.workExternalIdentifierId))
+            return false;
+        if (workExternalIdentifierType == null) {
+            if (other.workExternalIdentifierType != null)
+                return false;
+        } else if (!workExternalIdentifierType.equals(other.workExternalIdentifierType))
+            return false;
+        return true;
+    }        
 }
