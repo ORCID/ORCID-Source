@@ -67,7 +67,7 @@ import com.google.common.collect.Lists;
 public class FundingsControllerTest extends BaseControllerTest {
     private static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml", "/data/SecurityQuestionEntityData.xml",
             "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/WorksEntityData.xml", "/data/ProfileWorksEntityData.xml",
-            "/data/ClientDetailsEntityData.xml", "/data/Oauth2TokenDetailsData.xml", "/data/WebhookEntityData.xml", "/data/OrgsEntityData.xml", "/data/ProfileFundingEntityData.xml",
+            "/data/ClientDetailsEntityData.xml", "/data/Oauth2TokenDetailsData.xml", "/data/OrgsEntityData.xml", "/data/ProfileFundingEntityData.xml",
             "/data/OrgAffiliationEntityData.xml");
 
     @Mock
@@ -582,7 +582,7 @@ public class FundingsControllerTest extends BaseControllerTest {
         assertNotNull(funding);
         assertNotNull(funding.getErrors());
         assertEquals(1, funding.getErrors().size());
-        assertEquals(fundingController.getMessage("fundings.dates.invalid"), funding.getErrors().get(0));
+        assertEquals(fundingController.getMessage("common.dates.invalid"), funding.getErrors().get(0));
         
         //Check valid end date
         funding = getFundingForm();
@@ -593,7 +593,7 @@ public class FundingsControllerTest extends BaseControllerTest {
         assertNotNull(funding);
         assertNotNull(funding.getErrors());
         assertEquals(1, funding.getErrors().size());
-        assertEquals(fundingController.getMessage("fundings.dates.invalid"), funding.getErrors().get(0));
+        assertEquals(fundingController.getMessage("common.dates.invalid"), funding.getErrors().get(0));
         
         
         //Check end date is after start date
