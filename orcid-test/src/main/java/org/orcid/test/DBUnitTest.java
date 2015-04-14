@@ -95,7 +95,8 @@ public class DBUnitTest {
         dataSet.addTable("notification");
         dataSet.addTable("notification_activity");
         dataSet.addTable("given_permission_to");
-        dataSet.addTable("subject");        
+        dataSet.addTable("subject");   
+        dataSet.addTable("shibboleth_account");
         DatabaseOperation.DELETE.execute(connection, dataSet);
 
         QueryDataSet theRest = new QueryDataSet(connection);
