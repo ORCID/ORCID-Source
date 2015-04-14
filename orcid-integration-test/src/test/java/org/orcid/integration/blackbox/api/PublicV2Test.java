@@ -35,6 +35,7 @@ import javax.xml.bind.Unmarshaller;
 
 import org.codehaus.jettison.json.JSONException;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
@@ -120,7 +121,7 @@ public class PublicV2Test {
 
     static String accessToken = null;
 
-    @After
+    @Before
     public void before() throws JSONException, InterruptedException, URISyntaxException {
         cleanActivities();
     }
@@ -336,10 +337,12 @@ public class PublicV2Test {
         found0 = found3 = false;
         for(PeerReviewGroup group : summary.getPeerReviews().getPeerReviewGroup()) {
             for(PeerReviewSummary peerReview : group.getPeerReviewSummary()) {
-                if(peerReview.getCompletionDate().getYear().getValue().equals("1000")) {
-                    found0 = true;
-                } else if(peerReview.getCompletionDate().getYear().getValue().equals("4000")) {
-                    found3 = true;
+                if(peerReview.getCompletionDate() != null && peerReview.getCompletionDate().getYear() != null) {
+                    if(peerReview.getCompletionDate().getYear().getValue().equals("1000")) {
+                        found0 = true;
+                    } else if(peerReview.getCompletionDate().getYear().getValue().equals("4000")) {
+                        found3 = true;
+                    }
                 }
             }
         }

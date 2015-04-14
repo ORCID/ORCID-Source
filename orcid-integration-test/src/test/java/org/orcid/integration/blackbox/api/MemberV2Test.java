@@ -34,6 +34,7 @@ import javax.xml.bind.Unmarshaller;
 
 import org.codehaus.jettison.json.JSONException;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
@@ -116,7 +117,7 @@ public class MemberV2Test {
 
     static String accessToken = null;
 
-    @After
+    @Before
     public void before() throws JSONException, InterruptedException, URISyntaxException {
         cleanActivities();
     }
@@ -721,15 +722,17 @@ public class MemberV2Test {
         found1 = found2 = found3 = found4 = false;
         for(PeerReviewGroup group : activities.getPeerReviews().getPeerReviewGroup()) {
             for(PeerReviewSummary summary : group.getPeerReviewSummary()) {
-                if(summary.getCompletionDate().getYear().getValue().equals("1848")) {
-                    found1 = true;
-                } else if(summary.getCompletionDate().getYear().getValue().equals("2016")) {
-                    found2 = true;
-                } else if(summary.getCompletionDate().getYear().getValue().equals("2017")) {
-                    found3 = true;
-                } else if(summary.getCompletionDate().getYear().getValue().equals("2018")) {
-                    found4 = true;
-                }                
+                if(summary.getCompletionDate() != null && summary.getCompletionDate().getYear() != null) {
+                    if(summary.getCompletionDate().getYear().getValue().equals("1848")) {
+                        found1 = true;
+                    } else if(summary.getCompletionDate().getYear().getValue().equals("2016")) {
+                        found2 = true;
+                    } else if(summary.getCompletionDate().getYear().getValue().equals("2017")) {
+                        found3 = true;
+                    } else if(summary.getCompletionDate().getYear().getValue().equals("2018")) {
+                        found4 = true;
+                    }
+                }                               
             }
         }
         
