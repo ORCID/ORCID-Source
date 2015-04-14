@@ -812,6 +812,7 @@ function populateWorkAjaxForm(bibJson, work) {
             work.url.value = lowerKeyTags['url'];
 
     }
+    return work;
 };
 
 /* END: Bibjson to work AjaxForm */

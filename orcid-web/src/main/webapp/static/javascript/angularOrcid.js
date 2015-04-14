@@ -792,6 +792,7 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
             quickRef: {},
             loading: false,
             loadingDetails: false,
+            blankWork: null,
             details: new Object(), // we should think about putting details in the
             worksToAddIds: null,
             addBibtexJson: function(dw) {
@@ -863,12 +864,15 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
                 return to;
             },
             getBlankWork: function(callback) {
+                // if cached return clone of blank
+                if (worksSrvc.blankWork != null)
+                    callback(JSON.parse(JSON.stringify(worksSrvc.blankWork)));
                 $.ajax({
                     url: getBaseUri() + '/works/work.json',
                     dataType: 'json',
                     success: function(data) {
+                        blankWork =  data;
                         callback(data);
-                        $rootScope.$apply();
                     }
                 }).fail(function() {
                     console.log("Error fetching blank work");
@@ -1069,6 +1073,21 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
                     count += worksSrvc.groups[idx].activitiesCount;
                 }
                 return count;
+            },
+            worksValidate: function(works,sucessFunc, failFunc) {
+                //console.log(work);
+                $.ajax({
+                    url: getBaseUri() + '/works/worksValidate.json',
+                    contentType: 'application/json;charset=UTF-8',
+                    dataType: 'json',
+                    type: 'POST',
+                    data: angular.toJson(works),
+                    success: function(data) {
+                        sucessFunc(data);
+                    }
+                }).fail(function(){
+                    failFunc();
+                });
             }
     };
     return worksSrvc;
@@ -3945,7 +3964,6 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     $scope.moreInfo = {};
     $scope.editSources = {};
     $scope.bibtexParsingError = false;
-    $scope.bibtexCancelLink = false;
     $scope.bibtextWork = false;
     $scope.bibtextWorkIndex = null;
     $scope.showElement = {};
@@ -4044,29 +4062,24 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     $scope.loadBibtexJs = function() {
         try {
             $scope.worksFromBibtex = new Array();
-
             $.each($scope.textFiles, function (index, bibtex) {
-
                 var parsed = bibtexParse.toJSON(bibtex);
-                var bibtexEntry = null;
-
-                if (parsed.length == 0) throw "bibtex parse return nothing";
-
-
-                for (j in parsed) {
-                    (function (cur) {
-                        bibtexEntry = parsed[j].entryType.toLowerCase();
-                        
-                        if(bibtexEntry != 'preamble' && bibtexEntry != 'comment'){ //Filtering @PREAMBLE and @COMMENT
-                            worksSrvc.getBlankWork(function(data) {
-                                populateWorkAjaxForm(cur,data);
-                                $scope.worksFromBibtex.push(data);
-                                $scope.bibtexCancelLink = true;                                
-                            });
-                        }
-                    })(parsed[j]);
-                };
-                
+                if (parsed.length == 0) 
+                    throw "bibtex parse return nothing";
+                worksSrvc.getBlankWork(function(blankWork) {
+                    var newWorks = new Array();
+                    while (parsed.length > 0) {
+                        var cur = parsed.shift();
+                        var bibtexEntry = cur.entryType.toLowerCase();
+                        if (bibtexEntry != 'preamble' && bibtexEntry != 'comment') //Filtering @PREAMBLE and @COMMENT
+                            newWorks.push(populateWorkAjaxForm(cur,JSON.parse(JSON.stringify(blankWork))));
+                    };
+                    worksSrvc.worksValidate(newWorks, function(data) {
+                        for (i in data)
+                            $scope.worksFromBibtex.push(data[i]);
+                        $scope.$apply();
+                    });
+                });
             });
                $scope.textFiles = null;
                $scope.bibtexParsingError = false;
@@ -4079,7 +4092,6 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     $scope.rmWorkFromBibtex = function(work) {
         var index = $scope.worksFromBibtex.indexOf(work);
         $scope.worksFromBibtex.splice(index, 1);
-        if($scope.worksFromBibtex.length == 0) $scope.bibtexCancelLink = false;
     };
 
     $scope.editWorkFromBibtex = function(work) {
@@ -4090,42 +4102,28 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     };
     
     $scope.addWorkFromBibtex = function(work) {
-    	$scope.bibtextWorkIndex = $scope.worksFromBibtex.indexOf(work);    	
-    	$scope.editWork = $scope.worksFromBibtex[$scope.bibtextWorkIndex];
-    	$scope.bibtextWork = true;    	        
+        $scope.bibtextWorkIndex = $scope.worksFromBibtex.indexOf(work);    	
+        $scope.editWork = $scope.worksFromBibtex[$scope.bibtextWorkIndex];
+        $scope.bibtextWork = true;    	        
         $scope.putWork();        
     };
     
     $scope.saveAllFromBibtex = function(){
-    	var works = $scope.worksFromBibtex;
-    	var prom = [];
-    	angular.forEach( works, function( work, key ) {    		
-    		if ( work.title.value != null
-				&& work.workCategory.value.length > 0
-				&& work.workType.value.length > 0) {
-    			prom.push(
-	    			$.ajax({
-	                    url: getBaseUri() + '/works/work.json',
-	                    contentType: 'application/json;charset=UTF-8',
-	                    dataType: 'json',
-	                    type: 'POST',
-	                    data: angular.toJson(work),
-	                    success: function(data) {
-	                    	index = works.indexOf(work);
-	                    	works.splice(index, 1);
-	                    	$scope.worksFromBibtex = works;
-	                		$scope.$apply();
-	                    }
-	                }).fail(function(){
-	                    //Something really sad is happening :(
-	                })
-    			);
-    		};    		
-    	}); 
-    	
-    	$q.all(prom).then(function(){
-    		$scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);    		
-    	});
+        var warksToSave =  new Array();
+        angular.forEach($scope.worksFromBibtex, function( work, key ) {
+            if (work.errors.length == 0) warksToSave.push(work);
+        });
+        var numToSave = warksToSave.length;
+        angular.forEach( warksToSave, function( work, key ) {
+            worksSrvc.putWork(work,function(data) {
+                    index = $scope.worksFromBibtex.indexOf(work);
+                    $scope.worksFromBibtex.splice(index, 1);
+                    $scope.$apply();
+                    numToSave--;
+                    if (numToSave == 0)
+                        $scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);
+            });
+        });
     };
 
     $scope.openBibTextWizard = function () {
@@ -4138,7 +4136,6 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
 
     $scope.bibtextCancel = function(){
         $scope.worksFromBibtex = null;
-        $scope.bibtexCancelLink = false;
     };    
 
     // Check for the various File API support.
@@ -4314,6 +4311,9 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
                     commonSrvc.copyErrorsLeft($scope.editWork, data);
                     $scope.addingWork = false;
                     $scope.$apply();
+                    // make sure colorbox is shown if there are errors
+                    if (!($("#colorbox").css("display")=="block"))
+                        $scope.addWorkModal(data);
                 }
             },
             function() {
