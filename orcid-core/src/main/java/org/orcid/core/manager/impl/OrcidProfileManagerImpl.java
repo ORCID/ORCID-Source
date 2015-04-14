@@ -2220,32 +2220,32 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
                 OrcidBio bio = orcidProfile.getOrcidBio();
                 if (bio.getBiography() != null) {
                     if (bio.getBiography().getVisibility() == null) {
-                        bio.getBiography().setVisibility(OrcidVisibilityDefaults.BIOGRAPHY_DEFAULT.getVisibility());
+                        bio.getBiography().setVisibility(Visibility.PRIVATE);
                     }
                 }
 
                 if (bio.getExternalIdentifiers() != null) {
                     if (bio.getExternalIdentifiers().getVisibility() == null) {
-                        bio.getExternalIdentifiers().setVisibility(OrcidVisibilityDefaults.EXTERNAL_IDENTIFIER_DEFAULT.getVisibility());
+                        bio.getExternalIdentifiers().setVisibility(Visibility.PRIVATE);
                     }
                 }
 
                 if (bio.getKeywords() != null) {
                     if (bio.getKeywords().getVisibility() == null) {
-                        bio.getKeywords().setVisibility(OrcidVisibilityDefaults.KEYWORD_DEFAULT.getVisibility());
+                        bio.getKeywords().setVisibility(Visibility.PRIVATE);
                     }
                 }
 
                 if (bio.getResearcherUrls() != null) {
                     if (bio.getResearcherUrls().getVisibility() == null) {
-                        bio.getResearcherUrls().setVisibility(OrcidVisibilityDefaults.RESEARCHER_URLS_DEFAULT.getVisibility());
+                        bio.getResearcherUrls().setVisibility(Visibility.PRIVATE);
                     }
                 }
 
                 if (bio.getPersonalDetails() != null) {
                     if (bio.getPersonalDetails().getCreditName() != null) {
                         if (bio.getPersonalDetails().getCreditName().getVisibility() == null) {
-                            bio.getPersonalDetails().getCreditName().setVisibility(OrcidVisibilityDefaults.CREDIT_NAME_DEFAULT.getVisibility());
+                            bio.getPersonalDetails().getCreditName().setVisibility(Visibility.PRIVATE);
                         }
                     }
                 }
@@ -2254,7 +2254,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
                     if (bio.getContactDetails().getAddress() != null) {
                         if (bio.getContactDetails().getAddress().getCountry() != null) {
                             if (bio.getContactDetails().getAddress().getCountry().getVisibility() == null) {
-                                bio.getContactDetails().getAddress().getCountry().setVisibility(OrcidVisibilityDefaults.COUNTRY_DEFAULT.getVisibility());
+                                bio.getContactDetails().getAddress().getCountry().setVisibility(Visibility.PRIVATE);
                             }
                         }
                     }
