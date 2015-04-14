@@ -16,8 +16,8 @@
     =============================================================================
 
 -->
-<ul ng-hide="1 == 1" class="workspace-peer-review workspace-body-list bottom-margin-medium" ng-cloak>
-<!--  <ul ng-hide="!fundingSrvc.groups.length" class="workspace-peer-review workspace-body-list bottom-margin-medium" ng-cloak> -->
+<ul ng-hide="!peerReviewSrvc.groups.length" class="workspace-peer-review workspace-body-list bottom-margin-medium" ng-cloak>	
+	
 
 	
 </ul>
@@ -28,7 +28,7 @@
     <![endif]-->
 </div>
 
-<div ng-show="1 == 1" class="" ng-cloak>
+<div ng-show="peerReviewSrvc.loading == false && peerReviewSrvc.groups.length == 0" class="" ng-cloak>
 <!--  <div ng-show="worksSrvc.loading == false && worksSrvc.groups.length == 0" class="" ng-cloak> -->
     <strong><#if (publicProfile)?? && publicProfile == true>${springMacroRequestContext.getMessage("workspace_peer_review_body_list.Nopublicationsaddedyet")}<#else>${springMacroRequestContext.getMessage("workspace_peer_review_body_list.havenotaddedanypeerreviews")} <a ng-click="addPeerReviewModal()">${springMacroRequestContext.getMessage("workspace_peer_review_body_list.addsomenow")}</a></#if></strong>
 </div>
