@@ -24,7 +24,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -277,22 +280,53 @@ public class LoadRinggoldData {
 
     private Map<String, String> processAltNamesFile(Reader reader) throws IOException {
         Map<String, String> altNamesMap = new HashMap<String, String>();
+        Map<String, Date> altNamesTimestamps = new HashMap<String, Date>();
         try (CSVReader csvReader = createCSVReader(reader)) {
             String[] line;
             while ((line = csvReader.readNext()) != null) {
+                //If the DN indicator exists
                 if(!PojoUtil.isEmpty(line[7]) && DN.equals(line[7])) {
-                    if(altNamesMap.containsKey(line[0]))
-                        LOGGER.warn("Key {} already exists, but will be replaced with new values", new Object[] {line[0]});       
+                    String name = null;
+                    //Get the name
+                    //If the ext_name is not empty, use it
                     if(!PojoUtil.isEmpty(line[2])) {
-                        //If the ext_name is not null, use it
-                        altNamesMap.put(line[0], line[2]);    
-                        LOGGER.info("DN name {} found for pCode {}", new Object[] {line[2], line [0]});
+                        LOGGER.info("Using ext_name {} for pCode {}", new Object[] {line[2], line[0]});
+                        name = line[2];
                     } else {
-                        //Else use the name
-                        altNamesMap.put(line[0], line[1]);
-                        LOGGER.info("DN name {} found for pCode {}", new Object[] {line[1], line [0]});
-                    }                                                                   
-                }                
+                        LOGGER.info("Using name {} for pCode {}", new Object[] {line[2], line[0]});
+                        name = line[1];
+                    }
+                    
+                    //get the timestamp
+                    Date timestamp = null;
+                    try {
+                        timestamp = getDateFromTimestamp(line[8]);
+                    } catch(ParseException p) {
+                        LOGGER.warn("Unable to parse timestamp {} for p_code {}", new Object[] {line[8], line[0]});
+                    }
+                    
+                    //Check if there is already a name for that pCode
+                    if(altNamesMap.containsKey(line[0])) {
+                        //If the timestamp is not empty, check it against the new timestamp
+                       if(altNamesTimestamps.containsKey(line[0]) && altNamesTimestamps.get(line[0]) != null) {
+                           Date existing = altNamesTimestamps.get(line[0]);
+                           if(existing.before(timestamp)) {
+                               LOGGER.info("Replacing old name {}({}) with {}({})", new Object[] {altNamesMap.get(line[0]), altNamesTimestamps.get(line[0]), name, timestamp});
+                               altNamesMap.put(line[0], name);
+                               altNamesTimestamps.put(line[0], timestamp);
+                           } else {
+                               LOGGER.info("Leaving old name {}({}) instead of using this one {}({})", new Object[] {altNamesMap.get(line[0]), altNamesTimestamps.get(line[0]), name, timestamp});
+                           }
+                       } else {
+                           //Else, just replace it with the new one
+                           altNamesMap.put(line[0], name);
+                           altNamesTimestamps.put(line[0], timestamp);
+                       }
+                    } else {
+                        altNamesMap.put(line[0], name);
+                        altNamesTimestamps.put(line[0], timestamp);
+                    }
+                }                                                
             }
         } finally {
             LOGGER.info("Number added={}, number updated={}, number unchanged={}, num skipped={}, total={}", new Object[] { numAdded, numUpdated, numUnchanged,
@@ -300,6 +334,15 @@ public class LoadRinggoldData {
         }        
         
         return altNamesMap;
+    }
+    
+    private Date getDateFromTimestamp(String timestamp) throws ParseException {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
+        try {            
+            return formatter.parse(timestamp);            
+        } catch (ParseException e) {            
+            throw e;
+        }
     }
     
     private void processOrg(String pCode, String name, String city, String state, Iso3166Country country, String type) {
