@@ -37,7 +37,7 @@
     <org_disambiguated_external_identifier/>    
 	<org/>
 	<org_affiliation_relation/>
-	<profile_funding/>
+	<profile_funding/>	
 	<funding_external_identifier/>      
 	<address/>
 	<institution/>
@@ -48,4 +48,6 @@
 	<oauth2_token_detail/>
 	<custom_email/>
 	<webhook/>
+	<peer_review/>
+	<peer_review_subject/>
 </dataset>

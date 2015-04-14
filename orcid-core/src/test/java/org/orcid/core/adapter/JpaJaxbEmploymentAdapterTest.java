@@ -31,7 +31,6 @@ import org.junit.runner.RunWith;
 import org.orcid.jaxb.model.common.Iso3166Country;
 import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.jaxb.model.record.Employment;
-import org.orcid.jaxb.model.record.Employment;
 import org.orcid.jaxb.model.record.summary.EmploymentSummary;
 import org.orcid.persistence.jpa.entities.EndDateEntity;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
@@ -56,7 +55,7 @@ public class JpaJaxbEmploymentAdapterTest {
 
     @Test
     public void testToOrgAffiliationRelationEntity() throws JAXBException {
-        Employment e = getEmployment();
+        Employment e = getEmployment(true);
         assertNotNull(e);
         OrgAffiliationRelationEntity oar = jpaJaxbEmploymentAdapter.toOrgAffiliationRelationEntity(e);
         assertNotNull(oar);
@@ -137,10 +136,14 @@ public class JpaJaxbEmploymentAdapterTest {
         assertEquals("APP-000000001", employmentSummary.getSource().getSourceOrcid().getPath());
     }
     
-    private Employment getEmployment() throws JAXBException {
+    private Employment getEmployment(boolean full) throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(new Class[] { Employment.class });
         Unmarshaller unmarshaller = context.createUnmarshaller();
-        InputStream inputStream = getClass().getResourceAsStream("/record_2.0_rc1/samples/employment-2.0_rc1.xml");
+        String name = "/record_2.0_rc1/samples/employment-2.0_rc1.xml";
+        if(full) {
+            name = "/record_2.0_rc1/samples/employment-full-2.0_rc1.xml";
+        }            
+        InputStream inputStream = getClass().getResourceAsStream(name);
         return (Employment) unmarshaller.unmarshal(inputStream);
     }
     

@@ -488,6 +488,9 @@
             <xs:enumeration value="/funding/create" />
             <xs:enumeration value="/orcid-patents/create" />
             <xs:enumeration value="/orcid-profile/create" />
+            <xs:enumeration value="/peer-review/read-limited" />
+            <xs:enumeration value="/peer-review/create" />
+            <xs:enumeration value="/peer-review/update" />
         </xs:restriction>
     </xs:simpleType>
 

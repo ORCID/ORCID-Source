@@ -39,7 +39,7 @@ import org.orcid.jaxb.model.record.FundingType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "createdDate", "lastModifiedDate", "source", "title", "externalIdentifiers", "type", "startDate", "endDate" })
-@XmlRootElement(name = "fundingSummary", namespace = "http://www.orcid.org/ns/funding")
+@XmlRootElement(name = "summary", namespace = "http://www.orcid.org/ns/funding")
 public class FundingSummary implements VisibilityType, Activity, GroupableActivity, Serializable {
 
     private static final long serialVersionUID = 7489792970949538708L;
@@ -273,7 +273,7 @@ public class FundingSummary implements VisibilityType, Activity, GroupableActivi
             if (otherIndex == null) {
                 return 1;
             } else if (index instanceof Comparable) {
-                //Return opossite, since higger index goes first
+                //Return opposite, since higher index goes first
                 return  index.compareTo(otherIndex) * -1;
             } else {
                 return 0;

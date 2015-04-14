@@ -27,6 +27,8 @@ import static org.orcid.core.api.OrcidApiConstants.FUNDING;
 import static org.orcid.core.api.OrcidApiConstants.FUNDING_SUMMARY;
 import static org.orcid.core.api.OrcidApiConstants.WORK;
 import static org.orcid.core.api.OrcidApiConstants.WORK_SUMMARY;
+import static org.orcid.core.api.OrcidApiConstants.PEER_REVIEW;
+import static org.orcid.core.api.OrcidApiConstants.PEER_REVIEW_SUMMARY;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -88,6 +90,16 @@ public class PublicV2ApiClientImpl {
  
     public ClientResponse viewEmploymentSummaryXml(String orcid, String putCode) {
         URI uri = UriBuilder.fromPath(EMPLOYMENT_SUMMARY + PUTCODE).build(orcid, putCode);
+        return orcidClientHelper.getClientResponse(uri, VND_ORCID_XML);
+    }
+    
+    public ClientResponse viewPeerReviewXml(String orcid, String putCode) {
+        URI uri = UriBuilder.fromPath(PEER_REVIEW + PUTCODE).build(orcid, putCode);
+        return orcidClientHelper.getClientResponse(uri, VND_ORCID_XML);
+    }
+ 
+    public ClientResponse viewPeerReviewSummaryXml(String orcid, String putCode) {
+        URI uri = UriBuilder.fromPath(PEER_REVIEW_SUMMARY + PUTCODE).build(orcid, putCode);
         return orcidClientHelper.getClientResponse(uri, VND_ORCID_XML);
     }
 }

@@ -17,13 +17,14 @@
 package org.orcid.integration.api.memberV2;
 
 import static org.orcid.core.api.OrcidApiConstants.ACTIVITIES;
+import static org.orcid.core.api.OrcidApiConstants.EDUCATION;
+import static org.orcid.core.api.OrcidApiConstants.EMPLOYMENT;
+import static org.orcid.core.api.OrcidApiConstants.FUNDING;
+import static org.orcid.core.api.OrcidApiConstants.PEER_REVIEW;
 import static org.orcid.core.api.OrcidApiConstants.PUTCODE;
 import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_JSON;
 import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_XML;
 import static org.orcid.core.api.OrcidApiConstants.WORK;
-import static org.orcid.core.api.OrcidApiConstants.EDUCATION;
-import static org.orcid.core.api.OrcidApiConstants.EMPLOYMENT;
-import static org.orcid.core.api.OrcidApiConstants.FUNDING;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -34,6 +35,7 @@ import org.orcid.api.common.OrcidClientHelper;
 import org.orcid.jaxb.model.record.Education;
 import org.orcid.jaxb.model.record.Employment;
 import org.orcid.jaxb.model.record.Funding;
+import org.orcid.jaxb.model.record.PeerReview;
 import org.orcid.jaxb.model.record.Work;
 
 import com.sun.jersey.api.client.Client;
@@ -136,4 +138,26 @@ public class MemberV2ApiClientImpl {
     public ClientResponse updateLocationXml(URI location, String accessToken, Object jaxbRootElement){
         return orcidClientHelper.putClientResponseWithToken(location, VND_ORCID_XML, jaxbRootElement, accessToken);
     }   
+    
+    
+    
+    
+    
+    public ClientResponse viewPeerReviewXml(String orcid, String putCode, String accessToken) {
+        URI putCodeUri = UriBuilder.fromPath(PEER_REVIEW + PUTCODE).build(orcid, putCode);
+        return orcidClientHelper.getClientResponseWithToken(putCodeUri, VND_ORCID_XML, accessToken);
+    }
+
+    public ClientResponse createPeerReviewXml(String orcid, PeerReview peerReview, String accessToken) {
+        return orcidClientHelper.postClientResponseWithToken(UriBuilder.fromPath(PEER_REVIEW).build(orcid), VND_ORCID_XML, peerReview, accessToken);
+    }
+
+    public ClientResponse createEmploymentJson(String orcid, PeerReview peerReview, String accessToken) {
+        return orcidClientHelper.postClientResponseWithToken(UriBuilder.fromPath(PEER_REVIEW).build(orcid), VND_ORCID_JSON, peerReview, accessToken);
+    }
+    
+    public ClientResponse deletePeerReviewXml(String orcid, String putCode, String accessToken) {
+        URI deletePeerReviewUri = UriBuilder.fromPath(PEER_REVIEW + PUTCODE).build(orcid, putCode);
+        return orcidClientHelper.deleteClientResponseWithToken(deletePeerReviewUri, VND_ORCID_XML, accessToken);
+    }
 }

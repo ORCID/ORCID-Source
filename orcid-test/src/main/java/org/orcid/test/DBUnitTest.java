@@ -50,7 +50,7 @@ public class DBUnitTest {
             "profile_work", "researcher_url", "given_permission_to", "external_identifier", "email", "email_event", "other_name", "profile_keyword", "profile_patent",
             "org_disambiguated", "org_disambiguated_external_identifier", "org", "org_affiliation_relation", "profile_funding", "funding_external_identifier", "address",
             "institution", "affiliation", "notification", "client_details", "client_secret", "oauth2_token_detail", "custom_email", "webhook", "granted_authority",
-            "orcid_props", "shibboleth_account" };
+            "orcid_props", "peer_review", "peer_review_subject", "shibboleth_account"};
 
     private static ApplicationContext context = new ClassPathXmlApplicationContext(CONTEXT);
 
@@ -72,12 +72,13 @@ public class DBUnitTest {
     }
 
     private static void cleanClientSourcedProfiles(IDatabaseConnection connection) throws AmbiguousTableNameException, DatabaseUnitException, SQLException {
-        QueryDataSet dataSet = new QueryDataSet(connection);
+        QueryDataSet dataSet = new QueryDataSet(connection);                        
         dataSet.addTable(
                 "profile",
                 "SELECT p1.* FROM profile p1 LEFT JOIN client_details c ON c.group_orcid = p1.orcid LEFT JOIN profile p2 ON p1.source_id = p2.source_id WHERE p2.source_id IS NULL AND (c.client_details_id IS NULL OR p1.client_source_id IS NOT NULL)");
         dataSet.addTable("other_name");
         dataSet.addTable("profile_keyword");
+        dataSet.addTable("work");
         dataSet.addTable("profile_work");
         dataSet.addTable("profile_event");
         dataSet.addTable("researcher_url");
@@ -85,14 +86,17 @@ public class DBUnitTest {
         dataSet.addTable("external_identifier");
         dataSet.addTable("org");
         dataSet.addTable("org_affiliation_relation");
-        dataSet.addTable("profile_funding");
+        dataSet.addTable("peer_review_subject");
+        dataSet.addTable("peer_review");
+        dataSet.addTable("profile_funding");        
         dataSet.addTable("funding_external_identifier");
         dataSet.addTable("webhook");
         dataSet.addTable("oauth2_token_detail");
         dataSet.addTable("notification");
         dataSet.addTable("notification_activity");
         dataSet.addTable("given_permission_to");
-        dataSet.addTable("subject");
+        dataSet.addTable("subject");   
+        dataSet.addTable("shibboleth_account");
         DatabaseOperation.DELETE.execute(connection, dataSet);
 
         QueryDataSet theRest = new QueryDataSet(connection);

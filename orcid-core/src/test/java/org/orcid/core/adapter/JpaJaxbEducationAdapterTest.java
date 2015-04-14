@@ -55,7 +55,7 @@ public class JpaJaxbEducationAdapterTest {
 
     @Test
     public void testToOrgAffiliationRelationEntity() throws JAXBException {
-        Education e = getEducation();
+        Education e = getEducation(true);
         assertNotNull(e);
         OrgAffiliationRelationEntity oar = jpaJaxbEducationAdapter.toOrgAffiliationRelationEntity(e);
         assertNotNull(oar);
@@ -135,10 +135,14 @@ public class JpaJaxbEducationAdapterTest {
         assertEquals("APP-000000001", educationSummary.getSource().getSourceOrcid().getPath());
     }
 
-    private Education getEducation() throws JAXBException {
+    private Education getEducation(boolean full) throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(new Class[] { Education.class });
         Unmarshaller unmarshaller = context.createUnmarshaller();
-        InputStream inputStream = getClass().getResourceAsStream("/record_2.0_rc1/samples/education-2.0_rc1.xml");
+        String name = "/record_2.0_rc1/samples/education-2.0_rc1.xml";
+        if(full) {
+            name = "/record_2.0_rc1/samples/education-full-2.0_rc1.xml";
+        }
+        InputStream inputStream = getClass().getResourceAsStream(name);
         return (Education) unmarshaller.unmarshal(inputStream);
     }
     

@@ -1,0 +1,112 @@
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2014 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+            
+    <changeSet id="CREATE-PEER-REVIEW-TABLE" author="Angel Montenegro">
+        <preConditions onFail="MARK_RAN">
+            <!-- Only perform the initial database create if key table doesn't exist -->
+            <not>
+                <tableExists tableName="peer_review"/>
+            </not>
+		</preConditions>
+		
+		<!-- peer_review -->
+		<createTable tableName="peer_review">
+           <column name="id" type="bigint">
+				<constraints nullable="false" primaryKey="true"
+					primaryKeyName="peer_review_pkey" />
+			</column>
+			<column name="orcid" type="VARCHAR(255)">
+				<constraints nullable="false" />
+			</column>		
+			<column name="peer_review_subject_id" type="bigint">
+				<constraints nullable="false" />
+			</column>	
+			<column name="external_identifiers_json" type="text">
+				<constraints nullable="false" />
+			</column>
+			<column name="org_id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="peer_review_role" type="VARCHAR(25)">
+				<constraints nullable="false" />
+			</column>
+			<column name="peer_review_type" type="VARCHAR(25)">
+				<constraints nullable="false" />
+			</column>
+			
+			<column name="completion_day" type="integer" />
+			<column name="completion_month" type="integer" />
+			<column name="completion_year" type="integer" />			
+			<column name="source_id" type="VARCHAR(255)" />
+			<column name="url" type="VARCHAR(350)" />
+			<column name="visibility" type="VARCHAR(20)" />
+			<column name="client_source_id" type="VARCHAR(20)"/>
+			<column name="date_created" type="TIMESTAMP WITH TIME ZONE" />
+			<column name="last_modified" type="TIMESTAMP WITH TIME ZONE" />	
+			<column name="display_index" type="bigint" defaultValue="0"/>								       
+        </createTable>
+        
+        <!-- peer_review_subject -->
+		<createTable tableName="peer_review_subject">			
+			<column name="id" type="bigint">
+				<constraints nullable="false" primaryKey="true"
+					primaryKeyName="peer_review_subject_pkey"/>
+			</column>
+			<column name="external_identifiers_json" type="text">
+				<constraints nullable="false" />
+			</column>
+			<column name="title" type="VARCHAR(1000)">
+				<constraints nullable="false" />
+			</column>
+			<column name="work_type" type="VARCHAR(25)">
+				<constraints nullable="false" />
+			</column>					
+			<column name="sub_title" type="VARCHAR(1000)" />
+			<column name="translated_title" type="VARCHAR(1000)" />
+			<column name="translated_title_language_code" type="VARCHAR(10)" />			
+			<column name="url" type="VARCHAR(350)" />					
+			<column name="journal_title" type="VARCHAR(1000)" />
+			<column name="date_created" type="TIMESTAMP WITH TIME ZONE" />			
+			<column name="last_modified" type="TIMESTAMP WITH TIME ZONE" />
+		</createTable>
+		
+		<addForeignKeyConstraint constraintName="peer_review_org_id_fk" baseTableName="peer_review" baseColumnNames="org_id" referencedTableName="org" referencedColumnNames="id" />
+		<addForeignKeyConstraint constraintName="peer_review_orcid_fk" baseTableName="peer_review" baseColumnNames="orcid" referencedTableName="profile" referencedColumnNames="orcid" />
+		<addForeignKeyConstraint constraintName="peer_review_subject_fk" baseTableName="peer_review" baseColumnNames="peer_review_subject_id" referencedTableName="peer_review_subject" referencedColumnNames="id" />				
+    </changeSet>
+    
+    <changeSet id="CREATE-PEER-REVIEW-SEQUENCES" author="Angel Montenegro" dbms="postgresql">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<sequenceExists sequenceName="peer_review_seq"/>
+				<sequenceExists sequenceName="peer_review_subject_seq"/>
+			</not>
+		</preConditions>
+        <createSequence sequenceName="peer_review_seq" startValue="1000" />
+        <createSequence sequenceName="peer_review_subject_seq" startValue="1000"/>
+    </changeSet>
+    
+    <changeSet id="CREATE-AUTOCOLS" author="Angel Montenegro" dbms="hsqldb">    	
+        <addAutoIncrement tableName="peer_review" columnName="id" columnDataType="bigint"/>
+        <addAutoIncrement tableName="peer_review_subject" columnName="id" columnDataType="bigint"/>
+    </changeSet>
+    
+</databaseChangeLog>

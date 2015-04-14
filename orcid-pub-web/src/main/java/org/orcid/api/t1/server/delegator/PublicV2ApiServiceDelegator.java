@@ -39,4 +39,8 @@ public interface PublicV2ApiServiceDelegator {
     Response viewEmployment(String orcid, String putCode);
     
     Response viewEmploymentSummary(String orcid, String putCode);    
+    
+    Response viewPeerReview(String orcid, String putCode);
+    
+    Response viewPeerReviewSummary(String orcid, String putCode);  
 }

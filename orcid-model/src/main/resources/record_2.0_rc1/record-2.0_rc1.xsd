@@ -61,6 +61,8 @@
 		schemaLocation="education-2.0_rc1.xsd" />
 	<xs:import namespace="http://www.orcid.org/ns/employment"
 		schemaLocation="employment-2.0_rc1.xsd" />		
+	<xs:import namespace="http://www.orcid.org/ns/peer-review"
+		schemaLocation="peer-review-2.0_rc1.xsd" />
 
 	<xs:element name="record">
 		<xs:complexType>

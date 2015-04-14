@@ -45,12 +45,33 @@ public class WorkExternalIdentifier implements ErrorsInterface, Serializable {
 
     }
     
+    public static WorkExternalIdentifier valueOf(org.orcid.jaxb.model.record.WorkExternalIdentifier workExternalIdentifier) {
+        WorkExternalIdentifier wi = new WorkExternalIdentifier();
+        if (workExternalIdentifier != null) {
+            if (workExternalIdentifier.getWorkExternalIdentifierId() != null)
+                wi.setWorkExternalIdentifierId(Text.valueOf(workExternalIdentifier.getWorkExternalIdentifierId().getContent()));
+            if (workExternalIdentifier.getWorkExternalIdentifierType() != null)
+                wi.setWorkExternalIdentifierType(Text.valueOf(workExternalIdentifier.getWorkExternalIdentifierType().value()));
+        }
+        return wi;
+
+    }
+    
     public org.orcid.jaxb.model.message.WorkExternalIdentifier toWorkExternalIdentifier() {
         org.orcid.jaxb.model.message.WorkExternalIdentifier we = new org.orcid.jaxb.model.message.WorkExternalIdentifier();
         if (!PojoUtil.isEmpty(this.getWorkExternalIdentifierId())) 
             we.setWorkExternalIdentifierId(new WorkExternalIdentifierId(this.getWorkExternalIdentifierId().getValue()));
         if (!PojoUtil.isEmpty(this.getWorkExternalIdentifierType()))
             we.setWorkExternalIdentifierType(WorkExternalIdentifierType.fromValue(this.getWorkExternalIdentifierType().getValue()));
+        return we;
+    }
+    
+    public org.orcid.jaxb.model.record.WorkExternalIdentifier toRecordWorkExternalIdentifier() {
+        org.orcid.jaxb.model.record.WorkExternalIdentifier we = new org.orcid.jaxb.model.record.WorkExternalIdentifier();
+        if (!PojoUtil.isEmpty(this.getWorkExternalIdentifierId())) 
+            we.setWorkExternalIdentifierId(new org.orcid.jaxb.model.record.WorkExternalIdentifierId(this.getWorkExternalIdentifierId().getValue()));
+        if (!PojoUtil.isEmpty(this.getWorkExternalIdentifierType()))
+            we.setWorkExternalIdentifierType(org.orcid.jaxb.model.record.WorkExternalIdentifierType.fromValue(this.getWorkExternalIdentifierType().getValue()));
         return we;
     }
 
@@ -78,5 +99,34 @@ public class WorkExternalIdentifier implements ErrorsInterface, Serializable {
         this.workExternalIdentifierType = workExternalIdentifierType;
     }
 
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((workExternalIdentifierId == null) ? 0 : workExternalIdentifierId.hashCode());
+        result = prime * result + ((workExternalIdentifierType == null) ? 0 : workExternalIdentifierType.hashCode());
+        return result;
+    }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        WorkExternalIdentifier other = (WorkExternalIdentifier) obj;
+        if (workExternalIdentifierId == null) {
+            if (other.workExternalIdentifierId != null)
+                return false;
+        } else if (!workExternalIdentifierId.equals(other.workExternalIdentifierId))
+            return false;
+        if (workExternalIdentifierType == null) {
+            if (other.workExternalIdentifierType != null)
+                return false;
+        } else if (!workExternalIdentifierType.equals(other.workExternalIdentifierType))
+            return false;
+        return true;
+    }        
 }

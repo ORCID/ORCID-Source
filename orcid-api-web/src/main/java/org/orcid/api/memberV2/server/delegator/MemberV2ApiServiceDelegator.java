@@ -21,6 +21,7 @@ import javax.ws.rs.core.Response;
 import org.orcid.jaxb.model.record.Education;
 import org.orcid.jaxb.model.record.Employment;
 import org.orcid.jaxb.model.record.Funding;
+import org.orcid.jaxb.model.record.PeerReview;
 import org.orcid.jaxb.model.record.Work;
 
 /**
@@ -71,4 +72,15 @@ public interface MemberV2ApiServiceDelegator {
     Response updateEmployment(String orcid, String putCode, Employment employment);
     
     Response deleteAffiliation(String orcid, String putCode);
+    
+    Response viewPeerReview(String orcid,  String putCode);
+            
+    Response viewPeerReviewSummary(String orcid,  String putCode);
+        
+    Response createPeerReview(String orcid, PeerReview peerReview);
+    
+    Response updatePeerReview(String orcid,  String putCode, PeerReview peerReview);
+        
+    Response deletePeerReview(String orcid,  String putCode);
+    
 }

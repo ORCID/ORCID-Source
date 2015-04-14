@@ -111,13 +111,11 @@
         <property name="serviceDelegator" ref="t2OrcidApiServiceDelegatorV1_2"/>
     </bean>
 
-
     <!--  Notifications API -->
     <bean id="notificationsApiServiceDelegator" class="org.orcid.api.notifications.server.delegator.impl.NotificationsApiServiceDelegatorImpl" />
     <bean id="notificationsApiServiceImplV2_0_rc1" class="org.orcid.api.notifications.server.NotificationsApiServiceImplV2_0_rc1">
         <property name="serviceDelegator" ref="notificationsApiServiceDelegator"/>
     </bean>
-
 
     <!--  Member_2 API -->
     <bean id="memberV2ApiServiceDelegator" class="org.orcid.api.memberV2.server.delegator.impl.MemberV2ApiServiceDelegatorImpl" />

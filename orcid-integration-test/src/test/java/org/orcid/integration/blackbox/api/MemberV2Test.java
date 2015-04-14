@@ -34,17 +34,21 @@ import javax.xml.bind.Unmarshaller;
 
 import org.codehaus.jettison.json.JSONException;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.orcid.api.common.WebDriverHelper;
-import org.orcid.api.common.util.ActivityUtils;
 import org.orcid.integration.api.helper.OauthHelper;
 import org.orcid.integration.api.memberV2.MemberV2ApiClientImpl;
 import org.orcid.integration.api.t2.T2OAuthAPIService;
+import org.orcid.jaxb.model.common.Day;
 import org.orcid.jaxb.model.common.FuzzyDate;
+import org.orcid.jaxb.model.common.Month;
+import org.orcid.jaxb.model.common.Url;
 import org.orcid.jaxb.model.common.Visibility;
+import org.orcid.jaxb.model.common.Year;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record.Activity;
 import org.orcid.jaxb.model.record.Education;
@@ -52,6 +56,7 @@ import org.orcid.jaxb.model.record.Employment;
 import org.orcid.jaxb.model.record.Funding;
 import org.orcid.jaxb.model.record.FundingExternalIdentifier;
 import org.orcid.jaxb.model.record.FundingExternalIdentifierType;
+import org.orcid.jaxb.model.record.PeerReview;
 import org.orcid.jaxb.model.record.Work;
 import org.orcid.jaxb.model.record.WorkExternalIdentifier;
 import org.orcid.jaxb.model.record.WorkExternalIdentifierId;
@@ -61,6 +66,8 @@ import org.orcid.jaxb.model.record.summary.EducationSummary;
 import org.orcid.jaxb.model.record.summary.EmploymentSummary;
 import org.orcid.jaxb.model.record.summary.FundingGroup;
 import org.orcid.jaxb.model.record.summary.FundingSummary;
+import org.orcid.jaxb.model.record.summary.PeerReviewGroup;
+import org.orcid.jaxb.model.record.summary.PeerReviewSummary;
 import org.orcid.jaxb.model.record.summary.WorkGroup;
 import org.orcid.jaxb.model.record.summary.WorkSummary;
 import org.springframework.beans.factory.annotation.Value;
@@ -97,7 +104,7 @@ public class MemberV2Test {
     @Value("${org.orcid.web.testUser1.orcidId}")
     public String user1OrcidId;
     @Resource(name = "t2OAuthClient")
-    private T2OAuthAPIService<ClientResponse> t2OAuthClient;        
+    private T2OAuthAPIService<ClientResponse> t2OAuthClient;
     @Resource
     private MemberV2ApiClientImpl memberV2ApiClient;
 
@@ -110,7 +117,7 @@ public class MemberV2Test {
 
     static String accessToken = null;
 
-    @After    
+    @Before
     public void before() throws JSONException, InterruptedException, URISyntaxException {
         cleanActivities();
     }
@@ -203,7 +210,7 @@ public class MemberV2Test {
         assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v2.0_rc1/" + user1OrcidId + "/education/\\d+"));
         ClientResponse getResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
-        Education gotEducation = getResponse.getEntity(Education.class);        
+        Education gotEducation = getResponse.getEntity(Education.class);
         assertEquals("education:department-name", gotEducation.getDepartmentName());
         assertEquals("education:role-title", gotEducation.getRoleTitle());
         gotEducation.setDepartmentName("updated dept. name");
@@ -386,6 +393,75 @@ public class MemberV2Test {
     }
 
     @Test
+    public void createViewUpdateAndDeletePeerReview() throws JSONException, InterruptedException, URISyntaxException {
+        long time = System.currentTimeMillis();
+        PeerReview peerReviewToCreate = (PeerReview) unmarshallFromPath("/record_2.0_rc1/samples/peer-review-2.0_rc1.xml", PeerReview.class);
+        peerReviewToCreate.setPutCode(null);
+        peerReviewToCreate.getExternalIdentifiers().getExternalIdentifier().clear();
+        WorkExternalIdentifier wExtId = new WorkExternalIdentifier();
+        wExtId.setWorkExternalIdentifierId(new WorkExternalIdentifierId("Work Id " + time));
+        wExtId.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
+        peerReviewToCreate.getExternalIdentifiers().getExternalIdentifier().add(wExtId);
+        String accessToken = getAccessToken();
+
+        ClientResponse postResponse = memberV2ApiClient.createPeerReviewXml(user1OrcidId, peerReviewToCreate, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+        String locationPath = postResponse.getLocation().getPath();
+        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v2.0_rc1/" + user1OrcidId + "/peer-review/\\d+"));
+        ClientResponse getResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
+        assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
+        PeerReview gotPeerReview = getResponse.getEntity(PeerReview.class);
+        assertEquals("peer-review:url", gotPeerReview.getUrl().getValue());
+        assertEquals("common:title", gotPeerReview.getSubject().getTitle().getTitle().getContent());
+        gotPeerReview.getSubject().getTitle().getTitle().setContent("updated title");
+
+        ClientResponse putResponse = memberV2ApiClient.updateLocationXml(postResponse.getLocation(), accessToken, gotPeerReview);
+        assertEquals(Response.Status.OK.getStatusCode(), putResponse.getStatus());
+        ClientResponse getAfterUpdateResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
+        assertEquals(Response.Status.OK.getStatusCode(), getAfterUpdateResponse.getStatus());
+
+        PeerReview gotAfterUpdateWork = getAfterUpdateResponse.getEntity(PeerReview.class);
+        assertEquals("updated title", gotAfterUpdateWork.getSubject().getTitle().getTitle().getContent());
+        ClientResponse deleteResponse = memberV2ApiClient.deletePeerReviewXml(user1OrcidId, gotAfterUpdateWork.getPutCode(), accessToken);
+        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), deleteResponse.getStatus());
+    }
+
+    @Test
+    public void testUpdatePeerReviewWithProfileCreationTokenWhenClaimedAndNotSource() throws JSONException, InterruptedException, URISyntaxException {
+        long time = System.currentTimeMillis();
+        PeerReview peerReviewToCreate = (PeerReview) unmarshallFromPath("/record_2.0_rc1/samples/peer-review-2.0_rc1.xml", PeerReview.class);
+        peerReviewToCreate.setPutCode(null);
+        peerReviewToCreate.setVisibility(Visibility.PUBLIC);
+        peerReviewToCreate.getExternalIdentifiers().getExternalIdentifier().clear();
+        WorkExternalIdentifier wExtId = new WorkExternalIdentifier();
+        wExtId.setWorkExternalIdentifierId(new WorkExternalIdentifierId("Work Id " + time));
+        wExtId.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
+        peerReviewToCreate.getExternalIdentifiers().getWorkExternalIdentifier().add(wExtId);
+        String accessToken = getAccessToken();
+
+        ClientResponse postResponse = memberV2ApiClient.createPeerReviewXml(user1OrcidId, peerReviewToCreate, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+        String locationPath = postResponse.getLocation().getPath();
+        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v2.0_rc1/" + user1OrcidId + "/peer-review/\\d+"));
+        ClientResponse getResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
+        assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
+        PeerReview gotPeerReview = getResponse.getEntity(PeerReview.class);
+        assertEquals("common:title", gotPeerReview.getSubject().getTitle().getTitle().getContent());
+        gotPeerReview.getSubject().getTitle().getTitle().setContent("updated title");
+        String profileCreateToken = oauthHelper.getClientCredentialsAccessToken(client2ClientId, client2ClientSecret, ScopePathType.ORCID_PROFILE_CREATE);
+        ClientResponse putResponse = memberV2ApiClient.updateLocationXml(postResponse.getLocation(), profileCreateToken, gotPeerReview);
+        assertEquals(Response.Status.FORBIDDEN.getStatusCode(), putResponse.getStatus());
+        ClientResponse getAfterUpdateResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
+        assertEquals(Response.Status.OK.getStatusCode(), getAfterUpdateResponse.getStatus());
+        PeerReview gotAfterUpdatePeerReview = getAfterUpdateResponse.getEntity(PeerReview.class);
+        assertEquals("common:title", gotAfterUpdatePeerReview.getSubject().getTitle().getTitle().getContent());
+        ClientResponse deleteResponse = memberV2ApiClient.deletePeerReviewXml(user1OrcidId, gotAfterUpdatePeerReview.getPutCode(), accessToken);
+        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), deleteResponse.getStatus());
+    }
+
+    @Test
     public void testViewActivitiesSummaries() throws JSONException, InterruptedException, URISyntaxException {
         long time = System.currentTimeMillis();
         Education education = (Education) unmarshallFromPath("/record_2.0_rc1/samples/education-2.0_rc1.xml", Education.class);
@@ -404,7 +480,7 @@ public class MemberV2Test {
         fExtId.setType(FundingExternalIdentifierType.GRANT_NUMBER);
         fExtId.setValue("Funding Id " + time);
         funding.getExternalIdentifiers().getExternalIdentifier().add(fExtId);
-
+                
         Work work = (Work) unmarshallFromPath("/record_2.0_rc1/samples/work-2.0_rc1.xml", Work.class);
         work.setPutCode(null);
         work.getExternalIdentifiers().getExternalIdentifier().clear();
@@ -413,10 +489,23 @@ public class MemberV2Test {
         wExtId.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
         work.getExternalIdentifiers().getWorkExternalIdentifier().add(wExtId);
 
+        PeerReview peerReview = (PeerReview) unmarshallFromPath("/record_2.0_rc1/samples/peer-review-2.0_rc1.xml", PeerReview.class);
+        peerReview.setPutCode(null);
+        peerReview.getExternalIdentifiers().getExternalIdentifier().clear();        
+        WorkExternalIdentifier pExtId = new WorkExternalIdentifier();
+        pExtId.setWorkExternalIdentifierId(new WorkExternalIdentifierId("Work Id " + time));
+        pExtId.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
+        peerReview.getExternalIdentifiers().getExternalIdentifier().add(pExtId);
+        
         String accessToken = getAccessToken();
 
-        memberV2ApiClient.createEducationXml(user1OrcidId, education, accessToken);
-        memberV2ApiClient.createEmploymentXml(user1OrcidId, employment, accessToken);
+        ClientResponse postResponse = memberV2ApiClient.createEducationXml(user1OrcidId, education, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+        
+        postResponse = memberV2ApiClient.createEmploymentXml(user1OrcidId, employment, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         /**
          * Add 4 fundings 1 and 2 get grouped together 3 in another group
          * because it have different ext ids 4 in another group because it
@@ -424,16 +513,21 @@ public class MemberV2Test {
          * **/
 
         // Add 1, the default funding
-        memberV2ApiClient.createFundingXml(user1OrcidId, funding, accessToken);
-
+        postResponse = memberV2ApiClient.createFundingXml(user1OrcidId, funding, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+        
         funding.getTitle().getTitle().setContent("Funding # 2");
         FundingExternalIdentifier fExtId3 = new FundingExternalIdentifier();
         fExtId3.setType(FundingExternalIdentifierType.GRANT_NUMBER);
         fExtId3.setValue("extId3Value" + time);
         funding.getExternalIdentifiers().getExternalIdentifier().add(fExtId3);
         // Add 2, with the same ext ids +1
-        memberV2ApiClient.createFundingXml(user1OrcidId, funding, accessToken);
-
+        postResponse = memberV2ApiClient.createFundingXml(user1OrcidId, funding, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+        
+        
         funding.getTitle().getTitle().setContent("Funding # 3");
         FundingExternalIdentifier fExtId4 = new FundingExternalIdentifier();
         fExtId4.setType(FundingExternalIdentifierType.GRANT_NUMBER);
@@ -441,29 +535,37 @@ public class MemberV2Test {
         funding.getExternalIdentifiers().getExternalIdentifier().clear();
         funding.getExternalIdentifiers().getExternalIdentifier().add(fExtId4);
         // Add 3, with different ext ids
-        memberV2ApiClient.createFundingXml(user1OrcidId, funding, accessToken);
-
+        postResponse = memberV2ApiClient.createFundingXml(user1OrcidId, funding, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());        
+        
         funding.getTitle().getTitle().setContent("Funding # 4");
         funding.getExternalIdentifiers().getExternalIdentifier().clear();
         // Add 4 without ext ids
-        memberV2ApiClient.createFundingXml(user1OrcidId, funding, accessToken);
-
+        postResponse = memberV2ApiClient.createFundingXml(user1OrcidId, funding, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+        
         /**
          * Add 4 works 1 and 2 get grouped together 3 in another group because
          * it have different ext ids 4 in another group because it doesnt have
          * any ext ids
          **/
         // Add 1, the default work
-        memberV2ApiClient.createWorkXml(user1OrcidId, work, accessToken);
-
+        postResponse = memberV2ApiClient.createWorkXml(user1OrcidId, work, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+        
         work.getWorkTitle().getTitle().setContent("Work # 2");
         WorkExternalIdentifier wExtId2 = new WorkExternalIdentifier();
         wExtId2.setWorkExternalIdentifierType(WorkExternalIdentifierType.DOI);
         wExtId2.setWorkExternalIdentifierId(new WorkExternalIdentifierId("doi-ext-id" + time));
         work.getExternalIdentifiers().getExternalIdentifier().add(wExtId2);
         // Add 2, with the same ext ids +1
-        memberV2ApiClient.createWorkXml(user1OrcidId, work, accessToken);
-
+        postResponse = memberV2ApiClient.createWorkXml(user1OrcidId, work, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+        
         work.getWorkTitle().getTitle().setContent("Work # 3");
         WorkExternalIdentifier wExtId3 = new WorkExternalIdentifier();
         wExtId3.setWorkExternalIdentifierType(WorkExternalIdentifierType.EID);
@@ -471,13 +573,67 @@ public class MemberV2Test {
         work.getWorkExternalIdentifiers().getExternalIdentifier().clear();
         work.getWorkExternalIdentifiers().getExternalIdentifier().add(wExtId3);
         // Add 3, with different ext ids
-        memberV2ApiClient.createWorkXml(user1OrcidId, work, accessToken);
-
+        postResponse = memberV2ApiClient.createWorkXml(user1OrcidId, work, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+        
         work.getWorkTitle().getTitle().setContent("Work # 4");
         work.getWorkExternalIdentifiers().getExternalIdentifier().clear();
         // Add 4, without ext ids
-        memberV2ApiClient.createWorkXml(user1OrcidId, work, accessToken);
-
+        postResponse = memberV2ApiClient.createWorkXml(user1OrcidId, work, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+        
+        /**
+         * Add 4 peer reviews 1 and 2 get grouped together 3 in another group because
+         * it have different ext ids 4 in another group because it doesnt have
+         * any ext ids
+         **/
+        // Add 1, the default peer review
+        postResponse = memberV2ApiClient.createPeerReviewXml(user1OrcidId, peerReview, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+        
+        peerReview.getSubject().getTitle().getTitle().setContent("PeerReview # 2");
+        peerReview.getCompletionDate().setDay(new Day(2));
+        peerReview.getCompletionDate().setMonth(new Month(2));
+        peerReview.getCompletionDate().setYear(new Year(2016));
+        peerReview.setUrl(new Url("http://peer_review/2"));
+        WorkExternalIdentifier pExtId2 = new WorkExternalIdentifier();
+        pExtId2.setWorkExternalIdentifierType(WorkExternalIdentifierType.DOI);
+        pExtId2.setWorkExternalIdentifierId(new WorkExternalIdentifierId("doi-ext-id" + time));
+        peerReview.getExternalIdentifiers().getExternalIdentifier().add(pExtId2);
+        // Add 2, with the same ext ids +1
+        postResponse = memberV2ApiClient.createPeerReviewXml(user1OrcidId, peerReview, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+        
+        peerReview.getSubject().getTitle().getTitle().setContent("PeerReview # 3");
+        peerReview.getCompletionDate().setDay(new Day(3));
+        peerReview.getCompletionDate().setMonth(new Month(3));
+        peerReview.getCompletionDate().setYear(new Year(2017));
+        peerReview.setUrl(new Url("http://peer_review/3"));
+        WorkExternalIdentifier pExtId3 = new WorkExternalIdentifier();
+        pExtId3.setWorkExternalIdentifierType(WorkExternalIdentifierType.EID);
+        pExtId3.setWorkExternalIdentifierId(new WorkExternalIdentifierId("eid-ext-id" + time));
+        peerReview.getExternalIdentifiers().getExternalIdentifier().clear();
+        peerReview.getExternalIdentifiers().getExternalIdentifier().add(pExtId3);
+        // Add 3, with different ext ids
+        postResponse = memberV2ApiClient.createPeerReviewXml(user1OrcidId, peerReview, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+        
+        peerReview.getSubject().getTitle().getTitle().setContent("PeerReview # 4");
+        peerReview.getCompletionDate().setDay(new Day(4));
+        peerReview.getCompletionDate().setMonth(new Month(4));
+        peerReview.getCompletionDate().setYear(new Year(2018));
+        peerReview.setUrl(new Url("http://peer_review/4"));
+        peerReview.getExternalIdentifiers().getExternalIdentifier().clear();
+        // Add 4, without ext ids
+        postResponse = memberV2ApiClient.createPeerReviewXml(user1OrcidId, peerReview, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+        
         /**
          * Now, get the summaries and verify the following: - Education summary
          * is complete - Employment summary is complete - There are 3 groups of
@@ -486,6 +642,10 @@ public class MemberV2Test {
          * 
          * - There are 3 groups of works -- One group with 2 works -- One group
          * with one work with ext ids -- One group with one work without ext ids
+         * 
+         * peer review -- There are 3 groups of peer reviews -- One group with 2 
+         * peer reviews -- One groups with one peer review and ext ids -- One 
+         * group with one peer review but without ext ids 
          **/
 
         ClientResponse activitiesResponse = memberV2ApiClient.viewActivities(user1OrcidId, accessToken);
@@ -540,8 +700,7 @@ public class MemberV2Test {
 
         assertTrue("One of the fundings was not found: 1(" + found1 + ") 2(" + found2 + ") 3(" + found3 + ") 4(" + found4 + ")", found1 == found2 == found3 == found4 == true);
         
-        assertNotNull(activities.getWorks());
-        
+        assertNotNull(activities.getWorks());        
         found1 = found2 = found3 = found4 = false;
         for (WorkGroup group : activities.getWorks().getWorkGroup()) {
             for(WorkSummary summary : group.getWorkSummary()) {
@@ -558,6 +717,27 @@ public class MemberV2Test {
         }
         
         assertTrue("One of the works was not found: 1(" + found1 + ") 2(" + found2 + ") 3(" + found3 + ") 4(" + found4 + ")", found1 == found2 == found3 == found4 == true);
+        
+        assertNotNull(activities.getPeerReviews());        
+        found1 = found2 = found3 = found4 = false;
+        for(PeerReviewGroup group : activities.getPeerReviews().getPeerReviewGroup()) {
+            for(PeerReviewSummary summary : group.getPeerReviewSummary()) {
+                if(summary.getCompletionDate() != null && summary.getCompletionDate().getYear() != null) {
+                    if(summary.getCompletionDate().getYear().getValue().equals("1848")) {
+                        found1 = true;
+                    } else if(summary.getCompletionDate().getYear().getValue().equals("2016")) {
+                        found2 = true;
+                    } else if(summary.getCompletionDate().getYear().getValue().equals("2017")) {
+                        found3 = true;
+                    } else if(summary.getCompletionDate().getYear().getValue().equals("2018")) {
+                        found4 = true;
+                    }
+                }                               
+            }
+        }
+        
+        assertTrue("One of the peer reviews was not found: 1(" + found1 + ") 2(" + found2 + ") 3(" + found3 + ") 4(" + found4 + ")", found1 == found2 == found3 == found4 == true);
+        
     }
 
     private String getAccessToken() throws InterruptedException, JSONException {
@@ -584,6 +764,8 @@ public class MemberV2Test {
                 result = (Funding) obj;
             } else if (Work.class.equals(type)) {
                 result = (Work) obj;
+            } else if(PeerReview.class.equals(type)) {
+                result = (PeerReview) obj;
             }
             return result;
         } catch (IOException e) {
@@ -635,6 +817,13 @@ public class MemberV2Test {
                 }
             }
         }
+        
+        if(summary.getPeerReviews() != null && !summary.getPeerReviews().getPeerReviewGroup().isEmpty()) {
+            for(PeerReviewGroup group : summary.getPeerReviews().getPeerReviewGroup()) {
+                for(PeerReviewSummary peerReview : group.getPeerReviewSummary()) {
+                    memberV2ApiClient.deletePeerReviewXml(user1OrcidId, peerReview.getPutCode(), token);
+                }
+            }
+        }
     }
-
 }

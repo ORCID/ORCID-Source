@@ -53,6 +53,11 @@ public class PojoUtil {
         return false;
     }
 
+    public static boolean isEmpty(org.orcid.jaxb.model.common.Url url) {
+        if (url == null || url.getValue() == null || url.getValue().trim().isEmpty()) return true;
+        return false;
+    }
+    
     public static boolean isEmpty(UrlName urlName) {
         if (urlName == null || urlName.getContent() == null) return true;
         return false;
@@ -105,6 +110,17 @@ public class PojoUtil {
         return true;
     }
     
+    public static boolean isEmpty(org.orcid.jaxb.model.common.FuzzyDate date) {
+        if (date == null) return true;
+        if (!isEmpty(date.getDay()))
+            return false;
+        if (!isEmpty(date.getMonth()))
+            return false;
+        if (!isEmpty(date.getYear()))
+            return false;
+        return true;
+    }
+    
     public static boolean isEmpty(Year year) {
         if (year==null) return true;
         return isEmpty(year.getValue());
@@ -120,6 +136,20 @@ public class PojoUtil {
         return isEmpty(month.getValue());
     }
 
+    public static boolean isEmpty(org.orcid.jaxb.model.common.Year year) {
+        if (year==null) return true;
+        return isEmpty(year.getValue());
+    }
+    
+    public static boolean isEmpty(org.orcid.jaxb.model.common.Day day) {
+        if (day==null) return true;
+        return isEmpty(day.getValue());
+    }
+
+    public static boolean isEmpty(org.orcid.jaxb.model.common.Month month) {
+        if (month==null) return true;
+        return isEmpty(month.getValue());
+    }
     
     public static boolean isEmtpy(Contributor c) {
     	return PojoUtil.areAllEmtpy(c.getContributorSequence(), c.getEmail(), c.getOrcid(), c.getUri(), c.getCreditName(), c.getContributorRole());

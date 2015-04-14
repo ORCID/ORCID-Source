@@ -38,6 +38,7 @@ import javax.persistence.Table;
 import org.orcid.jaxb.model.message.FundingType;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.utils.NullUtils;
+import org.orcid.utils.OrcidStringUtils;
 
 /**
  * orcid-entities - Dec 6, 2011 - ProfileInstitutionEntity
@@ -268,12 +269,12 @@ public class ProfileFundingEntity extends BaseEntity<Long> implements Comparable
             return compareTypes;
         }
 
-        int compareTitles = compareStrings(title, other.getTitle());
+        int compareTitles = OrcidStringUtils.compareStrings(title, other.getTitle());
         if (compareTitles != 0) {
             return compareTitles;
         }
 
-        int compareDescriptions = compareStrings(description, other.getDescription());
+        int compareDescriptions = OrcidStringUtils.compareStrings(description, other.getDescription());
         if (compareDescriptions != 0) {
             return compareDescriptions;
         }
@@ -292,23 +293,23 @@ public class ProfileFundingEntity extends BaseEntity<Long> implements Comparable
             return compareNumericAmounts;
         }
 
-        int compareCurrency = compareStrings(currencyCode, other.getCurrencyCode());
+        int compareCurrency = OrcidStringUtils.compareStrings(currencyCode, other.getCurrencyCode());
         if (compareCurrency != 0) {
             return compareCurrency;
         }
 
-        int compareOrgName = compareStrings(org.getName(), other.getOrg().getName());
+        int compareOrgName = OrcidStringUtils.compareStrings(org.getName(), other.getOrg().getName());
         if (compareOrgName != 0) {
             return compareOrgName;
         }
 
-        int compareOrgCountry = compareStrings(org.getCountry() == null ? null : org.getCountry().value(), other.getOrg().getCountry() == null ? null : other.getOrg()
+        int compareOrgCountry = OrcidStringUtils.compareStrings(org.getCountry() == null ? null : org.getCountry().value(), other.getOrg().getCountry() == null ? null : other.getOrg()
                 .getCountry().value());
         if (compareOrgCountry != 0) {
             return compareOrgCountry;
         }
 
-        int compareOrgCity = compareStrings(org.getCity(), other.getOrg().getCity());
+        int compareOrgCity = OrcidStringUtils.compareStrings(org.getCity(), other.getOrg().getCity());
         if (compareOrgCity != 0) {
             return compareOrgCity;
         }
@@ -318,11 +319,11 @@ public class ProfileFundingEntity extends BaseEntity<Long> implements Comparable
             return compareDisplayIndex;
         }
 
-        int compareExternalIds = compareStrings(externalIdentifiersJson, other.getExternalIdentifiersJson());
+        int compareExternalIds = OrcidStringUtils.compareStrings(externalIdentifiersJson, other.getExternalIdentifiersJson());
         if (compareExternalIds != 0)
             return compareExternalIds;
         
-        return compareStrings(url, other.getUrl());
+        return OrcidStringUtils.compareStrings(url, other.getUrl());
     }
 
     private int compareTypes(FundingType type, FundingType otherType) {
@@ -346,13 +347,6 @@ public class ProfileFundingEntity extends BaseEntity<Long> implements Comparable
         return -startDate.compareTo(otherStartDate);
     }
 
-    private int compareStrings(String string, String otherString) {
-        if (NullUtils.anyNull(string, otherString)) {
-            return NullUtils.compareNulls(string, otherString);
-        }
-        return string.compareTo(otherString);
-    }
-    
     private int compareLongs(Long l1, Long l2 ) {
         if (NullUtils.anyNull(l1, l2)) {
             return NullUtils.compareNulls(l1, l2);

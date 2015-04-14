@@ -35,6 +35,7 @@ import javax.xml.bind.Unmarshaller;
 
 import org.codehaus.jettison.json.JSONException;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
@@ -44,6 +45,9 @@ import org.orcid.integration.api.helper.OauthHelper;
 import org.orcid.integration.api.memberV2.MemberV2ApiClientImpl;
 import org.orcid.integration.api.publicV2.PublicV2ApiClientImpl;
 import org.orcid.integration.api.t2.T2OAuthAPIService;
+import org.orcid.jaxb.model.common.Day;
+import org.orcid.jaxb.model.common.Month;
+import org.orcid.jaxb.model.common.Year;
 import org.orcid.jaxb.model.error.OrcidError;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record.Activity;
@@ -52,6 +56,7 @@ import org.orcid.jaxb.model.record.Employment;
 import org.orcid.jaxb.model.record.Funding;
 import org.orcid.jaxb.model.record.FundingExternalIdentifier;
 import org.orcid.jaxb.model.record.FundingExternalIdentifierType;
+import org.orcid.jaxb.model.record.PeerReview;
 import org.orcid.jaxb.model.record.Work;
 import org.orcid.jaxb.model.record.WorkExternalIdentifier;
 import org.orcid.jaxb.model.record.WorkExternalIdentifierId;
@@ -61,6 +66,8 @@ import org.orcid.jaxb.model.record.summary.EducationSummary;
 import org.orcid.jaxb.model.record.summary.EmploymentSummary;
 import org.orcid.jaxb.model.record.summary.FundingGroup;
 import org.orcid.jaxb.model.record.summary.FundingSummary;
+import org.orcid.jaxb.model.record.summary.PeerReviewGroup;
+import org.orcid.jaxb.model.record.summary.PeerReviewSummary;
 import org.orcid.jaxb.model.record.summary.WorkGroup;
 import org.orcid.jaxb.model.record.summary.WorkSummary;
 import org.springframework.beans.factory.annotation.Value;
@@ -114,7 +121,7 @@ public class PublicV2Test {
 
     static String accessToken = null;
 
-    @After
+    @Before
     public void before() throws JSONException, InterruptedException, URISyntaxException {
         cleanActivities();
     }
@@ -236,6 +243,34 @@ public class PublicV2Test {
         assertNotNull(summary);        
         assertEquals("education:department-name", summary.getDepartmentName());
     }
+    
+    @Test
+    public void testViewPeerReviewAndPeerReviewSummary() throws JSONException, InterruptedException, URISyntaxException {
+        PeerReview peerReviewToCreate = (PeerReview) unmarshallFromPath("/record_2.0_rc1/samples/peer-review-2.0_rc1.xml", PeerReview.class);
+        peerReviewToCreate.setPutCode(null);
+        peerReviewToCreate.setVisibility(org.orcid.jaxb.model.common.Visibility.PUBLIC);
+
+        String accessToken = getAccessToken();
+        ClientResponse postResponse = memberV2ApiClient.createPeerReviewXml(user1OrcidId, peerReviewToCreate, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+        String path = postResponse.getLocation().getPath();
+        String putCode = path.substring(path.lastIndexOf('/') + 1, path.length());
+
+        ClientResponse getPeerReviewResponse = publicV2ApiClient.viewPeerReviewXml(user1OrcidId, putCode);
+        assertNotNull(getPeerReviewResponse);
+        checkResponse(getPeerReviewResponse);
+        PeerReview peerReview = getPeerReviewResponse.getEntity(PeerReview.class);
+        assertNotNull(peerReview);
+        assertEquals("peer-review:url", peerReview.getUrl().getValue());
+
+        ClientResponse getPeerReviewSummaryResponse = publicV2ApiClient.viewPeerReviewSummaryXml(user1OrcidId, putCode);
+        assertNotNull(getPeerReviewSummaryResponse);
+        checkResponse(getPeerReviewSummaryResponse);
+        PeerReviewSummary summary = getPeerReviewSummaryResponse.getEntity(PeerReviewSummary.class);
+        assertNotNull(summary);        
+        assertEquals("1848", summary.getCompletionDate().getYear().getValue());
+    }
 
     @Test
     public void testViewPublicActivities() throws JSONException, InterruptedException, URISyntaxException {
@@ -298,7 +333,21 @@ public class PublicV2Test {
         
         assertTrue("One of the works was not found: 0(" + found0 + ") 3(" + found3 + "), please verify users default visibility is public", found0 == found3 == true);
         
-
+        assertNotNull(summary.getPeerReviews());
+        found0 = found3 = false;
+        for(PeerReviewGroup group : summary.getPeerReviews().getPeerReviewGroup()) {
+            for(PeerReviewSummary peerReview : group.getPeerReviewSummary()) {
+                if(peerReview.getCompletionDate() != null && peerReview.getCompletionDate().getYear() != null) {
+                    if(peerReview.getCompletionDate().getYear().getValue().equals("1000")) {
+                        found0 = true;
+                    } else if(peerReview.getCompletionDate().getYear().getValue().equals("4000")) {
+                        found3 = true;
+                    }
+                }
+            }
+        }
+        
+        assertTrue("One of the peer reviews was not found: 0(" + found0 + ") 3(" + found3 + "), please verify users default visibility is public", found0 == found3 == true);
     }
 
     /**
@@ -425,6 +474,34 @@ public class PublicV2Test {
         assertEquals(new Integer(9017), result.getErrorCode());
         assertEquals("org.orcid.core.exception.OrcidUnauthorizedException: The activity is not public", result.getDeveloperMessage());
     }
+    
+    @Test
+    public void testViewLimitedPeerReviewAndPeerReviewSummary() throws JSONException, InterruptedException, URISyntaxException {
+        PeerReview peerReviewToCreate = (PeerReview) unmarshallFromPath("/record_2.0_rc1/samples/peer-review-2.0_rc1.xml", PeerReview.class);
+        peerReviewToCreate.setPutCode(null);
+        peerReviewToCreate.setVisibility(org.orcid.jaxb.model.common.Visibility.LIMITED);
+
+        String accessToken = getAccessToken();
+        ClientResponse postResponse = memberV2ApiClient.createPeerReviewXml(user1OrcidId, peerReviewToCreate, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+        String path = postResponse.getLocation().getPath();
+        String putCode = path.substring(path.lastIndexOf('/') + 1, path.length());
+
+        ClientResponse response = publicV2ApiClient.viewPeerReviewXml(user1OrcidId, putCode);
+        assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
+        OrcidError result = response.getEntity(OrcidError.class);
+        assertNotNull(result);
+        assertEquals(new Integer(9017), result.getErrorCode());
+        assertEquals("org.orcid.core.exception.OrcidUnauthorizedException: The activity is not public", result.getDeveloperMessage());
+
+        response = publicV2ApiClient.viewPeerReviewSummaryXml(user1OrcidId, putCode);
+        assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
+        result = response.getEntity(OrcidError.class);
+        assertNotNull(result);
+        assertEquals(new Integer(9017), result.getErrorCode());
+        assertEquals("org.orcid.core.exception.OrcidUnauthorizedException: The activity is not public", result.getDeveloperMessage());
+    }
 
     @Test
     public void testNotFoundReturn404() throws InterruptedException, JSONException {
@@ -457,6 +534,8 @@ public class PublicV2Test {
                 result = (Funding) obj;
             } else if (Work.class.equals(type)) {
                 result = (Work) obj;
+            } else if (PeerReview.class.equals(type)) {
+                result = (PeerReview) obj;
             }
             return result;
         } catch (IOException e) {
@@ -551,6 +630,28 @@ public class PublicV2Test {
             assertNotNull(postResponse);
             assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         }
+        
+        
+        PeerReview peerReviewToCreate = (PeerReview) unmarshallFromPath("/record_2.0_rc1/samples/peer-review-2.0_rc1.xml", PeerReview.class);
+        for (int i = 0; i < 4; i++) {
+            peerReviewToCreate.setPutCode(null);
+            peerReviewToCreate.getSubject().getTitle().getTitle().setContent("PeerReview # " + i);
+            peerReviewToCreate.getCompletionDate().setDay(new Day(i + 1));
+            peerReviewToCreate.getCompletionDate().setMonth(new Month(i + 1));
+            peerReviewToCreate.getCompletionDate().setYear(new Year((i + 1) * 1000));
+            peerReviewToCreate.getExternalIdentifiers().getExternalIdentifier().get(0).getWorkExternalIdentifierId().setContent("extId-" + (i + 1));
+            if (i == 0 || i == 3) {
+                peerReviewToCreate.setVisibility(org.orcid.jaxb.model.common.Visibility.PUBLIC);
+            } else if (i == 1) {
+                peerReviewToCreate.setVisibility(org.orcid.jaxb.model.common.Visibility.LIMITED);
+            } else {
+                peerReviewToCreate.setVisibility(org.orcid.jaxb.model.common.Visibility.PRIVATE);
+            }              
+
+            ClientResponse postResponse = memberV2ApiClient.createPeerReviewXml(user1OrcidId, peerReviewToCreate, accessToken);
+            assertNotNull(postResponse);
+            assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+        }
     }
 
     public void cleanActivities() throws JSONException, InterruptedException, URISyntaxException {
@@ -584,6 +685,14 @@ public class PublicV2Test {
             for (WorkGroup group : summary.getWorks().getWorkGroup()) {
                 for (WorkSummary work : group.getWorkSummary()) {
                     memberV2ApiClient.deleteWorkXml(user1OrcidId, work.getPutCode(), token);
+                }
+            }
+        }
+        
+        if (summary.getPeerReviews() != null && !summary.getPeerReviews().getPeerReviewGroup().isEmpty()) {
+            for (PeerReviewGroup group : summary.getPeerReviews().getPeerReviewGroup()) {
+                for (PeerReviewSummary peerReview : group.getPeerReviewSummary()) {
+                    memberV2ApiClient.deletePeerReviewXml(user1OrcidId, peerReview.getPutCode(), token);
                 }
             }
         }

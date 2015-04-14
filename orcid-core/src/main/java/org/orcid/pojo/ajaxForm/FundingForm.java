@@ -401,8 +401,9 @@ public class FundingForm implements ErrorsInterface, Serializable {
         Source source = funding.getSource();
         if (source != null) {
             result.setSource(source.retrieveSourcePath());            
-            if(source.getSourceName() != null)
-            result.setSourceName(source.getSourceName().getContent());
+            if(source.getSourceName() != null) {
+                result.setSourceName(source.getSourceName().getContent());
+            }
         }
         
         if (funding.getTitle() != null) {

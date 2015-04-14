@@ -533,6 +533,7 @@ orcidNgModule.factory("workspaceSrvc", ['$rootScope', function ($rootScope) {
             displayFunding: true,
             displayPersonalInfo: true,
             displayWorks: true,
+            displayPeerReview: true,
             toggleEducation: function() {
                 serv.displayEducation = !serv.displayEducation;
             },
@@ -548,6 +549,10 @@ orcidNgModule.factory("workspaceSrvc", ['$rootScope', function ($rootScope) {
             toggleWorks: function() {
                 serv.displayWorks = !serv.displayWorks;
             },
+            togglePeerReview: function() {
+            	console.log('Click');
+            	serv.displayPeerReview = !serv.displayPeerReview;
+            },
             openEducation: function() {
                 serv.displayEducation = true;
             },
@@ -562,7 +567,11 @@ orcidNgModule.factory("workspaceSrvc", ['$rootScope', function ($rootScope) {
             },
             openWorks: function() {
                 serv.displayWorks = true;
+            },
+            openPeerReview: function() {
+                serv.displayPeerReview = true;
             }
+            
     };
     return serv;
 }]);
@@ -1072,6 +1081,8 @@ orcidNgModule.factory("emailSrvc", function ($rootScope) {
             delEmail: null,
             primaryEmail: null,
             addEmail: function() {
+            	console.log('Adding: ');
+            	console.log(serv.inputEmail);
                 $.ajax({
                     url: getBaseUri() + '/account/addEmail.json',
                     data:  angular.toJson(serv.inputEmail),
@@ -1079,6 +1090,8 @@ orcidNgModule.factory("emailSrvc", function ($rootScope) {
                     type: 'POST',
                     dataType: 'json',
                     success: function(data) {
+                    	console.log('Added...');
+                    	console.log(data);
                         serv.inputEmail = data;
                         if (serv.inputEmail.errors.length == 0) {
                             serv.initInputEmail();
@@ -1094,14 +1107,17 @@ orcidNgModule.factory("emailSrvc", function ($rootScope) {
             getEmails: function(callback) {
                 $.ajax({
                     url: getBaseUri() + '/account/emails.json',
-                    //type: 'POST',
-                    //data: $scope.emailsPojo,
+                    type: 'GET',
                     dataType: 'json',
                     success: function(data) {
                         serv.emails = data;
-                        for (var i in data.emails)
-                            if (data.emails[i].primary)
+                        console.log('Requested: ');
+                        console.log(data);
+                        for (var i in data.emails){
+                            if (data.emails[i].primary){
                                 serv.primaryEmail = data.emails[i];
+                            }    
+                        }
                         $rootScope.$apply();
                         if (callback)
                            callback(data);
@@ -3503,7 +3519,6 @@ orcidNgModule.controller('FundingCtrl',['$scope', '$compile', '$filter', 'fundin
         }
     };
 
-
     $scope.selectOrgDefinedFundingSubType = function(subtype) {
         if (subtype != undefined && subtype != null) {
             $scope.editFunding.organizationDefinedFundingSubType.subtype.value = subtype.value;
@@ -3659,7 +3674,6 @@ orcidNgModule.controller('FundingCtrl',['$scope', '$compile', '$filter', 'fundin
         $scope.editFunding.externalIdentifiers.splice(index,1);
     };
 
-
     $scope.toggleTranslatedTitleModal = function(){
         $scope.editTranslatedTitle = !$scope.editTranslatedTitle;
         $('#translatedTitle').toggle();
@@ -3718,9 +3732,7 @@ orcidNgModule.controller('FundingCtrl',['$scope', '$compile', '$filter', 'fundin
         fundingSrvc.getEditable(putCode, function(bestMatch) {
             $scope.addFundingModal(bestMatch);
         });
-    };
-
-    
+    };    
     
     $scope.showFundingImportWizard =  function() {
     	$scope.fundingImportWizard = !$scope.fundingImportWizard;
@@ -4525,26 +4537,266 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     };
     
     $scope.showTooltip = function (key){    	
-        $scope.showElement[key] = true;
-    	
-    }
+        $scope.showElement[key] = true;    	
+    };
     
     $scope.hideTooltip = function (key){    	
     	$scope.showElement[key] = false;
-    }
+    };
     
     $scope.openFileDialog = function(){    	
     	$timeout(function() { //To avoid '$apply already in progress' error
     	    angular.element('#inputBibtex').trigger('click');
     	}, 0);
-    }
+    };
     
     $scope.toggleWizardDesc = function(id){
     	$scope.wizardDescExpanded[id] = !$scope.wizardDescExpanded[id];
-    }   
-    
+    };
     
 }]);
+
+orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'workspaceSrvc', 'commonSrvc', 'peerReviewSrvc', function ($scope, $compile, $filter, workspaceSrvc, commonSrvc, peerReviewSrvc){
+	$scope.workspaceSrvc = workspaceSrvc;
+	$scope.editPeerReview = null;
+	$scope.disambiguatedOrganization = null;
+	$scope.addingPeerReview = false;
+	$scope.editTranslatedTitle = false;
+	
+	
+	$scope.addPeerReviewModal = function(){        
+        	peerReviewSrvc.getBlankPeerReview(function(data) {
+                $scope.editPeerReview = data;
+                $scope.$apply(function() {                    
+                    $scope.showAddPeerReviewModal();
+                    $scope.bindTypeaheadForOrgs();
+                });
+            });
+            //$scope.showAddPeerReviewModal();        
+    };
+    
+    $scope.showAddPeerReviewModal = function(){
+        $scope.editTranslatedTitle = false;
+        $.colorbox({
+            scrolling: true,
+            html: $compile($('#add-peer-review-modal').html())($scope),
+            onLoad: function() {$('#cboxClose').remove();},
+            // start the colorbox off with the correct width
+            width: formColorBoxResize(),
+            onComplete: function() {
+                //resize to insure content fits
+            },
+            onClosed: function() {
+                //$scope.closeAllMoreInfo();
+                //$scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);
+            }
+        });
+    };
+    
+    $scope.addAPeerReview = function() {
+    	if ($scope.addingPeerReview) return; 
+        $scope.addingPeerReview = true;
+        $scope.editPeerReview.errors.length = 0;
+        peerReviewSrvc.postPeerReview($scope.editPeerReview,
+            function(data){        	    
+                if (data.errors.length == 0) {
+                	    $scope.addingPeerReview = false;
+                        $scope.$apply();
+                        $.colorbox.close();
+                        $scope.peerReviewSrvc.loadAbbrPeerReviews(peerReviewSrvc.constants.access_type.USER);                    
+                } else {
+                    $scope.editPeerReview = data;
+                    commonSrvc.copyErrorsLeft($scope.editPeerReview, data);
+                    $scope.addingPeerReview = false;
+                    $scope.$apply();
+                }
+            },
+            function() {
+                // something bad is happening!
+                $scope.addingPeerReview = false;
+                console.log("error creating peer review");
+            }
+        );
+    };
+    
+    $scope.closeModal = function() {
+        $.colorbox.close();
+    };
+    
+    $scope.serverValidate = function (relativePath) {
+        $.ajax({
+            url: getBaseUri() + '/' + relativePath,
+            type: 'POST',
+            data:  angular.toJson($scope.editPeerReview),
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            success: function(data) {
+                commonSrvc.copyErrorsLeft($scope.editPeerReview, data);                
+                $scope.$apply();
+            }
+        }).fail(function() {
+            // something bad is happening!
+            console.log("PeerReviewCtrl.serverValidate() error");
+        });
+    };
+    
+    $scope.removeDisambiguatedOrganization = function() {
+        $scope.bindTypeaheadForOrgs();
+        if ($scope.disambiguatedOrganization != undefined) delete $scope.disambiguatedOrganization;
+        if ($scope.editPeerReview != undefined && $scope.editPeerReview.disambiguatedOrganizationSourceId != undefined) delete $scope.editPeerReview.disambiguatedOrganizationSourceId;
+    };
+    
+    $scope.unbindTypeaheadForOrgs = function () {
+        $('#organizationName').typeahead('destroy');
+    };
+    
+    $scope.bindTypeaheadForOrgs = function () {
+        var numOfResults = 100;
+        $("#organizationName").typeahead({
+            name: 'organizationName',
+            limit: numOfResults,
+            remote: {
+                replace: function () {
+                    var q = getBaseUri()+'/peer-reviews/disambiguated/name/';
+                    if ($('#organizationName').val()) {
+                        q += encodeURIComponent($('#organizationName').val());
+                    }
+                    q += '?limit=' + numOfResults;
+                    return q;
+                }
+            },
+            template: function (datum) {
+                   var forDisplay =
+                       '<span style=\'white-space: nowrap; font-weight: bold;\'>' + datum.value+ '</span>'
+                      +'<span style=\'font-size: 80%;\'>'
+                      + ' <br />' + datum.city;
+                   if(datum.region){
+                       forDisplay += ", " + datum.region;
+                   }
+                   if (datum.orgType != null && datum.orgType.trim() != '')
+                      forDisplay += ", " + datum.orgType;
+                   forDisplay += '</span><hr />';
+
+                   return forDisplay;
+            }
+        });
+        $("#organizationName").bind("typeahead:selected", function(obj, datum) {
+            $scope.selectOrganization(datum);
+            $scope.$apply();
+        });
+    };
+    
+    $scope.selectOrganization = function(datum) {
+        if (datum != undefined && datum != null) {
+            $scope.editPeerReview.orgName.value = datum.value;
+            if(datum.value)
+                $scope.editPeerReview.orgName.errors = [];
+            $scope.editPeerReview.city.value = datum.city;
+            if(datum.city)
+                $scope.editPeerReview.city.errors = [];
+            if(datum.region)
+            	$scope.editPeerReview.region.value = datum.region;
+
+            if(datum.country != undefined && datum.country != null) {
+                $scope.editPeerReview.country.value = datum.country;
+                $scope.editPeerReview.country.errors = [];
+            }
+
+            if (datum.disambiguatedOrganizationIdentifier != undefined && datum.disambiguatedOrganizationIdentifier != null) {
+                $scope.getDisambiguatedOrganization(datum.disambiguatedOrganizationIdentifier);
+                $scope.unbindTypeaheadForOrgs();
+            }
+        }
+    };
+    
+    $scope.getDisambiguatedOrganization = function(id) {
+        $.ajax({
+            url: getBaseUri() + '/peer-reviews/disambiguated/id/' + id,
+            dataType: 'json',
+            type: 'GET',
+            success: function(data) {
+                if (data != null) {
+                    console.log(data.sourceId);
+                    $scope.disambiguatedOrganization = data;
+                    $scope.editPeerReview.disambiguatedOrganizationSourceId = data.sourceId;
+                    $scope.editPeerReview.disambiguationSource = data.sourceType;
+                    $scope.$apply();
+                }
+            }
+        }).fail(function(){
+            console.log("error getDisambiguatedOrganization(id)");
+        });
+    };
+    
+    $scope.toggleTranslatedTitleModal = function(){
+        $scope.editTranslatedTitle = !$scope.editTranslatedTitle;
+        $('#translatedTitle').toggle();
+        $.colorbox.resize();
+    };
+
+    $scope.addExternalIdentifier = function () {
+        $scope.editPeerReview.externalIdentifiers.push({workExternalIdentifierId: {value: ""}, workExternalIdentifierType: {value: ""}});
+    };
+    
+    $scope.addSubjectExternalIdentifier = function () {
+    	$scope.editPeerReview.subjectForm.workExternalIdentifiers.push({workExternalIdentifierId: {value: ""}, workExternalIdentifierType: {value: ""}});
+    };
+    
+    $scope.deleteExternalIdentifier = function(obj) {
+        var index = $scope.editPeerReview.externalIdentifiers.indexOf(obj);
+        $scope.editPeerReview.externalIdentifiers.splice(index,1);
+    };
+    
+    $scope.deleteSubjectExternalIdentifier = function(obj) {
+        var index = $scope.editPeerReview.subjectForm.workExternalIdentifiers.indexOf(obj);
+        $scope.editPeerReview.subjectForm.workExternalIdentifiers.splice(index,1);
+        
+    };
+    
+}]);
+
+
+orcidNgModule.factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
+    var peerReviewSrvc = {
+    		constants: { 'access_type': { 'USER': 'user', 'ANONYMOUS': 'anonymous'}},
+    		getBlankPeerReview: function(callback) {
+    			$.ajax({
+                    url: getBaseUri() + '/peer-reviews/peer-review.json',
+                    dataType: 'json',
+                    success: function(data) {
+                    	callback(data);
+                        $rootScope.$apply();
+                    }
+                }).fail(function() {
+                    console.log("Error fetching blank work");
+                });                
+            },
+            
+            postPeerReview: function(peer_review, successFunc, failFunc) {
+            	$.ajax({
+                    url: getBaseUri() + '/peer-reviews/peer-review.json',
+                    contentType: 'application/json;charset=UTF-8',
+                    dataType: 'json',
+                    type: 'POST',
+                    data: angular.toJson(peer_review),
+                    success: function(data) {
+                    	successFunc(data);
+                        console.log(data);
+                    }
+                }).fail(function(){
+                    failFunc();
+                });
+    		}, 
+    		
+    		loadAbbrPeerReviews: function(type) {
+    			console.log("loadAbbrPeerReviews: NOT IMPLEMENTE YET");
+    		}
+    
+    		
+    };
+    return peerReviewSrvc;
+}]);
+
 
 orcidNgModule.controller('SearchCtrl',['$scope', '$compile', function ($scope, $compile){
     $scope.hasErrors = false;

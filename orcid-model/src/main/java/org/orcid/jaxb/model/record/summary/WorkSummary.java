@@ -286,7 +286,7 @@ public class WorkSummary implements VisibilityType, Activity, GroupableActivity,
             if (otherIndex == null) {
                 return 1;
             } else if (index instanceof Comparable) {
-                // Return opossite, since higger index goes first
+                // Return opposite, since higher index goes first
                 return index.compareTo(otherIndex) * -1;
             } else {
                 return 0;

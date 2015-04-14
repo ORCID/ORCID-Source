@@ -120,4 +120,11 @@ public class OrcidStringUtils {
         String striped = stripHtml(s);
         return !striped.equals(s);
     }
+    
+    public static int compareStrings(String string, String otherString) {        
+        if (NullUtils.anyNull(string, otherString)) {
+            return NullUtils.compareNulls(string, otherString);
+        }
+        return string.compareTo(otherString);
+    }
 }

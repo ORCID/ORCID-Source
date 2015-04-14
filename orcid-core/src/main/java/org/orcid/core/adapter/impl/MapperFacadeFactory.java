@@ -39,6 +39,7 @@ import org.orcid.jaxb.model.record.Education;
 import org.orcid.jaxb.model.record.Employment;
 import org.orcid.jaxb.model.record.Funding;
 import org.orcid.jaxb.model.record.FundingContributors;
+import org.orcid.jaxb.model.record.PeerReview;
 import org.orcid.jaxb.model.record.Work;
 import org.orcid.jaxb.model.record.WorkContributors;
 import org.orcid.jaxb.model.record.WorkExternalIdentifier;
@@ -46,13 +47,16 @@ import org.orcid.jaxb.model.record.WorkExternalIdentifiers;
 import org.orcid.jaxb.model.record.summary.EducationSummary;
 import org.orcid.jaxb.model.record.summary.EmploymentSummary;
 import org.orcid.jaxb.model.record.summary.FundingSummary;
+import org.orcid.jaxb.model.record.summary.PeerReviewSummary;
 import org.orcid.jaxb.model.record.summary.WorkSummary;
+import org.orcid.persistence.jpa.entities.CompletionDateEntity;
 import org.orcid.persistence.jpa.entities.EndDateEntity;
 import org.orcid.persistence.jpa.entities.NotificationActivityEntity;
 import org.orcid.persistence.jpa.entities.NotificationAddActivitiesEntity;
 import org.orcid.persistence.jpa.entities.NotificationAmendedEntity;
 import org.orcid.persistence.jpa.entities.NotificationCustomEntity;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
+import org.orcid.persistence.jpa.entities.PeerReviewEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
 import org.orcid.persistence.jpa.entities.PublicationDateEntity;
@@ -234,7 +238,48 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         addV2SourceMapping(mapperFactory);
         return mapperFactory.getMapperFacade();
     }
-
+    
+    public MapperFacade getPeerReviewMapperFacade() {                
+        MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
+        
+        ConverterFactory converterFactory = mapperFactory.getConverterFactory();
+        converterFactory.registerConverter("workExternalIdentifiersConverterId", new JsonOrikaConverter<WorkExternalIdentifiers>());
+        
+        ClassMapBuilder<PeerReview, PeerReviewEntity> classMap = mapperFactory.classMap(PeerReview.class, PeerReviewEntity.class);
+        classMap.byDefault();
+        classMap.field("putCode", "id");
+        classMap.field("url.value", "url");
+        classMap.field("organization.name", "org.name");
+        classMap.field("organization.address.city", "org.city");
+        classMap.field("organization.address.region", "org.region");
+        classMap.field("organization.address.country", "org.country");
+        classMap.field("organization.disambiguatedOrganization.disambiguatedOrganizationIdentifier", "org.orgDisambiguated.sourceId");
+        classMap.field("organization.disambiguatedOrganization.disambiguationSource", "org.orgDisambiguated.sourceType");
+        classMap.field("subject.putCode", "subject.id");
+        classMap.field("subject.type", "subject.workType");
+        classMap.field("subject.url.value", "subject.url");
+        classMap.field("subject.title.title.content", "subject.title");
+        classMap.field("subject.title.translatedTitle.content", "subject.translatedTitle");
+        classMap.field("subject.title.translatedTitle.languageCode", "subject.translatedTitleLanguageCode");
+        classMap.field("subject.title.subtitle.content", "subject.subTitle");
+        classMap.field("subject.journalTitle.content", "subject.journalTitle");
+        classMap.fieldMap("externalIdentifiers", "externalIdentifiersJson").converter("workExternalIdentifiersConverterId").add();
+        classMap.fieldMap("subject.externalIdentifiers", "subject.externalIdentifiersJson").converter("workExternalIdentifiersConverterId").add();
+        classMap.register();
+        
+        ClassMapBuilder<PeerReviewSummary, PeerReviewEntity> peerReviewSummaryClassMap = mapperFactory.classMap(PeerReviewSummary.class,
+                PeerReviewEntity.class);
+        peerReviewSummaryClassMap.byDefault();
+        peerReviewSummaryClassMap.field("putCode", "id");
+        peerReviewSummaryClassMap.fieldMap("externalIdentifiers", "externalIdentifiersJson").converter("workExternalIdentifiersConverterId").add();
+        peerReviewSummaryClassMap.register();
+        
+        mapperFactory.classMap(FuzzyDate.class, CompletionDateEntity.class).field("year.value", "year").field("month.value", "month").field("day.value", "day").register();
+        
+        addV2SourceMapping(mapperFactory);
+        return mapperFactory.getMapperFacade();
+    }
+    
     private ClassMapBuilder<?, ?> mapCommonFields(ClassMapBuilder<?, ?> builder) {
         return builder.field("dateCreated", "createdDate").field("id", "putCode").byDefault();
     }

@@ -56,9 +56,11 @@ import org.orcid.jaxb.model.message.FundingType;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.SequenceType;
 import org.orcid.jaxb.model.message.Source;
-import org.orcid.jaxb.model.message.SourceOrcid;
 import org.orcid.jaxb.model.message.WorkCategory;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
+import org.orcid.jaxb.model.message.WorkType;
+import org.orcid.jaxb.model.record.PeerReviewType;
+import org.orcid.jaxb.model.record.Role;
 import org.orcid.pojo.ThirdPartyRedirect;
 import org.orcid.pojo.ajaxForm.KeywordsForm;
 import org.orcid.pojo.ajaxForm.OtherNamesForm;
@@ -163,7 +165,7 @@ public class WorkspaceController extends BaseWorkspaceController {
     }
 
     @ModelAttribute("workCategories")
-    public Map<String, String> retrieveWorkTypesAsMap() {
+    public Map<String, String> retrieveWorkCategoriesAsMap() {
         Map<String, String> workCategories = new LinkedHashMap<String, String>();
 
         for (WorkCategory workCategory : WorkCategory.values()) {
@@ -280,6 +282,33 @@ public class WorkspaceController extends BaseWorkspaceController {
         return lm.getLanguagesMap(localeManager.getLocale());
     }
 
+    @ModelAttribute("peerReviewRoles")
+    public Map<String, String> retrievePeerReviewRolesAsMap() {
+        Map<String, String> peerReviewRoles = new LinkedHashMap<String, String>();
+        for (Role role : Role.values()) {
+            peerReviewRoles.put(role.value(), getMessage(buildInternationalizationKey(Role.class, role.value())));
+        }
+        return FunctionsOverCollections.sortMapsByValues(peerReviewRoles);
+    }
+    
+    @ModelAttribute("peerReviewTypes")
+    public Map<String, String> retrievePeerReviewTypesAsMap() {
+        Map<String, String> peerReviewTypes = new LinkedHashMap<String, String>();
+        for (PeerReviewType type : PeerReviewType.values()) {
+            peerReviewTypes.put(type.value(), getMessage(buildInternationalizationKey(PeerReviewType.class, type.value())));
+        }
+        return FunctionsOverCollections.sortMapsByValues(peerReviewTypes);
+    }
+    
+    @ModelAttribute("workTypes")
+    public Map<String, String> retrieveWorkTypesAsMap() {
+        Map<String, String> types = new LinkedHashMap<String, String>();
+        for (WorkType type : WorkType.values()) {
+            types.put(type.value(), getMessage(buildInternationalizationKey(WorkType.class, type.value())));
+        }
+        return FunctionsOverCollections.sortMapsByValues(types);
+    }
+    
     @RequestMapping(value = {"/my-orcid3","/my-orcid", "/workspace"}, method = RequestMethod.GET)
     public ModelAndView viewWorkspace3(HttpServletRequest request, @RequestParam(value = "page", defaultValue = "1") int pageNo,
             @RequestParam(value = "maxResults", defaultValue = "200") int maxResults) {
@@ -346,7 +375,6 @@ public class WorkspaceController extends BaseWorkspaceController {
         otherNameManager.updateOtherNames(currentProfile.getOrcidIdentifier().getPath(), onf.toOtherNames());
         return onf;
     }
-
     
     /**
      * Retrieve all external identifiers as a json string
@@ -380,7 +408,6 @@ public class WorkspaceController extends BaseWorkspaceController {
         researcherUrlManager.updateResearcherUrls(currentProfile.getOrcidIdentifier().getPath(), ws.toResearcherUrls());
         return ws;
     }
-
 
     /**
      * Retrieve all external identifiers as a json string
@@ -426,8 +453,7 @@ public class WorkspaceController extends BaseWorkspaceController {
             }
         }
         return tpr;
-    }    
-    
+    }        
     
     /**
      * Reads the latest cache version from database, compare it against the

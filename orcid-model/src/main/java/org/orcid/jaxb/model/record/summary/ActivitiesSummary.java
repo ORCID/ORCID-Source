@@ -51,7 +51,7 @@ import org.orcid.jaxb.model.record.RecordUtil;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "educations", "employments", "fundings", "works" })
+@XmlType(propOrder = { "educations", "employments", "fundings", "peerReviews", "works" })
 @XmlRootElement(name = "activities-summary", namespace = "http://www.orcid.org/ns/activities")
 public class ActivitiesSummary implements Serializable, ActivitiesContainer {
 
@@ -62,6 +62,8 @@ public class ActivitiesSummary implements Serializable, ActivitiesContainer {
     protected Employments employments;
     @XmlElement(name = "fundings", namespace = "http://www.orcid.org/ns/activities")
     protected Fundings fundings;
+    @XmlElement(name = "peer-reviews", namespace = "http://www.orcid.org/ns/activities")
+    protected PeerReviews peerReviews;
     @XmlElement(name = "works", namespace = "http://www.orcid.org/ns/activities")
     protected Works works;
 
@@ -79,6 +81,16 @@ public class ActivitiesSummary implements Serializable, ActivitiesContainer {
 
     public void setEmployments(Employments employments) {
         this.employments = employments;
+    }
+
+    public PeerReviews getPeerReviews() {
+        if(peerReviews == null)
+            peerReviews = new PeerReviews();
+        return peerReviews;
+    }
+
+    public void setPeerReviews(PeerReviews peerReviews) {
+        this.peerReviews = peerReviews;
     }
 
     public Works getWorks() {
@@ -108,6 +120,7 @@ public class ActivitiesSummary implements Serializable, ActivitiesContainer {
         result = prime * result + ((educations == null) ? 0 : educations.hashCode());
         result = prime * result + ((employments == null) ? 0 : employments.hashCode());
         result = prime * result + ((fundings == null) ? 0 : fundings.hashCode());
+        result = prime * result + ((peerReviews == null) ? 0 : peerReviews.hashCode());
         result = prime * result + ((works == null) ? 0 : works.hashCode());
         return result;
     }
@@ -135,7 +148,12 @@ public class ActivitiesSummary implements Serializable, ActivitiesContainer {
             if (other.fundings != null)
                 return false;
         } else if (!fundings.equals(other.fundings))
-            return false;
+            return false;                        
+        if (peerReviews == null) {
+            if (other.peerReviews != null)
+                return false;
+        } else if (!peerReviews.equals(other.peerReviews))
+            return false;                        
         if (works == null) {
             if (other.works != null)
                 return false;
@@ -164,6 +182,20 @@ public class ActivitiesSummary implements Serializable, ActivitiesContainer {
                 }
             }
         }
+        
+        //Set peer reviews
+        if(peerReviews != null){
+            List<PeerReviewGroup> groups = peerReviews.getPeerReviewGroup();
+            for(PeerReviewGroup peerReview : groups) {
+                if(peerReview != null) {
+                    List<PeerReviewSummary> summaries = peerReview.getPeerReviewSummary();
+                    for(PeerReviewSummary summary : summaries) {
+                        activities.put(summary.getPutCode(), summary);
+                    }
+                }
+            }
+        }
+        
         // Set funding
         if (fundings != null) {
             List<FundingGroup> groups = fundings.getFundingGroup();

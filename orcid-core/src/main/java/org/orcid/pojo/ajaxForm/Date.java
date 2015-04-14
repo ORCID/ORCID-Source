@@ -65,6 +65,17 @@ public class Date implements ErrorsInterface, Required, Serializable {
             d.setYear(fuzzyDate.getYear().getValue());
         return d;
     }
+    
+    public static Date valueOf(org.orcid.jaxb.model.common.FuzzyDate fuzzyDate) {
+        Date d = new Date();
+        if (fuzzyDate.getDay() != null && fuzzyDate.getDay().getValue() !=null)
+            d.setDay(fuzzyDate.getDay().getValue());
+        if (fuzzyDate.getMonth() != null && fuzzyDate.getMonth().getValue() !=null)
+            d.setMonth(fuzzyDate.getMonth().getValue());
+        if (fuzzyDate.getYear() != null && fuzzyDate.getYear().getValue() !=null)
+            d.setYear(fuzzyDate.getYear().getValue());
+        return d;
+    }
 
     public FuzzyDate toFuzzyDate() {
         PublicationDate pd = new PublicationDate();
@@ -87,6 +98,20 @@ public class Date implements ErrorsInterface, Required, Serializable {
         return newDate;
     }
 
+    public static Date valueOf(org.orcid.jaxb.model.common.CreatedDate date) {
+        Date newDate = new Date();
+        if (date != null && date.getValue() != null)
+            return Date.valueOf(date.getValue().toGregorianCalendar().getTime());
+        return newDate;
+    }
+
+    public static Date valueOf(org.orcid.jaxb.model.common.LastModifiedDate date) {
+        Date newDate = new Date();
+        if (date != null && date.getValue() != null)
+            return Date.valueOf(date.getValue().toGregorianCalendar().getTime());
+        return newDate;
+    }
+    
     public static Date valueOf(CreatedDate date) {
         Date newDate = new Date();
         if (date != null && date.getValue() != null)
@@ -179,4 +204,40 @@ public class Date implements ErrorsInterface, Required, Serializable {
         this.year = year;
     }
 
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((day == null) ? 0 : day.hashCode());
+        result = prime * result + ((month == null) ? 0 : month.hashCode());
+        result = prime * result + ((year == null) ? 0 : year.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Date other = (Date) obj;
+        if (day == null) {
+            if (other.day != null)
+                return false;
+        } else if (!day.equals(other.day))
+            return false;
+        if (month == null) {
+            if (other.month != null)
+                return false;
+        } else if (!month.equals(other.month))
+            return false;
+        if (year == null) {
+            if (other.year != null)
+                return false;
+        } else if (!year.equals(other.year))
+            return false;
+        return true;
+    }        
 }
