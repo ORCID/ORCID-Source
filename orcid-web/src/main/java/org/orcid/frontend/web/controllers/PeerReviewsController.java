@@ -33,6 +33,7 @@ import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.PeerReviewManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.frontend.web.util.LanguagesMap;
+import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.record.PeerReview;
 import org.orcid.jaxb.model.record.PeerReviewType;
 import org.orcid.jaxb.model.record.Role;
@@ -529,4 +530,20 @@ public class PeerReviewsController extends BaseWorkspaceController {
     public @ResponseBody boolean updateToMaxDisplay(HttpServletRequest request, @RequestParam(value = "putCode") String putCode) {
         return peerReviewManager.updateToMaxDisplay(getEffectiveUserOrcid(), putCode);
     }
+        
+    /**
+     * updates visibility of a peer review
+     * */
+    @RequestMapping(value = "/{peerReviewIdsStr}/visibility/{visibilityStr}", method = RequestMethod.GET)
+    public @ResponseBody
+    ArrayList<Long>  updateVisibilitys(@PathVariable("peerReviewIdsStr") String peerReviewIdsStr,@PathVariable("visibilityStr") String visibilityStr) {
+        // make sure this is a users work
+        String orcid = getEffectiveUserOrcid();
+        ArrayList<Long> peerReviewIds = new ArrayList<Long>();
+        for (String peerReviewId: peerReviewIdsStr.split(","))
+            peerReviewIds.add(new Long(peerReviewId));
+        peerReviewManager.updateVisibilities(orcid, peerReviewIds, Visibility.fromValue(visibilityStr));
+        return peerReviewIds;
+    }
+
 }

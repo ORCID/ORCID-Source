@@ -16,9 +16,11 @@
  */
 package org.orcid.core.manager;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.record.PeerReview;
 import org.orcid.jaxb.model.record.summary.PeerReviewSummary;
 import org.orcid.persistence.jpa.entities.PeerReviewEntity;
@@ -111,4 +113,15 @@ public interface PeerReviewManager {
      * @return true if it was able to update the display index
      * */
     boolean updateToMaxDisplay(String orcid, String peerReviewId);
+    
+    /**
+     * Updates the visibility of a list of existing peer review
+     * 
+     * @param peerReviewIds
+     *            The ids of the peerReview that will be updated
+     * @param visibility
+     *            The new visibility value for the peer review
+     * @return true if the relationship was updated
+     * */
+    public boolean updateVisibilities(String orcid, ArrayList<Long> peerReviewIds, Visibility visibility);
 }
