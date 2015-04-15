@@ -537,9 +537,12 @@ public class PeerReviewsController extends BaseWorkspaceController {
     @RequestMapping(value = "/{peerReviewIdsStr}/visibility/{visibilityStr}", method = RequestMethod.GET)
     public @ResponseBody
     ArrayList<Long>  updateVisibilitys(@PathVariable("peerReviewIdsStr") String peerReviewIdsStr,@PathVariable("visibilityStr") String visibilityStr) {
-        // make sure this is a users work
-        String orcid = getEffectiveUserOrcid();
         ArrayList<Long> peerReviewIds = new ArrayList<Long>();
+        if(PojoUtil.isEmpty(peerReviewIdsStr)) {
+            return peerReviewIds;
+        }
+        // make sure this is a users work
+        String orcid = getEffectiveUserOrcid();        
         for (String peerReviewId: peerReviewIdsStr.split(","))
             peerReviewIds.add(new Long(peerReviewId));
         peerReviewManager.updateVisibilities(orcid, peerReviewIds, Visibility.fromValue(visibilityStr));
