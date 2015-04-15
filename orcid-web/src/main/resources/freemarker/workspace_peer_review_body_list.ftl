@@ -28,7 +28,7 @@
 						 <div class="workspace-title">											
 						    <a ng-click="workspaceSrvc.togglePeerReview()" class="toggle-text">
 						  		<i class="glyphicon-chevron-down glyphicon x075" ng-class="{'glyphicon-chevron-right':workspaceSrvc.displayPeerReview==false}"></i> <@orcid.msg 'workspace_peer_review_body_list.peerReview'/>
-						  			(<span class="ng-binding">0</span>)
+						  			(<span ng-bind="peerReviewSrvc.groups.length"></span>)						  			
 						  		</a>						  		
 						   	</a>							    
 						</div>

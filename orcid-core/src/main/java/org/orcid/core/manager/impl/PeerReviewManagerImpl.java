@@ -16,6 +16,7 @@
  */
 package org.orcid.core.manager.impl;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -184,14 +185,17 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
     }
 
     @Override
-    @Transactional
     public void removePeerReview(String orcid, String peerReviewId) {
         peerReviewDao.removePeerReview(orcid, Long.valueOf(peerReviewId));
     }
     
     @Override
-    @Transactional
     public boolean updateToMaxDisplay(String orcid, String peerReviewId) {
         return peerReviewDao.updateToMaxDisplay(orcid, peerReviewId);
+    }
+    
+    @Override
+    public boolean updateVisibilities(String orcid, ArrayList<Long> peerReviewIds, Visibility visibility) {
+        return peerReviewDao.updateVisibilities(orcid, peerReviewIds, visibility);
     }
 }
