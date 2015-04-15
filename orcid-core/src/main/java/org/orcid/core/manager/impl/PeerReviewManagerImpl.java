@@ -112,7 +112,7 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
         }
 
         // If it is the user adding the peer review, allow him to add duplicates
-        if(sourceEntity.getSourceId().equals(orcid)) {
+        if(!sourceEntity.getSourceId().equals(orcid)) {
             if (peerReviews != null) {
                 for (PeerReviewEntity entity : peerReviews) {
                     PeerReview existing = jpaJaxbPeerReviewAdapter.toPeerReview(entity);
