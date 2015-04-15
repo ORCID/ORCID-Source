@@ -16,3 +16,21 @@
     =============================================================================
 
 -->
+
+<div class="more-info" ng-show="showDetails[group.groupId] && group.activePutCode == peerReview.putCode.value">
+	<div class="content" ng-hide="worksSrvc.details[work.putCode.value] == undefined">
+		<span class="dotted-bar"></span>
+		<div class="row">
+			<!-- Translated title -->
+			<div class="col-md-6" ng-show="worksSrvc.details[work.putCode.value].translatedTitle.content" ng-cloak>
+				<div class="bottomBuffer">
+					<strong><@orcid.msg
+						'manual_work_form_contents.labeltranslatedtitle'/></strong> <span><i>({{worksSrvc.details[work.putCode.value].translatedTitle.languageName}})</i></span>
+					<div>{{worksSrvc.details[work.putCode.value].translatedTitle.content}}</div>				
+				</div>
+			</div>
+		
+		
+		></div>		
+	</div>
+</div>

@@ -4571,6 +4571,7 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
 	$scope.addingPeerReview = false;
 	$scope.editTranslatedTitle = false;
 	$scope.editSources = {};
+	$scope.showDetails = {};
 	
 	$scope.addPeerReviewModal = function(){        
         	peerReviewSrvc.getBlankPeerReview(function(data) {
@@ -4769,6 +4770,11 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
     $scope.showSources = function(group) {
         $scope.editSources[group.groupId] = true;
     };
+    
+    $scope.showDetailsMouseClick = function(groupId, $event){
+    	$event.stopPropagation();
+    	$scope.showDetails[groupId] = !$scope.showDetails[groupId];
+    }
     
     //Init
     $scope.peerReviewSrvc.loadAbbrPeerReviews(peerReviewSrvc.constants.access_type.USER);

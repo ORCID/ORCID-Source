@@ -16,40 +16,6 @@
     =============================================================================
 
 -->
-
-<!-- 
-peerReview.visibility
-peerReview.putCode.value
-peerReview.externalIdentifiers.workExternalIdentifierId
-peerReview.externalIdentifiers.workExternalIdentifierType
-peerReview.url.value
-peerReview.role.value
-peerReview.type.value
-peerReview.orgName.value
-peerReview.city.value
-peerReview.region.value
-peerReview.country.value
-peerReview.countryForDisplay
-peerReview.disambiguatedOrganizationSourceId
-peerReview.disambiguationSource
-peerReview.completionDate
-peerReview.subjectForm.putCode.value
-peerReview.subjectForm.workExternalIdentifiers.workExternalIdentifierId
-peerReview.subjectForm.workExternalIdentifiers.workExternalIdentifierType
-peerReview.subjectForm.url.value
-peerReview.subjectForm.title.value
-peerReview.subjectForm.subtitle.value
-peerReview.subjectForm.translatedTitle.value
-peerReview.subjectForm.journalTitle.value
-peerReview.subjectForm.workType.value
-peerReview.source
-peerReview.sourceName
-peerReview.createdDate
-peerReview.lastModified
-
- -->
-
-
 <ul ng-hide="!peerReviewSrvc.groups.length" class="workspace-peer-review workspace-body-list bottom-margin-medium" ng-cloak>	
 	<li class="bottom-margin-small workspace-border-box card" ng-repeat="group in peerReviewSrvc.groups | orderBy:sortState.predicate:sortState.reverse">
 		<ul class="sources-edit-list">
@@ -71,21 +37,21 @@ peerReview.lastModified
                                                  <input type="checkbox" ng-model="bulkEditMap[group.getActive().putCode.value]" class="bulk-edit-input-header ng-valid ng-dirty">
                                              </li>
                                          </#if>
-                                         <!-- 
+                                        
                                          <li class="works-details">
-                                             <a ng-click="showDetailsMouseClick(group,$event);" ng-mouseenter="showTooltip(group.groupId+'-showHideDetails')" ng-mouseleave="hideTooltip(group.groupId+'-showHideDetails')">
-                                                 <span ng-class="(moreInfo[group.groupId] == true ? 'glyphicons collapse_top' : 'glyphicons expand'">
+                                             <a ng-click="showDetailsMouseClick(group.groupId,$event);" ng-mouseenter="showTooltip(group.groupId+'-showHideDetails')" ng-mouseleave="hideTooltip(group.groupId+'-showHideDetails')">
+                                                 <span ng-class="(showDetails[group.groupId] == true) ? 'glyphicons collapse_top' : 'glyphicons expand'">
                                                  </span>
                                              </a>
                                              <div class="popover popover-tooltip top show-hide-details-popover" ng-show="showElement[group.groupId+'-showHideDetails'] == true">
                                                   <div class="arrow"></div>
                                                  <div class="popover-content">   
-                                                     <span ng-show="moreInfo[group.groupId] == false || moreInfo[group.groupId] == null"><@orcid.msg 'common.details.show_details'/></span>   
-                                                     <span ng-show="moreInfo[group.groupId] == true"><@orcid.msg 'common.details.hide_details'/></span>
+                                                     <span ng-show="showDetails[group.groupId] == false || showDetails[group.groupId] == null"><@orcid.msg 'common.details.show_details'/></span>   
+                                                     <span ng-show="showDetails[group.groupId] == true"><@orcid.msg 'common.details.hide_details'/></span>
                                                  </div>
                                              </div>
                                          </li>
-                                          -->
+                                        
                                          <#if !(isPublicProfile??)>
                                          <li>
                                              <@orcid.privacyToggle2 angularModel="group.getActive().visibility"
@@ -129,15 +95,15 @@ peerReview.lastModified
                                   </#if>
                                   <!-- Show/Hide Details -->
                                   <li class="works-details" ng-hide="editSources[group.groupId] == true">
-                                      <a ng-click="showDetailsMouseClick(group,$event);" ng-mouseenter="showTooltip(group.groupId+'-showHideDetails')" ng-mouseleave="hideTooltip(group.groupId+'-showHideDetails')">
-                                          <span ng-class="(moreInfo[group.groupId] == true) ? 'glyphicons collapse_top' : 'glyphicons expand'">
+                                      <a ng-click="showDetailsMouseClick(group.groupId,$event);" ng-mouseenter="showTooltip(group.groupId+'-showHideDetails')" ng-mouseleave="hideTooltip(group.groupId+'-showHideDetails')">
+                                          <span ng-class="(showDetails[group.groupId] == true) ? 'glyphicons collapse_top' : 'glyphicons expand'">
                                           </span>
                                       </a>
                                       <div class="popover popover-tooltip top show-hide-details-popover" ng-show="showElement[group.groupId+'-showHideDetails'] == true">
                                            <div class="arrow"></div>
                                           <div class="popover-content">
-                                              <span ng-show="moreInfo[group.groupId] == false || moreInfo[group.groupId] == null"><@orcid.msg 'common.details.show_details' /></span>   
-                                              <span ng-show="moreInfo[group.groupId] == true"><@orcid.msg 'common.details.hide_details' /></span>
+                                              <span ng-show="showDetails[group.groupId] == false || showDetails[group.groupId] == null"><@orcid.msg 'common.details.show_details' /></span>   
+                                              <span ng-show="showDetails[group.groupId] == true"><@orcid.msg 'common.details.hide_details' /></span>
                                           </div>
                                       </div>
                                   </li>
@@ -170,20 +136,22 @@ peerReview.lastModified
                               </#if>
                               
                           </div>
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    </div>
-                    
-                    
+                     </div>
+                     <!-- Active Row Identifiers / URL / Validations / Versions -->
+                     <div class="row" ng-show="group.activePutCode == peerReview.putCode.value">
+                         <div class="col-md-12 col-sm-12 bottomBuffer">
+                             <ul class="id-details">
+                                 <li>
+                                     <span ng-repeat='ie in peerReview.externalIdentifiers'><span
+                                     ng-bind-html='ie | workExternalIdentifierHtml:$first:$last:peerReview.externalIdentifiers.length'></span>
+                                    </span>
+                                 </li>
+                                 <li ng-show="peerReview.url.value"><@orcid.msg 'common.url' />: <a href="{{peerReview.url.value | urlWithHttp}}" class="truncate-anchor" target="_blank">{{peerReview.url.value}}</a></li>
+                             </ul>
+                         </div>
+                     </div>
+                    <!-- more info -->
+                    <#include "peer_review_more_info_inc.ftl"/>
                     
                     
                     
