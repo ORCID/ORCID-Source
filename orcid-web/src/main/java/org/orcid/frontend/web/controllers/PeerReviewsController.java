@@ -17,8 +17,10 @@
 package org.orcid.frontend.web.controllers;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -33,6 +35,9 @@ import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.PeerReviewManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.frontend.web.util.LanguagesMap;
+import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.jaxb.model.message.OrcidWork;
+import org.orcid.jaxb.model.message.OrcidWorks;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.record.PeerReview;
 import org.orcid.jaxb.model.record.PeerReviewType;
@@ -310,6 +315,20 @@ public class PeerReviewsController extends BaseWorkspaceController {
         }
         peerReviewManager.removePeerReview(getEffectiveUserOrcid(), peerReview.getPutCode().getValue());
         return peerReview;
+    }
+    
+    @RequestMapping(value = "/{peerReviewIdsStr}", method = RequestMethod.DELETE)
+    public @ResponseBody
+    List<String> removePeerReviews(@PathVariable("peerReviewIdsStr") String peerReviewIdsStr) {
+        List<String> peerReviewIds = Arrays.asList(peerReviewIdsStr.split(","));
+        String orcid = getEffectiveUserOrcid();
+        
+        for(String id : peerReviewIds) {
+            peerReviewManager.removePeerReview(orcid, id);
+        }
+        
+        
+        return peerReviewIds;
     }
 
     private PeerReviewForm addPeerReview(PeerReviewForm peerReviewForm) {
