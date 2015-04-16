@@ -21,12 +21,15 @@ import java.util.LinkedHashMap;
 import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.Funding;
 import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.jaxb.model.record.PeerReview;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.Work;
 
 public interface ActivityCacheManager {
 
     public LinkedHashMap<String, Work> pubMinWorksMap(OrcidProfile profile);
+    
+    public LinkedHashMap<String, PeerReview> pubPeerReviewsMap(ProfileEntity profile);
     
     public LinkedHashMap<String, Funding> fundingMap(OrcidProfile profile);
     

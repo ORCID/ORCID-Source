@@ -119,6 +119,7 @@ GroupedActivities.prototype.consistentVis = function() {
 
 GroupedActivities.prototype.getIdentifiersPath = function() {
     if (this.type == GroupedActivities.ABBR_WORK) return 'workExternalIdentifiers';
+    if (this.type == GroupedActivities.PEER_REVIEW) return 'externalIdentifiers';
     return 'externalIdentifiers';
 };
 
@@ -190,7 +191,11 @@ GroupedActivities.prototype.key = function(activityIdentifiers) {
         // we don't have external identifiers for affiliations yet
         idPath = null;
         idTypePath = null;
+    } else if (this.type == GroupedActivities.PEER_REVIEW) {
+    	idPath = 'workExternalIdentifierId';
+        idTypePath = 'workExternalIdentifierType';
     }
+    
     var key = '';
     if (activityIdentifiers[idTypePath]) {    	
         // ISSN is misused too often to identify a work
@@ -239,6 +244,7 @@ GroupedActivities.prototype.makeDefault = function(putCode) {
     if (this.type == GroupedActivities.ABBR_WORK) title = act.title;
     else if (this.type == GroupedActivities.FUNDING) title = act.fundingTitle.title;
     else if (this.type == GroupedActivities.AFFILIATION) title = act.affiliationName;
+    else if (this.type == GroupedActivities.PEER_REVIEW) title = act.subjectForm.title;
     this.title =  title != null ? title.value : null;
 };
 
@@ -4571,6 +4577,7 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
 	$scope.addingPeerReview = false;
 	$scope.editTranslatedTitle = false;
 	$scope.editSources = {};
+	$scope.showDetails = {};
 	
 	$scope.addPeerReviewModal = function(){        
         	peerReviewSrvc.getBlankPeerReview(function(data) {
@@ -4769,6 +4776,11 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
     $scope.showSources = function(group) {
         $scope.editSources[group.groupId] = true;
     };
+    
+    $scope.showDetailsMouseClick = function(groupId, $event){
+    	$event.stopPropagation();
+    	$scope.showDetails[groupId] = !$scope.showDetails[groupId];
+    }
     
     //Init
     $scope.peerReviewSrvc.loadAbbrPeerReviews(peerReviewSrvc.constants.access_type.USER);

@@ -35,7 +35,7 @@ import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ActivityCacheManager;
 import org.orcid.core.manager.OrcidProfileCacheManager;
-import org.orcid.core.manager.ProfileEntityManager;
+import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileWorkManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.frontend.web.util.LanguagesMap;
@@ -46,12 +46,14 @@ import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.PersonalDetails;
 import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.jaxb.model.record.PeerReview;
 import org.orcid.persistence.jpa.entities.CountryIsoEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
 import org.orcid.pojo.ajaxForm.AffiliationForm;
 import org.orcid.pojo.ajaxForm.Contributor;
 import org.orcid.pojo.ajaxForm.FundingForm;
+import org.orcid.pojo.ajaxForm.PeerReviewForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.Work;
@@ -94,10 +96,10 @@ public class PublicProfileController extends BaseWorkspaceController {
     private OrcidProfileCacheManager orcidProfileCacheManager;
 
     @Resource
-    private ActivityCacheManager cacheManager;
+    private ActivityCacheManager cacheManager;        
     
-    @Resource
-    ProfileEntityManager profileEntityManager;
+    @Resource(name = "profileEntityCacheManager")
+    ProfileEntityCacheManager profileEntityCacheManager;
     
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[x]}")
     public ModelAndView publicPreviewRedir(HttpServletRequest request, @RequestParam(value = "page", defaultValue = "1") int pageNo,
@@ -130,6 +132,7 @@ public class PublicProfileController extends BaseWorkspaceController {
         LinkedHashMap<String, Work> minimizedWorksMap = new LinkedHashMap<String, Work>();
         LinkedHashMap<String, Affiliation> affiliationMap = new LinkedHashMap<String, Affiliation>();
         LinkedHashMap<String, Funding> fundingMap = new LinkedHashMap<String, Funding>();
+        LinkedHashMap<String, PeerReview> peerReviewMap = new LinkedHashMap<String, PeerReview>();
 
         if(profile != null && profile.getOrcidBio() != null && profile.getOrcidBio().getBiography() != null && StringUtils.isNotBlank(profile.getOrcidBio().getBiography().getContent())){
             isProfileEmtpy = false;
@@ -164,6 +167,13 @@ public class PublicProfileController extends BaseWorkspaceController {
             else {
                 mav.addObject("fundingEmpty", true);
             }
+            
+            peerReviewMap = peerReviewMap(orcid);
+            if(peerReviewMap.size() > 0) {
+                mav.addObject("peerReviews", peerReviewMap.values());
+            } else {
+                mav.addObject("peerReviewsEmpty", true);
+            }
 
         }
         ObjectMapper mapper = new ObjectMapper();
@@ -172,9 +182,11 @@ public class PublicProfileController extends BaseWorkspaceController {
             String worksIdsJson = mapper.writeValueAsString(minimizedWorksMap.keySet());
             String affiliationIdsJson = mapper.writeValueAsString(affiliationMap.keySet());
             String fundingIdsJson = mapper.writeValueAsString(fundingMap.keySet());
+            String peerReviewIdsJson = mapper.writeValueAsString(peerReviewMap.keySet());
             mav.addObject("workIdsJson", StringEscapeUtils.escapeEcmaScript(worksIdsJson));
             mav.addObject("affiliationIdsJson", StringEscapeUtils.escapeEcmaScript(affiliationIdsJson));
             mav.addObject("fundingIdsJson", StringEscapeUtils.escapeEcmaScript(fundingIdsJson));
+            mav.addObject("peerReviewIdsJson", StringEscapeUtils.escapeEcmaScript(peerReviewIdsJson));
             mav.addObject("isProfileEmpty", isProfileEmtpy);
             
             String creditName = "";
@@ -358,6 +370,33 @@ public class PublicProfileController extends BaseWorkspaceController {
         return null;
     }
 
+    @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/peer-reviews.json")
+    public @ResponseBody
+    List<PeerReviewForm> getPeerReviewsJson(HttpServletRequest request, @PathVariable("orcid") String orcid, @RequestParam(value = "peerReviewIds") String peerReviewIdsStr) {
+        Map<String, String> languages = lm.buildLanguageMap(localeManager.getLocale(), false);
+        List<PeerReviewForm> peerReviews = new ArrayList<PeerReviewForm>();
+        Map<String, PeerReview> peerReviewMap = peerReviewMap(orcid);
+        String[] peerReviewIds = peerReviewIdsStr.split(",");
+        for (String id : peerReviewIds) {
+            PeerReview peerReview = peerReviewMap.get(id);
+            PeerReviewForm form = PeerReviewForm.valueOf(peerReview);
+            // Set language name
+            form.setCountryForDisplay(getMessage(buildInternationalizationKey(CountryIsoEntity.class, peerReview.getOrganization().getAddress().getCountry()
+                    .name())));
+            
+            if (form.getSubjectForm() != null && form.getSubjectForm().getTitle() != null) {
+                // Set translated title language name
+                if (!(form.getSubjectForm().getTranslatedTitle() == null) && !StringUtils.isEmpty(form.getSubjectForm().getTranslatedTitle().getLanguageCode())) {
+                    String languageName = languages.get(form.getSubjectForm().getTranslatedTitle().getLanguageCode());
+                    form.getSubjectForm().getTranslatedTitle().setLanguageName(languageName);
+                }
+            }
+            
+            peerReviews.add(form);
+        }
+        return peerReviews;
+    }
+    
     public LinkedHashMap<String, Funding> fundingMap(String orcid) {
         OrcidProfile profile = orcidProfileCacheManager.retrievePublic(orcid);
         if (profile == null)
@@ -377,6 +416,13 @@ public class PublicProfileController extends BaseWorkspaceController {
         if (profile == null)
             return null;
         return activityCacheManager.pubMinWorksMap(profile);
+    }
+    
+    public LinkedHashMap<String, PeerReview> peerReviewMap(String orcid) {
+        ProfileEntity profileEntity = profileEntityCacheManager.retrieve(orcid);
+        if(profileEntity == null)
+            return null;
+        return activityCacheManager.pubPeerReviewsMap(profileEntity);
     }
     
     /**

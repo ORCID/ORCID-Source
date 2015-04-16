@@ -17,17 +17,20 @@
 package org.orcid.core.manager.impl;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.manager.ActivityCacheManager;
 import org.orcid.core.manager.OrcidProfileManager;
+import org.orcid.core.manager.PeerReviewManager;
 import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.Funding;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.jaxb.model.record.PeerReview;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Work;
@@ -37,6 +40,9 @@ public class ActivityCacheManagerImpl extends Object implements ActivityCacheMan
 
     @Resource
     protected OrcidProfileManager orcidProfileManager;
+    
+    @Resource
+    private PeerReviewManager peerReviewManager;
 
     @Cacheable(value = "pub-min-works-maps", key = "#profile.getCacheKey()")
     public LinkedHashMap<String, Work> pubMinWorksMap(OrcidProfile profile) {
@@ -50,7 +56,23 @@ public class ActivityCacheManagerImpl extends Object implements ActivityCacheMan
         }
         return workMap;
     }
-
+    
+    @Cacheable(value = "pub-peer-reviews-maps", key = "#profile.getCacheKey()")
+    public LinkedHashMap<String, PeerReview> pubPeerReviewsMap(ProfileEntity profile) {
+        LinkedHashMap<String, PeerReview> peerReviewMap = new LinkedHashMap<String, PeerReview>();
+        if (profile.getPeerReviews() != null) {
+            if (!profile.getPeerReviews().isEmpty()) {
+                List<PeerReview> peerReviews = peerReviewManager.toPeerReviewList(profile.getPeerReviews());
+                for(PeerReview peerReview : peerReviews) {
+                    if(peerReview.getVisibility().equals(org.orcid.jaxb.model.common.Visibility.PUBLIC)) {
+                        peerReviewMap.put(peerReview.getPutCode(), peerReview);
+                    }
+                }
+            }
+        }
+        return peerReviewMap;
+    }
+    
     @Cacheable(value = "pub-funding-maps", key = "#profile.getCacheKey()")
     public LinkedHashMap<String, Funding> fundingMap(OrcidProfile profile) {
         LinkedHashMap<String, Funding> fundingMap = new LinkedHashMap<String, Funding>();

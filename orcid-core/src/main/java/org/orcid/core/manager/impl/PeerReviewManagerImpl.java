@@ -111,15 +111,18 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
             peerReview.setSource(source);
         }
 
-        if (peerReviews != null) {
-            for (PeerReviewEntity entity : peerReviews) {
-                PeerReview existing = jpaJaxbPeerReviewAdapter.toPeerReview(entity);
-                if (existing.isDuplicated(peerReview)) {
-                    LOGGER.error("Trying to create a funding that is duplicated with " + entity.getId());
-                    throw new OrcidDuplicatedActivityException(localeManager.resolveMessage("api.error.duplicated"));
+        // If it is the user adding the peer review, allow him to add duplicates
+        if(!sourceEntity.getSourceId().equals(orcid)) {
+            if (peerReviews != null) {
+                for (PeerReviewEntity entity : peerReviews) {
+                    PeerReview existing = jpaJaxbPeerReviewAdapter.toPeerReview(entity);
+                    if (existing.isDuplicated(peerReview)) {
+                        LOGGER.error("Trying to create a funding that is duplicated with " + entity.getId());
+                        throw new OrcidDuplicatedActivityException(localeManager.resolveMessage("api.error.duplicated"));
+                    }
                 }
             }
-        }
+        }        
 
         PeerReviewEntity entity = jpaJaxbPeerReviewAdapter.toPeerReviewEntity(peerReview);
 
