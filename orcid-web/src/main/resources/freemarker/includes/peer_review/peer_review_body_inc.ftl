@@ -153,11 +153,196 @@
                     <!-- more info -->
                     <#include "peer_review_more_info_inc.ftl"/>
                     
+                    <!-- active row  source display -->
+                      <div class="row source-line" ng-show="group.activePutCode == peerReview.putCode.value">
+                          <div class="col-md-7 col-sm-7 col-xs-7" ng-show="editSources[group.groupId] == true">
+                              {{peerReview.sourceName}}
+                          </div>
+                          <div class="col-md-3 col-sm-3 col-xs-3" ng-show="editSources[group.groupId] == true">
+
+                            <div ng-show="editSources[group.groupId] == true">
+                                <span class="glyphicon glyphicon-check ng-hide" ng-show="peerReview.putCode.value == group.defaultPutCode"></span><span ng-show="peerReview.putCode.value == group.defaultPutCode"> <@orcid.msg 'groups.common.preferred_source' /></span>
+                                <#if !(isPublicProfile??)>
+                                    <a ng-click="peerReviewSrvc.makeDefault(group, peerReview.putCode.value); " ng-show="peerReview.putCode.value != group.defaultPutCode" class="">
+                                         <span class="glyphicon glyphicon-unchecked"></span> <@orcid.msg 'groups.common.make_preferred' />
+                                    </a>
+                                </#if>
+                            </div>
+
+                          </div>
+                          <div class="col-md-2 trash-source" ng-show="editSources[group.groupId] == true">
+                              <div ng-show="editSources[group.groupId] == true">
+                            <#if !(isPublicProfile??)>
+                                <ul class="sources-actions">
+                                    <#if RequestParameters['combine']??>
+                                        <li ng-show="canBeCombined(peerReview)">
+                                            <a class="glyphicons git_pull_request" ng-click="showCombineMatches(group.getDefault())" ng-mouseenter="showTooltip(peerReview.putCode.value+'-combineActiveDuplicates')" ng-mouseleave="hideTooltip(work.putCode.value+'-combineActiveDuplicates')"></a>
+
+                                            <div class="popover popover-tooltip top combine-activeDuplicates-popover" ng-show="showElement[peerReview.putCode.value+'-combineActiveDuplicates'] == true">
+                                                <div class="arrow"></div>
+                                                <div class="popover-content">
+                                                    <@orcid.msg 'groups.common.combine_duplicates' />
+                                                </div>
+                                            </div>
+
+
+                                        </li>
+                                    </#if>
+                                    <li> 
+                                        <@orcid.editActivityIcon
+                                            activity="peerReview"
+                                            click="openEditPeerReview(peerReview.putCode.value)"
+                                            toolTipSuffix="editToolTipSource"
+                                            toolTipClass="popover popover-tooltip top edit-activeSource-popover"
+                                         />
+                                    </li>
+                                    <li>
+                                        <a ng-click="deletePeerReviewConfirm(peerReview.putCode.value, false)"  title="<@orcid.msg 'freemarker.btnDelete' /> {{peerReview.subjectForm.title.value}}" ng-mouseenter="showTooltip(peerReview.putCode.value+'-deleteActiveSource')" ng-mouseleave="hideTooltip(work.putCode.value+'-deleteActiveSource')">
+                                            <span class="glyphicon glyphicon-trash"></span>
+                                        </a>
+
+                                        <div class="popover popover-tooltip top delete-activeSource-popover" ng-show="showElement[peerReview.putCode.value+'-deleteActiveSource'] == true">
+                                            <div class="arrow"></div>
+                                            <div class="popover-content">
+                                                <@orcid.msg 'groups.common.delete_this_source' />
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </#if>
+                        	</div>
+                          </div>
+                    </div>
                     
+                    <!-- not active row && edit sources -->
+                    <div ng-show="group.activePutCode != peerReview.putCode.value" class="row source-line">
+                        <div class="col-md-7 col-sm-7 col-xs-7">
+                            <a ng-click="group.activePutCode = peerReview.putCode.value;">
+                                {{peerReview.sourceName}}
+                            </a>
+                        </div>
+                        
+                        <div class="col-md-3 col-sm-3 col-xs-3">
+                             <#if !(isPublicProfile??)>
+                                <span class="glyphicon glyphicon-check" ng-show="peerReview.putCode.value == group.defaultPutCode"></span><span ng-show="peerReview.putCode.value == group.defaultPutCode"> <@orcid.msg 'groups.common.preferred_source' /></span>
+                                <a ng-click="peerReviewSrvc.makeDefault(group, peerReview.putCode.value); " ng-show="peerReview.putCode.value != group.defaultPutCode">
+                                   <span class="glyphicon glyphicon-unchecked"></span> <@orcid.msg 'groups.common.make_preferred' />
+                                </a>
+                            </#if>
+                        </div>
+                        <div class="col-md-2 col-sm-2 col-xs-2 trash-source">
+                            <#if !(isPublicProfile??)>
+                                <ul class="sources-actions">
+                                    <#if RequestParameters['combine']??>
+                                        <li ng-show="canBeCombined(peerReview)">
+                                            <a class="glyphicons git_pull_request" ng-click="showCombineMatches(group.getDefault())" ng-mouseenter="showTooltip(peerReview.putCode.value+'-combineInactiveDuplicates')" ng-mouseleave="hideTooltip(peerReview.putCode.value+'-combineInactiveDuplicates')"></a>
+
+                                            <div class="popover popover-tooltip top combine-inactiveDuplicates-popover" ng-show="showElement[peerReview.putCode.value+'-combineInactiveDuplicates'] == true">
+                                                <div class="arrow"></div>
+                                                <div class="popover-content">
+                                                    <@orcid.msg 'groups.common.combine_duplicates' />
+                                                </div>
+                                            </div>
+
+                                        </li>
+                                    </#if>
+                                    <li> 
+                                        <@orcid.editActivityIcon
+                                            activity="peerReview"
+                                            click="openEditPeerReview(peerReview.putCode.value)"
+                                            toolTipSuffix="editToolTipSourceActions"
+                                            toolTipClass="popover popover-tooltip top edit-inactiveSource-popover"
+                                         />
+                                    </li>
+                                    <li>
+                                        <a ng-click="deletePeerReviewConfirm(peerReview.putCode.value, false)" ng-mouseenter="showTooltip(peerReview.putCode.value+'-deleteInactiveSource')" ng-mouseleave="hideTooltip(peerReview.putCode.value+'-deleteInactiveSource')">
+                                            <span class="glyphicon glyphicon-trash" title="<@orcid.msg 'freemarker.btnDelete'/> {{peerReview.subjectForm.title.value}}"></span>
+                                        </a>
+
+                                        <div class="popover popover-tooltip top delete-inactiveSource-popover" ng-show="showElement[peerReview.putCode.value+'-deleteInactiveSource'] == true">
+                                            <div class="arrow"></div>
+                                            <div class="popover-content">
+                                               <@orcid.msg 'groups.common.delete_this_source' />
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </#if>
+                        </div>
+                    </div>
                     
-                    
-                    
-                    
+                    <!--  Bottom row -->                     
+                    <div class="row source-line" ng-hide="editSources[group.groupId] == true">                        
+                        
+                        <div class="col-md-7 col-sm-7 col-xs-7">
+                             <@orcid.msg 'groups.common.source'/>: {{peerReview.sourceName}}
+                        </div>
+                        
+                        <div class="col-md-3 col-sm-3 col-xs-3">
+                              <span class="glyphicon glyphicon-check"></span><span> <@orcid.msg 'groups.common.preferred_source' /></span> <span ng-hide="group.activitiesCount == 1">(</span><a ng-click="showSources(group)" ng-hide="group.activitiesCount == 1" ng-mouseenter="showTooltip(group.groupId+'-sources')" ng-mouseleave="hideTooltip(group.groupId+'-sources')"><@orcid.msg 'groups.common.of'/> {{group.activitiesCount}}</a><span ng-hide="group.activitiesCount == 1">)</span>
+
+                              <div class="popover popover-tooltip top sources-popover" ng-show="showElement[group.groupId+'-sources'] == true">
+                                   <div class="arrow"></div>
+                                   <div class="popover-content">
+                                       <@orcid.msg 'groups.common.sources.show_other_sources' />
+                                   </div>
+                              </div>
+                        </div>
+
+                        <div class="col-md-2 col-sm-2 col-xs-2" ng-show="group.activePutCode == peerReview.putCode.value">
+                            <ul class="sources-options" ng-cloak>
+                                <#if !(isPublicProfile??)>
+                                    <#if RequestParameters['combine']??>
+                                        <li ng-show="canBeCombined(peerReview)">
+                                            <a ng-click="showCombineMatches(group.getDefault())" title="<@orcid.msg 'groups.common.combine_duplicates' />" ng-mouseenter="showTooltip(group.groupId+'-combineDuplicates')" ng-mouseleave="hideTooltip(group.groupId+'-combineDuplicates')">
+                                                <span class="glyphicons git_pull_request"></span>
+                                            </a>
+
+                                            <div class="popover popover-tooltip top combine-duplicates-popover" ng-show="showElement[group.groupId+'-combineDuplicates'] == true">
+                                                <div class="arrow"></div>
+                                                <div class="popover-content">
+                                                    <@orcid.msg 'groups.common.combine_duplicates' />
+                                                </div>
+                                            </div>
+                                        </li>
+                                    </#if>
+
+                                    <li>
+                                        <@orcid.editActivityIcon
+                                            activity="peerReview"
+                                            click="openEditPeerReview(peerReview.putCode.value)"
+                                            toolTipSuffix="editToolTip"
+                                            toolTipClass="popover popover-tooltip top edit-source-popover"
+                                         />
+                                    </li>
+
+                                     <li ng-hide="editSources[group.groupId] == true || group.activitiesCount == 1">
+                                        <a ng-click="showSources(group)" ng-mouseenter="showTooltip(group.groupId+'-deleteGroup')" ng-mouseleave="hideTooltip(group.groupId+'-deleteGroup')">
+                                            <span class="glyphicon glyphicon-trash"></span>
+                                        </a>
+                                        <div class="popover popover-tooltip top delete-group-popover" ng-show="showElement[group.groupId+'-deleteGroup'] == true">
+                                             <div class="arrow"></div>
+                                            <div class="popover-content">
+                                               <@orcid.msg 'groups.common.delete_this_source' />
+                                            </div>
+                                        </div>
+                                     </li>
+
+                                     <li ng-show="group.activitiesCount == 1">
+                                        <a ng-click="deletePeerReviewConfirm(group.getActive().putCode.value, false)" ng-mouseenter="showTooltip(group.groupId+'-deleteSource')" ng-mouseleave="hideTooltip(group.groupId+'-deleteSource')">
+                                           <span class="glyphicon glyphicon-trash"></span>
+                                        </a>
+                                        <div class="popover popover-tooltip top delete-source-popover" ng-show="showElement[group.groupId+'-deleteSource'] == true">
+                                             <div class="arrow"></div>
+                                            <div class="popover-content">
+                                                  <@orcid.msg 'groups.common.delete_this_source' />
+                                            </div>
+                                        </div>
+                                    </li>
+                                  </#if>
+                            </ul>
+                        </div>
+                    </div>
               </li>
 		</ul>
 	</li>	
