@@ -17,7 +17,7 @@
 
 -->
 <ul ng-hide="!peerReviewSrvc.groups.length" class="workspace-peer-review workspace-body-list bottom-margin-medium" ng-cloak>	
-	<li class="bottom-margin-small workspace-border-box card" ng-repeat="group in peerReviewSrvc.groups | orderBy:sortState.predicate:sortState.reverse">
+	<li class="bottom-margin-small workspace-border-box card" ng-repeat="group in peerReviewSrvc.groups | orderBy:sortState.predicate:sortState.reverse">		
 		<ul class="sources-edit-list">
 			<!-- Header -->
              <li ng-show="editSources[group.groupId] == true" class="source-header" ng-class="{'source-active' : editSources[group.groupId] == true}" ng-model="group.activities">
@@ -72,7 +72,7 @@
              </li>
              <!-- End of Header -->
              
-             <li ng-repeat="peerReview in group.activities" ng-show="group.activePutCode == peerReview.putCode.value || editSources[group.groupId] == true" orcid-put-code="{{peerReview.putCode.value}}">
+             <li ng-repeat="peerReview in group.activities" ng-show="group.activePutCode == peerReview.putCode.value || editSources[group.groupId] == true" orcid-put-code="{{peerReview.putCode.value}}">             		
                     <!-- active row summary info -->
                     <div class="row" ng-show="group.activePutCode == peerReview.putCode.value">
                         <div class="col-md-9 col-sm-9 col-xs-8">
@@ -176,7 +176,7 @@
                                 <ul class="sources-actions">
                                     <#if RequestParameters['combine']??>
                                         <li ng-show="canBeCombined(peerReview)">
-                                            <a class="glyphicons git_pull_request" ng-click="showCombineMatches(group.getDefault())" ng-mouseenter="showTooltip(peerReview.putCode.value+'-combineActiveDuplicates')" ng-mouseleave="hideTooltip(work.putCode.value+'-combineActiveDuplicates')"></a>
+                                            <a class="glyphicons git_pull_request" ng-click="showCombineMatches(group.getDefault())" ng-mouseenter="showTooltip(peerReview.putCode.value+'-combineActiveDuplicates')" ng-mouseleave="hideTooltip(peerReview.putCode.value+'-combineActiveDuplicates')"></a>
 
                                             <div class="popover popover-tooltip top combine-activeDuplicates-popover" ng-show="showElement[peerReview.putCode.value+'-combineActiveDuplicates'] == true">
                                                 <div class="arrow"></div>
@@ -197,7 +197,7 @@
                                          />
                                     </li>
                                     <li>
-                                        <a ng-click="deletePeerReviewConfirm(peerReview.putCode.value, false)"  title="<@orcid.msg 'freemarker.btnDelete' /> {{peerReview.subjectForm.title.value}}" ng-mouseenter="showTooltip(peerReview.putCode.value+'-deleteActiveSource')" ng-mouseleave="hideTooltip(work.putCode.value+'-deleteActiveSource')">
+                                        <a ng-click="deletePeerReviewConfirm(peerReview.putCode.value, false)"  title="<@orcid.msg 'freemarker.btnDelete' /> {{peerReview.subjectForm.title.value}}" ng-mouseenter="showTooltip(peerReview.putCode.value+'-deleteActiveSource')" ng-mouseleave="hideTooltip(peerReview.putCode.value+'-deleteActiveSource')">
                                             <span class="glyphicon glyphicon-trash"></span>
                                         </a>
 

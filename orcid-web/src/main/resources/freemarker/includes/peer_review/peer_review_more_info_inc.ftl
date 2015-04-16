@@ -22,7 +22,7 @@
 		<span class="dotted-bar"></span>
 		<div class="row">
 			<!-- Translated title -->
-			<div class="col-md-6" ng-show="worksSrvc.details[work.putCode.value].translatedTitle.content" ng-cloak>
+			<div class="col-md-6" ng-show="peerReviewSrvc.details[peerReview.putCode.value].translatedTitle.content" ng-cloak>
 				<div class="bottomBuffer">
 					<strong><@orcid.msg
 						'manual_work_form_contents.labeltranslatedtitle'/></strong> <span><i>({{worksSrvc.details[work.putCode.value].translatedTitle.languageName}})</i></span>

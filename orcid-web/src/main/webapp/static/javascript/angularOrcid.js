@@ -4780,7 +4780,31 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
     $scope.showDetailsMouseClick = function(groupId, $event){
     	$event.stopPropagation();
     	$scope.showDetails[groupId] = !$scope.showDetails[groupId];
-    }
+    };
+    
+    $scope.deletePeerReviewConfirm = function(putCode, deleteGroup) {
+        $scope.deletePutCode = putCode;
+        $scope.deleteGroup = deleteGroup;
+        var peerReview = peerReviewSrvc.getPeerReview(putCode);
+        if (peerReview.subjectForm.title)
+            $scope.fixedTitle = peerReview.subjectForm.title.value;
+        else $scope.fixedTitle = '';
+        var maxSize = 100;
+        if($scope.fixedTitle.length > maxSize)
+            $scope.fixedTitle = $scope.fixedTitle.substring(0, maxSize) + '...';
+        $.colorbox({
+            html : $compile($('#delete-peer-review-modal').html())($scope),
+            onComplete: function() {$.colorbox.resize();}
+        });
+    };
+    
+    $scope.deleteByPutCode = function(putCode, deleteGroup) {
+        if (deleteGroup)
+           peerReviewSrvc.deleteGroupPeerReview(putCode);
+        else
+        	peerReviewSrvc.deletePeerReview(putCode);
+        $.colorbox.close();
+    };
     
     //Init
     $scope.peerReviewSrvc.loadAbbrPeerReviews(peerReviewSrvc.constants.access_type.USER);
@@ -4979,26 +5003,27 @@ orcidNgModule.factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
                     }
                 while (rmGroups.length > 0) 
                 	peerReviewSrvc.groups.splice(rmGroups.pop(),1);
-                peerReviewSrvc.removeWorks(rmPeerReview);
+                peerReviewSrvc.removePeerReview(rmPeerReview);
             },
             deletePeerReview: function(putCode) {
             	peerReviewSrvc.removePeerReview([putCode], function() {peerReviewSrvc.loadAbbrPeerReview(peerReviewSrvc.constants.access_type.USER);});
             },
             makeDefault: function(group, putCode) {
-                group.makeDefault(putCode);
+            	group.makeDefault(putCode);
                 $.ajax({
-                    url: getBaseUri() + '/peer-review/updateToMaxDisplay.json?putCode=' + putCode,
+                    url: getBaseUri() + '/peer-reviews/updateToMaxDisplay.json?putCode=' + putCode,
+                    type: 'GET',
                     dataType: 'json',
                     success: function(data) {
                     }
                 }).fail(function(){
                     // something bad is happening!
-                    console.log("some bad is hppending");
+                    console.log("Error: peerReviewSrvc.makeDefault method");
                 });
             },
             removePeerReview: function(putCodes,callback) {
                 $.ajax({
-                    url: getBaseUri() + '/peer-review/' + putCodes.splice(0,150).join(),
+                    url: getBaseUri() + '/peer-reviews/' + putCodes.splice(0,150).join(),
                     type: 'DELETE',
                     contentType: 'application/json;charset=UTF-8',
                     dataType: 'json',
