@@ -17,18 +17,61 @@
 
 -->
 
-<div class="more-info" ng-show="showDetails[group.groupId] && group.activePutCode == peerReview.putCode.value">
-	<div class="content" ng-hide="worksSrvc.details[work.putCode.value] == undefined">
+<div class="more-info" ng-show="group.activePutCode == peerReview.putCode.value && showDetails[group.groupId] == true">
+	<div class="content">
 		<span class="dotted-bar"></span>
 		<div class="row">
-			<!-- Translated title -->
-			<div class="col-md-6" ng-show="peerReviewSrvc.details[peerReview.putCode.value].translatedTitle.content" ng-cloak>
+			<!-- Role -->
+			<div class="col-md-6" ng-show="peerReview.role.value" ng-cloak>
 				<div class="bottomBuffer">
-					<strong><@orcid.msg
-						'manual_work_form_contents.labeltranslatedtitle'/></strong> <span><i>({{worksSrvc.details[work.putCode.value].translatedTitle.languageName}})</i></span>
-					<div>{{worksSrvc.details[work.putCode.value].translatedTitle.content}}</div>				
+					<strong>Role: </strong>
+					<div>{{peerReview.role.value.toLowerCase()}}</div>				
 				</div>
 			</div>
+			<!-- Type -->
+			<div class="col-md-6" ng-show="peerReview.type.value" ng-cloak>
+				<div class="bottomBuffer">
+					<strong>Type: </strong>
+					<div>{{peerReview.type.value.toLowerCase()}}</div>				
+				</div>
+			</div>
+			<!-- Institution -->
+			<div class="col-md-6" ng-show="peerReview.orgName.value" ng-cloak>
+				<div class="bottomBuffer">
+					<strong>Institution: </strong>
+					<div>{{peerReview.orgName.value}}</div>				
+				</div>
+			</div>
+			<!-- City -->
+			<div class="col-md-6" ng-show="peerReview.city.value" ng-cloak>
+				<div class="bottomBuffer">
+					<strong>City: </strong>
+					<div>{{peerReview.city.value}}</div>				
+				</div>
+			</div>
+			<!-- Region -->
+			<div class="col-md-6" ng-show="peerReview.region.value" ng-cloak>
+				<div class="bottomBuffer">
+					<strong>Region: </strong>
+					<div>{{peerReview.region.value}}</div>				
+				</div>
+			</div>
+			<!-- Country -->
+			<div class="col-md-6" ng-show="peerReview.country.value" ng-cloak>
+				<div class="bottomBuffer">
+					<strong>Country: </strong>
+					<div>{{peerReview.country.value}}</div>				
+				</div>
+			</div>
+			<!-- External Identifiers -->
+			<div class="col-md-6" ng-show="peerReview.subjectForm.workExternalIdentifiers[0].workExternalIdentifierId.value != null" ng-cloak>
+				<div class="bottomBuffer">
+					<strong>Subject External Identifiers: </strong><br/>
+					<span ng-repeat='ie in peerReview.subjectForm.workExternalIdentifiers'><span
+		             	ng-bind-html='ie | workExternalIdentifierHtml:$first:$last:peerReview.subjectForm.workExternalIdentifiers.length'></span>
+		            </span>
+		        </div>
+		   </div>
 		
 		
 		</div>		
