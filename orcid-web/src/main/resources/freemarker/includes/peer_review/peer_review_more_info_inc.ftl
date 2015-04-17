@@ -60,7 +60,7 @@
 			<div class="col-md-6" ng-show="peerReview.country.value" ng-cloak>
 				<div class="bottomBuffer">
 					<strong>Country: </strong>
-					<div>{{peerReview.country.value}}</div>				
+					<div>{{peerReview.countryForDisplay}}</div>				
 				</div>
 			</div>
 			<!-- External Identifiers -->
