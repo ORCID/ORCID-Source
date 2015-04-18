@@ -1,0 +1,42 @@
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2014 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+            
+    <changeSet id="SET-DEFAULT-VALUE-ON-VISIBILITY-FIELDS" author="amontenegro">
+        <addDefaultValue columnDataType="boolean" columnName="biography_visibility" defaultValueBoolean="false" tableName="profile"/>
+        <addDefaultValue columnDataType="boolean" columnName="keywords_visibility" defaultValueBoolean="false" tableName="profile"/>
+        <addDefaultValue columnDataType="boolean" columnName="external_identifiers_visibility" defaultValueBoolean="false" tableName="profile"/>
+        <addDefaultValue columnDataType="boolean" columnName="researcher_urls_visibility" defaultValueBoolean="false" tableName="profile"/>
+        <addDefaultValue columnDataType="boolean" columnName="other_names_visibility" defaultValueBoolean="false" tableName="profile"/>
+        <addDefaultValue columnDataType="boolean" columnName="credit_name_visibility" defaultValueBoolean="false" tableName="profile"/>
+        <addDefaultValue columnDataType="boolean" columnName="profile_address_visibility" defaultValueBoolean="false" tableName="profile"/>
+    </changeSet>
+    
+    <changeSet id="SET-NULL-TO-PRIVATE" author="amontenegro">
+    	<sql>update profile set biography_visibility='PRIVATE' where biography_visibility is NULL</sql>
+    	<sql>update profile set keywords_visibility='PRIVATE' where keywords_visibility is NULL</sql>
+    	<sql>update profile set external_identifiers_visibility='PRIVATE' where external_identifiers_visibility is NULL</sql>
+    	<sql>update profile set researcher_urls_visibility='PRIVATE' where researcher_urls_visibility is NULL</sql>
+    	<sql>update profile set other_names_visibility='PRIVATE' where other_names_visibility is NULL</sql>
+    	<sql>update profile set credit_name_visibility='PRIVATE' where credit_name_visibility is NULL</sql>
+    	<sql>update profile set profile_address_visibility='PRIVATE' where profile_address_visibility is NULL</sql>    	
+    </changeSet>
+    
+</databaseChangeLog>
