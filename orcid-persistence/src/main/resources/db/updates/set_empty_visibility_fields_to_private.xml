@@ -19,7 +19,7 @@
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
             
-    <changeSet id="SET-DEFAULT-VALUE-ON-VISIBILITY-FIELDS" author="amontenegro">
+    <changeSet id="SET-DEFAULT-VALUE-ON-VISIBILITY-FIELDS" author="amontenegro" dbms="postgresql">
         <addDefaultValue columnDataType="boolean" columnName="biography_visibility" defaultValueBoolean="false" tableName="profile"/>
         <addDefaultValue columnDataType="boolean" columnName="keywords_visibility" defaultValueBoolean="false" tableName="profile"/>
         <addDefaultValue columnDataType="boolean" columnName="external_identifiers_visibility" defaultValueBoolean="false" tableName="profile"/>
