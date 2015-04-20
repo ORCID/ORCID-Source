@@ -378,6 +378,12 @@ sortPredicateMap[GroupedActivities.FUNDING]['type'] = ['getDefault().fundingType
 sortPredicateMap[GroupedActivities.AFFILIATION] = {};
 sortPredicateMap[GroupedActivities.AFFILIATION]['date'] = ['-dateSortString', 'title'];
 sortPredicateMap[GroupedActivities.AFFILIATION]['title'] = ['title', '-dateSortString'];
+
+sortPredicateMap[GroupedActivities.PEER_REVIEW] = {};
+sortPredicateMap[GroupedActivities.PEER_REVIEW]['date'] = ['-dateSortString', 'title','getDefault().type.value'];
+sortPredicateMap[GroupedActivities.PEER_REVIEW]['title'] = ['title', '-dateSortString','getDefault().type.value'];
+sortPredicateMap[GroupedActivities.PEER_REVIEW]['type'] = ['getDefault().type.value','title', '-dateSortString'];
+
 ActSortState.prototype.predicateMap = sortPredicateMap;
 
 
@@ -4577,6 +4583,11 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
 	$scope.editTranslatedTitle = false;
 	$scope.editSources = {};
 	$scope.showDetails = {};
+	$scope.sortState = new ActSortState(GroupedActivities.PEER_REVIEW);
+    
+    $scope.sort = function(key) {
+        $scope.sortState.sortBy(key);
+    };
 	
 	$scope.addPeerReviewModal = function(data){
 		if (data == undefined) {
@@ -4818,6 +4829,9 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
             return true;
         return false;
     };
+    
+    
+    
     
     
     //Init

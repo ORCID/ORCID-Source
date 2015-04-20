@@ -258,9 +258,14 @@ a {
 	cursor: pointer;
 }
 
-a:hover {
+a:hover, a:active {
 	color: #a6ce39;
 	text-decoration: inherit;
+}
+
+a:visited{
+	text-decoration: none;
+	color: #338caf;
 }
 
 .aside ul,.header ul,.footer ul,.well ul {
