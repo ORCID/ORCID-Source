@@ -119,7 +119,6 @@ GroupedActivities.prototype.consistentVis = function() {
 
 GroupedActivities.prototype.getIdentifiersPath = function() {
     if (this.type == GroupedActivities.ABBR_WORK) return 'workExternalIdentifiers';
-    if (this.type == GroupedActivities.PEER_REVIEW) return 'externalIdentifiers';
     return 'externalIdentifiers';
 };
 
@@ -4579,18 +4578,22 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
 	$scope.editSources = {};
 	$scope.showDetails = {};
 	
-	$scope.addPeerReviewModal = function(){        
-    	peerReviewSrvc.getBlankPeerReview(function(data) {
-	        $scope.editPeerReview = data;
-	        $scope.$apply(function() {                    
-	            $scope.showAddPeerReviewModal();
-	            $scope.bindTypeaheadForOrgs();
-	        });
-	    });
-	    //$scope.showAddPeerReviewModal();        
+	$scope.addPeerReviewModal = function(data){
+		if (data == undefined) {
+	    	peerReviewSrvc.getBlankPeerReview(function(data) {
+		        $scope.editPeerReview = data;
+		        $scope.$apply(function() {                    
+		            $scope.showAddPeerReviewModal();
+		            $scope.bindTypeaheadForOrgs();
+		        });
+		    });
+		}else{
+			$scope.editPeerReview = data;
+			$scope.showAddPeerReviewModal();	
+		}       
     };
     
-    $scope.showAddPeerReviewModal = function(){
+    $scope.showAddPeerReviewModal = function(data){
         $scope.editTranslatedTitle = false;
     	$.colorbox({
             scrolling: true,
@@ -4603,7 +4606,7 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
             },
             onClosed: function() {
                 //$scope.closeAllMoreInfo();
-                $scope.peerReviewSrvc.loadAbbrPeerReviews(peerReviewSrvc.constants.access_type.USER);
+                $scope.peerReviewSrvc.loadPeerReviews(peerReviewSrvc.constants.access_type.USER);
             }
         });
     };
@@ -4618,7 +4621,7 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
                 	    $scope.addingPeerReview = false;
                         $scope.$apply();
                         $.colorbox.close();
-                        $scope.peerReviewSrvc.loadAbbrPeerReviews(peerReviewSrvc.constants.access_type.USER);                    
+                        $scope.peerReviewSrvc.loadPeerReviews(peerReviewSrvc.constants.access_type.USER);                    
                 } else {
                     $scope.editPeerReview = data;
                     commonSrvc.copyErrorsLeft($scope.editPeerReview, data);
@@ -4632,6 +4635,10 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
                 console.log("error creating peer review");
             }
         );
+    };
+    
+    $scope.openEditPeerReview = function(putCode){
+    	peerReviewSrvc.getEditable(putCode, function(data) {$scope.addPeerReviewModal(data);});        
     };
     
     $scope.closeModal = function() {
@@ -4812,14 +4819,9 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
         return false;
     };
     
-    $scope.openEditPeerReview = function(putCode){
-        console.log('Not implemented yet');        
-    };
-    
-    
     
     //Init
-    $scope.peerReviewSrvc.loadAbbrPeerReviews(peerReviewSrvc.constants.access_type.USER);
+    $scope.peerReviewSrvc.loadPeerReviews(peerReviewSrvc.constants.access_type.USER);
     
 }]);
 
@@ -4844,10 +4846,11 @@ orcidNgModule.factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
                         $rootScope.$apply();
                     }
                 }).fail(function() {
-                    console.log("Error fetching blank work");
+                    console.log("Error fetching blank Peer Review");
                 });                
             },
             postPeerReview: function(peer_review, successFunc, failFunc) {
+            	console.log(peer_review);
             	$.ajax({
                     url: getBaseUri() + '/peer-reviews/peer-review.json',
                     contentType: 'application/json;charset=UTF-8',
@@ -4856,37 +4859,21 @@ orcidNgModule.factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
                     data: angular.toJson(peer_review),
                     success: function(data) {
                     	successFunc(data);
-                        console.log(data);
                     }
-                }).fail(function(){
-                    failFunc();
+                }).fail(function(data){
+                    failFunc(data);
+                    console.log(data);
                 });
-    		},    		
-    		getDetails: function(putCode, type, callback) {
-                if (type == peerReviewSrvc.constants.access_type.USER)
-                    var url = getBaseUri() + '/peer-reviews/get-peer-reviews.json?peerReviewIds=';
-                else // use the anonymous url
-                    var url = getBaseUri() + '/' + orcidVar.orcidId + '/get-peer-reviews.json?peerReviewIds='; // public
-                if(peerReviewSrvc.details[putCode] == undefined) {
-                    $.ajax({
-                        url: url + putCode,
-                        dataType: 'json',
-                        success: function(data) {
-                            $rootScope.$apply(function () {                                
-                                removeBadExternalIdentifiers(data);                                
-                                peerReviewSrvc.details[putCode] = data;
-                                if (callback != undefined) callback(peerReviewSrvc.details[putCode]);
-                            });
-                        }
-                    }).fail(function(){
-                        // something bad is happening!
-                        console.log("error fetching works");
-                    });
-                } else {
-                    if (callback != undefined) callback(peerReviewSrvc.details[putCode]);
-                };
-            },                        
-    		loadAbbrPeerReviews: function(access_type) {
+    		},
+    		createNew: function(peerReview) {
+                var cloneF = JSON.parse(JSON.stringify(peerReview));
+                cloneF.source = null;
+                cloneF.putCode = null;
+                for (var idx in cloneF.externalIdentifiers)
+                    cloneF.externalIdentifiers[idx].putCode = null;
+                return cloneF;
+            },                   
+    		loadPeerReviews: function(access_type) {
     			if (access_type == peerReviewSrvc.constants.access_type.ANONYMOUS) {
     				peerReviewSrvc.peerReviewsToAddIds = orcidVar.peerReviewIds;
     				peerReviewSrvc.addAbbrPeerReviewToScope(peerReviewSrvc.constants.access_type.ANONYMOUS);
@@ -4955,23 +4942,25 @@ orcidNgModule.factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
                 }
                 return null;
             },
-            /*
-            getGroupDetails: function(putCode, type, callback) {
-                var group = peerReviewSrvc.getGroup(putCode);
-                var needsLoading =  new Array();
-                for (var idx in group.activities) {
-                    needsLoading.push(group.activities[idx].putCode.value)
-                }
-
-                var popFunct = function () {
-                    if (needsLoading.length > 0)
-                    	peerReviewSrvc.getDetails(needsLoading.pop(), type, popFunct);
-                    else if (callback != undefined)
-                        callback();
-                };
-                popFunct();
+            getEditable: function(putCode, callback) {
+                // first check if they are the current source
+                var peerReview = peerReviewSrvc.getPeerReview(putCode);
+                if (peerReview.source == orcidVar.orcidId)
+                    callback(peerReview);
+                else {
+                    var bestMatch = null;
+                    var group = peerReviewSrvc.getGroup(putCode);
+                    for (var idx in group.activitiess) {
+                        if (group[idx].source == orcidVar.orcidId) {
+                            bestMatch = callback(group[idx]);
+                            break;
+                        }
+                    }
+                    if (bestMatch == null) 
+                        bestMatch = peerReviewSrvc.createNew(peerReview);
+                    	callback(bestMatch);
+                	};
             },
-            */
             getPeerReview: function(putCode) {
                 for (var idx in peerReviewSrvc.groups) {
                         if (peerReviewSrvc.groups[idx].hasPut(putCode))
@@ -4995,7 +4984,7 @@ orcidNgModule.factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
                 peerReviewSrvc.removePeerReview(rmPeerReview);
             },
             deletePeerReview: function(putCode) {
-            	peerReviewSrvc.removePeerReview([putCode], function() {peerReviewSrvc.loadAbbrPeerReviews(peerReviewSrvc.constants.access_type.USER);});
+            	peerReviewSrvc.removePeerReview([putCode], function() {peerReviewSrvc.loadPeerReviews(peerReviewSrvc.constants.access_type.USER);});
             },
             makeDefault: function(group, putCode) {
             	group.makeDefault(putCode);
