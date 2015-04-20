@@ -140,19 +140,23 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
 
     @Override
     public PeerReview updatePeerReview(String orcid, PeerReview peerReview) {
-        PeerReviewEntity entity = peerReviewDao.getPeerReview(orcid, peerReview.getPutCode());
-        Visibility originalVisibility = entity.getVisibility();
-        SourceEntity existingSource = entity.getSource();
+        PeerReviewEntity existingEntity = peerReviewDao.getPeerReview(orcid, peerReview.getPutCode());
+        PeerReviewEntity updatedEntity = new PeerReviewEntity();
+        Visibility originalVisibility = existingEntity.getVisibility();
+        SourceEntity existingSource = existingEntity.getSource();
         orcidSecurityManager.checkSource(existingSource);
-        jpaJaxbPeerReviewAdapter.toPeerReviewEntity(peerReview, entity);
-        entity.setVisibility(originalVisibility);
-        entity.setSource(existingSource);
-
+        jpaJaxbPeerReviewAdapter.toPeerReviewEntity(peerReview, updatedEntity);
+        updatedEntity.setProfile(new ProfileEntity(orcid));
+        updatedEntity.setVisibility(originalVisibility);
+        updatedEntity.setSource(existingSource);
+        
+        
         OrgEntity updatedOrganization = orgManager.getOrgEntity(peerReview);
-        entity.setOrg(updatedOrganization);
+        updatedEntity.setOrg(updatedOrganization);
 
-        entity = peerReviewDao.merge(entity);
-        return jpaJaxbPeerReviewAdapter.toPeerReview(entity);
+        updatedEntity = peerReviewDao.merge(updatedEntity); 
+        
+        return jpaJaxbPeerReviewAdapter.toPeerReview(updatedEntity);
     }
 
     @Override
