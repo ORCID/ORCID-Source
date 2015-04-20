@@ -160,7 +160,7 @@ public class PeerReviewsController extends BaseWorkspaceController {
         subjectForm.setUrl(Text.valueOf(StringUtils.EMPTY));
         subjectForm.getUrl().setRequired(false);
         subjectForm.setWorkExternalIdentifiers(emptyExtIdsList);
-        subjectForm.setWorkType(Text.valueOf(StringUtils.EMPTY));
+        subjectForm.setWorkType(Text.valueOf(StringUtils.EMPTY));        
 
         form.setSubjectForm(subjectForm);
         return form;
@@ -450,9 +450,11 @@ public class PeerReviewsController extends BaseWorkspaceController {
 
     @RequestMapping(value = "/completionDateValidate.json", method = RequestMethod.POST)
     public @ResponseBody PeerReviewForm validateCompletionDate(@RequestBody PeerReviewForm peerReview) {
-        peerReview.getCompletionDate().setErrors(new ArrayList<String>());
-        if (!PojoUtil.isEmpty(peerReview.getCompletionDate().getMonth()) && PojoUtil.isEmpty(peerReview.getCompletionDate().getYear())) {
-            setError(peerReview.getCompletionDate(), "common.dates.invalid");
+        if(peerReview.getCompletionDate() != null) {
+            peerReview.getCompletionDate().setErrors(new ArrayList<String>());
+            if (!PojoUtil.isEmpty(peerReview.getCompletionDate().getMonth()) && PojoUtil.isEmpty(peerReview.getCompletionDate().getYear())) {
+                setError(peerReview.getCompletionDate(), "common.dates.invalid");
+            }
         }
         return peerReview;
     }
@@ -469,7 +471,7 @@ public class PeerReviewsController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = "/subject/typeValidate.json", method = RequestMethod.POST)
-    public @ResponseBody PeerReviewForm validateSubjectType(PeerReviewForm peerReview) {
+    public @ResponseBody PeerReviewForm validateSubjectType(@RequestBody PeerReviewForm peerReview) {
         peerReview.getSubjectForm().getWorkType().setErrors(new ArrayList<String>());
         if (PojoUtil.isEmpty(peerReview.getSubjectForm().getWorkType())) {
             setError(peerReview.getSubjectForm().getWorkType(), "peer_review.subject.work_type.not_blank");
