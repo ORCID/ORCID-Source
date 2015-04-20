@@ -72,6 +72,13 @@
 		            </span>
 		        </div>
 		   </div>
+		   <!-- Subject URL -->
+			<div class="col-md-6" ng-show="peerReview.subjectForm.url.value" ng-cloak>
+				<div class="bottomBuffer">
+					<strong>Subject URL: </strong><br/>
+					<div><a href="{{peerReview.subjectForm.url.value}}" target="_blank">{{peerReview.subjectForm.url.value}}</a></div>			
+		        </div>
+		   </div>
 		
 		
 		</div>		
