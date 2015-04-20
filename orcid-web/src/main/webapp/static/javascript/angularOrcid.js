@@ -4860,9 +4860,8 @@ orcidNgModule.factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
                     success: function(data) {
                     	successFunc(data);
                     }
-                }).fail(function(data){
-                    failFunc(data);
-                    console.log(data);
+                }).fail(function(){
+                    failFunc();
                 });
     		},
     		createNew: function(peerReview) {
