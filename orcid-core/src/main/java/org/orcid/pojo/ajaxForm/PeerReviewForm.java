@@ -245,7 +245,7 @@ public class PeerReviewForm implements ErrorsInterface, Serializable {
         PeerReview peerReview = new PeerReview();
         // Put Code
         if (!PojoUtil.isEmpty(putCode)) {
-            peerReview.setPutCode(null);
+            peerReview.setPutCode(putCode.getValue());
         }
         // Visibility
         if (visibility != null) {

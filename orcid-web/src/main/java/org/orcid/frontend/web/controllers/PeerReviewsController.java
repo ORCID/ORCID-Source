@@ -101,7 +101,7 @@ public class PeerReviewsController extends BaseWorkspaceController {
      * Returns a blank peer review form
      * */
     @RequestMapping(value = "/peer-review.json", method = RequestMethod.GET)
-    public @ResponseBody PeerReviewForm getEmptyPeerReview() {        
+    public @ResponseBody PeerReviewForm getEmptyPeerReview() {
         Date emptyDate = new Date();
         emptyDate.setDay(StringUtils.EMPTY);
         emptyDate.setMonth(StringUtils.EMPTY);
@@ -272,9 +272,18 @@ public class PeerReviewsController extends BaseWorkspaceController {
         copyErrors(peerReview.getCountry(), peerReview);
         copyErrors(peerReview.getUrl(), peerReview);
         copyErrors(peerReview.getCompletionDate(), peerReview);
-        copyErrors(peerReview.getSubjectForm().getWorkType(), peerReview);
-        copyErrors(peerReview.getSubjectForm().getTitle(), peerReview);
-        copyErrors(peerReview.getSubjectForm().getUrl(), peerReview);
+        if (peerReview.getSubjectForm() != null) {
+            PeerReviewSubjectForm subjectForm = peerReview.getSubjectForm();
+            if (!PojoUtil.isEmpty(subjectForm.getWorkType())) {
+                copyErrors(subjectForm.getWorkType(), peerReview);
+            }
+            if (!PojoUtil.isEmpty(subjectForm.getTitle())) {
+                copyErrors(subjectForm.getTitle(), peerReview);
+            }
+            if (!PojoUtil.isEmpty(subjectForm.getUrl())) {
+                copyErrors(subjectForm.getUrl(), peerReview);
+            }
+        }
 
         // If there are no errors, persist to DB
         if (peerReview.getErrors().isEmpty()) {
@@ -299,8 +308,8 @@ public class PeerReviewsController extends BaseWorkspaceController {
             if (peerReview != null) {
                 result = PeerReviewForm.valueOf(peerReview);
             }
-        } catch(NoResultException nre) {
-            //There is no peer review with that id, just return a null one
+        } catch (NoResultException nre) {
+            // There is no peer review with that id, just return a null one
         }
         return result;
     }
@@ -316,18 +325,16 @@ public class PeerReviewsController extends BaseWorkspaceController {
         peerReviewManager.removePeerReview(getEffectiveUserOrcid(), peerReview.getPutCode().getValue());
         return peerReview;
     }
-    
+
     @RequestMapping(value = "/{peerReviewIdsStr}", method = RequestMethod.DELETE)
-    public @ResponseBody
-    List<String> removePeerReviews(@PathVariable("peerReviewIdsStr") String peerReviewIdsStr) {
+    public @ResponseBody List<String> removePeerReviews(@PathVariable("peerReviewIdsStr") String peerReviewIdsStr) {
         List<String> peerReviewIds = Arrays.asList(peerReviewIdsStr.split(","));
         String orcid = getEffectiveUserOrcid();
-        
-        for(String id : peerReviewIds) {
+
+        for (String id : peerReviewIds) {
             peerReviewManager.removePeerReview(orcid, id);
         }
-        
-        
+
         return peerReviewIds;
     }
 
@@ -358,12 +365,12 @@ public class PeerReviewsController extends BaseWorkspaceController {
                 }
             }
         }
-        
-        if(updatedExtIds.isEmpty()) {
-            WorkExternalIdentifier wei = new WorkExternalIdentifier();            
+
+        if (updatedExtIds.isEmpty()) {
+            WorkExternalIdentifier wei = new WorkExternalIdentifier();
             updatedExtIds.add(wei);
         }
-        
+
         peerReview.setExternalIdentifiers(updatedExtIds);
     }
 
@@ -382,12 +389,12 @@ public class PeerReviewsController extends BaseWorkspaceController {
                 }
             }
         }
-        
-        if(updatedExtIds.isEmpty()) {
-            WorkExternalIdentifier wei = new WorkExternalIdentifier();            
+
+        if (updatedExtIds.isEmpty()) {
+            WorkExternalIdentifier wei = new WorkExternalIdentifier();
             updatedExtIds.add(wei);
         }
-        
+
         peerReview.getSubjectForm().setWorkExternalIdentifiers(updatedExtIds);
     }
 
@@ -462,17 +469,20 @@ public class PeerReviewsController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = "/subject/typeValidate.json", method = RequestMethod.POST)
-    public @ResponseBody PeerReviewForm validateSubjectType(PeerReviewForm peerReview) {        
+    public @ResponseBody PeerReviewForm validateSubjectType(PeerReviewForm peerReview) {
         peerReview.getSubjectForm().getWorkType().setErrors(new ArrayList<String>());
         if (PojoUtil.isEmpty(peerReview.getSubjectForm().getWorkType())) {
             setError(peerReview.getSubjectForm().getWorkType(), "peer_review.subject.work_type.not_blank");
-        }        
+        }
         return peerReview;
     }
 
     @RequestMapping(value = "/subject/urlValidate.json", method = RequestMethod.POST)
-    public @ResponseBody PeerReviewForm validateSubjectUrl(@RequestBody PeerReviewForm peerReview) {        
-        validateUrl(peerReview.getSubjectForm().getUrl());
+    public @ResponseBody PeerReviewForm validateSubjectUrl(@RequestBody PeerReviewForm peerReview) {
+        if (peerReview != null && peerReview.getSubjectForm() != null && peerReview.getSubjectForm().getUrl() != null) {
+            peerReview.getSubjectForm().getUrl().setErrors(new ArrayList<String>());
+            validateUrl(peerReview.getSubjectForm().getUrl());
+        }
         return peerReview;
     }
 
@@ -549,20 +559,19 @@ public class PeerReviewsController extends BaseWorkspaceController {
     public @ResponseBody boolean updateToMaxDisplay(HttpServletRequest request, @RequestParam(value = "putCode") String putCode) {
         return peerReviewManager.updateToMaxDisplay(getEffectiveUserOrcid(), putCode);
     }
-        
+
     /**
      * updates visibility of a peer review
      * */
     @RequestMapping(value = "/{peerReviewIdsStr}/visibility/{visibilityStr}", method = RequestMethod.GET)
-    public @ResponseBody
-    ArrayList<Long>  updateVisibilitys(@PathVariable("peerReviewIdsStr") String peerReviewIdsStr,@PathVariable("visibilityStr") String visibilityStr) {
+    public @ResponseBody ArrayList<Long> updateVisibilitys(@PathVariable("peerReviewIdsStr") String peerReviewIdsStr, @PathVariable("visibilityStr") String visibilityStr) {
         ArrayList<Long> peerReviewIds = new ArrayList<Long>();
-        if(PojoUtil.isEmpty(peerReviewIdsStr)) {
+        if (PojoUtil.isEmpty(peerReviewIdsStr)) {
             return peerReviewIds;
         }
         // make sure this is a users work
-        String orcid = getEffectiveUserOrcid();        
-        for (String peerReviewId: peerReviewIdsStr.split(","))
+        String orcid = getEffectiveUserOrcid();
+        for (String peerReviewId : peerReviewIdsStr.split(","))
             peerReviewIds.add(new Long(peerReviewId));
         peerReviewManager.updateVisibilities(orcid, peerReviewIds, Visibility.fromValue(visibilityStr));
         return peerReviewIds;
