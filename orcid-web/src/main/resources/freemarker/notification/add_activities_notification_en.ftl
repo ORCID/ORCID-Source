@@ -77,7 +77,7 @@
 	<a class="btn btn-primary" href="${notification.authorizationUrl.uri}" target="_blank">
 		Add items
 	</a>  
-	<a class="btn btn-default close-button" href="" ng-click="archive('${notification.putCode?c}')" type="reset">
+	<a class="btn btn-default" href="" ng-click="archive('${notification.putCode?c}')" type="reset">
 		Archive
 	</a>                                                     
 </#if>
