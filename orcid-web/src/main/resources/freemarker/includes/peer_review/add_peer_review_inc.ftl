@@ -25,10 +25,10 @@
 					<div class="col-md-9 col-sm-8 col-xs-9">	
 						<h1 class="lightbox-title pull-left">						
 							<div ng-show="editPeerReview.putCode.value != ''" ng-cloak>
-								Edit Peer Review
+								<@orcid.msg 'peer_review.edit'/>
 							</div>						 
 							<div ng-show="editPeerReview.putCode.value == ''" ng-cloak>
-								Add Peer Review
+								<@orcid.msg 'peer_review.add'/>
 							</div>
 						</h1>
 					</div>			
@@ -40,7 +40,7 @@
 					<div class="col-md-6 col-sm-6 col-xs-12">	
 						<!-- ROLE -->
 						<div class="control-group">
-				    		<label class="relative">Role</label>			    		
+				    		<label class="relative"><@orcid.msg 'peer_review.role'/></label>			    		
 				    		<div class="relative">
 					    		<select id="peerReviewRole" class="input-xlarge" name="peerReviewRole" ng-model="editPeerReview.role.value" ng-change="serverValidate('peer-reviews/roleValidate.json');">
 	                            	<option value=""><@orcid.msg 'org.orcid.jaxb.model.record.Role.empty' /></option>
@@ -56,7 +56,7 @@
 						</div>
 						<!-- TYPE -->
 						<div class="control-group">
-				    		<label class="relative">Type</label>			    		
+				    		<label class="relative"><@orcid.msg 'peer_review.type'/></label>			    		
 				    		<div class="relative">
 					    		<select id="peerReviewType" class="input-xlarge" name="peerReviewType" ng-model="editPeerReview.type.value" ng-change="serverValidate('peer-reviews/typeValidate.json');">
 	                            	<option value=""><@orcid.msg 'org.orcid.jaxb.model.record.PeerReviewType.empty' /></option>
@@ -74,7 +74,7 @@
 						<!-- ORGANIZATION -->
 						<div class="control-group">
 		                	<div class="control-group no-margin-bottom">
-	    	                	<strong>FUNDING AGENCY</strong>
+	    	                	<strong><@orcid.msg 'peer_review.institution'/></strong>
 		    	            </div>
 	    	    	        <div class="control-group" ng-show="editPeerReview.disambiguatedOrganizationSourceId">
 	        	    	        <label>Institution</label>
@@ -89,10 +89,10 @@
 	                		</div>
 		                	<div class="control-group">
 	    	                	<span ng-hide="disambiguatedOrganization">
-	        	                	   <label>Institution</label>
+	        	                	   <label><@orcid.msg 'peer_review.institution'/></label>
 	            	        	</span>
 		                	    <span ng-show="disambiguatedOrganization">
-	    	                    	<label>Display institution</label>
+	    	                    	<label><@orcid.msg 'peer_review.institution.display_institution'/></label>
 	        	            	</span>
 	            	    	    <div class="relative">
 		                	        <input id="organizationName" class="input-xlarge" name="organizationName" type="text" ng-model="editPeerReview.orgName.value" placeholder="Type name. Select from the list to fill other fields" ng-change="serverValidate('peer-reviews/orgNameValidate.json')" ng-model-onblur/>
@@ -103,8 +103,8 @@
 		    	                </div>
 	    	    	        </div>
 	                		<div class="control-group">
-			                    <label ng-hide="disambiguatedOrganization">City</label>
-	        		            <label ng-show="disambiguatedOrganization">Display city</label>
+			                    <label ng-hide="disambiguatedOrganization"><@orcid.msg 'peer_review.city'/></label>
+	        		            <label ng-show="disambiguatedOrganization"><@orcid.msg 'peer_review.display_city'/></label>
 	                		    <div class="relative">
 			                        <input name="city" type="text" class="input-xlarge"  ng-model="editPeerReview.city.value" placeholder="Add city" ng-change="serverValidate('peer-reviews/cityValidate.json')" ng-model-onblur/>
 	        		                <span class="required" ng-class="isValidClass(editPeerReview.city)">*</span>
@@ -114,8 +114,8 @@
 	        		            </div>
 			                </div>
 	        		        <div class="control-group">
-	                		    <label ng-hide="disambiguatedOrganization">Region</label>
-			                    <label ng-show="disambiguatedOrganization">Display region</label>
+	                		    <label ng-hide="disambiguatedOrganization"><@orcid.msg 'peer_review.region'/></label>
+			                    <label ng-show="disambiguatedOrganization"><@orcid.msg 'peer_review.display'/></label>
 	        		            <div class="relative">
 	                		        <input name="region" type="text" class="input-xlarge"  ng-model="editPeerReview.region.value" placeholder="Add region" ng-change="serverValidate('peer-reviews/regionValidate.json')" ng-model-onblur/>
 			                        <span class="orcid-error" ng-show="editPeerReview.region.errors.length > 0">
@@ -124,8 +124,8 @@
 	                    		</div>
 	                		</div>
 			                <div class="control-group">
-	        		            <label ng-hide="disambiguatedOrganization">Country</label>
-	                		    <label ng-show="disambiguatedOrganization">Display country</label>
+	        		            <label ng-hide="disambiguatedOrganization"><@orcid.msg 'peer_review.country'/></label>
+	                		    <label ng-show="disambiguatedOrganization"><@orcid.msg 'peer_review.display_country'/></label>
 			                    <div class="relative">
 	        		                <select id="country" class="input-xlarge" name="country" ng-model="editPeerReview.country.value" ng-change="serverValidate('peer-reviews/countryValidate.json')">
 	                		            <option value=""><@orcid.msg 'org.orcid.persistence.jpa.entities.CountryIsoEntity.empty' /></option>
@@ -141,7 +141,7 @@
 	                		</div>
 						</div>
 						<!-- DATE -->				
-						<span><strong>COMPLETION DATE</strong></span>	
+						<span><strong><@orcid.msg 'peer_review.completion_date'/></strong></span>	
 						<div class="control-group">			    		
 				    		<div class="relative">					    
 								<select id="year" class="col-md-3 col-sm-3 col-xs-3 inline-input" name="year" ng-model="editPeerReview.completionDate.year">
@@ -162,10 +162,10 @@
 				    		</div>
 						</div>
 						<!-- External identifiers -->
-					    <span><strong>EXTERNAL IDENTIFIERS</strong></span>
+					    <span><strong><@orcid.msg 'peer_review.external_identifiers'/></strong></span>
 						<div ng-repeat="extId in editPeerReview.externalIdentifiers"> 
 							<div class="control-group">
-								<label class="relative">Identifier type</label>
+								<label class="relative"><@orcid.msg 'peer_review.identifier_type' /></label>
 								<div class="relative">
 				    				<select id="extIdType" class="input-xlarge" name="extIdType" ng-model="extId.workExternalIdentifierType.value">																					 
 										<option value=""><@orcid.msg 'org.orcid.jaxb.model.message.WorkExternalIdentifierType.empty' /></option>
@@ -181,7 +181,7 @@
 							</div>								
 							
 							<div class="control-group">
-								<label class="relative">Identifier value</label>
+								<label class="relative"><@orcid.msg 'peer_review.identifier_value'/></label>
 						    	<div class="relative">
 									<input id="extIdValue" name="extIdValue" type="text" class="input-xlarge"  ng-model="extId.workExternalIdentifierId.value"/>
 									<span class="orcid-error" ng-show="workExternalIdentifier.workExternalIdentifierId.errors.length > 0">
@@ -189,8 +189,8 @@
 									</span>
 								</div>
 								<div class="add-item-link" ng-show="$last">			
-									<span><a href ng-click="addExternalIdentifier()"><i class="glyphicon glyphicon-plus-sign"></i> Add external identifier</a></span>
 								</div>
+									<span><a href ng-click="addExternalIdentifier()"><i class="glyphicon glyphicon-plus-sign"></i> <@orcid.msg 'peer_review.add_external_identifiers'/></a></span>
 							</div>
 						</div>
 					</div>
@@ -202,8 +202,8 @@
 					<div class="col-md-6 col-sm-6 col-xs-12">
 						<!-- URL -->	
 						<div class="control-group">
-					    	<label class="relative">URL</label>
 					    	<div class="relative">
+					    	<label class="relative"><@orcid.msg 'peer_review.url'/></label><br/>
 								<input id="url" class="input-xlarge" name="url" type="text" ng-model="editPeerReview.url.value" placeholder="Type url." ng-change="serverValidate('peer-reviews/urlValidate.json')" ng-model-onblur/>
 								<span class="required" ng-class="isValidClass(editPeerReview.url)">*</span>
 	            		        <span class="orcid-error" ng-show="editPeerReview.url.errors.length > 0">
@@ -214,12 +214,12 @@
 						
 						<!-- Subject -->
 						<!-- Subject External ids -->
-						<span><strong>SUBJECT</strong></span>
-						<span>EXTERNAL IDENTIFIERS</span>
+						<span><strong><@orcid.msg 'peer_reveiw.subject'/></strong></span>
+						<span><@orcid.msg 'peer_reveiw.subject.external_identifiers'/></span>
 						<div ng-repeat="extId in editPeerReview.subjectForm.workExternalIdentifiers"> 
 							<!-- Ext id type-->
 							<div class="control-group">
-								<label class="relative">Identifier type</label>
+								<label class="relative"><@orcid.msg 'peer_review.subject.identifier_type'/></label>
 								<div class="relative">
 									<select id="extIdType" class="input-xlarge" name="extIdType" ng-model="extId.workExternalIdentifierType.value">																					 
 										<option value=""><@orcid.msg 'org.orcid.jaxb.model.message.WorkExternalIdentifierType.empty' /></option>
@@ -236,7 +236,7 @@
 							
 							<!-- Ext id value-->
 							<div class="control-group">
-								<label class="relative">Identifier value</label>
+								<label class="relative"><@orcid.msg 'peer_review.subject.identifier_value'/></label>
 								<div class="relative">
 									<input id="extIdValue" name="extIdValue" type="text" class="input-xlarge"  ng-model="extId.workExternalIdentifierId.value"/>
 									<span class="orcid-error" ng-show="workExternalIdentifier.workExternalIdentifierId.errors.length > 0">
@@ -244,7 +244,7 @@
 									</span>
 								</div>
 								<div class="add-item-link" ng-show="$last">			
-									<span><a href ng-click="addSubjectExternalIdentifier()"><i class="glyphicon glyphicon-plus-sign"></i> Add external identifier</a></span>
+									<span><a href ng-click="addSubjectExternalIdentifier()"><i class="glyphicon glyphicon-plus-sign"></i> <@orcid.msg 'peer_review.subject.add_external_identifier'/></a></span>
 								</div>
 							</div>	
 						</div>										 
@@ -339,7 +339,7 @@
 					
 					<!-- Subject URL -->	
 						<div class="control-group">
-					    	<label class="relative">Subject URL</label>
+					    	<label class="relative"><@orcid.msg 'peer_review.subject.url'/></label><br/>
 					    	<div class="relative">
 								<input name="subjectUrl" type="text" class="input-xlarge"  ng-model="editPeerReview.subjectForm.url.value" placeholder="Type a url" ng-change="serverValidate('peer-reviews/subject/urlValidate.json')" ng-model-onblur/>
 								<span class="orcid-error" ng-show="editPeerReview.subjectForm.url.errors.length > 0">
@@ -350,11 +350,11 @@
 	
 						<div class="control-group">
 	                    	<button class="btn btn-primary" ng-click="addAPeerReview()" ng-disabled="addingPeerReview" ng-class="{disabled:addingPeerReview}">
-		                        <!--<span ng-show="" class="">Add to list</span>-->
-								<!--<span ng-show="" class="">Save changes</span>-->
-	                        	<span>Add to list</span>
+		                        <span ng-show="editPeerReview.putCode.value == ''" class=""><@orcid.msg 'peer_review.add_to_list'/></span>
+								<span ng-show="editPeerReview.putCode.value != ''" class=""><@orcid.msg 'peer_review.save_changes'/></span>
+	                        	
 	                    	</button>
-	                    	<button id="" class="btn close-button" ng-click="closeModal()" type="reset">Cancel</button>
+	                    	<button id="" class="btn close-button" ng-click="closeModal()" type="reset"><@orcid.msg 'peer_review.cancel'/></button>
 	                	</div>
 					</div>
 				</div>

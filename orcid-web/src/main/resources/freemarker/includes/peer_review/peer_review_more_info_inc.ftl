@@ -24,49 +24,49 @@
 			<!-- Role -->
 			<div class="col-md-6" ng-show="peerReview.role.value" ng-cloak>
 				<div class="bottomBuffer">
-					<strong>Role: </strong>
+					<strong><@orcid.msg 'workspace_peer_review_body_list.role'/></strong>
 					<div>{{peerReview.role.value.toLowerCase()}}</div>				
 				</div>
 			</div>
 			<!-- Type -->
 			<div class="col-md-6" ng-show="peerReview.type.value" ng-cloak>
 				<div class="bottomBuffer">
-					<strong>Type: </strong>
+					<strong><@orcid.msg 'workspace_peer_review_body_list.type'/></strong>
 					<div>{{peerReview.type.value.toLowerCase()}}</div>				
 				</div>
 			</div>
 			<!-- Institution -->
 			<div class="col-md-6" ng-show="peerReview.orgName.value" ng-cloak>
 				<div class="bottomBuffer">
-					<strong>Institution: </strong>
+					<strong><@orcid.msg 'workspace_peer_review_body_list.institution'/></strong>
 					<div>{{peerReview.orgName.value}}</div>				
 				</div>
 			</div>
 			<!-- City -->
 			<div class="col-md-6" ng-show="peerReview.city.value" ng-cloak>
 				<div class="bottomBuffer">
-					<strong>City: </strong>
+					<strong><@orcid.msg 'workspace_peer_review_body_list.city'/></strong>
 					<div>{{peerReview.city.value}}</div>				
 				</div>
 			</div>
 			<!-- Region -->
 			<div class="col-md-6" ng-show="peerReview.region.value" ng-cloak>
 				<div class="bottomBuffer">
-					<strong>Region: </strong>
+					<strong><@orcid.msg 'workspace_peer_review_body_list.region'/></strong>
 					<div>{{peerReview.region.value}}</div>				
 				</div>
 			</div>
 			<!-- Country -->
 			<div class="col-md-6" ng-show="peerReview.country.value" ng-cloak>
 				<div class="bottomBuffer">
-					<strong>Country: </strong>
+					<strong><@orcid.msg 'workspace_peer_review_body_list.country'/></strong>
 					<div>{{peerReview.countryForDisplay}}</div>				
 				</div>
 			</div>
 			<!-- External Identifiers -->
 			<div class="col-md-6" ng-show="peerReview.subjectForm.workExternalIdentifiers[0].workExternalIdentifierId.value != null" ng-cloak>
 				<div class="bottomBuffer">
-					<strong>Subject External Identifiers: </strong><br/>
+					<strong><@orcid.msg 'workspace_peer_review_body_list.subject.externalIdentifiers'/></strong><br/>
 					<span ng-repeat='ie in peerReview.subjectForm.workExternalIdentifiers'><span
 		             	ng-bind-html='ie | workExternalIdentifierHtml:$first:$last:peerReview.subjectForm.workExternalIdentifiers.length'></span>
 		            </span>
@@ -75,12 +75,10 @@
 		   <!-- Subject URL -->
 			<div class="col-md-6" ng-show="peerReview.subjectForm.url.value" ng-cloak>
 				<div class="bottomBuffer">
-					<strong>Subject URL: </strong><br/>
+					<strong><@orcid.msg 'workspace_peer_review_body_list.subject.url'/></strong><br/>
 					<div><a href="{{peerReview.subjectForm.url.value}}" target="_blank">{{peerReview.subjectForm.url.value}}</a></div>			
 		        </div>
 		   </div>
-		
-		
 		</div>		
 	</div>
 </div>
