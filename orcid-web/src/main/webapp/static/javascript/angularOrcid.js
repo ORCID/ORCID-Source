@@ -1297,7 +1297,7 @@ orcidNgModule.factory("notificationsSrvc", ['$rootScope', function ($rootScope) 
                     else{
                         serv.areMoreFlag = true;
                     }
-                    for(var i = 0; i < data.length; i++){
+                    for(var i = 0; i < data.length; i++){                    	
                         serv.notifications.push(data[i]);
                     }
                     $rootScope.$apply();
@@ -1364,7 +1364,7 @@ orcidNgModule.factory("notificationsSrvc", ['$rootScope', function ($rootScope) 
                 console.log("error flagging notification as read");
             });
         },
-        archive: function(notificationId) {
+        archive: function(notificationId) {        	
             $.ajax({
                 url: getBaseUri() + '/notifications/' + notificationId + '/archive.json',
                 type: 'POST',
