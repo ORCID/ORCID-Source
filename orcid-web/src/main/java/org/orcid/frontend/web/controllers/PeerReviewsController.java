@@ -276,13 +276,13 @@ public class PeerReviewsController extends BaseWorkspaceController {
         }
         if (peerReview.getSubjectForm() != null) {
             PeerReviewSubjectForm subjectForm = peerReview.getSubjectForm();
-            if (!PojoUtil.isEmpty(subjectForm.getWorkType())) {
+            if (subjectForm.getWorkType() != null) {
                 copyErrors(subjectForm.getWorkType(), peerReview);
             }
-            if (!PojoUtil.isEmpty(subjectForm.getTitle())) {
+            if (subjectForm.getTitle() != null) {
                 copyErrors(subjectForm.getTitle(), peerReview);
             }
-            if (!PojoUtil.isEmpty(subjectForm.getUrl())) {
+            if (subjectForm.getUrl() != null) {
                 copyErrors(subjectForm.getUrl(), peerReview);
             }
         }

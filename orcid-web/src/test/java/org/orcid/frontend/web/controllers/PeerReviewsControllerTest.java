@@ -158,7 +158,7 @@ public class PeerReviewsControllerTest extends BaseControllerTest {
         form = peerReviewsController.postPeerReview(form);
         assertNotNull(form);
         assertNotNull(form.getErrors());
-        assertEquals(form.getErrors().size(), 5);
+        assertEquals(5, form.getErrors().size());
         assertTrue(form.getErrors().contains(peerReviewsController.getMessage("org.name.not_blank")));
         assertTrue(form.getErrors().contains(peerReviewsController.getMessage("org.city.not_blank")));
         assertTrue(form.getErrors().contains(peerReviewsController.getMessage("common.country.not_blank")));
