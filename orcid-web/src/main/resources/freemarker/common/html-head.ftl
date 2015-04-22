@@ -47,6 +47,9 @@
       <#if (fundingIdsJson)??>
         orcidVar.fundingIdsJson = JSON.parse("${fundingIdsJson}");
       </#if>
+      <#if (peerReviewIdsJson)??>      	
+      	orcidVar.PeerReviewIds = JSON.parse("${peerReviewIdsJson}");
+      </#if>      
       <#if (showLogin)??>
         orcidVar.showLogin = ${showLogin};
       </#if>

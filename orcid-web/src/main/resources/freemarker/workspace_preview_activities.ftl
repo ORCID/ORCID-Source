@@ -55,6 +55,18 @@
 	</div>
 </#if>
 
+<!-- Peer Review -->
+<#if RequestParameters['peer']??>
+	<#if !(peerReviewsEmpty)??>	
+		<div id="workspace-peer-review" class="workspace-accordion-item workspace-accordion-active" ng-controller="PublicPeerReviewCtrl" ng-cloack>
+	        <#include "includes/peer_review/peer_review_section_header_inc.ftl" />	        	          
+		    <div ng-show="workspaceSrvc.displayPeerReview == true" class="workspace-accordion-content">
+				<#include "includes/peer_review/public_peer_review_body_list.ftl" />	
+		    </div>		     
+		</div>
+	</#if>
+</#if>
+
 <!-- Works -->
 <#if !(worksEmpty)??>		
 	<div id="workspace-works" class="workspace-accordion-item workspace-accordion-active" ng-controller="PublicWorkCtrl" ng-cloack>

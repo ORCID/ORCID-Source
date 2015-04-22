@@ -586,6 +586,9 @@ orcidNgModule.factory("workspaceSrvc", ['$rootScope', function ($rootScope) {
             },
             openPeerReview: function() {
                 serv.displayPeerReview = true;
+            },
+            togglePeerReviews : function() {
+            	serv.displayPeerReview = !serv.displayPeerReview;
             }
             
     };
@@ -3863,6 +3866,16 @@ orcidNgModule.controller('PublicFundingCtrl',['$scope', '$compile', '$filter', '
 
 }]);
 
+orcidNgModule.controller('PublicPeerReviewCtrl',['$scope', '$compile', '$filter', 'workspaceSrvc', 'peerReviewSrvc',function ($scope, $compile, $filter, workspaceSrvc, peerReviewSrvc) {
+	 $scope.peerReviewSrvc = peerReviewSrvc;
+	 $scope.workspaceSrvc  = workspaceSrvc;
+	 
+	 //Init
+	 $scope.peerReviewSrvc.loadPeerReviews(peerReviewSrvc.constants.access_type.ANONYMOUS);
+	 
+	 
+}]);
+
 orcidNgModule.controller('PublicWorkCtrl',['$scope', '$compile', '$filter', 'workspaceSrvc', 'worksSrvc',function ($scope, $compile, $filter, workspaceSrvc, worksSrvc) {
     $scope.worksSrvc = worksSrvc;
     $scope.workspaceSrvc = workspaceSrvc;
@@ -4895,9 +4908,9 @@ orcidNgModule.factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
                 return cloneF;
             },                   
     		loadPeerReviews: function(access_type) {
-    			if (access_type == peerReviewSrvc.constants.access_type.ANONYMOUS) {
-    				peerReviewSrvc.peerReviewsToAddIds = orcidVar.peerReviewIds;
-    				peerReviewSrvc.addAbbrPeerReviewToScope(peerReviewSrvc.constants.access_type.ANONYMOUS);
+    			if (access_type == peerReviewSrvc.constants.access_type.ANONYMOUS) {    				
+    				peerReviewSrvc.peerReviewsToAddIds = orcidVar.PeerReviewIds;
+    				peerReviewSrvc.addPeerReviewsToScope(peerReviewSrvc.constants.access_type.ANONYMOUS);
                 } else {
                 	peerReviewSrvc.peerReviewsToAddIds = null;
                 	peerReviewSrvc.loading = true;
@@ -4907,8 +4920,8 @@ orcidNgModule.factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
                         url: getBaseUri() + '/peer-reviews/peer-review-ids.json',
                         dataType: 'json',
                         success: function(data) {
-                        	peerReviewSrvc.peerReviewsToAddIds = data;
-                        	peerReviewSrvc.addAbbrPeerReviewsToScope(peerReviewSrvc.constants.access_type.USER);
+                        	peerReviewSrvc.peerReviewsToAddIds = data;                        	
+                        	peerReviewSrvc.addPeerReviewsToScope(peerReviewSrvc.constants.access_type.USER);
                             $rootScope.$apply();
                         }
                     }).fail(function(){
@@ -4917,11 +4930,11 @@ orcidNgModule.factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
                     });
                 };
     		},    		
-    		addAbbrPeerReviewsToScope: function(type) {
+    		addPeerReviewsToScope: function(type) {
                 if (type == peerReviewSrvc.constants.access_type.USER)
                     var url = getBaseUri() + '/peer-reviews/get-peer-reviews.json?peerReviewIds=';
                 else // use the anonymous url
-                    var url = getBaseUri() + '/' + orcidVar.orcidId +'/get-peer-reviews.json?peerReviewIds='; // public TO BE IMPLEMENTED!!!
+                    var url = getBaseUri() + '/' + orcidVar.orcidId +'/peer-reviews.json?peerReviewIds=';
                 if(peerReviewSrvc.peerReviewsToAddIds.length != 0 ) {
                 	peerReviewSrvc.loading = true;
                     var peerReviewIds = peerReviewSrvc.peerReviewsToAddIds.splice(0,20).join();
@@ -4942,7 +4955,7 @@ orcidNgModule.factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
                             } else {
                                 $rootScope.$apply();
                                 setTimeout(function(){
-                                	peerReviewSrvc.addAbbrPeerReviewsToScope(type);
+                                	peerReviewSrvc.addPeerReviewsToScope(type);
                                 },50);
                             }
                         }

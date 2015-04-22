@@ -34,7 +34,7 @@
 </div>
   </#if>
   
-  <!-- Funding -->
+ <!-- Funding -->
 <#if !(fundingEmpty)??>		
 	<div id="workspace-funding" class="workspace-accordion-item workspace-accordion-active" ng-controller="PublicFundingCtrl" ng-cloack>
         <#include "includes/funding/funding_section_header_inc_v3.ftl" />
@@ -43,6 +43,19 @@
 	    </div>
 	</div>
 </#if>
+
+ <!-- Peer Review -->
+<#if RequestParameters['peer']??>
+	<#if !(peerReviewsEmpty)??>	
+		<div id="workspace-peer-review" class="workspace-accordion-item workspace-accordion-active" ng-controller="PublicPeerReviewCtrl" ng-cloack>
+	        <#include "includes/peer_review/peer_review_section_header_inc.ftl" />	         
+		    <div ng-show="workspaceSrvc.displayPeerReview" class="workspace-accordion-content">
+					
+		    </div>		     
+		</div>
+	</#if>
+</#if>
+
 
 <!-- Works -->
 <#if !(worksEmpty)??>		
