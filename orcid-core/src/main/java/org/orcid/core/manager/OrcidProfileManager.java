@@ -37,11 +37,11 @@ public interface OrcidProfileManager {
      * Creates a new profile, assigning it a new ORCID
      * 
      * @param orcidProfile
-     *            the new profile valiues
+     *            the new profile 
      * @return the profile as it is represented in the data store after its
      *         creation
      */
-    OrcidProfile createOrcidProfile(OrcidProfile orcidProfile);
+    OrcidProfile createOrcidProfile(OrcidProfile orcidProfile, boolean createdByMember);
 
     /**
      * Creates a new profile, assigning it a new ORCID. Also, sends a

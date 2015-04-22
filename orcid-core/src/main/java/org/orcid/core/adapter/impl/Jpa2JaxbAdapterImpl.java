@@ -845,11 +845,16 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
             return null;
         java.util.Locale locale = new java.util.Locale(code);
         String localeString = locale.toString();
-        if (localeString.startsWith("zn")) {
-            if (localeString.startsWith("zn_CN") || localeString.startsWith("zn_TW"))
+        if (localeString.startsWith("zh")) {
+            if (localeString.startsWith("zh_CN") || localeString.startsWith("zh_TW")) {
                 return localeString.substring(0, 5);
-            else
-                return "zn_CN"; // bit of a gamble here :-/
+            } else if (localeString.startsWith("zh_cn")) {
+                return "zh_CN";
+            } else if(localeString.startsWith("zh_tw")) {
+                return "zh_TW";
+            } else { 
+                return "zh_CN"; // bit of a gamble here :-/
+            }
         }
         return localeString.substring(0, 2);
     }

@@ -35,7 +35,7 @@ import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ActivityCacheManager;
 import org.orcid.core.manager.OrcidProfileCacheManager;
-import org.orcid.core.manager.ProfileEntityCacheManager;
+import org.orcid.core.manager.PeerReviewManager;
 import org.orcid.core.manager.ProfileWorkManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.frontend.web.util.LanguagesMap;
@@ -97,9 +97,9 @@ public class PublicProfileController extends BaseWorkspaceController {
 
     @Resource
     private ActivityCacheManager cacheManager;        
-    
-    @Resource(name = "profileEntityCacheManager")
-    ProfileEntityCacheManager profileEntityCacheManager;
+        
+    @Resource
+    private PeerReviewManager peerReviewManager;
     
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[x]}")
     public ModelAndView publicPreviewRedir(HttpServletRequest request, @RequestParam(value = "page", defaultValue = "1") int pageNo,
@@ -419,10 +419,9 @@ public class PublicProfileController extends BaseWorkspaceController {
     }
     
     public LinkedHashMap<String, PeerReview> peerReviewMap(String orcid) {
-        ProfileEntity profileEntity = profileEntityCacheManager.retrieve(orcid);
-        if(profileEntity == null)
-            return null;
-        return activityCacheManager.pubPeerReviewsMap(profileEntity);
+        OrcidProfile userPubProfile = orcidProfileCacheManager.retrievePublic(orcid);
+        java.util.Date lastModified = userPubProfile.getOrcidHistory().getLastModifiedDate().getValue().toGregorianCalendar().getTime();
+        return activityCacheManager.pubPeerReviewsMap(orcid, lastModified.getTime());
     }
     
     /**

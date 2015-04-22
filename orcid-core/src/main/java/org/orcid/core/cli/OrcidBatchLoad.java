@@ -80,7 +80,7 @@ public class OrcidBatchLoad {
         logger.info(MessageFormat.format("Took {0} millis to unmarshall {1} orcids", new Object[] { currTime.getTime() - startTime.getTime(), numOrcidsRequired }));
         for (int i = 0; i < numOrcidsRequired; i++) {
             OrcidProfile orcidProfile = populateSampleProfileData.populateDefaultOrcidMessage();
-            orcidProfileManager.createOrcidProfile(orcidProfile);
+            orcidProfileManager.createOrcidProfile(orcidProfile, true);
         }
 
         Date dbPersistTime = new Date(System.currentTimeMillis());

@@ -29,7 +29,7 @@ public interface ActivityCacheManager {
 
     public LinkedHashMap<String, Work> pubMinWorksMap(OrcidProfile profile);
     
-    public LinkedHashMap<String, PeerReview> pubPeerReviewsMap(ProfileEntity profile);
+    public LinkedHashMap<String, PeerReview> pubPeerReviewsMap(String orcid, long lastModified);
     
     public LinkedHashMap<String, Funding> fundingMap(OrcidProfile profile);
     
