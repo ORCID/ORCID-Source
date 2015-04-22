@@ -113,7 +113,7 @@ public interface PeerReviewManager {
      * @return true if it was able to update the display index
      * */
     boolean updateToMaxDisplay(String orcid, String peerReviewId);
-    
+
     /**
      * Updates the visibility of a list of existing peer review
      * 
@@ -124,4 +124,14 @@ public interface PeerReviewManager {
      * @return true if the relationship was updated
      * */
     public boolean updateVisibilities(String orcid, ArrayList<Long> peerReviewIds, Visibility visibility);
+
+    /**
+     * Return the list of peer reviews that belongs to a specific user
+     * 
+     * @param orcid
+     *            the peerReview owner
+     * @param lastModified
+     * @return a list containing the user peer reviews
+     * */
+    List<PeerReview> findPeerReviews(String orcid, long lastModified);
 }

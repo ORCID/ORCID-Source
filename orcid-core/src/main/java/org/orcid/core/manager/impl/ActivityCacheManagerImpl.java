@@ -23,7 +23,6 @@ import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.manager.ActivityCacheManager;
-import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.PeerReviewManager;
 import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.Funding;
@@ -37,9 +36,6 @@ import org.orcid.pojo.ajaxForm.Work;
 import org.springframework.cache.annotation.Cacheable;
 
 public class ActivityCacheManagerImpl extends Object implements ActivityCacheManager {
-
-    @Resource
-    protected OrcidProfileManager orcidProfileManager;
     
     @Resource
     private PeerReviewManager peerReviewManager;
@@ -57,12 +53,12 @@ public class ActivityCacheManagerImpl extends Object implements ActivityCacheMan
         return workMap;
     }
     
-    @Cacheable(value = "pub-peer-reviews-maps", key = "#profile.getCacheKey()")
-    public LinkedHashMap<String, PeerReview> pubPeerReviewsMap(ProfileEntity profile) {
+    @Cacheable(value = "pub-peer-reviews-maps", key = "#orcid.concat('-').concat(#lastModified)")
+    public LinkedHashMap<String, PeerReview> pubPeerReviewsMap(String orcid, long lastModified) {
+        List<PeerReview> peerReviews = peerReviewManager.findPeerReviews(orcid, lastModified);
         LinkedHashMap<String, PeerReview> peerReviewMap = new LinkedHashMap<String, PeerReview>();
-        if (profile.getPeerReviews() != null) {
-            if (!profile.getPeerReviews().isEmpty()) {
-                List<PeerReview> peerReviews = peerReviewManager.toPeerReviewList(profile.getPeerReviews());
+        if (peerReviews != null) {
+            if (!peerReviews.isEmpty()) {                
                 for(PeerReview peerReview : peerReviews) {
                     if(peerReview.getVisibility().equals(org.orcid.jaxb.model.common.Visibility.PUBLIC)) {
                         peerReviewMap.put(peerReview.getPutCode(), peerReview);
