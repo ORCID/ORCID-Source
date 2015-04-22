@@ -35,6 +35,7 @@ import org.orcid.jaxb.model.message.Claimed;
 import org.orcid.jaxb.model.message.ContactDetails;
 import org.orcid.jaxb.model.message.CreditName;
 import org.orcid.jaxb.model.message.Email;
+import org.orcid.jaxb.model.message.ExternalIdentifier;
 import org.orcid.jaxb.model.message.ExternalIdentifiers;
 import org.orcid.jaxb.model.message.FundingList;
 import org.orcid.jaxb.model.message.Keyword;
@@ -189,10 +190,6 @@ public class OrcidJaxbCopyManagerImpl implements OrcidJaxbCopyManager {
             return;
         }
         
-        //TODO!!!!
-        
-        
-        
         ExternalIdentifiers existingExternalIdentifiers = existing.getExternalIdentifiers();
         ExternalIdentifiers updatedExternalIdentifiers = updated.getExternalIdentifiers();
 
@@ -204,7 +201,18 @@ public class OrcidJaxbCopyManagerImpl implements OrcidJaxbCopyManager {
         } else if (updatedExternalIdentifiersVisibility == null && existingExternalIdentifiersVisibility != null) {
             updatedExternalIdentifiers.setVisibility(existingExternalIdentifiersVisibility);
         }
-        existing.setExternalIdentifiers(updatedExternalIdentifiers);
+        
+        if(Visibility.PRIVATE.equals(existingExternalIdentifiersVisibility)) {
+           if(existingExternalIdentifiers != null) {
+               for(ExternalIdentifier extId : updatedExternalIdentifiers.getExternalIdentifier()) {
+                   if(!existingExternalIdentifiers.getExternalIdentifier().contains(extId)) {
+                       existingExternalIdentifiers.getExternalIdentifier().add(extId);
+                   }
+               }
+           } 
+        } else {
+            existing.setExternalIdentifiers(updatedExternalIdentifiers);
+        }        
     }
 
     @Override

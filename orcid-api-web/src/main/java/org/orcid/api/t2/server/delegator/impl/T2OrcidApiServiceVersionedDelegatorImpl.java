@@ -201,7 +201,7 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
     @Override
     public Response updateBioDetails(UriInfo uriInfo, String orcid, OrcidMessage orcidMessage) {
         Response response = null;
-        validateIncomingMessage(orcidMessage);
+        validateBioUpdateMessage(orcidMessage);
         validateEmailAvailability(orcidMessage, orcid);
         OrcidMessage upgradedMessage = upgradeMessage(orcidMessage);
         response = t2OrcidApiServiceDelegator.updateBioDetails(uriInfo, orcid, upgradedMessage);
@@ -299,6 +299,24 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
         }
     }
 
+    private void validateBioUpdateMessage(OrcidMessage orcidMessage) {
+        try {
+            incomingValidationManager.validateBioMessage(orcidMessage);            
+            checkDeprecation(orcidMessage);
+        } catch (OrcidValidationException e) {
+            Throwable cause = e.getCause();
+            if (cause == null) {
+                cause = e;
+            } else {
+                Throwable underlyingCause = cause.getCause();
+                if (underlyingCause != null) {
+                    cause = underlyingCause;
+                }
+            }
+            throw new OrcidBadRequestException("Invalid incoming message: " + cause.toString());
+        } 
+    }
+    
     /**
      * Checks if an account is deprecated
      * 

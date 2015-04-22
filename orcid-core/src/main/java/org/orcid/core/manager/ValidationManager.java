@@ -29,4 +29,5 @@ public interface ValidationManager {
 
     void validateMessage(OrcidMessage orcidMessage);
 
+    void validateBioMessage(OrcidMessage orcidMessage);
 }
