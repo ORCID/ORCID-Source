@@ -4173,7 +4173,8 @@ ul#body-work-list > li{
 }
 
 #workspace-publications .action-button-bar,
-#workspace-fundings .action-button-bar{
+#workspace-fundings .action-button-bar,
+#workspace-peer-review  .action-button-bar{
 	padding: 0 14px 0 0;	
 }
 
@@ -6938,7 +6939,8 @@ hr{
 		margin-top: 35px;
 	}
 	
-	#workspace-publications .action-button-bar{
+	#workspace-publications .action-button-bar,
+	#workspace-peer-review .action-button-bar{
 		padding-right: 15px;
 		padding-left: 15px;
 	}
@@ -6995,6 +6997,10 @@ hr{
 	
 	.add-peer-review .input-xlarge{
 		width: 95%;
+	}
+	
+	#workspace-peer-review .visible-xs-inline a{
+		width: 100%;
 	}
 	
 }
