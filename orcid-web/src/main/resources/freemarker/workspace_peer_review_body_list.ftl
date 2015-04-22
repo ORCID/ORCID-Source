@@ -34,6 +34,7 @@
 						</div>
 					</div>
 					<div class="col-md-7 col-sm-10 col-xs-12 action-button-bar">
+						<#include "includes/workspace/workspace_act_sort_menu.ftl"/>
 						<div class="menu-container">
 							<ul class="toggle-menu">
 						        <li ng-class="{'green-bg' : showBibtexImportWizard == true}"> 
