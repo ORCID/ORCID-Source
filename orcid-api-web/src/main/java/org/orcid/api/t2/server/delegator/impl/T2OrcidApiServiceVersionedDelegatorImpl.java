@@ -301,8 +301,7 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
 
     private void validateBioUpdateMessage(OrcidMessage orcidMessage) {
         try {
-            incomingValidationManager.validateBioMessage(orcidMessage);            
-            checkDeprecation(orcidMessage);
+            incomingValidationManager.validateBioMessage(orcidMessage);
         } catch (OrcidValidationException e) {
             Throwable cause = e.getCause();
             if (cause == null) {
