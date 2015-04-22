@@ -134,7 +134,7 @@ public class MemberV2Test {
     }
 
     @Test
-    public void createViewUpdateAndDeleteWork() throws JSONException, InterruptedException, URISyntaxException {
+    public void testCreateViewUpdateAndDeleteWork() throws JSONException, InterruptedException, URISyntaxException {
         long time = System.currentTimeMillis();
         Work workToCreate = (Work) unmarshallFromPath("/record_2.0_rc1/samples/work-2.0_rc1.xml", Work.class);
         workToCreate.setPutCode(null);
@@ -825,5 +825,5 @@ public class MemberV2Test {
                 }
             }
         }
-    }
+    }    
 }

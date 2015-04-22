@@ -286,7 +286,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
 
     @Override
     @Transactional
-    public OrcidProfile createOrcidProfile(OrcidProfile orcidProfile) {
+    public OrcidProfile createOrcidProfile(OrcidProfile orcidProfile, boolean createdByMember) {
         if (orcidProfile.getOrcidIdentifier() == null) {
             orcidProfile.setOrcidIdentifier(orcidGenerationManager.createNewOrcid());
         }
@@ -298,11 +298,11 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         addSourceToWorks(orcidProfile, amenderOrcid);
         addSourceToAffiliations(orcidProfile, amenderOrcid);
         addSourceToFundings(orcidProfile, amenderOrcid);
-        setDefaultVisibility(orcidProfile);
 
         ProfileEntity profileEntity = adapter.toProfileEntity(orcidProfile);
         encryptAndMapFieldsForProfileEntityPersistence(orcidProfile, profileEntity);
         profileEntity.setAuthorities(getGrantedAuthorities(profileEntity));
+        setDefaultVisibility(profileEntity, createdByMember);
 
         profileDao.persist(profileEntity);
         profileDao.flush();
@@ -312,7 +312,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
 
     @Override
     public OrcidProfile createOrcidProfileAndNotify(OrcidProfile orcidProfile) {
-        OrcidProfile createdOrcidProfile = createOrcidProfile(orcidProfile);
+        OrcidProfile createdOrcidProfile = createOrcidProfile(orcidProfile, true);
         notificationManager.sendApiRecordCreationEmail(orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue(), orcidProfile);
         return createdOrcidProfile;
     }
@@ -2214,52 +2214,49 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
      * 
      * @param orcidProfile
      * */
-    private void setDefaultVisibility(OrcidProfile orcidProfile) {
-        if (orcidProfile != null) {
-            if (orcidProfile.getOrcidBio() != null) {
-                OrcidBio bio = orcidProfile.getOrcidBio();
-                if (bio.getBiography() != null) {
-                    if (bio.getBiography().getVisibility() == null) {
-                        bio.getBiography().setVisibility(OrcidVisibilityDefaults.BIOGRAPHY_DEFAULT.getVisibility());
-                    }
-                }
+    private void setDefaultVisibility(ProfileEntity profileEntity, boolean useMemberDefaults) {
+        if (profileEntity != null) {
 
-                if (bio.getExternalIdentifiers() != null) {
-                    if (bio.getExternalIdentifiers().getVisibility() == null) {
-                        bio.getExternalIdentifiers().setVisibility(OrcidVisibilityDefaults.EXTERNAL_IDENTIFIER_DEFAULT.getVisibility());
-                    }
-                }
-
-                if (bio.getKeywords() != null) {
-                    if (bio.getKeywords().getVisibility() == null) {
-                        bio.getKeywords().setVisibility(OrcidVisibilityDefaults.KEYWORD_DEFAULT.getVisibility());
-                    }
-                }
-
-                if (bio.getResearcherUrls() != null) {
-                    if (bio.getResearcherUrls().getVisibility() == null) {
-                        bio.getResearcherUrls().setVisibility(OrcidVisibilityDefaults.RESEARCHER_URLS_DEFAULT.getVisibility());
-                    }
-                }
-
-                if (bio.getPersonalDetails() != null) {
-                    if (bio.getPersonalDetails().getCreditName() != null) {
-                        if (bio.getPersonalDetails().getCreditName().getVisibility() == null) {
-                            bio.getPersonalDetails().getCreditName().setVisibility(OrcidVisibilityDefaults.CREDIT_NAME_DEFAULT.getVisibility());
-                        }
-                    }
-                }
-
-                if (bio.getContactDetails() != null) {
-                    if (bio.getContactDetails().getAddress() != null) {
-                        if (bio.getContactDetails().getAddress().getCountry() != null) {
-                            if (bio.getContactDetails().getAddress().getCountry().getVisibility() == null) {
-                                bio.getContactDetails().getAddress().getCountry().setVisibility(OrcidVisibilityDefaults.COUNTRY_DEFAULT.getVisibility());
-                            }
-                        }
-                    }
-                }
+            if (profileEntity.getBiographyVisibility() == null) {
+                profileEntity.setBiographyVisibility(useMemberDefaults ? OrcidVisibilityDefaults.CREATED_BY_MEMBER_DEFAULT.getVisibility()
+                        : OrcidVisibilityDefaults.BIOGRAPHY_DEFAULT.getVisibility());
             }
+
+            if (profileEntity.getExternalIdentifiersVisibility() == null) {
+                profileEntity.setExternalIdentifiersVisibility(useMemberDefaults ? OrcidVisibilityDefaults.CREATED_BY_MEMBER_DEFAULT.getVisibility()
+                        : OrcidVisibilityDefaults.EXTERNAL_IDENTIFIER_DEFAULT.getVisibility());
+            }
+
+            if (profileEntity.getKeywordsVisibility() == null) {
+                profileEntity.setKeywordsVisibility(useMemberDefaults ? OrcidVisibilityDefaults.CREATED_BY_MEMBER_DEFAULT.getVisibility()
+                        : OrcidVisibilityDefaults.KEYWORD_DEFAULT.getVisibility());
+            }
+
+            if (profileEntity.getResearcherUrlsVisibility() == null) {
+                profileEntity.setResearcherUrlsVisibility(useMemberDefaults ? OrcidVisibilityDefaults.CREATED_BY_MEMBER_DEFAULT.getVisibility()
+                        : OrcidVisibilityDefaults.RESEARCHER_URLS_DEFAULT.getVisibility());
+            }
+
+            if (profileEntity.getCreditNameVisibility() == null) {
+                profileEntity.setCreditNameVisibility(useMemberDefaults ? OrcidVisibilityDefaults.CREATED_BY_MEMBER_DEFAULT.getVisibility()
+                        : OrcidVisibilityDefaults.CREDIT_NAME_DEFAULT.getVisibility());
+            }
+
+            if (profileEntity.getOtherNamesVisibility() == null) {
+                profileEntity.setOtherNamesVisibility(useMemberDefaults ? OrcidVisibilityDefaults.CREATED_BY_MEMBER_DEFAULT.getVisibility()
+                        : OrcidVisibilityDefaults.OTHER_NAMES_DEFAULT.getVisibility());
+            }
+
+            if (profileEntity.getProfileAddressVisibility() == null) {
+                profileEntity.setProfileAddressVisibility(useMemberDefaults ? OrcidVisibilityDefaults.CREATED_BY_MEMBER_DEFAULT.getVisibility()
+                        : OrcidVisibilityDefaults.COUNTRY_DEFAULT.getVisibility());
+            }
+
+            if (profileEntity.getActivitiesVisibilityDefault() == null) {
+                profileEntity.setActivitiesVisibilityDefault(useMemberDefaults ? OrcidVisibilityDefaults.CREATED_BY_MEMBER_DEFAULT.getVisibility()
+                        : OrcidVisibilityDefaults.ACTIVITIES_DEFAULT.getVisibility());
+            }
+
         }
     }
 }

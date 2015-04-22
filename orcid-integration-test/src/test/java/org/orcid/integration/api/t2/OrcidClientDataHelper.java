@@ -76,8 +76,7 @@ public class OrcidClientDataHelper implements InitializingBean {
     public void afterPropertiesSet() throws Exception {
         init();
     }
-
-    @SuppressWarnings({ "unchecked" })
+    
     protected <T> T getTargetObject(Object proxy, Class<T> targetClass) throws Exception {
         return TargetProxyHelper.getTargetObject(proxy, targetClass);
     }
@@ -108,7 +107,7 @@ public class OrcidClientDataHelper implements InitializingBean {
 
     public OrcidMessage createSponsor() throws JAXBException {
         OrcidMessage message = createFromXML(ORCID_INTERNAL_SPONSOR_XML);
-        OrcidProfile orcidProfile = orcidProfileManager.createOrcidProfile(message.getOrcidProfile());
+        OrcidProfile orcidProfile = orcidProfileManager.createOrcidProfile(message.getOrcidProfile(), false);
         message.setOrcidProfile(orcidProfile);
         return message;
     }
