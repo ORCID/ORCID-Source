@@ -1506,16 +1506,22 @@ orcidNgModule.filter('workExternalIdentifierHtml', function(){
 
 //Currently being used in Fundings only
 orcidNgModule.filter('externalIdentifierHtml', function(){
-    return function(externalIdentifier, first, last, length){
+    return function(externalIdentifier, first, last, length, type){
     	
-        var output = '';
+    	var output = '';
 
         if (externalIdentifier == null) return output;
         
-        var type = externalIdentifier.type.value;
-        
         //If type is set always come: "grant_number"
-        if (type != null) output += om.get('funding.add.external_id.value.label.grant') + ": ";        
+        if (type != null) {
+        	if (type.value == 'grant') {
+        		output += om.get('funding.add.external_id.value.label.grant') + ": ";
+        	} else if (type.value == 'contract') {
+        		output += om.get('funding.add.external_id.value.label.contract') + ": ";
+        	} else {
+        		output += om.get('funding.add.external_id.value.label.award') + ": ";
+        	}
+        }         
         
         var value = null;        
         if(externalIdentifier.value != null){
@@ -1532,7 +1538,15 @@ orcidNgModule.filter('externalIdentifierHtml', function(){
         	if(value != null) {
         		output += "<a href='" + link + "' class='truncate-anchor' target='_blank'>" + value + "</a>";
         	} else {
-        		output = om.get('funding.add.external_id.url.label.grant') + ": <a href='" + link + "' class='truncate-anchor' target='_blank'>" + link + "</a>";
+        		if(type != null) {
+        			if(type.value == 'grant') {
+        				output = om.get('funding.add.external_id.url.label.grant') + ": <a href='" + link + "' class='truncate-anchor' target='_blank'>" + link + "</a>";
+        			} else if(type.value == 'contract') {
+        				output = om.get('funding.add.external_id.url.label.contract') + ": <a href='" + link + "' class='truncate-anchor' target='_blank'>" + link + "</a>";
+        			} else {
+        				output = om.get('funding.add.external_id.url.label.award') + ": <a href='" + link + "' class='truncate-anchor' target='_blank'>" + link + "</a>";
+        			}
+        		}        		
         	}
         } else if(value != null) {
         	output = output + " " + value;

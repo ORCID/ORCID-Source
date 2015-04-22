@@ -125,7 +125,7 @@
 					<strong><@orcid.msg 'manual_funding_form_contents.title_external_identifier'/></strong>
 					<div>
 						<span ng-repeat='ei in funding.externalIdentifiers'> <span
-							ng-bind-html='ei | externalIdentifierHtml:$first:$last:funding.externalIdentifiers.length'></span>
+							ng-bind-html='ei | externalIdentifierHtml:$first:$last:funding.externalIdentifiers.length:group.getActive().fundingType'></span>
 						</span>
 					</div>
 				</div>
