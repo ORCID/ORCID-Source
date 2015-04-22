@@ -173,7 +173,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         CreditName delegateCreditName = new CreditName("H. Shearer");
         delegateCreditName.setVisibility(Visibility.PUBLIC);
         delegatePersonalDetails.setCreditName(delegateCreditName);
-        orcidProfileManager.createOrcidProfile(delegateProfile);
+        orcidProfileManager.createOrcidProfile(delegateProfile, false);
 
         OrcidProfile applicationProfile = new OrcidProfile();
         applicationProfile.setOrcidIdentifier(APPLICATION_ORCID);
@@ -182,7 +182,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         PersonalDetails applicationPersonalDetails = new PersonalDetails();
         applicationBio.setPersonalDetails(applicationPersonalDetails);
         applicationPersonalDetails.setCreditName(new CreditName("Brown University"));
-        orcidProfileManager.createOrcidProfile(applicationProfile);
+        orcidProfileManager.createOrcidProfile(applicationProfile, false);
 
         ClientDetailsEntity clientDetails = new ClientDetailsEntity();
         clientDetails.setId(applicationProfile.getOrcidIdentifier().getPath());
@@ -225,7 +225,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
     @Rollback(true)
     public void testUpdateProfile() {
         OrcidProfile profile1 = createBasicProfile();
-        profile1 = orcidProfileManager.createOrcidProfile(profile1);
+        profile1 = orcidProfileManager.createOrcidProfile(profile1, false);
         String originalPutCode = profile1.getOrcidActivities().getOrcidWorks().getOrcidWork().get(0).getPutCode();
 
         OrcidProfile profile2 = createBasicProfile();
@@ -248,7 +248,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
     @Rollback(true)
     public void testUpdateProfileButRemoveActivities() {
         OrcidProfile profile1 = createBasicProfile();
-        profile1 = orcidProfileManager.createOrcidProfile(profile1);
+        profile1 = orcidProfileManager.createOrcidProfile(profile1, false);
 
         OrcidProfile profile2 = createBasicProfile();
         profile2.setOrcidActivities(null);
@@ -268,7 +268,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
     @Rollback(true)
     public void testUpdateProfileButRemoveWorkExternalIdentifier() {
         OrcidProfile profile1 = createBasicProfile();
-        profile1 = orcidProfileManager.createOrcidProfile(profile1);
+        profile1 = orcidProfileManager.createOrcidProfile(profile1, false);
 
         List<WorkExternalIdentifier> workExternalIdentifiers = profile1.getOrcidActivities().getOrcidWorks().getOrcidWork().get(0).getWorkExternalIdentifiers()
                 .getWorkExternalIdentifier();
@@ -297,7 +297,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
     @Rollback(true)
     public void testUpdateProfileButRemoveWorkContributor() {
         OrcidProfile profile1 = createBasicProfile();
-        profile1 = orcidProfileManager.createOrcidProfile(profile1);
+        profile1 = orcidProfileManager.createOrcidProfile(profile1, false);
 
         List<Contributor> contributors = profile1.getOrcidActivities().getOrcidWorks().getOrcidWork().get(0).getWorkContributors().getContributor();
         assertEquals(2, contributors.size());
@@ -349,7 +349,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
     @Rollback(true)
     public void testUpdateProfileWithEmailVerified() {
         OrcidProfile profile = createBasicProfile();
-        profile = orcidProfileManager.createOrcidProfile(profile);
+        profile = orcidProfileManager.createOrcidProfile(profile, false);
         assertNotNull(profile.getOrcidBio().getContactDetails().retrievePrimaryEmail());
         assertFalse(profile.getOrcidBio().getContactDetails().retrievePrimaryEmail().isVerified());
 
@@ -375,7 +375,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         OrcidWork work3 = createWork3();
                 
         OrcidProfile profile = createBasicProfile();
-        profile = orcidProfileManager.createOrcidProfile(profile);
+        profile = orcidProfileManager.createOrcidProfile(profile, false);
         assertNotNull(profile);
         assertNotNull(profile.getOrcidActivities());
         assertNotNull(profile.getOrcidActivities().getOrcidWorks());
@@ -544,7 +544,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
     @Rollback(true)
     public void testUpdateProfileWithDupeWork() {
         OrcidProfile profile = createBasicProfile();
-        OrcidProfile createdProfile = orcidProfileManager.createOrcidProfile(profile);
+        OrcidProfile createdProfile = orcidProfileManager.createOrcidProfile(profile, false);
         List<OrcidWork> orcidWorkList = createdProfile.getOrcidActivities().getOrcidWorks().getOrcidWork();
         assertEquals(1, orcidWorkList.size());
 
@@ -582,7 +582,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
 
         orcidWorks.getOrcidWork().add(orcidWork);
 
-        orcidProfileManager.createOrcidProfile(profile);
+        orcidProfileManager.createOrcidProfile(profile, false);
 
         // now negate all fields that form part of a solr query, leaving only
         // the orcid itself
@@ -608,7 +608,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         history.setSubmissionDate(new SubmissionDate(DateUtils.convertToXMLGregorianCalendar(new Date())));
         profile1.setOrcidHistory(history);
         history.setClaimed(new Claimed(true));
-        profile1 = orcidProfileManager.createOrcidProfile(profile1);
+        profile1 = orcidProfileManager.createOrcidProfile(profile1, false);
         String originalPutCode = profile1.getOrcidActivities().getOrcidWorks().getOrcidWork().get(0).getPutCode();
 
         OrcidProfile profile2 = new OrcidProfile();
@@ -664,7 +664,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         profile1.setOrcidHistory(history);
         history.setClaimed(new Claimed(true));
         profile1.getOrcidInternal().getPreferences().setActivitiesVisibilityDefault(new ActivitiesVisibilityDefault(Visibility.PUBLIC));
-        orcidProfileManager.createOrcidProfile(profile1);
+        orcidProfileManager.createOrcidProfile(profile1, false);
 
         OrcidProfile profile2 = new OrcidProfile();
         profile2.setOrcidIdentifier(TEST_ORCID);
@@ -718,7 +718,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
     public void testAddOrcidWorkToUnclaimedProfile() {
 
         OrcidProfile profile1 = createBasicProfile();
-        orcidProfileManager.createOrcidProfile(profile1);
+        orcidProfileManager.createOrcidProfile(profile1, false);
 
         OrcidProfile profile2 = new OrcidProfile();
         profile2.setOrcidIdentifier(TEST_ORCID);
@@ -856,7 +856,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
     @Rollback(true)
     public void testUpdatePasswordResultsInEncypytedProfile() {
         OrcidProfile basicProfile = createBasicProfile();
-        OrcidProfile derivedProfile = orcidProfileManager.createOrcidProfile(basicProfile);
+        OrcidProfile derivedProfile = orcidProfileManager.createOrcidProfile(basicProfile, false);
         assertTrue(encryptionManager.hashMatches("password", derivedProfile.getPassword()));
         assertEquals("random answer", encryptionManager.decryptForInternalUse(derivedProfile.getSecurityQuestionAnswer()));
         assertEquals("1234", encryptionManager.decryptForInternalUse(derivedProfile.getVerificationCode()));
@@ -872,7 +872,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
     @Rollback(true)
     public void testUpdatePreferences() {
         OrcidProfile profile1 = createBasicProfile();
-        profile1 = orcidProfileManager.createOrcidProfile(profile1);
+        profile1 = orcidProfileManager.createOrcidProfile(profile1, false);
         assertEquals(Visibility.PRIVATE, profile1.getOrcidInternal().getPreferences().getActivitiesVisibilityDefault().getValue());
 
         OrcidProfile profile2 = new OrcidProfile();
@@ -900,7 +900,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
     @Rollback(true)
     public void testAffiliations() throws DatatypeConfigurationException {
         OrcidProfile profile1 = createBasicProfile();
-        orcidProfileManager.createOrcidProfile(profile1);
+        orcidProfileManager.createOrcidProfile(profile1, false);
 
         OrcidProfile profile2 = new OrcidProfile();
         profile2.setOrcidIdentifier(TEST_ORCID);
@@ -967,7 +967,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         organizationAddress.setCity("Edinburgh");
         organizationAddress.setCountry(Iso3166Country.GB);
 
-        orcidProfileManager.createOrcidProfile(profile1);
+        orcidProfileManager.createOrcidProfile(profile1, false);
 
         ProfileEntity profileEntity = profileDao.find(TEST_ORCID);
         assertEquals(1, profileEntity.getOrgAffiliationRelations().size());
@@ -984,7 +984,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         emailList2.clear();
         emailList2.add(new Email("another@semantico.com"));
         profile2.getOrcidActivities().setAffiliations(affiliations);
-        orcidProfileManager.createOrcidProfile(profile2);
+        orcidProfileManager.createOrcidProfile(profile2, false);
 
         ProfileEntity profileEntity2 = profileDao.find(otherOrcid);
         assertEquals(1, profileEntity2.getOrgAffiliationRelations().size());
@@ -1000,7 +1000,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
     @Rollback(true)
     public void testAddDelegates() {
         OrcidProfile profile1 = createBasicProfile();
-        orcidProfileManager.createOrcidProfile(profile1);
+        orcidProfileManager.createOrcidProfile(profile1, false);
 
         OrcidProfile profile2 = new OrcidProfile();
         profile2.setOrcidIdentifier(TEST_ORCID);
@@ -1045,7 +1045,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         DelegateSummary profileSummary = new DelegateSummary(new OrcidIdentifier(DELEGATE_ORCID));
         delegationDetails.setDelegateSummary(profileSummary);
         givenPermissionTo.getDelegationDetails().add(delegationDetails);
-        orcidProfileManager.createOrcidProfile(profile1);
+        orcidProfileManager.createOrcidProfile(profile1, false);
 
         orcidProfileManager.revokeDelegate(TEST_ORCID, DELEGATE_ORCID);
 
@@ -1060,7 +1060,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         OrcidProfile profile1 = createBasicProfile();
         assertEquals("password", profile1.getPassword());
         assertEquals("random answer", profile1.getSecurityQuestionAnswer());
-        orcidProfileManager.createOrcidProfile(profile1);
+        orcidProfileManager.createOrcidProfile(profile1, false);
 
         OrcidProfile retrievedProfile = orcidProfileManager.retrieveOrcidProfile(profile1.getOrcidIdentifier().getPath());
 
@@ -1089,7 +1089,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         OrcidProfile profile1 = createBasicProfile();
         assertEquals("password", profile1.getPassword());
         assertEquals("random answer", profile1.getSecurityQuestionAnswer());
-        orcidProfileManager.createOrcidProfile(profile1);
+        orcidProfileManager.createOrcidProfile(profile1, false);
 
         OrcidProfile retrievedProfile = orcidProfileManager.retrieveOrcidProfile(profile1.getOrcidIdentifier().getPath());
 
@@ -1115,7 +1115,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
     public void testUpdateLastModifiedDate() throws InterruptedException {
         Date start = new Date();
         OrcidProfile profile1 = createBasicProfile();
-        profile1 = orcidProfileManager.createOrcidProfile(profile1);
+        profile1 = orcidProfileManager.createOrcidProfile(profile1, false);
         Date profile1LastModified = profile1.getOrcidHistory().getLastModifiedDate().getValue().toGregorianCalendar().getTime();
         assertNotNull(profile1LastModified);
         assertFalse(start.after(profile1LastModified));
@@ -1147,7 +1147,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         
         profile1.getOrcidBio().getPersonalDetails().setOtherNames(otherNames);
         
-        profile1 = orcidProfileManager.createOrcidProfile(profile1);
+        profile1 = orcidProfileManager.createOrcidProfile(profile1, false);
         assertEquals(1, profile1.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().size());
         assertEquals(2, profile1.getOrcidBio().getPersonalDetails().getOtherNames().getOtherName().size());
         assertEquals("My Credit Name", profile1.getOrcidBio().getPersonalDetails().getCreditName().getContent());
@@ -1186,7 +1186,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         work3.getWorkExternalIdentifiers().getWorkExternalIdentifier().add(sharedExternalIdentifier1);
 
         OrcidProfile profile = createBasicProfile();
-        profile = orcidProfileManager.createOrcidProfile(profile);
+        profile = orcidProfileManager.createOrcidProfile(profile, false);
         assertNotNull(profile);
         assertNotNull(profile.getOrcidActivities());
         assertNotNull(profile.getOrcidActivities().getOrcidWorks());

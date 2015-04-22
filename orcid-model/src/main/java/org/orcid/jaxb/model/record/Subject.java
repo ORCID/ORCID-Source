@@ -16,6 +16,8 @@
  */
 package org.orcid.jaxb.model.record;
 
+import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -29,7 +31,9 @@ import org.orcid.jaxb.model.common.Url;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = {"externalIdentifiers","type","journalTitle","title","url"})
 @XmlRootElement(name = "subject", namespace = "http://www.orcid.org/ns/peer-review")
-public class Subject {
+public class Subject implements Serializable {    
+    private static final long serialVersionUID = -3011951615514804083L;
+    
     @XmlElement(name = "external-identifiers", namespace = "http://www.orcid.org/ns/peer-review")
     protected WorkExternalIdentifiers externalIdentifiers;
     @XmlElement(namespace = "http://www.orcid.org/ns/peer-review")

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2014 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<orcid-message xmlns="http://www.orcid.org/ns/orcid">
+    <message-version>1.2</message-version>
+    <orcid-profile type="user">        
+        <orcid-preferences>
+            <locale>en</locale>
+        </orcid-preferences>
+        <orcid-bio>
+        	<personal-details>
+                <given-names>given</given-names>
+                <family-name>family</family-name>
+                <credit-name>credit</credit-name>
+                <other-names>
+                    <other-name>other</other-name>
+                </other-names>
+            </personal-details>            
+            <biography>biography</biography>
+            <researcher-urls>
+                <researcher-url>
+                    <url-name>The site</url-name>
+                    <url>http://www.site.com</url>
+                </researcher-url>
+            </researcher-urls>
+            <contact-details>
+            	<email primary="true">2@api.com</email>
+                <address>
+                    <country>CR</country>
+                </address>                            
+            </contact-details>
+            <keywords>
+                <keyword>K1</keyword>
+            </keywords>
+        </orcid-bio>
+    </orcid-profile>
+</orcid-message>

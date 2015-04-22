@@ -45,6 +45,7 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
 
 public class PeerReviewManagerImpl implements PeerReviewManager {
@@ -204,5 +205,12 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
     @Override
     public boolean updateVisibilities(String orcid, ArrayList<Long> peerReviewIds, Visibility visibility) {
         return peerReviewDao.updateVisibilities(orcid, peerReviewIds, visibility);
+    }
+    
+    @Override
+    @Cacheable(value = "peer-reviews", key = "#orcid.concat('-').concat(#lastModified)")
+    public List<PeerReview> findPeerReviews(String orcid, long lastModified) {
+        List<PeerReviewEntity> peerReviewEntities = peerReviewDao.getByUser(orcid);
+        return toPeerReviewList(peerReviewEntities);
     }
 }

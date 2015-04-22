@@ -23,7 +23,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.persistence.NoResultException;
@@ -32,8 +31,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.PeerReviewManager;
-import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.frontend.web.util.LanguagesMap;
+import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.record.PeerReview;
 import org.orcid.jaxb.model.record.PeerReviewType;
@@ -42,8 +41,6 @@ import org.orcid.persistence.dao.OrgDisambiguatedDao;
 import org.orcid.persistence.dao.OrgDisambiguatedSolrDao;
 import org.orcid.persistence.jpa.entities.CountryIsoEntity;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
-import org.orcid.persistence.jpa.entities.PeerReviewEntity;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.solr.entities.OrgDisambiguatedSolrDocument;
 import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.pojo.ajaxForm.PeerReviewForm;
@@ -84,10 +81,7 @@ public class PeerReviewsController extends BaseWorkspaceController {
     private OrgDisambiguatedDao orgDisambiguatedDao;
 
     @Resource(name = "languagesMap")
-    private LanguagesMap lm;
-
-    @Resource(name = "profileEntityCacheManager")
-    ProfileEntityCacheManager profileEntityCacheManager;
+    private LanguagesMap lm;    
 
     public void setLocaleManager(LocaleManager localeManager) {
         this.localeManager = localeManager;
@@ -178,13 +172,10 @@ public class PeerReviewsController extends BaseWorkspaceController {
      * 
      */
     private List<String> createPeerReviewIdList(HttpServletRequest request) {
-        ProfileEntity profileEntity = profileEntityCacheManager.retrieve(getEffectiveUserOrcid());
-
-        Set<PeerReviewEntity> peerReviewEntities = profileEntity.getPeerReviews();
-        List<PeerReview> peerReviews = null;
-        if (peerReviewEntities != null) {
-            peerReviews = peerReviewManager.toPeerReviewList(peerReviewEntities);
-        }
+        OrcidProfile currentProfile = getEffectiveProfile();
+        java.util.Date lastModified = currentProfile.getOrcidHistory().getLastModifiedDate().getValue().toGregorianCalendar().getTime();
+        List<PeerReview> peerReviews = peerReviewManager.findPeerReviews(currentProfile.getOrcidIdentifier().getPath(), lastModified.getTime());
+        
         Map<String, String> languages = lm.buildLanguageMap(getUserLocale(), false);
         HashMap<String, PeerReviewForm> peerReviewMap = new HashMap<>();
         List<String> peerReviewIds = new ArrayList<String>();
