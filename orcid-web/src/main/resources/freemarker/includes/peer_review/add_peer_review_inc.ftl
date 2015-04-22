@@ -194,9 +194,6 @@
 							</div>
 						</div>
 					</div>
-		
-					
-					
 					
 					<!-- Right column -->
 					<div class="col-md-6 col-sm-6 col-xs-12">
@@ -204,8 +201,7 @@
 						<div class="control-group">
 					    	<div class="relative">
 					    	<label class="relative"><@orcid.msg 'peer_review.url'/></label><br/>
-								<input id="url" class="input-xlarge" name="url" type="text" ng-model="editPeerReview.url.value" placeholder="Type url." ng-change="serverValidate('peer-reviews/urlValidate.json')" ng-model-onblur/>
-								<span class="required" ng-class="isValidClass(editPeerReview.url)">*</span>
+								<input id="url" class="input-xlarge" name="url" type="text" ng-model="editPeerReview.url.value" placeholder="Type url." ng-change="serverValidate('peer-reviews/urlValidate.json')" ng-model-onblur/>							
 	            		        <span class="orcid-error" ng-show="editPeerReview.url.errors.length > 0">
 	                    	    	<div ng-repeat='error in editPeerReview.url.errors' ng-bind-html="error"></div>
 	                        	</span>

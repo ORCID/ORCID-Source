@@ -35,27 +35,32 @@
 					</div>
 					<div class="col-md-7 col-sm-10 col-xs-12 action-button-bar">
 						<#include "includes/workspace/workspace_act_sort_menu.ftl"/>
-						<div class="menu-container">
-							<ul class="toggle-menu">
-						        <li ng-class="{'green-bg' : showBibtexImportWizard == true}"> 
-						            <span class="glyphicon glyphicon-plus"></span> <@orcid.msg 'workspace_peer_review_body_list.addPeerReview'/>                                    
-						            <ul class="menu-options works">
-						                <!-- Search & Link -->
-						                <li>
-						                    <a class="action-option manage-button" ng-click="showWorkImportWizard()">
-						                        <span class="glyphicon glyphicon-cloud-upload"></span> <@orcid.msg 'workspace_peer_review_body_list.searchAndLink'/>
-						                    </a>
-						                </li>                
-						                <!-- Add Manually -->
-						                <li>
-						                    <a class="action-option manage-button" ng-click="addPeerReviewModal()">
-						                        <span class="glyphicon glyphicon-plus"></span> <@orcid.msg 'workspace_peer_review_body_list.addManually'/>                                            
-						                    </a>
-						                </li>                                                                                
-						            </ul>
-						        </li>
-						    </ul>
-						</div>	
+						<#if !(isPublicProfile??)>
+                			<ul class="workspace-bar-menu">
+                			  	<li class="hidden-xs">
+									<div class="menu-container">
+										<ul class="toggle-menu">
+									        <li ng-class="{'green-bg' : showBibtexImportWizard == true}"> 
+									            <span class="glyphicon glyphicon-plus"></span> <@orcid.msg 'workspace_peer_review_body_list.addPeerReview'/>                                    
+									            <ul class="menu-options works">						                                
+									                <!-- Add Manually -->
+									                <li>
+									                    <a class="action-option manage-button" ng-click="addPeerReviewModal()">
+									                        <span class="glyphicon glyphicon-plus"></span> <@orcid.msg 'workspace_peer_review_body_list.addManually'/>                                            
+									                    </a>
+									                </li>                                                                                
+									            </ul>
+									        </li>									        
+									    </ul>									    
+									</div>	
+								</li>
+								<li class="hidden-md hidden-sm visible-xs-inline">
+							       	<a class="action-option manage-button" ng-click="addPeerReviewModal()">
+							           	<span class="glyphicon glyphicon-plus"></span> <@orcid.msg 'workspace_peer_review_body_list.addManually'/>                                            
+							        </a>
+							    </li>
+							</ul>
+						</#if>
 					</div>	
 				</div>			
 			</div>

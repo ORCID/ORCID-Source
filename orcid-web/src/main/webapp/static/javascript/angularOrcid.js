@@ -4886,8 +4886,7 @@ orcidNgModule.factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
                     console.log("Error fetching blank Peer Review");
                 });                
             },
-            postPeerReview: function(peer_review, successFunc, failFunc) {
-            	console.log(peer_review);
+            postPeerReview: function(peer_review, successFunc, failFunc) {            	
             	$.ajax({
                     url: getBaseUri() + '/peer-reviews/peer-review.json',
                     contentType: 'application/json;charset=UTF-8',

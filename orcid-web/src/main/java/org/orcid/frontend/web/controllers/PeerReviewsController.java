@@ -248,12 +248,19 @@ public class PeerReviewsController extends BaseWorkspaceController {
         validateCity(peerReview);
         validateRegion(peerReview);
         validateCountry(peerReview);
-        validateUrl(peerReview);               
+        validateUrl(peerReview);         
+        validateExternalIdentifiers(peerReview);
         copyErrors(peerReview.getOrgName(), peerReview);
         copyErrors(peerReview.getCity(), peerReview);
         copyErrors(peerReview.getRegion(), peerReview);
         copyErrors(peerReview.getCountry(), peerReview);
         copyErrors(peerReview.getUrl(), peerReview);
+        if(peerReview.getExternalIdentifiers() != null) {
+            for(WorkExternalIdentifier extId : peerReview.getExternalIdentifiers()) {
+                copyErrors(extId.getWorkExternalIdentifierId(), peerReview);
+                copyErrors(extId.getWorkExternalIdentifierType(), peerReview);
+            }
+        }
         
         if(peerReview.getCompletionDate() != null) {
             validateCompletionDate(peerReview);
@@ -263,10 +270,17 @@ public class PeerReviewsController extends BaseWorkspaceController {
             validateSubjectType(peerReview);
             validateSubjectTitle(peerReview);
             validateSubjectUrl(peerReview);
+            validateSubjectExternalIdentifiers(peerReview);
             PeerReviewSubjectForm subjectForm = peerReview.getSubjectForm();
             copyErrors(subjectForm.getWorkType(), peerReview);
             copyErrors(subjectForm.getTitle(), peerReview);
-            copyErrors(subjectForm.getUrl(), peerReview);            
+            copyErrors(subjectForm.getUrl(), peerReview);
+            if(subjectForm.getWorkExternalIdentifiers() != null) {
+                for(WorkExternalIdentifier extId : subjectForm.getWorkExternalIdentifiers()) {
+                    copyErrors(extId.getWorkExternalIdentifierId(), peerReview);
+                    copyErrors(extId.getWorkExternalIdentifierType(), peerReview);
+                }
+            }
         }
 
         // If there are no errors, persist to DB
@@ -497,6 +511,57 @@ public class PeerReviewsController extends BaseWorkspaceController {
         return peerReview;
     }
 
+    @RequestMapping(value = "/subject/extIdsValidate.json", method = RequestMethod.POST)
+    public @ResponseBody PeerReviewForm validateSubjectExternalIdentifiers(@RequestBody PeerReviewForm peerReview) {
+        if(peerReview.getSubjectForm() == null) {
+            return peerReview;
+        }
+        
+        PeerReviewSubjectForm subject = peerReview.getSubjectForm();
+        if(subject.getWorkExternalIdentifiers() != null) {
+            validateExternalIdentifiers(subject.getWorkExternalIdentifiers());
+        }
+        
+        return peerReview;
+    }
+    
+    @RequestMapping(value = "/extIdsValidate.json", method = RequestMethod.POST)
+    public @ResponseBody PeerReviewForm validateExternalIdentifiers(@RequestBody PeerReviewForm peerReview) {
+        if(peerReview.getExternalIdentifiers() == null) {
+            return peerReview;
+        }
+        
+        validateExternalIdentifiers(peerReview.getExternalIdentifiers());
+        
+        return peerReview;
+    }
+    
+    private void validateExternalIdentifiers(List<WorkExternalIdentifier> extIds) {
+        for(WorkExternalIdentifier extId : extIds) {
+            //Init fields
+            if(extId.getWorkExternalIdentifierId() == null)
+                extId.setWorkExternalIdentifierId(new Text());
+            if(extId.getWorkExternalIdentifierType() == null)
+                extId.setWorkExternalIdentifierType(new Text());
+            extId.setErrors(new ArrayList<String>());
+            extId.getWorkExternalIdentifierId().setErrors(new ArrayList<String>());
+            extId.getWorkExternalIdentifierType().setErrors(new ArrayList<String>());
+            
+            if(PojoUtil.isEmpty(extId.getWorkExternalIdentifierId()) && !PojoUtil.isEmpty(extId.getWorkExternalIdentifierType())) {
+                //Please select a type
+                setError(extId.getWorkExternalIdentifierId(), "NotBlank.currentWorkExternalIds.id");
+            } else if(!PojoUtil.isEmpty(extId.getWorkExternalIdentifierId()) && PojoUtil.isEmpty(extId.getWorkExternalIdentifierType())) {
+                //Please add a value
+                setError(extId.getWorkExternalIdentifierType(), "NotBlank.currentWorkExternalIds.idType");
+            } 
+            
+            if(!PojoUtil.isEmpty(extId.getWorkExternalIdentifierId()) && extId.getWorkExternalIdentifierId().getValue().length() > 2084) {
+                setError(extId.getWorkExternalIdentifierId(), "manualWork.length_less_2084");
+            }
+        }
+    }
+    
+    
     @RequestMapping(value = "/roleValidate.json", method = RequestMethod.POST)
     public @ResponseBody PeerReviewForm validateRole(@RequestBody PeerReviewForm peerReview) {
         if(peerReview.getRole() == null) {
@@ -508,7 +573,7 @@ public class PeerReviewsController extends BaseWorkspaceController {
         }
 
         return peerReview;
-    }
+    }       
 
     @RequestMapping(value = "/typeValidate.json", method = RequestMethod.POST)
     public @ResponseBody PeerReviewForm validateType(@RequestBody PeerReviewForm peerReview) {
