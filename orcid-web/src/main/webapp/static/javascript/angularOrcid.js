@@ -3883,9 +3883,24 @@ orcidNgModule.controller('PublicFundingCtrl',['$scope', '$compile', '$filter', '
 orcidNgModule.controller('PublicPeerReviewCtrl',['$scope', '$compile', '$filter', 'workspaceSrvc', 'peerReviewSrvc',function ($scope, $compile, $filter, workspaceSrvc, peerReviewSrvc) {
 	 $scope.peerReviewSrvc = peerReviewSrvc;
 	 $scope.workspaceSrvc  = workspaceSrvc;
+	 $scope.showDetails = {};
+	 $scope.showElement = {};
 	 
 	 //Init
 	 $scope.peerReviewSrvc.loadPeerReviews(peerReviewSrvc.constants.access_type.ANONYMOUS);
+	 
+	 $scope.showDetailsMouseClick = function(key, $event) {
+        $event.stopPropagation();
+        $scope.showDetails[key] = !$scope.showDetails[key];
+    };
+    
+    $scope.showTooltip = function (element){    	
+        $scope.showElement[element] = true;
+    };
+
+    $scope.hideTooltip = function (element){    	
+        $scope.showElement[element] = false;
+    };
 	 
 	 
 }]);
