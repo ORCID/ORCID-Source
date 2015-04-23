@@ -16,6 +16,7 @@
     =============================================================================
 
 -->
+<!-- User workspace_preview_activities_v3.ftl instead of this one -->
 <#if !(affiliationsEmpty)??>
 <!-- Education -->
 <div id="workspace-education" class="workspace-accordion-item workspace-accordion-active" ng-controller="PublicEduAffiliation" ng-hide="!affiliationsSrvc.educations.length" ng-cloack>	       
