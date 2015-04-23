@@ -17,41 +17,27 @@
 
 -->
 <#escape x as x?html>
-	<#-- noscript is for search engines -->
-	<noscript ng-non-bindable>
-		<#if (peerReviews)??>			
-			<ul class="workspace-publications workspace-body-list">             
+	 <#-- noscript is for search engines -->
+    <noscript ng-non-bindable>
+        <#if (peerReviews)??> 
+        	<ul class="workspace-publications workspace-body-list">             
                 <#list peerReviews as peerReview>                                       
                     <div>
-                        <h3 class="work-title">
+                    	<h3 class="work-title">
                             <#if peerReview.subject.title?? && peerReview.subject.title.title.content??>
                                 <#if peerReview.subject.journalTitle?? && peerReview.subject.journalTitle.content??>
                                     <strong>${peerReview.subject.title.title.content}</strong>: <span class="work-subtitle">${peerReview.subject.journalTitle.content}</span>
                                 <#else>
-                                    <strong>${peerReview.subject.title.title.value}</strong>
-                                </#if>
-                                <#if peerReview.completionDate??>
-                                    <#assign date = '' >
-                                    <#if peerReview.completionDate.year??>
-                                        <#assign date = date + peerReview.completionDate.year.value>
-                                    </#if>
-                                    <#if peerReview.completionDate.month??>
-                                         <#if peerReview.completionDate.day??>
-                                            <#assign date = date + '-' + peerReview.completionDate.day.value >
-                                        </#if>
-                                        <#assign date = date + '-' + peerReview.completionDate.month.value >
-                                    </#if>                                  
-                                    ${date}
-                                </#if>                                
+                                    <strong>${peerReview.subject.title.title.content}</strong>
+                                </#if>                       
                             </#if>
-                        </h3>                       
+                        </h3>
                     </div>
-                </#list>
-            </ul>			
-		</#if>
-		 
-	</noscript>
-	<div>		
-		<#include "peer_review_body_inc.ftl"/>
-	</div>
+        		</#list>
+           </ul>
+        </#if>         
+    </noscript>
+    <div>       
+        <#include "peer_review_body_inc.ftl"/>
+    </div>
 </#escape>
