@@ -171,6 +171,7 @@ public class PublicProfileController extends BaseWorkspaceController {
             peerReviewMap = peerReviewMap(orcid);
             if(peerReviewMap.size() > 0) {
                 mav.addObject("peerReviews", peerReviewMap.values());
+                isProfileEmtpy = false;
             } else {
                 mav.addObject("peerReviewsEmpty", true);
             }
