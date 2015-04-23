@@ -126,6 +126,16 @@ public class ValidationManagerImpl implements ValidationManager {
         doSchemaValidation(orcidMessage);
         doCustomValidation(orcidMessage);
     }
+    
+    @Override
+    public void validateBioMessage(OrcidMessage orcidMessage) {
+        if (ValidationBehaviour.IGNORE.equals(validationBehaviour)) {
+            return;
+        }
+        doMessageVersionValidation(orcidMessage);
+        doSchemaValidation(orcidMessage);
+    }
+    
 
     private void doMessageVersionValidation(OrcidMessage orcidMessage) {
         if (orcidMessage != null) {
@@ -205,7 +215,7 @@ public class ValidationManagerImpl implements ValidationManager {
 
             if (validateOnlyOnePrimaryEmail) {
                 if (primaryCount == 0)
-                    throw new OrcidValidationException("There must be just one primary email");
+                    throw new OrcidValidationException("There must be at least one primary email");
             }
         }
     }

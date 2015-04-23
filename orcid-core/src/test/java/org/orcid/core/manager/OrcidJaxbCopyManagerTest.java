@@ -17,9 +17,10 @@
 package org.orcid.core.manager;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertNotNull;
+
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -33,7 +34,7 @@ import javax.xml.bind.Unmarshaller;
 import org.junit.Before;
 import org.junit.Test;
 import org.orcid.core.BaseTest;
-import org.orcid.core.manager.OrcidJaxbCopyManager;
+import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.jaxb.model.message.Address;
 import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.Affiliations;
@@ -42,7 +43,13 @@ import org.orcid.jaxb.model.message.ContactDetails;
 import org.orcid.jaxb.model.message.Country;
 import org.orcid.jaxb.model.message.CreditName;
 import org.orcid.jaxb.model.message.Email;
+import org.orcid.jaxb.model.message.ExternalIdCommonName;
+import org.orcid.jaxb.model.message.ExternalIdReference;
+import org.orcid.jaxb.model.message.ExternalIdentifier;
+import org.orcid.jaxb.model.message.ExternalIdentifiers;
+import org.orcid.jaxb.model.message.FamilyName;
 import org.orcid.jaxb.model.message.Iso3166Country;
+import org.orcid.jaxb.model.message.Keyword;
 import org.orcid.jaxb.model.message.Keywords;
 import org.orcid.jaxb.model.message.OrcidBio;
 import org.orcid.jaxb.model.message.OrcidMessage;
@@ -55,7 +62,9 @@ import org.orcid.jaxb.model.message.PersonalDetails;
 import org.orcid.jaxb.model.message.ResearcherUrl;
 import org.orcid.jaxb.model.message.ResearcherUrls;
 import org.orcid.jaxb.model.message.Url;
+import org.orcid.jaxb.model.message.UrlName;
 import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.pojo.GivenNames;
 
 /**
  * @author Declan Newman (declan) Date: 13/03/2012
@@ -130,9 +139,11 @@ public class OrcidJaxbCopyManagerTest extends BaseTest {
 
         orcidJaxbCopyManager.copyUpdatedBioToExistingWithVisibility(existingOrcidBioProtected, updatedOrcidBioPublic);
 
-        assertTrue(existingOtherNames.getOtherName().size() == 2);
+        assertEquals(4, existingOtherNames.getOtherName().size());
         assertEquals("Another 1", existingOtherNames.getOtherName().get(0).getContent());
         assertEquals("Another 2", existingOtherNames.getOtherName().get(1).getContent());
+        assertEquals("Yet Another 1", existingOtherNames.getOtherName().get(2).getContent());
+        assertEquals("Yet Another 2", existingOtherNames.getOtherName().get(3).getContent());
         assertEquals(Visibility.PRIVATE, existingOtherNames.getVisibility());
         existingContactDetailsAddress = existingOrcidBioProtected.getContactDetails().getAddress();
         assertEquals(Visibility.LIMITED, existingContactDetailsAddress.getCountry().getVisibility());
@@ -165,7 +176,7 @@ public class OrcidJaxbCopyManagerTest extends BaseTest {
         updatedOrcidPersonalDetails.getCreditName().setVisibility(null);
 
         orcidJaxbCopyManager.copyUpdatedBioToExistingWithVisibility(existingOrcidBioProtected, updatedOrcidBioPublic);
-        assertEquals(existingOrcidBioProtected.getPersonalDetails().getCreditName().getContent(), "Jimmy");
+        assertEquals("Don", existingOrcidBioProtected.getPersonalDetails().getCreditName().getContent());
         assertEquals(Visibility.PRIVATE, existingOrcidPersonalDetails.getCreditName().getVisibility());
 
     }
@@ -194,7 +205,7 @@ public class OrcidJaxbCopyManagerTest extends BaseTest {
         orcidJaxbCopyManager.copyUpdatedBioToExistingWithVisibility(existingOrcidBioProtected, updatedOrcidBioPublic);
         // check that the old values have been retained
         assertEquals(Visibility.PRIVATE, existingOrcidBioProtected.getBiography().getVisibility());
-        assertEquals("A new and impoved bio", existingOrcidBioProtected.getBiography().getContent());
+        assertEquals("A new bio", existingOrcidBioProtected.getBiography().getContent());
 
     }
 
@@ -350,7 +361,7 @@ public class OrcidJaxbCopyManagerTest extends BaseTest {
         }
         assertEquals(3, existingContactDetails.getEmail().size());
         assertEquals(Iso3166Country.GB, existingContactDetails.getAddress().getCountry().getValue());
-        assertEquals(Visibility.LIMITED, existingContactDetails.getAddress().getCountry().getVisibility());
+        assertEquals(OrcidVisibilityDefaults.COUNTRY_DEFAULT.getVisibility(), existingContactDetails.getAddress().getCountry().getVisibility());
 
         updatedContactDetails = new ContactDetails();
         updatedOrcidBioPublic.setContactDetails(updatedContactDetails);
@@ -508,5 +519,139 @@ public class OrcidJaxbCopyManagerTest extends BaseTest {
         return orcidMessage;
 
     }
+    
+    @Test
+    public void testCopyToAPrivateBio() {
+        final String privateSufix = "private_"; 
+        final String publicSufix = "public_";
+        OrcidBio privateBio = getBio(privateSufix, Visibility.PRIVATE, 3);
+        OrcidBio publicBio = getBio(publicSufix, Visibility.PUBLIC, 3);
+        
+        orcidJaxbCopyManager.copyUpdatedBioToExistingWithVisibility(privateBio, publicBio);
+        assertEquals(privateSufix + "My Biography", privateBio.getBiography().getContent());
+        assertEquals(Visibility.PRIVATE, privateBio.getBiography().getVisibility());
+        assertEquals(Iso3166Country.US, privateBio.getContactDetails().getAddress().getCountry().getValue());
+        assertEquals(Visibility.PRIVATE, privateBio.getContactDetails().getAddress().getCountry().getVisibility());
+        assertEquals(6, privateBio.getContactDetails().getEmail().size());
+        assertEquals("public_Email0", privateBio.getContactDetails().getEmail().get(0).getValue());
+        assertEquals("public_Email1", privateBio.getContactDetails().getEmail().get(1).getValue());
+        assertEquals("public_Email2", privateBio.getContactDetails().getEmail().get(2).getValue());
+        assertEquals("private_Email0", privateBio.getContactDetails().getEmail().get(3).getValue());
+        assertEquals("private_Email1", privateBio.getContactDetails().getEmail().get(4).getValue());
+        assertEquals("private_Email2", privateBio.getContactDetails().getEmail().get(5).getValue());
+        assertTrue(privateBio.getContactDetails().getEmail().containsAll(publicBio.getContactDetails().getEmail()));
+        assertEquals(6, privateBio.getExternalIdentifiers().getExternalIdentifier().size());
+        assertEquals("private_CommonName0", privateBio.getExternalIdentifiers().getExternalIdentifier().get(0).getExternalIdCommonName().getContent());
+        assertEquals("private_CommonName1", privateBio.getExternalIdentifiers().getExternalIdentifier().get(1).getExternalIdCommonName().getContent());
+        assertEquals("private_CommonName2", privateBio.getExternalIdentifiers().getExternalIdentifier().get(2).getExternalIdCommonName().getContent());
+        assertEquals("public_CommonName0", privateBio.getExternalIdentifiers().getExternalIdentifier().get(3).getExternalIdCommonName().getContent());
+        assertEquals("public_CommonName1", privateBio.getExternalIdentifiers().getExternalIdentifier().get(4).getExternalIdCommonName().getContent());
+        assertEquals("public_CommonName2", privateBio.getExternalIdentifiers().getExternalIdentifier().get(5).getExternalIdCommonName().getContent());
+        assertTrue(privateBio.getExternalIdentifiers().getExternalIdentifier().containsAll(publicBio.getExternalIdentifiers().getExternalIdentifier()));
+        assertEquals(Visibility.PRIVATE, privateBio.getExternalIdentifiers().getVisibility());
+        assertEquals(6, privateBio.getKeywords().getKeyword().size());
+        assertEquals("private_Keyword0", privateBio.getKeywords().getKeyword().get(0).getContent());
+        assertEquals("private_Keyword1", privateBio.getKeywords().getKeyword().get(1).getContent());
+        assertEquals("private_Keyword2", privateBio.getKeywords().getKeyword().get(2).getContent());
+        assertEquals("public_Keyword0", privateBio.getKeywords().getKeyword().get(3).getContent());
+        assertEquals("public_Keyword1", privateBio.getKeywords().getKeyword().get(4).getContent());
+        assertEquals("public_Keyword2", privateBio.getKeywords().getKeyword().get(5).getContent());
+        assertTrue(privateBio.getKeywords().getKeyword().containsAll(publicBio.getKeywords().getKeyword()));
+        assertEquals(Visibility.PRIVATE, privateBio.getKeywords().getVisibility());
+        assertEquals(6, privateBio.getResearcherUrls().getResearcherUrl().size());
+        assertEquals("http://www.rurl.com/private_/0", privateBio.getResearcherUrls().getResearcherUrl().get(0).getUrl().getValue());
+        assertEquals("http://www.rurl.com/private_/1", privateBio.getResearcherUrls().getResearcherUrl().get(1).getUrl().getValue());
+        assertEquals("http://www.rurl.com/private_/2", privateBio.getResearcherUrls().getResearcherUrl().get(2).getUrl().getValue());
+        assertEquals("http://www.rurl.com/public_/0", privateBio.getResearcherUrls().getResearcherUrl().get(3).getUrl().getValue());
+        assertEquals("http://www.rurl.com/public_/1", privateBio.getResearcherUrls().getResearcherUrl().get(4).getUrl().getValue());
+        assertEquals("http://www.rurl.com/public_/2", privateBio.getResearcherUrls().getResearcherUrl().get(5).getUrl().getValue());
+        assertTrue(privateBio.getResearcherUrls().getResearcherUrl().containsAll(publicBio.getResearcherUrls().getResearcherUrl()));
+        assertEquals(Visibility.PRIVATE, privateBio.getResearcherUrls().getVisibility());
+        assertEquals(privateSufix + "Credit name", privateBio.getPersonalDetails().getCreditName().getContent());
+        assertEquals(Visibility.PRIVATE, privateBio.getPersonalDetails().getCreditName().getVisibility());
+        assertEquals(publicSufix + "Family", privateBio.getPersonalDetails().getFamilyName().getContent());
+        assertEquals(publicSufix + "Given", privateBio.getPersonalDetails().getGivenNames().getContent());
+        assertEquals(6, privateBio.getPersonalDetails().getOtherNames().getOtherName().size());
+        assertEquals("private_Other0", privateBio.getPersonalDetails().getOtherNames().getOtherName().get(0).getContent());
+        assertEquals("private_Other1", privateBio.getPersonalDetails().getOtherNames().getOtherName().get(1).getContent());
+        assertEquals("private_Other2", privateBio.getPersonalDetails().getOtherNames().getOtherName().get(2).getContent());
+        assertEquals("public_Other0", privateBio.getPersonalDetails().getOtherNames().getOtherName().get(3).getContent());
+        assertEquals("public_Other1", privateBio.getPersonalDetails().getOtherNames().getOtherName().get(4).getContent());
+        assertEquals("public_Other2", privateBio.getPersonalDetails().getOtherNames().getOtherName().get(5).getContent());
+        assertTrue(privateBio.getPersonalDetails().getOtherNames().getOtherName().containsAll(publicBio.getPersonalDetails().getOtherNames().getOtherName()));        
+    }
 
+    private OrcidBio getBio(String sufix, Visibility visibility, int max) {
+        OrcidBio orcidBio = new OrcidBio();
+        Biography bio = new Biography(sufix + "My Biography", visibility);
+        orcidBio.setBiography(bio);
+        ContactDetails contactDetails = new ContactDetails();
+        Address address = new Address();
+        Country country = new Country(visibility.equals(Visibility.PRIVATE) ? Iso3166Country.US : Iso3166Country.CR);
+        country.setVisibility(visibility);
+        address.setCountry(country);
+        contactDetails.setAddress(address);
+        List<Email> emails = new ArrayList<Email>();
+        for(int i = 0; i < max; i++) {
+            Email email = new Email();
+            email.setValue(sufix + "Email" + i);
+            if(i == 0) {
+                email.setPrimary(true);
+            }
+            email.setVisibility(visibility);
+            emails.add(email);
+        }
+        
+        contactDetails.setEmail(emails);
+        orcidBio.setContactDetails(contactDetails);
+        
+        ExternalIdentifiers extIds = new ExternalIdentifiers();
+        extIds.setVisibility(visibility);
+        
+        for(int i = 0; i < max; i++) {
+            ExternalIdentifier extId = new ExternalIdentifier();             
+            extId.setExternalIdCommonName(new ExternalIdCommonName(sufix + "CommonName" + i));
+            extId.setExternalIdReference(new ExternalIdReference(sufix + "Reference" + i));
+            extIds.getExternalIdentifier().add(extId);
+        }        
+        orcidBio.setExternalIdentifiers(extIds);
+        Keywords keywords = new Keywords();
+        keywords.setVisibility(visibility);
+        
+        for(int i = 0; i < max; i++) {
+            Keyword k = new Keyword();
+            k.setContent(sufix + "Keyword" + i);
+            keywords.getKeyword().add(k);
+        }
+        orcidBio.setKeywords(keywords);
+        
+        PersonalDetails personalDetails = new PersonalDetails();
+        CreditName creditName = new CreditName(sufix + "Credit name");
+        creditName.setVisibility(visibility);
+        personalDetails.setCreditName(creditName);
+        FamilyName familyName = new FamilyName(sufix + "Family");
+        personalDetails.setFamilyName(familyName);
+        GivenNames givenNames = new GivenNames();
+        givenNames.setContent(sufix + "Given");
+        personalDetails.setGivenNames(givenNames);
+        OtherNames other = new OtherNames();
+        other.setVisibility(visibility);
+        for(int i = 0; i < max; i++) {
+            other.addOtherName(sufix + "Other" + i);
+        }        
+        personalDetails.setOtherNames(other);        
+        orcidBio.setPersonalDetails(personalDetails);
+        
+        ResearcherUrls researcherUrls = new ResearcherUrls();
+        researcherUrls.setVisibility(visibility);
+        for(int i = 0; i < max; i++) {
+            ResearcherUrl rUrl = new ResearcherUrl();
+            rUrl.setUrl(new Url("http://www.rurl.com/" + sufix + "/" + i));
+            rUrl.setUrlName(new UrlName(sufix + "Url" + i));
+            researcherUrls.getResearcherUrl().add(rUrl);
+        }
+        orcidBio.setResearcherUrls(researcherUrls);
+        return orcidBio;
+    }
+    
 }
