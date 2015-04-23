@@ -49,6 +49,7 @@ import org.orcid.jaxb.model.message.PersonalDetails;
 import org.orcid.jaxb.model.message.ResearcherUrl;
 import org.orcid.jaxb.model.message.ResearcherUrls;
 import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.util.Assert;
 
 /**
@@ -323,8 +324,10 @@ public class OrcidJaxbCopyManagerImpl implements OrcidJaxbCopyManager {
 
             if (updatedAddress != null) {
                 if (existingAddress.getCountry() != null) {
-                    if (!Visibility.PRIVATE.equals(existingAddress.getCountry().getValue())) {
-                        existingAddress.setCountry(updatedAddress.getCountry());
+                    if (!Visibility.PRIVATE.equals(existingAddress.getCountry().getVisibility())) {
+                        if(updatedAddress.getCountry() != null) {
+                            existingAddress.getCountry().setValue(updatedAddress.getCountry().getValue());
+                        }
                     }
                 } else {
                     existingAddress.setCountry(updatedAddress.getCountry());
@@ -387,9 +390,14 @@ public class OrcidJaxbCopyManagerImpl implements OrcidJaxbCopyManager {
 
         // otherwise preserve visibility of other names && credit names
         copyOtherNamesPreservingVisibility(existingPersonalDetails, updatedPersonalDetails);
-        copyCreditNamePreservingVisibility(existingPersonalDetails, updatedPersonalDetails);
-        existing.setPersonalDetails(updatedPersonalDetails);
-
+        copyCreditNamePreservingVisibility(existingPersonalDetails, updatedPersonalDetails);        
+        if(updatedPersonalDetails.getFamilyName() != null && !PojoUtil.isEmpty(updatedPersonalDetails.getFamilyName().getContent())) {
+            existingPersonalDetails.setFamilyName(updatedPersonalDetails.getFamilyName());
+        }
+        
+        if(updatedPersonalDetails.getGivenNames() != null && !PojoUtil.isEmpty(updatedPersonalDetails.getGivenNames().getContent())) {
+            existingPersonalDetails.setGivenNames(updatedPersonalDetails.getGivenNames());
+        }        
     }
 
     private void copyOtherNamesPreservingVisibility(PersonalDetails existingPersonalDetails, PersonalDetails updatedPersonalDetails) {
