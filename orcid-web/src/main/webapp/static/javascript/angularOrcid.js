@@ -3887,9 +3887,6 @@ orcidNgModule.controller('PublicPeerReviewCtrl',['$scope', '$compile', '$filter'
 	 $scope.showElement = {};
 	 $scope.editSources = {};
 	 
-	 //Init
-	 $scope.peerReviewSrvc.loadPeerReviews(peerReviewSrvc.constants.access_type.ANONYMOUS);
-	 
 	 $scope.sortState = new ActSortState(GroupedActivities.PEER_REVIEW);
      
 	 $scope.sort = function(key) {
@@ -3917,6 +3914,9 @@ orcidNgModule.controller('PublicPeerReviewCtrl',['$scope', '$compile', '$filter'
         $scope.editSources[group.groupId] = false;
         group.activePutCode = group.defaultPutCode;
     };
+    
+    //Init
+    $scope.peerReviewSrvc.loadPeerReviews(peerReviewSrvc.constants.access_type.ANONYMOUS);
 
 	 
 	 
@@ -4916,10 +4916,14 @@ orcidNgModule.factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
             loadingDetails: false,
             quickRef: {},            
             loadingDetails: false,
+            blankPeerReview: null,
             details: new Object(), // we should think about putting details in the
             peerReviewsToAddIds: null,            
     		
             getBlankPeerReview: function(callback) {
+            	 // if cached return clone of blank
+                if (peerReviewSrvc.blankPeerReview != null)
+                    callback(JSON.parse(JSON.stringify(peerReviewSrvc.blankPeerReview)));
     			$.ajax({
                     url: getBaseUri() + '/peer-reviews/peer-review.json',
                     dataType: 'json',
@@ -7932,7 +7936,7 @@ orcidNgModule.controller('switchUserCtrl',['$scope','$compile',function ($scope,
 
 }]);
 
-orcidNgModule.controller('SocialNetworksCtrl',['$scope',function ($scope){
+orcidNgModule.controller('SocialNet`',['$scope',function ($scope){
     $scope.twitter=false;
 
     $scope.checkTwitterStatus = function(){
