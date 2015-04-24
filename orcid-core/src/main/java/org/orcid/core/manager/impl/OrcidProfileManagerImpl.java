@@ -837,8 +837,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
             return null;
         }
         // preserve the visibility settings
-        orcidJaxbCopyManager.copyUpdatedBioToExistingWithVisibility(existingProfile.getOrcidBio(), updatedOrcidProfile.getOrcidBio());
-        existingProfile.setOrcidBio(updatedOrcidProfile.getOrcidBio());
+        orcidJaxbCopyManager.copyUpdatedBioToExistingWithVisibility(existingProfile.getOrcidBio(), updatedOrcidProfile.getOrcidBio());        
         return updateOrcidProfile(existingProfile);
     }
 

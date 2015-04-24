@@ -505,7 +505,9 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
             OrcidMessage message = bioResponse.getEntity(OrcidMessage.class);
             OrcidBio orcidBio = message.getOrcidProfile().getOrcidBio();
             ExternalIdentifiers externalIdentifiers = orcidBio.getExternalIdentifiers();
-            assertNull(externalIdentifiers);
+            if(externalIdentifiers != null) {
+                assertTrue(externalIdentifiers.getExternalIdentifier() == null || externalIdentifiers.getExternalIdentifier().isEmpty()); 
+            }
 
             ExternalIdentifiers newExternalIdentifiers = new ExternalIdentifiers();
             newExternalIdentifiers.setVisibility(Visibility.PUBLIC);
@@ -555,7 +557,9 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
         assertEquals("Ecological Complexity", clientDetails.getClientName());
 
         ExternalIdentifiers externalIdentifiers = orcidBio.getExternalIdentifiers();
-        assertNull(externalIdentifiers);
+        if(externalIdentifiers != null) {
+            assertTrue(externalIdentifiers.getExternalIdentifier() == null || externalIdentifiers.getExternalIdentifier().isEmpty()); 
+        }
 
         ExternalIdentifiers newExternalIdentifiers = new ExternalIdentifiers();
         newExternalIdentifiers.setVisibility(Visibility.PUBLIC);
@@ -602,7 +606,9 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
         assertEquals("Ecological Complexity", clientDetails.getClientName());
 
         ExternalIdentifiers externalIdentifiers = orcidBio.getExternalIdentifiers();
-        assertNull(externalIdentifiers);
+        if(externalIdentifiers != null) {
+            assertTrue(externalIdentifiers.getExternalIdentifier() == null || externalIdentifiers.getExternalIdentifier().isEmpty()); 
+        }
 
         ExternalIdentifiers newExternalIdentifiers = new ExternalIdentifiers();
         newExternalIdentifiers.setVisibility(Visibility.PUBLIC);
@@ -655,7 +661,9 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
         assertEquals("Ecological Complexity", clientDetails.getClientName());
 
         ExternalIdentifiers externalIdentifiers = orcidBio.getExternalIdentifiers();
-        assertNull(externalIdentifiers);
+        if(externalIdentifiers != null) {
+            assertTrue(externalIdentifiers.getExternalIdentifier() == null || externalIdentifiers.getExternalIdentifier().isEmpty()); 
+        }
 
         ExternalIdentifiers newExternalIdentifiers = new ExternalIdentifiers();
         newExternalIdentifiers.setVisibility(Visibility.PUBLIC);
@@ -697,7 +705,9 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
         
         //Add one external identifier
         ExternalIdentifiers externalIdentifiers = orcidBio.getExternalIdentifiers();
-        assertNull(externalIdentifiers);
+        if(externalIdentifiers != null) {
+            assertTrue(externalIdentifiers.getExternalIdentifier() == null || externalIdentifiers.getExternalIdentifier().isEmpty()); 
+        }
         
         ExternalIdentifiers newExternalIdentifiers = new ExternalIdentifiers();
         newExternalIdentifiers.setVisibility(Visibility.PUBLIC);
@@ -764,7 +774,9 @@ public class T2OrcidOAuthApiClientIntegrationTest extends BaseT2OrcidOAuthApiCli
         
         //Add one external identifier
         ExternalIdentifiers externalIdentifiers = orcidBio.getExternalIdentifiers();
-        assertNull(externalIdentifiers);
+        if(externalIdentifiers != null) {
+            assertTrue(externalIdentifiers.getExternalIdentifier() == null || externalIdentifiers.getExternalIdentifier().isEmpty()); 
+        }
         
         ExternalIdentifiers newExternalIdentifiers = new ExternalIdentifiers();
         newExternalIdentifiers.setVisibility(Visibility.PUBLIC);
