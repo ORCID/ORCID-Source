@@ -3885,9 +3885,16 @@ orcidNgModule.controller('PublicPeerReviewCtrl',['$scope', '$compile', '$filter'
 	 $scope.workspaceSrvc  = workspaceSrvc;
 	 $scope.showDetails = {};
 	 $scope.showElement = {};
+	 $scope.editSources = {};
 	 
 	 //Init
 	 $scope.peerReviewSrvc.loadPeerReviews(peerReviewSrvc.constants.access_type.ANONYMOUS);
+	 
+	 $scope.sortState = new ActSortState(GroupedActivities.PEER_REVIEW);
+     
+	 $scope.sort = function(key) {
+        $scope.sortState.sortBy(key);
+     };
 	 
 	 $scope.showDetailsMouseClick = function(key, $event) {
         $event.stopPropagation();
@@ -3901,6 +3908,16 @@ orcidNgModule.controller('PublicPeerReviewCtrl',['$scope', '$compile', '$filter'
     $scope.hideTooltip = function (element){    	
         $scope.showElement[element] = false;
     };
+    
+    $scope.showSources = function(group) {
+        $scope.editSources[group.groupId] = true;
+    };
+    
+    $scope.hideSources = function(group) {
+        $scope.editSources[group.groupId] = false;
+        group.activePutCode = group.defaultPutCode;
+    };
+
 	 
 	 
 }]);
