@@ -7936,7 +7936,7 @@ orcidNgModule.controller('switchUserCtrl',['$scope','$compile',function ($scope,
 
 }]);
 
-orcidNgModule.controller('SocialNet`',['$scope',function ($scope){
+orcidNgModule.controller('SocialNetworksCtrl',['$scope',function ($scope){
     $scope.twitter=false;
 
     $scope.checkTwitterStatus = function(){
