@@ -286,7 +286,7 @@ public class WorkspaceController extends BaseWorkspaceController {
     public Map<String, String> retrievePeerReviewRolesAsMap() {
         Map<String, String> peerReviewRoles = new LinkedHashMap<String, String>();
         for (Role role : Role.values()) {
-            peerReviewRoles.put(role.value(), getMessage(buildInternationalizationKey(Role.class, role.value())));
+            peerReviewRoles.put(role.value(), getMessage(buildInternationalizationKey(Role.class, role.name())));
         }
         return FunctionsOverCollections.sortMapsByValues(peerReviewRoles);
     }
@@ -295,7 +295,7 @@ public class WorkspaceController extends BaseWorkspaceController {
     public Map<String, String> retrievePeerReviewTypesAsMap() {
         Map<String, String> peerReviewTypes = new LinkedHashMap<String, String>();
         for (PeerReviewType type : PeerReviewType.values()) {
-            peerReviewTypes.put(type.value(), getMessage(buildInternationalizationKey(PeerReviewType.class, type.value())));
+            peerReviewTypes.put(type.value(), getMessage(buildInternationalizationKey(PeerReviewType.class, type.name())));
         }
         return FunctionsOverCollections.sortMapsByValues(peerReviewTypes);
     }
