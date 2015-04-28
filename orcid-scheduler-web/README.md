@@ -12,7 +12,7 @@ There are some tasks at the [ORCID's Core project](https://github.com/ORCID/ORCI
 
 To register a new scheduled task, you first need to be sure that:
 
-###**Prerequisites**
+###*Prerequisites*
 
 1. The class containing the scheduled task should be at the [ORCID's Core project](https://github.com/ORCID/ORCID-Source/tree/master/orcid-core) and the method that will run should be public.
 2. There should be a bean associated with that class in the [context config file](https://github.com/ORCID/ORCID-Source/blob/master/orcid-core/src/main/resources/orcid-core-context.xml)
@@ -20,7 +20,7 @@ To register a new scheduled task, you first need to be sure that:
 
 Then, when you are sure that your class is ready and the none of the unit tests got broken, you can register your scheduled task like this:
 
-### register the task
+###*Register the task*
 
 Add your task to the [orcid-scheduler-web-context.xml](https://github.com/ORCID/ORCID-Source/blob/master/orcid-scheduler-web/src/main/resources/orcid-scheduler-web-context.xml) file, the task will look like this:
 ```XML
