@@ -22,9 +22,9 @@ To register a new scheduled task, you first need to be sure that:
 
 Then, when you are sure that your class is ready and that none of the unit tests got broken, you can register your scheduled task like this:
 
-###*Register the task*
+###*Registering the task*
 
-Add your task to the [orcid-scheduler-web-context.xml](https://github.com/ORCID/ORCID-Source/blob/master/orcid-scheduler-web/src/main/resources/orcid-scheduler-web-context.xml) file, add it as the last element of the  <task:scheduled-tasks scheduler="scheduler"> tag, the task will look like this:
+Add your task to the [orcid-scheduler-web-context.xml](https://github.com/ORCID/ORCID-Source/blob/master/orcid-scheduler-web/src/main/resources/orcid-scheduler-web-context.xml) file, as the last element of the task:scheduled-tasks element and looking like this:
 ```XML
 <task:scheduled ref="bean_name" method="method_name" type="cron_or_time_in_millis"/>
 ```
