@@ -25,16 +25,16 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "role")
 @XmlEnum
 public enum Role implements Serializable {
-    @XmlEnumValue("REVIEWER")
-    REVIEWER("REVIEWER"),
-    @XmlEnumValue("EDITOR")
-    EDITOR("EDITOR"),
-    @XmlEnumValue("MEMBER")
-    MEMBER("MEMBER"),
-    @XmlEnumValue("CHAIR")
-    CHAIR("CHAIR"),
-    @XmlEnumValue("ORGANIZER")
-    ORGANIZER("ORGANIZER");
+    @XmlEnumValue("reviewer")
+    REVIEWER("reviewer"),
+    @XmlEnumValue("editor")
+    EDITOR("editor"),
+    @XmlEnumValue("member")
+    MEMBER("member"),
+    @XmlEnumValue("chair")
+    CHAIR("chair"),
+    @XmlEnumValue("organizer")
+    ORGANIZER("organizer");
         
     private final String value;
 
