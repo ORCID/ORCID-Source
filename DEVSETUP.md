@@ -75,7 +75,7 @@ Do to licensing issues this is only available to ORCID.org employees.
 
 
 ## Run Maven Task - First Time Only
-1. maven clean install
+1. maven clean install -Dmaven.test.skip=true
 
     ```
     cd ~/git/ORCID-Source
