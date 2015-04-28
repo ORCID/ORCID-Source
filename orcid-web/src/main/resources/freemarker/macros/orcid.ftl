@@ -170,6 +170,15 @@ kind of variable. This temp value is only used in this macro lib -->
 <#macro unescapedMessageArgs code, args>${springMacroRequestContext.getMessage(code, args, false)}</#macro>
 
 <#--
+ * urlPath
+ *
+ * Macro to build urlPath
+ -->
+ 
+<#macro rootPath path><@spring.bind "basePath" />${basePath?substring(1)}${path}</#macro>
+
+
+<#--
  * unescapedMessageArgsText
  *
  * Macro to translate a message code with arguments into a message,
