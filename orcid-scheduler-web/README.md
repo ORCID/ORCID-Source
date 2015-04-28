@@ -22,7 +22,7 @@ Then, when you are sure that your class is ready and the none of the unit tests 
 
 ###*Register the task*
 
-Add your task to the [orcid-scheduler-web-context.xml](https://github.com/ORCID/ORCID-Source/blob/master/orcid-scheduler-web/src/main/resources/orcid-scheduler-web-context.xml) file, the task will look like this:
+Add your task to the [orcid-scheduler-web-context.xml](https://github.com/ORCID/ORCID-Source/blob/master/orcid-scheduler-web/src/main/resources/orcid-scheduler-web-context.xml) file, add it as the last element of the  <task:scheduled-tasks scheduler="scheduler"> tag, the task will look like this:
 ```XML
 <task:scheduled ref="bean_name" method="method_name" type="cron_or_time_in_millis"/>
 ```
@@ -35,8 +35,22 @@ Where:
   * fixed-delay: An interval-based trigger where the interval is measured from the completion time of the previous task. The time unit value is measured in milliseconds.
 * cron_or_time_in_millis: A cron expression or a number of milliseconds based on the type you selected
 
+# Getting Support
 
+If you are experience problems using ORCID you can check our [help page](http://orcid.org/help). 
+
+# Contributing
+Pull requests are welcome; See [CONTRIBUTING.md](CONTRIBUTING.md)
+
+# Development Environment Setup
+See [DEVSETUP.md](https://github.com/ORCID/ORCID-Source/blob/master/DEVSETUP.md)
 
 # License
-See [LICENSE.md](https://github.com/ORCID/ORCID-Work-in-Progress/blob/master/LICENSE.md)
+See [LICENSE.md](https://github.com/ORCID/ORCID-Source/blob/master/LICENSE.md)
+
+# Contributors
+See [CREDITS.md](https://github.com/ORCID/ORCID-Source/blob/master/CREDITS.md)
+
+# Projects
+See [PROJECTS.md](https://github.com/ORCID/ORCID-Source/blob/master/PROJECTS.md)
 
