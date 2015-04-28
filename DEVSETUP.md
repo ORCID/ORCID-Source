@@ -75,11 +75,11 @@ Do to licensing issues this is only available to ORCID.org employees.
 
 
 ## Run Maven Task - First Time Only
-1. maven clean install -Dmaven.test.skip=true
+1. maven clean install
 
     ```
     cd ~/git/ORCID-Source
-    mvn clean install
+    mvn clean install -Dmaven.test.skip=true
     ```
     
 Tip: If you experience the following error: 
