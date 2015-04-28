@@ -9,28 +9,21 @@ The ```peer-review``` activity type follows the [CASRAI Peer Review Services dat
 ##Peer Review XML
 XML for the ```peer-review``` activity follows the [peer-review-2.0_rc1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc1/peer-review-2.0_rc1.xsd) and consists of the following sections:
 
-- ```<peer-review:role>```
-The role played by a person in their contribution to a review. 
+- **peer-review:role** The role played by a person in their contribution to a review. 
 
-- ```<peer-review:organization>``` 
-Information about the organization (journal publisher, conference organizer, funding agency, etc) convening the review
+- **peer-review:organization** Information about the organization (journal publisher, conference organizer, funding agency, etc) convening the review
 
-- ```<peer-review:external-identifiers>```
-The unique locally generated identifier of the review. **IMPORTANT**: This identifier refers to the review itself, **NOT** to the manuscript, application, etc that was reviewed.
+- **peer-review:external-identifiers** The unique locally generated identifier of the review. *This identifier refers to the review itself, NOT to the item that was reviewed.*
 
-- ```<peer-review:url>```
-A link to a representation of the review on the web. **IMPORTANT**: This URL refers to the review itself, **NOT** to the manuscript, application, etc that was reviewed.
+- **peer-review:url** A link to a representation of the review on the web. *This URL refers to the review itself, NOT to the item that was reviewed.*
 
-- ```<peer-review:type>```
-The kind of review applied to the subject type reviewed. 
+- **peer-review:type** The kind of review applied to the subject type reviewed. 
 
-- ```<peer-review:completion-date>```
-The day of the month on which the review was completed (formatted to ISO 8601). 
+- **peer-review:completion-date** The day of the month on which the review was completed (formatted to ISO 8601). 
 
-- ```<peer-review:subject>```
-Information about the item (journal article, conference paper, funding application, etc) that was reviewed.
+- **peer-review:subject** Information about the item (journal article, conference paper, funding application, etc) that was reviewed.
 
-For an example, see [peer-review-2.0_rc1.xml](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc1/samples/peer-review-2.0_rc1.xml )
+For an example XML file, see [peer-review-2.0_rc1.xml](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc1/samples/peer-review-2.0_rc1.xml )
 
 ***Note:*** *Sample files contain system-generated elements/attributes that are returned when reading items from ORCID. The following items should not be included when posting items to ORCID:*
 
