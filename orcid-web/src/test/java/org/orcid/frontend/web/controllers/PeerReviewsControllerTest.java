@@ -187,8 +187,8 @@ public class PeerReviewsControllerTest extends BaseControllerTest {
         form.setCountry(Text.valueOf("CR"));
         form.setOrgName(Text.valueOf("OrgName"));
         form.setRegion(Text.valueOf("The Region"));
-        form.setRole(Text.valueOf("REVIEWER"));
-        form.setType(Text.valueOf("EVALUATION"));
+        form.setRole(Text.valueOf("reviewer"));
+        form.setType(Text.valueOf("evaluation"));
         form.setUrl(Text.valueOf("http://url.com"));
         form.setVisibility(Visibility.LIMITED);
 
