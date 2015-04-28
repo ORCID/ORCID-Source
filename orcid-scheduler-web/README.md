@@ -3,26 +3,23 @@ Welcome to the ORCID Scheduler project. Here we configure all task that we will 
 
 ## How does it work?  
 
-If you have a task in [ORCID's Core project](https://github.com/ORCID/ORCID-Source/tree/master/orcid-core) that you would like to configure as a scheduler task:
+There are some tasks at the [ORCID's Core project](https://github.com/ORCID/ORCID-Source/tree/master/orcid-core) that needs to run as a scheduler task, so, they are registered in the list of scheduled tasks in the [scheduler config file](https://github.com/ORCID/ORCID-Source/blob/master/orcid-scheduler-web/src/main/resources/orcid-scheduler-web-context.xml), those tasks can be of two different types:
 
-1. Make sure you defined a bean [here](https://github.com/ORCID/ORCID-Source/blob/master/orcid-core/src/main/resources/orcid-core-context.xml) for the class that have the method you want to schedule, and, that the method is public.
-2. Add the task definition to the [scheduler config file](https://github.com/ORCID/ORCID-Source/blob/master/orcid-scheduler-web/src/main/resources/orcid-scheduler-web-context.xml) as the last entrance of the scheduled tasks list (the code inside the <task:scheduled-tasks scheduler="scheduler"> tag) 
+* fixed-delay: An interval-based trigger where the interval is measured from the completion time of the previous task. The time unit value is measured in milliseconds.
+* cron: A cron-based trigger. See the [CronSequenceGenerator]( http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/scheduling/support/CronSequenceGenerator.html) JavaDoc for example patterns.
 
-The task should look like this:
+## How to register a new scheduled task?
 
-```XML
-<task:scheduled ref="[bean_name]" method="[method_name]" [type]="[cron_or_delay]"/>
-```
+To register a new scheduled task, you first need to be sure that:
 
-Where the place holders means:
-* bean_name: The bean name defined in [here](https://github.com/ORCID/ORCID-Source/blob/master/orcid-core/src/main/resources/orcid-core-context.xml)
-* method_name: The name  
+1. The class containing the scheduled task should be at the [ORCID's Core project](https://github.com/ORCID/ORCID-Source/tree/master/orcid-core) and the method that will run should be public.
+2. There should be a bean associated with that class in the [context config file](https://github.com/ORCID/ORCID-Source/blob/master/orcid-core/src/main/resources/orcid-core-context.xml)
+3. There should be acouple of [unit tests](http://junit.org/) in the [tests directory](https://github.com/ORCID/ORCID-Source/tree/master/orcid-core/src/test/java/org/orcid/core) that ensures you cron job runs as expected.
 
+Then, when you are sure that your class is ready and the none of the unit tests got broken, you can register your scheduled task like this:
 
+1. 
 
-
- 
- 
 # License
 See [LICENSE.md](https://github.com/ORCID/ORCID-Work-in-Progress/blob/master/LICENSE.md)
 
