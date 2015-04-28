@@ -151,7 +151,7 @@
 			</xs:documentation>
 		</xs:annotation>
 		<xs:restriction base="xs:string">
-			<xs:enumeration value="REVIEWER">
+			<xs:enumeration value="reviewer">
 				<xs:annotation>
 					<xs:documentation>
 						A person who formally assess or examines an
@@ -160,28 +160,28 @@
 					</xs:documentation>
 				</xs:annotation>
 			</xs:enumeration>
-			<xs:enumeration value="EDITOR">
+			<xs:enumeration value="editor">
 				<xs:annotation>
 					<xs:documentation>A person who coordinates reviews and/or is
 						responsible for decision making on the content of a publication.
 					</xs:documentation>
 				</xs:annotation>
 			</xs:enumeration>
-			<xs:enumeration value="MEMBER">
+			<xs:enumeration value="member">
 				<xs:annotation>
 					<xs:documentation>A person participating in a process, committee or
 						activity.
 					</xs:documentation>
 				</xs:annotation>
 			</xs:enumeration>
-			<xs:enumeration value="CHAIR">
+			<xs:enumeration value="chair">
 				<xs:annotation>
 					<xs:documentation>A person who coordinates reviews and/or is
 						responsible for decision making on the content of a conference.
 					</xs:documentation>
 				</xs:annotation>
 			</xs:enumeration>
-			<xs:enumeration value="ORGANIZER">
+			<xs:enumeration value="organizer">
 				<xs:annotation>
 					<xs:documentation>A person who makes arrangements or preparations
 						for an event or activity.
@@ -197,14 +197,14 @@
 			</xs:documentation>
 		</xs:annotation>
 		<xs:restriction base="xs:string">
-			<xs:enumeration value="REVIEW">
+			<xs:enumeration value="review">
 				<xs:annotation>
 					<xs:documentation>An expert assessment of a scholarly output that
 						contributes to a decision regarding on the object of the review.
 					</xs:documentation>
 				</xs:annotation>
 			</xs:enumeration>
-			<xs:enumeration value="EVALUATION">
+			<xs:enumeration value="evaluation">
 				<xs:annotation>
 					<xs:documentation>
 						A post­peer review, expert evaluation of a

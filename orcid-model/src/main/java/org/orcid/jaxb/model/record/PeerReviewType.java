@@ -25,10 +25,10 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "type")
 @XmlEnum
 public enum PeerReviewType implements Serializable {
-    @XmlEnumValue("REVIEW")
-    REVIEW("REVIEW"),
-    @XmlEnumValue("EVALUATION")
-    EVALUATION("EVALUATION");
+    @XmlEnumValue("review")
+    REVIEW("review"),
+    @XmlEnumValue("evaluation")
+    EVALUATION("evaluation");
         
     private final String value;
 

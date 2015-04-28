@@ -453,10 +453,11 @@ public class PeerReviewsController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = "/urlValidate.json", method = RequestMethod.POST)
-    public @ResponseBody PeerReviewForm validateUrl(@RequestBody PeerReviewForm peerReview) {
+    public @ResponseBody PeerReviewForm validateUrl(@RequestBody PeerReviewForm peerReview) {        
         if(peerReview.getUrl() == null) {
             peerReview.setUrl(Text.valueOf(StringUtils.EMPTY));
         }
+        peerReview.getUrl().setErrors(new ArrayList<String>());
         validateUrl(peerReview.getUrl());
         return peerReview;
     }
