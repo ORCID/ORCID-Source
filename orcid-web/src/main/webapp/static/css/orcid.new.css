@@ -5814,6 +5814,13 @@ hr{
 	margin: 0 10px 15px 0;
 }
 
+/* Shibboleth */
+
+.shibboleth .col-xs-12{
+	padding-left: 0;
+	padding-right: 0;
+}
+
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
 
@@ -7001,6 +7008,11 @@ hr{
 	
 	#workspace-peer-review .visible-xs-inline a{
 		width: 100%;
+	}
+	
+	.shibboleth .col-xs-12{
+		padding-left: 15px;
+		padding-right: 15px;
 	}
 	
 }
