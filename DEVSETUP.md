@@ -111,9 +111,9 @@ These instructions are for Spring Tool Suite for Eclipse.
 1. Download and install Spring Tool Suite for Eclipse:
 http://www.springsource.org/downloads/sts-ggts
 
-* Select File Import "Project from Git", Click Next.
+* Select File-> Import -> Git -> Project from Git, Click Next.
 
-* Select Local, Click Next
+* Select "Existing local repository", Click Next
 
 * Select Add, once ORCID-Source has been added, select it and click Next
 
@@ -137,7 +137,7 @@ http://www.springsource.org/downloads/sts-ggts
 
 * Select Window -> Show View -> Servers
 
-* Double Click "VMWare vFabric tc Server"
+* Double Click "VMWare vFabric tc Server" or  "Pivotal tc Server"
 
 * Select Open launch configuration
 
