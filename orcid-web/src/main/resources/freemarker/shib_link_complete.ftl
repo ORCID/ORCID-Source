@@ -18,13 +18,13 @@
 -->
 <@public classes=['home'] nav="signin">
 <#include "sandbox_warning.ftl"/>
-    <form class="form-sign-in" id="loginForm" ng-enter-submit action="<@spring.url '/signin/auth'/>" method="post">
+    <form class="form-sign-in" id="loginForm" ng-enter-submit action="<@orcid.rootPath '/signin/auth'/>" method="post">
         <div class="row col-md-offset-3">
             <div>Congratulations!</div>
             <div>You have linked your Shibboleth account ${remoteUser}</div>
             <div>to your ORCID account ${effectiveUserOrcid}.</div>
             <div>You will now be able to signin to ORCID using Shibboleth.</div>
-            <div>You can now <a href="<@spring.url '/my-orcid'/>">continue to your ORCID record</a>.</div>
+            <div>You can now <a href="<@orcid.rootPath '/my-orcid'/>">continue to your ORCID record</a>.</div>
         </div>
     </form>
 </@public>

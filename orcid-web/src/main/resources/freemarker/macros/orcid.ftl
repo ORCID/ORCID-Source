@@ -175,7 +175,7 @@ kind of variable. This temp value is only used in this macro lib -->
  * Macro to build urlPath
  -->
  
-<#macro rootPath path><@spring.bind "basePath" />${basePath?substring(1)}${path}</#macro>
+<#macro rootPath path><@spring.bind "basePath" />${basePath}${path?substring(1)}</#macro>
 
 
 <#--

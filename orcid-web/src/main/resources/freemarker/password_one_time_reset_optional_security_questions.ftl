@@ -30,7 +30,7 @@
 			</div>
 		</#if>
 		<div ng-controller="ResetPasswordCtrl">
-			<form id="reg-form-password" action="<@spring.url '/reset-password-email/${encryptedEmail}'/>" method="post" autocomplete="off">
+			<form id="reg-form-password" action="<@orcid.rootPath '/reset-password-email/${encryptedEmail}'/>" method="post" autocomplete="off">
 	    		<div class="control-group">
 	    			<label for="passwordField" class="control-label">${springMacroRequestContext.getMessage("password_one_time_reset_optional_security_questions.pleaseenternewpassword")}</label>
 	    			<div class="controls">

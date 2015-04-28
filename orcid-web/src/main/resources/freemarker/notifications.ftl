@@ -56,7 +56,7 @@
 	                </tr>
 	                <tr ng-repeat-end ng-show="displayBody[notification.putCode]">
 	                    <td colspan="4">
-	                        <iframe id="{{notification.putCode}}" ng-src="{{ '<@spring.url '/notifications'/>/' + notification.notificationType + '/' + notification.putCode + '/notification.html'}}" frameborder="0" width="100%" scrolling="no"></iframe>
+	                        <iframe id="{{notification.putCode}}" ng-src="{{ '<@orcid.rootPath '/notifications'/>/' + notification.notificationType + '/' + notification.putCode + '/notification.html'}}" frameborder="0" width="100%" scrolling="no"></iframe>
 	                    </td>
 	                </tr>
                 </tbody>
