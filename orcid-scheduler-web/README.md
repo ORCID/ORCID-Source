@@ -23,7 +23,7 @@ Then, when you are sure that your class is ready and the none of the unit tests 
 <task:scheduled ref="bean_name" method="method_name" type="cron_or_time_in_millis"/>
 ```
 
-Where the place holders means:
+  Where the place holders means:
 * bean_name: the bean name defined in [context config file](https://github.com/ORCID/ORCID-Source/blob/master/orcid-core/src/main/resources/orcid-core-context.xml)
 * method_name: the method that will be triged by the scheduler
 * type: 
