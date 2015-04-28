@@ -20,7 +20,7 @@ To register a new scheduled task, you first need to be sure that:
 2. There should be a bean associated with that class in the [context config file](https://github.com/ORCID/ORCID-Source/blob/master/orcid-core/src/main/resources/orcid-core-context.xml)
 3. There should be acouple of [unit tests](http://junit.org/) in the [tests directory](https://github.com/ORCID/ORCID-Source/tree/master/orcid-core/src/test/java/org/orcid/core) that ensures you cron job runs as expected.
 
-Then, when you are sure that your class is ready and the none of the unit tests got broken, you can register your scheduled task like this:
+Then, when you are sure that your class is ready and that none of the unit tests got broken, you can register your scheduled task like this:
 
 ###*Register the task*
 
