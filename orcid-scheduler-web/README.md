@@ -3,10 +3,12 @@ Welcome to the ORCID Scheduler project. Here we configure all task that we will 
 
 ## How does it work?  
 
-There are some tasks at the [ORCID's Core project](https://github.com/ORCID/ORCID-Source/tree/master/orcid-core) that needs to run as a scheduler task, so, they are registered in the list of scheduled tasks in the [scheduler config file](https://github.com/ORCID/ORCID-Source/blob/master/orcid-scheduler-web/src/main/resources/orcid-scheduler-web-context.xml), those tasks can be of two different types:
+There are some tasks at the [ORCID's Core project](https://github.com/ORCID/ORCID-Source/tree/master/orcid-core) to run in a scheduled basis, so, they are registered in the list of scheduled tasks in the [scheduler config file](https://github.com/ORCID/ORCID-Source/blob/master/orcid-scheduler-web/src/main/resources/orcid-scheduler-web-context.xml), those tasks can be of two different types:
 
 * fixed-delay: An interval-based trigger where the interval is measured from the completion time of the previous task. The time unit value is measured in milliseconds.
 * cron: A cron-based trigger. See the [CronSequenceGenerator]( http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/scheduling/support/CronSequenceGenerator.html) JavaDoc for example patterns.
+
+When a task is registered here, the scheduler engine will process it and run it following the rule specified for that task.
 
 ## How to register a new scheduled task?
 
