@@ -24,12 +24,13 @@
 	        	<div class="congrat">
         			<div class="grey-box">
         				<h4>Congratulations!</h4>
-			            <p>You have linked your Shibboleth account ${remoteUser}<br />
-			            to your ORCID account ${effectiveUserOrcid}.<br />
-			            You will now be able to signin to ORCID using Shibboleth.<br />
-			            You can now <a href="<@spring.url '/my-orcid'/>">continue to your ORCID record</a>.
+			            <p>
+				            You have linked your Shibboleth account ${remoteUser}<br />
+				            to your ORCID account ${effectiveUserOrcid}.<br />
+				            You will now be able to signin to ORCID using Shibboleth.<br />
+				            You can now <a href="<@spring.url '/my-orcid'/>">continue to your ORCID record</a>.
+		            	</p>
 		            </div>
-		            </p>
 	            </div>
            </div>
         </div>
