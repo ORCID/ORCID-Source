@@ -68,7 +68,7 @@ import javax.xml.transform.Source;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType( propOrder = { "messageVersion", "orcidProfile", "orcidSearchResults", "errorDesc" })
+@XmlType(propOrder = { "messageVersion", "orcidProfile", "orcidSearchResults", "errorDesc" })
 @XmlRootElement(name = "orcid-message")
 public class OrcidMessage implements Serializable {
 
@@ -191,17 +191,33 @@ public class OrcidMessage implements Serializable {
         return convertToString(this);
     }
 
+    /**
+     * @return A string of valid XML
+     * @throw RuntimeException if there is an error marshalling to XML
+     */
+    public String toXmlString() {
+        try {
+            return marshall(this);
+        } catch (JAXBException e) {
+            throw new RuntimeException("Error marshalling", e);
+        }
+    }
+
     static String convertToString(Object obj) {
         try {
-            JAXBContext context = JAXBContext.newInstance(obj.getClass());
-            StringWriter writer = new StringWriter();
-            Marshaller marshaller = context.createMarshaller();
-            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-            marshaller.marshal(obj, writer);
-            return writer.toString();
+            return marshall(obj);
         } catch (JAXBException e) {
-            return ("Unable to unmarshal because: " + e);
+            return ("Unable to marshal because: " + e);
         }
+    }
+
+    private static String marshall(Object obj) throws JAXBException {
+        JAXBContext context = JAXBContext.newInstance(obj.getClass());
+        StringWriter writer = new StringWriter();
+        Marshaller marshaller = context.createMarshaller();
+        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+        marshaller.marshal(obj, writer);
+        return writer.toString();
     }
 
     @Override
