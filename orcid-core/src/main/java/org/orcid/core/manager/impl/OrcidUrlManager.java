@@ -108,7 +108,7 @@ public class OrcidUrlManager {
         String forwardedProto = request.getHeader("X-Forwarded-Proto");
         String scheme = forwardedProto != null ? forwardedProto : request.getScheme();
         String forwardedPort = request.getHeader("X-Forwarded-Port");
-        int serverPort = forwardedPort != null ? Integer.valueOf(forwardedPort) : request.getServerPort();
+        //int serverPort = forwardedPort != null ? Integer.valueOf(forwardedPort) : request.getServerPort();
         String serverName = request.getServerName();
 
         StringBuilder sb = new StringBuilder();
@@ -116,7 +116,7 @@ public class OrcidUrlManager {
         sb.append(scheme);
         sb.append("://");
         sb.append(serverName);
-        sb.append((("https".equalsIgnoreCase(scheme) && serverPort == 443) || ("http".equalsIgnoreCase(scheme) && serverPort == 80)) ? "" : ":" + serverPort);
+        //sb.append((("https".equalsIgnoreCase(scheme) && serverPort == 443) || ("http".equalsIgnoreCase(scheme) && serverPort == 80)) ? "" : ":" + serverPort);
         return sb.toString();
     }
 
