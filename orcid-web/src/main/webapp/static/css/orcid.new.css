@@ -5572,21 +5572,30 @@ ul.oauth-icons li {
 	display: inline;
 }
 
+/* Notifications */
+
+.notifications{
+	color: #494A4C; /* Global text*/
+}
+
 .notifications iframe{
-	padding: 0 15px;
+	padding: 15px;	
 }
 
 .notifications .archived{
 	background: #F3F3F3;
 }
 
-.notifications .unread{	
-	color: #494A4C;
-	 background: #FFF;
+.notifications .unread{
+	font-weight: bold;
+	background: #FFF;
 }
 .notifications tbody>tr{
 	cursor: pointer;
 }
+
+
+
 
 .vertical-align-middle {
 	line-height: 0px;

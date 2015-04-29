@@ -24,9 +24,9 @@
         <#include "admin_menu.ftl"/>
     </div>
     <div class="col-md-9 col-sm-12 col-xs-12" ng-controller="NotificationsCtrl" >
-        <h1>${springMacroRequestContext.getMessage("notifications.title")}</h1>
+        <!-- <h2>${springMacroRequestContext.getMessage("notifications.title")}</h2> -->
         <div>
-            <label class="checkbox">
+            <label class="checkbox pull-right">
                 <input type="checkbox" ng-model="notificationsSrvc.showArchived" ng-change="reloadNotifications()"></input>
                 ${springMacroRequestContext.getMessage("notifications.showArchived")}
             </label>
@@ -56,7 +56,7 @@
 	                </tr>
 	                <tr ng-repeat-end ng-show="displayBody[notification.putCode]">
 	                    <td colspan="4">
-	                        <iframe id="{{notification.putCode}}" ng-src="{{ '<@spring.url '/notifications'/>/' + notification.notificationType + '/' + notification.putCode + '/notification.html'}}" frameborder="0" width="100%" scrolling="no"></iframe>
+	                        <iframe id="{{notification.putCode}}" ng-src="{{ '<@spring.url '/notifications'/>/' + notification.notificationType + '/' + notification.putCode + '/notification.html'}}" class="notification-iframe" frameborder="0" width="100%" scrolling="no" height="400"></iframe>
 	                    </td>
 	                </tr>
                 </tbody>
