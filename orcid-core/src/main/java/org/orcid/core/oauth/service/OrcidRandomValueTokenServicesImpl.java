@@ -19,6 +19,7 @@ package org.orcid.core.oauth.service;
 import java.util.Date;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import javax.annotation.Resource;
 
@@ -72,26 +73,26 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
         OAuth2AccessToken existingAccessToken = orcidtokenStore.getAccessToken(authentication);
         String userOrcid = authInfo.getUserOrcid();
         
+        
         if (existingAccessToken != null) {
             if (existingAccessToken.isExpired()) {
                 orcidtokenStore.removeAccessToken(existingAccessToken);
                 LOGGER.info("Existing but expired access token found: clientId={}, scopes={}, userOrcid={}", new Object[] { authInfo.getClientId(), authInfo.getScopes(),
                         userOrcid });
-            } else {
-                DefaultOAuth2AccessToken updatedAccessToken = new DefaultOAuth2AccessToken(existingAccessToken);
-                int validitySeconds = getAccessTokenValiditySeconds(authentication.getOAuth2Request());
-                if (validitySeconds > 0) {
-                    updatedAccessToken.setExpiration(new Date(System.currentTimeMillis() + (validitySeconds * 1000L)));
-                }
-                customTokenEnhancer.enhance(updatedAccessToken, authentication);
-                orcidtokenStore.storeAccessToken(updatedAccessToken, authentication);
-                LOGGER.info("Existing reusable access token found: clientId={}, scopes={}, userOrcid={}", new Object[] { authInfo.getClientId(), authInfo.getScopes(),
-                        userOrcid });
-                return updatedAccessToken;
-            }
+            } 
         }
         
-        DefaultOAuth2AccessToken accessToken = new DefaultOAuth2AccessToken(super.createAccessToken(authentication));        
+        DefaultOAuth2AccessToken accessToken = new DefaultOAuth2AccessToken(UUID.randomUUID().toString());
+        int validitySeconds = getAccessTokenValiditySeconds(authentication.getOAuth2Request());
+        if (validitySeconds > 0) {
+            accessToken.setExpiration(new Date(System.currentTimeMillis() + (validitySeconds * 1000L)));
+        }        
+        accessToken.setScope(authentication.getOAuth2Request().getScope());
+        
+        if(customTokenEnhancer != null) {
+            accessToken = new DefaultOAuth2AccessToken(customTokenEnhancer.enhance(accessToken, authentication));
+        }
+        
         orcidtokenStore.storeAccessToken(accessToken, authentication);
         LOGGER.info("Creating new access token: clientId={}, scopes={}, userOrcid={}", new Object[] { authInfo.getClientId(), authInfo.getScopes(), userOrcid });
         return accessToken;
@@ -209,5 +210,39 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
     public void setCustomTokenEnhancer(TokenEnhancer customTokenEnhancer) {
         super.setTokenEnhancer(customTokenEnhancer);
         this.customTokenEnhancer = customTokenEnhancer;
-    }        
+    }      
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 }
