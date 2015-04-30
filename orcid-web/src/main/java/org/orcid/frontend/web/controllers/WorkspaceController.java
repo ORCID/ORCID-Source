@@ -337,7 +337,7 @@ public class WorkspaceController extends BaseWorkspaceController {
     public @ResponseBody
     KeywordsForm setKeywordsFormJson(HttpServletRequest request, @RequestBody KeywordsForm kf) throws NoSuchRequestHandlingMethodException {
         kf.setErrors(new ArrayList<String>());
-        for (int i = kf.getKeywords().size() - 1; i > 0; i--) {
+    	for (int i = kf.getKeywords().size() - 1; i >= 0; i--) {
             Text t = kf.getKeywords().get(i);
             if (PojoUtil.isEmpty(t))
                 kf.getKeywords().remove(i);
