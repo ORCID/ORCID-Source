@@ -3044,7 +3044,7 @@ ul.personal-inf-display li:last-child{
 .add-work #day,
 .add-work #month{
 	width: 100px;
-	margin: 0 10px 0 0; 
+	margin: 0 0 0 10px; 
 }
 
 .add-work #year{

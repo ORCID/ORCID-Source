@@ -140,7 +140,10 @@
 							<#list days?keys as key>
 								<option value="${key}">${days[key]}</option>
 							</#list>
-			    		</select>								    
+			    		</select>
+			    		<span class="orcid-error" ng-show="editWork.publicationDate.errors.length > 0">
+							<div ng-repeat='error in editWork.publicationDate.errors' ng-bind-html="error"></div>
+						</span>								    
 		    		</div>
 		    	</div>
 		    	
