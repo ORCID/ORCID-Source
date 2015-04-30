@@ -42,6 +42,8 @@ import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.orcid.integration.api.t2.T2OAuthAPIService;
+import org.orcid.jaxb.model.message.OrcidMessage;
+import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
@@ -50,6 +52,11 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 
+/**
+ * 
+ * @author Angel Montenegro
+ * 
+ */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-memberV2-context.xml" })
 public class OauthAuthorizationPageTest {
@@ -239,13 +246,279 @@ public class OauthAuthorizationPageTest {
         assertTrue("URL is:" + currentUrl, currentUrl.contains("scope="));
     }
 
+    @Test
+    public void useAuthorizationCodeWithInalidScopesTest() throws InterruptedException, JSONException {
+        webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, client1ClientId,
+                ScopePathType.ORCID_WORKS_CREATE.getContent(), redirectUri));
+        By switchFromLinkLocator = By.id("in-register-switch-form");
+        (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(switchFromLinkLocator));
+        WebElement switchFromLink = webDriver.findElement(switchFromLinkLocator);
+        switchFromLink.click();
+
+        // Fill the form
+        By userIdElementLocator = By.id("userId");
+        (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(userIdElementLocator));
+        WebElement userIdElement = webDriver.findElement(userIdElementLocator);
+        userIdElement.sendKeys(user1UserName);
+        WebElement passwordElement = webDriver.findElement(By.id("password"));
+        passwordElement.sendKeys(user1Password);
+        WebElement submitButton = webDriver.findElement(By.id("authorize-button"));
+        submitButton.click();
+
+        (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(new ExpectedCondition<Boolean>() {
+            public Boolean apply(WebDriver d) {
+                return d.getTitle().equals("ORCID Playground");
+            }
+        });
+
+        String currentUrl = webDriver.getCurrentUrl();
+        Matcher matcher = AUTHORIZATION_CODE_PATTERN.matcher(currentUrl);
+        assertTrue(matcher.find());
+        String authorizationCode = matcher.group(1);
+        assertFalse(PojoUtil.isEmpty(authorizationCode));
+
+        ClientResponse tokenResponse = getClientResponse(client1ClientId, client1ClientSecret, ScopePathType.ORCID_WORKS_UPDATE.getContent(), redirectUri,
+                authorizationCode);
+
+        assertEquals(401, tokenResponse.getStatus());
+        OrcidMessage result = tokenResponse.getEntity(OrcidMessage.class);
+        assertNotNull(result);
+        assertNotNull(result.getErrorDesc());
+        assertEquals("OAuth2 problem : Invalid scopes: /orcid-works/update available scopes for this code are: [/orcid-works/create]", result.getErrorDesc().getContent());
+    }
+
+    @Test
+    public void useAuthorizationCodeWithoutScopesTest() throws InterruptedException, JSONException {
+        webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, client1ClientId,
+                ScopePathType.ORCID_WORKS_CREATE.getContent(), redirectUri));
+        By switchFromLinkLocator = By.id("in-register-switch-form");
+        (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(switchFromLinkLocator));
+        WebElement switchFromLink = webDriver.findElement(switchFromLinkLocator);
+        switchFromLink.click();
+
+        // Fill the form
+        By userIdElementLocator = By.id("userId");
+        (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(userIdElementLocator));
+        WebElement userIdElement = webDriver.findElement(userIdElementLocator);
+        userIdElement.sendKeys(user1UserName);
+        WebElement passwordElement = webDriver.findElement(By.id("password"));
+        passwordElement.sendKeys(user1Password);
+        WebElement submitButton = webDriver.findElement(By.id("authorize-button"));
+        submitButton.click();
+
+        (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(new ExpectedCondition<Boolean>() {
+            public Boolean apply(WebDriver d) {
+                return d.getTitle().equals("ORCID Playground");
+            }
+        });
+
+        String currentUrl = webDriver.getCurrentUrl();
+        Matcher matcher = AUTHORIZATION_CODE_PATTERN.matcher(currentUrl);
+        assertTrue(matcher.find());
+        String authorizationCode = matcher.group(1);
+        assertFalse(PojoUtil.isEmpty(authorizationCode));
+
+        ClientResponse tokenResponse = getClientResponse(client1ClientId, client1ClientSecret, null, redirectUri, authorizationCode);
+        assertEquals(200, tokenResponse.getStatus());
+        String body = tokenResponse.getEntity(String.class);
+        JSONObject jsonObject = new JSONObject(body);
+        String accessToken = (String) jsonObject.get("access_token");
+        assertNotNull(accessToken);
+        assertFalse(PojoUtil.isEmpty(accessToken));
+    }
+
+    @Test
+    public void skipAuthorizationScreenIfTokenAlreadyExists() throws InterruptedException, JSONException {
+        // First get the authorization code
+        webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, client1ClientId,
+                ScopePathType.FUNDING_CREATE.getContent(), redirectUri));
+        By switchFromLinkLocator = By.id("in-register-switch-form");
+        (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(switchFromLinkLocator));
+        WebElement switchFromLink = webDriver.findElement(switchFromLinkLocator);
+        switchFromLink.click();
+
+        // Fill the form
+        By userIdElementLocator = By.id("userId");
+        (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(userIdElementLocator));
+        WebElement userIdElement = webDriver.findElement(userIdElementLocator);
+        userIdElement.sendKeys(user1UserName);
+        WebElement passwordElement = webDriver.findElement(By.id("password"));
+        passwordElement.sendKeys(user1Password);
+        WebElement submitButton = webDriver.findElement(By.id("authorize-button"));
+        submitButton.click();
+
+        (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(new ExpectedCondition<Boolean>() {
+            public Boolean apply(WebDriver d) {
+                return d.getTitle().equals("ORCID Playground");
+            }
+        });
+
+        String currentUrl = webDriver.getCurrentUrl();
+        Matcher matcher = AUTHORIZATION_CODE_PATTERN.matcher(currentUrl);
+        assertTrue(matcher.find());
+        String authorizationCode = matcher.group(1);
+        assertFalse(PojoUtil.isEmpty(authorizationCode));
+
+        ClientResponse tokenResponse = getClientResponse(client1ClientId, client1ClientSecret, ScopePathType.FUNDING_CREATE.getContent(), redirectUri, authorizationCode);
+        assertEquals(200, tokenResponse.getStatus());
+        String body = tokenResponse.getEntity(String.class);
+        JSONObject jsonObject = new JSONObject(body);
+        String accessToken = (String) jsonObject.get("access_token");
+        assertNotNull(accessToken);
+        assertFalse(PojoUtil.isEmpty(accessToken));
+
+        // Then, ask again for the same permissions. Note that the user is
+        // already logged in
+        webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, client1ClientId,
+                ScopePathType.FUNDING_CREATE.getContent(), redirectUri));
+
+        (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(new ExpectedCondition<Boolean>() {
+            public Boolean apply(WebDriver d) {
+                return d.getTitle().equals("ORCID Playground");
+            }
+        });
+
+        currentUrl = webDriver.getCurrentUrl();
+        matcher = AUTHORIZATION_CODE_PATTERN.matcher(currentUrl);
+        assertTrue(matcher.find());
+        authorizationCode = matcher.group(1);
+        assertFalse(PojoUtil.isEmpty(authorizationCode));
+
+        tokenResponse = getClientResponse(client1ClientId, client1ClientSecret, ScopePathType.FUNDING_CREATE.getContent(), redirectUri, authorizationCode);
+        assertEquals(200, tokenResponse.getStatus());
+        body = tokenResponse.getEntity(String.class);
+        jsonObject = new JSONObject(body);
+        String otherAccessToken = (String) jsonObject.get("access_token");
+        assertNotNull(otherAccessToken);
+        assertFalse(PojoUtil.isEmpty(otherAccessToken));
+
+        // Check that both access tokens are equals
+        assertEquals(accessToken, otherAccessToken);
+    }
+
+    /**
+     * Test that asking for different scopes generates different tokens 
+     * 
+     * IMPORTANT NOTE:
+     *          For this test to run, the user should not have tokens for any of the
+     *          following scopes: 
+     *          - FUNDING_CREATE 
+     *          - FUNDING_UPDATE 
+     *          - PEER_REVIEW_CREATE
+     * */
+    @Test
+    public void testDifferentScopesGeneratesDifferentAccessTokens() throws InterruptedException, JSONException {
+        // First get the authorization code
+        webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, client1ClientId,
+                ScopePathType.FUNDING_CREATE.getContent(), redirectUri));
+        By switchFromLinkLocator = By.id("in-register-switch-form");
+        (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(switchFromLinkLocator));
+        WebElement switchFromLink = webDriver.findElement(switchFromLinkLocator);
+        switchFromLink.click();
+
+        // Fill the form
+        By userIdElementLocator = By.id("userId");
+        (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(userIdElementLocator));
+        WebElement userIdElement = webDriver.findElement(userIdElementLocator);
+        userIdElement.sendKeys(user1UserName);
+        WebElement passwordElement = webDriver.findElement(By.id("password"));
+        passwordElement.sendKeys(user1Password);
+        WebElement submitButton = webDriver.findElement(By.id("authorize-button"));
+        submitButton.click();
+
+        (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(new ExpectedCondition<Boolean>() {
+            public Boolean apply(WebDriver d) {
+                return d.getTitle().equals("ORCID Playground");
+            }
+        });
+
+        String currentUrl = webDriver.getCurrentUrl();
+        Matcher matcher = AUTHORIZATION_CODE_PATTERN.matcher(currentUrl);
+        assertTrue(matcher.find());
+        String authorizationCode = matcher.group(1);
+        assertFalse(PojoUtil.isEmpty(authorizationCode));
+
+        ClientResponse tokenResponse = getClientResponse(client1ClientId, client1ClientSecret, ScopePathType.FUNDING_CREATE.getContent(), redirectUri, authorizationCode);
+        assertEquals(200, tokenResponse.getStatus());
+        String body = tokenResponse.getEntity(String.class);
+        JSONObject jsonObject = new JSONObject(body);
+        String accessToken = (String) jsonObject.get("access_token");
+        assertNotNull(accessToken);
+        assertFalse(PojoUtil.isEmpty(accessToken));
+
+        // Then, ask again for permissions over other scopes. Note that the user
+        // is already logged in
+        webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, client1ClientId,
+                ScopePathType.FUNDING_UPDATE.getContent(), redirectUri));
+
+        By authorizeBtn = By.id("authorize");
+        (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(authorizeBtn));
+        WebElement authorizeBtnElement = webDriver.findElement(authorizeBtn);
+        authorizeBtnElement.click();
+
+        (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(new ExpectedCondition<Boolean>() {
+            public Boolean apply(WebDriver d) {
+                return d.getCurrentUrl().contains("code=");
+            }
+        });
+
+        currentUrl = webDriver.getCurrentUrl();
+        matcher = AUTHORIZATION_CODE_PATTERN.matcher(currentUrl);
+        assertTrue(matcher.find());
+        authorizationCode = matcher.group(1);
+        assertFalse(PojoUtil.isEmpty(authorizationCode));
+
+        tokenResponse = getClientResponse(client1ClientId, client1ClientSecret, ScopePathType.FUNDING_UPDATE.getContent(), redirectUri, authorizationCode);
+        assertEquals(200, tokenResponse.getStatus());
+        body = tokenResponse.getEntity(String.class);
+        jsonObject = new JSONObject(body);
+        String otherAccessToken = (String) jsonObject.get("access_token");
+        assertNotNull(otherAccessToken);
+        assertFalse(PojoUtil.isEmpty(otherAccessToken));
+
+        assertFalse(otherAccessToken.equals(accessToken));
+
+        // Repeat the process again with other scope
+        webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, client1ClientId,
+                ScopePathType.PEER_REVIEW_CREATE.getContent(), redirectUri));
+
+        authorizeBtn = By.id("authorize");
+        (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(authorizeBtn));
+        authorizeBtnElement = webDriver.findElement(authorizeBtn);
+        authorizeBtnElement.click();
+
+        (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(new ExpectedCondition<Boolean>() {
+            public Boolean apply(WebDriver d) {
+                return d.getCurrentUrl().contains("code=");
+            }
+        });
+
+        currentUrl = webDriver.getCurrentUrl();
+        matcher = AUTHORIZATION_CODE_PATTERN.matcher(currentUrl);
+        assertTrue(matcher.find());
+        authorizationCode = matcher.group(1);
+        assertFalse(PojoUtil.isEmpty(authorizationCode));
+
+        tokenResponse = getClientResponse(client1ClientId, client1ClientSecret, ScopePathType.PEER_REVIEW_CREATE.getContent(), redirectUri, authorizationCode);
+        assertEquals(200, tokenResponse.getStatus());
+        body = tokenResponse.getEntity(String.class);
+        jsonObject = new JSONObject(body);
+        String otherAccessToken2 = (String) jsonObject.get("access_token");
+        assertNotNull(otherAccessToken2);
+        assertFalse(PojoUtil.isEmpty(otherAccessToken2));
+
+        assertFalse(otherAccessToken2.equals(accessToken));
+        assertFalse(otherAccessToken2.equals(otherAccessToken));
+    }
+
     public ClientResponse getClientResponse(String clientId, String clientSecret, String scopes, String redirectUri, String authorizationCode) {
         MultivaluedMap<String, String> params = new MultivaluedMapImpl();
         params.add("client_id", clientId);
         params.add("client_secret", clientSecret);
         params.add("grant_type", "authorization_code");
-        if (scopes != null)
+        if (scopes != null) {
             params.add("scope", scopes);
+        }
         params.add("redirect_uri", redirectUri);
         params.add("code", authorizationCode);
         return t2OAuthClient.obtainOauth2TokenPost("client_credentials", params);
