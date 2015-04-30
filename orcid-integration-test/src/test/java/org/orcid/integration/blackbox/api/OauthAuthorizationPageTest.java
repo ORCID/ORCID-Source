@@ -331,7 +331,7 @@ public class OauthAuthorizationPageTest {
     public void skipAuthorizationScreenIfTokenAlreadyExists() throws InterruptedException, JSONException {
         // First get the authorization code
         webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, client1ClientId,
-                ScopePathType.FUNDING_CREATE.getContent(), redirectUri));
+                ScopePathType.ORCID_BIO_UPDATE.getContent(), redirectUri));
         By switchFromLinkLocator = By.id("in-register-switch-form");
         (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(switchFromLinkLocator));
         WebElement switchFromLink = webDriver.findElement(switchFromLinkLocator);
@@ -359,7 +359,7 @@ public class OauthAuthorizationPageTest {
         String authorizationCode = matcher.group(1);
         assertFalse(PojoUtil.isEmpty(authorizationCode));
 
-        ClientResponse tokenResponse = getClientResponse(client1ClientId, client1ClientSecret, ScopePathType.FUNDING_CREATE.getContent(), redirectUri, authorizationCode);
+        ClientResponse tokenResponse = getClientResponse(client1ClientId, client1ClientSecret, ScopePathType.ORCID_BIO_UPDATE.getContent(), redirectUri, authorizationCode);
         assertEquals(200, tokenResponse.getStatus());
         String body = tokenResponse.getEntity(String.class);
         JSONObject jsonObject = new JSONObject(body);
@@ -370,7 +370,7 @@ public class OauthAuthorizationPageTest {
         // Then, ask again for the same permissions. Note that the user is
         // already logged in
         webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, client1ClientId,
-                ScopePathType.FUNDING_CREATE.getContent(), redirectUri));
+                ScopePathType.ORCID_BIO_UPDATE.getContent(), redirectUri));
 
         (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(new ExpectedCondition<Boolean>() {
             public Boolean apply(WebDriver d) {
@@ -384,7 +384,7 @@ public class OauthAuthorizationPageTest {
         authorizationCode = matcher.group(1);
         assertFalse(PojoUtil.isEmpty(authorizationCode));
 
-        tokenResponse = getClientResponse(client1ClientId, client1ClientSecret, ScopePathType.FUNDING_CREATE.getContent(), redirectUri, authorizationCode);
+        tokenResponse = getClientResponse(client1ClientId, client1ClientSecret, ScopePathType.ORCID_BIO_UPDATE.getContent(), redirectUri, authorizationCode);
         assertEquals(200, tokenResponse.getStatus());
         body = tokenResponse.getEntity(String.class);
         jsonObject = new JSONObject(body);
