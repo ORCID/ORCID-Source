@@ -70,18 +70,7 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
     @Override
     public OAuth2AccessToken createAccessToken(OAuth2Authentication authentication) throws AuthenticationException {
         OrcidOauth2AuthInfo authInfo = new OrcidOauth2AuthInfo(authentication);
-        OAuth2AccessToken existingAccessToken = orcidtokenStore.getAccessToken(authentication);
-        String userOrcid = authInfo.getUserOrcid();
-        
-        
-        if (existingAccessToken != null) {
-            if (existingAccessToken.isExpired()) {
-                orcidtokenStore.removeAccessToken(existingAccessToken);
-                LOGGER.info("Existing but expired access token found: clientId={}, scopes={}, userOrcid={}", new Object[] { authInfo.getClientId(), authInfo.getScopes(),
-                        userOrcid });
-            } 
-        }
-        
+        String userOrcid = authInfo.getUserOrcid();                
         DefaultOAuth2AccessToken accessToken = new DefaultOAuth2AccessToken(UUID.randomUUID().toString());
         int validitySeconds = getAccessTokenValiditySeconds(authentication.getOAuth2Request());
         if (validitySeconds > 0) {
@@ -211,38 +200,5 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
         super.setTokenEnhancer(customTokenEnhancer);
         this.customTokenEnhancer = customTokenEnhancer;
     }      
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     
 }

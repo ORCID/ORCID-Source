@@ -29,12 +29,14 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -117,11 +119,14 @@ public class OrcidOauth2AuthorisationDetailsDaoTest extends DBUnitTest {
         assertEquals(5, all.size());
 
         for (OrcidOauth2TokenDetail detail : all) {
-            OrcidOauth2TokenDetail another = orcidOauth2TokenDetailDao.findByAuthenticationKey(detail.getAuthenticationKey());
+            List<OrcidOauth2TokenDetail> another = orcidOauth2TokenDetailDao.findByAuthenticationKey(detail.getAuthenticationKey());            
             assertNotNull(another);
-            assertEquals(detail.getId(), another.getId());
-            assertTrue(detail.getTokenExpiration().after(new Date()));
-            assertTrue(detail.getRefreshTokenExpiration().after(new Date()));
+            assertFalse(another.isEmpty());
+            for(OrcidOauth2TokenDetail token : another) {
+                assertEquals(detail.getId(), token.getId());
+                assertTrue(detail.getTokenExpiration().after(new Date()));
+                assertTrue(detail.getRefreshTokenExpiration().after(new Date()));
+            }            
         }
     }
 

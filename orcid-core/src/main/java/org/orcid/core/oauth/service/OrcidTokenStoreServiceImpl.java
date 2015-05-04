@@ -222,8 +222,24 @@ public class OrcidTokenStoreServiceImpl implements TokenStore {
     @Override
     public OAuth2AccessToken getAccessToken(OAuth2Authentication authentication) {
         String authKey = KEY_GENERATOR.extractKey(authentication);
-        OrcidOauth2TokenDetail detail = orcidOauthTokenDetailService.findByAuthenticationKey(authKey);
-        return getOauth2AccessTokenFromDetails(detail);
+        List<OrcidOauth2TokenDetail> details = orcidOauthTokenDetailService.findByAuthenticationKey(authKey);
+        // Since we are now able to have more than one token for the combo
+        // user-scopes, we will need to return the oldest token, the first token
+        // created with these scopes
+        if (details != null && !details.isEmpty()) {
+            OrcidOauth2TokenDetail oldestToken = null;
+            for (OrcidOauth2TokenDetail tokenDetails : details) {
+                if (oldestToken == null) {
+                    oldestToken = tokenDetails;
+                } else {
+                    if (tokenDetails.getDateCreated().before(oldestToken.getDateCreated())) {
+                        oldestToken = tokenDetails;
+                    }
+                }
+            }
+            getOauth2AccessTokenFromDetails(oldestToken);
+        }
+        return null;
     }
 
     /**

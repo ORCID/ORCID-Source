@@ -21,6 +21,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -771,7 +772,8 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                             applicationSummary.setScopePaths(scopePaths);
                             // Only add to list if there is a scope (if no
                             // scopes then has been used and is defunct)
-                            applications.getApplicationSummary().add(applicationSummary);
+                            //If there are several token with the same scope, add just the oldest one 
+                            checkApplicationsAndAdd(applicationSummary, applications);
                         }
                     }
 
@@ -781,6 +783,65 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         }
         return null;
     }
+    
+    /**
+     * Get an application and compare it to the list of existing applications,
+     * if it share the same client and scopes, keep just the oldest one
+     * 
+     * @param applicationSummary
+     *            The application that want to be added
+     * @param applications
+     *            The list of applications already evaluated
+     * */
+    private void checkApplicationsAndAdd(ApplicationSummary applicationSummary, Applications applications) {
+        if (applications == null) {
+            return;
+        }
+
+        if (applications.getApplicationSummary().isEmpty()) {
+            applications.getApplicationSummary().add(applicationSummary);
+        } else {
+            boolean replaceExisting = false;
+            boolean foundExisting = false;
+            Iterator<ApplicationSummary> it = applications.getApplicationSummary().iterator();
+            while (it.hasNext()) {
+                ApplicationSummary existingSummary = it.next();
+                // Check if both apps refer to the same client
+                if (existingSummary.getApplicationOrcid().equals(applicationSummary.getApplicationOrcid())) {
+                    // Check if both apps share all scopes
+                    if (existingSummary.getScopePaths().getScopePath().containsAll(applicationSummary.getScopePaths().getScopePath())) {
+                        if (applicationSummary.getScopePaths().getScopePath().containsAll(existingSummary.getScopePaths().getScopePath())) {
+                            // If they do share the scopes, keep the oldest one
+                            if (applicationSummary.getApprovalDate() != null && applicationSummary.getApprovalDate().getValue() != null) {
+                                foundExisting = true;
+                                XMLGregorianCalendar approvalDate = applicationSummary.getApprovalDate().getValue();
+                                XMLGregorianCalendar existingApprovalDate = null;
+                                if (existingSummary.getApprovalDate() != null && existingSummary.getApprovalDate().getValue() != null) {
+                                    existingApprovalDate = existingSummary.getApprovalDate().getValue();
+                                }
+
+                                if (existingApprovalDate == null) {
+                                    it.remove();
+                                    replaceExisting = true;
+                                    break;
+                                } else if (approvalDate.toGregorianCalendar().before(existingApprovalDate.toGregorianCalendar())) {
+                                    it.remove();
+                                    replaceExisting = true;
+                                    break;
+                                }
+
+                            }
+                        }
+                    }
+                }
+            }
+
+            if(!foundExisting || replaceExisting) {
+                applications.getApplicationSummary().add(applicationSummary);
+            } 
+        }
+    }
+    
 
     private String getGroupDisplayName(ProfileEntity groupProfile) {
         String creditName = groupProfile.getCreditName();
