@@ -18,12 +18,18 @@
 -->
 <@public classes=['home'] nav="signin">
 <#include "sandbox_warning.ftl"/>
-    <form class="form-sign-in" id="loginForm" ng-enter-submit action="<@spring.url '/signin/auth'/>" method="post">
-        <div class="row col-md-offset-3">
-            <div class="alert">Keep your mock REMOTE_USER and Shib-Identity-Provider as secret as your password if you are using mocked headers, because they can be used to get access to your account once they are linked.</div>
-            <div>Link your Shibboleth account to your ORCID account?</div>
-            <div>You are logged into Shibboleth as ${remoteUser}.</div>
-            <div>Sign in to your ORCID account to complete the linkage.</div>
+    <form class="form-sign-in shibboleth" id="loginForm" ng-enter-submit action="<@spring.url '/signin/auth'/>" method="post">
+        <div class="row">
+        	<div class="col-md-offset-3 col-md-9 col-sm-offset-3 col-sm-9 col-xs-12">
+	            <div class="alert">Keep your mock REMOTE_USER and Shib-Identity-Provider as secret as your password if you are using mocked headers, because they can be used to get access to your account once they are linked.</div>
+	            <div class="">
+		            <h4>Link your Shibboleth account to your ORCID account?</h4>
+		            <p>
+			            You are logged into <i>Shibboleth</i> as <i>${remoteUser}</i>.<br />
+			            Sign in to your ORCID account to complete the linkage.<br />
+		            </p>
+	            </div>
+            </div>
         </div>
         <div class="row">
             <@spring.bind "loginForm" />             

@@ -144,7 +144,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals("01", peerReviewSummary.getCompletionDate().getMonth().getValue());
         assertEquals("2015", peerReviewSummary.getCompletionDate().getYear().getValue());
         assertEquals("work:external-identifier-id#1", peerReviewSummary.getExternalIdentifiers().getExternalIdentifier().get(0).getWorkExternalIdentifierId().getContent());
-        assertEquals("REVIEWER", peerReviewSummary.getRole().value());
+        assertEquals("reviewer", peerReviewSummary.getRole().value());
         assertEquals("APP-5555555555555555", peerReviewSummary.getSource().retrieveSourcePath());
         assertEquals("public", peerReviewSummary.getVisibility().value());        
     }
@@ -218,10 +218,10 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals("01", peerReview.getCompletionDate().getMonth().getValue());
         assertEquals("2015", peerReview.getCompletionDate().getYear().getValue());
         assertEquals("work:external-identifier-id#1", peerReview.getExternalIdentifiers().getExternalIdentifier().get(0).getWorkExternalIdentifierId().getContent());
-        assertEquals("REVIEWER", peerReview.getRole().value());
+        assertEquals("reviewer", peerReview.getRole().value());
         assertEquals("APP-5555555555555555", peerReview.getSource().retrieveSourcePath());
         assertEquals("public", peerReview.getVisibility().value());        
-        assertEquals("REVIEW", peerReview.getType().value());
+        assertEquals("review", peerReview.getType().value());
         assertEquals("http://peer_review.com", peerReview.getUrl().getValue());
         Subject subject = peerReview.getSubject();
         assertEquals("1", subject.getPutCode());
@@ -251,7 +251,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals("01", peerReview.getCompletionDate().getMonth().getValue());
         assertEquals("2015", peerReview.getCompletionDate().getYear().getValue());
         assertEquals("work:external-identifier-id#1", peerReview.getExternalIdentifiers().getExternalIdentifier().get(0).getWorkExternalIdentifierId().getContent());
-        assertEquals("REVIEWER", peerReview.getRole().value());
+        assertEquals("reviewer", peerReview.getRole().value());
         assertEquals("APP-5555555555555555", peerReview.getSource().retrieveSourcePath());
         assertEquals("public", peerReview.getVisibility().value());                
     }

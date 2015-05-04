@@ -66,8 +66,8 @@ public class JpaJaxbPeerReviewAdapterTest {
         assertEquals(Long.valueOf(12345), pe.getId());
         assertEquals(Visibility.PRIVATE.value(), pe.getVisibility().value());        
         assertEquals("{\"workExternalIdentifier\":[{\"workExternalIdentifierType\":\"AGR\",\"workExternalIdentifierId\":{\"content\":\"work:external-identifier-id\"}}]}", pe.getExternalIdentifiersJson());
-        assertEquals("REVIEWER", pe.getRole().value());
-        assertEquals("REVIEW", pe.getType().value());
+        assertEquals("reviewer", pe.getRole().value());
+        assertEquals("review", pe.getType().value());
         assertEquals("peer-review:url", pe.getUrl());
         
         //Dates

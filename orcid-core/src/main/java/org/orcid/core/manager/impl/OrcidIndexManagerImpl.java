@@ -319,7 +319,7 @@ public class OrcidIndexManagerImpl implements OrcidIndexManager {
                 profileIndexDocument.setProfileSubmissionDate(submissionDate.getValue().toGregorianCalendar().getTime());
             }
         }
-        profileIndexDocument.setPublicProfileMessage(orcidMessage.toString());
+        profileIndexDocument.setPublicProfileMessage(orcidMessage.toXmlString());
         solrDao.persist(profileIndexDocument);
     }
 
