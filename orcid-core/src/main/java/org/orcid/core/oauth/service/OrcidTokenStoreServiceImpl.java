@@ -237,7 +237,7 @@ public class OrcidTokenStoreServiceImpl implements TokenStore {
                     }
                 }
             }
-            getOauth2AccessTokenFromDetails(oldestToken);
+            return getOauth2AccessTokenFromDetails(oldestToken);
         }
         return null;
     }
