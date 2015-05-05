@@ -23,23 +23,33 @@
 
 <#assign aworks = 0>
 <#assign tworks = "">
-
-<#assign aeducation = 0>
-<#assign teducation = "">
-
-<#assign aemployment = 0>
-<#assign temployment = "">
-
-<#assign apeerreview = 0>
-<#assign tpeerreview = "">
-
-<#assign afunding = 0>
-<#assign tfunding = "">
-
 <#assign wbuttons = false>
 <#assign wurl = "">
 <#assign wputCode = "">
 
+<#assign aeducation = 0>
+<#assign teducation = "">
+<#assign edubuttons = false>
+<#assign eduUrl = "">
+<#assign eduPutCode = "">
+
+<#assign aemployment = 0>
+<#assign temployment = "">
+<#assign empButtons = false>
+<#assign empUrl = "">
+<#assign empPutCode = "">
+
+<#assign apeerreview = 0>
+<#assign tpeerreview = "">
+<#assign pButtons = false>
+<#assign pUrl = "">
+<#assign pPutCode = "">
+
+<#assign afunding = 0>
+<#assign tfunding = "">
+<#assign fButtons = false>
+<#assign fUrl = "">
+<#assign fPutCode = "">
 
 
 <head>
@@ -129,19 +139,11 @@
 			    <#break>
 			  <#case "EMPLOYMENT">
 			     <#assign aemployment = aemployment + 1>
-			     <#assign temployment = temployment + activity.activityName>
-			     <#if activity.externalId??>
-	           		<#assign temployment = temployment + "(" + activity.externalId.externalIdType + ":" + activity.externalId.externalIdValue + ")">
-	       		</#if>
-	       		<#assign temployment = temployment + "<br/>">
+			     <#assign temployment = temployment + activity.activityName + "<br/>">
 			     <#break>
 			  <#case "EDUCATION">
 			     <#assign aeducation = aeducation + 1>
-			     <#assign teducation = teducation + activity.activityName>
-			     <#if activity.externalId??>
-	           		<#assign teducation = teducation + "(" + activity.externalId.externalIdType + ":" + activity.externalId.externalIdValue + ")">
-	       		 </#if>
-	       		 <#assign teducation = teducation + "<br/>">
+			     <#assign teducation = teducation + activity.activityName + "<br/>">
 			     <#break>
 			 <#case "FUNDING">
 			     <#assign afunding = afunding + 1>
@@ -151,7 +153,14 @@
 	       		 </#if>
 	       		 <#assign tfunding = tfunding + "<br/>">
 			     <#break>
-			     
+			 <#case "PEER_REVIEW">
+			     <#assign apeerreview = apeerreview + 1>
+			     <#assign tpeerreview = tpeerreview + activity.activityName>
+			     <#if activity.externalId??>
+	           		<#assign tpeerreview = tpeerreview + "(" + activity.externalId.externalIdType + ":" + activity.externalId.externalIdValue + ")">
+	       		 </#if>
+	       		 <#assign tpeerreview = tpeerreview + "<br/>">
+			     <#break>
 			  <#default>
 		</#switch>
 		<#if activity.externalId??>
@@ -185,6 +194,23 @@
 				<i class="glyphicon-chevron-down glyphicon x075"></i> Fundings (${afunding})
 			</div>
 			<strong>${tfunding}</strong>
+			<#if fButtons>
+				<div class="notifications-buttons">
+					<a class="btn btn-primary" href="${fUrl}" target="_blank"><span class="glyphicons cloud-upload"></span> Add now</a>  <a class="btn btn-default" href="" ng-click="archive('${fPutCode?c}')" type="reset">Archive</a>
+				</div>
+			</#if>
+		</#if>
+		<#if apeerreview gt 0>
+			<!-- Peer Review -->
+			<div class="workspace-accordion-header">
+				<i class="glyphicon-chevron-down glyphicon x075"></i> Peer Review (${apeerreview})
+			</div>
+			<strong>${tpeerreview}</strong>
+			<#if pButtons>
+				<div class="notifications-buttons">
+					<a class="btn btn-primary" href="${pUrl}" target="_blank"><span class="glyphicons cloud-upload"></span> Add now</a>  <a class="btn btn-default" href="" ng-click="archive('${pPutCode?c}')" type="reset">Archive</a>
+				</div>
+			</#if>
 		</#if>
 		<#if aworks gt 0>
 			<!-- Works -->
