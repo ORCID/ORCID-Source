@@ -16,32 +16,19 @@
  */
 package org.orcid.integration.blackbox.api;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.annotation.Resource;
+import javax.ws.rs.core.Response;
 
 import org.codehaus.jettison.json.JSONException;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.support.ui.ExpectedCondition;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
-import org.orcid.api.common.WebDriverHelper;
-import org.orcid.integration.api.memberV2.MemberV2ApiClientImpl;
-import org.orcid.integration.api.t2.T2OAuthAPIService;
+import org.orcid.integration.blackbox.BlackBoxBase;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.pojo.ajaxForm.PojoUtil;
-import org.springframework.beans.factory.annotation.Value;
+import org.orcid.jaxb.model.record.Work;
+import org.orcid.jaxb.model.record.summary.ActivitiesSummary;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -49,77 +36,66 @@ import com.sun.jersey.api.client.ClientResponse;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-memberV2-context.xml" })
-public class MultipleTokensPerUserAndScopeTest {
-    private static final int DEFAULT_TIMEOUT_SECONDS = 10;
-    private static final Pattern AUTHORIZATION_CODE_PATTERN = Pattern.compile("code=(.+)");    
-    
-    @Value("${org.orcid.web.base.url:http://localhost:8080/orcid-web}")
-    private String webBaseUrl;
-    @Value("${org.orcid.web.testClient1.redirectUri}")
-    private String redirectUri;
-    @Value("${org.orcid.web.testClient1.clientId}")
-    public String client1ClientId;
-    @Value("${org.orcid.web.testClient1.clientSecret}")
-    public String client1ClientSecret;
-    @Value("${org.orcid.web.testClient2.clientId}")
-    public String client2ClientId;
-    @Value("${org.orcid.web.testClient2.clientSecret}")
-    public String client2ClientSecret;
-    @Value("${org.orcid.web.testUser1.username}")
-    public String user1UserName;
-    @Value("${org.orcid.web.testUser1.password}")
-    public String user1Password;
-    @Value("${org.orcid.web.testUser1.orcidId}")
-    public String user1OrcidId;
-    @Resource(name = "t2OAuthClient")
-    private T2OAuthAPIService<ClientResponse> t2OAuthClient;
-    @Resource
-    private MemberV2ApiClientImpl memberV2ApiClient;
+public class MultipleTokensPerUserAndScopeTest extends BlackBoxBase {
 
-    private WebDriver webDriver;
-
-    private WebDriverHelper webDriverHelper;
-    
-    @Before
-    public void before() {
-        webDriver = new FirefoxDriver();
-    }
-
-    @After
-    public void after() {
-        webDriver.quit();
-    }
-    
     @Test
-    public void skipAuthorizationScreenIfTokenAlreadyExists() throws InterruptedException, JSONException {
-        // First get the authorization code
-        webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, client1ClientId,
-                ScopePathType.ORCID_BIO_UPDATE.getContent(), redirectUri));
-        By switchFromLinkLocator = By.id("in-register-switch-form");
-        (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(switchFromLinkLocator));
-        WebElement switchFromLink = webDriver.findElement(switchFromLinkLocator);
-        switchFromLink.click();
+    public void useSameScopesGetDifferentTokensTest() throws InterruptedException, JSONException {
+        String scopes = ScopePathType.ACTIVITIES_READ_LIMITED.value() + " " + ScopePathType.PERSON_READ_LIMITED.value();
+        String token1 = getAccessToken(scopes);
+        String token2 = getAccessToken(scopes);
 
-        // Fill the form
-        By userIdElementLocator = By.id("userId");
-        (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(userIdElementLocator));
-        WebElement userIdElement = webDriver.findElement(userIdElementLocator);
-        userIdElement.sendKeys(user1UserName);
-        WebElement passwordElement = webDriver.findElement(By.id("password"));
-        passwordElement.sendKeys(user1Password);
-        WebElement submitButton = webDriver.findElement(By.id("authorize-button"));
-        submitButton.click();
+        // Check the scopes are not null
+        assertNotNull(token1);
+        assertNotNull(token2);
+        assertFalse(token1.equals(token2));
 
-        (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(new ExpectedCondition<Boolean>() {
-            public Boolean apply(WebDriver d) {
-                return d.getTitle().equals("ORCID Playground");
-            }
-        });
+        // Check token 1 is working
+        ClientResponse token1Response = memberV2ApiClient.viewActivities(user1OrcidId, token1);
+        assertNotNull(token1Response);
+        assertEquals(Response.Status.OK.getStatusCode(), token1Response.getStatus());
+        ActivitiesSummary token1Activities = token1Response.getEntity(ActivitiesSummary.class);
+        assertNotNull(token1Activities);
 
-        String currentUrl = webDriver.getCurrentUrl();
-        Matcher matcher = AUTHORIZATION_CODE_PATTERN.matcher(currentUrl);
-        assertTrue(matcher.find());
-        String authorizationCode = matcher.group(1);
-        assertFalse(PojoUtil.isEmpty(authorizationCode));
-    }
+        // Check token 2 is working
+        ClientResponse token2Response = memberV2ApiClient.viewActivities(user1OrcidId, token2);
+        assertNotNull(token2Response);
+        assertEquals(Response.Status.OK.getStatusCode(), token2Response.getStatus());
+        ActivitiesSummary token2Activities = token2Response.getEntity(ActivitiesSummary.class);
+        assertNotNull(token2Activities);
+
+        assertEquals(token1Activities, token2Activities);
+        
+        // Check tokens works just for his scopes
+        Work workToCreate = (Work) unmarshallFromPath("/record_2.0_rc1/samples/work-2.0_rc1.xml", Work.class);
+        workToCreate.setPutCode(null);
+        workToCreate.getWorkTitle().getTitle().setContent("Title " + System.currentTimeMillis());
+        
+        ClientResponse token1AddWorkresponse = memberV2ApiClient.createWorkXml(user1OrcidId, workToCreate, token1);
+        assertNotNull(token1AddWorkresponse);
+        assertEquals(Response.Status.FORBIDDEN.getStatusCode(), token1AddWorkresponse.getStatus());
+                
+        ClientResponse token2AddWorkresponse = memberV2ApiClient.createWorkXml(user1OrcidId, workToCreate, token2);
+        assertNotNull(token2AddWorkresponse);
+        assertEquals(Response.Status.FORBIDDEN.getStatusCode(), token2AddWorkresponse.getStatus());  
+        
+        // Check a new token with other scope can add the work
+        scopes += " " + ScopePathType.ACTIVITIES_UPDATE.value();
+        String token3 = getAccessToken(scopes);
+        assertNotNull(token3);
+        assertFalse(token1.equals(token3));
+        
+        // Check token 3 is working
+        ClientResponse token3Response = memberV2ApiClient.viewActivities(user1OrcidId, token3);
+        assertNotNull(token3Response);
+        assertEquals(Response.Status.OK.getStatusCode(), token3Response.getStatus());
+        ActivitiesSummary token3Activities = token3Response.getEntity(ActivitiesSummary.class);
+        assertNotNull(token3Activities);
+        
+        assertEquals(token1Activities, token3Activities);
+        
+        //Check that token 3 can add works
+        ClientResponse token3AddWorkresponse = memberV2ApiClient.createWorkXml(user1OrcidId, workToCreate, token3);
+        assertNotNull(token3AddWorkresponse);
+        assertEquals(Response.Status.CREATED.getStatusCode(), token3AddWorkresponse.getStatus());
+    }          
 }

@@ -1,0 +1,112 @@
+package org.orcid.integration.blackbox;
+
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
+
+import javax.annotation.Resource;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
+
+import org.codehaus.jettison.json.JSONException;
+import org.junit.runner.RunWith;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.orcid.api.common.WebDriverHelper;
+import org.orcid.integration.api.helper.OauthHelper;
+import org.orcid.integration.api.memberV2.MemberV2ApiClientImpl;
+import org.orcid.integration.api.t2.T2OAuthAPIService;
+import org.orcid.jaxb.model.record.Activity;
+import org.orcid.jaxb.model.record.Education;
+import org.orcid.jaxb.model.record.Employment;
+import org.orcid.jaxb.model.record.Funding;
+import org.orcid.jaxb.model.record.PeerReview;
+import org.orcid.jaxb.model.record.Work;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import com.sun.jersey.api.client.ClientResponse;
+
+/**
+ * 
+ * @author Angel Montenegro
+ * 
+ */
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = { "classpath:test-memberV2-context.xml" })
+public class BlackBoxBase {
+
+    @Value("${org.orcid.web.base.url:http://localhost:8080/orcid-web}")
+    protected String webBaseUrl;
+    @Value("${org.orcid.web.testClient1.redirectUri}")
+    protected String redirectUri;
+    @Value("${org.orcid.web.testClient1.clientId}")
+    protected String client1ClientId;
+    @Value("${org.orcid.web.testClient1.clientSecret}")
+    protected String client1ClientSecret;
+    @Value("${org.orcid.web.testClient2.clientId}")
+    protected String client2ClientId;
+    @Value("${org.orcid.web.testClient2.clientSecret}")
+    protected String client2ClientSecret;
+    @Value("${org.orcid.web.testUser1.username}")
+    protected String user1UserName;
+    @Value("${org.orcid.web.testUser1.password}")
+    protected String user1Password;
+    @Value("${org.orcid.web.testUser1.orcidId}")
+    protected String user1OrcidId;
+    @Resource(name = "t2OAuthClient")
+    protected T2OAuthAPIService<ClientResponse> t2OAuthClient;
+    @Resource
+    protected MemberV2ApiClientImpl memberV2ApiClient;
+
+    protected WebDriver webDriver;
+
+    protected WebDriverHelper webDriverHelper;
+
+    @Resource
+    protected OauthHelper oauthHelper;
+    
+    public String getAccessToken(String scopes) throws InterruptedException, JSONException {
+        webDriver = new FirefoxDriver();
+        webDriverHelper = new WebDriverHelper(webDriver, webBaseUrl, redirectUri);
+        oauthHelper.setWebDriverHelper(webDriverHelper);
+        String accessToken = oauthHelper.obtainAccessToken(client1ClientId, client1ClientSecret, scopes, user1UserName, user1Password,
+                redirectUri);
+        webDriver.quit();
+        return accessToken;
+    }
+
+    public Activity unmarshallFromPath(String path, Class<? extends Activity> type) {
+        try (Reader reader = new InputStreamReader(getClass().getResourceAsStream(path))) {
+            Object obj = unmarshall(reader, type);
+            Activity result = null;
+            if (Education.class.equals(type)) {
+                result = (Education) obj;
+            } else if (Employment.class.equals(type)) {
+                result = (Employment) obj;
+            } else if (Funding.class.equals(type)) {
+                result = (Funding) obj;
+            } else if (Work.class.equals(type)) {
+                result = (Work) obj;
+            } else if (PeerReview.class.equals(type)) {
+                result = (PeerReview) obj;
+            }
+            return result;
+        } catch (IOException e) {
+            throw new RuntimeException("Error reading notification from classpath", e);
+        }
+    }
+
+    public Object unmarshall(Reader reader, Class<? extends Activity> type) {
+        try {
+            JAXBContext context = JAXBContext.newInstance(type);
+            Unmarshaller unmarshaller = context.createUnmarshaller();
+            return unmarshaller.unmarshal(reader);
+        } catch (JAXBException e) {
+            throw new RuntimeException("Unable to unmarshall orcid message" + e);
+        }
+    }
+
+}
