@@ -54,9 +54,9 @@
 	                        <span ng-hide="notification.archivedDate"><a href="" ng-click="archive(notification.putCode)" class="glyphicon glyphicon-download-alt grey" title="${springMacroRequestContext.getMessage("notifications.archive")}"></a></span>
 	                    </td>
 	                </tr>
-	                <tr ng-repeat-end ng-show="displayBody[notification.putCode]">
+	                <tr ng-repeat-end ng-show="displayBody[notification.putCode]" onclick="return false;">
 	                    <td colspan="4">
-	                        <iframe id="{{notification.putCode}}" ng-src="{{ '<@spring.url '/notifications'/>/' + notification.notificationType + '/' + notification.putCode + '/notification.html'}}" class="notification-iframe" frameborder="0" width="100%" scrolling="no" height="400"></iframe>
+	                        <iframe id="{{notification.putCode}}" ng-src="{{ '<@spring.url '/notifications'/>/' + notification.notificationType + '/' + notification.putCode + '/notification.html'}}" class="notification-iframe" frameborder="0" width="100%" scrolling="no"></iframe>
 	                    </td>
 	                </tr>
                 </tbody>

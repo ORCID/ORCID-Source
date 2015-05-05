@@ -20,6 +20,28 @@
 <html>
 <#assign verDateTime = startupDate?datetime>
 <#assign ver="${verDateTime?iso_utc}">
+
+<#assign aworks = 0>
+<#assign tworks = "">
+
+<#assign aeducation = 0>
+<#assign teducation = "">
+
+<#assign aemployment = 0>
+<#assign temployment = "">
+
+<#assign apeerreview = 0>
+<#assign tpeerreview = "">
+
+<#assign afunding = 0>
+<#assign tfunding = "">
+
+<#assign wbuttons = false>
+<#assign wurl = "">
+<#assign wputCode = "">
+
+
+
 <head>
     <meta charset="utf-8" />    
     <meta name="description" content="">
@@ -29,13 +51,17 @@
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.28/angular.min.js"></script>
     <link rel="stylesheet" href="${staticCdn}/twitter-bootstrap/3.1.0/css/bootstrap.min.css?v=${ver}"/>
     <link rel="stylesheet" href="${staticCdn}/css/fonts.css?v=${ver}"/>
+    <link rel="stylesheet" href="${staticLoc}/css/glyphicons.css?v=${ver}"/>
     <link rel="stylesheet" href="${staticCdn}/css/orcid.new.css?v=${ver}"/>
     <style> 
 		body, html{			
 			color: #494A4C;
 			font-size: 15px;
 			font-family: 'Gill Sans W02', 'Helvetica', sans-serif;
-			font-style: normal;   
+			font-style: normal;
+			min-height: 100px; /* Do not change */
+			height: auto; /* Do not change */
+			padding-bottom: 30px; /* Do not change */
 		}
 		
 		.workspace-accordion-header{
@@ -54,6 +80,17 @@
 			margin-top: 15px;
 		}
 		
+		.glyphicons{
+			top: -10px;
+			padding-left: 21px;
+			
+		}
+		
+		.glyphicons:before{
+			color: #FFF;
+			font: 16px/1em 'Glyphicons Regular'
+		}
+		
 		
 	</style>
 	<script type="text/javascript">
@@ -70,33 +107,98 @@
 		  };		  
 		});
 	</script>
+	<!--  Do not remove -->
+	<script type="text/javascript" src="${staticCdn}/javascript/iframeResizer.contentWindow.min.js?v=${ver}"></script>
 </head>
 <body data-baseurl="<@spring.url '/'/>" ng-app="appInFrame" ng-controller="iframeController">
+	
+	<#list notification.activities.activities?sort_by("activityType") as activity>
+		<#switch activity.activityType>
+			 <#case "WORK">
+			  	<#assign aworks = aworks + 1>
+			  	<#assign tworks = tworks + activity.activityName>
+			  	<#if activity.externalId??>
+	           		<#assign tworks = tworks + "(" + activity.externalId.externalIdType + ":" + activity.externalId.externalIdValue + ")">
+	       		</#if>
+	       		<#assign tworks = tworks + "<br/>">
+	       		<#if notification.authorizationUrl??>
+	       			<#assign wbuttons = true>
+	       			<#assign wurl = notification.authorizationUrl.uri>
+	       			<#assign wputCode = notification.putCode>
+	       		</#if>
+			    <#break>
+			  <#case "EMPLOYMENT">
+			     <#assign aemployment = aemployment + 1>
+			     <#assign temployment = temployment + activity.activityName>
+			     <#if activity.externalId??>
+	           		<#assign temployment = temployment + "(" + activity.externalId.externalIdType + ":" + activity.externalId.externalIdValue + ")">
+	       		</#if>
+	       		<#assign temployment = temployment + "<br/>">
+			     <#break>
+			  <#case "EDUCATION">
+			     <#assign aeducation = aeducation + 1>
+			     <#assign teducation = teducation + activity.activityName>
+			     <#if activity.externalId??>
+	           		<#assign teducation = teducation + "(" + activity.externalId.externalIdType + ":" + activity.externalId.externalIdValue + ")">
+	       		 </#if>
+	       		 <#assign teducation = teducation + "<br/>">
+			     <#break>
+			 <#case "FUNDING">
+			     <#assign afunding = afunding + 1>
+			     <#assign tfunding = tfunding + activity.activityName>
+			     <#if activity.externalId??>
+	           		<#assign tfunding = tfunding + "(" + activity.externalId.externalIdType + ":" + activity.externalId.externalIdValue + ")">
+	       		 </#if>
+	       		 <#assign tfunding = tfunding + "<br/>">
+			     <#break>
+			     
+			  <#default>
+		</#switch>
+		<#if activity.externalId??>
+	           (${activity.externalId.externalIdType}: ${activity.externalId.externalIdValue})
+	       </#if>
+	</#list>
+
+
+	<!-- Start rendering -->
 	<div>
 	    <strong>${notification.source.sourceName.content}</strong> would like to add the following items to your record:
 	</div>
 	<div class="notifications-inner">
-		<#list notification.activities.activities as activity>
+		<#if aeducation gt 0>
+			<!-- Education -->
 			<div class="workspace-accordion-header">
-				<i class="glyphicon-chevron-down glyphicon x075"></i> ${activity.activityType?capitalize} (${notification.activities.activities?size})
-			</div>	        		
-        	<strong>${activity.activityName}</strong><br /> 
-	        <#if activity.externalId??>
-	            (${activity.externalId.externalIdType}: ${activity.externalId.externalIdValue})
-	        </#if>
-		</#list>
-		<div class="notifications-buttons">
-			<#if notification.authorizationUrl??>	
-				<a class="btn btn-primary" href="${notification.authorizationUrl.uri}" target="_blank">
-					<span class="glyphicons glyphicons-cloud-upload"></span>Add now
-				</a>  
-				<a class="btn btn-default" href="" ng-click="archive('${notification.putCode?c}')" type="reset">
-					Archive
-				</a>                                                     
+				<i class="glyphicon-chevron-down glyphicon x075"></i> Education (${aeducation})
+			</div>
+			<strong>${teducation}</strong>
+		</#if>
+		<#if aemployment gt 0>
+			<!-- Employment -->
+			<div class="workspace-accordion-header">
+				<i class="glyphicon-chevron-down glyphicon x075"></i> Employment (${aemployment})
+			</div>
+			<strong>${temployment}</strong>
+		</#if>
+		<#if afunding gt 0>
+			<!-- Funding -->
+			<div class="workspace-accordion-header">
+				<i class="glyphicon-chevron-down glyphicon x075"></i> Fundings (${afunding})
+			</div>
+			<strong>${tfunding}</strong>
+		</#if>
+		<#if aworks gt 0>
+			<!-- Works -->
+			<div class="workspace-accordion-header">
+				<i class="glyphicon-chevron-down glyphicon x075"></i> Works (${aworks})
+			</div>
+			<strong>${tworks}</strong>
+			<#if wbuttons>
+				<div class="notifications-buttons">
+					<a class="btn btn-primary" href="${wurl}" target="_blank"><span class="glyphicons cloud-upload"></span> Add now</a>  <a class="btn btn-default" href="" ng-click="archive('${wputCode?c}')" type="reset">Archive</a>
+				</div>
 			</#if>
-		</div>
+		</#if>
 	</div>	
-	<!--  Review it -->
-	<script type="text/javascript" src="${staticCdn}/javascript/iframeResizer.contentWindow.min.js?v=${ver}"></script><!-- required for iframe resizing -->
+	
 </body>
 </html>
