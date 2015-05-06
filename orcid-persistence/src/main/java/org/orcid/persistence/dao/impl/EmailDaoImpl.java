@@ -82,7 +82,7 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
     @Override
     @Transactional
     public void addEmail(String orcid, String email, Visibility visibility, String sourceId, String clientSourceId) {
-        addEmail(orcid, email, visibility, sourceId, clientSourceId, false, false);
+        addEmail(orcid, email, visibility, sourceId, clientSourceId, false, true);
     }
 
     @Override
