@@ -45,7 +45,7 @@ public interface OrcidOauth2TokenDetailService {
 
     void removeByRefreshTokenValue(String refreshToken);
 
-    OrcidOauth2TokenDetail findByAuthenticationKey(String authKey);
+    List<OrcidOauth2TokenDetail> findByAuthenticationKey(String authKey);
 
     List<OrcidOauth2TokenDetail> findByUserName(String userName);
 

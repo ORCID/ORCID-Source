@@ -161,9 +161,7 @@ public class OrcidRandomValueTokenServicesTest extends DBUnitTest {
         latestExpiry = oneHoursTime();
 
         assertNotNull(reissuedOauth2AccessToken);
-        // Check is the same token - should be as token has not be used, and has
-        // not expired.
-        assertEquals(oauth2AccessToken.getValue(), reissuedOauth2AccessToken.getValue());
+
         assertFalse(reissuedOauth2AccessToken.getExpiration().before(earliestExpiry));
         assertFalse(reissuedOauth2AccessToken.getExpiration().after(latestExpiry));
     }

@@ -112,7 +112,7 @@ public class OrcidOauth2TokenDetailServiceImpl implements OrcidOauth2TokenDetail
     }
 
     @Override
-    public OrcidOauth2TokenDetail findByAuthenticationKey(String authKey) {
+    public List<OrcidOauth2TokenDetail> findByAuthenticationKey(String authKey) {
         try {
             return orcidOauth2TokenDetailDao.findByAuthenticationKey(authKey);
         } catch (NoResultException e) {
@@ -167,8 +167,9 @@ public class OrcidOauth2TokenDetailServiceImpl implements OrcidOauth2TokenDetail
 
     @Override
     public void removeConflictsAndCreateNew(OrcidOauth2TokenDetail detail) {
-        orcidOauth2TokenDetailDao.removeByAuthenticationKeyOrTokenValueOrRefreshTokenValue(detail.getAuthenticationKey(), detail.getTokenValue(), detail
-                .getRefreshTokenValue());
+        // We should allow multiple tokens for the same combo user-scopes, thats why we will
+        // not delete based on the authentication key
+        orcidOauth2TokenDetailDao.removeByAuthenticationKeyOrTokenValueOrRefreshTokenValue(null, detail.getTokenValue(), detail.getRefreshTokenValue());
         orcidOauth2TokenDetailDao.persist(detail);
     }
     
