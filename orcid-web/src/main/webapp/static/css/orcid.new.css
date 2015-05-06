@@ -2425,6 +2425,10 @@ label.error,span.orcid-error {
 
 span.orcid-error {
 	display: block;
+	float: left;
+	clear: both;
+	width: 100%;
+	margin-bottom: 15px;
 }
 
 input.error {
