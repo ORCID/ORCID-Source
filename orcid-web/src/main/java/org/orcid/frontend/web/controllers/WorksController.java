@@ -266,13 +266,7 @@ public class WorksController extends BaseWorkspaceController {
             w.setWorkType(wTypeText);
         }
         
-        if(w.getPublicationDate() == null) {
-            Date d = new Date();
-            d.setDay(new String());
-            d.setMonth(new String());
-            d.setYear(new String());
-            w.setPublicationDate(d);
-        }
+        initializePublicationDate(w);
         
         if(w.getWorkExternalIdentifiers() == null || w.getWorkExternalIdentifiers().isEmpty()) {
             WorkExternalIdentifier wdi = new WorkExternalIdentifier();
@@ -322,7 +316,19 @@ public class WorksController extends BaseWorkspaceController {
         }                
     }
     
-    /**
+    private void initializePublicationDate(Work w) {
+    	if(w.getPublicationDate() == null) {
+            Date d = new Date();
+            d.setDay(new String());
+            d.setMonth(new String());
+            d.setYear(new String());
+            w.setPublicationDate(d);
+        }
+	}
+
+
+
+	/**
      * Returns a blank work
      * */
     @RequestMapping(value = "/getWorkInfo.json", method = RequestMethod.GET)
@@ -341,6 +347,21 @@ public class WorksController extends BaseWorkspaceController {
 
             if (orcidWork != null) {
                 Work work = Work.valueOf(orcidWork);
+                //Set Publication date
+                if(work.getPublicationDate() == null) {
+                	initializePublicationDate(work);
+                } else {
+                	if(work.getPublicationDate().getDay() == null) {
+                		work.getPublicationDate().setDay(new String());
+                	}
+                	if(work.getPublicationDate().getMonth() == null) {
+                		work.getPublicationDate().setMonth(new String());
+                	}
+                	if(work.getPublicationDate().getYear() == null) {
+                		work.getPublicationDate().setYear(new String());
+                	}
+                }
+                
                 // Set country name
                 if (!PojoUtil.isEmpty(work.getCountryCode())) {
                     Text countryName = Text.valueOf(countries.get(work.getCountryCode().getValue()));
@@ -450,6 +471,11 @@ public class WorksController extends BaseWorkspaceController {
         if (work.getJournalTitle() != null) {
             workJournalTitleValidate(work);
             copyErrors(work.getJournalTitle(), work);
+        }
+        
+        if (work.getPublicationDate() != null) {
+            workPublicationDateValidate(work);
+            copyErrors(work.getPublicationDate(), work);
         }
         
         //allowed to be null
@@ -716,7 +742,22 @@ public class WorksController extends BaseWorkspaceController {
         }
         return work;
     }
-
+    
+    @RequestMapping(value = "/work/publicationDateValidate.json", method = RequestMethod.POST)
+    public @ResponseBody
+    Work workPublicationDateValidate(@RequestBody Work work) {
+        work.getPublicationDate().setErrors(new ArrayList<String>());
+        if (
+    		(PojoUtil.isEmpty(work.getPublicationDate().getYear())
+    				&& (!PojoUtil.isEmpty(work.getPublicationDate().getMonth()) || !PojoUtil.isEmpty(work.getPublicationDate().getDay()))) ||
+    		(!PojoUtil.isEmpty(work.getPublicationDate().getYear()) 
+    				&& PojoUtil.isEmpty(work.getPublicationDate().getMonth()) && !PojoUtil.isEmpty(work.getPublicationDate().getDay()))
+    		) {
+            setError(work.getPublicationDate(), "common.dates.invalid");
+        }
+        return work;
+    }
+    
     @RequestMapping(value = "/work/languageCodeValidate.json", method = RequestMethod.POST)
     public @ResponseBody
     Work workLanguageCodeValidate(@RequestBody Work work) {

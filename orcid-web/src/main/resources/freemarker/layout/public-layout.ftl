@@ -21,7 +21,7 @@
 <!DOCTYPE html>
 <html class="no-js oldie ng-app:orcidApp"  ng-app="orcidApp" id="ng-app" lang="en">
 <#include "/common/html-head.ftl" />
-<body data-baseurl="<@spring.url '/'/>">
+<body data-baseurl="<@orcid.rootPath '/'/>">
 <#nested />
 <#include "/common/scripts.ftl" />
 <#if !hideUserVoiceScript??> 
@@ -80,7 +80,7 @@
 						<button type="submit" class="search-button">
 							<i class="icon-orcid-search"></i>
 						</button>
-						<a href="<@spring.url "/orcid-search/search" />"
+						<a href="<@orcid.rootPath "/orcid-search/search" />"
 						class="settings-button" title="<@orcid.msg
 						'public-layout.search.advanced'/>"><i class="glyphicon glyphicon-cog"></i></a>
 					</div>
@@ -99,7 +99,7 @@
 					<div class="account-settings-mobile-menu">
 						<span class="account-settings-mobile"> <a ${(nav==
 							"settings")?string('class="active"
-							', '')}href="<@spring.url '/account'/>"><@orcid.msg
+							', '')}href="<@orcid.rootPath '/account'/>"><@orcid.msg
 								'public-layout.account_setting'/></a>
 						</span>
 					</div>
@@ -124,7 +124,7 @@
 				<a id="mobile-search" class="mobile-button mobile-search" ng-click="toggleSearch()" ng-class="{'mobile-menu-active': searchVisible == true}">
 					<span class="glyphicon glyphicon-search"></span>
 				</a>
-				<a href="<@spring.url "/signin" />" id="mobile-sign-in" class="mobile-button mobile-sign-in">
+				<a href="<@orcid.rootPath "/signin" />" id="mobile-sign-in" class="mobile-button mobile-sign-in">
 					<span class="glyphicon glyphicon-user"></span>
 				</a>				
 				
@@ -132,46 +132,46 @@
 				<ul class="menu" ng-show="menuVisible == true" ng-cloak resize>
 					<!-- FOR RESEARCHERS -->
 					<li class="first expanded active-trail"><a
-						href="<@spring.url " /" />" ng-click="handleMobileMenuOption($event)" title=""><@orcid.msg
+						href="<@orcid.rootPath " /" />" ng-click="handleMobileMenuOption($event)" title=""><@orcid.msg
 						'public-layout.for_researchers'/></a>
 						<ul class="menu lang-fixes">
 						<!-- Mobile view Only -->
-						<li class="leaf hidden-md hidden-lg hidden-sm visible-xs"><a href="<@spring.url "/" />" title=""><@orcid.msg 'public-layout.for_researchers'/></a></li>
+						<li class="leaf hidden-md hidden-lg hidden-sm visible-xs"><a href="<@orcid.rootPath "/" />" title=""><@orcid.msg 'public-layout.for_researchers'/></a></li>
 						
 						<@security.authorize ifNotGranted="ROLE_USER, ROLE_ADMIN, ROLE_BASIC, ROLE_PREMIUM, ROLE_BASIC_INSTITUTION, ROLE_PREMIUM_INSTITUTION">								
-							<li class="leaf last"><a ${(nav=="signin")?string('class="active" ', '')} href="<@spring.url "/signin" />"><@orcid.msg 'public-layout.sign_in'/></a></li>									
-							<li class="leaf last"><a ${(nav=="register")?string('class="active" ', '')} href="<@spring.url "/register" />"><@orcid.msg 'public-layout.register'/></a></li>
+							<li class="leaf last"><a ${(nav=="signin")?string('class="active" ', '')} href="<@orcid.rootPath "/signin" />"><@orcid.msg 'public-layout.sign_in'/></a></li>									
+							<li class="leaf last"><a ${(nav=="register")?string('class="active" ', '')} href="<@orcid.rootPath "/register" />"><@orcid.msg 'public-layout.register'/></a></li>
 						</@security.authorize>
 						<@security.authorize ifAnyGranted="ROLE_USER, ROLE_ADMIN, ROLE_BASIC, ROLE_PREMIUM, ROLE_BASIC_INSTITUTION, ROLE_PREMIUM_INSTITUTION">								
-							<li><a ${(nav=="record")?string('class="active" ', '')}href="<@spring.url '/my-orcid'/>">
+							<li><a ${(nav=="record")?string('class="active" ', '')}href="<@orcid.rootPath '/my-orcid'/>">
 								<#if inDelegationMode><@orcid.msg 'public-layout.my_orcid'/><#else><@orcid.msg 'public-layout.my_orcid_record'/></#if>
 							</a></li>
 						<@security.authorize ifAnyGranted="ROLE_USER, ROLE_ADMIN, ROLE_BASIC, ROLE_PREMIUM, ROLE_BASIC_INSTITUTION, ROLE_PREMIUM_INSTITUTION">
 							<#if profile?? && profile.orcidInternal?? && profile.orcidInternal.preferences.notificationsEnabled?? && profile.orcidInternal.preferences.notificationsEnabled == true>
 								<li ng-controller="NotificationsAlertCtrl">
-									<a ${(nav=="notifications")?string('class="active" ', '')}href="<@spring.url "/notifications" />">${springMacroRequestContext.getMessage("workspace.notifications")} <span ng-cloak ng-hide="getUnreadCount() === 0">({{getUnreadCount()}})</span></a>
+									<a ${(nav=="notifications")?string('class="active" ', '')}href="<@orcid.rootPath "/notifications" />">${springMacroRequestContext.getMessage("workspace.notifications")} <span ng-cloak ng-hide="getUnreadCount() === 0">({{getUnreadCount()}})</span></a>
 								</li>
 							</#if>
 						</@security.authorize>
 						
-						<li><a ${(nav=="settings")?string('class="active" ', '')}href="<@spring.url '/account'/>"><@orcid.msg 'public-layout.account_setting'/></a></li>
+						<li><a ${(nav=="settings")?string('class="active" ', '')}href="<@orcid.rootPath '/account'/>"><@orcid.msg 'public-layout.account_setting'/></a></li>
 						
 						<#if !inDelegationMode || isDelegatedByAdmin>
 							<@security.authorize ifAnyGranted="ROLE_GROUP, ROLE_BASIC, ROLE_BASIC_INSTITUTION, ROLE_PREMIUM, ROLE_PREMIUM_INSTITUTION">
-			 					<li><a ${(nav=="developer-tools")?string('class="active" ', '')}href="<@spring.url "/group/developer-tools" />">${springMacroRequestContext.getMessage("workspace.developer_tools")}</a></li>
+			 					<li><a ${(nav=="developer-tools")?string('class="active" ', '')}href="<@orcid.rootPath "/group/developer-tools" />">${springMacroRequestContext.getMessage("workspace.developer_tools")}</a></li>
 							</@security.authorize>
 							<@security.authorize ifAnyGranted="ROLE_USER">
-								<li><a ${(nav=="developer-tools")?string('class="active" ', '')}href="<@spring.url "/developer-tools" />">${springMacroRequestContext.getMessage("workspace.developer_tools")}</a></li>
+								<li><a ${(nav=="developer-tools")?string('class="active" ', '')}href="<@orcid.rootPath "/developer-tools" />">${springMacroRequestContext.getMessage("workspace.developer_tools")}</a></li>
 							</@security.authorize>
 						</#if>
 						
 						<@security.authorize ifAnyGranted="ROLE_ADMIN">
-							<li><a ${(nav=="members")?string('class="active" ', '')}href="<@spring.url "/manage-members" />"><@orcid.msg 'admin.members.workspace_link' /></a></li>
-							<li><a ${(nav=="admin")?string('class="active" ', '')}href="<@spring.url "/admin-actions" />"><@orcid.msg 'admin.workspace_link' /></a></li>
+							<li><a ${(nav=="members")?string('class="active" ', '')}href="<@orcid.rootPath "/manage-members" />"><@orcid.msg 'admin.members.workspace_link' /></a></li>
+							<li><a ${(nav=="admin")?string('class="active" ', '')}href="<@orcid.rootPath "/admin-actions" />"><@orcid.msg 'admin.workspace_link' /></a></li>
 						</@security.authorize>
 																
 						</@security.authorize>
-							<li class="leaf last"><a href="<@spring.url "/content/initiative" />"><@orcid.msg 'manage_delegators.learn_more.link.text' /></a></li>
+							<li class="leaf last"><a href="<@orcid.rootPath "/content/initiative" />"><@orcid.msg 'manage_delegators.learn_more.link.text' /></a></li>
 						</ul>
 					</li>
 
@@ -452,11 +452,11 @@
 					<li class="last leaf"><@security.authorize
 						ifNotGranted="ROLE_USER, ROLE_ADMIN, ROLE_BASIC, ROLE_PREMIUM,
 						ROLE_BASIC_INSTITUTION, ROLE_PREMIUM_INSTITUTION">
-						<a href="<@spring.url "/signin" />" title=""><@orcid.msg 'public-layout.sign_in'/></a>
+						<a href="<@orcid.rootPath "/signin" />" title=""><@orcid.msg 'public-layout.sign_in'/></a>
 					</@security.authorize>
 					 
 					<@security.authorize ifAnyGranted="ROLE_USER, ROLE_ADMIN, ROLE_BASIC, ROLE_PREMIUM, ROLE_BASIC_INSTITUTION, ROLE_PREMIUM_INSTITUTION">
-						<a href="<@spring.url '/signout'/>"><@orcid.msg 'public-layout.sign_out'/></a>
+						<a href="<@orcid.rootPath '/signout'/>"><@orcid.msg 'public-layout.sign_out'/></a>
 					</@security.authorize>
 					
 				</li>
@@ -472,7 +472,7 @@
 				<p><@orcid.msg 'public-layout.logo.tagline'/></p>
 			</div>
 			<span class="see-more">${liveIds} <@orcid.msg
-				'public-layout.amount_ids'/> <a href="<@spring.url " /statistics" />"
+				'public-layout.amount_ids'/> <a href="<@orcid.rootPath " /statistics" />"
 				title=""><@orcid.msg 'public-layout.see_more'/></a>
 		</span>
 			<!--
@@ -505,7 +505,7 @@
 		</div>
 	</div>
 </div>
-<form action="<@spring.url '/'/>">
+<form action="<@orcid.rootPath '/'/>">
 	<input id="imageUrl" type="hidden" value="${staticCdn}/images">
 </form>
 </@base>

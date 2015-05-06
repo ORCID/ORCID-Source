@@ -31,8 +31,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 import javax.mail.internet.AddressException;
@@ -61,7 +59,6 @@ import org.orcid.pojo.ajaxForm.ErrorsInterface;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.utils.OrcidStringUtils;
-import org.orcid.utils.OrcidWebUtils;
 import org.orcid.utils.UTF8Control;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -111,8 +108,6 @@ public class BaseController {
     private String staticContentPath;
 
     private String staticCdnPath;
-
-    static Pattern fileNamePattern = Pattern.compile("https{0,1}:\\/\\/[^\\/]*(.*){0,1}");
 
     @Value("${org.orcid.core.shareThis.key}")
     private String shareThisKey;
@@ -419,7 +414,7 @@ public class BaseController {
             LOGGER.debug("Unable to url encode email address: {}", email, e);
         }
         StringBuilder resendUrl = new StringBuilder();
-        resendUrl.append(OrcidWebUtils.getServerStringWithContextPath(request));
+        resendUrl.append(orcidUrlManager.getServerStringWithContextPath(request));
         resendUrl.append("/resend-claim");
         if (urlEncodedEmail != null) {
             resendUrl.append("?email=");
@@ -547,10 +542,7 @@ public class BaseController {
 
     @ModelAttribute("basePath")
     public String getBasePath() {
-        Matcher fileNameMatcher = fileNamePattern.matcher(orcidUrlManager.getBaseUrl());
-        if (!fileNameMatcher.find())
-            return "/";
-        return fileNameMatcher.group(1) + "/";
+        return orcidUrlManager.getBasePath();
     }
 
     /**

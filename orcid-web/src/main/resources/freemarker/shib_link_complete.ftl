@@ -18,7 +18,7 @@
 -->
 <@public classes=['home'] nav="signin">
 <#include "sandbox_warning.ftl"/>
-    <form class="form-sign-in shibboleth" id="loginForm" ng-enter-submit action="<@spring.url '/signin/auth'/>" method="post">
+    <form class="form-sign-in shibboleth" id="loginForm" ng-enter-submit action="<@orcid.rootPath '/signin/auth'/>" method="post">
         <div class="row">
 	        <div class="col-md-offset-3 col-md-offset-9 col-sm-offset-3 col-sm-9 col-xs-12">
 	        	<div class="congrat">
@@ -28,7 +28,7 @@
 				            You have linked your Shibboleth account ${remoteUser}<br />
 				            to your ORCID account ${effectiveUserOrcid}.<br />
 				            You will now be able to signin to ORCID using Shibboleth.<br />
-				            You can now <a href="<@spring.url '/my-orcid'/>">continue to your ORCID record</a>.
+				            You can now <a href="<@orcid.rootPath '/my-orcid'/>">continue to your ORCID record</a>.
 		            	</p>
 		            </div>
 	            </div>

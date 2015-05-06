@@ -16,7 +16,7 @@
  */
 package org.orcid.pojo.ajaxForm;
 
-public class OauthRegistration extends Registration {
+public class OauthRegistration extends Registration implements OauthForm {
     /**
      * 
      */
