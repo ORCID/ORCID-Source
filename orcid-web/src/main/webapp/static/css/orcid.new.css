@@ -3025,7 +3025,7 @@ ul.personal-inf-display li:last-child{
 }
 
 .citation-title{
-	margin: 70px 0 0 0;
+	margin: 50px 0 0 0;
 	display: block;
 }
 
@@ -3041,15 +3041,9 @@ ul.personal-inf-display li:last-child{
 	color: #B94A48;
 }
 
-.add-work #day,
-.add-work #month{
-	width: 100px;
-	margin: 0 0 0 10px; 
-}
-
-.add-work #year{
-	width: 100px;
-	margin-bottom:0;
+.add-work #month,
+.add-work #year{	
+	margin: 0 5px 0 0; 
 }
 
 .add-funding #month {
@@ -6421,11 +6415,7 @@ hr{
 	}
 		
 	.add-work .input-xlarge{
-		width: 96%;
-	}
-	
-	.add-work #day, .add-work #month{
-		width: 72px;
+		width: 95%;
 	}
 	
 	.add-work .citation-title{
@@ -6439,11 +6429,7 @@ hr{
 	
 	.add-work .alert{
 		display: block;
-	}
-	
-	.add-work select{
-		width: 95%;
-	}
+	}	
 	
 	.control-group{
 		width: 100%;

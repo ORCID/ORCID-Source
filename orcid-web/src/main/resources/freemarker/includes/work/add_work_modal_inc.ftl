@@ -121,32 +121,32 @@
 							<div ng-repeat='error in editWork.journalTitle.errors' ng-bind-html="error"></div>
 						</span>						
 					</div>
-				</div>									 				 														
-
+				</div>
 		 		<div class="control-group">
 		    		<label class="relative" for="manualWork.day"><@orcid.msg 'manual_work_form_contents.labelPubDate'/></label>
 		    		<div class="relative">					    
-						<select id="year" name="month" ng-model="editWork.publicationDate.year" class="col-md-4">
+						<select id="year" name="month" ng-model="editWork.publicationDate.year" class="col-xs-4">
 							<#list years?keys as key>
 								<option value="${key}">${years[key]}</option>
 							</#list>
 			    		</select>
-					    <select id="month" name="month" ng-model="editWork.publicationDate.month" class="col-md-3">
+					    <select id="month" name="month" ng-model="editWork.publicationDate.month" class="col-xs-4">
 							<#list months?keys as key>
 								<option value="${key}">${months[key]}</option>
 							</#list>
 			    		</select>
-						<select id="day" name="day" ng-model="editWork.publicationDate.day" class="col-md-3">
+						<select id="day" name="day" ng-model="editWork.publicationDate.day" class="col-xs-3">
 							<#list days?keys as key>
 								<option value="${key}">${days[key]}</option>
 							</#list>
-			    		</select>
-			    		<span class="orcid-error" ng-show="editWork.publicationDate.errors.length > 0">
-							<div ng-repeat='error in editWork.publicationDate.errors' ng-bind-html="error"></div>
-						</span>								    
+			    		</select>									    		
 		    		</div>
-		    	</div>
-		    	
+					<div class="relative">
+						<span class="orcid-error" ng-show="editWork.publicationDate.errors.length > 0">
+							<div ng-repeat='error in editWork.publicationDate.errors' ng-bind-html="error"></div>
+						</span>
+					</div>					
+		    	</div>		    	
 				<div class="control-group">
 					<span class="citation-title">
 						<strong><@orcid.msg 'manual_work_form_contents.titlecitation'/></strong>
