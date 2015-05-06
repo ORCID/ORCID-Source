@@ -16,6 +16,7 @@
  */
 package org.orcid.core.oauth.service;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
 import java.util.Set;
@@ -197,6 +198,8 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
             }
         }
 
+        
+        
         OAuth2Authentication result = orcidtokenStore.readAuthentication(accessToken);
         return result;
     }    
@@ -210,4 +213,22 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
         super.setTokenEnhancer(customTokenEnhancer);
         this.customTokenEnhancer = customTokenEnhancer;
     }        
+    
+    public boolean tokenAlreadyExists(String clientId, String userId, Collection<String> scopes) {
+        Collection<OAuth2AccessToken> existingTokens = orcidtokenStore.findTokensByClientIdAndUserName(clientId, userId);
+        
+        if(existingTokens == null || existingTokens.isEmpty()) {
+            return false;
+        }
+        
+        for(OAuth2AccessToken token : existingTokens) {
+            if(!token.isExpired()) {
+                if(token.getScope().containsAll(scopes) && scopes.containsAll(token.getScope())) {
+                    return true;
+                }
+            }
+        }
+        
+        return false;
+    }
 }
