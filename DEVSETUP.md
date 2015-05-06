@@ -2,13 +2,14 @@
 
 ##Prerequisites 
 
-1. Install [Java SDK](http://www.oracle.com/technetwork/java/javaee/downloads/index.html)
+1. Install [Java](http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html). Add an environment variable JAVA_HOME. (Verify Java. Go to cmd and type "java -version". It should display the version of Java)
     
-* Install [Maven](http://maven.apache.org/index.html)
+* Install [Maven](http://maven.apache.org/index.html). Add an environment variable M2_HOME. (Verify Maven. Go to cmd and type "mvn -version". It should display the version of Maven)
 
-* Install [Postgres](http://www.postgresql.org/download/)
+* Install [Postgres](http://www.postgresql.org/download/). (Verify Postgres. Go to cmd. Navigate to /postgres/xx/bin and execute the command "psql -U postgres". Type the password entered during the installation, if prompted. It should show a postgres console.)
 
-* Install [Tomcat 7](http://tomcat.apache.org/)
+* Install [Tomcat 7](http://tomcat.apache.org/). (Verify Tomcat. Go to the directory /apache-tomcat-7.x/bin and run the batch "startup.bat". It should start the server and display a message "Server startup in xxxx ms".)
+
 
 ## Setup Postgres DB
 We'll set up postgres using the default settings in 
@@ -135,9 +136,29 @@ http://www.springsource.org/downloads/sts-ggts
 
 * Click Finish
 
+* Select Window -> Preferences -> Servers(Expand) -> Runtime Environments
+
+* Click on Add.
+
+* Expand the folder Apache, select Apache Tomcat v7.0 and click Next.
+
+* Browse to the directory of apache tomcat in the file system and click Finish.
+
+* Click OK.
+
+* Go to File -> New -> Other.
+
+* Filter for 'Server', select and click Next.
+
+* Expand the folder Apache, select Apache Tomcat v7.0.
+
+* Field 'Server Runtime Environment' should point to the newly added server runtime for tomcat.
+
+* Click Next and Finish.
+
 * Select Window -> Show View -> Servers
 
-* Double Click "VMWare vFabric tc Server" or  "Pivotal tc Server"
+* Double Click "Apache Tomcat Server 7.0"
 
 * Select Open launch configuration
 
@@ -148,14 +169,17 @@ http://www.springsource.org/downloads/sts-ggts
     ```
     -Dsolr.solr.home=/Users/rcpeters/git/ORCID-Source/orcid-solr-web/src/main/webapp/solr -Dorg.orcid.config.file=classpath:staging-persistence.properties -Dorg.apache.tomcat.util.buf.UDecoder.ALLOW_ENCODED_SLASH=true -XX:MaxPermSize=1024m
     ```
-
 * Click Ok
 
-* Right click on "VMWare vFabric tc Server"
+* In Timeouts, increase the time limit of Start to 600 seconds and Stop to 100.
+
+* Save and close the server configuration view.
+
+* Right click on "Apache Tomcat Server 7.0".
 
 * Select "Add and Remove" Add orcid-api-web, orcid-pub-web, orcid-scheduler-web, orcid-solr-web, orcid-integration-test and orcid-web
 
-* Right click on "VMWare vFabric tc Server"
+* Right click on "Apache Tomcat Server 7.0"
 
 * Select Debug
 

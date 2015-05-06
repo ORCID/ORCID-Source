@@ -817,7 +817,7 @@ function populateWorkAjaxForm(bibJson, work) {
 
 /* END: Bibjson to work AjaxForm */
 
-/* START: workIdLinkJs v0.0.7 */
+/* START: workIdLinkJs v0.0.8 */
 /* https://github.com/ORCID/workIdLinkJs */
 
 /* browser and NodeJs compatible */
@@ -852,23 +852,23 @@ function populateWorkAjaxForm(bibJson, work) {
    
    typeMap['arxiv'] = function (id) {
       if (id.toLowerCase().startsWith('arxiv.org')) return 'http://' + id;
-      if (id.startsWith('arXiv:')) return 'http://arxiv.org/abs/' + encodeURIComponent(id.substring(6));
-      return 'http://arxiv.org/abs/' + encodeURIComponent(id);
+      if (id.startsWith('arXiv:')) return 'http://arxiv.org/abs/' + id.substring(6);
+      return 'http://arxiv.org/abs/' + id;
    };
    
    typeMap['asin'] = function (id) {
       if (id.toLowerCase().startsWith('amazon.') || id.startsWith('www.amazon.')) return 'http://' + id;
-      return 'http://www.amazon.com/dp/' + encodeURIComponent(id);
+      return 'http://www.amazon.com/dp/' + id;
    };
 
    typeMap['bibcode'] = function (id) {
       if (id.toLowerCase().startsWith('adsabs.harvard.edu')) return 'http://' + id;
-      return 'http://adsabs.harvard.edu/abs/' + encodeURIComponent(id);
+      return 'http://adsabs.harvard.edu/abs/' + id;
    };
    
    typeMap['doi'] = function (id) {
       if (id.toLowerCase().startsWith('dx.doi.org') || id.startsWith('dx.doi.org')) return 'http://' + id;
-      return 'http://dx.doi.org/' + encodeURIComponent(id);
+      return 'http://dx.doi.org/' + id;
    };
 
    typeMap['ethos'] = function (id) {
@@ -878,7 +878,7 @@ function populateWorkAjaxForm(bibJson, work) {
 
    typeMap['isbn'] = function (id) {
       if (id.toLowerCase().startsWith('amazon.com/dp/') || id.toLowerCase().startsWith('www.worldcat.org')) return 'http://' + id;
-      return 'http://www.worldcat.org/isbn/' + encodeURIComponent(id.replace(/\-/g, ''));
+      return 'http://www.worldcat.org/isbn/' + id.replace(/\-/g, '');
    };
 
    typeMap['jfm'] = function (id) {
@@ -889,12 +889,12 @@ function populateWorkAjaxForm(bibJson, work) {
 
    typeMap['jstor'] = function (id) {
       if (id.toLowerCase().startsWith('dx.doi.org') || id.startsWith('www.jstor.org')) return 'http://' + id;
-      return 'http://www.jstor.org/stable/' + encodeURIComponent(id);
+      return 'http://www.jstor.org/stable/' + id;
    };
 
    typeMap['lccn'] = function (id) {
       if (id.toLowerCase().startsWith('lccn.loc.gov')) return 'http://' + id;
-      return 'http://lccn.loc.gov/' + encodeURIComponent(id);
+      return 'http://lccn.loc.gov/' + id;
    };
 
    typeMap['mr'] = function (id) {
@@ -905,12 +905,12 @@ function populateWorkAjaxForm(bibJson, work) {
 
    typeMap['oclc'] = function (id) {
       if (id.toLowerCase().startsWith('worldcat.org')) return 'http://' + id;
-      return 'http://www.worldcat.org/oclc/' + encodeURIComponent(id);
+      return 'http://www.worldcat.org/oclc/' + id;
    };
 
    typeMap['ol'] = function (id) {
       if (id.toLowerCase().startsWith('openlibrary.org/b/')) return 'http://' + id;
-      return 'http://openlibrary.org/b/' + encodeURIComponent(id);
+      return 'http://openlibrary.org/b/' + id;
    };
  
    typeMap['osti'] = function (id) {
@@ -921,7 +921,7 @@ function populateWorkAjaxForm(bibJson, work) {
    typeMap['pmc'] = function (id) {
       if (id.toLowerCase().startsWith('pmc')) return 'http://europepmc.org/articles/' + id;
       if (id.toLowerCase().startsWith('www.ncbi.nlm.nih.gov')) return 'http://' + id;
-      return 'http://www.ncbi.nlm.nih.gov/pubmed/' + encodeURIComponent(id);
+      return 'http://www.ncbi.nlm.nih.gov/pubmed/' + id;
    };
 
    /* 
@@ -933,14 +933,14 @@ function populateWorkAjaxForm(bibJson, work) {
    typeMap['pmid'] = function (id) {
       if (id.toLowerCase().startsWith('www.ncbi.nlm.nih.gov')) return 'http://' + id;
       if (id.toLowerCase().startsWith('europepmc.org')) return 'http://' + id;
-      return 'http://europepmc.org/abstract/med/' + encodeURIComponent(id);
+      return 'http://europepmc.org/abstract/med/' + id;
    };
 
    typeMap['rfc'] = function (id) {
       id = id.replace(/\s/g,'');
       id = id.toLowerCase();
       if (id.toLowerCase().startsWith('www.rfc-editor.org/rfc/')) return 'http://' + id;
-      return 'http://www.rfc-editor.org/rfc/' + encodeURIComponent(id + '.txt');
+      return 'http://www.rfc-editor.org/rfc/' + id + '.txt';
    };
 
    typeMap['ssrn'] = function (id) {

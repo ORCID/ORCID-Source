@@ -25,7 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.orcid.jaxb.model.message.Locale;
 import org.orcid.persistence.dao.ProfileDao;
-import org.orcid.utils.OrcidWebUtils;
+import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
@@ -40,6 +40,10 @@ import org.springframework.web.servlet.i18n.CookieLocaleResolver;
  */
 public class AjaxAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
+
+    @Resource
+    private OrcidUrlManager orcidUrlManager;
+    
     @Resource
     private ProfileDao profileDao;
 
@@ -55,25 +59,6 @@ public class AjaxAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuc
         response.setContentType("application/json");
         response.getWriter().println("{\"success\": true, \"url\": \"" + targetUrl.replaceAll("^/", "") + "\"}");
     }
-
-// @formatter:off    
-//    old method would switch the current locale to user's preferred locale
-//    private void checkLocale(HttpServletRequest request, HttpServletResponse response, String orcidId) {
-//        OrcidProfile op = orcidProfileManager.retrieveOrcidProfile(orcidId);
-//        if (op != null) {
-//            if (op.getOrcidInternal() != null 
-//                    && op.getOrcidInternal().getPreferences() != null
-//                    && op.getOrcidInternal().getPreferences().getLocale() != null 
-//                    && op.getOrcidInternal().getPreferences().getLocale().value() != null) {
-//                String preferedLocale = op.getOrcidInternal().getPreferences().getLocale().value();
-//                // hack to write/rewrite correct locale cookie on login.
-//                CookieLocaleResolver clr = new CookieLocaleResolver();
-//                clr.setCookieName("locale_v3"); /* must match <property name="cookieName" value="locale_v3" /> */
-//                clr.setLocale(request, response, StringUtils.parseLocaleString(preferedLocale));
-//            }            
-//        }
-//    }
-// @formatter:on
 
     // new method - persist which ever local they logged in with
     private void checkLocale(HttpServletRequest request, HttpServletResponse response, String orcidId) {
@@ -105,7 +90,10 @@ public class AjaxAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuc
 
         // this next section is a hack, we should refactor to us
         // some of kind of configuration file
+        String contextPath =  request.getContextPath();
         if (url != null) {
+        	if (orcidUrlManager.getBasePath().equals("/") && !contextPath.equals("/"))
+        		url = url.replaceFirst(contextPath.replace("/", "\\/"), "");
             if (url.contains("/signin/auth"))
                 url = null;
             else if (url.contains(".json"))
@@ -116,7 +104,7 @@ public class AjaxAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuc
     }
 
     private String determineFullTargetUrl(HttpServletRequest request, HttpServletResponse response) {
-        return OrcidWebUtils.getServerStringWithContextPath(request) + determineTargetUrl(request, response);
+        return orcidUrlManager.getServerStringWithContextPath(request) + determineTargetUrl(request, response);
     }
 
 }

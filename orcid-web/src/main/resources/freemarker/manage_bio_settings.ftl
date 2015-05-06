@@ -19,7 +19,7 @@
 <@base>
 <#escape x as x?html>
 <div class="colorbox-content manage-bio" id="manage-bio">
-    <form id="bio-settings-form" class="" action="<@spring.url '/account/save-bio-settings'/>" method="post" autocomplete="off">
+    <form id="bio-settings-form" class="" action="<@orcid.rootPath '/account/save-bio-settings'/>" method="post" autocomplete="off">
         <div class="row">
             <div class="col-md-12 col-sm-12 col-xs-12">
                 <h1 class="lightbox-title pull-left">${springMacroRequestContext.getMessage("manage_bio_settings.editpersonalinformation")}</h1>
@@ -152,7 +152,7 @@
             	<div class="control-group">
                     <h3>${springMacroRequestContext.getMessage("manage_bio_settings.emailaddress")}</h3>
                     <div class="relative">
-                       <a href="javascript:void(0)" onClick="top.colorOnCloseBoxDest='<@spring.url '/account#editEmail'/>'; top.$.colorbox.close(); return false;">${springMacroRequestContext.getMessage("manage_bio_settings.editEmail")}</a>
+                       <a href="javascript:void(0)" onClick="top.colorOnCloseBoxDest='<@orcid.rootPath '/account#editEmail'/>'; top.$.colorbox.close(); return false;">${springMacroRequestContext.getMessage("manage_bio_settings.editEmail")}</a>
                     </div>
                 </div>             	 		
              	<div class="control-group save-btns left">

@@ -21,7 +21,7 @@
 		<div class="page-header">
 		    <h3><@orcid.msg 'oauth_sign_in.h3signin'/></h3>
 		</div>
-        <form id="loginForm" action="<@spring.url '/signin/auth'/>" method="post">	            
+        <form id="loginForm" action="<@orcid.rootPath '/signin/auth'/>" method="post">	            
             <@spring.bind "loginForm" />
             <@spring.showErrors "<br/>" "error" />
 			<input type="hidden" name="client_name" value="${client_name}" />
@@ -44,7 +44,7 @@
                     <span id="ajax-loader" class="hide"><i id="ajax-loader" class="glyphicon glyphicon-refresh spin x2 green"></i></span>
                 </div>
                 <div class="relative margin-top-box">
-                	<a href="<@spring.url '/reset-password'/>"><@orcid.msg 'oauth_sign_in.forgottenpassword'/></a>
+                	<a href="<@orcid.rootPath '/reset-password'/>"><@orcid.msg 'oauth_sign_in.forgottenpassword'/></a>
                 </div>
             </div>
         </form>	
@@ -55,7 +55,7 @@
 		<div class="row margin-top-box">			
 			<div class="col-md-6 col-sm-6 col-xs-12">
 	     		<h4><@orcid.msg 'duplicate_researcher.wefoundfollowingrecords'/>
-	     		<@orcid.msg 'duplicate_researcher.to_access.1'/><a href="<@spring.url "/signin" />" target="signin"><@orcid.msg 'duplicate_researcher.to_access.2'/></a><@orcid.msg 'duplicate_researcher.to_access.3'/>
+	     		<@orcid.msg 'duplicate_researcher.to_access.1'/><a href="<@orcid.rootPath "/signin" />" target="signin"><@orcid.msg 'duplicate_researcher.to_access.2'/></a><@orcid.msg 'duplicate_researcher.to_access.3'/>
 	     		</h4>
      		</div>
      		<div class="col-md-6 col-sm-6 col-xs-12 right margin-top-box">
@@ -77,7 +77,7 @@
 						</thead>
 						<tbody>
 						 	<tr ng-repeat='dup in duplicates'>
-					 			<td><a href="<@spring.url '/'/>{{dup.orcid}}" target="_blank">{{dup.orcid}}</a></td>
+					 			<td><a href="<@orcid.rootPath '/'/>{{dup.orcid}}" target="_blank">{{dup.orcid}}</a></td>
         						<td>{{dup.email}}</td>
         						<td>{{dup.givenNames}}</td>
         						<td>{{dup.familyNames}}</td>

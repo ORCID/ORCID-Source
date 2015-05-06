@@ -18,7 +18,7 @@
 -->
 <@public classes=['home'] nav="signin">
 <#include "sandbox_warning.ftl"/>
-	<form class="form-sign-in" id="loginForm" ng-enter-submit action="<@spring.url '/signin/auth'/>" method="post">
+	<form class="form-sign-in" id="loginForm" ng-enter-submit action="<@orcid.rootPath '/signin/auth'/>" method="post">
 		<div class="row">
 		    <@spring.bind "loginForm" />		     
 		    <@spring.showErrors "<br/>" "error" />		     
@@ -49,10 +49,10 @@
 		<div class="row">
 			<div class="control-group col-md-offset-3 col-md-9 col-sm-9 col-sm-offset-3 col-xs-12"> 
 			    <div id="login-reset">
-			        <a href="<@spring.url '/reset-password'/>">${springMacroRequestContext.getMessage("login.reset")}</a>&nbsp;&nbsp;
+			        <a href="<@orcid.rootPath '/reset-password'/>">${springMacroRequestContext.getMessage("login.reset")}</a>&nbsp;&nbsp;
 			    </div>
 			    <div id="login-register">
-			       	<a class="reg" href="<@spring.url '/register'/>">${springMacroRequestContext.getMessage("login.register")}</a>
+			       	<a class="reg" href="<@orcid.rootPath '/register'/>">${springMacroRequestContext.getMessage("login.register")}</a>
 			    </div>
 		    </div>		    
 	    </div>
@@ -60,7 +60,7 @@
 	<#if (RequestParameters['shibboleth'])??>
         <div class="row">
             <div class="control-group col-md-offset-3 col-md-9 col-sm-9 col-sm-offset-3 col-xs-12">
-                <form class="form-shibboleth-sign-in" id="shibbolethSignInForm" action="<@spring.url '/shibboleth/link'/>" method="get">
+                <form class="form-shibboleth-sign-in" id="shibbolethSignInForm" action="<@orcid.rootPath '/shibboleth/link'/>" method="get">
                     <button id='shibboleth-sign-in-button' class="btn btn-primary" type="submit">Sign in with Shibboleth</button>
                 </form>
             </div>
