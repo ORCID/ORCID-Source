@@ -47,7 +47,7 @@
 						</div>
 						<@security.authorize ifAnyGranted="ROLE_USER, ROLE_ADMIN, ROLE_BASIC, ROLE_PREMIUM, ROLE_BASIC_INSTITUTION, ROLE_PREMIUM_INSTITUTION">
 							<div class="orcid-id-options">
-								<a href="<@spring.url '/my-orcid'/>" class="gray-button"><@orcid.msg 'public-layout.return' /></a>
+								<a href="<@orcid.rootPath '/my-orcid'/>" class="gray-button"><@orcid.msg 'public-layout.return' /></a>
 							</div>
 						</@security.authorize>
 					</div>

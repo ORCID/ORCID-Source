@@ -39,7 +39,7 @@ public interface OrcidOauth2TokenDetailDao extends GenericDao<OrcidOauth2TokenDe
 
     OrcidOauth2TokenDetail findByRefreshTokenValue(String refreshTokenValue);
 
-    OrcidOauth2TokenDetail findByAuthenticationKey(String authKey);
+    List<OrcidOauth2TokenDetail> findByAuthenticationKey(String authKey);
 
     List<OrcidOauth2TokenDetail> findByUserName(String userName);
 

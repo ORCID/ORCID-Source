@@ -96,7 +96,7 @@
 				   <input id="delegators-search" type="text" ng-model="searchTerm" ng-change="search()" placeholder="<@orcid.msg 'manage_delegators.search.placeholder'/>"></input>
 	           </li>
 	           <li ng-show="me && !searchTerm">
-	               <a href="<@spring.url '/switch-user?j_username='/>{{me.delegateSummary.orcidIdentifier.path}}">
+	               <a href="<@orcid.rootPath '/switch-user?j_username='/>{{me.delegateSummary.orcidIdentifier.path}}">
 					   <ul>
 						   <li><@orcid.msg 'id_banner.switchbacktome'/></li>
 						   <li>{{me.delegateSummary.orcidIdentifier.uri}}</li>
@@ -104,14 +104,14 @@
 	               </a>
 	           </li>
 	           <li ng-repeat="delegationDetails in delegators.delegationDetails | orderBy:'delegateSummary.creditName.content' | limitTo:10">
-	               <a href="<@spring.url '/switch-user?j_username='/>{{delegationDetails.delegateSummary.orcidIdentifier.path}}">
+	               <a href="<@orcid.rootPath '/switch-user?j_username='/>{{delegationDetails.delegateSummary.orcidIdentifier.path}}">
 	               	   <ul>
 	               	   	 <li>{{delegationDetails.delegateSummary.creditName.content}}</li>
 	               	   	 <li>{{delegationDetails.delegateSummary.orcidIdentifier.uri}}</li>
 	               	   </ul>
 	               </a>
 	           </li>
-	           <li><a href="<@spring.url '/delegators?delegates'/>"><@orcid.msg 'id_banner.more'/></a></li>
+	           <li><a href="<@orcid.rootPath '/delegators?delegates'/>"><@orcid.msg 'id_banner.more'/></a></li>
 	       </ul>
 	    </div>	
 	</#if>

@@ -86,7 +86,7 @@
             <div class="row">
 	            <div class="control-group"> 
 			    	<div id="oauth-login-reset" class="col-md-offset-3 col-md-9 col-sm-offset-3 col-sm-9 col-xs-offset-3-fix col-xs-9">
-				        <a href="<@spring.url '/reset-password'/>"><@orcid.msg 'login.reset'/></a>
+				        <a href="<@orcid.rootPath '/reset-password'/>"><@orcid.msg 'login.reset'/></a>
 				    </div>				  
 		    	</div>
 	    	</div>
@@ -111,7 +111,7 @@
        		<div class="form-group">
 		        <label for="givelNames" class="col-sm-3 col-xs-3-fix control-label"><@orcid.msg 'oauth_sign_up.labelfirstname'/></label>
 		        <div class="col-sm-9  col-xs-9-fix bottomBuffer">			        	
-		            <input name="givenNames" type="text" tabindex="1" class="" ng-model="registrationForm.givenNames.value" ng-model-onblur ng-change="serverValidate('GivenNames')"/>									        
+		            <input id="register-form-given-names" name="givenNames" type="text" tabindex="1" class="" ng-model="registrationForm.givenNames.value" ng-model-onblur ng-change="serverValidate('GivenNames')"/>									        
 		        	<span class="required" ng-class="isValidClass(registrationForm.givenNames)">*</span>						
 					<div class="popover-help-container">
 		                <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
@@ -135,7 +135,7 @@
 				<div>
 			        <label class="col-sm-3 col-xs-3-fix control-label"><@orcid.msg 'oauth_sign_up.labellastname'/></label>
 			        <div class="col-sm-9 col-xs-9-fix bottomBuffer">
-			            <input name="familyNames" type="text" tabindex="2" class=""  ng-model="registrationForm.familyNames.value" ng-model-onblur/>
+			            <input id="register-form-family-name" name="familyNames" type="text" tabindex="2" class=""  ng-model="registrationForm.familyNames.value" ng-model-onblur/>
 			            <span class="orcid-error" ng-show="registrationForm.familyNames.errors.length > 0">
 							<div ng-repeat='error in registrationForm.familyNames.errors' ng-bind-html="error"></div>
 			   			</span>
@@ -146,7 +146,7 @@
 		    <div class="form-group">
 		        <label class="col-sm-3 col-xs-3-fix control-label"><@orcid.msg 'oauth_sign_up.labelemail'/></label>
 		        <div class="col-sm-9 col-xs-9-fix bottomBuffer">
-		            <input name="email" type="email" tabindex="3" class="" ng-model="registrationForm.email.value" ng-model-onblur ng-change="serverValidate('Email')" />
+		            <input id="register-form-email" name="email" type="email" tabindex="3" class="" ng-model="registrationForm.email.value" ng-model-onblur ng-change="serverValidate('Email')" />
 		            <span class="required" ng-class="isValidClass(registrationForm.email)">*</span>			            
 		            <span class="orcid-error" ng-show="emailTrustAsHtmlErrors.length > 0">
 						<div ng-repeat='error in emailTrustAsHtmlErrors' ng-bind-html="error" compile="html"></div>
@@ -157,7 +157,7 @@
 		    <div class="form-group oAuthFix">
 		        <label class="col-sm-3 col-xs-3-fix control-label"><@orcid.msg 'oauth_sign_up.labelreenteremail'/></label>
 		        <div class="col-sm-9 col-xs-9-fix bottomBuffer">
-		            <input name="confirmedEmail" type="email" tabindex="4" class="" ng-model="registrationForm.emailConfirm.value" ng-model-onblur ng-change="serverValidate('EmailConfirm')" />
+		            <input id="register-form-confirm-email" name="confirmedEmail" type="email" tabindex="4" class="" ng-model="registrationForm.emailConfirm.value" ng-model-onblur ng-change="serverValidate('EmailConfirm')" />
 		            <span class="required" ng-class="isValidClass(registrationForm.emailConfirm)">*</span>			            
 		            <span class="orcid-error" ng-show="registrationForm.emailConfirm.errors.length > 0">
 						<div ng-repeat='error in registrationForm.emailConfirm.errors' ng-bind-html="error"></div>
@@ -168,7 +168,7 @@
 		    <div class="form-group">
 		        <label class="col-sm-3 col-xs-3-fix control-label"><@orcid.msg 'oauth_sign_up.labelpassword'/></label>
 		        <div class="col-sm-9 col-xs-9-fix bottomBuffer">
-		            <input type="password" name="password" tabindex="5" class="" ng-model="registrationForm.password.value" ng-change="serverValidate('Password')"/>
+		            <input id="register-form-password" type="password" name="password" tabindex="5" class="" ng-model="registrationForm.password.value" ng-change="serverValidate('Password')"/>
 		            <span class="required" ng-class="isValidClass(registrationForm.password)">*</span>
 		        	<@orcid.passwordHelpPopup />
 		            <span class="orcid-error" ng-show="registrationForm.password.errors.length > 0">
@@ -180,7 +180,7 @@
 		    <div class="form-group">
 		        <label class="col-sm-3 col-xs-3-fix control-label"><@orcid.msg 'password_one_time_reset.labelconfirmpassword'/></label>
 		        <div class="col-sm-9 col-xs-9-fix bottomBuffer">
-		            <input type="password" name="confirmPassword" tabindex="6" class="" ng-model="registrationForm.passwordConfirm.value" ng-change="serverValidate('PasswordConfirm')"/>
+		            <input id="register-form-confirm-password" type="password" name="confirmPassword" tabindex="6" class="" ng-model="registrationForm.passwordConfirm.value" ng-change="serverValidate('PasswordConfirm')"/>
 		            <span class="required" ng-class="isValidClass(registrationForm.passwordConfirm)">*</span>			            
 		            <span class="orcid-error" ng-show="registrationForm.passwordConfirm.errors.length > 0">
 						<div ng-repeat='error in registrationForm.passwordConfirm.errors' ng-bind-html="error"></div>
@@ -220,7 +220,7 @@
 		            	<span class="required"  ng-class="{'text-error':register.termsOfUse.value == false}">*</span>
 		            </label>
 		            <div class="col-sm-12">			            
-			            <input type="checkbox" name="termsConditions" tabindex="9" name="acceptTermsAndConditions" ng-model="registrationForm.termsOfUse.value" ng-change="serverValidate('TermsOfUse')" />
+			            <input id="register-form-term-box" type="checkbox" name="termsConditions" tabindex="9" name="acceptTermsAndConditions" ng-model="registrationForm.termsOfUse.value" ng-change="serverValidate('TermsOfUse')" />
 			            <@orcid.msg 'register.labelconsent'/> <a href="${aboutUri}/footer/privacy-policy" target="_blank"><@orcid.msg 'register.labelprivacypolicy'/></a>&nbsp;<@orcid.msg 'register.labeland'/>&nbsp;<@orcid.msg 'common.termsandconditions1'/><a href="${aboutUri}/content/orcid-terms-use" target="_blank"><@orcid.msg 'common.termsandconditions2'/></a>&nbsp;<@orcid.msg 'common.termsandconditions3'/></p>			            
 			            <span class="orcid-error" ng-show="registrationForm.termsOfUse.errors.length > 0">
 							<div ng-repeat='error in registrationForm.termsOfUse.errors' ng-bind-html="error"></div>
@@ -230,10 +230,10 @@
 	        </div>				   
 		   
 		    <div id="register-buttons">                     		            		               					
-				<button class="btn btn-primary pull-right" name="authorize" value="<@orcid.msg 'confirm-oauth-access.Authorize'/>" ng-click="registerAndAuthorize()">
+				<button id="register-form-authorize" class="btn btn-primary pull-right" name="authorize" value="<@orcid.msg 'confirm-oauth-access.Authorize'/>" ng-click="registerAndAuthorize()">
 					<@orcid.msg 'confirm-oauth-access.Authorize' />
 				</button>		                 	            
-				<a class="oauth_deny_link pull-right" name="deny" value="<@orcid.msg 'confirm-oauth-access.Deny'/>" ng-click="registerAndDeny()">
+				<a id="register-form-deny" class="oauth_deny_link pull-right" name="deny" value="<@orcid.msg 'confirm-oauth-access.Deny'/>" ng-click="registerAndDeny()">
 					<@orcid.msg 'confirm-oauth-access.Deny' />
 				</a>
             </div> 
@@ -245,7 +245,7 @@
 		<div class="row margin-top-box">			
 			<div class="col-md-6 col-sm-6 col-xs-12">
 	     		<h4><@orcid.msg 'duplicate_researcher.wefoundfollowingrecords'/>
-	     		<@orcid.msg 'duplicate_researcher.to_access.1'/><a href="<@spring.url "/signin" />" target="signin"><@orcid.msg 'duplicate_researcher.to_access.2'/></a><@orcid.msg 'duplicate_researcher.to_access.3'/>
+	     		<@orcid.msg 'duplicate_researcher.to_access.1'/><a href="<@orcid.rootPath "/signin" />" target="signin"><@orcid.msg 'duplicate_researcher.to_access.2'/></a><@orcid.msg 'duplicate_researcher.to_access.3'/>
 	     		</h4>
      		</div>
      		<div class="col-md-6 col-sm-6 col-xs-12 right margin-top-box">
@@ -267,7 +267,7 @@
 						</thead>
 						<tbody>
 						 	<tr ng-repeat='dup in duplicates'>
-					 			<td><a href="<@spring.url '/'/>{{dup.orcid}}" target="_blank">{{dup.orcid}}</a></td>
+					 			<td><a href="<@orcid.rootPath '/'/>{{dup.orcid}}" target="_blank">{{dup.orcid}}</a></td>
         						<td>{{dup.email}}</td>
         						<td>{{dup.givenNames}}</td>
         						<td>{{dup.familyNames}}</td>

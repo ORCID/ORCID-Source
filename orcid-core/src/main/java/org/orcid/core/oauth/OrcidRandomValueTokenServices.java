@@ -16,6 +16,8 @@
  */
 package org.orcid.core.oauth;
 
+import java.util.Collection;
+
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
@@ -38,4 +40,6 @@ public interface OrcidRandomValueTokenServices {
     void setOrcidtokenStore(TokenStore orcidtokenStore);
 
     void setCustomTokenEnhancer(TokenEnhancer customTokenEnhancer);
+    
+    boolean tokenAlreadyExists(String clientId, String userId, Collection<String> scopes);
 }

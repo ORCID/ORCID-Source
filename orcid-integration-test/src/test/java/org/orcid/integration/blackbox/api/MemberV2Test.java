@@ -21,28 +21,16 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.net.URISyntaxException;
 
-import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
 
 import org.codehaus.jettison.json.JSONException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
-import org.orcid.api.common.WebDriverHelper;
-import org.orcid.integration.api.helper.OauthHelper;
-import org.orcid.integration.api.memberV2.MemberV2ApiClientImpl;
-import org.orcid.integration.api.t2.T2OAuthAPIService;
+import org.orcid.integration.blackbox.BlackBoxBase;
 import org.orcid.jaxb.model.common.Day;
 import org.orcid.jaxb.model.common.FuzzyDate;
 import org.orcid.jaxb.model.common.Month;
@@ -50,7 +38,6 @@ import org.orcid.jaxb.model.common.Url;
 import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.jaxb.model.common.Year;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.record.Activity;
 import org.orcid.jaxb.model.record.Education;
 import org.orcid.jaxb.model.record.Employment;
 import org.orcid.jaxb.model.record.Funding;
@@ -70,7 +57,6 @@ import org.orcid.jaxb.model.record.summary.PeerReviewGroup;
 import org.orcid.jaxb.model.record.summary.PeerReviewSummary;
 import org.orcid.jaxb.model.record.summary.WorkGroup;
 import org.orcid.jaxb.model.record.summary.WorkSummary;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -83,39 +69,9 @@ import com.sun.jersey.api.client.ClientResponse;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-memberV2-context.xml" })
-public class MemberV2Test {
+public class MemberV2Test extends BlackBoxBase {    
 
-    @Value("${org.orcid.web.base.url:http://localhost:8080/orcid-web}")
-    private String webBaseUrl;
-    @Value("${org.orcid.web.testClient1.redirectUri}")
-    private String redirectUri;
-    @Value("${org.orcid.web.testClient1.clientId}")
-    public String client1ClientId;
-    @Value("${org.orcid.web.testClient1.clientSecret}")
-    public String client1ClientSecret;
-    @Value("${org.orcid.web.testClient2.clientId}")
-    public String client2ClientId;
-    @Value("${org.orcid.web.testClient2.clientSecret}")
-    public String client2ClientSecret;
-    @Value("${org.orcid.web.testUser1.username}")
-    public String user1UserName;
-    @Value("${org.orcid.web.testUser1.password}")
-    public String user1Password;
-    @Value("${org.orcid.web.testUser1.orcidId}")
-    public String user1OrcidId;
-    @Resource(name = "t2OAuthClient")
-    private T2OAuthAPIService<ClientResponse> t2OAuthClient;
-    @Resource
-    private MemberV2ApiClientImpl memberV2ApiClient;
-
-    private WebDriver webDriver;
-
-    private WebDriverHelper webDriverHelper;
-
-    @Resource
-    private OauthHelper oauthHelper;
-
-    static String accessToken = null;
+    protected String accessToken = null;
 
     @Before
     public void before() throws JSONException, InterruptedException, URISyntaxException {
@@ -134,7 +90,7 @@ public class MemberV2Test {
     }
 
     @Test
-    public void testCreateViewUpdateAndDeleteWork() throws JSONException, InterruptedException, URISyntaxException {
+    public void createViewUpdateAndDeleteWork() throws JSONException, InterruptedException, URISyntaxException {
         long time = System.currentTimeMillis();
         Work workToCreate = (Work) unmarshallFromPath("/record_2.0_rc1/samples/work-2.0_rc1.xml", Work.class);
         workToCreate.setPutCode(null);
@@ -740,48 +696,12 @@ public class MemberV2Test {
         
     }
 
-    private String getAccessToken() throws InterruptedException, JSONException {
+    public String getAccessToken() throws InterruptedException, JSONException {
         if (accessToken == null) {
-            webDriver = new FirefoxDriver();
-            webDriverHelper = new WebDriverHelper(webDriver, webBaseUrl, redirectUri);
-            oauthHelper.setWebDriverHelper(webDriverHelper);
-            accessToken = oauthHelper.obtainAccessToken(client1ClientId, client1ClientSecret, ScopePathType.ACTIVITIES_UPDATE.value(), user1UserName, user1Password,
-                    redirectUri);
-            webDriver.quit();
+            accessToken = super.getAccessToken(ScopePathType.ACTIVITIES_UPDATE.value());
         }
         return accessToken;
-    }
-
-    public Activity unmarshallFromPath(String path, Class<? extends Activity> type) {
-        try (Reader reader = new InputStreamReader(getClass().getResourceAsStream(path))) {
-            Object obj = unmarshall(reader, type);
-            Activity result = null;
-            if (Education.class.equals(type)) {
-                result = (Education) obj;
-            } else if (Employment.class.equals(type)) {
-                result = (Employment) obj;
-            } else if (Funding.class.equals(type)) {
-                result = (Funding) obj;
-            } else if (Work.class.equals(type)) {
-                result = (Work) obj;
-            } else if(PeerReview.class.equals(type)) {
-                result = (PeerReview) obj;
-            }
-            return result;
-        } catch (IOException e) {
-            throw new RuntimeException("Error reading notification from classpath", e);
-        }
-    }
-
-    public Object unmarshall(Reader reader, Class<? extends Activity> type) {
-        try {
-            JAXBContext context = JAXBContext.newInstance(type);
-            Unmarshaller unmarshaller = context.createUnmarshaller();
-            return unmarshaller.unmarshal(reader);
-        } catch (JAXBException e) {
-            throw new RuntimeException("Unable to unmarshall orcid message" + e);
-        }
-    }
+    }    
 
     public void cleanActivities() throws JSONException, InterruptedException, URISyntaxException {
         // Remove all activities

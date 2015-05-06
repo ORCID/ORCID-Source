@@ -34,7 +34,7 @@
  </#if>
  <#if admin_delegate_not_you??>
      <div class="alert alert-success">
-         <strong><@orcid.msg 'wrong_user.Wronguser' /></strong> <a href="<@spring.url '/signout'/>"><@orcid.msg 'public-layout.sign_out' /></a> <@orcid.msg 'wrong_user.andtryagain' />
+         <strong><@orcid.msg 'wrong_user.Wronguser' /></strong> <a href="<@orcid.rootPath '/signout'/>"><@orcid.msg 'public-layout.sign_out' /></a> <@orcid.msg 'wrong_user.andtryagain' />
      </div>
  </#if>
 <div class="row">
@@ -54,7 +54,7 @@
                         <th>${springMacroRequestContext.getMessage("public_profile.h3PersonalInformation")}</th>
                         <td>
                             <div>
-                                <a href="<@spring.url '/account/manage-bio-settings'/>"
+                                <a href="<@orcid.rootPath '/account/manage-bio-settings'/>"
                                     class="update">${springMacroRequestContext.getMessage("settings.tdEdit")}</a>
                             </div>
                         </td>
@@ -581,7 +581,7 @@
                 Shibboleth accounts
             </h1>
             <p>
-                Click <a href="<@spring.url '/shibboleth/link'/>">here</a> to link a new Shibboleth account.
+                Click <a href="<@orcid.rootPath '/shibboleth/link'/>">here</a> to link a new Shibboleth account.
             </p>
             <div ng-controller="ShibbolethCtrl" id="ShibbolethCtrl">
                 <table class="table table-bordered settings-table normal-width" ng-show="shibbolethAccounts" ng-cloak>

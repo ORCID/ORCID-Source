@@ -6164,7 +6164,7 @@ hr{
 		min-height: 30px;
 		height: 50px;
 		text-align: center;
-		top: 260px; /* Login layout top */
+		top: 165px; /* Login layout top */
 	}
 	#loginForm #ajax-loader {
 		width: 100%;

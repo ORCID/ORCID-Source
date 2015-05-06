@@ -20,7 +20,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OauthAuthorizeForm implements ErrorsInterface, Serializable {
+public class OauthAuthorizeForm implements OauthForm, ErrorsInterface, Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -106,5 +106,5 @@ public class OauthAuthorizeForm implements ErrorsInterface, Serializable {
 
     public void setPersistentTokenEnabled(boolean persistentTokenEnabled) {
         this.persistentTokenEnabled = persistentTokenEnabled;
-    }       
+    }
 }
