@@ -167,9 +167,7 @@ public class OrcidOauth2TokenDetailServiceImpl implements OrcidOauth2TokenDetail
 
     @Override
     public void removeConflictsAndCreateNew(OrcidOauth2TokenDetail detail) {
-        // According to this card
-        // https://trello.com/c/ESDnS330/1965-allow-for-multiple-tokens-for-same-client-orcid-id-combo
-        // we should allow multiple tokens for the same combo user-scopes, thats why we will
+        // We should allow multiple tokens for the same combo user-scopes, thats why we will
         // not delete based on the authentication key
         orcidOauth2TokenDetailDao.removeByAuthenticationKeyOrTokenValueOrRefreshTokenValue(null, detail.getTokenValue(), detail.getRefreshTokenValue());
         orcidOauth2TokenDetailDao.persist(detail);
