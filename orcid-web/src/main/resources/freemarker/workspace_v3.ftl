@@ -278,7 +278,7 @@
 																    
 	        <#if RequestParameters['OldPersonal']??>	        
 				<p class="hoover-white-fonts">	       
-		       		<a href="<@spring.url '/account/manage-bio-settings'/>" id="update-personal-modal-link" class="label btn-primary"><@orcid.msg 'workspace.Update'/></a>
+		       		<a href="<@orcid.rootPath '/account/manage-bio-settings'/>" id="update-personal-modal-link" class="label btn-primary"><@orcid.msg 'workspace.Update'/></a>
 		        </p>
 	        </#if>
 		</div>
@@ -307,7 +307,7 @@
 	       				<div class="row">
 	       					<div class="col-md-12 col-sm-12 col-xs-12">	 			   			
 	 			   					        
-	      			   		   		<a href="<@spring.url '/account/manage-bio-settings'/>" id="update-personal-modal-link" class="label btn-primary"><@orcid.msg 'workspace.Update'/></a>        			   		
+	      			   		   		<a href="<@orcid.rootPath '/account/manage-bio-settings'/>" id="update-personal-modal-link" class="label btn-primary"><@orcid.msg 'workspace.Update'/></a>        			   		
 	      			    	 			   			
 	 			   			</div>
 	  			   		</div>
@@ -352,7 +352,7 @@
 					    		    	<#list workImportWizards?sort_by("displayName") as thirdPartyDetails>					    		    				
 						        	       	<#assign redirect = (thirdPartyDetails.redirectUris.redirectUri[0].value) >
 					            	   		<#assign predefScopes = (thirdPartyDetails.redirectUris.redirectUri[0].scopeAsSingleString) >
-					                   		<strong><a ng-click="openImportWizardUrl('<@spring.url '/oauth/authorize?client_id=${thirdPartyDetails.clientId}&response_type=code&scope=${predefScopes}&redirect_uri=${redirect}'/>')">${thirdPartyDetails.displayName}</a></strong><br />					                   							                   		                		
+					                   		<strong><a ng-click="openImportWizardUrl('<@orcid.rootPath '/oauth/authorize?client_id=${thirdPartyDetails.clientId}&response_type=code&scope=${predefScopes}&redirect_uri=${redirect}'/>')">${thirdPartyDetails.displayName}</a></strong><br />					                   							                   		                		
 					                 		<div class="justify">												
 												<p class="wizard-description" ng-class="{'ellipsis-on' : wizardDescExpanded[${thirdPartyDetails.clientId}] == false || wizardDescExpanded[${thirdPartyDetails.clientId}] == null}">
 													${(thirdPartyDetails.shortDescription)!}													
@@ -662,7 +662,7 @@
     		    	<#list workImportWizards?sort_by("displayName") as thirdPartyDetails>
 	        	       	<#assign redirect = (thirdPartyDetails.redirectUris.redirectUri[0].value) >
             	   		<#assign predefScopes = (thirdPartyDetails.redirectUris.redirectUri[0].scopeAsSingleString) >
-                   		<strong><a ng-click="openImportWizardUrl('<@spring.url '/oauth/authorize?client_id=${thirdPartyDetails.clientId}&response_type=code&scope=${predefScopes}&redirect_uri=${redirect}'/>')">${thirdPartyDetails.displayName}</a></strong><br />
+                   		<strong><a ng-click="openImportWizardUrl('<@orcid.rootPath '/oauth/authorize?client_id=${thirdPartyDetails.clientId}&response_type=code&scope=${predefScopes}&redirect_uri=${redirect}'/>')">${thirdPartyDetails.displayName}</a></strong><br />
                  		<div class="justify">
 							<p>
 								${(thirdPartyDetails.shortDescription)!}

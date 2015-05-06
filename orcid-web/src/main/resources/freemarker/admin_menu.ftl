@@ -24,7 +24,7 @@
 		<li><a href="#account-settings">${springMacroRequestContext.getMessage("manage.accountsettings")}</a></li>
 		<li><a href="#manage-permissions">${springMacroRequestContext.getMessage("manage.managepermission")}</a></li>			
 		<#if (profile.groupType)?? && ((profile.groupType) = "BASIC" ||	(profile.groupType) = "PREMIUM" || (profile.groupType) = "BASIC_INSTITUTION" || (profile.groupType) = "PREMIUM_INSTITUTION")>
-			<li><a href="<@spring.url "/manage-clients" />">${springMacroRequestContext.getMessage("workspace.developer_tools")}</a></li>
+			<li><a href="<@orcid.rootPath "/manage-clients" />">${springMacroRequestContext.getMessage("workspace.developer_tools")}</a></li>
 		</#if>
 		<li><a href="#manage-developer-tools">${springMacroRequestContext.getMessage("workspace.developer_tools")}</a></li>		
 	</ul>

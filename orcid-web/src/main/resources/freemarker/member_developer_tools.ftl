@@ -238,7 +238,7 @@
 							<span><strong><@orcid.msg 'manage.developer_tools.group.custom_emails.th'/></strong></span>
 						</div>
 						<div class="col-md-9 col-sm-9 col-xs-12 dt-description">
-							<p><a href="<@spring.url "/group/custom-emails" />?clientId={{clientDetails.clientId.value}}" target="_blank">Edit custom emails</a></p>
+							<p><a href="<@orcid.rootPath "/group/custom-emails" />?clientId={{clientDetails.clientId.value}}" target="_blank">Edit custom emails</a></p>
 						</div>
 					</div>	
 				</@security.authorize>

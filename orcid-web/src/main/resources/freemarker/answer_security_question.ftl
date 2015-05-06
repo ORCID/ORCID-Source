@@ -31,7 +31,7 @@
     			</div>
     		</#if>
     		<p><small>${springMacroRequestContext.getMessage("answer_security_question.answertosecuritypassword")}</small></p>    		
-        	<form id="answer-security--question-form" name="changeSecurityQuestionForm" action="<@spring.url '/answer-security-question/${encryptedEmail}'/>" method="post" autocomplete="off">
+        	<form id="answer-security--question-form" name="changeSecurityQuestionForm" action="<@orcid.rootPath '/answer-security-question/${encryptedEmail}'/>" method="post" autocomplete="off">
         		<fieldset>
         			<div class="control-group">            			
         				<div class="controls">

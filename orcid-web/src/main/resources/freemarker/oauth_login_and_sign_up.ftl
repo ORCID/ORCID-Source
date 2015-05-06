@@ -86,7 +86,7 @@
             <div class="row">
 	            <div class="control-group"> 
 			    	<div id="oauth-login-reset" class="col-md-offset-3 col-md-9 col-sm-offset-3 col-sm-9 col-xs-offset-3-fix col-xs-9">
-				        <a href="<@spring.url '/reset-password'/>"><@orcid.msg 'login.reset'/></a>
+				        <a href="<@orcid.rootPath '/reset-password'/>"><@orcid.msg 'login.reset'/></a>
 				    </div>				  
 		    	</div>
 	    	</div>
@@ -245,7 +245,7 @@
 		<div class="row margin-top-box">			
 			<div class="col-md-6 col-sm-6 col-xs-12">
 	     		<h4><@orcid.msg 'duplicate_researcher.wefoundfollowingrecords'/>
-	     		<@orcid.msg 'duplicate_researcher.to_access.1'/><a href="<@spring.url "/signin" />" target="signin"><@orcid.msg 'duplicate_researcher.to_access.2'/></a><@orcid.msg 'duplicate_researcher.to_access.3'/>
+	     		<@orcid.msg 'duplicate_researcher.to_access.1'/><a href="<@orcid.rootPath "/signin" />" target="signin"><@orcid.msg 'duplicate_researcher.to_access.2'/></a><@orcid.msg 'duplicate_researcher.to_access.3'/>
 	     		</h4>
      		</div>
      		<div class="col-md-6 col-sm-6 col-xs-12 right margin-top-box">
@@ -267,7 +267,7 @@
 						</thead>
 						<tbody>
 						 	<tr ng-repeat='dup in duplicates'>
-					 			<td><a href="<@spring.url '/'/>{{dup.orcid}}" target="_blank">{{dup.orcid}}</a></td>
+					 			<td><a href="<@orcid.rootPath '/'/>{{dup.orcid}}" target="_blank">{{dup.orcid}}</a></td>
         						<td>{{dup.email}}</td>
         						<td>{{dup.givenNames}}</td>
         						<td>{{dup.familyNames}}</td>
