@@ -3881,6 +3881,11 @@ orcidNgModule.controller('PublicFundingCtrl',['$scope', '$compile', '$filter', '
     $scope.showSources = function(group) {
         $scope.editSources[group.groupId] = true;
     };
+    
+    $scope.hideSources = function(group) {
+        $scope.editSources[group.groupId] = false;
+        group.activePutCode = group.defaultPutCode;
+    };
 
 }]);
 
