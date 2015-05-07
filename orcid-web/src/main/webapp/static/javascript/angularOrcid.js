@@ -3829,7 +3829,7 @@ orcidNgModule.controller('PublicFundingCtrl',['$scope', '$compile', '$filter', '
     $scope.workspaceSrvc = workspaceSrvc;
     $scope.moreInfo = {};
     $scope.editSources = {};
-    $scope.showElement = {};
+    $scope.showElement = {};    
 
     $scope.sortState = new ActSortState(GroupedActivities.FUNDING);
     $scope.sort = function(key) {
@@ -3876,6 +3876,15 @@ orcidNgModule.controller('PublicFundingCtrl',['$scope', '$compile', '$filter', '
 
     $scope.hideTooltip = function (key){    	
         $scope.showElement[key] = false;
+    };
+    
+    $scope.showSources = function(group) {
+        $scope.editSources[group.groupId] = true;
+    };
+    
+    $scope.hideSources = function(group) {
+        $scope.editSources[group.groupId] = false;
+        group.activePutCode = group.defaultPutCode;
     };
 
 }]);
