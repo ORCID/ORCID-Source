@@ -375,7 +375,7 @@
 						<div class="bulk-edit">
 							<div class="row">
 								<div class="col-md-7 col-sm-7 col-xs-6">
-									<h4><@orcid.msg 'workspace.bulkedit.'/></h4><span class="hide-bulk" ng-click="toggleBulkEdit()"><@orcid.msg 'workspace.bulkedit.hide'/></span>
+									<h4><@orcid.msg 'workspace.bulkedit.title'/></h4><span class="hide-bulk" ng-click="toggleBulkEdit()"><@orcid.msg 'workspace.bulkedit.hide'/></span>
 									<ol>
 										<li><@orcid.msg 'workspace.bulkedit.selectWorks'/></li>
 										<li><@orcid.msg 'workspace.bulkedit.selectAction'/></li>
