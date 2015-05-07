@@ -636,7 +636,7 @@
 				<div class="right">			
 					<a ng-click="closeModal()">
 						<@orcid.msg 'freemarker.btncancel'/>
-					</a>  <button class="btn blue" ng-click="bulkDeleteFunction()"><@orcid.msg 'freemarker.btnDelete'/></button>
+					</a>  <button class="btn btn-danger" ng-click="bulkDeleteFunction()"><@orcid.msg 'freemarker.btnDelete'/></button>
 				</div>				
 			</div>
 		</div>		

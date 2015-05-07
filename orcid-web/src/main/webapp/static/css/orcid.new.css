@@ -5288,12 +5288,6 @@ ul.workspace-private-toolbar .popover-help-container .popover{
 	margin-left: 15px;
 }
 
-.bulk-delete-modal button:hover, 
-.bulk-delete-modal button:focus{
-	color: #FFF;
-	background: #A3CD39;
-}
-
 .dark-grey{
 	color: #494A4C;	
 }
