@@ -85,7 +85,7 @@ public class RegistrationManagerImpl implements RegistrationManager {
     }
 
     @Override
-    public void resetUserPassword(String toEmail, OrcidProfile orcidProfile, URI baseUri) {
+    public void resetUserPassword(String toEmail, OrcidProfile orcidProfile) {
         LOGGER.debug("Resetting password for Orcid: {}", orcidProfile.getOrcidIdentifier().getPath());
         if (!orcidProfile.getOrcidHistory().isClaimed()) {
             LOGGER.debug("Profile is not claimed so re-sending claim email instead of password reset: {}", orcidProfile.getOrcidIdentifier().getPath());

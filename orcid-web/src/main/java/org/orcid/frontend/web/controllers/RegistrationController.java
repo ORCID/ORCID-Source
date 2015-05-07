@@ -546,8 +546,7 @@ public class RegistrationController extends BaseController {
                 mav.addObject("disabledAccount", true);
                 return mav;
             } else {
-                URI uri = orcidUrlManager.getServerUriWithContextPath(request);
-                registrationManager.resetUserPassword(submittedEmail, profile, uri);
+                registrationManager.resetUserPassword(submittedEmail, profile);
                 mav.addObject("passwordResetSuccessful", true);
                 return mav;
             }
