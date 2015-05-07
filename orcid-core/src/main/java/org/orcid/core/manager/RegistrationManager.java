@@ -30,7 +30,7 @@ public interface RegistrationManager {
 
     VerifyRegistrationToken parseEncyrptedParamsForVerification(String encryptedParams);
 
-    void resetUserPassword(String toEmail, OrcidProfile orcidProfile, URI baseUri);
+    void resetUserPassword(String toEmail, OrcidProfile orcidProfile);
 
     OrcidProfile createMinimalRegistration(OrcidProfile orcidProfile);
 
