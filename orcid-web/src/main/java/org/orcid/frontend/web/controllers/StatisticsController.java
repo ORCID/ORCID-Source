@@ -70,7 +70,7 @@ public class StatisticsController extends BaseController {
      * Formats the date when the statistic was added
      * */
     private String formatStatisticsDate(Date date){
-        SimpleDateFormat dt = new SimpleDateFormat("yyyy-MMM-dd"); 
+        SimpleDateFormat dt = new SimpleDateFormat("dd-MM-yyyy"); 
         return dt.format(date);
     }
     
