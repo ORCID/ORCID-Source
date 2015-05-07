@@ -372,7 +372,7 @@ public class BaseController {
             if (!(ignoreCurrentUser && emailMatchesCurrentUser(email)) && emailManager.emailExists(email)) {
                 OrcidProfile orcidProfile = orcidProfileManager.retrieveOrcidProfileByEmail(email);
                 if (orcidProfile.getOrcidHistory().isClaimed()) {
-                    String[] codes = { "orcid.frontend.verify.duplicate_email" };
+                    String[] codes = { "orcid.frontend.verify.claimed_email" };
                     String[] args = { email };
                     bindingResult.addError(new FieldError("email", "email", email, false, codes, args, "Email already exists"));
                 } else {
