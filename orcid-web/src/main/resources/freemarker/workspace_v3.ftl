@@ -568,7 +568,7 @@
 				<h4><@orcid.msg 'workspace.sent'/></h4>
 				<@orcid.msg 'workspace.check_your_email'/><br />
 				<br />
-				<span class="btn" ng-click="closeColorBox()"><@orcid.msg 'freemarker.btnclose'/></span>
+				<span class="btn btn-danger" ng-click="closeColorBox()"><@orcid.msg 'freemarker.btnclose'/></span>
 			</div>
 		</div>
 	</div>
@@ -580,7 +580,7 @@
 			<div class="col-md-12 col-sm-12 col-xs-12">
 				<strong><@spring.message "orcid.frontend.web.record_claimed"/></strong><br />
 				<br />
-				<button class="btn" ng-click="close()"><@spring.message "freemarker.btnclose"/></button>
+				<button class="btn btn-primary" ng-click="close()"><@spring.message "freemarker.btnclose"/></button>
 			</div>
 		</div>
 	</div>
@@ -595,7 +595,7 @@
 				<strong ng-bind="sourceGrantReadWizard.displayName"></strong> <@spring.message "orcid.frontend.web.record_claimed.would_like"/><br />
 				<br />
 				<button class="btn btn-primary" ng-click="yes()"><@spring.message "orcid.frontend.web.record_claimed.yes_go_to" /></button>
-				<button class="btn" ng-click="close()"><@spring.message "orcid.frontend.web.record_claimed.no_thanks" /></button>
+				<button class="btn btn-primary" ng-click="close()"><@spring.message "orcid.frontend.web.record_claimed.no_thanks" /></button>
 			</div>
 		</div>
 	</div>
