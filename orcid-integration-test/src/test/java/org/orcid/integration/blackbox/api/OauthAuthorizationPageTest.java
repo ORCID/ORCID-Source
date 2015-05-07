@@ -390,10 +390,7 @@ public class OauthAuthorizationPageTest {
         jsonObject = new JSONObject(body);
         String otherAccessToken = (String) jsonObject.get("access_token");
         assertNotNull(otherAccessToken);
-        assertFalse(PojoUtil.isEmpty(otherAccessToken));
-
-        // Check that both access tokens are equals
-        assertEquals(accessToken, otherAccessToken);
+        assertFalse(PojoUtil.isEmpty(otherAccessToken));        
     }
 
     /**
