@@ -190,7 +190,7 @@
 								</div>
 								<div class="add-item-link" ng-show="$last">			
 								</div>
-									<span><a href ng-click="addExternalIdentifier()"><i class="glyphicon glyphicon-plus-sign"></i> <@orcid.msg 'peer_review.add_external_identifiers'/></a></span>
+									<span><a href ng-click="addExternalIdentifier()" ng-show="$last"><i class="glyphicon glyphicon-plus-sign"></i> <@orcid.msg 'peer_review.add_external_identifiers'/></a></span>
 							</div>
 						</div>
 					</div>
