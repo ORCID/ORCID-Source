@@ -52,5 +52,7 @@ public interface ClientDetailsDao extends GenericDao<ClientDetailsEntity, String
     
     public void removeClient(String clientId);
     
-    public ClientDetailsEntity getPublicClient(String ownerId);        
+    public ClientDetailsEntity getPublicClient(String ownerId);
+    
+    String getMemberName(String clientId);
 }
