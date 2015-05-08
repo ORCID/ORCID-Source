@@ -25,6 +25,7 @@ import org.orcid.core.exception.OrcidClientGroupManagementException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.EmailManager;
+import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.MembersManager;
 import org.orcid.core.manager.OrcidClientGroupManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
@@ -35,6 +36,7 @@ import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
 import org.orcid.jaxb.model.message.ErrorDesc;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+import org.orcid.persistence.jpa.entities.ClientSecretEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.Client;
 import org.orcid.pojo.ajaxForm.Member;
@@ -68,6 +70,9 @@ public class MembersManagerImpl implements MembersManager {
     @Resource
     private ThirdPartyLinkManager thirdPartyLinkManager;
     
+    @Resource
+    private EncryptionManager encryptionManager;
+    
     @Override
     public Member createMember(Member newMember) {
         OrcidClientGroup orcidClientGroup = newMember.toOrcidClientGroup();
@@ -88,7 +93,7 @@ public class MembersManagerImpl implements MembersManager {
     public Member getMember(String memberId) {
         Member member = new Member();
         String orcid = memberId;
-        if (!matchesOrcidPattern(memberId)) {
+        if (!OrcidStringUtils.isValidOrcid(memberId)) {
             Map<String, String> ids = emailManager.findIdByEmail(memberId);
             if (ids != null && ids.containsKey(memberId)) {
                 orcid = ids.get(memberId);
@@ -119,10 +124,19 @@ public class MembersManagerImpl implements MembersManager {
     @Override
     public Client getClient(String clientId) {
         Client result = new Client();
-        ClientDetailsEntity clientDetailsEntity = clientDetailsManager.findByClientId(clientId);
+        ClientDetailsEntity clientDetailsEntity = clientDetailsManager.findByClientId(clientId);        
         if (clientDetailsEntity != null) {            
             result = Client.valueOf(clientDetailsEntity);
+            //Set member name
             result.setMemberName(Text.valueOf(clientDetailsManager.getMemberName(clientId)));
+            //Set client secret
+            if(clientDetailsEntity.getClientSecrets() != null) {
+                for(ClientSecretEntity secret : clientDetailsEntity.getClientSecrets()) {
+                    if(secret.isPrimary()) {
+                        result.setClientSecret(Text.valueOf(encryptionManager.decryptForInternalUse(secret.getClientSecret())));
+                    }
+                }                
+            }    
         } else {
             result.getErrors().add(getMessage("admin.edit_client.invalid_orcid"));
         }
@@ -142,11 +156,7 @@ public class MembersManagerImpl implements MembersManager {
         }
 
         return Client.valueOf(result);
-    }
-
-    private boolean matchesOrcidPattern(String orcid) {
-        return OrcidStringUtils.isValidOrcid(orcid);
-    }
+    }    
     
     private String getMessage(String message) {
         return localeManager.resolveMessage(message);

@@ -16,6 +16,7 @@
  */
 package org.orcid.frontend.web.controllers;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -31,6 +32,7 @@ import org.orcid.pojo.ajaxForm.Member;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.RedirectUri;
 import org.orcid.pojo.ajaxForm.Text;
+import org.orcid.utils.OrcidStringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -43,7 +45,6 @@ import org.springframework.web.servlet.ModelAndView;
 /**
  * @author Angel Montenegro
  */
-
 @Controller
 @RequestMapping(value = { "/manage-members" })
 public class ManageMembersController extends BaseController {    
@@ -80,6 +81,21 @@ public class ManageMembersController extends BaseController {
         return group;
     }
 
+    @RequestMapping(value = "/find.json", method = RequestMethod.GET)
+    public @ResponseBody ResultContainer find(@RequestParam("id") String id) {
+        ResultContainer result = new ResultContainer();
+        
+        if(OrcidStringUtils.isClientId(id)) {
+            result.setClient(true);
+            result.setClientObject(findClient(id));
+        } else {
+            result.setClient(false);
+            result.setMemberObject(findMember(id));
+        }     
+        
+        return result;
+    } 
+    
     @RequestMapping(value = "/find-member.json", method = RequestMethod.GET)
     public @ResponseBody
     Member findMember(@RequestParam("orcidOrEmail") String orcidOrEmail) {
@@ -281,4 +297,31 @@ public class ManageMembersController extends BaseController {
             }
         }
     }    
+}
+
+class ResultContainer implements Serializable {
+    private static final long serialVersionUID = -3832431757948716851L;
+    
+    boolean isClient = false;
+    Client clientObject;
+    Member memberObject;
+
+    public boolean isClient() {
+        return isClient;
+    }
+    public void setClient(boolean isClient) {
+        this.isClient = isClient;
+    }
+    public Client getClientObject() {
+        return clientObject;
+    }
+    public void setClientObject(Client clientObject) {
+        this.clientObject = clientObject;
+    }
+    public Member getMemberObject() {
+        return memberObject;
+    }
+    public void setMemberObject(Member memberObject) {
+        this.memberObject = memberObject;
+    }
 }

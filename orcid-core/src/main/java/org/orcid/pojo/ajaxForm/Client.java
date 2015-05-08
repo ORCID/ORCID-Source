@@ -26,6 +26,7 @@ import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.RedirectUris;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
+import org.orcid.persistence.jpa.entities.ClientSecretEntity;
 
 public class Client implements ErrorsInterface, Serializable {
 
@@ -50,8 +51,7 @@ public class Client implements ErrorsInterface, Serializable {
             client.setClientId(Text.valueOf(clientDetails.getClientId()));
             client.setDisplayName(Text.valueOf(clientDetails.getClientName()));
             client.setShortDescription(Text.valueOf(clientDetails.getClientDescription()));
-            client.setWebsite(Text.valueOf(clientDetails.getClientWebsite()));
-
+            client.setWebsite(Text.valueOf(clientDetails.getClientWebsite()));                               
             client.redirectUris = new ArrayList<RedirectUri>();
             if (clientDetails.getClientRegisteredRedirectUris() != null) {
                 for (ClientRedirectUriEntity rUri : clientDetails.getClientRegisteredRedirectUris()) {
