@@ -179,9 +179,33 @@
 					<div class="admin-edit-client">
 						<div class="row">
 							<div class="col-md-12 col-sm-12 col-xs-12">
-								<h4><@orcid.msg 'manage_member.edit_member.general'/></h4>
+								<h3><@orcid.msg 'manage_groups.clients'/></h3>
 							</div>
 						</div>
+						<!-- Clients -->						
+						<div class="row" ng-show="member.clients.length > 0">
+							<div>
+								<div class="col-md-5 col-sm-5 col-xs-5">
+									<strong><@orcid.msg 'admin.edit_client.client_id'/></strong>
+								</div>
+								<div class="col-md-7 col-sm-7 col-xs-7">
+									<strong><@orcid.msg 'manage.developer_tools.group.display_name'/></strong>
+								</div>
+								<div ng-repeat="client in member.clients">
+									<div class="col-md-5 col-sm-5 col-xs-5">
+										{{client.clientId.value}}
+									</div>
+									<div class="col-md-7 col-sm-7 col-xs-7">
+										{{client.displayName.value}}
+									</div>
+								</div> 									
+							</div>
+						</div>		
+						<div class="row">
+							<div class="col-md-12 col-sm-12 col-xs-12">
+								<h3><@orcid.msg 'manage_member.edit_member.general'/></h3>
+							</div>
+						</div>						
 						<!-- Name -->
 						<div class="row">
 							<div class="col-md-12 col-sm-12 col-xs-12">
@@ -231,7 +255,7 @@
 							<div class="controls save-btns col-md-12 col-sm-12 col-xs-12">
 			    				<span id="bottom-confirm-update-client" ng-click="confirmUpdateMember()" class="btn btn-primary"><@orcid.msg 'admin.edit_client.btn.update'/></span>
 							</div>
-						</div>			
+						</div>						
 					</div>
 				</div>	
 			</div>						
@@ -263,7 +287,21 @@
 					<div class="admin-edit-client">
 						<div class="row">
 							<div class="col-md-12 col-sm-12 col-xs-12">
-								<h4><@orcid.msg 'admin.edit_client.general'/></h4>
+								<h3><@orcid.msg 'admin.edit_client.general'/></h3>
+							</div>
+						</div>
+						<!-- Member id -->
+						<div class="row">
+							<div class="col-md-12 col-sm-12 col-xs-12">
+								<span><@orcid.msg 'manage_groups.group_id'/></span><br />
+								<i>{{client.memberId.value}}</i><br />								
+							</div>
+						</div>
+						<!-- Member name -->
+						<div class="row">
+							<div class="col-md-12 col-sm-12 col-xs-12">
+								<span><@orcid.msg 'manage_groups.group_name'/></span><br />
+								<i>{{client.memberName.value}}</i><br />							
 							</div>
 						</div>
 						<!-- Name -->
@@ -311,7 +349,7 @@
 						<!-- Redirect uris -->
 						<div class="row">			
 							<div class="col-md-12 col-sm-12 col-xs-12">
-								<h4><@orcid.msg 'admin.edit_client.redirect_uris'/></h4>
+								<h3><@orcid.msg 'admin.edit_client.redirect_uris'/></h3>
 							</div>			
 						</div>
 						<div ng-repeat="rUri in client.redirectUris">
