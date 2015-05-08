@@ -76,6 +76,7 @@ import org.orcid.jaxb.model.message.SendEmailFrequency;
 import org.orcid.jaxb.model.message.SendOrcidNews;
 import org.orcid.jaxb.model.message.SubmissionDate;
 import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.jaxb.model.notification.amended.AmendedSection;
 import org.orcid.password.constants.OrcidPasswordConstants;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.ProfileDao;
@@ -926,7 +927,9 @@ public class RegistrationController extends BaseController {
             preferences.setSendOrcidNews(new SendOrcidNews(claim.getSendOrcidNews().getValue()));
             preferences.setActivitiesVisibilityDefault(new ActivitiesVisibilityDefault(claim.getActivitiesVisibilityDefault().getVisibility()));
         }
-        return orcidProfileManager.updateOrcidProfile(orcidProfile);
+        OrcidProfile profileToReturn =  orcidProfileManager.updateOrcidProfile(orcidProfile);
+        notificationManager.sendAmendEmail(profileToReturn, AmendedSection.UNKNOWN);
+        return profileToReturn;
     }
 
     private List<OrcidProfile> findPotentialDuplicatesByFirstNameLastName(String firstName, String lastName) {
