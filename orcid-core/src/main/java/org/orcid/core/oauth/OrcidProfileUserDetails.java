@@ -20,7 +20,7 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import org.orcid.core.security.OrcidWebRole;
-import org.orcid.jaxb.model.clientgroup.GroupType;
+import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -40,7 +40,7 @@ public class OrcidProfileUserDetails implements UserDetails {
 
     private OrcidType orcidType;
 
-    private GroupType groupType;
+    private MemberType groupType;
 
     public OrcidProfileUserDetails() {
     }
@@ -58,7 +58,7 @@ public class OrcidProfileUserDetails implements UserDetails {
         this.orcidType = orcidType;
     }
 
-    public OrcidProfileUserDetails(String orcid, String primaryEmail, String password, OrcidType orcidType, GroupType groupType) {
+    public OrcidProfileUserDetails(String orcid, String primaryEmail, String password, OrcidType orcidType, MemberType groupType) {
         this.orcid = orcid;
         this.primaryEmail = primaryEmail;
         this.password = password;
@@ -190,11 +190,11 @@ public class OrcidProfileUserDetails implements UserDetails {
 
    
 
-    public GroupType getGroupType() {
+    public MemberType getGroupType() {
         return groupType;
     }
 
-    public void setGroupType(GroupType groupType) {
+    public void setGroupType(MemberType groupType) {
         this.groupType = groupType;
     }
 

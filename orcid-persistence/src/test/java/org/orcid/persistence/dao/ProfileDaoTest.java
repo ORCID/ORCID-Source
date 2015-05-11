@@ -41,7 +41,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.jaxb.model.message.Iso3166Country;
-import org.orcid.jaxb.model.clientgroup.GroupType;
+import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
@@ -240,7 +240,7 @@ public class ProfileDaoTest extends DBUnitTest {
         ProfileEntity groupProfile = new ProfileEntity();
         groupProfile.setId(groupOrcid);
         groupProfile.setOrcidType(OrcidType.GROUP);
-        groupProfile.setGroupType(GroupType.BASIC);
+        groupProfile.setGroupType(MemberType.BASIC);
 
         SortedSet<ClientDetailsEntity> clients = new TreeSet<>(new OrcidEntityIdComparator<String>());
         String clientOrcid1 = "4444-4444-4444-4442";
@@ -260,7 +260,7 @@ public class ProfileDaoTest extends DBUnitTest {
 
         assertNotNull(groupProfile);
         assertEquals(groupOrcid, groupProfile.getId());
-        assertEquals(GroupType.BASIC, groupProfile.getGroupType());
+        assertEquals(MemberType.BASIC, groupProfile.getGroupType());
         assertNotNull(groupProfile.getClients());
         assertEquals(2, groupProfile.getClients().size());
         Map<String, ClientDetailsEntity> map = ProfileEntity.mapById(groupProfile.getClients());

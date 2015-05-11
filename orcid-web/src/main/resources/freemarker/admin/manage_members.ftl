@@ -153,35 +153,68 @@
 			</div>			
 		</div>
 		
-		<!-- Edit Member -->
-		<a name="edit-member"></a>
+		<!-- Find -->
+		<a name="find"></a>
 		<div ng-controller="manageMembersCtrl" class="workspace-accordion-item" ng-cloak>			
 			<p>
-				<a ng-show="showEditMemberModal" ng-click="toggleEditMemberModal()"><span class="glyphicon glyphicon-chevron-down blue"></span><@orcid.msg 'manage_members.edit_members_title'/></a>
-				<a ng-hide="showEditMemberModal" ng-click="toggleEditMemberModal()"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'manage_members.edit_members_title'/></a>				
+				<a ng-show="showFindModal" ng-click="toggleFindModal()"><span class="glyphicon glyphicon-chevron-down blue"></span><@orcid.msg 'manage_members.find'/></a>
+				<a ng-hide="showFindModal" ng-click="toggleFindModal()"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'manage_members.find'/></a>				
 			</p>
-			<div class="collapsible bottom-margin-small admin-modal" id="edit_member_modal" style="display:none;">					    		
-	    		<div class="form-group" ng-show="success_edit_member_message != null">
+			<div class="collapsible bottom-margin-small admin-modal" id="find_edit_modal" style="display:none;">	
+				<div class="form-group" ng-show="success_edit_member_message != null">
 	    			<div ng-bind-html="success_edit_member_message" class="alert alert-success"></div>
 	    		</div>
-	    		<div class="form-group">
-					<label for="member_id"><@orcid.msg 'manage_member.member_id' /></label>
-					<input type="text" id="member_id" ng-enter="findMember()" ng-model="member_id" placeholder="<@orcid.msg 'manage_member.orcid_or_email' />" class="input-xlarge" />					
-					<span class="orcid-error" ng-show="member.errors.length > 0 && member.groupOrcid == null">
-						<div ng-repeat='error in member.errors' ng-bind-html="error"></div>
-					</span>		
+	    		<div class="form-group" ng-show="success_message != null">
+	    			<div ng-bind-html="success_message" class="alert alert-success"></div>
+	    		</div>
+				<!-- Find -->
+				<div class="form-group">
+					<div>
+						<label for="client_id"><@orcid.msg 'admin.edit_client.any_id' /></label>
+						<input type="text" id="any_id" ng-enter="findAny()" ng-model="any_id" placeholder="<@orcid.msg 'admin.edit_client.any_id.placeholder' />" class="input-xlarge" />					
+						<span class="orcid-error" ng-show="client.errors.length > 0 && client.clientId == null">
+							<div ng-repeat='error in client.errors' ng-bind-html="error"></div>						
+						</span>		
+						<span class="orcid-error" ng-show="member.errors.length > 0 && member.groupOrcid.value.length > 0">
+							<div ng-repeat='error in member.errors' ng-bind-html="error"></div>
+						</span>
+					</div>	
+					<div class="controls save-btns pull-left">
+						<span id="bottom-search" ng-click="findAny()" class="btn btn-primary"><@orcid.msg 'admin.edit_client.find'/></span>
+					</div>	
 				</div>
-				<div class="controls save-btns pull-left">
-					<span id="bottom-search-client" ng-click="findMember()" class="btn btn-primary"><@orcid.msg 'public-layout.search'/></span>
-				</div>
-				
+				<!-- Edit member -->
 				<div ng-show="member.groupOrcid.value.length > 0" ng-cloak>
 					<div class="admin-edit-client">
 						<div class="row">
 							<div class="col-md-12 col-sm-12 col-xs-12">
-								<h4><@orcid.msg 'manage_member.edit_member.general'/></h4>
+								<h3><@orcid.msg 'manage_groups.clients'/></h3>
 							</div>
 						</div>
+						<!-- Clients -->						
+						<div class="row" ng-show="member.clients.length > 0">
+							<div>
+								<div class="col-md-5 col-sm-5 col-xs-5">
+									<strong><@orcid.msg 'admin.edit_client.client_id'/></strong>
+								</div>
+								<div class="col-md-7 col-sm-7 col-xs-7">
+									<strong><@orcid.msg 'manage.developer_tools.group.display_name'/></strong>
+								</div>
+								<div ng-repeat="client in member.clients">
+									<div class="col-md-5 col-sm-5 col-xs-5">
+										{{client.clientId.value}}
+									</div>
+									<div class="col-md-7 col-sm-7 col-xs-7">
+										{{client.displayName.value}}
+									</div>
+								</div> 									
+							</div>
+						</div>		
+						<div class="row">
+							<div class="col-md-12 col-sm-12 col-xs-12">
+								<h3><@orcid.msg 'manage_member.edit_member.general'/></h3>
+							</div>
+						</div>						
 						<!-- Name -->
 						<div class="row">
 							<div class="col-md-12 col-sm-12 col-xs-12">
@@ -231,39 +264,30 @@
 							<div class="controls save-btns col-md-12 col-sm-12 col-xs-12">
 			    				<span id="bottom-confirm-update-client" ng-click="confirmUpdateMember()" class="btn btn-primary"><@orcid.msg 'admin.edit_client.btn.update'/></span>
 							</div>
-						</div>			
+						</div>						
 					</div>
-				</div>	
-			</div>						
-		</div>
-		
-		<!-- Edit client -->
-		<a name="edit-client"></a>
-		<div ng-controller="manageMembersCtrl" class="workspace-accordion-item" ng-cloak>
-			<p>
-				<a ng-show="showAdminGroupsModal" ng-click="toggleEditClientModal()"><span class="glyphicon glyphicon-chevron-down blue"></span><@orcid.msg 'admin.edit_client.title'/></a>
-				<a ng-hide="showAdminGroupsModal" ng-click="toggleEditClientModal()"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'admin.edit_client.title'/></a>				
-			</p>
-			<div class="collapsible bottom-margin-small admin-modal" id="edit_client_modal" style="display:none;">					    		
-	    		<div class="form-group" ng-show="success_message != null">
-	    			<div ng-bind-html="success_message" class="alert alert-success"></div>
-	    		</div>
-	    		<div class="form-group">
-					<label for="client_id"><@orcid.msg 'admin.edit_client.client_id' /></label>
-					<input type="text" id="client_id" ng-enter="searchClient()" ng-model="client_id" placeholder="<@orcid.msg 'admin.edit_client.client_id.placeholder' />" class="input-xlarge" />					
-					<span class="orcid-error" ng-show="client.errors.length > 0 && client.clientId == null">
-						<div ng-repeat='error in client.errors' ng-bind-html="error"></div>
-					</span>		
-				</div>
-				<div class="controls save-btns pull-left">
-					<span id="bottom-search-client" ng-click="searchClient()" class="btn btn-primary"><@orcid.msg 'admin.edit_client.find'/></span>
 				</div>
 				
+				<!-- Edit client -->
 				<div ng-show="client.clientId != null" ng-cloak>	
 					<div class="admin-edit-client">
 						<div class="row">
 							<div class="col-md-12 col-sm-12 col-xs-12">
-								<h4><@orcid.msg 'admin.edit_client.general'/></h4>
+								<h3><@orcid.msg 'admin.edit_client.general'/></h3>
+							</div>
+						</div>
+						<!-- Member id -->
+						<div class="row">
+							<div class="col-md-12 col-sm-12 col-xs-12">
+								<span><@orcid.msg 'manage_groups.group_id'/></span><br />
+								<i>{{client.memberId.value}}</i><br />								
+							</div>
+						</div>
+						<!-- Member name -->
+						<div class="row">
+							<div class="col-md-12 col-sm-12 col-xs-12">
+								<span><@orcid.msg 'manage_groups.group_name'/></span><br />
+								<i>{{client.memberName.value}}</i><br />							
 							</div>
 						</div>
 						<!-- Name -->
@@ -295,8 +319,14 @@
 									<div ng-repeat='error in client.shortDescription.errors' ng-bind-html="error"></div>
 								</span>	
 							</div>
+						</div>												
+						<!-- Client secret -->
+						<div class="row">
+							<div class="col-md-12 col-sm-12 col-xs-12 dt-description">
+								<span><@orcid.msg 'manage.developer_tools.group.secret'/></span><br />
+								<input type="text" ng-model="client.clientSecret.value" class="full-width-input" disabled="disabled"/>								
+							</div>
 						</div>
-						
 						<!-- Persistent tokens -->
 						<div class="row">
 							<div class="col-md-12 col-sm-12 col-xs-12">
@@ -311,7 +341,7 @@
 						<!-- Redirect uris -->
 						<div class="row">			
 							<div class="col-md-12 col-sm-12 col-xs-12">
-								<h4><@orcid.msg 'admin.edit_client.redirect_uris'/></h4>
+								<h3><@orcid.msg 'admin.edit_client.redirect_uris'/></h3>
 							</div>			
 						</div>
 						<div ng-repeat="rUri in client.redirectUris">
@@ -367,9 +397,11 @@
 							</div>
 						</div>					
 					</div>							
-				</div>					
-			</div>							
-		</div>						
+				</div>
+			</div>
+		</div>
+		
+								
 						
 	</div>
 </div>
