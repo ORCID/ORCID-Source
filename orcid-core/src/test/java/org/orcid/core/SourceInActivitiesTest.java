@@ -19,6 +19,7 @@ package org.orcid.core;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
@@ -104,7 +105,7 @@ public class SourceInActivitiesTest extends BaseTest {
     }
     
     @Test
-    public void sourceDoesntChangeAfterCreationTest() {        
+    public void sourceDoesntChangeAfterCreation_Work_Test() {        
         OrcidProfile newUser = getMinimalOrcidProfile();
         String userOrcid = newUser.getOrcidIdentifier().getPath();
         ProfileWorkEntity work1 = getProfileWorkEntity(userOrcid, null);
@@ -136,6 +137,21 @@ public class SourceInActivitiesTest extends BaseTest {
         assertNotNull(fromDb3);
         assertEquals(CLIENT_2_ID, fromDb3.getSource().getSourceId());        
     }     
+    
+    @Test
+    public void sourceDoesntChangeAfterCreation_Funding_Test() {
+        fail();
+    }
+    
+    @Test
+    public void sourceDoesntChangeAfterCreation_PeerReview_Test() {
+        fail();
+    }
+    
+    @Test
+    public void sourceDoesntChangeAfterCreation_Affiliation_Test() {
+        fail();
+    }
     
     private OrcidProfile getMinimalOrcidProfile() {
         OrcidProfile profile = new OrcidProfile();
