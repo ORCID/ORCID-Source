@@ -16,7 +16,6 @@
  */
 package org.orcid.core.manager.impl;
 
-import java.net.URI;
 import java.util.List;
 
 import javax.annotation.Resource;

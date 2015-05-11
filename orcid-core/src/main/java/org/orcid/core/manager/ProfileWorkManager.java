@@ -131,5 +131,7 @@ public interface ProfileWorkManager {
     Work createWork(String orcid, Work work);
 
     Work updateWork(String orcid, Work work);
+    
+    void setSourceManager(SourceManager sourceManager);
 
 }

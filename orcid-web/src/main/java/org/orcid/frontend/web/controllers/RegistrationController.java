@@ -18,7 +18,6 @@ package org.orcid.frontend.web.controllers;
 
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.util.ArrayList;
