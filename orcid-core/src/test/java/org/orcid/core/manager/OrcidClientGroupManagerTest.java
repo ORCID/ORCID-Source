@@ -38,7 +38,7 @@ import org.orcid.core.BaseTest;
 import org.orcid.core.exception.OrcidClientGroupManagementException;
 import org.orcid.core.manager.impl.OrcidProfileManagerImpl;
 import org.orcid.jaxb.model.clientgroup.ClientType;
-import org.orcid.jaxb.model.clientgroup.GroupType;
+import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
 import org.orcid.jaxb.model.clientgroup.RedirectUri;
@@ -447,7 +447,7 @@ public class OrcidClientGroupManagerTest extends BaseTest {
         });
         
         assertNotNull(createdGroup);
-        assertEquals(GroupType.PREMIUM, createdGroup.getType());
+        assertEquals(MemberType.PREMIUM, createdGroup.getType());
         
         Set<String> premiumScopes = orcidClientGroupManager.premiumUpdaterScopes();
         
@@ -460,7 +460,7 @@ public class OrcidClientGroupManagerTest extends BaseTest {
         }
 
         //Update the group type
-        createdGroup.setType(GroupType.PREMIUM_INSTITUTION);
+        createdGroup.setType(MemberType.PREMIUM_INSTITUTION);
         
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             @Override

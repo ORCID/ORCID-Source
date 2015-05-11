@@ -75,7 +75,7 @@ public class OrcidClientGroup implements Serializable {
 
     private final static long serialVersionUID = 1L;
     @XmlAttribute(name = "type")
-    GroupType type;
+    MemberType type;
     @XmlElement(name = "group-orcid")
     protected String groupOrcid;
     @XmlElement(name = "group-name", required = true)
@@ -90,10 +90,10 @@ public class OrcidClientGroup implements Serializable {
     /**
      * Gets the value of the type property.
      * 
-     * @return possible object is {@link GroupType }
+     * @return possible object is {@link MemberType }
      * 
      */
-    public GroupType getType() {
+    public MemberType getType() {
         return type;
     }
 
@@ -101,10 +101,10 @@ public class OrcidClientGroup implements Serializable {
      * Sets the value of the type property.
      * 
      * @param value
-     *            allowed object is {@link GroupType }
+     *            allowed object is {@link MemberType }
      * 
      */
-    public void setType(GroupType type) {
+    public void setType(MemberType type) {
         this.type = type;
     }
            

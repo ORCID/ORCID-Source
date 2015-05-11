@@ -400,7 +400,7 @@ public class OauthAuthorizationPageTest {
      *          For this test to run, the user should not have tokens for any of the
      *          following scopes: 
      *          - FUNDING_CREATE 
-     *          - FUNDING_UPDATE 
+     *          - AFFILIATIONS_CREATE 
      *          - PEER_REVIEW_CREATE
      * */
     @Test
@@ -446,12 +446,7 @@ public class OauthAuthorizationPageTest {
         // Then, ask again for permissions over other scopes. Note that the user
         // is already logged in
         webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, client1ClientId,
-                ScopePathType.FUNDING_UPDATE.getContent(), redirectUri));
-
-        By authorizeBtn = By.id("authorize");
-        (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(authorizeBtn));
-        WebElement authorizeBtnElement = webDriver.findElement(authorizeBtn);
-        authorizeBtnElement.click();
+                ScopePathType.AFFILIATIONS_CREATE.getContent(), redirectUri));        
 
         (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(new ExpectedCondition<Boolean>() {
             public Boolean apply(WebDriver d) {
@@ -465,7 +460,7 @@ public class OauthAuthorizationPageTest {
         authorizationCode = matcher.group(1);
         assertFalse(PojoUtil.isEmpty(authorizationCode));
 
-        tokenResponse = getClientResponse(client1ClientId, client1ClientSecret, ScopePathType.FUNDING_UPDATE.getContent(), redirectUri, authorizationCode);
+        tokenResponse = getClientResponse(client1ClientId, client1ClientSecret, ScopePathType.AFFILIATIONS_CREATE.getContent(), redirectUri, authorizationCode);
         assertEquals(200, tokenResponse.getStatus());
         body = tokenResponse.getEntity(String.class);
         jsonObject = new JSONObject(body);
@@ -477,12 +472,7 @@ public class OauthAuthorizationPageTest {
 
         // Repeat the process again with other scope
         webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, client1ClientId,
-                ScopePathType.PEER_REVIEW_CREATE.getContent(), redirectUri));
-
-        authorizeBtn = By.id("authorize");
-        (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(authorizeBtn));
-        authorizeBtnElement = webDriver.findElement(authorizeBtn);
-        authorizeBtnElement.click();
+                ScopePathType.PEER_REVIEW_CREATE.getContent(), redirectUri));        
 
         (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(new ExpectedCondition<Boolean>() {
             public Boolean apply(WebDriver d) {

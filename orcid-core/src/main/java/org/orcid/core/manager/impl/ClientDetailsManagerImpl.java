@@ -444,4 +444,16 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
     public ClientDetailsEntity getPublicClient(String ownerId) {
         return clientDetailsDao.getPublicClient(ownerId);
     }
+    
+    /**
+     * Get member name
+     * 
+     * @param clientId
+     *            The client id
+     * @return the name of the member owner of the given client 
+     * */
+    @Override
+    public String getMemberName(String clientId) {
+        return clientDetailsDao.getMemberName(clientId);
+    }
 }
