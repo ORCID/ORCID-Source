@@ -165,6 +165,5 @@ public class Organization implements Serializable {
         } else if (!name.equals(other.name))
             return false;
         return true;
-    }
-
+    }    
 }
