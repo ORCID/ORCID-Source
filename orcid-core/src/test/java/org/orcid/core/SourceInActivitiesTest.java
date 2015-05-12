@@ -19,14 +19,11 @@ package org.orcid.core;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.Date;
-
 import javax.annotation.Resource;
-
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -35,6 +32,7 @@ import org.mockito.Mock;
 import org.orcid.core.manager.AffiliationsManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.OrgManager;
+import org.orcid.core.manager.PeerReviewManager;
 import org.orcid.core.manager.ProfileFundingManager;
 import org.orcid.core.manager.ProfileWorkManager;
 import org.orcid.core.manager.SourceManager;
@@ -43,7 +41,6 @@ import org.orcid.jaxb.model.common.Organization;
 import org.orcid.jaxb.model.common.OrganizationAddress;
 import org.orcid.jaxb.model.common.Title;
 import org.orcid.jaxb.model.message.ActivitiesVisibilityDefault;
-import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.Claimed;
 import org.orcid.jaxb.model.message.ContactDetails;
 import org.orcid.jaxb.model.message.CreationMethod;
@@ -62,10 +59,18 @@ import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.record.Education;
 import org.orcid.jaxb.model.record.Funding;
 import org.orcid.jaxb.model.record.FundingTitle;
+import org.orcid.jaxb.model.record.PeerReview;
+import org.orcid.jaxb.model.record.PeerReviewType;
+import org.orcid.jaxb.model.record.Role;
+import org.orcid.jaxb.model.record.Subject;
 import org.orcid.jaxb.model.record.Work;
+import org.orcid.jaxb.model.record.WorkExternalIdentifier;
+import org.orcid.jaxb.model.record.WorkExternalIdentifierId;
+import org.orcid.jaxb.model.record.WorkExternalIdentifierType;
+import org.orcid.jaxb.model.record.WorkExternalIdentifiers;
 import org.orcid.jaxb.model.record.WorkTitle;
+import org.orcid.jaxb.model.record.WorkType;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
-import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
@@ -97,6 +102,9 @@ public class SourceInActivitiesTest extends BaseTest {
 
     @Resource
     AffiliationsManager affiliationsManager;
+    
+    @Resource
+    private PeerReviewManager peerReviewManager;
 
     @Resource
     private OrgManager orgManager;
@@ -117,6 +125,7 @@ public class SourceInActivitiesTest extends BaseTest {
         profileWorkManager.setSourceManager(sourceManager);
         profileFundingManager.setSourceManager(sourceManager);
         affiliationsManager.setSourceManager(sourceManager);
+        peerReviewManager.setSourceManager(sourceManager);
         if (PojoUtil.isEmpty(userOrcid)) {
             OrcidProfile newUser = getMinimalOrcidProfile();
             userOrcid = newUser.getOrcidIdentifier().getPath();
@@ -217,30 +226,77 @@ public class SourceInActivitiesTest extends BaseTest {
     @Test
     public void sourceDoesntChange_PeerReview_Test() {
         when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ProfileEntity(userOrcid)));
+        PeerReview peerReview1 = getPeerReview(userOrcid);
+        assertNotNull(peerReview1);
+        assertNotNull(peerReview1.getSubject());
+        assertNotNull(peerReview1.getSubject().getTitle());
+        assertNotNull(peerReview1.getSubject().getTitle().getTitle());
+        assertFalse(PojoUtil.isEmpty(peerReview1.getSubject().getTitle().getTitle().getContent()));
+        assertEquals(userOrcid, peerReview1.retrieveSourcePath());
+        
         when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
+        PeerReview peerReview2 = getPeerReview(userOrcid);
+        assertNotNull(peerReview2);
+        assertNotNull(peerReview2.getSubject());
+        assertNotNull(peerReview2.getSubject().getTitle());
+        assertNotNull(peerReview2.getSubject().getTitle().getTitle());
+        assertFalse(PojoUtil.isEmpty(peerReview2.getSubject().getTitle().getTitle().getContent()));
+        assertEquals(CLIENT_1_ID, peerReview2.retrieveSourcePath());
+        
         when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_2_ID)));
+        PeerReview peerReview3 = getPeerReview(userOrcid);
+        assertNotNull(peerReview3);
+        assertNotNull(peerReview3.getSubject());
+        assertNotNull(peerReview3.getSubject().getTitle());
+        assertNotNull(peerReview3.getSubject().getTitle().getTitle());
+        assertFalse(PojoUtil.isEmpty(peerReview3.getSubject().getTitle().getTitle().getContent()));
+        assertEquals(CLIENT_2_ID, peerReview3.retrieveSourcePath());
+        
         when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ProfileEntity(userOrcid)));
+        PeerReview peerReview4 = getPeerReview(userOrcid);
+        assertNotNull(peerReview4);
+        assertNotNull(peerReview4.getSubject());
+        assertNotNull(peerReview4.getSubject().getTitle());
+        assertNotNull(peerReview4.getSubject().getTitle().getTitle());
+        assertFalse(PojoUtil.isEmpty(peerReview4.getSubject().getTitle().getTitle().getContent()));
+        assertEquals(userOrcid, peerReview4.retrieveSourcePath());
+        
+        PeerReview fromDb1 = peerReviewManager.getPeerReview(userOrcid, peerReview1.getPutCode());
+        assertNotNull(fromDb1);
+        assertEquals(userOrcid, fromDb1.retrieveSourcePath());
+        
+        PeerReview fromDb2 = peerReviewManager.getPeerReview(userOrcid, peerReview2.getPutCode());
+        assertNotNull(fromDb2);
+        assertEquals(CLIENT_1_ID, fromDb2.retrieveSourcePath());
+        
+        PeerReview fromDb3 = peerReviewManager.getPeerReview(userOrcid, peerReview3.getPutCode());
+        assertNotNull(fromDb3);
+        assertEquals(CLIENT_2_ID, fromDb3.retrieveSourcePath());
+        
+        PeerReview fromDb4 = peerReviewManager.getPeerReview(userOrcid, peerReview4.getPutCode());
+        assertNotNull(fromDb4);
+        assertEquals(userOrcid, fromDb4.retrieveSourcePath());
     }
 
     @Test
     public void sourceDoesntChange_Affiliation_Test() {
         when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ProfileEntity(userOrcid)));
-        Education education1 = getEducationEntity(userOrcid);
+        Education education1 = getEducation(userOrcid);
         assertNotNull(education1);        
         assertEquals(userOrcid, education1.retrieveSourcePath());
         
         when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
-        Education education2 = getEducationEntity(userOrcid);
+        Education education2 = getEducation(userOrcid);
         assertNotNull(education2);        
         assertEquals(CLIENT_1_ID, education2.retrieveSourcePath());
         
         when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_2_ID)));
-        Education education3 = getEducationEntity(userOrcid);
+        Education education3 = getEducation(userOrcid);
         assertNotNull(education3);        
         assertEquals(CLIENT_2_ID, education3.retrieveSourcePath());
         
         when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ProfileEntity(userOrcid)));
-        Education education4 = getEducationEntity(userOrcid);
+        Education education4 = getEducation(userOrcid);
         assertNotNull(education4);        
         assertEquals(userOrcid, education4.retrieveSourcePath());
         
@@ -302,7 +358,7 @@ public class SourceInActivitiesTest extends BaseTest {
 
     private ProfileFundingEntity getProfileFundingEntity(String userOrcid) {
         Funding funding = new Funding();        
-        funding.setOrganization(getCommonOrganization());
+        funding.setOrganization(getOrganization());
         FundingTitle title = new FundingTitle();
         title.setTitle(new Title("Title " + System.currentTimeMillis()));
         funding.setTitle(title);
@@ -311,14 +367,36 @@ public class SourceInActivitiesTest extends BaseTest {
         return profileFundingManager.getProfileFundingEntity(funding.getPutCode());
     }
 
-    private Education getEducationEntity(String userOrcid) {
+    private Education getEducation(String userOrcid) {
         Education education = new Education();
-        education.setOrganization(getCommonOrganization());
+        education.setOrganization(getOrganization());
         education = affiliationsManager.createEducationAffiliation(userOrcid, education);
         return affiliationsManager.getEducationAffiliation(userOrcid, education.getPutCode());
     }
+    
+    private PeerReview getPeerReview(String userOrcid) {
+        PeerReview peerReview = new PeerReview();
+        peerReview.setOrganization(getOrganization());
+        peerReview.setType(PeerReviewType.EVALUATION);
+        WorkTitle workTitle = new WorkTitle();
+        workTitle.setTitle(new Title("Title " + System.currentTimeMillis()));
+        WorkExternalIdentifiers workExtIds = new WorkExternalIdentifiers();
+        WorkExternalIdentifier workExtId = new WorkExternalIdentifier();
+        workExtId.setWorkExternalIdentifierId(new WorkExternalIdentifierId("ID"));
+        workExtId.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
+        workExtIds.getExternalIdentifier().add(workExtId);
+        Subject subject = new Subject();        
+        subject.setTitle(workTitle);
+        subject.setExternalIdentifiers(workExtIds);
+        subject.setType(WorkType.ARTISTIC_PERFORMANCE);
+        peerReview.setSubject(subject);
+        peerReview.setExternalIdentifiers(workExtIds);
+        peerReview.setRole(Role.CHAIR);
+        peerReview = peerReviewManager.createPeerReview(userOrcid, peerReview);
+        return peerReviewManager.getPeerReview(userOrcid, peerReview.getPutCode());
+    }
 
-    private Organization getCommonOrganization() {
+    private Organization getOrganization() {
         if (organization == null) {
             OrganizationAddress address = new OrganizationAddress();
             address.setCity("City");

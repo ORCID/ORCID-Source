@@ -80,6 +80,11 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
     private OrcidUrlManager orcidUrlManager;
 
     @Override
+    public void setSourceManager(SourceManager sourceManager) {
+        this.sourceManager = sourceManager;
+    }
+    
+    @Override
     public PeerReview getPeerReview(String orcid, String peerReviewId) {
         PeerReviewEntity peerReviewEntity = peerReviewDao.getPeerReview(orcid, peerReviewId);
         return jpaJaxbPeerReviewAdapter.toPeerReview(peerReviewEntity);

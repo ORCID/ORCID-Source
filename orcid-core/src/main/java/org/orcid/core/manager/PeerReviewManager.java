@@ -26,6 +26,9 @@ import org.orcid.jaxb.model.record.summary.PeerReviewSummary;
 import org.orcid.persistence.jpa.entities.PeerReviewEntity;
 
 public interface PeerReviewManager {
+    
+    void setSourceManager(SourceManager sourceManager);
+    
     /**
      * Get a peerReview based on the orcid and peerReview id
      * 
