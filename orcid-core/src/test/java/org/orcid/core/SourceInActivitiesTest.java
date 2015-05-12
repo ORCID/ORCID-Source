@@ -32,12 +32,18 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.orcid.core.manager.AffiliationsManager;
 import org.orcid.core.manager.OrcidProfileManager;
+import org.orcid.core.manager.OrgManager;
+import org.orcid.core.manager.ProfileFundingManager;
 import org.orcid.core.manager.ProfileWorkManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.WorkManager;
+import org.orcid.jaxb.model.common.Organization;
+import org.orcid.jaxb.model.common.OrganizationAddress;
 import org.orcid.jaxb.model.common.Title;
 import org.orcid.jaxb.model.message.ActivitiesVisibilityDefault;
+import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.Claimed;
 import org.orcid.jaxb.model.message.ContactDetails;
 import org.orcid.jaxb.model.message.CreationMethod;
@@ -53,14 +59,17 @@ import org.orcid.jaxb.model.message.SendChangeNotifications;
 import org.orcid.jaxb.model.message.SendOrcidNews;
 import org.orcid.jaxb.model.message.SubmissionDate;
 import org.orcid.jaxb.model.message.Visibility;
-import org.orcid.jaxb.model.message.WorkType;
+import org.orcid.jaxb.model.record.Education;
+import org.orcid.jaxb.model.record.Funding;
+import org.orcid.jaxb.model.record.FundingTitle;
 import org.orcid.jaxb.model.record.Work;
 import org.orcid.jaxb.model.record.WorkTitle;
-import org.orcid.persistence.dao.ProfileWorkDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
-import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.DateUtils;
 
@@ -70,89 +79,188 @@ import org.orcid.utils.DateUtils;
  * 
  */
 public class SourceInActivitiesTest extends BaseTest {
-    
+
     private static final String CLIENT_1_ID = "APP-5555555555555555";
-    private static final String CLIENT_2_ID = "APP-6666666666666666";
-    
+    private static final String CLIENT_2_ID = "APP-5555555555555556";
+
     @Resource
     private OrcidProfileManager orcidProfileManager;
-    
+
     @Resource
     private WorkManager workManager;
-    
+
     @Resource
     private ProfileWorkManager profileWorkManager;
-    
+
     @Resource
-    private ProfileWorkDao profileWorkDao;
-    
+    ProfileFundingManager profileFundingManager;
+
+    @Resource
+    AffiliationsManager affiliationsManager;
+
+    @Resource
+    private OrgManager orgManager;
+
     @Mock
-    private SourceManager sourceManager;      
+    private SourceManager sourceManager;
+
+    static String userOrcid = null;
+    static Organization organization = null;
     
     @BeforeClass
     public static void initDBUnitData() throws Exception {
         initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SourceClientDetailsEntityData.xml"));
-    }        
-    
+    }
+
     @Before
     public void before() {
         profileWorkManager.setSourceManager(sourceManager);
+        profileFundingManager.setSourceManager(sourceManager);
+        affiliationsManager.setSourceManager(sourceManager);
+        if (PojoUtil.isEmpty(userOrcid)) {
+            OrcidProfile newUser = getMinimalOrcidProfile();
+            userOrcid = newUser.getOrcidIdentifier().getPath();
+        }
     }
-    
+
     @AfterClass
     public static void after() throws Exception {
         removeDBUnitData(Arrays.asList("/data/SourceClientDetailsEntityData.xml", "/data/SecurityQuestionEntityData.xml"));
     }
-    
+
     @Test
-    public void sourceDoesntChangeAfterCreation_Work_Test() {        
-        OrcidProfile newUser = getMinimalOrcidProfile();
-        String userOrcid = newUser.getOrcidIdentifier().getPath();
-        ProfileWorkEntity work1 = getProfileWorkEntity(userOrcid, null);
+    public void sourceDoesntChange_Work_Test() {
+        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ProfileEntity(userOrcid)));
+        ProfileWorkEntity work1 = getProfileWorkEntity(userOrcid);
         assertNotNull(work1);
         assertFalse(PojoUtil.isEmpty(work1.getWork().getTitle()));
         assertEquals(userOrcid, work1.getSource().getSourceId());
-                        
+
         when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
-        ProfileWorkEntity work2 = getProfileWorkEntity(userOrcid, CLIENT_1_ID);
+        ProfileWorkEntity work2 = getProfileWorkEntity(userOrcid);
         assertNotNull(work2);
         assertFalse(PojoUtil.isEmpty(work2.getWork().getTitle()));
         assertEquals(CLIENT_1_ID, work2.getSource().getSourceId());
-                     
+
         when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_2_ID)));
-        ProfileWorkEntity work3 = getProfileWorkEntity(userOrcid, CLIENT_2_ID);
+        ProfileWorkEntity work3 = getProfileWorkEntity(userOrcid);
         assertNotNull(work3);
         assertFalse(PojoUtil.isEmpty(work3.getWork().getTitle()));
         assertEquals(CLIENT_2_ID, work3.getSource().getSourceId());
-                                                        
+
+        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ProfileEntity(userOrcid)));
+        ProfileWorkEntity work4 = getProfileWorkEntity(userOrcid);
+        assertNotNull(work4);
+        assertFalse(PojoUtil.isEmpty(work4.getWork().getTitle()));
+        assertEquals(userOrcid, work4.getSource().getSourceId());
+
         ProfileWorkEntity fromDb1 = profileWorkManager.getProfileWork(userOrcid, String.valueOf(work1.getWork().getId()));
         assertNotNull(fromDb1);
         assertEquals(userOrcid, fromDb1.getSource().getSourceId());
-        
+
         ProfileWorkEntity fromDb2 = profileWorkManager.getProfileWork(userOrcid, String.valueOf(work2.getWork().getId()));
         assertNotNull(fromDb2);
         assertEquals(CLIENT_1_ID, fromDb2.getSource().getSourceId());
-                        
+
         ProfileWorkEntity fromDb3 = profileWorkManager.getProfileWork(userOrcid, String.valueOf(work3.getWork().getId()));
         assertNotNull(fromDb3);
-        assertEquals(CLIENT_2_ID, fromDb3.getSource().getSourceId());        
-    }     
-    
-    @Test
-    public void sourceDoesntChangeAfterCreation_Funding_Test() {
-        fail();
+        assertEquals(CLIENT_2_ID, fromDb3.getSource().getSourceId());
+
+        ProfileWorkEntity fromDb4 = profileWorkManager.getProfileWork(userOrcid, String.valueOf(work4.getWork().getId()));
+        assertNotNull(fromDb4);
+        assertEquals(userOrcid, fromDb4.getSource().getSourceId());
     }
-    
+
     @Test
-    public void sourceDoesntChangeAfterCreation_PeerReview_Test() {
-        fail();
+    public void sourceDoesntChange_Funding_Test() {
+        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ProfileEntity(userOrcid)));
+        ProfileFundingEntity funding1 = getProfileFundingEntity(userOrcid);
+        assertNotNull(funding1);
+        assertFalse(PojoUtil.isEmpty(funding1.getTitle()));
+        assertEquals(userOrcid, funding1.getSource().getSourceId());
+
+        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
+        ProfileFundingEntity funding2 = getProfileFundingEntity(userOrcid);
+        assertNotNull(funding2);
+        assertFalse(PojoUtil.isEmpty(funding2.getTitle()));
+        assertEquals(CLIENT_1_ID, funding2.getSource().getSourceId());
+
+        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_2_ID)));
+        ProfileFundingEntity funding3 = getProfileFundingEntity(userOrcid);
+        assertNotNull(funding3);
+        assertFalse(PojoUtil.isEmpty(funding3.getTitle()));
+        assertEquals(CLIENT_2_ID, funding3.getSource().getSourceId());
+
+        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ProfileEntity(userOrcid)));
+        ProfileFundingEntity funding4 = getProfileFundingEntity(userOrcid);
+        assertNotNull(funding4);
+        assertFalse(PojoUtil.isEmpty(funding4.getTitle()));
+        assertEquals(userOrcid, funding4.getSource().getSourceId());
+
+        ProfileFundingEntity fromDb1 = profileFundingManager.getProfileFundingEntity(String.valueOf(funding1.getId()));
+        assertNotNull(fromDb1);
+        assertEquals(userOrcid, fromDb1.getSource().getSourceId());
+
+        ProfileFundingEntity fromDb2 = profileFundingManager.getProfileFundingEntity(String.valueOf(funding2.getId()));
+        assertNotNull(fromDb2);
+        assertEquals(CLIENT_1_ID, fromDb2.getSource().getSourceId());
+
+        ProfileFundingEntity fromDb3 = profileFundingManager.getProfileFundingEntity(String.valueOf(funding3.getId()));
+        assertNotNull(fromDb3);
+        assertEquals(CLIENT_2_ID, fromDb3.getSource().getSourceId());
+
+        ProfileFundingEntity fromDb4 = profileFundingManager.getProfileFundingEntity(String.valueOf(funding4.getId()));
+        assertNotNull(fromDb4);
+        assertEquals(userOrcid, fromDb4.getSource().getSourceId());
     }
-    
+
     @Test
-    public void sourceDoesntChangeAfterCreation_Affiliation_Test() {
-        fail();
+    public void sourceDoesntChange_PeerReview_Test() {
+        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ProfileEntity(userOrcid)));
+        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
+        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_2_ID)));
+        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ProfileEntity(userOrcid)));
     }
-    
+
+    @Test
+    public void sourceDoesntChange_Affiliation_Test() {
+        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ProfileEntity(userOrcid)));
+        Education education1 = getEducationEntity(userOrcid);
+        assertNotNull(education1);        
+        assertEquals(userOrcid, education1.retrieveSourcePath());
+        
+        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
+        Education education2 = getEducationEntity(userOrcid);
+        assertNotNull(education2);        
+        assertEquals(CLIENT_1_ID, education2.retrieveSourcePath());
+        
+        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_2_ID)));
+        Education education3 = getEducationEntity(userOrcid);
+        assertNotNull(education3);        
+        assertEquals(CLIENT_2_ID, education3.retrieveSourcePath());
+        
+        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ProfileEntity(userOrcid)));
+        Education education4 = getEducationEntity(userOrcid);
+        assertNotNull(education4);        
+        assertEquals(userOrcid, education4.retrieveSourcePath());
+        
+        Education fromDb1 = affiliationsManager.getEducationAffiliation(userOrcid, education1.getPutCode());
+        assertNotNull(fromDb1);
+        assertEquals(userOrcid, fromDb1.retrieveSourcePath());
+        
+        Education fromDb2 = affiliationsManager.getEducationAffiliation(userOrcid, education2.getPutCode());
+        assertNotNull(fromDb2);
+        assertEquals(CLIENT_1_ID, fromDb2.retrieveSourcePath());
+        
+        Education fromDb3 = affiliationsManager.getEducationAffiliation(userOrcid, education3.getPutCode());
+        assertNotNull(fromDb3);
+        assertEquals(CLIENT_2_ID, fromDb3.retrieveSourcePath());
+        
+        Education fromDb4 = affiliationsManager.getEducationAffiliation(userOrcid, education4.getPutCode());
+        assertNotNull(fromDb4);
+        assertEquals(userOrcid, fromDb4.retrieveSourcePath());
+    }
+
     private OrcidProfile getMinimalOrcidProfile() {
         OrcidProfile profile = new OrcidProfile();
         OrcidBio bio = new OrcidBio();
@@ -171,7 +279,7 @@ public class SourceInActivitiesTest extends BaseTest {
         bio.setPersonalDetails(personalDetails);
         OrcidInternal internal = new OrcidInternal();
         internal.setPreferences(preferences);
-        profile.setOrcidBio(bio);       
+        profile.setOrcidBio(bio);
         profile.setOrcidInternal(internal);
         OrcidHistory orcidHistory = new OrcidHistory();
         orcidHistory.setClaimed(new Claimed(true));
@@ -181,25 +289,45 @@ public class SourceInActivitiesTest extends BaseTest {
         profile.setPassword("password1");
         return orcidProfileManager.createOrcidProfile(profile, false);
     }
-    
-    private ProfileWorkEntity getProfileWorkEntity(String userOrcid, String clientId) {        
-        String workId = "";
-        if(PojoUtil.isEmpty(clientId)) {
-            WorkEntity workEntity = new WorkEntity();
-            workEntity.setTitle("Work " + System.currentTimeMillis());
-            workEntity.setWorkType(WorkType.BOOK);
-            workEntity = workManager.addWork(workEntity);
-            workId = String.valueOf(workEntity.getId());
-            profileWorkManager.addProfileWork(userOrcid, workEntity.getId(), Visibility.PUBLIC, userOrcid);
-        } else {
-            Work work = new Work();
-            WorkTitle title = new WorkTitle();
-            title.setTitle(new Title("Work " + System.currentTimeMillis()));            
-            work.setWorkTitle(title);
-            work.setWorkType(org.orcid.jaxb.model.record.WorkType.BOOK);
-            work = profileWorkManager.createWork(userOrcid, work);
-            workId = work.getPutCode();
-        }
-        return profileWorkManager.getProfileWork(userOrcid, workId);
+
+    private ProfileWorkEntity getProfileWorkEntity(String userOrcid) {
+        Work work = new Work();
+        WorkTitle title = new WorkTitle();
+        title.setTitle(new Title("Work " + System.currentTimeMillis()));
+        work.setWorkTitle(title);
+        work.setWorkType(org.orcid.jaxb.model.record.WorkType.BOOK);
+        work = profileWorkManager.createWork(userOrcid, work);
+        return profileWorkManager.getProfileWork(userOrcid, work.getPutCode());
     }
+
+    private ProfileFundingEntity getProfileFundingEntity(String userOrcid) {
+        Funding funding = new Funding();        
+        funding.setOrganization(getCommonOrganization());
+        FundingTitle title = new FundingTitle();
+        title.setTitle(new Title("Title " + System.currentTimeMillis()));
+        funding.setTitle(title);
+        funding.setType(org.orcid.jaxb.model.record.FundingType.AWARD);
+        funding = profileFundingManager.createFunding(userOrcid, funding);
+        return profileFundingManager.getProfileFundingEntity(funding.getPutCode());
+    }
+
+    private Education getEducationEntity(String userOrcid) {
+        Education education = new Education();
+        education.setOrganization(getCommonOrganization());
+        education = affiliationsManager.createEducationAffiliation(userOrcid, education);
+        return affiliationsManager.getEducationAffiliation(userOrcid, education.getPutCode());
+    }
+
+    private Organization getCommonOrganization() {
+        if (organization == null) {
+            OrganizationAddress address = new OrganizationAddress();
+            address.setCity("City");
+            address.setRegion("Region");
+            address.setCountry(org.orcid.jaxb.model.common.Iso3166Country.US);                        
+            organization = new Organization();                                    
+            organization.setName("Org name");
+            organization.setAddress(address);
+        }
+        return organization;
+    }        
 }
