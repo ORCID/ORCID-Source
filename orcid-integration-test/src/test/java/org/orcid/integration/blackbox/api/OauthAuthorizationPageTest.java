@@ -31,7 +31,9 @@ import javax.ws.rs.core.MultivaluedMap;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
@@ -42,6 +44,7 @@ import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.orcid.integration.api.t2.T2OAuthAPIService;
+import org.orcid.integration.blackbox.BlackBoxBase;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -59,7 +62,7 @@ import com.sun.jersey.core.util.MultivaluedMapImpl;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-memberV2-context.xml" })
-public class OauthAuthorizationPageTest {
+public class OauthAuthorizationPageTest extends BlackBoxBase {
 
     private static final String STATE_PARAM = "MyStateParam";
     private static final String SCOPES = "/activities/update /activities/read-limited";
@@ -86,16 +89,26 @@ public class OauthAuthorizationPageTest {
     private T2OAuthAPIService<ClientResponse> t2OAuthClient;
 
     private WebDriver webDriver;
-
+    
+    @BeforeClass
+    public static void beforeClass() {
+        revokeApplicationsAccess();
+    }
+    
+    @AfterClass
+    public static void afterClass() {
+        revokeApplicationsAccess();
+    }
+    
     @Before
     public void before() {
-        webDriver = new FirefoxDriver();
+        webDriver = new FirefoxDriver();              
     }
 
     @After
     public void after() {
-        webDriver.quit();
-    }
+        webDriver.quit();        
+    }        
 
     @Test
     public void testAuthorizeAndRegister() throws JSONException, InterruptedException, URISyntaxException {
@@ -446,8 +459,13 @@ public class OauthAuthorizationPageTest {
         // Then, ask again for permissions over other scopes. Note that the user
         // is already logged in
         webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, client1ClientId,
-                ScopePathType.AFFILIATIONS_CREATE.getContent(), redirectUri));        
-
+                ScopePathType.AFFILIATIONS_CREATE.getContent(), redirectUri));                
+                        
+        By authorizeElementLocator = By.id("authorize");
+        (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(authorizeElementLocator));        
+        WebElement authorizeButton = webDriver.findElement(authorizeElementLocator);
+        authorizeButton.click();
+        
         (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(new ExpectedCondition<Boolean>() {
             public Boolean apply(WebDriver d) {
                 return d.getCurrentUrl().contains("code=");
@@ -473,7 +491,12 @@ public class OauthAuthorizationPageTest {
         // Repeat the process again with other scope
         webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, client1ClientId,
                 ScopePathType.PEER_REVIEW_CREATE.getContent(), redirectUri));        
-
+               
+        authorizeElementLocator = By.id("authorize");
+        (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(authorizeElementLocator));        
+        authorizeButton = webDriver.findElement(authorizeElementLocator);
+        authorizeButton.click();
+        
         (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(new ExpectedCondition<Boolean>() {
             public Boolean apply(WebDriver d) {
                 return d.getCurrentUrl().contains("code=");
@@ -509,5 +532,5 @@ public class OauthAuthorizationPageTest {
         params.add("redirect_uri", redirectUri);
         params.add("code", authorizationCode);
         return t2OAuthClient.obtainOauth2TokenPost("client_credentials", params);
-    }
+    }        
 }

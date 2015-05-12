@@ -19,6 +19,7 @@ package org.orcid.integration.blackbox;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.List;
 
 import javax.annotation.Resource;
 import javax.xml.bind.JAXBContext;
@@ -27,18 +28,24 @@ import javax.xml.bind.Unmarshaller;
 
 import org.codehaus.jettison.json.JSONException;
 import org.junit.runner.RunWith;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.orcid.api.common.WebDriverHelper;
 import org.orcid.integration.api.helper.OauthHelper;
 import org.orcid.integration.api.memberV2.MemberV2ApiClientImpl;
 import org.orcid.integration.api.t2.T2OAuthAPIService;
+import org.orcid.integration.blackbox.web.SigninTest;
 import org.orcid.jaxb.model.record.Activity;
 import org.orcid.jaxb.model.record.Education;
 import org.orcid.jaxb.model.record.Employment;
 import org.orcid.jaxb.model.record.Funding;
 import org.orcid.jaxb.model.record.PeerReview;
 import org.orcid.jaxb.model.record.Work;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -125,4 +132,53 @@ public class BlackBoxBase {
         }
     }
 
+    public static void revokeApplicationsAccess() {
+        String userName = System.getProperty("org.orcid.web.testUser1.username");
+        String password = System.getProperty("org.orcid.web.testUser1.password");
+        String baseUrl = "http://localhost:8080/orcid-web";
+        if(!PojoUtil.isEmpty(System.getProperty("org.orcid.web.base.url"))) {
+            baseUrl = System.getProperty("org.orcid.web.base.url");
+        }
+        
+        WebDriver webDriver = new FirefoxDriver();        
+        
+        int timeout = 4;
+        webDriver.get(baseUrl + "/userStatus.json?logUserOut=true");
+        webDriver.get(baseUrl + "/my-orcid");
+        SigninTest.signIn(webDriver, userName, password);
+        
+        // Switch to accounts settings page
+        By accountSettingsMenuLink = By.id("accountSettingMenuLink");
+        (new WebDriverWait(webDriver, timeout)).until(ExpectedConditions.presenceOfElementLocated(accountSettingsMenuLink));
+        WebElement menuItem = webDriver.findElement(accountSettingsMenuLink);
+        menuItem.click();
+        
+        try {
+            boolean stillHaveApps = true;
+            while(stillHaveApps) {
+                //Look for each revoke app button
+                By revokeAppBtn = By.id("revokeAppBtn");
+                (new WebDriverWait(webDriver, timeout)).until(ExpectedConditions.presenceOfElementLocated(revokeAppBtn));
+                List<WebElement> appsToRevoke = webDriver.findElements(revokeAppBtn);
+                if(appsToRevoke != null && !appsToRevoke.isEmpty()) {
+                    appsToRevoke.get(0).click();
+                    Thread.sleep(1000);
+                    //Wait for the revoke button
+                    By confirmRevokeAppBtn = By.id("confirmRevokeAppBtn");
+                    (new WebDriverWait(webDriver, timeout)).until(ExpectedConditions.presenceOfElementLocated(confirmRevokeAppBtn));
+                    WebElement trash = webDriver.findElement(confirmRevokeAppBtn);
+                    trash.click();  
+                    Thread.sleep(2000);
+                } else {
+                    stillHaveApps = false;
+                }                                                                    
+            }
+        } catch(Exception e) {
+            //If it fail is because it couldnt find any other application
+        } finally {
+            webDriver.get(baseUrl + "/userStatus.json?logUserOut=true");
+            webDriver.quit();
+        }                
+    }
+    
 }

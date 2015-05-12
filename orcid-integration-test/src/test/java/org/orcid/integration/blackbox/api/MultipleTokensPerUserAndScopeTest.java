@@ -19,10 +19,13 @@ package org.orcid.integration.blackbox.api;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import javax.ws.rs.core.Response;
 
 import org.codehaus.jettison.json.JSONException;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.integration.blackbox.BlackBoxBase;
@@ -38,6 +41,16 @@ import com.sun.jersey.api.client.ClientResponse;
 @ContextConfiguration(locations = { "classpath:test-memberV2-context.xml" })
 public class MultipleTokensPerUserAndScopeTest extends BlackBoxBase {
 
+    @BeforeClass
+    public static void beforeClass() {
+        revokeApplicationsAccess();
+    }
+    
+    @AfterClass
+    public static void afterClass() {
+        revokeApplicationsAccess();
+    }
+    
     @Test
     public void useSameScopesGetDifferentTokensTest() throws InterruptedException, JSONException {
         String scopes = ScopePathType.ACTIVITIES_READ_LIMITED.value() + " " + ScopePathType.PERSON_READ_LIMITED.value();
@@ -63,7 +76,7 @@ public class MultipleTokensPerUserAndScopeTest extends BlackBoxBase {
         ActivitiesSummary token2Activities = token2Response.getEntity(ActivitiesSummary.class);
         assertNotNull(token2Activities);
 
-        assertEquals(token1Activities, token2Activities);
+        assertTrue(token1Activities.equals(token2Activities));
         
         // Check tokens works just for his scopes
         Work workToCreate = (Work) unmarshallFromPath("/record_2.0_rc1/samples/work-2.0_rc1.xml", Work.class);
@@ -91,7 +104,7 @@ public class MultipleTokensPerUserAndScopeTest extends BlackBoxBase {
         ActivitiesSummary token3Activities = token3Response.getEntity(ActivitiesSummary.class);
         assertNotNull(token3Activities);
         
-        assertEquals(token1Activities, token3Activities);
+        assertTrue(token1Activities.equals(token3Activities));
         
         //Check that token 3 can add works
         ClientResponse token3AddWorkresponse = memberV2ApiClient.createWorkXml(user1OrcidId, workToCreate, token3);
