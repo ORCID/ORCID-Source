@@ -3829,7 +3829,7 @@ orcidNgModule.controller('PublicFundingCtrl',['$scope', '$compile', '$filter', '
     $scope.workspaceSrvc = workspaceSrvc;
     $scope.moreInfo = {};
     $scope.editSources = {};
-    $scope.showElement = {};
+    $scope.showElement = {};    
 
     $scope.sortState = new ActSortState(GroupedActivities.FUNDING);
     $scope.sort = function(key) {
@@ -3876,6 +3876,15 @@ orcidNgModule.controller('PublicFundingCtrl',['$scope', '$compile', '$filter', '
 
     $scope.hideTooltip = function (key){    	
         $scope.showElement[key] = false;
+    };
+    
+    $scope.showSources = function(group) {
+        $scope.editSources[group.groupId] = true;
+    };
+    
+    $scope.hideSources = function(group) {
+        $scope.editSources[group.groupId] = false;
+        group.activePutCode = group.defaultPutCode;
     };
 
 }]);
@@ -6300,9 +6309,8 @@ orcidNgModule.controller('revokeApplicationFormCtrl',['$scope', '$compile', func
 /**
  * Manage members controller
  * */
-orcidNgModule.controller('manageMembersCtrl',['$scope', '$compile', function manageMembersCtrl($scope, $compile) {
-    $scope.showEditClientModal = false;
-    $scope.showEditMemberModal = false;
+orcidNgModule.controller('manageMembersCtrl',['$scope', '$compile', function manageMembersCtrl($scope, $compile) {    
+    $scope.showFindModal = false;
     $scope.success_message = null;
     $scope.client_id = null;
     $scope.client = null;
@@ -6312,21 +6320,45 @@ orcidNgModule.controller('manageMembersCtrl',['$scope', '$compile', function man
     $scope.newMember = null;
     $scope.groups = [];
 
-    $scope.toggleEditClientModal = function() {
-        $scope.showEditClientModal = !$scope.showEditClientModal;
-        $('#edit_client_modal').toggle();
-    };
-
     $scope.toggleGroupsModal = function() {
         $scope.showAdminGroupsModal = !$scope.showAdminGroupsModal;
         $('#admin_groups_modal').toggle();
     };
+    
+    $scope.toggleFindModal = function() {
+        $scope.showAdminGroupsModal = !$scope.showAdminGroupsModal;
+        $('#find_edit_modal').toggle();
+    };
+    
 
-    $scope.toggleEditMemberModal = function() {
-        $scope.showEditMemberModal = !$scope.showEditMemberModal;
-        $('#edit_member_modal').toggle();
-    }
-
+    /**
+     * FIND
+     * */
+    $scope.findAny = function() {
+    	success_edit_member_message = null;
+    	success_message = null;
+    	$.ajax({
+            url: getBaseUri()+'/manage-members/find.json?id=' + $scope.any_id,
+            type: 'GET',
+            dataType: 'json',
+            success: function(data){
+            	console.log(angular.toJson(data));                
+            	$scope.$apply(function(){  
+                	if(data.client == true) {
+                    	$scope.client = data.clientObject;
+                    	$scope.member = null;
+                    } else {
+                    	$scope.client = null;
+                    	$scope.member = data.memberObject;
+                    }
+                });
+            }
+        }).fail(function(error) {
+            // something bad is happening!
+            console.log("Error finding the information");
+        });
+    };
+    
     /**
      * MEMBERS
      * */
@@ -6423,7 +6455,6 @@ orcidNgModule.controller('manageMembersCtrl',['$scope', '$compile', function man
             type: 'GET',
             dataType: 'json',
             success: function(data) {
-                console.log(angular.toJson(data));
                 $scope.client = data;
                 $scope.$apply();
             }

@@ -18,7 +18,6 @@ package org.orcid.frontend.web.controllers;
 
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.util.ArrayList;
@@ -46,6 +45,7 @@ import org.orcid.core.manager.OrcidSearchManager;
 import org.orcid.core.manager.RegistrationManager;
 import org.orcid.core.manager.RegistrationRoleManager;
 import org.orcid.core.manager.SecurityQuestionManager;
+import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.utils.PasswordResetToken;
 import org.orcid.frontend.web.controllers.helper.SearchOrcidSolrCriteria;
 import org.orcid.frontend.web.forms.ChangeSecurityQuestionForm;
@@ -89,7 +89,6 @@ import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Registration;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.utils.DateUtils;
-import org.orcid.utils.OrcidWebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -132,6 +131,9 @@ public class RegistrationController extends BaseController {
     final static Integer DUP_SEARCH_START = 0;
 
     final static Integer DUP_SEARCH_ROWS = 25;
+
+    @Resource
+    private OrcidUrlManager orcidUrlManager;
 
     @Resource
     private RegistrationManager registrationManager;
@@ -544,8 +546,7 @@ public class RegistrationController extends BaseController {
                 mav.addObject("disabledAccount", true);
                 return mav;
             } else {
-                URI uri = OrcidWebUtils.getServerUriWithContextPath(request);
-                registrationManager.resetUserPassword(submittedEmail, profile, uri);
+                registrationManager.resetUserPassword(submittedEmail, profile);
                 mav.addObject("passwordResetSuccessful", true);
                 return mav;
             }

@@ -278,7 +278,7 @@
 																    
 	        <#if RequestParameters['OldPersonal']??>	        
 				<p class="hoover-white-fonts">	       
-		       		<a href="<@spring.url '/account/manage-bio-settings'/>" id="update-personal-modal-link" class="label btn-primary"><@orcid.msg 'workspace.Update'/></a>
+		       		<a href="<@orcid.rootPath '/account/manage-bio-settings'/>" id="update-personal-modal-link" class="label btn-primary"><@orcid.msg 'workspace.Update'/></a>
 		        </p>
 	        </#if>
 		</div>
@@ -307,7 +307,7 @@
 	       				<div class="row">
 	       					<div class="col-md-12 col-sm-12 col-xs-12">	 			   			
 	 			   					        
-	      			   		   		<a href="<@spring.url '/account/manage-bio-settings'/>" id="update-personal-modal-link" class="label btn-primary"><@orcid.msg 'workspace.Update'/></a>        			   		
+	      			   		   		<a href="<@orcid.rootPath '/account/manage-bio-settings'/>" id="update-personal-modal-link" class="label btn-primary"><@orcid.msg 'workspace.Update'/></a>        			   		
 	      			    	 			   			
 	 			   			</div>
 	  			   		</div>
@@ -352,7 +352,7 @@
 					    		    	<#list workImportWizards?sort_by("displayName") as thirdPartyDetails>					    		    				
 						        	       	<#assign redirect = (thirdPartyDetails.redirectUris.redirectUri[0].value) >
 					            	   		<#assign predefScopes = (thirdPartyDetails.redirectUris.redirectUri[0].scopeAsSingleString) >
-					                   		<strong><a ng-click="openImportWizardUrl('<@spring.url '/oauth/authorize?client_id=${thirdPartyDetails.clientId}&response_type=code&scope=${predefScopes}&redirect_uri=${redirect}'/>')">${thirdPartyDetails.displayName}</a></strong><br />					                   							                   		                		
+					                   		<strong><a ng-click="openImportWizardUrl('<@orcid.rootPath '/oauth/authorize?client_id=${thirdPartyDetails.clientId}&response_type=code&scope=${predefScopes}&redirect_uri=${redirect}'/>')">${thirdPartyDetails.displayName}</a></strong><br />					                   							                   		                		
 					                 		<div class="justify">												
 												<p class="wizard-description" ng-class="{'ellipsis-on' : wizardDescExpanded[${thirdPartyDetails.clientId}] == false || wizardDescExpanded[${thirdPartyDetails.clientId}] == null}">
 													${(thirdPartyDetails.shortDescription)!}													
@@ -375,7 +375,7 @@
 						<div class="bulk-edit">
 							<div class="row">
 								<div class="col-md-7 col-sm-7 col-xs-6">
-									<h4><@orcid.msg 'workspace.bulkedit.'/></h4><span class="hide-bulk" ng-click="toggleBulkEdit()"><@orcid.msg 'workspace.bulkedit.hide'/></span>
+									<h4><@orcid.msg 'workspace.bulkedit.title'/></h4><span class="hide-bulk" ng-click="toggleBulkEdit()"><@orcid.msg 'workspace.bulkedit.hide'/></span>
 									<ol>
 										<li><@orcid.msg 'workspace.bulkedit.selectWorks'/></li>
 										<li><@orcid.msg 'workspace.bulkedit.selectAction'/></li>
@@ -519,8 +519,8 @@
 				<@orcid.msg 'workspace.ensure_future_access'/>
 				<br />
 				<br />						
-				<span class="btn btn-primary" id="modal-close" ng-click="verifyEmail()"><@orcid.msg 'workspace.send_verification'/></span>
-				<span class="btn" id="modal-close" ng-click="closeColorBox()"><@orcid.msg 'freemarker.btncancel'/></span>								
+				<button class="btn btn-primary" id="modal-close" ng-click="verifyEmail()"><@orcid.msg 'workspace.send_verification'/></button>
+				<button class="btn" id="modal-close" ng-click="closeColorBox()"><@orcid.msg 'freemarker.btncancel'/></button>								
 			</div>
 		</div>		
 	</div>		
@@ -549,7 +549,7 @@
 		</div>
 		<div class="row">
 			<div class="col-md-12 col-xs-12 col-sm-12">
-				<span class="btn close-button pull-right" id="modal-close" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel'/></span>
+				<button class="btn close-button pull-right" id="modal-close" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel'/></button>
 			</div>
 		</div>
 	</div>
@@ -568,7 +568,7 @@
 				<h4><@orcid.msg 'workspace.sent'/></h4>
 				<@orcid.msg 'workspace.check_your_email'/><br />
 				<br />
-				<span class="btn" ng-click="closeColorBox()"><@orcid.msg 'freemarker.btnclose'/></span>
+				<button class="btn" ng-click="closeColorBox()"><@orcid.msg 'freemarker.btnclose'/></button>
 			</div>
 		</div>
 	</div>
@@ -580,7 +580,7 @@
 			<div class="col-md-12 col-sm-12 col-xs-12">
 				<strong><@spring.message "orcid.frontend.web.record_claimed"/></strong><br />
 				<br />
-				<button class="btn" ng-click="close()"><@spring.message "freemarker.btnclose"/></button>
+				<button class="btn btn-primary" ng-click="close()"><@spring.message "freemarker.btnclose"/></button>
 			</div>
 		</div>
 	</div>
@@ -595,7 +595,7 @@
 				<strong ng-bind="sourceGrantReadWizard.displayName"></strong> <@spring.message "orcid.frontend.web.record_claimed.would_like"/><br />
 				<br />
 				<button class="btn btn-primary" ng-click="yes()"><@spring.message "orcid.frontend.web.record_claimed.yes_go_to" /></button>
-				<button class="btn" ng-click="close()"><@spring.message "orcid.frontend.web.record_claimed.no_thanks" /></button>
+				<button class="btn btn-primary" ng-click="close()"><@spring.message "orcid.frontend.web.record_claimed.no_thanks" /></button>
 			</div>
 		</div>
 	</div>
@@ -636,7 +636,7 @@
 				<div class="right">			
 					<a ng-click="closeModal()">
 						<@orcid.msg 'freemarker.btncancel'/>
-					</a>  <button class="btn blue" ng-click="bulkDeleteFunction()"><@orcid.msg 'freemarker.btnDelete'/></button>
+					</a>  <button class="btn btn-danger" ng-click="bulkDeleteFunction()"><@orcid.msg 'freemarker.btnDelete'/></button>
 				</div>				
 			</div>
 		</div>		
@@ -662,7 +662,7 @@
     		    	<#list workImportWizards?sort_by("displayName") as thirdPartyDetails>
 	        	       	<#assign redirect = (thirdPartyDetails.redirectUris.redirectUri[0].value) >
             	   		<#assign predefScopes = (thirdPartyDetails.redirectUris.redirectUri[0].scopeAsSingleString) >
-                   		<strong><a ng-click="openImportWizardUrl('<@spring.url '/oauth/authorize?client_id=${thirdPartyDetails.clientId}&response_type=code&scope=${predefScopes}&redirect_uri=${redirect}'/>')">${thirdPartyDetails.displayName}</a></strong><br />
+                   		<strong><a ng-click="openImportWizardUrl('<@orcid.rootPath '/oauth/authorize?client_id=${thirdPartyDetails.clientId}&response_type=code&scope=${predefScopes}&redirect_uri=${redirect}'/>')">${thirdPartyDetails.displayName}</a></strong><br />
                  		<div class="justify">
 							<p>
 								${(thirdPartyDetails.shortDescription)!}

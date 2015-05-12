@@ -39,13 +39,13 @@ import org.mockito.MockitoAnnotations;
 import org.orcid.core.manager.OrcidClientGroupManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidWebRole;
-import org.orcid.jaxb.model.clientgroup.GroupType;
+import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.Client;
-import org.orcid.pojo.ajaxForm.Group;
+import org.orcid.pojo.ajaxForm.Member;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.RedirectUri;
 import org.orcid.pojo.ajaxForm.Text;
@@ -95,7 +95,7 @@ public class ManageMembersControllerTest extends DBUnitTest {
     }    
         
     protected Authentication getAuthentication() {    
-        OrcidProfileUserDetails details = new OrcidProfileUserDetails("5555-5555-5555-0000", "premium_institution@group.com", "", OrcidType.GROUP, GroupType.PREMIUM_INSTITUTION);
+        OrcidProfileUserDetails details = new OrcidProfileUserDetails("5555-5555-5555-0000", "premium_institution@group.com", "", OrcidType.GROUP, MemberType.PREMIUM_INSTITUTION);
         UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(details, "5555-5555-5555-0000", Arrays.asList(OrcidWebRole.ROLE_GROUP));
         return auth;
     }
@@ -107,7 +107,7 @@ public class ManageMembersControllerTest extends DBUnitTest {
         assertNotNull(profile.getPrimaryEmail());
         String existingEmail = profile.getPrimaryEmail().getId();
         assertNotNull(existingEmail);
-        Group group = new Group();
+        Member group = new Member();
         group.setGroupName(Text.valueOf("Group Name"));
         group.setType(Text.valueOf("basic"));
         group.setSalesforceId(Text.valueOf(""));
@@ -133,7 +133,7 @@ public class ManageMembersControllerTest extends DBUnitTest {
 
     @Test    
     public void createMemberProfileWithInvalidGroupNameTest() throws Exception {
-        Group group = new Group();
+        Member group = new Member();
         group.setEmail(Text.valueOf("group@email.com"));
         group.setType(Text.valueOf("basic"));
         group.setSalesforceId(Text.valueOf(""));
@@ -154,7 +154,7 @@ public class ManageMembersControllerTest extends DBUnitTest {
 
     @Test    
     public void createMemberProfileWithInvalidTypeTest() throws Exception {
-        Group group = new Group();
+        Member group = new Member();
         group.setEmail(Text.valueOf("group@email.com"));
         group.setGroupName(Text.valueOf("Group Name"));
         group.setSalesforceId(Text.valueOf(""));
@@ -174,7 +174,7 @@ public class ManageMembersControllerTest extends DBUnitTest {
     
     @Test    
     public void createMemberProfileWithInvalidSalesforceIdTest() throws Exception {
-        Group group = new Group();
+        Member group = new Member();
         group.setEmail(Text.valueOf("group@email.com"));
         group.setGroupName(Text.valueOf("Group Name"));
         group.setType(Text.valueOf("basic"));        
@@ -194,7 +194,7 @@ public class ManageMembersControllerTest extends DBUnitTest {
 
     @Test    
     public void createMemberProfileTest() throws Exception {
-        Group group = new Group();
+        Member group = new Member();
         group.setEmail(Text.valueOf("group@email.com"));
         group.setGroupName(Text.valueOf("Group Name"));
         group.setType(Text.valueOf("premium-institution"));
@@ -206,7 +206,7 @@ public class ManageMembersControllerTest extends DBUnitTest {
 
     @Test    
     public void findMemberByOrcidTest() throws Exception {
-        Group group = new Group();
+        Member group = new Member();
         group.setEmail(Text.valueOf("group@email.com"));
         group.setGroupName(Text.valueOf("Group Name"));
         group.setType(Text.valueOf("premium-institution"));
@@ -217,7 +217,7 @@ public class ManageMembersControllerTest extends DBUnitTest {
 
         // Test find by orcid
         String orcid = group.getGroupOrcid().getValue();
-        Group newGroup = manageMembers.findMember(orcid);
+        Member newGroup = manageMembers.findMember(orcid);
         assertNotNull(newGroup);
 
         assertFalse(PojoUtil.isEmpty(newGroup.getGroupOrcid()));
@@ -231,7 +231,7 @@ public class ManageMembersControllerTest extends DBUnitTest {
         assertEquals(orcid, newGroup.getGroupOrcid().getValue());
 
         // Test find by email
-        Group newGroup2 = manageMembers.findMember("group@email.com");
+        Member newGroup2 = manageMembers.findMember("group@email.com");
         assertNotNull(newGroup2);
 
         assertFalse(PojoUtil.isEmpty(newGroup2.getGroupOrcid()));
@@ -248,7 +248,7 @@ public class ManageMembersControllerTest extends DBUnitTest {
     
     @Test
     public void editMemberTest() throws Exception {
-        Group group = new Group();
+        Member group = new Member();
         group.setEmail(Text.valueOf("group@email.com"));
         group.setGroupName(Text.valueOf("Group Name"));
         group.setType(Text.valueOf("premium-institution"));
@@ -262,7 +262,7 @@ public class ManageMembersControllerTest extends DBUnitTest {
         group.setGroupName(Text.valueOf("Updated Group Name"));
         
         manageMembers.updateMember(group);
-        Group updatedGroup = manageMembers.findMember(group.getGroupOrcid().getValue());
+        Member updatedGroup = manageMembers.findMember(group.getGroupOrcid().getValue());
         assertNotNull(updatedGroup);
         assertEquals(group.getGroupOrcid().getValue(), updatedGroup.getGroupOrcid().getValue());
         assertEquals("Updated Group Name", updatedGroup.getGroupName().getValue());
@@ -271,7 +271,7 @@ public class ManageMembersControllerTest extends DBUnitTest {
     @Test
     public void editMemberWithInvalidEmailTest() throws Exception {
         //Create one member
-        Group group = new Group();
+        Member group = new Member();
         group.setEmail(Text.valueOf("group@email.com"));
         group.setGroupName(Text.valueOf("Group Name"));
         group.setType(Text.valueOf("premium-institution"));
@@ -280,7 +280,7 @@ public class ManageMembersControllerTest extends DBUnitTest {
         assertNotNull(group);
         assertEquals(0, group.getErrors().size());
         //Try to create another member with the same email
-        group = new Group();
+        group = new Member();
         group.setEmail(Text.valueOf("group@email.com"));
         group.setGroupName(Text.valueOf("Group Name"));
         group.setType(Text.valueOf("premium-institution"));
@@ -294,7 +294,7 @@ public class ManageMembersControllerTest extends DBUnitTest {
     @Test
     public void editMemberWithInvalidSalesforceIdTest() throws Exception {
         //Create one member
-        Group group = new Group();
+        Member group = new Member();
         group.setEmail(Text.valueOf("group@email.com"));
         group.setGroupName(Text.valueOf("Group Name"));
         group.setType(Text.valueOf("premium-institution"));
@@ -303,7 +303,7 @@ public class ManageMembersControllerTest extends DBUnitTest {
         assertNotNull(group);
         assertEquals(0, group.getErrors().size());
         //Try to create another member with the same email
-        group = new Group();
+        group = new Member();
         group.setEmail(Text.valueOf("group2@email.com"));
         group.setGroupName(Text.valueOf("Group Name"));
         group.setType(Text.valueOf("premium-institution"));
@@ -407,19 +407,19 @@ public class ManageMembersControllerTest extends DBUnitTest {
     
     @Test
     public void editGroupTypeTest() throws Exception {
-        Group group_0000 = manageMembers.findMember("5555-5555-5555-0000");
+        Member group_0000 = manageMembers.findMember("5555-5555-5555-0000");
         assertNotNull(group_0000);
         assertNotNull(group_0000.getType());
-        assertEquals(GroupType.PREMIUM_INSTITUTION.value(), group_0000.getType().getValue());
+        assertEquals(MemberType.PREMIUM_INSTITUTION.value(), group_0000.getType().getValue());
         
         // Update group type to basic
-        group_0000.setType(Text.valueOf(GroupType.BASIC.value()));
+        group_0000.setType(Text.valueOf(MemberType.BASIC.value()));
         manageMembers.updateMember(group_0000);                                
         
         group_0000 = manageMembers.findMember("5555-5555-5555-0000");
         assertNotNull(group_0000);
         assertNotNull(group_0000.getType());
-        assertEquals(GroupType.BASIC.value(), group_0000.getType().getValue());
+        assertEquals(MemberType.BASIC.value(), group_0000.getType().getValue());
         
     }
 }

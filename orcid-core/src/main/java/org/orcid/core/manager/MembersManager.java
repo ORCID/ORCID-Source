@@ -16,23 +16,19 @@
  */
 package org.orcid.core.manager;
 
-import java.net.URI;
+import org.orcid.pojo.ajaxForm.Client;
+import org.orcid.pojo.ajaxForm.Member;
 
-import org.orcid.core.utils.VerifyRegistrationToken;
-import org.orcid.jaxb.model.message.OrcidProfile;
+public interface MembersManager {
 
-/**
- * 
- * @author Will Simpson
- * 
- */
-public interface RegistrationManager {
+    Member createMember(Member newMember);
+    
+    Member updateMemeber(Member member);
+    
+    Member getMember(String memberId);      
+    
+    Client getClient(String clientId);
+    
+    Client updateClient(Client client);
 
-    VerifyRegistrationToken parseEncyrptedParamsForVerification(String encryptedParams);
-
-    void resetUserPassword(String toEmail, OrcidProfile orcidProfile);
-
-    OrcidProfile createMinimalRegistration(OrcidProfile orcidProfile);
-
-    Long getCount();
 }

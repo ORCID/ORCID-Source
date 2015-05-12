@@ -14,25 +14,30 @@
  *
  * =============================================================================
  */
-package org.orcid.core.manager;
+package org.orcid.pojo.ajaxForm;
 
-import java.net.URI;
+public interface OauthForm {
+    Text getClientId();
 
-import org.orcid.core.utils.VerifyRegistrationToken;
-import org.orcid.jaxb.model.message.OrcidProfile;
+    void setClientId(Text clientId);
 
-/**
- * 
- * @author Will Simpson
- * 
- */
-public interface RegistrationManager {
+    Text getRedirectUri();
 
-    VerifyRegistrationToken parseEncyrptedParamsForVerification(String encryptedParams);
+    void setRedirectUri(Text redirectUri);
 
-    void resetUserPassword(String toEmail, OrcidProfile orcidProfile);
+    Text getScope();
 
-    OrcidProfile createMinimalRegistration(OrcidProfile orcidProfile);
+    void setScope(Text scope);
 
-    Long getCount();
+    Text getResponseType();
+
+    void setResponseType(Text responseType);
+    
+    boolean getApproved();
+
+    void setApproved(boolean approved);
+    
+    boolean getPersistentTokenEnabled();
+
+    void setPersistentTokenEnabled(boolean persistentTokenEnabled);
 }

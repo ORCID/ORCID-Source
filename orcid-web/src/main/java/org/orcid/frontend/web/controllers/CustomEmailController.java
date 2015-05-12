@@ -28,7 +28,7 @@ import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.CustomEmailManager;
 import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.ProfileEntityManager;
-import org.orcid.jaxb.model.clientgroup.GroupType;
+import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.persistence.jpa.entities.CustomEmailEntity;
 import org.orcid.persistence.jpa.entities.EmailType;
@@ -68,8 +68,8 @@ public class CustomEmailController extends BaseController {
         ModelAndView mav = new ModelAndView("custom_emails");
         boolean haveErrors = false;        
         String groupId = getEffectiveUserOrcid();        
-        GroupType groupType = profileEntityManager.getGroupType(groupId);        
-        if(!GroupType.PREMIUM_INSTITUTION.equals(groupType)) {
+        MemberType groupType = profileEntityManager.getGroupType(groupId);        
+        if(!MemberType.PREMIUM_INSTITUTION.equals(groupType)) {
             haveErrors = true;
             mav.addObject("invalid_request", getMessage("manage.developer_tools.group.custom_emails.invalid_group_type"));
         } else if(!clientDetailsManager.exists(clientId)) {
@@ -115,8 +115,8 @@ public class CustomEmailController extends BaseController {
         List<CustomEmailForm> result = new ArrayList<CustomEmailForm>();
         boolean haveErrors = false;
         String groupId = getEffectiveUserOrcid();        
-        GroupType groupType = profileEntityManager.getGroupType(groupId);        
-        if(!GroupType.PREMIUM_INSTITUTION.equals(groupType)) {
+        MemberType groupType = profileEntityManager.getGroupType(groupId);        
+        if(!MemberType.PREMIUM_INSTITUTION.equals(groupType)) {
             haveErrors = true;           
         } else if(!clientDetailsManager.exists(clientId)) {
             haveErrors = true;

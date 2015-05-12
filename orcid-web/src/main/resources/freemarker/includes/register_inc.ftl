@@ -170,7 +170,7 @@
 	     		    <#if request.requestURI?ends_with("/oauth/signin")>
 	     		        <a href="javascript:$.colorbox.close()">
 	     		    <#else>
-	     		        <a href="<@spring.url "/signin" />" target="signin">
+	     		        <a href="<@orcid.rootPath "/signin" />" target="signin">
 	     		    </#if>
 	     		    ${springMacroRequestContext.getMessage("duplicate_researcher.to_access.2")}</a>${springMacroRequestContext.getMessage("duplicate_researcher.to_access.3")}
 	     		</h4>
@@ -194,7 +194,7 @@
 						</thead>
 						<tbody>
 						 	<tr ng-repeat='dup in duplicates'>
-					 			<td><a href="<@spring.url '/'/>{{dup.orcid}}" target="_blank">{{dup.orcid}}</a></td>
+					 			<td><a href="<@orcid.rootPath '/'/>{{dup.orcid}}" target="_blank">{{dup.orcid}}</a></td>
         						<td>{{dup.email}}</td>
         						<td>{{dup.givenNames}}</td>
         						<td>{{dup.familyNames}}</td>

@@ -18,7 +18,7 @@
 -->
 <@public classes=['home'] nav="signin">
 <#include "sandbox_warning.ftl"/>
-    <form class="form-sign-in shibboleth" id="loginForm" ng-enter-submit action="<@spring.url '/signin/auth'/>" method="post">
+    <form class="form-sign-in shibboleth" id="loginForm" ng-enter-submit action="<@orcid.rootPath '/signin/auth'/>" method="post">
         <div class="row">
         	<div class="col-md-offset-3 col-md-9 col-sm-offset-3 col-sm-9 col-xs-12">
 	            <div class="alert">Keep your mock REMOTE_USER and Shib-Identity-Provider as secret as your password if you are using mocked headers, because they can be used to get access to your account once they are linked.</div>
@@ -61,10 +61,10 @@
         <div class="row">
             <div class="control-group col-md-offset-3 col-md-9 col-sm-9 col-sm-offset-3 col-xs-12"> 
                 <div id="login-reset">
-                    <a href="<@spring.url '/reset-password'/>">${springMacroRequestContext.getMessage("login.reset")}</a>&nbsp;&nbsp;
+                    <a href="<@orcid.rootPath '/reset-password'/>">${springMacroRequestContext.getMessage("login.reset")}</a>&nbsp;&nbsp;
                 </div>
                 <div id="login-register">
-                    <a class="reg" href="<@spring.url '/register'/>">${springMacroRequestContext.getMessage("login.register")}</a>
+                    <a class="reg" href="<@orcid.rootPath '/register'/>">${springMacroRequestContext.getMessage("login.register")}</a>
                 </div>
             </div>            
         </div>

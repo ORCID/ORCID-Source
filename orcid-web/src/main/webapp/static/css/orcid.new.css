@@ -2424,6 +2424,10 @@ label.error,span.orcid-error {
 
 span.orcid-error {
 	display: block;
+	float: left;
+	clear: both;
+	width: 100%;
+	margin-bottom: 15px;
 }
 
 input.error {
@@ -3024,7 +3028,7 @@ ul.personal-inf-display li:last-child{
 }
 
 .citation-title{
-	margin: 70px 0 0 0;
+	margin: 50px 0 0 0;
 	display: block;
 }
 
@@ -3040,15 +3044,9 @@ ul.personal-inf-display li:last-child{
 	color: #B94A48;
 }
 
-.add-work #day,
-.add-work #month{
-	width: 100px;
-	margin: 0 10px 0 0; 
-}
-
-.add-work #year{
-	width: 100px;
-	margin-bottom:0;
+.add-work #month,
+.add-work #year{	
+	margin: 0 5px 0 0; 
 }
 
 .add-funding #month {
@@ -5289,12 +5287,6 @@ ul.workspace-private-toolbar .popover-help-container .popover{
 	margin-left: 15px;
 }
 
-.bulk-delete-modal button:hover, 
-.bulk-delete-modal button:focus{
-	color: #FFF;
-	background: #A3CD39;
-}
-
 .dark-grey{
 	color: #494A4C;	
 }
@@ -6178,7 +6170,7 @@ hr{
 		min-height: 30px;
 		height: 50px;
 		text-align: center;
-		top: 260px; /* Login layout top */
+		top: 165px; /* Login layout top */
 	}
 	#loginForm #ajax-loader {
 		width: 100%;
@@ -6429,11 +6421,7 @@ hr{
 	}
 		
 	.add-work .input-xlarge{
-		width: 96%;
-	}
-	
-	.add-work #day, .add-work #month{
-		width: 72px;
+		width: 95%;
 	}
 	
 	.add-work .citation-title{
@@ -6447,11 +6435,7 @@ hr{
 	
 	.add-work .alert{
 		display: block;
-	}
-	
-	.add-work select{
-		width: 95%;
-	}
+	}	
 	
 	.control-group{
 		width: 100%;

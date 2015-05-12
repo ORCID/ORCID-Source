@@ -139,10 +139,6 @@ public class MemberV2ApiClientImpl {
         return orcidClientHelper.putClientResponseWithToken(location, VND_ORCID_XML, jaxbRootElement, accessToken);
     }   
     
-    
-    
-    
-    
     public ClientResponse viewPeerReviewXml(String orcid, String putCode, String accessToken) {
         URI putCodeUri = UriBuilder.fromPath(PEER_REVIEW + PUTCODE).build(orcid, putCode);
         return orcidClientHelper.getClientResponseWithToken(putCodeUri, VND_ORCID_XML, accessToken);

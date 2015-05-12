@@ -36,7 +36,7 @@ import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.jaxb.model.common.VisibilityType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "role", "organization", "externalIdentifiers", "url", "type", "completionDate", "subject", "source", "lastModifiedDate", "createdDate" })
+@XmlType(propOrder = { "putCode", "path", "source", "createdDate", "lastModifiedDate", "role", "organization", "externalIdentifiers", "url", "type", "completionDate", "subject" })
 @XmlRootElement(name = "peer-review", namespace = "http://www.orcid.org/ns/peer-review")
 public class PeerReview implements VisibilityType, Activity, Serializable, OrganizationHolder {
     private static final long serialVersionUID = -1112309604310926743L;

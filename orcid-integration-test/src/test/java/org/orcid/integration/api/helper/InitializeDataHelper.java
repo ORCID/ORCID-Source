@@ -37,7 +37,7 @@ import org.orcid.core.manager.OrcidClientGroupManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.jaxb.model.clientgroup.ClientType;
-import org.orcid.jaxb.model.clientgroup.GroupType;
+import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
 import org.orcid.jaxb.model.clientgroup.RedirectUri;
@@ -67,7 +67,7 @@ import org.orcid.persistence.dao.ProfileFundingDao;
 import org.orcid.persistence.dao.ProfileWorkDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientSecretEntity;
-import org.orcid.pojo.ajaxForm.Group;
+import org.orcid.pojo.ajaxForm.Member;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Registration;
 import org.orcid.pojo.ajaxForm.Text;
@@ -121,7 +121,7 @@ public class InitializeDataHelper {
     private ProfileEntityManager profileEntityManager;    
     
     //Map containing a list of members, the key is the group type, there will be one member for each group type
-    private Map<String, Group> members = new HashMap<String, Group>();
+    private Map<String, Member> members = new HashMap<String, Member>();
     
     //Map containing a list of clients, the key is the member orcid
     private Map<String, OrcidClient> clients = new HashMap<String, OrcidClient>();
@@ -149,15 +149,15 @@ public class InitializeDataHelper {
         clientDetailsDao.removeClient(clientId);
     }
     
-    public Group createMember(GroupType type) throws Exception {
+    public Member createMember(MemberType type) throws Exception {
         if(members.containsKey(type.value())) {            
-            Group group = members.get(type.value());
+            Member group = members.get(type.value());
             if(this.profileEntityManager.orcidExists(group.getGroupOrcid().getValue()))
                 return group;
         }
         
         String name = type.value() + System.currentTimeMillis() + "@orcid-integration-test.com";
-        Group group = new Group();
+        Member group = new Member();
         group.setEmail(Text.valueOf(name));
         group.setGroupName(Text.valueOf(name));
         group.setType(Text.valueOf(type.value()));
@@ -176,7 +176,7 @@ public class InitializeDataHelper {
             return clients.get(groupOrcid);
         }
         
-        GroupType groupType = profileDao.getGroupType(groupOrcid);
+        MemberType groupType = profileDao.getGroupType(groupOrcid);
         ClientType clientType = null;
         if(groupType == null)
             return null;

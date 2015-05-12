@@ -26,6 +26,7 @@ import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.RedirectUris;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
+import org.orcid.persistence.jpa.entities.ClientSecretEntity;
 
 public class Client implements ErrorsInterface, Serializable {
 
@@ -38,6 +39,8 @@ public class Client implements ErrorsInterface, Serializable {
     private Text clientId;
     private Text clientSecret;
     private Text type; 
+    private Text memberId;
+    private Text memberName;
     private Checkbox persistentTokenEnabled;
     private List<RedirectUri> redirectUris;
     private Set<String> scopes;
@@ -48,8 +51,7 @@ public class Client implements ErrorsInterface, Serializable {
             client.setClientId(Text.valueOf(clientDetails.getClientId()));
             client.setDisplayName(Text.valueOf(clientDetails.getClientName()));
             client.setShortDescription(Text.valueOf(clientDetails.getClientDescription()));
-            client.setWebsite(Text.valueOf(clientDetails.getClientWebsite()));
-
+            client.setWebsite(Text.valueOf(clientDetails.getClientWebsite()));                               
             client.redirectUris = new ArrayList<RedirectUri>();
             if (clientDetails.getClientRegisteredRedirectUris() != null) {
                 for (ClientRedirectUriEntity rUri : clientDetails.getClientRegisteredRedirectUris()) {
@@ -63,8 +65,18 @@ public class Client implements ErrorsInterface, Serializable {
             
             if(clientDetails.isScoped())
                 client.setScopes(clientDetails.getScope());
+            
+            client.setMemberId(Text.valueOf(clientDetails.getGroupProfileId()));
         }
         return client;
+    }
+    
+    public static List<Client> valueOf(List<ClientDetailsEntity> clientDetails) {
+        List<Client> clients = new ArrayList<Client>();
+        for(ClientDetailsEntity entity : clientDetails) {
+            clients.add(Client.valueOf(entity));
+        }
+        return clients;
     }
 
     public static Client valueOf(OrcidClient orcidClient) {
@@ -197,5 +209,21 @@ public class Client implements ErrorsInterface, Serializable {
     
     public Set<String> getScopes() {
         return scopes;
-    }        
+    }
+
+    public Text getMemberId() {
+        return memberId;
+    }
+
+    public void setMemberId(Text memberId) {
+        this.memberId = memberId;
+    }
+
+    public Text getMemberName() {
+        return memberName;
+    }
+
+    public void setMemberName(Text memberName) {
+        this.memberName = memberName;
+    }           
 }

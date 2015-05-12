@@ -35,6 +35,7 @@ import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
+import org.orcid.core.oauth.OrcidRandomValueTokenServices;
 import org.orcid.core.oauth.service.OrcidAuthorizationEndpoint;
 import org.orcid.jaxb.model.message.CreationMethod;
 import org.orcid.jaxb.model.message.OrcidProfile;
@@ -42,6 +43,7 @@ import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.OauthAuthorizeForm;
+import org.orcid.pojo.ajaxForm.OauthForm;
 import org.orcid.pojo.ajaxForm.OauthRegistration;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
@@ -99,6 +101,8 @@ public class OauthConfirmAccessController extends BaseController {
     private RegistrationController registrationController;
     @Resource
     private ProfileEntityManager profileEntityManager;
+    @Resource
+    private OrcidRandomValueTokenServices tokenServices;
     
     @Resource(name = "profileEntityCacheManager")
     ProfileEntityCacheManager profileEntityCacheManager;
@@ -227,7 +231,7 @@ public class OauthConfirmAccessController extends BaseController {
     }
 
     @RequestMapping(value = "/confirm_access", method = RequestMethod.GET)
-    public ModelAndView loginGetHandler(HttpServletRequest request, ModelAndView mav, @RequestParam("client_id") String clientId, @RequestParam("scope") String scope, @RequestParam("redirect_uri") String redirectUri) {
+    public ModelAndView loginGetHandler(HttpServletRequest request,  HttpServletResponse response, ModelAndView mav, @RequestParam("client_id") String clientId, @RequestParam("scope") String scope, @RequestParam("redirect_uri") String redirectUri) {
         OrcidProfile profile = orcidProfileManager.retrieveOrcidProfile(getCurrentUserOrcid(), LoadOptions.BIO_ONLY);
 
         Boolean justRegistered = (Boolean) request.getSession().getAttribute(JUST_REGISTERED);
@@ -261,9 +265,50 @@ public class OauthConfirmAccessController extends BaseController {
         }
        
         // Check if the client has persistent tokens enabled
-        if (clientDetails.isPersistentTokensEnabled())
+        if (clientDetails.isPersistentTokensEnabled()) {
             usePersistentTokens = true;
+        }
 
+        // TODO: If persistent tokens are enabled, check for the existing tokens
+        // for this client, if one exists with the same scopes, just return the
+        // authorization code
+        if (usePersistentTokens) {
+            boolean tokenAlreadyExists = tokenServices.tokenAlreadyExists(clientId, getEffectiveUserOrcid(), OAuth2Utils.parseParameterList(scope));
+            if (tokenAlreadyExists) {                
+                AuthorizationRequest authorizationRequest = (AuthorizationRequest) request.getSession().getAttribute("authorizationRequest");
+                Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+                Map<String, String> requestParams = new HashMap<String, String>();
+                copyRequestParameters(request, requestParams);
+                Map<String, String> approvalParams = new HashMap<String, String>();
+
+                requestParams.put(OAuth2Utils.USER_OAUTH_APPROVAL, "true");
+                approvalParams.put(OAuth2Utils.USER_OAUTH_APPROVAL, "true");
+
+                requestParams.put(OauthTokensConstants.TOKEN_VERSION, OauthTokensConstants.PERSISTENT_TOKEN);
+
+                // Check if the client have persistent tokens enabled
+                requestParams.put(OauthTokensConstants.GRANT_PERSISTENT_TOKEN, "false");
+                if (hasPersistenTokensEnabled(clientId)) {
+                    // Then check if the client granted the persistent token
+                    requestParams.put(OauthTokensConstants.GRANT_PERSISTENT_TOKEN, "true");
+                }
+                
+                // Session status
+                SimpleSessionStatus status = new SimpleSessionStatus();
+
+                authorizationRequest.setRequestParameters(requestParams);
+                // Authorization request model
+                Map<String, Object> model = new HashMap<String, Object>();
+                model.put("authorizationRequest", authorizationRequest);
+                
+                // Approve
+                RedirectView view = (RedirectView) authorizationEndpoint.approveOrDeny(approvalParams, model, status, auth);
+                ModelAndView authCodeView = new ModelAndView();
+                authCodeView.setView(view);
+                return authCodeView;
+            }
+        }
+        
         if (clientDetails.getClientType() == null) {
             clientGroupName = PUBLIC_CLIENT_GROUP_NAME;
         } else if (!PojoUtil.isEmpty(clientDetails.getGroupProfileId())) {
@@ -318,34 +363,15 @@ public class OauthConfirmAccessController extends BaseController {
             if (form.getErrors().isEmpty()) {
                 try {
                     // Authenticate user
-                    Authentication auth = authenticateUser(request, form);
+                    Authentication auth = authenticateUser(request, form);                                        
                     // Create authorization params
                     SimpleSessionStatus status = new SimpleSessionStatus();
                     Map<String, Object> model = new HashMap<String, Object>();
                     Map<String, String> params = new HashMap<String, String>();
-                    // Put all request params into the params                    
-                    copyRequestParameters(savedRequest, params);
-                    // Then, put the custom authorization params
-                    params.put(CLIENT_ID_PARAM, form.getClientId().getValue());
-                    if (!PojoUtil.isEmpty(form.getRedirectUri()))
-                        params.put(REDIRECT_URI_PARAM, form.getRedirectUri().getValue());
-                    else
-                        params.put(REDIRECT_URI_PARAM, new String());
-                    if (!PojoUtil.isEmpty(form.getScope()))
-                        params.put(SCOPE_PARAM, form.getScope().getValue());
-                    if (!PojoUtil.isEmpty(form.getResponseType()))
-                        params.put(RESPONSE_TYPE_PARAM, form.getResponseType().getValue());
-                    params.put(OAuth2Utils.USER_OAUTH_APPROVAL, "true");                                        
-                    params.put(OauthTokensConstants.TOKEN_VERSION, OauthTokensConstants.PERSISTENT_TOKEN);
-                    // Check if the client have persistent tokens enabled
-                    params.put(OauthTokensConstants.GRANT_PERSISTENT_TOKEN, "false");
-                    if (hasPersistenTokensEnabled(form.getClientId().getValue()))
-                        // Then check if the client granted the persistent token
-                        if (form.getPersistentTokenEnabled())
-                            params.put(OauthTokensConstants.GRANT_PERSISTENT_TOKEN, "true");
-
                     Map<String, String> approvalParams = new HashMap<String, String>();
-                    approvalParams.put(OAuth2Utils.USER_OAUTH_APPROVAL, "true");
+                    
+                    // Set params 
+                    setOauthParams(savedRequest, form, params, approvalParams, false);
                     
                     // Authorize
                     try {
@@ -437,13 +463,11 @@ public class OauthConfirmAccessController extends BaseController {
 
     @RequestMapping(value = "/custom/registerConfirm.json", method = RequestMethod.POST)
     public @ResponseBody
-    OauthRegistration registerAndAuthorize(HttpServletRequest request, HttpServletResponse response, @RequestBody OauthRegistration form) {
-        form.setErrors(new ArrayList<String>());
-
+    OauthRegistration registerAndAuthorize(HttpServletRequest request, HttpServletResponse response, @RequestBody OauthRegistration form) {                
         if (form.getApproved()) {
             // Check there are no errors
             checkRegisterForm(request, response, form);
-            if (form.getErrors() != null && form.getErrors().isEmpty()) {
+            if (form.getErrors().isEmpty()) {
                 // Register user
                 registrationController.createMinimalRegistration(request, RegistrationController.toProfile(form));
                 // Authenticate user
@@ -457,33 +481,9 @@ public class OauthConfirmAccessController extends BaseController {
                 Map<String, String> approvalParams = new HashMap<String, String>();
                 // Put all request params into the params
                 SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
-                copyRequestParameters(savedRequest, params);
-                // Then, put the custom authorization params
-                params.put(CLIENT_ID_PARAM, form.getClientId().getValue());
-                if (!PojoUtil.isEmpty(form.getRedirectUri()))
-                    params.put(REDIRECT_URI_PARAM, form.getRedirectUri().getValue());
-                else
-                    params.put(REDIRECT_URI_PARAM, new String());
-                if (!PojoUtil.isEmpty(form.getScope()))
-                    params.put(SCOPE_PARAM, form.getScope().getValue());
-                if (!PojoUtil.isEmpty(form.getResponseType()))
-                    params.put(RESPONSE_TYPE_PARAM, form.getResponseType().getValue());
                 
-                if (form.getApproved()) {
-                    params.put(OAuth2Utils.USER_OAUTH_APPROVAL, "true");
-                    approvalParams.put(OAuth2Utils.USER_OAUTH_APPROVAL, "true");
-                } else {
-                    params.put(OAuth2Utils.USER_OAUTH_APPROVAL, "false");
-                    approvalParams.put(OAuth2Utils.USER_OAUTH_APPROVAL, "false");
-                }
-                
-                params.put(OauthTokensConstants.TOKEN_VERSION, OauthTokensConstants.PERSISTENT_TOKEN);
-                // Check if the client have persistent tokens enabled
-                params.put(OauthTokensConstants.GRANT_PERSISTENT_TOKEN, "false");
-                if (hasPersistenTokensEnabled(form.getClientId().getValue()))
-                    // Then check if the client granted the persistent token
-                    if (form.getPersistentTokenEnabled())
-                        params.put(OauthTokensConstants.GRANT_PERSISTENT_TOKEN, "true");                              
+                // Set params 
+                setOauthParams(savedRequest, form, params, approvalParams, true);
                 
                 // Authorize
                 try {
@@ -518,6 +518,61 @@ public class OauthConfirmAccessController extends BaseController {
         return form;
     }
 
+    /**
+     * Set the needed params for the Oauth request
+     * 
+     * @param savedRequest
+     * @param form
+     * @param params
+     * @param approvalParams
+     * @param justRegistred
+     * */
+    private void setOauthParams(SavedRequest savedRequest, OauthForm form, Map<String, String> params, Map<String, String> approvalParams, boolean justRegistred) {
+        // Put all request params into the params
+        copyRequestParameters(savedRequest, params);
+        // Then, put the custom authorization params
+        // Token version
+        params.put(OauthTokensConstants.TOKEN_VERSION, OauthTokensConstants.PERSISTENT_TOKEN);
+        // Client ID
+        params.put(CLIENT_ID_PARAM, form.getClientId().getValue());
+        // Redirect URI
+        if (!PojoUtil.isEmpty(form.getRedirectUri())) {
+            params.put(REDIRECT_URI_PARAM, form.getRedirectUri().getValue());
+        } else {
+            params.put(REDIRECT_URI_PARAM, new String());
+        }
+        // Scope
+        if (!PojoUtil.isEmpty(form.getScope())) {
+            params.put(SCOPE_PARAM, form.getScope().getValue());
+        }
+        // Response type
+        if (!PojoUtil.isEmpty(form.getResponseType())) {
+            params.put(RESPONSE_TYPE_PARAM, form.getResponseType().getValue());
+        }
+
+        // Approved
+        if (justRegistred) {
+            if (form.getApproved()) {
+                params.put(OAuth2Utils.USER_OAUTH_APPROVAL, "true");
+                approvalParams.put(OAuth2Utils.USER_OAUTH_APPROVAL, "true");
+            } else {
+                params.put(OAuth2Utils.USER_OAUTH_APPROVAL, "false");
+                approvalParams.put(OAuth2Utils.USER_OAUTH_APPROVAL, "false");
+            }
+        } else {
+            params.put(OAuth2Utils.USER_OAUTH_APPROVAL, "true");
+            approvalParams.put(OAuth2Utils.USER_OAUTH_APPROVAL, "true");
+        }
+        // Set persistent tokens flag
+        params.put(OauthTokensConstants.GRANT_PERSISTENT_TOKEN, "false");
+        if (hasPersistenTokensEnabled(form.getClientId().getValue())) {
+            // Then check if the client granted the persistent token
+            if (form.getPersistentTokenEnabled()) {
+                params.put(OauthTokensConstants.GRANT_PERSISTENT_TOKEN, "true");
+            }
+        }
+    }
+        
     @RequestMapping(value = { "/custom/authorize.json" }, method = RequestMethod.POST)
     public @ResponseBody
     OauthAuthorizeForm authorize(HttpServletRequest request, @RequestBody OauthAuthorizeForm form) {
@@ -525,9 +580,7 @@ public class OauthConfirmAccessController extends BaseController {
         AuthorizationRequest authorizationRequest = (AuthorizationRequest) request.getSession().getAttribute("authorizationRequest");
         Map<String, String> requestParams = new HashMap<String, String>(authorizationRequest.getRequestParameters());
         Map<String, String> approvalParams = new HashMap<String, String>();
-        
-        
-        
+                        
         // Add the persistent token information        
         if (form.getApproved()) {
             requestParams.put(OAuth2Utils.USER_OAUTH_APPROVAL, "true");
@@ -589,13 +642,31 @@ public class OauthConfirmAccessController extends BaseController {
     private void copyRequestParameters(SavedRequest request, Map<String, String> params) {
         if (request != null && request.getParameterMap() != null) {
             Map<String, String[]> savedParams = request.getParameterMap();
-
-            if (savedParams != null && !savedParams.isEmpty()) {
-                for (String key : savedParams.keySet()) {
-                    String[] values = savedParams.get(key);
-                    if (values != null && values.length > 0)
-                        params.put(key, values[0]);
-                }
+            copy(savedParams, params);
+        }
+    }
+    
+    /**
+     * Copies all request parameters into the provided params map
+     * 
+     * @param request
+     *            The server request
+     * @param params
+     *            The map to copy the params
+     * */
+    private void copyRequestParameters(HttpServletRequest request, Map<String, String> params) {
+        if (request != null && request.getParameterMap() != null) {
+            Map<String, String[]> savedParams = request.getParameterMap();
+            copy(savedParams, params);
+        }
+    }
+    
+    private void copy(Map<String, String[]> savedParams, Map<String, String> params) {
+        if (savedParams != null && !savedParams.isEmpty()) {
+            for (String key : savedParams.keySet()) {
+                String[] values = savedParams.get(key);
+                if (values != null && values.length > 0)
+                    params.put(key, values[0]);
             }
         }
     }

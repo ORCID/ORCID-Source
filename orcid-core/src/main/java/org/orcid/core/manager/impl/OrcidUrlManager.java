@@ -18,10 +18,17 @@ package org.orcid.core.manager.impl;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.bind.annotation.ModelAttribute;
 
 public class OrcidUrlManager {
+
+    static Pattern fileNamePattern = Pattern.compile("https{0,1}:\\/\\/[^\\/]*(.*){0,1}");
 
     static String PROTOCALL_PATTREN = "http[s]{0,1}:\\/\\/";
 
@@ -50,6 +57,15 @@ public class OrcidUrlManager {
         return this.baseUrl.replace("https", "http");
     }
 
+    @ModelAttribute("basePath")
+    public String getBasePath() {
+        Matcher fileNameMatcher = fileNamePattern.matcher(getBaseUrl());
+        if (!fileNameMatcher.find())
+            return "/";
+        return fileNameMatcher.group(1) + "/";
+    }
+
+    
     public String getBaseHost() {
         try {
             return new URI(this.baseUrl).getHost();
@@ -73,5 +89,19 @@ public class OrcidUrlManager {
     public void setApiBaseUrl(String apiBaseUrl) {
         this.apiBaseUrl = apiBaseUrl;
     }
+
+    public String getServerStringWithContextPath(HttpServletRequest request) {
+        String forwardedProto = request.getHeader("X-Forwarded-Proto");
+        String scheme = forwardedProto != null ? forwardedProto : request.getScheme();
+
+        StringBuilder sb = new StringBuilder();
+
+        if (scheme.equals("https"))
+        	sb.append(getBaseUrl());
+        else
+        	sb.append(getBaseUriHttp());
+        return sb.toString();
+    }
+    
 
 }

@@ -42,7 +42,7 @@
 		    		    	<#list fundingImportWizards?sort_by("displayName") as thirdPartyDetails>
 			        	       	<#assign redirect = (thirdPartyDetails.redirectUris.redirectUri[0].value) >
 		            	   		<#assign predefScopes = (thirdPartyDetails.redirectUris.redirectUri[0].scopeAsSingleString) >
-		                   		<strong><a ng-click="openImportWizardUrl('<@spring.url '/oauth/authorize?client_id=${thirdPartyDetails.clientId}&response_type=code&scope=${predefScopes}&redirect_uri=${redirect}'/>')">${thirdPartyDetails.displayName}</a></strong><br />
+		                   		<strong><a ng-click="openImportWizardUrl('<@orcid.rootPath '/oauth/authorize?client_id=${thirdPartyDetails.clientId}&response_type=code&scope=${predefScopes}&redirect_uri=${redirect}'/>')">${thirdPartyDetails.displayName}</a></strong><br />
 		                 		<div class="justify">
 									<p class="wizard-description" ng-class="{'ellipsis-on' : wizardDescExpanded[${thirdPartyDetails.clientId}] == false || wizardDescExpanded[${thirdPartyDetails.clientId}] == null}">
 										${(thirdPartyDetails.shortDescription)!}

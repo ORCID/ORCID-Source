@@ -26,7 +26,6 @@ import java.util.Date;
 import javax.annotation.Resource;
 
 import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -37,13 +36,13 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.orcid.api.common.WebDriverHelper;
 import org.orcid.integration.api.helper.InitializeDataHelper;
 import org.orcid.integration.api.helper.OauthHelper;
-import org.orcid.jaxb.model.clientgroup.GroupType;
+import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.persistence.dao.OrcidOauth2AuthoriziationCodeDetailDao;
 import org.orcid.persistence.jpa.entities.OrcidOauth2AuthoriziationCodeDetail;
-import org.orcid.pojo.ajaxForm.Group;
+import org.orcid.pojo.ajaxForm.Member;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
@@ -91,7 +90,7 @@ public class OauthAuthorizationCodeTest extends IntegrationTestBase {
     private static String email;
     private static String password;
     private static OrcidProfile user;
-    private static Group member;
+    private static Member member;
     private static OrcidClient client; 
     
     @Resource
@@ -107,7 +106,7 @@ public class OauthAuthorizationCodeTest extends IntegrationTestBase {
         if(user == null)
             user = idh.createProfile(email, password);
         if(member == null)
-            member = idh.createMember(GroupType.BASIC);
+            member = idh.createMember(MemberType.BASIC);
         if(client == null)
             client = idh.createClient(member.getGroupOrcid().getValue(), getRedirectUri());                
     }    
@@ -122,52 +121,7 @@ public class OauthAuthorizationCodeTest extends IntegrationTestBase {
     @After
     public void after() {
         webDriver.quit();
-    }    
-    
-    @Test
-    public void useAuthorizationCodeWithValidScopesTest() throws InterruptedException, JSONException {        
-        String accessToken = oauthHelper.obtainAccessToken(client.getClientId(), client.getClientSecret(), "/orcid-works/create", email, password, getRedirectUri(), true);        
-        assertNotNull(accessToken);
-        assertFalse(PojoUtil.isEmpty(accessToken));
-    }
-    
-    @Test
-    public void useAuthorizationCodeWithInalidScopesTest() throws InterruptedException, JSONException {
-        String authorizationCode = oauthHelper.getAuthorizationCode(client.getClientId(), "/orcid-works/create", email, password, true);
-        assertFalse(PojoUtil.isEmpty(authorizationCode));        
-        ClientResponse tokenResponse = oauthHelper.getClientResponse(client.getClientId(), client.getClientSecret(), "/orcid-works/update", getRedirectUri(), authorizationCode);
-        assertEquals(401, tokenResponse.getStatus());  
-        OrcidMessage result = tokenResponse.getEntity(OrcidMessage.class);
-        assertNotNull(result);
-        assertNotNull(result.getErrorDesc());
-        assertEquals("OAuth2 problem : Invalid scopes: /orcid-works/update available scopes for this code are: [/orcid-works/create]", result.getErrorDesc().getContent());
-    }
-    
-    @Test
-    public void useAuthorizationCodeWithoutScopesTest() throws InterruptedException, JSONException {
-        String authorizationCode = oauthHelper.getAuthorizationCode(client.getClientId(), "/orcid-works/create", email, password, true);
-        assertFalse(PojoUtil.isEmpty(authorizationCode));
-        ClientResponse tokenResponse = oauthHelper.getClientResponse(client.getClientId(), client.getClientSecret(), null, getRedirectUri(), authorizationCode);
-        assertEquals(200, tokenResponse.getStatus());
-        String body = tokenResponse.getEntity(String.class);
-        JSONObject jsonObject = new JSONObject(body);
-        String accessToken = (String) jsonObject.get("access_token");
-        assertNotNull(accessToken);
-        assertFalse(PojoUtil.isEmpty(accessToken));
-    }
-    
-    @Test
-    public void useClientCredentialsGrantTypeScope() throws InterruptedException, JSONException {
-        String authorizationCode = oauthHelper.getAuthorizationCode(client.getClientId(), "/orcid-works/create", email, password, true);
-        assertFalse(PojoUtil.isEmpty(authorizationCode));
-        ClientResponse tokenResponse = oauthHelper.getClientResponse(client.getClientId(), client.getClientSecret(), "/orcid-works/create /webhook", getRedirectUri(), authorizationCode);
-        assertEquals(200, tokenResponse.getStatus());
-        String body = tokenResponse.getEntity(String.class);
-        JSONObject jsonObject = new JSONObject(body);
-        String scope = (String) jsonObject.get("scope");
-        assertNotNull(scope);
-        assertEquals("/orcid-works/create", scope);
-    }
+    }            
     
     @Test
     public void authorizationCodeExpiresAfterXMinutesTest() throws InterruptedException, JSONException {

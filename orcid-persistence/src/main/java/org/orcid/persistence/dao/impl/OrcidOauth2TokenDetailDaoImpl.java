@@ -104,11 +104,11 @@ public class OrcidOauth2TokenDetailDaoImpl extends GenericDaoImpl<OrcidOauth2Tok
 
     @Override
     @ExcludeFromProfileLastModifiedUpdate
-    public OrcidOauth2TokenDetail findByAuthenticationKey(String authenticationKey) {
+    public List<OrcidOauth2TokenDetail> findByAuthenticationKey(String authenticationKey) {
         TypedQuery<OrcidOauth2TokenDetail> query = entityManager.createQuery("from " + "OrcidOauth2TokenDetail where authenticationKey = :authenticationKey",
                 OrcidOauth2TokenDetail.class);
         query.setParameter("authenticationKey", authenticationKey);
-        return query.getSingleResult();
+        return query.getResultList();
     }
 
     @Override

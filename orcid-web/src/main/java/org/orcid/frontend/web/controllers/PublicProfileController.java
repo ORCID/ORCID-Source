@@ -114,14 +114,20 @@ public class PublicProfileController extends BaseWorkspaceController {
     public ModelAndView publicPreview(HttpServletRequest request, @RequestParam(value = "page", defaultValue = "1") int pageNo, 
             @RequestParam(value = "v", defaultValue = "0") int v,
             @RequestParam(value = "maxResults", defaultValue = "15") int maxResults, @PathVariable("orcid") String orcid) {
-        ModelAndView mav = null;
+        
+    	OrcidProfile profile = orcidProfileCacheManager.retrievePublic(orcid);
+    	
+    	if(profile == null) {
+    		return new ModelAndView("error-404");
+    	}
+    	
+    	ModelAndView mav = null;
         mav = new ModelAndView("public_profile_v3");
         mav.addObject("isPublicProfile", true);
 
         boolean isProfileEmtpy = true;
         
         request.getSession().removeAttribute(PUBLIC_WORKS_RESULTS_ATTRIBUTE);
-        OrcidProfile profile = orcidProfileCacheManager.retrievePublic(orcid);
 
         mav.addObject("profile", profile);
         
