@@ -20,10 +20,6 @@
 <#assign verDateTime = startupDate?datetime>
 <#assign ver="${verDateTime?iso_utc}">
 <#include "/common/html-head.ftl" />
-<#assign works = "workspace-works">
-<#assign works = "workspace-fundings">
-<#assign works = "workspace-educations">
-<#assign works = "workspace-peer-reviews">
 <head>
 	<meta charset="utf-8" />    
     <meta name="description" content="">
@@ -63,7 +59,7 @@
 		});
 	</script>
 	<!--  Do not remove -->
-<script type="text/javascript" src="${staticCdn}/javascript/iframeResizer.contentWindow.min.js?v=${ver}"></script>
+	<script type="text/javascript" src="${staticCdn}/javascript/iframeResizer.contentWindow.min.js?v=${ver}"></script>
 </head>
 <body data-baseurl="<@spring.url '/'/>" ng-app="appInFrame" ng-controller="iframeController">
     <div>        	        	
