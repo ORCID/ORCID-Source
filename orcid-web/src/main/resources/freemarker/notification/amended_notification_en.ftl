@@ -49,8 +49,10 @@
 		});
 	
 		appInIframe.controller('iframeController', function($scope, $parentScope) {
-		  
-		  $scope.archivedDate = "${notification.archivedDate!}"; //Passing value from freemarker variable
+	      
+		  var str = "${notification.putCode!}";
+		  $scope.putCode = parseInt(str.replace(",", ""));
+		  $scope.archived = "${notification.archived!}"
 		  
 		  $scope.archive = function(id) {			
 			$parentScope.archive(id);
@@ -64,7 +66,7 @@
 <body data-baseurl="<@spring.url '/'/>" ng-app="appInFrame" ng-controller="iframeController"> 
     <div>        	        	
     	<p><strong>${notification.source.sourceName.content}</strong> has updated items in the ${notification.amendedSection!?capitalize} section of your record.</p>
-    	<a href="<@spring.url '/my-orcid'/>" target="_parent" class="btn btn-primary">View on your record</a> <a ng-click="archive(notification.putCode)" target="_parent" ng-hide="archivedDate" class="btn btn-default">Archive</a>
+    	<a href="<@spring.url '/my-orcid'/>" target="_parent" class="btn btn-primary">View on your record</a> <a ng-click="archive(putCode)" target="_parent" ng-hide="notification.archivedDate" class="btn btn-default">Archive</a>
      </div>
  </body>
  </html>
