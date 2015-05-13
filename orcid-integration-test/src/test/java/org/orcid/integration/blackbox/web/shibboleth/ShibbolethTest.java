@@ -65,7 +65,7 @@ public class ShibbolethTest {
 
         fireFoxProfile.setPreference("modifyheaders.headers.count", 2);
         fireFoxProfile.setPreference("modifyheaders.headers.action0", "Add");
-        fireFoxProfile.setPreference("modifyheaders.headers.name0", "Remote-User");
+        fireFoxProfile.setPreference("modifyheaders.headers.name0", "eppn");
         fireFoxProfile.setPreference("modifyheaders.headers.value0", "integration-test-" + System.currentTimeMillis() + "@orcid.org");
         fireFoxProfile.setPreference("modifyheaders.headers.enabled0", true);
         fireFoxProfile.setPreference("modifyheaders.headers.action1", "Add");
