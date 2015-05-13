@@ -6335,10 +6335,11 @@ orcidNgModule.controller('manageMembersCtrl',['$scope', '$compile', function man
      * FIND
      * */
     $scope.findAny = function() {
+    	console.log(encodeURIComponent($scope.any_id));
     	success_edit_member_message = null;
     	success_message = null;
     	$.ajax({
-            url: getBaseUri()+'/manage-members/find.json?id=' + $scope.any_id,
+            url: getBaseUri()+'/manage-members/find.json?id=' + encodeURIComponent($scope.any_id),
             type: 'GET',
             dataType: 'json',
             success: function(data){
