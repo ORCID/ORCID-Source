@@ -20,11 +20,11 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.orcid.jaxb.model.clientgroup.GroupType;
+import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 
-public class Group implements ErrorsInterface, Serializable {
+public class Member implements ErrorsInterface, Serializable {
     private static final long serialVersionUID = 1L;
 
     private List<String> errors = new ArrayList<String>();
@@ -33,6 +33,7 @@ public class Group implements ErrorsInterface, Serializable {
     private Text groupName;
     private Text email;
     private Text salesforceId;
+    private List<Client> clients = new ArrayList<Client>();
 
     @Override
     public List<String> getErrors() {
@@ -44,8 +45,8 @@ public class Group implements ErrorsInterface, Serializable {
         this.errors = errors;
     }
 
-    public static Group fromProfileEntity(ProfileEntity profile){
-    	Group group = new Group();
+    public static Member fromProfileEntity(ProfileEntity profile){
+    	Member group = new Member();
     	group.setEmail(Text.valueOf(profile.getPrimaryEmail().getId()));
     	group.setGroupName(Text.valueOf(profile.getCreditName()));
     	group.setGroupOrcid(Text.valueOf(profile.getId()));
@@ -57,7 +58,7 @@ public class Group implements ErrorsInterface, Serializable {
     public OrcidClientGroup toOrcidClientGroup() {
         OrcidClientGroup orcidClientGroup = new OrcidClientGroup();
         orcidClientGroup.setGroupOrcid(groupOrcid == null? "" : groupOrcid.getValue());
-        orcidClientGroup.setType(GroupType.fromValue(getType().getValue()));
+        orcidClientGroup.setType(MemberType.fromValue(getType().getValue()));
         orcidClientGroup.setGroupName(getGroupName().getValue());
         orcidClientGroup.setEmail(getEmail().getValue());
         if(getSalesforceId() == null)
@@ -104,5 +105,13 @@ public class Group implements ErrorsInterface, Serializable {
 
     public void setSalesforceId(Text salesforceId) {
         this.salesforceId = salesforceId;
-    }        
+    }
+
+    public List<Client> getClients() {
+        return clients;
+    }
+
+    public void setClients(List<Client> clients) {
+        this.clients = clients;
+    }            
 }

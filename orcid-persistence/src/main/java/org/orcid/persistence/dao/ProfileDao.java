@@ -21,7 +21,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.orcid.jaxb.model.clientgroup.ClientType;
-import org.orcid.jaxb.model.clientgroup.GroupType;
+import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.Locale;
 import org.orcid.jaxb.model.message.OrcidType;
@@ -124,7 +124,7 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
 
     ClientType getClientType(String orcid);
 
-    GroupType getGroupType(String orcid);
+    MemberType getGroupType(String orcid);
 
     public boolean removeProfile(String orcid);
     

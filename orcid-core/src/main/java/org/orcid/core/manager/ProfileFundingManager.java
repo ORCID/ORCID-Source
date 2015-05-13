@@ -25,6 +25,8 @@ import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 
 public interface ProfileFundingManager {
 
+    void setSourceManager(SourceManager sourceManager);
+    
     /**
      * Removes the relationship that exists between a funding and a profile.
      * 
@@ -152,6 +154,5 @@ public interface ProfileFundingManager {
      *          The funding id                 
      * @return true if the funding was deleted, false otherwise
      * */
-    boolean checkSourceAndDelete(String orcid, String fundingId);
-    
+    boolean checkSourceAndDelete(String orcid, String fundingId);   
 }

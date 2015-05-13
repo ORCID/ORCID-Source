@@ -36,7 +36,7 @@ import org.orcid.api.common.WebDriverHelper;
 import org.orcid.integration.api.helper.InitializeDataHelper;
 import org.orcid.integration.api.helper.OauthHelper;
 import org.orcid.integration.api.t2.T2OAuthAPIService;
-import org.orcid.jaxb.model.clientgroup.GroupType;
+import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.CreditName;
@@ -55,7 +55,7 @@ import org.orcid.jaxb.model.message.PersonalDetails;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
-import org.orcid.pojo.ajaxForm.Group;
+import org.orcid.pojo.ajaxForm.Member;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -74,7 +74,7 @@ public class PerActivityAPINewScopesTest extends IntegrationTestBase {
     private static String email;
     private static String password;
     private static OrcidProfile user;
-    private static Group member;
+    private static Member member;
     private static OrcidClient client;    
     
     @Resource(name="t2OAuthClient1_2")
@@ -96,7 +96,7 @@ public class PerActivityAPINewScopesTest extends IntegrationTestBase {
         if(user == null)
             user = idh.createProfile(email, password);
         if(member == null)
-            member = idh.createMember(GroupType.BASIC);
+            member = idh.createMember(MemberType.BASIC);
         if(client == null)
             client = idh.createClient(member.getGroupOrcid().getValue(), getRedirectUri());                
     }

@@ -72,7 +72,7 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
         updateQuery.setParameter("clientId", clientId);
         updateQuery.executeUpdate();
     }
-    
+
     @Override
     @Transactional
     public boolean removeClientSecret(String clientId, String clientSecret) {
@@ -81,23 +81,24 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
         deleteQuery.setParameter("clientSecret", clientSecret);
         return deleteQuery.executeUpdate() > 0;
     }
-    
+
     @Override
     @Transactional
     public boolean createClientSecret(String clientId, String clientSecret) {
-        Query deleteQuery = entityManager.createNativeQuery("INSERT INTO client_secret (client_details_id, client_secret, date_created, last_modified) VALUES (:clientId, :clientSecret, now(), now())");
+        Query deleteQuery = entityManager
+                .createNativeQuery("INSERT INTO client_secret (client_details_id, client_secret, date_created, last_modified) VALUES (:clientId, :clientSecret, now(), now())");
         deleteQuery.setParameter("clientId", clientId);
         deleteQuery.setParameter("clientSecret", clientSecret);
         return deleteQuery.executeUpdate() > 0;
     }
-    
+
     @Override
     public List<ClientSecretEntity> getClientSecretsByClientId(String clientId) {
         TypedQuery<ClientSecretEntity> query = entityManager.createQuery("From ClientSecretEntity WHERE client_details_id=:clientId", ClientSecretEntity.class);
         query.setParameter("clientId", clientId);
         return query.getResultList();
     }
-    
+
     @Override
     public boolean exists(String clientId) {
         TypedQuery<Long> query = entityManager.createQuery("select count(*) from ClientDetailsEntity where client_details_id=:clientId", Long.class);
@@ -105,20 +106,21 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
         Long result = query.getSingleResult();
         return (result != null && result > 0);
     }
-    
+
     @Override
     public boolean belongsTo(String clientId, String groupId) {
-        TypedQuery<ClientDetailsEntity> query = entityManager.createQuery("from ClientDetailsEntity where id = :clientId and groupProfileId = :groupId", ClientDetailsEntity.class);
+        TypedQuery<ClientDetailsEntity> query = entityManager.createQuery("from ClientDetailsEntity where id = :clientId and groupProfileId = :groupId",
+                ClientDetailsEntity.class);
         query.setParameter("clientId", clientId);
         query.setParameter("groupId", groupId);
         try {
-            query.getSingleResult();            
-        } catch (NoResultException e) {            
+            query.getSingleResult();
+        } catch (NoResultException e) {
             return false;
-        }        
-        return true; 
+        }
+        return true;
     }
-    
+
     @Override
     @Transactional
     public void updateClientType(ClientType clientType, String clientId) {
@@ -127,7 +129,7 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
         updateQuery.setParameter("clientId", clientId);
         updateQuery.executeUpdate();
     }
-        
+
     @Override
     @SuppressWarnings("unchecked")
     public List<ClientDetailsEntity> findByGroupId(String groupId) {
@@ -142,7 +144,7 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
         ClientDetailsEntity clientDetailsEntity = this.find(clientId);
         this.remove(clientDetailsEntity);
     }
-    
+
     /**
      * Get the public client that belongs to the given orcid ID
      * 
@@ -152,16 +154,30 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
      * */
     @Override
     public ClientDetailsEntity getPublicClient(String ownerId) {
-        TypedQuery<ClientDetailsEntity> query = entityManager.createQuery("from ClientDetailsEntity where groupProfileId = :ownerId and clientType = :clientType", ClientDetailsEntity.class);
+        TypedQuery<ClientDetailsEntity> query = entityManager.createQuery("from ClientDetailsEntity where groupProfileId = :ownerId and clientType = :clientType",
+                ClientDetailsEntity.class);
         query.setParameter("ownerId", ownerId);
         query.setParameter("clientType", ClientType.PUBLIC_CLIENT);
         try {
             return query.getSingleResult();
-        } catch(NoResultException nre) {
+        } catch (NoResultException nre) {
             LOGGER.warn("There is not public client for " + ownerId);
             return null;
         }
-        
     }
-    
+
+    /**
+     * Get member name
+     * 
+     * @param clientId
+     *            The client id
+     * @return the name of the member owner of the given client
+     * */
+    public String getMemberName(String clientId) {
+        TypedQuery<String> query = entityManager.createQuery(
+                "select creditName from ProfileEntity where id = (select groupProfileId from ClientDetailsEntity where id=:clientId)", String.class);
+        query.setParameter("clientId", clientId);
+        return query.getSingleResult();
+    }
+
 }

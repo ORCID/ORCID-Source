@@ -160,4 +160,6 @@ public interface ClientDetailsManager extends ClientDetailsService {
     List<ClientDetailsEntity> findByGroupId(String groupId);
     
     ClientDetailsEntity getPublicClient(String ownerId);
+    
+    String getMemberName(String clientId);
 }
