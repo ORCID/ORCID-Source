@@ -111,6 +111,10 @@
 		});
 	
 		appInIframe.controller('iframeController', function($scope, $parentScope) {
+			
+			
+		  $scope.archivedDate = "${notification.archivedDate!}"
+		  
 		  $scope.archive = function(id) {			
 			$parentScope.archive(id);
 			$parentScope.$apply();
@@ -196,7 +200,7 @@
 			<strong>${tfunding}</strong>
 			<#if fButtons>
 				<div class="notifications-buttons">
-					<a class="btn btn-primary" href="${fUrl}" target="_blank"><span class="glyphicons cloud-upload"></span> Add now</a>  <a class="btn btn-default" href="" ng-click="archive('${fPutCode?c}')" type="reset">Archive</a>
+					<a class="btn btn-primary" href="${fUrl}" target="_blank"><span class="glyphicons cloud-upload"></span> Add now</a>  <a class="btn btn-default" href="" ng-click="archive('${fPutCode?c}')" type="reset" ng-hide="archivedDate">Archive</a>
 				</div>
 			</#if>
 		</#if>
@@ -208,7 +212,7 @@
 			<strong>${tpeerreview}</strong>
 			<#if pButtons>
 				<div class="notifications-buttons">
-					<a class="btn btn-primary" href="${pUrl}" target="_blank"><span class="glyphicons cloud-upload"></span> Add now</a>  <a class="btn btn-default" href="" ng-click="archive('${pPutCode?c}')" type="reset">Archive</a>
+					<a class="btn btn-primary" href="${pUrl}" target="_blank"><span class="glyphicons cloud-upload"></span> Add now</a>  <a class="btn btn-default" href="" ng-click="archive('${pPutCode?c}')" type="reset" ng-hide="archivedDate">Archive</a>
 				</div>
 			</#if>
 		</#if>
@@ -220,7 +224,7 @@
 			<strong>${tworks}</strong>
 			<#if wbuttons>
 				<div class="notifications-buttons">
-					<a class="btn btn-primary" href="${wurl}" target="_blank"><span class="glyphicons cloud-upload"></span> Add now</a>  <a class="btn btn-default" href="" ng-click="archive('${wputCode?c}')" type="reset">Archive</a>
+					<a class="btn btn-primary" href="${wurl}" target="_blank"><span class="glyphicons cloud-upload"></span> Add now</a>  <a class="btn btn-default" href="" ng-click="archive('${wputCode?c}')" type="reset" ng-hide="archivedDate">Archive</a>
 				</div>
 			</#if>
 		</#if>

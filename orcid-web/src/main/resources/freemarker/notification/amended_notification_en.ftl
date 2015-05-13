@@ -52,8 +52,7 @@
 	      
 		  var str = "${notification.putCode!}";
 		  $scope.putCode = parseInt(str.replace(",", ""));
-		  $scope.archivedDate = "${notification.archivedDate!}"
-		  console.log($scope.archivedDate);
+		  $scope.archivedDate = "${notification.archivedDate!}"		  
 		  
 		  $scope.archive = function(id) {			
 			$parentScope.archive(id);
