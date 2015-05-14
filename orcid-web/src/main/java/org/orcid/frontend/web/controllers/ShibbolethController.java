@@ -84,6 +84,7 @@ public class ShibbolethController extends BaseController {
             // To avoid confusion, force the user to login to ORCID again
             logoutCurrentUser();
             mav.setViewName("shib_link_signin");
+            mav.addObject("remoteUserHeader", REMOTE_USER_HEADER);
             mav.addObject("remoteUser", remoteUser);
         }
         return mav;

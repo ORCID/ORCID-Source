@@ -21,7 +21,7 @@
     <form class="form-sign-in shibboleth" id="loginForm" ng-enter-submit action="<@orcid.rootPath '/signin/auth'/>" method="post">
         <div class="row">
         	<div class="col-md-offset-3 col-md-9 col-sm-offset-3 col-sm-9 col-xs-12">
-	            <div class="alert">Keep your mock Remote-User and Shib-Identity-Provider as secret as your password if you are using mocked headers, because they can be used to get access to your account once they are linked.</div>
+	            <div class="alert">Keep your mock ${remoteUserHeader} and Shib-Identity-Provider as secret as your password if you are using mocked headers, because they can be used to get access to your account once they are linked.</div>
 	            <div class="">
 		            <h4>Link your Shibboleth account to your ORCID account?</h4>
 		            <p>
