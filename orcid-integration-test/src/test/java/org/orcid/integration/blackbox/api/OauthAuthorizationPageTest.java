@@ -92,12 +92,24 @@ public class OauthAuthorizationPageTest extends BlackBoxBase {
     
     @BeforeClass
     public static void beforeClass() {
-        revokeApplicationsAccess();
+        String clientId1 = System.getProperty("org.orcid.web.testClient1.clientId");        
+        String clientId2 = System.getProperty("org.orcid.web.testClient2.clientId");
+        if(PojoUtil.isEmpty(clientId2)) {
+            revokeApplicationsAccess(clientId1);
+        } else {
+            revokeApplicationsAccess(clientId1, clientId2);
+        }        
     }
     
     @AfterClass
     public static void afterClass() {
-        revokeApplicationsAccess();
+        String clientId1 = System.getProperty("org.orcid.web.testClient1.clientId");        
+        String clientId2 = System.getProperty("org.orcid.web.testClient2.clientId");
+        if(PojoUtil.isEmpty(clientId2)) {
+            revokeApplicationsAccess(clientId1);
+        } else {
+            revokeApplicationsAccess(clientId1, clientId2);
+        }
     }
     
     @Before
@@ -490,7 +502,7 @@ public class OauthAuthorizationPageTest extends BlackBoxBase {
 
         // Repeat the process again with other scope
         webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, client1ClientId,
-                ScopePathType.PEER_REVIEW_CREATE.getContent(), redirectUri));        
+                ScopePathType.ORCID_WORKS_CREATE.getContent(), redirectUri));        
                
         authorizeElementLocator = By.id("authorize");
         (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(authorizeElementLocator));        
@@ -509,7 +521,7 @@ public class OauthAuthorizationPageTest extends BlackBoxBase {
         authorizationCode = matcher.group(1);
         assertFalse(PojoUtil.isEmpty(authorizationCode));
 
-        tokenResponse = getClientResponse(client1ClientId, client1ClientSecret, ScopePathType.PEER_REVIEW_CREATE.getContent(), redirectUri, authorizationCode);
+        tokenResponse = getClientResponse(client1ClientId, client1ClientSecret, ScopePathType.ORCID_WORKS_CREATE.getContent(), redirectUri, authorizationCode);
         assertEquals(200, tokenResponse.getStatus());
         body = tokenResponse.getEntity(String.class);
         jsonObject = new JSONObject(body);

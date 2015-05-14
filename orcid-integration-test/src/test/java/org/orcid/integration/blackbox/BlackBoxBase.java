@@ -19,6 +19,7 @@ package org.orcid.integration.blackbox;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -132,7 +133,16 @@ public class BlackBoxBase {
         }
     }
 
-    public static void revokeApplicationsAccess() {
+    public static void revokeApplicationsAccess(String ... clientIdsParam) {
+        //Nothing to remove
+        if(clientIdsParam == null) {
+            return;
+        }
+        List<String> clientIds = new ArrayList<String>();
+        for(String clientId : clientIdsParam) {
+            clientIds.add(clientId);
+        }
+        
         String userName = System.getProperty("org.orcid.web.testUser1.username");
         String password = System.getProperty("org.orcid.web.testUser1.password");
         String baseUrl = "http://localhost:8080/orcid-web";
@@ -154,25 +164,40 @@ public class BlackBoxBase {
         menuItem.click();
         
         try {
-            boolean stillHaveApps = true;
-            while(stillHaveApps) {
+            
+            boolean lookAgain = false;
+            
+            do {                
                 //Look for each revoke app button
                 By revokeAppBtn = By.id("revokeAppBtn");
                 (new WebDriverWait(webDriver, timeout)).until(ExpectedConditions.presenceOfElementLocated(revokeAppBtn));
-                List<WebElement> appsToRevoke = webDriver.findElements(revokeAppBtn);
-                if(appsToRevoke != null && !appsToRevoke.isEmpty()) {
-                    appsToRevoke.get(0).click();
-                    Thread.sleep(1000);
-                    //Wait for the revoke button
-                    By confirmRevokeAppBtn = By.id("confirmRevokeAppBtn");
-                    (new WebDriverWait(webDriver, timeout)).until(ExpectedConditions.presenceOfElementLocated(confirmRevokeAppBtn));
-                    WebElement trash = webDriver.findElement(confirmRevokeAppBtn);
-                    trash.click();  
-                    Thread.sleep(2000);
+                List<WebElement> appsToRevoke = webDriver.findElements(revokeAppBtn);                
+                boolean elementFound = false;
+                //Iterate on them and delete the ones created by the specified client id
+                for(WebElement appElement : appsToRevoke) {
+                    String nameAttribute = appElement.getAttribute("name");
+                    if(clientIds.contains(nameAttribute)) {
+                        appElement.click();
+                        Thread.sleep(1000);
+                        //Wait for the revoke button
+                        By confirmRevokeAppBtn = By.id("confirmRevokeAppBtn");
+                        (new WebDriverWait(webDriver, timeout)).until(ExpectedConditions.presenceOfElementLocated(confirmRevokeAppBtn));
+                        WebElement trash = webDriver.findElement(confirmRevokeAppBtn);
+                        trash.click();  
+                        Thread.sleep(2000);
+                        elementFound = true;
+                        break;
+                    }
+                }
+                
+                if(elementFound) {
+                    lookAgain = true;
                 } else {
-                    stillHaveApps = false;
-                }                                                                    
-            }
+                    lookAgain = false;
+                }                
+                
+            } while (lookAgain); 
+                        
         } catch(Exception e) {
             //If it fail is because it couldnt find any other application
         } finally {
@@ -180,5 +205,7 @@ public class BlackBoxBase {
             webDriver.quit();
         }                
     }
+    
+    
     
 }

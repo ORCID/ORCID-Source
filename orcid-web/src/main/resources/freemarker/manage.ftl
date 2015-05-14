@@ -484,11 +484,11 @@
                             <#if scopePath_has_next>;&nbsp;</#if> </#list> </#if></td width="35%">
                         <td width="5%">
                             <#if (applicationSummary.applicationGroupName)??>
-                                <a id="revokeAppBtn" ng-click="confirmRevoke('${applicationSummary.applicationName.content?js_string}','${applicationSummary.applicationGroupName.content?js_string}', '${applicationSummary_index}')"
+                                <a id="revokeAppBtn" name="${applicationSummary.applicationOrcid.path}" ng-click="confirmRevoke('${applicationSummary.applicationName.content?js_string}','${applicationSummary.applicationGroupName.content?js_string}', '${applicationSummary_index}')"
                                 class="glyphicon glyphicon-trash grey"
                                 title="${springMacroRequestContext.getMessage("manage.revokeaccess")}"></a>
                             <#else>
-                                <a id="revokeAppBtn" ng-click="confirmRevoke('${applicationSummary.applicationName.content?js_string}','', '${applicationSummary_index}')"
+                                <a id="revokeAppBtn" name="${applicationSummary.applicationOrcid.path}" ng-click="confirmRevoke('${applicationSummary.applicationName.content?js_string}','', '${applicationSummary_index}')"
                                 class="glyphicon glyphicon-trash grey"
                                 title="${springMacroRequestContext.getMessage("manage.revokeaccess")}"></a>
                             </#if>

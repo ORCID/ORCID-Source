@@ -32,6 +32,7 @@ import org.orcid.integration.blackbox.BlackBoxBase;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record.Work;
 import org.orcid.jaxb.model.record.summary.ActivitiesSummary;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -43,12 +44,24 @@ public class MultipleTokensPerUserAndScopeTest extends BlackBoxBase {
 
     @BeforeClass
     public static void beforeClass() {
-        revokeApplicationsAccess();
+        String clientId1 = System.getProperty("org.orcid.web.testClient1.clientId");        
+        String clientId2 = System.getProperty("org.orcid.web.testClient2.clientId");
+        if(PojoUtil.isEmpty(clientId2)) {
+            revokeApplicationsAccess(clientId1);
+        } else {
+            revokeApplicationsAccess(clientId1, clientId2);
+        }
     }
     
     @AfterClass
     public static void afterClass() {
-        revokeApplicationsAccess();
+        String clientId1 = System.getProperty("org.orcid.web.testClient1.clientId");        
+        String clientId2 = System.getProperty("org.orcid.web.testClient2.clientId");
+        if(PojoUtil.isEmpty(clientId2)) {
+            revokeApplicationsAccess(clientId1);
+        } else {
+            revokeApplicationsAccess(clientId1, clientId2);
+        }
     }
     
     @Test
