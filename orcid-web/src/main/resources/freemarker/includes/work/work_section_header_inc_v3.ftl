@@ -19,6 +19,7 @@
 <div class="workspace-accordion-header">
     <div class="row">
         <div class="col-md-3 col-sm-2 col-xs-12">
+        	<a name='workspace-works' />
             <div class="workspace-title" ng-controller="WorkspaceSummaryCtrl">
                 <a href="" ng-click="workspaceSrvc.toggleWorks($event)" class="toggle-text">
                    <i class="glyphicon-chevron-down glyphicon x075" ng-class="{'glyphicon-chevron-right':workspaceSrvc.displayWorks==false}"></i>

@@ -48,6 +48,7 @@ import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.notification.Notification;
 import org.orcid.jaxb.model.notification.NotificationType;
+import org.orcid.jaxb.model.notification.amended.AmendedSection;
 import org.orcid.jaxb.model.notification.custom.NotificationCustom;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.NotificationDao;
@@ -74,6 +75,9 @@ public class NotificationManagerTest extends BaseTest {
     @Mock
     private GenericDao<ProfileEventEntity, Long> profileEventDao;
 
+    @Mock
+    private SourceManager sourceManager;
+
     @Resource
     private ProfileDao profileDao;
 
@@ -97,6 +101,7 @@ public class NotificationManagerTest extends BaseTest {
         NotificationManagerImpl notificationManagerImpl = getTargetObject(notificationManager, NotificationManagerImpl.class);
         notificationManagerImpl.setEncryptionManager(encryptionManager);
         notificationManagerImpl.setProfileEventDao(profileEventDao);
+        notificationManagerImpl.setSourceManager(sourceManager);
     }
 
     @Test
@@ -105,7 +110,7 @@ public class NotificationManagerTest extends BaseTest {
         OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();
         notificationManager.sendWelcomeEmail(orcidProfile, orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue());
     }
-    
+
     @Test
     public void testSendVerificationEmail() throws JAXBException, IOException, URISyntaxException {
         OrcidMessage orcidMessage = (OrcidMessage) unmarshaller.unmarshal(getClass().getResourceAsStream(ORCID_INTERNAL_FULL_XML));
@@ -135,6 +140,7 @@ public class NotificationManagerTest extends BaseTest {
 
     @Test
     public void testAmendEmail() throws JAXBException, IOException, URISyntaxException {
+        when(sourceManager.retrieveSourceOrcid()).thenReturn("8888-8888-8888-8880");
         String testOrcid = "4444-4444-4444-4446";
         ProfileEntity testProfile = new ProfileEntity(testOrcid);
         testProfile.setEnableNotifications(true);
@@ -143,7 +149,7 @@ public class NotificationManagerTest extends BaseTest {
             NotificationEntity previousNotification = notificationDao.findLatestByOrcid(testOrcid);
             long minNotificationId = previousNotification != null ? previousNotification.getId() : -1;
             OrcidProfile orcidProfile = getProfile(locale);
-            notificationManager.sendAmendEmail(orcidProfile, "8888-8888-8888-8880");
+            notificationManager.sendAmendEmail(orcidProfile, AmendedSection.UNKNOWN);
             // New notification entity should have been created
             NotificationEntity latestNotification = notificationDao.findLatestByOrcid(testOrcid);
             assertNotNull(latestNotification);
