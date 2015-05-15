@@ -47,6 +47,8 @@ import org.springframework.web.servlet.ModelAndView;
 @RequestMapping("/shibboleth")
 public class ShibbolethController extends BaseController {
 
+    private static final String REMOTE_USER_HEADER = "eppn";
+
     private static final Logger LOGGER = LoggerFactory.getLogger(ShibbolethController.class);
 
     @Value("${org.orcid.shibboleth.enabled:false}")
@@ -59,7 +61,7 @@ public class ShibbolethController extends BaseController {
     private AuthenticationManager authenticationManager;
 
     @RequestMapping(value = { "/signin" }, method = RequestMethod.GET)
-    public ModelAndView signinHandler(HttpServletRequest request, @RequestHeader("REMOTE_USER") String remoteUser,
+    public ModelAndView signinHandler(HttpServletRequest request, @RequestHeader(REMOTE_USER_HEADER) String remoteUser,
             @RequestHeader("Shib-Identity-Provider") String shibIdentityProvider, ModelAndView mav) {
         checkEnabled();
         // Check if the Shibboleth user is already linked to an ORCID account.
@@ -82,13 +84,14 @@ public class ShibbolethController extends BaseController {
             // To avoid confusion, force the user to login to ORCID again
             logoutCurrentUser();
             mav.setViewName("shib_link_signin");
+            mav.addObject("remoteUserHeader", REMOTE_USER_HEADER);
             mav.addObject("remoteUser", remoteUser);
         }
         return mav;
     }
 
     @RequestMapping(value = { "/link" }, method = RequestMethod.GET)
-    public ModelAndView linkHandler(@RequestHeader("REMOTE_USER") String remoteUser, @RequestHeader("Shib-Identity-Provider") String shibIdentityProvider,
+    public ModelAndView linkHandler(@RequestHeader(REMOTE_USER_HEADER) String remoteUser, @RequestHeader("Shib-Identity-Provider") String shibIdentityProvider,
             ModelAndView mav) {
         checkEnabled();
         ShibbolethAccountEntity shibbolethAccountEntity = shibbolethAccountDao.findByRemoteUserAndShibIdentityProvider(remoteUser, shibIdentityProvider);
@@ -104,7 +107,7 @@ public class ShibbolethController extends BaseController {
         mav.addObject("remoteUser", remoteUser);
         return mav;
     }
-    
+
     private void checkEnabled() {
         if (!enabled) {
             throw new FeatureDisabledException();
