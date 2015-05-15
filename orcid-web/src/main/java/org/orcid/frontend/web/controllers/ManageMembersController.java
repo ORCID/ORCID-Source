@@ -23,7 +23,9 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
+import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.MembersManager;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
@@ -32,7 +34,6 @@ import org.orcid.pojo.ajaxForm.Member;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.RedirectUri;
 import org.orcid.pojo.ajaxForm.Text;
-import org.orcid.utils.OrcidStringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -52,6 +53,9 @@ public class ManageMembersController extends BaseController {
 
     @Resource
     MembersManager membersManager;
+    
+    @Resource
+    ClientDetailsManager clientDetailsManager;
 
     @Resource
     private GroupAdministratorController groupAdministratorController;          
@@ -85,7 +89,7 @@ public class ManageMembersController extends BaseController {
     public @ResponseBody ResultContainer find(@RequestParam("id") String id) {
         ResultContainer result = new ResultContainer();
         
-        if(OrcidStringUtils.isClientId(id)) {
+        if(clientDetailsManager.exists(id)) {
             result.setClient(true);
             result.setClientObject(findClient(id));
         } else {
