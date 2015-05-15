@@ -27,7 +27,9 @@ import javax.ws.rs.core.Response;
 
 import org.codehaus.jettison.json.JSONException;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.integration.blackbox.BlackBoxBase;
@@ -57,6 +59,7 @@ import org.orcid.jaxb.model.record.summary.PeerReviewGroup;
 import org.orcid.jaxb.model.record.summary.PeerReviewSummary;
 import org.orcid.jaxb.model.record.summary.WorkGroup;
 import org.orcid.jaxb.model.record.summary.WorkSummary;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -71,8 +74,30 @@ import com.sun.jersey.api.client.ClientResponse;
 @ContextConfiguration(locations = { "classpath:test-memberV2-context.xml" })
 public class MemberV2Test extends BlackBoxBase {    
 
-    protected String accessToken = null;
+    protected static String accessToken = null;
 
+    @BeforeClass
+    public static void beforeClass() {
+        String clientId1 = System.getProperty("org.orcid.web.testClient1.clientId");        
+        String clientId2 = System.getProperty("org.orcid.web.testClient2.clientId");
+        if(PojoUtil.isEmpty(clientId2)) {
+            revokeApplicationsAccess(clientId1);
+        } else {
+            revokeApplicationsAccess(clientId1, clientId2);
+        }
+    }
+    
+    @AfterClass
+    public static void afterClass() {
+        String clientId1 = System.getProperty("org.orcid.web.testClient1.clientId");        
+        String clientId2 = System.getProperty("org.orcid.web.testClient2.clientId");
+        if(PojoUtil.isEmpty(clientId2)) {
+            revokeApplicationsAccess(clientId1);
+        } else {
+            revokeApplicationsAccess(clientId1, clientId2);
+        }
+    }
+    
     @Before
     public void before() throws JSONException, InterruptedException, URISyntaxException {
         cleanActivities();
@@ -612,7 +637,7 @@ public class MemberV2Test extends BlackBoxBase {
         
         boolean found = false;
         for(EducationSummary summary : activities.getEducations().getSummaries()) {
-            if(summary.getRoleTitle().equals("education:role-title")) {                
+            if(summary.getRoleTitle() != null && summary.getRoleTitle().equals("education:role-title")) {                
                 assertEquals("education:department-name", summary.getDepartmentName());
                 assertEquals(new FuzzyDate(1848, 2, 2), summary.getStartDate());
                 assertEquals(new FuzzyDate(1848, 2, 2), summary.getEndDate());
@@ -626,7 +651,7 @@ public class MemberV2Test extends BlackBoxBase {
         assertFalse(activities.getEmployments().getSummaries().isEmpty());        
         found = false;
         for(EmploymentSummary summary : activities.getEmployments().getSummaries()) {
-            if(summary.getRoleTitle().equals("affiliation:role-title")) {
+            if(summary.getRoleTitle() != null && summary.getRoleTitle().equals("affiliation:role-title")) {
                 assertEquals("affiliation:department-name", summary.getDepartmentName());
                 assertEquals(new FuzzyDate(1848, 2, 2), summary.getStartDate());
                 assertEquals(new FuzzyDate(1848, 2, 2), summary.getEndDate());

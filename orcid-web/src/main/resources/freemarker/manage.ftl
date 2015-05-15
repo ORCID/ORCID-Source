@@ -447,7 +447,7 @@
             <a href="${springMacroRequestContext.getMessage("manage.findoutmore.trustedOrganizations.url")}"
                 target=_blank"">${springMacroRequestContext.getMessage("manage.findoutmore")}</a>
         </p>
-        <#if (profile.orcidBio.applications.applicationSummary)??>
+        <#if (profile.orcidBio.applications.applicationSummary)?? && (profile.orcidBio.applications.applicationSummary?size > 0)>
         <table ng-controller="revokeApplicationFormCtrl"
             class="table table-bordered settings-table normal-width">
             <thead>
@@ -484,11 +484,11 @@
                             <#if scopePath_has_next>;&nbsp;</#if> </#list> </#if></td width="35%">
                         <td width="5%">
                             <#if (applicationSummary.applicationGroupName)??>
-                                <a ng-click="confirmRevoke('${applicationSummary.applicationName.content?js_string}','${applicationSummary.applicationGroupName.content?js_string}', '${applicationSummary_index}')"
+                                <a id="revokeAppBtn" name="${applicationSummary.applicationOrcid.path}" ng-click="confirmRevoke('${applicationSummary.applicationName.content?js_string}','${applicationSummary.applicationGroupName.content?js_string}', '${applicationSummary_index}')"
                                 class="glyphicon glyphicon-trash grey"
                                 title="${springMacroRequestContext.getMessage("manage.revokeaccess")}"></a>
                             <#else>
-                                <a ng-click="confirmRevoke('${applicationSummary.applicationName.content?js_string}','', '${applicationSummary_index}')"
+                                <a id="revokeAppBtn" name="${applicationSummary.applicationOrcid.path}" ng-click="confirmRevoke('${applicationSummary.applicationName.content?js_string}','', '${applicationSummary_index}')"
                                 class="glyphicon glyphicon-trash grey"
                                 title="${springMacroRequestContext.getMessage("manage.revokeaccess")}"></a>
                             </#if>
@@ -498,6 +498,8 @@
                 </#list>
             </tbody>
         </table>
+        <#else>
+        	<div id="noApplications" />
         </#if>
         
         <h1>
@@ -646,7 +648,7 @@
 <script type="text/ng-template" id="confirm-revoke-access-modal">
     <div style="padding: 20px;">
        <h3><@orcid.msg 'manage.application_access.revoke.confirm_revoke' /> {{appName}}</h3>
-       <button class="btn btn-danger" ng-click="revokeAccess()"><@orcid.msg 'manage.application_access.revoke.confirm' /></button>
+       <button class="btn btn-danger" ng-click="revokeAccess()" id="confirmRevokeAppBtn"><@orcid.msg 'manage.application_access.revoke.confirm' /></button>
        <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel' /></a>
     </div>
 </script>
