@@ -332,10 +332,6 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         dedupeAffiliations(orcidProfile);
         dedupeFundings(orcidProfile);
         addSourceToEmails(orcidProfile, existingProfileEntity, amenderOrcid);
-        addSourceToAffiliations(orcidProfile, amenderOrcid);
-        addSourceToWorks(orcidProfile, amenderOrcid);
-        addSourceToAffiliations(orcidProfile, amenderOrcid);
-        addSourceToFundings(orcidProfile, amenderOrcid);
         ProfileEntity profileEntity = adapter.toProfileEntity(orcidProfile, existingProfileEntity);
         profileEntity.setLastModified(new Date());
         profileEntity.setIndexingStatus(IndexingStatus.PENDING);
