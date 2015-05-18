@@ -117,13 +117,16 @@
                                             </div>
                                         </div>
                                         <div class="col-md-2 col-xs-4">
-                                            <div class="emailVisibility"><@orcid.privacyToggle
-                                                angularModel="email.visibility"
-                                                questionClick="toggleClickPrivacyHelp(email.value)"
-                                                clickedClassCheck="{'popover-help-container-show':privacyHelp[email.value]==true}"
-                                                publicClick="setPrivacy(email, 'PUBLIC', $event)"
-                                                limitedClick="setPrivacy(email, 'LIMITED', $event)"
-                                                privateClick="setPrivacy(email, 'PRIVATE', $event)" />
+                                        
+                                            <div class="emailVisibility">
+	                                            <@orcid.privacyToggle3
+	                                            	angularModel="email.visibility"
+													questionClick="toggleClickPrivacyHelp(email.value)"
+													clickedClassCheck="{'popover-help-container-show':privacyHelp[email.value]==true}" 
+													publicClick="setPrivacy(email, 'PUBLIC', $event)" 
+								                  	limitedClick="setPrivacy(email, 'LIMITED', $event)" 
+								                  	privateClick="setPrivacy(email, 'PRIVATE', $event)" 
+								                  	elementId="email.value" />    
                                             </div>
                                         </div>
                                     </div>
