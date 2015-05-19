@@ -427,7 +427,7 @@ public class PublicProfileController extends BaseWorkspaceController {
 
             if (profile.getOrcidBio().getPersonalDetails().getFamilyName() != null
                     && !PojoUtil.isEmpty(profile.getOrcidBio().getPersonalDetails().getFamilyName().getContent())) {
-                name += profile.getOrcidBio().getPersonalDetails().getFamilyName().getContent();
+                name += " "+profile.getOrcidBio().getPersonalDetails().getFamilyName().getContent();
             }
             result.setName(name);
         }
