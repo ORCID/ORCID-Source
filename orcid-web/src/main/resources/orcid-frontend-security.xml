@@ -167,7 +167,7 @@
 
 		<sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX](\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/info.json(\?.*)?"
+		<sec:intercept-url pattern="/public_widgets/(\d{4}-){3,}\d{3}[\dX]/info.json(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />	
 		<sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/works.json(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />

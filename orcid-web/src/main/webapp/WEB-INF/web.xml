@@ -148,6 +148,7 @@
 		<filter-name>jsonpCallbackFilter</filter-name>
 		<url-pattern>/lang.json</url-pattern>
 		<url-pattern>/userStatus.json</url-pattern>
+		<url-pattern>/public_widgets/*</url-pattern>
 	</filter-mapping>
 
 	<filter>
@@ -159,6 +160,7 @@
 		<filter-name>corsFilter</filter-name>
 		<url-pattern>/lang.json</url-pattern>
 		<url-pattern>/userStatus.json</url-pattern>
+		<url-pattern>/public_widgets/*</url-pattern>
 	</filter-mapping>
 
 

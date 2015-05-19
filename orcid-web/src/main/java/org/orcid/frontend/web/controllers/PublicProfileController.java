@@ -406,7 +406,7 @@ public class PublicProfileController extends BaseWorkspaceController {
         return peerReviews;
     }
 
-    @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/info.json")
+    @RequestMapping(value = "/public_widgets/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/info.json")
     public @ResponseBody
     OrcidInfo getInfo(@PathVariable("orcid") String orcid) {
         OrcidInfo result = new OrcidInfo();
