@@ -1,181 +1,213 @@
-(function (global) {
-	//Copyright: https://github.com/OscarGodson/JSONP/blob/master/JSONP.js
-	var JSONP = function(url,data,method,callback){
-	    url = url || '';
-	    data = data || {};
-	    method = method || '';
-	    callback = callback || function(){};
-	    var getKeys = function(obj){
-	      var keys = [];
-	      for(var key in obj){
-	        if (obj.hasOwnProperty(key)) {
-	          keys.push(key);
-	        }
-	        
-	      }
-	      return keys;
-	    }
-	    if(typeof data == 'object'){
-	      var queryString = '';
-	      var keys = getKeys(data);
-	      for(var i = 0; i < keys.length; i++){
-	        queryString += encodeURIComponent(keys[i]) + '=' + encodeURIComponent(data[keys[i]])
-	        if(i != keys.length - 1){ 
-	          queryString += '&';
-	        }
-	      }
-	      url += '?' + queryString;
-	    } else if(typeof data == 'function'){
-	      method = data;
-	      callback = method;
-	    }
-	    if(typeof method == 'function'){
-	      callback = method;
-	      method = 'callback';
-	    }
-	    if(!Date.now){
-	      Date.now = function() { return new Date().getTime(); };
-	    } 
-	    var timestamp = Date.now();
-	    var generatedFunction = 'jsonp'+Math.round(timestamp+Math.random()*1000001)
-	    window[generatedFunction] = function(json){
-	      callback(json);
-	      delete window[generatedFunction];
-	    };
-	    if(url.indexOf('?') === -1){ url = url+'?'; }
-	    else{ url = url+'&'; }
-	    var jsonpScript = document.createElement('script');
-	    jsonpScript.setAttribute("src", url+method+'='+generatedFunction);
-	    document.getElementsByTagName("head")[0].appendChild(jsonpScript)
-	  };
-	  
-	  
-    if (!Array.prototype.indexOf) {
-	    Array.prototype.indexOf = function(obj, start) {
-	      var i, j;
-	      i = start || 0;
-	      j = this.length;
-	      while (i < j) {
-	        if (this[i] === obj) {
-	          return i;
-	        }
-	        i++;
-	      }
-	      return -1;
-	    };
-    }
+(function(global) {
 
-  var QueryStringToHash = function QueryStringToHash  (query) {
-    var query_string = {};
-    var vars = query.split("&");
-    for (var i=0;i<vars.length;i++) {
-      var pair = vars[i].split("=");
-      pair[0] = decodeURIComponent(pair[0]);
-      pair[1] = decodeURIComponent(pair[1]);
-        // If first entry with this name
-      if (typeof query_string[pair[0]] === "undefined") {
-        query_string[pair[0]] = pair[1];
-        // If second entry with this name
-      } else if (typeof query_string[pair[0]] === "string") {
-        var arr = [ query_string[pair[0]], pair[1] ];
-        query_string[pair[0]] = arr;
-        // If third or later entry with this name
-      } else {
-        query_string[pair[0]].push(pair[1]);
-      }
-    } 
-    return query_string;
-  };
+	var JSONP = function(url, data, method, callback) {
+		url = url || '';
+		data = data || {};
+		method = method || '';
+		callback = callback || function() {
+		};
+		var getKeys = function(obj) {
+			var keys = [];
+			for ( var key in obj) {
+				if (obj.hasOwnProperty(key)) {
+					keys.push(key);
+				}
 
-  var parseQueryString = function(url) {
-    var a = document.createElement('a');
-    a.href = url;
-    str = a.search.replace(/\?/, '');
-   
-    return QueryStringToHash(str);
-  };
-  
+			}
+			return keys;
+		}
+		if (typeof data == 'object') {
+			var queryString = '';
+			var keys = getKeys(data);
+			for (var i = 0; i < keys.length; i++) {
+				queryString += encodeURIComponent(keys[i]) + '='
+						+ encodeURIComponent(data[keys[i]])
+				if (i != keys.length - 1) {
+					queryString += '&';
+				}
+			}
+			url += '?' + queryString;
+		} else if (typeof data == 'function') {
+			method = data;
+			callback = method;
+		}
+		if (typeof method == 'function') {
+			callback = method;
+			method = 'callback';
+		}
+		if (!Date.now) {
+			Date.now = function() {
+				return new Date().getTime();
+			};
+		}
+		var timestamp = Date.now();
+		var generatedFunction = 'jsonp'
+				+ Math.round(timestamp + Math.random() * 1000001)
+		window[generatedFunction] = function(json) {
+			callback(json);
+			delete window[generatedFunction];
+		};
+		if (url.indexOf('?') === -1) {
+			url = url + '?';
+		} else {
+			url = url + '&';
+		}
+		var jsonpScript = document.createElement('script');
+		jsonpScript.setAttribute("src", url + method + '=' + generatedFunction);
+		document.getElementsByTagName("head")[0].appendChild(jsonpScript)
+	};
 
- 
-  if(!global.OrcidSummaryWidget) { global.OrcidSummaryWidget = {}; };
-  var OrcidSummaryWidget = global.OrcidSummaryWidget;
+	if (!Array.prototype.indexOf) {
+		Array.prototype.indexOf = function(obj, start) {
+			var i, j;
+			i = start || 0;
+			j = this.length;
+			while (i < j) {
+				if (this[i] === obj) {
+					return i;
+				}
+				i++;
+			}
+			return -1;
+		};
+	}
 
-  if(!OrcidSummaryWidget.processedScripts) { OrcidSummaryWidget.processedScripts = []; };
-  var processedScripts = OrcidSummaryWidget.processedScripts;
+	var QueryStringToHash = function QueryStringToHash(query) {
+		var query_string = {};
+		var vars = query.split("&");
+		for (var i = 0; i < vars.length; i++) {
+			var pair = vars[i].split("=");
+			pair[0] = decodeURIComponent(pair[0]);
+			pair[1] = decodeURIComponent(pair[1]);
+			// If first entry with this name
+			if (typeof query_string[pair[0]] === "undefined") {
+				query_string[pair[0]] = pair[1];
+				// If second entry with this name
+			} else if (typeof query_string[pair[0]] === "string") {
+				var arr = [ query_string[pair[0]], pair[1] ];
+				query_string[pair[0]] = arr;
+				// If third or later entry with this name
+			} else {
+				query_string[pair[0]].push(pair[1]);
+			}
+		}
+		return query_string;
+	};
 
-  if(!OrcidSummaryWidget.styleTags) { OrcidSummaryWidget.styleTags = []; };
-  var styleTags = OrcidSummaryWidget.styleTags;  
-  
-  
-  var scriptTags = document.getElementsByTagName('script');
-  
-  var thisRequestUrl = location.href; //Change it to some Java or PHP function to get the href value, 
-                                      //for testing purposes I am using my location
+	var parseQueryString = function(url) {
+		var a = document.createElement('a');
+		a.href = url;
+		str = a.search.replace(/\?/, '');
 
-  var re = /.*orcid-summary-widget\.([^/]+\.)?js/;
- 
-  for(var i = 0; i < scriptTags.length; i++) {
-    var el = scriptTags[i];
-    if(el.src.match(re)) {
-        scriptTag = el;
-    }
-  }
-   
-  // We get the orcid passed by parameter to the widget
-  var data = parseQueryString(scriptTag.src);
-  
-  var url = 'http://localhost:8080/orcid-web/public_widgets/' + data.orcid + '/info.json';
-  
-  JSONP(url,function(json){
-	  
-	var orcid = json.orcid;
-	var name = json.name;
-	var works = json.works;
-	var fundings = json.fundings;
-	var educations = json.educations;
-	var peerReviews =  json.peerReviews;
-	
-	if(styleTags.length == 0) {
-        
-        var styleTag = document.createElement("link");
-        styleTag.rel = "stylesheet";
-        styleTag.type = "text/css";
-        styleTag.href =  "http://localhost:8080/orcid-web/static/css/orcid-summary-widget.css"; //For hackathon testing only
-        styleTag.media = "all";
-        document.getElementsByTagName('head')[0].appendChild(styleTag);
-     }
-	
-	var widgetInnerHTML = '<div class="orcid-summary-widget">\
-								<a href="http://localhost:8080/orcid-web/'+ orcid + '" target="_blank">\
-									<div class="orcid-widget-details">\
-										<div class="orcid-logo"></div>\
-										<div class="orcid-name">'+ name +'</div>\
-										<div class="orcid-id">ORCID: '+ orcid +'</div>\
+		return QueryStringToHash(str);
+	};
+
+	if (!global.OrcidSummaryWidget) {
+		global.OrcidSummaryWidget = {};
+	}
+	;
+
+	var OrcidSummaryWidget = global.OrcidSummaryWidget;
+
+	if (!OrcidSummaryWidget.processedScripts) {
+		OrcidSummaryWidget.processedScripts = [];
+	}
+	;
+
+	var processedScripts = OrcidSummaryWidget.processedScripts;
+
+	if (!OrcidSummaryWidget.styleTags) {
+		OrcidSummaryWidget.styleTags = [];
+	}
+	;
+
+	var styleTags = OrcidSummaryWidget.styleTags;
+
+	var scriptTags = document.getElementsByTagName('script');
+
+	var thisRequestUrl = location.href;
+
+	var re = /.*orcid-summary-widget\.([^/]+\.)?js/;
+
+	for (var i = 0; i < scriptTags.length; i++) {
+		var el = scriptTags[i];
+		if (el.src.match(re)) {
+			scriptTag = el;
+		}
+	}
+
+	// We get the orcid passed by parameter to the widget
+	var data = parseQueryString(scriptTag.src);
+
+	var url = 'http://localhost:8080/orcid-web/public_widgets/' + data.orcid
+			+ '/info.json';
+
+	JSONP(
+			url,
+			function(json) {
+
+				var orcid = json.orcid;
+				var name = json.name;
+				var works = json.works;
+				var fundings = json.fundings;
+				var educations = json.educations;
+				var peerReviews = json.peerReviews;
+
+				if (styleTags.length == 0) {
+
+					var styleTag = document.createElement("link");
+					styleTag.rel = "stylesheet";
+					styleTag.type = "text/css";
+					styleTag.href = "http://localhost:8080/orcid-web/static/css/orcid-summary-widget.css"; // For
+																											// hackathon
+																											// testing
+																											// only
+					styleTag.media = "all";
+					document.getElementsByTagName('head')[0]
+							.appendChild(styleTag);
+				}
+
+				var widgetInnerHTML = '<div class="orcid-summary-widget">\
+								<a href="http://localhost:8080/orcid-web/'
+						+ orcid
+						+ '" target="_blank">\
+							<div class="orcid-widget-details">\
+								<div class="orcid-logo"></div>\
+								<div class="orcid-name">'
+						+ name
+						+ '</div>\
+						<div class="orcid-id">ORCID: '
+						+ orcid
+						+ '</div>\
 										<div class="orcid-summary-items">';
-										if (works > 0) {
-											widgetInnerHTML += '<div class="orcid-summary-item">Works ('+ works +')</div>';
-										}
-										if (fundings > 0){
-											widgetInnerHTML += '<div class="orcid-summary-item">Fundings (' + fundings +')</div>';
-										}
-										if (educations > 0){
-											widgetInnerHTML += '<div class="orcid-summary-item">Educations (' + educations + ')</div>';
-										}
-										if(peerReviews > 0){
-											widgetInnerHTML += '<div class="orcid-summary-item">Peer Reviews (' + peerReviews +')</div>';
-										}
-										
-										widgetInnerHTML += '</div>\
+				if (works > 0) {
+					widgetInnerHTML += '<div class="orcid-summary-item">Works ('
+							+ works + ')</div>';
+				}
+				if (fundings > 0) {
+					widgetInnerHTML += '<div class="orcid-summary-item">Fundings ('
+							+ fundings + ')</div>';
+				}
+				if (educations > 0) {
+					widgetInnerHTML += '<div class="orcid-summary-item">Educations ('
+							+ educations + ')</div>';
+				}
+				if (peerReviews > 0) {
+					widgetInnerHTML += '<div class="orcid-summary-item">Peer Reviews ('
+							+ peerReviews + ')</div>';
+				}
+
+				widgetInnerHTML += '</div>\
 									</div>\
 								</a>\
 								<a href="http://orcid.org/about/what-is-orcid" class="orcid-widget-button" target="_blank">What is ORCID?</a>\
 							</div>';
-		
-	var div = document.createElement('div');
-	    div.id = 'orcid-summary-widget';
-	    div.className = 'orcid-widget cleanslate';
-	    div.innerHTML = widgetInnerHTML;
-	    
-	    document.getElementById('orcid-summary-widget').innerHTML = widgetInnerHTML;
-  });
+
+				var div = document.createElement('div');
+				div.id = 'orcid-summary-widget';
+				div.className = 'orcid-widget cleanslate';
+				div.innerHTML = widgetInnerHTML;
+
+				document.getElementById('orcid-summary-widget').innerHTML = widgetInnerHTML;
+			});
 })(this);
