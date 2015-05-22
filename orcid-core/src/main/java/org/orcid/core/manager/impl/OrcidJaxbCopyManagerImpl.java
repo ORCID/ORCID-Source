@@ -29,6 +29,7 @@ import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.jaxb.model.message.ActivitiesContainer;
 import org.orcid.jaxb.model.message.Activity;
 import org.orcid.jaxb.model.message.Address;
+import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.Affiliations;
 import org.orcid.jaxb.model.message.Biography;
 import org.orcid.jaxb.model.message.Claimed;
@@ -37,19 +38,25 @@ import org.orcid.jaxb.model.message.CreditName;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.ExternalIdentifier;
 import org.orcid.jaxb.model.message.ExternalIdentifiers;
+import org.orcid.jaxb.model.message.Funding;
 import org.orcid.jaxb.model.message.FundingList;
 import org.orcid.jaxb.model.message.Keyword;
 import org.orcid.jaxb.model.message.Keywords;
 import org.orcid.jaxb.model.message.OrcidBio;
 import org.orcid.jaxb.model.message.OrcidHistory;
+import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
 import org.orcid.jaxb.model.message.OtherName;
 import org.orcid.jaxb.model.message.OtherNames;
 import org.orcid.jaxb.model.message.PersonalDetails;
 import org.orcid.jaxb.model.message.ResearcherUrl;
 import org.orcid.jaxb.model.message.ResearcherUrls;
+import org.orcid.jaxb.model.message.Source;
+import org.orcid.jaxb.model.message.SourceClientId;
+import org.orcid.jaxb.model.message.SourceOrcid;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.orcid.utils.OrcidStringUtils;
 import org.springframework.util.Assert;
 
 /**
@@ -121,7 +128,7 @@ public class OrcidJaxbCopyManagerImpl implements OrcidJaxbCopyManager {
         }
 
         Map<String, ? extends Activity> updatedActivitiesMap = updatedActivities.retrieveActivitiesAsMap();
-
+        Source targetSource = createSource(sourceManager.retrieveSourceOrcid());
         for (Iterator<? extends Activity> existingActivitiesIterator = existingActivities.retrieveActivities().iterator(); existingActivitiesIterator.hasNext();) {
             Activity existingActivity = existingActivitiesIterator.next();
             Activity updatedActivity = updatedActivitiesMap.get(existingActivity.getPutCode());
@@ -142,6 +149,7 @@ public class OrcidJaxbCopyManagerImpl implements OrcidJaxbCopyManager {
                     // was set by API user
                     updatedActivity.setVisibility(existingActivity.getVisibility());
                 }
+                addSourceToActivity(updatedActivity, targetSource);
                 // Can remove existing object because will be replaced by
                 // incoming
                 existingActivitiesIterator.remove();
@@ -155,20 +163,39 @@ public class OrcidJaxbCopyManagerImpl implements OrcidJaxbCopyManager {
             if (updatedActivity.getPutCode() == null) {
                 // Check source is correct for any newly added activities, if
                 // mentioned
-                String newSourcePath = updatedActivity.retrieveSourcePath();
-                if (newSourcePath != null) {
-                    checkSource(updatedActivity);
-                }
+            	addSourceToActivity(updatedActivity, targetSource);
             }
         }
         existingActivities.retrieveActivities().addAll((List) updatedActivities.retrieveActivities());
     }
 
-    private void checkSource(Activity activity) {
+    private void addSourceToActivity(Activity updatedActivity, Source targetSource) {
+		if(updatedActivity instanceof OrcidWork) {
+			((OrcidWork) updatedActivity).setSource(targetSource);
+		} else if(updatedActivity instanceof Funding) {
+			((Funding) updatedActivity).setSource(targetSource);
+		} else if(updatedActivity instanceof Affiliation) {
+			((Affiliation) updatedActivity).setSource(targetSource);
+		}
+	}
+
+	private void checkSource(Activity activity) {
         if (isFromDifferentSource(activity)) {
             throw new WrongSourceException();
         }
 
+    }
+    
+    private Source createSource(String amenderOrcid) {
+        Source source = new Source();
+        if (OrcidStringUtils.isValidOrcid(amenderOrcid)) {
+            source.setSourceOrcid(new SourceOrcid(amenderOrcid));
+            source.setSourceClientId(null);
+        } else {
+            source.setSourceClientId(new SourceClientId(amenderOrcid));
+            source.setSourceOrcid(null);
+        }
+        return source;
     }
 
     private boolean isFromDifferentSource(Activity activity) {
