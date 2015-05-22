@@ -31,7 +31,9 @@ import javax.ws.rs.core.MultivaluedMap;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
@@ -42,6 +44,7 @@ import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.orcid.integration.api.t2.T2OAuthAPIService;
+import org.orcid.integration.blackbox.BlackBoxBase;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -59,7 +62,7 @@ import com.sun.jersey.core.util.MultivaluedMapImpl;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-memberV2-context.xml" })
-public class OauthAuthorizationPageTest {
+public class OauthAuthorizationPageTest extends BlackBoxBase {
 
     private static final String STATE_PARAM = "MyStateParam";
     private static final String SCOPES = "/activities/update /activities/read-limited";
@@ -86,16 +89,38 @@ public class OauthAuthorizationPageTest {
     private T2OAuthAPIService<ClientResponse> t2OAuthClient;
 
     private WebDriver webDriver;
-
+    
+    @BeforeClass
+    public static void beforeClass() {
+        String clientId1 = System.getProperty("org.orcid.web.testClient1.clientId");        
+        String clientId2 = System.getProperty("org.orcid.web.testClient2.clientId");
+        if(PojoUtil.isEmpty(clientId2)) {
+            revokeApplicationsAccess(clientId1);
+        } else {
+            revokeApplicationsAccess(clientId1, clientId2);
+        }        
+    }
+    
+    @AfterClass
+    public static void afterClass() {
+        String clientId1 = System.getProperty("org.orcid.web.testClient1.clientId");        
+        String clientId2 = System.getProperty("org.orcid.web.testClient2.clientId");
+        if(PojoUtil.isEmpty(clientId2)) {
+            revokeApplicationsAccess(clientId1);
+        } else {
+            revokeApplicationsAccess(clientId1, clientId2);
+        }
+    }
+    
     @Before
     public void before() {
-        webDriver = new FirefoxDriver();
+        webDriver = new FirefoxDriver();              
     }
 
     @After
     public void after() {
-        webDriver.quit();
-    }
+        webDriver.quit();        
+    }        
 
     @Test
     public void testAuthorizeAndRegister() throws JSONException, InterruptedException, URISyntaxException {
@@ -400,7 +425,7 @@ public class OauthAuthorizationPageTest {
      *          For this test to run, the user should not have tokens for any of the
      *          following scopes: 
      *          - FUNDING_CREATE 
-     *          - FUNDING_UPDATE 
+     *          - AFFILIATIONS_CREATE 
      *          - PEER_REVIEW_CREATE
      * */
     @Test
@@ -446,13 +471,13 @@ public class OauthAuthorizationPageTest {
         // Then, ask again for permissions over other scopes. Note that the user
         // is already logged in
         webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, client1ClientId,
-                ScopePathType.FUNDING_UPDATE.getContent(), redirectUri));
-
-        By authorizeBtn = By.id("authorize");
-        (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(authorizeBtn));
-        WebElement authorizeBtnElement = webDriver.findElement(authorizeBtn);
-        authorizeBtnElement.click();
-
+                ScopePathType.AFFILIATIONS_CREATE.getContent(), redirectUri));                
+                        
+        By authorizeElementLocator = By.id("authorize");
+        (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(authorizeElementLocator));        
+        WebElement authorizeButton = webDriver.findElement(authorizeElementLocator);
+        authorizeButton.click();
+        
         (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(new ExpectedCondition<Boolean>() {
             public Boolean apply(WebDriver d) {
                 return d.getCurrentUrl().contains("code=");
@@ -465,7 +490,7 @@ public class OauthAuthorizationPageTest {
         authorizationCode = matcher.group(1);
         assertFalse(PojoUtil.isEmpty(authorizationCode));
 
-        tokenResponse = getClientResponse(client1ClientId, client1ClientSecret, ScopePathType.FUNDING_UPDATE.getContent(), redirectUri, authorizationCode);
+        tokenResponse = getClientResponse(client1ClientId, client1ClientSecret, ScopePathType.AFFILIATIONS_CREATE.getContent(), redirectUri, authorizationCode);
         assertEquals(200, tokenResponse.getStatus());
         body = tokenResponse.getEntity(String.class);
         jsonObject = new JSONObject(body);
@@ -477,13 +502,13 @@ public class OauthAuthorizationPageTest {
 
         // Repeat the process again with other scope
         webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, client1ClientId,
-                ScopePathType.PEER_REVIEW_CREATE.getContent(), redirectUri));
-
-        authorizeBtn = By.id("authorize");
-        (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(authorizeBtn));
-        authorizeBtnElement = webDriver.findElement(authorizeBtn);
-        authorizeBtnElement.click();
-
+                ScopePathType.ORCID_WORKS_CREATE.getContent(), redirectUri));        
+               
+        authorizeElementLocator = By.id("authorize");
+        (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(authorizeElementLocator));        
+        authorizeButton = webDriver.findElement(authorizeElementLocator);
+        authorizeButton.click();
+        
         (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(new ExpectedCondition<Boolean>() {
             public Boolean apply(WebDriver d) {
                 return d.getCurrentUrl().contains("code=");
@@ -496,7 +521,7 @@ public class OauthAuthorizationPageTest {
         authorizationCode = matcher.group(1);
         assertFalse(PojoUtil.isEmpty(authorizationCode));
 
-        tokenResponse = getClientResponse(client1ClientId, client1ClientSecret, ScopePathType.PEER_REVIEW_CREATE.getContent(), redirectUri, authorizationCode);
+        tokenResponse = getClientResponse(client1ClientId, client1ClientSecret, ScopePathType.ORCID_WORKS_CREATE.getContent(), redirectUri, authorizationCode);
         assertEquals(200, tokenResponse.getStatus());
         body = tokenResponse.getEntity(String.class);
         jsonObject = new JSONObject(body);
@@ -519,5 +544,5 @@ public class OauthAuthorizationPageTest {
         params.add("redirect_uri", redirectUri);
         params.add("code", authorizationCode);
         return t2OAuthClient.obtainOauth2TokenPost("client_credentials", params);
-    }
+    }        
 }

@@ -44,7 +44,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlType(name = "group-type")
 @XmlEnum
-public enum GroupType {
+public enum MemberType {
     
     //@formatter:off
     @XmlEnumValue("basic")
@@ -59,7 +59,7 @@ public enum GroupType {
     
     private final String value;
 
-    GroupType(String v) {
+    MemberType(String v) {
         value = v;
     }
 
@@ -67,8 +67,8 @@ public enum GroupType {
         return value;
     }
 
-    public static GroupType fromValue(String v) {
-        for (GroupType c : GroupType.values()) {
+    public static MemberType fromValue(String v) {
+        for (MemberType c : MemberType.values()) {
             if (c.value.equals(v)) {
                 return c;
             }

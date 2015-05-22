@@ -22,9 +22,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -992,43 +989,6 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         assertNotNull(orgEntity);
 
         assertEquals(orgEntity.getId(), orgEntity2.getId());
-    }
-
-    @SuppressWarnings("unchecked")
-    @Test
-    @Transactional
-    @Rollback(true)
-    public void testAddDelegates() {
-        OrcidProfile profile1 = createBasicProfile();
-        orcidProfileManager.createOrcidProfile(profile1, false);
-
-        OrcidProfile profile2 = new OrcidProfile();
-        profile2.setOrcidIdentifier(TEST_ORCID);
-        OrcidBio orcidBio = new OrcidBio();
-        profile2.setOrcidBio(orcidBio);
-        Delegation delegation = new Delegation();
-        orcidBio.setDelegation(delegation);
-        GivenPermissionTo givenPermissionTo = new GivenPermissionTo();
-        delegation.setGivenPermissionTo(givenPermissionTo);
-        DelegationDetails delegationDetails = new DelegationDetails();
-        delegationDetails.setApprovalDate(new ApprovalDate(DateUtils.convertToXMLGregorianCalendar("2011-03-14T02:34:16")));
-        DelegateSummary delegateSummary = new DelegateSummary(new OrcidIdentifier(DELEGATE_ORCID));
-        delegationDetails.setDelegateSummary(delegateSummary);
-        givenPermissionTo.getDelegationDetails().add(delegationDetails);
-        orcidProfileManager.addDelegates(profile2);
-
-        OrcidProfile retrievedProfile = orcidProfileManager.retrieveOrcidProfile(TEST_ORCID);
-        assertNotNull(retrievedProfile);
-        GivenPermissionTo retrievedGivenPermissionTo = retrievedProfile.getOrcidBio().getDelegation().getGivenPermissionTo();
-        assertNotNull(retrievedGivenPermissionTo);
-        assertEquals(1, retrievedGivenPermissionTo.getDelegationDetails().size());
-        DelegationDetails retrievedDelegationDetails = retrievedGivenPermissionTo.getDelegationDetails().get(0);
-        DelegateSummary retrievedDelegateSummary = retrievedDelegationDetails.getDelegateSummary();
-        assertNotNull(retrievedDelegateSummary);
-        assertEquals(DELEGATE_ORCID, retrievedDelegateSummary.getOrcidIdentifier().getPath());
-        assertEquals("H. Shearer", retrievedDelegateSummary.getCreditName().getContent());
-        assertEquals(DateUtils.convertToDate("2011-03-14T02:34:16"), DateUtils.convertToDate(retrievedDelegationDetails.getApprovalDate().getValue()));
-        verify(notificationManager, times(1)).sendNotificationToAddedDelegate(any(OrcidProfile.class), any(List.class));
     }
 
     @Test

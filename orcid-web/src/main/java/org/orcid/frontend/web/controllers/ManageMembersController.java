@@ -16,35 +16,24 @@
  */
 package org.orcid.frontend.web.controllers;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
-import org.orcid.core.exception.OrcidClientGroupManagementException;
 import org.orcid.core.manager.ClientDetailsManager;
-import org.orcid.core.manager.EmailManager;
-import org.orcid.core.manager.OrcidClientGroupManager;
-import org.orcid.core.manager.ProfileEntityCacheManager;
-import org.orcid.core.manager.ProfileEntityManager;
-import org.orcid.jaxb.model.clientgroup.ClientType;
-import org.orcid.jaxb.model.clientgroup.GroupType;
-import org.orcid.jaxb.model.clientgroup.OrcidClient;
-import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
+import org.orcid.core.manager.MembersManager;
+import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
-import org.orcid.jaxb.model.message.ErrorDesc;
-import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.Client;
-import org.orcid.pojo.ajaxForm.Group;
+import org.orcid.pojo.ajaxForm.Member;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.RedirectUri;
 import org.orcid.pojo.ajaxForm.Text;
-import org.orcid.utils.OrcidStringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -57,40 +46,19 @@ import org.springframework.web.servlet.ModelAndView;
 /**
  * @author Angel Montenegro
  */
-
 @Controller
 @RequestMapping(value = { "/manage-members" })
-public class ManageMembersController extends BaseController {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(ManageMembersController.class);
-
+public class ManageMembersController extends BaseController {    
     private static String SALESFORCE_ID_PATTERN = "[a-zA-Z0-9]{15}";
 
     @Resource
-    EmailManager emailManager;
-
-    @Resource
-    ProfileEntityManager profileEntityManager;
-
-    @Resource
-    OrcidClientGroupManager orcidClientGroupManager;
-
+    MembersManager membersManager;
+    
     @Resource
     ClientDetailsManager clientDetailsManager;
 
     @Resource
-    private GroupAdministratorController groupAdministratorController;
-
-    @Resource(name = "profileEntityCacheManager")
-    ProfileEntityCacheManager profileEntityCacheManager;
-    
-    public OrcidClientGroupManager getOrcidClientGroupManager() {
-        return orcidClientGroupManager;
-    }
-
-    public void setOrcidClientGroupManager(OrcidClientGroupManager orcidClientGroupManager) {
-        this.orcidClientGroupManager = orcidClientGroupManager;
-    }
+    private GroupAdministratorController groupAdministratorController;          
 
     @RequestMapping
     public ModelAndView getManageMembersPage() {
@@ -105,47 +73,43 @@ public class ManageMembersController extends BaseController {
      * */
     @RequestMapping(value = "/member.json", method = RequestMethod.GET)
     public @ResponseBody
-    Group getEmptyGroup() {
+    Member getEmptyGroup() {
         Text empty = Text.valueOf("");
-        Group group = new Group();
+        Member group = new Member();
         group.setEmail(empty);
         group.setGroupName(empty);
         group.setGroupOrcid(empty);
         group.setSalesforceId(empty);
         // Set the default type as basic
-        group.setType(Text.valueOf(GroupType.BASIC.value()));
+        group.setType(Text.valueOf(MemberType.BASIC.value()));
         return group;
     }
 
+    @RequestMapping(value = "/find.json", method = RequestMethod.GET)
+    public @ResponseBody ResultContainer find(@RequestParam("id") String id) {
+        ResultContainer result = new ResultContainer();
+        
+        if(clientDetailsManager.exists(id)) {
+            result.setClient(true);
+            result.setClientObject(findClient(id));
+        } else {
+            result.setClient(false);
+            result.setMemberObject(findMember(id));
+        }     
+        
+        return result;
+    } 
+    
     @RequestMapping(value = "/find-member.json", method = RequestMethod.GET)
     public @ResponseBody
-    Group findMember(@RequestParam("orcidOrEmail") String orcidOrEmail) {
-        Group group = new Group();
+    Member findMember(@RequestParam("orcidOrEmail") String orcidOrEmail) {
+        Member group = new Member();
 
-        String orcid = orcidOrEmail;
-        if (!matchesOrcidPattern(orcidOrEmail)) {
-            Map<String, String> ids = emailManager.findIdByEmail(orcidOrEmail);
-            if (ids != null && ids.containsKey(orcidOrEmail)) {
-                orcid = ids.get(orcidOrEmail);
-            } else {
-                group.getErrors().add(getMessage("manage_member.email_not_found"));
-                orcid = null;
-            }
-        }
-
-        if (orcid != null) {
-            if (profileEntityManager.orcidExists(orcid)) {
-                GroupType groupType = profileEntityManager.getGroupType(orcid);
-                if (groupType != null) {
-                    ProfileEntity memberProfile = profileEntityCacheManager.retrieve(orcid);
-                    group = Group.fromProfileEntity(memberProfile);
-                } else {
-                    group.getErrors().add(getMessage("manage_members.orcid_is_not_a_member"));
-                }
-            } else {
-                group.getErrors().add(getMessage("manage_members.orcid_doesnt_exists"));
-            }
-        }
+        if(PojoUtil.isEmpty(orcidOrEmail)) {
+            group.getErrors().add("manage_member.not_blank");
+        } else {
+            group = membersManager.getMember(orcidOrEmail);
+        }                        
 
         return group;
     }
@@ -160,71 +124,59 @@ public class ManageMembersController extends BaseController {
      * */
     @RequestMapping(value = "/create-member.json", method = RequestMethod.POST)
     public @ResponseBody
-    Group createMember(@RequestBody Group group) {
-        group.setErrors(new ArrayList<String>());
+    Member createMember(@RequestBody Member member) {
+        member.setErrors(new ArrayList<String>());
 
-        validateGroupEmail(group);
-        validateGroupName(group);
-        validateGroupType(group);
-        validateSalesforceId(group);
+        validateGroupEmail(member);
+        validateGroupName(member);
+        validateGroupType(member);
+        validateSalesforceId(member);
 
-        copyErrors(group.getEmail(), group);
-        copyErrors(group.getGroupName(), group);
-        copyErrors(group.getType(), group);
-        copyErrors(group.getSalesforceId(), group);
+        copyErrors(member.getEmail(), member);
+        copyErrors(member.getGroupName(), member);
+        copyErrors(member.getType(), member);
+        copyErrors(member.getSalesforceId(), member);
 
-        if (group.getErrors().isEmpty()) {
-            OrcidClientGroup orcidClientGroup = group.toOrcidClientGroup();
-            orcidClientGroup = orcidClientGroupManager.createGroup(orcidClientGroup);
-            group.setGroupOrcid(Text.valueOf(orcidClientGroup.getGroupOrcid()));
+        if (member.getErrors().isEmpty()) {
+            member = membersManager.createMember(member);
         }
 
-        return group;
+        return member;
     }
 
     @RequestMapping(value = "/update-member.json", method = RequestMethod.POST)
     public @ResponseBody
-    Group updateMember(@RequestBody Group group) {
-        group.setErrors(new ArrayList<String>());
+    Member updateMember(@RequestBody Member member) {
+        member.setErrors(new ArrayList<String>());
 
-        validateGroupEmail(group);
-        validateGroupName(group);
-        validateGroupType(group);
-        validateSalesforceId(group);
+        validateGroupEmail(member);
+        validateGroupName(member);
+        validateGroupType(member);
+        validateSalesforceId(member);
 
-        copyErrors(group.getEmail(), group);
-        copyErrors(group.getGroupName(), group);
-        copyErrors(group.getType(), group);
-        copyErrors(group.getSalesforceId(), group);
+        copyErrors(member.getEmail(), member);
+        copyErrors(member.getGroupName(), member);
+        copyErrors(member.getType(), member);
+        copyErrors(member.getSalesforceId(), member);
 
-        if (group.getErrors().isEmpty()) {
-            OrcidClientGroup orcidClientGroup = group.toOrcidClientGroup();
-            orcidClientGroupManager.updateGroup(orcidClientGroup);
-            groupAdministratorController.clearCache();
+        if (member.getErrors().isEmpty()) {
+            member = membersManager.updateMemeber(member);
         }
 
-        return group;
+        return member;
     }
 
     @RequestMapping(value = "/find-client.json", method = RequestMethod.GET)
     public @ResponseBody
     Client findClient(@RequestParam("orcid") String orcid) {
         Client result = new Client();
-        ClientDetailsEntity clientDetailsEntity = clientDetailsManager.findByClientId(orcid);
-        if (clientDetailsEntity != null) {
-            ClientType clientType = profileEntityManager.getClientType(orcid);
-            if (clientType != null) {
-                result = Client.valueOf(clientDetailsEntity);
-                // If the client types is undefined, get it from DB
-                if (PojoUtil.isEmpty(result.getType()))
-                    result.setType(Text.valueOf(clientType.value()));
-            } else {
-                result.getErrors().add(getMessage("admin.edit_client.orcid_is_not_a_client"));
-            }
-
+        
+        if(PojoUtil.isEmpty(orcid)) {
+            result.getErrors().add(getMessage("manage_member.not_blank"));
         } else {
-            result.getErrors().add(getMessage("admin.edit_client.invalid_orcid"));
+            result = membersManager.getClient(orcid);
         }
+                
         return result;
     }
 
@@ -248,18 +200,7 @@ public class ManageMembersController extends BaseController {
         }
 
         if (client.getErrors().isEmpty()) {
-
-            OrcidClient result = null;
-            try {
-                result = orcidClientGroupManager.updateClient(client.toOrcidClient());
-                groupAdministratorController.clearCache();
-            } catch (OrcidClientGroupManagementException e) {
-                LOGGER.error(e.getMessage());
-                result = new OrcidClient();
-                result.setErrors(new ErrorDesc(getMessage("manage.developer_tools.group.unable_to_update")));
-            }
-
-            client = Client.valueOf(result);
+            client = membersManager.updateClient(client);
         }
 
         return client;
@@ -289,10 +230,10 @@ public class ManageMembersController extends BaseController {
 
     @ModelAttribute("groupTypes")
     public Map<String, String> retrieveGroupTypes() {
-        GroupType[] groupTypes = GroupType.values();
+        MemberType[] groupTypes = MemberType.values();
         Map<String, String> groupTypesMap = new TreeMap<String, String>();
 
-        for (GroupType groupType : groupTypes) {
+        for (MemberType groupType : groupTypes) {
             String key = groupType.value();
             String value = key.replace('-', ' ');
             groupTypesMap.put(key, value);
@@ -304,7 +245,7 @@ public class ManageMembersController extends BaseController {
     /**
      * VALIDATORS
      * */
-    private void validateGroupEmail(Group group) {
+    private void validateGroupEmail(Member group) {
         group.getEmail().setErrors(new ArrayList<String>());
         if (PojoUtil.isEmpty(group.getEmail())) {
             setError(group.getEmail(), "NotBlank.group.email");
@@ -328,7 +269,7 @@ public class ManageMembersController extends BaseController {
         }
     }
 
-    private void validateGroupName(Group group) {
+    private void validateGroupName(Member group) {
         group.getGroupName().setErrors(new ArrayList<String>());
         if (PojoUtil.isEmpty(group.getGroupName())) {
             setError(group.getGroupName(), "NotBlank.group.name");
@@ -337,20 +278,20 @@ public class ManageMembersController extends BaseController {
         }
     }
 
-    private void validateGroupType(Group group) {
+    private void validateGroupType(Member group) {
         group.getType().setErrors(new ArrayList<String>());
         if (PojoUtil.isEmpty(group.getType())) {
             setError(group.getType(), "NotBlank.group.type");
         } else {
             try {
-                GroupType.fromValue(group.getType().getValue());
+                MemberType.fromValue(group.getType().getValue());
             } catch (IllegalArgumentException e) {
                 setError(group.getType(), "group.type.invalid");
             }
         }
     }
 
-    private void validateSalesforceId(Group group) {
+    private void validateSalesforceId(Member group) {
         group.getSalesforceId().setErrors(new ArrayList<String>());
         if (group != null && !PojoUtil.isEmpty(group.getSalesforceId())) {
             if (group.getSalesforceId().getValue().length() != 15) {
@@ -359,9 +300,32 @@ public class ManageMembersController extends BaseController {
                 setError(group.getSalesforceId(), "group.salesforce_id.invalid");
             }
         }
-    }
+    }    
+}
 
-    private boolean matchesOrcidPattern(String orcid) {
-        return OrcidStringUtils.isValidOrcid(orcid);
+class ResultContainer implements Serializable {
+    private static final long serialVersionUID = -3832431757948716851L;
+    
+    boolean isClient = false;
+    Client clientObject;
+    Member memberObject;
+
+    public boolean isClient() {
+        return isClient;
+    }
+    public void setClient(boolean isClient) {
+        this.isClient = isClient;
+    }
+    public Client getClientObject() {
+        return clientObject;
+    }
+    public void setClientObject(Client clientObject) {
+        this.clientObject = clientObject;
+    }
+    public Member getMemberObject() {
+        return memberObject;
+    }
+    public void setMemberObject(Member memberObject) {
+        this.memberObject = memberObject;
     }
 }

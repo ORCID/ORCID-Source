@@ -37,7 +37,7 @@ import org.orcid.core.manager.OrcidClientGroupManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileWorkManager;
-import org.orcid.jaxb.model.clientgroup.GroupType;
+import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.password.constants.OrcidPasswordConstants;
@@ -139,10 +139,10 @@ public class AdminController extends BaseController {
 
     @ModelAttribute("groupTypes")
     public Map<String, String> retrieveGroupTypes() {
-        GroupType[] groupTypes = GroupType.values();
+        MemberType[] groupTypes = MemberType.values();
         Map<String, String> groupTypesMap = new TreeMap<String, String>();
 
-        for (GroupType groupType : groupTypes) {
+        for (MemberType groupType : groupTypes) {
             String key = groupType.value();
             String value = key.replace('-', ' ');
             groupTypesMap.put(key, value);

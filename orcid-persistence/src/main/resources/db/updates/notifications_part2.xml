@@ -55,4 +55,10 @@ $$ LANGUAGE plpgsql;
         <sql>UPDATE notification set notification_type = 'CUSTOM' WHERE notification_type = 'RECORD_UPDATED_BY_MEMBER'</sql>
     </changeSet>
     
+    <changeSet id="ADD-AMENDED-SECTION-TO-NOTIFICATION" author="Will Simpson">
+        <addColumn tableName="notification">
+            <column name="amended_section" type="varchar(200)" />
+        </addColumn>
+    </changeSet>
+    
 </databaseChangeLog>

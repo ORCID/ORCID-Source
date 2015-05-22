@@ -36,7 +36,7 @@ import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.utils.activities.ActivitiesGroup;
 import org.orcid.core.utils.activities.ActivitiesGroupGenerator;
 import org.orcid.jaxb.model.clientgroup.ClientType;
-import org.orcid.jaxb.model.clientgroup.GroupType;
+import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidType;
@@ -256,7 +256,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
      * @return the group type, null if it is not a client
      * */
     @Override
-    public GroupType getGroupType(String orcid) {
+    public MemberType getGroupType(String orcid) {
         return profileDao.getGroupType(orcid);
     }
 

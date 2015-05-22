@@ -117,6 +117,7 @@ import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.VisibilityType;
 import org.orcid.jaxb.model.message.WorkContributors;
 import org.orcid.jaxb.model.message.WorkExternalIdentifier;
+import org.orcid.jaxb.model.notification.amended.AmendedSection;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.GivenPermissionToDao;
@@ -332,10 +333,6 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         dedupeAffiliations(orcidProfile);
         dedupeFundings(orcidProfile);
         addSourceToEmails(orcidProfile, existingProfileEntity, amenderOrcid);
-        addSourceToAffiliations(orcidProfile, amenderOrcid);
-        addSourceToWorks(orcidProfile, amenderOrcid);
-        addSourceToAffiliations(orcidProfile, amenderOrcid);
-        addSourceToFundings(orcidProfile, amenderOrcid);
         ProfileEntity profileEntity = adapter.toProfileEntity(orcidProfile, existingProfileEntity);
         profileEntity.setLastModified(new Date());
         profileEntity.setIndexingStatus(IndexingStatus.PENDING);
@@ -344,7 +341,6 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         profileDao.refresh(updatedProfileEntity);
         OrcidProfile updatedOrcidProfile = convertToOrcidProfile(updatedProfileEntity, LoadOptions.ALL);
         orcidProfileCacheManager.put(updatedOrcidProfile);
-        notificationManager.sendAmendEmail(updatedOrcidProfile, amenderOrcid);
         return updatedOrcidProfile;
     }
 
@@ -423,10 +419,8 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     private void addSourceToWorks(OrcidWorks orcidWorks, String amenderOrcid) {
         if (orcidWorks != null && !orcidWorks.getOrcidWork().isEmpty() && amenderOrcid != null) {
             for (OrcidWork orcidWork : orcidWorks.getOrcidWork()) {
-                if (orcidWork.getSource() == null || StringUtils.isBlank(orcidWork.getSource().retrieveSourcePath())) {
-                    Source source = createSource(amenderOrcid);
-                    orcidWork.setSource(source);
-                }
+                Source source = createSource(amenderOrcid);
+                orcidWork.setSource(source);
             }
         }
     }
@@ -435,8 +429,10 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         Source source = new Source();
         if (OrcidStringUtils.isValidOrcid(amenderOrcid)) {
             source.setSourceOrcid(new SourceOrcid(amenderOrcid));
+            source.setSourceClientId(null);
         } else {
             source.setSourceClientId(new SourceClientId(amenderOrcid));
+            source.setSourceOrcid(null);
         }
         return source;
     }
@@ -785,7 +781,9 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
             existingActivities.setOrcidWorks(existingOrcidWorks);
         }
         orcidJaxbCopyManager.copyUpdatedWorksPreservingVisbility(existingProfile.retrieveOrcidWorks(), updatedOrcidProfile.retrieveOrcidWorks());
-        return updateOrcidProfile(existingProfile);
+        OrcidProfile profileToReturn = updateOrcidProfile(existingProfile);
+        notificationManager.sendAmendEmail(profileToReturn, AmendedSection.WORK);
+        return profileToReturn;
     }
 
     /**
@@ -817,7 +815,9 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
 
             orcidJaxbCopyManager.copyUpdatedExternalIdentifiersToExistingPreservingVisibility(orcidBio, updatedOrcidProfile.getOrcidBio());
 
-            return updateOrcidProfile(existingProfile);
+            OrcidProfile profileToReturn = updateOrcidProfile(existingProfile);
+            notificationManager.sendAmendEmail(profileToReturn, AmendedSection.EXTERNAL_IDENTIFIERS);
+            return profileToReturn;
         } else {
             return null;
         }
@@ -837,8 +837,10 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
             return null;
         }
         // preserve the visibility settings
-        orcidJaxbCopyManager.copyUpdatedBioToExistingWithVisibility(existingProfile.getOrcidBio(), updatedOrcidProfile.getOrcidBio());        
-        return updateOrcidProfile(existingProfile);
+        orcidJaxbCopyManager.copyUpdatedBioToExistingWithVisibility(existingProfile.getOrcidBio(), updatedOrcidProfile.getOrcidBio());
+        OrcidProfile profileToReturn = updateOrcidProfile(existingProfile);
+        notificationManager.sendAmendEmail(profileToReturn, AmendedSection.BIO);
+        return profileToReturn;
     }
 
     @Override
@@ -868,7 +870,9 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         }
 
         orcidJaxbCopyManager.copyAffiliationsToExistingPreservingVisibility(existingAffiliations, updatedAffiliations);
-        return updateOrcidProfile(existingProfile);
+        OrcidProfile profileToReturn = updateOrcidProfile(existingProfile);
+        notificationManager.sendAmendEmail(profileToReturn, AmendedSection.AFFILIATION);
+        return profileToReturn;
     }
 
     @Override
@@ -899,7 +903,9 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         }
 
         orcidJaxbCopyManager.copyFundingListToExistingPreservingVisibility(existingFundingList, updatedFundingList);
-        return updateOrcidProfile(existingProfile);
+        OrcidProfile profileToReturn = updateOrcidProfile(existingProfile);
+        notificationManager.sendAmendEmail(profileToReturn, AmendedSection.FUNDING);
+        return profileToReturn;
     }
 
     @Override
@@ -1019,7 +1025,9 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         }
 
         existingProfile.setOrcidPreferences(updatedOrcidProfile.getOrcidPreferences());
-        return updateOrcidProfile(existingProfile);
+        OrcidProfile profileToReturn = updateOrcidProfile(existingProfile);
+        notificationManager.sendAmendEmail(profileToReturn, AmendedSection.PREFERENCES);
+        return profileToReturn;
     }
 
     @Override
@@ -1073,7 +1081,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         profileDao.flush();
         boolean notificationsEnabled = existingProfile.getOrcidInternal().getPreferences().isNotificationsEnabled();
         if (notificationsEnabled) {
-            notificationManager.sendAmendEmail(existingProfile, amenderOrcid);
+            notificationManager.sendAmendEmail(existingProfile, AmendedSection.WORK);
         }
     }
 
@@ -1403,48 +1411,6 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
 
     @Override
     @Transactional
-    public OrcidProfile deleteOrcidWorks(String orcid, int[] positionsToDelete) {
-        OrcidProfile existingProfile = retrieveOrcidProfile(orcid);
-        if (existingProfile == null) {
-            return null;
-        }
-        // XXX Probably should be some optimistic locking around here somewhere,
-        // or something, because deleting by position isn't cool if the list has
-        // changed.
-        Arrays.sort(positionsToDelete);
-        List<OrcidWork> orcidWorks = existingProfile.retrieveOrcidWorks().getOrcidWork();
-        List<OrcidWork> remainingWorks = new ArrayList<OrcidWork>(orcidWorks.size() - positionsToDelete.length);
-        existingProfile.retrieveOrcidWorks().setOrcidWork(remainingWorks);
-        int startPosition = 0;
-        for (int positionToDelete : positionsToDelete) {
-            remainingWorks.addAll(orcidWorks.subList(startPosition, positionToDelete));
-            startPosition = positionToDelete + 1;
-        }
-        remainingWorks.addAll(orcidWorks.subList(startPosition, orcidWorks.size()));
-        return updateOrcidProfile(existingProfile);
-    }
-
-    @Override
-    @Transactional
-    public OrcidProfile updateOrcidWorkVisibility(String orcid, int[] positionsToUpdate, Visibility visibility) {
-        OrcidProfile existingProfile = retrieveOrcidProfile(orcid);
-        if (existingProfile == null) {
-            return null;
-        }
-        // XXX Probably should be some optimistic locking around here somewhere,
-        // or something, because updating by position isn't cool if the list has
-        // changed.
-        Arrays.sort(positionsToUpdate);
-        List<OrcidWork> orcidWorks = existingProfile.retrieveOrcidWorks().getOrcidWork();
-        for (int positionToUpdate : positionsToUpdate) {
-            OrcidWork work = orcidWorks.get(positionToUpdate);
-            work.setVisibility(visibility);
-        }
-        return updateOrcidProfile(existingProfile);
-    }
-
-    @Override
-    @Transactional
     public OrcidProfile deactivateOrcidProfile(OrcidProfile existingOrcidProfile) {
         OrcidProfile blankedOrcidProfile = new OrcidProfile();
 
@@ -1483,7 +1449,9 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         blankedOrcidProfile.setOrcidBio(minimalBio);
         blankedOrcidProfile.setOrcidIdentifier(existingOrcidProfile.getOrcidIdentifier().getPath());
 
-        return this.updateOrcidProfile(blankedOrcidProfile);
+        OrcidProfile profileToReturn =  updateOrcidProfile(blankedOrcidProfile);
+        notificationManager.sendAmendEmail(profileToReturn, AmendedSection.UNKNOWN);
+        return profileToReturn;
     }
 
     /**
@@ -1492,7 +1460,9 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     public OrcidProfile reactivateOrcidProfile(OrcidProfile deactivatedOrcidProfile) {
         OrcidHistory deactivatedOrcidHistory = deactivatedOrcidProfile.getOrcidHistory();
         deactivatedOrcidHistory.setDeactivationDate(null);
-        return this.updateOrcidProfile(deactivatedOrcidProfile);
+        OrcidProfile profileToReturn = updateOrcidProfile(deactivatedOrcidProfile);
+        notificationManager.sendAmendEmail(profileToReturn, AmendedSection.UNKNOWN);
+        return profileToReturn;
     }
 
     private void setVisibilityToPrivate(VisibilityType visibilityType) {
@@ -1575,7 +1545,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         profileDao.flush();
         boolean notificationsEnabled = existingProfile.getOrcidInternal().getPreferences().isNotificationsEnabled();
         if (notificationsEnabled) {
-            notificationManager.sendAmendEmail(existingProfile, amenderOrcid);
+            notificationManager.sendAmendEmail(existingProfile, AmendedSection.AFFILIATION);
         }
     }
 
@@ -1632,7 +1602,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         profileDao.flush();
         boolean notificationsEnabled = existingProfile.getOrcidInternal().getPreferences().isNotificationsEnabled();
         if (notificationsEnabled) {
-            notificationManager.sendAmendEmail(existingProfile, amenderOrcid);
+            notificationManager.sendAmendEmail(existingProfile, AmendedSection.FUNDING);
         }
     }
 
@@ -1732,8 +1702,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     private void addSourceToAffiliations(Affiliations affiliations, String amenderOrcid) {
         if (affiliations != null && !affiliations.getAffiliation().isEmpty()) {
             for (Affiliation affiliation : affiliations.getAffiliation()) {
-                if (affiliation.getSource() == null || StringUtils.isBlank(affiliation.retrieveSourcePath()))
-                    affiliation.setSource(createSource(amenderOrcid));
+                affiliation.setSource(createSource(amenderOrcid));
             }
         }
     }
@@ -1741,9 +1710,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     private void addSourceToFundings(FundingList fundings, String amenderOrcid) {
         if (fundings != null && !fundings.getFundings().isEmpty()) {
             for (Funding funding : fundings.getFundings()) {
-                if (funding.getSource() == null || StringUtils.isBlank(funding.retrieveSourcePath())) {
-                    funding.setSource(createSource(amenderOrcid));
-                }
+            	funding.setSource(createSource(amenderOrcid));
             }
         }
     }
@@ -1842,60 +1809,6 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
             profileFundingDao.addProfileFunding(profileFundingEntity);
         }
         orcidProfileCacheManager.remove(orcid);
-    }
-
-    @Override
-    @Transactional
-    public OrcidProfile addDelegates(OrcidProfile updatedOrcidProfile) {
-        String orcid = updatedOrcidProfile.getOrcidIdentifier().getPath();
-        OrcidProfile existingProfile = retrieveOrcidProfile(orcid);
-        if (existingProfile == null) {
-            return null;
-        }
-        OrcidBio existingOrcidBio = existingProfile.getOrcidBio();
-        Delegation existingDelegation = existingOrcidBio.getDelegation();
-        // if existing delegation doesn't exist then use this as the definitive
-        List<DelegationDetails> newlyAddedDelegates = new ArrayList<DelegationDetails>();
-        if (existingDelegation == null) {
-            Delegation updatedDelegation = updatedOrcidProfile.getOrcidBio().getDelegation();
-            existingOrcidBio.setDelegation(updatedDelegation);
-            // all delegate for this user can be considered new
-            if (updatedDelegation.getGivenPermissionTo() != null && updatedDelegation.getGivenPermissionTo().getDelegationDetails() != null) {
-                newlyAddedDelegates.addAll(updatedDelegation.getGivenPermissionTo().getDelegationDetails());
-            }
-
-        } else {
-            GivenPermissionTo existingPermissionsTo = existingDelegation.getGivenPermissionTo();
-            GivenPermissionTo updatedPermissionTo = updatedOrcidProfile.getOrcidBio().getDelegation().getGivenPermissionTo();
-            if (existingPermissionsTo == null) {
-                // any delegates in this list of GivenPermissionTo are to be
-                // added to mailing list, first time in..
-                if (updatedPermissionTo.getDelegationDetails() != null && updatedPermissionTo.getDelegationDetails() != null) {
-                    newlyAddedDelegates.addAll(updatedPermissionTo.getDelegationDetails());
-                }
-                existingDelegation.setGivenPermissionTo(updatedPermissionTo);
-            } else {
-                // anything being passed in the new list of delegation details
-                // is to be added to existing, but email the
-                // delta
-                for (DelegationDetails delegationDetails : updatedPermissionTo.getDelegationDetails()) {
-                    // add all to correctly update object graph for persistence
-                    // but don't send repeated emails
-                    if (!existingPermissionsTo.getDelegationDetails().contains(delegationDetails)) {
-                        newlyAddedDelegates.add(delegationDetails);
-                    }
-                    existingPermissionsTo.getDelegationDetails().add(delegationDetails);
-
-                }
-            }
-        }
-
-        OrcidProfile persistedProfile = updateOrcidProfile(existingProfile);
-        if (!newlyAddedDelegates.isEmpty()) {
-            notificationManager.sendNotificationToAddedDelegate(existingProfile, newlyAddedDelegates);
-        }
-
-        return persistedProfile;
     }
 
     @Override

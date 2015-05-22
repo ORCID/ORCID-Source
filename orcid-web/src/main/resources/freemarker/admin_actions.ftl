@@ -40,7 +40,7 @@
 				</tr>
 				<tr ng-repeat="(email, orcid) in emailIdsMap">
 					<td>{{email}}</td>
-					<td>{{orcid}}&nbsp;(<@orcid.msg 'admin.switch.click.1'/>&nbsp;<a href="<@orcid.msg 'admin.switch.click.link'/>{{orcid}}"><@orcid.msg 'admin.switch.click.here'/></a>&nbsp;<@orcid.msg 'admin.switch.click.2'/>)</td>
+					<td><a href="<@orcid.msg 'admin.public_view.click.link'/>{{orcid}}" target="_blank">{{orcid}}</a>&nbsp;(<@orcid.msg 'admin.switch.click.1'/>&nbsp;<a href="<@orcid.msg 'admin.switch.click.link'/>{{orcid}}"><@orcid.msg 'admin.switch.click.here'/></a>&nbsp;<@orcid.msg 'admin.switch.click.2'/>)</td>
 				</tr>
 			</table>
 			<div class="controls save-btns pull-right bottom-margin-small">

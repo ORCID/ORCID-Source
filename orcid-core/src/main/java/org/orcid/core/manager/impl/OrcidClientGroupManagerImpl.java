@@ -35,7 +35,7 @@ import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.OrcidClientGroupManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.jaxb.model.clientgroup.ClientType;
-import org.orcid.jaxb.model.clientgroup.GroupType;
+import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
 import org.orcid.jaxb.model.clientgroup.RedirectUri;
@@ -298,7 +298,7 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
      * @throws OrcidClientGroupManagementException
      *             if the client type cant be added by this group
      * */
-    private void checkAndSetClientType(OrcidClient client, GroupType groupType) {
+    private void checkAndSetClientType(OrcidClient client, MemberType groupType) {
         ClientType clientType = client.getType();
         if (clientType != null) {
             switch (groupType) {
@@ -357,7 +357,7 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
 
         // If this is a basic group or a basic institution group, it should
         // be allowed to have only one client
-        if (group.getType().equals(GroupType.BASIC) || group.getType().equals(GroupType.BASIC_INSTITUTION)) {
+        if (group.getType().equals(MemberType.BASIC) || group.getType().equals(MemberType.BASIC_INSTITUTION)) {
             if (!group.getOrcidClient().isEmpty())
                 return false;
         }
@@ -371,7 +371,7 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
      * @param groupType
      * @return the client type associated with the given group type
      * */
-    private ClientType getClientType(GroupType groupType) {
+    private ClientType getClientType(MemberType groupType) {
         ClientType clientType = null;
         switch (groupType) {
         case BASIC:
@@ -688,7 +688,7 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
     /**
      * Sets the client type based on the group type
      * */
-    private void setClientType(GroupType groupType, OrcidClient client) {
+    private void setClientType(MemberType groupType, OrcidClient client) {
         switch (groupType) {
         case BASIC:
             client.setType(ClientType.UPDATER);
