@@ -426,7 +426,7 @@ public class OauthAuthorizationPageTest extends BlackBoxBase {
      *          following scopes: 
      *          - FUNDING_CREATE 
      *          - AFFILIATIONS_CREATE 
-     *          - PEER_REVIEW_CREATE
+     *          - ORCID_WORKS_UPDATE
      * */
     @Test
     public void testDifferentScopesGeneratesDifferentAccessTokens() throws InterruptedException, JSONException {
@@ -502,7 +502,7 @@ public class OauthAuthorizationPageTest extends BlackBoxBase {
 
         // Repeat the process again with other scope
         webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, client1ClientId,
-                ScopePathType.ORCID_WORKS_CREATE.getContent(), redirectUri));        
+                ScopePathType.ORCID_WORKS_UPDATE.getContent(), redirectUri));        
                
         authorizeElementLocator = By.id("authorize");
         (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(authorizeElementLocator));        
@@ -521,7 +521,7 @@ public class OauthAuthorizationPageTest extends BlackBoxBase {
         authorizationCode = matcher.group(1);
         assertFalse(PojoUtil.isEmpty(authorizationCode));
 
-        tokenResponse = getClientResponse(client1ClientId, client1ClientSecret, ScopePathType.ORCID_WORKS_CREATE.getContent(), redirectUri, authorizationCode);
+        tokenResponse = getClientResponse(client1ClientId, client1ClientSecret, ScopePathType.ORCID_WORKS_UPDATE.getContent(), redirectUri, authorizationCode);
         assertEquals(200, tokenResponse.getStatus());
         body = tokenResponse.getEntity(String.class);
         jsonObject = new JSONObject(body);
