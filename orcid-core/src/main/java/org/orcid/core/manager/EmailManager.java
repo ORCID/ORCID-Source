@@ -50,4 +50,6 @@ public interface EmailManager {
     boolean isPrimaryEmailVerified(String orcid);
     
     boolean verifyPrimaryEmail(String orcid);
+    
+    boolean moveEmailToOtherAccount(String email, String origin, String destination);
 }
