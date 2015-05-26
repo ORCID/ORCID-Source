@@ -63,23 +63,22 @@ public class OrcidStringUtils {
         }
     }
     
-    public static boolean isValidOrcid(StringBuffer orcid) {
+    public static boolean isValidOrcidWithSpaces(String orcid) {
     	boolean result = false;
     	if(orcidPatternWithSpaces.matcher(orcid).matches()) {
-    		String temp = orcid.toString().replace(' ', '-');
-			orcid.replace(0, orcid.length(), temp);
-			result = true;
-    	} else if(orcidPatternOnlyDigits.matcher(orcid).matches()) {
-    		String temp = orcid.toString();
-			temp = temp.replaceAll("(.{4})", "$1-");
-			int length = temp.length();
-			temp = temp.substring(0, length -1);
-			orcid.replace(0, orcid.length(), temp);
 			result = true;
     	}
     	return result;
     }
 
+    public static boolean isValidOrcidWithoutSpacesWithoutHyphens(String orcid) {
+    	boolean result = false;
+    	 if(orcidPatternOnlyDigits.matcher(orcid).matches()) {
+ 			result = true;
+     	} 
+    	return result;
+    }
+    
     public static String getOrcidNumber(String orcid) {
         Matcher matcher = orcidPatternNormal.matcher(orcid);
         if (matcher.find()) {

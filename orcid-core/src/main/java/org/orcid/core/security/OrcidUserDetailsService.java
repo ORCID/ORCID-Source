@@ -46,7 +46,7 @@ public class OrcidUserDetailsService implements UserDetailsService {
     
     @Value("${org.orcid.core.baseUri}")
     private String baseUrl;
-
+    
     /**
      * Locates the user based on the username. In the actual implementation, the
      * search may possibly be case insensitive, or case insensitive depending on
@@ -99,10 +99,16 @@ public class OrcidUserDetailsService implements UserDetailsService {
     private ProfileEntity obtainEntity(String username) {
         ProfileEntity profile = null;
         if(!StringUtils.isEmpty(username)) {
-        	StringBuffer userNameBuffer = new StringBuffer(username);
-	        if (OrcidStringUtils.isValidOrcid(username) || OrcidStringUtils.isValidOrcid(userNameBuffer)) {
-	        	username = userNameBuffer.toString();
+	        if (OrcidStringUtils.isValidOrcid(username)) {
 	            profile = profileDao.find(username);
+	        } else if(OrcidStringUtils.isValidOrcidWithSpaces(username)) {
+	        	username = username.toString().replace(' ', '-');
+	        	profile = profileDao.find(username);
+	        } else if(OrcidStringUtils.isValidOrcidWithoutSpacesWithoutHyphens(username)) {
+	        	String temp = username.replaceAll("(.{4})", "$1-");
+				int length = temp.length();
+				username = temp.substring(0, length -1);
+				profile = profileDao.find(username);
 	        } else if(baseUrl != null && username.contains(new StringBuffer(baseUrl).append("/").toString())) {
 	        	username = OrcidStringUtils.getOrcidNumber(username);
 	        	if(username != null) {
