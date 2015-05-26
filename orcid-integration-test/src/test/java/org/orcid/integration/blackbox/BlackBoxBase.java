@@ -91,13 +91,12 @@ public class BlackBoxBase {
 
     @Resource
     protected OauthHelper oauthHelper;
-    
+
     public String getAccessToken(String scopes) throws InterruptedException, JSONException {
         webDriver = new FirefoxDriver();
         webDriverHelper = new WebDriverHelper(webDriver, webBaseUrl, redirectUri);
         oauthHelper.setWebDriverHelper(webDriverHelper);
-        String accessToken = oauthHelper.obtainAccessToken(client1ClientId, client1ClientSecret, scopes, user1UserName, user1Password,
-                redirectUri);
+        String accessToken = oauthHelper.obtainAccessToken(client1ClientId, client1ClientSecret, scopes, user1UserName, user1Password, redirectUri);
         webDriver.quit();
         return accessToken;
     }
@@ -133,79 +132,78 @@ public class BlackBoxBase {
         }
     }
 
-    public static void revokeApplicationsAccess(String ... clientIdsParam) {
-        //Nothing to remove
-        if(clientIdsParam == null) {
+    public static void revokeApplicationsAccess(String... clientIdsParam) {
+        // Nothing to remove
+        if (clientIdsParam == null) {
             return;
         }
         List<String> clientIds = new ArrayList<String>();
-        for(String clientId : clientIdsParam) {
+        for (String clientId : clientIdsParam) {
             clientIds.add(clientId);
         }
-        
+
         String userName = System.getProperty("org.orcid.web.testUser1.username");
         String password = System.getProperty("org.orcid.web.testUser1.password");
         String baseUrl = "http://localhost:8080/orcid-web";
-        if(!PojoUtil.isEmpty(System.getProperty("org.orcid.web.base.url"))) {
+        if (!PojoUtil.isEmpty(System.getProperty("org.orcid.web.base.url"))) {
             baseUrl = System.getProperty("org.orcid.web.base.url");
         }
-        
-        WebDriver webDriver = new FirefoxDriver();        
-        
+
+        WebDriver webDriver = new FirefoxDriver();
+
         int timeout = 4;
         webDriver.get(baseUrl + "/userStatus.json?logUserOut=true");
         webDriver.get(baseUrl + "/my-orcid");
         SigninTest.signIn(webDriver, userName, password);
-        
+
         // Switch to accounts settings page
         By accountSettingsMenuLink = By.id("accountSettingMenuLink");
         (new WebDriverWait(webDriver, timeout)).until(ExpectedConditions.presenceOfElementLocated(accountSettingsMenuLink));
         WebElement menuItem = webDriver.findElement(accountSettingsMenuLink);
         menuItem.click();
-        
+
         try {
-            
+
             boolean lookAgain = false;
-            
-            do {                
-                //Look for each revoke app button
+
+            do {
+                // Look for each revoke app button
                 By revokeAppBtn = By.id("revokeAppBtn");
                 (new WebDriverWait(webDriver, timeout)).until(ExpectedConditions.presenceOfElementLocated(revokeAppBtn));
-                List<WebElement> appsToRevoke = webDriver.findElements(revokeAppBtn);                
+                List<WebElement> appsToRevoke = webDriver.findElements(revokeAppBtn);
                 boolean elementFound = false;
-                //Iterate on them and delete the ones created by the specified client id
-                for(WebElement appElement : appsToRevoke) {
+                // Iterate on them and delete the ones created by the specified
+                // client id
+                for (WebElement appElement : appsToRevoke) {
                     String nameAttribute = appElement.getAttribute("name");
-                    if(clientIds.contains(nameAttribute)) {
+                    if (clientIds.contains(nameAttribute)) {
                         appElement.click();
                         Thread.sleep(1000);
-                        //Wait for the revoke button
+                        // Wait for the revoke button
                         By confirmRevokeAppBtn = By.id("confirmRevokeAppBtn");
                         (new WebDriverWait(webDriver, timeout)).until(ExpectedConditions.presenceOfElementLocated(confirmRevokeAppBtn));
                         WebElement trash = webDriver.findElement(confirmRevokeAppBtn);
-                        trash.click();  
+                        trash.click();
                         Thread.sleep(2000);
                         elementFound = true;
                         break;
                     }
                 }
-                
-                if(elementFound) {
+
+                if (elementFound) {
                     lookAgain = true;
                 } else {
                     lookAgain = false;
-                }                
-                
-            } while (lookAgain); 
-                        
-        } catch(Exception e) {
-            //If it fail is because it couldnt find any other application
+                }
+
+            } while (lookAgain);
+
+        } catch (Exception e) {
+            // If it fail is because it couldnt find any other application
         } finally {
             webDriver.get(baseUrl + "/userStatus.json?logUserOut=true");
             webDriver.quit();
-        }                
+        }
     }
-    
-    
-    
+
 }
