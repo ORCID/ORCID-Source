@@ -201,7 +201,7 @@ public class ClientDetailsManagerTest extends DBUnitTest {
             assertEquals(1, resourceIds.size());
         Set<String> scope = clientDetails.getScope();
         assertNotNull(scope);
-        int expectedNumberOfScopes = "4444-4444-4444-4445".equals(clientDetails.getClientId()) ? 14 : 1;
+        int expectedNumberOfScopes = "4444-4444-4444-4445".equals(clientDetails.getClientId()) ? 15 : 1;
         assertEquals(expectedNumberOfScopes, scope.size());
     }
 }
