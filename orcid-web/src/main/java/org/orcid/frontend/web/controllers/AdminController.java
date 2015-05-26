@@ -190,30 +190,19 @@ public class AdminController extends BaseController {
             try {
                 boolean wasDeprecated = adminManager.deprecateProfile(result, deprecatedOrcid, primaryOrcid);
                 if(wasDeprecated) {
-                    OrcidProfile deprecated = orcidProfileManager.retrieveOrcidProfile(deprecatedOrcid, LoadOptions.BIO_ONLY);
-                    OrcidProfile primary = orcidProfileManager.retrieveOrcidProfile(primaryOrcid, LoadOptions.BIO_ONLY);
+                    ProfileEntity deprecated = profileEntityCacheManager.retrieve(deprecatedOrcid);
+                    ProfileEntity primary = profileEntityCacheManager.retrieve(primaryOrcid);
                     
                     ProfileDetails deprecatedDetails = new ProfileDetails();
                     deprecatedDetails.setOrcid(deprecatedOrcid);
-                    if(deprecated.getOrcidBio().getPersonalDetails() != null) {
-                        if(deprecated.getOrcidBio().getPersonalDetails().getFamilyName() != null) {
-                            deprecatedDetails.setFamilyName(deprecated.getOrcidBio().getPersonalDetails().getFamilyName().getContent());
-                        }
-                        if(deprecated.getOrcidBio().getPersonalDetails().getGivenNames() != null) {
-                            deprecatedDetails.setGivenNames(deprecated.getOrcidBio().getPersonalDetails().getGivenNames().getContent());
-                        }
-                    }
-                                        
+                    
+                    deprecatedDetails.setFamilyName(deprecated.getFamilyName());
+                    deprecatedDetails.setGivenNames(deprecated.getGivenNames());
+                    
                     ProfileDetails primaryDetails = new ProfileDetails();
                     primaryDetails.setOrcid(primaryOrcid);
-                    if(primary.getOrcidBio().getPersonalDetails() != null) {
-                        if(primary.getOrcidBio().getPersonalDetails().getFamilyName() != null) {
-                            primaryDetails.setFamilyName(primary.getOrcidBio().getPersonalDetails().getFamilyName().getContent());
-                        }
-                        if(primary.getOrcidBio().getPersonalDetails().getGivenNames() != null) {
-                            primaryDetails.setGivenNames(primary.getOrcidBio().getPersonalDetails().getGivenNames().getContent());
-                        }                        
-                    }                    
+                    primaryDetails.setFamilyName(primary.getFamilyName());
+                    primaryDetails.setGivenNames(primary.getGivenNames());
                     
                     result.setDeprecatedAccount(deprecatedDetails);
                     result.setPrimaryAccount(primaryDetails);
@@ -247,7 +236,7 @@ public class AdminController extends BaseController {
                 } else if (profile.isDeactivated()) {
                     profileDetails.getErrors().add(getMessage("admin.profile_deactivation.errors.already_deactivated", orcid));
                 } else {
-                    profileDetails.setOrcid(profile.getOrcidId());
+                    profileDetails.setOrcid(orcid);
                     if(profile != null && profile.getOrcidBio().getPersonalDetails() != null) {
                         boolean hasName = false;
                         if(profile.getOrcidBio().getPersonalDetails().getFamilyName() != null) {
