@@ -139,7 +139,9 @@ public class BlackBoxBase {
         }
         List<String> clientIds = new ArrayList<String>();
         for (String clientId : clientIdsParam) {
-            clientIds.add(clientId);
+            if (!PojoUtil.isEmpty(clientId)) {
+                clientIds.add(clientId);
+            }
         }
 
         String userName = System.getProperty("org.orcid.web.testUser1.username");
@@ -205,5 +207,4 @@ public class BlackBoxBase {
             webDriver.quit();
         }
     }
-
 }
