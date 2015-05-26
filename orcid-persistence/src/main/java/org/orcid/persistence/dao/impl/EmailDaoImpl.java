@@ -173,8 +173,8 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
     
     @Override
     @Transactional
-    public boolean moveEmailToOtherAccount(String email, String origin, String destination) {
-        Query query = entityManager.createNativeQuery("update email set orcid=:destination, last_modified=now() where orcid=:origin and email=:email");
+    public boolean moveEmailToOtherAccountAsNonPrimary(String email, String origin, String destination) {
+        Query query = entityManager.createNativeQuery("update email set orcid=:destination, is_primary=false, last_modified=now() where orcid=:origin and email=:email");
         query.setParameter("destination", destination);
         query.setParameter("origin", origin);
         query.setParameter("email", email);

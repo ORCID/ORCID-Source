@@ -17,6 +17,7 @@
 package org.orcid.frontend.web.controllers;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
@@ -38,6 +39,7 @@ import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileWorkManager;
 import org.orcid.jaxb.model.clientgroup.MemberType;
+import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.password.constants.OrcidPasswordConstants;
@@ -186,7 +188,37 @@ public class AdminController extends BaseController {
             result.getErrors().add(getMessage("admin.profile_deprecation.errors.deprecated_equals_primary"));
         } else {            
             try {
-                adminManager.deprecateProfile(result, deprecatedOrcid, primaryOrcid);                            
+                boolean wasDeprecated = adminManager.deprecateProfile(result, deprecatedOrcid, primaryOrcid);
+                if(wasDeprecated) {
+                    OrcidProfile deprecated = orcidProfileManager.retrieveOrcidProfile(deprecatedOrcid, LoadOptions.BIO_ONLY);
+                    OrcidProfile primary = orcidProfileManager.retrieveOrcidProfile(primaryOrcid, LoadOptions.BIO_ONLY);
+                    
+                    ProfileDetails deprecatedDetails = new ProfileDetails();
+                    deprecatedDetails.setOrcid(deprecatedOrcid);
+                    if(deprecated.getOrcidBio().getPersonalDetails() != null) {
+                        if(deprecated.getOrcidBio().getPersonalDetails().getFamilyName() != null) {
+                            deprecatedDetails.setFamilyName(deprecated.getOrcidBio().getPersonalDetails().getFamilyName().getContent());
+                        }
+                        if(deprecated.getOrcidBio().getPersonalDetails().getGivenNames() != null) {
+                            deprecatedDetails.setGivenNames(deprecated.getOrcidBio().getPersonalDetails().getGivenNames().getContent());
+                        }
+                    }
+                                        
+                    ProfileDetails primaryDetails = new ProfileDetails();
+                    primaryDetails.setOrcid(primaryOrcid);
+                    if(primary.getOrcidBio().getPersonalDetails() != null) {
+                        if(primary.getOrcidBio().getPersonalDetails().getFamilyName() != null) {
+                            primaryDetails.setFamilyName(primary.getOrcidBio().getPersonalDetails().getFamilyName().getContent());
+                        }
+                        if(primary.getOrcidBio().getPersonalDetails().getGivenNames() != null) {
+                            primaryDetails.setGivenNames(primary.getOrcidBio().getPersonalDetails().getGivenNames().getContent());
+                        }                        
+                    }                    
+                    
+                    result.setDeprecatedAccount(deprecatedDetails);
+                    result.setPrimaryAccount(primaryDetails);
+                    result.setDeprecatedDate(new Date());
+                }
             } catch (Exception e) {
                 result.getErrors().add(getMessage("admin.profile_deprecation.errors.internal_error", deprecatedOrcid));
             }                                               
@@ -208,18 +240,37 @@ public class AdminController extends BaseController {
     ProfileDetails checkOrcidToDeprecate(@RequestParam("orcid") String orcid) {        
         ProfileDetails profileDetails = new ProfileDetails();
         try {
-            ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
+            OrcidProfile profile = orcidProfileManager.retrieveOrcidProfile(orcid, LoadOptions.BIO_ONLY);
             if (profile != null) {
-                if (profile.getDeprecatedDate() != null) {
+                if (profile.getOrcidDeprecated() != null && profile.getOrcidDeprecated().getDate() != null) {
                     profileDetails.getErrors().add(getMessage("admin.profile_deprecation.errors.already_deprecated", orcid));
-                } else if (profile.getDeactivationDate() != null) {
+                } else if (profile.isDeactivated()) {
                     profileDetails.getErrors().add(getMessage("admin.profile_deactivation.errors.already_deactivated", orcid));
                 } else {
-                    profileDetails.setOrcid(profile.getId());
-                    profileDetails.setFamilyName(profile.getFamilyName());
-                    profileDetails.setGivenNames(profile.getGivenNames());
-                    if (profile.getPrimaryEmail() != null)
-                        profileDetails.setEmail(profile.getPrimaryEmail().getId());
+                    profileDetails.setOrcid(profile.getOrcidId());
+                    if(profile != null && profile.getOrcidBio().getPersonalDetails() != null) {
+                        boolean hasName = false;
+                        if(profile.getOrcidBio().getPersonalDetails().getFamilyName() != null) {
+                            profileDetails.setFamilyName(profile.getOrcidBio().getPersonalDetails().getFamilyName().getContent());
+                            hasName = true;
+                        }                        
+                        if(profile.getOrcidBio().getPersonalDetails().getGivenNames() != null) {
+                            profileDetails.setGivenNames(profile.getOrcidBio().getPersonalDetails().getGivenNames().getContent());
+                            hasName = true;
+                        }
+                        
+                        if(!hasName) {
+                            profileDetails.setGivenNames(profile.getOrcidBio().getPersonalDetails().getCreditName().getContent());
+                        }
+                    }                   
+                    if (profile.getOrcidBio().getContactDetails() != null && profile.getOrcidBio().getContactDetails().getEmail() != null) {                        
+                        for(Email email : profile.getOrcidBio().getContactDetails().getEmail()) {
+                            if(email.isPrimary()) {
+                                profileDetails.setEmail(email.getValue());
+                                break;
+                            }
+                        }                        
+                    }
                 }
             } else {
                 profileDetails.getErrors().add(getMessage("admin.profile_deprecation.errors.inexisting_orcid", orcid));

@@ -142,6 +142,6 @@ public class EmailManagerImpl implements EmailManager {
     @Override
     @Transactional
     public boolean moveEmailToOtherAccount(String email, String origin, String destination) {
-        return emailDao.moveEmailToOtherAccount(email, origin, destination);
+        return emailDao.moveEmailToOtherAccountAsNonPrimary(email, origin, destination);
     }
 }

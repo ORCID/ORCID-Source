@@ -234,13 +234,6 @@ public class AdminManagerImpl implements AdminManager {
                         // following line:
                         // notificationManager.sendProfileDeprecationEmail(deprecated,
                         // primary);
-
-                        // Update the deprecation request object that
-                        // will be returned
-                        result.setDeprecatedAccount(new ProfileDetails(deprecated.getId(), deprecated.getGivenNames(), deprecated.getFamilyName()));
-                        result.setPrimaryAccount(new ProfileDetails(primary.getId(), primary.getGivenNames(), primary.getFamilyName(), primary.getPrimaryEmail()
-                                .getId()));
-                        result.setDeprecatedDate(new Date());
                     }
                 }
             }
