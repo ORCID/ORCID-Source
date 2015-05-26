@@ -54,4 +54,6 @@ public interface EmailDao extends GenericDao<EmailEntity, String> {
     boolean isPrimaryEmailVerified(String orcid);
     
     boolean verifyPrimaryEmail(String orcid);
+    
+    boolean moveEmailToOtherAccount(String email, String origin, String destination);
 }

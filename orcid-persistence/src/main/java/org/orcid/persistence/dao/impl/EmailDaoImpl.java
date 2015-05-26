@@ -170,4 +170,14 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
         query.setParameter("orcid", orcid);
         return query.executeUpdate() > 0;
     }
+    
+    @Override
+    @Transactional
+    public boolean moveEmailToOtherAccount(String email, String origin, String destination) {
+        Query query = entityManager.createNativeQuery("update email set orcid=:destination, last_modified=now() where orcid=:origin and email=:email");
+        query.setParameter("destination", destination);
+        query.setParameter("origin", origin);
+        query.setParameter("email", email);
+        return query.executeUpdate() > 0;
+    }
 }

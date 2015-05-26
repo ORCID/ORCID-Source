@@ -213,19 +213,16 @@ public class AdminManagerImpl implements AdminManager {
                         // Move all emails to the primary email
                         Set<EmailEntity> deprecatedAccountEmails = deprecated.getEmails();
                         if (deprecatedAccountEmails != null) {
-                            // For each email in the deprecated profile
+                            // For each email in the deprecated profile                            
                             for (EmailEntity email : deprecatedAccountEmails) {
                                 // Delete each email from the deprecated
                                 // profile
-                                LOGGER.info("About to delete email {} from profile {}", email.getId(), email.getProfile().getId());
-                                emailManager.removeEmail(email.getProfile().getId(), email.getId(), true);
-                                // Copy that email to the primary profile
-                                LOGGER.info("About to add email {} to profile {}", email.getId(), primary.getId());
-                                emailManager.addEmail(primary.getId(), email);
+                                LOGGER.info("About to move email {} from profile {} to profile {}", new Object[] {email.getId(), deprecatedOrcid, primaryOrcid});
+                                emailManager.moveEmailToOtherAccount(email.getId(), deprecatedOrcid, primaryOrcid);
                             }
                         } 
                         
-                        LOGGER.info("Sending deprecation notifications to {} and {}", deprecated.getId(), primary.getId());
+                        LOGGER.info("Updating last modified for {} and {}", deprecated.getId(), primary.getId());
 
                         //Update the last modified date of both profiles
                         orcidProfileManager.updateLastModifiedDate(deprecatedOrcid);
@@ -240,8 +237,7 @@ public class AdminManagerImpl implements AdminManager {
 
                         // Update the deprecation request object that
                         // will be returned
-                        result.setDeprecatedAccount(new ProfileDetails(deprecated.getId(), deprecated.getGivenNames(), deprecated.getFamilyName(), deprecated
-                                .getPrimaryEmail().getId()));
+                        result.setDeprecatedAccount(new ProfileDetails(deprecated.getId(), deprecated.getGivenNames(), deprecated.getFamilyName()));
                         result.setPrimaryAccount(new ProfileDetails(primary.getId(), primary.getGivenNames(), primary.getFamilyName(), primary.getPrimaryEmail()
                                 .getId()));
                         result.setDeprecatedDate(new Date());
