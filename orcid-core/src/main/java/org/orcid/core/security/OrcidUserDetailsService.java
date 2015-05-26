@@ -38,89 +38,101 @@ import org.springframework.transaction.annotation.Transactional;
  */
 public class OrcidUserDetailsService implements UserDetailsService {
 
-    @Resource
-    private ProfileDao profileDao;
+	@Resource
+	private ProfileDao profileDao;
 
-    @Resource
-    private EmailDao emailDao;
-    
-    @Value("${org.orcid.core.baseUri}")
-    private String baseUrl;
-    
-    /**
-     * Locates the user based on the username. In the actual implementation, the
-     * search may possibly be case insensitive, or case insensitive depending on
-     * how the implementation instance is configured. In this case, the
-     * <code>UserDetails</code> object that comes back may have a username that
-     * is of a different case than what was actually requested..
-     * 
-     * @param username
-     *            the username identifying the user whose data is required.
-     * @return a fully populated user record (never <code>null</code>)
-     * @throws org.springframework.security.core.userdetails.UsernameNotFoundException
-     *             if the user could not be found or the user has no
-     *             GrantedAuthority
-     */
-    @Override
-    @Transactional(propagation = Propagation.REQUIRED)
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        ProfileEntity profile = obtainEntity(username);
+	@Resource
+	private EmailDao emailDao;
 
-        if (profile == null) {
-            throw new UsernameNotFoundException("Bad username or password");
-        }
-        if (profile.getPrimaryRecord() != null) {
-            throw new DeprecatedException("orcid.frontend.security.deprecated_with_primary", profile.getPrimaryRecord().getId(), profile.getId());
-        }
-        if (!profile.getClaimed()) {
-            throw new UnclaimedProfileExistsException("orcid.frontend.security.unclaimed_exists");
-        }
-        if (profile.getDeactivationDate() != null) {
-            throw new DisabledException("Account not active, please call helpdesk");
-        }
+	@Value("${org.orcid.core.baseUri}")
+	private String baseUrl;
 
-        String primaryEmail = null;
+	/**
+	 * Locates the user based on the username. In the actual implementation, the
+	 * search may possibly be case insensitive, or case insensitive depending on
+	 * how the implementation instance is configured. In this case, the
+	 * <code>UserDetails</code> object that comes back may have a username that
+	 * is of a different case than what was actually requested..
+	 * 
+	 * @param username
+	 *            the username identifying the user whose data is required.
+	 * @return a fully populated user record (never <code>null</code>)
+	 * @throws org.springframework.security.core.userdetails.UsernameNotFoundException
+	 *             if the user could not be found or the user has no
+	 *             GrantedAuthority
+	 */
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED)
+	public UserDetails loadUserByUsername(String username)
+			throws UsernameNotFoundException {
+		ProfileEntity profile = obtainEntity(username);
 
-        // Clients doesnt have primary email, so, we need to cover that case.
-        if (profile.getPrimaryEmail() != null)
-            primaryEmail = profile.getPrimaryEmail().getId();
+		if (profile == null) {
+			throw new UsernameNotFoundException("Bad username or password");
+		}
+		if (profile.getPrimaryRecord() != null) {
+			throw new DeprecatedException(
+					"orcid.frontend.security.deprecated_with_primary", profile
+							.getPrimaryRecord().getId(), profile.getId());
+		}
+		if (!profile.getClaimed()) {
+			throw new UnclaimedProfileExistsException(
+					"orcid.frontend.security.unclaimed_exists");
+		}
+		if (profile.getDeactivationDate() != null) {
+			throw new DisabledException(
+					"Account not active, please call helpdesk");
+		}
 
-        OrcidProfileUserDetails userDetails = null;
+		String primaryEmail = null;
 
-        if (profile.getOrcidType() != null) {
-            userDetails = new OrcidProfileUserDetails(profile.getId(), primaryEmail, profile.getEncryptedPassword(), profile.getOrcidType(), profile.getGroupType());
-        } else {
-            userDetails = new OrcidProfileUserDetails(profile.getId(), primaryEmail, profile.getEncryptedPassword());
-        }
+		// Clients doesnt have primary email, so, we need to cover that case.
+		if (profile.getPrimaryEmail() != null)
+			primaryEmail = profile.getPrimaryEmail().getId();
 
-        return userDetails;
-    }
+		OrcidProfileUserDetails userDetails = null;
 
-    private ProfileEntity obtainEntity(String username) {
-        ProfileEntity profile = null;
-        if(!StringUtils.isEmpty(username)) {
-	        if (OrcidStringUtils.isValidOrcid(username)) {
-	            profile = profileDao.find(username);
-	        } else if(OrcidStringUtils.isValidOrcidWithSpaces(username)) {
-	        	username = username.toString().replace(' ', '-');
-	        	profile = profileDao.find(username);
-	        } else if(OrcidStringUtils.isValidOrcidWithoutSpacesWithoutHyphens(username)) {
-	        	String temp = username.replaceAll("(.{4})", "$1-");
-				int length = temp.length();
-				username = temp.substring(0, length -1);
+		if (profile.getOrcidType() != null) {
+			userDetails = new OrcidProfileUserDetails(profile.getId(),
+					primaryEmail, profile.getEncryptedPassword(),
+					profile.getOrcidType(), profile.getGroupType());
+		} else {
+			userDetails = new OrcidProfileUserDetails(profile.getId(),
+					primaryEmail, profile.getEncryptedPassword());
+		}
+
+		return userDetails;
+	}
+
+	private ProfileEntity obtainEntity(String username) {
+		ProfileEntity profile = null;
+		if (!StringUtils.isEmpty(username)) {
+			if (OrcidStringUtils.isValidOrcid(username)) {
 				profile = profileDao.find(username);
-	        } else if(baseUrl != null && username.contains(new StringBuffer(baseUrl).append("/").toString())) {
-	        	username = OrcidStringUtils.getOrcidNumber(username);
-	        	if(username != null) {
-	        		profile = profileDao.find(username);
-	        	}
-	        } else {
-	            EmailEntity emailEntity = emailDao.findCaseInsensitive(username);
-	            if (emailEntity != null) {
-	                profile = emailEntity.getProfile();
-	            }
-	        }
-        }
-        return profile;
-    }
+			} else if (OrcidStringUtils.isValidOrcidWithSpaces(username)) {
+				username = username.toString().replace(' ', '-');
+				profile = profileDao.find(username);
+			} else if (OrcidStringUtils
+					.isValidOrcidWithoutSpacesWithoutHyphens(username)) {
+				String temp = username.replaceAll("(.{4})", "$1-");
+				int length = temp.length();
+				username = temp.substring(0, length - 1);
+				profile = profileDao.find(username);
+			} else if (baseUrl != null
+					&& username.contains(new StringBuffer(baseUrl).append("/")
+							.toString())) {
+				username = OrcidStringUtils.getOrcidNumber(username);
+				if (username != null) {
+					profile = profileDao.find(username);
+				}
+			} else {
+				EmailEntity emailEntity = emailDao
+						.findCaseInsensitive(username);
+				if (emailEntity != null) {
+					profile = emailEntity.getProfile();
+				}
+			}
+		}
+		return profile;
+	}
 }
