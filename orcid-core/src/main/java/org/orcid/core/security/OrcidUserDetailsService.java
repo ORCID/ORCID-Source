@@ -18,12 +18,14 @@ package org.orcid.core.security;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.utils.OrcidStringUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -41,6 +43,9 @@ public class OrcidUserDetailsService implements UserDetailsService {
 
     @Resource
     private EmailDao emailDao;
+    
+    @Value("${org.orcid.core.baseUri}")
+    private String baseUrl;
 
     /**
      * Locates the user based on the username. In the actual implementation, the
@@ -93,15 +98,23 @@ public class OrcidUserDetailsService implements UserDetailsService {
 
     private ProfileEntity obtainEntity(String username) {
         ProfileEntity profile = null;
-        if (OrcidStringUtils.isValidOrcid(username)) {
-            profile = profileDao.find(username);
-        } else {
-            EmailEntity emailEntity = emailDao.findCaseInsensitive(username);
-            if (emailEntity != null) {
-                profile = emailEntity.getProfile();
-            }
+        if(!StringUtils.isEmpty(username)) {
+        	StringBuffer userNameBuffer = new StringBuffer(username);
+	        if (OrcidStringUtils.isValidOrcid(username) || OrcidStringUtils.isValidOrcid(userNameBuffer)) {
+	        	username = userNameBuffer.toString();
+	            profile = profileDao.find(username);
+	        } else if(baseUrl != null && username.contains(new StringBuffer(baseUrl).append("/").toString())) {
+	        	username = OrcidStringUtils.getOrcidNumber(username);
+	        	if(username != null) {
+	        		profile = profileDao.find(username);
+	        	}
+	        } else {
+	            EmailEntity emailEntity = emailDao.findCaseInsensitive(username);
+	            if (emailEntity != null) {
+	                profile = emailEntity.getProfile();
+	            }
+	        }
         }
         return profile;
     }
-
 }
