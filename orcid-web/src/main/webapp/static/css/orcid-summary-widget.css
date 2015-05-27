@@ -30,7 +30,6 @@
 
 .orcid-summary-widget .orcid-widget-details .orcid-name{
 	font-size: 20px;
-
 }
 
 .orcid-summary-widget .orcid-widget-details .orcid-id{
@@ -44,10 +43,6 @@
 	color: #FFF;
 	margin-top: 10px;
 	font-size: 14px;
-}
-
-.orcid-summary-widget .orcid-widget-details .orcid-summary-items .orcid-summary-item{
-	
 }
 
 .orcid-summary-widget .orcid-widget-button{
@@ -64,5 +59,4 @@
 .orcid-summary-widget .orcid-widget-button:hover{
 	color: #FFF;
 	background: #a6ce39;
-
 }
