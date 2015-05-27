@@ -29,12 +29,13 @@ import org.orcid.jaxb.model.common.CreatedDate;
 import org.orcid.jaxb.model.common.Filterable;
 import org.orcid.jaxb.model.common.FuzzyDate;
 import org.orcid.jaxb.model.common.LastModifiedDate;
+import org.orcid.jaxb.model.common.Organization;
 import org.orcid.jaxb.model.common.Source;
 import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.jaxb.model.record.Activity;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "createdDate", "lastModifiedDate", "source", "departmentName", "roleTitle", "startDate", "endDate" })
+@XmlType(propOrder = { "createdDate", "lastModifiedDate", "source", "departmentName", "roleTitle", "startDate", "endDate", "org" })
 @XmlRootElement(name = "education-summary", namespace = "http://www.orcid.org/ns/education")
 public class EducationSummary implements Filterable, Activity, Serializable {
             
@@ -47,14 +48,14 @@ public class EducationSummary implements Filterable, Activity, Serializable {
     protected FuzzyDate startDate;
     @XmlElement(name="end-date", namespace = "http://www.orcid.org/ns/common")
     protected FuzzyDate endDate;
-    
+    @XmlElement(name="organization", namespace = "http://www.orcid.org/ns/education")
+    protected Organization org;
     @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected Source source;
     @XmlElement(name="last-modified-date", namespace = "http://www.orcid.org/ns/common")
     protected LastModifiedDate lastModifiedDate;
     @XmlElement(name="created-date", namespace = "http://www.orcid.org/ns/common")
     protected CreatedDate createdDate;
-
     @XmlAttribute(name="put-code")
     protected String putCode;
     @XmlAttribute(name="path")
@@ -232,4 +233,12 @@ public class EducationSummary implements Filterable, Activity, Serializable {
             return false;
         return true;
     }
+
+	public Organization getOrg() {
+		return org;
+	}
+
+	public void setOrg(Organization org) {
+		this.org = org;
+	}
 }
