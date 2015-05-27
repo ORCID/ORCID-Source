@@ -1,6 +1,21 @@
 (function (global) {
-	//Copyright: https://github.com/OscarGodson/JSONP/blob/master/JSONP.js
-	var JSONP = function(url,data,method,callback){
+	
+	var host = window.location.hostname;
+	var baseURL = ''; 
+	
+	
+	if (host == 'localhost'){
+		baseURL = '//localhost:8080/orcid-web';
+	}else if(host == 'qa.orcid.org'){
+		baseURL = '//qa.orcid.org';
+	}else if(host == 'sandbox.orcid.org'){
+		baseURL = '//sandbox.orcid.org';
+	}else{
+		baseURL = '//orcid.org';
+	}	
+
+	//Copyright JSONP function: https://github.com/OscarGodson/JSONP/blob/master/JSONP.js
+	var JSONP = function(url, data, method, callback){
 	    url = url || '';
 	    data = data || {};
 	    method = method || '';
@@ -14,12 +29,12 @@
 	        
 	      }
 	      return keys;
-	    }
+	    };
 	    if(typeof data == 'object'){
 	      var queryString = '';
 	      var keys = getKeys(data);
 	      for(var i = 0; i < keys.length; i++){
-	        queryString += encodeURIComponent(keys[i]) + '=' + encodeURIComponent(data[keys[i]])
+	        queryString += encodeURIComponent(keys[i]) + '=' + encodeURIComponent(data[keys[i]]);
 	        if(i != keys.length - 1){ 
 	          queryString += '&';
 	        }
@@ -37,7 +52,7 @@
 	      Date.now = function() { return new Date().getTime(); };
 	    } 
 	    var timestamp = Date.now();
-	    var generatedFunction = 'jsonp'+Math.round(timestamp+Math.random()*1000001)
+	    var generatedFunction = 'jsonp'+Math.round(timestamp+Math.random()*1000001);
 	    window[generatedFunction] = function(json){
 	      callback(json);
 	      delete window[generatedFunction];
@@ -46,7 +61,7 @@
 	    else{ url = url+'&'; }
 	    var jsonpScript = document.createElement('script');
 	    jsonpScript.setAttribute("src", url+method+'='+generatedFunction);
-	    document.getElementsByTagName("head")[0].appendChild(jsonpScript)
+	    document.getElementsByTagName("head")[0].appendChild(jsonpScript);
 	  };
 	  
 	  
@@ -94,88 +109,76 @@
    
     return QueryStringToHash(str);
   };
-  
-
  
   if(!global.OrcidSummaryWidget) { global.OrcidSummaryWidget = {}; };
   var OrcidSummaryWidget = global.OrcidSummaryWidget;
-
-  if(!OrcidSummaryWidget.processedScripts) { OrcidSummaryWidget.processedScripts = []; };
-  var processedScripts = OrcidSummaryWidget.processedScripts;
-
   if(!OrcidSummaryWidget.styleTags) { OrcidSummaryWidget.styleTags = []; };
-  var styleTags = OrcidSummaryWidget.styleTags;  
-  
+  var styleTags = OrcidSummaryWidget.styleTags;
   
   var scriptTags = document.getElementsByTagName('script');
-  
-  var thisRequestUrl = location.href; //Change it to some Java or PHP function to get the href value, 
-                                      //for testing purposes I am using my location
 
   var re = /.*orcid-summary-widget\.([^/]+\.)?js/;
  
   for(var i = 0; i < scriptTags.length; i++) {
-    var el = scriptTags[i];
-    if(el.src.match(re)) {
-        scriptTag = el;
-    }
-  }
-   
-  // We get the orcid passed by parameter to the widget
-  var data = parseQueryString(scriptTag.src);
+	  var el = scriptTags[i];
+	  if(el.src.match(re)) {
+		  scriptTag = el;
+      }
+  }   
   
-  var url = 'http://localhost:8080/orcid-web/public_widgets/' + data.orcid + '/info.json';
+  var data = parseQueryString(scriptTag.src);  
   
-  JSONP(url,function(json){
-	  
-	var orcid = json.orcid;
-	var name = json.name;
-	var works = json.works;
-	var fundings = json.fundings;
-	var educations = json.educations;
-	var peerReviews =  json.peerReviews;
-	
-	if(styleTags.length == 0) {
-        
-        var styleTag = document.createElement("link");
-        styleTag.rel = "stylesheet";
-        styleTag.type = "text/css";
-        styleTag.href =  "http://localhost:8080/orcid-web/static/css/orcid-summary-widget.css"; //For hackathon testing only
-        styleTag.media = "all";
-        document.getElementsByTagName('head')[0].appendChild(styleTag);
-     }
-	
-	var widgetInnerHTML = '<div class="orcid-summary-widget">\
-								<a href="http://localhost:8080/orcid-web/'+ orcid + '" target="_blank">\
-									<div class="orcid-widget-details">\
-										<div class="orcid-logo"></div>\
-										<div class="orcid-name">'+ name +'</div>\
-										<div class="orcid-id">ORCID: '+ orcid +'</div>\
-										<div class="orcid-summary-items">';
-										if (works > 0) {
-											widgetInnerHTML += '<div class="orcid-summary-item">Works ('+ works +')</div>';
-										}
-										if (fundings > 0){
-											widgetInnerHTML += '<div class="orcid-summary-item">Fundings (' + fundings +')</div>';
-										}
-										if (educations > 0){
-											widgetInnerHTML += '<div class="orcid-summary-item">Educations (' + educations + ')</div>';
-										}
-										if(peerReviews > 0){
-											widgetInnerHTML += '<div class="orcid-summary-item">Peer Reviews (' + peerReviews +')</div>';
-										}
-										
-										widgetInnerHTML += '</div>\
-									</div>\
-								</a>\
-								<a href="http://orcid.org/about/what-is-orcid" class="orcid-widget-button" target="_blank">What is ORCID?</a>\
-							</div>';
-		
-	var div = document.createElement('div');
-	    div.id = 'orcid-summary-widget';
-	    div.className = 'orcid-widget cleanslate';
-	    div.innerHTML = widgetInnerHTML;
+  var url = baseURL + '/public_widgets/' + data.orcid + '/info.json';  
+  
+  JSONP(url, callback);
+  
+  function callback(json){
+	  	var orcid = json.orcid;
+	    var name = json.name;
+	    var works = json.works;
+	    var fundings = json.fundings;
+	    var educations = json.educations;
+	    var peerReviews =  json.peerReviews;	    
+	    if(styleTags.length == 0) {	        
+	        var styleTag = document.createElement("link");
+	        styleTag.rel = "stylesheet";
+	        styleTag.type = "text/css";
+	        styleTag.href =  baseURL + '/static/css/orcid-summary-widget.css';
+	        styleTag.media = "all";
+	        document.getElementsByTagName('head')[0].appendChild(styleTag);
+	    }
 	    
-	    document.getElementById('orcid-summary-widget').innerHTML = widgetInnerHTML;
-  });
+	    var widgetInnerHTML = '<div class="orcid-summary-widget">\
+	                                <a href="'+ baseURL+'/'+ orcid + '" target="_blank">\
+	                                    <div class="orcid-widget-details">\
+	                                        <div class="orcid-logo"></div>\
+	                                        <div class="orcid-name">'+ name +'</div>\
+	                                        <div class="orcid-id">ORCID: '+ orcid +'</div>\
+	                                        <div class="orcid-summary-items">';
+	                                        if (works > 0) {
+	                                            widgetInnerHTML += '<div class="orcid-summary-item">Works ('+ works +')</div>';
+	                                        }
+	                                        if (fundings > 0){
+	                                            widgetInnerHTML += '<div class="orcid-summary-item">Fundings (' + fundings +')</div>';
+	                                        }
+	                                        if (educations > 0){
+	                                            widgetInnerHTML += '<div class="orcid-summary-item">Educations (' + educations + ')</div>';
+	                                        }
+	                                        if(peerReviews > 0){
+	                                            widgetInnerHTML += '<div class="orcid-summary-item">Peer Reviews (' + peerReviews +')</div>';
+	                                        }
+	                                        
+	                                        widgetInnerHTML += '</div>\
+	                                    </div>\
+	                                </a>\
+	                                <a href="http://orcid.org/about/what-is-orcid" class="orcid-widget-button" target="_blank">What is ORCID?</a>\
+	                            </div>';
+	        
+		var div = document.createElement('div');
+		    div.id = 'orcid-summary-widget';
+		    div.className = 'orcid-widget cleanslate';
+		    div.innerHTML = widgetInnerHTML;	        
+		    document.getElementById('orcid-summary-widget').innerHTML = widgetInnerHTML;
+   }  	
+  
 })(this);
