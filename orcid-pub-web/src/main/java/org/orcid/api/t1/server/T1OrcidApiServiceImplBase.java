@@ -143,8 +143,8 @@ abstract public class T1OrcidApiServiceImplBase implements OrcidApiService<Respo
     @Path(STATUS_PATH)
     public Response viewStatusText() {
         return orcidApiServiceDelegator.viewStatusText();
-    }
-
+    }    
+    
     /**
      * GETs the HTML representation of the ORCID record
      * 
