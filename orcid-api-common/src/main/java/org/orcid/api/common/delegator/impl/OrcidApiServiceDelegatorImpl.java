@@ -178,7 +178,7 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
 
     @Override
     @VisibilityControl(removeAttributes = false)
-    @AccessControl(requiredScope = ScopePathType.READ_PUBLIC)
+    @AccessControl(requiredScope = ScopePathType.READ_PUBLIC, enableAnonymousAccess = true)
     @NonLocked
     public Response findFullDetailsFromPublicCache(String orcid) {
         try {
