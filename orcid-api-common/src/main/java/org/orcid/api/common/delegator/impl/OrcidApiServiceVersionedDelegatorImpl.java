@@ -144,7 +144,7 @@ public class OrcidApiServiceVersionedDelegatorImpl implements OrcidApiServiceDel
         Response response = orcidApiServiceDelegator.findWorksDetailsFromPublicCache(orcid);
         return regradeAndValidateResponse(response);
     }
-
+ 
     @Override
     public Response redirectClientToGroup(String clientId) {
         return orcidApiServiceDelegator.redirectClientToGroup(clientId);
@@ -153,6 +153,12 @@ public class OrcidApiServiceVersionedDelegatorImpl implements OrcidApiServiceDel
     @Override
     public Response searchByQuery(Map<String, List<String>> queryMap) {
         Response response = orcidApiServiceDelegator.searchByQuery(queryMap);
+        return regradeAndValidateResponse(response);
+    }
+    
+    @Override
+    public Response publicSearchByQuery(Map<String, List<String>> queryMap) {
+        Response response = orcidApiServiceDelegator.publicSearchByQuery(queryMap);
         return regradeAndValidateResponse(response);
     }
 

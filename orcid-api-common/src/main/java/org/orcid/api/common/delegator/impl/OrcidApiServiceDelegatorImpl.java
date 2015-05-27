@@ -104,6 +104,7 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
 
     @Override
     @VisibilityControl(removeAttributes = false)
+    @AccessControl(requiredScope = ScopePathType.READ_PUBLIC, enableAnonymousAccess = true)
     @NonLocked
     public Response findBioDetailsFromPublicCache(String orcid) {
         try {
@@ -141,6 +142,7 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
 
     @Override
     @VisibilityControl(removeAttributes = false)
+    @AccessControl(requiredScope = ScopePathType.READ_PUBLIC, enableAnonymousAccess = true)
     @NonLocked
     public Response findExternalIdentifiersFromPublicCache(String orcid) {
         try {
@@ -210,6 +212,7 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
 
     @Override
     @VisibilityControl(removeAttributes = false)
+    @AccessControl(requiredScope = ScopePathType.READ_PUBLIC, enableAnonymousAccess = true)
     @NonLocked
     public Response findAffiliationsDetailsFromPublicCache(String orcid) {
         try {
@@ -246,6 +249,7 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
 
     @Override
     @VisibilityControl(removeAttributes = false)
+    @AccessControl(requiredScope = ScopePathType.READ_PUBLIC, enableAnonymousAccess = true)
     @NonLocked
     public Response findFundingDetailsFromPublicCache(String orcid) {
         try {
@@ -282,6 +286,7 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
 
     @Override
     @VisibilityControl(removeAttributes = false)
+    @AccessControl(requiredScope = ScopePathType.READ_PUBLIC, enableAnonymousAccess = true)
     @NonLocked
     public Response findWorksDetailsFromPublicCache(String orcid) {
         try {
@@ -316,6 +321,17 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
         }
     }
 
+    
+    /**
+     * See {@link OrcidApiServiceDelegator}{@link #publicSearchByQuery(Map)}
+     * */
+    @Override
+    @VisibilityControl
+    @AccessControl(requiredScope = ScopePathType.READ_PUBLIC, enableAnonymousAccess = true)
+    public Response publicSearchByQuery(Map<String, List<String>> queryMap) {
+        return searchByQuery(queryMap);
+    }
+    
     /**
      * See {@link OrcidApiServiceDelegator}{@link #searchByQuery(Map)}
      */

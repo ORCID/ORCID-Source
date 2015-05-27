@@ -121,6 +121,12 @@ public class OrcidApiAuthorizationSecurityAspect {
         Object entity = response.getEntity();
         if (entity != null && OrcidMessage.class.isAssignableFrom(entity.getClass())) {
             OrcidMessage orcidMessage = (OrcidMessage) entity;
+            
+            //If it is search results, don't filter them, just return them
+            if(orcidMessage.getOrcidSearchResults() != null) {
+                return;
+            }
+            
             // get the client id
             Object authentication = getAuthentication();
             
