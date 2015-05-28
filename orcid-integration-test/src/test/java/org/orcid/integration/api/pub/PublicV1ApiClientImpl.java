@@ -19,6 +19,7 @@ package org.orcid.integration.api.pub;
 import static org.orcid.core.api.OrcidApiConstants.PROFILE_ROOT_PATH;
 import static org.orcid.core.api.OrcidApiConstants.PROFILE_GET_PATH;
 import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_XML;
+import static org.orcid.core.api.OrcidApiConstants.BIO_SEARCH_PATH;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -55,6 +56,16 @@ public class PublicV1ApiClientImpl {
     public ClientResponse viewPublicProfile(String orcid, String token) {
         URI profileUri = UriBuilder.fromPath(PROFILE_GET_PATH).build(orcid);
         return getClientReponse(profileUri, token);
+    }
+    
+    public ClientResponse doPublicSearch(String orcid) {        
+        URI searchUri = UriBuilder.fromPath(BIO_SEARCH_PATH).replaceQuery("q=orcid:" + orcid).build();
+        return getClientReponse(searchUri, null);
+    }
+    
+    public ClientResponse doPublicSearch(String orcid, String token) {
+        URI searchUri = UriBuilder.fromPath(BIO_SEARCH_PATH).replaceQuery("q=orcid:" + orcid).build();
+        return getClientReponse(searchUri, token);
     }
     
     private ClientResponse getClientReponse(URI uri, String token) {

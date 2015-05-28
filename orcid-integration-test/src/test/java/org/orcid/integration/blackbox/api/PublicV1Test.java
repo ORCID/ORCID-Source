@@ -21,8 +21,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.net.URISyntaxException;
-
 import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
 
@@ -68,7 +66,7 @@ public class PublicV1Test {
     static String accessToken = null;
     
     @Test
-    public void testViewPublicProfileAnonymously() throws JSONException, InterruptedException, URISyntaxException {
+    public void testViewPublicProfileAnonymously() throws JSONException, InterruptedException {
         ClientResponse response = publicV1ApiClient.viewRootProfile(user1OrcidId);
         assertNotNull(response);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());    
@@ -90,7 +88,7 @@ public class PublicV1Test {
     }
     
     @Test
-    public void testViewPublicProfileUsingToken() throws JSONException, InterruptedException, URISyntaxException {
+    public void testViewPublicProfileUsingToken() throws JSONException, InterruptedException {
         String accessToken = getAccessToken();
         ClientResponse response = publicV1ApiClient.viewRootProfile(user1OrcidId, accessToken);
         assertNotNull(response);
@@ -112,7 +110,7 @@ public class PublicV1Test {
     }
 
     @Test
-    public void testViewPublicProfileUsingInvalidToken() throws JSONException, InterruptedException, URISyntaxException {
+    public void testViewPublicProfileUsingInvalidToken() throws JSONException, InterruptedException {
         String accessToken = getAccessToken();
         accessToken += "X";
         ClientResponse response = publicV1ApiClient.viewRootProfile(user1OrcidId, accessToken);
@@ -126,12 +124,43 @@ public class PublicV1Test {
     
     @Test
     public void testPublicSearchAnonymously() {
-        
+        ClientResponse response = publicV1ApiClient.doPublicSearch(user1OrcidId);
+        assertNotNull(response);
+        OrcidMessage orcidMessage = response.getEntity(OrcidMessage.class);
+        assertNotNull(orcidMessage);
+        assertNotNull(orcidMessage.getOrcidSearchResults());
+        assertNotNull(orcidMessage.getOrcidSearchResults().getOrcidSearchResult());
+        assertNotNull(orcidMessage.getOrcidSearchResults().getOrcidSearchResult().get(0));
+        assertNotNull(orcidMessage.getOrcidSearchResults().getOrcidSearchResult().get(0).getOrcidProfile());
+        assertNotNull(orcidMessage.getOrcidSearchResults().getOrcidSearchResult().get(0).getOrcidProfile().getOrcidIdentifier());
+        assertEquals(user1OrcidId, orcidMessage.getOrcidSearchResults().getOrcidSearchResult().get(0).getOrcidProfile().getOrcidIdentifier().getPath());
     }
     
     @Test
-    public void testPublicSearchUsingToken() {
-        
+    public void testPublicSearchUsingToken() throws InterruptedException, JSONException {
+        String accessToken = getAccessToken();
+        ClientResponse response = publicV1ApiClient.doPublicSearch(user1OrcidId, accessToken);
+        assertNotNull(response);
+        OrcidMessage orcidMessage = response.getEntity(OrcidMessage.class);
+        assertNotNull(orcidMessage);
+        assertNotNull(orcidMessage.getOrcidSearchResults());
+        assertNotNull(orcidMessage.getOrcidSearchResults().getOrcidSearchResult());
+        assertNotNull(orcidMessage.getOrcidSearchResults().getOrcidSearchResult().get(0));
+        assertNotNull(orcidMessage.getOrcidSearchResults().getOrcidSearchResult().get(0).getOrcidProfile());
+        assertNotNull(orcidMessage.getOrcidSearchResults().getOrcidSearchResult().get(0).getOrcidProfile().getOrcidIdentifier());
+        assertEquals(user1OrcidId, orcidMessage.getOrcidSearchResults().getOrcidSearchResult().get(0).getOrcidProfile().getOrcidIdentifier().getPath());
+    }
+    
+    @Test
+    public void testPublicSearchUsingInvalidToken() throws InterruptedException, JSONException {
+        String accessToken = getAccessToken();
+        accessToken += "X";
+        ClientResponse response = publicV1ApiClient.doPublicSearch(user1OrcidId, accessToken);
+        assertNotNull(response);
+        assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), response.getStatus());    
+        String errorMessage = response.getEntity(String.class);
+        assertFalse(PojoUtil.isEmpty(errorMessage));
+        assertTrue(errorMessage.contains("invalid_token"));
     }
     
     private String getAccessToken() throws InterruptedException, JSONException {
