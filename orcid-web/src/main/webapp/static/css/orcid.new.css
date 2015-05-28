@@ -533,8 +533,7 @@ select,textarea,input[type="text"],input[type="password"],input[type="datetime"]
 
 select {
     background-color: #FFFFFF;
-    border: 1px solid #CCCCCC;
-    width: 220px;
+    border: 1px solid #CCCCCC;    
 }
 
 
@@ -1909,16 +1908,8 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input{
     margin: 10px 0 0 0;
 }
 
-#edit-affiliation #startDay,
-#edit-affiliation #startMonth,
-#edit-affiliation #endDay,
-#edit-affiliation #endMonth{
-	width: 80px;	
-}
-
-#edit-affiliation #startYear,
-#edit-affiliation #endYear{
-	width: 100px;
+#edit-affiliation input{
+	margin-bottom: 0;
 }
 
 #edit-affiliation .spin{
@@ -2123,10 +2114,6 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input{
 
 .tabs .selected a:hover {
 	color: #fff !important;
-}
-
-.colorbox-content .row {
-	margin-left: -20px;
 }
 
 .selector-title {
@@ -3072,6 +3059,10 @@ ul.personal-inf-display li:last-child{
 
 /* Typeahead */
 
+.twitter-typeahead{
+	width: 100%;
+}
+
 .twitter-typeahead .tt-query,
 .twitter-typeahead .tt-hint {
   margin-bottom: 0;
@@ -3138,6 +3129,7 @@ ul.personal-inf-display li:last-child{
 /* .tt-dropdown-menu used for typeahead
     http://stackoverflow.com/questions/17982037/typeahead-js-scrollbar-and-keyboard-event */
 .tt-dropdown-menu {
+  width: 100%;
   height: 300px;
   overflow-y: auto;
 }
