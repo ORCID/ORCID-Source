@@ -47,6 +47,7 @@ import org.orcid.jaxb.model.record.summary.WorkSummary;
 import org.orcid.jaxb.model.record.summary.Works;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
@@ -128,7 +129,16 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
             OAuth2Authentication oAuth2Authentication = (OAuth2Authentication) authentication;
             return oAuth2Authentication;
         } else {
+            
+            for(GrantedAuthority grantedAuth : authentication.getAuthorities()) {
+                if("ROLE_ANONYMOUS".equals(grantedAuth.getAuthority())) {
+                    //Assume that anonymous authority is like not having authority at all
+                    return null;
+                }
+            }
+                        
             throw new AccessControlException("Cannot access method with authentication type " + authentication != null ? authentication.toString() : ", as it's null!");
         }
     }
+    
 }
