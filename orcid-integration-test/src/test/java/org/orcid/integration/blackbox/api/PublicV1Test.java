@@ -1,0 +1,116 @@
+/**
+ * =============================================================================
+ *
+ * ORCID (R) Open Source
+ * http://orcid.org
+ *
+ * Copyright (c) 2012-2014 ORCID, Inc.
+ * Licensed under an MIT-Style License (MIT)
+ * http://orcid.org/open-source-license
+ *
+ * This copyright and license information (including a link to the full license)
+ * shall be included in its entirety in all copies or substantial portion of
+ * the software.
+ *
+ * =============================================================================
+ */
+package org.orcid.integration.blackbox.api;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import java.net.URISyntaxException;
+
+import javax.annotation.Resource;
+import javax.ws.rs.core.Response;
+
+import org.codehaus.jettison.json.JSONException;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.orcid.integration.api.helper.OauthHelper;
+import org.orcid.integration.api.pub.PublicV1ApiClientImpl;
+import org.orcid.jaxb.model.message.OrcidMessage;
+import org.orcid.jaxb.model.message.ScopePathType;
+import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import com.sun.jersey.api.client.ClientResponse;
+
+/**
+ * 
+ * @author Angel Montenegro
+ * 
+ */
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = { "classpath:test-publicV2-context.xml" })
+public class PublicV1Test {
+    @Value("${org.orcid.web.base.url:http://localhost:8080/orcid-web}")
+    private String webBaseUrl;
+    @Value("${org.orcid.web.testClient1.redirectUri}")
+    private String redirectUri;
+    @Value("${org.orcid.web.testClient1.clientId}")
+    public String client1ClientId;
+    @Value("${org.orcid.web.testClient1.clientSecret}")
+    public String client1ClientSecret;
+    @Value("${org.orcid.web.testUser1.orcidId}")
+    public String user1OrcidId;      
+
+    @Resource
+    private PublicV1ApiClientImpl publicV1ApiClient;
+    
+    @Resource
+    private OauthHelper oauthHelper;
+
+    static String accessToken = null;
+    
+    @Test
+    public void testViewPublicProfileAnonymously() throws JSONException, InterruptedException, URISyntaxException {
+        ClientResponse response = publicV1ApiClient.viewRootProfile(user1OrcidId);
+        assertNotNull(response);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());    
+        OrcidMessage message = response.getEntity(OrcidMessage.class);
+        assertNotNull(message);
+        assertNotNull(message.getOrcidProfile());
+        assertNotNull(message.getOrcidProfile().getOrcidIdentifier());
+        assertEquals(user1OrcidId, message.getOrcidProfile().getOrcidIdentifier().getPath());
+    }
+    
+    @Test
+    public void testViewPublicProfileUsingToken() throws JSONException, InterruptedException, URISyntaxException {
+        String accessToken = getAccessToken();
+        ClientResponse response = publicV1ApiClient.viewRootProfile(user1OrcidId, accessToken);
+        assertNotNull(response);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());    
+        OrcidMessage message = response.getEntity(OrcidMessage.class);
+        assertNotNull(message);
+        assertNotNull(message.getOrcidProfile());
+        assertNotNull(message.getOrcidProfile().getOrcidIdentifier());
+        assertEquals(user1OrcidId, message.getOrcidProfile().getOrcidIdentifier().getPath());
+    }
+
+    @Test
+    public void testViewPublicProfileUsingInvalidToken() throws JSONException, InterruptedException, URISyntaxException {
+        String accessToken = getAccessToken();
+        accessToken += "X";
+        ClientResponse response = publicV1ApiClient.viewRootProfile(user1OrcidId, accessToken);
+        assertNotNull(response);
+        assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), response.getStatus());    
+        String errorMessage = response.getEntity(String.class);
+        assertFalse(PojoUtil.isEmpty(errorMessage));
+        assertTrue(errorMessage.contains("invalid_token"));
+    }
+    
+    
+    private String getAccessToken() throws InterruptedException, JSONException {
+        if (accessToken == null) {            
+            accessToken = oauthHelper.getClientCredentialsAccessToken(client1ClientId, client1ClientSecret, ScopePathType.READ_PUBLIC);            
+        }
+        return accessToken;
+    }
+
+    
+}

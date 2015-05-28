@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.integration.api.publicV2;
+package org.orcid.integration.api.pub;
 
 import static org.orcid.core.api.OrcidApiConstants.ACTIVITIES;
 import static org.orcid.core.api.OrcidApiConstants.PUTCODE;

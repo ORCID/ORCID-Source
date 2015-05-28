@@ -38,7 +38,12 @@
         <constructor-arg ref="jerseyClient"/>
     </bean>
     
-    <bean id="publicV2ApiClient" class="org.orcid.integration.api.publicV2.PublicV2ApiClientImpl">
+    <bean id="publicV1ApiClient" class="org.orcid.integration.api.pub.PublicV1ApiClientImpl">
+        <constructor-arg value="${org.orcid.pub.baseUri}/v1.2"/>
+        <constructor-arg ref="jerseyClient"/>
+    </bean>
+    
+    <bean id="publicV2ApiClient" class="org.orcid.integration.api.pub.PublicV2ApiClientImpl">
         <constructor-arg value="${org.orcid.pub.baseUri}/v2.0_rc1"/>
         <constructor-arg ref="jerseyClient"/>
     </bean>

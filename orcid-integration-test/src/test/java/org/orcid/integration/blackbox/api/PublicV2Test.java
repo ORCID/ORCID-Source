@@ -43,7 +43,7 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.orcid.api.common.WebDriverHelper;
 import org.orcid.integration.api.helper.OauthHelper;
 import org.orcid.integration.api.memberV2.MemberV2ApiClientImpl;
-import org.orcid.integration.api.publicV2.PublicV2ApiClientImpl;
+import org.orcid.integration.api.pub.PublicV2ApiClientImpl;
 import org.orcid.integration.api.t2.T2OAuthAPIService;
 import org.orcid.jaxb.model.common.Day;
 import org.orcid.jaxb.model.common.Month;
@@ -78,7 +78,7 @@ import com.sun.jersey.api.client.ClientResponse;
 
 /**
  * 
- * @author Angel Monenegro
+ * @author Angel Montenegro
  * 
  */
 @RunWith(SpringJUnit4ClassRunner.class)
