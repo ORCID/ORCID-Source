@@ -77,6 +77,16 @@ public class PublicV1Test {
         assertNotNull(message.getOrcidProfile());
         assertNotNull(message.getOrcidProfile().getOrcidIdentifier());
         assertEquals(user1OrcidId, message.getOrcidProfile().getOrcidIdentifier().getPath());
+        
+        response = publicV1ApiClient.viewPublicProfile(user1OrcidId);
+        assertNotNull(response);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());    
+        message = response.getEntity(OrcidMessage.class);
+        assertNotNull(message);
+        assertNotNull(message.getOrcidProfile());
+        assertNotNull(message.getOrcidProfile().getOrcidIdentifier());
+        assertEquals(user1OrcidId, message.getOrcidProfile().getOrcidIdentifier().getPath());
+        
     }
     
     @Test
@@ -86,6 +96,15 @@ public class PublicV1Test {
         assertNotNull(response);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());    
         OrcidMessage message = response.getEntity(OrcidMessage.class);
+        assertNotNull(message);
+        assertNotNull(message.getOrcidProfile());
+        assertNotNull(message.getOrcidProfile().getOrcidIdentifier());
+        assertEquals(user1OrcidId, message.getOrcidProfile().getOrcidIdentifier().getPath());
+        
+        response = publicV1ApiClient.viewPublicProfile(user1OrcidId, accessToken);
+        assertNotNull(response);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());    
+        message = response.getEntity(OrcidMessage.class);
         assertNotNull(message);
         assertNotNull(message.getOrcidProfile());
         assertNotNull(message.getOrcidProfile().getOrcidIdentifier());
@@ -104,6 +123,16 @@ public class PublicV1Test {
         assertTrue(errorMessage.contains("invalid_token"));
     }
     
+    
+    @Test
+    public void testPublicSearchAnonymously() {
+        
+    }
+    
+    @Test
+    public void testPublicSearchUsingToken() {
+        
+    }
     
     private String getAccessToken() throws InterruptedException, JSONException {
         if (accessToken == null) {            

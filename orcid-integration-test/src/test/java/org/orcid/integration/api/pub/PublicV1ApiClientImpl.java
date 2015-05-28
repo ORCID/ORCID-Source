@@ -1,6 +1,23 @@
+/**
+ * =============================================================================
+ *
+ * ORCID (R) Open Source
+ * http://orcid.org
+ *
+ * Copyright (c) 2012-2014 ORCID, Inc.
+ * Licensed under an MIT-Style License (MIT)
+ * http://orcid.org/open-source-license
+ *
+ * This copyright and license information (including a link to the full license)
+ * shall be included in its entirety in all copies or substantial portion of
+ * the software.
+ *
+ * =============================================================================
+ */
 package org.orcid.integration.api.pub;
 
 import static org.orcid.core.api.OrcidApiConstants.PROFILE_ROOT_PATH;
+import static org.orcid.core.api.OrcidApiConstants.PROFILE_GET_PATH;
 import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_XML;
 
 import java.net.URI;
@@ -28,11 +45,24 @@ public class PublicV1ApiClientImpl {
     
     public ClientResponse viewRootProfile(String orcid, String token) {
         URI rootProfileUri = UriBuilder.fromPath(PROFILE_ROOT_PATH).build(orcid);
+        return getClientReponse(rootProfileUri, token);
+    }
+    
+    public ClientResponse viewPublicProfile(String orcid) {
+        return viewPublicProfile(orcid, null);
+    }
+    
+    public ClientResponse viewPublicProfile(String orcid, String token) {
+        URI profileUri = UriBuilder.fromPath(PROFILE_GET_PATH).build(orcid);
+        return getClientReponse(profileUri, token);
+    }
+    
+    private ClientResponse getClientReponse(URI uri, String token) {
         ClientResponse result = null;
         if(PojoUtil.isEmpty(token)) {
-            result = orcidClientHelper.getClientResponse(rootProfileUri, VND_ORCID_XML);
+            result = orcidClientHelper.getClientResponse(uri, VND_ORCID_XML);
         } else {
-            result = orcidClientHelper.getClientResponseWithToken(rootProfileUri, VND_ORCID_XML, token);
+            result = orcidClientHelper.getClientResponseWithToken(uri, VND_ORCID_XML, token);
         }
         return result;
     }
