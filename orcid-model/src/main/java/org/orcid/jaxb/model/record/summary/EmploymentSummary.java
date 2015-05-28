@@ -35,7 +35,7 @@ import org.orcid.jaxb.model.common.VisibilityType;
 import org.orcid.jaxb.model.record.Activity;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "createdDate", "lastModifiedDate",  "source", "departmentName", "roleTitle", "startDate", "endDate", "org"})
+@XmlType(propOrder = { "createdDate", "lastModifiedDate",  "source", "departmentName", "roleTitle", "startDate", "endDate", "organization"})
 @XmlRootElement(name = "employment-summary", namespace = "http://www.orcid.org/ns/employment")
 public class EmploymentSummary implements VisibilityType, Activity, Serializable {
             
@@ -49,7 +49,7 @@ public class EmploymentSummary implements VisibilityType, Activity, Serializable
     @XmlElement(name="end-date", namespace = "http://www.orcid.org/ns/common")
     protected FuzzyDate endDate;
     @XmlElement(name="organization", namespace = "http://www.orcid.org/ns/employment")
-    protected Organization org;
+    protected Organization organization;
     @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected Source source;
     @XmlElement(name="last-modified-date", namespace = "http://www.orcid.org/ns/common")
@@ -234,12 +234,12 @@ public class EmploymentSummary implements VisibilityType, Activity, Serializable
             return false;
         return true;
     }
-
-	public Organization getOrg() {
-		return org;
+    
+	public Organization getOrganization() {
+		return organization;
 	}
 
-	public void setOrg(Organization org) {
-		this.org = org;
+	public void setOrganization(Organization organization) {
+		this.organization = organization;
 	}
 }

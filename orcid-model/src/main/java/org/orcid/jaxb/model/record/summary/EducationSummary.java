@@ -35,7 +35,7 @@ import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.jaxb.model.record.Activity;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "createdDate", "lastModifiedDate", "source", "departmentName", "roleTitle", "startDate", "endDate", "org" })
+@XmlType(propOrder = { "createdDate", "lastModifiedDate", "source", "departmentName", "roleTitle", "startDate", "endDate", "organization" })
 @XmlRootElement(name = "education-summary", namespace = "http://www.orcid.org/ns/education")
 public class EducationSummary implements Filterable, Activity, Serializable {
             
@@ -49,7 +49,7 @@ public class EducationSummary implements Filterable, Activity, Serializable {
     @XmlElement(name="end-date", namespace = "http://www.orcid.org/ns/common")
     protected FuzzyDate endDate;
     @XmlElement(name="organization", namespace = "http://www.orcid.org/ns/education")
-    protected Organization org;
+    protected Organization organization;
     @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected Source source;
     @XmlElement(name="last-modified-date", namespace = "http://www.orcid.org/ns/common")
@@ -234,11 +234,11 @@ public class EducationSummary implements Filterable, Activity, Serializable {
         return true;
     }
 
-	public Organization getOrg() {
-		return org;
+	public Organization getOrganization() {
+		return organization;
 	}
 
-	public void setOrg(Organization org) {
-		this.org = org;
+	public void setOrganization(Organization organization) {
+		this.organization = organization;
 	}
 }
