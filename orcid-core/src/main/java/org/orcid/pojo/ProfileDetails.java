@@ -28,6 +28,7 @@ public class ProfileDetails implements ErrorsInterface {
     String givenNames;
     String familyName;
     String email;
+    String status;
 
     public ProfileDetails() {
 
@@ -81,4 +82,12 @@ public class ProfileDetails implements ErrorsInterface {
     public void setErrors(List<String> errors) {
         this.errors = errors;
     }
+    
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
 }

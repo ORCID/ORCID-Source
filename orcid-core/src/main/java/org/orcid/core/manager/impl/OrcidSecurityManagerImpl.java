@@ -18,7 +18,6 @@ package org.orcid.core.manager.impl;
 
 import java.security.AccessControlException;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import javax.annotation.Resource;
@@ -28,23 +27,16 @@ import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.SourceManager;
+import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.jaxb.model.common.Filterable;
 import org.orcid.jaxb.model.common.Visibility;
+import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record.Education;
 import org.orcid.jaxb.model.record.Employment;
 import org.orcid.jaxb.model.record.Funding;
 import org.orcid.jaxb.model.record.PeerReview;
 import org.orcid.jaxb.model.record.Work;
-import org.orcid.jaxb.model.record.summary.ActivitiesSummary;
-import org.orcid.jaxb.model.record.summary.EducationSummary;
-import org.orcid.jaxb.model.record.summary.EmploymentSummary;
-import org.orcid.jaxb.model.record.summary.FundingGroup;
-import org.orcid.jaxb.model.record.summary.FundingSummary;
-import org.orcid.jaxb.model.record.summary.Fundings;
-import org.orcid.jaxb.model.record.summary.WorkGroup;
-import org.orcid.jaxb.model.record.summary.WorkSummary;
-import org.orcid.jaxb.model.record.summary.Works;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -99,6 +91,20 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
             throw new WrongSourceException("You are not the source of the work, so you are not allowed to update it");
         }
     }
+    
+	@Override
+	public boolean isAdmin() {
+		SecurityContext securityContext = SecurityContextHolder.getContext();
+		Authentication authentication = securityContext.getAuthentication();
+		if (authentication != null) {
+			Object principal = authentication.getPrincipal();
+			if (principal instanceof OrcidProfileUserDetails) {
+				OrcidProfileUserDetails userDetails = (OrcidProfileUserDetails) principal;
+				return OrcidType.ADMIN.equals(userDetails.getOrcidType());
+			}
+		}
+		return false;
+	}
 
     private Set<String> getReadLimitedScopesThatTheClientHas(OAuth2Request authorizationRequest, Filterable filterable) {
         Set<String> requestedScopes = ScopePathType.getCombinedScopesFromStringsAsStrings(authorizationRequest.getScope());

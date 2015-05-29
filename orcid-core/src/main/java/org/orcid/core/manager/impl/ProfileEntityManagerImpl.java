@@ -480,6 +480,11 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     public Date getLastModified(String orcid) {
         return profileDao.retrieveLastModifiedDate(orcid);
     }
+    
+	@Override
+	public boolean isDeactivated(String orcid) {
+		return profileDao.isDeactivated(orcid);
+	}
 
 }
 

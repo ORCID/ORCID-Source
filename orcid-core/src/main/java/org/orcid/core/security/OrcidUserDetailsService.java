@@ -18,6 +18,7 @@ package org.orcid.core.security;
 
 import javax.annotation.Resource;
 
+import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.ProfileDao;
@@ -41,6 +42,9 @@ public class OrcidUserDetailsService implements UserDetailsService {
 
     @Resource
     private EmailDao emailDao;
+    
+    @Resource
+	private OrcidSecurityManager securityMgr;
 
     /**
      * Locates the user based on the username. In the actual implementation, the
@@ -67,7 +71,7 @@ public class OrcidUserDetailsService implements UserDetailsService {
         if (profile.getPrimaryRecord() != null) {
             throw new DeprecatedException("orcid.frontend.security.deprecated_with_primary", profile.getPrimaryRecord().getId(), profile.getId());
         }
-        if (!profile.getClaimed()) {
+        if (!profile.getClaimed() && !securityMgr.isAdmin()) {
             throw new UnclaimedProfileExistsException("orcid.frontend.security.unclaimed_exists");
         }
         if (profile.getDeactivationDate() != null) {

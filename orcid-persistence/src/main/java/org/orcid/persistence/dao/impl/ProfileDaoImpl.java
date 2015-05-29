@@ -720,4 +720,12 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         Boolean result = query.getSingleResult();
         return result;
     }
+
+	@Override
+	public boolean isDeactivated(String orcid) {
+		TypedQuery<Date> query = entityManager.createQuery("select deactivationDate from ProfileEntity where orcid = :orcid", Date.class);
+        query.setParameter("orcid", orcid);                   
+        Date result = query.getSingleResult();
+		return (result == null) ? false : true;
+	}
 }

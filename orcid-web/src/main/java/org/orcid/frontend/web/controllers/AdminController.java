@@ -18,6 +18,7 @@ package org.orcid.frontend.web.controllers;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -267,7 +268,29 @@ public class AdminController extends BaseController {
 
     @RequestMapping(value = "/find-id", method = RequestMethod.GET)
     public @ResponseBody
-    Map<String, String> findIdByEmail(@RequestParam("csvEmails") String csvEmails) {
+    List<ProfileDetails> findIdByEmail(@RequestParam("csvEmails") String csvEmails) {
+        Map<String, String> emailMap = findIdByEmailHelper(csvEmails);
+        List<ProfileDetails> profileDetList = new ArrayList<ProfileDetails>();
+        ProfileDetails tempObj;
+        for(Map.Entry<String, String> entry : emailMap.entrySet()) {
+        	tempObj = new ProfileDetails();
+        	tempObj.setOrcid(entry.getValue());
+        	tempObj.setEmail(entry.getKey());
+        	if(!profileEntityManager.isProfileClaimed(entry.getValue())) {
+        		tempObj.setStatus("Unclaimed");
+        	} else if(profileEntityManager.isLocked(entry.getValue())) {
+        		tempObj.setStatus("Locked");
+        	} else if(profileEntityManager.isDeactivated(entry.getValue())){
+        		tempObj.setStatus("Deactivated");
+        	} else {
+        		tempObj.setStatus("Claimed");
+        	}
+        	profileDetList.add(tempObj);
+        }
+        return profileDetList;
+    }
+    
+    public Map<String, String> findIdByEmailHelper(String csvEmails) {
         if (StringUtils.isBlank(csvEmails))
             return new HashMap<String, String>();
         return emailManager.findIdByEmail(csvEmails);
@@ -299,7 +322,7 @@ public class AdminController extends BaseController {
                 boolean isOrcid = matchesOrcidPattern(orcidOrEmail);
                 // If it is not an orcid, check the value from the emails table
                 if (!isOrcid) {
-                    Map<String, String> email = findIdByEmail(orcidOrEmail);
+                    Map<String, String> email = findIdByEmailHelper(orcidOrEmail);
                     orcid = email.get(orcidOrEmail);
                 } else {
                     orcid = orcidOrEmail;
@@ -336,7 +359,7 @@ public class AdminController extends BaseController {
         String orcid = null;
         // If it is not an orcid, check the value from the emails table
         if (!isOrcid) {
-            Map<String, String> email = findIdByEmail(orcidOrEmail);
+            Map<String, String> email = findIdByEmailHelper(orcidOrEmail);
             orcid = email.get(orcidOrEmail);
         } else {
             orcid = orcidOrEmail;
@@ -360,36 +383,40 @@ public class AdminController extends BaseController {
     /**
      * Admin switch user
      * */
-    @RequestMapping(value = "/admin-switch-user", method = RequestMethod.POST)
-    public ModelAndView adminSwitchUser(@ModelAttribute("orcidOrEmail") String orcidOrEmail, RedirectAttributes redirectAttributes) {
+    /**
+     * Admin switch user
+     * */
+    @RequestMapping(value = "/admin-switch-user", method = RequestMethod.GET)
+    public @ResponseBody Map<String, String> adminSwitchUser(@ModelAttribute("orcidOrEmail") String orcidOrEmail, RedirectAttributes redirectAttributes) {
         if (StringUtils.isNotBlank(orcidOrEmail))
-            orcidOrEmail = orcidOrEmail.trim();
-        boolean isOrcid = matchesOrcidPattern(orcidOrEmail);
-        String orcid = null;
-        // If it is not an orcid, check the value from the emails table
-        if (!isOrcid) {
-            Map<String, String> email = findIdByEmail(orcidOrEmail);
-            orcid = email.get(orcidOrEmail);
-        } else {
-            orcid = orcidOrEmail;
-        }
-
-        ModelAndView mav = null;
-
-        if (StringUtils.isNotEmpty(orcid)) {
-            if (profileEntityManager.orcidExists(orcid)) {
-                mav = new ModelAndView("redirect:/switch-user?j_username=" + orcid);
-            } else {
-                redirectAttributes.addFlashAttribute("invalidOrcid", true);
-                mav = new ModelAndView("redirect:/admin-actions");
-            }
-        } else {
-            redirectAttributes.addFlashAttribute("invalidOrcid", true);
-            mav = new ModelAndView("redirect:/admin-actions");
-        }
-
-        return mav;
-
+        orcidOrEmail = orcidOrEmail.trim();
+	    boolean isOrcid = matchesOrcidPattern(orcidOrEmail);
+	    String orcid = null;
+	    // If it is not an orcid, check the value from the emails table
+	    if (!isOrcid) {
+	        Map<String, String> email = findIdByEmailHelper(orcidOrEmail);
+	        orcid = email.get(orcidOrEmail);
+	    } else {
+	        orcid = orcidOrEmail;
+	    }
+	 
+	    Map<String, String> mapOrcid = null;
+	    if (StringUtils.isNotEmpty(orcid)) {
+	        if (profileEntityManager.orcidExists(orcid)) {
+	        	mapOrcid = new HashMap<String, String>();
+	        	if(!profileEntityManager.isProfileClaimed(orcid)) {
+	        		mapOrcid.put("errorMessg", new StringBuffer("Account for user ").append(orcidOrEmail).append(" is unclaimed.").toString());
+	        	} else if(profileEntityManager.isDeactivated(orcid)) {
+	        		mapOrcid.put("errorMessg", new StringBuffer("Account for user ").append(orcidOrEmail).append(" is deactivated.").toString());
+	        	} else if(profileEntityManager.isLocked(orcid)) {
+	        		mapOrcid.put("errorMessg",  new StringBuffer("Account for user ").append(orcidOrEmail).append(" is locked.").toString());
+	        	} else {
+	        		mapOrcid.put("errorMessg", null);
+	        	}
+	        	mapOrcid.put("orcid", orcid);
+	        }
+	    }
+        return mapOrcid;
     }
 
     /**
@@ -429,7 +456,7 @@ public class AdminController extends BaseController {
 
         if (!trustedIsOrcid) {
             if (emailManager.emailExists(trusted)) {
-                Map<String, String> email = findIdByEmail(trusted);
+                Map<String, String> email = findIdByEmailHelper(trusted);
                 trusted = email.get(trusted);
             } else {
                 request.getTrusted().getErrors().add(getMessage("admin.delegate.error.invalid_orcid_or_email", request.getTrusted().getValue()));
@@ -439,7 +466,7 @@ public class AdminController extends BaseController {
         
         if (!managedIsOrcid) {
             if (emailManager.emailExists(managed)) {
-                Map<String, String> email = findIdByEmail(managed);
+                Map<String, String> email = findIdByEmailHelper(managed);
                 managed = email.get(managed);
             } else {
                 request.getManaged().getErrors().add(getMessage("admin.delegate.error.invalid_orcid_or_email", request.getManaged().getValue()));
@@ -465,7 +492,7 @@ public class AdminController extends BaseController {
         // If it is not an orcid, check the value from the emails table
         if (!isOrcid) {
             if (emailManager.emailExists(orcidOrEmail)) {
-                Map<String, String> email = findIdByEmail(orcidOrEmail);
+                Map<String, String> email = findIdByEmailHelper(orcidOrEmail);
                 orcid = email.get(orcidOrEmail);
             }
         } else {
@@ -550,7 +577,7 @@ public class AdminController extends BaseController {
         // If it is not an orcid, check the value from the emails table
         if (!isOrcid) {
             if (emailManager.emailExists(orcidOrEmail)) {
-                Map<String, String> email = findIdByEmail(orcidOrEmail);
+                Map<String, String> email = findIdByEmailHelper(orcidOrEmail);
                 orcid = email.get(orcidOrEmail);
             }
         } else {
