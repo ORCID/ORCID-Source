@@ -61,7 +61,7 @@
 		                	</div>
 		                	<div>
 				                <#list profile.orcidBio.personalDetails.otherNames.otherName as otherName>
-				                	${otherName.content}<#if otherName_has_next></#if>
+				                	${otherName.content}<#if otherName_has_next>,</#if>
 				                </#list>
 			                </div>
 		                </div>
