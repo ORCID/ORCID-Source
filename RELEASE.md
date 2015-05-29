@@ -585,8 +585,3 @@ We release updates to the Registry regularly. Below is a list of the improvement
 * Email is now case insensitive on login screen.
 * Email is validated on OAuth Create
 * Formatting improvement to Personal Info Window (Brian's making us look nice)
- 
-
-## Earlier Release Notes
-
-Looking for release note from January 2013 and earlier? See our [knowledge base article](http://support.orcid.org/knowledgebase/articles/137550)
