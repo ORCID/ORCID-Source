@@ -1,4 +1,7 @@
 # Release notes and highlights
+As of late 2014, we have moved our release notes to our "Trello boards", where we actively manage our development schedule. Please see https://trello.com/orcid2 for more details.
+
+# Historic documentation
 We release updates to the Registry regularly. Below is a list of the improvements and enhancements that have been made so far. You can see more details about our releases on our Release boards:
 
 * [2013 Releases](https://trello.com/b/ZgYVAlel)
@@ -582,8 +585,3 @@ We release updates to the Registry regularly. Below is a list of the improvement
 * Email is now case insensitive on login screen.
 * Email is validated on OAuth Create
 * Formatting improvement to Personal Info Window (Brian's making us look nice)
- 
-
-## Earlier Release Notes
-
-Looking for release note from January 2013 and earlier? See our [knowledge base article](http://support.orcid.org/knowledgebase/articles/137550)

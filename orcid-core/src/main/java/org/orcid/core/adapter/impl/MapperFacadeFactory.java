@@ -198,9 +198,15 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
 
         ClassMapBuilder<EducationSummary, OrgAffiliationRelationEntity> educationSummaryClassMap = mapperFactory.classMap(EducationSummary.class,
                 OrgAffiliationRelationEntity.class);
+        educationSummaryClassMap.field("putCode", "id");
+        educationSummaryClassMap.field("organization.name", "org.name");
+        educationSummaryClassMap.field("organization.address.city", "org.city");
+        educationSummaryClassMap.field("organization.address.region", "org.region");
+        educationSummaryClassMap.field("organization.address.country", "org.country");
+        educationSummaryClassMap.field("organization.disambiguatedOrganization.disambiguatedOrganizationIdentifier", "org.orgDisambiguated.sourceId");
+        educationSummaryClassMap.field("organization.disambiguatedOrganization.disambiguationSource", "org.orgDisambiguated.sourceType");
         educationSummaryClassMap.field("departmentName", "department");
         educationSummaryClassMap.field("roleTitle", "title");
-        educationSummaryClassMap.field("putCode", "id");
         educationSummaryClassMap.byDefault();
         educationSummaryClassMap.register();
 
@@ -227,9 +233,15 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
 
         ClassMapBuilder<EmploymentSummary, OrgAffiliationRelationEntity> employmentSummaryClassMap = mapperFactory.classMap(EmploymentSummary.class,
                 OrgAffiliationRelationEntity.class);
+        employmentSummaryClassMap.field("putCode", "id");
+        employmentSummaryClassMap.field("organization.name", "org.name");
+        employmentSummaryClassMap.field("organization.address.city", "org.city");
+        employmentSummaryClassMap.field("organization.address.region", "org.region");
+        employmentSummaryClassMap.field("organization.address.country", "org.country");
+        employmentSummaryClassMap.field("organization.disambiguatedOrganization.disambiguatedOrganizationIdentifier", "org.orgDisambiguated.sourceId");
+        employmentSummaryClassMap.field("organization.disambiguatedOrganization.disambiguationSource", "org.orgDisambiguated.sourceType");
         employmentSummaryClassMap.field("departmentName", "department");
         employmentSummaryClassMap.field("roleTitle", "title");
-        employmentSummaryClassMap.field("putCode", "id");
         employmentSummaryClassMap.byDefault();
         employmentSummaryClassMap.register();
 
