@@ -30,7 +30,7 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.apache.commons.lang.StringUtils;
 import org.orcid.jaxb.model.clientgroup.ClientType;
-import org.orcid.jaxb.model.clientgroup.GroupType;
+import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.utils.ReleaseNameUtils;
 
 /**
@@ -103,7 +103,7 @@ public class OrcidProfile implements Serializable {
     protected OrcidType type;
 
     @XmlAttribute(name = "group-type")
-    protected GroupType groupType;
+    protected MemberType groupType;
 
     @XmlAttribute(name = "client-type")
     protected ClientType clientType;
@@ -404,10 +404,10 @@ public class OrcidProfile implements Serializable {
     /**
      * Gets the value of the groupType property.
      * 
-     * @return possible object is {@link GroupType }
+     * @return possible object is {@link MemberType }
      * 
      */
-    public GroupType getGroupType() {
+    public MemberType getGroupType() {
         return groupType;
     }
 
@@ -415,10 +415,10 @@ public class OrcidProfile implements Serializable {
      * Sets the value of the groupType property.
      * 
      * @param value
-     *            allowed object is {@link GroupType }
+     *            allowed object is {@link MemberType }
      * 
      */
-    public void setGroupType(GroupType value) {
+    public void setGroupType(MemberType value) {
         this.groupType = value;
     }
 

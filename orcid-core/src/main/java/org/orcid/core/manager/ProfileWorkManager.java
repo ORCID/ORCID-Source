@@ -25,6 +25,8 @@ import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
 
 public interface ProfileWorkManager {
 
+    void setSourceManager(SourceManager sourceManager);
+    
     /**
      * Removes the relationship that exists between a work and a profile.
      *      
@@ -130,6 +132,5 @@ public interface ProfileWorkManager {
     
     Work createWork(String orcid, Work work);
 
-    Work updateWork(String orcid, Work work);
-
+    Work updateWork(String orcid, Work work);       
 }

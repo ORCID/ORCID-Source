@@ -16,8 +16,13 @@
  */
 package org.orcid.persistence.jpa.entities;
 
+import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+
+import org.orcid.jaxb.model.notification.amended.AmendedSection;
 
 /**
  * 
@@ -29,5 +34,15 @@ import javax.persistence.Entity;
 public class NotificationAmendedEntity extends NotificationEntity {
 
     private static final long serialVersionUID = 1L;
+    private AmendedSection amendedSection = AmendedSection.UNKNOWN;
+    
+    @Enumerated(EnumType.STRING)
+    @Column(name = "amended_section")
+    public AmendedSection getAmendedSection() {
+        return amendedSection;
+    }
+    public void setAmendedSection(AmendedSection amendedSection) {
+        this.amendedSection = amendedSection;
+    }
 
 }

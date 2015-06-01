@@ -30,7 +30,7 @@ import javax.persistence.TypedQuery;
 
 import org.apache.commons.lang.StringUtils;
 import org.orcid.jaxb.model.clientgroup.ClientType;
-import org.orcid.jaxb.model.clientgroup.GroupType;
+import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.Locale;
 import org.orcid.jaxb.model.message.OrcidType;
@@ -658,10 +658,10 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
      * @return the group type, null if it is not a group
      * */
     @Override
-    public GroupType getGroupType(String orcid) {
-        TypedQuery<GroupType> query = entityManager.createQuery("select groupType from ProfileEntity where orcid = :orcid", GroupType.class);
+    public MemberType getGroupType(String orcid) {
+        TypedQuery<MemberType> query = entityManager.createQuery("select groupType from ProfileEntity where orcid = :orcid", MemberType.class);
         query.setParameter("orcid", orcid);
-        List<GroupType> results = query.getResultList();
+        List<MemberType> results = query.getResultList();
         return results.isEmpty() ? null : results.get(0);
     }
     

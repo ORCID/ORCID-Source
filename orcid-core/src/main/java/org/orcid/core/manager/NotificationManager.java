@@ -23,13 +23,14 @@ import org.orcid.jaxb.model.message.DelegationDetails;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.notification.Notification;
+import org.orcid.jaxb.model.notification.amended.AmendedSection;
 
 public interface NotificationManager {
 
     // void sendRegistrationEmail(RegistrationEntity registration, URI baseUri);
 
     void sendWelcomeEmail(OrcidProfile orcidProfile, String email);
-    
+
     void sendVerificationEmail(OrcidProfile orcidProfile, String email);
 
     public void sendVerificationReminderEmail(OrcidProfile orcidProfile, String email);
@@ -42,7 +43,7 @@ public interface NotificationManager {
 
     void sendNotificationToAddedDelegate(OrcidProfile grantingUser, List<DelegationDetails> delegatesGrantedByUser);
 
-    void sendAmendEmail(OrcidProfile amendedProfile, String amenderOrcid);
+    void sendAmendEmail(OrcidProfile amendedProfile, AmendedSection amendedSection);
 
     void sendOrcidDeactivateEmail(OrcidProfile orcidToDeactivate);
 

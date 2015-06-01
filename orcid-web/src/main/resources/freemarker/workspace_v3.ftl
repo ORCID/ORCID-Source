@@ -212,7 +212,7 @@
 	        	   <span ng-hide="showEdit == true">
 	        	      <span class="glyphicon glyphicon-pencil edit-websites edit-option pull-right" ng-click="openEdit()" title=""></span><br />
 	        	      <div ng-repeat="website in websitesForm.websites" ng-cloak class="wrap">
-	        	         <a href="{{website.url.value}}" target="_blank" rel="nofollow">{{website.name.value != null? website.name.value : website.url.value}}</a>
+	        	         <a href="{{website.url.value}}" target="_blank" rel="me nofollow">{{website.name.value != null? website.name.value : website.url.value}}</a>
 	        	      </div>
 	        	   </span>	
 	        	   <span class="pull-right" ng-show="showEdit == true" ng-cloak>
@@ -519,8 +519,8 @@
 				<@orcid.msg 'workspace.ensure_future_access'/>
 				<br />
 				<br />						
-				<span class="btn btn-primary" id="modal-close" ng-click="verifyEmail()"><@orcid.msg 'workspace.send_verification'/></span>
-				<span class="btn" id="modal-close" ng-click="closeColorBox()"><@orcid.msg 'freemarker.btncancel'/></span>								
+				<button class="btn btn-primary" id="modal-close" ng-click="verifyEmail()"><@orcid.msg 'workspace.send_verification'/></button>
+				<button class="btn" id="modal-close" ng-click="closeColorBox()"><@orcid.msg 'freemarker.btncancel'/></button>								
 			</div>
 		</div>		
 	</div>		
@@ -549,7 +549,7 @@
 		</div>
 		<div class="row">
 			<div class="col-md-12 col-xs-12 col-sm-12">
-				<span class="btn close-button pull-right" id="modal-close" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel'/></span>
+				<button class="btn close-button pull-right" id="modal-close" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel'/></button>
 			</div>
 		</div>
 	</div>
@@ -568,7 +568,7 @@
 				<h4><@orcid.msg 'workspace.sent'/></h4>
 				<@orcid.msg 'workspace.check_your_email'/><br />
 				<br />
-				<span class="btn btn-danger" ng-click="closeColorBox()"><@orcid.msg 'freemarker.btnclose'/></span>
+				<button class="btn" ng-click="closeColorBox()"><@orcid.msg 'freemarker.btnclose'/></button>
 			</div>
 		</div>
 	</div>

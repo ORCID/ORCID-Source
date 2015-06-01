@@ -24,9 +24,9 @@
         <#include "admin_menu.ftl"/>
     </div>
     <div class="col-md-9 col-sm-12 col-xs-12" ng-controller="NotificationsCtrl" >
-        <h1>${springMacroRequestContext.getMessage("notifications.title")}</h1>
+        <!-- <h2>${springMacroRequestContext.getMessage("notifications.title")}</h2> -->
         <div>
-            <label class="checkbox">
+            <label class="checkbox pull-right">
                 <input type="checkbox" ng-model="notificationsSrvc.showArchived" ng-change="reloadNotifications()"></input>
                 ${springMacroRequestContext.getMessage("notifications.showArchived")}
             </label>
@@ -51,12 +51,12 @@
 	                    <td ng-click="toggleDisplayBody(notification.putCode)"><span ng-cloak>{{notification.subject}}</span></td>
 	                    <td ng-click="toggleDisplayBody(notification.putCode)"><span ng-cloak>{{notification.createdDate|humanDate}}</span></td>
 	                    <td>
-	                        <span ng-hide="notification.archivedDate"><a href="" ng-click="archive(notification.putCode)" class="glyphicon glyphicon-download-alt grey" title="${springMacroRequestContext.getMessage("notifications.archive")}"></a></span>
+	                        <span ng-hide="notification.archivedDate"><a href="" ng-click="archive(notification.putCode)" class="glyphicon glyphicon-download-alt dark-grey" title="${springMacroRequestContext.getMessage("notifications.archive")}"></a></span>
 	                    </td>
 	                </tr>
-	                <tr ng-repeat-end ng-show="displayBody[notification.putCode]">
+	                <tr ng-repeat-end ng-show="displayBody[notification.putCode]" onclick="return false;">
 	                    <td colspan="4">
-	                        <iframe id="{{notification.putCode}}" ng-src="{{ '<@orcid.rootPath '/notifications'/>/' + notification.notificationType + '/' + notification.putCode + '/notification.html'}}" frameborder="0" width="100%" scrolling="no"></iframe>
+	                        <iframe id="{{notification.putCode}}" ng-src="{{ '<@spring.url '/notifications'/>/' + notification.notificationType + '/' + notification.putCode + '/notification.html'}}" class="notification-iframe" frameborder="0" width="100%" scrolling="no"></iframe>
 	                    </td>
 	                </tr>
                 </tbody>

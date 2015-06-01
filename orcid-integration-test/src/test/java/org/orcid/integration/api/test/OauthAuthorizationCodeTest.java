@@ -36,13 +36,13 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.orcid.api.common.WebDriverHelper;
 import org.orcid.integration.api.helper.InitializeDataHelper;
 import org.orcid.integration.api.helper.OauthHelper;
-import org.orcid.jaxb.model.clientgroup.GroupType;
+import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.persistence.dao.OrcidOauth2AuthoriziationCodeDetailDao;
 import org.orcid.persistence.jpa.entities.OrcidOauth2AuthoriziationCodeDetail;
-import org.orcid.pojo.ajaxForm.Group;
+import org.orcid.pojo.ajaxForm.Member;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
@@ -90,7 +90,7 @@ public class OauthAuthorizationCodeTest extends IntegrationTestBase {
     private static String email;
     private static String password;
     private static OrcidProfile user;
-    private static Group member;
+    private static Member member;
     private static OrcidClient client; 
     
     @Resource
@@ -106,7 +106,7 @@ public class OauthAuthorizationCodeTest extends IntegrationTestBase {
         if(user == null)
             user = idh.createProfile(email, password);
         if(member == null)
-            member = idh.createMember(GroupType.BASIC);
+            member = idh.createMember(MemberType.BASIC);
         if(client == null)
             client = idh.createClient(member.getGroupOrcid().getValue(), getRedirectUri());                
     }    

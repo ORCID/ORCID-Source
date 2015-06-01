@@ -25,6 +25,7 @@ package org.orcid.jaxb.model.notification.amended;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
@@ -60,13 +61,23 @@ import org.orcid.jaxb.model.notification.Notification;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "putCode", "notificationType", "createdDate", "sentDate", "readDate", "archivedDate", "source" })
+@XmlType(name = "", propOrder = { "putCode", "notificationType", "amendedSection", "createdDate", "sentDate", "readDate", "archivedDate", "source" })
 @XmlRootElement(name = "notification", namespace = "http://www.orcid.org/ns/notification")
 public class NotificationAmended extends Notification {
 
     private final static long serialVersionUID = 1L;
+    @XmlElement(name = "amended-section", namespace = "http://www.orcid.org/ns/notification", required = true)
+    protected AmendedSection amendedSection;
     @XmlTransient
     protected String subject;
+
+    public AmendedSection getAmendedSection() {
+        return amendedSection;
+    }
+
+    public void setAmendedSection(AmendedSection amendedSection) {
+        this.amendedSection = amendedSection;
+    }
 
     public String getSubject() {
         return subject;

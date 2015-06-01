@@ -33,6 +33,10 @@ public class ProfileDetails implements ErrorsInterface {
 
     }
 
+    public ProfileDetails(String orcid, String givenNames, String familyName) {
+        this(orcid, givenNames, familyName, null);
+    }
+    
     public ProfileDetails(String orcid, String givenNames, String familyName, String email) {
         this.orcid = orcid;
         this.givenNames = givenNames;

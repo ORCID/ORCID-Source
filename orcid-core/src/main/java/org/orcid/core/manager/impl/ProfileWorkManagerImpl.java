@@ -55,6 +55,11 @@ public class ProfileWorkManagerImpl implements ProfileWorkManager {
     @Resource
     private OrcidSecurityManager orcidSecurityManager;
 
+    @Override
+    public void setSourceManager(SourceManager sourceManager) {
+        this.sourceManager = sourceManager;
+    }
+    
     /**
      * Removes the relationship that exists between a work and a profile.
      * 

@@ -27,6 +27,8 @@ import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 
 public interface AffiliationsManager {
 
+    void setSourceManager(SourceManager sourceManager);
+    
     /**
      * 
      * */

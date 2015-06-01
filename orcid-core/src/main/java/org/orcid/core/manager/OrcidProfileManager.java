@@ -26,7 +26,6 @@ import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
 import org.orcid.jaxb.model.message.Preferences;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.message.Visibility;
 
 /**
  * @author Will Simpson
@@ -209,28 +208,6 @@ public interface OrcidProfileManager {
     void addOrcidWorks(OrcidProfile orcidProfile);
 
     /**
-     * Deletes an ORCID works for the ORCID supplied as a parameter
-     * 
-     * @param orcid
-     *            the owning ORCID
-     * @param positionsToDelete
-     *            the indexes of the sections (portions) to delete
-     */
-
-    OrcidProfile deleteOrcidWorks(String orcid, int[] positionsToDelete);
-
-    /**
-     * Updates the visibility of the ORCID works for the ORCID supplied as a
-     * parameter
-     * 
-     * @param orcid
-     *            the owning ORCID
-     * @param visibility
-     *            the visibility to update the works to
-     */
-    OrcidProfile updateOrcidWorkVisibility(String orcid, int[] positionsToUpdate, Visibility visibility);
-
-    /**
      * Deletes an approved client application's token from a profile.
      * 
      * @param userOrcid
@@ -314,17 +291,6 @@ public interface OrcidProfileManager {
      * @return
      */
     OrcidProfile addExternalIdentifiers(OrcidProfile orcidProfile);
-
-    /**
-     * Add new delegates to the profile. The orcidProfile should contain the
-     * Orcid for the profile giving permission. The delegation section should
-     * contain a GivenPermissionTo for each new delegate. If the delegate has
-     * already been permission for this profile, then it is ignored.
-     * 
-     * @param orcidProfile
-     * @return
-     */
-    OrcidProfile addDelegates(OrcidProfile orcidProfile);
 
     OrcidProfile revokeDelegate(String giverOrcid, String receiverOrcid);
 

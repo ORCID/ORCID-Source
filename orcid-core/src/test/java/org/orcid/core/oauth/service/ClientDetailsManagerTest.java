@@ -74,11 +74,11 @@ public class ClientDetailsManagerTest extends DBUnitTest {
     @Transactional
     public void testLoadClientByClientId() throws Exception {
         List<ClientDetailsEntity> all = clientDetailsManager.getAll();
-        assertEquals(8, all.size());
+        assertEquals(9, all.size());
         for (ClientDetailsEntity clientDetailsEntity : all) {
             ClientDetails clientDetails = clientDetailsManager.loadClientByClientId(clientDetailsEntity.getId());
             assertNotNull(clientDetails);
-            if (!"APP-5555555555555555".equals(clientDetailsEntity.getId()) && !"APP-6666666666666666".equals(clientDetailsEntity.getId()) ) {
+            if (!"APP-5555555555555555".equals(clientDetailsEntity.getId()) && !"APP-5555555555555556".equals(clientDetailsEntity.getId()) && !"APP-6666666666666666".equals(clientDetailsEntity.getId()) ) {
                 checkClientDetails(clientDetails);
             }
         }
@@ -158,7 +158,7 @@ public class ClientDetailsManagerTest extends DBUnitTest {
     @Transactional
     public void testDeleteClientDetail() throws Exception {
         List<ClientDetailsEntity> all = clientDetailsManager.getAll();
-        assertEquals(8, all.size());
+        assertEquals(9, all.size());
         for (ClientDetailsEntity clientDetailsEntity : all) {
             if (!"APP-5555555555555555".equals(clientDetailsEntity.getId())) {
                 clientDetailsManager.deleteClientDetail(clientDetailsEntity.getId());
@@ -201,7 +201,7 @@ public class ClientDetailsManagerTest extends DBUnitTest {
             assertEquals(1, resourceIds.size());
         Set<String> scope = clientDetails.getScope();
         assertNotNull(scope);
-        int expectedNumberOfScopes = "4444-4444-4444-4445".equals(clientDetails.getClientId()) ? 9 : 1;
+        int expectedNumberOfScopes = "4444-4444-4444-4445".equals(clientDetails.getClientId()) ? 15 : 1;
         assertEquals(expectedNumberOfScopes, scope.size());
     }
 }
