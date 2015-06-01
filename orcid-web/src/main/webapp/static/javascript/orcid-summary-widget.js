@@ -136,8 +136,8 @@
 	  	var orcid = json.orcid;
 	    var name = json.name;
 	    var works = json.works;
-	    var fundings = json.fundings;
-	    var educations = json.educations;
+	    var funding = json.fundings;
+	    var education = json.educations;
 	    var peerReviews =  json.peerReviews;	    
 	    if(styleTags.length == 0) {	        
 	        var styleTag = document.createElement("link");
@@ -158,11 +158,11 @@
 	                                        if (works > 0) {
 	                                            widgetInnerHTML += '<div class="orcid-summary-item">Works ('+ works +')</div>';
 	                                        }
-	                                        if (fundings > 0){
-	                                            widgetInnerHTML += '<div class="orcid-summary-item">Fundings (' + fundings +')</div>';
+	                                        if (funding > 0){
+	                                            widgetInnerHTML += '<div class="orcid-summary-item">Funding (' + funding +')</div>';
 	                                        }
-	                                        if (educations > 0){
-	                                            widgetInnerHTML += '<div class="orcid-summary-item">Educations (' + educations + ')</div>';
+	                                        if (education > 0){
+	                                            widgetInnerHTML += '<div class="orcid-summary-item">Education (' + education + ')</div>';
 	                                        }
 	                                        if(peerReviews > 0){
 	                                            widgetInnerHTML += '<div class="orcid-summary-item">Peer Reviews (' + peerReviews +')</div>';
