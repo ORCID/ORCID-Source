@@ -74,7 +74,7 @@ public class OrcidUserDetailsService implements UserDetailsService {
         if (!profile.getClaimed() && !securityMgr.isAdmin()) {
             throw new UnclaimedProfileExistsException("orcid.frontend.security.unclaimed_exists");
         }
-        if (profile.getDeactivationDate() != null) {
+        if (profile.getDeactivationDate() != null && !securityMgr.isAdmin()) {
             throw new DisabledException("Account not active, please call helpdesk");
         }
 
