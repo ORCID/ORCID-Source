@@ -63,8 +63,7 @@
                 <tr>
                     <!-- Email header -->
                     <th><a name="editEmail"></a>${springMacroRequestContext.getMessage("manage.thEmail")}</th>
-                    <td><a href="" ng-click="toggleEmailEdit()"
-                        ng-bind="emailToggleText"></a></td>
+                    <td><a href="" ng-click="toggleEmailEdit()" ng-bind="emailToggleText"></a></td>
                 </tr>
                 <tr ng-controller="EmailEditCtrl" ng-show="showEditEmail" ng-cloak>
                     <!-- Email edit -->
