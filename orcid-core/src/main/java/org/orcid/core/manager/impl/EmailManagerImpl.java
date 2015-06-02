@@ -138,4 +138,10 @@ public class EmailManagerImpl implements EmailManager {
     public boolean verifyPrimaryEmail(String orcid) {
         return emailDao.verifyPrimaryEmail(orcid);
     }
+    
+    @Override
+    @Transactional
+    public boolean moveEmailToOtherAccount(String email, String origin, String destination) {
+        return emailDao.moveEmailToOtherAccountAsNonPrimary(email, origin, destination);
+    }
 }

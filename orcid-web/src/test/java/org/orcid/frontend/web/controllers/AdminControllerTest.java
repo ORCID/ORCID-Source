@@ -32,7 +32,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
-import javax.persistence.NoResultException;
 
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -222,12 +221,7 @@ public class AdminControllerTest extends BaseControllerTest {
     public void tryToDeprecateDeprecatedProfile() throws Exception {
         ProfileDeprecationRequest result = adminController.deprecateProfile("4444-4444-4444-4444", "4444-4444-4444-4445");
         assertEquals(0, result.getErrors().size());        
-        
-        ProfileDetails details = adminController.checkOrcidToDeprecate("4444-4444-4444-4444");
-        assertNotNull(details);
-        assertEquals(1, details.getErrors().size());
-        assertEquals(adminController.getMessage("admin.profile_deprecation.errors.already_deprecated", "4444-4444-4444-4444"), details.getErrors().get(0));
-        
+                
         // Test deprecating a deprecated account
         result = adminController.deprecateProfile("4444-4444-4444-4444", "4444-4444-4444-4443");
         assertEquals(1, result.getErrors().size());
