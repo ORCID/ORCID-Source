@@ -16,6 +16,8 @@
  */
 package org.orcid.core.manager;
 
+import java.security.NoSuchAlgorithmException;
+
 public interface EncryptionManager {
 
     String encryptForInternalUse(String stringToEncrypt);
@@ -27,6 +29,8 @@ public interface EncryptionManager {
     String legacyDecryptForInternalUse(String stringToDecrypt);
 
     String hashForInternalUse(String raw);
+
+    String sha256Hash(String s) throws NoSuchAlgorithmException;
 
     boolean hashMatches(String raw, String hash);
 

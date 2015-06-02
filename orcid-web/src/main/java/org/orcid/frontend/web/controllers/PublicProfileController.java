@@ -34,6 +34,7 @@ import org.jsoup.helper.StringUtil;
 import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ActivityCacheManager;
+import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.OrcidProfileCacheManager;
 import org.orcid.core.manager.PeerReviewManager;
 import org.orcid.core.manager.ProfileWorkManager;
@@ -82,6 +83,9 @@ public class PublicProfileController extends BaseWorkspaceController {
     private WorkManager workManager;
 
     @Resource
+    private EncryptionManager encryptionManager;
+
+    @Resource
     private ActivityCacheManager activityCacheManager;
 
     @Resource
@@ -101,6 +105,8 @@ public class PublicProfileController extends BaseWorkspaceController {
 
     @Resource
     private PeerReviewManager peerReviewManager;
+    
+    public static int ORCID_HASH_LENGTH = 8;
 
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[x]}")
     public ModelAndView publicPreviewRedir(HttpServletRequest request, @RequestParam(value = "page", defaultValue = "1") int pageNo,
@@ -406,9 +412,14 @@ public class PublicProfileController extends BaseWorkspaceController {
         return peerReviews;
     }
 
-    @RequestMapping(value = "/public_widgets/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/info.json")
+    @RequestMapping(value = "/public_widgets/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/{orcidHash}/info.json")
     public @ResponseBody
-    OrcidInfo getInfo(@PathVariable("orcid") String orcid) {
+    OrcidInfo getInfo(@PathVariable("orcid") String orcid, @PathVariable("orcidHash") String orcidHash) throws Exception {
+    	// Light weight security check. To keep copy and paster from easily generating
+    	// the widget with out the user being logged in. Anyone that figures out this is 
+        // a hash should be smart enough to just use the API.
+    	if (orcidHash.length() > 5 && !super.getOrcidHash().startsWith(orcidHash))
+    		throw new Exception("Semi-security hash doens't match");
         OrcidInfo result = new OrcidInfo();
         OrcidProfile profile = orcidProfileCacheManager.retrievePublic(orcid);
         result.setOrcid(orcid);
