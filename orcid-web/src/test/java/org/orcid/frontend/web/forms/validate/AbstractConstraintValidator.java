@@ -29,13 +29,13 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 
 import org.junit.runner.RunWith;
+import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.context.MessageSource;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml", "classpath:orcid-frontend-web-servlet.xml" })
 public class AbstractConstraintValidator<T> {
 
