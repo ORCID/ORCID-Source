@@ -42,10 +42,10 @@ public class OrcidUserDetailsService implements UserDetailsService {
 	@Resource
 	private ProfileDao profileDao;
 
-    @Resource
-    private EmailDao emailDao;
-    
-    @Resource
+	@Resource
+	private EmailDao emailDao;
+
+	@Resource
 	private OrcidSecurityManager securityMgr;
 
 	@Value("${org.orcid.core.baseUri}")
@@ -70,19 +70,23 @@ public class OrcidUserDetailsService implements UserDetailsService {
 	public UserDetails loadUserByUsername(String username)
 			throws UsernameNotFoundException {
 		ProfileEntity profile = obtainEntity(username);
-		
+
 		if (profile == null) {
-	            throw new UsernameNotFoundException("Bad username or password");
-        }
-        if (profile.getPrimaryRecord() != null) {
-            throw new DeprecatedException("orcid.frontend.security.deprecated_with_primary", profile.getPrimaryRecord().getId(), profile.getId());
-        }
-        if (!profile.getClaimed() && !securityMgr.isAdmin()) {
-            throw new UnclaimedProfileExistsException("orcid.frontend.security.unclaimed_exists");
-        }
-        if (profile.getDeactivationDate() != null && !securityMgr.isAdmin()) {
-            throw new DisabledException("Account not active, please call helpdesk");
-        }
+			throw new UsernameNotFoundException("Bad username or password");
+		}
+		if (profile.getPrimaryRecord() != null) {
+			throw new DeprecatedException(
+					"orcid.frontend.security.deprecated_with_primary", profile
+							.getPrimaryRecord().getId(), profile.getId());
+		}
+		if (!profile.getClaimed() && !securityMgr.isAdmin()) {
+			throw new UnclaimedProfileExistsException(
+					"orcid.frontend.security.unclaimed_exists");
+		}
+		if (profile.getDeactivationDate() != null && !securityMgr.isAdmin()) {
+			throw new DisabledException(
+					"Account not active, please call helpdesk");
+		}
 
 		String primaryEmail = null;
 

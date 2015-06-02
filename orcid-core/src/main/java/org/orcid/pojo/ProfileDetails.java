@@ -23,70 +23,71 @@ import org.orcid.pojo.ajaxForm.ErrorsInterface;
 
 public class ProfileDetails implements ErrorsInterface {
 
-    private List<String> errors = new ArrayList<String>();
-    String orcid;
-    String givenNames;
-    String familyName;
-    String email;
-    String status;
+	private List<String> errors = new ArrayList<String>();
+	String orcid;
+	String givenNames;
+	String familyName;
+	String email;
+	String status;
 
-    public ProfileDetails() {
+	public ProfileDetails() {
 
-    }
+	}
 
-    public ProfileDetails(String orcid, String givenNames, String familyName) {
-        this(orcid, givenNames, familyName, null);
-    }
-    
-    public ProfileDetails(String orcid, String givenNames, String familyName, String email) {
-        this.orcid = orcid;
-        this.givenNames = givenNames;
-        this.familyName = familyName;
-        this.email = email;
-    }
+	public ProfileDetails(String orcid, String givenNames, String familyName) {
+		this(orcid, givenNames, familyName, null);
+	}
 
-    public String getOrcid() {
-        return orcid;
-    }
+	public ProfileDetails(String orcid, String givenNames, String familyName,
+			String email) {
+		this.orcid = orcid;
+		this.givenNames = givenNames;
+		this.familyName = familyName;
+		this.email = email;
+	}
 
-    public void setOrcid(String orcid) {
-        this.orcid = orcid;
-    }
+	public String getOrcid() {
+		return orcid;
+	}
 
-    public String getGivenNames() {
-        return givenNames;
-    }
+	public void setOrcid(String orcid) {
+		this.orcid = orcid;
+	}
 
-    public void setGivenNames(String givenNames) {
-        this.givenNames = givenNames;
-    }
+	public String getGivenNames() {
+		return givenNames;
+	}
 
-    public String getFamilyName() {
-        return familyName;
-    }
+	public void setGivenNames(String givenNames) {
+		this.givenNames = givenNames;
+	}
 
-    public void setFamilyName(String familyName) {
-        this.familyName = familyName;
-    }
+	public String getFamilyName() {
+		return familyName;
+	}
 
-    public String getEmail() {
-        return email;
-    }
+	public void setFamilyName(String familyName) {
+		this.familyName = familyName;
+	}
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
+	public String getEmail() {
+		return email;
+	}
 
-    @Override
-    public List<String> getErrors() {
-        return errors;
-    }
+	public void setEmail(String email) {
+		this.email = email;
+	}
 
-    @Override
-    public void setErrors(List<String> errors) {
-        this.errors = errors;
-    }
-    
+	@Override
+	public List<String> getErrors() {
+		return errors;
+	}
+
+	@Override
+	public void setErrors(List<String> errors) {
+		this.errors = errors;
+	}
+
 	public String getStatus() {
 		return status;
 	}
