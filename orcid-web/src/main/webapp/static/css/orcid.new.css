@@ -1930,11 +1930,6 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input{
 	width: 800px;
 }
 
-.add-work input.input-xlarge,
-.add-work #workType{
-	width: 95%;
-}
-
 .add-work .alert,
 .add-funding .alert{
 	display: block;
@@ -3007,7 +3002,7 @@ ul.personal-inf-display li:last-child{
 	color: #2DC0CE;
     float: right;
     font-size: 13px;
-    margin: 5px 17px 5px 0;    
+    margin: 5px 0 15px 0;    
 }
 
 #add-funding .add-item-link {
