@@ -29,25 +29,52 @@
   </div>
 </script>
 
+<script type="text/ng-template" id="switch-error-modal">
+	<div style="padding:20px">
+		<h1><@orcid.msg 'admin.switch_user'/></h1>
+		<div ng-show="orcidMap">
+			{{orcidMap.errorMessg}}
+			<div class="controls save-btns pull-right bottom-margin-small">
+				<a class="btn btn-primary" href="<@orcid.msg 'admin.switch.click.link'/>{{orcidMap.orcid}}"><@orcid.msg 'admin.switch_anyway.button'/></a>&nbsp;
+				<span ng-click="closeModal()" class="btn btn-primary"><@orcid.msg 'freemarker.btnclose'/></span>
+			</div>
+		</div>
+	</div>
+</script>
+
+<script type="text/ng-template" id="switch-imvalid-modal">
+	<div style="padding:20px">
+		<h1><@orcid.msg 'admin.switch_user'/></h1>
+		<div>
+			<@spring.message "orcid.frontend.web.invalid_switch_orcid"/>
+			<div class="controls save-btns pull-right bottom-margin-small">
+				<span ng-click="closeModal()" class="btn btn-primary"><@orcid.msg 'freemarker.btnclose'/></span>
+			</div>
+		</div
+	</div>
+</script>
+
 <script type="text/ng-template" id="email-ids-modal">
 	<div style="padding:20px">
 		<h1><@orcid.msg 'admin.find_ids.results'/></h1>
-		<div ng-show="emailIdsMap">
+		<div ng-show="profileList">
 			<table class="table table-bordered table-hover">
 				<tr>
 					<td><strong><@orcid.msg 'admin.email'/></strong></td>
 					<td><strong><@orcid.msg 'admin.orcid'/></strong></td>
+					<td><strong><@orcid.msg 'admin.account_status'/></strong></td>
 				</tr>
-				<tr ng-repeat="(email, orcid) in emailIdsMap">
-					<td>{{email}}</td>
-					<td><a href="<@orcid.msg 'admin.public_view.click.link'/>{{orcid}}" target="_blank">{{orcid}}</a>&nbsp;(<@orcid.msg 'admin.switch.click.1'/>&nbsp;<a href="<@orcid.msg 'admin.switch.click.link'/>{{orcid}}"><@orcid.msg 'admin.switch.click.here'/></a>&nbsp;<@orcid.msg 'admin.switch.click.2'/>)</td>
+				<tr ng-repeat="profile in profileList">
+					<td>{{profile.email}}</td>
+					<td><a href="<@orcid.msg 'admin.public_view.click.link'/>{{profile.orcid}}" target="_blank">{{profile.orcid}}</a>&nbsp;(<@orcid.msg 'admin.switch.click.1'/>&nbsp;<a href="<@orcid.msg 'admin.switch.click.link'/>{{profile.orcid}}"><@orcid.msg 'admin.switch.click.here'/></a>&nbsp;<@orcid.msg 'admin.switch.click.2'/>)</td>
+					<td>{{profile.status}}</td>
 				</tr>
 			</table>
 			<div class="controls save-btns pull-right bottom-margin-small">
 				<a href="" class="cancel-action" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
 			</div>
 		</div>
-		<div ng-show="!emailIdsMap">
+		<div ng-show="!profileList">
 			<span><@orcid.msg 'admin.find_ids.no_results'/></span>
 		</div>
 	</div>
@@ -190,13 +217,6 @@
 	</div>
 </script>
 
-
-
-<#if invalidOrcid?? && invalidOrcid>
-    <div class="alert alert-success">
-        <strong><@spring.message "orcid.frontend.web.invalid_switch_orcid"/></strong>
-    </div>
-</#if>
 <!-- Admin main Layout -->
 <div class="row">
 	<!-- Left menu bar -->	
@@ -213,15 +233,13 @@
 				<a  ng-hide="showSection" ng-click="toggleSection()"><span class="glyphicon glyphicon-chevron-right blue"></span></span><@orcid.msg 'admin.switch_user' /></a>
 			</p>
 			<div class="collapsible bottom-margin-small admin-modal" id="switch_user_section" style="display:none;">
-				<form action="./admin-actions/admin-switch-user" method="post">
-					<div class="form-group">
-						<label for="orcidOrEmail"><@orcid.msg 'admin.switch_user.orcid.label' /></label>
-						<input type="text" id="orcidOrEmail" name="orcidOrEmail" placeholder="<@orcid.msg 'admin.switch_user.orcid.placeholder' />" class="input-xlarge" />
-					</div>
-					<div class="controls save-btns pull-left">
-						<input type="submit" class="btn btn-primary" value="<@orcid.msg 'admin.switch_user.button'/>" />											
-					</div>
-				</form>
+				<div class="form-group">
+					<label for="orcidOrEmail"><@orcid.msg 'admin.switch_user.orcid.label' /></label>
+					<input type="text" id="orcidOrEmail" ng-enter="switchUserAdmin()" ng-model="orcidOrEmail" placeholder="<@orcid.msg 'admin.switch_user.orcid.placeholder' />" class="input-xlarge" />
+				</div>
+				<div class="controls save-btns pull-left">
+					<span id="switch-user" ng-click="switchUserAdmin()" class="btn btn-primary"><@orcid.msg 'admin.switch_user.button'/></span>						
+				</div>
 			</div>	
 		</div>
 
