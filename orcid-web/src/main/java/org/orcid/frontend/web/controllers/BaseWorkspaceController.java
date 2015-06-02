@@ -116,6 +116,7 @@ public class BaseWorkspaceController extends BaseController {
     @ModelAttribute("orcidIdHash")
     String getOrcidHash() throws Exception {
     	OrcidProfile currentProfile = getEffectiveProfile();
+    	if (currentProfile == null) return null;
     	String orcid = currentProfile.getOrcidIdentifier().getPath();
     	return encryptionManager.sha256Hash(orcid);
     };

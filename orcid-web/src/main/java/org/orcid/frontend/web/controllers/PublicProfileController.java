@@ -418,7 +418,7 @@ public class PublicProfileController extends BaseWorkspaceController {
     	// Light weight security check. To keep copy and paster from easily generating
     	// the widget with out the user being logged in. Anyone that figures out this is 
         // a hash should be smart enough to just use the API.
-    	if (orcidHash.length() > 5 && !super.getOrcidHash().startsWith(orcidHash))
+    	if (orcidHash.length() > 5 && !encryptionManager.sha256Hash(orcid).startsWith(orcidHash))
     		throw new Exception("Semi-security hash doens't match");
         OrcidInfo result = new OrcidInfo();
         OrcidProfile profile = orcidProfileCacheManager.retrievePublic(orcid);
