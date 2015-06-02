@@ -34,13 +34,13 @@ import org.orcid.core.manager.WebhookManager;
 import org.orcid.persistence.dao.WebhookDao;
 import org.orcid.persistence.jpa.entities.WebhookEntity;
 import org.orcid.test.DBUnitTest;
+import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
  * @author Will Simpson
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
 public class WebhookManagerMultiThreadedTest extends DBUnitTest {
 
