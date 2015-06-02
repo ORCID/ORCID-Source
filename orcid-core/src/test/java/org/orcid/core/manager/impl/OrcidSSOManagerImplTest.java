@@ -42,11 +42,11 @@ import org.orcid.persistence.jpa.entities.ClientAuthorisedGrantTypeEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientGrantedAuthorityEntity;
 import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
+import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
 public class OrcidSSOManagerImplTest extends BaseTest {
 

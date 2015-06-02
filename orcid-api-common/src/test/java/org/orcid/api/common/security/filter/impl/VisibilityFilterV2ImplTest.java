@@ -16,8 +16,8 @@
  */
 package org.orcid.api.common.security.filter.impl;
 
-import static org.junit.Assert.*;
-import org.custommonkey.xmlunit.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 
@@ -27,6 +27,8 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
 import org.apache.commons.io.IOUtils;
+import org.custommonkey.xmlunit.Diff;
+import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,8 +36,8 @@ import org.orcid.core.security.visibility.filter.VisibilityFilterV2;
 import org.orcid.core.utils.SecurityContextTestUtils;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record.summary.ActivitiesSummary;
+import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.xml.sax.SAXException;
 
 /**
@@ -43,7 +45,7 @@ import org.xml.sax.SAXException;
  * @author Will Simpson
  * 
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
 public class VisibilityFilterV2ImplTest {
 
