@@ -3011,7 +3011,7 @@ ul.personal-inf-display li:last-child{
 }
 
 #add-funding .add-item-link {
-	margin: 5px 40px 5px 0;    
+	margin: 10px 0 15px 0;    
 }
 
 .citation-title{
@@ -3379,11 +3379,11 @@ p.orcid-id-container{
 }
 
 #currencyCode {
-	width: 20%;
+	width: 73px;
 }
 
 #fundingAmount {
-	width: 69%;
+	width: 287px;
 }
 
 .top-buttons{
@@ -5811,6 +5811,16 @@ hr{
 .shibboleth .col-xs-12{
 	padding-left: 0;
 	padding-right: 0;
+}
+
+.action-icon-align-right{
+	position: absolute;
+	top: 8px;
+	right: 5px;
+}
+
+.action-icon-inside{
+	padding-right: 25px !important; /* Overwriting global reset styling */
 }
 
 /* Media Queries */
