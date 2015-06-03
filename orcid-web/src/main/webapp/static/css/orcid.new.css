@@ -4123,13 +4123,9 @@ ul#body-work-list > li{
 	width: 100%;
 }
 
-#workspace-publications .action-button-bar,
-#workspace-fundings .action-button-bar,
-#workspace-peer-review  .action-button-bar{
+.action-button-bar{
 	padding: 0 14px 0 0;	
 }
-
-
 
 #workspace-publications{
 	padding: 0 0 0 10px;
