@@ -139,8 +139,8 @@
                 </div>
 
 
-                <div class="control-group">
-                    <label class="relative"><@orcid.msg 'manual_funding_form_contents.labelStartDate'/></label>
+                <div class="form-group">
+                    <label class="relative start-year"><@orcid.msg 'manual_funding_form_contents.labelStartDate'/></label>
                     <div class="relative">
                         <select id="startYear" name="startMonth" ng-model="editFunding.startDate.year">
                             <#list years?keys as key>

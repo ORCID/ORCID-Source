@@ -1875,20 +1875,6 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input{
 	padding-right: 38px;	
 }
 
-#add-funding #startDay,
-#add-funding #startMonth,
-#add-funding #endDay,
-#add-funding #endMonth
-{
-	width: 80px;
-}
-
-#add-funding #startYear,
-#add-funding #endYear
-{
-	width: 100px;
-}
-
 #add-funding input[type=checkbox] {
 	margin: 0;
 }
@@ -2627,30 +2613,6 @@ header overrides
 
 /* Edit Works */
 
-.add-work label,
-.add-work input,
-.add-work textarea,
-.add-work select
-	{
-	margin-bottom: 0;
-}
-
-.add-funding label,
-.add-funding input,
-.add-funding textarea,
-.add-funding select
-	{
-	margin-bottom: 0;
-}
-
-.manage-bio label,
-.manage-bio input,
-.manage-bio textarea,
-.manage-bio select
-	{
-	margin-bottom: 0;
-}
-
 .websites {
 	position: relative;
 }
@@ -3030,11 +2992,6 @@ ul.personal-inf-display li:last-child{
 	color: #B94A48;
 }
 
-.add-work #month,
-.add-work #year{	
-	margin: 0 5px 0 0; 
-}
-
 .add-funding #month {
 	width: 100px;
 	margin: 0 10px 0 0; 
@@ -3382,12 +3339,12 @@ p.orcid-id-container{
 }
 
 #currencyCode {
-	width: 70px;
+	width: 20%;
 	float: left;
 }
 
 #fundingAmount {
-	width: 285px;
+	width: 79%;
 	float: right;
 }
 
@@ -6423,14 +6380,6 @@ hr{
 		left:125px;
 	}
 	
-	.add-work #workCategory{
-	    width: 95%;
-	}
-		
-	.add-work .input-xlarge{
-		width: 95%;
-	}
-	
 	.add-work .citation-title{
 		margin: 25px 0 0 0;
 	}
@@ -6566,11 +6515,6 @@ hr{
 		 left: 44%;
 		 top: -11px;
 	}
-		
-	#edit-affiliation input[type="text"],
-	#edit-affiliation select{
-		width: 95%;
-	}
 	
 	#edit-affiliation input[type="text"]#affiliationName{
 		width: 99%;
@@ -6624,14 +6568,6 @@ hr{
 	
 	.main-search input[type="text"]{
 		width: 100%;				
-	}	
-
-	#currencyCode {
-		width: 30%;		
-	}
-	
-	.twitter-typeahead{
-		width: 96%;
 	}
 	
 	.tt-hint{
@@ -6658,20 +6594,10 @@ hr{
 	    float: left;
 	    margin-top: 15px;
 	    width: 100%;
-	}
-	
-	#add-funding input[type="text"],
-	#add-funding select{
-		width: 95%;
-	}
+	}	
 	
 	#add-funding .twitter-typeahead{
 		width: 100%;
-	}
-	
-	#add-funding textarea#fundingDescription{
-		width: 95%; 
-		height: 150px;
 	}
 	
 	#add-funding select#currencyCode{
@@ -7012,6 +6938,10 @@ hr{
 	.shibboleth .col-xs-12{
 		padding-left: 15px;
 		padding-right: 15px;
+	}
+	
+	#add-funding label.start-year{
+		width: 100%;
 	}
 	
 }
