@@ -2999,10 +2999,14 @@ ul.personal-inf-display li:last-child{
 }
 
 .add-item-link{
-	color: #2DC0CE;
-    float: right;
+	color: #2DC0CE;    
     font-size: 13px;
-    margin: 5px 0 15px 0;    
+    margin: 5px 0 15px 0;
+    width: 100%;    
+}
+
+.add-item-link a{
+	float: right;
 }
 
 #add-funding .add-item-link {
@@ -3373,12 +3377,18 @@ p.orcid-id-container{
 	color: black;
 }
 
+.funding-info{
+	width: 100%;	
+}
+
 #currencyCode {
-	width: 73px;
+	width: 70px;
+	float: left;
 }
 
 #fundingAmount {
-	width: 287px;
+	width: 285px;
+	float: right;
 }
 
 .top-buttons{

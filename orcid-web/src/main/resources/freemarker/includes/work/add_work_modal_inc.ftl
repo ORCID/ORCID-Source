@@ -92,10 +92,10 @@
 						</div>						
 					</div>
 
-					<div class="control-group">
+					<div class="form-group">
 						<label class="relative"><@orcid.msg 'manual_work_form_contents.labeltranslatedtitlelanguage'/></label>
 						<div class="relative">						
-							<select id="language" name="language" ng-model="editWork.translatedTitle.languageCode" ng-change="serverValidate('works/work/translatedTitleValidate.json')">			
+							<select id="language" class="form-control" name="language" ng-model="editWork.translatedTitle.languageCode" ng-change="serverValidate('works/work/translatedTitleValidate.json')">			
 								<#list languages?keys as key>
 									<option value="${languages[key]}">${key}</option>
 								</#list>
@@ -228,26 +228,28 @@
 				</div>
 		    	
 				<div ng-repeat="workExternalIdentifier in editWork.workExternalIdentifiers"> 
-					<div class="control-group">
+					<div class="form-group">
 						<label class="relative"><@orcid.msg 'manual_work_form_contents.labelIDtype'/></label>
 						<div class="relative">
-		    				<select id="idType" name="idType" class="input-xlarge" ng-model="workExternalIdentifier.workExternalIdentifierType.value" ng-change="serverValidate('works/work/workExternalIdentifiersValidate.json')">																						 
+		    				<select id="idType" name="idType" class="form-control" ng-model="workExternalIdentifier.workExternalIdentifierType.value" ng-change="serverValidate('works/work/workExternalIdentifiersValidate.json')">																						 
 								<option value=""><@orcid.msg 'org.orcid.jaxb.model.message.WorkExternalIdentifierType.empty' /></option>
 								<#list idTypes?keys as key>
 									<option value="${idTypes[key]}">${key}</option>
 								</#list>
-							</select> 
-							<a href ng-click="deleteExternalIdentifier(workExternalIdentifier)" class="glyphicon glyphicon-trash grey"></a>
+							</select>
 							<span class="orcid-error" ng-show="workExternalIdentifier.workExternalIdentifierType.errors.length > 0">
 								<div ng-repeat='error in workExternalIdentifier.workExternalIdentifierType.errors' ng-bind-html="error"></div>
 							</span>
 						</div>	
 					</div>
 					<div class="bottomBuffer">
-			   			<div class="control-group">
+			   			<div class="form-group">
 							<label><@orcid.msg 'manual_work_form_contents.labelID'/></label>
 					    	<div class="relative">
-								<input name="currentWorkExternalIds" type="text" class="input-xlarge"  ng-model="workExternalIdentifier.workExternalIdentifierId.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_ID'/>"  ng-change="serverValidate('works/work/workExternalIdentifiersValidate.json')" ng-model-onblur/>
+								<input name="currentWorkExternalIds" type="text" class="form-control action-icon-inside"  ng-model="workExternalIdentifier.workExternalIdentifierId.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_ID'/>"  ng-change="serverValidate('works/work/workExternalIdentifiersValidate.json')" ng-model-onblur/>
+								
+								<a href ng-click="deleteExternalIdentifier(workExternalIdentifier)" class="glyphicon glyphicon-trash grey action-icon-align-right" ng-hide="$first"></a>
+
 								<span class="orcid-error" ng-show="workExternalIdentifier.workExternalIdentifierId.errors.length > 0">
 									<div ng-repeat='error in workExternalIdentifier.workExternalIdentifierId.errors' ng-bind-html="error"></div>
 								</span>
@@ -259,25 +261,25 @@
 					</div>
 				</div>
 				<div ng-show="editWork.workExternalIdentifiers == null || editWork.workExternalIdentifiers.length == 0">
-					<div>			
+					<div class="add-item-link">
 						<span><a href ng-click="addExternalIdentifier()"><i class="glyphicon glyphicon-plus-sign"></i> <@orcid.msg 'manual_work_form_contents.add_external_identifier' /></a></span>
 					</div>
 				</div>
 			
-				<div class="control-group">
+				<div class="form-group">
 		    		<label class="relative"><@orcid.msg 'common.url'/></label>
 		    		<div class="relative">
-						<input name="url" type="text" class="input-xlarge"  ng-model="editWork.url.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_URL'/>" ng-change="serverValidate('works/work/urlValidate.json')" ng-model-onblur/>
+						<input name="url" type="text" class="form-control"  ng-model="editWork.url.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_URL'/>" ng-change="serverValidate('works/work/urlValidate.json')" ng-model-onblur/>
 						<span class="orcid-error" ng-show="editWork.url.errors.length > 0">
 							<div ng-repeat='error in editWork.url.errors' ng-bind-html="error"></div>
 						</span>
 					</div>
 				</div>
 
-				<div class="control-group">
+				<div class="form-group">
 					<label class="relative"><@orcid.msg 'manual_work_form_contents.labelformlanguage'/></label>
 					<div class="relative">	
-						<select id="language" name="language" ng-model="editWork.languageCode.value">
+						<select id="language" class="form-control" name="language" ng-model="editWork.languageCode.value">
 							<option value="${currentLocaleKey}">${currentLocaleValue}</option>
 							<#list languages?keys as key>
 								<option value="${languages[key]}">${key}</option>
@@ -286,10 +288,10 @@
 					</div>
 				</div>
 
-				<div class="control-group">
+				<div class="form-group">
                     <label for="country"><@orcid.msg 'manual_work_form_contents.labelcountry'/></label>
                     <div class="relative">
-                    	<select id="isoCountryCode" name="isoCountryCode" ng-model="editWork.countryCode.value">
+                    	<select id="isoCountryCode" class="form-control" name="isoCountryCode" ng-model="editWork.countryCode.value">
                     		<option value=""><@orcid.msg 'org.orcid.persistence.jpa.entities.CountryIsoEntity.empty' /></option>
 	                    	<#list isoCountries?keys as key>
 								<option value="${key}">${isoCountries[key]}</option>								
