@@ -30,4 +30,5 @@ public interface OrcidSecurityManager {
     
     void checkSource(SourceEntity existingSource);
     
+    boolean isAdmin();
 }

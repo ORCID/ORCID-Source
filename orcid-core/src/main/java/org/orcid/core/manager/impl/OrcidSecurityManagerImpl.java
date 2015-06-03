@@ -27,8 +27,10 @@ import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.SourceManager;
+import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.jaxb.model.common.Filterable;
 import org.orcid.jaxb.model.common.Visibility;
+import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record.Education;
 import org.orcid.jaxb.model.record.Employment;
@@ -52,21 +54,21 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
 
     @Resource
     private SourceManager sourceManager;
-    
+
     @Override
     public void checkVisibility(Filterable filterable) {
         OAuth2Authentication oAuth2Authentication = getOAuth2Authentication();
-        //If it is null, it might be a call from the public API
+        // If it is null, it might be a call from the public API
         Set<String> readLimitedScopes = new HashSet<String>();
         Visibility visibility = filterable.getVisibility();
         String clientId = null;
-        
-        if(oAuth2Authentication != null) {
+
+        if (oAuth2Authentication != null) {
             OAuth2Request authorizationRequest = oAuth2Authentication.getOAuth2Request();
-            clientId = authorizationRequest.getClientId();            
-             readLimitedScopes = getReadLimitedScopesThatTheClientHas(authorizationRequest, filterable);
+            clientId = authorizationRequest.getClientId();
+            readLimitedScopes = getReadLimitedScopesThatTheClientHas(authorizationRequest, filterable);
         }
-        
+
         if (readLimitedScopes.isEmpty()) {
             // This client only has permission for read public
             if ((visibility == null || Visibility.PRIVATE.equals(visibility)) && clientId != null && !clientId.equals(filterable.retrieveSourcePath())) {
@@ -81,7 +83,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
                 throw new OrcidForbiddenException("The activity is private and you are not the source");
             }
         }
-    }        
+    }
 
     @Override
     public void checkSource(SourceEntity existingSource) {
@@ -89,6 +91,20 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         if (sourceIdOfUpdater != null && (existingSource == null || !sourceIdOfUpdater.equals(existingSource.getSourceId()))) {
             throw new WrongSourceException("You are not the source of the work, so you are not allowed to update it");
         }
+    }
+
+    @Override
+    public boolean isAdmin() {
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        Authentication authentication = securityContext.getAuthentication();
+        if (authentication != null) {
+            Object principal = authentication.getPrincipal();
+            if (principal instanceof OrcidProfileUserDetails) {
+                OrcidProfileUserDetails userDetails = (OrcidProfileUserDetails) principal;
+                return OrcidType.ADMIN.equals(userDetails.getOrcidType());
+            }
+        }
+        return false;
     }
 
     private Set<String> getReadLimitedScopesThatTheClientHas(OAuth2Request authorizationRequest, Filterable filterable) {
@@ -112,22 +128,24 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
     private OAuth2Authentication getOAuth2Authentication() {
         SecurityContext context = SecurityContextHolder.getContext();
         Authentication authentication = context.getAuthentication();
-        //if authentication is null, it might be a call from the public api, so, return null
-        if(authentication == null)
+        // if authentication is null, it might be a call from the public api,
+        // so, return null
+        if (authentication == null)
             return null;
         if (OAuth2Authentication.class.isAssignableFrom(authentication.getClass())) {
             OAuth2Authentication oAuth2Authentication = (OAuth2Authentication) authentication;
             return oAuth2Authentication;
-        } else {            
-            for(GrantedAuthority grantedAuth : authentication.getAuthorities()) {
-                if("ROLE_ANONYMOUS".equals(grantedAuth.getAuthority())) {
-                    //Assume that anonymous authority is like not having authority at all
+        } else {
+            for (GrantedAuthority grantedAuth : authentication.getAuthorities()) {
+                if ("ROLE_ANONYMOUS".equals(grantedAuth.getAuthority())) {
+                    // Assume that anonymous authority is like not having
+                    // authority at all
                     return null;
                 }
             }
-                        
+
             throw new AccessControlException("Cannot access method with authentication type " + authentication != null ? authentication.toString() : ", as it's null!");
         }
     }
-    
+
 }
