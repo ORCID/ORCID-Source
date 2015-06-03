@@ -74,7 +74,6 @@ public class T1OrcidApiServiceImplLatestMetricsTest {
 
     @Test
     public void testViewBioDetailsHtml() {
-
         when(mockServiceDelegator.findBioDetailsFromPublicCache(any(String.class))).thenReturn(successResponse);
         Response response = t1OrcidApiService.viewBioDetailsHtml("orcid");
         assertEquals(200, response.getStatus());

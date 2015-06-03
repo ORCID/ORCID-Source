@@ -18,7 +18,6 @@ package org.orcid.core.manager.impl;
 
 import java.security.AccessControlException;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import javax.annotation.Resource;
@@ -36,15 +35,6 @@ import org.orcid.jaxb.model.record.Employment;
 import org.orcid.jaxb.model.record.Funding;
 import org.orcid.jaxb.model.record.PeerReview;
 import org.orcid.jaxb.model.record.Work;
-import org.orcid.jaxb.model.record.summary.ActivitiesSummary;
-import org.orcid.jaxb.model.record.summary.EducationSummary;
-import org.orcid.jaxb.model.record.summary.EmploymentSummary;
-import org.orcid.jaxb.model.record.summary.FundingGroup;
-import org.orcid.jaxb.model.record.summary.FundingSummary;
-import org.orcid.jaxb.model.record.summary.Fundings;
-import org.orcid.jaxb.model.record.summary.WorkGroup;
-import org.orcid.jaxb.model.record.summary.WorkSummary;
-import org.orcid.jaxb.model.record.summary.Works;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -128,8 +118,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         if (OAuth2Authentication.class.isAssignableFrom(authentication.getClass())) {
             OAuth2Authentication oAuth2Authentication = (OAuth2Authentication) authentication;
             return oAuth2Authentication;
-        } else {
-            
+        } else {            
             for(GrantedAuthority grantedAuth : authentication.getAuthorities()) {
                 if("ROLE_ANONYMOUS".equals(grantedAuth.getAuthority())) {
                     //Assume that anonymous authority is like not having authority at all

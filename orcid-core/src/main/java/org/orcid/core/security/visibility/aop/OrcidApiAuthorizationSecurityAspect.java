@@ -93,7 +93,11 @@ public class OrcidApiAuthorizationSecurityAspect {
     
     @Before("@annotation(accessControl) && args(orcid, id)")
     public void checkPermissionsWithId(AccessControl accessControl, String orcid, String id) {
-        permissionChecker.checkPermissions(getAuthentication(), accessControl.requiredScope(), orcid);
+        Authentication auth = getAuthentication();
+        boolean allowAnonymousCall = allowAnonymousAccess(auth, accessControl);
+        if(!allowAnonymousCall) {
+            permissionChecker.checkPermissions(getAuthentication(), accessControl.requiredScope(), orcid);
+        }
     }
 
     @Before("@annotation(accessControl) && args(uriInfo, orcid, notification)")
