@@ -31,9 +31,9 @@ import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.test.DBUnitTest;
+import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,7 +42,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @author Will Simpson
  * 
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
 public class JpaJaxbEntityAdapterToOrcidClientGroupTest extends DBUnitTest {
 

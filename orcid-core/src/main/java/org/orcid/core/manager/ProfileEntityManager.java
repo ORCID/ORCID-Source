@@ -74,4 +74,6 @@ public interface ProfileEntityManager {
     ActivitiesSummary getPublicActivitiesSummary(String orcid);
     
     Date getLastModified(String orcid);
+    
+    boolean isDeactivated(String deactivated);
 }
