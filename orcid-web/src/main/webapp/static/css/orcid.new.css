@@ -5813,6 +5813,12 @@ hr{
 	padding-right: 0;
 }
 
+#widget-code{
+	height: 140px;
+	cursor: text;
+	background-color: #FFF;
+}
+
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
 

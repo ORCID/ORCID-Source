@@ -52,6 +52,20 @@
             
             <#include "includes/id_banner.ftl"/>
             
+            
+            <#if RequestParameters['widget']??>
+	            <div class="widget-container" ng-controller="widgetCtrl">
+	            	<div>
+						<a ng-click="toggleCopyWidget()">ORCID public profile Widget</a>
+					</div>
+					<div ng-show="showCode" ng-cloak>
+						<textarea id="widget-code" name="widget-code" class="form-control" ng-model="widgetURL" ng-click="inputTextAreaSelectAll($event)" readonly="readonly"></textarea>
+					</div>
+					
+	            </div>
+            </#if>
+            
+            
             <div class="qrcode-container">
                 <a href="http://qrcode.orcid.org" target="_blank"><span class="glyphicons qrcode orcid-qr"></span><@orcid.msg 'workspace.qrcode.link.text'/></a>
                 <div class="popover-help-container">
