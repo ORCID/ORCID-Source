@@ -16,8 +16,6 @@
  */
 package org.orcid.frontend.web.forms;
 
-import static org.junit.Assert.assertTrue;
-
 import org.apache.commons.io.IOUtils;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.ElementNameAndTextQualifier;
@@ -26,7 +24,6 @@ import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Test;
 import org.orcid.jaxb.model.message.OrcidIdentifier;
 import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.persistence.aop.ProfileLastModifiedAspect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -100,7 +100,7 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
     }
 
     @Override
-    @VisibilityControl
+    @VisibilityControl(removeAttributes = false)
     @NonLocked
     public Response findBioDetailsFromPublicCache(String orcid) {
         try {
@@ -137,7 +137,7 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
     }
 
     @Override
-    @VisibilityControl
+    @VisibilityControl(removeAttributes = false)
     @NonLocked
     public Response findExternalIdentifiersFromPublicCache(String orcid) {
         try {
@@ -174,7 +174,7 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
     }
 
     @Override
-    @VisibilityControl
+    @VisibilityControl(removeAttributes = false)
     @NonLocked
     public Response findFullDetailsFromPublicCache(String orcid) {
         try {
@@ -205,7 +205,7 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
     }
 
     @Override
-    @VisibilityControl
+    @VisibilityControl(removeAttributes = false)
     @NonLocked
     public Response findAffiliationsDetailsFromPublicCache(String orcid) {
         try {
@@ -241,7 +241,7 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
     }
 
     @Override
-    @VisibilityControl
+    @VisibilityControl(removeAttributes = false)
     @NonLocked
     public Response findFundingDetailsFromPublicCache(String orcid) {
         try {
@@ -277,7 +277,7 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
     }
 
     @Override
-    @VisibilityControl
+    @VisibilityControl(removeAttributes = false)
     @NonLocked
     public Response findWorksDetailsFromPublicCache(String orcid) {
         try {

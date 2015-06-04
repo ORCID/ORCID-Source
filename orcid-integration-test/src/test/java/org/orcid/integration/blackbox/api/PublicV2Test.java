@@ -283,11 +283,13 @@ public class PublicV2Test {
         assertFalse(summary.getEducations().getSummaries().isEmpty());
         boolean found0 = false, found3 = false;
         for(EducationSummary education : summary.getEducations().getSummaries()) {
-            if(education.getDepartmentName().equals("Education # 0")) {
-                found0 = true;
-            } else if (education.getDepartmentName().equals("Education # 3")) {
-                found3 = true;
-            }
+            if(education.getDepartmentName() != null) {
+                if(education.getDepartmentName().equals("Education # 0")) {
+                    found0 = true;
+                } else if (education.getDepartmentName().equals("Education # 3")) {
+                    found3 = true;
+                }
+            }            
         }
         
         assertTrue("One of the educations was not found: 0(" + found0 + ") 3(" + found3 + "), please verify users default visibility is public", found0 == found3 == true);
@@ -296,11 +298,13 @@ public class PublicV2Test {
         assertFalse(summary.getEmployments().getSummaries().isEmpty());
         found0 = found3 = false;
         for(EmploymentSummary employment : summary.getEmployments().getSummaries()) {
-            if(employment.getDepartmentName().equals("Employment # 0")) {
-                found0 = true;
-            } else if (employment.getDepartmentName().equals("Employment # 3")) {
-                found3 = true;
-            }
+            if(employment.getDepartmentName() != null) {
+                if(employment.getDepartmentName().equals("Employment # 0")) {
+                    found0 = true;
+                } else if (employment.getDepartmentName().equals("Employment # 3")) {
+                    found3 = true;
+                }
+            }            
         }
         
         assertTrue("One of the employments was not found: 0(" + found0 + ") 3(" + found3 + "), please verify users default visibility is public", found0 == found3 == true);
@@ -309,11 +313,13 @@ public class PublicV2Test {
         found0 = found3 = false;
         for(FundingGroup group : summary.getFundings().getFundingGroup()) {
             for(FundingSummary funding : group.getFundingSummary()) {
-                if(funding.getTitle().getTitle().getContent().equals("Funding # 0")) {
-                    found0 = true;
-                } else if(funding.getTitle().getTitle().getContent().equals("Funding # 3")) {
-                    found3 = true;
-                }
+                if(funding.getTitle() != null && funding.getTitle().getTitle() != null) {
+                    if(funding.getTitle().getTitle().getContent().equals("Funding # 0")) {
+                        found0 = true;
+                    } else if(funding.getTitle().getTitle().getContent().equals("Funding # 3")) {
+                        found3 = true;
+                    }
+                }                
             }
         }
         

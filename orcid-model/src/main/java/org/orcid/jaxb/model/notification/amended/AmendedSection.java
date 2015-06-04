@@ -14,21 +14,16 @@
  *
  * =============================================================================
  */
-package org.orcid.core.manager;
+package org.orcid.jaxb.model.notification.amended;
 
-import org.orcid.jaxb.model.common.Filterable;
-import org.orcid.persistence.jpa.entities.SourceEntity;
+import javax.xml.bind.annotation.XmlEnum;
 
 /**
  * 
  * @author Will Simpson
  *
  */
-public interface OrcidSecurityManager {
-
-    void checkVisibility(Filterable filterable);        
-    
-    void checkSource(SourceEntity existingSource);
-    
-    boolean isAdmin();
+@XmlEnum
+public enum AmendedSection {
+    AFFILIATION, BIO, EDUCATION, EMPLOYMENT, EXTERNAL_IDENTIFIERS, FUNDING, PREFERENCES, WORK, UNKNOWN;
 }

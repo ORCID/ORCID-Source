@@ -36,10 +36,10 @@ import org.junit.runner.RunWith;
 import org.orcid.persistence.solr.entities.OrcidSolrDocument;
 import org.orcid.persistence.solr.entities.OrcidSolrResult;
 import org.orcid.persistence.solr.entities.OrcidSolrResults;
+import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-orcid-persistence-context.xml" })
 /**
  * Integration tests for Solr Daos. 

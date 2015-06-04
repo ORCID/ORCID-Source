@@ -226,7 +226,7 @@
 	        	   <span ng-hide="showEdit == true">
 	        	      <span class="glyphicon glyphicon-pencil edit-websites edit-option pull-right" ng-click="openEdit()" title=""></span><br />
 	        	      <div ng-repeat="website in websitesForm.websites" ng-cloak class="wrap">
-	        	         <a href="{{website.url.value}}" target="_blank" rel="nofollow">{{website.name.value != null? website.name.value : website.url.value}}</a>
+	        	         <a href="{{website.url.value}}" target="_blank" rel="me nofollow">{{website.name.value != null? website.name.value : website.url.value}}</a>
 	        	      </div>
 	        	   </span>	
 	        	   <span class="pull-right" ng-show="showEdit == true" ng-cloak>
@@ -648,9 +648,10 @@
 		<div class="row">
 			<div class="col-md-12 col-sm-12 col-xs-12">	
 				<div class="right">			
+					<button class="btn btn-danger" ng-click="bulkDeleteFunction()"><@orcid.msg 'freemarker.btnDelete'/></button>&nbsp;&nbsp;
 					<a ng-click="closeModal()">
 						<@orcid.msg 'freemarker.btncancel'/>
-					</a>  <button class="btn btn-danger" ng-click="bulkDeleteFunction()"><@orcid.msg 'freemarker.btnDelete'/></button>
+					</a>
 				</div>				
 			</div>
 		</div>		

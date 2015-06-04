@@ -51,6 +51,7 @@ import org.orcid.jaxb.model.message.SendChangeNotifications;
 import org.orcid.jaxb.model.message.Source;
 import org.orcid.jaxb.model.notification.Notification;
 import org.orcid.jaxb.model.notification.NotificationType;
+import org.orcid.jaxb.model.notification.amended.AmendedSection;
 import org.orcid.jaxb.model.notification.amended.NotificationAmended;
 import org.orcid.jaxb.model.notification.custom.NotificationCustom;
 import org.orcid.persistence.dao.GenericDao;
@@ -140,7 +141,7 @@ public class NotificationManagerImpl implements NotificationManager {
 
     @Resource
     private LocaleManager localeManager;
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(NotificationManagerImpl.class);
 
     public boolean isApiRecordCreationEmailEnabled() {
@@ -169,6 +170,10 @@ public class NotificationManagerImpl implements NotificationManager {
         this.profileDao = profileDao;
     }
 
+    public void setSourceManager(SourceManager sourceManager) {
+        this.sourceManager = sourceManager;
+    }
+
     @Override
     public void sendWelcomeEmail(OrcidProfile orcidProfile, String email) {
         Map<String, Object> templateParams = new HashMap<String, Object>();
@@ -178,44 +183,43 @@ public class NotificationManagerImpl implements NotificationManager {
         String orcidId = orcidProfile.getOrcidIdentifier().getPath();
         String baseUri = orcidUrlManager.getBaseUrl();
         String baseUriHttp = orcidUrlManager.getBaseUriHttp();
-        
+
         templateParams.put("subject", subject);
         templateParams.put("emailName", emailName);
         templateParams.put("verificationUrl", verificationUrl);
         templateParams.put("orcidId", orcidId);
         templateParams.put("baseUri", baseUri);
         templateParams.put("baseUriHttp", baseUriHttp);
-        
+
         SourceEntity source = sourceManager.retrieveSourceEntity();
-        if(source != null) {
+        if (source != null) {
             String sourceId = source.getSourceId();
             String sourceName = source.getSourceName();
-            //If the source is not the user itself
-            if(sourceId != null && ! sourceId.equals(orcidId)) {
-                if(!PojoUtil.isEmpty(sourceName)) {
+            // If the source is not the user itself
+            if (sourceId != null && !sourceId.equals(orcidId)) {
+                if (!PojoUtil.isEmpty(sourceName)) {
                     String paramValue = " " + localeManager.resolveMessage("common.through") + " " + sourceName + ".";
                     templateParams.put("source_name_if_exists", paramValue);
                 } else {
                     templateParams.put("source_name_if_exists", ".");
-                }            
+                }
             } else {
                 templateParams.put("source_name_if_exists", ".");
             }
         } else {
             templateParams.put("source_name_if_exists", ".");
         }
-        
+
         addMessageParams(templateParams, orcidProfile);
-        
+
         // Generate body from template
         String body = templateManager.processTemplate("welcome_email.ftl", templateParams);
         // Generate html from template
         String html = templateManager.processTemplate("welcome_email_html.ftl", templateParams);
-        
+
         mailGunManager.sendEmail(SUPPORT_VERIFY_ORCID_ORG, email, subject, body, html);
     }
-    
-    
+
     @Override
     public void sendOrcidDeactivateEmail(OrcidProfile orcidToDeactivate) {
         // Create verification url
@@ -374,7 +378,8 @@ public class NotificationManagerImpl implements NotificationManager {
     }
 
     @Override
-    public void sendAmendEmail(OrcidProfile amendedProfile, String amenderOrcid) {
+    public void sendAmendEmail(OrcidProfile amendedProfile, AmendedSection amendedSection) {
+        String amenderOrcid = sourceManager.retrieveSourceOrcid();
         if (amenderOrcid == null) {
             LOGGER.debug("Not sending amend email, because amender is null: {}", amendedProfile);
             return;
@@ -415,6 +420,7 @@ public class NotificationManagerImpl implements NotificationManager {
         if (notificationsEnabled) {
             NotificationAmended notification = new NotificationAmended();
             notification.setNotificationType(NotificationType.AMENDED);
+            notification.setAmendedSection(amendedSection);
             createNotification(amendedProfile.getOrcidIdentifier().getPath(), notification);
         } else {
             String email = amendedProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();

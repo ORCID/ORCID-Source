@@ -172,10 +172,10 @@
 					<div>
 						<label for="client_id"><@orcid.msg 'admin.edit_client.any_id' /></label>
 						<input type="text" id="any_id" ng-enter="findAny()" ng-model="any_id" placeholder="<@orcid.msg 'admin.edit_client.any_id.placeholder' />" class="input-xlarge" />					
-						<span class="orcid-error" ng-show="client.errors.length > 0 && client.clientId == null">
+						<span class="orcid-error" ng-show="client.errors.length > 0">
 							<div ng-repeat='error in client.errors' ng-bind-html="error"></div>						
 						</span>		
-						<span class="orcid-error" ng-show="member.errors.length > 0 && member.groupOrcid.value.length > 0">
+						<span class="orcid-error" ng-show="member.errors.length > 0">
 							<div ng-repeat='error in member.errors' ng-bind-html="error"></div>
 						</span>
 					</div>	

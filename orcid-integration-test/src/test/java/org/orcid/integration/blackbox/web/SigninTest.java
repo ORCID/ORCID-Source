@@ -17,6 +17,7 @@
 package org.orcid.integration.blackbox.web;
 
 import java.util.List;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -44,6 +45,8 @@ public class SigninTest {
     public String user1UserName;
     @Value("${org.orcid.web.testUser1.password}")
     public String user1Password;
+    @Value("${org.orcid.web.testUser1.orcidId}")
+    public String user1OrcidId;
 
     @Before
     public void before() {
@@ -63,8 +66,25 @@ public class SigninTest {
         signIn(webDriver, user1UserName, user1Password);
         dismissVerifyEmailModal(webDriver);
     }
+    
+    @Test
+    public void signinVariousUsernameFormats() {
+    	String user1FrmtSpaces = user1OrcidId.replace('-', ' ');
+    	verifySignIn(user1FrmtSpaces);
+    	String user1FrmtNoSpNoHyp = user1OrcidId.replace("-", "");
+    	verifySignIn(user1FrmtNoSpNoHyp);
+    	String user1FrmtProfLink = new StringBuffer(baseUri).append("/").append(user1OrcidId).toString();
+    	verifySignIn(user1FrmtProfLink);
+    }
+    
+    private void verifySignIn(String userName) {
+    	webDriver.get(baseUri + "/userStatus.json?logUserOut=true");
+        webDriver.get(baseUri + "/my-orcid");
+        signIn(webDriver, userName, user1Password);
+        dismissVerifyEmailModal(webDriver);
+    }
 
-    // Make this available to other classes
+	// Make this available to other classes
     static public void signIn(WebDriver webDriver, String username, String password) {
         WebElement emailEl = webDriver.findElement(By.xpath("//input[@name='userId']"));
         emailEl.sendKeys(username);
