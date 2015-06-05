@@ -8907,6 +8907,10 @@ orcidNgModule.controller('widgetCtrl',['$scope', function ($scope){
 		$scope.showCode = !$scope.showCode;
 	}
 	
+	$scope.hideWidgetCode = function(){
+		$scope.showCode = false;
+	}
+	
 	//http://localhost:8080/orcid-web/public_widgets/0000-0002-9178-5522/37be7d/info.json
 	
 }]);
