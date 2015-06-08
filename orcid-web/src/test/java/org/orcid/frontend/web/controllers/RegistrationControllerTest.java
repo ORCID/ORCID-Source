@@ -339,6 +339,7 @@ public class RegistrationControllerTest {
         ContactDetails contactDetails = new ContactDetails();
         List<Email> emails = new ArrayList<Email>();
         Email email = new Email("billie@holiday.com");
+        email.setPrimary(true);
         emails.add(email);
         contactDetails.setEmail(emails);
         orcidBio.setContactDetails(contactDetails);
