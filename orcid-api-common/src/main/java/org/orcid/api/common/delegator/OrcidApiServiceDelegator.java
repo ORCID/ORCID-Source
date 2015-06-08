@@ -146,4 +146,24 @@ public interface OrcidApiServiceDelegator {
      */
     Response searchByQuery(Map<String, List<String>> queryMap);
 
+    /**
+     * NOTE:
+     * Helper method used during the transition of public searches with and without bearer authentication 
+     * When we finish the transition and all public searches require the bearer, we must remove this one 
+     * 
+     * 
+     * finds and returns the
+     * {@link org.orcid.jaxb.model.message.OrcidSearchResult} wrapped in a
+     * {@link Response} with only bio details returned.
+     * 
+     * @param queryMap
+     *            any set of query params accepted by SOLR. *NB* currently the
+     *            SOLRDAO only applies the first value for each key in the map
+     *            when building a query for SOLR.
+     * @See {@link SolrDao}
+     * 
+     * @return the {@link Response} with the
+     *         {@link org.orcid.jaxb.model.message.OrcidSearchResult} within it. 
+     * */
+    Response publicSearchByQuery(Map<String, List<String>> queryMap);
 }

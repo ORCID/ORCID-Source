@@ -17,6 +17,7 @@
 package org.orcid.core.security.visibility.aop;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -39,6 +40,7 @@ import org.orcid.jaxb.model.notification.Notification;
 import org.orcid.jaxb.model.record.Activity;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.provider.OAuth2Request;
@@ -76,8 +78,12 @@ public class OrcidApiAuthorizationSecurityAspect {
 
     @Before("@annotation(accessControl) && args(orcid)")
     public void checkPermissionsWithOrcid(AccessControl accessControl, String orcid) {
-        permissionChecker.checkPermissions(getAuthentication(), accessControl.requiredScope(), orcid);
-
+        Authentication auth = getAuthentication();
+        boolean allowAnonymousCall = allowAnonymousAccess(auth, accessControl);
+        if(!allowAnonymousCall) {
+            permissionChecker.checkPermissions(auth, accessControl.requiredScope(), orcid);
+        }
+                
     }
 
     @Before("@annotation(accessControl) && args(orcid, id)")
@@ -87,7 +93,11 @@ public class OrcidApiAuthorizationSecurityAspect {
     
     @Before("@annotation(accessControl) && args(orcid, id)")
     public void checkPermissionsWithId(AccessControl accessControl, String orcid, String id) {
-        permissionChecker.checkPermissions(getAuthentication(), accessControl.requiredScope(), orcid);
+        Authentication auth = getAuthentication();
+        boolean allowAnonymousCall = allowAnonymousAccess(auth, accessControl);
+        if(!allowAnonymousCall) {
+            permissionChecker.checkPermissions(getAuthentication(), accessControl.requiredScope(), orcid);
+        }
     }
 
     @Before("@annotation(accessControl) && args(uriInfo, orcid, notification)")
@@ -115,13 +125,26 @@ public class OrcidApiAuthorizationSecurityAspect {
         Object entity = response.getEntity();
         if (entity != null && OrcidMessage.class.isAssignableFrom(entity.getClass())) {
             OrcidMessage orcidMessage = (OrcidMessage) entity;
-            Set<Visibility> visibilities = permissionChecker.obtainVisibilitiesForAuthentication(getAuthentication(), accessControl.requiredScope(), orcidMessage);
-
+            
+            //If it is search results, don't filter them, just return them
+            if(orcidMessage.getOrcidSearchResults() != null) {
+                return;
+            }
+            
+            // get the client id
+            Object authentication = getAuthentication();
+            
+            Set<Visibility> visibilities = new HashSet<Visibility>();
+            
+            if(allowAnonymousAccess((Authentication)authentication, accessControl)) {
+                visibilities.add(Visibility.PUBLIC);
+            } else {
+                visibilities = permissionChecker.obtainVisibilitiesForAuthentication(getAuthentication(), accessControl.requiredScope(), orcidMessage);
+            }
+            
             ScopePathType requiredScope = accessControl.requiredScope();
             // If the required scope is */read-limited or */update
-            if (isUpdateOrReadScope(requiredScope)) {
-                // get the client id
-                Object authentication = getAuthentication();
+            if (isUpdateOrReadScope(requiredScope)) {                
                 // If the authentication contains a client_id, use it to check
                 // if it should be able to
                 if (authentication.getClass().isAssignableFrom(OrcidOAuth2Authentication.class)) {
@@ -235,5 +258,21 @@ public class OrcidApiAuthorizationSecurityAspect {
             }
         return null;
     }
+    
+    private boolean allowAnonymousAccess(Authentication auth, AccessControl accessControl) {        
+        boolean allowAnonymousAccess = false;
+        if(auth != null) {
+            for(GrantedAuthority grantedAuth : auth.getAuthorities()) {
+                if("ROLE_ANONYMOUS".equals(grantedAuth.getAuthority())) {
+                    if(!accessControl.enableAnonymousAccess()) {
+                        break;
+                    }
+                    allowAnonymousAccess = true;
+                    break;
+                }
+            }                
+        }
+        return allowAnonymousAccess;
+    } 
 
 }
