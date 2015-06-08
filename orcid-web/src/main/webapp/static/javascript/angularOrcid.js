@@ -8897,7 +8897,7 @@ orcidNgModule.controller('widgetCtrl',['$scope', function ($scope){
 	$scope.hash = orcidVar.orcidIdHash.substr(0, 6);
 	$scope.showCode = false;
 	
-	$scope.widgetURL = '<script src="'+ getBaseUri() + '/public_widgets/' + orcidVar.orcidId + '/' + $scope.hash + '/info.json' + '"></script><div id="orcid-summary-widget"></div>';
+	$scope.widgetURL = '<script src="'+ getBaseUri() + '/static/javascript/orcid-summary-widget.js?orcid=' + orcidVar.orcidId + '&t=' + $scope.hash + '"></script><div id="orcid-summary-widget"></div>';
 	
 	$scope.inputTextAreaSelectAll = function($event){
     	$event.target.select();
@@ -8910,8 +8910,6 @@ orcidNgModule.controller('widgetCtrl',['$scope', function ($scope){
 	$scope.hideWidgetCode = function(){
 		$scope.showCode = false;
 	}
-	
-	//http://localhost:8080/orcid-web/public_widgets/0000-0002-9178-5522/37be7d/info.json
 	
 }]);
 

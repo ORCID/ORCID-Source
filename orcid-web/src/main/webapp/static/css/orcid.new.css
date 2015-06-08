@@ -5830,16 +5830,16 @@ hr{
 
 .widget-container .widget-code-container{
 	padding: 10px;
-	background: #C9C9CA;
+	border: 1px solid #C9C9CA;
 	color: #494A4C;
 	float: left;
 	height: auto;
+	width: 100%;;
 }
 
 .widget-container #widget-code{
-	height: 140px;
+	height: 170px;
 	cursor: text;
-	background-color: #FFF;
 }
 
 .widget-container .widget-code-icon{

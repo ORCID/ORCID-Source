@@ -122,7 +122,7 @@
     var a = document.createElement('a');
     a.href = url;
     str = a.search.replace(/\?/, '');
-   
+    
     return QueryStringToHash(str);
   };
  
@@ -144,7 +144,7 @@
   
   var data = parseQueryString(scriptTag.src);  
   
-  var url = baseURL + '/public_widgets/' + data.orcid + '/info.json';  
+  var url = baseURL + '/public_widgets/' + data.orcid + '/' + data.t +'/info.json';  
   
   JSONP(url, callback);
   

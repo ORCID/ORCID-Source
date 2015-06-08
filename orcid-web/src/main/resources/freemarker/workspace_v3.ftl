@@ -56,7 +56,7 @@
             <#if RequestParameters['widget']??>
 	            <div class="widget-container" ng-controller="widgetCtrl">
 	            	<div class="widget-header">
-						<a ng-click="toggleCopyWidget()">ORCID Public Profile Widget</a><div class="popover-help-container">
+						<a ng-click="toggleCopyWidget()">ORCID public profile widget</a><div class="popover-help-container">
 	                    <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
 	                    <div id="qrcode-help" class="popover bottom">
 	                        <div class="arrow"></div>
