@@ -75,7 +75,7 @@ public class StatisticsDaoTest extends DBUnitTest {
         long s2 = statisticsGeneratorDao.getAccountsWithWorks();
         long s3 = statisticsGeneratorDao.getLiveIds();
         long s4 = statisticsGeneratorDao.getNumberOfWorks();
-        long s5 = statisticsGeneratorDao.getNumberOfWorksWithDOIs();
+        long s5 = statisticsGeneratorDao.getNumberOfUniqueDOIs();
         long s6 = 0;
         long s7 = 0;
 

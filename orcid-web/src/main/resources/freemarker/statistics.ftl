@@ -51,10 +51,10 @@
     </div>
     <div class="row">        
 	    <div class="col-md-6 col-md-offset-3 col-sm-8 col-xs-7">
-			<span class="stat-name"><@orcid.msg 'statistics.number_of_works_with_dois'/></span>	    
+			<span class="stat-name"><@orcid.msg 'statistics.number_of_unique_dois'/></span>	    
 	    </div>
 	    <div class="col-md-3 col-sm-4 col-xs-5 right">
-	    	<span class="stat-data"><#if statistics['worksWithDois']??>${statistics['worksWithDois']}<#else><@orcid.msg 'statistics.calculating'/></#if></span>
+	    	<span class="stat-data"><#if statistics['uniqueDois']??>${statistics['uniqueDois']}<#else><@orcid.msg 'statistics.calculating'/></#if></span>
 		</div>
     </div>  
     
