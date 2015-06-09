@@ -103,8 +103,6 @@ public class PublicV2Test {
     public String user1UserName;
     @Value("${org.orcid.web.testUser1.password}")
     public String user1Password;
-    
-    
     @Value("${org.orcid.web.publicClient1.clientId}")
     public String publicClientId;
     @Value("${org.orcid.web.publicClient1.clientSecret}")
