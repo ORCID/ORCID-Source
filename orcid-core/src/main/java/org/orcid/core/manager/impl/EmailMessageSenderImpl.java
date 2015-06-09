@@ -42,6 +42,7 @@ import org.orcid.jaxb.model.notification.amended.NotificationAmended;
 import org.orcid.persistence.dao.NotificationDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
+import org.orcid.pojo.DigestEmail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
@@ -104,7 +105,9 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         int amendedMessageCount = 0;
         int activityCount = 0;
         Set<String> memberIds = new HashSet<>();
+        DigestEmail digestEmail = new DigestEmail();
         for (Notification notification : notifications) {
+            digestEmail.addNotification(notification);
             totalMessageCount++;
             if (notification.getSource() == null) {
                 orcidMessageCount++;
@@ -130,6 +133,7 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         params.put("messages", messages);
         params.put("messageArgs", new Object[0]);
         params.put("emailName", emailName);
+        params.put("digestEmail", digestEmail);
         params.put("orcidMessageCount", orcidMessageCount);
         params.put("addActivitiesMessageCount", addActivitiesMessageCount);
         params.put("activityCount", activityCount);

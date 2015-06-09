@@ -19,16 +19,43 @@
 <#import "email_macros.ftl" as emailMacros />
 Hi ${emailName},
 
-Here’s what has happened since the last time you visited your ORCID record.
+Here's what has happened since the last time you visited your ORCID record.
 
 Visit ${baseUri}/notifications?lang=${locale} to view all notifications.
 
-<#compress>
-<#if amendedMessageCount gt 0>[${amendedMessageCount}] <#if amendedMessageCount == 1>notification<#else>notifications</#if> from ORCID member organizations that added or updated information on your record</#if>
-<#if addActivitiesMessageCount gt 0>[${addActivitiesMessageCount}] <#if addActivitiesMessageCount == 1>Request<#else>Requests</#if> to add or update your ORCID record</#if>
-<#if orcidMessageCount gt 0>[${orcidMessageCount}] <#if orcidMessageCount == 1>notification<#else>notifications</#if> from ORCID</#if>
-</#compress>
+<#if digestEmail.notificationsBySourceId['ORCID']??>
+ORCID would like to let you know
 
+<#list digestEmail.notificationsBySourceId['ORCID'].allNotifications as notification>    
+    ${notification.subject}
+</#list>
+
+</#if>
+<#list digestEmail.notificationsBySourceId?keys?sort as sourceId>
+<#if sourceId != 'ORCID'>
+<#list digestEmail.notificationsBySourceId[sourceId].notificationsByType?keys?sort as notificationType>
+<#list digestEmail.notificationsBySourceId[sourceId].notificationsByType[notificationType] as notification>
+<#if notificationType == 'ADD_ACTIVITIES'>
+${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sourceId} would like to add the following items to your record.
+<#assign activitiesByType=notification.activities.retrieveActivitiesByType()>
+<#list activitiesByType?keys?sort as activityType>
+${activityType?capitalize}s (${activitiesByType[activityType]?size})
+Visit ${notification.authorizationUrl.uri} to add now.
+
+<#list activitiesByType[activityType] as activity>
+    ${activity.activityName} <#if activity.externalIdentifier??>(${activity.externalIdentifier.externalIdentifierType?lower_case}: ${activity.externalIdentifier.externalIdentifierId})</#if>
+</#list>
+</#list>
+<#elseif notificationType == 'AMENDED'>
+${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sourceId} amended the ${notification.amendedSection?lower_case}s section of your record.
+<#else>
+${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sourceId}
+</#if>
+
+</#list>
+</#list>
+</#if>
+</#list>
 
 <@emailMacros.msg "email.common.you_have_received_this_email_opt_out.1" />${baseUri}/account?lang=${locale}.
 

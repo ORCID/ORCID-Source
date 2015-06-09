@@ -31,6 +31,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 import org.orcid.jaxb.model.notification.Notification;
+import org.orcid.jaxb.model.notification.NotificationType;
 
 /**
  * <p>
@@ -70,6 +71,10 @@ public class NotificationAmended extends Notification {
     protected AmendedSection amendedSection;
     @XmlTransient
     protected String subject;
+
+    {
+        notificationType = NotificationType.AMENDED;
+    }
 
     public AmendedSection getAmendedSection() {
         return amendedSection;

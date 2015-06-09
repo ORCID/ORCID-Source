@@ -25,13 +25,16 @@ package org.orcid.jaxb.model.notification.addactivities;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+
 /**
  * <p>
  * Java class for anonymous complex type.
@@ -93,6 +96,20 @@ public class Activities implements Serializable {
             activities = new ArrayList<Activity>();
         }
         return this.activities;
+    }
+
+    public Map<String, List<Activity>> retrieveActivitiesByType() {
+        Map<String, List<Activity>> activitiesMap = new HashMap<>();
+        for (Activity activity : activities) {
+            String key = activity.getActivityType().name();
+            List<Activity> activitiesForType = activitiesMap.get(key);
+            if (activitiesForType == null) {
+                activitiesForType = new ArrayList<>();
+                activitiesMap.put(key, activitiesForType);
+            }
+            activitiesForType.add(activity);
+        }
+        return activitiesMap;
     }
 
 }

@@ -1,12 +1,36 @@
-Hi Spike Milligan,
+Hi John Watson,
 
-Here’s what has happened since the last time you visited your ORCID record.
+Here's what has happened since the last time you visited your ORCID record.
 
 Visit http://testserver.orcid.org/notifications?lang=en to view all notifications.
 
-[1] notification from ORCID member organizations that added or updated information on your record
-[3] Requests to add or update your ORCID record
-[2] notifications from ORCID
+ORCID would like to let you know
+
+    We have release a new messaging feature
+    The ORCID registry is now available in Orc
+
+Super Institution 1 would like to add the following items to your record.
+Works (2)
+Visit https://thirdparty.com/add-to-orcid/12345 to add now.
+
+    Work 1 (doi: 123446/67654)
+    Work 2 (doi: 123446/67655)
+
+Super Institution 1 would like to add the following items to your record.
+Employments (1)
+Visit https://thirdparty.com/add-to-orcid/abc to add now.
+
+    Employment 1 (doi: 12345/abc)
+
+Lovely Publisher 1 would like to add the following items to your record.
+Works (2)
+Visit https://thirdparty.com/add-to-orcid/def to add now.
+
+    Work 3 (doi: 12345/def)
+    Work 4 (doi: 12345/ghi)
+
+Lovely Publisher 1 amended the fundings section of your record.
+
 
 You have received this email in the genuine belief that its contents would be of
 interest to you. To opt-out of messages from ORCID please go to your Account
