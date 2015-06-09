@@ -70,6 +70,7 @@ import org.orcid.jaxb.model.record.summary.PeerReviewGroup;
 import org.orcid.jaxb.model.record.summary.PeerReviewSummary;
 import org.orcid.jaxb.model.record.summary.WorkGroup;
 import org.orcid.jaxb.model.record.summary.WorkSummary;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -102,6 +103,14 @@ public class PublicV2Test {
     public String user1UserName;
     @Value("${org.orcid.web.testUser1.password}")
     public String user1Password;
+    
+    
+    @Value("${org.orcid.web.publicClient1.clientId}")
+    public String publicClientId;
+    @Value("${org.orcid.web.publicClient1.clientSecret}")
+    public String publicClientSecret;
+    
+    
 
     @Resource(name = "t2OAuthClient")
     private T2OAuthAPIService<ClientResponse> t2OAuthClient;
@@ -133,6 +142,12 @@ public class PublicV2Test {
         cleanActivities();
     }
 
+    @Test
+    public void testPublicClientCanGetAccessToken() throws InterruptedException, JSONException {
+        String publicAccessToken = oauthHelper.getClientCredentialsAccessToken(publicClientId, publicClientSecret, ScopePathType.READ_PUBLIC, true);
+        assertFalse(PojoUtil.isEmpty(publicAccessToken));
+    }
+    
     /**
      * VIEW PUBLIC INFO
      * */

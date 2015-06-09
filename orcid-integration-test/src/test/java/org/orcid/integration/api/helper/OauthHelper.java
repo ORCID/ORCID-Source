@@ -28,6 +28,7 @@ import javax.ws.rs.core.MultivaluedMap;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.orcid.api.common.WebDriverHelper;
+import org.orcid.integration.api.t1.T1OAuthAPIService;
 import org.orcid.integration.api.t2.T2OAuthAPIService;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -40,7 +41,8 @@ public class OauthHelper {
     private WebDriverHelper webDriverHelper;
 
     private T2OAuthAPIService<ClientResponse> oauthT2Client;
-    
+    private T1OAuthAPIService<ClientResponse> oauthT1Client;        
+
     private List<String> items = new ArrayList<String>();
     
     {items.add("enablePersistentToken");}
@@ -51,6 +53,14 @@ public class OauthHelper {
 
     public T2OAuthAPIService<ClientResponse> getOauthT2Client() {
         return oauthT2Client;
+    }
+    
+    public T1OAuthAPIService<ClientResponse> getOauthT1Client() {
+        return oauthT1Client;
+    }
+
+    public void setOauthT1Client(T1OAuthAPIService<ClientResponse> oauthT1Client) {
+        this.oauthT1Client = oauthT1Client;
     }
 
     public void setOauthT2Client(T2OAuthAPIService<ClientResponse> oauthT2Client) {
@@ -97,12 +107,21 @@ public class OauthHelper {
     } 
     
     public String getClientCredentialsAccessToken(String clientId, String clientSecret, ScopePathType scope) throws JSONException {
+        return getClientCredentialsAccessToken(clientId, clientSecret, scope, false);
+    }
+    
+    public String getClientCredentialsAccessToken(String clientId, String clientSecret, ScopePathType scope, boolean usingPublicApi) throws JSONException {
         MultivaluedMap<String, String> params = new MultivaluedMapImpl();
         params.add("client_id", clientId);
         params.add("client_secret", clientSecret);
         params.add("grant_type", "client_credentials");
         params.add("scope", scope.value());
-        ClientResponse clientResponse = oauthT2Client.obtainOauth2TokenPost("client_credentials", params);
+        ClientResponse clientResponse = null;
+        if(!usingPublicApi) {
+            clientResponse = oauthT2Client.obtainOauth2TokenPost("client_credentials", params);
+        } else {
+            clientResponse = oauthT1Client.obtainOauth2TokenPost("client_credentials", params);
+        }
         assertEquals(200, clientResponse.getStatus());
         String body = clientResponse.getEntity(String.class);
         JSONObject jsonObject = new JSONObject(body);
