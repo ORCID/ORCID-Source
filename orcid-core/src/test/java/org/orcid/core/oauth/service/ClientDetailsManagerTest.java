@@ -190,7 +190,7 @@ public class ClientDetailsManagerTest extends DBUnitTest {
         Set<String> authorizedGrantTypes = clientDetails.getAuthorizedGrantTypes();
         assertNotNull(authorizedGrantTypes);
         if (clientDetails.getClientId().equals("4444-4444-4444-4498"))
-            assertEquals(1, authorizedGrantTypes.size());
+            assertEquals(2, authorizedGrantTypes.size());
         else
             assertEquals(3, authorizedGrantTypes.size());
         String clientSecret = clientDetails.getClientSecret();
