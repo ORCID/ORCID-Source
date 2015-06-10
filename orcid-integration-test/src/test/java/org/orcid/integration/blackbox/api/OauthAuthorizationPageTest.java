@@ -42,10 +42,10 @@ import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.orcid.integration.api.t2.T2OAuthAPIService;
+import org.orcid.integration.blackbox.BlackBoxBase;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.pojo.ajaxForm.PojoUtil;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -59,28 +59,13 @@ import com.sun.jersey.core.util.MultivaluedMapImpl;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-memberV2-context.xml" })
-public class OauthAuthorizationPageTest {
+public class OauthAuthorizationPageTest extends BlackBoxBase {
 
     private static final String STATE_PARAM = "MyStateParam";
     private static final String SCOPES = "/activities/update /activities/read-limited";
     private static final int DEFAULT_TIMEOUT_SECONDS = 10;
     private static final Pattern AUTHORIZATION_CODE_PATTERN = Pattern.compile("code=(.+)");
     private static final Pattern STATE_PARAM_PATTERN = Pattern.compile("state=(.+)");
-
-    @Value("${org.orcid.web.base.url:http://localhost:8080/orcid-web}")
-    private String webBaseUrl;
-    @Value("${org.orcid.web.testClient1.redirectUri}")
-    private String redirectUri;
-    @Value("${org.orcid.web.testClient1.clientId}")
-    public String client1ClientId;
-    @Value("${org.orcid.web.testClient1.clientSecret}")
-    public String client1ClientSecret;
-    @Value("${org.orcid.web.testUser1.username}")
-    public String user1UserName;
-    @Value("${org.orcid.web.testUser1.password}")
-    public String user1Password;
-    @Value("${org.orcid.web.testUser1.orcidId}")
-    public String user1OrcidId;
 
     @Resource(name = "t2OAuthClient")
     private T2OAuthAPIService<ClientResponse> t2OAuthClient;
@@ -359,7 +344,8 @@ public class OauthAuthorizationPageTest {
         String authorizationCode = matcher.group(1);
         assertFalse(PojoUtil.isEmpty(authorizationCode));
 
-        ClientResponse tokenResponse = getClientResponse(client1ClientId, client1ClientSecret, ScopePathType.ORCID_BIO_UPDATE.getContent(), redirectUri, authorizationCode);
+        ClientResponse tokenResponse = getClientResponse(client1ClientId, client1ClientSecret, ScopePathType.ORCID_BIO_UPDATE.getContent(), redirectUri,
+                authorizationCode);
         assertEquals(200, tokenResponse.getStatus());
         String body = tokenResponse.getEntity(String.class);
         JSONObject jsonObject = new JSONObject(body);
@@ -390,21 +376,19 @@ public class OauthAuthorizationPageTest {
         jsonObject = new JSONObject(body);
         String otherAccessToken = (String) jsonObject.get("access_token");
         assertNotNull(otherAccessToken);
-        assertFalse(PojoUtil.isEmpty(otherAccessToken));        
+        assertFalse(PojoUtil.isEmpty(otherAccessToken));
     }
 
     /**
-     * Test that asking for different scopes generates different tokens 
+     * Test that asking for different scopes generates different tokens
      * 
-     * IMPORTANT NOTE:
-     *          For this test to run, the user should not have tokens for any of the
-     *          following scopes: 
-     *          - FUNDING_CREATE 
-     *          - AFFILIATIONS_CREATE 
-     *          - PEER_REVIEW_CREATE
+     * IMPORTANT NOTE: For this test to run, the user should not have tokens for
+     * any of the following scopes: - FUNDING_CREATE - AFFILIATIONS_CREATE -
+     * ORCID_WORKS_UPDATE
      * */
     @Test
     public void testDifferentScopesGeneratesDifferentAccessTokens() throws InterruptedException, JSONException {
+        revokeApplicationsAccess(client1ClientId);
         // First get the authorization code
         webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, client1ClientId,
                 ScopePathType.FUNDING_CREATE.getContent(), redirectUri));
@@ -446,7 +430,12 @@ public class OauthAuthorizationPageTest {
         // Then, ask again for permissions over other scopes. Note that the user
         // is already logged in
         webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, client1ClientId,
-                ScopePathType.AFFILIATIONS_CREATE.getContent(), redirectUri));        
+                ScopePathType.AFFILIATIONS_CREATE.getContent(), redirectUri));
+
+        By authorizeElementLocator = By.id("authorize");
+        (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(authorizeElementLocator));
+        WebElement authorizeButton = webDriver.findElement(authorizeElementLocator);
+        authorizeButton.click();
 
         (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(new ExpectedCondition<Boolean>() {
             public Boolean apply(WebDriver d) {
@@ -472,7 +461,12 @@ public class OauthAuthorizationPageTest {
 
         // Repeat the process again with other scope
         webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, client1ClientId,
-                ScopePathType.PEER_REVIEW_CREATE.getContent(), redirectUri));        
+                ScopePathType.ORCID_WORKS_UPDATE.getContent(), redirectUri));
+
+        authorizeElementLocator = By.id("authorize");
+        (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(authorizeElementLocator));
+        authorizeButton = webDriver.findElement(authorizeElementLocator);
+        authorizeButton.click();
 
         (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(new ExpectedCondition<Boolean>() {
             public Boolean apply(WebDriver d) {
@@ -486,7 +480,7 @@ public class OauthAuthorizationPageTest {
         authorizationCode = matcher.group(1);
         assertFalse(PojoUtil.isEmpty(authorizationCode));
 
-        tokenResponse = getClientResponse(client1ClientId, client1ClientSecret, ScopePathType.PEER_REVIEW_CREATE.getContent(), redirectUri, authorizationCode);
+        tokenResponse = getClientResponse(client1ClientId, client1ClientSecret, ScopePathType.ORCID_WORKS_UPDATE.getContent(), redirectUri, authorizationCode);
         assertEquals(200, tokenResponse.getStatus());
         body = tokenResponse.getEntity(String.class);
         jsonObject = new JSONObject(body);

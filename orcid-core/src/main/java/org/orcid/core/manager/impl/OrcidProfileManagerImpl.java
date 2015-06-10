@@ -333,10 +333,6 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         dedupeAffiliations(orcidProfile);
         dedupeFundings(orcidProfile);
         addSourceToEmails(orcidProfile, existingProfileEntity, amenderOrcid);
-        addSourceToAffiliations(orcidProfile, amenderOrcid);
-        addSourceToWorks(orcidProfile, amenderOrcid);
-        addSourceToAffiliations(orcidProfile, amenderOrcid);
-        addSourceToFundings(orcidProfile, amenderOrcid);
         ProfileEntity profileEntity = adapter.toProfileEntity(orcidProfile, existingProfileEntity);
         profileEntity.setLastModified(new Date());
         profileEntity.setIndexingStatus(IndexingStatus.PENDING);
@@ -423,10 +419,8 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     private void addSourceToWorks(OrcidWorks orcidWorks, String amenderOrcid) {
         if (orcidWorks != null && !orcidWorks.getOrcidWork().isEmpty() && amenderOrcid != null) {
             for (OrcidWork orcidWork : orcidWorks.getOrcidWork()) {
-                if (orcidWork.getSource() == null || StringUtils.isBlank(orcidWork.getSource().retrieveSourcePath())) {
-                    Source source = createSource(amenderOrcid);
-                    orcidWork.setSource(source);
-                }
+                Source source = createSource(amenderOrcid);
+                orcidWork.setSource(source);
             }
         }
     }
@@ -435,8 +429,10 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         Source source = new Source();
         if (OrcidStringUtils.isValidOrcid(amenderOrcid)) {
             source.setSourceOrcid(new SourceOrcid(amenderOrcid));
+            source.setSourceClientId(null);
         } else {
             source.setSourceClientId(new SourceClientId(amenderOrcid));
+            source.setSourceOrcid(null);
         }
         return source;
     }
@@ -1706,8 +1702,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     private void addSourceToAffiliations(Affiliations affiliations, String amenderOrcid) {
         if (affiliations != null && !affiliations.getAffiliation().isEmpty()) {
             for (Affiliation affiliation : affiliations.getAffiliation()) {
-                if (affiliation.getSource() == null || StringUtils.isBlank(affiliation.retrieveSourcePath()))
-                    affiliation.setSource(createSource(amenderOrcid));
+                affiliation.setSource(createSource(amenderOrcid));
             }
         }
     }
@@ -1715,9 +1710,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     private void addSourceToFundings(FundingList fundings, String amenderOrcid) {
         if (fundings != null && !fundings.getFundings().isEmpty()) {
             for (Funding funding : fundings.getFundings()) {
-                if (funding.getSource() == null || StringUtils.isBlank(funding.retrieveSourcePath())) {
-                    funding.setSource(createSource(amenderOrcid));
-                }
+            	funding.setSource(createSource(amenderOrcid));
             }
         }
     }

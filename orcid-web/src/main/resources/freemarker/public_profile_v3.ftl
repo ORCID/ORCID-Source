@@ -61,7 +61,7 @@
 		                	</div>
 		                	<div>
 				                <#list profile.orcidBio.personalDetails.otherNames.otherName as otherName>
-				                	${otherName.content}<#if otherName_has_next></#if>
+				                	${otherName.content}<#if otherName_has_next>,</#if>
 				                </#list>
 			                </div>
 		                </div>
@@ -94,7 +94,7 @@
 				                <span class="workspace-section-title">${springMacroRequestContext.getMessage("public_profile.labelWebsites")}</span>
 				                <div>
 				                    <#list profile.orcidBio.researcherUrls.researcherUrl as url>
-				                        <a href="<@orcid.absUrl url.url/>" target="_blank" rel="nofollow"><#if (url.urlName.content)! != "">${url.urlName.content}<#else>${url.url.value}</#if></a><#if url_has_next><br/></#if>
+				                        <a href="<@orcid.absUrl url.url/>" target="_blank" rel="me nofollow"><#if (url.urlName.content)! != "">${url.urlName.content}<#else>${url.url.value}</#if></a><#if url_has_next><br/></#if>
 				                    </#list>
 			                    </div>
 			                </div>

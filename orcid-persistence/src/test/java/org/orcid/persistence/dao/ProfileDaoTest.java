@@ -21,6 +21,7 @@ import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -40,8 +41,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.clientgroup.MemberType;
+import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
@@ -53,9 +54,9 @@ import org.orcid.persistence.jpa.entities.ProfileEventType;
 import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
 import org.orcid.persistence.jpa.entities.SubjectEntity;
 import org.orcid.test.DBUnitTest;
+import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -64,7 +65,7 @@ import org.springframework.transaction.annotation.Transactional;
  * 
  * @author Declan Newman (declan)
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-persistence-context.xml" })
 public class ProfileDaoTest extends DBUnitTest {
 

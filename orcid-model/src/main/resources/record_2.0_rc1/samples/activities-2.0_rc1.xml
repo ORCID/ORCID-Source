@@ -31,6 +31,18 @@
 				<common:month>12</common:month>
 				<common:day>20</common:day>
 			</common:end-date>
+			<education:organization>
+				<common:name>common:name</common:name>
+				<common:address>
+					<common:city>common:city</common:city>
+					<common:region>common:region</common:region>
+					<common:country>AF</common:country>
+				</common:address>
+				<common:disambiguated-organization>
+					<common:disambiguated-organization-identifier>common:disambiguated-organization-identifier</common:disambiguated-organization-identifier>
+					<common:disambiguation-source>common:disambiguation-source</common:disambiguation-source>
+				</common:disambiguated-organization>
+			</education:organization>
 		</education:education-summary>
 	</activities:educations>
 	<activities:employments>
@@ -58,6 +70,18 @@
 				<common:month>12</common:month>
 				<common:day>20</common:day>
 			</common:end-date>
+			<affiliation:organization>
+				<common:name>common:name</common:name>
+				<common:address>
+					<common:city>common:city</common:city>
+					<common:region>common:region</common:region>
+					<common:country>AF</common:country>
+				</common:address>
+				<common:disambiguated-organization>
+					<common:disambiguated-organization-identifier>common:disambiguated-organization-identifier</common:disambiguated-organization-identifier>
+					<common:disambiguation-source>common:disambiguation-source</common:disambiguation-source>
+				</common:disambiguated-organization>
+			</affiliation:organization>
 		</affiliation:employment-summary>
 	</activities:employments>
 	<activities:fundings>
@@ -113,7 +137,7 @@
 				</activities:identifier>
 			</activities:identifiers>
 			<peer-review:summary put-code="12345" visibility="private">
-				<peer-review:role>REVIEWER</peer-review:role>
+				<peer-review:role>reviewer</peer-review:role>
 				<peer-review:external-identifiers>
 					<work:work-external-identifier>
 						<work:external-identifier-type>agr</work:external-identifier-type>
@@ -121,7 +145,7 @@
 						</work:external-identifier-id>
 					</work:work-external-identifier>
 				</peer-review:external-identifiers>
-				<peer-review:type>REVIEW</peer-review:type>
+				<peer-review:type>review</peer-review:type>
 				<peer-review:completion-date>
 					<common:year>1848</common:year>
 					<common:month>02</common:month>

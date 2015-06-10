@@ -19,6 +19,7 @@ package org.orcid.api.t1.server;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -27,6 +28,7 @@ import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
 
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,10 +41,15 @@ import org.orcid.jaxb.model.record.Work;
 import org.orcid.jaxb.model.record.WorkType;
 import org.orcid.jaxb.model.record.summary.ActivitiesSummary;
 import org.orcid.test.DBUnitTest;
+import org.orcid.test.OrcidJUnit4ClassRunner;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-t1-web-context.xml", "classpath:orcid-t1-security-context.xml" })
 public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
     private static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml", "/data/SecurityQuestionEntityData.xml",
@@ -54,7 +61,15 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
     
     @BeforeClass
     public static void initDBUnitData() throws Exception {
-        initDBUnitData(DATA_FILES);
+        initDBUnitData(DATA_FILES);        
+    }
+    
+    @Before
+    public void before() {
+        ArrayList<GrantedAuthority> roles = new ArrayList<GrantedAuthority>();
+        roles.add(new SimpleGrantedAuthority("ROLE_ANONYMOUS"));
+        Authentication auth = new AnonymousAuthenticationToken("anonymous", "anonymous", roles);
+        SecurityContextHolder.getContext().setAuthentication(auth);
     }
     
     @AfterClass

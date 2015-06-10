@@ -36,95 +36,120 @@ import java.util.regex.Pattern;
  */
 public class OrcidStringUtils {
 
-    private static String LT = "&lt;";
-    private static String GT = "&gt;";
-    private static String AMP = "&amp;";
-    private static String APOS = "&apos;";
-    private static String QUOT = "&quot;";
+	private static String LT = "&lt;";
+	private static String GT = "&gt;";
+	private static String AMP = "&amp;";
+	private static String APOS = "&apos;";
+	private static String QUOT = "&quot;";
 
-    private static String DECODED_LT = "<";
-    private static String DECODED_GT = ">";
-    private static String DECODED_AMP = "&";
-    private static String DECODED_APOS = "'";
-    private static String DECODED_QUOT = "\"";
+	private static String DECODED_LT = "<";
+	private static String DECODED_GT = ">";
+	private static String DECODED_AMP = "&";
+	private static String DECODED_APOS = "'";
+	private static String DECODED_QUOT = "\"";
 
-    private static final Pattern orcidPattern = Pattern.compile("(\\d{4}-){3,}\\d{3}[\\dX]");
-    private static final Pattern clientIdPattern = Pattern.compile("APP-[\\dA-Z]{16}");
+	private static final Pattern orcidPatternNormal = Pattern
+			.compile("(\\d{4}-){3}\\d{3}[\\dX]");
+	private static final Pattern orcidPatternWithSpaces = Pattern
+			.compile("(\\d{4} ){3}\\d{3}[\\dX]");
+	private static final Pattern orcidPatternOnlyDigits = Pattern
+			.compile("(\\d{15}[\\dX])");
+	private static final Pattern clientIdPattern = Pattern
+			.compile("APP-[\\dA-Z]{16}");
 
-    private static final Document.OutputSettings outputSettings = new Document.OutputSettings().prettyPrint(false).charset("UTF-8").escapeMode(EscapeMode.xhtml);
+	private static final Document.OutputSettings outputSettings = new Document.OutputSettings()
+			.prettyPrint(false).charset("UTF-8").escapeMode(EscapeMode.xhtml);
 
-    public static boolean isValidOrcid(String orcid) {
-        if (StringUtils.isNotBlank(orcid)) {
-            return orcidPattern.matcher(orcid).matches();
-        } else {
-            return false;
-        }
-    }
+	public static boolean isValidOrcid(String orcid) {
+		if (StringUtils.isNotBlank(orcid)) {
+			return orcidPatternNormal.matcher(orcid).matches();
+		} else {
+			return false;
+		}
+	}
 
-    public static String getOrcidNumber(String orcid) {
-        Matcher matcher = orcidPattern.matcher(orcid);
-        if (matcher.find()) {
-            return matcher.group(0);
-        }
-        return null;
-    }
+	public static boolean isValidOrcidWithSpaces(String orcid) {
+		boolean result = false;
+		if (orcidPatternWithSpaces.matcher(orcid).matches()) {
+			result = true;
+		}
+		return result;
+	}
 
-    public static boolean isClientId(String clientId) {
-        if (StringUtils.isNotBlank(clientId)) {
-            return clientIdPattern.matcher(clientId).matches();
-        } else {
-            return false;
-        }
-    }
+	public static boolean isValidOrcidWithoutSpacesWithoutHyphens(String orcid) {
+		boolean result = false;
+		if (orcidPatternOnlyDigits.matcher(orcid).matches()) {
+			result = true;
+		}
+		return result;
+	}
 
-    public static Map<String, String> resourceBundleToMap(ResourceBundle resource) {
-        Map<String, String> map = new HashMap<String, String>();
+	public static String getOrcidNumber(String orcid) {
+		Matcher matcher = orcidPatternNormal.matcher(orcid);
+		if (matcher.find()) {
+			return matcher.group(0);
+		}
+		return null;
+	}
 
-        Enumeration<String> keys = resource.getKeys();
-        while (keys.hasMoreElements()) {
-            String key = keys.nextElement();
-            map.put(key, resource.getString(key));
-        }
+	public static boolean isClientId(String clientId) {
+		if (StringUtils.isNotBlank(clientId)) {
+			return clientIdPattern.matcher(clientId).matches();
+		} else {
+			return false;
+		}
+	}
 
-        return map;
-    }
+	public static Map<String, String> resourceBundleToMap(
+			ResourceBundle resource) {
+		Map<String, String> map = new HashMap<String, String>();
 
-    /*
-     * http://stackoverflow.com/questions/14453047/jsoup-to-strip-only-html-tagsnot
-     * -new-line-character
-     */
-    public static String stripHtml(String s) {
-        String output = Jsoup.clean(s, "", Whitelist.simpleText(), outputSettings);
-        // According to
-        // http://jsoup.org/apidocs/org/jsoup/nodes/Entities.EscapeMode.html#xhtml
-        // jsoup scape lt, gt, amp, apos, and quot for xhtml
-        // So we want to restore them
-        output = output.replace(LT, DECODED_LT);
-        output = output.replace(GT, DECODED_GT);
-        output = output.replace(AMP, DECODED_AMP);
-        output = output.replace(APOS, DECODED_APOS);
-        output = output.replace(QUOT, DECODED_QUOT);
-        return output;
-    }
+		Enumeration<String> keys = resource.getKeys();
+		while (keys.hasMoreElements()) {
+			String key = keys.nextElement();
+			map.put(key, resource.getString(key));
+		}
 
-    /**
-     * Strips html and restore the following characters: ' " & > < If the string
-     * resulting after that process doesnt match the given string, we can say it
-     * contains html
-     * 
-     * @param s
-     *            String to be cleared
-     * @return true if the give string has html tags in it
-     * */
-    public static boolean hasHtml(String s) {
-        String striped = stripHtml(s);
-        return !striped.equals(s);
-    }
-    
-    public static int compareStrings(String string, String otherString) {        
-        if (NullUtils.anyNull(string, otherString)) {
-            return NullUtils.compareNulls(string, otherString);
-        }
-        return string.compareTo(otherString);
-    }
+		return map;
+	}
+
+	/*
+	 * http://stackoverflow.com/questions/14453047/jsoup-to-strip-only-html-tagsnot
+	 * -new-line-character
+	 */
+	public static String stripHtml(String s) {
+		String output = Jsoup.clean(s, "", Whitelist.simpleText(),
+				outputSettings);
+		// According to
+		// http://jsoup.org/apidocs/org/jsoup/nodes/Entities.EscapeMode.html#xhtml
+		// jsoup scape lt, gt, amp, apos, and quot for xhtml
+		// So we want to restore them
+		output = output.replace(LT, DECODED_LT);
+		output = output.replace(GT, DECODED_GT);
+		output = output.replace(AMP, DECODED_AMP);
+		output = output.replace(APOS, DECODED_APOS);
+		output = output.replace(QUOT, DECODED_QUOT);
+		return output;
+	}
+
+	/**
+	 * Strips html and restore the following characters: ' " & > < If the string
+	 * resulting after that process doesnt match the given string, we can say it
+	 * contains html
+	 * 
+	 * @param s
+	 *            String to be cleared
+	 * @return true if the give string has html tags in it
+	 * */
+	public static boolean hasHtml(String s) {
+		String striped = stripHtml(s);
+		return !striped.equals(s);
+	}
+
+	public static int compareStrings(String string, String otherString) {
+		if (NullUtils.anyNull(string, otherString)) {
+			return NullUtils.compareNulls(string, otherString);
+		}
+		return string.compareTo(otherString);
+	}
 }

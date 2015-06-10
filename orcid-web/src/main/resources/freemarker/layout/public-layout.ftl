@@ -155,7 +155,7 @@
 							</#if>
 						</@security.authorize>
 						
-						<li><a ${(nav=="settings")?string('class="active" ', '')}href="<@orcid.rootPath '/account'/>"><@orcid.msg 'public-layout.account_setting'/></a></li>
+						<li><a ${(nav=="settings")?string('class="active" ', '')}href="<@orcid.rootPath '/account'/>" id="accountSettingMenuLink"><@orcid.msg 'public-layout.account_setting'/></a></li>
 						
 						<#if !inDelegationMode || isDelegatedByAdmin>
 							<@security.authorize ifAnyGranted="ROLE_GROUP, ROLE_BASIC, ROLE_BASIC_INSTITUTION, ROLE_PREMIUM, ROLE_PREMIUM_INSTITUTION">

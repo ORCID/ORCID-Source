@@ -64,6 +64,11 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
     private OrcidSecurityManager orcidSecurityManager;
     
     @Override
+    public void setSourceManager(SourceManager sourceManager) {
+        this.sourceManager = sourceManager;
+    }
+    
+    @Override
     public OrgAffiliationRelationEntity findAffiliationByUserAndId(String userOrcid, String affiliationId) {
         if(PojoUtil.isEmpty(userOrcid) || PojoUtil.isEmpty(affiliationId))
             return null;

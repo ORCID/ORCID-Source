@@ -78,6 +78,11 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
     @Resource
     private OrcidSecurityManager orcidSecurityManager;
     
+    @Override
+    public void setSourceManager(SourceManager sourceManager) {
+        this.sourceManager = sourceManager;
+    }
+    
     /**
      * Removes the relationship that exists between a funding and a profile.
      * 
