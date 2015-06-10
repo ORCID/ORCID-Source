@@ -6607,6 +6607,10 @@ orcidNgModule.controller('manageMembersCtrl',['$scope', '$compile', function man
     $scope.closeModal = function() {
         $.colorbox.close();
     };
+    
+    $scope.selectAll = function($event){
+    	$event.target.select();
+    }
 }]);
 
 orcidNgModule.controller('findIdsCtrl',['$scope','$compile', function findIdsCtrl($scope,$compile){
