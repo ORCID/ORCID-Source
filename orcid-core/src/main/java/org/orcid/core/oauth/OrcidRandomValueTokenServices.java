@@ -42,8 +42,4 @@ public interface OrcidRandomValueTokenServices {
     void setCustomTokenEnhancer(TokenEnhancer customTokenEnhancer);
     
     boolean tokenAlreadyExists(String clientId, String userId, Collection<String> scopes);
-    
-    boolean allowEmptyTokens();
-    
-    void setAllowEmptyTokens(boolean value);
 }

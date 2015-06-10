@@ -89,12 +89,4 @@
         <property name="serviceDelegator" ref="publicV2ApiServiceDelegator"/>
     </bean>
     
-    <!-- Use the provided token random token services to actually create the values, and plugin our tokenStore etc -->
-    <bean id="tokenServices" class="org.orcid.core.oauth.service.OrcidRandomValueTokenServicesImpl">               
-        <property name="orcidtokenStore" ref="orcidTokenStore" />        
-        <property name="customTokenEnhancer" ref="orcidTokenEnhancer" />
-        <property name="supportRefreshToken" value="${org.orcid.core.oauth.supportRefreshToken:false}" />
-        <property name="allowEmptyTokens" value="true" />
-    </bean>
-    
 </beans>

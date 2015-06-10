@@ -20,9 +20,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -43,70 +41,46 @@ public class SanitizeAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        CustomHeadersHttpServletRequest customRequest = new CustomHeadersHttpServletRequest(request);
-        
-        Enumeration<String> originalHeaders = request.getHeaderNames();
-        if(originalHeaders != null) {
-            while(originalHeaders.hasMoreElements()) {
-                String header = originalHeaders.nextElement();
-                if(!PojoUtil.isEmpty(header)) {
-                    if(header.equals("authorization")) {
-                        String value = request.getHeader(header);
-                        if(!PojoUtil.isEmpty(value) && !value.trim().equals("bearer")) {
-                            customRequest.addHeader(header, value);
-                        }
-                    } else {
-                        customRequest.addHeader(header, request.getHeader(header));
-                    }
-                }
-            }
-        }
-        
-        filterChain.doFilter(request, response);
+        CustomHeadersHttpServletRequest customRequest = new CustomHeadersHttpServletRequest(request);        
+        filterChain.doFilter(customRequest, response);        
     }
 }
 
 class CustomHeadersHttpServletRequest extends HttpServletRequestWrapper {
 
-    private Map<String, List<String>> headers = new HashMap<String, List<String>>();
-    
     public CustomHeadersHttpServletRequest(HttpServletRequest request) {
         super(request);        
     }
     
     @Override
     public String getHeader(String name) {
-        if (headers.containsKey(name)) {
-            return headers.get(name).get(0);
+        HttpServletRequest req = (HttpServletRequest)this.getRequest();
+        if(name.equalsIgnoreCase("authorization")) {
+            String authorization = req.getHeader(name);
+            if(PojoUtil.isEmpty(authorization) || authorization.trim().compareToIgnoreCase("bearer") == 0){
+                return null;
+            } 
+            return authorization;
         }
-
-        return null;
+        
+        return req.getHeader(name);
     }
     
-    /**
-     * The default behavior of this method is to return getHeaders(String name)
-     * on the wrapped request object.
-     */
     public Enumeration<String> getHeaders(String name) {
-        if(headers.containsKey(name)) {
-            return Collections.enumeration(headers.keySet());
-        } 
-        return Collections.emptyEnumeration();
-    }  
-    
-    public void addHeader(String header, String value) {
-        List<String> list = headers.get(header);
-        if (list == null) {
-            list = new ArrayList<String>();
-            headers.put(header, list);
+        HttpServletRequest req = (HttpServletRequest)this.getRequest();
+        if(name.equalsIgnoreCase("authorization")) {
+            List<String> headers = new ArrayList<String>();
+            Enumeration<String> existingHeaders = req.getHeaders(name);            
+            if(existingHeaders != null){
+                while(existingHeaders.hasMoreElements()) {
+                    String existingHeader = existingHeaders.nextElement();
+                    if(!PojoUtil.isEmpty(existingHeader) && !(existingHeader.trim().compareToIgnoreCase("bearer") == 0)){
+                        headers.add(existingHeader);
+                    }
+                }
+            }
+            return Collections.enumeration(headers);
         }
-        list.add(value);
-    }        
-    
-    @Override
-    public Enumeration<String> getHeaderNames() {
-        List<String> list = new ArrayList<String>();
-        list.addAll(headers.keySet());
-        return Collections.enumeration(list);
-    }
+        return req.getHeaders(name);
+    }          
 }

@@ -16,10 +16,8 @@
  */
 package org.orcid.core.oauth.service;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -33,19 +31,13 @@ import org.orcid.core.oauth.OrcidRandomValueTokenServices;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.dao.OrcidOauth2AuthoriziationCodeDetailDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
-import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.common.exceptions.InvalidTokenException;
-import org.springframework.security.oauth2.provider.AuthorizationRequest;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.OAuth2Request;
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
@@ -72,22 +64,9 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
     private ClientDetailsManager clientDetailsManager;        
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OrcidRandomValueTokenServicesImpl.class);
-
-    private boolean allowEmptyTokens = false;
     
     public OrcidRandomValueTokenServicesImpl() {        
     }
-
-    @Override
-    public boolean allowEmptyTokens() {        
-        return allowEmptyTokens;
-    }
-    
-    @Override
-    public void setAllowEmptyTokens(boolean value) {
-        this.allowEmptyTokens = value;
-    }
-    
     
     @Override
     public OAuth2AccessToken createAccessToken(OAuth2Authentication authentication) throws AuthenticationException {
@@ -197,12 +176,7 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
     }
 
     @Override
-    public OAuth2Authentication loadAuthentication(String accessTokenValue) throws AuthenticationException {
-        if(PojoUtil.isEmpty(accessTokenValue)) {
-            if(allowEmptyTokens) {
-               return null;
-            }
-        }
+    public OAuth2Authentication loadAuthentication(String accessTokenValue) throws AuthenticationException {        
         OAuth2AccessToken accessToken = orcidtokenStore.readAccessToken(accessTokenValue);
         if (accessToken == null) {
             throw new InvalidTokenException("Invalid access token: " + accessTokenValue);
