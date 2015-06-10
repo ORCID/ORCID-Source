@@ -6610,7 +6610,7 @@ orcidNgModule.controller('manageMembersCtrl',['$scope', '$compile', function man
     
     $scope.selectAll = function($event){
     	$event.target.select();
-    }
+    };
 }]);
 
 orcidNgModule.controller('findIdsCtrl',['$scope','$compile', function findIdsCtrl($scope,$compile){
