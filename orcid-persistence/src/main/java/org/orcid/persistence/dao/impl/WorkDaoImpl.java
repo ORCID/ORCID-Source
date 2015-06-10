@@ -72,6 +72,11 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
         workToUpdate.setPublicationDate(workWithNewData.getPublicationDate());
         workToUpdate.setContributorsJson(workWithNewData.getContributorsJson());
         workToUpdate.setExternalIdentifiersJson(workWithNewData.getExternalIdentifiersJson());
+        workToUpdate.setProfile(workWithNewData.getProfile());
+        workToUpdate.setVisibility(workWithNewData.getVisibility());
+        workToUpdate.setDisplayIndex(workWithNewData.getDisplayIndex());
+        workToUpdate.setAddedToProfileDate(workWithNewData.getAddedToProfileDate());
+        workToUpdate.setSource(workWithNewData.getSource());
         workToUpdate.setLastModified(new Date());
     }
 

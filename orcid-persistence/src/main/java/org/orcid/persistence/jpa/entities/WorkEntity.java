@@ -17,7 +17,7 @@
 package org.orcid.persistence.jpa.entities;
 
 import java.util.Comparator;
-import java.util.SortedSet;
+import java.util.Date;
 
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -29,16 +29,14 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-import org.hibernate.annotations.Sort;
-import org.hibernate.annotations.SortType;
 import org.orcid.jaxb.model.message.CitationType;
 import org.orcid.jaxb.model.message.Iso3166Country;
+import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkType;
 
 /**
@@ -51,8 +49,7 @@ import org.orcid.jaxb.model.message.WorkType;
 public class WorkEntity extends BaseEntity<Long> implements Comparable<WorkEntity> {
 
     private static final long serialVersionUID = -8096348611438944935L;
-    private static final String WORK = "work";
-
+    
     private Long id;
     private String title;
     private String translatedTitle;
@@ -69,7 +66,11 @@ public class WorkEntity extends BaseEntity<Long> implements Comparable<WorkEntit
     private PublicationDateEntity publicationDate;
     private String contributorsJson;
     private String externalIdentifiersJson;
-    private SortedSet<WorkExternalIdentifierEntity> externalIdentifiers;
+    private ProfileEntity profile;
+    private SourceEntity source;
+    private Date addedToProfileDate;
+    private Visibility visibility;
+    private Long displayIndex;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "work_seq")
@@ -226,22 +227,7 @@ public class WorkEntity extends BaseEntity<Long> implements Comparable<WorkEntit
 
     public void setExternalIdentifiersJson(String externalIdentifiersJson) {
         this.externalIdentifiersJson = externalIdentifiersJson;
-    }
-
-    /**
-     * @return the authors
-     */
-
-    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, mappedBy = WORK, orphanRemoval = true)
-    @Fetch(FetchMode.SUBSELECT)
-    @Sort(type = SortType.NATURAL)
-    public SortedSet<WorkExternalIdentifierEntity> getExternalIdentifiers() {
-        return externalIdentifiers;
-    }
-
-    public void setExternalIdentifiers(SortedSet<WorkExternalIdentifierEntity> externalIdentifiers) {
-        this.externalIdentifiers = externalIdentifiers;
-    }
+    }    
     
     @Basic
     @Enumerated(EnumType.STRING)
@@ -254,18 +240,81 @@ public class WorkEntity extends BaseEntity<Long> implements Comparable<WorkEntit
         this.iso2Country = iso2Country;
     }
 
+    /**
+     * @return the profile
+     */
+    @ManyToOne(cascade = { CascadeType.REFRESH }, fetch = FetchType.EAGER)
+    @JoinColumn(name = "orcid", nullable = false)
+    public ProfileEntity getProfile() {
+        return profile;
+    }
+
+    /**
+     * @param profile
+     *            the profile to set
+     */
+    public void setProfile(ProfileEntity profile) {
+        this.profile = profile;
+    }
+    
+    public SourceEntity getSource() {
+        return source;
+    }
+
+    public void setSource(SourceEntity source) {
+        this.source = source;
+    }
+    
+    @Column(name = "added_to_profile_date")
+    public Date getAddedToProfileDate() {
+        return addedToProfileDate;
+    }
+
+    public void setAddedToProfileDate(Date addedToProfileDate) {
+        this.addedToProfileDate = addedToProfileDate;
+    }
+
+    @Basic
+    @Enumerated(EnumType.STRING)
+    public Visibility getVisibility() {
+        return visibility;
+    }
+
+    public void setVisibility(Visibility visibility) {
+        this.visibility = visibility;
+    }
+    
+    /*
+     * Dictates the display order for works (and versions of works)
+     * works with higher numbers should be displayed first. 
+     * 
+     * Currently only updatable via ProfileWorkDaoImpl.updateToMaxDisplay
+     *
+     */
+
+    @Column(name = "display_index", updatable=false, insertable=false)
+    public Long getDisplayIndex() {
+        return displayIndex;
+    }
+
+    public void setDisplayIndex(Long displayIndex) {
+        this.displayIndex = displayIndex;
+    }
+    
     @Override
     public int compareTo(WorkEntity other) {
         if (other == null) {
             throw new NullPointerException("Can't compare with null");
         }
 
-        int comparison = comparePublicationDate(other);
-
+        int comparison = compareOrcidId(other);        
         if (comparison == 0) {
-            comparison = compareTitles(other);
-            if (comparison == 0) {
-                return compareIds(other);
+            comparison = comparePublicationDate(other);
+            if(comparison == 0) {
+                comparison = compareTitles(other);
+                if (comparison == 0) {
+                    return compareIds(other);
+                }
             }
         }
 
@@ -320,6 +369,20 @@ public class WorkEntity extends BaseEntity<Long> implements Comparable<WorkEntit
         return this.publicationDate.compareTo(other.getPublicationDate());
     }
 
+    private int compareOrcidId(WorkEntity other) {
+        if(this.getProfile() == null) {
+            if(other.getProfile() == null) {
+                return 0;
+            } else {
+                return -1;
+            }
+        } else if(other.getProfile() == null) {
+            return 1;
+        } else {
+            return this.getProfile().getId().compareTo(other.getProfile().getId());
+        }        
+    }
+    
     public static class ChronologicallyOrderedWorkEntityComparator implements Comparator<WorkEntity> {
         public int compare(WorkEntity work1, WorkEntity work2) {
             if (work2 == null) {

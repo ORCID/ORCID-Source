@@ -240,6 +240,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     public ProfileWorkEntity getNewProfileWorkEntity(OrcidWork orcidWork, ProfileEntity profileEntity) {
         ProfileWorkEntity profileWorkEntity = getProfileWorkEntity(orcidWork, null);
         profileWorkEntity.setProfile(profileEntity);
+        profileWorkEntity.getWork().setProfile(profileEntity);
         return profileWorkEntity;
     }
 
@@ -282,15 +283,9 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             }
             // New way of doing work contributors
             workEntity.setContributorsJson(getWorkContributorsJson(orcidWork.getWorkContributors()));
-            // Old way of doing work contributors
-            // workEntity.setContributors(getWorkContributors(workEntity,
-            // orcidWork.getWorkContributors()));
             workEntity.setDescription(orcidWork.getShortDescription() != null ? orcidWork.getShortDescription() : null);
             // New way of doing work external ids
             workEntity.setExternalIdentifiersJson(getWorkExternalIdsJson(orcidWork.getWorkExternalIdentifiers()));
-            // Old way of doing work external ids
-            // workEntity.setExternalIdentifiers(getWorkExternalIdentifiers(workEntity,
-            // orcidWork.getWorkExternalIdentifiers()));
             workEntity.setPublicationDate(getWorkPublicationDate(orcidWork));
             WorkTitle workTitle = orcidWork.getWorkTitle();
             if (workTitle != null) {
@@ -307,6 +302,9 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             workEntity.setIso2Country(orcidWork.getCountry() == null ? null : orcidWork.getCountry().getValue());
             workEntity.setWorkType(orcidWork.getWorkType());
             workEntity.setWorkUrl(orcidWork.getUrl() != null ? orcidWork.getUrl().getValue() : null);
+            workEntity.setSource(getSource(orcidWork.getSource()));            
+            workEntity.setVisibility(orcidWork.getVisibility());
+            workEntity.setAddedToProfileDate(new Date());
             return workEntity;
         }
         return null;
