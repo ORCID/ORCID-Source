@@ -49,8 +49,6 @@
         <param-value>false</param-value>
     </context-param>
 
-	
-
 	<filter>
 		<filter-name>sanitizeAuthenticationFilter</filter-name>
 		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
@@ -60,12 +58,6 @@
 		<filter-name>sanitizeAuthenticationFilter</filter-name>
 		<url-pattern>*</url-pattern>
 	</filter-mapping>
-
-
-
-
-
-
 
 	<filter>
 		<filter-name>jsonpCallbackFilter</filter-name>

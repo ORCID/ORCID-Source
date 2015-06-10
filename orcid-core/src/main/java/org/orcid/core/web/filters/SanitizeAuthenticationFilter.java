@@ -46,6 +46,9 @@ public class SanitizeAuthenticationFilter extends OncePerRequestFilter {
     }
 }
 
+/**
+ * Thanks! http://stackoverflow.com/questions/15585755/setting-http-header-in-delegatingfilterproxy
+ * */
 class CustomHeadersHttpServletRequest extends HttpServletRequestWrapper {
 
     public CustomHeadersHttpServletRequest(HttpServletRequest request) {
