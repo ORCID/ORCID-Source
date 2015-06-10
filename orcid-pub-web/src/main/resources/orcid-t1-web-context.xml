@@ -29,6 +29,8 @@
     <context:component-scan base-package="org.orcid.api.t1, org.orcid.api.common, org.orcid.core.security"/>
     <aop:aspectj-autoproxy />
 
+	<bean id="sanitizeAuthenticationFilter" class="org.orcid.core.web.filters.SanitizeAuthenticationFilter" />
+	
 	<bean id="corsFilter" class="org.orcid.core.web.filters.CorsFilter" />
 
     <bean id="jsonpCallbackFilter" class="org.orcid.core.web.filters.JsonpCallbackFilter" />
@@ -85,6 +87,14 @@
     <bean id="publicV2ApiServiceDelegator" class="org.orcid.api.t1.server.delegator.impl.PublicV2ApiServiceDelegatorImpl" />
     <bean id="publicV2ApiServiceImplV2_0_rc1" class="org.orcid.api.t1.server.PublicV2ApiServiceImplV2_0_rc1">
         <property name="serviceDelegator" ref="publicV2ApiServiceDelegator"/>
+    </bean>
+    
+    <!-- Use the provided token random token services to actually create the values, and plugin our tokenStore etc -->
+    <bean id="tokenServices" class="org.orcid.core.oauth.service.OrcidRandomValueTokenServicesImpl">               
+        <property name="orcidtokenStore" ref="orcidTokenStore" />        
+        <property name="customTokenEnhancer" ref="orcidTokenEnhancer" />
+        <property name="supportRefreshToken" value="${org.orcid.core.oauth.supportRefreshToken:false}" />
+        <property name="allowEmptyTokens" value="true" />
     </bean>
     
 </beans>
