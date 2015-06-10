@@ -5789,6 +5789,13 @@ hr{
 	padding-right: 25px !important; /* Overwriting global reset styling */
 }
 
+
+.settings-table .popover{
+	left: -138px;
+  	top: -178px;
+}
+  
+
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
 
