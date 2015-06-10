@@ -51,6 +51,7 @@
     <client_authorised_grant_type client_details_id="4444-4444-4444-4445" grant_type="client_credentials" />
     
 	<client_authorised_grant_type client_details_id="4444-4444-4444-4498" grant_type="authorization_code" />		
+    <client_authorised_grant_type client_details_id="4444-4444-4444-4498" grant_type="client_credentials" />
     
     <client_granted_authority client_details_id="APP-6666666666666666" granted_authority="ROLE_CLIENT"/>		
     <client_granted_authority client_details_id="4444-4444-4444-4441" granted_authority="ROLE_CLIENT"/>

@@ -188,6 +188,11 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
         Response response = t2OrcidApiServiceDelegator.searchByQuery(queryMap);
         return downgradeAndValidateResponse(response);
     }
+    
+    @Override
+    public Response publicSearchByQuery(Map<String, List<String>> queryMap) {
+        return searchByQuery(queryMap);
+    }
 
     @Override
     public Response createProfile(UriInfo uriInfo, OrcidMessage orcidMessage) {

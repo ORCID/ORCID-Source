@@ -143,8 +143,8 @@ abstract public class T1OrcidApiServiceImplBase implements OrcidApiService<Respo
     @Path(STATUS_PATH)
     public Response viewStatusText() {
         return orcidApiServiceDelegator.viewStatusText();
-    }
-
+    }    
+    
     /**
      * GETs the HTML representation of the ORCID record
      * 
@@ -531,7 +531,7 @@ abstract public class T1OrcidApiServiceImplBase implements OrcidApiService<Respo
     @Path(BIO_SEARCH_PATH)
     public Response searchByQueryJSON(String query) {
         Map<String, List<String>> queryParams = uriInfo.getQueryParameters();
-        Response jsonQueryResults = orcidApiServiceDelegator.searchByQuery(queryParams);
+        Response jsonQueryResults = orcidApiServiceDelegator.publicSearchByQuery(queryParams);
         registerSearchMetrics(jsonQueryResults);
         return jsonQueryResults;
     }
@@ -549,7 +549,7 @@ abstract public class T1OrcidApiServiceImplBase implements OrcidApiService<Respo
     @Path(BIO_SEARCH_PATH)
     public Response searchByQueryXML(String query) {
         Map<String, List<String>> queryParams = uriInfo.getQueryParameters();
-        Response xmlQueryResults = orcidApiServiceDelegator.searchByQuery(queryParams);
+        Response xmlQueryResults = orcidApiServiceDelegator.publicSearchByQuery(queryParams);
         registerSearchMetrics(xmlQueryResults);
         return xmlQueryResults;
     }

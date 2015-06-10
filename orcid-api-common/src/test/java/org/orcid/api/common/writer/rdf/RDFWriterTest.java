@@ -51,7 +51,7 @@ import org.orcid.jaxb.model.message.ResearcherUrls;
 import org.orcid.jaxb.model.message.Url;
 import org.orcid.jaxb.model.message.UrlName;
 
-//@RunWith(SpringJUnit4ClassRunner.class)
+//@RunWith(OrcidJUnit4ClassRunner.class)
 //@ContextConfiguration(locations = { "classpath:orcid-t1-web-context.xml" })
 public class RDFWriterTest {
 

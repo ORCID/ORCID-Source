@@ -33,12 +33,22 @@
         <constructor-arg ref="jerseyClient"/>
     </bean>
     
+    <bean id="t1OAuthClient" class="org.orcid.integration.api.t1.T1OAuthOrcidApiClientImpl">
+        <constructor-arg value="${org.orcid.pub.baseUri}"/>
+        <constructor-arg ref="jerseyClient"/>
+    </bean>
+    
     <bean id="memberV2ApiClient" class="org.orcid.integration.api.memberV2.MemberV2ApiClientImpl">
         <constructor-arg value="${org.orcid.api.baseUri}/v2.0_rc1"/>
         <constructor-arg ref="jerseyClient"/>
     </bean>
     
-    <bean id="publicV2ApiClient" class="org.orcid.integration.api.publicV2.PublicV2ApiClientImpl">
+    <bean id="publicV1ApiClient" class="org.orcid.integration.api.pub.PublicV1ApiClientImpl">
+        <constructor-arg value="${org.orcid.pub.baseUri}/v1.2"/>
+        <constructor-arg ref="jerseyClient"/>
+    </bean>
+    
+    <bean id="publicV2ApiClient" class="org.orcid.integration.api.pub.PublicV2ApiClientImpl">
         <constructor-arg value="${org.orcid.pub.baseUri}/v2.0_rc1"/>
         <constructor-arg ref="jerseyClient"/>
     </bean>
@@ -51,6 +61,7 @@
     
     <bean id="oauthHelper" class="org.orcid.integration.api.helper.OauthHelper">
         <property name="oauthT2Client" ref="t2OAuthClient" />
+        <property name="oauthT1Client" ref="t1OAuthClient" />        
     </bean>
 
 </beans>

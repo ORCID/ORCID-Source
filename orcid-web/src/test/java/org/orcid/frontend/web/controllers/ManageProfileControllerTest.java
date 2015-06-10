@@ -61,8 +61,8 @@ import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SecurityQuestionEntity;
 import org.orcid.pojo.ManageDelegate;
+import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
@@ -72,7 +72,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 /**
  * @author Declan Newman (declan) Date: 23/02/2012
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml", "classpath:orcid-frontend-web-servlet.xml" })
 @Transactional(propagation = Propagation.REQUIRES_NEW)
 public class ManageProfileControllerTest extends BaseControllerTest {

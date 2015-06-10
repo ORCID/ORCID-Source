@@ -17,7 +17,6 @@
 package org.orcid.api.t1.server;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -30,7 +29,6 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,12 +37,12 @@ import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidSearchResult;
 import org.orcid.jaxb.model.message.OrcidSearchResults;
+import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:/orcid-t1-web-context.xml", "classpath:/orcid-t1-security-context.xml" })
 public class T1OrcidApiServiceImplLatestMetricsTest {
 
@@ -76,7 +74,6 @@ public class T1OrcidApiServiceImplLatestMetricsTest {
 
     @Test
     public void testViewBioDetailsHtml() {
-
         when(mockServiceDelegator.findBioDetailsFromPublicCache(any(String.class))).thenReturn(successResponse);
         Response response = t1OrcidApiService.viewBioDetailsHtml("orcid");
         assertEquals(200, response.getStatus());
@@ -166,7 +163,7 @@ public class T1OrcidApiServiceImplLatestMetricsTest {
         t1OrcidApiService.setUriInfo(uriInfo);
         MultivaluedMap<String, String> queryMaps = queryParams();
         when(uriInfo.getQueryParameters()).thenReturn(queryMaps);
-        when(mockServiceDelegator.searchByQuery(queryMaps)).thenReturn(successResponse);
+        when(mockServiceDelegator.publicSearchByQuery(queryMaps)).thenReturn(successResponse);
         Response response = t1OrcidApiService.searchByQueryJSON("orcid");
         assertEquals(200, response.getStatus());
     }
@@ -182,7 +179,7 @@ public class T1OrcidApiServiceImplLatestMetricsTest {
         t1OrcidApiService.setUriInfo(uriInfo);
         MultivaluedMap<String, String> queryMaps = queryParams();
         when(uriInfo.getQueryParameters()).thenReturn(queryMaps);
-        when(mockServiceDelegator.searchByQuery(queryMaps)).thenReturn(successResponse);
+        when(mockServiceDelegator.publicSearchByQuery(queryMaps)).thenReturn(successResponse);
         Response response = t1OrcidApiService.searchByQueryXML("orcid");
         assertEquals(200, response.getStatus());
     }
@@ -193,7 +190,7 @@ public class T1OrcidApiServiceImplLatestMetricsTest {
         t1OrcidApiService.setUriInfo(uriInfo);
         MultivaluedMap<String, String> queryMaps = queryParams();
         when(uriInfo.getQueryParameters()).thenReturn(queryMaps);
-        when(mockServiceDelegator.searchByQuery(queryMaps)).thenReturn(orcidWithMultipleResults());
+        when(mockServiceDelegator.publicSearchByQuery(queryMaps)).thenReturn(orcidWithMultipleResults());
         Response response = t1OrcidApiService.searchByQueryXML("orcid");
         assertEquals(200, response.getStatus());
     }
@@ -204,7 +201,7 @@ public class T1OrcidApiServiceImplLatestMetricsTest {
         t1OrcidApiService.setUriInfo(uriInfo);
         MultivaluedMap<String, String> queryMaps = queryParams();
         when(uriInfo.getQueryParameters()).thenReturn(queryMaps);
-        when(mockServiceDelegator.searchByQuery(queryMaps)).thenReturn(orcidWithMultipleResults());
+        when(mockServiceDelegator.publicSearchByQuery(queryMaps)).thenReturn(orcidWithMultipleResults());
         Response response = t1OrcidApiService.searchByQueryJSON("orcid");
         assertEquals(200, response.getStatus());
     }

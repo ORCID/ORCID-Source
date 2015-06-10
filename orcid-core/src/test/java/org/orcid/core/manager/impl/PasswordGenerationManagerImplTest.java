@@ -28,10 +28,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.manager.PasswordGenerationManager;
 import org.orcid.password.constants.OrcidPasswordConstants;
+import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
 public class PasswordGenerationManagerImplTest {
 

@@ -16,6 +16,17 @@
  */
 package org.orcid.persistence.dao;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotNull;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+
+import javax.annotation.Resource;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -23,26 +34,15 @@ import org.junit.runner.RunWith;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.test.DBUnitTest;
+import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.annotation.Resource;
-
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 /**
  * @author Declan Newman (declan) Date: 19/04/2012
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-persistence-context.xml" })
 public class OrcidOauth2AuthorisationDetailsDaoTest extends DBUnitTest {
 

@@ -37,17 +37,17 @@ import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.RedirectUri;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.test.DBUnitTest;
+import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.provider.ClientDetails;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author Declan Newman (declan) Date: 15/03/2012
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
 public class ClientDetailsManagerTest extends DBUnitTest {
 
@@ -190,7 +190,7 @@ public class ClientDetailsManagerTest extends DBUnitTest {
         Set<String> authorizedGrantTypes = clientDetails.getAuthorizedGrantTypes();
         assertNotNull(authorizedGrantTypes);
         if (clientDetails.getClientId().equals("4444-4444-4444-4498"))
-            assertEquals(1, authorizedGrantTypes.size());
+            assertEquals(2, authorizedGrantTypes.size());
         else
             assertEquals(3, authorizedGrantTypes.size());
         String clientSecret = clientDetails.getClientSecret();

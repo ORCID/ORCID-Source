@@ -36,6 +36,7 @@ import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.test.DBUnitTest;
+import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -51,13 +52,12 @@ import org.springframework.security.oauth2.provider.code.AuthorizationCodeServic
 import org.springframework.security.oauth2.provider.request.DefaultOAuth2RequestFactory;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author Declan Newman (declan) Date: 24/04/2012
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
 public class OrcidAuthorizationCodeServiceTest extends DBUnitTest {
 

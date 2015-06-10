@@ -133,4 +133,6 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     public boolean unlockProfile(String orcid);
     
     public boolean isLocked(String orcid);
+    
+    public boolean isDeactivated(String orcid);
 }
