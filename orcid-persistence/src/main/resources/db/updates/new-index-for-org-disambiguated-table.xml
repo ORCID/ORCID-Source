@@ -42,7 +42,7 @@
         <createIndex 
             indexName="org_disambiguated_source_type_idx"
             tableName="org_disambiguated"
-            unique="true">
+            unique="false">
         	<column name="source_type" />
     	</createIndex>
     </changeSet>
