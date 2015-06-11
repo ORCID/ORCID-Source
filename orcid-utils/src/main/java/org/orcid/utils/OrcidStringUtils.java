@@ -48,12 +48,8 @@ public class OrcidStringUtils {
 	private static String DECODED_APOS = "'";
 	private static String DECODED_QUOT = "\"";
 
-	private static final Pattern orcidPatternNormal = Pattern
+	private static final Pattern orcidPattern = Pattern
 			.compile("(\\d{4}-){3}\\d{3}[\\dX]");
-	private static final Pattern orcidPatternWithSpaces = Pattern
-			.compile("(\\d{4} ){3}\\d{3}[\\dX]");
-	private static final Pattern orcidPatternOnlyDigits = Pattern
-			.compile("(\\d{15}[\\dX])");
 	private static final Pattern clientIdPattern = Pattern
 			.compile("APP-[\\dA-Z]{16}");
 
@@ -62,30 +58,14 @@ public class OrcidStringUtils {
 
 	public static boolean isValidOrcid(String orcid) {
 		if (StringUtils.isNotBlank(orcid)) {
-			return orcidPatternNormal.matcher(orcid).matches();
+			return orcidPattern.matcher(orcid).matches();
 		} else {
 			return false;
 		}
 	}
 
-	public static boolean isValidOrcidWithSpaces(String orcid) {
-		boolean result = false;
-		if (orcidPatternWithSpaces.matcher(orcid).matches()) {
-			result = true;
-		}
-		return result;
-	}
-
-	public static boolean isValidOrcidWithoutSpacesWithoutHyphens(String orcid) {
-		boolean result = false;
-		if (orcidPatternOnlyDigits.matcher(orcid).matches()) {
-			result = true;
-		}
-		return result;
-	}
-
 	public static String getOrcidNumber(String orcid) {
-		Matcher matcher = orcidPatternNormal.matcher(orcid);
+		Matcher matcher = orcidPattern.matcher(orcid);
 		if (matcher.find()) {
 			return matcher.group(0);
 		}
