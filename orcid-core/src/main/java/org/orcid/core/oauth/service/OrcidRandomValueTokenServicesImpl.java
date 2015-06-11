@@ -64,10 +64,10 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
     private ClientDetailsManager clientDetailsManager;        
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OrcidRandomValueTokenServicesImpl.class);
-
+    
     public OrcidRandomValueTokenServicesImpl() {        
     }
-
+    
     @Override
     public OAuth2AccessToken createAccessToken(OAuth2Authentication authentication) throws AuthenticationException {
         OrcidOauth2AuthInfo authInfo = new OrcidOauth2AuthInfo(authentication);
@@ -176,7 +176,7 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
     }
 
     @Override
-    public OAuth2Authentication loadAuthentication(String accessTokenValue) throws AuthenticationException {
+    public OAuth2Authentication loadAuthentication(String accessTokenValue) throws AuthenticationException {        
         OAuth2AccessToken accessToken = orcidtokenStore.readAccessToken(accessTokenValue);
         if (accessToken == null) {
             throw new InvalidTokenException("Invalid access token: " + accessTokenValue);
@@ -187,9 +187,7 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
                 throw new InvalidTokenException("Access token expired: " + accessTokenValue);
             }
         }
-
-        
-        
+                
         OAuth2Authentication result = orcidtokenStore.readAuthentication(accessToken);
         return result;
     }    
