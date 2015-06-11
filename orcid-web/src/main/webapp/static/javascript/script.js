@@ -397,7 +397,7 @@ $(function() {
                                         {
                                             url : baseUrl + 'signin/auth.json',
                                             type : 'POST',
-                                            data : 'userId=' + encodeURIComponent( orcidLoginFitler( $('input[name=userId]').val())) + '&password=' + $('input[name=password]').val(),
+                                            data : 'userId=' + encodeURIComponent(orcidLoginFitler($('input[name=userId]').val())) + '&password=' + encodeURIComponent($('input[name=password]').val()),
                                             dataType : 'json',
                                             success : function(data) {
                                                 $('#ajax-loader').hide();
