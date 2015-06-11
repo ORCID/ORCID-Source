@@ -487,7 +487,7 @@ $(function() {
     });
 
     function orcidLoginFitler(userId) {
-    	var orcidPattern = /(\d{4}[- ]{0,1}){3}\d{3}[\dX]/;
+    	var orcidPattern = /(\d{4}[- ]{0,}){3}\d{3}[\dX]/;
     	var extId = orcidPattern.exec(userId);
     	if(extId != null) {
     		userId = extId[0].toString().replace(/ /g, '');
