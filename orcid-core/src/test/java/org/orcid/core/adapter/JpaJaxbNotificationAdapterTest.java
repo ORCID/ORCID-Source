@@ -36,11 +36,15 @@ import org.orcid.jaxb.model.notification.addactivities.ActivityType;
 import org.orcid.jaxb.model.notification.addactivities.AuthorizationUrl;
 import org.orcid.jaxb.model.notification.addactivities.ExternalIdentifier;
 import org.orcid.jaxb.model.notification.addactivities.NotificationAddActivities;
+import org.orcid.jaxb.model.notification.amended.NotificationAmended;
 import org.orcid.jaxb.model.notification.custom.NotificationCustom;
 import org.orcid.persistence.jpa.entities.NotificationActivityEntity;
 import org.orcid.persistence.jpa.entities.NotificationAddActivitiesEntity;
+import org.orcid.persistence.jpa.entities.NotificationAmendedEntity;
 import org.orcid.persistence.jpa.entities.NotificationCustomEntity;
 import org.orcid.persistence.jpa.entities.NotificationEntity;
+import org.orcid.persistence.jpa.entities.NotificationWorkEntity;
+import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.utils.DateUtils;
 import org.springframework.test.context.ContextConfiguration;
@@ -132,6 +136,46 @@ public class JpaJaxbNotificationAdapterTest {
         assertEquals("Latest Research Article", activityEntity.getActivityName());
         assertEquals("DOI", activityEntity.getExternalIdType());
         assertEquals("1234/abc123", activityEntity.getExternalIdValue());
+    }
+
+    @Test
+    public void testToNotificationAmendedEntity() {
+        NotificationAmended notification = new NotificationAmended();
+        notification.setNotificationType(NotificationType.AMENDED);
+        Source source = new Source();
+        notification.setSource(source);
+        SourceClientId clientId = new SourceClientId();
+        source.setSourceClientId(clientId);
+        clientId.setPath("APP-5555-5555-5555-5555");
+        Activities activities = new Activities();
+        notification.setActivities(activities);
+        Activity activity = new Activity();
+        activities.getActivities().add(activity);
+        activity.setActivityType(ActivityType.WORK);
+        activity.setActivityName("Latest Research Article");
+        ExternalIdentifier extId = new ExternalIdentifier();
+        activity.setExternalIdentifier(extId);
+        extId.setExternalIdType("doi");
+        extId.setExternalIdentifierId("1234/abc123");
+
+        NotificationEntity notificationEntity = jpaJaxbNotificationAdapter.toNotificationEntity(notification);
+
+        assertTrue(notificationEntity instanceof NotificationAmendedEntity);
+        NotificationAmendedEntity notificationAmendedEntity = (NotificationAmendedEntity) notificationEntity;
+
+        assertNotNull(notificationEntity);
+        assertEquals(NotificationType.AMENDED, notificationEntity.getNotificationType());
+        assertNotNull(notificationAmendedEntity.getSource());
+        assertEquals("APP-5555-5555-5555-5555", notificationAmendedEntity.getSource().getSourceId());
+        Set<NotificationWorkEntity> workEntities = notificationAmendedEntity.getNotificationWorks();
+        assertNotNull(workEntities);
+        assertEquals(1, workEntities.size());
+        NotificationWorkEntity notificationWorkEntity = workEntities.iterator().next();
+        WorkEntity workEntity = notificationWorkEntity.getWork();
+        assertNotNull(workEntity);
+        assertEquals("Latest Research Article", workEntity.getTitle());
+        String extIdJson = workEntity.getExternalIdentifiersJson();
+        assertEquals("{\"workExternalIdentifierType\":\"DOI\",\"workExternalIdentifierId\":{\"content\":\"1234/abc123\"}}", extIdJson);
     }
 
 }

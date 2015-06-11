@@ -55,6 +55,7 @@ import org.orcid.persistence.jpa.entities.NotificationActivityEntity;
 import org.orcid.persistence.jpa.entities.NotificationAddActivitiesEntity;
 import org.orcid.persistence.jpa.entities.NotificationAmendedEntity;
 import org.orcid.persistence.jpa.entities.NotificationCustomEntity;
+import org.orcid.persistence.jpa.entities.NotificationWorkEntity;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.PeerReviewEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
@@ -80,11 +81,15 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     public MapperFacade getObject() throws Exception {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
         ConverterFactory converterFactory = mapperFactory.getConverterFactory();
+        converterFactory.registerConverter("singleWorkExternalIdentifierFromJsonConverter", new SingleWorkExternalIdentifierFromJsonConverter());
         converterFactory.registerConverter("externalIdentifierIdConverter", new ExternalIdentifierTypeConverter());
         mapCommonFields(mapperFactory.classMap(NotificationCustomEntity.class, NotificationCustom.class)).register();
         mapCommonFields(mapperFactory.classMap(NotificationAddActivitiesEntity.class, NotificationAddActivities.class)).field("authorizationUrl", "authorizationUrl.uri")
                 .field("notificationActivities", "activities.activities").register();
-        mapCommonFields(mapperFactory.classMap(NotificationAmendedEntity.class, NotificationAmended.class)).register();
+        mapCommonFields(mapperFactory.classMap(NotificationAmendedEntity.class, NotificationAmended.class)).fieldAToB("notificationWorks", "activities.activities")
+                .fieldBToA("activities.activitiesByType['WORK']", "notificationWorks").register();
+        mapperFactory.classMap(NotificationWorkEntity.class, Activity.class).field("work.title", "activityName")
+                .fieldMap("work.externalIdentifiersJson", "externalIdentifier").converter("singleWorkExternalIdentifierFromJsonConverter").add().register();
         mapperFactory.classMap(NotificationActivityEntity.class, Activity.class).fieldMap("externalIdType", "externalIdentifier.externalIdentifierType")
                 .converter("externalIdentifierIdConverter").add().field("externalIdValue", "externalIdentifier.externalIdentifierId").byDefault().register();
         addV2SourceMapping(mapperFactory);
@@ -250,13 +255,13 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         addV2SourceMapping(mapperFactory);
         return mapperFactory.getMapperFacade();
     }
-    
-    public MapperFacade getPeerReviewMapperFacade() {                
+
+    public MapperFacade getPeerReviewMapperFacade() {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
-        
+
         ConverterFactory converterFactory = mapperFactory.getConverterFactory();
         converterFactory.registerConverter("workExternalIdentifiersConverterId", new JsonOrikaConverter<WorkExternalIdentifiers>());
-        
+
         ClassMapBuilder<PeerReview, PeerReviewEntity> classMap = mapperFactory.classMap(PeerReview.class, PeerReviewEntity.class);
         classMap.byDefault();
         classMap.field("putCode", "id");
@@ -278,20 +283,20 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         classMap.fieldMap("externalIdentifiers", "externalIdentifiersJson").converter("workExternalIdentifiersConverterId").add();
         classMap.fieldMap("subject.externalIdentifiers", "subject.externalIdentifiersJson").converter("workExternalIdentifiersConverterId").add();
         classMap.register();
-        
-        ClassMapBuilder<PeerReviewSummary, PeerReviewEntity> peerReviewSummaryClassMap = mapperFactory.classMap(PeerReviewSummary.class,
-                PeerReviewEntity.class);
+
+        ClassMapBuilder<PeerReviewSummary, PeerReviewEntity> peerReviewSummaryClassMap = mapperFactory.classMap(PeerReviewSummary.class, PeerReviewEntity.class);
         peerReviewSummaryClassMap.byDefault();
         peerReviewSummaryClassMap.field("putCode", "id");
         peerReviewSummaryClassMap.fieldMap("externalIdentifiers", "externalIdentifiersJson").converter("workExternalIdentifiersConverterId").add();
         peerReviewSummaryClassMap.register();
-        
-        mapperFactory.classMap(FuzzyDate.class, CompletionDateEntity.class).field("year.value", "year").field("month.value", "month").field("day.value", "day").register();
-        
+
+        mapperFactory.classMap(FuzzyDate.class, CompletionDateEntity.class).field("year.value", "year").field("month.value", "month").field("day.value", "day")
+                .register();
+
         addV2SourceMapping(mapperFactory);
         return mapperFactory.getMapperFacade();
     }
-    
+
     private ClassMapBuilder<?, ?> mapCommonFields(ClassMapBuilder<?, ?> builder) {
         return builder.field("dateCreated", "createdDate").field("id", "putCode").byDefault();
     }

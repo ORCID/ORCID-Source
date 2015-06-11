@@ -33,6 +33,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 /**
@@ -98,7 +99,8 @@ public class Activities implements Serializable {
         return this.activities;
     }
 
-    public Map<String, List<Activity>> retrieveActivitiesByType() {
+    @XmlTransient
+    public Map<String, List<Activity>> getActivitiesByType() {
         Map<String, List<Activity>> activitiesMap = new HashMap<>();
         for (Activity activity : activities) {
             String key = activity.getActivityType().name();

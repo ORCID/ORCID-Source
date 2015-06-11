@@ -37,7 +37,7 @@ ORCID would like to let you know
 <#list digestEmail.notificationsBySourceId[sourceId].notificationsByType[notificationType] as notification>
 <#if notificationType == 'ADD_ACTIVITIES'>
 ${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sourceId} would like to add the following items to your record.
-<#assign activitiesByType=notification.activities.retrieveActivitiesByType()>
+<#assign activitiesByType=notification.activities.activitiesByType>
 <#list activitiesByType?keys?sort as activityType>
 ${activityType?capitalize}s (${activitiesByType[activityType]?size})
 Visit ${notification.authorizationUrl.uri} to add now.
