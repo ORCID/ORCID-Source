@@ -56,6 +56,10 @@ public class PublicV1Test {
     public String client1ClientSecret;
     @Value("${org.orcid.web.testUser1.orcidId}")
     public String user1OrcidId;      
+    @Value("${org.orcid.web.publicClient1.clientId}")
+    public String publicClientId;
+    @Value("${org.orcid.web.publicClient1.clientSecret}")
+    public String publicClientSecret;
 
     @Resource
     private PublicV1ApiClientImpl publicV1ApiClient;
@@ -64,6 +68,15 @@ public class PublicV1Test {
     private OauthHelper oauthHelper;
 
     static String accessToken = null;
+    
+    @Test
+    public void testGetInfoWithEmptyToken() throws InterruptedException, JSONException {
+        ClientResponse response = publicV1ApiClient.viewRootProfile(user1OrcidId, "");
+        assertNotNull(response);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        OrcidMessage message = response.getEntity(OrcidMessage.class);
+        assertNotNull(message);
+    }
     
     @Test
     public void testViewPublicProfileAnonymously() throws JSONException, InterruptedException {
