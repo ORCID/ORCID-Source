@@ -941,25 +941,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
 
     private WorkExternalIdentifiers getWorkExternalIdentifiers(WorkEntity work) {
         String externalIdentifiersJson = work.getExternalIdentifiersJson();
-        if (externalIdentifiersJson != null) {
-            // New way of doing work external identifiers
-            return JsonUtils.readObjectFromJsonString(externalIdentifiersJson, WorkExternalIdentifiers.class);
-        } else {
-            // Old way of doing work external identifiers
-            if (work == null || work.getExternalIdentifiers() == null || work.getExternalIdentifiers().isEmpty()) {
-                return null;
-            }
-            Set<WorkExternalIdentifierEntity> workExternalIdentifierEntities = work.getExternalIdentifiers();
-            WorkExternalIdentifiers workExternalIdentifiers = new WorkExternalIdentifiers();
-            for (WorkExternalIdentifierEntity workExternalIdentifierEntity : workExternalIdentifierEntities) {
-                WorkExternalIdentifier workExternalIdentifier = getWorkExternalIdentifier(workExternalIdentifierEntity);
-                if (workExternalIdentifier != null) {
-                    workExternalIdentifiers.getWorkExternalIdentifier().add(workExternalIdentifier);
-                }
-            }
-            return workExternalIdentifiers;
-        }
-
+        return JsonUtils.readObjectFromJsonString(externalIdentifiersJson, WorkExternalIdentifiers.class);        
     }
 
     private WorkExternalIdentifier getWorkExternalIdentifier(WorkExternalIdentifierEntity workExternalIdentifierEntity) {

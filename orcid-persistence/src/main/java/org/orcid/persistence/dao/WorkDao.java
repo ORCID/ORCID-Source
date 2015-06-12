@@ -16,8 +16,10 @@
  */
 package org.orcid.persistence.dao;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.custom.MinimizedWorkEntity;
 
@@ -64,4 +66,14 @@ public interface WorkDao extends GenericDao<WorkEntity, Long> {
      * */
     List<MinimizedWorkEntity> findPublicWorks(String orcid);
 
+    /**
+     * Updates the visibility of an existing work
+     * 
+     * @param workId
+     *            The id of the work that will be updated
+     * @param visibility
+     *            The new visibility value for the profile work relationship
+     * @return true if the relationship was updated
+     * */
+    boolean updateVisibilities(String orcid, ArrayList<Long> workIds, Visibility visibility);
 }

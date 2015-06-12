@@ -55,6 +55,7 @@ import org.orcid.jaxb.model.message.WorkType;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
 import org.orcid.persistence.jpa.entities.PublicationDateEntity;
+import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.custom.MinimizedWorkEntity;
 import org.orcid.pojo.KeyValue;
@@ -650,6 +651,12 @@ public class WorksController extends BaseWorkspaceController {
         if (orcidWork.getCountry() != null)
             workEntity.setIso2Country(orcidWork.getCountry().getValue());
 
+        workEntity.setVisibility(orcidWork.getVisibility());
+        workEntity.setAddedToProfileDate(new java.util.Date());
+        ProfileEntity userProfile = new ProfileEntity(getEffectiveUserOrcid());
+        SourceEntity source = new SourceEntity(userProfile);
+        workEntity.setProfile(userProfile);
+        workEntity.setSource(source);        
         return workEntity;
     }
 
@@ -922,6 +929,7 @@ public class WorksController extends BaseWorkspaceController {
         for (String workId: workIdsStr.split(","))
             workIds.add(new Long(workId));
         profileWorkManager.updateVisibilities(currentProfile.getOrcidIdentifier().getPath(), workIds, Visibility.fromValue(visibilityStr));
+        workManager.updateVisibilities(currentProfile.getOrcidIdentifier().getPath(), workIds, Visibility.fromValue(visibilityStr));
         return workIds;
     }
 

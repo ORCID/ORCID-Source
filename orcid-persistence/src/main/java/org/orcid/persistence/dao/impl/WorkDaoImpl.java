@@ -16,11 +16,13 @@
  */
 package org.orcid.persistence.dao.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Query;
 
+import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.custom.MinimizedWorkEntity;
@@ -119,4 +121,21 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
         return query.getResultList();
     }
 
+    /**
+     * Updates the visibility of an existing work
+     * 
+     * @param workId
+     *            The id of the work that will be updated
+     * @param visibility
+     *            The new visibility value for the profile work relationship
+     * @return true if the relationship was updated
+     * */
+    @Override
+    @Transactional
+    public boolean updateVisibilities(String orcid, ArrayList<Long> workIds, Visibility visibility) {
+        Query query = entityManager.createNativeQuery("UPDATE work SET visibility=:visibility, last_modified=now() WHERE work_id in (:workIds)");
+        query.setParameter("visibility", visibility.name());
+        query.setParameter("workIds", workIds);
+        return query.executeUpdate() > 0;
+    }
 }

@@ -26,13 +26,9 @@
             </not>
         </preConditions>
         <addColumn tableName="work">
-            <column name="orcid" type="VARCHAR(19)">
-            	<constraints nullable="false" />
-            </column>            
+            <column name="orcid" type="VARCHAR(19)" />
             <column name="added_to_profile_date" type="TIMESTAMP WITHOUT TIME ZONE" />
-            <column name="visibility" type="VARCHAR(19)">
-            	<constraints nullable="false" />
-            </column>
+            <column name="visibility" type="VARCHAR(19)" />
             <column name="display_index" type="bigint" defaultValue="0"/>
             <column name="source_id" type="VARCHAR(19)" />
             <column name="client_source_id" type="VARCHAR(20)"/>            
