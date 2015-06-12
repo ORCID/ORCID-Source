@@ -98,4 +98,18 @@ public class WorkManagerImpl implements WorkManager {
     public boolean updateVisibilities(String orcid, ArrayList<Long> workIds, Visibility visibility) {
         return workDao.updateVisibilities(orcid, workIds, visibility);
     }
+    
+    /**
+     * Removes a work.
+     * 
+     * @param workId
+     *            The id of the work that will be removed from the client
+     *            profile
+     * @param clientOrcid
+     *            The client orcid
+     * @return true if the work was deleted
+     * */
+    public boolean removeWorks(String clientOrcid, ArrayList<Long> workIds) {
+        return workDao.removeWorks(clientOrcid, workIds);
+    }
 }

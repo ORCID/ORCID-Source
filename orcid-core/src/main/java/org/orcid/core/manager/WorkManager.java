@@ -70,5 +70,16 @@ public interface WorkManager {
      * @return true if the relationship was updated
      * */
     boolean updateVisibilities(String orcid, ArrayList<Long> workIds, Visibility visibility);
-    
+ 
+    /**
+     * Removes a work.
+     * 
+     * @param workId
+     *            The id of the work that will be removed from the client
+     *            profile
+     * @param clientOrcid
+     *            The client orcid
+     * @return true if the work was deleted
+     * */
+    boolean removeWorks(String clientOrcid, ArrayList<Long> workIds);
 }

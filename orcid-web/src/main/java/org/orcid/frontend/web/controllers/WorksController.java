@@ -140,6 +140,7 @@ public class WorksController extends BaseWorkspaceController {
                 workIdLs.add(new Long(workId));
                 
             profileWorkManager.removeWorks(currentProfile.getOrcidIdentifier().getPath(), workIdLs);
+            workManager.removeWorks(currentProfile.getOrcidIdentifier().getPath(), workIdLs);
             works.setOrcidWork(workList);
             currentProfile.getOrcidActivities().setOrcidWorks(works);
         }
