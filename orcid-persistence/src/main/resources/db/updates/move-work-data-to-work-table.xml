@@ -38,5 +38,16 @@
         <addForeignKeyConstraint constraintName="work_source_id_fk" baseTableName="work" baseColumnNames="source_id" referencedTableName="profile" referencedColumnNames="orcid"/>
         <addForeignKeyConstraint constraintName="work_client_source_id_fk" baseTableName="work" baseColumnNames="client_source_id" referencedTableName="client_details" referencedColumnNames="client_details_id"/>
      </changeSet>
+     
+     <changeSet id="ADD-UTILITY-FIELD-TO-PROFILE-WORK" author="Angel Montenegro">
+     	<preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="profile_work" columnName="migrated"/>
+            </not>
+		</preConditions>
+		<addColumn tableName="profile_work">
+			<column name="migrated" type="boolean" defaultValueBoolean="false" />
+		</addColumn>        
+     </changeSet>
 
 </databaseChangeLog>

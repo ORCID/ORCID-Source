@@ -242,6 +242,8 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         ProfileWorkEntity profileWorkEntity = getProfileWorkEntity(orcidWork, null);
         profileWorkEntity.setProfile(profileEntity);
         profileWorkEntity.getWork().setProfile(profileEntity);
+        //All new works are already in both tables
+        profileWorkEntity.setMigrated(true);
         return profileWorkEntity;
     }
 

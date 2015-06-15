@@ -183,6 +183,7 @@ public class ProfileWorkManagerImpl implements ProfileWorkManager {
         profileWorkEntity.setProfile(profile);
         profileWorkEntity.getWork().setProfile(profile);
         profileWorkEntity.getWork().setAddedToProfileDate(new Date());
+        profileWorkEntity.setMigrated(true);
         setIncomingWorkPrivacy(profileWorkEntity, profile);
         profileWorkDao.persist(profileWorkEntity);
         return jpaJaxbWorkAdapter.toWork(profileWorkEntity);
@@ -200,6 +201,7 @@ public class ProfileWorkManagerImpl implements ProfileWorkManager {
         profileWorkEntity.getWork().setVisibility(originalVisibility);
         profileWorkEntity.setSource(existingSource);
         profileWorkEntity.getWork().setSource(existingSource);
+        profileWorkEntity.setMigrated(true);
         profileWorkDao.merge(profileWorkEntity);
         return jpaJaxbWorkAdapter.toWork(profileWorkEntity);
     }
@@ -216,6 +218,5 @@ public class ProfileWorkManagerImpl implements ProfileWorkManager {
             profileWorkEntity.setVisibility(Visibility.PRIVATE);
             profileWorkEntity.getWork().setVisibility(Visibility.PRIVATE);
         }
-    }
-
+    }    
 }

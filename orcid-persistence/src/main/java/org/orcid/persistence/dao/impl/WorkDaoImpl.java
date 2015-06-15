@@ -24,6 +24,7 @@ import javax.persistence.Query;
 
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.dao.WorkDao;
+import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.custom.MinimizedWorkEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -156,4 +157,50 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
         query.setParameter("workIds", workIds);
         return query.executeUpdate() > 0;
     }
+    
+    /**
+     * Copy the data from the profile_work table to the work table
+     * @param profileWork
+     *          The profileWork object that contains the profile_work info
+     * @param workId
+     *          The id of the work we want to update
+     * @return true if the work was updated                  
+     * */
+    @Override
+    @Transactional
+    public boolean copyDataFromProfileWork(Long workId, ProfileWorkEntity profileWork) {        
+        Query query = entityManager.createNativeQuery("UPDATE work SET orcid=:orcid, visibility=:visibility, added_to_profile_date=:addedToProfileDate, display_index=:displayIndex, source_id=:sourceId, client_source_id=:clientSourceId WHERE work_id=:workId");
+        query.setParameter("orcid", profileWork.getProfile().getId());
+        query.setParameter("visibility", profileWork.getVisibility());
+        query.setParameter("addedToProfileDate", profileWork.getAddedToProfileDate());
+        query.setParameter("displayIndex", profileWork.getDisplayIndex());
+        if(profileWork.getSource().getSourceProfile() != null) {
+            query.setParameter("sourceId", profileWork.getSource().getSourceProfile().getId());
+        } else {
+            query.setParameter("sourceId", null);
+        }
+        if(profileWork.getSource().getSourceClient() != null) {
+            query.setParameter("clientSourceId", profileWork.getSource().getSourceClient().getId());
+        } else {
+            query.setParameter("clientSourceId", null);
+        }        
+        query.setParameter("workId", workId);
+        return query.executeUpdate() > 0;
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

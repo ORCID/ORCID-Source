@@ -56,6 +56,7 @@ public class ProfileWorkEntity extends BaseEntity<ProfileWorkEntityPk> implement
     private Date addedToProfileDate;
     private Visibility visibility;
     private Long displayIndex; 
+    private Boolean migrated;
 
     @Override
     @Transient
@@ -124,6 +125,15 @@ public class ProfileWorkEntity extends BaseEntity<ProfileWorkEntityPk> implement
 
     public void setVisibility(Visibility visibility) {
         this.visibility = visibility;
+    }
+    
+    @Column(name = "migrated")
+    public Boolean getMigrated() {
+        return migrated;
+    }
+
+    public void setMigrated(Boolean migrated) {
+        this.migrated = migrated;
     }
 
     @Override
