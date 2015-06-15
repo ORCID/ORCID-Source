@@ -69,7 +69,6 @@ import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 import org.orcid.persistence.jpa.entities.SourceAware;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
-import org.orcid.persistence.jpa.entities.WorkExternalIdentifierEntity;
 import org.orcid.pojo.FundingExternalIdentifiers;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.DateUtils;
@@ -940,21 +939,13 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     }    
 
     private WorkExternalIdentifiers getWorkExternalIdentifiers(WorkEntity work) {
+        WorkExternalIdentifiers extIds = new WorkExternalIdentifiers();
         String externalIdentifiersJson = work.getExternalIdentifiersJson();
-        return JsonUtils.readObjectFromJsonString(externalIdentifiersJson, WorkExternalIdentifiers.class);        
-    }
-
-    private WorkExternalIdentifier getWorkExternalIdentifier(WorkExternalIdentifierEntity workExternalIdentifierEntity) {
-        if (workExternalIdentifierEntity == null) {
-            return null;
+        if(!PojoUtil.isEmpty(externalIdentifiersJson)) {
+            extIds = JsonUtils.readObjectFromJsonString(externalIdentifiersJson, WorkExternalIdentifiers.class);
         }
-        WorkExternalIdentifier workExternalIdentifier = new WorkExternalIdentifier();
-        workExternalIdentifier.setWorkExternalIdentifierType(workExternalIdentifierEntity.getIdentifierType() != null ? workExternalIdentifierEntity.getIdentifierType()
-                : null);
-        workExternalIdentifier.setWorkExternalIdentifierId(StringUtils.isNotBlank(workExternalIdentifierEntity.getIdentifier()) ? new WorkExternalIdentifierId(
-                workExternalIdentifierEntity.getIdentifier()) : null);
-        return workExternalIdentifier;
-    }
+        return extIds;        
+    }    
 
     private WorkContributors getWorkContributors(ProfileWorkEntity profileWorkEntity) {
         WorkEntity work = profileWorkEntity.getWork();
