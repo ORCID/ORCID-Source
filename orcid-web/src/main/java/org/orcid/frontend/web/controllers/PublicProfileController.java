@@ -205,12 +205,12 @@ public class PublicProfileController extends BaseWorkspaceController {
                     if(personalDetails.getGivenNames() != null && !PojoUtil.isEmpty(personalDetails.getGivenNames().getContent()))
                         creditName += personalDetails.getGivenNames().getContent();
                     if(personalDetails.getFamilyName() != null && !PojoUtil.isEmpty(personalDetails.getFamilyName().getContent()))
-                        creditName += personalDetails.getFamilyName().getContent();
+                        creditName += " " + personalDetails.getFamilyName().getContent();
                 }                   
             }
             if(!PojoUtil.isEmpty(creditName)) {
                 //<Published Name> (<ORCID iD>) - ORCID | Connecting Research and Researchers
-                mav.addObject("title", getMessage("layout.public-layout.title", creditName, orcid));
+                mav.addObject("title", getMessage("layout.public-layout.title", creditName.trim(), orcid));
             }
             
         } catch (JsonGenerationException e) {
