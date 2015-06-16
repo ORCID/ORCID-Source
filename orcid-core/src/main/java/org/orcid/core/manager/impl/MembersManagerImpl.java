@@ -35,6 +35,7 @@ import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
 import org.orcid.jaxb.model.message.ErrorDesc;
+import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientSecretEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -44,6 +45,7 @@ import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.utils.OrcidStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
 
 public class MembersManagerImpl implements MembersManager {
 
@@ -73,6 +75,9 @@ public class MembersManagerImpl implements MembersManager {
     @Resource
     private EncryptionManager encryptionManager;
     
+    @Resource
+    private ProfileDao profileDao;
+    
     @Override
     public Member createMember(Member newMember) {
         OrcidClientGroup orcidClientGroup = newMember.toOrcidClientGroup();
@@ -90,6 +95,7 @@ public class MembersManagerImpl implements MembersManager {
     }
 
     @Override
+    @Transactional
     public Member getMember(String memberId) {
         Member member = new Member();
         String orcid = memberId;
@@ -107,7 +113,7 @@ public class MembersManagerImpl implements MembersManager {
             if (profileEntityManager.orcidExists(orcid)) {
                 MemberType groupType = profileEntityManager.getGroupType(orcid);
                 if (groupType != null) {
-                    ProfileEntity memberProfile = profileEntityCacheManager.retrieve(orcid);
+                    ProfileEntity memberProfile = profileDao.find(orcid);                    
                     member = Member.fromProfileEntity(memberProfile);
                     List<ClientDetailsEntity> clients = clientDetailsManager.findByGroupId(orcid);
                     member.setClients(Client.valueOf(clients));

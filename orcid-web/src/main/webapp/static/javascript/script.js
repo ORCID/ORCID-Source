@@ -397,8 +397,7 @@ $(function() {
                                         {
                                             url : baseUrl + 'signin/auth.json',
                                             type : 'POST',
-                                            data : $('form#loginForm')
-                                                    .serialize(),
+                                            data : 'userId=' + encodeURIComponent(orcidLoginFitler($('input[name=userId]').val())) + '&password=' + encodeURIComponent($('input[name=password]').val()),
                                             dataType : 'json',
                                             success : function(data) {
                                                 $('#ajax-loader').hide();
@@ -487,6 +486,19 @@ $(function() {
         });
     });
 
+    function orcidLoginFitler(userId) {
+    	var orcidPattern = /(\d{4}[- ]{0,}){3}\d{3}[\dX]/;
+    	var extId = orcidPattern.exec(userId);
+    	if(extId != null) {
+    		userId = extId[0].toString().replace(/ /g, '');
+    		userId = userId.toString().replace(/-/g, '');
+    		var temp = userId.toString().replace(/(.{4})/g, "$1-");
+    		var length = temp.length;
+    		userId = temp.substring(0, length - 1);
+    	}
+    	return userId;
+    }
+    
     var hideThing = function(e, selector, className) {
         var p = $(selector + "." + className);
         if (p.length == 0) {

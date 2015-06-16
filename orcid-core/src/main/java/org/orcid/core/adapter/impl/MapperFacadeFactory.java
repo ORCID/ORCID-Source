@@ -336,7 +336,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
                         if (OrcidStringUtils.isClientId(sourceId)) {
                             SourceClientId sourceClientId = new SourceClientId(sourceId);
                             sourceClientId.setHost(orcidUrlManager.getBaseHost());
-                            sourceClientId.setUri(orcidUrlManager.getBaseUrl() + "/client/" + sourceId);
+                            sourceClientId.setUri(orcidUrlManager.getBaseUriHttp() + "/client/" + sourceId);
                             source.setSourceClientId(sourceClientId);
                         } else {
                             SourceOrcid sourceOrcid = new SourceOrcid(sourceId);
