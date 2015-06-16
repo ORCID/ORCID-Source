@@ -59,6 +59,7 @@ public class MigrateDataFromProfileWorkToWorkTable {
         }
         m.init();        
         long counter = 0;
+        long start = System.currentTimeMillis();
         do {
             List<ProfileWorkEntity> toProcess = m.getBatchToProcess();
             if(toProcess == null || toProcess.isEmpty()) {
@@ -70,7 +71,8 @@ public class MigrateDataFromProfileWorkToWorkTable {
             } else {
                 break;
             }            
-            LOG.info("{} batches have run so far", (++counter));
+            long time = System.currentTimeMillis();
+            LOG.info("{} batches have run so far in {} secs", (++counter), ((time - start)/1000));
             if(m.batchesToRun > 0) {
                 if (counter >= m.batchesToRun){
                     break;
