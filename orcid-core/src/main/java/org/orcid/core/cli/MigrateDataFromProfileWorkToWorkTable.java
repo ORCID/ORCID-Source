@@ -61,6 +61,10 @@ public class MigrateDataFromProfileWorkToWorkTable {
         long counter = 0;
         do {
             List<ProfileWorkEntity> toProcess = m.getBatchToProcess();
+            if(toProcess == null || toProcess.isEmpty()) {
+                LOG.info("All data has been migrated");
+                System.exit(0);
+            }                
             if(toProcess != null && !toProcess.isEmpty()) {
                 m.processBatch(toProcess);
             } else {
