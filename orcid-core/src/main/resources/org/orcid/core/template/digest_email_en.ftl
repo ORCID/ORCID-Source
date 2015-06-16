@@ -48,6 +48,12 @@ Visit ${notification.authorizationUrl.uri} to add now.
 </#list>
 <#elseif notificationType == 'AMENDED'>
 ${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sourceId} amended the ${notification.amendedSection?lower_case}s section of your record.
+<#if notification.activities??>
+
+<#list notification.activities.activities as activity>
+     ${activity.activityName} <#if activity.externalIdentifier??>(${activity.externalIdentifier.externalIdentifierType?lower_case}: ${activity.externalIdentifier.externalIdentifierId})</#if>
+</#list>
+</#if>
 <#else>
 ${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sourceId}
 </#if>
