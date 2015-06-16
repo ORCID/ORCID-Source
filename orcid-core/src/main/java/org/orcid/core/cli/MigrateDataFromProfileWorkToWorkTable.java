@@ -25,7 +25,6 @@ import org.kohsuke.args4j.Option;
 import org.orcid.persistence.dao.ProfileWorkDao;
 import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
-import org.orcid.utils.NullUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -45,30 +44,44 @@ public class MigrateDataFromProfileWorkToWorkTable {
     @Option(name = "-s", usage = "Chunk size")
     private Long chunkSize;
     
+    @Option(name = "-n", usage = "Number of batches to run")
+    private Long batchesToRun;
+    
     public static void main(String[] args) throws IOException {
         MigrateDataFromProfileWorkToWorkTable m = new MigrateDataFromProfileWorkToWorkTable();
         CmdLineParser parser = new CmdLineParser(m);
         try {
-            parser.parseArgument(args);         
+            parser.parseArgument(args);
+            m.validateArgs(parser);
         } catch (CmdLineException e) {
             System.err.println(e.getMessage());
             parser.printUsage(System.err);
         }
-        m.init();
+        m.init();        
+        long counter = 0;
         do {
             List<ProfileWorkEntity> toProcess = m.getBatchToProcess();
             if(toProcess != null && !toProcess.isEmpty()) {
                 m.processBatch(toProcess);
             } else {
                 break;
+            }            
+            LOG.info("{} batches have run so far", (++counter));
+            if(m.batchesToRun > 0) {
+                if (counter >= m.batchesToRun){
+                    break;
+                }
             }
         } while(true);
+        
+        System.exit(0);
     }
     
     private void init() {
         ApplicationContext context = new ClassPathXmlApplicationContext("orcid-core-context.xml");
         profileWorkDao = (ProfileWorkDao) context.getBean("profileWorkDao");
         workDao = (WorkDao) context.getBean("workDao");
+        transactionTemplate = (TransactionTemplate) context.getBean("transactionTemplate");
     }
 
     private List<ProfileWorkEntity> getBatchToProcess() {
@@ -81,29 +94,34 @@ public class MigrateDataFromProfileWorkToWorkTable {
         for (final ProfileWorkEntity profileWork : profileWorks) {
             final String orcid = profileWork.getProfile().getId();
             final Long workId = profileWork.getWork().getId();
+            LOG.debug("Migrating work id {} for profile {}", workId, orcid);
             transactionTemplate.execute(new TransactionCallbackWithoutResult() {
                 @Override
                 protected void doInTransactionWithoutResult(TransactionStatus status) {
                     // Migrate the data to the work table
                     boolean copied = workDao.copyDataFromProfileWork(profileWork.getWork().getId(), profileWork);
                     if (!copied) {
-                        LOG.error("Unable to migrate profile work with orcid: " + orcid + " and work id " + workId);
+                        LOG.error("Unable to migrate profile work with orcid: {}, and work id: {}", orcid, workId);
                         System.exit(1);
                     }
                     // Set the profile_work as migrated
                     boolean updated = profileWorkDao.setProfileWorkAsMigrated(orcid, workId);
                     if (!updated) {
-                        LOG.error("Unable to set profile work as updated orcid:" + orcid + " work id: " + workId);
+                        LOG.error("Unable to set profile work as updated orcid: {} work id: {}", orcid, workId);
                         System.exit(1);
                     }
                 }
             });
-        }
+        }        
     }
     
     private void validateArgs(CmdLineParser parser) throws CmdLineException {
-        if (NullUtils.allNull(chunkSize)) {
-            chunkSize = DEFAULT_CHUNK_SIZE;
+        if (chunkSize == null) {
+            chunkSize = DEFAULT_CHUNK_SIZE;            
+        }
+        
+        if(batchesToRun == null) {
+            batchesToRun = Long.valueOf(-1);
         }
     }
 }

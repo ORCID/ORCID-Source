@@ -222,7 +222,7 @@ public class ProfileWorkDaoImpl extends GenericDaoImpl<ProfileWorkEntity, Profil
     @Override
     @Transactional
     public boolean setProfileWorkAsMigrated(String orcid, Long workId) {
-        Query query = entityManager.createNativeQuery("UPDATE profile_work SET migrated=true WHERE profile.id=:orcid and work.id=:workId");
+        Query query = entityManager.createNativeQuery("UPDATE profile_work SET migrated=true WHERE orcid=:orcid and work_id=:workId");
         query.setParameter("orcid", orcid);
         query.setParameter("workId", workId);
         return query.executeUpdate() > 0;
