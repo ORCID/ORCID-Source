@@ -177,7 +177,7 @@
 									    		</div>
 									    		<div class="row">
 									    			<div class="col-md-12 col-sm-12 col-xs-12">
-									    				<textarea class="input-xlarge-full authorizeURL" ng-model="authorizeURL" readonly="readonly" ng-focus="inputTextAreaSelectAll($event)"></textarea>
+									    				<textarea class="input-xlarge-full authorizeURL" ng-model="authorizeURL" readonly="readonly" ng-click="inputTextAreaSelectAll($event)"></textarea>
 									    			</div>
 									    		</div>								
 											</div>
@@ -190,7 +190,7 @@
 											<div class="col-md-9 col-sm-9 col-xs-12">
 													{{tokenURL}}<br />
 											    	<@orcid.msg 'manage.developer_tools.view.example.curl' /><a href="<@orcid.msg 'manage.developer_tools.view.example.curl.url' />" target="curlWiki"><@orcid.msg 'manage.developer_tools.view.example.curl.text' /></a> 
-											    	<textarea class="input-xlarge-full authorizeURL" ng-model="sampleAuthCurl" readonly="readonly" ng-focus="inputTextAreaSelectAll($event)"></textarea>							
+											    	<textarea class="input-xlarge-full authorizeURL" ng-model="sampleAuthCurl" readonly="readonly" ng-click="inputTextAreaSelectAll($event)"></textarea>							
 											</div>
 										</div>
 										
