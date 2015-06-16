@@ -21,7 +21,6 @@ import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.text.ParsePosition;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -77,8 +76,6 @@ import org.orcid.jaxb.model.message.Contributor;
 import org.orcid.jaxb.model.message.ContributorOrcid;
 import org.orcid.jaxb.model.message.CreditName;
 import org.orcid.jaxb.model.message.DeactivationDate;
-import org.orcid.jaxb.model.message.Delegation;
-import org.orcid.jaxb.model.message.DelegationDetails;
 import org.orcid.jaxb.model.message.DeveloperToolsEnabled;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.EncryptedPassword;
@@ -89,7 +86,6 @@ import org.orcid.jaxb.model.message.FamilyName;
 import org.orcid.jaxb.model.message.Funding;
 import org.orcid.jaxb.model.message.FundingList;
 import org.orcid.jaxb.model.message.GivenNames;
-import org.orcid.jaxb.model.message.GivenPermissionTo;
 import org.orcid.jaxb.model.message.LastModifiedDate;
 import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.OrcidBio;
@@ -117,6 +113,8 @@ import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.VisibilityType;
 import org.orcid.jaxb.model.message.WorkContributors;
 import org.orcid.jaxb.model.message.WorkExternalIdentifier;
+import org.orcid.jaxb.model.notification.addactivities.Activity;
+import org.orcid.jaxb.model.notification.addactivities.ActivityType;
 import org.orcid.jaxb.model.notification.amended.AmendedSection;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.GenericDao;
@@ -1079,9 +1077,18 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
 
         persistAddedWorks(orcid, updatedOrcidWorksList);
         profileDao.flush();
+
         boolean notificationsEnabled = existingProfile.getOrcidInternal().getPreferences().isNotificationsEnabled();
         if (notificationsEnabled) {
-            notificationManager.sendAmendEmail(existingProfile, AmendedSection.WORK);
+            List<Activity> activities = new ArrayList<>();
+            for (OrcidWork updatedWork : updatedOrcidWorksList) {
+                Activity activity = new Activity();
+                activity.setActivityName(updatedWork.getWorkTitle().getTitle().getContent());
+                activity.setActivityType(ActivityType.WORK);
+                activity.setPutCode(updatedWork.getPutCode());
+                activities.add(activity);
+            }
+            notificationManager.sendAmendEmail(existingProfile, AmendedSection.WORK, activities);
         }
     }
 
@@ -1345,6 +1352,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
             populateContributorInfo(updatedOrcidWork);
             ProfileWorkEntity profileWorkEntity = jaxb2JpaAdapter.getNewProfileWorkEntity(updatedOrcidWork, profileEntity);
             profileWorkDao.persist(profileWorkEntity);
+            updatedOrcidWork.setPutCode(String.valueOf(profileWorkEntity.getWork().getId()));
         }
         orcidProfileCacheManager.remove(orcid);
     }
@@ -1449,7 +1457,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         blankedOrcidProfile.setOrcidBio(minimalBio);
         blankedOrcidProfile.setOrcidIdentifier(existingOrcidProfile.getOrcidIdentifier().getPath());
 
-        OrcidProfile profileToReturn =  updateOrcidProfile(blankedOrcidProfile);
+        OrcidProfile profileToReturn = updateOrcidProfile(blankedOrcidProfile);
         notificationManager.sendAmendEmail(profileToReturn, AmendedSection.UNKNOWN);
         return profileToReturn;
     }
@@ -1710,7 +1718,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     private void addSourceToFundings(FundingList fundings, String amenderOrcid) {
         if (fundings != null && !fundings.getFundings().isEmpty()) {
             for (Funding funding : fundings.getFundings()) {
-            	funding.setSource(createSource(amenderOrcid));
+                funding.setSource(createSource(amenderOrcid));
             }
         }
     }

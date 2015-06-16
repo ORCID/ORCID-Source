@@ -27,60 +27,54 @@ public class NotificationWorkEntityPk implements Serializable {
 
     private static final long serialVersionUID = -6483017414290915958L;
 
-    private String profile;
+    private Long notification;
     private Long work;
 
-    /**
-     * @return the profile
-     */
-    public String getProfile() {
-        return profile;
+    public Long getNotification() {
+        return notification;
     }
 
-    /**
-     * @param profile
-     *            the profile to set
-     */
-    public void setProfile(String profile) {
-        this.profile = profile;
+    public void setNotification(Long notification) {
+        this.notification = notification;
     }
 
-    /**
-     * @return the work
-     */
     public Long getWork() {
         return work;
     }
 
-    /**
-     * @param work
-     *            the work to set
-     */
     public void setWork(Long work) {
         this.work = work;
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
-
-        NotificationWorkEntityPk that = (NotificationWorkEntityPk) o;
-
-        if (!profile.equals(that.profile))
-            return false;
-        if (!work.equals(that.work))
-            return false;
-
-        return true;
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((notification == null) ? 0 : notification.hashCode());
+        result = prime * result + ((work == null) ? 0 : work.hashCode());
+        return result;
     }
 
     @Override
-    public int hashCode() {
-        int result = profile.hashCode();
-        result = 31 * result + work.hashCode();
-        return result;
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        NotificationWorkEntityPk other = (NotificationWorkEntityPk) obj;
+        if (notification == null) {
+            if (other.notification != null)
+                return false;
+        } else if (!notification.equals(other.notification))
+            return false;
+        if (work == null) {
+            if (other.work != null)
+                return false;
+        } else if (!work.equals(other.work))
+            return false;
+        return true;
     }
+
 }

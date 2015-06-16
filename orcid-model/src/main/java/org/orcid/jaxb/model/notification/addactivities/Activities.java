@@ -36,6 +36,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * <p>
  * Java class for anonymous complex type.
@@ -70,6 +72,10 @@ public class Activities implements Serializable {
     public Activities() {
     }
 
+    public Activities(List<Activity> activities) {
+        this.activities = activities;
+    }
+
     /**
      * Gets the value of the activities property.
      * 
@@ -100,16 +106,20 @@ public class Activities implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public Map<String, List<Activity>> getActivitiesByType() {
         Map<String, List<Activity>> activitiesMap = new HashMap<>();
-        for (Activity activity : activities) {
-            String key = activity.getActivityType().name();
-            List<Activity> activitiesForType = activitiesMap.get(key);
-            if (activitiesForType == null) {
-                activitiesForType = new ArrayList<>();
-                activitiesMap.put(key, activitiesForType);
+        if (activities != null) {
+            for (Activity activity : activities) {
+                ActivityType activityType = activity.getActivityType();
+                String key = activityType.name();
+                List<Activity> activitiesForType = activitiesMap.get(key);
+                if (activitiesForType == null) {
+                    activitiesForType = new ArrayList<>();
+                    activitiesMap.put(key, activitiesForType);
+                }
+                activitiesForType.add(activity);
             }
-            activitiesForType.add(activity);
         }
         return activitiesMap;
     }

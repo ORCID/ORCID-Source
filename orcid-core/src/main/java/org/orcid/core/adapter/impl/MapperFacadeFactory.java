@@ -25,6 +25,7 @@ import ma.glasnost.orika.MappingContext;
 import ma.glasnost.orika.converter.ConverterFactory;
 import ma.glasnost.orika.impl.DefaultMapperFactory;
 import ma.glasnost.orika.metadata.ClassMapBuilder;
+import ma.glasnost.orika.metadata.TypeFactory;
 
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.jaxb.model.common.FuzzyDate;
@@ -32,6 +33,7 @@ import org.orcid.jaxb.model.common.PublicationDate;
 import org.orcid.jaxb.model.common.SourceClientId;
 import org.orcid.jaxb.model.common.SourceOrcid;
 import org.orcid.jaxb.model.notification.addactivities.Activity;
+import org.orcid.jaxb.model.notification.addactivities.ActivityType;
 import org.orcid.jaxb.model.notification.addactivities.NotificationAddActivities;
 import org.orcid.jaxb.model.notification.amended.NotificationAmended;
 import org.orcid.jaxb.model.notification.custom.NotificationCustom;
@@ -49,6 +51,7 @@ import org.orcid.jaxb.model.record.summary.EmploymentSummary;
 import org.orcid.jaxb.model.record.summary.FundingSummary;
 import org.orcid.jaxb.model.record.summary.PeerReviewSummary;
 import org.orcid.jaxb.model.record.summary.WorkSummary;
+import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.CompletionDateEntity;
 import org.orcid.persistence.jpa.entities.EndDateEntity;
 import org.orcid.persistence.jpa.entities.NotificationActivityEntity;
@@ -77,22 +80,45 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     @Resource
     private OrcidUrlManager orcidUrlManager;
 
+    @Resource
+    private WorkDao workDao;
+
     @Override
     public MapperFacade getObject() throws Exception {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
+
+        // Register converters
         ConverterFactory converterFactory = mapperFactory.getConverterFactory();
         converterFactory.registerConverter("singleWorkExternalIdentifierFromJsonConverter", new SingleWorkExternalIdentifierFromJsonConverter());
         converterFactory.registerConverter("externalIdentifierIdConverter", new ExternalIdentifierTypeConverter());
+
+        // Register factories
+        mapperFactory.registerObjectFactory(new WorkEntityFactory(workDao), TypeFactory.<NotificationWorkEntity> valueOf(NotificationWorkEntity.class),
+                TypeFactory.<Activity> valueOf(Activity.class));
+
+        // Custom notification
         mapCommonFields(mapperFactory.classMap(NotificationCustomEntity.class, NotificationCustom.class)).register();
+
+        // Add activities notification
         mapCommonFields(mapperFactory.classMap(NotificationAddActivitiesEntity.class, NotificationAddActivities.class)).field("authorizationUrl", "authorizationUrl.uri")
                 .field("notificationActivities", "activities.activities").register();
-        mapCommonFields(mapperFactory.classMap(NotificationAmendedEntity.class, NotificationAmended.class)).fieldAToB("notificationWorks", "activities.activities")
-                .fieldBToA("activities.activitiesByType['WORK']", "notificationWorks").register();
-        mapperFactory.classMap(NotificationWorkEntity.class, Activity.class).field("work.title", "activityName")
-                .fieldMap("work.externalIdentifiersJson", "externalIdentifier").converter("singleWorkExternalIdentifierFromJsonConverter").add().register();
         mapperFactory.classMap(NotificationActivityEntity.class, Activity.class).fieldMap("externalIdType", "externalIdentifier.externalIdentifierType")
                 .converter("externalIdentifierIdConverter").add().field("externalIdValue", "externalIdentifier.externalIdentifierId").byDefault().register();
+
+        // Amended notification
+        mapCommonFields(mapperFactory.classMap(NotificationAmendedEntity.class, NotificationAmended.class)).fieldAToB("notificationWorks", "activities.activities")
+                .fieldBToA("activities.activitiesByType['WORK']", "notificationWorks").register();
+        mapperFactory.classMap(NotificationWorkEntity.class, Activity.class).fieldAToB("work.id", "putCode").fieldAToB("work.title", "activityName")
+                .fieldMap("work.externalIdentifiersJson", "externalIdentifier").aToB().converter("singleWorkExternalIdentifierFromJsonConverter").add()
+                .customize(new CustomMapper<NotificationWorkEntity, Activity>() {
+                    public void mapAtoB(NotificationWorkEntity entity, Activity activity, MappingContext context) {
+                        activity.setActivityType(ActivityType.WORK);
+                    }
+                }).register();
+
+        // All notifications
         addV2SourceMapping(mapperFactory);
+
         return mapperFactory.getMapperFacade();
     }
 

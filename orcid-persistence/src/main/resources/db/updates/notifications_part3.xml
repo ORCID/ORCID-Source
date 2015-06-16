@@ -22,17 +22,17 @@
         <createTable tableName="notification_work">
             <column name="date_created" type="TIMESTAMP WITH TIME ZONE"/>
             <column name="last_modified" type="TIMESTAMP WITH TIME ZONE"/> 
-            <column name="orcid" type="VARCHAR(255)">
+            <column name="notification_id" type="bigint">
                 <constraints nullable="false"/>
             </column>
             <column name="work_id" type="bigint">
                 <constraints nullable="false"/>
             </column>
         </createTable>
-        <addPrimaryKey columnNames="orcid, work_id" constraintName="notification_work_pkey" tableName="notification_work"/>
-        <addForeignKeyConstraint constraintName="notification_work_orcid_fk"
-                                 baseColumnNames="orcid" baseTableName="notification_work"
-                                 referencedColumnNames="orcid" referencedTableName="profile" />
+        <addPrimaryKey columnNames="notification_id, work_id" constraintName="notification_work_pkey" tableName="notification_work"/>
+        <addForeignKeyConstraint constraintName="notification_work_notification_id_fk"
+                                 baseColumnNames="notification_id" baseTableName="notification_work"
+                                 referencedColumnNames="id" referencedTableName="notification" />
         <addForeignKeyConstraint constraintName="notification_work"
                                  baseColumnNames="work_id" baseTableName="notification_work"
                                  referencedColumnNames="work_id" referencedTableName="work" />

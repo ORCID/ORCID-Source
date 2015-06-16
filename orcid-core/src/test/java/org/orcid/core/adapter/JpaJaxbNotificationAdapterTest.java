@@ -18,6 +18,7 @@ package org.orcid.core.adapter;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Set;
@@ -170,12 +171,6 @@ public class JpaJaxbNotificationAdapterTest {
         Set<NotificationWorkEntity> workEntities = notificationAmendedEntity.getNotificationWorks();
         assertNotNull(workEntities);
         assertEquals(1, workEntities.size());
-        NotificationWorkEntity notificationWorkEntity = workEntities.iterator().next();
-        WorkEntity workEntity = notificationWorkEntity.getWork();
-        assertNotNull(workEntity);
-        assertEquals("Latest Research Article", workEntity.getTitle());
-        String extIdJson = workEntity.getExternalIdentifiersJson();
-        assertEquals("{\"workExternalIdentifierType\":\"DOI\",\"workExternalIdentifierId\":{\"content\":\"1234/abc123\"}}", extIdJson);
     }
 
 }

@@ -34,11 +34,11 @@ import org.orcid.persistence.jpa.entities.keys.NotificationWorkEntityPk;
 @Entity
 @Table(name = "notification_work")
 @IdClass(NotificationWorkEntityPk.class)
-public class NotificationWorkEntity extends BaseEntity<NotificationWorkEntityPk> implements Comparable<NotificationWorkEntity>, ProfileAware {
+public class NotificationWorkEntity extends BaseEntity<NotificationWorkEntityPk> implements Comparable<NotificationWorkEntity> {
 
     private static final long serialVersionUID = -3187757614938904392L;
 
-    private ProfileEntity profile;
+    private NotificationEntity notification;
     private WorkEntity work;
 
     @Override
@@ -47,29 +47,22 @@ public class NotificationWorkEntity extends BaseEntity<NotificationWorkEntityPk>
         return null;
     }
 
-    /**
-     * @return the profile
-     */
     @Id
     @ManyToOne(cascade = { CascadeType.REFRESH }, fetch = FetchType.EAGER)
-    @JoinColumn(name = "orcid", nullable = false)
-    public ProfileEntity getProfile() {
-        return profile;
+    @JoinColumn(name = "notification_id", nullable = false)
+    public NotificationEntity getNotification() {
+        return notification;
     }
 
-    /**
-     * @param profile
-     *            the profile to set
-     */
-    public void setProfile(ProfileEntity profile) {
-        this.profile = profile;
+    public void setNotification(NotificationEntity notification) {
+        this.notification = notification;
     }
 
     /**
      * @return the work
      */
     @Id
-    @ManyToOne(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "work_id", nullable = false)
     public WorkEntity getWork() {
         return work;

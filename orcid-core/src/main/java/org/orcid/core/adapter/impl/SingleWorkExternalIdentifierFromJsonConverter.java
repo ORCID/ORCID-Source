@@ -16,6 +16,8 @@
  */
 package org.orcid.core.adapter.impl;
 
+import java.util.List;
+
 import ma.glasnost.orika.converter.BidirectionalConverter;
 import ma.glasnost.orika.metadata.Type;
 
@@ -23,6 +25,7 @@ import org.orcid.core.utils.JsonUtils;
 import org.orcid.jaxb.model.message.WorkExternalIdentifier;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierId;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
+import org.orcid.jaxb.model.message.WorkExternalIdentifiers;
 import org.orcid.jaxb.model.notification.addactivities.ExternalIdentifier;
 
 /**
@@ -34,15 +37,22 @@ public final class SingleWorkExternalIdentifierFromJsonConverter extends Bidirec
 
     @Override
     public String convertTo(ExternalIdentifier source, Type<String> destinationType) {
+        WorkExternalIdentifiers workExternalIdentifiers = new WorkExternalIdentifiers();
         WorkExternalIdentifier workExternalIdentifier = new WorkExternalIdentifier();
+        workExternalIdentifiers.getWorkExternalIdentifier().add(workExternalIdentifier);
         workExternalIdentifier.setWorkExternalIdentifierId(new WorkExternalIdentifierId(source.getExternalIdentifierId()));
         workExternalIdentifier.setWorkExternalIdentifierType(WorkExternalIdentifierType.fromValue(source.getExternalIdentifierType()));
-        return JsonUtils.convertToJsonString(workExternalIdentifier);
+        return JsonUtils.convertToJsonString(workExternalIdentifiers);
     }
 
     @Override
     public ExternalIdentifier convertFrom(String source, Type<ExternalIdentifier> destinationType) {
-        WorkExternalIdentifier workExternalIdentifier = JsonUtils.readObjectFromJsonString(source, WorkExternalIdentifier.class);
+        WorkExternalIdentifiers workExternalIdentifiers = JsonUtils.readObjectFromJsonString(source, WorkExternalIdentifiers.class);
+        List<WorkExternalIdentifier> workExternalIdentifierList = workExternalIdentifiers.getWorkExternalIdentifier();
+        if (workExternalIdentifierList.isEmpty()) {
+            return null;
+        }
+        WorkExternalIdentifier workExternalIdentifier = workExternalIdentifierList.get(0);
         ExternalIdentifier extId = new ExternalIdentifier();
         extId.setExternalIdentifierId(workExternalIdentifier.getWorkExternalIdentifierId().getContent());
         extId.setExternalIdType(workExternalIdentifier.getWorkExternalIdentifierType().value());

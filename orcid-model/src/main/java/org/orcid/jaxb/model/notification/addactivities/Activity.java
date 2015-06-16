@@ -27,6 +27,7 @@ import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
@@ -56,17 +57,27 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "activityType", "activityName", "externalIdentifier" })
+@XmlType(name = "", propOrder = { "putCode", "activityType", "activityName", "externalIdentifier" })
 @XmlRootElement(name = "activity")
 public class Activity implements Serializable {
 
     private final static long serialVersionUID = 1L;
+    @XmlAttribute(name = "put-code")
+    protected String putCode;
     @XmlElement(name = "activity-type", namespace = "http://www.orcid.org/ns/notification", required = true)
     protected ActivityType activityType;
     @XmlElement(name = "activity-name", namespace = "http://www.orcid.org/ns/notification", required = true)
     protected String activityName;
     @XmlElement(name = "external-identifier", namespace = "http://www.orcid.org/ns/notification", required = true)
     protected ExternalIdentifier externalIdentifier;
+
+    public String getPutCode() {
+        return putCode;
+    }
+
+    public void setPutCode(String putCode) {
+        this.putCode = putCode;
+    }
 
     /**
      * Gets the value of the activityType property.
