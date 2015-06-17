@@ -4124,11 +4124,7 @@ ul#body-work-list > li{
 }
 
 .action-button-bar{
-	padding: 0 14px 0 0;	
-}
-
-#workspace-publications{
-	padding: 0 0 0 10px;
+	padding: 0 14px;	
 }
 
 .versions ul,
