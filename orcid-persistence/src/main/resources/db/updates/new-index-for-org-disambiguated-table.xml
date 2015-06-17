@@ -28,7 +28,7 @@
         <createIndex 
             indexName="org_disambiguated_source_id_idx"
             tableName="org_disambiguated"
-            unique="true">
+            unique="false">
         	<column name="source_id" />
     	</createIndex>
     </changeSet>
