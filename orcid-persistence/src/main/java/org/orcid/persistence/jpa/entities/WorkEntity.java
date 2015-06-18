@@ -244,7 +244,7 @@ public class WorkEntity extends BaseEntity<Long> implements Comparable<WorkEntit
      * @return the profile
      */
     @ManyToOne(cascade = { CascadeType.REFRESH }, fetch = FetchType.LAZY)
-    @JoinColumn(name = "orcid", nullable = false)
+    @JoinColumn(name = "orcid", nullable = true)
     public ProfileEntity getProfile() {
         return profile;
     }

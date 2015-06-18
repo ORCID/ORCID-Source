@@ -199,7 +199,9 @@ public class WorksController extends BaseWorkspaceController {
     public @ResponseBody
     boolean updateToMaxDisplay(HttpServletRequest request, @RequestParam(value = "putCode") String putCode) {
         OrcidProfile profile = getEffectiveProfile();
-        return profileWorkManager.updateToMaxDisplay(profile.getOrcidIdentifier().getPath(), putCode);
+        boolean result = profileWorkManager.updateToMaxDisplay(profile.getOrcidIdentifier().getPath(), putCode);
+        workManager.updateToMaxDisplay(profile.getOrcidIdentifier().getPath(), putCode);
+        return result;
     }
 
     /**
@@ -519,6 +521,8 @@ public class WorksController extends BaseWorkspaceController {
         
         // make the new work the default display
         profileWorkManager.updateToMaxDisplay(currentProfile.getOrcidIdentifier().getPath(), putCode);
+        //Set the max display in the work table
+        workManager.updateToMaxDisplay(currentProfile.getOrcidIdentifier().getPath(), putCode);
         
         // Check if the user have orcid activities, if not, initialize them
         if (currentProfile.getOrcidActivities() == null)

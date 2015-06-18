@@ -26,6 +26,7 @@ import org.orcid.core.manager.WorkManager;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.dao.ProfileWorkDao;
 import org.orcid.persistence.dao.WorkDao;
+import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.custom.MinimizedWorkEntity;
 import org.springframework.cache.annotation.Cacheable;
@@ -111,5 +112,18 @@ public class WorkManagerImpl implements WorkManager {
      * */
     public boolean removeWorks(String clientOrcid, ArrayList<Long> workIds) {
         return workDao.removeWorks(clientOrcid, workIds);
+    }
+    
+    /**
+     * Sets the display index of the new work
+     * @param orcid     
+     *          The work owner
+     * @param workId
+     *          The work id
+     * @return true if the work index was correctly set                  
+     * */
+    public boolean updateToMaxDisplay(String orcid, String workId) {
+        ProfileWorkEntity profileWork = profileWorkDao.getProfileWork(orcid, workId);
+        return workDao.updateToMaxDisplay(workId, profileWork.getDisplayIndex());
     }
 }

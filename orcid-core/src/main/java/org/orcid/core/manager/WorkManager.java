@@ -82,4 +82,14 @@ public interface WorkManager {
      * @return true if the work was deleted
      * */
     boolean removeWorks(String clientOrcid, ArrayList<Long> workIds);
+    
+    /**
+     * Sets the display index of the new work
+     * @param orcid     
+     *          The work owner
+     * @param workId
+     *          The work id
+     * @return true if the work index was correctly set                  
+     * */
+    boolean updateToMaxDisplay(String orcid, String workId);
 }

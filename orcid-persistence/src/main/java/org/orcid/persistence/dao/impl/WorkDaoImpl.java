@@ -178,20 +178,23 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
         this.merge(work);
         return true;
     }
+    
+    /**
+     * Sets the display index of the new work
+     * @param workId
+     *          The work id
+     * @param displayIndex
+     *          The display index for the work
+     * @return true if the work index was correctly set                  
+     * */
+    @Override
+    @Transactional
+    public boolean updateToMaxDisplay(String workId, Long displayIndex) {
+        Query query = entityManager.createNativeQuery("UPDATE work SET display_index=:index WHERE work_id=:workId");
+        query.setParameter("index", displayIndex);
+        query.setParameter("workId", Long.valueOf(workId));
+        return query.executeUpdate() > 0;
+    }
+    
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

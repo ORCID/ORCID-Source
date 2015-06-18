@@ -99,4 +99,14 @@ public interface WorkDao extends GenericDao<WorkEntity, Long> {
      * @return true if the work was updated                  
      * */
     boolean copyDataFromProfileWork(Long workId, ProfileWorkEntity profileWork);
+    
+    /**
+     * Sets the display index of the new work
+     * @param workId
+     *          The work id
+     * @param displayIndex
+     *          The display index for the work
+     * @return true if the work index was correctly set                  
+     * */
+    boolean updateToMaxDisplay(String workId, Long displayIndex);
 }
