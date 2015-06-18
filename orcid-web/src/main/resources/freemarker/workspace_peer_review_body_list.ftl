@@ -20,7 +20,7 @@
 
 <#include "includes/peer_review/add_peer_review_inc.ftl"/>
 <div ng-controller="PeerReviewCtrl">
-	<div class="workspace-accordion" id="workspace-accordion">
+	<div class="workspace-accordion accordion-peer-review" id="workspace-accordion">
 		<div id="workspace-peer-review" class="workspace-accordion-item workspace-accordion-active">
 			<div class="workspace-accordion-header"><a name='workspace-peer-review'></a>
 				<div class="row">
