@@ -335,6 +335,7 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
         ProfileWorkEntity pf = profileWorkDao.getProfileWork(orcid, String.valueOf(workId));
         assertNotNull(pf);
         assertTrue(pf.getMigrated());
+        assertEquals(pf.getDisplayIndex(), work.getDisplayIndex());
     }
 
     @Test
