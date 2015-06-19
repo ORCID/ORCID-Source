@@ -693,7 +693,7 @@ public class ManageProfileController extends BaseWorkspaceController {
 
             MapBindingResult mbr = new MapBindingResult(new HashMap<String, String>(), "Email");
             // make sure there are no dups
-            validateEmailAddress(email.getValue(), false, request, mbr);
+            validateEmailAddress(email.getValue(), false, false, request, mbr);
 
             for (ObjectError oe : mbr.getAllErrors()) {
                 emailErrors.add(getMessage(oe.getCode(), email.getValue()));
