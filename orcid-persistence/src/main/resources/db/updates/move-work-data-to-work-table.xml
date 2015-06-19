@@ -1,0 +1,73 @@
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2014 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+	<changeSet id="ADD-FIELDS-TO-WORK" author="Angel Montenegro">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<columnExists tableName="work" columnName="orcid" />
+			</not>
+		</preConditions>
+		<addColumn tableName="work">
+			<column name="orcid" type="VARCHAR(19)" />
+			<column name="added_to_profile_date" type="TIMESTAMP WITHOUT TIME ZONE" />
+			<column name="visibility" type="VARCHAR(19)" />
+			<column name="display_index" type="bigint" defaultValue="0" />
+			<column name="source_id" type="VARCHAR(19)" />
+			<column name="client_source_id" type="VARCHAR(20)" />
+		</addColumn>
+
+		<addForeignKeyConstraint constraintName="work_orcid_fk"
+			baseTableName="work" baseColumnNames="orcid" referencedTableName="profile"
+			referencedColumnNames="orcid" />
+		<addForeignKeyConstraint constraintName="work_source_id_fk"
+			baseTableName="work" baseColumnNames="source_id" referencedTableName="profile"
+			referencedColumnNames="orcid" />
+		<addForeignKeyConstraint constraintName="work_client_source_id_fk"
+			baseTableName="work" baseColumnNames="client_source_id"
+			referencedTableName="client_details" referencedColumnNames="client_details_id" />
+	</changeSet>
+
+	<changeSet id="ADD-UTILITY-FIELD-TO-PROFILE-WORK" author="Angel Montenegro">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<columnExists tableName="profile_work" columnName="migrated" />
+			</not>
+		</preConditions>
+		<addColumn tableName="profile_work">
+			<column name="migrated" type="boolean" defaultValueBoolean="false" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ORCID-IDX-ON-WORK" author="Angel Montenegro">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<indexExists indexName="work_orcid_idx"
+					tableName="work" />
+			</not>
+		</preConditions>
+		<createIndex indexName="work_orcid_idx"
+			tableName="work" unique="false">
+			<column name="orcid" />
+		</createIndex>
+	</changeSet>
+
+</databaseChangeLog>

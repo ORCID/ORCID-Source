@@ -219,6 +219,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                 ProfileWorkEntity profileWorkEntity = getProfileWorkEntity(orcidWork, existingProfileWorkEntitiesMap.get(orcidWork.getPutCode()));
                 if (profileWorkEntity != null) {
                     profileWorkEntity.setProfile(profileEntity);
+                    profileWorkEntity.getWork().setProfile(profileEntity);
                     profileWorkEntities.add(profileWorkEntity);
                 }
             }
@@ -240,6 +241,9 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     public ProfileWorkEntity getNewProfileWorkEntity(OrcidWork orcidWork, ProfileEntity profileEntity) {
         ProfileWorkEntity profileWorkEntity = getProfileWorkEntity(orcidWork, null);
         profileWorkEntity.setProfile(profileEntity);
+        profileWorkEntity.getWork().setProfile(profileEntity);
+        //All new works are already in both tables
+        profileWorkEntity.setMigrated(true);
         return profileWorkEntity;
     }
 
@@ -260,8 +264,12 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                 workEntity.clean();
             }
             profileWorkEntity.setWork(getWorkEntity(orcidWork, workEntity));
-            profileWorkEntity.setVisibility(orcidWork.getVisibility() == null ? Visibility.PRIVATE : orcidWork.getVisibility());
-            profileWorkEntity.setSource(getSource(orcidWork.getSource()));
+            Visibility visibility = orcidWork.getVisibility() == null ? Visibility.PRIVATE : orcidWork.getVisibility();
+            profileWorkEntity.setVisibility(visibility);
+            workEntity.setVisibility(visibility);
+            SourceEntity source = getSource(orcidWork.getSource());
+            profileWorkEntity.setSource(source);
+            workEntity.setSource(source);
 
             if (orcidWork.getCreatedDate() != null && orcidWork.getCreatedDate().getValue() != null)
                 profileWorkEntity.setDateCreated(orcidWork.getCreatedDate().getValue().toGregorianCalendar().getTime());
@@ -282,15 +290,9 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             }
             // New way of doing work contributors
             workEntity.setContributorsJson(getWorkContributorsJson(orcidWork.getWorkContributors()));
-            // Old way of doing work contributors
-            // workEntity.setContributors(getWorkContributors(workEntity,
-            // orcidWork.getWorkContributors()));
             workEntity.setDescription(orcidWork.getShortDescription() != null ? orcidWork.getShortDescription() : null);
             // New way of doing work external ids
             workEntity.setExternalIdentifiersJson(getWorkExternalIdsJson(orcidWork.getWorkExternalIdentifiers()));
-            // Old way of doing work external ids
-            // workEntity.setExternalIdentifiers(getWorkExternalIdentifiers(workEntity,
-            // orcidWork.getWorkExternalIdentifiers()));
             workEntity.setPublicationDate(getWorkPublicationDate(orcidWork));
             WorkTitle workTitle = orcidWork.getWorkTitle();
             if (workTitle != null) {
@@ -307,6 +309,9 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             workEntity.setIso2Country(orcidWork.getCountry() == null ? null : orcidWork.getCountry().getValue());
             workEntity.setWorkType(orcidWork.getWorkType());
             workEntity.setWorkUrl(orcidWork.getUrl() != null ? orcidWork.getUrl().getValue() : null);
+            workEntity.setSource(getSource(orcidWork.getSource()));            
+            workEntity.setVisibility(orcidWork.getVisibility());
+            workEntity.setAddedToProfileDate(new Date());
             return workEntity;
         }
         return null;

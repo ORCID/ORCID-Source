@@ -32,6 +32,10 @@
           citation_type="FORMATTED_IEEE"
           date_created="2011-07-02 15:31:00.00"
           last_modified="2011-07-02 15:31:00.00"
+          orcid="4444-4444-4444-4443"
+          source_id="4444-4444-4444-4443"
+          added_to_profile_date="2013-10-22 11:09:28.636"
+          visibility="LIMITED"
             />
     <work work_id="2"
           publication_year="2011"
@@ -43,6 +47,10 @@
           work_type="BOOK"          
           date_created="2011-07-02 15:31:00.00"
           last_modified="2011-07-02 15:31:00.00"
+          orcid="4444-4444-4444-4443"
+          source_id="4444-4444-4444-4443"
+          added_to_profile_date="2013-10-22 11:09:28.636"
+          visibility="LIMITED"
             />
             
     <work work_id="3"
@@ -55,6 +63,10 @@
           work_type="BOOK"
           date_created="2011-07-02 15:31:00.00"
           last_modified="2011-07-02 15:31:00.00"
+          orcid="4444-4444-4444-4445"
+          source_id="4444-4444-4444-4445"
+          added_to_profile_date="2013-10-22 11:09:28.636"
+          visibility="LIMITED"
             />
             
     
@@ -69,6 +81,10 @@
           work_type="BOOK"
           date_created="2011-07-02 15:31:00.00"
           last_modified="2011-07-02 15:31:00.00"
+          orcid="4444-4444-4444-4443"
+          source_id="4444-4444-4444-4443"
+          added_to_profile_date="2013-10-22 11:09:28.636"
+          visibility="PRIVATE"
             />
             
     <work work_id="5"
@@ -79,6 +95,10 @@
           work_type="JOURNAL_ARTICLE"
           date_created="2011-07-02 15:31:00.00"
           last_modified="2011-07-02 15:31:00.00"
+          orcid="4444-4444-4444-4446"
+          source_id="4444-4444-4444-4446"
+          added_to_profile_date="2013-10-22 11:09:28.636"
+          visibility="PUBLIC"
             />
             
     <work work_id="6"
@@ -88,7 +108,11 @@
           title="Journal article B"
           work_type="JOURNAL_ARTICLE"
           date_created="2011-07-02 15:31:00.00"
-          last_modified="2011-07-02 15:31:00.00"      
+          last_modified="2011-07-02 15:31:00.00"    
+          orcid="4444-4444-4444-4446"
+          source_id="4444-4444-4444-4446"
+          added_to_profile_date="2013-10-22 11:09:28.636"
+          visibility="LIMITED"  
             />               
     <work work_id="7"
           publication_year="2011"
@@ -97,7 +121,11 @@
           title="Journal article C"
           work_type="JOURNAL_ARTICLE"
           date_created="2011-07-02 15:31:00.00"
-          last_modified="2011-07-02 15:31:00.00"     
+          last_modified="2011-07-02 15:31:00.00"
+          orcid="4444-4444-4444-4446"
+          source_id="4444-4444-4444-4446"
+          added_to_profile_date="2013-10-22 11:09:28.636"
+          visibility="PRIVATE"     
             />
                 
 </dataset>

@@ -56,6 +56,7 @@ public class ProfileWorkEntity extends BaseEntity<ProfileWorkEntityPk> implement
     private Date addedToProfileDate;
     private Visibility visibility;
     private Long displayIndex; 
+    private Boolean migrated;
 
     @Override
     @Transient
@@ -125,6 +126,15 @@ public class ProfileWorkEntity extends BaseEntity<ProfileWorkEntityPk> implement
     public void setVisibility(Visibility visibility) {
         this.visibility = visibility;
     }
+    
+    @Column(name = "migrated")
+    public Boolean getMigrated() {
+        return migrated;
+    }
+
+    public void setMigrated(Boolean migrated) {
+        this.migrated = migrated;
+    }
 
     @Override
     public int compareTo(ProfileWorkEntity other) {
@@ -148,7 +158,7 @@ public class ProfileWorkEntity extends BaseEntity<ProfileWorkEntityPk> implement
      * Dictates the display order for works (and versions of works)
      * works with higher numbers should be displayed first. 
      * 
-     * Currently only only updatable via ProfileWorkDaoImpl.updateToMaxDisplay
+     * Currently only updatable via ProfileWorkDaoImpl.updateToMaxDisplay
      *
      */
 
