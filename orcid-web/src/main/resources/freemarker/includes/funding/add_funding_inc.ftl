@@ -285,7 +285,7 @@
 	                        <label class="relative" id="funding-ext-ids-url-label"><@orcid.msg 'manual_funding_form_contents.external_identifier.label_url'/></label>
                         	<div class="relative">
 	                            <input name="currentFundingExternalIdentifierUrl" id="funding-ext-ids-url-input" type="text" class="form-control action-icon-inside" ng-model="externalIdentifier.url.value" placeholder="<@orcid.msg 'manual_funding_form_contents.external_identifier.url'/>" ng-model-onblur/>
-                            	<a href ng-click="deleteFundingExternalIdentifier(externalIdentifier)" class="glyphicon glyphicon-trash grey action-icon-align-right" ng-hide="$first"></a>
+								<a href ng-click="deleteFundingExternalIdentifier(externalIdentifier)" class="glyphicon glyphicon-trash grey action-icon-align-right" ng-hide="$first && editFunding.externalIdentifiers.length == 1"></a>								
                             	<span class="orcid-error" ng-show="externalIdentifier.url.errors.length > 0">
 	                               	<div ng-repeat='error in externalIdentifier.url.errors' ng-bind-html="error"></div>
                             	</span>

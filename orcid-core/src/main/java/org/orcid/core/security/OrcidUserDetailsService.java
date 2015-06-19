@@ -113,22 +113,6 @@ public class OrcidUserDetailsService implements UserDetailsService {
 		if (!StringUtils.isEmpty(username)) {
 			if (OrcidStringUtils.isValidOrcid(username)) {
 				profile = profileDao.find(username);
-			} else if (OrcidStringUtils.isValidOrcidWithSpaces(username)) {
-				username = username.toString().replace(' ', '-');
-				profile = profileDao.find(username);
-			} else if (OrcidStringUtils
-					.isValidOrcidWithoutSpacesWithoutHyphens(username)) {
-				String temp = username.replaceAll("(.{4})", "$1-");
-				int length = temp.length();
-				username = temp.substring(0, length - 1);
-				profile = profileDao.find(username);
-			} else if (baseUrl != null
-					&& username.contains(new StringBuffer(baseUrl).append("/")
-							.toString())) {
-				username = OrcidStringUtils.getOrcidNumber(username);
-				if (username != null) {
-					profile = profileDao.find(username);
-				}
 			} else {
 				EmailEntity emailEntity = emailDao
 						.findCaseInsensitive(username);

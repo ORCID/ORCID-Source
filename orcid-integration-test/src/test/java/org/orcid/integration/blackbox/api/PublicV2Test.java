@@ -107,9 +107,7 @@ public class PublicV2Test {
     public String publicClientId;
     @Value("${org.orcid.web.publicClient1.clientSecret}")
     public String publicClientSecret;
-    
-    
-
+        
     @Resource(name = "t2OAuthClient")
     private T2OAuthAPIService<ClientResponse> t2OAuthClient;
 
@@ -146,6 +144,15 @@ public class PublicV2Test {
         assertFalse(PojoUtil.isEmpty(publicAccessToken));
     }
     
+    @Test
+    public void testGetInfoWithEmptyToken() throws InterruptedException, JSONException {
+        ClientResponse activitiesResponse = publicV2ApiClient.viewActivities(user1OrcidId, "");
+        assertNotNull(activitiesResponse);
+        assertEquals(Response.Status.OK.getStatusCode(), activitiesResponse.getStatus());
+        ActivitiesSummary activities = activitiesResponse.getEntity(ActivitiesSummary.class);
+        assertNotNull(activities);
+    }    
+    
     /**
      * VIEW PUBLIC INFO
      * */
@@ -153,7 +160,7 @@ public class PublicV2Test {
     public void testViewWorkAndWorkSummary() throws JSONException, InterruptedException, URISyntaxException {
         checkWorks(null);
     }
-    
+        
     @Test
     public void testViewWorkAndWorkSummaryUsingToken() throws JSONException, InterruptedException, URISyntaxException {
         checkWorks(getReadPublicAccessToken());
