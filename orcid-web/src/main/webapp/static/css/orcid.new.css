@@ -3335,7 +3335,8 @@ p.orcid-id-container{
 }
 
 .funding-info{
-	width: 100%;	
+	width: 100%;
+	float: left;	
 }
 
 #currencyCode {
@@ -5725,6 +5726,13 @@ hr{
 
 .action-icon-inside{
 	padding-right: 25px !important; /* Overwriting global reset styling */
+}
+
+input.form-control,
+select.form-control,
+textarea.form-control,
+.form-group div>select{
+	margin-bottom: 0px; 
 }
 
 .accordion-peer-review{
