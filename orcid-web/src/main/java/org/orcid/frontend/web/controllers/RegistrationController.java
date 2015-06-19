@@ -434,7 +434,7 @@ public class RegistrationController extends BaseController {
         // validate email
         MapBindingResult mbr = new MapBindingResult(new HashMap<String, String>(), "Email");
         // make sure there are no dups
-        validateEmailAddress(reg.getEmail().getValue(), false, request, mbr);
+        validateEmailAddress(reg.getEmail().getValue(), false, true, request, mbr);
 
         for (ObjectError oe : mbr.getAllErrors()) {
             if (isOauthRequest && oe.getCode().equals("orcid.frontend.verify.duplicate_email")) {

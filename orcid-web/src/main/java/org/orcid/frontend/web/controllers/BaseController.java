@@ -359,10 +359,14 @@ public class BaseController {
     }
 
     protected void validateEmailAddress(String email, HttpServletRequest request, BindingResult bindingResult) {
-        validateEmailAddress(email, true, request, bindingResult);
+        validateEmailAddress(email, true, false, request, bindingResult);
+    }
+    
+    protected void validateEmailAddressOnRegister(String email, HttpServletRequest request, BindingResult bindingResult) {
+        validateEmailAddress(email, true, true, request, bindingResult);
     }
 
-    protected void validateEmailAddress(String email, boolean ignoreCurrentUser, HttpServletRequest request, BindingResult bindingResult) {
+    protected void validateEmailAddress(String email, boolean ignoreCurrentUser, boolean isRegisterRequest, HttpServletRequest request, BindingResult bindingResult) {
         if (StringUtils.isNotBlank(email)) {
             if (!validateEmailAddress(email)) {
                 String[] codes = { "Email.personalInfoForm.email" };
@@ -372,7 +376,12 @@ public class BaseController {
             if (!(ignoreCurrentUser && emailMatchesCurrentUser(email)) && emailManager.emailExists(email)) {
                 OrcidProfile orcidProfile = orcidProfileManager.retrieveOrcidProfileByEmail(email);
                 if (orcidProfile.getOrcidHistory().isClaimed()) {
-                    String[] codes = { "orcid.frontend.verify.claimed_email" };
+                    String[] codes = null;
+                    if(isRegisterRequest) {
+                        codes = new String[]{ "orcid.frontend.verify.duplicate_email" };
+                    } else {
+                        codes = new String[]{ "orcid.frontend.verify.claimed_email" };
+                    }
                     String[] args = { email };
                     bindingResult.addError(new FieldError("email", "email", email, false, codes, args, "Email already exists"));
                 } else {
