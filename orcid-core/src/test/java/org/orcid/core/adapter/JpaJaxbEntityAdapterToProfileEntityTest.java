@@ -132,7 +132,7 @@ public class JpaJaxbEntityAdapterToProfileEntityTest extends DBUnitTest {
         // Check all email visibility and values
         Set<EmailEntity> emails = profileEntity.getEmails();
         assertNotNull(emails);
-        assertEquals(3, emails.size());
+        assertEquals(2, emails.size());
         Map<String, EmailEntity> emailMap = EmailEntity.mapById(emails);
 
         EmailEntity primaryEmail = emailMap.get("josiah_carberry@brown.edu");
@@ -149,15 +149,7 @@ public class JpaJaxbEntityAdapterToProfileEntityTest extends DBUnitTest {
         assertFalse(nonPrimaryEmail1.getPrimary());
         assertTrue(nonPrimaryEmail1.getCurrent());
         assertFalse(nonPrimaryEmail1.getVerified());
-        assertEquals("1111-1111-1111-1115", nonPrimaryEmail1.getSource().getSourceId());
-
-        EmailEntity nonPrimaryEmail2 = emailMap.get("josiah_carberry_2@brown.edu");
-        assertNotNull(nonPrimaryEmail2);
-        assertEquals(Visibility.LIMITED, nonPrimaryEmail2.getVisibility());
-        assertFalse(nonPrimaryEmail2.getPrimary());
-        assertFalse(nonPrimaryEmail2.getCurrent());
-        assertTrue(nonPrimaryEmail2.getVerified());
-        assertEquals("1111-1111-1111-1115", nonPrimaryEmail1.getSource().getSourceId());
+        assertEquals("APP-0000000000000000", nonPrimaryEmail1.getSource().getSourceClient().getClientId());
 
         Set<ProfileWorkEntity> profileWorkEntities = profileEntity.getProfileWorks();
         assertEquals(3, profileWorkEntities.size());

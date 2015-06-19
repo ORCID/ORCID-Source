@@ -305,6 +305,7 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
         SecurityContextTestUtils.setUpSecurityContextForClientOnly();
         OrcidMessage orcidMessage = createStubOrcidMessage();
         Email email = new Email("madeupemail@semantico.com");
+        email.setPrimary(true);
         orcidMessage.getOrcidProfile().getOrcidBio().getContactDetails().getEmail().add(email);
 
         Response createResponse = t2OrcidApiServiceDelegator.createProfile(mockedUriInfo, orcidMessage);
@@ -328,6 +329,7 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
         SecurityContextTestUtils.setUpSecurityContextForClientOnly();
         OrcidMessage orcidMessage = createStubOrcidMessage();
         Email email = new Email("madeupemail2@semantico.com");
+        email.setPrimary(true);
         orcidMessage.getOrcidProfile().getOrcidBio().getContactDetails().getEmail().add(email);
 
         Response createResponse = t2OrcidApiServiceDelegator.createProfile(mockedUriInfo, orcidMessage);

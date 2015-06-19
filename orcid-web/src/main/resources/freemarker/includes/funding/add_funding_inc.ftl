@@ -267,7 +267,7 @@
                             <a href ng-click="deleteFundingExternalIdentifier(externalIdentifier)" class="glyphicon glyphicon-trash grey action-icon-align-right" ng-hide="$first"></a>
                             <span class="orcid-error" ng-show="externalIdentifier.url.errors.length > 0">
 	                           	<div ng-repeat='error in externalIdentifier.url.errors' ng-bind-html="error"></div>
-                            </span>                        	
+                            </span>
                         	<div ng-show="$last" class="add-item-link">
 	                            <span><a href ng-click="addFundingExternalIdentifier()"><i class="glyphicon glyphicon-plus-sign"></i> <@orcid.msg 'manual_funding_form_contents.external_identifier.add_another' /></a></span>
                         	</div>

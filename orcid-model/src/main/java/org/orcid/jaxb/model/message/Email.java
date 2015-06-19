@@ -113,7 +113,7 @@ public class Email implements Serializable, VisibilityType {
      */
     public boolean isPrimary() {
         if (primary == null) {
-            return true;
+            return false;
         } else {
             return primary;
         }

@@ -109,9 +109,6 @@ public class BaseController {
 
     private String staticCdnPath;
 
-    @Value("${org.orcid.core.shareThis.key}")
-    private String shareThisKey;
-
     @Resource
     private String cdnConfigFile;
 
@@ -624,15 +621,6 @@ public class BaseController {
         String baseUrlWithCorrectedProtocol = orcidUrlManager.getBaseUrl().replaceAll("^https?:", "");
         String baseUrlWithCorrectedContext = baseUrlWithCorrectedProtocol.replaceAll("/orcid-web$", "/orcid-pub-web");
         return baseUrlWithCorrectedContext + "/v1.1/search/orcid-bio/";
-    }
-
-    @ModelAttribute("shareThisKey")
-    public String getShareThisKey() {
-        return shareThisKey;
-    }
-
-    public void setShareThisKey(String key) {
-        this.shareThisKey = key;
     }
 
     @ModelAttribute("locked")

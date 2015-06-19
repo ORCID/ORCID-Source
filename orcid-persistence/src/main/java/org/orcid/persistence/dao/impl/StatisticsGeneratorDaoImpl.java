@@ -54,8 +54,8 @@ public class StatisticsGeneratorDaoImpl implements StatisticsGeneratorDao {
         return numberOfWorks.longValue();
     }
 
-    public long getNumberOfWorksWithDOIs() {
-        Query query = entityManager.createNativeQuery("select count(distinct identifier) from work_external_identifier where identifier_type='DOI'");
+    public long getNumberOfUniqueDOIs() {
+        Query query = entityManager.createNativeQuery("SELECT COUNT(DISTINCT j->'workExternalIdentifierId'->>'content') FROM (SELECT json_array_elements(json_extract_path(external_ids_json, 'workExternalIdentifier')) AS j FROM work) AS a WHERE j->>'workExternalIdentifierType' = 'DOI'");
         BigInteger numberOfWorksWithDOIs = (BigInteger) query.getSingleResult();
         return numberOfWorksWithDOIs.longValue();
     }
