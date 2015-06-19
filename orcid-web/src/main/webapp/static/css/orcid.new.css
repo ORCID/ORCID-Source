@@ -5399,56 +5399,6 @@ multiselect .dropdown-menu .dropdown-menu-list {
 	margin-bottom: 20px;
 }
 
-/* Custom Sharethis Buttons */
-.st_custom{
-	font-size: 30px;
-	text-align:center;
-	cursor: pointer;
-	width: 30px;
-	height: 30px;
-	display: inline;
-	
-}
-.st_facebook_custom:before{
-	content: "\E031";
-	color: #939598;
-}
-
-.st_facebook_custom:hover:before{
-	content: "\E031";
-	color: #a6ce39;
-}
-
-.st_googleplus_custom:before{
-	content: "\E003";
-	color: #939598;
-}
-
-.st_googleplus_custom:hover:before{
-	content: "\E003";
-	color: #a6ce39;
-}
-
-.st_twitter_custom:before{
-	content: "\E032";
-	color: #939598;
-}
-
-.st_twitter_custom:hover:before{
-	content: "\E032";
-	color: #a6ce39;
-}
-
-.st_linkedin_custom:before{
-	content: "\E018";
-	color: #939598;
-}
-
-.st_linkedin_custom:hover:before{
-	content: "\E018";
-	color: #a6ce39;
-}
-
 .confirm-oauth-access .popover, .oauth-signin-register .popover {
 	top: 22px;
 	left: 0;
