@@ -2058,7 +2058,7 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input{
 	overflow: hidden;
 }
 
-.inline-list li {
+.inline-list > li {
 	float: left;
 }
 
@@ -3637,14 +3637,6 @@ ul.sso-options li span {
 	display: none;
 }
 
-/*
-.developer-tools .slidebox {
-	display: none;
-	overflow: visible !important;
-}
-
-*/
-
 .developer-tools .tab-container a span {
 	margin-right: 5px;
 }
@@ -4055,17 +4047,6 @@ ul#body-work-list > li{
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
 #social-networks #social-network-options input[type=checkbox]{
 	margin-top:11px;
 }
@@ -4181,13 +4162,21 @@ ul.id-details li{
 	display: block;
 }
 
-.biography-controller .popover-help-container .popover{
-	left: -109px;
+.biography-controller .bio-edit{
+	overflow: visible;
 }
 
-.biography-controller .popover.bottom .arrow{
-	left: 117px;
+.bio-edit  .popover-help-container > .popover.privacy-myorcid3 {
+	 left: -276px !important;
+	 top: -177px !important;
+	 min-width: 242px;
 }
+
+.bio-edit .popover-help-container > .privacy-myorcid3 > .arrow{
+	  left: 226px !important;
+}
+
+
 
 .dotted-bar{
 	display: block;
@@ -5737,6 +5726,11 @@ textarea.form-control,
 
 .accordion-peer-review{
 	padding: 0;
+}
+
+.settings-table .popover{
+	left: -138px;
+  	top: -178px;
 }
 
 /* Media Queries */
