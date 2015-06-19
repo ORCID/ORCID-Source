@@ -36,11 +36,13 @@ import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.OrcidSearchManager;
 import org.orcid.core.security.DeprecatedException;
 import org.orcid.core.security.aop.NonLocked;
+import org.orcid.core.security.visibility.aop.AccessControl;
 import org.orcid.core.security.visibility.aop.VisibilityControl;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidSearchResult;
 import org.orcid.jaxb.model.message.OrcidSearchResults;
+import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -77,6 +79,7 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
     /**
      * @return Plain text message indicating health of service
      */
+    @Override    
     public Response viewStatusText() {
         return Response.ok(STATUS_OK_MESSAGE).build();
     }
@@ -101,6 +104,7 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
 
     @Override
     @VisibilityControl(removeAttributes = false)
+    @AccessControl(requiredScope = ScopePathType.READ_PUBLIC, enableAnonymousAccess = true)
     @NonLocked
     public Response findBioDetailsFromPublicCache(String orcid) {
         try {
@@ -138,6 +142,7 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
 
     @Override
     @VisibilityControl(removeAttributes = false)
+    @AccessControl(requiredScope = ScopePathType.READ_PUBLIC, enableAnonymousAccess = true)
     @NonLocked
     public Response findExternalIdentifiersFromPublicCache(String orcid) {
         try {
@@ -175,6 +180,7 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
 
     @Override
     @VisibilityControl(removeAttributes = false)
+    @AccessControl(requiredScope = ScopePathType.READ_PUBLIC, enableAnonymousAccess = true)
     @NonLocked
     public Response findFullDetailsFromPublicCache(String orcid) {
         try {
@@ -206,6 +212,7 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
 
     @Override
     @VisibilityControl(removeAttributes = false)
+    @AccessControl(requiredScope = ScopePathType.READ_PUBLIC, enableAnonymousAccess = true)
     @NonLocked
     public Response findAffiliationsDetailsFromPublicCache(String orcid) {
         try {
@@ -242,6 +249,7 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
 
     @Override
     @VisibilityControl(removeAttributes = false)
+    @AccessControl(requiredScope = ScopePathType.READ_PUBLIC, enableAnonymousAccess = true)
     @NonLocked
     public Response findFundingDetailsFromPublicCache(String orcid) {
         try {
@@ -278,6 +286,7 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
 
     @Override
     @VisibilityControl(removeAttributes = false)
+    @AccessControl(requiredScope = ScopePathType.READ_PUBLIC, enableAnonymousAccess = true)
     @NonLocked
     public Response findWorksDetailsFromPublicCache(String orcid) {
         try {
@@ -312,6 +321,17 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
         }
     }
 
+    
+    /**
+     * See {@link OrcidApiServiceDelegator}{@link #publicSearchByQuery(Map)}
+     * */
+    @Override
+    @VisibilityControl
+    @AccessControl(requiredScope = ScopePathType.READ_PUBLIC, enableAnonymousAccess = true)
+    public Response publicSearchByQuery(Map<String, List<String>> queryMap) {
+        return searchByQuery(queryMap);
+    }
+    
     /**
      * See {@link OrcidApiServiceDelegator}{@link #searchByQuery(Map)}
      */
@@ -393,6 +413,7 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
 
         if (orcidSearchResults != null) {
             OrcidMessage orcidMessage = new OrcidMessage();
+            orcidMessage.setMessageVersion("1.2");
             orcidMessage.setOrcidSearchResults(orcidSearchResults);
             return Response.ok(orcidMessage).build();
         } else {

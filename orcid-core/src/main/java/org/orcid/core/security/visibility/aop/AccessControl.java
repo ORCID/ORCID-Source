@@ -31,7 +31,8 @@ import java.lang.annotation.Target;
 @Inherited
 @Documented
 public @interface AccessControl {
-
+    
+    boolean enableAnonymousAccess() default false;    
     ScopePathType requiredScope() default ScopePathType.AUTHENTICATE;
 
 }

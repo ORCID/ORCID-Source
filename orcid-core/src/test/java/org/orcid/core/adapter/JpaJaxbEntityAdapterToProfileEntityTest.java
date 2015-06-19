@@ -52,11 +52,11 @@ import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.test.DBUnitTest;
+import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -65,7 +65,7 @@ import org.springframework.transaction.annotation.Transactional;
  * 
  * @author Declan Newman (declan)
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
 public class JpaJaxbEntityAdapterToProfileEntityTest extends DBUnitTest {
 
@@ -132,7 +132,7 @@ public class JpaJaxbEntityAdapterToProfileEntityTest extends DBUnitTest {
         // Check all email visibility and values
         Set<EmailEntity> emails = profileEntity.getEmails();
         assertNotNull(emails);
-        assertEquals(3, emails.size());
+        assertEquals(2, emails.size());
         Map<String, EmailEntity> emailMap = EmailEntity.mapById(emails);
 
         EmailEntity primaryEmail = emailMap.get("josiah_carberry@brown.edu");
@@ -149,15 +149,7 @@ public class JpaJaxbEntityAdapterToProfileEntityTest extends DBUnitTest {
         assertFalse(nonPrimaryEmail1.getPrimary());
         assertTrue(nonPrimaryEmail1.getCurrent());
         assertFalse(nonPrimaryEmail1.getVerified());
-        assertEquals("1111-1111-1111-1115", nonPrimaryEmail1.getSource().getSourceId());
-
-        EmailEntity nonPrimaryEmail2 = emailMap.get("josiah_carberry_2@brown.edu");
-        assertNotNull(nonPrimaryEmail2);
-        assertEquals(Visibility.LIMITED, nonPrimaryEmail2.getVisibility());
-        assertFalse(nonPrimaryEmail2.getPrimary());
-        assertFalse(nonPrimaryEmail2.getCurrent());
-        assertTrue(nonPrimaryEmail2.getVerified());
-        assertEquals("1111-1111-1111-1115", nonPrimaryEmail1.getSource().getSourceId());
+        assertEquals("APP-0000000000000000", nonPrimaryEmail1.getSource().getSourceClient().getClientId());
 
         Set<ProfileWorkEntity> profileWorkEntities = profileEntity.getProfileWorks();
         assertEquals(3, profileWorkEntities.size());

@@ -36,12 +36,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.utils.Classpath;
 import org.orcid.core.utils.Classpath.FileFilter;
+import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml", "classpath:orcid-frontend-web-servlet.xml" })
 public class PropertyFiles {
     ArrayList<Properties> pList = new ArrayList<>();

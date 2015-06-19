@@ -55,15 +55,15 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.AdminChangePassword;
 import org.orcid.pojo.ProfileDeprecationRequest;
 import org.orcid.pojo.ProfileDetails;
+import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml", "classpath:orcid-frontend-web-servlet.xml" })
 @Transactional(propagation = Propagation.REQUIRES_NEW)
 public class AdminControllerTest extends BaseControllerTest {
@@ -205,7 +205,7 @@ public class AdminControllerTest extends BaseControllerTest {
         assertEquals(0, result.getErrors().size());      
         
         
-        Map<String, String> emails = adminController.findIdByEmail("1@deprecate.com,2@deprecate.com,spike@milligan.com,michael@bentine.com");
+        Map<String, String> emails = adminController.findIdByEmailHelper("1@deprecate.com,2@deprecate.com,spike@milligan.com,michael@bentine.com");
         assertEquals("4444-4444-4444-4442", emails.get("1@deprecate.com"));
         assertEquals("4444-4444-4444-4442", emails.get("2@deprecate.com"));
         assertEquals("4444-4444-4444-4442", emails.get("spike@milligan.com"));
@@ -293,7 +293,7 @@ public class AdminControllerTest extends BaseControllerTest {
     
     @Test
     public void findIdsTest(){
-        Map<String, String> ids = adminController.findIdByEmail("spike@milligan.com,michael@bentine.com,peter@sellers.com,invalid@email.com");
+        Map<String, String> ids = adminController.findIdByEmailHelper("spike@milligan.com,michael@bentine.com,peter@sellers.com,invalid@email.com");
         assertNotNull(ids);
         assertEquals(3, ids.size());
         assertTrue(ids.containsKey("spike@milligan.com"));

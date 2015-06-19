@@ -20,6 +20,7 @@ public class OrcidApiConstants {
 
     public static final String EXPERIMENTAL_RDF_V1 = "/experimental_rdf_v1";
 
+    public static final String PROFILE_ROOT_PATH = "/{orcid}";
     public static final String PROFILE_POST_PATH = "/orcid-profile";
     public static final String PROFILE_GET_PATH = "/{orcid}" + PROFILE_POST_PATH;
     public static final String PROFILE_DELETE_PATH = "/{orcid}" + PROFILE_POST_PATH;

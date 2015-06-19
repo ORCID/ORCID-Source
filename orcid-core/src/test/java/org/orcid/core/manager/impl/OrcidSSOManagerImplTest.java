@@ -42,11 +42,11 @@ import org.orcid.persistence.jpa.entities.ClientAuthorisedGrantTypeEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientGrantedAuthorityEntity;
 import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
+import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
 public class OrcidSSOManagerImplTest extends BaseTest {
 
@@ -93,13 +93,15 @@ public class OrcidSSOManagerImplTest extends BaseTest {
         }
 
         Set<ClientAuthorisedGrantTypeEntity> grantTypeList = clientDetails.getClientAuthorizedGrantTypes();
-        assertEquals(grantTypeList.size(), 1);
-        for (ClientAuthorisedGrantTypeEntity grantType : grantTypeList) {
-            assertEquals(grantType.getGrantType(), "authorization_code");
-        }
+        assertEquals(2, grantTypeList.size());
+        
+        Set<String> grantTypes = clientDetails.getAuthorizedGrantTypes();
+        assertTrue(grantTypes.contains("authorization_code"));
+        assertTrue(grantTypes.contains("client_credentials"));
+        
 
         List<ClientGrantedAuthorityEntity> grantedAuthList = clientDetails.getClientGrantedAuthorities();
-        assertEquals(grantedAuthList.size(), 1);
+        assertEquals(1, grantedAuthList.size());
         for (ClientGrantedAuthorityEntity grantedAuth : grantedAuthList) {
             assertEquals(grantedAuth.getAuthority(), "ROLE_PUBLIC");
         }

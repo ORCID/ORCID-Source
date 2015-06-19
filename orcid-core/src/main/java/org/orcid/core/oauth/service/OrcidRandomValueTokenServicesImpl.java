@@ -30,7 +30,6 @@ import org.orcid.core.oauth.OrcidOauth2AuthInfo;
 import org.orcid.core.oauth.OrcidRandomValueTokenServices;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.dao.OrcidOauth2AuthoriziationCodeDetailDao;
-import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -64,10 +63,10 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
     private ClientDetailsManager clientDetailsManager;        
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OrcidRandomValueTokenServicesImpl.class);
-
+    
     public OrcidRandomValueTokenServicesImpl() {        
     }
-
+    
     @Override
     public OAuth2AccessToken createAccessToken(OAuth2Authentication authentication) throws AuthenticationException {
         OrcidOauth2AuthInfo authInfo = new OrcidOauth2AuthInfo(authentication);
@@ -98,25 +97,18 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
     @Override
     protected int getAccessTokenValiditySeconds(OAuth2Request authorizationRequest) {
         Set<ScopePathType> requestedScopes = ScopePathType.getScopesFromStrings(authorizationRequest.getScope());
-        if (requestedScopes.size() == 1 && ScopePathType.ORCID_PROFILE_CREATE.equals(requestedScopes.iterator().next())) {
-            return readValiditySeconds;
-        }
-
         if (isClientCredentialsGrantType(authorizationRequest)) {
-            boolean isClientCredentialsScope = false;
+            boolean allAreClientCredentialsScopes = true;
 
             for (ScopePathType scope : requestedScopes) {
-                if (scope.isClientCreditalScope()) {
-                    isClientCredentialsScope = true;
+                if (!scope.isClientCreditalScope()) {
+                    allAreClientCredentialsScopes = false;
                     break;
                 }
             }
 
-            if (isClientCredentialsScope) {
-                String clientId = authorizationRequest.getClientId();
-                ClientDetailsEntity clientDetails = clientDetailsManager.findByClientId(clientId);
-                if (clientDetails != null && clientDetails.isPersistentTokensEnabled())
-                    return readValiditySeconds;
+            if (allAreClientCredentialsScopes) {
+                return readValiditySeconds;
             }
         } else if (isPersistentTokenEnabled(authorizationRequest)) {
             return readValiditySeconds;
@@ -176,7 +168,7 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
     }
 
     @Override
-    public OAuth2Authentication loadAuthentication(String accessTokenValue) throws AuthenticationException {
+    public OAuth2Authentication loadAuthentication(String accessTokenValue) throws AuthenticationException {        
         OAuth2AccessToken accessToken = orcidtokenStore.readAccessToken(accessTokenValue);
         if (accessToken == null) {
             throw new InvalidTokenException("Invalid access token: " + accessTokenValue);
@@ -187,9 +179,7 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
                 throw new InvalidTokenException("Access token expired: " + accessTokenValue);
             }
         }
-
-        
-        
+                
         OAuth2Authentication result = orcidtokenStore.readAuthentication(accessToken);
         return result;
     }    

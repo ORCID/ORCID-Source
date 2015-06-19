@@ -22,7 +22,8 @@ public enum StatisticsEnum {
     KEY_IDS_WITH_WORKS("idsWithWorks"),
     KEY_NUMBER_OF_WORKS("works"),
     KEY_WORKS_WITH_DOIS("worksWithDois"),
-    KEY_LOCKED_RECORDS("lockedRecords");
+    KEY_LOCKED_RECORDS("lockedRecords"),
+    KEY_UNIQUE_DOIS("uniqueDois");
     private final String value;
 
     StatisticsEnum(String v) {

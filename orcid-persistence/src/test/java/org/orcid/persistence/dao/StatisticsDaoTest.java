@@ -34,13 +34,13 @@ import org.junit.runner.RunWith;
 import org.orcid.persistence.jpa.entities.StatisticKeyEntity;
 import org.orcid.persistence.jpa.entities.StatisticValuesEntity;
 import org.orcid.test.DBUnitTest;
+import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-persistence-context.xml" })
 public class StatisticsDaoTest extends DBUnitTest {
 
@@ -71,29 +71,15 @@ public class StatisticsDaoTest extends DBUnitTest {
     @Rollback(true)
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void testStatistics() {
-        long s1 = statisticsGeneratorDao.getAccountsWithVerifiedEmails();
-        long s2 = statisticsGeneratorDao.getAccountsWithWorks();
-        long s3 = statisticsGeneratorDao.getLiveIds();
-        long s4 = statisticsGeneratorDao.getNumberOfWorks();
-        long s5 = statisticsGeneratorDao.getNumberOfWorksWithDOIs();
-        long s6 = 0;
-        long s7 = 0;
-
-        assertEquals(11, s1);
-        assertEquals(3, s2);
-        assertEquals(12, s3);
-        assertEquals(7, s4);
-        assertEquals(0, s5);
-
         StatisticKeyEntity key = statisticsDao.createKey();
 
-        StatisticValuesEntity os1 = new StatisticValuesEntity(key, "s1", s1);
-        StatisticValuesEntity os2 = new StatisticValuesEntity(key, "s2", s2);
-        StatisticValuesEntity os3 = new StatisticValuesEntity(key, "s3", s3);
-        StatisticValuesEntity os4 = new StatisticValuesEntity(key, "s4", s4);
-        StatisticValuesEntity os5 = new StatisticValuesEntity(key, "s5", s5);
-        StatisticValuesEntity os6 = new StatisticValuesEntity(key, "s6", s6);
-        StatisticValuesEntity os7 = new StatisticValuesEntity(null, "s7", s7);
+        StatisticValuesEntity os1 = new StatisticValuesEntity(key, "s1", 11);
+        StatisticValuesEntity os2 = new StatisticValuesEntity(key, "s2", 3);
+        StatisticValuesEntity os3 = new StatisticValuesEntity(key, "s3", 12);
+        StatisticValuesEntity os4 = new StatisticValuesEntity(key, "s4", 7);
+        StatisticValuesEntity os5 = new StatisticValuesEntity(key, "s5", 0);
+        StatisticValuesEntity os6 = new StatisticValuesEntity(key, "s6", 0);
+        StatisticValuesEntity os7 = new StatisticValuesEntity(null, "s7", 0);
 
         statisticsDao.saveStatistic(os1);
         statisticsDao.saveStatistic(os2);

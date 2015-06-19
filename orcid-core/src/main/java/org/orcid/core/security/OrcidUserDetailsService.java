@@ -18,6 +18,7 @@ package org.orcid.core.security;
 
 import javax.annotation.Resource;
 
+import org.orcid.core.manager.OrcidSecurityManager;
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.persistence.dao.EmailDao;
@@ -43,6 +44,9 @@ public class OrcidUserDetailsService implements UserDetailsService {
 
 	@Resource
 	private EmailDao emailDao;
+
+	@Resource
+	private OrcidSecurityManager securityMgr;
 
 	@Value("${org.orcid.core.baseUri}")
 	private String baseUrl;
@@ -75,11 +79,11 @@ public class OrcidUserDetailsService implements UserDetailsService {
 					"orcid.frontend.security.deprecated_with_primary", profile
 							.getPrimaryRecord().getId(), profile.getId());
 		}
-		if (!profile.getClaimed()) {
+		if (!profile.getClaimed() && !securityMgr.isAdmin()) {
 			throw new UnclaimedProfileExistsException(
 					"orcid.frontend.security.unclaimed_exists");
 		}
-		if (profile.getDeactivationDate() != null) {
+		if (profile.getDeactivationDate() != null && !securityMgr.isAdmin()) {
 			throw new DisabledException(
 					"Account not active, please call helpdesk");
 		}
@@ -109,22 +113,6 @@ public class OrcidUserDetailsService implements UserDetailsService {
 		if (!StringUtils.isEmpty(username)) {
 			if (OrcidStringUtils.isValidOrcid(username)) {
 				profile = profileDao.find(username);
-			} else if (OrcidStringUtils.isValidOrcidWithSpaces(username)) {
-				username = username.toString().replace(' ', '-');
-				profile = profileDao.find(username);
-			} else if (OrcidStringUtils
-					.isValidOrcidWithoutSpacesWithoutHyphens(username)) {
-				String temp = username.replaceAll("(.{4})", "$1-");
-				int length = temp.length();
-				username = temp.substring(0, length - 1);
-				profile = profileDao.find(username);
-			} else if (baseUrl != null
-					&& username.contains(new StringBuffer(baseUrl).append("/")
-							.toString())) {
-				username = OrcidStringUtils.getOrcidNumber(username);
-				if (username != null) {
-					profile = profileDao.find(username);
-				}
 			} else {
 				EmailEntity emailEntity = emailDao
 						.findCaseInsensitive(username);

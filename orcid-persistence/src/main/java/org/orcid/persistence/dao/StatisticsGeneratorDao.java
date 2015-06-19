@@ -26,7 +26,7 @@ public interface StatisticsGeneratorDao {
 
     public long getNumberOfWorks();
 
-    public long getNumberOfWorksWithDOIs();
+    public long getNumberOfUniqueDOIs();
     
     public long getNumberOfLockedRecords();
 }

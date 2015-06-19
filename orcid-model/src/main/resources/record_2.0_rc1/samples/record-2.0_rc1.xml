@@ -331,6 +331,6 @@
 			<common:host>orcid.org</common:host>
 		</common:group-orcid-identifier>
 		<internal:referred-by>internal:referred-by</internal:referred-by>
-		<internal:salesforce-dd>123456789012345</internal:salesforce-dd>
+		<internal:salesforce-id>123456789012345</internal:salesforce-id>
 	</internal:internal>
 </record:record>
