@@ -16,7 +16,6 @@
  */
 package org.orcid.persistence.dao.impl;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -133,7 +132,7 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
      * */
     @Override
     @Transactional
-    public boolean updateVisibilities(String orcid, ArrayList<Long> workIds, Visibility visibility) {
+    public boolean updateVisibilities(String orcid, List<Long> workIds, Visibility visibility) {
         Query query = entityManager.createNativeQuery("UPDATE work SET visibility=:visibility, last_modified=now() WHERE work_id in (:workIds)");
         query.setParameter("visibility", visibility.name());
         query.setParameter("workIds", workIds);
@@ -152,7 +151,7 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
      * */
     @Override
     @Transactional
-    public boolean removeWorks(String clientOrcid, ArrayList<Long> workIds) {
+    public boolean removeWorks(String clientOrcid, List<Long> workIds) {
         Query query = entityManager.createNativeQuery("DELETE FROM work WHERE work_id in (:workIds)");        
         query.setParameter("workIds", workIds);
         return query.executeUpdate() > 0;

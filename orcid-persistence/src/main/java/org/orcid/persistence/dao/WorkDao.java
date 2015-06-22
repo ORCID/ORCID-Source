@@ -16,7 +16,6 @@
  */
 package org.orcid.persistence.dao;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.orcid.jaxb.model.message.Visibility;
@@ -76,7 +75,7 @@ public interface WorkDao extends GenericDao<WorkEntity, Long> {
      *            The new visibility value for the profile work relationship
      * @return true if the relationship was updated
      * */
-    boolean updateVisibilities(String orcid, ArrayList<Long> workIds, Visibility visibility);
+    boolean updateVisibilities(String orcid, List<Long> workIds, Visibility visibility);
     
     /**
      * Removes a work.
@@ -88,7 +87,7 @@ public interface WorkDao extends GenericDao<WorkEntity, Long> {
      *            The client orcid
      * @return true if the work was deleted
      * */
-    boolean removeWorks(String clientOrcid, ArrayList<Long> workIds);
+    boolean removeWorks(String clientOrcid, List<Long> workIds);
     
     /**
      * Copy the data from the profile_work table to the work table

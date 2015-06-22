@@ -32,7 +32,7 @@ import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.record.PeerReview;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
-import org.orcid.pojo.ajaxForm.Work;
+import org.orcid.pojo.ajaxForm.WorkForm;
 import org.springframework.cache.annotation.Cacheable;
 
 public class ActivityCacheManagerImpl extends Object implements ActivityCacheManager {
@@ -41,13 +41,13 @@ public class ActivityCacheManagerImpl extends Object implements ActivityCacheMan
     private PeerReviewManager peerReviewManager;
 
     @Cacheable(value = "pub-min-works-maps", key = "#profile.getCacheKey()")
-    public LinkedHashMap<String, Work> pubMinWorksMap(OrcidProfile profile) {
-        LinkedHashMap<String, Work> workMap = new LinkedHashMap<String, Work>();
+    public LinkedHashMap<String, WorkForm> pubMinWorksMap(OrcidProfile profile) {
+        LinkedHashMap<String, WorkForm> workMap = new LinkedHashMap<String, WorkForm>();
         if (profile.getOrcidActivities() != null) {
             if (profile.getOrcidActivities().getOrcidWorks() != null) {
                 for (OrcidWork orcidWork : profile.getOrcidActivities().getOrcidWorks().getOrcidWork())
                     if (Visibility.PUBLIC.equals(orcidWork.getVisibility()))
-                        workMap.put(orcidWork.getPutCode(), Work.minimizedValueOf(orcidWork));
+                        workMap.put(orcidWork.getPutCode(), WorkForm.minimizedValueOf(orcidWork));
             }
         }
         return workMap;

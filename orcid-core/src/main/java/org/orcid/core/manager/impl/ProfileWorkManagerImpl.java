@@ -142,12 +142,12 @@ public class ProfileWorkManagerImpl implements ProfileWorkManager {
 
     @Override
     public Work getWork(String orcid, String workId) {
-        return jpaJaxbWorkAdapter.toWork(profileWorkDao.getProfileWork(orcid, workId));
+        throw new UnsupportedOperationException("ProfileWork table should not be used anymore");
     }
 
     @Override
     public WorkSummary getWorkSummary(String orcid, String workId) {
-        return jpaJaxbWorkAdapter.toWorkSummary(profileWorkDao.getProfileWork(orcid, workId));
+        throw new UnsupportedOperationException("ProfileWork table should not be used anymore");
     }
 
     /**

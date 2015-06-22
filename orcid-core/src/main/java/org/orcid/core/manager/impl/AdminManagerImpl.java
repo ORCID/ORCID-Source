@@ -16,8 +16,10 @@
  */
 package org.orcid.core.manager.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -40,6 +42,7 @@ import org.orcid.core.manager.ProfileFundingManager;
 import org.orcid.core.manager.ProfileKeywordManager;
 import org.orcid.core.manager.ProfileWorkManager;
 import org.orcid.core.manager.ResearcherUrlManager;
+import org.orcid.core.manager.WorkManager;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.jaxb.model.message.Keywords;
 import org.orcid.jaxb.model.message.OrcidProfile;
@@ -53,7 +56,7 @@ import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
-import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
+import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.pojo.AdminDelegatesRequest;
 import org.orcid.pojo.ProfileDeprecationRequest;
 import org.slf4j.Logger;
@@ -70,6 +73,9 @@ public class AdminManagerImpl implements AdminManager {
     
     @Resource
     private ProfileWorkManager profileWorkManager;
+    
+    @Resource 
+    private WorkManager workManager;
     
     @Resource
     private ProfileFundingManager profileFundingManager;
@@ -142,9 +148,11 @@ public class AdminManagerImpl implements AdminManager {
                         deprecated = profileEntityCacheManager.retrieve(deprecatedOrcid);
                         LOGGER.info("Account {} was deprecated to primary account: {}", deprecated.getId(), primary.getId());
                         // Remove works
-                        if (deprecated.getProfileWorks() != null) {
-                            for (ProfileWorkEntity profileWork : deprecated.getProfileWorks()) {
-                                profileWorkManager.removeWork(deprecated.getId(), String.valueOf(profileWork.getWork().getId()));
+                        if (deprecated.getWorks() != null) {
+                            for (WorkEntity work : deprecated.getWorks()) {
+                                List<Long> works = new ArrayList<Long>();
+                                works.add(work.getId());
+                                workManager.removeWorks(deprecated.getId(), works);
                             }
                         }
                         

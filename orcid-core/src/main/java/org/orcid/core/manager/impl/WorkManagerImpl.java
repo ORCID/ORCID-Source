@@ -16,19 +16,27 @@
  */
 package org.orcid.core.manager.impl;
 
-import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
 
 import org.orcid.core.adapter.Jpa2JaxbAdapter;
+import org.orcid.core.adapter.JpaJaxbWorkAdapter;
+import org.orcid.core.manager.OrcidSecurityManager;
+import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.jaxb.model.record.Work;
+import org.orcid.jaxb.model.record.summary.WorkSummary;
+import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.WorkDao;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.custom.MinimizedWorkEntity;
-import org.orcid.pojo.ajaxForm.Work;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.transaction.annotation.Transactional;
 
 public class WorkManagerImpl implements WorkManager {
 
@@ -38,6 +46,18 @@ public class WorkManagerImpl implements WorkManager {
     @Resource
     private Jpa2JaxbAdapter jpa2JaxbAdapter;
 
+    @Resource
+    private JpaJaxbWorkAdapter jpaJaxbWorkAdapter;
+
+    @Resource
+    private SourceManager sourceManager;
+
+    @Resource
+    private OrcidSecurityManager orcidSecurityManager;
+    
+    @Resource
+    private ProfileDao profileDao;
+    
     /**
      * Add a new work to the work table
      * 
@@ -45,8 +65,10 @@ public class WorkManagerImpl implements WorkManager {
      *            The work that will be persited
      * @return the work already persisted on database
      * */
-    public WorkEntity addWork(WorkEntity work) {
-        return workDao.addWork(work);
+    public Work addWork(Work work) {
+        WorkEntity workEntity = jpaJaxbWorkAdapter.toWorkEntity(work);
+        workEntity = workDao.addWork(workEntity);
+        return jpaJaxbWorkAdapter.toWork(workEntity);
     }
 
     /**
@@ -56,8 +78,10 @@ public class WorkManagerImpl implements WorkManager {
      *            The work to be edited
      * @return The updated entity
      * */
-    public WorkEntity editWork(WorkEntity work) {
-        return workDao.editWork(work);
+    public Work editWork(Work work) {
+        WorkEntity workEntity = jpaJaxbWorkAdapter.toWorkEntity(work);
+        workEntity = workDao.editWork(workEntity);
+        return jpaJaxbWorkAdapter.toWork(workEntity);
     }
 
     /**
@@ -68,8 +92,9 @@ public class WorkManagerImpl implements WorkManager {
      * @return the list of works associated to the specific user
      * */
     @Cacheable(value = "works", key = "#orcid.concat('-').concat(#lastModified)")
-    public List<MinimizedWorkEntity> findWorks(String orcid, long lastModified) {
-        return workDao.findWorks(orcid);
+    public List<Work> findWorks(String orcid, long lastModified) {        
+        List<MinimizedWorkEntity> minimizedWorks = workDao.findWorks(orcid);
+        return jpaJaxbWorkAdapter.toMinimizedWork(minimizedWorks);
     }
 
     /**
@@ -79,8 +104,9 @@ public class WorkManagerImpl implements WorkManager {
      *            the Id of the user
      * @return the list of works associated to the specific user
      * */
-    public List<MinimizedWorkEntity> findPublicWorks(String orcid) {
-        return workDao.findPublicWorks(orcid);
+    public List<Work> findPublicWorks(String orcid) {
+        List<MinimizedWorkEntity> minimizedWorks = workDao.findPublicWorks(orcid);
+        return jpaJaxbWorkAdapter.toMinimizedWork(minimizedWorks);
     }
 
     /**
@@ -92,7 +118,7 @@ public class WorkManagerImpl implements WorkManager {
      *            The new visibility value for the profile work relationship
      * @return true if the relationship was updated
      * */
-    public boolean updateVisibilities(String orcid, ArrayList<Long> workIds, Visibility visibility) {
+    public boolean updateVisibilities(String orcid, List<Long> workIds, Visibility visibility) {
         return workDao.updateVisibilities(orcid, workIds, visibility);
     }
     
@@ -106,7 +132,7 @@ public class WorkManagerImpl implements WorkManager {
      *            The client orcid
      * @return true if the work was deleted
      * */
-    public boolean removeWorks(String clientOrcid, ArrayList<Long> workIds) {
+    public boolean removeWorks(String clientOrcid, List<Long> workIds) {
         return workDao.removeWorks(clientOrcid, workIds);
     }
     
@@ -129,11 +155,52 @@ public class WorkManagerImpl implements WorkManager {
      * @param workId
      *          The work id             
      * */
+    @Override
     public Work getWork(String orcid, String workId) {
-        WorkEntity workEntity = workDao.find(Long.valueOf(workId));
-        if(!workEntity.getProfile().getId().equals(orcid)) {
-            throw new IllegalArgumentException("User " + orcid + " is not the owner of work " + workId);
-        }
-        return Work.valueOf(workEntity);
+        return jpaJaxbWorkAdapter.toWork(workDao.find(Long.valueOf(workId)));
     }
+
+    @Override
+    public WorkSummary getWorkSummary(String orcid, String workId) {
+        return jpaJaxbWorkAdapter.toWorkSummary(workDao.find(Long.valueOf(workId)));
+    }    
+    
+    @Override
+    @Transactional
+    public org.orcid.jaxb.model.record.Work createWork(String orcid, org.orcid.jaxb.model.record.Work work) {
+        WorkEntity workEntity = jpaJaxbWorkAdapter.toWorkEntity(work);
+        workEntity.setSource(sourceManager.retrieveSourceEntity());
+        ProfileEntity profile = profileDao.find(orcid);
+        workEntity.setProfile(profile);        
+        workEntity.setAddedToProfileDate(new Date());
+        setIncomingWorkPrivacy(workEntity, profile);
+        workDao.persist(workEntity);
+        return jpaJaxbWorkAdapter.toWork(workEntity);
+    }
+
+    @Override
+    @Transactional
+    public org.orcid.jaxb.model.record.Work updateWork(String orcid, org.orcid.jaxb.model.record.Work work) {
+        WorkEntity workEntity = workDao.find(Long.valueOf(work.getPutCode()));
+        Visibility originalVisibility = workEntity.getVisibility();
+        SourceEntity existingSource = workEntity.getSource();
+        orcidSecurityManager.checkSource(existingSource);
+        jpaJaxbWorkAdapter.toWorkEntity(work, workEntity);
+        workEntity.setVisibility(originalVisibility);
+        workEntity.setSource(existingSource);
+        workDao.merge(workEntity);
+        return jpaJaxbWorkAdapter.toWork(workEntity);
+    }
+
+    private void setIncomingWorkPrivacy(WorkEntity workEntity, ProfileEntity profile) {
+        Visibility incomingWorkVisibility = workEntity.getVisibility();
+        Visibility defaultWorkVisibility = profile.getActivitiesVisibilityDefault();
+        if (profile.getClaimed()) {
+            if (defaultWorkVisibility.isMoreRestrictiveThan(incomingWorkVisibility)) {
+                workEntity.setVisibility(defaultWorkVisibility);                
+            }
+        } else if (incomingWorkVisibility == null) {
+            workEntity.setVisibility(Visibility.PRIVATE);            
+        }
+    }   
 }

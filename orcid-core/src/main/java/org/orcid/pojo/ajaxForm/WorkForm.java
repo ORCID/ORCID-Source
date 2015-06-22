@@ -41,7 +41,7 @@ import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.custom.MinimizedWorkEntity;
 import org.springframework.util.Assert;
 
-public class Work implements ErrorsInterface, Serializable {
+public class WorkForm implements ErrorsInterface, Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -115,9 +115,9 @@ public class Work implements ErrorsInterface, Serializable {
     
     
     
-    public static Work valueOf(WorkEntity workEntity) {
+    public static WorkForm valueOf(WorkEntity workEntity) {
         Assert.notNull(workEntity);
-        Work w = new Work();
+        WorkForm w = new WorkForm();
         
         //Set work id
         if(workEntity.getId() != null) {            
@@ -290,8 +290,8 @@ public class Work implements ErrorsInterface, Serializable {
     
     
     
-    public static Work valueOf(MinimizedWorkEntity minimizedWorkEntity) {
-        Work w = new Work();
+    public static WorkForm valueOf(MinimizedWorkEntity minimizedWorkEntity) {
+        WorkForm w = new WorkForm();
         // Set id
         w.setPutCode(Text.valueOf(String.valueOf(minimizedWorkEntity.getId())));
         // Set publication date
@@ -350,8 +350,8 @@ public class Work implements ErrorsInterface, Serializable {
         return w;
     }
 
-    public static Work valueOf(OrcidWork orcidWork) {
-        Work w = Work.minimizedValueOf(orcidWork);
+    public static WorkForm valueOf(OrcidWork orcidWork) {
+        WorkForm w = WorkForm.minimizedValueOf(orcidWork);
 
         // minimized works have everything except citation and contributers now
 
@@ -369,7 +369,7 @@ public class Work implements ErrorsInterface, Serializable {
         return w;
     }
 
-    private static void populateExternaIdentifiers(WorkExternalIdentifiers workExternalIdentifiers, Work work) {
+    private static void populateExternaIdentifiers(WorkExternalIdentifiers workExternalIdentifiers, WorkForm work) {
         List<WorkExternalIdentifier> workExternalIdentifiersList = new ArrayList<WorkExternalIdentifier>();
         if (workExternalIdentifiers != null && workExternalIdentifiers.getWorkExternalIdentifier() != null)
             for (org.orcid.jaxb.model.message.WorkExternalIdentifier owWorkExternalIdentifier : workExternalIdentifiers.getWorkExternalIdentifier())
@@ -378,7 +378,7 @@ public class Work implements ErrorsInterface, Serializable {
     }
     
     
-    private static void populateExternalIdentifiers(WorkEntity workEntity, Work work) {
+    private static void populateExternalIdentifiers(WorkEntity workEntity, WorkForm work) {
         List<WorkExternalIdentifier> workExternalIdentifiersList = new ArrayList<WorkExternalIdentifier>();
         if(!PojoUtil.isEmpty(workEntity.getExternalIdentifiersJson())) {
             WorkExternalIdentifiers extIds = JsonUtils.readObjectFromJsonString(workEntity.getExternalIdentifiersJson(), WorkExternalIdentifiers.class);
@@ -391,7 +391,7 @@ public class Work implements ErrorsInterface, Serializable {
         work.setWorkExternalIdentifiers(workExternalIdentifiersList);
     }
     
-    private static void populateContributors(WorkEntity workEntity, Work work) {
+    private static void populateContributors(WorkEntity workEntity, WorkForm work) {
         List<Contributor> contributorsList = new ArrayList<Contributor>();
         if(!PojoUtil.isEmpty(workEntity.getContributorsJson())) {
             WorkContributors contributors = JsonUtils.readObjectFromJsonString(workEntity.getContributorsJson(), WorkContributors.class);
@@ -405,8 +405,8 @@ public class Work implements ErrorsInterface, Serializable {
     }
     
 
-    public static Work minimizedValueOf(OrcidWork orcidWork) {
-        Work w = new Work();
+    public static WorkForm minimizedValueOf(OrcidWork orcidWork) {
+        WorkForm w = new WorkForm();
         if (orcidWork.getPublicationDate() != null)
             w.setPublicationDate(Date.valueOf(orcidWork.getPublicationDate()));
         w.setDateSortString(PojoUtil.createDateSortString(null, orcidWork.getPublicationDate()));

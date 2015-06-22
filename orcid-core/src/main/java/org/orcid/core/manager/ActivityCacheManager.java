@@ -23,11 +23,11 @@ import org.orcid.jaxb.model.message.Funding;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.record.PeerReview;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.pojo.ajaxForm.Work;
+import org.orcid.pojo.ajaxForm.WorkForm;
 
 public interface ActivityCacheManager {
 
-    public LinkedHashMap<String, Work> pubMinWorksMap(OrcidProfile profile);
+    public LinkedHashMap<String, WorkForm> pubMinWorksMap(OrcidProfile profile);
     
     public LinkedHashMap<String, PeerReview> pubPeerReviewsMap(String orcid, long lastModified);
     

@@ -58,7 +58,7 @@ import org.orcid.pojo.ajaxForm.FundingForm;
 import org.orcid.pojo.ajaxForm.PeerReviewForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
-import org.orcid.pojo.ajaxForm.Work;
+import org.orcid.pojo.ajaxForm.WorkForm;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -142,7 +142,7 @@ public class PublicProfileController extends BaseWorkspaceController {
         if (!StringUtil.isBlank(countryName))
             mav.addObject("countryName", countryName);
 
-        LinkedHashMap<String, Work> minimizedWorksMap = new LinkedHashMap<String, Work>();
+        LinkedHashMap<String, WorkForm> minimizedWorksMap = new LinkedHashMap<String, WorkForm>();
         LinkedHashMap<String, Affiliation> affiliationMap = new LinkedHashMap<String, Affiliation>();
         LinkedHashMap<String, Funding> fundingMap = new LinkedHashMap<String, Funding>();
         LinkedHashMap<String, PeerReview> peerReviewMap = new LinkedHashMap<String, PeerReview>();
@@ -289,18 +289,18 @@ public class PublicProfileController extends BaseWorkspaceController {
 
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/works.json")
     public @ResponseBody
-    List<Work> getWorkJson(HttpServletRequest request, @PathVariable("orcid") String orcid, @RequestParam(value = "workIds") String workIdsStr) {
+    List<WorkForm> getWorkJson(HttpServletRequest request, @PathVariable("orcid") String orcid, @RequestParam(value = "workIds") String workIdsStr) {
         Map<String, String> countries = retrieveIsoCountries();
         Map<String, String> languages = lm.buildLanguageMap(localeManager.getLocale(), false);
 
-        HashMap<String, Work> minimizedWorksMap = minimizedWorksMap(orcid);
+        HashMap<String, WorkForm> minimizedWorksMap = minimizedWorksMap(orcid);
 
-        List<Work> works = new ArrayList<Work>();
+        List<WorkForm> works = new ArrayList<WorkForm>();
         String[] workIds = workIdsStr.split(",");
 
         for (String workId : workIds) {
             if (minimizedWorksMap.containsKey(workId)) {
-                Work work = minimizedWorksMap.get(workId);
+                WorkForm work = minimizedWorksMap.get(workId);
                 if (Visibility.PUBLIC.equals(work.getVisibility())) {
                     if (!PojoUtil.isEmpty(work.getCountryCode())) {
                         Text countryName = Text.valueOf(countries.get(work.getCountryCode().getValue()));
@@ -333,7 +333,7 @@ public class PublicProfileController extends BaseWorkspaceController {
      * */
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/getWorkInfo.json", method = RequestMethod.GET)
     public @ResponseBody
-    Work getWorkInfo(@PathVariable("orcid") String orcid, @RequestParam(value = "workId") String workId) {
+    WorkForm getWorkInfo(@PathVariable("orcid") String orcid, @RequestParam(value = "workId") String workId) {
         Map<String, String> countries = retrieveIsoCountries();
         Map<String, String> languages = lm.buildLanguageMap(localeManager.getLocale(), false);
         if (StringUtils.isEmpty(workId))
@@ -344,7 +344,7 @@ public class PublicProfileController extends BaseWorkspaceController {
         if (profileWork != null) {
             OrcidWork orcidWork = jpa2JaxbAdapter.getOrcidWork(profileWork);
             if (orcidWork != null) {
-                Work work = Work.valueOf(orcidWork);
+                WorkForm work = WorkForm.valueOf(orcidWork);
                 // Set country name
                 if (!PojoUtil.isEmpty(work.getCountryCode())) {
                     Text countryName = Text.valueOf(countries.get(work.getCountryCode().getValue()));
@@ -445,7 +445,7 @@ public class PublicProfileController extends BaseWorkspaceController {
         java.util.Date lastModified = profile.getOrcidHistory().getLastModifiedDate().getValue().toGregorianCalendar().getTime();
         
         HashMap<String, Funding> fundings = activityCacheManager.fundingMap(profile);
-        HashMap<String, Work> works = activityCacheManager.pubMinWorksMap(profile);
+        HashMap<String, WorkForm> works = activityCacheManager.pubMinWorksMap(profile);
         HashMap<String, Affiliation> affiliations = activityCacheManager.affiliationMap(profile);        
         HashMap<String, PeerReview> peerReviews = activityCacheManager.pubPeerReviewsMap(orcid, lastModified.getTime());
         
@@ -488,7 +488,7 @@ public class PublicProfileController extends BaseWorkspaceController {
         return activityCacheManager.affiliationMap(profile);
     }
 
-    public LinkedHashMap<String, Work> minimizedWorksMap(String orcid) {
+    public LinkedHashMap<String, WorkForm> minimizedWorksMap(String orcid) {
         OrcidProfile profile = orcidProfileCacheManager.retrievePublic(orcid);
         if (profile == null)
             return null;
