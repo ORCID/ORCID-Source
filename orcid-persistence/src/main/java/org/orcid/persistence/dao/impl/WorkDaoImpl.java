@@ -94,10 +94,10 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
     public List<MinimizedWorkEntity> findWorks(String orcid) {
 
         Query query = entityManager
-                .createQuery("select NEW org.orcid.persistence.jpa.entities.custom.MinimizedWorkEntity(w.id, w.title, w.subtitle, w.journalTitle, w.description, w.publicationDate.day, w.publicationDate.month, w.publicationDate.year, pw.visibility, w.externalIdentifiersJson, pw.displayIndex, pw.source, pw.dateCreated, pw.lastModified, w.workType, w.languageCode, w.translatedTitleLanguageCode, w.translatedTitle, w.workUrl) "
-                        + "from WorkEntity w, ProfileWorkEntity pw "
-                        + "where pw.profile.id=:orcid and w.id=pw.work.id "
-                        + "order by pw.displayIndex desc, pw.dateCreated asc");
+                .createQuery("select NEW org.orcid.persistence.jpa.entities.custom.MinimizedWorkEntity(w.id, w.title, w.subtitle, w.journalTitle, w.description, w.publicationDate.day, w.publicationDate.month, w.publicationDate.year, w.visibility, w.externalIdentifiersJson, w.displayIndex, w.source, w.dateCreated, w.lastModified, w.workType, w.languageCode, w.translatedTitleLanguageCode, w.translatedTitle, w.workUrl) "
+                        + "from WorkEntity w "
+                        + "where w.profile.id=:orcid "
+                        + "order by w.displayIndex desc, w.dateCreated asc");
         query.setParameter("orcid", orcid);
 
         return query.getResultList();
@@ -113,10 +113,10 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
     @SuppressWarnings("unchecked")
     public List<MinimizedWorkEntity> findPublicWorks(String orcid) {
         Query query = entityManager
-                .createQuery("select NEW org.orcid.persistence.jpa.entities.custom.MinimizedWorkEntity(w.id, w.title, w.subtitle, w.journalTitle, w.description, w.publicationDate.day, w.publicationDate.month, w.publicationDate.year, pw.visibility, w.externalIdentifiersJson, pw.displayIndex, pw.sourceProfile, pw.dateCreated, pw.lastModified, w.workType, w.languageCode, w.translatedTitleLanguageCode, w.translatedTitle, w.workUrl) "
-                        + "from WorkEntity w, ProfileWorkEntity pw "
-                        + "where pw.visibility='PUBLIC' and pw.profile.id=:orcid and w.id=pw.work.id "
-                        + "order by pw.displayIndex desc, pw.dateCreated asc");
+                .createQuery("select NEW org.orcid.persistence.jpa.entities.custom.MinimizedWorkEntity(w.id, w.title, w.subtitle, w.journalTitle, w.description, w.publicationDate.day, w.publicationDate.month, w.publicationDate.year, w.visibility, w.externalIdentifiersJson, w.displayIndex, w.sourceProfile, w.dateCreated, w.lastModified, w.workType, w.languageCode, w.translatedTitleLanguageCode, w.translatedTitle, w.workUrl) "
+                        + "from WorkEntity w "
+                        + "where w.visibility='PUBLIC' and w.profile.id=:orcid "
+                        + "order by w.displayIndex desc, w.dateCreated asc");
         query.setParameter("orcid", orcid);
 
         return query.getResultList();
@@ -183,16 +183,16 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
      * Sets the display index of the new work
      * @param workId
      *          The work id
-     * @param displayIndex
-     *          The display index for the work
+     * @param orcid
+     *          The work owner 
      * @return true if the work index was correctly set                  
      * */
     @Override
     @Transactional
-    public boolean updateToMaxDisplay(String workId, Long displayIndex) {
-        Query query = entityManager.createNativeQuery("UPDATE work SET display_index=:index WHERE work_id=:workId");
-        query.setParameter("index", displayIndex);
+    public boolean updateToMaxDisplay(String orcid, String workId) {
+        Query query = entityManager.createNativeQuery("UPDATE work SET display_index=(select coalesce(MAX(display_index) + 1, 0) from work where orcid=:orcid and work_id != :workId ) WHERE work_id=:workId");        
         query.setParameter("workId", Long.valueOf(workId));
+        query.setParameter("orcid", orcid);
         return query.executeUpdate() > 0;
     }
     

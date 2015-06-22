@@ -104,9 +104,9 @@ public interface WorkDao extends GenericDao<WorkEntity, Long> {
      * Sets the display index of the new work
      * @param workId
      *          The work id
-     * @param displayIndex
-     *          The display index for the work
+     * @param orcid
+     *          The work owner                         
      * @return true if the work index was correctly set                  
      * */
-    boolean updateToMaxDisplay(String workId, Long displayIndex);
+    boolean updateToMaxDisplay(String orcid, String workId);
 }

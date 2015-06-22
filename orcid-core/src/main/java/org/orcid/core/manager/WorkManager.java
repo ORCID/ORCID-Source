@@ -22,6 +22,7 @@ import java.util.List;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.custom.MinimizedWorkEntity;
+import org.orcid.pojo.ajaxForm.Work;
 
 public interface WorkManager {
     /**
@@ -92,4 +93,13 @@ public interface WorkManager {
      * @return true if the work index was correctly set                  
      * */
     boolean updateToMaxDisplay(String orcid, String workId);
+    
+    /**
+     * Get the given Work from the database
+     * @param orcid
+     *          The work owner
+     * @param workId
+     *          The work id             
+     * */
+    Work getWork(String orcid, String workId);
 }

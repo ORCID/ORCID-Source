@@ -24,20 +24,16 @@ import javax.annotation.Resource;
 import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.jaxb.model.message.Visibility;
-import org.orcid.persistence.dao.ProfileWorkDao;
 import org.orcid.persistence.dao.WorkDao;
-import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.custom.MinimizedWorkEntity;
+import org.orcid.pojo.ajaxForm.Work;
 import org.springframework.cache.annotation.Cacheable;
 
 public class WorkManagerImpl implements WorkManager {
 
     @Resource
     private WorkDao workDao;
-
-    @Resource
-    private ProfileWorkDao profileWorkDao;
 
     @Resource
     private Jpa2JaxbAdapter jpa2JaxbAdapter;
@@ -122,8 +118,22 @@ public class WorkManagerImpl implements WorkManager {
      *          The work id
      * @return true if the work index was correctly set                  
      * */
-    public boolean updateToMaxDisplay(String orcid, String workId) {
-        ProfileWorkEntity profileWork = profileWorkDao.getProfileWork(orcid, workId);
-        return workDao.updateToMaxDisplay(workId, profileWork.getDisplayIndex());
+    public boolean updateToMaxDisplay(String orcid, String workId) {        
+        return workDao.updateToMaxDisplay(workId, orcid);
+    }
+    
+    /**
+     * Get the given Work from the database
+     * @param orcid
+     *          The work owner
+     * @param workId
+     *          The work id             
+     * */
+    public Work getWork(String orcid, String workId) {
+        WorkEntity workEntity = workDao.find(Long.valueOf(workId));
+        if(!workEntity.getProfile().getId().equals(orcid)) {
+            throw new IllegalArgumentException("User " + orcid + " is not the owner of work " + workId);
+        }
+        return Work.valueOf(workEntity);
     }
 }

@@ -198,9 +198,9 @@ public class WorksController extends BaseWorkspaceController {
     @RequestMapping(value = "/updateToMaxDisplay.json", method = RequestMethod.GET)
     public @ResponseBody
     boolean updateToMaxDisplay(HttpServletRequest request, @RequestParam(value = "putCode") String putCode) {
-        OrcidProfile profile = getEffectiveProfile();
-        boolean result = profileWorkManager.updateToMaxDisplay(profile.getOrcidIdentifier().getPath(), putCode);
-        workManager.updateToMaxDisplay(profile.getOrcidIdentifier().getPath(), putCode);
+        String orcid = getEffectiveUserOrcid();
+        boolean result = workManager.updateToMaxDisplay(orcid, putCode);
+        profileWorkManager.updateToMaxDisplay(orcid, putCode);        
         return result;
     }
 
@@ -328,11 +328,9 @@ public class WorksController extends BaseWorkspaceController {
             d.setYear(new String());
             w.setPublicationDate(d);
         }
-	}
+    }
 
-
-
-	/**
+    /**
      * Returns a blank work
      * */
     @RequestMapping(value = "/getWorkInfo.json", method = RequestMethod.GET)
@@ -342,7 +340,7 @@ public class WorksController extends BaseWorkspaceController {
         Map<String, String> languages = lm.buildLanguageMap(localeManager.getLocale(), false);
         if (StringUtils.isEmpty(workId))
             return null;
-
+               
         ProfileWorkEntity profileWork = profileWorkManager.getProfileWork(this.getCurrentUserOrcid(), workId);
 
         if (profileWork != null) {
@@ -355,15 +353,15 @@ public class WorksController extends BaseWorkspaceController {
                 if(work.getPublicationDate() == null) {
                 	initializePublicationDate(work);
                 } else {
-                	if(work.getPublicationDate().getDay() == null) {
-                		work.getPublicationDate().setDay(new String());
-                	}
-                	if(work.getPublicationDate().getMonth() == null) {
-                		work.getPublicationDate().setMonth(new String());
-                	}
-                	if(work.getPublicationDate().getYear() == null) {
-                		work.getPublicationDate().setYear(new String());
-                	}
+                    if(work.getPublicationDate().getDay() == null) {
+                        work.getPublicationDate().setDay(new String());
+                    }
+                    if(work.getPublicationDate().getMonth() == null) {
+                        work.getPublicationDate().setMonth(new String());
+                    }
+                    if(work.getPublicationDate().getYear() == null) {
+                        work.getPublicationDate().setYear(new String());
+                    }
                 }
                 
                 // Set country name
@@ -520,9 +518,8 @@ public class WorksController extends BaseWorkspaceController {
         work.setPutCode(Text.valueOf(putCode));
         
         // make the new work the default display
-        profileWorkManager.updateToMaxDisplay(currentProfile.getOrcidIdentifier().getPath(), putCode);
-        //Set the max display in the work table
         workManager.updateToMaxDisplay(currentProfile.getOrcidIdentifier().getPath(), putCode);
+        profileWorkManager.updateToMaxDisplay(currentProfile.getOrcidIdentifier().getPath(), putCode);                
         
         // Check if the user have orcid activities, if not, initialize them
         if (currentProfile.getOrcidActivities() == null)
@@ -548,14 +545,7 @@ public class WorksController extends BaseWorkspaceController {
         workManager.editWork(workEntity);
 
         // Edit the work visibility
-        profileWorkManager.updateVisibility(currentProfile.getOrcidIdentifier().getPath(), String.valueOf(workEntity.getId()), updatedOw.getVisibility());
-        // Update the work on the cached profile
-        List<OrcidWork> works = currentProfile.getOrcidActivities().getOrcidWorks().getOrcidWork();
-        for (OrcidWork existingWork : works) {
-            if (existingWork.getPutCode().equals(updatedOw.getPutCode())) {
-
-            }
-        }
+        profileWorkManager.updateVisibility(currentProfile.getOrcidIdentifier().getPath(), String.valueOf(workEntity.getId()), updatedOw.getVisibility());        
     }
 
     /**
@@ -933,8 +923,8 @@ public class WorksController extends BaseWorkspaceController {
         ArrayList<Long> workIds = new ArrayList<Long>();
         for (String workId: workIdsStr.split(","))
             workIds.add(new Long(workId));
-        profileWorkManager.updateVisibilities(currentProfile.getOrcidIdentifier().getPath(), workIds, Visibility.fromValue(visibilityStr));
         workManager.updateVisibilities(currentProfile.getOrcidIdentifier().getPath(), workIds, Visibility.fromValue(visibilityStr));
+        profileWorkManager.updateVisibilities(currentProfile.getOrcidIdentifier().getPath(), workIds, Visibility.fromValue(visibilityStr));        
         return workIds;
     }
 
