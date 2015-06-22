@@ -21,6 +21,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
 import java.util.Arrays;
+import java.util.Date;
 
 import javax.annotation.Resource;
 
@@ -30,6 +31,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.jaxb.model.message.CitationType;
 import org.orcid.jaxb.model.message.WorkType;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
@@ -42,6 +45,8 @@ import org.springframework.transaction.annotation.Transactional;
 @ContextConfiguration(locations = { "classpath:orcid-persistence-context.xml" })
 public class WorkDaoTest extends DBUnitTest {
 
+    private static String USER_ORCID="4444-4444-4444-4441";
+    
     @Resource
     private WorkDao workDao;
 
@@ -74,7 +79,11 @@ public class WorkDaoTest extends DBUnitTest {
         work.setSubtitle(subtitle);
         work.setWorkType(WorkType.BOOK);
         work.setWorkUrl(url);
-
+        ProfileEntity profile = new ProfileEntity(USER_ORCID); 
+        work.setProfile(profile);
+        work.setSource(new SourceEntity(profile));
+        work.setAddedToProfileDate(new Date());
+        
         assertNull(work.getId());
 
         try {

@@ -27,6 +27,7 @@ import javax.annotation.Resource;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.CountryManager;
 import org.orcid.core.manager.CrossRefManager;
+import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.SecurityQuestionManager;
 import org.orcid.core.manager.SponsorManager;
@@ -35,6 +36,7 @@ import org.orcid.frontend.web.util.YearsList;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.Visibility;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * @author Declan Newman (declan) Date: 22/02/2012
@@ -47,6 +49,9 @@ public class BaseWorkspaceController extends BaseController {
 
     @Resource
     protected SponsorManager sponsorManager;
+    
+    @Resource
+    private EncryptionManager encryptionManager;
 
     @Resource
     protected CountryManager countryManager;
@@ -107,6 +112,14 @@ public class BaseWorkspaceController extends BaseController {
         }
         return map;
     }
+    
+    @ModelAttribute("orcidIdHash")
+    String getOrcidHash() throws Exception {
+    	OrcidProfile currentProfile = getEffectiveProfile();
+    	if (currentProfile == null) return null;
+    	String orcid = currentProfile.getOrcidIdentifier().getPath();
+    	return encryptionManager.sha256Hash(orcid);
+    };
     
     public String getCountryName(OrcidProfile profile) {
         return getCountryName(profile, false);

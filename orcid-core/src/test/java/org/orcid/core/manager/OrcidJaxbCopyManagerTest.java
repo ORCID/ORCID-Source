@@ -20,6 +20,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -33,7 +34,9 @@ import javax.xml.bind.Unmarshaller;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
 import org.orcid.core.BaseTest;
+import org.orcid.core.manager.impl.OrcidJaxbCopyManagerImpl;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.jaxb.model.message.Address;
 import org.orcid.jaxb.model.message.Affiliation;
@@ -76,6 +79,9 @@ public class OrcidJaxbCopyManagerTest extends BaseTest {
     private OrcidMessage protectedOrcidMessage;
     private OrcidMessage publicOrcidMessage;
 
+    @Mock
+    private SourceManager sourceManager;
+    
     @Resource
     private OrcidJaxbCopyManager orcidJaxbCopyManager;
 
@@ -88,6 +94,12 @@ public class OrcidJaxbCopyManagerTest extends BaseTest {
     public void init() throws JAXBException {
         protectedOrcidMessage = getOrcidMessage("/orcid-protected-full-message-latest.xml");
         publicOrcidMessage = getOrcidMessage("/orcid-full-message-no-visibility-latest.xml");
+    }
+    
+    @Before
+    public void initMockObject() throws Exception {
+    	OrcidJaxbCopyManagerImpl copyManagerImpl = getTargetObject(orcidJaxbCopyManager, OrcidJaxbCopyManagerImpl.class);
+    	copyManagerImpl.setSourceManager(sourceManager);
     }
 
     @Test
@@ -306,8 +318,9 @@ public class OrcidJaxbCopyManagerTest extends BaseTest {
 
     @Test
     public void testUpdatedContactDetailsToExistingPreservingVisibility() throws Exception {
-
-        OrcidBio existingOrcidBioProtected = protectedOrcidMessage.getOrcidProfile().getOrcidBio();
+    	when(sourceManager.retrieveSourceOrcid()).thenReturn("APP-0000000000000000");
+        
+    	OrcidBio existingOrcidBioProtected = protectedOrcidMessage.getOrcidProfile().getOrcidBio();
         OrcidBio updatedOrcidBioPublic = publicOrcidMessage.getOrcidProfile().getOrcidBio();
 
         ContactDetails existingContactDetails = existingOrcidBioProtected.getContactDetails();
@@ -315,13 +328,13 @@ public class OrcidJaxbCopyManagerTest extends BaseTest {
 
         assertEquals("josiah_carberry@brown.edu", existingContactDetails.retrievePrimaryEmail().getValue());
         assertEquals(Visibility.LIMITED, existingContactDetails.retrievePrimaryEmail().getVisibility());
-        String[] alternativeEmails = new String[] { "josiah_carberry_1@brown.edu", "josiah_carberry_2@brown.edu" };
+        String[] alternativeEmails = new String[] { "josiah_carberry_1@brown.edu" };
         for (String alternativeEmail : alternativeEmails) {
             Email email = existingContactDetails.getEmailByString(alternativeEmail);
             assertNotNull(email);
             assertEquals(Visibility.LIMITED, email.getVisibility());
         }
-        assertEquals(3, existingContactDetails.getEmail().size());
+        assertEquals(2, existingContactDetails.getEmail().size());
 
         Address existingAddress = existingContactDetails.getAddress();
         assertTrue(Iso3166Country.US.equals(existingAddress.getCountry().getValue()) && existingAddress.getCountry().getVisibility() == null);
@@ -334,14 +347,17 @@ public class OrcidJaxbCopyManagerTest extends BaseTest {
 
         List<Email> updatedEmailList = new ArrayList<>();
         Email updatedMainEmail = new Email("jimmyb@semantico.com");
+        updatedMainEmail.setSourceClientId("APP-0000000000000000");
         updatedMainEmail.setVisibility(Visibility.PUBLIC);
+        updatedMainEmail.setPrimary(true);
         updatedEmailList.add(updatedMainEmail);
-        String[] updatedAlternativeEmails = new String[] { "jimmyb1@semantico.com", "jimmyb2@semantico.com" };
+        String[] updatedAlternativeEmails = new String[] { "jimmyb1@semantico.com"};
         for (String alternativeEmail : updatedAlternativeEmails) {
             Email email = new Email(alternativeEmail);
             email.setPrimary(false);
             email.setVerified(false);
             email.setVisibility(Visibility.PRIVATE);
+            email.setSourceClientId("APP-0000000000000000");
             updatedEmailList.add(email);
         }
         updatedContactDetails.getEmail().clear();
@@ -351,15 +367,17 @@ public class OrcidJaxbCopyManagerTest extends BaseTest {
 
         orcidJaxbCopyManager.copyUpdatedBioToExistingWithVisibility(existingOrcidBioProtected, updatedOrcidBioPublic);
         existingContactDetails = existingOrcidBioProtected.getContactDetails();
-        assertEquals("jimmyb@semantico.com", existingContactDetails.retrievePrimaryEmail().getValue());
-        assertEquals(Visibility.PUBLIC, existingContactDetails.retrievePrimaryEmail().getVisibility());
+        assertEquals("josiah_carberry@brown.edu", existingContactDetails.retrievePrimaryEmail().getValue());
+        assertEquals(Visibility.LIMITED, existingContactDetails.retrievePrimaryEmail().getVisibility());
 
         for (String alternativeEmail : updatedAlternativeEmails) {
             Email email = existingContactDetails.getEmailByString(alternativeEmail);
             assertNotNull(email);
             assertEquals(Visibility.PRIVATE, email.getVisibility());
         }
+        //Exisiting client email should be removed
         assertEquals(3, existingContactDetails.getEmail().size());
+        assertEquals(null, existingContactDetails.getEmailByString("josiah_carberry_1@brown.edu"));
         assertEquals(Iso3166Country.GB, existingContactDetails.getAddress().getCountry().getValue());
         assertEquals(OrcidVisibilityDefaults.COUNTRY_DEFAULT.getVisibility(), existingContactDetails.getAddress().getCountry().getVisibility());
 
@@ -372,15 +390,16 @@ public class OrcidJaxbCopyManagerTest extends BaseTest {
         updatedContactDetails.setAddress(updatedAddress);
 
         updatedEmailList = new ArrayList<>();
-        updatedMainEmail = new Email("jimmyb2@semantico.com");
+        updatedMainEmail = new Email("jimmyb1@semantico.com");
         updatedMainEmail.setVisibility(Visibility.PUBLIC);
         updatedEmailList.add(updatedMainEmail);
 
-        String[] moreAlternativeEmails = new String[] { "jimmyb3@semantico.com", "jimmyb4@semantico.com" };
+        String[] moreAlternativeEmails = new String[] {"jimmyb3@semantico.com"};
         for (String alternativeEmail : moreAlternativeEmails) {
             Email email = new Email(alternativeEmail);
             email.setPrimary(false);
             email.setVisibility(Visibility.PRIVATE);
+            email.setSourceClientId("APP-0000000000000000");
             updatedEmailList.add(email);
         }
         updatedContactDetails.getEmail().clear();
@@ -389,8 +408,8 @@ public class OrcidJaxbCopyManagerTest extends BaseTest {
         orcidJaxbCopyManager.copyUpdatedBioToExistingWithVisibility(existingOrcidBioProtected, updatedOrcidBioPublic);
 
         existingContactDetails = existingOrcidBioProtected.getContactDetails();
-        assertEquals("jimmyb2@semantico.com", existingContactDetails.retrievePrimaryEmail().getValue());
-        assertEquals(Visibility.PUBLIC, existingContactDetails.retrievePrimaryEmail().getVisibility());
+        //It should remain unchanged, as the 
+        assertEquals(Visibility.PRIVATE, existingContactDetails.getEmailByString("jimmyb1@semantico.com").getVisibility());
 
         for (String alternativeEmail : moreAlternativeEmails) {
             Email email = existingContactDetails.getEmailByString(alternativeEmail);
@@ -533,12 +552,12 @@ public class OrcidJaxbCopyManagerTest extends BaseTest {
         assertEquals(Iso3166Country.US, privateBio.getContactDetails().getAddress().getCountry().getValue());
         assertEquals(Visibility.PRIVATE, privateBio.getContactDetails().getAddress().getCountry().getVisibility());
         assertEquals(6, privateBio.getContactDetails().getEmail().size());
-        assertEquals("public_Email0", privateBio.getContactDetails().getEmail().get(0).getValue());
-        assertEquals("public_Email1", privateBio.getContactDetails().getEmail().get(1).getValue());
-        assertEquals("public_Email2", privateBio.getContactDetails().getEmail().get(2).getValue());
-        assertEquals("private_Email0", privateBio.getContactDetails().getEmail().get(3).getValue());
-        assertEquals("private_Email1", privateBio.getContactDetails().getEmail().get(4).getValue());
-        assertEquals("private_Email2", privateBio.getContactDetails().getEmail().get(5).getValue());
+        assertEquals("private_Email0", privateBio.getContactDetails().getEmail().get(0).getValue());
+        assertEquals("private_Email1", privateBio.getContactDetails().getEmail().get(1).getValue());
+        assertEquals("private_Email2", privateBio.getContactDetails().getEmail().get(2).getValue());
+        assertEquals("public_Email0", privateBio.getContactDetails().getEmail().get(3).getValue());
+        assertEquals("public_Email1", privateBio.getContactDetails().getEmail().get(4).getValue());
+        assertEquals("public_Email2", privateBio.getContactDetails().getEmail().get(5).getValue());
         assertTrue(privateBio.getContactDetails().getEmail().containsAll(publicBio.getContactDetails().getEmail()));
         assertEquals(6, privateBio.getExternalIdentifiers().getExternalIdentifier().size());
         assertEquals("private_CommonName0", privateBio.getExternalIdentifiers().getExternalIdentifier().get(0).getExternalIdCommonName().getContent());

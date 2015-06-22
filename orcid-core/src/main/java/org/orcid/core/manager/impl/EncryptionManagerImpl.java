@@ -16,6 +16,10 @@
  */
 package org.orcid.core.manager.impl;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
+import org.apache.commons.codec.binary.Hex;
 import org.jasypt.digest.StringDigester;
 import org.jasypt.encryption.pbe.PBEStringEncryptor;
 import org.orcid.core.crypto.DesEncrypter;
@@ -180,4 +184,11 @@ public class EncryptionManagerImpl implements EncryptionManager, PasswordEncoder
     public boolean isPasswordValid(String encPass, String rawPass, Object salt) {
         return hashMatches(rawPass, encPass);
     }
+
+	@Override
+	public String sha256Hash(String s) throws NoSuchAlgorithmException {
+		MessageDigest md = MessageDigest.getInstance("SHA-256");
+		md.update(s.getBytes());
+		return Hex.encodeHexString(md.digest());
+	}
 }

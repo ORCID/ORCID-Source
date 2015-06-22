@@ -55,6 +55,7 @@ import org.orcid.jaxb.model.message.WorkType;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
 import org.orcid.persistence.jpa.entities.PublicationDateEntity;
+import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.custom.MinimizedWorkEntity;
 import org.orcid.pojo.KeyValue;
@@ -139,6 +140,7 @@ public class WorksController extends BaseWorkspaceController {
                 workIdLs.add(new Long(workId));
                 
             profileWorkManager.removeWorks(currentProfile.getOrcidIdentifier().getPath(), workIdLs);
+            workManager.removeWorks(currentProfile.getOrcidIdentifier().getPath(), workIdLs);
             works.setOrcidWork(workList);
             currentProfile.getOrcidActivities().setOrcidWorks(works);
         }
@@ -197,7 +199,9 @@ public class WorksController extends BaseWorkspaceController {
     public @ResponseBody
     boolean updateToMaxDisplay(HttpServletRequest request, @RequestParam(value = "putCode") String putCode) {
         OrcidProfile profile = getEffectiveProfile();
-        return profileWorkManager.updateToMaxDisplay(profile.getOrcidIdentifier().getPath(), putCode);
+        boolean result = profileWorkManager.updateToMaxDisplay(profile.getOrcidIdentifier().getPath(), putCode);
+        workManager.updateToMaxDisplay(profile.getOrcidIdentifier().getPath(), putCode);
+        return result;
     }
 
     /**
@@ -517,6 +521,8 @@ public class WorksController extends BaseWorkspaceController {
         
         // make the new work the default display
         profileWorkManager.updateToMaxDisplay(currentProfile.getOrcidIdentifier().getPath(), putCode);
+        //Set the max display in the work table
+        workManager.updateToMaxDisplay(currentProfile.getOrcidIdentifier().getPath(), putCode);
         
         // Check if the user have orcid activities, if not, initialize them
         if (currentProfile.getOrcidActivities() == null)
@@ -650,6 +656,12 @@ public class WorksController extends BaseWorkspaceController {
         if (orcidWork.getCountry() != null)
             workEntity.setIso2Country(orcidWork.getCountry().getValue());
 
+        workEntity.setVisibility(orcidWork.getVisibility());
+        workEntity.setAddedToProfileDate(new java.util.Date());
+        ProfileEntity userProfile = new ProfileEntity(getEffectiveUserOrcid());
+        SourceEntity source = new SourceEntity(userProfile);
+        workEntity.setProfile(userProfile);
+        workEntity.setSource(source);        
         return workEntity;
     }
 
@@ -922,6 +934,7 @@ public class WorksController extends BaseWorkspaceController {
         for (String workId: workIdsStr.split(","))
             workIds.add(new Long(workId));
         profileWorkManager.updateVisibilities(currentProfile.getOrcidIdentifier().getPath(), workIds, Visibility.fromValue(visibilityStr));
+        workManager.updateVisibilities(currentProfile.getOrcidIdentifier().getPath(), workIds, Visibility.fromValue(visibilityStr));
         return workIds;
     }
 
