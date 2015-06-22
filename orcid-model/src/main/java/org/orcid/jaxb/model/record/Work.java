@@ -55,7 +55,7 @@ import org.orcid.jaxb.model.common.VisibilityType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "putCode", "path", "source", "createdDate", "lastModifiedDate", "title", "journalTitle", "shortDescription", "citation", "type",
+@XmlType(propOrder = { "createdDate", "lastModifiedDate", "source", "putCode", "path", "title", "journalTitle", "shortDescription", "citation", "type",
         "publicationDate", "externalIdentifiers", "url", "contributors", "languageCode", "country" })
 @XmlRootElement(name = "work", namespace = "http://www.orcid.org/ns/work")
 public class Work implements VisibilityType, Activity, Serializable {
@@ -94,9 +94,9 @@ public class Work implements VisibilityType, Activity, Serializable {
     protected Visibility visibility;
     @XmlAttribute(name = "path")
     protected String path;
-    @XmlElement(namespace = "http://www.orcid.org/ns/common")
+    @XmlElement(name = "last-modified-date", namespace = "http://www.orcid.org/ns/common")
     protected LastModifiedDate lastModifiedDate;
-    @XmlElement(namespace = "http://www.orcid.org/ns/common")
+    @XmlElement(name = "created-date", namespace = "http://www.orcid.org/ns/common")
     protected CreatedDate createdDate;
 
     /**
