@@ -36,6 +36,7 @@ import org.orcid.jaxb.model.message.WorkContributors;
 import org.orcid.jaxb.model.message.WorkExternalIdentifiers;
 import org.orcid.jaxb.model.message.WorkTitle;
 import org.orcid.jaxb.model.message.WorkType;
+import org.orcid.jaxb.model.record.Work;
 import org.orcid.persistence.jpa.entities.PublicationDateEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.custom.MinimizedWorkEntity;
@@ -80,9 +81,9 @@ public class WorkForm implements ErrorsInterface, Serializable {
     private Text title;
 
     private Text subtitle;
-    
+
     private TranslatedTitle translatedTitle;
-    
+
     private Text workCategory;
 
     private Text workType;
@@ -95,201 +96,111 @@ public class WorkForm implements ErrorsInterface, Serializable {
 
     private Date lastModified;
 
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    public static WorkForm valueOf(WorkEntity workEntity) {
-        Assert.notNull(workEntity);
+    public static WorkForm valueOf(Work work) {
+        if (work == null)
+            return null;
+
         WorkForm w = new WorkForm();
-        
-        //Set work id
-        if(workEntity.getId() != null) {            
-            w.setPutCode(Text.valueOf(String.valueOf(workEntity.getId())));
-        }        
-        
-        //Set language
-        if(!PojoUtil.isEmpty(workEntity.getLanguageCode())) {
-            w.setLanguageCode(Text.valueOf(workEntity.getLanguageCode()));
+
+        // Set work id
+        if (work.getPutCode() != null) {
+            w.setPutCode(Text.valueOf(work.getPutCode()));
         }
-        
-        //Set type
-        if(workEntity.getWorkType() != null) {
-            w.setWorkType(Text.valueOf(workEntity.getWorkType().value()));
-            //Set category
-            WorkCategory category = WorkCategory.fromWorkType(workEntity.getWorkType());
+
+        // Set language
+        if (!PojoUtil.isEmpty(work.getLanguageCode())) {
+            w.setLanguageCode(Text.valueOf(work.getLanguageCode()));
+        }
+
+        // Set type
+        if (work.getWorkType() != null) {
+            w.setWorkType(Text.valueOf(work.getWorkType().value()));
+            // Set category
+            WorkCategory category = WorkCategory.fromWorkType(work.getWorkType());
             w.setWorkCategory(Text.valueOf(category.value()));
-        }                        
-        
-        //Set title
-        if(!PojoUtil.isEmpty(workEntity.getTitle())) {
-            w.setTitle(Text.valueOf(workEntity.getTitle()));
         }
-        
-        //Set translated title
-        if(!PojoUtil.isEmpty(workEntity.getTranslatedTitle())) {
-            TranslatedTitle translatedTitle = new TranslatedTitle();
-            translatedTitle.setContent(workEntity.getTranslatedTitle());
-            if(!PojoUtil.isEmpty(workEntity.getTranslatedTitleLanguageCode())) {
-                translatedTitle.setLanguageCode(workEntity.getTranslatedTitleLanguageCode());
+
+        if (work.getWorkTitle() != null) {
+            // Set title
+            if (work.getWorkTitle().getTitle() != null) {
+                w.setTitle(Text.valueOf(work.getWorkTitle().getTitle().getContent()));
             }
-            w.setTranslatedTitle(translatedTitle);
+            // Set translated title
+            if (work.getWorkTitle().getTranslatedTitle() != null) {
+                TranslatedTitle tt = new TranslatedTitle();
+                tt.setContent(work.getWorkTitle().getTranslatedTitle().getContent());
+                tt.setLanguageCode(work.getWorkTitle().getTranslatedTitle().getLanguageCode());
+                w.setTranslatedTitle(tt);
+            }
+            // Set subtitle
+            if (work.getWorkTitle().getSubtitle() != null) {
+                w.setSubtitle(Text.valueOf(work.getWorkTitle().getSubtitle().getContent()));
+            }
         }
-        
-        //Set subtitle
-        if(!PojoUtil.isEmpty(workEntity.getSubtitle())) {
-            w.setSubtitle(Text.valueOf(workEntity.getSubtitle()));
+
+        // Set journal title
+        if (work.getJournalTitle() != null ) {
+            w.setJournalTitle(Text.valueOf(work.getJournalTitle().getContent()));
         }
-        
-        //Set journal title
-        if(!PojoUtil.isEmpty(workEntity.getJournalTitle())) {
-            w.setJournalTitle(Text.valueOf(workEntity.getJournalTitle()));
-        }                
-        
-        //Set description
-        if(!PojoUtil.isEmpty(workEntity.getDescription())) {
-            w.setShortDescription(Text.valueOf(workEntity.getDescription()));
+
+        // Set description
+        if (work.getShortDescription() != null) {
+            w.setShortDescription(Text.valueOf(work.getShortDescription()));
         }
-        
-        //Set url
-        if(!PojoUtil.isEmpty(workEntity.getWorkUrl())) {
-            w.setUrl(Text.valueOf(workEntity.getWorkUrl()));
+
+        // Set url
+        if (work.getUrl() != null ) {
+            w.setUrl(Text.valueOf(work.getUrl().getValue()));
         }
-        
-        //Set visibility
-        if(workEntity.getVisibility() != null) {
-            w.setVisibility(workEntity.getVisibility());
+
+        // Set visibility
+        if (work.getVisibility() != null) {
+            w.setVisibility(Visibility.fromValue(work.getVisibility().value()));
         }
-              
-        //Set country
-        if(workEntity.getIso2Country() != null) {
-            w.setCountryCode(Text.valueOf(workEntity.getIso2Country().value()));            
-        }                
-        
-        //Set publication date
-        FuzzyDate fuzzyPublicationDate = null;        
-        if(workEntity.getPublicationDate() != null) {
+
+        // Set country
+        if (work.getCountry() != null && work.getCountry().getValue() != null) {
+            w.setCountryCode(Text.valueOf(work.getCountry().getValue().value()));
+        }
+
+        // Set publication date
+        FuzzyDate fuzzyPublicationDate = null;
+        if (workEntity.getPublicationDate() != null) {
             PublicationDateEntity publicationDate = workEntity.getPublicationDate();
             fuzzyPublicationDate = new FuzzyDate(publicationDate.getYear(), publicationDate.getMonth(), publicationDate.getDay());
             w.setPublicationDate(Date.valueOf(fuzzyPublicationDate));
         }
         w.setDateSortString(PojoUtil.createDateSortString(null, fuzzyPublicationDate));
-        
-        //Set citation
-        if(!PojoUtil.isEmpty(workEntity.getCitation())) {
+
+        // Set citation
+        if (!PojoUtil.isEmpty(workEntity.getCitation())) {
             Citation citation = new Citation();
             citation.setCitation(Text.valueOf(workEntity.getCitation()));
-            if(workEntity.getCitationType() != null) {
+            if (workEntity.getCitationType() != null) {
                 citation.setCitationType(Text.valueOf(workEntity.getCitationType().value()));
             }
             w.setCitation(citation);
         }
-        
-        //Set contributors
+
+        // Set contributors
         populateContributors(workEntity, w);
-        
-        //Set external identifiers        
+
+        // Set external identifiers
         populateExternalIdentifiers(workEntity, w);
-                        
-        //Set created date
+
+        // Set created date
         w.setCreatedDate(Date.valueOf(workEntity.getDateCreated()));
-        
-        //Set last modified
+
+        // Set last modified
         w.setLastModified(Date.valueOf(workEntity.getLastModified()));
-        
-        //Set source
+
+        // Set source
         w.setSource(workEntity.getSource().getSourceId());
         w.setSourceName(workEntity.getSource().getSourceName());
-        
+
         return w;
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
     public static WorkForm valueOf(MinimizedWorkEntity minimizedWorkEntity) {
         WorkForm w = new WorkForm();
         // Set id
@@ -303,7 +214,7 @@ public class WorkForm implements ErrorsInterface, Serializable {
         w.setDateSortString(PojoUtil.createDateSortString(null, fuzz));
 
         // Set title and subtitle
-        if (!StringUtils.isEmpty(minimizedWorkEntity.getTitle())) 
+        if (!StringUtils.isEmpty(minimizedWorkEntity.getTitle()))
             w.setTitle(Text.valueOf(minimizedWorkEntity.getTitle()));
 
         if (!StringUtils.isEmpty(minimizedWorkEntity.getTranslatedTitle())) {
@@ -314,7 +225,7 @@ public class WorkForm implements ErrorsInterface, Serializable {
         }
 
         if (!StringUtils.isEmpty(minimizedWorkEntity.getSubtitle()))
-            w.setSubtitle(Text.valueOf(minimizedWorkEntity.getSubtitle()));        
+            w.setSubtitle(Text.valueOf(minimizedWorkEntity.getSubtitle()));
 
         // Set Subtitle
         if (!StringUtils.isEmpty(minimizedWorkEntity.getJournalTitle()))
@@ -376,34 +287,32 @@ public class WorkForm implements ErrorsInterface, Serializable {
                 workExternalIdentifiersList.add(WorkExternalIdentifier.valueOf(owWorkExternalIdentifier));
         work.setWorkExternalIdentifiers(workExternalIdentifiersList);
     }
-    
-    
+
     private static void populateExternalIdentifiers(WorkEntity workEntity, WorkForm work) {
         List<WorkExternalIdentifier> workExternalIdentifiersList = new ArrayList<WorkExternalIdentifier>();
-        if(!PojoUtil.isEmpty(workEntity.getExternalIdentifiersJson())) {
+        if (!PojoUtil.isEmpty(workEntity.getExternalIdentifiersJson())) {
             WorkExternalIdentifiers extIds = JsonUtils.readObjectFromJsonString(workEntity.getExternalIdentifiersJson(), WorkExternalIdentifiers.class);
-            if(extIds != null) {
-                for(org.orcid.jaxb.model.message.WorkExternalIdentifier extId : extIds.getWorkExternalIdentifier()) {
+            if (extIds != null) {
+                for (org.orcid.jaxb.model.message.WorkExternalIdentifier extId : extIds.getWorkExternalIdentifier()) {
                     workExternalIdentifiersList.add(WorkExternalIdentifier.valueOf(extId));
                 }
             }
         }
         work.setWorkExternalIdentifiers(workExternalIdentifiersList);
     }
-    
+
     private static void populateContributors(WorkEntity workEntity, WorkForm work) {
         List<Contributor> contributorsList = new ArrayList<Contributor>();
-        if(!PojoUtil.isEmpty(workEntity.getContributorsJson())) {
+        if (!PojoUtil.isEmpty(workEntity.getContributorsJson())) {
             WorkContributors contributors = JsonUtils.readObjectFromJsonString(workEntity.getContributorsJson(), WorkContributors.class);
-            if(contributors != null) {
-                for(org.orcid.jaxb.model.message.Contributor contributor : contributors.getContributor()) {
+            if (contributors != null) {
+                for (org.orcid.jaxb.model.message.Contributor contributor : contributors.getContributor()) {
                     contributorsList.add(Contributor.valueOf(contributor));
                 }
             }
         }
         work.setContributors(contributorsList);
     }
-    
 
     public static WorkForm minimizedValueOf(OrcidWork orcidWork) {
         WorkForm w = new WorkForm();
@@ -428,23 +337,24 @@ public class WorkForm implements ErrorsInterface, Serializable {
             if (orcidWork.getSource().getSourceName() != null)
                 w.setSourceName(orcidWork.getSource().getSourceName().getContent());
         }
-        
+
         WorkTitle workTitle = orcidWork.getWorkTitle();
-        if (workTitle == null) 
-            workTitle =  new WorkTitle();
+        if (workTitle == null)
+            workTitle = new WorkTitle();
         if (workTitle.getTitle() != null) {
             w.setTitle(Text.valueOf(workTitle.getTitle().getContent()));
         }
         if (workTitle.getSubtitle() != null) {
             w.setSubtitle(Text.valueOf(workTitle.getSubtitle().getContent()));
         }
-        if(workTitle.getTranslatedTitle() != null) {
+        if (workTitle.getTranslatedTitle() != null) {
             TranslatedTitle translatedTitle = new TranslatedTitle();
             translatedTitle.setContent((workTitle.getTranslatedTitle() == null) ? null : workTitle.getTranslatedTitle().getContent());
-            translatedTitle.setLanguageCode((workTitle.getTranslatedTitle() == null || workTitle.getTranslatedTitle().getLanguageCode() == null) ? null : workTitle.getTranslatedTitle().getLanguageCode());
+            translatedTitle.setLanguageCode((workTitle.getTranslatedTitle() == null || workTitle.getTranslatedTitle().getLanguageCode() == null) ? null : workTitle
+                    .getTranslatedTitle().getLanguageCode());
             w.setTranslatedTitle(translatedTitle);
         }
-        
+
         if (orcidWork.getWorkType() != null) {
             w.setWorkType(Text.valueOf(orcidWork.getWorkType().value()));
             WorkCategory category = WorkCategory.fromWorkType(orcidWork.getWorkType());
@@ -494,14 +404,14 @@ public class WorkForm implements ErrorsInterface, Serializable {
         ow.setWorkExternalIdentifiers(new WorkExternalIdentifiers(wiList));
         if (this.getSource() != null)
             ow.setSource(new Source(this.getSource()));
-        
+
         if (this.getTitle() != null || this.getSubtitle() != null || this.getTranslatedTitle() != null)
             ow.setWorkTitle(new WorkTitle());
         if (this.getTitle() != null)
             ow.getWorkTitle().setTitle(this.getTitle().toTitle());
         if (this.getSubtitle() != null)
             ow.getWorkTitle().setSubtitle(this.getSubtitle().toSubtitle());
-        if(this.getTranslatedTitle() != null)
+        if (this.getTranslatedTitle() != null)
             ow.getWorkTitle().setTranslatedTitle(this.getTranslatedTitle().toTranslatedTitle());
 
         if (this.getWorkType() != null) {

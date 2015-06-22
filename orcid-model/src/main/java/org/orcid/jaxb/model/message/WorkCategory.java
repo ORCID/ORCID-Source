@@ -72,4 +72,17 @@ public enum WorkCategory {
         else 
             throw new IllegalArgumentException("Invalid work type provided: " + type.name());
     }
+    
+    public static WorkCategory fromWorkType(org.orcid.jaxb.model.record.WorkType type) {
+        if (PUBLICATION.getSubTypes().contains(type))
+            return PUBLICATION;
+        else if (CONFERENCE.getSubTypes().contains(type))
+            return CONFERENCE;
+        else if (INTELLECTUAL_PROPERTY.getSubTypes().contains(type))
+            return INTELLECTUAL_PROPERTY;
+        else if (OTHER_OUTPUT.getSubTypes().contains(type))
+            return OTHER_OUTPUT;
+        else 
+            throw new IllegalArgumentException("Invalid work type provided: " + type.name());
+    }
 }
