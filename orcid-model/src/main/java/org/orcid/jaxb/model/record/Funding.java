@@ -55,7 +55,7 @@ import java.io.Serializable;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "putCode", "path", "source", "createdDate", "lastModifiedDate", "type", "organizationDefinedType", "title", "description", "amount", "url",
+@XmlType(propOrder = { "createdDate", "lastModifiedDate", "source", "putCode", "path", "type", "organizationDefinedType", "title", "description", "amount", "url",
         "startDate", "endDate", "externalIdentifiers", "contributors", "organization" })
 @XmlRootElement(name = "funding", namespace = "http://www.orcid.org/ns/funding")
 public class Funding implements VisibilityType, Activity, Serializable, OrganizationHolder {
