@@ -17,6 +17,7 @@
 package org.orcid.core.manager.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import javax.annotation.Resource;
 
@@ -177,8 +178,12 @@ public class ProfileWorkManagerImpl implements ProfileWorkManager {
     public Work createWork(String orcid, Work work) {
         ProfileWorkEntity profileWorkEntity = jpaJaxbWorkAdapter.toProfileWorkEntity(work);
         profileWorkEntity.setSource(sourceManager.retrieveSourceEntity());
+        profileWorkEntity.getWork().setSource(sourceManager.retrieveSourceEntity());
         ProfileEntity profile = profileDao.find(orcid);
         profileWorkEntity.setProfile(profile);
+        profileWorkEntity.getWork().setProfile(profile);
+        profileWorkEntity.getWork().setAddedToProfileDate(new Date());
+        profileWorkEntity.setMigrated(true);
         setIncomingWorkPrivacy(profileWorkEntity, profile);
         profileWorkDao.persist(profileWorkEntity);
         return jpaJaxbWorkAdapter.toWork(profileWorkEntity);
@@ -193,7 +198,10 @@ public class ProfileWorkManagerImpl implements ProfileWorkManager {
         orcidSecurityManager.checkSource(existingSource);
         jpaJaxbWorkAdapter.toProfileWorkEntity(work, profileWorkEntity);
         profileWorkEntity.setVisibility(originalVisibility);
+        profileWorkEntity.getWork().setVisibility(originalVisibility);
         profileWorkEntity.setSource(existingSource);
+        profileWorkEntity.getWork().setSource(existingSource);
+        profileWorkEntity.setMigrated(true);
         profileWorkDao.merge(profileWorkEntity);
         return jpaJaxbWorkAdapter.toWork(profileWorkEntity);
     }
@@ -204,10 +212,11 @@ public class ProfileWorkManagerImpl implements ProfileWorkManager {
         if (profile.getClaimed()) {
             if (defaultWorkVisibility.isMoreRestrictiveThan(incomingWorkVisibility)) {
                 profileWorkEntity.setVisibility(defaultWorkVisibility);
+                profileWorkEntity.getWork().setVisibility(defaultWorkVisibility);
             }
         } else if (incomingWorkVisibility == null) {
             profileWorkEntity.setVisibility(Visibility.PRIVATE);
+            profileWorkEntity.getWork().setVisibility(Visibility.PRIVATE);
         }
-    }
-
+    }    
 }

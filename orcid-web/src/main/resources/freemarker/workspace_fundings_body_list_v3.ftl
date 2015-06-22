@@ -58,15 +58,9 @@
 					</div>	
 				</div>
 			</#if>
-        
-        
         </div>
-        
-        
-        
         <div ng-show="workspaceSrvc.displayFunding" class="workspace-accordion-content">
             <#include "includes/funding/body_funding_inc_v3.ftl" />
         </div>
-        </div><!-- this div seems out of place -->
     </div>
 </div>

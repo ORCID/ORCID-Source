@@ -31,6 +31,18 @@
 				<common:month>12</common:month>
 				<common:day>20</common:day>
 			</common:end-date>
+			<education:organization>
+				<common:name>common:name</common:name>
+				<common:address>
+					<common:city>common:city</common:city>
+					<common:region>common:region</common:region>
+					<common:country>AF</common:country>
+				</common:address>
+				<common:disambiguated-organization>
+					<common:disambiguated-organization-identifier>common:disambiguated-organization-identifier</common:disambiguated-organization-identifier>
+					<common:disambiguation-source>common:disambiguation-source</common:disambiguation-source>
+				</common:disambiguated-organization>
+			</education:organization>
 		</education:education-summary>
 	</activities:educations>
 	<activities:employments>
@@ -58,6 +70,18 @@
 				<common:month>12</common:month>
 				<common:day>20</common:day>
 			</common:end-date>
+			<affiliation:organization>
+				<common:name>common:name</common:name>
+				<common:address>
+					<common:city>common:city</common:city>
+					<common:region>common:region</common:region>
+					<common:country>AF</common:country>
+				</common:address>
+				<common:disambiguated-organization>
+					<common:disambiguated-organization-identifier>common:disambiguated-organization-identifier</common:disambiguated-organization-identifier>
+					<common:disambiguation-source>common:disambiguation-source</common:disambiguation-source>
+				</common:disambiguated-organization>
+			</affiliation:organization>
 		</affiliation:employment-summary>
 	</activities:employments>
 	<activities:fundings>

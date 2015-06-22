@@ -413,6 +413,7 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
 
         if (orcidSearchResults != null) {
             OrcidMessage orcidMessage = new OrcidMessage();
+            orcidMessage.setMessageVersion("1.2");
             orcidMessage.setOrcidSearchResults(orcidSearchResults);
             return Response.ok(orcidMessage).build();
         } else {

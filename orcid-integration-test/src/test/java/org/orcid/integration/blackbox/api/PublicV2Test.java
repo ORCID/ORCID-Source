@@ -70,6 +70,7 @@ import org.orcid.jaxb.model.record.summary.PeerReviewGroup;
 import org.orcid.jaxb.model.record.summary.PeerReviewSummary;
 import org.orcid.jaxb.model.record.summary.WorkGroup;
 import org.orcid.jaxb.model.record.summary.WorkSummary;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -102,7 +103,11 @@ public class PublicV2Test {
     public String user1UserName;
     @Value("${org.orcid.web.testUser1.password}")
     public String user1Password;
-
+    @Value("${org.orcid.web.publicClient1.clientId}")
+    public String publicClientId;
+    @Value("${org.orcid.web.publicClient1.clientSecret}")
+    public String publicClientSecret;
+        
     @Resource(name = "t2OAuthClient")
     private T2OAuthAPIService<ClientResponse> t2OAuthClient;
 
@@ -133,6 +138,21 @@ public class PublicV2Test {
         cleanActivities();
     }
 
+    @Test
+    public void testPublicClientCanGetAccessToken() throws InterruptedException, JSONException {
+        String publicAccessToken = oauthHelper.getClientCredentialsAccessToken(publicClientId, publicClientSecret, ScopePathType.READ_PUBLIC, true);
+        assertFalse(PojoUtil.isEmpty(publicAccessToken));
+    }
+    
+    @Test
+    public void testGetInfoWithEmptyToken() throws InterruptedException, JSONException {
+        ClientResponse activitiesResponse = publicV2ApiClient.viewActivities(user1OrcidId, "");
+        assertNotNull(activitiesResponse);
+        assertEquals(Response.Status.OK.getStatusCode(), activitiesResponse.getStatus());
+        ActivitiesSummary activities = activitiesResponse.getEntity(ActivitiesSummary.class);
+        assertNotNull(activities);
+    }    
+    
     /**
      * VIEW PUBLIC INFO
      * */
@@ -140,7 +160,7 @@ public class PublicV2Test {
     public void testViewWorkAndWorkSummary() throws JSONException, InterruptedException, URISyntaxException {
         checkWorks(null);
     }
-    
+        
     @Test
     public void testViewWorkAndWorkSummaryUsingToken() throws JSONException, InterruptedException, URISyntaxException {
         checkWorks(getReadPublicAccessToken());

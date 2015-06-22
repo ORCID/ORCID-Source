@@ -324,7 +324,7 @@
 						<div class="row">
 							<div class="col-md-12 col-sm-12 col-xs-12 dt-description">
 								<span><@orcid.msg 'manage.developer_tools.group.secret'/></span><br />
-								<input type="text" ng-model="client.clientSecret.value" class="full-width-input" disabled="disabled"/>								
+								<input type="text" ng-model="client.clientSecret.value" class="full-width-input" readonly="readonly" ng-click="selectAll($event)"/>								
 							</div>
 						</div>
 						<!-- Persistent tokens -->

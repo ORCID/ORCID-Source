@@ -126,5 +126,22 @@ public interface ProfileWorkDao extends GenericDao<ProfileWorkEntity, ProfileWor
     boolean updateToMaxDisplay(String orcid, String workId);
     
     void removeWorksByClientSourceId(String clientSourceId);
+    
+    /**
+     * Get a list of profile_works that have not been migrated to the works table yet
+     * @param chunkSize
+     *          The number of profile_works to fetch
+     * @return a list of profile_works to migrate
+     * */
+    List<ProfileWorkEntity> getNonMigratedProfileWorks(int chunkSize);
 
+    /**
+     * Mark a profile_work as migrated
+     * @param orcid
+     *          The work owner
+     * @param workId
+     *          The work id 
+     * @return true if the profile work was correctly set as migrated         
+     * */
+    boolean setProfileWorkAsMigrated(String orcid, Long workId);
 }

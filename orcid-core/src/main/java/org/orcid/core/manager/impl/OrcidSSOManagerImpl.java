@@ -263,6 +263,7 @@ public class OrcidSSOManagerImpl implements OrcidSSOManager {
     private Set<String> getClientAuthorizedGrantTypes() {
         Set<String> clientAuthorizedGrantTypes = new HashSet<>();
         clientAuthorizedGrantTypes.add("authorization_code");
+        clientAuthorizedGrantTypes.add("client_credentials");
         return clientAuthorizedGrantTypes;
     }
 
