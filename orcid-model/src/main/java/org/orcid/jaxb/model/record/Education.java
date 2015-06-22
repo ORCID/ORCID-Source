@@ -52,11 +52,11 @@ import org.orcid.jaxb.model.common.VisibilityType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "putCode", "path", "source", "createdDate", "lastModifiedDate", "departmentName", "roleTitle", "startDate", "endDate", "organization"})
+@XmlType(propOrder = { "putCode", "path", "source", "createdDate", "lastModifiedDate", "departmentName", "roleTitle", "startDate", "endDate", "organization" })
 @XmlRootElement(name = "education", namespace = "http://www.orcid.org/ns/education")
 public class Education implements Serializable, VisibilityType, Activity, OrganizationHolder {
 
-    private final static long serialVersionUID = 1L;    
+    private final static long serialVersionUID = 1L;
     @XmlElement(namespace = "http://www.orcid.org/ns/education", name = "department-name")
     protected String departmentName;
     @XmlElement(namespace = "http://www.orcid.org/ns/education", name = "role-title")
@@ -68,19 +68,19 @@ public class Education implements Serializable, VisibilityType, Activity, Organi
     @XmlElement(namespace = "http://www.orcid.org/ns/education", required = true)
     protected Organization organization;
     @XmlElement(namespace = "http://www.orcid.org/ns/common")
-    protected Source source;    
+    protected Source source;
     @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "last-modified-date")
     protected LastModifiedDate lastModifiedDate;
     @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "created-date")
-    protected CreatedDate createdDate;       
+    protected CreatedDate createdDate;
 
     @XmlAttribute(name = "put-code")
     protected String putCode;
-    @XmlAttribute(name="path")
+    @XmlAttribute(name = "path")
     protected String path;
     @XmlAttribute
     protected Visibility visibility;
-    
+
     /**
      * Gets the value of the departmentName property.
      * 
@@ -269,7 +269,7 @@ public class Education implements Serializable, VisibilityType, Activity, Organi
     public void setPath(String path) {
         this.path = path;
     }
-    
+
     @Override
     public String retrieveSourcePath() {
         if (source == null) {
@@ -277,7 +277,6 @@ public class Education implements Serializable, VisibilityType, Activity, Organi
         }
         return source.retrieveSourcePath();
     }
-    
 
     @Override
     public CreatedDate getCreatedDate() {
@@ -299,7 +298,6 @@ public class Education implements Serializable, VisibilityType, Activity, Organi
         lastModifiedDate = value;
     }
 
-    
     /**
      * 
      * Note that put-code is not part of hashCode or equals! This is to allow
@@ -315,7 +313,7 @@ public class Education implements Serializable, VisibilityType, Activity, Organi
         result = prime * result + ((organization == null) ? 0 : organization.hashCode());
         result = prime * result + ((roleTitle == null) ? 0 : roleTitle.hashCode());
         result = prime * result + ((source == null) ? 0 : source.hashCode());
-        result = prime * result + ((startDate == null) ? 0 : startDate.hashCode());        
+        result = prime * result + ((startDate == null) ? 0 : startDate.hashCode());
         result = prime * result + ((visibility == null) ? 0 : visibility.hashCode());
         return result;
     }
@@ -368,12 +366,11 @@ public class Education implements Serializable, VisibilityType, Activity, Organi
         if (visibility != other.visibility)
             return false;
 
-        /*    
-        Breaks our deduping
-        if (lastModifiedDate != other.lastModifiedDate) return false;
-        if (createdDate != other.createdDate) return false;
-        */
-        
+        /*
+         * Breaks our deduping if (lastModifiedDate != other.lastModifiedDate)
+         * return false; if (createdDate != other.createdDate) return false;
+         */
+
         return true;
     }
 

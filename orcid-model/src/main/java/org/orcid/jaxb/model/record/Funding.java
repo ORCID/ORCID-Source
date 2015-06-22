@@ -55,8 +55,8 @@ import java.io.Serializable;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "putCode", "path", "source", "createdDate", "lastModifiedDate", "type", "organizationDefinedType", "title", "description", "amount", "url", "startDate", "endDate", "externalIdentifiers",
-        "contributors", "organization" })
+@XmlType(propOrder = { "putCode", "path", "source", "createdDate", "lastModifiedDate", "type", "organizationDefinedType", "title", "description", "amount", "url",
+        "startDate", "endDate", "externalIdentifiers", "contributors", "organization" })
 @XmlRootElement(name = "funding", namespace = "http://www.orcid.org/ns/funding")
 public class Funding implements VisibilityType, Activity, Serializable, OrganizationHolder {
 
@@ -85,19 +85,19 @@ public class Funding implements VisibilityType, Activity, Serializable, Organiza
     @XmlElement(namespace = "http://www.orcid.org/ns/funding")
     protected FundingContributors contributors;
     @XmlElement(namespace = "http://www.orcid.org/ns/common")
-    protected Source source;    
+    protected Source source;
     @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "last-modified-date")
     protected LastModifiedDate lastModifiedDate;
     @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "created-date")
     protected CreatedDate createdDate;
-    
+
     @XmlAttribute(name = "put-code")
     protected String putCode;
-    @XmlAttribute(name="path")
+    @XmlAttribute(name = "path")
     protected String path;
     @XmlAttribute
     protected Visibility visibility;
-    
+
     public FundingTitle getTitle() {
         return title;
     }
@@ -207,7 +207,7 @@ public class Funding implements VisibilityType, Activity, Serializable, Organiza
     public void setPath(String path) {
         this.path = path;
     }
-    
+
     public FundingExternalIdentifiers getExternalIdentifiers() {
         return externalIdentifiers;
     }

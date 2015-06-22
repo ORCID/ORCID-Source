@@ -56,7 +56,7 @@ import org.orcid.jaxb.model.common.VisibilityType;
 @XmlRootElement(name = "employment", namespace = "http://www.orcid.org/ns/employment")
 public class Employment implements Serializable, VisibilityType, Activity, OrganizationHolder {
 
-    private final static long serialVersionUID = 1L;    
+    private final static long serialVersionUID = 1L;
     @XmlElement(namespace = "http://www.orcid.org/ns/employment", name = "department-name")
     protected String departmentName;
     @XmlElement(namespace = "http://www.orcid.org/ns/employment", name = "role-title")
@@ -68,19 +68,19 @@ public class Employment implements Serializable, VisibilityType, Activity, Organ
     @XmlElement(namespace = "http://www.orcid.org/ns/employment", required = true)
     protected Organization organization;
     @XmlElement(namespace = "http://www.orcid.org/ns/common")
-    protected Source source;    
+    protected Source source;
     @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "last-modified-date")
     protected LastModifiedDate lastModifiedDate;
     @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "created-date")
     protected CreatedDate createdDate;
-    
+
     @XmlAttribute(name = "put-code")
     protected String putCode;
-    @XmlAttribute(name="path")
+    @XmlAttribute(name = "path")
     protected String path;
     @XmlAttribute
     protected Visibility visibility;
-    
+
     /**
      * Gets the value of the departmentName property.
      * 
@@ -269,7 +269,7 @@ public class Employment implements Serializable, VisibilityType, Activity, Organ
     public void setPath(String path) {
         this.path = path;
     }
-    
+
     @Override
     public String retrieveSourcePath() {
         if (source == null) {
@@ -277,7 +277,6 @@ public class Employment implements Serializable, VisibilityType, Activity, Organ
         }
         return source.retrieveSourcePath();
     }
-    
 
     @Override
     public CreatedDate getCreatedDate() {
@@ -299,7 +298,6 @@ public class Employment implements Serializable, VisibilityType, Activity, Organ
         lastModifiedDate = value;
     }
 
-    
     /**
      * 
      * Note that put-code is not part of hashCode or equals! This is to allow
@@ -368,12 +366,11 @@ public class Employment implements Serializable, VisibilityType, Activity, Organ
         if (visibility != other.visibility)
             return false;
 
-        /*    
-        Breaks our deduping
-        if (lastModifiedDate != other.lastModifiedDate) return false;
-        if (createdDate != other.createdDate) return false;
-        */
-        
+        /*
+         * Breaks our deduping if (lastModifiedDate != other.lastModifiedDate)
+         * return false; if (createdDate != other.createdDate) return false;
+         */
+
         return true;
     }
 
