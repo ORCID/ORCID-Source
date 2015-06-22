@@ -119,7 +119,7 @@ public class WorkManagerImpl implements WorkManager {
      * @return true if the work index was correctly set                  
      * */
     public boolean updateToMaxDisplay(String orcid, String workId) {        
-        return workDao.updateToMaxDisplay(workId, orcid);
+        return workDao.updateToMaxDisplay(orcid, workId);
     }
     
     /**

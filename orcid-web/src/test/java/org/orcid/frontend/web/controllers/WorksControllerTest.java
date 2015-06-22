@@ -250,7 +250,7 @@ public class WorksControllerTest extends BaseControllerTest {
         } catch (Exception e) {
             throwsError  = true;
         }
-        assertEquals(throwsError, true);
+        assertTrue(throwsError);
     }
 
     @Test
