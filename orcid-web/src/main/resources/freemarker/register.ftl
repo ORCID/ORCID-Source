@@ -20,7 +20,8 @@
     <div class="row">        
         <div class="col-md-9 col-md-offset-3 col-sm-12 col-xs-12">
             <h2>${springMacroRequestContext.getMessage("register.labelRegisterforanORCIDiD")}</h2>
-            <p>${springMacroRequestContext.getMessage("register.labelORCIDprovides")}<br /><br /></p>
+            <p>${springMacroRequestContext.getMessage("register.labelORCIDprovides")}</p>
+            <p>${springMacroRequestContext.getMessage("register.labelClause")}<br /><br /></p>
     		<#include "/includes/register_inc.ftl" />
         </div>
     </div>
