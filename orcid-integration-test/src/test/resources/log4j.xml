@@ -56,6 +56,10 @@
         <level value="DEBUG" />
     </logger>
     
+    <logger name="org.apache.http">
+        <level value="INFO" />
+    </logger>
+    
     <!-- Root Logger -->
     <root>
         <level value="DEBUG" />
