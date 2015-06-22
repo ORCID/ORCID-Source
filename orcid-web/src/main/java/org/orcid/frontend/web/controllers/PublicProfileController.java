@@ -34,12 +34,14 @@ import org.jsoup.helper.StringUtil;
 import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ActivityCacheManager;
+import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.OrcidProfileCacheManager;
 import org.orcid.core.manager.PeerReviewManager;
 import org.orcid.core.manager.ProfileWorkManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.jaxb.model.message.Affiliation;
+import org.orcid.jaxb.model.message.AffiliationType;
 import org.orcid.jaxb.model.message.Funding;
 import org.orcid.jaxb.model.message.FundingType;
 import org.orcid.jaxb.model.message.OrcidProfile;
@@ -81,6 +83,9 @@ public class PublicProfileController extends BaseWorkspaceController {
     private WorkManager workManager;
 
     @Resource
+    private EncryptionManager encryptionManager;
+
+    @Resource
     private ActivityCacheManager activityCacheManager;
 
     @Resource
@@ -88,19 +93,21 @@ public class PublicProfileController extends BaseWorkspaceController {
 
     @Resource
     private Jpa2JaxbAdapter jpa2JaxbAdapter;
-    
-    @Resource(name="languagesMap")
+
+    @Resource(name = "languagesMap")
     private LanguagesMap lm;
 
     @Resource
     private OrcidProfileCacheManager orcidProfileCacheManager;
 
     @Resource
-    private ActivityCacheManager cacheManager;        
-        
+    private ActivityCacheManager cacheManager;
+
     @Resource
     private PeerReviewManager peerReviewManager;
     
+    public static int ORCID_HASH_LENGTH = 8;
+
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[x]}")
     public ModelAndView publicPreviewRedir(HttpServletRequest request, @RequestParam(value = "page", defaultValue = "1") int pageNo,
             @RequestParam(value = "maxResults", defaultValue = "15") int maxResults, @PathVariable("orcid") String orcid) {
@@ -109,42 +116,43 @@ public class PublicProfileController extends BaseWorkspaceController {
         rv.setUrl(getBasePath() + orcid.toUpperCase());
         return new ModelAndView(rv);
     }
-    
+
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}")
-    public ModelAndView publicPreview(HttpServletRequest request, @RequestParam(value = "page", defaultValue = "1") int pageNo, 
-            @RequestParam(value = "v", defaultValue = "0") int v,
-            @RequestParam(value = "maxResults", defaultValue = "15") int maxResults, @PathVariable("orcid") String orcid) {
-        
-    	OrcidProfile profile = orcidProfileCacheManager.retrievePublic(orcid);
-    	
-    	if(profile == null) {
-    		return new ModelAndView("error-404");
-    	}
-    	
-    	ModelAndView mav = null;
+    public ModelAndView publicPreview(HttpServletRequest request, @RequestParam(value = "page", defaultValue = "1") int pageNo,
+            @RequestParam(value = "v", defaultValue = "0") int v, @RequestParam(value = "maxResults", defaultValue = "15") int maxResults,
+            @PathVariable("orcid") String orcid) {
+
+        OrcidProfile profile = orcidProfileCacheManager.retrievePublic(orcid);
+
+        if (profile == null) {
+            return new ModelAndView("error-404");
+        }
+
+        ModelAndView mav = null;
         mav = new ModelAndView("public_profile_v3");
         mav.addObject("isPublicProfile", true);
 
         boolean isProfileEmtpy = true;
-        
+
         request.getSession().removeAttribute(PUBLIC_WORKS_RESULTS_ATTRIBUTE);
 
         mav.addObject("profile", profile);
-        
+
         String countryName = getCountryName(profile, true);
-        if(!StringUtil.isBlank(countryName))
+        if (!StringUtil.isBlank(countryName))
             mav.addObject("countryName", countryName);
-        
+
         LinkedHashMap<String, Work> minimizedWorksMap = new LinkedHashMap<String, Work>();
         LinkedHashMap<String, Affiliation> affiliationMap = new LinkedHashMap<String, Affiliation>();
         LinkedHashMap<String, Funding> fundingMap = new LinkedHashMap<String, Funding>();
         LinkedHashMap<String, PeerReview> peerReviewMap = new LinkedHashMap<String, PeerReview>();
 
-        if(profile != null && profile.getOrcidBio() != null && profile.getOrcidBio().getBiography() != null && StringUtils.isNotBlank(profile.getOrcidBio().getBiography().getContent())){
+        if (profile != null && profile.getOrcidBio() != null && profile.getOrcidBio().getBiography() != null
+                && StringUtils.isNotBlank(profile.getOrcidBio().getBiography().getContent())) {
             isProfileEmtpy = false;
         }
-        
-        if(profile.isLocked()) {
+
+        if (profile.isLocked()) {
             mav.addObject("locked", true);
         } else if (profile.getOrcidDeprecated() != null) {
             String primaryRecord = profile.getOrcidDeprecated().getPrimaryRecord().getOrcidIdentifier().getPath();
@@ -166,16 +174,16 @@ public class PublicProfileController extends BaseWorkspaceController {
             } else {
                 mav.addObject("affiliationsEmpty", true);
             }
-            
-            fundingMap = fundingMap(orcid);            
-            if(fundingMap.size() > 0)
+
+            fundingMap = fundingMap(orcid);
+            if (fundingMap.size() > 0)
                 isProfileEmtpy = false;
             else {
                 mav.addObject("fundingEmpty", true);
             }
-            
+
             peerReviewMap = peerReviewMap(orcid);
-            if(peerReviewMap.size() > 0) {
+            if (peerReviewMap.size() > 0) {
                 mav.addObject("peerReviews", peerReviewMap.values());
                 isProfileEmtpy = false;
             } else {
@@ -195,14 +203,14 @@ public class PublicProfileController extends BaseWorkspaceController {
             mav.addObject("fundingIdsJson", StringEscapeUtils.escapeEcmaScript(fundingIdsJson));
             mav.addObject("peerReviewIdsJson", StringEscapeUtils.escapeEcmaScript(peerReviewIdsJson));
             mav.addObject("isProfileEmpty", isProfileEmtpy);
-            
+
             String creditName = "";
-            if(profile.getOrcidBio() != null && profile.getOrcidBio().getPersonalDetails() != null) {
-                PersonalDetails personalDetails = profile.getOrcidBio().getPersonalDetails(); 
-                if(personalDetails.getCreditName() != null && !PojoUtil.isEmpty(personalDetails.getCreditName().getContent()))
+            if (profile.getOrcidBio() != null && profile.getOrcidBio().getPersonalDetails() != null) {
+                PersonalDetails personalDetails = profile.getOrcidBio().getPersonalDetails();
+                if (personalDetails.getCreditName() != null && !PojoUtil.isEmpty(personalDetails.getCreditName().getContent()))
                     creditName = profile.getOrcidBio().getPersonalDetails().getCreditName().getContent();
                 else {
-                    if(personalDetails.getGivenNames() != null && !PojoUtil.isEmpty(personalDetails.getGivenNames().getContent()))
+                    if (personalDetails.getGivenNames() != null && !PojoUtil.isEmpty(personalDetails.getGivenNames().getContent()))
                         creditName += personalDetails.getGivenNames().getContent();
                     if(personalDetails.getFamilyName() != null && !PojoUtil.isEmpty(personalDetails.getFamilyName().getContent()))
                         creditName += " " + personalDetails.getFamilyName().getContent();
@@ -212,7 +220,7 @@ public class PublicProfileController extends BaseWorkspaceController {
                 //<Published Name> (<ORCID iD>) - ORCID | Connecting Research and Researchers
                 mav.addObject("title", getMessage("layout.public-layout.title", creditName.trim(), orcid));
             }
-            
+
         } catch (JsonGenerationException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -236,13 +244,13 @@ public class PublicProfileController extends BaseWorkspaceController {
         for (String id : affIds) {
             Affiliation aff = affMap.get(id);
             // ONLY SHARE THE PUBLIC AFFILIATIONS!
-            if (aff != null && aff.getVisibility().equals(Visibility.PUBLIC)) {                
+            if (aff != null && aff.getVisibility().equals(Visibility.PUBLIC)) {
                 AffiliationForm form = AffiliationForm.valueOf(aff);
                 form.setCountryForDisplay(getMessage(buildInternationalizationKey(CountryIsoEntity.class, aff.getOrganization().getAddress().getCountry().name())));
                 affs.add(form);
             }
         }
-        
+
         return affs;
     }
 
@@ -264,14 +272,14 @@ public class PublicProfileController extends BaseWorkspaceController {
             if (!(funding.getTitle().getTranslatedTitle() == null) && !StringUtils.isEmpty(funding.getTitle().getTranslatedTitle().getLanguageCode())) {
                 String languageName = languages.get(funding.getTitle().getTranslatedTitle().getLanguageCode());
                 form.getFundingTitle().getTranslatedTitle().setLanguageName(languageName);
-            }            
+            }
             // Set formatted amount
-            if(funding.getAmount() != null && StringUtils.isNotBlank(funding.getAmount().getContent())) {
+            if (funding.getAmount() != null && StringUtils.isNotBlank(funding.getAmount().getContent())) {
                 BigDecimal bigDecimal = new BigDecimal(funding.getAmount().getContent());
                 String formattedAmount = formatAmountString(bigDecimal);
                 form.setAmount(Text.valueOf(formattedAmount));
             }
-            
+
             // Set country name
             form.setCountryForDisplay(getMessage(buildInternationalizationKey(CountryIsoEntity.class, funding.getOrganization().getAddress().getCountry().name())));
             fundings.add(form);
@@ -304,8 +312,7 @@ public class PublicProfileController extends BaseWorkspaceController {
                         work.setLanguageName(languageName);
                     }
                     // Set translated title language name
-                    if (work.getTranslatedTitle() != null
-                            && !StringUtils.isEmpty(work.getTranslatedTitle().getLanguageCode())) {
+                    if (work.getTranslatedTitle() != null && !StringUtils.isEmpty(work.getTranslatedTitle().getLanguageCode())) {
                         String languageName = languages.get(work.getTranslatedTitle().getLanguageCode());
                         work.getTranslatedTitle().setLanguageName(languageName);
                     }
@@ -349,24 +356,24 @@ public class PublicProfileController extends BaseWorkspaceController {
                     work.setLanguageName(languageName);
                 }
                 // Set translated title language name
-                if (work.getTranslatedTitle() != null
-                        && !StringUtils.isEmpty(work.getTranslatedTitle().getLanguageCode())) {
+                if (work.getTranslatedTitle() != null && !StringUtils.isEmpty(work.getTranslatedTitle().getLanguageCode())) {
                     String languageName = languages.get(work.getTranslatedTitle().getLanguageCode());
                     work.getTranslatedTitle().setLanguageName(languageName);
                 }
 
-                //If the work source is the user himself, fill the work source name
-                if(!PojoUtil.isEmpty(work.getSource()) && profileWork.getProfile().getId().equals(work.getSource())){
+                // If the work source is the user himself, fill the work source
+                // name
+                if (!PojoUtil.isEmpty(work.getSource()) && profileWork.getProfile().getId().equals(work.getSource())) {
                     List<Contributor> contributors = work.getContributors();
-                    if(work.getContributors() != null) {
-                        for(Contributor contributor : contributors){  
-                            //If it is not an empty contributor
-                            if(!PojoUtil.isEmpty(contributor.getContributorRole()) || !PojoUtil.isEmpty(contributor.getContributorSequence())) {
+                    if (work.getContributors() != null) {
+                        for (Contributor contributor : contributors) {
+                            // If it is not an empty contributor
+                            if (!PojoUtil.isEmpty(contributor.getContributorRole()) || !PojoUtil.isEmpty(contributor.getContributorSequence())) {
                                 ProfileEntity profile = profileWork.getProfile();
-                                String creditNameString = cacheManager.getPublicCreditName(profile);   
+                                String creditNameString = cacheManager.getPublicCreditName(profile);
                                 Text creditName = Text.valueOf(creditNameString);
                                 contributor.setCreditName(creditName);
-                            }                            
+                            }
                         }
                     }
                 }
@@ -379,7 +386,8 @@ public class PublicProfileController extends BaseWorkspaceController {
 
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/peer-reviews.json")
     public @ResponseBody
-    List<PeerReviewForm> getPeerReviewsJson(HttpServletRequest request, @PathVariable("orcid") String orcid, @RequestParam(value = "peerReviewIds") String peerReviewIdsStr) {
+    List<PeerReviewForm> getPeerReviewsJson(HttpServletRequest request, @PathVariable("orcid") String orcid,
+            @RequestParam(value = "peerReviewIds") String peerReviewIdsStr) {
         Map<String, String> languages = lm.buildLanguageMap(localeManager.getLocale(), false);
         List<PeerReviewForm> peerReviews = new ArrayList<PeerReviewForm>();
         Map<String, PeerReview> peerReviewMap = peerReviewMap(orcid);
@@ -388,9 +396,8 @@ public class PublicProfileController extends BaseWorkspaceController {
             PeerReview peerReview = peerReviewMap.get(id);
             PeerReviewForm form = PeerReviewForm.valueOf(peerReview);
             // Set language name
-            form.setCountryForDisplay(getMessage(buildInternationalizationKey(CountryIsoEntity.class, peerReview.getOrganization().getAddress().getCountry()
-                    .name())));
-            
+            form.setCountryForDisplay(getMessage(buildInternationalizationKey(CountryIsoEntity.class, peerReview.getOrganization().getAddress().getCountry().name())));
+
             if (form.getSubjectForm() != null && form.getSubjectForm().getTitle() != null) {
                 // Set translated title language name
                 if (!(form.getSubjectForm().getTranslatedTitle() == null) && !StringUtils.isEmpty(form.getSubjectForm().getTranslatedTitle().getLanguageCode())) {
@@ -398,12 +405,75 @@ public class PublicProfileController extends BaseWorkspaceController {
                     form.getSubjectForm().getTranslatedTitle().setLanguageName(languageName);
                 }
             }
-            
+
             peerReviews.add(form);
         }
         return peerReviews;
     }
-    
+
+    @RequestMapping(value = "/public_widgets/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/{orcidHash}/info.json")
+    public @ResponseBody
+    OrcidInfo getInfo(@PathVariable("orcid") String orcid, @PathVariable("orcidHash") String orcidHash) throws Exception {
+    	// Light weight security check. To keep copy and paster from easily generating
+    	// the widget with out the user being logged in. Anyone that figures out this is 
+        // a hash should be smart enough to just use the API.
+    	if (orcidHash.length() > 5 && !encryptionManager.sha256Hash(orcid).startsWith(orcidHash))
+    		throw new Exception("Semi-security hash doens't match");
+        OrcidInfo result = new OrcidInfo();
+        OrcidProfile profile = orcidProfileCacheManager.retrievePublic(orcid);
+        result.setOrcid(orcid);
+
+        if (profile.getOrcidBio().getPersonalDetails().getCreditName() != null
+                && !PojoUtil.isEmpty(profile.getOrcidBio().getPersonalDetails().getCreditName().getContent())
+                && profile.getOrcidBio().getPersonalDetails().getCreditName().getVisibility().equals(Visibility.PUBLIC)) {
+            result.setName(profile.getOrcidBio().getPersonalDetails().getCreditName().getContent());
+        } else {
+            String name = "";
+
+            if (profile.getOrcidBio().getPersonalDetails().getGivenNames() != null
+                    && !PojoUtil.isEmpty(profile.getOrcidBio().getPersonalDetails().getGivenNames().getContent())) {
+                name += profile.getOrcidBio().getPersonalDetails().getGivenNames().getContent();
+            }
+
+            if (profile.getOrcidBio().getPersonalDetails().getFamilyName() != null
+                    && !PojoUtil.isEmpty(profile.getOrcidBio().getPersonalDetails().getFamilyName().getContent())) {
+                name += " "+profile.getOrcidBio().getPersonalDetails().getFamilyName().getContent();
+            }
+            result.setName(name);
+        }
+
+        java.util.Date lastModified = profile.getOrcidHistory().getLastModifiedDate().getValue().toGregorianCalendar().getTime();
+        
+        HashMap<String, Funding> fundings = activityCacheManager.fundingMap(profile);
+        HashMap<String, Work> works = activityCacheManager.pubMinWorksMap(profile);
+        HashMap<String, Affiliation> affiliations = activityCacheManager.affiliationMap(profile);        
+        HashMap<String, PeerReview> peerReviews = activityCacheManager.pubPeerReviewsMap(orcid, lastModified.getTime());
+        
+        if(fundings != null) {
+            result.setFundings(fundings.size());
+        }
+        
+        if(works != null) {
+            result.setWorks(works.size());
+        }
+        
+        if(peerReviews != null) {
+            result.setPeerReviews(peerReviews.size());
+        }
+        
+        if(affiliations != null) {
+            for(Affiliation aff : affiliations.values()) {
+                if(aff.getType().equals(AffiliationType.EDUCATION)) {
+                    result.setEducations(result.getEducations() + 1);
+                } else {
+                    result.setEmployments(result.getEmployments() + 1);
+                }
+            }
+        }
+        
+        return result;
+    }
+
     public LinkedHashMap<String, Funding> fundingMap(String orcid) {
         OrcidProfile profile = orcidProfileCacheManager.retrievePublic(orcid);
         if (profile == null)
@@ -424,13 +494,13 @@ public class PublicProfileController extends BaseWorkspaceController {
             return null;
         return activityCacheManager.pubMinWorksMap(profile);
     }
-    
+
     public LinkedHashMap<String, PeerReview> peerReviewMap(String orcid) {
         OrcidProfile userPubProfile = orcidProfileCacheManager.retrievePublic(orcid);
         java.util.Date lastModified = userPubProfile.getOrcidHistory().getLastModifiedDate().getValue().toGregorianCalendar().getTime();
         return activityCacheManager.pubPeerReviewsMap(orcid, lastModified.getTime());
     }
-    
+
     /**
      * Format a big decimal based on a locale
      * 
@@ -441,5 +511,71 @@ public class PublicProfileController extends BaseWorkspaceController {
     private String formatAmountString(BigDecimal bigDecimal) {
         NumberFormat numberFormat = NumberFormat.getNumberInstance(localeManager.getLocale());
         return numberFormat.format(bigDecimal);
+    }
+}
+
+class OrcidInfo {
+    public String orcid = "";
+    public String name = "";
+    public int works = 0;
+    public int fundings = 0;
+    public int educations = 0;
+    public int employments = 0;
+    public int peerReviews = 0;
+
+    public String getOrcid() {
+        return orcid;
+    }
+
+    public void setOrcid(String orcid) {
+        this.orcid = orcid;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getWorks() {
+        return works;
+    }
+
+    public void setWorks(int works) {
+        this.works = works;
+    }
+
+    public int getFundings() {
+        return fundings;
+    }
+
+    public void setFundings(int fundings) {
+        this.fundings = fundings;
+    }
+
+    public int getEducations() {
+        return educations;
+    }
+
+    public void setEducations(int educations) {
+        this.educations = educations;
+    }
+
+    public int getEmployments() {
+        return employments;
+    }
+
+    public void setEmployments(int employments) {
+        this.employments = employments;
+    }
+
+    public int getPeerReviews() {
+        return peerReviews;
+    }
+
+    public void setPeerReviews(int peerReviews) {
+        this.peerReviews = peerReviews;
     }
 }

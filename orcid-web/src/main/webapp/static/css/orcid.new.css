@@ -5707,6 +5707,57 @@ hr{
 	padding-right: 0;
 }
 
+<<<<<<< HEAD
+/* Widget */
+
+.widget-container{
+	float: left;
+	width: 100%;
+}
+
+.widget-container .widget-code-container{
+	padding: 10px;
+	border: 1px solid #C9C9CA;
+	color: #494A4C;
+	float: left;
+	height: auto;
+	width: 100%;;
+}
+
+.widget-container #widget-code{
+	height: 170px;
+	cursor: text;
+}
+
+.widget-container .widget-code-icon{
+	padding-left: 0;
+	padding-right: 19px;
+	
+}
+
+.widget-container .widget-code-icon:before{
+	font-size: 16px;
+	top: -9px;
+	color: #338caf;
+}
+
+.widget-container a:hover span.widget-code-icon:before{
+	color: rgb(166, 206, 57);
+}
+
+.widget-container .widget-instructions,
+.widget-container .widget-code-container a{
+	font-size: 14px;
+}
+
+.glyphicon-question-sign{
+	cursor: default;
+}
+
+.widget-container .widget-code-container a{
+	float: right;
+}
+
 .action-icon-align-right{
 	position: absolute;
 	top: 8px;

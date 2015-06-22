@@ -52,6 +52,29 @@
             
             <#include "includes/id_banner.ftl"/>
             
+            
+            <#if RequestParameters['widget']??>
+	            <div class="widget-container" ng-controller="widgetCtrl">
+	            	<div class="widget-header">
+						<a ng-click="toggleCopyWidget()">ORCID public profile widget</a><div class="popover-help-container">
+	                    <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
+	                    <div id="qrcode-help" class="popover bottom">
+	                        <div class="arrow"></div>
+	                        <div class="popover-content">
+	                            <p>Share a summary of your public profile to others!</p>
+	                        </div>
+	                    </div>
+	                </div>
+					</div>
+					<div ng-show="showCode" ng-cloak class="widget-code-container">
+						<p class="widget-instructions">Copy the code below and paste it into your personal website.</p>
+						<textarea id="widget-code" name="widget-code" class="form-control" ng-model="widgetURL" ng-click="inputTextAreaSelectAll($event)" readonly="readonly"></textarea>
+						<a ng-click="hideWidgetCode()">Hide code</a>
+					</div>
+	            </div>
+            </#if>
+            
+            
             <div class="qrcode-container">
                 <a href="http://qrcode.orcid.org" target="_blank"><span class="glyphicons qrcode orcid-qr"></span><@orcid.msg 'workspace.qrcode.link.text'/></a>
                 <div class="popover-help-container">

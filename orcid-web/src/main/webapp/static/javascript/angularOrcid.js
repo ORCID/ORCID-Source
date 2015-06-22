@@ -8925,6 +8925,26 @@ orcidNgModule.controller('headerCtrl',['$scope', '$window', function ($scope, $w
 	
 }]);
 
+orcidNgModule.controller('widgetCtrl',['$scope', function ($scope){
+	$scope.hash = orcidVar.orcidIdHash.substr(0, 6);
+	$scope.showCode = false;
+	
+	$scope.widgetURL = '<script src="'+ getBaseUri() + '/static/javascript/orcid-summary-widget.js?orcid=' + orcidVar.orcidId + '&t=' + $scope.hash + '"></script><div id="orcid-summary-widget"></div>';
+	
+	$scope.inputTextAreaSelectAll = function($event){
+    	$event.target.select();
+    }
+	
+	$scope.toggleCopyWidget = function(){
+		$scope.showCode = !$scope.showCode;
+	}
+	
+	$scope.hideWidgetCode = function(){
+		$scope.showCode = false;
+	}
+	
+}]);
+
 orcidNgModule.directive('resize', function ($window) {
 	return function ($scope, element) {
 		var w = angular.element($window);
