@@ -467,25 +467,26 @@ public class WorkForm implements ErrorsInterface, Serializable {
             work.setWorkType(org.orcid.jaxb.model.record.WorkType.fromValue(this.getWorkType().getValue()));
         }
         
-        // Set title
+        
         org.orcid.jaxb.model.record.WorkTitle workTitle = new org.orcid.jaxb.model.record.WorkTitle();
+        // Set title
         if(!PojoUtil.isEmpty(this.getTitle())) {            
             workTitle.setTitle(new org.orcid.jaxb.model.common.Title(this.getTitle().getValue()));
+        }
+        
+        // Set translated title
+        if(!PojoUtil.isEmpty(this.getTranslatedTitle()))
+        if (work.getWorkTitle().getTranslatedTitle() != null) {
+            TranslatedTitle tt = new TranslatedTitle();
+            tt.setContent(work.getWorkTitle().getTranslatedTitle().getContent());
+            tt.setLanguageCode(work.getWorkTitle().getTranslatedTitle().getLanguageCode());
+            w.setTranslatedTitle(tt);
         }
         
         
         if (work.getWorkTitle() != null) {
             
-            if (work.getWorkTitle().getTitle() != null) {
-                w.setTitle(Text.valueOf(work.getWorkTitle().getTitle().getContent()));
-            }
-            // Set translated title
-            if (work.getWorkTitle().getTranslatedTitle() != null) {
-                TranslatedTitle tt = new TranslatedTitle();
-                tt.setContent(work.getWorkTitle().getTranslatedTitle().getContent());
-                tt.setLanguageCode(work.getWorkTitle().getTranslatedTitle().getLanguageCode());
-                w.setTranslatedTitle(tt);
-            }
+            
             // Set subtitle
             if (work.getWorkTitle().getSubtitle() != null) {
                 w.setSubtitle(Text.valueOf(work.getWorkTitle().getSubtitle().getContent()));
