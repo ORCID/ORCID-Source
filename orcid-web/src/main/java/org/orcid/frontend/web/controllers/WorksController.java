@@ -342,45 +342,46 @@ public class WorksController extends BaseWorkspaceController {
             return null;
 
         Work work = workManager.getWork(this.getCurrentUserOrcid(), workId);
-
+        
         if (work != null) {
+            WorkForm workForm = WorkForm.valueOf(work);
             // Set Publication date
-            if (work.getPublicationDate() == null) {
-                initializePublicationDate(work);
+            if (workForm.getPublicationDate() == null) {
+                initializePublicationDate(workForm);
             } else {
-                if (work.getPublicationDate().getDay() == null) {
-                    work.getPublicationDate().setDay(new String());
+                if (workForm.getPublicationDate().getDay() == null) {
+                    workForm.getPublicationDate().setDay(new String());
                 }
-                if (work.getPublicationDate().getMonth() == null) {
-                    work.getPublicationDate().setMonth(new String());
+                if (workForm.getPublicationDate().getMonth() == null) {
+                    workForm.getPublicationDate().setMonth(new String());
                 }
-                if (work.getPublicationDate().getYear() == null) {
-                    work.getPublicationDate().setYear(new String());
+                if (workForm.getPublicationDate().getYear() == null) {
+                    workForm.getPublicationDate().setYear(new String());
                 }
             }
 
             // Set country name
-            if (!PojoUtil.isEmpty(work.getCountryCode())) {
-                Text countryName = Text.valueOf(countries.get(work.getCountryCode().getValue()));
-                work.setCountryName(countryName);
+            if (!PojoUtil.isEmpty(workForm.getCountryCode())) {
+                Text countryName = Text.valueOf(countries.get(workForm.getCountryCode().getValue()));
+                workForm.setCountryName(countryName);
             }
             // Set language name
-            if (!PojoUtil.isEmpty(work.getLanguageCode())) {
-                Text languageName = Text.valueOf(languages.get(work.getLanguageCode().getValue()));
-                work.setLanguageName(languageName);
+            if (!PojoUtil.isEmpty(workForm.getLanguageCode())) {
+                Text languageName = Text.valueOf(languages.get(workForm.getLanguageCode().getValue()));
+                workForm.setLanguageName(languageName);
             }
             // Set translated title language name
-            if (!(work.getTranslatedTitle() == null) && !StringUtils.isEmpty(work.getTranslatedTitle().getLanguageCode())) {
-                String languageName = languages.get(work.getTranslatedTitle().getLanguageCode());
-                work.getTranslatedTitle().setLanguageName(languageName);
+            if (!(workForm.getTranslatedTitle() == null) && !StringUtils.isEmpty(workForm.getTranslatedTitle().getLanguageCode())) {
+                String languageName = languages.get(workForm.getTranslatedTitle().getLanguageCode());
+                workForm.getTranslatedTitle().setLanguageName(languageName);
             }
 
             // If the work source is the user himself, fill the work source
             // name
             String userOrcid = getEffectiveUserOrcid();
-            if (!PojoUtil.isEmpty(work.getSource()) && userOrcid.equals(work.getSource())) {
-                List<Contributor> contributors = work.getContributors();
-                if (work.getContributors() != null) {
+            if (!PojoUtil.isEmpty(workForm.getSource()) && userOrcid.equals(workForm.getSource())) {
+                List<Contributor> contributors = workForm.getContributors();
+                if (workForm.getContributors() != null) {
                     for (Contributor contributor : contributors) {
                         if (!PojoUtil.isEmpty(contributor.getContributorRole()) || !PojoUtil.isEmpty(contributor.getContributorSequence())) {
                             ProfileEntity profile = profileEntityCacheManager.retrieve(userOrcid);
@@ -393,7 +394,7 @@ public class WorksController extends BaseWorkspaceController {
                 }
             }
 
-            return work;
+            return workForm;
         }
 
         return null;
@@ -405,15 +406,15 @@ public class WorksController extends BaseWorkspaceController {
      * @throws Exception
      * */
     @RequestMapping(value = "/work.json", method = RequestMethod.POST)
-    public @ResponseBody WorkForm postWork(HttpServletRequest request, @RequestBody WorkForm work) throws Exception {
-        validateWork(work);
-        if (work.getErrors().size() == 0) {
-            if (work.getPutCode() != null)
-                updateWork(work);
+    public @ResponseBody WorkForm postWork(HttpServletRequest request, @RequestBody WorkForm workForm) throws Exception {
+        validateWork(workForm);
+        if (workForm.getErrors().size() == 0) {
+            if (workForm.getPutCode() != null)
+                updateWork(workForm);
             else
-                addWork(work);
+                addWork(workForm);
         }
-        return work;
+        return workForm;
     }
 
     @RequestMapping(value = "/worksValidate.json", method = RequestMethod.POST)
@@ -488,13 +489,13 @@ public class WorksController extends BaseWorkspaceController {
         return work;
     }
 
-    public void addWork(WorkForm work) {
+    public void addWork(WorkForm workForm) {
         // Get current profile
         OrcidProfile currentProfile = getEffectiveProfile();
 
         // Set the credit name to the work
 
-        OrcidWork newOw = work.toOrcidWork();
+        OrcidWork newOw = workForm.toOrcidWork();
         newOw.setPutCode("-1"); // put codes of -1 override new works
                                 // visibility filtering settings.
 
@@ -510,7 +511,7 @@ public class WorksController extends BaseWorkspaceController {
         newOw.setPutCode(putCode);
 
         // Set the id in the work to be returned
-        work.setPutCode(Text.valueOf(putCode));
+        workForm.setPutCode(Text.valueOf(putCode));
 
         // make the new work the default display
         workManager.updateToMaxDisplay(currentProfile.getOrcidIdentifier().getPath(), putCode);

@@ -37,10 +37,7 @@ import org.orcid.jaxb.model.message.WorkExternalIdentifiers;
 import org.orcid.jaxb.model.message.WorkTitle;
 import org.orcid.jaxb.model.message.WorkType;
 import org.orcid.jaxb.model.record.Work;
-import org.orcid.persistence.jpa.entities.PublicationDateEntity;
-import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.custom.MinimizedWorkEntity;
-import org.springframework.util.Assert;
 
 public class WorkForm implements ErrorsInterface, Serializable {
 
@@ -192,18 +189,21 @@ public class WorkForm implements ErrorsInterface, Serializable {
         populateContributors(work, w);
 
         // Set external identifiers
-        populateExternalIdentifiers(workEntity, w);
+        populateExternalIdentifiers(work, w);
 
         // Set created date
-        w.setCreatedDate(Date.valueOf(workEntity.getDateCreated()));
+        w.setCreatedDate(Date.valueOf(work.getCreatedDate()));
 
         // Set last modified
-        w.setLastModified(Date.valueOf(workEntity.getLastModified()));
+        w.setLastModified(Date.valueOf(work.getLastModifiedDate()));
 
-        // Set source
-        w.setSource(workEntity.getSource().getSourceId());
-        w.setSourceName(workEntity.getSource().getSourceName());
-
+        if(work.getSource() != null) {
+            // Set source
+            w.setSource(work.getSource().retrieveSourcePath());
+            if(work.getSource().getSourceName() != null) {
+                w.setSourceName(work.getSource().getSourceName().getContent());
+            }
+        }
         return w;
     }
 
@@ -294,17 +294,17 @@ public class WorkForm implements ErrorsInterface, Serializable {
         work.setWorkExternalIdentifiers(workExternalIdentifiersList);
     }
 
-    private static void populateExternalIdentifiers(WorkEntity workEntity, WorkForm work) {
+    private static void populateExternalIdentifiers(Work work, WorkForm workForm) {
         List<WorkExternalIdentifier> workExternalIdentifiersList = new ArrayList<WorkExternalIdentifier>();
-        if (!PojoUtil.isEmpty(workEntity.getExternalIdentifiersJson())) {
-            WorkExternalIdentifiers extIds = JsonUtils.readObjectFromJsonString(workEntity.getExternalIdentifiersJson(), WorkExternalIdentifiers.class);
+        if(work.getExternalIdentifiers() != null) {        
+            org.orcid.jaxb.model.record.WorkExternalIdentifiers extIds = work.getExternalIdentifiers();
             if (extIds != null) {
-                for (org.orcid.jaxb.model.message.WorkExternalIdentifier extId : extIds.getWorkExternalIdentifier()) {
+                for (org.orcid.jaxb.model.record.WorkExternalIdentifier extId : extIds.getWorkExternalIdentifier()) {
                     workExternalIdentifiersList.add(WorkExternalIdentifier.valueOf(extId));
                 }
             }
         }
-        work.setWorkExternalIdentifiers(workExternalIdentifiersList);
+        workForm.setWorkExternalIdentifiers(workExternalIdentifiersList);
     }
 
     private static void populateContributors(Work work, WorkForm workForm) {
@@ -440,6 +440,93 @@ public class WorkForm implements ErrorsInterface, Serializable {
         return ow;
     }
 
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    public Work toWork() {
+        Work work = new Work();
+        
+        // Set work id
+        if (!PojoUtil.isEmpty(this.getPutCode())) {
+            work.setPutCode(this.getPutCode().getValue());
+        }
+
+        // Set language
+        if (!PojoUtil.isEmpty(this.getLanguageCode())) {
+            work.setLanguageCode(this.getLanguageCode().getValue());
+        }
+
+        // Set type
+        if (!PojoUtil.isEmpty(this.getWorkType())) {
+            work.setWorkType(org.orcid.jaxb.model.record.WorkType.fromValue(this.getWorkType().getValue()));
+        }
+        
+        // Set title
+        org.orcid.jaxb.model.record.WorkTitle workTitle = new org.orcid.jaxb.model.record.WorkTitle();
+        if(!PojoUtil.isEmpty(this.getTitle())) {            
+            workTitle.setTitle(new org.orcid.jaxb.model.common.Title(this.getTitle().getValue()));
+        }
+        
+        
+        if (work.getWorkTitle() != null) {
+            
+            if (work.getWorkTitle().getTitle() != null) {
+                w.setTitle(Text.valueOf(work.getWorkTitle().getTitle().getContent()));
+            }
+            // Set translated title
+            if (work.getWorkTitle().getTranslatedTitle() != null) {
+                TranslatedTitle tt = new TranslatedTitle();
+                tt.setContent(work.getWorkTitle().getTranslatedTitle().getContent());
+                tt.setLanguageCode(work.getWorkTitle().getTranslatedTitle().getLanguageCode());
+                w.setTranslatedTitle(tt);
+            }
+            // Set subtitle
+            if (work.getWorkTitle().getSubtitle() != null) {
+                w.setSubtitle(Text.valueOf(work.getWorkTitle().getSubtitle().getContent()));
+            }
+        }
+
+        // Set journal title
+        if (work.getJournalTitle() != null ) {
+            w.setJournalTitle(Text.valueOf(work.getJournalTitle().getContent()));
+        }
+        
+        
+        
+        
+        
+        return work;
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     public void setCitationForDisplay(String citation) {
         this.citationForDisplay = citation;
     }
