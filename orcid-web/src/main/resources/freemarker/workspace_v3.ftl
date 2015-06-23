@@ -56,7 +56,7 @@
             <#if RequestParameters['widget']??>
 	            <div class="widget-container" ng-controller="widgetCtrl">
 	            	<div class="widget-header">
-						<a ng-click="toggleCopyWidget()">ORCID public profile widget</a><div class="popover-help-container">
+						<a ng-click="toggleCopyWidget(); showSampleWidget()">ORCID public profile widget</a><div class="popover-help-container">
 	                    <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
 	                    <div id="qrcode-help" class="popover bottom">
 	                        <div class="arrow"></div>
@@ -67,6 +67,23 @@
 	                </div>
 					</div>
 					<div ng-show="showCode" ng-cloak class="widget-code-container">
+						<p><@orcid.msg 'orcid_widget.widget_sample'/>:</p>
+						<div class="orcid-summary-widget">
+                           <div class="orcid-widget-details">
+                               <div class="orcid-logo"></div>
+                               <div class="orcid-name">{{name}}</div>
+                               <div class="orcid-id">ORCID: {{orcid}}</div>
+                               <div class="orcid-summary-items">
+                                 <div class="orcid-summary-item" ng-show="works > 0"><@orcid.msg 'workspace.Works'/> ({{works}})</div>
+                                 <div class="orcid-summary-item" ng-show="fundings > 0"><@orcid.msg 'workspace.Funding'/> ({{fundings}})</div>
+                                 <div class="orcid-summary-item" ng-show="educations > 0"> <@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.education'/> ({{educations}})</div>
+                                 <div class="orcid-summary-item" ng-show="employments > 0"><@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.employment'/> ({{employments}})</div>
+                                 <div class="orcid-summary-item" ng-show="peerReviews > 0"><@orcid.msg 'workspace_peer_review_body_list.peerReview'/> ({{peerReviews}})</div>
+                             </div>
+	                        <a href="http://orcid.org/about/what-is-orcid" class="orcid-widget-button" target="_blank"><@orcid.msg 'public-layout.what_is_orcid'/>?</a>
+	                        </div>  
+                        </div>
+					
 						<p class="widget-instructions">Copy the code below and paste it into your personal website.</p>
 						<textarea id="widget-code" name="widget-code" class="form-control" ng-model="widgetURL" ng-click="inputTextAreaSelectAll($event)" readonly="readonly"></textarea>
 						<a ng-click="hideWidgetCode()">Hide code</a>
