@@ -16,14 +16,17 @@
  */
 package org.orcid.core.manager.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
 
 import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.manager.WorkManager;
+import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.dao.ProfileWorkDao;
 import org.orcid.persistence.dao.WorkDao;
+import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.custom.MinimizedWorkEntity;
 import org.springframework.cache.annotation.Cacheable;
@@ -84,4 +87,43 @@ public class WorkManagerImpl implements WorkManager {
         return workDao.findPublicWorks(orcid);
     }
 
+    /**
+     * Updates the visibility of an existing work
+     * 
+     * @param workId
+     *            The id of the work that will be updated
+     * @param visibility
+     *            The new visibility value for the profile work relationship
+     * @return true if the relationship was updated
+     * */
+    public boolean updateVisibilities(String orcid, ArrayList<Long> workIds, Visibility visibility) {
+        return workDao.updateVisibilities(orcid, workIds, visibility);
+    }
+    
+    /**
+     * Removes a work.
+     * 
+     * @param workId
+     *            The id of the work that will be removed from the client
+     *            profile
+     * @param clientOrcid
+     *            The client orcid
+     * @return true if the work was deleted
+     * */
+    public boolean removeWorks(String clientOrcid, ArrayList<Long> workIds) {
+        return workDao.removeWorks(clientOrcid, workIds);
+    }
+    
+    /**
+     * Sets the display index of the new work
+     * @param orcid     
+     *          The work owner
+     * @param workId
+     *          The work id
+     * @return true if the work index was correctly set                  
+     * */
+    public boolean updateToMaxDisplay(String orcid, String workId) {
+        ProfileWorkEntity profileWork = profileWorkDao.getProfileWork(orcid, workId);
+        return workDao.updateToMaxDisplay(workId, profileWork.getDisplayIndex());
+    }
 }

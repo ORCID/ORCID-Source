@@ -1186,6 +1186,7 @@ orcidNgModule.factory("emailSrvc", function ($rootScope) {
                 serv.inputEmail = {"value":"","primary":false,"current":true,"verified":false,"visibility":"PRIVATE","errors":[]};
             },
             setPrivacy: function(email, priv) {
+            	console.log(email);
                 email.visibility = priv;
                 serv.saveEmail();
             },
@@ -1742,6 +1743,7 @@ orcidNgModule.controller('EmailFrequencyCtrl',['$scope', '$compile', 'emailSrvc'
 orcidNgModule.controller('WorksPrivacyPreferencesCtrl',['$scope', 'prefsSrvc', function ($scope, prefsSrvc) {
     $scope.prefsSrvc = prefsSrvc;
     $scope.privacyHelp = {};
+    $scope.showElement = {};
 
     $scope.toggleClickPrivacyHelp = function(key) {
         if (!document.documentElement.className.contains('no-touch'))
@@ -1751,6 +1753,14 @@ orcidNgModule.controller('WorksPrivacyPreferencesCtrl',['$scope', 'prefsSrvc', f
     $scope.updateActivitiesVisibilityDefault = function(priv, $event) {
         $scope.prefsSrvc.prefs.activitiesVisibilityDefault.value = priv;
         $scope.prefsSrvc.savePrivacyPreferences();
+    };
+    
+    $scope.showTooltip = function(el){
+        $scope.showElement[el] = true;
+    };
+    
+    $scope.hideTooltip = function(el){
+        $scope.showElement[el] = false;
     };
 }]);
 
@@ -1892,6 +1902,7 @@ orcidNgModule.controller('EmailEditCtrl', ['$scope', '$compile', 'emailSrvc' ,fu
     $scope.emailSrvc = emailSrvc;
     $scope.privacyHelp = {};
     $scope.verifyEmailObject;
+    $scope.showElement = {};
 
     $scope.toggleClickPrivacyHelp = function(key) {
         if (!document.documentElement.className.contains('no-touch'))
@@ -1970,6 +1981,14 @@ orcidNgModule.controller('EmailEditCtrl', ['$scope', '$compile', 'emailSrvc' ,fu
         });
         $.colorbox.resize();
     };
+    
+    $scope.showTooltip = function(el){
+    	$scope.showElement[el] = true;
+    }
+    
+    $scope.hideTooltip = function(el){
+    	$scope.showElement[el] = false;
+    }
 
 }]);
 
@@ -2261,6 +2280,7 @@ orcidNgModule.controller('BiographyCtrl',['$scope', '$compile',function ($scope,
     $scope.showEdit = false;
     $scope.biographyForm = null;
     $scope.lengthError = false;
+    $scope.showElement = {};
 
     $scope.toggleEdit = function() {
         $scope.showEdit = !$scope.showEdit;
@@ -2329,6 +2349,14 @@ orcidNgModule.controller('BiographyCtrl',['$scope', '$compile',function ($scope,
         $scope.biographyForm.visiblity.visibility = priv;
         $scope.setBiographyForm();        
     };
+    
+    $scope.showTooltip = function(tp){
+    	$scope.showElement[tp] = true;
+    }
+    
+    $scope.hideTooltip = function(tp){
+    	$scope.showElement[tp] = false;
+    }
 
 
     $scope.getBiographyForm();
@@ -8893,6 +8921,26 @@ orcidNgModule.controller('headerCtrl',['$scope', '$window', function ($scope, $w
 		if(w > 767) {				
 			window.location = $event.target.getAttribute('href');
 		}
+	}
+	
+}]);
+
+orcidNgModule.controller('widgetCtrl',['$scope', function ($scope){
+	$scope.hash = orcidVar.orcidIdHash.substr(0, 6);
+	$scope.showCode = false;
+	
+	$scope.widgetURL = '<script src="'+ getBaseUri() + '/static/javascript/orcid-summary-widget.js?orcid=' + orcidVar.orcidId + '&t=' + $scope.hash + '"></script><div id="orcid-summary-widget"></div>';
+	
+	$scope.inputTextAreaSelectAll = function($event){
+    	$event.target.select();
+    }
+	
+	$scope.toggleCopyWidget = function(){
+		$scope.showCode = !$scope.showCode;
+	}
+	
+	$scope.hideWidgetCode = function(){
+		$scope.showCode = false;
 	}
 	
 }]);

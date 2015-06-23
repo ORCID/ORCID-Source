@@ -2058,7 +2058,7 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input{
 	overflow: hidden;
 }
 
-.inline-list li {
+.inline-list > li {
 	float: left;
 }
 
@@ -3335,7 +3335,8 @@ p.orcid-id-container{
 }
 
 .funding-info{
-	width: 100%;	
+	width: 100%;
+	float: left;	
 }
 
 #currencyCode {
@@ -3635,14 +3636,6 @@ ul.sso-options li span {
 .developer-tools .tab-container .tab.expanded {
 	display: none;
 }
-
-/*
-.developer-tools .slidebox {
-	display: none;
-	overflow: visible !important;
-}
-
-*/
 
 .developer-tools .tab-container a span {
 	margin-right: 5px;
@@ -4054,17 +4047,6 @@ ul#body-work-list > li{
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
 #social-networks #social-network-options input[type=checkbox]{
 	margin-top:11px;
 }
@@ -4180,13 +4162,21 @@ ul.id-details li{
 	display: block;
 }
 
-.biography-controller .popover-help-container .popover{
-	left: -109px;
+.biography-controller .bio-edit{
+	overflow: visible;
 }
 
-.biography-controller .popover.bottom .arrow{
-	left: 117px;
+.bio-edit  .popover-help-container > .popover.privacy-myorcid3 {
+	 left: -276px !important;
+	 top: -177px !important;
+	 min-width: 242px;
 }
+
+.bio-edit .popover-help-container > .privacy-myorcid3 > .arrow{
+	  left: 226px !important;
+}
+
+
 
 .dotted-bar{
 	display: block;
@@ -5399,56 +5389,6 @@ multiselect .dropdown-menu .dropdown-menu-list {
 	margin-bottom: 20px;
 }
 
-/* Custom Sharethis Buttons */
-.st_custom{
-	font-size: 30px;
-	text-align:center;
-	cursor: pointer;
-	width: 30px;
-	height: 30px;
-	display: inline;
-	
-}
-.st_facebook_custom:before{
-	content: "\E031";
-	color: #939598;
-}
-
-.st_facebook_custom:hover:before{
-	content: "\E031";
-	color: #a6ce39;
-}
-
-.st_googleplus_custom:before{
-	content: "\E003";
-	color: #939598;
-}
-
-.st_googleplus_custom:hover:before{
-	content: "\E003";
-	color: #a6ce39;
-}
-
-.st_twitter_custom:before{
-	content: "\E032";
-	color: #939598;
-}
-
-.st_twitter_custom:hover:before{
-	content: "\E032";
-	color: #a6ce39;
-}
-
-.st_linkedin_custom:before{
-	content: "\E018";
-	color: #939598;
-}
-
-.st_linkedin_custom:hover:before{
-	content: "\E018";
-	color: #a6ce39;
-}
-
 .confirm-oauth-access .popover, .oauth-signin-register .popover {
 	top: 22px;
 	left: 0;
@@ -5767,6 +5707,57 @@ hr{
 	padding-right: 0;
 }
 
+<<<<<<< HEAD
+/* Widget */
+
+.widget-container{
+	float: left;
+	width: 100%;
+}
+
+.widget-container .widget-code-container{
+	padding: 10px;
+	border: 1px solid #C9C9CA;
+	color: #494A4C;
+	float: left;
+	height: auto;
+	width: 100%;;
+}
+
+.widget-container #widget-code{
+	height: 170px;
+	cursor: text;
+}
+
+.widget-container .widget-code-icon{
+	padding-left: 0;
+	padding-right: 19px;
+	
+}
+
+.widget-container .widget-code-icon:before{
+	font-size: 16px;
+	top: -9px;
+	color: #338caf;
+}
+
+.widget-container a:hover span.widget-code-icon:before{
+	color: rgb(166, 206, 57);
+}
+
+.widget-container .widget-instructions,
+.widget-container .widget-code-container a{
+	font-size: 14px;
+}
+
+.glyphicon-question-sign{
+	cursor: default;
+}
+
+.widget-container .widget-code-container a{
+	float: right;
+}
+
 .action-icon-align-right{
 	position: absolute;
 	top: 8px;
@@ -5777,8 +5768,20 @@ hr{
 	padding-right: 25px !important; /* Overwriting global reset styling */
 }
 
+input.form-control,
+select.form-control,
+textarea.form-control,
+.form-group div>select{
+	margin-bottom: 0px; 
+}
+
 .accordion-peer-review{
 	padding: 0;
+}
+
+.settings-table .popover{
+	left: -138px;
+  	top: -178px;
 }
 
 /* Media Queries */

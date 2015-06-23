@@ -62,8 +62,3 @@ if (typeof angular == 'undefined') {
         (document.getElementsByTagName('head')[0]||document.getElementsByTagName('body')[0]).appendChild( mtiTracking );
    })();
 </script>
- 
-<!-- Commented in case you want to activate the Orcid Social project again
-<script type="text/javascript" src="https://ws.sharethis.com/button/buttons.js"></script>
-<script type="text/javascript">stLight.options({publisher: "${shareThisKey}", headerTitle:"<@orcid.msg 'orcid_social.message.header'/>"});</script>
- -->

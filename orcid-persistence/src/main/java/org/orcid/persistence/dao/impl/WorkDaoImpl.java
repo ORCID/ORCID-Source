@@ -16,12 +16,15 @@
  */
 package org.orcid.persistence.dao.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Query;
 
+import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.dao.WorkDao;
+import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.custom.MinimizedWorkEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -72,6 +75,11 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
         workToUpdate.setPublicationDate(workWithNewData.getPublicationDate());
         workToUpdate.setContributorsJson(workWithNewData.getContributorsJson());
         workToUpdate.setExternalIdentifiersJson(workWithNewData.getExternalIdentifiersJson());
+        workToUpdate.setProfile(workWithNewData.getProfile());
+        workToUpdate.setVisibility(workWithNewData.getVisibility());
+        workToUpdate.setDisplayIndex(workWithNewData.getDisplayIndex());
+        workToUpdate.setAddedToProfileDate(workWithNewData.getAddedToProfileDate());
+        workToUpdate.setSource(workWithNewData.getSource());
         workToUpdate.setLastModified(new Date());
     }
 
@@ -114,4 +122,79 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
         return query.getResultList();
     }
 
+    /**
+     * Updates the visibility of an existing work
+     * 
+     * @param workId
+     *            The id of the work that will be updated
+     * @param visibility
+     *            The new visibility value for the profile work relationship
+     * @return true if the relationship was updated
+     * */
+    @Override
+    @Transactional
+    public boolean updateVisibilities(String orcid, ArrayList<Long> workIds, Visibility visibility) {
+        Query query = entityManager.createNativeQuery("UPDATE work SET visibility=:visibility, last_modified=now() WHERE work_id in (:workIds)");
+        query.setParameter("visibility", visibility.name());
+        query.setParameter("workIds", workIds);
+        return query.executeUpdate() > 0;
+    }
+    
+    /**
+     * Removes a work.
+     * 
+     * @param workId
+     *            The id of the work that will be removed from the client
+     *            profile
+     * @param clientOrcid
+     *            The client orcid
+     * @return true if the work was deleted
+     * */
+    @Override
+    @Transactional
+    public boolean removeWorks(String clientOrcid, ArrayList<Long> workIds) {
+        Query query = entityManager.createNativeQuery("DELETE FROM work WHERE work_id in (:workIds)");        
+        query.setParameter("workIds", workIds);
+        return query.executeUpdate() > 0;
+    }
+    
+    /**
+     * Copy the data from the profile_work table to the work table
+     * @param profileWork
+     *          The profileWork object that contains the profile_work info
+     * @param workId
+     *          The id of the work we want to update
+     * @return true if the work was updated                  
+     * */
+    @Override
+    @Transactional
+    public boolean copyDataFromProfileWork(Long workId, ProfileWorkEntity profileWork) {     
+        WorkEntity work = this.find(workId);
+        work.setAddedToProfileDate(profileWork.getAddedToProfileDate());
+        work.setDisplayIndex(profileWork.getDisplayIndex());
+        work.setVisibility(profileWork.getVisibility());
+        work.setProfile(profileWork.getProfile());
+        work.setSource(profileWork.getSource());
+        this.merge(work);
+        return true;
+    }
+    
+    /**
+     * Sets the display index of the new work
+     * @param workId
+     *          The work id
+     * @param displayIndex
+     *          The display index for the work
+     * @return true if the work index was correctly set                  
+     * */
+    @Override
+    @Transactional
+    public boolean updateToMaxDisplay(String workId, Long displayIndex) {
+        Query query = entityManager.createNativeQuery("UPDATE work SET display_index=:index WHERE work_id=:workId");
+        query.setParameter("index", displayIndex);
+        query.setParameter("workId", Long.valueOf(workId));
+        return query.executeUpdate() > 0;
+    }
+    
 }
+

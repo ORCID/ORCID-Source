@@ -16,8 +16,11 @@
  */
 package org.orcid.persistence.dao;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.custom.MinimizedWorkEntity;
 
@@ -64,4 +67,46 @@ public interface WorkDao extends GenericDao<WorkEntity, Long> {
      * */
     List<MinimizedWorkEntity> findPublicWorks(String orcid);
 
+    /**
+     * Updates the visibility of an existing work
+     * 
+     * @param workId
+     *            The id of the work that will be updated
+     * @param visibility
+     *            The new visibility value for the profile work relationship
+     * @return true if the relationship was updated
+     * */
+    boolean updateVisibilities(String orcid, ArrayList<Long> workIds, Visibility visibility);
+    
+    /**
+     * Removes a work.
+     * 
+     * @param workId
+     *            The id of the work that will be removed from the client
+     *            profile
+     * @param clientOrcid
+     *            The client orcid
+     * @return true if the work was deleted
+     * */
+    boolean removeWorks(String clientOrcid, ArrayList<Long> workIds);
+    
+    /**
+     * Copy the data from the profile_work table to the work table
+     * @param profileWork
+     *          The profileWork object that contains the profile_work info
+     * @param workId
+     *          The id of the work we want to update
+     * @return true if the work was updated                  
+     * */
+    boolean copyDataFromProfileWork(Long workId, ProfileWorkEntity profileWork);
+    
+    /**
+     * Sets the display index of the new work
+     * @param workId
+     *          The work id
+     * @param displayIndex
+     *          The display index for the work
+     * @return true if the work index was correctly set                  
+     * */
+    boolean updateToMaxDisplay(String workId, Long displayIndex);
 }

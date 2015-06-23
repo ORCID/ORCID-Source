@@ -55,6 +55,7 @@
                                             </li>
                                             <#if !(isPublicProfile??)>
                                             <li>
+                                            	aaa
                                                 <@orcid.privacyToggle2 angularModel="group.getActive().visibility"
                                                     questionClick="toggleClickPrivacyHelp(group.getActive().putCode)"
                                                     clickedClassCheck="{'popover-help-container-show':privacyHelp[group.getActive().putCode.value]==true}"
