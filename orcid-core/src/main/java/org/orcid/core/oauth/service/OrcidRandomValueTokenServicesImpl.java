@@ -35,7 +35,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
+import org.springframework.security.oauth2.common.DefaultOAuth2RefreshToken;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
+import org.springframework.security.oauth2.common.OAuth2RefreshToken;
 import org.springframework.security.oauth2.common.exceptions.InvalidTokenException;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.OAuth2Request;
@@ -47,6 +49,8 @@ import org.springframework.security.oauth2.provider.token.TokenStore;
  * @author Declan Newman (declan) Date: 11/05/2012
  */
 public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices implements OrcidRandomValueTokenServices {
+    private static final Logger LOGGER = LoggerFactory.getLogger(OrcidRandomValueTokenServicesImpl.class);
+    
     @Value("${org.orcid.core.token.write_validity_seconds:3600}")
     private int writeValiditySeconds;
     @Value("${org.orcid.core.token.read_validity_seconds:631138519}")
@@ -62,8 +66,6 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
     @Resource
     private ClientDetailsManager clientDetailsManager;        
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(OrcidRandomValueTokenServicesImpl.class);
-    
     public OrcidRandomValueTokenServicesImpl() {        
     }
     
@@ -80,6 +82,11 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
         
         if(customTokenEnhancer != null) {
             accessToken = new DefaultOAuth2AccessToken(customTokenEnhancer.enhance(accessToken, authentication));
+        }
+        
+        if(this.isSupportRefreshToken(authentication.getOAuth2Request())) {
+            OAuth2RefreshToken refreshToken = new DefaultOAuth2RefreshToken(UUID.randomUUID().toString());
+            accessToken.setRefreshToken(refreshToken);
         }
         
         orcidtokenStore.storeAccessToken(accessToken, authentication);
