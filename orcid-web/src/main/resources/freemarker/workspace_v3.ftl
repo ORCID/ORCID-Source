@@ -56,20 +56,20 @@
             <#if RequestParameters['widget']??>
 	            <div class="widget-container" ng-controller="widgetCtrl">
 	            	<div class="widget-header">
-						<a ng-click="toggleCopyWidget()">ORCID public profile widget</a><div class="popover-help-container">
+						<a ng-click="toggleCopyWidget()"><@orcid.msg 'orcid_widget.header'/></a><div class="popover-help-container">
 	                    <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
 	                    <div id="qrcode-help" class="popover bottom">
 	                        <div class="arrow"></div>
 	                        <div class="popover-content">
-	                            <p>Share a summary of your public profile to others!</p>
+	                            <p><@orcid.msg 'orcid_widget.tooltip'/></p>
 	                        </div>
 	                    </div>
 	                </div>
 					</div>
 					<div ng-show="showCode" ng-cloak class="widget-code-container">
-						<p class="widget-instructions">Copy the code below and paste it into your personal website.</p>
+						<p class="widget-instructions"><@orcid.msg 'orcid_widget.copy_message'/></p>
 						<textarea id="widget-code" name="widget-code" class="form-control" ng-model="widgetURL" ng-click="inputTextAreaSelectAll($event)" readonly="readonly"></textarea>
-						<a ng-click="hideWidgetCode()">Hide code</a>
+						<a ng-click="hideWidgetCode()"><@orcid.msg 'orcid_widget.hide_code'/></a>
 					</div>
 	            </div>
             </#if>
