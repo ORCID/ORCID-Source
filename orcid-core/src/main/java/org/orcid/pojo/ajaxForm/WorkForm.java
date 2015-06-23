@@ -165,25 +165,31 @@ public class WorkForm implements ErrorsInterface, Serializable {
 
         // Set publication date
         FuzzyDate fuzzyPublicationDate = null;
-        if (workEntity.getPublicationDate() != null) {
-            PublicationDateEntity publicationDate = workEntity.getPublicationDate();
-            fuzzyPublicationDate = new FuzzyDate(publicationDate.getYear(), publicationDate.getMonth(), publicationDate.getDay());
+        if (work.getPublicationDate() != null) {
+            org.orcid.jaxb.model.common.PublicationDate publicationDate = work.getPublicationDate();
+            Integer year = PojoUtil.isEmpty(publicationDate.getYear()) ? null : Integer.valueOf(publicationDate.getYear().getValue());
+            Integer month = PojoUtil.isEmpty(publicationDate.getMonth()) ? null : Integer.valueOf(publicationDate.getMonth().getValue());
+            Integer day = PojoUtil.isEmpty(publicationDate.getDay()) ? null : Integer.valueOf(publicationDate.getDay().getValue());
+            fuzzyPublicationDate = new FuzzyDate(year, month, day);
             w.setPublicationDate(Date.valueOf(fuzzyPublicationDate));
         }
         w.setDateSortString(PojoUtil.createDateSortString(null, fuzzyPublicationDate));
 
         // Set citation
-        if (!PojoUtil.isEmpty(workEntity.getCitation())) {
+        if (work.getWorkCitation() != null) {            
             Citation citation = new Citation();
-            citation.setCitation(Text.valueOf(workEntity.getCitation()));
-            if (workEntity.getCitationType() != null) {
-                citation.setCitationType(Text.valueOf(workEntity.getCitationType().value()));
+            if(!PojoUtil.isEmpty(work.getWorkCitation().getCitation())) {
+                citation.setCitation(Text.valueOf(work.getWorkCitation().getCitation()));
             }
+            if(work.getWorkCitation().getWorkCitationType() != null) {
+                citation.setCitationType(Text.valueOf(work.getWorkCitation().getWorkCitationType().value()));
+            }
+            
             w.setCitation(citation);
         }
 
         // Set contributors
-        populateContributors(workEntity, w);
+        populateContributors(work, w);
 
         // Set external identifiers
         populateExternalIdentifiers(workEntity, w);
@@ -301,17 +307,17 @@ public class WorkForm implements ErrorsInterface, Serializable {
         work.setWorkExternalIdentifiers(workExternalIdentifiersList);
     }
 
-    private static void populateContributors(WorkEntity workEntity, WorkForm work) {
+    private static void populateContributors(Work work, WorkForm workForm) {
         List<Contributor> contributorsList = new ArrayList<Contributor>();
-        if (!PojoUtil.isEmpty(workEntity.getContributorsJson())) {
-            WorkContributors contributors = JsonUtils.readObjectFromJsonString(workEntity.getContributorsJson(), WorkContributors.class);
+        if(work.getWorkContributors() != null) {
+            org.orcid.jaxb.model.record.WorkContributors contributors = work.getWorkContributors();
             if (contributors != null) {
-                for (org.orcid.jaxb.model.message.Contributor contributor : contributors.getContributor()) {
+                for (org.orcid.jaxb.model.common.Contributor contributor : contributors.getContributor()) {
                     contributorsList.add(Contributor.valueOf(contributor));
                 }
             }
         }
-        work.setContributors(contributorsList);
+        workForm.setContributors(contributorsList);
     }
 
     public static WorkForm minimizedValueOf(OrcidWork orcidWork) {
