@@ -18,26 +18,25 @@ package org.orcid.pojo.ajaxForm;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.GregorianCalendar;
 import java.util.List;
+
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
 
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.utils.JsonUtils;
-import org.orcid.jaxb.model.message.Country;
+import org.orcid.jaxb.model.common.CreatedDate;
+import org.orcid.jaxb.model.common.SourceClientId;
+import org.orcid.jaxb.model.common.SourceOrcid;
 import org.orcid.jaxb.model.message.FuzzyDate;
-import org.orcid.jaxb.model.message.Iso3166Country;
-import org.orcid.jaxb.model.message.OrcidWork;
-import org.orcid.jaxb.model.message.PublicationDate;
-import org.orcid.jaxb.model.message.Source;
-import org.orcid.jaxb.model.message.Title;
-import org.orcid.jaxb.model.message.Url;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkCategory;
-import org.orcid.jaxb.model.message.WorkContributors;
 import org.orcid.jaxb.model.message.WorkExternalIdentifiers;
-import org.orcid.jaxb.model.message.WorkTitle;
-import org.orcid.jaxb.model.message.WorkType;
+import org.orcid.jaxb.model.record.CitationType;
 import org.orcid.jaxb.model.record.Work;
 import org.orcid.persistence.jpa.entities.custom.MinimizedWorkEntity;
+import org.orcid.utils.OrcidStringUtils;
 
 public class WorkForm implements ErrorsInterface, Serializable {
 
@@ -93,6 +92,17 @@ public class WorkForm implements ErrorsInterface, Serializable {
 
     private Date lastModified;
 
+    private transient DatatypeFactory datatypeFactory = null;
+    
+    public WorkForm() {
+        try {
+            datatypeFactory = DatatypeFactory.newInstance();
+        } catch (DatatypeConfigurationException e) {
+            // We're in serious trouble and can't carry on
+            throw new IllegalStateException("Cannot create new DatatypeFactory");
+        }  
+    }
+    
     public static WorkForm valueOf(Work work) {
         if (work == null)
             return null;
@@ -267,25 +277,7 @@ public class WorkForm implements ErrorsInterface, Serializable {
         return w;
     }
 
-    public static WorkForm valueOf(OrcidWork orcidWork) {
-        WorkForm w = WorkForm.minimizedValueOf(orcidWork);
-
-        // minimized works have everything except citation and contributers now
-
-        if (orcidWork.getWorkContributors() != null && orcidWork.getWorkContributors().getContributor() != null) {
-            List<Contributor> contributors = new ArrayList<Contributor>();
-            for (org.orcid.jaxb.model.message.Contributor owContributor : orcidWork.getWorkContributors().getContributor()) {
-                contributors.add(Contributor.valueOf(owContributor));
-            }
-            w.setContributors(contributors);
-        }
-
-        if (orcidWork.getWorkCitation() != null)
-            w.setCitation(Citation.valueOf(orcidWork.getWorkCitation()));
-
-        return w;
-    }
-
+    
     private static void populateExternaIdentifiers(WorkExternalIdentifiers workExternalIdentifiers, WorkForm work) {
         List<WorkExternalIdentifier> workExternalIdentifiersList = new ArrayList<WorkExternalIdentifier>();
         if (workExternalIdentifiers != null && workExternalIdentifiers.getWorkExternalIdentifier() != null)
@@ -306,6 +298,27 @@ public class WorkForm implements ErrorsInterface, Serializable {
         }
         workForm.setWorkExternalIdentifiers(workExternalIdentifiersList);
     }
+    
+    
+    private static void populateExternalIdentifiers(WorkForm workForm, Work work) {
+        org.orcid.jaxb.model.record.WorkExternalIdentifiers workExternalIds = new org.orcid.jaxb.model.record.WorkExternalIdentifiers();
+        if(workForm.getWorkExternalIdentifiers() != null && !workForm.getWorkExternalIdentifiers().isEmpty()) {
+            for(WorkExternalIdentifier wfExtId : workForm.getWorkExternalIdentifiers()) {
+                org.orcid.jaxb.model.record.WorkExternalIdentifier wExtId = new org.orcid.jaxb.model.record.WorkExternalIdentifier();
+                if(!PojoUtil.isEmpty(wfExtId.getWorkExternalIdentifierId())) {
+                    wExtId.setWorkExternalIdentifierId(new org.orcid.jaxb.model.record.WorkExternalIdentifierId(wfExtId.getWorkExternalIdentifierId().getValue()));
+                }
+                
+                if(!PojoUtil.isEmpty(wfExtId.getWorkExternalIdentifierType())) {
+                    wExtId.setWorkExternalIdentifierType(org.orcid.jaxb.model.record.WorkExternalIdentifierType.fromValue(wfExtId.getWorkExternalIdentifierType().getValue()));
+                }
+                workExternalIds.getExternalIdentifier().add(wExtId);
+            }
+        }
+        work.setWorkExternalIdentifiers(workExternalIds);
+    }
+    
+    
 
     private static void populateContributors(Work work, WorkForm workForm) {
         List<Contributor> contributorsList = new ArrayList<Contributor>();
@@ -319,136 +332,48 @@ public class WorkForm implements ErrorsInterface, Serializable {
         }
         workForm.setContributors(contributorsList);
     }
-
-    public static WorkForm minimizedValueOf(OrcidWork orcidWork) {
-        WorkForm w = new WorkForm();
-        if (orcidWork.getPublicationDate() != null)
-            w.setPublicationDate(Date.valueOf(orcidWork.getPublicationDate()));
-        w.setDateSortString(PojoUtil.createDateSortString(null, orcidWork.getPublicationDate()));
-        if (orcidWork.getPutCode() != null)
-            w.setPutCode(Text.valueOf(orcidWork.getPutCode()));
-        if (orcidWork.getShortDescription() != null)
-            w.setShortDescription(Text.valueOf(orcidWork.getShortDescription()));
-        if (orcidWork.getUrl() != null)
-            w.setUrl(Text.valueOf(orcidWork.getUrl().getValue()));
-        if (orcidWork.getVisibility() != null)
-            w.setVisibility(orcidWork.getVisibility());
-        WorkExternalIdentifiers workExternalIdentifiers = null;
-        if (orcidWork.getWorkExternalIdentifiers() != null) {
-            workExternalIdentifiers = orcidWork.getWorkExternalIdentifiers();
-        }
-        populateExternaIdentifiers(workExternalIdentifiers, w);
-        if (orcidWork.getSource() != null) {
-            w.setSource(orcidWork.getSource().retrieveSourcePath());
-            if (orcidWork.getSource().getSourceName() != null)
-                w.setSourceName(orcidWork.getSource().getSourceName().getContent());
-        }
-
-        WorkTitle workTitle = orcidWork.getWorkTitle();
-        if (workTitle == null)
-            workTitle = new WorkTitle();
-        if (workTitle.getTitle() != null) {
-            w.setTitle(Text.valueOf(workTitle.getTitle().getContent()));
-        }
-        if (workTitle.getSubtitle() != null) {
-            w.setSubtitle(Text.valueOf(workTitle.getSubtitle().getContent()));
-        }
-        if (workTitle.getTranslatedTitle() != null) {
-            TranslatedTitle translatedTitle = new TranslatedTitle();
-            translatedTitle.setContent((workTitle.getTranslatedTitle() == null) ? null : workTitle.getTranslatedTitle().getContent());
-            translatedTitle.setLanguageCode((workTitle.getTranslatedTitle() == null || workTitle.getTranslatedTitle().getLanguageCode() == null) ? null : workTitle
-                    .getTranslatedTitle().getLanguageCode());
-            w.setTranslatedTitle(translatedTitle);
-        }
-
-        if (orcidWork.getWorkType() != null) {
-            w.setWorkType(Text.valueOf(orcidWork.getWorkType().value()));
-            WorkCategory category = WorkCategory.fromWorkType(orcidWork.getWorkType());
-            w.setWorkCategory(Text.valueOf(category.value()));
-        }
-
-        if (orcidWork.getJournalTitle() != null)
-            w.setJournalTitle(Text.valueOf(orcidWork.getJournalTitle().getContent()));
-
-        if (orcidWork.getLanguageCode() != null)
-            w.setLanguageCode(Text.valueOf(orcidWork.getLanguageCode()));
-
-        if (orcidWork.getCountry() != null)
-            w.setCountryCode((orcidWork.getCountry().getValue() == null) ? null : Text.valueOf(orcidWork.getCountry().getValue().value()));
-        w.setCreatedDate(Date.valueOf(orcidWork.getCreatedDate()));
-        w.setLastModified(Date.valueOf(orcidWork.getLastModifiedDate()));
-        return w;
-    }
-
-    public OrcidWork toOrcidWork() {
-        OrcidWork ow = new OrcidWork();
-        if (this.getPublicationDate() != null)
-            ow.setPublicationDate(new PublicationDate(this.getPublicationDate().toFuzzyDate()));
-        if (this.getPutCode() != null)
-            ow.setPutCode(this.getPutCode().getValue());
-        if (this.getShortDescription() != null)
-            ow.setShortDescription(this.shortDescription.getValue());
-        if (this.getUrl() != null)
-            ow.setUrl(new Url(this.url.getValue()));
-        if (this.getVisibility() != null)
-            ow.setVisibility(this.getVisibility());
-        if (this.getCitation() != null)
-            ow.setWorkCitation(this.citation.toCitiation());
-        if (this.getContributors() != null) {
-            List<org.orcid.jaxb.model.message.Contributor> cList = new ArrayList<org.orcid.jaxb.model.message.Contributor>();
-            for (Contributor c : this.getContributors()) {
-                cList.add(c.toContributor());
-            }
-            ow.setWorkContributors(new WorkContributors(cList));
-        }
-        List<org.orcid.jaxb.model.message.WorkExternalIdentifier> wiList = new ArrayList<org.orcid.jaxb.model.message.WorkExternalIdentifier>();
-        if (this.getWorkExternalIdentifiers() != null) {
-            for (WorkExternalIdentifier wi : this.getWorkExternalIdentifiers()) {
-                wiList.add(wi.toWorkExternalIdentifier());
+    
+    private static void populateContributors(WorkForm workForm, Work work) {
+        org.orcid.jaxb.model.record.WorkContributors contributors = new org.orcid.jaxb.model.record.WorkContributors();
+        if(workForm.getContributors() != null && !workForm.getContributors().isEmpty()) {
+            for(Contributor wfContributor : workForm.getContributors()) {
+                org.orcid.jaxb.model.common.Contributor workContributor = new org.orcid.jaxb.model.common.Contributor();
+                org.orcid.jaxb.model.common.ContributorAttributes contributorAttributes = new org.orcid.jaxb.model.common.ContributorAttributes();
+                if(!PojoUtil.isEmpty(wfContributor.getContributorRole())) {
+                    contributorAttributes.setContributorRole(org.orcid.jaxb.model.common.ContributorRole.fromValue(wfContributor.getContributorRole().getValue()));
+                }
+                
+                if(!PojoUtil.isEmpty(wfContributor.getContributorSequence())) {
+                    contributorAttributes.setContributorSequence(org.orcid.jaxb.model.record.SequenceType.fromValue(wfContributor.getContributorSequence().getValue()));
+                }
+                
+                if(!PojoUtil.isEmpty(wfContributor.getCreditName())) {
+                    org.orcid.jaxb.model.common.CreditName creditName = new org.orcid.jaxb.model.common.CreditName();                    
+                    if(wfContributor.getCreditNameVisibility() != null && wfContributor.getCreditNameVisibility().getVisibility() != null) {
+                        creditName.setVisibility(org.orcid.jaxb.model.common.Visibility.fromValue(wfContributor.getCreditNameVisibility().getVisibility().value()));
+                    }
+                    workContributor.setCreditName(creditName);
+                }                                
+                
+                if(!PojoUtil.isEmpty(wfContributor.getEmail())) {                    
+                    workContributor.setContributorEmail(new org.orcid.jaxb.model.common.ContributorEmail(wfContributor.getEmail().getValue()));
+                }
+                
+                org.orcid.jaxb.model.common.ContributorOrcid contributorOrcid = new org.orcid.jaxb.model.common.ContributorOrcid(); 
+                if(!PojoUtil.isEmpty(wfContributor.getOrcid())) {
+                    contributorOrcid.setPath(wfContributor.getOrcid().getValue());
+                }
+                
+                if(!PojoUtil.isEmpty(wfContributor.getUri())) {
+                    contributorOrcid.setUri(wfContributor.getUri().getValue());
+                }
+                workContributor.setContributorOrcid(contributorOrcid);                                
+                contributors.getContributor().add(workContributor);
             }
         }
-        ow.setWorkExternalIdentifiers(new WorkExternalIdentifiers(wiList));
-        if (this.getSource() != null)
-            ow.setSource(new Source(this.getSource()));
-
-        if (this.getTitle() != null || this.getSubtitle() != null || this.getTranslatedTitle() != null)
-            ow.setWorkTitle(new WorkTitle());
-        if (this.getTitle() != null)
-            ow.getWorkTitle().setTitle(this.getTitle().toTitle());
-        if (this.getSubtitle() != null)
-            ow.getWorkTitle().setSubtitle(this.getSubtitle().toSubtitle());
-        if (this.getTranslatedTitle() != null)
-            ow.getWorkTitle().setTranslatedTitle(this.getTranslatedTitle().toTranslatedTitle());
-
-        if (this.getWorkType() != null) {
-            ow.setWorkType(WorkType.fromValue(this.getWorkType().getValue()));
-        }
-
-        if (this.getJournalTitle() != null) {
-            ow.setJournalTitle(new Title(this.getJournalTitle().getValue()));
-        }
-
-        if (this.getLanguageCode() != null) {
-            ow.setLanguageCode(this.getLanguageCode().getValue());
-        }
-
-        if (this.getCountryCode() != null) {
-            Country country = new Country(StringUtils.isEmpty(this.getCountryCode().getValue()) ? null : Iso3166Country.fromValue(this.getCountryCode().getValue()));
-            ow.setCountry(country);
-        }
-
-        return ow;
+        work.setWorkContributors(contributors);
     }
 
-    
-    
-    
-    
-    
-    
-    
-    
-    
     public Work toWork() {
         Work work = new Work();
         
@@ -465,8 +390,7 @@ public class WorkForm implements ErrorsInterface, Serializable {
         // Set type
         if (!PojoUtil.isEmpty(this.getWorkType())) {
             work.setWorkType(org.orcid.jaxb.model.record.WorkType.fromValue(this.getWorkType().getValue()));
-        }
-        
+        }        
         
         org.orcid.jaxb.model.record.WorkTitle workTitle = new org.orcid.jaxb.model.record.WorkTitle();
         // Set title
@@ -474,59 +398,108 @@ public class WorkForm implements ErrorsInterface, Serializable {
             workTitle.setTitle(new org.orcid.jaxb.model.common.Title(this.getTitle().getValue()));
         }
         
-        // Set translated title
-        if(!PojoUtil.isEmpty(this.getTranslatedTitle()))
-        if (work.getWorkTitle().getTranslatedTitle() != null) {
-            TranslatedTitle tt = new TranslatedTitle();
-            tt.setContent(work.getWorkTitle().getTranslatedTitle().getContent());
-            tt.setLanguageCode(work.getWorkTitle().getTranslatedTitle().getLanguageCode());
-            w.setTranslatedTitle(tt);
+        // Set translated title        
+        if(this.getTranslatedTitle() != null) {
+            org.orcid.jaxb.model.common.TranslatedTitle translatedTitle = new org.orcid.jaxb.model.common.TranslatedTitle();
+            translatedTitle.setContent(this.getTranslatedTitle().getContent());
+            translatedTitle.setLanguageCode(this.getTranslatedTitle().getLanguageCode());
+            workTitle.setTranslatedTitle(translatedTitle);
         }
         
+        // Set subtitle
+        if (!PojoUtil.isEmpty(this.getSubtitle())) {
+            org.orcid.jaxb.model.common.Subtitle subtitle = new  org.orcid.jaxb.model.common.Subtitle();
+            subtitle.setContent(this.getSubtitle().getValue());
+            workTitle.setSubtitle(subtitle);
+        }
         
-        if (work.getWorkTitle() != null) {
-            
-            
-            // Set subtitle
-            if (work.getWorkTitle().getSubtitle() != null) {
-                w.setSubtitle(Text.valueOf(work.getWorkTitle().getSubtitle().getContent()));
-            }
+        work.setWorkTitle(workTitle);
+        
+        // Set journal title
+        if(!PojoUtil.isEmpty(this.getJournalTitle())) {
+            work.setJournalTitle(new org.orcid.jaxb.model.common.Title(this.getJournalTitle().getValue()));            
         }
 
-        // Set journal title
-        if (work.getJournalTitle() != null ) {
-            w.setJournalTitle(Text.valueOf(work.getJournalTitle().getContent()));
+        // Set description
+        if (!PojoUtil.isEmpty(this.getShortDescription())) {
+            work.setShortDescription(this.getShortDescription().getGetRequiredMessage());
+        }
+
+        // Set url
+        if (!PojoUtil.isEmpty(this.getUrl())) {
+            work.setUrl(new org.orcid.jaxb.model.common.Url(this.getUrl().getValue()));
+        }
+
+        // Set visibility
+        if (this.getVisibility() != null) {
+            work.setVisibility(org.orcid.jaxb.model.common.Visibility.fromValue(this.getVisibility().value()));
         }
         
+        // Set country
+        if (!PojoUtil.isEmpty(this.getCountryCode())) {
+            work.setCountry(new org.orcid.jaxb.model.common.Country(org.orcid.jaxb.model.common.Iso3166Country.fromValue(this.getCountryName().getValue())));
+        }
+
+        // Set publication date        
+        if(this.getPublicationDate() != null) {            
+            Integer yearInteger = PojoUtil.isEmpty(this.getPublicationDate().getYear()) ? null : Integer.valueOf(this.getPublicationDate().getYear());
+            Integer monthInteger = PojoUtil.isEmpty(this.getPublicationDate().getMonth()) ? null : Integer.valueOf(this.getPublicationDate().getMonth());
+            Integer dayInteger = PojoUtil.isEmpty(this.getPublicationDate().getDay()) ? null : Integer.valueOf(this.getPublicationDate().getDay());
+            org.orcid.jaxb.model.common.Year year = new org.orcid.jaxb.model.common.Year(yearInteger);
+            org.orcid.jaxb.model.common.Month month = new org.orcid.jaxb.model.common.Month(monthInteger);
+            org.orcid.jaxb.model.common.Day day = new org.orcid.jaxb.model.common.Day(dayInteger);                        
+            work.setPublicationDate(new org.orcid.jaxb.model.common.PublicationDate(year, month, day));
+        }
+                
+        // Set citation
+        if(this.getCitation() != null) {
+            org.orcid.jaxb.model.record.Citation citation = new org.orcid.jaxb.model.record.Citation();
+            if(!PojoUtil.isEmpty(this.getCitation().getCitation())) {
+                citation.setCitation(this.getCitation().getCitation().getValue());
+            }
+            
+            if(!PojoUtil.isEmpty(this.getCitation().getCitationType())) {
+                citation.setWorkCitationType(CitationType.fromValue(this.getCitation().getCitationType().getValue()));
+            }                        
+            work.setWorkCitation(citation);
+        }
+                        
+        // Set contributors
+        populateContributors(this, work);
+
+        // Set external identifiers
+        populateExternalIdentifiers(this, work);
+
+        // Set created date
+        if(!PojoUtil.isEmpty(this.getCreatedDate())) {
+            CreatedDate createdDate = new CreatedDate();
+            GregorianCalendar calendar = this.getCreatedDate().toCalendar();
+            createdDate.setValue(datatypeFactory.newXMLGregorianCalendar(calendar));            
+            work.setCreatedDate(createdDate);
+        }
         
-        
-        
+        // Set last modified
+        if(!PojoUtil.isEmpty(this.getLastModified())) {
+            org.orcid.jaxb.model.common.LastModifiedDate lastModified = new org.orcid.jaxb.model.common.LastModifiedDate();
+            GregorianCalendar calendar = this.getLastModified().toCalendar();
+            lastModified.setValue(datatypeFactory.newXMLGregorianCalendar(calendar));
+            work.setLastModifiedDate(lastModified);
+        }
+
+        if(!PojoUtil.isEmpty(this.getSource())) {
+            org.orcid.jaxb.model.common.Source source = new org.orcid.jaxb.model.common.Source();
+            
+            if(OrcidStringUtils.isClientId(this.getSource())) {
+                source.setSourceClientId(new SourceClientId(this.getSource()));
+            } else {
+                source.setSourceOrcid(new SourceOrcid(this.getSource()));
+            }
+                       
+            work.setSource(source);
+        }
         
         return work;
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     
     public void setCitationForDisplay(String citation) {
         this.citationForDisplay = citation;

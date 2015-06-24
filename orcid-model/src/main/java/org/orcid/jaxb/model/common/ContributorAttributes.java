@@ -34,15 +34,18 @@ import org.orcid.jaxb.model.record.SequenceType;
 import java.io.Serializable;
 
 /**
- * <p>Java class for anonymous complex type.
+ * <p>
+ * Java class for anonymous complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  * 
  * 
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType( propOrder = { "contributorSequence", "contributorRole" })
+@XmlType(propOrder = { "contributorSequence", "contributorRole" })
 @XmlRootElement(name = "contributor-attributes")
 public class ContributorAttributes implements Serializable {
 
@@ -50,18 +53,16 @@ public class ContributorAttributes implements Serializable {
      * 
      */
     private static final long serialVersionUID = 1L;
-    @XmlElement(name="contributor-sequence", namespace = "http://www.orcid.org/ns/work", required = true)
+    @XmlElement(name = "contributor-sequence", namespace = "http://www.orcid.org/ns/work", required = true)
     protected SequenceType contributorSequence;
-    @XmlElement(name="contributor-role", namespace = "http://www.orcid.org/ns/work", required = true)
+    @XmlElement(name = "contributor-role", namespace = "http://www.orcid.org/ns/work", required = true)
     protected ContributorRole contributorRole;
 
     /**
      * Gets the value of the contributorSequence property.
      * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     * @return possible object is {@link String }
+     * 
      */
     public SequenceType getContributorSequence() {
         return contributorSequence;
@@ -71,9 +72,8 @@ public class ContributorAttributes implements Serializable {
      * Sets the value of the contributorSequence property.
      * 
      * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *            allowed object is {@link String }
+     * 
      */
     public void setContributorSequence(SequenceType value) {
         this.contributorSequence = value;
@@ -82,10 +82,8 @@ public class ContributorAttributes implements Serializable {
     /**
      * Gets the value of the contributorRole property.
      * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     * @return possible object is {@link String }
+     * 
      */
     public ContributorRole getContributorRole() {
         return contributorRole;
@@ -95,9 +93,8 @@ public class ContributorAttributes implements Serializable {
      * Sets the value of the contributorRole property.
      * 
      * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *            allowed object is {@link String }
+     * 
      */
     public void setContributorRole(ContributorRole value) {
         this.contributorRole = value;
