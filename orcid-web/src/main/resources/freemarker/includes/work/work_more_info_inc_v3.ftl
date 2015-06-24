@@ -101,7 +101,7 @@
 					<div class="col-md-8 col-sm-9 col-xs-offset-1 col-xs-11">{{bibJSON.citationKey}}</div>								
 					<div ng-repeat="(entKey,entVal) in bibJSON.entryTags">
 						<div class="col-md-offset-1 col-md-2 col-sm-offset-1 col-sm-1 col-xs-offset-1 col-xs-11">{{entKey}}</div>
-						<div class="col-md-8 col-sm-9 col-xs-offset-1 col-xs-11">{{entVal}}</div>
+						<div class="col-md-8 col-sm-9 col-xs-offset-1 col-xs-11">{{entVal | latex}}</div>
 					</div>
 				</div>						
 			</div>
