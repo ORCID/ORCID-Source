@@ -39,27 +39,16 @@ import org.orcid.core.manager.ProfileWorkManager;
 import org.orcid.core.manager.ThirdPartyLinkManager;
 import org.orcid.core.manager.WorkExternalIdentifierManager;
 import org.orcid.core.manager.WorkManager;
-import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
-import org.orcid.core.utils.JsonUtils;
 import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.jaxb.model.message.CitationType;
-import org.orcid.jaxb.model.message.CreditName;
-import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
-import org.orcid.jaxb.model.message.PublicationDate;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkCategory;
-import org.orcid.jaxb.model.message.WorkContributors;
-import org.orcid.jaxb.model.message.WorkExternalIdentifiers;
 import org.orcid.jaxb.model.message.WorkType;
 import org.orcid.jaxb.model.record.Work;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.persistence.jpa.entities.PublicationDateEntity;
-import org.orcid.persistence.jpa.entities.SourceEntity;
-import org.orcid.persistence.jpa.entities.WorkEntity;
-import org.orcid.persistence.jpa.entities.custom.MinimizedWorkEntity;
 import org.orcid.pojo.KeyValue;
 import org.orcid.pojo.ajaxForm.Citation;
 import org.orcid.pojo.ajaxForm.Contributor;
@@ -67,8 +56,8 @@ import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.TranslatedTitle;
-import org.orcid.pojo.ajaxForm.WorkForm;
 import org.orcid.pojo.ajaxForm.WorkExternalIdentifier;
+import org.orcid.pojo.ajaxForm.WorkForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -493,55 +482,44 @@ public class WorksController extends BaseWorkspaceController {
         // Get current profile
         OrcidProfile currentProfile = getEffectiveProfile();
 
-        // Set the credit name to the work
-
-        OrcidWork newOw = workForm.toOrcidWork();
-        newOw.setPutCode("-1"); // put codes of -1 override new works
-                                // visibility filtering settings.
-
-        WorkEntity workEntity = toWorkEntity(newOw);
+        Work newWork = workForm.toWork();
+        // put codes of -1 override new works visibility filtering settings.        
+        newWork.setPutCode("-1");          
+        
         // Create work
-        workEntity = workManager.addWork(workEntity);
+        newWork = workManager.addWork(newWork);
 
+        // XXX: Still save the profile work, just in case we need a rollback
+        // TODO: Remove this 
         // Create profile work relationship
-        profileWorkManager.addProfileWork(currentProfile.getOrcidIdentifier().getPath(), workEntity.getId(), newOw.getVisibility(), sourceManager.retrieveSourceOrcid());
-
-        // Set the id (put-code) to the new work
-        String putCode = String.valueOf(workEntity.getId());
-        newOw.setPutCode(putCode);
+        org.orcid.jaxb.model.message.Visibility visibility = org.orcid.jaxb.model.message.Visibility.fromValue(newWork.getVisibility().value());
+        profileWorkManager.addProfileWork(currentProfile.getOrcidIdentifier().getPath(), Long.valueOf(newWork.getPutCode()), visibility, sourceManager.retrieveSourceOrcid());
 
         // Set the id in the work to be returned
-        workForm.setPutCode(Text.valueOf(putCode));
+        String workId = newWork.getPutCode();
+        workForm.setPutCode(Text.valueOf(workId));
 
         // make the new work the default display
-        workManager.updateToMaxDisplay(currentProfile.getOrcidIdentifier().getPath(), putCode);
-        profileWorkManager.updateToMaxDisplay(currentProfile.getOrcidIdentifier().getPath(), putCode);
-
-        // Check if the user have orcid activities, if not, initialize them
-        if (currentProfile.getOrcidActivities() == null)
-            currentProfile.setOrcidActivities(new OrcidActivities());
-        // Check if the user have works, if not, initialize them
-        if (currentProfile.getOrcidActivities().getOrcidWorks() == null)
-            currentProfile.getOrcidActivities().setOrcidWorks(new OrcidWorks());
-
-        // Add the new work to the list of works
-        currentProfile.getOrcidActivities().getOrcidWorks().getOrcidWork().add(newOw);
+        workManager.updateToMaxDisplay(currentProfile.getOrcidIdentifier().getPath(), workId);
+        profileWorkManager.updateToMaxDisplay(currentProfile.getOrcidIdentifier().getPath(), workId);        
     }
 
-    public void updateWork(WorkForm work) throws Exception {
+    public void updateWork(WorkForm workForm) throws Exception {
         // Get current profile
         OrcidProfile currentProfile = getEffectiveProfile();
-        if (!currentProfile.getOrcidIdentifier().getPath().equals(work.getSource()))
+        if (!currentProfile.getOrcidIdentifier().getPath().equals(workForm.getSource())) {
             throw new Exception("Error source isn't correct");
+        }
 
-        OrcidWork updatedOw = work.toOrcidWork();
-
-        WorkEntity workEntity = toWorkEntity(updatedOw);
+        Work updatedWork = workForm.toWork();        
         // Edit work
-        workManager.editWork(workEntity);
+        workManager.editWork(updatedWork);
 
+        // XXX: Still save the profile work, just in case we need a rollback
+        // TODO: Remove this 
         // Edit the work visibility
-        profileWorkManager.updateVisibility(currentProfile.getOrcidIdentifier().getPath(), String.valueOf(workEntity.getId()), updatedOw.getVisibility());
+        org.orcid.jaxb.model.message.Visibility visibility = org.orcid.jaxb.model.message.Visibility.fromValue(updatedWork.getVisibility().value());
+        profileWorkManager.updateVisibility(currentProfile.getOrcidIdentifier().getPath(), updatedWork.getPutCode(), visibility);
     }
 
     /**
@@ -566,109 +544,7 @@ public class WorksController extends BaseWorkspaceController {
     @RequestMapping(value = "/countries.json", method = RequestMethod.GET)
     public @ResponseBody Map<String, String> getCountriesMap(HttpServletRequest request) {
         return retrieveIsoCountries();
-    }
-
-    /**
-     * Gets an orcidWork and generates a workEntity
-     * 
-     * @param orcidWork
-     *            The orcid work used to generate the work entity
-     * @return a workEntity populated with the information from the workEntity
-     * */
-    private WorkEntity toWorkEntity(OrcidWork orcidWork) {
-        WorkEntity workEntity = new WorkEntity();
-        if (!PojoUtil.isEmpty(orcidWork.getPutCode()) && !orcidWork.getPutCode().equals("-1"))
-            workEntity.setId(Long.valueOf(orcidWork.getPutCode()));
-        if (orcidWork.getWorkCitation() != null) {
-            workEntity.setCitation(orcidWork.getWorkCitation().getCitation());
-            workEntity.setCitationType(orcidWork.getWorkCitation().getWorkCitationType());
-        }
-        if (orcidWork.getCreatedDate() == null)
-            workEntity.setDateCreated(new java.util.Date());
-        workEntity.setDescription(orcidWork.getShortDescription());
-        workEntity.setLastModified(new java.util.Date());
-        if (orcidWork.getPublicationDate() != null)
-            workEntity.setPublicationDate(toFuzzyDate(orcidWork.getPublicationDate()));
-        if (orcidWork.getWorkTitle().getSubtitle() != null)
-            workEntity.setSubtitle(orcidWork.getWorkTitle().getSubtitle().getContent());
-        workEntity.setTitle(orcidWork.getWorkTitle().getTitle().getContent().trim());
-        workEntity.setJournalTitle(orcidWork.getJournalTitle() != null ? orcidWork.getJournalTitle().getContent() : null);
-        workEntity.setWorkType(orcidWork.getWorkType());
-        if (orcidWork.getUrl() != null)
-            workEntity.setWorkUrl(orcidWork.getUrl().getValue());
-        workEntity.setLanguageCode(StringUtils.isEmpty(orcidWork.getLanguageCode()) ? null : orcidWork.getLanguageCode());
-
-        TranslatedTitle translatedTitle = TranslatedTitle.valueOf(orcidWork.getWorkTitle().getTranslatedTitle());
-
-        if (translatedTitle != null) {
-            workEntity.setTranslatedTitle(translatedTitle.getContent());
-            workEntity.setTranslatedTitleLanguageCode(translatedTitle.getLanguageCode());
-        }
-
-        WorkContributors workContributors = orcidWork.getWorkContributors();
-        if (workContributors != null) {
-            for (org.orcid.jaxb.model.message.Contributor workContributor : workContributors.getContributor()) {
-                CreditName creditName = new CreditName();
-
-                if (workContributor.getCreditName() != null) {
-                    if (!PojoUtil.isEmpty(workContributor.getCreditName().getContent())) {
-                        creditName.setContent(workContributor.getCreditName().getContent());
-                    } else {
-                        creditName.setContent(getEffectiveProfile().getOrcidBio().getPersonalDetails().retrievePublicDisplayName());
-                    }
-
-                    if (workContributor.getCreditName().getVisibility() != null) {
-                        creditName.setVisibility(workContributor.getCreditName().getVisibility());
-                    } else {
-                        creditName.setVisibility(OrcidVisibilityDefaults.CREDIT_NAME_DEFAULT.getVisibility());
-                    }
-                } else {
-                    creditName.setContent(getEffectiveProfile().getOrcidBio().getPersonalDetails().retrievePublicDisplayName());
-                    creditName.setVisibility(OrcidVisibilityDefaults.CREDIT_NAME_DEFAULT.getVisibility());
-                }
-                creditName.setVisibility(workContributor.getCreditName().getVisibility());
-                workContributor.setCreditName(creditName);
-            }
-            workEntity.setContributorsJson(JsonUtils.convertToJsonString(workContributors));
-        }
-
-        WorkExternalIdentifiers workExternalIdentifiers = orcidWork.getWorkExternalIdentifiers();
-        if (workExternalIdentifiers != null) {
-            workEntity.setExternalIdentifiersJson(JsonUtils.convertToJsonString(workExternalIdentifiers));
-        }
-
-        if (orcidWork.getCountry() != null)
-            workEntity.setIso2Country(orcidWork.getCountry().getValue());
-
-        workEntity.setVisibility(orcidWork.getVisibility());
-        workEntity.setAddedToProfileDate(new java.util.Date());
-        ProfileEntity userProfile = new ProfileEntity(getEffectiveUserOrcid());
-        SourceEntity source = new SourceEntity(userProfile);
-        workEntity.setProfile(userProfile);
-        workEntity.setSource(source);
-        return workEntity;
-    }
-
-    /**
-     * Transform a PublicationDate into a PuzzyDate
-     * 
-     * @param publicationDate
-     * 
-     * @return a fuzzy date
-     * */
-    private PublicationDateEntity toFuzzyDate(PublicationDate publicationDate) {
-        PublicationDateEntity fuzzyDate = new PublicationDateEntity();
-        String year = publicationDate.getYear() == null ? null : publicationDate.getYear().getValue();
-        String month = publicationDate.getMonth() == null ? null : publicationDate.getMonth().getValue();
-        String day = publicationDate.getDay() == null ? null : publicationDate.getDay().getValue();
-        if (year != null)
-            fuzzyDate.setYear(Integer.valueOf(year));
-        if (month != null)
-            fuzzyDate.setMonth(Integer.valueOf(month));
-        if (day != null)
-            fuzzyDate.setDay(Integer.valueOf(day));
-        return fuzzyDate;
-    }
+    }    
 
     @RequestMapping(value = "/work/titleValidate.json", method = RequestMethod.POST)
     public @ResponseBody WorkForm workTitleValidate(@RequestBody WorkForm work) {
@@ -874,16 +750,16 @@ public class WorksController extends BaseWorkspaceController {
     private List<String> createWorksIdList(HttpServletRequest request) {
         String orcid = getEffectiveUserOrcid();
         java.util.Date lastModified = profileEntityManager.getLastModified(orcid);
-        List<MinimizedWorkEntity> works = workManager.findWorks(orcid, lastModified.getTime());
+        List<Work> works = workManager.findWorks(orcid, lastModified.getTime());
         HashMap<String, WorkForm> worksMap = new HashMap<String, WorkForm>();
         List<String> workIds = new ArrayList<String>();
         if (works != null) {
-            for (MinimizedWorkEntity work : works) {
+            for (Work work : works) {
                 try {
-                    worksMap.put(String.valueOf(work.getId()), WorkForm.valueOf(work));
-                    workIds.add(String.valueOf(work.getId()));
+                    worksMap.put(String.valueOf(work.getPutCode()), WorkForm.valueOf(work));
+                    workIds.add(String.valueOf(work.getPutCode()));
                 } catch (Exception e) {
-                    LOGGER.error("ProfileWork failed to parse as Work. Put code" + work.getId());
+                    LOGGER.error("ProfileWork failed to parse as Work. Put code" + work.getPutCode());
                 }
             }
             request.getSession().setAttribute(WORKS_MAP, worksMap);
