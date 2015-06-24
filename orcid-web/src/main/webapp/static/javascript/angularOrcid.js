@@ -1412,6 +1412,14 @@ orcidNgModule.filter('urlWithHttp', function(){
     };
 });
 
+orcidNgModule.filter('latex', function(){
+    return function(input){
+        if (input == null) return "barf";
+        return latexParseJs.decodeLatex(input);
+    };
+});
+
+
 orcidNgModule.filter('ajaxFormDateToISO8601', function(){
     return function(input){
         var str = '';
