@@ -17,7 +17,6 @@
 package org.orcid.core.manager.impl;
 
 import java.util.ArrayList;
-import java.util.Date;
 
 import javax.annotation.Resource;
 
@@ -31,10 +30,8 @@ import org.orcid.jaxb.model.record.summary.WorkSummary;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.ProfileWorkDao;
 import org.orcid.persistence.dao.WorkDao;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
-import org.springframework.transaction.annotation.Transactional;
 
 public class ProfileWorkManagerImpl implements ProfileWorkManager {
 
@@ -171,52 +168,5 @@ public class ProfileWorkManagerImpl implements ProfileWorkManager {
 
     public boolean updateToMaxDisplay(String orcid, String workId) {
         return profileWorkDao.updateToMaxDisplay(orcid, workId);
-    }
-
-    @Override
-    @Transactional
-    public Work createWork(String orcid, Work work) {
-        ProfileWorkEntity profileWorkEntity = jpaJaxbWorkAdapter.toProfileWorkEntity(work);
-        profileWorkEntity.setSource(sourceManager.retrieveSourceEntity());
-        profileWorkEntity.getWork().setSource(sourceManager.retrieveSourceEntity());
-        ProfileEntity profile = profileDao.find(orcid);
-        profileWorkEntity.setProfile(profile);
-        profileWorkEntity.getWork().setProfile(profile);
-        profileWorkEntity.getWork().setAddedToProfileDate(new Date());
-        profileWorkEntity.setMigrated(true);
-        setIncomingWorkPrivacy(profileWorkEntity, profile);
-        profileWorkDao.persist(profileWorkEntity);
-        return jpaJaxbWorkAdapter.toWork(profileWorkEntity);
-    }
-
-    @Override
-    @Transactional
-    public Work updateWork(String orcid, Work work) {
-        ProfileWorkEntity profileWorkEntity = profileWorkDao.getProfileWork(orcid, work.getPutCode());
-        Visibility originalVisibility = profileWorkEntity.getVisibility();
-        SourceEntity existingSource = profileWorkEntity.getSource();
-        orcidSecurityManager.checkSource(existingSource);
-        jpaJaxbWorkAdapter.toProfileWorkEntity(work, profileWorkEntity);
-        profileWorkEntity.setVisibility(originalVisibility);
-        profileWorkEntity.getWork().setVisibility(originalVisibility);
-        profileWorkEntity.setSource(existingSource);
-        profileWorkEntity.getWork().setSource(existingSource);
-        profileWorkEntity.setMigrated(true);
-        profileWorkDao.merge(profileWorkEntity);
-        return jpaJaxbWorkAdapter.toWork(profileWorkEntity);
-    }
-
-    private void setIncomingWorkPrivacy(ProfileWorkEntity profileWorkEntity, ProfileEntity profile) {
-        Visibility incomingWorkVisibility = profileWorkEntity.getVisibility();
-        Visibility defaultWorkVisibility = profile.getActivitiesVisibilityDefault();
-        if (profile.getClaimed()) {
-            if (defaultWorkVisibility.isMoreRestrictiveThan(incomingWorkVisibility)) {
-                profileWorkEntity.setVisibility(defaultWorkVisibility);
-                profileWorkEntity.getWork().setVisibility(defaultWorkVisibility);
-            }
-        } else if (incomingWorkVisibility == null) {
-            profileWorkEntity.setVisibility(Visibility.PRIVATE);
-            profileWorkEntity.getWork().setVisibility(Visibility.PRIVATE);
-        }
     }    
 }
