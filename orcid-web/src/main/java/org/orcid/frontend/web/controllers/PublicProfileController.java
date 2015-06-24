@@ -463,7 +463,7 @@ public class PublicProfileController extends BaseWorkspaceController {
             if(actSummary.getEducations() != null && actSummary.getEducations().getSummaries() != null) {
             	result.setEducations(actSummary.getEducations().getSummaries().size());
             }
-            if(actSummary.getEmployments() != null) {
+            if(actSummary.getEmployments() != null && actSummary.getEmployments().getSummaries() != null) {
             	result.setEmployments(actSummary.getEmployments().getSummaries().size());
             }
         }
