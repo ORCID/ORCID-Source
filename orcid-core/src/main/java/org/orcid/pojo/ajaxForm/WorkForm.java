@@ -29,10 +29,16 @@ import org.orcid.core.utils.JsonUtils;
 import org.orcid.jaxb.model.common.CreatedDate;
 import org.orcid.jaxb.model.common.SourceClientId;
 import org.orcid.jaxb.model.common.SourceOrcid;
+import org.orcid.jaxb.model.message.Country;
 import org.orcid.jaxb.model.message.FuzzyDate;
 import org.orcid.jaxb.model.message.OrcidWork;
+import org.orcid.jaxb.model.message.PublicationDate;
+import org.orcid.jaxb.model.message.Source;
+import org.orcid.jaxb.model.message.Title;
+import org.orcid.jaxb.model.message.Url;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkCategory;
+import org.orcid.jaxb.model.message.WorkContributors;
 import org.orcid.jaxb.model.message.WorkExternalIdentifiers;
 import org.orcid.jaxb.model.message.WorkTitle;
 import org.orcid.jaxb.model.record.CitationType;
@@ -578,6 +584,70 @@ public class WorkForm implements ErrorsInterface, Serializable {
         w.setLastModified(Date.valueOf(orcidWork.getLastModifiedDate()));
         return w;
     }        
+    
+    
+    public OrcidWork toOrcidWork() {
+        OrcidWork ow = new OrcidWork();
+        if (this.getPublicationDate() != null)
+            ow.setPublicationDate(new PublicationDate(this.getPublicationDate().toFuzzyDate()));
+        if (this.getPutCode() != null)
+            ow.setPutCode(this.getPutCode().getValue());
+        if (this.getShortDescription() != null)
+            ow.setShortDescription(this.shortDescription.getValue());
+        if (this.getUrl() != null)
+            ow.setUrl(new Url(this.url.getValue()));
+        if (this.getVisibility() != null)
+            ow.setVisibility(this.getVisibility());
+        if (this.getCitation() != null)
+            ow.setWorkCitation(this.citation.toCitiation());
+        if (this.getContributors() != null) {
+            List<org.orcid.jaxb.model.message.Contributor> cList = new ArrayList<org.orcid.jaxb.model.message.Contributor>();
+            for (Contributor c : this.getContributors()) {
+                cList.add(c.toContributor());
+            }
+            ow.setWorkContributors(new WorkContributors(cList));
+        }
+        List<org.orcid.jaxb.model.message.WorkExternalIdentifier> wiList = new ArrayList<org.orcid.jaxb.model.message.WorkExternalIdentifier>();
+        if (this.getWorkExternalIdentifiers() != null) {
+            for (WorkExternalIdentifier wi : this.getWorkExternalIdentifiers()) {
+                wiList.add(wi.toWorkExternalIdentifier());
+            }
+        }
+        ow.setWorkExternalIdentifiers(new WorkExternalIdentifiers(wiList));
+        if (this.getSource() != null)
+            ow.setSource(new Source(this.getSource()));
+        
+        if (this.getTitle() != null || this.getSubtitle() != null || this.getTranslatedTitle() != null)
+            ow.setWorkTitle(new WorkTitle());
+        if (this.getTitle() != null)
+            ow.getWorkTitle().setTitle(this.getTitle().toTitle());
+        if (this.getSubtitle() != null)
+            ow.getWorkTitle().setSubtitle(this.getSubtitle().toSubtitle());
+        if(this.getTranslatedTitle() != null)
+            ow.getWorkTitle().setTranslatedTitle(this.getTranslatedTitle().toTranslatedTitle());
+
+        if (this.getWorkType() != null) {
+            ow.setWorkType(org.orcid.jaxb.model.message.WorkType.fromValue(this.getWorkType().getValue()));
+        }
+
+        if (this.getJournalTitle() != null) {
+            ow.setJournalTitle(new Title(this.getJournalTitle().getValue()));
+        }
+
+        if (this.getLanguageCode() != null) {
+            ow.setLanguageCode(this.getLanguageCode().getValue());
+        }
+
+        if (this.getCountryCode() != null) {
+            Country country = new Country(StringUtils.isEmpty(this.getCountryCode().getValue()) ? null : org.orcid.jaxb.model.message.Iso3166Country.fromValue(this.getCountryCode().getValue()));
+            ow.setCountry(country);
+        }
+
+        return ow;
+    }
+    
+    
+    
     
     public void setCitationForDisplay(String citation) {
         this.citationForDisplay = citation;
