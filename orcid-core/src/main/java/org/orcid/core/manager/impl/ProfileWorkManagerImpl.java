@@ -21,12 +21,15 @@ import java.util.Date;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.adapter.JpaJaxbWorkAdapter;
+import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.ProfileWorkManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.record.Work;
+import org.orcid.jaxb.model.record.WorkTitle;
 import org.orcid.jaxb.model.record.summary.WorkSummary;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.ProfileWorkDao;
@@ -176,6 +179,7 @@ public class ProfileWorkManagerImpl implements ProfileWorkManager {
     @Override
     @Transactional
     public Work createWork(String orcid, Work work) {
+    	validateWork(work);
         ProfileWorkEntity profileWorkEntity = jpaJaxbWorkAdapter.toProfileWorkEntity(work);
         profileWorkEntity.setSource(sourceManager.retrieveSourceEntity());
         profileWorkEntity.getWork().setSource(sourceManager.retrieveSourceEntity());
@@ -189,6 +193,18 @@ public class ProfileWorkManagerImpl implements ProfileWorkManager {
         return jpaJaxbWorkAdapter.toWork(profileWorkEntity);
     }
 
+    private void validateWork(Work work) {
+        WorkTitle title = work.getWorkTitle();
+        if (title == null || title.getTitle() == null || StringUtils.isEmpty(title.getTitle().getContent())) {
+            throw new OrcidValidationException("Invalid Title: title cannot be null nor emtpy");
+        }
+
+        if (work.getWorkExternalIdentifiers() == null || work.getWorkExternalIdentifiers().getWorkExternalIdentifier() == null
+                || work.getWorkExternalIdentifiers().getWorkExternalIdentifier().isEmpty()) {
+            throw new OrcidValidationException("Invalid work: Works added using message version 1.2_rc5 or greater must contain at least one external identifier");
+        }
+	}
+    
     @Override
     @Transactional
     public Work updateWork(String orcid, Work work) {
