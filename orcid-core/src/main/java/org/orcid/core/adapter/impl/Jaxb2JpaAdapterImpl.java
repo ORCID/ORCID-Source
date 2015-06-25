@@ -257,6 +257,8 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                     throw new IllegalArgumentException("Invalid put-code was supplied: " + putCode);
                 }
                 profileWorkEntity = new ProfileWorkEntity();
+                profileWorkEntity.setMigrated(true);
+                profileWorkEntity.setAddedToProfileDate(new Date());
                 workEntity = new WorkEntity();
             } else {
                 profileWorkEntity = existingProfileWorkEntity;
