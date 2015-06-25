@@ -52,7 +52,7 @@
 					<xs:sequence>
 
 						<xs:element name="title" type="work:work-title"
-							minOccurs="0" />
+							minOccurs="1" />
 						<xs:element name="journal-title" type="work:journal-title"
 							minOccurs="0" maxOccurs="1" />
 						<xs:element name="short-description" type="common:short-description"
@@ -67,7 +67,7 @@
 						<xs:element name="type" type="work:work-type" />
 						<xs:element ref="common:publication-date" minOccurs="0" />
 						<xs:element name="external-identifiers" type="work:work-external-identifiers"
-							minOccurs="0">
+							minOccurs="1">
 							<xs:annotation>
 								<xs:documentation>Element containing the type and content of the
 									citation for this work
@@ -94,7 +94,7 @@
 						<xs:element name="title" type="work:work-title"
 							minOccurs="1" />
 						<xs:element name="external-identifiers" type="work:work-external-identifiers"
-							minOccurs="0" />
+							minOccurs="1" />
 						<xs:element name="type" type="work:work-type" />
 						<xs:element ref="common:publication-date" minOccurs="0" />
 					</xs:sequence>
@@ -159,7 +159,7 @@
 			</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
-			<xs:element maxOccurs="unbounded" minOccurs="0"
+			<xs:element maxOccurs="unbounded" minOccurs="1"
 				name="work-external-identifier" type="work:external-identifier" />
 		</xs:sequence>
 	</xs:complexType>
