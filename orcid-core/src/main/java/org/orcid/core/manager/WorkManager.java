@@ -23,6 +23,9 @@ import org.orcid.jaxb.model.record.Work;
 import org.orcid.jaxb.model.record.summary.WorkSummary;
 
 public interface WorkManager {
+    
+    void setSourceManager(SourceManager sourceManager);
+    
     /**
      * Add a new work to the work table
      * 

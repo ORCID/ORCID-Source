@@ -648,10 +648,7 @@ public class WorkForm implements ErrorsInterface, Serializable {
 
         return ow;
     }
-    
-    
-    
-    
+                
     public void setCitationForDisplay(String citation) {
         this.citationForDisplay = citation;
     }
@@ -923,12 +920,7 @@ public class WorkForm implements ErrorsInterface, Serializable {
             if (other.dateSortString != null)
                 return false;
         } else if (!dateSortString.equals(other.dateSortString))
-            return false;
-        if (errors == null) {
-            if (other.errors != null)
-                return false;
-        } else if (!errors.equals(other.errors))
-            return false;
+            return false;       
         if (journalTitle == null) {
             if (other.journalTitle != null)
                 return false;

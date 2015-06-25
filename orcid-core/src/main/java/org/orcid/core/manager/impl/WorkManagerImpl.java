@@ -62,6 +62,11 @@ public class WorkManagerImpl implements WorkManager {
     @Resource
     private ProfileDao profileDao;
     
+    @Override
+    public void setSourceManager(SourceManager sourceManager) {
+        this.sourceManager = sourceManager;
+    }
+    
     /**
      * Add a new work to the work table
      * 

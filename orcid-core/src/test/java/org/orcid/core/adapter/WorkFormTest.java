@@ -44,6 +44,7 @@ import org.orcid.jaxb.model.common.Title;
 import org.orcid.jaxb.model.common.Url;
 import org.orcid.jaxb.model.common.Year;
 import org.orcid.jaxb.model.message.FuzzyDate;
+import org.orcid.jaxb.model.message.WorkCategory;
 import org.orcid.jaxb.model.record.CitationType;
 import org.orcid.jaxb.model.record.Work;
 import org.orcid.jaxb.model.record.WorkExternalIdentifierId;
@@ -68,7 +69,6 @@ import org.springframework.test.context.ContextConfiguration;
  * @author Angel Montenegro
  * 
  */
-@RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
 public class WorkFormTest {
 
@@ -166,8 +166,7 @@ public class WorkFormTest {
 
     private WorkForm getWorkForm() {
         WorkForm form = new WorkForm();
-        form.setCitation(new Citation("Citation", "formatted-unspecified"));
-        form.setCitationForDisplay("Citation for display");
+        form.setCitation(new Citation("Citation", "formatted-unspecified"));        
         List<Contributor> çontributors = new ArrayList<Contributor>();
         Contributor contributor = new Contributor();
         contributor.setContributorRole(Text.valueOf("co_inventor"));
@@ -179,37 +178,33 @@ public class WorkFormTest {
         contributor.setUri(Text.valueOf("Contributor uri"));
         çontributors.add(contributor);
         form.setContributors(çontributors);
-        form.setCountryCode(Text.valueOf("US"));
-        form.setCountryName(Text.valueOf("United States"));
+        form.setCountryCode(Text.valueOf("US"));        
         Date createdDate = new Date();
         createdDate.setDay("1");
         createdDate.setMonth("1");
         createdDate.setYear("2015");
-        form.setCreatedDate(createdDate);
-        form.setDateSortString(PojoUtil.createDateSortString(null, new FuzzyDate(2015, 1, 1)));
+        form.setCreatedDate(createdDate);        
         form.setJournalTitle(Text.valueOf("Journal title"));
         form.setLanguageCode(Text.valueOf("en"));
-        form.setLanguageName(Text.valueOf("English"));
         Date lastModifiedDate = new Date();
         lastModifiedDate.setDay("2");
         lastModifiedDate.setMonth("2");
         lastModifiedDate.setYear("2015");
         form.setLastModified(lastModifiedDate);
         Date publicationDate = new Date();
-        publicationDate.setDay("3");
-        publicationDate.setMonth("3");
+        publicationDate.setDay("03");
+        publicationDate.setMonth("03");
         publicationDate.setYear("2015");
         form.setPublicationDate(publicationDate);
+        form.setDateSortString(PojoUtil.createDateSortString(null, new FuzzyDate(2015, 3, 3)));
         form.setPutCode(Text.valueOf("1"));
         form.setShortDescription(Text.valueOf("Short description"));
-        form.setSource("0000-0000-0000-0000");
-        form.setSourceName("Source Name");
+        form.setSource("0000-0000-0000-0000");        
         form.setSubtitle(Text.valueOf("Subtitle"));
         form.setTitle(Text.valueOf("Title"));
         form.setTranslatedTitle(new TranslatedTitle("Translated Title", "es"));
         form.setUrl(Text.valueOf("http://myurl.com"));
-        form.setVisibility(org.orcid.jaxb.model.message.Visibility.PUBLIC);
-        form.setWorkCategory(Text.valueOf("Category"));
+        form.setVisibility(org.orcid.jaxb.model.message.Visibility.PUBLIC);        
         List<WorkExternalIdentifier> extIds = new ArrayList<WorkExternalIdentifier>();
         WorkExternalIdentifier extId = new WorkExternalIdentifier();
         extId.setWorkExternalIdentifierId(Text.valueOf("External Identifier ID"));
@@ -217,15 +212,8 @@ public class WorkFormTest {
         extIds.add(extId);
         form.setWorkExternalIdentifiers(extIds);
         form.setWorkType(Text.valueOf("artistic-performance"));
+        WorkCategory category = WorkCategory.fromWorkType(WorkType.fromValue(form.getWorkType().getValue()));
+        form.setWorkCategory(Text.valueOf(category.value()));
         return form;
-    }
-
-    private void cleanTransientFields(WorkForm form) {
-        form.setCitationForDisplay(null);
-        form.setCountryName(null);
-        form.setDateSortString(null);
-        form.setLanguageName(null);
-        form.setSourceName(null);
-        form.setWorkCategory(null);
     }
 }

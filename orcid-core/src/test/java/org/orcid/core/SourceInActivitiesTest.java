@@ -124,6 +124,7 @@ public class SourceInActivitiesTest extends BaseTest {
     @Before
     public void before() {
         profileWorkManager.setSourceManager(sourceManager);
+        workManager.setSourceManager(sourceManager);
         profileFundingManager.setSourceManager(sourceManager);
         affiliationsManager.setSourceManager(sourceManager);
         peerReviewManager.setSourceManager(sourceManager);
@@ -148,7 +149,7 @@ public class SourceInActivitiesTest extends BaseTest {
         assertFalse(PojoUtil.isEmpty(work1.getWorkTitle().getTitle().getContent()));
         assertNotNull(work1.getSource());
         assertNotNull(work1.getSource().retrieveSourcePath());
-        assertEquals(CLIENT_1_ID, work1.getSource().retrieveSourcePath());
+        assertEquals(userOrcid, work1.getSource().retrieveSourcePath());
         
         when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
         Work work2 = getWork(userOrcid);
@@ -178,7 +179,7 @@ public class SourceInActivitiesTest extends BaseTest {
         assertFalse(PojoUtil.isEmpty(work4.getWorkTitle().getTitle().getContent()));        
         assertNotNull(work4.getSource());
         assertNotNull(work4.getSource().retrieveSourcePath());
-        assertEquals(CLIENT_2_ID, work4.getSource().retrieveSourcePath());
+        assertEquals(userOrcid, work4.getSource().retrieveSourcePath());
 
         Work fromDb1 = workManager.getWork(userOrcid, work1.getPutCode());
         assertNotNull(fromDb1);
