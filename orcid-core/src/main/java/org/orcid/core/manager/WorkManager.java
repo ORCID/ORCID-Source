@@ -105,5 +105,7 @@ public interface WorkManager {
     
     Work createWork(String orcid, Work work);
 
-    Work updateWork(String orcid, Work work);   
+    Work updateWork(String orcid, Work work); 
+    
+    boolean checkSourceAndRemoveWork(String orcid, String workId);
 }

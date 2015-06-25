@@ -33,7 +33,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.manager.impl.OrcidUrlManager;
-import org.orcid.jaxb.model.common.SourceClientId;
 import org.orcid.jaxb.model.message.CitationType;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.Visibility;
@@ -42,7 +41,6 @@ import org.orcid.jaxb.model.record.Work;
 import org.orcid.jaxb.model.record.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.record.summary.WorkSummary;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
 import org.orcid.persistence.jpa.entities.PublicationDateEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
@@ -80,12 +78,11 @@ public class JpaJaxbWorkAdapterTest {
     public void testToWorkEntity() throws JAXBException {
         Work work = getWork(true);
         assertNotNull(work);
-        ProfileWorkEntity profileWorkEntity = jpaJaxbWorkAdapter.toProfileWorkEntity(work);
-        assertNotNull(profileWorkEntity);
-        assertEquals(Visibility.PRIVATE, profileWorkEntity.getVisibility());
-        SourceEntity sourceEntity = profileWorkEntity.getSource();
+        WorkEntity workEntity = jpaJaxbWorkAdapter.toWorkEntity(work);
+        assertNotNull(workEntity);
+        assertEquals(Visibility.PRIVATE, workEntity.getVisibility());
+        SourceEntity sourceEntity = workEntity.getSource();
         assertEquals("8888-8888-8888-8880", sourceEntity.getSourceId());
-        WorkEntity workEntity = profileWorkEntity.getWork();
         assertNotNull(workEntity);
         assertEquals(123, workEntity.getId().longValue());
         assertEquals("common:title", workEntity.getTitle());
@@ -115,9 +112,9 @@ public class JpaJaxbWorkAdapterTest {
     public void fromProfileWorkEntityToWorkTest() {
         // Set base url to https to ensure source URI is converted to http
         orcidUrlManager.setBaseUrl("https://testserver.orcid.org");
-        ProfileWorkEntity pw = getProfileWorkEntity();
-        assertNotNull(pw);
-        Work w = jpaJaxbWorkAdapter.toWork(pw);
+        WorkEntity work = getWorkEntity();
+        assertNotNull(work);
+        Work w = jpaJaxbWorkAdapter.toWork(work);
         assertNotNull(w);
         assertEquals(org.orcid.jaxb.model.common.Iso3166Country.CR.value(), w.getCountry().getValue().value());
         assertEquals("work:citation", w.getWorkCitation().getCitation());
@@ -139,18 +136,18 @@ public class JpaJaxbWorkAdapterTest {
         assertEquals("123", workExtId.getWorkExternalIdentifierId().getContent());
         assertNotNull(workExtId.getWorkExternalIdentifierType());
         assertEquals(WorkExternalIdentifierType.AGR.value(), workExtId.getWorkExternalIdentifierType().value());
-        SourceClientId sourceClientId = w.getSource().getSourceClientId();
-        assertNotNull(sourceClientId);
-        assertEquals("APP-5555555555555555", sourceClientId.getPath());
+        String sourcePath = w.getSource().retrieveSourcePath();
+        assertNotNull(sourcePath);
+        assertEquals("APP-5555555555555555", sourcePath);
         // Identifier URIs should always be http, event if base url is https
-        assertEquals("http://testserver.orcid.org/client/APP-5555555555555555", sourceClientId.getUri());
+        assertEquals("http://testserver.orcid.org/client/APP-5555555555555555", w.getSource().retriveSourceUri());
     }
 
     @Test
     public void fromProfileWorkEntityToWorkSummaryTest() {
-        ProfileWorkEntity pw = getProfileWorkEntity();
-        assertNotNull(pw);
-        WorkSummary ws = jpaJaxbWorkAdapter.toWorkSummary(pw);
+        WorkEntity work = getWorkEntity();
+        assertNotNull(work);
+        WorkSummary ws = jpaJaxbWorkAdapter.toWorkSummary(work);
         assertNotNull(ws);
         assertEquals("12345", ws.getPutCode());
         assertEquals(Visibility.LIMITED.value(), ws.getVisibility().value());
@@ -176,17 +173,15 @@ public class JpaJaxbWorkAdapterTest {
         return (Work) unmarshaller.unmarshal(inputStream);
     }
 
-    private ProfileWorkEntity getProfileWorkEntity() {
-        Date date = new Date();
-        ProfileWorkEntity result = new ProfileWorkEntity();
-        result.setDateCreated(date);
-        result.setLastModified(date);
-        result.setProfile(new ProfileEntity("0000-0000-0000-0001"));
-        result.setVisibility(Visibility.LIMITED);
-        result.setDisplayIndex(1234567890L);
-        result.setSource(new SourceEntity("APP-5555555555555555"));
-
+    private WorkEntity getWorkEntity() {
+        Date date = new Date();        
         WorkEntity work = new WorkEntity();
+        work.setDateCreated(date);
+        work.setLastModified(date);
+        work.setProfile(new ProfileEntity("0000-0000-0000-0001"));
+        work.setVisibility(Visibility.LIMITED);
+        work.setDisplayIndex(1234567890L);
+        work.setSource(new SourceEntity("APP-5555555555555555"));        
         work.setCitation("work:citation");
         work.setCitationType(CitationType.BIBTEX);
         work.setDateCreated(date);
@@ -205,8 +200,6 @@ public class JpaJaxbWorkAdapterTest {
         work.setWorkUrl("work:url");
         work.setContributorsJson("{\"contributor\":[]}");
         work.setExternalIdentifiersJson("{\"workExternalIdentifier\":[{\"workExternalIdentifierType\":\"AGR\",\"workExternalIdentifierId\":{\"content\":\"123\"}}]}");
-
-        result.setWork(work);
-        return result;
+        return work;
     }
 }

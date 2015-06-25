@@ -23,7 +23,9 @@ import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.Date;
+
 import javax.annotation.Resource;
+
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -73,7 +75,6 @@ import org.orcid.jaxb.model.record.WorkType;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
-import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.DateUtils;
@@ -140,44 +141,60 @@ public class SourceInActivitiesTest extends BaseTest {
     @Test
     public void sourceDoesntChange_Work_Test() {
         when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ProfileEntity(userOrcid)));
-        ProfileWorkEntity work1 = getProfileWorkEntity(userOrcid);
+        Work work1 = getWork(userOrcid);
         assertNotNull(work1);
-        assertFalse(PojoUtil.isEmpty(work1.getWork().getTitle()));
-        assertEquals(userOrcid, work1.getSource().getSourceId());
-
+        assertNotNull(work1.getWorkTitle());
+        assertNotNull(work1.getWorkTitle().getTitle());
+        assertFalse(PojoUtil.isEmpty(work1.getWorkTitle().getTitle().getContent()));
+        assertNotNull(work1.getSource());
+        assertNotNull(work1.getSource().retrieveSourcePath());
+        assertEquals(CLIENT_1_ID, work1.getSource().retrieveSourcePath());
+        
         when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
-        ProfileWorkEntity work2 = getProfileWorkEntity(userOrcid);
+        Work work2 = getWork(userOrcid);
         assertNotNull(work2);
-        assertFalse(PojoUtil.isEmpty(work2.getWork().getTitle()));
-        assertEquals(CLIENT_1_ID, work2.getSource().getSourceId());
+        assertNotNull(work2.getWorkTitle());
+        assertNotNull(work2.getWorkTitle().getTitle());
+        assertFalse(PojoUtil.isEmpty(work2.getWorkTitle().getTitle().getContent()));
+        assertNotNull(work2.getSource());
+        assertNotNull(work2.getSource().retrieveSourcePath());
+        assertEquals(CLIENT_1_ID, work2.getSource().retrieveSourcePath());
 
         when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_2_ID)));
-        ProfileWorkEntity work3 = getProfileWorkEntity(userOrcid);
+        Work work3 = getWork(userOrcid);
         assertNotNull(work3);
-        assertFalse(PojoUtil.isEmpty(work3.getWork().getTitle()));
-        assertEquals(CLIENT_2_ID, work3.getSource().getSourceId());
+        assertNotNull(work3.getWorkTitle());
+        assertNotNull(work3.getWorkTitle().getTitle());
+        assertFalse(PojoUtil.isEmpty(work3.getWorkTitle().getTitle().getContent()));
+        assertNotNull(work3.getSource());
+        assertNotNull(work3.getSource().retrieveSourcePath());
+        assertEquals(CLIENT_2_ID, work3.getSource().retrieveSourcePath());
 
         when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ProfileEntity(userOrcid)));
-        ProfileWorkEntity work4 = getProfileWorkEntity(userOrcid);
+        Work work4 = getWork(userOrcid);
         assertNotNull(work4);
-        assertFalse(PojoUtil.isEmpty(work4.getWork().getTitle()));
-        assertEquals(userOrcid, work4.getSource().getSourceId());
+        assertNotNull(work4.getWorkTitle());
+        assertNotNull(work4.getWorkTitle().getTitle());
+        assertFalse(PojoUtil.isEmpty(work4.getWorkTitle().getTitle().getContent()));        
+        assertNotNull(work4.getSource());
+        assertNotNull(work4.getSource().retrieveSourcePath());
+        assertEquals(CLIENT_2_ID, work4.getSource().retrieveSourcePath());
 
-        ProfileWorkEntity fromDb1 = profileWorkManager.getProfileWork(userOrcid, String.valueOf(work1.getWork().getId()));
+        Work fromDb1 = workManager.getWork(userOrcid, work1.getPutCode());
         assertNotNull(fromDb1);
-        assertEquals(userOrcid, fromDb1.getSource().getSourceId());
+        assertEquals(userOrcid, fromDb1.getSource().retrieveSourcePath());
 
-        ProfileWorkEntity fromDb2 = profileWorkManager.getProfileWork(userOrcid, String.valueOf(work2.getWork().getId()));
+        Work fromDb2 = workManager.getWork(userOrcid, work2.getPutCode());
         assertNotNull(fromDb2);
-        assertEquals(CLIENT_1_ID, fromDb2.getSource().getSourceId());
+        assertEquals(CLIENT_1_ID, fromDb2.getSource().retrieveSourcePath());
 
-        ProfileWorkEntity fromDb3 = profileWorkManager.getProfileWork(userOrcid, String.valueOf(work3.getWork().getId()));
+        Work fromDb3 = workManager.getWork(userOrcid, work3.getPutCode());
         assertNotNull(fromDb3);
-        assertEquals(CLIENT_2_ID, fromDb3.getSource().getSourceId());
+        assertEquals(CLIENT_2_ID, fromDb3.getSource().retrieveSourcePath());
 
-        ProfileWorkEntity fromDb4 = profileWorkManager.getProfileWork(userOrcid, String.valueOf(work4.getWork().getId()));
+        Work fromDb4 = workManager.getWork(userOrcid, work4.getPutCode());
         assertNotNull(fromDb4);
-        assertEquals(userOrcid, fromDb4.getSource().getSourceId());
+        assertEquals(userOrcid, fromDb4.getSource().retrieveSourcePath());
     }
 
     @Test
@@ -346,14 +363,14 @@ public class SourceInActivitiesTest extends BaseTest {
         return orcidProfileManager.createOrcidProfile(profile, false);
     }
 
-    private ProfileWorkEntity getProfileWorkEntity(String userOrcid) {
+    private Work getWork(String userOrcid) {
         Work work = new Work();
         WorkTitle title = new WorkTitle();
         title.setTitle(new Title("Work " + System.currentTimeMillis()));
         work.setWorkTitle(title);
         work.setWorkType(org.orcid.jaxb.model.record.WorkType.BOOK);
-        work = profileWorkManager.createWork(userOrcid, work);
-        return profileWorkManager.getProfileWork(userOrcid, work.getPutCode());
+        work = workManager.createWork(userOrcid, work);
+        return workManager.getWork(userOrcid, work.getPutCode());
     }
 
     private ProfileFundingEntity getProfileFundingEntity(String userOrcid) {

@@ -35,11 +35,15 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.custom.MinimizedWorkEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
 
 public class WorkManagerImpl implements WorkManager {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(WorkManagerImpl.class);
+    
     @Resource
     private WorkDao workDao;
 
@@ -192,6 +196,23 @@ public class WorkManagerImpl implements WorkManager {
         return jpaJaxbWorkAdapter.toWork(workEntity);
     }
 
+    
+    @Override
+    public boolean checkSourceAndRemoveWork(String orcid, String workIdStr) {
+        boolean result = true;
+        Long workId = Long.valueOf(workIdStr);
+        WorkEntity workEntity = workDao.find(Long.valueOf(workId));
+        SourceEntity existingSource = workEntity.getSource();
+        orcidSecurityManager.checkSource(existingSource);
+        try {
+            workDao.remove(workId);
+        } catch(Exception e) {
+            LOGGER.error("Unable to delete work with ID: " + workIdStr);
+            result = false;
+        }
+        return result;
+    }
+    
     private void setIncomingWorkPrivacy(WorkEntity workEntity, ProfileEntity profile) {
         Visibility incomingWorkVisibility = workEntity.getVisibility();
         Visibility defaultWorkVisibility = profile.getActivitiesVisibilityDefault();
