@@ -5784,6 +5784,24 @@ textarea.form-control,
   	top: -178px;
 }
 
+/* URLS Workspace Tooltip */
+
+.url-work .popover-help-container{
+   float: left;
+   width: 1px;
+   height: 1px;
+   position: relative; 
+}
+
+.url-work .popover-help-container .popover{
+  left: 0;
+  top: -94px;
+}
+
+.url-work .popover.top .arrow {
+    left: 56px;
+}
+
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
 
@@ -6248,24 +6266,6 @@ textarea.form-control,
 	.workspace-accordion-item{
 		border-bottom: none;
 	}
-	
-	#workspace-accordion .popover-help-container .popover{
-		left:-105px !important;
-	}
-	
-	#workspace-accordion .popover-help-container .arrow{
-		left: 117px !important;
-	}		
-
-	
-	.public-profile .popover-help-container .popover{
-		left:-105px;		
-	}
-	
-	.public-profile .popover-help-container .popover.bottom .arrow{
-		left:117px;
-	}
-	
 	
 	/* Lightboxes */	
 	

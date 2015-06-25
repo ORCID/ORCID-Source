@@ -4094,6 +4094,7 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     $scope.bulkDeleteSubmit = false;
     $scope.workImportWizard = false;
     $scope.wizardDescExpanded = {};
+    $scope.displayURLPopOver = {};
     
     $scope.sortState = new ActSortState(GroupedActivities.ABBR_WORK);
     $scope.sort = function(key) {
@@ -4675,6 +4676,17 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     $scope.toggleWizardDesc = function(id){
     	$scope.wizardDescExpanded[id] = !$scope.wizardDescExpanded[id];
     };
+    
+    $scope.showURLPopOver = function(id){    	
+    	$scope.displayURLPopOver[id] = true;
+    	console.log($scope.displayURLPopOver[id]);
+    }
+    
+    $scope.hideURLPopOver = function(id){    	
+    	$scope.displayURLPopOver[id] = false;
+    	console.log($scope.displayURLPopOver[id]);
+    }
+    
     
 }]);
 
