@@ -352,6 +352,12 @@ public class SourceInActivitiesTest extends BaseTest {
         title.setTitle(new Title("Work " + System.currentTimeMillis()));
         work.setWorkTitle(title);
         work.setWorkType(org.orcid.jaxb.model.record.WorkType.BOOK);
+        WorkExternalIdentifier extId = new WorkExternalIdentifier();
+        extId.setWorkExternalIdentifierId(new WorkExternalIdentifierId("111"));
+        extId.setWorkExternalIdentifierType(WorkExternalIdentifierType.DOI);
+        WorkExternalIdentifiers extIdentifiers = new WorkExternalIdentifiers();
+        extIdentifiers.getExternalIdentifier().add(extId);
+        work.setWorkExternalIdentifiers(extIdentifiers);
         work = profileWorkManager.createWork(userOrcid, work);
         return profileWorkManager.getProfileWork(userOrcid, work.getPutCode());
     }
