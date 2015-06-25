@@ -23,7 +23,9 @@ import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.adapter.JpaJaxbWorkAdapter;
-import org.orcid.core.exception.OrcidValidationException;
+import org.orcid.core.exception.ActivityIdentifierValidationException;
+import org.orcid.core.exception.ActivityTitleValidationException;
+import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.ProfileWorkManager;
 import org.orcid.core.manager.SourceManager;
@@ -58,6 +60,9 @@ public class ProfileWorkManagerImpl implements ProfileWorkManager {
 
     @Resource
     private OrcidSecurityManager orcidSecurityManager;
+    
+    @Resource
+    private LocaleManager localeManager;
 
     @Override
     public void setSourceManager(SourceManager sourceManager) {
@@ -196,12 +201,12 @@ public class ProfileWorkManagerImpl implements ProfileWorkManager {
     private void validateWork(Work work) {
         WorkTitle title = work.getWorkTitle();
         if (title == null || title.getTitle() == null || StringUtils.isEmpty(title.getTitle().getContent())) {
-            throw new OrcidValidationException("Invalid Title: title cannot be null nor emtpy");
+            throw new ActivityTitleValidationException();
         }
 
         if (work.getWorkExternalIdentifiers() == null || work.getWorkExternalIdentifiers().getWorkExternalIdentifier() == null
                 || work.getWorkExternalIdentifiers().getWorkExternalIdentifier().isEmpty()) {
-            throw new OrcidValidationException("Invalid work: Works added using message version 1.2_rc5 or greater must contain at least one external identifier");
+        	throw new ActivityIdentifierValidationException();
         }
 	}
     
