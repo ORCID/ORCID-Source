@@ -61,6 +61,7 @@ import org.orcid.pojo.ajaxForm.Visibility;
 import org.orcid.pojo.ajaxForm.WorkExternalIdentifier;
 import org.orcid.pojo.ajaxForm.WorkForm;
 import org.orcid.test.OrcidJUnit4ClassRunner;
+import org.springframework.test.context.ContextConfiguration;
 
 /**
  * 
@@ -68,6 +69,7 @@ import org.orcid.test.OrcidJUnit4ClassRunner;
  * 
  */
 @RunWith(OrcidJUnit4ClassRunner.class)
+@ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
 public class WorkFormTest {
 
     private DatatypeFactory datatypeFactory = null;
@@ -144,9 +146,13 @@ public class WorkFormTest {
         attributes.setContributorRole(org.orcid.jaxb.model.common.ContributorRole.CO_INVENTOR);
         attributes.setContributorSequence(org.orcid.jaxb.model.record.SequenceType.FIRST);
         contributor.setContributorAttributes(attributes);
-        contributor.setContributorEmail(new ContributorEmail("Contributor email"));
-        contributor.setContributorOrcid(new ContributorOrcid("Contributor orcid"));
-        contributor.setCreditName(new CreditName("Contributor credit name"));
+        contributor.setContributorEmail(new ContributorEmail("Contributor email"));      
+        ContributorOrcid contributorOrcid = new ContributorOrcid("Contributor orcid");
+        contributorOrcid.setUri("Contributor uri");
+        contributor.setContributorOrcid(contributorOrcid);
+        CreditName creditName = new CreditName("Contributor credit name");
+        creditName.setVisibility(org.orcid.jaxb.model.common.Visibility.PUBLIC);
+        contributor.setCreditName(creditName);
         contributors.getContributor().add(contributor);
         work.setWorkContributors(contributors);
         WorkExternalIdentifiers externalIdentifiers = new WorkExternalIdentifiers();

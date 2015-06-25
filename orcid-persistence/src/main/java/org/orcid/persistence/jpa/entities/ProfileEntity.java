@@ -496,13 +496,6 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
         this.profileFunding = funding;
     }
     
-    
-    
-    
-    
-    
-    
-    
     /**
      * @return the works
      */
@@ -519,17 +512,6 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     public void setWorks(SortedSet<WorkEntity> works) {
         this.works = works;
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     
     /**
      * @return the peer reviews

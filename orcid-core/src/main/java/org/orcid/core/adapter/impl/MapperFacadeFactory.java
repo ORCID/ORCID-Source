@@ -140,7 +140,9 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         minimizedWorkClassMap.field("workTitle.subtitle.content", "subtitle");
         minimizedWorkClassMap.field("shortDescription", "description");                
         minimizedWorkClassMap.field("workType", "workType");
-        minimizedWorkClassMap.field("publicationDate", "publicationDate");
+        minimizedWorkClassMap.field("publicationDate.year.value", "publicationYear");
+        minimizedWorkClassMap.field("publicationDate.month.value", "publicationMonth");
+        minimizedWorkClassMap.field("publicationDate.day.value", "publicationDay");
         minimizedWorkClassMap.fieldMap("workExternalIdentifiers", "externalIdentifiersJson").converter("workExternalIdentifiersConverterId").add();
         minimizedWorkClassMap.field("url.value", "workUrl");                
         minimizedWorkClassMap.register();

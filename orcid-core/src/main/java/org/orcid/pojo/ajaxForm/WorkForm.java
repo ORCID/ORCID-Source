@@ -41,6 +41,7 @@ import org.orcid.jaxb.model.message.WorkCategory;
 import org.orcid.jaxb.model.message.WorkContributors;
 import org.orcid.jaxb.model.message.WorkExternalIdentifiers;
 import org.orcid.jaxb.model.message.WorkTitle;
+import org.orcid.jaxb.model.message.WorkType;
 import org.orcid.jaxb.model.record.CitationType;
 import org.orcid.jaxb.model.record.Work;
 import org.orcid.persistence.jpa.entities.custom.MinimizedWorkEntity;
@@ -131,7 +132,7 @@ public class WorkForm implements ErrorsInterface, Serializable {
         if (work.getWorkType() != null) {
             w.setWorkType(Text.valueOf(work.getWorkType().value()));
             // Set category
-            WorkCategory category = WorkCategory.fromWorkType(work.getWorkType());
+            WorkCategory category = WorkCategory.fromWorkType(WorkType.fromValue(work.getWorkType().value()));
             w.setWorkCategory(Text.valueOf(category.value()));
         }
 
@@ -351,10 +352,12 @@ public class WorkForm implements ErrorsInterface, Serializable {
                 
                 if(!PojoUtil.isEmpty(wfContributor.getContributorSequence())) {
                     contributorAttributes.setContributorSequence(org.orcid.jaxb.model.record.SequenceType.fromValue(wfContributor.getContributorSequence().getValue()));
-                }
+                }                
+                workContributor.setContributorAttributes(contributorAttributes);
                 
                 if(!PojoUtil.isEmpty(wfContributor.getCreditName())) {
-                    org.orcid.jaxb.model.common.CreditName creditName = new org.orcid.jaxb.model.common.CreditName();                    
+                    org.orcid.jaxb.model.common.CreditName creditName = new org.orcid.jaxb.model.common.CreditName(); 
+                    creditName.setContent(wfContributor.getCreditName().getValue());
                     if(wfContributor.getCreditNameVisibility() != null && wfContributor.getCreditNameVisibility().getVisibility() != null) {
                         creditName.setVisibility(org.orcid.jaxb.model.common.Visibility.fromValue(wfContributor.getCreditNameVisibility().getVisibility().value()));
                     }
@@ -428,7 +431,7 @@ public class WorkForm implements ErrorsInterface, Serializable {
 
         // Set description
         if (!PojoUtil.isEmpty(this.getShortDescription())) {
-            work.setShortDescription(this.getShortDescription().getGetRequiredMessage());
+            work.setShortDescription(this.getShortDescription().getValue());
         }
 
         // Set url
@@ -443,7 +446,7 @@ public class WorkForm implements ErrorsInterface, Serializable {
         
         // Set country
         if (!PojoUtil.isEmpty(this.getCountryCode())) {
-            work.setCountry(new org.orcid.jaxb.model.common.Country(org.orcid.jaxb.model.common.Iso3166Country.fromValue(this.getCountryName().getValue())));
+            work.setCountry(new org.orcid.jaxb.model.common.Country(org.orcid.jaxb.model.common.Iso3166Country.fromValue(this.getCountryCode().getValue())));
         }
 
         // Set publication date        
@@ -844,4 +847,170 @@ public class WorkForm implements ErrorsInterface, Serializable {
     public void setTranslatedTitle(TranslatedTitle translatedTitle) {
         this.translatedTitle = translatedTitle;
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((citation == null) ? 0 : citation.hashCode());
+        result = prime * result + ((citationForDisplay == null) ? 0 : citationForDisplay.hashCode());
+        result = prime * result + ((contributors == null) ? 0 : contributors.hashCode());
+        result = prime * result + ((countryCode == null) ? 0 : countryCode.hashCode());
+        result = prime * result + ((countryName == null) ? 0 : countryName.hashCode());
+        result = prime * result + ((createdDate == null) ? 0 : createdDate.hashCode());
+        result = prime * result + ((dateSortString == null) ? 0 : dateSortString.hashCode());
+        result = prime * result + ((errors == null) ? 0 : errors.hashCode());
+        result = prime * result + ((journalTitle == null) ? 0 : journalTitle.hashCode());
+        result = prime * result + ((languageCode == null) ? 0 : languageCode.hashCode());
+        result = prime * result + ((languageName == null) ? 0 : languageName.hashCode());
+        result = prime * result + ((lastModified == null) ? 0 : lastModified.hashCode());
+        result = prime * result + ((publicationDate == null) ? 0 : publicationDate.hashCode());
+        result = prime * result + ((putCode == null) ? 0 : putCode.hashCode());
+        result = prime * result + ((shortDescription == null) ? 0 : shortDescription.hashCode());
+        result = prime * result + ((source == null) ? 0 : source.hashCode());
+        result = prime * result + ((sourceName == null) ? 0 : sourceName.hashCode());
+        result = prime * result + ((subtitle == null) ? 0 : subtitle.hashCode());
+        result = prime * result + ((title == null) ? 0 : title.hashCode());
+        result = prime * result + ((translatedTitle == null) ? 0 : translatedTitle.hashCode());
+        result = prime * result + ((url == null) ? 0 : url.hashCode());
+        result = prime * result + ((visibility == null) ? 0 : visibility.hashCode());
+        result = prime * result + ((workCategory == null) ? 0 : workCategory.hashCode());
+        result = prime * result + ((workExternalIdentifiers == null) ? 0 : workExternalIdentifiers.hashCode());
+        result = prime * result + ((workType == null) ? 0 : workType.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        WorkForm other = (WorkForm) obj;
+        if (citation == null) {
+            if (other.citation != null)
+                return false;
+        } else if (!citation.equals(other.citation))
+            return false;
+        if (citationForDisplay == null) {
+            if (other.citationForDisplay != null)
+                return false;
+        } else if (!citationForDisplay.equals(other.citationForDisplay))
+            return false;
+        if (contributors == null) {
+            if (other.contributors != null)
+                return false;
+        } else if (!contributors.equals(other.contributors))
+            return false;
+        if (countryCode == null) {
+            if (other.countryCode != null)
+                return false;
+        } else if (!countryCode.equals(other.countryCode))
+            return false;
+        if (countryName == null) {
+            if (other.countryName != null)
+                return false;
+        } else if (!countryName.equals(other.countryName))
+            return false;
+        if (createdDate == null) {
+            if (other.createdDate != null)
+                return false;
+        } else if (!createdDate.equals(other.createdDate))
+            return false;
+        if (dateSortString == null) {
+            if (other.dateSortString != null)
+                return false;
+        } else if (!dateSortString.equals(other.dateSortString))
+            return false;
+        if (errors == null) {
+            if (other.errors != null)
+                return false;
+        } else if (!errors.equals(other.errors))
+            return false;
+        if (journalTitle == null) {
+            if (other.journalTitle != null)
+                return false;
+        } else if (!journalTitle.equals(other.journalTitle))
+            return false;
+        if (languageCode == null) {
+            if (other.languageCode != null)
+                return false;
+        } else if (!languageCode.equals(other.languageCode))
+            return false;
+        if (languageName == null) {
+            if (other.languageName != null)
+                return false;
+        } else if (!languageName.equals(other.languageName))
+            return false;
+        if (lastModified == null) {
+            if (other.lastModified != null)
+                return false;
+        } else if (!lastModified.equals(other.lastModified))
+            return false;
+        if (publicationDate == null) {
+            if (other.publicationDate != null)
+                return false;
+        } else if (!publicationDate.equals(other.publicationDate))
+            return false;
+        if (putCode == null) {
+            if (other.putCode != null)
+                return false;
+        } else if (!putCode.equals(other.putCode))
+            return false;
+        if (shortDescription == null) {
+            if (other.shortDescription != null)
+                return false;
+        } else if (!shortDescription.equals(other.shortDescription))
+            return false;
+        if (source == null) {
+            if (other.source != null)
+                return false;
+        } else if (!source.equals(other.source))
+            return false;
+        if (sourceName == null) {
+            if (other.sourceName != null)
+                return false;
+        } else if (!sourceName.equals(other.sourceName))
+            return false;
+        if (subtitle == null) {
+            if (other.subtitle != null)
+                return false;
+        } else if (!subtitle.equals(other.subtitle))
+            return false;
+        if (title == null) {
+            if (other.title != null)
+                return false;
+        } else if (!title.equals(other.title))
+            return false;
+        if (translatedTitle == null) {
+            if (other.translatedTitle != null)
+                return false;
+        } else if (!translatedTitle.equals(other.translatedTitle))
+            return false;
+        if (url == null) {
+            if (other.url != null)
+                return false;
+        } else if (!url.equals(other.url))
+            return false;
+        if (visibility != other.visibility)
+            return false;
+        if (workCategory == null) {
+            if (other.workCategory != null)
+                return false;
+        } else if (!workCategory.equals(other.workCategory))
+            return false;
+        if (workExternalIdentifiers == null) {
+            if (other.workExternalIdentifiers != null)
+                return false;
+        } else if (!workExternalIdentifiers.equals(other.workExternalIdentifiers))
+            return false;
+        if (workType == null) {
+            if (other.workType != null)
+                return false;
+        } else if (!workType.equals(other.workType))
+            return false;
+        return true;
+    }        
 }

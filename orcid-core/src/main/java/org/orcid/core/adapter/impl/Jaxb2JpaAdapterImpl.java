@@ -203,7 +203,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     }
 
     private SortedSet<WorkEntity> getWorkEntities(ProfileEntity profileEntity, OrcidWorks orcidWorks) {
-        SortedSet<WorkEntity> existingWorkEntities = profileEntity.getWorks();
+        SortedSet<WorkEntity> existingWorkEntities = profileEntity.getWorks();        
         Map<String, WorkEntity> existingWorkEntitiesMap = createWorkEntitiesMap(existingWorkEntities);
         SortedSet<WorkEntity> workEntities = null;
         if (existingWorkEntities == null) {
@@ -265,10 +265,8 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             profileWorkEntity.setWork(getWorkEntity(orcidWork, workEntity));
             Visibility visibility = orcidWork.getVisibility() == null ? Visibility.PRIVATE : orcidWork.getVisibility();
             profileWorkEntity.setVisibility(visibility);
-            workEntity.setVisibility(visibility);
             SourceEntity source = getSource(orcidWork.getSource());
-            profileWorkEntity.setSource(source);
-            workEntity.setSource(source);
+            profileWorkEntity.setSource(source);            
 
             if (orcidWork.getCreatedDate() != null && orcidWork.getCreatedDate().getValue() != null)
                 profileWorkEntity.setDateCreated(orcidWork.getCreatedDate().getValue().toGregorianCalendar().getTime());
@@ -282,6 +280,15 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
 
     public WorkEntity getWorkEntity(OrcidWork orcidWork, WorkEntity workEntity) {
         if (orcidWork != null) {
+            if(workEntity == null) {
+                String putCode = orcidWork.getPutCode();
+                if (StringUtils.isNotBlank(putCode) && !"-1".equals(putCode)) {
+                    throw new IllegalArgumentException("Invalid put-code was supplied: " + putCode);
+                }
+                workEntity = new WorkEntity();
+            } else {
+                workEntity.clean();
+            }
             Citation workCitation = orcidWork.getWorkCitation();
             if (workCitation != null && StringUtils.isNotBlank(workCitation.getCitation()) && workCitation.getWorkCitationType() != null) {
                 workEntity.setCitation(workCitation.getCitation());
@@ -309,7 +316,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             workEntity.setWorkType(orcidWork.getWorkType());
             workEntity.setWorkUrl(orcidWork.getUrl() != null ? orcidWork.getUrl().getValue() : null);
             workEntity.setSource(getSource(orcidWork.getSource()));            
-            workEntity.setVisibility(orcidWork.getVisibility());
+            workEntity.setVisibility(orcidWork.getVisibility() == null ? Visibility.PRIVATE : orcidWork.getVisibility());
             workEntity.setAddedToProfileDate(new Date());
             return workEntity;
         }
