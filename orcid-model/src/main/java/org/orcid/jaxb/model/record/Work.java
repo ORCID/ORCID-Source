@@ -43,7 +43,6 @@ import org.orcid.jaxb.model.common.Url;
 import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.jaxb.model.common.VisibilityType;
 
-
 /**
  * <p>
  * Java class for anonymous complex type.
@@ -56,25 +55,25 @@ import org.orcid.jaxb.model.common.VisibilityType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "putCode", "path", "source", "createdDate", "lastModifiedDate", "title", "journalTitle", "shortDescription", "citation", "type", "publicationDate", "externalIdentifiers", "url",
-        "contributors", "languageCode", "country" })
+@XmlType(propOrder = { "createdDate", "lastModifiedDate", "source", "putCode", "path", "title", "journalTitle", "shortDescription", "citation", "type",
+        "publicationDate", "externalIdentifiers", "url", "contributors", "languageCode", "country" })
 @XmlRootElement(name = "work", namespace = "http://www.orcid.org/ns/work")
 public class Work implements VisibilityType, Activity, Serializable {
 
     private static final long serialVersionUID = 1L;
     @XmlElement(namespace = "http://www.orcid.org/ns/work")
     protected WorkTitle title;
-    @XmlElement(name="journal-title", namespace = "http://www.orcid.org/ns/work")
+    @XmlElement(name = "journal-title", namespace = "http://www.orcid.org/ns/work")
     protected Title journalTitle;
-    @XmlElement(name="short-description", namespace = "http://www.orcid.org/ns/work")
+    @XmlElement(name = "short-description", namespace = "http://www.orcid.org/ns/work")
     protected String shortDescription;
     @XmlElement(namespace = "http://www.orcid.org/ns/work")
     protected Citation citation;
     @XmlElement(namespace = "http://www.orcid.org/ns/work")
     protected WorkType type;
-    @XmlElement(name="publication-date", namespace = "http://www.orcid.org/ns/common")
+    @XmlElement(name = "publication-date", namespace = "http://www.orcid.org/ns/common")
     protected PublicationDate publicationDate;
-    @XmlElement(name="external-identifiers", namespace = "http://www.orcid.org/ns/work")
+    @XmlElement(name = "external-identifiers", namespace = "http://www.orcid.org/ns/work")
     protected WorkExternalIdentifiers externalIdentifiers;
     @XmlElement(namespace = "http://www.orcid.org/ns/work")
     protected Url url;
@@ -89,15 +88,15 @@ public class Work implements VisibilityType, Activity, Serializable {
      */
     @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected Source source;
-    @XmlAttribute(name="put-code")
+    @XmlAttribute(name = "put-code")
     protected String putCode;
     @XmlAttribute
     protected Visibility visibility;
-    @XmlAttribute(name="path")
+    @XmlAttribute(name = "path")
     protected String path;
-    @XmlElement(namespace = "http://www.orcid.org/ns/common")
+    @XmlElement(name = "last-modified-date", namespace = "http://www.orcid.org/ns/common")
     protected LastModifiedDate lastModifiedDate;
-    @XmlElement(namespace = "http://www.orcid.org/ns/common")
+    @XmlElement(name = "created-date", namespace = "http://www.orcid.org/ns/common")
     protected CreatedDate createdDate;
 
     /**
@@ -260,7 +259,7 @@ public class Work implements VisibilityType, Activity, Serializable {
     public WorkExternalIdentifiers getExternalIdentifiers() {
         return externalIdentifiers;
     }
-    
+
     /**
      * Sets the value of the workExternalIdentifiers property.
      * 

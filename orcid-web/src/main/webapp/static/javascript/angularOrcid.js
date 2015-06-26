@@ -1114,13 +1114,11 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 
 orcidNgModule.factory("emailSrvc", function ($rootScope) {
     var serv = {
-            emails: null,
+            emails: null,            
             inputEmail: null,
             delEmail: null,
             primaryEmail: null,
-            addEmail: function() {
-            	console.log('Adding: ');
-            	console.log(serv.inputEmail);
+            addEmail: function() {            	
                 $.ajax({
                     url: getBaseUri() + '/account/addEmail.json',
                     data:  angular.toJson(serv.inputEmail),
@@ -1143,19 +1141,18 @@ orcidNgModule.factory("emailSrvc", function ($rootScope) {
                 });
             },
             getEmails: function(callback) {
+            	
                 $.ajax({
                     url: getBaseUri() + '/account/emails.json',
                     type: 'GET',
                     dataType: 'json',
-                    success: function(data) {
+                    success: function(data) {                    	
                         serv.emails = data;
-                        console.log('Requested: ');
-                        console.log(data);
                         for (var i in data.emails){
                             if (data.emails[i].primary){
                                 serv.primaryEmail = data.emails[i];
-                            }    
-                        }
+                            }
+                        }                                                
                         $rootScope.$apply();
                         if (callback)
                            callback(data);
@@ -1411,6 +1408,14 @@ orcidNgModule.filter('urlWithHttp', function(){
         return input;
     };
 });
+
+orcidNgModule.filter('latex', function(){
+    return function(input){
+        if (input == null) return "";
+        return latexParseJs.decodeLatex(input);
+    };
+});
+
 
 orcidNgModule.filter('ajaxFormDateToISO8601', function(){
     return function(input){
