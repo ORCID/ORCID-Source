@@ -276,14 +276,8 @@
         	      		<a class="cancel-option" ng-click="close()"><@spring.message "freemarker.btncancel"/></a>
         	      	</li>
         	      </ul>
-        	      
-        	      
-        	      
-        	      
-        	   </div> 
-	         
+        	   </div>
 	       	</div>
-	       	
 	       	
 	       	<!--  Pending to apply style -->
        		<div ng-controller="ExternalIdentifierCtrl" ng-hide="!externalIdentifiersPojo.externalIdentifiers.length" ng-cloak  class="workspace-section">
