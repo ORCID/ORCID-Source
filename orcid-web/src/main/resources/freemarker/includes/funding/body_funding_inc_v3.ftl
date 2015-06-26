@@ -153,7 +153,7 @@
                              <ul class="id-details">
                                  <li>
                                      <span ng-repeat='ei in group.getActive().externalIdentifiers'>
-                                        <span ng-bind-html='ei | externalIdentifierHtml:$first:$last:group.getActive().externalIdentifiers.length:group.getActive().fundingType'>
+                                        <span bind-html-compile='ei | externalIdentifierHtml:$first:$last:group.getActive().externalIdentifiers.length:group.getActive().fundingType' class="url-popover">
                                         </span>
                                     </span>
                                  </li>

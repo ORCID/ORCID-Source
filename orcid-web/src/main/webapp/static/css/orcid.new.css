@@ -5786,20 +5786,30 @@ textarea.form-control,
 
 /* URLS Workspace Tooltip */
 
-.url-work .popover-help-container{
-   float: left;
-   width: 1px;
-   height: 1px;
-   position: relative; 
+.url-popover{
+	position: relative;
+	float: left;
+	clear: both;
+	width: 100%;
 }
 
-.url-work .popover-help-container .popover{
+.popover-pos{
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+
+.popover-help-container{
+   position: relative;
+}
+
+.url-popover .popover-help-container .popover{
   left: 0;
   top: -94px;
 }
 
-.url-work .popover.top .arrow {
-    left: 56px;
+.url-popover .popover.top .arrow {
+    left: 15px;
 }
 
 /* Media Queries */

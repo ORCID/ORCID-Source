@@ -1553,22 +1553,31 @@ orcidNgModule.filter('externalIdentifierHtml', function(){
         if(link != null) {
         	if (link.search(/^http[s]?\:\/\//) == -1)
             	link = 'http://' + link;
+        	
         	if(value != null) {
-        		output += "<a href='" + link + "' class='truncate-anchor' target='_blank'>" + value + "</a>";
+        		output += "<a href='" + link + "' class='truncate-anchor' target='_blank' ng-mouseenter='showURLPopOver(funding.putCode.value+ $index)' ng-mouseleave='hideURLPopOver(funding.putCode.value + $index)'>" + value + "</a>";
         	} else {
         		if(type != null) {
         			if(type.value == 'grant') {
-        				output = om.get('funding.add.external_id.url.label.grant') + ": <a href='" + link + "' class='truncate-anchor' target='_blank'>" + link + "</a>";
+        				output = om.get('funding.add.external_id.url.label.grant') + ": <a href='" + link + "' class='truncate-anchor' target='_blank' ng-mouseenter='showURLPopOver(funding.putCode.value + $index)' ng-mouseleave='hideURLPopOver(funding.putCode.value + $index)'>" + link + "</a>";
         			} else if(type.value == 'contract') {
-        				output = om.get('funding.add.external_id.url.label.contract') + ": <a href='" + link + "' class='truncate-anchor' target='_blank'>" + link + "</a>";
+        				output = om.get('funding.add.external_id.url.label.contract') + ": <a href='" + link + "' class='truncate-anchor' target='_blank' ng-mouseenter='showURLPopOver(funding.putCode.value + $index)' ng-mouseleave='hideURLPopOver(funding.putCode.value + $index)'>" + link + "</a>";
         			} else {
-        				output = om.get('funding.add.external_id.url.label.award') + ": <a href='" + link + "' class='truncate-anchor' target='_blank'>" + link + "</a>";
+        				output = om.get('funding.add.external_id.url.label.award') + ": <a href='" + link + "' class='truncate-anchor' target='_blank' ng-mouseenter='showURLPopOver(funding.putCode.value + $index)' ng-mouseleave='hideURLPopOver(funding.putCode.value + $index)'>" + link + "</a>";
         			}
         		}        		
         	}
         } else if(value != null) {
         	output = output + " " + value;
         }
+        output += '<div class="popover-pos"><div class="popover-help-container">\
+				        	<div class="popover top" ng-class="{'+"'block'"+' : displayURLPopOver[funding.putCode.value + $index] == true}">\
+							<div class="arrow"></div>\
+							<div class="popover-content">\
+						    	<a href="'+link+'" target="_blank" class="ng-binding">'+link+'</a>\
+						    </div>\
+						  </div>\
+					</div></div>';
       
         if (length > 1 && !last) output = output + ',';
         	return output;
@@ -3372,6 +3381,7 @@ orcidNgModule.controller('FundingCtrl',['$scope', '$compile', '$filter', 'fundin
     $scope.showElement = {};
     $scope.fundingImportWizard = false;
     $scope.wizardDescExpanded = {};
+    $scope.displayURLPopOver = {};
     $scope.emptyExtId = {
             "errors": [],
             "type": {
@@ -3854,6 +3864,14 @@ orcidNgModule.controller('FundingCtrl',['$scope', '$compile', '$filter', 'fundin
         if (funding.source == orcidVar.orcidId)
             return true;
         return false;
+    };
+    
+    $scope.hideURLPopOver = function(id){
+    	$scope.displayURLPopOver[id] = false;
+    };
+    
+    $scope.showURLPopOver = function(id){
+    	$scope.displayURLPopOver[id] = true;
     };
 }]);
 
@@ -4679,12 +4697,10 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     
     $scope.showURLPopOver = function(id){    	
     	$scope.displayURLPopOver[id] = true;
-    	console.log($scope.displayURLPopOver[id]);
     }
     
     $scope.hideURLPopOver = function(id){    	
     	$scope.displayURLPopOver[id] = false;
-    	console.log($scope.displayURLPopOver[id]);
     }
     
     
@@ -9063,3 +9079,18 @@ orcidNgModule.directive('ngEnter', function() {
         });
     };
 });
+
+/*Use instead ng-bind-html when you want to include directives inside the HTML to bind */
+orcidNgModule.directive('bindHtmlCompile', ['$compile', function ($compile) {
+    return {
+        restrict: 'A',
+        link: function (scope, element, attrs) {
+            scope.$watch(function () {
+                return scope.$eval(attrs.bindHtmlCompile);
+            }, function (value) {
+                element.html(value);
+                $compile(element.contents())(scope);
+            });
+        }
+    };
+}]);
