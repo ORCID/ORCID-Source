@@ -17,11 +17,14 @@
 package org.orcid.core.utils;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import org.junit.Test;
 import org.orcid.jaxb.model.message.Contributor;
 import org.orcid.jaxb.model.message.CreditName;
 import org.orcid.jaxb.model.message.WorkContributors;
+import org.orcid.jaxb.model.record.Relationship;
 
 /**
  * 
@@ -51,4 +54,45 @@ public class JsonUtilsTest {
         assertEquals("A Contributor", workContributors.getContributor().get(0).getCreditName().getContent());
     }
 
+    @Test
+    public void testJsonStringToWorkExternalIdentifiersV1_2() {
+        String jsonString1_2ExternalIdentifiers = "{\"workExternalIdentifier\":[{\"workExternalIdentifierType\":\"DOI\",\"workExternalIdentifierId\":{\"content\":\"12345\"}}],\"scope\":null}";
+        org.orcid.jaxb.model.message.WorkExternalIdentifiers wExtId1_2 = JsonUtils.<org.orcid.jaxb.model.message.WorkExternalIdentifiers> readObjectFromJsonString(jsonString1_2ExternalIdentifiers, org.orcid.jaxb.model.message.WorkExternalIdentifiers.class);
+        assertNotNull(wExtId1_2);
+        assertNotNull(wExtId1_2.getWorkExternalIdentifier());
+        assertEquals(org.orcid.jaxb.model.message.WorkExternalIdentifierType.DOI, wExtId1_2.getWorkExternalIdentifier().get(0).getWorkExternalIdentifierType());
+        assertEquals("12345", wExtId1_2.getWorkExternalIdentifier().get(0).getWorkExternalIdentifierId().getContent());
+        
+        String jsonString1_2ExternalIdentifiersWithNewValues = "{\"workExternalIdentifier\":[{\"external-identifier-url\":\"http://orcid.org\", \"relationship\":\"SELF\", \"workExternalIdentifierType\":\"DOI\",\"workExternalIdentifierId\":{\"content\":\"12345\"}}],\"scope\":null}";
+        wExtId1_2 = JsonUtils.<org.orcid.jaxb.model.message.WorkExternalIdentifiers> readObjectFromJsonString(jsonString1_2ExternalIdentifiersWithNewValues, org.orcid.jaxb.model.message.WorkExternalIdentifiers.class);
+        assertNotNull(wExtId1_2);
+        assertNotNull(wExtId1_2.getWorkExternalIdentifier());
+        assertEquals(org.orcid.jaxb.model.message.WorkExternalIdentifierType.DOI, wExtId1_2.getWorkExternalIdentifier().get(0).getWorkExternalIdentifierType());
+        assertEquals("12345", wExtId1_2.getWorkExternalIdentifier().get(0).getWorkExternalIdentifierId().getContent());
+    }
+    
+    @Test
+    public void testJsonStringToWorkExternalIdentifiersV2_0() {
+        String jsonString1_2ExternalIdentifiers = "{\"workExternalIdentifier\":[{\"workExternalIdentifierType\":\"DOI\",\"workExternalIdentifierId\":{\"content\":\"12345\"}}],\"scope\":null}";
+        org.orcid.jaxb.model.record.WorkExternalIdentifiers wExtId1_2 = JsonUtils.<org.orcid.jaxb.model.record.WorkExternalIdentifiers> readObjectFromJsonString(jsonString1_2ExternalIdentifiers, org.orcid.jaxb.model.record.WorkExternalIdentifiers.class);
+        assertNotNull(wExtId1_2);
+        assertNotNull(wExtId1_2.getWorkExternalIdentifier());
+        assertEquals(org.orcid.jaxb.model.record.WorkExternalIdentifierType.DOI, wExtId1_2.getWorkExternalIdentifier().get(0).getWorkExternalIdentifierType());
+        assertEquals("12345", wExtId1_2.getWorkExternalIdentifier().get(0).getWorkExternalIdentifierId().getContent());
+        assertNull(wExtId1_2.getWorkExternalIdentifier().get(0).getUrl());
+        assertNull(wExtId1_2.getWorkExternalIdentifier().get(0).getRelationship());
+        
+        String jsonString1_2ExternalIdentifiersWithNewValues = "{\"workExternalIdentifier\":[{\"external-identifier-url\":\"http://orcid.org\", \"relationship\":\"SELF\", \"workExternalIdentifierType\":\"DOI\",\"workExternalIdentifierId\":{\"content\":\"12345\"}}],\"scope\":null}";
+        wExtId1_2 = JsonUtils.<org.orcid.jaxb.model.record.WorkExternalIdentifiers> readObjectFromJsonString(jsonString1_2ExternalIdentifiersWithNewValues, org.orcid.jaxb.model.record.WorkExternalIdentifiers.class);
+        assertNotNull(wExtId1_2);
+        assertNotNull(wExtId1_2.getWorkExternalIdentifier());
+        assertEquals(org.orcid.jaxb.model.record.WorkExternalIdentifierType.DOI, wExtId1_2.getWorkExternalIdentifier().get(0).getWorkExternalIdentifierType());
+        assertEquals("12345", wExtId1_2.getWorkExternalIdentifier().get(0).getWorkExternalIdentifierId().getContent());
+        assertNotNull(wExtId1_2.getWorkExternalIdentifier().get(0).getUrl());
+        assertEquals("http://orcid.org", wExtId1_2.getWorkExternalIdentifier().get(0).getUrl().getValue());
+        assertNotNull(wExtId1_2.getWorkExternalIdentifier().get(0).getRelationship());
+        assertEquals(Relationship.SELF, wExtId1_2.getWorkExternalIdentifier().get(0).getRelationship());
+        
+    }
+    
 }

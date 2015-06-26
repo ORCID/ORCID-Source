@@ -41,11 +41,8 @@ import java.io.Serializable;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType( propOrder = { "workExternalIdentifierType", "workExternalIdentifierId" })
 @XmlRootElement(name = "workExternalIdentifier")
-public class WorkExternalIdentifier implements ExternalIdentifier, Serializable {
+public class WorkExternalIdentifier extends ExternalIdentifierBase implements ExternalIdentifier, Serializable {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = 1L;
     @XmlElement(name = "external-identifier-type", namespace = "http://www.orcid.org/ns/work", required = true)
     protected WorkExternalIdentifierType workExternalIdentifierType;
@@ -103,34 +100,6 @@ public class WorkExternalIdentifier implements ExternalIdentifier, Serializable 
     public void setWorkExternalIdentifierId(WorkExternalIdentifierId value) {
         this.workExternalIdentifierId = value;
     }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof WorkExternalIdentifier)) {
-            return false;
-        }
-
-        WorkExternalIdentifier that = (WorkExternalIdentifier) o;
-
-        if (workExternalIdentifierId != null ? !workExternalIdentifierId.equals(that.workExternalIdentifierId) : that.workExternalIdentifierId != null) {
-            return false;
-        }
-        if (workExternalIdentifierType != that.workExternalIdentifierType) {
-            return false;
-        }
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = workExternalIdentifierType != null ? workExternalIdentifierType.hashCode() : 0;
-        result = 31 * result + (workExternalIdentifierId != null ? workExternalIdentifierId.hashCode() : 0);
-        return result;
-    }
     
     @Override
     public String toString() {
@@ -155,5 +124,33 @@ public class WorkExternalIdentifier implements ExternalIdentifier, Serializable 
             return false;
         
         return true;
-    }    
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + ((workExternalIdentifierId == null) ? 0 : workExternalIdentifierId.hashCode());
+        result = prime * result + ((workExternalIdentifierType == null) ? 0 : workExternalIdentifierType.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!super.equals(obj))
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        WorkExternalIdentifier other = (WorkExternalIdentifier) obj;
+        if (workExternalIdentifierId == null) {
+            if (other.workExternalIdentifierId != null)
+                return false;
+        } else if (!workExternalIdentifierId.equals(other.workExternalIdentifierId))
+            return false;
+        if (workExternalIdentifierType != other.workExternalIdentifierType)
+            return false;
+        return true;
+    }                
 }

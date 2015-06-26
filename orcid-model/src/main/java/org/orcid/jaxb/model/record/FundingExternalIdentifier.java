@@ -47,7 +47,7 @@ import org.orcid.jaxb.model.common.Url;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "type", "value", "url" })
 @XmlRootElement(name = "externalIdentifier", namespace = "http://www.orcid.org/ns/funding")
-public class FundingExternalIdentifier implements ExternalIdentifier, Serializable {
+public class FundingExternalIdentifier extends ExternalIdentifierBase implements ExternalIdentifier, Serializable {
 	private static final long serialVersionUID = 1L;	
 	@XmlElement(name="external-identifier-type", namespace = "http://www.orcid.org/ns/funding")
 	protected FundingExternalIdentifierType type;
