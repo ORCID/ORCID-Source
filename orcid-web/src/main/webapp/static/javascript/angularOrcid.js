@@ -1570,14 +1570,16 @@ orcidNgModule.filter('externalIdentifierHtml', function(){
         } else if(value != null) {
         	output = output + " " + value;
         }
-        output += '<div class="popover-pos"><div class="popover-help-container">\
+        output += '<div class="popover-pos">\
+        				<div class="popover-help-container">\
 				        	<div class="popover top" ng-class="{'+"'block'"+' : displayURLPopOver[funding.putCode.value + $index] == true}">\
-							<div class="arrow"></div>\
-							<div class="popover-content">\
-						    	<a href="'+link+'" target="_blank" class="ng-binding">'+link+'</a>\
-						    </div>\
-						  </div>\
-					</div></div>';
+								<div class="arrow"></div>\
+								<div class="popover-content">\
+							    	<a href="'+link+'" target="_blank" class="ng-binding">'+link+'</a>\
+							    </div>\
+							</div>\
+						</div>\
+				  </div>';
       
         if (length > 1 && !last) output = output + ',';
         	return output;
