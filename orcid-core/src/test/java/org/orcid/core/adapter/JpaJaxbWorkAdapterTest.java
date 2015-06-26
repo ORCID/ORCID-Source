@@ -48,6 +48,7 @@ import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.test.OrcidJUnit4ClassRunner;
+import org.orcid.utils.DateUtils;
 import org.springframework.test.context.ContextConfiguration;
 
 /**
@@ -119,6 +120,10 @@ public class JpaJaxbWorkAdapterTest {
         assertNotNull(pw);
         Work w = jpaJaxbWorkAdapter.toWork(pw);
         assertNotNull(w);
+        assertNotNull(w.getCreatedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(w.getCreatedDate().getValue()));
+        assertNotNull(w.getLastModifiedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(w.getLastModifiedDate().getValue()));
         assertEquals(org.orcid.jaxb.model.common.Iso3166Country.CR.value(), w.getCountry().getValue().value());
         assertEquals("work:citation", w.getWorkCitation().getCitation());
         assertEquals("work:description", w.getShortDescription());
@@ -177,7 +182,7 @@ public class JpaJaxbWorkAdapterTest {
     }
 
     private ProfileWorkEntity getProfileWorkEntity() {
-        Date date = new Date();
+        Date date = DateUtils.convertToDate("2015-06-05T10:15:20");
         ProfileWorkEntity result = new ProfileWorkEntity();
         result.setDateCreated(date);
         result.setLastModified(date);

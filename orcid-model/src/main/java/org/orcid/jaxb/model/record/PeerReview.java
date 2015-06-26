@@ -36,7 +36,8 @@ import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.jaxb.model.common.VisibilityType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "putCode", "path", "source", "createdDate", "lastModifiedDate", "role", "organization", "externalIdentifiers", "url", "type", "completionDate", "subject" })
+@XmlType(propOrder = { "createdDate", "lastModifiedDate", "source", "putCode", "path", "role", "organization", "externalIdentifiers", "url", "type", "completionDate",
+        "subject" })
 @XmlRootElement(name = "peer-review", namespace = "http://www.orcid.org/ns/peer-review")
 public class PeerReview implements VisibilityType, Activity, Serializable, OrganizationHolder {
     private static final long serialVersionUID = -1112309604310926743L;
@@ -265,7 +266,8 @@ public class PeerReview implements VisibilityType, Activity, Serializable, Organ
 
     /**
      * Indicates if two peer reviews are ORCID duplicated. Two peer review will
-     * be duplicated if they have the same source and share at least one external id
+     * be duplicated if they have the same source and share at least one
+     * external id
      * 
      * @return true if the two peer reviews are duplicated according to ORCID
      *         requirements
@@ -278,40 +280,44 @@ public class PeerReview implements VisibilityType, Activity, Serializable, Organ
         if (getClass() != obj.getClass())
             return false;
         PeerReview other = (PeerReview) obj;
-        
-        //Check if they have the same source
-        if(!source.equals(other.getSource())) {
+
+        // Check if they have the same source
+        if (!source.equals(other.getSource())) {
             return false;
         }
-        
-        //Check if they share at least one external identifier
+
+        // Check if they share at least one external identifier
         if (externalIdentifiers == null || externalIdentifiers.getExternalIdentifier() == null || externalIdentifiers.getExternalIdentifier().isEmpty()) {
-            if(other.getExternalIdentifiers() != null && other.getExternalIdentifiers().getExternalIdentifier() != null && !other.getExternalIdentifiers().getExternalIdentifier().isEmpty()) {
+            if (other.getExternalIdentifiers() != null && other.getExternalIdentifiers().getExternalIdentifier() != null
+                    && !other.getExternalIdentifiers().getExternalIdentifier().isEmpty()) {
                 return false;
             }
-        } else {            
-            if(other.getExternalIdentifiers() == null || other.getExternalIdentifiers().getExternalIdentifier() == null || other.getExternalIdentifiers().getExternalIdentifier().isEmpty()) {
+        } else {
+            if (other.getExternalIdentifiers() == null || other.getExternalIdentifiers().getExternalIdentifier() == null
+                    || other.getExternalIdentifiers().getExternalIdentifier().isEmpty()) {
                 return false;
             }
-            
-            if(externalIdentifiers.getExternalIdentifier().size() != other.getExternalIdentifiers().getExternalIdentifier().size()) {
+
+            if (externalIdentifiers.getExternalIdentifier().size() != other.getExternalIdentifiers().getExternalIdentifier().size()) {
                 return false;
             }
-            
-            //If the unique external identifier is empty, the comparison must return false, since two empty ext ids are not equals
-            if(externalIdentifiers.getExternalIdentifier().size() == 1) {
-                if((externalIdentifiers.getExternalIdentifier().get(0).getWorkExternalIdentifierId() == null && externalIdentifiers.getExternalIdentifier().get(0).getWorkExternalIdentifierType() == null)) {
+
+            // If the unique external identifier is empty, the comparison must
+            // return false, since two empty ext ids are not equals
+            if (externalIdentifiers.getExternalIdentifier().size() == 1) {
+                if ((externalIdentifiers.getExternalIdentifier().get(0).getWorkExternalIdentifierId() == null && externalIdentifiers.getExternalIdentifier().get(0)
+                        .getWorkExternalIdentifierType() == null)) {
                     return false;
                 }
             }
-            
-            for(WorkExternalIdentifier thisExtId : externalIdentifiers.getExternalIdentifier()) {
-                if(!other.getExternalIdentifiers().getExternalIdentifier().contains(thisExtId)) {
+
+            for (WorkExternalIdentifier thisExtId : externalIdentifiers.getExternalIdentifier()) {
+                if (!other.getExternalIdentifiers().getExternalIdentifier().contains(thisExtId)) {
                     return false;
-                }                                
-            }                        
+                }
+            }
         }
-        
+
         return true;
     }
 }
