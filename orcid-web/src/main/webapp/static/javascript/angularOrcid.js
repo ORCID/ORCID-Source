@@ -1114,13 +1114,11 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 
 orcidNgModule.factory("emailSrvc", function ($rootScope) {
     var serv = {
-            emails: null,
+            emails: null,            
             inputEmail: null,
             delEmail: null,
             primaryEmail: null,
-            addEmail: function() {
-            	console.log('Adding: ');
-            	console.log(serv.inputEmail);
+            addEmail: function() {            	
                 $.ajax({
                     url: getBaseUri() + '/account/addEmail.json',
                     data:  angular.toJson(serv.inputEmail),
@@ -1143,19 +1141,18 @@ orcidNgModule.factory("emailSrvc", function ($rootScope) {
                 });
             },
             getEmails: function(callback) {
+            	
                 $.ajax({
                     url: getBaseUri() + '/account/emails.json',
                     type: 'GET',
                     dataType: 'json',
-                    success: function(data) {
+                    success: function(data) {                    	
                         serv.emails = data;
-                        console.log('Requested: ');
-                        console.log(data);
                         for (var i in data.emails){
                             if (data.emails[i].primary){
                                 serv.primaryEmail = data.emails[i];
-                            }    
-                        }
+                            }
+                        }                                                
                         $rootScope.$apply();
                         if (callback)
                            callback(data);
@@ -8966,6 +8963,13 @@ orcidNgModule.controller('headerCtrl',['$scope', '$window', function ($scope, $w
 orcidNgModule.controller('widgetCtrl',['$scope', function ($scope){
 	$scope.hash = orcidVar.orcidIdHash.substr(0, 6);
 	$scope.showCode = false;
+	$scope.name = null;
+	$scope.orcid = null;
+	$scope.works = 0;
+	$scope.fundings = 0;
+	$scope.educations = 0;
+	$scope.employments = 0;
+	$scope.peerReviews = 0;
 	
 	$scope.widgetURL = '<script src="'+ getBaseUri() + '/static/javascript/orcid-summary-widget.js?orcid=' + orcidVar.orcidId + '&t=' + $scope.hash + '"></script><div id="orcid-summary-widget"></div>';
 	
@@ -8980,6 +8984,30 @@ orcidNgModule.controller('widgetCtrl',['$scope', function ($scope){
 	$scope.hideWidgetCode = function(){
 		$scope.showCode = false;
 	}
+	
+	$scope.showSampleWidget = function(){
+		$.ajax({
+	        url: getBaseUri() + '/public_widgets/' + orcidVar.orcidId + '/' + $scope.hash +'/info.json',
+	        type: 'GET',
+	        contentType: 'application/json;charset=UTF-8',
+	        dataType: 'json',
+	        success: function(data) {
+	        	console.log(data.orcid);
+	        
+	           
+	        	$scope.name =  data.name;
+	        	$scope.orcid =  data.orcid;
+	            $scope.works =  data.works;
+	            $scope.fundings =  data.fundings;
+	            $scope.educations =  data.educations;
+	            $scope.employments =  data.employments;
+	            $scope.peerReviews =  data.peerReviews;
+	            
+	            $scope.$apply();
+			}
+		});
+	}
+		
 	
 }]);
 
