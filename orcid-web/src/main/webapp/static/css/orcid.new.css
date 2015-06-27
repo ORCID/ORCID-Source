@@ -5707,11 +5707,41 @@ hr{
 	padding-right: 0;
 }
 
+.action-icon-align-right{
+	position: absolute;
+	top: 8px;
+	right: 5px;
+}
+
+.action-icon-inside{
+	padding-right: 25px !important; /* Overwriting global reset styling */
+}
+
+input.form-control,
+select.form-control,
+textarea.form-control,
+.form-group div>select{
+	margin-bottom: 0px; 
+}
+
+.accordion-peer-review{
+	padding: 0;
+}
+
+.settings-table .popover{
+	left: -138px;
+  	top: -178px;
+}
+
 /* Widget */
 
 .widget-container{
 	float: left;
 	width: 100%;
+}
+
+.widget-container .widget-header a{
+	word-break: normal;
 }
 
 .widget-container .widget-code-container{
@@ -5761,34 +5791,6 @@ hr{
 .widget-container .widget-code-container a{
 	float: right;
 }
-
-.action-icon-align-right{
-	position: absolute;
-	top: 8px;
-	right: 5px;
-}
-
-.action-icon-inside{
-	padding-right: 25px !important; /* Overwriting global reset styling */
-}
-
-input.form-control,
-select.form-control,
-textarea.form-control,
-.form-group div>select{
-	margin-bottom: 0px; 
-}
-
-.accordion-peer-review{
-	padding: 0;
-}
-
-.settings-table .popover{
-	left: -138px;
-  	top: -178px;
-}
-
-/* Widget */
 
 .orcid-summary-widget{
 	width: 180px;
