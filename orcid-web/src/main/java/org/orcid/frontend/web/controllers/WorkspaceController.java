@@ -432,11 +432,7 @@ public class WorkspaceController extends BaseWorkspaceController {
         if (currentProfile.getOrcidHistory().getSource() == null)
             return tpr;
         Source source = currentProfile.getOrcidHistory().getSource();
-        String sourcStr = null;
-        if (source.getSourceOrcid() != null)
-            sourcStr = source.getSourceOrcid().getPath();
-        else if (source.getSourceClientId() != null)
-            sourcStr = source.getSourceClientId().getPath();
+        String sourcStr = source.retrieveSourcePath();        
         // Check that the cache is up to date
         evictThirdPartyLinkManagerCacheIfNeeded();
         // Get list of clients

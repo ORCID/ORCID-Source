@@ -35,8 +35,8 @@ import org.orcid.core.security.visibility.filter.VisibilityFilter;
 import org.orcid.frontend.web.util.YearsList;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.jaxb.model.record.Relationship;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * @author Declan Newman (declan) Date: 22/02/2012
@@ -119,7 +119,18 @@ public class BaseWorkspaceController extends BaseController {
     	if (currentProfile == null) return null;
     	String orcid = currentProfile.getOrcidIdentifier().getPath();
     	return encryptionManager.sha256Hash(orcid);
-    };
+    }
+    
+    @ModelAttribute("relationships")
+    public Map<String, String> getRelationshipsMap() {
+        Map<String, String> relationships = new LinkedHashMap<String, String>();
+
+        for (Relationship relationship : Relationship.values()) {
+            relationships.put(relationship.value(), getMessage(buildInternationalizationKey(Relationship.class, relationship.value())));
+        }
+
+        return relationships;
+    }
     
     public String getCountryName(OrcidProfile profile) {
         return getCountryName(profile, false);
