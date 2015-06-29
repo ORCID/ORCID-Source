@@ -58,7 +58,7 @@
 	            	<div class="widget-header">
 						<a ng-click="toggleCopyWidget();showSampleWidget();"><@orcid.msg 'orcid_widget.header'/></a><div class="popover-help-container">
 	                    <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
-	                    <div id="qrcode-help" class="popover bottom">
+	                    <div id="widget-help" class="popover bottom">
 	                        <div class="arrow"></div>
 	                        <div class="popover-content">
 	                            <p><@orcid.msg 'orcid_widget.tooltip'/></p>
@@ -84,7 +84,10 @@
 	                        </div>  
                         </div>
 						<p class="widget-instructions"><@orcid.msg 'orcid_widget.copy_message'/></p>
-						<textarea id="widget-code" name="widget-code" class="form-control" ng-model="widgetURL" ng-click="inputTextAreaSelectAll($event)" readonly="readonly"></textarea>
+						<p class="widget-instructions"><@orcid.msg 'orcid_widget.for_non_developers'/></p>
+						<textarea id="widget-code-nd" name="widget-code" class="form-control widget-code" ng-model="widgetURLND" ng-click="inputTextAreaSelectAll($event)" readonly="readonly"></textarea>
+						<p class="widget-instructions"><@orcid.msg 'orcid_widget.for_developers'/></p>
+						<textarea id="widget-code" name="widget-code" class="form-control widget-code" ng-model="widgetURL" ng-click="inputTextAreaSelectAll($event)" readonly="readonly"></textarea>
 						<a ng-click="hideWidgetCode()"><@orcid.msg 'orcid_widget.hide_code'/></a>
 					</div>
 	            </div>

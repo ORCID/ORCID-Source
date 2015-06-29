@@ -5753,9 +5753,10 @@ textarea.form-control,
 	width: 100%;;
 }
 
-.widget-container #widget-code{
-	height: 170px;
+.widget-container .widget-code{
+	height: 100px;
 	cursor: text;
+	margin-bottom: 15px;
 }
 
 .widget-container .widget-code-icon{
@@ -5793,7 +5794,7 @@ textarea.form-control,
 }
 
 .orcid-summary-widget{
-	width: 180px;
+	width: 195px;
 	height: auto;
 	border: 1px solid #939598;
 	padding: 10px;
@@ -5801,7 +5802,7 @@ textarea.form-control,
 	color: #939598;
 	background: #FFF;
 	float: left;
-	margin: 5px 20px 15px;
+	margin: 5px 10px 15px;
 }
 
 .orcid-summary-widget a{
@@ -5856,6 +5857,14 @@ textarea.form-control,
 .orcid-summary-widget .orcid-widget-button:hover{
 	color: #FFF;
 	background: #a6ce39;
+}
+
+.widget-container .popover-help-container .popover{
+	left: -30px;
+}
+
+.widget-container .popover.bottom .arrow{
+	left: 41px;	
 }
 
 /* Media Queries */
