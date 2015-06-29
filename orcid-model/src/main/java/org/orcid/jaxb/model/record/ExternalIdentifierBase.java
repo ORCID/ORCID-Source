@@ -8,7 +8,7 @@ import javax.xml.bind.annotation.XmlType;
 import org.orcid.jaxb.model.common.Url;
 
 
-@XmlAccessorType(XmlAccessType.PROPERTY)
+@XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "url", "relationship" })
 public class ExternalIdentifierBase {
     @XmlElement(name="relationship", namespace = "http://www.orcid.org/ns/common")

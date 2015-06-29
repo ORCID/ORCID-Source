@@ -97,8 +97,9 @@ import org.orcid.jaxb.model.message.SubmissionDate;
 import org.orcid.jaxb.model.message.TranslatedTitle;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkContributors;
-import org.orcid.jaxb.model.message.WorkExternalIdentifiers;
 import org.orcid.jaxb.model.message.WorkTitle;
+import org.orcid.jaxb.model.record.Relationship;
+import org.orcid.jaxb.model.record.WorkExternalIdentifierType;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.OrgAffiliationRelationDao;
@@ -294,7 +295,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             workEntity.setContributorsJson(getWorkContributorsJson(orcidWork.getWorkContributors()));
             workEntity.setDescription(orcidWork.getShortDescription() != null ? orcidWork.getShortDescription() : null);
             // New way of doing work external ids
-            workEntity.setExternalIdentifiersJson(getWorkExternalIdsJson(orcidWork.getWorkExternalIdentifiers()));
+            workEntity.setExternalIdentifiersJson(getWorkExternalIdsJson(orcidWork));
             workEntity.setPublicationDate(getWorkPublicationDate(orcidWork));
             WorkTitle workTitle = orcidWork.getWorkTitle();
             if (workTitle != null) {
@@ -352,13 +353,39 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         return JsonUtils.convertToJsonString(fundingContributors);
     }
 
-    private String getWorkExternalIdsJson(WorkExternalIdentifiers workExternalIdentifiers) {
-        if (workExternalIdentifiers == null) {
+    private String getWorkExternalIdsJson(OrcidWork work) {
+        if (work == null || work.getWorkExternalIdentifiers() == null) {
             return null;
         }
-        return JsonUtils.convertToJsonString(workExternalIdentifiers);
+        //Transform the external id v1.2 into an external id v2.0
+        org.orcid.jaxb.model.record.WorkExternalIdentifiers recordExternalIdentifiers = org.orcid.jaxb.model.record.WorkExternalIdentifiers.valueOf(work.getWorkExternalIdentifiers());
+        
+        /**
+         * Transform the work external identifiers according to the rules in: 
+         * https://trello.com/c/pqboi7EJ/1368-activity-identifiers-add-self-or-part-of
+         * */
+        for(org.orcid.jaxb.model.record.WorkExternalIdentifier extId : recordExternalIdentifiers.getExternalIdentifier()) {
+            if(WorkExternalIdentifierType.ISSN.equals(extId.getWorkExternalIdentifierType())) {
+                if(!work.getWorkType().equals(org.orcid.jaxb.model.message.WorkType.BOOK)){
+                    extId.setRelationship(Relationship.PART_OF);
+                } else {
+                    extId.setRelationship(Relationship.SELF);
+                }                
+            } else if(WorkExternalIdentifierType.ISBN.equals(extId.getWorkExternalIdentifierType())) {
+                if(work.getWorkType().equals(org.orcid.jaxb.model.message.WorkType.BOOK_CHAPTER)) {
+                    extId.setRelationship(Relationship.PART_OF);
+                } else {
+                    extId.setRelationship(Relationship.SELF);
+                }
+            } else {
+                extId.setRelationship(Relationship.SELF);
+            }
+        }
+        
+        return JsonUtils.convertToJsonString(recordExternalIdentifiers);
     }
-
+    
+    
     private void setFundings(ProfileEntity profileEntity, FundingList orcidFundings) {
         SortedSet<ProfileFundingEntity> existingProfileFundingEntities = profileEntity.getProfileFunding();
         if (existingProfileFundingEntities == null) {

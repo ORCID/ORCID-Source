@@ -56,7 +56,7 @@ import java.io.Serializable;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType( propOrder = { "workExternalIdentifierType", "workExternalIdentifierId" })
 @XmlRootElement(name = "work-external-identifier")
-@JsonIgnoreProperties({ "external-identifier-url", "relationship" })
+@JsonIgnoreProperties({ "url", "relationship" })
 public class WorkExternalIdentifier implements Serializable {
 
     /**

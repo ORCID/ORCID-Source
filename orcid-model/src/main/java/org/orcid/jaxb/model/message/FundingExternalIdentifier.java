@@ -31,6 +31,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 /**
  * <p>
  * Java class for anonymous complex type.
@@ -59,6 +61,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "type", "value", "url" })
 @XmlRootElement(name = "funding-external-identifier")
+@JsonIgnoreProperties({ "relationship" })
 public class FundingExternalIdentifier implements Serializable {
 	private static final long serialVersionUID = 1L;	
 	@XmlElement(name="funding-external-identifier-type")
