@@ -361,7 +361,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         org.orcid.jaxb.model.record.WorkExternalIdentifiers recordExternalIdentifiers = org.orcid.jaxb.model.record.WorkExternalIdentifiers.valueOf(work.getWorkExternalIdentifiers());
         
         /**
-         * Transform the work external identifiers according to the rules in: 
+         * Transform the external identifiers according to the rules in: 
          * https://trello.com/c/pqboi7EJ/1368-activity-identifiers-add-self-or-part-of
          * */
         for(org.orcid.jaxb.model.record.WorkExternalIdentifier extId : recordExternalIdentifiers.getExternalIdentifier()) {
@@ -1062,8 +1062,16 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             return null;
         }
         //Transform the message external identifiers to core external identifiers
-        FundingExternalIdentifiers fei = FundingExternalIdentifiers.fromMessagePojo(fundingExternalIdentifiers);
-        return JsonUtils.convertToJsonString(fei);
+        FundingExternalIdentifiers feis = FundingExternalIdentifiers.fromMessagePojo(fundingExternalIdentifiers);
+        if(feis != null && !feis.getFundingExternalIdentifier().isEmpty()) {
+            //For all external identifiers, if the relationship is empty set it to self by default
+            for(org.orcid.pojo.FundingExternalIdentifier fei : feis.getFundingExternalIdentifier()) {
+                if(fei.getRelationship() == null) {
+                    fei.setRelationship(Relationship.SELF);
+                }
+            }
+        }
+        return JsonUtils.convertToJsonString(feis);
     }
     
 

@@ -27,6 +27,7 @@ import java.io.Serializable;
 
 import org.orcid.jaxb.model.message.FundingExternalIdentifierType;
 import org.orcid.jaxb.model.message.Url;
+import org.orcid.jaxb.model.record.Relationship;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 
 public class FundingExternalIdentifier implements Serializable {
@@ -34,6 +35,7 @@ public class FundingExternalIdentifier implements Serializable {
     protected FundingExternalIdentifierType type;
     protected String value;
     protected Url url;
+    protected Relationship relationship;
 
     public FundingExternalIdentifierType getType() {
         return type;
@@ -58,6 +60,14 @@ public class FundingExternalIdentifier implements Serializable {
     public void setUrl(Url url) {
         this.url = url;
     }
+    
+    public Relationship getRelationship() {
+        return relationship;
+    }
+
+    public void setRelationship(Relationship relationship) {
+        this.relationship = relationship;
+    }
 
     @Override
     public int hashCode() {
@@ -66,6 +76,7 @@ public class FundingExternalIdentifier implements Serializable {
         result = prime * result + ((type == null) ? 0 : type.hashCode());
         result = prime * result + ((url == null) ? 0 : url.hashCode());
         result = prime * result + ((value == null) ? 0 : value.hashCode());
+        result = prime * result + ((relationship == null) ? 0 : relationship.hashCode());
         return result;
     }
 
@@ -92,7 +103,12 @@ public class FundingExternalIdentifier implements Serializable {
             if (other.value != null)
                 return false;
         } else if (!value.equals(other.value))
-            return false;
+            return false;                
+        if (relationship == null) {
+            if (other.relationship != null)
+                return false;
+        } else if (!relationship.equals(other.relationship))
+            return false;                
         return true;
     }
 
@@ -117,36 +133,51 @@ public class FundingExternalIdentifier implements Serializable {
             recordPojo.setUrl(url);
         }
 
-        if (!PojoUtil.isEmpty(this.getValue()))
+        if (!PojoUtil.isEmpty(this.getValue())) {
             recordPojo.setValue(this.getValue());
+        }
+        
+        if(this.getRelationship() != null) {
+            recordPojo.setRelationship(this.getRelationship());
+        }
 
         return recordPojo;
     }
 
     public static FundingExternalIdentifier fromMessagePojo(org.orcid.jaxb.model.message.FundingExternalIdentifier messagePojo) {
         FundingExternalIdentifier result = new FundingExternalIdentifier();
-        if (messagePojo.getType() != null)
+        if (messagePojo.getType() != null) {
             result.setType(FundingExternalIdentifierType.fromValue(messagePojo.getType().value()));
+        }
 
-        if (messagePojo.getUrl() != null)
+        if (messagePojo.getUrl() != null) {
             result.setUrl(new Url(messagePojo.getUrl().getValue()));
+        }
 
-        if (!PojoUtil.isEmpty(messagePojo.getValue()))
+        if (!PojoUtil.isEmpty(messagePojo.getValue())) {
             result.setValue(messagePojo.getValue());
+        }
 
         return result;
     }
 
     public static FundingExternalIdentifier fromRecordPojo(org.orcid.jaxb.model.record.FundingExternalIdentifier recordPojo) {
         FundingExternalIdentifier result = new FundingExternalIdentifier();
-        if (recordPojo.getType() != null)
+        if (recordPojo.getType() != null) {
             result.setType(FundingExternalIdentifierType.fromValue(recordPojo.getType().value()));
-
-        if (recordPojo.getUrl() != null)
+        }
+        
+        if (recordPojo.getUrl() != null) {
             result.setUrl(new Url(recordPojo.getUrl().getValue()));
+        }
 
-        if (!PojoUtil.isEmpty(recordPojo.getValue()))
+        if (!PojoUtil.isEmpty(recordPojo.getValue())) {
             result.setValue(recordPojo.getValue());
+        }
+        
+        if(recordPojo.getRelationship() != null) {
+            result.setRelationship(recordPojo.getRelationship());
+        }
         return result;
     }
 }
