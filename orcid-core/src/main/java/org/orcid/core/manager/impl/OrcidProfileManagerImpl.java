@@ -21,7 +21,6 @@ import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.text.ParsePosition;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -50,6 +49,7 @@ import net.sf.ehcache.Element;
 
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.adapter.Jaxb2JpaAdapter;
+import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.adapter.JpaJaxbEntityAdapter;
 import org.orcid.core.constants.DefaultPreferences;
 import org.orcid.core.locale.LocaleManager;
@@ -77,8 +77,6 @@ import org.orcid.jaxb.model.message.Contributor;
 import org.orcid.jaxb.model.message.ContributorOrcid;
 import org.orcid.jaxb.model.message.CreditName;
 import org.orcid.jaxb.model.message.DeactivationDate;
-import org.orcid.jaxb.model.message.Delegation;
-import org.orcid.jaxb.model.message.DelegationDetails;
 import org.orcid.jaxb.model.message.DeveloperToolsEnabled;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.EncryptedPassword;
@@ -89,12 +87,12 @@ import org.orcid.jaxb.model.message.FamilyName;
 import org.orcid.jaxb.model.message.Funding;
 import org.orcid.jaxb.model.message.FundingList;
 import org.orcid.jaxb.model.message.GivenNames;
-import org.orcid.jaxb.model.message.GivenPermissionTo;
 import org.orcid.jaxb.model.message.LastModifiedDate;
 import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.OrcidBio;
 import org.orcid.jaxb.model.message.OrcidDeprecated;
 import org.orcid.jaxb.model.message.OrcidHistory;
+import org.orcid.jaxb.model.message.OrcidIdentifier;
 import org.orcid.jaxb.model.message.OrcidInternal;
 import org.orcid.jaxb.model.message.OrcidPreferences;
 import org.orcid.jaxb.model.message.OrcidProfile;
@@ -236,6 +234,9 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
 
     @Resource
     private OrgManager orgManager;
+    
+    @Resource
+    private Jpa2JaxbAdapter jpaJaxbAdapter;
 
     @Value("${org.orcid.core.works.compare.useScopusWay:false}")
     private boolean compareWorksUsingScopusWay;
@@ -626,8 +627,8 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     public OrcidProfile retrieveClaimedOrcidProfile(String orcid) {
         OrcidProfile orcidProfile = retrieveOrcidProfile(orcid);
         if (orcidProfile != null) {
-            if (Boolean.TRUE.equals(orcidProfile.getOrcidHistory().getClaimed().isValue()) || orcidProfile.isDeactivated() || isOldEnough(orcidProfile)
-                    || isBeingAccessedByCreator(orcidProfile) || haveSystemRole()) {
+            if (Boolean.TRUE.equals(orcidProfile.getOrcidHistory().getClaimed().isValue()) || orcidProfile.isDeactivated()
+                    || isBeingAccessedByCreator(orcidProfile) || haveSystemRole() || isOldEnough(orcidProfile)) {
                 return orcidProfile;
             } else {
                 if (orcidProfile.getOrcidDeprecated() != null && orcidProfile.getOrcidDeprecated().getPrimaryRecord() != null)
@@ -669,8 +670,11 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
 
     private OrcidProfile createReservedForClaimOrcidProfile(String orcid, OrcidDeprecated deprecatedInfo, LastModifiedDate lastModifiedDate) {
         OrcidProfile op = new OrcidProfile();
-        op.setOrcidIdentifier(orcid);
-
+        if(jpaJaxbAdapter != null) {
+        	 op.setOrcidIdentifier(new OrcidIdentifier(jpaJaxbAdapter.getOrcidIdBase(orcid)));
+        } else {
+        	op.setOrcidIdentifier(orcid);
+        }
         if (deprecatedInfo != null)
             op.setOrcidDeprecated(deprecatedInfo);
 
@@ -1968,7 +1972,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
             LOG.info("Got batch of {} unclaimed profiles to flag for indexing", orcidsToFlag.size());
             for (String orcid : orcidsToFlag) {
                 LOG.info("About to flag unclaimed profile for indexing: {}", orcid);
-                profileDao.updateIndexingStatus(orcid, IndexingStatus.PENDING);
+                profileDao.updateLastModifiedDateAndIndexingStatus(orcid);
             }
         } while (!orcidsToFlag.isEmpty());
     }
