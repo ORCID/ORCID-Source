@@ -126,7 +126,7 @@ public class BaseWorkspaceController extends BaseController {
         Map<String, String> relationships = new LinkedHashMap<String, String>();
 
         for (Relationship relationship : Relationship.values()) {
-            relationships.put(relationship.value(), getMessage(buildInternationalizationKey(Relationship.class, relationship.value())));
+            relationships.put(relationship.value(), getMessage(buildInternationalizationKey(Relationship.class, relationship.name())));
         }
 
         return relationships;

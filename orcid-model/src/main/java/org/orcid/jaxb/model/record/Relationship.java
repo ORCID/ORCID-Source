@@ -32,10 +32,10 @@ import java.io.Serializable;
 @XmlType(namespace = "http://www.orcid.org/ns/common")
 @XmlEnum
 public enum Relationship implements Serializable {
-    @XmlEnumValue("self")
-    SELF("self"), 
     @XmlEnumValue("part-of")
-    PART_OF("part-of");
+    PART_OF("part-of"),
+    @XmlEnumValue("self")
+    SELF("self"); 
     private final String value;
 
     Relationship(String v) {
