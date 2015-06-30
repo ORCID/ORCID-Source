@@ -25,6 +25,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.adapter.JpaJaxbWorkAdapter;
 import org.orcid.core.exception.ActivityIdentifierValidationException;
 import org.orcid.core.exception.ActivityTitleValidationException;
+import org.orcid.core.exception.InvalidPutCodeException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.ProfileWorkManager;
@@ -207,6 +208,10 @@ public class ProfileWorkManagerImpl implements ProfileWorkManager {
         if (work.getWorkExternalIdentifiers() == null || work.getWorkExternalIdentifiers().getWorkExternalIdentifier() == null
                 || work.getWorkExternalIdentifiers().getWorkExternalIdentifier().isEmpty()) {
         	throw new ActivityIdentifierValidationException();
+        }
+        
+        if (work.getPutCode() != null) {
+        	throw new InvalidPutCodeException();
         }
 	}
     
