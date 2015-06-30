@@ -250,33 +250,24 @@
 								<div ng-repeat='error in workExternalIdentifier.workExternalIdentifierId.errors' ng-bind-html="error"></div>
 							</span>
 						</div>						
-					</div>					
+					</div>		
+
+
+			
 					<div class="form-group">
 						<label><@orcid.msg 'common.url'/></label>
 						<div class="relative">
-							<input name="currentWorkExternalIdUrl" type="text" class="form-control action-icon-inside"  ng-model="workExternalIdentifier.url.value" placeholder="<@orcid.msg 'common.url'/>"  ng-change="serverValidate('works/work/workExternalIdentifiersValidate.json')" ng-model-onblur/>
+							<input name="currentWorkExternalIdUrl" type="text" class="form-control action-icon-inside"  ng-model="workExternalIdentifier.url.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_URL'/>"  ng-change="serverValidate('works/work/workExternalIdentifiersValidate.json')" ng-model-onblur/>
 							<span class="orcid-error" ng-show="workExternalIdentifier.url.errors.length > 0">
 								<div ng-repeat='error in workExternalIdentifier.url.errors' ng-bind-html="error"></div>
 							</span>
 						</div>
 					</div>					
-					
-					
-					
-					
-					
-					
-					
-					
 					<div class="bottomBuffer">
 						<label><@orcid.msg 'common.ext_id.relationship'/></label>
 						<div class="relative">
-							<select id="relationshipType" name="relationshipType" class="form-control" ng-model="workExternalIdentifier.relationship.value" ng-change="serverValidate('works/work/workExternalIdentifiersValidate.json')">																						 
-								<option value=""><@orcid.msg 'org.orcid.jaxb.model.record.Relationship.EMPTY' /></option>
-								<#list relationships?keys as key>
-									<option value="${relationships[key]}">${key}</option>
-								</#list>
-							</select>
+							<input type="radio" name="relationship" ng-model="workExternalIdentifier.relationship.value" value="self"> <@orcid.msg "common.self" />
+							<input type="radio" name="relationship" ng-model="workExternalIdentifier.relationship.value" value="part-of"> <@orcid.msg "common.part_of" />							
 							<a href ng-click="deleteExternalIdentifier(workExternalIdentifier)" class="glyphicon glyphicon-trash grey action-icon-align-right" ng-hide="$first && editWork.workExternalIdentifiers.length == 1"></a>							
 						</div>
 						<div ng-show="$last" class="add-item-link">			

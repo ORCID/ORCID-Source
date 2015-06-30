@@ -52,6 +52,7 @@ import org.orcid.jaxb.model.message.WorkCategory;
 import org.orcid.jaxb.model.message.WorkContributors;
 import org.orcid.jaxb.model.message.WorkExternalIdentifiers;
 import org.orcid.jaxb.model.message.WorkType;
+import org.orcid.jaxb.model.record.Relationship;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
 import org.orcid.persistence.jpa.entities.PublicationDateEntity;
@@ -145,9 +146,7 @@ public class WorksController extends BaseWorkspaceController {
             currentProfile.getOrcidActivities().setOrcidWorks(works);
         }
         return workIdLs;
-    }
-
-    
+    }    
     
     /**
      * List works associated with a profile
@@ -273,14 +272,15 @@ public class WorksController extends BaseWorkspaceController {
         initializePublicationDate(w);
         
         if(w.getWorkExternalIdentifiers() == null || w.getWorkExternalIdentifiers().isEmpty()) {
-            WorkExternalIdentifier wdi = new WorkExternalIdentifier();
+            WorkExternalIdentifier wei = new WorkExternalIdentifier();
             Text wdiT = new Text();
             Text wdiType = new Text();
             wdiType.setValue(new String());
-            wdi.setWorkExternalIdentifierId(wdiT);
-            wdi.setWorkExternalIdentifierType(wdiType);
+            wei.setWorkExternalIdentifierId(wdiT);
+            wei.setWorkExternalIdentifierType(wdiType);
+            wei.setRelationship(Text.valueOf(Relationship.PART_OF.value()));
             List<WorkExternalIdentifier> wdiL = new ArrayList<WorkExternalIdentifier>();
-            wdiL.add(wdi);
+            wdiL.add(wei);
             w.setWorkExternalIdentifiers(wdiL);
         }
         
@@ -317,7 +317,7 @@ public class WorksController extends BaseWorkspaceController {
 
         if(PojoUtil.isEmpty(w.getCountryName())) {
             w.setCountryName(new Text());
-        }                
+        }            
     }
     
     private void initializePublicationDate(Work w) {
