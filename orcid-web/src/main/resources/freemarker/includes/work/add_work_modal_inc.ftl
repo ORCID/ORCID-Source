@@ -265,9 +265,16 @@
 					</div>					
 					<div class="bottomBuffer">
 						<label><@orcid.msg 'common.ext_id.relationship'/></label>
-						<div class="relative">
-							<input type="radio" name="relationship" ng-model="workExternalIdentifier.relationship.value" value="self"> <@orcid.msg "common.self" />
-							<input type="radio" name="relationship" ng-model="workExternalIdentifier.relationship.value" value="part-of"> <@orcid.msg "common.part_of" />							
+						<div class="relative">							
+  							<label class="checkbox-inline">
+    							<input type="radio" name="relationship{{$index}}" ng-model="workExternalIdentifier.relationship.value" value="self">
+    							<@orcid.msg "common.self" />
+  							</label>
+																					
+  							<label class="checkbox-inline">
+    							<input type="radio" name="relationship{{$index}}" ng-model="workExternalIdentifier.relationship.value" value="part-of">
+    							<@orcid.msg "common.part_of" />
+  							</label>							
 							<a href ng-click="deleteExternalIdentifier(workExternalIdentifier)" class="glyphicon glyphicon-trash grey action-icon-align-right" ng-hide="$first && editWork.workExternalIdentifiers.length == 1"></a>							
 						</div>
 						<div ng-show="$last" class="add-item-link">			
