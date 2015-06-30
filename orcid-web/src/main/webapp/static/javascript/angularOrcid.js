@@ -8580,6 +8580,23 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
     
 }]);
 
+orcidNgModule.controller('EmailsController',['$scope', 'emailSrvc',function ($scope, emailSrvc){
+	$scope.emailSrvc = emailSrvc;
+	$scope.showEdit = false;
+
+	emailSrvc.getEmails();
+	
+	$scope.openEdit = function(){
+		$scope.showEdit = true;
+	}
+	
+	$scope.close = function(){
+		$scope.showEdit = false;
+	}
+	
+}]);
+
+
 
 /*Angular Multi-selectbox*/
 angular.module('ui.multiselect', [])
