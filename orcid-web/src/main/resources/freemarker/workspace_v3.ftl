@@ -298,7 +298,7 @@
 	       	<!-- Emails  -->
 	       	<div ng-controller="EmailsController" class="workspace-section">
 	        	<div class="workspace-section-header">
-	        	   <span class="workspace-section-title">Emails</span>
+	        	   <span class="workspace-section-title"><@orcid.msg 'manage.emails'/></span>
 	        	   <span ng-hide="showEdit == true">
 	        	      	<span class="glyphicon glyphicon-pencil edit-websites edit-option pull-right" ng-click="openEdit()"></span>
 	        	   </span>
@@ -316,7 +316,7 @@
 	        	   		</span>
 	        	   </div>
 	        	   <div ng-show="showEdit == true" ng-cloak>
-	        	   		<a href="account">Edit more email settings</a>
+	        	   		<a href="account"><@orcid.msg 'workspace.EditMoreEmailSettings'/></a>
 	        	   </div>
 	        	   <div ng-show="showEdit == true" ng-cloak>
 	        	   		<a class="cancel-option pull-right" ng-click="close()"><@spring.message "freemarker.btncancel"/></a>
