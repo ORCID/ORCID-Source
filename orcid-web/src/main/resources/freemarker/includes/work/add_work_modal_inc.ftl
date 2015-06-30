@@ -251,9 +251,6 @@
 							</span>
 						</div>						
 					</div>		
-
-
-			
 					<div class="form-group">
 						<label><@orcid.msg 'common.url'/></label>
 						<div class="relative">
@@ -281,19 +278,6 @@
 							<span><a href ng-click="addExternalIdentifier()"><i class="glyphicon glyphicon-plus-sign"></i> <@orcid.msg 'manual_work_form_contents.add_external_identifier' /></a></span>
 						</div>
 					</div>
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
 				</div>
 				<div ng-show="editWork.workExternalIdentifiers == null || editWork.workExternalIdentifiers.length == 0">
 					<div class="add-item-link">
