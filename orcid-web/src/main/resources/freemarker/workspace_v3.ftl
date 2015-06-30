@@ -295,6 +295,36 @@
         	   </div>
 	       	</div>
 	       	
+	       	<!-- Emails  -->
+	       	<div ng-controller="EmailsController" class="workspace-section">
+	        	<div class="workspace-section-header">
+	        	   <span class="workspace-section-title">Emails</span>
+	        	   <span ng-hide="showEdit == true">
+	        	      	<span class="glyphicon glyphicon-pencil edit-websites edit-option pull-right" ng-click="openEdit()"></span>
+	        	   </span>
+	        	   <div ng-repeat="email in emailSrvc.emails.emails" class="mobile-box emails-box">
+	        	   		<span ng-bind="email.value"></span>
+	        	   		<span class="pull-right" ng-show="showEdit == true" ng-cloak>
+	        	   		<@orcid.privacyToggle3
+                            angularModel="email.visibility"
+							questionClick="toggleClickPrivacyHelp(email.value)"
+							clickedClassCheck="{'popover-help-container-show':privacyHelp[email.value]==true}" 
+							publicClick="emailSrvc.setPrivacy(email, 'PUBLIC', $event)" 
+		                  	limitedClick="emailSrvc.setPrivacy(email, 'LIMITED', $event)" 
+		                  	privateClick="emailSrvc.setPrivacy(email, 'PRIVATE', $event)" 
+		                  	elementId="email.value" />
+	        	   		</span>
+	        	   </div>
+	        	   <div ng-show="showEdit == true" ng-cloak>
+	        	   		<a href="account">Edit more email settings</a>
+	        	   </div>
+	        	   <div ng-show="showEdit == true" ng-cloak>
+	        	   		<a class="cancel-option pull-right" ng-click="close()"><@spring.message "freemarker.btncancel"/></a>
+	        	   </div>
+	        	   
+	        	</div>
+	       	</div>
+	       	
 	       	<!--  Pending to apply style -->
        		<div ng-controller="ExternalIdentifierCtrl" ng-hide="!externalIdentifiersPojo.externalIdentifiers.length" ng-cloak  class="workspace-section">
        			<div class="workspace-section-header">	       			

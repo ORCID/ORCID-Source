@@ -5856,6 +5856,11 @@ textarea.form-control,
 	background: #a6ce39;
 }
 
+.emails-box{
+	width: 100%;
+	height: 36px;
+}
+
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
 
