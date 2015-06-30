@@ -8959,7 +8959,9 @@ orcidNgModule.controller('widgetCtrl',['$scope', function ($scope){
 	$scope.peerReviews = 0;
 	
 	$scope.widgetURL = '<script src="'+ getBaseUri() + '/static/javascript/orcid-summary-widget.js?orcid=' + orcidVar.orcidId + '&t=' + $scope.hash + '"></script><div id="orcid-summary-widget"></div>';
-	
+	$scope.widgetURLND = '<div style="width:100%;text-align:center">\
+	    					  <iframe src="'+ getBaseUri() + '/static/html/widget.html?orcid=' + orcidVar.orcidId + '&t=' + $scope.hash + '" frameborder="0" height="310" width="210px" vspace="0" hspace="0" marginheight="5" marginwidth="5" scrolling="auto" allowtransparency="true"></iframe>\
+	    				  </div>';
 	$scope.inputTextAreaSelectAll = function($event){
     	$event.target.select();
     }

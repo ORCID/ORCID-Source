@@ -225,6 +225,8 @@
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/verify(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/disco(\?.*)?"
+            access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/oauth/confirm_access(\?.*)?"
 			access="DENY_OAUTH,ROLE_USER" />
 		<sec:intercept-url pattern="/oauth-signup(\?.*)?"
