@@ -3279,9 +3279,9 @@ p.orcid-id-container{
 	float: left;	
 }
 
-.public-profile .oid{	
+.oid{	
 	border-bottom: 1px solid #c9c9c9;
-	margin-bottom: 5px;
+	margin-bottom: 10px;
 	float: left;
 	width: 100%;
 }
