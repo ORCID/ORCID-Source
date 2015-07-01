@@ -254,7 +254,7 @@
 					<div class="form-group">
 						<label><@orcid.msg 'common.url'/></label>
 						<div class="relative">
-							<input name="currentWorkExternalIdUrl" type="text" class="form-control action-icon-inside"  ng-model="workExternalIdentifier.url.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_URL'/>"  ng-change="serverValidate('works/work/workExternalIdentifiersValidate.json')" ng-model-onblur/>
+							<input name="currentWorkExternalIdUrl" type="text" class="form-control action-icon-inside"  ng-model="workExternalIdentifier.url.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_URL'/>" ng-model-onblur/>
 							<span class="orcid-error" ng-show="workExternalIdentifier.url.errors.length > 0">
 								<div ng-repeat='error in workExternalIdentifier.url.errors' ng-bind-html="error"></div>
 							</span>
