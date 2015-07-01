@@ -1929,6 +1929,10 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input{
 	font-weight: normal;
 }
 
+.italic {
+	font-style: italic;
+}
+
 .grey {
 	color: #949599;
 }
