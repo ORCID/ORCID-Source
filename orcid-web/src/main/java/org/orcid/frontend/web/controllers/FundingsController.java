@@ -246,7 +246,8 @@ public class FundingsController extends BaseWorkspaceController {
                     //XXX: Enhance the external identifiers with the new relationship field
                     ProfileFundingEntity profileFunding = profileFundingManager.getProfileFundingEntity(funding.getPutCode());
                     if(!PojoUtil.isEmpty(profileFunding.getExternalIdentifiersJson())) {
-                        org.orcid.jaxb.model.record.FundingExternalIdentifiers fundingExternalIdentifiers = JsonUtils.readObjectFromJsonString(profileFunding.getExternalIdentifiersJson(), org.orcid.jaxb.model.record.FundingExternalIdentifiers.class);                    
+                        FundingExternalIdentifiers extIdsPojo = JsonUtils.readObjectFromJsonString(profileFunding.getExternalIdentifiersJson(), FundingExternalIdentifiers.class);
+                        org.orcid.jaxb.model.record.FundingExternalIdentifiers fundingExternalIdentifiers = extIdsPojo.toRecordPojo();
                         enhanceExternalIdentifiers(form, fundingExternalIdentifiers);
                     }
                     
@@ -321,7 +322,8 @@ public class FundingsController extends BaseWorkspaceController {
         FundingForm form = FundingForm.valueOf(funding);
         //XXX: Enhance the external identifiers with the new relationship field
         if(!PojoUtil.isEmpty(profileFunding.getExternalIdentifiersJson())) {
-            org.orcid.jaxb.model.record.FundingExternalIdentifiers fundingExternalIdentifiers = JsonUtils.readObjectFromJsonString(profileFunding.getExternalIdentifiersJson(), org.orcid.jaxb.model.record.FundingExternalIdentifiers.class);                    
+            FundingExternalIdentifiers extIdsPojo = JsonUtils.readObjectFromJsonString(profileFunding.getExternalIdentifiersJson(), FundingExternalIdentifiers.class);
+            org.orcid.jaxb.model.record.FundingExternalIdentifiers fundingExternalIdentifiers = extIdsPojo.toRecordPojo();
             enhanceExternalIdentifiers(form, fundingExternalIdentifiers);
         }        
         if (funding.getType() != null) {
