@@ -136,11 +136,11 @@
                                          <div class="popover-help-container">
                                              <span class="glyphicons circle_exclamation_mark" ng-mouseleave="hideTooltip('vis-issue')" ng-mouseenter="showTooltip('vis-issue')"></span>
                                              <div class="popover vis-popover bottom" ng-show="showElement['vis-issue'] == true">
-                                             <div class="arrow"></div>
-                                                 <div class="popover-content">
-                                               <@orcid.msg 'groups.common.data_inconsistency' />
-                                             </div>
-                                         </div>
+	                                             <div class="arrow"></div>
+	                                             <div class="popover-content">
+	                                             	<@orcid.msg 'groups.common.data_inconsistency' />
+	                                             </div>
+	                                         </div>
                                         </div>
                                      </div>
                                 </#if>
@@ -159,7 +159,7 @@
                                  </li>
                                  
                                  <li ng-show="group.getActive().url.value" class="url-popover">
-                                 	<@orcid.msg 'manual_funding_form_contents.label_url'/>: <a href="{{group.getActive().url.value | urlWithHttp}}" class="truncate-anchor" ng-bind="group.getActive().url.value" target="_blank" ng-mouseenter='showURLPopOver(funding.putCode.value + "-alternate")' ng-mouseleave='hideURLPopOver(funding.putCode.value + "-alternate")'></a>
+                                 	<@orcid.msg 'manual_funding_form_contents.label_url'/>: <a href="{{group.getActive().url.value | urlWithHttp}}" ng-class="{'truncate-anchor' : moreInfo[group.groupId] == false || moreInfo[group.groupId] == null}" ng-bind="group.getActive().url.value" target="_blank" ng-mouseenter='showURLPopOver(funding.putCode.value + "-alternate")' ng-mouseleave='hideURLPopOver(funding.putCode.value + "-alternate")'></a>                                 		
 	                                <div class="popover-pos">
 		                                <div class="popover-help-container">
 									       <div class="popover top" ng-class="{'block' : displayURLPopOver[funding.putCode.value + '-alternate'] == true}">

@@ -1556,12 +1556,15 @@ orcidNgModule.filter('externalIdentifierHtml', function(){
         	} else {
         		if(type != null) {
         			if(type.value == 'grant') {
-        				output = om.get('funding.add.external_id.url.label.grant') + ": <a href='" + link + "' class='truncate-anchor' target='_blank' ng-mouseenter='showURLPopOver(funding.putCode.value + $index)' ng-mouseleave='hideURLPopOver(funding.putCode.value + $index)'>" + link + "</a>";
+        				output = om.get('funding.add.external_id.url.label.grant') + '": <a href="' + link + " ng-class=\"{'truncate-anchor':angular.equals(moreInfo[group.groupId],false)||angular.equals(moreInfo[group.groupId],null)}\" target=\"_blank\" ng-mouseenter=\"showURLPopOver(funding.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(funding.putCode.value + $index)\">" + link + "</a>";
         			} else if(type.value == 'contract') {
-        				output = om.get('funding.add.external_id.url.label.contract') + ": <a href='" + link + "' class='truncate-anchor' target='_blank' ng-mouseenter='showURLPopOver(funding.putCode.value + $index)' ng-mouseleave='hideURLPopOver(funding.putCode.value + $index)'>" + link + "</a>";
+        				output = om.get('funding.add.external_id.url.label.contract') + '": <a href="' + link + " ng-class=\"{'truncate-anchor':angular.equals(moreInfo[group.groupId], false)||angular.equals(moreInfo[group.groupId],null)}\" target=\"_blank\" ng-mouseenter=\"showURLPopOver(funding.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(funding.putCode.value + $index)\">" + link + "</a>";
         			} else {
-        				output = om.get('funding.add.external_id.url.label.award') + ": <a href='" + link + "' class='truncate-anchor' target='_blank' ng-mouseenter='showURLPopOver(funding.putCode.value + $index)' ng-mouseleave='hideURLPopOver(funding.putCode.value + $index)'>" + link + "</a>";
-        			}
+        				output = om.get('funding.add.external_id.url.label.award') + '": <a href="' + link + " ng-class=\"{'truncate-anchor':angular.equals(moreInfo[group.groupId], false)||angular.equals(moreInfo[group.groupId], null)}\" target=\"_blank\" ng-mouseenter=\"showURLPopOver(funding.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(funding.putCode.value + $index)\">" + link + "</a>";
+        			}        				
+        			
+        			
+        			//ng-class="{'truncate-anchor' : moreInfo[group.groupId] == false || moreInfo[group.groupId] == null}"
         		}        		
         	}
         } else if(value != null) {
@@ -3444,8 +3447,9 @@ orcidNgModule.controller('FundingCtrl',['$scope', '$compile', '$filter', 'fundin
     };
 
     $scope.showDetailsMouseClick = function(key, $event) {
+    	console.log(key);
         $event.stopPropagation();
-        $scope.moreInfo[key] = !$scope.moreInfo[key];
+        $scope.moreInfo[key] = !$scope.moreInfo[key];        
     };
 
     $scope.closeMoreInfo = function(key) {
