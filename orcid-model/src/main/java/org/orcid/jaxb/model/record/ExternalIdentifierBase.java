@@ -26,7 +26,7 @@ import org.orcid.jaxb.model.common.Url;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "url", "relationship" })
-public class ExternalIdentifierBase {
+public class ExternalIdentifierBase implements ExternalIdentifier {
     @XmlElement(name="relationship", namespace = "http://www.orcid.org/ns/common")
     protected Relationship relationship;
     @XmlElement(name="external-identifier-url", namespace = "http://www.orcid.org/ns/common")
@@ -44,6 +44,16 @@ public class ExternalIdentifierBase {
     public void setUrl(Url url) {
         this.url = url;
     }
+    
+    @Override
+    public boolean passGroupingValidation() {
+        //Dont group if it is a part-of identifier
+        if(Relationship.PART_OF.equals(relationship))
+            return false;
+        
+        return true;
+    }
+    
     @Override
     public int hashCode() {
         final int prime = 31;

@@ -41,7 +41,7 @@ import java.io.Serializable;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType( propOrder = { "workExternalIdentifierType", "workExternalIdentifierId" })
 @XmlRootElement(name = "workExternalIdentifier")
-public class WorkExternalIdentifier extends ExternalIdentifierBase implements ExternalIdentifier, Serializable {
+public class WorkExternalIdentifier extends ExternalIdentifierBase implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @XmlElement(name = "external-identifier-type", namespace = "http://www.orcid.org/ns/work", required = true)
@@ -115,6 +115,10 @@ public class WorkExternalIdentifier extends ExternalIdentifierBase implements Ex
     
     @Override
     public boolean passGroupingValidation() {
+        //Perform general validations
+        if(!super.passGroupingValidation()) 
+            return false;        
+        
         //Dont groups works where the external id is empty
         if(workExternalIdentifierType == null && (workExternalIdentifierId == null || workExternalIdentifierId.getContent() == null || workExternalIdentifierId.getContent().isEmpty()))
             return false;
@@ -129,8 +133,7 @@ public class WorkExternalIdentifier extends ExternalIdentifierBase implements Ex
     @Override
     public int hashCode() {
         final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + ((workExternalIdentifierId == null) ? 0 : workExternalIdentifierId.hashCode());
+        int result = prime + ((workExternalIdentifierId == null) ? 0 : workExternalIdentifierId.hashCode());
         result = prime * result + ((workExternalIdentifierType == null) ? 0 : workExternalIdentifierType.hashCode());
         return result;
     }
@@ -139,8 +142,6 @@ public class WorkExternalIdentifier extends ExternalIdentifierBase implements Ex
     public boolean equals(Object obj) {
         if (this == obj)
             return true;
-        if (!super.equals(obj))
-            return false;
         if (getClass() != obj.getClass())
             return false;
         WorkExternalIdentifier other = (WorkExternalIdentifier) obj;

@@ -45,7 +45,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "type", "value" })
 @XmlRootElement(name = "externalIdentifier", namespace = "http://www.orcid.org/ns/funding")
-public class FundingExternalIdentifier extends ExternalIdentifierBase implements ExternalIdentifier, Serializable {
+public class FundingExternalIdentifier extends ExternalIdentifierBase implements Serializable {
 	private static final long serialVersionUID = 1L;	
 	@XmlElement(name="external-identifier-type", namespace = "http://www.orcid.org/ns/funding")
 	protected FundingExternalIdentifierType type;
@@ -99,6 +99,8 @@ public class FundingExternalIdentifier extends ExternalIdentifierBase implements
 	
 	@Override
 	public boolean passGroupingValidation() {
+	    if (!super.passGroupingValidation())
+	        return false;
 	    return true;
 	}
 }
