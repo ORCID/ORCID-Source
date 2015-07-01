@@ -109,4 +109,12 @@ public interface WorkDao extends GenericDao<WorkEntity, Long> {
      * @return true if the work index was correctly set                  
      * */
     boolean updateToMaxDisplay(String workId, Long displayIndex);
+    
+    /**
+     * Returns a list of work ids of works that still have old external identifiers
+     * @param limit
+     *          The batch number to fetch
+     * @return a list of work ids with old ext ids          
+     * */
+    List<String> getWorksWithOldExtIds(long limit);
 }
