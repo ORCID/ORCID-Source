@@ -1,0 +1,54 @@
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2014 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+	</head>
+	<body>
+		<div id="orcid-summary-widget"></div>
+		<script>
+			var host = window.location.hostname;
+			var baseURL = '';
+			
+			if (host == 'localhost'){
+				baseURL = '//localhost:8080/orcid-web';
+			}else if(host == 'qa.orcid.org'){
+				baseURL = '//qa.orcid.org';
+			}else if(host == 'sandbox.orcid.org'){
+				baseURL = '//sandbox.orcid.org';
+			}else{
+				baseURL = '//orcid.org';
+			}
+			
+			var loc = window.location.toString();
+		    var params = loc.split('?')[1];
+			
+			if (params.length === 34 && params.indexOf('orcid=') === 0 && params.indexOf('t=') === 26){
+				var script = document.createElement('script');
+				script.src = baseURL + '/static/javascript/orcid-summary-widget.js' + '?' + params;
+				var head = document.getElementsByTagName('head')[0];
+				head.appendChild(script);	
+			}else{
+				var widget = document.getElementById("orcid-summary-widget");
+				widget.innerHTML = "Please review widget's code";
+			}	
+		</script>
+	</body>
+</html>

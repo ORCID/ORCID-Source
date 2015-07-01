@@ -342,9 +342,14 @@ public class OrcidJaxbCopyManagerImpl implements OrcidJaxbCopyManager {
 				}
 			}
 		}
+		//Set primary = false for each remaining new email.
 		if(updatedContactDetails != null) {
-			allEmails.addAll(updatedContactDetails.getEmail());
+			for(Email newEmail : updatedContactDetails.getEmail()) {
+				newEmail.setPrimary(false);
+				allEmails.add(newEmail);
+			}
 		}
+		
 		for(Email email : allEmails) {
 			if(email.getVisibility() == null) {
 				email.setVisibility(OrcidVisibilityDefaults.ALTERNATIVE_EMAIL_DEFAULT.getVisibility());

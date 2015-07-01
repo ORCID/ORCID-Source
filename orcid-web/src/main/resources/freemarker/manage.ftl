@@ -507,7 +507,7 @@
             </tbody>
         </table>
         <#else>
-        	<div id="noApplications" />
+        	<div id="noApplications"></div>
         </#if>
         
         <h1>
@@ -587,6 +587,7 @@
             <div id="no-results-alert" class="orcid-hide alert alert-error no-delegate-matches"><@spring.message "orcid.frontend.web.no_results"/></div>
         </div>
         <#if (RequestParameters['shibboleth'])??>
+        <div>
             <h1>
                 Shibboleth accounts
             </h1>
@@ -625,17 +626,19 @@
 <script type="text/ng-template" id="deactivate-account-modal">
     <div style="padding: 20px;"><h3>${springMacroRequestContext.getMessage("manage.deactivateSend")} {{primaryEmail}}</h3>
     <button class="btn" ng-click="closeModal()">${springMacroRequestContext.getMessage("manage.deactivateSend.close")}</button>
+	</div>
 </script>
         
 <script type="text/ng-template" id="verify-email-modal">
     <div style="padding: 20px;"><h3>${springMacroRequestContext.getMessage("manage.email.verificationEmail")} {{verifyEmailObject.value}}</h3>
     <button class="btn" ng-click="closeModal()">${springMacroRequestContext.getMessage("manage.email.verificationEmail.close")}</button>
+	</div>
 </script>
 
 <script type="text/ng-template" id="delete-email-modal">
     <div style="padding: 20px;"><h3><@orcid.msg 'manage.email.pleaseConfirmDeletion' /> {{emailSrvc.delEmail.value}}</h3>
     <button class="btn btn-danger" ng-click="deleteEmail(emailSrvc.delEmail)"><@orcid.msg 'manage.email.deleteEmail' /></button>
-    <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel' /></a><div>
+    <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel' /></a></div>
 </script>
 
 <#-- Script that will display a modal to ask for user password                                                 -->
@@ -741,7 +744,7 @@
         <div ng-show="errors.length === 0">
             <br></br>
         </div>
-    <div>
+    </div>
 </script>
 
    
@@ -764,7 +767,7 @@
         <div ng-show="errors.length === 0">
             <br></br>
         </div>
-    <div>
+    </div>
 </script>
 
 <script type="text/ng-template" id="confirm-disable-developer-tools">
