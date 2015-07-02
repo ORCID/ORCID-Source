@@ -233,5 +233,19 @@ public class ProfileFundingDaoImpl extends GenericDaoImpl<ProfileFundingEntity, 
         TypedQuery<ProfileFundingEntity> query = entityManager.createQuery("from ProfileFundingEntity where profile.id=:userOrcid", ProfileFundingEntity.class);
         query.setParameter("userOrcid", userOrcid);
         return query.getResultList();
-    }            
+    }
+    
+    /**
+     * Returns a list of external ids of fundings that still have old external identifiers
+     * @param limit
+     *          The batch number to fetch
+     * @return a list of funding ids with old ext ids          
+     * */
+    @Override
+    @SuppressWarnings("unchecked")   
+    public List<BigInteger> getFundingWithOldExtIds(long limit) {
+        Query query = entityManager.createNativeQuery("SELECT distinct(id) FROM (SELECT id, json_array_elements(json_extract_path(external_identifiers_json, 'fundingExternalIdentifier')) AS j FROM profile_funding WHERE external_identifiers_json is not null limit :limit) AS a WHERE (j->'relationship') is null;");
+        query.setParameter("limit", limit);
+        return query.getResultList();
+    }
 }

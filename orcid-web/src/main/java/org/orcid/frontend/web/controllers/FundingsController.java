@@ -978,6 +978,10 @@ public class FundingsController extends BaseWorkspaceController {
         if(extIds != null && !extIds.getExternalIdentifier().isEmpty()) {
             for(FundingExternalIdentifier extId : extIds.getExternalIdentifier()) {
                 FundingExternalIdentifierForm newExtId = FundingExternalIdentifierForm.valueOf(extId);
+                //Set the relationship default value
+                if(PojoUtil.isEmpty(newExtId.getRelationship())) {
+                    newExtId.setRelationship(Text.valueOf(Relationship.SELF.value()));
+                }                
                 fundingExternalIdentifiers.add(newExtId);
             }
         }

@@ -29,7 +29,10 @@ import org.orcid.jaxb.model.record.Relationship;
 import org.orcid.persistence.dao.PeerReviewDao;
 import org.orcid.persistence.dao.ProfileFundingDao;
 import org.orcid.persistence.dao.WorkDao;
+import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
+import org.orcid.pojo.FundingExternalIdentifier;
+import org.orcid.pojo.FundingExternalIdentifiers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -79,17 +82,17 @@ public class AddRelationshipFieldToExistingActivitiesExternalIds {
         do {
             //First migrate works
             if(haveMoreWorks) {
-                haveMoreWorks = obj.upgradeWorks(obj.chunkSize);                                      
+                //haveMoreWorks = obj.upgradeWorks(obj.chunkSize);                                      
             }
             
             //Migrate funding
             if(haveMoreFundings) {
-                
+                haveMoreFundings = obj.upgradeFunding(obj.chunkSize);
             }
             
             //Migrate peer review
             if(haveMorePeerReviews) {
-                
+                haveMorePeerReviews = obj.upgradePeerReview(obj.chunkSize);
             }
             
             long time = System.currentTimeMillis();
@@ -122,7 +125,7 @@ public class AddRelationshipFieldToExistingActivitiesExternalIds {
         if(idsToUpgrade == null || idsToUpgrade.isEmpty()) {
             return false;
         }
-        LOG.info("Ids to upgrade: {}", idsToUpgrade);
+        LOG.info("Ids to upgrade: {}", idsToUpgrade.size());
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             @Override
             protected void doInTransactionWithoutResult(TransactionStatus status) {                
@@ -155,8 +158,7 @@ public class AddRelationshipFieldToExistingActivitiesExternalIds {
                             newExtIds.getWorkExternalIdentifier().add(newExtId);
                         }
                     }  
-                    String externalIdentifiersString = JsonUtils.convertToJsonString(newExtIds);
-                    work.setExternalIdentifiersJson(externalIdentifiersString);
+                    work.setExternalIdentifiersJson(JsonUtils.convertToJsonString(newExtIds));
                     workDao.merge(work);
                 }
             }
@@ -165,6 +167,28 @@ public class AddRelationshipFieldToExistingActivitiesExternalIds {
     }
     
     private boolean upgradeFunding(long limit) {
+        final List<BigInteger> idsToUpgrade = profileFundingDao.getFundingWithOldExtIds(limit);
+        if(idsToUpgrade == null || idsToUpgrade.isEmpty()) {
+            return false;
+        }
+        LOG.info("Ids to upgrade: {}", idsToUpgrade.size());
+        
+        for(BigInteger fundingId : idsToUpgrade) {
+            System.out.println("Processing funding id: " + fundingId);
+            ProfileFundingEntity fundingEntity = profileFundingDao.find(fundingId.longValue());
+            FundingExternalIdentifiers extIdsPojo = JsonUtils.readObjectFromJsonString(fundingEntity.getExternalIdentifiersJson(), FundingExternalIdentifiers.class);
+            if(extIdsPojo != null && !extIdsPojo.getFundingExternalIdentifier().isEmpty()) {
+                for(FundingExternalIdentifier extId : extIdsPojo.getFundingExternalIdentifier()) {
+                    if(extId.getRelationship() == null) {
+                        extId.setRelationship(Relationship.SELF);
+                    }
+                }
+            }
+            
+            fundingEntity.setExternalIdentifiersJson(JsonUtils.convertToJsonString(extIdsPojo));
+            profileFundingDao.merge(fundingEntity);
+        }
+        
         return true;
     }
     

@@ -188,6 +188,14 @@ public class PeerReviewsController extends BaseWorkspaceController {
                 try {
                     PeerReviewForm form = PeerReviewForm.valueOf(peerReview);
 
+                    if(form.getExternalIdentifiers() != null && !form.getExternalIdentifiers().isEmpty()) {
+                        for(WorkExternalIdentifier wExtId : form.getExternalIdentifiers()) {
+                            if(PojoUtil.isEmpty(wExtId.getRelationship())) {
+                                wExtId.setRelationship(Text.valueOf(Relationship.SELF.value()));
+                            }
+                        }
+                    }
+                    
                     if (form.getSubjectForm() != null && form.getSubjectForm().getTitle() != null) {
                         // Set translated title language name
                         if (!(form.getSubjectForm().getTranslatedTitle() == null) && !StringUtils.isEmpty(form.getSubjectForm().getTranslatedTitle().getLanguageCode())) {

@@ -50,6 +50,7 @@ import org.orcid.jaxb.model.message.PublicationDate;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkCategory;
 import org.orcid.jaxb.model.message.WorkContributors;
+import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.message.WorkExternalIdentifiers;
 import org.orcid.jaxb.model.message.WorkType;
 import org.orcid.jaxb.model.record.Relationship;
@@ -708,7 +709,24 @@ public class WorksController extends BaseWorkspaceController {
                 work.getWorkExternalIdentifiers().clear();
             }
             for(org.orcid.jaxb.model.record.WorkExternalIdentifier extId : externalIdentifiers.getExternalIdentifier()) {
-                WorkExternalIdentifier extIdForm = WorkExternalIdentifier.valueOf(extId);
+                if(extId.getRelationship() == null) {
+                    if(!PojoUtil.isEmpty(work.getWorkType()) && WorkExternalIdentifierType.ISSN.value().equals(extId.getWorkExternalIdentifierType().value())) {
+                        if(!PojoUtil.isEmpty(work.getWorkType()) && WorkType.BOOK.value().equals(work.getWorkType().getValue())) {
+                            extId.setRelationship(Relationship.PART_OF);
+                        } else {
+                            extId.setRelationship(Relationship.SELF);
+                        }
+                    } else if (!PojoUtil.isEmpty(work.getWorkType()) && WorkExternalIdentifierType.ISBN.value().equals(extId.getWorkExternalIdentifierType().value())) {
+                        if(!PojoUtil.isEmpty(work.getWorkType()) && WorkType.BOOK_CHAPTER.value().equals(work.getWorkType().getValue())) {
+                            extId.setRelationship(Relationship.PART_OF);
+                        } else {
+                            extId.setRelationship(Relationship.SELF);
+                        }
+                    } else {
+                        extId.setRelationship(Relationship.SELF);
+                    }
+                }
+                WorkExternalIdentifier extIdForm = WorkExternalIdentifier.valueOf(extId);                
                 work.getWorkExternalIdentifiers().add(extIdForm);
             }
         }
