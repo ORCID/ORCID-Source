@@ -16,6 +16,7 @@
  */
 package org.orcid.persistence.dao.impl;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -205,8 +206,8 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
      * */
     @SuppressWarnings("unchecked")
     @Override
-    public List<String> getWorksWithOldExtIds(long limit) {
-        Query query = entityManager.createNativeQuery("SELECT count(distinct(work_id)) FROM (SELECT work_id, json_array_elements(json_extract_path(external_ids_json, 'workExternalIdentifier')) AS j FROM work where external_ids_json is not null limit :limit) AS a WHERE (j->'relationship') is null");
+    public List<BigInteger> getWorksWithOldExtIds(long limit) {
+        Query query = entityManager.createNativeQuery("SELECT distinct(work_id) FROM (SELECT work_id, json_array_elements(json_extract_path(external_ids_json, 'workExternalIdentifier')) AS j FROM work where external_ids_json is not null limit :limit) AS a WHERE (j->'relationship') is null");
         query.setParameter("limit", limit);
         return query.getResultList();
     }

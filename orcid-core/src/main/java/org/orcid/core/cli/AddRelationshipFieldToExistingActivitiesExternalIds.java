@@ -16,20 +16,26 @@
  */
 package org.orcid.core.cli;
 
+import java.io.IOException;
+import java.math.BigInteger;
 import java.util.List;
 
+import org.kohsuke.args4j.CmdLineException;
+import org.kohsuke.args4j.CmdLineParser;
+import org.kohsuke.args4j.Option;
 import org.orcid.core.utils.JsonUtils;
-import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
+import org.orcid.jaxb.model.common.Url;
 import org.orcid.jaxb.model.record.Relationship;
-import org.orcid.jaxb.model.record.WorkExternalIdentifier;
-import org.orcid.jaxb.model.record.WorkExternalIdentifiers;
-import org.orcid.jaxb.model.record.WorkType;
 import org.orcid.persistence.dao.PeerReviewDao;
 import org.orcid.persistence.dao.ProfileFundingDao;
 import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.WorkEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
 /**
@@ -39,10 +45,69 @@ import org.springframework.transaction.support.TransactionTemplate;
  */
 public class AddRelationshipFieldToExistingActivitiesExternalIds {
     
+    private static Logger LOG = LoggerFactory.getLogger(AddRelationshipFieldToExistingActivitiesExternalIds.class);
+    private final long DEFAULT_CHUNK_SIZE = 1000;
+    
     private PeerReviewDao peerReviewDao;
     private ProfileFundingDao profileFundingDao;
     private WorkDao workDao;    
     private TransactionTemplate transactionTemplate;
+    
+    @Option(name = "-s", usage = "Chunk size")
+    private Long chunkSize;
+    
+    @Option(name = "-n", usage = "Number of batches to run")
+    private Long batchesToRun;
+    
+    public static void main(String[] args) throws IOException {
+        AddRelationshipFieldToExistingActivitiesExternalIds obj = new AddRelationshipFieldToExistingActivitiesExternalIds();
+        obj.init();
+        CmdLineParser parser = new CmdLineParser(obj);
+        try {
+            parser.parseArgument(args);
+            obj.validateArgs(parser);
+        } catch (CmdLineException e) {
+            System.err.println(e.getMessage());
+            parser.printUsage(System.err);
+        }
+        
+        long counter = 0;
+        long start = System.currentTimeMillis();
+        boolean haveMoreWorks = true;
+        boolean haveMoreFundings = true;
+        boolean haveMorePeerReviews = true;
+        do {
+            //First migrate works
+            if(haveMoreWorks) {
+                haveMoreWorks = obj.upgradeWorks(obj.chunkSize);                                      
+            }
+            
+            //Migrate funding
+            if(haveMoreFundings) {
+                
+            }
+            
+            //Migrate peer review
+            if(haveMorePeerReviews) {
+                
+            }
+            
+            long time = System.currentTimeMillis();
+            LOG.info("{} batches have run so far in {} secs", (++counter), ((time - start)/1000));
+            
+            if(!haveMoreWorks && !haveMoreFundings && !haveMorePeerReviews) {
+                LOG.info("All data has been migrated");
+                System.exit(0);
+            }
+            if(obj.batchesToRun > 0) {
+                if (counter >= obj.batchesToRun){
+                    break;
+                }
+            }
+        } while(true);
+        
+        System.exit(0);                
+    }
     
     private void init() {
         ApplicationContext context = new ClassPathXmlApplicationContext("orcid-core-context.xml");
@@ -52,32 +117,68 @@ public class AddRelationshipFieldToExistingActivitiesExternalIds {
         transactionTemplate = (TransactionTemplate) context.getBean("transactionTemplate");
     }
     
-    private void upgradeWorks(long limit) {
-        List<String> idsToUpgrade = workDao.getWorksWithOldExtIds(limit);
-        for(String workId : idsToUpgrade) {
-            WorkEntity work = workDao.find(Long.valueOf(workId));
-            WorkExternalIdentifiers extIds = JsonUtils.readObjectFromJsonString(work.getExternalIdentifiersJson(), WorkExternalIdentifiers.class);
-            if(extIds != null) {
-                for(WorkExternalIdentifier extId : extIds.getWorkExternalIdentifier()) {
-                    if(extId.getRelationship() == null) {
-                        if(WorkExternalIdentifierType.ISSN.equals(extId.getWorkExternalIdentifierType())) {
-                            if(WorkType.BOOK.equals(work.getWorkType())) {
-                                extId.setRelationship(Relationship.PART_OF);
+    private boolean upgradeWorks(long limit) {
+        final List<BigInteger> idsToUpgrade = workDao.getWorksWithOldExtIds(limit);
+        if(idsToUpgrade == null || idsToUpgrade.isEmpty()) {
+            return false;
+        }
+        LOG.info("Ids to upgrade: {}", idsToUpgrade);
+        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+            @Override
+            protected void doInTransactionWithoutResult(TransactionStatus status) {                
+                for(BigInteger workId : idsToUpgrade) {
+                    System.out.println("Processing work id: " + workId);
+                    WorkEntity work = workDao.find(workId.longValue());
+                    org.orcid.jaxb.model.message.WorkExternalIdentifiers oldExtIds = JsonUtils.readObjectFromJsonString(work.getExternalIdentifiersJson(), org.orcid.jaxb.model.message.WorkExternalIdentifiers.class);
+                    org.orcid.jaxb.model.record.WorkExternalIdentifiers newExtIds = new org.orcid.jaxb.model.record.WorkExternalIdentifiers(); 
+                    if(oldExtIds != null) {
+                        for(org.orcid.jaxb.model.message.WorkExternalIdentifier oldExtId : oldExtIds.getWorkExternalIdentifier()) {
+                            org.orcid.jaxb.model.record.WorkExternalIdentifier newExtId = org.orcid.jaxb.model.record.WorkExternalIdentifier.fromMessageExtId(oldExtId); 
+                            // Set the part_of field
+                            if(org.orcid.jaxb.model.message.WorkExternalIdentifierType.ISSN.equals(oldExtId.getWorkExternalIdentifierType())) {
+                                if(org.orcid.jaxb.model.message.WorkType.BOOK.equals(work.getWorkType())) {
+                                    newExtId.setRelationship(Relationship.PART_OF);
+                                } else {
+                                    newExtId.setRelationship(Relationship.SELF);
+                                }
+                            } else if(org.orcid.jaxb.model.message.WorkExternalIdentifierType.ISBN.equals(oldExtId.getWorkExternalIdentifierType())) {
+                                if(org.orcid.jaxb.model.message.WorkType.BOOK_CHAPTER.equals(work.getWorkType())) {                                
+                                    newExtId.setRelationship(Relationship.PART_OF);
+                                } else {
+                                    newExtId.setRelationship(Relationship.SELF);
+                                }
                             } else {
-                                extId.setRelationship(Relationship.SELF);
-                            }
-                        } else if(WorkExternalIdentifierType.ISBN.equals(extId.getWorkExternalIdentifierType())) {
-                            if(WorkType.BOOK_CHAPTER.equals(work.getWorkType())) {                                
-                                extId.setRelationship(Relationship.PART_OF);
-                            } else {
-                                extId.setRelationship(Relationship.SELF);
-                            }
-                        } else {
-                            extId.setRelationship(Relationship.SELF);
-                        }                        
-                    }
+                                newExtId.setRelationship(Relationship.SELF);
+                            }                       
+                            // Set an empty url
+                            newExtId.setUrl(new Url("")); 
+                            newExtIds.getWorkExternalIdentifier().add(newExtId);
+                        }
+                    }  
+                    String externalIdentifiersString = JsonUtils.convertToJsonString(newExtIds);
+                    work.setExternalIdentifiersJson(externalIdentifiersString);
+                    workDao.merge(work);
                 }
-            }            
+            }
+        });        
+        return true;
+    }
+    
+    private boolean upgradeFunding(long limit) {
+        return true;
+    }
+    
+    private boolean upgradePeerReview(long limit) {
+        return true;
+    }
+    
+    private void validateArgs(CmdLineParser parser) throws CmdLineException {
+        if (chunkSize == null) {
+            chunkSize = DEFAULT_CHUNK_SIZE;            
+        }
+        
+        if(batchesToRun == null) {
+            batchesToRun = Long.valueOf(-1);
         }
     }
 }

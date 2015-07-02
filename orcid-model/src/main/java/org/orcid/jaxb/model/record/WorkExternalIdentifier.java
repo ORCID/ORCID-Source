@@ -153,5 +153,16 @@ public class WorkExternalIdentifier extends ExternalIdentifierBase implements Se
         if (workExternalIdentifierType != other.workExternalIdentifierType)
             return false;
         return true;
-    }                
+    }     
+    
+    public static WorkExternalIdentifier fromMessageExtId(org.orcid.jaxb.model.message.WorkExternalIdentifier oldExtId) {        
+        WorkExternalIdentifier newExtId = new WorkExternalIdentifier();
+        if(oldExtId.getWorkExternalIdentifierId() != null) {
+            newExtId.setWorkExternalIdentifierId(new WorkExternalIdentifierId(oldExtId.getWorkExternalIdentifierId().getContent()));
+        }
+        if(oldExtId.getWorkExternalIdentifierType() != null) {
+            newExtId.setWorkExternalIdentifierType(WorkExternalIdentifierType.fromValue(oldExtId.getWorkExternalIdentifierType().value()));
+        }
+        return newExtId;
+    }
 }

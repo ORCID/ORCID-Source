@@ -16,6 +16,7 @@
  */
 package org.orcid.persistence.dao;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -116,5 +117,5 @@ public interface WorkDao extends GenericDao<WorkEntity, Long> {
      *          The batch number to fetch
      * @return a list of work ids with old ext ids          
      * */
-    List<String> getWorksWithOldExtIds(long limit);
+    List<BigInteger> getWorksWithOldExtIds(long limit);
 }

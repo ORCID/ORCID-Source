@@ -233,5 +233,5 @@ public class ProfileFundingDaoImpl extends GenericDaoImpl<ProfileFundingEntity, 
         TypedQuery<ProfileFundingEntity> query = entityManager.createQuery("from ProfileFundingEntity where profile.id=:userOrcid", ProfileFundingEntity.class);
         query.setParameter("userOrcid", userOrcid);
         return query.getResultList();
-    }
+    }            
 }
