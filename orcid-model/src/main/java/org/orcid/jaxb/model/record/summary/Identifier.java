@@ -90,7 +90,7 @@ public class Identifier {
         }
         Identifier result = new Identifier();
         result.setExternalIdentifierId(workExtId.getWorkExternalIdentifierId().getContent());
-        result.setExternalIdentifierType(workExtId.getWorkExternalIdentifierType().value());
+        result.setExternalIdentifierType(workExtId.getWorkExternalIdentifierType().name());
         return result;
     }
 
@@ -100,7 +100,7 @@ public class Identifier {
             result.setExternalIdentifierId(fundingExtId.getValue());
         else if(fundingExtId.getUrl() != null)
             result.setExternalIdentifierId(fundingExtId.getUrl().getValue());
-        result.setExternalIdentifierType(fundingExtId.getType().value());
+        result.setExternalIdentifierType(fundingExtId.getType().name());
         return result;
     }        
 }
