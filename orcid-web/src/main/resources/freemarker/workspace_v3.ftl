@@ -306,17 +306,17 @@
 	        	      	<span class="glyphicon glyphicon-pencil edit-websites edit-option pull-right" ng-click="openEdit()"></span>
 	        	   </span>
 	        	   <div ng-repeat="email in emailSrvc.emails.emails" class="mobile-box emails-box">
-	        	   		<span ng-bind="email.value"></span>
-	        	   		<span class="pull-right" ng-show="showEdit == true" ng-cloak>
-	        	   		<@orcid.privacyToggle3
-                            angularModel="email.visibility"
-							questionClick="toggleClickPrivacyHelp(email.value)"
-							clickedClassCheck="{'popover-help-container-show':privacyHelp[email.value]==true}" 
-							publicClick="emailSrvc.setPrivacy(email, 'PUBLIC', $event)" 
-		                  	limitedClick="emailSrvc.setPrivacy(email, 'LIMITED', $event)" 
-		                  	privateClick="emailSrvc.setPrivacy(email, 'PRIVATE', $event)" 
-		                  	elementId="email.value" />
-	        	   		</span>
+	        	   		<div ng-bind="email.value"></div>
+	        	   		<div ng-show="showEdit == true" ng-cloak>
+		        	   		<@orcid.privacyToggle3
+	                            angularModel="email.visibility"
+								questionClick="toggleClickPrivacyHelp(email.value)"
+								clickedClassCheck="{'popover-help-container-show':privacyHelp[email.value]==true}" 
+								publicClick="emailSrvc.setPrivacy(email, 'PUBLIC', $event)" 
+			                  	limitedClick="emailSrvc.setPrivacy(email, 'LIMITED', $event)" 
+			                  	privateClick="emailSrvc.setPrivacy(email, 'PRIVATE', $event)" 
+			                  	elementId="email.value" />
+	        	   		</div>
 	        	   </div>
 	        	   <div ng-show="showEdit == true" ng-cloak>
 	        	   		<a href="account"><@orcid.msg 'workspace.EditMoreEmailSettings'/></a>
