@@ -32,6 +32,7 @@ import org.apache.commons.lang.StringUtils;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.OrcidClientGroupManager;
 import org.orcid.core.manager.OrcidProfileManager;
+import org.orcid.core.manager.ProfileWorkManager;
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
 import org.orcid.jaxb.model.clientgroup.RedirectUri;
@@ -69,6 +70,9 @@ public class OrcidClientDataHelper implements InitializingBean {
 
     @Resource
     private ClientDetailsManager clientDetailsManager;
+    
+    @Resource
+    private ProfileWorkManager profileWorkManager;
 
     private Unmarshaller unmarshaller;
 
@@ -190,7 +194,19 @@ public class OrcidClientDataHelper implements InitializingBean {
     }
 
     public void deleteOrcidProfile(String orcid) throws Exception {
-        if (!StringUtils.isBlank(orcid)) {
+        if (!StringUtils.isBlank(orcid)) {            
+            //TODO: remove this after the works migration
+            //Delete profile works 
+            OrcidProfile orcidProfile = orcidProfileManager.retrieveOrcidProfile(orcid);
+            
+            if(orcidProfile != null && orcidProfile.getOrcidActivities() != null && orcidProfile.getOrcidActivities().getOrcidWorks() != null && orcidProfile.getOrcidActivities().getOrcidWorks().getOrcidWork() != null && !orcidProfile.getOrcidActivities().getOrcidWorks().getOrcidWork().isEmpty()) {
+                List<OrcidWork> works = orcidProfile.getOrcidActivities().getOrcidWorks().getOrcidWork();
+                for(OrcidWork work : works) {
+                    profileWorkManager.removeWork(orcid, work.getPutCode());
+                }
+            }
+            //END
+            orcidProfileManager.updateLastModifiedDate(orcid);
             orcidProfileManager.deleteProfile(orcid);
         }
     }

@@ -1357,6 +1357,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
             profileWork.setSource(new SourceEntity(profileEntity));
             profileWork.setVisibility(workEntity.getVisibility());
             profileWork.setWork(workEntity);
+            profileWorkDao.persist(profileWork);
         }
         orcidProfileCacheManager.remove(orcid);
     }
