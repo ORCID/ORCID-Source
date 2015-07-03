@@ -1669,7 +1669,6 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input{
 	font-family: 'Gill Sans W02', 'Helvetica', sans-serif;	
 	font-style: normal;
 	vertical-align: 3px;
-	margin-left: 5px;	
 }
 
 .workspace-overview {
@@ -5733,6 +5732,10 @@ textarea.form-control,
   	top: -178px;
 }
 
+.glyphicon-question-sign{
+	cursor: default;
+}
+
 /* Widget */
 
 .widget-container{
@@ -5747,37 +5750,9 @@ textarea.form-control,
 .widget-container .widget-code-container{
 	padding: 10px;
 	border: 1px solid #C9C9CA;
-	color: #494A4C;
 	float: left;
 	height: auto;
 	width: 100%;;
-}
-
-.widget-container .widget-code{
-	height: 100px;
-	cursor: text;
-	margin-bottom: 15px;
-}
-
-.widget-container .widget-code-icon{
-	padding-left: 0;
-	padding-right: 19px;
-	
-}
-
-.widget-container .widget-code-icon:before{
-	font-size: 16px;
-	top: -9px;
-	color: #338caf;
-}
-
-.widget-container a:hover span.widget-code-icon:before{
-	color: rgb(166, 206, 57);
-}
-
-.widget-container .widget-instructions{
-	width: 100%;
-	float:left;
 }
 
 .widget-container .widget-instructions,
@@ -5785,78 +5760,14 @@ textarea.form-control,
 	font-size: 14px;	
 }
 
-.glyphicon-question-sign{
-	cursor: default;
-}
-
 .widget-container .widget-code-container a{
 	float: right;
 }
 
-.orcid-summary-widget{
-	width: 195px;
-	height: auto;
-	border: 1px solid #939598;
-	padding: 10px;
-	font-family: 'Helvetica', 'Sans serif', 'Verdana';
-	color: #939598;
-	background: #FFF;
-	float: left;
-	margin: 5px 10px 15px;
-}
-
-.orcid-summary-widget a{
-	text-decoration: none;
-	color: #939598;
-	width: 100%;
-}
-
-.orcid-summary-widget .orcid-widget-details .orcid-logo{
-	background: url('http://orcid.org/sites/all/themes/orcidResponsive/img/orcid-logo.png') 0 0 transparent;
-	height: 43px;
-	width: 140px;
-	margin: 0 auto 15px;
-}
-
-.orcid-summary-widget .orcid-widget-details{
-	text-align: center;
-}
-
-.orcid-summary-widget .orcid-widget-details div{
-	margin: 5px 0;
-}
-
-.orcid-summary-widget .orcid-widget-details .orcid-name{
-	font-size: 20px;
-}
-
-.orcid-summary-widget .orcid-widget-details .orcid-id{
-	font-size: 12px;
-	margin-top: 10px;
-}
-
-.orcid-summary-widget .orcid-widget-details .orcid-summary-items{
-	background: #939598;
-	padding: 5px;
-	color: #FFF;
-	margin-top: 10px;
-	font-size: 14px;
-}
-
-.orcid-summary-widget .orcid-widget-button{
-	padding: 5px;
-	color: #FFF;
-	background: #338caf;
-	text-decoration: none;
-	margin-top: 15px;
-	display: block;
-	text-align: center;
-	font-size: 14px;
-}
-
-.orcid-summary-widget .orcid-widget-button:hover{
-	color: #FFF;
-	background: #a6ce39;
+.widget-container .widget-code{
+	height: 100px;
+	cursor: text;
+	margin-bottom: 15px;
 }
 
 .widget-container .popover-help-container .popover{
