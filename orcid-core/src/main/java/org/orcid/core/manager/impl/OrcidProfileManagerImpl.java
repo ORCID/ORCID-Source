@@ -319,11 +319,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     public OrcidProfile updateOrcidProfile(OrcidProfile orcidProfile) {
         String amenderOrcid = sourceManager.retrieveSourceOrcid();
         ProfileEntity existingProfileEntity = profileDao.find(orcidProfile.getOrcidIdentifier().getPath());
-        if(existingProfileEntity.getWorks() != null) {
-            for(WorkEntity work : existingProfileEntity.getWorks()) {
-                System.out.println(work.getId() + "      " + work.getTitle());
-            }
-        }
+        
         if (existingProfileEntity != null) {
             profileDao.removeChildrenWithGeneratedIds(existingProfileEntity);
             setWorkPrivacy(orcidProfile, existingProfileEntity.getActivitiesVisibilityDefault());
@@ -338,11 +334,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         profileEntity.setLastModified(new Date());
         profileEntity.setIndexingStatus(IndexingStatus.PENDING);
         ProfileEntity updatedProfileEntity = profileDao.merge(profileEntity);
-        if(updatedProfileEntity.getWorks() != null) {
-            for(WorkEntity work : updatedProfileEntity.getWorks()) {
-                System.out.println(work.getId() + "      " + work.getTitle());
-            }
-        }
+        
         profileDao.flush();
         profileDao.refresh(updatedProfileEntity);
         OrcidProfile updatedOrcidProfile = convertToOrcidProfile(updatedProfileEntity, LoadOptions.ALL);
