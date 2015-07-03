@@ -545,8 +545,7 @@ public class MemberV2Test extends BlackBoxBase {
         
         /**
          * Add 4 works 1 and 2 get grouped together 3 in another group because
-         * it have different ext ids 4 in another group because it doesnt have
-         * any ext ids
+         * it have different ext ids 4 in another group because it also have different ext ids
          **/
         // Add 1, the default work
         postResponse = memberV2ApiClient.createWorkXml(user1OrcidId, work, accessToken);
@@ -577,8 +576,13 @@ public class MemberV2Test extends BlackBoxBase {
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         
         work.getWorkTitle().getTitle().setContent("Work # 4");
+        WorkExternalIdentifier wExtId4 = new WorkExternalIdentifier();
+        wExtId4.setWorkExternalIdentifierType(WorkExternalIdentifierType.EID);
+        wExtId4.setWorkExternalIdentifierId(new WorkExternalIdentifierId("eid-ext-id-4" + time));
+        wExtId4.setRelationship(Relationship.SELF);
         work.getWorkExternalIdentifiers().getExternalIdentifier().clear();
-        // Add 4, without ext ids
+        work.getWorkExternalIdentifiers().getExternalIdentifier().add(wExtId4);
+        // Add 4, without ext ids                
         postResponse = memberV2ApiClient.createWorkXml(user1OrcidId, work, accessToken);
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
@@ -680,8 +684,7 @@ public class MemberV2Test extends BlackBoxBase {
             }
         }
         
-        assertTrue("Employment not found", found);
-        
+        assertTrue("Employment not found", found);        
         
         assertNotNull(activities.getFundings());        
         boolean found1 = false, found2 = false, found3 = false, found4 = false;
@@ -739,34 +742,6 @@ public class MemberV2Test extends BlackBoxBase {
         
         assertTrue("One of the peer reviews was not found: 1(" + found1 + ") 2(" + found2 + ") 3(" + found3 + ") 4(" + found4 + ")", found1 == found2 == found3 == found4 == true);        
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     
     @SuppressWarnings("unchecked")
     @Test

@@ -90,7 +90,10 @@ public class AddWorksTest {
         assertEquals(1, webDriver.findElements(byWorkTitle(workNameB)).size());
         assertEquals(1, webDriver.findElements(byWorkTitle(workNameC)).size());
         
-        
+        // clean up any from previous test
+        deleteAllByWorkName(workNameA, webDriver);
+        deleteAllByWorkName(workNameB, webDriver);
+        deleteAllByWorkName(workNameC, webDriver);
     }
     
     public void addComplete() {
