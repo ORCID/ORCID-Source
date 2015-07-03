@@ -483,8 +483,7 @@ public class WorksController extends BaseWorkspaceController {
         OrcidProfile currentProfile = getEffectiveProfile();
 
         Work newWork = workForm.toWork();
-        // put codes of -1 override new works visibility filtering settings.        
-        newWork.setPutCode("-1");          
+        newWork.setPutCode(null);          
         
         // Create work
         newWork = workManager.addWork(newWork);

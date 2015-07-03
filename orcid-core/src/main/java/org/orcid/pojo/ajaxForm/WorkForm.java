@@ -454,9 +454,18 @@ public class WorkForm implements ErrorsInterface, Serializable {
             Integer yearInteger = PojoUtil.isEmpty(this.getPublicationDate().getYear()) ? null : Integer.valueOf(this.getPublicationDate().getYear());
             Integer monthInteger = PojoUtil.isEmpty(this.getPublicationDate().getMonth()) ? null : Integer.valueOf(this.getPublicationDate().getMonth());
             Integer dayInteger = PojoUtil.isEmpty(this.getPublicationDate().getDay()) ? null : Integer.valueOf(this.getPublicationDate().getDay());
-            org.orcid.jaxb.model.common.Year year = new org.orcid.jaxb.model.common.Year(yearInteger);
-            org.orcid.jaxb.model.common.Month month = new org.orcid.jaxb.model.common.Month(monthInteger);
-            org.orcid.jaxb.model.common.Day day = new org.orcid.jaxb.model.common.Day(dayInteger);                        
+            org.orcid.jaxb.model.common.Year year = null;
+            org.orcid.jaxb.model.common.Month month = null;
+            org.orcid.jaxb.model.common.Day day = null;
+            if(yearInteger != null) {
+                year = new org.orcid.jaxb.model.common.Year(yearInteger);
+            }
+            if(monthInteger != null) {
+                month = new org.orcid.jaxb.model.common.Month(monthInteger);
+            }
+            if(dayInteger != null) {
+                day = new org.orcid.jaxb.model.common.Day(dayInteger);
+            }                                                  
             work.setPublicationDate(new org.orcid.jaxb.model.common.PublicationDate(year, month, day));
         }
                 

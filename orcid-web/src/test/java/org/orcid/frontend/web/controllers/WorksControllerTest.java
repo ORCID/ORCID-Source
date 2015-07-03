@@ -227,7 +227,10 @@ public class WorksControllerTest extends BaseControllerTest {
         WorkExternalIdentifier wei = work.getWorkExternalIdentifiers().get(0);
         wei.setWorkExternalIdentifierId(Text.valueOf("1"));
         wei.setWorkExternalIdentifierType(Text.valueOf("doi"));
-
+        if(!PojoUtil.isEmpty(work.getPutCode())) {
+            work.setPutCode(Text.valueOf(""));
+        }
+        
         work = worksController.postWork(null, work);
         assertNotNull(work);
         assertFalse(PojoUtil.isEmpty(work.getPutCode()));

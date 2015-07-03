@@ -236,7 +236,8 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         return map;
     }
 
-    @Override
+    //TODO: Remove after the works migration
+    @Override  
     public ProfileWorkEntity getNewProfileWorkEntity(OrcidWork orcidWork, ProfileEntity profileEntity) {
         ProfileWorkEntity profileWorkEntity = getProfileWorkEntity(orcidWork, null);
         profileWorkEntity.setProfile(profileEntity);
