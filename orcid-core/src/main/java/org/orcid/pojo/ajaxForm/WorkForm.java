@@ -186,6 +186,15 @@ public class WorkForm implements ErrorsInterface, Serializable {
             Integer year = PojoUtil.isEmpty(publicationDate.getYear()) ? null : Integer.valueOf(publicationDate.getYear().getValue());
             Integer month = PojoUtil.isEmpty(publicationDate.getMonth()) ? null : Integer.valueOf(publicationDate.getMonth().getValue());
             Integer day = PojoUtil.isEmpty(publicationDate.getDay()) ? null : Integer.valueOf(publicationDate.getDay().getValue());
+            if(year == 0) {
+                year = null;
+            }
+            if(month == 0) {
+                month = null;
+            }
+            if (day == 0) {
+                day = null;
+            }
             fuzzyPublicationDate = new FuzzyDate(year, month, day);
             w.setPublicationDate(Date.valueOf(fuzzyPublicationDate));
         }

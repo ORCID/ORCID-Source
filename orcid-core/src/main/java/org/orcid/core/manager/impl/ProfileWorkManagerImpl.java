@@ -32,6 +32,7 @@ import org.orcid.persistence.dao.ProfileWorkDao;
 import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
+import org.orcid.utils.OrcidStringUtils;
 
 public class ProfileWorkManagerImpl implements ProfileWorkManager {
 
@@ -162,8 +163,15 @@ public class ProfileWorkManagerImpl implements ProfileWorkManager {
      * 
      * @return true if the profile work relationship was created
      * */
-    public boolean addProfileWork(String orcid, long workId, Visibility visibility, String sourceOrcid) {
-        return profileWorkDao.addProfileWork(orcid, workId, visibility, sourceOrcid);
+    public boolean addProfileWork(String orcid, long workId, Visibility visibility, String source) {
+        String sourceId = null;
+        String clientSourceId = null;
+        if(OrcidStringUtils.isClientId(source)) {
+            clientSourceId = source;
+        } else {
+            sourceId = source;
+        }
+        return profileWorkDao.addProfileWork(orcid, workId, visibility, sourceId, clientSourceId);
     }
 
     public boolean updateToMaxDisplay(String orcid, String workId) {

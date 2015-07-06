@@ -101,7 +101,7 @@ public interface ProfileWorkDao extends GenericDao<ProfileWorkEntity, ProfileWor
      * 
      * @return true if the profile work relationship was created
      * */
-    boolean addProfileWork(String clientOrcid, long workId, Visibility visibility, String sourceOrcid);
+    boolean addProfileWork(String clientOrcid, long workId, Visibility visibility, String sourceOrcid, String clientSourceId);
 
     /**
      * Find the list of orcids where at least one of his works have contributors

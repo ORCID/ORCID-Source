@@ -486,7 +486,7 @@ public class WorksController extends BaseWorkspaceController {
         newWork.setPutCode(null);          
         
         // Create work
-        newWork = workManager.addWork(newWork);
+        newWork = workManager.createWork(currentProfile.getOrcidIdentifier().getPath(), newWork);
 
         // XXX: Still save the profile work, just in case we need a rollback
         // TODO: Remove this 
