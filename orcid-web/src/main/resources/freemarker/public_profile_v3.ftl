@@ -99,7 +99,22 @@
 			                    </div>
 			                </div>
 	                    </div>
-		            </#if>	            	            
+		            </#if>	  
+		            <!-- Email -->
+		            <#if (profile.orcidBio.contactDetails)?? && (profile.orcidBio.contactDetails.email?size != 0)>
+		           		<div class="workspace-section">
+		            		<div class="workspace-section-header">
+		            			 <span class="workspace-section-title">${springMacroRequestContext.getMessage("public_profile.labelEmail")}</span>
+		            			 <div class="emails-box">
+			            			 <#list profile.orcidBio.contactDetails.email as email>
+			        					<#if (email.visibility == 'public')??>    			 				            			 				            			 	
+			            					<div>${email.value}</div>
+			        					</#if>    					 		
+			            			 </#list>
+		            			 </div>		            			
+			                </div>
+	                    </div>
+		            </#if>          	            
 		            <#if (profile.orcidBio.externalIdentifiers)?? && (profile.orcidBio.externalIdentifiers.externalIdentifier?size != 0)>
 						<div class="workspace-section">
 		            		<div class="workspace-section-header">            

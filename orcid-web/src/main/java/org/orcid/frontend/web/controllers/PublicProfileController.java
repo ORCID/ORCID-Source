@@ -37,11 +37,11 @@ import org.orcid.core.manager.ActivityCacheManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.OrcidProfileCacheManager;
 import org.orcid.core.manager.PeerReviewManager;
+import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileWorkManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.jaxb.model.message.Affiliation;
-import org.orcid.jaxb.model.message.AffiliationType;
 import org.orcid.jaxb.model.message.Funding;
 import org.orcid.jaxb.model.message.FundingType;
 import org.orcid.jaxb.model.message.OrcidProfile;
@@ -49,6 +49,7 @@ import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.PersonalDetails;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.record.PeerReview;
+import org.orcid.jaxb.model.record.summary.ActivitiesSummary;
 import org.orcid.persistence.jpa.entities.CountryIsoEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
@@ -90,6 +91,9 @@ public class PublicProfileController extends BaseWorkspaceController {
 
     @Resource
     private ProfileWorkManager profileWorkManager;
+    
+    @Resource
+    private ProfileEntityManager profileEntManager;
 
     @Resource
     private Jpa2JaxbAdapter jpa2JaxbAdapter;
@@ -442,32 +446,23 @@ public class PublicProfileController extends BaseWorkspaceController {
             result.setName(name);
         }
 
-        java.util.Date lastModified = profile.getOrcidHistory().getLastModifiedDate().getValue().toGregorianCalendar().getTime();
+        ActivitiesSummary actSummary = profileEntManager.getActivitiesSummary(orcid);
         
-        HashMap<String, Funding> fundings = activityCacheManager.fundingMap(profile);
-        HashMap<String, WorkForm> works = activityCacheManager.pubMinWorksMap(profile);
-        HashMap<String, Affiliation> affiliations = activityCacheManager.affiliationMap(profile);        
-        HashMap<String, PeerReview> peerReviews = activityCacheManager.pubPeerReviewsMap(orcid, lastModified.getTime());
-        
-        if(fundings != null) {
-            result.setFundings(fundings.size());
-        }
-        
-        if(works != null) {
-            result.setWorks(works.size());
-        }
-        
-        if(peerReviews != null) {
-            result.setPeerReviews(peerReviews.size());
-        }
-        
-        if(affiliations != null) {
-            for(Affiliation aff : affiliations.values()) {
-                if(aff.getType().equals(AffiliationType.EDUCATION)) {
-                    result.setEducations(result.getEducations() + 1);
-                } else {
-                    result.setEmployments(result.getEmployments() + 1);
-                }
+        if(actSummary != null) {
+        	if(actSummary.getFundings() != null) {
+                result.setFundings(actSummary.getFundings().getFundingGroup().size());
+            }
+            if(actSummary.getFundings() != null) {
+                result.setWorks(actSummary.getWorks().getWorkGroup().size());
+            }
+            if(actSummary.getPeerReviews() != null) {
+                result.setPeerReviews(actSummary.getPeerReviews().getPeerReviewGroup().size());
+            }
+            if(actSummary.getEducations() != null && actSummary.getEducations().getSummaries() != null) {
+            	result.setEducations(actSummary.getEducations().getSummaries().size());
+            }
+            if(actSummary.getEmployments() != null && actSummary.getEmployments().getSummaries() != null) {
+            	result.setEmployments(actSummary.getEmployments().getSummaries().size());
             }
         }
         

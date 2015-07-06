@@ -371,6 +371,12 @@ public class SourceInActivitiesTest extends BaseTest {
         work.setWorkTitle(title);
         work.setWorkType(org.orcid.jaxb.model.record.WorkType.BOOK);
         work = workManager.createWork(userOrcid, work);
+        WorkExternalIdentifier extId = new WorkExternalIdentifier();
+        extId.setWorkExternalIdentifierId(new WorkExternalIdentifierId("111"));
+        extId.setWorkExternalIdentifierType(WorkExternalIdentifierType.DOI);
+        WorkExternalIdentifiers extIdentifiers = new WorkExternalIdentifiers();
+        extIdentifiers.getExternalIdentifier().add(extId);
+        work.setWorkExternalIdentifiers(extIdentifiers);
         return workManager.getWork(userOrcid, work.getPutCode());
     }
 

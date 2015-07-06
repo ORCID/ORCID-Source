@@ -154,6 +154,7 @@
 	    var works = json.works;
 	    var funding = json.fundings;
 	    var education = json.educations;
+	    var employment = json.employments;
 	    var peerReviews =  json.peerReviews;	    
 	    if(styleTags.length == 0) {	        
 	        var styleTag = document.createElement("link");
@@ -179,6 +180,9 @@
 	                                        }
 	                                        if (education > 0){
 	                                            widgetInnerHTML += '<div class="orcid-summary-item">Education (' + education + ')</div>';
+	                                        }
+	                                        if (employment > 0){
+	                                            widgetInnerHTML += '<div class="orcid-summary-item">Employment (' + employment + ')</div>';
 	                                        }
 	                                        if(peerReviews > 0){
 	                                            widgetInnerHTML += '<div class="orcid-summary-item">Peer Reviews (' + peerReviews +')</div>';

@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import javax.annotation.Resource;
 
 import org.orcid.core.adapter.JpaJaxbWorkAdapter;
+import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.ProfileWorkManager;
 import org.orcid.core.manager.SourceManager;
@@ -53,6 +54,9 @@ public class ProfileWorkManagerImpl implements ProfileWorkManager {
 
     @Resource
     private OrcidSecurityManager orcidSecurityManager;
+    
+    @Resource
+    private LocaleManager localeManager;
 
     @Override
     public void setSourceManager(SourceManager sourceManager) {
