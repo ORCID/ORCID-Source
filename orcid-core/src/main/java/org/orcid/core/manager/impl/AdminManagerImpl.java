@@ -152,6 +152,9 @@ public class AdminManagerImpl implements AdminManager {
                             for (WorkEntity work : deprecated.getWorks()) {
                                 List<Long> works = new ArrayList<Long>();
                                 works.add(work.getId());
+                                //TODO: Remove after the works migration
+                                profileWorkManager.removeWork(deprecated.getId(), String.valueOf(work.getId()));
+                                //END TODO
                                 workManager.removeWorks(deprecated.getId(), works);
                             }
                         }

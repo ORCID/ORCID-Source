@@ -205,8 +205,7 @@ public class OrcidClientDataHelper implements InitializingBean {
                     profileWorkManager.removeWork(orcid, work.getPutCode());
                 }
             }
-            //END
-            orcidProfileManager.updateLastModifiedDate(orcid);
+            //END            
             orcidProfileManager.deleteProfile(orcid);
         }
     }
