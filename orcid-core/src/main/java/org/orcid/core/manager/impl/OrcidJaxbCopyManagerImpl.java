@@ -314,7 +314,8 @@ public class OrcidJaxbCopyManagerImpl implements OrcidJaxbCopyManager {
 			if(updatedContactDetails != null) {
 				tempEmail = updatedContactDetails.getEmailByString(oldEmail.getValue());
 			}
-			if(clientId == null || (clientId != null && !clientId.equals(oldEmail.getSourceClientId()))) {
+			String oldEmSource = (oldEmail.getSourceClientId() == null) ? oldEmail.getSource() : oldEmail.getSourceClientId();
+			if(clientId == null || (clientId != null && !clientId.equals(oldEmSource))) {
 				allEmails.add(oldEmail);
 				if(tempEmail != null) {
 					updatedContactDetails.getEmail().remove(tempEmail);
