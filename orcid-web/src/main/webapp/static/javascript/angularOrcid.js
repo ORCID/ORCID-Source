@@ -2588,8 +2588,10 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
                 }
             }
         }).fail(function(){
-        // something bad is happening!
-            console.log("error fetching register.json");
+            // something bad is happening!
+            console.log("error fetching dupicateResearcher.json");
+            // continue to registration, as solr dup lookup failed.
+            $scope.postRegisterConfirm();
         });
     };
 
@@ -8388,8 +8390,10 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
                 }
             }
         }).fail(function(){
-        // something bad is happening!
-            console.log("error fetching register.json");
+            // something bad is happening!
+            console.log("error fetching dupicateResearcher.json");
+            // continue to registration, as solr dup lookup failed.
+            $scope.postRegisterConfirm();
         });
     };
 
