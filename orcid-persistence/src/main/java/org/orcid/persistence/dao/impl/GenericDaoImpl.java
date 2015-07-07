@@ -16,20 +16,18 @@
  */
 package org.orcid.persistence.dao.impl;
 
+import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
+
+import javax.annotation.Resource;
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.jpa.entities.OrcidEntity;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceUnit;
-import javax.persistence.Query;
-
-import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
 
 /**
  * orcid-persistence - Dec 7, 2011 - GenericDaoImpl
