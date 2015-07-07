@@ -18,6 +18,7 @@ package org.orcid.core.manager.impl;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.annotation.Resource;
 
@@ -40,6 +41,7 @@ import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
 
 public class ProfileWorkManagerImpl implements ProfileWorkManager {
@@ -244,5 +246,20 @@ public class ProfileWorkManagerImpl implements ProfileWorkManager {
             profileWorkEntity.setVisibility(Visibility.PRIVATE);
             profileWorkEntity.getWork().setVisibility(Visibility.PRIVATE);
         }
-    }    
+    }
+    
+    /**
+     * Get the list of works that belongs to a user
+     * 
+     * @param userOrcid
+     * @param lastModified
+     *          Last modified date used to check the cache
+     * @return the list of works that belongs to this user
+     * */
+    @Override
+    @Cacheable(value = "works-summaries", key = "#userOrcid.concat('-').concat(#lastModified)")
+    public List<WorkSummary> getWorkSummaryList(String userOrcid, long lastModified) {
+        //TODO
+        return null;
+    }
 }

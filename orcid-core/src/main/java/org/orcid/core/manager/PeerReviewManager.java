@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.record.PeerReview;
+import org.orcid.jaxb.model.record.summary.FundingSummary;
 import org.orcid.jaxb.model.record.summary.PeerReviewSummary;
 import org.orcid.persistence.jpa.entities.PeerReviewEntity;
 
@@ -137,4 +138,14 @@ public interface PeerReviewManager {
      * @return a list containing the user peer reviews
      * */
     List<PeerReview> findPeerReviews(String orcid, long lastModified);
+    
+    /**
+     * Get the list of peer reivews that belongs to a user
+     * 
+     * @param userOrcid
+     * @param lastModified
+     *          Last modified date used to check the cache
+     * @return the list of peer reviews that belongs to this user
+     * */
+    List<PeerReviewSummary> getPeerReviewSummaryList(String userOrcid, long lastModified);
 }
