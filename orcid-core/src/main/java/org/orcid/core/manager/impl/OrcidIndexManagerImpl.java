@@ -63,14 +63,18 @@ import org.orcid.persistence.solr.entities.OrcidSolrDocument;
 import org.orcid.utils.NullUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
 public class OrcidIndexManagerImpl implements OrcidIndexManager {
 
+    @Value("${org.orcid.core.indexPublicProfile:true}")
+    private boolean indexPublicProfile;
+
     @Resource
     private SolrDao solrDao;
-    
+
     @Resource
     private ProfileDao profileDao;
 
@@ -91,7 +95,7 @@ public class OrcidIndexManagerImpl implements OrcidIndexManager {
         if (lastModifiedFromDb.equals(lastModifiedFromSolr)) {
             // Check if re-indexing
             IndexingStatus indexingStatus = profileDao.retrieveIndexingStatus(orcid);
-            if(!IndexingStatus.REINDEX.equals(indexingStatus)){
+            if (!IndexingStatus.REINDEX.equals(indexingStatus)) {
                 // If not re-indexing then skip
                 LOG.info("Index is already up to date for orcid: {}", orcid);
                 return;
@@ -103,11 +107,11 @@ public class OrcidIndexManagerImpl implements OrcidIndexManager {
     @Override
     public void persistProfileInformationForIndexing(OrcidProfile orcidProfile) {
 
-        //Check if the profile is locked
-        if(orcidProfile.isLocked()) {
+        // Check if the profile is locked
+        if (orcidProfile.isLocked()) {
             orcidProfile.downgradeToOrcidIdentifierOnly();
         }
-        
+
         OrcidMessage messageToFilter = new OrcidMessage();
         messageToFilter.setOrcidProfile(orcidProfile);
         OrcidMessage filteredMessage = visibilityFilter.filter(messageToFilter, Visibility.PUBLIC);
@@ -319,7 +323,9 @@ public class OrcidIndexManagerImpl implements OrcidIndexManager {
                 profileIndexDocument.setProfileSubmissionDate(submissionDate.getValue().toGregorianCalendar().getTime());
             }
         }
-        profileIndexDocument.setPublicProfileMessage(orcidMessage.toXmlString());
+        if (indexPublicProfile) {
+            profileIndexDocument.setPublicProfileMessage(orcidMessage.toXmlString());
+        }
         solrDao.persist(profileIndexDocument);
     }
 
