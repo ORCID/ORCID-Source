@@ -268,11 +268,7 @@ public interface OrcidProfileManager extends OrcidProfileManagerReadOnly {
 
     OrcidWorks dedupeWorks(OrcidWorks orcidWorks);
 
-    OrcidProfile retrievePublic(String orcid);
-
     public void updateNames(OrcidProfile orcidProfile);
-
-    Date retrieveLastModifiedDate(String orcid);
 
     Date updateLastModifiedDate(String orcid);
 

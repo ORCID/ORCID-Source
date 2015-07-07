@@ -114,7 +114,7 @@ public class OrcidSearchManagerImpl implements OrcidSearchManager {
             OrcidProfile orcidProfile = null;
             if (orcidMessage == null) {
                 // Fall back to DB
-                orcidProfile = orcidProfileManager.retrievePublic(orcid);
+                orcidProfile = orcidProfileManager.retrievePublicOrcidProfile(orcid);
             } else {
                 orcidProfile = orcidMessage.getOrcidProfile();
             }

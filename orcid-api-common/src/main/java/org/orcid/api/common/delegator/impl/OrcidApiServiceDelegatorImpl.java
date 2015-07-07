@@ -32,7 +32,7 @@ import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.exception.OrcidNotFoundException;
 import org.orcid.core.exception.OrcidSearchException;
 import org.orcid.core.manager.ClientDetailsManager;
-import org.orcid.core.manager.OrcidProfileManager;
+import org.orcid.core.manager.OrcidProfileManagerReadOnly;
 import org.orcid.core.manager.OrcidSearchManager;
 import org.orcid.core.security.DeprecatedException;
 import org.orcid.core.security.aop.NonLocked;
@@ -62,8 +62,8 @@ import com.sun.jersey.api.client.ClientResponse.Status;
 @Component("orcidApiServiceDelegator")
 public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
 
-    @Resource(name = "orcidProfileManager")
-    private OrcidProfileManager orcidProfileManager;
+    @Resource(name = "orcidProfileManagerReadOnly")
+    private OrcidProfileManagerReadOnly orcidProfileManager;
 
     @Resource(name = "orcidSearchManager")
     private OrcidSearchManager orcidSearchManager;

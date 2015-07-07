@@ -60,7 +60,6 @@ import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.OrgManager;
 import org.orcid.core.security.OrcidWebRole;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
-import org.orcid.core.security.visibility.aop.VisibilityControl;
 import org.orcid.jaxb.model.message.ActivitiesVisibilityDefault;
 import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.Affiliations;
@@ -110,7 +109,6 @@ import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.GivenPermissionToDao;
 import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
-import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.ProfileFundingDao;
 import org.orcid.persistence.dao.ProfileWorkDao;
 import org.orcid.persistence.dao.WorkDao;
@@ -199,7 +197,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
 
     @Resource
     private OrgManager orgManager;
-    
+
     @Value("${org.orcid.core.works.compare.useScopusWay:false}")
     private boolean compareWorksUsingScopusWay;
 
@@ -218,10 +216,6 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
     private int numberOfIndexingThreads;
 
     private static final int INDEXING_BATCH_SIZE = 100;
-
-    public void setProfileDao(ProfileDao profileDao) {
-        this.profileDao = profileDao;
-    }
 
     public void setOrcidIndexManager(OrcidIndexManager orcidIndexManager) {
         this.orcidIndexManager = orcidIndexManager;
@@ -463,12 +457,6 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
                 }
             }
         }
-    }
-
-    @Override
-    @VisibilityControl(removeAttributes = false, visibilities = Visibility.PUBLIC)
-    public OrcidProfile retrievePublicOrcidProfile(String orcid) {
-        return retrieveClaimedOrcidProfile(orcid);
     }
 
     @Override
@@ -1215,7 +1203,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         blankedOrcidProfile.setOrcidBio(minimalBio);
         blankedOrcidProfile.setOrcidIdentifier(existingOrcidProfile.getOrcidIdentifier().getPath());
 
-        OrcidProfile profileToReturn =  updateOrcidProfile(blankedOrcidProfile);
+        OrcidProfile profileToReturn = updateOrcidProfile(blankedOrcidProfile);
         notificationManager.sendAmendEmail(profileToReturn, AmendedSection.UNKNOWN);
         return profileToReturn;
     }
@@ -1476,7 +1464,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
     private void addSourceToFundings(FundingList fundings, String amenderOrcid) {
         if (fundings != null && !fundings.getFundings().isEmpty()) {
             for (Funding funding : fundings.getFundings()) {
-            	funding.setSource(createSource(amenderOrcid));
+                funding.setSource(createSource(amenderOrcid));
             }
         }
     }
@@ -1698,7 +1686,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
 
             protected void doInTransactionWithoutResult(TransactionStatus status) {
                 LOG.info("About to index profile: {}", orcid);
-                OrcidProfile orcidProfile = retrievePublic(orcid);
+                OrcidProfile orcidProfile = retrievePublicOrcidProfile(orcid);
                 if (orcidProfile == null) {
                     LOG.debug("Null profile found during indexing: {}", orcid);
                 } else {
@@ -1848,11 +1836,6 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
     }
 
     @Override
-    public Date retrieveLastModifiedDate(String orcid) {
-        return profileDao.retrieveLastModifiedDate(orcid);
-    }
-
-    @Override
     public Date updateLastModifiedDate(String orcid) {
         return profileDao.updateLastModifiedDate(orcid);
     }
@@ -1870,12 +1853,6 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         if (orcidProfile.getOrcidPreferences() == null)
             orcidProfile.setOrcidPreferences(new OrcidPreferences());
         orcidProfile.getOrcidPreferences().setLocale(org.orcid.jaxb.model.message.Locale.fromValue(locale.toString()));
-    }
-
-    @VisibilityControl(removeAttributes = false, visibilities = Visibility.PUBLIC)
-    @Override
-    public OrcidProfile retrievePublic(String orcid) {
-        return retrieveClaimedOrcidProfile(orcid);
     }
 
     /**

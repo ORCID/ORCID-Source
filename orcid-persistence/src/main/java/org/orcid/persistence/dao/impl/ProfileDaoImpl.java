@@ -45,7 +45,6 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventType;
 import org.springframework.transaction.annotation.Transactional;
 
-@PersistenceContext(unitName = "orcid")
 public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String>
 		implements ProfileDao {
 

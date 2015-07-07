@@ -16,6 +16,8 @@
  */
 package org.orcid.core.manager;
 
+import java.util.Date;
+
 import org.orcid.jaxb.model.message.OrcidProfile;
 
 /**
@@ -82,5 +84,9 @@ public interface OrcidProfileManagerReadOnly {
     OrcidProfile retrieveClaimedOrcidProfile(String orcid);
     
     OrcidProfile retrieveFreshOrcidProfile(String orcid, LoadOptions loadOptions);
+    
+    OrcidProfile retrievePublicOrcidProfile(String orcid);
+    
+    Date retrieveLastModifiedDate(String orcid);
     
 }

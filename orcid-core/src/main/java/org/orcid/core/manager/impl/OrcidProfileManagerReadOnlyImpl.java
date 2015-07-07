@@ -17,6 +17,7 @@
 package org.orcid.core.manager.impl;
 
 import java.util.Collection;
+import java.util.Date;
 
 import javax.annotation.Resource;
 
@@ -29,6 +30,7 @@ import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.OrcidProfileCacheManager;
 import org.orcid.core.manager.OrcidProfileManagerReadOnly;
 import org.orcid.core.manager.SourceManager;
+import org.orcid.core.security.visibility.aop.VisibilityControl;
 import org.orcid.jaxb.model.message.Claimed;
 import org.orcid.jaxb.model.message.GivenNames;
 import org.orcid.jaxb.model.message.LastModifiedDate;
@@ -39,17 +41,21 @@ import org.orcid.jaxb.model.message.OrcidIdentifier;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.PersonalDetails;
 import org.orcid.jaxb.model.message.Source;
+import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.utils.DateUtils;
 import org.orcid.utils.NullUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Required;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionTemplate;
 
 public class OrcidProfileManagerReadOnlyImpl implements OrcidProfileManagerReadOnly {
 
@@ -68,7 +74,25 @@ public class OrcidProfileManagerReadOnlyImpl implements OrcidProfileManagerReadO
     protected OrcidProfileCacheManager orcidProfileCacheManager;
     @Resource
     protected JpaJaxbEntityAdapter adapter;
+    protected TransactionTemplate transactionTemplate;
     protected static final Logger LOG = LoggerFactory.getLogger(OrcidProfileManagerImpl.class);
+
+    public void setProfileDao(ProfileDao profileDao) {
+        this.profileDao = profileDao;
+    }
+
+    public void setOrcidProfileCacheManager(OrcidProfileCacheManager orcidProfileCacheManager) {
+        this.orcidProfileCacheManager = orcidProfileCacheManager;
+    }
+
+    public void setClaimWaitPeriodDays(int claimWaitPeriodDays) {
+        this.claimWaitPeriodDays = claimWaitPeriodDays;
+    }
+
+    @Required
+    public void setTransactionTemplate(TransactionTemplate transactionTemplate) {
+        this.transactionTemplate = transactionTemplate;
+    }
 
     /**
      * Retrieves the orcid fundings given an identifier
@@ -78,7 +102,6 @@ public class OrcidProfileManagerReadOnlyImpl implements OrcidProfileManagerReadO
      * @return the orcid profile with only the funding list populated
      */
     @Override
-    @Transactional
     public OrcidProfile retrieveClaimedFundings(String orcid) {
         OrcidProfile profile = retrieveClaimedOrcidProfile(orcid);
         if (profile != null) {
@@ -95,7 +118,6 @@ public class OrcidProfileManagerReadOnlyImpl implements OrcidProfileManagerReadO
      * @return the orcid profile with only the works populated
      */
     @Override
-    @Transactional
     public OrcidProfile retrieveClaimedOrcidWorks(String orcid) {
         OrcidProfile profile = retrieveClaimedOrcidProfile(orcid);
         if (profile != null) {
@@ -105,21 +127,27 @@ public class OrcidProfileManagerReadOnlyImpl implements OrcidProfileManagerReadO
     }
 
     @Override
-    @Transactional
     public OrcidProfile retrieveOrcidProfile(String orcid) {
         return retrieveOrcidProfile(orcid, LoadOptions.ALL);
     }
 
     @Override
-    @Transactional(readOnly = true)
     public OrcidProfile retrieveOrcidProfile(String orcid, LoadOptions loadOptions) {
         if (LoadOptions.ALL.equals(loadOptions))
             return orcidProfileCacheManager.retrieve(orcid);
         return retrieveFreshOrcidProfile(orcid, loadOptions);
     }
 
-    @Transactional
-    public OrcidProfile retrieveFreshOrcidProfile(String orcid, LoadOptions loadOptions) {
+    @Override
+    public OrcidProfile retrieveFreshOrcidProfile(final String orcid, final LoadOptions loadOptions) {
+        return transactionTemplate.execute(new TransactionCallback<OrcidProfile>() {
+            public OrcidProfile doInTransaction(TransactionStatus status) {
+                return doRetrieveFreshOrcidProfileInTransaction(orcid, loadOptions);
+            }
+        });
+    }
+
+    private OrcidProfile doRetrieveFreshOrcidProfileInTransaction(String orcid, LoadOptions loadOptions) {
         LOG.debug("About to obtain fresh profile: " + orcid);
         profileDao.flush();
         ProfileEntity profileEntity = profileDao.find(orcid);
@@ -131,7 +159,6 @@ public class OrcidProfileManagerReadOnlyImpl implements OrcidProfileManagerReadO
     }
 
     @Override
-    @Transactional
     public OrcidProfile retrieveClaimedOrcidProfile(String orcid) {
         OrcidProfile orcidProfile = retrieveOrcidProfile(orcid);
         if (orcidProfile != null) {
@@ -148,11 +175,70 @@ public class OrcidProfileManagerReadOnlyImpl implements OrcidProfileManagerReadO
         return null;
     }
 
-    private boolean isOldEnough(OrcidProfile orcidProfile) {
+    /**
+     * Retrieves the orcid external identifiers given an identifier
+     * 
+     * @param orcid
+     *            the identifier
+     * @return the orcid profile with only the bio populated
+     */
+    @Override
+    public OrcidProfile retrieveClaimedExternalIdentifiers(String orcid) {
+        OrcidProfile profile = retrieveClaimedOrcidProfile(orcid);
+        if (profile != null) {
+            profile.downgradeToExternalIdentifiersOnly();
+        }
+        return profile;
+    }
+
+    /**
+     * Retrieves the orcid bio given an identifier
+     * 
+     * @param orcid
+     *            the identifier
+     * @return the orcid profile with only the bio populated
+     */
+    @Override
+    public OrcidProfile retrieveClaimedOrcidBio(String orcid) {
+        OrcidProfile profile = retrieveClaimedOrcidProfile(orcid);
+        if (profile != null) {
+            profile.downgradeToBioOnly();
+        }
+        return profile;
+    }
+
+    /**
+     * Retrieves the orcid affiliations given an identifier
+     * 
+     * @param orcid
+     *            the identifier
+     * @return the orcid profile with only the affiliations populated
+     */
+    @Override
+    public OrcidProfile retrieveClaimedAffiliations(String orcid) {
+        OrcidProfile profile = retrieveClaimedOrcidProfile(orcid);
+        if (profile != null) {
+            profile.downgradeToAffiliationsOnly();
+        }
+        return profile;
+    }
+
+    @Override
+    @VisibilityControl(removeAttributes = false, visibilities = Visibility.PUBLIC)
+    public OrcidProfile retrievePublicOrcidProfile(String orcid) {
+        return retrieveClaimedOrcidProfile(orcid);
+    }
+
+    @Override
+    public Date retrieveLastModifiedDate(String orcid) {
+        return profileDao.retrieveLastModifiedDate(orcid);
+    }
+
+    protected boolean isOldEnough(OrcidProfile orcidProfile) {
         return DateUtils.olderThan(orcidProfile.getOrcidHistory().getSubmissionDate().getValue().toGregorianCalendar().getTime(), claimWaitPeriodDays);
     }
 
-    private boolean isBeingAccessedByCreator(OrcidProfile orcidProfile) {
+    protected boolean isBeingAccessedByCreator(OrcidProfile orcidProfile) {
         String amenderOrcid = sourceManager.retrieveSourceOrcid();
         Source source = orcidProfile.getOrcidHistory().getSource();
         if (NullUtils.noneNull(amenderOrcid, source)) {
@@ -161,7 +247,7 @@ public class OrcidProfileManagerReadOnlyImpl implements OrcidProfileManagerReadO
         return false;
     }
 
-    private boolean haveSystemRole() {
+    protected boolean haveSystemRole() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null) {
             Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
@@ -172,11 +258,11 @@ public class OrcidProfileManagerReadOnlyImpl implements OrcidProfileManagerReadO
         return false;
     }
 
-    private OrcidProfile createReservedForClaimOrcidProfile(String orcid, LastModifiedDate lastModifiedDate) {
+    protected OrcidProfile createReservedForClaimOrcidProfile(String orcid, LastModifiedDate lastModifiedDate) {
         return createReservedForClaimOrcidProfile(orcid, null, lastModifiedDate);
     }
 
-    private OrcidProfile createReservedForClaimOrcidProfile(String orcid, OrcidDeprecated deprecatedInfo, LastModifiedDate lastModifiedDate) {
+    protected OrcidProfile createReservedForClaimOrcidProfile(String orcid, OrcidDeprecated deprecatedInfo, LastModifiedDate lastModifiedDate) {
         OrcidProfile op = new OrcidProfile();
         if (jpaJaxbAdapter != null) {
             op.setOrcidIdentifier(new OrcidIdentifier(jpaJaxbAdapter.getOrcidIdBase(orcid)));
@@ -211,67 +297,12 @@ public class OrcidProfileManagerReadOnlyImpl implements OrcidProfileManagerReadO
         return orcidProfile;
     }
 
-    public void setClaimWaitPeriodDays(int claimWaitPeriodDays) {
-        this.claimWaitPeriodDays = claimWaitPeriodDays;
-    }
-
     protected String decrypt(String encrypted) {
         if (StringUtils.isNotBlank(encrypted)) {
             return encryptionManager.decryptForInternalUse(encrypted);
         } else {
             return null;
         }
-    }
-
-    /**
-     * Retrieves the orcid external identifiers given an identifier
-     * 
-     * @param orcid
-     *            the identifier
-     * @return the orcid profile with only the bio populated
-     */
-    @Override
-    @Transactional
-    public OrcidProfile retrieveClaimedExternalIdentifiers(String orcid) {
-        OrcidProfile profile = retrieveClaimedOrcidProfile(orcid);
-        if (profile != null) {
-            profile.downgradeToExternalIdentifiersOnly();
-        }
-        return profile;
-    }
-
-    /**
-     * Retrieves the orcid bio given an identifier
-     * 
-     * @param orcid
-     *            the identifier
-     * @return the orcid profile with only the bio populated
-     */
-    @Override
-    @Transactional
-    public OrcidProfile retrieveClaimedOrcidBio(String orcid) {
-        OrcidProfile profile = retrieveClaimedOrcidProfile(orcid);
-        if (profile != null) {
-            profile.downgradeToBioOnly();
-        }
-        return profile;
-    }
-
-    /**
-     * Retrieves the orcid affiliations given an identifier
-     * 
-     * @param orcid
-     *            the identifier
-     * @return the orcid profile with only the affiliations populated
-     */
-    @Override
-    @Transactional
-    public OrcidProfile retrieveClaimedAffiliations(String orcid) {
-        OrcidProfile profile = retrieveClaimedOrcidProfile(orcid);
-        if (profile != null) {
-            profile.downgradeToAffiliationsOnly();
-        }
-        return profile;
     }
 
 }
