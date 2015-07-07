@@ -28,16 +28,11 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
-import org.orcid.core.adapter.Jaxb2JpaAdapter;
-import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ActivityCacheManager;
-import org.orcid.core.manager.ExternalIdentifierManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileWorkManager;
-import org.orcid.core.manager.ThirdPartyLinkManager;
-import org.orcid.core.manager.WorkExternalIdentifierManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.jaxb.model.message.CitationType;
@@ -80,27 +75,12 @@ public class WorksController extends BaseWorkspaceController {
     private static final String WORKS_MAP = "WORKS_MAP";
 
     private static final Pattern LANGUAGE_CODE = Pattern.compile("([a-zA-Z]{2})(_[a-zA-Z]{2}){0,2}");
-
-    @Resource
-    private ThirdPartyLinkManager thirdPartyLinkManager;
-
-    @Resource
-    private ExternalIdentifierManager externalIdentifierManager;
-
+        
     @Resource
     private ProfileWorkManager profileWorkManager;
 
     @Resource
-    private Jpa2JaxbAdapter jpa2JaxbAdapter;
-
-    @Resource
-    private Jaxb2JpaAdapter jaxb2JpaAdapter;
-
-    @Resource
     private WorkManager workManager;
-
-    @Resource
-    private WorkExternalIdentifierManager workExternalIdentifierManager;
 
     @Resource
     private LocaleManager localeManager;
