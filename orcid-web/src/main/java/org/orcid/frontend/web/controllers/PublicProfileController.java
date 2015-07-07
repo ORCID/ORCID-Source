@@ -446,7 +446,7 @@ public class PublicProfileController extends BaseWorkspaceController {
             result.setName(name);
         }
 
-        ActivitiesSummary actSummary = profileEntManager.getActivitiesSummary(orcid);
+        ActivitiesSummary actSummary = profileEntManager.getPublicActivitiesSummary(orcid);
         
         if(actSummary != null) {
         	if(actSummary.getFundings() != null) {

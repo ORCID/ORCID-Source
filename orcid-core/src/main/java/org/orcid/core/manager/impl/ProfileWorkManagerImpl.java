@@ -180,5 +180,5 @@ public class ProfileWorkManagerImpl implements ProfileWorkManager {
 
     public boolean updateToMaxDisplay(String orcid, String workId) {
         return profileWorkDao.updateToMaxDisplay(orcid, workId);
-    }    
+    }
 }

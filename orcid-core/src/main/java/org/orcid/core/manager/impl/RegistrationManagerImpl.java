@@ -114,8 +114,6 @@ public class RegistrationManagerImpl implements RegistrationManager {
         List<Email> emails = minimalProfile.getOrcidBio().getContactDetails().getEmail();
         for(Email email : emails)
             emailManager.addSourceToEmail(email.getValue(), sourceId);
-        //Index new profile
-        orcidProfileManager.processProfilePendingIndexingInTransaction(orcidProfile.getOrcidIdentifier().getPath());
         LOGGER.debug("Created minimal orcid and assigned id of {}", orcidProfile.getOrcidIdentifier().getPath());
         return minimalProfile;
     }
