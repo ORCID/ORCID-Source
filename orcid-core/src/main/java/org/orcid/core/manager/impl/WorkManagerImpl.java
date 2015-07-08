@@ -24,6 +24,7 @@ import javax.annotation.Resource;
 import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.jaxb.model.record.summary.FundingSummary;
 import org.orcid.persistence.dao.ProfileWorkDao;
 import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
@@ -126,4 +127,58 @@ public class WorkManagerImpl implements WorkManager {
         ProfileWorkEntity profileWork = profileWorkDao.getProfileWork(orcid, workId);
         return workDao.updateToMaxDisplay(workId, profileWork.getDisplayIndex());
     }
+    
+    /**
+     * Get the list of works that belongs to a user
+     * 
+     * @param userOrcid
+     * @param lastModified
+     *          Last modified date used to check the cache
+     * @return the list of works that belongs to this user
+     * */
+    public List<FundingSummary> getWorksSummaryList(String userOrcid, long lastModified) {
+        //TODO
+        return null;
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

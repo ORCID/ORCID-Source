@@ -20,8 +20,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.jaxb.model.record.summary.FundingSummary;
+import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.custom.MinimizedWorkEntity;
+import org.springframework.cache.annotation.Cacheable;
 
 public interface WorkManager {
     /**
@@ -92,4 +95,14 @@ public interface WorkManager {
      * @return true if the work index was correctly set                  
      * */
     boolean updateToMaxDisplay(String orcid, String workId);
+    
+    /**
+     * Get the list of works that belongs to a user
+     * 
+     * @param userOrcid
+     * @param lastModified
+     *          Last modified date used to check the cache
+     * @return the list of works that belongs to this user
+     * */
+    List<FundingSummary> getWorksSummaryList(String userOrcid, long lastModified);
 }
