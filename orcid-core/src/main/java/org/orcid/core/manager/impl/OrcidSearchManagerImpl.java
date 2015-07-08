@@ -168,8 +168,7 @@ public class OrcidSearchManagerImpl implements OrcidSearchManager {
             if (cachingSource.equals(DB)) {
                 OrcidProfile orcidProfile = orcidProfileCacheManager.retrievePublic(orcid);
                 orcidProfile.setOrcidInternal(null);
-                om = new OrcidMessage();
-                om.setOrcidProfile(orcidProfile);
+                om = new OrcidMessage(orcidProfile);
             } else {
                 try (Reader reader = solrDao.findByOrcidAsReader(orcid)) {
                     if (reader != null) {
