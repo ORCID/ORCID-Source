@@ -20,8 +20,10 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.orcid.jaxb.model.common.Url;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierId;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
+import org.orcid.jaxb.model.record.Relationship;
 
 public class WorkExternalIdentifier implements ErrorsInterface, Serializable {
     
@@ -33,14 +35,18 @@ public class WorkExternalIdentifier implements ErrorsInterface, Serializable {
 
     private Text workExternalIdentifierType;
     
+    private Text url;
+    
+    private Text relationship;
+    
     public static WorkExternalIdentifier valueOf(org.orcid.jaxb.model.message.WorkExternalIdentifier workExternalIdentifier) {
         WorkExternalIdentifier wi = new WorkExternalIdentifier();
         if (workExternalIdentifier != null) {
             if (workExternalIdentifier.getWorkExternalIdentifierId() != null)
                 wi.setWorkExternalIdentifierId(Text.valueOf(workExternalIdentifier.getWorkExternalIdentifierId().getContent()));
             if (workExternalIdentifier.getWorkExternalIdentifierType() != null)
-                wi.setWorkExternalIdentifierType(Text.valueOf(workExternalIdentifier.getWorkExternalIdentifierType().value()));
-        }
+                wi.setWorkExternalIdentifierType(Text.valueOf(workExternalIdentifier.getWorkExternalIdentifierType().value()));            
+        }                
         return wi;
 
     }
@@ -52,6 +58,10 @@ public class WorkExternalIdentifier implements ErrorsInterface, Serializable {
                 wi.setWorkExternalIdentifierId(Text.valueOf(workExternalIdentifier.getWorkExternalIdentifierId().getContent()));
             if (workExternalIdentifier.getWorkExternalIdentifierType() != null)
                 wi.setWorkExternalIdentifierType(Text.valueOf(workExternalIdentifier.getWorkExternalIdentifierType().value()));
+            if(workExternalIdentifier.getRelationship() != null)
+                wi.setRelationship(Text.valueOf(workExternalIdentifier.getRelationship().value()));
+            if(workExternalIdentifier.getUrl() != null)
+                wi.setUrl(Text.valueOf(workExternalIdentifier.getUrl().getValue()));
         }
         return wi;
 
@@ -72,6 +82,10 @@ public class WorkExternalIdentifier implements ErrorsInterface, Serializable {
             we.setWorkExternalIdentifierId(new org.orcid.jaxb.model.record.WorkExternalIdentifierId(this.getWorkExternalIdentifierId().getValue()));
         if (!PojoUtil.isEmpty(this.getWorkExternalIdentifierType()))
             we.setWorkExternalIdentifierType(org.orcid.jaxb.model.record.WorkExternalIdentifierType.fromValue(this.getWorkExternalIdentifierType().getValue()));
+        if(!PojoUtil.isEmpty(this.getRelationship())) 
+            we.setRelationship(Relationship.fromValue(this.getRelationship().getValue()));
+        if(!PojoUtil.isEmpty(this.getUrl()))
+            we.setUrl(new Url(this.getUrl().getValue()));
         return we;
     }
 
@@ -98,6 +112,22 @@ public class WorkExternalIdentifier implements ErrorsInterface, Serializable {
     public void setWorkExternalIdentifierType(Text workExternalIdentifierType) {
         this.workExternalIdentifierType = workExternalIdentifierType;
     }
+    
+    public Text getUrl() {
+        return url;
+    }
+
+    public void setUrl(Text url) {
+        this.url = url;
+    }
+
+    public Text getRelationship() {
+        return relationship;
+    }
+
+    public void setRelationship(Text relationship) {
+        this.relationship = relationship;
+    }
 
     @Override
     public int hashCode() {
@@ -105,6 +135,8 @@ public class WorkExternalIdentifier implements ErrorsInterface, Serializable {
         int result = 1;
         result = prime * result + ((workExternalIdentifierId == null) ? 0 : workExternalIdentifierId.hashCode());
         result = prime * result + ((workExternalIdentifierType == null) ? 0 : workExternalIdentifierType.hashCode());
+        result = prime * result + ((url == null) ? 0 : url.hashCode());
+        result = prime * result + ((relationship == null) ? 0 : relationship.hashCode());
         return result;
     }
 
@@ -126,7 +158,18 @@ public class WorkExternalIdentifier implements ErrorsInterface, Serializable {
             if (other.workExternalIdentifierType != null)
                 return false;
         } else if (!workExternalIdentifierType.equals(other.workExternalIdentifierType))
+            return false;        
+        if (url == null) {
+            if (other.url != null)
+                return false;
+        } else if (!url.equals(other.url))
+            return false;        
+        if (relationship == null) {
+            if (other.relationship != null)
+                return false;
+        } else if (!relationship.equals(other.relationship))
             return false;
+        
         return true;
     }        
 }

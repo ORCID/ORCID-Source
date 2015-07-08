@@ -132,9 +132,9 @@ public class Work implements ErrorsInterface, Serializable {
 
         if (minimizedWorkEntity.getWorkType() != null)
             w.setWorkType(Text.valueOf(minimizedWorkEntity.getWorkType().value()));
-        WorkExternalIdentifiers identifiers = null;
+        org.orcid.jaxb.model.record.WorkExternalIdentifiers identifiers = null;
         if (!StringUtils.isEmpty(minimizedWorkEntity.getExternalIdentifiersJson())) {
-            identifiers = JsonUtils.readObjectFromJsonString(minimizedWorkEntity.getExternalIdentifiersJson(), WorkExternalIdentifiers.class);
+            identifiers = JsonUtils.readObjectFromJsonString(minimizedWorkEntity.getExternalIdentifiersJson(), org.orcid.jaxb.model.record.WorkExternalIdentifiers.class);
         }
         populateExternaIdentifiers(identifiers, w);
         if (minimizedWorkEntity.getSource() != null) {
@@ -171,7 +171,15 @@ public class Work implements ErrorsInterface, Serializable {
         return w;
     }
 
-    private static void populateExternaIdentifiers(WorkExternalIdentifiers workExternalIdentifiers, Work work) {
+    private static void populateExternaIdentifiers(org.orcid.jaxb.model.record.WorkExternalIdentifiers workExternalIdentifiers, Work work) {
+        List<WorkExternalIdentifier> workExternalIdentifiersList = new ArrayList<WorkExternalIdentifier>();
+        if (workExternalIdentifiers != null && workExternalIdentifiers.getWorkExternalIdentifier() != null)
+            for (org.orcid.jaxb.model.record.WorkExternalIdentifier owWorkExternalIdentifier : workExternalIdentifiers.getWorkExternalIdentifier())
+                workExternalIdentifiersList.add(WorkExternalIdentifier.valueOf(owWorkExternalIdentifier));
+        work.setWorkExternalIdentifiers(workExternalIdentifiersList);
+    }
+    
+    private static void populateExternaIdentifiers(org.orcid.jaxb.model.message.WorkExternalIdentifiers workExternalIdentifiers, Work work) {
         List<WorkExternalIdentifier> workExternalIdentifiersList = new ArrayList<WorkExternalIdentifier>();
         if (workExternalIdentifiers != null && workExternalIdentifiers.getWorkExternalIdentifier() != null)
             for (org.orcid.jaxb.model.message.WorkExternalIdentifier owWorkExternalIdentifier : workExternalIdentifiers.getWorkExternalIdentifier())

@@ -16,9 +16,12 @@
  */
 package org.orcid.integration.blackbox.api;
 
+import static org.hamcrest.core.AnyOf.anyOf;
+import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.net.URISyntaxException;
@@ -36,6 +39,7 @@ import org.orcid.integration.blackbox.BlackBoxBase;
 import org.orcid.jaxb.model.common.Day;
 import org.orcid.jaxb.model.common.FuzzyDate;
 import org.orcid.jaxb.model.common.Month;
+import org.orcid.jaxb.model.common.Title;
 import org.orcid.jaxb.model.common.Url;
 import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.jaxb.model.common.Year;
@@ -46,6 +50,7 @@ import org.orcid.jaxb.model.record.Funding;
 import org.orcid.jaxb.model.record.FundingExternalIdentifier;
 import org.orcid.jaxb.model.record.FundingExternalIdentifierType;
 import org.orcid.jaxb.model.record.PeerReview;
+import org.orcid.jaxb.model.record.Relationship;
 import org.orcid.jaxb.model.record.Work;
 import org.orcid.jaxb.model.record.WorkExternalIdentifier;
 import org.orcid.jaxb.model.record.WorkExternalIdentifierId;
@@ -123,6 +128,7 @@ public class MemberV2Test extends BlackBoxBase {
         WorkExternalIdentifier wExtId = new WorkExternalIdentifier();
         wExtId.setWorkExternalIdentifierId(new WorkExternalIdentifierId("Work Id " + time));
         wExtId.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
+        wExtId.setRelationship(Relationship.PART_OF);
         workToCreate.getExternalIdentifiers().getWorkExternalIdentifier().add(wExtId);
         String accessToken = getAccessToken();
         ClientResponse postResponse = memberV2ApiClient.createWorkXml(user1OrcidId, workToCreate, accessToken);
@@ -155,6 +161,7 @@ public class MemberV2Test extends BlackBoxBase {
         WorkExternalIdentifier wExtId = new WorkExternalIdentifier();
         wExtId.setWorkExternalIdentifierId(new WorkExternalIdentifierId("Work Id " + time));
         wExtId.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
+        wExtId.setRelationship(Relationship.SELF);
         workToCreate.getExternalIdentifiers().getWorkExternalIdentifier().add(wExtId);
         String accessToken = getAccessToken();
         ClientResponse postResponse = memberV2ApiClient.createWorkXml(user1OrcidId, workToCreate, accessToken);
@@ -306,6 +313,7 @@ public class MemberV2Test extends BlackBoxBase {
         FundingExternalIdentifier fExtId = new FundingExternalIdentifier();
         fExtId.setType(FundingExternalIdentifierType.GRANT_NUMBER);
         fExtId.setValue("Funding Id " + time);
+        fExtId.setRelationship(Relationship.SELF);
         funding.getExternalIdentifiers().getExternalIdentifier().add(fExtId);
         String accessToken = getAccessToken();
         ClientResponse postResponse = memberV2ApiClient.createFundingXml(user1OrcidId, funding, accessToken);
@@ -344,6 +352,7 @@ public class MemberV2Test extends BlackBoxBase {
         FundingExternalIdentifier fExtId = new FundingExternalIdentifier();
         fExtId.setType(FundingExternalIdentifierType.GRANT_NUMBER);
         fExtId.setValue("Funding Id " + time);
+        fExtId.setRelationship(Relationship.SELF);
         funding.getExternalIdentifiers().getExternalIdentifier().add(fExtId);
         String accessToken = getAccessToken();
         ClientResponse postResponse = memberV2ApiClient.createFundingXml(user1OrcidId, funding, accessToken);
@@ -382,6 +391,7 @@ public class MemberV2Test extends BlackBoxBase {
         WorkExternalIdentifier wExtId = new WorkExternalIdentifier();
         wExtId.setWorkExternalIdentifierId(new WorkExternalIdentifierId("Work Id " + time));
         wExtId.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
+        wExtId.setRelationship(Relationship.SELF);
         peerReviewToCreate.getExternalIdentifiers().getExternalIdentifier().add(wExtId);
         String accessToken = getAccessToken();
 
@@ -418,6 +428,7 @@ public class MemberV2Test extends BlackBoxBase {
         WorkExternalIdentifier wExtId = new WorkExternalIdentifier();
         wExtId.setWorkExternalIdentifierId(new WorkExternalIdentifierId("Work Id " + time));
         wExtId.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
+        wExtId.setRelationship(Relationship.SELF);
         peerReviewToCreate.getExternalIdentifiers().getWorkExternalIdentifier().add(wExtId);
         String accessToken = getAccessToken();
 
@@ -460,6 +471,7 @@ public class MemberV2Test extends BlackBoxBase {
         FundingExternalIdentifier fExtId = new FundingExternalIdentifier();
         fExtId.setType(FundingExternalIdentifierType.GRANT_NUMBER);
         fExtId.setValue("Funding Id " + time);
+        fExtId.setRelationship(Relationship.SELF);
         funding.getExternalIdentifiers().getExternalIdentifier().add(fExtId);
                 
         Work work = (Work) unmarshallFromPath("/record_2.0_rc1/samples/work-2.0_rc1.xml", Work.class);
@@ -468,6 +480,7 @@ public class MemberV2Test extends BlackBoxBase {
         WorkExternalIdentifier wExtId = new WorkExternalIdentifier();
         wExtId.setWorkExternalIdentifierId(new WorkExternalIdentifierId("Work Id " + time));
         wExtId.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
+        wExtId.setRelationship(Relationship.SELF);
         work.getExternalIdentifiers().getWorkExternalIdentifier().add(wExtId);
 
         PeerReview peerReview = (PeerReview) unmarshallFromPath("/record_2.0_rc1/samples/peer-review-2.0_rc1.xml", PeerReview.class);
@@ -476,6 +489,7 @@ public class MemberV2Test extends BlackBoxBase {
         WorkExternalIdentifier pExtId = new WorkExternalIdentifier();
         pExtId.setWorkExternalIdentifierId(new WorkExternalIdentifierId("Work Id " + time));
         pExtId.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
+        pExtId.setRelationship(Relationship.SELF);
         peerReview.getExternalIdentifiers().getExternalIdentifier().add(pExtId);
         
         String accessToken = getAccessToken();
@@ -502,6 +516,7 @@ public class MemberV2Test extends BlackBoxBase {
         FundingExternalIdentifier fExtId3 = new FundingExternalIdentifier();
         fExtId3.setType(FundingExternalIdentifierType.GRANT_NUMBER);
         fExtId3.setValue("extId3Value" + time);
+        fExtId3.setRelationship(Relationship.SELF);
         funding.getExternalIdentifiers().getExternalIdentifier().add(fExtId3);
         // Add 2, with the same ext ids +1
         postResponse = memberV2ApiClient.createFundingXml(user1OrcidId, funding, accessToken);
@@ -513,6 +528,7 @@ public class MemberV2Test extends BlackBoxBase {
         FundingExternalIdentifier fExtId4 = new FundingExternalIdentifier();
         fExtId4.setType(FundingExternalIdentifierType.GRANT_NUMBER);
         fExtId4.setValue("extId4Value" + time);
+        fExtId4.setRelationship(Relationship.SELF);
         funding.getExternalIdentifiers().getExternalIdentifier().clear();
         funding.getExternalIdentifiers().getExternalIdentifier().add(fExtId4);
         // Add 3, with different ext ids
@@ -529,8 +545,7 @@ public class MemberV2Test extends BlackBoxBase {
         
         /**
          * Add 4 works 1 and 2 get grouped together 3 in another group because
-         * it have different ext ids 4 in another group because it doesnt have
-         * any ext ids
+         * it have different ext ids 4 in another group because it also have different ext ids
          **/
         // Add 1, the default work
         postResponse = memberV2ApiClient.createWorkXml(user1OrcidId, work, accessToken);
@@ -541,6 +556,7 @@ public class MemberV2Test extends BlackBoxBase {
         WorkExternalIdentifier wExtId2 = new WorkExternalIdentifier();
         wExtId2.setWorkExternalIdentifierType(WorkExternalIdentifierType.DOI);
         wExtId2.setWorkExternalIdentifierId(new WorkExternalIdentifierId("doi-ext-id" + time));
+        wExtId2.setRelationship(Relationship.SELF);
         work.getExternalIdentifiers().getExternalIdentifier().add(wExtId2);
         // Add 2, with the same ext ids +1
         postResponse = memberV2ApiClient.createWorkXml(user1OrcidId, work, accessToken);
@@ -551,6 +567,7 @@ public class MemberV2Test extends BlackBoxBase {
         WorkExternalIdentifier wExtId3 = new WorkExternalIdentifier();
         wExtId3.setWorkExternalIdentifierType(WorkExternalIdentifierType.EID);
         wExtId3.setWorkExternalIdentifierId(new WorkExternalIdentifierId("eid-ext-id" + time));
+        wExtId3.setRelationship(Relationship.SELF);
         work.getWorkExternalIdentifiers().getExternalIdentifier().clear();
         work.getWorkExternalIdentifiers().getExternalIdentifier().add(wExtId3);
         // Add 3, with different ext ids
@@ -559,8 +576,13 @@ public class MemberV2Test extends BlackBoxBase {
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         
         work.getWorkTitle().getTitle().setContent("Work # 4");
+        WorkExternalIdentifier wExtId4 = new WorkExternalIdentifier();
+        wExtId4.setWorkExternalIdentifierType(WorkExternalIdentifierType.EID);
+        wExtId4.setWorkExternalIdentifierId(new WorkExternalIdentifierId("eid-ext-id-4" + time));
+        wExtId4.setRelationship(Relationship.SELF);
         work.getWorkExternalIdentifiers().getExternalIdentifier().clear();
-        // Add 4, without ext ids
+        work.getWorkExternalIdentifiers().getExternalIdentifier().add(wExtId4);
+        // Add 4, without ext ids                
         postResponse = memberV2ApiClient.createWorkXml(user1OrcidId, work, accessToken);
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
@@ -583,6 +605,7 @@ public class MemberV2Test extends BlackBoxBase {
         WorkExternalIdentifier pExtId2 = new WorkExternalIdentifier();
         pExtId2.setWorkExternalIdentifierType(WorkExternalIdentifierType.DOI);
         pExtId2.setWorkExternalIdentifierId(new WorkExternalIdentifierId("doi-ext-id" + time));
+        pExtId2.setRelationship(Relationship.SELF);
         peerReview.getExternalIdentifiers().getExternalIdentifier().add(pExtId2);
         // Add 2, with the same ext ids +1
         postResponse = memberV2ApiClient.createPeerReviewXml(user1OrcidId, peerReview, accessToken);
@@ -597,6 +620,7 @@ public class MemberV2Test extends BlackBoxBase {
         WorkExternalIdentifier pExtId3 = new WorkExternalIdentifier();
         pExtId3.setWorkExternalIdentifierType(WorkExternalIdentifierType.EID);
         pExtId3.setWorkExternalIdentifierId(new WorkExternalIdentifierId("eid-ext-id" + time));
+        pExtId3.setRelationship(Relationship.SELF);
         peerReview.getExternalIdentifiers().getExternalIdentifier().clear();
         peerReview.getExternalIdentifiers().getExternalIdentifier().add(pExtId3);
         // Add 3, with different ext ids
@@ -660,8 +684,7 @@ public class MemberV2Test extends BlackBoxBase {
             }
         }
         
-        assertTrue("Employment not found", found);
-        
+        assertTrue("Employment not found", found);        
         
         assertNotNull(activities.getFundings());        
         boolean found1 = false, found2 = false, found3 = false, found4 = false;
@@ -717,10 +740,157 @@ public class MemberV2Test extends BlackBoxBase {
             }
         }
         
-        assertTrue("One of the peer reviews was not found: 1(" + found1 + ") 2(" + found2 + ") 3(" + found3 + ") 4(" + found4 + ")", found1 == found2 == found3 == found4 == true);
+        assertTrue("One of the peer reviews was not found: 1(" + found1 + ") 2(" + found2 + ") 3(" + found3 + ") 4(" + found4 + ")", found1 == found2 == found3 == found4 == true);        
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Test
+    public void testWorksWithPartOfRelationshipDontGetGrouped () throws JSONException, InterruptedException, URISyntaxException {
+        long time = System.currentTimeMillis();
+        String accessToken = getAccessToken();        
         
+        Work work1 = (Work) unmarshallFromPath("/record_2.0_rc1/samples/work-2.0_rc1.xml", Work.class);
+        work1.setPutCode(null);
+        work1.getExternalIdentifiers().getExternalIdentifier().clear();
+        org.orcid.jaxb.model.record.WorkTitle title1 = new org.orcid.jaxb.model.record.WorkTitle();
+        title1.setTitle(new Title("Work # 1"));
+        work1.setWorkTitle(title1);
+        WorkExternalIdentifier wExtId1 = new WorkExternalIdentifier();
+        wExtId1.setWorkExternalIdentifierId(new WorkExternalIdentifierId("Work Id " + time));
+        wExtId1.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
+        wExtId1.setRelationship(Relationship.SELF);
+        wExtId1.setUrl(new Url("http://orcid.org/work#1"));
+        work1.getExternalIdentifiers().getWorkExternalIdentifier().clear();
+        work1.getExternalIdentifiers().getWorkExternalIdentifier().add(wExtId1);
+
+        Work work2 = (Work) unmarshallFromPath("/record_2.0_rc1/samples/work-2.0_rc1.xml", Work.class);
+        work2.setPutCode(null);
+        org.orcid.jaxb.model.record.WorkTitle title2 = new org.orcid.jaxb.model.record.WorkTitle();
+        title2.setTitle(new Title("Work # 2"));
+        work2.setWorkTitle(title2);
+        work2.getExternalIdentifiers().getExternalIdentifier().clear();
+        WorkExternalIdentifier wExtId2 = new WorkExternalIdentifier();
+        wExtId2.setWorkExternalIdentifierId(new WorkExternalIdentifierId("Work Id " + time));
+        wExtId2.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
+        wExtId2.setRelationship(Relationship.PART_OF);
+        wExtId2.setUrl(new Url("http://orcid.org/work#2"));
+        work2.getExternalIdentifiers().getWorkExternalIdentifier().clear();
+        work2.getExternalIdentifiers().getWorkExternalIdentifier().add(wExtId2);
+        
+        Work work3 = (Work) unmarshallFromPath("/record_2.0_rc1/samples/work-2.0_rc1.xml", Work.class);
+        work3.setPutCode(null);        
+        org.orcid.jaxb.model.record.WorkTitle title3 = new org.orcid.jaxb.model.record.WorkTitle();
+        title3.setTitle(new Title("Work # 3"));
+        work3.setWorkTitle(title3);        
+        work3.getExternalIdentifiers().getExternalIdentifier().clear();
+        WorkExternalIdentifier wExtId3 = new WorkExternalIdentifier();
+        wExtId3.setWorkExternalIdentifierId(new WorkExternalIdentifierId("Work Id " + time));
+        wExtId3.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
+        wExtId3.setRelationship(Relationship.SELF);
+        wExtId3.setUrl(new Url("http://orcid.org/work#3"));
+        work3.getExternalIdentifiers().getWorkExternalIdentifier().clear();
+        work3.getExternalIdentifiers().getWorkExternalIdentifier().add(wExtId3);
+        
+        //Add the three works
+        ClientResponse postResponse = memberV2ApiClient.createWorkXml(user1OrcidId, work1, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+        
+        postResponse = memberV2ApiClient.createWorkXml(user1OrcidId, work2, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+        
+        postResponse = memberV2ApiClient.createWorkXml(user1OrcidId, work3, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+        
+        ClientResponse activitiesResponse = memberV2ApiClient.viewActivities(user1OrcidId, accessToken);
+        assertEquals(Response.Status.OK.getStatusCode(), activitiesResponse.getStatus());
+        ActivitiesSummary activities = activitiesResponse.getEntity(ActivitiesSummary.class);
+        assertNotNull(activities);
+        assertFalse(activities.getWorks().getWorkGroup().isEmpty());
+        assertEquals(2, activities.getWorks().getWorkGroup().size());
+        
+        WorkGroup group0 = activities.getWorks().getWorkGroup().get(0);
+        WorkGroup group1 = activities.getWorks().getWorkGroup().get(1);
+        
+        boolean group0isOk = false;
+        boolean group1isOk = false;
+        
+        //Check if group0 contain the non grouped work
+        if(group0.getWorkSummary().size() == 1) {
+            assertNotNull(group0.getIdentifiers().getIdentifier());            
+            assertEquals(0, group0.getIdentifiers().getIdentifier().size());
+            assertNotNull(group0.getWorkSummary());
+            assertNotNull(group0.getWorkSummary().get(0));
+            assertEquals("Work # 2", group0.getWorkSummary().get(0).getTitle().getTitle().getContent());
+            group0isOk = true;
+        } else {
+            assertNotNull(group0.getIdentifiers().getIdentifier());
+            assertEquals(1, group0.getIdentifiers().getIdentifier().size());
+            assertEquals("Work Id " + time, group0.getIdentifiers().getIdentifier().get(0).getExternalIdentifierId());
+            assertNotNull(group0.getWorkSummary());            
+            assertEquals(2, group0.getWorkSummary().size());
+            assertThat(group0.getWorkSummary().get(0).getTitle().getTitle().getContent(), anyOf(is("Work # 1"), is("Work # 3")));
+            assertThat(group0.getWorkSummary().get(1).getTitle().getTitle().getContent(), anyOf(is("Work # 1"), is("Work # 3")));
+            group0isOk = true;
+        }
+                        
+        //Check if group1 contain the non grouped work
+        if(group1.getWorkSummary().size() == 1) {
+            assertNotNull(group1.getIdentifiers().getIdentifier());
+            assertEquals(0, group1.getIdentifiers().getIdentifier().size());            
+            assertNotNull(group1.getWorkSummary());
+            assertNotNull(group1.getWorkSummary().get(0));            
+            assertEquals("Work # 2", group1.getWorkSummary().get(0).getTitle().getTitle().getContent());
+            group1isOk = true;
+        } else {
+            assertNotNull(group1.getIdentifiers().getIdentifier());
+            assertEquals(1, group1.getIdentifiers().getIdentifier().size());
+            assertEquals("Work Id " + time, group1.getIdentifiers().getIdentifier().get(0).getExternalIdentifierId());
+            assertNotNull(group1.getWorkSummary());            
+            assertEquals(2, group1.getWorkSummary().size());
+            assertThat(group1.getWorkSummary().get(0).getTitle().getTitle().getContent(), anyOf(is("Work # 1"), is("Work # 3")));
+            assertThat(group1.getWorkSummary().get(1).getTitle().getTitle().getContent(), anyOf(is("Work # 1"), is("Work # 3")));
+            group1isOk = true;
+        }
+        
+        assertTrue(group0isOk);
+        assertTrue(group1isOk);
     }
 
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     public String getAccessToken() throws InterruptedException, JSONException {
         if (accessToken == null) {
             accessToken = super.getAccessToken(ScopePathType.ACTIVITIES_UPDATE.value());

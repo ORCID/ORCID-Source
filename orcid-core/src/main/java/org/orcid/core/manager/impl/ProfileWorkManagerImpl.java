@@ -25,12 +25,16 @@ import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.adapter.JpaJaxbWorkAdapter;
 import org.orcid.core.exception.ActivityIdentifierValidationException;
 import org.orcid.core.exception.ActivityTitleValidationException;
+import org.orcid.core.exception.InvalidPutCodeException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.ProfileWorkManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.jaxb.model.record.Relationship;
 import org.orcid.jaxb.model.record.Work;
+import org.orcid.jaxb.model.record.WorkExternalIdentifier;
+import org.orcid.jaxb.model.record.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.record.WorkTitle;
 import org.orcid.jaxb.model.record.summary.WorkSummary;
 import org.orcid.persistence.dao.ProfileDao;
@@ -184,6 +188,28 @@ public class ProfileWorkManagerImpl implements ProfileWorkManager {
     @Override
     @Transactional
     public Work createWork(String orcid, Work work) {
+        //Check external identifiers before transform it into a ProfileWorkEntity
+        if(work.getExternalIdentifiers() != null && !work.getWorkExternalIdentifiers().getExternalIdentifier().isEmpty()) {
+            for(WorkExternalIdentifier extId : work.getWorkExternalIdentifiers().getExternalIdentifier()) {
+                if(extId.getRelationship() == null) {
+                    if(WorkExternalIdentifierType.ISSN.equals(extId.getWorkExternalIdentifierType())) {
+                        if(!work.getWorkType().equals(org.orcid.jaxb.model.message.WorkType.BOOK)){
+                            extId.setRelationship(Relationship.PART_OF);
+                        } else {
+                            extId.setRelationship(Relationship.SELF);
+                        }                
+                    } else if(WorkExternalIdentifierType.ISBN.equals(extId.getWorkExternalIdentifierType())) {
+                        if(work.getWorkType().equals(org.orcid.jaxb.model.message.WorkType.BOOK_CHAPTER)) {
+                            extId.setRelationship(Relationship.PART_OF);
+                        } else {
+                            extId.setRelationship(Relationship.SELF);
+                        }
+                    } else {
+                        extId.setRelationship(Relationship.SELF);
+                    }
+                }
+            }
+        }
     	validateWork(work);
         ProfileWorkEntity profileWorkEntity = jpaJaxbWorkAdapter.toProfileWorkEntity(work);
         profileWorkEntity.setSource(sourceManager.retrieveSourceEntity());
@@ -208,11 +234,37 @@ public class ProfileWorkManagerImpl implements ProfileWorkManager {
                 || work.getWorkExternalIdentifiers().getWorkExternalIdentifier().isEmpty()) {
         	throw new ActivityIdentifierValidationException();
         }
+        
+        if (work.getPutCode() != null) {
+        	throw new InvalidPutCodeException();
+        }
 	}
     
     @Override
     @Transactional
     public Work updateWork(String orcid, Work work) {
+        //Check external identifiers before transform it into a ProfileWorkEntity
+        if(work.getExternalIdentifiers() != null && !work.getWorkExternalIdentifiers().getExternalIdentifier().isEmpty()) {
+            for(WorkExternalIdentifier extId : work.getWorkExternalIdentifiers().getExternalIdentifier()) {
+                if(extId.getRelationship() == null) {
+                    if(WorkExternalIdentifierType.ISSN.equals(extId.getWorkExternalIdentifierType())) {
+                        if(!work.getWorkType().equals(org.orcid.jaxb.model.message.WorkType.BOOK)){
+                            extId.setRelationship(Relationship.PART_OF);
+                        } else {
+                            extId.setRelationship(Relationship.SELF);
+                        }                
+                    } else if(WorkExternalIdentifierType.ISBN.equals(extId.getWorkExternalIdentifierType())) {
+                        if(work.getWorkType().equals(org.orcid.jaxb.model.message.WorkType.BOOK_CHAPTER)) {
+                            extId.setRelationship(Relationship.PART_OF);
+                        } else {
+                            extId.setRelationship(Relationship.SELF);
+                        }
+                    } else {
+                        extId.setRelationship(Relationship.SELF);
+                    }
+                }
+            }
+        }
         ProfileWorkEntity profileWorkEntity = profileWorkDao.getProfileWork(orcid, work.getPutCode());
         Visibility originalVisibility = profileWorkEntity.getVisibility();
         SourceEntity existingSource = profileWorkEntity.getSource();

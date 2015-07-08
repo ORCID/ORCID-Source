@@ -137,4 +137,23 @@ public class WorkExternalIdentifiers implements Serializable, ExternalIdentifier
         int result = workExternalIdentifier != null ? workExternalIdentifier.hashCode() : 0;
         return result;
     }
+    
+    public static WorkExternalIdentifiers valueOf(org.orcid.jaxb.model.message.WorkExternalIdentifiers messageWorkExternalIdentifiers) {
+        WorkExternalIdentifiers result = new WorkExternalIdentifiers();
+        
+        if(messageWorkExternalIdentifiers != null && !messageWorkExternalIdentifiers.getWorkExternalIdentifier().isEmpty()) {
+            for(org.orcid.jaxb.model.message.WorkExternalIdentifier messageExtId : messageWorkExternalIdentifiers.getWorkExternalIdentifier()) {
+                WorkExternalIdentifier extId = new WorkExternalIdentifier();
+                if(messageExtId.getWorkExternalIdentifierId() != null) {
+                    extId.setWorkExternalIdentifierId(new WorkExternalIdentifierId(messageExtId.getWorkExternalIdentifierId().getContent()));
+                }
+                if(messageExtId.getWorkExternalIdentifierType() != null) {
+                    extId.setWorkExternalIdentifierType(WorkExternalIdentifierType.fromValue(messageExtId.getWorkExternalIdentifierType().value()));
+                }
+                result.getExternalIdentifier().add(extId);
+            }
+        }
+        
+        return result;
+    }
 }

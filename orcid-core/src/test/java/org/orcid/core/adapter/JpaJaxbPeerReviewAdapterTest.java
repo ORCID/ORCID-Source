@@ -65,7 +65,7 @@ public class JpaJaxbPeerReviewAdapterTest {
         //General info
         assertEquals(Long.valueOf(12345), pe.getId());
         assertEquals(Visibility.PRIVATE.value(), pe.getVisibility().value());        
-        assertEquals("{\"workExternalIdentifier\":[{\"workExternalIdentifierType\":\"AGR\",\"workExternalIdentifierId\":{\"content\":\"work:external-identifier-id\"}}]}", pe.getExternalIdentifiersJson());
+        assertEquals("{\"workExternalIdentifier\":[{\"relationship\":\"SELF\",\"url\":{\"value\":\"http://orcid.org\"},\"workExternalIdentifierType\":\"AGR\",\"workExternalIdentifierId\":{\"content\":\"work:external-identifier-id\"}}]}", pe.getExternalIdentifiersJson());
         assertEquals("reviewer", pe.getRole().value());
         assertEquals("review", pe.getType().value());
         assertEquals("peer-review:url", pe.getUrl());
@@ -88,7 +88,7 @@ public class JpaJaxbPeerReviewAdapterTest {
         
         //Check subject
         assertNotNull(pe.getSubject());
-        assertEquals("{\"workExternalIdentifier\":[{\"workExternalIdentifierType\":\"AGR\",\"workExternalIdentifierId\":{\"content\":\"work:external-identifier-id\"}}]}", pe.getSubject().getExternalIdentifiersJson());
+        assertEquals("{\"workExternalIdentifier\":[{\"relationship\":\"SELF\",\"url\":{\"value\":\"http://orcid.org\"},\"workExternalIdentifierType\":\"AGR\",\"workExternalIdentifierId\":{\"content\":\"work:external-identifier-id\"}}]}", pe.getSubject().getExternalIdentifiersJson());
         assertEquals("peer-review:journal title", pe.getSubject().getJournalTitle());
         assertEquals("common:subtitle", pe.getSubject().getSubTitle());
         assertEquals("common:title", pe.getSubject().getTitle());
@@ -139,8 +139,7 @@ public class JpaJaxbPeerReviewAdapterTest {
         assertEquals("org:city", peerReview.getOrganization().getAddress().getCity());
         assertEquals("org:region", peerReview.getOrganization().getAddress().getRegion());
         assertNotNull(peerReview.getSource());        
-        assertNotNull(peerReview.getSource().getSourceOrcid());
-        assertEquals("APP-000000001", peerReview.getSource().getSourceOrcid().getPath());
+        assertEquals("APP-000000001", peerReview.getSource().retrieveSourcePath());
     }
     
     @Test
@@ -162,8 +161,7 @@ public class JpaJaxbPeerReviewAdapterTest {
         assertEquals("agr", peerReviewSummary.getExternalIdentifiers().getExternalIdentifier().get(0).getWorkExternalIdentifierType().value());
         assertEquals(Role.MEMBER.value(), peerReviewSummary.getRole().value());
         assertNotNull(peerReviewSummary.getSource());
-        assertNotNull(peerReviewSummary.getSource().getSourceOrcid());
-        assertEquals("APP-000000001", peerReviewSummary.getSource().getSourceOrcid().getPath());
+        assertEquals("APP-000000001", peerReviewSummary.getSource().retrieveSourcePath());
     }
 
     private PeerReview getPeerReview(boolean full) throws JAXBException {

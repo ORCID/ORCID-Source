@@ -50,8 +50,10 @@ import org.orcid.jaxb.model.message.PublicationDate;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkCategory;
 import org.orcid.jaxb.model.message.WorkContributors;
+import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.message.WorkExternalIdentifiers;
 import org.orcid.jaxb.model.message.WorkType;
+import org.orcid.jaxb.model.record.Relationship;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
 import org.orcid.persistence.jpa.entities.PublicationDateEntity;
@@ -145,9 +147,7 @@ public class WorksController extends BaseWorkspaceController {
             currentProfile.getOrcidActivities().setOrcidWorks(works);
         }
         return workIdLs;
-    }
-
-    
+    }    
     
     /**
      * List works associated with a profile
@@ -273,14 +273,15 @@ public class WorksController extends BaseWorkspaceController {
         initializePublicationDate(w);
         
         if(w.getWorkExternalIdentifiers() == null || w.getWorkExternalIdentifiers().isEmpty()) {
-            WorkExternalIdentifier wdi = new WorkExternalIdentifier();
+            WorkExternalIdentifier wei = new WorkExternalIdentifier();
             Text wdiT = new Text();
             Text wdiType = new Text();
             wdiType.setValue(new String());
-            wdi.setWorkExternalIdentifierId(wdiT);
-            wdi.setWorkExternalIdentifierType(wdiType);
+            wei.setWorkExternalIdentifierId(wdiT);
+            wei.setWorkExternalIdentifierType(wdiType);
+            wei.setRelationship(Text.valueOf(Relationship.SELF.value()));
             List<WorkExternalIdentifier> wdiL = new ArrayList<WorkExternalIdentifier>();
-            wdiL.add(wdi);
+            wdiL.add(wei);
             w.setWorkExternalIdentifiers(wdiL);
         }
         
@@ -317,7 +318,7 @@ public class WorksController extends BaseWorkspaceController {
 
         if(PojoUtil.isEmpty(w.getCountryName())) {
             w.setCountryName(new Text());
-        }                
+        }            
     }
     
     private void initializePublicationDate(Work w) {
@@ -328,11 +329,9 @@ public class WorksController extends BaseWorkspaceController {
             d.setYear(new String());
             w.setPublicationDate(d);
         }
-	}
-
-
-
-	/**
+    }
+    
+    /**
      * Returns a blank work
      * */
     @RequestMapping(value = "/getWorkInfo.json", method = RequestMethod.GET)
@@ -348,9 +347,15 @@ public class WorksController extends BaseWorkspaceController {
         if (profileWork != null) {
 
             OrcidWork orcidWork = jpa2JaxbAdapter.getOrcidWork(profileWork);
-
+                       
             if (orcidWork != null) {
                 Work work = Work.valueOf(orcidWork);
+                //Enhance work external identifiers 
+                WorkEntity workEntity = profileWork.getWork();
+                if(!PojoUtil.isEmpty(workEntity.getExternalIdentifiersJson())) {
+                    org.orcid.jaxb.model.record.WorkExternalIdentifiers workExternalIdentifiers = JsonUtils.readObjectFromJsonString(workEntity.getExternalIdentifiersJson(), org.orcid.jaxb.model.record.WorkExternalIdentifiers.class);                    
+                    enhanceExternalIdentifiers(work, workExternalIdentifiers);
+                }
                 //Set Publication date
                 if(work.getPublicationDate() == null) {
                 	initializePublicationDate(work);
@@ -382,7 +387,6 @@ public class WorksController extends BaseWorkspaceController {
                     work.getTranslatedTitle().setLanguageName(languageName);
                 }
                 
-
                 // If the work source is the user himself, fill the work source
                 // name
                 if (!PojoUtil.isEmpty(work.getSource()) && profileWork.getProfile().getId().equals(work.getSource())) {
@@ -506,6 +510,9 @@ public class WorksController extends BaseWorkspaceController {
                                 // visibility filtering settings.
 
         WorkEntity workEntity = toWorkEntity(newOw);
+        // Upgrade the external identifiers to include the relationship and url fields
+        enhanceExternalIdentifiers(workEntity, work);
+        
         // Create work
         workEntity = workManager.addWork(workEntity);
 
@@ -544,6 +551,8 @@ public class WorksController extends BaseWorkspaceController {
         OrcidWork updatedOw = work.toOrcidWork();
 
         WorkEntity workEntity = toWorkEntity(updatedOw);
+        // Upgrade the external identifiers to include the relationship and url fields
+        enhanceExternalIdentifiers(workEntity, work);
         // Edit work
         workManager.editWork(workEntity);
 
@@ -664,7 +673,65 @@ public class WorksController extends BaseWorkspaceController {
         workEntity.setSource(source);        
         return workEntity;
     }
+    
+    /**
+     * New external identifiers for works have relationship and url fields, so, we need to add those new fields to the work entity object.
+     * This function might be used between the transition from OrcidWorks (API 1.2 style) to Works (API 2.0 style)
+     * @param workEntity
+     *          The object to be enhanced
+     * @param work
+     *          The UI object containing the new ext id fields          
+     * */
+    private void enhanceExternalIdentifiers(WorkEntity workEntity, Work work) {
+        List<org.orcid.jaxb.model.record.WorkExternalIdentifier> weiList = new ArrayList<org.orcid.jaxb.model.record.WorkExternalIdentifier>();
+        if (work.getWorkExternalIdentifiers() != null) {
+            for (WorkExternalIdentifier wi : work.getWorkExternalIdentifiers()) {
+                weiList.add(wi.toRecordWorkExternalIdentifier());
+            }
+        }
+        org.orcid.jaxb.model.record.WorkExternalIdentifiers externalIdentifiers = new org.orcid.jaxb.model.record.WorkExternalIdentifiers(weiList);
+        workEntity.setExternalIdentifiersJson(JsonUtils.convertToJsonString(externalIdentifiers));
+    }
 
+    /**
+     * New external identifiers for works have relationship and url fields, so, we need to add those new fields to the work object so they can be displayed in the UI.
+     * This function might be used between the transition from OrcidWorks (API 1.2 style) to Works (API 2.0 style)
+     * @param work
+     *          The object to be enhanced
+     * @param externalIdentifiers
+     *          The external identifiers used to enhance work object          
+     * */
+    private void enhanceExternalIdentifiers(Work work, org.orcid.jaxb.model.record.WorkExternalIdentifiers externalIdentifiers) {
+        if(externalIdentifiers != null && !externalIdentifiers.getExternalIdentifier().isEmpty()) {
+            if(work.getWorkExternalIdentifiers() == null) {
+                work.setWorkExternalIdentifiers(new ArrayList<WorkExternalIdentifier>());
+            } else {
+                work.getWorkExternalIdentifiers().clear();
+            }
+            for(org.orcid.jaxb.model.record.WorkExternalIdentifier extId : externalIdentifiers.getExternalIdentifier()) {
+                if(extId.getRelationship() == null) {
+                    if(!PojoUtil.isEmpty(work.getWorkType()) && WorkExternalIdentifierType.ISSN.value().equals(extId.getWorkExternalIdentifierType().value())) {
+                        if(!PojoUtil.isEmpty(work.getWorkType()) && WorkType.BOOK.value().equals(work.getWorkType().getValue())) {
+                            extId.setRelationship(Relationship.PART_OF);
+                        } else {
+                            extId.setRelationship(Relationship.SELF);
+                        }
+                    } else if (!PojoUtil.isEmpty(work.getWorkType()) && WorkExternalIdentifierType.ISBN.value().equals(extId.getWorkExternalIdentifierType().value())) {
+                        if(!PojoUtil.isEmpty(work.getWorkType()) && WorkType.BOOK_CHAPTER.value().equals(work.getWorkType().getValue())) {
+                            extId.setRelationship(Relationship.PART_OF);
+                        } else {
+                            extId.setRelationship(Relationship.SELF);
+                        }
+                    } else {
+                        extId.setRelationship(Relationship.SELF);
+                    }
+                }
+                WorkExternalIdentifier extIdForm = WorkExternalIdentifier.valueOf(extId);                
+                work.getWorkExternalIdentifiers().add(extIdForm);
+            }
+        }
+    }
+    
     /**
      * Transform a PublicationDate into a PuzzyDate
      * 

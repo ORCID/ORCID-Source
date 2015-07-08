@@ -317,7 +317,11 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
                 for (Email email : contactDetails.getEmail()) {
                     EmailEntity existingEmail = existingMap.get(email.getValue().toLowerCase());
                     if (existingEmail == null) {
-                        email.setSource(amenderOrcid);
+                    	if(OrcidStringUtils.isValidOrcid(amenderOrcid)) {
+                    		email.setSourceClientId(amenderOrcid);
+                    	} else {
+                    		email.setSource(amenderOrcid);
+                    	}
                     } else {
                         SourceEntity existingSource = existingEmail.getSource();
                         if (existingSource != null) {

@@ -29,6 +29,8 @@
 	</peer-review:organization>
 	<peer-review:external-identifiers>
 		<work:work-external-identifier>
+			<common:external-identifier-url>http://orcid.org</common:external-identifier-url>
+			<common:relationship>self</common:relationship>
 			<work:external-identifier-type>agr</work:external-identifier-type>
 			<work:external-identifier-id>work:external-identifier-id</work:external-identifier-id>
 		</work:work-external-identifier>
@@ -43,6 +45,8 @@
 	<peer-review:subject>
 		<peer-review:external-identifiers>
 			<work:work-external-identifier>
+				<common:external-identifier-url>http://orcid.org</common:external-identifier-url>
+				<common:relationship>self</common:relationship>
 				<work:external-identifier-type>agr</work:external-identifier-type>
 				<work:external-identifier-id>work:external-identifier-id</work:external-identifier-id>
 			</work:work-external-identifier>
