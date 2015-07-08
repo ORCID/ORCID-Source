@@ -92,6 +92,7 @@ public class PrivacyWorksTest {
         wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(privIsVis(PRIVACY_WORKS_TEST+_B, "LIMITED")));
         wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(privIsVis(PRIVACY_WORKS_TEST+_C, "PRIVATE")));
         
+        // clean up after test
         AddWorksTest.deleteAllByWorkName(PRIVACY_WORKS_TEST+_A, webDriver);
         AddWorksTest.deleteAllByWorkName(PRIVACY_WORKS_TEST+_B, webDriver);
         AddWorksTest.deleteAllByWorkName(PRIVACY_WORKS_TEST+_C, webDriver);

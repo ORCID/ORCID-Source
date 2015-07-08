@@ -242,21 +242,40 @@
 							</span>
 						</div>	
 					</div>
+					<div class="form-group">
+						<label><@orcid.msg 'manual_work_form_contents.labelID'/></label>
+				    	<div class="relative">
+							<input name="currentWorkExternalIds" type="text" class="form-control action-icon-inside"  ng-model="workExternalIdentifier.workExternalIdentifierId.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_ID'/>"  ng-change="serverValidate('works/work/workExternalIdentifiersValidate.json')" ng-model-onblur/>																					
+							<span class="orcid-error" ng-show="workExternalIdentifier.workExternalIdentifierId.errors.length > 0">
+								<div ng-repeat='error in workExternalIdentifier.workExternalIdentifierId.errors' ng-bind-html="error"></div>
+							</span>
+						</div>						
+					</div>		
+					<div class="form-group">
+						<label><@orcid.msg 'common.url'/></label>
+						<div class="relative">
+							<input name="currentWorkExternalIdUrl" type="text" class="form-control action-icon-inside"  ng-model="workExternalIdentifier.url.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_URL'/>" ng-model-onblur/>
+							<span class="orcid-error" ng-show="workExternalIdentifier.url.errors.length > 0">
+								<div ng-repeat='error in workExternalIdentifier.url.errors' ng-bind-html="error"></div>
+							</span>
+						</div>
+					</div>					
 					<div class="bottomBuffer">
-			   			<div class="form-group">
-							<label><@orcid.msg 'manual_work_form_contents.labelID'/></label>
-					    	<div class="relative">
-								<input name="currentWorkExternalIds" type="text" class="form-control action-icon-inside"  ng-model="workExternalIdentifier.workExternalIdentifierId.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_ID'/>"  ng-change="serverValidate('works/work/workExternalIdentifiersValidate.json')" ng-model-onblur/>
-								
-								<a href ng-click="deleteExternalIdentifier(workExternalIdentifier)" class="glyphicon glyphicon-trash grey action-icon-align-right" ng-hide="$first && editWork.workExternalIdentifiers.length == 1"></a>
-
-								<span class="orcid-error" ng-show="workExternalIdentifier.workExternalIdentifierId.errors.length > 0">
-									<div ng-repeat='error in workExternalIdentifier.workExternalIdentifierId.errors' ng-bind-html="error"></div>
-								</span>
-							</div>
-							<div ng-show="$last" class="add-item-link">			
-								<span><a href ng-click="addExternalIdentifier()"><i class="glyphicon glyphicon-plus-sign"></i> <@orcid.msg 'manual_work_form_contents.add_external_identifier' /></a></span>
-							</div>
+						<label><@orcid.msg 'common.ext_id.relationship'/></label>
+						<div class="relative">							
+  							<label class="checkbox-inline">
+    							<input type="radio" name="relationship{{$index}}" ng-model="workExternalIdentifier.relationship.value" value="self">
+    							<@orcid.msg "common.self" />
+  							</label>
+																					
+  							<label class="checkbox-inline">
+    							<input type="radio" name="relationship{{$index}}" ng-model="workExternalIdentifier.relationship.value" value="part-of">
+    							<@orcid.msg "common.part_of" />
+  							</label>							
+							<a href ng-click="deleteExternalIdentifier(workExternalIdentifier)" class="glyphicon glyphicon-trash grey action-icon-align-right" ng-hide="$first && editWork.workExternalIdentifiers.length == 1"></a>							
+						</div>
+						<div ng-show="$last" class="add-item-link">			
+							<span><a href ng-click="addExternalIdentifier()"><i class="glyphicon glyphicon-plus-sign"></i> <@orcid.msg 'manual_work_form_contents.add_external_identifier' /></a></span>
 						</div>
 					</div>
 				</div>

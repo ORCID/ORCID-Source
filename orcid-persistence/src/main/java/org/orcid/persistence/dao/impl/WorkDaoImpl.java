@@ -16,12 +16,13 @@
  */
 package org.orcid.persistence.dao.impl;
 
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Query;
 
-import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
@@ -73,13 +74,15 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
         workToUpdate.setWorkType(workWithNewData.getWorkType());
         workToUpdate.setPublicationDate(workWithNewData.getPublicationDate());
         workToUpdate.setContributorsJson(workWithNewData.getContributorsJson());
-        workToUpdate.setExternalIdentifiersJson(workWithNewData.getExternalIdentifiersJson());
-        workToUpdate.setProfile(workWithNewData.getProfile());
+        workToUpdate.setExternalIdentifiersJson(workWithNewData.getExternalIdentifiersJson());        
         workToUpdate.setVisibility(workWithNewData.getVisibility());
-        workToUpdate.setDisplayIndex(workWithNewData.getDisplayIndex());
-        workToUpdate.setAddedToProfileDate(workWithNewData.getAddedToProfileDate());
+        workToUpdate.setDisplayIndex(workWithNewData.getDisplayIndex());        
         workToUpdate.setSource(workWithNewData.getSource());
         workToUpdate.setLastModified(new Date());
+        if(workWithNewData.getAddedToProfileDate() != null) {
+            workToUpdate.setAddedToProfileDate(workWithNewData.getAddedToProfileDate());
+        }
+        workToUpdate.setProfile(workWithNewData.getProfile());
     }
 
     /**
@@ -195,5 +198,19 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
         return query.executeUpdate() > 0;
     }
     
+    
+    /**
+     * Returns a list of work ids of works that still have old external identifiers
+     * @param limit
+     *          The batch number to fetch
+     * @return a list of work ids with old ext ids          
+     * */
+    @Override
+    @SuppressWarnings("unchecked")    
+    public List<BigInteger> getWorksWithOldExtIds(long limit) {
+        Query query = entityManager.createNativeQuery("SELECT distinct(work_id) FROM (SELECT work_id, json_array_elements(json_extract_path(external_ids_json, 'workExternalIdentifier')) AS j FROM work where external_ids_json is not null limit :limit) AS a WHERE (j->'relationship') is null");
+        query.setParameter("limit", limit);
+        return query.getResultList();
+    }
 }
 

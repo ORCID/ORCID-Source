@@ -43,6 +43,7 @@ import org.orcid.jaxb.model.message.WorkExternalIdentifiers;
 import org.orcid.jaxb.model.message.WorkTitle;
 import org.orcid.jaxb.model.message.WorkType;
 import org.orcid.jaxb.model.record.CitationType;
+import org.orcid.jaxb.model.record.Relationship;
 import org.orcid.jaxb.model.record.Work;
 import org.orcid.persistence.jpa.entities.custom.MinimizedWorkEntity;
 import org.orcid.utils.OrcidStringUtils;
@@ -186,13 +187,13 @@ public class WorkForm implements ErrorsInterface, Serializable {
             Integer year = PojoUtil.isEmpty(publicationDate.getYear()) ? null : Integer.valueOf(publicationDate.getYear().getValue());
             Integer month = PojoUtil.isEmpty(publicationDate.getMonth()) ? null : Integer.valueOf(publicationDate.getMonth().getValue());
             Integer day = PojoUtil.isEmpty(publicationDate.getDay()) ? null : Integer.valueOf(publicationDate.getDay().getValue());
-            if(year == 0) {
+            if(year != null && year == 0) {
                 year = null;
             }
-            if(month == 0) {
+            if(month != null && month == 0) {
                 month = null;
             }
-            if (day == 0) {
+            if (day != null && day == 0) {
                 day = null;
             }
             fuzzyPublicationDate = new FuzzyDate(year, month, day);
@@ -310,6 +311,25 @@ public class WorkForm implements ErrorsInterface, Serializable {
             org.orcid.jaxb.model.record.WorkExternalIdentifiers extIds = work.getExternalIdentifiers();
             if (extIds != null) {
                 for (org.orcid.jaxb.model.record.WorkExternalIdentifier extId : extIds.getWorkExternalIdentifier()) {
+                    
+                    if(extId.getRelationship() == null) {
+                        if(org.orcid.jaxb.model.record.WorkExternalIdentifierType.ISSN.equals(extId.getWorkExternalIdentifierType())) {
+                            if(org.orcid.jaxb.model.record.WorkType.BOOK.equals(work.getWorkType())) {
+                                extId.setRelationship(Relationship.PART_OF);
+                            } else {
+                                extId.setRelationship(Relationship.SELF);
+                            }
+                        } else if(org.orcid.jaxb.model.record.WorkExternalIdentifierType.ISBN.equals(extId.getWorkExternalIdentifierType())) {
+                            if(org.orcid.jaxb.model.record.WorkType.BOOK_CHAPTER.equals(work.getWorkType())) {
+                                extId.setRelationship(Relationship.PART_OF);
+                            } else {
+                                extId.setRelationship(Relationship.SELF);
+                            }
+                        } else {
+                            extId.setRelationship(Relationship.SELF);
+                        }
+                    }
+                    
                     workExternalIdentifiersList.add(WorkExternalIdentifier.valueOf(extId));
                 }
             }
@@ -329,6 +349,14 @@ public class WorkForm implements ErrorsInterface, Serializable {
                 
                 if(!PojoUtil.isEmpty(wfExtId.getWorkExternalIdentifierType())) {
                     wExtId.setWorkExternalIdentifierType(org.orcid.jaxb.model.record.WorkExternalIdentifierType.fromValue(wfExtId.getWorkExternalIdentifierType().getValue()));
+                }
+                
+                if(!PojoUtil.isEmpty(wfExtId.getRelationship())) {
+                    wExtId.setRelationship(Relationship.fromValue(wfExtId.getRelationship().getValue()));
+                }
+                
+                if(!PojoUtil.isEmpty(wfExtId.getUrl())) {
+                    wExtId.setUrl(new org.orcid.jaxb.model.common.Url(wfExtId.getUrl().getValue()));
                 }
                 workExternalIds.getExternalIdentifier().add(wExtId);
             }

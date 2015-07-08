@@ -26,7 +26,7 @@ import org.orcid.core.adapter.JpaJaxbWorkAdapter;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.WorkManager;
-import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.jaxb.model.record.Work;
 import org.orcid.jaxb.model.record.summary.WorkSummary;
 import org.orcid.persistence.dao.ProfileDao;
@@ -180,7 +180,7 @@ public class WorkManagerImpl implements WorkManager {
     
     @Override
     @Transactional
-    public org.orcid.jaxb.model.record.Work createWork(String orcid, org.orcid.jaxb.model.record.Work work) {
+    public Work createWork(String orcid, Work work) {
         WorkEntity workEntity = jpaJaxbWorkAdapter.toWorkEntity(work);
         workEntity.setSource(sourceManager.retrieveSourceEntity());
         ProfileEntity profile = profileDao.find(orcid);
@@ -193,13 +193,13 @@ public class WorkManagerImpl implements WorkManager {
 
     @Override
     @Transactional
-    public org.orcid.jaxb.model.record.Work updateWork(String orcid, org.orcid.jaxb.model.record.Work work) {
+    public Work updateWork(String orcid, Work work) {
         WorkEntity workEntity = workDao.find(Long.valueOf(work.getPutCode()));
-        Visibility originalVisibility = workEntity.getVisibility();
+        Visibility originalVisibility = Visibility.fromValue(workEntity.getVisibility().value());
         SourceEntity existingSource = workEntity.getSource();
         orcidSecurityManager.checkSource(existingSource);
         jpaJaxbWorkAdapter.toWorkEntity(work, workEntity);
-        workEntity.setVisibility(originalVisibility);
+        workEntity.setVisibility(org.orcid.jaxb.model.message.Visibility.fromValue(originalVisibility.value()));
         workEntity.setSource(existingSource);
         workDao.merge(workEntity);
         return jpaJaxbWorkAdapter.toWork(workEntity);
@@ -226,14 +226,14 @@ public class WorkManagerImpl implements WorkManager {
     }
     
     private void setIncomingWorkPrivacy(WorkEntity workEntity, ProfileEntity profile) {
-        Visibility incomingWorkVisibility = workEntity.getVisibility();
-        Visibility defaultWorkVisibility = profile.getActivitiesVisibilityDefault();
+        org.orcid.jaxb.model.message.Visibility incomingWorkVisibility = workEntity.getVisibility();
+        org.orcid.jaxb.model.message.Visibility defaultWorkVisibility = profile.getActivitiesVisibilityDefault();
         if (profile.getClaimed()) {
             if (defaultWorkVisibility.isMoreRestrictiveThan(incomingWorkVisibility)) {
                 workEntity.setVisibility(defaultWorkVisibility);                
             }
         } else if (incomingWorkVisibility == null) {
-            workEntity.setVisibility(Visibility.PRIVATE);            
+            workEntity.setVisibility(org.orcid.jaxb.model.message.Visibility.PRIVATE);            
         }
     }   
 }

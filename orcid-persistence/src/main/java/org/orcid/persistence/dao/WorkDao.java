@@ -16,9 +16,10 @@
  */
 package org.orcid.persistence.dao;
 
+import java.math.BigInteger;
 import java.util.List;
 
-import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.custom.MinimizedWorkEntity;
@@ -108,4 +109,12 @@ public interface WorkDao extends GenericDao<WorkEntity, Long> {
      * @return true if the work index was correctly set                  
      * */
     boolean updateToMaxDisplay(String orcid, String workId);
+    
+    /**
+     * Returns a list of work ids of works that still have old external identifiers
+     * @param limit
+     *          The batch number to fetch
+     * @return a list of work ids with old ext ids          
+     * */
+    List<BigInteger> getWorksWithOldExtIds(long limit);
 }

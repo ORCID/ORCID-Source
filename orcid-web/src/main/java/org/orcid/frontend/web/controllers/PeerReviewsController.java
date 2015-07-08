@@ -36,6 +36,7 @@ import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.record.PeerReview;
 import org.orcid.jaxb.model.record.PeerReviewType;
+import org.orcid.jaxb.model.record.Relationship;
 import org.orcid.jaxb.model.record.Role;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
 import org.orcid.persistence.dao.OrgDisambiguatedSolrDao;
@@ -109,6 +110,8 @@ public class PeerReviewsController extends BaseWorkspaceController {
         emptyExternalId.getWorkExternalIdentifierId().setRequired(false);
         emptyExternalId.setWorkExternalIdentifierType(Text.valueOf(StringUtils.EMPTY));
         emptyExternalId.getWorkExternalIdentifierType().setRequired(false);
+        emptyExternalId.setRelationship(Text.valueOf(Relationship.SELF.value()));
+        emptyExternalId.setUrl(Text.valueOf(StringUtils.EMPTY));
 
         List<WorkExternalIdentifier> emptyExtIdsList = new ArrayList<WorkExternalIdentifier>();
         emptyExtIdsList.add(emptyExternalId);
@@ -185,6 +188,14 @@ public class PeerReviewsController extends BaseWorkspaceController {
                 try {
                     PeerReviewForm form = PeerReviewForm.valueOf(peerReview);
 
+                    if(form.getExternalIdentifiers() != null && !form.getExternalIdentifiers().isEmpty()) {
+                        for(WorkExternalIdentifier wExtId : form.getExternalIdentifiers()) {
+                            if(PojoUtil.isEmpty(wExtId.getRelationship())) {
+                                wExtId.setRelationship(Text.valueOf(Relationship.SELF.value()));
+                            }
+                        }
+                    }
+                    
                     if (form.getSubjectForm() != null && form.getSubjectForm().getTitle() != null) {
                         // Set translated title language name
                         if (!(form.getSubjectForm().getTranslatedTitle() == null) && !StringUtils.isEmpty(form.getSubjectForm().getTranslatedTitle().getLanguageCode())) {

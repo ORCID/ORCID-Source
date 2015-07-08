@@ -33,6 +33,12 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
+
+/**
+ * 
+ * @author Angel Montenegro
+ * 
+ */
 public class MigrateDataFromProfileWorkToWorkTable {
 
     private static Logger LOG = LoggerFactory.getLogger(MigrateDataFromProfileWorkToWorkTable.class);
