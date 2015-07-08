@@ -157,7 +157,15 @@
 
 	<bean id="subjectManager" class="org.orcid.core.manager.impl.SubjectManagerImpl" />
 
-	<bean id="orcidSearchManager" class="org.orcid.core.manager.impl.OrcidSearchManagerImpl" />
+	<bean id="orcidSearchManager" class="org.orcid.core.manager.impl.OrcidSearchManagerImpl" >
+	    <property name="orcidProfileCacheManager" ref="orcidProfileCacheManager" />
+	    <property name="orcidProfileManager" ref="orcidProfileManager" />
+	</bean>
+	
+	<bean id="orcidSearchManagerReadOnly" class="org.orcid.core.manager.impl.OrcidSearchManagerImpl" >
+        <property name="orcidProfileCacheManager" ref="orcidProfileCacheManagerReadOnly" />
+        <property name="orcidProfileManager" ref="orcidProfileManagerReadOnly" />
+    </bean>
 
 	<bean id="orcidIndexManager" class="org.orcid.core.manager.impl.OrcidIndexManagerImpl" />
 
