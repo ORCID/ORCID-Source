@@ -23,7 +23,6 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.MembersManager;

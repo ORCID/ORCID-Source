@@ -57,6 +57,7 @@ import org.orcid.jaxb.model.record.Funding;
 import org.orcid.jaxb.model.record.FundingExternalIdentifier;
 import org.orcid.jaxb.model.record.FundingExternalIdentifierType;
 import org.orcid.jaxb.model.record.PeerReview;
+import org.orcid.jaxb.model.record.Relationship;
 import org.orcid.jaxb.model.record.Work;
 import org.orcid.jaxb.model.record.WorkExternalIdentifier;
 import org.orcid.jaxb.model.record.WorkExternalIdentifierId;
@@ -813,6 +814,7 @@ public class PublicV2Test {
             WorkExternalIdentifier wExtId = new WorkExternalIdentifier();
             wExtId.setWorkExternalIdentifierId(new WorkExternalIdentifierId(time + " Work Id " + i));
             wExtId.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
+            wExtId.setRelationship(Relationship.SELF);
             workToCreate.getExternalIdentifiers().getExternalIdentifier().add(wExtId);
             if (i == 0 || i == 3)
                 workToCreate.setVisibility(org.orcid.jaxb.model.common.Visibility.PUBLIC);
@@ -834,6 +836,7 @@ public class PublicV2Test {
             FundingExternalIdentifier fExtId = new FundingExternalIdentifier();
             fExtId.setType(FundingExternalIdentifierType.GRANT_NUMBER);
             fExtId.setValue(time + " funding Id " + i);
+            fExtId.setRelationship(Relationship.SELF);
             fundingToCreate.getExternalIdentifiers().getExternalIdentifier().add(fExtId);
             if (i == 0 || i == 3)
                 fundingToCreate.setVisibility(org.orcid.jaxb.model.common.Visibility.PUBLIC);

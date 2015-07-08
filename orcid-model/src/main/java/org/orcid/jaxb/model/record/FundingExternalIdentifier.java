@@ -31,8 +31,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.orcid.jaxb.model.common.Url;
-
 /**
  * <p>
  * Java class for anonymous complex type.
@@ -45,16 +43,14 @@ import org.orcid.jaxb.model.common.Url;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "type", "value", "url" })
+@XmlType(propOrder = { "type", "value" })
 @XmlRootElement(name = "externalIdentifier", namespace = "http://www.orcid.org/ns/funding")
-public class FundingExternalIdentifier implements ExternalIdentifier, Serializable {
+public class FundingExternalIdentifier extends ExternalIdentifierBase implements Serializable {
 	private static final long serialVersionUID = 1L;	
 	@XmlElement(name="external-identifier-type", namespace = "http://www.orcid.org/ns/funding")
 	protected FundingExternalIdentifierType type;
 	@XmlElement(name="external-identifier-value", namespace = "http://www.orcid.org/ns/funding")
-	protected String value;
-	@XmlElement(name="external-identifier-url", namespace = "http://www.orcid.org/ns/funding")
-	protected Url url;	
+	protected String value;		
 	
 	public FundingExternalIdentifierType getType() {
 		return type;
@@ -67,12 +63,6 @@ public class FundingExternalIdentifier implements ExternalIdentifier, Serializab
 	}
 	public void setValue(String value) {
 		this.value = value;
-	}
-	public Url getUrl() {
-		return url;
-	}
-	public void setUrl(Url url) {
-		this.url = url;
 	}	
 	@Override
 	public int hashCode() {
@@ -81,6 +71,7 @@ public class FundingExternalIdentifier implements ExternalIdentifier, Serializab
 		result = prime * result + ((type == null) ? 0 : type.hashCode());
 		result = prime * result + ((url == null) ? 0 : url.hashCode());
 		result = prime * result + ((value == null) ? 0 : value.hashCode());
+		result = prime * result + ((relationship == null) ? 0 : relationship.hashCode());
 		return result;
 	}
 	@Override
@@ -108,6 +99,8 @@ public class FundingExternalIdentifier implements ExternalIdentifier, Serializab
 	
 	@Override
 	public boolean passGroupingValidation() {
+	    if (!super.passGroupingValidation())
+	        return false;
 	    return true;
 	}
 }

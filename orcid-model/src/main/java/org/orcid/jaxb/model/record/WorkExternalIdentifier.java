@@ -41,11 +41,8 @@ import java.io.Serializable;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType( propOrder = { "workExternalIdentifierType", "workExternalIdentifierId" })
 @XmlRootElement(name = "workExternalIdentifier")
-public class WorkExternalIdentifier implements ExternalIdentifier, Serializable {
+public class WorkExternalIdentifier extends ExternalIdentifierBase implements Serializable {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = 1L;
     @XmlElement(name = "external-identifier-type", namespace = "http://www.orcid.org/ns/work", required = true)
     protected WorkExternalIdentifierType workExternalIdentifierType;
@@ -103,34 +100,6 @@ public class WorkExternalIdentifier implements ExternalIdentifier, Serializable 
     public void setWorkExternalIdentifierId(WorkExternalIdentifierId value) {
         this.workExternalIdentifierId = value;
     }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof WorkExternalIdentifier)) {
-            return false;
-        }
-
-        WorkExternalIdentifier that = (WorkExternalIdentifier) o;
-
-        if (workExternalIdentifierId != null ? !workExternalIdentifierId.equals(that.workExternalIdentifierId) : that.workExternalIdentifierId != null) {
-            return false;
-        }
-        if (workExternalIdentifierType != that.workExternalIdentifierType) {
-            return false;
-        }
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = workExternalIdentifierType != null ? workExternalIdentifierType.hashCode() : 0;
-        result = 31 * result + (workExternalIdentifierId != null ? workExternalIdentifierId.hashCode() : 0);
-        return result;
-    }
     
     @Override
     public String toString() {
@@ -146,6 +115,10 @@ public class WorkExternalIdentifier implements ExternalIdentifier, Serializable 
     
     @Override
     public boolean passGroupingValidation() {
+        //Perform general validations
+        if(!super.passGroupingValidation()) 
+            return false;        
+        
         //Dont groups works where the external id is empty
         if(workExternalIdentifierType == null && (workExternalIdentifierId == null || workExternalIdentifierId.getContent() == null || workExternalIdentifierId.getContent().isEmpty()))
             return false;
@@ -155,5 +128,41 @@ public class WorkExternalIdentifier implements ExternalIdentifier, Serializable 
             return false;
         
         return true;
-    }    
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = prime + ((workExternalIdentifierId == null) ? 0 : workExternalIdentifierId.hashCode());
+        result = prime * result + ((workExternalIdentifierType == null) ? 0 : workExternalIdentifierType.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (getClass() != obj.getClass())
+            return false;
+        WorkExternalIdentifier other = (WorkExternalIdentifier) obj;
+        if (workExternalIdentifierId == null) {
+            if (other.workExternalIdentifierId != null)
+                return false;
+        } else if (!workExternalIdentifierId.equals(other.workExternalIdentifierId))
+            return false;
+        if (workExternalIdentifierType != other.workExternalIdentifierType)
+            return false;
+        return true;
+    }     
+    
+    public static WorkExternalIdentifier fromMessageExtId(org.orcid.jaxb.model.message.WorkExternalIdentifier oldExtId) {        
+        WorkExternalIdentifier newExtId = new WorkExternalIdentifier();
+        if(oldExtId.getWorkExternalIdentifierId() != null) {
+            newExtId.setWorkExternalIdentifierId(new WorkExternalIdentifierId(oldExtId.getWorkExternalIdentifierId().getContent()));
+        }
+        if(oldExtId.getWorkExternalIdentifierType() != null) {
+            newExtId.setWorkExternalIdentifierType(WorkExternalIdentifierType.fromValue(oldExtId.getWorkExternalIdentifierType().value()));
+        }
+        return newExtId;
+    }
 }

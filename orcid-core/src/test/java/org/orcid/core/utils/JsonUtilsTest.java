@@ -17,11 +17,14 @@
 package org.orcid.core.utils;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import org.junit.Test;
 import org.orcid.jaxb.model.message.Contributor;
 import org.orcid.jaxb.model.message.CreditName;
 import org.orcid.jaxb.model.message.WorkContributors;
+import org.orcid.jaxb.model.record.Relationship;
 
 /**
  * 
@@ -51,4 +54,92 @@ public class JsonUtilsTest {
         assertEquals("A Contributor", workContributors.getContributor().get(0).getCreditName().getContent());
     }
 
+    @Test
+    public void testJsonStringToWorkExternalIdentifiersV1_2() {
+        String jsonString1_2ExternalIdentifiers = "{\"workExternalIdentifier\":[{\"workExternalIdentifierType\":\"DOI\",\"workExternalIdentifierId\":{\"content\":\"12345\"}}],\"scope\":null}";
+        org.orcid.jaxb.model.message.WorkExternalIdentifiers wExtId1_2 = JsonUtils.<org.orcid.jaxb.model.message.WorkExternalIdentifiers> readObjectFromJsonString(jsonString1_2ExternalIdentifiers, org.orcid.jaxb.model.message.WorkExternalIdentifiers.class);
+        assertNotNull(wExtId1_2);
+        assertNotNull(wExtId1_2.getWorkExternalIdentifier());
+        org.orcid.jaxb.model.message.WorkExternalIdentifier extId = wExtId1_2.getWorkExternalIdentifier().get(0);
+        assertEquals(org.orcid.jaxb.model.message.WorkExternalIdentifierType.DOI, extId.getWorkExternalIdentifierType());
+        assertEquals("12345", extId.getWorkExternalIdentifierId().getContent());
+        
+        String jsonString2_ExternalIdentifiers = "{\"workExternalIdentifier\":[{\"url\":\"http://orcid.org\", \"relationship\":\"SELF\", \"workExternalIdentifierType\":\"DOI\",\"workExternalIdentifierId\":{\"content\":\"67890\"}}],\"scope\":null}";
+        wExtId1_2 = JsonUtils.<org.orcid.jaxb.model.message.WorkExternalIdentifiers> readObjectFromJsonString(jsonString2_ExternalIdentifiers, org.orcid.jaxb.model.message.WorkExternalIdentifiers.class);
+        assertNotNull(wExtId1_2);
+        assertNotNull(wExtId1_2.getWorkExternalIdentifier());
+        extId = wExtId1_2.getWorkExternalIdentifier().get(0);
+        assertEquals(org.orcid.jaxb.model.message.WorkExternalIdentifierType.DOI, extId.getWorkExternalIdentifierType());
+        assertEquals("67890", extId.getWorkExternalIdentifierId().getContent());
+    }
+    
+    @Test
+    public void testJsonStringToWorkExternalIdentifiersV2_0() {
+        String jsonString1_2ExternalIdentifiers = "{\"workExternalIdentifier\":[{\"workExternalIdentifierType\":\"DOI\",\"workExternalIdentifierId\":{\"content\":\"12345\"}}],\"scope\":null}";
+        org.orcid.jaxb.model.record.WorkExternalIdentifiers wExtId2_0 = JsonUtils.<org.orcid.jaxb.model.record.WorkExternalIdentifiers> readObjectFromJsonString(jsonString1_2ExternalIdentifiers, org.orcid.jaxb.model.record.WorkExternalIdentifiers.class);
+        assertNotNull(wExtId2_0);
+        assertNotNull(wExtId2_0.getWorkExternalIdentifier());
+        org.orcid.jaxb.model.record.WorkExternalIdentifier extId = wExtId2_0.getWorkExternalIdentifier().get(0);
+        assertEquals(org.orcid.jaxb.model.record.WorkExternalIdentifierType.DOI, extId.getWorkExternalIdentifierType());
+        assertEquals("12345", extId.getWorkExternalIdentifierId().getContent());
+        assertNull(extId.getUrl());
+        assertNull(extId.getRelationship());
+        
+        String jsonString2_ExternalIdentifiers = "{\"workExternalIdentifier\":[{\"url\":\"http://orcid.org\", \"relationship\":\"SELF\", \"workExternalIdentifierType\":\"DOI\",\"workExternalIdentifierId\":{\"content\":\"67890\"}}],\"scope\":null}";
+        wExtId2_0 = JsonUtils.<org.orcid.jaxb.model.record.WorkExternalIdentifiers> readObjectFromJsonString(jsonString2_ExternalIdentifiers, org.orcid.jaxb.model.record.WorkExternalIdentifiers.class);
+        assertNotNull(wExtId2_0);
+        assertNotNull(wExtId2_0.getWorkExternalIdentifier());
+        extId = wExtId2_0.getWorkExternalIdentifier().get(0);
+        assertEquals(org.orcid.jaxb.model.record.WorkExternalIdentifierType.DOI, extId.getWorkExternalIdentifierType());
+        assertEquals("67890", extId.getWorkExternalIdentifierId().getContent());
+        assertNotNull(extId.getUrl());
+        assertEquals("http://orcid.org", extId.getUrl().getValue());
+        assertNotNull(extId.getRelationship());
+        assertEquals(Relationship.SELF, extId.getRelationship());        
+    }
+    
+    @Test
+    public void testJsonStringToFundingExternalIdentifiersV1_2(){
+        String jsonString1_2ExternalIdentifiers = "{\"fundingExternalIdentifier\":[{\"type\":\"GRANT_NUMBER\",\"value\":\"123\",\"url\":{\"value\":\"http://orcid.org\"}}]}";
+        org.orcid.jaxb.model.message.FundingExternalIdentifiers fExtId1_2 = JsonUtils.<org.orcid.jaxb.model.message.FundingExternalIdentifiers> readObjectFromJsonString(jsonString1_2ExternalIdentifiers, org.orcid.jaxb.model.message.FundingExternalIdentifiers.class);
+        assertNotNull(fExtId1_2);
+        assertNotNull(fExtId1_2.getFundingExternalIdentifier());
+        org.orcid.jaxb.model.message.FundingExternalIdentifier extId = fExtId1_2.getFundingExternalIdentifier().get(0);
+        assertEquals(org.orcid.jaxb.model.message.FundingExternalIdentifierType.GRANT_NUMBER, extId.getType());
+        assertEquals("123", extId.getValue());
+        assertNotNull(extId.getUrl());
+        assertEquals("http://orcid.org", extId.getUrl().getValue());
+        
+        String jsonString2_0ExternalIdentifiers = "{\"fundingExternalIdentifier\":[{\"relationship\":\"SELF\",\"type\":\"GRANT_NUMBER\",\"value\":\"456\",\"url\":{\"value\":\"http://orcid.org/updated\"}}]}";
+        fExtId1_2 = JsonUtils.<org.orcid.jaxb.model.message.FundingExternalIdentifiers> readObjectFromJsonString(jsonString2_0ExternalIdentifiers, org.orcid.jaxb.model.message.FundingExternalIdentifiers.class);
+        extId = fExtId1_2.getFundingExternalIdentifier().get(0);
+        assertEquals(org.orcid.jaxb.model.message.FundingExternalIdentifierType.GRANT_NUMBER, extId.getType());
+        assertEquals("456", extId.getValue());
+        assertNotNull(extId.getUrl());
+        assertEquals("http://orcid.org/updated", extId.getUrl().getValue());        
+    }
+    
+    @Test
+    public void testJsonStringToFundingExternalIdentifiersV2_0(){
+        String jsonString1_2ExternalIdentifiers = "{\"externalIdentifier\":[{\"type\":\"GRANT_NUMBER\",\"value\":\"123\",\"url\":{\"value\":\"http://orcid.org\"}}]}";
+        org.orcid.jaxb.model.record.FundingExternalIdentifiers fExtId2_0 = JsonUtils.<org.orcid.jaxb.model.record.FundingExternalIdentifiers> readObjectFromJsonString(jsonString1_2ExternalIdentifiers, org.orcid.jaxb.model.record.FundingExternalIdentifiers.class);
+        assertNotNull(fExtId2_0);
+        assertNotNull(fExtId2_0.getExternalIdentifier());
+        org.orcid.jaxb.model.record.FundingExternalIdentifier extId = fExtId2_0.getExternalIdentifier().get(0);
+        assertEquals(org.orcid.jaxb.model.record.FundingExternalIdentifierType.GRANT_NUMBER, extId.getType());
+        assertEquals("123", extId.getValue());
+        assertNotNull(extId.getUrl());
+        assertEquals("http://orcid.org", extId.getUrl().getValue());
+        
+        String jsonString2_0ExternalIdentifiers = "{\"externalIdentifier\":[{\"relationship\":\"SELF\",\"type\":\"GRANT_NUMBER\",\"value\":\"456\",\"url\":{\"value\":\"http://orcid.org/updated\"}}]}";
+        fExtId2_0 = JsonUtils.<org.orcid.jaxb.model.record.FundingExternalIdentifiers> readObjectFromJsonString(jsonString2_0ExternalIdentifiers, org.orcid.jaxb.model.record.FundingExternalIdentifiers.class);
+        assertNotNull(fExtId2_0);
+        assertNotNull(fExtId2_0.getExternalIdentifier());
+        extId = fExtId2_0.getExternalIdentifier().get(0);
+        assertEquals(org.orcid.jaxb.model.record.FundingExternalIdentifierType.GRANT_NUMBER, extId.getType());
+        assertEquals("456", extId.getValue());
+        assertNotNull(extId.getUrl());
+        assertEquals("http://orcid.org/updated", extId.getUrl().getValue());
+        assertEquals(org.orcid.jaxb.model.record.Relationship.SELF, extId.getRelationship());
+    }
 }
