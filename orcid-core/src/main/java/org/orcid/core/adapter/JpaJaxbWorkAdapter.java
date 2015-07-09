@@ -21,7 +21,8 @@ import java.util.List;
 
 import org.orcid.jaxb.model.record.Work;
 import org.orcid.jaxb.model.record.summary.WorkSummary;
-import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
+import org.orcid.persistence.jpa.entities.WorkEntity;
+import org.orcid.persistence.jpa.entities.custom.MinimizedWorkEntity;
 
 /**
  * 
@@ -30,16 +31,18 @@ import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
  */
 public interface JpaJaxbWorkAdapter {
 
-    ProfileWorkEntity toProfileWorkEntity(Work work);
+    WorkEntity toWorkEntity(Work work);
 
-    Work toWork(ProfileWorkEntity ProfileWorkEntity);
+    Work toWork(WorkEntity workEntity);
     
-    WorkSummary toWorkSummary(ProfileWorkEntity ProfileWorkEntity);
+    WorkSummary toWorkSummary(WorkEntity workEntity);
 
-    List<Work> toWork(Collection<ProfileWorkEntity> workEntities);
+    List<Work> toWork(Collection<WorkEntity> workEntities);
 
-    List<WorkSummary> toWorkSummary(Collection<ProfileWorkEntity> workEntities);   
+    List<Work> toMinimizedWork(Collection<MinimizedWorkEntity> minimizedEntities);
     
-    ProfileWorkEntity toProfileWorkEntity(Work work, ProfileWorkEntity existing);
+    List<WorkSummary> toWorkSummary(Collection<WorkEntity> workEntities);   
+    
+    WorkEntity toWorkEntity(Work work, WorkEntity existing);
 
 }

@@ -380,7 +380,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
 
 		// Set works
 		List<WorkSummary> workSummaries = jpaJaxbWorkAdapter
-				.toWorkSummary(profileEntity.getProfileWorks());
+				.toWorkSummary(profileEntity.getWorks());
 		Works works = groupWorks(workSummaries, justPublic);
 		activities.setWorks(works);
 

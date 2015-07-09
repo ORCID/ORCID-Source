@@ -134,6 +134,16 @@ public class Source implements Serializable {
         }
         return null;
     }
+    
+    public String retriveSourceUri() {
+        if (sourceClientId != null) {
+            return sourceClientId.getUri();
+        }
+        if (sourceOrcid != null) {
+            return sourceOrcid.getUri();
+        }
+        return null;
+    }
 
     @Override
     public int hashCode() {

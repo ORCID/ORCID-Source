@@ -310,19 +310,19 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
 
     private OrcidWorks getOrcidWorks(ProfileEntity profileEntity) {
         LOGGER.debug("About to convert works from entity: " + profileEntity.getId());
-        Set<ProfileWorkEntity> profileWorks = profileEntity.getProfileWorks();
-        if (profileWorks != null && !profileWorks.isEmpty()) {
-            OrcidWorks works = new OrcidWorks();
-            for (ProfileWorkEntity profileWorkEntity : profileWorks) {
-                OrcidWork orcidWork = getOrcidWork(profileWorkEntity);
-                orcidWork.setVisibility(profileWorkEntity.getVisibility());
-                works.getOrcidWork().add(orcidWork);
+        Set<WorkEntity> works = profileEntity.getWorks();        
+        if (works != null && !works.isEmpty()) {
+            OrcidWorks orcidWorks = new OrcidWorks();
+            for (WorkEntity workEntity : works) {
+                OrcidWork orcidWork = getOrcidWork(workEntity);
+                orcidWork.setVisibility(workEntity.getVisibility());
+                orcidWorks.getOrcidWork().add(orcidWork);
             }
-            return works;
+            return orcidWorks;
         }
         return null;
     }
-
+    
     private OrcidBio getOrcidBio(ProfileEntity profileEntity) {
         OrcidBio orcidBio = new OrcidBio();
 
@@ -895,6 +895,38 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
 
         return orcidWork;
     }
+    
+    public OrcidWork getOrcidWork(WorkEntity work) {        
+        if (work == null) {
+            return null;
+        }
+        OrcidWork orcidWork = new OrcidWork();
+        PublicationDateEntity publicationDate = work.getPublicationDate();
+        orcidWork.setPublicationDate(getPublicationDateFromEntity(publicationDate));
+        orcidWork.setPutCode(Long.toString(work.getId()));
+        orcidWork.setShortDescription(work.getDescription());
+        orcidWork.setUrl(StringUtils.isNotBlank(work.getWorkUrl()) ? new Url(work.getWorkUrl()) : null);
+        orcidWork.setWorkCitation(getWorkCitation(work));
+        orcidWork.setWorkContributors(getWorkContributors(work));
+        orcidWork.setWorkExternalIdentifiers(getWorkExternalIdentifiers(work));
+        orcidWork.setSource(getSource(work));
+        orcidWork.setWorkTitle(getWorkTitle(work));
+        orcidWork.setJournalTitle(StringUtils.isNotBlank(work.getJournalTitle()) ? new Title(work.getJournalTitle()) : null);
+        orcidWork.setLanguageCode(normalizeLanguageCode(work.getLanguageCode()));
+
+        if (work.getIso2Country() != null) {
+            Country country = new Country(work.getIso2Country());
+            country.setVisibility(OrcidVisibilityDefaults.WORKS_COUNTRY_DEFAULT.getVisibility());
+            orcidWork.setCountry(country);
+        }
+        orcidWork.setWorkType(work.getWorkType());
+        orcidWork.setVisibility(work.getVisibility());
+
+        orcidWork.setCreatedDate(new CreatedDate(toXMLGregorianCalendar(work.getDateCreated())));
+        orcidWork.setLastModifiedDate(new LastModifiedDate(toXMLGregorianCalendar(work.getLastModified())));
+
+        return orcidWork;
+    }
 
     /*
      * converts locale codes to only return language code, with the exception of
@@ -947,8 +979,14 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         return extIds;        
     }    
 
-    private WorkContributors getWorkContributors(ProfileWorkEntity profileWorkEntity) {
-        WorkEntity work = profileWorkEntity.getWork();
+    private WorkContributors getWorkContributors (ProfileWorkEntity profileWorkEntity) {
+        if(profileWorkEntity == null) {
+            return null;
+        }
+        return getWorkContributors(profileWorkEntity.getWork());
+    }
+    
+    private WorkContributors getWorkContributors(WorkEntity work) {
         if (work == null) {
             return null;
         }
@@ -962,7 +1000,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                 // the work
                 CreditName creditName = contributor.getCreditName();
                 if (creditName != null) {
-                    creditName.setVisibility(profileWorkEntity.getVisibility());
+                    creditName.setVisibility(work.getVisibility());
                 }
                 // Strip out any contributor emails
                 contributor.setContributorEmail(null);

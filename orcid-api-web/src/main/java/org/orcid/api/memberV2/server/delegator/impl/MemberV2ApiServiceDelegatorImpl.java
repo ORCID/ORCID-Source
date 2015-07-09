@@ -35,6 +35,7 @@ import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileFundingManager;
 import org.orcid.core.manager.ProfileWorkManager;
 import org.orcid.core.manager.SourceManager;
+import org.orcid.core.manager.WorkManager;
 import org.orcid.core.security.visibility.aop.AccessControl;
 import org.orcid.core.security.visibility.filter.VisibilityFilterV2;
 import org.orcid.jaxb.model.message.ScopePathType;
@@ -66,8 +67,11 @@ import org.springframework.stereotype.Component;
 public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelegator {
 
     @Resource
-    private ProfileWorkManager profileWorkManager;
+    private WorkManager workManager;
 
+    @Resource
+    private ProfileWorkManager profileWorkManager;
+    
     @Resource
     private ProfileFundingManager profileFundingManager;
 
@@ -124,7 +128,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     @Override
     @AccessControl(requiredScope = ScopePathType.ACTIVITIES_READ_LIMITED)
     public Response viewWork(String orcid, String putCode) {
-        Work w = profileWorkManager.getWork(orcid, putCode);
+        Work w = workManager.getWork(orcid, putCode);
         orcidSecurityManager.checkVisibility(w);
         ActivityUtils.setPathToActivity(w, orcid);
         return Response.ok(w).build();
@@ -133,7 +137,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     @Override
     @AccessControl(requiredScope = ScopePathType.ACTIVITIES_READ_LIMITED)
     public Response viewWorkSummary(String orcid, String putCode) {
-        WorkSummary ws = profileWorkManager.getWorkSummary(orcid, putCode);
+        WorkSummary ws = workManager.getWorkSummary(orcid, putCode);
         orcidSecurityManager.checkVisibility(ws);
         ActivityUtils.setPathToActivity(ws, orcid);
         return Response.ok(ws).build();
@@ -142,7 +146,11 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     @Override
     @AccessControl(requiredScope = ScopePathType.ACTIVITIES_UPDATE)
     public Response createWork(String orcid, Work work) {
-        Work w = profileWorkManager.createWork(orcid, work);
+        Work w = workManager.createWork(orcid, work);
+        //TODO: Remove this when we remove profile works
+        org.orcid.jaxb.model.message.Visibility visibility = org.orcid.jaxb.model.message.Visibility.fromValue(w.getVisibility().value());
+        profileWorkManager.addProfileWork(orcid, Long.valueOf(w.getPutCode()), visibility, w.getSource().retrieveSourcePath());
+        //END TODO
         try {
             return Response.created(new URI(w.getPutCode())).build();
         } catch (URISyntaxException e) {
@@ -156,14 +164,19 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
         if (!putCode.equals(work.getPutCode())) {
             throw new MismatchedPutCodeException("The put code in the URL was " + putCode + " whereas the one in the body was " + work.getPutCode());
         }
-        Work w = profileWorkManager.updateWork(orcid, work);
+        Work w = workManager.updateWork(orcid, work);
+        //TODO: Remove this when we remove profile works        
+        org.orcid.jaxb.model.message.Visibility visibility = org.orcid.jaxb.model.message.Visibility.fromValue(w.getVisibility().value());
+        profileWorkManager.updateVisibility(orcid, putCode, visibility);
+        //END TODO
         return Response.ok(w).build();
     }
 
     @Override
     @AccessControl(requiredScope = ScopePathType.ACTIVITIES_UPDATE)
     public Response deleteWork(String orcid, String putCode) {
-        profileWorkManager.checkSourceAndRemoveWork(orcid, putCode);
+        workManager.checkSourceAndRemoveWork(orcid, putCode);
+        //TODO: Delete profile work
         return Response.noContent().build();
     }
 

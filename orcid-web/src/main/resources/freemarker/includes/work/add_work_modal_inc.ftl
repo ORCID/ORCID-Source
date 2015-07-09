@@ -44,7 +44,7 @@
 					<span class="required" ng-class="isValidClass(editWork.workCategory)">*</span>
 		    		<div class="relative">
 			    		<select id="workCategory" name="workCategory" class="form-control" ng-model="editWork.workCategory.value" ng-change="loadWorkTypes();clearErrors()">
-			    			<option value=""><@orcid.msg 'org.orcid.jaxb.model.message.WorkCategory.empty' /></option>
+			    			<option value=""><@orcid.msg 'org.orcid.jaxb.model.record.WorkCategory.empty' /></option>
 							<#list workCategories?keys as key>
 								<option value="${key}">${workCategories[key]}</option>
 							</#list>
@@ -232,7 +232,7 @@
 						<label class="relative"><@orcid.msg 'manual_work_form_contents.labelIDtype'/></label>
 						<div class="relative">
 		    				<select id="idType" name="idType" class="form-control" ng-model="workExternalIdentifier.workExternalIdentifierType.value" ng-change="serverValidate('works/work/workExternalIdentifiersValidate.json')">																						 
-								<option value=""><@orcid.msg 'org.orcid.jaxb.model.message.WorkExternalIdentifierType.empty' /></option>
+								<option value=""><@orcid.msg 'org.orcid.jaxb.model.record.WorkExternalIdentifierType.empty' /></option>
 								<#list idTypes?keys as key>
 									<option value="${idTypes[key]}">${key}</option>
 								</#list>
