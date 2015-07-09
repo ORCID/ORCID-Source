@@ -24,12 +24,13 @@ import javax.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.manager.ActivityCacheManager;
 import org.orcid.core.manager.PeerReviewManager;
+import org.orcid.core.manager.WorkManager;
 import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.Funding;
 import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.record.PeerReview;
+import org.orcid.jaxb.model.record.Work;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.WorkForm;
@@ -39,16 +40,18 @@ public class ActivityCacheManagerImpl extends Object implements ActivityCacheMan
     
     @Resource
     private PeerReviewManager peerReviewManager;
+    
+    @Resource
+    private WorkManager workManager;
 
     @Cacheable(value = "pub-min-works-maps", key = "#profile.getCacheKey()")
     public LinkedHashMap<String, WorkForm> pubMinWorksMap(OrcidProfile profile) {
         LinkedHashMap<String, WorkForm> workMap = new LinkedHashMap<String, WorkForm>();
-        if (profile.getOrcidActivities() != null) {
-            if (profile.getOrcidActivities().getOrcidWorks() != null) {
-                for (OrcidWork orcidWork : profile.getOrcidActivities().getOrcidWorks().getOrcidWork())
-                    if (Visibility.PUBLIC.equals(orcidWork.getVisibility()))
-                        workMap.put(orcidWork.getPutCode(), WorkForm.minimizedValueOf(orcidWork));
-            }
+        List<Work> works = workManager.findPublicWorks(profile.getOrcidIdentifier().getPath());
+        if (works != null) {
+            for (Work work : works) {                
+                workMap.put(work.getPutCode(), WorkForm.valueOf(work));                
+            }                                
         }
         return workMap;
     }

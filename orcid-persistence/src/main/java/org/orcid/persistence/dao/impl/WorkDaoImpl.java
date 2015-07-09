@@ -115,7 +115,7 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
     @SuppressWarnings("unchecked")
     public List<MinimizedWorkEntity> findPublicWorks(String orcid) {
         Query query = entityManager
-                .createQuery("select NEW org.orcid.persistence.jpa.entities.custom.MinimizedWorkEntity(w.id, w.title, w.subtitle, w.journalTitle, w.description, w.publicationDate.day, w.publicationDate.month, w.publicationDate.year, w.visibility, w.externalIdentifiersJson, w.displayIndex, w.sourceProfile, w.dateCreated, w.lastModified, w.workType, w.languageCode, w.translatedTitleLanguageCode, w.translatedTitle, w.workUrl) "
+                .createQuery("select NEW org.orcid.persistence.jpa.entities.custom.MinimizedWorkEntity(w.id, w.title, w.subtitle, w.journalTitle, w.description, w.publicationDate.day, w.publicationDate.month, w.publicationDate.year, w.visibility, w.externalIdentifiersJson, w.displayIndex, w.source, w.dateCreated, w.lastModified, w.workType, w.languageCode, w.translatedTitleLanguageCode, w.translatedTitle, w.workUrl) "
                         + "from WorkEntity w "
                         + "where w.visibility='PUBLIC' and w.profile.id=:orcid "
                         + "order by w.displayIndex desc, w.dateCreated asc");

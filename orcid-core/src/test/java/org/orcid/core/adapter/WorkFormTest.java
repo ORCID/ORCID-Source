@@ -28,7 +28,6 @@ import javax.xml.datatype.DatatypeFactory;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.orcid.jaxb.model.common.ContributorEmail;
 import org.orcid.jaxb.model.common.ContributorOrcid;
 import org.orcid.jaxb.model.common.Country;
@@ -46,6 +45,7 @@ import org.orcid.jaxb.model.common.Year;
 import org.orcid.jaxb.model.message.FuzzyDate;
 import org.orcid.jaxb.model.message.WorkCategory;
 import org.orcid.jaxb.model.record.CitationType;
+import org.orcid.jaxb.model.record.Relationship;
 import org.orcid.jaxb.model.record.Work;
 import org.orcid.jaxb.model.record.WorkExternalIdentifierId;
 import org.orcid.jaxb.model.record.WorkExternalIdentifierType;
@@ -61,7 +61,6 @@ import org.orcid.pojo.ajaxForm.TranslatedTitle;
 import org.orcid.pojo.ajaxForm.Visibility;
 import org.orcid.pojo.ajaxForm.WorkExternalIdentifier;
 import org.orcid.pojo.ajaxForm.WorkForm;
-import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
 
 /**
@@ -159,6 +158,7 @@ public class WorkFormTest {
         org.orcid.jaxb.model.record.WorkExternalIdentifier extId = new org.orcid.jaxb.model.record.WorkExternalIdentifier();
         extId.setWorkExternalIdentifierId(new WorkExternalIdentifierId("External Identifier ID"));
         extId.setWorkExternalIdentifierType(WorkExternalIdentifierType.ASIN);
+        extId.setRelationship(Relationship.SELF);
         externalIdentifiers.getExternalIdentifier().add(extId);
         work.setWorkExternalIdentifiers(externalIdentifiers);
         return work;
@@ -209,6 +209,7 @@ public class WorkFormTest {
         WorkExternalIdentifier extId = new WorkExternalIdentifier();
         extId.setWorkExternalIdentifierId(Text.valueOf("External Identifier ID"));
         extId.setWorkExternalIdentifierType(Text.valueOf("asin"));
+        extId.setRelationship(Text.valueOf(Relationship.SELF.value()));
         extIds.add(extId);
         form.setWorkExternalIdentifiers(extIds);
         form.setWorkType(Text.valueOf("artistic-performance"));
