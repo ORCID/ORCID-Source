@@ -246,9 +246,9 @@ public class WorkManagerImpl implements WorkManager {
      * @return the list of works that belongs to this user
      * */
     @Override
-    @Cacheable(value = "works-summaries", key = "#userOrcid.concat('-').concat(#lastModified)")
-    public List<WorkSummary> getWorksSummaryList(String userOrcid, long lastModified) {
-        List<MinimizedWorkEntity> works = workDao.findWorks(userOrcid);        
+    @Cacheable(value = "works-summaries", key = "#orcid.concat('-').concat(#lastModified)")
+    public List<WorkSummary> getWorksSummaryList(String orcid, long lastModified) {
+        List<MinimizedWorkEntity> works = workDao.findWorks(orcid);        
         return jpaJaxbWorkAdapter.toWorkSummaryFromMinimized(works);
     }
 }

@@ -229,8 +229,8 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
      * */
      @Override
      @Cacheable(value = "peer-reviews-summaries", key = "#orcid.concat('-').concat(#lastModified)")
-    public List<PeerReviewSummary> getPeerReviewSummaryList(String userOrcid, long lastModified) {
-         List<PeerReviewEntity> peerReviewEntities = peerReviewDao.getByUser(userOrcid);
+    public List<PeerReviewSummary> getPeerReviewSummaryList(String orcid, long lastModified) {
+         List<PeerReviewEntity> peerReviewEntities = peerReviewDao.getByUser(orcid);
          return jpaJaxbPeerReviewAdapter.toPeerReviewSummary(peerReviewEntities);
      }
 }

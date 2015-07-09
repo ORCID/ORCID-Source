@@ -120,5 +120,5 @@ public interface WorkManager {
      *          Last modified date used to check the cache
      * @return the list of works that belongs to this user
      * */
-    List<WorkSummary> getWorksSummaryList(String userOrcid, long lastModified);
+    List<WorkSummary> getWorksSummaryList(String orcid, long lastModified);
 }
