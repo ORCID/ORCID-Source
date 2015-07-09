@@ -97,19 +97,19 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
 
     @Resource(name = "profileEntityCacheManager")
     ProfileEntityCacheManager profileEntityCacheManager;
-    
+
     @Resource
     AffiliationsManager affiliationsManager;
-    
+
     @Resource
     ProfileFundingManager fundingManager;
-    
+
     @Resource
     PeerReviewManager peerReviewManager;
-    
+
     @Resource
     ProfileWorkManager profileWorkManager;
-    
+
     @Resource
     WorkManager workManager;
 
@@ -337,41 +337,41 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         Date lastModified = profileDao.retrieveLastModifiedDate(orcid);
         long lastModifiedTime = lastModified.getTime();
         ActivitiesSummary activities = new ActivitiesSummary();
-        
-        //Set educations
+
+        // Set educations
         List<EducationSummary> educationsList = affiliationsManager.getEducationSummaryList(orcid, lastModifiedTime);
         if (!educationsList.isEmpty()) {
             Educations educations = new Educations();
-            for(EducationSummary summary : educationsList) {
-                if(justPublic) {
-                    if(Visibility.PUBLIC.equals(summary.getVisibility())) {
+            for (EducationSummary summary : educationsList) {
+                if (justPublic) {
+                    if (Visibility.PUBLIC.equals(summary.getVisibility())) {
                         educations.getSummaries().add(summary);
                     }
                 } else {
                     educations.getSummaries().add(summary);
                 }
             }
-               
+
             activities.setEducations(educations);
         }
-        
-        //Set employments
+
+        // Set employments
         List<EmploymentSummary> employmentList = affiliationsManager.getEmploymentSummaryList(orcid, lastModifiedTime);
         if (!employmentList.isEmpty()) {
             Employments employments = new Employments();
-            for(EmploymentSummary summary : employmentList) {
-                if(justPublic) {
-                    if(Visibility.PUBLIC.equals(summary.getVisibility())) {
+            for (EmploymentSummary summary : employmentList) {
+                if (justPublic) {
+                    if (Visibility.PUBLIC.equals(summary.getVisibility())) {
                         employments.getSummaries().add(summary);
                     }
                 } else {
                     employments.getSummaries().add(summary);
                 }
             }
-               
+
             activities.setEmployments(employments);
         }
-        
+
         // Set fundings
         List<FundingSummary> fundingSummaries = fundingManager.getFundingSummaryList(orcid, lastModifiedTime);
         Fundings fundings = groupFundings(fundingSummaries, justPublic);
@@ -381,12 +381,12 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         List<PeerReviewSummary> peerReviewSummaries = peerReviewManager.getPeerReviewSummaryList(orcid, lastModifiedTime);
         PeerReviews peerReviews = groupPeerReviews(peerReviewSummaries, justPublic);
         activities.setPeerReviews(peerReviews);
-                                                                        
+
         // Set works
         List<WorkSummary> workSummaries = workManager.getWorksSummaryList(orcid, lastModifiedTime);
         Works works = groupWorks(workSummaries, justPublic);
         activities.setWorks(works);
-        
+
         return activities;
     }
 
