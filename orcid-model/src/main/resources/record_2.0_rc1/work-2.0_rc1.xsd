@@ -168,16 +168,20 @@
 			<xs:documentation>External references to the work.
 			</xs:documentation>
 		</xs:annotation>
-		<xs:sequence>
-			<xs:element name="external-identifier-type" type="work:external-identifier-type"
-				maxOccurs="1" />
-			<xs:element name="external-identifier-id" maxOccurs="1"
-				type="common:non-empty-string">
-				<xs:annotation>
-					<xs:documentation>Value for the identifier</xs:documentation>
-				</xs:annotation>
-			</xs:element>
-		</xs:sequence>
+		<xs:complexContent>
+			<xs:extension base="common:external-identifier">
+				<xs:sequence>
+						<xs:element name="external-identifier-type" type="work:external-identifier-type"
+							maxOccurs="1" />
+						<xs:element name="external-identifier-id" maxOccurs="1"
+							type="common:non-empty-string">
+						<xs:annotation>
+							<xs:documentation>Value for the identifier</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>		
 	</xs:complexType>
 	<xs:simpleType name="external-identifier-type">
 		<xs:annotation>

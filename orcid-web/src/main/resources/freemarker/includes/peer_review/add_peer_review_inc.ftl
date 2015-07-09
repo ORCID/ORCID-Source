@@ -168,18 +168,16 @@
 								<label class="relative"><@orcid.msg 'peer_review.identifier_type' /></label>
 								<div class="relative">
 				    				<select id="extIdType" class="input-xlarge" name="extIdType" ng-model="extId.workExternalIdentifierType.value">																					 
-										<option value=""><@orcid.msg 'org.orcid.jaxb.model.message.WorkExternalIdentifierType.empty' /></option>
+										<option value=""><@orcid.msg 'org.orcid.jaxb.model.record.WorkExternalIdentifierType.empty' /></option>
 										<#list idTypes?keys as key>
 											<option value="${idTypes[key]}">${key}</option>
 										</#list>
-									</select> 
-									<a href ng-click="deleteExternalIdentifier(extId)" class="glyphicon glyphicon-trash grey"></a>
+									</select> 									
 									<span class="orcid-error" ng-show="extId.workExternalIdentifierType.errors.length > 0">
 	                	        	    <div ng-repeat='error in extId.workExternalIdentifierType.errors' ng-bind-html="error"></div>
 	                    		    </span>
 								</div>	
-							</div>								
-							
+							</div>															
 							<div class="control-group">
 								<label class="relative"><@orcid.msg 'peer_review.identifier_value'/></label>
 						    	<div class="relative">
@@ -188,9 +186,35 @@
 										<div ng-repeat='error in workExternalIdentifier.workExternalIdentifierId.errors' ng-bind-html="error"></div>
 									</span>
 								</div>
-								<div class="add-item-link" ng-show="$last">			
+							</div>
+							<!-- Ext id url -->																															
+							<div class="control-group">
+								<label><@orcid.msg 'common.url'/></label>
+								<div class="relative">
+									<input name="externalIdUrl" type="text" class="input-xlarge"  ng-model="extId.url.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_URL'/>" ng-model-onblur/>
+									<span class="orcid-error" ng-show="extId.url.errors.length > 0">
+										<div ng-repeat='error in extId.url.errors' ng-bind-html="error"></div>
+									</span>
 								</div>
+							</div>
+							<!-- Ext id relationship -->
+							<div class="bottomBuffer">
+								<label><@orcid.msg 'common.ext_id.relationship'/></label>
+								<div class="relative">							
+									<label class="checkbox-inline">
+										<input type="radio" name="relationship{{$index}}" ng-model="extId.relationship.value" value="self">
+										<@orcid.msg "common.self" />
+									</label>
+																							
+									<label class="checkbox-inline">
+										<input type="radio" name="relationship{{$index}}" ng-model="extId.relationship.value" value="part-of">
+										<@orcid.msg "common.part_of" />
+									</label>							
+									<a href ng-click="deleteExternalIdentifier(extId)" class="glyphicon glyphicon-trash grey"  ng-hide="$first && editPeerReview.externalIdentifiers.length == 1"></a>							
+								</div>
+								<div ng-show="$last" class="add-item-link">			
 									<span><a href ng-click="addExternalIdentifier()" ng-show="$last"><i class="glyphicon glyphicon-plus-sign"></i> <@orcid.msg 'peer_review.add_external_identifiers'/></a></span>
+								</div>
 							</div>
 						</div>
 					</div>
@@ -218,12 +242,11 @@
 								<label class="relative"><@orcid.msg 'peer_review.subject.identifier_type'/></label>
 								<div class="relative">
 									<select id="extIdType" class="input-xlarge" name="extIdType" ng-model="extId.workExternalIdentifierType.value">																					 
-										<option value=""><@orcid.msg 'org.orcid.jaxb.model.message.WorkExternalIdentifierType.empty' /></option>
+										<option value=""><@orcid.msg 'org.orcid.jaxb.model.record.WorkExternalIdentifierType.empty' /></option>
 										<#list idTypes?keys as key>
 											<option value="${idTypes[key]}">${key}</option>
 										</#list>
-									</select> 
-									<a href ng-click="deleteSubjectExternalIdentifier(extId)" class="glyphicon glyphicon-trash grey"></a>
+									</select> 									
 									<span class="orcid-error" ng-show="extId.workExternalIdentifierType.errors.length > 0">
 										<div ng-repeat='error in extId.workExternalIdentifierType.errors' ng-bind-html="error"></div>
 									</span>
@@ -238,11 +261,37 @@
 									<span class="orcid-error" ng-show="workExternalIdentifier.workExternalIdentifierId.errors.length > 0">
 										<div ng-repeat='error in workExternalIdentifier.workExternalIdentifierId.errors' ng-bind-html="error"></div>
 									</span>
-								</div>
-								<div class="add-item-link" ng-show="$last">			
-									<span><a href ng-click="addSubjectExternalIdentifier()"><i class="glyphicon glyphicon-plus-sign"></i> <@orcid.msg 'peer_review.subject.add_external_identifier'/></a></span>
+								</div>								
+							</div>
+							<!-- Ext id url -->
+							<div class="control-group">
+								<label><@orcid.msg 'common.url'/></label>
+								<div class="relative">
+									<input name="externalIdUrl" type="text" class="input-xlarge"  ng-model="extId.url.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_URL'/>" ng-model-onblur/>
+									<span class="orcid-error" ng-show="extId.url.errors.length > 0">
+										<div ng-repeat='error in extId.url.errors' ng-bind-html="error"></div>
+									</span>
 								</div>
 							</div>	
+							<!-- Ext id relationship -->
+							<div class="bottomBuffer">
+								<label><@orcid.msg 'common.ext_id.relationship'/></label>
+								<div class="relative">							
+									<label class="checkbox-inline">
+										<input type="radio" name="subject_relationship{{$index}}" ng-model="extId.relationship.value" value="self">
+										<@orcid.msg "common.self" />
+									</label>
+																							
+									<label class="checkbox-inline">
+										<input type="radio" name="subject_relationship{{$index}}" ng-model="extId.relationship.value" value="part-of">
+										<@orcid.msg "common.part_of" />
+									</label>							
+									<a href ng-click="deleteSubjectExternalIdentifier(extId)" class="glyphicon glyphicon-trash grey" ng-hide="$first && extId.length == 1"></a>					
+								</div>
+								<div ng-show="$last" class="add-item-link">			
+									<span><a href ng-click="addSubjectExternalIdentifier()"><i class="glyphicon glyphicon-plus-sign"></i> <@orcid.msg 'peer_review.subject.add_external_identifier'/></a></span>
+								</div>
+							</div>
 						</div>										 
 											
 						<!-- Subject Type -->

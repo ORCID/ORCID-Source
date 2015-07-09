@@ -324,13 +324,14 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
     public OrcidProfile updateOrcidProfile(OrcidProfile orcidProfile) {
         String amenderOrcid = sourceManager.retrieveSourceOrcid();
         ProfileEntity existingProfileEntity = profileDao.find(orcidProfile.getOrcidIdentifier().getPath());
+        
         if (existingProfileEntity != null) {
             profileDao.removeChildrenWithGeneratedIds(existingProfileEntity);
             setWorkPrivacy(orcidProfile, existingProfileEntity.getActivitiesVisibilityDefault());
             setAffiliationPrivacy(orcidProfile, existingProfileEntity.getActivitiesVisibilityDefault());
             setFundingPrivacy(orcidProfile, existingProfileEntity.getActivitiesVisibilityDefault());
         }
-        dedupeProfileWorks(orcidProfile);
+        dedupeWorks(orcidProfile);
         dedupeAffiliations(orcidProfile);
         dedupeFundings(orcidProfile);
         addSourceToEmails(orcidProfile, existingProfileEntity, amenderOrcid);
@@ -338,6 +339,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         profileEntity.setLastModified(new Date());
         profileEntity.setIndexingStatus(IndexingStatus.PENDING);
         ProfileEntity updatedProfileEntity = profileDao.merge(profileEntity);
+        
         profileDao.flush();
         profileDao.refresh(updatedProfileEntity);
         OrcidProfile updatedOrcidProfile = convertToOrcidProfile(updatedProfileEntity, LoadOptions.ALL);
@@ -1351,8 +1353,23 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         ProfileEntity profileEntity = profileDao.find(orcid);
         for (OrcidWork updatedOrcidWork : updatedOrcidWorksList) {
             populateContributorInfo(updatedOrcidWork);
-            ProfileWorkEntity profileWorkEntity = jaxb2JpaAdapter.getNewProfileWorkEntity(updatedOrcidWork, profileEntity);
-            profileWorkDao.persist(profileWorkEntity);
+            //Create the work entity
+            WorkEntity workEntity = jaxb2JpaAdapter.getWorkEntity(updatedOrcidWork, null);
+            workEntity.setProfile(profileEntity);
+            workDao.persist(workEntity);
+            //Create the profile work entity
+            //TODO: Remove this after the migration to work table is done
+            ProfileWorkEntity profileWork = new ProfileWorkEntity();
+            profileWork.setAddedToProfileDate(workEntity.getAddedToProfileDate());
+            profileWork.setDateCreated(workEntity.getDateCreated());
+            profileWork.setDisplayIndex(workEntity.getDisplayIndex());
+            profileWork.setLastModified(workEntity.getLastModified());
+            profileWork.setMigrated(true);
+            profileWork.setProfile(profileEntity);
+            profileWork.setSource(new SourceEntity(profileEntity));
+            profileWork.setVisibility(workEntity.getVisibility());
+            profileWork.setWork(workEntity);
+            profileWorkDao.persist(profileWork);
         }
         orcidProfileCacheManager.remove(orcid);
     }
@@ -1394,7 +1411,7 @@ public class OrcidProfileManagerImpl implements OrcidProfileManager {
         }
     }
 
-    private void dedupeProfileWorks(OrcidProfile orcidProfile) {
+    private void dedupeWorks(OrcidProfile orcidProfile) {
         OrcidActivities orcidActivities = orcidProfile.getOrcidActivities();
         if (orcidActivities != null) {
             OrcidWorks orcidWorks = orcidActivities.getOrcidWorks();

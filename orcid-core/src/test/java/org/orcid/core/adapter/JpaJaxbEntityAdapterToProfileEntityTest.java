@@ -49,7 +49,6 @@ import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
-import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
@@ -151,11 +150,10 @@ public class JpaJaxbEntityAdapterToProfileEntityTest extends DBUnitTest {
         assertFalse(nonPrimaryEmail1.getVerified());
         assertEquals("APP-0000000000000000", nonPrimaryEmail1.getSource().getSourceClient().getClientId());
 
-        Set<ProfileWorkEntity> profileWorkEntities = profileEntity.getProfileWorks();
-        assertEquals(3, profileWorkEntities.size());
+        Set<WorkEntity> workEntities = profileEntity.getWorks();
+        assertEquals(3, workEntities.size());
 
-        for (ProfileWorkEntity profileWorkEntity : profileWorkEntities) {
-            WorkEntity workEntity = profileWorkEntity.getWork();
+        for (WorkEntity workEntity : workEntities) {
             String contributorsJson = workEntity.getContributorsJson();
             if ("Work title 1".equals(workEntity.getTitle())) {
                 assertEquals("Journal Title # 1", workEntity.getJournalTitle());
@@ -248,9 +246,9 @@ public class JpaJaxbEntityAdapterToProfileEntityTest extends DBUnitTest {
         assertTrue(currentOrcidWorks.size() == 1);
         currentOrcidWorks.get(0).setWorkType(WorkType.DATA_SET);
         ProfileEntity profileEntity = adapter.toProfileEntity(orcidMessage.getOrcidProfile());
-        List<ProfileWorkEntity> profileWorks = new ArrayList<ProfileWorkEntity>(profileEntity.getProfileWorks());
-        assertEquals(1, profileWorks.size());
-        assertTrue(profileWorks.get(0).getWork().getWorkType().equals(WorkType.DATA_SET));
+        List<WorkEntity> works = new ArrayList<WorkEntity>(profileEntity.getWorks());
+        assertEquals(1, works.size());
+        assertTrue(works.get(0).getWorkType().equals(WorkType.DATA_SET));
     }
 
     private OrcidMessage getOrcidMessage(String orcidMessagePath) throws JAXBException {

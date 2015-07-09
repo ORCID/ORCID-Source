@@ -16,13 +16,13 @@
  */
 package org.orcid.persistence.dao.impl;
 
-import java.util.ArrayList;
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Query;
 
-import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
@@ -74,13 +74,15 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
         workToUpdate.setWorkType(workWithNewData.getWorkType());
         workToUpdate.setPublicationDate(workWithNewData.getPublicationDate());
         workToUpdate.setContributorsJson(workWithNewData.getContributorsJson());
-        workToUpdate.setExternalIdentifiersJson(workWithNewData.getExternalIdentifiersJson());
-        workToUpdate.setProfile(workWithNewData.getProfile());
+        workToUpdate.setExternalIdentifiersJson(workWithNewData.getExternalIdentifiersJson());        
         workToUpdate.setVisibility(workWithNewData.getVisibility());
-        workToUpdate.setDisplayIndex(workWithNewData.getDisplayIndex());
-        workToUpdate.setAddedToProfileDate(workWithNewData.getAddedToProfileDate());
+        workToUpdate.setDisplayIndex(workWithNewData.getDisplayIndex());        
         workToUpdate.setSource(workWithNewData.getSource());
         workToUpdate.setLastModified(new Date());
+        if(workWithNewData.getAddedToProfileDate() != null) {
+            workToUpdate.setAddedToProfileDate(workWithNewData.getAddedToProfileDate());
+        }
+        workToUpdate.setProfile(workWithNewData.getProfile());
     }
 
     /**
@@ -94,10 +96,10 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
     public List<MinimizedWorkEntity> findWorks(String orcid) {
 
         Query query = entityManager
-                .createQuery("select NEW org.orcid.persistence.jpa.entities.custom.MinimizedWorkEntity(w.id, w.title, w.subtitle, w.journalTitle, w.description, w.publicationDate.day, w.publicationDate.month, w.publicationDate.year, pw.visibility, w.externalIdentifiersJson, pw.displayIndex, pw.source, pw.dateCreated, pw.lastModified, w.workType, w.languageCode, w.translatedTitleLanguageCode, w.translatedTitle, w.workUrl) "
-                        + "from WorkEntity w, ProfileWorkEntity pw "
-                        + "where pw.profile.id=:orcid and w.id=pw.work.id "
-                        + "order by pw.displayIndex desc, pw.dateCreated asc");
+                .createQuery("select NEW org.orcid.persistence.jpa.entities.custom.MinimizedWorkEntity(w.id, w.title, w.subtitle, w.journalTitle, w.description, w.publicationDate.day, w.publicationDate.month, w.publicationDate.year, w.visibility, w.externalIdentifiersJson, w.displayIndex, w.source, w.dateCreated, w.lastModified, w.workType, w.languageCode, w.translatedTitleLanguageCode, w.translatedTitle, w.workUrl) "
+                        + "from WorkEntity w "
+                        + "where w.profile.id=:orcid "
+                        + "order by w.displayIndex desc, w.dateCreated asc");
         query.setParameter("orcid", orcid);
 
         return query.getResultList();
@@ -113,10 +115,10 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
     @SuppressWarnings("unchecked")
     public List<MinimizedWorkEntity> findPublicWorks(String orcid) {
         Query query = entityManager
-                .createQuery("select NEW org.orcid.persistence.jpa.entities.custom.MinimizedWorkEntity(w.id, w.title, w.subtitle, w.journalTitle, w.description, w.publicationDate.day, w.publicationDate.month, w.publicationDate.year, pw.visibility, w.externalIdentifiersJson, pw.displayIndex, pw.sourceProfile, pw.dateCreated, pw.lastModified, w.workType, w.languageCode, w.translatedTitleLanguageCode, w.translatedTitle, w.workUrl) "
-                        + "from WorkEntity w, ProfileWorkEntity pw "
-                        + "where pw.visibility='PUBLIC' and pw.profile.id=:orcid and w.id=pw.work.id "
-                        + "order by pw.displayIndex desc, pw.dateCreated asc");
+                .createQuery("select NEW org.orcid.persistence.jpa.entities.custom.MinimizedWorkEntity(w.id, w.title, w.subtitle, w.journalTitle, w.description, w.publicationDate.day, w.publicationDate.month, w.publicationDate.year, w.visibility, w.externalIdentifiersJson, w.displayIndex, w.source, w.dateCreated, w.lastModified, w.workType, w.languageCode, w.translatedTitleLanguageCode, w.translatedTitle, w.workUrl) "
+                        + "from WorkEntity w "
+                        + "where w.visibility='PUBLIC' and w.profile.id=:orcid "
+                        + "order by w.displayIndex desc, w.dateCreated asc");
         query.setParameter("orcid", orcid);
 
         return query.getResultList();
@@ -133,7 +135,7 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
      * */
     @Override
     @Transactional
-    public boolean updateVisibilities(String orcid, ArrayList<Long> workIds, Visibility visibility) {
+    public boolean updateVisibilities(String orcid, List<Long> workIds, Visibility visibility) {
         Query query = entityManager.createNativeQuery("UPDATE work SET visibility=:visibility, last_modified=now() WHERE work_id in (:workIds)");
         query.setParameter("visibility", visibility.name());
         query.setParameter("workIds", workIds);
@@ -152,7 +154,7 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
      * */
     @Override
     @Transactional
-    public boolean removeWorks(String clientOrcid, ArrayList<Long> workIds) {
+    public boolean removeWorks(String clientOrcid, List<Long> workIds) {
         Query query = entityManager.createNativeQuery("DELETE FROM work WHERE work_id in (:workIds)");        
         query.setParameter("workIds", workIds);
         return query.executeUpdate() > 0;
@@ -183,18 +185,32 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
      * Sets the display index of the new work
      * @param workId
      *          The work id
-     * @param displayIndex
-     *          The display index for the work
+     * @param orcid
+     *          The work owner 
      * @return true if the work index was correctly set                  
      * */
     @Override
     @Transactional
-    public boolean updateToMaxDisplay(String workId, Long displayIndex) {
-        Query query = entityManager.createNativeQuery("UPDATE work SET display_index=:index WHERE work_id=:workId");
-        query.setParameter("index", displayIndex);
+    public boolean updateToMaxDisplay(String orcid, String workId) {
+        Query query = entityManager.createNativeQuery("UPDATE work SET display_index=(select coalesce(MAX(display_index) + 1, 0) from work where orcid=:orcid and work_id != :workId ) WHERE work_id=:workId");        
         query.setParameter("workId", Long.valueOf(workId));
+        query.setParameter("orcid", orcid);
         return query.executeUpdate() > 0;
     }
     
+    
+    /**
+     * Returns a list of work ids of works that still have old external identifiers
+     * @param limit
+     *          The batch number to fetch
+     * @return a list of work ids with old ext ids          
+     * */
+    @Override
+    @SuppressWarnings("unchecked")    
+    public List<BigInteger> getWorksWithOldExtIds(long limit) {
+        Query query = entityManager.createNativeQuery("SELECT distinct(work_id) FROM (SELECT work_id, json_array_elements(json_extract_path(external_ids_json, 'workExternalIdentifier')) AS j FROM work where external_ids_json is not null limit :limit) AS a WHERE (j->'relationship') is null");
+        query.setParameter("limit", limit);
+        return query.getResultList();
+    }
 }
 

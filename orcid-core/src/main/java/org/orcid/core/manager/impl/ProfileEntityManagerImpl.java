@@ -37,6 +37,7 @@ import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileFundingManager;
 import org.orcid.core.manager.ProfileWorkManager;
+import org.orcid.core.manager.WorkManager;
 import org.orcid.core.utils.activities.ActivitiesGroup;
 import org.orcid.core.utils.activities.ActivitiesGroupGenerator;
 import org.orcid.jaxb.model.clientgroup.ClientType;
@@ -108,6 +109,9 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     
     @Resource
     ProfileWorkManager profileWorkManager;
+    
+    @Resource
+    WorkManager workManager;
 
     /**
      * Fetch a ProfileEntity from the database Instead of calling this function,
@@ -377,13 +381,12 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         List<PeerReviewSummary> peerReviewSummaries = peerReviewManager.getPeerReviewSummaryList(orcid, lastModifiedTime);
         PeerReviews peerReviews = groupPeerReviews(peerReviewSummaries, justPublic);
         activities.setPeerReviews(peerReviews);
-
+                                                                        
         // Set works
-        //TODO
-        /*List<WorkSummary> workSummaries = jpaJaxbWorkAdapter.toWorkSummary(profileEntity.getProfileWorks());
+        List<WorkSummary> workSummaries = workManager.getWorksSummaryList(orcid, lastModifiedTime);
         Works works = groupWorks(workSummaries, justPublic);
-        activities.setWorks(works);*/
-
+        activities.setWorks(works);
+        
         return activities;
     }
 
@@ -514,7 +517,6 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     public boolean isDeactivated(String orcid) {
         return profileDao.isDeactivated(orcid);
     }
-
 }
 
 class GroupableActivityComparator implements Comparator<GroupableActivity> {

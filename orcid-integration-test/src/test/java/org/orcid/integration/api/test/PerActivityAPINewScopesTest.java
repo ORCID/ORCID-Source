@@ -355,8 +355,4 @@ public class PerActivityAPINewScopesTest extends IntegrationTestBase {
         
         assertTrue(affiliationFound);
     }
-    
-    
-    
-      
 }

@@ -17,7 +17,6 @@
 package org.orcid.core.manager;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.record.Work;
@@ -129,19 +128,5 @@ public interface ProfileWorkManager {
      * @param workId
      * @return
      */
-    boolean updateToMaxDisplay(String orcid, String workId);
-    
-    Work createWork(String orcid, Work work);
-
-    Work updateWork(String orcid, Work work);    
-    
-    /**
-     * Get the list of works that belongs to a user
-     * 
-     * @param userOrcid
-     * @param lastModified
-     *          Last modified date used to check the cache
-     * @return the list of works that belongs to this user
-     * */
-    List<WorkSummary> getWorkSummaryList(String userOrcid, long lastModified);    
+    boolean updateToMaxDisplay(String orcid, String workId);           
 }

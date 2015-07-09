@@ -180,6 +180,10 @@ GroupedActivities.prototype.hasPut = function(putCode) {
 GroupedActivities.prototype.key = function(activityIdentifiers) {
     var idPath;
     var idTypePath;
+    var relationship = 'relationship';
+    console.log("--------------------------------------------------------");        
+    console.log(angular.toJson(activityIdentifiers[relationship]));
+    console.log("--------------------------------------------------------");
     if (this.type == GroupedActivities.ABBR_WORK) {
         idPath = 'workExternalIdentifierId';
         idTypePath = 'workExternalIdentifierType';
@@ -199,6 +203,7 @@ GroupedActivities.prototype.key = function(activityIdentifiers) {
     if (activityIdentifiers[idTypePath]) {    	
         // ISSN is misused too often to identify a work
         if (activityIdentifiers[idTypePath].value != 'issn'
+        		&& (activityIdentifiers[relationship] == null || activityIdentifiers[relationship].value != 'part-of')
         		&& activityIdentifiers[idPath] != null
         		&& activityIdentifiers[idPath].value != null
         		&& activityIdentifiers[idPath].value != '') {
@@ -1497,7 +1502,11 @@ orcidNgModule.filter('workExternalIdentifierHtml', function(){
     return function(workExternalIdentifier, first, last, length){
 
         var output = '';
-
+        var isPartOf = false;
+        
+        if(workExternalIdentifier.relationship != null && workExternalIdentifier.relationship.value == 'part-of')
+        	isPartOf = true;
+        
         if (workExternalIdentifier == null) return output;
         if (workExternalIdentifier.workExternalIdentifierId == null) return output;
 
@@ -1506,14 +1515,23 @@ orcidNgModule.filter('workExternalIdentifierHtml', function(){
 
         if (workExternalIdentifier.workExternalIdentifierType != null)
             type = workExternalIdentifier.workExternalIdentifierType.value;
-        if (type != null) output = output + "<span class='type'>" + type.toUpperCase() + "</span>: ";
-        var link = workIdLinkJs.getLink(id,type);
+        if (type != null) {
+        	if(isPartOf) 
+        		output = output + "<span class='italic'>" + om.get("common.part_of") + " <span class='type'>" + type.toUpperCase() + "</span></span>: ";
+        	else 
+        		output = output + "<span class='type'>" + type.toUpperCase() + "</span>: ";
+        }
+        var link = null;
 
+        if (workExternalIdentifier.url != null && workExternalIdentifier.url.value != '')
+        	link = workExternalIdentifier.url.value;
+        else link = workIdLinkJs.getLink(id,type); 
+        	
         if (link != null)
             output = output + "<a href='" + link.replace(/'/g, "&#39;") + "' target='_blank'>" + id.escapeHtml() + "</a>";
         else
-            output = output + id;
-
+            output = output + id;        
+        
         if (length > 1 && !last) output = output + ',';
         return output;
     };
@@ -2924,7 +2942,6 @@ orcidNgModule.controller('ClaimThanks', ['$scope', '$compile', function ($scope,
             dataType: 'json',
             success: function(data) {
                 $scope.sourceGrantReadWizard = data;
-                //console.log(angular.toJson(data))
                 $scope.$apply();
                 $scope.showThanks();
             }
@@ -3755,7 +3772,7 @@ orcidNgModule.controller('FundingCtrl',['$scope', '$compile', '$filter', 'fundin
     };
 
     $scope.addFundingExternalIdentifier = function () {
-        $scope.editFunding.externalIdentifiers.push({type: {value: ""}, value: {value: ""}, url: {value: ""} });
+        $scope.editFunding.externalIdentifiers.push({type: {value: ""}, value: {value: ""}, url: {value: ""}, relationship: {value: "self"} });
     };
 
     $scope.deleteFundingExternalIdentifier = function(obj) {
@@ -4270,7 +4287,7 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     };
 
     $scope.addExternalIdentifier = function () {
-        $scope.editWork.workExternalIdentifiers.push({workExternalIdentifierId: {value: ""}, workExternalIdentifierType: {value: ""}});
+        $scope.editWork.workExternalIdentifiers.push({workExternalIdentifierId: {value: ""}, workExternalIdentifierType: {value: ""}, relationship: {value: "self"}, url: {value: ""}});
     };
 
     $scope.deleteExternalIdentifier = function(obj) {
@@ -4872,11 +4889,11 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
     };
 
     $scope.addExternalIdentifier = function () {
-        $scope.editPeerReview.externalIdentifiers.push({workExternalIdentifierId: {value: ""}, workExternalIdentifierType: {value: ""}});
+        $scope.editPeerReview.externalIdentifiers.push({workExternalIdentifierId: {value: ""}, workExternalIdentifierType: {value: ""}, relationship: {value: "self"}, url: {value: ""}});
     };
     
     $scope.addSubjectExternalIdentifier = function () {
-    	$scope.editPeerReview.subjectForm.workExternalIdentifiers.push({workExternalIdentifierId: {value: ""}, workExternalIdentifierType: {value: ""}});
+    	$scope.editPeerReview.subjectForm.workExternalIdentifiers.push({workExternalIdentifierId: {value: ""}, workExternalIdentifierType: {value: ""}, relationship: {value: "self"}, url: {value: ""}});
     };
     
     $scope.deleteExternalIdentifier = function(obj) {

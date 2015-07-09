@@ -54,7 +54,7 @@ public abstract class BaseT2OrcidOAuthApiClientIntegrationTest {
     protected String groupOrcid;
     protected String orcid;
     protected String accessToken;
-    protected String blankScopeToken;
+    protected String blankScopeToken;    
     protected String grantType = "client_credentials";
 
     @Resource
