@@ -20,13 +20,16 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.constants.OauthTokensConstants;
@@ -38,6 +41,8 @@ import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.oauth.OrcidRandomValueTokenServices;
 import org.orcid.core.oauth.service.OrcidAuthorizationEndpoint;
 import org.orcid.jaxb.model.message.CreationMethod;
+import org.orcid.jaxb.model.message.ErrorDesc;
+import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
@@ -68,6 +73,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.support.SimpleSessionStatus;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
+
+import com.orcid.api.common.server.delegator.OrcidClientCredentialEndPointDelegator;
 
 @Controller("oauthConfirmAccessController")
 @RequestMapping(value = "/oauth", method = RequestMethod.GET)
@@ -103,12 +110,46 @@ public class OauthConfirmAccessController extends BaseController {
     private ProfileEntityManager profileEntityManager;
     @Resource
     private OrcidRandomValueTokenServices tokenServices;
+    @Resource
+    private OrcidClientCredentialEndPointDelegator orcidClientCredentialEndPointDelegator;
     
     @Resource(name = "profileEntityCacheManager")
     ProfileEntityCacheManager profileEntityCacheManager;
 
     private static String REDIRECT_URI_ERROR = "/oauth/error/redirect-uri-mismatch?client_id={0}";
         
+    
+    @RequestMapping(value = "/token", method = RequestMethod.POST)
+    public @ResponseBody Object obtainOauth2TokenPost(HttpServletRequest request) {
+    	String clientId = request.getParameter("client_id");
+        String clientSecret = request.getParameter("client_secret");
+        String code = request.getParameter("code");
+        String state = request.getParameter("state");
+        String redirectUri = request.getParameter("redirect_uri");
+        String resourceId = request.getParameter("resource_id");
+        String refreshToken = request.getParameter("refresh_token");
+        String scopeList = request.getParameter("scope");
+        String grantType = request.getParameter("grant_type");
+        Set<String> scopes = new HashSet<String>();
+        if (StringUtils.isNotEmpty(scopeList)) {
+            scopes = OAuth2Utils.parseParameterList(scopeList);
+        }
+        Response res = null;
+        try {
+        	res = orcidClientCredentialEndPointDelegator.obtainOauth2Token(clientId, clientSecret, grantType, refreshToken, code, scopes, state, redirectUri, resourceId);
+        } catch(Exception e) {
+            return getLegacyOrcidEntity("OAuth2 problem", e);
+        }
+        return res.getEntity();
+    }
+    
+    private OrcidMessage getLegacyOrcidEntity(String prefix, Throwable e) {
+        OrcidMessage entity = new OrcidMessage();
+        entity.setMessageVersion(OrcidMessage.DEFAULT_VERSION);
+        entity.setErrorDesc(new ErrorDesc(prefix + " : " + e.getMessage()));
+        return entity;
+    }
+    
     @RequestMapping(value = { "/signin", "/login" }, method = RequestMethod.GET)
     public ModelAndView loginGetHandler2(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) {
         // find client name if available
