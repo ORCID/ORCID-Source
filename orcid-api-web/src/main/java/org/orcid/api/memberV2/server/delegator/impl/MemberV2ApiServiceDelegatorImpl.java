@@ -166,7 +166,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     @Override
     @AccessControl(requiredScope = ScopePathType.ACTIVITIES_UPDATE)
     public Response createWork(String orcid, Work work) {
-        Work w = workManager.createWork(orcid, work);
+        Work w = workManager.createWork(orcid, work, true);
         //TODO: Remove this when we remove profile works
         org.orcid.jaxb.model.message.Visibility visibility = org.orcid.jaxb.model.message.Visibility.fromValue(w.getVisibility().value());
         profileWorkManager.addProfileWork(orcid, Long.valueOf(w.getPutCode()), visibility, w.getSource().retrieveSourcePath());

@@ -394,7 +394,7 @@ public class SourceInActivitiesTest extends BaseTest {
         WorkExternalIdentifiers extIdentifiers = new WorkExternalIdentifiers();
         extIdentifiers.getExternalIdentifier().add(extId);
         work.setWorkExternalIdentifiers(extIdentifiers);
-        work = workManager.createWork(userOrcid, work);
+        work = workManager.createWork(userOrcid, work, false);
         return workManager.getWork(userOrcid, work.getPutCode());
     }
     
@@ -407,7 +407,7 @@ public class SourceInActivitiesTest extends BaseTest {
         WorkExternalIdentifiers extIdentifiers = new WorkExternalIdentifiers();
         extIdentifiers.getExternalIdentifier().add(extId);
         work.setWorkExternalIdentifiers(extIdentifiers);
-        work = workManager.createWork(userOrcid, work);
+        work = workManager.createWork(userOrcid, work, false);
         return workManager.getWork(userOrcid, work.getPutCode());
 	}
     
@@ -417,7 +417,7 @@ public class SourceInActivitiesTest extends BaseTest {
         title.setTitle(new Title("Work " + System.currentTimeMillis()));
         work.setWorkTitle(title);
         work.setWorkType(org.orcid.jaxb.model.record.WorkType.BOOK);
-        work = workManager.createWork(userOrcid, work);
+        work = workManager.createWork(userOrcid, work, false);
         return workManager.getWork(userOrcid, work.getPutCode());
     }
     private Work getWorkWithPutCode(String userOrcid) {
@@ -433,7 +433,7 @@ public class SourceInActivitiesTest extends BaseTest {
         work.setWorkExternalIdentifiers(extIdentifiers);
         work.setWorkType(org.orcid.jaxb.model.record.WorkType.BOOK);
         work.setPutCode("111");
-        work = workManager.createWork(userOrcid, work);
+        work = workManager.createWork(userOrcid, work, false);
         return workManager.getWork(userOrcid, work.getPutCode());
     }
 

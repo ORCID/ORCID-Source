@@ -74,33 +74,7 @@ public class WorkManagerImpl implements WorkManager {
     @Override
     public void setSourceManager(SourceManager sourceManager) {
         this.sourceManager = sourceManager;
-    }
-    
-    /**
-     * Add a new work to the work table
-     * 
-     * @param work
-     *            The work that will be persited
-     * @return the work already persisted on database
-     * */
-    public Work addWork(Work work) {
-        WorkEntity workEntity = jpaJaxbWorkAdapter.toWorkEntity(work);
-        workEntity = workDao.addWork(workEntity);
-        return jpaJaxbWorkAdapter.toWork(workEntity);
-    }
-
-    /**
-     * Edits an existing work
-     * 
-     * @param work
-     *            The work to be edited
-     * @return The updated entity
-     * */
-    public Work editWork(Work work) {
-        WorkEntity workEntity = jpaJaxbWorkAdapter.toWorkEntity(work);
-        workEntity = workDao.editWork(workEntity);
-        return jpaJaxbWorkAdapter.toWork(workEntity);
-    }
+    }       
 
     /**
      * Find the works for a specific user
@@ -185,8 +159,10 @@ public class WorkManagerImpl implements WorkManager {
     
     @Override
     @Transactional
-    public Work createWork(String orcid, Work work) {
-        validateWork(work);
+    public Work createWork(String orcid, Work work, boolean applyValidations) {        
+        if(applyValidations) {
+            validateWork(work);
+        }        
         WorkEntity workEntity = jpaJaxbWorkAdapter.toWorkEntity(work);
         workEntity.setSource(sourceManager.retrieveSourceEntity());
         ProfileEntity profile = profileDao.find(orcid);

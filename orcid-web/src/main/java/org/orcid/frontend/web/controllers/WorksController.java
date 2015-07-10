@@ -399,7 +399,7 @@ public class WorksController extends BaseWorkspaceController {
         newWork.setPutCode(null);                  
 
         // Create work
-        newWork = workManager.createWork(currentProfile.getOrcidIdentifier().getPath(), newWork);
+        newWork = workManager.createWork(currentProfile.getOrcidIdentifier().getPath(), newWork, false);
 
         // TODO: Still save the profile work, just in case we need a rollback
         // Create profile work relationship
