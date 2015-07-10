@@ -31,6 +31,9 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.orcid.core.exception.ActivityIdentifierValidationException;
+import org.orcid.core.exception.ActivityTitleValidationException;
+import org.orcid.core.exception.InvalidPutCodeException;
 import org.orcid.core.manager.AffiliationsManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.OrgManager;
@@ -198,7 +201,22 @@ public class SourceInActivitiesTest extends BaseTest {
         assertEquals(userOrcid, fromDb4.getSource().retrieveSourcePath());
     }
 
-    @Test
+    @Test(expected=ActivityTitleValidationException.class)
+    public void addWorkWithoutTitle() {
+    	getWorkWithoutTitle(userOrcid);
+    }
+    
+    @Test(expected=ActivityIdentifierValidationException.class)
+    public void addWorkWithoutExternalIdentifiers() {
+    	getWorkWithoutExternalIdentifier(userOrcid);
+    }
+    
+    @Test(expected=InvalidPutCodeException.class)
+    public void addWorkWithPutCode() {
+    	getWorkWithPutCode(userOrcid);
+    }
+    
+	@Test
     public void sourceDoesntChange_Funding_Test() {
         when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ProfileEntity(userOrcid)));
         ProfileFundingEntity funding1 = getProfileFundingEntity(userOrcid);
@@ -370,13 +388,52 @@ public class SourceInActivitiesTest extends BaseTest {
         title.setTitle(new Title("Work " + System.currentTimeMillis()));
         work.setWorkTitle(title);
         work.setWorkType(org.orcid.jaxb.model.record.WorkType.BOOK);
-        work = workManager.createWork(userOrcid, work);
         WorkExternalIdentifier extId = new WorkExternalIdentifier();
         extId.setWorkExternalIdentifierId(new WorkExternalIdentifierId("111"));
         extId.setWorkExternalIdentifierType(WorkExternalIdentifierType.DOI);
         WorkExternalIdentifiers extIdentifiers = new WorkExternalIdentifiers();
         extIdentifiers.getExternalIdentifier().add(extId);
         work.setWorkExternalIdentifiers(extIdentifiers);
+        work = workManager.createWork(userOrcid, work);
+        return workManager.getWork(userOrcid, work.getPutCode());
+    }
+    
+    private Work getWorkWithoutTitle(String userOrcid2) {
+    	Work work = new Work();
+        work.setWorkType(org.orcid.jaxb.model.record.WorkType.BOOK);
+        WorkExternalIdentifier extId = new WorkExternalIdentifier();
+        extId.setWorkExternalIdentifierId(new WorkExternalIdentifierId("111"));
+        extId.setWorkExternalIdentifierType(WorkExternalIdentifierType.DOI);
+        WorkExternalIdentifiers extIdentifiers = new WorkExternalIdentifiers();
+        extIdentifiers.getExternalIdentifier().add(extId);
+        work.setWorkExternalIdentifiers(extIdentifiers);
+        work = workManager.createWork(userOrcid, work);
+        return workManager.getWork(userOrcid, work.getPutCode());
+	}
+    
+    private Work getWorkWithoutExternalIdentifier(String userOrcid) {
+        Work work = new Work();
+        WorkTitle title = new WorkTitle();
+        title.setTitle(new Title("Work " + System.currentTimeMillis()));
+        work.setWorkTitle(title);
+        work.setWorkType(org.orcid.jaxb.model.record.WorkType.BOOK);
+        work = workManager.createWork(userOrcid, work);
+        return workManager.getWork(userOrcid, work.getPutCode());
+    }
+    private Work getWorkWithPutCode(String userOrcid) {
+        Work work = new Work();
+        WorkTitle title = new WorkTitle();
+        title.setTitle(new Title("Work " + System.currentTimeMillis()));
+        work.setWorkTitle(title);
+        WorkExternalIdentifier extId = new WorkExternalIdentifier();
+        extId.setWorkExternalIdentifierId(new WorkExternalIdentifierId("111"));
+        extId.setWorkExternalIdentifierType(WorkExternalIdentifierType.DOI);
+        WorkExternalIdentifiers extIdentifiers = new WorkExternalIdentifiers();
+        extIdentifiers.getExternalIdentifier().add(extId);
+        work.setWorkExternalIdentifiers(extIdentifiers);
+        work.setWorkType(org.orcid.jaxb.model.record.WorkType.BOOK);
+        work.setPutCode("111");
+        work = workManager.createWork(userOrcid, work);
         return workManager.getWork(userOrcid, work.getPutCode());
     }
 
