@@ -189,7 +189,7 @@
 							</div>
 							<!-- Ext id url -->																															
 							<div class="control-group">
-								<label><@orcid.msg 'common.url'/></label>
+								<label><@orcid.msg 'manual_work_form_contents.identifierurl'/></label>
 								<div class="relative">
 									<input name="externalIdUrl" type="text" class="input-xlarge"  ng-model="extId.url.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_URL'/>" ng-model-onblur/>
 									<span class="orcid-error" ng-show="extId.url.errors.length > 0">
@@ -265,7 +265,7 @@
 							</div>
 							<!-- Ext id url -->
 							<div class="control-group">
-								<label><@orcid.msg 'common.url'/></label>
+								<label><@orcid.msg 'manual_work_form_contents.identifierurl'/></label>
 								<div class="relative">
 									<input name="externalIdUrl" type="text" class="input-xlarge"  ng-model="extId.url.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_URL'/>" ng-model-onblur/>
 									<span class="orcid-error" ng-show="extId.url.errors.length > 0">

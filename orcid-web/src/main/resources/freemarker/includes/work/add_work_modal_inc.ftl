@@ -224,7 +224,7 @@
 			
 			<div class="col-md-6 col-sm-6 col-xs-12">							    
 				<div class="control-group">
-					<span><strong><@orcid.msg 'manual_work_form_contents.titlecitationexternalidentifier'/></strong></span>
+					<span><strong><@orcid.msg 'manual_work_form_contents.titleexternalidentifier'/></strong></span>
 				</div>
 		    	
 				<div ng-repeat="workExternalIdentifier in editWork.workExternalIdentifiers"> 
@@ -252,7 +252,7 @@
 						</div>						
 					</div>		
 					<div class="form-group">
-						<label><@orcid.msg 'common.url'/></label>
+						<label><@orcid.msg 'manual_work_form_contents.identifierurl'/></label>
 						<div class="relative">
 							<input name="currentWorkExternalIdUrl" type="text" class="form-control action-icon-inside"  ng-model="workExternalIdentifier.url.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_URL'/>" ng-model-onblur/>
 							<span class="orcid-error" ng-show="workExternalIdentifier.url.errors.length > 0">
