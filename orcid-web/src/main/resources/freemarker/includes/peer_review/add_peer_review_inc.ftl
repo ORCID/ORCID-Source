@@ -167,7 +167,7 @@
 							<div class="control-group">
 								<label class="relative"><@orcid.msg 'peer_review.identifier_type' /></label>
 								<div class="relative">
-				    				<select id="extIdType" class="input-xlarge" name="extIdType" ng-model="extId.workExternalIdentifierType.value">																					 
+				    				<select id="extIdType" class="input-xlarge" name="extIdType" ng-model="extId.workExternalIdentifierType.value" ng-change="fillUrl(extId)">																					 
 										<option value=""><@orcid.msg 'org.orcid.jaxb.model.record.WorkExternalIdentifierType.empty' /></option>
 										<#list idTypes?keys as key>
 											<option value="${idTypes[key]}">${key}</option>
@@ -181,7 +181,7 @@
 							<div class="control-group">
 								<label class="relative"><@orcid.msg 'peer_review.identifier_value'/></label>
 						    	<div class="relative">
-									<input id="extIdValue" name="extIdValue" type="text" class="input-xlarge"  ng-model="extId.workExternalIdentifierId.value"/>
+									<input id="extIdValue" name="extIdValue" type="text" class="input-xlarge"  ng-model="extId.workExternalIdentifierId.value" ng-change="fillUrl(extId)"/>
 									<span class="orcid-error" ng-show="workExternalIdentifier.workExternalIdentifierId.errors.length > 0">
 										<div ng-repeat='error in workExternalIdentifier.workExternalIdentifierId.errors' ng-bind-html="error"></div>
 									</span>
@@ -241,7 +241,7 @@
 							<div class="control-group">
 								<label class="relative"><@orcid.msg 'peer_review.subject.identifier_type'/></label>
 								<div class="relative">
-									<select id="extIdType" class="input-xlarge" name="extIdType" ng-model="extId.workExternalIdentifierType.value">																					 
+									<select id="extIdType" class="input-xlarge" name="extIdType" ng-model="extId.workExternalIdentifierType.value" ng-change="fillUrl(extId)">																					 
 										<option value=""><@orcid.msg 'org.orcid.jaxb.model.record.WorkExternalIdentifierType.empty' /></option>
 										<#list idTypes?keys as key>
 											<option value="${idTypes[key]}">${key}</option>
@@ -257,7 +257,7 @@
 							<div class="control-group">
 								<label class="relative"><@orcid.msg 'peer_review.subject.identifier_value'/></label>
 								<div class="relative">
-									<input id="extIdValue" name="extIdValue" type="text" class="input-xlarge"  ng-model="extId.workExternalIdentifierId.value"/>
+									<input id="extIdValue" name="extIdValue" type="text" class="input-xlarge"  ng-model="extId.workExternalIdentifierId.value" ng-change="fillUrl(extId)"/>
 									<span class="orcid-error" ng-show="workExternalIdentifier.workExternalIdentifierId.errors.length > 0">
 										<div ng-repeat='error in workExternalIdentifier.workExternalIdentifierId.errors' ng-bind-html="error"></div>
 									</span>

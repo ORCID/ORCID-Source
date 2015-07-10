@@ -181,9 +181,6 @@ GroupedActivities.prototype.key = function(activityIdentifiers) {
     var idPath;
     var idTypePath;
     var relationship = 'relationship';
-    console.log("--------------------------------------------------------");        
-    console.log(angular.toJson(activityIdentifiers[relationship]));
-    console.log("--------------------------------------------------------");
     if (this.type == GroupedActivities.ABBR_WORK) {
         idPath = 'workExternalIdentifierId';
         idTypePath = 'workExternalIdentifierType';
@@ -4542,6 +4539,16 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
 
     };
 
+    $scope.fillUrl = function(extId) {
+    	if(extId != null) {
+    		var url = workIdLinkJs.getLink(extId.workExternalIdentifierId.value, extId.workExternalIdentifierType.value);
+    		if(extId.url == null) {
+    			extId.url = {value:""};
+    		}
+    		extId.url.value=url;
+    	}
+    };
+    
     //init
     $scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);
 
@@ -4959,9 +4966,15 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
         $scope.showElement[element] = false;
     };
     
-    
-    
-    
+    $scope.fillUrl = function(extId) {
+    	if(extId != null) {
+    		var url = workIdLinkJs.getLink(extId.workExternalIdentifierId.value, extId.workExternalIdentifierType.value);    		
+    		if(extId.url == null) {
+    			extId.url = {value:""};
+    		}
+    		extId.url.value=url;
+    	}
+    };
     
     //Init
     $scope.peerReviewSrvc.loadPeerReviews(peerReviewSrvc.constants.access_type.USER);
