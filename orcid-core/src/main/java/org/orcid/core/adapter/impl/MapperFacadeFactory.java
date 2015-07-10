@@ -130,6 +130,19 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         workSummaryClassMap.fieldMap("externalIdentifiers", "externalIdentifiersJson").converter("workExternalIdentifiersConverterId").add();
         workSummaryClassMap.byDefault();
         workSummaryClassMap.register();
+                
+        ClassMapBuilder<WorkSummary, MinimizedWorkEntity> workSummaryMinimizedClassMap = mapperFactory.classMap(WorkSummary.class, MinimizedWorkEntity.class);
+        workSummaryMinimizedClassMap.field("putCode", "id");
+        workSummaryMinimizedClassMap.field("title.title.content", "title");
+        workSummaryMinimizedClassMap.field("title.translatedTitle.content", "translatedTitle");
+        workSummaryMinimizedClassMap.field("title.translatedTitle.languageCode", "translatedTitleLanguageCode");
+        workSummaryMinimizedClassMap.field("type", "workType");
+        workSummaryMinimizedClassMap.field("publicationDate.year.value", "publicationYear");
+        workSummaryMinimizedClassMap.field("publicationDate.month.value", "publicationMonth");
+        workSummaryMinimizedClassMap.field("publicationDate.day.value", "publicationDay");
+        workSummaryMinimizedClassMap.fieldMap("externalIdentifiers", "externalIdentifiersJson").converter("workExternalIdentifiersConverterId").add();
+        workSummaryMinimizedClassMap.byDefault();
+        workSummaryMinimizedClassMap.register();
         
         ClassMapBuilder<Work, MinimizedWorkEntity> minimizedWorkClassMap = mapperFactory.classMap(Work.class, MinimizedWorkEntity.class);
         minimizedWorkClassMap.byDefault();

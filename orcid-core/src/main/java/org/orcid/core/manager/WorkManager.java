@@ -93,8 +93,8 @@ public interface WorkManager {
      *          The work id
      * @return true if the work index was correctly set                  
      * */
-    boolean updateToMaxDisplay(String orcid, String workId);
-    
+    boolean updateToMaxDisplay(String orcid, String workId);        
+
     /**
      * Get the given Work from the database
      * @param orcid
@@ -111,4 +111,14 @@ public interface WorkManager {
     Work updateWork(String orcid, Work work); 
     
     boolean checkSourceAndRemoveWork(String orcid, String workId);
+    
+    /**
+     * Get the list of works that belongs to a user
+     * 
+     * @param userOrcid
+     * @param lastModified
+     *          Last modified date used to check the cache
+     * @return the list of works that belongs to this user
+     * */
+    List<WorkSummary> getWorksSummaryList(String orcid, long lastModified);
 }

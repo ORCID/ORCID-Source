@@ -116,7 +116,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertThat(summary.getFundings().getFundingGroup().get(1).getFundingSummary().get(0).getPath(),
                 anyOf(is("/4444-4444-4444-4446/funding/4"), is("/4444-4444-4444-4446/funding/5")));
         assertThat(summary.getFundings().getFundingGroup().get(1).getFundingSummary().get(0).getTitle().getTitle().getContent(),
-                anyOf(is("Private Funding"), is("Limited Funding")));
+                anyOf(is("Private Funding"), is("Public Funding")));
 
         // Check Educations
         assertNotNull(summary.getEducations());

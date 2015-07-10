@@ -164,8 +164,8 @@ public class WorkManagerImpl implements WorkManager {
      * */
     public boolean updateToMaxDisplay(String orcid, String workId) {        
         return workDao.updateToMaxDisplay(orcid, workId);
-    }
-    
+    }        
+
     /**
      * Get the given Work from the database
      * @param orcid
@@ -241,7 +241,22 @@ public class WorkManagerImpl implements WorkManager {
         } else if (incomingWorkVisibility == null) {
             workEntity.setVisibility(org.orcid.jaxb.model.message.Visibility.PRIVATE);            
         }
-    }  
+    }   
+    
+    /**
+     * Get the list of works that belongs to a user
+     * 
+     * @param userOrcid
+     * @param lastModified
+     *          Last modified date used to check the cache
+     * @return the list of works that belongs to this user
+     * */
+    @Override
+    @Cacheable(value = "works-summaries", key = "#orcid.concat('-').concat(#lastModified)")
+    public List<WorkSummary> getWorksSummaryList(String orcid, long lastModified) {
+        List<MinimizedWorkEntity> works = workDao.findWorks(orcid);        
+        return jpaJaxbWorkAdapter.toWorkSummaryFromMinimized(works);
+    }
     
     private void validateWork(Work work) {
         WorkTitle title = work.getWorkTitle();
@@ -259,3 +274,4 @@ public class WorkManagerImpl implements WorkManager {
         }
     }
 }
+
