@@ -21,18 +21,14 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.adapter.JpaJaxbWorkAdapter;
-import org.orcid.core.exception.ActivityIdentifierValidationException;
-import org.orcid.core.exception.ActivityTitleValidationException;
-import org.orcid.core.exception.InvalidPutCodeException;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.WorkManager;
+import org.orcid.core.manager.validator.ActivityValidator;
 import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.jaxb.model.record.Work;
-import org.orcid.jaxb.model.record.WorkTitle;
 import org.orcid.jaxb.model.record.summary.WorkSummary;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.ProfileWorkDao;
@@ -186,7 +182,7 @@ public class WorkManagerImpl implements WorkManager {
     @Override
     @Transactional
     public Work createWork(String orcid, Work work) {
-        validateWork(work);
+    	ActivityValidator.validateWork(work);
         WorkEntity workEntity = jpaJaxbWorkAdapter.toWorkEntity(work);
         workEntity.setSource(sourceManager.retrieveSourceEntity());
         ProfileEntity profile = profileDao.find(orcid);
@@ -256,22 +252,6 @@ public class WorkManagerImpl implements WorkManager {
     public List<WorkSummary> getWorksSummaryList(String orcid, long lastModified) {
         List<MinimizedWorkEntity> works = workDao.findWorks(orcid);        
         return jpaJaxbWorkAdapter.toWorkSummaryFromMinimized(works);
-    }
-    
-    private void validateWork(Work work) {
-        WorkTitle title = work.getWorkTitle();
-        if (title == null || title.getTitle() == null || StringUtils.isEmpty(title.getTitle().getContent())) {
-            throw new ActivityTitleValidationException();
-        }
-
-        if (work.getWorkExternalIdentifiers() == null || work.getWorkExternalIdentifiers().getWorkExternalIdentifier() == null
-                || work.getWorkExternalIdentifiers().getWorkExternalIdentifier().isEmpty()) {
-                throw new ActivityIdentifierValidationException();
-        }
-        
-        if (work.getPutCode() != null) {
-                throw new InvalidPutCodeException();
-        }
     }
 }
 
