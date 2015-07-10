@@ -192,11 +192,7 @@ public class ProfileWorkDaoImpl extends GenericDaoImpl<ProfileWorkEntity, Profil
         Query query = entityManager.createNativeQuery("DELETE FROM profile_work WHERE client_source_id=:clientSourceId");
         query.setParameter("clientSourceId", clientSourceId);
         query.executeUpdate();        
-    }
-
-    
-    
-    
+    }            
     
     /**
      * Get a list of profile_works that have not been migrated to the works table yet
@@ -227,5 +223,16 @@ public class ProfileWorkDaoImpl extends GenericDaoImpl<ProfileWorkEntity, Profil
         query.setParameter("orcid", orcid);
         query.setParameter("workId", workId);
         return query.executeUpdate() > 0;
+    }
+    
+    @Override
+    public boolean exists(String orcid, String workId) {
+        Query query = entityManager.createQuery("from ProfileWorkEntity where profile.id=:clientOrcid and work.id=:workId");
+        query.setParameter("clientOrcid", orcid);
+        query.setParameter("workId", Long.valueOf(workId));
+        List results = query.getResultList();
+        if(results == null || results.isEmpty())
+            return false;
+        return true;
     }
 }
