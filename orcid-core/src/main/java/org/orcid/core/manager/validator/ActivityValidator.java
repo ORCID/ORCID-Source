@@ -1,16 +1,3 @@
-package org.orcid.core.manager.validator;
-
-import org.apache.commons.lang3.StringUtils;
-import org.orcid.core.exception.ActivityIdentifierValidationException;
-import org.orcid.core.exception.ActivityTitleValidationException;
-import org.orcid.core.exception.InvalidPutCodeException;
-import org.orcid.jaxb.model.record.Education;
-import org.orcid.jaxb.model.record.Employment;
-import org.orcid.jaxb.model.record.Funding;
-import org.orcid.jaxb.model.record.FundingTitle;
-import org.orcid.jaxb.model.record.Work;
-import org.orcid.jaxb.model.record.WorkTitle;
-
 /**
  * =============================================================================
  *
@@ -27,6 +14,19 @@ import org.orcid.jaxb.model.record.WorkTitle;
  *
  * =============================================================================
  */
+package org.orcid.core.manager.validator;
+
+import org.apache.commons.lang3.StringUtils;
+import org.orcid.core.exception.ActivityIdentifierValidationException;
+import org.orcid.core.exception.ActivityTitleValidationException;
+import org.orcid.core.exception.InvalidPutCodeException;
+import org.orcid.jaxb.model.record.Education;
+import org.orcid.jaxb.model.record.Employment;
+import org.orcid.jaxb.model.record.Funding;
+import org.orcid.jaxb.model.record.FundingTitle;
+import org.orcid.jaxb.model.record.Work;
+import org.orcid.jaxb.model.record.WorkTitle;
+
 public class ActivityValidator {
 
     public static void validateWork(Work work) {
