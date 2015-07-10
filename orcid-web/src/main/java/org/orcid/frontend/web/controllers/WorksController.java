@@ -365,6 +365,7 @@ public class WorksController extends BaseWorkspaceController {
     @RequestMapping(value = "/work.json", method = RequestMethod.POST)
     public @ResponseBody WorkForm postWork(HttpServletRequest request, @RequestBody WorkForm workForm) throws Exception {
         validateWork(workForm);
+        removeEmptyExternalIdentifiers(workForm);
         if (workForm.getErrors().size() == 0) {
             if (workForm.getPutCode() != null)
                 updateWork(workForm);
@@ -372,11 +373,25 @@ public class WorksController extends BaseWorkspaceController {
                 addWork(workForm);
         }
         return workForm;
+    }    
+    
+    private void removeEmptyExternalIdentifiers(WorkForm workForm) {
+        if(workForm != null) {
+            if(workForm.getWorkExternalIdentifiers() != null && !workForm.getWorkExternalIdentifiers().isEmpty()) {
+                List<WorkExternalIdentifier> cleanExtIds = new ArrayList<WorkExternalIdentifier>();
+                for(WorkExternalIdentifier wExtId : workForm.getWorkExternalIdentifiers()) {
+                    if(!PojoUtil.isEmpty(wExtId.getWorkExternalIdentifierType())) {
+                        if(!PojoUtil.isEmpty(wExtId.getWorkExternalIdentifierId())) {
+                            cleanExtIds.add(wExtId);
+                        }
+                    }
+                }
+                workForm.setWorkExternalIdentifiers(cleanExtIds);
+            }
+        }
     }
 
-    
-
-    public void addWork(WorkForm workForm) {
+    private void addWork(WorkForm workForm) {
         // Get current profile
         OrcidProfile currentProfile = getEffectiveProfile();
 
@@ -401,7 +416,7 @@ public class WorksController extends BaseWorkspaceController {
         profileWorkManager.updateToMaxDisplay(currentProfile.getOrcidIdentifier().getPath(), workId);        
     }
 
-    public void updateWork(WorkForm workForm) throws Exception {
+    private void updateWork(WorkForm workForm) throws Exception {
         // Get current profile
         String userOrcid = getCurrentUserOrcid();
         if (!userOrcid.equals(workForm.getSource())) {
