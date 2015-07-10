@@ -40,8 +40,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.orcid.jaxb.model.message.SalesforceId;
-
 /**
  * <p>
  * Java class for anonymous complex type.

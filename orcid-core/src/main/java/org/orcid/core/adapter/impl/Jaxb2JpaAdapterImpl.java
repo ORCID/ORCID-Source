@@ -199,46 +199,46 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     }
 
     private void setWorks(ProfileEntity profileEntity, OrcidWorks orcidWorks) {
-        SortedSet<ProfileWorkEntity> profileWorkEntities = getProfileWorkEntities(profileEntity, orcidWorks);
-        profileEntity.setProfileWorks(profileWorkEntities);
+        SortedSet<WorkEntity> workEntities = getWorkEntities(profileEntity, orcidWorks);
+        profileEntity.setWorks(workEntities);
     }
 
-    private SortedSet<ProfileWorkEntity> getProfileWorkEntities(ProfileEntity profileEntity, OrcidWorks orcidWorks) {
-        SortedSet<ProfileWorkEntity> existingProfileWorkEntities = profileEntity.getProfileWorks();
-        Map<String, ProfileWorkEntity> existingProfileWorkEntitiesMap = createProfileWorkEntitiesMap(existingProfileWorkEntities);
-        SortedSet<ProfileWorkEntity> profileWorkEntities = null;
-        if (existingProfileWorkEntities == null) {
-            profileWorkEntities = new TreeSet<ProfileWorkEntity>();
+    private SortedSet<WorkEntity> getWorkEntities(ProfileEntity profileEntity, OrcidWorks orcidWorks) {
+        SortedSet<WorkEntity> existingWorkEntities = profileEntity.getWorks();        
+        Map<String, WorkEntity> existingWorkEntitiesMap = createWorkEntitiesMap(existingWorkEntities);
+        SortedSet<WorkEntity> workEntities = null;
+        if (existingWorkEntities == null) {
+            workEntities = new TreeSet<WorkEntity>();
         } else {
             // To allow for orphan deletion
-            existingProfileWorkEntities.clear();
-            profileWorkEntities = existingProfileWorkEntities;
+            existingWorkEntities.clear();
+            workEntities = existingWorkEntities;
         }
         if (orcidWorks != null && orcidWorks.getOrcidWork() != null && !orcidWorks.getOrcidWork().isEmpty()) {
             List<OrcidWork> orcidWorkList = orcidWorks.getOrcidWork();
             for (OrcidWork orcidWork : orcidWorkList) {
-                ProfileWorkEntity profileWorkEntity = getProfileWorkEntity(orcidWork, existingProfileWorkEntitiesMap.get(orcidWork.getPutCode()));
-                if (profileWorkEntity != null) {
-                    profileWorkEntity.setProfile(profileEntity);
-                    profileWorkEntity.getWork().setProfile(profileEntity);
-                    profileWorkEntities.add(profileWorkEntity);
+                WorkEntity workEntity = getWorkEntity(orcidWork, existingWorkEntitiesMap.get(orcidWork.getPutCode()));
+                if (workEntity != null) {
+                    workEntity.setProfile(profileEntity);
+                    workEntities.add(workEntity);
                 }
             }
         }
-        return profileWorkEntities;
+        return workEntities;
     }
 
-    private Map<String, ProfileWorkEntity> createProfileWorkEntitiesMap(SortedSet<ProfileWorkEntity> profileWorkEntities) {
-        Map<String, ProfileWorkEntity> map = new HashMap<>();
-        if (profileWorkEntities != null) {
-            for (ProfileWorkEntity profileWorkEntity : profileWorkEntities) {
-                map.put(String.valueOf(profileWorkEntity.getWork().getId()), profileWorkEntity);
+    private Map<String, WorkEntity> createWorkEntitiesMap(SortedSet<WorkEntity> workEntities) {
+        Map<String, WorkEntity> map = new HashMap<>();
+        if (workEntities != null) {
+            for (WorkEntity workEntity : workEntities) {
+                map.put(String.valueOf(workEntity.getId()), workEntity);
             }
         }
         return map;
     }
 
-    @Override
+    //TODO: Remove after the works migration
+    @Override  
     public ProfileWorkEntity getNewProfileWorkEntity(OrcidWork orcidWork, ProfileEntity profileEntity) {
         ProfileWorkEntity profileWorkEntity = getProfileWorkEntity(orcidWork, null);
         profileWorkEntity.setProfile(profileEntity);
@@ -269,10 +269,8 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             profileWorkEntity.setWork(getWorkEntity(orcidWork, workEntity));
             Visibility visibility = orcidWork.getVisibility() == null ? Visibility.PRIVATE : orcidWork.getVisibility();
             profileWorkEntity.setVisibility(visibility);
-            workEntity.setVisibility(visibility);
             SourceEntity source = getSource(orcidWork.getSource());
-            profileWorkEntity.setSource(source);
-            workEntity.setSource(source);
+            profileWorkEntity.setSource(source);            
 
             if (orcidWork.getCreatedDate() != null && orcidWork.getCreatedDate().getValue() != null)
                 profileWorkEntity.setDateCreated(orcidWork.getCreatedDate().getValue().toGregorianCalendar().getTime());
@@ -286,6 +284,15 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
 
     public WorkEntity getWorkEntity(OrcidWork orcidWork, WorkEntity workEntity) {
         if (orcidWork != null) {
+            if(workEntity == null) {
+                String putCode = orcidWork.getPutCode();
+                if (StringUtils.isNotBlank(putCode) && !"-1".equals(putCode)) {
+                    throw new IllegalArgumentException("Invalid put-code was supplied: " + putCode);
+                }
+                workEntity = new WorkEntity();
+            } else {
+                workEntity.clean();
+            }
             Citation workCitation = orcidWork.getWorkCitation();
             if (workCitation != null && StringUtils.isNotBlank(workCitation.getCitation()) && workCitation.getWorkCitationType() != null) {
                 workEntity.setCitation(workCitation.getCitation());
@@ -313,7 +320,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             workEntity.setWorkType(orcidWork.getWorkType());
             workEntity.setWorkUrl(orcidWork.getUrl() != null ? orcidWork.getUrl().getValue() : null);
             workEntity.setSource(getSource(orcidWork.getSource()));            
-            workEntity.setVisibility(orcidWork.getVisibility());
+            workEntity.setVisibility(orcidWork.getVisibility() == null ? Visibility.PRIVATE : orcidWork.getVisibility());
             workEntity.setAddedToProfileDate(new Date());
             return workEntity;
         }

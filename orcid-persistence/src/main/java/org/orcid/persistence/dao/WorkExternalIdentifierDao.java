@@ -16,7 +16,6 @@
  */
 package org.orcid.persistence.dao;
 
-import org.orcid.jaxb.model.message.WorkExternalIdentifier;
 import org.orcid.persistence.jpa.entities.WorkExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.keys.WorkExternalIdentifierEntityPk;
 

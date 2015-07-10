@@ -29,8 +29,8 @@ import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.PeerReviewManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileFundingManager;
-import org.orcid.core.manager.ProfileWorkManager;
 import org.orcid.core.manager.SourceManager;
+import org.orcid.core.manager.WorkManager;
 import org.orcid.core.security.visibility.aop.AccessControl;
 import org.orcid.core.security.visibility.filter.VisibilityFilterV2;
 import org.orcid.jaxb.model.message.ScopePathType;
@@ -51,7 +51,7 @@ import org.orcid.persistence.dao.WebhookDao;
 public class PublicV2ApiServiceDelegatorImpl implements PublicV2ApiServiceDelegator {
 
     @Resource
-    private ProfileWorkManager profileWorkManager;
+    private WorkManager workManager;
 
     @Resource
     private ProfileFundingManager profileFundingManager;
@@ -100,7 +100,7 @@ public class PublicV2ApiServiceDelegatorImpl implements PublicV2ApiServiceDelega
     @Override
     @AccessControl(requiredScope = ScopePathType.READ_PUBLIC, enableAnonymousAccess = true)
     public Response viewWork(String orcid, String putCode) {        
-        Work w = profileWorkManager.getWork(orcid, putCode);
+        Work w = workManager.getWork(orcid, putCode);
         orcidSecurityManager.checkVisibility(w);
         ActivityUtils.setPathToActivity(w, orcid);
         return Response.ok(w).build();
@@ -109,7 +109,7 @@ public class PublicV2ApiServiceDelegatorImpl implements PublicV2ApiServiceDelega
     @Override
     @AccessControl(requiredScope = ScopePathType.READ_PUBLIC, enableAnonymousAccess = true)
     public Response viewWorkSummary(String orcid, String putCode) {
-        WorkSummary ws = profileWorkManager.getWorkSummary(orcid, putCode);
+        WorkSummary ws = workManager.getWorkSummary(orcid, putCode);
         orcidSecurityManager.checkVisibility(ws);
         ActivityUtils.setPathToActivity(ws, orcid);
         return Response.ok(ws).build();

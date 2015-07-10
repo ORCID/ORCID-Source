@@ -1507,9 +1507,6 @@ orcidNgModule.filter('workExternalIdentifierHtml', function(){
         if(workExternalIdentifier.relationship != null && workExternalIdentifier.relationship.value == 'part-of')
         	isPartOf = true;
         
-        if (isPartOf)
-        	output += "<div class='italic'>"
-        
         if (workExternalIdentifier == null) return output;
         if (workExternalIdentifier.workExternalIdentifierId == null) return output;
 
@@ -1520,7 +1517,7 @@ orcidNgModule.filter('workExternalIdentifierHtml', function(){
             type = workExternalIdentifier.workExternalIdentifierType.value;
         if (type != null) {
         	if(isPartOf) 
-        		output = output + om.get("common.part_of") + " <span class='type'>" + type.toUpperCase() + "</span>: ";
+        		output = output + "<span class='italic'>" + om.get("common.part_of") + " <span class='type'>" + type.toUpperCase() + "</span></span>: ";
         	else 
         		output = output + "<span class='type'>" + type.toUpperCase() + "</span>: ";
         }
@@ -1533,10 +1530,7 @@ orcidNgModule.filter('workExternalIdentifierHtml', function(){
         if (link != null)
             output = output + "<a href='" + link.replace(/'/g, "&#39;") + "' target='_blank'>" + id.escapeHtml() + "</a>";
         else
-            output = output + id;
-
-        if(isPartOf)
-        	output += "</div>"
+            output = output + id;        
         
         if (length > 1 && !last) output = output + ',';
         return output;
