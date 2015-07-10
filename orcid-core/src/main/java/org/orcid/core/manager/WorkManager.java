@@ -24,25 +24,7 @@ import org.orcid.jaxb.model.record.summary.WorkSummary;
 
 public interface WorkManager {
     
-    void setSourceManager(SourceManager sourceManager);
-    
-    /**
-     * Add a new work to the work table
-     * 
-     * @param work
-     *            The work that will be persited
-     * @return the work already persisted on database
-     * */
-    Work addWork(Work work);
-    
-    /**
-     * Edits an existing work
-     * 
-     * @param work
-     *            The work to be edited
-     * @return The updated entity
-     * */
-    Work editWork(Work work);
+    void setSourceManager(SourceManager sourceManager);        
     
     /**
      * Find the works for a specific user
@@ -106,8 +88,24 @@ public interface WorkManager {
     
     WorkSummary getWorkSummary(String orcid, String workId);
     
-    Work createWork(String orcid, Work work);
+    /**
+     * Add a new work to the work table
+     * 
+     * @param work
+     *            The work that will be persited
+     * @param applyValidations
+     *          Should the work be validated?           
+     * @return the work already persisted on database
+     * */
+    Work createWork(String orcid, Work work, boolean applyValidations);
 
+    /**
+     * Edits an existing work
+     * 
+     * @param work
+     *            The work to be edited
+     * @return The updated entity
+     * */
     Work updateWork(String orcid, Work work); 
     
     boolean checkSourceAndRemoveWork(String orcid, String workId);
