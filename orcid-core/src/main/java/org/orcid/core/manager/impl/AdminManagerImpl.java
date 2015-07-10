@@ -215,6 +215,7 @@ public class AdminManagerImpl implements AdminManager {
                         deprecated.setKeywordsVisibility(Visibility.PRIVATE);
                         deprecated.setResearcherUrlsVisibility(Visibility.PRIVATE);
                         deprecated.setProfileAddressVisibility(Visibility.PRIVATE);
+                        deprecated.setPrimaryRecord(primary);
                         deprecated.setBiography(new String());
                         deprecated.setIso2Country(null);
                         
