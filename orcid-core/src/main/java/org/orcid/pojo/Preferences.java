@@ -21,7 +21,6 @@ import java.util.List;
 
 import org.orcid.jaxb.model.message.ActivitiesVisibilityDefault;
 import org.orcid.jaxb.model.message.DeveloperToolsEnabled;
-import org.orcid.jaxb.model.message.Locale;
 import org.orcid.jaxb.model.message.SendChangeNotifications;
 import org.orcid.jaxb.model.message.SendOrcidNews;
 import org.orcid.jaxb.model.message.WorkVisibilityDefault;

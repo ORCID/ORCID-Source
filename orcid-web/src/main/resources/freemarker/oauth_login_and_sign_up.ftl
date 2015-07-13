@@ -57,7 +57,7 @@
 					<p class="pull-right"><@orcid.msg 'common.dont_have_an_id'/>&nbsp;<a class="reg" ng-click="switchForm()" id="in-signin-switch-form"><@orcid.msg 'oauth_sign_up.btnregister'/></a>.</p>			    	
 		    	 </div>           
 	    	 </div> 			                        	
-			 <div class="row">
+			 <div class="row bottomBuffer">
 				  <div class="form-group has-feedback">
 				    <label for="userId" class="col-sm-3 col-xs-3-fix control-label"><@orcid.msg 'oauth_sign_in.labelemailorID'/></label>
 				    <div class="col-sm-9 col-xs-9-fix">
@@ -66,7 +66,7 @@
 				    </div>
 				  </div>
 			 </div>
-			 <div class="row">  
+			 <div class="row bottomBuffer">  
 			  <div class="form-group has-feedback">
 			    <label for="password" class="col-sm-3 col-xs-3-fix control-label"><@orcid.msg 'oauth_sign_in.labelpassword'/></label>
 			    <div class="col-sm-9 col-xs-9-fix">
@@ -105,7 +105,10 @@
        	<!-- REGISTER FORM -->
        	<div id="register" class="oauth-registration" ng-show="showRegisterForm" ng-init="loadAndInitRegistrationForm('${scopesString}','${redirect_uri}','${client_id}','${response_type}')" ng-cloak>
        		<div class="control-group col-md-12 col-sm-12 col-xs-12"> 			    	
-				<p class="pull-right"><@orcid.msg 'orcid.frontend.oauth.alread_have_account'/>&nbsp;<a class="reg" ng-click="switchForm()" id="in-register-switch-form"><@orcid.msg 'orcid.frontend.oauth.alread_have_account.link.text'/></a>.</p>			    	
+				<p class="pull-right"><@orcid.msg 'orcid.frontend.oauth.alread_have_account'/>&nbsp;<a class="reg" ng-click="switchForm()" id="in-register-switch-form"><@orcid.msg 'orcid.frontend.oauth.alread_have_account.link.text'/></a>.</p>
+	    	</div>
+	    	<div class="">
+	    		<p>${springMacroRequestContext.getMessage("register.labelClause")}</p>
 	    	</div>
 	    	<!-- First name -->
        		<div class="form-group">

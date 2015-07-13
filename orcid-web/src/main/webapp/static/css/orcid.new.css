@@ -1929,6 +1929,10 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input{
 	font-weight: normal;
 }
 
+.italic {
+	font-style: italic;
+}
+
 .grey {
 	color: #949599;
 }
@@ -2058,7 +2062,7 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input{
 	overflow: hidden;
 }
 
-.inline-list li {
+.inline-list > li {
 	float: left;
 }
 
@@ -3279,9 +3283,9 @@ p.orcid-id-container{
 	float: left;	
 }
 
-.public-profile .oid{	
+.oid{	
 	border-bottom: 1px solid #c9c9c9;
-	margin-bottom: 5px;
+	margin-bottom: 10px;
 	float: left;
 	width: 100%;
 }
@@ -3335,7 +3339,8 @@ p.orcid-id-container{
 }
 
 .funding-info{
-	width: 100%;	
+	width: 100%;
+	float: left;	
 }
 
 #currencyCode {
@@ -3635,14 +3640,6 @@ ul.sso-options li span {
 .developer-tools .tab-container .tab.expanded {
 	display: none;
 }
-
-/*
-.developer-tools .slidebox {
-	display: none;
-	overflow: visible !important;
-}
-
-*/
 
 .developer-tools .tab-container a span {
 	margin-right: 5px;
@@ -4054,17 +4051,6 @@ ul#body-work-list > li{
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
 #social-networks #social-network-options input[type=checkbox]{
 	margin-top:11px;
 }
@@ -4124,11 +4110,7 @@ ul#body-work-list > li{
 }
 
 .action-button-bar{
-	padding: 0 14px 0 0;	
-}
-
-#workspace-publications{
-	padding: 0 0 0 10px;
+	padding: 0 14px;	
 }
 
 .versions ul,
@@ -4184,13 +4166,21 @@ ul.id-details li{
 	display: block;
 }
 
-.biography-controller .popover-help-container .popover{
-	left: -109px;
+.biography-controller .bio-edit{
+	overflow: visible;
 }
 
-.biography-controller .popover.bottom .arrow{
-	left: 117px;
+.bio-edit  .popover-help-container > .popover.privacy-myorcid3 {
+	 left: -276px !important;
+	 top: -177px !important;
+	 min-width: 242px;
 }
+
+.bio-edit .popover-help-container > .privacy-myorcid3 > .arrow{
+	  left: 226px !important;
+}
+
+
 
 .dotted-bar{
 	display: block;
@@ -5403,56 +5393,6 @@ multiselect .dropdown-menu .dropdown-menu-list {
 	margin-bottom: 20px;
 }
 
-/* Custom Sharethis Buttons */
-.st_custom{
-	font-size: 30px;
-	text-align:center;
-	cursor: pointer;
-	width: 30px;
-	height: 30px;
-	display: inline;
-	
-}
-.st_facebook_custom:before{
-	content: "\E031";
-	color: #939598;
-}
-
-.st_facebook_custom:hover:before{
-	content: "\E031";
-	color: #a6ce39;
-}
-
-.st_googleplus_custom:before{
-	content: "\E003";
-	color: #939598;
-}
-
-.st_googleplus_custom:hover:before{
-	content: "\E003";
-	color: #a6ce39;
-}
-
-.st_twitter_custom:before{
-	content: "\E032";
-	color: #939598;
-}
-
-.st_twitter_custom:hover:before{
-	content: "\E032";
-	color: #a6ce39;
-}
-
-.st_linkedin_custom:before{
-	content: "\E018";
-	color: #939598;
-}
-
-.st_linkedin_custom:hover:before{
-	content: "\E018";
-	color: #a6ce39;
-}
-
 .confirm-oauth-access .popover, .oauth-signin-register .popover {
 	top: 22px;
 	left: 0;
@@ -5779,6 +5719,165 @@ hr{
 
 .action-icon-inside{
 	padding-right: 25px !important; /* Overwriting global reset styling */
+}
+
+input.form-control,
+select.form-control,
+textarea.form-control,
+.form-group div>select{
+	margin-bottom: 0px; 
+}
+
+.accordion-peer-review{
+	padding: 0;
+}
+
+.settings-table .popover{
+	left: -138px;
+  	top: -178px;
+}
+
+/* Widget */
+
+.widget-container{
+	float: left;
+	width: 100%;
+}
+
+.widget-container .widget-header a{
+	word-break: normal;
+}
+
+.widget-container .widget-code-container{
+	padding: 10px;
+	border: 1px solid #C9C9CA;
+	color: #494A4C;
+	float: left;
+	height: auto;
+	width: 100%;;
+}
+
+.widget-container .widget-code{
+	height: 100px;
+	cursor: text;
+	margin-bottom: 15px;
+}
+
+.widget-container .widget-code-icon{
+	padding-left: 0;
+	padding-right: 19px;
+	
+}
+
+.widget-container .widget-code-icon:before{
+	font-size: 16px;
+	top: -9px;
+	color: #338caf;
+}
+
+.widget-container a:hover span.widget-code-icon:before{
+	color: rgb(166, 206, 57);
+}
+
+.widget-container .widget-instructions{
+	width: 100%;
+	float:left;
+}
+
+.widget-container .widget-instructions,
+.widget-container .widget-code-container a{
+	font-size: 14px;	
+}
+
+.glyphicon-question-sign{
+	cursor: default;
+}
+
+.widget-container .widget-code-container a{
+	float: right;
+}
+
+.orcid-summary-widget{
+	width: 195px;
+	height: auto;
+	border: 1px solid #939598;
+	padding: 10px;
+	font-family: 'Helvetica', 'Sans serif', 'Verdana';
+	color: #939598;
+	background: #FFF;
+	float: left;
+	margin: 5px 10px 15px;
+}
+
+.orcid-summary-widget a{
+	text-decoration: none;
+	color: #939598;
+	width: 100%;
+}
+
+.orcid-summary-widget .orcid-widget-details .orcid-logo{
+	background: url('http://orcid.org/sites/all/themes/orcidResponsive/img/orcid-logo.png') 0 0 transparent;
+	height: 43px;
+	width: 140px;
+	margin: 0 auto 15px;
+}
+
+.orcid-summary-widget .orcid-widget-details{
+	text-align: center;
+}
+
+.orcid-summary-widget .orcid-widget-details div{
+	margin: 5px 0;
+}
+
+.orcid-summary-widget .orcid-widget-details .orcid-name{
+	font-size: 20px;
+}
+
+.orcid-summary-widget .orcid-widget-details .orcid-id{
+	font-size: 12px;
+	margin-top: 10px;
+}
+
+.orcid-summary-widget .orcid-widget-details .orcid-summary-items{
+	background: #939598;
+	padding: 5px;
+	color: #FFF;
+	margin-top: 10px;
+	font-size: 14px;
+}
+
+.orcid-summary-widget .orcid-widget-button{
+	padding: 5px;
+	color: #FFF;
+	background: #338caf;
+	text-decoration: none;
+	margin-top: 15px;
+	display: block;
+	text-align: center;
+	font-size: 14px;
+}
+
+.orcid-summary-widget .orcid-widget-button:hover{
+	color: #FFF;
+	background: #a6ce39;
+}
+
+.widget-container .popover-help-container .popover{
+	left: -30px;
+}
+
+.widget-container .popover.bottom .arrow{
+	left: 41px;
+}
+
+.emails-box{
+	word-wrap: break-word;
+}
+
+.emails-box #privacy-bar{
+	border-bottom: 1px dotted #C3C3C3;
+	padding: 5px 0;
 }
 
 /* Media Queries */

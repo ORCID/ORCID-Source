@@ -70,8 +70,7 @@ public interface ProfileWorkDao extends GenericDao<ProfileWorkEntity, ProfileWor
      *            The new visibility value for the profile work relationship
      * @return true if the relationship was updated
      * */
-    boolean updateVisibilities(String orcid, ArrayList<Long> workIds, Visibility visibility);
-
+    boolean updateVisibilities(String orcid, ArrayList<Long> workIds, Visibility visibility);        
     
     /**
      * Get the profile work associated with the client orcid and the workId
@@ -101,7 +100,7 @@ public interface ProfileWorkDao extends GenericDao<ProfileWorkEntity, ProfileWor
      * 
      * @return true if the profile work relationship was created
      * */
-    boolean addProfileWork(String clientOrcid, long workId, Visibility visibility, String sourceOrcid);
+    boolean addProfileWork(String clientOrcid, long workId, Visibility visibility, String sourceOrcid, String clientSourceId);
 
     /**
      * Find the list of orcids where at least one of his works have contributors
@@ -126,5 +125,24 @@ public interface ProfileWorkDao extends GenericDao<ProfileWorkEntity, ProfileWor
     boolean updateToMaxDisplay(String orcid, String workId);
     
     void removeWorksByClientSourceId(String clientSourceId);
+    
+    /**
+     * Get a list of profile_works that have not been migrated to the works table yet
+     * @param chunkSize
+     *          The number of profile_works to fetch
+     * @return a list of profile_works to migrate
+     * */
+    List<ProfileWorkEntity> getNonMigratedProfileWorks(int chunkSize);
 
+    /**
+     * Mark a profile_work as migrated
+     * @param orcid
+     *          The work owner
+     * @param workId
+     *          The work id 
+     * @return true if the profile work was correctly set as migrated         
+     * */
+    boolean setProfileWorkAsMigrated(String orcid, Long workId);
+    
+    boolean exists(String orcid, String workId);
 }

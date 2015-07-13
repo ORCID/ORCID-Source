@@ -27,6 +27,7 @@ import javax.annotation.Resource;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.CountryManager;
 import org.orcid.core.manager.CrossRefManager;
+import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.SecurityQuestionManager;
 import org.orcid.core.manager.SponsorManager;
@@ -47,6 +48,9 @@ public class BaseWorkspaceController extends BaseController {
 
     @Resource
     protected SponsorManager sponsorManager;
+    
+    @Resource
+    private EncryptionManager encryptionManager;
 
     @Resource
     protected CountryManager countryManager;
@@ -106,6 +110,14 @@ public class BaseWorkspaceController extends BaseController {
             map.put(year, year);
         }
         return map;
+    }
+    
+    @ModelAttribute("orcidIdHash")
+    String getOrcidHash() throws Exception {
+    	OrcidProfile currentProfile = getEffectiveProfile();
+    	if (currentProfile == null) return null;
+    	String orcid = currentProfile.getOrcidIdentifier().getPath();
+    	return encryptionManager.sha256Hash(orcid);
     }
     
     public String getCountryName(OrcidProfile profile) {

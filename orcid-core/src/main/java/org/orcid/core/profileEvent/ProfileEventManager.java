@@ -16,8 +16,6 @@
  */
 package org.orcid.core.profileEvent;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.List;
 

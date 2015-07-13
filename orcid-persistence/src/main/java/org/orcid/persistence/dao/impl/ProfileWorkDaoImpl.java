@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.dao.ProfileWorkDao;
@@ -84,7 +85,7 @@ public class ProfileWorkDaoImpl extends GenericDaoImpl<ProfileWorkEntity, Profil
     @Transactional
     public boolean updateVisibility(String orcid, String workId, Visibility visibility) {
         Query query = entityManager
-                .createQuery("update ProfileWorkEntity set visibility=:visibility, lastModified=now() where work.id=:workId and  profile.id=:orcid");
+                .createQuery("update ProfileWorkEntity set visibility=:visibility, lastModified=now(), migrated=true where work.id=:workId and  profile.id=:orcid");
         query.setParameter("workId", Long.valueOf(workId));
         query.setParameter("visibility", visibility);
         query.setParameter("orcid", orcid);
@@ -139,13 +140,14 @@ public class ProfileWorkDaoImpl extends GenericDaoImpl<ProfileWorkEntity, Profil
      * */
     @Override
     @Transactional
-    public boolean addProfileWork(String orcid, long workId, Visibility visibility, String sourceOrcid) {
+    public boolean addProfileWork(String orcid, long workId, Visibility visibility, String sourceOrcid, String clientSourceId) {
         Query query = entityManager
-                .createNativeQuery("INSERT INTO profile_work(orcid, work_id, date_created, last_modified, added_to_profile_date, visibility, source_id) values(:orcid, :workId, now(), now(), now(), :visibility, :sourceId)");
+                .createNativeQuery("INSERT INTO profile_work(orcid, work_id, date_created, last_modified, added_to_profile_date, visibility, source_id, client_source_id, migrated) values(:orcid, :workId, now(), now(), now(), :visibility, :sourceId, :clientSourceId, true)");
         query.setParameter("orcid", orcid);
         query.setParameter("workId", workId);
         query.setParameter("visibility", visibility.name());
         query.setParameter("sourceId", sourceOrcid);
+        query.setParameter("clientSourceId", clientSourceId);
 
         return query.executeUpdate() > 0 ? true : false;
     }
@@ -190,6 +192,47 @@ public class ProfileWorkDaoImpl extends GenericDaoImpl<ProfileWorkEntity, Profil
         Query query = entityManager.createNativeQuery("DELETE FROM profile_work WHERE client_source_id=:clientSourceId");
         query.setParameter("clientSourceId", clientSourceId);
         query.executeUpdate();        
+    }            
+    
+    /**
+     * Get a list of profile_works that have not been migrated to the works table yet
+     * @param chunkSize
+     *          The number of profile_works to fetch
+     * @return a list of profile_works to migrate
+     * */
+    @Override
+    @Transactional
+    public List<ProfileWorkEntity> getNonMigratedProfileWorks(int chunkSize) {
+        TypedQuery<ProfileWorkEntity> query = entityManager.createQuery("FROM ProfileWorkEntity WHERE migrated=false", ProfileWorkEntity.class);
+        query.setMaxResults(chunkSize);
+        return query.getResultList();        
     }
 
+    /**
+     * Mark a profile_work as migrated
+     * @param orcid
+     *          The work owner
+     * @param workId
+     *          The work id 
+     * @return true if the profile work was correctly set as migrated         
+     * */
+    @Override
+    @Transactional
+    public boolean setProfileWorkAsMigrated(String orcid, Long workId) {
+        Query query = entityManager.createNativeQuery("UPDATE profile_work SET migrated=true WHERE orcid=:orcid and work_id=:workId");
+        query.setParameter("orcid", orcid);
+        query.setParameter("workId", workId);
+        return query.executeUpdate() > 0;
+    }
+    
+    @Override
+    public boolean exists(String orcid, String workId) {
+        Query query = entityManager.createQuery("from ProfileWorkEntity where profile.id=:clientOrcid and work.id=:workId");
+        query.setParameter("clientOrcid", orcid);
+        query.setParameter("workId", Long.valueOf(workId));
+        List results = query.getResultList();
+        if(results == null || results.isEmpty())
+            return false;
+        return true;
+    }
 }

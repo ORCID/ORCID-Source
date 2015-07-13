@@ -54,6 +54,7 @@
         orcidVar.showLogin = ${showLogin};
       </#if>
       orcidVar.orcidId = '${(profile.orcidIdentifier.path)!}';
+      orcidVar.orcidIdHash = '${(orcidIdHash)!}';
       orcidVar.realOrcidId = '${realUserOrcid!}';
       orcidVar.jsMessages = JSON.parse("${jsMessagesJson}");
       orcidVar.searchBaseUrl = "${searchBaseUrl}";

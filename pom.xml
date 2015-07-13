@@ -29,7 +29,7 @@ the software.
         <spring.version>4.1.5.RELEASE</spring.version>
         <security.version>3.2.5.RELEASE</security.version>
         <jersey.version>1.18.3</jersey.version>
-        <solr.version>4.3.0</solr.version>
+        <solr.version>4.10.4</solr.version>
         <aspectj.version>1.8.4</aspectj.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -218,6 +218,7 @@ the software.
                         	<exclude>**/src/main/webapp/static/javascript/json3/**</exclude>
                         	<exclude>**/src/main/webapp/static/javascript/typeahead/**</exclude>
                         	<exclude>**/src/main/webapp/static/javascript/respond.*.js</exclude>
+                        	<exclude>**/src/main/webapp/static/javascript/shibboleth-embedded-ds/**</exclude>
                         	<exclude>**/src/main/webapp/static/fonts/glyphicons*</exclude>
                         	<exclude>**/.externalToolBuilders/**</exclude>
                         	<exclude>**/src/main/webapp/static/css/jquery-*.css</exclude>
@@ -237,6 +238,7 @@ the software.
                             <exclude>**/src/test/resources/org/orcid/core/manager/example**</exclude>
                             <exclude>**/src/test/resources/org/orcid/frontend/web/forms/**</exclude>
                             <exclude>**/src/main/webapp/static/css/glyphicons.css</exclude>
+                            <exclude>**/src/main/webapp/static/css/idpselect.css</exclude>
                             <exclude>**/src/test/javascript/node_modules/**</exclude>
                             <exclude>**/src/main/webapp/static/javascript/iframeResizer**</exclude>
                             <exclude>**/*.xsd</exclude>
@@ -443,12 +445,7 @@ the software.
             <groupId>io.takari.junit</groupId>
             <artifactId>takari-cpsuite</artifactId>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.takari.junit</groupId>
-            <artifactId>takari-cpsuite</artifactId>
-            <scope>test</scope>
-        </dependency>
+        </dependency>        
         <dependency>
             <groupId>org.hsqldb</groupId>
             <artifactId>hsqldb</artifactId>

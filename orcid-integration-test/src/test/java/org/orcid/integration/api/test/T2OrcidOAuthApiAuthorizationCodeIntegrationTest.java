@@ -17,6 +17,7 @@
 package org.orcid.integration.api.test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -81,7 +82,12 @@ import org.orcid.jaxb.model.message.WorkTitle;
 import org.orcid.jaxb.model.message.WorkType;
 import org.orcid.persistence.dao.ClientRedirectDao;
 import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.persistence.dao.ProfileWorkDao;
+import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
+import org.orcid.persistence.jpa.entities.WorkEntity;
+import org.orcid.persistence.jpa.entities.custom.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.keys.ClientRedirectUriPk;
 import org.orcid.test.DBUnitTest;
 import org.springframework.beans.factory.annotation.Value;
@@ -143,6 +149,12 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
     private ProfileDao profileDao;
 
     @Resource
+    private WorkDao workDao;
+    
+    @Resource
+    private ProfileWorkDao profileWorkDao;      
+    
+    @Resource
     OrcidSSOManager ssoManager;
 
     @Value("${org.orcid.web.base.url:http://localhost:8080/orcid-web}")
@@ -151,7 +163,7 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
     private String redirectUri;
 
     private static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml", "/data/SecurityQuestionEntityData.xml",
-            "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/WorksEntityData.xml", "/data/ProfileWorksEntityData.xml",
+            "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/WorksEntityData.xml", 
             "/data/ClientDetailsEntityData.xml", "/data/Oauth2TokenDetailsData.xml", "/data/WebhookEntityData.xml");
 
     @BeforeClass
@@ -277,6 +289,7 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
 
     @Test
     public void testAddWork() throws InterruptedException, JSONException {
+        String orcid = "4444-4444-4444-4442";
         String scopes = "/orcid-works/create";
         String authorizationCode = webDriverHelper.obtainAuthorizationCode(scopes, CLIENT_DETAILS_ID, "michael@bentine.com", "password");
         String accessToken = obtainAccessToken(authorizationCode, scopes);
@@ -294,10 +307,35 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
         orcidWork.setWorkType(WorkType.JOURNAL_ARTICLE);
         WorkTitle workTitle = new WorkTitle();
         orcidWork.setWorkTitle(workTitle);
-        workTitle.setTitle(new Title("Work added by integration test"));
+        String title = "Work added by integration test " + System.currentTimeMillis();
+        workTitle.setTitle(new Title(title));
 
-        ClientResponse clientResponse = oauthT2Client.addWorksJson("4444-4444-4444-4442", orcidMessage, accessToken);
+        
+        ClientResponse clientResponse = oauthT2Client.addWorksJson(orcid, orcidMessage, accessToken);
         assertEquals(201, clientResponse.getStatus());
+        List<MinimizedWorkEntity> works = workDao.findWorks(orcid);
+        assertNotNull(works);
+        long workId = -1;
+        for(MinimizedWorkEntity work : works) {
+            if(work.getTitle().equals(title)) {
+                workId = work.getId();
+            }
+        }
+        
+        assertFalse(workId == -1);
+        WorkEntity work = workDao.find(workId);
+        assertNotNull(work);
+        assertNotNull(work.getProfile());
+        assertEquals(orcid, work.getProfile().getId());
+        assertNotNull(work.getSource());
+        assertEquals(CLIENT_DETAILS_ID, work.getSource().getSourceId());
+        assertNotNull(work.getVisibility());
+        assertNotNull(work.getAddedToProfileDate());
+               
+        ProfileWorkEntity pf = profileWorkDao.getProfileWork(orcid, String.valueOf(workId));
+        assertNotNull(pf);
+        assertTrue(pf.getMigrated());
+        assertEquals(pf.getDisplayIndex(), work.getDisplayIndex());
     }
 
     @Test

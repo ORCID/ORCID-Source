@@ -63,8 +63,7 @@
                 <tr>
                     <!-- Email header -->
                     <th><a name="editEmail"></a>${springMacroRequestContext.getMessage("manage.thEmail")}</th>
-                    <td><a href="" ng-click="toggleEmailEdit()"
-                        ng-bind="emailToggleText"></a></td>
+                    <td><a href="" ng-click="toggleEmailEdit()" ng-bind="emailToggleText"></a></td>
                 </tr>
                 <tr ng-controller="EmailEditCtrl" ng-show="showEditEmail" ng-cloak>
                     <!-- Email edit -->
@@ -117,13 +116,16 @@
                                             </div>
                                         </div>
                                         <div class="col-md-2 col-xs-4">
-                                            <div class="emailVisibility"><@orcid.privacyToggle
-                                                angularModel="email.visibility"
-                                                questionClick="toggleClickPrivacyHelp(email.value)"
-                                                clickedClassCheck="{'popover-help-container-show':privacyHelp[email.value]==true}"
-                                                publicClick="setPrivacy(email, 'PUBLIC', $event)"
-                                                limitedClick="setPrivacy(email, 'LIMITED', $event)"
-                                                privateClick="setPrivacy(email, 'PRIVATE', $event)" />
+                                        
+                                            <div class="emailVisibility">
+	                                            <@orcid.privacyToggle3
+	                                            	angularModel="email.visibility"
+													questionClick="toggleClickPrivacyHelp(email.value)"
+													clickedClassCheck="{'popover-help-container-show':privacyHelp[email.value]==true}" 
+													publicClick="setPrivacy(email, 'PUBLIC', $event)" 
+								                  	limitedClick="setPrivacy(email, 'LIMITED', $event)" 
+								                  	privateClick="setPrivacy(email, 'PRIVATE', $event)" 
+								                  	elementId="email.value" />    
                                             </div>
                                         </div>
                                     </div>
@@ -264,6 +266,8 @@
                         </div>
                     </td>
                 </tr>
+                
+                <!-- Privacy preferences -->
                 <tr>
                     <th><a name="editPrivacyPreferences"></a>${springMacroRequestContext.getMessage("manage.privacy_preferences")}</th>
                     <td><a href="" ng-click="togglePrivacyPreferencesEdit()"
@@ -274,17 +278,21 @@
                     <td colspan="2">
                         <div class="editTablePadCell35" id="privacy-settings">
                             ${springMacroRequestContext.getMessage("privacy_preferences.activitiesVisibilityDefault")}<br />
-                            <@orcid.privacyToggle
-                            angularModel="prefsSrvc.prefs.activitiesVisibilityDefault.value"
-                            questionClick="toggleClickPrivacyHelp('workPrivHelp')"
-                            clickedClassCheck="{'popover-help-container-show':privacyHelp['workPrivHelp']==true}"
-                            publicClick="updateActivitiesVisibilityDefault('PUBLIC', $event)"
-                            limitedClick="updateActivitiesVisibilityDefault('LIMITED', $event)"
-                            privateClick="updateActivitiesVisibilityDefault('PRIVATE', $event)" />
+                            <@orcid.privacyToggle3
+						    angularModel="prefsSrvc.prefs.activitiesVisibilityDefault.value"
+						    questionClick="toggleClickPrivacyHelp('workPrivHelp')"
+						    clickedClassCheck="{'popover-help-container-show':privacyHelp['workPrivHelp']==true}" 
+						    publicClick="updateActivitiesVisibilityDefault('PUBLIC', $event)" 
+						    limitedClick="updateActivitiesVisibilityDefault('LIMITED', $event)" 
+						    privateClick="updateActivitiesVisibilityDefault('PRIVATE', $event)" 
+						    elementId="workPrivHelp" />    
                         </div>
                     </td>
                 </tr>
                 <tr>
+                
+                
+                
                     <th><a name="editSecurityQuestion"></a>${springMacroRequestContext.getMessage("manage.security_question")}</th>
                     <td><a href="" ng-click="toggleSecurityQuestionEdit()"
                         ng-bind="securityQuestionToggleText"></a></td>
@@ -499,7 +507,7 @@
             </tbody>
         </table>
         <#else>
-        	<div id="noApplications" />
+        	<div id="noApplications"></div>
         </#if>
         
         <h1>
@@ -579,6 +587,7 @@
             <div id="no-results-alert" class="orcid-hide alert alert-error no-delegate-matches"><@spring.message "orcid.frontend.web.no_results"/></div>
         </div>
         <#if (RequestParameters['shibboleth'])??>
+        <div>
             <h1>
                 Shibboleth accounts
             </h1>
@@ -617,17 +626,19 @@
 <script type="text/ng-template" id="deactivate-account-modal">
     <div style="padding: 20px;"><h3>${springMacroRequestContext.getMessage("manage.deactivateSend")} {{primaryEmail}}</h3>
     <button class="btn" ng-click="closeModal()">${springMacroRequestContext.getMessage("manage.deactivateSend.close")}</button>
+	</div>
 </script>
         
 <script type="text/ng-template" id="verify-email-modal">
     <div style="padding: 20px;"><h3>${springMacroRequestContext.getMessage("manage.email.verificationEmail")} {{verifyEmailObject.value}}</h3>
     <button class="btn" ng-click="closeModal()">${springMacroRequestContext.getMessage("manage.email.verificationEmail.close")}</button>
+	</div>
 </script>
 
 <script type="text/ng-template" id="delete-email-modal">
     <div style="padding: 20px;"><h3><@orcid.msg 'manage.email.pleaseConfirmDeletion' /> {{emailSrvc.delEmail.value}}</h3>
     <button class="btn btn-danger" ng-click="deleteEmail(emailSrvc.delEmail)"><@orcid.msg 'manage.email.deleteEmail' /></button>
-    <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel' /></a><div>
+    <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel' /></a></div>
 </script>
 
 <#-- Script that will display a modal to ask for user password                                                 -->
@@ -733,7 +744,7 @@
         <div ng-show="errors.length === 0">
             <br></br>
         </div>
-    <div>
+    </div>
 </script>
 
    
@@ -756,7 +767,7 @@
         <div ng-show="errors.length === 0">
             <br></br>
         </div>
-    <div>
+    </div>
 </script>
 
 <script type="text/ng-template" id="confirm-disable-developer-tools">

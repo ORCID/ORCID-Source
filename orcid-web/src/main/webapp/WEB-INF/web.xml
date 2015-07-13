@@ -101,6 +101,16 @@
         <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
     </filter>
 
+    <filter>
+        <filter-name>clientCredentialsTokenEndpointFilter</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>clientCredentialsTokenEndpointFilter</filter-name>
+        <url-pattern>/oauth/token</url-pattern>
+    </filter-mapping>
+
     <filter-mapping>
         <filter-name>springSecurityFilterChain</filter-name>
         <url-pattern>/*</url-pattern>
@@ -148,6 +158,7 @@
 		<filter-name>jsonpCallbackFilter</filter-name>
 		<url-pattern>/lang.json</url-pattern>
 		<url-pattern>/userStatus.json</url-pattern>
+		<url-pattern>/public_widgets/*</url-pattern>
 	</filter-mapping>
 
 	<filter>
@@ -159,6 +170,7 @@
 		<filter-name>corsFilter</filter-name>
 		<url-pattern>/lang.json</url-pattern>
 		<url-pattern>/userStatus.json</url-pattern>
+		<url-pattern>/public_widgets/*</url-pattern>
 	</filter-mapping>
 
 

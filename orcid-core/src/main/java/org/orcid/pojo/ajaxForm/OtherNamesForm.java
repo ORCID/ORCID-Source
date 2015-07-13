@@ -20,8 +20,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.orcid.jaxb.model.message.Keyword;
-import org.orcid.jaxb.model.message.Keywords;
 import org.orcid.jaxb.model.message.OtherName;
 import org.orcid.jaxb.model.message.OtherNames;
 

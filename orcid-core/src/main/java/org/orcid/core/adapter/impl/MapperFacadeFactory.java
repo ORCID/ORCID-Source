@@ -62,11 +62,12 @@ import org.orcid.persistence.jpa.entities.NotificationWorkEntity;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.PeerReviewEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
-import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
 import org.orcid.persistence.jpa.entities.PublicationDateEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.jpa.entities.StartDateEntity;
+import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.WorkExternalIdentifierEntity;
+import org.orcid.persistence.jpa.entities.custom.MinimizedWorkEntity;
 import org.orcid.utils.OrcidStringUtils;
 import org.springframework.beans.factory.FactoryBean;
 
@@ -129,42 +130,73 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         converterFactory.registerConverter("workExternalIdentifiersConverterId", new JsonOrikaConverter<WorkExternalIdentifiers>());
         converterFactory.registerConverter("workContributorsConverterId", new JsonOrikaConverter<WorkContributors>());
 
-        ClassMapBuilder<Work, ProfileWorkEntity> workClassMap = mapperFactory.classMap(Work.class, ProfileWorkEntity.class);
+        ClassMapBuilder<Work, WorkEntity> workClassMap = mapperFactory.classMap(Work.class, WorkEntity.class);
         workClassMap.byDefault();
-        workClassMap.field("putCode", "work.id");
-        workClassMap.field("journalTitle.content", "work.journalTitle");
-        workClassMap.field("workTitle.title.content", "work.title");
-        workClassMap.field("workTitle.translatedTitle.content", "work.translatedTitle");
-        workClassMap.field("workTitle.translatedTitle.languageCode", "work.translatedTitleLanguageCode");
-        workClassMap.field("workTitle.subtitle.content", "work.subtitle");
-        workClassMap.field("shortDescription", "work.description");
-        workClassMap.field("workCitation.workCitationType", "work.citationType");
-        workClassMap.field("workCitation.citation", "work.citation");
-        workClassMap.field("workType", "work.workType");
-        workClassMap.field("publicationDate", "work.publicationDate");
-        workClassMap.fieldMap("workExternalIdentifiers", "work.externalIdentifiersJson").converter("workExternalIdentifiersConverterId").add();
-        workClassMap.field("url.value", "work.workUrl");
-        workClassMap.fieldMap("workContributors", "work.contributorsJson").converter("workContributorsConverterId").add();
-        workClassMap.field("languageCode", "work.languageCode");
-        workClassMap.field("country.value", "work.iso2Country");
+        workClassMap.field("putCode", "id");
+        addV2DateFields(workClassMap);        
+        workClassMap.field("journalTitle.content", "journalTitle");
+        workClassMap.field("workTitle.title.content", "title");
+        workClassMap.field("workTitle.translatedTitle.content", "translatedTitle");
+        workClassMap.field("workTitle.translatedTitle.languageCode", "translatedTitleLanguageCode");
+        workClassMap.field("workTitle.subtitle.content", "subtitle");
+        workClassMap.field("shortDescription", "description");
+        workClassMap.field("workCitation.workCitationType", "citationType");
+        workClassMap.field("workCitation.citation", "citation");
+        workClassMap.field("workType", "workType");
+        workClassMap.field("publicationDate", "publicationDate");
+        workClassMap.fieldMap("workExternalIdentifiers", "externalIdentifiersJson").converter("workExternalIdentifiersConverterId").add();
+        workClassMap.field("url.value", "workUrl");
+        workClassMap.fieldMap("workContributors", "contributorsJson").converter("workContributorsConverterId").add();
+        workClassMap.field("languageCode", "languageCode");
+        workClassMap.field("country.value", "iso2Country");
         workClassMap.register();
 
-        mapperFactory.classMap(PublicationDate.class, PublicationDateEntity.class).field("year.value", "year").field("month.value", "month").field("day.value", "day")
-                .register();
-        mapperFactory.classMap(WorkExternalIdentifier.class, WorkExternalIdentifierEntity.class).field("workExternalIdentifierType", "identifierType").register();
-        addV2SourceMapping(mapperFactory);
-
-        ClassMapBuilder<WorkSummary, ProfileWorkEntity> workSummaryClassMap = mapperFactory.classMap(WorkSummary.class, ProfileWorkEntity.class);
-        workSummaryClassMap.field("putCode", "work.id");
-        workSummaryClassMap.field("title.title.content", "work.title");
-        workSummaryClassMap.field("title.translatedTitle.content", "work.translatedTitle");
-        workSummaryClassMap.field("title.translatedTitle.languageCode", "work.translatedTitleLanguageCode");
-        workSummaryClassMap.field("type", "work.workType");
-        workSummaryClassMap.field("publicationDate", "work.publicationDate");
-        workSummaryClassMap.fieldMap("externalIdentifiers", "work.externalIdentifiersJson").converter("workExternalIdentifiersConverterId").add();
+        ClassMapBuilder<WorkSummary, WorkEntity> workSummaryClassMap = mapperFactory.classMap(WorkSummary.class, WorkEntity.class);
+        workSummaryClassMap.field("putCode", "id");
+        workSummaryClassMap.field("title.title.content", "title");
+        workSummaryClassMap.field("title.translatedTitle.content", "translatedTitle");
+        workSummaryClassMap.field("title.translatedTitle.languageCode", "translatedTitleLanguageCode");
+        workSummaryClassMap.field("type", "workType");
+        workSummaryClassMap.field("publicationDate", "publicationDate");
+        workSummaryClassMap.fieldMap("externalIdentifiers", "externalIdentifiersJson").converter("workExternalIdentifiersConverterId").add();
         workSummaryClassMap.byDefault();
         workSummaryClassMap.register();
+                
+        ClassMapBuilder<WorkSummary, MinimizedWorkEntity> workSummaryMinimizedClassMap = mapperFactory.classMap(WorkSummary.class, MinimizedWorkEntity.class);
+        workSummaryMinimizedClassMap.field("putCode", "id");
+        workSummaryMinimizedClassMap.field("title.title.content", "title");
+        workSummaryMinimizedClassMap.field("title.translatedTitle.content", "translatedTitle");
+        workSummaryMinimizedClassMap.field("title.translatedTitle.languageCode", "translatedTitleLanguageCode");
+        workSummaryMinimizedClassMap.field("type", "workType");
+        workSummaryMinimizedClassMap.field("publicationDate.year.value", "publicationYear");
+        workSummaryMinimizedClassMap.field("publicationDate.month.value", "publicationMonth");
+        workSummaryMinimizedClassMap.field("publicationDate.day.value", "publicationDay");
+        workSummaryMinimizedClassMap.fieldMap("externalIdentifiers", "externalIdentifiersJson").converter("workExternalIdentifiersConverterId").add();
+        workSummaryMinimizedClassMap.byDefault();
+        workSummaryMinimizedClassMap.register();
+        
+        ClassMapBuilder<Work, MinimizedWorkEntity> minimizedWorkClassMap = mapperFactory.classMap(Work.class, MinimizedWorkEntity.class);
+        minimizedWorkClassMap.byDefault();
+        minimizedWorkClassMap.field("putCode", "id");
+        minimizedWorkClassMap.field("journalTitle.content", "journalTitle");
+        minimizedWorkClassMap.field("workTitle.title.content", "title");
+        minimizedWorkClassMap.field("workTitle.translatedTitle.content", "translatedTitle");
+        minimizedWorkClassMap.field("workTitle.translatedTitle.languageCode", "translatedTitleLanguageCode");
+        minimizedWorkClassMap.field("workTitle.subtitle.content", "subtitle");
+        minimizedWorkClassMap.field("shortDescription", "description");                
+        minimizedWorkClassMap.field("workType", "workType");
+        minimizedWorkClassMap.field("publicationDate.year.value", "publicationYear");
+        minimizedWorkClassMap.field("publicationDate.month.value", "publicationMonth");
+        minimizedWorkClassMap.field("publicationDate.day.value", "publicationDay");
+        minimizedWorkClassMap.fieldMap("workExternalIdentifiers", "externalIdentifiersJson").converter("workExternalIdentifiersConverterId").add();
+        minimizedWorkClassMap.field("url.value", "workUrl");                
+        minimizedWorkClassMap.register();
 
+        mapperFactory.classMap(PublicationDate.class, PublicationDateEntity.class).field("year.value", "year").field("month.value", "month").field("day.value", "day")
+        .register();
+        mapperFactory.classMap(WorkExternalIdentifier.class, WorkExternalIdentifierEntity.class).field("workExternalIdentifierType", "identifierType").register();
+        addV2SourceMapping(mapperFactory);
+        
         return mapperFactory.getMapperFacade();
     }
 
@@ -175,8 +207,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         converterFactory.registerConverter("fundingContributorsConverterId", new JsonOrikaConverter<FundingContributors>());
 
         ClassMapBuilder<Funding, ProfileFundingEntity> fundingClassMap = mapperFactory.classMap(Funding.class, ProfileFundingEntity.class);
-        fundingClassMap.byDefault();
-        fundingClassMap.field("putCode", "id");
+        addV2CommonFields(fundingClassMap);
         fundingClassMap.field("type", "type");
         fundingClassMap.field("organizationDefinedType.content", "organizationDefinedType");
         fundingClassMap.field("title.title.content", "title");
@@ -197,13 +228,12 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         fundingClassMap.register();
 
         ClassMapBuilder<FundingSummary, ProfileFundingEntity> fundingSummaryClassMap = mapperFactory.classMap(FundingSummary.class, ProfileFundingEntity.class);
-        fundingSummaryClassMap.field("putCode", "id");
+        addV2CommonFields(fundingSummaryClassMap);
         fundingSummaryClassMap.field("type", "type");
         fundingSummaryClassMap.field("title.title.content", "title");
         fundingSummaryClassMap.field("title.translatedTitle.content", "translatedTitle");
         fundingSummaryClassMap.field("title.translatedTitle.languageCode", "translatedTitleLanguageCode");
         fundingSummaryClassMap.fieldMap("externalIdentifiers", "externalIdentifiersJson").converter("fundingExternalIdentifiersConverterId").add();
-        fundingSummaryClassMap.byDefault();
         fundingSummaryClassMap.register();
 
         mapperFactory.classMap(FuzzyDate.class, StartDateEntity.class).field("year.value", "year").field("month.value", "month").field("day.value", "day").register();
@@ -215,8 +245,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     public MapperFacade getEducationMapperFacade() {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
         ClassMapBuilder<Education, OrgAffiliationRelationEntity> educationClassMap = mapperFactory.classMap(Education.class, OrgAffiliationRelationEntity.class);
-        educationClassMap.byDefault();
-        educationClassMap.field("putCode", "id");
+        addV2CommonFields(educationClassMap);
         educationClassMap.field("organization.name", "org.name");
         educationClassMap.field("organization.address.city", "org.city");
         educationClassMap.field("organization.address.region", "org.region");
@@ -229,7 +258,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
 
         ClassMapBuilder<EducationSummary, OrgAffiliationRelationEntity> educationSummaryClassMap = mapperFactory.classMap(EducationSummary.class,
                 OrgAffiliationRelationEntity.class);
-        educationSummaryClassMap.field("putCode", "id");
+        addV2CommonFields(educationSummaryClassMap);
         educationSummaryClassMap.field("organization.name", "org.name");
         educationSummaryClassMap.field("organization.address.city", "org.city");
         educationSummaryClassMap.field("organization.address.region", "org.region");
@@ -238,7 +267,6 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         educationSummaryClassMap.field("organization.disambiguatedOrganization.disambiguationSource", "org.orgDisambiguated.sourceType");
         educationSummaryClassMap.field("departmentName", "department");
         educationSummaryClassMap.field("roleTitle", "title");
-        educationSummaryClassMap.byDefault();
         educationSummaryClassMap.register();
 
         mapperFactory.classMap(FuzzyDate.class, StartDateEntity.class).field("year.value", "year").field("month.value", "month").field("day.value", "day").register();
@@ -250,8 +278,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     public MapperFacade getEmploymentMapperFacade() {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
         ClassMapBuilder<Employment, OrgAffiliationRelationEntity> classMap = mapperFactory.classMap(Employment.class, OrgAffiliationRelationEntity.class);
-        classMap.byDefault();
-        classMap.field("putCode", "id");
+        addV2CommonFields(classMap);
         classMap.field("organization.name", "org.name");
         classMap.field("organization.address.city", "org.city");
         classMap.field("organization.address.region", "org.region");
@@ -264,7 +291,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
 
         ClassMapBuilder<EmploymentSummary, OrgAffiliationRelationEntity> employmentSummaryClassMap = mapperFactory.classMap(EmploymentSummary.class,
                 OrgAffiliationRelationEntity.class);
-        employmentSummaryClassMap.field("putCode", "id");
+        addV2CommonFields(employmentSummaryClassMap);
         employmentSummaryClassMap.field("organization.name", "org.name");
         employmentSummaryClassMap.field("organization.address.city", "org.city");
         employmentSummaryClassMap.field("organization.address.region", "org.region");
@@ -273,7 +300,6 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         employmentSummaryClassMap.field("organization.disambiguatedOrganization.disambiguationSource", "org.orgDisambiguated.sourceType");
         employmentSummaryClassMap.field("departmentName", "department");
         employmentSummaryClassMap.field("roleTitle", "title");
-        employmentSummaryClassMap.byDefault();
         employmentSummaryClassMap.register();
 
         mapperFactory.classMap(FuzzyDate.class, StartDateEntity.class).field("year.value", "year").field("month.value", "month").field("day.value", "day").register();
@@ -289,8 +315,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         converterFactory.registerConverter("workExternalIdentifiersConverterId", new JsonOrikaConverter<WorkExternalIdentifiers>());
 
         ClassMapBuilder<PeerReview, PeerReviewEntity> classMap = mapperFactory.classMap(PeerReview.class, PeerReviewEntity.class);
-        classMap.byDefault();
-        classMap.field("putCode", "id");
+        addV2CommonFields(classMap);
         classMap.field("url.value", "url");
         classMap.field("organization.name", "org.name");
         classMap.field("organization.address.city", "org.city");
@@ -311,8 +336,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         classMap.register();
 
         ClassMapBuilder<PeerReviewSummary, PeerReviewEntity> peerReviewSummaryClassMap = mapperFactory.classMap(PeerReviewSummary.class, PeerReviewEntity.class);
-        peerReviewSummaryClassMap.byDefault();
-        peerReviewSummaryClassMap.field("putCode", "id");
+        addV2CommonFields(peerReviewSummaryClassMap);
         peerReviewSummaryClassMap.fieldMap("externalIdentifiers", "externalIdentifiersJson").converter("workExternalIdentifiersConverterId").add();
         peerReviewSummaryClassMap.register();
 
@@ -325,6 +349,17 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
 
     private ClassMapBuilder<?, ?> mapCommonFields(ClassMapBuilder<?, ?> builder) {
         return builder.field("dateCreated", "createdDate").field("id", "putCode").byDefault();
+    }
+
+    private void addV2CommonFields(ClassMapBuilder<?, ?> classMap) {
+        classMap.byDefault();
+        classMap.field("putCode", "id");
+        addV2DateFields(classMap);
+    }
+
+    private void addV2DateFields(ClassMapBuilder<?, ?> classMap) {
+        classMap.field("createdDate.value", "dateCreated");
+        classMap.field("lastModifiedDate.value", "lastModified");
     }
 
     private void addV2SourceMapping(MapperFactory mapperFactory) {

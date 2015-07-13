@@ -24,7 +24,8 @@ import ma.glasnost.orika.MapperFacade;
 import org.orcid.core.adapter.JpaJaxbWorkAdapter;
 import org.orcid.jaxb.model.record.Work;
 import org.orcid.jaxb.model.record.summary.WorkSummary;
-import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
+import org.orcid.persistence.jpa.entities.WorkEntity;
+import org.orcid.persistence.jpa.entities.custom.MinimizedWorkEntity;
 
 /**
  * 
@@ -40,15 +41,15 @@ public class JpaJaxbWorkAdapterImpl implements JpaJaxbWorkAdapter {
     }
 
     @Override
-    public ProfileWorkEntity toProfileWorkEntity(Work work) {
+    public WorkEntity toWorkEntity(Work work) {
         if (work == null) {
             return null;
         }
-        return mapperFacade.map(work, ProfileWorkEntity.class);
+        return mapperFacade.map(work, WorkEntity.class);
     }
     
     @Override
-    public ProfileWorkEntity toProfileWorkEntity(Work work, ProfileWorkEntity existing) {
+    public WorkEntity toWorkEntity(Work work, WorkEntity existing) {
         if (work == null) {
             return null;
         }
@@ -57,31 +58,47 @@ public class JpaJaxbWorkAdapterImpl implements JpaJaxbWorkAdapter {
     }
 
     @Override
-    public Work toWork(ProfileWorkEntity ProfileWorkEntity) {
-        if (ProfileWorkEntity == null) {
+    public Work toWork(WorkEntity workEntity) {
+        if (workEntity == null) {
             return null;
         }
-        return mapperFacade.map(ProfileWorkEntity,Work.class);
+        return mapperFacade.map(workEntity,Work.class);
     }
 
     @Override
-    public WorkSummary toWorkSummary(ProfileWorkEntity ProfileWorkEntity) {
-        if (ProfileWorkEntity == null) {
+    public WorkSummary toWorkSummary(WorkEntity workEntity) {
+        if (workEntity == null) {
             return null;
         }
-        return mapperFacade.map(ProfileWorkEntity, WorkSummary.class);
-    }
+        return mapperFacade.map(workEntity, WorkSummary.class);
+    }                    
     
     @Override
-    public List<Work> toWork(Collection<ProfileWorkEntity> workEntities) {
+    public List<Work> toWork(Collection<WorkEntity> workEntities) {
         if (workEntities == null) {
             return null;
         }
         return mapperFacade.mapAsList(workEntities, Work.class);
     }
+           
+    @Override
+    public List<Work> toMinimizedWork(Collection<MinimizedWorkEntity> minimizedEntities) {
+        if(minimizedEntities == null) {
+            return null;
+        }
+        return mapperFacade.mapAsList(minimizedEntities, Work.class);
+    }
     
     @Override
-    public List<WorkSummary> toWorkSummary(Collection<ProfileWorkEntity> workEntities) {
+    public List<WorkSummary> toWorkSummary(Collection<WorkEntity> workEntities) {
+        if(workEntities == null) {
+            return null;
+        }
+        return mapperFacade.mapAsList(workEntities, WorkSummary.class);
+    }
+    
+    @Override
+    public List<WorkSummary> toWorkSummaryFromMinimized(Collection<MinimizedWorkEntity> workEntities) {
         if(workEntities == null) {
             return null;
         }

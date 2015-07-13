@@ -16,6 +16,7 @@
  */
 package org.orcid.core.manager.impl;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -297,53 +298,72 @@ public class OrcidJaxbCopyManagerImpl implements OrcidJaxbCopyManager {
 
     @Override
     public void copyUpdatedContactDetailsToExistingPreservingVisibility(OrcidBio existing, OrcidBio updated) {
-        if (updated.getContactDetails() == null) {
-            return;
-        }
+       ContactDetails existingContactDetails = existing.getContactDetails();
+       ContactDetails updatedContactDetails = updated.getContactDetails();
+       copyUpdatedEmails(existingContactDetails, updatedContactDetails);
+       copyUpdatedAddress(existingContactDetails, updatedContactDetails);
+    }
 
-        ContactDetails updatedContactDetails = updated.getContactDetails();
-        ContactDetails existingContactDetails = existing.getContactDetails();
+    private void copyUpdatedEmails(ContactDetails existingContactDetails, ContactDetails updatedContactDetails) {
+    	String clientId = sourceManager.retrieveSourceOrcid();
+    	List<Email> allEmails = new ArrayList<Email>();
+		List<Email> existingEmails = existingContactDetails.getEmail();
+		
+		for(Email oldEmail : existingEmails) {
+			Email tempEmail = null;
+			if(updatedContactDetails != null) {
+				tempEmail = updatedContactDetails.getEmailByString(oldEmail.getValue());
+			}
+			String oldEmSource = (oldEmail.getSourceClientId() == null) ? oldEmail.getSource() : oldEmail.getSourceClientId();
+			if(clientId == null || (clientId != null && !clientId.equals(oldEmSource))) {
+				allEmails.add(oldEmail);
+				if(tempEmail != null) {
+					updatedContactDetails.getEmail().remove(tempEmail);
+				}
+			} else {
+				if(oldEmail.isPrimary()) {
+					if(tempEmail != null) {
+						updatedContactDetails.getEmail().remove(tempEmail);
+						if(!Visibility.PRIVATE.equals(oldEmail.getVisibility())) {
+							oldEmail.setVisibility(tempEmail.getVisibility());
+						}
+					}
+					allEmails.add(oldEmail);
+				} else if(Visibility.PRIVATE.equals(oldEmail.getVisibility())) {
+					if(tempEmail != null) {
+						updatedContactDetails.getEmail().remove(tempEmail);
+					}
+					allEmails.add(oldEmail);
+				} else {
+					if(tempEmail != null) {
+						updatedContactDetails.getEmail().remove(tempEmail);
+						tempEmail.setPrimary(false);
+						allEmails.add(tempEmail);
+					}
+				}
+			}
+		}
+		//Set primary = false for each remaining new email.
+		if(updatedContactDetails != null) {
+			for(Email newEmail : updatedContactDetails.getEmail()) {
+				newEmail.setPrimary(false);
+				allEmails.add(newEmail);
+			}
+		}
+		
+		for(Email email : allEmails) {
+			if(email.getVisibility() == null) {
+				email.setVisibility(OrcidVisibilityDefaults.ALTERNATIVE_EMAIL_DEFAULT.getVisibility());
+			}
+		}
+		existingContactDetails.setEmail(allEmails);
+	}
 
-        Email updatedPrimaryEmail = updatedContactDetails.retrievePrimaryEmail();
-
-        for (Email existingEmail : existingContactDetails.getEmail()) {
-            Email updatedEmail = updatedContactDetails.getEmailByString(existingEmail.getValue());
-            if (updatedEmail == null) {
-                // Make sure existing private emails are preserved. The API
-                // client wouldn't have been able to see these to know to write
-                // them back.
-                if (Visibility.PRIVATE.equals(existingEmail.getVisibility())) {
-                    // Make sure not ending up with more than one primary.
-                    if (updatedPrimaryEmail != null) {
-                        existingEmail.setPrimary(false);
-                    }
-                    updatedContactDetails.getEmail().add(existingEmail);
-                }
-            } else {
-                if (updatedEmail.getVisibility() == null) {
-                    // Make sure existing privacy level is preserved if not
-                    // specified in incoming.
-                    updatedEmail.setVisibility(existingEmail.getVisibility());
-                }
-            }
-        }
-
-        // Set any remaining null visibilities to the default value.
-        for (Email email : updatedContactDetails.getEmail()) {
-            if (email.getVisibility() == null) {
-                if (email.isPrimary()) {
-                    email.setVisibility(OrcidVisibilityDefaults.PRIMARY_EMAIL_DEFAULT.getVisibility());
-                } else {
-                    email.setVisibility(OrcidVisibilityDefaults.ALTERNATIVE_EMAIL_DEFAULT.getVisibility());
-                }
-            }
-        }
-
-        // Set updated emails to existing contact details
-        existingContactDetails.setEmail(updatedContactDetails.getEmail());
-
-        // If contact details are null, just replace them with the updated ones
-        if (existingContactDetails.getAddress() == null) {
+	private void copyUpdatedAddress(ContactDetails existingContactDetails, ContactDetails updatedContactDetails) {
+		if(updatedContactDetails == null) {
+			return;
+		}
+		if (existingContactDetails.getAddress() == null) {
             existingContactDetails.setAddress(updatedContactDetails.getAddress());
         } else {
             Address existingAddress = existingContactDetails.getAddress();
@@ -362,14 +382,13 @@ public class OrcidJaxbCopyManagerImpl implements OrcidJaxbCopyManager {
             }
         }
 
-        // Check if visibility is empty and fill it
         if (existingContactDetails.getAddress() != null && existingContactDetails.getAddress().getCountry() != null
                 && existingContactDetails.getAddress().getCountry().getVisibility() == null) {
             existingContactDetails.getAddress().getCountry().setVisibility(OrcidVisibilityDefaults.COUNTRY_DEFAULT.getVisibility());
         }
-    }
+	}
 
-    @Override
+	@Override
     public void copyUpdatedResearcherUrlPreservingVisbility(OrcidBio existing, OrcidBio updated) {
         if (updated.getResearcherUrls() == null) {
             return;
@@ -485,5 +504,9 @@ public class OrcidJaxbCopyManagerImpl implements OrcidJaxbCopyManager {
     public void copyUpdatedFundingListVisibilityInformationOnlyPreservingVisbility(FundingList existingFundingList, FundingList updatedFundingList) {
         throw new RuntimeException("Not implemented!");
     }
+
+	public void setSourceManager(SourceManager sourceManager) {
+		this.sourceManager = sourceManager;
+	}
 
 }
