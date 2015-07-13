@@ -23,6 +23,8 @@
 
 package org.orcid.jaxb.model.message;
 
+import org.orcid.jaxb.model.message.ScopeConstants;
+
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
@@ -73,39 +75,39 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "scope-path-type")
 @XmlEnum
 public enum ScopePathType implements Serializable {
-
-    //@formatter:off
-    @XmlEnumValue("/authenticate") AUTHENTICATE("/authenticate"),
-    @XmlEnumValue("/read-public") READ_PUBLIC("/read-public"),
-    @XmlEnumValue("/webhook") WEBHOOK("/webhook"),
-    @XmlEnumValue("/orcid-bio/read-limited") ORCID_BIO_READ_LIMITED("/orcid-bio/read-limited", READ_PUBLIC),
-    @XmlEnumValue("/orcid-profile/read-limited") ORCID_PROFILE_READ_LIMITED("/orcid-profile/read-limited", READ_PUBLIC),
-    @XmlEnumValue("/affiliations/read-limited") AFFILIATIONS_READ_LIMITED("/affiliations/read-limited", READ_PUBLIC),
-    @XmlEnumValue("/orcid-works/read-limited") ORCID_WORKS_READ_LIMITED("/orcid-works/read-limited", READ_PUBLIC),
-    @XmlEnumValue("/funding/read-limited") FUNDING_READ_LIMITED("/funding/read-limited", READ_PUBLIC),
-    @XmlEnumValue("/orcid-patents/read-limited") ORCID_PATENTS_READ_LIMITED("/orcid-patents/read-limited", READ_PUBLIC),
-    @XmlEnumValue("/affiliations/update") AFFILIATIONS_UPDATE("/affiliations/update", AFFILIATIONS_READ_LIMITED, READ_PUBLIC),
-    @XmlEnumValue("/orcid-works/update") ORCID_WORKS_UPDATE("/orcid-works/update", ORCID_WORKS_READ_LIMITED, READ_PUBLIC),
-    @XmlEnumValue("/funding/update") FUNDING_UPDATE("/funding/update", FUNDING_READ_LIMITED, READ_PUBLIC),
-    @XmlEnumValue("/orcid-patents/update") ORCID_PATENTS_UPDATE("/orcid-patents/update", ORCID_PATENTS_READ_LIMITED, READ_PUBLIC),
-    @XmlEnumValue("/orcid-bio/external-identifiers/create") ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE("/orcid-bio/external-identifiers/create", READ_PUBLIC),
-    @XmlEnumValue("/orcid-bio/update") ORCID_BIO_UPDATE("/orcid-bio/update", ORCID_BIO_READ_LIMITED, ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE, READ_PUBLIC),
-    @XmlEnumValue("/affiliations/create") AFFILIATIONS_CREATE("/affiliations/create", AFFILIATIONS_READ_LIMITED, READ_PUBLIC),
-    @XmlEnumValue("/orcid-works/create") ORCID_WORKS_CREATE("/orcid-works/create", ORCID_WORKS_READ_LIMITED, READ_PUBLIC),
-    @XmlEnumValue("/funding/create") FUNDING_CREATE("/funding/create", FUNDING_READ_LIMITED, READ_PUBLIC),
-    @XmlEnumValue("/orcid-patents/create") ORCID_PATENTS_CREATE("/orcid-patents/create", ORCID_PATENTS_UPDATE, READ_PUBLIC),    
-    @XmlEnumValue("/basic-notification") BASIC_NOTIFICATION("/basic-notification"),
-    @XmlEnumValue("/premium-notification") PREMIUM_NOTIFICATION("/premium-notification", BASIC_NOTIFICATION),
-    @XmlEnumValue("/peer-review/read-limited") PEER_REVIEW_READ_LIMITED("/peer-review/read-limited", READ_PUBLIC),
-    @XmlEnumValue("/peer-review/update") PEER_REVIEW_UPDATE("/peer-review/update", PEER_REVIEW_READ_LIMITED, READ_PUBLIC),
-    @XmlEnumValue("/peer-review/create") PEER_REVIEW_CREATE("/peer-review/create", PEER_REVIEW_READ_LIMITED),
     
-    //XXX: Per activity API    
-    @XmlEnumValue("/activities/read-limited") ACTIVITIES_READ_LIMITED("/activities/read-limited", ORCID_WORKS_READ_LIMITED, AFFILIATIONS_READ_LIMITED, FUNDING_READ_LIMITED, PEER_REVIEW_READ_LIMITED),
-    @XmlEnumValue("/activities/update") ACTIVITIES_UPDATE ("/activities/update", ACTIVITIES_READ_LIMITED, ORCID_WORKS_CREATE, ORCID_WORKS_UPDATE, AFFILIATIONS_CREATE, AFFILIATIONS_UPDATE, FUNDING_CREATE, FUNDING_UPDATE, PEER_REVIEW_CREATE, PEER_REVIEW_UPDATE),    
-    @XmlEnumValue("/person/read-limited") PERSON_READ_LIMITED("/person/read-limited", ORCID_BIO_READ_LIMITED),
-    @XmlEnumValue("/person/update") PERSON_UPDATE("/person/update", PERSON_READ_LIMITED, ORCID_BIO_UPDATE, ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE),
-    @XmlEnumValue("/orcid-profile/create") ORCID_PROFILE_CREATE("/orcid-profile/create", ORCID_BIO_READ_LIMITED, ORCID_WORKS_READ_LIMITED, ORCID_PROFILE_READ_LIMITED, ORCID_WORKS_UPDATE, ORCID_BIO_UPDATE,
+    //@formatter:off
+    @XmlEnumValue(ScopeConstants.AUTHENTICATE) AUTHENTICATE(ScopeConstants.AUTHENTICATE),
+    @XmlEnumValue(ScopeConstants.READ_PUBLIC) READ_PUBLIC(ScopeConstants.READ_PUBLIC),
+    @XmlEnumValue(ScopeConstants.WEBHOOK) WEBHOOK(ScopeConstants.WEBHOOK),
+    @XmlEnumValue(ScopeConstants.ORCID_BIO_READ_LIMITED) ORCID_BIO_READ_LIMITED(ScopeConstants.ORCID_BIO_READ_LIMITED, READ_PUBLIC),
+    @XmlEnumValue(ScopeConstants.ORCID_PROFILE_READ_LIMITED) ORCID_PROFILE_READ_LIMITED(ScopeConstants.ORCID_PROFILE_READ_LIMITED, READ_PUBLIC),
+    @XmlEnumValue(ScopeConstants.AFFILIATIONS_READ_LIMITED) AFFILIATIONS_READ_LIMITED(ScopeConstants.AFFILIATIONS_READ_LIMITED, READ_PUBLIC),
+    @XmlEnumValue(ScopeConstants.ORCID_WORKS_READ_LIMITED) ORCID_WORKS_READ_LIMITED(ScopeConstants.ORCID_WORKS_READ_LIMITED, READ_PUBLIC),
+    @XmlEnumValue(ScopeConstants.FUNDING_READ_LIMITED) FUNDING_READ_LIMITED(ScopeConstants.FUNDING_READ_LIMITED, READ_PUBLIC),
+    @XmlEnumValue(ScopeConstants.ORCID_PATENTS_READ_LIMITED) ORCID_PATENTS_READ_LIMITED(ScopeConstants.ORCID_PATENTS_READ_LIMITED, READ_PUBLIC),
+    @XmlEnumValue(ScopeConstants.AFFILIATIONS_UPDATE) AFFILIATIONS_UPDATE(ScopeConstants.AFFILIATIONS_UPDATE, AFFILIATIONS_READ_LIMITED, READ_PUBLIC),
+    @XmlEnumValue(ScopeConstants.ORCID_WORKS_UPDATE) ORCID_WORKS_UPDATE(ScopeConstants.ORCID_WORKS_UPDATE, ORCID_WORKS_READ_LIMITED, READ_PUBLIC),
+    @XmlEnumValue(ScopeConstants.FUNDING_UPDATE) FUNDING_UPDATE(ScopeConstants.FUNDING_UPDATE, FUNDING_READ_LIMITED, READ_PUBLIC),
+    @XmlEnumValue(ScopeConstants.ORCID_PATENTS_UPDATE) ORCID_PATENTS_UPDATE(ScopeConstants.ORCID_PATENTS_UPDATE, ORCID_PATENTS_READ_LIMITED, READ_PUBLIC),
+    @XmlEnumValue(ScopeConstants.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE) ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE(ScopeConstants.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE, READ_PUBLIC),
+    @XmlEnumValue(ScopeConstants.ORCID_BIO_UPDATE) ORCID_BIO_UPDATE(ScopeConstants.ORCID_BIO_UPDATE, ORCID_BIO_READ_LIMITED, ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE, READ_PUBLIC),
+    @XmlEnumValue(ScopeConstants.AFFILIATIONS_CREATE) AFFILIATIONS_CREATE(ScopeConstants.AFFILIATIONS_CREATE, AFFILIATIONS_READ_LIMITED, READ_PUBLIC),
+    @XmlEnumValue(ScopeConstants.ORCID_WORKS_CREATE) ORCID_WORKS_CREATE(ScopeConstants.ORCID_WORKS_CREATE, ORCID_WORKS_READ_LIMITED, READ_PUBLIC),
+    @XmlEnumValue(ScopeConstants.FUNDING_CREATE) FUNDING_CREATE(ScopeConstants.FUNDING_CREATE, FUNDING_READ_LIMITED, READ_PUBLIC),
+    @XmlEnumValue(ScopeConstants.ORCID_PATENTS_CREATE) ORCID_PATENTS_CREATE(ScopeConstants.ORCID_PATENTS_CREATE, ORCID_PATENTS_UPDATE, READ_PUBLIC),    
+    @XmlEnumValue(ScopeConstants.BASIC_NOTIFICATION) BASIC_NOTIFICATION(ScopeConstants.BASIC_NOTIFICATION),
+    @XmlEnumValue(ScopeConstants.PREMIUM_NOTIFICATION) PREMIUM_NOTIFICATION(ScopeConstants.PREMIUM_NOTIFICATION, BASIC_NOTIFICATION),
+    @XmlEnumValue(ScopeConstants.PEER_REVIEW_READ_LIMITED) PEER_REVIEW_READ_LIMITED(ScopeConstants.PEER_REVIEW_READ_LIMITED, READ_PUBLIC),
+    @XmlEnumValue(ScopeConstants.PEER_REVIEW_UPDATE) PEER_REVIEW_UPDATE(ScopeConstants.PEER_REVIEW_UPDATE, PEER_REVIEW_READ_LIMITED, READ_PUBLIC),
+    @XmlEnumValue(ScopeConstants.PEER_REVIEW_CREATE) PEER_REVIEW_CREATE(ScopeConstants.PEER_REVIEW_CREATE, PEER_REVIEW_READ_LIMITED),
+    
+    // Per activity API    
+    @XmlEnumValue(ScopeConstants.ACTIVITIES_READ_LIMITED) ACTIVITIES_READ_LIMITED(ScopeConstants.ACTIVITIES_READ_LIMITED, ORCID_WORKS_READ_LIMITED, AFFILIATIONS_READ_LIMITED, FUNDING_READ_LIMITED, PEER_REVIEW_READ_LIMITED),
+    @XmlEnumValue(ScopeConstants.ACTIVITIES_UPDATE) ACTIVITIES_UPDATE (ScopeConstants.ACTIVITIES_UPDATE, ACTIVITIES_READ_LIMITED, ORCID_WORKS_CREATE, ORCID_WORKS_UPDATE, AFFILIATIONS_CREATE, AFFILIATIONS_UPDATE, FUNDING_CREATE, FUNDING_UPDATE, PEER_REVIEW_CREATE, PEER_REVIEW_UPDATE),    
+    @XmlEnumValue(ScopeConstants.PERSON_READ_LIMITED) PERSON_READ_LIMITED(ScopeConstants.PERSON_READ_LIMITED, ORCID_BIO_READ_LIMITED),
+    @XmlEnumValue(ScopeConstants.PERSON_UPDATE) PERSON_UPDATE(ScopeConstants.PERSON_UPDATE, PERSON_READ_LIMITED, ORCID_BIO_UPDATE, ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE),
+    @XmlEnumValue(ScopeConstants.ORCID_PROFILE_CREATE) ORCID_PROFILE_CREATE(ScopeConstants.ORCID_PROFILE_CREATE, ORCID_BIO_READ_LIMITED, ORCID_WORKS_READ_LIMITED, ORCID_PROFILE_READ_LIMITED, ORCID_WORKS_UPDATE, ORCID_BIO_UPDATE,
             FUNDING_UPDATE, AFFILIATIONS_UPDATE, ORCID_PATENTS_UPDATE, ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE, ORCID_WORKS_CREATE, FUNDING_CREATE, AFFILIATIONS_CREATE, ORCID_PATENTS_CREATE, PEER_REVIEW_CREATE, PEER_REVIEW_UPDATE, AUTHENTICATE, READ_PUBLIC, ACTIVITIES_UPDATE, ACTIVITIES_READ_LIMITED, PERSON_UPDATE, PERSON_READ_LIMITED);
     //@formatter:on
 
@@ -260,7 +262,7 @@ public enum ScopePathType implements Serializable {
         }
         return newScopes;
     }
-    
+
     public static Set<String> getCombinedScopesFromStringsAsStrings(Collection<String> scopes) {
         Set<String> newScopes = new HashSet<>();
         for (String scopeString : scopes) {
