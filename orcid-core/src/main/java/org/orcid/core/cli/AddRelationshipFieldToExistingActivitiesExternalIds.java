@@ -146,6 +146,7 @@ public class AddRelationshipFieldToExistingActivitiesExternalIds {
     private boolean upgradeWorks(long limit) {
         final List<BigInteger> idsToUpgrade = workDao.getWorksWithOldExtIds(limit);
         if (idsToUpgrade == null || idsToUpgrade.isEmpty()) {
+            LOG.info("Couldnt find more works to process");
             return false;
         }
         LOG.info("Ids to upgrade: {}", idsToUpgrade.size());
@@ -195,6 +196,7 @@ public class AddRelationshipFieldToExistingActivitiesExternalIds {
     private boolean upgradeFunding(long limit) {
         final List<BigInteger> idsToUpgrade = profileFundingDao.getFundingWithOldExtIds(limit);
         if (idsToUpgrade == null || idsToUpgrade.isEmpty()) {
+            LOG.info("Couldnt find more funding to process");
             return false;
         }
         LOG.info("Funding ids to upgrade: {}", idsToUpgrade.size());
