@@ -71,7 +71,7 @@ public class JpaJaxbWorkAdapterImpl implements JpaJaxbWorkAdapter {
             return null;
         }
         return mapperFacade.map(workEntity, WorkSummary.class);
-    }
+    }                    
     
     @Override
     public List<Work> toWork(Collection<WorkEntity> workEntities) {
@@ -91,6 +91,14 @@ public class JpaJaxbWorkAdapterImpl implements JpaJaxbWorkAdapter {
     
     @Override
     public List<WorkSummary> toWorkSummary(Collection<WorkEntity> workEntities) {
+        if(workEntities == null) {
+            return null;
+        }
+        return mapperFacade.mapAsList(workEntities, WorkSummary.class);
+    }
+    
+    @Override
+    public List<WorkSummary> toWorkSummaryFromMinimized(Collection<MinimizedWorkEntity> workEntities) {
         if(workEntities == null) {
             return null;
         }

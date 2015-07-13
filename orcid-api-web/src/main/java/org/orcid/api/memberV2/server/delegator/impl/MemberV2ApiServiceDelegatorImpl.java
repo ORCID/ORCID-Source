@@ -52,6 +52,7 @@ import org.orcid.jaxb.model.record.summary.PeerReviewSummary;
 import org.orcid.jaxb.model.record.summary.WorkSummary;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.WebhookDao;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.stereotype.Component;
 
 /**
@@ -129,11 +130,30 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     @AccessControl(requiredScope = ScopePathType.ACTIVITIES_READ_LIMITED)
     public Response viewWork(String orcid, String putCode) {
         Work w = workManager.getWork(orcid, putCode);
+        cleanEmptyFields(w);
         orcidSecurityManager.checkVisibility(w);
         ActivityUtils.setPathToActivity(w, orcid);
         return Response.ok(w).build();
-    }
+    }        
 
+    private void cleanEmptyFields(Work work) {
+        if(work != null) {
+            if(work.getWorkCitation() != null) {
+                if(PojoUtil.isEmpty(work.getWorkCitation().getCitation())) {
+                    work.setWorkCitation(null);
+                }
+            }
+            
+            if(work.getWorkTitle() != null) {
+                if(work.getWorkTitle().getTranslatedTitle() != null) {
+                    if(PojoUtil.isEmpty(work.getWorkTitle().getTranslatedTitle().getContent())) {
+                        work.getWorkTitle().setTranslatedTitle(null);
+                    }
+                }
+            }
+        }
+    }
+    
     @Override
     @AccessControl(requiredScope = ScopePathType.ACTIVITIES_READ_LIMITED)
     public Response viewWorkSummary(String orcid, String putCode) {
@@ -141,12 +161,12 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
         orcidSecurityManager.checkVisibility(ws);
         ActivityUtils.setPathToActivity(ws, orcid);
         return Response.ok(ws).build();
-    }
-
+    }        
+    
     @Override
     @AccessControl(requiredScope = ScopePathType.ACTIVITIES_UPDATE)
     public Response createWork(String orcid, Work work) {
-        Work w = workManager.createWork(orcid, work);
+        Work w = workManager.createWork(orcid, work, true);
         //TODO: Remove this when we remove profile works
         org.orcid.jaxb.model.message.Visibility visibility = org.orcid.jaxb.model.message.Visibility.fromValue(w.getVisibility().value());
         profileWorkManager.addProfileWork(orcid, Long.valueOf(w.getPutCode()), visibility, w.getSource().retrieveSourcePath());

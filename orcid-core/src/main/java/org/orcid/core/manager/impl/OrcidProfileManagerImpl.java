@@ -291,6 +291,27 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         profileDao.flush();
         profileDao.refresh(updatedProfileEntity);
         OrcidProfile updatedOrcidProfile = convertToOrcidProfile(updatedProfileEntity, LoadOptions.ALL);
+        
+        //TODO remove this after works migration
+        String userOrcid = updatedProfileEntity.getId();
+        if(updatedProfileEntity.getWorks() != null) {
+            for(WorkEntity work : updatedProfileEntity.getWorks()) {
+                if(!profileWorkDao.exists(userOrcid, work.getId().toString())) {
+                    String sourceId = null;
+                    String clientSourceId = null;
+                    if(work.getSource() != null) {
+                        if(work.getSource().getSourceProfile() != null) {
+                            sourceId = work.getSource().getSourceId();
+                        } else if(work.getSource().getSourceClient() != null) {
+                            clientSourceId = work.getSource().getSourceId();
+                        }
+                    }
+                    profileWorkDao.addProfileWork(userOrcid, work.getId(), work.getVisibility(), sourceId, clientSourceId);
+                }
+            }
+        }
+        //END TODO
+        
         orcidProfileCacheManager.put(updatedOrcidProfile);
         return updatedOrcidProfile;
     }
@@ -519,6 +540,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
     @Transactional
     public OrcidProfile updateOrcidWorks(OrcidProfile updatedOrcidProfile) {
         OrcidProfile existingProfile = retrieveOrcidProfile(updatedOrcidProfile.getOrcidIdentifier().getPath());
+        cleanProfileWorks(updatedOrcidProfile);
         if (existingProfile == null) {
             return null;
         }
@@ -546,6 +568,38 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         return profileToReturn;
     }
 
+    @Transactional
+    private void cleanProfileWorks(OrcidProfile updatedOrcidProfile) {
+        List<String> workIdsToPreserve = new ArrayList<String>();
+        List<String> existingIds = new ArrayList<String>();
+        if(updatedOrcidProfile != null && updatedOrcidProfile.getOrcidActivities() != null && updatedOrcidProfile.getOrcidActivities().getOrcidWorks() != null) {
+            if(updatedOrcidProfile.getOrcidActivities().getOrcidWorks().getOrcidWork() != null && !updatedOrcidProfile.getOrcidActivities().getOrcidWorks().getOrcidWork().isEmpty()) {
+                for(OrcidWork work : updatedOrcidProfile.getOrcidActivities().getOrcidWorks().getOrcidWork()) {
+                    if(!PojoUtil.isEmpty(work.getPutCode())) {
+                        workIdsToPreserve.add(work.getPutCode());
+                    }
+                }
+            } 
+        }
+        
+        String userOrcid = updatedOrcidProfile.getOrcidIdentifier().getPath();
+        
+        ProfileEntity profile = profileDao.find(userOrcid);
+        if(profile != null && profile.getWorks() != null) {
+            for(WorkEntity work : profile.getWorks()) {
+                existingIds.add(work.getId().toString());
+            }
+        }
+        profileDao.detatch(profile);
+        
+        for(String id : existingIds) {
+            if(!workIdsToPreserve.contains(id)) {
+                profileWorkDao.removeWork(userOrcid, id);
+            }
+        }
+        
+    }
+    
     /**
      * Add new external identifiers to an existing profile
      * 
@@ -1116,7 +1170,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
             profileWork.setLastModified(workEntity.getLastModified());
             profileWork.setMigrated(true);
             profileWork.setProfile(profileEntity);
-            profileWork.setSource(new SourceEntity(profileEntity));
+            profileWork.setSource(workEntity.getSource());
             profileWork.setVisibility(workEntity.getVisibility());
             profileWork.setWork(workEntity);
             profileWorkDao.persist(profileWork);

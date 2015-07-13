@@ -21,13 +21,18 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.adapter.JpaJaxbWorkAdapter;
+import org.orcid.core.exception.ActivityIdentifierValidationException;
+import org.orcid.core.exception.ActivityTitleValidationException;
+import org.orcid.core.exception.InvalidPutCodeException;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.jaxb.model.record.Work;
+import org.orcid.jaxb.model.record.WorkTitle;
 import org.orcid.jaxb.model.record.summary.WorkSummary;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.ProfileWorkDao;
@@ -69,33 +74,7 @@ public class WorkManagerImpl implements WorkManager {
     @Override
     public void setSourceManager(SourceManager sourceManager) {
         this.sourceManager = sourceManager;
-    }
-    
-    /**
-     * Add a new work to the work table
-     * 
-     * @param work
-     *            The work that will be persited
-     * @return the work already persisted on database
-     * */
-    public Work addWork(Work work) {
-        WorkEntity workEntity = jpaJaxbWorkAdapter.toWorkEntity(work);
-        workEntity = workDao.addWork(workEntity);
-        return jpaJaxbWorkAdapter.toWork(workEntity);
-    }
-
-    /**
-     * Edits an existing work
-     * 
-     * @param work
-     *            The work to be edited
-     * @return The updated entity
-     * */
-    public Work editWork(Work work) {
-        WorkEntity workEntity = jpaJaxbWorkAdapter.toWorkEntity(work);
-        workEntity = workDao.editWork(workEntity);
-        return jpaJaxbWorkAdapter.toWork(workEntity);
-    }
+    }       
 
     /**
      * Find the works for a specific user
@@ -159,8 +138,8 @@ public class WorkManagerImpl implements WorkManager {
      * */
     public boolean updateToMaxDisplay(String orcid, String workId) {        
         return workDao.updateToMaxDisplay(orcid, workId);
-    }
-    
+    }        
+
     /**
      * Get the given Work from the database
      * @param orcid
@@ -180,7 +159,10 @@ public class WorkManagerImpl implements WorkManager {
     
     @Override
     @Transactional
-    public Work createWork(String orcid, Work work) {
+    public Work createWork(String orcid, Work work, boolean applyValidations) {        
+        if(applyValidations) {
+            validateWork(work);
+        }        
         WorkEntity workEntity = jpaJaxbWorkAdapter.toWorkEntity(work);
         workEntity.setSource(sourceManager.retrieveSourceEntity());
         ProfileEntity profile = profileDao.find(orcid);
@@ -236,4 +218,36 @@ public class WorkManagerImpl implements WorkManager {
             workEntity.setVisibility(org.orcid.jaxb.model.message.Visibility.PRIVATE);            
         }
     }   
+    
+    /**
+     * Get the list of works that belongs to a user
+     * 
+     * @param userOrcid
+     * @param lastModified
+     *          Last modified date used to check the cache
+     * @return the list of works that belongs to this user
+     * */
+    @Override
+    @Cacheable(value = "works-summaries", key = "#orcid.concat('-').concat(#lastModified)")
+    public List<WorkSummary> getWorksSummaryList(String orcid, long lastModified) {
+        List<MinimizedWorkEntity> works = workDao.findWorks(orcid);        
+        return jpaJaxbWorkAdapter.toWorkSummaryFromMinimized(works);
+    }
+    
+    private void validateWork(Work work) {
+        WorkTitle title = work.getWorkTitle();
+        if (title == null || title.getTitle() == null || StringUtils.isEmpty(title.getTitle().getContent())) {
+            throw new ActivityTitleValidationException();
+        }
+
+        if (work.getWorkExternalIdentifiers() == null || work.getWorkExternalIdentifiers().getWorkExternalIdentifier() == null
+                || work.getWorkExternalIdentifiers().getWorkExternalIdentifier().isEmpty()) {
+                throw new ActivityIdentifierValidationException();
+        }
+        
+        if (work.getPutCode() != null) {
+                throw new InvalidPutCodeException();
+        }
+    }
 }
+
