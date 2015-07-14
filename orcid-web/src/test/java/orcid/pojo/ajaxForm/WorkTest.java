@@ -32,7 +32,7 @@ import org.junit.Test;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.WorkExternalIdentifiers;
-import org.orcid.pojo.ajaxForm.Work;
+import org.orcid.pojo.ajaxForm.WorkForm;
 
 public class WorkTest extends XMLTestCase {
     private Unmarshaller unmarshaller;
@@ -50,13 +50,13 @@ public class WorkTest extends XMLTestCase {
         
         // check the empty work case
         OrcidWork ow = new OrcidWork();
-        Work work = Work.valueOf(ow);
+        WorkForm work = WorkForm.valueOf(ow);
         OrcidWork ow2 = work.toOrcidWork();
         // Work will add WorkExternalIdentifiers
         assertFalse(ow.toString().equals(ow2.toString()));
         // Run the test again but with empty WorkExternalIdentifiers added
         ow.setWorkExternalIdentifiers(new WorkExternalIdentifiers());
-        work = Work.valueOf(ow);
+        work = WorkForm.valueOf(ow);
         ow2 = work.toOrcidWork();
         assertEquals(ow.toString(),ow2.toString());
         
@@ -71,7 +71,7 @@ public class WorkTest extends XMLTestCase {
             // an identifier
             if (curOw.getWorkExternalIdentifiers() == null)
                 curOw.setWorkExternalIdentifiers(new WorkExternalIdentifiers());
-            Work curWork = Work.valueOf(curOw);
+            WorkForm curWork = WorkForm.valueOf(curOw);
             OrcidWork curOw2 = curWork.toOrcidWork();  
             assertEquals(curOw.toString(), curOw2.toString());           
         }
@@ -82,7 +82,7 @@ public class WorkTest extends XMLTestCase {
     public void testSerializeWork() throws Exception {
         InputStream inputStream = WorkTest.class.getResourceAsStream("/orcid-work.xml");
         OrcidWork orcidWork = (OrcidWork) unmarshaller.unmarshal(inputStream);
-        Work work =  Work.minimizedValueOf(orcidWork);
+        WorkForm work =  WorkForm.minimizedValueOf(orcidWork);
         MemoryEfficientByteArrayOutputStream.serialize(work);
     }
 

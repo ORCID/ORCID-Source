@@ -24,14 +24,16 @@
 	</common:end-date>
 	<funding:external-identifiers>
 		<funding:externalIdentifier>
+			<common:external-identifier-url>http://tempuri.org</common:external-identifier-url>
+			<common:relationship>self</common:relationship>
 			<funding:external-identifier-type>grant_number</funding:external-identifier-type>
-			<funding:external-identifier-value>funding:external-identifier-value</funding:external-identifier-value>
-			<funding:external-identifier-url>http://tempuri.org</funding:external-identifier-url>
+			<funding:external-identifier-value>funding:external-identifier-value</funding:external-identifier-value>			
 		</funding:externalIdentifier>
 		<funding:externalIdentifier>
+			<common:external-identifier-url>http://tempuri.org/2</common:external-identifier-url>
+			<common:relationship>self</common:relationship>
 			<funding:external-identifier-type>grant_number</funding:external-identifier-type>
-			<funding:external-identifier-value>funding:external-identifier-value2</funding:external-identifier-value>
-			<funding:external-identifier-url>http://tempuri.org/2</funding:external-identifier-url>
+			<funding:external-identifier-value>funding:external-identifier-value2</funding:external-identifier-value>			
 		</funding:externalIdentifier>
 	</funding:external-identifiers>
 	<funding:contributors>

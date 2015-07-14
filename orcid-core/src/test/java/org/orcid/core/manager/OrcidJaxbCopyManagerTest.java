@@ -416,8 +416,8 @@ public class OrcidJaxbCopyManagerTest extends BaseTest {
             assertNotNull(email);
             assertEquals(Visibility.PRIVATE, email.getVisibility());
         }
-        // There's now 4 because can't remove private emails
-        assertEquals(4, existingContactDetails.getEmail().size());
+        //3 emails existing, out of which 1 is public. 1 email new and 1 for edit. public is removed so 3 remain
+        assertEquals(3, existingContactDetails.getEmail().size());
 
         assertEquals(Iso3166Country.AU, existingContactDetails.getAddress().getCountry().getValue());
     }

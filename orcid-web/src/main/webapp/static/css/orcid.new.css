@@ -1929,6 +1929,10 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input{
 	font-weight: normal;
 }
 
+.italic {
+	font-style: italic;
+}
+
 .grey {
 	color: #949599;
 }
@@ -3279,9 +3283,9 @@ p.orcid-id-container{
 	float: left;	
 }
 
-.public-profile .oid{	
+.oid{	
 	border-bottom: 1px solid #c9c9c9;
-	margin-bottom: 5px;
+	margin-bottom: 10px;
 	float: left;
 	width: 100%;
 }
@@ -5707,11 +5711,41 @@ hr{
 	padding-right: 0;
 }
 
+.action-icon-align-right{
+	position: absolute;
+	top: 8px;
+	right: 5px;
+}
+
+.action-icon-inside{
+	padding-right: 25px !important; /* Overwriting global reset styling */
+}
+
+input.form-control,
+select.form-control,
+textarea.form-control,
+.form-group div>select{
+	margin-bottom: 0px; 
+}
+
+.accordion-peer-review{
+	padding: 0;
+}
+
+.settings-table .popover{
+	left: -138px;
+  	top: -178px;
+}
+
 /* Widget */
 
 .widget-container{
 	float: left;
 	width: 100%;
+}
+
+.widget-container .widget-header a{
+	word-break: normal;
 }
 
 .widget-container .widget-code-container{
@@ -5723,9 +5757,10 @@ hr{
 	width: 100%;;
 }
 
-.widget-container #widget-code{
-	height: 170px;
+.widget-container .widget-code{
+	height: 100px;
 	cursor: text;
+	margin-bottom: 15px;
 }
 
 .widget-container .widget-code-icon{
@@ -5818,7 +5853,7 @@ textarea.form-control,
 /* Widget */
 
 .orcid-summary-widget{
-	width: 180px;
+	width: 195px;
 	height: auto;
 	border: 1px solid #939598;
 	padding: 10px;
@@ -5826,7 +5861,7 @@ textarea.form-control,
 	color: #939598;
 	background: #FFF;
 	float: left;
-	margin: 5px 20px 15px;
+	margin: 5px 10px 15px;
 }
 
 .orcid-summary-widget a{
@@ -5881,6 +5916,23 @@ textarea.form-control,
 .orcid-summary-widget .orcid-widget-button:hover{
 	color: #FFF;
 	background: #a6ce39;
+}
+
+.widget-container .popover-help-container .popover{
+	left: -30px;
+}
+
+.widget-container .popover.bottom .arrow{
+	left: 41px;
+}
+
+.emails-box{
+	word-wrap: break-word;
+}
+
+.emails-box #privacy-bar{
+	border-bottom: 1px dotted #C3C3C3;
+	padding: 5px 0;
 }
 
 /* Media Queries */

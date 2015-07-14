@@ -47,7 +47,7 @@ import org.orcid.frontend.web.util.YearsList;
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.RedirectUri;
 import org.orcid.jaxb.model.message.AffiliationType;
-import org.orcid.jaxb.model.message.CitationType;
+import org.orcid.jaxb.model.record.CitationType;
 import org.orcid.jaxb.model.message.ContributorRole;
 import org.orcid.jaxb.model.message.ExternalIdentifier;
 import org.orcid.jaxb.model.message.ExternalIdentifiers;
@@ -56,9 +56,9 @@ import org.orcid.jaxb.model.message.FundingType;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.SequenceType;
 import org.orcid.jaxb.model.message.Source;
-import org.orcid.jaxb.model.message.WorkCategory;
-import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
-import org.orcid.jaxb.model.message.WorkType;
+import org.orcid.jaxb.model.record.WorkCategory;
+import org.orcid.jaxb.model.record.WorkExternalIdentifierType;
+import org.orcid.jaxb.model.record.WorkType;
 import org.orcid.jaxb.model.record.PeerReviewType;
 import org.orcid.jaxb.model.record.Role;
 import org.orcid.pojo.ThirdPartyRedirect;
@@ -432,11 +432,7 @@ public class WorkspaceController extends BaseWorkspaceController {
         if (currentProfile.getOrcidHistory().getSource() == null)
             return tpr;
         Source source = currentProfile.getOrcidHistory().getSource();
-        String sourcStr = null;
-        if (source.getSourceOrcid() != null)
-            sourcStr = source.getSourceOrcid().getPath();
-        else if (source.getSourceClientId() != null)
-            sourcStr = source.getSourceClientId().getPath();
+        String sourcStr = source.retrieveSourcePath();        
         // Check that the cache is up to date
         evictThirdPartyLinkManagerCacheIfNeeded();
         // Get list of clients

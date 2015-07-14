@@ -56,9 +56,9 @@
             <#if RequestParameters['widget']??>
 	            <div class="widget-container" ng-controller="widgetCtrl">
 	            	<div class="widget-header">
-						<a ng-click="toggleCopyWidget()"><@orcid.msg 'orcid_widget.header'/></a><div class="popover-help-container">
+						<a ng-click="toggleCopyWidget();showSampleWidget();"><@orcid.msg 'orcid_widget.header'/></a><div class="popover-help-container">
 	                    <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
-	                    <div id="qrcode-help" class="popover bottom">
+	                    <div id="widget-help" class="popover bottom">
 	                        <div class="arrow"></div>
 	                        <div class="popover-content">
 	                            <p><@orcid.msg 'orcid_widget.tooltip'/></p>
@@ -84,7 +84,10 @@
 	                        </div>  
                         </div>
 						<p class="widget-instructions"><@orcid.msg 'orcid_widget.copy_message'/></p>
-						<textarea id="widget-code" name="widget-code" class="form-control" ng-model="widgetURL" ng-click="inputTextAreaSelectAll($event)" readonly="readonly"></textarea>
+						<p class="widget-instructions"><@orcid.msg 'orcid_widget.for_non_developers'/></p>
+						<textarea id="widget-code-nd" name="widget-code" class="form-control widget-code" ng-model="widgetURLND" ng-click="inputTextAreaSelectAll($event)" readonly="readonly"></textarea>
+						<p class="widget-instructions"><@orcid.msg 'orcid_widget.for_developers'/></p>
+						<textarea id="widget-code" name="widget-code" class="form-control widget-code" ng-model="widgetURL" ng-click="inputTextAreaSelectAll($event)" readonly="readonly"></textarea>
 						<a ng-click="hideWidgetCode()"><@orcid.msg 'orcid_widget.hide_code'/></a>
 					</div>
 	            </div>
@@ -293,6 +296,36 @@
         	      	</li>
         	      </ul>
         	   </div>
+	       	</div>
+	       	
+	       	<!-- Emails  -->
+	       	<div ng-controller="EmailsController" class="workspace-section">
+	        	<div class="workspace-section-header">
+	        	   <span class="workspace-section-title"><@orcid.msg 'manage.emails'/></span>
+	        	   <span ng-hide="showEdit == true">
+	        	      	<span class="glyphicon glyphicon-pencil edit-websites edit-option pull-right" ng-click="openEdit()"></span>
+	        	   </span>
+	        	   <div ng-repeat="email in emailSrvc.emails.emails" class="mobile-box emails-box">
+	        	   		<div ng-bind="email.value"></div>
+	        	   		<div ng-show="showEdit == true" ng-cloak>
+		        	   		<@orcid.privacyToggle3
+	                            angularModel="email.visibility"
+								questionClick="toggleClickPrivacyHelp(email.value)"
+								clickedClassCheck="{'popover-help-container-show':privacyHelp[email.value]==true}" 
+								publicClick="emailSrvc.setPrivacy(email, 'PUBLIC', $event)" 
+			                  	limitedClick="emailSrvc.setPrivacy(email, 'LIMITED', $event)" 
+			                  	privateClick="emailSrvc.setPrivacy(email, 'PRIVATE', $event)" 
+			                  	elementId="email.value" />
+	        	   		</div>
+	        	   </div>
+	        	   <div ng-show="showEdit == true" ng-cloak>
+	        	   		<a href="account"><@orcid.msg 'workspace.EditMoreEmailSettings'/></a>
+	        	   </div>
+	        	   <div ng-show="showEdit == true" ng-cloak>
+	        	   		<a class="cancel-option pull-right" ng-click="close()"><@spring.message "freemarker.btncancel"/></a>
+	        	   </div>
+	        	   
+	        	</div>
 	       	</div>
 	       	
 	       	<!--  Pending to apply style -->

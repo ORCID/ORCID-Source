@@ -109,9 +109,10 @@
 				</funding:title>
 				<funding:external-identifiers>
 					<funding:externalIdentifier>
+						<common:external-identifier-url>http://tempuri.org</common:external-identifier-url>
+						<common:relationship>self</common:relationship>
 						<funding:external-identifier-type>grant_number</funding:external-identifier-type>
-						<funding:external-identifier-value>funding:external-identifier-value</funding:external-identifier-value>
-						<funding:external-identifier-url>http://tempuri.org</funding:external-identifier-url>
+						<funding:external-identifier-value>funding:external-identifier-value</funding:external-identifier-value>						
 					</funding:externalIdentifier>
 				</funding:external-identifiers>
 				<funding:type>grant</funding:type>
@@ -140,6 +141,8 @@
 				<peer-review:role>reviewer</peer-review:role>
 				<peer-review:external-identifiers>
 					<work:work-external-identifier>
+						<common:external-identifier-url>http://orcid.org</common:external-identifier-url>
+						<common:relationship>self</common:relationship>
 						<work:external-identifier-type>agr</work:external-identifier-type>
 						<work:external-identifier-id>work:external-identifier-id
 						</work:external-identifier-id>
@@ -180,6 +183,8 @@
 				</work:title>
 				<work:external-identifiers>
 					<work:work-external-identifier>
+						<common:external-identifier-url>http://orcid.org</common:external-identifier-url>
+						<common:relationship>self</common:relationship>
 						<work:external-identifier-type>agr</work:external-identifier-type>
 						<work:external-identifier-id>work:external-identifier-id</work:external-identifier-id>
 					</work:work-external-identifier>

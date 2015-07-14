@@ -140,13 +140,14 @@ public class ProfileWorkDaoImpl extends GenericDaoImpl<ProfileWorkEntity, Profil
      * */
     @Override
     @Transactional
-    public boolean addProfileWork(String orcid, long workId, Visibility visibility, String sourceOrcid) {
+    public boolean addProfileWork(String orcid, long workId, Visibility visibility, String sourceOrcid, String clientSourceId) {
         Query query = entityManager
-                .createNativeQuery("INSERT INTO profile_work(orcid, work_id, date_created, last_modified, added_to_profile_date, visibility, source_id, migrated) values(:orcid, :workId, now(), now(), now(), :visibility, :sourceId, true)");
+                .createNativeQuery("INSERT INTO profile_work(orcid, work_id, date_created, last_modified, added_to_profile_date, visibility, source_id, client_source_id, migrated) values(:orcid, :workId, now(), now(), now(), :visibility, :sourceId, :clientSourceId, true)");
         query.setParameter("orcid", orcid);
         query.setParameter("workId", workId);
         query.setParameter("visibility", visibility.name());
         query.setParameter("sourceId", sourceOrcid);
+        query.setParameter("clientSourceId", clientSourceId);
 
         return query.executeUpdate() > 0 ? true : false;
     }
@@ -191,11 +192,7 @@ public class ProfileWorkDaoImpl extends GenericDaoImpl<ProfileWorkEntity, Profil
         Query query = entityManager.createNativeQuery("DELETE FROM profile_work WHERE client_source_id=:clientSourceId");
         query.setParameter("clientSourceId", clientSourceId);
         query.executeUpdate();        
-    }
-
-    
-    
-    
+    }            
     
     /**
      * Get a list of profile_works that have not been migrated to the works table yet
@@ -226,5 +223,16 @@ public class ProfileWorkDaoImpl extends GenericDaoImpl<ProfileWorkEntity, Profil
         query.setParameter("orcid", orcid);
         query.setParameter("workId", workId);
         return query.executeUpdate() > 0;
+    }
+    
+    @Override
+    public boolean exists(String orcid, String workId) {
+        Query query = entityManager.createQuery("from ProfileWorkEntity where profile.id=:clientOrcid and work.id=:workId");
+        query.setParameter("clientOrcid", orcid);
+        query.setParameter("workId", Long.valueOf(workId));
+        List results = query.getResultList();
+        if(results == null || results.isEmpty())
+            return false;
+        return true;
     }
 }

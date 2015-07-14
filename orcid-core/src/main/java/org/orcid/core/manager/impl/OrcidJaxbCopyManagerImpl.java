@@ -314,7 +314,8 @@ public class OrcidJaxbCopyManagerImpl implements OrcidJaxbCopyManager {
 			if(updatedContactDetails != null) {
 				tempEmail = updatedContactDetails.getEmailByString(oldEmail.getValue());
 			}
-			if(clientId == null || (clientId != null && !clientId.equals(oldEmail.getSourceClientId()))) {
+			String oldEmSource = (oldEmail.getSourceClientId() == null) ? oldEmail.getSource() : oldEmail.getSourceClientId();
+			if(clientId == null || (clientId != null && !clientId.equals(oldEmSource))) {
 				allEmails.add(oldEmail);
 				if(tempEmail != null) {
 					updatedContactDetails.getEmail().remove(tempEmail);
@@ -342,9 +343,14 @@ public class OrcidJaxbCopyManagerImpl implements OrcidJaxbCopyManager {
 				}
 			}
 		}
+		//Set primary = false for each remaining new email.
 		if(updatedContactDetails != null) {
-			allEmails.addAll(updatedContactDetails.getEmail());
+			for(Email newEmail : updatedContactDetails.getEmail()) {
+				newEmail.setPrimary(false);
+				allEmails.add(newEmail);
+			}
 		}
+		
 		for(Email email : allEmails) {
 			if(email.getVisibility() == null) {
 				email.setVisibility(OrcidVisibilityDefaults.ALTERNATIVE_EMAIL_DEFAULT.getVisibility());

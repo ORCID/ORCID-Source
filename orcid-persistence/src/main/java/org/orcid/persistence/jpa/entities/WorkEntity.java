@@ -46,7 +46,7 @@ import org.orcid.jaxb.model.message.WorkType;
  */
 @Entity
 @Table(name = "work")
-public class WorkEntity extends BaseEntity<Long> implements Comparable<WorkEntity> {
+public class WorkEntity extends BaseEntity<Long> implements Comparable<WorkEntity>, ProfileAware, DisplayIndexInterface, SourceAware {
 
     private static final long serialVersionUID = -8096348611438944935L;
     

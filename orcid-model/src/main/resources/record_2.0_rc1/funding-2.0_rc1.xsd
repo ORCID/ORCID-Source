@@ -172,25 +172,20 @@
 				a link to more information about the funding.
 			</xs:documentation>
 		</xs:annotation>
-		<xs:sequence>
-			<xs:element name="external-identifier-type" type="funding:external-identifier-type"
-				minOccurs="1" maxOccurs="1" />
-			<xs:element name="external-identifier-value" type="common:string-2084"
-				minOccurs="0" maxOccurs="1">
-				<xs:annotation>
-					<xs:documentation>Value of the external identifier.
-					</xs:documentation>
-				</xs:annotation>
-			</xs:element>
-			<xs:element name="external-identifier-url" type="xs:anyURI"
-				minOccurs="0" maxOccurs="1">
-				<xs:annotation>
-					<xs:documentation>URL link to additional information about the
-						funding.
-					</xs:documentation>
-				</xs:annotation>
-			</xs:element>
-		</xs:sequence>
+		<xs:complexContent>
+			<xs:extension base="common:external-identifier">
+				<xs:sequence>
+					<xs:element name="external-identifier-type" type="funding:external-identifier-type"
+						minOccurs="1" maxOccurs="1" />
+					<xs:element name="external-identifier-value" type="common:string-2084"
+						minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>Value of the external identifier.</xs:documentation>
+						</xs:annotation>
+					</xs:element>			
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>		
 	</xs:complexType>
 
 	<xs:simpleType name="external-identifier-type">

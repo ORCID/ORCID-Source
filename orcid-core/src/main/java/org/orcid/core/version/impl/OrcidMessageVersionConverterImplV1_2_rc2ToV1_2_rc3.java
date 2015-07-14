@@ -18,11 +18,8 @@ package org.orcid.core.version.impl;
 
 import org.orcid.core.adapter.impl.Jpa2JaxbAdapterImpl;
 import org.orcid.core.version.OrcidMessageVersionConverter;
-import org.orcid.jaxb.model.message.CreationMethod;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.jaxb.model.message.OrcidSearchResult;
-import org.orcid.jaxb.model.message.OrcidSearchResults;
 import org.orcid.jaxb.model.message.OrcidWork;
 
 /**

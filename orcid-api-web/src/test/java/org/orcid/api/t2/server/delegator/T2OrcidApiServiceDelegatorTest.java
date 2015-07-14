@@ -72,19 +72,19 @@ import org.orcid.jaxb.model.message.WorkExternalIdentifiers;
 import org.orcid.jaxb.model.message.WorkTitle;
 import org.orcid.jaxb.model.message.WorkType;
 import org.orcid.test.DBUnitTest;
-import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.sun.jersey.api.uri.UriBuilderImpl;
 
-@RunWith(OrcidJUnit4ClassRunner.class)
+@RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-api-web-context.xml", "classpath:orcid-api-security-context.xml" })
 public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
 
     private static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml", "/data/SecurityQuestionEntityData.xml",
-            "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/WorksEntityData.xml", "/data/ProfileWorksEntityData.xml",
+            "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/WorksEntityData.xml", 
             "/data/ClientDetailsEntityData.xml", "/data/Oauth2TokenDetailsData.xml", "/data/OrgsEntityData.xml", "/data/ProfileFundingEntityData.xml",
             "/data/OrgAffiliationEntityData.xml");
 

@@ -36,6 +36,8 @@ import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.OrcidClientGroupManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.ProfileEntityManager;
+import org.orcid.core.manager.ProfileWorkManager;
+import org.orcid.core.manager.WorkManager;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
@@ -59,6 +61,7 @@ import org.orcid.jaxb.model.message.SendChangeNotifications;
 import org.orcid.jaxb.model.message.SendOrcidNews;
 import org.orcid.jaxb.model.message.SubmissionDate;
 import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.jaxb.model.record.Work;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.OrgAffiliationRelationDao;
 import org.orcid.persistence.dao.OrgDao;
@@ -118,7 +121,13 @@ public class InitializeDataHelper {
     private EncryptionManager encryptionManager;    
     
     @Resource
-    private ProfileEntityManager profileEntityManager;    
+    private ProfileEntityManager profileEntityManager;   
+    
+    @Resource
+    private WorkManager workManager;
+    
+    @Resource
+    private ProfileWorkManager profileWorkManager;
     
     //Map containing a list of members, the key is the group type, there will be one member for each group type
     private Map<String, Member> members = new HashMap<String, Member>();
@@ -127,8 +136,19 @@ public class InitializeDataHelper {
     private Map<String, OrcidClient> clients = new HashMap<String, OrcidClient>();
     
     public void deleteProfile(String orcid) throws Exception {
+        // TODO: Remove after the works migration
+        List<Work> works = workManager.findWorks(orcid, 0L);
+        ArrayList<Long> workIds = new ArrayList<Long>();
+        for(Work work : works) {
+            workIds.add(Long.valueOf(work.getPutCode()));
+        }
+        if(!workIds.isEmpty()) {
+            profileWorkManager.removeWorks(orcid, workIds);
+            workManager.removeWorks(orcid, workIds);
+        }
+        // END TODO
         orcidProfileManager.deactivateOrcidProfile(orcidProfileManager.retrieveOrcidProfile(orcid));
-        profileDao.removeProfile(orcid);
+        orcidProfileManager.deleteProfile(orcid);
     }
 
     public void deleteClient(String clientId) throws Exception {

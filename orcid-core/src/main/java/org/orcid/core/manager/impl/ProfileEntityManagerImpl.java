@@ -31,12 +31,18 @@ import org.orcid.core.adapter.JpaJaxbEmploymentAdapter;
 import org.orcid.core.adapter.JpaJaxbFundingAdapter;
 import org.orcid.core.adapter.JpaJaxbPeerReviewAdapter;
 import org.orcid.core.adapter.JpaJaxbWorkAdapter;
+import org.orcid.core.manager.AffiliationsManager;
+import org.orcid.core.manager.PeerReviewManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
+import org.orcid.core.manager.ProfileFundingManager;
+import org.orcid.core.manager.ProfileWorkManager;
+import org.orcid.core.manager.WorkManager;
 import org.orcid.core.utils.activities.ActivitiesGroup;
 import org.orcid.core.utils.activities.ActivitiesGroupGenerator;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.MemberType;
+import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidType;
@@ -60,7 +66,6 @@ import org.orcid.jaxb.model.record.summary.WorkGroup;
 import org.orcid.jaxb.model.record.summary.WorkSummary;
 import org.orcid.jaxb.model.record.summary.Works;
 import org.orcid.persistence.dao.ProfileDao;
-import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.stereotype.Service;
@@ -72,476 +77,453 @@ import org.springframework.transaction.annotation.Transactional;
 @Service("profileEntityManager")
 public class ProfileEntityManagerImpl implements ProfileEntityManager {
 
-	@Resource
-	private ProfileDao profileDao;
+    @Resource
+    private ProfileDao profileDao;
 
-	@Resource
-	private JpaJaxbEducationAdapter jpaJaxbEducationAdapter;
+    @Resource
+    private JpaJaxbEducationAdapter jpaJaxbEducationAdapter;
 
-	@Resource
-	private JpaJaxbEmploymentAdapter jpaJaxbEmploymentAdapter;
+    @Resource
+    private JpaJaxbEmploymentAdapter jpaJaxbEmploymentAdapter;
 
-	@Resource
-	private JpaJaxbFundingAdapter jpaJaxbFundingAdapter;
+    @Resource
+    private JpaJaxbFundingAdapter jpaJaxbFundingAdapter;
 
-	@Resource
-	private JpaJaxbPeerReviewAdapter jpaJaxbPeerReviewAdapter;
+    @Resource
+    private JpaJaxbPeerReviewAdapter jpaJaxbPeerReviewAdapter;
 
-	@Resource
-	private JpaJaxbWorkAdapter jpaJaxbWorkAdapter;
+    @Resource
+    private JpaJaxbWorkAdapter jpaJaxbWorkAdapter;
 
-	@Resource(name = "profileEntityCacheManager")
-	ProfileEntityCacheManager profileEntityCacheManager;
+    @Resource(name = "profileEntityCacheManager")
+    ProfileEntityCacheManager profileEntityCacheManager;
 
-	/**
-	 * Fetch a ProfileEntity from the database Instead of calling this function,
-	 * use the cache profileEntityCacheManager whenever is possible
-	 * */
-	@Override
-	public ProfileEntity findByOrcid(String orcid) {
-		return profileDao.find(orcid);
-	}
+    @Resource
+    AffiliationsManager affiliationsManager;
 
-	@Override
-	public boolean orcidExists(String orcid) {
-		return profileDao.orcidExists(orcid);
-	}
+    @Resource
+    ProfileFundingManager fundingManager;
 
-	@Override
-	public boolean hasBeenGivenPermissionTo(String giverOrcid,
-			String receiverOrcid) {
-		return profileDao.hasBeenGivenPermissionTo(giverOrcid, receiverOrcid);
-	}
+    @Resource
+    PeerReviewManager peerReviewManager;
 
-	public boolean existsAndNotClaimedAndBelongsTo(String messageOrcid,
-			String clientId) {
-		return profileDao.existsAndNotClaimedAndBelongsTo(messageOrcid,
-				clientId);
-	}
+    @Resource
+    ProfileWorkManager profileWorkManager;
 
-	@Override
-	public Long getConfirmedProfileCount() {
-		return profileDao.getConfirmedProfileCount();
-	}
+    @Resource
+    WorkManager workManager;
 
-	/**
-	 * Updates a profile with the given OrcidProfile object
-	 * 
-	 * @param orcidProfile
-	 *            The object that will be used to update the database profile
-	 * @return true if the profile was successfully updated on database, false
-	 *         otherwise
-	 * */
-	@Override
-	public boolean updateProfile(OrcidProfile orcidProfile) {
-		ProfileEntity profile = generateProfileEntityWithBio(orcidProfile);
-		return profileDao.updateProfile(profile);
-	}
+    /**
+     * Fetch a ProfileEntity from the database Instead of calling this function,
+     * use the cache profileEntityCacheManager whenever is possible
+     * */
+    @Override
+    public ProfileEntity findByOrcid(String orcid) {
+        return profileDao.find(orcid);
+    }
 
-	/**
-	 * Updates a profile entity object on database.
-	 * 
-	 * @param profile
-	 *            The profile object to update
-	 * @return true if the profile was successfully updated.
-	 * */
-	@Override
-	public boolean updateProfile(ProfileEntity profile) {
-		return profileDao.updateProfile(profile);
-	}
+    @Override
+    public boolean orcidExists(String orcid) {
+        return profileDao.orcidExists(orcid);
+    }
 
-	/**
-	 * Generate a ProfileEntity object with the bio information populated from
-	 * the info that comes from the OrcidProfile parameter
-	 * 
-	 * @param orcidProfile
-	 * @return A Profile Entity containing the bio information that comes in the
-	 *         OrcidProfile parameter
-	 * */
-	private ProfileEntity generateProfileEntityWithBio(OrcidProfile orcidProfile) {
-		ProfileEntity profile = new ProfileEntity();
-		profile.setCreditName(orcidProfile.getOrcidBio().getPersonalDetails()
-				.getCreditName().getContent());
-		profile.setFamilyName(orcidProfile.getOrcidBio().getPersonalDetails()
-				.getFamilyName().getContent());
-		profile.setGivenNames(orcidProfile.getOrcidBio().getPersonalDetails()
-				.getGivenNames().getContent());
-		profile.setBiography(orcidProfile.getOrcidBio().getBiography()
-				.getContent());
-		profile.setIso2Country(orcidProfile.getOrcidBio().getContactDetails()
-				.getAddress().getCountry().getValue());
-		profile.setBiographyVisibility(orcidProfile.getOrcidBio()
-				.getBiography().getVisibility());
-		profile.setKeywordsVisibility(orcidProfile.getOrcidBio().getKeywords()
-				.getVisibility());
-		profile.setResearcherUrlsVisibility(orcidProfile.getOrcidBio()
-				.getResearcherUrls().getVisibility());
-		profile.setOtherNamesVisibility(orcidProfile.getOrcidBio()
-				.getPersonalDetails().getOtherNames().getVisibility());
-		profile.setCreditNameVisibility(orcidProfile.getOrcidBio()
-				.getPersonalDetails().getCreditName().getVisibility());
-		profile.setProfileAddressVisibility(orcidProfile.getOrcidBio()
-				.getContactDetails().getAddress().getCountry().getVisibility());
-		profile.setId(orcidProfile.getOrcidIdentifier().getPath());
-		return profile;
-	}
+    @Override
+    public boolean hasBeenGivenPermissionTo(String giverOrcid, String receiverOrcid) {
+        return profileDao.hasBeenGivenPermissionTo(giverOrcid, receiverOrcid);
+    }
 
-	/**
-	 * Deprecates a profile
-	 * 
-	 * @param deprecatedProfile
-	 *            The profile that want to be deprecated
-	 * @param primaryProfile
-	 *            The primary profile for the deprecated profile
-	 * @return true if the account was successfully deprecated, false otherwise
-	 * */
-	@Override
-	public boolean deprecateProfile(ProfileEntity deprecatedProfile,
-			ProfileEntity primaryProfile) {
-		return profileDao.deprecateProfile(deprecatedProfile.getId(),
-				primaryProfile.getId());
-	}
+    public boolean existsAndNotClaimedAndBelongsTo(String messageOrcid, String clientId) {
+        return profileDao.existsAndNotClaimedAndBelongsTo(messageOrcid, clientId);
+    }
 
-	/**
-	 * Return the list of profiles that belongs to the provided OrcidType
-	 * 
-	 * @param type
-	 *            OrcidType that indicates the profile type we want to fetch
-	 * @return the list of profiles that belongs to the specified type
-	 * */
-	@Override
-	public List<ProfileEntity> findProfilesByOrcidType(OrcidType type) {
-		if (type == null)
-			return new ArrayList<ProfileEntity>();
-		return profileDao.findProfilesByOrcidType(type);
-	}
+    @Override
+    public Long getConfirmedProfileCount() {
+        return profileDao.getConfirmedProfileCount();
+    }
 
-	/**
-	 * Enable developer tools
-	 * 
-	 * @param profile
-	 *            The profile to update
-	 * @return true if the developer tools where enabled on that profile
-	 * */
-	@Override
-	public boolean enableDeveloperTools(OrcidProfile profile) {
-		boolean result = profileDao.updateDeveloperTools(profile
-				.getOrcidIdentifier().getPath(), true);
-		return result;
-	}
+    /**
+     * Updates a profile with the given OrcidProfile object
+     * 
+     * @param orcidProfile
+     *            The object that will be used to update the database profile
+     * @return true if the profile was successfully updated on database, false
+     *         otherwise
+     * */
+    @Override
+    public boolean updateProfile(OrcidProfile orcidProfile) {
+        ProfileEntity profile = generateProfileEntityWithBio(orcidProfile);
+        return profileDao.updateProfile(profile);
+    }
 
-	/**
-	 * Disable developer tools
-	 * 
-	 * @param profile
-	 *            The profile to update
-	 * @return true if the developer tools where disabeled on that profile
-	 * */
-	@Override
-	public boolean disableDeveloperTools(OrcidProfile profile) {
-		boolean result = profileDao.updateDeveloperTools(profile
-				.getOrcidIdentifier().getPath(), false);
-		return result;
-	}
+    /**
+     * Updates a profile entity object on database.
+     * 
+     * @param profile
+     *            The profile object to update
+     * @return true if the profile was successfully updated.
+     * */
+    @Override
+    public boolean updateProfile(ProfileEntity profile) {
+        return profileDao.updateProfile(profile);
+    }
 
-	@Override
-	public Iso3166Country getCountry(String orcid) {
-		return profileDao.getCountry(orcid);
-	}
+    /**
+     * Generate a ProfileEntity object with the bio information populated from
+     * the info that comes from the OrcidProfile parameter
+     * 
+     * @param orcidProfile
+     * @return A Profile Entity containing the bio information that comes in the
+     *         OrcidProfile parameter
+     * */
+    private ProfileEntity generateProfileEntityWithBio(OrcidProfile orcidProfile) {
+        ProfileEntity profile = new ProfileEntity();
+        profile.setCreditName(orcidProfile.getOrcidBio().getPersonalDetails().getCreditName().getContent());
+        profile.setFamilyName(orcidProfile.getOrcidBio().getPersonalDetails().getFamilyName().getContent());
+        profile.setGivenNames(orcidProfile.getOrcidBio().getPersonalDetails().getGivenNames().getContent());
+        profile.setBiography(orcidProfile.getOrcidBio().getBiography().getContent());
+        profile.setIso2Country(orcidProfile.getOrcidBio().getContactDetails().getAddress().getCountry().getValue());
+        profile.setBiographyVisibility(orcidProfile.getOrcidBio().getBiography().getVisibility());
+        profile.setKeywordsVisibility(orcidProfile.getOrcidBio().getKeywords().getVisibility());
+        profile.setResearcherUrlsVisibility(orcidProfile.getOrcidBio().getResearcherUrls().getVisibility());
+        profile.setOtherNamesVisibility(orcidProfile.getOrcidBio().getPersonalDetails().getOtherNames().getVisibility());
+        profile.setCreditNameVisibility(orcidProfile.getOrcidBio().getPersonalDetails().getCreditName().getVisibility());
+        profile.setProfileAddressVisibility(orcidProfile.getOrcidBio().getContactDetails().getAddress().getCountry().getVisibility());
+        profile.setId(orcidProfile.getOrcidIdentifier().getPath());
+        return profile;
+    }
 
-	@Override
-	public boolean isProfileClaimed(String orcid) {
-		return profileDao.getClaimedStatus(orcid);
-	}
+    /**
+     * Deprecates a profile
+     * 
+     * @param deprecatedProfile
+     *            The profile that want to be deprecated
+     * @param primaryProfile
+     *            The primary profile for the deprecated profile
+     * @return true if the account was successfully deprecated, false otherwise
+     * */
+    @Override
+    public boolean deprecateProfile(ProfileEntity deprecatedProfile, ProfileEntity primaryProfile) {
+        return profileDao.deprecateProfile(deprecatedProfile.getId(), primaryProfile.getId());
+    }
 
-	/**
-	 * Get the client type of a profile
-	 * 
-	 * @param orcid
-	 *            The profile to look for
-	 * @return the client type, null if it is not a client
-	 * */
-	@Override
-	public ClientType getClientType(String orcid) {
-		return profileDao.getClientType(orcid);
-	}
+    /**
+     * Return the list of profiles that belongs to the provided OrcidType
+     * 
+     * @param type
+     *            OrcidType that indicates the profile type we want to fetch
+     * @return the list of profiles that belongs to the specified type
+     * */
+    @Override
+    public List<ProfileEntity> findProfilesByOrcidType(OrcidType type) {
+        if (type == null)
+            return new ArrayList<ProfileEntity>();
+        return profileDao.findProfilesByOrcidType(type);
+    }
 
-	/**
-	 * Get the group type of a profile
-	 * 
-	 * @param orcid
-	 *            The profile to look for
-	 * @return the group type, null if it is not a client
-	 * */
-	@Override
-	public MemberType getGroupType(String orcid) {
-		return profileDao.getGroupType(orcid);
-	}
+    /**
+     * Enable developer tools
+     * 
+     * @param profile
+     *            The profile to update
+     * @return true if the developer tools where enabled on that profile
+     * */
+    @Override
+    public boolean enableDeveloperTools(OrcidProfile profile) {
+        boolean result = profileDao.updateDeveloperTools(profile.getOrcidIdentifier().getPath(), true);
+        return result;
+    }
 
-	/**
-	 * Set the locked status of an account to true
-	 * 
-	 * @param orcid
-	 *            the id of the profile that should be locked
-	 * @return true if the account was locked
-	 * */
-	@Override
-	public boolean lockProfile(String orcid) {
-		return profileDao.lockProfile(orcid);
-	}
+    /**
+     * Disable developer tools
+     * 
+     * @param profile
+     *            The profile to update
+     * @return true if the developer tools where disabeled on that profile
+     * */
+    @Override
+    public boolean disableDeveloperTools(OrcidProfile profile) {
+        boolean result = profileDao.updateDeveloperTools(profile.getOrcidIdentifier().getPath(), false);
+        return result;
+    }
 
-	/**
-	 * Set the locked status of an account to false
-	 * 
-	 * @param orcid
-	 *            the id of the profile that should be unlocked
-	 * @return true if the account was unlocked
-	 * */
-	@Override
-	public boolean unlockProfile(String orcid) {
-		return profileDao.unlockProfile(orcid);
-	}
+    @Override
+    public Iso3166Country getCountry(String orcid) {
+        return profileDao.getCountry(orcid);
+    }
 
-	/**
-	 * Check if a profile is locked
-	 * 
-	 * @param orcid
-	 *            the id of the profile to check
-	 * @return true if the account is locked
-	 * */
-	@Override
-	public boolean isLocked(String orcid) {
-		if (PojoUtil.isEmpty(orcid))
-			return false;
-		return profileDao.isLocked(orcid);
-	}
+    @Override
+    public boolean isProfileClaimed(String orcid) {
+        return profileDao.getClaimedStatus(orcid);
+    }
 
-	@Override
-	@Transactional
-	public ActivitiesSummary getActivitiesSummary(String orcid) {
-		return getActivitiesSummary(orcid, false);
-	}
+    /**
+     * Get the client type of a profile
+     * 
+     * @param orcid
+     *            The profile to look for
+     * @return the client type, null if it is not a client
+     * */
+    @Override
+    public ClientType getClientType(String orcid) {
+        return profileDao.getClientType(orcid);
+    }
 
-	@Override
-	@Transactional
-	public ActivitiesSummary getPublicActivitiesSummary(String orcid) {
-		return getActivitiesSummary(orcid, true);
-	}
+    /**
+     * Get the group type of a profile
+     * 
+     * @param orcid
+     *            The profile to look for
+     * @return the group type, null if it is not a client
+     * */
+    @Override
+    public MemberType getGroupType(String orcid) {
+        return profileDao.getGroupType(orcid);
+    }
 
-	public ActivitiesSummary getActivitiesSummary(String orcid,
-			boolean justPublic) {
-		if (!orcidExists(orcid)) {
-			throw new NoResultException();
-		}
-		ActivitiesSummary activities = new ActivitiesSummary();
-		ProfileEntity profileEntity = profileEntityCacheManager.retrieve(orcid);
-		// Set Affiliations
-		Set<OrgAffiliationRelationEntity> affiliations = profileEntity
-				.getOrgAffiliationRelations();
-		Educations educations = new Educations();
-		Employments employments = new Employments();
-		for (OrgAffiliationRelationEntity affiliation : affiliations) {
-			if (justPublic
-					&& !affiliation.getVisibility().equals(
-							org.orcid.jaxb.model.message.Visibility.PUBLIC)) {
-				// If it is just public and the affiliation is not public,
-				// ignore it
-			} else {
-				if (org.orcid.jaxb.model.message.AffiliationType.EDUCATION == affiliation
-						.getAffiliationType()) {
-					EducationSummary education = jpaJaxbEducationAdapter
-							.toEducationSummary(affiliation);
-					educations.getSummaries().add(education);
-				} else {
-					EmploymentSummary employment = jpaJaxbEmploymentAdapter
-							.toEmploymentSummary(affiliation);
-					employments.getSummaries().add(employment);
-				}
-			}
-		}
-		if (!educations.getSummaries().isEmpty()) {
-			activities.setEducations(educations);
-		}
-		if (!employments.getSummaries().isEmpty()) {
-			activities.setEmployments(employments);
-		}
-		// Set fundings
-		List<FundingSummary> fundingSummaries = jpaJaxbFundingAdapter
-				.toFundingSummary(profileEntity.getProfileFunding());
-		Fundings fundings = groupFundings(fundingSummaries, justPublic);
-		activities.setFundings(fundings);
+    /**
+     * Set the locked status of an account to true
+     * 
+     * @param orcid
+     *            the id of the profile that should be locked
+     * @return true if the account was locked
+     * */
+    @Override
+    public boolean lockProfile(String orcid) {
+        return profileDao.lockProfile(orcid);
+    }
 
-		// Set peer reviews
-		List<PeerReviewSummary> peerReviewSummaries = jpaJaxbPeerReviewAdapter
-				.toPeerReviewSummary(profileEntity.getPeerReviews());
-		PeerReviews peerReviews = groupPeerReviews(peerReviewSummaries,
-				justPublic);
-		activities.setPeerReviews(peerReviews);
+    /**
+     * Set the locked status of an account to false
+     * 
+     * @param orcid
+     *            the id of the profile that should be unlocked
+     * @return true if the account was unlocked
+     * */
+    @Override
+    public boolean unlockProfile(String orcid) {
+        return profileDao.unlockProfile(orcid);
+    }
 
-		// Set works
-		List<WorkSummary> workSummaries = jpaJaxbWorkAdapter
-				.toWorkSummary(profileEntity.getProfileWorks());
-		Works works = groupWorks(workSummaries, justPublic);
-		activities.setWorks(works);
+    /**
+     * Check if a profile is locked
+     * 
+     * @param orcid
+     *            the id of the profile to check
+     * @return true if the account is locked
+     * */
+    @Override
+    public boolean isLocked(String orcid) {
+        if (PojoUtil.isEmpty(orcid))
+            return false;
+        return profileDao.isLocked(orcid);
+    }
 
-		return activities;
-	}
+    @Override
+    @Transactional
+    public ActivitiesSummary getActivitiesSummary(String orcid) {
+        return getActivitiesSummary(orcid, false);
+    }
 
-	private Works groupWorks(List<WorkSummary> works, boolean justPublic) {
-		ActivitiesGroupGenerator groupGenerator = new ActivitiesGroupGenerator();
-		Works result = new Works();
-		// Group all works
-		for (WorkSummary work : works) {
-			if (justPublic
-					&& !work.getVisibility().equals(
-							org.orcid.jaxb.model.common.Visibility.PUBLIC)) {
-				// If it is just public and the work is not public, just ignore
-				// it
-			} else {
-				groupGenerator.group(work);
-			}
-		}
+    @Override
+    @Transactional
+    public ActivitiesSummary getPublicActivitiesSummary(String orcid) {
+        return getActivitiesSummary(orcid, true);
+    }
 
-		List<ActivitiesGroup> groups = groupGenerator.getGroups();
+    public ActivitiesSummary getActivitiesSummary(String orcid, boolean justPublic) {
+        if (!orcidExists(orcid)) {
+            throw new NoResultException();
+        }
+        Date lastModified = profileDao.retrieveLastModifiedDate(orcid);
+        long lastModifiedTime = lastModified.getTime();
+        ActivitiesSummary activities = new ActivitiesSummary();
 
-		for (ActivitiesGroup group : groups) {
-			Set<ExternalIdentifier> externalIdentifiers = group
-					.getExternalIdentifiers();
-			Set<GroupableActivity> activities = group.getActivities();
-			WorkGroup workGroup = new WorkGroup();
-			// Fill the work groups with the external identifiers
-			for (ExternalIdentifier extId : externalIdentifiers) {
-				WorkExternalIdentifier workExtId = (WorkExternalIdentifier) extId;
-				workGroup.getIdentifiers().getIdentifier()
-						.add(Identifier.fromWorkExternalIdentifier(workExtId));
-			}
+        // Set educations
+        List<EducationSummary> educationsList = affiliationsManager.getEducationSummaryList(orcid, lastModifiedTime);
+        if (!educationsList.isEmpty()) {
+            Educations educations = new Educations();
+            for (EducationSummary summary : educationsList) {
+                if (justPublic) {
+                    if (Visibility.PUBLIC.equals(summary.getVisibility())) {
+                        educations.getSummaries().add(summary);
+                    }
+                } else {
+                    educations.getSummaries().add(summary);
+                }
+            }
 
-			// Fill the work group with the list of activities
-			for (GroupableActivity activity : activities) {
-				WorkSummary workSummary = (WorkSummary) activity;
-				workGroup.getWorkSummary().add(workSummary);
-			}
+            activities.setEducations(educations);
+        }
 
-			// Sort the works
-			Collections.sort(workGroup.getWorkSummary(),
-					new GroupableActivityComparator());
+        // Set employments
+        List<EmploymentSummary> employmentList = affiliationsManager.getEmploymentSummaryList(orcid, lastModifiedTime);
+        if (!employmentList.isEmpty()) {
+            Employments employments = new Employments();
+            for (EmploymentSummary summary : employmentList) {
+                if (justPublic) {
+                    if (Visibility.PUBLIC.equals(summary.getVisibility())) {
+                        employments.getSummaries().add(summary);
+                    }
+                } else {
+                    employments.getSummaries().add(summary);
+                }
+            }
 
-			result.getWorkGroup().add(workGroup);
-		}
+            activities.setEmployments(employments);
+        }
 
-		return result;
-	}
+        // Set fundings
+        List<FundingSummary> fundingSummaries = fundingManager.getFundingSummaryList(orcid, lastModifiedTime);
+        Fundings fundings = groupFundings(fundingSummaries, justPublic);
+        activities.setFundings(fundings);
 
-	private Fundings groupFundings(List<FundingSummary> fundings,
-			boolean justPublic) {
-		ActivitiesGroupGenerator groupGenerator = new ActivitiesGroupGenerator();
-		Fundings result = new Fundings();
-		for (FundingSummary funding : fundings) {
-			if (justPublic
-					&& !funding.getVisibility().equals(
-							org.orcid.jaxb.model.common.Visibility.PUBLIC)) {
-				// If it is just public and the funding is not public, just
-				// ignore it
-			} else {
-				groupGenerator.group(funding);
-			}
-		}
+        // Set peer reviews
+        List<PeerReviewSummary> peerReviewSummaries = peerReviewManager.getPeerReviewSummaryList(orcid, lastModifiedTime);
+        PeerReviews peerReviews = groupPeerReviews(peerReviewSummaries, justPublic);
+        activities.setPeerReviews(peerReviews);
 
-		List<ActivitiesGroup> groups = groupGenerator.getGroups();
+        // Set works
+        List<WorkSummary> workSummaries = workManager.getWorksSummaryList(orcid, lastModifiedTime);
+        Works works = groupWorks(workSummaries, justPublic);
+        activities.setWorks(works);
 
-		for (ActivitiesGroup group : groups) {
-			Set<ExternalIdentifier> externalIdentifiers = group
-					.getExternalIdentifiers();
-			Set<GroupableActivity> activities = group.getActivities();
-			FundingGroup fundingGroup = new FundingGroup();
+        return activities;
+    }
 
-			// Fill the funding groups with the external identifiers
-			for (ExternalIdentifier extId : externalIdentifiers) {
-				FundingExternalIdentifier fundingExtId = (FundingExternalIdentifier) extId;
-				fundingGroup
-						.getIdentifiers()
-						.getIdentifier()
-						.add(Identifier
-								.fromFundingExternalIdentifier(fundingExtId));
-			}
+    private Works groupWorks(List<WorkSummary> works, boolean justPublic) {
+        ActivitiesGroupGenerator groupGenerator = new ActivitiesGroupGenerator();
+        Works result = new Works();
+        // Group all works
+        for (WorkSummary work : works) {
+            if (justPublic && !work.getVisibility().equals(org.orcid.jaxb.model.common.Visibility.PUBLIC)) {
+                // If it is just public and the work is not public, just ignore
+                // it
+            } else {
+                groupGenerator.group(work);
+            }
+        }
 
-			// Fill the funding group with the list of activities
-			for (GroupableActivity activity : activities) {
-				FundingSummary fundingSummary = (FundingSummary) activity;
-				fundingGroup.getFundingSummary().add(fundingSummary);
-			}
+        List<ActivitiesGroup> groups = groupGenerator.getGroups();
 
-			// Sort the fundings
-			Collections.sort(fundingGroup.getFundingSummary(),
-					new GroupableActivityComparator());
+        for (ActivitiesGroup group : groups) {
+            Set<ExternalIdentifier> externalIdentifiers = group.getExternalIdentifiers();
+            Set<GroupableActivity> activities = group.getActivities();
+            WorkGroup workGroup = new WorkGroup();
+            // Fill the work groups with the external identifiers
+            for (ExternalIdentifier extId : externalIdentifiers) {
+                WorkExternalIdentifier workExtId = (WorkExternalIdentifier) extId;
+                workGroup.getIdentifiers().getIdentifier().add(Identifier.fromWorkExternalIdentifier(workExtId));
+            }
 
-			result.getFundingGroup().add(fundingGroup);
-		}
+            // Fill the work group with the list of activities
+            for (GroupableActivity activity : activities) {
+                WorkSummary workSummary = (WorkSummary) activity;
+                workGroup.getWorkSummary().add(workSummary);
+            }
 
-		return result;
-	}
+            // Sort the works
+            Collections.sort(workGroup.getWorkSummary(), new GroupableActivityComparator());
 
-	private PeerReviews groupPeerReviews(List<PeerReviewSummary> peerReviews,
-			boolean justPublic) {
-		ActivitiesGroupGenerator groupGenerator = new ActivitiesGroupGenerator();
-		PeerReviews result = new PeerReviews();
-		for (PeerReviewSummary peerReview : peerReviews) {
-			if (justPublic
-					&& !peerReview.getVisibility().equals(
-							org.orcid.jaxb.model.common.Visibility.PUBLIC)) {
-				// If it is just public and the funding is not public, just
-				// ignore it
-			} else {
-				groupGenerator.group(peerReview);
-			}
-		}
+            result.getWorkGroup().add(workGroup);
+        }
 
-		List<ActivitiesGroup> groups = groupGenerator.getGroups();
+        return result;
+    }
 
-		for (ActivitiesGroup group : groups) {
-			Set<ExternalIdentifier> externalIdentifiers = group
-					.getExternalIdentifiers();
-			Set<GroupableActivity> activities = group.getActivities();
-			PeerReviewGroup peerReviewGroup = new PeerReviewGroup();
-			// Fill the peer review groups with the external identifiers
-			for (ExternalIdentifier extId : externalIdentifiers) {
-				WorkExternalIdentifier workExtId = (WorkExternalIdentifier) extId;
-				peerReviewGroup.getIdentifiers().getIdentifier()
-						.add(Identifier.fromWorkExternalIdentifier(workExtId));
-			}
+    private Fundings groupFundings(List<FundingSummary> fundings, boolean justPublic) {
+        ActivitiesGroupGenerator groupGenerator = new ActivitiesGroupGenerator();
+        Fundings result = new Fundings();
+        for (FundingSummary funding : fundings) {
+            if (justPublic && !funding.getVisibility().equals(org.orcid.jaxb.model.common.Visibility.PUBLIC)) {
+                // If it is just public and the funding is not public, just
+                // ignore it
+            } else {
+                groupGenerator.group(funding);
+            }
+        }
 
-			// Fill the peer review group with the list of activities
-			for (GroupableActivity activity : activities) {
-				PeerReviewSummary peerReviewSummary = (PeerReviewSummary) activity;
-				peerReviewGroup.getPeerReviewSummary().add(peerReviewSummary);
-			}
+        List<ActivitiesGroup> groups = groupGenerator.getGroups();
 
-			// Sort the peer reviews
-			Collections.sort(peerReviewGroup.getPeerReviewSummary(),
-					new GroupableActivityComparator());
+        for (ActivitiesGroup group : groups) {
+            Set<ExternalIdentifier> externalIdentifiers = group.getExternalIdentifiers();
+            Set<GroupableActivity> activities = group.getActivities();
+            FundingGroup fundingGroup = new FundingGroup();
 
-			result.getPeerReviewGroup().add(peerReviewGroup);
-		}
+            // Fill the funding groups with the external identifiers
+            for (ExternalIdentifier extId : externalIdentifiers) {
+                FundingExternalIdentifier fundingExtId = (FundingExternalIdentifier) extId;
+                fundingGroup.getIdentifiers().getIdentifier().add(Identifier.fromFundingExternalIdentifier(fundingExtId));
+            }
 
-		return result;
-	}
+            // Fill the funding group with the list of activities
+            for (GroupableActivity activity : activities) {
+                FundingSummary fundingSummary = (FundingSummary) activity;
+                fundingGroup.getFundingSummary().add(fundingSummary);
+            }
 
-	public Date getLastModified(String orcid) {
-		return profileDao.retrieveLastModifiedDate(orcid);
-	}
+            // Sort the fundings
+            Collections.sort(fundingGroup.getFundingSummary(), new GroupableActivityComparator());
 
-	@Override
-	public boolean isDeactivated(String orcid) {
-		return profileDao.isDeactivated(orcid);
-	}
+            result.getFundingGroup().add(fundingGroup);
+        }
 
+        return result;
+    }
+
+    private PeerReviews groupPeerReviews(List<PeerReviewSummary> peerReviews, boolean justPublic) {
+        ActivitiesGroupGenerator groupGenerator = new ActivitiesGroupGenerator();
+        PeerReviews result = new PeerReviews();
+        for (PeerReviewSummary peerReview : peerReviews) {
+            if (justPublic && !peerReview.getVisibility().equals(org.orcid.jaxb.model.common.Visibility.PUBLIC)) {
+                // If it is just public and the funding is not public, just
+                // ignore it
+            } else {
+                groupGenerator.group(peerReview);
+            }
+        }
+
+        List<ActivitiesGroup> groups = groupGenerator.getGroups();
+
+        for (ActivitiesGroup group : groups) {
+            Set<ExternalIdentifier> externalIdentifiers = group.getExternalIdentifiers();
+            Set<GroupableActivity> activities = group.getActivities();
+            PeerReviewGroup peerReviewGroup = new PeerReviewGroup();
+            // Fill the peer review groups with the external identifiers
+            for (ExternalIdentifier extId : externalIdentifiers) {
+                WorkExternalIdentifier workExtId = (WorkExternalIdentifier) extId;
+                peerReviewGroup.getIdentifiers().getIdentifier().add(Identifier.fromWorkExternalIdentifier(workExtId));
+            }
+
+            // Fill the peer review group with the list of activities
+            for (GroupableActivity activity : activities) {
+                PeerReviewSummary peerReviewSummary = (PeerReviewSummary) activity;
+                peerReviewGroup.getPeerReviewSummary().add(peerReviewSummary);
+            }
+
+            // Sort the peer reviews
+            Collections.sort(peerReviewGroup.getPeerReviewSummary(), new GroupableActivityComparator());
+
+            result.getPeerReviewGroup().add(peerReviewGroup);
+        }
+
+        return result;
+    }
+
+    public Date getLastModified(String orcid) {
+        return profileDao.retrieveLastModifiedDate(orcid);
+    }
+
+    @Override
+    public boolean isDeactivated(String orcid) {
+        return profileDao.isDeactivated(orcid);
+    }
 }
 
 class GroupableActivityComparator implements Comparator<GroupableActivity> {
 
-	@Override
-	public int compare(GroupableActivity o1, GroupableActivity o2) {
-		return o1.compareTo(o2);
-	}
+    @Override
+    public int compare(GroupableActivity o1, GroupableActivity o2) {
+        return o1.compareTo(o2);
+    }
 
 }

@@ -260,18 +260,31 @@
                         </span>
                     </div>
                     <!-- URL -->
+					<div class="form-group">
+						<label id="funding-ext-ids-url-label"><@orcid.msg 'manual_funding_form_contents.external_identifier.label_url'/></label>                        	
+	                    <input name="currentFundingExternalIdentifierUrl" id="funding-ext-ids-url-input" type="text" class="form-control action-icon-inside" ng-model="externalIdentifier.url.value" placeholder="<@orcid.msg 'manual_funding_form_contents.external_identifier.url'/>" ng-model-onblur/>                        
+						<span class="orcid-error" ng-show="externalIdentifier.url.errors.length > 0">
+	                    	<div ng-repeat='error in externalIdentifier.url.errors' ng-bind-html="error"></div>
+						</span>                        
+					</div>
+					<!-- Relationship -->
                     <div class="bottomBuffer">
-                    	<div class="form-group">
-	                        <label id="funding-ext-ids-url-label"><@orcid.msg 'manual_funding_form_contents.external_identifier.label_url'/></label>                        	
-	                        <input name="currentFundingExternalIdentifierUrl" id="funding-ext-ids-url-input" type="text" class="form-control action-icon-inside" ng-model="externalIdentifier.url.value" placeholder="<@orcid.msg 'manual_funding_form_contents.external_identifier.url'/>" ng-model-onblur/>
-                            <a href ng-click="deleteFundingExternalIdentifier(externalIdentifier)" class="glyphicon glyphicon-trash grey action-icon-align-right" ng-hide="$first"></a>
-                            <span class="orcid-error" ng-show="externalIdentifier.url.errors.length > 0">
-	                           	<div ng-repeat='error in externalIdentifier.url.errors' ng-bind-html="error"></div>
-                            </span>
-                        	<div ng-show="$last" class="add-item-link">
-	                            <span><a href ng-click="addFundingExternalIdentifier()"><i class="glyphicon glyphicon-plus-sign"></i> <@orcid.msg 'manual_funding_form_contents.external_identifier.add_another' /></a></span>
-                        	</div>
-                    	</div>
+                    	<label><@orcid.msg 'common.ext_id.relationship'/></label>
+						<div class="relative">							
+  							<label class="checkbox-inline">
+    							<input type="radio" name="relationship{{$index}}" ng-model="externalIdentifier.relationship.value" value="self">
+    							<@orcid.msg "common.self" />
+  							</label>
+																					
+  							<label class="checkbox-inline">
+    							<input type="radio" name="relationship{{$index}}" ng-model="externalIdentifier.relationship.value" value="part-of">
+    							<@orcid.msg "common.part_of" />
+  							</label>							
+							<a href ng-click="deleteFundingExternalIdentifier(externalIdentifier)" class="glyphicon glyphicon-trash grey action-icon-align-right" ng-hide="$first"></a>							
+						</div>
+						<div ng-show="$last" class="add-item-link">
+	                    	<span><a href ng-click="addFundingExternalIdentifier()"><i class="glyphicon glyphicon-plus-sign"></i> <@orcid.msg 'manual_funding_form_contents.external_identifier.add_another' /></a></span>
+                        </div>
                     </div>
                 </div>
 

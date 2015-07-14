@@ -155,4 +155,14 @@ public interface ProfileFundingManager {
      * @return true if the funding was deleted, false otherwise
      * */
     boolean checkSourceAndDelete(String orcid, String fundingId);   
+    
+    /**
+     * Get the list of fundings that belongs to a user
+     * 
+     * @param userOrcid
+     * @param lastModified
+     *          Last modified date used to check the cache
+     * @return the list of fundings that belongs to this user
+     * */
+    List<FundingSummary> getFundingSummaryList(String userOrcid, long lastModified);
 }

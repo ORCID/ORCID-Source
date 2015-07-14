@@ -141,4 +141,5 @@
     <include file="/db/updates/drop_oauth2_authentication_key_unique_constraint.xml" />
     <include file="/db/updates/move-work-data-to-work-table.xml" />
     <include file="/db/updates/new-index-for-org-disambiguated-table.xml" />
+    <include file="/db/updates/external-ids-as-json.xml" />
 </databaseChangeLog>

@@ -153,11 +153,10 @@
                              <ul class="id-details">
                                  <li>
                                      <span ng-repeat='ei in group.getActive().externalIdentifiers'>
-                                        <span bind-html-compile='ei | externalIdentifierHtml:$first:$last:group.getActive().externalIdentifiers.length:group.getActive().fundingType' class="url-popover">
+                                        <span bind-html-compile='ei | externalIdentifierHtml:$first:$last:group.getActive().externalIdentifiers.length:group.getActive().fundingType:moreInfo[group.groupId]' class="url-popover">
                                         </span>
                                     </span>
                                  </li>
-                                 
                                  <li ng-show="group.getActive().url.value" class="url-popover">
                                  	<@orcid.msg 'manual_funding_form_contents.label_url'/>: <a href="{{group.getActive().url.value | urlWithHttp}}" ng-class="{'truncate-anchor' : moreInfo[group.groupId] == false || moreInfo[group.groupId] == null}" ng-bind="group.getActive().url.value" target="_blank" ng-mouseenter='showURLPopOver(funding.putCode.value + "-alternate")' ng-mouseleave='hideURLPopOver(funding.putCode.value + "-alternate")'></a>                                 		
 	                                <div class="popover-pos">
