@@ -49,6 +49,7 @@ import org.orcid.jaxb.model.record.summary.EducationSummary;
 import org.orcid.jaxb.model.record.summary.EmploymentSummary;
 import org.orcid.jaxb.model.record.summary.FundingSummary;
 import org.orcid.jaxb.model.record.summary.PeerReviewSummary;
+import org.orcid.jaxb.model.record.summary.WorkGroup;
 import org.orcid.jaxb.model.record.summary.WorkSummary;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.WebhookDao;
@@ -122,10 +123,25 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     @AccessControl(requiredScope = ScopePathType.ACTIVITIES_READ_LIMITED)
     public Response viewActivities(String orcid) {
         ActivitiesSummary as = visibilityFilter.filter(profileEntityManager.getActivitiesSummary(orcid));
+        cleanEmptyFields(as);
         ActivityUtils.setPathToActivity(as, orcid);
         return Response.ok(as).build();
     }
 
+    public void cleanEmptyFields(ActivitiesSummary summaries) {
+        if(summaries != null) {
+            if(summaries.getWorks() != null && summaries.getWorks().getWorkGroup() != null) {
+                for(WorkGroup group : summaries.getWorks().getWorkGroup()) {
+                    if(group.getWorkSummary() != null) {
+                        for(WorkSummary summary : group.getWorkSummary()) {
+                            cleanEmptyFields(summary);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
     @Override
     @AccessControl(requiredScope = ScopePathType.ACTIVITIES_READ_LIMITED)
     public Response viewWork(String orcid, String putCode) {
@@ -136,7 +152,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
         return Response.ok(w).build();
     }        
 
-    private void cleanEmptyFields(Work work) {
+    public void cleanEmptyFields(Work work) {
         if(work != null) {
             if(work.getWorkCitation() != null) {
                 if(PojoUtil.isEmpty(work.getWorkCitation().getCitation())) {
@@ -158,10 +174,23 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     @AccessControl(requiredScope = ScopePathType.ACTIVITIES_READ_LIMITED)
     public Response viewWorkSummary(String orcid, String putCode) {
         WorkSummary ws = workManager.getWorkSummary(orcid, putCode);
+        cleanEmptyFields(ws);
         orcidSecurityManager.checkVisibility(ws);
         ActivityUtils.setPathToActivity(ws, orcid);
         return Response.ok(ws).build();
     }        
+    
+    public void cleanEmptyFields(WorkSummary summary) {
+        if(summary != null) {
+            if(summary.getTitle() != null) {
+                if(summary.getTitle().getTranslatedTitle() != null) {
+                    if(PojoUtil.isEmpty(summary.getTitle().getTranslatedTitle().getContent())) {
+                        summary.getTitle().setTranslatedTitle(null);
+                    }
+                }
+            }
+        }
+    }
     
     @Override
     @AccessControl(requiredScope = ScopePathType.ACTIVITIES_UPDATE)
