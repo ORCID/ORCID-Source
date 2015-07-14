@@ -116,5 +116,5 @@ public interface WorkDao extends GenericDao<WorkEntity, Long> {
      *          The batch number to fetch
      * @return a list of work ids with old ext ids          
      * */
-    List<BigInteger> getWorksWithOldExtIds(long limit);
+    List<BigInteger> getWorksWithOldExtIds(long workId, long limit);
 }

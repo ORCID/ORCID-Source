@@ -207,9 +207,10 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
      * */
     @Override
     @SuppressWarnings("unchecked")    
-    public List<BigInteger> getWorksWithOldExtIds(long limit) {
-        Query query = entityManager.createNativeQuery("SELECT distinct(work_id) FROM (SELECT work_id, json_array_elements(json_extract_path(external_ids_json, 'workExternalIdentifier')) AS j FROM work where external_ids_json is not null) AS a WHERE (j->'relationship') is null limit :limit");
+    public List<BigInteger> getWorksWithOldExtIds(long workId, long limit) {
+        Query query = entityManager.createNativeQuery("SELECT distinct(work_id) FROM (SELECT work_id, json_array_elements(json_extract_path(external_ids_json, 'workExternalIdentifier')) AS j FROM work where work_id > :workId and external_ids_json is not null order by work_id limit :limit) AS a WHERE (j->'relationship') is null");
         query.setParameter("limit", limit);
+        query.setParameter("workId", workId);
         return query.getResultList();
     }
 }

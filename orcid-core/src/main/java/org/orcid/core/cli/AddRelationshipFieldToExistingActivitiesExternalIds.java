@@ -60,6 +60,9 @@ public class AddRelationshipFieldToExistingActivitiesExternalIds {
     private WorkDao workDao;
     private TransactionTemplate transactionTemplate;
 
+    @Option(name = "-wid", usage = "Last work id processed")
+    private Long lastWorkId;
+    
     @Option(name = "-s", usage = "Chunk size")
     private Long chunkSize;
 
@@ -100,7 +103,7 @@ public class AddRelationshipFieldToExistingActivitiesExternalIds {
             // First migrate works
             if(obj.processWorks) {
                 if (haveMoreWorks) {
-                    haveMoreWorks = obj.upgradeWorks(obj.chunkSize);
+                    haveMoreWorks = obj.upgradeWorks(obj.lastWorkId, obj.chunkSize);
                 }
             } 
 
@@ -143,8 +146,8 @@ public class AddRelationshipFieldToExistingActivitiesExternalIds {
         transactionTemplate = (TransactionTemplate) context.getBean("transactionTemplate");
     }
 
-    private boolean upgradeWorks(long limit) {
-        final List<BigInteger> idsToUpgrade = workDao.getWorksWithOldExtIds(limit);
+    private boolean upgradeWorks(long lastWorkId, long limit) {
+        final List<BigInteger> idsToUpgrade = workDao.getWorksWithOldExtIds(lastWorkId, limit);
         if (idsToUpgrade == null || idsToUpgrade.isEmpty()) {
             LOG.info("Couldnt find more works to process");
             return false;
@@ -282,6 +285,10 @@ public class AddRelationshipFieldToExistingActivitiesExternalIds {
 
         if (batchesToRun == null) {
             batchesToRun = Long.valueOf(-1);
+        }
+        
+        if(lastWorkId == null) {
+            lastWorkId = 0L;
         }
     }
 }
