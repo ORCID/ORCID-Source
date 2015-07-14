@@ -123,74 +123,30 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     @AccessControl(requiredScope = ScopePathType.ACTIVITIES_READ_LIMITED)
     public Response viewActivities(String orcid) {
         ActivitiesSummary as = visibilityFilter.filter(profileEntityManager.getActivitiesSummary(orcid));
-        cleanEmptyFields(as);
+        ActivityUtils.cleanEmptyFields(as);
         ActivityUtils.setPathToActivity(as, orcid);
         return Response.ok(as).build();
-    }
-
-    public void cleanEmptyFields(ActivitiesSummary summaries) {
-        if(summaries != null) {
-            if(summaries.getWorks() != null && summaries.getWorks().getWorkGroup() != null) {
-                for(WorkGroup group : summaries.getWorks().getWorkGroup()) {
-                    if(group.getWorkSummary() != null) {
-                        for(WorkSummary summary : group.getWorkSummary()) {
-                            cleanEmptyFields(summary);
-                        }
-                    }
-                }
-            }
-        }
-    }
+    }    
     
     @Override
     @AccessControl(requiredScope = ScopePathType.ACTIVITIES_READ_LIMITED)
     public Response viewWork(String orcid, String putCode) {
         Work w = workManager.getWork(orcid, putCode);
-        cleanEmptyFields(w);
+        ActivityUtils.cleanEmptyFields(w);
         orcidSecurityManager.checkVisibility(w);
         ActivityUtils.setPathToActivity(w, orcid);
         return Response.ok(w).build();
-    }        
-
-    public void cleanEmptyFields(Work work) {
-        if(work != null) {
-            if(work.getWorkCitation() != null) {
-                if(PojoUtil.isEmpty(work.getWorkCitation().getCitation())) {
-                    work.setWorkCitation(null);
-                }
-            }
-            
-            if(work.getWorkTitle() != null) {
-                if(work.getWorkTitle().getTranslatedTitle() != null) {
-                    if(PojoUtil.isEmpty(work.getWorkTitle().getTranslatedTitle().getContent())) {
-                        work.getWorkTitle().setTranslatedTitle(null);
-                    }
-                }
-            }
-        }
-    }
+    }            
     
     @Override
     @AccessControl(requiredScope = ScopePathType.ACTIVITIES_READ_LIMITED)
     public Response viewWorkSummary(String orcid, String putCode) {
         WorkSummary ws = workManager.getWorkSummary(orcid, putCode);
-        cleanEmptyFields(ws);
+        ActivityUtils.cleanEmptyFields(ws);
         orcidSecurityManager.checkVisibility(ws);
         ActivityUtils.setPathToActivity(ws, orcid);
         return Response.ok(ws).build();
-    }        
-    
-    public void cleanEmptyFields(WorkSummary summary) {
-        if(summary != null) {
-            if(summary.getTitle() != null) {
-                if(summary.getTitle().getTranslatedTitle() != null) {
-                    if(PojoUtil.isEmpty(summary.getTitle().getTranslatedTitle().getContent())) {
-                        summary.getTitle().setTranslatedTitle(null);
-                    }
-                }
-            }
-        }
-    }
+    }                
     
     @Override
     @AccessControl(requiredScope = ScopePathType.ACTIVITIES_UPDATE)

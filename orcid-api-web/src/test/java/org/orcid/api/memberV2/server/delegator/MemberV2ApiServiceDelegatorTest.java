@@ -36,23 +36,23 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.api.memberV2.server.delegator.impl.MemberV2ApiServiceDelegatorImpl;
+import org.orcid.api.common.util.ActivityUtils;
 import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.utils.SecurityContextTestUtils;
+import org.orcid.jaxb.model.common.Subtitle;
 import org.orcid.jaxb.model.common.Title;
 import org.orcid.jaxb.model.common.TranslatedTitle;
 import org.orcid.jaxb.model.common.Url;
 import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.common.Subtitle;
 import org.orcid.jaxb.model.record.Citation;
-import org.orcid.jaxb.model.record.WorkTitle;
 import org.orcid.jaxb.model.record.Education;
 import org.orcid.jaxb.model.record.Employment;
 import org.orcid.jaxb.model.record.Funding;
 import org.orcid.jaxb.model.record.PeerReview;
 import org.orcid.jaxb.model.record.Subject;
 import org.orcid.jaxb.model.record.Work;
+import org.orcid.jaxb.model.record.WorkTitle;
 import org.orcid.jaxb.model.record.WorkType;
 import org.orcid.jaxb.model.record.summary.ActivitiesSummary;
 import org.orcid.jaxb.model.record.summary.PeerReviewSummary;
@@ -176,8 +176,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         ActivitiesSummary as = new ActivitiesSummary();
         as.setWorks(works);
         
-        MemberV2ApiServiceDelegatorImpl test = new MemberV2ApiServiceDelegatorImpl();
-        test.cleanEmptyFields(as);
+        ActivityUtils.cleanEmptyFields(as);
         
         assertNotNull(as);
         assertNotNull(as.getWorks());
@@ -219,8 +218,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         title.setTranslatedTitle(new TranslatedTitle("", ""));
         work.setWorkTitle(title);
         
-        MemberV2ApiServiceDelegatorImpl test = new MemberV2ApiServiceDelegatorImpl();
-        test.cleanEmptyFields(work);
+        ActivityUtils.cleanEmptyFields(work);
         
         assertNotNull(work);
         assertNotNull(work.getWorkTitle());        

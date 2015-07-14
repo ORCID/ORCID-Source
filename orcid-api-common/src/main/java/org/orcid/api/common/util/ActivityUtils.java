@@ -22,6 +22,7 @@ import org.orcid.jaxb.model.record.Education;
 import org.orcid.jaxb.model.record.Employment;
 import org.orcid.jaxb.model.record.Funding;
 import org.orcid.jaxb.model.record.PeerReview;
+import org.orcid.jaxb.model.record.Work;
 import org.orcid.jaxb.model.record.summary.ActivitiesSummary;
 import org.orcid.jaxb.model.record.summary.EducationSummary;
 import org.orcid.jaxb.model.record.summary.Educations;
@@ -34,6 +35,7 @@ import org.orcid.jaxb.model.record.summary.PeerReviewSummary;
 import org.orcid.jaxb.model.record.summary.WorkGroup;
 import org.orcid.jaxb.model.record.summary.WorkSummary;
 import org.orcid.jaxb.model.record.summary.Works;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 
 public class ActivityUtils {
 
@@ -110,5 +112,49 @@ public class ActivityUtils {
                 }
             }
         }
-    }    
+    }
+    
+    public static void cleanEmptyFields(ActivitiesSummary summaries) {
+        if(summaries != null) {
+            if(summaries.getWorks() != null && summaries.getWorks().getWorkGroup() != null) {
+                for(WorkGroup group : summaries.getWorks().getWorkGroup()) {
+                    if(group.getWorkSummary() != null) {
+                        for(WorkSummary summary : group.getWorkSummary()) {
+                            cleanEmptyFields(summary);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    public static void cleanEmptyFields(WorkSummary summary) {
+        if(summary != null) {
+            if(summary.getTitle() != null) {
+                if(summary.getTitle().getTranslatedTitle() != null) {
+                    if(PojoUtil.isEmpty(summary.getTitle().getTranslatedTitle().getContent())) {
+                        summary.getTitle().setTranslatedTitle(null);
+                    }
+                }
+            }
+        }
+    }
+    
+    public static void cleanEmptyFields(Work work) {
+        if(work != null) {
+            if(work.getWorkCitation() != null) {
+                if(PojoUtil.isEmpty(work.getWorkCitation().getCitation())) {
+                    work.setWorkCitation(null);
+                }
+            }
+            
+            if(work.getWorkTitle() != null) {
+                if(work.getWorkTitle().getTranslatedTitle() != null) {
+                    if(PojoUtil.isEmpty(work.getWorkTitle().getTranslatedTitle().getContent())) {
+                        work.getWorkTitle().setTranslatedTitle(null);
+                    }
+                }
+            }
+        }
+    }
 }
