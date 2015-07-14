@@ -53,6 +53,7 @@ import org.orcid.persistence.dao.GivenPermissionToDao;
 import org.orcid.persistence.dao.OrgAffiliationRelationDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
+import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
@@ -218,6 +219,7 @@ public class AdminManagerImpl implements AdminManager {
                         deprecated.setPrimaryRecord(primary);
                         deprecated.setBiography(new String());
                         deprecated.setIso2Country(null);
+                        deprecated.setIndexingStatus(IndexingStatus.PENDING);
                         
                         profileEntityManager.updateProfile(deprecated);                        
                         
