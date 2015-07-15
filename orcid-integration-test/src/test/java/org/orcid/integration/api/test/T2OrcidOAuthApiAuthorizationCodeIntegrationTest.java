@@ -82,10 +82,8 @@ import org.orcid.jaxb.model.message.WorkTitle;
 import org.orcid.jaxb.model.message.WorkType;
 import org.orcid.persistence.dao.ClientRedirectDao;
 import org.orcid.persistence.dao.ProfileDao;
-import org.orcid.persistence.dao.ProfileWorkDao;
 import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.custom.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.keys.ClientRedirectUriPk;
@@ -150,9 +148,6 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
 
     @Resource
     private WorkDao workDao;
-    
-    @Resource
-    private ProfileWorkDao profileWorkDao;      
     
     @Resource
     OrcidSSOManager ssoManager;
@@ -330,12 +325,7 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
         assertNotNull(work.getSource());
         assertEquals(CLIENT_DETAILS_ID, work.getSource().getSourceId());
         assertNotNull(work.getVisibility());
-        assertNotNull(work.getAddedToProfileDate());
-               
-        ProfileWorkEntity pf = profileWorkDao.getProfileWork(orcid, String.valueOf(workId));
-        assertNotNull(pf);
-        assertTrue(pf.getMigrated());
-        assertEquals(pf.getDisplayIndex(), work.getDisplayIndex());
+        assertNotNull(work.getAddedToProfileDate());               
     }
 
     @Test

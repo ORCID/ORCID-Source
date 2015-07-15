@@ -36,7 +36,6 @@ import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.OrcidClientGroupManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.ProfileEntityManager;
-import org.orcid.core.manager.ProfileWorkManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.MemberType;
@@ -61,13 +60,11 @@ import org.orcid.jaxb.model.message.SendChangeNotifications;
 import org.orcid.jaxb.model.message.SendOrcidNews;
 import org.orcid.jaxb.model.message.SubmissionDate;
 import org.orcid.jaxb.model.message.Visibility;
-import org.orcid.jaxb.model.record.Work;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.OrgAffiliationRelationDao;
 import org.orcid.persistence.dao.OrgDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.ProfileFundingDao;
-import org.orcid.persistence.dao.ProfileWorkDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientSecretEntity;
 import org.orcid.pojo.ajaxForm.Member;
@@ -107,10 +104,7 @@ public class InitializeDataHelper {
     
     @Resource
     private OrgDao orgDao;
-    
-    @Resource
-    private ProfileWorkDao profileWorkDao;
-    
+            
     @Resource
     private ProfileFundingDao profileFundingDao;
     
@@ -126,27 +120,13 @@ public class InitializeDataHelper {
     @Resource
     private WorkManager workManager;
     
-    @Resource
-    private ProfileWorkManager profileWorkManager;
-    
     //Map containing a list of members, the key is the group type, there will be one member for each group type
     private Map<String, Member> members = new HashMap<String, Member>();
     
     //Map containing a list of clients, the key is the member orcid
     private Map<String, OrcidClient> clients = new HashMap<String, OrcidClient>();
     
-    public void deleteProfile(String orcid) throws Exception {
-        // TODO: Remove after the works migration
-        List<Work> works = workManager.findWorks(orcid, 0L);
-        ArrayList<Long> workIds = new ArrayList<Long>();
-        for(Work work : works) {
-            workIds.add(Long.valueOf(work.getPutCode()));
-        }
-        if(!workIds.isEmpty()) {
-            profileWorkManager.removeWorks(orcid, workIds);
-            workManager.removeWorks(orcid, workIds);
-        }
-        // END TODO
+    public void deleteProfile(String orcid) throws Exception {        
         orcidProfileManager.deactivateOrcidProfile(orcidProfileManager.retrieveOrcidProfile(orcid));
         orcidProfileManager.deleteProfile(orcid);
     }
@@ -157,8 +137,6 @@ public class InitializeDataHelper {
         for(ClientSecretEntity entity : clientSecrets) {
             clientDetailsDao.removeClientSecret(clientId, entity.getClientSecret());
         }
-        //Remove works where he is the source
-        profileWorkDao.removeWorksByClientSourceId(clientId);
         //Remove fundings where he is the source
         profileFundingDao.removeFundingByClientSourceId(clientId);
         //Remove affiliations where he is the source

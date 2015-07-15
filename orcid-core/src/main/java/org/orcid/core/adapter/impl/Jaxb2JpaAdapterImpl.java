@@ -116,7 +116,6 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
 import org.orcid.persistence.jpa.entities.ProfileSummaryEntity;
-import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
 import org.orcid.persistence.jpa.entities.PublicationDateEntity;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 import org.orcid.persistence.jpa.entities.SecurityQuestionEntity;
@@ -236,52 +235,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         }
         return map;
     }
-
-    //TODO: Remove after the works migration
-    @Override  
-    public ProfileWorkEntity getNewProfileWorkEntity(OrcidWork orcidWork, ProfileEntity profileEntity) {
-        ProfileWorkEntity profileWorkEntity = getProfileWorkEntity(orcidWork, null);
-        profileWorkEntity.setProfile(profileEntity);
-        profileWorkEntity.getWork().setProfile(profileEntity);
-        //All new works are already in both tables
-        profileWorkEntity.setMigrated(true);
-        return profileWorkEntity;
-    }
-
-    private ProfileWorkEntity getProfileWorkEntity(OrcidWork orcidWork, ProfileWorkEntity existingProfileWorkEntity) {
-        if (orcidWork != null) {
-            ProfileWorkEntity profileWorkEntity = null;
-            WorkEntity workEntity = null;
-            if (existingProfileWorkEntity == null) {
-                String putCode = orcidWork.getPutCode();
-                if (StringUtils.isNotBlank(putCode) && !"-1".equals(putCode)) {
-                    throw new IllegalArgumentException("Invalid put-code was supplied: " + putCode);
-                }
-                profileWorkEntity = new ProfileWorkEntity();
-                profileWorkEntity.setMigrated(true);
-                profileWorkEntity.setAddedToProfileDate(new Date());
-                workEntity = new WorkEntity();
-            } else {
-                profileWorkEntity = existingProfileWorkEntity;
-                workEntity = existingProfileWorkEntity.getWork();
-                workEntity.clean();
-            }
-            profileWorkEntity.setWork(getWorkEntity(orcidWork, workEntity));
-            Visibility visibility = orcidWork.getVisibility() == null ? Visibility.PRIVATE : orcidWork.getVisibility();
-            profileWorkEntity.setVisibility(visibility);
-            SourceEntity source = getSource(orcidWork.getSource());
-            profileWorkEntity.setSource(source);            
-
-            if (orcidWork.getCreatedDate() != null && orcidWork.getCreatedDate().getValue() != null)
-                profileWorkEntity.setDateCreated(orcidWork.getCreatedDate().getValue().toGregorianCalendar().getTime());
-            if (orcidWork.getLastModifiedDate() != null && orcidWork.getLastModifiedDate().getValue() != null)
-                profileWorkEntity.setLastModified(orcidWork.getLastModifiedDate().getValue().toGregorianCalendar().getTime());
-
-            return profileWorkEntity;
-        }
-        return null;
-    }
-
+    
     public WorkEntity getWorkEntity(OrcidWork orcidWork, WorkEntity workEntity) {
         if (orcidWork != null) {
             if(workEntity == null) {

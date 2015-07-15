@@ -35,7 +35,6 @@ import org.orcid.jaxb.model.record.Work;
 import org.orcid.jaxb.model.record.WorkTitle;
 import org.orcid.jaxb.model.record.summary.WorkSummary;
 import org.orcid.persistence.dao.ProfileDao;
-import org.orcid.persistence.dao.ProfileWorkDao;
 import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
@@ -52,9 +51,6 @@ public class WorkManagerImpl implements WorkManager {
     
     @Resource
     private WorkDao workDao;
-
-    @Resource
-    private ProfileWorkDao profileWorkDao;
     
     @Resource
     private Jpa2JaxbAdapter jpa2JaxbAdapter;
@@ -195,10 +191,7 @@ public class WorkManagerImpl implements WorkManager {
         WorkEntity workEntity = workDao.find(Long.valueOf(workId));
         SourceEntity existingSource = workEntity.getSource();
         orcidSecurityManager.checkSource(existingSource);
-        try {
-            //TODO: Remove after the works migration
-            profileWorkDao.removeWork(orcid, workIdStr);
-            //END TODO
+        try {            
             workDao.remove(workId);
         } catch(Exception e) {
             LOGGER.error("Unable to delete work with ID: " + workIdStr);
