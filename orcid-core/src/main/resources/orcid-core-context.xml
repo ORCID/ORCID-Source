@@ -300,8 +300,6 @@
 
 	<bean id="externalIdentifierManager" class="org.orcid.core.manager.impl.ExternalIdentifierManagerImpl" />
 	
-	<bean id="profileWorkManager" class="org.orcid.core.manager.impl.ProfileWorkManagerImpl" />
-	
 	<bean id="ActivityCacheManager" class="org.orcid.core.manager.impl.ActivityCacheManagerImpl" />
 	
 	<bean id="profileEventManager" class="org.orcid.core.profileEvent.ProfileEventManager" />
