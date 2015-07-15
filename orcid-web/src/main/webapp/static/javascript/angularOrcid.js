@@ -1524,10 +1524,14 @@ orcidNgModule.filter('workExternalIdentifierHtml', function(){
         	link = workExternalIdentifier.url.value;
         else link = workIdLinkJs.getLink(id,type); 
         	
-        if (link != null)
-            output = output + "<a href='" + link.replace(/'/g, "&#39;") + "' target='_blank'>" + id.escapeHtml() + "</a>";
-        else
-            output = output + id;        
+        if (link != null) {
+        	if(link.lastIndexOf('http://') === -1 && link.lastIndexOf('https://') === -1) {
+        		link = '//' + link;
+        	}
+        	output = output + "<a href='" + link.replace(/'/g, "&#39;") + "' target='_blank'>" + id.escapeHtml() + "</a>";
+        } else {
+        	output = output + id;
+        }                   
         
         if (length > 1 && !last) output = output + ',';
         return output;
