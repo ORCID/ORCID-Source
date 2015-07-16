@@ -44,6 +44,7 @@ import org.orcid.jaxb.model.record.summary.EducationSummary;
 import org.orcid.jaxb.model.record.summary.EmploymentSummary;
 import org.orcid.jaxb.model.record.summary.FundingSummary;
 import org.orcid.jaxb.model.record.summary.PeerReviewSummary;
+import org.orcid.jaxb.model.record.summary.WorkGroup;
 import org.orcid.jaxb.model.record.summary.WorkSummary;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.WebhookDao;
@@ -92,15 +93,17 @@ public class PublicV2ApiServiceDelegatorImpl implements PublicV2ApiServiceDelega
     @AccessControl(requiredScope = ScopePathType.READ_PUBLIC, enableAnonymousAccess = true)
     public Response viewActivities(String orcid) {
         ActivitiesSummary as = profileEntityManager.getPublicActivitiesSummary(orcid);
+        ActivityUtils.cleanEmptyFields(as);
         visibilityFilter.filter(as);
         ActivityUtils.setPathToActivity(as, orcid);
         return Response.ok(as).build();
     }
-
+    
     @Override
     @AccessControl(requiredScope = ScopePathType.READ_PUBLIC, enableAnonymousAccess = true)
     public Response viewWork(String orcid, String putCode) {        
         Work w = workManager.getWork(orcid, putCode);
+        ActivityUtils.cleanEmptyFields(w);
         orcidSecurityManager.checkVisibility(w);
         ActivityUtils.setPathToActivity(w, orcid);
         return Response.ok(w).build();
@@ -110,6 +113,7 @@ public class PublicV2ApiServiceDelegatorImpl implements PublicV2ApiServiceDelega
     @AccessControl(requiredScope = ScopePathType.READ_PUBLIC, enableAnonymousAccess = true)
     public Response viewWorkSummary(String orcid, String putCode) {
         WorkSummary ws = workManager.getWorkSummary(orcid, putCode);
+        ActivityUtils.cleanEmptyFields(ws);
         orcidSecurityManager.checkVisibility(ws);
         ActivityUtils.setPathToActivity(ws, orcid);
         return Response.ok(ws).build();
