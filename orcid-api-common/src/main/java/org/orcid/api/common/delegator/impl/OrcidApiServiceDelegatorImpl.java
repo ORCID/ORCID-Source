@@ -32,7 +32,7 @@ import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.exception.OrcidNotFoundException;
 import org.orcid.core.exception.OrcidSearchException;
 import org.orcid.core.manager.ClientDetailsManager;
-import org.orcid.core.manager.OrcidProfileManager;
+import org.orcid.core.manager.OrcidProfileManagerReadOnly;
 import org.orcid.core.manager.OrcidSearchManager;
 import org.orcid.core.security.DeprecatedException;
 import org.orcid.core.security.aop.NonLocked;
@@ -46,7 +46,7 @@ import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Required;
 
 import com.sun.jersey.api.client.ClientResponse.Status;
 
@@ -59,13 +59,11 @@ import com.sun.jersey.api.client.ClientResponse.Status;
  * 
  * @author Declan Newman (declan) Date: 02/03/2012
  */
-@Component("orcidApiServiceDelegator")
 public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
 
-    @Resource(name = "orcidProfileManager")
-    private OrcidProfileManager orcidProfileManager;
+    @Resource(name = "orcidProfileManagerReadOnly")
+    private OrcidProfileManagerReadOnly orcidProfileManager;
 
-    @Resource(name = "orcidSearchManager")
     private OrcidSearchManager orcidSearchManager;
 
     @Resource
@@ -76,10 +74,15 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OrcidApiServiceDelegatorImpl.class);
 
+    @Required
+    public void setOrcidSearchManager(OrcidSearchManager orcidSearchManager) {
+        this.orcidSearchManager = orcidSearchManager;
+    }
+
     /**
      * @return Plain text message indicating health of service
      */
-    @Override    
+    @Override
     public Response viewStatusText() {
         return Response.ok(STATUS_OK_MESSAGE).build();
     }
@@ -321,7 +324,6 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
         }
     }
 
-    
     /**
      * See {@link OrcidApiServiceDelegator}{@link #publicSearchByQuery(Map)}
      * */
@@ -331,7 +333,7 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
     public Response publicSearchByQuery(Map<String, List<String>> queryMap) {
         return searchByQuery(queryMap);
     }
-    
+
     /**
      * See {@link OrcidApiServiceDelegator}{@link #searchByQuery(Map)}
      */
