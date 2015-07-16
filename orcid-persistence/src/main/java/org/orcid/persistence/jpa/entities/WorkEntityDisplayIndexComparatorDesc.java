@@ -21,19 +21,14 @@ import java.util.Comparator;
 
 /**
  * 
- * Comparator that compares OrcidEntity objects based on their ID.
- * 
- * Spring Sort annotation didn't seem to have descending function.
- * Sort by index and then compare value
- * 
- * @author rcpeters
+ * @author Angel Montenegro
  * 
  */
-public class ProfileWorkEntityDisplayIndexComparatorDesc<T> implements Comparator<ProfileWorkEntity>, Serializable {
+public class WorkEntityDisplayIndexComparatorDesc<T> implements Comparator<WorkEntity>, Serializable {
 
     private static final long serialVersionUID = 1L;
     @Override
-    public int compare(ProfileWorkEntity o1, ProfileWorkEntity o2) {
+    public int compare(WorkEntity o1, WorkEntity o2) {
         Long index = o1.getDisplayIndex();
         Long otherIndex = o2.getDisplayIndex();
         if (index == otherIndex) return o2.compareTo(o1);

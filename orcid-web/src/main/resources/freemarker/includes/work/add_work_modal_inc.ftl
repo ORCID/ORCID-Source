@@ -44,7 +44,7 @@
 					<span class="required" ng-class="isValidClass(editWork.workCategory)">*</span>
 		    		<div class="relative">
 			    		<select id="workCategory" name="workCategory" class="form-control" ng-model="editWork.workCategory.value" ng-change="loadWorkTypes();clearErrors()">
-			    			<option value=""><@orcid.msg 'org.orcid.jaxb.model.message.WorkCategory.empty' /></option>
+			    			<option value=""><@orcid.msg 'org.orcid.jaxb.model.record.WorkCategory.empty' /></option>
 							<#list workCategories?keys as key>
 								<option value="${key}">${workCategories[key]}</option>
 							</#list>
@@ -224,15 +224,15 @@
 			
 			<div class="col-md-6 col-sm-6 col-xs-12">							    
 				<div class="control-group">
-					<span><strong><@orcid.msg 'manual_work_form_contents.titlecitationexternalidentifier'/></strong></span>
+					<span><strong><@orcid.msg 'manual_work_form_contents.titleexternalidentifier'/></strong></span>
 				</div>
 		    	
 				<div ng-repeat="workExternalIdentifier in editWork.workExternalIdentifiers"> 
 					<div class="form-group">
 						<label class="relative"><@orcid.msg 'manual_work_form_contents.labelIDtype'/></label>
 						<div class="relative">
-		    				<select id="idType" name="idType" class="form-control" ng-model="workExternalIdentifier.workExternalIdentifierType.value" ng-change="serverValidate('works/work/workExternalIdentifiersValidate.json')">																						 
-								<option value=""><@orcid.msg 'org.orcid.jaxb.model.message.WorkExternalIdentifierType.empty' /></option>
+		    				<select id="idType" name="idType" class="form-control" ng-model="workExternalIdentifier.workExternalIdentifierType.value" ng-change="serverValidate('works/work/workExternalIdentifiersValidate.json');fillUrl(workExternalIdentifier)">																						 
+								<option value=""><@orcid.msg 'org.orcid.jaxb.model.record.WorkExternalIdentifierType.empty' /></option>
 								<#list idTypes?keys as key>
 									<option value="${idTypes[key]}">${key}</option>
 								</#list>
@@ -245,14 +245,14 @@
 					<div class="form-group">
 						<label><@orcid.msg 'manual_work_form_contents.labelID'/></label>
 				    	<div class="relative">
-							<input name="currentWorkExternalIds" type="text" class="form-control action-icon-inside"  ng-model="workExternalIdentifier.workExternalIdentifierId.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_ID'/>"  ng-change="serverValidate('works/work/workExternalIdentifiersValidate.json')" ng-model-onblur/>																					
+							<input name="currentWorkExternalIds" type="text" class="form-control action-icon-inside"  ng-model="workExternalIdentifier.workExternalIdentifierId.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_ID'/>"  ng-change="serverValidate('works/work/workExternalIdentifiersValidate.json');fillUrl(workExternalIdentifier)" ng-model-onblur/>																					
 							<span class="orcid-error" ng-show="workExternalIdentifier.workExternalIdentifierId.errors.length > 0">
 								<div ng-repeat='error in workExternalIdentifier.workExternalIdentifierId.errors' ng-bind-html="error"></div>
 							</span>
 						</div>						
 					</div>		
 					<div class="form-group">
-						<label><@orcid.msg 'common.url'/></label>
+						<label><@orcid.msg 'manual_work_form_contents.identifierurl'/></label>
 						<div class="relative">
 							<input name="currentWorkExternalIdUrl" type="text" class="form-control action-icon-inside"  ng-model="workExternalIdentifier.url.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_URL'/>" ng-model-onblur/>
 							<span class="orcid-error" ng-show="workExternalIdentifier.url.errors.length > 0">

@@ -30,7 +30,7 @@ import org.orcid.jaxb.model.message.ScopePathType;
 /**
  * @author Will Simpson
  */
-public interface OrcidProfileManager {
+public interface OrcidProfileManager extends OrcidProfileManagerReadOnly {
 
     /**
      * Creates a new profile, assigning it a new ORCID
@@ -64,68 +64,12 @@ public interface OrcidProfileManager {
     OrcidProfile updateOrcidProfile(OrcidProfile orcidProfile);
 
     /**
-     * Retrieves the orcid external identifiers given an identifier
-     * 
-     * @param orcid
-     *            the identifier
-     * @return the orcid profile with only the bio populated
-     */
-    OrcidProfile retrieveClaimedExternalIdentifiers(String orcid);
-
-    /**
-     * Retrieves the orcid bio given an identifier
-     * 
-     * @param orcid
-     *            the identifier
-     * @return the orcid profile with only the bio populated
-     */
-    OrcidProfile retrieveClaimedOrcidBio(String orcid);
-
-    /**
-     * Retrieves the orcid affiliations given an identifier
-     * 
-     * @param orcid
-     *            the identifier
-     * @return the orcid profile with only the affiliations populated
-     */
-    OrcidProfile retrieveClaimedAffiliations(String orcid);
-
-    /**
-     * Retrieves the orcid fundings given an identifier
-     * 
-     * @param orcid
-     *            the identifier
-     * @return the orcid profile with only the funding list populated
-     */
-    OrcidProfile retrieveClaimedFundings(String orcid);
-
-    /**
      * Returns true if ORCID exist.
      * 
      * @param orcid
      * @return
      */
     public boolean exists(String orcid);
-
-    /**
-     * Retrieves the orcid works given an identifier
-     * 
-     * @param orcid
-     *            the identifier
-     * @return the orcid profile with only the works populated
-     */
-    OrcidProfile retrieveClaimedOrcidWorks(String orcid);
-
-    /**
-     * Retrieves the orcid profile given an identifier
-     * 
-     * @param orcid
-     *            the identifier
-     * @return the full orcid profile
-     */
-    OrcidProfile retrieveOrcidProfile(String orcid);
-
-    OrcidProfile retrieveOrcidProfile(String orcid, LoadOptions loadOptions);
 
     OrcidProfile retrievePublicOrcidProfile(String orcid);
 
@@ -324,15 +268,7 @@ public interface OrcidProfileManager {
 
     OrcidWorks dedupeWorks(OrcidWorks orcidWorks);
 
-    OrcidProfile retrieveClaimedOrcidProfile(String orcid);
-    
-    OrcidProfile retrievePublic(String orcid);
-
-    public OrcidProfile retrieveFreshOrcidProfile(String orcid, LoadOptions loadOptions);
-    
     public void updateNames(OrcidProfile orcidProfile);
-
-    Date retrieveLastModifiedDate(String orcid);
 
     Date updateLastModifiedDate(String orcid);
 

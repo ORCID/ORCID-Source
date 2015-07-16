@@ -17,11 +17,9 @@
 package org.orcid.persistence.dao;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
 import java.util.List;
 
-import org.orcid.jaxb.model.message.Visibility;
-import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
+import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.custom.MinimizedWorkEntity;
 
@@ -77,7 +75,7 @@ public interface WorkDao extends GenericDao<WorkEntity, Long> {
      *            The new visibility value for the profile work relationship
      * @return true if the relationship was updated
      * */
-    boolean updateVisibilities(String orcid, ArrayList<Long> workIds, Visibility visibility);
+    boolean updateVisibilities(String orcid, List<Long> workIds, Visibility visibility);
     
     /**
      * Removes a work.
@@ -89,27 +87,17 @@ public interface WorkDao extends GenericDao<WorkEntity, Long> {
      *            The client orcid
      * @return true if the work was deleted
      * */
-    boolean removeWorks(String clientOrcid, ArrayList<Long> workIds);
-    
-    /**
-     * Copy the data from the profile_work table to the work table
-     * @param profileWork
-     *          The profileWork object that contains the profile_work info
-     * @param workId
-     *          The id of the work we want to update
-     * @return true if the work was updated                  
-     * */
-    boolean copyDataFromProfileWork(Long workId, ProfileWorkEntity profileWork);
+    boolean removeWorks(String clientOrcid, List<Long> workIds);        
     
     /**
      * Sets the display index of the new work
      * @param workId
      *          The work id
-     * @param displayIndex
-     *          The display index for the work
+     * @param orcid
+     *          The work owner                         
      * @return true if the work index was correctly set                  
      * */
-    boolean updateToMaxDisplay(String workId, Long displayIndex);
+    boolean updateToMaxDisplay(String orcid, String workId);
     
     /**
      * Returns a list of work ids of works that still have old external identifiers
@@ -117,5 +105,5 @@ public interface WorkDao extends GenericDao<WorkEntity, Long> {
      *          The batch number to fetch
      * @return a list of work ids with old ext ids          
      * */
-    List<BigInteger> getWorksWithOldExtIds(long limit);
+    List<BigInteger> getWorksWithOldExtIds(long workId, long limit);
 }

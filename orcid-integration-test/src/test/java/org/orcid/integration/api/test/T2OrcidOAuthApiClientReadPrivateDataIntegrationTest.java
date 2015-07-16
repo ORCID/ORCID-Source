@@ -78,7 +78,7 @@ public class T2OrcidOAuthApiClientReadPrivateDataIntegrationTest extends DBUnitT
 
     private static final List<String> DATA_FILES = Arrays.asList("/group_client_data/EmptyEntityData.xml", "/group_client_data/SecurityQuestionEntityData.xml",
             "/group_client_data/ProfileEntityData.xml", "/group_client_data/WorksEntityData.xml", "/group_client_data/OrgsEntityData.xml",
-            "/group_client_data/ClientDetailsEntityData.xml", "/group_client_data/ProfileWorksEntityData.xml", "/group_client_data/OrgAffiliationEntityData.xml",
+            "/group_client_data/ClientDetailsEntityData.xml", "/group_client_data/OrgAffiliationEntityData.xml",
             "/group_client_data/ProfileFundingEntityData.xml");
 
     private WebDriver webDriver;

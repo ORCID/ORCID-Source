@@ -190,7 +190,7 @@ public class OrcidClientDataHelper implements InitializingBean {
     }
 
     public void deleteOrcidProfile(String orcid) throws Exception {
-        if (!StringUtils.isBlank(orcid)) {
+        if (!StringUtils.isBlank(orcid)) {           
             orcidProfileManager.deleteProfile(orcid);
         }
     }

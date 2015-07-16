@@ -22,8 +22,6 @@ import java.util.List;
 
 import org.orcid.jaxb.model.message.ResearcherUrl;
 import org.orcid.jaxb.model.message.ResearcherUrls;
-import org.orcid.jaxb.model.message.WorkExternalIdentifierId;
-import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 
 public class WebsitesForm implements ErrorsInterface, Serializable {
 

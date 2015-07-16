@@ -37,29 +37,28 @@ import org.orcid.core.manager.ActivityCacheManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.OrcidProfileCacheManager;
 import org.orcid.core.manager.PeerReviewManager;
+import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
-import org.orcid.core.manager.ProfileWorkManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.Funding;
 import org.orcid.jaxb.model.message.FundingType;
 import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.PersonalDetails;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.record.PeerReview;
+import org.orcid.jaxb.model.record.Work;
 import org.orcid.jaxb.model.record.summary.ActivitiesSummary;
 import org.orcid.persistence.jpa.entities.CountryIsoEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
 import org.orcid.pojo.ajaxForm.AffiliationForm;
 import org.orcid.pojo.ajaxForm.Contributor;
 import org.orcid.pojo.ajaxForm.FundingForm;
 import org.orcid.pojo.ajaxForm.PeerReviewForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
-import org.orcid.pojo.ajaxForm.Work;
+import org.orcid.pojo.ajaxForm.WorkForm;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -87,10 +86,7 @@ public class PublicProfileController extends BaseWorkspaceController {
     private EncryptionManager encryptionManager;
 
     @Resource
-    private ActivityCacheManager activityCacheManager;
-
-    @Resource
-    private ProfileWorkManager profileWorkManager;
+    private ActivityCacheManager activityCacheManager;    
     
     @Resource
     private ProfileEntityManager profileEntManager;
@@ -109,6 +105,9 @@ public class PublicProfileController extends BaseWorkspaceController {
 
     @Resource
     private PeerReviewManager peerReviewManager;
+    
+    @Resource
+    private ProfileEntityCacheManager profileEntityCacheManager;
     
     public static int ORCID_HASH_LENGTH = 8;
 
@@ -146,7 +145,7 @@ public class PublicProfileController extends BaseWorkspaceController {
         if (!StringUtil.isBlank(countryName))
             mav.addObject("countryName", countryName);
 
-        LinkedHashMap<String, Work> minimizedWorksMap = new LinkedHashMap<String, Work>();
+        LinkedHashMap<String, WorkForm> minimizedWorksMap = new LinkedHashMap<String, WorkForm>();
         LinkedHashMap<String, Affiliation> affiliationMap = new LinkedHashMap<String, Affiliation>();
         LinkedHashMap<String, Funding> fundingMap = new LinkedHashMap<String, Funding>();
         LinkedHashMap<String, PeerReview> peerReviewMap = new LinkedHashMap<String, PeerReview>();
@@ -226,13 +225,10 @@ public class PublicProfileController extends BaseWorkspaceController {
             }
 
         } catch (JsonGenerationException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         } catch (JsonMappingException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
@@ -293,18 +289,18 @@ public class PublicProfileController extends BaseWorkspaceController {
 
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/works.json")
     public @ResponseBody
-    List<Work> getWorkJson(HttpServletRequest request, @PathVariable("orcid") String orcid, @RequestParam(value = "workIds") String workIdsStr) {
+    List<WorkForm> getWorkJson(HttpServletRequest request, @PathVariable("orcid") String orcid, @RequestParam(value = "workIds") String workIdsStr) {
         Map<String, String> countries = retrieveIsoCountries();
         Map<String, String> languages = lm.buildLanguageMap(localeManager.getLocale(), false);
 
-        HashMap<String, Work> minimizedWorksMap = minimizedWorksMap(orcid);
+        HashMap<String, WorkForm> minimizedWorksMap = minimizedWorksMap(orcid);
 
-        List<Work> works = new ArrayList<Work>();
+        List<WorkForm> works = new ArrayList<WorkForm>();
         String[] workIds = workIdsStr.split(",");
 
         for (String workId : workIds) {
             if (minimizedWorksMap.containsKey(workId)) {
-                Work work = minimizedWorksMap.get(workId);
+                WorkForm work = minimizedWorksMap.get(workId);
                 if (Visibility.PUBLIC.equals(work.getVisibility())) {
                     if (!PojoUtil.isEmpty(work.getCountryCode())) {
                         Text countryName = Text.valueOf(countries.get(work.getCountryCode().getValue()));
@@ -337,52 +333,49 @@ public class PublicProfileController extends BaseWorkspaceController {
      * */
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/getWorkInfo.json", method = RequestMethod.GET)
     public @ResponseBody
-    Work getWorkInfo(@PathVariable("orcid") String orcid, @RequestParam(value = "workId") String workId) {
+    WorkForm getWorkInfo(@PathVariable("orcid") String orcid, @RequestParam(value = "workId") String workId) {
         Map<String, String> countries = retrieveIsoCountries();
         Map<String, String> languages = lm.buildLanguageMap(localeManager.getLocale(), false);
         if (StringUtils.isEmpty(workId))
             return null;
 
-        ProfileWorkEntity profileWork = profileWorkManager.getProfileWork(orcid, workId);
+        Work workObj = workManager.getWork(orcid, workId);
 
-        if (profileWork != null) {
-            OrcidWork orcidWork = jpa2JaxbAdapter.getOrcidWork(profileWork);
-            if (orcidWork != null) {
-                Work work = Work.valueOf(orcidWork);
-                // Set country name
-                if (!PojoUtil.isEmpty(work.getCountryCode())) {
-                    Text countryName = Text.valueOf(countries.get(work.getCountryCode().getValue()));
-                    work.setCountryName(countryName);
-                }
-                // Set language name
-                if (!PojoUtil.isEmpty(work.getLanguageCode())) {
-                    Text languageName = Text.valueOf(languages.get(work.getLanguageCode().getValue()));
-                    work.setLanguageName(languageName);
-                }
-                // Set translated title language name
-                if (work.getTranslatedTitle() != null && !StringUtils.isEmpty(work.getTranslatedTitle().getLanguageCode())) {
-                    String languageName = languages.get(work.getTranslatedTitle().getLanguageCode());
-                    work.getTranslatedTitle().setLanguageName(languageName);
-                }
+        if (workObj != null) {                        
+            WorkForm work = WorkForm.valueOf(workObj);
+            // Set country name
+            if (!PojoUtil.isEmpty(work.getCountryCode())) {
+                Text countryName = Text.valueOf(countries.get(work.getCountryCode().getValue()));
+                work.setCountryName(countryName);
+            }
+            // Set language name
+            if (!PojoUtil.isEmpty(work.getLanguageCode())) {
+                Text languageName = Text.valueOf(languages.get(work.getLanguageCode().getValue()));
+                work.setLanguageName(languageName);
+            }
+            // Set translated title language name
+            if (work.getTranslatedTitle() != null && !StringUtils.isEmpty(work.getTranslatedTitle().getLanguageCode())) {
+                String languageName = languages.get(work.getTranslatedTitle().getLanguageCode());
+                work.getTranslatedTitle().setLanguageName(languageName);
+            }
 
-                // If the work source is the user himself, fill the work source
-                // name
-                if (!PojoUtil.isEmpty(work.getSource()) && profileWork.getProfile().getId().equals(work.getSource())) {
-                    List<Contributor> contributors = work.getContributors();
-                    if (work.getContributors() != null) {
-                        for (Contributor contributor : contributors) {
-                            // If it is not an empty contributor
-                            if (!PojoUtil.isEmpty(contributor.getContributorRole()) || !PojoUtil.isEmpty(contributor.getContributorSequence())) {
-                                ProfileEntity profile = profileWork.getProfile();
-                                String creditNameString = cacheManager.getPublicCreditName(profile);
-                                Text creditName = Text.valueOf(creditNameString);
-                                contributor.setCreditName(creditName);
-                            }
+            // If the work source is the user himself, fill the work source
+            // name
+            if (!PojoUtil.isEmpty(work.getSource()) && orcid.equals(work.getSource())) {
+                List<Contributor> contributors = work.getContributors();
+                if (work.getContributors() != null) {
+                    for (Contributor contributor : contributors) {
+                        // If it is not an empty contributor
+                        if (!PojoUtil.isEmpty(contributor.getContributorRole()) || !PojoUtil.isEmpty(contributor.getContributorSequence())) {
+                            ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
+                            String creditNameString = cacheManager.getPublicCreditName(profile);
+                            Text creditName = Text.valueOf(creditNameString);
+                            contributor.setCreditName(creditName);
                         }
                     }
                 }
-                return work;
             }
+            return work;
         }
 
         return null;
@@ -483,7 +476,7 @@ public class PublicProfileController extends BaseWorkspaceController {
         return activityCacheManager.affiliationMap(profile);
     }
 
-    public LinkedHashMap<String, Work> minimizedWorksMap(String orcid) {
+    public LinkedHashMap<String, WorkForm> minimizedWorksMap(String orcid) {
         OrcidProfile profile = orcidProfileCacheManager.retrievePublic(orcid);
         if (profile == null)
             return null;

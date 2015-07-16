@@ -26,7 +26,6 @@ import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.RedirectUris;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
-import org.orcid.persistence.jpa.entities.ClientSecretEntity;
 
 public class Client implements ErrorsInterface, Serializable {
 
