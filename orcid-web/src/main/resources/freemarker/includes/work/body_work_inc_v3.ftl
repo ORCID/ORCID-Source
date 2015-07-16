@@ -156,7 +156,7 @@
                                  	<@orcid.msg 'common.url' />: <a href="{{work.url.value | urlWithHttp}}" ng-mouseenter="showURLPopOver(work.putCode.value)" ng-mouseleave="hideURLPopOver(work.putCode.value)" ng-class="{'truncate-anchor' : moreInfo[group.groupId] == false || moreInfo[group.groupId] == undefined}" target="_blank">{{work.url.value}}</a>
                                  	<div class="popover-pos">                                 	
 		                                <div class="popover-help-container">
-									       <div class="popover top" ng-class="{'block' : displayURLPopOver[work.putCode.value] == true}">
+									       <div class="popover bottom" ng-class="{'block' : displayURLPopOver[work.putCode.value] == true}">
 												<div class="arrow"></div>
 												<div class="popover-content">
 											    	<a href="{{work.url.value}}" target="_blank">{{work.url.value}}</a>

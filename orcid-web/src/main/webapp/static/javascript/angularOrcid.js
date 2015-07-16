@@ -1530,13 +1530,16 @@ orcidNgModule.filter('workExternalIdentifierHtml', function(){
         else link = workIdLinkJs.getLink(id,type); 
         	
         if (link != null){
+        	if(link.lastIndexOf('http://') === -1 && link.lastIndexOf('https://') === -1) {
+        		link = '//' + link;
+        	}
             output = output + '<a href="' + link.replace(/'/g, "&#39;") + '" class ="' + ngclass + '"' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(work.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(work.putCode.value + $index)\">" + id.escapeHtml() + '</a>';
         }else{
             output = output + id;        
         }
         output += '<div class="popover-pos">\
 			<div class="popover-help-container">\
-	        	<div class="popover top" ng-class="{'+"'block'"+' : displayURLPopOver[work.putCode.value + $index] == true}">\
+	        	<div class="popover bottom" ng-class="{'+"'block'"+' : displayURLPopOver[work.putCode.value + $index] == true}">\
 					<div class="arrow"></div>\
 					<div class="popover-content">\
 				    	<a href="'+link+'" target="_blank" class="ng-binding">'+link+'</a>\
@@ -1544,8 +1547,8 @@ orcidNgModule.filter('workExternalIdentifierHtml', function(){
 				</div>\
 			</div>\
 	  </div>';
-        //if (length > 1 && !last) output = output + ',';
-        return output;
+
+      return output;
     };
 });
 
@@ -1604,7 +1607,7 @@ orcidNgModule.filter('externalIdentifierHtml', ['fundingSrvc', function(fundingS
         }
         output += '<div class="popover-pos">\
         				<div class="popover-help-container">\
-				        	<div class="popover top" ng-class="{'+"'block'"+' : displayURLPopOver[funding.putCode.value + $index] == true}">\
+				        	<div class="popover bottom" ng-class="{'+"'block'"+' : displayURLPopOver[funding.putCode.value + $index] == true}">\
 								<div class="arrow"></div>\
 								<div class="popover-content">\
 							    	<a href="'+link+'" target="_blank" class="ng-binding">'+link+'</a>\

@@ -858,37 +858,51 @@ public class MemberV2Test extends BlackBoxBase {
         assertTrue(group0isOk);
         assertTrue(group1isOk);
     }
-
     
+    @Test
+    public void testTokenWorksOnlyForTheScopeItWasIssued() throws JSONException, InterruptedException, URISyntaxException {
+        long time = System.currentTimeMillis();
+        String accessToken =  getAccessToken(ScopePathType.FUNDING_CREATE);
+        Work work1 = (Work) unmarshallFromPath("/record_2.0_rc1/samples/work-2.0_rc1.xml", Work.class);
+        work1.setPutCode(null);
+        work1.getExternalIdentifiers().getExternalIdentifier().clear();
+        org.orcid.jaxb.model.record.WorkTitle title1 = new org.orcid.jaxb.model.record.WorkTitle();
+        title1.setTitle(new Title("Work # 1"));
+        work1.setWorkTitle(title1);
+        WorkExternalIdentifier wExtId1 = new WorkExternalIdentifier();
+        wExtId1.setWorkExternalIdentifierId(new WorkExternalIdentifierId("Work Id " + time));
+        wExtId1.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
+        wExtId1.setRelationship(Relationship.SELF);
+        wExtId1.setUrl(new Url("http://orcid.org/work#1"));
+        work1.getExternalIdentifiers().getWorkExternalIdentifier().clear();
+        work1.getExternalIdentifiers().getWorkExternalIdentifier().add(wExtId1);
+        
+        
+        //Add the work
+        ClientResponse postResponse = memberV2ApiClient.createWorkXml(user1OrcidId, work1, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.FORBIDDEN.getStatusCode(), postResponse.getStatus());
+        
+        Funding funding = (Funding) unmarshallFromPath("/record_2.0_rc1/samples/funding-2.0_rc1.xml", Funding.class);
+        funding.setPutCode(null);
+        funding.setVisibility(Visibility.PUBLIC);
+        funding.getExternalIdentifiers().getExternalIdentifier().clear();
+        FundingExternalIdentifier fExtId = new FundingExternalIdentifier();
+        fExtId.setType(FundingExternalIdentifierType.GRANT_NUMBER);
+        fExtId.setValue("Funding Id " + time);
+        fExtId.setRelationship(Relationship.SELF);
+        funding.getExternalIdentifiers().getExternalIdentifier().add(fExtId);
+        
+        //Add the funding
+        postResponse = memberV2ApiClient.createFundingXml(user1OrcidId, funding, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+    }
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    public String getAccessToken(ScopePathType scope) throws InterruptedException, JSONException {
+        String accessToken = super.getAccessToken(scope.value());
+        return accessToken;
+    }               
     
     
     public String getAccessToken() throws InterruptedException, JSONException {

@@ -5843,11 +5843,11 @@ textarea.form-control,
 
 .url-popover .popover-help-container .popover{
   left: 0;
-  top: -94px;
+  top: 15px;
 }
 
-.url-popover .popover.top .arrow {
-    left: 15px;
+.url-popover .popover.bottom .arrow {
+    left: 15px !important;
 }
 
 /* Widget */
