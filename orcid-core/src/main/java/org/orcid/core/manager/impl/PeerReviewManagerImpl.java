@@ -218,4 +218,19 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
         List<PeerReviewEntity> peerReviewEntities = peerReviewDao.getByUser(orcid);
         return toPeerReviewList(peerReviewEntities);
     }
+    
+    /**
+     * Get the list of peer reivews that belongs to a user
+     * 
+     * @param userOrcid
+     * @param lastModified
+     *          Last modified date used to check the cache
+     * @return the list of peer reviews that belongs to this user
+     * */
+     @Override
+     @Cacheable(value = "peer-reviews-summaries", key = "#orcid.concat('-').concat(#lastModified)")
+    public List<PeerReviewSummary> getPeerReviewSummaryList(String orcid, long lastModified) {
+         List<PeerReviewEntity> peerReviewEntities = peerReviewDao.getByUser(orcid);
+         return jpaJaxbPeerReviewAdapter.toPeerReviewSummary(peerReviewEntities);
+     }
 }

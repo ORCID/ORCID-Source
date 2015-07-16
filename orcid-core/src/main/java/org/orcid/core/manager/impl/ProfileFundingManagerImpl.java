@@ -45,6 +45,7 @@ import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.solr.entities.OrgDefinedFundingTypeSolrDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
 
 public class ProfileFundingManagerImpl implements ProfileFundingManager {
@@ -336,5 +337,20 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
         orcidSecurityManager.checkSource(pfe.getSource());
         return profileFundingDao.removeProfileFunding(orcid, fundingId);
     }
+
     
+    /**
+     * Get the list of fundings that belongs to a user
+     * 
+     * @param userOrcid
+     * @param lastModified
+     *          Last modified date used to check the cache
+     * @return the list of fundings that belongs to this user
+     * */
+    @Override
+    @Cacheable(value = "fundings-summaries", key = "#userOrcid.concat('-').concat(#lastModified)")
+    public List<FundingSummary> getFundingSummaryList(String userOrcid, long lastModified) {
+        List<ProfileFundingEntity> fundingEntities = profileFundingDao.getByUser(userOrcid);
+        return jpaJaxbFundingAdapter.toFundingSummary(fundingEntities);
+    }
 }

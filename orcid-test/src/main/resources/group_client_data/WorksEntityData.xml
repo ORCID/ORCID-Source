@@ -18,43 +18,28 @@
 
 -->
 <dataset>
-    <work work_id="1"
-          publication_year="2011"
-          publication_month="2"
-          publication_day="1"
-          title="A private work"
-          work_type="BOOK"
-            />
-            
-    <work work_id="2"
-          publication_year="2011"
-          publication_month="2"
-          publication_day="1"
-          title="A limited work"
-          work_type="BOOK"
-            />
-            
-	<work work_id="3"
-          publication_year="2011"
-          publication_month="2"
-          publication_day="1"
-          title="A public work"
-          work_type="BOOK"
-            />
-                      
-	<work work_id="4"
-          publication_year="2011"
-          publication_month="2"
-          publication_day="1"
-          title="A private work from client"
-          work_type="BOOK"
-            />  
+	<work work_id="1" date_created="2011-06-29 15:31:00.00" last_modified="2011-07-02 15:31:00.00"
+		publication_year="2011" publication_month="2" publication_day="1"
+		title="A private work" work_type="BOOK" orcid="9999-9999-9999-9989"
+		visibility="PRIVATE" source_id="9999-9999-9999-9989" />
 
-	<work work_id="5"
-          publication_year="2011"
-          publication_month="2"
-          publication_day="1"
-          title="A private work from client #2"
-          work_type="BOOK"
-            />                                    
+	<work work_id="2" date_created="2011-06-29 15:31:00.00" last_modified="2011-07-02 15:31:00.00"
+		publication_year="2011" publication_month="2" publication_day="1"
+		title="A limited work" work_type="BOOK" orcid="9999-9999-9999-9989"
+		visibility="LIMITED" source_id="9999-9999-9999-9989" />
+
+	<work work_id="3" date_created="2011-06-29 15:31:00.00" last_modified="2011-07-02 15:31:00.00"
+		publication_year="2011" publication_month="2" publication_day="1"
+		title="A public work" work_type="BOOK" orcid="9999-9999-9999-9989"
+		visibility="PUBLIC" source_id="9999-9999-9999-9989" />
+
+	<work work_id="4" date_created="2011-06-29 15:31:00.00" last_modified="2011-07-02 15:31:00.00"
+		publication_year="2011" publication_month="2" publication_day="1"
+		title="A private work from client" work_type="BOOK" orcid="9999-9999-9999-9989"
+		visibility="PRIVATE" source_id="9999-9999-9999-9991" />
+
+	<work work_id="5" date_created="2011-06-29 15:31:00.00" last_modified="2011-07-02 15:31:00.00"
+		publication_year="2011" publication_month="2" publication_day="1"
+		title="A private work from client #2" work_type="BOOK" orcid="9999-9999-9999-9989"
+		visibility="PRIVATE" source_id="9999-9999-9999-9995" />
 </dataset>

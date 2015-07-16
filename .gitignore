@@ -17,3 +17,4 @@ orcid-solr-web/src/main/webapp/solr/data/
 orcid-solr-web/src/main/webapp/solr/org/data/
 orcid-solr-web/src/main/webapp/solr/profile/data/
 orcid-solr-web/src/main/webapp/solr/fundingSubType/data
+orcid-solr-web/**/_rest_managed.json

@@ -35,7 +35,7 @@
 	<bean id="authorizationEndpoint" class="org.orcid.core.oauth.service.OrcidAuthorizationEndpoint">
 		<property name="authorizationCodeServices" ref="orcidAuthorizationCodeService" />
 		<property name="clientDetailsService" ref="clientDetailsManager" />
-		<property name="tokenGranter" ref="authorizationCodeTokenGranter" />
+		<property name="tokenGranter" ref="tokenGranter" />
 		<property name="orcidOAuth2RequestValidator" ref="orcidOAuth2RequestValidator" />
 	</bean>
 
@@ -106,6 +106,16 @@
 	<sec:http pattern="/favicon.ico" security="none" />
 	<sec:http pattern="/static/**" security="none" />
 
+    <!-- Authenticate the client before reaching the token endpoint -->
+    <sec:http pattern="/oauth/token" create-session="stateless" authentication-manager-ref="clientAuthenticationManager">
+        <sec:intercept-url pattern="/oauth/token" access="IS_AUTHENTICATED_FULLY" />
+        <sec:anonymous enabled="false" />
+        <sec:http-basic entry-point-ref="oauthAuthenticationEntryPoint" />
+        <!-- include this only if you need to authenticate clients via request parameters -->
+        <sec:custom-filter ref="customFilters" before="BASIC_AUTH_FILTER" />
+        <sec:access-denied-handler ref="oauthAccessDeniedHandler" />
+    </sec:http>
+    
 	<sec:http pattern="/oauth/.*" access-denied-page="/oauth/signin"
 		access-decision-manager-ref="accessDecisionManager" create-session="ifRequired"
 		path-type="regex">
@@ -338,4 +348,37 @@
 	<bean id="oAuth2RequestFactory" class="org.springframework.security.oauth2.provider.request.DefaultOAuth2RequestFactory">
         <constructor-arg ref="clientDetailsManager"/>
     </bean>	
+    
+        <bean id="customFilters" class="org.springframework.web.filter.CompositeFilter">
+        <property name="filters">
+            <list>
+                <ref bean="clientCredentialsTokenEndpointFilter"/>
+            </list>
+        </property>
+    </bean>
+    <bean id="clientCredentialsTokenEndpointFilter" class="org.orcid.api.common.security.oauth.OrcidOauth2TokenEndPointFilter">
+        <property name="authenticationEntryPoint" ref="oauthAuthenticationEntryPoint"/>
+        <property name="authenticationManager" ref="clientAuthenticationManager"/>
+    </bean>
+    <bean id="tokenGranter" class="org.springframework.security.oauth2.provider.CompositeTokenGranter">
+    <constructor-arg>
+        <list>
+            <ref bean="clientCredentialsTokenGranter"/>
+            <ref bean="authorizationCodeTokenGranter"/>
+        </list>
+    </constructor-arg>
+    </bean>
+    
+    <bean id="orcidClientCredentialEndPointDelegator" class="com.orcid.api.common.server.delegator.impl.OrcidClientCredentialEndPointDelegatorImpl">
+        <property name="tokenGranter" ref="tokenGranter"/>
+        <property name="clientDetailsService" ref="clientDetailsManager"/>        
+    </bean>
+    <bean id="orcidClientCredentialsChecker" class="org.orcid.core.oauth.OrcidClientCredentialsChecker">
+        <constructor-arg ref="clientDetailsManager"/>
+        <constructor-arg ref="oAuth2RequestFactory" />
+    </bean>
+    <bean id="clientCredentialsTokenGranter" class="org.orcid.core.oauth.OrcidClientCredentialsTokenGranter">
+        <constructor-arg ref="tokenServices"/>
+        <constructor-arg ref="orcidClientCredentialsChecker"/>
+    </bean>
 </beans>

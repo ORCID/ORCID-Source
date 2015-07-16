@@ -128,9 +128,5 @@ public interface ProfileWorkManager {
      * @param workId
      * @return
      */
-    boolean updateToMaxDisplay(String orcid, String workId);
-    
-    Work createWork(String orcid, Work work);
-
-    Work updateWork(String orcid, Work work);      
+    boolean updateToMaxDisplay(String orcid, String workId);           
 }

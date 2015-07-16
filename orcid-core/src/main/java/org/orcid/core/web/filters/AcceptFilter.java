@@ -19,9 +19,6 @@ package org.orcid.core.web.filters;
 import static org.orcid.core.api.OrcidApiConstants.*;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Arrays;
-
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;

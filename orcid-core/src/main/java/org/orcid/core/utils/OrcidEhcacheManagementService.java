@@ -20,7 +20,6 @@ import javax.annotation.Resource;
 import javax.management.InstanceNotFoundException;
 import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
-import javax.management.ObjectInstance;
 import javax.management.ObjectName;
 
 import net.sf.ehcache.CacheException;
