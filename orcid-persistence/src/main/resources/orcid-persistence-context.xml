@@ -132,8 +132,6 @@
      
 	<bean id="externalIdentifierDao" class="org.orcid.persistence.dao.impl.ExternalIdentifierDaoImpl" />
 	
-	<bean id="profileWorkDao" class="org.orcid.persistence.dao.impl.ProfileWorkDaoImpl" />
-	
     <bean id="orgAffilationRelationDao" class="org.orcid.persistence.dao.impl.OrgAffiliationRelationDaoImpl" />     
  
     <bean id="orgDao" class="org.orcid.persistence.dao.impl.OrgDaoImpl" />

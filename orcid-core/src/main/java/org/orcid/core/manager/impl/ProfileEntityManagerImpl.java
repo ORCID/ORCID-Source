@@ -36,7 +36,6 @@ import org.orcid.core.manager.PeerReviewManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileFundingManager;
-import org.orcid.core.manager.ProfileWorkManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.core.utils.activities.ActivitiesGroup;
 import org.orcid.core.utils.activities.ActivitiesGroupGenerator;
@@ -106,9 +105,6 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
 
     @Resource
     PeerReviewManager peerReviewManager;
-
-    @Resource
-    ProfileWorkManager profileWorkManager;
 
     @Resource
     WorkManager workManager;

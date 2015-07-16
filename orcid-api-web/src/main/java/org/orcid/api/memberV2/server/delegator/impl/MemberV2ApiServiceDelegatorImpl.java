@@ -33,7 +33,6 @@ import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.PeerReviewManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileFundingManager;
-import org.orcid.core.manager.ProfileWorkManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.core.security.visibility.aop.AccessControl;
@@ -70,9 +69,6 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
 
     @Resource
     private WorkManager workManager;
-
-    @Resource
-    private ProfileWorkManager profileWorkManager;
     
     @Resource
     private ProfileFundingManager profileFundingManager;
@@ -152,10 +148,6 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     @AccessControl(requiredScope = ScopePathType.ORCID_WORKS_CREATE)
     public Response createWork(String orcid, Work work) {
         Work w = workManager.createWork(orcid, work, true);
-        //TODO: Remove this when we remove profile works
-        org.orcid.jaxb.model.message.Visibility visibility = org.orcid.jaxb.model.message.Visibility.fromValue(w.getVisibility().value());
-        profileWorkManager.addProfileWork(orcid, Long.valueOf(w.getPutCode()), visibility, w.getSource().retrieveSourcePath());
-        //END TODO
         try {
             return Response.created(new URI(w.getPutCode())).build();
         } catch (URISyntaxException e) {
@@ -170,10 +162,6 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
             throw new MismatchedPutCodeException("The put code in the URL was " + putCode + " whereas the one in the body was " + work.getPutCode());
         }
         Work w = workManager.updateWork(orcid, work);
-        //TODO: Remove this when we remove profile works        
-        org.orcid.jaxb.model.message.Visibility visibility = org.orcid.jaxb.model.message.Visibility.fromValue(w.getVisibility().value());
-        profileWorkManager.updateVisibility(orcid, putCode, visibility);
-        //END TODO
         return Response.ok(w).build();
     }
 
