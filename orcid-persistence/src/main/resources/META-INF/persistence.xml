@@ -62,6 +62,7 @@
         <class>org.orcid.persistence.jpa.entities.WorkEntity</class>
         <class>org.orcid.persistence.jpa.entities.WorkExternalIdentifierEntity</class>
         <class>org.orcid.persistence.jpa.entities.WorkSourceEntity</class>
+        <class>org.orcid.persistence.jpa.entities.GroupIdRecordEntity</class>
         <class>org.orcid.persistence.jpa.entities</class>
 
         <!-- OAuth entities -->
