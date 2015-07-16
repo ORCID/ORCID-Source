@@ -36,6 +36,7 @@ import org.orcid.jaxb.model.message.OrcidIdentifier;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.springframework.beans.factory.annotation.Value;
@@ -57,7 +58,13 @@ public class DefaultPermissionChecker implements PermissionChecker {
     
     @Resource(name = "profileEntityManager")
     private ProfileEntityManager profileEntityManager;
+    
+	@Resource
+	private ProfileDao profileDao;
 
+	@Value("${org.orcid.core.baseUri}")
+	private String baseUrl;
+	
     @Resource
     private OrcidOauth2TokenDetailService orcidOauthTokenDetailService;
 
@@ -304,6 +311,11 @@ public class DefaultPermissionChecker implements PermissionChecker {
                 // make sure they're not trying to
                 // update private information.
                 return;
+            } else if(profileDao.isProfileDeprecated(orcid)) {
+            	StringBuffer primary = new StringBuffer(baseUrl).append("/").append(userOrcid);
+            	DeprecatedException ex = new DeprecatedException();
+            	ex.setPrimary(primary.toString());
+            	throw ex;
             }
         }
         throw new AccessControlException("You do not have the required permissions.");
