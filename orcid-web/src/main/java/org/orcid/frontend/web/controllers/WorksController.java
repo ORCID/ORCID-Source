@@ -31,7 +31,6 @@ import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ActivityCacheManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
-import org.orcid.core.manager.ProfileWorkManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.jaxb.model.message.OrcidProfile;
@@ -72,10 +71,7 @@ public class WorksController extends BaseWorkspaceController {
 
     private static final String WORKS_MAP = "WORKS_MAP";
 
-    private static final Pattern LANGUAGE_CODE = Pattern.compile("([a-zA-Z]{2})(_[a-zA-Z]{2}){0,2}");
-        
-    @Resource
-    private ProfileWorkManager profileWorkManager;
+    private static final Pattern LANGUAGE_CODE = Pattern.compile("([a-zA-Z]{2})(_[a-zA-Z]{2}){0,2}");       
 
     @Resource
     private WorkManager workManager;
@@ -104,7 +100,6 @@ public class WorksController extends BaseWorkspaceController {
             for (String workId : workIds) {
                 workIdLs.add(new Long(workId));
             }
-            profileWorkManager.removeWorks(getCurrentUserOrcid(), workIdLs);
             workManager.removeWorks(getCurrentUserOrcid(), workIdLs);            
         }
         return workIdLs;
@@ -157,9 +152,7 @@ public class WorksController extends BaseWorkspaceController {
     @RequestMapping(value = "/updateToMaxDisplay.json", method = RequestMethod.GET)
     public @ResponseBody boolean updateToMaxDisplay(HttpServletRequest request, @RequestParam(value = "putCode") String putCode) {
         String orcid = getEffectiveUserOrcid();
-        boolean result = workManager.updateToMaxDisplay(orcid, putCode);
-        profileWorkManager.updateToMaxDisplay(orcid, putCode);
-        return result;
+        return workManager.updateToMaxDisplay(orcid, putCode);        
     }
 
     /**
@@ -399,21 +392,14 @@ public class WorksController extends BaseWorkspaceController {
         newWork.setPutCode(null);                  
 
         // Create work
-        newWork = workManager.createWork(currentProfile.getOrcidIdentifier().getPath(), newWork);
+        newWork = workManager.createWork(currentProfile.getOrcidIdentifier().getPath(), newWork, false);
 
-        // TODO: Still save the profile work, just in case we need a rollback
-        // Create profile work relationship
-        org.orcid.jaxb.model.message.Visibility visibility = org.orcid.jaxb.model.message.Visibility.fromValue(newWork.getVisibility().value());
-        profileWorkManager.addProfileWork(currentProfile.getOrcidIdentifier().getPath(), Long.valueOf(newWork.getPutCode()), visibility, sourceManager.retrieveSourceOrcid());
-        // END TODO
-        
         // Set the id in the work to be returned
         String workId = newWork.getPutCode();
         workForm.setPutCode(Text.valueOf(workId));
 
         // make the new work the default display
-        workManager.updateToMaxDisplay(currentProfile.getOrcidIdentifier().getPath(), workId);
-        profileWorkManager.updateToMaxDisplay(currentProfile.getOrcidIdentifier().getPath(), workId);        
+        workManager.updateToMaxDisplay(currentProfile.getOrcidIdentifier().getPath(), workId);               
     }
 
     private void updateWork(WorkForm workForm) throws Exception {
@@ -425,13 +411,7 @@ public class WorksController extends BaseWorkspaceController {
 
         Work updatedWork = workForm.toWork();        
         // Edit work
-        workManager.updateWork(userOrcid, updatedWork);
-
-        // XXX: Still save the profile work, just in case we need a rollback
-        // TODO: Remove this after works migration
-        // Edit the work visibility
-        org.orcid.jaxb.model.message.Visibility visibility = org.orcid.jaxb.model.message.Visibility.fromValue(updatedWork.getVisibility().value());
-        profileWorkManager.updateVisibility(userOrcid, updatedWork.getPutCode(), visibility);
+        workManager.updateWork(userOrcid, updatedWork);        
     }
 
     /**
@@ -763,7 +743,6 @@ public class WorksController extends BaseWorkspaceController {
         for (String workId : workIdsStr.split(","))
             workIds.add(new Long(workId));
         workManager.updateVisibilities(orcid, workIds, Visibility.fromValue(visibilityStr));
-        profileWorkManager.updateVisibilities(orcid, workIds, org.orcid.jaxb.model.message.Visibility.fromValue(visibilityStr));
         return workIds;
     }
 

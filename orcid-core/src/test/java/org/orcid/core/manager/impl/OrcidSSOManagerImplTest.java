@@ -51,7 +51,7 @@ import org.springframework.test.context.ContextConfiguration;
 public class OrcidSSOManagerImplTest extends BaseTest {
 
     private static final List<String> DATA_FILES = Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SourceClientDetailsEntityData.xml",
-            "/data/ProfileEntityData.xml", "/data/WorksEntityData.xml", "/data/ProfileWorksEntityData.xml", "/data/ClientDetailsEntityData.xml",
+            "/data/ProfileEntityData.xml", "/data/WorksEntityData.xml", "/data/ClientDetailsEntityData.xml",
             "/data/Oauth2TokenDetailsData.xml");
 
     private String orcid1 = "4444-4444-4444-444X";

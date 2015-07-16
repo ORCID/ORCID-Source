@@ -31,7 +31,6 @@ import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.jaxb.model.record.Work;
 import org.orcid.jaxb.model.record.summary.WorkSummary;
 import org.orcid.persistence.dao.ProfileDao;
-import org.orcid.persistence.dao.ProfileWorkDao;
 import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
@@ -48,9 +47,6 @@ public class WorkManagerImpl implements WorkManager {
     
     @Resource
     private WorkDao workDao;
-
-    @Resource
-    private ProfileWorkDao profileWorkDao;
     
     @Resource
     private Jpa2JaxbAdapter jpa2JaxbAdapter;
@@ -70,33 +66,7 @@ public class WorkManagerImpl implements WorkManager {
     @Override
     public void setSourceManager(SourceManager sourceManager) {
         this.sourceManager = sourceManager;
-    }
-    
-    /**
-     * Add a new work to the work table
-     * 
-     * @param work
-     *            The work that will be persited
-     * @return the work already persisted on database
-     * */
-    public Work addWork(Work work) {
-        WorkEntity workEntity = jpaJaxbWorkAdapter.toWorkEntity(work);
-        workEntity = workDao.addWork(workEntity);
-        return jpaJaxbWorkAdapter.toWork(workEntity);
-    }
-
-    /**
-     * Edits an existing work
-     * 
-     * @param work
-     *            The work to be edited
-     * @return The updated entity
-     * */
-    public Work editWork(Work work) {
-        WorkEntity workEntity = jpaJaxbWorkAdapter.toWorkEntity(work);
-        workEntity = workDao.editWork(workEntity);
-        return jpaJaxbWorkAdapter.toWork(workEntity);
-    }
+    }       
 
     /**
      * Find the works for a specific user
@@ -181,8 +151,10 @@ public class WorkManagerImpl implements WorkManager {
     
     @Override
     @Transactional
-    public Work createWork(String orcid, Work work) {
-    	ActivityValidator.validateWork(work);
+    public Work createWork(String orcid, Work work, boolean applyValidations) {        
+        if(applyValidations) {
+        	ActivityValidator.validateWork(work);
+        }        
         WorkEntity workEntity = jpaJaxbWorkAdapter.toWorkEntity(work);
         workEntity.setSource(sourceManager.retrieveSourceEntity());
         ProfileEntity profile = profileDao.find(orcid);
@@ -215,10 +187,7 @@ public class WorkManagerImpl implements WorkManager {
         WorkEntity workEntity = workDao.find(Long.valueOf(workId));
         SourceEntity existingSource = workEntity.getSource();
         orcidSecurityManager.checkSource(existingSource);
-        try {
-            //TODO: Remove after the works migration
-            profileWorkDao.removeWork(orcid, workIdStr);
-            //END TODO
+        try {            
             workDao.remove(workId);
         } catch(Exception e) {
             LOGGER.error("Unable to delete work with ID: " + workIdStr);

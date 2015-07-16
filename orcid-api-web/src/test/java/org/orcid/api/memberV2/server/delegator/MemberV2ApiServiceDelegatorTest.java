@@ -20,7 +20,9 @@ import static org.hamcrest.core.AnyOf.anyOf;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.Arrays;
@@ -34,20 +36,29 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.orcid.api.common.util.ActivityUtils;
 import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.utils.SecurityContextTestUtils;
+import org.orcid.jaxb.model.common.Subtitle;
+import org.orcid.jaxb.model.common.Title;
+import org.orcid.jaxb.model.common.TranslatedTitle;
 import org.orcid.jaxb.model.common.Url;
 import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.jaxb.model.message.ScopePathType;
+import org.orcid.jaxb.model.record.Citation;
 import org.orcid.jaxb.model.record.Education;
 import org.orcid.jaxb.model.record.Employment;
 import org.orcid.jaxb.model.record.Funding;
 import org.orcid.jaxb.model.record.PeerReview;
 import org.orcid.jaxb.model.record.Subject;
 import org.orcid.jaxb.model.record.Work;
+import org.orcid.jaxb.model.record.WorkTitle;
 import org.orcid.jaxb.model.record.WorkType;
 import org.orcid.jaxb.model.record.summary.ActivitiesSummary;
 import org.orcid.jaxb.model.record.summary.PeerReviewSummary;
+import org.orcid.jaxb.model.record.summary.WorkGroup;
+import org.orcid.jaxb.model.record.summary.WorkSummary;
+import org.orcid.jaxb.model.record.summary.Works;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
@@ -56,9 +67,8 @@ import org.springframework.test.context.ContextConfiguration;
 @ContextConfiguration(locations = { "classpath:orcid-api-web-context.xml", "classpath:orcid-api-security-context.xml" })
 public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     private static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml", "/data/SecurityQuestionEntityData.xml",
-            "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/WorksEntityData.xml", "/data/ProfileWorksEntityData.xml",
-            "/data/ClientDetailsEntityData.xml", "/data/Oauth2TokenDetailsData.xml", "/data/OrgsEntityData.xml", "/data/ProfileFundingEntityData.xml",
-            "/data/OrgAffiliationEntityData.xml", "/data/PeerReviewSubjectEntityData.xml", "/data/PeerReviewEntityData.xml");
+            "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/WorksEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/Oauth2TokenDetailsData.xml",
+            "/data/OrgsEntityData.xml", "/data/ProfileFundingEntityData.xml", "/data/OrgAffiliationEntityData.xml", "/data/PeerReviewSubjectEntityData.xml", "/data/PeerReviewEntityData.xml");
 
     @Resource(name = "memberV2ApiServiceDelegator")
     private MemberV2ApiServiceDelegator serviceDelegator;
@@ -150,6 +160,39 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     }
 
     @Test
+    public void testCleanEmptyFieldsOnActivities() {
+        Works works = new Works();
+        WorkGroup group = new WorkGroup();
+        for(int i = 0; i < 5; i++) {
+            WorkSummary summary = new WorkSummary();
+            WorkTitle title = new WorkTitle();
+            title.setTitle(new Title("Work " + i));
+            title.setTranslatedTitle(new TranslatedTitle("", ""));
+            summary.setTitle(title);
+            group.getWorkSummary().add(summary);
+        }
+        works.getWorkGroup().add(group);
+        ActivitiesSummary as = new ActivitiesSummary();
+        as.setWorks(works);
+        
+        ActivityUtils.cleanEmptyFields(as);
+        
+        assertNotNull(as);
+        assertNotNull(as.getWorks());
+        assertNotNull(as.getWorks().getWorkGroup());
+        assertEquals(1, as.getWorks().getWorkGroup().size());
+        assertNotNull(as.getWorks().getWorkGroup().get(0).getWorkSummary());
+        assertEquals(5, as.getWorks().getWorkGroup().get(0).getWorkSummary().size());
+        for(WorkSummary summary : as.getWorks().getWorkGroup().get(0).getWorkSummary()) {
+            assertNotNull(summary.getTitle());
+            assertNotNull(summary.getTitle().getTitle());
+            assertTrue(summary.getTitle().getTitle().getContent().startsWith("Work "));
+            assertNull(summary.getTitle().getTranslatedTitle());
+        }
+        
+    }
+    
+    @Test
     public void testViewWork() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.ACTIVITIES_READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
         Response response = serviceDelegator.viewWork("4444-4444-4444-4446", "5");
@@ -163,7 +206,30 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals("/4444-4444-4444-4446/work/5", work.getPath());
         assertEquals(WorkType.JOURNAL_ARTICLE, work.getWorkType());
     }
-
+    
+    @Test
+    public void testCleanEmptyFieldsOnWorks() {
+        Work work = new Work();
+        work.setWorkCitation(new Citation(""));
+        WorkTitle title = new WorkTitle();
+        title.setTitle(new Title("My Work"));
+        title.setSubtitle(new Subtitle("My subtitle"));
+        title.setTranslatedTitle(new TranslatedTitle("", ""));
+        work.setWorkTitle(title);
+        
+        ActivityUtils.cleanEmptyFields(work);
+        
+        assertNotNull(work);
+        assertNotNull(work.getWorkTitle());        
+        assertNotNull(work.getWorkTitle().getTitle());
+        assertNotNull(work.getWorkTitle().getSubtitle());
+        assertEquals("My Work", work.getWorkTitle().getTitle().getContent());
+        assertEquals("My subtitle", work.getWorkTitle().getSubtitle().getContent());
+        
+        assertNull(work.getWorkCitation());
+        assertNull(work.getWorkTitle().getTranslatedTitle());
+    }
+    
     @Test
     public void testViewFunding() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.ACTIVITIES_READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);

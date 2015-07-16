@@ -39,7 +39,6 @@ import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.OrgManager;
 import org.orcid.core.manager.PeerReviewManager;
 import org.orcid.core.manager.ProfileFundingManager;
-import org.orcid.core.manager.ProfileWorkManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.jaxb.model.common.Organization;
@@ -103,9 +102,6 @@ public class SourceInActivitiesTest extends BaseTest {
     private WorkManager workManager;
 
     @Resource
-    private ProfileWorkManager profileWorkManager;
-
-    @Resource
     ProfileFundingManager profileFundingManager;
 
     @Resource
@@ -129,8 +125,7 @@ public class SourceInActivitiesTest extends BaseTest {
     }
 
     @Before
-    public void before() {
-        profileWorkManager.setSourceManager(sourceManager);
+    public void before() {        
         workManager.setSourceManager(sourceManager);
         profileFundingManager.setSourceManager(sourceManager);
         affiliationsManager.setSourceManager(sourceManager);
@@ -207,20 +202,20 @@ public class SourceInActivitiesTest extends BaseTest {
 
     @Test(expected=ActivityTitleValidationException.class)
     public void addWorkWithoutTitle() {
-    	getWorkWithoutTitle(userOrcid);
+    	getWorkWithoutTitle(userOrcid, true);
     }
     
     @Test(expected=ActivityIdentifierValidationException.class)
     public void addWorkWithoutExternalIdentifiers() {
-    	getWorkWithoutExternalIdentifier(userOrcid);
+    	getWorkWithoutExternalIdentifier(userOrcid, true);
     }
     
     @Test(expected=InvalidPutCodeException.class)
     public void addWorkWithPutCode() {
-    	getWorkWithPutCode(userOrcid);
+    	getWorkWithPutCode(userOrcid, true);
     }
     
-	@Test
+    @Test
     public void sourceDoesntChange_Funding_Test() {
         when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ProfileEntity(userOrcid)));
         ProfileFundingEntity funding1 = getProfileFundingEntity(userOrcid);
@@ -471,11 +466,11 @@ public class SourceInActivitiesTest extends BaseTest {
         WorkExternalIdentifiers extIdentifiers = new WorkExternalIdentifiers();
         extIdentifiers.getExternalIdentifier().add(extId);
         work.setWorkExternalIdentifiers(extIdentifiers);
-        work = workManager.createWork(userOrcid, work);
+        work = workManager.createWork(userOrcid, work, false);
         return workManager.getWork(userOrcid, work.getPutCode());
     }
     
-    private Work getWorkWithoutTitle(String userOrcid2) {
+    private Work getWorkWithoutTitle(String userOrcid2, boolean validate) {
     	Work work = new Work();
         work.setWorkType(org.orcid.jaxb.model.record.WorkType.BOOK);
         WorkExternalIdentifier extId = new WorkExternalIdentifier();
@@ -484,20 +479,20 @@ public class SourceInActivitiesTest extends BaseTest {
         WorkExternalIdentifiers extIdentifiers = new WorkExternalIdentifiers();
         extIdentifiers.getExternalIdentifier().add(extId);
         work.setWorkExternalIdentifiers(extIdentifiers);
-        work = workManager.createWork(userOrcid, work);
+        work = workManager.createWork(userOrcid, work, validate);
         return workManager.getWork(userOrcid, work.getPutCode());
 	}
     
-    private Work getWorkWithoutExternalIdentifier(String userOrcid) {
+    private Work getWorkWithoutExternalIdentifier(String userOrcid, boolean validate) {
         Work work = new Work();
         WorkTitle title = new WorkTitle();
         title.setTitle(new Title("Work " + System.currentTimeMillis()));
         work.setWorkTitle(title);
         work.setWorkType(org.orcid.jaxb.model.record.WorkType.BOOK);
-        work = workManager.createWork(userOrcid, work);
+        work = workManager.createWork(userOrcid, work, validate);
         return workManager.getWork(userOrcid, work.getPutCode());
     }
-    private Work getWorkWithPutCode(String userOrcid) {
+    private Work getWorkWithPutCode(String userOrcid, boolean validate) {
         Work work = new Work();
         WorkTitle title = new WorkTitle();
         title.setTitle(new Title("Work " + System.currentTimeMillis()));
@@ -510,7 +505,7 @@ public class SourceInActivitiesTest extends BaseTest {
         work.setWorkExternalIdentifiers(extIdentifiers);
         work.setWorkType(org.orcid.jaxb.model.record.WorkType.BOOK);
         work.setPutCode("111");
-        work = workManager.createWork(userOrcid, work);
+        work = workManager.createWork(userOrcid, work, validate);
         return workManager.getWork(userOrcid, work.getPutCode());
     }
 

@@ -40,7 +40,6 @@ import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileFundingManager;
 import org.orcid.core.manager.ProfileKeywordManager;
-import org.orcid.core.manager.ProfileWorkManager;
 import org.orcid.core.manager.ResearcherUrlManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
@@ -53,6 +52,7 @@ import org.orcid.persistence.dao.GivenPermissionToDao;
 import org.orcid.persistence.dao.OrgAffiliationRelationDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
+import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
@@ -69,10 +69,7 @@ public class AdminManagerImpl implements AdminManager {
     public static final String AUTHORIZE_DELEGATION_ACTION = "/manage/authorize-delegates";
     
     @Resource
-    private ProfileEntityManager profileEntityManager;
-    
-    @Resource
-    private ProfileWorkManager profileWorkManager;
+    private ProfileEntityManager profileEntityManager;        
     
     @Resource 
     private WorkManager workManager;
@@ -152,9 +149,6 @@ public class AdminManagerImpl implements AdminManager {
                             for (WorkEntity work : deprecated.getWorks()) {
                                 List<Long> works = new ArrayList<Long>();
                                 works.add(work.getId());
-                                //TODO: Remove after the works migration
-                                profileWorkManager.removeWork(deprecated.getId(), String.valueOf(work.getId()));
-                                //END TODO
                                 workManager.removeWorks(deprecated.getId(), works);
                             }
                         }
@@ -218,6 +212,7 @@ public class AdminManagerImpl implements AdminManager {
                         deprecated.setPrimaryRecord(primary);
                         deprecated.setBiography(new String());
                         deprecated.setIso2Country(null);
+                        deprecated.setIndexingStatus(IndexingStatus.PENDING);
                         
                         profileEntityManager.updateProfile(deprecated);                        
                         
