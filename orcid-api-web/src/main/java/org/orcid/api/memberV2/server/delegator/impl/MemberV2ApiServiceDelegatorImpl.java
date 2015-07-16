@@ -34,7 +34,6 @@ import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.PeerReviewManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileFundingManager;
-import org.orcid.core.manager.ProfileWorkManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.core.security.visibility.aop.AccessControl;
@@ -52,6 +51,7 @@ import org.orcid.jaxb.model.record.summary.EducationSummary;
 import org.orcid.jaxb.model.record.summary.EmploymentSummary;
 import org.orcid.jaxb.model.record.summary.FundingSummary;
 import org.orcid.jaxb.model.record.summary.PeerReviewSummary;
+import org.orcid.jaxb.model.record.summary.WorkGroup;
 import org.orcid.jaxb.model.record.summary.WorkSummary;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.WebhookDao;
@@ -72,9 +72,6 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
 
     @Resource
     private WorkManager workManager;
-
-    @Resource
-    private ProfileWorkManager profileWorkManager;
     
     @Resource
     private ProfileFundingManager profileFundingManager;
@@ -128,55 +125,35 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     @AccessControl(requiredScope = ScopePathType.ACTIVITIES_READ_LIMITED)
     public Response viewActivities(String orcid) {
         ActivitiesSummary as = visibilityFilter.filter(profileEntityManager.getActivitiesSummary(orcid));
+        ActivityUtils.cleanEmptyFields(as);
         ActivityUtils.setPathToActivity(as, orcid);
         return Response.ok(as).build();
-    }
-
+    }    
+    
     @Override
     @AccessControl(requiredScope = ScopePathType.ORCID_WORKS_READ_LIMITED)
     public Response viewWork(String orcid, String putCode) {
         Work w = workManager.getWork(orcid, putCode);
-        cleanEmptyFields(w);
+        ActivityUtils.cleanEmptyFields(w);
         orcidSecurityManager.checkVisibility(w);
         ActivityUtils.setPathToActivity(w, orcid);
         return Response.ok(w).build();
-    }        
-
-    private void cleanEmptyFields(Work work) {
-        if(work != null) {
-            if(work.getWorkCitation() != null) {
-                if(PojoUtil.isEmpty(work.getWorkCitation().getCitation())) {
-                    work.setWorkCitation(null);
-                }
-            }
-            
-            if(work.getWorkTitle() != null) {
-                if(work.getWorkTitle().getTranslatedTitle() != null) {
-                    if(PojoUtil.isEmpty(work.getWorkTitle().getTranslatedTitle().getContent())) {
-                        work.getWorkTitle().setTranslatedTitle(null);
-                    }
-                }
-            }
-        }
-    }
+    }            
     
     @Override
     @AccessControl(requiredScope = ScopePathType.ORCID_WORKS_READ_LIMITED)
     public Response viewWorkSummary(String orcid, String putCode) {
         WorkSummary ws = workManager.getWorkSummary(orcid, putCode);
+        ActivityUtils.cleanEmptyFields(ws);
         orcidSecurityManager.checkVisibility(ws);
         ActivityUtils.setPathToActivity(ws, orcid);
         return Response.ok(ws).build();
-    }        
+    }                
     
     @Override
     @AccessControl(requiredScope = ScopePathType.ORCID_WORKS_CREATE)
     public Response createWork(String orcid, Work work) {
         Work w = workManager.createWork(orcid, work, true);
-        //TODO: Remove this when we remove profile works
-        org.orcid.jaxb.model.message.Visibility visibility = org.orcid.jaxb.model.message.Visibility.fromValue(w.getVisibility().value());
-        profileWorkManager.addProfileWork(orcid, Long.valueOf(w.getPutCode()), visibility, w.getSource().retrieveSourcePath());
-        //END TODO
         try {
             return Response.created(new URI(w.getPutCode())).build();
         } catch (URISyntaxException e) {
@@ -191,10 +168,6 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
             throw new MismatchedPutCodeException("The put code in the URL was " + putCode + " whereas the one in the body was " + work.getPutCode());
         }
         Work w = workManager.updateWork(orcid, work);
-        //TODO: Remove this when we remove profile works        
-        org.orcid.jaxb.model.message.Visibility visibility = org.orcid.jaxb.model.message.Visibility.fromValue(w.getVisibility().value());
-        profileWorkManager.updateVisibility(orcid, putCode, visibility);
-        //END TODO
         return Response.ok(w).build();
     }
 

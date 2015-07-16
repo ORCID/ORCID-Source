@@ -37,22 +37,21 @@ import org.orcid.core.manager.ActivityCacheManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.OrcidProfileCacheManager;
 import org.orcid.core.manager.PeerReviewManager;
+import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
-import org.orcid.core.manager.ProfileWorkManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.Funding;
 import org.orcid.jaxb.model.message.FundingType;
 import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.PersonalDetails;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.record.PeerReview;
+import org.orcid.jaxb.model.record.Work;
 import org.orcid.jaxb.model.record.summary.ActivitiesSummary;
 import org.orcid.persistence.jpa.entities.CountryIsoEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
 import org.orcid.pojo.ajaxForm.AffiliationForm;
 import org.orcid.pojo.ajaxForm.Contributor;
 import org.orcid.pojo.ajaxForm.FundingForm;
@@ -87,10 +86,7 @@ public class PublicProfileController extends BaseWorkspaceController {
     private EncryptionManager encryptionManager;
 
     @Resource
-    private ActivityCacheManager activityCacheManager;
-
-    @Resource
-    private ProfileWorkManager profileWorkManager;
+    private ActivityCacheManager activityCacheManager;    
     
     @Resource
     private ProfileEntityManager profileEntManager;
@@ -109,6 +105,9 @@ public class PublicProfileController extends BaseWorkspaceController {
 
     @Resource
     private PeerReviewManager peerReviewManager;
+    
+    @Resource
+    private ProfileEntityCacheManager profileEntityCacheManager;
     
     public static int ORCID_HASH_LENGTH = 8;
 
@@ -226,13 +225,10 @@ public class PublicProfileController extends BaseWorkspaceController {
             }
 
         } catch (JsonGenerationException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         } catch (JsonMappingException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
@@ -343,46 +339,43 @@ public class PublicProfileController extends BaseWorkspaceController {
         if (StringUtils.isEmpty(workId))
             return null;
 
-        ProfileWorkEntity profileWork = profileWorkManager.getProfileWork(orcid, workId);
+        Work workObj = workManager.getWork(orcid, workId);
 
-        if (profileWork != null) {
-            OrcidWork orcidWork = jpa2JaxbAdapter.getOrcidWork(profileWork);
-            if (orcidWork != null) {
-                WorkForm work = WorkForm.valueOf(orcidWork);
-                // Set country name
-                if (!PojoUtil.isEmpty(work.getCountryCode())) {
-                    Text countryName = Text.valueOf(countries.get(work.getCountryCode().getValue()));
-                    work.setCountryName(countryName);
-                }
-                // Set language name
-                if (!PojoUtil.isEmpty(work.getLanguageCode())) {
-                    Text languageName = Text.valueOf(languages.get(work.getLanguageCode().getValue()));
-                    work.setLanguageName(languageName);
-                }
-                // Set translated title language name
-                if (work.getTranslatedTitle() != null && !StringUtils.isEmpty(work.getTranslatedTitle().getLanguageCode())) {
-                    String languageName = languages.get(work.getTranslatedTitle().getLanguageCode());
-                    work.getTranslatedTitle().setLanguageName(languageName);
-                }
+        if (workObj != null) {                        
+            WorkForm work = WorkForm.valueOf(workObj);
+            // Set country name
+            if (!PojoUtil.isEmpty(work.getCountryCode())) {
+                Text countryName = Text.valueOf(countries.get(work.getCountryCode().getValue()));
+                work.setCountryName(countryName);
+            }
+            // Set language name
+            if (!PojoUtil.isEmpty(work.getLanguageCode())) {
+                Text languageName = Text.valueOf(languages.get(work.getLanguageCode().getValue()));
+                work.setLanguageName(languageName);
+            }
+            // Set translated title language name
+            if (work.getTranslatedTitle() != null && !StringUtils.isEmpty(work.getTranslatedTitle().getLanguageCode())) {
+                String languageName = languages.get(work.getTranslatedTitle().getLanguageCode());
+                work.getTranslatedTitle().setLanguageName(languageName);
+            }
 
-                // If the work source is the user himself, fill the work source
-                // name
-                if (!PojoUtil.isEmpty(work.getSource()) && profileWork.getProfile().getId().equals(work.getSource())) {
-                    List<Contributor> contributors = work.getContributors();
-                    if (work.getContributors() != null) {
-                        for (Contributor contributor : contributors) {
-                            // If it is not an empty contributor
-                            if (!PojoUtil.isEmpty(contributor.getContributorRole()) || !PojoUtil.isEmpty(contributor.getContributorSequence())) {
-                                ProfileEntity profile = profileWork.getProfile();
-                                String creditNameString = cacheManager.getPublicCreditName(profile);
-                                Text creditName = Text.valueOf(creditNameString);
-                                contributor.setCreditName(creditName);
-                            }
+            // If the work source is the user himself, fill the work source
+            // name
+            if (!PojoUtil.isEmpty(work.getSource()) && orcid.equals(work.getSource())) {
+                List<Contributor> contributors = work.getContributors();
+                if (work.getContributors() != null) {
+                    for (Contributor contributor : contributors) {
+                        // If it is not an empty contributor
+                        if (!PojoUtil.isEmpty(contributor.getContributorRole()) || !PojoUtil.isEmpty(contributor.getContributorSequence())) {
+                            ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
+                            String creditNameString = cacheManager.getPublicCreditName(profile);
+                            Text creditName = Text.valueOf(creditNameString);
+                            contributor.setCreditName(creditName);
                         }
                     }
                 }
-                return work;
             }
+            return work;
         }
 
         return null;

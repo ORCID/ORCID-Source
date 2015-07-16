@@ -24,7 +24,6 @@ import javax.persistence.Query;
 
 import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.persistence.dao.WorkDao;
-import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.custom.MinimizedWorkEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -159,28 +158,7 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
         query.setParameter("workIds", workIds);
         return query.executeUpdate() > 0;
     }
-    
-    /**
-     * Copy the data from the profile_work table to the work table
-     * @param profileWork
-     *          The profileWork object that contains the profile_work info
-     * @param workId
-     *          The id of the work we want to update
-     * @return true if the work was updated                  
-     * */
-    @Override
-    @Transactional
-    public boolean copyDataFromProfileWork(Long workId, ProfileWorkEntity profileWork) {     
-        WorkEntity work = this.find(workId);
-        work.setAddedToProfileDate(profileWork.getAddedToProfileDate());
-        work.setDisplayIndex(profileWork.getDisplayIndex());
-        work.setVisibility(profileWork.getVisibility());
-        work.setProfile(profileWork.getProfile());
-        work.setSource(profileWork.getSource());
-        this.merge(work);
-        return true;
-    }
-    
+        
     /**
      * Sets the display index of the new work
      * @param workId

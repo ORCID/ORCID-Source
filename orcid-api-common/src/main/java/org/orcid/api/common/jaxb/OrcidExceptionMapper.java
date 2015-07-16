@@ -237,7 +237,14 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
         }
         orcidError.setDeveloperMessage(devMessage);
         Locale locale = localeManager.getLocale();
-        orcidError.setUserMessage(messageSource.getMessage("apiError." + errorCode + ".userMessage", null, locale));
+        String param = null;
+        if(t instanceof DeprecatedException) {
+        	param = ((DeprecatedException) t).getPrimary();
+        	orcidError.setUserMessage(new StringBuffer(messageSource.getMessage("apiError." + errorCode + ".userMessage", null, locale)).append(param).toString());
+        } else {
+        	orcidError.setUserMessage(messageSource.getMessage("apiError." + errorCode + ".userMessage", null, locale));
+        }
+        
         orcidError.setMoreInfo(messageSource.getMessage("apiError." + errorCode + ".moreInfo", null, locale));
         return orcidError;
     }

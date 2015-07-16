@@ -39,7 +39,6 @@ import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.OrgManager;
 import org.orcid.core.manager.PeerReviewManager;
 import org.orcid.core.manager.ProfileFundingManager;
-import org.orcid.core.manager.ProfileWorkManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.jaxb.model.common.Organization;
@@ -99,9 +98,6 @@ public class SourceInActivitiesTest extends BaseTest {
     private WorkManager workManager;
 
     @Resource
-    private ProfileWorkManager profileWorkManager;
-
-    @Resource
     ProfileFundingManager profileFundingManager;
 
     @Resource
@@ -125,8 +121,7 @@ public class SourceInActivitiesTest extends BaseTest {
     }
 
     @Before
-    public void before() {
-        profileWorkManager.setSourceManager(sourceManager);
+    public void before() {        
         workManager.setSourceManager(sourceManager);
         profileFundingManager.setSourceManager(sourceManager);
         affiliationsManager.setSourceManager(sourceManager);
