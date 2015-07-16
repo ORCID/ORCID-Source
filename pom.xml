@@ -206,6 +206,7 @@ the software.
                             <xjb>XML_STYLE</xjb>
                         </mapping>
                         <excludes>
+                        	<exclude>**/src/main/webapp/static/swagger/**</exclude>
                         	<exclude>**/src/main/resources/data/AuditEventData.xml</exclude>
                         	<exclude>**/src/main/resources/orcid-client-group-for-db-unit-data.xml</exclude>
                         	<exclude>**/src/main/webapp/static/ORCID-Fonts-Dot-Com/**</exclude>

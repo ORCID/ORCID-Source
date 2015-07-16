@@ -18,6 +18,9 @@ package org.orcid.api.t1.server;
 
 import javax.ws.rs.Path;
 
+import io.swagger.annotations.Api;
+
+
 /**
  * 
  * @author Will Simpson
@@ -27,3 +30,4 @@ import javax.ws.rs.Path;
 public class T1OrcidApiServiceImplV1_2 extends T1OrcidApiServiceImplBase {
 
 }
+
