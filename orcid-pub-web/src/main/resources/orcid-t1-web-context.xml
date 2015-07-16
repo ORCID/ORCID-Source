@@ -35,6 +35,10 @@
 
     <bean id="jsonpCallbackFilter" class="org.orcid.core.web.filters.JsonpCallbackFilter" />
     
+    <bean id="orcidApiServiceDelegator" class="org.orcid.api.common.delegator.impl.OrcidApiServiceDelegatorImpl" >
+        <property name="orcidSearchManager" ref="orcidSearchManagerReadOnly" />
+    </bean>
+    
     <bean id="t1OrcidApiServiceDelegatorLatest" class="org.orcid.api.common.delegator.impl.OrcidApiServiceVersionedDelegatorImpl"/>
     
     <bean id="t1OrcidApiServiceImplRoot" class="org.orcid.api.t1.server.T1OrcidApiServiceImplRoot">
