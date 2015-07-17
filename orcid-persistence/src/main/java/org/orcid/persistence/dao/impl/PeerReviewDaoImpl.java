@@ -16,6 +16,7 @@
  */
 package org.orcid.persistence.dao.impl;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -75,5 +76,19 @@ public class PeerReviewDaoImpl extends GenericDaoImpl<PeerReviewEntity, Long> im
         query.setParameter("visibility", visibility);
         query.setParameter("orcid", orcid);
         return query.executeUpdate() > 0 ? true : false;
+    }
+    
+    /**
+     * Returns a list of  ids of peer reviews that still have old external identifiers
+     * @param limit
+     *          The batch number to fetch
+     * @return a list of peer review ids with old ext ids          
+     * */
+    @Override
+    @SuppressWarnings("unchecked") 
+    public List<BigInteger> getPeerReviewWithOldExtIds(long limit) {
+        Query query = entityManager.createNativeQuery("SELECT distinct(id) FROM (SELECT id, json_array_elements(json_extract_path(external_identifiers_json, 'workExternalIdentifier')) AS j FROM peer_review WHERE external_identifiers_json is not null limit :limit) AS a WHERE (j->'relationship') is null");
+        query.setParameter("limit", limit);
+        return query.getResultList();
     }
 }

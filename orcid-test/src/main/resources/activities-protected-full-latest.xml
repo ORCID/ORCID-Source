@@ -113,7 +113,7 @@
 	<activities:fundings>
 		<activities:group>
 			<activities:identifiers>
-				<activities:identifier>
+				<activities:identifier>					
 					<activities:external-identifier-type>agr
 					</activities:external-identifier-type>
 					<activities:external-identifier-id>activities:external-identifier-id
@@ -139,12 +139,12 @@
 				</funding:title>
 				<funding:external-identifiers>
 					<funding:externalIdentifier>
+						<common:external-identifier-url>http://tempuri.org
+						</common:external-identifier-url>						
 						<funding:external-identifier-type>grant_number
 						</funding:external-identifier-type>
 						<funding:external-identifier-value>funding:external-identifier-value
-						</funding:external-identifier-value>
-						<funding:external-identifier-url>http://tempuri.org
-						</funding:external-identifier-url>
+						</funding:external-identifier-value>						
 					</funding:externalIdentifier>
 				</funding:external-identifiers>
 				<funding:type>grant</funding:type>
@@ -191,6 +191,7 @@
 				</work:title>
 				<work:external-identifiers>
 					<work:work-external-identifier>
+						
 						<work:external-identifier-type>agr</work:external-identifier-type>
 						<work:external-identifier-id>work:external-identifier-id
 						</work:external-identifier-id>

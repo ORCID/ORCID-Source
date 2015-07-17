@@ -48,10 +48,11 @@ class EmbeddedSolrFactory {
 
     private static CoreContainer createCoreContainer() throws FileNotFoundException {
         URL solrHome = EmbeddedSolrFactory.class.getResource("/solr");
+        URL solrXml = EmbeddedSolrFactory.class.getResource("/solr" + "/solr.xml");
         File solrHomeDir = new File(solrHome.getFile());
         System.setProperty("solr.solr.home", solrHomeDir.getAbsolutePath());
-        CoreContainer.Initializer initializer = new CoreContainer.Initializer();
-        CoreContainer coreContainer = initializer.initialize();
+        File solrXmlFile = new File(solrXml.getFile());;
+        CoreContainer coreContainer = CoreContainer.createAndLoad(solrHomeDir.getAbsolutePath(), solrXmlFile);
         return coreContainer;
     }
 }

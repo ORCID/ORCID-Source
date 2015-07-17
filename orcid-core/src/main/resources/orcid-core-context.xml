@@ -118,9 +118,25 @@
 		<property name="numberOfIndexingThreads" value="${org.orcid.core.numberOfIndexingThreads:4}" />
 		<property name="claimWaitPeriodDays" value="${org.orcid.core.claimWaitPeriodDays:10}" />
 		<property name="claimReminderAfterDays" value="${org.orcid.core.claimReminderAfterDays:8}" />
+		<property name="profileDao" ref="profileDao" />
+        <property name="transactionTemplate" ref="transactionTemplate" />
+		<property name="orcidProfileCacheManager" ref="orcidProfileCacheManager" />
 	</bean>
 	
-	<bean id="orcidProfileCacheManager" class="org.orcid.core.manager.impl.OrcidProfileCacheManagerImpl"/>
+	<bean id="orcidProfileManagerReadOnly" class="org.orcid.core.manager.impl.OrcidProfileManagerReadOnlyImpl">
+        <property name="claimWaitPeriodDays" value="${org.orcid.core.claimWaitPeriodDays:10}" />
+        <property name="profileDao" ref="profileDaoReadOnly" />
+        <property name="transactionTemplate" ref="transactionTemplateReadOnly" />
+        <property name="orcidProfileCacheManager" ref="orcidProfileCacheManagerReadOnly" />
+    </bean>
+	
+	<bean id="orcidProfileCacheManager" class="org.orcid.core.manager.impl.OrcidProfileCacheManagerImpl">
+	    <property name="orcidProfileManager" ref="orcidProfileManager" />
+	</bean>
+	
+	<bean id="orcidProfileCacheManagerReadOnly" class="org.orcid.core.manager.impl.OrcidProfileCacheManagerImpl">
+	    <property name="orcidProfileManager" ref="orcidProfileManagerReadOnly" />
+	</bean>
 	
 	<bean id="profileEntityCacheManager" class="org.orcid.core.manager.impl.ProfileEntityCacheManagerImpl"/>
 	
@@ -141,7 +157,15 @@
 
 	<bean id="subjectManager" class="org.orcid.core.manager.impl.SubjectManagerImpl" />
 
-	<bean id="orcidSearchManager" class="org.orcid.core.manager.impl.OrcidSearchManagerImpl" />
+	<bean id="orcidSearchManager" class="org.orcid.core.manager.impl.OrcidSearchManagerImpl" >
+	    <property name="orcidProfileCacheManager" ref="orcidProfileCacheManager" />
+	    <property name="orcidProfileManager" ref="orcidProfileManager" />
+	</bean>
+	
+	<bean id="orcidSearchManagerReadOnly" class="org.orcid.core.manager.impl.OrcidSearchManagerImpl" >
+        <property name="orcidProfileCacheManager" ref="orcidProfileCacheManagerReadOnly" />
+        <property name="orcidProfileManager" ref="orcidProfileManagerReadOnly" />
+    </bean>
 
 	<bean id="orcidIndexManager" class="org.orcid.core.manager.impl.OrcidIndexManagerImpl" />
 
@@ -300,8 +324,6 @@
 
 	<bean id="externalIdentifierManager" class="org.orcid.core.manager.impl.ExternalIdentifierManagerImpl" />
 	
-	<bean id="profileWorkManager" class="org.orcid.core.manager.impl.ProfileWorkManagerImpl" />
-	
 	<bean id="ActivityCacheManager" class="org.orcid.core.manager.impl.ActivityCacheManagerImpl" />
 	
 	<bean id="profileEventManager" class="org.orcid.core.profileEvent.ProfileEventManager" />
@@ -327,6 +349,8 @@
 	<bean id="orcidSecurityManager" class="org.orcid.core.manager.impl.OrcidSecurityManagerImpl" />
 	
 	<bean id="peerReviewManager" class="org.orcid.core.manager.impl.PeerReviewManagerImpl" />
+	
+	<bean id="groupIdRecordManager" class="org.orcid.core.manager.impl.GroupIdRecordManagerImpl" />
 
 	<bean id="membersManager" class="org.orcid.core.manager.impl.MembersManagerImpl" />
 
@@ -510,6 +534,11 @@
     <bean id="peerReviewMapperFacade" factory-bean="&amp;mapperFacadeFactory" factory-method="getPeerReviewMapperFacade"/>
 	<bean id="jpaJaxbPeerReviewAdapter" class="org.orcid.core.adapter.impl.JpaJaxbPeerReviewAdapterImpl">
         <property name="mapperFacade" ref="peerReviewMapperFacade" />
+    </bean>
+    
+    <bean id="groupIdRecordMapperFacade" factory-bean="&amp;mapperFacadeFactory" factory-method="getGroupIdRecordMapperFacade"/>
+	<bean id="jpaJaxbGroupIdRecordAdapter" class="org.orcid.core.adapter.impl.JpaJaxbGroupIdRecordAdapterImpl">
+        <property name="mapperFacade" ref="groupIdRecordMapperFacade" />
     </bean>
     
     <!-- Geonames username -->

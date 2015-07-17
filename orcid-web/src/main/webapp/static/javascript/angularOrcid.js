@@ -180,6 +180,7 @@ GroupedActivities.prototype.hasPut = function(putCode) {
 GroupedActivities.prototype.key = function(activityIdentifiers) {
     var idPath;
     var idTypePath;
+    var relationship = 'relationship';
     if (this.type == GroupedActivities.ABBR_WORK) {
         idPath = 'workExternalIdentifierId';
         idTypePath = 'workExternalIdentifierType';
@@ -199,6 +200,7 @@ GroupedActivities.prototype.key = function(activityIdentifiers) {
     if (activityIdentifiers[idTypePath]) {    	
         // ISSN is misused too often to identify a work
         if (activityIdentifiers[idTypePath].value != 'issn'
+        		&& (activityIdentifiers[relationship] == null || activityIdentifiers[relationship].value != 'part-of')
         		&& activityIdentifiers[idPath] != null
         		&& activityIdentifiers[idPath].value != null
         		&& activityIdentifiers[idPath].value != '') {
@@ -605,6 +607,7 @@ orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
             loading: false,
             constants: { 'access_type': { 'USER': 'user', 'ANONYMOUS': 'anonymous'}},
             fundingToAddIds: null,
+            moreDetailsActive: false,
             addFundingToScope: function(path) {
                 if( fundingSrvc.fundingToAddIds.length != 0 ) {
                     var fundingIds = fundingSrvc.fundingToAddIds.splice(0,20).join();
@@ -1494,10 +1497,18 @@ orcidNgModule.filter('contributorFilter', function(){
 
 
 orcidNgModule.filter('workExternalIdentifierHtml', function(){
-    return function(workExternalIdentifier, first, last, length){
+    return function(workExternalIdentifier, first, last, length, moreInfo){
 
         var output = '';
-
+        var ngclass = '';
+        var isPartOf = false;
+        
+        if (moreInfo == false || typeof moreInfo == 'undefined') ngclass = 'truncate-anchor';
+        
+        
+        if(workExternalIdentifier.relationship != null && workExternalIdentifier.relationship.value == 'part-of')
+        	isPartOf = true;
+        
         if (workExternalIdentifier == null) return output;
         if (workExternalIdentifier.workExternalIdentifierId == null) return output;
 
@@ -1506,23 +1517,46 @@ orcidNgModule.filter('workExternalIdentifierHtml', function(){
 
         if (workExternalIdentifier.workExternalIdentifierType != null)
             type = workExternalIdentifier.workExternalIdentifierType.value;
-        if (type != null) output = output + "<span class='type'>" + type.toUpperCase() + "</span>: ";
-        var link = workIdLinkJs.getLink(id,type);
+        if (type != null) {
+        	if(isPartOf) 
+        		output = output + "<span class='italic'>" + om.get("common.part_of") + " <span class='type'>" + type.toUpperCase() + "</span></span>: ";
+        	else 
+        		output = output + "<span class='type'>" + type.toUpperCase() + "</span>: ";
+        }
+        var link = null;
 
-        if (link != null)
-            output = output + "<a href='" + link.replace(/'/g, "&#39;") + "' target='_blank'>" + id.escapeHtml() + "</a>";
-        else
-            output = output + id;
+        if (workExternalIdentifier.url != null && workExternalIdentifier.url.value != '')
+        	link = workExternalIdentifier.url.value;
+        else link = workIdLinkJs.getLink(id,type); 
+        	
+        if (link != null){
+        	if(link.lastIndexOf('http://') === -1 && link.lastIndexOf('https://') === -1) {
+        		link = '//' + link;
+        	}
+            output = output + '<a href="' + link.replace(/'/g, "&#39;") + '" class ="' + ngclass + '"' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(work.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(work.putCode.value + $index)\">" + id.escapeHtml() + '</a>';
+        }else{
+            output = output + id;        
+        }
+        output += '<div class="popover-pos">\
+			<div class="popover-help-container">\
+	        	<div class="popover bottom" ng-class="{'+"'block'"+' : displayURLPopOver[work.putCode.value + $index] == true}">\
+					<div class="arrow"></div>\
+					<div class="popover-content">\
+				    	<a href="'+link+'" target="_blank" class="ng-binding">'+link+'</a>\
+				    </div>\
+				</div>\
+			</div>\
+	  </div>';
 
-        if (length > 1 && !last) output = output + ',';
-        return output;
+      return output;
     };
 });
 
 //Currently being used in Fundings only
-orcidNgModule.filter('externalIdentifierHtml', function(){
-    return function(externalIdentifier, first, last, length, type){
+orcidNgModule.filter('externalIdentifierHtml', ['fundingSrvc', function(fundingSrvc){
+    return function(externalIdentifier, first, last, length, type, moreInfo){
     	
+    	var ngclass = '';
     	var output = '';
 
         if (externalIdentifier == null) return output;
@@ -1541,7 +1575,7 @@ orcidNgModule.filter('externalIdentifierHtml', function(){
         var value = null;        
         if(externalIdentifier.value != null){
         	value = externalIdentifier.value.value;
-        }            
+        }
         
         var link = null;
         if(externalIdentifier.url != null)
@@ -1550,27 +1584,43 @@ orcidNgModule.filter('externalIdentifierHtml', function(){
         if(link != null) {
         	if (link.search(/^http[s]?\:\/\//) == -1)
             	link = 'http://' + link;
+        	
         	if(value != null) {
-        		output += "<a href='" + link + "' class='truncate-anchor' target='_blank'>" + value + "</a>";
+        		output += "<a href='" + link + "' class='truncate-anchor' target='_blank' ng-mouseenter='showURLPopOver(funding.putCode.value+ $index)' ng-mouseleave='hideURLPopOver(funding.putCode.value + $index)'>" + value + "</a>";
         	} else {
         		if(type != null) {
+        			
+        			if (moreInfo == false || typeof moreInfo == 'undefined') ngclass = 'truncate-anchor';
+        			
         			if(type.value == 'grant') {
-        				output = om.get('funding.add.external_id.url.label.grant') + ": <a href='" + link + "' class='truncate-anchor' target='_blank'>" + link + "</a>";
+        				output = om.get('funding.add.external_id.url.label.grant') + ': <a href="' + link + '" class="' + ngclass + '"' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(funding.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(funding.putCode.value + $index)\">" + link + "</a>";
         			} else if(type.value == 'contract') {
-        				output = om.get('funding.add.external_id.url.label.contract') + ": <a href='" + link + "' class='truncate-anchor' target='_blank'>" + link + "</a>";
+        				output = om.get('funding.add.external_id.url.label.contract') + ': <a href="' + link + '" class="' + ngclass + '"' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(funding.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(funding.putCode.value + $index)\">" + link + "</a>";
         			} else {
-        				output = om.get('funding.add.external_id.url.label.award') + ": <a href='" + link + "' class='truncate-anchor' target='_blank'>" + link + "</a>";
+        				output = om.get('funding.add.external_id.url.label.award') + ': <a href="' + link + '" class="' + ngclass + '"' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(funding.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(funding.putCode.value + $index)\">" + link + "</a>";
         			}
+        			
         		}        		
         	}
         } else if(value != null) {
         	output = output + " " + value;
         }
+        output += '<div class="popover-pos">\
+        				<div class="popover-help-container">\
+				        	<div class="popover bottom" ng-class="{'+"'block'"+' : displayURLPopOver[funding.putCode.value + $index] == true}">\
+								<div class="arrow"></div>\
+								<div class="popover-content">\
+							    	<a href="'+link+'" target="_blank" class="ng-binding">'+link+'</a>\
+							    </div>\
+							</div>\
+						</div>\
+				  </div>';
       
-        if (length > 1 && !last) output = output + ',';
+        
+        //if (length > 1 && !last) output = output + ',';
         	return output;
-    };
-});
+    	};
+}]);
 
 function removeBadContributors(dw) {
     for (var idx in dw.contributors) {
@@ -2588,8 +2638,10 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
                 }
             }
         }).fail(function(){
-        // something bad is happening!
-            console.log("error fetching register.json");
+            // something bad is happening!
+            console.log("error fetching dupicateResearcher.json");
+            // continue to registration, as solr dup lookup failed.
+            $scope.postRegisterConfirm();
         });
     };
 
@@ -2922,7 +2974,6 @@ orcidNgModule.controller('ClaimThanks', ['$scope', '$compile', function ($scope,
             dataType: 'json',
             success: function(data) {
                 $scope.sourceGrantReadWizard = data;
-                //console.log(angular.toJson(data))
                 $scope.$apply();
                 $scope.showThanks();
             }
@@ -3369,6 +3420,7 @@ orcidNgModule.controller('FundingCtrl',['$scope', '$compile', '$filter', 'fundin
     $scope.showElement = {};
     $scope.fundingImportWizard = false;
     $scope.wizardDescExpanded = {};
+    $scope.displayURLPopOver = {};
     $scope.emptyExtId = {
             "errors": [],
             "type": {
@@ -3433,7 +3485,7 @@ orcidNgModule.controller('FundingCtrl',['$scope', '$compile', '$filter', 'fundin
 
     $scope.showDetailsMouseClick = function(key, $event) {
         $event.stopPropagation();
-        $scope.moreInfo[key] = !$scope.moreInfo[key];
+        $scope.moreInfo[key] = !$scope.moreInfo[key];        
     };
 
     $scope.closeMoreInfo = function(key) {
@@ -3753,7 +3805,7 @@ orcidNgModule.controller('FundingCtrl',['$scope', '$compile', '$filter', 'fundin
     };
 
     $scope.addFundingExternalIdentifier = function () {
-        $scope.editFunding.externalIdentifiers.push({type: {value: ""}, value: {value: ""}, url: {value: ""} });
+        $scope.editFunding.externalIdentifiers.push({type: {value: ""}, value: {value: ""}, url: {value: ""}, relationship: {value: "self"} });
     };
 
     $scope.deleteFundingExternalIdentifier = function(obj) {
@@ -3852,6 +3904,19 @@ orcidNgModule.controller('FundingCtrl',['$scope', '$compile', '$filter', 'fundin
             return true;
         return false;
     };
+    
+    $scope.hideURLPopOver = function(id){
+    	$scope.displayURLPopOver[id] = false;
+    };
+    
+    $scope.showURLPopOver = function(id){
+    	$scope.displayURLPopOver[id] = true;
+    };
+    
+    $scope.moreInfoActive = function(groupID){
+    	if ($scope.moreInfo[groupID] == true || $scope.moreInfo[groupID] != null) return 'truncate-anchor';
+    }
+    
 }]);
 
 /**
@@ -3862,7 +3927,8 @@ orcidNgModule.controller('PublicFundingCtrl',['$scope', '$compile', '$filter', '
     $scope.workspaceSrvc = workspaceSrvc;
     $scope.moreInfo = {};
     $scope.editSources = {};
-    $scope.showElement = {};    
+    $scope.showElement = {};
+    $scope.displayURLPopOver = {};
 
     $scope.sortState = new ActSortState(GroupedActivities.FUNDING);
     $scope.sort = function(key) {
@@ -3885,7 +3951,6 @@ orcidNgModule.controller('PublicFundingCtrl',['$scope', '$compile', '$filter', '
     $scope.showDetailsMouseClick = function(key, $event) {    	    	
         $event.stopPropagation();
         $scope.moreInfo[key] = !$scope.moreInfo[key];
-        console.log(key);
     };
 
     $scope.closeMoreInfo = function(key) {
@@ -3919,6 +3984,14 @@ orcidNgModule.controller('PublicFundingCtrl',['$scope', '$compile', '$filter', '
         $scope.editSources[group.groupId] = false;
         group.activePutCode = group.defaultPutCode;
     };
+    
+    $scope.hideURLPopOver = function(id){
+    	$scope.displayURLPopOver[id] = false;
+	};
+	
+	$scope.showURLPopOver = function(id){
+		$scope.displayURLPopOver[id] = true;
+	};
 
 }]);
 
@@ -3972,6 +4045,7 @@ orcidNgModule.controller('PublicWorkCtrl',['$scope', '$compile', '$filter', 'wor
     $scope.moreInfo = {};
     $scope.editSources = {};
     $scope.showElement = {};
+    $scope.displayURLPopOver = {};
 
     $scope.sortState = new ActSortState(GroupedActivities.ABBR_WORK);
     $scope.sort = function(key) {
@@ -4063,6 +4137,14 @@ orcidNgModule.controller('PublicWorkCtrl',['$scope', '$compile', '$filter', 'wor
     $scope.hideTooltip = function (element){    	
         $scope.showElement[element] = false;
     };
+    
+    $scope.hideURLPopOver = function(id){
+    	$scope.displayURLPopOver[id] = false;
+	};
+	
+	$scope.showURLPopOver = function(id){
+		$scope.displayURLPopOver[id] = true;
+	};
 
 }]);
 
@@ -4091,6 +4173,7 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     $scope.bulkDeleteSubmit = false;
     $scope.workImportWizard = false;
     $scope.wizardDescExpanded = {};
+    $scope.displayURLPopOver = {};
     
     $scope.sortState = new ActSortState(GroupedActivities.ABBR_WORK);
     $scope.sort = function(key) {
@@ -4268,7 +4351,7 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     };
 
     $scope.addExternalIdentifier = function () {
-        $scope.editWork.workExternalIdentifiers.push({workExternalIdentifierId: {value: ""}, workExternalIdentifierType: {value: ""}});
+        $scope.editWork.workExternalIdentifiers.push({workExternalIdentifierId: {value: ""}, workExternalIdentifierType: {value: ""}, relationship: {value: "self"}, url: {value: ""}});
     };
 
     $scope.deleteExternalIdentifier = function(obj) {
@@ -4523,6 +4606,16 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
 
     };
 
+    $scope.fillUrl = function(extId) {
+    	if(extId != null) {
+    		var url = workIdLinkJs.getLink(extId.workExternalIdentifierId.value, extId.workExternalIdentifierType.value);
+    		if(extId.url == null) {
+    			extId.url = {value:""};
+    		}
+    		extId.url.value=url;
+    	}
+    };
+    
     //init
     $scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);
 
@@ -4672,6 +4765,15 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     $scope.toggleWizardDesc = function(id){
     	$scope.wizardDescExpanded[id] = !$scope.wizardDescExpanded[id];
     };
+    
+    $scope.showURLPopOver = function(id){    	
+    	$scope.displayURLPopOver[id] = true;
+    }
+    
+    $scope.hideURLPopOver = function(id){    	
+    	$scope.displayURLPopOver[id] = false;
+    }
+    
     
 }]);
 
@@ -4870,11 +4972,11 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
     };
 
     $scope.addExternalIdentifier = function () {
-        $scope.editPeerReview.externalIdentifiers.push({workExternalIdentifierId: {value: ""}, workExternalIdentifierType: {value: ""}});
+        $scope.editPeerReview.externalIdentifiers.push({workExternalIdentifierId: {value: ""}, workExternalIdentifierType: {value: ""}, relationship: {value: "self"}, url: {value: ""}});
     };
     
     $scope.addSubjectExternalIdentifier = function () {
-    	$scope.editPeerReview.subjectForm.workExternalIdentifiers.push({workExternalIdentifierId: {value: ""}, workExternalIdentifierType: {value: ""}});
+    	$scope.editPeerReview.subjectForm.workExternalIdentifiers.push({workExternalIdentifierId: {value: ""}, workExternalIdentifierType: {value: ""}, relationship: {value: "self"}, url: {value: ""}});
     };
     
     $scope.deleteExternalIdentifier = function(obj) {
@@ -4940,9 +5042,15 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
         $scope.showElement[element] = false;
     };
     
-    
-    
-    
+    $scope.fillUrl = function(extId) {
+    	if(extId != null) {
+    		var url = workIdLinkJs.getLink(extId.workExternalIdentifierId.value, extId.workExternalIdentifierType.value);    		
+    		if(extId.url == null) {
+    			extId.url = {value:""};
+    		}
+    		extId.url.value=url;
+    	}
+    };
     
     //Init
     $scope.peerReviewSrvc.loadPeerReviews(peerReviewSrvc.constants.access_type.USER);
@@ -8388,8 +8496,10 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
                 }
             }
         }).fail(function(){
-        // something bad is happening!
-            console.log("error fetching register.json");
+            // something bad is happening!
+            console.log("error fetching dupicateResearcher.json");
+            // continue to registration, as solr dup lookup failed.
+            $scope.postRegisterConfirm();
         });
     };
 
@@ -9098,3 +9208,18 @@ orcidNgModule.directive('ngEnter', function() {
         });
     };
 });
+
+/*Use instead ng-bind-html when you want to include directives inside the HTML to bind */
+orcidNgModule.directive('bindHtmlCompile', ['$compile', function ($compile) {
+    return {
+        restrict: 'A',
+        link: function (scope, element, attrs) {
+            scope.$watch(function () {
+                return scope.$eval(attrs.bindHtmlCompile);
+            }, function (value) {
+                element.html(value);
+                $compile(element.contents())(scope);
+            });
+        }
+    };
+}]);

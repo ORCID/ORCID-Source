@@ -1929,6 +1929,10 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input{
 	font-weight: normal;
 }
 
+.italic {
+	font-style: italic;
+}
+
 .grey {
 	color: #949599;
 }
@@ -5793,6 +5797,61 @@ textarea.form-control,
 	float: right;
 }
 
+.action-icon-align-right{
+	position: absolute;
+	top: 8px;
+	right: 5px;
+}
+
+.action-icon-inside{
+	padding-right: 25px !important; /* Overwriting global reset styling */
+}
+
+input.form-control,
+select.form-control,
+textarea.form-control,
+.form-group div>select{
+	margin-bottom: 0px; 
+}
+
+.accordion-peer-review{
+	padding: 0;
+}
+
+.settings-table .popover{
+	left: -138px;
+  	top: -178px;
+}
+
+/* URLS Workspace Tooltip */
+.url-popover{
+	position: relative;
+	float: left;
+	clear: both;
+	width: 100%;
+}
+
+.popover-pos{
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+
+.popover-help-container{
+   position: relative;
+}
+
+.url-popover .popover-help-container .popover{
+  left: 0;
+  top: 15px;
+}
+
+.url-popover .popover.bottom .arrow {
+    left: 15px !important;
+}
+
+/* Widget */
+
 .orcid-summary-widget{
 	width: 195px;
 	height: auto;
@@ -5868,8 +5927,12 @@ textarea.form-control,
 }
 
 .emails-box{
-	width: 100%;
-	height: 36px;
+	word-wrap: break-word;
+}
+
+.emails-box #privacy-bar{
+	border-bottom: 1px dotted #C3C3C3;
+	padding: 5px 0;
 }
 
 /* Media Queries */
@@ -6336,24 +6399,6 @@ textarea.form-control,
 	.workspace-accordion-item{
 		border-bottom: none;
 	}
-	
-	#workspace-accordion .popover-help-container .popover{
-		left:-105px !important;
-	}
-	
-	#workspace-accordion .popover-help-container .arrow{
-		left: 117px !important;
-	}		
-
-	
-	.public-profile .popover-help-container .popover{
-		left:-105px;		
-	}
-	
-	.public-profile .popover-help-container .popover.bottom .arrow{
-		left:117px;
-	}
-	
 	
 	/* Lightboxes */	
 	

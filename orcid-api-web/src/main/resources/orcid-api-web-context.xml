@@ -48,6 +48,10 @@
         <property name="serviceDelegator" ref="t2OrcidApiServiceDelegatorV1_1"/>
     </bean>
     
+    <bean id="orcidT2ServiceDelegator" class="org.orcid.api.t2.server.delegator.impl.T2OrcidApiServiceDelegatorImpl">
+        <property name="orcidSearchManager" ref="orcidSearchManager" />
+    </bean>
+    
     <bean id="t2OrcidApiServiceDelegatorLatest" class="org.orcid.api.t2.server.delegator.impl.T2OrcidApiServiceVersionedDelegatorImpl">
         <property name="incomingValidationManager" ref="incomingValidationManagerLatest"/>
         <property name="outgoingValidationManager" ref="outgoingValidationManagerLatest"/>

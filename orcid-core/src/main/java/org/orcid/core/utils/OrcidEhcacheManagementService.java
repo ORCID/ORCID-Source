@@ -20,13 +20,15 @@ import javax.annotation.Resource;
 import javax.management.InstanceNotFoundException;
 import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
-import javax.management.ObjectInstance;
 import javax.management.ObjectName;
 
 import net.sf.ehcache.CacheException;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.hibernate.management.impl.EhcacheHibernateMbeanNames;
 import net.sf.ehcache.management.ManagementService;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 
@@ -40,6 +42,8 @@ public class OrcidEhcacheManagementService extends ManagementService {
 
     @Resource
     private CacheManager coreCacheManager;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(OrcidEhcacheManagementService.class);
 
     public OrcidEhcacheManagementService(CacheManager cacheManager, MBeanServer mBeanServer, boolean registerCacheManager, boolean registerCaches,
             boolean registerCacheConfigurations, boolean registerCacheStatistics) throws CacheException {
@@ -63,7 +67,12 @@ public class OrcidEhcacheManagementService extends ManagementService {
     static ObjectName createObjectName(net.sf.ehcache.CacheManager cacheManager) {
         ObjectName objectName;
         try {
-            objectName = new ObjectName("net.sf.ehcache:type=CacheManager,name=" + EhcacheHibernateMbeanNames.mbeanSafe(cacheManager.getName()));
+            int hashCode = OrcidEhcacheManagementService.class.getClassLoader().hashCode();
+            String suffix = "_" + hashCode;
+            String safeCacheManagerName = EhcacheHibernateMbeanNames.mbeanSafe(cacheManager.getName() + suffix);
+            LOGGER.info("Cache manager name = {}", safeCacheManagerName);
+            cacheManager.setName(safeCacheManagerName);
+            objectName = new ObjectName("net.sf.ehcache:type=CacheManager,name=" + safeCacheManagerName);
         } catch (MalformedObjectNameException e) {
             throw new CacheException(e);
         }

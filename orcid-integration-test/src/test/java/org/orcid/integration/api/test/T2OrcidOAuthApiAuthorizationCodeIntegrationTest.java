@@ -82,10 +82,8 @@ import org.orcid.jaxb.model.message.WorkTitle;
 import org.orcid.jaxb.model.message.WorkType;
 import org.orcid.persistence.dao.ClientRedirectDao;
 import org.orcid.persistence.dao.ProfileDao;
-import org.orcid.persistence.dao.ProfileWorkDao;
 import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.custom.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.keys.ClientRedirectUriPk;
@@ -152,9 +150,6 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
     private WorkDao workDao;
     
     @Resource
-    private ProfileWorkDao profileWorkDao;      
-    
-    @Resource
     OrcidSSOManager ssoManager;
 
     @Value("${org.orcid.web.base.url:http://localhost:8080/orcid-web}")
@@ -163,7 +158,7 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
     private String redirectUri;
 
     private static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml", "/data/SecurityQuestionEntityData.xml",
-            "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/WorksEntityData.xml", "/data/ProfileWorksEntityData.xml",
+            "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/WorksEntityData.xml", 
             "/data/ClientDetailsEntityData.xml", "/data/Oauth2TokenDetailsData.xml", "/data/WebhookEntityData.xml");
 
     @BeforeClass
@@ -330,12 +325,7 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
         assertNotNull(work.getSource());
         assertEquals(CLIENT_DETAILS_ID, work.getSource().getSourceId());
         assertNotNull(work.getVisibility());
-        assertNotNull(work.getAddedToProfileDate());
-               
-        ProfileWorkEntity pf = profileWorkDao.getProfileWork(orcid, String.valueOf(workId));
-        assertNotNull(pf);
-        assertTrue(pf.getMigrated());
-        assertEquals(pf.getDisplayIndex(), work.getDisplayIndex());
+        assertNotNull(work.getAddedToProfileDate());               
     }
 
     @Test

@@ -16,21 +16,16 @@
  */
 package org.orcid.integration.blackbox.web.works;
 
-import static org.junit.Assert.*;
-
-import java.util.List;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.orcid.integration.blackbox.web.SigninTest;
 import org.springframework.beans.factory.annotation.Value;
@@ -96,6 +91,11 @@ public class PrivacyWorksTest {
         wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(privIsVis(PRIVACY_WORKS_TEST+_A, "PUBLIC")));
         wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(privIsVis(PRIVACY_WORKS_TEST+_B, "LIMITED")));
         wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(privIsVis(PRIVACY_WORKS_TEST+_C, "PRIVATE")));
+        
+        // clean up after test
+        AddWorksTest.deleteAllByWorkName(PRIVACY_WORKS_TEST+_A, webDriver);
+        AddWorksTest.deleteAllByWorkName(PRIVACY_WORKS_TEST+_B, webDriver);
+        AddWorksTest.deleteAllByWorkName(PRIVACY_WORKS_TEST+_C, webDriver);
     }
     
     public static By selectPublicByTitle(String title) {

@@ -16,8 +16,6 @@
  */
 package org.orcid.core.manager;
 
-import java.net.URI;
-
 import org.orcid.core.utils.VerifyRegistrationToken;
 import org.orcid.jaxb.model.message.OrcidProfile;
 

@@ -16,6 +16,7 @@
  */
 package org.orcid.persistence.dao;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,4 +61,12 @@ public interface PeerReviewDao extends GenericDao<PeerReviewEntity, Long> {
     boolean updateToMaxDisplay(String orcid, String id);
     
     boolean updateVisibilities(String orcid, ArrayList<Long> peerReviewIds, Visibility visibility);
+    
+    /**
+     * Returns a list of  ids of peer reviews that still have old external identifiers
+     * @param limit
+     *          The batch number to fetch
+     * @return a list of peer review ids with old ext ids          
+     * */
+    List<BigInteger> getPeerReviewWithOldExtIds(long limit);
 }

@@ -45,9 +45,8 @@
 				id="search" ng-show="searchVisible == true || settingsVisible == true" ng-cloak>
 				
 				
-				<!-- Search Form  -->
-				<form id="form-search" action="<@orcid.rootPath "/search/node" />"
-					method="POST" ng-show="searchVisible == true" ng-cloak>
+				<!-- Search Form  -->				
+				<form id="form-search" action='<@orcid.rootPath "/search/node" />' method="POST" ng-show="searchVisible == true" ng-cloak>
 					<div id="search-box">
 						<input type="search" id="search-input" name="keys"
 							ng-focus="searchFocus()" ng-blur="searchBlur()"
@@ -85,7 +84,7 @@
 						class="settings-button" title="<@orcid.msg
 						'public-layout.search.advanced'/>"><i class="glyphicon glyphicon-cog"></i></a>
 					</div>
-				</form>
+				</form>				
 				
 				<!-- Language -->
 				<div class="language-selector" ng-show = "settingsVisible == true">

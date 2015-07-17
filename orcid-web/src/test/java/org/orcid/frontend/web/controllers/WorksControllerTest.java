@@ -47,7 +47,7 @@ import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.TranslatedTitle;
-import org.orcid.pojo.ajaxForm.Work;
+import org.orcid.pojo.ajaxForm.WorkForm;
 import org.orcid.pojo.ajaxForm.WorkExternalIdentifier;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
@@ -62,7 +62,7 @@ import com.google.common.collect.Lists;
 public class WorksControllerTest extends BaseControllerTest {
 
     private static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml", "/data/SecurityQuestionEntityData.xml",
-            "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/WorksEntityData.xml", "/data/ProfileWorksEntityData.xml",
+            "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/WorksEntityData.xml", 
             "/data/ClientDetailsEntityData.xml", "/data/Oauth2TokenDetailsData.xml", "/data/WebhookEntityData.xml");
 
     @Resource
@@ -107,7 +107,7 @@ public class WorksControllerTest extends BaseControllerTest {
 
     @Test
     public void testGetWorkInfo() {
-        Work work = worksController.getWorkInfo("5");
+        WorkForm work = worksController.getWorkInfo("5");
         assertNotNull(work);
         assertEquals("5", work.getPutCode().getValue());
         assertNotNull(work.getPublicationDate());
@@ -128,7 +128,7 @@ public class WorksControllerTest extends BaseControllerTest {
         Unmarshaller unmarshaller = context.createUnmarshaller();
         OrcidWork orcidWork = (OrcidWork) unmarshaller.unmarshal(getClass().getResourceAsStream("/orcid-work.xml"));
         assertNotNull(orcidWork);
-        Work work = Work.valueOf(orcidWork);
+        WorkForm work = WorkForm.valueOf(orcidWork);
 
         worksController.workTitleValidate(work);
         assertEquals(0, work.getTitle().getErrors().size());
@@ -220,14 +220,17 @@ public class WorksControllerTest extends BaseControllerTest {
         HttpSession session = mock(HttpSession.class);
         when(servletRequest.getSession()).thenReturn(session);
 
-        Work work = worksController.getWork(null);
+        WorkForm work = worksController.getWork(null);
         // Set title
         work.setTitle(Text.valueOf("Test add work"));
         work.setWorkType(Text.valueOf("artistic-performance"));
         WorkExternalIdentifier wei = work.getWorkExternalIdentifiers().get(0);
         wei.setWorkExternalIdentifierId(Text.valueOf("1"));
         wei.setWorkExternalIdentifierType(Text.valueOf("doi"));
-
+        if(!PojoUtil.isEmpty(work.getPutCode())) {
+            work.setPutCode(Text.valueOf(""));
+        }
+        
         work = worksController.postWork(null, work);
         assertNotNull(work);
         assertFalse(PojoUtil.isEmpty(work.getPutCode()));
@@ -243,14 +246,14 @@ public class WorksControllerTest extends BaseControllerTest {
         HttpSession session = mock(HttpSession.class);
         when(servletRequest.getSession()).thenReturn(session);
 
-        Work work = worksController.getWorkInfo("7");
+        WorkForm work = worksController.getWorkInfo("7");
         boolean throwsError = false;
         try {
             worksController.postWork(null, work);
         } catch (Exception e) {
             throwsError  = true;
         }
-        assertEquals(throwsError, true);
+        assertTrue(throwsError);
     }
 
     @Test
@@ -259,7 +262,7 @@ public class WorksControllerTest extends BaseControllerTest {
         HttpSession session = mock(HttpSession.class);
         when(servletRequest.getSession()).thenReturn(session);
 
-        Work work = worksController.getWorkInfo("6");
+        WorkForm work = worksController.getWorkInfo("6");
         // Set title
         work.setTitle(Text.valueOf("Test update work"));
         work.setSubtitle(Text.valueOf("Test update subtitle"));
@@ -290,7 +293,7 @@ public class WorksControllerTest extends BaseControllerTest {
 
         worksController.postWork(null, work);
 
-        Work updatedWork = worksController.getWorkInfo("6");
+        WorkForm updatedWork = worksController.getWorkInfo("6");
         assertNotNull(updatedWork);
         assertEquals("6", updatedWork.getPutCode().getValue());
         assertEquals("Test update work", updatedWork.getTitle().getValue());
