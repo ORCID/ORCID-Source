@@ -37,7 +37,6 @@ import org.orcid.core.manager.ExternalIdentifierManager;
 import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.OtherNameManager;
 import org.orcid.core.manager.ProfileKeywordManager;
-import org.orcid.core.manager.ProfileWorkManager;
 import org.orcid.core.manager.ResearcherUrlManager;
 import org.orcid.core.manager.ThirdPartyLinkManager;
 import org.orcid.core.manager.WorkManager;
@@ -89,10 +88,7 @@ public class WorkspaceController extends BaseWorkspaceController {
     private ThirdPartyLinkManager thirdPartyLinkManager;
 
     @Resource
-    private ExternalIdentifierManager externalIdentifierManager;
-
-    @Resource
-    private ProfileWorkManager profileWorkManager;
+    private ExternalIdentifierManager externalIdentifierManager;    
     
     @Resource
     private ProfileKeywordManager profileKeywordManager;

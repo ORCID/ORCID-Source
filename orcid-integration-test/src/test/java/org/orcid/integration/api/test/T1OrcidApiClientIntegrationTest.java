@@ -51,7 +51,7 @@ import com.sun.jersey.api.client.ClientResponse;
 public class T1OrcidApiClientIntegrationTest extends DBUnitTest {
 
     private static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml", "/data/SecurityQuestionEntityData.xml",
-            "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/WorksEntityData.xml", "/data/ProfileWorksEntityData.xml",
+            "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/WorksEntityData.xml", 
             "/data/ClientDetailsEntityData.xml", "/data/Oauth2TokenDetailsData.xml", "/data/WebhookEntityData.xml");
 
     private static String ORCID = "4444-4444-4444-4441";
@@ -76,7 +76,7 @@ public class T1OrcidApiClientIntegrationTest extends DBUnitTest {
     @AfterClass
     public static void afterClass() throws Exception {
         removeDBUnitData(Arrays.asList("/data/WebhookEntityData.xml", "/data/Oauth2TokenDetailsData.xml", "/data/ClientDetailsEntityData.xml",
-                "/data/ProfileWorksEntityData.xml", "/data/WorksEntityData.xml", "/data/ProfileEntityData.xml", "/data/SecurityQuestionEntityData.xml",
+                "/data/WorksEntityData.xml", "/data/ProfileEntityData.xml", "/data/SecurityQuestionEntityData.xml",
                 "/data/EmptyEntityData.xml"));
     }
 

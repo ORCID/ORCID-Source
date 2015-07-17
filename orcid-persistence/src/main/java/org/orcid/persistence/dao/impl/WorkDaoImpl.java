@@ -24,7 +24,6 @@ import javax.persistence.Query;
 
 import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.persistence.dao.WorkDao;
-import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.custom.MinimizedWorkEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -159,28 +158,7 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
         query.setParameter("workIds", workIds);
         return query.executeUpdate() > 0;
     }
-    
-    /**
-     * Copy the data from the profile_work table to the work table
-     * @param profileWork
-     *          The profileWork object that contains the profile_work info
-     * @param workId
-     *          The id of the work we want to update
-     * @return true if the work was updated                  
-     * */
-    @Override
-    @Transactional
-    public boolean copyDataFromProfileWork(Long workId, ProfileWorkEntity profileWork) {     
-        WorkEntity work = this.find(workId);
-        work.setAddedToProfileDate(profileWork.getAddedToProfileDate());
-        work.setDisplayIndex(profileWork.getDisplayIndex());
-        work.setVisibility(profileWork.getVisibility());
-        work.setProfile(profileWork.getProfile());
-        work.setSource(profileWork.getSource());
-        this.merge(work);
-        return true;
-    }
-    
+        
     /**
      * Sets the display index of the new work
      * @param workId
@@ -207,9 +185,10 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
      * */
     @Override
     @SuppressWarnings("unchecked")    
-    public List<BigInteger> getWorksWithOldExtIds(long limit) {
-        Query query = entityManager.createNativeQuery("SELECT distinct(work_id) FROM (SELECT work_id, json_array_elements(json_extract_path(external_ids_json, 'workExternalIdentifier')) AS j FROM work where external_ids_json is not null) AS a WHERE (j->'relationship') is null limit :limit");
+    public List<BigInteger> getWorksWithOldExtIds(long workId, long limit) {
+        Query query = entityManager.createNativeQuery("SELECT distinct(work_id) FROM (SELECT work_id, json_array_elements(json_extract_path(external_ids_json, 'workExternalIdentifier')) AS j FROM work where work_id > :workId and external_ids_json is not null order by work_id limit :limit) AS a WHERE (j->'relationship') is null");
         query.setParameter("limit", limit);
+        query.setParameter("workId", workId);
         return query.getResultList();
     }
 }

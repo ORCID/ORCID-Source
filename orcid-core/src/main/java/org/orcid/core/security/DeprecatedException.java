@@ -28,6 +28,9 @@ public class DeprecatedException extends ApplicationException {
     private String primary;
     private String deprecated;
 
+    public DeprecatedException() {
+    }
+    
     public DeprecatedException(String msg) {
         super(msg);
     }

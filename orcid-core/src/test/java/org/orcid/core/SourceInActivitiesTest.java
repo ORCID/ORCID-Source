@@ -39,17 +39,20 @@ import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.OrgManager;
 import org.orcid.core.manager.PeerReviewManager;
 import org.orcid.core.manager.ProfileFundingManager;
-import org.orcid.core.manager.ProfileWorkManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.jaxb.model.common.Organization;
 import org.orcid.jaxb.model.common.OrganizationAddress;
 import org.orcid.jaxb.model.common.Title;
+import org.orcid.jaxb.model.common.Url;
 import org.orcid.jaxb.model.message.ActivitiesVisibilityDefault;
 import org.orcid.jaxb.model.message.Claimed;
 import org.orcid.jaxb.model.message.ContactDetails;
 import org.orcid.jaxb.model.message.CreationMethod;
 import org.orcid.jaxb.model.message.FamilyName;
+import org.orcid.jaxb.model.record.FundingExternalIdentifier;
+import org.orcid.jaxb.model.record.FundingExternalIdentifierType;
+import org.orcid.jaxb.model.record.FundingExternalIdentifiers;
 import org.orcid.jaxb.model.message.GivenNames;
 import org.orcid.jaxb.model.message.OrcidBio;
 import org.orcid.jaxb.model.message.OrcidHistory;
@@ -99,9 +102,6 @@ public class SourceInActivitiesTest extends BaseTest {
     private WorkManager workManager;
 
     @Resource
-    private ProfileWorkManager profileWorkManager;
-
-    @Resource
     ProfileFundingManager profileFundingManager;
 
     @Resource
@@ -125,8 +125,7 @@ public class SourceInActivitiesTest extends BaseTest {
     }
 
     @Before
-    public void before() {
-        profileWorkManager.setSourceManager(sourceManager);
+    public void before() {        
         workManager.setSourceManager(sourceManager);
         profileFundingManager.setSourceManager(sourceManager);
         affiliationsManager.setSourceManager(sourceManager);
@@ -258,6 +257,66 @@ public class SourceInActivitiesTest extends BaseTest {
         assertNotNull(fromDb4);
         assertEquals(userOrcid, fromDb4.getSource().getSourceId());
     }
+	
+    @Test(expected=ActivityTitleValidationException.class)
+    public void addFundingWithoutTitle() {
+    	getFundingWithoutTitle(userOrcid);
+    }
+    
+    @Test(expected=ActivityIdentifierValidationException.class)
+    public void addFundingWithoutExternalIdentifiers() {
+    	getFundingWithoutExtIdentifiers(userOrcid);
+    }
+    
+    @Test(expected=InvalidPutCodeException.class)
+    public void addFundingWithPutCode() {
+    	getFundingWithPutCode(userOrcid);
+    }
+    
+    private ProfileFundingEntity getFundingWithoutTitle(String userOrcid) {
+        Funding funding = new Funding();        
+        funding.setOrganization(getOrganization());
+        funding.setType(org.orcid.jaxb.model.record.FundingType.AWARD);
+        FundingExternalIdentifier extId = new FundingExternalIdentifier();
+        extId.setValue("111");
+        extId.setType(FundingExternalIdentifierType.GRANT_NUMBER);
+        extId.setUrl(new Url("http://test.com"));
+        FundingExternalIdentifiers extIdentifiers = new FundingExternalIdentifiers();
+        extIdentifiers.getExternalIdentifier().add(extId);
+        funding.setExternalIdentifiers(extIdentifiers);
+        funding = profileFundingManager.createFunding(userOrcid, funding);
+        return profileFundingManager.getProfileFundingEntity(funding.getPutCode());
+    }
+    
+    private ProfileFundingEntity getFundingWithoutExtIdentifiers(String userOrcid) {
+        Funding funding = new Funding();        
+        funding.setOrganization(getOrganization());
+        FundingTitle title = new FundingTitle();
+        title.setTitle(new Title("Title " + System.currentTimeMillis()));
+        funding.setTitle(title);
+        funding.setType(org.orcid.jaxb.model.record.FundingType.AWARD);
+        funding = profileFundingManager.createFunding(userOrcid, funding);
+        return profileFundingManager.getProfileFundingEntity(funding.getPutCode());
+    }
+    
+    private ProfileFundingEntity getFundingWithPutCode(String userOrcid) {
+        Funding funding = new Funding();        
+        funding.setOrganization(getOrganization());
+        FundingTitle title = new FundingTitle();
+        title.setTitle(new Title("Title " + System.currentTimeMillis()));
+        funding.setTitle(title);
+        funding.setType(org.orcid.jaxb.model.record.FundingType.AWARD);
+        FundingExternalIdentifier extId = new FundingExternalIdentifier();
+        extId.setValue("111");
+        extId.setType(FundingExternalIdentifierType.GRANT_NUMBER);
+        extId.setUrl(new Url("http://test.com"));
+        FundingExternalIdentifiers extIdentifiers = new FundingExternalIdentifiers();
+        extIdentifiers.getExternalIdentifier().add(extId);
+        funding.setExternalIdentifiers(extIdentifiers);
+        funding.setPutCode("111");
+        funding = profileFundingManager.createFunding(userOrcid, funding);
+        return profileFundingManager.getProfileFundingEntity(funding.getPutCode());
+    }
 
     @Test
     public void sourceDoesntChange_PeerReview_Test() {
@@ -352,6 +411,19 @@ public class SourceInActivitiesTest extends BaseTest {
         assertNotNull(fromDb4);
         assertEquals(userOrcid, fromDb4.retrieveSourcePath());
     }
+    
+    @Test(expected=InvalidPutCodeException.class)
+    public void addAffiliationWithPutCode() {
+    	getAffiliationWithPutCode(userOrcid);
+    }
+    
+    private Education getAffiliationWithPutCode(String userOrcid) {
+        Education education = new Education();
+        education.setOrganization(getOrganization());
+        education.setPutCode("111");
+        education = affiliationsManager.createEducationAffiliation(userOrcid, education);
+        return affiliationsManager.getEducationAffiliation(userOrcid, education.getPutCode());
+    }
 
     private OrcidProfile getMinimalOrcidProfile() {
         OrcidProfile profile = new OrcidProfile();
@@ -444,6 +516,13 @@ public class SourceInActivitiesTest extends BaseTest {
         title.setTitle(new Title("Title " + System.currentTimeMillis()));
         funding.setTitle(title);
         funding.setType(org.orcid.jaxb.model.record.FundingType.AWARD);
+        FundingExternalIdentifier extId = new FundingExternalIdentifier();
+        extId.setValue("111");
+        extId.setType(FundingExternalIdentifierType.GRANT_NUMBER);
+        extId.setUrl(new Url("http://test.com"));
+        FundingExternalIdentifiers extIdentifiers = new FundingExternalIdentifiers();
+        extIdentifiers.getExternalIdentifier().add(extId);
+        funding.setExternalIdentifiers(extIdentifiers);
         funding = profileFundingManager.createFunding(userOrcid, funding);
         return profileFundingManager.getProfileFundingEntity(funding.getPutCode());
     }
