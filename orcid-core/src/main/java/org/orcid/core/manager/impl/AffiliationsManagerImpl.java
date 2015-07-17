@@ -26,6 +26,7 @@ import org.orcid.core.manager.AffiliationsManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.OrgManager;
 import org.orcid.core.manager.SourceManager;
+import org.orcid.core.manager.validator.ActivityValidator;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.AffiliationType;
 import org.orcid.jaxb.model.record.Education;
@@ -128,6 +129,7 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
      * */
     @Override
     public Education createEducationAffiliation(String orcid, Education education) {
+    	ActivityValidator.validateEducation(education);
         OrgAffiliationRelationEntity educationEntity = jpaJaxbEducationAdapter.toOrgAffiliationRelationEntity(education);
         
         //Updates the give organization with the latest organization from database
@@ -208,6 +210,7 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
      * */
     @Override
     public Employment createEmploymentAffiliation(String orcid, Employment employment) {
+    	ActivityValidator.validateEmployment(employment);
         OrgAffiliationRelationEntity employmentEntity = jpaJaxbEmploymentAdapter.toOrgAffiliationRelationEntity(employment);
         
         //Updates the give organization with the latest organization from database
