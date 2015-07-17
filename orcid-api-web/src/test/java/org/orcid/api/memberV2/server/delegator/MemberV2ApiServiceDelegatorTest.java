@@ -36,6 +36,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.orcid.core.exception.GroupIdRecordNotFoundException;
 import org.orcid.api.common.util.ActivityUtils;
 import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.utils.SecurityContextTestUtils;
@@ -44,6 +45,8 @@ import org.orcid.jaxb.model.common.Title;
 import org.orcid.jaxb.model.common.TranslatedTitle;
 import org.orcid.jaxb.model.common.Url;
 import org.orcid.jaxb.model.common.Visibility;
+import org.orcid.jaxb.model.groupid.GroupIdRecord;
+import org.orcid.jaxb.model.groupid.GroupIdRecords;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record.Citation;
 import org.orcid.jaxb.model.record.Education;
@@ -68,7 +71,7 @@ import org.springframework.test.context.ContextConfiguration;
 public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     private static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml", "/data/SecurityQuestionEntityData.xml",
             "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/WorksEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/Oauth2TokenDetailsData.xml",
-            "/data/OrgsEntityData.xml", "/data/ProfileFundingEntityData.xml", "/data/OrgAffiliationEntityData.xml", "/data/PeerReviewSubjectEntityData.xml", "/data/PeerReviewEntityData.xml");
+            "/data/OrgsEntityData.xml", "/data/ProfileFundingEntityData.xml", "/data/OrgAffiliationEntityData.xml", "/data/PeerReviewSubjectEntityData.xml", "/data/PeerReviewEntityData.xml", "/data/GroupIdRecordEntityData.xml");
 
     @Resource(name = "memberV2ApiServiceDelegator")
     private MemberV2ApiServiceDelegator serviceDelegator;
@@ -365,5 +368,94 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(peerReview);
         assertEquals("http://peer_review.com/2", peerReview.getUrl().getValue());
         assertEquals("APP-6666666666666666", peerReview.getSource().retrieveSourcePath());
+    }
+    
+    @Test
+    public void testGetGroupIdRecord() {
+    	SecurityContextTestUtils.setUpSecurityContextForClientOnly();
+        Response response = serviceDelegator.viewGroupIdRecord("2");
+        assertNotNull(response);
+        GroupIdRecord groupIdRecord = (GroupIdRecord) response.getEntity();
+        assertNotNull(groupIdRecord);        
+        assertEquals("2", groupIdRecord.getPutCode());
+        assertEquals("issn:0000002", groupIdRecord.getGroupId());
+        assertEquals("TestGroup2", groupIdRecord.getName());
+        assertEquals("TestDescription2", groupIdRecord.getDescription());
+        assertEquals("publisher", groupIdRecord.getType());
+    }
+    
+    @Test
+    public void testCreateGroupIdRecord() {
+    	SecurityContextTestUtils.setUpSecurityContextForClientOnly();
+    	GroupIdRecord newRecord = new GroupIdRecord();
+    	newRecord.setGroupId("issn:0000005");
+    	newRecord.setName("TestGroup5");
+    	newRecord.setDescription("TestDescription5");
+    	newRecord.setType("publisher");
+    	Response response = serviceDelegator.createGroupIdRecord(newRecord);
+    	//Response created with location as the group-id
+    	assertNotNull(response.getMetadata().get("Location").get(0));
+    	assertEquals(response.getMetadata().get("Location").get(0).toString(), "issn:0000005");
+    }
+    
+    @Test
+    public void testUpdateGroupIdRecord() {
+    	SecurityContextTestUtils.setUpSecurityContextForClientOnly();
+        Response response = serviceDelegator.viewGroupIdRecord("3");
+        assertNotNull(response);
+        GroupIdRecord groupIdRecord = (GroupIdRecord) response.getEntity();
+        assertNotNull(groupIdRecord);
+        //Verify the name
+        assertEquals(groupIdRecord.getName(), "TestGroup3");
+        //Set a new name for update
+        groupIdRecord.setName("TestGroup33");
+        serviceDelegator.updateGroupIdRecord(groupIdRecord, "3");
+        
+        //Get the entity again and verify the name
+        response = serviceDelegator.viewGroupIdRecord("3");
+        assertNotNull(response);
+        GroupIdRecord groupIdRecordNew = (GroupIdRecord) response.getEntity();
+        assertNotNull(groupIdRecordNew);
+        //Verify the name
+        assertEquals(groupIdRecordNew.getName(), "TestGroup33");
+        
+    }
+    
+    @Test(expected=GroupIdRecordNotFoundException.class)
+    public void testDeleteGroupIdRecord() {
+    	SecurityContextTestUtils.setUpSecurityContextForClientOnly();
+    	//Verify if the record exists
+    	Response response = serviceDelegator.viewGroupIdRecord("4");
+        assertNotNull(response);
+        GroupIdRecord groupIdRecord = (GroupIdRecord) response.getEntity();
+        assertNotNull(groupIdRecord);
+        //Delete the record
+        serviceDelegator.deleteGroupIdRecord("4");
+        //Throws a record not found exception
+        serviceDelegator.viewGroupIdRecord("4");
+    }
+    
+    @Test
+    public void testGetGroupIdRecords() {
+    	SecurityContextTestUtils.setUpSecurityContextForClientOnly();
+    	/*
+    	 * Total number of records in the test data is 4
+    	 * Setting page size to 3 should give us 2 pages.
+    	 */
+    	
+    	//Get the 1st page.
+    	Response response = serviceDelegator.viewGroupIdRecords("3", "1");
+        assertNotNull(response);
+        GroupIdRecords groupIdRecords1 = (GroupIdRecords) response.getEntity();
+        assertNotNull(groupIdRecords1);
+        assertNotNull(groupIdRecords1.getGroupIdRecord());
+        assertEquals(groupIdRecords1.getTotal(), 3);
+        response = serviceDelegator.viewGroupIdRecords("3", "2");
+        assertNotNull(response);
+        GroupIdRecords groupIdRecords2 = (GroupIdRecords) response.getEntity();
+        assertNotNull(groupIdRecords2);
+        assertNotNull(groupIdRecords2.getGroupIdRecord());
+        assertEquals(groupIdRecords2.getTotal(), 1);
+        
     }
 }

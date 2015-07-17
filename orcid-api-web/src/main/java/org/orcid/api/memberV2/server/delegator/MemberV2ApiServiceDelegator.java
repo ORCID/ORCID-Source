@@ -18,6 +18,7 @@ package org.orcid.api.memberV2.server.delegator;
 
 import javax.ws.rs.core.Response;
 
+import org.orcid.jaxb.model.groupid.GroupIdRecord;
 import org.orcid.jaxb.model.record.Education;
 import org.orcid.jaxb.model.record.Employment;
 import org.orcid.jaxb.model.record.Funding;
@@ -82,5 +83,15 @@ public interface MemberV2ApiServiceDelegator {
     Response updatePeerReview(String orcid,  String putCode, PeerReview peerReview);
         
     Response deletePeerReview(String orcid,  String putCode);
+
+	Response viewGroupIdRecord(String putCode);
+
+	Response createGroupIdRecord(GroupIdRecord groupIdRecord);
+
+	Response updateGroupIdRecord(GroupIdRecord groupIdRecord, String putCode);
+
+	Response deleteGroupIdRecord(String putCode);
+	
+	Response viewGroupIdRecords(String pageSize, String pageNum);
     
 }

@@ -349,6 +349,8 @@
 	<bean id="orcidSecurityManager" class="org.orcid.core.manager.impl.OrcidSecurityManagerImpl" />
 	
 	<bean id="peerReviewManager" class="org.orcid.core.manager.impl.PeerReviewManagerImpl" />
+	
+	<bean id="groupIdRecordManager" class="org.orcid.core.manager.impl.GroupIdRecordManagerImpl" />
 
 	<bean id="membersManager" class="org.orcid.core.manager.impl.MembersManagerImpl" />
 
@@ -532,6 +534,11 @@
     <bean id="peerReviewMapperFacade" factory-bean="&amp;mapperFacadeFactory" factory-method="getPeerReviewMapperFacade"/>
 	<bean id="jpaJaxbPeerReviewAdapter" class="org.orcid.core.adapter.impl.JpaJaxbPeerReviewAdapterImpl">
         <property name="mapperFacade" ref="peerReviewMapperFacade" />
+    </bean>
+    
+    <bean id="groupIdRecordMapperFacade" factory-bean="&amp;mapperFacadeFactory" factory-method="getGroupIdRecordMapperFacade"/>
+	<bean id="jpaJaxbGroupIdRecordAdapter" class="org.orcid.core.adapter.impl.JpaJaxbGroupIdRecordAdapterImpl">
+        <property name="mapperFacade" ref="groupIdRecordMapperFacade" />
     </bean>
     
     <!-- Geonames username -->

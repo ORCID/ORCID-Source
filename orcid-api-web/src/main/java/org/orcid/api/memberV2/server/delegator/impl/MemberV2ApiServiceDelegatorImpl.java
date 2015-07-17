@@ -29,6 +29,7 @@ import org.orcid.api.memberV2.server.delegator.MemberV2ApiServiceDelegator;
 import org.orcid.core.exception.MismatchedPutCodeException;
 import org.orcid.core.manager.AffiliationsManager;
 import org.orcid.core.manager.ClientDetailsManager;
+import org.orcid.core.manager.GroupIdRecordManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.PeerReviewManager;
 import org.orcid.core.manager.ProfileEntityManager;
@@ -37,6 +38,8 @@ import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.core.security.visibility.aop.AccessControl;
 import org.orcid.core.security.visibility.filter.VisibilityFilterV2;
+import org.orcid.jaxb.model.groupid.GroupIdRecord;
+import org.orcid.jaxb.model.groupid.GroupIdRecords;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record.Education;
 import org.orcid.jaxb.model.record.Employment;
@@ -99,6 +102,9 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
 
     @Resource(name = "visibilityFilterV2")
     private VisibilityFilterV2 visibilityFilter;
+    
+    @Resource
+    private GroupIdRecordManager groupIdRecordManager;
 
     @Override
     public Response viewStatusText() {
@@ -344,5 +350,43 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
         return Response.noContent().build();
     }
     
-    
+    @Override
+    @AccessControl(requiredScope = ScopePathType.GROUP_ID_RECORD_READ)
+	public Response viewGroupIdRecord(String putCode) {
+		GroupIdRecord record = groupIdRecordManager.getGroupIdRecord(putCode);
+		return Response.ok(record).build();
+	}
+
+    @Override
+    @AccessControl(requiredScope = ScopePathType.GROUP_ID_RECORD_UPDATE)
+	public Response createGroupIdRecord(GroupIdRecord groupIdRecord) {
+		GroupIdRecord newRecord = groupIdRecordManager.createGroupIdRecord(groupIdRecord);
+        try {
+            return Response.created(new URI(newRecord.getGroupId())).build();
+        } catch (URISyntaxException ex) {
+            throw new RuntimeException("Error creating URI for new group-id record", ex);
+        }
+	}
+
+    @Override
+    @AccessControl(requiredScope = ScopePathType.GROUP_ID_RECORD_UPDATE)
+	public Response updateGroupIdRecord(GroupIdRecord groupIdRecord,
+			String putCode) {
+		GroupIdRecord updatedRecord = groupIdRecordManager.updateGroupIdRecord(putCode, groupIdRecord);
+		return Response.ok(updatedRecord).build();
+	}
+
+    @Override
+    @AccessControl(requiredScope = ScopePathType.GROUP_ID_RECORD_UPDATE)
+	public Response deleteGroupIdRecord(String putCode) {
+		groupIdRecordManager.deleteGroupIdRecord(putCode);
+		return Response.noContent().build();
+	}
+
+	@Override
+    @AccessControl(requiredScope = ScopePathType.GROUP_ID_RECORD_READ)
+	public Response viewGroupIdRecords(String pageSize, String pageNum) {
+		GroupIdRecords records = groupIdRecordManager.getGroupIdRecords(pageSize, pageNum);
+		return Response.ok(records).build();
+	}
 }

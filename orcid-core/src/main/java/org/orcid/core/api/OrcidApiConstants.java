@@ -52,6 +52,8 @@ public class OrcidApiConstants {
     public static final String ADD_ACTIVITIES_FLAG_AS_ARCHIVED_PATH = "/add-activities/{id}/archive";
     public static final String PEER_REVIEW = "/{orcid}/peer-review";
     public static final String PEER_REVIEW_SUMMARY = "/{orcid}/peer-review/summary";
+    public static final String GROUP_ID_RECORD = "/group-id-record";
+    
     public static final String ERROR = "/error";
     
     public static final String ORCID_XML = "application/orcid+xml; qs=3";

@@ -99,6 +99,8 @@ public enum ScopePathType implements Serializable {
     @XmlEnumValue("/peer-review/read-limited") PEER_REVIEW_READ_LIMITED("/peer-review/read-limited", READ_PUBLIC),
     @XmlEnumValue("/peer-review/update") PEER_REVIEW_UPDATE("/peer-review/update", PEER_REVIEW_READ_LIMITED, READ_PUBLIC),
     @XmlEnumValue("/peer-review/create") PEER_REVIEW_CREATE("/peer-review/create", PEER_REVIEW_READ_LIMITED),
+    @XmlEnumValue("/group-id-record/read") GROUP_ID_RECORD_READ("/group-id-record/read"),
+    @XmlEnumValue("/group-id-record/update") GROUP_ID_RECORD_UPDATE("/group-id-record/update, /group-id-record/read"),
     
     //XXX: Per activity API    
     @XmlEnumValue("/activities/read-limited") ACTIVITIES_READ_LIMITED("/activities/read-limited", ORCID_WORKS_READ_LIMITED, AFFILIATIONS_READ_LIMITED, FUNDING_READ_LIMITED, PEER_REVIEW_READ_LIMITED),
@@ -106,7 +108,7 @@ public enum ScopePathType implements Serializable {
     @XmlEnumValue("/person/read-limited") PERSON_READ_LIMITED("/person/read-limited", ORCID_BIO_READ_LIMITED),
     @XmlEnumValue("/person/update") PERSON_UPDATE("/person/update", PERSON_READ_LIMITED, ORCID_BIO_UPDATE, ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE),
     @XmlEnumValue("/orcid-profile/create") ORCID_PROFILE_CREATE("/orcid-profile/create", ORCID_BIO_READ_LIMITED, ORCID_WORKS_READ_LIMITED, ORCID_PROFILE_READ_LIMITED, ORCID_WORKS_UPDATE, ORCID_BIO_UPDATE,
-            FUNDING_UPDATE, AFFILIATIONS_UPDATE, ORCID_PATENTS_UPDATE, ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE, ORCID_WORKS_CREATE, FUNDING_CREATE, AFFILIATIONS_CREATE, ORCID_PATENTS_CREATE, PEER_REVIEW_CREATE, PEER_REVIEW_UPDATE, AUTHENTICATE, READ_PUBLIC, ACTIVITIES_UPDATE, ACTIVITIES_READ_LIMITED, PERSON_UPDATE, PERSON_READ_LIMITED);
+            FUNDING_UPDATE, AFFILIATIONS_UPDATE, ORCID_PATENTS_UPDATE, ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE, ORCID_WORKS_CREATE, FUNDING_CREATE, AFFILIATIONS_CREATE, ORCID_PATENTS_CREATE, PEER_REVIEW_CREATE, PEER_REVIEW_UPDATE, AUTHENTICATE, READ_PUBLIC, ACTIVITIES_UPDATE, ACTIVITIES_READ_LIMITED, PERSON_UPDATE, PERSON_READ_LIMITED, GROUP_ID_RECORD_READ, GROUP_ID_RECORD_UPDATE);
     //@formatter:on
 
     private final String value;
@@ -185,6 +187,10 @@ public enum ScopePathType implements Serializable {
         case WEBHOOK:
             return true;
         case PREMIUM_NOTIFICATION:
+            return true;
+        case GROUP_ID_RECORD_READ:
+            return true;
+        case GROUP_ID_RECORD_UPDATE:
             return true;
         default:
             return false;
