@@ -15,7 +15,7 @@
 -- =============================================================================
 --
 
-select pw.orcid from profile_work pw
-			group by pw.orcid
-			having count (pw.work_id) > 1
-		order by (pw.orcid) asc
+select w.orcid from work w
+			group by w.orcid
+			having count (w.work_id) > 1
+		order by (w.orcid) asc

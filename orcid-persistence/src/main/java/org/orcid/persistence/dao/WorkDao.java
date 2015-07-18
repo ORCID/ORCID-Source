@@ -20,7 +20,6 @@ import java.math.BigInteger;
 import java.util.List;
 
 import org.orcid.jaxb.model.common.Visibility;
-import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.custom.MinimizedWorkEntity;
 
@@ -88,17 +87,7 @@ public interface WorkDao extends GenericDao<WorkEntity, Long> {
      *            The client orcid
      * @return true if the work was deleted
      * */
-    boolean removeWorks(String clientOrcid, List<Long> workIds);
-    
-    /**
-     * Copy the data from the profile_work table to the work table
-     * @param profileWork
-     *          The profileWork object that contains the profile_work info
-     * @param workId
-     *          The id of the work we want to update
-     * @return true if the work was updated                  
-     * */
-    boolean copyDataFromProfileWork(Long workId, ProfileWorkEntity profileWork);
+    boolean removeWorks(String clientOrcid, List<Long> workIds);        
     
     /**
      * Sets the display index of the new work

@@ -5768,6 +5768,124 @@ textarea.form-control,
 	float: right;
 }
 
+
+.action-icon-align-right{
+	position: absolute;
+	top: 8px;
+	right: 5px;
+}
+
+.action-icon-inside{
+	padding-right: 25px !important; /* Overwriting global reset styling */
+}
+
+input.form-control,
+select.form-control,
+textarea.form-control,
+.form-group div>select{
+	margin-bottom: 0px; 
+}
+
+.accordion-peer-review{
+	padding: 0;
+}
+
+.settings-table .popover{
+	left: -138px;
+  	top: -178px;
+}
+
+/* URLS Workspace Tooltip */
+.url-popover{
+	position: relative;
+	float: left;
+	clear: both;
+	width: 100%;
+}
+
+.popover-pos{
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+
+.popover-help-container{
+   position: relative;
+}
+
+.url-popover .popover-help-container .popover{
+  left: 0;
+  top: 15px;
+}
+
+.url-popover .popover.bottom .arrow {
+    left: 15px !important;
+}
+
+/* Widget */
+
+.orcid-summary-widget{
+	height: auto;
+	font-family: 'Helvetica', 'Sans serif', 'Verdana';
+	color: #939598;
+	background: #FFF;
+	margin: 0 auto;
+}
+
+.orcid-summary-widget a{
+	text-decoration: none;
+	color: #939598;
+	width: 100%;
+}
+
+.orcid-summary-widget .orcid-widget-details .orcid-logo{
+	background: url('http://orcid.org/sites/all/themes/orcidResponsive/img/orcid-logo.png') 0 0 transparent;
+	height: 43px;
+	width: 140px;
+	margin: 0 auto 15px;
+}
+
+.orcid-summary-widget .orcid-widget-details{
+	text-align: center;
+}
+
+.orcid-summary-widget .orcid-widget-details div{
+	margin: 5px 0;
+}
+
+.orcid-summary-widget .orcid-widget-details .orcid-name{
+	font-size: 20px;
+}
+
+.orcid-summary-widget .orcid-widget-details .orcid-id{
+	font-size: 12px;
+	margin-top: 10px;
+}
+
+.orcid-summary-widget .orcid-widget-details .orcid-summary-items{
+	background: #939598;
+	padding: 5px;
+	color: #FFF;
+	margin-top: 10px;
+	font-size: 14px;
+}
+
+.orcid-summary-widget .orcid-widget-button{
+	padding: 5px;
+	color: #FFF;
+	background: #338caf;
+	text-decoration: none;
+	margin-top: 15px;
+	display: block;
+	text-align: center;
+	font-size: 14px;
+}
+
+.orcid-summary-widget .orcid-widget-button:hover{
+	color: #FFF;
+	background: #a6ce39;
+}
+
 .widget-container .widget-code{
 	height: 100px;
 	cursor: text;
@@ -6255,24 +6373,6 @@ textarea.form-control,
 	.workspace-accordion-item{
 		border-bottom: none;
 	}
-	
-	#workspace-accordion .popover-help-container .popover{
-		left:-105px !important;
-	}
-	
-	#workspace-accordion .popover-help-container .arrow{
-		left: 117px !important;
-	}		
-
-	
-	.public-profile .popover-help-container .popover{
-		left:-105px;		
-	}
-	
-	.public-profile .popover-help-container .popover.bottom .arrow{
-		left:117px;
-	}
-	
 	
 	/* Lightboxes */	
 	

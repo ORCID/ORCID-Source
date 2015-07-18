@@ -42,6 +42,7 @@ import org.apache.log4j.Logger;
 import org.orcid.core.api.OrcidApiConstants;
 import org.orcid.core.exception.OrcidBadRequestException;
 import org.orcid.core.web.filters.ApiVersionFilter;
+import org.orcid.jaxb.model.groupid.GroupIdRecord;
 import org.orcid.jaxb.model.message.ErrorDesc;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.notification.addactivities.NotificationAddActivities;
@@ -75,6 +76,7 @@ public class OrcidValidationJaxbContextResolver implements ContextResolver<Unmar
         SCHEMA_FILENAME_PREFIX_BY_CLASS.put(Employment.class, "record_2.0_rc1/employment-");
         SCHEMA_FILENAME_PREFIX_BY_CLASS.put(PeerReview.class, "record_2.0_rc1/peer-review-");
         SCHEMA_FILENAME_PREFIX_BY_CLASS.put(OrcidMessage.class, "orcid-message-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS.put(GroupIdRecord.class, "group-id-2.0_rc1/group-id-");
     }
     private JAXBContext jaxbContext;
     private Map<String, Schema> schemaByPath = new ConcurrentHashMap<>();

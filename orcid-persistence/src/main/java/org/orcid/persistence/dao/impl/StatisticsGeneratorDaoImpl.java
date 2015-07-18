@@ -43,13 +43,13 @@ public class StatisticsGeneratorDaoImpl implements StatisticsGeneratorDao {
     }
 
     public long getAccountsWithWorks() {
-        Query query = entityManager.createNativeQuery("select count (distinct orcid) from profile_work");
+        Query query = entityManager.createNativeQuery("select count (distinct orcid) from work");
         BigInteger numberOfAccountsWithWorks = (BigInteger) query.getSingleResult();
         return numberOfAccountsWithWorks.longValue();
     }
 
     public long getNumberOfWorks() {
-        Query query = entityManager.createNativeQuery("select count(*) from profile_work");
+        Query query = entityManager.createNativeQuery("select count(*) from work");
         BigInteger numberOfWorks = (BigInteger) query.getSingleResult();
         return numberOfWorks.longValue();
     }

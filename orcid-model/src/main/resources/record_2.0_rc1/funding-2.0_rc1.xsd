@@ -62,7 +62,7 @@
 						<xs:element name="organization-defined-type" type="common:organization-defined-type"
 							minOccurs="0" maxOccurs="1" />
 						<xs:element name="title" type="funding:funding-title"
-							minOccurs="1" />
+							minOccurs="0" />
 						<xs:element name="short-description" type="common:short-description"
 							minOccurs="0" />
 						<xs:element name="amount" type="common:amount"
