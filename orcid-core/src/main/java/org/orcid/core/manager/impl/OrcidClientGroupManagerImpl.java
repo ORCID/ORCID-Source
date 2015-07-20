@@ -662,7 +662,7 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
                 ScopePathType.FUNDING_UPDATE, ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE, ScopePathType.ORCID_BIO_READ_LIMITED, ScopePathType.ORCID_BIO_UPDATE,
                 ScopePathType.ORCID_PROFILE_READ_LIMITED, ScopePathType.ORCID_WORKS_CREATE, ScopePathType.ORCID_WORKS_READ_LIMITED, ScopePathType.ORCID_WORKS_UPDATE,
                 ScopePathType.READ_PUBLIC, ScopePathType.ACTIVITIES_UPDATE, ScopePathType.PERSON_UPDATE, ScopePathType.ACTIVITIES_READ_LIMITED,
-                ScopePathType.PERSON_READ_LIMITED, ScopePathType.GROUP_ID_RECORD_UPDATE, ScopePathType.GROUP_ID_RECORD_READ));
+                ScopePathType.PERSON_READ_LIMITED));
     }
 
     private void addPremiumOnlyScopes(Set<String> scopes) {
