@@ -472,7 +472,7 @@
 				<p><@orcid.msg 'public-layout.logo.tagline'/></p>
 			</div>
 			<span class="see-more">${liveIds} <@orcid.msg
-				'public-layout.amount_ids'/> <a href="<@orcid.rootPath " /statistics" />"
+				'public-layout.amount_ids'/> <a href="<@orcid.rootPath " statistics" />"
 				title=""><@orcid.msg 'public-layout.see_more'/></a>
 		</span>
 			<!--
