@@ -4,7 +4,13 @@ The group-id-record API allows a client to view, add, update, delete the group-i
 A client can access the records with the following 2 scopes : 
 
 /group-id-record/read : GET
+
 /group-id-record/update : GET, POST, PUT, DELETE
+
+
+In order to get access to these scopes, one should manually map the scopes with the client in the table client_scope using the following example query :
+
+``insert into client_scope values(<Client ID>,'/group-id-record/read','2015-07-20 14:08:42.128','2015-07-20 14:08:42.128' );``
 
 ##### To use the API >>>
 
