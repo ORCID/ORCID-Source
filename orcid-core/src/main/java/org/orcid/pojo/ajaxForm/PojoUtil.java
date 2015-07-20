@@ -158,5 +158,14 @@ public class PojoUtil {
     public static boolean isEmtpy(FundingExternalIdentifierForm g) {
     	return PojoUtil.areAllEmtpy(g.getType(), g.getValue(), g.getUrl());
     }
+    
+    public static boolean isEmpty(org.orcid.jaxb.model.message.ContributorOrcid contributorOrcid) {
+        if(contributorOrcid == null) return true;
+        return isEmpty(contributorOrcid.getPath());
+    }
 
+    public static boolean isEmpty(org.orcid.jaxb.model.common.ContributorOrcid contributorOrcid) {
+        if(contributorOrcid == null) return true;
+        return isEmpty(contributorOrcid.getPath());
+    }
 }
