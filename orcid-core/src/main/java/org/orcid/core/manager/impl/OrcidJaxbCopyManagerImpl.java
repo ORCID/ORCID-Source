@@ -300,11 +300,13 @@ public class OrcidJaxbCopyManagerImpl implements OrcidJaxbCopyManager {
     public void copyUpdatedContactDetailsToExistingPreservingVisibility(OrcidBio existing, OrcidBio updated) {
        ContactDetails existingContactDetails = existing.getContactDetails();
        ContactDetails updatedContactDetails = updated.getContactDetails();
-       copyUpdatedEmails(existingContactDetails, updatedContactDetails);
+//     copyUpdatedEmails(existingContactDetails, updatedContactDetails);
        copyUpdatedAddress(existingContactDetails, updatedContactDetails);
     }
 
-    private void copyUpdatedEmails(ContactDetails existingContactDetails, ContactDetails updatedContactDetails) {
+    //Not being used now as the client is not allowed to add or edit emails.
+    @SuppressWarnings("unused")
+	private void copyUpdatedEmails(ContactDetails existingContactDetails, ContactDetails updatedContactDetails) {
     	String clientId = sourceManager.retrieveSourceOrcid();
     	List<Email> allEmails = new ArrayList<Email>();
 		List<Email> existingEmails = existingContactDetails.getEmail();

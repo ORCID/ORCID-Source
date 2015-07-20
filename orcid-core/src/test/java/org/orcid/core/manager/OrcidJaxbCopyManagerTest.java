@@ -370,14 +370,8 @@ public class OrcidJaxbCopyManagerTest extends BaseTest {
         assertEquals("josiah_carberry@brown.edu", existingContactDetails.retrievePrimaryEmail().getValue());
         assertEquals(Visibility.LIMITED, existingContactDetails.retrievePrimaryEmail().getVisibility());
 
-        for (String alternativeEmail : updatedAlternativeEmails) {
-            Email email = existingContactDetails.getEmailByString(alternativeEmail);
-            assertNotNull(email);
-            assertEquals(Visibility.PRIVATE, email.getVisibility());
-        }
-        //Exisiting client email should be removed
-        assertEquals(3, existingContactDetails.getEmail().size());
-        assertEquals(null, existingContactDetails.getEmailByString("josiah_carberry_1@brown.edu"));
+        //Emails remain unchanged
+        assertEquals(2, existingContactDetails.getEmail().size());
         assertEquals(Iso3166Country.GB, existingContactDetails.getAddress().getCountry().getValue());
         assertEquals(OrcidVisibilityDefaults.COUNTRY_DEFAULT.getVisibility(), existingContactDetails.getAddress().getCountry().getVisibility());
 
@@ -408,16 +402,9 @@ public class OrcidJaxbCopyManagerTest extends BaseTest {
         orcidJaxbCopyManager.copyUpdatedBioToExistingWithVisibility(existingOrcidBioProtected, updatedOrcidBioPublic);
 
         existingContactDetails = existingOrcidBioProtected.getContactDetails();
-        //It should remain unchanged, as the 
-        assertEquals(Visibility.PRIVATE, existingContactDetails.getEmailByString("jimmyb1@semantico.com").getVisibility());
 
-        for (String alternativeEmail : moreAlternativeEmails) {
-            Email email = existingContactDetails.getEmailByString(alternativeEmail);
-            assertNotNull(email);
-            assertEquals(Visibility.PRIVATE, email.getVisibility());
-        }
-        //3 emails existing, out of which 1 is public. 1 email new and 1 for edit. public is removed so 3 remain
-        assertEquals(3, existingContactDetails.getEmail().size());
+      //Emails remain unchanged
+        assertEquals(2, existingContactDetails.getEmail().size());
 
         assertEquals(Iso3166Country.AU, existingContactDetails.getAddress().getCountry().getValue());
     }
@@ -551,14 +538,11 @@ public class OrcidJaxbCopyManagerTest extends BaseTest {
         assertEquals(Visibility.PRIVATE, privateBio.getBiography().getVisibility());
         assertEquals(Iso3166Country.US, privateBio.getContactDetails().getAddress().getCountry().getValue());
         assertEquals(Visibility.PRIVATE, privateBio.getContactDetails().getAddress().getCountry().getVisibility());
-        assertEquals(6, privateBio.getContactDetails().getEmail().size());
+        //Remains same as client cannot add/update emails.
+        assertEquals(3, privateBio.getContactDetails().getEmail().size());
         assertEquals("private_Email0", privateBio.getContactDetails().getEmail().get(0).getValue());
         assertEquals("private_Email1", privateBio.getContactDetails().getEmail().get(1).getValue());
         assertEquals("private_Email2", privateBio.getContactDetails().getEmail().get(2).getValue());
-        assertEquals("public_Email0", privateBio.getContactDetails().getEmail().get(3).getValue());
-        assertEquals("public_Email1", privateBio.getContactDetails().getEmail().get(4).getValue());
-        assertEquals("public_Email2", privateBio.getContactDetails().getEmail().get(5).getValue());
-        assertTrue(privateBio.getContactDetails().getEmail().containsAll(publicBio.getContactDetails().getEmail()));
         assertEquals(6, privateBio.getExternalIdentifiers().getExternalIdentifier().size());
         assertEquals("private_CommonName0", privateBio.getExternalIdentifiers().getExternalIdentifier().get(0).getExternalIdCommonName().getContent());
         assertEquals("private_CommonName1", privateBio.getExternalIdentifiers().getExternalIdentifier().get(1).getExternalIdCommonName().getContent());
