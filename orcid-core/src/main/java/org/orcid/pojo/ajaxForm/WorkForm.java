@@ -29,18 +29,10 @@ import org.orcid.core.utils.JsonUtils;
 import org.orcid.jaxb.model.common.CreatedDate;
 import org.orcid.jaxb.model.common.SourceClientId;
 import org.orcid.jaxb.model.common.SourceOrcid;
-import org.orcid.jaxb.model.message.Country;
 import org.orcid.jaxb.model.message.FuzzyDate;
-import org.orcid.jaxb.model.message.OrcidWork;
-import org.orcid.jaxb.model.message.PublicationDate;
-import org.orcid.jaxb.model.message.Source;
-import org.orcid.jaxb.model.message.Title;
-import org.orcid.jaxb.model.message.Url;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkCategory;
-import org.orcid.jaxb.model.message.WorkContributors;
 import org.orcid.jaxb.model.message.WorkExternalIdentifiers;
-import org.orcid.jaxb.model.message.WorkTitle;
 import org.orcid.jaxb.model.message.WorkType;
 import org.orcid.jaxb.model.record.CitationType;
 import org.orcid.jaxb.model.record.Relationship;
@@ -554,146 +546,7 @@ public class WorkForm implements ErrorsInterface, Serializable {
         }
         
         return work;
-    }
-    
-    public static WorkForm valueOf(OrcidWork orcidWork) {
-        WorkForm w = WorkForm.minimizedValueOf(orcidWork);
-
-        // minimized works have everything except citation and contributers now
-
-        if (orcidWork.getWorkContributors() != null && orcidWork.getWorkContributors().getContributor() != null) {
-            List<Contributor> contributors = new ArrayList<Contributor>();
-            for (org.orcid.jaxb.model.message.Contributor owContributor : orcidWork.getWorkContributors().getContributor()) {
-                contributors.add(Contributor.valueOf(owContributor));
-            }
-            w.setContributors(contributors);
-        }
-
-        if (orcidWork.getWorkCitation() != null)
-            w.setCitation(Citation.valueOf(orcidWork.getWorkCitation()));
-
-        return w;
-    }
-    
-    public static WorkForm minimizedValueOf(OrcidWork orcidWork) {
-        WorkForm w = new WorkForm();
-        if (orcidWork.getPublicationDate() != null)
-            w.setPublicationDate(Date.valueOf(orcidWork.getPublicationDate()));
-        w.setDateSortString(PojoUtil.createDateSortString(null, orcidWork.getPublicationDate()));
-        if (orcidWork.getPutCode() != null)
-            w.setPutCode(Text.valueOf(orcidWork.getPutCode()));
-        if (orcidWork.getShortDescription() != null)
-            w.setShortDescription(Text.valueOf(orcidWork.getShortDescription()));
-        if (orcidWork.getUrl() != null)
-            w.setUrl(Text.valueOf(orcidWork.getUrl().getValue()));
-        if (orcidWork.getVisibility() != null)
-            w.setVisibility(orcidWork.getVisibility());
-        WorkExternalIdentifiers workExternalIdentifiers = null;
-        if (orcidWork.getWorkExternalIdentifiers() != null) {
-            workExternalIdentifiers = orcidWork.getWorkExternalIdentifiers();
-        }
-        populateExternaIdentifiers(workExternalIdentifiers, w);
-        if (orcidWork.getSource() != null) {
-            w.setSource(orcidWork.getSource().retrieveSourcePath());
-            if (orcidWork.getSource().getSourceName() != null)
-                w.setSourceName(orcidWork.getSource().getSourceName().getContent());
-        }
-        
-        WorkTitle workTitle = orcidWork.getWorkTitle();
-        if (workTitle == null) 
-            workTitle =  new WorkTitle();
-        if (workTitle.getTitle() != null) {
-            w.setTitle(Text.valueOf(workTitle.getTitle().getContent()));
-        }
-        if (workTitle.getSubtitle() != null) {
-            w.setSubtitle(Text.valueOf(workTitle.getSubtitle().getContent()));
-        }
-        if(workTitle.getTranslatedTitle() != null) {
-            TranslatedTitle translatedTitle = new TranslatedTitle();
-            translatedTitle.setContent((workTitle.getTranslatedTitle() == null) ? null : workTitle.getTranslatedTitle().getContent());
-            translatedTitle.setLanguageCode((workTitle.getTranslatedTitle() == null || workTitle.getTranslatedTitle().getLanguageCode() == null) ? null : workTitle.getTranslatedTitle().getLanguageCode());
-            w.setTranslatedTitle(translatedTitle);
-        }
-        
-        if (orcidWork.getWorkType() != null) {
-            w.setWorkType(Text.valueOf(orcidWork.getWorkType().value()));
-            WorkCategory category = WorkCategory.fromWorkType(orcidWork.getWorkType());
-            w.setWorkCategory(Text.valueOf(category.value()));
-        }
-
-        if (orcidWork.getJournalTitle() != null)
-            w.setJournalTitle(Text.valueOf(orcidWork.getJournalTitle().getContent()));
-
-        if (orcidWork.getLanguageCode() != null)
-            w.setLanguageCode(Text.valueOf(orcidWork.getLanguageCode()));
-
-        if (orcidWork.getCountry() != null)
-            w.setCountryCode((orcidWork.getCountry().getValue() == null) ? null : Text.valueOf(orcidWork.getCountry().getValue().value()));
-        w.setCreatedDate(Date.valueOf(orcidWork.getCreatedDate()));
-        w.setLastModified(Date.valueOf(orcidWork.getLastModifiedDate()));
-        return w;
-    }        
-    
-    
-    public OrcidWork toOrcidWork() {
-        OrcidWork ow = new OrcidWork();
-        if (this.getPublicationDate() != null)
-            ow.setPublicationDate(new PublicationDate(this.getPublicationDate().toFuzzyDate()));
-        if (this.getPutCode() != null)
-            ow.setPutCode(this.getPutCode().getValue());
-        if (this.getShortDescription() != null)
-            ow.setShortDescription(this.shortDescription.getValue());
-        if (this.getUrl() != null)
-            ow.setUrl(new Url(this.url.getValue()));
-        if (this.getVisibility() != null)
-            ow.setVisibility(this.getVisibility());
-        if (this.getCitation() != null)
-            ow.setWorkCitation(this.citation.toCitiation());
-        if (this.getContributors() != null) {
-            List<org.orcid.jaxb.model.message.Contributor> cList = new ArrayList<org.orcid.jaxb.model.message.Contributor>();
-            for (Contributor c : this.getContributors()) {
-                cList.add(c.toContributor());
-            }
-            ow.setWorkContributors(new WorkContributors(cList));
-        }
-        List<org.orcid.jaxb.model.message.WorkExternalIdentifier> wiList = new ArrayList<org.orcid.jaxb.model.message.WorkExternalIdentifier>();
-        if (this.getWorkExternalIdentifiers() != null) {
-            for (WorkExternalIdentifier wi : this.getWorkExternalIdentifiers()) {
-                wiList.add(wi.toWorkExternalIdentifier());
-            }
-        }
-        ow.setWorkExternalIdentifiers(new WorkExternalIdentifiers(wiList));
-        if (this.getSource() != null)
-            ow.setSource(new Source(this.getSource()));
-        
-        if (this.getTitle() != null || this.getSubtitle() != null || this.getTranslatedTitle() != null)
-            ow.setWorkTitle(new WorkTitle());
-        if (this.getTitle() != null)
-            ow.getWorkTitle().setTitle(this.getTitle().toTitle());
-        if (this.getSubtitle() != null)
-            ow.getWorkTitle().setSubtitle(this.getSubtitle().toSubtitle());
-        if(this.getTranslatedTitle() != null)
-            ow.getWorkTitle().setTranslatedTitle(this.getTranslatedTitle().toTranslatedTitle());
-
-        if (this.getWorkType() != null) {
-            ow.setWorkType(org.orcid.jaxb.model.message.WorkType.fromValue(this.getWorkType().getValue()));
-        }
-
-        if (this.getJournalTitle() != null) {
-            ow.setJournalTitle(new Title(this.getJournalTitle().getValue()));
-        }
-
-        if (this.getLanguageCode() != null) {
-            ow.setLanguageCode(this.getLanguageCode().getValue());
-        }
-
-        if (this.getCountryCode() != null) {
-            Country country = new Country(StringUtils.isEmpty(this.getCountryCode().getValue()) ? null : org.orcid.jaxb.model.message.Iso3166Country.fromValue(this.getCountryCode().getValue()));
-            ow.setCountry(country);
-        }
-
-        return ow;
-    }
+    }               
                 
     public void setCitationForDisplay(String citation) {
         this.citationForDisplay = citation;
