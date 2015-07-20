@@ -69,7 +69,11 @@ public class Contributor implements ErrorsInterface, Serializable {
             }
             if (contributor.getCreditName() != null) {
                 c.setCreditName(Text.valueOf(contributor.getCreditName().getContent()));
-                c.setCreditNameVisibility(Visibility.valueOf(contributor.getCreditName().getVisibility()));
+                if(contributor.getCreditName().getVisibility() != null) {
+                    c.setCreditNameVisibility(Visibility.valueOf(contributor.getCreditName().getVisibility()));
+                } else {
+                    c.setCreditNameVisibility(Visibility.valueOf(OrcidVisibilityDefaults.CONTRIBUTOR_VISIBILITY_DEFAULT.getVisibility()));
+                }                
             }
         }
         return c;
@@ -93,7 +97,11 @@ public class Contributor implements ErrorsInterface, Serializable {
             }
             if (contributor.getCreditName() != null) {
                 c.setCreditName(Text.valueOf(contributor.getCreditName().getContent()));
-                c.setCreditNameVisibility(Visibility.valueOf(contributor.getCreditName().getVisibility()));
+                if(contributor.getCreditName().getVisibility() != null) {
+                    c.setCreditNameVisibility(Visibility.valueOf(contributor.getCreditName().getVisibility()));
+                } else {
+                    c.setCreditNameVisibility(Visibility.valueOf(OrcidVisibilityDefaults.CONTRIBUTOR_VISIBILITY_DEFAULT.getVisibility()));
+                }
             }
         }
         return c;

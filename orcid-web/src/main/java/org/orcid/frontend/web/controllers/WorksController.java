@@ -33,6 +33,7 @@ import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileWorkManager;
 import org.orcid.core.manager.WorkManager;
+import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.record.CitationType;
@@ -332,6 +333,35 @@ public class WorksController extends BaseWorkspaceController {
                 workForm.getTranslatedTitle().setLanguageName(languageName);
             }
 
+            if (workForm.getContributors() != null) {
+                for (Contributor contributor : workForm.getContributors()) {
+                    if (!PojoUtil.isEmpty(contributor.getOrcid())) {
+                        String contributorOrcid = contributor.getOrcid().getValue();
+                        if (profileEntityManager.orcidExists(contributorOrcid)) {
+                            ProfileEntity profileEntity = profileEntityCacheManager.retrieve(contributorOrcid);
+                            String publicContributorCreditName = cacheManager.getPublicCreditName(profileEntity);
+                            if (profileEntity.getCreditNameVisibility() != null) {
+                                if (profileEntity.getCreditNameVisibility().value().equals(Visibility.PUBLIC.value())) {
+                                    contributor.setCreditName(Text.valueOf(publicContributorCreditName));
+                                    contributor.setCreditNameVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(Visibility.PUBLIC));
+                                } else {
+                                    contributor.setCreditName(null);
+                                    contributor.setCreditNameVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(OrcidVisibilityDefaults.CREDIT_NAME_DEFAULT
+                                            .getVisibility()));
+                                }
+                            } else {
+                                contributor.setCreditName(Text.valueOf(publicContributorCreditName));
+                                contributor.setCreditNameVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(OrcidVisibilityDefaults.CREDIT_NAME_DEFAULT
+                                        .getVisibility()));
+                            }
+                        } else {
+                            contributor.setCreditName(null);
+                            contributor.setCreditNameVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(OrcidVisibilityDefaults.CREDIT_NAME_DEFAULT.getVisibility()));
+                        }
+                    }
+                }
+            }
+            
             // If the work source is the user himself, fill the work source
             // name
             String userOrcid = getEffectiveUserOrcid();
