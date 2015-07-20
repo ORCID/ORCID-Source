@@ -76,8 +76,9 @@ public class OrcidClientCredentialsChecker {
             Set<String> validScope = clientDetails.getScope();
             if (scopes.isEmpty()) {
                 throw new InvalidScopeException("Invalid scope (none)", validScope);
-            } else if (!containsAny(validScope, ScopePathType.ORCID_PROFILE_CREATE, ScopePathType.WEBHOOK, ScopePathType.PREMIUM_NOTIFICATION) && !scopes.contains(ScopePathType.READ_PUBLIC.value())
-                    && scopes.size() == 1) {
+            } else if (!containsAny(validScope, ScopePathType.ORCID_PROFILE_CREATE, ScopePathType.WEBHOOK,
+            		ScopePathType.PREMIUM_NOTIFICATION, ScopePathType.GROUP_ID_RECORD_READ, ScopePathType.GROUP_ID_RECORD_UPDATE)
+            		&& !scopes.contains(ScopePathType.READ_PUBLIC.value()) && scopes.size() == 1) {
                 throw new InvalidScopeException("Invalid scope" + (scopes != null && scopes.size() > 1 ? "s: " : ": " + "") + OAuth2Utils.formatParameterList(scopes),
                         validScope);
             }
