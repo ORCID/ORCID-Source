@@ -372,7 +372,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     
     @Test
     public void testGetGroupIdRecord() {
-    	SecurityContextTestUtils.setUpSecurityContextForClientOnly();
+    	SecurityContextTestUtils.setUpSecurityContextForGroupIdClientOnly();
         Response response = serviceDelegator.viewGroupIdRecord("2");
         assertNotNull(response);
         GroupIdRecord groupIdRecord = (GroupIdRecord) response.getEntity();
@@ -386,7 +386,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     
     @Test
     public void testCreateGroupIdRecord() {
-    	SecurityContextTestUtils.setUpSecurityContextForClientOnly();
+    	SecurityContextTestUtils.setUpSecurityContextForGroupIdClientOnly();
     	GroupIdRecord newRecord = new GroupIdRecord();
     	newRecord.setGroupId("issn:0000005");
     	newRecord.setName("TestGroup5");
@@ -400,7 +400,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     
     @Test
     public void testUpdateGroupIdRecord() {
-    	SecurityContextTestUtils.setUpSecurityContextForClientOnly();
+    	SecurityContextTestUtils.setUpSecurityContextForGroupIdClientOnly();
         Response response = serviceDelegator.viewGroupIdRecord("3");
         assertNotNull(response);
         GroupIdRecord groupIdRecord = (GroupIdRecord) response.getEntity();
@@ -423,7 +423,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     
     @Test(expected=GroupIdRecordNotFoundException.class)
     public void testDeleteGroupIdRecord() {
-    	SecurityContextTestUtils.setUpSecurityContextForClientOnly();
+    	SecurityContextTestUtils.setUpSecurityContextForGroupIdClientOnly();
     	//Verify if the record exists
     	Response response = serviceDelegator.viewGroupIdRecord("4");
         assertNotNull(response);
@@ -437,7 +437,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     
     @Test
     public void testGetGroupIdRecords() {
-    	SecurityContextTestUtils.setUpSecurityContextForClientOnly();
+    	SecurityContextTestUtils.setUpSecurityContextForGroupIdClientOnly();
     	/*
     	 * Total number of records in the test data is 4
     	 * Setting page size to 3 should give us 2 pages.
