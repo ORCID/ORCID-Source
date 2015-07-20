@@ -376,6 +376,9 @@ public class OrcidIndexManagerImpl implements OrcidIndexManager {
             Map.Entry<WorkExternalIdentifierType, List<String>> entry = (Map.Entry<WorkExternalIdentifierType, List<String>>) it.next();
             if (entry.getKey() != null && entry.getValue() != null && !entry.getValue().isEmpty()) {
                 switch (entry.getKey()) {
+                case AGR:
+                    profileIndexDocument.setAgr(entry.getValue());
+                    break;
                 case ARXIV:
                     profileIndexDocument.setArxiv(entry.getValue());
                     break;
@@ -388,11 +391,29 @@ public class OrcidIndexManagerImpl implements OrcidIndexManager {
                 case BIBCODE:
                     profileIndexDocument.setBibcode(entry.getValue());
                     break;
+                case CBA:
+                    profileIndexDocument.setCba(entry.getValue());
+                    break;
+                case CIT:
+                    profileIndexDocument.setCit(entry.getValue());
+                    break;
+                case CTX:
+                    profileIndexDocument.setCtx(entry.getValue());
+                    break;
                 case DOI:
                     profileIndexDocument.setDigitalObjectIds(entry.getValue());
                     break;
                 case EID:
                     profileIndexDocument.setEid(entry.getValue());
+                    break;
+                case ETHOS:
+                    profileIndexDocument.setEthos(entry.getValue());
+                    break;
+                case HANDLE:
+                    profileIndexDocument.setHandle(entry.getValue());
+                    break;
+                case HIR:
+                    profileIndexDocument.setHir(entry.getValue());
                     break;
                 case ISBN:
                     profileIndexDocument.setIsbn(entry.getValue());
@@ -424,6 +445,9 @@ public class OrcidIndexManagerImpl implements OrcidIndexManager {
                 case OTHER_ID:
                     profileIndexDocument.setOtherIdentifierType(entry.getValue());
                     break;
+                case PAT:
+                    profileIndexDocument.setPat(entry.getValue());
+                    break;
                 case PMC:
                     profileIndexDocument.setPmc(entry.getValue());
                     break;
@@ -433,9 +457,20 @@ public class OrcidIndexManagerImpl implements OrcidIndexManager {
                 case RFC:
                     profileIndexDocument.setRfc(entry.getValue());
                     break;
+                case SOURCE_WORK_ID:
+                    profileIndexDocument.setSourceWorkId(entry.getValue());
+                    break;
                 case SSRN:
                     profileIndexDocument.setSsrn(entry.getValue());
                     break;
+                case URI:
+                    profileIndexDocument.setUri(entry.getValue());
+                    break;
+                case URN:
+                    profileIndexDocument.setUrn(entry.getValue());
+                    break;
+                case WOSUID:
+                    profileIndexDocument.setWosuid(entry.getValue());
                 case XBL:
                     profileIndexDocument.setZbl(entry.getValue());
                     break;
