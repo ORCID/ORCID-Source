@@ -9060,18 +9060,9 @@ orcidNgModule.controller('headerCtrl',['$scope', '$window', function ($scope, $w
 orcidNgModule.controller('widgetCtrl',['$scope', function ($scope){
 	$scope.hash = orcidVar.orcidIdHash.substr(0, 6);
 	$scope.showCode = false;
-	$scope.name = null;
-	$scope.orcid = null;
-	$scope.works = 0;
-	$scope.fundings = 0;
-	$scope.educations = 0;
-	$scope.employments = 0;
-	$scope.peerReviews = 0;
+		
+	$scope.widgetURLND = '<div style="width:100%;text-align:center"><iframe src="'+ getBaseUri() + '/static/html/widget.html?orcid=' + orcidVar.orcidId + '&t=' + $scope.hash + '" frameborder="0" height="310" width="210px" vspace="0" hspace="0" marginheight="5" marginwidth="5" scrolling="no" allowtransparency="true"></iframe></div>';
 	
-	$scope.widgetURL = '<script src="'+ getBaseUri() + '/static/javascript/orcid-summary-widget.js?orcid=' + orcidVar.orcidId + '&t=' + $scope.hash + '"></script><div id="orcid-summary-widget"></div>';
-	$scope.widgetURLND = '<div style="width:100%;text-align:center">\
-	    					  <iframe src="'+ getBaseUri() + '/static/html/widget.html?orcid=' + orcidVar.orcidId + '&t=' + $scope.hash + '" frameborder="0" height="310" width="210px" vspace="0" hspace="0" marginheight="5" marginwidth="5" scrolling="auto" allowtransparency="true"></iframe>\
-	    				  </div>';
 	$scope.inputTextAreaSelectAll = function($event){
     	$event.target.select();
     }
@@ -9083,30 +9074,6 @@ orcidNgModule.controller('widgetCtrl',['$scope', function ($scope){
 	$scope.hideWidgetCode = function(){
 		$scope.showCode = false;
 	}
-	
-	$scope.showSampleWidget = function(){
-		$.ajax({
-	        url: getBaseUri() + '/public_widgets/' + orcidVar.orcidId + '/' + $scope.hash +'/info.json',
-	        type: 'GET',
-	        contentType: 'application/json;charset=UTF-8',
-	        dataType: 'json',
-	        success: function(data) {
-	        	console.log(data.orcid);
-	        
-	           
-	        	$scope.name =  data.name;
-	        	$scope.orcid =  data.orcid;
-	            $scope.works =  data.works;
-	            $scope.fundings =  data.fundings;
-	            $scope.educations =  data.educations;
-	            $scope.employments =  data.employments;
-	            $scope.peerReviews =  data.peerReviews;
-	            
-	            $scope.$apply();
-			}
-		});
-	}
-		
 	
 }]);
 

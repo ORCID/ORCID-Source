@@ -52,46 +52,8 @@
             
             <#include "includes/id_banner.ftl"/>
             
+            <#include "includes/orcid_public_record_widget.ftl"/>
             
-            <#if RequestParameters['widget']??>
-	            <div class="widget-container" ng-controller="widgetCtrl">
-	            	<div class="widget-header">
-						<a ng-click="toggleCopyWidget();showSampleWidget();"><@orcid.msg 'orcid_widget.header'/></a><div class="popover-help-container">
-	                    <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
-	                    <div id="widget-help" class="popover bottom">
-	                        <div class="arrow"></div>
-	                        <div class="popover-content">
-	                            <p><@orcid.msg 'orcid_widget.tooltip'/></p>
-	                        </div>
-	                    </div>
-	                </div>
-					</div>
-					<div ng-show="showCode" ng-cloak class="widget-code-container">
-						<p><@orcid.msg 'orcid_widget.widget_sample'/>:</p>
-						<div class="orcid-summary-widget">
-                           <div class="orcid-widget-details">
-                               <div class="orcid-logo"></div>
-                               <div class="orcid-name">{{name}}</div>
-                               <div class="orcid-id">ORCID: {{orcid}}</div>
-                               <div class="orcid-summary-items">
-                                 <div class="orcid-summary-item" ng-show="works > 0"><@orcid.msg 'workspace.Works'/> ({{works}})</div>
-                                 <div class="orcid-summary-item" ng-show="fundings > 0"><@orcid.msg 'workspace.Funding'/> ({{fundings}})</div>
-                                 <div class="orcid-summary-item" ng-show="educations > 0"> <@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.education'/> ({{educations}})</div>
-                                 <div class="orcid-summary-item" ng-show="employments > 0"><@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.employment'/> ({{employments}})</div>
-                                 <div class="orcid-summary-item" ng-show="peerReviews > 0"><@orcid.msg 'workspace_peer_review_body_list.peerReview'/> ({{peerReviews}})</div>
-                             </div>
-	                        <a href="http://orcid.org/about/what-is-orcid" class="orcid-widget-button" target="_blank"><@orcid.msg 'public-layout.what_is_orcid'/>?</a>
-	                        </div>  
-                        </div>
-						<p class="widget-instructions"><@orcid.msg 'orcid_widget.copy_message'/></p>
-						<p class="widget-instructions"><@orcid.msg 'orcid_widget.for_non_developers'/></p>
-						<textarea id="widget-code-nd" name="widget-code" class="form-control widget-code" ng-model="widgetURLND" ng-click="inputTextAreaSelectAll($event)" readonly="readonly"></textarea>
-						<p class="widget-instructions"><@orcid.msg 'orcid_widget.for_developers'/></p>
-						<textarea id="widget-code" name="widget-code" class="form-control widget-code" ng-model="widgetURL" ng-click="inputTextAreaSelectAll($event)" readonly="readonly"></textarea>
-						<a ng-click="hideWidgetCode()"><@orcid.msg 'orcid_widget.hide_code'/></a>
-					</div>
-	            </div>
-            </#if>
             
             
             <div class="qrcode-container">

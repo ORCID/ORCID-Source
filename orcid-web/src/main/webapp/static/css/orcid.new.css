@@ -1669,7 +1669,6 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input{
 	font-family: 'Gill Sans W02', 'Helvetica', sans-serif;	
 	font-style: normal;
 	vertical-align: 3px;
-	margin-left: 5px;	
 }
 
 .workspace-overview {
@@ -5737,6 +5736,10 @@ textarea.form-control,
   	top: -178px;
 }
 
+.glyphicon-question-sign{
+	cursor: default;
+}
+
 /* Widget */
 
 .widget-container{
@@ -5751,37 +5754,9 @@ textarea.form-control,
 .widget-container .widget-code-container{
 	padding: 10px;
 	border: 1px solid #C9C9CA;
-	color: #494A4C;
 	float: left;
 	height: auto;
 	width: 100%;;
-}
-
-.widget-container .widget-code{
-	height: 100px;
-	cursor: text;
-	margin-bottom: 15px;
-}
-
-.widget-container .widget-code-icon{
-	padding-left: 0;
-	padding-right: 19px;
-	
-}
-
-.widget-container .widget-code-icon:before{
-	font-size: 16px;
-	top: -9px;
-	color: #338caf;
-}
-
-.widget-container a:hover span.widget-code-icon:before{
-	color: rgb(166, 206, 57);
-}
-
-.widget-container .widget-instructions{
-	width: 100%;
-	float:left;
 }
 
 .widget-container .widget-instructions,
@@ -5789,13 +5764,10 @@ textarea.form-control,
 	font-size: 14px;	
 }
 
-.glyphicon-question-sign{
-	cursor: default;
-}
-
 .widget-container .widget-code-container a{
 	float: right;
 }
+
 
 .action-icon-align-right{
 	position: absolute;
@@ -5853,15 +5825,11 @@ textarea.form-control,
 /* Widget */
 
 .orcid-summary-widget{
-	width: 195px;
 	height: auto;
-	border: 1px solid #939598;
-	padding: 10px;
 	font-family: 'Helvetica', 'Sans serif', 'Verdana';
 	color: #939598;
 	background: #FFF;
-	float: left;
-	margin: 5px 10px 15px;
+	margin: 0 auto;
 }
 
 .orcid-summary-widget a{
@@ -5916,6 +5884,12 @@ textarea.form-control,
 .orcid-summary-widget .orcid-widget-button:hover{
 	color: #FFF;
 	background: #a6ce39;
+}
+
+.widget-container .widget-code{
+	height: 100px;
+	cursor: text;
+	margin-bottom: 15px;
 }
 
 .widget-container .popover-help-container .popover{
