@@ -35,7 +35,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.lang.StringUtils;
 import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.LoadOptions;
@@ -626,13 +625,6 @@ public class RegistrationController extends BaseController {
             return new ModelAndView("redirect:/reset-password");
         }
 
-        OrcidProfile retrievedProfile = orcidProfileManager.retrieveOrcidProfileByEmail(passwordResetToken.getEmail(), LoadOptions.INTERNAL_ONLY);
-        if (StringUtils.isNotBlank(retrievedProfile.getSecurityQuestionAnswer())) {
-
-            // if have a answer without a question something has gone wrong
-            // anyway!!
-            return new ModelAndView("redirect:/answer-security-question/" + encryptedEmail);
-        }
         OneTimeResetPasswordForm form = new OneTimeResetPasswordForm();
         form.setSecurityQuestionId(0);
         // otherwise, straight to the screen with the option to set a security
