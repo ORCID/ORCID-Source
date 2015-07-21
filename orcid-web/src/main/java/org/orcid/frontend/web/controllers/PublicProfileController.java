@@ -37,9 +37,11 @@ import org.orcid.core.manager.ActivityCacheManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.OrcidProfileCacheManager;
 import org.orcid.core.manager.PeerReviewManager;
+import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileWorkManager;
 import org.orcid.core.manager.WorkManager;
+import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.Funding;
@@ -109,6 +111,9 @@ public class PublicProfileController extends BaseWorkspaceController {
 
     @Resource
     private PeerReviewManager peerReviewManager;
+    
+    @Resource
+    private ProfileEntityCacheManager profileEntityCacheManager;
     
     public static int ORCID_HASH_LENGTH = 8;
 
@@ -365,22 +370,30 @@ public class PublicProfileController extends BaseWorkspaceController {
                     work.getTranslatedTitle().setLanguageName(languageName);
                 }
 
-                // If the work source is the user himself, fill the work source
-                // name
-                if (!PojoUtil.isEmpty(work.getSource()) && profileWork.getProfile().getId().equals(work.getSource())) {
-                    List<Contributor> contributors = work.getContributors();
-                    if (work.getContributors() != null) {
-                        for (Contributor contributor : contributors) {
-                            // If it is not an empty contributor
-                            if (!PojoUtil.isEmpty(contributor.getContributorRole()) || !PojoUtil.isEmpty(contributor.getContributorSequence())) {
-                                ProfileEntity profile = profileWork.getProfile();
-                                String creditNameString = cacheManager.getPublicCreditName(profile);
-                                Text creditName = Text.valueOf(creditNameString);
-                                contributor.setCreditName(creditName);
+                if (work.getContributors() != null) {
+                    for (Contributor contributor : work.getContributors()) {
+                        if (!PojoUtil.isEmpty(contributor.getOrcid())) {
+                            String contributorOrcid = contributor.getOrcid().getValue();
+                            if (profileEntManager.orcidExists(contributorOrcid)) {
+                                ProfileEntity profileEntity = profileEntityCacheManager.retrieve(contributorOrcid);
+                                String publicContributorCreditName = cacheManager.getPublicCreditName(profileEntity);
+                                if (profileEntity.getCreditNameVisibility() != null) {
+                                    contributor.setCreditName(Text.valueOf(publicContributorCreditName));
+                                    contributor.setCreditNameVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(profileEntity.getCreditNameVisibility()));  
+                                } else {
+                                    contributor.setCreditName(Text.valueOf(publicContributorCreditName));
+                                    contributor.setCreditNameVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(OrcidVisibilityDefaults.CREDIT_NAME_DEFAULT
+                                            .getVisibility()));
+                                }
+                            } else {
+                                if(contributor.getCreditNameVisibility() == null) {
+                                    contributor.setCreditNameVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(OrcidVisibilityDefaults.CREDIT_NAME_DEFAULT.getVisibility()));
+                                }
                             }
                         }
                     }
                 }
+                                
                 return work;
             }
         }

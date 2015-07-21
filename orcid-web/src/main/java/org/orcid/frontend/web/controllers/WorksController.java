@@ -341,45 +341,21 @@ public class WorksController extends BaseWorkspaceController {
                             ProfileEntity profileEntity = profileEntityCacheManager.retrieve(contributorOrcid);
                             String publicContributorCreditName = cacheManager.getPublicCreditName(profileEntity);
                             if (profileEntity.getCreditNameVisibility() != null) {
-                                if (profileEntity.getCreditNameVisibility().value().equals(Visibility.PUBLIC.value())) {
-                                    contributor.setCreditName(Text.valueOf(publicContributorCreditName));
-                                    contributor.setCreditNameVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(Visibility.PUBLIC));
-                                } else {
-                                    contributor.setCreditName(null);
-                                    contributor.setCreditNameVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(OrcidVisibilityDefaults.CREDIT_NAME_DEFAULT
-                                            .getVisibility()));
-                                }
+                                contributor.setCreditName(Text.valueOf(publicContributorCreditName));
+                                contributor.setCreditNameVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(profileEntity.getCreditNameVisibility()));                                
                             } else {
                                 contributor.setCreditName(Text.valueOf(publicContributorCreditName));
                                 contributor.setCreditNameVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(OrcidVisibilityDefaults.CREDIT_NAME_DEFAULT
                                         .getVisibility()));
                             }
                         } else {
-                            contributor.setCreditName(null);
-                            contributor.setCreditNameVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(OrcidVisibilityDefaults.CREDIT_NAME_DEFAULT.getVisibility()));
+                            if(contributor.getCreditNameVisibility() == null) {
+                                contributor.setCreditNameVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(OrcidVisibilityDefaults.CREDIT_NAME_DEFAULT.getVisibility()));
+                            }
                         }
                     }
                 }
-            }
-            
-            // If the work source is the user himself, fill the work source
-            // name
-            String userOrcid = getEffectiveUserOrcid();
-            if (!PojoUtil.isEmpty(workForm.getSource()) && userOrcid.equals(workForm.getSource())) {
-                List<Contributor> contributors = workForm.getContributors();
-                if (workForm.getContributors() != null) {
-                    for (Contributor contributor : contributors) {
-                        if (!PojoUtil.isEmpty(contributor.getContributorRole()) || !PojoUtil.isEmpty(contributor.getContributorSequence())) {
-                            ProfileEntity profile = profileEntityCacheManager.retrieve(userOrcid);
-                            String creditNameString = cacheManager.getCreditName(profile);
-                            Text creditName = Text.valueOf(creditNameString);
-                            contributor.setCreditName(creditName);
-                            contributor.setCreditNameVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(profile.getCreditNameVisibility()));
-
-                        }
-                    }
-                }
-            }
+            }                        
 
             return workForm;
         }
