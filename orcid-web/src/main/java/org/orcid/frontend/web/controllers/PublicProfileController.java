@@ -40,6 +40,7 @@ import org.orcid.core.manager.PeerReviewManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.WorkManager;
+import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.Funding;
@@ -86,8 +87,8 @@ public class PublicProfileController extends BaseWorkspaceController {
     private EncryptionManager encryptionManager;
 
     @Resource
-    private ActivityCacheManager activityCacheManager;    
-    
+    private ActivityCacheManager activityCacheManager;
+
     @Resource
     private ProfileEntityManager profileEntManager;
 
@@ -105,10 +106,10 @@ public class PublicProfileController extends BaseWorkspaceController {
 
     @Resource
     private PeerReviewManager peerReviewManager;
-    
+
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
-    
+
     public static int ORCID_HASH_LENGTH = 8;
 
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[x]}")
@@ -215,12 +216,13 @@ public class PublicProfileController extends BaseWorkspaceController {
                 else {
                     if (personalDetails.getGivenNames() != null && !PojoUtil.isEmpty(personalDetails.getGivenNames().getContent()))
                         creditName += personalDetails.getGivenNames().getContent();
-                    if(personalDetails.getFamilyName() != null && !PojoUtil.isEmpty(personalDetails.getFamilyName().getContent()))
+                    if (personalDetails.getFamilyName() != null && !PojoUtil.isEmpty(personalDetails.getFamilyName().getContent()))
                         creditName += " " + personalDetails.getFamilyName().getContent();
-                }                   
+                }
             }
-            if(!PojoUtil.isEmpty(creditName)) {
-                //<Published Name> (<ORCID iD>) - ORCID | Connecting Research and Researchers
+            if (!PojoUtil.isEmpty(creditName)) {
+                // <Published Name> (<ORCID iD>) - ORCID | Connecting Research
+                // and Researchers
                 mav.addObject("title", getMessage("layout.public-layout.title", creditName.trim(), orcid));
             }
 
@@ -341,7 +343,7 @@ public class PublicProfileController extends BaseWorkspaceController {
 
         Work workObj = workManager.getWork(orcid, workId);
 
-        if (workObj != null) {                        
+        if (workObj != null) {
             WorkForm work = WorkForm.valueOf(workObj);
             // Set country name
             if (!PojoUtil.isEmpty(work.getCountryCode())) {
@@ -359,22 +361,31 @@ public class PublicProfileController extends BaseWorkspaceController {
                 work.getTranslatedTitle().setLanguageName(languageName);
             }
 
-            // If the work source is the user himself, fill the work source
-            // name
-            if (!PojoUtil.isEmpty(work.getSource()) && orcid.equals(work.getSource())) {
-                List<Contributor> contributors = work.getContributors();
-                if (work.getContributors() != null) {
-                    for (Contributor contributor : contributors) {
-                        // If it is not an empty contributor
-                        if (!PojoUtil.isEmpty(contributor.getContributorRole()) || !PojoUtil.isEmpty(contributor.getContributorSequence())) {
-                            ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
-                            String creditNameString = cacheManager.getPublicCreditName(profile);
-                            Text creditName = Text.valueOf(creditNameString);
-                            contributor.setCreditName(creditName);
+            if (work.getContributors() != null) {
+                for (Contributor contributor : work.getContributors()) {
+                    if (!PojoUtil.isEmpty(contributor.getOrcid())) {
+                        String contributorOrcid = contributor.getOrcid().getValue();
+                        if (profileEntManager.orcidExists(contributorOrcid)) {
+                            ProfileEntity profileEntity = profileEntityCacheManager.retrieve(contributorOrcid);
+                            String publicContributorCreditName = cacheManager.getPublicCreditName(profileEntity);
+                            if (profileEntity.getCreditNameVisibility() != null) {
+                                contributor.setCreditName(Text.valueOf(publicContributorCreditName));
+                                contributor.setCreditNameVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(profileEntity.getCreditNameVisibility()));
+                            } else {
+                                contributor.setCreditName(Text.valueOf(publicContributorCreditName));
+                                contributor.setCreditNameVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(OrcidVisibilityDefaults.CREDIT_NAME_DEFAULT
+                                        .getVisibility()));
+                            }
+                        } else {
+                            if (contributor.getCreditNameVisibility() == null) {
+                                contributor.setCreditNameVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(OrcidVisibilityDefaults.CREDIT_NAME_DEFAULT
+                                        .getVisibility()));
+                            }
                         }
                     }
                 }
             }
+
             return work;
         }
 
@@ -411,11 +422,13 @@ public class PublicProfileController extends BaseWorkspaceController {
     @RequestMapping(value = "/public_widgets/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/{orcidHash}/info.json")
     public @ResponseBody
     OrcidInfo getInfo(@PathVariable("orcid") String orcid, @PathVariable("orcidHash") String orcidHash) throws Exception {
-    	// Light weight security check. To keep copy and paster from easily generating
-    	// the widget with out the user being logged in. Anyone that figures out this is 
+        // Light weight security check. To keep copy and paster from easily
+        // generating
+        // the widget with out the user being logged in. Anyone that figures out
+        // this is
         // a hash should be smart enough to just use the API.
-    	if (orcidHash.length() > 5 && !encryptionManager.sha256Hash(orcid).startsWith(orcidHash))
-    		throw new Exception("Semi-security hash doens't match");
+        if (orcidHash.length() > 5 && !encryptionManager.sha256Hash(orcid).startsWith(orcidHash))
+            throw new Exception("Semi-security hash doens't match");
         OrcidInfo result = new OrcidInfo();
         OrcidProfile profile = orcidProfileCacheManager.retrievePublic(orcid);
         result.setOrcid(orcid);
@@ -434,31 +447,31 @@ public class PublicProfileController extends BaseWorkspaceController {
 
             if (profile.getOrcidBio().getPersonalDetails().getFamilyName() != null
                     && !PojoUtil.isEmpty(profile.getOrcidBio().getPersonalDetails().getFamilyName().getContent())) {
-                name += " "+profile.getOrcidBio().getPersonalDetails().getFamilyName().getContent();
+                name += " " + profile.getOrcidBio().getPersonalDetails().getFamilyName().getContent();
             }
             result.setName(name);
         }
 
         ActivitiesSummary actSummary = profileEntManager.getPublicActivitiesSummary(orcid);
-        
-        if(actSummary != null) {
-        	if(actSummary.getFundings() != null) {
+
+        if (actSummary != null) {
+            if (actSummary.getFundings() != null) {
                 result.setFundings(actSummary.getFundings().getFundingGroup().size());
             }
-            if(actSummary.getFundings() != null) {
+            if (actSummary.getFundings() != null) {
                 result.setWorks(actSummary.getWorks().getWorkGroup().size());
             }
-            if(actSummary.getPeerReviews() != null) {
+            if (actSummary.getPeerReviews() != null) {
                 result.setPeerReviews(actSummary.getPeerReviews().getPeerReviewGroup().size());
             }
-            if(actSummary.getEducations() != null && actSummary.getEducations().getSummaries() != null) {
-            	result.setEducations(actSummary.getEducations().getSummaries().size());
+            if (actSummary.getEducations() != null && actSummary.getEducations().getSummaries() != null) {
+                result.setEducations(actSummary.getEducations().getSummaries().size());
             }
-            if(actSummary.getEmployments() != null && actSummary.getEmployments().getSummaries() != null) {
-            	result.setEmployments(actSummary.getEmployments().getSummaries().size());
+            if (actSummary.getEmployments() != null && actSummary.getEmployments().getSummaries() != null) {
+                result.setEmployments(actSummary.getEmployments().getSummaries().size());
             }
         }
-        
+
         return result;
     }
 
