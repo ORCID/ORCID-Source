@@ -1911,6 +1911,11 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input{
 	display: block;	
 }
 
+#edit-affiliation .control-group.errors{
+	float: left;
+    width: 100%;
+}
+
 .add-work{
 	width: 800px;
 }
@@ -7059,6 +7064,10 @@ textarea.form-control,
 	
 	#add-funding label.start-year{
 		width: 100%;
+	}
+	
+	#edit-affiliation .form-group div>select{
+		margin-bottom: 10px;
 	}
 	
 }
