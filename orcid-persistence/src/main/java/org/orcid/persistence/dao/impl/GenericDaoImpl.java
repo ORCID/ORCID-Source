@@ -118,7 +118,6 @@ public class GenericDaoImpl<E extends OrcidEntity<I>, I extends Serializable> im
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRED)
     public void refresh(E e) {
         entityManager.refresh(e);
     }
