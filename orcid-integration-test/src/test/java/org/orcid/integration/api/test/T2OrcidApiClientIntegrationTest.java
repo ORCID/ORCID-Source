@@ -20,6 +20,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 import static org.orcid.core.api.OrcidApiConstants.STATUS_OK_MESSAGE;
 
 import java.util.List;
@@ -171,7 +172,8 @@ public class T2OrcidApiClientIntegrationTest extends AbstractT2ClientIntegration
         assertTrue(orcidProfileFullDetails.indexOf("<title>Work title 2</title>") != -1);
         assertTrue(orcidProfileFullDetails.indexOf("<subtitle>Work subtitle 2</subtitle>") != -1);
         assertTrue(orcidProfileFullDetails.indexOf("<orcid-history>") != -1);
-        assertTrue(orcidProfileFullDetails.indexOf("<email primary=\"false\" current=\"true\" verified=\"false\" visibility=\"private\">") != -1);
+// 		A secondary email can only be added using the UI
+//      assertTrue(orcidProfileFullDetails.indexOf("<email primary=\"false\" current=\"true\" verified=\"false\" visibility=\"private\">") != -1);
         assertTrue(orcidProfileFullDetails.indexOf("<email primary=\"true\" current=\"true\" verified=\"false\" visibility=\"private\">") != -1);
     }
 
@@ -552,7 +554,9 @@ public class T2OrcidApiClientIntegrationTest extends AbstractT2ClientIntegration
         String familyName = responseEntity.getOrcidProfile().getOrcidBio().getPersonalDetails().getFamilyName().getContent();
         assertEquals("Bowen", familyName);
         List<Email> updatedEmails = responseEntity.getOrcidProfile().getOrcidBio().getContactDetails().getEmail();
-        assertTrue(updatedEmails.contains(email6));
+        
+        //Client cannot add emails
+        assertFalse(updatedEmails.contains(email6));
     }
 
     @Test
@@ -577,7 +581,8 @@ public class T2OrcidApiClientIntegrationTest extends AbstractT2ClientIntegration
         String familyName = responseEntity.getOrcidProfile().getOrcidBio().getPersonalDetails().getFamilyName().getContent();
         assertEquals("Bowen", familyName);
         List<Email> updatedEmails = responseEntity.getOrcidProfile().getOrcidBio().getContactDetails().getEmail();
-        assertTrue(updatedEmails.contains(email6));
+        //Client cannot add emails
+        assertFalse(updatedEmails.contains(email6));
     }
 
     private void createOrcidAndVerifyResponse201() throws Exception {
