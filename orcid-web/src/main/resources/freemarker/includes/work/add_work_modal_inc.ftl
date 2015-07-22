@@ -261,7 +261,19 @@
 						</div>
 					</div>					
 					<div class="bottomBuffer">
-						<label><@orcid.msg 'common.ext_id.relationship'/></label>
+						<label><@orcid.msg 'common.ext_id.relationship'/>
+							<div class="popover-help-container">
+	   	     					<a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
+   	     						<div id="widget-help" class="popover bottom">
+									<div class="arrow"></div>
+									<div class="popover-content">
+										<p><@orcid.msg 'relationship.tooltip'/></p>
+									</div>
+								</div>
+							</div>
+						</label>
+
+						
 						<div class="relative">							
   							<label class="checkbox-inline">
     							<input type="radio" name="relationship{{$index}}" ng-model="workExternalIdentifier.relationship.value" value="self">

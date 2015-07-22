@@ -19,10 +19,11 @@
 <#if RequestParameters['widget']??>
 	<div class="widget-container" ng-controller="widgetCtrl">
 		<div class="widget-header">
-			<a ng-click="toggleCopyWidget();showSampleWidget();"><@orcid.msg 'orcid_widget.header'/></a><div class="popover-help-container">
-   	     <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
-   	     <div id="widget-help" class="popover bottom">
-				<div class="arrow"></div>
+			<a ng-click="toggleCopyWidget();showSampleWidget();"><@orcid.msg 'orcid_widget.header'/></a>
+			<div class="popover-help-container">
+   	     		<a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
+   	     		<div id="widget-help" class="popover bottom">
+					<div class="arrow"></div>
 					<div class="popover-content">
 						<p><@orcid.msg 'orcid_widget.tooltip'/></p>
 					</div>
