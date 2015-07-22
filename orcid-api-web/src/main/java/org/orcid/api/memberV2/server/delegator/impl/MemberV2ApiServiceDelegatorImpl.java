@@ -362,7 +362,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
 	public Response createGroupIdRecord(GroupIdRecord groupIdRecord) {
 		GroupIdRecord newRecord = groupIdRecordManager.createGroupIdRecord(groupIdRecord);
         try {
-            return Response.created(new URI(newRecord.getGroupId())).build();
+            return Response.created(new URI(newRecord.getPutCode())).build();
         } catch (URISyntaxException ex) {
             throw new RuntimeException("Error creating URI for new group-id record", ex);
         }
