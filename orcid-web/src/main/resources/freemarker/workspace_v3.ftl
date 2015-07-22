@@ -72,7 +72,7 @@
 	       	
 	       	
 	       	<!-- Also known as -->
-	       	<div ng-controller="OtherNamesCtrl" class="workspace-section">
+	       	<div ng-controller="OtherNamesCtrl" class="workspace-section other-names">
         	   
         	   <div class="workspace-section-header">
         	   	   <span class="workspace-section-title"><@orcid.msg 'workspace.Alsoknownas'/></span>
@@ -83,12 +83,13 @@
 	        	      </span>
 	        	   </span>
 	        	   <span class="pull-right" ng-show="showEdit == true" ng-cloak>
-		        	   <@orcid.privacyToggle2  angularModel="otherNamesForm.visibility.visibility"
-			             questionClick="toggleClickPrivacyHelp()"
+		        	   <@orcid.privacyToggle3  angularModel="otherNamesForm.visibility.visibility"
+			             questionClick="toggleClickPrivacyHelp($index)"
 			             clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
 			             publicClick="setPrivacy('PUBLIC', $event)" 
 	                	     limitedClick="setPrivacy('LIMITED', $event)" 
-	                	     privateClick="setPrivacy('PRIVATE', $event)" />
+	                	     privateClick="setPrivacy('PRIVATE', $event)"
+	                	     elementId="$index"/>
                    </span>
         	   </div>
         	   
@@ -120,7 +121,7 @@
             
             
             <!-- Country -->
-            <div ng-controller="CountryCtrl" class="workspace-section">
+            <div ng-controller="CountryCtrl" class="workspace-section country">
             	<div class="workspace-section-header">
 		        	<span class="workspace-section-title"><@orcid.msg 'public_profile.labelCountry'/></span>
 		            <span class="glyphicon glyphicon-pencil edit-country edit-option pull-right" ng-click="openEdit()" title="" ng-hide="showEdit == true"></span>
@@ -128,12 +129,13 @@
 		            	<span ng-show="countryForm != null && countryForm.countryName != null" ng-bind="countryForm.countryName" ng-hide="showEdit == true"></span>
 		            </span>
 		            <span class="pull-right" ng-show="showEdit == true" ng-cloak>
-		            	<@orcid.privacyToggle2  angularModel="countryForm.profileAddressVisibility.visibility"
-			         questionClick="toggleClickPrivacyHelp()"
-			         clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
-			         publicClick="setPrivacy('PUBLIC', $event)" 
-                 	     limitedClick="setPrivacy('LIMITED', $event)" 
-                 	     privateClick="setPrivacy('PRIVATE', $event)" />
+		            	<@orcid.privacyToggle3  angularModel="countryForm.profileAddressVisibility.visibility"
+			         		questionClick="toggleClickPrivacyHelp($index)"
+			         		clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
+			         		publicClick="setPrivacy('PUBLIC', $event)" 
+                 	     	limitedClick="setPrivacy('LIMITED', $event)" 
+                 	     	privateClick="setPrivacy('PRIVATE', $event)"
+                 	      	elementId="$index"/>
 		            </span>
 	            </div>
                 <!-- Edit -->
@@ -158,7 +160,7 @@
             
               
 	       	<!-- Keywords -->
-	       	<div ng-controller="KeywordsCtrl" class="workspace-section">
+	       	<div ng-controller="KeywordsCtrl" class="workspace-section keywords">
 	        	<div class="workspace-section-header">
 	        	   <span class="workspace-section-title"><@orcid.msg 'public_profile.labelKeywords'/></span>
 	        	   
@@ -169,12 +171,13 @@
 	        	      </span>
 	        	   </span>
 	        	   <span class="pull-right" ng-show="showEdit == true" ng-cloak>
-	        	   		<@orcid.privacyToggle2  angularModel="keywordsForm.visibility.visibility"
-		             questionClick="toggleClickPrivacyHelp()"
-		             clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
-		             publicClick="setPrivacy('PUBLIC', $event)" 
-                	     limitedClick="setPrivacy('LIMITED', $event)" 
-                	     privateClick="setPrivacy('PRIVATE', $event)" />
+	        	   		<@orcid.privacyToggle3  angularModel="keywordsForm.visibility.visibility"
+		             	  questionClick="toggleClickPrivacyHelp($index)"
+		             	  clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
+		             	  publicClick="setPrivacy('PUBLIC', $event)" 
+                	      limitedClick="setPrivacy('LIMITED', $event)" 
+                	      privateClick="setPrivacy('PRIVATE', $event)"
+                	      elementId="$index"/>
 	        	   </span>
 	        	 </div>
 	        	   
@@ -210,7 +213,7 @@
 	       
 	       	
 	      	<!-- Websites  -->
-	       	<div ng-controller="WebsitesCtrl" class="workspace-section">
+	       	<div ng-controller="WebsitesCtrl" class="workspace-section websites">
 	        	<div class="workspace-section-header">
 	        	   <span class="workspace-section-title"><@orcid.msg 'public_profile.labelWebsites'/></span>
 	        	   <span ng-hide="showEdit == true">
@@ -220,12 +223,14 @@
 	        	      </div>
 	        	   </span>	
 	        	   <span class="pull-right" ng-show="showEdit == true" ng-cloak>
-	        	   		<@orcid.privacyToggle2  angularModel="websitesForm.visibility.visibility"
-		             questionClick="toggleClickPrivacyHelp()"
-		             clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
-		             publicClick="setPrivacy('PUBLIC', $event)" 
-                	     limitedClick="setPrivacy('LIMITED', $event)" 
-                	     privateClick="setPrivacy('PRIVATE', $event)" />
+	        	   		<@orcid.privacyToggle3 
+		        	   		angularModel="websitesForm.visibility.visibility"
+			            	questionClick="toggleClickPrivacyHelp($index)"
+			             	clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
+			             	publicClick="setPrivacy('PUBLIC', $event)" 
+	                	    limitedClick="setPrivacy('LIMITED', $event)" 
+	                	    privateClick="setPrivacy('PRIVATE', $event)" 
+	                	    elementId="$index"/>
 	        	   </span>
 	        	</div>
 
@@ -272,12 +277,12 @@
 	        	   		<div ng-show="showEdit == true" ng-cloak>
 		        	   		<@orcid.privacyToggle3
 	                            angularModel="email.visibility"
-								questionClick="toggleClickPrivacyHelp(email.value)"
+								questionClick="toggleClickPrivacyHelp($index)"
 								clickedClassCheck="{'popover-help-container-show':privacyHelp[email.value]==true}" 
 								publicClick="emailSrvc.setPrivacy(email, 'PUBLIC', $event)" 
 			                  	limitedClick="emailSrvc.setPrivacy(email, 'LIMITED', $event)" 
 			                  	privateClick="emailSrvc.setPrivacy(email, 'PRIVATE', $event)" 
-			                  	elementId="email.value" />
+			                  	elementId="$index" />
 	        	   		</div>
 	        	   </div>
 	        	   <div ng-show="showEdit == true" ng-cloak>
