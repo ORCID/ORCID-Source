@@ -794,6 +794,9 @@ function populateWorkAjaxForm(bibJson, work) {
 
         if (lowerKeyTags.hasOwnProperty('doi'))
             workExternalIdentifierId(work, 'doi', lowerKeyTags['doi']);
+        
+        if (lowerKeyTags.hasOwnProperty('pmid'))
+            workExternalIdentifierId(work, 'pmid', lowerKeyTags['pmid']);
 
         if (lowerKeyTags.hasOwnProperty('eprint')
                 && lowerKeyTags.hasOwnProperty('eprint'))
