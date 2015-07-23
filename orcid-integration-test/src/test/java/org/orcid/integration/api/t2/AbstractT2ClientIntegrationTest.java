@@ -57,21 +57,21 @@ public abstract class AbstractT2ClientIntegrationTest {
         OrcidMessage emptyOrcid = (OrcidMessage) unmarshaller.unmarshal(AbstractT2ClientIntegrationTest.class.getResourceAsStream(xmlLoc));
         emptyOrcid.getOrcidProfile().getOrcidBio().getContactDetails()
                 .addOrReplacePrimaryEmail(new Email("orcid.integration.test+" + System.currentTimeMillis() + "@semantico.com"));
+          List<Email> emails = emptyOrcid.getOrcidProfile().getOrcidBio().getContactDetails().getEmail();
 
-        List<Email> emails = emptyOrcid.getOrcidProfile().getOrcidBio().getContactDetails().getEmail();
-
-        Email secondaryEmail1 = new Email("   test1+" + System.currentTimeMillis() + "@test.com   ");
-        secondaryEmail1.setPrimary(false);
-
-        Email secondaryEmail2 = new Email("test2+" + System.currentTimeMillis() + "@test.com   ");
-        secondaryEmail2.setPrimary(false);
-
-        Email secondaryEmail3 = new Email("   test3+" + System.currentTimeMillis() + "@test.com");
-        secondaryEmail3.setPrimary(false);
-
-        emails.add(secondaryEmail1);
-        emails.add(secondaryEmail2);
-        emails.add(secondaryEmail3);
+//		  Cannot create a profile with more than 1 email.
+//        Email secondaryEmail1 = new Email("   test1+" + System.currentTimeMillis() + "@test.com   ");
+//        secondaryEmail1.setPrimary(false);
+//
+//        Email secondaryEmail2 = new Email("test2+" + System.currentTimeMillis() + "@test.com   ");
+//        secondaryEmail2.setPrimary(false);
+//
+//        Email secondaryEmail3 = new Email("   test3+" + System.currentTimeMillis() + "@test.com");
+//        secondaryEmail3.setPrimary(false);
+//
+//        emails.add(secondaryEmail1);
+//        emails.add(secondaryEmail2);
+//        emails.add(secondaryEmail3);
 
         emptyOrcid.getOrcidProfile().getOrcidBio().getContactDetails().setEmail(emails);
 
@@ -86,18 +86,19 @@ public abstract class AbstractT2ClientIntegrationTest {
 
         List<Email> emails = emptyOrcid.getOrcidProfile().getOrcidBio().getContactDetails().getEmail();
 
-        Email secondaryEmail1 = new Email("   test1+" + System.currentTimeMillis() + "@test.com   ");
-        secondaryEmail1.setPrimary(false);
-
-        Email secondaryEmail2 = new Email("test2+" + System.currentTimeMillis() + "@test.com   ");
-        secondaryEmail2.setPrimary(false);
-
-        Email secondaryEmail3 = new Email("   test3+" + System.currentTimeMillis() + "@test.com");
-        secondaryEmail3.setPrimary(false);
-
-        emails.add(secondaryEmail1);
-        emails.add(secondaryEmail2);
-        emails.add(secondaryEmail3);
+//		  Client cannot add more than 1 emails
+//        Email secondaryEmail1 = new Email("   test1+" + System.currentTimeMillis() + "@test.com   ");
+//        secondaryEmail1.setPrimary(false);
+//
+//        Email secondaryEmail2 = new Email("test2+" + System.currentTimeMillis() + "@test.com   ");
+//        secondaryEmail2.setPrimary(false);
+//
+//        Email secondaryEmail3 = new Email("   test3+" + System.currentTimeMillis() + "@test.com");
+//        secondaryEmail3.setPrimary(false);
+//
+//        emails.add(secondaryEmail1);
+//        emails.add(secondaryEmail2);
+//        emails.add(secondaryEmail3);
 
         emptyOrcid.getOrcidProfile().getOrcidBio().getContactDetails().setEmail(emails);
 

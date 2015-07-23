@@ -1911,6 +1911,11 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input{
 	display: block;	
 }
 
+#edit-affiliation .control-group.errors{
+	float: left;
+    width: 100%;
+}
+
 .add-work{
 	width: 800px;
 }
@@ -5909,6 +5914,17 @@ textarea.form-control,
 	padding: 5px 0;
 }
 
+.workspace-top .emails-box .popover-help-container > .popover.privacy-myorcid3{
+	top: -184px;
+}
+
+.workspace-top .websites .popover-help-container > .popover.privacy-myorcid3,
+.workspace-top .keywords .popover-help-container > .popover.privacy-myorcid3,
+.workspace-top .country .popover-help-container > .popover.privacy-myorcid3,
+.workspace-top .other-names .popover-help-container > .popover.privacy-myorcid3{
+	top: -178px;
+}
+
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
 
@@ -7048,6 +7064,10 @@ textarea.form-control,
 	
 	#add-funding label.start-year{
 		width: 100%;
+	}
+	
+	#edit-affiliation .form-group div>select{
+		margin-bottom: 10px;
 	}
 	
 }

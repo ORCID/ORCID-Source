@@ -2053,6 +2053,7 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$compile', function Website
     $scope.showEdit = false;
     $scope.websitesForm = null;
     $scope.privacyHelp = false;
+    $scope.showElement = {};
 
     $scope.openEdit = function() {
         $scope.addNew();
@@ -2127,6 +2128,14 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$compile', function Website
         $event.preventDefault();
         $scope.websitesForm.visibility.visibility = priv;
     };
+    
+    $scope.showTooltip = function(elem){
+    	$scope.showElement[elem] = true;
+    }
+    
+    $scope.hideTooltip = function(elem){
+    	$scope.showElement[elem] = false;
+    }
 
     $scope.getWebsitesForm();
 }]);
@@ -2135,6 +2144,7 @@ orcidNgModule.controller('KeywordsCtrl', ['$scope', '$compile', function ($scope
     $scope.showEdit = false;
     $scope.keywordsForm = null;
     $scope.privacyHelp = false;
+    $scope.showElement = {};
 
     $scope.openEdit = function() {
         $scope.addNew();
@@ -2199,6 +2209,14 @@ orcidNgModule.controller('KeywordsCtrl', ['$scope', '$compile', function ($scope
         $event.preventDefault();
         $scope.keywordsForm.visibility.visibility = priv;
     };
+    
+    $scope.showTooltip = function(elem){
+    	$scope.showElement[elem] = true;
+    }
+    
+    $scope.hideTooltip = function(elem){
+    	$scope.showElement[elem] = false;
+    }
 
     $scope.getKeywordsForm();
 }]);
@@ -2264,6 +2282,7 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile',function ($scope
     $scope.showEdit = false;
     $scope.otherNamesForm = null;
     $scope.privacyHelp = false;
+    $scope.showElement = {};
 
     $scope.openEdit = function() {
         $scope.addNew();
@@ -2322,11 +2341,21 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile',function ($scope
             console.log("OtherNames.serverValidate() error");
         });
     };
+    
+    $scope.showTooltip = function(elem){
+    	$scope.showElement[elem] = true;
+    }
+
+    $scope.hideTooltip = function(elem){
+    	$scope.showElement[elem] = false;	
+    }
 
     $scope.setPrivacy = function(priv, $event) {
         $event.preventDefault();
         $scope.otherNamesForm.visibility.visibility = priv;
     };
+    
+    
 
     $scope.getOtherNamesForm();
 }]);
@@ -2422,6 +2451,7 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
     $scope.showEdit = false;
     $scope.countryForm = null;
     $scope.privacyHelp = false;
+    $scope.showElement = {};
 
     $scope.openEdit = function() {
         $scope.showEdit = true;
@@ -2477,6 +2507,14 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
         $event.preventDefault();
         $scope.countryForm.profileAddressVisibility.visibility = priv;
     };
+    
+    $scope.showTooltip = function(elem){
+    	$scope.showElement[elem] = true;
+    }
+
+    $scope.hideTooltip = function(elem){
+    	$scope.showElement[elem] = false;	
+    }
 
     $scope.getCountryForm();
 
@@ -8693,6 +8731,7 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
 orcidNgModule.controller('EmailsController',['$scope', 'emailSrvc',function ($scope, emailSrvc){
 	$scope.emailSrvc = emailSrvc;
 	$scope.showEdit = false;
+	$scope.showElement = {};
 
 	emailSrvc.getEmails();
 	
@@ -8702,6 +8741,14 @@ orcidNgModule.controller('EmailsController',['$scope', 'emailSrvc',function ($sc
 	
 	$scope.close = function(){
 		$scope.showEdit = false;
+	}
+	
+	$scope.showTooltip = function(elem){
+		$scope.showElement[elem] = true;
+	}
+	
+	$scope.hideTooltip = function(elem){
+		$scope.showElement[elem] = false;
 	}
 	
 }]);

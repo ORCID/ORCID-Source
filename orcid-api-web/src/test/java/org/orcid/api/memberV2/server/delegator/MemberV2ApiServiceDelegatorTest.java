@@ -395,7 +395,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     	Response response = serviceDelegator.createGroupIdRecord(newRecord);
     	//Response created with location as the group-id
     	assertNotNull(response.getMetadata().get("Location").get(0));
-    	assertEquals(response.getMetadata().get("Location").get(0).toString(), "issn:0000005");
+    	assertEquals(response.getMetadata().get("Location").get(0).toString(), "5");
     }
     
     @Test

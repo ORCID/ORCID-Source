@@ -687,6 +687,9 @@ public class WorksController extends BaseWorkspaceController {
     WorkForm workCitationValidate(@RequestBody WorkForm work) {
         if (work.getCitation().getCitation() == null) {
             work.getCitation().setCitation(Text.valueOf(StringUtils.EMPTY));
+        }        
+        if(work.getCitation().getCitationType() == null) {
+            work.getCitation().setCitationType(Text.valueOf(StringUtils.EMPTY));
         }
         work.getCitation().getCitation().setErrors(new ArrayList<String>());
         work.getCitation().getCitationType().setErrors(new ArrayList<String>());

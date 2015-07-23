@@ -197,7 +197,7 @@
                         <div ng-repeat='error in editAffiliation.endDate.errors' ng-bind-html="error"></div>
                     </span>
                 </div>
-                <div class="control-group">
+                <div class="control-group errors">
                     <span ng-show="editAffiliation.errors.length > 0" class="alert"><@orcid.msg 'common.please_fix_errors' /></span>
                     <span ng-show="addingAffiliation">
                         <i class="glyphicon glyphicon-refresh spin x2 green"></i>

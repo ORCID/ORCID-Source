@@ -149,7 +149,7 @@ public class OrcidProfileManagerReadOnlyImpl implements OrcidProfileManagerReadO
 
     private OrcidProfile doRetrieveFreshOrcidProfileInTransaction(String orcid, LoadOptions loadOptions) {
         LOG.debug("About to obtain fresh profile: " + orcid);
-        profileDao.flush();
+        profileDao.flushWithoutTransactional();
         ProfileEntity profileEntity = profileDao.find(orcid);
         if (profileEntity != null) {
             OrcidProfile freshOrcidProfile = convertToOrcidProfile(profileEntity, loadOptions);
