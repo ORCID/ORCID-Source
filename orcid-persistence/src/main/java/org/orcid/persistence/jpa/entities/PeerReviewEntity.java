@@ -17,6 +17,7 @@
 package org.orcid.persistence.jpa.entities;
 
 import static org.orcid.utils.NullUtils.compareObjectsNullSafe;
+
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -29,11 +30,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.jaxb.model.message.WorkType;
 import org.orcid.jaxb.model.record.PeerReviewType;
 import org.orcid.jaxb.model.record.Role;
 import org.orcid.utils.OrcidStringUtils;
@@ -52,9 +53,17 @@ public class PeerReviewEntity extends BaseEntity<Long> implements Comparable<Pee
     private PeerReviewType type;
     private CompletionDateEntity completionDate;    
     private SourceEntity source;
-    private Visibility visibility;    
-    private PeerReviewSubjectEntity subject;
-    private Long displayIndex; 
+    private Visibility visibility;            
+    
+    private String subjectExternalIdentifiersJson;
+    private WorkType subjectType;
+    private String subjectContainerName;
+    private String subjectName;
+    private String subjectTranslatedName;
+    private String subjectTranslatedNameLanguageCode;
+    private String subjectUrl;    
+    
+    private String groupId;
     
     @Override
     @Id
@@ -153,43 +162,90 @@ public class PeerReviewEntity extends BaseEntity<Long> implements Comparable<Pee
     @JoinColumn(name = "orcid", nullable = false)
     public ProfileEntity getProfile() {
         return profile;
-    }  
+    }     
+
     
-    @OneToOne(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, orphanRemoval = true)
-    @JoinColumn(name = "peer_review_subject_id", nullable = false)
-    public PeerReviewSubjectEntity getSubject() {
-        return subject;
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    public String getSubjectExternalIdentifiersJson() {
+        return subjectExternalIdentifiersJson;
     }
 
-    public void setSubject(PeerReviewSubjectEntity subject) {
-        this.subject = subject;
+    public void setSubjectExternalIdentifiersJson(String subjectExternalIdentifiersJson) {
+        this.subjectExternalIdentifiersJson = subjectExternalIdentifiersJson;
     }
 
-    /*
-     * Dictates the display order for peer reviews (and versions of peer reviews)
-     * peer reviews with higher numbers should be displayed first. 
-     * 
-     * Currently only updatable via PeerReviewDaoImpl.updateToMaxDisplay
-     *
-     */
-
-    @Column(name = "display_index", updatable=false, insertable=false)
-    public Long getDisplayIndex() {
-        return displayIndex;
+    public WorkType getSubjectType() {
+        return subjectType;
     }
 
-    public void setDisplayIndex(Long displayIndex) {
-        this.displayIndex = displayIndex;
+    public void setSubjectType(WorkType subjectType) {
+        this.subjectType = subjectType;
     }
+
+    public String getSubjectContainerName() {
+        return subjectContainerName;
+    }
+
+    public void setSubjectContainerName(String subjectContainerName) {
+        this.subjectContainerName = subjectContainerName;
+    }
+
+    public String getSubjectName() {
+        return subjectName;
+    }
+
+    public void setSubjectName(String subjectName) {
+        this.subjectName = subjectName;
+    }
+
+    public String getSubjectTranslatedName() {
+        return subjectTranslatedName;
+    }
+
+    public void setSubjectTranslatedName(String subjectTranslatedName) {
+        this.subjectTranslatedName = subjectTranslatedName;
+    }
+
+    public String getSubjectTranslatedNameLanguageCode() {      
+        return subjectTranslatedNameLanguageCode;
+    }
+
+    public void setSubjectTranslatedNameLanguageCode(String subjectTranslatedNameLanguageCode) {
+        this.subjectTranslatedNameLanguageCode = subjectTranslatedNameLanguageCode;
+    }
+
+    public String getSubjectUrl() {
+        return subjectUrl;
+    }
+
+    public void setSubjectUrl(String subjectUrl) {
+        this.subjectUrl = subjectUrl;
+    }
+
+    public String getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(String groupId) {
+        this.groupId = groupId;
+    }
+
+    
+    
     
     public int compareTo(PeerReviewEntity other) {        
         if (other == null) {
             throw new NullPointerException("Can't compare with null");
-        }
-                
-        int subjectCompare = compareObjectsNullSafe(subject, other.getSubject());
-        if(subjectCompare != 0) {
-            return subjectCompare;
         }
                 
         int typeCompare = compareObjectsNullSafe(type, other.getType());
@@ -256,9 +312,6 @@ public class PeerReviewEntity extends BaseEntity<Long> implements Comparable<Pee
         url = null;
         type = null;
         completionDate = null;        
-        visibility = null;
-        if(subject != null) {
-            subject.clean();
-        }
+        visibility = null;        
     }
 }

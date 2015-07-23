@@ -47,7 +47,6 @@
         <class>org.orcid.persistence.jpa.entities.ProfileEventEntity</class>
         <class>org.orcid.persistence.jpa.entities.EmailEventEntity</class>
         <class>org.orcid.persistence.jpa.entities.PeerReviewEntity</class>
-        <class>org.orcid.persistence.jpa.entities.PeerReviewSubjectEntity</class>
         <class>org.orcid.persistence.jpa.entities.ProfileFundingEntity</class>
         <class>org.orcid.persistence.jpa.entities.ProfileKeywordEntity</class>
         <class>org.orcid.persistence.jpa.entities.ProfileSummaryEntity</class>

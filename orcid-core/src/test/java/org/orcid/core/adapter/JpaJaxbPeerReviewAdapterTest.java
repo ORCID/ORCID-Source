@@ -38,7 +38,6 @@ import org.orcid.jaxb.model.record.summary.PeerReviewSummary;
 import org.orcid.persistence.jpa.entities.CompletionDateEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.jpa.entities.PeerReviewEntity;
-import org.orcid.persistence.jpa.entities.PeerReviewSubjectEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
@@ -106,8 +105,6 @@ public class JpaJaxbPeerReviewAdapterTest {
         assertEquals("12345", peerReview.getPutCode());
         assertEquals("private", peerReview.getVisibility().value());        
         //Subject
-        assertNotNull(peerReview.getSubject());
-        assertEquals("24816", peerReview.getSubject().getPutCode());
         assertNotNull(peerReview.getSubject().getExternalIdentifiers());
         assertNotNull(peerReview.getSubject().getExternalIdentifiers().getExternalIdentifier());
         assertEquals(1, peerReview.getSubject().getExternalIdentifiers().getExternalIdentifier().size());
