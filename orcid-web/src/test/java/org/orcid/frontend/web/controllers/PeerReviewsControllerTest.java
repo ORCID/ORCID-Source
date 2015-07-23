@@ -46,7 +46,6 @@ import org.orcid.frontend.web.util.BaseControllerTest;
 import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.pojo.ajaxForm.PeerReviewForm;
-import org.orcid.pojo.ajaxForm.PeerReviewSubjectForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.TranslatedTitle;
@@ -135,17 +134,22 @@ public class PeerReviewsControllerTest extends BaseControllerTest {
             String putCode = newForm.getPutCode().getValue();
             newForm = peerReviewsController.getPeerReviewJson(putCode);
 
-            assertEquals(newForm.getCity(), form.getCity());
-            assertEquals(newForm.getRegion(), form.getRegion());
-            assertEquals(newForm.getCountry(), form.getCountry());
-            assertEquals(newForm.getOrgName(), form.getOrgName());
-            assertEquals(newForm.getCompletionDate(), form.getCompletionDate());
-            assertEquals(newForm.getExternalIdentifiers(), form.getExternalIdentifiers());
-            assertEquals(newForm.getRole(), form.getRole());
-            assertEquals(newForm.getSubjectForm(), form.getSubjectForm());
-            assertEquals(newForm.getType(), form.getType());
-            assertEquals(newForm.getUrl(), form.getUrl());
-            assertEquals(newForm.getVisibility(), form.getVisibility());
+            assertEquals(form.getCity(), newForm.getCity());
+            assertEquals(form.getRegion(), newForm.getRegion());
+            assertEquals(form.getCountry(), newForm.getCountry());
+            assertEquals(form.getOrgName(), newForm.getOrgName());
+            assertEquals(form.getCompletionDate(), newForm.getCompletionDate());
+            assertEquals(form.getExternalIdentifiers(), newForm.getExternalIdentifiers());
+            assertEquals(form.getRole(), newForm.getRole());
+            assertEquals(form.getType(), newForm.getType());
+            assertEquals(form.getUrl(), newForm.getUrl());
+            assertEquals(form.getVisibility(), newForm.getVisibility());
+            assertEquals(form.getGroupId(), newForm.getGroupId());
+            assertEquals(form.getSubjectContainerName(), newForm.getSubjectContainerName());
+            assertEquals(form.getSubjectExternalIdentifier(), newForm.getSubjectExternalIdentifier());
+            assertEquals(form.getSubjectName(), newForm.getSubjectName());
+            assertEquals(form.getSubjectType(), newForm.getSubjectType());
+            assertEquals(form.getSubjectUrl(), newForm.getSubjectUrl());
         } catch (NullPointerException npe) {
             fail();
 
@@ -203,21 +207,18 @@ public class PeerReviewsControllerTest extends BaseControllerTest {
         wei.setWorkExternalIdentifierType(Text.valueOf("bibcode"));
         List<WorkExternalIdentifier> extIds = new ArrayList<WorkExternalIdentifier>();
         extIds.add(wei);
-        form.setExternalIdentifiers(extIds);
-
-        PeerReviewSubjectForm subjectForm = new PeerReviewSubjectForm();
-        subjectForm.setJournalTitle(Text.valueOf("Journal Title"));
-        subjectForm.setSubtitle(Text.valueOf("Subtitle"));
-        subjectForm.setTitle(Text.valueOf("Title"));
-
+        form.setExternalIdentifiers(extIds);        
+        form.setSubjectContainerName(Text.valueOf("Journal Title"));
+        form.setSubjectName(Text.valueOf("Title"));        
         TranslatedTitle translated = new TranslatedTitle();
         translated.setContent("Translated title");
         translated.setLanguageCode("es");
-        subjectForm.setTranslatedTitle(translated);
-        subjectForm.setUrl(Text.valueOf("http://subject.com"));
-        subjectForm.setWorkExternalIdentifiers(extIds);
-        subjectForm.setWorkType(Text.valueOf("book-review"));
-        form.setSubjectForm(subjectForm);
+        form.setTranslatedSubjectName(translated);
+        form.setSubjectUrl(Text.valueOf("http://subject.com"));
+        form.setSubjectExternalIdentifier(wei);
+        form.setSubjectType(Text.valueOf("book-review"));        
+        form.setGroupId(Text.valueOf(""));
+        
         return form;
     }
 }

@@ -404,8 +404,8 @@ public class MemberV2Test extends BlackBoxBase {
         assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
         PeerReview gotPeerReview = getResponse.getEntity(PeerReview.class);
         assertEquals("peer-review:url", gotPeerReview.getUrl().getValue());
-        assertEquals("common:title", gotPeerReview.getSubject().getTitle().getTitle().getContent());
-        gotPeerReview.getSubject().getTitle().getTitle().setContent("updated title");
+        assertEquals("common:title", gotPeerReview.getSubjectName().getTitle().getContent());
+        gotPeerReview.getSubjectName().getTitle().setContent("updated title");
 
         ClientResponse putResponse = memberV2ApiClient.updateLocationXml(postResponse.getLocation(), accessToken, gotPeerReview);
         assertEquals(Response.Status.OK.getStatusCode(), putResponse.getStatus());
@@ -413,7 +413,7 @@ public class MemberV2Test extends BlackBoxBase {
         assertEquals(Response.Status.OK.getStatusCode(), getAfterUpdateResponse.getStatus());
 
         PeerReview gotAfterUpdateWork = getAfterUpdateResponse.getEntity(PeerReview.class);
-        assertEquals("updated title", gotAfterUpdateWork.getSubject().getTitle().getTitle().getContent());
+        assertEquals("updated title", gotAfterUpdateWork.getSubjectName().getTitle().getContent());
         ClientResponse deleteResponse = memberV2ApiClient.deletePeerReviewXml(user1OrcidId, gotAfterUpdateWork.getPutCode(), accessToken);
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), deleteResponse.getStatus());
     }
@@ -440,15 +440,15 @@ public class MemberV2Test extends BlackBoxBase {
         ClientResponse getResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
         PeerReview gotPeerReview = getResponse.getEntity(PeerReview.class);
-        assertEquals("common:title", gotPeerReview.getSubject().getTitle().getTitle().getContent());
-        gotPeerReview.getSubject().getTitle().getTitle().setContent("updated title");
+        assertEquals("common:title", gotPeerReview.getSubjectName().getTitle().getContent());
+        gotPeerReview.getSubjectName().getTitle().setContent("updated title");
         String profileCreateToken = oauthHelper.getClientCredentialsAccessToken(client2ClientId, client2ClientSecret, ScopePathType.ORCID_PROFILE_CREATE);
         ClientResponse putResponse = memberV2ApiClient.updateLocationXml(postResponse.getLocation(), profileCreateToken, gotPeerReview);
         assertEquals(Response.Status.FORBIDDEN.getStatusCode(), putResponse.getStatus());
         ClientResponse getAfterUpdateResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), getAfterUpdateResponse.getStatus());
         PeerReview gotAfterUpdatePeerReview = getAfterUpdateResponse.getEntity(PeerReview.class);
-        assertEquals("common:title", gotAfterUpdatePeerReview.getSubject().getTitle().getTitle().getContent());
+        assertEquals("common:title", gotAfterUpdatePeerReview.getSubjectName().getTitle().getContent());
         ClientResponse deleteResponse = memberV2ApiClient.deletePeerReviewXml(user1OrcidId, gotAfterUpdatePeerReview.getPutCode(), accessToken);
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), deleteResponse.getStatus());
     }
@@ -597,7 +597,7 @@ public class MemberV2Test extends BlackBoxBase {
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         
-        peerReview.getSubject().getTitle().getTitle().setContent("PeerReview # 2");
+        peerReview.getSubjectName().getTitle().setContent("PeerReview # 2");
         peerReview.getCompletionDate().setDay(new Day(2));
         peerReview.getCompletionDate().setMonth(new Month(2));
         peerReview.getCompletionDate().setYear(new Year(2016));
@@ -612,7 +612,7 @@ public class MemberV2Test extends BlackBoxBase {
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         
-        peerReview.getSubject().getTitle().getTitle().setContent("PeerReview # 3");
+        peerReview.getSubjectName().getTitle().setContent("PeerReview # 3");
         peerReview.getCompletionDate().setDay(new Day(3));
         peerReview.getCompletionDate().setMonth(new Month(3));
         peerReview.getCompletionDate().setYear(new Year(2017));
@@ -628,7 +628,7 @@ public class MemberV2Test extends BlackBoxBase {
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         
-        peerReview.getSubject().getTitle().getTitle().setContent("PeerReview # 4");
+        peerReview.getSubjectName().getTitle().setContent("PeerReview # 4");
         peerReview.getCompletionDate().setDay(new Day(4));
         peerReview.getCompletionDate().setMonth(new Month(4));
         peerReview.getCompletionDate().setYear(new Year(2018));

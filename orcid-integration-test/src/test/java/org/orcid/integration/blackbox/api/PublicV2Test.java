@@ -886,7 +886,7 @@ public class PublicV2Test {
         PeerReview peerReviewToCreate = (PeerReview) unmarshallFromPath("/record_2.0_rc1/samples/peer-review-2.0_rc1.xml", PeerReview.class);
         for (int i = 0; i < 4; i++) {
             peerReviewToCreate.setPutCode(null);
-            peerReviewToCreate.getSubject().getTitle().getTitle().setContent("PeerReview # " + i);
+            peerReviewToCreate.getSubjectName().getTitle().setContent("PeerReview # " + i);
             peerReviewToCreate.getCompletionDate().setDay(new Day(i + 1));
             peerReviewToCreate.getCompletionDate().setMonth(new Month(i + 1));
             peerReviewToCreate.getCompletionDate().setYear(new Year((i + 1) * 1000));
