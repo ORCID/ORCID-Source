@@ -133,10 +133,10 @@ public class WorkExternalIdentifier implements ErrorsInterface, Serializable {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
+        result = prime * result + ((relationship == null) ? 0 : relationship.hashCode());
+        result = prime * result + ((url == null) ? 0 : url.hashCode());
         result = prime * result + ((workExternalIdentifierId == null) ? 0 : workExternalIdentifierId.hashCode());
         result = prime * result + ((workExternalIdentifierType == null) ? 0 : workExternalIdentifierType.hashCode());
-        result = prime * result + ((url == null) ? 0 : url.hashCode());
-        result = prime * result + ((relationship == null) ? 0 : relationship.hashCode());
         return result;
     }
 
@@ -149,6 +149,16 @@ public class WorkExternalIdentifier implements ErrorsInterface, Serializable {
         if (getClass() != obj.getClass())
             return false;
         WorkExternalIdentifier other = (WorkExternalIdentifier) obj;
+        if (relationship == null) {
+            if (other.relationship != null)
+                return false;
+        } else if (!relationship.equals(other.relationship))
+            return false;
+        if (url == null) {
+            if (other.url != null)
+                return false;
+        } else if (!url.equals(other.url))
+            return false;
         if (workExternalIdentifierId == null) {
             if (other.workExternalIdentifierId != null)
                 return false;
@@ -158,18 +168,7 @@ public class WorkExternalIdentifier implements ErrorsInterface, Serializable {
             if (other.workExternalIdentifierType != null)
                 return false;
         } else if (!workExternalIdentifierType.equals(other.workExternalIdentifierType))
-            return false;        
-        if (url == null) {
-            if (other.url != null)
-                return false;
-        } else if (!url.equals(other.url))
-            return false;        
-        if (relationship == null) {
-            if (other.relationship != null)
-                return false;
-        } else if (!relationship.equals(other.relationship))
             return false;
-        
         return true;
-    }        
+    }          
 }

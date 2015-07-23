@@ -44,6 +44,7 @@ import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidWebRole;
 import org.orcid.frontend.web.util.BaseControllerTest;
 import org.orcid.jaxb.model.common.Visibility;
+import org.orcid.jaxb.model.record.Relationship;
 import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.pojo.ajaxForm.PeerReviewForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -66,7 +67,7 @@ public class PeerReviewsControllerTest extends BaseControllerTest {
 
     private static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml", "/data/SecurityQuestionEntityData.xml",
             "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/OrgsEntityData.xml",
-            "/data/OrgAffiliationEntityData.xml", "/data/PeerReviewSubjectEntityData.xml", "/data/PeerReviewEntityData.xml");
+            "/data/OrgAffiliationEntityData.xml", "/data/PeerReviewEntityData.xml");
 
     @Resource
     protected OrcidProfileManager orcidProfileManager;
@@ -205,6 +206,8 @@ public class PeerReviewsControllerTest extends BaseControllerTest {
         WorkExternalIdentifier wei = new WorkExternalIdentifier();
         wei.setWorkExternalIdentifierId(Text.valueOf("extId1"));
         wei.setWorkExternalIdentifierType(Text.valueOf("bibcode"));
+        wei.setRelationship(Text.valueOf(Relationship.SELF.value()));
+        wei.setUrl(Text.valueOf("http://myurl.com"));
         List<WorkExternalIdentifier> extIds = new ArrayList<WorkExternalIdentifier>();
         extIds.add(wei);
         form.setExternalIdentifiers(extIds);        
@@ -217,7 +220,7 @@ public class PeerReviewsControllerTest extends BaseControllerTest {
         form.setSubjectUrl(Text.valueOf("http://subject.com"));
         form.setSubjectExternalIdentifier(wei);
         form.setSubjectType(Text.valueOf("book-review"));        
-        form.setGroupId(Text.valueOf(""));
+        form.setGroupId(Text.valueOf("orcid-generated:12345"));
         
         return form;
     }

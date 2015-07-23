@@ -30,21 +30,20 @@
 		<common:month>02</common:month>
 		<common:day>02</common:day>
 	</peer-review:review-completion-date>	
-	<peer-review:review-group-id>orcid-generated:1234</peer-review:review-group-id>		
+	<peer-review:review-group-id>orcid-generated:12345</peer-review:review-group-id>		
 	<peer-review:subject-external-identifier>			
 		<common:external-identifier-url>http://orcid.org</common:external-identifier-url>
 		<common:relationship>self</common:relationship>
 		<work:external-identifier-type>agr</work:external-identifier-type>
-		<work:external-identifier-id>work:external-identifier-id</work:external-identifier-id>			
+		<work:external-identifier-id>peer-review:subject-external-identifier-id</work:external-identifier-id>			
 	</peer-review:subject-external-identifier>
-	<peer-review:subject-container-name>peer-review:subject container name</peer-review:subject-container-name>
-	<peer-review:subject-type>artistic-performance</peer-review:subject-type>
+	<peer-review:subject-container-name>peer-review:subject-container-name</peer-review:subject-container-name>
+	<peer-review:subject-type>book-review</peer-review:subject-type>
 	<peer-review:subject-name>
-		<common:title>common:title</common:title>
-		<common:subtitle>common:subtitle</common:subtitle>
-		<common:translated-title language-code="en">common:translated-title</common:translated-title>
+		<common:title>peer-review:subject-name</common:title>
+		<common:translated-title language-code="en">peer-review:subject-translated-name</common:translated-title>
 	</peer-review:subject-name>
-	<peer-review:subject-url>peer-review-subject:url</peer-review:subject-url>
+	<peer-review:subject-url>peer-review:subject-url</peer-review:subject-url>
 	<peer-review:convening-organization>
 		<common:name>common:name</common:name>
 		<common:address>

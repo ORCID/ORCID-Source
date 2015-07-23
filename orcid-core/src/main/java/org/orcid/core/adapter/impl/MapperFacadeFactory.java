@@ -284,6 +284,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
 
         ConverterFactory converterFactory = mapperFactory.getConverterFactory();
         converterFactory.registerConverter("workExternalIdentifiersConverterId", new JsonOrikaConverter<WorkExternalIdentifiers>());
+        converterFactory.registerConverter("workExternalIdentifierConverterId", new JsonOrikaConverter<WorkExternalIdentifier>());
 
         ClassMapBuilder<PeerReview, PeerReviewEntity> classMap = mapperFactory.classMap(PeerReview.class, PeerReviewEntity.class);
         addV2CommonFields(classMap);
@@ -293,17 +294,17 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         classMap.field("organization.address.region", "org.region");
         classMap.field("organization.address.country", "org.country");
         classMap.field("organization.disambiguatedOrganization.disambiguatedOrganizationIdentifier", "org.orgDisambiguated.sourceId");
-        classMap.field("organization.disambiguatedOrganization.disambiguationSource", "org.orgDisambiguated.sourceType");
-        classMap.field("subject.putCode", "subject.id");
-        classMap.field("subject.type", "subject.workType");
-        classMap.field("subject.url.value", "subject.url");
-        classMap.field("subject.title.title.content", "subject.title");
-        classMap.field("subject.title.translatedTitle.content", "subject.translatedTitle");
-        classMap.field("subject.title.translatedTitle.languageCode", "subject.translatedTitleLanguageCode");
-        classMap.field("subject.title.subtitle.content", "subject.subTitle");
-        classMap.field("subject.journalTitle.content", "subject.journalTitle");
+        classMap.field("organization.disambiguatedOrganization.disambiguationSource", "org.orgDisambiguated.sourceType");        
+        classMap.field("groupId", "groupId");
+        classMap.field("subjectType", "subjectType");
+        classMap.field("subjectUrl.value", "subjectUrl");
+        classMap.field("subjectName.title.content", "subjectName");
+        classMap.field("subjectName.translatedTitle.content", "subjectTranslatedName");
+        classMap.field("subjectName.translatedTitle.languageCode", "subjectTranslatedNameLanguageCode");
+        classMap.field("subjectContainerName.content", "subjectContainerName");
         classMap.fieldMap("externalIdentifiers", "externalIdentifiersJson").converter("workExternalIdentifiersConverterId").add();
-        classMap.fieldMap("subject.externalIdentifiers", "subject.externalIdentifiersJson").converter("workExternalIdentifiersConverterId").add();
+        classMap.fieldMap("subjectExternalIdentifier", "subjectExternalIdentifiersJson").converter("workExternalIdentifierConverterId").add();
+        
         classMap.register();
 
         ClassMapBuilder<PeerReviewSummary, PeerReviewEntity> peerReviewSummaryClassMap = mapperFactory.classMap(PeerReviewSummary.class, PeerReviewEntity.class);

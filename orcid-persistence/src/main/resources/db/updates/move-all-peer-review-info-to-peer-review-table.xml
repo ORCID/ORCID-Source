@@ -20,22 +20,20 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
 
-	<changeSet author="Angel Montenegro" id="MOVE-ALL-PEER-REVIEW-INFO-TO-PEER-REVIEW-TABLE">
+	<changeSet id="MOVE-ALL-PEER-REVIEW-INFO-TO-PEER-REVIEW-TABLE" author="Angel Montenegro">
 		<preConditions onFail="MARK_RAN">
 			<not>
 				<columnExists tableName="peer_review" columnName="subject_external_identifiers_json" />
 			</not>
 		</preConditions>
 	    <addColumn tableName="peer_review">
-			<column name="subject_external_identifiers_json" type="json">
+			<column name="subject_external_identifiers_json" type="text">
 				<constraints nullable="false" />
-			</column>
-			<column name="subject_container_name" type="VARCHAR(1000)">
-				<constraints nullable="false" />
-			</column>
+			</column>			
 			<column name="subject_type" type="VARCHAR(25)">
 				<constraints nullable="false" />
-			</column>					
+			</column>
+			<column name="subject_container_name" type="VARCHAR(1000)" />
 			<column name="subject_name" type="VARCHAR(1000)" />
 			<column name="subject_translated_name" type="VARCHAR(1000)" />
 			<column name="subject_translated_name_language_code" type="VARCHAR(10)" />			
@@ -44,10 +42,25 @@
 		</addColumn>
     </changeSet>
         
-    <changeSet author="Angel Montenegro" id="REMOVE-PEER-REVIEW-SUBJECT-FK">
+    <changeSet id="REMOVE-PEER-REVIEW-SUBJECT-FK" author="Angel Montenegro">
 		<preConditions onFail="MARK_RAN">
             <foreignKeyConstraintExists foreignKeyTableName="peer_review" foreignKeyName="peer_review_subject_fk"/>            
         </preConditions>
 		<dropForeignKeyConstraint baseTableName="peer_review" constraintName="peer_review_subject_fk"/>
     </changeSet>
+    
+    <changeSet id="SUBJECT-EXTERNAL-IDS-AS-JSON" author="Angel Montenegro">
+		<preConditions onFail="MARK_RAN">
+            <foreignKeyConstraintExists foreignKeyTableName="peer_review" foreignKeyName="subject_external_identifiers_json"/>            
+        </preConditions>		
+		<sql>ALTER TABLE peer_review ALTER COLUMN subject_external_identifiers_json TYPE json USING subject_external_identifiers_json::JSON</sql>		
+    </changeSet>
+    
+    <changeSet id="REMOVE-PEER-REVIEW-SUBJECT-ID-FROM-PEER-REVIEW-TABLE" author="Angel Montenegro">
+		<preConditions onFail="MARK_RAN">
+			<columnExists tableName="peer_review" columnName="peer_review_subject_id"/>
+		</preConditions>
+		<dropColumn tableName="peer_review" columnName="peer_review_subject_id"/>
+    </changeSet>
+    
 </databaseChangeLog>	

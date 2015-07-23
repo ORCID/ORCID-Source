@@ -93,7 +93,6 @@ public class PeerReviewsController extends BaseWorkspaceController {
     @RequestMapping(value = "/peer-review.json", method = RequestMethod.GET)
     public @ResponseBody PeerReviewForm getEmptyPeerReview() {
         Date emptyDate = new Date();
-        Text emptyText = Text.valueOf(StringUtils.EMPTY);
         emptyDate.setDay(StringUtils.EMPTY);
         emptyDate.setMonth(StringUtils.EMPTY);
         emptyDate.setYear(StringUtils.EMPTY);
@@ -106,12 +105,12 @@ public class PeerReviewsController extends BaseWorkspaceController {
 
         WorkExternalIdentifier emptyExternalId = new WorkExternalIdentifier();
         emptyExternalId.setErrors(new ArrayList<String>());
-        emptyExternalId.setWorkExternalIdentifierId(emptyText);
+        emptyExternalId.setWorkExternalIdentifierId(Text.valueOf(StringUtils.EMPTY));
         emptyExternalId.getWorkExternalIdentifierId().setRequired(false);
-        emptyExternalId.setWorkExternalIdentifierType(emptyText);
+        emptyExternalId.setWorkExternalIdentifierType(Text.valueOf(StringUtils.EMPTY));
         emptyExternalId.getWorkExternalIdentifierType().setRequired(false);
         emptyExternalId.setRelationship(Text.valueOf(Relationship.SELF.value()));
-        emptyExternalId.setUrl(emptyText);
+        emptyExternalId.setUrl(Text.valueOf(StringUtils.EMPTY));
 
         List<WorkExternalIdentifier> emptyExtIdsList = new ArrayList<WorkExternalIdentifier>();
         emptyExtIdsList.add(emptyExternalId);
@@ -123,29 +122,29 @@ public class PeerReviewsController extends BaseWorkspaceController {
         form.setCompletionDate(emptyDate);
         form.setCreatedDate(emptyDate);
 
-        form.setCity(emptyText);
-        form.setRegion(emptyText);
+        form.setCity(Text.valueOf(StringUtils.EMPTY));
+        form.setRegion(Text.valueOf(StringUtils.EMPTY));
         form.getRegion().setRequired(false);
-        form.setCountry(emptyText);
+        form.setCountry(Text.valueOf(StringUtils.EMPTY));
         form.setCountryForDisplay(StringUtils.EMPTY);
-        form.setDisambiguationSource(emptyText);
+        form.setDisambiguationSource(Text.valueOf(StringUtils.EMPTY));
         form.getDisambiguationSource().setRequired(false);
-        form.setOrgName(emptyText);
+        form.setOrgName(Text.valueOf(StringUtils.EMPTY));
 
-        form.setPutCode(emptyText);
+        form.setPutCode(Text.valueOf(StringUtils.EMPTY));
         form.getPutCode().setRequired(false);
         form.setRole(Text.valueOf(Role.REVIEWER.value()));
         form.setType(Text.valueOf(PeerReviewType.REVIEW.value()));
-        form.setUrl(emptyText);
+        form.setUrl(Text.valueOf(StringUtils.EMPTY));
         form.getUrl().setRequired(false);
         form.setExternalIdentifiers(emptyExtIdsList);
 
-        form.setGroupId(emptyText);
-        form.setSubjectContainerName(emptyText);        
+        form.setGroupId(Text.valueOf(StringUtils.EMPTY));
+        form.setSubjectContainerName(Text.valueOf(StringUtils.EMPTY));        
         form.setSubjectExternalIdentifier(emptyExternalId);
-        form.setSubjectName(emptyText);
-        form.setSubjectType(emptyText);
-        form.setSubjectUrl(emptyText);
+        form.setSubjectName(Text.valueOf(StringUtils.EMPTY));
+        form.setSubjectType(Text.valueOf(StringUtils.EMPTY));
+        form.setSubjectUrl(Text.valueOf(StringUtils.EMPTY));
         
         return form;
     }
@@ -496,11 +495,11 @@ public class PeerReviewsController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = "/subject/extIdsValidate.json", method = RequestMethod.POST)
-    public @ResponseBody PeerReviewForm validateSubjectExternalIdentifier(@RequestBody PeerReviewForm peerReview) {        
-        if(peerReview.getSubjectExternalIdentifier() != null) {
-            validateExternalIdentifier(peerReview.getSubjectExternalIdentifier());
+    public @ResponseBody PeerReviewForm validateSubjectExternalIdentifier(@RequestBody PeerReviewForm peerReview) {
+        if(peerReview.getSubjectExternalIdentifier() == null) {
+            peerReview.setSubjectExternalIdentifier(new WorkExternalIdentifier());
         }
-        
+        validateExternalIdentifier(peerReview.getSubjectExternalIdentifier());                
         return peerReview;
     }
     
@@ -521,9 +520,15 @@ public class PeerReviewsController extends BaseWorkspaceController {
             extId.setWorkExternalIdentifierId(new Text());
         if(extId.getWorkExternalIdentifierType() == null)
             extId.setWorkExternalIdentifierType(new Text());
+        if(extId.getRelationship() == null) 
+            extId.setRelationship(new Text());
+        if(extId.getUrl() == null)
+            extId.setUrl(new Text());
         extId.setErrors(new ArrayList<String>());
         extId.getWorkExternalIdentifierId().setErrors(new ArrayList<String>());
         extId.getWorkExternalIdentifierType().setErrors(new ArrayList<String>());
+        extId.getRelationship().setErrors(new ArrayList<String>());
+        extId.getUrl().setErrors(new ArrayList<String>());
         
         if(PojoUtil.isEmpty(extId.getWorkExternalIdentifierId()) && !PojoUtil.isEmpty(extId.getWorkExternalIdentifierType())) {
             //Please select a type

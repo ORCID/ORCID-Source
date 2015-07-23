@@ -38,7 +38,7 @@ import org.orcid.jaxb.model.common.VisibilityType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "createdDate", "lastModifiedDate", "source", "putCode", "path", "role", "organization", "externalIdentifiers", "url", "type", "completionDate",
-        "subject" })
+        "groupId", "subjectExternalIdentifier", "subjectContainerName", "subjectType", "subjectName", "subjectUrl" })
 @XmlRootElement(name = "peer-review", namespace = "http://www.orcid.org/ns/peer-review")
 public class PeerReview implements VisibilityType, Activity, Serializable, OrganizationHolder {
     private static final long serialVersionUID = -1112309604310926743L;
@@ -52,11 +52,8 @@ public class PeerReview implements VisibilityType, Activity, Serializable, Organ
     protected PeerReviewType type;
     @XmlElement(namespace = "http://www.orcid.org/ns/peer-review", name = "review-completion-date")
     protected FuzzyDate completionDate;
-    @XmlElement(namespace = "http://www.orcid.org/ns/group-id", name = "group-id", required = true)
+    @XmlElement(namespace = "http://www.orcid.org/ns/peer-review", name = "review-group-id", required = true)
     protected String groupId;
-
-    
-    
     @XmlElement(namespace = "http://www.orcid.org/ns/peer-review", name = "subject-external-identifier")
     protected WorkExternalIdentifier subjectExternalIdentifier;
     @XmlElement(namespace = "http://www.orcid.org/ns/peer-review", name = "subject-container-name")
@@ -69,12 +66,6 @@ public class PeerReview implements VisibilityType, Activity, Serializable, Organ
     protected Url subjectUrl;
     @XmlElement(required = true, namespace = "http://www.orcid.org/ns/peer-review", name = "convening-organization")
     protected Organization organization;
-    
-    
-    
-    
-    
-    
     @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected Source source;
     @XmlAttribute(name = "put-code")
