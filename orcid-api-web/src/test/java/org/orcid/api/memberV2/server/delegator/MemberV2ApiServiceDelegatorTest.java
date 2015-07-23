@@ -298,7 +298,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals("Peer Review # 1 container name", peerReview.getSubjectContainerName().getContent());        
         assertEquals("peer-review:subject-external-identifier-id#1", peerReview.getSubjectExternalIdentifier().getWorkExternalIdentifierId().getContent());
         assertEquals("agr", peerReview.getSubjectExternalIdentifier().getWorkExternalIdentifierType().value());
-        assertEquals("orcid-generated:24816", "fail");
+        assertEquals("orcid-generated:24816", peerReview.getGroupId());
     }
     
     @Test
