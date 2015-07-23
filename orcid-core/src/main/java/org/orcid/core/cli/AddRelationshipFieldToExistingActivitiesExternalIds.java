@@ -255,22 +255,22 @@ public class AddRelationshipFieldToExistingActivitiesExternalIds {
             peerReviewEntity.setExternalIdentifiersJson(JsonUtils.convertToJsonString(extIds));
 
             //Update peer review subject ext ids
-            if(peerReviewEntity.getSubject() != null) {
-                if(!PojoUtil.isEmpty(peerReviewEntity.getSubject().getExternalIdentifiersJson())) {
-                    WorkExternalIdentifiers subjectExtIds = JsonUtils.readObjectFromJsonString(peerReviewEntity.getSubject().getExternalIdentifiersJson(), WorkExternalIdentifiers.class);
-                    if (subjectExtIds != null && !subjectExtIds.getExternalIdentifier().isEmpty()) {
-                        for (WorkExternalIdentifier subjectExtId : subjectExtIds.getExternalIdentifier()) {
-                            if (subjectExtId.getRelationship() == null) {
-                                subjectExtId.setRelationship(Relationship.SELF);
-                            }
-                            if(PojoUtil.isEmpty(subjectExtId.getUrl())) {
-                                subjectExtId.setUrl(new Url(""));
-                            }
+            
+            if(!PojoUtil.isEmpty(peerReviewEntity.getSubjectExternalIdentifiersJson())) {
+                WorkExternalIdentifiers subjectExtIds = JsonUtils.readObjectFromJsonString(peerReviewEntity.getSubjectExternalIdentifiersJson(), WorkExternalIdentifiers.class);
+                if (subjectExtIds != null && !subjectExtIds.getExternalIdentifier().isEmpty()) {
+                    for (WorkExternalIdentifier subjectExtId : subjectExtIds.getExternalIdentifier()) {
+                        if (subjectExtId.getRelationship() == null) {
+                            subjectExtId.setRelationship(Relationship.SELF);
+                        }
+                        if(PojoUtil.isEmpty(subjectExtId.getUrl())) {
+                            subjectExtId.setUrl(new Url(""));
                         }
                     }
-                    peerReviewEntity.getSubject().setExternalIdentifiersJson(JsonUtils.convertToJsonString(subjectExtIds));
                 }
-            }            
+                peerReviewEntity.setSubjectExternalIdentifiersJson(JsonUtils.convertToJsonString(subjectExtIds));
+            }
+                        
                         
             peerReviewDao.merge(peerReviewEntity);
         }

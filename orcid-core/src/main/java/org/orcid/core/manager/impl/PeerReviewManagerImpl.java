@@ -35,7 +35,6 @@ import org.orcid.jaxb.model.common.SourceOrcid;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.record.PeerReview;
 import org.orcid.jaxb.model.record.summary.PeerReviewSummary;
-import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.PeerReviewDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.OrgEntity;
@@ -71,9 +70,6 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
 
     @Resource
     private LocaleManager localeManager;
-
-    @Resource
-    private GenericDao<PeerReviewSubjectEntity, Long> peerReviewSubjectDao;
 
     @Resource
     private OrcidUrlManager orcidUrlManager;
@@ -174,14 +170,7 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
 
     @Transactional
     private boolean deletePeerReview(PeerReviewEntity entity, String orcid) {
-        Long subjectId = entity.getSubject().getId();
-        // Delete the peer review
-        boolean result = peerReviewDao.removePeerReview(orcid, entity.getId());
-        if (result) {
-            // Delete the subject
-            peerReviewSubjectDao.remove(subjectId);
-        }
-        return result;
+        return peerReviewDao.removePeerReview(orcid, entity.getId());
     }
 
     private void setIncomingPrivacy(PeerReviewEntity entity, ProfileEntity profile) {

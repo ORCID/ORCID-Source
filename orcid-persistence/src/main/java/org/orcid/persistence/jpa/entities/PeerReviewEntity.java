@@ -53,16 +53,14 @@ public class PeerReviewEntity extends BaseEntity<Long> implements Comparable<Pee
     private PeerReviewType type;
     private CompletionDateEntity completionDate;    
     private SourceEntity source;
-    private Visibility visibility;            
-    
+    private Visibility visibility;                
     private String subjectExternalIdentifiersJson;
     private WorkType subjectType;
     private String subjectContainerName;
     private String subjectName;
     private String subjectTranslatedName;
     private String subjectTranslatedNameLanguageCode;
-    private String subjectUrl;    
-    
+    private String subjectUrl;
     private String groupId;
     
     @Override
@@ -164,18 +162,7 @@ public class PeerReviewEntity extends BaseEntity<Long> implements Comparable<Pee
         return profile;
     }     
 
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    @Column(name = "subject_external_identifiers_json")
     public String getSubjectExternalIdentifiersJson() {
         return subjectExternalIdentifiersJson;
     }
@@ -184,6 +171,9 @@ public class PeerReviewEntity extends BaseEntity<Long> implements Comparable<Pee
         this.subjectExternalIdentifiersJson = subjectExternalIdentifiersJson;
     }
 
+    @Basic
+    @Enumerated(EnumType.STRING)   
+    @Column(name = "subject_type")
     public WorkType getSubjectType() {
         return subjectType;
     }
@@ -192,6 +182,7 @@ public class PeerReviewEntity extends BaseEntity<Long> implements Comparable<Pee
         this.subjectType = subjectType;
     }
 
+    @Column(name = "subject_container_name")
     public String getSubjectContainerName() {
         return subjectContainerName;
     }
@@ -200,6 +191,7 @@ public class PeerReviewEntity extends BaseEntity<Long> implements Comparable<Pee
         this.subjectContainerName = subjectContainerName;
     }
 
+    @Column(name = "subject_name")
     public String getSubjectName() {
         return subjectName;
     }
@@ -208,6 +200,7 @@ public class PeerReviewEntity extends BaseEntity<Long> implements Comparable<Pee
         this.subjectName = subjectName;
     }
 
+    @Column(name = "subject_translated_name")
     public String getSubjectTranslatedName() {
         return subjectTranslatedName;
     }
@@ -216,6 +209,7 @@ public class PeerReviewEntity extends BaseEntity<Long> implements Comparable<Pee
         this.subjectTranslatedName = subjectTranslatedName;
     }
 
+    @Column(name = "subject_translated_name_language_code")
     public String getSubjectTranslatedNameLanguageCode() {      
         return subjectTranslatedNameLanguageCode;
     }
@@ -224,6 +218,7 @@ public class PeerReviewEntity extends BaseEntity<Long> implements Comparable<Pee
         this.subjectTranslatedNameLanguageCode = subjectTranslatedNameLanguageCode;
     }
 
+    @Column(name = "subject_url")
     public String getSubjectUrl() {
         return subjectUrl;
     }
@@ -232,6 +227,7 @@ public class PeerReviewEntity extends BaseEntity<Long> implements Comparable<Pee
         this.subjectUrl = subjectUrl;
     }
 
+    @Column(name = "group_id")
     public String getGroupId() {
         return groupId;
     }
@@ -240,9 +236,6 @@ public class PeerReviewEntity extends BaseEntity<Long> implements Comparable<Pee
         this.groupId = groupId;
     }
 
-    
-    
-    
     public int compareTo(PeerReviewEntity other) {        
         if (other == null) {
             throw new NullPointerException("Can't compare with null");
@@ -289,6 +282,46 @@ public class PeerReviewEntity extends BaseEntity<Long> implements Comparable<Pee
             return compareOrgCity;
         }
         
+        int subjectExtIdCompare = OrcidStringUtils.compareStrings(subjectExternalIdentifiersJson, other.getSubjectExternalIdentifiersJson());
+        if(subjectExtIdCompare != 0) {
+            return subjectExtIdCompare;
+        }
+        
+        int subjectTypeCompare = compareObjectsNullSafe(subjectType, other.getSubjectType());
+        if(subjectTypeCompare != 0) {
+            return subjectTypeCompare;
+        }
+        
+        int subjectContainerNameCompare = OrcidStringUtils.compareStrings(subjectContainerName, other.getSubjectContainerName());
+        if(subjectContainerNameCompare != 0) {
+            return subjectContainerNameCompare;
+        }
+        
+        int subjectNameCompare = OrcidStringUtils.compareStrings(subjectName, other.getSubjectName());
+        if(subjectNameCompare != 0) {
+            return subjectNameCompare;
+        }
+        
+        int subjectTranslatedNameCompare = OrcidStringUtils.compareStrings(subjectTranslatedName, other.getSubjectTranslatedName());
+        if(subjectTranslatedNameCompare != 0) {
+            return subjectTranslatedNameCompare;
+        }
+        
+        int subjectTranslatedNameLanguageCodeCompare = OrcidStringUtils.compareStrings(subjectTranslatedNameLanguageCode, other.getSubjectTranslatedNameLanguageCode());
+        if(subjectTranslatedNameLanguageCodeCompare != 0) {
+            return subjectTranslatedNameLanguageCodeCompare;
+        }
+        
+        int subjectUrlCompare = OrcidStringUtils.compareStrings(subjectUrl, other.getSubjectUrl());
+        if(subjectUrlCompare != 0) {
+            return subjectUrlCompare;
+        }
+        
+        int groupIdCompare = OrcidStringUtils.compareStrings(groupId, other.getGroupId());        
+        if(groupIdCompare != 0) {
+            return groupIdCompare;
+        }
+        
         if(source == null) {
             if(other.getSource() != null) {
                 return -1;
@@ -312,6 +345,13 @@ public class PeerReviewEntity extends BaseEntity<Long> implements Comparable<Pee
         url = null;
         type = null;
         completionDate = null;        
-        visibility = null;        
+        visibility = null;   
+        subjectExternalIdentifiersJson = null;
+        subjectContainerName = null;
+        subjectName = null;
+        subjectTranslatedName = null;
+        subjectTranslatedNameLanguageCode = null;
+        subjectUrl = null;
+        groupId = null;
     }
 }
