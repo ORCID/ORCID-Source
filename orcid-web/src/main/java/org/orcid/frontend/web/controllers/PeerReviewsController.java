@@ -458,7 +458,7 @@ public class PeerReviewsController extends BaseWorkspaceController {
         return peerReview;
     }
 
-    @RequestMapping(value = "/subject/titleValidate.json", method = RequestMethod.POST)
+    @RequestMapping(value = "/subject/subjectNameValidate.json", method = RequestMethod.POST)
     public @ResponseBody PeerReviewForm validateSubjectName(@RequestBody PeerReviewForm peerReview) {
         if(peerReview.getSubjectName() == null) {
             peerReview.setSubjectName(Text.valueOf(StringUtils.EMPTY));
