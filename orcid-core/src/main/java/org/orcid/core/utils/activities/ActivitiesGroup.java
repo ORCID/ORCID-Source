@@ -147,6 +147,7 @@ public class ActivitiesGroup {
         return false;
     }
     
+    //TODO!!! how to merge these with peer reviews!!!!
     public void merge(ActivitiesGroup group) {
         Set<GroupableActivity> otherActivities = group.getActivities();
         Set<GroupKey> otherKeys = group.getGroupKeys();
