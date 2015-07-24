@@ -20,37 +20,46 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.orcid.jaxb.model.record.ExternalIdentifier;
 import org.orcid.jaxb.model.record.ExternalIdentifiersContainer;
+import org.orcid.jaxb.model.record.GroupKey;
 import org.orcid.jaxb.model.record.GroupableActivity;
+import org.orcid.jaxb.model.record.summary.PeerReviewGroupKey;
+import org.orcid.jaxb.model.record.summary.PeerReviewSummary;
 
 public class ActivitiesGroup {
-    private Set<ExternalIdentifier> externalIdentifiers;
+    private Set<GroupKey> groupKeys;
     private Set<GroupableActivity> activities;         
     
     public ActivitiesGroup(GroupableActivity activity) {        
-        externalIdentifiers = new HashSet<ExternalIdentifier>();        
+        groupKeys = new HashSet<GroupKey>();        
         activities = new HashSet<GroupableActivity>();
         
         if(activity != null) {
-            ExternalIdentifiersContainer container = activity.getExternalIdentifiers();
-            if(container != null) {
-                List<? extends ExternalIdentifier> extIds = (List<? extends ExternalIdentifier>)container.getExternalIdentifier();
-                for(ExternalIdentifier extId : extIds) {
-                    //Dont add ext ids that dont pass the validation
-                    if(extId.passGroupingValidation())
-                        externalIdentifiers.add(extId);
+            if(PeerReviewSummary.class.isAssignableFrom(activity.getClass())) {
+                PeerReviewSummary peerReviewSummary = (PeerReviewSummary) activity;
+                PeerReviewGroupKey prgk = new PeerReviewGroupKey(); 
+                prgk.setGroupId(peerReviewSummary.getGroupId());                
+                groupKeys.add(prgk);                               
+            } else {
+                ExternalIdentifiersContainer container = activity.getExternalIdentifiers();
+                if(container != null) {
+                    List<? extends GroupKey> extIds = (List<? extends GroupKey>)container.getExternalIdentifier();
+                    for(GroupKey extId : extIds) {
+                        //Dont add grouping keys  that dont pass the validation
+                        if(extId.passGroupingValidation())
+                            groupKeys.add(extId);
+                    }
                 }
-            }
+            }            
         }
         
         activities.add(activity);
     }
             
-    public Set<ExternalIdentifier> getExternalIdentifiers() {
-        if(externalIdentifiers == null)
-            externalIdentifiers = new HashSet<ExternalIdentifier>();
-        return externalIdentifiers;
+    public Set<GroupKey> getGroupKeys() {
+        if(groupKeys == null)
+            groupKeys = new HashSet<GroupKey>();
+        return groupKeys;
     }
 
     public Set<GroupableActivity> getActivities() {
@@ -59,16 +68,20 @@ public class ActivitiesGroup {
         return activities;
     }
 
-    public void add(GroupableActivity activity) {                
-                //Add new external identifiers
-        ExternalIdentifiersContainer container = activity.getExternalIdentifiers();
-        if(container != null) {
-            List<? extends ExternalIdentifier> extIds = (List<? extends ExternalIdentifier>)container.getExternalIdentifier();
-            for(ExternalIdentifier extId : extIds) {
-                //Dont add ext ids that dont pass the grouping validation
-                if(extId.passGroupingValidation())
-                    if(!externalIdentifiers.contains(extId))
-                        externalIdentifiers.add(extId);
+    public void add(GroupableActivity activity) {    
+        if(PeerReviewSummary.class.isAssignableFrom(activity.getClass())) {
+            //For peer review there is only one grouping key, so we dont need to add more keys to the groupKeys set
+        }  else {
+            //Add new grouping keys
+            ExternalIdentifiersContainer container = activity.getExternalIdentifiers();
+            if(container != null) {
+                List<? extends GroupKey> extIds = (List<? extends GroupKey>)container.getExternalIdentifier();
+                for(GroupKey extId : extIds) {
+                    //Dont add grouping keys  that dont pass the grouping validation
+                    if(extId.passGroupingValidation())
+                        if(!groupKeys.contains(extId))
+                            groupKeys.add(extId);
+                }
             }
         }
         
@@ -77,40 +90,56 @@ public class ActivitiesGroup {
     }
     
     public boolean belongsToGroup(GroupableActivity activity) {
-        //If there are no external ids
-        if(externalIdentifiers == null || externalIdentifiers.isEmpty()) {
-            //Check if the activity dont have ext ids
-            if(activity.getExternalIdentifiers() == null || activity.getExternalIdentifiers().getExternalIdentifier() == null || activity.getExternalIdentifiers().getExternalIdentifier().isEmpty()) {
-                //If the activity doesn't have any external identifier, check if the activity is in the group
-                if(activities.contains(activity))
-                    return true;
-                else 
-                    return false;                            
+        boolean isPeerReview = PeerReviewSummary.class.isAssignableFrom(activity.getClass());
+        //If there are no grouping keys
+        if(groupKeys == null || groupKeys.isEmpty()) {            
+            if(isPeerReview) {
+                return false;
             } else {
-                //If any of the activities pass the grouping validation, the activity must belong to other group
-                for(ExternalIdentifier extId : activity.getExternalIdentifiers().getExternalIdentifier()) {
-                    if(extId.passGroupingValidation())
-                        return false;
+                if(activity.getExternalIdentifiers() == null || activity.getExternalIdentifiers().getExternalIdentifier() == null || activity.getExternalIdentifiers().getExternalIdentifier().isEmpty()) {            
+                    //Check if the activity dont have grouping keys
+                    //If the activity doesn't have any external identifier, check if the activity is in the group
+                    if(activities.contains(activity))
+                        return true;
+                    else 
+                        return false;                            
+                } else {
+                    //If any of the activities pass the grouping validation, the activity must belong to other group
+                    for(GroupKey extId : activity.getExternalIdentifiers().getExternalIdentifier()) {
+                        if(extId.passGroupingValidation())
+                            return false;
+                    }
+                    
+                    //If none of the activities pass the groupings validation, so, lets check if the group actually contains the activity
+                    if(activities.contains(activity))
+                        return true;
+                    else 
+                        return false;                
                 }
-                
-                //If none of the activities pass the groupings validation, so, lets check if the group actually contains the activity
-                if(activities.contains(activity))
-                    return true;
-                else 
-                    return false;                
             }
         }                        
         
-        //Check existing external identifiers 
-        ExternalIdentifiersContainer container = activity.getExternalIdentifiers();
-        if(container != null) {
-            List<? extends ExternalIdentifier> extIds = (List<? extends ExternalIdentifier>)container.getExternalIdentifier();
-            for(ExternalIdentifier extId : extIds) {
-                //First check external identifiers restrictions
-                if(extId.passGroupingValidation()) {
-                    //If any of the ext ids already exists on this group, return true
-                    if(externalIdentifiers.contains(extId))
-                        return true;
+        if(isPeerReview) {
+            PeerReviewSummary peerReviewSummary = (PeerReviewSummary) activity;
+            PeerReviewGroupKey prgk = new PeerReviewGroupKey(); 
+            prgk.setGroupId(peerReviewSummary.getGroupId());  
+            if(prgk.passGroupingValidation()) {
+                if(groupKeys.contains(prgk)) {
+                    return true;
+                }
+            }
+        } else {
+            //Check existing keys
+            ExternalIdentifiersContainer container = activity.getExternalIdentifiers();
+            if(container != null) {
+                List<? extends GroupKey> extIds = (List<? extends GroupKey>)container.getExternalIdentifier();
+                for(GroupKey extId : extIds) {
+                    //First check keys restrictions
+                    if(extId.passGroupingValidation()) {
+                        //If any of the keys already exists on this group, return true
+                        if(groupKeys.contains(extId))
+                            return true;
+                    }
                 }
             }
         }
@@ -120,18 +149,18 @@ public class ActivitiesGroup {
     
     public void merge(ActivitiesGroup group) {
         Set<GroupableActivity> otherActivities = group.getActivities();
-        Set<ExternalIdentifier> otherExtIds = group.getExternalIdentifiers();
+        Set<GroupKey> otherKeys = group.getGroupKeys();
         
-        //The incoming groups should always contain at least one ext id, we should not merge activities without ext ids
-        if(otherExtIds.isEmpty()) 
+        //The incoming groups should always contain at least one key, we should not merge activities without keys
+        if(otherKeys.isEmpty()) 
             throw new IllegalArgumentException("Unable to merge a group without external identifiers");
         
         //The incoming group should always contains at least one activity, we should not merge empty activities
         
-        //Merge external identifiers
-        for(ExternalIdentifier otherExtId: otherExtIds) {
-            if(!externalIdentifiers.contains(otherExtId))
-                externalIdentifiers.add(otherExtId);
+        //Merge group keys
+        for(GroupKey otherKey: otherKeys) {
+            if(!groupKeys.contains(otherKey))
+                groupKeys.add(otherKey);
         }
         
         //Merge activities
