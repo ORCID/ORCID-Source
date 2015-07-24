@@ -5998,6 +5998,10 @@ orcidNgModule.controller('languageCtrl',['$scope', '$cookies', function ($scope,
                 "label": 'Français'
             },
             {
+                "value": 'it',
+                "label": 'Italiano'
+            },
+            {
                 "value": 'ja',
                 "label": '日本語'
             },
