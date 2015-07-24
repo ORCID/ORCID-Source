@@ -350,17 +350,26 @@
 						<div class="control-group">
 					    	<label class="relative"><@orcid.msg 'peer_review.subject.url'/></label><br/>
 					    	<div class="relative">
-								<input name="subjectUrl" type="text" class="input-xlarge"  ng-model="editPeerReview.subjectUrl.value" placeholder="Type a url" ng-change="serverValidate('peer-reviews/subject/urlValidate.json')" ng-model-onblur/>
+								<input name="subjectUrl" type="text" class="input-xlarge"  ng-model="editPeerReview.subjectUrl.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_URL' />" ng-change="serverValidate('peer-reviews/subject/urlValidate.json')" ng-model-onblur/>
 								<span class="orcid-error" ng-show="editPeerReview.subjectUrl.errors.length > 0">
 									<div ng-repeat='error in editPeerReview.subjectUrl.errors' ng-bind-html="error"></div>
+								</span>							
+							</div>
+						</div>
+						<!-- Group Id -->
+						<div class="control-group">
+					    	<label class="relative"><@orcid.msg 'manual_peer_review_form_contents.groupId'/></label><br/>
+					    	<div class="relative">
+								<input name="groupId" type="text" class="input-xlarge"  ng-model="editPeerReview.groupId.value" placeholder="<@orcid.msg 'manual_peer_review_form_contents.addGroupId'/>" ng-model-onblur/>
+								<span class="orcid-error" ng-show="editPeerReview.groupId.errors.length > 0">
+									<div ng-repeat='error in editPeerReview.groupId.errors' ng-bind-html="error"></div>
 								</span>							
 							</div>
 						</div>
 						<div class="control-group">
 	                    	<button class="btn btn-primary" ng-click="addAPeerReview()" ng-disabled="addingPeerReview" ng-class="{disabled:addingPeerReview}">
 		                        <span ng-show="editPeerReview.putCode.value == ''" class=""><@orcid.msg 'peer_review.add_to_list'/></span>
-								<span ng-show="editPeerReview.putCode.value != ''" class=""><@orcid.msg 'peer_review.save_changes'/></span>
-	                        	
+								<span ng-show="editPeerReview.putCode.value != ''" class=""><@orcid.msg 'peer_review.save_changes'/></span>	                        	
 	                    	</button>
 	                    	<button id="" class="btn close-button" ng-click="closeModal()" type="reset"><@orcid.msg 'peer_review.cancel'/></button>
 	                	</div>

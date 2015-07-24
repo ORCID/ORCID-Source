@@ -27,12 +27,8 @@
 			</not>
 		</preConditions>
 	    <addColumn tableName="peer_review">
-			<column name="subject_external_identifiers_json" type="text">
-				<constraints nullable="false" />
-			</column>			
-			<column name="subject_type" type="VARCHAR(25)">
-				<constraints nullable="false" />
-			</column>
+			<column name="subject_external_identifiers_json" type="text" />
+			<column name="subject_type" type="VARCHAR(25)" />				
 			<column name="subject_container_name" type="VARCHAR(1000)" />
 			<column name="subject_name" type="VARCHAR(1000)" />
 			<column name="subject_translated_name" type="VARCHAR(1000)" />
@@ -61,6 +57,5 @@
 			<columnExists tableName="peer_review" columnName="peer_review_subject_id"/>
 		</preConditions>
 		<dropColumn tableName="peer_review" columnName="peer_review_subject_id"/>
-    </changeSet>
-    
+    </changeSet>               
 </databaseChangeLog>	

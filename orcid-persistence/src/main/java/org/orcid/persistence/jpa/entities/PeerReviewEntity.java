@@ -62,6 +62,7 @@ public class PeerReviewEntity extends BaseEntity<Long> implements Comparable<Pee
     private String subjectTranslatedNameLanguageCode;
     private String subjectUrl;
     private String groupId;
+    private Long displayIndex;
     
     @Override
     @Id
@@ -236,6 +237,23 @@ public class PeerReviewEntity extends BaseEntity<Long> implements Comparable<Pee
         this.groupId = groupId;
     }
 
+    /*
+     * Dictates the display order for works (and versions of works)
+     * works with higher numbers should be displayed first. 
+     * 
+     * Currently only updatable via ProfileWorkDaoImpl.updateToMaxDisplay
+     *
+     */
+
+    @Column(name = "display_index", updatable=false, insertable=false)
+    public Long getDisplayIndex() {
+        return displayIndex;
+    }
+
+    public void setDisplayIndex(Long displayIndex) {
+        this.displayIndex = displayIndex;
+    }
+    
     public int compareTo(PeerReviewEntity other) {        
         if (other == null) {
             throw new NullPointerException("Can't compare with null");
