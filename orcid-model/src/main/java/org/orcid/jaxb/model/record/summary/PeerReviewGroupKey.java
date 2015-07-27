@@ -20,6 +20,7 @@ import org.jsoup.helper.StringUtil;
 import org.orcid.jaxb.model.record.GroupKey;
 
 public class PeerReviewGroupKey implements GroupKey {    
+    public static String KEY_NAME = "PEER-REVIEW"; 
     protected String groupId;
     
     public String getGroupId() {
