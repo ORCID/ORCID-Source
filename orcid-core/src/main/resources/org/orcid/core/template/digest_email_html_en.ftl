@@ -19,35 +19,53 @@
 <#import "email_macros.ftl" as emailMacros />
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>${subject}</title>
-    </head>
+    <head></head>
     <body>
-        <div style="padding: 20px; padding-top: 0px;">
+        <div style="padding: 20px; padding-top: 0px; font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666; width: 800px;">
             <img src="https://orcid.org/sites/all/themes/orcid/img/orcid-logo.png" alt="ORCID.org"/>
             <hr />
-            <span style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666; font-weight: bold;">
+            <span style="font-weight: bold;">
                 Hi ${emailName},
             </span>
-            <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
-                Here’s what has happened since the last time you visited your ORCID record.
-                <a href="${baseUri}/notifications?lang=${locale}">View all notifications</a>.
-            </p>            
-            <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
-                <ul style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666; margin-left: 0;">
-                    <#compress>
-                    <#if amendedMessageCount gt 0><li>[${amendedMessageCount}] <#if amendedMessageCount == 1>notification<#else>notifications</#if> from ORCID member organizations that added or updated information on your record</li></#if>
-                    <#if addActivitiesMessageCount gt 0><li>[${addActivitiesMessageCount}] <#if addActivitiesMessageCount == 1>Request<#else>Requests</#if> to add or update your ORCID record</li></#if>
-                    <#if orcidMessageCount gt 0><li>[${orcidMessageCount}] <#if orcidMessageCount == 1>notification<#else>notifications</#if> from ORCID</li></#if>
-                    </#compress>
-                </ul>
-           </p>
-           <p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #666666;">
-                <@emailMacros.msg "email.common.you_have_received_this_email_opt_out.1" />${baseUri}/account?lang=${locale}.
-            </p>                       
-            <p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #666666;">
-               <#include "email_footer_html.ftl"/>
+            <p>
+                You have <${orcidMessageCount}> new <#if orcidMessageCount == 1>notification<#else>notifications</#if> in your ORCID inbox - see summary below. Please visit your ORCID <a href="${baseUri}/notifications?lang=${locale}" style="color: #338caf;">account inbox</a> to take action.
+            </p>   
+            <#if addActivitiesMessageCount gt 0>    
+	            <p>
+	                Requests to add to or update items in your ORCID record [${addActivitiesMessageCount}] (Please action as soon as possible)
+	            </p>            
+	            <p>  
+	                <ul>
+	                	<#-- Here goes the info -->
+	                    <li></li>                    
+	                </ul>
+	            </p>
+	        </#if>
+            <#if amendedMessageCount gt 0>
+	            <p>
+	                Updates to your ORCID record [${amendedMessageCount}]
+	                <ul>
+	                	<#-- Here goes the info -->
+	                    <li></li>                    
+	                </ul>            
+	            </p>
+	        </#if>
+            <p>
+                <a href="" style="text-decoration: none; text-align: center;">
+                    <span style="padding-top: 10px; padding-bottom: 10px; padding-left: 15px; padding-right: 15px; background: #338caf; color: #FFF; display: block; width: 300px;">
+                        View in your ORCID inbox
+                    </span>
+                </a>
             </p>
-         </div>
-     </body>
- </html>
+            <p>
+                You have received this message because you opted in to receive Inbox notifications about your ORCID record. <a href="${baseUri}/notifications?lang=${locale}" style="color: #338caf;">Learn more about how the Inbox works.</a>
+            </p>
+            <p>
+                You may adjust your email frequency and subscription preferences in your account settings.
+            </p>
+            <p>
+               <#include "email_footer_html.ftl"/>
+            </p>            
+        </div>      
+    </body>
+</html>
