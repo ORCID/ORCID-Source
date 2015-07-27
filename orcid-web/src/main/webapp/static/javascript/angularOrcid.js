@@ -67,14 +67,17 @@ GroupedActivities.prototype.add = function(activity) {
     // assumes works are added in the order of the display index desc
     // subsorted by the created date asc
     var identifiersPath = null;
-    identifiersPath = this.getIdentifiersPath();
-    for (var idx in activity[identifiersPath]) {
-    	if(this.type == GroupedActivities.PEER_REVIEW) {
-    		this.addKey(this.key(idx));
-    	} else {
+    identifiersPath = this.getIdentifiersPath();        
+    
+    if(this.type == GroupedActivities.PEER_REVIEW) {    
+    	var key = this.key(activity[identifiersPath]);
+    	this.addKey(key);
+    } else {
+    	for (var idx in activity[identifiersPath]) {
     		this.addKey(this.key(activity[identifiersPath][idx]));
-    	}    	
-    }        
+    	}
+    }    
+    
     this.activities[activity.putCode.value] = activity;
     if (this.defaultPutCode == null) {
         this.activePutCode = activity.putCode.value;
@@ -131,13 +134,13 @@ GroupedActivities.prototype.getIdentifiersPath = function() {
  * a new group
  */
 GroupedActivities.group = function(activity, type, groupsArray) {
-	
-    var matches = new Array();
+	var matches = new Array();
     // there are no possible keys for affiliations    
     if (type != GroupedActivities.AFFILIATION);
-       for (var idx in groupsArray)
-           if (groupsArray[idx].keyMatch(activity))
+       for (var idx in groupsArray) {     	   
+    	   if (groupsArray[idx].keyMatch(activity))
                matches.push(groupsArray[idx]);
+       }           
     if (matches.length == 0) {
         var newGroup = new GroupedActivities(type);
         newGroup.add(activity);
@@ -196,14 +199,14 @@ GroupedActivities.prototype.key = function(activityIdentifiers) {
         idPath = null;
         idTypePath = null;
     } else if (this.type == GroupedActivities.PEER_REVIEW) {
-    	idPath = 'groupId';
-        idTypePath = 'groupId';
+    	idPath = 'value';
+        idTypePath = 'value';
     }
     
     var key = '';
     
     if (this.type ==  GroupedActivities.PEER_REVIEW) {
-		key += activityIdentifiers[idPath];
+    	key += activityIdentifiers[idPath];
 	} else if (activityIdentifiers[idTypePath]) {    
     	// ISSN is misused too often to identify a work
     	if (activityIdentifiers[idTypePath].value != 'issn'
@@ -223,17 +226,19 @@ GroupedActivities.prototype.key = function(activityIdentifiers) {
 GroupedActivities.prototype.keyMatch = function(activity) {
 	var identifiersPath = null;
     identifiersPath = this.getIdentifiersPath();    
-    for (var idx in activity[identifiersPath]) {    	    	
-        if(this.type == GroupedActivities.PEER_REVIEW) {
-        	if(this.key(activity[identifiersPath]) == '') continue;
-        	if(this.key(activity[identifiersPath]) in this._keySet)
-        		return true;
-        } else {
+    
+    if(this.type == GroupedActivities.PEER_REVIEW) {    	
+    	if(this.key(activity[identifiersPath]) == '' || typeof this.key(activity[identifiersPath].value) === undefined) return false;
+    	if(this.key(activity[identifiersPath]) in this._keySet)
+    		return true;
+    } else {
+    	for (var idx in activity[identifiersPath]) {    	    	        
         	if (this.key(activity[identifiersPath][idx]) == '') continue;
             if (this.key(activity[identifiersPath][idx]) in this._keySet)
-                return true;
-        }    	
+                return true;        
+        }
     }
+        
     return false;
 };
 
@@ -5044,8 +5049,8 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
         $scope.deletePutCode = putCode;
         $scope.deleteGroup = deleteGroup;
         var peerReview = peerReviewSrvc.getPeerReview(putCode);
-        if (peerReview.subjectForm.title)
-            $scope.fixedTitle = peerReview.subjectForm.title.value;
+        if (peerReview.subjectName)
+            $scope.fixedTitle = peerReview.subjectName.value;
         else $scope.fixedTitle = '';
         var maxSize = 100;
         if($scope.fixedTitle.length > maxSize)
@@ -5181,7 +5186,7 @@ orcidNgModule.factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
                             $rootScope.$apply(function(){
                                 for (i in data) {
                                     var dw = data[i];                                    
-                                    removeBadExternalIdentifiers(dw);                                    
+                                    removeBadExternalIdentifiers(dw);                                       
                                     GroupedActivities.group(dw,GroupedActivities.PEER_REVIEW,peerReviewSrvc.groups);
                                 };
                             });

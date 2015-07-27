@@ -147,7 +147,6 @@ public class ActivitiesGroup {
         return false;
     }
     
-    //TODO!!! how to merge these with peer reviews!!!!
     public void merge(ActivitiesGroup group) {
         Set<GroupableActivity> otherActivities = group.getActivities();
         Set<GroupKey> otherKeys = group.getGroupKeys();
@@ -156,8 +155,7 @@ public class ActivitiesGroup {
         if(otherKeys.isEmpty()) 
             throw new IllegalArgumentException("Unable to merge a group without external identifiers");
         
-        //The incoming group should always contains at least one activity, we should not merge empty activities
-        
+        //The incoming group should always contains at least one activity, we should not merge empty activities        
         //Merge group keys
         for(GroupKey otherKey: otherKeys) {
             if(!groupKeys.contains(otherKey))
