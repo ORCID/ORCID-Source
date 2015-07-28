@@ -423,6 +423,7 @@ public class MemberV2Test extends BlackBoxBase {
         long time = System.currentTimeMillis();
         PeerReview peerReviewToCreate = (PeerReview) unmarshallFromPath("/record_2.0_rc1/samples/peer-review-2.0_rc1.xml", PeerReview.class);
         peerReviewToCreate.setPutCode(null);
+        peerReviewToCreate.setGroupId(null);
         peerReviewToCreate.setVisibility(Visibility.PUBLIC);
         peerReviewToCreate.getExternalIdentifiers().getExternalIdentifier().clear();
         WorkExternalIdentifier wExtId = new WorkExternalIdentifier();
@@ -931,4 +932,8 @@ public class MemberV2Test extends BlackBoxBase {
             }
         }
     }    
+    
+    public void createGroupIds() {
+        
+    }
 }
