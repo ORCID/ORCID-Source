@@ -545,7 +545,7 @@ public class SourceInActivitiesTest extends BaseTest {
         peerReview.setSubjectType(WorkType.ARTISTIC_PERFORMANCE);
         peerReview.setExternalIdentifiers(workExtIds);
         peerReview.setRole(Role.CHAIR);
-        peerReview = peerReviewManager.createPeerReview(userOrcid, peerReview);
+        peerReview = peerReviewManager.createPeerReview(userOrcid, peerReview, false);
         return peerReviewManager.getPeerReview(userOrcid, peerReview.getPutCode());
     }
 

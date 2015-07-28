@@ -43,6 +43,7 @@
             <foreignKeyConstraintExists foreignKeyTableName="peer_review" foreignKeyName="peer_review_subject_fk"/>            
         </preConditions>
 		<dropForeignKeyConstraint baseTableName="peer_review" constraintName="peer_review_subject_fk"/>
+		<dropNotNullConstraint columnName="peer_review_subject_id" tableName="peer_review"/>
     </changeSet>
     
     <changeSet id="SUBJECT-EXTERNAL-IDS-AS-JSON" author="Angel Montenegro">
@@ -50,12 +51,5 @@
             <foreignKeyConstraintExists foreignKeyTableName="peer_review" foreignKeyName="subject_external_identifiers_json"/>            
         </preConditions>		
 		<sql>ALTER TABLE peer_review ALTER COLUMN subject_external_identifiers_json TYPE json USING subject_external_identifiers_json::JSON</sql>		
-    </changeSet>
-    
-    <changeSet id="REMOVE-PEER-REVIEW-SUBJECT-ID-FROM-PEER-REVIEW-TABLE" author="Angel Montenegro">
-		<preConditions onFail="MARK_RAN">
-			<columnExists tableName="peer_review" columnName="peer_review_subject_id"/>
-		</preConditions>
-		<dropColumn tableName="peer_review" columnName="peer_review_subject_id"/>
-    </changeSet>               
+    </changeSet>           
 </databaseChangeLog>	

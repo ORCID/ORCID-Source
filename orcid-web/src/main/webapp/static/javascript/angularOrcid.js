@@ -206,7 +206,8 @@ GroupedActivities.prototype.key = function(activityIdentifiers) {
     var key = '';
     
     if (this.type ==  GroupedActivities.PEER_REVIEW) {
-    	key += activityIdentifiers[idPath];
+    	if(activityIdentifiers != null && activityIdentifiers[idPath] != null)
+    		key += activityIdentifiers[idPath];
 	} else if (activityIdentifiers[idTypePath]) {    
     	// ISSN is misused too often to identify a work
     	if (activityIdentifiers[idTypePath].value != 'issn'

@@ -21,13 +21,15 @@ import org.orcid.jaxb.model.groupid.GroupIdRecords;
 
 public interface GroupIdRecordManager {
 
-	GroupIdRecord getGroupIdRecord(String putCode);
-	
-	GroupIdRecord createGroupIdRecord(GroupIdRecord groupIdRecord);
-	
-	GroupIdRecord updateGroupIdRecord(String putCode, GroupIdRecord groupIdRecord);
-	
-	void deleteGroupIdRecord(String putCode);
+    GroupIdRecord getGroupIdRecord(String putCode);
 
-	GroupIdRecords getGroupIdRecords(String pageSize, String pageNum);
+    GroupIdRecord createGroupIdRecord(GroupIdRecord groupIdRecord);
+
+    GroupIdRecord updateGroupIdRecord(String putCode, GroupIdRecord groupIdRecord);
+
+    void deleteGroupIdRecord(String putCode);
+
+    GroupIdRecords getGroupIdRecords(String pageSize, String pageNum);
+
+    boolean exists(String groupId);
 }

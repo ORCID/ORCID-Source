@@ -51,11 +51,9 @@ import org.orcid.jaxb.model.record.summary.EducationSummary;
 import org.orcid.jaxb.model.record.summary.EmploymentSummary;
 import org.orcid.jaxb.model.record.summary.FundingSummary;
 import org.orcid.jaxb.model.record.summary.PeerReviewSummary;
-import org.orcid.jaxb.model.record.summary.WorkGroup;
 import org.orcid.jaxb.model.record.summary.WorkSummary;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.WebhookDao;
-import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.stereotype.Component;
 
 /**
@@ -325,7 +323,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     @Override
     @AccessControl(requiredScope = ScopePathType.PEER_REVIEW_CREATE)
     public Response createPeerReview(String orcid, PeerReview peerReview) {
-        PeerReview newPeerReview = peerReviewManager.createPeerReview(orcid, peerReview);
+        PeerReview newPeerReview = peerReviewManager.createPeerReview(orcid, peerReview, true);
         try {
             return Response.created(new URI(newPeerReview.getPutCode())).build();
         } catch (URISyntaxException ex) {
@@ -339,7 +337,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
         if (!putCode.equals(peerReview.getPutCode())) {
             throw new MismatchedPutCodeException("The put code in the URL was " + putCode + " whereas the one in the body was " + peerReview.getPutCode());
         }
-        PeerReview updatedPeerReview = peerReviewManager.updatePeerReview(orcid, peerReview);
+        PeerReview updatedPeerReview = peerReviewManager.updatePeerReview(orcid, peerReview, true);
         return Response.ok(updatedPeerReview).build();
     }
 

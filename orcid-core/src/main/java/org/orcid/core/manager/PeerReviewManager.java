@@ -58,9 +58,11 @@ public interface PeerReviewManager {
      *            The user to add the peerReview
      * @param peerReview
      *            The peerReview to add
+     * @param isApiRequest
+     *          Indicates if the request comes from the API or not           
      * @return the added peerReview
      * */
-    PeerReview createPeerReview(String orcid, PeerReview peerReview);
+    PeerReview createPeerReview(String orcid, PeerReview peerReview, boolean isApiRequest);
 
     /**
      * Updates a peerReview that belongs to the given user
@@ -69,9 +71,11 @@ public interface PeerReviewManager {
      *            The user
      * @param peerReview
      *            The peerReview to update
+     * @param isApiRequest
+     *          Indicates if the request comes from the API or not
      * @return the updated peerReview
      * */
-    PeerReview updatePeerReview(String orcid, PeerReview peerReview);
+    PeerReview updatePeerReview(String orcid, PeerReview peerReview, boolean isApiRequest);
 
     /**
      * Deletes a given peerReview, if and only if, the client that requested the

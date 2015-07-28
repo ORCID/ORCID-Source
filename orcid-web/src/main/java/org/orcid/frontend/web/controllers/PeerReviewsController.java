@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.locale.LocaleManager;
+import org.orcid.core.manager.GroupIdRecordManager;
 import org.orcid.core.manager.PeerReviewManager;
 import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.jaxb.model.message.OrcidProfile;
@@ -82,6 +83,9 @@ public class PeerReviewsController extends BaseWorkspaceController {
 
     @Resource(name = "languagesMap")
     private LanguagesMap lm;    
+    
+    @Resource
+    private GroupIdRecordManager groupIdRecordManager;
 
     public void setLocaleManager(LocaleManager localeManager) {
         this.localeManager = localeManager;
@@ -251,11 +255,13 @@ public class PeerReviewsController extends BaseWorkspaceController {
         validateCountry(peerReview);
         validateUrl(peerReview);         
         validateExternalIdentifiers(peerReview);
+        validateGroupId(peerReview);
         copyErrors(peerReview.getOrgName(), peerReview);
         copyErrors(peerReview.getCity(), peerReview);
         copyErrors(peerReview.getRegion(), peerReview);
         copyErrors(peerReview.getCountry(), peerReview);
         copyErrors(peerReview.getUrl(), peerReview);
+        copyErrors(peerReview.getGroupId(), peerReview);
         if(peerReview.getExternalIdentifiers() != null) {
             for(WorkExternalIdentifier extId : peerReview.getExternalIdentifiers()) {
                 copyErrors(extId.getWorkExternalIdentifierId(), peerReview);
@@ -336,7 +342,7 @@ public class PeerReviewsController extends BaseWorkspaceController {
     private PeerReviewForm addPeerReview(PeerReviewForm peerReviewForm) {
         String userOrcid = getEffectiveUserOrcid();
         PeerReview peerReview = peerReviewForm.toPeerReview();
-        peerReview = peerReviewManager.createPeerReview(userOrcid, peerReview);
+        peerReview = peerReviewManager.createPeerReview(userOrcid, peerReview, false);
         peerReviewForm = PeerReviewForm.valueOf(peerReview);
         return peerReviewForm;
     }
@@ -344,7 +350,7 @@ public class PeerReviewsController extends BaseWorkspaceController {
     private PeerReviewForm editPeerReview(PeerReviewForm peerReviewForm) {
         String userOrcid = getEffectiveUserOrcid();
         PeerReview peerReview = peerReviewForm.toPeerReview();
-        peerReview = peerReviewManager.updatePeerReview(userOrcid, peerReview);
+        peerReview = peerReviewManager.updatePeerReview(userOrcid, peerReview, false);
         return PeerReviewForm.valueOf(peerReview);
     }
 
@@ -568,6 +574,17 @@ public class PeerReviewsController extends BaseWorkspaceController {
 
         return peerReview;
     }
+    
+    private void validateGroupId(PeerReviewForm peerReview) {
+        if(peerReview.getGroupId() == null) {
+            peerReview.setGroupId(Text.valueOf(StringUtils.EMPTY));
+        }
+        if(!PojoUtil.isEmpty(peerReview.getGroupId())) {
+            if(!groupIdRecordManager.exists(peerReview.getGroupId().getValue())) {
+                setError(peerReview.getGroupId(), "peer_review.group_id.not_valid");
+            }
+        }
+    }
 
     /**
      * Typeahead
@@ -638,6 +655,5 @@ public class PeerReviewsController extends BaseWorkspaceController {
             peerReviewIds.add(new Long(peerReviewId));
         peerReviewManager.updateVisibilities(orcid, peerReviewIds, Visibility.fromValue(visibilityStr));
         return peerReviewIds;
-    }
-
+    }    
 }
