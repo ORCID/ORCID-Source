@@ -160,6 +160,21 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
     }
         
     /**
+     * Remove a single work
+     * 
+     * @param workId
+     *          The id of the work that should be deleted     
+     * */
+    @Override
+    @Transactional
+    public boolean removeWork(String orcid, Long workId) {
+        Query query = entityManager.createNativeQuery("DELETE FROM work WHERE work_id = :workId and orcid = :orcid");        
+        query.setParameter("workId", workId);
+        query.setParameter("orcid", orcid);
+        return query.executeUpdate() > 0;
+    }
+    
+    /**
      * Sets the display index of the new work
      * @param workId
      *          The work id
