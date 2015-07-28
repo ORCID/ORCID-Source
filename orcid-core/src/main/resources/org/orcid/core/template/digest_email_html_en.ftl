@@ -32,7 +32,7 @@
             </p>   
             <#if addActivitiesMessageCount gt 0>    
 	            <p>
-	                Requests to add to or update items in your ORCID record [${addActivitiesMessageCount}] (Please action as soon as possible)
+	                <img src="${baseUri}/static/img/request.png"> Requests to add to or update items in your ORCID record [${addActivitiesMessageCount}] (Please action as soon as possible)
 	            </p>            
 	            <p>  
 	                <ul>
@@ -43,7 +43,7 @@
 	        </#if>
             <#if amendedMessageCount gt 0>
 	            <p>
-	                Updates to your ORCID record [${amendedMessageCount}]
+	                <img src="${baseUri}/static/img/update.png"> Updates to your ORCID record [${amendedMessageCount}]
 	                <ul>
 	                	<#-- Here goes the info -->
 	                    <li></li>                    
@@ -51,7 +51,7 @@
 	            </p>
 	        </#if>
             <p>
-                <a href="" style="text-decoration: none; text-align: center;">
+                <a href="${baseUri}/notifications?lang=${locale}" style="text-decoration: none; text-align: center;">
                     <span style="padding-top: 10px; padding-bottom: 10px; padding-left: 15px; padding-right: 15px; background: #338caf; color: #FFF; display: block; width: 300px;">
                         View in your ORCID inbox
                     </span>
@@ -61,7 +61,7 @@
                 You have received this message because you opted in to receive Inbox notifications about your ORCID record. <a href="${baseUri}/notifications?lang=${locale}" style="color: #338caf;">Learn more about how the Inbox works.</a>
             </p>
             <p>
-                You may adjust your email frequency and subscription preferences in your account settings.
+                You may adjust your email frequency and subscription preferences in your <a href="${baseUri}/account?lang=${locale}" style="color: #338caf;">account settings</a>.
             </p>
             <p>
                <#include "email_footer_html.ftl"/>
