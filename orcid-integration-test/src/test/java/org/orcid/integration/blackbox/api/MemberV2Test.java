@@ -502,9 +502,8 @@ public class MemberV2Test extends BlackBoxBase {
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         /**
-         * Add 4 fundings 1 and 2 get grouped together 3 in another group
-         * because it have different ext ids 4 in another group because it
-         * doesnt have any ext ids
+         * Add 3 fundings 1 and 2 get grouped together 3 in another group
+         * because it have different ext ids
          * **/
 
         // Add 1, the default funding
@@ -536,16 +535,9 @@ public class MemberV2Test extends BlackBoxBase {
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());        
         
-        funding.getTitle().getTitle().setContent("Funding # 4");
-        funding.getExternalIdentifiers().getExternalIdentifier().clear();
-        // Add 4 without ext ids
-        postResponse = memberV2ApiClient.createFundingXml(user1OrcidId, funding, accessToken);
-        assertNotNull(postResponse);
-        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
-        
         /**
-         * Add 4 works 1 and 2 get grouped together 3 in another group because
-         * it have different ext ids 4 in another group because it also have different ext ids
+         * Add 3 works 1 and 2 get grouped together 3 in another group because
+         * it have different ext ids 
          **/
         // Add 1, the default work
         postResponse = memberV2ApiClient.createWorkXml(user1OrcidId, work, accessToken);
@@ -574,19 +566,7 @@ public class MemberV2Test extends BlackBoxBase {
         postResponse = memberV2ApiClient.createWorkXml(user1OrcidId, work, accessToken);
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
-        
-        work.getWorkTitle().getTitle().setContent("Work # 4");
-        WorkExternalIdentifier wExtId4 = new WorkExternalIdentifier();
-        wExtId4.setWorkExternalIdentifierType(WorkExternalIdentifierType.EID);
-        wExtId4.setWorkExternalIdentifierId(new WorkExternalIdentifierId("eid-ext-id-4" + time));
-        wExtId4.setRelationship(Relationship.SELF);
-        work.getWorkExternalIdentifiers().getExternalIdentifier().clear();
-        work.getWorkExternalIdentifiers().getExternalIdentifier().add(wExtId4);
-        // Add 4, without ext ids                
-        postResponse = memberV2ApiClient.createWorkXml(user1OrcidId, work, accessToken);
-        assertNotNull(postResponse);
-        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
-        
+                
         /**
          * Add 4 peer reviews 1 and 2 get grouped together 3 in another group because
          * it have different ext ids 4 in another group because it doesnt have
@@ -696,16 +676,14 @@ public class MemberV2Test extends BlackBoxBase {
                     found2 = true;
                 } else if(summary.getTitle().getTitle().getContent().equals("Funding # 3")) {
                     found3 = true;
-                } else if(summary.getTitle().getTitle().getContent().equals("Funding # 4")) {
-                    found4 = true;
-                }
+                } 
             }
         }
 
-        assertTrue("One of the fundings was not found: 1(" + found1 + ") 2(" + found2 + ") 3(" + found3 + ") 4(" + found4 + ")", found1 == found2 == found3 == found4 == true);
+        assertTrue("One of the fundings was not found: 1(" + found1 + ") 2(" + found2 + ") 3(" + found3 + ")", found1 == found2 == found3 == true);
         
         assertNotNull(activities.getWorks());        
-        found1 = found2 = found3 = found4 = false;
+        found1 = found2 = found3 = false;
         for (WorkGroup group : activities.getWorks().getWorkGroup()) {
             for(WorkSummary summary : group.getWorkSummary()) {
                 if(summary.getTitle().getTitle().getContent().equals("common:title")) {
@@ -714,13 +692,11 @@ public class MemberV2Test extends BlackBoxBase {
                     found2 = true;
                 } else if(summary.getTitle().getTitle().getContent().equals("Work # 3")) {
                     found3 = true;
-                } else if(summary.getTitle().getTitle().getContent().equals("Work # 4")) {
-                    found4 = true;
-                }
+                } 
             }
         }
         
-        assertTrue("One of the works was not found: 1(" + found1 + ") 2(" + found2 + ") 3(" + found3 + ") 4(" + found4 + ")", found1 == found2 == found3 == found4 == true);
+        assertTrue("One of the works was not found: 1(" + found1 + ") 2(" + found2 + ") 3(" + found3 + ")", found1 == found2 == found3 == true);
         
         assertNotNull(activities.getPeerReviews());        
         found1 = found2 = found3 = found4 = false;
