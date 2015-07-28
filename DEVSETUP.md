@@ -216,7 +216,7 @@ http://www.springsource.org/downloads/sts-ggts
 
 ## Integration tests
 
-See [orcid-integrations-test/README.md](https://github.com/ORCID/ORCID-Source/blob/master/ORCID-Source/orcid-integration-test/README.md)
+See [orcid-integration-test/README.md](https://github.com/ORCID/ORCID-Source/blob/master/ORCID-Source/orcid-integration-test/README.md)
 
 * Finally help out by improving these instructions!    
    
