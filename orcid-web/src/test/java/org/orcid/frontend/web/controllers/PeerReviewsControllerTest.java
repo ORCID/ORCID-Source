@@ -67,7 +67,7 @@ public class PeerReviewsControllerTest extends BaseControllerTest {
 
     private static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml", "/data/SecurityQuestionEntityData.xml",
             "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/OrgsEntityData.xml",
-            "/data/OrgAffiliationEntityData.xml", "/data/PeerReviewEntityData.xml");
+            "/data/OrgAffiliationEntityData.xml", "/data/PeerReviewEntityData.xml", "/data/GroupIdRecordEntityData.xml");
 
     @Resource
     protected OrcidProfileManager orcidProfileManager;
@@ -160,17 +160,29 @@ public class PeerReviewsControllerTest extends BaseControllerTest {
     @Test
     public void testValidatePeerReviewFields() {
         PeerReviewForm form = peerReviewsController.getEmptyPeerReview();
+        form.getGroupId().setValue("bad-group-id");
         form = peerReviewsController.postPeerReview(form);
         assertNotNull(form);
         assertNotNull(form.getErrors());
-        assertEquals(5, form.getErrors().size());
+        assertEquals(6, form.getErrors().size());
         assertTrue(form.getErrors().contains(peerReviewsController.getMessage("org.name.not_blank")));
         assertTrue(form.getErrors().contains(peerReviewsController.getMessage("org.city.not_blank")));
         assertTrue(form.getErrors().contains(peerReviewsController.getMessage("common.country.not_blank")));
         assertTrue(form.getErrors().contains(peerReviewsController.getMessage("peer_review.subject.work_type.not_blank")));
         assertTrue(form.getErrors().contains(peerReviewsController.getMessage("common.title.not_blank")));
+        assertTrue(form.getErrors().contains(peerReviewsController.getMessage("peer_review.group_id.not_valid")));
     }
 
+    @Test
+    public void testAddWithInvalidGroupId() {
+        PeerReviewForm form = getForm();
+        form.getGroupId().setValue("bad-group-id");
+        PeerReviewForm newForm = peerReviewsController.postPeerReview(form);
+        assertNotNull(newForm);
+        assertTrue(PojoUtil.isEmpty(newForm.getPutCode()));
+        assertTrue(form.getErrors().contains(peerReviewsController.getMessage("peer_review.group_id.not_valid")));
+    }
+    
     @Test
     public void testDeletePeerReview() {
         HttpSession session = mock(HttpSession.class);
@@ -220,7 +232,7 @@ public class PeerReviewsControllerTest extends BaseControllerTest {
         form.setSubjectUrl(Text.valueOf("http://subject.com"));
         form.setSubjectExternalIdentifier(wei);
         form.setSubjectType(Text.valueOf("book-review"));        
-        form.setGroupId(Text.valueOf("orcid-generated:12345"));
+        form.setGroupId(Text.valueOf("issn:0000001"));
         
         return form;
     }
