@@ -31,6 +31,7 @@ import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileFundingManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.WorkManager;
+import org.orcid.core.security.DeprecatedException;
 import org.orcid.core.security.visibility.aop.AccessControl;
 import org.orcid.core.security.visibility.filter.VisibilityFilterV2;
 import org.orcid.jaxb.model.message.ScopePathType;
@@ -48,6 +49,8 @@ import org.orcid.jaxb.model.record.summary.WorkGroup;
 import org.orcid.jaxb.model.record.summary.WorkSummary;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.WebhookDao;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.springframework.beans.factory.annotation.Value;
 
 public class PublicV2ApiServiceDelegatorImpl implements PublicV2ApiServiceDelegator {
 
@@ -83,6 +86,9 @@ public class PublicV2ApiServiceDelegatorImpl implements PublicV2ApiServiceDelega
 
     @Resource(name = "visibilityFilterV2")
     private VisibilityFilterV2 visibilityFilter;
+    
+	@Value("${org.orcid.core.baseUri}")
+	private String baseUrl;
 
     @Override
     public Response viewStatusText() {
@@ -92,6 +98,13 @@ public class PublicV2ApiServiceDelegatorImpl implements PublicV2ApiServiceDelega
     @Override
     @AccessControl(requiredScope = ScopePathType.READ_PUBLIC, enableAnonymousAccess = true)
     public Response viewActivities(String orcid) {
+    	ProfileEntity entity = profileEntityManager.findByOrcid(orcid);
+    	if(profileDao.isProfileDeprecated(orcid)) {
+        	StringBuffer primary = new StringBuffer(baseUrl).append("/").append(entity.getPrimaryRecord().getId());
+        	DeprecatedException ex = new DeprecatedException();
+        	ex.setPrimary(primary.toString());
+        	throw ex;
+        }
         ActivitiesSummary as = profileEntityManager.getPublicActivitiesSummary(orcid);
         ActivityUtils.cleanEmptyFields(as);
         visibilityFilter.filter(as);

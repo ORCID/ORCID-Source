@@ -188,7 +188,7 @@ public class WorkManagerImpl implements WorkManager {
         SourceEntity existingSource = workEntity.getSource();
         orcidSecurityManager.checkSource(existingSource);
         try {            
-            workDao.remove(workId);
+            workDao.removeWork(orcid, workId);
         } catch(Exception e) {
             LOGGER.error("Unable to delete work with ID: " + workIdStr);
             result = false;

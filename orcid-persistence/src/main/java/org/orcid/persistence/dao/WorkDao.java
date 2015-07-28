@@ -90,6 +90,15 @@ public interface WorkDao extends GenericDao<WorkEntity, Long> {
     boolean removeWorks(String clientOrcid, List<Long> workIds);        
     
     /**
+     * Remove a single work
+     * 
+     * @param workId
+     *          The id of the work that should be deleted
+     * @return true if the work was correctly deleted         
+     * */
+    boolean removeWork(String orcid, Long workId);
+    
+    /**
      * Sets the display index of the new work
      * @param workId
      *          The work id
