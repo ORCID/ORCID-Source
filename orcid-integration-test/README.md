@@ -35,9 +35,9 @@ The new style blackbox are different from the old style integration tests, becau
 
     For more details of the properties to override and their meanings see the following.
 
-    [src/test/resources/test-web.properties](https://github.com/ORCID/ORCID-Work-in-Progress/blob/master/src/test/resources/test-web.properties)
+    [src/test/resources/test-web.properties](https://github.com/ORCID/ORCID-Source/blob/master/src/test/resources/test-web.properties)
 
-    [src/test/resources/test-client.properties](https://github.com/ORCID/ORCID-Work-in-Progress/blob/master/src/test/resources/test-client.properties)
+    [src/test/resources/test-client.properties](https://github.com/ORCID/ORCID-Source/blob/master/src/test/resources/test-client.properties)
 
 ## Old Style Integration Tests
 
@@ -89,5 +89,5 @@ But, before running the integration tests, there are some things that need to be
 
     
 # License
-See [LICENSE.md](https://github.com/ORCID/ORCID-Work-in-Progress/blob/master/LICENSE.md)
+See [LICENSE.md](https://github.com/ORCID/ORCID-Source/blob/master/LICENSE.md)
 
