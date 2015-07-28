@@ -28,70 +28,70 @@ import org.orcid.jaxb.model.record.Work;
 /**
  * 
  * @author Will Simpson
- *
+ * 
  */
 public interface MemberV2ApiServiceDelegator {
 
     Response viewStatusText();
 
     Response viewActivities(String orcid);
-    
+
     Response viewWork(String orcid, String putCode);
-    
+
     Response viewWorkSummary(String orcid, String putCode);
-    
+
     Response createWork(String orcid, Work work);
-    
+
     Response updateWork(String orcid, String putCode, Work work);
-    
+
     Response deleteWork(String orcid, String putCode);
 
     Response viewFunding(String orcid, String putCode);
-    
+
     Response viewFundingSummary(String orcid, String putCode);
-    
+
     Response createFunding(String orcid, Funding funding);
-    
+
     Response updateFunding(String orcid, String putCode, Funding funding);
-    
+
     Response deleteFunding(String orcid, String putCode);
-    
+
     Response viewEducation(String orcid, String putCode);
-    
+
     Response viewEducationSummary(String orcid, String putCode);
-    
+
     Response createEducation(String orcid, Education education);
-    
+
     Response updateEducation(String orcid, String putCode, Education education);
-    
+
     Response viewEmployment(String orcid, String putCode);
-    
+
     Response viewEmploymentSummary(String orcid, String putCode);
-    
+
     Response createEmployment(String orcid, Employment employment);
-    
+
     Response updateEmployment(String orcid, String putCode, Employment employment);
-    
+
     Response deleteAffiliation(String orcid, String putCode);
-    
-    Response viewPeerReview(String orcid,  String putCode);
-            
-    Response viewPeerReviewSummary(String orcid,  String putCode);
-        
+
+    Response viewPeerReview(String orcid, String putCode);
+
+    Response viewPeerReviewSummary(String orcid, String putCode);
+
     Response createPeerReview(String orcid, PeerReview peerReview);
-    
-    Response updatePeerReview(String orcid,  String putCode, PeerReview peerReview);
-        
-    Response deletePeerReview(String orcid,  String putCode);
 
-	Response viewGroupIdRecord(String putCode);
+    Response updatePeerReview(String orcid, String putCode, PeerReview peerReview);
 
-	Response createGroupIdRecord(GroupIdRecord groupIdRecord);
+    Response deletePeerReview(String orcid, String putCode);
 
-	Response updateGroupIdRecord(GroupIdRecord groupIdRecord, String putCode);
+    Response viewGroupIdRecord(String putCode);
 
-	Response deleteGroupIdRecord(String putCode);
-	
-	Response viewGroupIdRecords(String pageSize, String pageNum);
-    
+    Response createGroupIdRecord(GroupIdRecord groupIdRecord);
+
+    Response updateGroupIdRecord(GroupIdRecord groupIdRecord, String putCode);
+
+    Response deleteGroupIdRecord(String putCode);
+
+    Response viewGroupIdRecords(String pageSize, String pageNum);
+
 }

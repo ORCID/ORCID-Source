@@ -25,6 +25,7 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.net.URISyntaxException;
+import java.util.List;
 
 import javax.ws.rs.core.Response;
 
@@ -43,6 +44,7 @@ import org.orcid.jaxb.model.common.Title;
 import org.orcid.jaxb.model.common.Url;
 import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.jaxb.model.common.Year;
+import org.orcid.jaxb.model.groupid.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record.Education;
 import org.orcid.jaxb.model.record.Employment;
@@ -106,6 +108,7 @@ public class MemberV2Test extends BlackBoxBase {
     @Before
     public void before() throws JSONException, InterruptedException, URISyntaxException {
         cleanActivities();
+        createGroupIds();
     }
 
     @After
@@ -933,7 +936,30 @@ public class MemberV2Test extends BlackBoxBase {
         }
     }    
     
-    public void createGroupIds() {
+    public List<GroupIdRecord> createGroupIds() throws JSONException {
+        String token = oauthHelper.getClientCredentialsAccessToken(client1ClientId, client1ClientSecret, ScopePathType.GROUP_ID_RECORD_UPDATE);
+        GroupIdRecord g1 = new GroupIdRecord();
+        g1.setDescription("Description");
+        g1.setGroupId("orcid-generated:001");
+        g1.setName("Group # 1");
+        g1.setType("publisher");
         
+        GroupIdRecord g2 = new GroupIdRecord();
+        g2.setDescription("Description");
+        g2.setGroupId("orcid-generated:002");
+        g2.setName("Group # 1");
+        g2.setType("publisher");
+        
+        GroupIdRecord g3 = new GroupIdRecord();
+        g3.setDescription("Description");
+        g3.setGroupId("orcid-generated:003");
+        g3.setName("Group # 1");
+        g3.setType("publisher");
+        
+        ClientResponse r1 = memberV2ApiClient.createGroupIdRecord(g1, token);
+        ClientResponse r2 = memberV2ApiClient.createGroupIdRecord(g1, token);
+        ClientResponse r3 = memberV2ApiClient.createGroupIdRecord(g1, token);
+        
+        return null;
     }
 }

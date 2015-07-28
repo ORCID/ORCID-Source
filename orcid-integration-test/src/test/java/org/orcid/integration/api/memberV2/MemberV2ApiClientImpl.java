@@ -25,6 +25,7 @@ import static org.orcid.core.api.OrcidApiConstants.PUTCODE;
 import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_JSON;
 import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_XML;
 import static org.orcid.core.api.OrcidApiConstants.WORK;
+import static org.orcid.core.api.OrcidApiConstants.GROUP_ID_RECORD;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -32,6 +33,7 @@ import java.net.URISyntaxException;
 import javax.ws.rs.core.UriBuilder;
 
 import org.orcid.api.common.OrcidClientHelper;
+import org.orcid.jaxb.model.groupid.GroupIdRecord;
 import org.orcid.jaxb.model.record.Education;
 import org.orcid.jaxb.model.record.Employment;
 import org.orcid.jaxb.model.record.Funding;
@@ -155,5 +157,15 @@ public class MemberV2ApiClientImpl {
     public ClientResponse deletePeerReviewXml(String orcid, String putCode, String accessToken) {
         URI deletePeerReviewUri = UriBuilder.fromPath(PEER_REVIEW + PUTCODE).build(orcid, putCode);
         return orcidClientHelper.deleteClientResponseWithToken(deletePeerReviewUri, VND_ORCID_XML, accessToken);
+    }
+    
+    public ClientResponse createGroupIdRecord(GroupIdRecord groupId, String accessToken) {
+        URI createUri = UriBuilder.fromPath(GROUP_ID_RECORD).build(null);
+        return orcidClientHelper.postClientResponseWithToken(createUri, VND_ORCID_XML, groupId, accessToken);
+    }
+    
+    public ClientResponse deleteGroupIdRecord(String putCode, String accessToken) {
+        URI deleteURI = UriBuilder.fromPath(GROUP_ID_RECORD + PUTCODE).build(putCode);
+        return orcidClientHelper.deleteClientResponseWithToken(deleteURI, VND_ORCID_XML, accessToken);
     }
 }
