@@ -155,7 +155,8 @@
 	    var funding = json.fundings;
 	    var education = json.educations;
 	    var employment = json.employments;
-	    var peerReviews =  json.peerReviews;	    
+	    var peerReviews =  json.peerReviews;	
+	    var all = works + funding + education + employment + peerReviews;
 	    if(styleTags.length == 0) {	        
 	        var styleTag = document.createElement("link");
 	        styleTag.rel = "stylesheet";
@@ -170,24 +171,27 @@
 	                                    <div class="orcid-widget-details">\
 	                                        <div class="orcid-logo"></div>\
 	                                        <div class="orcid-name">'+ name +'</div>\
-	                                        <div class="orcid-id">ORCID: '+ orcid +'</div>\
+	                                        <div class="orcid-id">ORCID: <span class="orcid-mini-logo"></span>'+ orcid +'</div>\
 	                                        <div class="orcid-summary-items">';
-	                                        if (works > 0) {
-	                                            widgetInnerHTML += '<div class="orcid-summary-item">Works ('+ works +')</div>';
-	                                        }
-	                                        if (funding > 0){
-	                                            widgetInnerHTML += '<div class="orcid-summary-item">Funding (' + funding +')</div>';
-	                                        }
-	                                        if (education > 0){
-	                                            widgetInnerHTML += '<div class="orcid-summary-item">Education (' + education + ')</div>';
-	                                        }
-	                                        if (employment > 0){
-	                                            widgetInnerHTML += '<div class="orcid-summary-item">Employment (' + employment + ')</div>';
-	                                        }
-	                                        if(peerReviews > 0){
-	                                            widgetInnerHTML += '<div class="orcid-summary-item">Peer Reviews (' + peerReviews +')</div>';
-	                                        }
-	                                        
+	    									if (all > 0){
+		                                        if (works > 0) {
+		                                            widgetInnerHTML += '<div class="orcid-summary-item">Works ('+ works +')</div>';
+		                                        }
+		                                        if (funding > 0){
+		                                            widgetInnerHTML += '<div class="orcid-summary-item">Funding (' + funding +')</div>';
+		                                        }
+		                                        if (education > 0){
+		                                            widgetInnerHTML += '<div class="orcid-summary-item">Education (' + education + ')</div>';
+		                                        }
+		                                        if (employment > 0){
+		                                            widgetInnerHTML += '<div class="orcid-summary-item">Employment (' + employment + ')</div>';
+		                                        }
+		                                        if(peerReviews > 0){
+		                                            widgetInnerHTML += '<div class="orcid-summary-item">Peer Reviews (' + peerReviews +')</div>';
+		                                        }
+	    									}else{
+	    										widgetInnerHTML += '<div class="orcid-summary-item">You haven\'t added any items to your record.</div>';
+	    									}
 	                                        widgetInnerHTML += '</div>\
 	                                    </div>\
 	                                </a>\

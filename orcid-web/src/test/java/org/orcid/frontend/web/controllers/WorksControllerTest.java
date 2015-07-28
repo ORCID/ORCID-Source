@@ -31,8 +31,8 @@ import java.util.List;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Unmarshaller;
+
+import orcid.pojo.ajaxForm.WorkFormTest;
 
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -42,13 +42,13 @@ import org.junit.runner.RunWith;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.frontend.web.util.BaseControllerTest;
 import org.orcid.jaxb.model.message.Iso3166Country;
-import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.jaxb.model.record.Work;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.TranslatedTitle;
-import org.orcid.pojo.ajaxForm.WorkForm;
 import org.orcid.pojo.ajaxForm.WorkExternalIdentifier;
+import org.orcid.pojo.ajaxForm.WorkForm;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Propagation;
@@ -62,7 +62,7 @@ import com.google.common.collect.Lists;
 public class WorksControllerTest extends BaseControllerTest {
 
     private static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml", "/data/SecurityQuestionEntityData.xml",
-            "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/WorksEntityData.xml", "/data/ProfileWorksEntityData.xml",
+            "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/WorksEntityData.xml", 
             "/data/ClientDetailsEntityData.xml", "/data/Oauth2TokenDetailsData.xml", "/data/WebhookEntityData.xml");
 
     @Resource
@@ -122,86 +122,82 @@ public class WorksControllerTest extends BaseControllerTest {
     }
 
     @Test
-    public void testFieldValidators() throws Exception {
-        // Test work without language fields
-        JAXBContext context = JAXBContext.newInstance(OrcidWork.class);
-        Unmarshaller unmarshaller = context.createUnmarshaller();
-        OrcidWork orcidWork = (OrcidWork) unmarshaller.unmarshal(getClass().getResourceAsStream("/orcid-work.xml"));
-        assertNotNull(orcidWork);
-        WorkForm work = WorkForm.valueOf(orcidWork);
+    public void testFieldValidators() throws Exception {        
+        Work work = WorkFormTest.getWork();
+        WorkForm workForm = WorkForm.valueOf(work);
 
-        worksController.workTitleValidate(work);
-        assertEquals(0, work.getTitle().getErrors().size());
+        worksController.workTitleValidate(workForm);
+        assertEquals(0, workForm.getTitle().getErrors().size());
 
-        worksController.workSubtitleValidate(work);
-        assertEquals(0, work.getSubtitle().getErrors().size());
+        worksController.workSubtitleValidate(workForm);
+        assertEquals(0, workForm.getSubtitle().getErrors().size());
 
-        worksController.workTranslatedTitleValidate(work);
-        assertEquals(0, work.getTranslatedTitle().getErrors().size());
+        worksController.workTranslatedTitleValidate(workForm);
+        assertEquals(0, workForm.getTranslatedTitle().getErrors().size());
 
-        worksController.workUrlValidate(work);
-        assertEquals(0, work.getUrl().getErrors().size());
+        worksController.workUrlValidate(workForm);
+        assertEquals(0, workForm.getUrl().getErrors().size());
 
-        worksController.workJournalTitleValidate(work);
-        assertEquals(0, work.getJournalTitle().getErrors().size());
+        worksController.workJournalTitleValidate(workForm);
+        assertEquals(0, workForm.getJournalTitle().getErrors().size());
 
-        worksController.workLanguageCodeValidate(work);
-        assertEquals(0, work.getLanguageCode().getErrors().size());
+        worksController.workLanguageCodeValidate(workForm);
+        assertEquals(0, workForm.getLanguageCode().getErrors().size());
 
-        worksController.workdescriptionValidate(work);
-        assertEquals(0, work.getShortDescription().getErrors().size());
+        worksController.workdescriptionValidate(workForm);
+        assertEquals(0, workForm.getShortDescription().getErrors().size());
 
-        worksController.workWorkTypeValidate(work);
-        assertEquals(0, work.getWorkType().getErrors().size());
+        worksController.workWorkTypeValidate(workForm);
+        assertEquals(0, workForm.getWorkType().getErrors().size());
 
-        worksController.workWorkExternalIdentifiersValidate(work);
-        for (WorkExternalIdentifier wId : work.getWorkExternalIdentifiers()) {
+        worksController.workWorkExternalIdentifiersValidate(workForm);
+        for (WorkExternalIdentifier wId : workForm.getWorkExternalIdentifiers()) {
             assertEquals(0, wId.getWorkExternalIdentifierId().getErrors().size());
             assertEquals(0, wId.getWorkExternalIdentifierType().getErrors().size());
         }
 
-        worksController.workCitationValidate(work);
-        assertEquals(0, work.getCitation().getCitation().getErrors().size());
-        assertEquals(0, work.getCitation().getCitationType().getErrors().size());
+        worksController.workCitationValidate(workForm);
+        assertEquals(0, workForm.getCitation().getCitation().getErrors().size());
+        assertEquals(0, workForm.getCitation().getCitationType().getErrors().size());
 
-        assertNotNull(orcidWork.getCountry());
-        assertNotNull(orcidWork.getCountry().getValue());
-        assertEquals(orcidWork.getCountry().getValue(), Iso3166Country.US);
+        assertNotNull(workForm.getCountryCode());
+        assertNotNull(workForm.getCountryCode().getValue());
+        assertEquals(Iso3166Country.US.value(), workForm.getCountryCode().getValue());
 
         // Set wrong values to each field
-        work.setTitle(Text.valueOf(buildLongWord()));
-        work.setSubtitle(Text.valueOf(buildLongWord()));
-        work.getTranslatedTitle().setContent(buildLongWord());
-        work.getTranslatedTitle().setLanguageCode(buildLongWord());
-        work.getUrl().setValue(buildLongWord());
-        work.getJournalTitle().setValue(buildLongWord());
-        work.getLanguageCode().setValue(buildLongWord());
-        work.getShortDescription().setValue(buildLongWord());
-        work.getWorkType().setValue(new String());
+        workForm.setTitle(Text.valueOf(buildLongWord()));
+        workForm.setSubtitle(Text.valueOf(buildLongWord()));
+        workForm.getTranslatedTitle().setContent(buildLongWord());
+        workForm.getTranslatedTitle().setLanguageCode(buildLongWord());
+        workForm.getUrl().setValue(buildLongWord());
+        workForm.getJournalTitle().setValue(buildLongWord());
+        workForm.getLanguageCode().setValue(buildLongWord());
+        workForm.getShortDescription().setValue(buildLongWord());
+        workForm.getWorkType().setValue(new String());
 
-        worksController.workTitleValidate(work);
-        assertEquals(1, work.getTitle().getErrors().size());
+        worksController.workTitleValidate(workForm);
+        assertEquals(1, workForm.getTitle().getErrors().size());
 
-        worksController.workSubtitleValidate(work);
-        assertEquals(1, work.getSubtitle().getErrors().size());
+        worksController.workSubtitleValidate(workForm);
+        assertEquals(1, workForm.getSubtitle().getErrors().size());
 
-        worksController.workTranslatedTitleValidate(work);
-        assertEquals(2, work.getTranslatedTitle().getErrors().size());
+        worksController.workTranslatedTitleValidate(workForm);
+        assertEquals(2, workForm.getTranslatedTitle().getErrors().size());
 
-        worksController.workUrlValidate(work);
-        assertEquals(2, work.getUrl().getErrors().size());
+        worksController.workUrlValidate(workForm);
+        assertEquals(2, workForm.getUrl().getErrors().size());
 
-        worksController.workJournalTitleValidate(work);
-        assertEquals(1, work.getJournalTitle().getErrors().size());
+        worksController.workJournalTitleValidate(workForm);
+        assertEquals(1, workForm.getJournalTitle().getErrors().size());
 
-        worksController.workLanguageCodeValidate(work);
-        assertEquals(1, work.getLanguageCode().getErrors().size());
+        worksController.workLanguageCodeValidate(workForm);
+        assertEquals(1, workForm.getLanguageCode().getErrors().size());
 
-        worksController.workdescriptionValidate(work);
-        assertEquals(1, work.getShortDescription().getErrors().size());
+        worksController.workdescriptionValidate(workForm);
+        assertEquals(1, workForm.getShortDescription().getErrors().size());
 
-        worksController.workWorkTypeValidate(work);
-        assertEquals(1, work.getWorkType().getErrors().size());
+        worksController.workWorkTypeValidate(workForm);
+        assertEquals(1, workForm.getWorkType().getErrors().size());
 
     }
 

@@ -32,6 +32,7 @@ import org.orcid.jaxb.model.common.FuzzyDate;
 import org.orcid.jaxb.model.common.PublicationDate;
 import org.orcid.jaxb.model.common.SourceClientId;
 import org.orcid.jaxb.model.common.SourceOrcid;
+import org.orcid.jaxb.model.groupid.GroupIdRecord;
 import org.orcid.jaxb.model.notification.addactivities.Activity;
 import org.orcid.jaxb.model.notification.addactivities.ActivityType;
 import org.orcid.jaxb.model.notification.addactivities.NotificationAddActivities;
@@ -54,6 +55,7 @@ import org.orcid.jaxb.model.record.summary.WorkSummary;
 import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.CompletionDateEntity;
 import org.orcid.persistence.jpa.entities.EndDateEntity;
+import org.orcid.persistence.jpa.entities.GroupIdRecordEntity;
 import org.orcid.persistence.jpa.entities.NotificationActivityEntity;
 import org.orcid.persistence.jpa.entities.NotificationAddActivitiesEntity;
 import org.orcid.persistence.jpa.entities.NotificationAmendedEntity;
@@ -342,6 +344,21 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
 
         mapperFactory.classMap(FuzzyDate.class, CompletionDateEntity.class).field("year.value", "year").field("month.value", "month").field("day.value", "day")
                 .register();
+
+        addV2SourceMapping(mapperFactory);
+        return mapperFactory.getMapperFacade();
+    }
+    
+    public MapperFacade getGroupIdRecordMapperFacade() {
+        MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
+
+        ClassMapBuilder<GroupIdRecord, GroupIdRecordEntity> classMap = mapperFactory.classMap(GroupIdRecord.class, GroupIdRecordEntity.class);
+        addV2CommonFields(classMap);
+        classMap.field("name", "groupName");
+        classMap.field("groupId", "groupId");
+        classMap.field("description", "groupDescription");
+        classMap.field("type", "groupType");
+        classMap.register();
 
         addV2SourceMapping(mapperFactory);
         return mapperFactory.getMapperFacade();

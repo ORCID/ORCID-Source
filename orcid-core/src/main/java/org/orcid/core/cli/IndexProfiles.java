@@ -110,7 +110,7 @@ public class IndexProfiles {
     private void processOrcid(final String orcid) {
         LOG.info("Indexing profile: {}", orcid);
         try {
-            OrcidProfile orcidProfile = orcidProfileManager.retrievePublic(orcid);
+            OrcidProfile orcidProfile = orcidProfileManager.retrievePublicOrcidProfile(orcid);
             orcidIndexManager.persistProfileInformationForIndexing(orcidProfile);
             profileDao.updateIndexingStatus(orcid, IndexingStatus.DONE);
         } catch (RuntimeException e) {

@@ -145,4 +145,6 @@
     <include file="/db/updates/move-work-data-to-work-table.xml" />
     <include file="/db/updates/new-index-for-org-disambiguated-table.xml" />
     <include file="/db/updates/external-ids-as-json.xml" />
+    <include file="/db/updates/remove-work-id-fk-on-profile-work.xml" />
+    <include file="/db/updates/group-id-record.xml" />
 </databaseChangeLog>

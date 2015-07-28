@@ -76,6 +76,9 @@ public class OrcidSolrDocument {
     @Field(SolrConstants.DIGITAL_OBJECT_IDS)
     private List<String> digitalObjectIds;
 
+    @Field(SolrConstants.AGR)
+    private List<String> agr;
+
     @Field(SolrConstants.ARXIV)
     private List<String> arxiv;
 
@@ -88,8 +91,26 @@ public class OrcidSolrDocument {
     @Field(SolrConstants.BIBCODE)
     private List<String> bibcode;
 
+    @Field(SolrConstants.CBA)
+    private List<String> cba;
+
+    @Field(SolrConstants.CIT)
+    private List<String> cit;
+
+    @Field(SolrConstants.CTX)
+    private List<String> ctx;
+    
     @Field(SolrConstants.EID)
     private List<String> eid;
+    
+    @Field(SolrConstants.ETHOS)
+    private List<String> ethos;
+
+    @Field(SolrConstants.HANDLE)
+    private List<String> handle;
+
+    @Field(SolrConstants.HIR)
+    private List<String> hir;
 
     @Field(SolrConstants.ISBN)
     private List<String> isbn;
@@ -118,6 +139,9 @@ public class OrcidSolrDocument {
     @Field(SolrConstants.OSTI)
     private List<String> osti;
 
+    @Field(SolrConstants.PAT)
+    private List<String> pat;
+
     @Field(SolrConstants.PMC)
     private List<String> pmc;
 
@@ -127,8 +151,20 @@ public class OrcidSolrDocument {
     @Field(SolrConstants.RFC)
     private List<String> rfc;
 
+    @Field(SolrConstants.SOURCE_WORK_ID)
+    private List<String> sourceWorkId;
+    
     @Field(SolrConstants.SSRN)
     private List<String> ssrn;
+    
+    @Field(SolrConstants.URI)
+    private List<String> uri;
+
+    @Field(SolrConstants.URN)
+    private List<String> urn;
+
+    @Field(SolrConstants.WOSUID)
+    private List<String> wosuid;
 
     @Field(SolrConstants.ZBL)
     private List<String> zbl;
@@ -385,6 +421,18 @@ public class OrcidSolrDocument {
         result = prime * result + ((ssrn == null) ? 0 : ssrn.hashCode());
         result = prime * result + ((zbl == null) ? 0 : zbl.hashCode());
         result = prime * result + ((otherIdentifierType == null) ? 0 : otherIdentifierType.hashCode());
+        result = prime * result + ((agr == null) ? 0 : agr.hashCode());
+        result = prime * result + ((cba == null) ? 0 : cba.hashCode());
+        result = prime * result + ((cit == null) ? 0 : cit.hashCode());
+        result = prime * result + ((ctx == null) ? 0 : ctx.hashCode());
+        result = prime * result + ((ethos == null) ? 0 : ethos.hashCode());
+        result = prime * result + ((handle == null) ? 0 : handle.hashCode());
+        result = prime * result + ((hir == null) ? 0 : hir.hashCode());
+        result = prime * result + ((pat == null) ? 0 : pat.hashCode());
+        result = prime * result + ((sourceWorkId == null) ? 0 : sourceWorkId.hashCode());
+        result = prime * result + ((uri == null) ? 0 : uri.hashCode());
+        result = prime * result + ((urn == null) ? 0 : urn.hashCode());
+        result = prime * result + ((wosuid == null) ? 0 : wosuid.hashCode());
         return result;
     }
 
@@ -602,6 +650,66 @@ public class OrcidSolrDocument {
                 return false;
         } else if (!otherIdentifierType.equals(other.otherIdentifierType))
             return false;
+        if (agr == null) {
+            if (other.agr != null)
+                return false;
+        } else if (!agr.equals(other.agr))
+            return false;
+        if (cba == null) {
+            if (other.cba != null)
+                return false;
+        } else if (!cba.equals(other.cba))
+            return false;
+        if (cit == null) {
+            if (other.cit != null)
+                return false;
+        } else if (!cit.equals(other.cit))
+            return false;
+        if (ctx == null) {
+            if (other.ctx != null)
+                return false;
+        } else if (!ctx.equals(other.ctx))
+            return false;
+        if (ethos == null) {
+            if (other.ethos != null)
+                return false;
+        } else if (!ethos.equals(other.ethos))
+            return false;
+        if (handle == null) {
+            if (other.handle != null)
+                return false;
+        } else if (!handle.equals(other.handle))
+            return false;
+        if (hir == null) {
+            if (other.hir != null)
+                return false;
+        } else if (!hir.equals(other.hir))
+            return false;
+        if (pat == null) {
+            if (other.pat != null)
+                return false;
+        } else if (!pat.equals(other.pat))
+            return false;
+        if (sourceWorkId == null) {
+            if (other.sourceWorkId != null)
+                return false;
+        } else if (!sourceWorkId.equals(other.sourceWorkId))
+            return false;
+        if (uri == null) {
+            if (other.uri != null)
+                return false;
+        } else if (!uri.equals(other.uri))
+            return false;
+        if (urn == null) {
+            if (other.urn != null)
+                return false;
+        } else if (!urn.equals(other.urn))
+            return false;
+        if (wosuid == null) {
+            if (other.wosuid != null)
+                return false;
+        } else if (!wosuid.equals(other.wosuid))
+            return false;
         return true;
     }
 
@@ -806,4 +914,100 @@ public class OrcidSolrDocument {
     public void setExternalIdSourcesAndReferences(List<String> externalIdSourcesAndReferences) {
         this.externalIdSourcesAndReferences = externalIdSourcesAndReferences;
     }
+
+	public List<String> getAgr() {
+		return agr;
+	}
+
+	public void setAgr(List<String> agr) {
+		this.agr = agr;
+	}
+
+	public List<String> getCba() {
+		return cba;
+	}
+
+	public void setCba(List<String> cba) {
+		this.cba = cba;
+	}
+
+	public List<String> getCit() {
+		return cit;
+	}
+
+	public void setCit(List<String> cit) {
+		this.cit = cit;
+	}
+
+	public List<String> getCtx() {
+		return ctx;
+	}
+
+	public void setCtx(List<String> ctx) {
+		this.ctx = ctx;
+	}
+
+	public List<String> getEthos() {
+		return ethos;
+	}
+
+	public void setEthos(List<String> ethos) {
+		this.ethos = ethos;
+	}
+
+	public List<String> getHandle() {
+		return handle;
+	}
+
+	public void setHandle(List<String> handle) {
+		this.handle = handle;
+	}
+
+	public List<String> getHir() {
+		return hir;
+	}
+
+	public void setHir(List<String> hir) {
+		this.hir = hir;
+	}
+
+	public List<String> getPat() {
+		return pat;
+	}
+
+	public void setPat(List<String> pat) {
+		this.pat = pat;
+	}
+
+	public List<String> getSourceWorkId() {
+		return sourceWorkId;
+	}
+
+	public void setSourceWorkId(List<String> sourceWorkId) {
+		this.sourceWorkId = sourceWorkId;
+	}
+
+	public List<String> getUri() {
+		return uri;
+	}
+
+	public void setUri(List<String> uri) {
+		this.uri = uri;
+	}
+
+	public List<String> getUrn() {
+		return urn;
+	}
+
+	public void setUrn(List<String> urn) {
+		this.urn = urn;
+	}
+
+	public List<String> getWosuid() {
+		return wosuid;
+	}
+
+	public void setWosuid(List<String> wosuid) {
+		this.wosuid = wosuid;
+	}
 }

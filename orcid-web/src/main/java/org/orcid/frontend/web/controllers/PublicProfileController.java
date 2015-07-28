@@ -37,22 +37,22 @@ import org.orcid.core.manager.ActivityCacheManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.OrcidProfileCacheManager;
 import org.orcid.core.manager.PeerReviewManager;
+import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
-import org.orcid.core.manager.ProfileWorkManager;
 import org.orcid.core.manager.WorkManager;
+import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.Funding;
 import org.orcid.jaxb.model.message.FundingType;
 import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.PersonalDetails;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.record.PeerReview;
+import org.orcid.jaxb.model.record.Work;
 import org.orcid.jaxb.model.record.summary.ActivitiesSummary;
 import org.orcid.persistence.jpa.entities.CountryIsoEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
 import org.orcid.pojo.ajaxForm.AffiliationForm;
 import org.orcid.pojo.ajaxForm.Contributor;
 import org.orcid.pojo.ajaxForm.FundingForm;
@@ -90,9 +90,6 @@ public class PublicProfileController extends BaseWorkspaceController {
     private ActivityCacheManager activityCacheManager;
 
     @Resource
-    private ProfileWorkManager profileWorkManager;
-    
-    @Resource
     private ProfileEntityManager profileEntManager;
 
     @Resource
@@ -109,7 +106,10 @@ public class PublicProfileController extends BaseWorkspaceController {
 
     @Resource
     private PeerReviewManager peerReviewManager;
-    
+
+    @Resource
+    private ProfileEntityCacheManager profileEntityCacheManager;
+
     public static int ORCID_HASH_LENGTH = 8;
 
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[x]}")
@@ -216,23 +216,21 @@ public class PublicProfileController extends BaseWorkspaceController {
                 else {
                     if (personalDetails.getGivenNames() != null && !PojoUtil.isEmpty(personalDetails.getGivenNames().getContent()))
                         creditName += personalDetails.getGivenNames().getContent();
-                    if(personalDetails.getFamilyName() != null && !PojoUtil.isEmpty(personalDetails.getFamilyName().getContent()))
+                    if (personalDetails.getFamilyName() != null && !PojoUtil.isEmpty(personalDetails.getFamilyName().getContent()))
                         creditName += " " + personalDetails.getFamilyName().getContent();
-                }                   
+                }
             }
-            if(!PojoUtil.isEmpty(creditName)) {
-                //<Published Name> (<ORCID iD>) - ORCID | Connecting Research and Researchers
+            if (!PojoUtil.isEmpty(creditName)) {
+                // <Published Name> (<ORCID iD>) - ORCID | Connecting Research
+                // and Researchers
                 mav.addObject("title", getMessage("layout.public-layout.title", creditName.trim(), orcid));
             }
 
         } catch (JsonGenerationException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         } catch (JsonMappingException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
@@ -343,46 +341,52 @@ public class PublicProfileController extends BaseWorkspaceController {
         if (StringUtils.isEmpty(workId))
             return null;
 
-        ProfileWorkEntity profileWork = profileWorkManager.getProfileWork(orcid, workId);
+        Work workObj = workManager.getWork(orcid, workId);
 
-        if (profileWork != null) {
-            OrcidWork orcidWork = jpa2JaxbAdapter.getOrcidWork(profileWork);
-            if (orcidWork != null) {
-                WorkForm work = WorkForm.valueOf(orcidWork);
-                // Set country name
-                if (!PojoUtil.isEmpty(work.getCountryCode())) {
-                    Text countryName = Text.valueOf(countries.get(work.getCountryCode().getValue()));
-                    work.setCountryName(countryName);
-                }
-                // Set language name
-                if (!PojoUtil.isEmpty(work.getLanguageCode())) {
-                    Text languageName = Text.valueOf(languages.get(work.getLanguageCode().getValue()));
-                    work.setLanguageName(languageName);
-                }
-                // Set translated title language name
-                if (work.getTranslatedTitle() != null && !StringUtils.isEmpty(work.getTranslatedTitle().getLanguageCode())) {
-                    String languageName = languages.get(work.getTranslatedTitle().getLanguageCode());
-                    work.getTranslatedTitle().setLanguageName(languageName);
-                }
+        if (workObj != null) {
+            WorkForm work = WorkForm.valueOf(workObj);
+            // Set country name
+            if (!PojoUtil.isEmpty(work.getCountryCode())) {
+                Text countryName = Text.valueOf(countries.get(work.getCountryCode().getValue()));
+                work.setCountryName(countryName);
+            }
+            // Set language name
+            if (!PojoUtil.isEmpty(work.getLanguageCode())) {
+                Text languageName = Text.valueOf(languages.get(work.getLanguageCode().getValue()));
+                work.setLanguageName(languageName);
+            }
+            // Set translated title language name
+            if (work.getTranslatedTitle() != null && !StringUtils.isEmpty(work.getTranslatedTitle().getLanguageCode())) {
+                String languageName = languages.get(work.getTranslatedTitle().getLanguageCode());
+                work.getTranslatedTitle().setLanguageName(languageName);
+            }
 
-                // If the work source is the user himself, fill the work source
-                // name
-                if (!PojoUtil.isEmpty(work.getSource()) && profileWork.getProfile().getId().equals(work.getSource())) {
-                    List<Contributor> contributors = work.getContributors();
-                    if (work.getContributors() != null) {
-                        for (Contributor contributor : contributors) {
-                            // If it is not an empty contributor
-                            if (!PojoUtil.isEmpty(contributor.getContributorRole()) || !PojoUtil.isEmpty(contributor.getContributorSequence())) {
-                                ProfileEntity profile = profileWork.getProfile();
-                                String creditNameString = cacheManager.getPublicCreditName(profile);
-                                Text creditName = Text.valueOf(creditNameString);
-                                contributor.setCreditName(creditName);
+            if (work.getContributors() != null) {
+                for (Contributor contributor : work.getContributors()) {
+                    if (!PojoUtil.isEmpty(contributor.getOrcid())) {
+                        String contributorOrcid = contributor.getOrcid().getValue();
+                        if (profileEntManager.orcidExists(contributorOrcid)) {
+                            ProfileEntity profileEntity = profileEntityCacheManager.retrieve(contributorOrcid);
+                            String publicContributorCreditName = cacheManager.getPublicCreditName(profileEntity);
+                            if (profileEntity.getCreditNameVisibility() != null) {
+                                contributor.setCreditName(Text.valueOf(publicContributorCreditName));
+                                contributor.setCreditNameVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(profileEntity.getCreditNameVisibility()));
+                            } else {
+                                contributor.setCreditName(Text.valueOf(publicContributorCreditName));
+                                contributor.setCreditNameVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(OrcidVisibilityDefaults.CREDIT_NAME_DEFAULT
+                                        .getVisibility()));
+                            }
+                        } else {
+                            if (contributor.getCreditNameVisibility() == null) {
+                                contributor.setCreditNameVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(OrcidVisibilityDefaults.CREDIT_NAME_DEFAULT
+                                        .getVisibility()));
                             }
                         }
                     }
                 }
-                return work;
             }
+
+            return work;
         }
 
         return null;
@@ -418,11 +422,13 @@ public class PublicProfileController extends BaseWorkspaceController {
     @RequestMapping(value = "/public_widgets/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/{orcidHash}/info.json")
     public @ResponseBody
     OrcidInfo getInfo(@PathVariable("orcid") String orcid, @PathVariable("orcidHash") String orcidHash) throws Exception {
-    	// Light weight security check. To keep copy and paster from easily generating
-    	// the widget with out the user being logged in. Anyone that figures out this is 
+        // Light weight security check. To keep copy and paster from easily
+        // generating
+        // the widget with out the user being logged in. Anyone that figures out
+        // this is
         // a hash should be smart enough to just use the API.
-    	if (orcidHash.length() > 5 && !encryptionManager.sha256Hash(orcid).startsWith(orcidHash))
-    		throw new Exception("Semi-security hash doens't match");
+        if (orcidHash.length() > 5 && !encryptionManager.sha256Hash(orcid).startsWith(orcidHash))
+            throw new Exception("Semi-security hash doens't match");
         OrcidInfo result = new OrcidInfo();
         OrcidProfile profile = orcidProfileCacheManager.retrievePublic(orcid);
         result.setOrcid(orcid);
@@ -441,31 +447,31 @@ public class PublicProfileController extends BaseWorkspaceController {
 
             if (profile.getOrcidBio().getPersonalDetails().getFamilyName() != null
                     && !PojoUtil.isEmpty(profile.getOrcidBio().getPersonalDetails().getFamilyName().getContent())) {
-                name += " "+profile.getOrcidBio().getPersonalDetails().getFamilyName().getContent();
+                name += " " + profile.getOrcidBio().getPersonalDetails().getFamilyName().getContent();
             }
             result.setName(name);
         }
 
         ActivitiesSummary actSummary = profileEntManager.getPublicActivitiesSummary(orcid);
-        
-        if(actSummary != null) {
-        	if(actSummary.getFundings() != null) {
+
+        if (actSummary != null) {
+            if (actSummary.getFundings() != null) {
                 result.setFundings(actSummary.getFundings().getFundingGroup().size());
             }
-            if(actSummary.getFundings() != null) {
+            if (actSummary.getFundings() != null) {
                 result.setWorks(actSummary.getWorks().getWorkGroup().size());
             }
-            if(actSummary.getPeerReviews() != null) {
+            if (actSummary.getPeerReviews() != null) {
                 result.setPeerReviews(actSummary.getPeerReviews().getPeerReviewGroup().size());
             }
-            if(actSummary.getEducations() != null && actSummary.getEducations().getSummaries() != null) {
-            	result.setEducations(actSummary.getEducations().getSummaries().size());
+            if (actSummary.getEducations() != null && actSummary.getEducations().getSummaries() != null) {
+                result.setEducations(actSummary.getEducations().getSummaries().size());
             }
-            if(actSummary.getEmployments() != null && actSummary.getEmployments().getSummaries() != null) {
-            	result.setEmployments(actSummary.getEmployments().getSummaries().size());
+            if (actSummary.getEmployments() != null && actSummary.getEmployments().getSummaries() != null) {
+                result.setEmployments(actSummary.getEmployments().getSummaries().size());
             }
         }
-        
+
         return result;
     }
 

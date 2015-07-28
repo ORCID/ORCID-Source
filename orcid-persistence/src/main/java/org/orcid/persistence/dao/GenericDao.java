@@ -49,8 +49,11 @@ public interface GenericDao<E extends OrcidEntity<I>, I extends Serializable> {
     void removeAll();
 
     void flush();
+    
+    void flushWithoutTransactional();
 
     void persist(E e);
 
     Long countAll();
+
 }

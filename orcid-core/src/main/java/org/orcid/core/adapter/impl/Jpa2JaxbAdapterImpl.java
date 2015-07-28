@@ -63,7 +63,6 @@ import org.orcid.persistence.jpa.entities.OtherNameEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
-import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
 import org.orcid.persistence.jpa.entities.PublicationDateEntity;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 import org.orcid.persistence.jpa.entities.SourceAware;
@@ -861,40 +860,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
             displayName += " " + familyName;
         }
         return displayName;
-    }
-
-    public OrcidWork getOrcidWork(ProfileWorkEntity profileWorkEntity) {
-        WorkEntity work = profileWorkEntity.getWork();
-        if (work == null) {
-            return null;
-        }
-        OrcidWork orcidWork = new OrcidWork();
-        PublicationDateEntity publicationDate = work.getPublicationDate();
-        orcidWork.setPublicationDate(getPublicationDateFromEntity(publicationDate));
-        orcidWork.setPutCode(Long.toString(work.getId()));
-        orcidWork.setShortDescription(work.getDescription());
-        orcidWork.setUrl(StringUtils.isNotBlank(work.getWorkUrl()) ? new Url(work.getWorkUrl()) : null);
-        orcidWork.setWorkCitation(getWorkCitation(work));
-        orcidWork.setWorkContributors(getWorkContributors(profileWorkEntity));
-        orcidWork.setWorkExternalIdentifiers(getWorkExternalIdentifiers(work));
-        orcidWork.setSource(getSource(profileWorkEntity));
-        orcidWork.setWorkTitle(getWorkTitle(work));
-        orcidWork.setJournalTitle(StringUtils.isNotBlank(work.getJournalTitle()) ? new Title(work.getJournalTitle()) : null);
-        orcidWork.setLanguageCode(normalizeLanguageCode(work.getLanguageCode()));
-
-        if (work.getIso2Country() != null) {
-            Country country = new Country(work.getIso2Country());
-            country.setVisibility(OrcidVisibilityDefaults.WORKS_COUNTRY_DEFAULT.getVisibility());
-            orcidWork.setCountry(country);
-        }
-        orcidWork.setWorkType(work.getWorkType());
-        orcidWork.setVisibility(profileWorkEntity.getVisibility());
-
-        orcidWork.setCreatedDate(new CreatedDate(toXMLGregorianCalendar(profileWorkEntity.getDateCreated())));
-        orcidWork.setLastModifiedDate(new LastModifiedDate(toXMLGregorianCalendar(profileWorkEntity.getLastModified())));
-
-        return orcidWork;
-    }
+    }    
     
     public OrcidWork getOrcidWork(WorkEntity work) {        
         if (work == null) {
@@ -978,13 +944,6 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         }
         return extIds;        
     }    
-
-    private WorkContributors getWorkContributors (ProfileWorkEntity profileWorkEntity) {
-        if(profileWorkEntity == null) {
-            return null;
-        }
-        return getWorkContributors(profileWorkEntity.getWork());
-    }
     
     private WorkContributors getWorkContributors(WorkEntity work) {
         if (work == null) {

@@ -607,6 +607,7 @@ orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
             loading: false,
             constants: { 'access_type': { 'USER': 'user', 'ANONYMOUS': 'anonymous'}},
             fundingToAddIds: null,
+            moreDetailsActive: false,
             addFundingToScope: function(path) {
                 if( fundingSrvc.fundingToAddIds.length != 0 ) {
                     var fundingIds = fundingSrvc.fundingToAddIds.splice(0,20).join();
@@ -1496,10 +1497,14 @@ orcidNgModule.filter('contributorFilter', function(){
 
 
 orcidNgModule.filter('workExternalIdentifierHtml', function(){
-    return function(workExternalIdentifier, first, last, length){
+    return function(workExternalIdentifier, first, last, length, moreInfo){
 
         var output = '';
+        var ngclass = '';
         var isPartOf = false;
+        
+        if (moreInfo == false || typeof moreInfo == 'undefined') ngclass = 'truncate-anchor';
+        
         
         if(workExternalIdentifier.relationship != null && workExternalIdentifier.relationship.value == 'part-of')
         	isPartOf = true;
@@ -1524,20 +1529,34 @@ orcidNgModule.filter('workExternalIdentifierHtml', function(){
         	link = workExternalIdentifier.url.value;
         else link = workIdLinkJs.getLink(id,type); 
         	
-        if (link != null)
-            output = output + "<a href='" + link.replace(/'/g, "&#39;") + "' target='_blank'>" + id.escapeHtml() + "</a>";
-        else
+        if (link != null){
+        	if(link.lastIndexOf('http://') === -1 && link.lastIndexOf('https://') === -1) {
+        		link = '//' + link;
+        	}
+            output = output + '<a href="' + link.replace(/'/g, "&#39;") + '" class ="' + ngclass + '"' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(work.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(work.putCode.value + $index)\">" + id.escapeHtml() + '</a>';
+        }else{
             output = output + id;        
-        
-        if (length > 1 && !last) output = output + ',';
-        return output;
+        }
+        output += '<div class="popover-pos">\
+			<div class="popover-help-container">\
+	        	<div class="popover bottom" ng-class="{'+"'block'"+' : displayURLPopOver[work.putCode.value + $index] == true}">\
+					<div class="arrow"></div>\
+					<div class="popover-content">\
+				    	<a href="'+link+'" target="_blank" class="ng-binding">'+link+'</a>\
+				    </div>\
+				</div>\
+			</div>\
+	  </div>';
+
+      return output;
     };
 });
 
 //Currently being used in Fundings only
-orcidNgModule.filter('externalIdentifierHtml', function(){
-    return function(externalIdentifier, first, last, length, type){
+orcidNgModule.filter('externalIdentifierHtml', ['fundingSrvc', function(fundingSrvc){
+    return function(externalIdentifier, first, last, length, type, moreInfo){
     	
+    	var ngclass = '';
     	var output = '';
 
         if (externalIdentifier == null) return output;
@@ -1556,7 +1575,7 @@ orcidNgModule.filter('externalIdentifierHtml', function(){
         var value = null;        
         if(externalIdentifier.value != null){
         	value = externalIdentifier.value.value;
-        }            
+        }
         
         var link = null;
         if(externalIdentifier.url != null)
@@ -1565,27 +1584,43 @@ orcidNgModule.filter('externalIdentifierHtml', function(){
         if(link != null) {
         	if (link.search(/^http[s]?\:\/\//) == -1)
             	link = 'http://' + link;
+        	
         	if(value != null) {
-        		output += "<a href='" + link + "' class='truncate-anchor' target='_blank'>" + value + "</a>";
+        		output += "<a href='" + link + "' class='truncate-anchor' target='_blank' ng-mouseenter='showURLPopOver(funding.putCode.value+ $index)' ng-mouseleave='hideURLPopOver(funding.putCode.value + $index)'>" + value + "</a>";
         	} else {
         		if(type != null) {
+        			
+        			if (moreInfo == false || typeof moreInfo == 'undefined') ngclass = 'truncate-anchor';
+        			
         			if(type.value == 'grant') {
-        				output = om.get('funding.add.external_id.url.label.grant') + ": <a href='" + link + "' class='truncate-anchor' target='_blank'>" + link + "</a>";
+        				output = om.get('funding.add.external_id.url.label.grant') + ': <a href="' + link + '" class="' + ngclass + '"' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(funding.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(funding.putCode.value + $index)\">" + link + "</a>";
         			} else if(type.value == 'contract') {
-        				output = om.get('funding.add.external_id.url.label.contract') + ": <a href='" + link + "' class='truncate-anchor' target='_blank'>" + link + "</a>";
+        				output = om.get('funding.add.external_id.url.label.contract') + ': <a href="' + link + '" class="' + ngclass + '"' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(funding.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(funding.putCode.value + $index)\">" + link + "</a>";
         			} else {
-        				output = om.get('funding.add.external_id.url.label.award') + ": <a href='" + link + "' class='truncate-anchor' target='_blank'>" + link + "</a>";
+        				output = om.get('funding.add.external_id.url.label.award') + ': <a href="' + link + '" class="' + ngclass + '"' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(funding.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(funding.putCode.value + $index)\">" + link + "</a>";
         			}
+        			
         		}        		
         	}
         } else if(value != null) {
         	output = output + " " + value;
         }
+        output += '<div class="popover-pos">\
+        				<div class="popover-help-container">\
+				        	<div class="popover bottom" ng-class="{'+"'block'"+' : displayURLPopOver[funding.putCode.value + $index] == true}">\
+								<div class="arrow"></div>\
+								<div class="popover-content">\
+							    	<a href="'+link+'" target="_blank" class="ng-binding">'+link+'</a>\
+							    </div>\
+							</div>\
+						</div>\
+				  </div>';
       
-        if (length > 1 && !last) output = output + ',';
+        
+        //if (length > 1 && !last) output = output + ',';
         	return output;
-    };
-});
+    	};
+}]);
 
 function removeBadContributors(dw) {
     for (var idx in dw.contributors) {
@@ -2018,6 +2053,7 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$compile', function Website
     $scope.showEdit = false;
     $scope.websitesForm = null;
     $scope.privacyHelp = false;
+    $scope.showElement = {};
 
     $scope.openEdit = function() {
         $scope.addNew();
@@ -2092,6 +2128,14 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$compile', function Website
         $event.preventDefault();
         $scope.websitesForm.visibility.visibility = priv;
     };
+    
+    $scope.showTooltip = function(elem){
+    	$scope.showElement[elem] = true;
+    }
+    
+    $scope.hideTooltip = function(elem){
+    	$scope.showElement[elem] = false;
+    }
 
     $scope.getWebsitesForm();
 }]);
@@ -2100,6 +2144,7 @@ orcidNgModule.controller('KeywordsCtrl', ['$scope', '$compile', function ($scope
     $scope.showEdit = false;
     $scope.keywordsForm = null;
     $scope.privacyHelp = false;
+    $scope.showElement = {};
 
     $scope.openEdit = function() {
         $scope.addNew();
@@ -2164,6 +2209,14 @@ orcidNgModule.controller('KeywordsCtrl', ['$scope', '$compile', function ($scope
         $event.preventDefault();
         $scope.keywordsForm.visibility.visibility = priv;
     };
+    
+    $scope.showTooltip = function(elem){
+    	$scope.showElement[elem] = true;
+    }
+    
+    $scope.hideTooltip = function(elem){
+    	$scope.showElement[elem] = false;
+    }
 
     $scope.getKeywordsForm();
 }]);
@@ -2229,6 +2282,7 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile',function ($scope
     $scope.showEdit = false;
     $scope.otherNamesForm = null;
     $scope.privacyHelp = false;
+    $scope.showElement = {};
 
     $scope.openEdit = function() {
         $scope.addNew();
@@ -2287,11 +2341,21 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile',function ($scope
             console.log("OtherNames.serverValidate() error");
         });
     };
+    
+    $scope.showTooltip = function(elem){
+    	$scope.showElement[elem] = true;
+    }
+
+    $scope.hideTooltip = function(elem){
+    	$scope.showElement[elem] = false;	
+    }
 
     $scope.setPrivacy = function(priv, $event) {
         $event.preventDefault();
         $scope.otherNamesForm.visibility.visibility = priv;
     };
+    
+    
 
     $scope.getOtherNamesForm();
 }]);
@@ -2387,6 +2451,7 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
     $scope.showEdit = false;
     $scope.countryForm = null;
     $scope.privacyHelp = false;
+    $scope.showElement = {};
 
     $scope.openEdit = function() {
         $scope.showEdit = true;
@@ -2442,6 +2507,14 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
         $event.preventDefault();
         $scope.countryForm.profileAddressVisibility.visibility = priv;
     };
+    
+    $scope.showTooltip = function(elem){
+    	$scope.showElement[elem] = true;
+    }
+
+    $scope.hideTooltip = function(elem){
+    	$scope.showElement[elem] = false;	
+    }
 
     $scope.getCountryForm();
 
@@ -3385,6 +3458,7 @@ orcidNgModule.controller('FundingCtrl',['$scope', '$compile', '$filter', 'fundin
     $scope.showElement = {};
     $scope.fundingImportWizard = false;
     $scope.wizardDescExpanded = {};
+    $scope.displayURLPopOver = {};
     $scope.emptyExtId = {
             "errors": [],
             "type": {
@@ -3449,7 +3523,7 @@ orcidNgModule.controller('FundingCtrl',['$scope', '$compile', '$filter', 'fundin
 
     $scope.showDetailsMouseClick = function(key, $event) {
         $event.stopPropagation();
-        $scope.moreInfo[key] = !$scope.moreInfo[key];
+        $scope.moreInfo[key] = !$scope.moreInfo[key];        
     };
 
     $scope.closeMoreInfo = function(key) {
@@ -3868,6 +3942,19 @@ orcidNgModule.controller('FundingCtrl',['$scope', '$compile', '$filter', 'fundin
             return true;
         return false;
     };
+    
+    $scope.hideURLPopOver = function(id){
+    	$scope.displayURLPopOver[id] = false;
+    };
+    
+    $scope.showURLPopOver = function(id){
+    	$scope.displayURLPopOver[id] = true;
+    };
+    
+    $scope.moreInfoActive = function(groupID){
+    	if ($scope.moreInfo[groupID] == true || $scope.moreInfo[groupID] != null) return 'truncate-anchor';
+    }
+    
 }]);
 
 /**
@@ -3878,7 +3965,8 @@ orcidNgModule.controller('PublicFundingCtrl',['$scope', '$compile', '$filter', '
     $scope.workspaceSrvc = workspaceSrvc;
     $scope.moreInfo = {};
     $scope.editSources = {};
-    $scope.showElement = {};    
+    $scope.showElement = {};
+    $scope.displayURLPopOver = {};
 
     $scope.sortState = new ActSortState(GroupedActivities.FUNDING);
     $scope.sort = function(key) {
@@ -3901,7 +3989,6 @@ orcidNgModule.controller('PublicFundingCtrl',['$scope', '$compile', '$filter', '
     $scope.showDetailsMouseClick = function(key, $event) {    	    	
         $event.stopPropagation();
         $scope.moreInfo[key] = !$scope.moreInfo[key];
-        console.log(key);
     };
 
     $scope.closeMoreInfo = function(key) {
@@ -3935,6 +4022,14 @@ orcidNgModule.controller('PublicFundingCtrl',['$scope', '$compile', '$filter', '
         $scope.editSources[group.groupId] = false;
         group.activePutCode = group.defaultPutCode;
     };
+    
+    $scope.hideURLPopOver = function(id){
+    	$scope.displayURLPopOver[id] = false;
+	};
+	
+	$scope.showURLPopOver = function(id){
+		$scope.displayURLPopOver[id] = true;
+	};
 
 }]);
 
@@ -3988,6 +4083,7 @@ orcidNgModule.controller('PublicWorkCtrl',['$scope', '$compile', '$filter', 'wor
     $scope.moreInfo = {};
     $scope.editSources = {};
     $scope.showElement = {};
+    $scope.displayURLPopOver = {};
 
     $scope.sortState = new ActSortState(GroupedActivities.ABBR_WORK);
     $scope.sort = function(key) {
@@ -4079,6 +4175,14 @@ orcidNgModule.controller('PublicWorkCtrl',['$scope', '$compile', '$filter', 'wor
     $scope.hideTooltip = function (element){    	
         $scope.showElement[element] = false;
     };
+    
+    $scope.hideURLPopOver = function(id){
+    	$scope.displayURLPopOver[id] = false;
+	};
+	
+	$scope.showURLPopOver = function(id){
+		$scope.displayURLPopOver[id] = true;
+	};
 
 }]);
 
@@ -4107,6 +4211,7 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     $scope.bulkDeleteSubmit = false;
     $scope.workImportWizard = false;
     $scope.wizardDescExpanded = {};
+    $scope.displayURLPopOver = {};
     
     $scope.sortState = new ActSortState(GroupedActivities.ABBR_WORK);
     $scope.sort = function(key) {
@@ -4698,6 +4803,15 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     $scope.toggleWizardDesc = function(id){
     	$scope.wizardDescExpanded[id] = !$scope.wizardDescExpanded[id];
     };
+    
+    $scope.showURLPopOver = function(id){    	
+    	$scope.displayURLPopOver[id] = true;
+    }
+    
+    $scope.hideURLPopOver = function(id){    	
+    	$scope.displayURLPopOver[id] = false;
+    }
+    
     
 }]);
 
@@ -5920,6 +6034,10 @@ orcidNgModule.controller('languageCtrl',['$scope', '$cookies', function ($scope,
             {
                 "value": 'fr',
                 "label": 'Français'
+            },
+            {
+                "value": 'it',
+                "label": 'Italiano'
             },
             {
                 "value": 'ja',
@@ -8617,6 +8735,7 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
 orcidNgModule.controller('EmailsController',['$scope', 'emailSrvc',function ($scope, emailSrvc){
 	$scope.emailSrvc = emailSrvc;
 	$scope.showEdit = false;
+	$scope.showElement = {};
 
 	emailSrvc.getEmails();
 	
@@ -8626,6 +8745,14 @@ orcidNgModule.controller('EmailsController',['$scope', 'emailSrvc',function ($sc
 	
 	$scope.close = function(){
 		$scope.showEdit = false;
+	}
+	
+	$scope.showTooltip = function(elem){
+		$scope.showElement[elem] = true;
+	}
+	
+	$scope.hideTooltip = function(elem){
+		$scope.showElement[elem] = false;
 	}
 	
 }]);
@@ -8984,18 +9111,9 @@ orcidNgModule.controller('headerCtrl',['$scope', '$window', function ($scope, $w
 orcidNgModule.controller('widgetCtrl',['$scope', function ($scope){
 	$scope.hash = orcidVar.orcidIdHash.substr(0, 6);
 	$scope.showCode = false;
-	$scope.name = null;
-	$scope.orcid = null;
-	$scope.works = 0;
-	$scope.fundings = 0;
-	$scope.educations = 0;
-	$scope.employments = 0;
-	$scope.peerReviews = 0;
+		
+	$scope.widgetURLND = '<div style="width:100%;text-align:center"><iframe src="'+ getBaseUri() + '/static/html/widget.html?orcid=' + orcidVar.orcidId + '&t=' + $scope.hash + '" frameborder="0" height="310" width="210px" vspace="0" hspace="0" marginheight="5" marginwidth="5" scrolling="no" allowtransparency="true"></iframe></div>';
 	
-	$scope.widgetURL = '<script src="'+ getBaseUri() + '/static/javascript/orcid-summary-widget.js?orcid=' + orcidVar.orcidId + '&t=' + $scope.hash + '"></script><div id="orcid-summary-widget"></div>';
-	$scope.widgetURLND = '<div style="width:100%;text-align:center">\
-	    					  <iframe src="'+ getBaseUri() + '/static/html/widget.html?orcid=' + orcidVar.orcidId + '&t=' + $scope.hash + '" frameborder="0" height="310" width="210px" vspace="0" hspace="0" marginheight="5" marginwidth="5" scrolling="auto" allowtransparency="true"></iframe>\
-	    				  </div>';
 	$scope.inputTextAreaSelectAll = function($event){
     	$event.target.select();
     }
@@ -9007,30 +9125,6 @@ orcidNgModule.controller('widgetCtrl',['$scope', function ($scope){
 	$scope.hideWidgetCode = function(){
 		$scope.showCode = false;
 	}
-	
-	$scope.showSampleWidget = function(){
-		$.ajax({
-	        url: getBaseUri() + '/public_widgets/' + orcidVar.orcidId + '/' + $scope.hash +'/info.json',
-	        type: 'GET',
-	        contentType: 'application/json;charset=UTF-8',
-	        dataType: 'json',
-	        success: function(data) {
-	        	console.log(data.orcid);
-	        
-	           
-	        	$scope.name =  data.name;
-	        	$scope.orcid =  data.orcid;
-	            $scope.works =  data.works;
-	            $scope.fundings =  data.fundings;
-	            $scope.educations =  data.educations;
-	            $scope.employments =  data.employments;
-	            $scope.peerReviews =  data.peerReviews;
-	            
-	            $scope.$apply();
-			}
-		});
-	}
-		
 	
 }]);
 
@@ -9132,3 +9226,18 @@ orcidNgModule.directive('ngEnter', function() {
         });
     };
 });
+
+/*Use instead ng-bind-html when you want to include directives inside the HTML to bind */
+orcidNgModule.directive('bindHtmlCompile', ['$compile', function ($compile) {
+    return {
+        restrict: 'A',
+        link: function (scope, element, attrs) {
+            scope.$watch(function () {
+                return scope.$eval(attrs.bindHtmlCompile);
+            }, function (value) {
+                element.html(value);
+                $compile(element.contents())(scope);
+            });
+        }
+    };
+}]);

@@ -65,68 +65,31 @@ abstract public class NotificationsApiServiceImplBase {
     }
 
     @GET
-    @Produces(value = { MediaType.TEXT_HTML })
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(ADD_ACTIVITIES_PATH)
-    public Response viewAddActivitiesNotificationsHtml(@PathParam("orcid") String orcid) {
-        Response response = serviceDelegator.findAddActivitiesNotifications(orcid);
-        return Response.fromResponse(response).header("Content-Disposition", "attachment; filename=\"" + orcid + "-add-activities-notifications.xml\"").build();
-    }
-
-    @GET
-    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
-    @Path(ADD_ACTIVITIES_PATH)
-    public Response viewAddActivitiesNotificationsXml(@PathParam("orcid") String orcid) {
+    public Response viewAddActivitiesNotifications(@PathParam("orcid") String orcid) {
         return serviceDelegator.findAddActivitiesNotifications(orcid);
     }
 
     @GET
-    @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
-    @Path(ADD_ACTIVITIES_PATH)
-    public Response viewAddActivitiesNotificationsJson(@PathParam("orcid") String orcid) {
-        return serviceDelegator.findAddActivitiesNotifications(orcid);
-    }
-
-    @GET
-    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(ADD_ACTIVITIES_VIEW_PATH)
-    public Response viewAddActivitiesNotificationXml(@PathParam("orcid") String orcid, @PathParam("id") Long id) {
-        return serviceDelegator.findAddActivitiesNotification(orcid, id);
-    }
-
-    @GET
-    @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
-    @Path(ADD_ACTIVITIES_VIEW_PATH)
-    public Response viewAddActivitiesNotificationJson(@PathParam("orcid") String orcid, @PathParam("id") Long id) {
+    public Response viewAddActivitiesNotification(@PathParam("orcid") String orcid, @PathParam("id") Long id) {
         return serviceDelegator.findAddActivitiesNotification(orcid, id);
     }
 
     @POST
-    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(ADD_ACTIVITIES_FLAG_AS_ARCHIVED_PATH)
-    public Response flagAsArchivedAddActivitiesNotificationXml(@PathParam("orcid") String orcid, @PathParam("id") Long id) throws OrcidNotificationAlreadyReadException {
+    public Response flagAsArchivedAddActivitiesNotification(@PathParam("orcid") String orcid, @PathParam("id") Long id) throws OrcidNotificationAlreadyReadException {
         return serviceDelegator.flagNotificationAsArchived(orcid, id);
     }
 
     @POST
-    @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
-    @Path(ADD_ACTIVITIES_FLAG_AS_ARCHIVED_PATH)
-    public Response flagAsArchivedAddActivitiesNotificationJson(@PathParam("orcid") String orcid, @PathParam("id") Long id) throws OrcidNotificationAlreadyReadException {
-        return serviceDelegator.flagNotificationAsArchived(orcid, id);
-    }
-
-    @POST
-    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
-    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(ADD_ACTIVITIES_PATH)
-    public Response addAddActivitiesNotificationXml(@PathParam("orcid") String orcid, NotificationAddActivities notification) {
-        return serviceDelegator.addAddActivitiesNotification(uriInfo, orcid, notification);
-    }
-
-    @POST
-    @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
-    @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
-    @Path(ADD_ACTIVITIES_PATH)
-    public Response addAddActivitiesNotificationJson(@PathParam("orcid") String orcid, NotificationAddActivities notification) {
+    public Response addAddActivitiesNotification(@PathParam("orcid") String orcid, NotificationAddActivities notification) {
         return serviceDelegator.addAddActivitiesNotification(uriInfo, orcid, notification);
     }
 

@@ -26,10 +26,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.jaxb.model.message.ContributorEmail;
 import org.orcid.jaxb.model.message.ContributorOrcid;
-import org.orcid.jaxb.model.message.ContributorRole;
 import org.orcid.jaxb.model.message.CreditName;
 import org.orcid.jaxb.model.message.FundingContributorRole;
-import org.orcid.jaxb.model.message.SequenceType;
 
 public class Contributor implements ErrorsInterface, Serializable {
 
@@ -49,31 +47,7 @@ public class Contributor implements ErrorsInterface, Serializable {
 
     private Text contributorRole;
 
-    private Visibility creditNameVisibility;
-
-    public static Contributor valueOf(org.orcid.jaxb.model.message.Contributor contributor) {
-        Contributor c = new Contributor();
-        if (contributor != null) {
-            if (contributor.getContributorAttributes() != null) {
-                contributor.getContributorAttributes();
-                if (contributor.getContributorAttributes().getContributorRole() != null)
-                    c.setContributorRole(Text.valueOf(contributor.getContributorAttributes().getContributorRole().value()));
-                if (contributor.getContributorAttributes().getContributorSequence() != null)
-                    c.setContributorSequence(Text.valueOf(contributor.getContributorAttributes().getContributorSequence().value()));
-            }
-            if (contributor.getContributorEmail() != null)
-                c.setEmail(Text.valueOf(contributor.getContributorEmail().getValue()));
-            if (contributor.getContributorOrcid() != null) {
-                c.setOrcid(Text.valueOf(contributor.getContributorOrcid().getPath()));
-                c.setUri(Text.valueOf(contributor.getContributorOrcid().getUri()));
-            }
-            if (contributor.getCreditName() != null) {
-                c.setCreditName(Text.valueOf(contributor.getCreditName().getContent()));
-                c.setCreditNameVisibility(Visibility.valueOf(contributor.getCreditName().getVisibility()));
-            }
-        }
-        return c;
-    }
+    private Visibility creditNameVisibility;    
     
     public static Contributor valueOf(org.orcid.jaxb.model.common.Contributor contributor) {
         Contributor c = new Contributor();
@@ -91,9 +65,14 @@ public class Contributor implements ErrorsInterface, Serializable {
                 c.setOrcid(Text.valueOf(contributor.getContributorOrcid().getPath()));
                 c.setUri(Text.valueOf(contributor.getContributorOrcid().getUri()));
             }
+            //Set default values that must be overwritten by the controller
             if (contributor.getCreditName() != null) {
                 c.setCreditName(Text.valueOf(contributor.getCreditName().getContent()));
-                c.setCreditNameVisibility(Visibility.valueOf(contributor.getCreditName().getVisibility()));
+                if(contributor.getCreditName().getVisibility() != null) {
+                    c.setCreditNameVisibility(Visibility.valueOf(contributor.getCreditName().getVisibility()));
+                } else {
+                    c.setCreditNameVisibility(Visibility.valueOf(OrcidVisibilityDefaults.CONTRIBUTOR_VISIBILITY_DEFAULT.getVisibility()));
+                }
             }
         }
         return c;
@@ -115,52 +94,15 @@ public class Contributor implements ErrorsInterface, Serializable {
             }
             if (contributor.getCreditName() != null) {
                 c.setCreditName(Text.valueOf(contributor.getCreditName().getContent()));
-                c.setCreditNameVisibility(Visibility.valueOf(contributor.getCreditName().getVisibility()));
-            }
-        }
-        return c;
-    }
-    
-    public org.orcid.jaxb.model.message.Contributor toContributor() {
-        org.orcid.jaxb.model.message.Contributor c = new org.orcid.jaxb.model.message.Contributor();
-        if (this.getContributorRole() != null || this.getContributorSequence() != null) {
-            org.orcid.jaxb.model.message.ContributorAttributes ca = new org.orcid.jaxb.model.message.ContributorAttributes();
-            if (!PojoUtil.isEmpty(this.getContributorRole()))
-                ca.setContributorRole(ContributorRole.fromValue(this.getContributorRole().getValue()));
-            if (!PojoUtil.isEmpty(this.getContributorSequence()))
-                ca.setContributorSequence(SequenceType.fromValue(this.getContributorSequence().getValue()));
-            c.setContributorAttributes(ca);
-        }
-        if (this.getEmail() != null)
-            c.setContributorEmail(new ContributorEmail(this.getEmail().getValue()));
-        if (this.getOrcid() != null) {
-            ContributorOrcid contributorOrcid = new ContributorOrcid(this.getOrcid().getValue());
-            if (this.getUri() != null) {
-                String uriString = this.getUri().getValue();
-                if (StringUtils.isNotBlank(uriString)) {
-                    try {
-                        URI uri = new URI(uriString);
-                        contributorOrcid.setHost(uri.getHost());
-                    } catch (URISyntaxException e) {
-                        throw new RuntimeException("Problem parsing contributor orcid uri", e);
-                    }
+                if(contributor.getCreditName().getVisibility() != null) {
+                    c.setCreditNameVisibility(Visibility.valueOf(contributor.getCreditName().getVisibility()));
+                } else {
+                    c.setCreditNameVisibility(Visibility.valueOf(OrcidVisibilityDefaults.CONTRIBUTOR_VISIBILITY_DEFAULT.getVisibility()));
                 }
             }
-            contributorOrcid.setUri(this.getUri().getValue());
-
-            c.setContributorOrcid(contributorOrcid);
-        }
-        if (this.getCreditName() != null) {
-            CreditName cn = new CreditName(this.getCreditName().getValue());
-            if(this.getCreditNameVisibility() != null && this.getCreditNameVisibility().getVisibility() != null)
-                cn.setVisibility(org.orcid.jaxb.model.message.Visibility.fromValue(this.getCreditNameVisibility().getVisibility().value()));
-            else {
-                cn.setVisibility(org.orcid.jaxb.model.message.Visibility.fromValue(OrcidVisibilityDefaults.CREDIT_NAME_DEFAULT.getVisibility().value()));
-            }
-            c.setCreditName(cn);
         }
         return c;
-    }
+    }        
     
     public org.orcid.jaxb.model.message.FundingContributor toFundingContributor() {
         org.orcid.jaxb.model.message.FundingContributor c = new org.orcid.jaxb.model.message.FundingContributor();

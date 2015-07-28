@@ -31,6 +31,7 @@ import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.OrgManager;
 import org.orcid.core.manager.ProfileFundingManager;
 import org.orcid.core.manager.SourceManager;
+import org.orcid.core.manager.validator.ActivityValidator;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.record.Funding;
 import org.orcid.jaxb.model.record.summary.FundingSummary;
@@ -257,6 +258,7 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
     @Override
     @Transactional
     public Funding createFunding(String orcid, Funding funding) {
+    	ActivityValidator.validateFunding(funding);
         //Check for duplicates
         List<ProfileFundingEntity> existingFundings = profileFundingDao.getByUser(orcid);
         List<Funding> fundings = jpaJaxbFundingAdapter.toFunding(existingFundings);

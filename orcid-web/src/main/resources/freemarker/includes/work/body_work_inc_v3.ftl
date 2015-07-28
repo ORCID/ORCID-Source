@@ -147,13 +147,26 @@
                      <div class="row" ng-show="group.activePutCode == work.putCode.value">
                          <div class="col-md-12 col-sm-12 bottomBuffer">
                              <ul class="id-details">
-                                 <li>
-                                     <span ng-repeat='ie in work.workExternalIdentifiers'><span
-                                     ng-bind-html='ie | workExternalIdentifierHtml:$first:$last:work.workExternalIdentifiers.length'></span>
-                                    </span>
+                                 <li class="url-work">
+                                 	<ul class="id-details">
+                                 		<li ng-repeat='ie in work.workExternalIdentifiers' class="url-popover">
+                                 			<span bind-html-compile='ie | workExternalIdentifierHtml:$first:$last:work.workExternalIdentifiers.length:moreInfo[group.groupId]'></span>
+                                 		</li>
+                                 	</ul>                                 	
                                  </li>
-                                 <li ng-show="work.url.value"><@orcid.msg 'common.url' />: <a href="{{work.url.value | urlWithHttp}}" class="truncate-anchor" target="_blank">{{work.url.value}}</a></li>
-
+                                 <li ng-show="work.url.value" class="url-popover url-work">
+                                 	<@orcid.msg 'common.url' />: <a href="{{work.url.value | urlWithHttp}}" ng-mouseenter="showURLPopOver(work.putCode.value)" ng-mouseleave="hideURLPopOver(work.putCode.value)" ng-class="{'truncate-anchor' : moreInfo[group.groupId] == false || moreInfo[group.groupId] == undefined}" target="_blank">{{work.url.value}}</a>
+                                 	<div class="popover-pos">                                 	
+		                                <div class="popover-help-container">
+									       <div class="popover bottom" ng-class="{'block' : displayURLPopOver[work.putCode.value] == true}">
+												<div class="arrow"></div>
+												<div class="popover-content">
+											    	<a href="{{work.url.value}}" target="_blank">{{work.url.value}}</a>
+											    </div>                
+										  	</div>    			   				
+									 	</div>
+									 </div>
+                                 </li>
                              </ul>
                          </div>
                      </div>
