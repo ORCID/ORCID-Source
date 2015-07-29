@@ -23,6 +23,7 @@ import java.util.List;
 import javax.persistence.Query;
 
 import org.orcid.jaxb.model.common.Visibility;
+import org.orcid.jaxb.model.message.WorkType;
 import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.custom.MinimizedWorkEntity;
@@ -204,6 +205,46 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
         Query query = entityManager.createNativeQuery("SELECT distinct(work_id) FROM (SELECT work_id, json_array_elements(json_extract_path(external_ids_json, 'workExternalIdentifier')) AS j FROM work where work_id > :workId and external_ids_json is not null order by work_id limit :limit) AS a WHERE (j->'relationship') is null");
         query.setParameter("limit", limit);
         query.setParameter("workId", workId);
+        return query.getResultList();
+    }
+    
+    /**
+     * Returns a list of work ids where the ext id relationship is null
+     * @param limit
+     *          The batch number to fetch
+     * @param workId
+     *          The id of the latest work processed         
+     * @return a list of work ids    
+     * */
+    @Override
+    @SuppressWarnings("unchecked")    
+    public List<BigInteger> getWorksWithNullRelationship(long workId, long limit) {
+        Query query = entityManager.createNativeQuery("SELECT distinct(work_id) FROM (SELECT work_id, json_array_elements(json_extract_path(external_ids_json, 'workExternalIdentifier')) AS j FROM work where work_id > :workId and external_ids_json is not null limit :limit) AS a WHERE (j->>'relationship') is null");
+        query.setParameter("limit", limit);
+        query.setParameter("workId", workId);
+        return query.getResultList();
+    }
+    
+    /**
+     * Returns a list of work ids where the work matches the work type and ext ids type
+     * @param workType
+     *          The work type
+     * @param extIdType
+     *          The ext id type
+     * @param limit
+     *          The batch number to fetch
+     * @param workId
+     *          The id of the latest work processed         
+     * @return a list of work ids    
+     * */
+    @Override
+    @SuppressWarnings("unchecked")    
+    public List<BigInteger> getWorksByWorkTypeAndExtIdType(String workType, String extIdType, long workId, long limit) {
+        Query query = entityManager.createNativeQuery("SELECT distinct(work_id) FROM (SELECT work_id, json_array_elements(json_extract_path(external_ids_json, 'workExternalIdentifier')) AS j FROM work where work_id > :workId and work_type=:workType and external_ids_json is not null limit :limit) AS a WHERE (j->>'workExternalIdentifierType') = :extIdType");
+        query.setParameter("limit", limit);
+        query.setParameter("workId", workId);
+        query.setParameter("extIdType", extIdType);
+        query.setParameter("workType", workType);
         return query.getResultList();
     }
 }
