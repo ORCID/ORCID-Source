@@ -104,9 +104,11 @@ public interface WorkManager {
      * 
      * @param work
      *            The work to be edited
+     * @param applyValidations
+     *          Should the work be validated?    
      * @return The updated entity
      * */
-    Work updateWork(String orcid, Work work); 
+    Work updateWork(String orcid, Work work, boolean applyValidations); 
     
     boolean checkSourceAndRemoveWork(String orcid, String workId);
     

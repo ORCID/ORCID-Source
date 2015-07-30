@@ -165,7 +165,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
         if (!putCode.equals(work.getPutCode())) {
             throw new MismatchedPutCodeException("The put code in the URL was " + putCode + " whereas the one in the body was " + work.getPutCode());
         }
-        Work w = workManager.updateWork(orcid, work);
+        Work w = workManager.updateWork(orcid, work, true);
         return Response.ok(w).build();
     }
 
