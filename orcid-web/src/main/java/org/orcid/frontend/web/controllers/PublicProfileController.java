@@ -432,7 +432,10 @@ public class PublicProfileController extends BaseWorkspaceController {
         OrcidInfo result = new OrcidInfo();
         OrcidProfile profile = orcidProfileCacheManager.retrievePublic(orcid);
         result.setOrcid(orcid);
-
+        if(profile.getOrcidPreferences() != null && profile.getOrcidPreferences().getLocale() != null) {
+            result.setLocale(profile.getOrcidPreferences().getLocale().value());
+        }        
+        
         if (profile.getOrcidBio().getPersonalDetails().getCreditName() != null
                 && !PojoUtil.isEmpty(profile.getOrcidBio().getPersonalDetails().getCreditName().getContent())
                 && profile.getOrcidBio().getPersonalDetails().getCreditName().getVisibility().equals(Visibility.PUBLIC)) {
@@ -518,6 +521,7 @@ public class PublicProfileController extends BaseWorkspaceController {
 class OrcidInfo {
     public String orcid = "";
     public String name = "";
+    public String locale = "";
     public int works = 0;
     public int fundings = 0;
     public int educations = 0;
@@ -538,6 +542,14 @@ class OrcidInfo {
 
     public void setName(String name) {
         this.name = name;
+    }
+    
+    public String getLocale() {
+        return locale;
+    }
+
+    public void setLocale(String locale) {
+        this.locale = locale;
     }
 
     public int getWorks() {
