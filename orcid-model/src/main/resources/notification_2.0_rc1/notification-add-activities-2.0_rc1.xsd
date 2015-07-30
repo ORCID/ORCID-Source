@@ -28,11 +28,16 @@
 		</xs:restriction>
 	</xs:simpleType>
 	<xs:complexType name="authorization-url">
-			<xs:sequence>
-				<xs:element name="uri" type="xs:anyURI"/>
-				<xs:element name="path" type="xs:string"/>
-				<xs:element name="host" type="xs:string"/>
-			</xs:sequence>
+		<xs:sequence>
+			<xs:choice>
+				<xs:sequence>
+					<xs:element name="uri" type="xs:anyURI"/>
+					<xs:element name="path" type="xs:string" minOccurs="0"/>
+				</xs:sequence>
+				<xs:element name="path" type="xs:string" />
+			</xs:choice>
+			<xs:element name="host" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="activities">
 		<xs:sequence>
