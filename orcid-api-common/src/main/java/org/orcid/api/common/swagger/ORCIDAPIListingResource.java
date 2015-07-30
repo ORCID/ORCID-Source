@@ -16,27 +16,11 @@
  */
 package org.orcid.api.common.swagger;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.config.FilterFactory;
-import io.swagger.config.Scanner;
-import io.swagger.config.ScannerFactory;
-import io.swagger.config.SwaggerConfig;
-import io.swagger.core.filter.SpecFilter;
-import io.swagger.core.filter.SwaggerSpecFilter;
-import io.swagger.jaxrs.Reader;
-import io.swagger.jaxrs.config.JaxrsScanner;
-import io.swagger.jaxrs.config.ReaderConfigUtils;
-import io.swagger.jaxrs.listing.SwaggerSerializers;
-import io.swagger.models.Swagger;
-import io.swagger.util.Yaml;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import org.apache.commons.lang.NotImplementedException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -49,11 +33,25 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+
+import org.orcid.jaxb.model.common.Year;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import io.swagger.annotations.ApiOperation;
+import io.swagger.config.FilterFactory;
+import io.swagger.config.Scanner;
+import io.swagger.config.ScannerFactory;
+import io.swagger.config.SwaggerConfig;
+import io.swagger.converter.ModelConverters;
+import io.swagger.core.filter.SpecFilter;
+import io.swagger.core.filter.SwaggerSpecFilter;
+import io.swagger.jaxrs.Reader;
+import io.swagger.jaxrs.config.ReaderConfigUtils;
+import io.swagger.jaxrs.listing.SwaggerSerializers;
+import io.swagger.models.Model;
+import io.swagger.models.Swagger;
+import io.swagger.util.Yaml;
 
 /** Adapted version of APIListingResource that works with our spring-jersey based server.  
  * It removes the need for a ServletContext when initialising, but is otherwise unchanged.
@@ -67,10 +65,24 @@ public class ORCIDAPIListingResource {
     Logger LOGGER = LoggerFactory.getLogger(ORCIDAPIListingResource.class);
     @Context
     ServletContext context;
+    
+    private String monthJSON = "{"
+    +"  \"type\" : \"object\","
+    +"  \"properties\" : {"
+    +"    \"value\" : {"
+    +"      \"type\" : \"string\""
+    +"      \"default\" : \"01\""
+    +"    }"
+    +"  },"
+    +"  \"xml\" : {"
+    +"    \"name\" : \"month\""
+    +"  }"
+    +"}";
 
     protected synchronized Swagger scan(Application app) {
         Swagger swagger = null;
         Scanner scanner = ScannerFactory.getScanner();
+        ModelConverters.getInstance().addConverter(new SwaggerModelConverter());
         LOGGER.debug("[SWAGGER] using scanner " + scanner);
 
         if (scanner != null) {
@@ -96,6 +108,9 @@ public class ORCIDAPIListingResource {
                 context.setAttribute("swagger", swagger);
             }
         }
+        /*Model model = ModelConverters.getInstance().read(Year.class).get("Year");
+        LOGGER.debug(model.toString());
+        model.getProperties().get("value").setDefault("02");*/
         initialized = true;
         return swagger;
     }

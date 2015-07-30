@@ -40,6 +40,7 @@ import javax.ws.rs.core.UriInfo;
 
 import org.orcid.api.notifications.server.delegator.NotificationsApiServiceDelegator;
 import org.orcid.core.exception.OrcidNotificationAlreadyReadException;
+import org.orcid.jaxb.model.message.ScopeConstants;
 import org.orcid.jaxb.model.notification.Notification;
 import org.orcid.jaxb.model.notification.addactivities.NotificationAddActivities;
 
@@ -79,7 +80,7 @@ abstract public class NotificationsApiServiceImplBase {
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(ADD_ACTIVITIES_PATH)
     @ApiOperation(value = "Fetch all notifications for an ORCID ID", hidden=true, authorizations = {
-            @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = "/premium-notification", description = "you need this") }) })
+            @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.PREMIUM_NOTIFICATION, description = "you need this") }) })
     public Response viewAddActivitiesNotifications(@PathParam("orcid") String orcid) {
         return serviceDelegator.findAddActivitiesNotifications(orcid);
     }
@@ -88,7 +89,7 @@ abstract public class NotificationsApiServiceImplBase {
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(ADD_ACTIVITIES_VIEW_PATH)
     @ApiOperation(value = "Fetch a notification by id", response = Notification.class, authorizations = {
-            @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = "/premium-notification", description = "you need this") }) })
+            @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.PREMIUM_NOTIFICATION, description = "you need this") }) })
     @ApiResponses(value = { 
             @ApiResponse(code = 200, message = "Notification found", response = Notification.class),
             @ApiResponse(code = 404, message = "Notification not found", response = String.class),
@@ -103,7 +104,7 @@ abstract public class NotificationsApiServiceImplBase {
     @Path(ADD_ACTIVITIES_FLAG_AS_ARCHIVED_PATH)
     @Consumes()
     @ApiOperation(value = "Archive a notification", response = Notification.class, authorizations = {
-            @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = "/premium-notification", description = "you need this") }) })
+            @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.PREMIUM_NOTIFICATION, description = "you need this") }) })
     @ApiResponses(value = { 
             @ApiResponse(code = 200, message = "Notification archived, see HTTP Location header for URI", response = Notification.class),
             @ApiResponse(code = 404, message = "Notification not found", response = String.class),
@@ -118,9 +119,9 @@ abstract public class NotificationsApiServiceImplBase {
     @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(ADD_ACTIVITIES_PATH)
     @ApiOperation(value = "Add a notification", response = URI.class, authorizations = {
-            @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = "/premium-notification", description = "you need this") }) })
+            @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.PREMIUM_NOTIFICATION, description = "you need this") }) })
     @ApiResponses(value = { 
-            @ApiResponse(code = 201, message = "Notification added, see HTTP Location header for URI", responseHeaders = @ResponseHeader(name = "Location", description = "The created Education resource", response = URI.class))
+            @ApiResponse(code = 201, message = "Notification added, see HTTP Location header for URI", responseHeaders = @ResponseHeader(name = "Location", description = "The created Notification resource", response = URI.class))
             })
     public Response addAddActivitiesNotification(@PathParam("orcid") String orcid, NotificationAddActivities notification) {
         return serviceDelegator.addAddActivitiesNotification(uriInfo, orcid, notification);
