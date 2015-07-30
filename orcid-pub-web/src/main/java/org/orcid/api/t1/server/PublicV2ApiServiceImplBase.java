@@ -68,6 +68,14 @@ public class PublicV2ApiServiceImplBase {
     }
 
     @GET
+    @Produces(value = { MediaType.TEXT_HTML })
+    @Path("")
+    @ApiOperation(value = "Fetch the HTML swagger UI interface", hidden = true)
+    public Response viewSwagger() {
+        return Response.ok("<html>hey there, this will be the swagger UI page</html>").build();
+    }
+    
+    @GET
     @Produces(value = { MediaType.TEXT_PLAIN })
     @Path(STATUS_PATH)
     @ApiOperation(value = "Check the server status", response=String.class)
@@ -78,7 +86,7 @@ public class PublicV2ApiServiceImplBase {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(ACTIVITIES)
-    @ApiOperation(value = "Check the server status", response=ActivitiesSummary.class)
+    @ApiOperation(value = "Fetch all Activities", response=ActivitiesSummary.class)
     public Response viewActivities(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewActivities(orcid);
     }

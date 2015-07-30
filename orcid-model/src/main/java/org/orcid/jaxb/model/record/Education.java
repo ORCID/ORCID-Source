@@ -41,6 +41,8 @@ import org.orcid.jaxb.model.common.Source;
 import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.jaxb.model.common.VisibilityType;
 
+import io.swagger.annotations.ApiModelProperty;
+
 /**
  * <p>
  * Java class for anonymous complex type.
@@ -75,6 +77,7 @@ public class Education implements Serializable, VisibilityType, Activity, Organi
     protected CreatedDate createdDate;
 
     @XmlAttribute(name = "put-code")
+    @ApiModelProperty(hidden = true) 
     protected String putCode;
     @XmlAttribute(name = "path")
     protected String path;

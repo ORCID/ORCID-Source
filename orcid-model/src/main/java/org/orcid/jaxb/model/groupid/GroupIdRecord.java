@@ -27,6 +27,8 @@ import org.orcid.jaxb.model.common.CreatedDate;
 import org.orcid.jaxb.model.common.LastModifiedDate;
 import org.orcid.jaxb.model.common.Source;
 
+import io.swagger.annotations.ApiModelProperty;
+
 
 /**
  * <p>Java class for anonymous complex type.
@@ -85,6 +87,7 @@ public class GroupIdRecord
     @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected Source source;
     @XmlAttribute(name = "put-code")
+    @ApiModelProperty(hidden = true) 
     protected String putCode;
     @XmlElement(name = "last-modified-date", namespace = "http://www.orcid.org/ns/common")
     protected LastModifiedDate lastModifiedDate;
