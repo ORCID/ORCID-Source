@@ -49,9 +49,6 @@ public class UpdateRelationshipOnWorkExternalIdentifiers {
     @Option(name = "-fn", usage = "Fix null relationships")
     private Boolean fix;
     
-    private long lastModifiedWork = 0;
-    
-    
     public static void main(String[] args) throws IOException {
         UpdateRelationshipOnWorkExternalIdentifiers obj = new UpdateRelationshipOnWorkExternalIdentifiers();
         obj.init();
@@ -66,17 +63,10 @@ public class UpdateRelationshipOnWorkExternalIdentifiers {
         }
 
         if(obj.fix) {
-            obj.lastModifiedWork = obj.fixNullRelationships(0, UpdateRelationshipOnWorkExternalIdentifiers.DEFAULT_CHUNK_SIZE);
-            LOG.info("Last work id processed in last batch: {}", obj.lastModifiedWork);
-            while(obj.lastModifiedWork != -1) {
-                obj.lastModifiedWork = obj.fixNullRelationships(obj.lastModifiedWork, UpdateRelationshipOnWorkExternalIdentifiers.DEFAULT_CHUNK_SIZE);
-            }
+            obj.fixNullRelationships(0, UpdateRelationshipOnWorkExternalIdentifiers.DEFAULT_CHUNK_SIZE);            
         }
         
-        obj.lastModifiedWork = obj.updateRelationshipField(Relationship.PART_OF, WorkType.CONFERENCE_PAPER.name(), WorkExternalIdentifierType.ISBN.name(), 0, UpdateRelationshipOnWorkExternalIdentifiers.DEFAULT_CHUNK_SIZE);
-        while(obj.lastModifiedWork != -1) {
-            obj.lastModifiedWork = obj.updateRelationshipField(Relationship.PART_OF, WorkType.CONFERENCE_PAPER.name(), WorkExternalIdentifierType.ISBN.name(), obj.lastModifiedWork, UpdateRelationshipOnWorkExternalIdentifiers.DEFAULT_CHUNK_SIZE);
-        }
+        obj.updateRelationshipField(Relationship.PART_OF, WorkType.CONFERENCE_PAPER.name(), WorkExternalIdentifierType.ISBN.name(), 0, UpdateRelationshipOnWorkExternalIdentifiers.DEFAULT_CHUNK_SIZE);
         
         System.exit(0);
     }        
@@ -89,7 +79,7 @@ public class UpdateRelationshipOnWorkExternalIdentifiers {
     }
     
     private long fixNullRelationships(long lastWorkId, long limit) {
-        final List<BigInteger> idsToUpgrade = workDao.getWorksWithNullRelationship(lastWorkId, limit);
+        final List<BigInteger> idsToUpgrade = workDao.getWorksWithNullRelationship();
         if (idsToUpgrade == null || idsToUpgrade.isEmpty()) {
             LOG.info("Couldnt find more works to process");
             return -1;
@@ -135,7 +125,7 @@ public class UpdateRelationshipOnWorkExternalIdentifiers {
     }
     
     private long updateRelationshipField(final Relationship newRelationshipValue, final String workType, final String externalIdType, long lastWorkId, long limit) {
-        final List<BigInteger> idsToUpgrade = workDao.getWorksByWorkTypeAndExtIdType(workType, externalIdType, lastWorkId, limit);
+        final List<BigInteger> idsToUpgrade = workDao.getWorksByWorkTypeAndExtIdType(workType, externalIdType);
         if (idsToUpgrade == null || idsToUpgrade.isEmpty()) {
             LOG.info("Couldnt find more works to process");
             return -1;

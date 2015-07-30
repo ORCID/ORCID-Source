@@ -23,7 +23,6 @@ import java.util.List;
 import javax.persistence.Query;
 
 import org.orcid.jaxb.model.common.Visibility;
-import org.orcid.jaxb.model.message.WorkType;
 import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.custom.MinimizedWorkEntity;
@@ -218,10 +217,8 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
      * */
     @Override
     @SuppressWarnings("unchecked")    
-    public List<BigInteger> getWorksWithNullRelationship(long workId, long limit) {
-        Query query = entityManager.createNativeQuery("SELECT distinct(work_id) FROM (SELECT work_id, json_array_elements(json_extract_path(external_ids_json, 'workExternalIdentifier')) AS j FROM work where work_id > :workId and external_ids_json is not null limit :limit) AS a WHERE (j->>'relationship') is null");
-        query.setParameter("limit", limit);
-        query.setParameter("workId", workId);
+    public List<BigInteger> getWorksWithNullRelationship() {
+        Query query = entityManager.createNativeQuery("SELECT distinct(work_id) FROM (SELECT work_id, json_array_elements(json_extract_path(external_ids_json, 'workExternalIdentifier')) AS j FROM work where external_ids_json is not null) AS a WHERE (j->>'relationship') is null");                
         return query.getResultList();
     }
     
@@ -239,10 +236,8 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
      * */
     @Override
     @SuppressWarnings("unchecked")    
-    public List<BigInteger> getWorksByWorkTypeAndExtIdType(String workType, String extIdType, long workId, long limit) {
-        Query query = entityManager.createNativeQuery("SELECT distinct(work_id) FROM (SELECT work_id, json_array_elements(json_extract_path(external_ids_json, 'workExternalIdentifier')) AS j FROM work where work_id > :workId and work_type=:workType and external_ids_json is not null limit :limit) AS a WHERE (j->>'workExternalIdentifierType') = :extIdType");
-        query.setParameter("limit", limit);
-        query.setParameter("workId", workId);
+    public List<BigInteger> getWorksByWorkTypeAndExtIdType(String workType, String extIdType) {
+        Query query = entityManager.createNativeQuery("SELECT distinct(work_id) FROM (SELECT work_id, json_array_elements(json_extract_path(external_ids_json, 'workExternalIdentifier')) AS j FROM work where work_type=:workType and external_ids_json is not null) AS a WHERE (j->>'workExternalIdentifierType') = :extIdType");
         query.setParameter("extIdType", extIdType);
         query.setParameter("workType", workType);
         return query.getResultList();
