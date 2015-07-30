@@ -44,9 +44,9 @@ import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidWebRole;
 import org.orcid.frontend.web.util.BaseControllerTest;
 import org.orcid.jaxb.model.common.Visibility;
+import org.orcid.jaxb.model.record.Relationship;
 import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.pojo.ajaxForm.PeerReviewForm;
-import org.orcid.pojo.ajaxForm.PeerReviewSubjectForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.TranslatedTitle;
@@ -67,7 +67,7 @@ public class PeerReviewsControllerTest extends BaseControllerTest {
 
     private static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml", "/data/SecurityQuestionEntityData.xml",
             "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/OrgsEntityData.xml",
-            "/data/OrgAffiliationEntityData.xml", "/data/PeerReviewSubjectEntityData.xml", "/data/PeerReviewEntityData.xml");
+            "/data/OrgAffiliationEntityData.xml", "/data/PeerReviewEntityData.xml", "/data/GroupIdRecordEntityData.xml");
 
     @Resource
     protected OrcidProfileManager orcidProfileManager;
@@ -135,17 +135,22 @@ public class PeerReviewsControllerTest extends BaseControllerTest {
             String putCode = newForm.getPutCode().getValue();
             newForm = peerReviewsController.getPeerReviewJson(putCode);
 
-            assertEquals(newForm.getCity(), form.getCity());
-            assertEquals(newForm.getRegion(), form.getRegion());
-            assertEquals(newForm.getCountry(), form.getCountry());
-            assertEquals(newForm.getOrgName(), form.getOrgName());
-            assertEquals(newForm.getCompletionDate(), form.getCompletionDate());
-            assertEquals(newForm.getExternalIdentifiers(), form.getExternalIdentifiers());
-            assertEquals(newForm.getRole(), form.getRole());
-            assertEquals(newForm.getSubjectForm(), form.getSubjectForm());
-            assertEquals(newForm.getType(), form.getType());
-            assertEquals(newForm.getUrl(), form.getUrl());
-            assertEquals(newForm.getVisibility(), form.getVisibility());
+            assertEquals(form.getCity(), newForm.getCity());
+            assertEquals(form.getRegion(), newForm.getRegion());
+            assertEquals(form.getCountry(), newForm.getCountry());
+            assertEquals(form.getOrgName(), newForm.getOrgName());
+            assertEquals(form.getCompletionDate(), newForm.getCompletionDate());
+            assertEquals(form.getExternalIdentifiers(), newForm.getExternalIdentifiers());
+            assertEquals(form.getRole(), newForm.getRole());
+            assertEquals(form.getType(), newForm.getType());
+            assertEquals(form.getUrl(), newForm.getUrl());
+            assertEquals(form.getVisibility(), newForm.getVisibility());
+            assertEquals(form.getGroupId(), newForm.getGroupId());
+            assertEquals(form.getSubjectContainerName(), newForm.getSubjectContainerName());
+            assertEquals(form.getSubjectExternalIdentifier(), newForm.getSubjectExternalIdentifier());
+            assertEquals(form.getSubjectName(), newForm.getSubjectName());
+            assertEquals(form.getSubjectType(), newForm.getSubjectType());
+            assertEquals(form.getSubjectUrl(), newForm.getSubjectUrl());
         } catch (NullPointerException npe) {
             fail();
 
@@ -155,17 +160,29 @@ public class PeerReviewsControllerTest extends BaseControllerTest {
     @Test
     public void testValidatePeerReviewFields() {
         PeerReviewForm form = peerReviewsController.getEmptyPeerReview();
+        form.getGroupId().setValue("bad-group-id");
         form = peerReviewsController.postPeerReview(form);
         assertNotNull(form);
         assertNotNull(form.getErrors());
-        assertEquals(5, form.getErrors().size());
+        assertEquals(6, form.getErrors().size());
         assertTrue(form.getErrors().contains(peerReviewsController.getMessage("org.name.not_blank")));
         assertTrue(form.getErrors().contains(peerReviewsController.getMessage("org.city.not_blank")));
         assertTrue(form.getErrors().contains(peerReviewsController.getMessage("common.country.not_blank")));
         assertTrue(form.getErrors().contains(peerReviewsController.getMessage("peer_review.subject.work_type.not_blank")));
         assertTrue(form.getErrors().contains(peerReviewsController.getMessage("common.title.not_blank")));
+        assertTrue(form.getErrors().contains(peerReviewsController.getMessage("peer_review.group_id.not_valid")));
     }
 
+    @Test
+    public void testAddWithInvalidGroupId() {
+        PeerReviewForm form = getForm();
+        form.getGroupId().setValue("bad-group-id");
+        PeerReviewForm newForm = peerReviewsController.postPeerReview(form);
+        assertNotNull(newForm);
+        assertTrue(PojoUtil.isEmpty(newForm.getPutCode()));
+        assertTrue(form.getErrors().contains(peerReviewsController.getMessage("peer_review.group_id.not_valid")));
+    }
+    
     @Test
     public void testDeletePeerReview() {
         HttpSession session = mock(HttpSession.class);
@@ -201,23 +218,22 @@ public class PeerReviewsControllerTest extends BaseControllerTest {
         WorkExternalIdentifier wei = new WorkExternalIdentifier();
         wei.setWorkExternalIdentifierId(Text.valueOf("extId1"));
         wei.setWorkExternalIdentifierType(Text.valueOf("bibcode"));
+        wei.setRelationship(Text.valueOf(Relationship.SELF.value()));
+        wei.setUrl(Text.valueOf("http://myurl.com"));
         List<WorkExternalIdentifier> extIds = new ArrayList<WorkExternalIdentifier>();
         extIds.add(wei);
-        form.setExternalIdentifiers(extIds);
-
-        PeerReviewSubjectForm subjectForm = new PeerReviewSubjectForm();
-        subjectForm.setJournalTitle(Text.valueOf("Journal Title"));
-        subjectForm.setSubtitle(Text.valueOf("Subtitle"));
-        subjectForm.setTitle(Text.valueOf("Title"));
-
+        form.setExternalIdentifiers(extIds);        
+        form.setSubjectContainerName(Text.valueOf("Journal Title"));
+        form.setSubjectName(Text.valueOf("Title"));        
         TranslatedTitle translated = new TranslatedTitle();
         translated.setContent("Translated title");
         translated.setLanguageCode("es");
-        subjectForm.setTranslatedTitle(translated);
-        subjectForm.setUrl(Text.valueOf("http://subject.com"));
-        subjectForm.setWorkExternalIdentifiers(extIds);
-        subjectForm.setWorkType(Text.valueOf("book-review"));
-        form.setSubjectForm(subjectForm);
+        form.setTranslatedSubjectName(translated);
+        form.setSubjectUrl(Text.valueOf("http://subject.com"));
+        form.setSubjectExternalIdentifier(wei);
+        form.setSubjectType(Text.valueOf("book-review"));        
+        form.setGroupId(Text.valueOf("issn:0000001"));
+        
         return form;
     }
 }

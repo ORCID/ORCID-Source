@@ -36,8 +36,8 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.core.exception.GroupIdRecordNotFoundException;
 import org.orcid.api.common.util.ActivityUtils;
+import org.orcid.core.exception.GroupIdRecordNotFoundException;
 import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.utils.SecurityContextTestUtils;
 import org.orcid.jaxb.model.common.Subtitle;
@@ -53,7 +53,6 @@ import org.orcid.jaxb.model.record.Education;
 import org.orcid.jaxb.model.record.Employment;
 import org.orcid.jaxb.model.record.Funding;
 import org.orcid.jaxb.model.record.PeerReview;
-import org.orcid.jaxb.model.record.Subject;
 import org.orcid.jaxb.model.record.Work;
 import org.orcid.jaxb.model.record.WorkTitle;
 import org.orcid.jaxb.model.record.WorkType;
@@ -71,7 +70,7 @@ import org.springframework.test.context.ContextConfiguration;
 public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     private static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml", "/data/SecurityQuestionEntityData.xml",
             "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/WorksEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/Oauth2TokenDetailsData.xml",
-            "/data/OrgsEntityData.xml", "/data/ProfileFundingEntityData.xml", "/data/OrgAffiliationEntityData.xml", "/data/PeerReviewSubjectEntityData.xml", "/data/PeerReviewEntityData.xml", "/data/GroupIdRecordEntityData.xml");
+            "/data/OrgsEntityData.xml", "/data/ProfileFundingEntityData.xml", "/data/OrgAffiliationEntityData.xml", "/data/PeerReviewEntityData.xml", "/data/GroupIdRecordEntityData.xml");
 
     @Resource(name = "memberV2ApiServiceDelegator")
     private MemberV2ApiServiceDelegator serviceDelegator;
@@ -292,19 +291,14 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals("public", peerReview.getVisibility().value());        
         assertEquals("review", peerReview.getType().value());
         assertEquals("http://peer_review.com", peerReview.getUrl().getValue());
-        Subject subject = peerReview.getSubject();
-        assertEquals("1", subject.getPutCode());
-        assertEquals("Peer Review # 1", subject.getTitle().getTitle().getContent());
-        assertEquals("Peer Review # 1 translated title", subject.getTitle().getTranslatedTitle().getContent());
-        assertEquals("es", subject.getTitle().getTranslatedTitle().getLanguageCode());
-        assertEquals("Peer Review # 1 subtitle", subject.getTitle().getSubtitle().getContent());
-        assertEquals("artistic-performance", subject.getType().value());
-        assertEquals("http://work.com", subject.getUrl().getValue());
-        assertEquals("Peer Review # 1 journal title", subject.getJournalTitle().getContent());        
-        assertNotNull(subject.getExternalIdentifiers());
-        assertEquals(1, subject.getExternalIdentifiers().getExternalIdentifier().size());
-        assertEquals("peer-review-subject:external-identifier-id#1", subject.getExternalIdentifiers().getExternalIdentifier().get(0).getWorkExternalIdentifierId().getContent());
-        assertEquals("agr", subject.getExternalIdentifiers().getExternalIdentifier().get(0).getWorkExternalIdentifierType().value());
+        assertEquals("Peer Review # 1", peerReview.getSubjectName().getTitle().getContent());
+        assertEquals("es", peerReview.getSubjectName().getTranslatedTitle().getLanguageCode());
+        assertEquals("artistic-performance", peerReview.getSubjectType().value());
+        assertEquals("http://work.com", peerReview.getSubjectUrl().getValue());
+        assertEquals("Peer Review # 1 container name", peerReview.getSubjectContainerName().getContent());        
+        assertEquals("peer-review:subject-external-identifier-id#1", peerReview.getSubjectExternalIdentifier().getWorkExternalIdentifierId().getContent());
+        assertEquals("agr", peerReview.getSubjectExternalIdentifier().getWorkExternalIdentifierType().value());
+        assertEquals("issn:0000001", peerReview.getGroupId());
     }
     
     @Test
@@ -333,13 +327,13 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         PeerReview peerReview= (PeerReview) response.getEntity();
         assertNotNull(peerReview);
         peerReview.setUrl(new Url("http://updated.com/url"));
-        peerReview.getSubject().getTitle().getTitle().setContent("Updated Title");
+        peerReview.getSubjectName().getTitle().setContent("Updated Title");
         serviceDelegator.updatePeerReview("4444-4444-4444-4446", "1", peerReview);
         response = serviceDelegator.viewPeerReview("4444-4444-4444-4446", "1");
         PeerReview updatedPeerReview= (PeerReview) response.getEntity();
         assertNotNull(updatedPeerReview);
         assertEquals("http://updated.com/url", updatedPeerReview.getUrl().getValue());
-        assertEquals("Updated Title", updatedPeerReview.getSubject().getTitle().getTitle().getContent());
+        assertEquals("Updated Title", updatedPeerReview.getSubjectName().getTitle().getContent());
     }
     
     @Test
@@ -354,7 +348,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         
         //Update the info
         peerReview.setUrl(new Url("http://updated.com/url"));
-        peerReview.getSubject().getTitle().getTitle().setContent("Updated Title");
+        peerReview.getSubjectName().getTitle().setContent("Updated Title");
         
         //Try to update it
         try {

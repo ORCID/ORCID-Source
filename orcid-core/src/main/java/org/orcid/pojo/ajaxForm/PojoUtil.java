@@ -42,6 +42,15 @@ public class PojoUtil {
     	}
     	return true;
     }
+    
+    public static boolean areAllEmpty(String ... strings) {
+        for(String s : strings) {
+            if(!isEmpty(s)) {
+                return false;
+            }
+        }
+        return true;
+    }
 	
     public static boolean isEmpty(Text text) {
         if (text == null || text.getValue() == null || text.getValue().trim().isEmpty()) return true;
@@ -167,5 +176,15 @@ public class PojoUtil {
     public static boolean isEmpty(org.orcid.jaxb.model.common.ContributorOrcid contributorOrcid) {
         if(contributorOrcid == null) return true;
         return isEmpty(contributorOrcid.getPath());
+    }
+    
+    public static boolean isEmpty(WorkExternalIdentifier workExternalId) {
+        if(workExternalId == null) return true;
+        return areAllEmtpy(workExternalId.getRelationship(), workExternalId.getUrl(), workExternalId.getWorkExternalIdentifierId(), workExternalId.getWorkExternalIdentifierType());
+    }
+    
+    public static boolean isEmpty(TranslatedTitle translatedTitle) {
+        if(translatedTitle == null) return true;
+        return areAllEmpty(translatedTitle.getContent(), translatedTitle.getLanguageCode());
     }
 }

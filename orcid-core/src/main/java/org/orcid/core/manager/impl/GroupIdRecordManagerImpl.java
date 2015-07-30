@@ -43,32 +43,32 @@ public class GroupIdRecordManagerImpl implements GroupIdRecordManager {
 
     @Resource
     private GroupIdRecordDao groupIdRecordDao;
-    
+
     @Resource
     private SourceManager sourceManager;
 
     @Resource
     private JpaJaxbGroupIdRecordAdapter jpaJaxbGroupIdRecordAdapter;
-    
+
     @Resource
     private LocaleManager localeManager;
-    
+
     @Resource
     private OrcidSecurityManager orcidSecurityManager;
-	
-	@Override
-	public GroupIdRecord getGroupIdRecord(String putCode) {
-		long putCodeLong = convertToLong(putCode);
-		GroupIdRecordEntity groupIdRecordEntity = groupIdRecordDao.find(putCodeLong);
-		if(groupIdRecordEntity == null) {
-			throw new GroupIdRecordNotFoundException();
-		}
-		return jpaJaxbGroupIdRecordAdapter.toGroupIdRecord(groupIdRecordEntity);
-	}
 
-	@Override
-	public GroupIdRecord createGroupIdRecord(GroupIdRecord groupIdRecord) {
-		validateCreateGroupRecord(groupIdRecord);
+    @Override
+    public GroupIdRecord getGroupIdRecord(String putCode) {
+        long putCodeLong = convertToLong(putCode);
+        GroupIdRecordEntity groupIdRecordEntity = groupIdRecordDao.find(putCodeLong);
+        if (groupIdRecordEntity == null) {
+            throw new GroupIdRecordNotFoundException();
+        }
+        return jpaJaxbGroupIdRecordAdapter.toGroupIdRecord(groupIdRecordEntity);
+    }
+
+    @Override
+    public GroupIdRecord createGroupIdRecord(GroupIdRecord groupIdRecord) {
+        validateCreateGroupRecord(groupIdRecord);
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
 
         if (sourceEntity != null) {
@@ -85,102 +85,106 @@ public class GroupIdRecordManagerImpl implements GroupIdRecordManager {
         GroupIdRecordEntity entity = jpaJaxbGroupIdRecordAdapter.toGroupIdRecordEntity(groupIdRecord);
         groupIdRecordDao.persist(entity);
         return jpaJaxbGroupIdRecordAdapter.toGroupIdRecord(entity);
-	}
+    }
 
-	@Override
-	public GroupIdRecord updateGroupIdRecord(String putCode,
-			GroupIdRecord groupIdRecord) {
-		validateUpdateGroupIdRecord(putCode, groupIdRecord);
-		long putCodeLong = convertToLong(putCode);
-		GroupIdRecordEntity existingEntity = groupIdRecordDao.find(putCodeLong);
-		GroupIdRecordEntity updatedEntity = null;
-		validateDuplicate(groupIdRecord);
-		if(existingEntity != null) {
-	        SourceEntity existingSource = existingEntity.getSource();
-	        orcidSecurityManager.checkSource(existingSource);
-	        updatedEntity = jpaJaxbGroupIdRecordAdapter.toGroupIdRecordEntity(groupIdRecord);
-	        updatedEntity.setDateCreated(existingEntity.getDateCreated());
-	        updatedEntity.setSource(existingSource);
-	        updatedEntity = groupIdRecordDao.merge(updatedEntity);
-		} else {
-			throw new GroupIdRecordNotFoundException();
-		}
-        
+    @Override
+    public GroupIdRecord updateGroupIdRecord(String putCode, GroupIdRecord groupIdRecord) {
+        validateUpdateGroupIdRecord(putCode, groupIdRecord);
+        long putCodeLong = convertToLong(putCode);
+        GroupIdRecordEntity existingEntity = groupIdRecordDao.find(putCodeLong);
+        GroupIdRecordEntity updatedEntity = null;
+        validateDuplicate(groupIdRecord);
+        if (existingEntity != null) {
+            SourceEntity existingSource = existingEntity.getSource();
+            orcidSecurityManager.checkSource(existingSource);
+            updatedEntity = jpaJaxbGroupIdRecordAdapter.toGroupIdRecordEntity(groupIdRecord);
+            updatedEntity.setDateCreated(existingEntity.getDateCreated());
+            updatedEntity.setSource(existingSource);
+            updatedEntity = groupIdRecordDao.merge(updatedEntity);
+        } else {
+            throw new GroupIdRecordNotFoundException();
+        }
+
         return jpaJaxbGroupIdRecordAdapter.toGroupIdRecord(updatedEntity);
-	}
+    }
 
-	@Override
-	public void deleteGroupIdRecord(String putCode) {
-		long putCodeLong = convertToLong(putCode);
-		GroupIdRecordEntity existingEntity = groupIdRecordDao.find(putCodeLong);
-		if(existingEntity != null) {
-			orcidSecurityManager.checkSource(existingEntity.getSource());
-	        groupIdRecordDao.remove(Long.valueOf(putCode));
-		} else {
-			throw new GroupIdRecordNotFoundException();
-		}
-	}
+    @Override
+    public void deleteGroupIdRecord(String putCode) {
+        long putCodeLong = convertToLong(putCode);
+        GroupIdRecordEntity existingEntity = groupIdRecordDao.find(putCodeLong);
+        if (existingEntity != null) {
+            orcidSecurityManager.checkSource(existingEntity.getSource());
+            groupIdRecordDao.remove(Long.valueOf(putCode));
+        } else {
+            throw new GroupIdRecordNotFoundException();
+        }
+    }
 
-	@Override
-	public GroupIdRecords getGroupIdRecords(String pageSize, String pageNum) {
-		
-		int pageNumInt = convertToInteger(pageNum);
-		int pageSizeInt = convertToInteger(pageSize);
-		GroupIdRecords records = new GroupIdRecords();
-		records.setPage(pageNumInt);
-		records.setPageSize(pageSizeInt);
-		List<GroupIdRecordEntity> recordEntities = groupIdRecordDao.getGroupIdRecords(pageSizeInt, pageNumInt);
-		List<GroupIdRecord> recordsReturned = jpaJaxbGroupIdRecordAdapter.toGroupIdRecords(recordEntities);
-		if(recordsReturned != null) {
-			records.setTotal(recordsReturned.size());
-			records.getGroupIdRecord().addAll(recordsReturned);
-		} else {
-			records.setTotal(0);
-		}
-		return records;
-	}
-	
-	private int convertToInteger(String param) {
-		int returnVal = 0;
-		try {
-			returnVal = Integer.valueOf(param);
-		} catch(NumberFormatException e) {
-			throw new OrcidValidationException();
-		}
-		return returnVal;
-	}
+    @Override
+    public GroupIdRecords getGroupIdRecords(String pageSize, String pageNum) {
 
-	private void validateCreateGroupRecord(GroupIdRecord groupIdRecord) {
+        int pageNumInt = convertToInteger(pageNum);
+        int pageSizeInt = convertToInteger(pageSize);
+        GroupIdRecords records = new GroupIdRecords();
+        records.setPage(pageNumInt);
+        records.setPageSize(pageSizeInt);
+        List<GroupIdRecordEntity> recordEntities = groupIdRecordDao.getGroupIdRecords(pageSizeInt, pageNumInt);
+        List<GroupIdRecord> recordsReturned = jpaJaxbGroupIdRecordAdapter.toGroupIdRecords(recordEntities);
+        if (recordsReturned != null) {
+            records.setTotal(recordsReturned.size());
+            records.getGroupIdRecord().addAll(recordsReturned);
+        } else {
+            records.setTotal(0);
+        }
+        return records;
+    }
+
+    @Override
+    public boolean exists(String groupId) {
+        return groupIdRecordDao.exists(groupId);
+    }
+    
+    private int convertToInteger(String param) {
+        int returnVal = 0;
+        try {
+            returnVal = Integer.valueOf(param);
+        } catch (NumberFormatException e) {
+            throw new OrcidValidationException();
+        }
+        return returnVal;
+    }
+
+    private void validateCreateGroupRecord(GroupIdRecord groupIdRecord) {
         if (groupIdRecord.getPutCode() != null) {
             throw new InvalidPutCodeException();
         }
-	}
-	
-	private void validateUpdateGroupIdRecord(String putCode, GroupIdRecord groupIdRecord) {
-		if (!putCode.equals(groupIdRecord.getPutCode())) {
+    }
+
+    private void validateUpdateGroupIdRecord(String putCode, GroupIdRecord groupIdRecord) {
+        if (!putCode.equals(groupIdRecord.getPutCode())) {
             throw new MismatchedPutCodeException();
         }
-	}
-	
-	private void validateDuplicate(GroupIdRecord groupIdRecord) {
+    }
+
+    private void validateDuplicate(GroupIdRecord groupIdRecord) {
         List<GroupIdRecordEntity> groupIdRecords = groupIdRecordDao.getAll();
         if (groupIdRecords != null) {
             for (GroupIdRecordEntity entity : groupIdRecords) {
-            	GroupIdRecord existing = jpaJaxbGroupIdRecordAdapter.toGroupIdRecord(entity);
+                GroupIdRecord existing = jpaJaxbGroupIdRecordAdapter.toGroupIdRecord(entity);
                 if (existing.isDuplicated(groupIdRecord) && !existing.getPutCode().equals(groupIdRecord.getPutCode())) {
                     throw new DuplicatedGroupIdRecordException();
                 }
             }
         }
-	}
-	
-	private Long convertToLong(String putCode) {
-		long putCodeLong = 0;
-		try {
-			putCodeLong = Long.valueOf(putCode);
-		} catch(NumberFormatException e) {
-			throw new InvalidPutCodeException();
-		}
-		return putCodeLong;
-	}
+    }
+
+    private Long convertToLong(String putCode) {
+        long putCodeLong = 0;
+        try {
+            putCodeLong = Long.valueOf(putCode);
+        } catch (NumberFormatException e) {
+            throw new InvalidPutCodeException();
+        }
+        return putCodeLong;
+    }
 }

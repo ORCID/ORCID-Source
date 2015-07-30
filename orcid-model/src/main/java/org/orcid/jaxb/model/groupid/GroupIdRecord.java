@@ -27,11 +27,13 @@ import org.orcid.jaxb.model.common.CreatedDate;
 import org.orcid.jaxb.model.common.LastModifiedDate;
 import org.orcid.jaxb.model.common.Source;
 
-
 /**
- * <p>Java class for anonymous complex type.
+ * <p>
+ * Java class for anonymous complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  * 
  * <pre>
  * &lt;complexType>
@@ -69,10 +71,9 @@ import org.orcid.jaxb.model.common.Source;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = {"name", "groupId", "description", "type", "source", "lastModifiedDate", "createdDate", "putCode" })
+@XmlType(propOrder = { "name", "groupId", "description", "type", "source", "lastModifiedDate", "createdDate", "putCode" })
 @XmlRootElement(name = "group-id-record", namespace = "http://www.orcid.org/ns/group-id")
-public class GroupIdRecord
-{
+public class GroupIdRecord {
 
     @XmlElement(namespace = "http://www.orcid.org/ns/group-id", required = true)
     protected String name;
@@ -94,10 +95,8 @@ public class GroupIdRecord
     /**
      * Gets the value of the name property.
      * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     * @return possible object is {@link String }
+     * 
      */
     public String getName() {
         return name;
@@ -107,9 +106,8 @@ public class GroupIdRecord
      * Sets the value of the name property.
      * 
      * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *            allowed object is {@link String }
+     * 
      */
     public void setName(String value) {
         this.name = value;
@@ -118,10 +116,8 @@ public class GroupIdRecord
     /**
      * Gets the value of the groupId property.
      * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     * @return possible object is {@link String }
+     * 
      */
     public String getGroupId() {
         return groupId;
@@ -131,9 +127,8 @@ public class GroupIdRecord
      * Sets the value of the groupId property.
      * 
      * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *            allowed object is {@link String }
+     * 
      */
     public void setGroupId(String value) {
         this.groupId = value;
@@ -142,10 +137,8 @@ public class GroupIdRecord
     /**
      * Gets the value of the description property.
      * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     * @return possible object is {@link String }
+     * 
      */
     public String getDescription() {
         return description;
@@ -155,9 +148,8 @@ public class GroupIdRecord
      * Sets the value of the description property.
      * 
      * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *            allowed object is {@link String }
+     * 
      */
     public void setDescription(String value) {
         this.description = value;
@@ -166,10 +158,8 @@ public class GroupIdRecord
     /**
      * Gets the value of the type property.
      * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     * @return possible object is {@link String }
+     * 
      */
     public String getType() {
         return type;
@@ -179,48 +169,47 @@ public class GroupIdRecord
      * Sets the value of the type property.
      * 
      * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *            allowed object is {@link String }
+     * 
      */
     public void setType(String value) {
         this.type = value;
     }
 
-	public Source getSource() {
-		return source;
-	}
+    public Source getSource() {
+        return source;
+    }
 
-	public void setSource(Source source) {
-		this.source = source;
-	}
+    public void setSource(Source source) {
+        this.source = source;
+    }
 
-	public String getPutCode() {
-		return putCode;
-	}
+    public String getPutCode() {
+        return putCode;
+    }
 
-	public void setPutCode(String putCode) {
-		this.putCode = putCode;
-	}
+    public void setPutCode(String putCode) {
+        this.putCode = putCode;
+    }
 
-	public LastModifiedDate getLastModifiedDate() {
-		return lastModifiedDate;
-	}
+    public LastModifiedDate getLastModifiedDate() {
+        return lastModifiedDate;
+    }
 
-	public void setLastModifiedDate(LastModifiedDate lastModifiedDate) {
-		this.lastModifiedDate = lastModifiedDate;
-	}
+    public void setLastModifiedDate(LastModifiedDate lastModifiedDate) {
+        this.lastModifiedDate = lastModifiedDate;
+    }
 
-	public CreatedDate getCreatedDate() {
-		return createdDate;
-	}
+    public CreatedDate getCreatedDate() {
+        return createdDate;
+    }
 
-	public void setCreatedDate(CreatedDate createdDate) {
-		this.createdDate = createdDate;
-	}
-	
+    public void setCreatedDate(CreatedDate createdDate) {
+        this.createdDate = createdDate;
+    }
+
     public boolean isDuplicated(Object obj) {
-    	
+
         if (this == obj)
             return true;
         if (obj == null)
@@ -228,7 +217,7 @@ public class GroupIdRecord
         if (getClass() != obj.getClass())
             return false;
         GroupIdRecord other = (GroupIdRecord) obj;
-        
+
         if (!this.groupId.equals(other.groupId)) {
             return false;
         }

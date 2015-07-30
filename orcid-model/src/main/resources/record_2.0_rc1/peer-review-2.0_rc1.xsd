@@ -46,36 +46,28 @@
 			<xs:complexContent>
 				<xs:extension base="common:activity-summary">
 					<xs:sequence>
-						<xs:element name="role" type="peer-review:role" minOccurs="1" maxOccurs="1">
+						<xs:element name="reviewer-role" type="peer-review:role" minOccurs="1" maxOccurs="1">
 							<xs:annotation>
 								<xs:documentation>The role played by a person in their
 									contribution to a review.
 								</xs:documentation>
 							</xs:annotation>
 						</xs:element>
-						<!-- orcid orgs doesn't match specification -->
-						<xs:element name="organization" type="common:organization"
-							minOccurs="1" maxOccurs="1">
-							<xs:annotation>
-								<xs:documentation>The organization convening the review
-								</xs:documentation>
-							</xs:annotation>
-						</xs:element>
-						<xs:element name="external-identifiers" type="work:work-external-identifiers"
+						<xs:element name="review-identifiers" type="work:work-external-identifiers"
 							minOccurs="0">
 							<xs:annotation>
 								<xs:documentation>The unique generated identifier of the review.
 								</xs:documentation>
 							</xs:annotation>
 						</xs:element>
-						<xs:element name="url" type="common:url" minOccurs="0">
+						<xs:element name="review-url" type="common:url" minOccurs="0">
 							<xs:annotation>
 								<xs:documentation>A link to a representation of the review on the
 									web.
 								</xs:documentation>
 							</xs:annotation>
 						</xs:element>
-						<xs:element name="type" type="peer-review:type"
+						<xs:element name="review-type" type="peer-review:type"
 							minOccurs="1" maxOccurs="1">
 							<xs:annotation>
 								<xs:documentation>The kind of review applied to the subject type
@@ -83,7 +75,7 @@
 								</xs:documentation>
 							</xs:annotation>
 						</xs:element>
-						<xs:element name="completion-date" type="common:fuzzy-date"
+						<xs:element name="review-completion-date" type="common:fuzzy-date"
 							minOccurs="1" maxOccurs="1">
 							<xs:annotation>
 								<xs:documentation>The day of the month on which the review was
@@ -91,7 +83,55 @@
 								</xs:documentation>
 							</xs:annotation>
 						</xs:element>
-						<xs:element name="subject" type="peer-review:subject" minOccurs="1" maxOccurs="1"/>				
+						<xs:element name="review-group-id" type="common:group-id" minOccurs="0" maxOccurs="1">
+							<xs:annotation>
+								<xs:documentation>Identifier for the group that this review should be a part of for aggregation purposes
+								</xs:documentation>
+							</xs:annotation>
+						</xs:element>						
+						<xs:element name="subject-external-identifier" type="work:external-identifier"
+							minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>The unique identifier of the subject being
+								reviewed.
+								</xs:documentation>
+							</xs:annotation>
+						</xs:element>						
+						<xs:element name="subject-container-name" type="work:journal-title"
+							minOccurs="0" maxOccurs="1">
+							<xs:annotation>
+								<xs:documentation>The name of the journal or conference or
+									applicable object of which the review was a part.
+								</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="subject-type" type="work:work-type" minOccurs="1" maxOccurs="1">
+							<xs:annotation>
+								<xs:documentation>The type of subject reviewed
+								</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="subject-name" type="work:work-title"
+							minOccurs="1" maxOccurs="1">
+							<xs:annotation>
+								<xs:documentation>The title of the subject reviewed
+								</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="subject-url" type="common:url" minOccurs="0" maxOccurs="1">
+							<xs:annotation>
+								<xs:documentation>The URL of the subject reviewed.
+								</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<!-- orcid orgs doesn't match specification -->
+						<xs:element name="convening-organization" type="common:organization"
+							minOccurs="1" maxOccurs="1">
+							<xs:annotation>
+								<xs:documentation>The organization convening the review
+								</xs:documentation>
+							</xs:annotation>
+						</xs:element>																																	
 					</xs:sequence>
 				</xs:extension>
 			</xs:complexContent>
@@ -131,6 +171,12 @@
 							<xs:annotation>
 								<xs:documentation>The day of the month on which the review was
 									completed
+								</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="review-group-id" type="common:group-id" minOccurs="1" maxOccurs="1">
+							<xs:annotation>
+								<xs:documentation>Identifier for the group that this review should be a part of for aggregation purposes
 								</xs:documentation>
 							</xs:annotation>
 						</xs:element>
@@ -208,46 +254,5 @@
 				</xs:annotation>
 			</xs:enumeration>
 		</xs:restriction>
-	</xs:simpleType>	
-	
-	<xs:complexType name="subject">
-		<xs:sequence>			
-			<xs:element name="external-identifiers" type="work:work-external-identifiers"
-				minOccurs="0">
-				<xs:annotation>
-					<xs:documentation>The unique identifier of the subject being
-						reviewed.
-					</xs:documentation>
-				</xs:annotation>
-			</xs:element>
-			<xs:element name="type" type="work:work-type" minOccurs="1" maxOccurs="1">
-				<xs:annotation>
-					<xs:documentation>The nominal type of unique ID
-					</xs:documentation>
-				</xs:annotation>
-			</xs:element>
-			<xs:element name="journal-title" type="work:journal-title"
-				minOccurs="0" maxOccurs="1">
-				<xs:annotation>
-					<xs:documentation>The name of the journal or conference or
-						applicable object of which the review was a part.
-					</xs:documentation>
-				</xs:annotation>
-			</xs:element>
-			<xs:element name="title" type="work:work-title"
-				minOccurs="1" maxOccurs="1">
-				<xs:annotation>
-					<xs:documentation>The title of the subject reviewed
-					</xs:documentation>
-				</xs:annotation>
-			</xs:element>
-			<xs:element name="url" type="common:url" minOccurs="0" maxOccurs="1">
-				<xs:annotation>
-					<xs:documentation>The URL of the subject reviewed.
-					</xs:documentation>
-				</xs:annotation>
-			</xs:element>
-		</xs:sequence>
-		<xs:attribute name="put-code" type="common:put-code" use="optional" />
-	</xs:complexType>		
+	</xs:simpleType>			
 </xs:schema>

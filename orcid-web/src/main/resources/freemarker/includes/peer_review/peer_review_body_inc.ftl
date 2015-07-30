@@ -77,11 +77,11 @@
                     <div class="row" ng-show="group.activePutCode == peerReview.putCode.value">
                         <div class="col-md-9 col-sm-9 col-xs-8">
                             <h3 class="workspace-title">
-                                <span ng-bind="peerReview.subjectForm.title.value"></span>
-                                <span class="journaltitle" ng-show="peerReview.subjectForm.journalTitle.value" ng-bind="peerReview.subjectForm.journalTitle.value"></span>                                
+                                <span ng-bind="peerReview.subjectName.value"></span>
+                                <span class="journaltitle" ng-show="peerReview.subjectContainerName.value" ng-bind="peerReview.subjectContainerName.value"></span>                                
                             </h3>                                                        
                             <div class="info-detail">
-                                <span ng-show="peerReview.completionDate.year">{{peerReview.completionDate.year}}</span><span ng-show="peerReview.completionDate.month">-{{peerReview.completionDate.month}}</span><span ng-show="peerReview.completionDate.year"> | </span> <span class="capitalize">{{peerReview.subjectForm.workType.value}}</span>
+                                <span ng-show="peerReview.completionDate.year">{{peerReview.completionDate.year}}</span><span ng-show="peerReview.completionDate.month">-{{peerReview.completionDate.month}}</span><span ng-show="peerReview.completionDate.year"> | </span> <span class="capitalize">{{peerReview.subjectType.value}}</span>
                             </div>
                         </div>
                     
@@ -197,7 +197,7 @@
                                          />
                                     </li>
                                     <li>
-                                        <a ng-click="deletePeerReviewConfirm(peerReview.putCode.value, false)"  title="<@orcid.msg 'freemarker.btnDelete' /> {{peerReview.subjectForm.title.value}}" ng-mouseenter="showTooltip(peerReview.putCode.value+'-deleteActiveSource')" ng-mouseleave="hideTooltip(peerReview.putCode.value+'-deleteActiveSource')">
+                                        <a ng-click="deletePeerReviewConfirm(peerReview.putCode.value, false)"  title="<@orcid.msg 'freemarker.btnDelete' /> {{peerReview.subjectName.value}}" ng-mouseenter="showTooltip(peerReview.putCode.value+'-deleteActiveSource')" ng-mouseleave="hideTooltip(peerReview.putCode.value+'-deleteActiveSource')">
                                             <span class="glyphicon glyphicon-trash"></span>
                                         </a>
 
@@ -256,7 +256,7 @@
                                     </li>
                                     <li>
                                         <a ng-click="deletePeerReviewConfirm(peerReview.putCode.value, false)" ng-mouseenter="showTooltip(peerReview.putCode.value+'-deleteInactiveSource')" ng-mouseleave="hideTooltip(peerReview.putCode.value+'-deleteInactiveSource')">
-                                            <span class="glyphicon glyphicon-trash" title="<@orcid.msg 'freemarker.btnDelete'/> {{peerReview.subjectForm.title.value}}"></span>
+                                            <span class="glyphicon glyphicon-trash" title="<@orcid.msg 'freemarker.btnDelete'/> {{peerReview.subjectName.value}}"></span>
                                         </a>
 
                                         <div class="popover popover-tooltip top delete-inactiveSource-popover" ng-show="showElement[peerReview.putCode.value+'-deleteInactiveSource'] == true">

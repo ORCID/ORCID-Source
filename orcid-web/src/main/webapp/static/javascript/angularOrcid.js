@@ -63,15 +63,21 @@ GroupedActivities.ABBR_WORK = 'abbrWork';
 GroupedActivities.PEER_REVIEW = 'peerReview';
 GroupedActivities.AFFILIATION = 'affiliation';
 
-GroupedActivities.prototype.add = function(activity) {
-	
-	
+GroupedActivities.prototype.add = function(activity) {		
     // assumes works are added in the order of the display index desc
     // subsorted by the created date asc
     var identifiersPath = null;
-    identifiersPath = this.getIdentifiersPath();
-    for (var idx in activity[identifiersPath])
-        this.addKey(this.key(activity[identifiersPath][idx]));
+    identifiersPath = this.getIdentifiersPath();        
+    
+    if(this.type == GroupedActivities.PEER_REVIEW) {    
+    	var key = this.key(activity[identifiersPath]);
+    	this.addKey(key);
+    } else {
+    	for (var idx in activity[identifiersPath]) {
+    		this.addKey(this.key(activity[identifiersPath][idx]));
+    	}
+    }    
+    
     this.activities[activity.putCode.value] = activity;
     if (this.defaultPutCode == null) {
         this.activePutCode = activity.putCode.value;
@@ -119,6 +125,7 @@ GroupedActivities.prototype.consistentVis = function() {
 
 GroupedActivities.prototype.getIdentifiersPath = function() {
     if (this.type == GroupedActivities.ABBR_WORK) return 'workExternalIdentifiers';
+    if (this.type == GroupedActivities.PEER_REVIEW) return 'groupId';
     return 'externalIdentifiers';
 };
 
@@ -127,13 +134,13 @@ GroupedActivities.prototype.getIdentifiersPath = function() {
  * a new group
  */
 GroupedActivities.group = function(activity, type, groupsArray) {
-	
-    var matches = new Array();
-    // there are no possible keys for affiliations
+	var matches = new Array();
+    // there are no possible keys for affiliations    
     if (type != GroupedActivities.AFFILIATION);
-       for (var idx in groupsArray)
-           if (groupsArray[idx].keyMatch(activity))
+       for (var idx in groupsArray) {     	   
+    	   if (groupsArray[idx].keyMatch(activity))
                matches.push(groupsArray[idx]);
+       }           
     if (matches.length == 0) {
         var newGroup = new GroupedActivities(type);
         newGroup.add(activity);
@@ -192,18 +199,22 @@ GroupedActivities.prototype.key = function(activityIdentifiers) {
         idPath = null;
         idTypePath = null;
     } else if (this.type == GroupedActivities.PEER_REVIEW) {
-    	idPath = 'workExternalIdentifierId';
-        idTypePath = 'workExternalIdentifierType';
+    	idPath = 'value';
+        idTypePath = 'value';
     }
     
     var key = '';
-    if (activityIdentifiers[idTypePath]) {    	
-        // ISSN is misused too often to identify a work
-        if (activityIdentifiers[idTypePath].value != 'issn'
+    
+    if (this.type ==  GroupedActivities.PEER_REVIEW) {
+    	if(activityIdentifiers != null && activityIdentifiers[idPath] != null)
+    		key += activityIdentifiers[idPath];
+	} else if (activityIdentifiers[idTypePath]) {    
+    	// ISSN is misused too often to identify a work
+    	if (activityIdentifiers[idTypePath].value != 'issn'
         		&& (activityIdentifiers[relationship] == null || activityIdentifiers[relationship].value != 'part-of')
         		&& activityIdentifiers[idPath] != null
         		&& activityIdentifiers[idPath].value != null
-        		&& activityIdentifiers[idPath].value != '') {
+        		&& activityIdentifiers[idPath].value != '') {    		
             key = activityIdentifiers[idTypePath].value;
             // currently I've been told all know identifiers are case insensitive so we are
             // lowercase the value for consistency
@@ -214,13 +225,21 @@ GroupedActivities.prototype.key = function(activityIdentifiers) {
 };
 
 GroupedActivities.prototype.keyMatch = function(activity) {
-    var identifiersPath = null;
+	var identifiersPath = null;
     identifiersPath = this.getIdentifiersPath();    
-    for (var idx in activity[identifiersPath]) {    	    	
-        if (this.key(activity[identifiersPath][idx]) == '') continue;
-        if (this.key(activity[identifiersPath][idx]) in this._keySet)
-            return true;
+    
+    if(this.type == GroupedActivities.PEER_REVIEW) {    	
+    	if(this.key(activity[identifiersPath]) == '' || typeof this.key(activity[identifiersPath].value) === undefined) return false;
+    	if(this.key(activity[identifiersPath]) in this._keySet)
+    		return true;
+    } else {
+    	for (var idx in activity[identifiersPath]) {    	    	        
+        	if (this.key(activity[identifiersPath][idx]) == '') continue;
+            if (this.key(activity[identifiersPath][idx]) in this._keySet)
+                return true;        
+        }
     }
+        
     return false;
 };
 
@@ -245,7 +264,7 @@ GroupedActivities.prototype.makeDefault = function(putCode) {
     if (this.type == GroupedActivities.ABBR_WORK) title = act.title;
     else if (this.type == GroupedActivities.FUNDING) title = act.fundingTitle.title;
     else if (this.type == GroupedActivities.AFFILIATION) title = act.affiliationName;
-    else if (this.type == GroupedActivities.PEER_REVIEW) title = act.subjectForm.title;
+    else if (this.type == GroupedActivities.PEER_REVIEW) title = act.subjectName;
     this.title =  title != null ? title.value : null;
 };
 
@@ -1032,7 +1051,6 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
                 };
             },
             putWork: function(work,sucessFunc, failFunc) {
-                //console.log(work);
                 $.ajax({
                     url: getBaseUri() + '/works/work.json',
                     contentType: 'application/json;charset=UTF-8',
@@ -1041,7 +1059,6 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
                     data: angular.toJson(work),
                     success: function(data) {
                         sucessFunc(data);
-                        console.log(data);
                     }
                 }).fail(function(){
                     failFunc();
@@ -1097,7 +1114,6 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
                 return count;
             },
             worksValidate: function(works,sucessFunc, failFunc) {
-                //console.log(work);
                 $.ajax({
                     url: getBaseUri() + '/works/worksValidate.json',
                     contentType: 'application/json;charset=UTF-8',
@@ -1129,8 +1145,6 @@ orcidNgModule.factory("emailSrvc", function ($rootScope) {
                     type: 'POST',
                     dataType: 'json',
                     success: function(data) {
-                    	console.log('Added...');
-                    	console.log(data);
                         serv.inputEmail = data;
                         if (serv.inputEmail.errors.length == 0) {
                             serv.initInputEmail();
@@ -1186,7 +1200,6 @@ orcidNgModule.factory("emailSrvc", function ($rootScope) {
                 serv.inputEmail = {"value":"","primary":false,"current":true,"verified":false,"visibility":"PRIVATE","errors":[]};
             },
             setPrivacy: function(email, priv) {
-            	console.log(email);
                 email.visibility = priv;
                 serv.saveEmail();
             },
@@ -1881,7 +1894,6 @@ orcidNgModule.controller('SecurityQuestionEditCtrl', ['$scope', '$compile', func
 
     $scope.submitModal = function() {
         $scope.securityQuestionPojo.password=$scope.password;
-        console.log(angular.toJson($scope.securityQuestionPojo));
         $.ajax({
             url: getBaseUri() + '/account/security-question.json',
             type: 'POST',
@@ -2407,8 +2419,6 @@ orcidNgModule.controller('BiographyCtrl',['$scope', '$compile',function ($scope,
     };
 
     $scope.setBiographyForm = function(){
-    	console.log('done ping pong');
-    	
         if ($scope.checkLength()) return; // do nothing if there is a length error
         $.ajax({
             url: getBaseUri() + '/account/biographyForm.json',
@@ -2586,7 +2596,6 @@ orcidNgModule.controller('ResetPasswordCtrl', ['$scope', '$compile', 'commonSrvc
             url: getBaseUri() + '/password-reset.json',
             dataType: 'json',
             success: function(data) {
-                console.log(angular.toJson(data));
                 $scope.resetPasswordForm = data;
                 $scope.$apply();
             }
@@ -3281,7 +3290,6 @@ orcidNgModule.controller('AffiliationCtrl', ['$scope', '$compile', '$filter', 'a
             type: 'GET',
             success: function(data) {
                 if (data != null) {
-                    console.log(data.sourceId);
                     $scope.disambiguatedAffiliation = data;
                     $scope.editAffiliation.orgDisambiguatedId.value = id;
                     $scope.editAffiliation.disambiguatedAffiliationSourceId = data.sourceId;
@@ -3321,7 +3329,6 @@ orcidNgModule.controller('AffiliationCtrl', ['$scope', '$compile', '$filter', 'a
             });
         } else {
             $scope.editAffiliation = affiliation;
-            console.log("Find for edit")
             if($scope.editAffiliation.orgDisambiguatedId != null)
                 $scope.getDisambiguatedAffiliation($scope.editAffiliation.orgDisambiguatedId.value);
 
@@ -3734,7 +3741,6 @@ orcidNgModule.controller('FundingCtrl',['$scope', '$compile', '$filter', 'fundin
             type: 'GET',
             success: function(data) {
                 if (data != null) {
-                    console.log(data.sourceId);
                     $scope.disambiguatedFunding = data;
                     $scope.editFunding.disambiguatedFundingSourceId = data.sourceId;
                     $scope.editFunding.disambiguationSource = data.sourceType;
@@ -4577,7 +4583,6 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
                 && $scope.editWork.citation.citationType.value == 'bibtex') {
             try {
                 var parsed = bibtexParse.toJSON($scope.editWork.citation.citation.value);
-                console.log(parsed);
                 if (parsed.length == 0) throw "bibtex parse return nothing";
                 var index = $scope.editWork.citation.citation.errors.indexOf(om.get('manualWork.bibtext.notValid'));
                 if (index > -1) {
@@ -4991,7 +4996,6 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
             type: 'GET',
             success: function(data) {
                 if (data != null) {
-                    console.log(data.sourceId);
                     $scope.disambiguatedOrganization = data;
                     $scope.editPeerReview.disambiguatedOrganizationSourceId = data.sourceId;
                     $scope.editPeerReview.disambiguationSource = data.sourceType;
@@ -5046,8 +5050,8 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
         $scope.deletePutCode = putCode;
         $scope.deleteGroup = deleteGroup;
         var peerReview = peerReviewSrvc.getPeerReview(putCode);
-        if (peerReview.subjectForm.title)
-            $scope.fixedTitle = peerReview.subjectForm.title.value;
+        if (peerReview.subjectName)
+            $scope.fixedTitle = peerReview.subjectName.value;
         else $scope.fixedTitle = '';
         var maxSize = 100;
         if($scope.fixedTitle.length > maxSize)
@@ -5183,7 +5187,7 @@ orcidNgModule.factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
                             $rootScope.$apply(function(){
                                 for (i in data) {
                                     var dw = data[i];                                    
-                                    removeBadExternalIdentifiers(dw);                                    
+                                    removeBadExternalIdentifiers(dw);                                       
                                     GroupedActivities.group(dw,GroupedActivities.PEER_REVIEW,peerReviewSrvc.groups);
                                 };
                             });
@@ -6161,7 +6165,6 @@ orcidNgModule.controller('profileDeactivationAndReactivationCtrl',['$scope', '$c
                 $scope.$apply(function(){
                     $scope.deactivatedAccount = data;
                     if($scope.deactivatedAccount.errors != null && $scope.deactivatedAccount.errors.length != 0){
-                        console.log($scope.deactivatedAccount.errors);
                         $scope.closeModal();
                     } else {
                         $scope.orcidToDeactivate = null;
@@ -6185,7 +6188,6 @@ orcidNgModule.controller('profileDeactivationAndReactivationCtrl',['$scope', '$c
                 $scope.$apply(function(){
                     $scope.reactivatedAccount = data;
                     if($scope.reactivatedAccount.errors != null && $scope.reactivatedAccount.errors.length != 0){
-                        console.log($scope.reactivatedAccount.errors);
                         $scope.closeModal();
                     } else {
                         $scope.orcidToReactivate = null;
@@ -6246,7 +6248,6 @@ orcidNgModule.controller('profileDeactivationAndReactivationCtrl',['$scope', '$c
     };
 
     $scope.showSuccessMessage = function(message){
-        console.log(message);
         $scope.successMessage = message;
         $.colorbox({
             html : $compile($('#success-modal').html())($scope),
@@ -6299,7 +6300,6 @@ orcidNgModule.controller('profileDeprecationCtrl',['$scope','$compile', function
             type: 'GET',
             dataType: 'json',
             success: function(data){
-                console.log(data);
                 callback(data);
                 $scope.$apply();
                 }
@@ -6356,7 +6356,6 @@ orcidNgModule.controller('profileDeprecationCtrl',['$scope','$compile', function
                 }
             });
         } else {
-            console.log("Orcid: " + orcid + " doesnt match regex");
             if(orcid_type == 'deprecated') {
                 if(!($scope.deprecatedAccount === undefined)){
                     $scope.invalid_regex_deprecated = true;
@@ -6417,7 +6416,6 @@ orcidNgModule.controller('profileDeprecationCtrl',['$scope','$compile', function
             dataType: 'json',
             success: function(data){
                 $scope.$apply(function(){
-                	console.log(angular.toJson(data));
                     if(data.errors.length != 0){
                         $scope.errors = data.errors;
                     } else {
@@ -6518,7 +6516,6 @@ orcidNgModule.controller('manageMembersCtrl',['$scope', '$compile', function man
      * FIND
      * */
     $scope.findAny = function() {
-    	console.log(encodeURIComponent($scope.any_id));
     	success_edit_member_message = null;
     	success_message = null;
     	$.ajax({
@@ -6526,7 +6523,6 @@ orcidNgModule.controller('manageMembersCtrl',['$scope', '$compile', function man
             type: 'GET',
             dataType: 'json',
             success: function(data){
-            	console.log(angular.toJson(data));                
             	$scope.$apply(function(){  
                 	if(data.client == true) {
                     	$scope.client = data.clientObject;
@@ -6570,7 +6566,6 @@ orcidNgModule.controller('manageMembersCtrl',['$scope', '$compile', function man
             dataType: 'json',
             data: angular.toJson($scope.newMember),
             success: function(data){
-                console.log(data);
                 $scope.$apply(function(){
                     $scope.newMember = data;
                     if(data.errors.length != 0){
@@ -6708,7 +6703,6 @@ orcidNgModule.controller('manageMembersCtrl',['$scope', '$compile', function man
             dataType: 'json',
             data: angular.toJson($scope.client),
             success: function(data) {
-                console.log(angular.toJson(data));
                 if(data.errors.length == 0){
                     $scope.client = null;
                     $scope.client_id = "";
@@ -8030,7 +8024,6 @@ orcidNgModule.controller('CustomEmailCtrl',['$scope', '$compile',function ($scop
             contentType: 'application/json;charset=UTF-8',
             dataType: 'json',
             success: function(data) {
-                console.log(angular.toJson(data));
                 if(data.errors == null || data.errors.length == 0){
                     $scope.customEmail = data;
                     $scope.showCreateForm = true;
@@ -8233,7 +8226,6 @@ orcidNgModule.controller('SocialNetworksCtrl',['$scope',function ($scope){
     };
 
     $scope.updateTwitter = function() {
-        console.log("Update twitter");
         if($scope.twitter == true) {
             $.ajax({
                 url: getBaseUri() + '/manage/twitter',
@@ -8322,9 +8314,7 @@ orcidNgModule.controller('adminDelegatesCtrl',['$scope',function ($scope){
             dataType: 'json',
             data: angular.toJson($scope.request),
             success: function(data){
-                    console.log(data);
                     $scope.request = data;
-                    console.log(data.successMessage);
                     if(data.successMessage) {
                         $scope.success = true;
                     }

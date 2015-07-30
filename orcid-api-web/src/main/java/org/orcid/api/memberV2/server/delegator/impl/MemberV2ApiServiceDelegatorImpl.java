@@ -70,7 +70,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
 
     @Resource
     private WorkManager workManager;
-    
+
     @Resource
     private ProfileFundingManager profileFundingManager;
 
@@ -85,7 +85,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
 
     @Resource
     private PeerReviewManager peerReviewManager;
-    
+
     @Resource
     private WebhookDao webhookDao;
 
@@ -100,7 +100,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
 
     @Resource(name = "visibilityFilterV2")
     private VisibilityFilterV2 visibilityFilter;
-    
+
     @Resource
     private GroupIdRecordManager groupIdRecordManager;
 
@@ -126,8 +126,8 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
         ActivityUtils.cleanEmptyFields(as);
         ActivityUtils.setPathToActivity(as, orcid);
         return Response.ok(as).build();
-    }    
-    
+    }
+
     @Override
     @AccessControl(requiredScope = ScopePathType.ORCID_WORKS_READ_LIMITED)
     public Response viewWork(String orcid, String putCode) {
@@ -136,8 +136,8 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
         orcidSecurityManager.checkVisibility(w);
         ActivityUtils.setPathToActivity(w, orcid);
         return Response.ok(w).build();
-    }            
-    
+    }
+
     @Override
     @AccessControl(requiredScope = ScopePathType.ORCID_WORKS_READ_LIMITED)
     public Response viewWorkSummary(String orcid, String putCode) {
@@ -146,8 +146,8 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
         orcidSecurityManager.checkVisibility(ws);
         ActivityUtils.setPathToActivity(ws, orcid);
         return Response.ok(ws).build();
-    }                
-    
+    }
+
     @Override
     @AccessControl(requiredScope = ScopePathType.ORCID_WORKS_CREATE)
     public Response createWork(String orcid, Work work) {
@@ -202,7 +202,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
             return Response.created(new URI(f.getPutCode())).build();
         } catch (URISyntaxException e) {
             throw new RuntimeException("Error creating URI for new funding", e);
-        }        
+        }
     }
 
     @Override
@@ -323,7 +323,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     @Override
     @AccessControl(requiredScope = ScopePathType.PEER_REVIEW_CREATE)
     public Response createPeerReview(String orcid, PeerReview peerReview) {
-        PeerReview newPeerReview = peerReviewManager.createPeerReview(orcid, peerReview);
+        PeerReview newPeerReview = peerReviewManager.createPeerReview(orcid, peerReview, true);
         try {
             return Response.created(new URI(newPeerReview.getPutCode())).build();
         } catch (URISyntaxException ex) {
@@ -337,7 +337,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
         if (!putCode.equals(peerReview.getPutCode())) {
             throw new MismatchedPutCodeException("The put code in the URL was " + putCode + " whereas the one in the body was " + peerReview.getPutCode());
         }
-        PeerReview updatedPeerReview = peerReviewManager.updatePeerReview(orcid, peerReview);
+        PeerReview updatedPeerReview = peerReviewManager.updatePeerReview(orcid, peerReview, true);
         return Response.ok(updatedPeerReview).build();
     }
 
@@ -347,44 +347,43 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
         peerReviewManager.checkSourceAndDelete(orcid, putCode);
         return Response.noContent().build();
     }
-    
+
     @Override
     @AccessControl(requiredScope = ScopePathType.GROUP_ID_RECORD_READ)
-	public Response viewGroupIdRecord(String putCode) {
-		GroupIdRecord record = groupIdRecordManager.getGroupIdRecord(putCode);
-		return Response.ok(record).build();
-	}
+    public Response viewGroupIdRecord(String putCode) {
+        GroupIdRecord record = groupIdRecordManager.getGroupIdRecord(putCode);
+        return Response.ok(record).build();
+    }
 
     @Override
     @AccessControl(requiredScope = ScopePathType.GROUP_ID_RECORD_UPDATE)
-	public Response createGroupIdRecord(GroupIdRecord groupIdRecord) {
-		GroupIdRecord newRecord = groupIdRecordManager.createGroupIdRecord(groupIdRecord);
+    public Response createGroupIdRecord(GroupIdRecord groupIdRecord) {
+        GroupIdRecord newRecord = groupIdRecordManager.createGroupIdRecord(groupIdRecord);
         try {
             return Response.created(new URI(newRecord.getPutCode())).build();
         } catch (URISyntaxException ex) {
             throw new RuntimeException("Error creating URI for new group-id record", ex);
         }
-	}
+    }
 
     @Override
     @AccessControl(requiredScope = ScopePathType.GROUP_ID_RECORD_UPDATE)
-	public Response updateGroupIdRecord(GroupIdRecord groupIdRecord,
-			String putCode) {
-		GroupIdRecord updatedRecord = groupIdRecordManager.updateGroupIdRecord(putCode, groupIdRecord);
-		return Response.ok(updatedRecord).build();
-	}
+    public Response updateGroupIdRecord(GroupIdRecord groupIdRecord, String putCode) {
+        GroupIdRecord updatedRecord = groupIdRecordManager.updateGroupIdRecord(putCode, groupIdRecord);
+        return Response.ok(updatedRecord).build();
+    }
 
     @Override
     @AccessControl(requiredScope = ScopePathType.GROUP_ID_RECORD_UPDATE)
-	public Response deleteGroupIdRecord(String putCode) {
-		groupIdRecordManager.deleteGroupIdRecord(putCode);
-		return Response.noContent().build();
-	}
+    public Response deleteGroupIdRecord(String putCode) {
+        groupIdRecordManager.deleteGroupIdRecord(putCode);
+        return Response.noContent().build();
+    }
 
-	@Override
+    @Override
     @AccessControl(requiredScope = ScopePathType.GROUP_ID_RECORD_READ)
-	public Response viewGroupIdRecords(String pageSize, String pageNum) {
-		GroupIdRecords records = groupIdRecordManager.getGroupIdRecords(pageSize, pageNum);
-		return Response.ok(records).build();
-	}
+    public Response viewGroupIdRecords(String pageSize, String pageNum) {
+        GroupIdRecords records = groupIdRecordManager.getGroupIdRecords(pageSize, pageNum);
+        return Response.ok(records).build();
+    }
 }

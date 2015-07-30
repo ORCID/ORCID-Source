@@ -24,7 +24,9 @@ import javax.annotation.Resource;
 
 import org.orcid.core.adapter.JpaJaxbPeerReviewAdapter;
 import org.orcid.core.exception.OrcidDuplicatedActivityException;
+import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.locale.LocaleManager;
+import org.orcid.core.manager.GroupIdRecordManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.OrgManager;
 import org.orcid.core.manager.PeerReviewManager;
@@ -35,14 +37,13 @@ import org.orcid.jaxb.model.common.SourceOrcid;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.record.PeerReview;
 import org.orcid.jaxb.model.record.summary.PeerReviewSummary;
-import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.PeerReviewDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.jpa.entities.PeerReviewEntity;
-import org.orcid.persistence.jpa.entities.PeerReviewSubjectEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.Cacheable;
@@ -74,16 +75,16 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
     private LocaleManager localeManager;
 
     @Resource
-    private GenericDao<PeerReviewSubjectEntity, Long> peerReviewSubjectDao;
+    private OrcidUrlManager orcidUrlManager;
 
     @Resource
-    private OrcidUrlManager orcidUrlManager;
+    private GroupIdRecordManager groupIdRecordManager;
 
     @Override
     public void setSourceManager(SourceManager sourceManager) {
         this.sourceManager = sourceManager;
     }
-    
+
     @Override
     public PeerReview getPeerReview(String orcid, String peerReviewId) {
         PeerReviewEntity peerReviewEntity = peerReviewDao.getPeerReview(orcid, peerReviewId);
@@ -102,7 +103,7 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
     }
 
     @Override
-    public PeerReview createPeerReview(String orcid, PeerReview peerReview) {
+    public PeerReview createPeerReview(String orcid, PeerReview peerReview, boolean isApiRequest) {
         List<PeerReviewEntity> peerReviews = peerReviewDao.getByUser(orcid);
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
 
@@ -117,18 +118,24 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
             peerReview.setSource(source);
         }
 
-        // If it is the user adding the peer review, allow him to add duplicates
-        if(!sourceEntity.getSourceId().equals(orcid)) {
-            if (peerReviews != null) {
-                for (PeerReviewEntity entity : peerReviews) {
-                    PeerReview existing = jpaJaxbPeerReviewAdapter.toPeerReview(entity);
-                    if (existing.isDuplicated(peerReview)) {
-                        LOGGER.error("Trying to create a funding that is duplicated with " + entity.getId());
-                        throw new OrcidDuplicatedActivityException(localeManager.resolveMessage("api.error.duplicated"));
+        // If request comes from the API, perform the validations
+        if (isApiRequest) {
+            // If it is the user adding the peer review, allow him to add
+            // duplicates
+            if (!sourceEntity.getSourceId().equals(orcid)) {
+                if (peerReviews != null) {
+                    for (PeerReviewEntity entity : peerReviews) {
+                        PeerReview existing = jpaJaxbPeerReviewAdapter.toPeerReview(entity);
+                        if (existing.isDuplicated(peerReview)) {
+                            LOGGER.error("Trying to create a funding that is duplicated with " + entity.getId());
+                            throw new OrcidDuplicatedActivityException(localeManager.resolveMessage("api.error.duplicated"));
+                        }
                     }
                 }
             }
-        }        
+
+            validateGroupId(peerReview);
+        }
 
         PeerReviewEntity entity = jpaJaxbPeerReviewAdapter.toPeerReviewEntity(peerReview);
 
@@ -145,7 +152,11 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
     }
 
     @Override
-    public PeerReview updatePeerReview(String orcid, PeerReview peerReview) {
+    public PeerReview updatePeerReview(String orcid, PeerReview peerReview, boolean isApiRequest) {
+        //If request comes from the API perform validations
+        if(isApiRequest) {
+            validateGroupId(peerReview);
+        }
         PeerReviewEntity existingEntity = peerReviewDao.getPeerReview(orcid, peerReview.getPutCode());
         PeerReviewEntity updatedEntity = new PeerReviewEntity();
         Visibility originalVisibility = existingEntity.getVisibility();
@@ -155,13 +166,9 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
         updatedEntity.setProfile(new ProfileEntity(orcid));
         updatedEntity.setVisibility(originalVisibility);
         updatedEntity.setSource(existingSource);
-        
-        
         OrgEntity updatedOrganization = orgManager.getOrgEntity(peerReview);
         updatedEntity.setOrg(updatedOrganization);
-
-        updatedEntity = peerReviewDao.merge(updatedEntity); 
-        
+        updatedEntity = peerReviewDao.merge(updatedEntity);
         return jpaJaxbPeerReviewAdapter.toPeerReview(updatedEntity);
     }
 
@@ -175,14 +182,7 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
 
     @Transactional
     private boolean deletePeerReview(PeerReviewEntity entity, String orcid) {
-        Long subjectId = entity.getSubject().getId();
-        // Delete the peer review
-        boolean result = peerReviewDao.removePeerReview(orcid, entity.getId());
-        if (result) {
-            // Delete the subject
-            peerReviewSubjectDao.remove(subjectId);
-        }
-        return result;
+        return peerReviewDao.removePeerReview(orcid, entity.getId());
     }
 
     private void setIncomingPrivacy(PeerReviewEntity entity, ProfileEntity profile) {
@@ -201,36 +201,44 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
     public void removePeerReview(String orcid, String peerReviewId) {
         peerReviewDao.removePeerReview(orcid, Long.valueOf(peerReviewId));
     }
-    
+
     @Override
     public boolean updateToMaxDisplay(String orcid, String peerReviewId) {
         return peerReviewDao.updateToMaxDisplay(orcid, peerReviewId);
     }
-    
+
     @Override
     public boolean updateVisibilities(String orcid, ArrayList<Long> peerReviewIds, Visibility visibility) {
         return peerReviewDao.updateVisibilities(orcid, peerReviewIds, visibility);
     }
-    
+
     @Override
     @Cacheable(value = "peer-reviews", key = "#orcid.concat('-').concat(#lastModified)")
     public List<PeerReview> findPeerReviews(String orcid, long lastModified) {
         List<PeerReviewEntity> peerReviewEntities = peerReviewDao.getByUser(orcid);
         return toPeerReviewList(peerReviewEntities);
     }
-    
+
     /**
      * Get the list of peer reivews that belongs to a user
      * 
      * @param userOrcid
      * @param lastModified
-     *          Last modified date used to check the cache
+     *            Last modified date used to check the cache
      * @return the list of peer reviews that belongs to this user
      * */
-     @Override
-     @Cacheable(value = "peer-reviews-summaries", key = "#orcid.concat('-').concat(#lastModified)")
+    @Override
+    @Cacheable(value = "peer-reviews-summaries", key = "#orcid.concat('-').concat(#lastModified)")
     public List<PeerReviewSummary> getPeerReviewSummaryList(String orcid, long lastModified) {
-         List<PeerReviewEntity> peerReviewEntities = peerReviewDao.getByUser(orcid);
-         return jpaJaxbPeerReviewAdapter.toPeerReviewSummary(peerReviewEntities);
-     }
+        List<PeerReviewEntity> peerReviewEntities = peerReviewDao.getByUser(orcid);
+        return jpaJaxbPeerReviewAdapter.toPeerReviewSummary(peerReviewEntities);
+    }
+
+    private void validateGroupId(PeerReview peerReview) {
+        if (!PojoUtil.isEmpty(peerReview.getGroupId())) {
+            if (!groupIdRecordManager.exists(peerReview.getGroupId())) {
+                throw new OrcidValidationException(localeManager.resolveMessage("peer_review.group_id.not_valid"));
+            }
+        }        
+    }
 }

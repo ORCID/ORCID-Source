@@ -43,11 +43,10 @@
         <class>org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity</class>
         <class>org.orcid.persistence.jpa.entities.OrgDisambiguatedExternalIdentifierEntity</class>
         <class>org.orcid.persistence.jpa.entities.OrgEntity</class>
+        <class>org.orcid.persistence.jpa.entities.PeerReviewEntity</class>
         <class>org.orcid.persistence.jpa.entities.ProfileEntity</class>
         <class>org.orcid.persistence.jpa.entities.ProfileEventEntity</class>
         <class>org.orcid.persistence.jpa.entities.EmailEventEntity</class>
-        <class>org.orcid.persistence.jpa.entities.PeerReviewEntity</class>
-        <class>org.orcid.persistence.jpa.entities.PeerReviewSubjectEntity</class>
         <class>org.orcid.persistence.jpa.entities.ProfileFundingEntity</class>
         <class>org.orcid.persistence.jpa.entities.ProfileKeywordEntity</class>
         <class>org.orcid.persistence.jpa.entities.ProfileSummaryEntity</class>

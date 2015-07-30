@@ -37,7 +37,7 @@ import org.orcid.jaxb.model.record.Role;
 import org.orcid.jaxb.model.record.WorkExternalIdentifiers;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "role", "externalIdentifiers", "completionDate", "source", "createdDate", "lastModifiedDate" })
+@XmlType(propOrder = { "role", "externalIdentifiers", "completionDate", "source", "groupId", "createdDate", "lastModifiedDate" })
 @XmlRootElement(name = "summary", namespace = "http://www.orcid.org/ns/peer-review")
 public class PeerReviewSummary implements Filterable, Activity, GroupableActivity, Serializable {
     
@@ -54,7 +54,6 @@ public class PeerReviewSummary implements Filterable, Activity, GroupableActivit
     protected LastModifiedDate lastModifiedDate;
     @XmlElement(name = "created-date", namespace = "http://www.orcid.org/ns/common")
     protected CreatedDate createdDate;
-
     @XmlAttribute(name = "put-code")
     protected String putCode;
     @XmlAttribute(name = "path")
@@ -63,6 +62,8 @@ public class PeerReviewSummary implements Filterable, Activity, GroupableActivit
     protected Visibility visibility;
     @XmlAttribute(name = "display-index")
     protected String displayIndex;
+    @XmlElement(namespace = "http://www.orcid.org/ns/peer-review", name = "review-group-id", required = true)
+    protected String groupId;
 
     public Role getRole() {
         return role;
@@ -152,6 +153,14 @@ public class PeerReviewSummary implements Filterable, Activity, GroupableActivit
         return source.retrieveSourcePath();
     }
 
+    public String getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(String groupId) {
+        this.groupId = groupId;
+    }    
+    
     @Override
     public int hashCode() {
         final int prime = 31;

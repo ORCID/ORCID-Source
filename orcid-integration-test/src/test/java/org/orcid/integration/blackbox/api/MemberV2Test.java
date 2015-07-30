@@ -25,6 +25,8 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.ws.rs.core.Response;
 
@@ -43,6 +45,7 @@ import org.orcid.jaxb.model.common.Title;
 import org.orcid.jaxb.model.common.Url;
 import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.jaxb.model.common.Year;
+import org.orcid.jaxb.model.groupid.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record.Education;
 import org.orcid.jaxb.model.record.Employment;
@@ -80,7 +83,9 @@ import com.sun.jersey.api.client.ClientResponse;
 public class MemberV2Test extends BlackBoxBase {    
 
     protected static String accessToken = null;
-
+    static List<GroupIdRecord> groupRecords = null;
+    
+    
     @BeforeClass
     public static void beforeClass() {
         String clientId1 = System.getProperty("org.orcid.web.testClient1.clientId");        
@@ -89,7 +94,7 @@ public class MemberV2Test extends BlackBoxBase {
             revokeApplicationsAccess(clientId1);
         } else {
             revokeApplicationsAccess(clientId1, clientId2);
-        }
+        }                
     }
     
     @AfterClass
@@ -105,7 +110,8 @@ public class MemberV2Test extends BlackBoxBase {
     
     @Before
     public void before() throws JSONException, InterruptedException, URISyntaxException {
-        cleanActivities();
+        cleanActivities();  
+        groupRecords = createGroupIds();
     }
 
     @After
@@ -387,6 +393,7 @@ public class MemberV2Test extends BlackBoxBase {
         long time = System.currentTimeMillis();
         PeerReview peerReviewToCreate = (PeerReview) unmarshallFromPath("/record_2.0_rc1/samples/peer-review-2.0_rc1.xml", PeerReview.class);
         peerReviewToCreate.setPutCode(null);
+        peerReviewToCreate.setGroupId(groupRecords.get(0).getGroupId());
         peerReviewToCreate.getExternalIdentifiers().getExternalIdentifier().clear();
         WorkExternalIdentifier wExtId = new WorkExternalIdentifier();
         wExtId.setWorkExternalIdentifierId(new WorkExternalIdentifierId("Work Id " + time));
@@ -404,8 +411,9 @@ public class MemberV2Test extends BlackBoxBase {
         assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
         PeerReview gotPeerReview = getResponse.getEntity(PeerReview.class);
         assertEquals("peer-review:url", gotPeerReview.getUrl().getValue());
-        assertEquals("common:title", gotPeerReview.getSubject().getTitle().getTitle().getContent());
-        gotPeerReview.getSubject().getTitle().getTitle().setContent("updated title");
+        assertEquals("peer-review:subject-name", gotPeerReview.getSubjectName().getTitle().getContent());
+        assertEquals(groupRecords.get(0).getGroupId(), gotPeerReview.getGroupId());
+        gotPeerReview.getSubjectName().getTitle().setContent("updated title");
 
         ClientResponse putResponse = memberV2ApiClient.updateLocationXml(postResponse.getLocation(), accessToken, gotPeerReview);
         assertEquals(Response.Status.OK.getStatusCode(), putResponse.getStatus());
@@ -413,7 +421,8 @@ public class MemberV2Test extends BlackBoxBase {
         assertEquals(Response.Status.OK.getStatusCode(), getAfterUpdateResponse.getStatus());
 
         PeerReview gotAfterUpdateWork = getAfterUpdateResponse.getEntity(PeerReview.class);
-        assertEquals("updated title", gotAfterUpdateWork.getSubject().getTitle().getTitle().getContent());
+        assertEquals("updated title", gotAfterUpdateWork.getSubjectName().getTitle().getContent());
+        assertEquals(groupRecords.get(0).getGroupId(), gotAfterUpdateWork.getGroupId());
         ClientResponse deleteResponse = memberV2ApiClient.deletePeerReviewXml(user1OrcidId, gotAfterUpdateWork.getPutCode(), accessToken);
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), deleteResponse.getStatus());
     }
@@ -423,6 +432,7 @@ public class MemberV2Test extends BlackBoxBase {
         long time = System.currentTimeMillis();
         PeerReview peerReviewToCreate = (PeerReview) unmarshallFromPath("/record_2.0_rc1/samples/peer-review-2.0_rc1.xml", PeerReview.class);
         peerReviewToCreate.setPutCode(null);
+        peerReviewToCreate.setGroupId(null);
         peerReviewToCreate.setVisibility(Visibility.PUBLIC);
         peerReviewToCreate.getExternalIdentifiers().getExternalIdentifier().clear();
         WorkExternalIdentifier wExtId = new WorkExternalIdentifier();
@@ -440,15 +450,15 @@ public class MemberV2Test extends BlackBoxBase {
         ClientResponse getResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
         PeerReview gotPeerReview = getResponse.getEntity(PeerReview.class);
-        assertEquals("common:title", gotPeerReview.getSubject().getTitle().getTitle().getContent());
-        gotPeerReview.getSubject().getTitle().getTitle().setContent("updated title");
+        assertEquals("peer-review:subject-name", gotPeerReview.getSubjectName().getTitle().getContent());
+        gotPeerReview.getSubjectName().getTitle().setContent("updated title");
         String profileCreateToken = oauthHelper.getClientCredentialsAccessToken(client2ClientId, client2ClientSecret, ScopePathType.ORCID_PROFILE_CREATE);
         ClientResponse putResponse = memberV2ApiClient.updateLocationXml(postResponse.getLocation(), profileCreateToken, gotPeerReview);
         assertEquals(Response.Status.FORBIDDEN.getStatusCode(), putResponse.getStatus());
         ClientResponse getAfterUpdateResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), getAfterUpdateResponse.getStatus());
         PeerReview gotAfterUpdatePeerReview = getAfterUpdateResponse.getEntity(PeerReview.class);
-        assertEquals("common:title", gotAfterUpdatePeerReview.getSubject().getTitle().getTitle().getContent());
+        assertEquals("peer-review:subject-name", gotAfterUpdatePeerReview.getSubjectName().getTitle().getContent());
         ClientResponse deleteResponse = memberV2ApiClient.deletePeerReviewXml(user1OrcidId, gotAfterUpdatePeerReview.getPutCode(), accessToken);
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), deleteResponse.getStatus());
     }
@@ -485,6 +495,7 @@ public class MemberV2Test extends BlackBoxBase {
 
         PeerReview peerReview = (PeerReview) unmarshallFromPath("/record_2.0_rc1/samples/peer-review-2.0_rc1.xml", PeerReview.class);
         peerReview.setPutCode(null);
+        peerReview.setGroupId(groupRecords.get(0).getGroupId());
         peerReview.getExternalIdentifiers().getExternalIdentifier().clear();        
         WorkExternalIdentifier pExtId = new WorkExternalIdentifier();
         pExtId.setWorkExternalIdentifierId(new WorkExternalIdentifierId("Work Id " + time));
@@ -566,18 +577,18 @@ public class MemberV2Test extends BlackBoxBase {
         postResponse = memberV2ApiClient.createWorkXml(user1OrcidId, work, accessToken);
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
-                
+        
         /**
          * Add 4 peer reviews 1 and 2 get grouped together 3 in another group because
-         * it have different ext ids 4 in another group because it doesnt have
-         * any ext ids
+         * it have different group id 4 in another group because it doesnt have
+         * any group id
          **/
         // Add 1, the default peer review
         postResponse = memberV2ApiClient.createPeerReviewXml(user1OrcidId, peerReview, accessToken);
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
-        
-        peerReview.getSubject().getTitle().getTitle().setContent("PeerReview # 2");
+        peerReview.setGroupId(groupRecords.get(0).getGroupId());
+        peerReview.getSubjectName().getTitle().setContent("PeerReview # 2");
         peerReview.getCompletionDate().setDay(new Day(2));
         peerReview.getCompletionDate().setMonth(new Month(2));
         peerReview.getCompletionDate().setYear(new Year(2016));
@@ -592,7 +603,8 @@ public class MemberV2Test extends BlackBoxBase {
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         
-        peerReview.getSubject().getTitle().getTitle().setContent("PeerReview # 3");
+        peerReview.setGroupId(groupRecords.get(1).getGroupId());
+        peerReview.getSubjectName().getTitle().setContent("PeerReview # 3");
         peerReview.getCompletionDate().setDay(new Day(3));
         peerReview.getCompletionDate().setMonth(new Month(3));
         peerReview.getCompletionDate().setYear(new Year(2017));
@@ -608,7 +620,8 @@ public class MemberV2Test extends BlackBoxBase {
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         
-        peerReview.getSubject().getTitle().getTitle().setContent("PeerReview # 4");
+        peerReview.setGroupId(null);
+        peerReview.getSubjectName().getTitle().setContent("PeerReview # 4");
         peerReview.getCompletionDate().setDay(new Day(4));
         peerReview.getCompletionDate().setMonth(new Month(4));
         peerReview.getCompletionDate().setYear(new Year(2018));
@@ -875,6 +888,32 @@ public class MemberV2Test extends BlackBoxBase {
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
     }
     
+    @Test
+    public void testAddPeerReviewWithInvalidGroupingId() throws JSONException, InterruptedException, URISyntaxException {
+        PeerReview peerReview = (PeerReview) unmarshallFromPath("/record_2.0_rc1/samples/peer-review-2.0_rc1.xml", PeerReview.class);
+        peerReview.setPutCode(null);
+        peerReview.setGroupId("Invalid group id " + System.currentTimeMillis());
+        peerReview.getExternalIdentifiers().getExternalIdentifier().clear();        
+        WorkExternalIdentifier pExtId = new WorkExternalIdentifier();
+        pExtId.setWorkExternalIdentifierId(new WorkExternalIdentifierId("Work Id " + System.currentTimeMillis()));
+        pExtId.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
+        pExtId.setRelationship(Relationship.SELF);
+        peerReview.getExternalIdentifiers().getExternalIdentifier().add(pExtId);
+        
+        String accessToken = getAccessToken();
+
+        //Pattern not valid
+        ClientResponse postResponse = memberV2ApiClient.createPeerReviewXml(user1OrcidId, peerReview, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), postResponse.getStatus());
+        
+        //Invalid group id
+        peerReview.setGroupId("orcid-generated:" + peerReview.getGroupId());
+        postResponse = memberV2ApiClient.createPeerReviewXml(user1OrcidId, peerReview, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.CONFLICT.getStatusCode(), postResponse.getStatus());        
+    }
+    
     public String getAccessToken(ScopePathType scope) throws InterruptedException, JSONException {
         String accessToken = super.getAccessToken(scope.value());
         return accessToken;
@@ -931,4 +970,37 @@ public class MemberV2Test extends BlackBoxBase {
             }
         }
     }    
+    
+    public List<GroupIdRecord> createGroupIds() throws JSONException {
+        //Use the existing ones
+        if(groupRecords != null && !groupRecords.isEmpty()) 
+            return groupRecords;
+        
+        List<GroupIdRecord> groups = new ArrayList<GroupIdRecord>();
+        String token = oauthHelper.getClientCredentialsAccessToken(client1ClientId, client1ClientSecret, ScopePathType.GROUP_ID_RECORD_UPDATE);
+        GroupIdRecord g1 = new GroupIdRecord();
+        g1.setDescription("Description");
+        g1.setGroupId("orcid-generated:01" + System.currentTimeMillis());
+        g1.setName("Group # 1");
+        g1.setType("publisher");
+        
+        GroupIdRecord g2 = new GroupIdRecord();
+        g2.setDescription("Description");
+        g2.setGroupId("orcid-generated:02" + System.currentTimeMillis());
+        g2.setName("Group # 2");
+        g2.setType("publisher");                
+        
+        ClientResponse r1 = memberV2ApiClient.createGroupIdRecord(g1, token);
+        
+        String r1LocationPutCode = r1.getLocation().getPath().replace("/orcid-api-web/v2.0_rc1/group-id-record/", "");
+        g1.setPutCode(r1LocationPutCode);
+        groups.add(g1);
+        
+        ClientResponse r2 = memberV2ApiClient.createGroupIdRecord(g2, token);
+        String r2LocationPutCode = r2.getLocation().getPath().replace("/orcid-api-web/v2.0_rc1/group-id-record/", "");
+        g2.setPutCode(r2LocationPutCode);
+        groups.add(g2);
+        
+        return groups;
+    }
 }

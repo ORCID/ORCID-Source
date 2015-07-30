@@ -406,11 +406,11 @@ public class PublicProfileController extends BaseWorkspaceController {
             // Set language name
             form.setCountryForDisplay(getMessage(buildInternationalizationKey(CountryIsoEntity.class, peerReview.getOrganization().getAddress().getCountry().name())));
 
-            if (form.getSubjectForm() != null && form.getSubjectForm().getTitle() != null) {
+            if (!PojoUtil.isEmpty(form.getTranslatedSubjectName())) {
                 // Set translated title language name
-                if (!(form.getSubjectForm().getTranslatedTitle() == null) && !StringUtils.isEmpty(form.getSubjectForm().getTranslatedTitle().getLanguageCode())) {
-                    String languageName = languages.get(form.getSubjectForm().getTranslatedTitle().getLanguageCode());
-                    form.getSubjectForm().getTranslatedTitle().setLanguageName(languageName);
+                if (!StringUtils.isEmpty(form.getTranslatedSubjectName().getLanguageCode())) {
+                    String languageName = languages.get(form.getTranslatedSubjectName().getLanguageCode());
+                    form.getTranslatedSubjectName().setLanguageName(languageName);
                 }
             }
 
