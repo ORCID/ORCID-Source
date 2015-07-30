@@ -112,7 +112,26 @@ public interface WorkDao extends GenericDao<WorkEntity, Long> {
      * Returns a list of work ids of works that still have old external identifiers
      * @param limit
      *          The batch number to fetch
+     * @param workId
+     *          The id of the latest work processed         
      * @return a list of work ids with old ext ids          
      * */
     List<BigInteger> getWorksWithOldExtIds(long workId, long limit);
+    
+    /**
+     * Returns a list of work ids where the ext id relationship is null         
+     * @return a list of work ids    
+     * */
+    List<BigInteger> getWorksWithNullRelationship();
+    
+    /**
+     * Returns a list of work ids where the work matches the work type and ext ids type
+     * @param workType
+     *          The work type
+     * @param extIdType
+     *          The ext id type
+     *         
+     * @return a list of work ids    
+     * */
+    List<BigInteger> getWorksByWorkTypeAndExtIdType(String workType, String extIdType);
 }

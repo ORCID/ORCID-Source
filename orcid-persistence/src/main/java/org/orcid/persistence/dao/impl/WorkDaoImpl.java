@@ -206,5 +206,41 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
         query.setParameter("workId", workId);
         return query.getResultList();
     }
+    
+    /**
+     * Returns a list of work ids where the ext id relationship is null
+     * @param limit
+     *          The batch number to fetch
+     * @param workId
+     *          The id of the latest work processed         
+     * @return a list of work ids    
+     * */
+    @Override
+    @SuppressWarnings("unchecked")    
+    public List<BigInteger> getWorksWithNullRelationship() {
+        Query query = entityManager.createNativeQuery("SELECT distinct(work_id) FROM (SELECT work_id, json_array_elements(json_extract_path(external_ids_json, 'workExternalIdentifier')) AS j FROM work where external_ids_json is not null) AS a WHERE (j->>'relationship') is null");                
+        return query.getResultList();
+    }
+    
+    /**
+     * Returns a list of work ids where the work matches the work type and ext ids type
+     * @param workType
+     *          The work type
+     * @param extIdType
+     *          The ext id type
+     * @param limit
+     *          The batch number to fetch
+     * @param workId
+     *          The id of the latest work processed         
+     * @return a list of work ids    
+     * */
+    @Override
+    @SuppressWarnings("unchecked")    
+    public List<BigInteger> getWorksByWorkTypeAndExtIdType(String workType, String extIdType) {
+        Query query = entityManager.createNativeQuery("SELECT distinct(work_id) FROM (SELECT work_id, json_array_elements(json_extract_path(external_ids_json, 'workExternalIdentifier')) AS j FROM work where work_type=:workType and external_ids_json is not null) AS a WHERE (j->>'workExternalIdentifierType') = :extIdType");
+        query.setParameter("extIdType", extIdType);
+        query.setParameter("workType", workType);
+        return query.getResultList();
+    }
 }
 
