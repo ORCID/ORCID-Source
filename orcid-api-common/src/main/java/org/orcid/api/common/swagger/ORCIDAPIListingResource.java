@@ -65,19 +65,6 @@ public class ORCIDAPIListingResource {
     Logger LOGGER = LoggerFactory.getLogger(ORCIDAPIListingResource.class);
     @Context
     ServletContext context;
-    
-    private String monthJSON = "{"
-    +"  \"type\" : \"object\","
-    +"  \"properties\" : {"
-    +"    \"value\" : {"
-    +"      \"type\" : \"string\""
-    +"      \"default\" : \"01\""
-    +"    }"
-    +"  },"
-    +"  \"xml\" : {"
-    +"    \"name\" : \"month\""
-    +"  }"
-    +"}";
 
     protected synchronized Swagger scan(Application app) {
         Swagger swagger = null;
