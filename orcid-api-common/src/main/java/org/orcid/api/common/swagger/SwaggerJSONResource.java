@@ -34,7 +34,7 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import org.orcid.jaxb.model.common.Year;
+import org.orcid.core.api.OrcidApiConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,7 +49,6 @@ import io.swagger.core.filter.SwaggerSpecFilter;
 import io.swagger.jaxrs.Reader;
 import io.swagger.jaxrs.config.ReaderConfigUtils;
 import io.swagger.jaxrs.listing.SwaggerSerializers;
-import io.swagger.models.Model;
 import io.swagger.models.Swagger;
 import io.swagger.util.Yaml;
 
@@ -59,10 +58,10 @@ import io.swagger.util.Yaml;
  * @author tom
  *
  */
-public class ORCIDAPIListingResource {
+public class SwaggerJSONResource {
     
     static boolean initialized = false;
-    Logger LOGGER = LoggerFactory.getLogger(ORCIDAPIListingResource.class);
+    Logger LOGGER = LoggerFactory.getLogger(SwaggerJSONResource.class);
     @Context
     ServletContext context;
 
@@ -94,21 +93,17 @@ public class ORCIDAPIListingResource {
                 }
                 context.setAttribute("swagger", swagger);
             }
-        }
-        /*Model model = ModelConverters.getInstance().read(Year.class).get("Year");
-        LOGGER.debug(model.toString());
-        model.getProperties().get("value").setDefault("02");*/
+        }        
         initialized = true;
         return swagger;
     }
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("/swagger.json")
+    @Path(OrcidApiConstants.SWAGGER_FILE)
     @ApiOperation(value = "The swagger definition in JSON", hidden = true)
     public Response getListingJson(
             @Context Application app,
-            //@Context ServletConfig sc,
             @Context HttpHeaders headers,
             @Context UriInfo uriInfo) {
         Swagger swagger = (Swagger) context.getAttribute("swagger");
@@ -133,11 +128,10 @@ public class ORCIDAPIListingResource {
 
     @GET
     @Produces("application/yaml")
-    @Path("/swagger.yaml")
+    @Path(OrcidApiConstants.SWAGGER_FILE_YAML)
     @ApiOperation(value = "The swagger definition in YAML", hidden = true)
     public Response getListingYaml(
             @Context Application app,
-            //@Context ServletConfig sc,
             @Context HttpHeaders headers,
             @Context UriInfo uriInfo) {
         Swagger swagger = (Swagger) context.getAttribute("swagger");
@@ -161,8 +155,8 @@ public class ORCIDAPIListingResource {
                 String[] parts = yaml.split("\n");
                 StringBuilder b = new StringBuilder();
                 for (String part : parts) {
-                    int pos = part.indexOf("!<");
-                    int endPos = part.indexOf(">");
+                    //int pos = part.indexOf("!<");
+                    //int endPos = part.indexOf(">");
                     b.append(part);
                     b.append("\n");
                 }

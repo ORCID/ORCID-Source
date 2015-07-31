@@ -31,6 +31,10 @@ import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_JSON;
 import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_XML;
 import static org.orcid.core.api.OrcidApiConstants.WORK;
 import static org.orcid.core.api.OrcidApiConstants.WORK_SUMMARY;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.orcid.core.api.OrcidApiConstants.PEER_REVIEW;
 import static org.orcid.core.api.OrcidApiConstants.PEER_REVIEW_SUMMARY;
 
@@ -41,6 +45,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.orcid.api.common.swagger.SwaggerUIBuilder;
 import org.orcid.api.t1.server.delegator.PublicV2ApiServiceDelegator;
 import org.orcid.jaxb.model.record.Education;
 import org.orcid.jaxb.model.record.Employment;
@@ -53,6 +58,9 @@ import org.orcid.jaxb.model.record.summary.EmploymentSummary;
 import org.orcid.jaxb.model.record.summary.FundingSummary;
 import org.orcid.jaxb.model.record.summary.PeerReviewSummary;
 import org.orcid.jaxb.model.record.summary.WorkSummary;
+import org.springframework.beans.factory.annotation.Value;
+
+import com.sun.jersey.api.view.Viewable;
 
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponses;
@@ -62,17 +70,27 @@ import io.swagger.annotations.ApiResponse;
 public class PublicV2ApiServiceImplBase {
 
     private PublicV2ApiServiceDelegator serviceDelegator;
+    
+    @Value("${org.orcid.core.baseUri}")
+    protected String baseUri;
+    
+    @Value("${org.orcid.core.pubBaseUri}")
+    protected String pubBaseUri;
 
     public void setServiceDelegator(PublicV2ApiServiceDelegator serviceDelegator) {
         this.serviceDelegator = serviceDelegator;
     }
 
+    /** Serves the Swagger UI HTML page
+     * 
+     * @return a 200 response containing the HTML
+     */
     @GET
     @Produces(value = { MediaType.TEXT_HTML })
-    @Path("")
+    @Path("/")
     @ApiOperation(value = "Fetch the HTML swagger UI interface", hidden = true)
     public Response viewSwagger() {
-        return Response.ok("<html>hey there, this will be the swagger UI page</html>").build();
+        return new SwaggerUIBuilder().buildSwaggerHTML(baseUri, pubBaseUri,false);
     }
     
     @GET

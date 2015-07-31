@@ -53,6 +53,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import org.orcid.api.common.swagger.SwaggerUIBuilder;
 import org.orcid.api.memberV2.server.delegator.MemberV2ApiServiceDelegator;
 import org.orcid.jaxb.model.groupid.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopeConstants;
@@ -67,8 +68,8 @@ import org.orcid.jaxb.model.record.summary.EmploymentSummary;
 import org.orcid.jaxb.model.record.summary.FundingSummary;
 import org.orcid.jaxb.model.record.summary.PeerReviewSummary;
 import org.orcid.jaxb.model.record.summary.WorkSummary;
+import org.springframework.beans.factory.annotation.Value;
 
-import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -86,12 +87,42 @@ abstract public class MemberV2ApiServiceImplBase {
     @Context
     private UriInfo uriInfo;
 
+    @Value("${org.orcid.core.baseUri}")
+    protected String baseUri;
+    
+    @Value("${org.orcid.core.apiBaseUri}")
+    protected String apiBaseUri;
+
     private MemberV2ApiServiceDelegator serviceDelegator;
 
     public void setServiceDelegator(MemberV2ApiServiceDelegator serviceDelegator) {
         this.serviceDelegator = serviceDelegator;
     }
 
+    /** Serves the Swagger UI HTML page
+     * 
+     * @return a 200 response containing the HTML
+     */
+    @GET
+    @Produces(value = { MediaType.TEXT_HTML })
+    @Path("/")
+    @ApiOperation(value = "Fetch the HTML swagger UI interface", hidden = true)
+    public Response viewSwagger() {
+        return new SwaggerUIBuilder().buildSwaggerHTML(baseUri, apiBaseUri,true);    
+    }
+    
+    /** Serves the Swagger UI o2c OAuth page
+     * 
+     * @return a 200 response containing the HTML
+     */
+    @GET
+    @Produces(value = { MediaType.TEXT_HTML })
+    @Path("/o2c.html")
+    @ApiOperation(value = "Fetch the swagger OAuth component", hidden = true)
+    public Response viewSwaggerO2c() {
+        return new SwaggerUIBuilder().buildSwaggerO2CHTML();    
+    }
+    
     /**
      * @return Plain text message indicating health of service
      */
