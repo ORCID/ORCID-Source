@@ -39,4 +39,8 @@
 		<sql>ALTER TABLE client_redirect_uri ALTER COLUMN uri_act_type SET DEFAULT '{"import-works-wizard" : ["Articles"]}'</sql>
 		<sql>ALTER TABLE client_redirect_uri ALTER COLUMN uri_geo_area SET DEFAULT '{"import-works-wizard" : ["Global"]}'</sql>
 	</changeSet>
+	<changeSet id="REDIRECT-URI-DEFAULT-VALUE-TO-EXISTING" author="Shobhit Tyagi" dbms="postgresql">
+		<sql>UPDATE client_redirect_uri SET uri_act_type ='{"import-works-wizard" : ["Articles"]}'</sql>
+		<sql>UPDATE client_redirect_uri SET uri_geo_area ='{"import-works-wizard" : ["Global"]}'</sql>
+	</changeSet>
 </databaseChangeLog>
