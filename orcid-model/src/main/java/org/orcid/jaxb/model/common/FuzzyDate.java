@@ -31,8 +31,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 
-import io.swagger.annotations.ApiModelProperty;
-
 /**
  * <p>
  * Java class for fuzzy-date complex type.
