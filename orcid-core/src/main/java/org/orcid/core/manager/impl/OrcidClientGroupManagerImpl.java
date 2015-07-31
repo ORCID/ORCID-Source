@@ -539,6 +539,8 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
                 if (clientPredefinedScopes != null) {
                     existingEntity.setPredefinedClientScope(ScopePathType.getScopesAsSingleString(clientPredefinedScopes));
                 }
+                existingEntity.setUriActType(redirectUri.getActType());
+                existingEntity.setUriGeoArea(redirectUri.getGeoArea());
                 // Add to the list
                 clientRedirectUriEntities.add(existingEntity);
             } else {
@@ -550,6 +552,8 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
                     allPreDefScopes = ScopePathType.getScopesAsSingleString(clientPredefinedScopes);
                 }
                 clientRedirectUriEntity.setPredefinedClientScope(allPreDefScopes);
+                clientRedirectUriEntity.setUriActType(redirectUri.getActType());
+                clientRedirectUriEntity.setUriGeoArea(redirectUri.getGeoArea());
                 clientRedirectUriEntities.add(clientRedirectUriEntity);
             }
         }

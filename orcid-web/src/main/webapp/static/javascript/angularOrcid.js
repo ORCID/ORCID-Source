@@ -26,6 +26,16 @@ function openImportWizardUrl(url) {
     $.colorbox.close();
 };
 
+function contains(arr, obj) {
+    var index = arr.length;
+    while (index--) {
+       if (arr[index] === obj) {
+           return true;
+       }
+    }
+    return false;
+}
+
 var PRIVACY = {};
 PRIVACY.PUBLIC = 'PUBLIC';
 PRIVACY.LIMITED = 'LIMITED';
@@ -4192,6 +4202,13 @@ orcidNgModule.controller('PublicWorkCtrl',['$scope', '$compile', '$filter', 'wor
 
 }]);
 
+function getParameterByName(name) {
+    name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+        results = regex.exec(location.search);
+    return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+}
+
 orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrvc', 'workspaceSrvc', 'actBulkSrvc', 'commonSrvc', '$timeout', '$q', 
                                       function ($scope, $compile, $filter, worksSrvc, workspaceSrvc, actBulkSrvc, commonSrvc, $timeout, $q) {
     actBulkSrvc.initScope($scope);
@@ -4218,6 +4235,8 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     $scope.workImportWizard = false;
     $scope.wizardDescExpanded = {};
     $scope.displayURLPopOver = {};
+    $scope.workType = ['All'];
+    $scope.geoArea = ['All'];
     
     $scope.sortState = new ActSortState(GroupedActivities.ABBR_WORK);
     $scope.sort = function(key) {
@@ -4508,10 +4527,59 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     };
 
     $scope.showWorkImportWizard =  function() {
-    	$scope.bulkEditShow = false;
-    	$scope.showBibtexImportWizard = false;
-    	$scope.workImportWizard = !$scope.workImportWizard;
+    	$.ajax({
+            url: getBaseUri() + '/workspace/retrieve-work-impor-wizards.json',
+            type: 'GET',
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            success: function(data) {
+                $scope.selectedWorkType = 'Articles';
+                $scope.selectedGeoArea = 'Global';
+            	$scope.workImportWizardsOriginal = data;
+            	$scope.bulkEditShow = false;
+            	$scope.showBibtexImportWizard = false;
+            	$scope.workImportWizard = !$scope.workImportWizard;
+            	for(var i = 0; i < $scope.workImportWizardsOriginal.length; i ++) {
+            		for(var j = 0; j < $scope.workImportWizardsOriginal[i].redirectUris.redirectUri.length; j ++) {
+            			$scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].actType =  JSON.parse($scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].actType);
+            			$scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].geoArea =  JSON.parse($scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].geoArea);
+            			for(var k = 0; k < $scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].actType['import-works-wizard'].length; k ++) {
+            				if(!contains($scope.workType, $scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].actType['import-works-wizard'][k]))
+            					$scope.workType.push($scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].actType['import-works-wizard'][k]);
+            			}
+            			
+            			for(var k = 0; k < $scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].geoArea['import-works-wizard'].length; k ++) {
+            				if(!contains($scope.geoArea, $scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].geoArea['import-works-wizard'][k]))
+            					$scope.geoArea.push($scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].geoArea['import-works-wizard'][k]);
+            			}
+            		}
+            	}
+            	console.log(getParameterByName('import_works_wizard'));
+            	if(getParameterByName('import_works_wizard') != 'true') {
+            		$scope.selectedWorkType = 'All';
+                    $scope.selectedGeoArea = 'All';
+            	}
+            	$scope.processWorkImportWizardList();
+            	$scope.$apply();
+            }
+        }).fail(function() {
+            // something bad is happening!
+            console.log("WorkImportWizardError");
+        });
     };
+    
+    $scope.processWorkImportWizardList = function() {
+    	$scope.workImportWizards = [];
+    	for(var i = 0; i < $scope.workImportWizardsOriginal.length; i ++) {
+    		for(var j = 0; j < $scope.workImportWizardsOriginal[i].redirectUris.redirectUri.length; j ++) {
+    			if(($scope.selectedWorkType == 'All' || contains($scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].actType['import-works-wizard'], $scope.selectedWorkType))&&
+    					($scope.selectedGeoArea == 'All' || contains($scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].geoArea['import-works-wizard'], $scope.selectedGeoArea))) {
+    				$scope.workImportWizards.push($scope.workImportWizardsOriginal[i]);
+    				break;
+    			}
+    		}
+    	}
+    }
 
     $scope.addWorkModal = function(data){
         if (data == undefined) {
@@ -6500,6 +6568,10 @@ orcidNgModule.controller('manageMembersCtrl',['$scope', '$compile', function man
     $scope.selectedScope = "";
     $scope.newMember = null;
     $scope.groups = [];
+    $scope.importWorkWizard = {
+    	'actTypeList' : ['Articles','Books','Data','Student Publications'],
+		'geoAreaList' : ['Global', 'Africa', 'Asia', 'Australia', 'Europe', 'North America', 'South America']
+    };
 
     $scope.toggleGroupsModal = function() {
         $scope.showAdminGroupsModal = !$scope.showAdminGroupsModal;
@@ -6527,6 +6599,10 @@ orcidNgModule.controller('manageMembersCtrl',['$scope', '$compile', function man
                 	if(data.client == true) {
                     	$scope.client = data.clientObject;
                     	$scope.member = null;
+                    	for(var i = 0; i < $scope.client.redirectUris.length; i ++) {
+                    		$scope.client.redirectUris[i].actType.value = JSON.parse($scope.client.redirectUris[i].actType.value);
+                    		$scope.client.redirectUris[i].geoArea.value = JSON.parse($scope.client.redirectUris[i].geoArea.value);
+                    	}
                     } else {
                     	$scope.client = null;
                     	$scope.member = data.memberObject;
@@ -6696,6 +6772,10 @@ orcidNgModule.controller('manageMembersCtrl',['$scope', '$compile', function man
 
     //Update client
     $scope.updateClient = function() {
+    	for(var i = 0; i < $scope.client.redirectUris.length; i ++) {
+    		$scope.client.redirectUris[i].actType.value = JSON.stringify($scope.client.redirectUris[i].actType.value);
+    		$scope.client.redirectUris[i].geoArea.value = JSON.stringify($scope.client.redirectUris[i].geoArea.value);
+    	}
         $.ajax({
             url: getBaseUri() + '/manage-members/update-client.json',
             type: 'POST',

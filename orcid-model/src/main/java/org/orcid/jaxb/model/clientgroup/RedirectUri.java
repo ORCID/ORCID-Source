@@ -63,6 +63,10 @@ public class RedirectUri implements Serializable {
 
     @XmlAttribute(required = true)
     private RedirectUriType type;
+    
+    private String actType;
+    
+    private String geoArea;
 
     public RedirectUri() {
         super();
@@ -174,4 +178,19 @@ public class RedirectUri implements Serializable {
         this.type = redirectUriType;
     }
 
+	public String getActType() {
+		return actType;
+	}
+
+	public void setActType(String actType) {
+		this.actType = actType;
+	}
+
+	public String getGeoArea() {
+		return geoArea;
+	}
+
+	public void setGeoArea(String geoArea) {
+		this.geoArea = geoArea;
+	}
 }
