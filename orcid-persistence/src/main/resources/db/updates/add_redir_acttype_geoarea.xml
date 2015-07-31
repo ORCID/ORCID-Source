@@ -20,7 +20,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
 
-	<changeSet author="Shobhit Tyagi" id="ADD-REDIRECT-ACTTYPE-GEOAREA-COLUMN">
+	<changeSet author="Shobhit Tyagi" id="ADD-ACTTYPE-GEOAREA-COLUMN">
 	    <preConditions onFail="MARK_RAN">
             <not>
                 <columnExists tableName="client_redirect_uri" columnName="uri_act_type"/>
@@ -28,8 +28,12 @@
             </not>
 		</preConditions>
 	    <addColumn tableName="client_redirect_uri">
-				<column name="uri_act_type" type="JSON" defaultValue='{"import-works-wizard" : ["Articles"]}' />
-				<column name="uri_geo_area" type="JSON" defaultValue='{"import-works-wizard" : ["Global"]}' />
+				<column name="uri_act_type" type="TEXT" defaultValue='{"import-works-wizard" : ["Articles"]}' />
+				<column name="uri_geo_area" type="TEXT" defaultValue='{"import-works-wizard" : ["Global"]}' />
 		</addColumn>
     </changeSet>
+    <changeSet id="REDIRECT-URI-CONVERT-TEXT-TO-JSON" author="Shobhit Tyagi" dbms="postgresql">        
+        <sql>ALTER TABLE client_redirect_uri ALTER COLUMN uri_act_type TYPE json USING uri_act_type::JSON</sql>
+        <sql>ALTER TABLE client_redirect_uri ALTER COLUMN uri_geo_area TYPE json USING uri_geo_area::JSON</sql>
+	</changeSet>
 </databaseChangeLog>
