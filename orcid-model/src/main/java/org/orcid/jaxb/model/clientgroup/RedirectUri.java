@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 
@@ -64,8 +65,10 @@ public class RedirectUri implements Serializable {
     @XmlAttribute(required = true)
     private RedirectUriType type;
     
+    @XmlTransient
     private String actType;
     
+    @XmlTransient
     private String geoArea;
 
     public RedirectUri() {
