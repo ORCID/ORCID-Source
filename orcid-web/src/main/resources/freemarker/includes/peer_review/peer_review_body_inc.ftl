@@ -24,7 +24,7 @@
                  <div class="sources-header">
                      <div class="row">
                          <div class="col-md-7 col-sm-7 col-xs-7">
-                             <@orcid.msg 'groups.common.sources' /> <span class="hide-sources" ng-click="hideSources(group)"><@orcid.msg 'groups.common.close_sources' /></span>
+                         	<@orcid.msg 'groups.common.sources' /> <span class="hide-sources" ng-click="hideSources(group)"><@orcid.msg 'groups.common.close_sources' /></span>
                          </div>
                          <div class="col-md-2 col-sm-2 col-xs-2">
                              <@orcid.msgCapFirst 'groups.common.preferred' />
@@ -76,23 +76,23 @@
                     <!-- active row summary info -->
                     <div class="row" ng-show="group.activePutCode == peerReview.putCode.value">
                         <div class="col-md-9 col-sm-9 col-xs-8">
+                        	<div>
+                        		<span class="title" ng-click="showDetailsMouseClick(group.groupId,$event);"><span ng-class="{'glyphicon x075 glyphicon-chevron-right': showDetails[group.groupId] == false || showDetails[group.groupId] == null, 'glyphicon x075 glyphicon-chevron-down': showDetails[group.groupId] == true}"></span> <span>review activity for </span><span class="peer-review-title" ng-bind="peerReview.groupId.value"></span></span>
+                        	</div>
+ 							<!--                        
                             <h3 class="workspace-title">
-                                <span ng-bind="peerReview.subjectName.value"></span>
+                                Review activity for <span ng-bind="peerReview.groupId.value"></span>
                                 <span class="journaltitle" ng-show="peerReview.subjectContainerName.value" ng-bind="peerReview.subjectContainerName.value"></span>                                
-                            </h3>                                                        
+                            </h3>
+                                                                                    
                             <div class="info-detail">
                                 <span ng-show="peerReview.completionDate.year">{{peerReview.completionDate.year}}</span><span ng-show="peerReview.completionDate.month">-{{peerReview.completionDate.month}}</span><span ng-show="peerReview.completionDate.year"> | </span> <span class="capitalize">{{peerReview.subjectType.value}}</span>
                             </div>
+                            --> 
                         </div>
                     
                     	<div class="col-md-3 col-sm-3 col-xs-4 workspace-toolbar">
                               <ul class="workspace-private-toolbar" ng-hide="editSources[group.groupId] == true">
-                                  <#if !(isPublicProfile??)>
-                                      <!-- Bulk edit tool -->
-                                      <li ng-show="bulkEditShow == true" class="bulk-checkbox-item">
-                                              <input type="checkbox" ng-model="bulkEditMap[peerReview.putCode.value]" class="bulk-edit-input ng-pristine ng-valid pull-right">       
-                                      </li>
-                                  </#if>
                                   <!-- Show/Hide Details -->
                                   <li class="works-details" ng-hide="editSources[group.groupId] == true">
                                       <a ng-click="showDetailsMouseClick(group.groupId,$event);" ng-mouseenter="showTooltip(group.groupId+'-showHideDetails')" ng-mouseleave="hideTooltip(group.groupId+'-showHideDetails')">
@@ -138,6 +138,7 @@
                           </div>
                      </div>
                      <!-- Active Row Identifiers / URL / Validations / Versions -->
+                     <!-- 
                      <div class="row" ng-show="group.activePutCode == peerReview.putCode.value">
                          <div class="col-md-12 col-sm-12 bottomBuffer">
                              <ul class="id-details">
@@ -150,6 +151,7 @@
                              </ul>
                          </div>
                      </div>
+                    -->
                     <!-- more info -->
                     <#include "peer_review_more_info_inc.ftl"/>
                     
@@ -271,7 +273,8 @@
                         </div>
                     </div>
                     
-                    <!--  Bottom row -->                     
+                    <!--  Bottom row -->     
+                    <!--                 
                     <div class="row source-line" ng-hide="editSources[group.groupId] == true">                        
                         
                         <div class="col-md-7 col-sm-7 col-xs-7">
@@ -343,6 +346,7 @@
                             </ul>
                         </div>
                     </div>
+                    --> 
               </li>
 		</ul>
 	</li>	
