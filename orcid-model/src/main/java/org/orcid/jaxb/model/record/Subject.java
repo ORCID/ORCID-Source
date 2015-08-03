@@ -28,6 +28,8 @@ import javax.xml.bind.annotation.XmlType;
 import org.orcid.jaxb.model.common.Title;
 import org.orcid.jaxb.model.common.Url;
 
+import io.swagger.annotations.ApiModelProperty;
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = {"externalIdentifiers","type","journalTitle","title","url"})
 @XmlRootElement(name = "subject", namespace = "http://www.orcid.org/ns/peer-review")
@@ -45,6 +47,7 @@ public class Subject implements Serializable {
     @XmlElement(namespace = "http://www.orcid.org/ns/peer-review")
     protected Url url;
     @XmlAttribute(name = "put-code")
+    @ApiModelProperty(hidden = true) 
     protected String putCode;
 
     public String getPutCode() {

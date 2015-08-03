@@ -29,7 +29,21 @@
 
     <context:component-scan base-package="org.orcid.api.t2, org.orcid.api.common, org.orcid.core.security"/>
     <aop:aspectj-autoproxy />
+     
+    <bean id="beanConfig" class="io.swagger.jaxrs.config.BeanConfig">
+        <property name="title" value="ORCID Member"/>
+        <property name="version" value="Latest" />
+        <property name="schemes" value="http" />
+        <property name="host" value="#{ orcidUrlManager.apiHostWithPort }" />
+        <property name="basePath" value="#{ orcidUrlManager.apiPath }"/>
+        <property name="resourcePackage" value="org.orcid.api"/>
+        <property name="scan" value="true"/>
+        <property name="prettyPrint" value="true"/>        
+    </bean>
     
+    <bean id="swaggerSerializers" class="io.swagger.jaxrs.listing.SwaggerSerializers" scope="singleton"/>    
+    <bean id="apiListingResource" class="org.orcid.api.swagger.MemberSwaggerResource"/>
+     
     <bean id="t2OrcidApiServiceImplRoot" class="org.orcid.api.t2.server.T2OrcidApiServiceImplRoot">
         <property name="serviceDelegator" ref="t2OrcidApiServiceDelegatorV1_1"/>
     </bean>

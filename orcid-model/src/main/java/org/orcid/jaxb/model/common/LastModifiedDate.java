@@ -30,6 +30,9 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 import javax.xml.datatype.XMLGregorianCalendar;
+
+import io.swagger.annotations.ApiModelProperty;
+
 import java.io.Serializable;
 
 /**
@@ -53,6 +56,7 @@ public class LastModifiedDate implements Serializable {
     private static final long serialVersionUID = 1L;
     @XmlValue
     @XmlSchemaType(name = "dateTime")
+    @ApiModelProperty(readOnly = true)
     protected XMLGregorianCalendar value;
 
     public LastModifiedDate() {
