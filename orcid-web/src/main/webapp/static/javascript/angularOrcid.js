@@ -5323,6 +5323,7 @@ orcidNgModule.factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
                     count += peerReviewSrvc.groups[idx].activitiesCount;
                 }
                 return count;
+                return 'hola';
             }
     };
     return peerReviewSrvc;

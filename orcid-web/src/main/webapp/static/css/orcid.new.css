@@ -5949,6 +5949,32 @@ textarea.form-control,
     cursor: pointer;
 }
 
+.workspace-peer-review .peer-review-list-container{
+	padding: 0 15px 15px;
+    float: left;
+    width: 100%;
+}
+
+
+.workspace-peer-review  .source-active > .sources-header div[class^="col-"]:not(:last-child){
+	padding-top: 0;
+}
+
+.workspace-peer-review .more-info .ng-binding{
+	min-height: 21px;
+}
+
+.workspace-peer-review ul.sources-edit-list > li:first-child{
+	box-shadow: none;
+}
+/*
+.workspace-peer-review ul.sources-edit-list > li{
+	border-left: 1px solid #C9CACB;	
+	border-right: 1px solid #C9CACB;
+}
+*/
+
+
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
 
