@@ -43,13 +43,8 @@
     </bean>
     
     <bean id="swaggerSerializers" class="io.swagger.jaxrs.listing.SwaggerSerializers" scope="singleton"/>    
-    <bean id="apiListingResource" class="org.orcid.api.t1.server.PublicSwaggerResource"/>
-     
-    <!-- 
-	<bean id="apiListingResource" class="io.swagger.jaxrs.listing.ApiListingResource"/>
-    <bean id="swaggerSerializers" class="io.swagger.jaxrs.listing.SwaggerSerializers" scope="singleton"/>  
-     -->
-    
+    <bean id="apiListingResource" class="org.orcid.api.swagger.PublicSwaggerResource"/>
+         
 	<bean id="sanitizeAuthenticationFilter" class="org.orcid.core.web.filters.SanitizeAuthenticationFilter" />
 	
 	<bean id="corsFilter" class="org.orcid.core.web.filters.CorsFilter" />

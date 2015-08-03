@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.api.memberV2.server;
+package org.orcid.api.swagger;
 
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -23,6 +23,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.orcid.api.common.swagger.SwaggerJSONResource;
 import org.orcid.core.api.OrcidApiConstants;
+import org.orcid.jaxb.model.message.ScopeConstants;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -64,6 +65,8 @@ public class MemberSwaggerResource extends SwaggerJSONResource {
         oauth.accessCode(this.authEndPoint, this.tokenEndPoint);
         oauth.scope(ScopePathType.ACTIVITIES_READ_LIMITED.value(), "Read activities");
         oauth.scope(ScopePathType.ACTIVITIES_UPDATE.value(), "Update activities");
+        oauth.scope(ScopePathType.GROUP_ID_RECORD_READ.value(), "Read groups");
+        oauth.scope(ScopePathType.GROUP_ID_RECORD_UPDATE.value(), "Update groups");
         s.securityDefinition("orcid_auth", oauth);
 
         /*

@@ -26,6 +26,7 @@
        http://www.springframework.org/schema/security/oauth2 http://www.springframework.org/schema/security/spring-security-oauth2-2.0.xsd">
 
 	<sec:http pattern="/resources/**" security="none"/>
+	
 	<sec:http pattern="/v2**/" security="none"/>
 	<sec:http pattern="/v2**/o2c.html" security="none"/>
 

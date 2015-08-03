@@ -42,7 +42,7 @@
     </bean>
     
     <bean id="swaggerSerializers" class="io.swagger.jaxrs.listing.SwaggerSerializers" scope="singleton"/>    
-    <bean id="apiListingResource" class="org.orcid.api.memberV2.server.MemberSwaggerResource"/>
+    <bean id="apiListingResource" class="org.orcid.api.swagger.MemberSwaggerResource"/>
      
     <bean id="t2OrcidApiServiceImplRoot" class="org.orcid.api.t2.server.T2OrcidApiServiceImplRoot">
         <property name="serviceDelegator" ref="t2OrcidApiServiceDelegatorV1_1"/>

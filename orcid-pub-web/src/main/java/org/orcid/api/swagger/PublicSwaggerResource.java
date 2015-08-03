@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.api.t1.server;
+package org.orcid.api.swagger;
 
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;

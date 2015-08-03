@@ -44,20 +44,20 @@ public class Swagger2Markup {
     @Test
     public void convertMemberSwaggerToAsciiDoc() throws IOException {
         Swagger2MarkupConverter.from("http://localhost:8080/orcid-api-web/resources/swagger.json").build()
-            .intoFolder("src/docs/asciidoc/generated");
+            .intoFolder("src/docs/member/generated/asciidoc");
 
         // Then validate that three AsciiDoc files have been created
-        String[] files = new File("src/docs/member/asciidoc/generated").list();
+        String[] files = new File("src/docs/member/generated/asciidoc").list();
         assertEquals(files.length,3);
     }
 
     @Test
     public void convertPublicSwaggerToAsciiDoc() throws IOException {
         Swagger2MarkupConverter.from("http://localhost:8080/orcid-pub-web/resources/swagger.json").build()
-            .intoFolder("src/docs/generated/public/asciidoc");
+            .intoFolder("src/docs/public/generated/asciidoc");
 
         // Then validate that three AsciiDoc files have been created
-        String[] files = new File("src/docs/generated/member/asciidoc").list();
+        String[] files = new File("src/docs/public/generated/asciidoc").list();
         assertEquals(files.length,3);
     }
 
@@ -65,9 +65,9 @@ public class Swagger2Markup {
     public void convertMemberSwaggerToMarkdown() throws IOException {
         Swagger2MarkupConverter.from("http://localhost:8080/orcid-api-web/resources/swagger.json")
             .withMarkupLanguage(MarkupLanguage.MARKDOWN).build()
-            .intoFolder("src/docs/generated/member/markdown");
+            .intoFolder("src/docs/member/generated/markdown");
         // Then validate that three Markdown files have been created
-        String[] files = new File("src/docs/markdown/generated").list();
+        String[] files = new File("src/docs/member/generated/markdown").list();
         assertEquals(files.length,3);
     }
 
@@ -75,9 +75,9 @@ public class Swagger2Markup {
     public void convertPublicSwaggerToMarkdown() throws IOException {
         Swagger2MarkupConverter.from("http://localhost:8080/orcid-pub-web/resources/swagger.json")
             .withMarkupLanguage(MarkupLanguage.MARKDOWN).build()
-            .intoFolder("src/docs/generated/public/markdown");
+            .intoFolder("src/docs/public/generated/markdown");
         // Then validate that three Markdown files have been created
-        String[] files = new File("src/docs/markdown/generated").list();
+        String[] files = new File("src/docs/public/generated/markdown").list();
         assertEquals(files.length,3);
     }
 
