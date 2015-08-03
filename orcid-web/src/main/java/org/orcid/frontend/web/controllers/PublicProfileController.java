@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -421,7 +422,7 @@ public class PublicProfileController extends BaseWorkspaceController {
 
     @RequestMapping(value = "/public_widgets/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/{orcidHash}/info.json")
     public @ResponseBody
-    OrcidInfo getInfo(@PathVariable("orcid") String orcid, @PathVariable("orcidHash") String orcidHash) throws Exception {
+    OrcidInfo getInfo(@PathVariable("orcid") String orcid, @PathVariable("orcidHash") String orcidHash, @RequestParam(value = "locale", required = false) String localeParam) throws Exception {
         // Light weight security check. To keep copy and paster from easily
         // generating
         // the widget with out the user being logged in. Anyone that figures out
@@ -452,23 +453,42 @@ public class PublicProfileController extends BaseWorkspaceController {
             result.setName(name);
         }
 
+        Locale locale = null;
+        if(!StringUtil.isBlank(localeParam)) {            
+            locale = new Locale(localeParam);
+        } else {
+            locale = Locale.US;
+        }
+        
+        
         ActivitiesSummary actSummary = profileEntManager.getPublicActivitiesSummary(orcid);
 
         if (actSummary != null) {
-            if (actSummary.getFundings() != null) {
-                result.setFundings(actSummary.getFundings().getFundingGroup().size());
+            if (actSummary.getFundings() != null) {                
+                String fundingsLabel = localeManager.resolveMessage("widget.labels.funding", locale, new Object(){});
+                result.setValue(fundingsLabel, String.valueOf(actSummary.getFundings().getFundingGroup().size()));
             }
-            if (actSummary.getFundings() != null) {
-                result.setWorks(actSummary.getWorks().getWorkGroup().size());
+            if (actSummary.getWorks() != null) {
+                String worksLabel = localeManager.resolveMessage("widget.labels.works", locale, new Object(){});
+                result.setValue(worksLabel, String.valueOf(actSummary.getWorks().getWorkGroup().size()));
             }
             if (actSummary.getPeerReviews() != null) {
-                result.setPeerReviews(actSummary.getPeerReviews().getPeerReviewGroup().size());
+                String peerReviewsLabel = localeManager.resolveMessage("widget.labels.peer_review", locale, new Object(){});
+                result.setValue(peerReviewsLabel, String.valueOf(actSummary.getPeerReviews().getPeerReviewGroup().size()));
             }
             if (actSummary.getEducations() != null && actSummary.getEducations().getSummaries() != null) {
-                result.setEducations(actSummary.getEducations().getSummaries().size());
+                String educationsLabel = localeManager.resolveMessage("widget.labels.educations", locale, new Object(){});
+                result.setValue(educationsLabel, String.valueOf(actSummary.getEducations().getSummaries().size()));
+            } else {
+                String educationsLabel = localeManager.resolveMessage("widget.labels.educations", locale, new Object(){});
+                result.setValue(educationsLabel, String.valueOf(0));
             }
             if (actSummary.getEmployments() != null && actSummary.getEmployments().getSummaries() != null) {
-                result.setEmployments(actSummary.getEmployments().getSummaries().size());
+                String employmentsLabel = localeManager.resolveMessage("widget.labels.employments", locale, new Object(){});
+                result.setValue(employmentsLabel, String.valueOf(actSummary.getEmployments().getSummaries().size()));
+            } else {
+                String employmentsLabel = localeManager.resolveMessage("widget.labels.employments", locale, new Object(){});
+                result.setValue(employmentsLabel, String.valueOf(0));
             }
         }
 
@@ -518,11 +538,7 @@ public class PublicProfileController extends BaseWorkspaceController {
 class OrcidInfo {
     public String orcid = "";
     public String name = "";
-    public int works = 0;
-    public int fundings = 0;
-    public int educations = 0;
-    public int employments = 0;
-    public int peerReviews = 0;
+    public HashMap<String, String> values = new HashMap<String, String>();    
 
     public String getOrcid() {
         return orcid;
@@ -540,43 +556,11 @@ class OrcidInfo {
         this.name = name;
     }
 
-    public int getWorks() {
-        return works;
+    public void setValue(String name, String value){
+        values.put(name, value);
     }
-
-    public void setWorks(int works) {
-        this.works = works;
-    }
-
-    public int getFundings() {
-        return fundings;
-    }
-
-    public void setFundings(int fundings) {
-        this.fundings = fundings;
-    }
-
-    public int getEducations() {
-        return educations;
-    }
-
-    public void setEducations(int educations) {
-        this.educations = educations;
-    }
-
-    public int getEmployments() {
-        return employments;
-    }
-
-    public void setEmployments(int employments) {
-        this.employments = employments;
-    }
-
-    public int getPeerReviews() {
-        return peerReviews;
-    }
-
-    public void setPeerReviews(int peerReviews) {
-        this.peerReviews = peerReviews;
+    
+    public String getValue(String name) {
+        return values.get(name);
     }
 }

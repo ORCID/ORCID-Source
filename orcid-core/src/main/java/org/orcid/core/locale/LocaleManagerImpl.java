@@ -69,6 +69,11 @@ public class LocaleManagerImpl implements LocaleManager {
         return messageSource.getMessage(messageCode, messageParams, getLocale());
     }
 
+    @Override
+    public String resolveMessage(String messageCode, Locale locale, Object... messageParams) {
+        return messageSource.getMessage(messageCode, messageParams, locale);
+    }
+    
     @Cacheable(value = "locale-messages", key = "#locale.toString().concat('-javascript')")
     public org.orcid.pojo.Local getJavascriptMessages(Locale locale) {
         org.orcid.pojo.Local lPojo = new org.orcid.pojo.Local();
