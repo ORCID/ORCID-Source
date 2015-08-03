@@ -56,6 +56,7 @@ import javax.ws.rs.core.UriInfo;
 import org.orcid.api.common.swagger.SwaggerUIBuilder;
 import org.orcid.api.memberV2.server.delegator.MemberV2ApiServiceDelegator;
 import org.orcid.jaxb.model.groupid.GroupIdRecord;
+import org.orcid.jaxb.model.groupid.GroupIdRecords;
 import org.orcid.jaxb.model.message.ScopeConstants;
 import org.orcid.jaxb.model.record.Education;
 import org.orcid.jaxb.model.record.Employment;
@@ -417,6 +418,8 @@ abstract public class MemberV2ApiServiceImplBase {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(GROUP_ID_RECORD + PUTCODE)
+    @ApiOperation(value = "Fetch a Group", response = GroupIdRecord.class, authorizations = { @Authorization(value = "orcid_auth", scopes = {
+            @AuthorizationScope(scope = ScopeConstants.GROUP_ID_RECORD_READ, description = "you need this") }) })
     public Response viewGroupIdRecord(@PathParam("putCode") String putCode) {
         return serviceDelegator.viewGroupIdRecord(putCode);        
     }
@@ -424,6 +427,12 @@ abstract public class MemberV2ApiServiceImplBase {
     @POST
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(GROUP_ID_RECORD)
+    @ApiOperation(value = "Create a Group", authorizations = { @Authorization(value = "orcid_auth", scopes = {
+            @AuthorizationScope(scope = ScopeConstants.GROUP_ID_RECORD_UPDATE, description = "you need this") }) })
+    @ApiResponses(value = { 
+            @ApiResponse(code = 201, message = "Group created, see HTTP Location header for URI", responseHeaders = @ResponseHeader(name = "Location", description = "The created Group resource", response = URI.class)),
+            @ApiResponse(code = 400, message = "Invalid Group representation",response =String.class)
+            })
     public Response createGroupIdRecord(GroupIdRecord groupIdRecord) {
         return serviceDelegator.createGroupIdRecord(groupIdRecord);        
     }
@@ -431,6 +440,9 @@ abstract public class MemberV2ApiServiceImplBase {
     @PUT
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(GROUP_ID_RECORD + PUTCODE)
+    @ApiOperation(value = "Update a Group", response = GroupIdRecord.class, authorizations = { @Authorization(value = "orcid_auth", scopes = {
+            @AuthorizationScope(scope = ScopeConstants.GROUP_ID_RECORD_UPDATE, description = "you need this") }) })
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "Peer Review updated") })
     public Response updateGroupIdRecord(@PathParam("putCode") String putCode, GroupIdRecord groupIdRecord) {
         return serviceDelegator.updateGroupIdRecord(groupIdRecord, putCode);
     }
@@ -438,6 +450,9 @@ abstract public class MemberV2ApiServiceImplBase {
     @DELETE
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(GROUP_ID_RECORD + PUTCODE)
+    @ApiOperation(value = "Delete a Group", authorizations = { @Authorization(value = "orcid_auth", scopes = {
+            @AuthorizationScope(scope = ScopeConstants.GROUP_ID_RECORD_UPDATE, description = "you need this") }) })
+    @ApiResponses(value = { @ApiResponse(code = 204, message = "Group deleted") })
     public Response deleteGroupIdRecord(@PathParam("putCode") String putCode) {
         return serviceDelegator.deleteGroupIdRecord(putCode);
     }
@@ -445,6 +460,8 @@ abstract public class MemberV2ApiServiceImplBase {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(GROUP_ID_RECORD)
+    @ApiOperation(value = "Fetch Groups", response = GroupIdRecords.class, authorizations = { @Authorization(value = "orcid_auth", scopes = {
+            @AuthorizationScope(scope = ScopeConstants.GROUP_ID_RECORD_READ, description = "you need this") }) })
     public Response viewGroupIdRecords(@QueryParam("page-size") String pageSize, @QueryParam("page") String page) {
         return serviceDelegator.viewGroupIdRecords(pageSize, page);        
     }

@@ -27,7 +27,6 @@ import io.swagger.annotations.Api;
  * @author Will Simpson
  * 
  */
-@Api("Notifications API v2.0_rc1")
 @Path("/v2.0_rc1" + OrcidApiConstants.NOTIFICATIONS_PATH)
 public class NotificationsApiServiceImplV2_0_rc1 extends NotificationsApiServiceImplBase {
 
