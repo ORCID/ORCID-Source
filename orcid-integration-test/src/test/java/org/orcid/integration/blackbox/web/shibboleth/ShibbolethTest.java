@@ -50,6 +50,8 @@ public class ShibbolethTest {
     public String user1UserName;
     @Value("${org.orcid.web.testUser1.password}")
     public String user1Password;
+    @Value("${org.orcid.web.testUser1.orcidId}")
+    public String user1OrcidId;
 
     @Before
     public void before() throws IOException {
@@ -102,9 +104,8 @@ public class ShibbolethTest {
         orcidRecordLinkWait.until(ExpectedConditions.presenceOfElementLocated(orcidRecordLinkBy));
         WebElement orcidRecordLink = webDriver.findElement(orcidRecordLinkBy);
         orcidRecordLink.click();
-
-        new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS).until(ExpectedConditions.presenceOfElementLocated(By.xpath("//h2/span[text()='S. Milligan']")));
-        new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS).until(ExpectedConditions.presenceOfElementLocated(By.xpath("//h3[text()='Biography']")));
+        
+        new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS).until(ExpectedConditions.presenceOfElementLocated(By.xpath("//span[contains(., '"+user1OrcidId+"')]")));
     }
 
 }
