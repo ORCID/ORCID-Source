@@ -82,8 +82,6 @@ public class PeerReview implements VisibilityType, Activity, Serializable, Organ
     @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "created-date")
     protected CreatedDate createdDate;
     
-    
-    
     public Role getRole() {
         return role;
     }
