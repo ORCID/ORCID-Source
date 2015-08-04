@@ -33,7 +33,7 @@
     <bean id="beanConfig" class="io.swagger.jaxrs.config.BeanConfig">
         <property name="title" value="ORCID Member"/>
         <property name="version" value="Latest" />
-        <property name="schemes" value="http" />
+        <property name="schemes" value="http,https" />
         <property name="host" value="#{ orcidUrlManager.apiHostWithPort }" />
         <property name="basePath" value="#{ orcidUrlManager.apiPath }"/>
         <property name="resourcePackage" value="org.orcid.api"/>
