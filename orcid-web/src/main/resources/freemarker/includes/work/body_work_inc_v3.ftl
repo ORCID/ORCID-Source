@@ -55,7 +55,6 @@
                                             </li>
                                             <#if !(isPublicProfile??)>
                                             <li>
-                                            	aaa
                                                 <@orcid.privacyToggle2 angularModel="group.getActive().visibility"
                                                     questionClick="toggleClickPrivacyHelp(group.getActive().putCode)"
                                                     clickedClassCheck="{'popover-help-container-show':privacyHelp[group.getActive().putCode.value]==true}"
@@ -76,6 +75,7 @@
 
 
                 <li ng-repeat="work in group.activities" ng-show="group.activePutCode == work.putCode.value || editSources[group.groupId] == true" orcid-put-code="{{work.putCode.value}}">
+
                     <!-- active row summary info -->
                     <div class="row" ng-show="group.activePutCode == work.putCode.value">
                         <div class="col-md-9 col-sm-9 col-xs-8">
@@ -84,7 +84,6 @@
                                 <span class="journaltitle" ng-show="work.journalTitle.value" ng-bind="work.journalTitle.value"></span>                                
                             </h3>                                                        
                             <div class="info-detail">
-                            	
                                 <span ng-show="work.publicationDate.year">{{work.publicationDate.year}}</span><span ng-show="work.publicationDate.month">-{{work.publicationDate.month}}</span><span ng-show="work.publicationDate.year"> | </span> <span class="capitalize">{{work.workType.value}}</span>
                             </div>
                         </div>

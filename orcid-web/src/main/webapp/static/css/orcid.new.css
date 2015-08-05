@@ -5925,6 +5925,56 @@ textarea.form-control,
 	top: -178px;
 }
 
+.divisor{
+	width: 100%;
+	height: 1px;
+	margin-bottom: 14px;
+}
+
+.add-peer-review input[type="radio"]{
+	vertical-align: 1px;
+}
+
+/* Peer review refactor */
+
+.workspace-peer-review .peer-review-title{
+	color: #338caf;
+	font-size: 20px;
+}
+
+.workspace-peer-review span.title{
+	font-size: 14px;
+    color: #939598;
+    font-weight: normal;
+    cursor: pointer;
+}
+
+.workspace-peer-review .peer-review-list-container{
+	padding: 0 15px 15px;
+    float: left;
+    width: 100%;
+}
+
+
+.workspace-peer-review  .source-active > .sources-header div[class^="col-"]:not(:last-child){
+	padding-top: 0;
+}
+
+.workspace-peer-review .more-info .ng-binding{
+	min-height: 21px;
+}
+
+.workspace-peer-review ul.sources-edit-list > li:first-child{
+	box-shadow: none;
+}
+/*
+.workspace-peer-review ul.sources-edit-list > li{
+	border-left: 1px solid #C9CACB;	
+	border-right: 1px solid #C9CACB;
+}
+*/
+
+
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
 

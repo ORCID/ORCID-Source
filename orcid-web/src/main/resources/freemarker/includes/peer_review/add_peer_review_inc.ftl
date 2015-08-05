@@ -42,7 +42,7 @@
 						<div class="control-group">
 				    		<label class="relative"><@orcid.msg 'peer_review.role'/></label><span class="required text-error" ng-class="isValidClass(editPeerReview.role)">*</span>			    		
 				    		<div class="relative">
-					    		<select id="peerReviewRole" class="input-xlarge" name="peerReviewRole" ng-model="editPeerReview.role.value" ng-change="serverValidate('peer-reviews/roleValidate.json');">
+					    		<select id="peerReviewRole" class="form-control" name="peerReviewRole" ng-model="editPeerReview.role.value" ng-change="serverValidate('peer-reviews/roleValidate.json');">
 	                            	<option value=""><@orcid.msg 'org.orcid.jaxb.model.record.Role.empty' /></option>
 	                            	<#list peerReviewRoles?keys as key>
 	                                	<option value="${key}">${peerReviewRoles[key]}</option>
@@ -57,7 +57,7 @@
 						<div class="control-group">
 				    		<label class="relative"><@orcid.msg 'peer_review.type'/></label><span class="required text-error" ng-class="isValidClass(editPeerReview.type)">*</span>			    		
 				    		<div class="relative">
-					    		<select id="peerReviewType" class="input-xlarge" name="peerReviewType" ng-model="editPeerReview.type.value" ng-change="serverValidate('peer-reviews/typeValidate.json');">
+					    		<select id="peerReviewType" class="form-control" name="peerReviewType" ng-model="editPeerReview.type.value" ng-change="serverValidate('peer-reviews/typeValidate.json');">
 	                            	<option value=""><@orcid.msg 'org.orcid.jaxb.model.record.PeerReviewType.empty' /></option>
 	                            	<#list peerReviewTypes?keys as key>
 	                                	<option value="${key}">${peerReviewTypes[key]}</option>
@@ -88,7 +88,7 @@
 		                	<div class="control-group">
 	    	                	<span ng-hide="disambiguatedOrganization"><label><@orcid.msg 'peer_review.institution'/></label></span><span ng-show="disambiguatedOrganization"><label><@orcid.msg 'peer_review.institution.display_institution'/></label></span><span class="required text-error" ng-class="isValidClass(editPeerReview.orgName)">*</span>
 	            	    	    <div class="relative">
-		                	        <input id="organizationName" class="input-xlarge" name="organizationName" type="text" ng-model="editPeerReview.orgName.value" placeholder="Type name. Select from the list to fill other fields" ng-change="serverValidate('peer-reviews/orgNameValidate.json')" ng-model-onblur/>
+		                	        <input id="organizationName" class="form-control" name="organizationName" type="text" ng-model="editPeerReview.orgName.value" placeholder="Type name. Select from the list to fill other fields" ng-change="serverValidate('peer-reviews/orgNameValidate.json')" ng-model-onblur/>
 	            		            <span class="orcid-error" ng-show="editPeerReview.orgName.errors.length > 0">
 	                    	        	<div ng-repeat='error in editPeerReview.orgName.errors' ng-bind-html="error"></div>
 	                        		</span>
@@ -97,7 +97,7 @@
 	                		<div class="control-group">
 			                    <label ng-hide="disambiguatedOrganization"><@orcid.msg 'peer_review.city'/></label><label ng-show="disambiguatedOrganization"><@orcid.msg 'peer_review.display_city'/></label><span class="required text-error" ng-class="isValidClass(editPeerReview.city)">*</span>
 	                		    <div class="relative">
-			                        <input name="city" type="text" class="input-xlarge"  ng-model="editPeerReview.city.value" placeholder="Add city" ng-change="serverValidate('peer-reviews/cityValidate.json')" ng-model-onblur/>
+			                        <input name="city" type="text" class="form-control"  ng-model="editPeerReview.city.value" placeholder="Add city" ng-change="serverValidate('peer-reviews/cityValidate.json')" ng-model-onblur/>
 	                		        <span class="orcid-error" ng-show="editPeerReview.city.errors.length > 0">
 	                        		    <div ng-repeat='error in editPeerReview.city.errors' ng-bind-html="error"></div>
 			                        </span>
@@ -107,7 +107,7 @@
 	                		    <label ng-hide="disambiguatedOrganization"><@orcid.msg 'peer_review.region'/></label>
 			                    <label ng-show="disambiguatedOrganization"><@orcid.msg 'peer_review.display'/></label>
 	        		            <div class="relative">
-	                		        <input name="region" type="text" class="input-xlarge"  ng-model="editPeerReview.region.value" placeholder="Add region" ng-change="serverValidate('peer-reviews/regionValidate.json')" ng-model-onblur/>
+	                		        <input name="region" type="text" class="form-control"  ng-model="editPeerReview.region.value" placeholder="Add region" ng-change="serverValidate('peer-reviews/regionValidate.json')" ng-model-onblur/>
 			                        <span class="orcid-error" ng-show="editPeerReview.region.errors.length > 0">
 	        	        	            <div ng-repeat='error in editPeerReview.region.errors' ng-bind-html="error"></div>
 	            		            </span>
@@ -116,7 +116,7 @@
 			                <div class="control-group">
 	        		            <label ng-hide="disambiguatedOrganization"><@orcid.msg 'peer_review.country'/></label><label ng-show="disambiguatedOrganization"><@orcid.msg 'peer_review.display_country'/></label><span class="required text-error" ng-class="isValidClass(editPeerReview.country)">*</span>
 			                    <div class="relative">
-	        		                <select id="country" class="input-xlarge" name="country" ng-model="editPeerReview.country.value" ng-change="serverValidate('peer-reviews/countryValidate.json')">
+	        		                <select id="country" class="form-control" name="country" ng-model="editPeerReview.country.value" ng-change="serverValidate('peer-reviews/countryValidate.json')">
 	                		            <option value=""><@orcid.msg 'org.orcid.persistence.jpa.entities.CountryIsoEntity.empty' /></option>
 										<#list isoCountries?keys as key>
 	                                    	<option value="${key}">${isoCountries[key]}</option>
@@ -149,13 +149,14 @@
 					    		</select>								    
 				    		</div>
 						</div>
+						<div class="divisor"></div>
 						<!-- External identifiers -->
 					    <span><strong><@orcid.msg 'peer_review.external_identifiers'/></strong></span>
 						<div ng-repeat="extId in editPeerReview.externalIdentifiers"> 
 							<div class="control-group">
 								<label class="relative"><@orcid.msg 'peer_review.identifier_type' /></label>
 								<div class="relative">
-				    				<select id="extIdType" class="input-xlarge" name="extIdType" ng-model="extId.workExternalIdentifierType.value" ng-change="fillUrl(extId)">																					 
+				    				<select id="extIdType" class="form-control" name="extIdType" ng-model="extId.workExternalIdentifierType.value" ng-change="fillUrl(extId)">																					 
 										<option value=""><@orcid.msg 'org.orcid.jaxb.model.record.WorkExternalIdentifierType.empty' /></option>
 										<#list idTypes?keys as key>
 											<option value="${idTypes[key]}">${key}</option>
@@ -169,7 +170,7 @@
 							<div class="control-group">
 								<label class="relative"><@orcid.msg 'peer_review.identifier_value'/></label>
 						    	<div class="relative">
-									<input id="extIdValue" name="extIdValue" type="text" class="input-xlarge"  ng-model="extId.workExternalIdentifierId.value" ng-change="fillUrl(extId)"/>
+									<input id="extIdValue" name="extIdValue" type="text" class="form-control"  ng-model="extId.workExternalIdentifierId.value" ng-change="fillUrl(extId)"/>
 									<span class="orcid-error" ng-show="workExternalIdentifier.workExternalIdentifierId.errors.length > 0">
 										<div ng-repeat='error in workExternalIdentifier.workExternalIdentifierId.errors' ng-bind-html="error"></div>
 									</span>
@@ -179,7 +180,7 @@
 							<div class="control-group">
 								<label><@orcid.msg 'manual_work_form_contents.identifierurl'/></label>
 								<div class="relative">
-									<input name="externalIdUrl" type="text" class="input-xlarge"  ng-model="extId.url.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_URL'/>" ng-model-onblur/>
+									<input name="externalIdUrl" type="text" class="form-control"  ng-model="extId.url.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_URL'/>" ng-model-onblur/>
 									<span class="orcid-error" ng-show="extId.url.errors.length > 0">
 										<div ng-repeat='error in extId.url.errors' ng-bind-html="error"></div>
 									</span>
@@ -212,7 +213,7 @@
 						<div class="control-group">
 					    	<div class="relative">
 					    	<label class="relative"><@orcid.msg 'peer_review.url'/></label><br/>
-								<input id="url" class="input-xlarge" name="url" type="text" ng-model="editPeerReview.url.value" placeholder="Type url." ng-change="serverValidate('peer-reviews/urlValidate.json')" ng-model-onblur/>							
+								<input id="url" class="form-control" name="url" type="text" ng-model="editPeerReview.url.value" placeholder="Type url." ng-change="serverValidate('peer-reviews/urlValidate.json')" ng-model-onblur/>							
 	            		        <span class="orcid-error" ng-show="editPeerReview.url.errors.length > 0">
 	                    	    	<div ng-repeat='error in editPeerReview.url.errors' ng-bind-html="error"></div>
 	                        	</span>
@@ -226,7 +227,7 @@
 							<div class="control-group">
 								<label class="relative"><@orcid.msg 'peer_review.subject.identifier_type'/></label>
 								<div class="relative">
-									<select id="extIdType" class="input-xlarge" name="extIdType" ng-model="editPeerReview.subjectExternalIdentifier.workExternalIdentifierType.value" ng-change="fillUrl(extId)">																					 
+									<select id="extIdType" class="form-control" name="extIdType" ng-model="editPeerReview.subjectExternalIdentifier.workExternalIdentifierType.value" ng-change="fillUrl(extId)">																					 
 										<option value=""><@orcid.msg 'org.orcid.jaxb.model.record.WorkExternalIdentifierType.empty' /></option>
 										<#list idTypes?keys as key>
 											<option value="${idTypes[key]}">${key}</option>
@@ -241,7 +242,7 @@
 							<div class="control-group">
 								<label class="relative"><@orcid.msg 'peer_review.subject.identifier_value'/></label>
 								<div class="relative">
-									<input id="extIdValue" name="extIdValue" type="text" class="input-xlarge"  ng-model="editPeerReview.subjectExternalIdentifier.workExternalIdentifierId.value" ng-change="fillUrl(extId)"/>
+									<input id="extIdValue" name="extIdValue" type="text" class="form-control"  ng-model="editPeerReview.subjectExternalIdentifier.workExternalIdentifierId.value" ng-change="fillUrl(extId)"/>
 									<span class="orcid-error" ng-show="editPeerReview.subjectExternalIdentifier.workExternalIdentifierId.errors.length > 0">
 										<div ng-repeat='error in editPeerReview.subjectExternalIdentifier.workExternalIdentifierId.errors' ng-bind-html="error"></div>
 									</span>
@@ -251,7 +252,7 @@
 							<div class="control-group">
 								<label><@orcid.msg 'manual_work_form_contents.identifierurl'/></label>
 								<div class="relative">
-									<input name="externalIdUrl" type="text" class="input-xlarge"  ng-model="editPeerReview.subjectExternalIdentifier.url.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_URL'/>" ng-model-onblur/>
+									<input name="externalIdUrl" type="text" class="form-control"  ng-model="editPeerReview.subjectExternalIdentifier.url.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_URL'/>" ng-model-onblur/>
 									<span class="orcid-error" ng-show="editPeerReview.subjectExternalIdentifier.url.errors.length > 0">
 										<div ng-repeat='error in editPeerReview.subjectExternalIdentifier.url.errors' ng-bind-html="error"></div>
 									</span>
@@ -277,7 +278,7 @@
 						<div class="control-group">
 				    		<label class="relative"><@orcid.msg 'manual_work_form_contents.labelworktype'/></label><span class="required text-error" ng-class="isValidClass(editPeerReview.subjectType)">*</span>
 							<div class="relative">
-								<select id="peerReviewSubjectType" class="input-xlarge" name="peerReviewSubjectType" ng-model="editPeerReview.subjectType.value" ng-change="serverValidate('peer-reviews/subject/typeValidate.json');">
+								<select id="peerReviewSubjectType" class="form-control" name="peerReviewSubjectType" ng-model="editPeerReview.subjectType.value" ng-change="serverValidate('peer-reviews/subject/typeValidate.json');">
 									<option value=""><@orcid.msg 'org.orcid.jaxb.model.message.WorkType.empty' /></option>
 									<#list workTypes?keys as key>
 										<option value="${key}">${workTypes[key]}</option>
@@ -292,7 +293,7 @@
 						<div class="control-group">
 						   <label><@orcid.msg 'manual_work_form_contents.labeltitle'/></label><span class="required text-error" ng-class="isValidClass(editPeerReview.subjectName)">*</span>
 						   <div class="relative">
-						      <input name="title" type="text" class="input-xlarge"  ng-model="editPeerReview.subjectName.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_title'/>" ng-change="serverValidate('peer-reviews/subject/subjectNameValidate.json')" ng-model-onblur/>
+						      <input name="title" type="text" class="form-control"  ng-model="editPeerReview.subjectName.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_title'/>" ng-change="serverValidate('peer-reviews/subject/subjectNameValidate.json')" ng-model-onblur/>
 						      <span class="orcid-error" ng-show="editPeerReview.subjectName.errors.length > 0">
 						         <div ng-repeat='error in editPeerReview.subjectName.errors' ng-bind-html="error"></div>
 						      </span>
@@ -309,7 +310,7 @@
 						   <div class="control-group">
 						      <label><@orcid.msg 'manual_work_form_contents.labeltranslatedtitle'/></label>
 						      <div class="relative">
-						         <input name="translatedTitle" type="text" class="input-xlarge" ng-model="editPeerReview.translatedSubjectName.content" placeholder="<@orcid.msg 'manual_work_form_contents.add_translated_title'/>" ng-model-onblur/>
+						         <input name="translatedTitle" type="text" class="form-control" ng-model="editPeerReview.translatedSubjectName.content" placeholder="<@orcid.msg 'manual_work_form_contents.add_translated_title'/>" ng-model-onblur/>
 						      </div>
 						   </div>
 						   <div class="control-group">
@@ -326,7 +327,7 @@
 						<div class="control-group">
 							<label><@orcid.msg 'manual_peer_review_form_contents.subjectContainerName'/></label>
 						    <div class="relative">
-								<input name="journalTitle" type="text" class="input-xlarge"  ng-model="editPeerReview.subjectContainerName.value" placeholder="<@orcid.msg 'manual_peer_review_form_contents.addSubjectContainerName'/>" ng-model-onblur/>
+								<input name="journalTitle" type="text" class="form-control"  ng-model="editPeerReview.subjectContainerName.value" placeholder="<@orcid.msg 'manual_peer_review_form_contents.addSubjectContainerName'/>" ng-model-onblur/>
 								<span class="orcid-error" ng-show="editPeerReview.subjectContainerName.errors.length > 0">
 									<div ng-repeat='error in editPeerReview.subjectContainerName.errors' ng-bind-html="error"></div>
 								</span>						
@@ -336,7 +337,7 @@
 						<div class="control-group">
 					    	<label class="relative"><@orcid.msg 'peer_review.subject.url'/></label><br/>
 					    	<div class="relative">
-								<input name="subjectUrl" type="text" class="input-xlarge"  ng-model="editPeerReview.subjectUrl.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_URL' />" ng-change="serverValidate('peer-reviews/subject/urlValidate.json')" ng-model-onblur/>
+								<input name="subjectUrl" type="text" class="form-control"  ng-model="editPeerReview.subjectUrl.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_URL' />" ng-change="serverValidate('peer-reviews/subject/urlValidate.json')" ng-model-onblur/>
 								<span class="orcid-error" ng-show="editPeerReview.subjectUrl.errors.length > 0">
 									<div ng-repeat='error in editPeerReview.subjectUrl.errors' ng-bind-html="error"></div>
 								</span>							
@@ -346,7 +347,7 @@
 						<div class="control-group">
 					    	<label class="relative"><@orcid.msg 'manual_peer_review_form_contents.groupId'/></label><br/>
 					    	<div class="relative">
-								<input name="groupId" type="text" class="input-xlarge"  ng-model="editPeerReview.groupId.value" placeholder="<@orcid.msg 'manual_peer_review_form_contents.addGroupId'/>" ng-model-onblur/>
+								<input name="groupId" type="text" class="form-control"  ng-model="editPeerReview.groupId.value" placeholder="<@orcid.msg 'manual_peer_review_form_contents.addGroupId'/>" ng-model-onblur/>
 								<span class="orcid-error" ng-show="editPeerReview.groupId.errors.length > 0">
 									<div ng-repeat='error in editPeerReview.groupId.errors' ng-bind-html="error"></div>
 								</span>							
