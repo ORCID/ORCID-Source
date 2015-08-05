@@ -4897,6 +4897,7 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
 	$scope.editTranslatedTitle = false;
 	$scope.editSources = {};
 	$scope.showDetails = {};
+	$scope.showPeerReviewDetails = {};
 	$scope.showElement = {};
 	$scope.sortState = new ActSortState(GroupedActivities.PEER_REVIEW);
     
@@ -5100,6 +5101,7 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
         
     }; 
     
+    /*
     $scope.hideSources = function(group) {
         $scope.editSources[group.groupId] = false;
         group.activePutCode = group.defaultPutCode;
@@ -5108,10 +5110,21 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
     $scope.showSources = function(group) {
         $scope.editSources[group.groupId] = true;
     };
-    
+    */
+   
     $scope.showDetailsMouseClick = function(groupId, $event){
     	$event.stopPropagation();
     	$scope.showDetails[groupId] = !$scope.showDetails[groupId];
+    	console.log($scope.showDetails[groupId]);
+    };
+    
+    
+    $scope.showMoreDetails = function(putCode){    	
+    	$scope.showPeerReviewDetails[putCode] = true;   
+    };
+    
+    $scope.hideMoreDetails = function(putCode){
+    	$scope.showPeerReviewDetails[putCode] = false;
     };
     
     $scope.deletePeerReviewConfirm = function(putCode, deleteGroup) {

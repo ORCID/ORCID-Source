@@ -27,6 +27,7 @@
 			<div class="peer-review-list-container">
 				<ul class="sources-edit-list">
 					<li class="source-active">
+						<!-- Header -->
 						<div class="sources-header">
                         	<div class="row">
 	                        	<div class="col-md-3">
@@ -43,8 +44,11 @@
 	                        	</div>
                         	</div>
                         </div>
+                        <!-- End of Header -->
 					</li>
+					
 					<li ng-repeat="peerReview in group.activities">
+						<!-- Active row -->
 						<div class="row source-line">
 							<div class="col-md-3">
 								<span ng-show="peerReview.completionDate.year">{{peerReview.completionDate.year}}</span><span ng-show="peerReview.completionDate.month">-{{peerReview.completionDate.month}}</span><span ng-show="peerReview.completionDate.year">
@@ -55,11 +59,20 @@
                         	<div class="col-md-3">
                         		{{peerReview.role.value}}
                         	</div>
-                        	<div class="col-md-4">
+                        	<div class="col-md-4">                        		
                         		<span class="pull-right">
-                        			<a href=""><span>show details</span></a> <a href=""><span>view</span></a> <a href=""><span class="glyphicon glyphicon-trash"></span></a>
+                        			<a ng-click="showMoreDetails(peerReview.putCode.value); group.activePutCode = peerReview.putCode.value;" ng-show="showPeerReviewDetails[peerReview.putCode.value] == null || showPeerReviewDetails[peerReview.putCode.value] == false" >show details</a>
+                        			<a ng-click="hideMoreDetails(peerReview.putCode.value);" ng-show="showPeerReviewDetails[peerReview.putCode.value] == true">hide details</a> | 
+                        			<a href=""><span>view</span></a> <a href=""><span class="glyphicon glyphicon-trash"></span></a>
                         		</span>
                         	</div>
+						</div>
+						
+						<!-- Details row -->
+						<div class="row source-line" ng-show="showPeerReviewDetails[peerReview.putCode.value] == true && group.activePutCode == peerReview.putCode.value;">
+							<div class="col-md-3">
+								<div>{{peerReview.orgName.value}}</div>		
+							</div>
 						</div>
 					</li>
 				</ul>
