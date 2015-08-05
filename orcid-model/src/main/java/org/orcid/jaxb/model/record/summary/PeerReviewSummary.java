@@ -29,6 +29,7 @@ import org.orcid.jaxb.model.common.CreatedDate;
 import org.orcid.jaxb.model.common.Filterable;
 import org.orcid.jaxb.model.common.FuzzyDate;
 import org.orcid.jaxb.model.common.LastModifiedDate;
+import org.orcid.jaxb.model.common.Organization;
 import org.orcid.jaxb.model.common.Source;
 import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.jaxb.model.record.Activity;
@@ -37,7 +38,7 @@ import org.orcid.jaxb.model.record.Role;
 import org.orcid.jaxb.model.record.WorkExternalIdentifiers;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "role", "externalIdentifiers", "completionDate", "source", "groupId", "createdDate", "lastModifiedDate" })
+@XmlType(propOrder = { "role", "externalIdentifiers", "completionDate", "organization", "source", "groupId", "createdDate", "lastModifiedDate" })
 @XmlRootElement(name = "summary", namespace = "http://www.orcid.org/ns/peer-review")
 public class PeerReviewSummary implements Filterable, Activity, GroupableActivity, Serializable {
     
@@ -48,12 +49,14 @@ public class PeerReviewSummary implements Filterable, Activity, GroupableActivit
     protected WorkExternalIdentifiers externalIdentifiers;
     @XmlElement(name = "completion-date", namespace = "http://www.orcid.org/ns/peer-review")
     protected FuzzyDate completionDate;
+    @XmlElement(required = true, namespace = "http://www.orcid.org/ns/peer-review", name = "convening-organization")
+    protected Organization organization;
     @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected Source source;
     @XmlElement(name = "last-modified-date", namespace = "http://www.orcid.org/ns/common")
     protected LastModifiedDate lastModifiedDate;
     @XmlElement(name = "created-date", namespace = "http://www.orcid.org/ns/common")
-    protected CreatedDate createdDate;
+    protected CreatedDate createdDate;    
     @XmlAttribute(name = "put-code")
     protected String putCode;
     @XmlAttribute(name = "path")
@@ -144,6 +147,14 @@ public class PeerReviewSummary implements Filterable, Activity, GroupableActivit
     public void setDisplayIndex(String displayIndex) {
         this.displayIndex = displayIndex;
     }
+    
+    public Organization getOrganization() {
+        return organization;
+    }
+
+    public void setOrganization(Organization organization) {
+        this.organization = organization;
+    }
 
     @Override
     public String retrieveSourcePath() {
@@ -174,6 +185,7 @@ public class PeerReviewSummary implements Filterable, Activity, GroupableActivit
         result = prime * result + ((role == null) ? 0 : role.hashCode());
         result = prime * result + ((source == null) ? 0 : source.hashCode());
         result = prime * result + ((visibility == null) ? 0 : visibility.hashCode());
+        result = prime * result + ((organization == null) ? 0 : organization.hashCode());
         return result;
     }
 
@@ -200,6 +212,11 @@ public class PeerReviewSummary implements Filterable, Activity, GroupableActivit
             if (other.externalIdentifiers != null)
                 return false;
         } else if (!externalIdentifiers.equals(other.externalIdentifiers))
+            return false;
+        if (organization == null) {
+            if (other.organization != null)
+                return false;
+        } else if (!organization.equals(other.organization))
             return false;
         if (lastModifiedDate == null) {
             if (other.lastModifiedDate != null)

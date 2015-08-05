@@ -595,8 +595,15 @@ public class MemberV2Test extends BlackBoxBase {
         peerReview.setUrl(new Url("http://peer_review/2"));
         WorkExternalIdentifier pExtId2 = new WorkExternalIdentifier();
         pExtId2.setWorkExternalIdentifierType(WorkExternalIdentifierType.DOI);
-        pExtId2.setWorkExternalIdentifierId(new WorkExternalIdentifierId("doi-ext-id" + time));
+        pExtId2.setWorkExternalIdentifierId(new WorkExternalIdentifierId("doi-ext-id" + System.currentTimeMillis()));
         pExtId2.setRelationship(Relationship.SELF);
+        
+        for(WorkExternalIdentifier wei : peerReview.getExternalIdentifiers().getExternalIdentifier()) {
+            WorkExternalIdentifierId id = wei.getWorkExternalIdentifierId();
+            id.setContent(id.getContent() + System.currentTimeMillis());
+            wei.setWorkExternalIdentifierId(id);
+        }
+        
         peerReview.getExternalIdentifiers().getExternalIdentifier().add(pExtId2);
         // Add 2, with the same ext ids +1
         postResponse = memberV2ApiClient.createPeerReviewXml(user1OrcidId, peerReview, accessToken);
@@ -611,7 +618,7 @@ public class MemberV2Test extends BlackBoxBase {
         peerReview.setUrl(new Url("http://peer_review/3"));
         WorkExternalIdentifier pExtId3 = new WorkExternalIdentifier();
         pExtId3.setWorkExternalIdentifierType(WorkExternalIdentifierType.EID);
-        pExtId3.setWorkExternalIdentifierId(new WorkExternalIdentifierId("eid-ext-id" + time));
+        pExtId3.setWorkExternalIdentifierId(new WorkExternalIdentifierId("eid-ext-id" + System.currentTimeMillis()));
         pExtId3.setRelationship(Relationship.SELF);
         peerReview.getExternalIdentifiers().getExternalIdentifier().clear();
         peerReview.getExternalIdentifiers().getExternalIdentifier().add(pExtId3);
@@ -626,7 +633,14 @@ public class MemberV2Test extends BlackBoxBase {
         peerReview.getCompletionDate().setMonth(new Month(4));
         peerReview.getCompletionDate().setYear(new Year(2018));
         peerReview.setUrl(new Url("http://peer_review/4"));
+        
+        WorkExternalIdentifier pExtId4 = new WorkExternalIdentifier();
+        pExtId4.setWorkExternalIdentifierType(WorkExternalIdentifierType.EID);
+        pExtId4.setWorkExternalIdentifierId(new WorkExternalIdentifierId("eid-ext-id" + System.currentTimeMillis()));
+        pExtId4.setRelationship(Relationship.SELF);
         peerReview.getExternalIdentifiers().getExternalIdentifier().clear();
+        peerReview.getExternalIdentifiers().getExternalIdentifier().add(pExtId4);
+        
         // Add 4, without ext ids
         postResponse = memberV2ApiClient.createPeerReviewXml(user1OrcidId, peerReview, accessToken);
         assertNotNull(postResponse);
@@ -731,6 +745,20 @@ public class MemberV2Test extends BlackBoxBase {
         
         assertTrue("One of the peer reviews was not found: 1(" + found1 + ") 2(" + found2 + ") 3(" + found3 + ") 4(" + found4 + ")", found1 == found2 == found3 == found4 == true);        
     }
+    
+    @Test
+    public void testPeerReviewMustHaveAtLeastOneExtId() throws JSONException, InterruptedException, URISyntaxException {
+        PeerReview peerReview = (PeerReview) unmarshallFromPath("/record_2.0_rc1/samples/peer-review-2.0_rc1.xml", PeerReview.class);
+        peerReview.setPutCode(null);
+        peerReview.setGroupId(groupRecords.get(0).getGroupId());
+        peerReview.getExternalIdentifiers().getExternalIdentifier().clear();        
+        
+        String accessToken = getAccessToken();
+
+        ClientResponse postResponse = memberV2ApiClient.createPeerReviewXml(user1OrcidId, peerReview, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.CONFLICT.getStatusCode(), postResponse.getStatus());
+    }    
     
     @SuppressWarnings("unchecked")
     @Test

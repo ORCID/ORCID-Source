@@ -54,16 +54,15 @@
 							</xs:annotation>
 						</xs:element>
 						<xs:element name="review-identifiers" type="work:work-external-identifiers"
-							minOccurs="0">
+							minOccurs="1">
 							<xs:annotation>
-								<xs:documentation>The unique generated identifier of the review.
+								<xs:documentation>Unique identifier(s) of the review. <i>This identifier refers to the review itself, NOT to the item that was reviewed.</i> At least one identifier is required. In the case where there is no persistent unique identifier for the review, the source providing the data should generate a locally-sourced unique identifier for the review (e.g., type "organization-defined-type"). This field will be checked when adding new reviews to prevent double counting of review activity.
 								</xs:documentation>
 							</xs:annotation>
 						</xs:element>
 						<xs:element name="review-url" type="common:url" minOccurs="0">
 							<xs:annotation>
-								<xs:documentation>A link to a representation of the review on the
-									web.
+								<xs:documentation>A link to a representation of the review on the web. <i>This URL refers to the review itself, NOT to the item that was reviewed.</i>
 								</xs:documentation>
 							</xs:annotation>
 						</xs:element>
@@ -78,8 +77,7 @@
 						<xs:element name="review-completion-date" type="common:fuzzy-date"
 							minOccurs="1" maxOccurs="1">
 							<xs:annotation>
-								<xs:documentation>The day of the month on which the review was
-									completed
+								<xs:documentation>The date on which the review was completed. Allowable values: yyyy; yyyy-mm; yyyy-mm-dd, formatted using the ORCID fuzzy date format.
 								</xs:documentation>
 							</xs:annotation>
 						</xs:element>
@@ -100,27 +98,26 @@
 						<xs:element name="subject-container-name" type="work:journal-title"
 							minOccurs="0" maxOccurs="1">
 							<xs:annotation>
-								<xs:documentation>The name of the journal or conference or
-									applicable object of which the review was a part.
+								<xs:documentation>The name of the journal, conference, grant review panel, or other applicable object of which the review subject was a part.
 								</xs:documentation>
 							</xs:annotation>
 						</xs:element>
-						<xs:element name="subject-type" type="work:work-type" minOccurs="1" maxOccurs="1">
+						<xs:element name="subject-type" type="work:work-type" minOccurs="0" maxOccurs="1">
 							<xs:annotation>
-								<xs:documentation>The type of subject reviewed
+								<xs:documentation>The type of object that the review subject is (for example, a journal article, grant, etc).
 								</xs:documentation>
 							</xs:annotation>
 						</xs:element>
 						<xs:element name="subject-name" type="work:work-title"
-							minOccurs="1" maxOccurs="1">
+							minOccurs="0" maxOccurs="1">
 							<xs:annotation>
-								<xs:documentation>The title of the subject reviewed
+								<xs:documentation>The name/title of the subject object that was reviewed.
 								</xs:documentation>
 							</xs:annotation>
 						</xs:element>
 						<xs:element name="subject-url" type="common:url" minOccurs="0" maxOccurs="1">
 							<xs:annotation>
-								<xs:documentation>The URL of the subject reviewed.
+								<xs:documentation>The URL of the subject object that was reviewed.
 								</xs:documentation>
 							</xs:annotation>
 						</xs:element>
@@ -128,7 +125,7 @@
 						<xs:element name="convening-organization" type="common:organization"
 							minOccurs="1" maxOccurs="1">
 							<xs:annotation>
-								<xs:documentation>The organization convening the review
+								<xs:documentation>Information about the organization convening the review (journal publisher, conference organizer, funding agency, etc). Whenever possible, this organization is identified by a unique identifier like the Ringgold ID or FundRef ID.
 								</xs:documentation>
 							</xs:annotation>
 						</xs:element>																																	
@@ -169,8 +166,7 @@
 						<xs:element name="completion-date" type="common:fuzzy-date"
 							minOccurs="1" maxOccurs="1">
 							<xs:annotation>
-								<xs:documentation>The day of the month on which the review was
-									completed
+								<xs:documentation>The date on which the review was completed. Allowable values: yyyy; yyyy-mm; yyyy-mm-dd, formatted using the ORCID fuzzy date format.
 								</xs:documentation>
 							</xs:annotation>
 						</xs:element>
@@ -180,6 +176,13 @@
 								</xs:documentation>
 							</xs:annotation>
 						</xs:element>
+						<xs:element name="convening-organization" type="common:organization"
+							minOccurs="1" maxOccurs="1">
+							<xs:annotation>
+								<xs:documentation>Information about the organization convening the review (journal publisher, conference organizer, funding agency, etc). Whenever possible, this organization is identified by a unique identifier like the Ringgold ID or FundRef ID.
+								</xs:documentation>
+							</xs:annotation>
+						</xs:element>	
 					</xs:sequence>
 				</xs:extension>
 			</xs:complexContent>
@@ -254,5 +257,5 @@
 				</xs:annotation>
 			</xs:enumeration>
 		</xs:restriction>
-	</xs:simpleType>			
+	</xs:simpleType>	
 </xs:schema>
