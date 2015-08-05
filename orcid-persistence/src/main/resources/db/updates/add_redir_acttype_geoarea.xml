@@ -1,0 +1,46 @@
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2014 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+	<changeSet author="Shobhit Tyagi" id="ADD-ACTTYPE-GEOAREA-COLUMN">
+	    <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="client_redirect_uri" columnName="uri_act_type"/>
+                <columnExists tableName="client_redirect_uri" columnName="uri_geo_area"/>
+            </not>
+		</preConditions>
+	    <addColumn tableName="client_redirect_uri">
+				<column name="uri_act_type" type="TEXT" />
+				<column name="uri_geo_area" type="TEXT" />
+		</addColumn>
+    </changeSet>
+    <changeSet id="REDIRECT-URI-CONVERT-TEXT-TO-JSON" author="Shobhit Tyagi" dbms="postgresql">        
+        <sql>ALTER TABLE client_redirect_uri ALTER COLUMN uri_act_type TYPE json USING uri_act_type::JSON</sql>
+        <sql>ALTER TABLE client_redirect_uri ALTER COLUMN uri_geo_area TYPE json USING uri_geo_area::JSON</sql>
+	</changeSet>
+	<changeSet id="REDIRECT-URI-DEFAULT-VALUE" author="Shobhit Tyagi" dbms="postgresql">
+		<sql>ALTER TABLE client_redirect_uri ALTER COLUMN uri_act_type SET DEFAULT '{"import-works-wizard" : ["Articles"]}'</sql>
+		<sql>ALTER TABLE client_redirect_uri ALTER COLUMN uri_geo_area SET DEFAULT '{"import-works-wizard" : ["Global"]}'</sql>
+	</changeSet>
+	<changeSet id="REDIRECT-URI-DEFAULT-VALUE-TO-EXISTING" author="Shobhit Tyagi" dbms="postgresql">
+		<sql>UPDATE client_redirect_uri SET uri_act_type ='{"import-works-wizard" : ["Articles"]}'</sql>
+		<sql>UPDATE client_redirect_uri SET uri_geo_area ='{"import-works-wizard" : ["Global"]}'</sql>
+	</changeSet>
+</databaseChangeLog>

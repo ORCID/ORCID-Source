@@ -29,7 +29,7 @@ import org.orcid.jaxb.model.record.WorkTitle;
 
 public class ActivityValidator {
 
-    public static void validateWork(Work work) {
+    public static void validateWork(Work work, boolean createFlag) {
         WorkTitle title = work.getWorkTitle();
         if (title == null || title.getTitle() == null || StringUtils.isEmpty(title.getTitle().getContent())) {
             throw new ActivityTitleValidationException();
@@ -40,7 +40,7 @@ public class ActivityValidator {
                 throw new ActivityIdentifierValidationException();
         }
         
-        if (work.getPutCode() != null) {
+        if (work.getPutCode() != null && createFlag) {
                 throw new InvalidPutCodeException();
         }
     }

@@ -36,6 +36,7 @@ import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileFundingManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.WorkManager;
+import org.orcid.core.security.DeprecatedException;
 import org.orcid.core.security.visibility.aop.AccessControl;
 import org.orcid.core.security.visibility.filter.VisibilityFilterV2;
 import org.orcid.jaxb.model.groupid.GroupIdRecord;
@@ -54,6 +55,8 @@ import org.orcid.jaxb.model.record.summary.PeerReviewSummary;
 import org.orcid.jaxb.model.record.summary.WorkSummary;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.WebhookDao;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 /**
@@ -104,6 +107,9 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     @Resource
     private GroupIdRecordManager groupIdRecordManager;
 
+	@Value("${org.orcid.core.baseUri}")
+	private String baseUrl;
+    
     @Override
     public Response viewStatusText() {
         return Response.ok(STATUS_OK_MESSAGE).build();
@@ -122,6 +128,13 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     @Override
     @AccessControl(requiredScope = ScopePathType.ACTIVITIES_READ_LIMITED)
     public Response viewActivities(String orcid) {
+    	ProfileEntity entity = profileEntityManager.findByOrcid(orcid);
+    	if(profileDao.isProfileDeprecated(orcid)) {
+        	StringBuffer primary = new StringBuffer(baseUrl).append("/").append(entity.getPrimaryRecord().getId());
+        	DeprecatedException ex = new DeprecatedException();
+        	ex.setPrimary(primary.toString());
+        	throw ex;
+        }
         ActivitiesSummary as = visibilityFilter.filter(profileEntityManager.getActivitiesSummary(orcid));
         ActivityUtils.cleanEmptyFields(as);
         ActivityUtils.setPathToActivity(as, orcid);
@@ -165,7 +178,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
         if (!putCode.equals(work.getPutCode())) {
             throw new MismatchedPutCodeException("The put code in the URL was " + putCode + " whereas the one in the body was " + work.getPutCode());
         }
-        Work w = workManager.updateWork(orcid, work);
+        Work w = workManager.updateWork(orcid, work, true);
         return Response.ok(w).build();
     }
 

@@ -427,7 +427,7 @@ public class WorksController extends BaseWorkspaceController {
 
         Work updatedWork = workForm.toWork();
         // Edit work
-        workManager.updateWork(userOrcid, updatedWork);
+        workManager.updateWork(userOrcid, updatedWork, false);
     }
 
     /**

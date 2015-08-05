@@ -367,10 +367,26 @@
 											<multiselect multiple="true" ng-model="rUri.scopes" options="scope as scope for scope in availableRedirectScopes"></multiselect>
 										</div>															
 									</div>
+									
 									<!-- Delete button -->
 									<div class="col-md-1 col-sm-1 col-xs-12">
 					    				<a href="" id="delete-redirect-uri" ng-click="deleteRedirectUri($index)" class="glyphicon glyphicon-trash grey"></a>
 									</div>
+									<br><br>
+									<!-- Activity Type-->
+									<div class="col-md-6 col-sm-6 col-xs-12">
+										<div ng-show="rUri.type.value == 'import-works-wizard'">
+											<multiselect multiple="true" ng-model="rUri.actType.value[rUri.type.value]" options="actType as actType for actType in importWorkWizard['actTypeList']"></multiselect>
+										</div>
+									</div>
+									
+									<!-- Geographical Area-->
+									<div class="col-md-4 col-sm-4 col-xs-12">
+										<div ng-show="rUri.type.value == 'import-works-wizard'">
+											<multiselect multiple="true" ng-model="rUri.geoArea.value[rUri.type.value]" options="geoArea as geoArea for geoArea in importWorkWizard['geoAreaList']"></multiselect>
+										</div>
+									</div>
+									
 									<!-- Add button -->
 									<div class="col-md-1 col-sm-1 col-xs-12">
 					    				<a href="" id="load-empty-redirect-uri" ng-click="addRedirectUri()" class="glyphicon glyphicon-plus grey" ng-show="$last"></a>

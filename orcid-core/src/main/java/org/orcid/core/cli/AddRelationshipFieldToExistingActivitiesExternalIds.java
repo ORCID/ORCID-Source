@@ -138,6 +138,7 @@ public class AddRelationshipFieldToExistingActivitiesExternalIds {
         System.exit(0);
     }
 
+    @SuppressWarnings("resource")
     private void init() {
         ApplicationContext context = new ClassPathXmlApplicationContext("orcid-core-context.xml");
         workDao = (WorkDao) context.getBean("workDao");
