@@ -2638,6 +2638,8 @@ orcidNgModule.controller('ResetPasswordCtrl', ['$scope', '$compile', 'commonSrvc
 
 orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc', function ($scope, $compile, commonSrvc) {
     $scope.privacyHelp = {};
+    var loadDate = new Date();
+    $scope.loadTime = loadDate.getTime();
 
     $scope.toggleClickPrivacyHelp = function(key) {
         if (!document.documentElement.className.contains('no-touch'))
@@ -2679,7 +2681,7 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
             console.log("error fetching register.json");
         });
     };
-
+    
     $scope.getDuplicates = function(){
         $.ajax({
             //url: getBaseUri() + 'dupicateResearcher.json?familyNames=test&givenNames=test',
@@ -2688,6 +2690,12 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
             success: function(data) {
                    $scope.duplicates = data;
                 $scope.$apply();
+            	var diffDate = new Date();
+            	// reg was filled out to fast reload the page
+            	if ($scope.loadTime + 5000 > diffDate.getTime()) {
+            		window.location.reload();
+            		return;
+            	}
                 if ($scope.duplicates.length > 0 ) {
                     $scope.showDuplicatesColorBox();
                 } else {
