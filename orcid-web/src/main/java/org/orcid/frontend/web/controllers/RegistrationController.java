@@ -638,7 +638,14 @@ public class RegistrationController extends BaseController {
         return resetPasswordForm;
     }
 
-    private void resetPasswordValidateFields(Text password, Text retypedPassword) {
+    private void resetPasswordValidateFields(Text password, Text retypedPassword) {  
+        if(password == null) {
+            password = new Text();
+        }
+        
+        if(retypedPassword == null) {
+            retypedPassword = new Text();
+        }
         password.setErrors(new ArrayList<String>());
         retypedPassword.setErrors(new ArrayList<String>());
 
