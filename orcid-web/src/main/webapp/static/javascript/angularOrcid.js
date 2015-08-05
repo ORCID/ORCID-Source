@@ -2748,6 +2748,7 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
 
     $scope.postRegisterConfirm = function () {
         $scope.showProcessingColorBox();
+        $scope.register.captchaNumClient = $scope.register.captchaNumServer / 2;
         $.ajax({
             url: getBaseUri() + '/registerConfirm.json',
             type: 'POST',
