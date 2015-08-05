@@ -121,6 +121,9 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
 
         // If request comes from the API, perform the validations
         if (isApiRequest) {
+            //Validate it have at least one ext id
+            validateExternalIdentifiers(peerReview);
+            
             List<PeerReviewEntity> peerReviews = peerReviewDao.getByUser(orcid);
             // If it is the user adding the peer review, allow him to add
             // duplicates
@@ -253,6 +256,12 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
         }        
     }
     
+    private void validateExternalIdentifiers(PeerReview peerReview) {
+        if(peerReview.getExternalIdentifiers() == null || peerReview.getExternalIdentifiers().getExternalIdentifier().isEmpty()) {
+            throw new OrcidValidationException(localeManager.resolveMessage("peer_review.external_id.one_required"));
+        }
+    }
+    
     private void checkExternalIdentifiers(PeerReview newer, PeerReview existing) {
         WorkExternalIdentifiers existingExtIds = existing.getExternalIdentifiers();
         WorkExternalIdentifiers newExtIds = newer.getExternalIdentifiers();
@@ -260,7 +269,8 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
             for(WorkExternalIdentifier existingId : existingExtIds.getExternalIdentifier()) {
                 for(WorkExternalIdentifier newId : newExtIds.getExternalIdentifier()) {
                     if(existingId.equals(newId)){
-                        throw new OrcidValidationException(localeManager.resolveMessage("peer_review.external_id.duplicated", newId.getWorkExternalIdentifierId().getContent()));
+                        String errorMessage = localeManager.resolveMessage("peer_review.external_id.duplicated", newId.getWorkExternalIdentifierId().getContent());
+                        throw new OrcidValidationException(errorMessage);
                     }
                 }
             }

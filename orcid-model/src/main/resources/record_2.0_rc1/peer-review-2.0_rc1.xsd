@@ -53,7 +53,7 @@
 								</xs:documentation>
 							</xs:annotation>
 						</xs:element>
-						<xs:element name="review-identifiers" type="peer-review:review-external-identifiers"
+						<xs:element name="review-identifiers" type="work:work-external-identifiers"
 							minOccurs="1">
 							<xs:annotation>
 								<xs:documentation>Unique identifier(s) of the review. <i>This identifier refers to the review itself, NOT to the item that was reviewed.</i> At least one identifier is required. In the case where there is no persistent unique identifier for the review, the source providing the data should generate a locally-sourced unique identifier for the review (e.g., type "organization-defined-type"). This field will be checked when adding new reviews to prevent double counting of review activity.
@@ -257,16 +257,5 @@
 				</xs:annotation>
 			</xs:enumeration>
 		</xs:restriction>
-	</xs:simpleType>
-	<xs:complexType name="review-external-identifiers">
-		<xs:annotation>
-			<xs:documentation>Container for storing the external references to
-				the work.
-			</xs:documentation>
-		</xs:annotation>
-		<xs:sequence>
-			<xs:element maxOccurs="unbounded" minOccurs="1"
-				name="work-external-identifier" type="work:external-identifier" />
-		</xs:sequence>
-	</xs:complexType>
+	</xs:simpleType>	
 </xs:schema>
