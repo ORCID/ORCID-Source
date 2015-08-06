@@ -315,10 +315,12 @@ public class RegistrationController extends BaseController {
         validateRegistrationFields(request, reg);
         
         if(reg.getGrecaptcha() == null) {
-            reg.getErrors().add("recaptcha-failure");
+            setError(reg.getGrecaptcha(), "registrationForm.recaptcha.error");
+            setError(reg, "registrationForm.recaptcha.error");
         }
         if (!recaptchaVerifier.verify(reg.getGrecaptcha().getValue())){
-            reg.getErrors().add("recaptcha-failure");            
+            setError(reg.getGrecaptcha(), "registrationForm.recaptcha.error");
+            setError(reg, "registrationForm.recaptcha.error");           
         } else {
             request.getSession().setAttribute("verified-recaptcha", reg.getGrecaptcha().getValue());
         }
@@ -330,12 +332,9 @@ public class RegistrationController extends BaseController {
     public @ResponseBody Redirect setRegisterConfirm(HttpServletRequest request, HttpServletResponse response, @RequestBody Registration reg) {
         Redirect r = new Redirect();
 
+        //If the captcha verified key is not in the session, redirect to the login page
         if(request.getSession().getAttribute("verified-recaptcha") == null || PojoUtil.isEmpty(reg.getGrecaptcha()) || !reg.getGrecaptcha().getValue().equals(request.getSession().getAttribute("verified-recaptcha"))) {
-            if(reg.getErrors() == null) {
-                reg.setErrors(new ArrayList<String>());
-            }
-                
-            r.getErrors().add("Please revalidate at /register.json");
+            r.setUrl(getBaseUri() + "/register");
             return r;
         }
         
