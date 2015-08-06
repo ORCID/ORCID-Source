@@ -2642,7 +2642,7 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
     $scope.response = null;
     
     $scope.model = {
-    	key: '6Ldj5woTAAAAADtaHCg0XpifkzKS9D7Pf8Nl5ije'
+    	key: '6LcH3woTAAAAACtvRjiHlFdBR-T7bTM4pZc1Q1TP'
     };
     
     

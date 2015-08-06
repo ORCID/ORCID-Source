@@ -167,6 +167,9 @@ public class RegistrationController extends BaseController {
 
     @Resource
     private EmailDao emailDao;
+    
+    @Resource
+    private RecaptchaVerifier recaptchaVerifier;
 
     public void setEncryptionManager(EncryptionManager encryptionManager) {
         this.encryptionManager = encryptionManager;
@@ -323,7 +326,14 @@ public class RegistrationController extends BaseController {
         copyErrors(reg.getPassword(), reg);
         copyErrors(reg.getPasswordConfirm(), reg);
         copyErrors(reg.getTermsOfUse(), reg);
-
+        
+        if(reg.getGrecaptcha() == null) {
+            reg.getErrors().add("There was a problem with the recaptcha");
+        }
+        if (!recaptchaVerifier.verify(reg.getGrecaptcha().getValue())){
+            reg.getErrors().add("There was a problem with the recaptcha");            
+        }
+        
         return reg;
     }
 
@@ -341,15 +351,7 @@ public class RegistrationController extends BaseController {
         if(reg.getCaptchaNumServer() == 0 || reg.getCaptchaNumClient() != reg.getCaptchaNumServer()/2) {
         	r.setUrl(getBaseUri() + "/register");
         	return r;
-        }
-
-        //String recaptchaResponse = reg.getG_recaptcha_response().getValue();
-        LOGGER.debug("-->"+request.getParameter("g-recaptcha-response"));
-        LOGGER.debug("-->"+reg.getGrecaptcha());
-        if (!RecaptchaVerifier.verify(request.getParameter("g-recaptcha-response"))){
-            reg.getErrors().add("There was a problem with the recaptcha");
-            return r;
-        }
+        }        
 
         createMinimalRegistrationAndLogUserIn(request, toProfile(reg));
         String redirectUrl = calculateRedirectUrl(request, response);
