@@ -322,7 +322,9 @@ public class RegistrationController extends BaseController {
             reg.getGrecaptcha().setErrors(new ArrayList<String>());
             setError(reg.getGrecaptcha(), "registrationForm.recaptcha.error");
             setError(reg, "registrationForm.recaptcha.error");
-        }        
+        } else {
+            reg.getGrecaptcha().setErrors(new ArrayList<String>());
+        }       
                 
         if(request.getSession().getAttribute("verified-recaptcha-hash") != null) {
             if(!encryptionManager.encryptForExternalUse(reg.getGrecaptcha().getValue()).equals(request.getSession().getAttribute("verified-recaptcha-hash"))) {

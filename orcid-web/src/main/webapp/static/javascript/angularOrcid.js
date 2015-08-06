@@ -2724,7 +2724,7 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
     };
 
     $scope.postRegister = function () {
-    	var valid;
+    	
         if (basePath.startsWith(baseUrl + 'oauth')) {
             var clientName = $('div#RegistrationCtr input[name="client_name"]').val();
             $scope.register.referredBy = $('div#RegistrationCtr input[name="client_id"]').val();
@@ -2752,16 +2752,8 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
                         $scope.showProcessingColorBox();
                         $scope.getDuplicates();
                     }
-            	} else {  
-            	    console.log('There might be an error!!!!')
-            	    console.log($scope.register.errors)
-            	    //Check for the recaptcha error
-            	    for(var i = 0; i < $scope.register.errors.length ; i++) {
-            	        var error = $scope.register.errors[i];
-            	        if(error == 'recaptcha-failure') {            	            
-            	            vcRecaptchaService.reload($scope.widgetId);
-            	        }            	            
-            	    }                    
+            	} else {            	    
+            	    vcRecaptchaService.reload($scope.widgetId);
                 }
             }
         }).fail(function() {
@@ -8677,7 +8669,7 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
             auth_scope_prefix = 'AuthorizeP_';
         $scope.showProcessingColorBox();
         $scope.registrationForm.grecaptcha = "hello"; // extract this from the widget and wire it up to Registration.java to make it work!
-        console.log($scope.registrationForm);
+        
         $.ajax({
             url: getBaseUri() + '/oauth/custom/registerConfirm.json',
             type: 'POST',
