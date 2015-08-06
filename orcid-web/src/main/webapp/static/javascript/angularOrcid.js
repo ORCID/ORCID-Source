@@ -2745,13 +2745,7 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
             contentType: 'application/json;charset=UTF-8',
             dataType: 'json',
             success: function(data) {
-            	$scope.register = data;
-            	console.log();
-            	console.log();
-            	console.log($scope.register.grecaptcha);
-            	console.log($scope.register.errors);
-            	console.log();
-            	console.log();
+            	$scope.register = data;            	
             	$scope.$apply();                
             	if ($scope.register.errors == undefined || $scope.register.errors == undefined || $scope.register.errors.length == 0) {
                     if ($scope.register.errors.length == 0) {
@@ -2759,10 +2753,12 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
                         $scope.getDuplicates();
                     }
             	} else {  
+            	    console.log('There might be an error!!!!')
+            	    console.log($scope.register.errors)
             	    //Check for the recaptcha error
-            	    for(var error in $scope.register.errors) {
-            	        if(error == 'recaptcha-failure') {
-            	            console.log('!!!!!! recaptcha error found');
+            	    for(var i = 0; i < $scope.register.errors.length ; i++) {
+            	        var error = $scope.register.errors[i];
+            	        if(error == 'recaptcha-failure') {            	            
             	            vcRecaptchaService.reload($scope.widgetId);
             	        }            	            
             	    }                    
