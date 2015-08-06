@@ -20,8 +20,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.Transient;
-
 public class Registration implements ErrorsInterface, Serializable {
     /**
      * 
@@ -58,9 +56,8 @@ public class Registration implements ErrorsInterface, Serializable {
 
     private Text sendEmailFrequencyDays;
     
-    @Transient
     private long captchaNumServer;
-    @Transient
+    
     private long captchaNumClient;
 
     public Registration() {
