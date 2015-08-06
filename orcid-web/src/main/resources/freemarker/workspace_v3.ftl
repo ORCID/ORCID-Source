@@ -386,7 +386,7 @@
 							<div class="row wizards">
 								<div class="col-md-12 col-sm-12 col-xs-12">
 				    		    	<div ng-repeat="wtw in workImportWizards">
-				                   		<strong><a ng-click="openImportWizardUrl('<@orcid.rootPath '/oauth/authorize'/>', wtw)">{{wtw.displayName}}</a></strong><br />					                   							                   		                		
+				                   		<strong><a ng-click="openImportWizardUrlFilter('<@orcid.rootPath '/oauth/authorize'/>', wtw)">{{wtw.displayName}}</a></strong><br />					                   							                   		                		
 				                 		<div class="justify">												
 											<p class="wizard-description" ng-class="{'ellipsis-on' : wizardDescExpanded[wtw.clientId] == false || wizardDescExpanded[wtw.clientId] == null}">
 												{{wtw.shortDescription}}													

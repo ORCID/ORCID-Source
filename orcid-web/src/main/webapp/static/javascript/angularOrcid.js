@@ -4829,6 +4829,11 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     $scope.openImportWizardUrl = function(url) {
         openImportWizardUrl(url);
     };
+    
+    $scope.openImportWizardUrlFilter = function(url, param) {
+    	url = url + '?client_id='+param.clientId+'&response_type=code&scope='+param.redirectUris.redirectUri[0].scopeAsSingleString+'&redirect_uri='+param.redirectUris.redirectUri[0].value;
+    	openImportWizardUrl(url);
+    };
 
     $scope.setAddWorkPrivacy = function(priv, $event) {
         $event.preventDefault();
