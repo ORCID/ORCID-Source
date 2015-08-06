@@ -2734,7 +2734,10 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
         } else {
             orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration-Submit', 'Website']);
             $scope.register.creationType.value = "Direct";
-        }
+        }        
+        
+        $scope.register.grecaptcha.value = $scope.response; //Adding the response to the register object
+        
         $.ajax({
             url: getBaseUri() + '/register.json',
             type: 'POST',
@@ -2743,6 +2746,7 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
             dataType: 'json',
             success: function(data) {
             	$scope.register = data;
+            	console.log($scope.register);
                 $scope.$apply();
             	if (valid) {
                     if ($scope.register.errors.length == 0) {

@@ -145,7 +145,8 @@
          </div>
 	</div>
     <div>
-        <div class="relative"  style="margin-bottom: 15px;">			
+        <div class="relative"  style="margin-bottom: 15px;">
+			<!-- <div class="g-recaptcha" data-sitekey="6Ldj5woTAAAAADtaHCg0XpifkzKS9D7Pf8Nl5ije"></div> -->
 			 <div
                 vc-recaptcha
                 theme="'light'"
