@@ -2746,15 +2746,26 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
             dataType: 'json',
             success: function(data) {
             	$scope.register = data;
-            	console.log($scope.register);
-                $scope.$apply();
-            	if (valid) {
+            	console.log();
+            	console.log();
+            	console.log($scope.register.grecaptcha);
+            	console.log($scope.register.errors);
+            	console.log();
+            	console.log();
+            	$scope.$apply();                
+            	if ($scope.register.errors == undefined || $scope.register.errors == undefined || $scope.register.errors.length == 0) {
                     if ($scope.register.errors.length == 0) {
                         $scope.showProcessingColorBox();
                         $scope.getDuplicates();
                     }
-            	} else {                
-                    vcRecaptchaService.reload($scope.widgetId);
+            	} else {  
+            	    //Check for the recaptcha error
+            	    for(var error in $scope.register.errors) {
+            	        if(error == 'recaptcha-failure') {
+            	            console.log('!!!!!! recaptcha error found');
+            	            vcRecaptchaService.reload($scope.widgetId);
+            	        }            	            
+            	    }                    
                 }
             }
         }).fail(function() {
@@ -2850,6 +2861,7 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
     
     
     $scope.setWidgetId = function (widgetId) {
+        console.log('Widget ID: ' + widgetId)
     	$scope.widgetId = widgetId;
     };
 

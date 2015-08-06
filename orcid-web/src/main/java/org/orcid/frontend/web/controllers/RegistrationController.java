@@ -312,28 +312,17 @@ public class RegistrationController extends BaseController {
 
     @RequestMapping(value = "/register.json", method = RequestMethod.POST)
     public @ResponseBody Registration setRegister(HttpServletRequest request, @RequestBody Registration reg) {
-        reg.setErrors(new ArrayList<String>());
-
-        registerGivenNameValidate(reg);
-        registerPasswordValidate(reg);
-        registerPasswordConfirmValidate(reg);
-        regEmailValidate(request, reg);
-        registerTermsOfUseValidate(reg);
-        
-        copyErrors(reg.getEmailConfirm(), reg);
-        copyErrors(reg.getEmail(), reg);
-        copyErrors(reg.getGivenNames(), reg);
-        copyErrors(reg.getPassword(), reg);
-        copyErrors(reg.getPasswordConfirm(), reg);
-        copyErrors(reg.getTermsOfUse(), reg);
+        validateRegistrationFields(request, reg);
         
         if(reg.getGrecaptcha() == null) {
-            reg.getErrors().add("There was a problem with the recaptcha");
+            reg.getErrors().add("recaptcha-failure");
         }
         if (!recaptchaVerifier.verify(reg.getGrecaptcha().getValue())){
-            reg.getErrors().add("There was a problem with the recaptcha");            
+            reg.getErrors().add("recaptcha-failure");            
+        } else {
+            request.getSession().setAttribute("verified-recaptcha", reg.getGrecaptcha().getValue());
         }
-        
+                        
         return reg;
     }
 
@@ -341,8 +330,17 @@ public class RegistrationController extends BaseController {
     public @ResponseBody Redirect setRegisterConfirm(HttpServletRequest request, HttpServletResponse response, @RequestBody Registration reg) {
         Redirect r = new Redirect();
 
+        if(request.getSession().getAttribute("verified-recaptcha") == null || PojoUtil.isEmpty(reg.getGrecaptcha()) || !reg.getGrecaptcha().getValue().equals(request.getSession().getAttribute("verified-recaptcha"))) {
+            if(reg.getErrors() == null) {
+                reg.setErrors(new ArrayList<String>());
+            }
+                
+            r.getErrors().add("Please revalidate at /register.json");
+            return r;
+        }
+        
         // make sure validation still passes
-        reg = setRegister(request, reg);
+        validateRegistrationFields(request, reg);
         if (reg.getErrors() != null && reg.getErrors().size() > 0) {
             r.getErrors().add("Please revalidate at /register.json");
             return r;
@@ -359,6 +357,23 @@ public class RegistrationController extends BaseController {
         return r;
     }
 
+    private void validateRegistrationFields(HttpServletRequest request, Registration reg) {
+        reg.setErrors(new ArrayList<String>());
+
+        registerGivenNameValidate(reg);
+        registerPasswordValidate(reg);
+        registerPasswordConfirmValidate(reg);
+        regEmailValidate(request, reg);
+        registerTermsOfUseValidate(reg);
+        
+        copyErrors(reg.getEmailConfirm(), reg);
+        copyErrors(reg.getEmail(), reg);
+        copyErrors(reg.getGivenNames(), reg);
+        copyErrors(reg.getPassword(), reg);
+        copyErrors(reg.getPasswordConfirm(), reg);
+        copyErrors(reg.getTermsOfUse(), reg);
+    }
+    
     private String calculateRedirectUrl(HttpServletRequest request, HttpServletResponse response) {
         SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
         if (savedRequest != null) {
