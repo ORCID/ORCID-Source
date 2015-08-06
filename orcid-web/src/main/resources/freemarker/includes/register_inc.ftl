@@ -140,13 +140,19 @@
                 <label class="checkbox">
                     <input type="checkbox" tabindex="8" name="sendOrcidNews" ng-model="register.sendOrcidNews.value"/>
                     ${springMacroRequestContext.getMessage("register.labelsendinformation")}
-                </label>
+                </lakel>
             </#if>
          </div>
 	</div>
     <div>
-        <div class="relative"  style="margin-bottom: 15px;">
-			<div class="g-recaptcha" data-sitekey="6Ldj5woTAAAAADtaHCg0XpifkzKS9D7Pf8Nl5ije"></div>
+        <div class="relative"  style="margin-bottom: 15px;">			
+			 <div
+                vc-recaptcha
+                theme="'light'"
+                key="model.key"
+                on-create="setWidgetId(widgetId)"
+                on-success="setResponse(response)"
+            ></div>
         </div>
 	</div>   
     <div>

@@ -47,6 +47,8 @@ if (typeof angular == 'undefined') {
     document.write(unescape("%3Cscript src='${staticCdn}/javascript/angularjs/1.2.28/angular-sanitize.min.js' type='text/javascript'%3E%3C/script%3E"));    
 }
 </script>
+<script src="https://www.google.com/recaptcha/api.js?onload=vcRecaptchaApiLoaded&render=explicit" async defer></script>
+<script src="${staticCdn}/javascript/angularjs/1.2.28/angular-recaptcha.min.js"></script>
 
 <script type="text/javascript" src="${staticCdn}/javascript/angularOrcid.js?v=${ver}"></script>
 
