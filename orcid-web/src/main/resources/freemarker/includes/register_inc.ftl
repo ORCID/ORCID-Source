@@ -140,7 +140,7 @@
                 <label class="checkbox">
                     <input type="checkbox" tabindex="8" name="sendOrcidNews" ng-model="register.sendOrcidNews.value"/>
                     ${springMacroRequestContext.getMessage("register.labelsendinformation")}
-                </lakel>
+                </label>
             </#if>
          </div>
 	</div>
