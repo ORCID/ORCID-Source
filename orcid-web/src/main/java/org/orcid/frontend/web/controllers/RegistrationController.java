@@ -261,17 +261,8 @@ public class RegistrationController extends BaseController {
     }
     
     public long generateCaptcha() {
-    	long numCheck = 0;
-    	while(true) {
-		 	StringBuilder strBuf = new StringBuilder("6");
-		 	for(int i = 0; i < 6; i ++) {
-		    	strBuf.append((char)('0' + rand.nextInt(10)));
-		    }
-		    numCheck = Long.parseLong(strBuf.toString());
-		    if(numCheck %2 == 0) {
-		    	break;
-		    }
-	 	}
+    	int numCheck = rand.nextInt(1000000);
+    	if(numCheck %2 != 0) numCheck +=1;
 	 	return numCheck;
 	}
 
