@@ -2724,7 +2724,7 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
     };
 
     $scope.postRegister = function () {
-    	var valid;
+    	
         if (basePath.startsWith(baseUrl + 'oauth')) {
             var clientName = $('div#RegistrationCtr input[name="client_name"]').val();
             $scope.register.referredBy = $('div#RegistrationCtr input[name="client_id"]').val();
@@ -2759,7 +2759,7 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
             	    for(var i = 0; i < $scope.register.errors.length ; i++) {
             	        var error = $scope.register.errors[i];
             	        if(error == 'recaptcha-failure') {            	            
-            	            vcRecaptchaService.reload($scope.widgetId);
+            	            vcRecaptchaService.reload($scope.widgetId);            	            
             	        }            	            
             	    }                    
                 }
