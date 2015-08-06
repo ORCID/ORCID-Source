@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -131,6 +132,8 @@ public class RegistrationController extends BaseController {
 
     final static Integer DUP_SEARCH_ROWS = 25;
 
+    private static Random rand = new Random();
+    
     @Resource
     private OrcidUrlManager orcidUrlManager;
 
@@ -251,9 +254,17 @@ public class RegistrationController extends BaseController {
                     LOGGER.info("error parsing users family name from oauth url", e);
                 }
         }
-
+        long captcha = generateCaptcha();
+		reg.setCaptchaNumServer(captcha);
+		reg.setCaptchaNumClient(0);
         return reg;
     }
+    
+    public long generateCaptcha() {
+    	int numCheck = rand.nextInt(1000000);
+    	if(numCheck %2 != 0) numCheck +=1;
+	 	return numCheck;
+	}
 
     public static OrcidProfile toProfile(Registration reg) {
         OrcidProfile profile = new OrcidProfile();
@@ -326,6 +337,11 @@ public class RegistrationController extends BaseController {
             return r;
         }
 
+        if(reg.getCaptchaNumServer() == 0 || reg.getCaptchaNumClient() != reg.getCaptchaNumServer()/2) {
+        	r.setUrl(getBaseUri() + "/register");
+        	return r;
+        }
+        
         createMinimalRegistrationAndLogUserIn(request, toProfile(reg));
         String redirectUrl = calculateRedirectUrl(request, response);
         r.setUrl(redirectUrl);

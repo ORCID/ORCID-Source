@@ -55,6 +55,10 @@ public class Registration implements ErrorsInterface, Serializable {
     private Text referredBy;
 
     private Text sendEmailFrequencyDays;
+    
+    private long captchaNumServer;
+    
+    private long captchaNumClient;
 
     public Registration() {
         errors = new ArrayList<String>();
@@ -193,5 +197,21 @@ public class Registration implements ErrorsInterface, Serializable {
     public void setSendEmailFrequencyDays(Text sendEmailFrequencyDays) {
         this.sendEmailFrequencyDays = sendEmailFrequencyDays;
     }
+
+	public long getCaptchaNumClient() {
+		return captchaNumClient;
+	}
+
+	public void setCaptchaNumClient(long captchaNumClient) {
+		this.captchaNumClient = captchaNumClient;
+	}
+
+	public long getCaptchaNumServer() {
+		return captchaNumServer;
+	}
+
+	public void setCaptchaNumServer(long captchaNumServer) {
+		this.captchaNumServer = captchaNumServer;
+	}
 
 }
