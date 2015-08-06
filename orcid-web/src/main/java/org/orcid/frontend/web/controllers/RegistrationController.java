@@ -52,6 +52,7 @@ import org.orcid.frontend.web.forms.ChangeSecurityQuestionForm;
 import org.orcid.frontend.web.forms.EmailAddressForm;
 import org.orcid.frontend.web.forms.OneTimeResetPasswordForm;
 import org.orcid.frontend.web.forms.PasswordTypeAndConfirmForm;
+import org.orcid.frontend.web.util.RecaptchaVerifier;
 import org.orcid.jaxb.model.message.ActivitiesVisibilityDefault;
 import org.orcid.jaxb.model.message.Claimed;
 import org.orcid.jaxb.model.message.CompletionDate;
@@ -315,7 +316,7 @@ public class RegistrationController extends BaseController {
         registerPasswordConfirmValidate(reg);
         regEmailValidate(request, reg);
         registerTermsOfUseValidate(reg);
-
+        
         copyErrors(reg.getEmailConfirm(), reg);
         copyErrors(reg.getEmail(), reg);
         copyErrors(reg.getGivenNames(), reg);
@@ -336,12 +337,20 @@ public class RegistrationController extends BaseController {
             r.getErrors().add("Please revalidate at /register.json");
             return r;
         }
-
+        
         if(reg.getCaptchaNumServer() == 0 || reg.getCaptchaNumClient() != reg.getCaptchaNumServer()/2) {
         	r.setUrl(getBaseUri() + "/register");
         	return r;
         }
-        
+
+        //String recaptchaResponse = reg.getG_recaptcha_response().getValue();
+        LOGGER.debug("-->"+request.getParameter("g-recaptcha-response"));
+        LOGGER.debug("-->"+reg.getGrecaptcha());
+        if (!RecaptchaVerifier.verify(request.getParameter("g-recaptcha-response"))){
+            reg.getErrors().add("There was a problem with the recaptcha");
+            return r;
+        }
+
         createMinimalRegistrationAndLogUserIn(request, toProfile(reg));
         String redirectUrl = calculateRedirectUrl(request, response);
         r.setUrl(redirectUrl);

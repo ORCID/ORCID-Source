@@ -8642,6 +8642,8 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
         if($scope.enablePersistentToken)
             auth_scope_prefix = 'AuthorizeP_';
         $scope.showProcessingColorBox();
+        $scope.registrationForm.grecaptcha = "hello"; // extract this from the widget and wire it up to Registration.java to make it work!
+        console.log($scope.registrationForm);
         $.ajax({
             url: getBaseUri() + '/oauth/custom/registerConfirm.json',
             type: 'POST',

@@ -62,3 +62,5 @@ if (typeof angular == 'undefined') {
         (document.getElementsByTagName('head')[0]||document.getElementsByTagName('body')[0]).appendChild( mtiTracking );
    })();
 </script>
+
+<script src="https://www.google.com/recaptcha/api.js"></script>

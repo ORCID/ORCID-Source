@@ -146,6 +146,11 @@
 	</div>
     <div>
         <div class="relative"  style="margin-bottom: 15px;">
+			<div class="g-recaptcha" data-sitekey="6Ldj5woTAAAAADtaHCg0XpifkzKS9D7Pf8Nl5ije"></div>
+        </div>
+	</div>   
+    <div>
+        <div class="relative"  style="margin-bottom: 15px;">
             <label>${springMacroRequestContext.getMessage("register.labelTermsofUse")} <span class="required"  ng-class="{'text-error':register.termsOfUse.value == false}">*</span></label>
             <label class="checkbox" style="width: 100%">
             <input type="checkbox" tabindex="9" name="acceptTermsAndConditions" ng-model="register.termsOfUse.value" ng-change="serverValidate('TermsOfUse')" />
