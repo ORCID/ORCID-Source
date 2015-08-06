@@ -64,7 +64,9 @@
         <addAutoIncrement tableName="group_id_record" columnName="id" columnDataType="bigint"/>
     </changeSet>
     
-    <changeSet id="UPDATE-DESCRIPTION-FIELD-SIZE" author="Shobhit Tyagi" dbms="postgresql">    	
+    <changeSet id="UPDATE-FIELDS-SIZE" author="Shobhit Tyagi" dbms="postgresql">    	
+        <sql>ALTER TABLE group_id_record ALTER COLUMN group_id TYPE VARCHAR(1000)</sql>
+        <sql>ALTER TABLE group_id_record ALTER COLUMN group_name TYPE VARCHAR(1000)</sql>
         <sql>ALTER TABLE group_id_record ALTER COLUMN group_description TYPE VARCHAR(1000)</sql>
     </changeSet>
 </databaseChangeLog>

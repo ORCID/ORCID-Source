@@ -12,6 +12,15 @@ In order to get access to these scopes, one should manually map the scopes with 
 
 ``insert into client_scope values(<Client ID>,'/group-id-record/read','2015-07-20 14:08:42.128','2015-07-20 14:08:42.128' );``
 
+##### Generate the input XML >>>
+
+The maximum length of the following fields should not exceed :
+
+Name : 1000 chars
+Groupid : 1000 chars
+Decription : 1000 chars
+
+
 ##### To use the API >>>
 
 1) Get the access_token :
