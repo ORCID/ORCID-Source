@@ -205,6 +205,10 @@ public class RegistrationController extends BaseController {
 
     @RequestMapping(value = "/register.json", method = RequestMethod.GET)
     public @ResponseBody Registration getRegister(HttpServletRequest request, HttpServletResponse response) {
+        //Remove the session hash if needed
+        if(request.getSession().getAttribute("verified-recaptcha-hash") != null) {
+            request.getSession().removeAttribute("verified-recaptcha-hash");
+        }
         Registration reg = new Registration();
 
         reg.getEmail().setRequired(true);
@@ -318,13 +322,20 @@ public class RegistrationController extends BaseController {
             reg.getGrecaptcha().setErrors(new ArrayList<String>());
             setError(reg.getGrecaptcha(), "registrationForm.recaptcha.error");
             setError(reg, "registrationForm.recaptcha.error");
-        }
-        if (!recaptchaVerifier.verify(reg.getGrecaptcha().getValue())){
+        }        
+                
+        if(request.getSession().getAttribute("verified-recaptcha-hash") != null) {
+            if(!encryptionManager.encryptForExternalUse(reg.getGrecaptcha().getValue()).equals(request.getSession().getAttribute("verified-recaptcha-hash"))) {
+                setError(reg.getGrecaptcha(), "registrationForm.recaptcha.error");
+                setError(reg, "registrationForm.recaptcha.error");
+            }            
+        } else if (!recaptchaVerifier.verify(reg.getGrecaptcha().getValue())){
             reg.getGrecaptcha().setErrors(new ArrayList<String>());
             setError(reg.getGrecaptcha(), "registrationForm.recaptcha.error");
             setError(reg, "registrationForm.recaptcha.error");           
         } else {
             request.getSession().setAttribute("verified-recaptcha", reg.getGrecaptcha().getValue());
+            request.getSession().setAttribute("verified-recaptcha-hash", encryptionManager.encryptForExternalUse(reg.getGrecaptcha().getValue()));
         }
                         
         return reg;
@@ -332,6 +343,10 @@ public class RegistrationController extends BaseController {
 
     @RequestMapping(value = "/registerConfirm.json", method = RequestMethod.POST)
     public @ResponseBody Redirect setRegisterConfirm(HttpServletRequest request, HttpServletResponse response, @RequestBody Registration reg) {
+        //Remove the session hash if needed
+        if(request.getSession().getAttribute("verified-recaptcha-hash") != null) {
+            request.getSession().removeAttribute("verified-recaptcha-hash");
+        }
         Redirect r = new Redirect();
 
         //If the captcha verified key is not in the session, redirect to the login page
