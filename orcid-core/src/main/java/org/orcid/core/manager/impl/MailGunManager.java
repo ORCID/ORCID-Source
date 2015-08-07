@@ -72,6 +72,9 @@ public class MailGunManager {
     @Value("${com.mailgun.notify.apiUrl:https://api.mailgun.net/v2/samples.mailgun.org/messages}")
     private String notifyApiUrl;
 
+    @Value("${com.mailgun.dedicated_ip.apiUrl:https://api.mailgun.net/v2/samples.mailgun.org/messages}")
+    private String dedicatedIpApiUrl;
+    
     @Value("${com.mailgun.testmode:yes}")
     private String testmode;
     
@@ -97,6 +100,8 @@ public class MailGunManager {
         if(custom) 
             webResource = client.resource(getNotifyApiUrl());
         //Else, check the from address to identify the domain
+        else if(to.trim().endsWith("@vt.edu") || to.trim().endsWith("@qq.com"))
+            webResource = client.resource(getDedicatedIpApiUrl());
         else if (from.trim().endsWith("@verify.orcid.org")) 
             webResource = client.resource(getVerifyApiUrl());
         else if (from.trim().endsWith("@notify.orcid.org")) 
@@ -157,4 +162,11 @@ public class MailGunManager {
         this.notifyApiUrl = notifyApiUrl;
     }
 
+    public String getDedicatedIpApiUrl() {
+        return dedicatedIpApiUrl;
+    }
+
+    public void setDedicatedIpApiUrl(String dedicatedIpApiUrl) {
+        this.dedicatedIpApiUrl = dedicatedIpApiUrl;
+    }      
 }
