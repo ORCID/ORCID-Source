@@ -81,7 +81,7 @@
 								</xs:documentation>
 							</xs:annotation>
 						</xs:element>
-						<xs:element name="review-group-id" type="common:group-id" minOccurs="0" maxOccurs="1">
+						<xs:element name="review-group-id" type="common:group-id" minOccurs="1" maxOccurs="1">
 							<xs:annotation>
 								<xs:documentation>Identifier for the group that this review should be a part of for aggregation purposes
 								</xs:documentation>
