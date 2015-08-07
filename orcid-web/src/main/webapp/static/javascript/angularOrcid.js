@@ -294,7 +294,7 @@ GroupedActivities.prototype.rmByPut = function(putCode) {
     return activity;
 };
 
-var orcidNgModule = angular.module('orcidApp', ['ngCookies','ngSanitize', 'ui.multiselect']);
+var orcidNgModule = angular.module('orcidApp', ['ngCookies','ngSanitize', 'ui.multiselect', 'vcRecaptcha']);
 
 orcidNgModule.directive('ngModelOnblur', function() {
     return {
@@ -2636,8 +2636,16 @@ orcidNgModule.controller('ResetPasswordCtrl', ['$scope', '$compile', 'commonSrvc
     $scope.getResetPasswordForm();
 }]);
 
-orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc', function ($scope, $compile, commonSrvc) {
+orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc', 'vcRecaptchaService', function ($scope, $compile, commonSrvc, vcRecaptchaService) {
     $scope.privacyHelp = {};
+    $scope.widgetId = null;
+    $scope.response = null;
+    
+    $scope.model = {
+    	key: orcidVar.recaptchaKey
+    };
+    
+    
     var loadDate = new Date();
     $scope.loadTime = loadDate.getTime();
 
@@ -2716,6 +2724,7 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
     };
 
     $scope.postRegister = function () {
+    	
         if (basePath.startsWith(baseUrl + 'oauth')) {
             var clientName = $('div#RegistrationCtr input[name="client_name"]').val();
             $scope.register.referredBy = $('div#RegistrationCtr input[name="client_id"]').val();
@@ -2725,7 +2734,10 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
         } else {
             orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration-Submit', 'Website']);
             $scope.register.creationType.value = "Direct";
-        }
+        }        
+        
+        $scope.register.grecaptcha.value = $scope.response; //Adding the response to the register object
+        
         $.ajax({
             url: getBaseUri() + '/register.json',
             type: 'POST',
@@ -2733,11 +2745,15 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
             contentType: 'application/json;charset=UTF-8',
             dataType: 'json',
             success: function(data) {
-                $scope.register = data;
-                $scope.$apply();
-                if ($scope.register.errors.length == 0) {
-                    $scope.showProcessingColorBox();
-                    $scope.getDuplicates();
+            	$scope.register = data;            	
+            	$scope.$apply();                
+            	if ($scope.register.errors == undefined || $scope.register.errors == undefined || $scope.register.errors.length == 0) {
+                    if ($scope.register.errors.length == 0) {
+                        $scope.showProcessingColorBox();
+                        $scope.getDuplicates();
+                    }
+            	} else {            	    
+            	    vcRecaptchaService.reload($scope.widgetId);
                 }
             }
         }).fail(function() {
@@ -2830,7 +2846,17 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
         if (cur.errors !== undefined && cur.errors.length > 0) valid = false;
         return valid ? '' : 'text-error';
     };
+    
+    
+    $scope.setWidgetId = function (widgetId) {
+        console.log('Widget ID: ' + widgetId)
+    	$scope.widgetId = widgetId;
+    };
 
+    $scope.setResponse = function (response) {
+        console.log('Yey response!');
+        $scope.response = response;
+    };
     //init
     $scope.getRegister();
     //$scope.getDuplicates();
@@ -8647,6 +8673,8 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
         if($scope.enablePersistentToken)
             auth_scope_prefix = 'AuthorizeP_';
         $scope.showProcessingColorBox();
+        $scope.registrationForm.grecaptcha = "hello"; // extract this from the widget and wire it up to Registration.java to make it work!
+        
         $.ajax({
             url: getBaseUri() + '/oauth/custom/registerConfirm.json',
             type: 'POST',

@@ -59,6 +59,8 @@ public class Registration implements ErrorsInterface, Serializable {
     private long captchaNumServer;
     
     private long captchaNumClient;
+    
+    private Text grecaptcha;
 
     public Registration() {
         errors = new ArrayList<String>();
@@ -76,6 +78,7 @@ public class Registration implements ErrorsInterface, Serializable {
         activitiesVisibilityDefault = new Visibility();
         referredBy = new Text();
         sendEmailFrequencyDays = new Text();
+        grecaptcha = new Text();
     }
 
     public List<String> getErrors() {
@@ -128,6 +131,10 @@ public class Registration implements ErrorsInterface, Serializable {
 
     public Text getPasswordConfirm() {
         return passwordConfirm;
+    }
+    
+    public Text getGrecaptcha(){
+        return grecaptcha;
     }
 
     public void setPasswordConfirm(Text passwordConfirm) {

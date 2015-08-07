@@ -145,6 +145,20 @@
          </div>
 	</div>
     <div>
+        <div class="relative"  style="margin-bottom: 15px;">			
+			 <div
+                vc-recaptcha
+                theme="'light'"
+                key="model.key"
+                on-create="setWidgetId(widgetId)"
+                on-success="setResponse(response)"
+            ></div>
+            <span class="orcid-error" ng-show="register.grecaptcha.errors.length > 0">
+				<div ng-repeat='error in register.grecaptcha.errors track by $index' ng-bind-html="error"></div>
+   			</span>
+        </div>
+	</div>   
+    <div>
         <div class="relative"  style="margin-bottom: 15px;">
             <label>${springMacroRequestContext.getMessage("register.labelTermsofUse")} <span class="required"  ng-class="{'text-error':register.termsOfUse.value == false}">*</span></label>
             <label class="checkbox" style="width: 100%">
