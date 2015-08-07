@@ -168,6 +168,8 @@ public class ThirdPartyLinkManagerImpl implements ThirdPartyLinkManager {
                 String prefefinedScopes = entity.getPredefinedClientScope();
                 redirectUri.setScope(new ArrayList<ScopePathType>(ScopePathType.getScopesFromSpaceSeparatedString(prefefinedScopes)));
                 redirectUri.setType(RedirectUriType.fromValue(entity.getRedirectUriType()));
+                redirectUri.setActType(entity.getUriActType());
+                redirectUri.setGeoArea(entity.getUriGeoArea());
                 RedirectUris redirectUris = new RedirectUris();
                 redirectUris.getRedirectUri().add(redirectUri);
 

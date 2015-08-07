@@ -55,6 +55,12 @@ public class Registration implements ErrorsInterface, Serializable {
     private Text referredBy;
 
     private Text sendEmailFrequencyDays;
+    
+    private long captchaNumServer;
+    
+    private long captchaNumClient;
+    
+    private Text grecaptcha;
 
     public Registration() {
         errors = new ArrayList<String>();
@@ -72,6 +78,7 @@ public class Registration implements ErrorsInterface, Serializable {
         activitiesVisibilityDefault = new Visibility();
         referredBy = new Text();
         sendEmailFrequencyDays = new Text();
+        grecaptcha = new Text();
     }
 
     public List<String> getErrors() {
@@ -124,6 +131,10 @@ public class Registration implements ErrorsInterface, Serializable {
 
     public Text getPasswordConfirm() {
         return passwordConfirm;
+    }
+    
+    public Text getGrecaptcha(){
+        return grecaptcha;
     }
 
     public void setPasswordConfirm(Text passwordConfirm) {
@@ -193,5 +204,21 @@ public class Registration implements ErrorsInterface, Serializable {
     public void setSendEmailFrequencyDays(Text sendEmailFrequencyDays) {
         this.sendEmailFrequencyDays = sendEmailFrequencyDays;
     }
+
+	public long getCaptchaNumClient() {
+		return captchaNumClient;
+	}
+
+	public void setCaptchaNumClient(long captchaNumClient) {
+		this.captchaNumClient = captchaNumClient;
+	}
+
+	public long getCaptchaNumServer() {
+		return captchaNumServer;
+	}
+
+	public void setCaptchaNumServer(long captchaNumServer) {
+		this.captchaNumServer = captchaNumServer;
+	}
 
 }

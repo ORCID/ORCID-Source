@@ -32,6 +32,8 @@ public class RedirectUri implements ErrorsInterface, Serializable, Comparable<Re
     private List<String> scopes = new ArrayList<String>();
     protected Text value;
     private Text type;
+    private Text actType;
+    private Text geoArea;
     
     public static RedirectUri valueOf(ClientRedirectUriEntity rUri) {
         RedirectUri redirectUri = new RedirectUri();
@@ -42,8 +44,10 @@ public class RedirectUri implements ErrorsInterface, Serializable, Comparable<Re
             for(String scope : rUri.getPredefinedClientScope().split(" ")) {
                 redirectUri.getScopes().add(scope);
             }
-        }        
-                        
+        }
+        
+        redirectUri.setActType(Text.valueOf(rUri.getUriActType()));
+        redirectUri.setGeoArea(Text.valueOf(rUri.getUriGeoArea()));
         return redirectUri;
     }
     
@@ -57,6 +61,8 @@ public class RedirectUri implements ErrorsInterface, Serializable, Comparable<Re
                 scopes.add(scope.value());
             }
         }
+        redirectUri.setActType(Text.valueOf(orcidRedirectUri.getActType()));
+        redirectUri.setGeoArea(Text.valueOf(orcidRedirectUri.getGeoArea()));
         return redirectUri;
     }
     
@@ -72,6 +78,12 @@ public class RedirectUri implements ErrorsInterface, Serializable, Comparable<Re
             }
             
             orcidRedirectUri.setScope(scopes);
+        }
+        if(this.actType != null) {
+        	orcidRedirectUri.setActType(this.actType.getValue());
+        }
+        if(this.geoArea != null) {
+        	orcidRedirectUri.setGeoArea(this.geoArea.getValue());
         }
         return orcidRedirectUri;
     }
@@ -117,5 +129,21 @@ public class RedirectUri implements ErrorsInterface, Serializable, Comparable<Re
                 return s1.compareTo(s2);
             }
         }
-    }         
+    }
+
+	public Text getActType() {
+		return actType;
+	}
+
+	public void setActType(Text actType) {
+		this.actType = actType;
+	}
+
+	public Text getGeoArea() {
+		return geoArea;
+	}
+
+	public void setGeoArea(Text geoArea) {
+		this.geoArea = geoArea;
+	}         
 }

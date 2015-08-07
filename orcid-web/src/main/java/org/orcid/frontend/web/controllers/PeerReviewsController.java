@@ -578,7 +578,9 @@ public class PeerReviewsController extends BaseWorkspaceController {
     private void validateGroupId(PeerReviewForm peerReview) {
         if(peerReview.getGroupId() == null) {
             peerReview.setGroupId(Text.valueOf(StringUtils.EMPTY));
-        }
+        }        
+        peerReview.getGroupId().setErrors(new ArrayList<String>());
+        
         if(!PojoUtil.isEmpty(peerReview.getGroupId())) {
             if(!groupIdRecordManager.exists(peerReview.getGroupId().getValue())) {
                 setError(peerReview.getGroupId(), "peer_review.group_id.not_valid");

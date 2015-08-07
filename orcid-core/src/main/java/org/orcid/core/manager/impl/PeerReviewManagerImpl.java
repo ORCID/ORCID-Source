@@ -36,6 +36,8 @@ import org.orcid.jaxb.model.common.SourceClientId;
 import org.orcid.jaxb.model.common.SourceOrcid;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.record.PeerReview;
+import org.orcid.jaxb.model.record.WorkExternalIdentifier;
+import org.orcid.jaxb.model.record.WorkExternalIdentifiers;
 import org.orcid.jaxb.model.record.summary.PeerReviewSummary;
 import org.orcid.persistence.dao.PeerReviewDao;
 import org.orcid.persistence.dao.ProfileDao;
@@ -104,7 +106,6 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
 
     @Override
     public PeerReview createPeerReview(String orcid, PeerReview peerReview, boolean isApiRequest) {
-        List<PeerReviewEntity> peerReviews = peerReviewDao.getByUser(orcid);
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
 
         // Set the source to the peerReview before looking for duplicates
@@ -120,6 +121,10 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
 
         // If request comes from the API, perform the validations
         if (isApiRequest) {
+            //Validate it have at least one ext id
+            validateExternalIdentifiers(peerReview);
+            
+            List<PeerReviewEntity> peerReviews = peerReviewDao.getByUser(orcid);
             // If it is the user adding the peer review, allow him to add
             // duplicates
             if (!sourceEntity.getSourceId().equals(orcid)) {
@@ -130,6 +135,8 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
                             LOGGER.error("Trying to create a funding that is duplicated with " + entity.getId());
                             throw new OrcidDuplicatedActivityException(localeManager.resolveMessage("api.error.duplicated"));
                         }
+                        
+                        checkExternalIdentifiers(peerReview, existing);
                     }
                 }
             }
@@ -156,6 +163,13 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
         //If request comes from the API perform validations
         if(isApiRequest) {
             validateGroupId(peerReview);
+            List<PeerReview> existingReviews = this.findPeerReviews(orcid, System.currentTimeMillis());
+            for(PeerReview existing : existingReviews) {
+                //Dont compare the updated peer review with the DB version
+                if(!existing.getPutCode().equals(peerReview.getPutCode())) {
+                    checkExternalIdentifiers(peerReview, existing);
+                }
+            }
         }
         PeerReviewEntity existingEntity = peerReviewDao.getPeerReview(orcid, peerReview.getPutCode());
         PeerReviewEntity updatedEntity = new PeerReviewEntity();
@@ -240,5 +254,26 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
                 throw new OrcidValidationException(localeManager.resolveMessage("peer_review.group_id.not_valid"));
             }
         }        
+    }
+    
+    private void validateExternalIdentifiers(PeerReview peerReview) {
+        if(peerReview.getExternalIdentifiers() == null || peerReview.getExternalIdentifiers().getExternalIdentifier().isEmpty()) {
+            throw new OrcidValidationException(localeManager.resolveMessage("peer_review.external_id.one_required"));
+        }
+    }
+    
+    private void checkExternalIdentifiers(PeerReview newer, PeerReview existing) {
+        WorkExternalIdentifiers existingExtIds = existing.getExternalIdentifiers();
+        WorkExternalIdentifiers newExtIds = newer.getExternalIdentifiers();
+        if(existingExtIds != null && newExtIds != null) {            
+            for(WorkExternalIdentifier existingId : existingExtIds.getExternalIdentifier()) {
+                for(WorkExternalIdentifier newId : newExtIds.getExternalIdentifier()) {
+                    if(existingId.equals(newId)){
+                        String errorMessage = localeManager.resolveMessage("peer_review.external_id.duplicated", newId.getWorkExternalIdentifierId().getContent());
+                        throw new OrcidValidationException(errorMessage);
+                    }
+                }
+            }
+        }
     }
 }

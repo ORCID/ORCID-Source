@@ -26,6 +26,16 @@ function openImportWizardUrl(url) {
     $.colorbox.close();
 };
 
+function contains(arr, obj) {
+    var index = arr.length;
+    while (index--) {
+       if (arr[index] === obj) {
+           return true;
+       }
+    }
+    return false;
+}
+
 var PRIVACY = {};
 PRIVACY.PUBLIC = 'PUBLIC';
 PRIVACY.LIMITED = 'LIMITED';
@@ -284,7 +294,7 @@ GroupedActivities.prototype.rmByPut = function(putCode) {
     return activity;
 };
 
-var orcidNgModule = angular.module('orcidApp', ['ngCookies','ngSanitize', 'ui.multiselect']);
+var orcidNgModule = angular.module('orcidApp', ['ngCookies','ngSanitize', 'ui.multiselect', 'vcRecaptcha']);
 
 orcidNgModule.directive('ngModelOnblur', function() {
     return {
@@ -2626,8 +2636,18 @@ orcidNgModule.controller('ResetPasswordCtrl', ['$scope', '$compile', 'commonSrvc
     $scope.getResetPasswordForm();
 }]);
 
-orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc', function ($scope, $compile, commonSrvc) {
+orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc', 'vcRecaptchaService', function ($scope, $compile, commonSrvc, vcRecaptchaService) {
     $scope.privacyHelp = {};
+    $scope.widgetId = null;
+    $scope.response = null;
+    
+    $scope.model = {
+    	key: orcidVar.recaptchaKey
+    };
+    
+    
+    var loadDate = new Date();
+    $scope.loadTime = loadDate.getTime();
 
     $scope.toggleClickPrivacyHelp = function(key) {
         if (!document.documentElement.className.contains('no-touch'))
@@ -2669,7 +2689,7 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
             console.log("error fetching register.json");
         });
     };
-
+    
     $scope.getDuplicates = function(){
         $.ajax({
             //url: getBaseUri() + 'dupicateResearcher.json?familyNames=test&givenNames=test',
@@ -2678,6 +2698,12 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
             success: function(data) {
                    $scope.duplicates = data;
                 $scope.$apply();
+            	var diffDate = new Date();
+            	// reg was filled out to fast reload the page
+            	if ($scope.loadTime + 5000 > diffDate.getTime()) {
+            		window.location.reload();
+            		return;
+            	}
                 if ($scope.duplicates.length > 0 ) {
                     $scope.showDuplicatesColorBox();
                 } else {
@@ -2698,6 +2724,7 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
     };
 
     $scope.postRegister = function () {
+    	
         if (basePath.startsWith(baseUrl + 'oauth')) {
             var clientName = $('div#RegistrationCtr input[name="client_name"]').val();
             $scope.register.referredBy = $('div#RegistrationCtr input[name="client_id"]').val();
@@ -2707,7 +2734,10 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
         } else {
             orcidGA.gaPush(['_trackEvent', 'RegGrowth', 'New-Registration-Submit', 'Website']);
             $scope.register.creationType.value = "Direct";
-        }
+        }        
+        
+        $scope.register.grecaptcha.value = $scope.response; //Adding the response to the register object
+        
         $.ajax({
             url: getBaseUri() + '/register.json',
             type: 'POST',
@@ -2715,11 +2745,15 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
             contentType: 'application/json;charset=UTF-8',
             dataType: 'json',
             success: function(data) {
-                $scope.register = data;
-                $scope.$apply();
-                if ($scope.register.errors.length == 0) {
-                    $scope.showProcessingColorBox();
-                    $scope.getDuplicates();
+            	$scope.register = data;            	
+            	$scope.$apply();                
+            	if ($scope.register.errors == undefined || $scope.register.errors == undefined || $scope.register.errors.length == 0) {
+                    if ($scope.register.errors.length == 0) {
+                        $scope.showProcessingColorBox();
+                        $scope.getDuplicates();
+                    }
+            	} else {            	    
+            	    vcRecaptchaService.reload($scope.widgetId);
                 }
             }
         }).fail(function() {
@@ -2730,6 +2764,7 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
 
     $scope.postRegisterConfirm = function () {
         $scope.showProcessingColorBox();
+        $scope.register.captchaNumClient = $scope.register.captchaNumServer / 2;
         $.ajax({
             url: getBaseUri() + '/registerConfirm.json',
             type: 'POST',
@@ -2811,7 +2846,17 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
         if (cur.errors !== undefined && cur.errors.length > 0) valid = false;
         return valid ? '' : 'text-error';
     };
+    
+    
+    $scope.setWidgetId = function (widgetId) {
+        console.log('Widget ID: ' + widgetId)
+    	$scope.widgetId = widgetId;
+    };
 
+    $scope.setResponse = function (response) {
+        console.log('Yey response!');
+        $scope.response = response;
+    };
     //init
     $scope.getRegister();
     //$scope.getDuplicates();
@@ -4192,6 +4237,13 @@ orcidNgModule.controller('PublicWorkCtrl',['$scope', '$compile', '$filter', 'wor
 
 }]);
 
+function getParameterByName(name) {
+    name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+        results = regex.exec(location.search);
+    return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+}
+
 orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrvc', 'workspaceSrvc', 'actBulkSrvc', 'commonSrvc', '$timeout', '$q', 
                                       function ($scope, $compile, $filter, worksSrvc, workspaceSrvc, actBulkSrvc, commonSrvc, $timeout, $q) {
     actBulkSrvc.initScope($scope);
@@ -4218,6 +4270,8 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     $scope.workImportWizard = false;
     $scope.wizardDescExpanded = {};
     $scope.displayURLPopOver = {};
+    $scope.workType = ['All'];
+    $scope.geoArea = ['All'];
     
     $scope.sortState = new ActSortState(GroupedActivities.ABBR_WORK);
     $scope.sort = function(key) {
@@ -4508,10 +4562,59 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     };
 
     $scope.showWorkImportWizard =  function() {
-    	$scope.bulkEditShow = false;
-    	$scope.showBibtexImportWizard = false;
-    	$scope.workImportWizard = !$scope.workImportWizard;
+    	$.ajax({
+            url: getBaseUri() + '/workspace/retrieve-work-impor-wizards.json',
+            type: 'GET',
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            success: function(data) {
+                $scope.selectedWorkType = 'Articles';
+                $scope.selectedGeoArea = 'Global';
+            	$scope.workImportWizardsOriginal = data;
+            	$scope.bulkEditShow = false;
+            	$scope.showBibtexImportWizard = false;
+            	$scope.workImportWizard = !$scope.workImportWizard;
+            	for(var i = 0; i < $scope.workImportWizardsOriginal.length; i ++) {
+            		for(var j = 0; j < $scope.workImportWizardsOriginal[i].redirectUris.redirectUri.length; j ++) {
+            			$scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].actType =  JSON.parse($scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].actType);
+            			$scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].geoArea =  JSON.parse($scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].geoArea);
+            			for(var k = 0; k < $scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].actType['import-works-wizard'].length; k ++) {
+            				if(!contains($scope.workType, $scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].actType['import-works-wizard'][k]))
+            					$scope.workType.push($scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].actType['import-works-wizard'][k]);
+            			}
+            			
+            			for(var k = 0; k < $scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].geoArea['import-works-wizard'].length; k ++) {
+            				if(!contains($scope.geoArea, $scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].geoArea['import-works-wizard'][k]))
+            					$scope.geoArea.push($scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].geoArea['import-works-wizard'][k]);
+            			}
+            		}
+            	}
+            	console.log(getParameterByName('import_works_wizard'));
+            	if(getParameterByName('import_works_wizard') != 'true') {
+            		$scope.selectedWorkType = 'All';
+                    $scope.selectedGeoArea = 'All';
+            	}
+            	$scope.processWorkImportWizardList();
+            	$scope.$apply();
+            }
+        }).fail(function() {
+            // something bad is happening!
+            console.log("WorkImportWizardError");
+        });
     };
+    
+    $scope.processWorkImportWizardList = function() {
+    	$scope.workImportWizards = [];
+    	for(var i = 0; i < $scope.workImportWizardsOriginal.length; i ++) {
+    		for(var j = 0; j < $scope.workImportWizardsOriginal[i].redirectUris.redirectUri.length; j ++) {
+    			if(($scope.selectedWorkType == 'All' || contains($scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].actType['import-works-wizard'], $scope.selectedWorkType))&&
+    					($scope.selectedGeoArea == 'All' || contains($scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].geoArea['import-works-wizard'], $scope.selectedGeoArea))) {
+    				$scope.workImportWizards.push($scope.workImportWizardsOriginal[i]);
+    				break;
+    			}
+    		}
+    	}
+    }
 
     $scope.addWorkModal = function(data){
         if (data == undefined) {
@@ -4751,6 +4854,11 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
 
     $scope.openImportWizardUrl = function(url) {
         openImportWizardUrl(url);
+    };
+    
+    $scope.openImportWizardUrlFilter = function(url, param) {
+    	url = url + '?client_id='+param.clientId+'&response_type=code&scope='+param.redirectUris.redirectUri[0].scopeAsSingleString+'&redirect_uri='+param.redirectUris.redirectUri[0].value;
+    	openImportWizardUrl(url);
     };
 
     $scope.setAddWorkPrivacy = function(priv, $event) {
@@ -6501,6 +6609,10 @@ orcidNgModule.controller('manageMembersCtrl',['$scope', '$compile', function man
     $scope.selectedScope = "";
     $scope.newMember = null;
     $scope.groups = [];
+    $scope.importWorkWizard = {
+    	'actTypeList' : ['Articles','Books','Data','Student Publications'],
+		'geoAreaList' : ['Global', 'Africa', 'Asia', 'Australia', 'Europe', 'North America', 'South America']
+    };
 
     $scope.toggleGroupsModal = function() {
         $scope.showAdminGroupsModal = !$scope.showAdminGroupsModal;
@@ -6528,6 +6640,10 @@ orcidNgModule.controller('manageMembersCtrl',['$scope', '$compile', function man
                 	if(data.client == true) {
                     	$scope.client = data.clientObject;
                     	$scope.member = null;
+                    	for(var i = 0; i < $scope.client.redirectUris.length; i ++) {
+                    		$scope.client.redirectUris[i].actType.value = JSON.parse($scope.client.redirectUris[i].actType.value);
+                    		$scope.client.redirectUris[i].geoArea.value = JSON.parse($scope.client.redirectUris[i].geoArea.value);
+                    	}
                     } else {
                     	$scope.client = null;
                     	$scope.member = data.memberObject;
@@ -6697,6 +6813,10 @@ orcidNgModule.controller('manageMembersCtrl',['$scope', '$compile', function man
 
     //Update client
     $scope.updateClient = function() {
+    	for(var i = 0; i < $scope.client.redirectUris.length; i ++) {
+    		$scope.client.redirectUris[i].actType.value = JSON.stringify($scope.client.redirectUris[i].actType.value);
+    		$scope.client.redirectUris[i].geoArea.value = JSON.stringify($scope.client.redirectUris[i].geoArea.value);
+    	}
         $.ajax({
             url: getBaseUri() + '/manage-members/update-client.json',
             type: 'POST',
@@ -8554,6 +8674,8 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
         if($scope.enablePersistentToken)
             auth_scope_prefix = 'AuthorizeP_';
         $scope.showProcessingColorBox();
+        $scope.registrationForm.grecaptcha = "hello"; // extract this from the widget and wire it up to Registration.java to make it work!
+        
         $.ajax({
             url: getBaseUri() + '/oauth/custom/registerConfirm.json',
             type: 'POST',

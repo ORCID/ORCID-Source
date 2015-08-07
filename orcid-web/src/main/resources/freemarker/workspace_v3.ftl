@@ -359,46 +359,43 @@
                     <#include "includes/work/work_section_header_inc_v3.ftl"/>
                     <!-- Work Import Wizard -->
 					<div ng-show="workImportWizard == true" class="work-import-wizard" ng-cloak>
-						
-						<#if ((workImportWizards)??)>
-							<div class="ie7fix-inner">
-								<div class="row">	
-									<div class="col-md-12 col-sm-12 col-xs-12">
-						           		<h1 class="lightbox-title wizard-header"><@orcid.msg 'workspace.link_works'/></h1>
-						           		<span ng-click="showWorkImportWizard()" class="close-wizard"><@orcid.msg 'workspace.LinkResearchActivities.hide_link_works'/></span>
-									</div>
+						<div class="ie7fix-inner">
+							<div class="row">	
+								<div class="col-md-12 col-sm-12 col-xs-12">
+					           		<h1 class="lightbox-title wizard-header"><@orcid.msg 'workspace.link_works'/></h1>
+					           		<span ng-click="showWorkImportWizard()" class="close-wizard"><@orcid.msg 'workspace.LinkResearchActivities.hide_link_works'/></span>
 								</div>
-								<div class="row">
-									<div class="col-md-12 col-sm-12 col-xs-12">
-										<p class="wizard-content">
-							           		<@orcid.msg 'workspace.LinkResearchActivities.description'/> <@orcid.msg 'workspace.LinkResearchActivities.description.more_info'/>
-							           	</p>								
-						           	</div>
+							</div>
+							<div class="row">
+								<div class="col-md-12 col-sm-12 col-xs-12">
+									<p class="wizard-content">
+						           		<@orcid.msg 'workspace.LinkResearchActivities.description'/> <@orcid.msg 'workspace.LinkResearchActivities.description.more_info'/>
+						           	</p>								
+					           	</div>
+							</div>
+							<#if RequestParameters['import_works_wizard']??>
+								<div id="workFilters" class="col-md-12 col-sm-12 col-xs-12">
+									<@orcid.msg 'workspace.link_works.filter.worktype'/>&nbsp;&nbsp;<select ng-options="wt as wt for wt in workType" ng-model="selectedWorkType" ng-change="processWorkImportWizardList()"></select>
+									<@orcid.msg 'workspace.link_works.filter.geographicalarea'/>&nbsp;&nbsp;<select ng-options="ga as ga for ga in geoArea" ng-model="selectedGeoArea" ng-change="processWorkImportWizardList()"></select>
 								</div>
-								
-								
-								<div class="row wizards">
-									<div class="col-md-12 col-sm-12 col-xs-12">
-					    		    	<#list workImportWizards?sort_by("displayName") as thirdPartyDetails>					    		    				
-						        	       	<#assign redirect = (thirdPartyDetails.redirectUris.redirectUri[0].value) >
-					            	   		<#assign predefScopes = (thirdPartyDetails.redirectUris.redirectUri[0].scopeAsSingleString) >
-					                   		<strong><a ng-click="openImportWizardUrl('<@orcid.rootPath '/oauth/authorize?client_id=${thirdPartyDetails.clientId}&response_type=code&scope=${predefScopes}&redirect_uri=${redirect}'/>')">${thirdPartyDetails.displayName}</a></strong><br />					                   							                   		                		
-					                 		<div class="justify">												
-												<p class="wizard-description" ng-class="{'ellipsis-on' : wizardDescExpanded[${thirdPartyDetails.clientId}] == false || wizardDescExpanded[${thirdPartyDetails.clientId}] == null}">
-													${(thirdPartyDetails.shortDescription)!}													
-													<a ng-click="toggleWizardDesc(${thirdPartyDetails.clientId})" ng-show="wizardDescExpanded[${thirdPartyDetails.clientId}] == true"><span class="glyphicon glyphicon-chevron-down wizard-chevron"></span></a>
-												</p>												
-												<a ng-click="toggleWizardDesc(${thirdPartyDetails.clientId})" ng-show="wizardDescExpanded[${thirdPartyDetails.clientId}] == false || wizardDescExpanded[${thirdPartyDetails.clientId}] == null" class="toggle-wizard-desc"><span class="glyphicon glyphicon-chevron-right wizard-chevron"></span></a>
-												
-											</div>
-					                   		<#if (thirdPartyDetails_has_next)>
-						                      	<hr/>
-											</#if>
-					                		</#list>
-									</div>
+							</#if>
+							<br>
+							<div class="row wizards">
+								<div class="col-md-12 col-sm-12 col-xs-12">
+				    		    	<div ng-repeat="wtw in workImportWizards">
+				                   		<strong><a ng-click="openImportWizardUrlFilter('<@orcid.rootPath '/oauth/authorize'/>', wtw)">{{wtw.displayName}}</a></strong><br />					                   							                   		                		
+				                 		<div class="justify">												
+											<p class="wizard-description" ng-class="{'ellipsis-on' : wizardDescExpanded[wtw.clientId] == false || wizardDescExpanded[wtw.clientId] == null}">
+												{{wtw.shortDescription}}													
+												<a ng-click="toggleWizardDesc(wtw.clientId)" ng-show="wizardDescExpanded[wtw.clientId] == true"><span class="glyphicon glyphicon-chevron-down wizard-chevron"></span></a>
+											</p>												
+											<a ng-click="toggleWizardDesc(wtw.clientId)" ng-show="wizardDescExpanded[wtw.clientId] == false || wizardDescExpanded[wtw.clientId] == null" class="toggle-wizard-desc"><span class="glyphicon glyphicon-chevron-right wizard-chevron"></span></a>
+										</div>
+					                    <hr/>
+				                	</div>
 								</div>
-							</div>						
-						</#if>
+							</div>
+						</div>						
 					</div>
 					<!-- Bulk Edit -->					
 					<div ng-show="bulkEditShow && workspaceSrvc.displayWorks" ng-cloak>						

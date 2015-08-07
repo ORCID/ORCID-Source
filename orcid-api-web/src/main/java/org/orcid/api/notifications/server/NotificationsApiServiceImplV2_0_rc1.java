@@ -20,6 +20,8 @@ import javax.ws.rs.Path;
 
 import org.orcid.core.api.OrcidApiConstants;
 
+import io.swagger.annotations.Api;
+
 /**
  * 
  * @author Will Simpson
