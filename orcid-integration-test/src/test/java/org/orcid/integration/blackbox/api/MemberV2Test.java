@@ -757,7 +757,7 @@ public class MemberV2Test extends BlackBoxBase {
 
         ClientResponse postResponse = memberV2ApiClient.createPeerReviewXml(user1OrcidId, peerReview, accessToken);
         assertNotNull(postResponse);
-        assertEquals(Response.Status.CONFLICT.getStatusCode(), postResponse.getStatus());
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), postResponse.getStatus());
     }    
     
     @SuppressWarnings("unchecked")
@@ -951,8 +951,8 @@ public class MemberV2Test extends BlackBoxBase {
         peerReview.setGroupId("orcid-generated:" + peerReview.getGroupId());
         postResponse = memberV2ApiClient.createPeerReviewXml(user1OrcidId, peerReview, accessToken);
         assertNotNull(postResponse);
-        assertEquals(Response.Status.CONFLICT.getStatusCode(), postResponse.getStatus());        
-    }        
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), postResponse.getStatus());        
+    }
     
     public String getAccessToken(ScopePathType scope) throws InterruptedException, JSONException {
         String accessToken = super.getAccessToken(scope.value());
