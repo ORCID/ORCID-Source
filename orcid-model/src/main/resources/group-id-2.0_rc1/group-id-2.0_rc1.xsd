@@ -49,7 +49,7 @@
 							</xs:annotation>
 						</xs:element>																		
 						<xs:element name="group-id"  type="common:group-id" maxOccurs="1" minOccurs="1" />
-						<xs:element name="description" type="common:non-empty-string"
+						<xs:element name="description" type="common:string-1000"
 							maxOccurs="1" minOccurs="1">
 							<xs:annotation>
 								<xs:documentation>Description

@@ -52,6 +52,7 @@ import org.orcid.frontend.web.forms.ChangeSecurityQuestionForm;
 import org.orcid.frontend.web.forms.EmailAddressForm;
 import org.orcid.frontend.web.forms.OneTimeResetPasswordForm;
 import org.orcid.frontend.web.forms.PasswordTypeAndConfirmForm;
+import org.orcid.frontend.web.util.RecaptchaVerifier;
 import org.orcid.jaxb.model.message.ActivitiesVisibilityDefault;
 import org.orcid.jaxb.model.message.Claimed;
 import org.orcid.jaxb.model.message.CompletionDate;
@@ -166,6 +167,9 @@ public class RegistrationController extends BaseController {
 
     @Resource
     private EmailDao emailDao;
+    
+    @Resource
+    private RecaptchaVerifier recaptchaVerifier;
 
     public void setEncryptionManager(EncryptionManager encryptionManager) {
         this.encryptionManager = encryptionManager;
@@ -201,6 +205,10 @@ public class RegistrationController extends BaseController {
 
     @RequestMapping(value = "/register.json", method = RequestMethod.GET)
     public @ResponseBody Registration getRegister(HttpServletRequest request, HttpServletResponse response) {
+        //Remove the session hash if needed
+        if(request.getSession().getAttribute("verified-recaptcha-hash") != null) {
+            request.getSession().removeAttribute("verified-recaptcha-hash");
+        }
         Registration reg = new Registration();
 
         reg.getEmail().setRequired(true);
@@ -308,6 +316,66 @@ public class RegistrationController extends BaseController {
 
     @RequestMapping(value = "/register.json", method = RequestMethod.POST)
     public @ResponseBody Registration setRegister(HttpServletRequest request, @RequestBody Registration reg) {
+        validateRegistrationFields(request, reg);
+        
+        if(reg.getGrecaptcha() == null) {
+            reg.getGrecaptcha().setErrors(new ArrayList<String>());
+            setError(reg.getGrecaptcha(), "registrationForm.recaptcha.error");
+            setError(reg, "registrationForm.recaptcha.error");
+        } else {
+            reg.getGrecaptcha().setErrors(new ArrayList<String>());
+        }       
+                
+        if(request.getSession().getAttribute("verified-recaptcha-hash") != null) {
+            if(!encryptionManager.encryptForExternalUse(reg.getGrecaptcha().getValue()).equals(request.getSession().getAttribute("verified-recaptcha-hash"))) {
+                setError(reg.getGrecaptcha(), "registrationForm.recaptcha.error");
+                setError(reg, "registrationForm.recaptcha.error");
+            }            
+        } else if (!recaptchaVerifier.verify(reg.getGrecaptcha().getValue())){
+            reg.getGrecaptcha().setErrors(new ArrayList<String>());
+            setError(reg.getGrecaptcha(), "registrationForm.recaptcha.error");
+            setError(reg, "registrationForm.recaptcha.error");           
+        } else {            
+            request.getSession().setAttribute("verified-recaptcha-hash", encryptionManager.encryptForExternalUse(reg.getGrecaptcha().getValue()));
+        }
+                        
+        return reg;
+    }
+
+    @RequestMapping(value = "/registerConfirm.json", method = RequestMethod.POST)
+    public @ResponseBody Redirect setRegisterConfirm(HttpServletRequest request, HttpServletResponse response, @RequestBody Registration reg) {        
+        Redirect r = new Redirect();
+
+        //If the captcha verified key is not in the session, redirect to the login page
+        if(request.getSession().getAttribute("verified-recaptcha-hash") == null || PojoUtil.isEmpty(reg.getGrecaptcha()) || !encryptionManager.encryptForExternalUse(reg.getGrecaptcha().getValue()).equals(request.getSession().getAttribute("verified-recaptcha-hash"))) {
+            r.setUrl(getBaseUri() + "/register");
+            return r;
+        }
+        
+        //Remove the session hash if needed
+        if(request.getSession().getAttribute("verified-recaptcha-hash") != null) {
+            request.getSession().removeAttribute("verified-recaptcha-hash");
+        }
+        
+        // make sure validation still passes
+        validateRegistrationFields(request, reg);
+        if (reg.getErrors() != null && reg.getErrors().size() > 0) {
+            r.getErrors().add("Please revalidate at /register.json");
+            return r;
+        }
+        
+        if(reg.getCaptchaNumServer() == 0 || reg.getCaptchaNumClient() != reg.getCaptchaNumServer()/2) {
+        	r.setUrl(getBaseUri() + "/register");
+        	return r;
+        }        
+
+        createMinimalRegistrationAndLogUserIn(request, toProfile(reg));
+        String redirectUrl = calculateRedirectUrl(request, response);
+        r.setUrl(redirectUrl);
+        return r;
+    }
+
+    private void validateRegistrationFields(HttpServletRequest request, Registration reg) {
         reg.setErrors(new ArrayList<String>());
 
         registerGivenNameValidate(reg);
@@ -315,39 +383,15 @@ public class RegistrationController extends BaseController {
         registerPasswordConfirmValidate(reg);
         regEmailValidate(request, reg);
         registerTermsOfUseValidate(reg);
-
+        
         copyErrors(reg.getEmailConfirm(), reg);
         copyErrors(reg.getEmail(), reg);
         copyErrors(reg.getGivenNames(), reg);
         copyErrors(reg.getPassword(), reg);
         copyErrors(reg.getPasswordConfirm(), reg);
         copyErrors(reg.getTermsOfUse(), reg);
-
-        return reg;
     }
-
-    @RequestMapping(value = "/registerConfirm.json", method = RequestMethod.POST)
-    public @ResponseBody Redirect setRegisterConfirm(HttpServletRequest request, HttpServletResponse response, @RequestBody Registration reg) {
-        Redirect r = new Redirect();
-
-        // make sure validation still passes
-        reg = setRegister(request, reg);
-        if (reg.getErrors() != null && reg.getErrors().size() > 0) {
-            r.getErrors().add("Please revalidate at /register.json");
-            return r;
-        }
-
-        if(reg.getCaptchaNumServer() == 0 || reg.getCaptchaNumClient() != reg.getCaptchaNumServer()/2) {
-        	r.setUrl(getBaseUri() + "/register");
-        	return r;
-        }
-        
-        createMinimalRegistrationAndLogUserIn(request, toProfile(reg));
-        String redirectUrl = calculateRedirectUrl(request, response);
-        r.setUrl(redirectUrl);
-        return r;
-    }
-
+    
     private String calculateRedirectUrl(HttpServletRequest request, HttpServletResponse response) {
         SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
         if (savedRequest != null) {

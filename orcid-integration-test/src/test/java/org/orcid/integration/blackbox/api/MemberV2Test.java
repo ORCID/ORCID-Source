@@ -432,7 +432,7 @@ public class MemberV2Test extends BlackBoxBase {
         long time = System.currentTimeMillis();
         PeerReview peerReviewToCreate = (PeerReview) unmarshallFromPath("/record_2.0_rc1/samples/peer-review-2.0_rc1.xml", PeerReview.class);
         peerReviewToCreate.setPutCode(null);
-        peerReviewToCreate.setGroupId(null);
+        peerReviewToCreate.setGroupId(groupRecords.get(0).getGroupId());
         peerReviewToCreate.setVisibility(Visibility.PUBLIC);
         peerReviewToCreate.getExternalIdentifiers().getExternalIdentifier().clear();
         WorkExternalIdentifier wExtId = new WorkExternalIdentifier();
@@ -627,7 +627,7 @@ public class MemberV2Test extends BlackBoxBase {
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         
-        peerReview.setGroupId(null);
+        peerReview.setGroupId(groupRecords.get(0).getGroupId());
         peerReview.getSubjectName().getTitle().setContent("PeerReview # 4");
         peerReview.getCompletionDate().setDay(new Day(4));
         peerReview.getCompletionDate().setMonth(new Month(4));
@@ -932,6 +932,18 @@ public class MemberV2Test extends BlackBoxBase {
 
         //Pattern not valid
         ClientResponse postResponse = memberV2ApiClient.createPeerReviewXml(user1OrcidId, peerReview, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), postResponse.getStatus());
+        
+        //Null group id 
+        peerReview.setGroupId(null);
+        postResponse = memberV2ApiClient.createPeerReviewXml(user1OrcidId, peerReview, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), postResponse.getStatus());
+        
+        //Empty group id
+        peerReview.setGroupId("");
+        postResponse = memberV2ApiClient.createPeerReviewXml(user1OrcidId, peerReview, accessToken);
         assertNotNull(postResponse);
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), postResponse.getStatus());
         
