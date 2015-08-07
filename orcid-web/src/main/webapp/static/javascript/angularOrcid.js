@@ -2745,15 +2745,17 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
             contentType: 'application/json;charset=UTF-8',
             dataType: 'json',
             success: function(data) {
+            	console.log(data);
             	$scope.register = data;            	
             	$scope.$apply();                
             	if ($scope.register.errors == undefined || $scope.register.errors == undefined || $scope.register.errors.length == 0) {
                     if ($scope.register.errors.length == 0) {
+                    	
                         $scope.showProcessingColorBox();
                         $scope.getDuplicates();
                     }
-            	} else {            	    
-            	    vcRecaptchaService.reload($scope.widgetId);
+            	} else {
+            		if ($scope.register.grecaptcha.errors.length == 0) angular.element(document.querySelector('#recaptcha')).remove();
                 }
             }
         }).fail(function() {
