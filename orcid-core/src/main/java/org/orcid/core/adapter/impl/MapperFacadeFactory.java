@@ -164,12 +164,14 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         workClassMap.register();
 
         ClassMapBuilder<WorkSummary, WorkEntity> workSummaryClassMap = mapperFactory.classMap(WorkSummary.class, WorkEntity.class);
-        workSummaryClassMap.field("putCode", "id");
+        addV2CommonFields(workSummaryClassMap);
         workSummaryClassMap.field("title.title.content", "title");
         workSummaryClassMap.field("title.translatedTitle.content", "translatedTitle");
         workSummaryClassMap.field("title.translatedTitle.languageCode", "translatedTitleLanguageCode");
         workSummaryClassMap.field("type", "workType");
-        workSummaryClassMap.field("publicationDate", "publicationDate");
+        workSummaryClassMap.field("publicationDate.year.value", "publicationDate.year");
+        workSummaryClassMap.field("publicationDate.month.value", "publicationDate.month");
+        workSummaryClassMap.field("publicationDate.day.value", "publicationDate.day");
         workSummaryClassMap.fieldMap("externalIdentifiers", "externalIdentifiersJson").converter("workExternalIdentifiersConverterId").add();
         workSummaryClassMap.byDefault();
         workSummaryClassMap.register();
