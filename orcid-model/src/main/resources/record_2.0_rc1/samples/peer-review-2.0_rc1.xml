@@ -9,7 +9,7 @@
 		<work:work-external-identifier>
 			<common:external-identifier-url>http://orcid.org</common:external-identifier-url>
 			<common:relationship>self</common:relationship>
-			<work:external-identifier-type>agr</work:external-identifier-type>
+			<work:external-identifier-type>source-work-id</work:external-identifier-type>
 			<work:external-identifier-id>work:external-identifier-id</work:external-identifier-id>
 		</work:work-external-identifier>
 	</peer-review:review-identifiers>
@@ -24,11 +24,11 @@
 	<peer-review:subject-external-identifier>			
 		<common:external-identifier-url>http://orcid.org</common:external-identifier-url>
 		<common:relationship>self</common:relationship>
-		<work:external-identifier-type>agr</work:external-identifier-type>
+		<work:external-identifier-type>doi</work:external-identifier-type>
 		<work:external-identifier-id>peer-review:subject-external-identifier-id</work:external-identifier-id>			
 	</peer-review:subject-external-identifier>
 	<peer-review:subject-container-name>peer-review:journal title</peer-review:subject-container-name>
-	<peer-review:subject-type>book-review</peer-review:subject-type>		
+	<peer-review:subject-type>journal-article</peer-review:subject-type>		
 	<peer-review:subject-name>
 		<common:title>peer-review:subject-name</common:title>
 		<common:translated-title language-code="en">peer-review:subject-translated-name</common:translated-title>

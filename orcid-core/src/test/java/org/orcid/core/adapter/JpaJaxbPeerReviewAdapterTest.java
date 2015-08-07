@@ -64,7 +64,7 @@ public class JpaJaxbPeerReviewAdapterTest {
         //General info
         assertEquals(Long.valueOf(12345), pe.getId());
         assertEquals(Visibility.PRIVATE.value(), pe.getVisibility().value());        
-        assertEquals("{\"workExternalIdentifier\":[{\"relationship\":\"SELF\",\"url\":{\"value\":\"http://orcid.org\"},\"workExternalIdentifierType\":\"AGR\",\"workExternalIdentifierId\":{\"content\":\"work:external-identifier-id\"}}]}", pe.getExternalIdentifiersJson());
+        assertEquals("{\"workExternalIdentifier\":[{\"relationship\":\"SELF\",\"url\":{\"value\":\"http://orcid.org\"},\"workExternalIdentifierType\":\"SOURCE_WORK_ID\",\"workExternalIdentifierId\":{\"content\":\"work:external-identifier-id\"}}]}", pe.getExternalIdentifiersJson());
         assertEquals("reviewer", pe.getRole().value());
         assertEquals("review", pe.getType().value());
         assertEquals("peer-review:url", pe.getUrl());
@@ -86,13 +86,13 @@ public class JpaJaxbPeerReviewAdapterTest {
         assertEquals("common:disambiguation-source", pe.getOrg().getOrgDisambiguated().getSourceType()); 
         
         //Check subject        
-        assertEquals("{\"relationship\":\"SELF\",\"url\":{\"value\":\"http://orcid.org\"},\"workExternalIdentifierType\":\"AGR\",\"workExternalIdentifierId\":{\"content\":\"peer-review:subject-external-identifier-id\"}}", pe.getSubjectExternalIdentifiersJson());
+        assertEquals("{\"relationship\":\"SELF\",\"url\":{\"value\":\"http://orcid.org\"},\"workExternalIdentifierType\":\"DOI\",\"workExternalIdentifierId\":{\"content\":\"peer-review:subject-external-identifier-id\"}}", pe.getSubjectExternalIdentifiersJson());
         assertEquals("peer-review:subject-container-name", pe.getSubjectContainerName());
         assertEquals("peer-review:subject-name", pe.getSubjectName());
         assertEquals("peer-review:subject-translated-name", pe.getSubjectTranslatedName());
         assertEquals("en", pe.getSubjectTranslatedNameLanguageCode());
         assertEquals("peer-review:subject-url", pe.getSubjectUrl());
-        assertEquals(WorkType.BOOK_REVIEW, pe.getSubjectType());
+        assertEquals(WorkType.JOURNAL_ARTICLE, pe.getSubjectType());
         
         //Check group id
         assertEquals("orcid-generated:12345", pe.getGroupId());
@@ -110,7 +110,7 @@ public class JpaJaxbPeerReviewAdapterTest {
         //Subject
         assertNotNull(peerReview.getSubjectExternalIdentifier());
         assertEquals("peer-review:subject-external-identifier-id", peerReview.getSubjectExternalIdentifier().getWorkExternalIdentifierId().getContent());
-        assertEquals("agr", peerReview.getSubjectExternalIdentifier().getWorkExternalIdentifierType().value());
+        assertEquals("source-work-id", peerReview.getSubjectExternalIdentifier().getWorkExternalIdentifierType().value());
         assertEquals("peer-review:subject-container-name", peerReview.getSubjectContainerName().getContent());
         assertEquals("peer-review:subject-name", peerReview.getSubjectName().getTitle().getContent());
         assertEquals("peer-review:subject-translated-name", peerReview.getSubjectName().getTranslatedTitle().getContent());
@@ -122,7 +122,7 @@ public class JpaJaxbPeerReviewAdapterTest {
         assertNotNull(peerReview.getExternalIdentifiers().getExternalIdentifier());
         assertEquals(1, peerReview.getExternalIdentifiers().getExternalIdentifier().size());
         assertEquals("peer-review:external-identifier-id", peerReview.getExternalIdentifiers().getExternalIdentifier().get(0).getWorkExternalIdentifierId().getContent());
-        assertEquals("agr", peerReview.getExternalIdentifiers().getExternalIdentifier().get(0).getWorkExternalIdentifierType().value());
+        assertEquals("source-work-id", peerReview.getExternalIdentifiers().getExternalIdentifier().get(0).getWorkExternalIdentifierType().value());
         assertEquals(Role.MEMBER.value(), peerReview.getRole().value());
         assertEquals(PeerReviewType.EVALUATION.value(), peerReview.getType().value());
         assertEquals("peer-review:url", peerReview.getUrl().getValue());
@@ -155,7 +155,7 @@ public class JpaJaxbPeerReviewAdapterTest {
         assertNotNull(peerReviewSummary.getExternalIdentifiers().getExternalIdentifier());
         assertEquals(1, peerReviewSummary.getExternalIdentifiers().getExternalIdentifier().size());
         assertEquals("peer-review:external-identifier-id", peerReviewSummary.getExternalIdentifiers().getExternalIdentifier().get(0).getWorkExternalIdentifierId().getContent());
-        assertEquals("agr", peerReviewSummary.getExternalIdentifiers().getExternalIdentifier().get(0).getWorkExternalIdentifierType().value());
+        assertEquals("source-work-id", peerReviewSummary.getExternalIdentifiers().getExternalIdentifier().get(0).getWorkExternalIdentifierType().value());
         assertEquals(Role.MEMBER.value(), peerReviewSummary.getRole().value());
         assertNotNull(peerReviewSummary.getSource());
         assertEquals("APP-000000001", peerReviewSummary.getSource().retrieveSourcePath());
@@ -184,12 +184,12 @@ public class JpaJaxbPeerReviewAdapterTest {
         PeerReviewEntity result = new PeerReviewEntity();
         result.setOrg(orgEntity);
         result.setCompletionDate(new CompletionDateEntity(2015, 1, 1));
-        result.setExternalIdentifiersJson("{\"workExternalIdentifier\":[{\"relationship\":\"SELF\",\"url\":{\"value\":\"http://orcid.org\"},\"workExternalIdentifierType\":\"AGR\",\"workExternalIdentifierId\":{\"content\":\"peer-review:external-identifier-id\"}}]}");
+        result.setExternalIdentifiersJson("{\"workExternalIdentifier\":[{\"relationship\":\"SELF\",\"url\":{\"value\":\"http://orcid.org\"},\"workExternalIdentifierType\":\"SOURCE_WORK_ID\",\"workExternalIdentifierId\":{\"content\":\"peer-review:external-identifier-id\"}}]}");
         result.setProfile(new ProfileEntity("0000-0001-0002-0003"));
         result.setRole(Role.MEMBER);
         result.setType(PeerReviewType.EVALUATION);
         result.setUrl("peer-review:url");        
-        result.setSubjectExternalIdentifiersJson("{\"relationship\":\"SELF\",\"url\":{\"value\":\"http://orcid.org\"},\"workExternalIdentifierType\":\"AGR\",\"workExternalIdentifierId\":{\"content\":\"peer-review:subject-external-identifier-id\"}}");
+        result.setSubjectExternalIdentifiersJson("{\"relationship\":\"SELF\",\"url\":{\"value\":\"http://orcid.org\"},\"workExternalIdentifierType\":\"SOURCE_WORK_ID\",\"workExternalIdentifierId\":{\"content\":\"peer-review:subject-external-identifier-id\"}}");
         result.setSubjectContainerName("peer-review:subject-container-name");
         result.setSubjectName("peer-review:subject-name");
         result.setSubjectTranslatedName("peer-review:subject-translated-name");
