@@ -22,8 +22,6 @@ import java.net.URISyntaxException;
 import javax.annotation.Resource;
 
 import ma.glasnost.orika.CustomMapper;
-import ma.glasnost.orika.Mapper;
-import ma.glasnost.orika.MapperBase;
 import ma.glasnost.orika.MapperFacade;
 import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.MappingContext;
