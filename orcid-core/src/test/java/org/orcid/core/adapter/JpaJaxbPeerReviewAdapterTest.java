@@ -155,8 +155,7 @@ public class JpaJaxbPeerReviewAdapterTest {
         assertNotNull(peerReviewSummary.getExternalIdentifiers().getExternalIdentifier());
         assertEquals(1, peerReviewSummary.getExternalIdentifiers().getExternalIdentifier().size());
         assertEquals("peer-review:external-identifier-id", peerReviewSummary.getExternalIdentifiers().getExternalIdentifier().get(0).getWorkExternalIdentifierId().getContent());
-        assertEquals("source-work-id", peerReviewSummary.getExternalIdentifiers().getExternalIdentifier().get(0).getWorkExternalIdentifierType().value());
-        assertEquals(Role.MEMBER.value(), peerReviewSummary.getRole().value());
+        assertEquals("source-work-id", peerReviewSummary.getExternalIdentifiers().getExternalIdentifier().get(0).getWorkExternalIdentifierType().value());        
         assertNotNull(peerReviewSummary.getSource());
         assertEquals("APP-000000001", peerReviewSummary.getSource().retrieveSourcePath());
     }

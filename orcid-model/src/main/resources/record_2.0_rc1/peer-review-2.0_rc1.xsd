@@ -139,14 +139,7 @@
 		<xs:complexType>
 			<xs:complexContent>
 				<xs:extension base="common:activity-summary">
-					<xs:sequence>
-						<xs:element name="role" type="peer-review:role">
-							<xs:annotation>
-								<xs:documentation>The role played by a person in their
-									contribution to a review.
-								</xs:documentation>
-							</xs:annotation>
-						</xs:element>
+					<xs:sequence>						
 						<!-- orcid orgs doesn't match specification -->
 						<xs:element name="external-identifiers" type="work:work-external-identifiers"
 							minOccurs="0">
@@ -154,15 +147,7 @@
 								<xs:documentation>The unique generated identifier of the review.
 								</xs:documentation>
 							</xs:annotation>
-						</xs:element>
-						<xs:element name="type" type="peer-review:type"
-							minOccurs="1" maxOccurs="1">
-							<xs:annotation>
-								<xs:documentation>The kind of review applied to the subject type
-									reviewed
-								</xs:documentation>
-							</xs:annotation>
-						</xs:element>
+						</xs:element>						
 						<xs:element name="completion-date" type="common:fuzzy-date"
 							minOccurs="1" maxOccurs="1">
 							<xs:annotation>
