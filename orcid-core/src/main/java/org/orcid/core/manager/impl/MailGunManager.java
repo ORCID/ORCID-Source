@@ -100,7 +100,7 @@ public class MailGunManager {
         if(custom) 
             webResource = client.resource(getNotifyApiUrl());
         //Else, check the from address to identify the domain
-        else if(to.trim().endsWith("@vt.edu") || to.trim().endsWith("@qq.com"))
+        else if(to.trim().endsWith(".vt.edu") || to.trim().endsWith("@vt.edu") || to.trim().endsWith(".qq.com") || to.trim().endsWith("@qq.com"))
             webResource = client.resource(getDedicatedIpApiUrl());
         else if (from.trim().endsWith("@verify.orcid.org")) 
             webResource = client.resource(getVerifyApiUrl());
