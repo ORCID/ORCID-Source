@@ -335,8 +335,7 @@ public class RegistrationController extends BaseController {
             reg.getGrecaptcha().setErrors(new ArrayList<String>());
             setError(reg.getGrecaptcha(), "registrationForm.recaptcha.error");
             setError(reg, "registrationForm.recaptcha.error");           
-        } else {
-            request.getSession().setAttribute("verified-recaptcha", reg.getGrecaptcha().getValue());
+        } else {            
             request.getSession().setAttribute("verified-recaptcha-hash", encryptionManager.encryptForExternalUse(reg.getGrecaptcha().getValue()));
         }
                         
@@ -344,17 +343,18 @@ public class RegistrationController extends BaseController {
     }
 
     @RequestMapping(value = "/registerConfirm.json", method = RequestMethod.POST)
-    public @ResponseBody Redirect setRegisterConfirm(HttpServletRequest request, HttpServletResponse response, @RequestBody Registration reg) {
-        //Remove the session hash if needed
-        if(request.getSession().getAttribute("verified-recaptcha-hash") != null) {
-            request.getSession().removeAttribute("verified-recaptcha-hash");
-        }
+    public @ResponseBody Redirect setRegisterConfirm(HttpServletRequest request, HttpServletResponse response, @RequestBody Registration reg) {        
         Redirect r = new Redirect();
 
         //If the captcha verified key is not in the session, redirect to the login page
-        if(request.getSession().getAttribute("verified-recaptcha") == null || PojoUtil.isEmpty(reg.getGrecaptcha()) || !reg.getGrecaptcha().getValue().equals(request.getSession().getAttribute("verified-recaptcha"))) {
+        if(request.getSession().getAttribute("verified-recaptcha-hash") == null || PojoUtil.isEmpty(reg.getGrecaptcha()) || !encryptionManager.encryptForExternalUse(reg.getGrecaptcha().getValue()).equals(request.getSession().getAttribute("verified-recaptcha-hash"))) {
             r.setUrl(getBaseUri() + "/register");
             return r;
+        }
+        
+        //Remove the session hash if needed
+        if(request.getSession().getAttribute("verified-recaptcha-hash") != null) {
+            request.getSession().removeAttribute("verified-recaptcha-hash");
         }
         
         // make sure validation still passes
