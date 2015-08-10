@@ -6815,6 +6815,11 @@ orcidNgModule.controller('manageMembersCtrl',['$scope', '$compile', function man
     //Update client
     $scope.updateClient = function() {
     	for(var i = 0; i < $scope.client.redirectUris.length; i ++) {
+    		if($scope.client.redirectUris[i].actType.value == "") {
+    			$scope.client.redirectUris[i].actType.value = {"import-works-wizard" : []};
+    			$scope.client.redirectUris[i].geoArea.value = {"import-works-wizard" : []};
+    		}
+    		console.log($scope.client.redirectUris[i].actType.value);
     		$scope.client.redirectUris[i].actType.value = JSON.stringify($scope.client.redirectUris[i].actType.value);
     		$scope.client.redirectUris[i].geoArea.value = JSON.stringify($scope.client.redirectUris[i].geoArea.value);
     	}
