@@ -145,7 +145,7 @@
          </div>
 	</div>
     <div>
-        <div class="relative"  style="margin-bottom: 15px;">			
+        <div class="relative recaptcha"  id="recaptcha" style="margin-bottom: 15px;">			
 			 <div
                 vc-recaptcha
                 theme="'light'"

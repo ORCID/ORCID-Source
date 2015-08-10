@@ -92,7 +92,7 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
     private LocaleManager localeManager;
 
     private static Map<Class<? extends Throwable>, Pair<Response.Status, Integer>> HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE = new HashMap<>();
-    {                        
+    {
         // 301
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(DeprecatedException.class, new ImmutablePair<>(Response.Status.MOVED_PERMANENTLY, 9007));
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OrcidDeprecatedException.class, new ImmutablePair<>(Response.Status.MOVED_PERMANENTLY, 9013));
@@ -102,11 +102,16 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OrcidBadRequestException.class, new ImmutablePair<>(Response.Status.BAD_REQUEST, 9012));
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(MismatchedPutCodeException.class, new ImmutablePair<>(Response.Status.BAD_REQUEST, 9019));
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(InvalidPutCodeException.class, new ImmutablePair<>(Response.Status.BAD_REQUEST, 9024));
-        
+        HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OrcidValidationException.class, new ImmutablePair<>(Response.Status.BAD_REQUEST, 9020));
+        HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(ActivityTitleValidationException.class, new ImmutablePair<>(Response.Status.BAD_REQUEST, 9022));
+        HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(ActivityIdentifierValidationException.class, new ImmutablePair<>(Response.Status.BAD_REQUEST, 9023));
+        HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(GroupIdRecordNotFoundException.class, new ImmutablePair<>(Response.Status.BAD_REQUEST, 9026));
+
         // 401
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(AuthenticationException.class, new ImmutablePair<>(Response.Status.UNAUTHORIZED, 9002));
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OAuth2Exception.class, new ImmutablePair<>(Response.Status.UNAUTHORIZED, 9003));
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OrcidUnauthorizedException.class, new ImmutablePair<>(Response.Status.UNAUTHORIZED, 9017));
+        HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OrcidInvalidScopeException.class, new ImmutablePair<>(Response.Status.UNAUTHORIZED, 9015));
 
         // 403
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(SecurityException.class, new ImmutablePair<>(Response.Status.FORBIDDEN, 9004));
@@ -123,14 +128,9 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OrcidNotAcceptableException.class, new ImmutablePair<>(Response.Status.NOT_ACCEPTABLE, 9016));
 
         // 409
-        HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OrcidInvalidScopeException.class, new ImmutablePair<>(Response.Status.CONFLICT, 9015));        
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(LockedException.class, new ImmutablePair<>(Response.Status.CONFLICT, 9018));
-        HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OrcidValidationException.class, new ImmutablePair<>(Response.Status.CONFLICT, 9020));
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OrcidDuplicatedActivityException.class, new ImmutablePair<>(Response.Status.CONFLICT, 9021));
-        HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(ActivityTitleValidationException.class, new ImmutablePair<>(Response.Status.CONFLICT, 9022));
-        HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(ActivityIdentifierValidationException.class, new ImmutablePair<>(Response.Status.CONFLICT, 9023));
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(DuplicatedGroupIdRecordException.class, new ImmutablePair<>(Response.Status.CONFLICT, 9025));
-        HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(GroupIdRecordNotFoundException.class, new ImmutablePair<>(Response.Status.CONFLICT, 9026));
     }
 
     @Override
@@ -172,10 +172,10 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
         } else if (DeprecatedException.class.isAssignableFrom(t.getClass())) {
             OrcidMessage entity = getLegacyOrcidEntity("Account Deprecated", t);
             return Response.status(Response.Status.MOVED_PERMANENTLY).entity(entity).build();
-        } else if(LockedException.class.isAssignableFrom(t.getClass())){
+        } else if (LockedException.class.isAssignableFrom(t.getClass())) {
             OrcidMessage entity = getLegacyOrcidEntity("Account locked", t);
             return Response.status(Response.Status.CONFLICT).entity(entity).build();
-        } else if(NoResultException.class.isAssignableFrom(t.getClass()) ) {
+        } else if (NoResultException.class.isAssignableFrom(t.getClass())) {
             OrcidMessage entity = getLegacyOrcidEntity("Not found", t);
             return Response.status(Response.Status.NOT_FOUND).entity(entity).build();
         } else {
@@ -235,16 +235,23 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
         if (exceptionMessage != null) {
             devMessage += ": " + exceptionMessage;
         }
+        Throwable cause = t.getCause();
+        if (cause != null) {
+            String causeMessage = cause.getLocalizedMessage();
+            if (causeMessage != null) {
+                devMessage += " (" + causeMessage + ")";
+            }
+        }
         orcidError.setDeveloperMessage(devMessage);
         Locale locale = localeManager.getLocale();
         String param = null;
-        if(t instanceof DeprecatedException) {
-        	param = ((DeprecatedException) t).getPrimary();
-        	orcidError.setUserMessage(new StringBuffer(messageSource.getMessage("apiError." + errorCode + ".userMessage", null, locale)).append(param).toString());
+        if (t instanceof DeprecatedException) {
+            param = ((DeprecatedException) t).getPrimary();
+            orcidError.setUserMessage(new StringBuffer(messageSource.getMessage("apiError." + errorCode + ".userMessage", null, locale)).append(param).toString());
         } else {
-        	orcidError.setUserMessage(messageSource.getMessage("apiError." + errorCode + ".userMessage", null, locale));
+            orcidError.setUserMessage(messageSource.getMessage("apiError." + errorCode + ".userMessage", null, locale));
         }
-        
+
         orcidError.setMoreInfo(messageSource.getMessage("apiError." + errorCode + ".moreInfo", null, locale));
         return orcidError;
     }

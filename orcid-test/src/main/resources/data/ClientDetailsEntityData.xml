@@ -97,6 +97,8 @@
     <client_scope client_details_id="4444-4444-4444-4445" scope_type="/activities/read-limited"/>
     <client_scope client_details_id="4444-4444-4444-4445" scope_type="/person/read-limited"/>
     <client_scope client_details_id="4444-4444-4444-4445" scope_type="/peer-review/create"/>
+    <client_scope client_details_id="4444-4444-4444-4445" scope_type="/group-id-record/read"/>
+    <client_scope client_details_id="4444-4444-4444-4445" scope_type="/group-id-record/update"/>
     <client_scope client_details_id="4444-4444-4444-4498" scope_type="/authenticate"/>
     <client_scope client_details_id="APP-6666666666666666" scope_type="/orcid-bio/read-limited"/>
     <client_scope client_details_id="APP-6666666666666666" scope_type="/orcid-works/create"/>
