@@ -222,8 +222,8 @@ public class WorkManagerImpl implements WorkManager {
     @Override
     @Cacheable(value = "works-summaries", key = "#orcid.concat('-').concat(#lastModified)")
     public List<WorkSummary> getWorksSummaryList(String orcid, long lastModified) {
-        List<WorkEntity> works = workDao.findFullWorks(orcid);        
-        return jpaJaxbWorkAdapter.toWorkSummary(works);
+    	List<MinimizedWorkEntity> works = workDao.findWorks(orcid);        
+    	return jpaJaxbWorkAdapter.toWorkSummaryFromMinimized(works);
     }
 }
 

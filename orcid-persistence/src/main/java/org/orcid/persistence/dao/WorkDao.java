@@ -134,13 +134,4 @@ public interface WorkDao extends GenericDao<WorkEntity, Long> {
      * @return a list of work ids    
      * */
     List<BigInteger> getWorksByWorkTypeAndExtIdType(String workType, String extIdType);
-    
-    /**
-     * Find works for a specific user
-     * 
-     * @param orcid
-     *            the Id of the user
-     * @return the list of works associated to the specific user
-     * */
-    List<WorkEntity> findFullWorks(String orcid);
 }

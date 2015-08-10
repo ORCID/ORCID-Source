@@ -242,15 +242,5 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
         query.setParameter("workType", workType);
         return query.getResultList();
     }
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<WorkEntity> findFullWorks(String orcid) {
-        Query query = entityManager
-                .createQuery("select w from WorkEntity w where w.profile.id=:orcid "
-                        + "order by w.displayIndex desc, w.dateCreated asc");
-        query.setParameter("orcid", orcid);
-        return query.getResultList();
-	}
 }
 

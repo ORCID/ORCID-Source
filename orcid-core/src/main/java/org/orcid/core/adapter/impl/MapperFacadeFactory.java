@@ -164,20 +164,18 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         workClassMap.register();
 
         ClassMapBuilder<WorkSummary, WorkEntity> workSummaryClassMap = mapperFactory.classMap(WorkSummary.class, WorkEntity.class);
-        addV2CommonFields(workSummaryClassMap);
+        workSummaryClassMap.field("putCode", "id");
         workSummaryClassMap.field("title.title.content", "title");
         workSummaryClassMap.field("title.translatedTitle.content", "translatedTitle");
         workSummaryClassMap.field("title.translatedTitle.languageCode", "translatedTitleLanguageCode");
         workSummaryClassMap.field("type", "workType");
-        workSummaryClassMap.field("publicationDate.year.value", "publicationDate.year");
-        workSummaryClassMap.field("publicationDate.month.value", "publicationDate.month");
-        workSummaryClassMap.field("publicationDate.day.value", "publicationDate.day");
+        workSummaryClassMap.field("publicationDate", "publicationDate");
         workSummaryClassMap.fieldMap("externalIdentifiers", "externalIdentifiersJson").converter("workExternalIdentifiersConverterId").add();
         workSummaryClassMap.byDefault();
         workSummaryClassMap.register();
 
         ClassMapBuilder<WorkSummary, MinimizedWorkEntity> workSummaryMinimizedClassMap = mapperFactory.classMap(WorkSummary.class, MinimizedWorkEntity.class);
-        workSummaryMinimizedClassMap.field("putCode", "id");
+        addV2CommonFields(workSummaryMinimizedClassMap);
         workSummaryMinimizedClassMap.field("title.title.content", "title");
         workSummaryMinimizedClassMap.field("title.translatedTitle.content", "translatedTitle");
         workSummaryMinimizedClassMap.field("title.translatedTitle.languageCode", "translatedTitleLanguageCode");
