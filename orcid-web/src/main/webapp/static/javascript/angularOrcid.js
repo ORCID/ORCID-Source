@@ -6815,6 +6815,11 @@ orcidNgModule.controller('manageMembersCtrl',['$scope', '$compile', function man
     //Update client
     $scope.updateClient = function() {
     	for(var i = 0; i < $scope.client.redirectUris.length; i ++) {
+    		if($scope.client.redirectUris[i].actType.value == "") {
+    			$scope.client.redirectUris[i].actType.value = {"import-works-wizard" : ["Articles"]};
+    			$scope.client.redirectUris[i].geoArea.value = {"import-works-wizard" : ["Global"]};
+    		}
+    		console.log($scope.client.redirectUris[i].actType.value);
     		$scope.client.redirectUris[i].actType.value = JSON.stringify($scope.client.redirectUris[i].actType.value);
     		$scope.client.redirectUris[i].geoArea.value = JSON.stringify($scope.client.redirectUris[i].geoArea.value);
     	}
@@ -7705,12 +7710,12 @@ orcidNgModule.controller('ClientEditCtrl',['$scope', '$compile', function ($scop
 
     // Add a new uri input field to a new client
     $scope.addRedirectUriToNewClientTable = function(){
-        $scope.newClient.redirectUris.push({value: {value: ''},type: {value: 'default'}, scopes: [], errors: []});
+        $scope.newClient.redirectUris.push({value: {value: ''},type: {value: 'default'}, scopes: [], errors: [], actType: {value: ""}, geoArea: {value: ""}});
     };
 
     // Add a new uri input field to a existing client
     $scope.addUriToExistingClientTable = function(){
-        $scope.clientToEdit.redirectUris.push({value: {value: ''},type: {value: 'default'}, scopes: [], errors: []});
+        $scope.clientToEdit.redirectUris.push({value: {value: ''},type: {value: 'default'}, scopes: [], errors: [], actType: {value: ""}, geoArea: {value: ""}});
     };
 
     // Delete an uri input field
@@ -7837,6 +7842,9 @@ orcidNgModule.controller('ClientEditCtrl',['$scope', '$compile', function ($scop
         for(var j = $scope.newClient.redirectUris.length - 1; j >= 0 ; j--)    {
             if(!$scope.newClient.redirectUris[j].value){
                 $scope.newClient.redirectUris.splice(j, 1);
+            } else {
+    			$scope.newClient.redirectUris[j].actType.value = JSON.stringify({"import-works-wizard" : ["Articles"]});
+    			$scope.newClient.redirectUris[j].geoArea.value = JSON.stringify({"import-works-wizard" : ["Global"]});
             }
         }
 
@@ -7867,6 +7875,9 @@ orcidNgModule.controller('ClientEditCtrl',['$scope', '$compile', function ($scop
         for(var j = $scope.clientToEdit.redirectUris.length - 1; j >= 0 ; j--)    {
             if(!$scope.clientToEdit.redirectUris[j].value){
                 $scope.clientToEdit.redirectUris.splice(j, 1);
+            } else if($scope.clientToEdit.redirectUris[j].actType.value == "") {
+    			$scope.clientToEdit.redirectUris[j].actType.value = JSON.stringify({"import-works-wizard" : ["Articles"]});
+    			$scope.clientToEdit.redirectUris[j].geoArea.value = JSON.stringify({"import-works-wizard" : ["Global"]});
             }
         }
 
