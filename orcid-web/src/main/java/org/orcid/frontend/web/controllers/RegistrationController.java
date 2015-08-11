@@ -317,27 +317,31 @@ public class RegistrationController extends BaseController {
     @RequestMapping(value = "/register.json", method = RequestMethod.POST)
     public @ResponseBody Registration setRegister(HttpServletRequest request, @RequestBody Registration reg) {
         validateRegistrationFields(request, reg);
-        
-        if(reg.getGrecaptcha() == null) {
-            reg.getGrecaptcha().setErrors(new ArrayList<String>());
-            setError(reg.getGrecaptcha(), "registrationForm.recaptcha.error");
-            setError(reg, "registrationForm.recaptcha.error");
-        } else {
-            reg.getGrecaptcha().setErrors(new ArrayList<String>());
-        }       
-                
-        if(request.getSession().getAttribute("verified-recaptcha-hash") != null) {
-            if(!encryptionManager.encryptForExternalUse(reg.getGrecaptcha().getValue()).equals(request.getSession().getAttribute("verified-recaptcha-hash"))) {
-                setError(reg.getGrecaptcha(), "registrationForm.recaptcha.error");
-                setError(reg, "registrationForm.recaptcha.error");
-            }            
-        } else if (!recaptchaVerifier.verify(reg.getGrecaptcha().getValue())){
-            reg.getGrecaptcha().setErrors(new ArrayList<String>());
-            setError(reg.getGrecaptcha(), "registrationForm.recaptcha.error");
-            setError(reg, "registrationForm.recaptcha.error");           
-        } else {            
-            request.getSession().setAttribute("verified-recaptcha-hash", encryptionManager.encryptForExternalUse(reg.getGrecaptcha().getValue()));
-        }
+        // If recatcha wasn't loaded do nothing. This is for countries that block google.
+		if (reg.getGrecaptchaWidgetId().getValue() != null) {
+			if (reg.getGrecaptcha() == null) {
+				reg.getGrecaptcha().setErrors(new ArrayList<String>());
+				setError(reg.getGrecaptcha(), "registrationForm.recaptcha.error");
+				setError(reg, "registrationForm.recaptcha.error");
+			} else {
+				reg.getGrecaptcha().setErrors(new ArrayList<String>());
+			}
+
+			if (request.getSession().getAttribute("verified-recaptcha-hash") != null) {
+				if (!encryptionManager.encryptForExternalUse(reg.getGrecaptcha().getValue())
+						.equals(request.getSession().getAttribute("verified-recaptcha-hash"))) {
+					setError(reg.getGrecaptcha(), "registrationForm.recaptcha.error");
+					setError(reg, "registrationForm.recaptcha.error");
+				}
+			} else if (!recaptchaVerifier.verify(reg.getGrecaptcha().getValue())) {
+				reg.getGrecaptcha().setErrors(new ArrayList<String>());
+				setError(reg.getGrecaptcha(), "registrationForm.recaptcha.error");
+				setError(reg, "registrationForm.recaptcha.error");
+			} else {
+				request.getSession().setAttribute("verified-recaptcha-hash",
+						encryptionManager.encryptForExternalUse(reg.getGrecaptcha().getValue()));
+			}
+		}
                         
         return reg;
     }
@@ -346,10 +350,13 @@ public class RegistrationController extends BaseController {
     public @ResponseBody Redirect setRegisterConfirm(HttpServletRequest request, HttpServletResponse response, @RequestBody Registration reg) {        
         Redirect r = new Redirect();
 
-        //If the captcha verified key is not in the session, redirect to the login page
-        if(request.getSession().getAttribute("verified-recaptcha-hash") == null || PojoUtil.isEmpty(reg.getGrecaptcha()) || !encryptionManager.encryptForExternalUse(reg.getGrecaptcha().getValue()).equals(request.getSession().getAttribute("verified-recaptcha-hash"))) {
-            r.setUrl(getBaseUri() + "/register");
-            return r;
+        // If recatcha wasn't loaded do nothing. This is for countries that block google.
+        if (reg.getGrecaptchaWidgetId().getValue() != null) {
+	        //If the captcha verified key is not in the session, redirect to the login page
+	        if(request.getSession().getAttribute("verified-recaptcha-hash") == null || PojoUtil.isEmpty(reg.getGrecaptcha()) || !encryptionManager.encryptForExternalUse(reg.getGrecaptcha().getValue()).equals(request.getSession().getAttribute("verified-recaptcha-hash"))) {
+	            r.setUrl(getBaseUri() + "/register");
+	            return r;
+	        }
         }
         
         //Remove the session hash if needed
