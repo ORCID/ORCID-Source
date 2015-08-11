@@ -2638,8 +2638,8 @@ orcidNgModule.controller('ResetPasswordCtrl', ['$scope', '$compile', 'commonSrvc
 
 orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc', 'vcRecaptchaService', function ($scope, $compile, commonSrvc, vcRecaptchaService) {
     $scope.privacyHelp = {};
-    $scope.widgetId = null;
-    $scope.response = null;
+    $scope.recaptchaWidgetId = null;
+    $scope.recatchaResponse = null;
     
     $scope.model = {
     	key: orcidVar.recaptchaKey
@@ -2736,7 +2736,8 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
             $scope.register.creationType.value = "Direct";
         }        
         
-        $scope.register.grecaptcha.value = $scope.response; //Adding the response to the register object
+        $scope.register.grecaptcha.value = $scope.recatchaResponse; //Adding the response to the register object
+        $scope.register.grecaptchaWidgetId.value = $scope.recaptchaWidgetId;
         
         $.ajax({
             url: getBaseUri() + '/register.json',
@@ -2850,14 +2851,14 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
     };
     
     
-    $scope.setWidgetId = function (widgetId) {
+    $scope.setRecaptchaWidgetId = function (widgetId) {
         console.log('Widget ID: ' + widgetId)
-    	$scope.widgetId = widgetId;
+    	$scope.recaptchaWidgetId = widgetId;
     };
 
-    $scope.setResponse = function (response) {
-        console.log('Yey response!');
-        $scope.response = response;
+    $scope.setRecatchaResponse = function (response) {
+        console.log('Yey recaptcha response!');
+        $scope.recatchaResponse = response;
     };
     //init
     $scope.getRegister();

@@ -61,6 +61,8 @@ public class Registration implements ErrorsInterface, Serializable {
     private long captchaNumClient;
     
     private Text grecaptcha;
+    
+    private Text grecaptchaWidgetId;
 
     public Registration() {
         errors = new ArrayList<String>();
@@ -79,6 +81,7 @@ public class Registration implements ErrorsInterface, Serializable {
         referredBy = new Text();
         sendEmailFrequencyDays = new Text();
         grecaptcha = new Text();
+        grecaptchaWidgetId = new Text();
     }
 
     public List<String> getErrors() {
@@ -219,6 +222,14 @@ public class Registration implements ErrorsInterface, Serializable {
 
 	public void setCaptchaNumServer(long captchaNumServer) {
 		this.captchaNumServer = captchaNumServer;
+	}
+
+	public Text getGrecaptchaWidgetId() {
+		return grecaptchaWidgetId;
+	}
+
+	public void setGrecaptchaWidgetId(Text grecaptchaWidgetId) {
+		this.grecaptchaWidgetId = grecaptchaWidgetId;
 	}
 
 }
