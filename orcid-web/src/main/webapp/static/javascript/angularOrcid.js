@@ -1645,6 +1645,62 @@ orcidNgModule.filter('externalIdentifierHtml', ['fundingSrvc', function(fundingS
     	};
 }]);
 
+orcidNgModule.filter('peerReviewExternalIdentifierHtml', function(){
+    return function(peerReviewExternalIdentifier, first, last, length, moreInfo){
+
+        var output = '';
+        var ngclass = '';
+        var isPartOf = false;
+        
+        if (moreInfo == false || typeof moreInfo == 'undefined') ngclass = 'truncate-anchor';
+        
+        
+        if(workExternalIdentifier.relationship != null && workExternalIdentifier.relationship.value == 'part-of')
+        	isPartOf = true;
+        
+        if (workExternalIdentifier == null) return output;
+        if (workExternalIdentifier.workExternalIdentifierId == null) return output;
+
+        var id = workExternalIdentifier.workExternalIdentifierId.value;
+        var type;
+
+        if (workExternalIdentifier.workExternalIdentifierType != null)
+            type = workExternalIdentifier.workExternalIdentifierType.value;
+        if (type != null) {
+        	if(isPartOf) 
+        		output = output + "<span class='italic'>" + om.get("common.part_of") + " <span class='type'>" + type.toUpperCase() + "</span></span>: ";
+        	else 
+        		output = output + "<span class='type'>" + type.toUpperCase() + "</span>: ";
+        }
+        var link = null;
+
+        if (workExternalIdentifier.url != null && workExternalIdentifier.url.value != '')
+        	link = workExternalIdentifier.url.value;
+        else link = workIdLinkJs.getLink(id,type); 
+        	
+        if (link != null){
+        	if(link.lastIndexOf('http://') === -1 && link.lastIndexOf('https://') === -1) {
+        		link = '//' + link;
+        	}
+            output = output + '<a href="' + link.replace(/'/g, "&#39;") + '" class ="' + ngclass + '"' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(work.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(work.putCode.value + $index)\">" + id.escapeHtml() + '</a>';
+        }else{
+            output = output + id;        
+        }
+        output += '<div class="popover-pos">\
+			<div class="popover-help-container">\
+	        	<div class="popover bottom" ng-class="{'+"'block'"+' : displayURLPopOver[work.putCode.value + $index] == true}">\
+					<div class="arrow"></div>\
+					<div class="popover-content">\
+				    	<a href="'+link+'" target="_blank" class="ng-binding">'+link+'</a>\
+				    </div>\
+				</div>\
+			</div>\
+	  </div>';
+
+      return output;
+    };
+});
+
 function removeBadContributors(dw) {
     for (var idx in dw.contributors) {
         if (dw.contributors[idx].contributorSequence == null
@@ -5446,7 +5502,6 @@ orcidNgModule.factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
                     count += peerReviewSrvc.groups[idx].activitiesCount;
                 }
                 return count;
-                return 'hola';
             }
     };
     return peerReviewSrvc;

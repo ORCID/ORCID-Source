@@ -129,7 +129,7 @@
 	                		</div>
 						</div>
 						<!-- DATE -->				
-						<span><strong><@orcid.msg 'peer_review.completion_date'/></strong></span>	
+						<span><strong><@orcid.msg 'peer_review.completion_date'/></strong></span><span class="required text-error">*</span>	
 						<div class="control-group">			    		
 				    		<div class="relative">					    
 								<select id="year" class="col-md-3 col-sm-3 col-xs-3 inline-input" name="year" ng-model="editPeerReview.completionDate.year">

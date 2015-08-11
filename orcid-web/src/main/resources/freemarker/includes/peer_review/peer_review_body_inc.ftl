@@ -24,7 +24,7 @@
                     <div class="row" ng-show="group.activePutCode == peerReview.putCode.value">
                         <div class="col-md-9 col-sm-9 col-xs-8">
                         	<div>
-                        		<span class="title" ng-click="showDetailsMouseClick(group.groupId,$event);"><span ng-class="{'glyphicon x075 glyphicon-chevron-right': showDetails[group.groupId] == false || showDetails[group.groupId] == null, 'glyphicon x075 glyphicon-chevron-down': showDetails[group.groupId] == true}"></span> <span>review activity for </span><span class="peer-review-title" ng-bind="peerReview.groupId.value"></span></span> ({{peerReviewSrvc.peerReviewCount}})
+                        		<span class="title" ng-click="showDetailsMouseClick(group.groupId,$event);"><span ng-class="{'glyphicon x075 glyphicon-chevron-right': showDetails[group.groupId] == false || showDetails[group.groupId] == null, 'glyphicon x075 glyphicon-chevron-down': showDetails[group.groupId] == true}"></span> <span>review activity for </span><span class="peer-review-title"><span ng-bind="peerReview.groupId.value"></span>({{group.activitiesCount}})</span></span>
                         	</div>
                         </div>
                     
