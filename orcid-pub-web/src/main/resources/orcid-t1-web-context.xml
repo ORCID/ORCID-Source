@@ -34,7 +34,6 @@
 	<bean id="beanConfig" class="io.swagger.jaxrs.config.BeanConfig">
         <property name="title" value="ORCID Public"/>
         <property name="version" value="Latest" />
-        <property name="schemes" value="http,https" />
         <property name="host" value="#{ orcidUrlManager.pubHostWithPort }" />
         <property name="basePath" value="#{ orcidUrlManager.pubPath }"/>
         <property name="resourcePackage" value="org.orcid.api.t1.server"/>
