@@ -40,15 +40,11 @@
 			var loc = window.location.toString();
 		    var params = loc.split('?')[1];
 			
-			if (params.length === 34 && params.indexOf('orcid=') === 0 && params.indexOf('t=') === 26){
-				var script = document.createElement('script');
-				script.src = baseURL + '/static/javascript/orcid-summary-widget.js' + '?' + params;
-				var head = document.getElementsByTagName('head')[0];
-				head.appendChild(script);	
-			}else{
-				var widget = document.getElementById("orcid-summary-widget");
-				widget.innerHTML = "Please review widget's code";
-			}	
+			var script = document.createElement('script');
+			script.src = baseURL + '/static/javascript/orcid-summary-widget.js' + '?' + params;
+			var head = document.getElementsByTagName('head')[0];
+			head.appendChild(script);	
+				
 		</script>
 	</body>
 </html>

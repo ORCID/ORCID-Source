@@ -140,23 +140,33 @@
 	  if(el.src.match(re)) {
 		  scriptTag = el;
       }
-  }   
+  }
   
-  var data = parseQueryString(scriptTag.src);  
+  var data = parseQueryString(scriptTag.src);
   
-  var url = baseURL + '/public_widgets/' + data.orcid + '/' + data.t +'/info.json';  
+  if (data.locale === undefined){
+	  var url = baseURL + '/public_widgets/' + data.orcid + '/' + data.t +'/info.json';
+  }else{
+	  var url = baseURL + '/public_widgets/' + data.orcid + '/' + data.t +'/info.json?locale=' + data.locale;
+  }
   
   JSONP(url, callback);
   
   function callback(json){
 	  	var orcid = json.orcid;
 	    var name = json.name;
-	    var works = json.works;
-	    var funding = json.fundings;
-	    var education = json.educations;
-	    var employment = json.employments;
-	    var peerReviews =  json.peerReviews;	
-	    var all = works + funding + education + employment + peerReviews;
+	    var content = '';
+	    var count = 0;
+	    for(key in json.values){
+	    	if (json.values[key] > 0){
+	    		content += '<div class="orcid-summary-item">' + key + '('+ json.values[key] +')</div>';
+	    		count++;
+	    	}
+	    }
+	    if (count == 0){
+	    	content = '<div class="orcid-summary-item">You haven\'t added any items to your record.</div>';
+	    }
+	    
 	    if(styleTags.length == 0) {	        
 	        var styleTag = document.createElement("link");
 	        styleTag.rel = "stylesheet";
@@ -173,25 +183,7 @@
 	                                        <div class="orcid-name">'+ name +'</div>\
 	                                        <div class="orcid-id">ORCID: <span class="orcid-mini-logo"></span>'+ orcid +'</div>\
 	                                        <div class="orcid-summary-items">';
-	    									if (all > 0){
-		                                        if (works > 0) {
-		                                            widgetInnerHTML += '<div class="orcid-summary-item">Works ('+ works +')</div>';
-		                                        }
-		                                        if (funding > 0){
-		                                            widgetInnerHTML += '<div class="orcid-summary-item">Funding (' + funding +')</div>';
-		                                        }
-		                                        if (education > 0){
-		                                            widgetInnerHTML += '<div class="orcid-summary-item">Education (' + education + ')</div>';
-		                                        }
-		                                        if (employment > 0){
-		                                            widgetInnerHTML += '<div class="orcid-summary-item">Employment (' + employment + ')</div>';
-		                                        }
-		                                        if(peerReviews > 0){
-		                                            widgetInnerHTML += '<div class="orcid-summary-item">Peer Reviews (' + peerReviews +')</div>';
-		                                        }
-	    									}else{
-	    										widgetInnerHTML += '<div class="orcid-summary-item">You haven\'t added any items to your record.</div>';
-	    									}
+	    									widgetInnerHTML += content;
 	                                        widgetInnerHTML += '</div>\
 	                                    </div>\
 	                                </a>\
