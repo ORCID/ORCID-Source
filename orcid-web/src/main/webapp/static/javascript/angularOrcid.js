@@ -1698,7 +1698,7 @@ orcidNgModule.filter('peerReviewExternalIdentifierHtml', function(){
 	        	<div class="popover bottom" ng-class="{'+"'block'"+' : displayURLPopOver[peerReview.putCode.value + $index] == true}">\
 					<div class="arrow"></div>\
 					<div class="popover-content">\
-				    	<a href="'+link+'" target="_blank" class="ng-binding">'+link+'</a>\
+				    	<a href="'+link+'" target="_blank">'+link+'</a>\
 				    </div>\
 				</div>\
 			</div>\
@@ -4157,7 +4157,7 @@ orcidNgModule.controller('PublicPeerReviewCtrl',['$scope', '$compile', '$filter'
 	 $scope.workspaceSrvc  = workspaceSrvc;
 	 $scope.showDetails = {};
 	 $scope.showElement = {};
-	 $scope.editSources = {};
+	 $scope.showPeerReviewDetails = {};
 	 
 	 $scope.sortState = new ActSortState(GroupedActivities.PEER_REVIEW);
      
@@ -4165,10 +4165,10 @@ orcidNgModule.controller('PublicPeerReviewCtrl',['$scope', '$compile', '$filter'
         $scope.sortState.sortBy(key);
      };
 	 
-	 $scope.showDetailsMouseClick = function(key, $event) {
-        $event.stopPropagation();
-        $scope.showDetails[key] = !$scope.showDetails[key];
-    };
+     $scope.showDetailsMouseClick = function(groupId, $event){
+     	$event.stopPropagation();
+     	$scope.showDetails[groupId] = !$scope.showDetails[groupId];
+     };
     
     $scope.showTooltip = function (element){    	
         $scope.showElement[element] = true;
@@ -4178,13 +4178,13 @@ orcidNgModule.controller('PublicPeerReviewCtrl',['$scope', '$compile', '$filter'
         $scope.showElement[element] = false;
     };
     
-    $scope.showSources = function(group) {
-        $scope.editSources[group.groupId] = true;
+    
+    $scope.showMoreDetails = function(putCode){    	
+    	$scope.showPeerReviewDetails[putCode] = true;   
     };
     
-    $scope.hideSources = function(group) {
-        $scope.editSources[group.groupId] = false;
-        group.activePutCode = group.defaultPutCode;
+    $scope.hideMoreDetails = function(putCode){
+    	$scope.showPeerReviewDetails[putCode] = false;
     };
     
     //Init

@@ -5979,6 +5979,7 @@ textarea.form-control,
 
 .peer-review-list-container .sources-edit-list li{
 	border-left: 1px solid #C9CACB;
+	border-right: 1px solid #C9CACB;
 } 
 
 
@@ -7063,6 +7064,10 @@ textarea.form-control,
 	
 	.sources-header .col-xs-3{
 		padding-left: 0;
+	}
+	
+	.peer-review-list-container .sources-header .col-xs-3{
+		padding-left: 15px; 
 	}
 	
 	#workspace-fundings .action-button-bar{

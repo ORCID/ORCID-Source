@@ -30,16 +30,16 @@
 						<!-- Header -->
 						<div class="sources-header">
                         	<div class="row">
-	                        	<div class="col-md-3">
+	                        	<div class="col-md-3 col-sm-3 col-xs-3">
 	                        		Review date
 	                        	</div>
-	                        	<div class="col-md-2">
+	                        	<div class="col-md-2 col-sm-2 col-xs-2">
 	                        		Type
 	                        	</div>
-	                        	<div class="col-md-3">
+	                        	<div class="col-md-3 col-sm-3 col-xs-3">
 	                        		Role
 	                        	</div>
-	                        	<div class="col-md-4">
+	                        	<div class="col-md-4 col-sm-4 col-xs-4">
 	                        		<span class="pull-right">Actions</span>
 	                        	</div>
                         	</div>
@@ -50,16 +50,16 @@
 					<li ng-repeat="peerReview in group.activities">
 						<!-- Active row -->
 						<div class="row source-line">
-							<div class="col-md-3">
+							<div class="col-md-3 col-sm-3 col-xs-3">
 								<span ng-show="peerReview.completionDate.year">{{peerReview.completionDate.year}}</span><span ng-show="peerReview.completionDate.month">-{{peerReview.completionDate.month}}</span><span ng-show="peerReview.completionDate.year">
 							</div>
-							<div class="col-md-2">
+							<div class="col-md-2 col-sm-2 col-xs-2">
 	                        	{{peerReview.type.value}}
                         	</div>
-                        	<div class="col-md-3">
+                        	<div class="col-md-3 col-sm-3 col-xs-3">
                         		{{peerReview.role.value}}
                         	</div>
-                        	<div class="col-md-4">                        		
+                        	<div class="col-md-4 col-sm-4 col-xs-4">                        		
                         		<span class="pull-right">
                         			<a ng-click="showMoreDetails(peerReview.putCode.value); group.activePutCode = peerReview.putCode.value;" ng-hide="showPeerReviewDetails[peerReview.putCode.value] == true" ng-show="group.activePutCode != peerReview.putCode.value || showPeerReviewDetails[peerReview.putCode.value] == null">show details</a> 
                         			<a ng-click="hideMoreDetails(peerReview.putCode.value);" ng-show="showPeerReviewDetails[peerReview.putCode.value] == true" ng-hide="group.activePutCode != peerReview.putCode.value || showPeerReviewDetails[peerReview.putCode.value] == null">hide details</a> | 
