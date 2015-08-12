@@ -16,20 +16,27 @@
  */
 package org.orcid.core.manager.validator;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.exception.ActivityIdentifierValidationException;
 import org.orcid.core.exception.ActivityTitleValidationException;
 import org.orcid.core.exception.InvalidPutCodeException;
+import org.orcid.core.exception.MismatchedPutCodeException;
+import org.orcid.jaxb.model.groupid.GroupIdRecord;
 import org.orcid.jaxb.model.record.Education;
 import org.orcid.jaxb.model.record.Employment;
 import org.orcid.jaxb.model.record.Funding;
 import org.orcid.jaxb.model.record.FundingTitle;
+import org.orcid.jaxb.model.record.PeerReview;
 import org.orcid.jaxb.model.record.Work;
 import org.orcid.jaxb.model.record.WorkTitle;
+import org.orcid.persistence.jpa.entities.SourceEntity;
 
 public class ActivityValidator {
 
-    public static void validateWork(Work work, boolean createFlag) {
+	public static void validateWork(Work work, boolean createFlag, SourceEntity sourceEntity) {
         WorkTitle title = work.getWorkTitle();
         if (title == null || title.getTitle() == null || StringUtils.isEmpty(title.getTitle().getContent())) {
             throw new ActivityTitleValidationException();
@@ -37,15 +44,19 @@ public class ActivityValidator {
 
         if (work.getWorkExternalIdentifiers() == null || work.getWorkExternalIdentifiers().getWorkExternalIdentifier() == null
                 || work.getWorkExternalIdentifiers().getWorkExternalIdentifier().isEmpty()) {
-                throw new ActivityIdentifierValidationException();
+        	throw new ActivityIdentifierValidationException();
         }
         
         if (work.getPutCode() != null && createFlag) {
-                throw new InvalidPutCodeException();
+        	Map<String, String> params = new HashMap<String, String>();
+        	if(sourceEntity != null) {
+        		params.put("clientName", sourceEntity.getSourceId());
+        	}
+            throw new InvalidPutCodeException(params);
         }
     }
     
-    public static void validateFunding(Funding funding) {
+    public static void validateFunding(Funding funding, SourceEntity sourceEntity) {
     	FundingTitle title = funding.getTitle();
         if (title == null || title.getTitle() == null || StringUtils.isEmpty(title.getTitle().getContent())) {
             throw new ActivityTitleValidationException();
@@ -53,23 +64,63 @@ public class ActivityValidator {
 
         if (funding.getExternalIdentifiers() == null || funding.getExternalIdentifiers().getExternalIdentifier() == null
                 || funding.getExternalIdentifiers().getExternalIdentifier().isEmpty()) {
-                throw new ActivityIdentifierValidationException();
+        	throw new ActivityIdentifierValidationException();
         }
         
         if (funding.getPutCode() != null) {
-                throw new InvalidPutCodeException();
+        	Map<String, String> params = new HashMap<String, String>();
+        	if(sourceEntity != null) {
+        		params.put("clientName", sourceEntity.getSourceId());
+        	}
+            throw new InvalidPutCodeException(params);
         }
     }
     
-    public static void validateEmployment(Employment employment) {
+    public static void validateEmployment(Employment employment, SourceEntity sourceEntity) {
         if (employment.getPutCode() != null) {
-                throw new InvalidPutCodeException();
+        	Map<String, String> params = new HashMap<String, String>();
+        	if(sourceEntity != null) {
+        		params.put("clientName", sourceEntity.getSourceId());
+        	}
+            throw new InvalidPutCodeException(params);
         }
     }
     
-    public static void validateEducation(Education education) {
+    public static void validateEducation(Education education, SourceEntity sourceEntity) {
         if (education.getPutCode() != null) {
-                throw new InvalidPutCodeException();
+        	Map<String, String> params = new HashMap<String, String>();
+        	if(sourceEntity != null) {
+        		params.put("clientName", sourceEntity.getSourceId());
+        	}
+            throw new InvalidPutCodeException(params);
+        }
+    }
+    
+    public static void validatePeerReview(PeerReview peerReview, SourceEntity sourceEntity) {
+        if(peerReview.getExternalIdentifiers() == null || peerReview.getExternalIdentifiers().getExternalIdentifier().isEmpty()) {
+            throw new ActivityIdentifierValidationException();
+        }
+        
+        if (peerReview.getPutCode() != null) {
+        	Map<String, String> params = new HashMap<String, String>();
+        	params.put("clientName", sourceEntity.getSourceId());
+            throw new InvalidPutCodeException(params);
+        }
+    }
+    
+    public static void validateCreateGroupRecord(GroupIdRecord groupIdRecord, SourceEntity sourceEntity) {
+        if (groupIdRecord.getPutCode() != null) {
+        	Map<String, String> params = new HashMap<String, String>();
+        	if(sourceEntity != null) {
+        		params.put("clientName", sourceEntity.getSourceId());
+        	}
+            throw new InvalidPutCodeException(params);
+        }
+    }
+
+    public static void validateUpdateGroupIdRecord(String putCode, GroupIdRecord groupIdRecord) {
+        if (!putCode.equals(groupIdRecord.getPutCode())) {
+            throw new MismatchedPutCodeException();
         }
     }
 }

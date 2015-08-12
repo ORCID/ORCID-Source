@@ -32,11 +32,13 @@ import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.text.StrSubstitutor;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.orcid.core.api.OrcidApiConstants;
 import org.orcid.core.exception.ActivityIdentifierValidationException;
 import org.orcid.core.exception.ActivityTitleValidationException;
+import org.orcid.core.exception.ApplicationException;
 import org.orcid.core.exception.DuplicatedGroupIdRecordException;
 import org.orcid.core.exception.GroupIdRecordNotFoundException;
 import org.orcid.core.exception.InvalidPutCodeException;
@@ -106,7 +108,7 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(ActivityTitleValidationException.class, new ImmutablePair<>(Response.Status.BAD_REQUEST, 9022));
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(ActivityIdentifierValidationException.class, new ImmutablePair<>(Response.Status.BAD_REQUEST, 9023));
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(GroupIdRecordNotFoundException.class, new ImmutablePair<>(Response.Status.BAD_REQUEST, 9026));
-
+        
         // 401
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(AuthenticationException.class, new ImmutablePair<>(Response.Status.UNAUTHORIZED, 9002));
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OAuth2Exception.class, new ImmutablePair<>(Response.Status.UNAUTHORIZED, 9003));
@@ -227,36 +229,49 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
     }
 
     private OrcidError getOrcidError(int errorCode, int status, Throwable t) {
-        OrcidError orcidError = new OrcidError();
+    	Locale locale = localeManager.getLocale();
+    	OrcidError orcidError = new OrcidError();
         orcidError.setResponseCode(status);
         orcidError.setErrorCode(errorCode);
-        String devMessage = t.getClass().getCanonicalName();
-        String exceptionMessage = t.getLocalizedMessage();
-        if (exceptionMessage != null) {
-            devMessage += ": " + exceptionMessage;
-        }
-        Throwable cause = t.getCause();
-        if (cause != null) {
-            String causeMessage = cause.getLocalizedMessage();
-            if (causeMessage != null) {
-                devMessage += " (" + causeMessage + ")";
-            }
-        }
-        orcidError.setDeveloperMessage(devMessage);
-        Locale locale = localeManager.getLocale();
-        String param = null;
-        if (t instanceof DeprecatedException) {
-            param = ((DeprecatedException) t).getPrimary();
-            orcidError.setUserMessage(new StringBuffer(messageSource.getMessage("apiError." + errorCode + ".userMessage", null, locale)).append(param).toString());
-        } else {
-            orcidError.setUserMessage(messageSource.getMessage("apiError." + errorCode + ".userMessage", null, locale));
-        }
-
         orcidError.setMoreInfo(messageSource.getMessage("apiError." + errorCode + ".moreInfo", null, locale));
-        return orcidError;
+        Map<String, String> params = null;
+		if(t instanceof ApplicationException) {
+			params = ((ApplicationException)t).getParams();
+		}
+		String devMessage = messageSource.getMessage("apiError." + errorCode + ".developerMessage", null, locale);
+		
+		if(devMessage == null || "".equals(devMessage)) {
+			devMessage = t.getClass().getCanonicalName();
+			Throwable cause = t.getCause();
+			String exceptionMessage = t.getLocalizedMessage();
+	        if (exceptionMessage != null) {
+	            devMessage += ": " + exceptionMessage;
+	        }
+			
+			if (cause != null) {
+	            String causeMessage = cause.getLocalizedMessage();
+	            if (causeMessage != null) {
+	                devMessage = " (" + causeMessage + ")";
+	            }
+	        }
+			orcidError.setDeveloperMessage(devMessage);
+		} else {
+			orcidError.setDeveloperMessage(resolveMessage(devMessage , params));
+		}
+		
+		orcidError.setUserMessage(resolveMessage(messageSource.getMessage("apiError." + errorCode + ".userMessage", null, locale), params));
+		return orcidError;
     }
 
-    private ApiSection getApiSection() {
+    private String resolveMessage(String errorMessg, Map<String, String> params) {
+    	if(params == null) {
+    		return errorMessg;
+    	}
+    	StrSubstitutor sub = new StrSubstitutor(params);
+    	return sub.replace(errorMessg);
+	}
+
+	private ApiSection getApiSection() {
         RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
         ApiSection apiSection = (ApiSection) requestAttributes.getAttribute(ApiVersionFilter.API_SECTION_REQUEST_ATTRIBUTE_NAME, RequestAttributes.SCOPE_REQUEST);
         return apiSection != null ? apiSection : ApiSection.V1;

@@ -16,9 +16,13 @@
  */
 package org.orcid.core.exception;
 
+import java.util.Map;
+
 public class ApplicationException extends RuntimeException {
 
     private static final long serialVersionUID = 1L;
+    
+    private Map<String, String> params; 
 
     public ApplicationException() {
         super();
@@ -36,4 +40,11 @@ public class ApplicationException extends RuntimeException {
         super(cause);
     }
 
+	public ApplicationException(Map<String, String> params) {
+		this.params = params;
+	}
+
+	public Map<String, String> getParams() {
+		return params;
+	}
 }

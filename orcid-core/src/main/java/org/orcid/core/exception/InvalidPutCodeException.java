@@ -16,6 +16,8 @@
  */
 package org.orcid.core.exception;
 
+import java.util.Map;
+
 /**
  * 
  * @author Shobhit Tyagi
@@ -39,5 +41,9 @@ public class InvalidPutCodeException extends ApplicationException {
     public InvalidPutCodeException(Throwable cause) {
         super(cause);
     }
+
+	public InvalidPutCodeException(Map<String, String> params) {
+		super(params);
+	}
 
 }

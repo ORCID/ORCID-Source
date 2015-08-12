@@ -151,12 +151,13 @@ public class WorkManagerImpl implements WorkManager {
     
     @Override
     @Transactional
-    public Work createWork(String orcid, Work work, boolean applyValidations) {        
+    public Work createWork(String orcid, Work work, boolean applyValidations) { 
+    	SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
         if(applyValidations) {
-        	ActivityValidator.validateWork(work, true);
+        	ActivityValidator.validateWork(work, true, sourceEntity);
         }        
         WorkEntity workEntity = jpaJaxbWorkAdapter.toWorkEntity(work);
-        workEntity.setSource(sourceManager.retrieveSourceEntity());
+        workEntity.setSource(sourceEntity);
         ProfileEntity profile = profileDao.find(orcid);
         workEntity.setProfile(profile);        
         workEntity.setAddedToProfileDate(new Date());
@@ -168,8 +169,9 @@ public class WorkManagerImpl implements WorkManager {
     @Override
     @Transactional
     public Work updateWork(String orcid, Work work, boolean applyValidations) {
+    	SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
         if(applyValidations) {
-        	ActivityValidator.validateWork(work, false);
+        	ActivityValidator.validateWork(work, false, sourceEntity);
         }
         WorkEntity workEntity = workDao.find(Long.valueOf(work.getPutCode()));
         Visibility originalVisibility = Visibility.fromValue(workEntity.getVisibility().value());
