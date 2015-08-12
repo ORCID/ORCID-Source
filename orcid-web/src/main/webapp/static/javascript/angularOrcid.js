@@ -1647,25 +1647,31 @@ orcidNgModule.filter('externalIdentifierHtml', ['fundingSrvc', function(fundingS
 
 orcidNgModule.filter('peerReviewExternalIdentifierHtml', function(){
     return function(peerReviewExternalIdentifier, first, last, length, moreInfo){
-
+    	
+    	console.log(moreInfo);
+    	
         var output = '';
         var ngclass = '';
         var isPartOf = false;
         
         if (moreInfo == false || typeof moreInfo == 'undefined') ngclass = 'truncate-anchor';
+       
         
         
-        if(workExternalIdentifier.relationship != null && workExternalIdentifier.relationship.value == 'part-of')
+        
+        if(peerReviewExternalIdentifier.relationship != null && peerReviewExternalIdentifier.relationship.value == 'part-of')
         	isPartOf = true;
         
-        if (workExternalIdentifier == null) return output;
-        if (workExternalIdentifier.workExternalIdentifierId == null) return output;
+        
+        
+        if (peerReviewExternalIdentifier == null) return output;
+        if (peerReviewExternalIdentifier.workExternalIdentifierId == null) return output;
 
-        var id = workExternalIdentifier.workExternalIdentifierId.value;
+        var id = peerReviewExternalIdentifier.workExternalIdentifierId.value;
         var type;
 
-        if (workExternalIdentifier.workExternalIdentifierType != null)
-            type = workExternalIdentifier.workExternalIdentifierType.value;
+        if (peerReviewExternalIdentifier.workExternalIdentifierType != null)
+            type = peerReviewExternalIdentifier.workExternalIdentifierType.value;
         if (type != null) {
         	if(isPartOf) 
         		output = output + "<span class='italic'>" + om.get("common.part_of") + " <span class='type'>" + type.toUpperCase() + "</span></span>: ";
@@ -1674,8 +1680,8 @@ orcidNgModule.filter('peerReviewExternalIdentifierHtml', function(){
         }
         var link = null;
 
-        if (workExternalIdentifier.url != null && workExternalIdentifier.url.value != '')
-        	link = workExternalIdentifier.url.value;
+        if (peerReviewExternalIdentifier.url != null && peerReviewExternalIdentifier.url.value != '')
+        	link = peerReviewExternalIdentifier.url.value;
         else link = workIdLinkJs.getLink(id,type); 
         	
         if (link != null){
@@ -1698,6 +1704,7 @@ orcidNgModule.filter('peerReviewExternalIdentifierHtml', function(){
 	  </div>';
 
       return output;
+     
     };
 });
 
