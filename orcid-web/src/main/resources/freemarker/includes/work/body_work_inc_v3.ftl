@@ -35,42 +35,40 @@
                             </div>
                             
                             <div class="col-md-3 col-sm-3 col-xs-3 right">
-	                            <div class="workspace-toolbar">
-	                                <ul class="workspace-private-toolbar">
-	                                    <#if !(isPublicProfile??)>
-	                                        <li ng-show="bulkEditShow">
-	                                            <input type="checkbox" ng-model="bulkEditMap[group.getActive().putCode.value]" class="bulk-edit-input-header ng-valid ng-dirty">
-	                                        </li>
-	                                    </#if>
-	                                    <li class="works-details">
-	                                        <a ng-click="showDetailsMouseClick(group,$event);" ng-mouseenter="showTooltip(group.groupId+'-showHideDetails')" ng-mouseleave="hideTooltip(group.groupId+'-showHideDetails')">
-	                                            <span ng-class="(moreInfo[group.groupId] == true) ? 'glyphicons collapse_top' : 'glyphicons expand'">
-	                                            </span>
-	                                        </a>
-	                                        <div class="popover popover-tooltip top show-hide-details-popover" ng-show="showElement[group.groupId+'-showHideDetails'] == true">
-	                                             <div class="arrow"></div>
-	                                            <div class="popover-content">   
-	                                                <span ng-show="moreInfo[group.groupId] == false || moreInfo[group.groupId] == null"><@orcid.msg 'common.details.show_details'/></span>   
-	                                                <span ng-show="moreInfo[group.groupId] == true"><@orcid.msg 'common.details.hide_details'/></span>
-	                                            </div>
-	                                        </div>
-	                                    </li>
-	                                    <#if !(isPublicProfile??)>
-	                                    <li>
-	                                        <@orcid.privacyToggle2 angularModel="group.getActive().visibility"
-	                                            questionClick="toggleClickPrivacyHelp(group.getActive().putCode)"
-	                                            clickedClassCheck="{'popover-help-container-show':privacyHelp[group.getActive().putCode.value]==true}"
-	                                            publicClick="worksSrvc.setGroupPrivacy(group.getActive().putCode.value, 'PUBLIC', $event)"
-	                                            limitedClick="worksSrvc.setGroupPrivacy(group.getActive().putCode.value, 'LIMITED', $event)"
-	                                            privateClick="worksSrvc.setGroupPrivacy(group.getActive().putCode.value, 'PRIVATE', $event)"/>
-	                                    </li>
-	                                    </#if>
-	                                </ul>
-	                            </div>
+                                    <div class="workspace-toolbar">
+                                        <ul class="workspace-private-toolbar">
+                                            <#if !(isPublicProfile??)>
+                                                <li ng-show="bulkEditShow">
+                                                    <input type="checkbox" ng-model="bulkEditMap[group.getActive().putCode.value]" class="bulk-edit-input-header ng-valid ng-dirty">
+                                                </li>
+                                            </#if>
+                                            <li class="works-details">
+                                                <a ng-click="showDetailsMouseClick(group,$event);" ng-mouseenter="showTooltip(group.groupId+'-showHideDetails')" ng-mouseleave="hideTooltip(group.groupId+'-showHideDetails')">
+                                                    <span ng-class="(moreInfo[group.groupId] == true) ? 'glyphicons collapse_top' : 'glyphicons expand'">
+                                                    </span>
+                                                </a>
+                                                <div class="popover popover-tooltip top show-hide-details-popover" ng-show="showElement[group.groupId+'-showHideDetails'] == true">
+                                                     <div class="arrow"></div>
+                                                    <div class="popover-content">   
+                                                        <span ng-show="moreInfo[group.groupId] == false || moreInfo[group.groupId] == null"><@orcid.msg 'common.details.show_details'/></span>   
+                                                        <span ng-show="moreInfo[group.groupId] == true"><@orcid.msg 'common.details.hide_details'/></span>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                            <#if !(isPublicProfile??)>
+                                            <li>
+                                                <@orcid.privacyToggle2 angularModel="group.getActive().visibility"
+                                                    questionClick="toggleClickPrivacyHelp(group.getActive().putCode)"
+                                                    clickedClassCheck="{'popover-help-container-show':privacyHelp[group.getActive().putCode.value]==true}"
+                                                    publicClick="worksSrvc.setGroupPrivacy(group.getActive().putCode.value, 'PUBLIC', $event)"
+                                                    limitedClick="worksSrvc.setGroupPrivacy(group.getActive().putCode.value, 'LIMITED', $event)"
+                                                    privateClick="worksSrvc.setGroupPrivacy(group.getActive().putCode.value, 'PRIVATE', $event)"/>
+                                            </li>
+                                            </#if>
+                                        </ul>
+                                    </div>
                             </div>
                         </div>
-
-
                     </div>
                 </li>
                 <!-- End of Header -->

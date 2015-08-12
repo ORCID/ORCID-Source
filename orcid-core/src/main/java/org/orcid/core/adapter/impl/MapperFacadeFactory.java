@@ -175,7 +175,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         workSummaryClassMap.register();
 
         ClassMapBuilder<WorkSummary, MinimizedWorkEntity> workSummaryMinimizedClassMap = mapperFactory.classMap(WorkSummary.class, MinimizedWorkEntity.class);
-        workSummaryMinimizedClassMap.field("putCode", "id");
+        addV2CommonFields(workSummaryMinimizedClassMap);
         workSummaryMinimizedClassMap.field("title.title.content", "title");
         workSummaryMinimizedClassMap.field("title.translatedTitle.content", "translatedTitle");
         workSummaryMinimizedClassMap.field("title.translatedTitle.languageCode", "translatedTitleLanguageCode");

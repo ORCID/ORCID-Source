@@ -53,7 +53,7 @@ public interface WorkDao extends GenericDao<WorkEntity, Long> {
      * 
      * @param orcid
      *            the Id of the user
-     * @return the list of works associated to the specific user
+     * @return the list of minimized works associated to the specific user
      * */
     List<MinimizedWorkEntity> findWorks(String orcid);
 
