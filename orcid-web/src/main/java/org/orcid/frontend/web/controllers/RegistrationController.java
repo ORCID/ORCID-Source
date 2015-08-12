@@ -262,13 +262,13 @@ public class RegistrationController extends BaseController {
                     LOGGER.info("error parsing users family name from oauth url", e);
                 }
         }
-        long captcha = generateCaptcha();
-		reg.setCaptchaNumServer(captcha);
-		reg.setCaptchaNumClient(0);
+        long numVal = generateRandomNumForValidation();
+		reg.setValNumServer(numVal);
+		reg.setValNumClient(0);
         return reg;
     }
     
-    public long generateCaptcha() {
+    public long generateRandomNumForValidation() {
     	int numCheck = rand.nextInt(1000000);
     	if(numCheck %2 != 0) numCheck +=1;
 	 	return numCheck;
@@ -371,7 +371,7 @@ public class RegistrationController extends BaseController {
             return r;
         }
         
-        if(reg.getCaptchaNumServer() == 0 || reg.getCaptchaNumClient() != reg.getCaptchaNumServer()/2) {
+        if(reg.getValNumServer() == 0 || reg.getValNumClient() != reg.getValNumServer()/2) {
         	r.setUrl(getBaseUri() + "/register");
         	return r;
         }        

@@ -56,9 +56,9 @@ public class Registration implements ErrorsInterface, Serializable {
 
     private Text sendEmailFrequencyDays;
     
-    private long captchaNumServer;
+    private long valNumServer;
     
-    private long captchaNumClient;
+    private long valNumClient;
     
     private Text grecaptcha;
     
@@ -208,22 +208,6 @@ public class Registration implements ErrorsInterface, Serializable {
         this.sendEmailFrequencyDays = sendEmailFrequencyDays;
     }
 
-	public long getCaptchaNumClient() {
-		return captchaNumClient;
-	}
-
-	public void setCaptchaNumClient(long captchaNumClient) {
-		this.captchaNumClient = captchaNumClient;
-	}
-
-	public long getCaptchaNumServer() {
-		return captchaNumServer;
-	}
-
-	public void setCaptchaNumServer(long captchaNumServer) {
-		this.captchaNumServer = captchaNumServer;
-	}
-
 	public Text getGrecaptchaWidgetId() {
 		return grecaptchaWidgetId;
 	}
@@ -232,4 +216,19 @@ public class Registration implements ErrorsInterface, Serializable {
 		this.grecaptchaWidgetId = grecaptchaWidgetId;
 	}
 
+	public long getValNumServer() {
+		return valNumServer;
+	}
+
+	public void setValNumServer(long valNumServer) {
+		this.valNumServer = valNumServer;
+	}
+
+	public long getValNumClient() {
+		return valNumClient;
+	}
+
+	public void setValNumClient(long valNumClient) {
+		this.valNumClient = valNumClient;
+	}
 }
