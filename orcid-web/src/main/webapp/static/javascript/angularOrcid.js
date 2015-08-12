@@ -1654,10 +1654,11 @@ orcidNgModule.filter('peerReviewExternalIdentifierHtml', function(){
         var isPartOf = false;
         var type = null;
         var link = null;
+        ngclass = 'truncate';
         
         if (peerReviewExternalIdentifier == null) return output;
         
-        if (moreInfo == false || typeof moreInfo == 'undefined') ngclass = 'truncate-anchor';
+        
         
         if(peerReviewExternalIdentifier.relationship != null && peerReviewExternalIdentifier.relationship.value == 'part-of')
         	isPartOf = true;
@@ -1684,10 +1685,12 @@ orcidNgModule.filter('peerReviewExternalIdentifierHtml', function(){
         	if(link.lastIndexOf('http://') === -1 && link.lastIndexOf('https://') === -1) {
         		link = '//' + link;
         	}
-            output = output + '<a href="' + link.replace(/'/g, "&#39;") + '" class ="' + ngclass + '"' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(peerReview.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(peerReview.putCode.value + $index)\">" + id.escapeHtml() + '</a>';
+            output = output + '<a href="' + link.replace(/'/g, "&#39;") + '" class =""' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(peerReview.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(peerReview.putCode.value + $index)\">" + id.escapeHtml() + '</a>' + ' | ' + '<a href="' + link.replace(/'/g, "&#39;") + '" class ="' + ngclass + '"' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(peerReview.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(peerReview.putCode.value + $index)\">" + link.replace(/'/g, "&#39;") + '</a>';
         }else{
             output = output + id;        
         }
+        
+        
         
         output += '\
         <div class="popover-pos">\

@@ -5967,12 +5967,19 @@ textarea.form-control,
 .workspace-peer-review ul.sources-edit-list > li:first-child{
 	box-shadow: none;
 }
-/*
-.workspace-peer-review ul.sources-edit-list > li{
-	border-left: 1px solid #C9CACB;	
-	border-right: 1px solid #C9CACB;
+
+.truncate {
+  width: 182px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: inline-block;
+  vertical-align: top;   
 }
-*/
+
+.peer-review-list-container .sources-edit-list li{
+	border-left: 1px solid #C9CACB;
+} 
 
 
 /* Media Queries */
