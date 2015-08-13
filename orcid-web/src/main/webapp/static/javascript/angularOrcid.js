@@ -1427,6 +1427,16 @@ orcidNgModule.factory("notificationsSrvc", ['$rootScope', function ($rootScope) 
     return serv;
 }]);
 
+orcidNgModule.factory("widgetSrvc", ['$rootScope', function ($rootScope) {
+    var widgetSrvc = {
+		locale: 'en',
+        setLocale: function (locale) {
+            widgetSrvc.locale = locale;
+        }
+    };
+    return widgetSrvc;
+}]);
+
 orcidNgModule.filter('urlWithHttp', function(){
     return function(input){
         if (input == null) return input;
@@ -6178,7 +6188,7 @@ orcidNgModule.controller('statisticCtrl',['$scope', function ($scope){
     $scope.getLiveIds();
 }]);
 
-orcidNgModule.controller('languageCtrl',['$scope', '$cookies', function ($scope, $cookies) {
+orcidNgModule.controller('languageCtrl',['$scope', '$cookies', 'widgetSrvc', function ($scope, $cookies, widgetSrvc) {
     var productionLangList =
         [
             {
@@ -6273,6 +6283,8 @@ orcidNgModule.controller('languageCtrl',['$scope', '$cookies', function ($scope,
                 "label": '繁體中文'
             }
         ];
+    
+    $scope.widgetSrvc = widgetSrvc;
 
     if (location == parent.location && window.location.hostname.toLowerCase() != "orcid.org")
         $scope.languages = testingLangList;
@@ -6284,7 +6296,10 @@ orcidNgModule.controller('languageCtrl',['$scope', '$cookies', function ($scope,
         $scope.language = $scope.languages[0]; //Default
         typeof($cookies.locale_v3) !== 'undefined' ? locale_v3 = $cookies.locale_v3 : locale_v3 = "en"; //If cookie exists we get the language value from it
         angular.forEach($scope.languages, function(value, key){ //angular.forEach doesn't support break
-            if (value.value == locale_v3) $scope.language = $scope.languages[key];
+            if (value.value == locale_v3){
+            	$scope.language = $scope.languages[key];
+            	$scope.widgetSrvc.locale = $scope.language.value; 
+            }
         });
     };
 
@@ -6300,6 +6315,8 @@ orcidNgModule.controller('languageCtrl',['$scope', '$cookies', function ($scope,
                 angular.forEach($scope.languages, function(value, key){
                     if(value.value == data.locale){
                         $scope.language = $scope.languages[key];
+                        $scope.widgetSrvc.setLocale($scope.language.value); 
+                        console.log($scope.widgetSrvc.locale);
                         window.location.reload(true);
                     }
                 });
@@ -9324,11 +9341,12 @@ orcidNgModule.controller('headerCtrl',['$scope', '$window', function ($scope, $w
 	
 }]);
 
-orcidNgModule.controller('widgetCtrl',['$scope', function ($scope){
+orcidNgModule.controller('widgetCtrl',['$scope', 'widgetSrvc', function ($scope, widgetSrvc){
 	$scope.hash = orcidVar.orcidIdHash.substr(0, 6);
 	$scope.showCode = false;
-		
-	$scope.widgetURLND = '<div style="width:100%;text-align:center"><iframe src="'+ getBaseUri() + '/static/html/widget.html?orcid=' + orcidVar.orcidId + '&t=' + $scope.hash + '" frameborder="0" height="310" width="210px" vspace="0" hspace="0" marginheight="5" marginwidth="5" scrolling="no" allowtransparency="true"></iframe></div>';
+	$scope.widgetSrvc = widgetSrvc;
+	
+	$scope.widgetURLND = '<div style="width:100%;text-align:center"><iframe src="'+ getBaseUri() + '/static/html/widget.html?orcid=' + orcidVar.orcidId + '&t=' + $scope.hash + '&locale=' + $scope.widgetSrvc.locale + '" frameborder="0" height="310" width="210px" vspace="0" hspace="0" marginheight="5" marginwidth="5" scrolling="no" allowtransparency="true"></iframe></div>';
 	
 	$scope.inputTextAreaSelectAll = function($event){
     	$event.target.select();

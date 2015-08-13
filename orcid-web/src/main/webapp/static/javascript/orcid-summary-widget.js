@@ -158,13 +158,14 @@
 	    var content = '';
 	    var count = 0;
 	    for(key in json.values){
-	    	if (json.values[key] > 0){
-	    		content += '<div class="orcid-summary-item">' + key + '('+ json.values[key] +')</div>';
-	    		count++;
-	    	}
+	    	if (key != 'what_is')
+		    	if (json.values[key] > 0){
+		    		content += '<div class="orcid-summary-item">' + key + '('+ json.values[key] +')</div>';
+		    		count++;
+		    	}
 	    }
 	    if (count == 0){
-	    	content = '<div class="orcid-summary-item">You haven\'t added any items to your record.</div>';
+	    	content = '<div class="orcid-summary-item">' + json.values.no_activities + '</div>';
 	    }
 	    
 	    if(styleTags.length == 0) {	        
@@ -187,7 +188,7 @@
 	                                        widgetInnerHTML += '</div>\
 	                                    </div>\
 	                                </a>\
-	                                <a href="http://orcid.org/about/what-is-orcid" class="orcid-widget-button" target="_blank">What is ORCID?</a>\
+	                                <a href="http://orcid.org/about/what-is-orcid" class="orcid-widget-button" target="_blank">' + json.values.what_is + '</a>\
 	                            </div>';
 	        
 		var div = document.createElement('div');
