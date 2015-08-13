@@ -168,19 +168,19 @@ public class WorkManagerImpl implements WorkManager {
     	
     	if(applyValidations) {
         	ActivityValidator.validateWork(work, true, sourceEntity);
+        	List<MinimizedWorkEntity> works = workDao.findWorks(orcid);
+        	// If it is the user adding the peer review, allow him to add duplicates
+        	if (!sourceEntity.getSourceId().equals(orcid)) {
+        		if (works != null) {
+        			List<Work> workEntities = jpaJaxbWorkAdapter.toMinimizedWork(works);
+                    for (Work existing : workEntities) {
+                    	 ActivityValidator.checkExternalIdentifiers(work.getExternalIdentifiers(),
+                    			 existing.getExternalIdentifiers(), existing.getSource(), sourceEntity);
+                    }
+        		}
+        	}
         }
     	
-    	List<MinimizedWorkEntity> works = workDao.findWorks(orcid);
-    	// If it is the user adding the peer review, allow him to add duplicates
-    	if (!sourceEntity.getSourceId().equals(orcid)) {
-    		if (works != null) {
-    			List<Work> workEntities = jpaJaxbWorkAdapter.toMinimizedWork(works);
-                for (Work existing : workEntities) {
-                	 ActivityValidator.checkExternalIdentifiers(work.getExternalIdentifiers(),
-                			 existing.getExternalIdentifiers(), existing.getSource(), sourceEntity);
-                }
-    		}
-    	}
         WorkEntity workEntity = jpaJaxbWorkAdapter.toWorkEntity(work);
         ProfileEntity profile = profileDao.find(orcid);
         workEntity.setProfile(profile);        
