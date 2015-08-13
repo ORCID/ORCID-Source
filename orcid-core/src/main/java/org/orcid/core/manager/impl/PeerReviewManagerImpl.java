@@ -44,8 +44,6 @@ import org.orcid.persistence.jpa.entities.PeerReviewEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -128,7 +126,8 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
                 if (peerReviews != null) {
                     for (PeerReviewEntity entity : peerReviews) {
                         PeerReview existing = jpaJaxbPeerReviewAdapter.toPeerReview(entity);
-                        ActivityValidator.checkPeerReviewExternalIdentifiers(peerReview, existing, sourceEntity);
+                        ActivityValidator.checkExternalIdentifiers(peerReview.getExternalIdentifiers(),
+                        		existing.getExternalIdentifiers(), existing.getSource(), sourceEntity);
                     }
                 }
             }
@@ -159,7 +158,8 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
             for(PeerReview existing : existingReviews) {
                 //Dont compare the updated peer review with the DB version
                 if(!existing.getPutCode().equals(peerReview.getPutCode())) {
-                	ActivityValidator.checkPeerReviewExternalIdentifiers(peerReview, existing, sourceManager.retrieveSourceEntity());
+                	 ActivityValidator.checkExternalIdentifiers(peerReview.getExternalIdentifiers(),
+                			 existing.getExternalIdentifiers(), existing.getSource(), sourceManager.retrieveSourceEntity());
                 }
             }
         }

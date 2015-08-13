@@ -18,16 +18,13 @@ package org.orcid.core.manager.impl;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 
 import org.apache.commons.io.IOUtils;
 import org.orcid.core.adapter.JpaJaxbFundingAdapter;
-import org.orcid.core.exception.OrcidDuplicatedActivityException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.OrgManager;
@@ -261,18 +258,14 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
     @Transactional
     public Funding createFunding(String orcid, Funding funding) {
     	SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
-    	ActivityValidator.validateFunding(funding, sourceEntity);
+    	ActivityValidator.validateFunding(funding, sourceEntity, true);
         //Check for duplicates
         List<ProfileFundingEntity> existingFundings = profileFundingDao.getByUser(orcid);
         List<Funding> fundings = jpaJaxbFundingAdapter.toFunding(existingFundings);
         if(fundings != null) {
             for(Funding exstingFunding : fundings) {
-                if(funding.isDuplicated(exstingFunding)) {
-                    LOGGER.error("Trying to create a funding that is duplicated with " + funding.getPutCode());
-                    Map<String, String> params = new HashMap<String, String>();
-                    params.put("clientName", sourceEntity.getSourceId());
-                    throw new OrcidDuplicatedActivityException(params);
-                }                    
+            	ActivityValidator.checkFundingExternalIdentifiers(funding.getExternalIdentifiers(),
+            			exstingFunding.getExternalIdentifiers(), exstingFunding.getSource(), sourceEntity);
             }
         }
                 
@@ -313,6 +306,17 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
      * */
     @Override    
     public Funding updateFunding(String orcid, Funding funding) {
+    	SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
+    	ActivityValidator.validateFunding(funding, sourceEntity, false);
+    	List<ProfileFundingEntity> existingFundings = profileFundingDao.getByUser(orcid);
+        for(ProfileFundingEntity existingFunding : existingFundings) {
+        	Funding existing = jpaJaxbFundingAdapter.toFunding(existingFunding);
+            if(!existing.getPutCode().equals(funding.getPutCode())) {
+            	 ActivityValidator.checkFundingExternalIdentifiers(funding.getExternalIdentifiers(),
+            			 existing.getExternalIdentifiers(), existing.getSource(), sourceEntity);
+            }
+        }
+    	
         ProfileFundingEntity pfe = profileFundingDao.getProfileFunding(orcid, funding.getPutCode());
         Visibility originalVisibility = pfe.getVisibility();
         SourceEntity existingSource = pfe.getSource();

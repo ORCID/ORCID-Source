@@ -25,10 +25,13 @@ import org.orcid.core.exception.ActivityTitleValidationException;
 import org.orcid.core.exception.InvalidPutCodeException;
 import org.orcid.core.exception.MismatchedPutCodeException;
 import org.orcid.core.exception.OrcidDuplicatedActivityException;
+import org.orcid.jaxb.model.common.Source;
 import org.orcid.jaxb.model.groupid.GroupIdRecord;
 import org.orcid.jaxb.model.record.Education;
 import org.orcid.jaxb.model.record.Employment;
 import org.orcid.jaxb.model.record.Funding;
+import org.orcid.jaxb.model.record.FundingExternalIdentifier;
+import org.orcid.jaxb.model.record.FundingExternalIdentifiers;
 import org.orcid.jaxb.model.record.FundingTitle;
 import org.orcid.jaxb.model.record.PeerReview;
 import org.orcid.jaxb.model.record.Relationship;
@@ -60,7 +63,7 @@ public class ActivityValidator {
         }
     }
     
-    public static void validateFunding(Funding funding, SourceEntity sourceEntity) {
+    public static void validateFunding(Funding funding, SourceEntity sourceEntity, boolean createFlag) {
     	FundingTitle title = funding.getTitle();
         if (title == null || title.getTitle() == null || StringUtils.isEmpty(title.getTitle().getContent())) {
             throw new ActivityTitleValidationException();
@@ -71,7 +74,7 @@ public class ActivityValidator {
         	throw new ActivityIdentifierValidationException();
         }
         
-        if (funding.getPutCode() != null) {
+        if (funding.getPutCode() != null && createFlag) {
         	Map<String, String> params = new HashMap<String, String>();
         	if(sourceEntity != null) {
         		params.put("clientName", sourceEntity.getSourceId());
@@ -128,14 +131,16 @@ public class ActivityValidator {
         }
     }
     
-    public static void checkPeerReviewExternalIdentifiers(PeerReview newer, PeerReview existing, SourceEntity sourceEntity) {
-        WorkExternalIdentifiers existingExtIds = existing.getExternalIdentifiers();
-        WorkExternalIdentifiers newExtIds = newer.getExternalIdentifiers();
+    public static void checkExternalIdentifiers(WorkExternalIdentifiers newExtIds,
+    		WorkExternalIdentifiers existingExtIds, Source existingSource, SourceEntity sourceEntity) {
         if(existingExtIds != null && newExtIds != null) {            
             for(WorkExternalIdentifier existingId : existingExtIds.getExternalIdentifier()) {
                 for(WorkExternalIdentifier newId : newExtIds.getExternalIdentifier()) {
                     if(existingId.getRelationship().equals(Relationship.SELF) 
-                    		&& newId.getRelationship().equals(Relationship.SELF) && newer.getSource().equals(existing.getSource())){
+                    		&& newId.getRelationship().equals(Relationship.SELF)
+                    		&& newId.getWorkExternalIdentifierId().getContent().equals(existingId.getWorkExternalIdentifierId().getContent())
+                    		&& newId.getWorkExternalIdentifierType().equals(existingId.getWorkExternalIdentifierType())
+                    		&& sourceEntity.getSourceId().equals(getExistingSource(existingSource))){
                     	Map<String, String> params = new HashMap<String, String>();
                         params.put("clientName", sourceEntity.getSourceId());
                         throw new OrcidDuplicatedActivityException(params);
@@ -145,14 +150,16 @@ public class ActivityValidator {
         }
     }
     
-    public static void checkWorkExternalIdentifiers(Work newer, Work existing, SourceEntity sourceEntity) {
-        WorkExternalIdentifiers existingExtIds = existing.getExternalIdentifiers();
-        WorkExternalIdentifiers newExtIds = newer.getExternalIdentifiers();
+    public static void checkFundingExternalIdentifiers(FundingExternalIdentifiers newExtIds,
+    		FundingExternalIdentifiers existingExtIds, Source existingSource, SourceEntity sourceEntity) {
         if(existingExtIds != null && newExtIds != null) {            
-            for(WorkExternalIdentifier existingId : existingExtIds.getExternalIdentifier()) {
-                for(WorkExternalIdentifier newId : newExtIds.getExternalIdentifier()) {
+            for(FundingExternalIdentifier existingId : existingExtIds.getExternalIdentifier()) {
+                for(FundingExternalIdentifier newId : newExtIds.getExternalIdentifier()) {
                     if(existingId.getRelationship().equals(Relationship.SELF) 
-                    		&& newId.getRelationship().equals(Relationship.SELF) && newer.getSource().equals(existing.getSource())){
+                    		&& newId.getRelationship().equals(Relationship.SELF)
+                    		&& newId.getValue().equals(existingId.getValue())
+                    		&& newId.getType().equals(existingId.getType())
+                    		&& sourceEntity.getSourceId().equals(getExistingSource(existingSource))){
                     	Map<String, String> params = new HashMap<String, String>();
                         params.put("clientName", sourceEntity.getSourceId());
                         throw new OrcidDuplicatedActivityException(params);
@@ -161,4 +168,13 @@ public class ActivityValidator {
             }
         }
     }
+
+	@SuppressWarnings("deprecation")
+	private static String getExistingSource(Source source) {
+		if(source != null) {
+			return (source.getSourceClientId() != null) ? 
+					source.getSourceClientId().getPath() : source.getSourceOrcid().getPath();
+		}
+		return null;
+	}
 }
