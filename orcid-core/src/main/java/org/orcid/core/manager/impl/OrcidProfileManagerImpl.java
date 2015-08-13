@@ -235,7 +235,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
 
     @Override
     @Transactional
-    public OrcidProfile createOrcidProfile(OrcidProfile orcidProfile, boolean createdByMember) {
+    public OrcidProfile createOrcidProfile(OrcidProfile orcidProfile, boolean createdByMember, boolean usedCaptcha) {
         if (orcidProfile.getOrcidIdentifier() == null) {
             orcidProfile.setOrcidIdentifier(orcidGenerationManager.createNewOrcid());
         }
@@ -249,6 +249,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         addSourceToFundings(orcidProfile, amenderOrcid);
 
         ProfileEntity profileEntity = adapter.toProfileEntity(orcidProfile);
+        profileEntity.setUsedRecaptchaOnRegistration(usedCaptcha);
         encryptAndMapFieldsForProfileEntityPersistence(orcidProfile, profileEntity);
         profileEntity.setAuthorities(getGrantedAuthorities(profileEntity));
         setDefaultVisibility(profileEntity, createdByMember);
@@ -261,7 +262,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
 
     @Override
     public OrcidProfile createOrcidProfileAndNotify(OrcidProfile orcidProfile) {
-        OrcidProfile createdOrcidProfile = createOrcidProfile(orcidProfile, true);
+        OrcidProfile createdOrcidProfile = createOrcidProfile(orcidProfile, true, false);
         notificationManager.sendApiRecordCreationEmail(orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue(), orcidProfile);
         return createdOrcidProfile;
     }

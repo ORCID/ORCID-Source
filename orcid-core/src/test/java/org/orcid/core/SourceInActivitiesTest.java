@@ -446,7 +446,7 @@ public class SourceInActivitiesTest extends BaseTest {
         profile.setOrcidHistory(orcidHistory);
         orcidHistory.setSubmissionDate(new SubmissionDate(DateUtils.convertToXMLGregorianCalendar(new Date())));
         profile.setPassword("password1");
-        return orcidProfileManager.createOrcidProfile(profile, false);
+        return orcidProfileManager.createOrcidProfile(profile, false, false);
     }
 
     private Work getWork(String userOrcid) {
