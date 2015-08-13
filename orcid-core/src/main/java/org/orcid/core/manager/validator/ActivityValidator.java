@@ -24,13 +24,17 @@ import org.orcid.core.exception.ActivityIdentifierValidationException;
 import org.orcid.core.exception.ActivityTitleValidationException;
 import org.orcid.core.exception.InvalidPutCodeException;
 import org.orcid.core.exception.MismatchedPutCodeException;
+import org.orcid.core.exception.OrcidDuplicatedActivityException;
 import org.orcid.jaxb.model.groupid.GroupIdRecord;
 import org.orcid.jaxb.model.record.Education;
 import org.orcid.jaxb.model.record.Employment;
 import org.orcid.jaxb.model.record.Funding;
 import org.orcid.jaxb.model.record.FundingTitle;
 import org.orcid.jaxb.model.record.PeerReview;
+import org.orcid.jaxb.model.record.Relationship;
 import org.orcid.jaxb.model.record.Work;
+import org.orcid.jaxb.model.record.WorkExternalIdentifier;
+import org.orcid.jaxb.model.record.WorkExternalIdentifiers;
 import org.orcid.jaxb.model.record.WorkTitle;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 
@@ -121,6 +125,40 @@ public class ActivityValidator {
     public static void validateUpdateGroupIdRecord(String putCode, GroupIdRecord groupIdRecord) {
         if (!putCode.equals(groupIdRecord.getPutCode())) {
             throw new MismatchedPutCodeException();
+        }
+    }
+    
+    public static void checkPeerReviewExternalIdentifiers(PeerReview newer, PeerReview existing, SourceEntity sourceEntity) {
+        WorkExternalIdentifiers existingExtIds = existing.getExternalIdentifiers();
+        WorkExternalIdentifiers newExtIds = newer.getExternalIdentifiers();
+        if(existingExtIds != null && newExtIds != null) {            
+            for(WorkExternalIdentifier existingId : existingExtIds.getExternalIdentifier()) {
+                for(WorkExternalIdentifier newId : newExtIds.getExternalIdentifier()) {
+                    if(existingId.getRelationship().equals(Relationship.SELF) 
+                    		&& newId.getRelationship().equals(Relationship.SELF) && newer.getSource().equals(existing.getSource())){
+                    	Map<String, String> params = new HashMap<String, String>();
+                        params.put("clientName", sourceEntity.getSourceId());
+                        throw new OrcidDuplicatedActivityException(params);
+                    }
+                }
+            }
+        }
+    }
+    
+    public static void checkWorkExternalIdentifiers(Work newer, Work existing, SourceEntity sourceEntity) {
+        WorkExternalIdentifiers existingExtIds = existing.getExternalIdentifiers();
+        WorkExternalIdentifiers newExtIds = newer.getExternalIdentifiers();
+        if(existingExtIds != null && newExtIds != null) {            
+            for(WorkExternalIdentifier existingId : existingExtIds.getExternalIdentifier()) {
+                for(WorkExternalIdentifier newId : newExtIds.getExternalIdentifier()) {
+                    if(existingId.getRelationship().equals(Relationship.SELF) 
+                    		&& newId.getRelationship().equals(Relationship.SELF) && newer.getSource().equals(existing.getSource())){
+                    	Map<String, String> params = new HashMap<String, String>();
+                        params.put("clientName", sourceEntity.getSourceId());
+                        throw new OrcidDuplicatedActivityException(params);
+                    }
+                }
+            }
         }
     }
 }

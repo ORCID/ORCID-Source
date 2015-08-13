@@ -18,14 +18,11 @@ package org.orcid.core.manager.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.Resource;
 
 import org.orcid.core.adapter.JpaJaxbPeerReviewAdapter;
-import org.orcid.core.exception.OrcidDuplicatedActivityException;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.GroupIdRecordManager;
@@ -39,8 +36,6 @@ import org.orcid.jaxb.model.common.SourceClientId;
 import org.orcid.jaxb.model.common.SourceOrcid;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.record.PeerReview;
-import org.orcid.jaxb.model.record.WorkExternalIdentifier;
-import org.orcid.jaxb.model.record.WorkExternalIdentifiers;
 import org.orcid.jaxb.model.record.summary.PeerReviewSummary;
 import org.orcid.persistence.dao.PeerReviewDao;
 import org.orcid.persistence.dao.ProfileDao;
@@ -55,8 +50,6 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
 
 public class PeerReviewManagerImpl implements PeerReviewManager {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(PeerReviewManagerImpl.class);
 
     @Resource
     private PeerReviewDao peerReviewDao;
@@ -135,14 +128,7 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
                 if (peerReviews != null) {
                     for (PeerReviewEntity entity : peerReviews) {
                         PeerReview existing = jpaJaxbPeerReviewAdapter.toPeerReview(entity);
-                        if (existing.isDuplicated(peerReview)) {
-                            LOGGER.error("Trying to create a funding that is duplicated with " + entity.getId());
-                            Map<String, String> params = new HashMap<String, String>();
-                            params.put("clientName", sourceEntity.getSourceId());
-                            throw new OrcidDuplicatedActivityException(params);
-                        }
-                        
-                        checkExternalIdentifiers(peerReview, existing);
+                        ActivityValidator.checkPeerReviewExternalIdentifiers(peerReview, existing, sourceEntity);
                     }
                 }
             }
@@ -173,7 +159,7 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
             for(PeerReview existing : existingReviews) {
                 //Dont compare the updated peer review with the DB version
                 if(!existing.getPutCode().equals(peerReview.getPutCode())) {
-                    checkExternalIdentifiers(peerReview, existing);
+                	ActivityValidator.checkPeerReviewExternalIdentifiers(peerReview, existing, sourceManager.retrieveSourceEntity());
                 }
             }
         }
@@ -260,20 +246,5 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
                 throw new OrcidValidationException(localeManager.resolveMessage("peer_review.group_id.not_valid"));
             }
         }        
-    }
-    
-    private void checkExternalIdentifiers(PeerReview newer, PeerReview existing) {
-        WorkExternalIdentifiers existingExtIds = existing.getExternalIdentifiers();
-        WorkExternalIdentifiers newExtIds = newer.getExternalIdentifiers();
-        if(existingExtIds != null && newExtIds != null) {            
-            for(WorkExternalIdentifier existingId : existingExtIds.getExternalIdentifier()) {
-                for(WorkExternalIdentifier newId : newExtIds.getExternalIdentifier()) {
-                    if(existingId.equals(newId)){
-                        String errorMessage = localeManager.resolveMessage("peer_review.external_id.duplicated", newId.getWorkExternalIdentifierId().getContent());
-                        throw new OrcidValidationException(errorMessage);
-                    }
-                }
-            }
-        }
     }
 }
