@@ -91,12 +91,12 @@ public class BlackBoxBase {
 
     @Resource
     protected OauthHelper oauthHelper;
-
-    public String getAccessToken(String scopes) throws InterruptedException, JSONException {
+           
+    public String getAccessToken(String scopes, String clientId, String clientSecret) throws InterruptedException, JSONException {
         webDriver = new FirefoxDriver();
         webDriverHelper = new WebDriverHelper(webDriver, webBaseUrl, redirectUri);
         oauthHelper.setWebDriverHelper(webDriverHelper);
-        String accessToken = oauthHelper.obtainAccessToken(client1ClientId, client1ClientSecret, scopes, user1UserName, user1Password, redirectUri);
+        String accessToken = oauthHelper.obtainAccessToken(clientId, clientSecret, scopes, user1UserName, user1Password, redirectUri);
         webDriver.quit();
         return accessToken;
     }
