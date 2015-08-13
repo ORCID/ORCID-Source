@@ -129,4 +129,22 @@ public class StatisticsDaoImpl implements StatisticsDao {
         List<StatisticValuesEntity> results = query.getResultList();
         return results.isEmpty() ? null : results.get(0);
     }
+    
+    /**
+     * Get an statistics object from database
+     * 
+     * @param id
+     * @param name
+     * @return the Statistic value object associated with the id and name
+     *         parameters
+     * */
+    @Override
+    @Transactional
+    public List<StatisticValuesEntity> getStatistic(String name) {
+        TypedQuery<StatisticValuesEntity> query = entityManager
+                .createQuery("FROM StatisticValuesEntity WHERE statisticName = :name", StatisticValuesEntity.class);
+        query.setParameter("name", name);
+        List<StatisticValuesEntity> results = query.getResultList();
+        return results.isEmpty() ? null : results;
+    }
 }
