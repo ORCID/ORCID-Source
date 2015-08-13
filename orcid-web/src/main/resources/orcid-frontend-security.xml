@@ -356,10 +356,11 @@
             </list>
         </property>
     </bean>
-    <bean id="clientCredentialsTokenEndpointFilter" class="org.orcid.api.common.security.oauth.OrcidOauth2TokenEndPointFilter">
+    <bean id="clientCredentialsTokenEndpointFilter" class="org.orcid.api.common.security.oauth.OrcidWebOauth2TokenEndPointFilter">
         <property name="authenticationEntryPoint" ref="oauthAuthenticationEntryPoint"/>
         <property name="authenticationManager" ref="clientAuthenticationManager"/>
     </bean>
+
     <bean id="tokenGranter" class="org.springframework.security.oauth2.provider.CompositeTokenGranter">
     <constructor-arg>
         <list>
