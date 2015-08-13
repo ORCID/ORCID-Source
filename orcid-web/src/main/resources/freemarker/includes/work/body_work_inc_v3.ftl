@@ -29,9 +29,11 @@
                             <div class="col-md-7 col-sm-7 col-xs-7">
                                 <@orcid.msg 'groups.common.sources' /> <span class="hide-sources" ng-click="hideSources(group)"><@orcid.msg 'groups.common.close_sources' /></span>
                             </div>
+                            
                             <div class="col-md-2 col-sm-2 col-xs-2">
                                 <@orcid.msgCapFirst 'groups.common.preferred' />
                             </div>
+                            
                             <div class="col-md-3 col-sm-3 col-xs-3 right">
                                     <div class="workspace-toolbar">
                                         <ul class="workspace-private-toolbar">
@@ -67,14 +69,13 @@
                                     </div>
                             </div>
                         </div>
-
-
                     </div>
                 </li>
                 <!-- End of Header -->
 
 
                 <li ng-repeat="work in group.activities" ng-show="group.activePutCode == work.putCode.value || editSources[group.groupId] == true" orcid-put-code="{{work.putCode.value}}">
+
                     <!-- active row summary info -->
                     <div class="row" ng-show="group.activePutCode == work.putCode.value">
                         <div class="col-md-9 col-sm-9 col-xs-8">
@@ -83,7 +84,6 @@
                                 <span class="journaltitle" ng-show="work.journalTitle.value" ng-bind="work.journalTitle.value"></span>                                
                             </h3>                                                        
                             <div class="info-detail">
-                            	
                                 <span ng-show="work.publicationDate.year">{{work.publicationDate.year}}</span><span ng-show="work.publicationDate.month">-{{work.publicationDate.month}}</span><span ng-show="work.publicationDate.year"> | </span> <span class="capitalize">{{work.workType.value}}</span>
                             </div>
                         </div>
