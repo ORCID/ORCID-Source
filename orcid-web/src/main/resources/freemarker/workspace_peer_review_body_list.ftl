@@ -27,9 +27,7 @@
 					<div class="col-md-5 col-sm-2 col-xs-12">
 						 <div class="workspace-title">											
 						    <a ng-click="workspaceSrvc.togglePeerReview()" class="toggle-text">
-						  		<i class="glyphicon-chevron-down glyphicon x075" ng-class="{'glyphicon-chevron-right':workspaceSrvc.displayPeerReview==false}"></i> <@orcid.msg 'workspace_peer_review_body_list.peerReview'/>
-						  			(<span ng-bind="peerReviewSrvc.groups.length"></span>)						  			
-						  		</a>						  		
+						  		<i class="glyphicon-chevron-down glyphicon x075" ng-class="{'glyphicon-chevron-right':workspaceSrvc.displayPeerReview==false}"></i> <@orcid.msg 'workspace_peer_review_body_list.peerReview'/> (<span ng-bind="peerReviewSrvc.groups.length"></span>)
 						   	</a>							    
 						</div>
 					</div>

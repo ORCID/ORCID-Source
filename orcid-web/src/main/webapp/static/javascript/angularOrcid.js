@@ -1645,6 +1645,71 @@ orcidNgModule.filter('externalIdentifierHtml', ['fundingSrvc', function(fundingS
     	};
 }]);
 
+orcidNgModule.filter('peerReviewExternalIdentifierHtml', function(){
+    return function(peerReviewExternalIdentifier, first, last, length, moreInfo){
+    	
+    	
+        var output = '';
+        var ngclass = '';
+        var isPartOf = false;
+        var type = null;
+        var link = null;
+        ngclass = 'truncate';
+        
+        if (peerReviewExternalIdentifier == null) return output;
+        
+        
+        
+        if(peerReviewExternalIdentifier.relationship != null && peerReviewExternalIdentifier.relationship.value == 'part-of')
+        	isPartOf = true;
+        
+        if (peerReviewExternalIdentifier.workExternalIdentifierId == null) return output;
+        var id = peerReviewExternalIdentifier.workExternalIdentifierId.value;
+        
+        
+        if (peerReviewExternalIdentifier.workExternalIdentifierType != null)
+            type = peerReviewExternalIdentifier.workExternalIdentifierType.value;
+	        if (type != null) {
+	        	if(isPartOf)
+	        		output = output + "<span class='italic'>" + om.get("common.part_of") + " <span class='type'>" + type.toUpperCase() + "</span></span>: ";
+	        	else 
+	        		output = output + "<span class='type'>" + type.toUpperCase() + "</span>: ";
+	        }
+        
+
+        if (peerReviewExternalIdentifier.url != null && peerReviewExternalIdentifier.url.value != '')
+        	link = peerReviewExternalIdentifier.url.value;
+        else link = workIdLinkJs.getLink(id,type); 
+        	
+        if (link != null){
+        	if(link.lastIndexOf('http://') === -1 && link.lastIndexOf('https://') === -1) {
+        		link = '//' + link;
+        	}
+            output = output + '<a href="' + link.replace(/'/g, "&#39;") + '" class =""' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(peerReview.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(peerReview.putCode.value + $index)\">" + id.escapeHtml() + '</a>' + ' | ' + '<a href="' + link.replace(/'/g, "&#39;") + '" class ="' + ngclass + '"' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(peerReview.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(peerReview.putCode.value + $index)\">" + link.replace(/'/g, "&#39;") + '</a>';
+        }else{
+            output = output + id;        
+        }
+        
+        
+        
+        output += '\
+        <div class="popover-pos">\
+			<div class="popover-help-container">\
+	        	<div class="popover bottom" ng-class="{'+"'block'"+' : displayURLPopOver[peerReview.putCode.value + $index] == true}">\
+					<div class="arrow"></div>\
+					<div class="popover-content">\
+				    	<a href="'+link+'" target="_blank">'+link+'</a>\
+				    </div>\
+				</div>\
+			</div>\
+	   </div>';
+
+       return output;      
+      
+     
+    };
+});
+
 function removeBadContributors(dw) {
     for (var idx in dw.contributors) {
         if (dw.contributors[idx].contributorSequence == null
@@ -2638,8 +2703,8 @@ orcidNgModule.controller('ResetPasswordCtrl', ['$scope', '$compile', 'commonSrvc
 
 orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc', 'vcRecaptchaService', function ($scope, $compile, commonSrvc, vcRecaptchaService) {
     $scope.privacyHelp = {};
-    $scope.widgetId = null;
-    $scope.response = null;
+    $scope.recaptchaWidgetId = null;
+    $scope.recatchaResponse = null;
     
     $scope.model = {
     	key: orcidVar.recaptchaKey
@@ -2736,7 +2801,8 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
             $scope.register.creationType.value = "Direct";
         }        
         
-        $scope.register.grecaptcha.value = $scope.response; //Adding the response to the register object
+        $scope.register.grecaptcha.value = $scope.recatchaResponse; //Adding the response to the register object
+        $scope.register.grecaptchaWidgetId.value = $scope.recaptchaWidgetId;
         
         $.ajax({
             url: getBaseUri() + '/register.json',
@@ -2766,7 +2832,7 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
 
     $scope.postRegisterConfirm = function () {
         $scope.showProcessingColorBox();
-        $scope.register.captchaNumClient = $scope.register.captchaNumServer / 2;
+        $scope.register.valNumClient = $scope.register.valNumServer / 2;
         $.ajax({
             url: getBaseUri() + '/registerConfirm.json',
             type: 'POST',
@@ -2850,14 +2916,14 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
     };
     
     
-    $scope.setWidgetId = function (widgetId) {
+    $scope.setRecaptchaWidgetId = function (widgetId) {
         console.log('Widget ID: ' + widgetId)
-    	$scope.widgetId = widgetId;
+    	$scope.recaptchaWidgetId = widgetId;
     };
 
-    $scope.setResponse = function (response) {
-        console.log('Yey response!');
-        $scope.response = response;
+    $scope.setRecatchaResponse = function (response) {
+        console.log('Yey recaptcha response!');
+        $scope.recatchaResponse = response;
     };
     //init
     $scope.getRegister();
@@ -4091,7 +4157,7 @@ orcidNgModule.controller('PublicPeerReviewCtrl',['$scope', '$compile', '$filter'
 	 $scope.workspaceSrvc  = workspaceSrvc;
 	 $scope.showDetails = {};
 	 $scope.showElement = {};
-	 $scope.editSources = {};
+	 $scope.showPeerReviewDetails = {};
 	 
 	 $scope.sortState = new ActSortState(GroupedActivities.PEER_REVIEW);
      
@@ -4099,10 +4165,10 @@ orcidNgModule.controller('PublicPeerReviewCtrl',['$scope', '$compile', '$filter'
         $scope.sortState.sortBy(key);
      };
 	 
-	 $scope.showDetailsMouseClick = function(key, $event) {
-        $event.stopPropagation();
-        $scope.showDetails[key] = !$scope.showDetails[key];
-    };
+     $scope.showDetailsMouseClick = function(groupId, $event){
+     	$event.stopPropagation();
+     	$scope.showDetails[groupId] = !$scope.showDetails[groupId];
+     };
     
     $scope.showTooltip = function (element){    	
         $scope.showElement[element] = true;
@@ -4112,13 +4178,13 @@ orcidNgModule.controller('PublicPeerReviewCtrl',['$scope', '$compile', '$filter'
         $scope.showElement[element] = false;
     };
     
-    $scope.showSources = function(group) {
-        $scope.editSources[group.groupId] = true;
+    
+    $scope.showMoreDetails = function(putCode){    	
+    	$scope.showPeerReviewDetails[putCode] = true;   
     };
     
-    $scope.hideSources = function(group) {
-        $scope.editSources[group.groupId] = false;
-        group.activePutCode = group.defaultPutCode;
+    $scope.hideMoreDetails = function(putCode){
+    	$scope.showPeerReviewDetails[putCode] = false;
     };
     
     //Init
@@ -4939,8 +5005,10 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
 	$scope.editTranslatedTitle = false;
 	$scope.editSources = {};
 	$scope.showDetails = {};
+	$scope.showPeerReviewDetails = {};
 	$scope.showElement = {};
 	$scope.sortState = new ActSortState(GroupedActivities.PEER_REVIEW);
+	$scope.displayURLPopOver = {};
     
     $scope.sort = function(key) {
         $scope.sortState.sortBy(key);
@@ -5142,6 +5210,7 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
         
     }; 
     
+    /*
     $scope.hideSources = function(group) {
         $scope.editSources[group.groupId] = false;
         group.activePutCode = group.defaultPutCode;
@@ -5150,10 +5219,20 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
     $scope.showSources = function(group) {
         $scope.editSources[group.groupId] = true;
     };
-    
+    */
+   
     $scope.showDetailsMouseClick = function(groupId, $event){
     	$event.stopPropagation();
     	$scope.showDetails[groupId] = !$scope.showDetails[groupId];
+    };
+    
+    
+    $scope.showMoreDetails = function(putCode){    	
+    	$scope.showPeerReviewDetails[putCode] = true;   
+    };
+    
+    $scope.hideMoreDetails = function(putCode){
+    	$scope.showPeerReviewDetails[putCode] = false;
     };
     
     $scope.deletePeerReviewConfirm = function(putCode, deleteGroup) {
@@ -5203,6 +5282,18 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
     		extId.url.value=url;
     	}
     };
+    
+    $scope.hideURLPopOver = function(id){
+    	$scope.displayURLPopOver[id] = false;
+    };
+    
+    $scope.showURLPopOver = function(id){
+    	$scope.displayURLPopOver[id] = true;
+    };
+    
+    $scope.moreInfoActive = function(groupID){
+    	if ($scope.moreInfo[groupID] == true || $scope.moreInfo[groupID] != null) return 'truncate-anchor';
+    }
     
     //Init
     $scope.peerReviewSrvc.loadPeerReviews(peerReviewSrvc.constants.access_type.USER);
