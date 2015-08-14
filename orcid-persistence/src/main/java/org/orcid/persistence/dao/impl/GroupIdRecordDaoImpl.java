@@ -44,4 +44,11 @@ public class GroupIdRecordDaoImpl extends GenericDaoImpl<GroupIdRecordEntity, Lo
         Long result = query.getSingleResult();
         return (result != null && result > 0);
     }
+    
+    @Override
+    public GroupIdRecordEntity findByGroupId(String groupId) {
+        TypedQuery<GroupIdRecordEntity> query = entityManager.createQuery("from GroupIdRecordEntity where groupId=:groupId", GroupIdRecordEntity.class);
+        query.setParameter("groupId", groupId);
+        return query.getSingleResult();
+    }
 }
