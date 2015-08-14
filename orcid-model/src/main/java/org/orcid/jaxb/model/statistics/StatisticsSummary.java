@@ -32,7 +32,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
  */
 @XmlRootElement(name = "statistics-summary")
 public class StatisticsSummary {
-    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd'T'HH:mm:ss'Z'",timezone="DEFAULT_TIMEZONE")
+    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd'T'HH:mm:ss.SSSZ'Z'",timezone="DEFAULT_TIMEZONE")
     protected Date date;
     protected Map<String, Long> statistics;
 
