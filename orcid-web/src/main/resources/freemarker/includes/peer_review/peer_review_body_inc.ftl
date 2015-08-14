@@ -30,21 +30,6 @@
                     
                     	<div class="col-md-3 col-sm-3 col-xs-4 workspace-toolbar">
                               <ul class="workspace-private-toolbar">
-                                  <!-- Show/Hide Details -->
-                                  <li class="works-details">
-                                      <a ng-click="showDetailsMouseClick(group.groupId,$event);" ng-mouseenter="showTooltip(group.groupId+'-showHideDetails')" ng-mouseleave="hideTooltip(group.groupId+'-showHideDetails')">
-                                          <span ng-class="(showDetails[group.groupId] == true) ? 'glyphicons collapse_top' : 'glyphicons expand'">
-                                          </span>
-                                      </a>
-                                      <div class="popover popover-tooltip top show-hide-details-popover" ng-show="showElement[group.groupId+'-showHideDetails'] == true">
-                                           <div class="arrow"></div>
-                                          <div class="popover-content">
-                                              <span ng-show="showDetails[group.groupId] == false || showDetails[group.groupId] == null"><@orcid.msg 'common.details.show_details' /></span>   
-                                              <span ng-show="showDetails[group.groupId] == true"><@orcid.msg 'common.details.hide_details' /></span>
-                                          </div>
-                                      </div>
-                                  </li>
-
                                   <#if !(isPublicProfile??)>
                                       <!-- Privacy -->
                                       <li>

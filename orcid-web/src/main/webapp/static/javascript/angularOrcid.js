@@ -1656,7 +1656,7 @@ orcidNgModule.filter('externalIdentifierHtml', ['fundingSrvc', function(fundingS
 }]);
 
 orcidNgModule.filter('peerReviewExternalIdentifierHtml', function(){
-    return function(peerReviewExternalIdentifier, first, last, length, moreInfo){
+    return function(peerReviewExternalIdentifier, first, last, length, moreInfo, own){
     	
     	
         var output = '';
@@ -1681,9 +1681,9 @@ orcidNgModule.filter('peerReviewExternalIdentifierHtml', function(){
             type = peerReviewExternalIdentifier.workExternalIdentifierType.value;
 	        if (type != null) {
 	        	if(isPartOf)
-	        		output = output + "<span class='italic'>" + om.get("common.part_of") + " <span class='type'>" + type.toUpperCase() + "</span></span>: ";
+	        		output += "<span class='italic'>" + om.get("common.part_of") + " <span class='type'>" + type.toUpperCase() + "</span></span>: ";
 	        	else 
-	        		output = output + "<span class='type'>" + type.toUpperCase() + "</span>: ";
+	        		output += "<span class='type'>" + type.toUpperCase() + "</span>: ";
 	        }
         
 
@@ -1695,12 +1695,12 @@ orcidNgModule.filter('peerReviewExternalIdentifierHtml', function(){
         	if(link.lastIndexOf('http://') === -1 && link.lastIndexOf('https://') === -1) {
         		link = '//' + link;
         	}
-            output = output + '<a href="' + link.replace(/'/g, "&#39;") + '" class =""' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(peerReview.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(peerReview.putCode.value + $index)\">" + id.escapeHtml() + '</a>' + ' | ' + '<a href="' + link.replace(/'/g, "&#39;") + '" class ="' + ngclass + '"' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(peerReview.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(peerReview.putCode.value + $index)\">" + link.replace(/'/g, "&#39;") + '</a>';
+            output += '<a href="' + link.replace(/'/g, "&#39;") + '" class =""' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(peerReview.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(peerReview.putCode.value + $index)\">" + id.escapeHtml() + '</a>' + ' | ' + '<a href="' + link.replace(/'/g, "&#39;") + '" class ="' + ngclass + '"' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(peerReview.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(peerReview.putCode.value + $index)\">" + link.replace(/'/g, "&#39;") + '</a>';
         }else{
-            output = output + id;        
+            output += + id;        
         }
         
-        output += ', ';
+        if (length > 1 && !last) output = output + ',';
         
         
         
@@ -1715,6 +1715,9 @@ orcidNgModule.filter('peerReviewExternalIdentifierHtml', function(){
 				</div>\
 			</div>\
 	   </div>';
+        
+        if(own)
+        	output = '<br/>' + output;
 
        return output;      
       
@@ -5021,6 +5024,9 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
 	$scope.showElement = {};
 	$scope.sortState = new ActSortState(GroupedActivities.PEER_REVIEW);
 	$scope.displayURLPopOver = {};
+	$scope.groupName = null;
+	$scope.groupDescription = null;
+	$scope.groupType = null;
     
     $scope.sort = function(key) {
         $scope.sortState.sortBy(key);
@@ -5220,18 +5226,7 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
         var index = $scope.editPeerReview.subjectForm.workExternalIdentifiers.indexOf(obj);
         $scope.editPeerReview.subjectForm.workExternalIdentifiers.splice(index,1);
         
-    }; 
-    
-    /*
-    $scope.hideSources = function(group) {
-        $scope.editSources[group.groupId] = false;
-        group.activePutCode = group.defaultPutCode;
     };
-
-    $scope.showSources = function(group) {
-        $scope.editSources[group.groupId] = true;
-    };
-    */
    
     $scope.showDetailsMouseClick = function(groupId, $event){
     	$event.stopPropagation();
@@ -5307,6 +5302,23 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
     	if ($scope.moreInfo[groupID] == true || $scope.moreInfo[groupID] != null) return 'truncate-anchor';
     }
     
+    $scope.getPeerReviewGroupSummary = function(groupID){ /*  */
+    	$.ajax({
+            url: getBaseUri() + '/peer-reviews/group/' + groupID,
+            dataType: 'json',
+            type: 'GET',
+            success: function(data) {
+                if (data != null) {
+                	$scope.groupName = data.name;
+                	$scope.groupDescription = data.description;
+                	$scope.groupType = data.type;
+                }
+            }
+        }).fail(function(){
+            console.log("error getPeerReviewGroupSummary(groupID)");
+        });
+    } 
+        
     //Init
     $scope.peerReviewSrvc.loadPeerReviews(peerReviewSrvc.constants.access_type.USER);
     

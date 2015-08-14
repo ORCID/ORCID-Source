@@ -27,7 +27,7 @@
 					<div class="col-md-5 col-sm-2 col-xs-12">
 						 <div class="workspace-title">											
 						    <a ng-click="workspaceSrvc.togglePeerReview()" class="toggle-text">
-						  		<i class="glyphicon-chevron-down glyphicon x075" ng-class="{'glyphicon-chevron-right':workspaceSrvc.displayPeerReview==false}"></i> <@orcid.msg 'workspace_peer_review_body_list.peerReview'/> (<span ng-bind="peerReviewSrvc.groups.length"></span>)
+						  		<i class="glyphicon-chevron-down glyphicon x075" ng-class="{'glyphicon-chevron-right':workspaceSrvc.displayPeerReview==false}"></i> <@orcid.msg 'workspace_peer_review_body_list.peerReview'/> (<span ng-bind="peerReviewSrvc.peerReviewCount()"></span>)
 						   	</a>							    
 						</div>
 					</div>
@@ -40,16 +40,6 @@
 										<ul class="toggle-menu">
 									        <li ng-class="{'green-bg' : showBibtexImportWizard == true}"> 
 									            <span class="glyphicon glyphicon-plus"></span> <span ng-click="addPeerReviewModal()"><@orcid.msg 'workspace_peer_review_body_list.addPeerReview'/></span>
-									            <!--                                     
-									            <ul class="menu-options works">						                                
-									                
-									                <li>
-									                    <a class="action-option manage-button" ng-click="addPeerReviewModal()">
-									                        <span class="glyphicon glyphicon-plus"></span> <@orcid.msg 'workspace_peer_review_body_list.addManually'/>                                            
-									                    </a>
-									                </li>                                                                                
-									            </ul>
-									             -->
 									        </li>									        
 									    </ul>									    
 									</div>	
