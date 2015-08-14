@@ -27,6 +27,9 @@ import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.core.manager.validator.ActivityValidator;
+import org.orcid.jaxb.model.common.Source;
+import org.orcid.jaxb.model.common.SourceClientId;
+import org.orcid.jaxb.model.common.SourceOrcid;
 import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.jaxb.model.record.Work;
 import org.orcid.jaxb.model.record.summary.WorkSummary;
@@ -153,11 +156,32 @@ public class WorkManagerImpl implements WorkManager {
     @Transactional
     public Work createWork(String orcid, Work work, boolean applyValidations) { 
     	SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
-        if(applyValidations) {
+    	if (sourceEntity != null) {
+             Source source = new Source();
+             if (sourceEntity.getSourceClient() != null) {
+                 source.setSourceClientId(new SourceClientId(sourceEntity.getSourceClient().getClientId()));
+             } else if (sourceEntity.getSourceProfile() != null) {
+                 source.setSourceOrcid(new SourceOrcid(sourceEntity.getSourceProfile().getId()));
+             }
+             work.setSource(source);
+        }
+    	
+    	if(applyValidations) {
         	ActivityValidator.validateWork(work, true, sourceEntity);
-        }        
+        	List<MinimizedWorkEntity> works = workDao.findWorks(orcid);
+        	// If it is the user adding the peer review, allow him to add duplicates
+        	if (!sourceEntity.getSourceId().equals(orcid)) {
+        		if (works != null) {
+        			List<Work> workEntities = jpaJaxbWorkAdapter.toMinimizedWork(works);
+                    for (Work existing : workEntities) {
+                    	 ActivityValidator.checkExternalIdentifiers(work.getExternalIdentifiers(),
+                    			 existing.getExternalIdentifiers(), existing.getSource(), sourceEntity);
+                    }
+        		}
+        	}
+        }
+    	
         WorkEntity workEntity = jpaJaxbWorkAdapter.toWorkEntity(work);
-        workEntity.setSource(sourceEntity);
         ProfileEntity profile = profileDao.find(orcid);
         workEntity.setProfile(profile);        
         workEntity.setAddedToProfileDate(new Date());
@@ -172,6 +196,14 @@ public class WorkManagerImpl implements WorkManager {
     	SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
         if(applyValidations) {
         	ActivityValidator.validateWork(work, false, sourceEntity);
+        	List<Work> existingWorks = this.findWorks(orcid, System.currentTimeMillis());
+            for(Work existing : existingWorks) {
+                //Dont compare the updated peer review with the DB version
+                if(!existing.getPutCode().equals(work.getPutCode())) {
+               	 ActivityValidator.checkExternalIdentifiers(work.getExternalIdentifiers(),
+            			 existing.getExternalIdentifiers(), existing.getSource(), sourceEntity);
+                }
+            }
         }
         WorkEntity workEntity = workDao.find(Long.valueOf(work.getPutCode()));
         Visibility originalVisibility = Visibility.fromValue(workEntity.getVisibility().value());
