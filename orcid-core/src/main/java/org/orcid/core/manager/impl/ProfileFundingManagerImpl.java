@@ -18,7 +18,9 @@ package org.orcid.core.manager.impl;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
@@ -258,7 +260,8 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
     @Override
     @Transactional
     public Funding createFunding(String orcid, Funding funding) {
-    	ActivityValidator.validateFunding(funding);
+    	SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
+    	ActivityValidator.validateFunding(funding, sourceEntity);
         //Check for duplicates
         List<ProfileFundingEntity> existingFundings = profileFundingDao.getByUser(orcid);
         List<Funding> fundings = jpaJaxbFundingAdapter.toFunding(existingFundings);
@@ -266,7 +269,9 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
             for(Funding exstingFunding : fundings) {
                 if(funding.isDuplicated(exstingFunding)) {
                     LOGGER.error("Trying to create a funding that is duplicated with " + funding.getPutCode());
-                    throw new OrcidDuplicatedActivityException(localeManager.resolveMessage("api.error.duplicated"));
+                    Map<String, String> params = new HashMap<String, String>();
+                    params.put("clientName", sourceEntity.getSourceId());
+                    throw new OrcidDuplicatedActivityException(params);
                 }                    
             }
         }
@@ -277,7 +282,7 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
         OrgEntity updatedOrganization = orgManager.getOrgEntity(funding);
         profileFundingEntity.setOrg(updatedOrganization);
         
-        profileFundingEntity.setSource(sourceManager.retrieveSourceEntity());
+        profileFundingEntity.setSource(sourceEntity);
         ProfileEntity profile = profileDao.find(orcid);
         profileFundingEntity.setProfile(profile);
         setIncomingWorkPrivacy(profileFundingEntity, profile);

@@ -18,7 +18,9 @@ package org.orcid.core.manager.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -31,6 +33,7 @@ import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.OrgManager;
 import org.orcid.core.manager.PeerReviewManager;
 import org.orcid.core.manager.SourceManager;
+import org.orcid.core.manager.validator.ActivityValidator;
 import org.orcid.jaxb.model.common.Source;
 import org.orcid.jaxb.model.common.SourceClientId;
 import org.orcid.jaxb.model.common.SourceOrcid;
@@ -106,7 +109,8 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
 
     @Override
     public PeerReview createPeerReview(String orcid, PeerReview peerReview, boolean isApiRequest) {
-        SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
+    	
+    	SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
 
         // Set the source to the peerReview before looking for duplicates
         if (sourceEntity != null) {
@@ -122,8 +126,8 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
         // If request comes from the API, perform the validations
         if (isApiRequest) {
             //Validate it have at least one ext id
-            validateExternalIdentifiers(peerReview);
-            
+        	ActivityValidator.validatePeerReview(peerReview, sourceEntity);
+        	
             List<PeerReviewEntity> peerReviews = peerReviewDao.getByUser(orcid);
             // If it is the user adding the peer review, allow him to add
             // duplicates
@@ -133,7 +137,9 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
                         PeerReview existing = jpaJaxbPeerReviewAdapter.toPeerReview(entity);
                         if (existing.isDuplicated(peerReview)) {
                             LOGGER.error("Trying to create a funding that is duplicated with " + entity.getId());
-                            throw new OrcidDuplicatedActivityException(localeManager.resolveMessage("api.error.duplicated"));
+                            Map<String, String> params = new HashMap<String, String>();
+                            params.put("clientName", sourceEntity.getSourceId());
+                            throw new OrcidDuplicatedActivityException(params);
                         }
                         
                         checkExternalIdentifiers(peerReview, existing);
@@ -254,12 +260,6 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
                 throw new OrcidValidationException(localeManager.resolveMessage("peer_review.group_id.not_valid"));
             }
         }        
-    }
-    
-    private void validateExternalIdentifiers(PeerReview peerReview) {
-        if(peerReview.getExternalIdentifiers() == null || peerReview.getExternalIdentifiers().getExternalIdentifier().isEmpty()) {
-            throw new OrcidValidationException(localeManager.resolveMessage("peer_review.external_id.one_required"));
-        }
     }
     
     private void checkExternalIdentifiers(PeerReview newer, PeerReview existing) {

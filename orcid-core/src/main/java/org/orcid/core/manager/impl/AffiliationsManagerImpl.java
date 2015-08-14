@@ -129,14 +129,15 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
      * */
     @Override
     public Education createEducationAffiliation(String orcid, Education education) {
-    	ActivityValidator.validateEducation(education);
+    	SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
+    	ActivityValidator.validateEducation(education, sourceEntity);
         OrgAffiliationRelationEntity educationEntity = jpaJaxbEducationAdapter.toOrgAffiliationRelationEntity(education);
         
         //Updates the give organization with the latest organization from database
         OrgEntity updatedOrganization = orgManager.getOrgEntity(education);
         educationEntity.setOrg(updatedOrganization);
         
-        educationEntity.setSource(sourceManager.retrieveSourceEntity());
+        educationEntity.setSource(sourceEntity);
         ProfileEntity profile = profileDao.find(orcid);
         educationEntity.setProfile(profile);
         setIncomingWorkPrivacy(educationEntity, profile);
@@ -210,14 +211,15 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
      * */
     @Override
     public Employment createEmploymentAffiliation(String orcid, Employment employment) {
-    	ActivityValidator.validateEmployment(employment);
+    	SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
+    	ActivityValidator.validateEmployment(employment, sourceEntity);
         OrgAffiliationRelationEntity employmentEntity = jpaJaxbEmploymentAdapter.toOrgAffiliationRelationEntity(employment);
         
         //Updates the give organization with the latest organization from database
         OrgEntity updatedOrganization = orgManager.getOrgEntity(employment);
         employmentEntity.setOrg(updatedOrganization);
         
-        employmentEntity.setSource(sourceManager.retrieveSourceEntity());
+        employmentEntity.setSource(sourceEntity);
         ProfileEntity profile = profileDao.find(orcid);
         employmentEntity.setProfile(profile);
         setIncomingWorkPrivacy(employmentEntity, profile);
