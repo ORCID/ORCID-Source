@@ -19,9 +19,9 @@ package org.orcid.jaxb.model.statistics;
 import java.util.Date;
 import java.util.Map;
 
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 /** Represents a statistics sumamry
  * 
@@ -32,6 +32,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement(name = "statistics-summary")
 public class StatisticsSummary {
+    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd'T'HH:mm:ss'Z'",timezone="DEFAULT_TIMEZONE")
     protected Date date;
     protected Map<String, Long> statistics;
 
