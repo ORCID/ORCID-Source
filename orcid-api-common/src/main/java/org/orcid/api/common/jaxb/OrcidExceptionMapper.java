@@ -238,9 +238,11 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
 		if(t instanceof ApplicationException) {
 			params = ((ApplicationException)t).getParams();
 		}
-		String devMessage = messageSource.getMessage("apiError." + errorCode + ".developerMessage", null, locale);
+		//Returns an empty message if the key is not found
+		String devMessage = messageSource.getMessage("apiError." + errorCode + ".developerMessage", null, "", locale);
 		
-		if(devMessage == null || "".equals(devMessage)) {
+		//Assign message from the exception
+		if("".equals(devMessage)) {
 			devMessage = t.getClass().getCanonicalName();
 			Throwable cause = t.getCause();
 			String exceptionMessage = t.getLocalizedMessage();
