@@ -19,10 +19,14 @@ package org.orcid.core.manager;
 import java.util.List;
 import java.util.Locale;
 
+import org.orcid.jaxb.model.statistics.StatisticsSummary;
+import org.orcid.jaxb.model.statistics.StatisticsTimeline;
+import org.orcid.persistence.dao.StatisticsDao;
 import org.orcid.persistence.jpa.entities.StatisticKeyEntity;
 import org.orcid.persistence.jpa.entities.StatisticValuesEntity;
 
 public interface StatisticsManager {
+    
     /**
      * Creates a new statistics key
      * 
@@ -79,4 +83,18 @@ public interface StatisticsManager {
      * @return the last statistics key
      * */
     public StatisticKeyEntity getLatestKey();
+    
+    /**
+     * Get all entries with a given name as a domain model;
+     * @param statisticName
+     * @return all statistics values for the statistics name parameter
+     * */
+    public StatisticsTimeline getStatisticsTimelineModel(String statisticName);
+
+    /**
+     * Get the list of the latest statistics as a domain model
+     * 
+     * @return a list that contains the latest set of statistics
+     * */
+    public StatisticsSummary getLatestStatisticsModel();
 }

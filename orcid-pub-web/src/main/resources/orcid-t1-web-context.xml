@@ -36,7 +36,7 @@
         <property name="version" value="Latest" />
         <property name="host" value="#{ orcidUrlManager.pubHostWithPort }" />
         <property name="basePath" value="#{ orcidUrlManager.pubPath }"/>
-        <property name="resourcePackage" value="org.orcid.api.t1.server"/>
+        <property name="resourcePackage" value="org.orcid.api.t1.server,org.orcid.api.t1.stats"/>
         <property name="scan" value="true"/>
         <property name="prettyPrint" value="true"/>        
     </bean>
@@ -108,7 +108,10 @@
         <property name="serviceDelegator" ref="publicV2ApiServiceDelegator"/>
     </bean>
     
-    
-
+    <!--  Statistics API -->
+    <bean id="statsApiServiceDelegator" class="org.orcid.api.t1.stats.delegator.impl.StatsApiServiceDelegatorImpl" />
+    <bean id="statsApiServiceImplV2_0_rc1" class="org.orcid.api.t1.stats.StatsApiServiceImplV2_0_rc1">
+        <property name="serviceDelegator" ref="statsApiServiceDelegator"/>
+    </bean>
     
 </beans>
