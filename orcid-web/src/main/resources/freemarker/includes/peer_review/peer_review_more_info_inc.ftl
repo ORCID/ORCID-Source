@@ -49,7 +49,7 @@
 					
 					<li ng-repeat="peerReview in group.activities">
 						<!-- Active row -->
-						<div class="row source-line">
+						<div class="row source-line-peer-review">
 							<div class="col-md-3 col-sm-3 col-xs-3">
 								<span ng-show="peerReview.completionDate.year">{{peerReview.completionDate.year}}</span><span ng-show="peerReview.completionDate.month">-{{peerReview.completionDate.month}}</span><span ng-show="peerReview.completionDate.year">
 							</div>
@@ -75,9 +75,9 @@
 						<div class="row" ng-show="showPeerReviewDetails[peerReview.putCode.value] == true && group.activePutCode == peerReview.putCode.value;">
 							<div class="col-md-12" ng-show="peerReview.externalIdentifiers[0].workExternalIdentifierId.value != null" ng-cloak>
 								<span class="workspace-title">Review identifier(s): </span><br/> 
-								<div ng-repeat='ie in peerReview.externalIdentifiers'><span
+								<span ng-repeat='ie in peerReview.externalIdentifiers'><span
 					             	ng-bind-html='ie | peerReviewExternalIdentifierHtml:$first:$last:peerReview.externalIdentifiers.length:showDetails[group.groupId]'></span>					        
-					            </div>					            
+					            </span>					            
 						    </div>
 						    <div class="col-md-12 info-detail" ng-show="peerReview.orgName.value != null" ng-cloak>
 								<span class="workspace-title">Convening organization: </span><span>{{peerReview.orgName.value}}</span><span> ({{peerReview.city.value}}, {{peerReview.countryForDisplay}})</span>

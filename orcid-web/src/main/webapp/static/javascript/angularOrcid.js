@@ -1700,6 +1700,8 @@ orcidNgModule.filter('peerReviewExternalIdentifierHtml', function(){
             output = output + id;        
         }
         
+        output += ', ';
+        
         
         
         output += '\

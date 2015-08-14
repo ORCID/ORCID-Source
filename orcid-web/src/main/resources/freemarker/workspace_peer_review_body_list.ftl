@@ -39,15 +39,17 @@
 									<div class="menu-container">
 										<ul class="toggle-menu">
 									        <li ng-class="{'green-bg' : showBibtexImportWizard == true}"> 
-									            <span class="glyphicon glyphicon-plus"></span> <@orcid.msg 'workspace_peer_review_body_list.addPeerReview'/>                                    
+									            <span class="glyphicon glyphicon-plus"></span> <span ng-click="addPeerReviewModal()"><@orcid.msg 'workspace_peer_review_body_list.addPeerReview'/></span>
+									            <!--                                     
 									            <ul class="menu-options works">						                                
-									                <!-- Add Manually -->
+									                
 									                <li>
 									                    <a class="action-option manage-button" ng-click="addPeerReviewModal()">
 									                        <span class="glyphicon glyphicon-plus"></span> <@orcid.msg 'workspace_peer_review_body_list.addManually'/>                                            
 									                    </a>
 									                </li>                                                                                
 									            </ul>
+									             -->
 									        </li>									        
 									    </ul>									    
 									</div>	
