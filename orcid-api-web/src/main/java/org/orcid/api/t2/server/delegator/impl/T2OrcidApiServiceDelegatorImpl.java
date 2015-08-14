@@ -62,7 +62,6 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.WebhookEntity;
 import org.orcid.persistence.jpa.entities.keys.WebhookEntityPk;
 import org.orcid.utils.DateUtils;
-import org.orcid.utils.NullUtils;
 import org.orcid.utils.OrcidStringUtils;
 import org.springframework.dao.DataAccessException;
 import org.springframework.security.access.prepost.PreAuthorize;

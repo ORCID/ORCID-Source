@@ -30,7 +30,7 @@ public interface RegistrationManager {
 
     void resetUserPassword(String toEmail, OrcidProfile orcidProfile);
 
-    OrcidProfile createMinimalRegistration(OrcidProfile orcidProfile);
+    OrcidProfile createMinimalRegistration(OrcidProfile orcidProfile, boolean usedCaptcha);
 
     Long getCount();
 }
