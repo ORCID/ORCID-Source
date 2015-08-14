@@ -24,6 +24,13 @@ public enum StatisticsEnum {
     KEY_WORKS_WITH_DOIS("worksWithDois"),
     KEY_LOCKED_RECORDS("lockedRecords"),
     KEY_UNIQUE_DOIS("uniqueDois");
+    
+    /** For use as allowable values list for swagger
+     * Annoyingly this can only be an inline static final if we want it to work
+     * There is a unit test to check it correctly contains all values in declared order
+     */
+    public static final String allowableSwaggerValues = "liveIds,idsWithVerifiedEmail,idsWithWorks,works,worksWithDois,lockedRecords,uniqueDois";
+    
     private final String value;
 
     StatisticsEnum(String v) {
@@ -34,6 +41,8 @@ public enum StatisticsEnum {
         return value;
     }
 
+    //not sure if this is used silently, so not removed yet.
+    @Deprecated
     public static StatisticsEnum fromValue(String v) {
         for (StatisticsEnum c : StatisticsEnum.values()) {
             if (c.value.equals(v.toLowerCase())) {
@@ -42,4 +51,19 @@ public enum StatisticsEnum {
         }
         throw new IllegalArgumentException(v);
     }
+    
+    /** Method called by JAX-RS when parsing path parameters
+     * 
+     * @param v the path param
+     * @return the matching enum 
+     */
+    public static StatisticsEnum fromString(String v) {
+        for (StatisticsEnum c : StatisticsEnum.values()) {
+            if (c.value().equalsIgnoreCase(v.trim())) {
+                return c;
+            }
+        }
+        throw new IllegalArgumentException(v);
+    }
+        
 }

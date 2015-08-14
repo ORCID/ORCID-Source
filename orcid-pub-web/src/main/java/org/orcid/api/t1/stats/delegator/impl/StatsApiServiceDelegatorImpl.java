@@ -23,6 +23,7 @@ import javax.ws.rs.core.Response.Status;
 import org.orcid.api.t1.stats.delegator.StatsApiServiceDelegator;
 import org.orcid.core.manager.StatisticsManager;
 import org.orcid.core.security.visibility.aop.AccessControl;
+import org.orcid.core.utils.statistics.StatisticsEnum;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.statistics.StatisticsSummary;
 import org.orcid.jaxb.model.statistics.StatisticsTimeline;
@@ -44,7 +45,7 @@ public class StatsApiServiceDelegatorImpl implements StatsApiServiceDelegator {
 
     @Override
     @AccessControl(requiredScope = ScopePathType.READ_PUBLIC, enableAnonymousAccess = true)
-    public Response getStatsTimeline(String type) {
+    public Response getStatsTimeline(StatisticsEnum type) {
         StatisticsTimeline timeline = statsManager.getStatisticsTimelineModel(type);
         if (timeline == null)
             return Response.status(Status.NOT_FOUND).build();
