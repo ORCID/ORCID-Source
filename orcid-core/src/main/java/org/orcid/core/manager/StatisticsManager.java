@@ -19,9 +19,9 @@ package org.orcid.core.manager;
 import java.util.List;
 import java.util.Locale;
 
+import org.orcid.core.utils.statistics.StatisticsEnum;
 import org.orcid.jaxb.model.statistics.StatisticsSummary;
 import org.orcid.jaxb.model.statistics.StatisticsTimeline;
-import org.orcid.persistence.dao.StatisticsDao;
 import org.orcid.persistence.jpa.entities.StatisticKeyEntity;
 import org.orcid.persistence.jpa.entities.StatisticValuesEntity;
 
@@ -89,7 +89,7 @@ public interface StatisticsManager {
      * @param statisticName
      * @return all statistics values for the statistics name parameter
      * */
-    public StatisticsTimeline getStatisticsTimelineModel(String statisticName);
+    public StatisticsTimeline getStatisticsTimelineModel(StatisticsEnum statisticName);
 
     /**
      * Get the list of the latest statistics as a domain model

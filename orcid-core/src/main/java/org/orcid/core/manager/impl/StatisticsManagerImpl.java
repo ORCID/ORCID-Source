@@ -119,14 +119,14 @@ public class StatisticsManagerImpl implements StatisticsManager {
      * @return all statistics values for the statistics name parameter
      * */
     @Cacheable("statistics")
-    public StatisticsTimeline getStatisticsTimelineModel(String statisticName){
-        List<StatisticValuesEntity> list = statisticsDao.getStatistic(statisticName);
+    public StatisticsTimeline getStatisticsTimelineModel(StatisticsEnum statisticName){
+        List<StatisticValuesEntity> list = statisticsDao.getStatistic(statisticName.value());
         if (list == null)
             return null;
         
         //convert to model
         StatisticsTimeline timeline = new StatisticsTimeline();
-        timeline.setStatisticName(statisticName);
+        timeline.setStatisticName(statisticName.value());
         Map<Date,Long> map = new TreeMap<Date,Long>();
         for (StatisticValuesEntity entry: list){
             map.put(entry.getKey().getGenerationDate(), entry.getStatisticValue());
