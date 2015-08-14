@@ -25,10 +25,12 @@ import javax.ws.rs.core.Response;
 
 import org.orcid.api.t1.stats.delegator.StatsApiServiceDelegator;
 import org.orcid.core.api.OrcidApiConstants;
+import org.orcid.core.utils.statistics.StatisticsEnum;
 import org.orcid.jaxb.model.statistics.StatisticsSummary;
 import org.orcid.jaxb.model.statistics.StatisticsTimeline;
 
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
@@ -49,7 +51,6 @@ abstract public class StatsApiServiceImplBase {
     @ApiOperation(value = "Fetch latest statistics summary")
     @ApiResponses(value = { @ApiResponse(code = 200, message = "Statistic found", response = StatisticsSummary.class),
             @ApiResponse(code = 404, message = "Statistic not found") })
-
     public Response viewStatsSummary() {
         return serviceDelegator.getStatsSummary();
     }
@@ -60,11 +61,13 @@ abstract public class StatsApiServiceImplBase {
     @GET
     @Produces(value = { MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     @Path(OrcidApiConstants.STATS)
-    @ApiOperation(value = "Fetch a time series for a given statistic", notes = "Valid statistic types can be inffered from the /statistics resource.  e.g. 'works'")
+    @ApiOperation(value = "Fetch a time series for a given statistic", notes = "Valid statistic types can be inferred from the /statistics resource.  e.g. 'works'")
     @ApiResponses(value = { @ApiResponse(code = 200, message = "Statistic found", response = StatisticsTimeline.class),
             @ApiResponse(code = 404, message = "Statistic not found") })
-    public Response viewStatsTimeline(@PathParam("type") String statisticName) {
+    public Response viewStatsTimeline(@ApiParam(allowableValues=StatisticsEnum.allowableSwaggerValues) @PathParam("type") StatisticsEnum statisticName) {
         return serviceDelegator.getStatsTimeline(statisticName);
     }
+    
+    //StatisticsEnum
 
 }
