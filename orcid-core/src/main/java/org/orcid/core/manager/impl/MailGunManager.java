@@ -101,8 +101,8 @@ public class MailGunManager {
         
         // determine correct api based off domain.
         WebResource webResource = null;
-        
-        if(to.trim().endsWith(".vt.edu") || to.trim().endsWith("@vt.edu") || to.trim().endsWith(".qq.com") || to.trim().endsWith("@qq.com")) {
+        String toAddress = to.trim();        
+        if(toAddress.endsWith(".vt.edu") || toAddress.endsWith("@vt.edu") || toAddress.endsWith(".qq.com") || toAddress.endsWith("@qq.com")) {
             if(custom)
                 webResource = client.resource(getAltNotifyApiUrl());
             else if (from.trim().endsWith("@verify.orcid.org")) 
