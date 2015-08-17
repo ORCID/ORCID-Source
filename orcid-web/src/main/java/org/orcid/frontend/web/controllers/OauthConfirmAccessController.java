@@ -510,7 +510,7 @@ public class OauthConfirmAccessController extends BaseController {
             checkRegisterForm(request, response, form);
             if (form.getErrors().isEmpty()) {
                 // Register user
-                registrationController.createMinimalRegistration(request, RegistrationController.toProfile(form));
+                registrationController.createMinimalRegistration(request, RegistrationController.toProfile(form), false);
                 // Authenticate user
                 String email = form.getEmail().getValue();
                 String password = form.getPassword().getValue();

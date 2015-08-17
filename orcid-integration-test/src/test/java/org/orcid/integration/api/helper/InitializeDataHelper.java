@@ -236,7 +236,7 @@ public class InitializeDataHelper {
         registration.setPassword(passwordText);
         registration.setPasswordConfirm(passwordText);
         OrcidProfile orcidProfile = toProfile(registration);
-        orcidProfile = orcidProfileManager.createOrcidProfile(orcidProfile, false);
+        orcidProfile = orcidProfileManager.createOrcidProfile(orcidProfile, false, false);
         return orcidProfile;
     }
 

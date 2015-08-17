@@ -23,13 +23,12 @@ import javax.annotation.Resource;
 import org.orcid.core.adapter.JpaJaxbGroupIdRecordAdapter;
 import org.orcid.core.exception.DuplicatedGroupIdRecordException;
 import org.orcid.core.exception.GroupIdRecordNotFoundException;
-import org.orcid.core.exception.InvalidPutCodeException;
-import org.orcid.core.exception.MismatchedPutCodeException;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.GroupIdRecordManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.SourceManager;
+import org.orcid.core.manager.validator.ActivityValidator;
 import org.orcid.jaxb.model.common.Source;
 import org.orcid.jaxb.model.common.SourceClientId;
 import org.orcid.jaxb.model.common.SourceOrcid;
@@ -68,9 +67,9 @@ public class GroupIdRecordManagerImpl implements GroupIdRecordManager {
 
     @Override
     public GroupIdRecord createGroupIdRecord(GroupIdRecord groupIdRecord) {
-        validateCreateGroupRecord(groupIdRecord);
-        SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
-
+    	SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
+    	ActivityValidator.validateCreateGroupRecord(groupIdRecord, sourceEntity);
+        
         if (sourceEntity != null) {
             Source source = new Source();
             if (sourceEntity.getSourceClient() != null) {
@@ -89,7 +88,7 @@ public class GroupIdRecordManagerImpl implements GroupIdRecordManager {
 
     @Override
     public GroupIdRecord updateGroupIdRecord(String putCode, GroupIdRecord groupIdRecord) {
-        validateUpdateGroupIdRecord(putCode, groupIdRecord);
+    	ActivityValidator.validateUpdateGroupIdRecord(putCode, groupIdRecord);
         long putCodeLong = convertToLong(putCode);
         GroupIdRecordEntity existingEntity = groupIdRecordDao.find(putCodeLong);
         GroupIdRecordEntity updatedEntity = null;
@@ -154,18 +153,6 @@ public class GroupIdRecordManagerImpl implements GroupIdRecordManager {
         return returnVal;
     }
 
-    private void validateCreateGroupRecord(GroupIdRecord groupIdRecord) {
-        if (groupIdRecord.getPutCode() != null) {
-            throw new InvalidPutCodeException();
-        }
-    }
-
-    private void validateUpdateGroupIdRecord(String putCode, GroupIdRecord groupIdRecord) {
-        if (!putCode.equals(groupIdRecord.getPutCode())) {
-            throw new MismatchedPutCodeException();
-        }
-    }
-
     private void validateDuplicate(GroupIdRecord groupIdRecord) {
         List<GroupIdRecordEntity> groupIdRecords = groupIdRecordDao.getAll();
         if (groupIdRecords != null) {
@@ -183,7 +170,7 @@ public class GroupIdRecordManagerImpl implements GroupIdRecordManager {
         try {
             putCodeLong = Long.valueOf(putCode);
         } catch (NumberFormatException e) {
-            throw new InvalidPutCodeException();
+            throw new OrcidValidationException();
         }
         return putCodeLong;
     }

@@ -22,8 +22,6 @@ import java.net.URISyntaxException;
 import javax.annotation.Resource;
 
 import ma.glasnost.orika.CustomMapper;
-import ma.glasnost.orika.Mapper;
-import ma.glasnost.orika.MapperBase;
 import ma.glasnost.orika.MapperFacade;
 import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.MappingContext;
@@ -177,7 +175,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         workSummaryClassMap.register();
 
         ClassMapBuilder<WorkSummary, MinimizedWorkEntity> workSummaryMinimizedClassMap = mapperFactory.classMap(WorkSummary.class, MinimizedWorkEntity.class);
-        workSummaryMinimizedClassMap.field("putCode", "id");
+        addV2CommonFields(workSummaryMinimizedClassMap);
         workSummaryMinimizedClassMap.field("title.title.content", "title");
         workSummaryMinimizedClassMap.field("title.translatedTitle.content", "translatedTitle");
         workSummaryMinimizedClassMap.field("title.translatedTitle.languageCode", "translatedTitleLanguageCode");

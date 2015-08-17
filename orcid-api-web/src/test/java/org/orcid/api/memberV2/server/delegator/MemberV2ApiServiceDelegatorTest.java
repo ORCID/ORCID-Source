@@ -155,8 +155,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals("01", peerReviewSummary.getCompletionDate().getDay().getValue());
         assertEquals("01", peerReviewSummary.getCompletionDate().getMonth().getValue());
         assertEquals("2015", peerReviewSummary.getCompletionDate().getYear().getValue());
-        assertEquals("work:external-identifier-id#1", peerReviewSummary.getExternalIdentifiers().getExternalIdentifier().get(0).getWorkExternalIdentifierId().getContent());
-        assertEquals("reviewer", peerReviewSummary.getRole().value());
+        assertEquals("work:external-identifier-id#1", peerReviewSummary.getExternalIdentifiers().getExternalIdentifier().get(0).getWorkExternalIdentifierId().getContent());        
         assertEquals("APP-5555555555555555", peerReviewSummary.getSource().retrieveSourcePath());
         assertEquals("public", peerReviewSummary.getVisibility().value());        
     }
@@ -313,8 +312,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals("01", peerReview.getCompletionDate().getDay().getValue());
         assertEquals("01", peerReview.getCompletionDate().getMonth().getValue());
         assertEquals("2015", peerReview.getCompletionDate().getYear().getValue());
-        assertEquals("work:external-identifier-id#1", peerReview.getExternalIdentifiers().getExternalIdentifier().get(0).getWorkExternalIdentifierId().getContent());
-        assertEquals("reviewer", peerReview.getRole().value());
+        assertEquals("work:external-identifier-id#1", peerReview.getExternalIdentifiers().getExternalIdentifier().get(0).getWorkExternalIdentifierId().getContent());        
         assertEquals("APP-5555555555555555", peerReview.getSource().retrieveSourcePath());
         assertEquals("public", peerReview.getVisibility().value());                
     }

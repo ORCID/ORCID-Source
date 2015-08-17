@@ -16,6 +16,8 @@
  */
 package org.orcid.core.exception;
 
+import java.util.Map;
+
 /**
  * 
  * @author Angel Montenegro
@@ -38,4 +40,8 @@ public class OrcidDuplicatedActivityException extends ApplicationException {
     public OrcidDuplicatedActivityException(Throwable cause) {
         super(cause);
     }
+
+	public OrcidDuplicatedActivityException(Map<String, String> params) {
+		super(params);
+	}
 }

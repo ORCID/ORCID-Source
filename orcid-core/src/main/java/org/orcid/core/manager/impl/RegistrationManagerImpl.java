@@ -107,8 +107,8 @@ public class RegistrationManagerImpl implements RegistrationManager {
     }
 
     @Override
-    public OrcidProfile createMinimalRegistration(OrcidProfile orcidProfile) {
-        OrcidProfile minimalProfile = orcidProfileManager.createOrcidProfile(orcidProfile, false);
+    public OrcidProfile createMinimalRegistration(OrcidProfile orcidProfile, boolean usedCaptcha) {
+        OrcidProfile minimalProfile = orcidProfileManager.createOrcidProfile(orcidProfile, false, usedCaptcha);
         //Set source to the new email
         String sourceId = minimalProfile.getOrcidIdentifier().getPath();
         List<Email> emails = minimalProfile.getOrcidBio().getContactDetails().getEmail();

@@ -619,8 +619,15 @@ public class NotificationManagerImpl implements NotificationManager {
         templateParams.put("orcid", orcid);
         templateParams.put("subject", getSubject("email.subject.claim_reminder", orcidProfile));
         Source source = orcidProfile.getOrcidHistory().getSource();
-        templateParams.put("creatorName", (source == null || source.getSourceName() == null || source.getSourceName().getContent() == null) ? source.retrieveSourcePath()
-                : source.getSourceName().getContent());
+        String creatorName = "";
+        if(source != null) {
+        	if(source.getSourceName() != null && source.getSourceName().getContent() != null) {
+        		creatorName = source.getSourceName().getContent();
+        	} else {
+        		creatorName = source.retrieveSourcePath();
+        	}
+        }
+        templateParams.put("creatorName", creatorName);
         templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
         templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
         templateParams.put("daysUntilActivation", daysUntilActivation);

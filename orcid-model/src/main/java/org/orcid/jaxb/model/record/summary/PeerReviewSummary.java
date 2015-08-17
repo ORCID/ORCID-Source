@@ -34,17 +34,14 @@ import org.orcid.jaxb.model.common.Source;
 import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.jaxb.model.record.Activity;
 import org.orcid.jaxb.model.record.GroupableActivity;
-import org.orcid.jaxb.model.record.Role;
 import org.orcid.jaxb.model.record.WorkExternalIdentifiers;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "role", "externalIdentifiers", "completionDate", "organization", "source", "groupId", "createdDate", "lastModifiedDate" })
+@XmlType(propOrder = { "externalIdentifiers", "completionDate", "organization", "source", "groupId", "createdDate", "lastModifiedDate" })
 @XmlRootElement(name = "summary", namespace = "http://www.orcid.org/ns/peer-review")
 public class PeerReviewSummary implements Filterable, Activity, GroupableActivity, Serializable {
     
-    private static final long serialVersionUID = -7769331531691171324L;
-    @XmlElement(namespace = "http://www.orcid.org/ns/peer-review")
-    protected Role role;
+    private static final long serialVersionUID = -7769331531691171324L;    
     @XmlElement(name = "external-identifiers", namespace = "http://www.orcid.org/ns/peer-review")
     protected WorkExternalIdentifiers externalIdentifiers;
     @XmlElement(name = "completion-date", namespace = "http://www.orcid.org/ns/peer-review")
@@ -66,15 +63,7 @@ public class PeerReviewSummary implements Filterable, Activity, GroupableActivit
     @XmlAttribute(name = "display-index")
     protected String displayIndex;
     @XmlElement(namespace = "http://www.orcid.org/ns/peer-review", name = "review-group-id", required = true)
-    protected String groupId;
-
-    public Role getRole() {
-        return role;
-    }
-
-    public void setRole(Role role) {
-        this.role = role;
-    }
+    protected String groupId;    
 
     public WorkExternalIdentifiers getExternalIdentifiers() {
         return externalIdentifiers;
@@ -182,7 +171,6 @@ public class PeerReviewSummary implements Filterable, Activity, GroupableActivit
         result = prime * result + ((lastModifiedDate == null) ? 0 : lastModifiedDate.hashCode());
         result = prime * result + ((path == null) ? 0 : path.hashCode());
         result = prime * result + ((putCode == null) ? 0 : putCode.hashCode());
-        result = prime * result + ((role == null) ? 0 : role.hashCode());
         result = prime * result + ((source == null) ? 0 : source.hashCode());
         result = prime * result + ((visibility == null) ? 0 : visibility.hashCode());
         result = prime * result + ((organization == null) ? 0 : organization.hashCode());
@@ -232,8 +220,6 @@ public class PeerReviewSummary implements Filterable, Activity, GroupableActivit
             if (other.putCode != null)
                 return false;
         } else if (!putCode.equals(other.putCode))
-            return false;
-        if (role != other.role)
             return false;
         if (source == null) {
             if (other.source != null)

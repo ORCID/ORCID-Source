@@ -69,6 +69,7 @@ import org.orcid.jaxb.model.record.FundingExternalIdentifiers;
 import org.orcid.jaxb.model.record.FundingTitle;
 import org.orcid.jaxb.model.record.PeerReview;
 import org.orcid.jaxb.model.record.PeerReviewType;
+import org.orcid.jaxb.model.record.Relationship;
 import org.orcid.jaxb.model.record.Role;
 import org.orcid.jaxb.model.record.Work;
 import org.orcid.jaxb.model.record.WorkExternalIdentifier;
@@ -446,7 +447,7 @@ public class SourceInActivitiesTest extends BaseTest {
         profile.setOrcidHistory(orcidHistory);
         orcidHistory.setSubmissionDate(new SubmissionDate(DateUtils.convertToXMLGregorianCalendar(new Date())));
         profile.setPassword("password1");
-        return orcidProfileManager.createOrcidProfile(profile, false);
+        return orcidProfileManager.createOrcidProfile(profile, false, false);
     }
 
     private Work getWork(String userOrcid) {
@@ -515,6 +516,7 @@ public class SourceInActivitiesTest extends BaseTest {
         extId.setValue("111");
         extId.setType(FundingExternalIdentifierType.GRANT_NUMBER);
         extId.setUrl(new Url("http://test.com"));
+        extId.setRelationship(Relationship.PART_OF);
         FundingExternalIdentifiers extIdentifiers = new FundingExternalIdentifiers();
         extIdentifiers.getExternalIdentifier().add(extId);
         funding.setExternalIdentifiers(extIdentifiers);
