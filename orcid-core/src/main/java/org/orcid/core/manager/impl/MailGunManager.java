@@ -87,6 +87,10 @@ public class MailGunManager {
     @Value("${com.mailgun.regexFilter:.*(orcid\\.org|mailinator\\.com|rcpeters\\.com)$}")
     private String filter;
     
+    
+    private String[] domainsForDedicatedIp = {"vt.com", "qq.com"};
+    
+    
     private static final Logger LOGGER = LoggerFactory.getLogger(MailGunManager.class);
 
     public boolean sendEmail(String from, String to, String subject, String text, String html) {
@@ -102,7 +106,7 @@ public class MailGunManager {
         // determine correct api based off domain.
         WebResource webResource = null;
         String toAddress = to.trim();        
-        if(toAddress.endsWith(".vt.edu") || toAddress.endsWith("@vt.edu") || toAddress.endsWith(".qq.com") || toAddress.endsWith("@qq.com")) {
+        if(shouldBeSentThroughDedicatedIP(toAddress)) {
             if(custom)
                 webResource = client.resource(getAltNotifyApiUrl());
             else if (from.trim().endsWith("@verify.orcid.org")) 
@@ -198,4 +202,13 @@ public class MailGunManager {
     public void setAltNotifyApiUrl(String altNotifyApiUrl) {
         this.altNotifyApiUrl = altNotifyApiUrl;
     }       
+    
+    private boolean shouldBeSentThroughDedicatedIP(String destinationAddress) {
+        for(String domain : domainsForDedicatedIp) {
+            if(destinationAddress.endsWith("@" + domain) || destinationAddress.endsWith("." + domain)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
