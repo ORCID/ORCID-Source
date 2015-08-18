@@ -20,10 +20,13 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.lang3.time.StopWatch;
 import org.jasypt.digest.StringDigester;
 import org.jasypt.encryption.pbe.PBEStringEncryptor;
 import org.orcid.core.crypto.DesEncrypter;
 import org.orcid.core.manager.EncryptionManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.security.authentication.encoding.PasswordEncoder;
@@ -41,6 +44,8 @@ public class EncryptionManagerImpl implements EncryptionManager, PasswordEncoder
     private DesEncrypter legacyEncrypterForInternalUse;
 
     private StringDigester passwordEncryptor;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(EncryptionManagerImpl.class);
 
     @Deprecated
     public void setPassPhraseForInternalEncryption(String passPhraseForInternalEncryption) {
@@ -182,7 +187,13 @@ public class EncryptionManagerImpl implements EncryptionManager, PasswordEncoder
      */
     @Override
     public boolean isPasswordValid(String encPass, String rawPass, Object salt) {
-        return hashMatches(rawPass, encPass);
+        LOGGER.info("About to start password check");
+        StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
+        boolean result = hashMatches(rawPass, encPass);
+        stopWatch.stop();
+        LOGGER.info("Password check took {} ms", stopWatch.getTime());
+        return result;
     }
 
     @Override
