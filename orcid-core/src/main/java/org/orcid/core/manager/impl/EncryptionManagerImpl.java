@@ -185,10 +185,10 @@ public class EncryptionManagerImpl implements EncryptionManager, PasswordEncoder
         return hashMatches(rawPass, encPass);
     }
 
-	@Override
-	public String sha256Hash(String s) throws NoSuchAlgorithmException {
-		MessageDigest md = MessageDigest.getInstance("SHA-256");
-		md.update(s.getBytes());
-		return Hex.encodeHexString(md.digest());
-	}
+    @Override
+    public String sha256Hash(String s) throws NoSuchAlgorithmException {
+        MessageDigest md = MessageDigest.getInstance("SHA-256");
+        md.update(s.getBytes());
+        return Hex.encodeHexString(md.digest());
+    }
 }
