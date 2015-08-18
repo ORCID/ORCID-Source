@@ -26,6 +26,8 @@ import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.utils.OrcidStringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -51,6 +53,8 @@ public class OrcidUserDetailsService implements UserDetailsService {
     @Value("${org.orcid.core.baseUri}")
     private String baseUrl;
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(OrcidUserDetailsService.class);
+
     /**
      * Locates the user based on the username. In the actual implementation, the
      * search may possibly be case insensitive, or case insensitive depending on
@@ -68,6 +72,7 @@ public class OrcidUserDetailsService implements UserDetailsService {
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        LOGGER.info("About to load user by username = {}", username);
         ProfileEntity profile = obtainEntity(username);
 
         if (profile == null) {
