@@ -16,6 +16,8 @@
  */
 package org.orcid.core.security;
 
+import java.util.Map;
+
 import org.orcid.core.exception.ApplicationException;
 
 /**
@@ -23,35 +25,39 @@ import org.orcid.core.exception.ApplicationException;
  * @author Angel Montenegro
  *
  */
-public class DeprecatedException extends ApplicationException {
+public class DeprecatedProfileException extends ApplicationException {
     private static final long serialVersionUID = 1L;
     private String primary;
     private String deprecated;
 
-    public DeprecatedException() {
+    public DeprecatedProfileException() {
     }
     
-    public DeprecatedException(String msg) {
+    public DeprecatedProfileException(String msg) {
         super(msg);
     }
 
-    public DeprecatedException(String msg, Throwable t) {
+    public DeprecatedProfileException(String msg, Throwable t) {
         super(msg, t);
     }
 
-    public DeprecatedException(String msg, String primary, String deprecated) {
+    public DeprecatedProfileException(String msg, String primary, String deprecated) {
         super(msg);
         this.primary = primary;
         this.deprecated = deprecated;
     }
 
-    public DeprecatedException(String msg, Throwable t, String primary, String deprecated) {
+    public DeprecatedProfileException(String msg, Throwable t, String primary, String deprecated) {
         super(msg, t);
         this.primary = primary;
         this.deprecated = deprecated;
     }
 
-    public String getPrimary() {
+    public DeprecatedProfileException(Map<String, String> params) {
+		super(params);
+	}
+
+	public String getPrimary() {
         return primary;
     }
 

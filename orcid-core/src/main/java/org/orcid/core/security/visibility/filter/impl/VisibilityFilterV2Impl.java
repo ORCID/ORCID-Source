@@ -22,8 +22,8 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.orcid.core.exception.OrcidForbiddenException;
 import org.orcid.core.exception.OrcidUnauthorizedException;
+import org.orcid.core.exception.OrcidVisibilityException;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.security.visibility.filter.VisibilityFilterV2;
 import org.orcid.jaxb.model.common.Filterable;
@@ -99,7 +99,7 @@ public class VisibilityFilterV2Impl implements VisibilityFilterV2 {
         for (Iterator<? extends Filterable> iterator = filterables.iterator(); iterator.hasNext();) {
             try {
                 orcidSecurityManager.checkVisibility(iterator.next());
-            } catch (OrcidForbiddenException | OrcidUnauthorizedException e) {
+            } catch (OrcidVisibilityException | OrcidUnauthorizedException e) {
                 iterator.remove();
             }
         }

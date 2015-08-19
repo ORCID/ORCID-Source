@@ -17,6 +17,7 @@
 package org.orcid.core.manager.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -182,7 +183,9 @@ public class OrcidJaxbCopyManagerImpl implements OrcidJaxbCopyManager {
 
 	private void checkSource(Activity activity) {
         if (isFromDifferentSource(activity)) {
-            throw new WrongSourceException();
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("activity", "activity");
+        	throw new WrongSourceException(params);
         }
 
     }

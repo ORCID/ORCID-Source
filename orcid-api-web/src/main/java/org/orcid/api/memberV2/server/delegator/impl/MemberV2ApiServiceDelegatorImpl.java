@@ -20,6 +20,8 @@ import static org.orcid.core.api.OrcidApiConstants.STATUS_OK_MESSAGE;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
@@ -27,6 +29,8 @@ import javax.ws.rs.core.Response;
 import org.orcid.api.common.util.ActivityUtils;
 import org.orcid.api.memberV2.server.delegator.MemberV2ApiServiceDelegator;
 import org.orcid.core.exception.MismatchedPutCodeException;
+import org.orcid.core.exception.OrcidDeprecatedException;
+import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.AffiliationsManager;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.GroupIdRecordManager;
@@ -36,7 +40,6 @@ import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileFundingManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.WorkManager;
-import org.orcid.core.security.DeprecatedException;
 import org.orcid.core.security.visibility.aop.AccessControl;
 import org.orcid.core.security.visibility.filter.VisibilityFilterV2;
 import org.orcid.jaxb.model.groupid.GroupIdRecord;
@@ -106,6 +109,9 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
 
     @Resource
     private GroupIdRecordManager groupIdRecordManager;
+    
+    @Resource
+    private LocaleManager localeManager;
 
 	@Value("${org.orcid.core.baseUri}")
 	private String baseUrl;
@@ -130,10 +136,10 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     public Response viewActivities(String orcid) {
     	ProfileEntity entity = profileEntityManager.findByOrcid(orcid);
     	if(profileDao.isProfileDeprecated(orcid)) {
-        	StringBuffer primary = new StringBuffer(baseUrl).append("/").append(entity.getPrimaryRecord().getId());
-        	DeprecatedException ex = new DeprecatedException();
-        	ex.setPrimary(primary.toString());
-        	throw ex;
+    		StringBuffer primary = new StringBuffer(baseUrl).append("/").append(entity.getPrimaryRecord().getId());
+    		Map<String, String> params = new HashMap<String, String>();
+        	params.put("orcid", primary.toString());
+            throw new OrcidDeprecatedException(params);
         }
         ActivitiesSummary as = visibilityFilter.filter(profileEntityManager.getActivitiesSummary(orcid));
         ActivityUtils.cleanEmptyFields(as);
@@ -168,7 +174,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
         try {
             return Response.created(new URI(w.getPutCode())).build();
         } catch (URISyntaxException e) {
-            throw new RuntimeException("Error creating URI for new work", e);
+            throw new RuntimeException(localeManager.resolveMessage("apiError.creatework_response.exception"), e);
         }
     }
 
@@ -176,7 +182,10 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     @AccessControl(requiredScope = ScopePathType.ORCID_WORKS_UPDATE)
     public Response updateWork(String orcid, String putCode, Work work) {
         if (!putCode.equals(work.getPutCode())) {
-            throw new MismatchedPutCodeException("The put code in the URL was " + putCode + " whereas the one in the body was " + work.getPutCode());
+        	Map<String, String> params = new HashMap<String, String>();
+        	params.put("urlPutCode", putCode);
+        	params.put("bodyPutCode", work.getPutCode());
+            throw new MismatchedPutCodeException(params);
         }
         Work w = workManager.updateWork(orcid, work, true);
         return Response.ok(w).build();
@@ -214,7 +223,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
         try {
             return Response.created(new URI(f.getPutCode())).build();
         } catch (URISyntaxException e) {
-            throw new RuntimeException("Error creating URI for new funding", e);
+            throw new RuntimeException(localeManager.resolveMessage("apiError.createfunding_response.exception"), e);
         }
     }
 
@@ -222,7 +231,10 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     @AccessControl(requiredScope = ScopePathType.FUNDING_UPDATE)
     public Response updateFunding(String orcid, String putCode, Funding funding) {
         if (!putCode.equals(funding.getPutCode())) {
-            throw new MismatchedPutCodeException("The put code in the URL was " + putCode + " whereas the one in the body was " + funding.getPutCode());
+        	Map<String, String> params = new HashMap<String, String>();
+        	params.put("urlPutCode", putCode);
+        	params.put("bodyPutCode", funding.getPutCode());
+            throw new MismatchedPutCodeException(params);
         }
         Funding f = profileFundingManager.updateFunding(orcid, funding);
         return Response.ok(f).build();
@@ -253,7 +265,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
         try {
             return Response.created(new URI(e.getPutCode())).build();
         } catch (URISyntaxException ex) {
-            throw new RuntimeException("Error creating URI for new education", ex);
+            throw new RuntimeException(localeManager.resolveMessage("apiError.createeducation_response.exception"), ex);
         }
     }
 
@@ -261,7 +273,10 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     @AccessControl(requiredScope = ScopePathType.AFFILIATIONS_UPDATE)
     public Response updateEducation(String orcid, String putCode, Education education) {
         if (!putCode.equals(education.getPutCode())) {
-            throw new MismatchedPutCodeException("The put code in the URL was " + putCode + " whereas the one in the body was " + education.getPutCode());
+        	Map<String, String> params = new HashMap<String, String>();
+        	params.put("urlPutCode", putCode);
+        	params.put("bodyPutCode", education.getPutCode());
+            throw new MismatchedPutCodeException(params);
         }
         Education e = affiliationsManager.updateEducationAffiliation(orcid, education);
         return Response.ok(e).build();
@@ -291,7 +306,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
         try {
             return Response.created(new URI(e.getPutCode())).build();
         } catch (URISyntaxException ex) {
-            throw new RuntimeException("Error creating URI for new work", ex);
+            throw new RuntimeException(localeManager.resolveMessage("apiError.createemployment_response.exception"), ex);
         }
     }
 
@@ -299,7 +314,10 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     @AccessControl(requiredScope = ScopePathType.AFFILIATIONS_UPDATE)
     public Response updateEmployment(String orcid, String putCode, Employment employment) {
         if (!putCode.equals(employment.getPutCode())) {
-            throw new MismatchedPutCodeException("The put code in the URL was " + putCode + " whereas the one in the body was " + employment.getPutCode());
+        	Map<String, String> params = new HashMap<String, String>();
+        	params.put("urlPutCode", putCode);
+        	params.put("bodyPutCode", employment.getPutCode());
+            throw new MismatchedPutCodeException(params);
         }
         Employment e = affiliationsManager.updateEmploymentAffiliation(orcid, employment);
         return Response.ok(e).build();
@@ -340,7 +358,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
         try {
             return Response.created(new URI(newPeerReview.getPutCode())).build();
         } catch (URISyntaxException ex) {
-            throw new RuntimeException("Error creating URI for new work", ex);
+            throw new RuntimeException(localeManager.resolveMessage("apiError.createpeerreview_response.exception"), ex);
         }
     }
 
@@ -348,7 +366,10 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     @AccessControl(requiredScope = ScopePathType.PEER_REVIEW_UPDATE)
     public Response updatePeerReview(String orcid, String putCode, PeerReview peerReview) {
         if (!putCode.equals(peerReview.getPutCode())) {
-            throw new MismatchedPutCodeException("The put code in the URL was " + putCode + " whereas the one in the body was " + peerReview.getPutCode());
+        	Map<String, String> params = new HashMap<String, String>();
+        	params.put("urlPutCode", putCode);
+        	params.put("bodyPutCode", peerReview.getPutCode());
+            throw new MismatchedPutCodeException(params);
         }
         PeerReview updatedPeerReview = peerReviewManager.updatePeerReview(orcid, peerReview, true);
         return Response.ok(updatedPeerReview).build();
@@ -375,14 +396,20 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
         try {
             return Response.created(new URI(newRecord.getPutCode())).build();
         } catch (URISyntaxException ex) {
-            throw new RuntimeException("Error creating URI for new group-id record", ex);
+            throw new RuntimeException(localeManager.resolveMessage("apiError.creategroupidrecord_response.exception"), ex);
         }
     }
 
     @Override
     @AccessControl(requiredScope = ScopePathType.GROUP_ID_RECORD_UPDATE)
     public Response updateGroupIdRecord(GroupIdRecord groupIdRecord, String putCode) {
-        GroupIdRecord updatedRecord = groupIdRecordManager.updateGroupIdRecord(putCode, groupIdRecord);
+        if (!putCode.equals(groupIdRecord.getPutCode())) {
+        	Map<String, String> params = new HashMap<String, String>();
+        	params.put("urlPutCode", putCode);
+        	params.put("bodyPutCode", groupIdRecord.getPutCode());
+            throw new MismatchedPutCodeException(params);
+        }
+    	GroupIdRecord updatedRecord = groupIdRecordManager.updateGroupIdRecord(putCode, groupIdRecord);
         return Response.ok(updatedRecord).build();
     }
 

@@ -88,7 +88,6 @@ public class GroupIdRecordManagerImpl implements GroupIdRecordManager {
 
     @Override
     public GroupIdRecord updateGroupIdRecord(String putCode, GroupIdRecord groupIdRecord) {
-    	ActivityValidator.validateUpdateGroupIdRecord(putCode, groupIdRecord);
         long putCodeLong = convertToLong(putCode);
         GroupIdRecordEntity existingEntity = groupIdRecordDao.find(putCodeLong);
         GroupIdRecordEntity updatedEntity = null;

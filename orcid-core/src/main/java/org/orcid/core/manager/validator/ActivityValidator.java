@@ -23,7 +23,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.exception.ActivityIdentifierValidationException;
 import org.orcid.core.exception.ActivityTitleValidationException;
 import org.orcid.core.exception.InvalidPutCodeException;
-import org.orcid.core.exception.MismatchedPutCodeException;
 import org.orcid.core.exception.OrcidDuplicatedActivityException;
 import org.orcid.jaxb.model.common.Source;
 import org.orcid.jaxb.model.groupid.GroupIdRecord;
@@ -125,12 +124,6 @@ public class ActivityValidator {
         }
     }
 
-    public static void validateUpdateGroupIdRecord(String putCode, GroupIdRecord groupIdRecord) {
-        if (!putCode.equals(groupIdRecord.getPutCode())) {
-            throw new MismatchedPutCodeException();
-        }
-    }
-    
     public static void checkExternalIdentifiers(WorkExternalIdentifiers newExtIds,
     		WorkExternalIdentifiers existingExtIds, Source existingSource, SourceEntity sourceEntity) {
         if(existingExtIds != null && newExtIds != null) {            

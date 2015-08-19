@@ -21,20 +21,23 @@ import static org.orcid.core.api.OrcidApiConstants.STATUS_OK_MESSAGE;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.persistence.NoResultException;
 import javax.ws.rs.core.Response;
 
 import org.orcid.api.common.delegator.OrcidApiServiceDelegator;
 import org.orcid.core.adapter.Jpa2JaxbAdapter;
+import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.exception.OrcidNotFoundException;
 import org.orcid.core.exception.OrcidSearchException;
+import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.OrcidProfileManagerReadOnly;
 import org.orcid.core.manager.OrcidSearchManager;
-import org.orcid.core.security.DeprecatedException;
 import org.orcid.core.security.aop.NonLocked;
 import org.orcid.core.security.visibility.aop.AccessControl;
 import org.orcid.core.security.visibility.aop.VisibilityControl;
@@ -71,6 +74,8 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
 
     @Resource
     private Jpa2JaxbAdapter jpa2JaxbAdapter;
+    
+    @Resource LocaleManager localeManager;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OrcidApiServiceDelegatorImpl.class);
 
@@ -375,7 +380,9 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
     private Response getOrcidMessageResponse(OrcidProfile profile, String requestedOrcid) {
 
         if (profile == null) {
-            throw new OrcidNotFoundException("ORCID " + requestedOrcid + " not found");
+        	Map<String, String> params = new HashMap<String, String>();
+        	params.put("orcid", requestedOrcid);
+            throw new OrcidNotFoundException(params);
         }
 
         profile.setOrcidInternal(null);
@@ -387,7 +394,9 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
     private Response getOrcidMessageResponse(OrcidMessage orcidMessage, String requestedOrcid) {
         boolean isProfileDeprecated = false;
         if (orcidMessage == null) {
-            throw new OrcidNotFoundException("ORCID " + requestedOrcid + " not found");
+        	Map<String, String> params = new HashMap<String, String>();
+        	params.put("orcid", requestedOrcid);
+            throw new OrcidNotFoundException(params);
         }
         OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();
         if (orcidProfile != null) {
@@ -401,9 +410,9 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
         Response response = null;
 
         if (isProfileDeprecated) {
-            // TODO: internationalize these messages
-            throw new DeprecatedException("This account is deprecated. Please refer to account: "
-                    + orcidProfile.getOrcidDeprecated().getPrimaryRecord().getOrcidIdentifier().getUri());
+        	Map<String, String> params = new HashMap<String, String>();
+        	params.put("orcid", orcidProfile.getOrcidDeprecated().getPrimaryRecord().getOrcidIdentifier().getUri());
+            throw new OrcidDeprecatedException(params);
         } else {
             response = Response.ok(orcidMessage).build();
         }
@@ -419,7 +428,8 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
             orcidMessage.setOrcidSearchResults(orcidSearchResults);
             return Response.ok(orcidMessage).build();
         } else {
-            throw new OrcidNotFoundException("No search results found using query " + query);
+        	Object params[] = {query};
+            throw new NoResultException(localeManager.resolveMessage("apiError.no_search_result.exception", params));
         }
     }
 }

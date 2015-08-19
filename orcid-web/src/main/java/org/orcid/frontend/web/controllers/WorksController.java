@@ -422,7 +422,7 @@ public class WorksController extends BaseWorkspaceController {
         // Get current profile
         String userOrcid = getCurrentUserOrcid();
         if (!userOrcid.equals(workForm.getSource())) {
-            throw new Exception("Error source isn't correct");
+            throw new Exception(getMessage("web.orcid.activity_incorrectsource.exception"));
         }
 
         Work updatedWork = workForm.toWork();

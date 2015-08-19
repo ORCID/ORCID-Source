@@ -18,8 +18,8 @@ package org.orcid.core.security;
 
 import javax.annotation.Resource;
 
-import org.orcid.core.manager.OrcidSecurityManager;
 import org.apache.commons.lang3.StringUtils;
+import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.ProfileDao;
@@ -79,7 +79,9 @@ public class OrcidUserDetailsService implements UserDetailsService {
             throw new UsernameNotFoundException("Bad username or password");
         }
         if (profile.getPrimaryRecord() != null) {
-            throw new DeprecatedException("orcid.frontend.security.deprecated_with_primary", profile.getPrimaryRecord().getId(), profile.getId());
+			throw new DeprecatedProfileException(
+					"orcid.frontend.security.deprecated_with_primary", profile
+							.getPrimaryRecord().getId(), profile.getId());
         }
         if (!profile.getClaimed() && !securityMgr.isAdmin()) {
             throw new UnclaimedProfileExistsException("orcid.frontend.security.unclaimed_exists");

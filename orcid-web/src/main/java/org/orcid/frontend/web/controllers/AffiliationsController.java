@@ -245,13 +245,13 @@ public class AffiliationsController extends BaseWorkspaceController {
      * @throws Exception 
      * */
     private void editAffiliation(AffiliationForm affiliationForm) throws Exception {
+    	Object params[] = {};
         if(PojoUtil.isEmpty(affiliationForm.getPutCode())) {
-            throw new IllegalArgumentException("Affiliation must contain a put code");
+            throw new IllegalArgumentException(getMessage("web.orcid.affiliation_noputcode.exception", params));
         }
-        
         OrcidProfile currentProfile = getEffectiveProfile();
         if (!currentProfile.getOrcidIdentifier().getPath().equals(affiliationForm.getSource()))
-            throw new Exception("Error source isn't correct");
+            throw new Exception(getMessage("web.orcid.activity_incorrectsource.exception"));
 
         ProfileEntity userProfile = profileDao.find(getEffectiveUserOrcid());
         OrgAffiliationRelationEntity orgAffiliationRelationEntity = jaxb2JpaAdapter.getUpdatedAffiliationRelationEntity(affiliationForm.toAffiliation());
