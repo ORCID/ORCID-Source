@@ -15,6 +15,7 @@
  * =============================================================================
  */
 package org.orcid.core.manager.impl;
+
 /**
  * =============================================================================
  *
@@ -51,18 +52,15 @@ public class MailGunManager {
      * From mailguns home page! Yey!
      * 
      * curl -s -k --user api:key-3ax6xnjp29jd6fds4gc373sgvjxteol0 \
-     *   https://api.mailgun.net/v2/samples.mailgun.org/messages \
-     *    -F from='Excited User <me@samples.mailgun.org>' \
-     *    -F to='Dude <dude@mailgun.net>'\
-     *    -F to=devs@mailgun.net \
-     *    -F subject='Hello' \
-     *    -F text='Testing some Mailgun awesomeness!'
-     *    
-      */
-    
+     * https://api.mailgun.net/v2/samples.mailgun.org/messages \ -F
+     * from='Excited User <me@samples.mailgun.org>' \ -F to='Dude
+     * <dude@mailgun.net>'\ -F to=devs@mailgun.net \ -F subject='Hello' \ -F
+     * text='Testing some Mailgun awesomeness!'
+     */
+
     @Value("${com.mailgun.apiKey:key-3ax6xnjp29jd6fds4gc373sgvjxteol0}")
     private String apiKey;
-    
+
     @Value("${com.mailgun.apiUrl:https://api.mailgun.net/v2}")
     private String apiUrl;
 
@@ -72,38 +70,57 @@ public class MailGunManager {
     @Value("${com.mailgun.notify.apiUrl:https://api.mailgun.net/v2/samples.mailgun.org/messages}")
     private String notifyApiUrl;
 
+    @Value("${com.mailgun.alt.apiUrl:https://api.mailgun.net/v2}")
+    private String altApiUrl;
+
+    @Value("${com.mailgun.alt.verify.apiUrl:https://api.mailgun.net/v2/samples.mailgun.org/messages}")
+    private String altVerifyApiUrl;
+
+    @Value("${com.mailgun.alt.notify.apiUrl:https://api.mailgun.net/v2/samples.mailgun.org/messages}")
+    private String altNotifyApiUrl;
+
     @Value("${com.mailgun.testmode:yes}")
     private String testmode;
-    
+
     @Value("${com.mailgun.regexFilter:.*(orcid\\.org|mailinator\\.com|rcpeters\\.com)$}")
     private String filter;
-    
+
+    private String[] domainsForDedicatedIp = { "vt.com", "qq.com" };
+
     private static final Logger LOGGER = LoggerFactory.getLogger(MailGunManager.class);
 
     public boolean sendEmail(String from, String to, String subject, String text, String html) {
         return sendEmail(from, to, subject, text, html, false);
     }
-    
+
     public boolean sendEmail(String from, String to, String subject, String text, String html, boolean custom) {
-        
+
         Client client = Client.create();
-        client.addFilter(new HTTPBasicAuthFilter("api",
-                getApiKey()));
-        
+        client.addFilter(new HTTPBasicAuthFilter("api", getApiKey()));
+
         // determine correct api based off domain.
         WebResource webResource = null;
-        
-        //If it is a custom email, send it as a notification
-        if(custom) 
-            webResource = client.resource(getNotifyApiUrl());
-        //Else, check the from address to identify the domain
-        else if (from.trim().endsWith("@verify.orcid.org")) 
-            webResource = client.resource(getVerifyApiUrl());
-        else if (from.trim().endsWith("@notify.orcid.org")) 
-            webResource = client.resource(getNotifyApiUrl());
-        else
-            webResource = client.resource(getApiUrl());
-        
+        String toAddress = to.trim();
+        if (shouldBeSentThroughDedicatedIP(toAddress)) {
+            if (custom)
+                webResource = client.resource(getAltNotifyApiUrl());
+            else if (from.trim().endsWith("@verify.orcid.org"))
+                webResource = client.resource(getAltVerifyApiUrl());
+            else if (from.trim().endsWith("@notify.orcid.org"))
+                webResource = client.resource(getAltNotifyApiUrl());
+            else
+                webResource = client.resource(getAltApiUrl());
+        } else {
+            if (custom)
+                webResource = client.resource(getNotifyApiUrl());
+            else if (from.trim().endsWith("@verify.orcid.org"))
+                webResource = client.resource(getVerifyApiUrl());
+            else if (from.trim().endsWith("@notify.orcid.org"))
+                webResource = client.resource(getNotifyApiUrl());
+            else
+                webResource = client.resource(getApiUrl());
+        }
+
         MultivaluedMapImpl formData = new MultivaluedMapImpl();
         formData.add("from", from);
         formData.add("to", to);
@@ -114,7 +131,8 @@ public class MailGunManager {
         }
         formData.add("o:testmode", testmode);
         LOGGER.debug("Email form data: \n" + formData.toString());
-        // the filter is used to prevent sending email to users in qa and sandbox
+        // the filter is used to prevent sending email to users in qa and
+        // sandbox
         if (to.matches(filter)) {
             ClientResponse cr = webResource.type(MediaType.APPLICATION_FORM_URLENCODED).post(ClientResponse.class, formData);
             if (cr.getStatus() != 200) {
@@ -157,4 +175,36 @@ public class MailGunManager {
         this.notifyApiUrl = notifyApiUrl;
     }
 
+    public String getAltApiUrl() {
+        return altApiUrl;
+    }
+
+    public void setAltApiUrl(String altApiUrl) {
+        this.altApiUrl = altApiUrl;
+    }
+
+    public String getAltVerifyApiUrl() {
+        return altVerifyApiUrl;
+    }
+
+    public void setAltVerifyApiUrl(String altVerifyApiUrl) {
+        this.altVerifyApiUrl = altVerifyApiUrl;
+    }
+
+    public String getAltNotifyApiUrl() {
+        return altNotifyApiUrl;
+    }
+
+    public void setAltNotifyApiUrl(String altNotifyApiUrl) {
+        this.altNotifyApiUrl = altNotifyApiUrl;
+    }
+
+    private boolean shouldBeSentThroughDedicatedIP(String destinationAddress) {
+        for (String domain : domainsForDedicatedIp) {
+            if (destinationAddress.endsWith("@" + domain) || destinationAddress.endsWith("." + domain)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
