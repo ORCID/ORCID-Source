@@ -5023,10 +5023,7 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
 	$scope.showPeerReviewDetails = {};
 	$scope.showElement = {};
 	$scope.sortState = new ActSortState(GroupedActivities.PEER_REVIEW);
-	$scope.displayURLPopOver = {};
-	$scope.groupName = null;
-	$scope.groupDescription = null;
-	$scope.groupType = null;
+	$scope.displayURLPopOver = {};	
     
     $scope.sort = function(key) {
         $scope.sortState.sortBy(key);
@@ -5233,7 +5230,6 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
     	$scope.showDetails[groupId] = !$scope.showDetails[groupId];
     };
     
-    
     $scope.showMoreDetails = function(putCode){    	
     	$scope.showPeerReviewDetails[putCode] = true;   
     };
@@ -5300,27 +5296,11 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
     
     $scope.moreInfoActive = function(groupID){
     	if ($scope.moreInfo[groupID] == true || $scope.moreInfo[groupID] != null) return 'truncate-anchor';
-    }
-    
-    $scope.getPeerReviewGroupSummary = function(groupID){ /*  */
-    	$.ajax({
-            url: getBaseUri() + '/peer-reviews/group/' + groupID,
-            dataType: 'json',
-            type: 'GET',
-            success: function(data) {
-                if (data != null) {
-                	$scope.groupName = data.name;
-                	$scope.groupDescription = data.description;
-                	$scope.groupType = data.type;
-                }
-            }
-        }).fail(function(){
-            console.log("error getPeerReviewGroupSummary(groupID)");
-        });
-    } 
+    };
         
     //Init
     $scope.peerReviewSrvc.loadPeerReviews(peerReviewSrvc.constants.access_type.USER);
+    
     
 }]);
 
@@ -5335,8 +5315,10 @@ orcidNgModule.factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
             loadingDetails: false,
             blankPeerReview: null,
             details: new Object(), // we should think about putting details in the
-            peerReviewsToAddIds: null,            
-    		
+            peerReviewsToAddIds: null,
+            groupName: null,
+        	groupDescription: null,
+        	groupType: null,
             getBlankPeerReview: function(callback) {
             	 // if cached return clone of blank
                 if (peerReviewSrvc.blankPeerReview != null)
@@ -5548,6 +5530,20 @@ orcidNgModule.factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
                     count += peerReviewSrvc.groups[idx].activitiesCount;
                 }
                 return count;
+            },
+            getPeerReviewGroupDetails: function(groupIDvalue){
+            	$.ajax({
+                    url: getBaseUri() + '/peer-reviews/group/' + groupIDvalue,
+                    dataType: 'json',
+                    type: 'GET',
+                    success: function(data) {
+                    	peerReviewSrvc.groupName = data.name;
+                    	peerReviewSrvc.groupDescription =  data.description;
+                    	peerReviewSrvc.groupType = data.type;
+                    }
+                }).fail(function(){
+                    console.log("error getPeerReviewGroupSummary(groupID)");
+                });
             }
     };
     return peerReviewSrvc;

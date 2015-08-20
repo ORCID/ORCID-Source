@@ -19,46 +19,50 @@
 <ul ng-hide="!peerReviewSrvc.groups.length" class="workspace-peer-review workspace-body-list bottom-margin-medium" ng-cloak>
 	<li class="bottom-margin-small workspace-border-box card" ng-repeat="group in peerReviewSrvc.groups | orderBy:sortState.predicate:sortState.reverse">
 		<ul class="sources-edit-list">
-             <li ng-repeat="peerReview in group.activities" ng-show="group.activePutCode == peerReview.putCode.value" orcid-put-code="{{peerReview.putCode.value}}">
-                    <!-- active row summary info -->
-                    <div class="row" ng-show="group.activePutCode == peerReview.putCode.value">
-                        <div class="col-md-9 col-sm-9 col-xs-8">
-                        	<div>
-                        		<span class="title" ng-click="showDetailsMouseClick(group.groupId,$event);"><span ng-class="{'glyphicon x075 glyphicon-chevron-right': showDetails[group.groupId] == false || showDetails[group.groupId] == null, 'glyphicon x075 glyphicon-chevron-down': showDetails[group.groupId] == true}"></span> <span>review activity for </span><span class="peer-review-title"><span ng-bind="peerReview.groupId.value"></span>({{group.activitiesCount}})</span></span>
-                        	</div>
-                        </div>
-                    
-                    	<div class="col-md-3 col-sm-3 col-xs-4 workspace-toolbar">
-                              <ul class="workspace-private-toolbar">
-                                  <#if !(isPublicProfile??)>
-                                      <!-- Privacy -->
-                                      <li>
-                                          <@orcid.privacyToggle2 angularModel="peerReview.visibility"
-                                              questionClick="toggleClickPrivacyHelp(group.highestVis())"
-                                              clickedClassCheck="{'popover-help-container-show':privacyHelp[peerReview.putCode.value]==true}"
-                                              publicClick="peerReviewSrvc.setGroupPrivacy(peerReview.putCode.value, 'PUBLIC', $event)"
-                                              limitedClick="peerReviewSrvc.setGroupPrivacy(peerReview.putCode.value, 'LIMITED', $event)"
-                                              privateClick="peerReviewSrvc.setGroupPrivacy(peerReview.putCode.value, 'PRIVATE', $event)"/>
-                                      </li>
-                                  </#if>
-                              </ul>
-                               
+			 <li>
+			 	<!-- active row summary info -->
+                <div class="row">
+                    <div class="col-md-9 col-sm-9 col-xs-8">
+                    	<div>
+                    		<span class="title" ng-click="showDetailsMouseClick(group.groupId,$event);"><span ng-class="{'glyphicon x075 glyphicon-chevron-right': showDetails[group.groupId] == false || showDetails[group.groupId] == null, 'glyphicon x075 glyphicon-chevron-down': showDetails[group.groupId] == true}"></span> <span>review activity for </span><span class="peer-review-title"><span ng-bind="peerReview.groupId.value"></span>({{group.activitiesCount}})</span></span>
+                    	</div>
+                    </div>
+                
+                	<div class="col-md-3 col-sm-3 col-xs-4 workspace-toolbar">
+                          <ul class="workspace-private-toolbar">
                               <#if !(isPublicProfile??)>
-                                  <div ng-show="!group.consistentVis() && !editSources[group.groupId]" class="vis-issue">
-                                  	<div class="popover-help-container">
-				                    <span class="glyphicons circle_exclamation_mark" ng-mouseleave="hideTooltip('vis-issue')" ng-mouseenter="showTooltip('vis-issue')"></span>
-				                    <div class="popover vis-popover bottom" ng-show="showElement['vis-issue'] == true">
-                                           	<div class="arrow"></div>
-                                           <div class="popover-content">
-											<@orcid.msg 'groups.common.data_inconsistency' />                                            
-										</div>
-                                       </div>
-					            </div>                                    
-                                  </div>
+                                  <!-- Privacy -->
+                                  <li>
+                                      <@orcid.privacyToggle2 angularModel="peerReview.visibility"
+                                          questionClick="toggleClickPrivacyHelp(group.highestVis())"
+                                          clickedClassCheck="{'popover-help-container-show':privacyHelp[peerReview.putCode.value]==true}"
+                                          publicClick="peerReviewSrvc.setGroupPrivacy(peerReview.putCode.value, 'PUBLIC', $event)"
+                                          limitedClick="peerReviewSrvc.setGroupPrivacy(peerReview.putCode.value, 'LIMITED', $event)"
+                                          privateClick="peerReviewSrvc.setGroupPrivacy(peerReview.putCode.value, 'PRIVATE', $event)"/>
+                                  </li>
                               </#if>
-                              
-                          </div>
-                     </div>
+                          </ul>
+                           
+                          <#if !(isPublicProfile??)>
+                              <div ng-show="!group.consistentVis() && !editSources[group.groupId]" class="vis-issue">
+                              	<div class="popover-help-container">
+                    <span class="glyphicons circle_exclamation_mark" ng-mouseleave="hideTooltip('vis-issue')" ng-mouseenter="showTooltip('vis-issue')"></span>
+                    <div class="popover vis-popover bottom" ng-show="showElement['vis-issue'] == true">
+                                       	<div class="arrow"></div>
+                                       <div class="popover-content">
+							<@orcid.msg 'groups.common.data_inconsistency' />                                            
+						</div>
+                                   </div>
+	            </div>                                    
+                              </div>
+                          </#if>
+                          
+                      </div>
+                 </div>
+			 
+			 </li>
+             <li ng-repeat="peerReview in group.activities" ng-show="group.activePutCode == peerReview.putCode.value" orcid-put-code="{{peerReview.putCode.value}}">
+                    
                     <!-- more info -->
                     <#include "peer_review_more_info_inc.ftl"/>
               </li>
