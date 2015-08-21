@@ -165,6 +165,21 @@ public class PublicV1Test {
     }
     
     @Test
+    public void testPublicSearchUsingPublicClient() throws InterruptedException, JSONException {
+        String accessToken = oauthHelper.getClientCredentialsAccessToken(publicClientId, publicClientSecret, ScopePathType.READ_PUBLIC, true);
+        ClientResponse response = publicV1ApiClient.doPublicSearch(user1OrcidId, accessToken);
+        assertNotNull(response);
+        OrcidMessage orcidMessage = response.getEntity(OrcidMessage.class);
+        assertNotNull(orcidMessage);
+        assertNotNull(orcidMessage.getOrcidSearchResults());
+        assertNotNull(orcidMessage.getOrcidSearchResults().getOrcidSearchResult());
+        assertNotNull(orcidMessage.getOrcidSearchResults().getOrcidSearchResult().get(0));
+        assertNotNull(orcidMessage.getOrcidSearchResults().getOrcidSearchResult().get(0).getOrcidProfile());
+        assertNotNull(orcidMessage.getOrcidSearchResults().getOrcidSearchResult().get(0).getOrcidProfile().getOrcidIdentifier());
+        assertEquals(user1OrcidId, orcidMessage.getOrcidSearchResults().getOrcidSearchResult().get(0).getOrcidProfile().getOrcidIdentifier().getPath());
+    }
+    
+    @Test
     public void testPublicSearchUsingInvalidToken() throws InterruptedException, JSONException {
         String accessToken = getAccessToken();
         accessToken += "X";
