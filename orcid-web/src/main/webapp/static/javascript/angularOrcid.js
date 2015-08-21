@@ -64,6 +64,9 @@ var GroupedActivities = function(type) {
     this.defaultPutCode = null;
     this.dateSortString;
     this.groupId = GroupedActivities.count;
+    this.groupDescription = null;
+    this.groupType = null;
+    this.groupRealId = null;
     this.title;
 };
 
@@ -99,6 +102,8 @@ GroupedActivities.prototype.add = function(activity) {
 GroupedActivities.prototype.addKey = function(key) {
     if (this.hasKey(key)) return;
     this._keySet[key] = true;
+    if (this.type == GroupedActivities.PEER_REVIEW)
+    	this.groupRealId = key;
     return;
 };
 
@@ -5537,12 +5542,14 @@ orcidNgModule.factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
                     dataType: 'json',
                     type: 'GET',
                     success: function(data) {
-                    	peerReviewSrvc.groupName = data.name;
-                    	peerReviewSrvc.groupDescription =  data.description;
-                    	peerReviewSrvc.groupType = data.type;
+                    	$rootScope.$apply(function(){
+                    		peerReviewSrvc.groupName =  data.name;
+	                    	peerReviewSrvc.groupDescription =  data.description;
+	                    	peerReviewSrvc.groupType = data.type;
+                    	});
                     }
                 }).fail(function(){
-                    console.log("error getPeerReviewGroupSummary(groupID)");
+                    console.log("error getPeerReviewGroupDetails(groupID)");
                 });
             }
     };

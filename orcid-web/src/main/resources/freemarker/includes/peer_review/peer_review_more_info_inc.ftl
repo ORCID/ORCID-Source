@@ -22,8 +22,8 @@
 		<!--  <span class="dotted-bar"></span> -->
 		<div class="row">
 			<div class="col-md-12">
-				<div>
-					<span class="italic"></span>
+				<div class="group-summary-details">
+					<span class="italic" ng-show="peerReviewSrvc.groupType" ng-bind="peerReviewSrvc.groupType"></span><span ng-show="peerReviewSrvc.groupDescription">, </span><span ng-show="peerReviewSrvc.groupDescription" ng-bind="peerReviewSrvc.groupDescription"></span>
 				</div>
 			</div>
 			<div class="peer-review-list-container">
@@ -63,7 +63,7 @@
                         	</div>
                         	<div class="col-md-4 col-sm-4 col-xs-4">                        		
                         		<span class="pull-right"> 
-                        			<a ng-click="showMoreDetails(peerReview.putCode.value);getPeerReviewGroupSummary(); group.activePutCode = peerReview.putCode.value;" ng-hide="showPeerReviewDetails[peerReview.putCode.value] == true" ng-show="group.activePutCode != peerReview.putCode.value || showPeerReviewDetails[peerReview.putCode.value] == null">
+                        			<a ng-click="showMoreDetails(peerReview.putCode.value); group.activePutCode = peerReview.putCode.value;" ng-hide="showPeerReviewDetails[peerReview.putCode.value] == true" ng-show="group.activePutCode != peerReview.putCode.value || showPeerReviewDetails[peerReview.putCode.value] == null">
                         				<span class="glyphicons expand"></span>
                         				show details
                         			</a> 

@@ -5997,6 +5997,21 @@ textarea.form-control,
 	vertical-align: baseline;
 }
 
+ul.sources-edit-list > li.peer-review-group{
+	border-bottom: none;
+	box-shadow: none;
+}
+
+ul.sources-edit-list > li.group-details{
+	padding-top: 0;
+}
+
+.group-summary-details{
+	padding-bottom: 15px;
+    font-size: 15px;
+}
+	
+
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
