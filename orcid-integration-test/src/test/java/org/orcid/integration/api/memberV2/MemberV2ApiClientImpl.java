@@ -154,7 +154,7 @@ public class MemberV2ApiClientImpl {
         return orcidClientHelper.postClientResponseWithToken(UriBuilder.fromPath(PEER_REVIEW).build(orcid), VND_ORCID_JSON, peerReview, accessToken);
     }
     
-    public ClientResponse deletePeerReviewXml(String orcid, String putCode, String accessToken) {
+    public ClientResponse deletePeerReviewXml(String orcid, Long putCode, String accessToken) {
         URI deletePeerReviewUri = UriBuilder.fromPath(PEER_REVIEW + PUTCODE).build(orcid, putCode);
         return orcidClientHelper.deleteClientResponseWithToken(deletePeerReviewUri, VND_ORCID_XML, accessToken);
     }

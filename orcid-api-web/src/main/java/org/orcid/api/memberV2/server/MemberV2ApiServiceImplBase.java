@@ -367,7 +367,7 @@ abstract public class MemberV2ApiServiceImplBase {
     @Path(PEER_REVIEW + PUTCODE)
     @ApiOperation(value = "Fetch a Peer Review", response = PeerReview.class, authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.ACTIVITIES_READ_LIMITED, description = "you need this") }) })
-    public Response viewPeerReview(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
+    public Response viewPeerReview(@PathParam("orcid") String orcid, @PathParam("putCode") Long putCode) {
         return serviceDelegator.viewPeerReview(orcid, putCode);
     }
 
@@ -376,7 +376,7 @@ abstract public class MemberV2ApiServiceImplBase {
     @Path(PEER_REVIEW_SUMMARY + PUTCODE)
     @ApiOperation(value = "Fetch a Peer Review Summary", response = PeerReviewSummary.class, authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.ACTIVITIES_READ_LIMITED, description = "you need this") }) })
-    public Response viewPeerReviewSummary(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
+    public Response viewPeerReviewSummary(@PathParam("orcid") String orcid, @PathParam("putCode") Long putCode) {
         return serviceDelegator.viewPeerReviewSummary(orcid, putCode);
     }
 
@@ -401,7 +401,7 @@ abstract public class MemberV2ApiServiceImplBase {
     @ApiOperation(value = "Update a Peer Review", response = PeerReview.class, authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.ACTIVITIES_UPDATE, description = "you need this") }) })
     @ApiResponses(value = { @ApiResponse(code = 200, message = "Peer Review updated") })
-    public Response updatePeerReview(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode, PeerReview peerReview) {
+    public Response updatePeerReview(@PathParam("orcid") String orcid, @PathParam("putCode") Long putCode, PeerReview peerReview) {
         return serviceDelegator.updatePeerReview(orcid, putCode, peerReview);
     }
 
@@ -411,7 +411,7 @@ abstract public class MemberV2ApiServiceImplBase {
     @ApiOperation(value = "Delete a Peer Review", authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.ACTIVITIES_UPDATE, description = "you need this") }) })
     @ApiResponses(value = { @ApiResponse(code = 204, message = "Peer Review deleted") })
-    public Response deletePeerReview(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
+    public Response deletePeerReview(@PathParam("orcid") String orcid, @PathParam("putCode") Long putCode) {
         return serviceDelegator.deletePeerReview(orcid, putCode);
     }
     

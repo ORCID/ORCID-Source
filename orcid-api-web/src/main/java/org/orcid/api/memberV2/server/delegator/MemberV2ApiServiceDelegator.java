@@ -74,15 +74,15 @@ public interface MemberV2ApiServiceDelegator {
 
     Response deleteAffiliation(String orcid, String putCode);
 
-    Response viewPeerReview(String orcid, String putCode);
+    Response viewPeerReview(String orcid, Long putCode);
 
-    Response viewPeerReviewSummary(String orcid, String putCode);
+    Response viewPeerReviewSummary(String orcid, Long putCode);
 
     Response createPeerReview(String orcid, PeerReview peerReview);
 
-    Response updatePeerReview(String orcid, String putCode, PeerReview peerReview);
+    Response updatePeerReview(String orcid, Long putCode, PeerReview peerReview);
 
-    Response deletePeerReview(String orcid, String putCode);
+    Response deletePeerReview(String orcid, Long putCode);
 
     Response viewGroupIdRecord(String putCode);
 

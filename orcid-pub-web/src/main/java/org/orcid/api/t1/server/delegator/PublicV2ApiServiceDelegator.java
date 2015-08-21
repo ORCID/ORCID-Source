@@ -40,7 +40,7 @@ public interface PublicV2ApiServiceDelegator {
     
     Response viewEmploymentSummary(String orcid, String putCode);    
     
-    Response viewPeerReview(String orcid, String putCode);
+    Response viewPeerReview(String orcid, Long putCode);
     
-    Response viewPeerReviewSummary(String orcid, String putCode);  
+    Response viewPeerReviewSummary(String orcid, Long putCode);  
 }

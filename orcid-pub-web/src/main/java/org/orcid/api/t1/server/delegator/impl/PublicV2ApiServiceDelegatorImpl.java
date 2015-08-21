@@ -190,7 +190,7 @@ public class PublicV2ApiServiceDelegatorImpl implements PublicV2ApiServiceDelega
 
     @Override
     @AccessControl(requiredScope = ScopePathType.READ_PUBLIC, enableAnonymousAccess = true)
-    public Response viewPeerReview(String orcid, String putCode) {
+    public Response viewPeerReview(String orcid, Long putCode) {
         PeerReview peerReview = peerReviewManager.getPeerReview(orcid, putCode);
         orcidSecurityManager.checkVisibility(peerReview);
         ActivityUtils.setPathToActivity(peerReview, orcid);
@@ -199,7 +199,7 @@ public class PublicV2ApiServiceDelegatorImpl implements PublicV2ApiServiceDelega
 
     @Override
     @AccessControl(requiredScope = ScopePathType.READ_PUBLIC, enableAnonymousAccess = true)
-    public Response viewPeerReviewSummary(String orcid, String putCode) {
+    public Response viewPeerReviewSummary(String orcid, Long putCode) {
         PeerReviewSummary summary = peerReviewManager.getPeerReviewSummary(orcid, putCode);
         orcidSecurityManager.checkVisibility(summary);
         ActivityUtils.setPathToActivity(summary, orcid);
