@@ -56,7 +56,7 @@ public class ActivityValidator {
         if (work.getPutCode() != null && createFlag) {
         	Map<String, String> params = new HashMap<String, String>();
         	if(sourceEntity != null) {
-        		params.put("clientName", sourceEntity.getSourceId());
+        		params.put("clientName", sourceEntity.getSourceName());
         	}
             throw new InvalidPutCodeException(params);
         }
@@ -76,7 +76,7 @@ public class ActivityValidator {
         if (funding.getPutCode() != null && createFlag) {
         	Map<String, String> params = new HashMap<String, String>();
         	if(sourceEntity != null) {
-        		params.put("clientName", sourceEntity.getSourceId());
+        		params.put("clientName", sourceEntity.getSourceName());
         	}
             throw new InvalidPutCodeException(params);
         }
@@ -86,7 +86,7 @@ public class ActivityValidator {
         if (employment.getPutCode() != null) {
         	Map<String, String> params = new HashMap<String, String>();
         	if(sourceEntity != null) {
-        		params.put("clientName", sourceEntity.getSourceId());
+        		params.put("clientName", sourceEntity.getSourceName());
         	}
             throw new InvalidPutCodeException(params);
         }
@@ -96,7 +96,7 @@ public class ActivityValidator {
         if (education.getPutCode() != null) {
         	Map<String, String> params = new HashMap<String, String>();
         	if(sourceEntity != null) {
-        		params.put("clientName", sourceEntity.getSourceId());
+        		params.put("clientName", sourceEntity.getSourceName());
         	}
             throw new InvalidPutCodeException(params);
         }
@@ -109,7 +109,7 @@ public class ActivityValidator {
         
         if (peerReview.getPutCode() != null) {
         	Map<String, String> params = new HashMap<String, String>();
-        	params.put("clientName", sourceEntity.getSourceId());
+        	params.put("clientName", sourceEntity.getSourceName());
             throw new InvalidPutCodeException(params);
         }
     }
@@ -118,7 +118,7 @@ public class ActivityValidator {
         if (groupIdRecord.getPutCode() != null) {
         	Map<String, String> params = new HashMap<String, String>();
         	if(sourceEntity != null) {
-        		params.put("clientName", sourceEntity.getSourceId());
+        		params.put("clientName", sourceEntity.getSourceName());
         	}
             throw new InvalidPutCodeException(params);
         }
@@ -135,7 +135,7 @@ public class ActivityValidator {
                     		&& newId.getWorkExternalIdentifierType().equals(existingId.getWorkExternalIdentifierType())
                     		&& sourceEntity.getSourceId().equals(getExistingSource(existingSource))){
                     	Map<String, String> params = new HashMap<String, String>();
-                        params.put("clientName", sourceEntity.getSourceId());
+                        params.put("clientName", sourceEntity.getSourceName());
                         throw new OrcidDuplicatedActivityException(params);
                     }
                 }
@@ -154,7 +154,7 @@ public class ActivityValidator {
                     		&& newId.getType().equals(existingId.getType())
                     		&& sourceEntity.getSourceId().equals(getExistingSource(existingSource))){
                     	Map<String, String> params = new HashMap<String, String>();
-                        params.put("clientName", sourceEntity.getSourceId());
+                        params.put("clientName", sourceEntity.getSourceName());
                         throw new OrcidDuplicatedActivityException(params);
                     }
                 }
