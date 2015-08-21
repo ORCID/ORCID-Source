@@ -98,17 +98,17 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(summary.getWorks());
         assertEquals(3, summary.getWorks().getWorkGroup().size());
         assertThat(summary.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getPutCode(),
-                anyOf(is("5"), is("6"), is("7")));
+                anyOf(is(Long.valueOf(5)), is(Long.valueOf(6)), is(Long.valueOf(7))));
         assertThat(summary.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getPath(), anyOf(is("/4444-4444-4444-4446/work/5"), is("/4444-4444-4444-4446/work/6"), is("/4444-4444-4444-4446/work/7")));
         assertThat(summary.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getTitle().getTitle().getContent(),
                 anyOf(is("Journal article A"), is("Journal article B"), is("Journal article C")));
         assertThat(summary.getWorks().getWorkGroup().get(1).getWorkSummary().get(0).getPutCode(),
-                anyOf(is("5"), is("6"), is("7")));
+                anyOf(is(Long.valueOf(5)), is(Long.valueOf(6)), is(Long.valueOf(7))));
         assertThat(summary.getWorks().getWorkGroup().get(1).getWorkSummary().get(0).getPath(), anyOf(is("/4444-4444-4444-4446/work/5"), is("/4444-4444-4444-4446/work/6"), is("/4444-4444-4444-4446/work/7")));
         assertThat(summary.getWorks().getWorkGroup().get(1).getWorkSummary().get(0).getTitle().getTitle().getContent(),
                 anyOf(is("Journal article A"), is("Journal article B"), is("Journal article C")));                        
         assertThat(summary.getWorks().getWorkGroup().get(2).getWorkSummary().get(0).getPutCode(),
-                anyOf(is("5"), is("6"), is("7")));
+                anyOf(is(Long.valueOf(5)), is(Long.valueOf(6)), is(Long.valueOf(7))));
         assertThat(summary.getWorks().getWorkGroup().get(2).getWorkSummary().get(0).getPath(), anyOf(is("/4444-4444-4444-4446/work/5"), is("/4444-4444-4444-4446/work/6"), is("/4444-4444-4444-4446/work/7")));
         assertThat(summary.getWorks().getWorkGroup().get(2).getWorkSummary().get(0).getTitle().getTitle().getContent(),
                 anyOf(is("Journal article A"), is("Journal article B"), is("Journal article C")));
@@ -117,14 +117,14 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(summary.getFundings());
         assertEquals(2, summary.getFundings().getFundingGroup().size());
         assertThat(summary.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getPutCode(),
-                anyOf(is("4"), is("5")));        
+                anyOf(is(Long.valueOf(4)), is(Long.valueOf(5))));        
         assertThat(summary.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getPath(),
                 anyOf(is("/4444-4444-4444-4446/funding/4"), is("/4444-4444-4444-4446/funding/5")));
         
         assertThat(summary.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getTitle().getTitle().getContent(),
                 anyOf(is("Private Funding"), is("Public Funding")));
         assertThat(summary.getFundings().getFundingGroup().get(1).getFundingSummary().get(0).getPutCode(),
-                anyOf(is("4"), is("5")));
+                anyOf(is(Long.valueOf(4)), is(Long.valueOf(5))));
         assertThat(summary.getFundings().getFundingGroup().get(1).getFundingSummary().get(0).getPath(),
                 anyOf(is("/4444-4444-4444-4446/funding/4"), is("/4444-4444-4444-4446/funding/5")));
         assertThat(summary.getFundings().getFundingGroup().get(1).getFundingSummary().get(0).getTitle().getTitle().getContent(),
@@ -134,7 +134,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(summary.getEducations());
         assertNotNull(summary.getEducations().getSummaries());
         assertEquals(2, summary.getEducations().getSummaries().size());
-        assertThat(summary.getEducations().getSummaries().get(0).getPutCode(), anyOf(is("6"), is("7")));
+        assertThat(summary.getEducations().getSummaries().get(0).getPutCode(), anyOf(is(Long.valueOf(6)), is(Long.valueOf(7))));
         assertThat(summary.getEducations().getSummaries().get(0).getPath(), anyOf(is("/4444-4444-4444-4446/education/6"), is("/4444-4444-4444-4446/education/7")));
         assertThat(summary.getEducations().getSummaries().get(0).getDepartmentName(), anyOf(is("Education Dept # 1"), is("Education Dept # 2")));
 
@@ -142,7 +142,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(summary.getEmployments());
         assertNotNull(summary.getEmployments().getSummaries());
         assertEquals(2, summary.getEmployments().getSummaries().size());
-        assertThat(summary.getEmployments().getSummaries().get(0).getPutCode(), anyOf(is("5"), is("8")));
+        assertThat(summary.getEmployments().getSummaries().get(0).getPutCode(), anyOf(is(Long.valueOf(5)), is(Long.valueOf(8))));
         assertThat(summary.getEmployments().getSummaries().get(0).getPath(), anyOf(is("/4444-4444-4444-4446/employment/5"), is("/4444-4444-4444-4446/employment/8")));
         assertThat(summary.getEmployments().getSummaries().get(0).getDepartmentName(), anyOf(is("Employment Dept # 1"), is("Employment Dept # 2")));
         
@@ -275,7 +275,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     @Test
     public void testViewPeerReview() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.ACTIVITIES_READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
-        Response response = serviceDelegator.viewPeerReview("4444-4444-4444-4446", "1");
+        Response response = serviceDelegator.viewPeerReview("4444-4444-4444-4446", Long.valueOf(1));
         assertNotNull(response);
         PeerReview peerReview= (PeerReview) response.getEntity();
         assertNotNull(peerReview);
@@ -303,7 +303,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     @Test
     public void testViewPeerReviewSummary() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.ACTIVITIES_READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
-        Response response = serviceDelegator.viewPeerReviewSummary("4444-4444-4444-4446", "1");
+        Response response = serviceDelegator.viewPeerReviewSummary("4444-4444-4444-4446", Long.valueOf(1));
         assertNotNull(response);
         PeerReviewSummary peerReview= (PeerReviewSummary) response.getEntity();
         assertNotNull(peerReview);
@@ -320,14 +320,14 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     @Test
     public void testUpdatePeerReview() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.ACTIVITIES_READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
-        Response response = serviceDelegator.viewPeerReview("4444-4444-4444-4446", "1");
+        Response response = serviceDelegator.viewPeerReview("4444-4444-4444-4446", Long.valueOf(1));
         assertNotNull(response);
         PeerReview peerReview= (PeerReview) response.getEntity();
         assertNotNull(peerReview);
         peerReview.setUrl(new Url("http://updated.com/url"));
         peerReview.getSubjectName().getTitle().setContent("Updated Title");
-        serviceDelegator.updatePeerReview("4444-4444-4444-4446", "1", peerReview);
-        response = serviceDelegator.viewPeerReview("4444-4444-4444-4446", "1");
+        serviceDelegator.updatePeerReview("4444-4444-4444-4446", Long.valueOf(1), peerReview);
+        response = serviceDelegator.viewPeerReview("4444-4444-4444-4446", Long.valueOf(1));
         PeerReview updatedPeerReview= (PeerReview) response.getEntity();
         assertNotNull(updatedPeerReview);
         assertEquals("http://updated.com/url", updatedPeerReview.getUrl().getValue());
@@ -337,7 +337,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     @Test
     public void testUpdatePeerReviewWhenNotSource() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.ACTIVITIES_READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
-        Response response = serviceDelegator.viewPeerReview("4444-4444-4444-4447", "2");
+        Response response = serviceDelegator.viewPeerReview("4444-4444-4444-4447", Long.valueOf(2));
         assertNotNull(response);
         PeerReview peerReview= (PeerReview) response.getEntity();
         assertNotNull(peerReview);
@@ -350,12 +350,12 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         
         //Try to update it
         try {
-            response = serviceDelegator.updatePeerReview("4444-4444-4444-4447", "2", peerReview);
+            response = serviceDelegator.updatePeerReview("4444-4444-4444-4447", Long.valueOf(2), peerReview);
             fail();
         } catch(WrongSourceException wse) {
             
         }
-        response = serviceDelegator.viewPeerReview("4444-4444-4444-4447", "2");
+        response = serviceDelegator.viewPeerReview("4444-4444-4444-4447", Long.valueOf(2));
         peerReview= (PeerReview) response.getEntity();
         assertNotNull(peerReview);
         assertEquals("http://peer_review.com/2", peerReview.getUrl().getValue());

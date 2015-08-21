@@ -241,19 +241,19 @@ public class SourceInActivitiesTest extends BaseTest {
         assertFalse(PojoUtil.isEmpty(funding4.getTitle()));
         assertEquals(userOrcid, funding4.getSource().getSourceId());
 
-        ProfileFundingEntity fromDb1 = profileFundingManager.getProfileFundingEntity(String.valueOf(funding1.getId()));
+        ProfileFundingEntity fromDb1 = profileFundingManager.getProfileFundingEntity(funding1.getId());
         assertNotNull(fromDb1);
         assertEquals(userOrcid, fromDb1.getSource().getSourceId());
 
-        ProfileFundingEntity fromDb2 = profileFundingManager.getProfileFundingEntity(String.valueOf(funding2.getId()));
+        ProfileFundingEntity fromDb2 = profileFundingManager.getProfileFundingEntity(funding2.getId());
         assertNotNull(fromDb2);
         assertEquals(CLIENT_1_ID, fromDb2.getSource().getSourceId());
 
-        ProfileFundingEntity fromDb3 = profileFundingManager.getProfileFundingEntity(String.valueOf(funding3.getId()));
+        ProfileFundingEntity fromDb3 = profileFundingManager.getProfileFundingEntity(funding3.getId());
         assertNotNull(fromDb3);
         assertEquals(CLIENT_2_ID, fromDb3.getSource().getSourceId());
 
-        ProfileFundingEntity fromDb4 = profileFundingManager.getProfileFundingEntity(String.valueOf(funding4.getId()));
+        ProfileFundingEntity fromDb4 = profileFundingManager.getProfileFundingEntity(funding4.getId());
         assertNotNull(fromDb4);
         assertEquals(userOrcid, fromDb4.getSource().getSourceId());
     }
@@ -313,7 +313,7 @@ public class SourceInActivitiesTest extends BaseTest {
         FundingExternalIdentifiers extIdentifiers = new FundingExternalIdentifiers();
         extIdentifiers.getExternalIdentifier().add(extId);
         funding.setExternalIdentifiers(extIdentifiers);
-        funding.setPutCode("111");
+        funding.setPutCode(Long.valueOf(111));
         funding = profileFundingManager.createFunding(userOrcid, funding);
         return profileFundingManager.getProfileFundingEntity(funding.getPutCode());
     }
@@ -416,7 +416,7 @@ public class SourceInActivitiesTest extends BaseTest {
     private Education getAffiliationWithPutCode(String userOrcid) {
         Education education = new Education();
         education.setOrganization(getOrganization());
-        education.setPutCode("111");
+        education.setPutCode(Long.valueOf(111));
         education = affiliationsManager.createEducationAffiliation(userOrcid, education);
         return affiliationsManager.getEducationAffiliation(userOrcid, education.getPutCode());
     }
@@ -500,7 +500,7 @@ public class SourceInActivitiesTest extends BaseTest {
         extIdentifiers.getExternalIdentifier().add(extId);
         work.setWorkExternalIdentifiers(extIdentifiers);
         work.setWorkType(org.orcid.jaxb.model.record.WorkType.BOOK);
-        work.setPutCode("111");
+        work.setPutCode(Long.valueOf(111));
         work = workManager.createWork(userOrcid, work, validate);
         return workManager.getWork(userOrcid, work.getPutCode());
     }

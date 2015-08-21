@@ -149,7 +149,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
 
     @Override
     @AccessControl(requiredScope = ScopePathType.ORCID_WORKS_READ_LIMITED)
-    public Response viewWork(String orcid, String putCode) {
+    public Response viewWork(String orcid, Long putCode) {
         Work w = workManager.getWork(orcid, putCode);
         ActivityUtils.cleanEmptyFields(w);
         orcidSecurityManager.checkVisibility(w);
@@ -159,7 +159,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
 
     @Override
     @AccessControl(requiredScope = ScopePathType.ORCID_WORKS_READ_LIMITED)
-    public Response viewWorkSummary(String orcid, String putCode) {
+    public Response viewWorkSummary(String orcid, Long putCode) {
         WorkSummary ws = workManager.getWorkSummary(orcid, putCode);
         ActivityUtils.cleanEmptyFields(ws);
         orcidSecurityManager.checkVisibility(ws);
@@ -172,7 +172,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     public Response createWork(String orcid, Work work) {
         Work w = workManager.createWork(orcid, work, true);
         try {
-            return Response.created(new URI(w.getPutCode())).build();
+            return Response.created(new URI(String.valueOf(w.getPutCode()))).build();
         } catch (URISyntaxException e) {
             throw new RuntimeException(localeManager.resolveMessage("apiError.creatework_response.exception"), e);
         }
@@ -193,14 +193,14 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
 
     @Override
     @AccessControl(requiredScope = ScopePathType.ORCID_WORKS_UPDATE)
-    public Response deleteWork(String orcid, String putCode) {
+    public Response deleteWork(String orcid, Long putCode) {
         workManager.checkSourceAndRemoveWork(orcid, putCode);
         return Response.noContent().build();
     }
 
     @Override
     @AccessControl(requiredScope = ScopePathType.FUNDING_READ_LIMITED)
-    public Response viewFunding(String orcid, String putCode) {
+    public Response viewFunding(String orcid, Long putCode) {
         Funding f = profileFundingManager.getFunding(orcid, putCode);
         orcidSecurityManager.checkVisibility(f);
         ActivityUtils.setPathToActivity(f, orcid);
@@ -209,7 +209,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
 
     @Override
     @AccessControl(requiredScope = ScopePathType.FUNDING_READ_LIMITED)
-    public Response viewFundingSummary(String orcid, String putCode) {
+    public Response viewFundingSummary(String orcid, Long putCode) {
         FundingSummary fs = profileFundingManager.getSummary(orcid, putCode);
         orcidSecurityManager.checkVisibility(fs);
         ActivityUtils.setPathToActivity(fs, orcid);
@@ -221,7 +221,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     public Response createFunding(String orcid, Funding funding) {
         Funding f = profileFundingManager.createFunding(orcid, funding);
         try {
-            return Response.created(new URI(f.getPutCode())).build();
+            return Response.created(new URI(String.valueOf(f.getPutCode()))).build();
         } catch (URISyntaxException e) {
             throw new RuntimeException(localeManager.resolveMessage("apiError.createfunding_response.exception"), e);
         }
@@ -233,7 +233,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
         if (!putCode.equals(funding.getPutCode())) {
             Map<String, String> params = new HashMap<String, String>();
             params.put("urlPutCode", putCode);
-            params.put("bodyPutCode", funding.getPutCode());
+            params.put("bodyPutCode", String.valueOf(funding.getPutCode()));
             throw new MismatchedPutCodeException(params);
         }
         Funding f = profileFundingManager.updateFunding(orcid, funding);
@@ -242,7 +242,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
 
     @Override
     @AccessControl(requiredScope = ScopePathType.AFFILIATIONS_READ_LIMITED)
-    public Response viewEducation(String orcid, String putCode) {
+    public Response viewEducation(String orcid, Long putCode) {
         Education e = affiliationsManager.getEducationAffiliation(orcid, putCode);
         orcidSecurityManager.checkVisibility(e);
         ActivityUtils.setPathToActivity(e, orcid);
@@ -251,7 +251,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
 
     @Override
     @AccessControl(requiredScope = ScopePathType.AFFILIATIONS_READ_LIMITED)
-    public Response viewEducationSummary(String orcid, String putCode) {
+    public Response viewEducationSummary(String orcid, Long putCode) {
         EducationSummary es = affiliationsManager.getEducationSummary(orcid, putCode);
         orcidSecurityManager.checkVisibility(es);
         ActivityUtils.setPathToActivity(es, orcid);
@@ -263,7 +263,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     public Response createEducation(String orcid, Education education) {
         Education e = affiliationsManager.createEducationAffiliation(orcid, education);
         try {
-            return Response.created(new URI(e.getPutCode())).build();
+            return Response.created(new URI(String.valueOf(e.getPutCode()))).build();
         } catch (URISyntaxException ex) {
             throw new RuntimeException(localeManager.resolveMessage("apiError.createeducation_response.exception"), ex);
         }
@@ -271,11 +271,11 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
 
     @Override
     @AccessControl(requiredScope = ScopePathType.AFFILIATIONS_UPDATE)
-    public Response updateEducation(String orcid, String putCode, Education education) {
+    public Response updateEducation(String orcid, Long putCode, Education education) {
         if (!putCode.equals(education.getPutCode())) {
             Map<String, String> params = new HashMap<String, String>();
-            params.put("urlPutCode", putCode);
-            params.put("bodyPutCode", education.getPutCode());
+            params.put("urlPutCode", String.valueOf(putCode));
+            params.put("bodyPutCode", String.valueOf(education.getPutCode()));
             throw new MismatchedPutCodeException(params);
         }
         Education e = affiliationsManager.updateEducationAffiliation(orcid, education);
@@ -284,7 +284,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
 
     @Override
     @AccessControl(requiredScope = ScopePathType.AFFILIATIONS_READ_LIMITED)
-    public Response viewEmployment(String orcid, String putCode) {
+    public Response viewEmployment(String orcid, Long putCode) {
         Employment e = affiliationsManager.getEmploymentAffiliation(orcid, putCode);
         orcidSecurityManager.checkVisibility(e);
         ActivityUtils.setPathToActivity(e, orcid);
@@ -292,7 +292,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     }
 
     @AccessControl(requiredScope = ScopePathType.AFFILIATIONS_READ_LIMITED)
-    public Response viewEmploymentSummary(String orcid, String putCode) {
+    public Response viewEmploymentSummary(String orcid, Long putCode) {
         EmploymentSummary es = affiliationsManager.getEmploymentSummary(orcid, putCode);
         orcidSecurityManager.checkVisibility(es);
         ActivityUtils.setPathToActivity(es, orcid);
@@ -304,7 +304,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     public Response createEmployment(String orcid, Employment employment) {
         Employment e = affiliationsManager.createEmploymentAffiliation(orcid, employment);
         try {
-            return Response.created(new URI(e.getPutCode())).build();
+            return Response.created(new URI(String.valueOf(e.getPutCode()))).build();
         } catch (URISyntaxException ex) {
             throw new RuntimeException(localeManager.resolveMessage("apiError.createemployment_response.exception"), ex);
         }
@@ -316,7 +316,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
         if (!putCode.equals(employment.getPutCode())) {
             Map<String, String> params = new HashMap<String, String>();
             params.put("urlPutCode", putCode);
-            params.put("bodyPutCode", employment.getPutCode());
+            params.put("bodyPutCode", String.valueOf(employment.getPutCode()));
             throw new MismatchedPutCodeException(params);
         }
         Employment e = affiliationsManager.updateEmploymentAffiliation(orcid, employment);
@@ -325,14 +325,14 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
 
     @Override
     @AccessControl(requiredScope = ScopePathType.AFFILIATIONS_UPDATE)
-    public Response deleteAffiliation(String orcid, String putCode) {
+    public Response deleteAffiliation(String orcid, Long putCode) {
         affiliationsManager.checkSourceAndDelete(orcid, putCode);
         return Response.noContent().build();
     }
 
     @Override
     @AccessControl(requiredScope = ScopePathType.FUNDING_UPDATE)
-    public Response deleteFunding(String orcid, String putCode) {
+    public Response deleteFunding(String orcid, Long putCode) {
         profileFundingManager.checkSourceAndDelete(orcid, putCode);
         return Response.noContent().build();
     }
