@@ -25,6 +25,8 @@ import static org.orcid.core.api.OrcidApiConstants.WORKS_PATH;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.persistence.PersistenceException;
@@ -36,8 +38,11 @@ import org.hibernate.exception.ConstraintViolationException;
 import org.orcid.api.common.delegator.impl.OrcidApiServiceDelegatorImpl;
 import org.orcid.api.t2.server.delegator.T2OrcidApiServiceDelegator;
 import org.orcid.core.exception.OrcidBadRequestException;
+import org.orcid.core.exception.OrcidClientNotFoundException;
 import org.orcid.core.exception.OrcidForbiddenException;
 import org.orcid.core.exception.OrcidNotFoundException;
+import org.orcid.core.exception.OrcidWebhookNotFoundException;
+import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
@@ -91,7 +96,10 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
     private ProfileEntityManager profileEntityManager;
 
     @Resource
-    private WebhookDao webhookDao;    
+    private WebhookDao webhookDao;
+    
+    @Resource
+    private LocaleManager localeManager;
 
     @Resource(name = "profileEntityCacheManager")
     ProfileEntityCacheManager profileEntityCacheManager;
@@ -179,7 +187,7 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
             }
             return getOrcidMessageResponse(orcidProfile, orcid);
         } catch (DataAccessException e) {
-            throw new OrcidBadRequestException("Cannot create ORCID");
+            throw new OrcidBadRequestException(localeManager.resolveMessage("apiError.badrequest_createorcid.exception"));
         }
     }
 
@@ -258,9 +266,9 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
             return getCreatedResponse(uriInfo, PROFILE_GET_PATH, orcidProfile);
         } catch (DataAccessException e) {
             if (e.getCause() != null && ConstraintViolationException.class.isAssignableFrom(e.getCause().getClass())) {
-                throw new OrcidBadRequestException("User with this email already exist.");
+                throw new OrcidBadRequestException(localeManager.resolveMessage("apiError.badrequest_email_exists.exception"));
             }
-            throw new OrcidBadRequestException("Cannot create ORCID", e);
+            throw new OrcidBadRequestException(localeManager.resolveMessage("apiError.badrequest_createorcid.exception"), e);
         }
     }
 
@@ -268,7 +276,7 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
         if(orcidProfile != null && orcidProfile.getOrcidBio() != null && orcidProfile.getOrcidBio().getContactDetails() != null 
         		&& orcidProfile.getOrcidBio().getContactDetails().getEmail() != null) {
         	if(orcidProfile.getOrcidBio().getContactDetails().getEmail().size() > 1) {
-        		throw new OrcidBadRequestException("There must be only one email in the new profile");
+        		throw new OrcidBadRequestException(localeManager.resolveMessage("apiError.badrequest_numberofemails.exception"));
         	}
         }
     }
@@ -290,9 +298,9 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
             orcidProfileManager.addOrcidWorks(orcidProfile);
             return getCreatedResponse(uriInfo, WORKS_PATH, orcid);
         } catch (DataAccessException e) {
-            throw new OrcidBadRequestException("Cannot update ORCID");
+            throw new OrcidBadRequestException(localeManager.resolveMessage("apiError.badrequest_updateorcid.exception"));
         } catch (PersistenceException pe) {
-            throw new OrcidBadRequestException("One of the parameters passed in the request is either too big or invalid.");
+            throw new OrcidBadRequestException(localeManager.resolveMessage("apiError.badrequest_invalid_params.exception"));
         }
     }
 
@@ -314,7 +322,7 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
             orcidProfile = orcidProfileManager.updateOrcidWorks(orcidProfile);
             return getOrcidMessageResponse(orcidProfile, orcid);
         } catch (DataAccessException e) {
-            throw new OrcidBadRequestException("Cannot update ORCID");
+            throw new OrcidBadRequestException(localeManager.resolveMessage("apiError.badrequest_updateorcid.exception"));
         }
     }
 
@@ -354,7 +362,9 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
                     String sourceOrcid = source.retrieveSourcePath();
                     if (sourceOrcid != null) {
                         if (StringUtils.isBlank(sourceOrcid) || (!profileEntityManager.orcidExists(sourceOrcid) && !clientDetailsManager.exists(sourceOrcid))) {
-                            throw new OrcidNotFoundException("Cannot find source ORCID");
+                        	Map<String, String> params = new HashMap<String, String>();
+                        	params.put("orcid", sourceOrcid);
+                            throw new OrcidNotFoundException(params);
                         }
                     }                    
                 }
@@ -363,7 +373,7 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
             orcidProfile = orcidProfileManager.addExternalIdentifiers(orcidProfile);
             return getOrcidMessageResponse(orcidProfile, orcid);
         } catch (DataAccessException e) {
-            throw new OrcidBadRequestException("Cannot create ORCID");
+            throw new OrcidBadRequestException(localeManager.resolveMessage("apiError.badrequest_createorcid.exception"));
         }
     }
 
@@ -374,7 +384,7 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
             OrcidProfile deletedProfile = orcidProfileManager.deleteProfile(orcid);
             return getOrcidMessageResponse(deletedProfile, orcid);
         } catch (DataAccessException e) {
-            throw new OrcidBadRequestException("Cannot delete ORCID");
+            throw new OrcidBadRequestException(localeManager.resolveMessage("apiError.badrequest_deleteorcid.exception"));
         }
     }
 
@@ -382,7 +392,7 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
         if (profile != null && profile.getOrcidIdentifier() != null) {
             return getCreatedResponse(uriInfo, requested, profile.getOrcidIdentifier().getPath());
         } else {
-            throw new OrcidNotFoundException("Cannot find ORCID");
+            throw new OrcidBadRequestException(localeManager.resolveMessage("apiError.badrequest_findorcid.exception"));
         }
     }
 
@@ -391,7 +401,7 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
             URI uri = uriInfo.getBaseUriBuilder().path("/").path(requested).build(orcid);
             return Response.created(uri).build();
         } else {
-            throw new OrcidNotFoundException("Cannot find ORCID");
+            throw new OrcidBadRequestException(localeManager.resolveMessage("apiError.badrequest_findorcid.exception"));
         }
     }
 
@@ -408,7 +418,9 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
             OrcidMessage orcidMessage = new OrcidMessage(profile);
             return Response.ok(orcidMessage).build();
         } else {
-            throw new OrcidNotFoundException("ORCID " + requestedOrcid + " not found");
+        	Map<String, String> params = new HashMap<String, String>();
+        	params.put("orcid", requestedOrcid);
+            throw new OrcidNotFoundException(params);
         }
     }
 
@@ -455,7 +467,8 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
         try {
             validatedWebhookUri = new URI(webhookUri);
         } catch (URISyntaxException e) {
-            throw new OrcidBadRequestException(String.format("Webhook uri:%s is syntactically incorrect", webhookUri));
+        	Object params[] = {webhookUri};
+            throw new OrcidBadRequestException(localeManager.resolveMessage("apiError.badrequest_incorrect_webhook.exception", params));
         }
 
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
@@ -484,9 +497,13 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
 
             return isNew ? Response.created(uriInfo.getAbsolutePath()).build() : Response.noContent().build();
         } else if (profile == null) {
-            throw new OrcidNotFoundException("Unable to find profile associated with orcid:" + orcid);
+        	Map<String, String> params = new HashMap<String, String>();
+        	params.put("orcid", orcid);
+            throw new OrcidNotFoundException(params);
         } else {
-            throw new OrcidNotFoundException("Unable to find client profile associated with client:" + clientId);
+        	Map<String, String> params = new HashMap<String, String>();
+        	params.put("client", clientId);
+            throw new OrcidClientNotFoundException(params);
         }
     }
 
@@ -508,7 +525,10 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
             WebhookEntityPk webhookPk = new WebhookEntityPk(profile, webhookUri);
             WebhookEntity webhook = webhookDao.find(webhookPk);
             if (webhook == null) {
-                throw new OrcidNotFoundException(String.format("No webhook found for orcid=%s, and uri=%s", orcid, webhookUri));
+            	Map<String, String> params = new HashMap<String, String>();
+            	params.put("orcid", orcid);
+            	params.put("uri", webhookUri);
+                throw new OrcidWebhookNotFoundException(params);
             } else {
                 Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
                 String clientId = null;
@@ -524,11 +544,13 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
                 } else {
                     // Throw 403 exception: user is not allowed to unregister
                     // that webhook
-                    throw new OrcidForbiddenException("Unable to unregister webhook: Only the client that register the webhook can unregister it.");
+                    throw new OrcidForbiddenException(localeManager.resolveMessage("apiError.forbidden_unregister_webhook.exception"));
                 }
             }
         } else {
-            throw new OrcidNotFoundException("Unable to find profile associated with orcid:" + orcid);
+        	Map<String, String> params = new HashMap<String, String>();
+        	params.put("orcid", orcid);
+            throw new OrcidNotFoundException(params);
         }
     }
 
@@ -540,9 +562,9 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
             orcidProfileManager.addAffiliations(orcidProfile);
             return getCreatedResponse(uriInfo, AFFILIATIONS_PATH, orcidProfile);
         } catch (DataAccessException e) {
-            throw new OrcidBadRequestException("Cannot update ORCID");
+            throw new OrcidBadRequestException(localeManager.resolveMessage("apiError.badrequest_updateorcid.exception"));
         } catch (PersistenceException pe) {
-            throw new OrcidBadRequestException("One of the parameters passed in the request is either too big or invalid.");
+            throw new OrcidBadRequestException(localeManager.resolveMessage("apiError.badrequest_invalid_params.exception"));
         }
     }
 
@@ -554,7 +576,7 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
             orcidProfile = orcidProfileManager.updateAffiliations(orcidProfile);
             return getOrcidMessageResponse(orcidProfile, orcid);
         } catch (DataAccessException e) {
-            throw new OrcidBadRequestException("Cannot update ORCID");
+            throw new OrcidBadRequestException(localeManager.resolveMessage("apiError.badrequest_updateorcid.exception"));
         }
     }
 
@@ -566,9 +588,9 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
             orcidProfileManager.addFundings(orcidProfile);
             return getCreatedResponse(uriInfo, FUNDING_PATH, orcidProfile);
         } catch (DataAccessException e) {
-            throw new OrcidBadRequestException("Cannot update ORCID");
+            throw new OrcidBadRequestException(localeManager.resolveMessage("apiError.badrequest_updateorcid.exception"));
         } catch (PersistenceException pe) {
-            throw new OrcidBadRequestException("One of the parameters passed in the request is either too big or invalid.");
+            throw new OrcidBadRequestException(localeManager.resolveMessage("apiError.badrequest_invalid_params.exception"));
         }
     }
 
@@ -580,7 +602,7 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
             orcidProfile = orcidProfileManager.updateFundings(orcidProfile);
             return getOrcidMessageResponse(orcidProfile, orcid);
         } catch (DataAccessException e) {
-            throw new OrcidBadRequestException("Cannot update ORCID");
+            throw new OrcidBadRequestException(localeManager.resolveMessage("apiError.badrequest_updateorcid.exception"));
         }
     }
 

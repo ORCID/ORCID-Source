@@ -28,6 +28,7 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.constants.OauthTokensConstants;
 import org.orcid.core.exception.OrcidInvalidScopeException;
+import org.orcid.core.locale.LocaleManager;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.dao.OrcidOauth2AuthoriziationCodeDetailDao;
 import org.orcid.persistence.jpa.entities.OrcidOauth2AuthoriziationCodeDetail;
@@ -59,6 +60,9 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
     @Resource
     private OrcidOauth2AuthoriziationCodeDetailDao orcidOauth2AuthoriziationCodeDetailDao;
     
+    @Resource
+    private LocaleManager localeManager;
+    
     @Transactional
     public Response obtainOauth2Token(String clientId, String clientSecret, String grantType, String refreshToken, String code, Set<String> scopes, String state,
             String redirectUri, String resourceId) {
@@ -70,7 +74,7 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
         if (!client.isAuthenticated()) {
             LOGGER.info("Not authenticated for OAuth2: clientId={}, grantType={}, refreshToken={}, code={}, scopes={}, state={}, redirectUri={}", new Object[] {
                     clientId, grantType, refreshToken, code, scopes, state, redirectUri });
-            throw new InsufficientAuthenticationException("The client is not authenticated.");
+            throw new InsufficientAuthenticationException(localeManager.resolveMessage("apiError.client_not_authenticated.exception"));
         }        
         
         /**
@@ -106,8 +110,7 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
                 }
             }
         } catch (IllegalArgumentException iae) {
-            throw new OrcidInvalidScopeException(
-                    "One of the provided scopes is not allowed. Please refere to the list of allowed scopes at: http://support.orcid.org/knowledgebase/articles/120162-orcid-scopes");
+            throw new OrcidInvalidScopeException();
         }
                            
         String clientName = client.getName();
@@ -148,10 +151,11 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
         TokenRequest tokenRequest = getOAuth2RequestFactory().createTokenRequest(authorizationRequest, grantType);                
         
         OAuth2AccessToken token = getTokenGranter().grant(grantType, tokenRequest);
+        Object params[] = {grantType};
         if (token == null) {
             LOGGER.info("Unsupported grant type for OAuth2: clientId={}, grantType={}, refreshToken={}, code={}, scopes={}, state={}, redirectUri={}", new Object[] {
                     clientId, grantType, refreshToken, code, scopes, state, redirectUri });
-            throw new UnsupportedGrantTypeException("Unsupported grant type: " + grantType);
+            throw new UnsupportedGrantTypeException(localeManager.resolveMessage("apiError.unsupported_client_type.exception", params));
         }
         LOGGER.info("OAuth2 access token granted: clientId={}, grantType={}, refreshToken={}, code={}, scopes={}, state={}, redirectUri={}, token={}", new Object[] {
                 clientId, grantType, refreshToken, code, scopes, state, redirectUri, token });
@@ -176,7 +180,7 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
         if (authentication != null) {
             return authentication;
         } else {
-            throw new InsufficientAuthenticationException("No client authentication found.");
+            throw new InsufficientAuthenticationException(localeManager.resolveMessage("apiError.client_authentication_notfound.exception"));
         }
 
     }

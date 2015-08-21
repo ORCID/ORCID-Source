@@ -478,7 +478,7 @@ public class FundingsController extends BaseWorkspaceController {
         OrcidProfile currentProfile = getEffectiveProfile();
         
         if (!currentProfile.getOrcidIdentifier().getPath().equals(funding.getSource()))
-            throw new Exception("Error source isn't correct");
+        	throw new Exception(getMessage("web.orcid.activity_incorrectsource.exception"));
         
         // Initialize activities if needed
         if (currentProfile.getOrcidActivities() == null) {

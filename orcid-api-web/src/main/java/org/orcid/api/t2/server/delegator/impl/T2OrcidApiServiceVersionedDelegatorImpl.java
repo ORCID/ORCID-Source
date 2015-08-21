@@ -16,6 +16,7 @@
  */
 package org.orcid.api.t2.server.delegator.impl;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -25,12 +26,12 @@ import javax.ws.rs.core.UriInfo;
 
 import org.orcid.api.t2.server.delegator.T2OrcidApiServiceDelegator;
 import org.orcid.core.exception.OrcidBadRequestException;
-import org.orcid.core.exception.OrcidNotFoundException;
+import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.exception.OrcidValidationException;
+import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ValidationBehaviour;
 import org.orcid.core.manager.ValidationManager;
 import org.orcid.core.manager.impl.ValidationManagerImpl;
-import org.orcid.core.security.DeprecatedException;
 import org.orcid.core.version.OrcidMessageVersionConverterChain;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.OrcidHistory;
@@ -66,6 +67,9 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
 
     @Resource
     private EmailDao emailDao;
+    
+    @Resource
+    private LocaleManager localeManager;
     
     public void setExternalVersion(String externalVersion) {
         this.externalVersion = externalVersion;
@@ -260,15 +264,15 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
             if(orcidMessage != null && orcidMessage.getOrcidProfile() != null && orcidMessage.getOrcidProfile().getOrcidHistory() != null) {
                 OrcidHistory history = orcidMessage.getOrcidProfile().getOrcidHistory();
                 if(history.getClaimed() != null) {
-                    throw new OrcidValidationException(new Throwable("Claimed status should not be specified when creating a profile"));
+                    throw new OrcidValidationException(new Throwable(localeManager.resolveMessage("apiError.validation_claimedstatus.exception")));
                 } else if(history.getCreationMethod() != null) {
-                    throw new OrcidValidationException(new Throwable("Creation method should not be specified when creating a profile"));
+                    throw new OrcidValidationException(new Throwable(localeManager.resolveMessage("apiError.validation_creationmethod.exception")));
                 } else if(history.getCompletionDate() != null) {
-                    throw new OrcidValidationException(new Throwable("Completion date should not be specified when creating a profile"));
+                    throw new OrcidValidationException(new Throwable(localeManager.resolveMessage("apiError.validation_completiondate.exception")));
                 } else if(history.getSubmissionDate() != null) {
-                    throw new OrcidValidationException(new Throwable("Submission date should not be specified when creating a profile"));
+                    throw new OrcidValidationException(new Throwable(localeManager.resolveMessage("apiError.validation_submissiondate.exception")));
                 } else if(history.getLastModifiedDate() != null) {
-                    throw new OrcidValidationException(new Throwable("Last modified date should not be specified when creating a profile"));
+                    throw new OrcidValidationException(new Throwable(localeManager.resolveMessage("apiError.validation_lastmodifieddate.exception")));
                 }
             }
             validateIncomingMessage(orcidMessage);
@@ -282,7 +286,8 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
                     cause = underlyingCause;
                 }
             }
-            throw new OrcidBadRequestException("Invalid incoming message: " + cause.toString());
+            Object params[] = {cause.toString()};
+            throw new OrcidValidationException(localeManager.resolveMessage("apiError.validation_invalidmessage.exception", params));
         }
     }
     
@@ -300,7 +305,8 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
                     cause = underlyingCause;
                 }
             }
-            throw new OrcidBadRequestException("Invalid incoming message: " + cause.toString());
+            Object params[] = {cause.toString()};
+            throw new OrcidValidationException(localeManager.resolveMessage("apiError.validation_invalidmessage.exception", params));
         }
     }
 
@@ -317,7 +323,8 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
                     cause = underlyingCause;
                 }
             }
-            throw new OrcidBadRequestException("Invalid incoming message: " + cause.toString());
+            Object params[] = {cause.toString()};
+            throw new OrcidValidationException(localeManager.resolveMessage("apiError.validation_invalidmessage.exception", params));
         } 
     }
     
@@ -335,8 +342,9 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
             String orcid = orcidMessage.getOrcidProfile().getOrcidIdentifier().getPath();
             String primaryOrcid = this.profileDao.retrievePrimaryAccountOrcid(orcid);
             if (primaryOrcid != null) {
-                // TODO: Internationalize these messages
-                throw new DeprecatedException("This account is deprecated. Please refer to account:" + primaryOrcid);
+        		Map<String, String> params = new HashMap<String, String>();
+            	params.put("orcid", primaryOrcid);
+                throw new OrcidDeprecatedException(params);
             }
         }
     }
@@ -352,9 +360,9 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
     protected Response checkProfileStatus(Response response) {
         OrcidMessage orcidMessage = (OrcidMessage) response.getEntity();
         if (orcidMessage != null && orcidMessage.getOrcidProfile() != null && orcidMessage.getOrcidProfile().getOrcidDeprecated() != null) {
-            // TODO: Internationalize these messages
-            throw new DeprecatedException("This account is deprecated. Please refer to account:"
-                    + orcidMessage.getOrcidProfile().getOrcidDeprecated().getPrimaryRecord().getOrcidIdentifier().getPath());
+    		Map<String, String> params = new HashMap<String, String>();
+        	params.put("orcid", orcidMessage.getOrcidProfile().getOrcidDeprecated().getPrimaryRecord().getOrcidIdentifier().getPath());
+            throw new OrcidDeprecatedException(params);
         }
         return response;
     }
@@ -401,7 +409,7 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
 
     private void checkAffiliationsSupport() {
         if (!supportsAffiliations) {
-            throw new OrcidNotFoundException("Affiliations are not supported in this version of the API");
+            throw new OrcidBadRequestException(localeManager.resolveMessage("apiError.badrequest_affiliations_notsupported.exception"));
         }
     }
 
@@ -427,8 +435,11 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
                     EmailEntity emailEntity = emailDao.findCaseInsensitive(email.getValue());
                     if(emailEntity != null) {
                         String emailOrcid = emailEntity.getProfile().getId();
-                        if(!targetOrcid.equals(emailOrcid))
-                            throw new OrcidBadRequestException("Invalid incoming message: Email " + email.getValue() + " belongs to other user");
+                        if(!targetOrcid.equals(emailOrcid)) {
+                        	Object params[] = {email.getValue()};
+                        	throw new OrcidValidationException(localeManager.resolveMessage("apiError.validation_invalidmessage_email.exception", params));
+                        }
+                            
                     }                                        
                 }                
             }

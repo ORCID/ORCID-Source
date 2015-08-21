@@ -18,13 +18,13 @@ package org.orcid.core.exception;
 
 /**
  * 
- * @author Will Simpson
- *
+ * @author Shobhit Tyagi
+ * 
  */
-public class OrcidNotificationAlreadyReadException extends ApplicationException {
+public class OrcidVisibilityException extends ApplicationException {
 
     private static final long serialVersionUID = 1L;
 
-    public OrcidNotificationAlreadyReadException() {
+    public OrcidVisibilityException() {
     }
 }

@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.annotation.Resource;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
@@ -41,6 +42,7 @@ import javax.xml.validation.SchemaFactory;
 import org.apache.log4j.Logger;
 import org.orcid.core.api.OrcidApiConstants;
 import org.orcid.core.exception.OrcidBadRequestException;
+import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.web.filters.ApiVersionFilter;
 import org.orcid.jaxb.model.groupid.GroupIdRecord;
 import org.orcid.jaxb.model.message.ErrorDesc;
@@ -80,6 +82,9 @@ public class OrcidValidationJaxbContextResolver implements ContextResolver<Unmar
     }
     private JAXBContext jaxbContext;
     private Map<String, Schema> schemaByPath = new ConcurrentHashMap<>();
+    
+    @Resource
+    LocaleManager localeManager;
 
     @Override
     public Unmarshaller getContext(Class<?> type) {
@@ -108,7 +113,7 @@ public class OrcidValidationJaxbContextResolver implements ContextResolver<Unmar
             try {
                 jaxbContext = JAXBContext.newInstance(SCHEMA_FILENAME_PREFIX_BY_CLASS.keySet().toArray(new Class[SCHEMA_FILENAME_PREFIX_BY_CLASS.size()]));
             } catch (JAXBException e) {
-                throw new RuntimeException("Error creating JAXB context", e);
+                throw new RuntimeException(localeManager.resolveMessage("apiError.jaxb_context.exception"), e);
             }
         }
         return jaxbContext;

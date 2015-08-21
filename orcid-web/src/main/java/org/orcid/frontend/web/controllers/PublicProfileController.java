@@ -429,7 +429,7 @@ public class PublicProfileController extends BaseWorkspaceController {
         // this is
         // a hash should be smart enough to just use the API.
         if (orcidHash.length() > 5 && !encryptionManager.sha256Hash(orcid).startsWith(orcidHash))
-            throw new Exception("Semi-security hash doens't match");
+            throw new Exception(getMessage("web.orcid.securityhash.exception"));
         OrcidInfo result = new OrcidInfo();
         OrcidProfile profile = orcidProfileCacheManager.retrievePublic(orcid);
         result.setOrcid(orcid);

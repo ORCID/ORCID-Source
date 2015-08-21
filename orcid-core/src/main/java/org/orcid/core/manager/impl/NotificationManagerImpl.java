@@ -811,10 +811,12 @@ public class NotificationManagerImpl implements NotificationManager {
         }
         String sourceId = sourceManager.retrieveSourceOrcid();
         if (sourceId != null && !sourceId.equals(notificationEntity.getSource().getSourceId())) {
-            throw new WrongSourceException("You are not the source of notification with id=" + id + " for ORCID iD=" + orcid);
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("activity", "notification");
+        	throw new WrongSourceException(params);
         }
         if (notificationEntity.getReadDate() != null) {
-            throw new OrcidNotificationAlreadyReadException("The notification has already been read");
+            throw new OrcidNotificationAlreadyReadException();
         }
         if (notificationEntity.getArchivedDate() == null) {
             notificationEntity.setArchivedDate(new Date());

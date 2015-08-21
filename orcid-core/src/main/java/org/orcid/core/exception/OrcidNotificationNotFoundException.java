@@ -16,23 +16,18 @@
  */
 package org.orcid.core.exception;
 
-import javax.ws.rs.core.Response;
+import java.util.Map;
 
 /**
- * @author Declan Newman (declan) Date: 01/03/2012
+ * 
+ * @author Shobhit Tyagi
+ * 
  */
-public class OrcidNotAcceptableException extends OrcidApiException {
+public class OrcidNotificationNotFoundException extends ApplicationException {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = 1L;
 
-    public OrcidNotAcceptableException(String message) {
-        super(message, Response.Status.NOT_ACCEPTABLE);
-    }
-
-    public OrcidNotAcceptableException(String message, Throwable t) {
-        super(message, Response.Status.NOT_ACCEPTABLE, t);
-    }
+	public OrcidNotificationNotFoundException(Map<String, String> params) {
+		super(params);
+	}
 }
