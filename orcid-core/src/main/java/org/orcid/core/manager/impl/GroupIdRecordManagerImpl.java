@@ -56,9 +56,8 @@ public class GroupIdRecordManagerImpl implements GroupIdRecordManager {
     private OrcidSecurityManager orcidSecurityManager;
 
     @Override
-    public GroupIdRecord getGroupIdRecord(String putCode) {
-        long putCodeLong = convertToLong(putCode);
-        GroupIdRecordEntity groupIdRecordEntity = groupIdRecordDao.find(putCodeLong);
+    public GroupIdRecord getGroupIdRecord(Long putCode) {
+        GroupIdRecordEntity groupIdRecordEntity = groupIdRecordDao.find(putCode);
         if (groupIdRecordEntity == null) {
             throw new GroupIdRecordNotFoundException();
         }
@@ -87,9 +86,8 @@ public class GroupIdRecordManagerImpl implements GroupIdRecordManager {
     }
 
     @Override
-    public GroupIdRecord updateGroupIdRecord(String putCode, GroupIdRecord groupIdRecord) {
-        long putCodeLong = convertToLong(putCode);
-        GroupIdRecordEntity existingEntity = groupIdRecordDao.find(putCodeLong);
+    public GroupIdRecord updateGroupIdRecord(Long putCode, GroupIdRecord groupIdRecord) {
+        GroupIdRecordEntity existingEntity = groupIdRecordDao.find(putCode);
         GroupIdRecordEntity updatedEntity = null;
         validateDuplicate(groupIdRecord);
         if (existingEntity != null) {
@@ -107,9 +105,8 @@ public class GroupIdRecordManagerImpl implements GroupIdRecordManager {
     }
 
     @Override
-    public void deleteGroupIdRecord(String putCode) {
-        long putCodeLong = convertToLong(putCode);
-        GroupIdRecordEntity existingEntity = groupIdRecordDao.find(putCodeLong);
+    public void deleteGroupIdRecord(Long putCode) {
+        GroupIdRecordEntity existingEntity = groupIdRecordDao.find(putCode);
         if (existingEntity != null) {
             orcidSecurityManager.checkSource(existingEntity.getSource());
             groupIdRecordDao.remove(Long.valueOf(putCode));
@@ -120,7 +117,6 @@ public class GroupIdRecordManagerImpl implements GroupIdRecordManager {
 
     @Override
     public GroupIdRecords getGroupIdRecords(String pageSize, String pageNum) {
-
         int pageNumInt = convertToInteger(pageNum);
         int pageSizeInt = convertToInteger(pageSize);
         GroupIdRecords records = new GroupIdRecords();
@@ -162,15 +158,5 @@ public class GroupIdRecordManagerImpl implements GroupIdRecordManager {
                 }
             }
         }
-    }
-
-    private Long convertToLong(String putCode) {
-        long putCodeLong = 0;
-        try {
-            putCodeLong = Long.valueOf(putCode);
-        } catch (NumberFormatException e) {
-            throw new OrcidValidationException();
-        }
-        return putCodeLong;
     }
 }

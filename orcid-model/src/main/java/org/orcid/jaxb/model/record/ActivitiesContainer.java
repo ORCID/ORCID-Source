@@ -26,7 +26,7 @@ import java.util.Map;
  */
 public interface ActivitiesContainer {
 
-    Map<String, ? extends Activity> retrieveActivitiesAsMap();
+    Map<Long, ? extends Activity> retrieveActivitiesAsMap();
 
     Collection<? extends Activity> retrieveActivities();
 

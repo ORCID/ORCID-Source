@@ -154,7 +154,7 @@ public class WorksController extends BaseWorkspaceController {
 
     @RequestMapping(value = "/updateToMaxDisplay.json", method = RequestMethod.GET)
     public @ResponseBody
-    boolean updateToMaxDisplay(HttpServletRequest request, @RequestParam(value = "putCode") String putCode) {
+    boolean updateToMaxDisplay(HttpServletRequest request, @RequestParam(value = "putCode") Long putCode) {
         String orcid = getEffectiveUserOrcid();
         return workManager.updateToMaxDisplay(orcid, putCode);
     }
@@ -291,10 +291,10 @@ public class WorksController extends BaseWorkspaceController {
      * */
     @RequestMapping(value = "/getWorkInfo.json", method = RequestMethod.GET)
     public @ResponseBody
-    WorkForm getWorkInfo(@RequestParam(value = "workId") String workId) {
+    WorkForm getWorkInfo(@RequestParam(value = "workId") Long workId) {
         Map<String, String> countries = retrieveIsoCountries();
         Map<String, String> languages = lm.buildLanguageMap(localeManager.getLocale(), false);
-        if (StringUtils.isEmpty(workId))
+        if (workId == null)
             return null;
 
         Work work = workManager.getWork(this.getCurrentUserOrcid(), workId);
@@ -411,7 +411,7 @@ public class WorksController extends BaseWorkspaceController {
         newWork = workManager.createWork(currentProfile.getOrcidIdentifier().getPath(), newWork, false);
 
         // Set the id in the work to be returned
-        String workId = newWork.getPutCode();
+        Long workId = newWork.getPutCode();
         workForm.setPutCode(Text.valueOf(workId));
 
         // make the new work the default display

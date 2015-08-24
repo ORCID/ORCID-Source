@@ -147,10 +147,10 @@ public class PublicProfileController extends BaseWorkspaceController {
         if (!StringUtil.isBlank(countryName))
             mav.addObject("countryName", countryName);
 
-        LinkedHashMap<String, WorkForm> minimizedWorksMap = new LinkedHashMap<String, WorkForm>();
-        LinkedHashMap<String, Affiliation> affiliationMap = new LinkedHashMap<String, Affiliation>();
-        LinkedHashMap<String, Funding> fundingMap = new LinkedHashMap<String, Funding>();
-        LinkedHashMap<String, PeerReview> peerReviewMap = new LinkedHashMap<String, PeerReview>();
+        LinkedHashMap<Long, WorkForm> minimizedWorksMap = new LinkedHashMap<>();
+        LinkedHashMap<Long, Affiliation> affiliationMap = new LinkedHashMap<>();
+        LinkedHashMap<Long, Funding> fundingMap = new LinkedHashMap<>();
+        LinkedHashMap<Long, PeerReview> peerReviewMap = new LinkedHashMap<>();
 
         if (profile != null && profile.getOrcidBio() != null && profile.getOrcidBio().getBiography() != null
                 && StringUtils.isNotBlank(profile.getOrcidBio().getBiography().getContent())) {
@@ -242,7 +242,7 @@ public class PublicProfileController extends BaseWorkspaceController {
     public @ResponseBody
     List<AffiliationForm> getAffiliationsJson(HttpServletRequest request, @PathVariable("orcid") String orcid, @RequestParam(value = "affiliationIds") String workIdsStr) {
         List<AffiliationForm> affs = new ArrayList<AffiliationForm>();
-        Map<String, Affiliation> affMap = affiliationMap(orcid);
+        Map<Long, Affiliation> affMap = affiliationMap(orcid);
         String[] affIds = workIdsStr.split(",");
         for (String id : affIds) {
             Affiliation aff = affMap.get(id);
@@ -262,7 +262,7 @@ public class PublicProfileController extends BaseWorkspaceController {
     List<FundingForm> getFundingsJson(HttpServletRequest request, @PathVariable("orcid") String orcid, @RequestParam(value = "fundingIds") String fundingIdsStr) {
         Map<String, String> languages = lm.buildLanguageMap(localeManager.getLocale(), false);
         List<FundingForm> fundings = new ArrayList<FundingForm>();
-        Map<String, Funding> fundingMap = fundingMap(orcid);
+        Map<Long, Funding> fundingMap = fundingMap(orcid);
         String[] fundingIds = fundingIdsStr.split(",");
         for (String id : fundingIds) {
             Funding funding = fundingMap.get(id);
@@ -296,7 +296,7 @@ public class PublicProfileController extends BaseWorkspaceController {
         Map<String, String> countries = retrieveIsoCountries();
         Map<String, String> languages = lm.buildLanguageMap(localeManager.getLocale(), false);
 
-        HashMap<String, WorkForm> minimizedWorksMap = minimizedWorksMap(orcid);
+        HashMap<Long, WorkForm> minimizedWorksMap = minimizedWorksMap(orcid);
 
         List<WorkForm> works = new ArrayList<WorkForm>();
         String[] workIds = workIdsStr.split(",");
@@ -336,10 +336,10 @@ public class PublicProfileController extends BaseWorkspaceController {
      * */
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/getWorkInfo.json", method = RequestMethod.GET)
     public @ResponseBody
-    WorkForm getWorkInfo(@PathVariable("orcid") String orcid, @RequestParam(value = "workId") String workId) {
+    WorkForm getWorkInfo(@PathVariable("orcid") String orcid, @RequestParam(value = "workId") Long workId) {
         Map<String, String> countries = retrieveIsoCountries();
         Map<String, String> languages = lm.buildLanguageMap(localeManager.getLocale(), false);
-        if (StringUtils.isEmpty(workId))
+        if (workId == null)
             return null;
 
         Work workObj = workManager.getWork(orcid, workId);
@@ -399,7 +399,7 @@ public class PublicProfileController extends BaseWorkspaceController {
             @RequestParam(value = "peerReviewIds") String peerReviewIdsStr) {
         Map<String, String> languages = lm.buildLanguageMap(localeManager.getLocale(), false);
         List<PeerReviewForm> peerReviews = new ArrayList<PeerReviewForm>();
-        Map<String, PeerReview> peerReviewMap = peerReviewMap(orcid);
+        Map<Long, PeerReview> peerReviewMap = peerReviewMap(orcid);
         String[] peerReviewIds = peerReviewIdsStr.split(",");
         for (String id : peerReviewIds) {
             PeerReview peerReview = peerReviewMap.get(id);
@@ -522,28 +522,28 @@ public class PublicProfileController extends BaseWorkspaceController {
         return result;
     }
 
-    public LinkedHashMap<String, Funding> fundingMap(String orcid) {
+    public LinkedHashMap<Long, Funding> fundingMap(String orcid) {
         OrcidProfile profile = orcidProfileCacheManager.retrievePublic(orcid);
         if (profile == null)
             return null;
         return activityCacheManager.fundingMap(profile);
     }
 
-    public LinkedHashMap<String, Affiliation> affiliationMap(String orcid) {
+    public LinkedHashMap<Long, Affiliation> affiliationMap(String orcid) {
         OrcidProfile profile = orcidProfileCacheManager.retrievePublic(orcid);
         if (profile == null)
             return null;
         return activityCacheManager.affiliationMap(profile);
     }
 
-    public LinkedHashMap<String, WorkForm> minimizedWorksMap(String orcid) {
+    public LinkedHashMap<Long, WorkForm> minimizedWorksMap(String orcid) {
         OrcidProfile profile = orcidProfileCacheManager.retrievePublic(orcid);
         if (profile == null)
             return null;
         return activityCacheManager.pubMinWorksMap(profile);
     }
 
-    public LinkedHashMap<String, PeerReview> peerReviewMap(String orcid) {
+    public LinkedHashMap<Long, PeerReview> peerReviewMap(String orcid) {
         OrcidProfile userPubProfile = orcidProfileCacheManager.retrievePublic(orcid);
         java.util.Date lastModified = userPubProfile.getOrcidHistory().getLastModifiedDate().getValue().toGregorianCalendar().getTime();
         return activityCacheManager.pubPeerReviewsMap(orcid, lastModified.getTime());

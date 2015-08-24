@@ -417,7 +417,7 @@ public class WorkForm implements ErrorsInterface, Serializable {
         
         // Set work id
         if (!PojoUtil.isEmpty(this.getPutCode())) {
-            work.setPutCode(this.getPutCode().getValue());
+            work.setPutCode(Long.valueOf(this.getPutCode().getValue()));
         }
 
         // Set language
