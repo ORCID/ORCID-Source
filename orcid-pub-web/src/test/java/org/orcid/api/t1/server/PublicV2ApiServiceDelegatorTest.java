@@ -87,14 +87,14 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
         // Check works
         assertNotNull(summary.getWorks());
         assertEquals(1, summary.getWorks().getWorkGroup().size());
-        assertEquals("5", summary.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getPutCode());
+        assertEquals(Long.valueOf(5), summary.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getPutCode());
         assertEquals("/4444-4444-4444-4446/work/5", summary.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getPath());
         assertEquals("Journal article A", summary.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getTitle().getTitle().getContent());
         
         // Check fundings
         assertNotNull(summary.getFundings());
         assertEquals(1, summary.getFundings().getFundingGroup().size());
-        assertEquals("5", summary.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getPutCode());
+        assertEquals(Long.valueOf(5), summary.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getPutCode());
         assertEquals("/4444-4444-4444-4446/funding/5", summary.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getPath());
         assertEquals("Public Funding", summary.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getTitle().getTitle().getContent());
         
@@ -102,7 +102,7 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(summary.getEducations());
         assertNotNull(summary.getEducations().getSummaries());
         assertEquals(1, summary.getEducations().getSummaries().size());
-        assertEquals("7", summary.getEducations().getSummaries().get(0).getPutCode());
+        assertEquals(Long.valueOf(7), summary.getEducations().getSummaries().get(0).getPutCode());
         assertEquals("/4444-4444-4444-4446/education/7", summary.getEducations().getSummaries().get(0).getPath());
         assertEquals("Education Dept # 2", summary.getEducations().getSummaries().get(0).getDepartmentName());
 
@@ -110,7 +110,7 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(summary.getEmployments());
         assertNotNull(summary.getEmployments().getSummaries());
         assertEquals(1, summary.getEmployments().getSummaries().size());
-        assertEquals("8", summary.getEmployments().getSummaries().get(0).getPutCode());
+        assertEquals(Long.valueOf(8), summary.getEmployments().getSummaries().get(0).getPutCode());
         assertEquals("/4444-4444-4444-4446/employment/8", summary.getEmployments().getSummaries().get(0).getPath());
         assertEquals("Employment Dept # 2", summary.getEmployments().getSummaries().get(0).getDepartmentName());
     }
