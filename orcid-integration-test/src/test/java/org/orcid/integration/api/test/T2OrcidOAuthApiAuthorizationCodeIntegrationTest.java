@@ -257,12 +257,12 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
         params.add("redirect_uri", redirectUri);
         params.add("code", authorizationCode);
         ClientResponse tokenResponse = oauthT2Client.obtainOauth2TokenPost("client_credentials", params);
-        assertEquals(409, tokenResponse.getStatus());
+        assertEquals(401, tokenResponse.getStatus());
         OrcidMessage errorMessage = tokenResponse.getEntity(OrcidMessage.class);
         assertNotNull(errorMessage);
         assertNotNull(errorMessage.getErrorDesc());
         assertEquals(
-                "One of the provided scopes is not allowed. Please refere to the list of allowed scopes at: http://support.orcid.org/knowledgebase/articles/120162-orcid-scopes",
+                "OAuth2 problem : One of the provided scopes is not allowed. Please refer to the list of allowed scopes at: http://support.orcid.org/knowledgebase/articles/120162-orcid-scopes.",
                 errorMessage.getErrorDesc().getContent());
     }
 
@@ -416,7 +416,7 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
         OrcidMessage errorMessage = clientResponse.getEntity(OrcidMessage.class);
         assertNotNull(errorMessage);
         assertNotNull(errorMessage.getErrorDesc());
-        assertEquals("Invalid incoming message: org.orcid.core.exception.OrcidValidationException: Invalid Title: title cannot be null nor emtpy", errorMessage
+        assertEquals("Bad Request: Invalid incoming message: org.orcid.core.exception.OrcidValidationException: Invalid Title: title cannot be null nor emtpy", errorMessage
                 .getErrorDesc().getContent());
     }
 
@@ -447,7 +447,7 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
         assertNotNull(errorMessage);
         assertNotNull(errorMessage.getErrorDesc());
         assertEquals(
-                "Invalid incoming message: org.orcid.core.exception.OrcidValidationException: Invalid work: Works added using message version 1.2_rc5 or greater must contain at least one external identifier",
+                "Bad Request: Invalid incoming message: org.orcid.core.exception.OrcidValidationException: Invalid work: Works added using message version 1.2_rc5 or greater must contain at least one external identifier",
                 errorMessage.getErrorDesc().getContent());
     }
 
@@ -841,7 +841,7 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
         assertNotNull(errorMessage);
         assertNotNull(errorMessage.getErrorDesc());
         assertEquals(
-                "Invalid incoming message: org.orcid.core.exception.OrcidValidationException: Invalid funding: Funding added using message version 1.2_rc5 or greater must contain at least one external identifier",
+                "Bad Request: Invalid incoming message: org.orcid.core.exception.OrcidValidationException: Invalid funding: Funding added using message version 1.2_rc5 or greater must contain at least one external identifier",
                 errorMessage.getErrorDesc().getContent());
     }
 
