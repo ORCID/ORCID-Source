@@ -874,7 +874,7 @@ public class RegistrationController extends BaseController {
             return new PasswordResetToken(paramsString);
         } catch (UnsupportedEncodingException e) {
             LOGGER.error("Could not decrypt " + encryptedLink);
-            throw new RuntimeException("Decryption Error occured during email password reset");
+            throw new RuntimeException(getMessage("web.orcid.decrypt_passwordreset.exception"));
         }
 
     }

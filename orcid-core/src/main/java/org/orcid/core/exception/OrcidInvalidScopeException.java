@@ -16,7 +16,6 @@
  */
 package org.orcid.core.exception;
 
-import javax.ws.rs.core.Response;
 
 /**
  * This exception will be thrown when the scope provided by the user doesn't match any of the scopes
@@ -24,15 +23,11 @@ import javax.ws.rs.core.Response;
  * 
  *  @author Angel Montenegro(amontenegro)
  */
-public class OrcidInvalidScopeException extends OrcidApiException {
+public class OrcidInvalidScopeException extends ApplicationException {
 	
     private static final long serialVersionUID = 1L;
 
-    public OrcidInvalidScopeException(String message) {
-        super(message, Response.Status.CONFLICT);
-    }
-
-    public OrcidInvalidScopeException(String message, Throwable t) {
-        super(message, Response.Status.CONFLICT, t);
-    }
+	public OrcidInvalidScopeException() {
+		super();
+	}
 }

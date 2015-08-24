@@ -18,11 +18,15 @@ package org.orcid.api.t1.server.delegator.impl;
 
 import static org.orcid.core.api.OrcidApiConstants.STATUS_OK_MESSAGE;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
 
 import org.orcid.api.common.util.ActivityUtils;
 import org.orcid.api.t1.server.delegator.PublicV2ApiServiceDelegator;
+import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.manager.AffiliationsManager;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.OrcidSecurityManager;
@@ -31,7 +35,6 @@ import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileFundingManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.WorkManager;
-import org.orcid.core.security.DeprecatedException;
 import org.orcid.core.security.visibility.aop.AccessControl;
 import org.orcid.core.security.visibility.filter.VisibilityFilterV2;
 import org.orcid.jaxb.model.message.ScopePathType;
@@ -45,7 +48,6 @@ import org.orcid.jaxb.model.record.summary.EducationSummary;
 import org.orcid.jaxb.model.record.summary.EmploymentSummary;
 import org.orcid.jaxb.model.record.summary.FundingSummary;
 import org.orcid.jaxb.model.record.summary.PeerReviewSummary;
-import org.orcid.jaxb.model.record.summary.WorkGroup;
 import org.orcid.jaxb.model.record.summary.WorkSummary;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.WebhookDao;
@@ -100,10 +102,10 @@ public class PublicV2ApiServiceDelegatorImpl implements PublicV2ApiServiceDelega
     public Response viewActivities(String orcid) {
     	ProfileEntity entity = profileEntityManager.findByOrcid(orcid);
     	if(profileDao.isProfileDeprecated(orcid)) {
-        	StringBuffer primary = new StringBuffer(baseUrl).append("/").append(entity.getPrimaryRecord().getId());
-        	DeprecatedException ex = new DeprecatedException();
-        	ex.setPrimary(primary.toString());
-        	throw ex;
+    		StringBuffer primary = new StringBuffer(baseUrl).append("/").append(entity.getPrimaryRecord().getId());
+    		Map<String, String> params = new HashMap<String, String>();
+        	params.put("orcid", primary.toString());
+            throw new OrcidDeprecatedException(params);
         }
         ActivitiesSummary as = profileEntityManager.getPublicActivitiesSummary(orcid);
         ActivityUtils.cleanEmptyFields(as);

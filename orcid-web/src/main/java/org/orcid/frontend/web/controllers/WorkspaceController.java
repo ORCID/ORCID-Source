@@ -145,6 +145,8 @@ public class WorkspaceController extends BaseWorkspaceController {
     @ModelAttribute("currencyCodeTypes")
     public Map<String, String> retrieveCurrencyCodesTypesAsMap() {
         Map<String, String> currencyCodeTypes = new LinkedHashMap<String, String>();
+        //Add an empty one
+        currencyCodeTypes.put("", "");
         for (Currency currency : Currency.getAvailableCurrencies()) {
             currencyCodeTypes.put(currency.getCurrencyCode(), currency.getCurrencyCode());
         }

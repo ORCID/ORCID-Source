@@ -478,7 +478,7 @@ public class FundingsController extends BaseWorkspaceController {
         OrcidProfile currentProfile = getEffectiveProfile();
         
         if (!currentProfile.getOrcidIdentifier().getPath().equals(funding.getSource()))
-            throw new Exception("Error source isn't correct");
+        	throw new Exception(getMessage("web.orcid.activity_incorrectsource.exception"));
         
         // Initialize activities if needed
         if (currentProfile.getOrcidActivities() == null) {
@@ -797,6 +797,11 @@ public class FundingsController extends BaseWorkspaceController {
     FundingForm validateExternalIdentifiers(@RequestBody FundingForm funding) {
         if (funding.getExternalIdentifiers() != null && !funding.getExternalIdentifiers().isEmpty()) {
             for (FundingExternalIdentifierForm extId : funding.getExternalIdentifiers()) {
+                extId.setErrors(new ArrayList<String>()); 
+                if(extId.getType() != null)
+                    extId.getType().setErrors(new ArrayList<String>());
+                if(extId.getUrl() != null)
+                    extId.getUrl().setErrors(new ArrayList<String>());                    
                 if (!PojoUtil.isEmpty(extId.getType()) && extId.getType().getValue().length() > 255)
                     setError(extId.getType(), "fundings.lenght_less_255");
                 if (!PojoUtil.isEmpty(extId.getUrl()) && extId.getUrl().getValue().length() > 350)

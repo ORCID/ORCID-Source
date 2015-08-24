@@ -794,7 +794,7 @@ public class OauthConfirmAccessController extends BaseController {
     private boolean hasPersistenTokensEnabled(String clientId) throws IllegalArgumentException {
         ClientDetailsEntity clientDetails = clientDetailsManager.findByClientId(clientId);
         if (clientDetails == null)
-            throw new IllegalArgumentException("Invalid client details id");
+            throw new IllegalArgumentException(getMessage("web.orcid.oauth_invalid_client.exception"));
         return clientDetails.isPersistentTokensEnabled();
     }
 }

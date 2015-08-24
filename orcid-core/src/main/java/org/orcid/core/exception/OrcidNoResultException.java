@@ -16,15 +16,33 @@
  */
 package org.orcid.core.exception;
 
+import java.util.Map;
+
 /**
  * 
- * @author Will Simpson
- *
+ * @author Shobhit Tyagi
+ * 
  */
-public class OrcidNotificationAlreadyReadException extends ApplicationException {
+public class OrcidNoResultException extends ApplicationException {
 
     private static final long serialVersionUID = 1L;
 
-    public OrcidNotificationAlreadyReadException() {
+    public OrcidNoResultException() {
+    }
+
+    public OrcidNoResultException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public OrcidNoResultException(String message) {
+        super(message);
+    }
+
+    public OrcidNoResultException(Throwable cause) {
+        super(cause);
+    }
+
+    public OrcidNoResultException(Map<String, String> params) {
+        super(params);
     }
 }
