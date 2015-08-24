@@ -718,8 +718,9 @@ public class WorksController extends BaseWorkspaceController {
             setError(work, "manual_work_form_contents.edit_work.undefined_id");
         } else {
             boolean exists = false;
-            for (Work existingWork : works) {
-                if (existingWork.getPutCode().equals(work.getPutCode().getValue())) {
+            Long putCode = Long.valueOf(work.getPutCode().getValue());
+            for (Work existingWork : works) {                                
+                if (existingWork.getPutCode().equals(putCode)) {
                     exists = true;
                     break;
                 }
