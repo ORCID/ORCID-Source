@@ -92,7 +92,7 @@ public class JpaJaxbEducationAdapterTest {
         Education education = jpaJaxbEducationAdapter.toEducation(entity);
         assertNotNull(education);
         assertEquals("education:department", education.getDepartmentName());
-        assertEquals("123456", education.getPutCode());
+        assertEquals(Long.valueOf(123456), education.getPutCode());
         assertEquals("education:title", education.getRoleTitle());
         assertEquals("private", education.getVisibility().value());
         assertNotNull(education.getStartDate());
@@ -109,8 +109,8 @@ public class JpaJaxbEducationAdapterTest {
         assertEquals("org:region", education.getOrganization().getAddress().getRegion());
         assertEquals(org.orcid.jaxb.model.common.Iso3166Country.US, education.getOrganization().getAddress().getCountry());
         assertNotNull(education.getSource());        
-        assertNotNull(education.getSource().getSourceOrcid());
-        assertEquals("APP-000000001", education.getSource().getSourceOrcid().getPath());
+        assertNotNull(education.getSource().retrieveSourcePath());
+        assertEquals("APP-000000001", education.getSource().retrieveSourcePath());
     }
     
     @Test
@@ -120,7 +120,7 @@ public class JpaJaxbEducationAdapterTest {
         EducationSummary educationSummary = jpaJaxbEducationAdapter.toEducationSummary(entity);
         assertNotNull(educationSummary);
         assertEquals("education:department", educationSummary.getDepartmentName());
-        assertEquals("123456", educationSummary.getPutCode());
+        assertEquals(Long.valueOf(123456), educationSummary.getPutCode());
         assertEquals("education:title", educationSummary.getRoleTitle());
         assertEquals("private", educationSummary.getVisibility().value());
         assertNotNull(educationSummary.getStartDate());
@@ -131,8 +131,8 @@ public class JpaJaxbEducationAdapterTest {
         assertEquals("02", educationSummary.getEndDate().getMonth().getValue());
         assertEquals("02", educationSummary.getEndDate().getDay().getValue());        
         assertNotNull(educationSummary.getSource());
-        assertNotNull(educationSummary.getSource().getSourceOrcid());
-        assertEquals("APP-000000001", educationSummary.getSource().getSourceOrcid().getPath());
+        assertNotNull(educationSummary.getSource().retrieveSourcePath());
+        assertEquals("APP-000000001", educationSummary.getSource().retrieveSourcePath());
     }
 
     private Education getEducation(boolean full) throws JAXBException {

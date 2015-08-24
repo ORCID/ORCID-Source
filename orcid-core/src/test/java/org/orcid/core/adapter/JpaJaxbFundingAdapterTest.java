@@ -111,7 +111,7 @@ public class JpaJaxbFundingAdapterTest {
 
         Funding funding = jpaJaxbFundingAdapter.toFunding(entity);
         assertNotNull(funding);
-        assertEquals("12345", funding.getPutCode());
+        assertEquals(Long.valueOf(12345), funding.getPutCode());
         assertNotNull(funding.getAmount());
         assertEquals("123456", funding.getAmount().getContent());
         assertEquals("CRC", funding.getAmount().getCurrencyCode());
@@ -146,7 +146,7 @@ public class JpaJaxbFundingAdapterTest {
         assertEquals("123456", entity.getNumericAmount().toString());
         FundingSummary summary = jpaJaxbFundingAdapter.toFundingSummary(entity);
         assertNotNull(summary);
-        assertEquals("12345", summary.getPutCode());
+        assertEquals(Long.valueOf(12345), summary.getPutCode());
         assertNotNull(summary.getStartDate());
         assertEquals("01", summary.getStartDate().getDay().getValue());
         assertEquals("01", summary.getStartDate().getMonth().getValue());
