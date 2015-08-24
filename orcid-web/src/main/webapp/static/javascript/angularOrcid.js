@@ -5028,6 +5028,7 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
 	$scope.showPeerReviewDetails = {};
 	$scope.showElement = {};
 	$scope.sortState = new ActSortState(GroupedActivities.PEER_REVIEW);
+	$scope.sortHideOption = true;
 	$scope.displayURLPopOver = {};	
     
     $scope.sort = function(key) {
