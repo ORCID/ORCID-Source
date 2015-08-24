@@ -89,7 +89,7 @@ public class GroupIdRecord {
     protected Source source;
     @XmlAttribute(name = "put-code")
     @ApiModelProperty(hidden = true) 
-    protected String putCode;
+    protected Long putCode;
     @XmlElement(name = "last-modified-date", namespace = "http://www.orcid.org/ns/common")
     protected LastModifiedDate lastModifiedDate;
     @XmlElement(name = "created-date", namespace = "http://www.orcid.org/ns/common")
@@ -187,11 +187,11 @@ public class GroupIdRecord {
         this.source = source;
     }
 
-    public String getPutCode() {
+    public Long getPutCode() {
         return putCode;
     }
 
-    public void setPutCode(String putCode) {
+    public void setPutCode(Long putCode) {
         this.putCode = putCode;
     }
 

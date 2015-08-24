@@ -150,7 +150,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(summary.getPeerReviews());
         assertEquals(1, summary.getPeerReviews().getPeerReviewGroup().size());
         PeerReviewSummary peerReviewSummary = summary.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0); 
-        assertEquals("1", peerReviewSummary.getPutCode());
+        assertEquals(Long.valueOf(1), peerReviewSummary.getPutCode());
         assertNotNull(peerReviewSummary.getCompletionDate());
         assertEquals("01", peerReviewSummary.getCompletionDate().getDay().getValue());
         assertEquals("01", peerReviewSummary.getCompletionDate().getMonth().getValue());
@@ -203,7 +203,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(work.getWorkTitle());
         assertNotNull(work.getWorkTitle().getTitle());
         assertEquals("Journal article A", work.getWorkTitle().getTitle().getContent());
-        assertEquals("5", work.getPutCode());
+        assertEquals(Long.valueOf(5), work.getPutCode());
         assertEquals("/4444-4444-4444-4446/work/5", work.getPath());
         assertEquals(WorkType.JOURNAL_ARTICLE, work.getWorkType());
     }
@@ -369,7 +369,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         GroupIdRecord groupIdRecord = (GroupIdRecord) response.getEntity();
         assertNotNull(groupIdRecord);        
-        assertEquals(Long.valueOf("2"), groupIdRecord.getPutCode());
+        assertEquals(Long.valueOf(2), groupIdRecord.getPutCode());
         assertEquals("issn:0000002", groupIdRecord.getGroupId());
         assertEquals("TestGroup2", groupIdRecord.getName());
         assertEquals("TestDescription2", groupIdRecord.getDescription());

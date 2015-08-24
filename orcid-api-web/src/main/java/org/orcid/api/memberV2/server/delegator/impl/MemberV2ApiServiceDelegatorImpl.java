@@ -394,7 +394,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     public Response createGroupIdRecord(GroupIdRecord groupIdRecord) {
         GroupIdRecord newRecord = groupIdRecordManager.createGroupIdRecord(groupIdRecord);
         try {
-            return Response.created(new URI(newRecord.getPutCode())).build();
+            return Response.created(new URI(String.valueOf(newRecord.getPutCode()))).build();
         } catch (URISyntaxException ex) {
             throw new RuntimeException(localeManager.resolveMessage("apiError.creategroupidrecord_response.exception"), ex);
         }
@@ -406,7 +406,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
         if (!putCode.equals(groupIdRecord.getPutCode())) {
             Map<String, String> params = new HashMap<String, String>();
             params.put("urlPutCode", String.valueOf(putCode));
-            params.put("bodyPutCode", groupIdRecord.getPutCode());
+            params.put("bodyPutCode", String.valueOf(groupIdRecord.getPutCode()));
             throw new MismatchedPutCodeException(params);
         }
         GroupIdRecord updatedRecord = groupIdRecordManager.updateGroupIdRecord(putCode, groupIdRecord);
