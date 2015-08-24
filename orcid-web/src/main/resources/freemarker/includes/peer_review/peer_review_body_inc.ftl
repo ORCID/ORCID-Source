@@ -75,6 +75,6 @@
     	<img src="${staticCdn}/img/spin-big.gif" width="85" height ="85"/>
     <![endif]-->
 </div>
-<div ng-show="peerReviewSrvc.loading == false && peerReviewSrvc.groups.length == 0" class="" ng-cloak>
-    <strong><#if (publicProfile)?? && publicProfile == true>${springMacroRequestContext.getMessage("workspace_peer_review_body_list.Nopublicationsaddedyet")}<#else>${springMacroRequestContext.getMessage("workspace_peer_review_body_list.havenotaddedanypeerreviews")} <a ng-click="addPeerReviewModal()">${springMacroRequestContext.getMessage("workspace_peer_review_body_list.addsomenow")}</a></#if></strong>
+<div ng-show="peerReviewSrvc.loading == false && peerReviewSrvc.groups.length == 0" ng-cloak>
+    <strong><#if (publicProfile)?? && publicProfile == true>${springMacroRequestContext.getMessage("workspace_peer_review_body_list.Nopublicationsaddedyet")}<#else>${springMacroRequestContext.getMessage("workspace_peer_review_body_list.havenotaddedanypeerreviews")} <a ng-click="showPeerReviewImportWizard()" class="no-wrap">${springMacroRequestContext.getMessage("workspace_peer_review_body_list.addsomenow")}</a></#if></strong>
 </div>

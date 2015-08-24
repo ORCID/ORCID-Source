@@ -5029,7 +5029,8 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
 	$scope.showElement = {};
 	$scope.sortState = new ActSortState(GroupedActivities.PEER_REVIEW);
 	$scope.sortHideOption = true;
-	$scope.displayURLPopOver = {};	
+	$scope.displayURLPopOver = {};
+	$scope.peerReviewImportWizard = false;
     
     $scope.sort = function(key) {
         $scope.sortState.sortBy(key);
@@ -5302,6 +5303,10 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
     
     $scope.moreInfoActive = function(groupID){
     	if ($scope.moreInfo[groupID] == true || $scope.moreInfo[groupID] != null) return 'truncate-anchor';
+    };
+    
+    $scope.showPeerReviewImportWizard = function(){
+    	$scope.peerReviewImportWizard = !$scope.peerReviewImportWizard;
     };
         
     //Init
