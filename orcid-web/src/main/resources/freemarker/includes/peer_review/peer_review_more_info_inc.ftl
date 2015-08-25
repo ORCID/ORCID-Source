@@ -22,7 +22,9 @@
 		<!--  <span class="dotted-bar"></span> -->
 		<div class="row">
 			<div class="col-md-12">
-				<div><span class="italic"></span></div>
+				<div class="group-summary-details">
+					<span class="italic" ng-show="peerReviewSrvc.groupType" ng-bind="peerReviewSrvc.groupType"></span><span ng-show="peerReviewSrvc.groupDescription">, </span><span ng-show="peerReviewSrvc.groupDescription" ng-bind="peerReviewSrvc.groupDescription"></span>
+				</div>
 			</div>
 			<div class="peer-review-list-container">
 				<ul class="sources-edit-list">
@@ -49,7 +51,7 @@
 					
 					<li ng-repeat="peerReview in group.activities">
 						<!-- Active row -->
-						<div class="row source-line">
+						<div class="row source-line-peer-review">
 							<div class="col-md-3 col-sm-3 col-xs-3">
 								<span ng-show="peerReview.completionDate.year">{{peerReview.completionDate.year}}</span><span ng-show="peerReview.completionDate.month">-{{peerReview.completionDate.month}}</span><span ng-show="peerReview.completionDate.year">
 							</div>
@@ -60,9 +62,15 @@
                         		{{peerReview.role.value}}
                         	</div>
                         	<div class="col-md-4 col-sm-4 col-xs-4">                        		
-                        		<span class="pull-right">
-                        			<a ng-click="showMoreDetails(peerReview.putCode.value); group.activePutCode = peerReview.putCode.value;" ng-hide="showPeerReviewDetails[peerReview.putCode.value] == true" ng-show="group.activePutCode != peerReview.putCode.value || showPeerReviewDetails[peerReview.putCode.value] == null">show details</a> 
-                        			<a ng-click="hideMoreDetails(peerReview.putCode.value);" ng-show="showPeerReviewDetails[peerReview.putCode.value] == true" ng-hide="group.activePutCode != peerReview.putCode.value || showPeerReviewDetails[peerReview.putCode.value] == null">hide details</a> | 
+                        		<span class="pull-right"> 
+                        			<a ng-click="showMoreDetails(peerReview.putCode.value); group.activePutCode = peerReview.putCode.value;" ng-hide="showPeerReviewDetails[peerReview.putCode.value] == true" ng-show="group.activePutCode != peerReview.putCode.value || showPeerReviewDetails[peerReview.putCode.value] == null">
+                        				<span class="glyphicons expand"></span>
+                        				show details
+                        			</a> 
+                        			<a ng-click="hideMoreDetails(peerReview.putCode.value);" ng-show="showPeerReviewDetails[peerReview.putCode.value] == true" ng-hide="group.activePutCode != peerReview.putCode.value || showPeerReviewDetails[peerReview.putCode.value] == null">
+                        				<span class="glyphicons collapse_top"></span>
+                        				hide details
+                        			</a> | 
                         			<a href="{{peerReview.url.value}}" ng-show="peerReview.url != null" target="_blank"><span>view</span></a><span ng-show="peerReview.url == null">view</span>
                         			 <#if !(isPublicProfile??)>
                         				<a ng-click="deletePeerReviewConfirm(group.getActive().putCode.value, false)"> | <span class="glyphicon glyphicon-trash"></span></a>
@@ -73,18 +81,18 @@
 						 
 						<!-- Details row -->
 						<div class="row" ng-show="showPeerReviewDetails[peerReview.putCode.value] == true && group.activePutCode == peerReview.putCode.value;">
-							<div class="col-md-12" ng-show="peerReview.externalIdentifiers[0].workExternalIdentifierId.value != null" ng-cloak>
-								<span class="workspace-title">Review identifier(s): </span><br/> 
-								<div ng-repeat='ie in peerReview.externalIdentifiers'><span
-					             	ng-bind-html='ie | peerReviewExternalIdentifierHtml:$first:$last:peerReview.externalIdentifiers.length:showDetails[group.groupId]'></span>					        
-					            </div>					            
+							<div class="col-md-12 info-detail" ng-show="peerReview.externalIdentifiers[0].workExternalIdentifierId.value != null" ng-cloak>
+								<span class="workspace-title">Review identifier(s):&nbsp;</span> 
+								<span ng-repeat='ie in peerReview.externalIdentifiers'><span
+					             	ng-bind-html='ie | peerReviewExternalIdentifierHtml:$first:$last:peerReview.externalIdentifiers.length:showDetails[group.groupId]:false'></span>					        
+					            </span>					            
 						    </div>
 						    <div class="col-md-12 info-detail" ng-show="peerReview.orgName.value != null" ng-cloak>
-								<span class="workspace-title">Convening organization: </span><span>{{peerReview.orgName.value}}</span><span> ({{peerReview.city.value}}, {{peerReview.countryForDisplay}})</span>
+								<span class="workspace-title">Convening organization:&nbsp;</span><span>{{peerReview.orgName.value}}</span><span> ({{peerReview.city.value}}, {{peerReview.countryForDisplay}})</span>
 							</div>
-							<div class="col-md-12">
+							<div class="col-md-12 info-detail">
 								<span ng-show="peerReview.subjectName.value != null">
-									<span class="workspace-title">Review subject: </span>									
+									<span class="workspace-title">Review subject:&nbsp;</span>									
 									<span>{{peerReview.subjectName.value}}</span>
 								</span>
 								<span ng-show="peerReview.subjectName.value != null">
@@ -94,7 +102,7 @@
 									{{peerReview.subjectContainerName.value}}.
 								</span><span ng-show="peerReview.subjectExternalIdentifier.workExternalIdentifierId.value != null" ng-cloak>
 									<span ng-repeat='ie in peerReview'><span
-						             	ng-bind-html='ie | peerReviewExternalIdentifierHtml:$first:$last:peerReview.subjectExternalIdentifier.length:showDetails[group.groupId]'></span>					        
+						             	ng-bind-html='ie | peerReviewExternalIdentifierHtml:$first:$last:peerReview.subjectExternalIdentifier.length:showDetails[group.groupId]:true'></span>					        
 						            </span>					            
 							    </span>							    
 							</div>							

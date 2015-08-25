@@ -184,7 +184,7 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
             return Response.status(Response.Status.NOT_FOUND).entity(entity).build();
         } else {
             OrcidMessage entity = getLegacy500OrcidEntity(t);
-            return Response.serverError().entity(entity).build();
+            return Response.status(getHttpStatusAndErrorCode(t).getKey()).entity(entity).build();
         }
     }
 
