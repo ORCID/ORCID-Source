@@ -32,7 +32,7 @@
                           <ul class="workspace-private-toolbar">
                               <#if !(isPublicProfile??)>
                                   <!-- Privacy -->
-                                  <li>
+                                  <li ng-repeat="peerReview in group.activities" ng-show="$last"> <!-- Currently showing the privacy setting for the last item, but if the privacy setting is changed it is going to apply for the group -->
                                       <@orcid.privacyToggle2 angularModel="peerReview.visibility"
                                           questionClick="toggleClickPrivacyHelp(group.highestVis())"
                                           clickedClassCheck="{'popover-help-container-show':privacyHelp[peerReview.putCode.value]==true}"
