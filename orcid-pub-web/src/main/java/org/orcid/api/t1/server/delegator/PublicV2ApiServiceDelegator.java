@@ -24,21 +24,21 @@ public interface PublicV2ApiServiceDelegator {
     
     Response viewActivities(String orcid);
     
-    Response viewWork(String orcid, String putCode);
+    Response viewWork(String orcid, Long putCode);
     
-    Response viewWorkSummary(String orcid, String putCode);
+    Response viewWorkSummary(String orcid, Long putCode);
     
-    Response viewFunding(String orcid, String putCode);
+    Response viewFunding(String orcid, Long putCode);
     
-    Response viewFundingSummary(String orcid, String putCode);
+    Response viewFundingSummary(String orcid, Long putCode);
     
-    Response viewEducation(String orcid, String putCode);
+    Response viewEducation(String orcid, Long putCode);
     
-    Response viewEducationSummary(String orcid, String putCode);
+    Response viewEducationSummary(String orcid, Long putCode);
     
-    Response viewEmployment(String orcid, String putCode);
+    Response viewEmployment(String orcid, Long putCode);
     
-    Response viewEmploymentSummary(String orcid, String putCode);    
+    Response viewEmploymentSummary(String orcid, Long putCode);    
     
     Response viewPeerReview(String orcid, Long putCode);
     

@@ -156,14 +156,14 @@ public class AdminManagerImpl implements AdminManager {
                         // Remove funding
                         if (deprecated.getProfileFunding() != null) {
                             for(ProfileFundingEntity funding : deprecated.getProfileFunding()) {
-                                profileFundingManager.removeProfileFunding(funding.getProfile().getId(), funding.getId().toString());
+                                profileFundingManager.removeProfileFunding(funding.getProfile().getId(), funding.getId());
                             }
                         }
                         
                         // Remove affiliations
                         if (deprecated.getOrgAffiliationRelations() != null) {
                             for(OrgAffiliationRelationEntity affiliation : deprecated.getOrgAffiliationRelations()) {                    
-                                orgRelationAffiliationDao.removeOrgAffiliationRelation(affiliation.getProfile().getId(), affiliation.getId().toString());
+                                orgRelationAffiliationDao.removeOrgAffiliationRelation(affiliation.getProfile().getId(), affiliation.getId());
                             }
                         }
                         

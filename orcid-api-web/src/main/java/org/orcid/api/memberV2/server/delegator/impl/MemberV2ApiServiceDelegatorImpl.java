@@ -180,11 +180,11 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
 
     @Override
     @AccessControl(requiredScope = ScopePathType.ORCID_WORKS_UPDATE)
-    public Response updateWork(String orcid, String putCode, Work work) {
+    public Response updateWork(String orcid, Long putCode, Work work) {
         if (!putCode.equals(work.getPutCode())) {
             Map<String, String> params = new HashMap<String, String>();
-            params.put("urlPutCode", putCode);
-            params.put("bodyPutCode", work.getPutCode());
+            params.put("urlPutCode", String.valueOf(putCode));
+            params.put("bodyPutCode", String.valueOf(work.getPutCode()));
             throw new MismatchedPutCodeException(params);
         }
         Work w = workManager.updateWork(orcid, work, true);
@@ -229,10 +229,10 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
 
     @Override
     @AccessControl(requiredScope = ScopePathType.FUNDING_UPDATE)
-    public Response updateFunding(String orcid, String putCode, Funding funding) {
+    public Response updateFunding(String orcid, Long putCode, Funding funding) {
         if (!putCode.equals(funding.getPutCode())) {
             Map<String, String> params = new HashMap<String, String>();
-            params.put("urlPutCode", putCode);
+            params.put("urlPutCode", String.valueOf(putCode));
             params.put("bodyPutCode", String.valueOf(funding.getPutCode()));
             throw new MismatchedPutCodeException(params);
         }
@@ -312,10 +312,10 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
 
     @Override
     @AccessControl(requiredScope = ScopePathType.AFFILIATIONS_UPDATE)
-    public Response updateEmployment(String orcid, String putCode, Employment employment) {
+    public Response updateEmployment(String orcid, Long putCode, Employment employment) {
         if (!putCode.equals(employment.getPutCode())) {
             Map<String, String> params = new HashMap<String, String>();
-            params.put("urlPutCode", putCode);
+            params.put("urlPutCode", String.valueOf(putCode));
             params.put("bodyPutCode", String.valueOf(employment.getPutCode()));
             throw new MismatchedPutCodeException(params);
         }
@@ -384,7 +384,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
 
     @Override
     @AccessControl(requiredScope = ScopePathType.GROUP_ID_RECORD_READ)
-    public Response viewGroupIdRecord(String putCode) {
+    public Response viewGroupIdRecord(Long putCode) {
         GroupIdRecord record = groupIdRecordManager.getGroupIdRecord(putCode);
         return Response.ok(record).build();
     }
@@ -394,7 +394,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     public Response createGroupIdRecord(GroupIdRecord groupIdRecord) {
         GroupIdRecord newRecord = groupIdRecordManager.createGroupIdRecord(groupIdRecord);
         try {
-            return Response.created(new URI(newRecord.getPutCode())).build();
+            return Response.created(new URI(String.valueOf(newRecord.getPutCode()))).build();
         } catch (URISyntaxException ex) {
             throw new RuntimeException(localeManager.resolveMessage("apiError.creategroupidrecord_response.exception"), ex);
         }
@@ -402,11 +402,11 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
 
     @Override
     @AccessControl(requiredScope = ScopePathType.GROUP_ID_RECORD_UPDATE)
-    public Response updateGroupIdRecord(GroupIdRecord groupIdRecord, String putCode) {
+    public Response updateGroupIdRecord(GroupIdRecord groupIdRecord, Long putCode) {
         if (!putCode.equals(groupIdRecord.getPutCode())) {
             Map<String, String> params = new HashMap<String, String>();
-            params.put("urlPutCode", putCode);
-            params.put("bodyPutCode", groupIdRecord.getPutCode());
+            params.put("urlPutCode", String.valueOf(putCode));
+            params.put("bodyPutCode", String.valueOf(groupIdRecord.getPutCode()));
             throw new MismatchedPutCodeException(params);
         }
         GroupIdRecord updatedRecord = groupIdRecordManager.updateGroupIdRecord(putCode, groupIdRecord);
@@ -415,7 +415,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
 
     @Override
     @AccessControl(requiredScope = ScopePathType.GROUP_ID_RECORD_UPDATE)
-    public Response deleteGroupIdRecord(String putCode) {
+    public Response deleteGroupIdRecord(Long putCode) {
         groupIdRecordManager.deleteGroupIdRecord(putCode);
         return Response.noContent().build();
     }
