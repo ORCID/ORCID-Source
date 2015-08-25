@@ -32,4 +32,6 @@ public interface GroupIdRecordManager {
     GroupIdRecords getGroupIdRecords(String pageSize, String pageNum);
 
     boolean exists(String groupId);
+    
+    GroupIdRecord findByGroupId(String groupId);
 }

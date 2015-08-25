@@ -19,6 +19,7 @@ package org.orcid.core.manager.impl;
 import java.util.List;
 
 import javax.annotation.Resource;
+import javax.persistence.NoResultException;
 
 import org.orcid.core.adapter.JpaJaxbGroupIdRecordAdapter;
 import org.orcid.core.exception.DuplicatedGroupIdRecordException;
@@ -65,6 +66,16 @@ public class GroupIdRecordManagerImpl implements GroupIdRecordManager {
         return jpaJaxbGroupIdRecordAdapter.toGroupIdRecord(groupIdRecordEntity);
     }
 
+    @Override
+    public GroupIdRecord findByGroupId(String groupId) {
+        try {
+            GroupIdRecordEntity entity = groupIdRecordDao.findByGroupId(groupId);
+            return jpaJaxbGroupIdRecordAdapter.toGroupIdRecord(entity);
+        } catch(NoResultException nre) {
+            return null;
+        }
+    }
+    
     @Override
     public GroupIdRecord createGroupIdRecord(GroupIdRecord groupIdRecord) {
     	SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();

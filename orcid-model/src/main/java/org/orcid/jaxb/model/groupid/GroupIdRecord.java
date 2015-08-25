@@ -27,6 +27,8 @@ import org.orcid.jaxb.model.common.CreatedDate;
 import org.orcid.jaxb.model.common.LastModifiedDate;
 import org.orcid.jaxb.model.common.Source;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import io.swagger.annotations.ApiModelProperty;
 
 /**
@@ -86,12 +88,16 @@ public class GroupIdRecord {
     @XmlElement(namespace = "http://www.orcid.org/ns/group-id", required = true)
     protected String type;
     @XmlElement(namespace = "http://www.orcid.org/ns/common")
+    @JsonIgnore
     protected Source source;
     @XmlAttribute(name = "put-code")
     @ApiModelProperty(hidden = true) 
+    @JsonIgnore
     protected String putCode;
-    @XmlElement(name = "last-modified-date", namespace = "http://www.orcid.org/ns/common")
+    @JsonIgnore
+    @XmlElement(name = "last-modified-date", namespace = "http://www.orcid.org/ns/common")    
     protected LastModifiedDate lastModifiedDate;
+    @JsonIgnore
     @XmlElement(name = "created-date", namespace = "http://www.orcid.org/ns/common")
     protected CreatedDate createdDate;
 
