@@ -23,7 +23,7 @@
 		<div class="row">
 			<div class="col-md-12">
 				<div class="group-summary-details">
-					<span class="italic" ng-show="peerReviewSrvc.groupType" ng-bind="peerReviewSrvc.groupType"></span><span ng-show="peerReviewSrvc.groupDescription">, </span><span ng-show="peerReviewSrvc.groupDescription" ng-bind="peerReviewSrvc.groupDescription"></span>
+					<span class="italic" ng-show="peerReviewSrvc.groupDetails[group.groupRealId].groupType" ng-bind="peerReviewSrvc.groupDetails[group.groupRealId].groupType"></span><span ng-show="peerReviewSrvc.groupDetails[group.groupRealId].groupDescription">, </span><span ng-show="peerReviewSrvc.groupDetails[group.groupRealId].groupDescription" ng-bind="peerReviewSrvc.groupDetails[group.groupRealId].groupDescription"></span>
 				</div>
 			</div>
 			<div class="peer-review-list-container">

@@ -5320,6 +5320,7 @@ orcidNgModule.factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
     var peerReviewSrvc = {
     		constants: { 'access_type': { 'USER': 'user', 'ANONYMOUS': 'anonymous'}},
     		groups: new Array(),
+    		groupDetails: {},
     		loading: false,
             loadingDetails: false,
             quickRef: {},            
@@ -5327,9 +5328,6 @@ orcidNgModule.factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
             blankPeerReview: null,
             details: new Object(), // we should think about putting details in the
             peerReviewsToAddIds: null,
-            groupName: null,
-        	groupDescription: null,
-        	groupType: null,
             getBlankPeerReview: function(callback) {
             	 // if cached return clone of blank
                 if (peerReviewSrvc.blankPeerReview != null)
@@ -5543,19 +5541,22 @@ orcidNgModule.factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
                 return count;
             },
             getPeerReviewGroupDetails: function(groupIDvalue){
+            	peerReviewSrvc.groupDetails[groupIDvalue] = {};
             	$.ajax({
                     url: getBaseUri() + '/peer-reviews/group/' + groupIDvalue,
                     dataType: 'json',
                     type: 'GET',
                     success: function(data) {
                     	$rootScope.$apply(function(){
-                    		peerReviewSrvc.groupName =  data.name;
-	                    	peerReviewSrvc.groupDescription =  data.description;
-	                    	peerReviewSrvc.groupType = data.type;
+                    		peerReviewSrvc.groupDetails[groupIDvalue].groupName = data.name;
+                    		peerReviewSrvc.groupDetails[groupIDvalue].groupDescription = data.description;
+                    		peerReviewSrvc.groupDetails[groupIDvalue].groupType = data.type;
+                    		console.log(peerReviewSrvc.groupDetails[groupIDvalue].groupName);
+                    		
                     	});
                     }
                 }).fail(function(){
-                    console.log("error getPeerReviewGroupDetails(groupID)");
+                    console.log("error getPeerReviewGroupDetails(groupIDvalue)");
                 });
             }
     };
