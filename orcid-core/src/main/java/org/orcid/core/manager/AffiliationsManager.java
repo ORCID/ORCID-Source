@@ -133,4 +133,24 @@ public interface AffiliationsManager {
      * @return true if the affiliation was deleted, false otherwise
      * */
     boolean checkSourceAndDelete(String orcid, String affiliationId);
+    
+    /**
+     * Get the list of employments that belongs to a user
+     * 
+     * @param userOrcid
+     * @param lastModified
+     *          Last modified date used to check the cache
+     * @return the list of employments that belongs to this user
+     * */
+    List<EmploymentSummary> getEmploymentSummaryList(String userOrcid, long lastModified);
+    
+    /**
+     * Get the list of educations that belongs to a user
+     * 
+     * @param userOrcid
+     * @param lastModified
+     *          Last modified date used to check the cache
+     * @return the list of educations that belongs to this user
+     * */
+    List<EducationSummary> getEducationSummaryList(String userOrcid, long lastModified);
 }

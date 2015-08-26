@@ -18,19 +18,23 @@ package org.orcid.api.t1.server.delegator.impl;
 
 import static org.orcid.core.api.OrcidApiConstants.STATUS_OK_MESSAGE;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
 
 import org.orcid.api.common.util.ActivityUtils;
 import org.orcid.api.t1.server.delegator.PublicV2ApiServiceDelegator;
+import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.manager.AffiliationsManager;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.PeerReviewManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileFundingManager;
-import org.orcid.core.manager.ProfileWorkManager;
 import org.orcid.core.manager.SourceManager;
+import org.orcid.core.manager.WorkManager;
 import org.orcid.core.security.visibility.aop.AccessControl;
 import org.orcid.core.security.visibility.filter.VisibilityFilterV2;
 import org.orcid.jaxb.model.message.ScopePathType;
@@ -47,11 +51,13 @@ import org.orcid.jaxb.model.record.summary.PeerReviewSummary;
 import org.orcid.jaxb.model.record.summary.WorkSummary;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.WebhookDao;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.springframework.beans.factory.annotation.Value;
 
 public class PublicV2ApiServiceDelegatorImpl implements PublicV2ApiServiceDelegator {
 
     @Resource
-    private ProfileWorkManager profileWorkManager;
+    private WorkManager workManager;
 
     @Resource
     private ProfileFundingManager profileFundingManager;
@@ -82,6 +88,9 @@ public class PublicV2ApiServiceDelegatorImpl implements PublicV2ApiServiceDelega
 
     @Resource(name = "visibilityFilterV2")
     private VisibilityFilterV2 visibilityFilter;
+    
+	@Value("${org.orcid.core.baseUri}")
+	private String baseUrl;
 
     @Override
     public Response viewStatusText() {
@@ -91,16 +100,25 @@ public class PublicV2ApiServiceDelegatorImpl implements PublicV2ApiServiceDelega
     @Override
     @AccessControl(requiredScope = ScopePathType.READ_PUBLIC, enableAnonymousAccess = true)
     public Response viewActivities(String orcid) {
+    	ProfileEntity entity = profileEntityManager.findByOrcid(orcid);
+    	if(profileDao.isProfileDeprecated(orcid)) {
+    		StringBuffer primary = new StringBuffer(baseUrl).append("/").append(entity.getPrimaryRecord().getId());
+    		Map<String, String> params = new HashMap<String, String>();
+        	params.put("orcid", primary.toString());
+            throw new OrcidDeprecatedException(params);
+        }
         ActivitiesSummary as = profileEntityManager.getPublicActivitiesSummary(orcid);
+        ActivityUtils.cleanEmptyFields(as);
         visibilityFilter.filter(as);
         ActivityUtils.setPathToActivity(as, orcid);
         return Response.ok(as).build();
     }
-
+    
     @Override
     @AccessControl(requiredScope = ScopePathType.READ_PUBLIC, enableAnonymousAccess = true)
     public Response viewWork(String orcid, String putCode) {        
-        Work w = profileWorkManager.getWork(orcid, putCode);
+        Work w = workManager.getWork(orcid, putCode);
+        ActivityUtils.cleanEmptyFields(w);
         orcidSecurityManager.checkVisibility(w);
         ActivityUtils.setPathToActivity(w, orcid);
         return Response.ok(w).build();
@@ -109,7 +127,8 @@ public class PublicV2ApiServiceDelegatorImpl implements PublicV2ApiServiceDelega
     @Override
     @AccessControl(requiredScope = ScopePathType.READ_PUBLIC, enableAnonymousAccess = true)
     public Response viewWorkSummary(String orcid, String putCode) {
-        WorkSummary ws = profileWorkManager.getWorkSummary(orcid, putCode);
+        WorkSummary ws = workManager.getWorkSummary(orcid, putCode);
+        ActivityUtils.cleanEmptyFields(ws);
         orcidSecurityManager.checkVisibility(ws);
         ActivityUtils.setPathToActivity(ws, orcid);
         return Response.ok(ws).build();

@@ -25,7 +25,7 @@ import net.sf.ehcache.Element;
 
 import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.OrcidProfileCacheManager;
-import org.orcid.core.manager.OrcidProfileManager;
+import org.orcid.core.manager.OrcidProfileManagerReadOnly;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.utils.ReleaseNameUtils;
 import org.slf4j.Logger;
@@ -33,8 +33,7 @@ import org.slf4j.LoggerFactory;
 
 public class OrcidProfileCacheManagerImpl implements OrcidProfileCacheManager {
 
-    @Resource
-    private OrcidProfileManager orcidProfileManager;
+    private OrcidProfileManagerReadOnly orcidProfileManager;
 
     @Resource(name = "publicProfileCache")
     private Cache publicProfileCache;
@@ -48,6 +47,10 @@ public class OrcidProfileCacheManagerImpl implements OrcidProfileCacheManager {
     private String releaseName = ReleaseNameUtils.getReleaseName();
 
     private static final Logger LOG = LoggerFactory.getLogger(OrcidProfileCacheManagerImpl.class);
+    
+    public void setOrcidProfileManager(OrcidProfileManagerReadOnly orcidProfileManager) {
+        this.orcidProfileManager = orcidProfileManager;
+    }
 
     @Override
     public OrcidProfile retrievePublic(String orcid) {
@@ -59,7 +62,7 @@ public class OrcidProfileCacheManagerImpl implements OrcidProfileCacheManager {
                 synchronized (pubLocks.obtainLock(orcid)) {
                     op = toOrcidProfile(publicProfileCache.get(orcid));
                     if (needsFresh(dbDate, op)) {
-                        op = orcidProfileManager.retrievePublic(orcid);
+                        op = orcidProfileManager.retrievePublicOrcidProfile(orcid);
                         publicProfileCache.put(new Element(key, op));
                     }
                 }

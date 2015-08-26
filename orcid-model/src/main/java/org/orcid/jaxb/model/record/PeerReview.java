@@ -31,34 +31,47 @@ import org.orcid.jaxb.model.common.LastModifiedDate;
 import org.orcid.jaxb.model.common.Organization;
 import org.orcid.jaxb.model.common.OrganizationHolder;
 import org.orcid.jaxb.model.common.Source;
+import org.orcid.jaxb.model.common.Title;
 import org.orcid.jaxb.model.common.Url;
 import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.jaxb.model.common.VisibilityType;
 
+import io.swagger.annotations.ApiModelProperty;
+
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "createdDate", "lastModifiedDate", "source", "putCode", "path", "role", "organization", "externalIdentifiers", "url", "type", "completionDate",
-        "subject" })
+@XmlType(propOrder = { "createdDate", "lastModifiedDate", "source", "role", "externalIdentifiers", "url", "type",  "completionDate",
+        "groupId", "subjectExternalIdentifier", "subjectContainerName", "subjectType", "subjectName", "subjectUrl", "organization" })
 @XmlRootElement(name = "peer-review", namespace = "http://www.orcid.org/ns/peer-review")
 public class PeerReview implements VisibilityType, Activity, Serializable, OrganizationHolder {
     private static final long serialVersionUID = -1112309604310926743L;
-    @XmlElement(namespace = "http://www.orcid.org/ns/peer-review")
+    @XmlElement(namespace = "http://www.orcid.org/ns/peer-review", name = "reviewer-role")
     protected Role role;
-    @XmlElement(required = true, namespace = "http://www.orcid.org/ns/peer-review")
-    protected Organization organization;
-    @XmlElement(namespace = "http://www.orcid.org/ns/peer-review", name = "external-identifiers")
+    @XmlElement(namespace = "http://www.orcid.org/ns/peer-review", name = "review-identifiers")
     protected WorkExternalIdentifiers externalIdentifiers;
-    @XmlElement(namespace = "http://www.orcid.org/ns/peer-review")
+    @XmlElement(namespace = "http://www.orcid.org/ns/peer-review", name = "review-url")
     protected Url url;
-    @XmlElement(namespace = "http://www.orcid.org/ns/peer-review")
+    @XmlElement(namespace = "http://www.orcid.org/ns/peer-review", name = "review-type")
     protected PeerReviewType type;
-    @XmlElement(namespace = "http://www.orcid.org/ns/peer-review", name = "completion-date")
+    @XmlElement(namespace = "http://www.orcid.org/ns/peer-review", name = "review-completion-date")
     protected FuzzyDate completionDate;
-    @XmlElement(namespace = "http://www.orcid.org/ns/peer-review")
-    protected Subject subject;
-
+    @XmlElement(namespace = "http://www.orcid.org/ns/peer-review", name = "review-group-id", required = true)
+    protected String groupId;
+    @XmlElement(namespace = "http://www.orcid.org/ns/peer-review", name = "subject-external-identifier")
+    protected WorkExternalIdentifier subjectExternalIdentifier;
+    @XmlElement(namespace = "http://www.orcid.org/ns/peer-review", name = "subject-container-name")
+    protected Title subjectContainerName;
+    @XmlElement(namespace = "http://www.orcid.org/ns/peer-review", name = "subject-type")
+    protected WorkType subjectType;
+    @XmlElement( namespace = "http://www.orcid.org/ns/peer-review", name = "subject-name")
+    protected WorkTitle subjectName;
+    @XmlElement(namespace = "http://www.orcid.org/ns/peer-review", name = "subject-url")
+    protected Url subjectUrl;
+    @XmlElement(required = true, namespace = "http://www.orcid.org/ns/peer-review", name = "convening-organization")
+    protected Organization organization;
     @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected Source source;
     @XmlAttribute(name = "put-code")
+    @ApiModelProperty(hidden = true) 
     protected String putCode;
     @XmlAttribute
     protected Visibility visibility;
@@ -68,7 +81,7 @@ public class PeerReview implements VisibilityType, Activity, Serializable, Organ
     protected LastModifiedDate lastModifiedDate;
     @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "created-date")
     protected CreatedDate createdDate;
-
+    
     public Role getRole() {
         return role;
     }
@@ -165,12 +178,52 @@ public class PeerReview implements VisibilityType, Activity, Serializable, Organ
         this.createdDate = createdDate;
     }
 
-    public Subject getSubject() {
-        return subject;
+    public String getGroupId() {
+        return groupId;
     }
 
-    public void setSubject(Subject subject) {
-        this.subject = subject;
+    public void setGroupId(String groupId) {
+        this.groupId = groupId;
+    }
+
+    public WorkExternalIdentifier getSubjectExternalIdentifier() {
+        return subjectExternalIdentifier;
+    }
+
+    public void setSubjectExternalIdentifier(WorkExternalIdentifier subjectExternalIdentifier) {
+        this.subjectExternalIdentifier = subjectExternalIdentifier;
+    }
+
+    public Title getSubjectContainerName() {
+        return subjectContainerName;
+    }
+
+    public void setSubjectContainerName(Title subjectContainerName) {
+        this.subjectContainerName = subjectContainerName;
+    }
+
+    public WorkType getSubjectType() {
+        return subjectType;
+    }
+
+    public void setSubjectType(WorkType subjectType) {
+        this.subjectType = subjectType;
+    }
+
+    public WorkTitle getSubjectName() {
+        return subjectName;
+    }
+
+    public void setSubjectName(WorkTitle subjectName) {
+        this.subjectName = subjectName;
+    }
+
+    public Url getSubjectUrl() {
+        return subjectUrl;
+    }
+
+    public void setSubjectUrl(Url subjectUrl) {
+        this.subjectUrl = subjectUrl;
     }
 
     @Override
@@ -192,10 +245,14 @@ public class PeerReview implements VisibilityType, Activity, Serializable, Organ
         result = prime * result + ((organization == null) ? 0 : organization.hashCode());
         result = prime * result + ((role == null) ? 0 : role.hashCode());
         result = prime * result + ((source == null) ? 0 : source.hashCode());
-        result = prime * result + ((subject == null) ? 0 : subject.hashCode());
         result = prime * result + ((type == null) ? 0 : type.hashCode());
         result = prime * result + ((url == null) ? 0 : url.hashCode());
         result = prime * result + ((visibility == null) ? 0 : visibility.hashCode());
+        result = prime * result + ((subjectExternalIdentifier == null) ? 0 : subjectExternalIdentifier.hashCode());
+        result = prime * result + ((subjectContainerName == null) ? 0 : subjectContainerName.hashCode());
+        result = prime * result + ((subjectType == null) ? 0 : subjectType.hashCode());
+        result = prime * result + ((subjectName == null) ? 0 : subjectName.hashCode());
+        result = prime * result + ((subjectUrl == null) ? 0 : subjectUrl.hashCode());
         return result;
     }
 
@@ -245,12 +302,7 @@ public class PeerReview implements VisibilityType, Activity, Serializable, Organ
             if (other.source != null)
                 return false;
         } else if (!source.equals(other.source))
-            return false;
-        if (subject == null) {
-            if (other.subject != null)
-                return false;
-        } else if (!subject.equals(other.subject))
-            return false;
+            return false;       
         if (type != other.type)
             return false;
         if (url == null) {
@@ -258,6 +310,36 @@ public class PeerReview implements VisibilityType, Activity, Serializable, Organ
                 return false;
         } else if (!url.equals(other.url))
             return false;
+        if(subjectExternalIdentifier == null) {
+            if(other.subjectExternalIdentifier != null)
+                return false;
+        } else if(!subjectExternalIdentifier.equals(other.subjectExternalIdentifier)) {
+            return false;
+        }        
+        if(subjectContainerName == null) {
+            if(other.subjectContainerName != null)
+                return false;
+        } else if(!subjectContainerName.equals(other.subjectContainerName)) {
+            return false;
+        }
+        if(subjectType == null) {
+            if(other.subjectType != null)
+                return false;
+        } else if(!subjectType.equals(other.subjectType)) {
+            return false;
+        }        
+        if(subjectName == null) {
+            if(other.subjectName != null)
+                return false;
+        } else if(!subjectName.equals(other.subjectName)) {
+            return false;
+        }       
+        if(subjectUrl == null) {
+            if(other.subjectUrl != null)
+                return false;
+        } else if(!subjectUrl.equals(other.subjectUrl)) {
+            return false;
+        }        
         if (visibility != other.visibility)
             return false;
 

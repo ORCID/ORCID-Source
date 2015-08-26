@@ -31,6 +31,8 @@ import javax.xml.bind.annotation.XmlValue;
 
 import org.apache.commons.lang.StringUtils;
 
+import io.swagger.annotations.ApiModelProperty;
+
 import java.io.Serializable;
 
 /**
@@ -50,6 +52,7 @@ public class Month implements Serializable {
      */
     private static final long serialVersionUID = 1L;
     @XmlValue
+    @ApiModelProperty(example = "01")
     protected String value;
 
     public Month() {

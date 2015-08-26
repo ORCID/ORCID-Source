@@ -107,7 +107,7 @@ public class OrcidClientDataHelper implements InitializingBean {
 
     public OrcidMessage createSponsor() throws JAXBException {
         OrcidMessage message = createFromXML(ORCID_INTERNAL_SPONSOR_XML);
-        OrcidProfile orcidProfile = orcidProfileManager.createOrcidProfile(message.getOrcidProfile(), false);
+        OrcidProfile orcidProfile = orcidProfileManager.createOrcidProfile(message.getOrcidProfile(), false, false);
         message.setOrcidProfile(orcidProfile);
         return message;
     }
@@ -190,7 +190,7 @@ public class OrcidClientDataHelper implements InitializingBean {
     }
 
     public void deleteOrcidProfile(String orcid) throws Exception {
-        if (!StringUtils.isBlank(orcid)) {
+        if (!StringUtils.isBlank(orcid)) {           
             orcidProfileManager.deleteProfile(orcid);
         }
     }

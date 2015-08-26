@@ -47,7 +47,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.orcid.core.exception.OrcidBadRequestException;
+import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.oauth.OrcidOAuth2Authentication;
 import org.orcid.jaxb.model.message.Affiliation;
@@ -96,9 +96,8 @@ import com.sun.jersey.api.uri.UriBuilderImpl;
 public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
 
     private static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml", "/data/SecurityQuestionEntityData.xml",
-            "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/WorksEntityData.xml", "/data/ProfileWorksEntityData.xml",
-            "/data/ClientDetailsEntityData.xml", "/data/Oauth2TokenDetailsData.xml", "/data/OrgsEntityData.xml", "/data/ProfileFundingEntityData.xml",
-            "/data/OrgAffiliationEntityData.xml");
+            "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/WorksEntityData.xml", "/data/ClientDetailsEntityData.xml", 
+            "/data/Oauth2TokenDetailsData.xml", "/data/OrgsEntityData.xml", "/data/ProfileFundingEntityData.xml", "/data/OrgAffiliationEntityData.xml");
 
     @Resource(name = "t2OrcidApiServiceDelegatorV1_2")
     private T2OrcidApiServiceDelegator t2OrcidApiServiceDelegatorV2_1;
@@ -166,7 +165,7 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
         assertNotNull(response);
     }
 
-    @Test(expected = OrcidBadRequestException.class)
+    @Test(expected = OrcidValidationException.class)
     public void testCreateBioWithMultiplePrimaryEmails() {
         setUpSecurityContextForClientOnly();
         OrcidMessage orcidMessage = createStubOrcidMessage();
@@ -221,7 +220,7 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
         assertEquals("Test credit name", retrievedMessage.getOrcidProfile().getOrcidBio().getPersonalDetails().getCreditName().getContent());
     }
 
-    @Test(expected = OrcidBadRequestException.class)
+    @Test(expected = OrcidValidationException.class)
     public void testAttemptCreateWithLaterButOtherwiseValidVersion() {
         setUpSecurityContextForClientOnly();
         OrcidMessage orcidMessage = createStubOrcidMessage();
@@ -232,7 +231,7 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
         t2OrcidApiServiceDelegatorV2_1.createProfile(mockedUriInfo, orcidMessage);
     }
 
-    @Test(expected = OrcidBadRequestException.class)
+    @Test(expected = OrcidValidationException.class)
     public void testAttemptCreateWithTotallyIncorrectVersion() {
         setUpSecurityContextForClientOnly();
         OrcidMessage orcidMessage = createStubOrcidMessage();
@@ -393,7 +392,7 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
             history.setClaimed(new Claimed(false));
             orcidMessage.getOrcidProfile().setOrcidHistory(history);
             t2OrcidApiServiceDelegatorLatest.createProfile(mockedUriInfo, orcidMessage);
-        } catch(OrcidBadRequestException obe) {
+        } catch(OrcidValidationException obe) {
             assertTrue(obe.getMessage().contains("Claimed status should not be specified when creating a profile"));
         }
         
@@ -403,7 +402,7 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
             history.setCreationMethod(CreationMethod.API);
             orcidMessage.getOrcidProfile().setOrcidHistory(history);
             t2OrcidApiServiceDelegatorLatest.createProfile(mockedUriInfo, orcidMessage);
-        } catch(OrcidBadRequestException obe) {
+        } catch(OrcidValidationException obe) {
             assertTrue(obe.getMessage().contains("Creation method should not be specified when creating a profile"));
         }
         
@@ -413,7 +412,7 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
             history.setCompletionDate(new CompletionDate());
             orcidMessage.getOrcidProfile().setOrcidHistory(history);
             t2OrcidApiServiceDelegatorLatest.createProfile(mockedUriInfo, orcidMessage);
-        } catch(OrcidBadRequestException obe) {
+        } catch(OrcidValidationException obe) {
             assertTrue(obe.getMessage().contains("Completion date should not be specified when creating a profile"));
         }
         
@@ -423,7 +422,7 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
             history.setSubmissionDate(new SubmissionDate());
             orcidMessage.getOrcidProfile().setOrcidHistory(history);
             t2OrcidApiServiceDelegatorLatest.createProfile(mockedUriInfo, orcidMessage);
-        } catch(OrcidBadRequestException obe) {
+        } catch(OrcidValidationException obe) {
             assertTrue(obe.getMessage().contains("Submission date should not be specified when creating a profile"));
         }
         
@@ -433,7 +432,7 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
             history.setLastModifiedDate(new LastModifiedDate());
             orcidMessage.getOrcidProfile().setOrcidHistory(history);
             t2OrcidApiServiceDelegatorLatest.createProfile(mockedUriInfo, orcidMessage);
-        } catch(OrcidBadRequestException obe) {
+        } catch(OrcidValidationException obe) {
             assertTrue(obe.getMessage().contains("Last modified date should not be specified when creating a profile"));
         }
     }

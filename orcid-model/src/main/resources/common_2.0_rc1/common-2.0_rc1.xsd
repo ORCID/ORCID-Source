@@ -1576,4 +1576,15 @@
 			<xs:element name="relationship" minOccurs="1" maxOccurs="1" type="common:relationship-type" />			
 		</xs:sequence>
 	</xs:complexType>
+	
+	
+	<xs:simpleType name="group-id">
+		<xs:annotation>
+			<xs:documentation>Identifier for the group that this review should be a part of for aggregation purposes
+			</xs:documentation>
+		</xs:annotation>		
+		<xs:restriction base="common:string-1000">
+			<xs:pattern value="(ringgold:|issn:|orcid-generated:|fundref:).*" />
+		</xs:restriction>    		
+	</xs:simpleType>
 </xs:schema>

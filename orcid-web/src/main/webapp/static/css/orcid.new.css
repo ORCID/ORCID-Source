@@ -1669,7 +1669,6 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input{
 	font-family: 'Gill Sans W02', 'Helvetica', sans-serif;	
 	font-style: normal;
 	vertical-align: 3px;
-	margin-left: 5px;	
 }
 
 .workspace-overview {
@@ -1910,6 +1909,11 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input{
 
 #edit-affiliation .alert{
 	display: block;	
+}
+
+#edit-affiliation .control-group.errors{
+	float: left;
+    width: 100%;
 }
 
 .add-work{
@@ -5106,6 +5110,10 @@ ul.sources-edit-list ul.sources-actions .git_create:hover:before{
 	font-size: 13px;
 }
 
+.source-line-peer-review{
+	font-size: 15px;
+}
+
 .workspace-private-toolbar .bulk-edit-input-header{
 	margin-right: 2px;
 }
@@ -5737,6 +5745,10 @@ textarea.form-control,
   	top: -178px;
 }
 
+.glyphicon-question-sign{
+	cursor: default;
+}
+
 /* Widget */
 
 .widget-container{
@@ -5751,37 +5763,9 @@ textarea.form-control,
 .widget-container .widget-code-container{
 	padding: 10px;
 	border: 1px solid #C9C9CA;
-	color: #494A4C;
 	float: left;
 	height: auto;
 	width: 100%;;
-}
-
-.widget-container .widget-code{
-	height: 100px;
-	cursor: text;
-	margin-bottom: 15px;
-}
-
-.widget-container .widget-code-icon{
-	padding-left: 0;
-	padding-right: 19px;
-	
-}
-
-.widget-container .widget-code-icon:before{
-	font-size: 16px;
-	top: -9px;
-	color: #338caf;
-}
-
-.widget-container a:hover span.widget-code-icon:before{
-	color: rgb(166, 206, 57);
-}
-
-.widget-container .widget-instructions{
-	width: 100%;
-	float:left;
 }
 
 .widget-container .widget-instructions,
@@ -5789,24 +5773,72 @@ textarea.form-control,
 	font-size: 14px;	
 }
 
-.glyphicon-question-sign{
-	cursor: default;
-}
-
 .widget-container .widget-code-container a{
 	float: right;
 }
 
+
+.action-icon-align-right{
+	position: absolute;
+	top: 8px;
+	right: 5px;
+}
+
+.action-icon-inside{
+	padding-right: 25px !important; /* Overwriting global reset styling */
+}
+
+input.form-control,
+select.form-control,
+textarea.form-control,
+.form-group div>select{
+	margin-bottom: 0px; 
+}
+
+.accordion-peer-review{
+	padding: 0;
+}
+
+.settings-table .popover{
+	left: -138px;
+  	top: -178px;
+}
+
+/* URLS Workspace Tooltip */
+.url-popover{
+	position: relative;
+	float: left;
+	clear: both;
+	width: 100%;
+}
+
+.popover-pos{
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+
+.popover-help-container{
+   position: relative;
+}
+
+.url-popover .popover-help-container .popover{
+  left: 0;
+  top: 15px;
+}
+
+.url-popover .popover.bottom .arrow {
+    left: 15px !important;
+}
+
+/* Widget */
+
 .orcid-summary-widget{
-	width: 195px;
 	height: auto;
-	border: 1px solid #939598;
-	padding: 10px;
 	font-family: 'Helvetica', 'Sans serif', 'Verdana';
 	color: #939598;
 	background: #FFF;
-	float: left;
-	margin: 5px 10px 15px;
+	margin: 0 auto;
 }
 
 .orcid-summary-widget a{
@@ -5863,6 +5895,12 @@ textarea.form-control,
 	background: #a6ce39;
 }
 
+.widget-container .widget-code{
+	height: 100px;
+	cursor: text;
+	margin-bottom: 15px;
+}
+
 .widget-container .popover-help-container .popover{
 	left: -30px;
 }
@@ -5879,6 +5917,105 @@ textarea.form-control,
 	border-bottom: 1px dotted #C3C3C3;
 	padding: 5px 0;
 }
+
+.workspace-top .emails-box .popover-help-container > .popover.privacy-myorcid3{
+	top: -184px;
+}
+
+.workspace-top .websites .popover-help-container > .popover.privacy-myorcid3,
+.workspace-top .keywords .popover-help-container > .popover.privacy-myorcid3,
+.workspace-top .country .popover-help-container > .popover.privacy-myorcid3,
+.workspace-top .other-names .popover-help-container > .popover.privacy-myorcid3{
+	top: -178px;
+}
+
+.divisor{
+	width: 100%;
+	height: 1px;
+	margin-bottom: 14px;
+}
+
+.add-peer-review input[type="radio"]{
+	vertical-align: 1px;
+}
+
+/* Peer review refactor */
+
+.workspace-peer-review .peer-review-title{
+	color: #338caf;
+	font-size: 20px;
+}
+
+.workspace-peer-review span.title{
+	font-size: 14px;
+    color: #939598;
+    font-weight: normal;
+    cursor: pointer;
+}
+
+.workspace-peer-review .peer-review-list-container{
+	padding: 0 15px 15px;
+    float: left;
+    width: 100%;
+}
+
+
+.workspace-peer-review  .source-active > .sources-header div[class^="col-"]:not(:last-child){
+	padding-top: 0;
+}
+
+.workspace-peer-review .more-info .ng-binding{
+	min-height: 21px;
+}
+
+.workspace-peer-review ul.sources-edit-list > li:first-child{
+	box-shadow: none;
+}
+
+.truncate {
+  max-width: 182px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: inline-block;
+  vertical-align: top;   
+}
+
+#workspace-accordion-item a{
+	word-break: normal;
+}
+
+.peer-review-list-container .sources-edit-list li{
+	border-left: 1px solid #C9CACB;
+	border-right: 1px solid #C9CACB;
+}
+
+.peer-review-list-container .glyphicons{
+	padding-left: 15px;
+} 
+
+.peer-review-list-container .glyphicons:before{
+	top: -10px;
+	font-size: 17px;
+	color: #338caf;
+	vertical-align: baseline;
+}
+
+ul.sources-edit-list > li.peer-review-group{
+	border-bottom: none;
+	box-shadow: none;
+}
+
+ul.sources-edit-list > li.group-details{
+	padding-top: 0;
+}
+
+.group-summary-details{
+	padding-bottom: 15px;
+    font-size: 15px;
+}
+	
+
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
@@ -6344,24 +6481,6 @@ textarea.form-control,
 	.workspace-accordion-item{
 		border-bottom: none;
 	}
-	
-	#workspace-accordion .popover-help-container .popover{
-		left:-105px !important;
-	}
-	
-	#workspace-accordion .popover-help-container .arrow{
-		left: 117px !important;
-	}		
-
-	
-	.public-profile .popover-help-container .popover{
-		left:-105px;		
-	}
-	
-	.public-profile .popover-help-container .popover.bottom .arrow{
-		left:117px;
-	}
-	
 	
 	/* Lightboxes */	
 	
@@ -6981,6 +7100,10 @@ textarea.form-control,
 		padding-left: 0;
 	}
 	
+	.peer-review-list-container .sources-header .col-xs-3{
+		padding-left: 15px; 
+	}
+	
 	#workspace-fundings .action-button-bar{
 		padding-right: 15px;
 		padding-left: 15px;
@@ -7037,6 +7160,10 @@ textarea.form-control,
 	
 	#add-funding label.start-year{
 		width: 100%;
+	}
+	
+	#edit-affiliation .form-group div>select{
+		margin-bottom: 10px;
 	}
 	
 }

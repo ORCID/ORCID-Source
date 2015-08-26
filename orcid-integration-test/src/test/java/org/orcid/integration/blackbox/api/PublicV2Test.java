@@ -26,6 +26,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
@@ -49,6 +51,7 @@ import org.orcid.jaxb.model.common.Day;
 import org.orcid.jaxb.model.common.Month;
 import org.orcid.jaxb.model.common.Year;
 import org.orcid.jaxb.model.error.OrcidError;
+import org.orcid.jaxb.model.groupid.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record.Activity;
 import org.orcid.jaxb.model.record.Education;
@@ -129,9 +132,12 @@ public class PublicV2Test {
     
     static String publicAccessToken = null;
 
+    static List<GroupIdRecord> groupRecords = null;
+    
     @Before
     public void before() throws JSONException, InterruptedException, URISyntaxException {
         cleanActivities();
+        groupRecords = createGroupIds();
     }
 
     @After
@@ -366,6 +372,7 @@ public class PublicV2Test {
     public void checkPeerReview(String readPublicToken) throws JSONException, InterruptedException, URISyntaxException {
         PeerReview peerReviewToCreate = (PeerReview) unmarshallFromPath("/record_2.0_rc1/samples/peer-review-2.0_rc1.xml", PeerReview.class);
         peerReviewToCreate.setPutCode(null);
+        peerReviewToCreate.setGroupId(groupRecords.get(0).getGroupId());
         peerReviewToCreate.setVisibility(org.orcid.jaxb.model.common.Visibility.PUBLIC);
 
         String accessToken = getAccessToken();
@@ -714,6 +721,7 @@ public class PublicV2Test {
     public void checkLimitedPeerReview(String readPublicToken) throws JSONException, InterruptedException, URISyntaxException {
         PeerReview peerReviewToCreate = (PeerReview) unmarshallFromPath("/record_2.0_rc1/samples/peer-review-2.0_rc1.xml", PeerReview.class);
         peerReviewToCreate.setPutCode(null);
+        peerReviewToCreate.setGroupId(groupRecords.get(0).getGroupId());
         peerReviewToCreate.setVisibility(org.orcid.jaxb.model.common.Visibility.LIMITED);
 
         String accessToken = getAccessToken();
@@ -886,7 +894,8 @@ public class PublicV2Test {
         PeerReview peerReviewToCreate = (PeerReview) unmarshallFromPath("/record_2.0_rc1/samples/peer-review-2.0_rc1.xml", PeerReview.class);
         for (int i = 0; i < 4; i++) {
             peerReviewToCreate.setPutCode(null);
-            peerReviewToCreate.getSubject().getTitle().getTitle().setContent("PeerReview # " + i);
+            peerReviewToCreate.setGroupId(groupRecords.get(0).getGroupId());
+            peerReviewToCreate.getSubjectName().getTitle().setContent("PeerReview # " + i);
             peerReviewToCreate.getCompletionDate().setDay(new Day(i + 1));
             peerReviewToCreate.getCompletionDate().setMonth(new Month(i + 1));
             peerReviewToCreate.getCompletionDate().setYear(new Year((i + 1) * 1000));
@@ -960,5 +969,38 @@ public class PublicV2Test {
             publicAccessToken = oauthHelper.getClientCredentialsAccessToken(client1ClientId, client1ClientSecret, ScopePathType.READ_PUBLIC);
         }
         return publicAccessToken;                    
+    }
+    
+    public List<GroupIdRecord> createGroupIds() throws JSONException {
+        //Use the existing ones
+        if(groupRecords != null && !groupRecords.isEmpty()) 
+            return groupRecords;
+        
+        List<GroupIdRecord> groups = new ArrayList<GroupIdRecord>();
+        String token = oauthHelper.getClientCredentialsAccessToken(client1ClientId, client1ClientSecret, ScopePathType.GROUP_ID_RECORD_UPDATE);
+        GroupIdRecord g1 = new GroupIdRecord();
+        g1.setDescription("Description");
+        g1.setGroupId("orcid-generated:01" + System.currentTimeMillis());
+        g1.setName("Group # 1");
+        g1.setType("publisher");
+        
+        GroupIdRecord g2 = new GroupIdRecord();
+        g2.setDescription("Description");
+        g2.setGroupId("orcid-generated:02" + System.currentTimeMillis());
+        g2.setName("Group # 2");
+        g2.setType("publisher");                
+        
+        ClientResponse r1 = memberV2ApiClient.createGroupIdRecord(g1, token);
+        
+        String r1LocationPutCode = r1.getLocation().getPath().replace("/orcid-api-web/v2.0_rc1/group-id-record/", "");
+        g1.setPutCode(r1LocationPutCode);
+        groups.add(g1);
+        
+        ClientResponse r2 = memberV2ApiClient.createGroupIdRecord(g2, token);
+        String r2LocationPutCode = r2.getLocation().getPath().replace("/orcid-api-web/v2.0_rc1/group-id-record/", "");
+        g2.setPutCode(r2LocationPutCode);
+        groups.add(g2);
+        
+        return groups;
     }
 }

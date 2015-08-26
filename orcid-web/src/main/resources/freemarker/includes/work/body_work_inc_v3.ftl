@@ -29,9 +29,11 @@
                             <div class="col-md-7 col-sm-7 col-xs-7">
                                 <@orcid.msg 'groups.common.sources' /> <span class="hide-sources" ng-click="hideSources(group)"><@orcid.msg 'groups.common.close_sources' /></span>
                             </div>
+                            
                             <div class="col-md-2 col-sm-2 col-xs-2">
                                 <@orcid.msgCapFirst 'groups.common.preferred' />
                             </div>
+                            
                             <div class="col-md-3 col-sm-3 col-xs-3 right">
                                     <div class="workspace-toolbar">
                                         <ul class="workspace-private-toolbar">
@@ -55,7 +57,6 @@
                                             </li>
                                             <#if !(isPublicProfile??)>
                                             <li>
-                                            	aaa
                                                 <@orcid.privacyToggle2 angularModel="group.getActive().visibility"
                                                     questionClick="toggleClickPrivacyHelp(group.getActive().putCode)"
                                                     clickedClassCheck="{'popover-help-container-show':privacyHelp[group.getActive().putCode.value]==true}"
@@ -68,14 +69,13 @@
                                     </div>
                             </div>
                         </div>
-
-
                     </div>
                 </li>
                 <!-- End of Header -->
 
 
                 <li ng-repeat="work in group.activities" ng-show="group.activePutCode == work.putCode.value || editSources[group.groupId] == true" orcid-put-code="{{work.putCode.value}}">
+
                     <!-- active row summary info -->
                     <div class="row" ng-show="group.activePutCode == work.putCode.value">
                         <div class="col-md-9 col-sm-9 col-xs-8">
@@ -84,7 +84,6 @@
                                 <span class="journaltitle" ng-show="work.journalTitle.value" ng-bind="work.journalTitle.value"></span>                                
                             </h3>                                                        
                             <div class="info-detail">
-                            	
                                 <span ng-show="work.publicationDate.year">{{work.publicationDate.year}}</span><span ng-show="work.publicationDate.month">-{{work.publicationDate.month}}</span><span ng-show="work.publicationDate.year"> | </span> <span class="capitalize">{{work.workType.value}}</span>
                             </div>
                         </div>
@@ -147,13 +146,26 @@
                      <div class="row" ng-show="group.activePutCode == work.putCode.value">
                          <div class="col-md-12 col-sm-12 bottomBuffer">
                              <ul class="id-details">
-                                 <li>
-                                     <span ng-repeat='ie in work.workExternalIdentifiers'><span
-                                     ng-bind-html='ie | workExternalIdentifierHtml:$first:$last:work.workExternalIdentifiers.length'></span>
-                                    </span>
+                                 <li class="url-work">
+                                 	<ul class="id-details">
+                                 		<li ng-repeat='ie in work.workExternalIdentifiers' class="url-popover">
+                                 			<span bind-html-compile='ie | workExternalIdentifierHtml:$first:$last:work.workExternalIdentifiers.length:moreInfo[group.groupId]'></span>
+                                 		</li>
+                                 	</ul>                                 	
                                  </li>
-                                 <li ng-show="work.url.value"><@orcid.msg 'common.url' />: <a href="{{work.url.value | urlWithHttp}}" class="truncate-anchor" target="_blank">{{work.url.value}}</a></li>
-
+                                 <li ng-show="work.url.value" class="url-popover url-work">
+                                 	<@orcid.msg 'common.url' />: <a href="{{work.url.value | urlWithHttp}}" ng-mouseenter="showURLPopOver(work.putCode.value)" ng-mouseleave="hideURLPopOver(work.putCode.value)" ng-class="{'truncate-anchor' : moreInfo[group.groupId] == false || moreInfo[group.groupId] == undefined}" target="_blank">{{work.url.value}}</a>
+                                 	<div class="popover-pos">                                 	
+		                                <div class="popover-help-container">
+									       <div class="popover bottom" ng-class="{'block' : displayURLPopOver[work.putCode.value] == true}">
+												<div class="arrow"></div>
+												<div class="popover-content">
+											    	<a href="{{work.url.value}}" target="_blank">{{work.url.value}}</a>
+											    </div>                
+										  	</div>    			   				
+									 	</div>
+									 </div>
+                                 </li>
                              </ul>
                          </div>
                      </div>

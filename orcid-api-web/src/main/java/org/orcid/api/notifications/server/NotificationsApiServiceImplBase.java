@@ -25,6 +25,8 @@ import static org.orcid.core.api.OrcidApiConstants.STATUS_PATH;
 import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_JSON;
 import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_XML;
 
+import java.net.URI;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -38,7 +40,16 @@ import javax.ws.rs.core.UriInfo;
 
 import org.orcid.api.notifications.server.delegator.NotificationsApiServiceDelegator;
 import org.orcid.core.exception.OrcidNotificationAlreadyReadException;
+import org.orcid.jaxb.model.message.ScopeConstants;
+import org.orcid.jaxb.model.notification.Notification;
 import org.orcid.jaxb.model.notification.addactivities.NotificationAddActivities;
+
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.Authorization;
+import io.swagger.annotations.AuthorizationScope;
+import io.swagger.annotations.ResponseHeader;
 
 /**
  * @author Will Simpson
@@ -60,73 +71,59 @@ abstract public class NotificationsApiServiceImplBase {
     @GET
     @Produces(value = { MediaType.TEXT_PLAIN })
     @Path(STATUS_PATH)
+    @ApiOperation(value = "Fetch status", hidden=true)
     public Response viewStatusText() {
         return serviceDelegator.viewStatusText();
     }
 
     @GET
-    @Produces(value = { MediaType.TEXT_HTML })
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(ADD_ACTIVITIES_PATH)
-    public Response viewAddActivitiesNotificationsHtml(@PathParam("orcid") String orcid) {
-        Response response = serviceDelegator.findAddActivitiesNotifications(orcid);
-        return Response.fromResponse(response).header("Content-Disposition", "attachment; filename=\"" + orcid + "-add-activities-notifications.xml\"").build();
-    }
-
-    @GET
-    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
-    @Path(ADD_ACTIVITIES_PATH)
-    public Response viewAddActivitiesNotificationsXml(@PathParam("orcid") String orcid) {
+    @ApiOperation(value = "Fetch all notifications for an ORCID ID", hidden=true, authorizations = {
+            @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.PREMIUM_NOTIFICATION, description = "you need this") }) })
+    public Response viewAddActivitiesNotifications(@PathParam("orcid") String orcid) {
         return serviceDelegator.findAddActivitiesNotifications(orcid);
     }
 
     @GET
-    @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
-    @Path(ADD_ACTIVITIES_PATH)
-    public Response viewAddActivitiesNotificationsJson(@PathParam("orcid") String orcid) {
-        return serviceDelegator.findAddActivitiesNotifications(orcid);
-    }
-
-    @GET
-    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(ADD_ACTIVITIES_VIEW_PATH)
-    public Response viewAddActivitiesNotificationXml(@PathParam("orcid") String orcid, @PathParam("id") Long id) {
-        return serviceDelegator.findAddActivitiesNotification(orcid, id);
-    }
-
-    @GET
-    @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
-    @Path(ADD_ACTIVITIES_VIEW_PATH)
-    public Response viewAddActivitiesNotificationJson(@PathParam("orcid") String orcid, @PathParam("id") Long id) {
+    @ApiOperation(value = "Fetch a notification by id", response = Notification.class, authorizations = {
+            @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.PREMIUM_NOTIFICATION, description = "you need this") }) })
+    @ApiResponses(value = { 
+            @ApiResponse(code = 200, message = "Notification found", response = Notification.class),
+            @ApiResponse(code = 404, message = "Notification not found", response = String.class),
+            @ApiResponse(code = 401, message = "Access denied, this is not your notification", response = String.class)
+            })
+    public Response viewAddActivitiesNotification(@PathParam("orcid") String orcid, @PathParam("id") Long id) {
         return serviceDelegator.findAddActivitiesNotification(orcid, id);
     }
 
     @POST
-    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(ADD_ACTIVITIES_FLAG_AS_ARCHIVED_PATH)
-    public Response flagAsArchivedAddActivitiesNotificationXml(@PathParam("orcid") String orcid, @PathParam("id") Long id) throws OrcidNotificationAlreadyReadException {
+    @Consumes()
+    @ApiOperation(value = "Archive a notification", response = Notification.class, authorizations = {
+            @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.PREMIUM_NOTIFICATION, description = "you need this") }) })
+    @ApiResponses(value = { 
+            @ApiResponse(code = 200, message = "Notification archived, see HTTP Location header for URI", response = Notification.class),
+            @ApiResponse(code = 404, message = "Notification not found", response = String.class),
+            @ApiResponse(code = 401, message = "Access denied, this is not your notification", response = String.class)
+            })
+    public Response flagAsArchivedAddActivitiesNotification(@PathParam("orcid") String orcid, @PathParam("id") Long id) throws OrcidNotificationAlreadyReadException {
         return serviceDelegator.flagNotificationAsArchived(orcid, id);
     }
 
     @POST
-    @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
-    @Path(ADD_ACTIVITIES_FLAG_AS_ARCHIVED_PATH)
-    public Response flagAsArchivedAddActivitiesNotificationJson(@PathParam("orcid") String orcid, @PathParam("id") Long id) throws OrcidNotificationAlreadyReadException {
-        return serviceDelegator.flagNotificationAsArchived(orcid, id);
-    }
-
-    @POST
-    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
-    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(ADD_ACTIVITIES_PATH)
-    public Response addAddActivitiesNotificationXml(@PathParam("orcid") String orcid, NotificationAddActivities notification) {
-        return serviceDelegator.addAddActivitiesNotification(uriInfo, orcid, notification);
-    }
-
-    @POST
-    @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
-    @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
-    @Path(ADD_ACTIVITIES_PATH)
-    public Response addAddActivitiesNotificationJson(@PathParam("orcid") String orcid, NotificationAddActivities notification) {
+    @ApiOperation(value = "Add a notification", response = URI.class, authorizations = {
+            @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.PREMIUM_NOTIFICATION, description = "you need this") }) })
+    @ApiResponses(value = { 
+            @ApiResponse(code = 201, message = "Notification added, see HTTP Location header for URI", responseHeaders = @ResponseHeader(name = "Location", description = "The created Notification resource", response = URI.class))
+            })
+    public Response addAddActivitiesNotification(@PathParam("orcid") String orcid, NotificationAddActivities notification) {
         return serviceDelegator.addAddActivitiesNotification(uriInfo, orcid, notification);
     }
 

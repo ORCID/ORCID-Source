@@ -282,5 +282,4 @@ public class OrcidClient implements Serializable {
     public void setPersistentTokenEnabled(boolean persistentTokenEnabled) {
         this.persistentTokenEnabled = persistentTokenEnabled;
     }
-
 }

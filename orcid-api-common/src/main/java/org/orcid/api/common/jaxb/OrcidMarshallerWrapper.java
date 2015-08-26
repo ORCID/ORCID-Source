@@ -21,6 +21,7 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 
+import javax.annotation.Resource;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.PropertyException;
@@ -32,6 +33,7 @@ import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.Result;
 import javax.xml.validation.Schema;
 
+import org.orcid.core.locale.LocaleManager;
 import org.w3c.dom.Node;
 import org.xml.sax.ContentHandler;
 
@@ -43,6 +45,9 @@ import org.xml.sax.ContentHandler;
 public class OrcidMarshallerWrapper implements Marshaller {
 
     private Marshaller marshaller;
+    
+    @Resource
+    private LocaleManager localeManager;
 
     public OrcidMarshallerWrapper(Marshaller marshaller) {
         this.marshaller = marshaller;
@@ -58,7 +63,7 @@ public class OrcidMarshallerWrapper implements Marshaller {
         try {
             marshaller.marshal(jaxbElement, new FilterInvalidXmlCharsOutputStreamWriter(os, (String) marshaller.getProperty(JAXB_ENCODING)));
         } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException("Problem creating output stream filter for invalid XML chars", e);
+            throw new RuntimeException(localeManager.resolveMessage("apiError.output_stream_filter.exception"), e);
         }
     }
 

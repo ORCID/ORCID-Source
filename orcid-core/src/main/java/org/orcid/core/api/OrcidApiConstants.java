@@ -52,6 +52,10 @@ public class OrcidApiConstants {
     public static final String ADD_ACTIVITIES_FLAG_AS_ARCHIVED_PATH = "/add-activities/{id}/archive";
     public static final String PEER_REVIEW = "/{orcid}/peer-review";
     public static final String PEER_REVIEW_SUMMARY = "/{orcid}/peer-review/summary";
+    public static final String GROUP_ID_RECORD = "/group-id-record";
+    public static final String STATS_PATH = "/statistics";
+    public static final String STATS = "/{type}";
+    
     public static final String ERROR = "/error";
     
     public static final String ORCID_XML = "application/orcid+xml; qs=3";
@@ -71,5 +75,9 @@ public class OrcidApiConstants {
     public static final String ACTIVITY_EMPLOYMENT = "employment";
     public static final String ACTIVITY_FUNDING = "funding";
     public static final String ACTIVITY_PEER_REVIEW = "peer-review";
-    public static final String ACTIVITY_WORK = "work";    
+    public static final String ACTIVITY_WORK = "work";  
+    
+    public static final String SWAGGER_PATH = "/resources";
+    public static final String SWAGGER_FILE = "/swagger.json";
+    public static final String SWAGGER_FILE_YAML = "/swagger.yaml";
 }       

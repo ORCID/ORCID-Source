@@ -16,21 +16,21 @@
  */
 package org.orcid.core.exception;
 
-import com.sun.jersey.api.client.ClientResponse.Status;
+import java.util.Map;
 
 /**
  * 
  * @author Angel Montenegro
  * 
  */
-public class OrcidDeprecatedException extends OrcidApiException {
+public class OrcidDeprecatedException extends ApplicationException {
     private static final long serialVersionUID = 1L;
 
-    public OrcidDeprecatedException(String msg) {
-        super(msg, Status.MOVED_PERMANENTLY.getStatusCode());
-    }
-
-    public OrcidDeprecatedException(String msg, Throwable t) {
-        super(msg, Status.MOVED_PERMANENTLY.getStatusCode(), t);
-    }
+    public OrcidDeprecatedException() {
+    	super();
+	}
+    
+	public OrcidDeprecatedException(Map<String, String> params) {
+		super(params);
+	}
 }

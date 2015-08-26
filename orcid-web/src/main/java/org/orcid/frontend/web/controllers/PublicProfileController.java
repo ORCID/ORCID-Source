@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -37,29 +38,29 @@ import org.orcid.core.manager.ActivityCacheManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.OrcidProfileCacheManager;
 import org.orcid.core.manager.PeerReviewManager;
+import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
-import org.orcid.core.manager.ProfileWorkManager;
 import org.orcid.core.manager.WorkManager;
+import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.Funding;
 import org.orcid.jaxb.model.message.FundingType;
 import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.PersonalDetails;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.record.PeerReview;
+import org.orcid.jaxb.model.record.Work;
 import org.orcid.jaxb.model.record.summary.ActivitiesSummary;
 import org.orcid.persistence.jpa.entities.CountryIsoEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
 import org.orcid.pojo.ajaxForm.AffiliationForm;
 import org.orcid.pojo.ajaxForm.Contributor;
 import org.orcid.pojo.ajaxForm.FundingForm;
 import org.orcid.pojo.ajaxForm.PeerReviewForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
-import org.orcid.pojo.ajaxForm.Work;
+import org.orcid.pojo.ajaxForm.WorkForm;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -90,9 +91,6 @@ public class PublicProfileController extends BaseWorkspaceController {
     private ActivityCacheManager activityCacheManager;
 
     @Resource
-    private ProfileWorkManager profileWorkManager;
-    
-    @Resource
     private ProfileEntityManager profileEntManager;
 
     @Resource
@@ -109,7 +107,10 @@ public class PublicProfileController extends BaseWorkspaceController {
 
     @Resource
     private PeerReviewManager peerReviewManager;
-    
+
+    @Resource
+    private ProfileEntityCacheManager profileEntityCacheManager;
+
     public static int ORCID_HASH_LENGTH = 8;
 
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[x]}")
@@ -146,7 +147,7 @@ public class PublicProfileController extends BaseWorkspaceController {
         if (!StringUtil.isBlank(countryName))
             mav.addObject("countryName", countryName);
 
-        LinkedHashMap<String, Work> minimizedWorksMap = new LinkedHashMap<String, Work>();
+        LinkedHashMap<String, WorkForm> minimizedWorksMap = new LinkedHashMap<String, WorkForm>();
         LinkedHashMap<String, Affiliation> affiliationMap = new LinkedHashMap<String, Affiliation>();
         LinkedHashMap<String, Funding> fundingMap = new LinkedHashMap<String, Funding>();
         LinkedHashMap<String, PeerReview> peerReviewMap = new LinkedHashMap<String, PeerReview>();
@@ -216,23 +217,21 @@ public class PublicProfileController extends BaseWorkspaceController {
                 else {
                     if (personalDetails.getGivenNames() != null && !PojoUtil.isEmpty(personalDetails.getGivenNames().getContent()))
                         creditName += personalDetails.getGivenNames().getContent();
-                    if(personalDetails.getFamilyName() != null && !PojoUtil.isEmpty(personalDetails.getFamilyName().getContent()))
+                    if (personalDetails.getFamilyName() != null && !PojoUtil.isEmpty(personalDetails.getFamilyName().getContent()))
                         creditName += " " + personalDetails.getFamilyName().getContent();
-                }                   
+                }
             }
-            if(!PojoUtil.isEmpty(creditName)) {
-                //<Published Name> (<ORCID iD>) - ORCID | Connecting Research and Researchers
+            if (!PojoUtil.isEmpty(creditName)) {
+                // <Published Name> (<ORCID iD>) - ORCID | Connecting Research
+                // and Researchers
                 mav.addObject("title", getMessage("layout.public-layout.title", creditName.trim(), orcid));
             }
 
         } catch (JsonGenerationException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         } catch (JsonMappingException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
@@ -293,18 +292,18 @@ public class PublicProfileController extends BaseWorkspaceController {
 
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/works.json")
     public @ResponseBody
-    List<Work> getWorkJson(HttpServletRequest request, @PathVariable("orcid") String orcid, @RequestParam(value = "workIds") String workIdsStr) {
+    List<WorkForm> getWorkJson(HttpServletRequest request, @PathVariable("orcid") String orcid, @RequestParam(value = "workIds") String workIdsStr) {
         Map<String, String> countries = retrieveIsoCountries();
         Map<String, String> languages = lm.buildLanguageMap(localeManager.getLocale(), false);
 
-        HashMap<String, Work> minimizedWorksMap = minimizedWorksMap(orcid);
+        HashMap<String, WorkForm> minimizedWorksMap = minimizedWorksMap(orcid);
 
-        List<Work> works = new ArrayList<Work>();
+        List<WorkForm> works = new ArrayList<WorkForm>();
         String[] workIds = workIdsStr.split(",");
 
         for (String workId : workIds) {
             if (minimizedWorksMap.containsKey(workId)) {
-                Work work = minimizedWorksMap.get(workId);
+                WorkForm work = minimizedWorksMap.get(workId);
                 if (Visibility.PUBLIC.equals(work.getVisibility())) {
                     if (!PojoUtil.isEmpty(work.getCountryCode())) {
                         Text countryName = Text.valueOf(countries.get(work.getCountryCode().getValue()));
@@ -337,52 +336,58 @@ public class PublicProfileController extends BaseWorkspaceController {
      * */
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/getWorkInfo.json", method = RequestMethod.GET)
     public @ResponseBody
-    Work getWorkInfo(@PathVariable("orcid") String orcid, @RequestParam(value = "workId") String workId) {
+    WorkForm getWorkInfo(@PathVariable("orcid") String orcid, @RequestParam(value = "workId") String workId) {
         Map<String, String> countries = retrieveIsoCountries();
         Map<String, String> languages = lm.buildLanguageMap(localeManager.getLocale(), false);
         if (StringUtils.isEmpty(workId))
             return null;
 
-        ProfileWorkEntity profileWork = profileWorkManager.getProfileWork(orcid, workId);
+        Work workObj = workManager.getWork(orcid, workId);
 
-        if (profileWork != null) {
-            OrcidWork orcidWork = jpa2JaxbAdapter.getOrcidWork(profileWork);
-            if (orcidWork != null) {
-                Work work = Work.valueOf(orcidWork);
-                // Set country name
-                if (!PojoUtil.isEmpty(work.getCountryCode())) {
-                    Text countryName = Text.valueOf(countries.get(work.getCountryCode().getValue()));
-                    work.setCountryName(countryName);
-                }
-                // Set language name
-                if (!PojoUtil.isEmpty(work.getLanguageCode())) {
-                    Text languageName = Text.valueOf(languages.get(work.getLanguageCode().getValue()));
-                    work.setLanguageName(languageName);
-                }
-                // Set translated title language name
-                if (work.getTranslatedTitle() != null && !StringUtils.isEmpty(work.getTranslatedTitle().getLanguageCode())) {
-                    String languageName = languages.get(work.getTranslatedTitle().getLanguageCode());
-                    work.getTranslatedTitle().setLanguageName(languageName);
-                }
+        if (workObj != null) {
+            WorkForm work = WorkForm.valueOf(workObj);
+            // Set country name
+            if (!PojoUtil.isEmpty(work.getCountryCode())) {
+                Text countryName = Text.valueOf(countries.get(work.getCountryCode().getValue()));
+                work.setCountryName(countryName);
+            }
+            // Set language name
+            if (!PojoUtil.isEmpty(work.getLanguageCode())) {
+                Text languageName = Text.valueOf(languages.get(work.getLanguageCode().getValue()));
+                work.setLanguageName(languageName);
+            }
+            // Set translated title language name
+            if (work.getTranslatedTitle() != null && !StringUtils.isEmpty(work.getTranslatedTitle().getLanguageCode())) {
+                String languageName = languages.get(work.getTranslatedTitle().getLanguageCode());
+                work.getTranslatedTitle().setLanguageName(languageName);
+            }
 
-                // If the work source is the user himself, fill the work source
-                // name
-                if (!PojoUtil.isEmpty(work.getSource()) && profileWork.getProfile().getId().equals(work.getSource())) {
-                    List<Contributor> contributors = work.getContributors();
-                    if (work.getContributors() != null) {
-                        for (Contributor contributor : contributors) {
-                            // If it is not an empty contributor
-                            if (!PojoUtil.isEmpty(contributor.getContributorRole()) || !PojoUtil.isEmpty(contributor.getContributorSequence())) {
-                                ProfileEntity profile = profileWork.getProfile();
-                                String creditNameString = cacheManager.getPublicCreditName(profile);
-                                Text creditName = Text.valueOf(creditNameString);
-                                contributor.setCreditName(creditName);
+            if (work.getContributors() != null) {
+                for (Contributor contributor : work.getContributors()) {
+                    if (!PojoUtil.isEmpty(contributor.getOrcid())) {
+                        String contributorOrcid = contributor.getOrcid().getValue();
+                        if (profileEntManager.orcidExists(contributorOrcid)) {
+                            ProfileEntity profileEntity = profileEntityCacheManager.retrieve(contributorOrcid);
+                            String publicContributorCreditName = cacheManager.getPublicCreditName(profileEntity);
+                            if (profileEntity.getCreditNameVisibility() != null) {
+                                contributor.setCreditName(Text.valueOf(publicContributorCreditName));
+                                contributor.setCreditNameVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(profileEntity.getCreditNameVisibility()));
+                            } else {
+                                contributor.setCreditName(Text.valueOf(publicContributorCreditName));
+                                contributor.setCreditNameVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(OrcidVisibilityDefaults.CREDIT_NAME_DEFAULT
+                                        .getVisibility()));
+                            }
+                        } else {
+                            if (contributor.getCreditNameVisibility() == null) {
+                                contributor.setCreditNameVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(OrcidVisibilityDefaults.CREDIT_NAME_DEFAULT
+                                        .getVisibility()));
                             }
                         }
                     }
                 }
-                return work;
             }
+
+            return work;
         }
 
         return null;
@@ -402,11 +407,11 @@ public class PublicProfileController extends BaseWorkspaceController {
             // Set language name
             form.setCountryForDisplay(getMessage(buildInternationalizationKey(CountryIsoEntity.class, peerReview.getOrganization().getAddress().getCountry().name())));
 
-            if (form.getSubjectForm() != null && form.getSubjectForm().getTitle() != null) {
+            if (!PojoUtil.isEmpty(form.getTranslatedSubjectName())) {
                 // Set translated title language name
-                if (!(form.getSubjectForm().getTranslatedTitle() == null) && !StringUtils.isEmpty(form.getSubjectForm().getTranslatedTitle().getLanguageCode())) {
-                    String languageName = languages.get(form.getSubjectForm().getTranslatedTitle().getLanguageCode());
-                    form.getSubjectForm().getTranslatedTitle().setLanguageName(languageName);
+                if (!StringUtils.isEmpty(form.getTranslatedSubjectName().getLanguageCode())) {
+                    String languageName = languages.get(form.getTranslatedSubjectName().getLanguageCode());
+                    form.getTranslatedSubjectName().setLanguageName(languageName);
                 }
             }
 
@@ -417,12 +422,14 @@ public class PublicProfileController extends BaseWorkspaceController {
 
     @RequestMapping(value = "/public_widgets/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/{orcidHash}/info.json")
     public @ResponseBody
-    OrcidInfo getInfo(@PathVariable("orcid") String orcid, @PathVariable("orcidHash") String orcidHash) throws Exception {
-    	// Light weight security check. To keep copy and paster from easily generating
-    	// the widget with out the user being logged in. Anyone that figures out this is 
+    OrcidInfo getInfo(@PathVariable("orcid") String orcid, @PathVariable("orcidHash") String orcidHash, @RequestParam(value = "locale", required = false) String localeParam) throws Exception {
+        // Light weight security check. To keep copy and paste from easily
+        // generating
+        // the widget with out the user being logged in. Anyone that figures out
+        // this is
         // a hash should be smart enough to just use the API.
-    	if (orcidHash.length() > 5 && !encryptionManager.sha256Hash(orcid).startsWith(orcidHash))
-    		throw new Exception("Semi-security hash doens't match");
+        if (orcidHash.length() > 5 && !encryptionManager.sha256Hash(orcid).startsWith(orcidHash))
+            throw new Exception(getMessage("web.orcid.securityhash.exception"));
         OrcidInfo result = new OrcidInfo();
         OrcidProfile profile = orcidProfileCacheManager.retrievePublic(orcid);
         result.setOrcid(orcid);
@@ -441,31 +448,77 @@ public class PublicProfileController extends BaseWorkspaceController {
 
             if (profile.getOrcidBio().getPersonalDetails().getFamilyName() != null
                     && !PojoUtil.isEmpty(profile.getOrcidBio().getPersonalDetails().getFamilyName().getContent())) {
-                name += " "+profile.getOrcidBio().getPersonalDetails().getFamilyName().getContent();
+                name += " " + profile.getOrcidBio().getPersonalDetails().getFamilyName().getContent();
             }
             result.setName(name);
         }
 
+        Locale locale = null;
+        if(!StringUtil.isBlank(localeParam)) {            
+            locale = new Locale(localeParam);
+        } else {
+            locale = Locale.US;
+        }
+                
         ActivitiesSummary actSummary = profileEntManager.getPublicActivitiesSummary(orcid);
+
+        boolean haveActivities = false;
         
-        if(actSummary != null) {
-        	if(actSummary.getFundings() != null) {
-                result.setFundings(actSummary.getFundings().getFundingGroup().size());
+        if (actSummary != null) {
+            if (actSummary.getFundings() != null && actSummary.getFundings().getFundingGroup() != null && actSummary.getFundings().getFundingGroup().size() > 0) {                
+                String fundingsLabel = localeManager.resolveMessage("widget.labels.funding", locale, new Object(){});
+                result.setValue(fundingsLabel, String.valueOf(actSummary.getFundings().getFundingGroup().size()));                
+                haveActivities = true;                
+            } else {
+                String fundingsLabel = localeManager.resolveMessage("widget.labels.funding", locale, new Object(){});
+                result.setValue(fundingsLabel, String.valueOf(0)); 
+            }            
+            
+            if (actSummary.getWorks() != null && actSummary.getWorks().getWorkGroup() != null && actSummary.getWorks().getWorkGroup().size() > 0) {
+                String worksLabel = localeManager.resolveMessage("widget.labels.works", locale, new Object(){});
+                result.setValue(worksLabel, String.valueOf(actSummary.getWorks().getWorkGroup().size()));                
+                haveActivities = true;                
+            } else {
+                String worksLabel = localeManager.resolveMessage("widget.labels.works", locale, new Object(){});
+                result.setValue(worksLabel, String.valueOf(0));  
             }
-            if(actSummary.getFundings() != null) {
-                result.setWorks(actSummary.getWorks().getWorkGroup().size());
+            
+            if (actSummary.getPeerReviews() != null && actSummary.getPeerReviews().getPeerReviewGroup() != null && actSummary.getPeerReviews().getPeerReviewGroup().size() > 0) {
+                String peerReviewsLabel = localeManager.resolveMessage("widget.labels.peer_review", locale, new Object(){});
+                result.setValue(peerReviewsLabel, String.valueOf(actSummary.getPeerReviews().getPeerReviewGroup().size()));
+                haveActivities = true;                
+            } else {
+                String peerReviewsLabel = localeManager.resolveMessage("widget.labels.peer_review", locale, new Object(){});
+                result.setValue(peerReviewsLabel, String.valueOf(0));
             }
-            if(actSummary.getPeerReviews() != null) {
-                result.setPeerReviews(actSummary.getPeerReviews().getPeerReviewGroup().size());
+            
+            if (actSummary.getEducations() != null && actSummary.getEducations().getSummaries() != null && actSummary.getEducations().getSummaries().size() > 0) {
+                String educationsLabel = localeManager.resolveMessage("widget.labels.educations", locale, new Object(){});
+                result.setValue(educationsLabel, String.valueOf(actSummary.getEducations().getSummaries().size()));
+                haveActivities = true;
+            } else {
+                String educationsLabel = localeManager.resolveMessage("widget.labels.educations", locale, new Object(){});
+                result.setValue(educationsLabel, String.valueOf(0));
             }
-            if(actSummary.getEducations() != null && actSummary.getEducations().getSummaries() != null) {
-            	result.setEducations(actSummary.getEducations().getSummaries().size());
-            }
-            if(actSummary.getEmployments() != null && actSummary.getEmployments().getSummaries() != null) {
-            	result.setEmployments(actSummary.getEmployments().getSummaries().size());
+            
+            if (actSummary.getEmployments() != null && actSummary.getEmployments().getSummaries() != null && actSummary.getEmployments().getSummaries().size() > 0) {
+                String employmentsLabel = localeManager.resolveMessage("widget.labels.employments", locale, new Object(){});
+                result.setValue(employmentsLabel, String.valueOf(actSummary.getEmployments().getSummaries().size()));
+                haveActivities = true;
+            } else {
+                String employmentsLabel = localeManager.resolveMessage("widget.labels.employments", locale, new Object(){});
+                result.setValue(employmentsLabel, String.valueOf(0));
             }
         }
         
+        if(!haveActivities) {
+            //Set the no activities label
+            result.setValue("no_activities", localeManager.resolveMessage("widget.labels.no_activties", locale, new Object(){}));
+        }
+        
+        //Set the what is label
+        result.setValue("what_is", localeManager.resolveMessage("widget.labels.what_is", locale, new Object(){}));
+                
         return result;
     }
 
@@ -483,7 +536,7 @@ public class PublicProfileController extends BaseWorkspaceController {
         return activityCacheManager.affiliationMap(profile);
     }
 
-    public LinkedHashMap<String, Work> minimizedWorksMap(String orcid) {
+    public LinkedHashMap<String, WorkForm> minimizedWorksMap(String orcid) {
         OrcidProfile profile = orcidProfileCacheManager.retrievePublic(orcid);
         if (profile == null)
             return null;
@@ -512,11 +565,7 @@ public class PublicProfileController extends BaseWorkspaceController {
 class OrcidInfo {
     public String orcid = "";
     public String name = "";
-    public int works = 0;
-    public int fundings = 0;
-    public int educations = 0;
-    public int employments = 0;
-    public int peerReviews = 0;
+    public HashMap<String, String> values = new HashMap<String, String>();    
 
     public String getOrcid() {
         return orcid;
@@ -534,43 +583,11 @@ class OrcidInfo {
         this.name = name;
     }
 
-    public int getWorks() {
-        return works;
+    public void setValue(String name, String value){
+        values.put(name, value);
     }
-
-    public void setWorks(int works) {
-        this.works = works;
-    }
-
-    public int getFundings() {
-        return fundings;
-    }
-
-    public void setFundings(int fundings) {
-        this.fundings = fundings;
-    }
-
-    public int getEducations() {
-        return educations;
-    }
-
-    public void setEducations(int educations) {
-        this.educations = educations;
-    }
-
-    public int getEmployments() {
-        return employments;
-    }
-
-    public void setEmployments(int employments) {
-        this.employments = employments;
-    }
-
-    public int getPeerReviews() {
-        return peerReviews;
-    }
-
-    public void setPeerReviews(int peerReviews) {
-        this.peerReviews = peerReviews;
+    
+    public String getValue(String name) {
+        return values.get(name);
     }
 }

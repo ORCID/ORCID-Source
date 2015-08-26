@@ -16,13 +16,14 @@ We'll set up postgres using the default settings in
 [staging-persistence.properties](https://github.com/ORCID/ORCID-Source/blob/master/orcid-persistence/src/main/resources/staging-persistence.properties).
  Please change usernames and passwords for any production environments.
 
-1. Become postgres user
+1. Become postgres user (note: your username for the superuser may differ)
 
     ```
     sudo su - postgres
     ```
     
 * Set up database
+
     ```
     psql -c "CREATE DATABASE orcid;"     
     psql -c "CREATE USER orcid WITH PASSWORD 'orcid';" 
@@ -31,6 +32,10 @@ We'll set up postgres using the default settings in
     psql -c "CREATE DATABASE statistics;" 
     psql -c "CREATE USER statistics WITH PASSWORD 'statistics';" 
     psql -c "GRANT ALL PRIVILEGES ON DATABASE statistics to statistics;"
+    
+    psql -c "CREATE USER orcidro WITH PASSWORD 'orcidro';"
+    psql -c "GRANT CONNECT ON DATABASE orcid to orcidro;"
+    psql -c "GRANT SELECT ON ALL TABLES IN SCHEMA public to orcidro;" orcid
     ```
     
 * Exit postgres user prompt
@@ -102,7 +107,11 @@ Intialize the database schema (runs as orcid the first time, but then you need t
     
     mvn exec:java -Dexec.mainClass=org.orcid.core.cli.InitDb
     
-    mvn exec:java -Dexec.mainClass=org.orcid.core.cli.InitDb -Dorg.orcid.persistence.db.username=postgres -Dorg.orcid.persistence.db.password=postgres
+    cd ..
+    
+    sudo su - postgres
+    
+    psql -d orcid -f orcid-persistence/src/main/resources/db/updates/work-external-ids-as-json.sql
     
     ```
 
@@ -167,7 +176,7 @@ http://www.springsource.org/downloads/sts-ggts
 * In VM Arguments add the following (changing the /Users/rcpeters/git/ORCID-Source path to your repo checkout)
 
     ```
-    -Dsolr.solr.home=/Users/rcpeters/git/ORCID-Source/orcid-solr-web/src/main/webapp/solr -Dorg.orcid.config.file=classpath:staging-persistence.properties -Dorg.apache.tomcat.util.buf.UDecoder.ALLOW_ENCODED_SLASH=true -XX:MaxPermSize=1024m
+    -Dsolr.solr.home=/Users/rcpeters/git/ORCID-Source/orcid-solr-web/src/main/webapp/solr -Dorg.orcid.config.file=classpath:staging-persistence.properties -Dorg.apache.tomcat.util.buf.UDecoder.ALLOW_ENCODED_SLASH=true -XX:MaxPermSize=1024m -Dcom.mailgun.testmode=no
     ```
 * Click Ok
 
@@ -202,6 +211,13 @@ http://www.springsource.org/downloads/sts-ggts
 
 * Click "Apply"
 
+### Disabling JPA facet for orcid-persistence
+1. Select Eclipse (or Spring Tool Suit) -> Preferences -> Validation 
+
+* Uncheck the JPA validatior checkboxes
+
+* Click "Ok"
+
 # Testing
 ## Maven test
 
@@ -210,6 +226,8 @@ http://www.springsource.org/downloads/sts-ggts
 2. run maven test ```mvn test```
 
 ## Integration tests
+
+See [orcid-integration-test/README.md](https://github.com/ORCID/ORCID-Source/blob/master/orcid-integration-test/README.md)
 
 Integration tests are under ```[ORCID-Source]/orcid-integraton-test/src/test/java/org/orcid/api```.
 
@@ -234,6 +252,8 @@ Find the **service** element/tag and the following connector:
 	* Open the "*Arguments*" tab 
 	* On the "*VM arguments*" add "-Dorg.orcid.config.file=classpath:staging-persistence.properties" 
 	* Click "*Apply*" 
+	
+* Make sure you have firefox installed so selenium can run the tests.  Note sometimes firefox is out of sync with selenium support or visa versa, so pick up the version before latest.  At time of writing latest selenium 2.45 works with firefox version 37 but not 38. Archives can be found at https://https://ftp.mozilla.org/pub/mozilla.org/firefox/releases/37.0.2/
 
 * Run the tests: 
 

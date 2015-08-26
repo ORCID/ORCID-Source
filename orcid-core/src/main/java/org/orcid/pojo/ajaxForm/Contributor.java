@@ -26,10 +26,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.jaxb.model.message.ContributorEmail;
 import org.orcid.jaxb.model.message.ContributorOrcid;
-import org.orcid.jaxb.model.message.ContributorRole;
 import org.orcid.jaxb.model.message.CreditName;
 import org.orcid.jaxb.model.message.FundingContributorRole;
-import org.orcid.jaxb.model.message.SequenceType;
 
 public class Contributor implements ErrorsInterface, Serializable {
 
@@ -49,9 +47,9 @@ public class Contributor implements ErrorsInterface, Serializable {
 
     private Text contributorRole;
 
-    private Visibility creditNameVisibility;
-
-    public static Contributor valueOf(org.orcid.jaxb.model.message.Contributor contributor) {
+    private Visibility creditNameVisibility;    
+    
+    public static Contributor valueOf(org.orcid.jaxb.model.common.Contributor contributor) {
         Contributor c = new Contributor();
         if (contributor != null) {
             if (contributor.getContributorAttributes() != null) {
@@ -67,14 +65,19 @@ public class Contributor implements ErrorsInterface, Serializable {
                 c.setOrcid(Text.valueOf(contributor.getContributorOrcid().getPath()));
                 c.setUri(Text.valueOf(contributor.getContributorOrcid().getUri()));
             }
+            //Set default values that must be overwritten by the controller
             if (contributor.getCreditName() != null) {
                 c.setCreditName(Text.valueOf(contributor.getCreditName().getContent()));
-                c.setCreditNameVisibility(Visibility.valueOf(contributor.getCreditName().getVisibility()));
+                if(contributor.getCreditName().getVisibility() != null) {
+                    c.setCreditNameVisibility(Visibility.valueOf(contributor.getCreditName().getVisibility()));
+                } else {
+                    c.setCreditNameVisibility(Visibility.valueOf(OrcidVisibilityDefaults.CONTRIBUTOR_VISIBILITY_DEFAULT.getVisibility()));
+                }
             }
         }
         return c;
     }
-
+    
     public static Contributor valueOf(org.orcid.jaxb.model.message.FundingContributor contributor) {
         Contributor c = new Contributor();
         if (contributor != null) {
@@ -91,52 +94,15 @@ public class Contributor implements ErrorsInterface, Serializable {
             }
             if (contributor.getCreditName() != null) {
                 c.setCreditName(Text.valueOf(contributor.getCreditName().getContent()));
-                c.setCreditNameVisibility(Visibility.valueOf(contributor.getCreditName().getVisibility()));
-            }
-        }
-        return c;
-    }
-    
-    public org.orcid.jaxb.model.message.Contributor toContributor() {
-        org.orcid.jaxb.model.message.Contributor c = new org.orcid.jaxb.model.message.Contributor();
-        if (this.getContributorRole() != null || this.getContributorSequence() != null) {
-            org.orcid.jaxb.model.message.ContributorAttributes ca = new org.orcid.jaxb.model.message.ContributorAttributes();
-            if (!PojoUtil.isEmpty(this.getContributorRole()))
-                ca.setContributorRole(ContributorRole.fromValue(this.getContributorRole().getValue()));
-            if (!PojoUtil.isEmpty(this.getContributorSequence()))
-                ca.setContributorSequence(SequenceType.fromValue(this.getContributorSequence().getValue()));
-            c.setContributorAttributes(ca);
-        }
-        if (this.getEmail() != null)
-            c.setContributorEmail(new ContributorEmail(this.getEmail().getValue()));
-        if (this.getOrcid() != null) {
-            ContributorOrcid contributorOrcid = new ContributorOrcid(this.getOrcid().getValue());
-            if (this.getUri() != null) {
-                String uriString = this.getUri().getValue();
-                if (StringUtils.isNotBlank(uriString)) {
-                    try {
-                        URI uri = new URI(uriString);
-                        contributorOrcid.setHost(uri.getHost());
-                    } catch (URISyntaxException e) {
-                        throw new RuntimeException("Problem parsing contributor orcid uri", e);
-                    }
+                if(contributor.getCreditName().getVisibility() != null) {
+                    c.setCreditNameVisibility(Visibility.valueOf(contributor.getCreditName().getVisibility()));
+                } else {
+                    c.setCreditNameVisibility(Visibility.valueOf(OrcidVisibilityDefaults.CONTRIBUTOR_VISIBILITY_DEFAULT.getVisibility()));
                 }
             }
-            contributorOrcid.setUri(this.getUri().getValue());
-
-            c.setContributorOrcid(contributorOrcid);
-        }
-        if (this.getCreditName() != null) {
-            CreditName cn = new CreditName(this.getCreditName().getValue());
-            if(this.getCreditNameVisibility() != null && this.getCreditNameVisibility().getVisibility() != null)
-                cn.setVisibility(org.orcid.jaxb.model.message.Visibility.fromValue(this.getCreditNameVisibility().getVisibility().value()));
-            else {
-                cn.setVisibility(org.orcid.jaxb.model.message.Visibility.fromValue(OrcidVisibilityDefaults.CREDIT_NAME_DEFAULT.getVisibility().value()));
-            }
-            c.setCreditName(cn);
         }
         return c;
-    }
+    }        
     
     public org.orcid.jaxb.model.message.FundingContributor toFundingContributor() {
         org.orcid.jaxb.model.message.FundingContributor c = new org.orcid.jaxb.model.message.FundingContributor();
@@ -237,4 +203,70 @@ public class Contributor implements ErrorsInterface, Serializable {
         this.creditNameVisibility = contributorRoleVisibility;
     }
 
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((contributorRole == null) ? 0 : contributorRole.hashCode());
+        result = prime * result + ((contributorSequence == null) ? 0 : contributorSequence.hashCode());
+        result = prime * result + ((creditName == null) ? 0 : creditName.hashCode());
+        result = prime * result + ((creditNameVisibility == null) ? 0 : creditNameVisibility.hashCode());
+        result = prime * result + ((email == null) ? 0 : email.hashCode());
+        result = prime * result + ((errors == null) ? 0 : errors.hashCode());
+        result = prime * result + ((orcid == null) ? 0 : orcid.hashCode());
+        result = prime * result + ((uri == null) ? 0 : uri.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Contributor other = (Contributor) obj;
+        if (contributorRole == null) {
+            if (other.contributorRole != null)
+                return false;
+        } else if (!contributorRole.equals(other.contributorRole))
+            return false;
+        if (contributorSequence == null) {
+            if (other.contributorSequence != null)
+                return false;
+        } else if (!contributorSequence.equals(other.contributorSequence))
+            return false;
+        if (creditName == null) {
+            if (other.creditName != null)
+                return false;
+        } else if (!creditName.equals(other.creditName))
+            return false;
+        if (creditNameVisibility == null) {
+            if (other.creditNameVisibility != null)
+                return false;
+        } else if (!creditNameVisibility.equals(other.creditNameVisibility))
+            return false;
+        if (email == null) {
+            if (other.email != null)
+                return false;
+        } else if (!email.equals(other.email))
+            return false;
+        if (errors == null) {
+            if (other.errors != null)
+                return false;
+        } else if (!errors.equals(other.errors))
+            return false;
+        if (orcid == null) {
+            if (other.orcid != null)
+                return false;
+        } else if (!orcid.equals(other.orcid))
+            return false;
+        if (uri == null) {
+            if (other.uri != null)
+                return false;
+        } else if (!uri.equals(other.uri))
+            return false;
+        return true;
+    }    
 }

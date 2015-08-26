@@ -58,7 +58,7 @@ public class OrcidMultiThreadedIndexingTest extends OrcidProfileManagerBaseTest 
         PersonalDetails delegatePersonalDetails = new PersonalDetails();
         delegateBio.setPersonalDetails(delegatePersonalDetails);
         delegatePersonalDetails.setCreditName(new CreditName("H. Shearer"));
-        orcidProfileManager.createOrcidProfile(delegateProfile, false);
+        orcidProfileManager.createOrcidProfile(delegateProfile, false, false);
 
         OrcidProfile applicationProfile = new OrcidProfile();
         applicationProfile.setOrcidIdentifier(APPLICATION_ORCID);
@@ -67,7 +67,7 @@ public class OrcidMultiThreadedIndexingTest extends OrcidProfileManagerBaseTest 
         PersonalDetails applicationPersonalDetails = new PersonalDetails();
         applicationBio.setPersonalDetails(applicationPersonalDetails);
         applicationPersonalDetails.setCreditName(new CreditName("Brown University"));
-        orcidProfileManager.createOrcidProfile(applicationProfile, false);
+        orcidProfileManager.createOrcidProfile(applicationProfile, false, false);
     }
 
     @After
@@ -87,7 +87,7 @@ public class OrcidMultiThreadedIndexingTest extends OrcidProfileManagerBaseTest 
         reset(orcidIndexManager);
         assertEquals(2, profileDao.findOrcidsByIndexingStatus(IndexingStatus.PENDING, Integer.MAX_VALUE).size());
         OrcidProfile profile1 = createBasicProfile();
-        profile1 = orcidProfileManager.createOrcidProfile(profile1, false);
+        profile1 = orcidProfileManager.createOrcidProfile(profile1, false, false);
         assertEquals(3, profileDao.findOrcidsByIndexingStatus(IndexingStatus.PENDING, Integer.MAX_VALUE).size());
         orcidProfileManager.processProfilesPendingIndexing();
         verify(orcidIndexManager, times(1)).persistProfileInformationForIndexingIfNecessary(argThat(OrcidIndexManagerTypeMatcherTestFactory.orcidBasicProfileCreate()));

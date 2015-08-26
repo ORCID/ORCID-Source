@@ -1,0 +1,72 @@
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2014 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+            
+    <changeSet id="CREATE-GROUP-ID-RECORD-TABLE" author="Shobhit Tyagi">
+        <preConditions onFail="MARK_RAN">
+            <!-- Only perform the initial database create if key table doesn't exist -->
+            <not>
+                <tableExists tableName="group_id_record"/>
+            </not>
+		</preConditions>
+		
+		<createTable tableName="group_id_record">
+           <column name="id" type="bigint">
+				<constraints nullable="false" primaryKey="true"
+					primaryKeyName="group_id_record_pkey" />
+			</column>
+			<column name="group_id" type="VARCHAR(255)">
+				<constraints nullable="false" unique="true" />
+			</column>		
+			<column name="group_name" type="VARCHAR(255)">
+				<constraints nullable="false" />
+			</column>	
+			<column name="group_description" type="VARCHAR(255)">
+				<constraints nullable="true" />
+			</column>
+			<column name="group_type" type="VARCHAR(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="source_id" type="VARCHAR(255)" />
+			<column name="client_source_id" type="VARCHAR(20)"/>
+			<column name="date_created" type="TIMESTAMP WITH TIME ZONE" />
+			<column name="last_modified" type="TIMESTAMP WITH TIME ZONE" />	
+        </createTable>
+    </changeSet>
+    
+    <changeSet id="CREATE-GROUP-ID-RECORD-SEQUENCES" author="Shobhit Tyagi" dbms="postgresql">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<sequenceExists sequenceName="group_id_record_seq"/>
+			</not>
+		</preConditions>
+        <createSequence sequenceName="group_id_record_seq" startValue="1000" />
+    </changeSet>
+    
+    <changeSet id="CREATE-AUTOCOLS" author="Shobhit Tyagi" dbms="hsqldb">    	
+        <addAutoIncrement tableName="group_id_record" columnName="id" columnDataType="bigint"/>
+    </changeSet>
+    
+    <changeSet id="UPDATE-FIELDS-SIZE" author="Shobhit Tyagi" dbms="postgresql">    	
+        <sql>ALTER TABLE group_id_record ALTER COLUMN group_id TYPE VARCHAR(1000)</sql>
+        <sql>ALTER TABLE group_id_record ALTER COLUMN group_name TYPE VARCHAR(1000)</sql>
+        <sql>ALTER TABLE group_id_record ALTER COLUMN group_description TYPE VARCHAR(1000)</sql>
+    </changeSet>
+</databaseChangeLog>

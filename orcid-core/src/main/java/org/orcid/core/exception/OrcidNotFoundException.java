@@ -16,23 +16,19 @@
  */
 package org.orcid.core.exception;
 
-import javax.ws.rs.core.Response;
+import java.util.Map;
 
 /**
  * @author Declan Newman (declan) Date: 01/03/2012
  */
-public class OrcidNotFoundException extends OrcidApiException {
+public class OrcidNotFoundException extends ApplicationException {
 
     /**
      * 
      */
     private static final long serialVersionUID = 1L;
 
-    public OrcidNotFoundException(String message) {
-        super(message, Response.Status.NOT_FOUND);
-    }
-
-    public OrcidNotFoundException(String message, Throwable t) {
-        super(message, Response.Status.NOT_FOUND, t);
-    }
+	public OrcidNotFoundException(Map<String, String> params) {
+		super(params);
+	}
 }

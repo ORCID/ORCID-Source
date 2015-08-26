@@ -51,6 +51,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 public class OrcidSSOManagerImpl implements OrcidSSOManager {
 
+    private final static String SSO_REDIRECT_URI_TYPE = RedirectUriType.SSO_AUTHENTICATION.value();
+    private final static ScopePathType [] PUBLIC_CLIENT_SCOPES = {ScopePathType.AUTHENTICATE, ScopePathType.READ_PUBLIC};    
+    private final static String SSO_ROLE = "ROLE_PUBLIC";
+    private final static String RESOURCE_ID = "orcid";
+    
     @Resource
     private ProfileEntityManager profileEntityManager;
 
@@ -77,11 +82,7 @@ public class OrcidSSOManagerImpl implements OrcidSSOManager {
     
     @Resource(name = "profileEntityCacheManager")
     ProfileEntityCacheManager profileEntityCacheManager;
-
-    private final static String SSO_REDIRECT_URI_TYPE = RedirectUriType.SSO_AUTHENTICATION.value();
-    private final static String SSO_SCOPE = ScopePathType.AUTHENTICATE.value();
-    private final static String SSO_ROLE = "ROLE_PUBLIC";
-
+   
     @Override
     @Transactional
     public ClientDetailsEntity grantSSOAccess(String orcid, String name, String description, String website, Set<String> redirectUris) {
@@ -94,29 +95,14 @@ public class OrcidSSOManagerImpl implements OrcidSSOManager {
         ClientDetailsEntity existingPublicClient = clientDetailsManager.getPublicClient(orcid);
         // If it already have SSO client credentials, just return them
         if (existingPublicClient != null) {            
-            Set<ClientScopeEntity> existingScopes = existingPublicClient.getClientScopes();
-            boolean alreadyHaveAuthScope = false;
-            // Check if it already have the SSO scope
-            for (ClientScopeEntity clientScope : existingScopes) {
-                if (SSO_SCOPE.equals(clientScope.getScopeType())) {
-                    alreadyHaveAuthScope = true;
-                    break;
-                }
-            }
-
-            // If it doesn't add it and persist it
-            if (!alreadyHaveAuthScope) {
-                ClientScopeEntity ssoScope = getClientScopeEntity(SSO_SCOPE, existingPublicClient);
-                existingScopes.add(ssoScope);
-                existingPublicClient.setClientScopes(existingScopes);
-                clientDetailsManager.merge(existingPublicClient);
-            }
             clientId = existingPublicClient.getId();
         } else {
             Set<String> clientScopes = new HashSet<>();
-            clientScopes.add(SSO_SCOPE);
+            for(ScopePathType publicClientScope : PUBLIC_CLIENT_SCOPES) {
+                clientScopes.add(publicClientScope.getContent());
+            }            
             Set<String> clientResourceIds = new HashSet<>();
-            clientResourceIds.add("orcid");
+            clientResourceIds.add(RESOURCE_ID);
 
             Set<String> redirectUrisSet = new HashSet<String>();
             for (String uri : redirectUris) {
@@ -136,6 +122,17 @@ public class OrcidSSOManagerImpl implements OrcidSSOManager {
         return clientDetailsEntity;
     }
 
+    @Override
+    @Transactional
+    public void revokeSSOAccess(String orcid) {
+        if(profileEntityManager.orcidExists(orcid)) {
+            ClientDetailsEntity publicClient = clientDetailsManager.getPublicClient(orcid);
+            if (publicClient != null) {
+                clientDetailsManager.removeByClientId(publicClient.getId());
+            }
+        }
+    }
+    
     @Override    
     public ClientDetailsEntity getUserCredentials(String orcid) {
         ClientDetailsEntity existingClientDetails = clientDetailsManager.getPublicClient(orcid);
@@ -158,48 +155,8 @@ public class OrcidSSOManagerImpl implements OrcidSSOManager {
             }
         }
         return existingClientDetails;
-    }
-
-    @Override
-    @Transactional
-    public void revokeSSOAccess(String orcid) {
-        ProfileEntity profileEntity = profileEntityCacheManager.retrieve(orcid);
-        if (profileEntity == null) {
-            throw new IllegalArgumentException("ORCID does not exist for " + orcid + " cannot continue");
-        } else {
-            ClientDetailsEntity publicClient = clientDetailsManager.getPublicClient(orcid);
-            if (publicClient != null) {                
-                Set<ClientScopeEntity> existingScopes = publicClient.getClientScopes();
-                if (hasSSOScope(existingScopes)) {
-                    // If the SSO scope is the unique scope, delete the complete
-                    // client details entity
-                    if (existingScopes.size() == 1) {
-                        // Delete the client details entity                        
-                        clientDetailsManager.removeByClientId(publicClient.getId());
-                    } else {
-                        // If the user have more that the SSO scope
-                        // Delete the SSO scope
-                        ClientScopePk pk = new ClientScopePk();
-                        pk.setClientDetailsEntity(publicClient.getId());
-                        pk.setScopeType(SSO_SCOPE);
-                        clientScopeDao.remove(pk);
-                        // Delete the client redirect uris associated with SSO
-                        // authentication
-                        Set<ClientRedirectUriEntity> redirectUris = publicClient.getClientRegisteredRedirectUris();
-                        if (redirectUris != null && redirectUris.size() > 0) {
-                            for (ClientRedirectUriEntity redirectUri : redirectUris) {
-                                if (RedirectUriType.SSO_AUTHENTICATION.value().equals(redirectUri.getRedirectUriType())) {
-                                    clientRedirectDao.removeClientRedirectUri(orcid, redirectUri.getRedirectUri());
-                                }
-                            }
-                        }
-                    }
-                    orcidProfileManager.updateLastModifiedDate(orcid);
-                }
-            }
-        }
-    }
-
+    }        
+    
     @Override
     public boolean resetClientSecret(String clientDetailsId) {
         ClientDetailsEntity clientDetailsEntity = clientDetailsManager.findByClientId(clientDetailsId);
@@ -211,25 +168,7 @@ public class OrcidSSOManagerImpl implements OrcidSSOManager {
 
         return clientDetailsManager.resetClientSecret(clientDetailsEntity.getClientId(), clientSecret);
     }
-
-    private boolean hasSSOScope(Set<ClientScopeEntity> scopes) {
-        if (scopes != null && scopes.size() > 0) {
-            for (ClientScopeEntity scope : scopes) {
-                if (SSO_SCOPE.equals(scope.getScopeType())) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    private ClientScopeEntity getClientScopeEntity(String clientScope, ClientDetailsEntity clientDetailsEntity) {
-        ClientScopeEntity clientScopeEntity = new ClientScopeEntity();
-        clientScopeEntity.setClientDetailsEntity(clientDetailsEntity);
-        clientScopeEntity.setScopeType(clientScope);
-        return clientScopeEntity;
-    }
-
+    
     private Set<RedirectUri> getClientRegisteredRedirectUris(Set<String> redirectUris) {
         Set<RedirectUri> clientRedirectUris = new HashSet<>();
         for (String redirectUri : redirectUris) {

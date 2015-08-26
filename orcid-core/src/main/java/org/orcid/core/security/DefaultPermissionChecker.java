@@ -21,13 +21,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
+import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.oauth.OrcidOAuth2Authentication;
@@ -36,6 +39,7 @@ import org.orcid.jaxb.model.message.OrcidIdentifier;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.springframework.beans.factory.annotation.Value;
@@ -57,7 +61,13 @@ public class DefaultPermissionChecker implements PermissionChecker {
     
     @Resource(name = "profileEntityManager")
     private ProfileEntityManager profileEntityManager;
+    
+	@Resource
+	private ProfileDao profileDao;
 
+	@Value("${org.orcid.core.baseUri}")
+	private String baseUrl;
+	
     @Resource
     private OrcidOauth2TokenDetailService orcidOauthTokenDetailService;
 
@@ -304,6 +314,11 @@ public class DefaultPermissionChecker implements PermissionChecker {
                 // make sure they're not trying to
                 // update private information.
                 return;
+            } else if(profileDao.isProfileDeprecated(orcid)) {
+            	StringBuffer primary = new StringBuffer(baseUrl).append("/").append(userOrcid);
+        		Map<String, String> params = new HashMap<String, String>();
+            	params.put("orcid", primary.toString());
+                throw new OrcidDeprecatedException(params);
             }
         }
         throw new AccessControlException("You do not have the required permissions.");

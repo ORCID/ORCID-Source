@@ -29,7 +29,7 @@ import org.orcid.persistence.jpa.entities.SourceEntity;
  * 
  * @author Angel Montenegro (amontenegro)
  * */
-public class MinimizedWorkEntity extends BaseEntity implements Serializable {
+public class MinimizedWorkEntity extends BaseEntity<Long> implements Serializable {
     private static final long serialVersionUID = -6961089690820823167L;
 
     private Long id;

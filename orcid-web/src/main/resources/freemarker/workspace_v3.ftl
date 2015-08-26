@@ -52,46 +52,8 @@
             
             <#include "includes/id_banner.ftl"/>
             
+            <#include "includes/orcid_public_record_widget.ftl"/>
             
-            <#if RequestParameters['widget']??>
-	            <div class="widget-container" ng-controller="widgetCtrl">
-	            	<div class="widget-header">
-						<a ng-click="toggleCopyWidget();showSampleWidget();"><@orcid.msg 'orcid_widget.header'/></a><div class="popover-help-container">
-	                    <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
-	                    <div id="widget-help" class="popover bottom">
-	                        <div class="arrow"></div>
-	                        <div class="popover-content">
-	                            <p><@orcid.msg 'orcid_widget.tooltip'/></p>
-	                        </div>
-	                    </div>
-	                </div>
-					</div>
-					<div ng-show="showCode" ng-cloak class="widget-code-container">
-						<p><@orcid.msg 'orcid_widget.widget_sample'/>:</p>
-						<div class="orcid-summary-widget">
-                           <div class="orcid-widget-details">
-                               <div class="orcid-logo"></div>
-                               <div class="orcid-name">{{name}}</div>
-                               <div class="orcid-id">ORCID: {{orcid}}</div>
-                               <div class="orcid-summary-items">
-                                 <div class="orcid-summary-item" ng-show="works > 0"><@orcid.msg 'workspace.Works'/> ({{works}})</div>
-                                 <div class="orcid-summary-item" ng-show="fundings > 0"><@orcid.msg 'workspace.Funding'/> ({{fundings}})</div>
-                                 <div class="orcid-summary-item" ng-show="educations > 0"> <@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.education'/> ({{educations}})</div>
-                                 <div class="orcid-summary-item" ng-show="employments > 0"><@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.employment'/> ({{employments}})</div>
-                                 <div class="orcid-summary-item" ng-show="peerReviews > 0"><@orcid.msg 'workspace_peer_review_body_list.peerReview'/> ({{peerReviews}})</div>
-                             </div>
-	                        <a href="http://orcid.org/about/what-is-orcid" class="orcid-widget-button" target="_blank"><@orcid.msg 'public-layout.what_is_orcid'/>?</a>
-	                        </div>  
-                        </div>
-						<p class="widget-instructions"><@orcid.msg 'orcid_widget.copy_message'/></p>
-						<p class="widget-instructions"><@orcid.msg 'orcid_widget.for_non_developers'/></p>
-						<textarea id="widget-code-nd" name="widget-code" class="form-control widget-code" ng-model="widgetURLND" ng-click="inputTextAreaSelectAll($event)" readonly="readonly"></textarea>
-						<p class="widget-instructions"><@orcid.msg 'orcid_widget.for_developers'/></p>
-						<textarea id="widget-code" name="widget-code" class="form-control widget-code" ng-model="widgetURL" ng-click="inputTextAreaSelectAll($event)" readonly="readonly"></textarea>
-						<a ng-click="hideWidgetCode()"><@orcid.msg 'orcid_widget.hide_code'/></a>
-					</div>
-	            </div>
-            </#if>
             
             
             <div class="qrcode-container">
@@ -110,7 +72,7 @@
 	       	
 	       	
 	       	<!-- Also known as -->
-	       	<div ng-controller="OtherNamesCtrl" class="workspace-section">
+	       	<div ng-controller="OtherNamesCtrl" class="workspace-section other-names">
         	   
         	   <div class="workspace-section-header">
         	   	   <span class="workspace-section-title"><@orcid.msg 'workspace.Alsoknownas'/></span>
@@ -121,12 +83,13 @@
 	        	      </span>
 	        	   </span>
 	        	   <span class="pull-right" ng-show="showEdit == true" ng-cloak>
-		        	   <@orcid.privacyToggle2  angularModel="otherNamesForm.visibility.visibility"
-			             questionClick="toggleClickPrivacyHelp()"
+		        	   <@orcid.privacyToggle3  angularModel="otherNamesForm.visibility.visibility"
+			             questionClick="toggleClickPrivacyHelp($index)"
 			             clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
 			             publicClick="setPrivacy('PUBLIC', $event)" 
 	                	     limitedClick="setPrivacy('LIMITED', $event)" 
-	                	     privateClick="setPrivacy('PRIVATE', $event)" />
+	                	     privateClick="setPrivacy('PRIVATE', $event)"
+	                	     elementId="$index"/>
                    </span>
         	   </div>
         	   
@@ -158,7 +121,7 @@
             
             
             <!-- Country -->
-            <div ng-controller="CountryCtrl" class="workspace-section">
+            <div ng-controller="CountryCtrl" class="workspace-section country">
             	<div class="workspace-section-header">
 		        	<span class="workspace-section-title"><@orcid.msg 'public_profile.labelCountry'/></span>
 		            <span class="glyphicon glyphicon-pencil edit-country edit-option pull-right" ng-click="openEdit()" title="" ng-hide="showEdit == true"></span>
@@ -166,12 +129,13 @@
 		            	<span ng-show="countryForm != null && countryForm.countryName != null" ng-bind="countryForm.countryName" ng-hide="showEdit == true"></span>
 		            </span>
 		            <span class="pull-right" ng-show="showEdit == true" ng-cloak>
-		            	<@orcid.privacyToggle2  angularModel="countryForm.profileAddressVisibility.visibility"
-			         questionClick="toggleClickPrivacyHelp()"
-			         clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
-			         publicClick="setPrivacy('PUBLIC', $event)" 
-                 	     limitedClick="setPrivacy('LIMITED', $event)" 
-                 	     privateClick="setPrivacy('PRIVATE', $event)" />
+		            	<@orcid.privacyToggle3  angularModel="countryForm.profileAddressVisibility.visibility"
+			         		questionClick="toggleClickPrivacyHelp($index)"
+			         		clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
+			         		publicClick="setPrivacy('PUBLIC', $event)" 
+                 	     	limitedClick="setPrivacy('LIMITED', $event)" 
+                 	     	privateClick="setPrivacy('PRIVATE', $event)"
+                 	      	elementId="$index"/>
 		            </span>
 	            </div>
                 <!-- Edit -->
@@ -196,7 +160,7 @@
             
               
 	       	<!-- Keywords -->
-	       	<div ng-controller="KeywordsCtrl" class="workspace-section">
+	       	<div ng-controller="KeywordsCtrl" class="workspace-section keywords">
 	        	<div class="workspace-section-header">
 	        	   <span class="workspace-section-title"><@orcid.msg 'public_profile.labelKeywords'/></span>
 	        	   
@@ -207,12 +171,13 @@
 	        	      </span>
 	        	   </span>
 	        	   <span class="pull-right" ng-show="showEdit == true" ng-cloak>
-	        	   		<@orcid.privacyToggle2  angularModel="keywordsForm.visibility.visibility"
-		             questionClick="toggleClickPrivacyHelp()"
-		             clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
-		             publicClick="setPrivacy('PUBLIC', $event)" 
-                	     limitedClick="setPrivacy('LIMITED', $event)" 
-                	     privateClick="setPrivacy('PRIVATE', $event)" />
+	        	   		<@orcid.privacyToggle3  angularModel="keywordsForm.visibility.visibility"
+		             	  questionClick="toggleClickPrivacyHelp($index)"
+		             	  clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
+		             	  publicClick="setPrivacy('PUBLIC', $event)" 
+                	      limitedClick="setPrivacy('LIMITED', $event)" 
+                	      privateClick="setPrivacy('PRIVATE', $event)"
+                	      elementId="$index"/>
 	        	   </span>
 	        	 </div>
 	        	   
@@ -248,7 +213,7 @@
 	       
 	       	
 	      	<!-- Websites  -->
-	       	<div ng-controller="WebsitesCtrl" class="workspace-section">
+	       	<div ng-controller="WebsitesCtrl" class="workspace-section websites">
 	        	<div class="workspace-section-header">
 	        	   <span class="workspace-section-title"><@orcid.msg 'public_profile.labelWebsites'/></span>
 	        	   <span ng-hide="showEdit == true">
@@ -258,12 +223,14 @@
 	        	      </div>
 	        	   </span>	
 	        	   <span class="pull-right" ng-show="showEdit == true" ng-cloak>
-	        	   		<@orcid.privacyToggle2  angularModel="websitesForm.visibility.visibility"
-		             questionClick="toggleClickPrivacyHelp()"
-		             clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
-		             publicClick="setPrivacy('PUBLIC', $event)" 
-                	     limitedClick="setPrivacy('LIMITED', $event)" 
-                	     privateClick="setPrivacy('PRIVATE', $event)" />
+	        	   		<@orcid.privacyToggle3 
+		        	   		angularModel="websitesForm.visibility.visibility"
+			            	questionClick="toggleClickPrivacyHelp($index)"
+			             	clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
+			             	publicClick="setPrivacy('PUBLIC', $event)" 
+	                	    limitedClick="setPrivacy('LIMITED', $event)" 
+	                	    privateClick="setPrivacy('PRIVATE', $event)" 
+	                	    elementId="$index"/>
 	        	   </span>
 	        	</div>
 
@@ -310,12 +277,12 @@
 	        	   		<div ng-show="showEdit == true" ng-cloak>
 		        	   		<@orcid.privacyToggle3
 	                            angularModel="email.visibility"
-								questionClick="toggleClickPrivacyHelp(email.value)"
+								questionClick="toggleClickPrivacyHelp($index)"
 								clickedClassCheck="{'popover-help-container-show':privacyHelp[email.value]==true}" 
 								publicClick="emailSrvc.setPrivacy(email, 'PUBLIC', $event)" 
 			                  	limitedClick="emailSrvc.setPrivacy(email, 'LIMITED', $event)" 
 			                  	privateClick="emailSrvc.setPrivacy(email, 'PRIVATE', $event)" 
-			                  	elementId="email.value" />
+			                  	elementId="$index" />
 	        	   		</div>
 	        	   </div>
 	        	   <div ng-show="showEdit == true" ng-cloak>
@@ -386,55 +353,49 @@
                 <#include "workspace_affiliations_body_list_v3.ftl"/>
                 <!-- Fundings -->
                	<#include "workspace_fundings_body_list_v3.ftl"/>
-               	<#if RequestParameters['peer']??>
-               		<!-- Peer Review -->
-               		<#include "workspace_peer_review_body_list.ftl"/>
- 				</#if>
+               
 		        <!-- Works -->                
                 <div id="workspace-publications" class="workspace-accordion-item workspace-accordion-active" ng-controller="WorkCtrl" orcid-loaded="{{worksSrvc.worksToAddIds != null && worksSrvc.loading != true}}">
                     <#include "includes/work/work_section_header_inc_v3.ftl"/>
                     <!-- Work Import Wizard -->
 					<div ng-show="workImportWizard == true" class="work-import-wizard" ng-cloak>
-						
-						<#if ((workImportWizards)??)>
-							<div class="ie7fix-inner">
-								<div class="row">	
-									<div class="col-md-12 col-sm-12 col-xs-12">
-						           		<h1 class="lightbox-title wizard-header"><@orcid.msg 'workspace.link_works'/></h1>
-						           		<span ng-click="showWorkImportWizard()" class="close-wizard"><@orcid.msg 'workspace.LinkResearchActivities.hide_link_works'/></span>
-									</div>
+						<div class="ie7fix-inner">
+							<div class="row">	
+								<div class="col-md-12 col-sm-12 col-xs-12">
+					           		<h1 class="lightbox-title wizard-header"><@orcid.msg 'workspace.link_works'/></h1>
+					           		<span ng-click="showWorkImportWizard()" class="close-wizard"><@orcid.msg 'workspace.LinkResearchActivities.hide_link_works'/></span>
 								</div>
-								<div class="row">
-									<div class="col-md-12 col-sm-12 col-xs-12">
-										<p class="wizard-content">
-							           		<@orcid.msg 'workspace.LinkResearchActivities.description'/> <@orcid.msg 'workspace.LinkResearchActivities.description.more_info'/>
-							           	</p>								
-						           	</div>
+							</div>
+							<div class="row">
+								<div class="col-md-12 col-sm-12 col-xs-12">
+									<p class="wizard-content">
+						           		<@orcid.msg 'workspace.LinkResearchActivities.description'/> <@orcid.msg 'workspace.LinkResearchActivities.description.more_info'/>
+						           	</p>								
+					           	</div>
+							</div>
+							<#if RequestParameters['import_works_wizard']??>
+								<div id="workFilters" class="col-md-12 col-sm-12 col-xs-12">
+									<@orcid.msg 'workspace.link_works.filter.worktype'/>&nbsp;&nbsp;<select ng-options="wt as wt for wt in workType" ng-model="selectedWorkType" ng-change="processWorkImportWizardList()"></select>
+									<@orcid.msg 'workspace.link_works.filter.geographicalarea'/>&nbsp;&nbsp;<select ng-options="ga as ga for ga in geoArea" ng-model="selectedGeoArea" ng-change="processWorkImportWizardList()"></select>
 								</div>
-								
-								
-								<div class="row wizards">
-									<div class="col-md-12 col-sm-12 col-xs-12">
-					    		    	<#list workImportWizards?sort_by("displayName") as thirdPartyDetails>					    		    				
-						        	       	<#assign redirect = (thirdPartyDetails.redirectUris.redirectUri[0].value) >
-					            	   		<#assign predefScopes = (thirdPartyDetails.redirectUris.redirectUri[0].scopeAsSingleString) >
-					                   		<strong><a ng-click="openImportWizardUrl('<@orcid.rootPath '/oauth/authorize?client_id=${thirdPartyDetails.clientId}&response_type=code&scope=${predefScopes}&redirect_uri=${redirect}'/>')">${thirdPartyDetails.displayName}</a></strong><br />					                   							                   		                		
-					                 		<div class="justify">												
-												<p class="wizard-description" ng-class="{'ellipsis-on' : wizardDescExpanded[${thirdPartyDetails.clientId}] == false || wizardDescExpanded[${thirdPartyDetails.clientId}] == null}">
-													${(thirdPartyDetails.shortDescription)!}													
-													<a ng-click="toggleWizardDesc(${thirdPartyDetails.clientId})" ng-show="wizardDescExpanded[${thirdPartyDetails.clientId}] == true"><span class="glyphicon glyphicon-chevron-down wizard-chevron"></span></a>
-												</p>												
-												<a ng-click="toggleWizardDesc(${thirdPartyDetails.clientId})" ng-show="wizardDescExpanded[${thirdPartyDetails.clientId}] == false || wizardDescExpanded[${thirdPartyDetails.clientId}] == null" class="toggle-wizard-desc"><span class="glyphicon glyphicon-chevron-right wizard-chevron"></span></a>
-												
-											</div>
-					                   		<#if (thirdPartyDetails_has_next)>
-						                      	<hr/>
-											</#if>
-					                		</#list>
-									</div>
+							</#if>
+							<br>
+							<div class="row wizards">
+								<div class="col-md-12 col-sm-12 col-xs-12">
+				    		    	<div ng-repeat="wtw in workImportWizards">
+				                   		<strong><a ng-click="openImportWizardUrlFilter('<@orcid.rootPath '/oauth/authorize'/>', wtw)">{{wtw.displayName}}</a></strong><br />					                   							                   		                		
+				                 		<div class="justify">												
+											<p class="wizard-description" ng-class="{'ellipsis-on' : wizardDescExpanded[wtw.clientId] == false || wizardDescExpanded[wtw.clientId] == null}">
+												{{wtw.shortDescription}}													
+												<a ng-click="toggleWizardDesc(wtw.clientId)" ng-show="wizardDescExpanded[wtw.clientId] == true"><span class="glyphicon glyphicon-chevron-down wizard-chevron"></span></a>
+											</p>												
+											<a ng-click="toggleWizardDesc(wtw.clientId)" ng-show="wizardDescExpanded[wtw.clientId] == false || wizardDescExpanded[wtw.clientId] == null" class="toggle-wizard-desc"><span class="glyphicon glyphicon-chevron-right wizard-chevron"></span></a>
+										</div>
+					                    <hr/>
+				                	</div>
 								</div>
-							</div>						
-						</#if>
+							</div>
+						</div>						
 					</div>
 					<!-- Bulk Edit -->					
 					<div ng-show="bulkEditShow && workspaceSrvc.displayWorks" ng-cloak>						
@@ -571,6 +532,10 @@
 						<#include "includes/work/body_work_inc_v3.ftl"/>						
 	            	</div>
             	</div>
+            	<#if RequestParameters['peer']??>
+               		<!-- Peer Review -->
+               		<#include "workspace_peer_review_body_list.ftl"/>
+ 				</#if>
             </div>
         </div>
     </div>    

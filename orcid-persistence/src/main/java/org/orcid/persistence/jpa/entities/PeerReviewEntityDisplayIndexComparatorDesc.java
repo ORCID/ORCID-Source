@@ -21,7 +21,7 @@ import java.util.Comparator;
 
 /**
  * 
- * Comparator that compares OrcidEntity objects based on their ID.
+ * Comparator that compares OrcidEntity objects based on their group id.
  * 
  * Spring Sort annotation didn't seem to have descending function.
  * Sort by index and then compare value

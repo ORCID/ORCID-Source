@@ -60,6 +60,9 @@ public class AddRelationshipFieldToExistingActivitiesExternalIds {
     private WorkDao workDao;
     private TransactionTemplate transactionTemplate;
 
+    @Option(name = "-wid", usage = "Last work id processed")
+    private Long lastWorkId;
+    
     @Option(name = "-s", usage = "Chunk size")
     private Long chunkSize;
 
@@ -100,7 +103,7 @@ public class AddRelationshipFieldToExistingActivitiesExternalIds {
             // First migrate works
             if(obj.processWorks) {
                 if (haveMoreWorks) {
-                    haveMoreWorks = obj.upgradeWorks(obj.chunkSize);
+                    haveMoreWorks = obj.upgradeWorks(obj.lastWorkId, obj.chunkSize);
                 }
             } 
 
@@ -135,6 +138,7 @@ public class AddRelationshipFieldToExistingActivitiesExternalIds {
         System.exit(0);
     }
 
+    @SuppressWarnings("resource")
     private void init() {
         ApplicationContext context = new ClassPathXmlApplicationContext("orcid-core-context.xml");
         workDao = (WorkDao) context.getBean("workDao");
@@ -143,17 +147,18 @@ public class AddRelationshipFieldToExistingActivitiesExternalIds {
         transactionTemplate = (TransactionTemplate) context.getBean("transactionTemplate");
     }
 
-    private boolean upgradeWorks(long limit) {
-        final List<BigInteger> idsToUpgrade = workDao.getWorksWithOldExtIds(limit);
+    private boolean upgradeWorks(long lastWorkId, long limit) {
+        final List<BigInteger> idsToUpgrade = workDao.getWorksWithOldExtIds(lastWorkId, limit);
         if (idsToUpgrade == null || idsToUpgrade.isEmpty()) {
+            LOG.info("Couldnt find more works to process");
             return false;
         }
         LOG.info("Ids to upgrade: {}", idsToUpgrade.size());
-        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-            @Override
-            protected void doInTransactionWithoutResult(TransactionStatus status) {
-                for (BigInteger workId : idsToUpgrade) {
-                    System.out.println("Processing work id: " + workId);
+        for (final BigInteger workId : idsToUpgrade) {
+            System.out.println("Processing work id: " + workId);
+                transactionTemplate.execute(new TransactionCallbackWithoutResult() {            
+                @Override
+                protected void doInTransactionWithoutResult(TransactionStatus status) {                
                     WorkEntity work = workDao.find(workId.longValue());
                     org.orcid.jaxb.model.message.WorkExternalIdentifiers oldExtIds = JsonUtils.readObjectFromJsonString(work.getExternalIdentifiersJson(),
                             org.orcid.jaxb.model.message.WorkExternalIdentifiers.class);
@@ -187,22 +192,23 @@ public class AddRelationshipFieldToExistingActivitiesExternalIds {
                     work.setExternalIdentifiersJson(JsonUtils.convertToJsonString(newExtIds));
                     workDao.merge(work);
                 }
-            }
-        });
+            });
+        }
         return true;
     }
 
     private boolean upgradeFunding(long limit) {
         final List<BigInteger> idsToUpgrade = profileFundingDao.getFundingWithOldExtIds(limit);
         if (idsToUpgrade == null || idsToUpgrade.isEmpty()) {
+            LOG.info("Couldnt find more funding to process");
             return false;
         }
         LOG.info("Funding ids to upgrade: {}", idsToUpgrade.size());
-        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-            @Override
-            protected void doInTransactionWithoutResult(TransactionStatus status) {
-                for (BigInteger fundingId : idsToUpgrade) {
-                    System.out.println("Processing funding id: " + fundingId);
+        for (final BigInteger fundingId : idsToUpgrade) {
+            System.out.println("Processing funding id: " + fundingId);
+            transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+                @Override
+                protected void doInTransactionWithoutResult(TransactionStatus status) {                
                     ProfileFundingEntity fundingEntity = profileFundingDao.find(fundingId.longValue());
                     FundingExternalIdentifiers extIdsPojo = JsonUtils.readObjectFromJsonString(fundingEntity.getExternalIdentifiersJson(),
                             FundingExternalIdentifiers.class);
@@ -217,8 +223,8 @@ public class AddRelationshipFieldToExistingActivitiesExternalIds {
                     fundingEntity.setExternalIdentifiersJson(JsonUtils.convertToJsonString(extIdsPojo));
                     profileFundingDao.merge(fundingEntity);
                 }
-            }
-        });
+            });
+        }
 
         return true;
     }
@@ -250,22 +256,22 @@ public class AddRelationshipFieldToExistingActivitiesExternalIds {
             peerReviewEntity.setExternalIdentifiersJson(JsonUtils.convertToJsonString(extIds));
 
             //Update peer review subject ext ids
-            if(peerReviewEntity.getSubject() != null) {
-                if(!PojoUtil.isEmpty(peerReviewEntity.getSubject().getExternalIdentifiersJson())) {
-                    WorkExternalIdentifiers subjectExtIds = JsonUtils.readObjectFromJsonString(peerReviewEntity.getSubject().getExternalIdentifiersJson(), WorkExternalIdentifiers.class);
-                    if (subjectExtIds != null && !subjectExtIds.getExternalIdentifier().isEmpty()) {
-                        for (WorkExternalIdentifier subjectExtId : subjectExtIds.getExternalIdentifier()) {
-                            if (subjectExtId.getRelationship() == null) {
-                                subjectExtId.setRelationship(Relationship.SELF);
-                            }
-                            if(PojoUtil.isEmpty(subjectExtId.getUrl())) {
-                                subjectExtId.setUrl(new Url(""));
-                            }
+            
+            if(!PojoUtil.isEmpty(peerReviewEntity.getSubjectExternalIdentifiersJson())) {
+                WorkExternalIdentifiers subjectExtIds = JsonUtils.readObjectFromJsonString(peerReviewEntity.getSubjectExternalIdentifiersJson(), WorkExternalIdentifiers.class);
+                if (subjectExtIds != null && !subjectExtIds.getExternalIdentifier().isEmpty()) {
+                    for (WorkExternalIdentifier subjectExtId : subjectExtIds.getExternalIdentifier()) {
+                        if (subjectExtId.getRelationship() == null) {
+                            subjectExtId.setRelationship(Relationship.SELF);
+                        }
+                        if(PojoUtil.isEmpty(subjectExtId.getUrl())) {
+                            subjectExtId.setUrl(new Url(""));
                         }
                     }
-                    peerReviewEntity.getSubject().setExternalIdentifiersJson(JsonUtils.convertToJsonString(subjectExtIds));
                 }
-            }            
+                peerReviewEntity.setSubjectExternalIdentifiersJson(JsonUtils.convertToJsonString(subjectExtIds));
+            }
+                        
                         
             peerReviewDao.merge(peerReviewEntity);
         }
@@ -280,6 +286,10 @@ public class AddRelationshipFieldToExistingActivitiesExternalIds {
 
         if (batchesToRun == null) {
             batchesToRun = Long.valueOf(-1);
+        }
+        
+        if(lastWorkId == null) {
+            lastWorkId = 0L;
         }
     }
 }

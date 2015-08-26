@@ -16,6 +16,8 @@
  */
 package org.orcid.core.exception;
 
+import java.util.Map;
+
 /**
  * 
  * @author Shobhit Tyagi
@@ -25,19 +27,8 @@ public class InvalidPutCodeException extends ApplicationException {
 
     private static final long serialVersionUID = 1L;
 
-    public InvalidPutCodeException() {
-    }
-
-    public InvalidPutCodeException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public InvalidPutCodeException(String message) {
-        super(message);
-    }
-
-    public InvalidPutCodeException(Throwable cause) {
-        super(cause);
-    }
+	public InvalidPutCodeException(Map<String, String> params) {
+		super(params);
+	}
 
 }

@@ -61,6 +61,13 @@ public class SecurityContextTestUtils {
     static public void setUpSecurityContextForClientOnly() {
         setUpSecurityContextForClientOnly("APP-5555555555555555");
     }
+    
+    static public void setUpSecurityContextForGroupIdClientOnly() {
+    	Set<String> scopes = new HashSet<String>();
+        scopes.add(ScopePathType.GROUP_ID_RECORD_READ.value());
+        scopes.add(ScopePathType.GROUP_ID_RECORD_UPDATE.value());
+        setUpSecurityContextForClientOnly("APP-5555555555555555", scopes);
+    }
 
     static public void setUpSecurityContextForClientOnly(String clientId) {
         Set<String> scopes = new HashSet<String>();

@@ -26,6 +26,7 @@ import org.orcid.core.manager.AffiliationsManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.OrgManager;
 import org.orcid.core.manager.SourceManager;
+import org.orcid.core.manager.validator.ActivityValidator;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.AffiliationType;
 import org.orcid.jaxb.model.record.Education;
@@ -39,6 +40,7 @@ import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.springframework.cache.annotation.Cacheable;
 
 public class AffiliationsManagerImpl implements AffiliationsManager {
 
@@ -127,13 +129,15 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
      * */
     @Override
     public Education createEducationAffiliation(String orcid, Education education) {
+    	SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
+    	ActivityValidator.validateEducation(education, sourceEntity);
         OrgAffiliationRelationEntity educationEntity = jpaJaxbEducationAdapter.toOrgAffiliationRelationEntity(education);
         
         //Updates the give organization with the latest organization from database
         OrgEntity updatedOrganization = orgManager.getOrgEntity(education);
         educationEntity.setOrg(updatedOrganization);
         
-        educationEntity.setSource(sourceManager.retrieveSourceEntity());
+        educationEntity.setSource(sourceEntity);
         ProfileEntity profile = profileDao.find(orcid);
         educationEntity.setProfile(profile);
         setIncomingWorkPrivacy(educationEntity, profile);
@@ -207,13 +211,15 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
      * */
     @Override
     public Employment createEmploymentAffiliation(String orcid, Employment employment) {
+    	SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
+    	ActivityValidator.validateEmployment(employment, sourceEntity);
         OrgAffiliationRelationEntity employmentEntity = jpaJaxbEmploymentAdapter.toOrgAffiliationRelationEntity(employment);
         
         //Updates the give organization with the latest organization from database
         OrgEntity updatedOrganization = orgManager.getOrgEntity(employment);
         employmentEntity.setOrg(updatedOrganization);
         
-        employmentEntity.setSource(sourceManager.retrieveSourceEntity());
+        employmentEntity.setSource(sourceEntity);
         ProfileEntity profile = profileDao.find(orcid);
         employmentEntity.setProfile(profile);
         setIncomingWorkPrivacy(employmentEntity, profile);
@@ -277,4 +283,33 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
         }
     }
     
+    /**
+     * Get the list of employments that belongs to a user
+     * 
+     * @param userOrcid
+     * @param lastModified
+     *          Last modified date used to check the cache
+     * @return the list of employments that belongs to this user
+     * */
+    @Override
+    @Cacheable(value = "employments-summaries", key = "#userOrcid.concat('-').concat(#lastModified)")
+    public List<EmploymentSummary> getEmploymentSummaryList(String userOrcid, long lastModified) {
+        List<OrgAffiliationRelationEntity> employmentEntities = findAffiliationsByUserAndType(userOrcid, AffiliationType.EMPLOYMENT);
+        return jpaJaxbEmploymentAdapter.toEmploymentSummary(employmentEntities);
+    }
+    
+    /**
+     * Get the list of educations that belongs to a user
+     * 
+     * @param userOrcid
+     * @param lastModified
+     *          Last modified date used to check the cache
+     * @return the list of educations that belongs to this user
+     * */
+    @Override
+    @Cacheable(value = "educations-summaries", key = "#userOrcid.concat('-').concat(#lastModified)")
+    public List<EducationSummary> getEducationSummaryList(String userOrcid, long lastModified) {
+        List<OrgAffiliationRelationEntity> educationEntities = findAffiliationsByUserAndType(userOrcid, AffiliationType.EDUCATION);
+        return jpaJaxbEducationAdapter.toEducationSummary(educationEntities);
+    }    
 }

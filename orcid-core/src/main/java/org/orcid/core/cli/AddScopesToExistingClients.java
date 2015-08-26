@@ -50,9 +50,14 @@ public class AddScopesToExistingClients {
     @Option(name = "-t", usage = "CSV client types, must be one in ClientType, if null, assume the change applies to all client types")
     private String clientTypes;
     
+    @Option(name = "-c", usage = "CSV client Ids, must belong to existing clients")
+    private String clientIds;
+    
     private Set<ScopePathType> scopes = new HashSet<ScopePathType>();
     
     private Set<ClientType> allowedClientTypes = new HashSet<ClientType>();
+    
+    private Set<String> clientIdSet = new HashSet<String>();
     
     private ClientDetailsManager clientDetailsManager;
     private TransactionTemplate transactionTemplate;
@@ -91,13 +96,25 @@ public class AddScopesToExistingClients {
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             @Override
             protected void doInTransactionWithoutResult(TransactionStatus status) {
-                List<ClientDetailsEntity> clients = clientDetailsManager.getAll();
-                for (ClientDetailsEntity client : clients) {
-                    // Only updater clients should be updated
-                    if (isInAllowedClientTypes(client)) {
-                        ClientDetailsEntity clientDetails = clientDetailsManager.findByClientId(client.getId());
-                        updateScopes(clientDetails);
+            	if(PojoUtil.isEmpty(clientIds) || !PojoUtil.isEmpty(clientTypes)) {
+            		List<ClientDetailsEntity> clients = clientDetailsManager.getAll();
+                    for (ClientDetailsEntity client : clients) {
+                        // Only updater clients should be updated
+                        if (isInAllowedClientTypes(client)) {
+                            ClientDetailsEntity clientDetails = clientDetailsManager.findByClientId(client.getId());
+                            updateScopes(clientDetails);
+                        }
                     }
+            	}
+                
+                for (String clientId : clientIdSet) {
+                	ClientDetailsEntity client = clientDetailsManager.findByClientId(clientId);
+                	if(client == null) {
+                		System.out.println();
+                		System.out.println("Client with Id "+ clientId+ " doesnot exist. Ignoring!!");
+                	} else {
+                		updateScopes(client);
+                	}
                 }
             }
         });
@@ -147,7 +164,8 @@ public class AddScopesToExistingClients {
     }        
     
     public void validateParameters(CmdLineParser parser) throws CmdLineException {
-        if(PojoUtil.isEmpty(newScopes)) {
+    	
+    	if(PojoUtil.isEmpty(newScopes)) {
             throw new CmdLineException(parser, "-s parameter must not be null");
         } else {
             String [] scopesArray = newScopes.split(",");
@@ -169,6 +187,13 @@ public class AddScopesToExistingClients {
                     throw new CmdLineException(parser, "Invalid client type: " + clientType);
                 }
             }            
+        }
+        
+        if(!PojoUtil.isEmpty(clientIds)) {
+        	String [] clientIdArr = clientIds.split(",");
+        	for(String clientId : clientIdArr) {
+        		clientIdSet.add(clientId);
+        	}
         }
     }
 

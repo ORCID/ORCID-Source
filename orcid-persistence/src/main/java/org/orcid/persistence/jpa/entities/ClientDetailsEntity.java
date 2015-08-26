@@ -26,7 +26,6 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import javax.annotation.Resource;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -86,7 +85,12 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
         this.clientId = clientId;
     }
 
-    /**
+    public ClientDetailsEntity(String clientId, String clientName) {
+    	this.clientId = clientId;
+    	this.clientName = clientName;
+	}
+
+	/**
      * This should be implemented by all entity classes to return the id of the
      * entity represented by the &lt;T&gt; generic argument
      * 

@@ -544,6 +544,8 @@
 			stored="false" multiValued="true" />
 
 		<!-- Indexing all possible external identifier types -->
+		<field name="agr" type="text_general" indexed="true" stored="false"
+			multiValued="true" />
 		<field name="arxiv" type="text_general" indexed="true" stored="false"
 			multiValued="true" />
 		<field name="asin" type="text_general" indexed="true" stored="false"
@@ -552,7 +554,19 @@
 			stored="false" multiValued="true" />
 		<field name="bibcode" type="text_general" indexed="true" stored="false"
 			multiValued="true" />
+		<field name="cba" type="text_general" indexed="true" stored="false"
+			multiValued="true" />
+		<field name="cit" type="text_general" indexed="true" stored="false"
+			multiValued="true" />
+		<field name="ctx" type="text_general" indexed="true" stored="false"
+			multiValued="true" />
 		<field name="eid" type="text_general" indexed="true" stored="false"
+			multiValued="true" />
+		<field name="ethos" type="text_general" indexed="true" stored="false"
+			multiValued="true" />
+		<field name="handle" type="text_general" indexed="true" stored="false"
+			multiValued="true" />
+		<field name="hir" type="text_general" indexed="true" stored="false"
 			multiValued="true" />
 		<field name="isbn" type="text_general" indexed="true" stored="false"
 			multiValued="true" />
@@ -572,13 +586,23 @@
 			multiValued="true" />
 		<field name="osti" type="text_general" indexed="true" stored="false"
 			multiValued="true" />
+		<field name="pat" type="text_general" indexed="true" stored="false"
+			multiValued="true" />
 		<field name="pmc" type="text_general" indexed="true" stored="false"
 			multiValued="true" />
 		<field name="pmid" type="text_general" indexed="true" stored="false"
 			multiValued="true" />
 		<field name="rfc" type="text_general" indexed="true" stored="false"
 			multiValued="true" />
+		<field name="source-work-id" type="text_general" indexed="true" stored="false"
+			multiValued="true" />
 		<field name="ssrn" type="text_general" indexed="true" stored="false"
+			multiValued="true" />
+		<field name="uri" type="text_general" indexed="true" stored="false"
+			multiValued="true" />
+		<field name="urn" type="text_general" indexed="true" stored="false"
+			multiValued="true" />
+		<field name="wosuid" type="text_general" indexed="true" stored="false"
 			multiValued="true" />
 		<field name="zbl" type="text_general" indexed="true" stored="false"
 			multiValued="true" />

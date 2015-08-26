@@ -19,6 +19,7 @@ package org.orcid.frontend.web.filter;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.frontend.web.exception.SwitchUserAuthenticationException;
 import org.orcid.jaxb.model.message.OrcidType;
@@ -37,6 +38,9 @@ public class OrcidSwitchUserFilter extends SwitchUserFilter {
 
     @Resource
     private SourceManager sourceManager;
+    
+    @Resource
+    private LocaleManager localeManager;
 
     @Override
     protected Authentication attemptSwitchUser(HttpServletRequest request) throws AuthenticationException {
@@ -54,7 +58,8 @@ public class OrcidSwitchUserFilter extends SwitchUserFilter {
                 return super.attemptSwitchUser(request);
             }
         }
-        throw new SwitchUserAuthenticationException("Insufficient permissions");
+        Object params [] = {};
+        throw new SwitchUserAuthenticationException(localeManager.resolveMessage("web.orcid.switchuser.exception", params));
     }
 
 }

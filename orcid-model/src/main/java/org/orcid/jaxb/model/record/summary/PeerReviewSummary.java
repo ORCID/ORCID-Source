@@ -29,32 +29,31 @@ import org.orcid.jaxb.model.common.CreatedDate;
 import org.orcid.jaxb.model.common.Filterable;
 import org.orcid.jaxb.model.common.FuzzyDate;
 import org.orcid.jaxb.model.common.LastModifiedDate;
+import org.orcid.jaxb.model.common.Organization;
 import org.orcid.jaxb.model.common.Source;
 import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.jaxb.model.record.Activity;
 import org.orcid.jaxb.model.record.GroupableActivity;
-import org.orcid.jaxb.model.record.Role;
 import org.orcid.jaxb.model.record.WorkExternalIdentifiers;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "role", "externalIdentifiers", "completionDate", "source", "createdDate", "lastModifiedDate" })
+@XmlType(propOrder = { "createdDate", "lastModifiedDate", "source", "externalIdentifiers", "organization", "groupId", "completionDate" })
 @XmlRootElement(name = "summary", namespace = "http://www.orcid.org/ns/peer-review")
 public class PeerReviewSummary implements Filterable, Activity, GroupableActivity, Serializable {
     
-    private static final long serialVersionUID = -7769331531691171324L;
-    @XmlElement(namespace = "http://www.orcid.org/ns/peer-review")
-    protected Role role;
+    private static final long serialVersionUID = -7769331531691171324L;    
     @XmlElement(name = "external-identifiers", namespace = "http://www.orcid.org/ns/peer-review")
     protected WorkExternalIdentifiers externalIdentifiers;
     @XmlElement(name = "completion-date", namespace = "http://www.orcid.org/ns/peer-review")
     protected FuzzyDate completionDate;
+    @XmlElement(required = true, namespace = "http://www.orcid.org/ns/peer-review", name = "convening-organization")
+    protected Organization organization;
     @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected Source source;
     @XmlElement(name = "last-modified-date", namespace = "http://www.orcid.org/ns/common")
     protected LastModifiedDate lastModifiedDate;
     @XmlElement(name = "created-date", namespace = "http://www.orcid.org/ns/common")
-    protected CreatedDate createdDate;
-
+    protected CreatedDate createdDate;    
     @XmlAttribute(name = "put-code")
     protected String putCode;
     @XmlAttribute(name = "path")
@@ -63,14 +62,8 @@ public class PeerReviewSummary implements Filterable, Activity, GroupableActivit
     protected Visibility visibility;
     @XmlAttribute(name = "display-index")
     protected String displayIndex;
-
-    public Role getRole() {
-        return role;
-    }
-
-    public void setRole(Role role) {
-        this.role = role;
-    }
+    @XmlElement(namespace = "http://www.orcid.org/ns/peer-review", name = "review-group-id", required = true)
+    protected String groupId;    
 
     public WorkExternalIdentifiers getExternalIdentifiers() {
         return externalIdentifiers;
@@ -143,6 +136,14 @@ public class PeerReviewSummary implements Filterable, Activity, GroupableActivit
     public void setDisplayIndex(String displayIndex) {
         this.displayIndex = displayIndex;
     }
+    
+    public Organization getOrganization() {
+        return organization;
+    }
+
+    public void setOrganization(Organization organization) {
+        this.organization = organization;
+    }
 
     @Override
     public String retrieveSourcePath() {
@@ -152,6 +153,14 @@ public class PeerReviewSummary implements Filterable, Activity, GroupableActivit
         return source.retrieveSourcePath();
     }
 
+    public String getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(String groupId) {
+        this.groupId = groupId;
+    }    
+    
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -162,9 +171,9 @@ public class PeerReviewSummary implements Filterable, Activity, GroupableActivit
         result = prime * result + ((lastModifiedDate == null) ? 0 : lastModifiedDate.hashCode());
         result = prime * result + ((path == null) ? 0 : path.hashCode());
         result = prime * result + ((putCode == null) ? 0 : putCode.hashCode());
-        result = prime * result + ((role == null) ? 0 : role.hashCode());
         result = prime * result + ((source == null) ? 0 : source.hashCode());
         result = prime * result + ((visibility == null) ? 0 : visibility.hashCode());
+        result = prime * result + ((organization == null) ? 0 : organization.hashCode());
         return result;
     }
 
@@ -192,6 +201,11 @@ public class PeerReviewSummary implements Filterable, Activity, GroupableActivit
                 return false;
         } else if (!externalIdentifiers.equals(other.externalIdentifiers))
             return false;
+        if (organization == null) {
+            if (other.organization != null)
+                return false;
+        } else if (!organization.equals(other.organization))
+            return false;
         if (lastModifiedDate == null) {
             if (other.lastModifiedDate != null)
                 return false;
@@ -206,8 +220,6 @@ public class PeerReviewSummary implements Filterable, Activity, GroupableActivit
             if (other.putCode != null)
                 return false;
         } else if (!putCode.equals(other.putCode))
-            return false;
-        if (role != other.role)
             return false;
         if (source == null) {
             if (other.source != null)

@@ -25,12 +25,12 @@ import javax.annotation.Resource;
 
 import org.apache.commons.io.IOUtils;
 import org.orcid.core.adapter.JpaJaxbFundingAdapter;
-import org.orcid.core.exception.OrcidDuplicatedActivityException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.OrgManager;
 import org.orcid.core.manager.ProfileFundingManager;
 import org.orcid.core.manager.SourceManager;
+import org.orcid.core.manager.validator.ActivityValidator;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.record.Funding;
 import org.orcid.jaxb.model.record.summary.FundingSummary;
@@ -45,6 +45,7 @@ import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.solr.entities.OrgDefinedFundingTypeSolrDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
 
 public class ProfileFundingManagerImpl implements ProfileFundingManager {
@@ -256,15 +257,15 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
     @Override
     @Transactional
     public Funding createFunding(String orcid, Funding funding) {
+    	SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
+    	ActivityValidator.validateFunding(funding, sourceEntity, true);
         //Check for duplicates
         List<ProfileFundingEntity> existingFundings = profileFundingDao.getByUser(orcid);
         List<Funding> fundings = jpaJaxbFundingAdapter.toFunding(existingFundings);
         if(fundings != null) {
             for(Funding exstingFunding : fundings) {
-                if(funding.isDuplicated(exstingFunding)) {
-                    LOGGER.error("Trying to create a funding that is duplicated with " + funding.getPutCode());
-                    throw new OrcidDuplicatedActivityException(localeManager.resolveMessage("api.error.duplicated"));
-                }                    
+            	ActivityValidator.checkFundingExternalIdentifiers(funding.getExternalIdentifiers(),
+            			exstingFunding.getExternalIdentifiers(), exstingFunding.getSource(), sourceEntity);
             }
         }
                 
@@ -274,7 +275,7 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
         OrgEntity updatedOrganization = orgManager.getOrgEntity(funding);
         profileFundingEntity.setOrg(updatedOrganization);
         
-        profileFundingEntity.setSource(sourceManager.retrieveSourceEntity());
+        profileFundingEntity.setSource(sourceEntity);
         ProfileEntity profile = profileDao.find(orcid);
         profileFundingEntity.setProfile(profile);
         setIncomingWorkPrivacy(profileFundingEntity, profile);
@@ -305,6 +306,17 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
      * */
     @Override    
     public Funding updateFunding(String orcid, Funding funding) {
+    	SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
+    	ActivityValidator.validateFunding(funding, sourceEntity, false);
+    	List<ProfileFundingEntity> existingFundings = profileFundingDao.getByUser(orcid);
+        for(ProfileFundingEntity existingFunding : existingFundings) {
+        	Funding existing = jpaJaxbFundingAdapter.toFunding(existingFunding);
+            if(!existing.getPutCode().equals(funding.getPutCode())) {
+            	 ActivityValidator.checkFundingExternalIdentifiers(funding.getExternalIdentifiers(),
+            			 existing.getExternalIdentifiers(), existing.getSource(), sourceEntity);
+            }
+        }
+    	
         ProfileFundingEntity pfe = profileFundingDao.getProfileFunding(orcid, funding.getPutCode());
         Visibility originalVisibility = pfe.getVisibility();
         SourceEntity existingSource = pfe.getSource();
@@ -336,5 +348,20 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
         orcidSecurityManager.checkSource(pfe.getSource());
         return profileFundingDao.removeProfileFunding(orcid, fundingId);
     }
+
     
+    /**
+     * Get the list of fundings that belongs to a user
+     * 
+     * @param userOrcid
+     * @param lastModified
+     *          Last modified date used to check the cache
+     * @return the list of fundings that belongs to this user
+     * */
+    @Override
+    @Cacheable(value = "fundings-summaries", key = "#userOrcid.concat('-').concat(#lastModified)")
+    public List<FundingSummary> getFundingSummaryList(String userOrcid, long lastModified) {
+        List<ProfileFundingEntity> fundingEntities = profileFundingDao.getByUser(userOrcid);
+        return jpaJaxbFundingAdapter.toFundingSummary(fundingEntities);
+    }
 }

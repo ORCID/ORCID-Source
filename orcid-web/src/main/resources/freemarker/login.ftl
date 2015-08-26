@@ -18,7 +18,7 @@
 -->
 <@public classes=['home'] nav="signin">
 <#include "sandbox_warning.ftl"/>
-	<form class="form-sign-in" id="loginForm" ng-enter-submit action="<@orcid.rootPath '/signin/auth'/>" method="post">
+	<form class="form-sign-in" id="loginForm" action="<@orcid.rootPath '/signin/auth'/>" method="post">
 		<div class="row">
 		    <@spring.bind "loginForm" />		     
 		    <@spring.showErrors "<br/>" "error" />		     

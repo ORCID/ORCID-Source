@@ -16,8 +16,6 @@
  */
 package org.orcid.core.manager;
 
-import java.net.URI;
-
 import org.orcid.core.utils.VerifyRegistrationToken;
 import org.orcid.jaxb.model.message.OrcidProfile;
 
@@ -32,7 +30,7 @@ public interface RegistrationManager {
 
     void resetUserPassword(String toEmail, OrcidProfile orcidProfile);
 
-    OrcidProfile createMinimalRegistration(OrcidProfile orcidProfile);
+    OrcidProfile createMinimalRegistration(OrcidProfile orcidProfile, boolean usedCaptcha);
 
     Long getCount();
 }

@@ -161,7 +161,7 @@ public class RegistrationControllerTest {
         when(orcidProfileManager.retrieveOrcidProfileByEmail(eq("any@orcid.org"), Matchers.<LoadOptions> any())).thenReturn(orcidWithSecurityQuestion());
         ModelAndView modelAndView = registrationController.resetPasswordEmail(servletRequest, "randomString", redirectAttributes);
 
-        assertEquals("redirect:/answer-security-question/randomString", modelAndView.getViewName());
+        assertEquals("password_one_time_reset_optional_security_questions", modelAndView.getViewName());
         verify(redirectAttributes, never()).addFlashAttribute("passwordResetLinkExpired", true);
 
     }
@@ -315,6 +315,18 @@ public class RegistrationControllerTest {
         assertFalse(mav.getModel().containsKey("alreadyClaimed"));
         assertTrue(mav.getModel().containsKey("claimResendSuccessful"));
         assertTrue((Boolean) mav.getModel().get("claimResendSuccessful"));
+    }
+    
+    @Test
+    public void testResetPasswordDontFailIfAnyFieldIsEmtpy() {
+        PasswordTypeAndConfirmForm form = new PasswordTypeAndConfirmForm();        
+        registrationController.resetPasswordConfirmValidate(form);
+        form.setPassword(new Text());
+        form.setRetypedPassword(null);
+        registrationController.resetPasswordConfirmValidate(form);
+        form.setPassword(null);
+        form.setRetypedPassword(new Text());
+        registrationController.resetPasswordConfirmValidate(form);
     }
     
     private OrcidProfile orcidWithSecurityQuestion() {

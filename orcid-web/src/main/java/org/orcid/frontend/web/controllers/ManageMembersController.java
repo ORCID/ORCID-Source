@@ -211,6 +211,8 @@ public class ManageMembersController extends BaseController {
         RedirectUri rUri = new RedirectUri();
         rUri.setType(Text.valueOf(RedirectUriType.DEFAULT.value()));
         rUri.setValue(Text.valueOf(""));
+        rUri.setActType(Text.valueOf(""));
+        rUri.setGeoArea(Text.valueOf(""));
         return rUri;
     }
 

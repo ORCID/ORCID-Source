@@ -23,7 +23,6 @@ import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
-import org.orcid.persistence.jpa.entities.ProfileWorkEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 
 /**
@@ -35,8 +34,6 @@ import org.orcid.persistence.jpa.entities.WorkEntity;
 public interface Jaxb2JpaAdapter {
 
     ProfileEntity toProfileEntity(OrcidProfile profile, ProfileEntity existingProfileEntity);
-
-    ProfileWorkEntity getNewProfileWorkEntity(OrcidWork orcidWork, ProfileEntity profileEntity);
 
     OrgAffiliationRelationEntity getNewOrgAffiliationRelationEntity(Affiliation updatedAffiliation, ProfileEntity profileEntity);
     

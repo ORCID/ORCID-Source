@@ -37,6 +37,15 @@ public class TranslatedTitle implements ErrorsInterface, Required, Serializable 
     
     private String getRequiredMessage;
     
+    public TranslatedTitle() {
+        
+    }
+    
+    public TranslatedTitle(String content, String languageCode) {        
+        this.content = content;
+        this.languageCode = languageCode;
+    }
+    
     public static TranslatedTitle valueOf(org.orcid.jaxb.model.message.TranslatedTitle translatedTitle){
     	if(translatedTitle == null)
     		return null;
