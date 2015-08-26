@@ -4557,6 +4557,10 @@ ul.toggle-menu > li .menu-options.sort{
 	width: 100%;
 }
 
+ul.toggle-menu > li .menu-options.sort .glyphicon{
+	line-height: 0;
+}
+
 ul.toggle-menu > li .menu-options.education{
 	min-width: 120px;
 }
@@ -4603,8 +4607,7 @@ ul.toggle-menu > li .menu-options > li a span{
 	margin-top: 3px;
 } 
 
-ul.toggle-menu > li .menu-options.sort > li a span{
-	float: right;
+ul.toggle-menu > li .menu-options.sort > li a span{	
 	margin-left: 5px;
 	padding: 7px 0 0 0;
 }
@@ -7164,6 +7167,18 @@ ul.sources-edit-list > li.group-details{
 	
 	#edit-affiliation .form-group div>select{
 		margin-bottom: 10px;
+	}
+	
+	ul.toggle-menu > li .menu-options.sort > li a span{
+		float: right;
+	}
+	
+	ul.toggle-menu > li .menu-options.sort .glyphicon.glyphicon-sort-by-alphabet-alt,
+	ul.toggle-menu > li .menu-options.sort .glyphicon.glyphicon-sort-by-order,
+	ul.toggle-menu > li .menu-options.sort .glyphicon.glyphicon-sort-by-order-alt,
+	ul.toggle-menu > li .menu-options.sort .glyphicon.glyphicon-sort-by-alphabet{
+		vertical-align: middle;
+    	line-height: 25px;
 	}
 	
 }
