@@ -128,7 +128,7 @@ public class WorksController extends BaseWorkspaceController {
                 worksMap = (HashMap<String, WorkForm>) request.getSession().getAttribute(WORKS_MAP);
             }
             for (String workId : workIds) {
-                work = worksMap.get(workId);
+                work = worksMap.get(Long.valueOf(workId));
                 // Set country name
                 if (!PojoUtil.isEmpty(work.getCountryCode())) {
                     Text countryName = Text.valueOf(countries.get(work.getCountryCode().getValue()));
@@ -753,12 +753,12 @@ public class WorksController extends BaseWorkspaceController {
         String orcid = getEffectiveUserOrcid();
         java.util.Date lastModified = profileEntityManager.getLastModified(orcid);
         List<Work> works = workManager.findWorks(orcid, lastModified.getTime());
-        HashMap<String, WorkForm> worksMap = new HashMap<String, WorkForm>();
+        HashMap<Long, WorkForm> worksMap = new HashMap<Long, WorkForm>();
         List<String> workIds = new ArrayList<String>();
         if (works != null) {
             for (Work work : works) {
                 try {
-                    worksMap.put(String.valueOf(work.getPutCode()), WorkForm.valueOf(work));
+                    worksMap.put(work.getPutCode(), WorkForm.valueOf(work));
                     workIds.add(String.valueOf(work.getPutCode()));
                 } catch (Exception e) {
                     LOGGER.error("ProfileWork failed to parse as Work. Put code" + work.getPutCode());
