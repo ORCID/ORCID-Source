@@ -35,7 +35,7 @@ public class PeerReviewDaoImpl extends GenericDaoImpl<PeerReviewEntity, Long> im
     }
 
     @Override
-    public PeerReviewEntity getPeerReview(String userOrcid, String peerReviewId) {
+    public PeerReviewEntity getPeerReview(String userOrcid, Long peerReviewId) {
         Query query = entityManager.createQuery("from PeerReviewEntity where profile.id=:userOrcid and id=:peerReviewId");
         query.setParameter("userOrcid", userOrcid);
         query.setParameter("peerReviewId", Long.valueOf(peerReviewId));
@@ -60,10 +60,10 @@ public class PeerReviewDaoImpl extends GenericDaoImpl<PeerReviewEntity, Long> im
     
     @Override
     @Transactional
-    public boolean updateToMaxDisplay(String orcid, String id) {
+    public boolean updateToMaxDisplay(String orcid, Long peerReviewId) {
         Query query = entityManager.createNativeQuery("UPDATE peer_review SET display_index = (select coalesce(MAX(display_index) + 1, 0) from peer_review where orcid=:orcid and id != :id ) WHERE id = :id");
         query.setParameter("orcid", orcid);
-        query.setParameter("id", Long.valueOf(id));
+        query.setParameter("id", peerReviewId);
         return query.executeUpdate() > 0 ? true : false;
     }
     

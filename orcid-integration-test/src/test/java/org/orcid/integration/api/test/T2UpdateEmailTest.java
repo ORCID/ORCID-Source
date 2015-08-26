@@ -161,6 +161,9 @@ public class T2UpdateEmailTest extends DBUnitTest {
         
         ClientResponse clientResponse = oauthT2Clientv1_2_rc6.updateBioDetailsXml(USER_TO_TEST, orcidMessage, accessToken);
         assertEquals(200, clientResponse.getStatus());
+                
+        clientResponse = oauthT2Clientv1_2_rc6.viewBioDetailsXml(USER_TO_TEST, accessToken);
+        assertEquals(200, clientResponse.getStatus());
         OrcidMessage result = clientResponse.getEntity(OrcidMessage.class);
         
         // Check returning message
@@ -201,7 +204,7 @@ public class T2UpdateEmailTest extends DBUnitTest {
         OrcidMessage errorMessage = clientResponse.getEntity(OrcidMessage.class);
         assertNotNull(errorMessage);
         assertNotNull(errorMessage.getErrorDesc());
-        assertEquals("Invalid incoming message: Email group@user.com belongs to other user", errorMessage.getErrorDesc().getContent());
+        assertEquals("Bad Request: Invalid incoming message: Email group@user.com belongs to other user", errorMessage.getErrorDesc().getContent());
     }
     
     private String obtainAccessToken(String clientId, String authorizationCode, String redirectUri, String scopes) throws JSONException {

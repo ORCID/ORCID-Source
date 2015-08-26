@@ -44,10 +44,10 @@ public class ProfileFundingDaoImpl extends GenericDaoImpl<ProfileFundingEntity, 
      * @return a profile funding entity that have the give id and belongs to the given user 
      * */
     @Override
-    public ProfileFundingEntity getProfileFunding(String userOrcid, String profileFundingId) {
+    public ProfileFundingEntity getProfileFunding(String userOrcid, Long profileFundingId) {
         Query query = entityManager.createQuery("from ProfileFundingEntity where profile.id=:userOrcid and id=:profileFundingId");
         query.setParameter("userOrcid", userOrcid);
-        query.setParameter("profileFundingId", Long.valueOf(profileFundingId));
+        query.setParameter("profileFundingId", profileFundingId);
         return (ProfileFundingEntity) query.getSingleResult();
     }
     
@@ -63,10 +63,10 @@ public class ProfileFundingDaoImpl extends GenericDaoImpl<ProfileFundingEntity, 
      * */
     @Override
     @Transactional
-    public boolean removeProfileFunding(String userOrcid, String profileFundingId) {
+    public boolean removeProfileFunding(String userOrcid, Long profileFundingId) {
         Query query = entityManager.createQuery("delete from ProfileFundingEntity where profile.id=:userOrcid and id=:profileFundingId");
         query.setParameter("userOrcid", userOrcid);
-        query.setParameter("profileFundingId", Long.valueOf(profileFundingId));
+        query.setParameter("profileFundingId", profileFundingId);
         return query.executeUpdate() > 0 ? true : false;
     }
 
@@ -86,10 +86,10 @@ public class ProfileFundingDaoImpl extends GenericDaoImpl<ProfileFundingEntity, 
      * */
     @Override
     @Transactional
-    public boolean updateProfileFundingVisibility(String clientOrcid, String profileFundingId, Visibility visibility) {
+    public boolean updateProfileFundingVisibility(String clientOrcid, Long profileFundingId, Visibility visibility) {
         Query query = entityManager.createQuery("update ProfileFundingEntity set visibility=:visibility where profile.id=:clientOrcid and id=:profileFundingId");
         query.setParameter("clientOrcid", clientOrcid);
-        query.setParameter("profileFundingId", Long.valueOf(profileFundingId));
+        query.setParameter("profileFundingId", profileFundingId);
         query.setParameter("visibility", visibility);
         return query.executeUpdate() > 0 ? true : false;
     }
@@ -138,9 +138,9 @@ public class ProfileFundingDaoImpl extends GenericDaoImpl<ProfileFundingEntity, 
      * @return the ProfileFundingEntity object
      * */
     @Override
-    public ProfileFundingEntity getProfileFundingEntity(String profileFundingId) {
+    public ProfileFundingEntity getProfileFundingEntity(Long profileFundingId) {
         Query query = entityManager.createQuery("from ProfileFundingEntity where id=:id");
-        query.setParameter("id", Long.valueOf(profileFundingId));
+        query.setParameter("id", profileFundingId);
         return (ProfileFundingEntity) query.getSingleResult();
     }
 
@@ -191,10 +191,10 @@ public class ProfileFundingDaoImpl extends GenericDaoImpl<ProfileFundingEntity, 
     
     @Override
     @Transactional
-    public boolean updateToMaxDisplay(String orcid, String id) {
+    public boolean updateToMaxDisplay(String orcid, Long id) {
         Query query = entityManager.createNativeQuery("UPDATE profile_funding SET display_index = (select coalesce(MAX(display_index) + 1, 0) from profile_funding where orcid=:orcid and id != :id ) WHERE id = :id");
         query.setParameter("orcid", orcid);
-        query.setParameter("id", Long.valueOf(id));
+        query.setParameter("id", id);
         return query.executeUpdate() > 0 ? true : false;
     }
 

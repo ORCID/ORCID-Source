@@ -76,7 +76,7 @@ public class WorkFormTest extends XMLTestCase {
         work.setJournalTitle(new Title("Journal Title"));
         work.setLanguageCode("EN");
         work.setPublicationDate(new PublicationDate(new Year(2015), new Month(1), new Day(1)));
-        work.setPutCode("12345");
+        work.setPutCode(Long.valueOf("12345"));
         work.setShortDescription("Short description");
         work.setUrl(new Url("http://test.com"));
         work.setVisibility(org.orcid.jaxb.model.common.Visibility.LIMITED);

@@ -93,7 +93,7 @@ public class JpaJaxbEmploymentAdapterTest {
         Employment employment = jpaJaxbEmploymentAdapter.toEmployment(entity);
         assertNotNull(employment);
         assertEquals("employment:department", employment.getDepartmentName());
-        assertEquals("123456", employment.getPutCode());
+        assertEquals(Long.valueOf(123456), employment.getPutCode());
         assertEquals("employment:title", employment.getRoleTitle());
         assertEquals("private", employment.getVisibility().value());
         assertNotNull(employment.getStartDate());
@@ -110,8 +110,8 @@ public class JpaJaxbEmploymentAdapterTest {
         assertEquals("org:region", employment.getOrganization().getAddress().getRegion());
         assertEquals(org.orcid.jaxb.model.common.Iso3166Country.US, employment.getOrganization().getAddress().getCountry());
         assertNotNull(employment.getSource());        
-        assertNotNull(employment.getSource().getSourceOrcid());
-        assertEquals("APP-000000001", employment.getSource().getSourceOrcid().getPath());
+        assertNotNull(employment.getSource().retrieveSourcePath());
+        assertEquals("APP-000000001", employment.getSource().retrieveSourcePath());
     }
     
     @Test
@@ -121,7 +121,7 @@ public class JpaJaxbEmploymentAdapterTest {
         EmploymentSummary employmentSummary = jpaJaxbEmploymentAdapter.toEmploymentSummary(entity);
         assertNotNull(employmentSummary);
         assertEquals("employment:department", employmentSummary.getDepartmentName());
-        assertEquals("123456", employmentSummary.getPutCode());
+        assertEquals(Long.valueOf(123456), employmentSummary.getPutCode());
         assertEquals("employment:title", employmentSummary.getRoleTitle());
         assertEquals("private", employmentSummary.getVisibility().value());
         assertNotNull(employmentSummary.getStartDate());
@@ -132,8 +132,8 @@ public class JpaJaxbEmploymentAdapterTest {
         assertEquals("02", employmentSummary.getEndDate().getMonth().getValue());
         assertEquals("02", employmentSummary.getEndDate().getDay().getValue());        
         assertNotNull(employmentSummary.getSource());
-        assertNotNull(employmentSummary.getSource().getSourceOrcid());
-        assertEquals("APP-000000001", employmentSummary.getSource().getSourceOrcid().getPath());
+        assertNotNull(employmentSummary.getSource().retrieveSourcePath());
+        assertEquals("APP-000000001", employmentSummary.getSource().retrieveSourcePath());
     }
     
     private Employment getEmployment(boolean full) throws JAXBException {

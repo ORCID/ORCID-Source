@@ -72,7 +72,7 @@ public class PeerReview implements VisibilityType, Activity, Serializable, Organ
     protected Source source;
     @XmlAttribute(name = "put-code")
     @ApiModelProperty(hidden = true) 
-    protected String putCode;
+    protected Long putCode;
     @XmlAttribute
     protected Visibility visibility;
     @XmlAttribute(name = "path")
@@ -138,11 +138,11 @@ public class PeerReview implements VisibilityType, Activity, Serializable, Organ
         this.source = source;
     }
 
-    public String getPutCode() {
+    public Long getPutCode() {
         return putCode;
     }
 
-    public void setPutCode(String putCode) {
+    public void setPutCode(Long putCode) {
         this.putCode = putCode;
     }
 

@@ -287,7 +287,7 @@ public class JpaJaxbEntityAdapterToOrcidProfileTest extends DBUnitTest {
         Source sponsor = orcidHistory.getSource();
         assertNotNull(sponsor);
         assertEquals("S. Milligan", sponsor.getSourceName().getContent());
-        assertEquals("4444-4444-4444-4441", sponsor.getSourceOrcid().getPath());
+        assertEquals("4444-4444-4444-4441", sponsor.retrieveSourcePath());
         assertEquals(DateUtils.convertToDate("2011-07-02T15:31:00"), orcidHistory.getLastModifiedDate().getValue().toGregorianCalendar().getTime());
         assertEquals(DateUtils.convertToDate("2011-06-29T15:31:00"), orcidHistory.getSubmissionDate().getValue().toGregorianCalendar().getTime());
         assertEquals(DateUtils.convertToDate("2011-07-02T15:31:00"), orcidHistory.getCompletionDate().getValue().toGregorianCalendar().getTime());
@@ -382,7 +382,7 @@ public class JpaJaxbEntityAdapterToOrcidProfileTest extends DBUnitTest {
         assertEquals(Visibility.LIMITED, externalIdentifiers.getVisibility());
         assertEquals(1, externalIdentifiers.getExternalIdentifier().size());
         ExternalIdentifier externalIdentifier = externalIdentifiers.getExternalIdentifier().get(0);
-        assertEquals("4444-4444-4444-4441", externalIdentifier.getSource().getSourceOrcid().getPath());
+        assertEquals("4444-4444-4444-4441", externalIdentifier.getSource().retrieveSourcePath());
         assertEquals("d3clan", externalIdentifier.getExternalIdReference().getContent());
         assertEquals("Facebook", externalIdentifier.getExternalIdCommonName().getContent());
     }
