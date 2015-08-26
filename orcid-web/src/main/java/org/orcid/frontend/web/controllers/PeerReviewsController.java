@@ -223,14 +223,14 @@ public class PeerReviewsController extends BaseWorkspaceController {
         String[] peerReviewIds = peerReviewIdsStr.split(",");
 
         if (peerReviewIds != null) {
-            HashMap<String, PeerReviewForm> peerReviewMap = (HashMap<String, PeerReviewForm>) request.getSession().getAttribute(PEER_REVIEW_MAP);
+            HashMap<Long, PeerReviewForm> peerReviewMap = (HashMap<Long, PeerReviewForm>) request.getSession().getAttribute(PEER_REVIEW_MAP);
             // this should never happen, but just in case.
             if (peerReviewMap == null) {
                 createPeerReviewIdList(request);
-                peerReviewMap = (HashMap<String, PeerReviewForm>) request.getSession().getAttribute(PEER_REVIEW_MAP);
+                peerReviewMap = (HashMap<Long, PeerReviewForm>) request.getSession().getAttribute(PEER_REVIEW_MAP);
             }
             for (String peerReviewId : peerReviewIds) {
-                peerReview = peerReviewMap.get(peerReviewId);
+                peerReview = peerReviewMap.get(Long.valueOf(peerReviewId));
                 peerReviewList.add(peerReview);
             }
         }
