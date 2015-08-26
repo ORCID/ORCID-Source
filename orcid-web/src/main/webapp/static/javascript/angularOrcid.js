@@ -426,7 +426,7 @@ ActSortState.prototype.predicateMap = sortPredicateMap;
 ActSortState.prototype.sortBy = function(key) {
         if (this.predicateKey == key){
            this.reverse = ! this.reverse;
-           this.reverseKey[key] = ! this.reverseKey[key];
+           this.reverseKey[key] = !this.reverseKey[key];
         }
         this.predicateKey = key;
         this.predicate = this.predicateMap[this.type][key];
@@ -3210,7 +3210,7 @@ orcidNgModule.controller('PublicEduAffiliation', ['$scope', '$compile', '$filter
     $scope.moreInfo = {};
 
     $scope.sortState = new ActSortState(GroupedActivities.AFFILIATION);
-    $scope.sort = function(key) {
+    $scope.sort = function(key) {    	
         $scope.sortState.sortBy(key);
     };
 
@@ -3287,7 +3287,7 @@ orcidNgModule.controller('AffiliationCtrl', ['$scope', '$compile', '$filter', 'a
     $scope.showElement = {};
 
     $scope.sortState = new ActSortState(GroupedActivities.AFFILIATION);
-    $scope.sort = function(key) {
+    $scope.sort = function(key) {    	
         $scope.sortState.sortBy(key);
     };
 
