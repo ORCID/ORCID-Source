@@ -36,6 +36,7 @@ import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ActivityCacheManager;
 import org.orcid.core.manager.EncryptionManager;
+import org.orcid.core.manager.GroupIdRecordManager;
 import org.orcid.core.manager.OrcidProfileCacheManager;
 import org.orcid.core.manager.PeerReviewManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
@@ -43,6 +44,7 @@ import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.frontend.web.util.LanguagesMap;
+import org.orcid.jaxb.model.groupid.GroupIdRecord;
 import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.Funding;
 import org.orcid.jaxb.model.message.FundingType;
@@ -111,6 +113,9 @@ public class PublicProfileController extends BaseWorkspaceController {
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
 
+    @Resource
+    private GroupIdRecordManager groupIdRecordManager;
+    
     public static int ORCID_HASH_LENGTH = 8;
 
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[x]}")
@@ -522,6 +527,14 @@ public class PublicProfileController extends BaseWorkspaceController {
         return result;
     }
 
+    /**
+     * Get group information based on the group id
+     * */
+    @RequestMapping(value = "/public/group/{groupId}", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
+    public @ResponseBody GroupIdRecord getGroupInformation(@PathVariable("groupId") String groupId) {        
+        return groupIdRecordManager.findByGroupId(groupId);
+    }
+    
     public LinkedHashMap<Long, Funding> fundingMap(String orcid) {
         OrcidProfile profile = orcidProfileCacheManager.retrievePublic(orcid);
         if (profile == null)
