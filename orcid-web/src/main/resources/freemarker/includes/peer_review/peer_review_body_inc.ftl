@@ -43,6 +43,7 @@
                               </#if>
                           </ul>
                            
+                          <!-- Review --> 
                           <#if !(isPublicProfile??)>
                               <div ng-show="!group.consistentVis() && !editSources[group.groupId]" class="vis-issue">
 	                              	<div class="popover-help-container">
