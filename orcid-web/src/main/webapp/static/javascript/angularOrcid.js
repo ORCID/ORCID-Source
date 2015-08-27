@@ -5542,8 +5542,6 @@ orcidNgModule.factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
             },
             getPeerReviewGroupDetails: function(groupIDvalue){
             	peerReviewSrvc.groupDetails[groupIDvalue] = {};
-            	console.log("ID: " + groupIDvalue);
-            	console.log(getBaseUri() + '/peer-reviews/group/' + groupIDvalue);
             	$.ajax({
                     url: getBaseUri() + '/peer-reviews/group/' + groupIDvalue,
                     dataType: 'json',
