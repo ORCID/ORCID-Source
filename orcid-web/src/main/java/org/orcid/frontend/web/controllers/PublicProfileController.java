@@ -245,7 +245,7 @@ public class PublicProfileController extends BaseWorkspaceController {
         Map<Long, Affiliation> affMap = affiliationMap(orcid);
         String[] affIds = workIdsStr.split(",");
         for (String id : affIds) {
-            Affiliation aff = affMap.get(id);
+            Affiliation aff = affMap.get(Long.valueOf(id));
             // ONLY SHARE THE PUBLIC AFFILIATIONS!
             if (aff != null && aff.getVisibility().equals(Visibility.PUBLIC)) {
                 AffiliationForm form = AffiliationForm.valueOf(aff);
@@ -265,7 +265,7 @@ public class PublicProfileController extends BaseWorkspaceController {
         Map<Long, Funding> fundingMap = fundingMap(orcid);
         String[] fundingIds = fundingIdsStr.split(",");
         for (String id : fundingIds) {
-            Funding funding = fundingMap.get(id);
+            Funding funding = fundingMap.get(Long.valueOf(id));
             FundingForm form = FundingForm.valueOf(funding);
             // Set type name
             if (funding.getType() != null) {
@@ -302,8 +302,8 @@ public class PublicProfileController extends BaseWorkspaceController {
         String[] workIds = workIdsStr.split(",");
 
         for (String workId : workIds) {
-            if (minimizedWorksMap.containsKey(workId)) {
-                WorkForm work = minimizedWorksMap.get(workId);
+            if (minimizedWorksMap.containsKey(Long.valueOf(workId))) {
+                WorkForm work = minimizedWorksMap.get(Long.valueOf(workId));
                 if (Visibility.PUBLIC.equals(work.getVisibility())) {
                     if (!PojoUtil.isEmpty(work.getCountryCode())) {
                         Text countryName = Text.valueOf(countries.get(work.getCountryCode().getValue()));
@@ -402,7 +402,7 @@ public class PublicProfileController extends BaseWorkspaceController {
         Map<Long, PeerReview> peerReviewMap = peerReviewMap(orcid);
         String[] peerReviewIds = peerReviewIdsStr.split(",");
         for (String id : peerReviewIds) {
-            PeerReview peerReview = peerReviewMap.get(id);
+            PeerReview peerReview = peerReviewMap.get(Long.valueOf(id));
             PeerReviewForm form = PeerReviewForm.valueOf(peerReview);
             // Set language name
             form.setCountryForDisplay(getMessage(buildInternationalizationKey(CountryIsoEntity.class, peerReview.getOrganization().getAddress().getCountry().name())));
