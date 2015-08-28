@@ -90,6 +90,22 @@
 			<version>1.5.0</version>
 		</dependency>
 
+		<!-- citeproc support -->
+		<dependency>
+			<groupId>de.undercouch</groupId>
+			<artifactId>citeproc-java</artifactId>
+			<version>0.6</version>
+		</dependency>
+		<dependency>
+			<groupId>org.citationstyles</groupId>
+			<artifactId>styles</artifactId>
+			<version>1.0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.citationstyles</groupId>
+			<artifactId>locales</artifactId>
+			<version>1.0.1-SNAPSHOT</version>
+		</dependency>
         <!-- Test dependencies -->
 
         <dependency>
