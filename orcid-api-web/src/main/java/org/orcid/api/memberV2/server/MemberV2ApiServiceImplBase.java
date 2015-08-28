@@ -426,6 +426,7 @@ abstract public class MemberV2ApiServiceImplBase {
     
     @POST
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(GROUP_ID_RECORD)
     @ApiOperation(value = "Create a Group", authorizations = { @Authorization(value = "orcid_auth", scopes = {
             @AuthorizationScope(scope = ScopeConstants.GROUP_ID_RECORD_UPDATE, description = "you need this") }) })
@@ -439,6 +440,7 @@ abstract public class MemberV2ApiServiceImplBase {
 
     @PUT
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(GROUP_ID_RECORD + PUTCODE)
     @ApiOperation(value = "Update a Group", response = GroupIdRecord.class, authorizations = { @Authorization(value = "orcid_auth", scopes = {
             @AuthorizationScope(scope = ScopeConstants.GROUP_ID_RECORD_UPDATE, description = "you need this") }) })
