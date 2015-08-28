@@ -390,12 +390,14 @@ orcidNgModule.directive('compile', function($compile) {
 
 
 var ActSortState = function(groupType) {
-    this.type = groupType;
+    this.type = groupType;    
     this.predicateKey = 'date';
+    if (this.type == 'peerReview') this.predicateKey = 'groupName';
     this.reverseKey = {};
     this.reverseKey['date']  = false;
     this.reverseKey['title'] = false;
     this.reverseKey['type']  = false;
+    this.reverseKey['groupName']  = false;
     this.predicate = this.predicateMap[this.type][this.predicateKey];
 };
 
@@ -416,17 +418,15 @@ sortPredicateMap[GroupedActivities.AFFILIATION]['date'] = ['-dateSortString', 't
 sortPredicateMap[GroupedActivities.AFFILIATION]['title'] = ['title', '-dateSortString'];
 
 sortPredicateMap[GroupedActivities.PEER_REVIEW] = {};
-sortPredicateMap[GroupedActivities.PEER_REVIEW]['date'] = ['-dateSortString', 'title','getDefault().type.value'];
-sortPredicateMap[GroupedActivities.PEER_REVIEW]['title'] = ['title', '-dateSortString','getDefault().type.value'];
-sortPredicateMap[GroupedActivities.PEER_REVIEW]['type'] = ['getDefault().type.value','title', '-dateSortString'];
+sortPredicateMap[GroupedActivities.PEER_REVIEW]['groupName'] = ['groupName'];
 
 ActSortState.prototype.predicateMap = sortPredicateMap;
 
 
-ActSortState.prototype.sortBy = function(key) {
+ActSortState.prototype.sortBy = function(key) {	
         if (this.predicateKey == key){
-           this.reverse = ! this.reverse;
-           this.reverseKey[key] = !this.reverseKey[key];
+           this.reverse = !this.reverse;
+           this.reverseKey[key] = !this.reverseKey[key];           
         }
         this.predicateKey = key;
         this.predicate = this.predicateMap[this.type][key];
@@ -4178,6 +4178,7 @@ orcidNgModule.controller('PublicPeerReviewCtrl',['$scope', '$compile', '$filter'
 	 $scope.showDetails = {};
 	 $scope.showElement = {};
 	 $scope.showPeerReviewDetails = {};
+	 $scope.sortHideOption = true;
 	 
 	 $scope.sortState = new ActSortState(GroupedActivities.PEER_REVIEW);
      
@@ -5319,8 +5320,7 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
 orcidNgModule.factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
     var peerReviewSrvc = {
     		constants: { 'access_type': { 'USER': 'user', 'ANONYMOUS': 'anonymous'}},
-    		groups: new Array(),
-    		groupDetails: {},
+    		groups: new Array(),    		
     		loading: false,
             loadingDetails: false,
             quickRef: {},            
@@ -5540,23 +5540,21 @@ orcidNgModule.factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
                 }
                 return count;
             },
-            getPeerReviewGroupDetails: function(groupIDvalue){
-            	peerReviewSrvc.groupDetails[groupIDvalue] = {};
+            getPeerReviewGroupDetails: function(groupIDvalue, putCode){
+            	var group = peerReviewSrvc.getGroup(putCode);
             	$.ajax({
-                    url: getBaseUri() + '/peer-reviews/group/' + groupIDvalue,
+                    url: getBaseUri() + '/public/group/' + groupIDvalue,
                     dataType: 'json',
                     type: 'GET',
                     success: function(data) {
                     	$rootScope.$apply(function(){
-                    		peerReviewSrvc.groupDetails[groupIDvalue].groupName = data.name;
-                    		peerReviewSrvc.groupDetails[groupIDvalue].groupDescription = data.description;
-                    		peerReviewSrvc.groupDetails[groupIDvalue].groupType = data.type;
-                    		console.log(peerReviewSrvc.groupDetails[groupIDvalue].groupName);
-                    		
+                    		group.groupName = data.name;
+                    		group.groupDescription = data.description;
+                    		group.groupType = data.type;
                     	});
                     }
                 }).fail(function(){
-                    console.log("error getPeerReviewGroupDetails(groupIDvalue)");
+                    console.log("error getPeerReviewGroupDetails(groupIDvalue, putCode)");
                 });
             }
     };
