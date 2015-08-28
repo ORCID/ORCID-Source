@@ -106,7 +106,7 @@ public class PublicV2ApiServiceImplBase {
     }
 
     @GET
-    @Produces(value = { OrcidApiConstants.APPLICATION_CITEPROC, VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Produces(value = {VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON, OrcidApiConstants.APPLICATION_CITEPROC })
     @Path(ACTIVITIES)
     @ApiOperation(value = "Fetch all Activities", response=ActivitiesSummary.class)
     public Response viewActivities(@PathParam("orcid") String orcid, @HeaderParam("Accept") String accept) {
@@ -130,7 +130,7 @@ public class PublicV2ApiServiceImplBase {
             WorkSummary work = group.getWorkSummary().get(0);
             Response r = serviceDelegator.viewWork(orcid, work.getPutCode());
             if (r.getStatus()==200){
-                CSLItemData item = tran.toCiteproc((Work)r.getEntity());
+                CSLItemData item = tran.toCiteproc((Work)r.getEntity(),true);
                 if (item!=null)
                     response.add(item);
             }
@@ -142,7 +142,7 @@ public class PublicV2ApiServiceImplBase {
     }
 
     @GET
-    @Produces(value = { OrcidApiConstants.APPLICATION_CITEPROC,VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON,OrcidApiConstants.APPLICATION_CITEPROC })
     @Path(WORK + PUTCODE)
     @ApiOperation(value = "Fetch a Work", notes = "More notes about this method", response = Work.class)
     public Response viewWork(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {

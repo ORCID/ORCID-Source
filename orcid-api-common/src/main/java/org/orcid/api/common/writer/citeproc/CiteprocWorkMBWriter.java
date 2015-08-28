@@ -53,7 +53,7 @@ public class CiteprocWorkMBWriter implements MessageBodyWriter<Work>{
     @Override
     public void writeTo(Work work, Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, Object> httpHeaders,
     OutputStream entityStream) throws IOException, WebApplicationException {
-        CSLItemData data = translator.toCiteproc(work);        
+        CSLItemData data = translator.toCiteproc(work,false);        
         entityStream.write( data.toJson(jsonFactory.createJsonBuilder()).toString().getBytes());
     }
 
