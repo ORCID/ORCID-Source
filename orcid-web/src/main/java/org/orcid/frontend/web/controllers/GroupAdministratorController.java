@@ -125,6 +125,8 @@ public class GroupAdministratorController extends BaseWorkspaceController {
         RedirectUri result = new RedirectUri();
         result.setValue(new Text());
         result.setType(Text.valueOf(RedirectUriType.DEFAULT.value()));
+        result.setActType(Text.valueOf(""));
+        result.setGeoArea(Text.valueOf(""));
         return result;
     }
     
