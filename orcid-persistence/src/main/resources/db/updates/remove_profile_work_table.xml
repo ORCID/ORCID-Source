@@ -24,8 +24,7 @@
 		<preConditions onFail="MARK_RAN">
 			<tableExists tableName="profile_work"/>
 		</preConditions>
-		<dropTable cascadeConstraints="true"            
-            tableName="profile_work"/>
+		<dropTable cascadeConstraints="true" tableName="profile_work"/>
     </changeSet>
           
 </databaseChangeLog>	
