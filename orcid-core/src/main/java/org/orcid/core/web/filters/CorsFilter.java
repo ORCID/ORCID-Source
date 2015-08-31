@@ -45,8 +45,6 @@ public class CorsFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        allowed(request);
-
         if(allowed(request)) {
             response.addHeader("Access-Control-Allow-Origin", "*");
             if (request.getHeader("Access-Control-Request-Method") != null && "OPTIONS".equals(request.getMethod())) {
