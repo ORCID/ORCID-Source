@@ -20,6 +20,7 @@ import java.util.Collection;
 
 import javax.annotation.Resource;
 
+import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.jaxb.model.message.OrcidType;
@@ -44,6 +45,9 @@ public class SourceManagerImpl implements SourceManager {
 
     @Resource
     private ProfileDao profileDao;
+    
+    @Resource
+    private ClientDetailsManager clientDetailsManager;
 
     @Override
     public String retrieveSourceOrcid() {
@@ -70,8 +74,9 @@ public class SourceManagerImpl implements SourceManager {
         if (OAuth2Authentication.class.isAssignableFrom(authentication.getClass())) {
             OAuth2Request authorizationRequest = ((OAuth2Authentication) authentication).getOAuth2Request();
             String clientId = authorizationRequest.getClientId();
+            ClientDetailsEntity clientDetails = clientDetailsManager.findByClientId(clientId);
             SourceEntity sourceEntity = new SourceEntity();
-            sourceEntity.setSourceClient(new ClientDetailsEntity(clientId));
+            sourceEntity.setSourceClient(new ClientDetailsEntity(clientId, clientDetails.getClientName()));
             return sourceEntity;
         }
         // Normal web user

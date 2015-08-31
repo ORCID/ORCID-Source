@@ -892,13 +892,13 @@ the software.
             <dependency>
                 <groupId>org.jasypt</groupId>
                 <artifactId>jasypt</artifactId>
-                <version>1.9.0</version>
+                <version>1.9.2</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.jasypt</groupId>
                 <artifactId>jasypt-hibernate3</artifactId>
-                <version>1.9.0</version>
+                <version>1.9.2</version>
             </dependency>
             <dependency>
                 <groupId>org.jbibtex</groupId>

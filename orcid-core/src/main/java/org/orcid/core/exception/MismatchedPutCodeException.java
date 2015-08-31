@@ -16,28 +16,19 @@
  */
 package org.orcid.core.exception;
 
+import java.util.Map;
+
 /**
  * 
  * @author Will Simpson
  *
  */
-public class MismatchedPutCodeException extends IllegalArgumentException {
+public class MismatchedPutCodeException extends ApplicationException {
 
     private static final long serialVersionUID = 1L;
 
-    public MismatchedPutCodeException() {
-    }
-
-    public MismatchedPutCodeException(String s) {
-        super(s);
-    }
-
-    public MismatchedPutCodeException(Throwable cause) {
-        super(cause);
-    }
-
-    public MismatchedPutCodeException(String message, Throwable cause) {
-        super(message, cause);
-    }
+	public MismatchedPutCodeException(Map<String, String> params) {
+		super(params);
+	}
 
 }

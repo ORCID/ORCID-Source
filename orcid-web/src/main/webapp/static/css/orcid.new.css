@@ -4557,6 +4557,10 @@ ul.toggle-menu > li .menu-options.sort{
 	width: 100%;
 }
 
+ul.toggle-menu > li .menu-options.sort .glyphicon{
+	line-height: 0;
+}
+
 ul.toggle-menu > li .menu-options.education{
 	min-width: 120px;
 }
@@ -4603,8 +4607,7 @@ ul.toggle-menu > li .menu-options > li a span{
 	margin-top: 3px;
 } 
 
-ul.toggle-menu > li .menu-options.sort > li a span{
-	float: right;
+ul.toggle-menu > li .menu-options.sort > li a span{	
 	margin-left: 5px;
 	padding: 7px 0 0 0;
 }
@@ -5108,6 +5111,10 @@ ul.sources-edit-list ul.sources-actions .git_create:hover:before{
 
 .source-line{
 	font-size: 13px;
+}
+
+.source-line-peer-review{
+	font-size: 15px;
 }
 
 .workspace-private-toolbar .bulk-edit-input-header{
@@ -5969,7 +5976,7 @@ textarea.form-control,
 }
 
 .truncate {
-  width: 182px;
+  max-width: 182px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -5977,10 +5984,40 @@ textarea.form-control,
   vertical-align: top;   
 }
 
+#workspace-accordion-item a{
+	word-break: normal;
+}
+
 .peer-review-list-container .sources-edit-list li{
 	border-left: 1px solid #C9CACB;
 	border-right: 1px solid #C9CACB;
+}
+
+.peer-review-list-container .glyphicons{
+	padding-left: 15px;
 } 
+
+.peer-review-list-container .glyphicons:before{
+	top: -10px;
+	font-size: 17px;
+	color: #338caf;
+	vertical-align: baseline;
+}
+
+ul.sources-edit-list > li.peer-review-group{
+	border-bottom: none;
+	box-shadow: none;
+}
+
+ul.sources-edit-list > li.group-details{
+	padding-top: 0;
+}
+
+.group-summary-details{
+	padding-bottom: 15px;
+    font-size: 15px;
+}
+	
 
 
 /* Media Queries */
@@ -7130,6 +7167,18 @@ textarea.form-control,
 	
 	#edit-affiliation .form-group div>select{
 		margin-bottom: 10px;
+	}
+	
+	ul.toggle-menu > li .menu-options.sort > li a span{
+		float: right;
+	}
+	
+	ul.toggle-menu > li .menu-options.sort .glyphicon.glyphicon-sort-by-alphabet-alt,
+	ul.toggle-menu > li .menu-options.sort .glyphicon.glyphicon-sort-by-order,
+	ul.toggle-menu > li .menu-options.sort .glyphicon.glyphicon-sort-by-order-alt,
+	ul.toggle-menu > li .menu-options.sort .glyphicon.glyphicon-sort-by-alphabet{
+		vertical-align: middle;
+    	line-height: 25px;
 	}
 	
 }

@@ -269,7 +269,7 @@ public class GroupAdministratorController extends BaseWorkspaceController {
 
             if (profile.getType() == null || !profile.getType().equals(OrcidType.GROUP)) {
                 LOGGER.warn("Trying to create client with non group user {}", profile.getOrcidIdentifier().getPath());
-                throw new OrcidClientGroupManagementException("Your account is not allowed to do this operation.");
+                throw new OrcidClientGroupManagementException(getMessage("web.orcid.privilege.exception"));
             }
 
             OrcidClient result = null;
@@ -315,7 +315,7 @@ public class GroupAdministratorController extends BaseWorkspaceController {
 
             if (profile.getType() == null || !profile.getType().equals(OrcidType.GROUP)) {
                 LOGGER.warn("Trying to edit client with non group user {}", profile.getOrcidIdentifier().getPath());
-                throw new OrcidClientGroupManagementException("Your account is not allowed to do this operation.");
+                throw new OrcidClientGroupManagementException(getMessage("web.orcid.privilege.exception"));
             }
 
             OrcidClient result = null;
@@ -343,7 +343,7 @@ public class GroupAdministratorController extends BaseWorkspaceController {
 
         if (profile.getType() == null || !profile.getType().equals(OrcidType.GROUP)) {
             LOGGER.warn("Trying to get clients of non group user {}", profile.getOrcidIdentifier().getPath());
-            throw new OrcidClientGroupManagementException("Your account is not allowed to do this operation.");
+            throw new OrcidClientGroupManagementException(getMessage("web.orcid.privilege.exception"));
         }
 
         OrcidClientGroup group = orcidClientGroupManager.retrieveOrcidClientGroup(groupOrcid);

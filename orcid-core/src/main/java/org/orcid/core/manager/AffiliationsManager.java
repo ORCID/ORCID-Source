@@ -32,7 +32,7 @@ public interface AffiliationsManager {
     /**
      * 
      * */
-    OrgAffiliationRelationEntity findAffiliationByUserAndId(String userOrcid, String affiliationId);
+    OrgAffiliationRelationEntity findAffiliationByUserAndId(String userOrcid, Long affiliationId);
     
     /**
      * 
@@ -52,7 +52,7 @@ public interface AffiliationsManager {
      *          The affiliation id
      * @return the education
      * */
-    Education getEducationAffiliation(String userOrcid, String affiliationId);
+    Education getEducationAffiliation(String userOrcid, Long affiliationId);
     
     /**
      * Get a summary of an education affiliation based on the orcid and education id
@@ -62,7 +62,7 @@ public interface AffiliationsManager {
      *          The affiliation id
      * @return the education summary
      * */
-    EducationSummary getEducationSummary(String userOrcid, String affiliationId);
+    EducationSummary getEducationSummary(String userOrcid, Long affiliationId);
     
     /**
      * Add a new education to the given user
@@ -92,7 +92,7 @@ public interface AffiliationsManager {
      *          The employment id
      * @return the employment
      * */
-    Employment getEmploymentAffiliation(String userOrcid, String employmentId);
+    Employment getEmploymentAffiliation(String userOrcid, Long employmentId);
     
     /**
      * Get a summary of an employment affiliation based on the orcid and education id
@@ -102,7 +102,7 @@ public interface AffiliationsManager {
      *          The employment id
      * @return the employment summary
      * */
-    EmploymentSummary getEmploymentSummary(String userOrcid, String employmentId);
+    EmploymentSummary getEmploymentSummary(String userOrcid, Long employmentId);
     
     /**
      * Add a new employment to the given user
@@ -132,7 +132,7 @@ public interface AffiliationsManager {
      *          The affiliation id                 
      * @return true if the affiliation was deleted, false otherwise
      * */
-    boolean checkSourceAndDelete(String orcid, String affiliationId);
+    boolean checkSourceAndDelete(String orcid, Long affiliationId);
     
     /**
      * Get the list of employments that belongs to a user

@@ -82,13 +82,13 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
     }
 
     @Override
-    public PeerReview getPeerReview(String orcid, String peerReviewId) {
+    public PeerReview getPeerReview(String orcid, Long peerReviewId) {
         PeerReviewEntity peerReviewEntity = peerReviewDao.getPeerReview(orcid, peerReviewId);
         return jpaJaxbPeerReviewAdapter.toPeerReview(peerReviewEntity);
     }
 
     @Override
-    public PeerReviewSummary getPeerReviewSummary(String orcid, String peerReviewId) {
+    public PeerReviewSummary getPeerReviewSummary(String orcid, Long peerReviewId) {
         PeerReviewEntity peerReviewEntity = peerReviewDao.getPeerReview(orcid, peerReviewId);
         return jpaJaxbPeerReviewAdapter.toPeerReviewSummary(peerReviewEntity);
     }
@@ -179,7 +179,7 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
     }
 
     @Override
-    public boolean checkSourceAndDelete(String orcid, String peerReviewId) {
+    public boolean checkSourceAndDelete(String orcid, Long peerReviewId) {
         PeerReviewEntity pr = peerReviewDao.getPeerReview(orcid, peerReviewId);
         orcidSecurityManager.checkSource(pr.getSource());
 
@@ -204,12 +204,12 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
     }
 
     @Override
-    public void removePeerReview(String orcid, String peerReviewId) {
-        peerReviewDao.removePeerReview(orcid, Long.valueOf(peerReviewId));
+    public void removePeerReview(String orcid, Long peerReviewId) {
+        peerReviewDao.removePeerReview(orcid, peerReviewId);
     }
 
     @Override
-    public boolean updateToMaxDisplay(String orcid, String peerReviewId) {
+    public boolean updateToMaxDisplay(String orcid, Long peerReviewId) {
         return peerReviewDao.updateToMaxDisplay(orcid, peerReviewId);
     }
 

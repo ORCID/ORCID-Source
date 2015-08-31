@@ -16,15 +16,18 @@
  */
 package org.orcid.core.exception;
 
+import java.util.Map;
+
 /**
  * 
- * @author Will Simpson
- *
+ * @author Shobhit Tyagi
+ * 
  */
-public class OrcidNotificationAlreadyReadException extends ApplicationException {
+public class OrcidWebhookNotFoundException extends ApplicationException {
 
     private static final long serialVersionUID = 1L;
 
-    public OrcidNotificationAlreadyReadException() {
-    }
+	public OrcidWebhookNotFoundException(Map<String, String> params) {
+		super(params);
+	}
 }

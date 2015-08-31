@@ -64,6 +64,9 @@ var GroupedActivities = function(type) {
     this.defaultPutCode = null;
     this.dateSortString;
     this.groupId = GroupedActivities.count;
+    this.groupDescription = null;
+    this.groupType = null;
+    this.groupRealId = null;
     this.title;
 };
 
@@ -99,6 +102,8 @@ GroupedActivities.prototype.add = function(activity) {
 GroupedActivities.prototype.addKey = function(key) {
     if (this.hasKey(key)) return;
     this._keySet[key] = true;
+    if (this.type == GroupedActivities.PEER_REVIEW)
+    	this.groupRealId = key;
     return;
 };
 
@@ -385,12 +390,14 @@ orcidNgModule.directive('compile', function($compile) {
 
 
 var ActSortState = function(groupType) {
-    this.type = groupType;
+    this.type = groupType;    
     this.predicateKey = 'date';
+    if (this.type == 'peerReview') this.predicateKey = 'groupName';
     this.reverseKey = {};
     this.reverseKey['date']  = false;
     this.reverseKey['title'] = false;
     this.reverseKey['type']  = false;
+    this.reverseKey['groupName']  = false;
     this.predicate = this.predicateMap[this.type][this.predicateKey];
 };
 
@@ -411,17 +418,15 @@ sortPredicateMap[GroupedActivities.AFFILIATION]['date'] = ['-dateSortString', 't
 sortPredicateMap[GroupedActivities.AFFILIATION]['title'] = ['title', '-dateSortString'];
 
 sortPredicateMap[GroupedActivities.PEER_REVIEW] = {};
-sortPredicateMap[GroupedActivities.PEER_REVIEW]['date'] = ['-dateSortString', 'title','getDefault().type.value'];
-sortPredicateMap[GroupedActivities.PEER_REVIEW]['title'] = ['title', '-dateSortString','getDefault().type.value'];
-sortPredicateMap[GroupedActivities.PEER_REVIEW]['type'] = ['getDefault().type.value','title', '-dateSortString'];
+sortPredicateMap[GroupedActivities.PEER_REVIEW]['groupName'] = ['groupName'];
 
 ActSortState.prototype.predicateMap = sortPredicateMap;
 
 
-ActSortState.prototype.sortBy = function(key) {
+ActSortState.prototype.sortBy = function(key) {	
         if (this.predicateKey == key){
-           this.reverse = ! this.reverse;
-           this.reverseKey[key] = ! this.reverseKey[key];
+           this.reverse = !this.reverse;
+           this.reverseKey[key] = !this.reverseKey[key];           
         }
         this.predicateKey = key;
         this.predicate = this.predicateMap[this.type][key];
@@ -1656,7 +1661,7 @@ orcidNgModule.filter('externalIdentifierHtml', ['fundingSrvc', function(fundingS
 }]);
 
 orcidNgModule.filter('peerReviewExternalIdentifierHtml', function(){
-    return function(peerReviewExternalIdentifier, first, last, length, moreInfo){
+    return function(peerReviewExternalIdentifier, first, last, length, moreInfo, own){
     	
     	
         var output = '';
@@ -1681,9 +1686,9 @@ orcidNgModule.filter('peerReviewExternalIdentifierHtml', function(){
             type = peerReviewExternalIdentifier.workExternalIdentifierType.value;
 	        if (type != null) {
 	        	if(isPartOf)
-	        		output = output + "<span class='italic'>" + om.get("common.part_of") + " <span class='type'>" + type.toUpperCase() + "</span></span>: ";
+	        		output += "<span class='italic'>" + om.get("common.part_of") + " <span class='type'>" + type.toUpperCase() + "</span></span>: ";
 	        	else 
-	        		output = output + "<span class='type'>" + type.toUpperCase() + "</span>: ";
+	        		output += "<span class='type'>" + type.toUpperCase() + "</span>: ";
 	        }
         
 
@@ -1695,10 +1700,12 @@ orcidNgModule.filter('peerReviewExternalIdentifierHtml', function(){
         	if(link.lastIndexOf('http://') === -1 && link.lastIndexOf('https://') === -1) {
         		link = '//' + link;
         	}
-            output = output + '<a href="' + link.replace(/'/g, "&#39;") + '" class =""' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(peerReview.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(peerReview.putCode.value + $index)\">" + id.escapeHtml() + '</a>' + ' | ' + '<a href="' + link.replace(/'/g, "&#39;") + '" class ="' + ngclass + '"' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(peerReview.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(peerReview.putCode.value + $index)\">" + link.replace(/'/g, "&#39;") + '</a>';
+            output += '<a href="' + link.replace(/'/g, "&#39;") + '" class =""' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(peerReview.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(peerReview.putCode.value + $index)\">" + id.escapeHtml() + '</a>' + ' | ' + '<a href="' + link.replace(/'/g, "&#39;") + '" class ="' + ngclass + '"' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(peerReview.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(peerReview.putCode.value + $index)\">" + link.replace(/'/g, "&#39;") + '</a>';
         }else{
-            output = output + id;        
+            output += + id;        
         }
+        
+        if (length > 1 && !last) output = output + ',';
         
         
         
@@ -1713,6 +1720,9 @@ orcidNgModule.filter('peerReviewExternalIdentifierHtml', function(){
 				</div>\
 			</div>\
 	   </div>';
+        
+        if(own)
+        	output = '<br/>' + output;
 
        return output;      
       
@@ -3200,7 +3210,7 @@ orcidNgModule.controller('PublicEduAffiliation', ['$scope', '$compile', '$filter
     $scope.moreInfo = {};
 
     $scope.sortState = new ActSortState(GroupedActivities.AFFILIATION);
-    $scope.sort = function(key) {
+    $scope.sort = function(key) {    	
         $scope.sortState.sortBy(key);
     };
 
@@ -3277,7 +3287,7 @@ orcidNgModule.controller('AffiliationCtrl', ['$scope', '$compile', '$filter', 'a
     $scope.showElement = {};
 
     $scope.sortState = new ActSortState(GroupedActivities.AFFILIATION);
-    $scope.sort = function(key) {
+    $scope.sort = function(key) {    	
         $scope.sortState.sortBy(key);
     };
 
@@ -4168,6 +4178,7 @@ orcidNgModule.controller('PublicPeerReviewCtrl',['$scope', '$compile', '$filter'
 	 $scope.showDetails = {};
 	 $scope.showElement = {};
 	 $scope.showPeerReviewDetails = {};
+	 $scope.sortHideOption = true;
 	 
 	 $scope.sortState = new ActSortState(GroupedActivities.PEER_REVIEW);
      
@@ -5018,7 +5029,9 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
 	$scope.showPeerReviewDetails = {};
 	$scope.showElement = {};
 	$scope.sortState = new ActSortState(GroupedActivities.PEER_REVIEW);
+	$scope.sortHideOption = true;
 	$scope.displayURLPopOver = {};
+	$scope.peerReviewImportWizard = false;
     
     $scope.sort = function(key) {
         $scope.sortState.sortBy(key);
@@ -5218,24 +5231,12 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
         var index = $scope.editPeerReview.subjectForm.workExternalIdentifiers.indexOf(obj);
         $scope.editPeerReview.subjectForm.workExternalIdentifiers.splice(index,1);
         
-    }; 
-    
-    /*
-    $scope.hideSources = function(group) {
-        $scope.editSources[group.groupId] = false;
-        group.activePutCode = group.defaultPutCode;
     };
-
-    $scope.showSources = function(group) {
-        $scope.editSources[group.groupId] = true;
-    };
-    */
    
     $scope.showDetailsMouseClick = function(groupId, $event){
     	$event.stopPropagation();
     	$scope.showDetails[groupId] = !$scope.showDetails[groupId];
     };
-    
     
     $scope.showMoreDetails = function(putCode){    	
     	$scope.showPeerReviewDetails[putCode] = true;   
@@ -5303,10 +5304,15 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
     
     $scope.moreInfoActive = function(groupID){
     	if ($scope.moreInfo[groupID] == true || $scope.moreInfo[groupID] != null) return 'truncate-anchor';
-    }
+    };
     
+    $scope.showPeerReviewImportWizard = function(){
+    	$scope.peerReviewImportWizard = !$scope.peerReviewImportWizard;
+    };
+        
     //Init
     $scope.peerReviewSrvc.loadPeerReviews(peerReviewSrvc.constants.access_type.USER);
+    
     
 }]);
 
@@ -5314,15 +5320,14 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
 orcidNgModule.factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
     var peerReviewSrvc = {
     		constants: { 'access_type': { 'USER': 'user', 'ANONYMOUS': 'anonymous'}},
-    		groups: new Array(),
+    		groups: new Array(),    		
     		loading: false,
             loadingDetails: false,
             quickRef: {},            
             loadingDetails: false,
             blankPeerReview: null,
             details: new Object(), // we should think about putting details in the
-            peerReviewsToAddIds: null,            
-    		
+            peerReviewsToAddIds: null,
             getBlankPeerReview: function(callback) {
             	 // if cached return clone of blank
                 if (peerReviewSrvc.blankPeerReview != null)
@@ -5534,6 +5539,23 @@ orcidNgModule.factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
                     count += peerReviewSrvc.groups[idx].activitiesCount;
                 }
                 return count;
+            },
+            getPeerReviewGroupDetails: function(groupIDvalue, putCode){
+            	var group = peerReviewSrvc.getGroup(putCode);
+            	$.ajax({
+                    url: getBaseUri() + '/public/group/' + groupIDvalue,
+                    dataType: 'json',
+                    type: 'GET',
+                    success: function(data) {
+                    	$rootScope.$apply(function(){
+                    		group.groupName = data.name;
+                    		group.groupDescription = data.description;
+                    		group.groupType = data.type;
+                    	});
+                    }
+                }).fail(function(){
+                    console.log("error getPeerReviewGroupDetails(groupIDvalue, putCode)");
+                });
             }
     };
     return peerReviewSrvc;

@@ -891,7 +891,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
      * */
     @Override
     public ProfileFundingEntity getUpdatedProfileFundingEntity(Funding updatedFunding) {
-        ProfileFundingEntity existingProfileFundingEntity = profileFundingManager.getProfileFundingEntity(updatedFunding.getPutCode());
+        ProfileFundingEntity existingProfileFundingEntity = profileFundingManager.getProfileFundingEntity(Long.valueOf(updatedFunding.getPutCode()));
         ProfileFundingEntity profileFundingEntity = getProfileFundingEntity(updatedFunding, existingProfileFundingEntity);
         return profileFundingEntity;
     }

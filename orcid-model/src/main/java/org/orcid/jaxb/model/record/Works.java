@@ -35,8 +35,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.apache.commons.lang3.StringUtils;
-
 /**
  * <p>
  * Java class for anonymous complex type.
@@ -85,11 +83,11 @@ public class Works implements Serializable, ActivitiesContainer {
         return this.works;
     }
 
-    public Map<String, Work> retrieveActivitiesAsMap() {
-        Map<String, Work> workMap = new HashMap<String, Work>();
+    public Map<Long, Work> retrieveActivitiesAsMap() {
+        Map<Long, Work> workMap = new HashMap<>();
         if (works != null) {
             for (Work work : works) {
-                if (StringUtils.isNotBlank(work.putCode)) {
+                if (work.putCode != null) {
                     workMap.put(work.putCode, work);
                 }
             }

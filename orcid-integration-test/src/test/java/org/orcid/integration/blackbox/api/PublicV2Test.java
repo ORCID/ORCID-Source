@@ -993,12 +993,12 @@ public class PublicV2Test {
         ClientResponse r1 = memberV2ApiClient.createGroupIdRecord(g1, token);
         
         String r1LocationPutCode = r1.getLocation().getPath().replace("/orcid-api-web/v2.0_rc1/group-id-record/", "");
-        g1.setPutCode(r1LocationPutCode);
+        g1.setPutCode(Long.valueOf(r1LocationPutCode));
         groups.add(g1);
         
         ClientResponse r2 = memberV2ApiClient.createGroupIdRecord(g2, token);
         String r2LocationPutCode = r2.getLocation().getPath().replace("/orcid-api-web/v2.0_rc1/group-id-record/", "");
-        g2.setPutCode(r2LocationPutCode);
+        g2.setPutCode(Long.valueOf(r2LocationPutCode));
         groups.add(g2);
         
         return groups;

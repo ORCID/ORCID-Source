@@ -94,7 +94,7 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
      *            The client orcid
      * @return true if the relationship was deleted
      * */
-    public boolean removeProfileFunding(String clientOrcid, String profileFundingId) {
+    public boolean removeProfileFunding(String clientOrcid, Long profileFundingId) {
         return profileFundingDao.removeProfileFunding(clientOrcid, profileFundingId);
     }
 
@@ -112,7 +112,7 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
      * 
      * @return true if the relationship was updated
      * */
-    public boolean updateProfileFundingVisibility(String clientOrcid, String profileFundingId, Visibility visibility) {
+    public boolean updateProfileFundingVisibility(String clientOrcid, Long profileFundingId, Visibility visibility) {
         return profileFundingDao.updateProfileFundingVisibility(clientOrcid, profileFundingId, visibility);
     }
 
@@ -198,7 +198,7 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
      * 
      * @return the ProfileFundingEntity object
      * */
-    public ProfileFundingEntity getProfileFundingEntity(String profileFundingId) {
+    public ProfileFundingEntity getProfileFundingEntity(Long profileFundingId) {
         return profileFundingDao.getProfileFundingEntity(profileFundingId);
     }
     
@@ -214,8 +214,8 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
         return profileFundingDao.updateProfileFunding(updatedProfileFundingEntity);
     }
     
-    public boolean updateToMaxDisplay(String orcid, String workId) {
-        return profileFundingDao.updateToMaxDisplay(orcid, workId);
+    public boolean updateToMaxDisplay(String orcid, Long fundingId) {
+        return profileFundingDao.updateToMaxDisplay(orcid, fundingId);
     }
     
     /**
@@ -227,7 +227,7 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
      * @return the Funding          
      * */
     @Override
-    public Funding getFunding(String orcid, String fundingId) {
+    public Funding getFunding(String orcid, Long fundingId) {
         ProfileFundingEntity profileFundingEntity = profileFundingDao.getProfileFunding(orcid, fundingId); 
         return jpaJaxbFundingAdapter.toFunding(profileFundingEntity);
     }
@@ -241,7 +241,7 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
      * @return the FundingSummary          
      * */
     @Override
-    public FundingSummary getSummary(String orcid, String fundingId) {
+    public FundingSummary getSummary(String orcid, Long fundingId) {
         ProfileFundingEntity profileFundingEntity = profileFundingDao.getProfileFunding(orcid, fundingId);
         return jpaJaxbFundingAdapter.toFundingSummary(profileFundingEntity);
     }
@@ -343,7 +343,7 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
      * */
     @Override
     @Transactional    
-    public boolean checkSourceAndDelete(String orcid, String fundingId) {
+    public boolean checkSourceAndDelete(String orcid, Long fundingId) {
         ProfileFundingEntity pfe = profileFundingDao.getProfileFunding(orcid, fundingId);
         orcidSecurityManager.checkSource(pfe.getSource());
         return profileFundingDao.removeProfileFunding(orcid, fundingId);

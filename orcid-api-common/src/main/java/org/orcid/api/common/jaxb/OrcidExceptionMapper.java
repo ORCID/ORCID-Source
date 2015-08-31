@@ -45,18 +45,20 @@ import org.orcid.core.exception.InvalidPutCodeException;
 import org.orcid.core.exception.MismatchedPutCodeException;
 import org.orcid.core.exception.OrcidApiException;
 import org.orcid.core.exception.OrcidBadRequestException;
+import org.orcid.core.exception.OrcidClientNotFoundException;
 import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.exception.OrcidDuplicatedActivityException;
 import org.orcid.core.exception.OrcidForbiddenException;
 import org.orcid.core.exception.OrcidInvalidScopeException;
-import org.orcid.core.exception.OrcidNotAcceptableException;
 import org.orcid.core.exception.OrcidNotFoundException;
 import org.orcid.core.exception.OrcidNotificationAlreadyReadException;
+import org.orcid.core.exception.OrcidNotificationNotFoundException;
 import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.exception.OrcidValidationException;
+import org.orcid.core.exception.OrcidVisibilityException;
+import org.orcid.core.exception.OrcidWebhookNotFoundException;
 import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.locale.LocaleManager;
-import org.orcid.core.security.DeprecatedException;
 import org.orcid.core.security.aop.LockedException;
 import org.orcid.core.version.ApiSection;
 import org.orcid.core.web.filters.ApiVersionFilter;
@@ -96,8 +98,7 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
     private static Map<Class<? extends Throwable>, Pair<Response.Status, Integer>> HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE = new HashMap<>();
     {
         // 301
-        HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(DeprecatedException.class, new ImmutablePair<>(Response.Status.MOVED_PERMANENTLY, 9007));
-        HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OrcidDeprecatedException.class, new ImmutablePair<>(Response.Status.MOVED_PERMANENTLY, 9013));
+        HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OrcidDeprecatedException.class, new ImmutablePair<>(Response.Status.MOVED_PERMANENTLY, 9007));
 
         // 400
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(IllegalArgumentException.class, new ImmutablePair<>(Response.Status.BAD_REQUEST, 9006));
@@ -121,13 +122,14 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OrcidNotificationAlreadyReadException.class, new ImmutablePair<>(Response.Status.FORBIDDEN, 9009));
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(WrongSourceException.class, new ImmutablePair<>(Response.Status.FORBIDDEN, 9010));
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OrcidForbiddenException.class, new ImmutablePair<>(Response.Status.FORBIDDEN, 9014));
-
+        HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OrcidVisibilityException.class, new ImmutablePair<>(Response.Status.FORBIDDEN, 9013));
+        
         // 404
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OrcidNotFoundException.class, new ImmutablePair<>(Response.Status.NOT_FOUND, 9011));
-        HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(NoResultException.class, new ImmutablePair<>(Response.Status.NOT_FOUND, 9011));
-
-        // 406
-        HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OrcidNotAcceptableException.class, new ImmutablePair<>(Response.Status.NOT_ACCEPTABLE, 9016));
+        HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(NoResultException.class, new ImmutablePair<>(Response.Status.NOT_FOUND, 9016));
+        HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OrcidClientNotFoundException.class, new ImmutablePair<>(Response.Status.NOT_FOUND, 9027));
+        HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OrcidWebhookNotFoundException.class, new ImmutablePair<>(Response.Status.NOT_FOUND, 9028));
+        HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OrcidNotificationNotFoundException.class, new ImmutablePair<>(Response.Status.NOT_FOUND, 9029));
 
         // 409
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(LockedException.class, new ImmutablePair<>(Response.Status.CONFLICT, 9018));
@@ -152,37 +154,43 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
     private Response legacyErrorResponse(Throwable t) {
         if (OrcidApiException.class.isAssignableFrom(t.getClass())) {
             return ((OrcidApiException) t).getResponse();
+        } else if (OrcidValidationException.class.isAssignableFrom(t.getClass())) {
+            OrcidMessage entity = getLegacyOrcidEntity("Bad Request: ", t);
+            return Response.status(Response.Status.BAD_REQUEST).entity(entity).build();
         } else if (WebApplicationException.class.isAssignableFrom(t.getClass())) {
             OrcidMessage entity = getLegacy500OrcidEntity(t);
             WebApplicationException webException = (WebApplicationException) t;
             return Response.status(webException.getResponse().getStatus()).entity(entity).build();
         } else if (AuthenticationException.class.isAssignableFrom(t.getClass())) {
-            OrcidMessage entity = getLegacyOrcidEntity("Authentication problem", t);
+            OrcidMessage entity = getLegacyOrcidEntity("Authentication problem : ", t);
             return Response.status(Response.Status.UNAUTHORIZED).entity(entity).build();
         } else if (OAuth2Exception.class.isAssignableFrom(t.getClass())) {
-            OrcidMessage entity = getLegacyOrcidEntity("OAuth2 problem", t);
+            OrcidMessage entity = getLegacyOrcidEntity("OAuth2 problem : ", t);
+            return Response.status(Response.Status.UNAUTHORIZED).entity(entity).build();
+        } else if (OrcidInvalidScopeException.class.isAssignableFrom(t.getClass())) {
+            OrcidMessage entity = getLegacyOrcidEntity("OAuth2 problem : ", t);
             return Response.status(Response.Status.UNAUTHORIZED).entity(entity).build();
         } else if (SecurityException.class.isAssignableFrom(t.getClass())) {
-            OrcidMessage entity = getLegacyOrcidEntity("Security problem", t);
+            OrcidMessage entity = getLegacyOrcidEntity("Security problem : ", t);
             return Response.status(Response.Status.FORBIDDEN).entity(entity).build();
         } else if (IllegalStateException.class.isAssignableFrom(t.getClass())) {
-            OrcidMessage entity = getLegacyOrcidEntity("Illegal state", t);
+            OrcidMessage entity = getLegacyOrcidEntity("Illegal state : ", t);
             return Response.status(Response.Status.FORBIDDEN).entity(entity).build();
         } else if (IllegalArgumentException.class.isAssignableFrom(t.getClass())) {
-            OrcidMessage entity = getLegacyOrcidEntity("Bad Request", t);
+            OrcidMessage entity = getLegacyOrcidEntity("Bad Request : ", t);
             return Response.status(Response.Status.BAD_REQUEST).entity(entity).build();
-        } else if (DeprecatedException.class.isAssignableFrom(t.getClass())) {
-            OrcidMessage entity = getLegacyOrcidEntity("Account Deprecated", t);
+        } else if (OrcidDeprecatedException.class.isAssignableFrom(t.getClass())) {
+            OrcidMessage entity = (OrcidMessage) newStyleErrorResponse(t).getEntity();
             return Response.status(Response.Status.MOVED_PERMANENTLY).entity(entity).build();
         } else if (LockedException.class.isAssignableFrom(t.getClass())) {
-            OrcidMessage entity = getLegacyOrcidEntity("Account locked", t);
+            OrcidMessage entity = getLegacyOrcidEntity("Account locked : ", t);
             return Response.status(Response.Status.CONFLICT).entity(entity).build();
         } else if (NoResultException.class.isAssignableFrom(t.getClass())) {
-            OrcidMessage entity = getLegacyOrcidEntity("Not found", t);
+            OrcidMessage entity = getLegacyOrcidEntity("Not found : ", t);
             return Response.status(Response.Status.NOT_FOUND).entity(entity).build();
         } else {
             OrcidMessage entity = getLegacy500OrcidEntity(t);
-            return Response.serverError().entity(entity).build();
+            return Response.status(getHttpStatusAndErrorCode(t).getKey()).entity(entity).build();
         }
     }
 
@@ -190,14 +198,14 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
         OrcidMessage entity = new OrcidMessage();
         entity.setMessageVersion(OrcidMessage.DEFAULT_VERSION);
         entity.setErrorDesc(new ErrorDesc(StringUtils.isNotBlank(e.getMessage()) ? e.getMessage()
-                : "It is possible that this is a bug. If you could raise an issue in Github it would be much " + "appreciated. Thanks, the ORCID team"));
+                : messageSource.getMessage("apiError.unknown.exception", null, localeManager.getLocale())));
         return entity;
     }
 
     private OrcidMessage getLegacyOrcidEntity(String prefix, Throwable e) {
         OrcidMessage entity = new OrcidMessage();
         entity.setMessageVersion(OrcidMessage.DEFAULT_VERSION);
-        entity.setErrorDesc(new ErrorDesc(prefix + " : " + e.getMessage()));
+        entity.setErrorDesc(new ErrorDesc(prefix + e.getMessage()));
         return entity;
     }
 
@@ -253,7 +261,7 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
 			if (cause != null) {
 	            String causeMessage = cause.getLocalizedMessage();
 	            if (causeMessage != null) {
-	                devMessage = " (" + causeMessage + ")";
+	                devMessage += " (" + causeMessage + ")";
 	            }
 	        }
 			orcidError.setDeveloperMessage(devMessage);

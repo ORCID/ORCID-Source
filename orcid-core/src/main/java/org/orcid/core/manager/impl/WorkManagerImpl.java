@@ -131,7 +131,7 @@ public class WorkManagerImpl implements WorkManager {
      *          The work id
      * @return true if the work index was correctly set                  
      * */
-    public boolean updateToMaxDisplay(String orcid, String workId) {        
+    public boolean updateToMaxDisplay(String orcid, Long workId) {        
         return workDao.updateToMaxDisplay(orcid, workId);
     }        
 
@@ -143,13 +143,13 @@ public class WorkManagerImpl implements WorkManager {
      *          The work id             
      * */
     @Override
-    public Work getWork(String orcid, String workId) {
-        return jpaJaxbWorkAdapter.toWork(workDao.find(Long.valueOf(workId)));
+    public Work getWork(String orcid, Long workId) {
+        return jpaJaxbWorkAdapter.toWork(workDao.find(workId));
     }
 
     @Override
-    public WorkSummary getWorkSummary(String orcid, String workId) {
-        return jpaJaxbWorkAdapter.toWorkSummary(workDao.find(Long.valueOf(workId)));
+    public WorkSummary getWorkSummary(String orcid, Long workId) {
+        return jpaJaxbWorkAdapter.toWorkSummary(workDao.find(workId));
     }    
     
     @Override
@@ -218,10 +218,10 @@ public class WorkManagerImpl implements WorkManager {
 
     
     @Override
-    public boolean checkSourceAndRemoveWork(String orcid, String workIdStr) {
+    public boolean checkSourceAndRemoveWork(String orcid, Long workIdStr) {
         boolean result = true;
         Long workId = Long.valueOf(workIdStr);
-        WorkEntity workEntity = workDao.find(Long.valueOf(workId));
+        WorkEntity workEntity = workDao.find(workId);
         SourceEntity existingSource = workEntity.getSource();
         orcidSecurityManager.checkSource(existingSource);
         try {            

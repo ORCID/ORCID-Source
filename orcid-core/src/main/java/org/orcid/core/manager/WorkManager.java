@@ -75,7 +75,7 @@ public interface WorkManager {
      *          The work id
      * @return true if the work index was correctly set                  
      * */
-    boolean updateToMaxDisplay(String orcid, String workId);        
+    boolean updateToMaxDisplay(String orcid, Long workId);        
 
     /**
      * Get the given Work from the database
@@ -84,9 +84,9 @@ public interface WorkManager {
      * @param workId
      *          The work id             
      * */
-    Work getWork(String orcid, String workId);
+    Work getWork(String orcid, Long workId);
     
-    WorkSummary getWorkSummary(String orcid, String workId);
+    WorkSummary getWorkSummary(String orcid, Long workId);
     
     /**
      * Add a new work to the work table
@@ -110,7 +110,7 @@ public interface WorkManager {
      * */
     Work updateWork(String orcid, Work work, boolean applyValidations); 
     
-    boolean checkSourceAndRemoveWork(String orcid, String workId);
+    boolean checkSourceAndRemoveWork(String orcid, Long workId);
     
     /**
      * Get the list of works that belongs to a user

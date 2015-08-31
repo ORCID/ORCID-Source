@@ -25,18 +25,17 @@ import static org.orcid.core.api.OrcidApiConstants.FUNDING;
 import static org.orcid.core.api.OrcidApiConstants.FUNDING_SUMMARY;
 import static org.orcid.core.api.OrcidApiConstants.ORCID_JSON;
 import static org.orcid.core.api.OrcidApiConstants.ORCID_XML;
+import static org.orcid.core.api.OrcidApiConstants.PEER_REVIEW;
+import static org.orcid.core.api.OrcidApiConstants.PEER_REVIEW_SUMMARY;
 import static org.orcid.core.api.OrcidApiConstants.PUTCODE;
 import static org.orcid.core.api.OrcidApiConstants.STATUS_PATH;
 import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_JSON;
 import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_XML;
 import static org.orcid.core.api.OrcidApiConstants.WORK;
 import static org.orcid.core.api.OrcidApiConstants.WORK_SUMMARY;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.orcid.core.api.OrcidApiConstants.PEER_REVIEW;
-import static org.orcid.core.api.OrcidApiConstants.PEER_REVIEW_SUMMARY;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -59,12 +58,6 @@ import org.orcid.jaxb.model.record.summary.FundingSummary;
 import org.orcid.jaxb.model.record.summary.PeerReviewSummary;
 import org.orcid.jaxb.model.record.summary.WorkSummary;
 import org.springframework.beans.factory.annotation.Value;
-
-import com.sun.jersey.api.view.Viewable;
-
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponses;
-import io.swagger.annotations.ApiResponse;
 
 
 public class PublicV2ApiServiceImplBase {
@@ -113,7 +106,7 @@ public class PublicV2ApiServiceImplBase {
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(WORK + PUTCODE)
     @ApiOperation(value = "Fetch a Work", notes = "More notes about this method", response = Work.class)
-    public Response viewWork(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
+    public Response viewWork(@PathParam("orcid") String orcid, @PathParam("putCode") Long putCode) {
         return serviceDelegator.viewWork(orcid, putCode);
     }
 
@@ -121,7 +114,7 @@ public class PublicV2ApiServiceImplBase {
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(WORK_SUMMARY + PUTCODE)
     @ApiOperation(value = "Fetch a Work Summary", response = WorkSummary.class)
-    public Response viewWorkSummary(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
+    public Response viewWorkSummary(@PathParam("orcid") String orcid, @PathParam("putCode") Long putCode) {
         return serviceDelegator.viewWorkSummary(orcid, putCode);
     }
 
@@ -129,7 +122,7 @@ public class PublicV2ApiServiceImplBase {
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(FUNDING + PUTCODE)
     @ApiOperation(value = "Fetch a Funding", response = Funding.class)
-    public Response viewFunding(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
+    public Response viewFunding(@PathParam("orcid") String orcid, @PathParam("putCode") Long putCode) {
         return serviceDelegator.viewFunding(orcid, putCode);
     }
 
@@ -137,7 +130,7 @@ public class PublicV2ApiServiceImplBase {
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(FUNDING_SUMMARY + PUTCODE)
     @ApiOperation(value = "Fetch a Funding Summary", response = FundingSummary.class)
-    public Response viewFundingSummary(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
+    public Response viewFundingSummary(@PathParam("orcid") String orcid, @PathParam("putCode") Long putCode) {
         return serviceDelegator.viewFundingSummary(orcid, putCode);
     }
 
@@ -145,7 +138,7 @@ public class PublicV2ApiServiceImplBase {
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(EDUCATION + PUTCODE)
     @ApiOperation(value = "Fetch an Education", response = Education.class)
-    public Response viewEducation(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
+    public Response viewEducation(@PathParam("orcid") String orcid, @PathParam("putCode") Long putCode) {
         return serviceDelegator.viewEducation(orcid, putCode);
     }
 
@@ -153,7 +146,7 @@ public class PublicV2ApiServiceImplBase {
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(EDUCATION_SUMMARY + PUTCODE)
     @ApiOperation(value = "Fetch an Education Summary", response = EducationSummary.class)
-    public Response viewEducationSummary(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
+    public Response viewEducationSummary(@PathParam("orcid") String orcid, @PathParam("putCode") Long putCode) {
         return serviceDelegator.viewEducationSummary(orcid, putCode);
     }
 
@@ -165,7 +158,7 @@ public class PublicV2ApiServiceImplBase {
             @ApiResponse(code = 200, message = "Employment found", response = Employment.class),
             @ApiResponse(code = 404, message = "Employment not found")
             })
-    public Response viewEmployment(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
+    public Response viewEmployment(@PathParam("orcid") String orcid, @PathParam("putCode") Long putCode) {
         return serviceDelegator.viewEmployment(orcid, putCode);
     }
 
@@ -173,7 +166,7 @@ public class PublicV2ApiServiceImplBase {
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(EMPLOYMENT_SUMMARY + PUTCODE)
     @ApiOperation(value = "Fetch an Employment Summary", response = EmploymentSummary.class)
-    public Response viewEmploymentSummary(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
+    public Response viewEmploymentSummary(@PathParam("orcid") String orcid, @PathParam("putCode") Long putCode) {
         return serviceDelegator.viewEmploymentSummary(orcid, putCode);
     }
     
@@ -181,7 +174,7 @@ public class PublicV2ApiServiceImplBase {
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(PEER_REVIEW + PUTCODE)
     @ApiOperation(value = "Fetch a Peer Review", response = PeerReview.class)
-    public Response viewPeerReview(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
+    public Response viewPeerReview(@PathParam("orcid") String orcid, @PathParam("putCode") Long putCode) {
         return serviceDelegator.viewPeerReview(orcid, putCode);
     }
 
@@ -189,7 +182,7 @@ public class PublicV2ApiServiceImplBase {
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(PEER_REVIEW_SUMMARY + PUTCODE)
     @ApiOperation(value = "Fetch a Peer Review Summary", response = PeerReviewSummary.class)
-    public Response viewPeerReviewSummary(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
+    public Response viewPeerReviewSummary(@PathParam("orcid") String orcid, @PathParam("putCode") Long putCode) {
         return serviceDelegator.viewPeerReviewSummary(orcid, putCode);
     }
 }

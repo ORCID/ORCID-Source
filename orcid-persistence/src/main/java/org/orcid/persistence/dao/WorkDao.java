@@ -106,7 +106,7 @@ public interface WorkDao extends GenericDao<WorkEntity, Long> {
      *          The work owner                         
      * @return true if the work index was correctly set                  
      * */
-    boolean updateToMaxDisplay(String orcid, String workId);
+    boolean updateToMaxDisplay(String orcid, Long workId);
     
     /**
      * Returns a list of work ids of works that still have old external identifiers

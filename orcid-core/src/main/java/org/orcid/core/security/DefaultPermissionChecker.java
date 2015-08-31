@@ -21,13 +21,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
+import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.oauth.OrcidOAuth2Authentication;
@@ -313,9 +316,9 @@ public class DefaultPermissionChecker implements PermissionChecker {
                 return;
             } else if(profileDao.isProfileDeprecated(orcid)) {
             	StringBuffer primary = new StringBuffer(baseUrl).append("/").append(userOrcid);
-            	DeprecatedException ex = new DeprecatedException();
-            	ex.setPrimary(primary.toString());
-            	throw ex;
+        		Map<String, String> params = new HashMap<String, String>();
+            	params.put("orcid", primary.toString());
+                throw new OrcidDeprecatedException(params);
             }
         }
         throw new AccessControlException("You do not have the required permissions.");
