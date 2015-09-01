@@ -28,6 +28,8 @@ import org.springframework.beans.factory.annotation.Value;
 
 public class CrossDomainWebManger {
 
+    private static final String LOCALHOST = "localhost";
+    
     @Value("${org.orcid.security.cors.allowed_domains:orcid.org}")
     private String allowedDomains;
     
@@ -48,14 +50,16 @@ public class CrossDomainWebManger {
             if (validateDomain(request.getHeader("origin"))) {
                 return true;
             }
-        }
-        
-        //Check referer header
-        if(!PojoUtil.isEmpty(request.getHeader("referer"))) {
-            if (validateDomain(request.getHeader("referer"))) {
-                return true;
+        } else {
+            //Check referer header for localhost
+            if(!PojoUtil.isEmpty(request.getHeader("referer"))) {
+                URL netUrl = new URL(request.getHeader("referer"));
+                String domain = netUrl.getHost();
+                if (LOCALHOST.equals(domain)) {
+                    return true;
+                }
             }
-        }        
+        }                       
         
         if(validatePath(path)) {
             return true;
