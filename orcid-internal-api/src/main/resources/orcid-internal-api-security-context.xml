@@ -70,11 +70,7 @@
     <!-- The authentication manager that wraps the client details user service, that performs a db lookup -->
     <sec:authentication-manager id="clientAuthenticationManager">
         <sec:authentication-provider ref="orcidAuthenticationProvider" />
-    </sec:authentication-manager>
-    
-    <bean id="orcidAuthenticationProvider" class="org.orcid.core.oauth.OrcidMultiSecretAuthenticationProvider">
-		<property name="userDetailsService" ref="clientDetailsUserService" />
-	</bean>
+    </sec:authentication-manager>        
 	
 	<bean id="oauthExceptionRenderer" class="org.springframework.security.oauth2.provider.error.DefaultOAuth2ExceptionRenderer">
         <property name="messageConverters">
@@ -88,4 +84,42 @@
      <bean id="oauthAccessDeniedHandler" class="org.springframework.security.oauth2.provider.error.OAuth2AccessDeniedHandler">
         <property name ="exceptionRenderer" ref="oauthExceptionRenderer"/>
      </bean>
+     
+     <bean id="orcidJsonMessageConverter" class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+    	<property name="supportedMediaTypes">
+            <list value-type="org.springframework.http.MediaType">                
+                <bean class="org.springframework.http.MediaType">
+                    <constructor-arg type="java.lang.String" value="application"/>
+                    <constructor-arg type="java.lang.String" value="json"/>
+                </bean>
+                <bean class="org.springframework.http.MediaType"> 
+                    <constructor-arg type="java.lang.String" value="application"/>
+                    <constructor-arg type="java.lang.String" value="orcid+json"/>
+                </bean>
+                <bean class="org.springframework.http.MediaType"> 
+                    <constructor-arg type="java.lang.String" value="application"/>
+                    <constructor-arg type="java.lang.String" value="vnd.orcid+json"/>
+                </bean>
+            </list>
+        </property>    
+    </bean>
+    
+    <bean id="orcidXmlMessageConverter" class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+    	<property name="supportedMediaTypes">
+            <list value-type="org.springframework.http.MediaType">
+                <bean class="org.springframework.http.MediaType">
+                    <constructor-arg type="java.lang.String" value="application"/>
+                    <constructor-arg type="java.lang.String" value="xml"/>
+                </bean>
+                <bean class="org.springframework.http.MediaType"> 
+                    <constructor-arg type="java.lang.String" value="application"/>
+                    <constructor-arg type="java.lang.String" value="orcid+xml"/>
+                </bean>
+                <bean class="org.springframework.http.MediaType"> 
+                    <constructor-arg type="java.lang.String" value="application"/>
+                    <constructor-arg type="java.lang.String" value="vnd.orcid+xml"/>
+                </bean>
+            </list>
+        </property>    
+    </bean>  
 </beans>
