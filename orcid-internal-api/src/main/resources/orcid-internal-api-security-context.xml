@@ -25,6 +25,67 @@
        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.2.xsd
        http://www.springframework.org/schema/security/oauth2 http://www.springframework.org/schema/security/spring-security-oauth2-2.0.xsd">
 
-	<sec:http pattern="/resources/**" security="none"/>	
+	<!-- Create for the filtering of Oauth2 resources -->
+    <oauth2:resource-server id="resourceServerFilter" resource-id="orcid" token-services-ref="tokenServices" entry-point-ref="oauthAuthenticationEntryPoint"/>
+	
+	<!-- User web expressions to aid the syntax of protection -->
+    <oauth2:web-expression-handler id="oauthWebExpressionHandler" />	
+
+	<!-- Authenticate the client before reaching the token endpoint -->
+    <sec:http pattern="/oauth/token" create-session="stateless" authentication-manager-ref="clientAuthenticationManager">
+        <sec:intercept-url pattern="/oauth/token" access="IS_AUTHENTICATED_FULLY" />
+        <sec:anonymous enabled="false" />
+        <sec:http-basic entry-point-ref="oauthAuthenticationEntryPoint" />
+        <!-- include this only if you need to authenticate clients via request parameters -->
+        <sec:custom-filter ref="clientCredentialsTokenEndpointFilter" before="BASIC_AUTH_FILTER" />
+        <sec:access-denied-handler ref="oauthAccessDeniedHandler" />
+    </sec:http>	
     
+    <!-- All other authentication will come through this. If a certificate is not found, it will attempt OAuth2 auth -->
+    <sec:http use-expressions="true" create-session="stateless">
+        <sec:anonymous enabled="true" />
+        <sec:x509 subject-principal-regex="CN=(.*?)," user-service-ref="x509UserService"/>
+        <sec:intercept-url pattern="/**" access="#oauth2.clientHasRole('ROLE_CLIENT')"/>
+        <sec:custom-filter ref="resourceServerFilter" before="PRE_AUTH_FILTER" />
+        <sec:access-denied-handler ref="oauthAccessDeniedHandler" />
+        <sec:expression-handler ref="oauthWebExpressionHandler" />
+    </sec:http>
+    
+    <!-- Add in order for it to be referenced in the filter order -->
+	<bean id="clientCredentialsTokenEndpointFilter" class="org.orcid.api.common.security.oauth.OrcidT1Oauth2TokenEndPointFilter">
+        <property name="authenticationEntryPoint" ref="oauthAuthenticationEntryPoint"/>
+        <property name="authenticationManager" ref="clientAuthenticationManager"/>
+    </bean>
+
+	<bean id="orcidAuthenticationProvider" class="org.orcid.core.oauth.OrcidMultiSecretAuthenticationProvider">
+		<property name="userDetailsService" ref="clientDetailsUserService" />
+	</bean>
+	
+	<bean id="oauthAuthenticationEntryPoint" class="org.springframework.security.oauth2.provider.error.OAuth2AuthenticationEntryPoint">
+        <property name="realmName" value="ORCID Internal API" />
+        <property name="typeName" value="Bearer"/>
+        <property name="exceptionRenderer" ref="oauthExceptionRenderer"/>
+    </bean>
+    
+    <!-- The authentication manager that wraps the client details user service, that performs a db lookup -->
+    <sec:authentication-manager id="clientAuthenticationManager">
+        <sec:authentication-provider ref="orcidAuthenticationProvider" />
+    </sec:authentication-manager>
+    
+    <bean id="orcidAuthenticationProvider" class="org.orcid.core.oauth.OrcidMultiSecretAuthenticationProvider">
+		<property name="userDetailsService" ref="clientDetailsUserService" />
+	</bean>
+	
+	<bean id="oauthExceptionRenderer" class="org.springframework.security.oauth2.provider.error.DefaultOAuth2ExceptionRenderer">
+        <property name="messageConverters">
+            <list>            
+                <ref bean="orcidJsonMessageConverter"/>
+                <ref bean="orcidXmlMessageConverter"/>
+            </list>
+        </property>
+     </bean>
+     
+     <bean id="oauthAccessDeniedHandler" class="org.springframework.security.oauth2.provider.error.OAuth2AccessDeniedHandler">
+        <property name ="exceptionRenderer" ref="oauthExceptionRenderer"/>
+     </bean>
 </beans>

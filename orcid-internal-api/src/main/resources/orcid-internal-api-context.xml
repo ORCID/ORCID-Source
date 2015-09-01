@@ -30,5 +30,9 @@
     <context:component-scan base-package="org.orcid.api.t2, org.orcid.api.common, org.orcid.core.security"/>
     <aop:aspectj-autoproxy />
      
+	<bean id="corsFilter" class="org.orcid.core.web.filters.CorsFilter" />
+    <bean id="jsonpCallbackFilter" class="org.orcid.core.web.filters.JsonpCallbackFilter" />
+     
+     
 	<bean name="serviceDelegator" class="org.orcid.internal.server.delegator.impl.InternalOrcidApiServiceDelegatorImpl" />
 </beans>
