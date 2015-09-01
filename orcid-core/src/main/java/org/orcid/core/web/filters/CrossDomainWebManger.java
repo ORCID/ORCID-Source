@@ -25,6 +25,7 @@ import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -40,8 +41,7 @@ public class CrossDomainWebManger {
     private List<String> domainsRegex;  
     
     public boolean allowed(HttpServletRequest request) throws MalformedURLException {
-        URL url = new URL(request.getRequestURL().toString());
-        String path = url.getPath();        
+        String path = OrcidUrlManager.getPathWithoutContextPath(request);        
         
         //Check origin header
         if(!PojoUtil.isEmpty(request.getHeader("origin"))) {
