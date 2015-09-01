@@ -31,7 +31,14 @@
 							<span ng-show="sortState.reverseKey['date'] == false" ng-class="{'glyphicon glyphicon-sort-by-order':sortState.predicateKey=='date'}"></span>
 						</a>																					
 					</li>
-				    <li ng-class="{'checked':sortState.predicateKey=='title'}">									    	
+				    <li ng-class="{'checked':sortState.predicateKey=='groupName'}" ng-hide="sortHideOption == null">
+				    	<a ng-click="sort('groupName');" class="action-option manage-button">
+				    		<@orcid.msg 'manual_orcid_record_contents.sort_title'/>
+				    		<span ng-show="sortState.reverseKey['groupName']" ng-class="{'glyphicon glyphicon-sort-by-alphabet-alt':sortState.predicateKey=='groupName'}" ></span>
+				    		<span ng-show="sortState.reverseKey['groupName'] == false" ng-class="{'glyphicon glyphicon-sort-by-alphabet':sortState.predicateKey=='groupName'}" ></span>
+				    	</a>									    	
+				    </li>
+				    <li ng-class="{'checked':sortState.predicateKey=='title'}" ng-hide="sortHideOption">									    	
 				    	<a ng-click="sort('title');" class="action-option manage-button">
 				    		<@orcid.msg 'manual_orcid_record_contents.sort_title'/>
 				    		<span ng-show="sortState.reverseKey['title']" ng-class="{'glyphicon glyphicon-sort-by-alphabet-alt':sortState.predicateKey=='title'}" ></span>

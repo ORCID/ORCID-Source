@@ -40,6 +40,12 @@ public class Text implements ErrorsInterface, Required, Serializable {
        return t;
     }
 
+    public static Text valueOf(Long value) {
+        Text t = new Text();
+        t.setValue(String.valueOf(value));
+       return t;
+    }
+    
     public Keyword toKeyword() {
         return new Keyword(this.value);
     }

@@ -168,8 +168,8 @@ public class ActivitiesSummary implements Serializable, ActivitiesContainer {
     }
 
     @Override
-    public Map<String, ? extends Activity> retrieveActivitiesAsMap() {
-        Map<String, Activity> activities = new HashMap<String, Activity>();
+    public Map<Long, ? extends Activity> retrieveActivitiesAsMap() {
+        Map<Long, Activity> activities = new HashMap<>();
         // Set works
         if (works != null) {
             List<WorkGroup> groups = works.getWorkGroup();

@@ -55,7 +55,7 @@ public class PeerReviewSummary implements Filterable, Activity, GroupableActivit
     @XmlElement(name = "created-date", namespace = "http://www.orcid.org/ns/common")
     protected CreatedDate createdDate;    
     @XmlAttribute(name = "put-code")
-    protected String putCode;
+    protected Long putCode;
     @XmlAttribute(name = "path")
     protected String path;
     @XmlAttribute
@@ -105,11 +105,11 @@ public class PeerReviewSummary implements Filterable, Activity, GroupableActivit
         this.createdDate = createdDate;
     }
 
-    public String getPutCode() {
+    public Long getPutCode() {
         return putCode;
     }
 
-    public void setPutCode(String putCode) {
+    public void setPutCode(Long putCode) {
         this.putCode = putCode;
     }
 

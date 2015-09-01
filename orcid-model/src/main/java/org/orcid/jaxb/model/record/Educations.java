@@ -34,8 +34,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.apache.commons.lang3.StringUtils;
-
 /**
  * <p>
  * Java class for anonymous complex type.
@@ -88,11 +86,11 @@ public class Educations implements Serializable, ActivitiesContainer {
     }
 
     @Override
-    public Map<String, Education> retrieveActivitiesAsMap() {
-        Map<String, Education> affMap = new HashMap<>();
+    public Map<Long, Education> retrieveActivitiesAsMap() {
+        Map<Long, Education> affMap = new HashMap<>();
         if (education != null) {
             for (Education aff : education) {
-                if (StringUtils.isNotBlank(aff.putCode)) {
+                if (aff.putCode != null) {
                     affMap.put(aff.putCode, aff);
                 }
             }

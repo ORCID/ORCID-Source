@@ -27,9 +27,9 @@ import org.orcid.jaxb.model.common.LastModifiedDate;
  */
 public interface Activity extends Filterable {
 
-    String getPutCode();
+    Long getPutCode();
     
-    void setPutCode(String putCode);
+    void setPutCode(Long putCode);
     
     String getPath();
     

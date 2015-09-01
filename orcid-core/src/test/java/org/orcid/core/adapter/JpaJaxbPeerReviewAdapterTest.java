@@ -104,7 +104,7 @@ public class JpaJaxbPeerReviewAdapterTest {
         assertNotNull(entity);
         PeerReview peerReview= jpaJaxbPeerReviewAdapter.toPeerReview(entity);
         assertNotNull(peerReview);
-        assertEquals("12345", peerReview.getPutCode());
+        assertEquals(Long.valueOf(12345), peerReview.getPutCode());
         assertEquals("private", peerReview.getVisibility().value());    
         assertEquals("orcid-generated:12345", peerReview.getGroupId());
         //Subject
@@ -145,7 +145,7 @@ public class JpaJaxbPeerReviewAdapterTest {
         assertNotNull(entity);
         PeerReviewSummary peerReviewSummary = jpaJaxbPeerReviewAdapter.toPeerReviewSummary(entity);
         assertNotNull(peerReviewSummary);
-        assertEquals("12345", peerReviewSummary.getPutCode());
+        assertEquals(Long.valueOf(12345), peerReviewSummary.getPutCode());
         assertEquals("private", peerReviewSummary.getVisibility().value());
         assertNotNull(peerReviewSummary.getCompletionDate());
         assertEquals("2015", peerReviewSummary.getCompletionDate().getYear().getValue());

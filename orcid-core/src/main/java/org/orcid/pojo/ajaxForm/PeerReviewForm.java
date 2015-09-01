@@ -303,8 +303,8 @@ public class PeerReviewForm implements ErrorsInterface, Serializable {
     public PeerReview toPeerReview() {
         PeerReview peerReview = new PeerReview();
         // Put Code
-        if (!PojoUtil.isEmpty(putCode)) {
-            peerReview.setPutCode(putCode.getValue());
+        if (!PojoUtil.isEmpty(putCode)) {            
+            peerReview.setPutCode(Long.valueOf(putCode.getValue()));
         }
         // Visibility
         if (visibility != null) {
@@ -433,7 +433,7 @@ public class PeerReviewForm implements ErrorsInterface, Serializable {
         PeerReviewForm form = new PeerReviewForm();
 
         // Put code
-        if (!PojoUtil.isEmpty(peerReview.getPutCode())) {
+        if (peerReview.getPutCode() != null) {
             form.setPutCode(Text.valueOf(peerReview.getPutCode()));
         }
 

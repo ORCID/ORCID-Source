@@ -19,12 +19,12 @@
 <ul ng-hide="!peerReviewSrvc.groups.length" class="workspace-peer-review workspace-body-list bottom-margin-medium" ng-cloak>
 	<li class="bottom-margin-small workspace-border-box card" ng-repeat="group in peerReviewSrvc.groups | orderBy:sortState.predicate:sortState.reverse">
 		<ul class="sources-edit-list">
-			 <li class="peer-review-group">
+			 <li class="peer-review-group" ng-repeat="peerReview in group.activities | orderBy: ['groupName']" ng-show="group.activePutCode == peerReview.putCode.value" orcid-put-code="{{peerReview.putCode.value}}" class="group-details">
 			 	<!-- active row summary info -->
                 <div class="row">
                     <div class="col-md-9 col-sm-9 col-xs-8">
-                    	<div ng-init="peerReviewSrvc.getPeerReviewGroupDetails(group.groupRealId)">
-                    		<span class="title" ng-click="showDetailsMouseClick(group.groupId,$event);"><span ng-class="{'glyphicon x075 glyphicon-chevron-right': showDetails[group.groupId] == false || showDetails[group.groupId] == null, 'glyphicon x075 glyphicon-chevron-down': showDetails[group.groupId] == true}"></span> <span>review activity for </span><span class="peer-review-title"><span ng-bind="peerReviewSrvc.groupName"></span>({{group.activitiesCount}})</span></span>
+                    	<div ng-init="peerReviewSrvc.getPeerReviewGroupDetails(group.groupRealId, peerReview.putCode.value)">
+                    		<span class="title" ng-click="showDetailsMouseClick(group.groupId,$event);"><span ng-class="{'glyphicon x075 glyphicon-chevron-right': showDetails[group.groupId] == false || showDetails[group.groupId] == null, 'glyphicon x075 glyphicon-chevron-down': showDetails[group.groupId] == true}"></span> <span>review activity for </span><span class="peer-review-title"><span ng-bind="group.groupName"></span>({{group.activitiesCount}})</span></span>
                     	</div>
                     </div>
                 
@@ -32,9 +32,9 @@
                           <ul class="workspace-private-toolbar">
                               <#if !(isPublicProfile??)>
                                   <!-- Privacy -->
-                                  <li ng-repeat="peerReview in group.activities" ng-show="$last"> <!-- Currently showing the privacy setting for the last item, but if the privacy setting is changed it is going to apply for the group -->
+                                  <li> <!-- Currently showing the privacy setting for the last item, but if the privacy setting is changed it is going to apply for the group -->
                                       <@orcid.privacyToggle2 angularModel="peerReview.visibility"
-                                          questionClick="toggleClickPrivacyHelp(group.highestVis())"
+                                          questionClick=""
                                           clickedClassCheck="{'popover-help-container-show':privacyHelp[peerReview.putCode.value]==true}"
                                           publicClick="peerReviewSrvc.setGroupPrivacy(peerReview.putCode.value, 'PUBLIC', $event)"
                                           limitedClick="peerReviewSrvc.setGroupPrivacy(peerReview.putCode.value, 'LIMITED', $event)"
@@ -43,6 +43,7 @@
                               </#if>
                           </ul>
                            
+                          <!-- Review --> 
                           <#if !(isPublicProfile??)>
                               <div ng-show="!group.consistentVis() && !editSources[group.groupId]" class="vis-issue">
 	                              	<div class="popover-help-container">
@@ -56,16 +57,11 @@
 						            </div>                                    
                               </div>
                           </#if>
-                          
                       </div>
                  </div>
-			 
-			 </li>
-             <li ng-repeat="peerReview in group.activities" ng-show="group.activePutCode == peerReview.putCode.value" orcid-put-code="{{peerReview.putCode.value}}" class="group-details">
-                    
-                    <!-- more info -->
-                    <#include "peer_review_more_info_inc.ftl"/>
-              </li>
+                  <!-- more info -->
+                  <#include "peer_review_more_info_inc.ftl"/>
+             </li>
 		</ul>
 	</li>	
 </ul>

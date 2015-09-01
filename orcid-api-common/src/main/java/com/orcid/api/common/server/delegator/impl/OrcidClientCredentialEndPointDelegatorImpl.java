@@ -110,7 +110,8 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
                 }
             }
         } catch (IllegalArgumentException iae) {
-            throw new OrcidInvalidScopeException();
+            String message = localeManager.resolveMessage("apiError.9015.developerMessage", new Object[]{});
+            throw new OrcidInvalidScopeException(message);
         }
                            
         String clientName = client.getName();

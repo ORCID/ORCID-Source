@@ -119,7 +119,7 @@ public class PeerReviewsControllerTest extends BaseControllerTest {
 
         assertEquals(1, ids.size());
         assertEquals("1", ids.get(0));
-        PeerReviewForm peerReview = peerReviewsController.getPeerReviewJson("1");
+        PeerReviewForm peerReview = peerReviewsController.getPeerReviewJson(Long.valueOf(1));
         assertNotNull(peerReview);
         assertEquals("http://peer_review.com", peerReview.getUrl().getValue());
     }
@@ -133,7 +133,7 @@ public class PeerReviewsControllerTest extends BaseControllerTest {
             assertFalse(PojoUtil.isEmpty(newForm.getPutCode()));
 
             String putCode = newForm.getPutCode().getValue();
-            newForm = peerReviewsController.getPeerReviewJson(putCode);
+            newForm = peerReviewsController.getPeerReviewJson(Long.valueOf(putCode));
 
             assertEquals(form.getCity(), newForm.getCity());
             assertEquals(form.getRegion(), newForm.getRegion());
@@ -194,7 +194,7 @@ public class PeerReviewsControllerTest extends BaseControllerTest {
 
         String putCode = newForm.getPutCode().getValue();
         peerReviewsController.deletePeerReviewJson(servletRequest, newForm);
-        PeerReviewForm deleted = peerReviewsController.getPeerReviewJson(putCode);
+        PeerReviewForm deleted = peerReviewsController.getPeerReviewJson(Long.valueOf(putCode));
         assertNull(deleted);
     }
 

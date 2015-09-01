@@ -36,61 +36,61 @@ public interface MemberV2ApiServiceDelegator {
 
     Response viewActivities(String orcid);
 
-    Response viewWork(String orcid, String putCode);
+    Response viewWork(String orcid, Long putCode);
 
-    Response viewWorkSummary(String orcid, String putCode);
+    Response viewWorkSummary(String orcid, Long putCode);
 
     Response createWork(String orcid, Work work);
 
-    Response updateWork(String orcid, String putCode, Work work);
+    Response updateWork(String orcid, Long putCode, Work work);
 
-    Response deleteWork(String orcid, String putCode);
+    Response deleteWork(String orcid, Long putCode);
 
-    Response viewFunding(String orcid, String putCode);
+    Response viewFunding(String orcid, Long putCode);
 
-    Response viewFundingSummary(String orcid, String putCode);
+    Response viewFundingSummary(String orcid, Long putCode);
 
     Response createFunding(String orcid, Funding funding);
 
-    Response updateFunding(String orcid, String putCode, Funding funding);
+    Response updateFunding(String orcid, Long putCode, Funding funding);
 
-    Response deleteFunding(String orcid, String putCode);
+    Response deleteFunding(String orcid, Long putCode);
 
-    Response viewEducation(String orcid, String putCode);
+    Response viewEducation(String orcid, Long putCode);
 
-    Response viewEducationSummary(String orcid, String putCode);
+    Response viewEducationSummary(String orcid, Long putCode);
 
     Response createEducation(String orcid, Education education);
 
-    Response updateEducation(String orcid, String putCode, Education education);
+    Response updateEducation(String orcid, Long putCode, Education education);
 
-    Response viewEmployment(String orcid, String putCode);
+    Response viewEmployment(String orcid, Long putCode);
 
-    Response viewEmploymentSummary(String orcid, String putCode);
+    Response viewEmploymentSummary(String orcid, Long putCode);
 
     Response createEmployment(String orcid, Employment employment);
 
-    Response updateEmployment(String orcid, String putCode, Employment employment);
+    Response updateEmployment(String orcid, Long putCode, Employment employment);
 
-    Response deleteAffiliation(String orcid, String putCode);
+    Response deleteAffiliation(String orcid, Long putCode);
 
-    Response viewPeerReview(String orcid, String putCode);
+    Response viewPeerReview(String orcid, Long putCode);
 
-    Response viewPeerReviewSummary(String orcid, String putCode);
+    Response viewPeerReviewSummary(String orcid, Long putCode);
 
     Response createPeerReview(String orcid, PeerReview peerReview);
 
-    Response updatePeerReview(String orcid, String putCode, PeerReview peerReview);
+    Response updatePeerReview(String orcid, Long putCode, PeerReview peerReview);
 
-    Response deletePeerReview(String orcid, String putCode);
+    Response deletePeerReview(String orcid, Long putCode);
 
-    Response viewGroupIdRecord(String putCode);
+    Response viewGroupIdRecord(Long putCode);
 
     Response createGroupIdRecord(GroupIdRecord groupIdRecord);
 
-    Response updateGroupIdRecord(GroupIdRecord groupIdRecord, String putCode);
+    Response updateGroupIdRecord(GroupIdRecord groupIdRecord, Long putCode);
 
-    Response deleteGroupIdRecord(String putCode);
+    Response deleteGroupIdRecord(Long putCode);
 
     Response viewGroupIdRecords(String pageSize, String pageNum);
 

@@ -71,8 +71,8 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
     }
     
     @Override
-    public OrgAffiliationRelationEntity findAffiliationByUserAndId(String userOrcid, String affiliationId) {
-        if(PojoUtil.isEmpty(userOrcid) || PojoUtil.isEmpty(affiliationId))
+    public OrgAffiliationRelationEntity findAffiliationByUserAndId(String userOrcid, Long affiliationId) {
+        if(PojoUtil.isEmpty(userOrcid) || affiliationId == null)
             return null;
         return affiliationsDao.getOrgAffiliationRelation(userOrcid, affiliationId);
     }
@@ -100,7 +100,7 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
      * @return the education
      * */
     @Override
-    public Education getEducationAffiliation(String userOrcid, String affiliationId) {
+    public Education getEducationAffiliation(String userOrcid, Long affiliationId) {
         OrgAffiliationRelationEntity entity = findAffiliationByUserAndId(userOrcid, affiliationId);
         return jpaJaxbEducationAdapter.toEducation(entity);
     }
@@ -114,7 +114,7 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
      * @return the education summary
      * */
     @Override
-    public EducationSummary getEducationSummary(String userOrcid, String affiliationId) {
+    public EducationSummary getEducationSummary(String userOrcid, Long affiliationId) {
         OrgAffiliationRelationEntity entity = findAffiliationByUserAndId(userOrcid, affiliationId);
         return jpaJaxbEducationAdapter.toEducationSummary(entity);
     }
@@ -183,7 +183,7 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
      * @return the employment
      * */
     @Override
-    public Employment getEmploymentAffiliation(String userOrcid, String employmentId) {
+    public Employment getEmploymentAffiliation(String userOrcid, Long employmentId) {
         OrgAffiliationRelationEntity entity = findAffiliationByUserAndId(userOrcid, employmentId);
         return jpaJaxbEmploymentAdapter.toEmployment(entity);
     }
@@ -196,7 +196,7 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
      *          The employment id
      * @return the employment summary
      * */
-    public EmploymentSummary getEmploymentSummary(String userOrcid, String employmentId) {
+    public EmploymentSummary getEmploymentSummary(String userOrcid, Long employmentId) {
         OrgAffiliationRelationEntity entity = findAffiliationByUserAndId(userOrcid, employmentId);
         return jpaJaxbEmploymentAdapter.toEmploymentSummary(entity);
     }        
@@ -265,7 +265,7 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
      * @return true if the affiliation was deleted, false otherwise
      * */
     @Override
-    public boolean checkSourceAndDelete(String orcid, String affiliationId) {
+    public boolean checkSourceAndDelete(String orcid, Long affiliationId) {
         OrgAffiliationRelationEntity affiliationEntity = affiliationsDao.getOrgAffiliationRelation(orcid, affiliationId);
         orcidSecurityManager.checkSource(affiliationEntity.getSource());
         return affiliationsDao.removeOrgAffiliationRelation(orcid, affiliationId);

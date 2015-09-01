@@ -78,7 +78,7 @@ public class Education implements Serializable, VisibilityType, Activity, Organi
 
     @XmlAttribute(name = "put-code")
     @ApiModelProperty(hidden = true) 
-    protected String putCode;
+    protected Long putCode;
     @XmlAttribute(name = "path")
     protected String path;
     @XmlAttribute
@@ -237,7 +237,7 @@ public class Education implements Serializable, VisibilityType, Activity, Organi
      * @return possible object is {@link String }
      * 
      */
-    public String getPutCode() {
+    public Long getPutCode() {
         return putCode;
     }
 
@@ -248,7 +248,7 @@ public class Education implements Serializable, VisibilityType, Activity, Organi
      *            allowed object is {@link String }
      * 
      */
-    public void setPutCode(String value) {
+    public void setPutCode(Long value) {
         this.putCode = value;
     }
 
