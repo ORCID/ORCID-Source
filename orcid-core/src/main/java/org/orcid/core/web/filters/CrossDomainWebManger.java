@@ -20,6 +20,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -30,14 +32,10 @@ public class CrossDomainWebManger {
 
     private static final String LOCALHOST = "localhost";
     
+    Pattern p = Pattern.compile(".*/public/.*|.*/public_widgets/.*|.*/userStatus\\.json");
+    
     @Value("${org.orcid.security.cors.allowed_domains:orcid.org}")
     private String allowedDomains;
-    
-    @Value("${org.orcid.security.cors.allowed_path:/public}")
-    private String allowedPaths;
-    
-    @Value("${org.orcid.security.cors.allowed_functions}")
-    private String allowedFunctions;    
     
     private List<String> domainsRegex;  
     
@@ -63,11 +61,7 @@ public class CrossDomainWebManger {
         
         if(validatePath(path)) {
             return true;
-        }
-        
-        if(validateFunction(path)) {
-            return true;
-        }
+        }        
         
         return false;
     }
@@ -83,23 +77,13 @@ public class CrossDomainWebManger {
         return false;
     }    
     
-    private boolean validatePath(String path) {
-        for(String allowedPath : allowedPaths.split(",")) {
-            if(path.startsWith("/" + allowedPath)) {
-                return true;
-            }
+    private boolean validatePath(String path) {        
+        Matcher m = p.matcher(path);
+        if(m.matches()) {
+            return true;
         }
         return false;
-    }
-    
-    private boolean validateFunction(String path) {
-        for(String allowedFunction : allowedFunctions.split(",")) {
-            if(path.contains(allowedFunction)) {
-                return true;
-            }
-        }
-        return false;
-    }
+    }        
     
     private List<String> getAllowedDomainsRegex() {
         if (domainsRegex == null) {
@@ -117,6 +101,5 @@ public class CrossDomainWebManger {
         String result = domainPattern.replace(".", "\\.");
         result = domainPattern.replace("*", ".+");
         return result;
-    }
-
+    }    
 }
