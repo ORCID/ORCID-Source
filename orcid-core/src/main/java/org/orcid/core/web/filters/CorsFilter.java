@@ -17,17 +17,13 @@
 package org.orcid.core.web.filters;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 
+import javax.annotation.Resource;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 /**
@@ -38,14 +34,12 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 public class CorsFilter extends OncePerRequestFilter {
 
-    @Value("${org.orcid.security.cors.allowed_domains:orcid.org}")
-    private String allowedDomains;
+    @Resource
+    CrossDomainWebManger crossDomainWebManger;
     
-    private static List<String> domainsRegex;    
-
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        if(allowed(request)) {
+        if(crossDomainWebManger.allowed(request)) {
             response.addHeader("Access-Control-Allow-Origin", "*");
             if (request.getHeader("Access-Control-Request-Method") != null && "OPTIONS".equals(request.getMethod())) {
                 // CORS "pre-flight" request
@@ -56,41 +50,5 @@ public class CorsFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    private boolean allowed(HttpServletRequest request) throws MalformedURLException {
-        URL url = new URL(request.getRequestURL().toString());
-        String domain = url.getHost();
-        
-        if (validateDomain(domain)) {
-            return true;
-        }
-        
-        return false;
-    }
-
-    private boolean validateDomain(String domain) {
-        for (String allowedDomain : getAllowedDomainsRegex()) {
-            if (domain.matches(allowedDomain)) {
-                return true;
-            }
-        }
-        return false;
-    }    
     
-    private List<String> getAllowedDomainsRegex() {
-        if (domainsRegex == null) {
-            domainsRegex = new ArrayList<String>();
-            for (String allowedDomain : allowedDomains.split(",")) {
-                String regex = transformPatternIntoRegex(allowedDomain);
-                domainsRegex.add(regex);
-            }
-        }
-
-        return domainsRegex;
-    }
-
-    private String transformPatternIntoRegex(String domainPattern) {
-        String result = domainPattern.replace(".", "\\.");
-        result = domainPattern.replace("*", ".+");
-        return result;
-    }
 }

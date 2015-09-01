@@ -550,4 +550,6 @@
 	<bean id="geonamesApiUrl" class="java.lang.String">
 		<constructor-arg value="http://api.geonames.org/getJSON"/>
 	</bean>	
+	
+	<bean id="crossDomainWebManger" class="org.orcid.core.web.filters.CrossDomainWebManger" />
 </beans>
