@@ -16,21 +16,17 @@
  */
 package org.orcid.integration.swagger;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import io.github.robwin.markup.builder.MarkupLanguage;
+import io.github.robwin.swagger2markup.Swagger2MarkupConverter;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 
-import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import io.github.robwin.markup.builder.MarkupLanguage;
-import io.github.robwin.swagger2markup.Swagger2MarkupConverter;
-import junit.framework.Assert;
 
 /** Generates markup from swagger docs during integration testing
  * Confirms valid swagger.json
