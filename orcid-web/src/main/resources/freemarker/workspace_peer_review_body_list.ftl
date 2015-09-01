@@ -42,7 +42,6 @@
 									            <span class="glyphicon glyphicon-plus"></span> <@orcid.msg 'workspace_peer_review_body_list.addPeerReview'/>
 									            <ul class="menu-options works">
 									            	<#if RequestParameters['addpeer']??>
-									            		<!--  Just to Frontend testing purposes -->
 									            		<li>
 				                                            <a class="action-option manage-button" ng-click="addPeerReviewModal()">
 				                                                <span class="glyphicon glyphicon-plus"></span> Add manually 

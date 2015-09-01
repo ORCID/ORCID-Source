@@ -6004,6 +6004,10 @@ textarea.form-control,
 	vertical-align: baseline;
 }
 
+.peer-review-group .workspace-toolbar .vis-issue{
+	margin-bottom: 5px;
+}
+
 ul.sources-edit-list > li.peer-review-group{
 	border-bottom: none;
 	box-shadow: none;
