@@ -51,7 +51,7 @@ import org.springframework.web.servlet.ModelAndView;
 @RequestMapping("/shibboleth")
 public class ShibbolethController extends BaseController {
 
-    private static final String[] POSSIBLE_REMOTE_USER_HEADERS = new String[] { "eppn", "persistent-id" };
+    private static final String[] POSSIBLE_REMOTE_USER_HEADERS = new String[] { "persistent-id", "targeted-id" };
 
     private static final String SHIB_IDENTITY_PROVIDER_HEADER = "shib-identity-provider";
 
