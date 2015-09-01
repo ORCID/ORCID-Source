@@ -25,9 +25,10 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jbibtex.BibTeXDatabase;
 import org.jbibtex.ParseException;
+import org.orcid.jaxb.model.record.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.record.CitationType;
 import org.orcid.jaxb.model.record.Work;
-import org.orcid.jaxb.model.record.summary.ActivitiesSummary;
+import org.orcid.jaxb.model.record.WorkExternalIdentifier;
 import org.springframework.util.ReflectionUtils;
 
 import de.undercouch.citeproc.bibtex.BibTeXConverter;
@@ -39,6 +40,7 @@ public class WorkToCiteprocTranslator {
 
     private final Field authorField = ReflectionUtils.findField(CSLItemData.class, "author");
     private final Field literalField = ReflectionUtils.findField(CSLName.class, "literal");
+    private final Field doiField = ReflectionUtils.findField(CSLItemData.class, "DOI");
 
     /**
      * Turn a work into Citeproc JSON Horrible use of reflection to shorten
@@ -53,27 +55,36 @@ public class WorkToCiteprocTranslator {
         if (work.getWorkCitation() != null && work.getWorkCitation().getWorkCitationType() != null
                 && work.getWorkCitation().getWorkCitationType().equals(CitationType.BIBTEX)) {
             try {
+                System.out.println("----");
+                System.out.println(work.getWorkCitation().getCitation());
+                System.out.println("----");
                 BibTeXConverter conv = new BibTeXConverter();
                 BibTeXDatabase db = conv.loadDatabase(IOUtils.toInputStream(work.getWorkCitation().getCitation()));
                 Map<String, CSLItemData> cids = conv.toItemData(db);
                 if (cids.size() == 1) {
                     CSLItemData item = cids.values().iterator().next();
+                    //FOR REASONS UNKNOWN, CITEPROC WILL SOMETIMES generate multiple authors not a literal.
                     if (abreviate) {
                         if (item.getAuthor().length > 20) {
                             CSLName[] abrev = Arrays.copyOf(item.getAuthor(), 1);
-                            // this wrong but better than nothing... CSL only
-                            // supports this in style definitions. Could add a
-                            // literal.
                             abrev[0] = new CSLNameBuilder().literal(abrev[0].getGiven() + " " + abrev[0].getFamily() + " " + "et all.").build();
                             ReflectionUtils.makeAccessible(authorField);
                             ReflectionUtils.setField(authorField, item, abrev);
                         }
-
                         for (int i = 0; i < item.getAuthor().length; i++) {
                             if (item.getAuthor()[i].getLiteral() != null && item.getAuthor()[i].getLiteral().length() > 200) {
                                 ReflectionUtils.makeAccessible(literalField);
-                                ReflectionUtils.setField(literalField, item.getAuthor()[i], StringUtils.abbreviate(item.getAuthor()[i].getLiteral(), 200));                                                                                                                                                          // dangerous!
+                                ReflectionUtils.setField(literalField, item.getAuthor()[i], StringUtils.abbreviate(item.getAuthor()[i].getLiteral(), 200));
                             }
+                        }
+                    }
+                    //add in first DOI (if found and not present)
+                    if (item.getDOI() == null && work.getExternalIdentifiers() != null && work.getExternalIdentifiers().getExternalIdentifier() != null && work.getExternalIdentifiers().getExternalIdentifier().size()>0){
+                        for (WorkExternalIdentifier id : work.getExternalIdentifiers().getExternalIdentifier()){
+                            if (id.getWorkExternalIdentifierType().equals(WorkExternalIdentifierType.DOI)){
+                                ReflectionUtils.makeAccessible(doiField);
+                                ReflectionUtils.setField(doiField, item, id.getWorkExternalIdentifierId().getContent());
+                            }                            
                         }
                     }
                     return item;
