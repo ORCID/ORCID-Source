@@ -38,4 +38,8 @@ public interface EncryptionManager {
 
     String decryptForExternalUse(String stringToDecrypt);
 
+    String encryptForLegacyExternalUse(String stringToEncrypt);
+
+    String decryptForLegacyExternalUse(String stringToDecrypt);
+
 }

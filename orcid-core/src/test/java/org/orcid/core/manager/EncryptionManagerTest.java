@@ -70,6 +70,16 @@ public class EncryptionManagerTest extends BaseTest {
     }
 
     @Test
+    public void testLegacyEncryptAndDecryptForExternalUse() {
+        String message = "email=will@semantico.com&fName=Will&lName=Simpson&sponsor=ORCID&identifier=&institution=Semantico";
+        String encrypted = encryptionManager.encryptForLegacyExternalUse(message);
+        assertNotNull(encrypted);
+        assertFalse(encrypted.equals(message));
+        String decrypted = encryptionManager.decryptForExternalUse(encrypted);
+        assertEquals(message, decrypted);
+    }
+
+    @Test
     public void testHashForInternalUse() {
         // This is a terrible password. You'd never actually use it, would you?
         // Would you?

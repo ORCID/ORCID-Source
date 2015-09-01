@@ -23,6 +23,7 @@ import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang3.time.StopWatch;
 import org.jasypt.digest.StringDigester;
 import org.jasypt.encryption.pbe.PBEStringEncryptor;
+import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
 import org.orcid.core.crypto.DesEncrypter;
 import org.orcid.core.manager.EncryptionManager;
 import org.slf4j.Logger;
@@ -40,6 +41,8 @@ public class EncryptionManagerImpl implements EncryptionManager, PasswordEncoder
     private PBEStringEncryptor internalEncryptor;
 
     private PBEStringEncryptor externalEncryptor;
+
+    private PBEStringEncryptor legacyExternalEncryptor;
 
     private DesEncrypter legacyEncrypterForInternalUse;
 
@@ -60,6 +63,11 @@ public class EncryptionManagerImpl implements EncryptionManager, PasswordEncoder
     @Required
     public void setInternalEncryptor(PBEStringEncryptor internalEncryptor) {
         this.internalEncryptor = internalEncryptor;
+    }
+
+    @Required
+    public void setLegacyExternalEncryptor(PBEStringEncryptor legacyExternalEncryptor) {
+        this.legacyExternalEncryptor = legacyExternalEncryptor;
     }
 
     @Required
@@ -114,9 +122,25 @@ public class EncryptionManagerImpl implements EncryptionManager, PasswordEncoder
         return externalEncryptor.encrypt(stringToEncrypt);
     }
 
+	@Override
+	public String decryptForExternalUse(String stringToDecrypt) {
+		try {
+			return externalEncryptor.decrypt(stringToDecrypt);
+		} catch (EncryptionOperationNotPossibleException e) {
+			return decryptForLegacyExternalUse(stringToDecrypt);
+		}
+	}
+
     @Override
-    public String decryptForExternalUse(String stringToDecrypt) {
-        return externalEncryptor.decrypt(stringToDecrypt);
+    @Deprecated
+    public String encryptForLegacyExternalUse(String stringToEncrypt) {
+        return legacyExternalEncryptor.encrypt(stringToEncrypt);
+    }
+
+    @Override
+    @Deprecated
+    public String decryptForLegacyExternalUse(String stringToDecrypt) {
+        return legacyExternalEncryptor.decrypt(stringToDecrypt);
     }
 
     /**
