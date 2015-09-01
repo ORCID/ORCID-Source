@@ -41,6 +41,9 @@ public class OrcidUrlManager {
     @Value("${org.orcid.core.apiBaseUri}")
     private String apiBaseUrl;
 
+    @Value("${org.orcid.core.internalApiBaseUri}")
+    private String internalApiBaseUrl;
+    
     public String getBaseUrl() {
         return baseUrl;
     }
@@ -81,6 +84,18 @@ public class OrcidUrlManager {
      * 
      * @return the path, without additional trailing slash
      */
+    @ModelAttribute("internalApiPath")
+    public String getInternalApiPath() {
+        Matcher fileNameMatcher = fileNamePattern.matcher(getInternalApiBaseUrl());
+        if (!fileNameMatcher.find())
+            return "/";
+        return fileNameMatcher.group(1);
+    }
+    
+    /** 
+     * 
+     * @return the path, without additional trailing slash
+     */
     @ModelAttribute("pubPath")
     public String getPubPath() {
         Matcher fileNameMatcher = fileNamePattern.matcher(this.getPubBaseUrl());
@@ -101,6 +116,17 @@ public class OrcidUrlManager {
     public String getApiHostWithPort() {
         try {
             URI uri = new URI(this.apiBaseUrl);
+            if (uri.getPort() >= 0)
+                return uri.getHost() + ":"+uri.getPort();
+            return uri.getHost();
+        } catch (URISyntaxException e) {
+            throw new RuntimeException("Problem parsing base URI: " + this.apiBaseUrl, e);
+        }
+    }
+    
+    public String getInternalApiHostWithPort() {
+        try {
+            URI uri = new URI(this.internalApiBaseUrl);
             if (uri.getPort() >= 0)
                 return uri.getHost() + ":"+uri.getPort();
             return uri.getHost();
@@ -132,6 +158,10 @@ public class OrcidUrlManager {
         return apiBaseUrl;
     }
 
+    public String getInternalApiBaseUrl() {
+        return internalApiBaseUrl;
+    }
+    
     public void setApiBaseUrl(String apiBaseUrl) {
         this.apiBaseUrl = apiBaseUrl;
     }
