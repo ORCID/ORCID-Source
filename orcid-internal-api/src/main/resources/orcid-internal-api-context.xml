@@ -30,27 +30,10 @@
     <context:component-scan base-package="org.orcid.api.t2, org.orcid.api.common, org.orcid.core.security"/>
     <aop:aspectj-autoproxy />
      
-    <bean id="t2OrcidApiServiceImplRoot" class="org.orcid.api.t2.server.T2OrcidApiServiceImplRoot">
-        <property name="serviceDelegator" ref="t2OrcidApiServiceDelegatorV1_1"/>
-    </bean>
-    
-    <bean id="orcidT2ServiceDelegator" class="org.orcid.api.t2.server.delegator.impl.T2OrcidApiServiceDelegatorImpl">
-        <property name="orcidSearchManager" ref="orcidSearchManager" />
-    </bean>
-    
-    <bean id="t2OrcidApiServiceDelegatorLatest" class="org.orcid.api.t2.server.delegator.impl.T2OrcidApiServiceVersionedDelegatorImpl">
-        <property name="incomingValidationManager" ref="incomingValidationManagerLatest"/>
-        <property name="outgoingValidationManager" ref="outgoingValidationManagerLatest"/>
-    </bean>
-    
-    <bean id="t2OrcidApiServiceDelegatorPrototype" class="org.orcid.api.t2.server.delegator.impl.T2OrcidApiServiceVersionedDelegatorImpl" scope="prototype"/>
-
-    
-
-    <!--  Member_2 API -->
-    <bean id="memberV2ApiServiceDelegator" class="org.orcid.api.memberV2.server.delegator.impl.MemberV2ApiServiceDelegatorImpl" />
-    <bean id="memberV2ApiServiceImplV2_0_rc1" class="org.orcid.api.memberV2.server.MemberV2ApiServiceImplV2_0_rc1">
-        <property name="serviceDelegator" ref="memberV2ApiServiceDelegator"/>
+    <!--  Internal API -->
+    <bean id="internalV2ApiServiceDelegator" class="org.orcid.internal.server.delegator.impl.InternalApiServiceDelegatorImpl" />
+    <bean id="internalApiServiceImplV1_0_rc1" class="org.orcid.internal.server.InternalApiServiceImplV1_0_rc1">
+        <property name="serviceDelegator" ref="internalV2ApiServiceDelegator"/>
     </bean>
 
 
