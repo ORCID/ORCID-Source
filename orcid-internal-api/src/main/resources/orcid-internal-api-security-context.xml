@@ -33,7 +33,7 @@
         <sec:anonymous enabled="false" />
         <sec:http-basic entry-point-ref="orcidOauthAuthenticationEntryPoint" />
         <!-- include this only if you need to authenticate clients via request parameters -->
-        <sec:custom-filter ref="clientCredentialsTokenEndpointFilter" before="BASIC_AUTH_FILTER" />
+        <sec:custom-filter ref="customFilters" before="BASIC_AUTH_FILTER" />
         <sec:access-denied-handler ref="oauthAccessDeniedHandler" />
     </sec:http>
 
