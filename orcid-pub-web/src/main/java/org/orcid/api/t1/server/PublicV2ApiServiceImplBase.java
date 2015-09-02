@@ -125,12 +125,14 @@ public class PublicV2ApiServiceImplBase {
         Works w = summary.getWorks();
         List<WorkGroup> groups = w.getWorkGroup();
         List<CSLItemData> response = new ArrayList<CSLItemData>();
+        
         WorkToCiteprocTranslator tran = new  WorkToCiteprocTranslator();
         for (WorkGroup group : groups){
             WorkSummary work = group.getWorkSummary().get(0);
             Response r = serviceDelegator.viewWork(orcid, work.getPutCode());
             if (r.getStatus()==200){
-                CSLItemData item = tran.toCiteproc((Work)r.getEntity(),true);
+                //TODO: need to get credit name in here
+                CSLItemData item = tran.toCiteproc((Work)r.getEntity(), true);
                 if (item!=null)
                     response.add(item);
             }
