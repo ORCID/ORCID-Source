@@ -212,6 +212,20 @@ function myTest() {
     return 'a success';
 }
 
+function loginFacebook() {
+	$
+    .ajax({
+        url : getBaseUri() + '/signin/facebook',
+        type : 'POST',
+        success : function(data) {
+            console.log("Success");
+        }
+    }).fail(
+    function() {
+        console.log("The login using facebook is failed!!!.. Please try again");
+    });
+}
+
 function checkOrcidLoggedIn() {
     $
             .ajax(
