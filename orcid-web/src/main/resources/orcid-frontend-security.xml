@@ -165,6 +165,19 @@
 			default-target-url="/shibboleth/link" />
 		<sec:session-management session-fixation-protection="migrateSession"/>
 	</sec:http>
+	
+	<sec:http pattern="/social/access" access-denied-page="/signin"
+		access-decision-manager-ref="accessDecisionManager" create-session="ifRequired"
+		path-type="regex">
+		<sec:intercept-url pattern="/social/access(\?.*)?"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/social/access*" access="ROLE_USER" />		
+		<sec:form-login authentication-failure-url="/signin"
+			login-page="/signin" login-processing-url="/signin/auth"
+			username-parameter="userId" password-parameter="password"
+			default-target-url="/social/access" />
+		<sec:session-management session-fixation-protection="migrateSession"/>
+	</sec:http>
 
 	<sec:http access-denied-page="/signin"
 		access-decision-manager-ref="accessDecisionManager" create-session="ifRequired"
@@ -195,6 +208,8 @@
 		<sec:intercept-url pattern="/signin(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/signin/facebook(\?.*)?"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/signin/google(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/userStatus.json(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />

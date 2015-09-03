@@ -13,12 +13,11 @@ import org.springframework.social.connect.ConnectionSignUp;
 import org.springframework.social.connect.UsersConnectionRepository;
 import org.springframework.social.connect.web.SignInAdapter;
 import org.springframework.social.facebook.api.Facebook;
+import org.springframework.social.google.api.Google;
 import org.springframework.web.context.request.NativeWebRequest;
 
 /**
- * 
  * @author Shobhit Tyagi
- *
  */
 public class SocialContext implements ConnectionSignUp, SignInAdapter {
 
@@ -32,11 +31,14 @@ public class SocialContext implements ConnectionSignUp, SignInAdapter {
 
 	private final Facebook facebook;
 
+	private final Google google;
+	
 	public SocialContext(UsersConnectionRepository connectionRepository, UserCookieGenerator userCookieGenerator,
-			Facebook facebook) {
+			Facebook facebook, Google google) {
 		this.connectionRepository = connectionRepository;
 		this.userCookieGenerator = userCookieGenerator;
 		this.facebook = facebook;
+		this.google = google;
 
 		rand = new Random(Calendar.getInstance().getTimeInMillis());
 	}
@@ -92,5 +94,8 @@ public class SocialContext implements ConnectionSignUp, SignInAdapter {
 	public Facebook getFacebook() {
 		return facebook;
 	}
-
+	
+	public Google getGoogle() {
+		return google;
+	}
 }

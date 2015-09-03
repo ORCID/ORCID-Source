@@ -17,28 +17,8 @@
 
 -->
 <@public classes=['home'] nav="signin">
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" />
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" />
-<style type="text/css">
-    .ml { width: 120px; color: white; text-decoration: none }
-    .ml:hover, a:focus { color: white; text-decoration: none }
-    .btn-social{position:relative;padding-left:44px;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.btn-social :first-child{position:absolute;left:0;top:0;bottom:0;width:32px;line-height:34px;font-size:1.6em;text-align:center;border-right:1px solid rgba(0,0,0,0.2)}
-	.btn-social.btn-md{padding-left:40px}.btn-social.btn-md :first-child{line-height:35px;width:35px;font-size:1.6em}
-	.btn-social-icon{position:relative;padding-left:44px;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;height:34px;width:34px;padding:0}.btn-social-icon :first-child{position:absolute;left:0;top:0;bottom:0;width:32px;line-height:34px;font-size:1.6em;text-align:center;border-right:1px solid rgba(0,0,0,0.2)}
-	.btn-social-icon.btn-md{padding-left:45px}.btn-social-icon.btn-md :first-child{line-height:35px;width:35px;font-size:1.6em}
-	.btn-social-icon :first-child{border:none;text-align:center;width:100% !important}
-	.btn-social-icon.btn-lg{height:45px;width:45px;padding-left:0;padding-right:0}
-	.btn-social-icon.btn-sm{height:30px;width:30px;padding-left:0;padding-right:0}
-	.btn-social-icon.btn-xs{height:22px;width:22px;padding-left:0;padding-right:0}
-	.btn-facebook{color:#fff;background-color:#3b5998;margin-left:10px;border-color:rgba(0,0,0,0.2)}.btn-facebook:hover,.btn-facebook:focus,.btn-facebook:active,.btn-facebook.active,.open>.dropdown-toggle.btn-facebook{color:#fff;background-color:#2d4373;border-color:rgba(0,0,0,0.2)}
-	.btn-facebook:active,.btn-facebook.active,.open>.dropdown-toggle.btn-facebook{background-image:none}
-	.btn-facebook.disabled,.btn-facebook[disabled],fieldset[disabled] .btn-facebook,.btn-facebook.disabled:hover,.btn-facebook[disabled]:hover,fieldset[disabled] .btn-facebook:hover,.btn-facebook.disabled:focus,.btn-facebook[disabled]:focus,fieldset[disabled] .btn-facebook:focus,.btn-facebook.disabled:active,.btn-facebook[disabled]:active,fieldset[disabled] .btn-facebook:active,.btn-facebook.disabled.active,.btn-facebook[disabled].active,fieldset[disabled] .btn-facebook.active{background-color:#3b5998;border-color:rgba(0,0,0,0.2)}
-	.btn-facebook .badge{color:#3b5998;background-color:#fff}
-	.btn-google-plus{color:#fff;background-color:#dd4b39;border-color:rgba(0,0,0,0.2)}.btn-google-plus:hover,.btn-google-plus:focus,.btn-google-plus:active,.btn-google-plus.active,.open>.dropdown-toggle.btn-google-plus{color:#fff;background-color:#c23321;border-color:rgba(0,0,0,0.2)}
-	.btn-google-plus:active,.btn-google-plus.active,.open>.dropdown-toggle.btn-google-plus{background-image:none}
-	.btn-google-plus.disabled,.btn-google-plus[disabled],fieldset[disabled] .btn-google-plus,.btn-google-plus.disabled:hover,.btn-google-plus[disabled]:hover,fieldset[disabled] .btn-google-plus:hover,.btn-google-plus.disabled:focus,.btn-google-plus[disabled]:focus,fieldset[disabled] .btn-google-plus:focus,.btn-google-plus.disabled:active,.btn-google-plus[disabled]:active,fieldset[disabled] .btn-google-plus:active,.btn-google-plus.disabled.active,.btn-google-plus[disabled].active,fieldset[disabled] .btn-google-plus.active{background-color:#dd4b39;border-color:rgba(0,0,0,0.2)}
-	.btn-google-plus .badge{color:#dd4b39;background-color:#fff}
-</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-social/4.10.0/bootstrap-social.min.css" />
 <#include "sandbox_warning.ftl"/>
 	<form class="form-sign-in" id="loginForm" action="<@orcid.rootPath '/signin/auth'/>" method="post">
 		<div class="row">
@@ -61,9 +41,6 @@
 	            <table>
 	            	<tr>
 	            		<td><button id='form-sign-in-button' class="btn btn-primary" type="submit">${springMacroRequestContext.getMessage("login.signin")}</button></td>
-	            		<td>
-							<button onclick="loginFacebook()" class="ml btn btn-block btn-social btn-md btn-facebook"><i class="fa fa-facebook"></i>Facebook</button>
-	            		</td>
 	            	</tr>
 	            </table>
 	            <span id="ajax-loader" class="no-visible"><i id="ajax-loader" class="glyphicon glyphicon-refresh spin x2 green"></i></span>	            
@@ -95,4 +72,22 @@
             </div>
         </div>
     </#if>
+	<div style="margin-left:auto; margin-right:auto;">
+		<h4>Or sign in with :</h4><br><br>
+		<table>
+			<tr>
+				<td style="padding-left: 20px;">
+					<form action="<@orcid.rootPath '/signin/facebook'/>" method="POST">
+					    <button type="submit" class="btn btn-social-icon btn-facebook"><i class="fa fa-facebook"></i></button>
+					</form>
+				</td>
+				<td style="padding-left: 20px;">
+					<form action="<@orcid.rootPath '/signin/google'/>" method="POST">
+					    <button type="submit" class="btn btn-social-icon btn-google"><i class="fa fa-google"></i></button>
+					    <input type="hidden" name="scope" value="email" />
+					</form>
+				</td>
+			</tr>
+		</table>
+	</div>
 </@public>

@@ -20,19 +20,23 @@ import org.springframework.social.connect.web.ProviderSignInController;
 import org.springframework.social.facebook.api.Facebook;
 import org.springframework.social.facebook.api.impl.FacebookTemplate;
 import org.springframework.social.facebook.connect.FacebookConnectionFactory;
+import org.springframework.social.google.api.Google;
+import org.springframework.social.google.api.impl.GoogleTemplate;
+import org.springframework.social.google.connect.GoogleConnectionFactory;
 
 /**
- * 
  * @author Shobhit Tyagi
- *
  */
 @Configuration
-public class FacebookConfig implements InitializingBean {
+public class SocialConfig implements InitializingBean {
 
-	private static final Logger logger = LoggerFactory.getLogger(FacebookConfig.class);
+	private static final Logger logger = LoggerFactory.getLogger(SocialConfig.class);
 
-	private static final String appId = "161378537526754";
-	private static final String appSecret = "9382f990c575be17af9afd7c8b856532";
+	private static final String FB_KEY = "161378537526754";
+	private static final String FB_SECRET = "9382f990c575be17af9afd7c8b856532";
+	
+	private static final String GG_KEY = "729610675962-s5053analpnp9mdf4iqf4hne8v8ud7ng.apps.googleusercontent.com";
+	private static final String GG_SECRET="D8nykt6q0IBzvy02CZPYp9Ru";
 
 	private SocialContext socialContext;
 
@@ -51,7 +55,8 @@ public class FacebookConfig implements InitializingBean {
 	public ConnectionFactoryLocator connectionFactoryLocator() {
 		logger.info("getting connectionFactoryLocator");
 		ConnectionFactoryRegistry registry = new ConnectionFactoryRegistry();
-		registry.addConnectionFactory(new FacebookConnectionFactory(appId, appSecret));
+		registry.addConnectionFactory(new FacebookConnectionFactory(FB_KEY, FB_SECRET));
+		registry.addConnectionFactory(new GoogleConnectionFactory(GG_KEY, GG_SECRET));
 		return registry;
 	}
 
@@ -73,12 +78,19 @@ public class FacebookConfig implements InitializingBean {
 		String accessToken = connectionRepository().getPrimaryConnection(Facebook.class).createData().getAccessToken();
 		return new FacebookTemplate(accessToken);
 	}
-
+	
+	@Bean
+	@Scope(value = "request", proxyMode = ScopedProxyMode.INTERFACES)
+	public Google google() {
+		String accessToken = connectionRepository().getPrimaryConnection(Google.class).createData().getAccessToken();
+		return new GoogleTemplate(accessToken);
+	}
+	
 	@Bean
 	public ProviderSignInController providerSignInController() {
 		ProviderSignInController providerSigninController = new ProviderSignInController(connectionFactoryLocator(),
 				usersConnectionRepository(), socialContext);
-		providerSigninController.setPostSignInUrl("/fb/access");
+		providerSigninController.setPostSignInUrl("/social/access");
 		return providerSigninController;
 	}
 
@@ -87,7 +99,7 @@ public class FacebookConfig implements InitializingBean {
 
 		JdbcUsersConnectionRepository usersConnectionRepositiory = new JdbcUsersConnectionRepository(simpleDataSource,
 				connectionFactoryLocator(), Encryptors.noOpText());
-		socialContext = new SocialContext(usersConnectionRepositiory, new UserCookieGenerator(), facebook());
+		socialContext = new SocialContext(usersConnectionRepositiory, new UserCookieGenerator(), facebook(), google());
 		usersConnectionRepositiory.setConnectionSignUp(socialContext);
 		this.usersConnectionRepositiory = usersConnectionRepositiory;
 	}

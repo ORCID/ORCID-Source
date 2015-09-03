@@ -7,9 +7,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.web.util.CookieGenerator;
 
 /**
- * 
  * @author Shobhit Tyagi
- *
  */
 public final class UserCookieGenerator {
 
