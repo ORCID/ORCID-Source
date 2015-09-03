@@ -27,19 +27,16 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jbibtex.BibTeXDatabase;
 import org.jbibtex.ParseException;
-import org.orcid.jaxb.model.record.WorkExternalIdentifierType;
-import org.orcid.jaxb.model.record.WorkType;
 import org.orcid.jaxb.model.common.Contributor;
 import org.orcid.jaxb.model.record.CitationType;
 import org.orcid.jaxb.model.record.Work;
 import org.orcid.jaxb.model.record.WorkExternalIdentifier;
+import org.orcid.jaxb.model.record.WorkExternalIdentifierType;
 import org.springframework.util.ReflectionUtils;
 
 import com.google.common.base.Joiner;
 
 import de.undercouch.citeproc.bibtex.BibTeXConverter;
-import de.undercouch.citeproc.csl.CSLCitationItemBuilder;
-import de.undercouch.citeproc.csl.CSLDateBuilder;
 import de.undercouch.citeproc.csl.CSLItemData;
 import de.undercouch.citeproc.csl.CSLItemDataBuilder;
 import de.undercouch.citeproc.csl.CSLName;
@@ -54,7 +51,8 @@ public class WorkToCiteprocTranslator {
     private final Field urlField = ReflectionUtils.findField(CSLItemData.class, "URL");
 
     /**
-     * Turn a work into Citeproc JSON.  Uses bibtex citation if present, otherwise attempts to map ORCID metadata
+     * Turn a work into Citeproc JSON. Uses bibtex citation if present,
+     * otherwise attempts to map ORCID metadata
      * 
      * @param work
      * @return the JSON as a String.
@@ -64,13 +62,13 @@ public class WorkToCiteprocTranslator {
                 && work.getWorkCitation().getWorkCitationType().equals(CitationType.BIBTEX)) {
             return translateFromBibtexCitation(work, abreviate);
         }
-        return translateFromWorkMetadata(work);        
+        return translateFromWorkMetadata(work);
     }
 
-    /** Extract the bibtex and turn into CSL
-     * Adds in DOI and URL from metadata if missing
-     * Horrible use of reflection to shorten hyperauthorship. It will strip anything above 20 authors down to the
-     * primary author and 'et all'.
+    /**
+     * Extract the bibtex and turn into CSL Adds in DOI and URL from metadata if
+     * missing Horrible use of reflection to shorten hyperauthorship. It will
+     * strip anything above 20 authors down to the primary author and 'et all'.
      * 
      * @param work
      * @param abreviate
@@ -109,34 +107,36 @@ public class WorkToCiteprocTranslator {
                         ReflectionUtils.setField(doiField, item, doi);
                     }
                 }
-                if (item.getURL() == null){ 
-                    if (extractID(work, WorkExternalIdentifierType.URI) !=null){
+                if (item.getURL() == null) {
+                    if (extractID(work, WorkExternalIdentifierType.URI) != null) {
                         ReflectionUtils.makeAccessible(urlField);
                         ReflectionUtils.setField(urlField, item, extractID(work, WorkExternalIdentifierType.URI));
-                    }else if(item.getDOI() != null) {
+                    } else if (item.getDOI() != null) {
                         ReflectionUtils.makeAccessible(urlField);
                         ReflectionUtils.setField(urlField, item, item.getDOI());
-                    }else if (extractID(work, WorkExternalIdentifierType.HANDLE) !=null){
+                    } else if (extractID(work, WorkExternalIdentifierType.HANDLE) != null) {
                         ReflectionUtils.makeAccessible(urlField);
                         ReflectionUtils.setField(urlField, item, extractID(work, WorkExternalIdentifierType.HANDLE));
                     }
                 }
                 return item;
-            }
-            else throw new ParseException("Invalid Citation count");
+            } else
+                throw new ParseException("Invalid Citation count");
         } catch (IOException | ParseException e) {
             return null;
         }
     }
 
-
-
-    /** Use the ORCID work metadata to generate a *limited* citation.  You'll most likely get a title, doi, url, date and author.
+    /**
+     * Use the ORCID work metadata to generate a *limited* citation. You'll most
+     * likely get a title, doi, url, date and author.
      * 
      * Translates type according to https://docs.google.com/spreadsheets/d/
      * 1h4nTF6DKNEpWcGNQVMDwt0ea09qmkBnkWisxkJE-li4/edit#gid=754644608
      * 
-     * Informed by mendley tranforms at http://support.mendeley.com/customer/portal/articles/364144-csl-type-mapping
+     * Informed by mendley tranforms at
+     * http://support.mendeley.com/customer/portal/articles/364144-csl-type-
+     * mapping
      * 
      * See also:
      * http://docs.citationstyles.org/en/stable/specification.html#appendix-iii-
@@ -159,49 +159,49 @@ public class WorkToCiteprocTranslator {
         if (url != null) {
             builder.URL(url);
         } else if (doi != null) {
-            builder.URL("http://doi.org/"+doi);
+            builder.URL("http://doi.org/" + doi);
         } else {
             url = extractID(work, WorkExternalIdentifierType.HANDLE);
-            if (url != null){
+            if (url != null) {
                 builder.URL(url);
             }
         }
-        
-        if (work.getJournalTitle()!=null){
-            builder.containerTitle(work.getJournalTitle().getContent());            
+
+        if (work.getJournalTitle() != null) {
+            builder.containerTitle(work.getJournalTitle().getContent());
         }
-        
+
         List<String> names = new ArrayList<String>();
-        //TODO: Pass it in!
-        //names.add(creditName);
-        if (work.getWorkContributors() != null && work.getWorkContributors().getContributor() != null){
-            for (Contributor c : work.getWorkContributors().getContributor()){
+        // TODO: Pass in credit name
+        // names.add(creditName);
+        if (work.getWorkContributors() != null && work.getWorkContributors().getContributor() != null) {
+            for (Contributor c : work.getWorkContributors().getContributor()) {
                 names.add(c.getCreditName().getContent());
             }
         }
         CSLNameBuilder name = new CSLNameBuilder();
         name.literal(Joiner.on(" and ").join(names));
         builder.author(name.build());
-        
-        //TODO: make it work with "Spring", "August", whatever...
-        if (work.getPublicationDate() !=null){
+
+        // TODO: make it work with "Spring", "August", whatever...
+        if (work.getPublicationDate() != null) {
             int year = 0;
             int month = 0;
             int day = 0;
-            try{
+            try {
                 year = Integer.parseInt(work.getPublicationDate().getYear().getValue());
                 month = Integer.parseInt(work.getPublicationDate().getMonth().getValue());
                 day = Integer.parseInt(work.getPublicationDate().getDay().getValue());
-            }catch (Exception e){     
+            } catch (Exception e) {
             }
-            if (year>0 && month >0 && day >0){
+            if (year > 0 && month > 0 && day > 0) {
                 builder.issued(year, month, day);
-            }else if (year>0 && month >0){
+            } else if (year > 0 && month > 0) {
                 builder.issued(year, month);
-            }else if (year>0){
+            } else if (year > 0) {
                 builder.issued(year);
-            }            
-            
+            }
+
         }
 
         switch (work.getWorkType()) {
@@ -282,7 +282,8 @@ public class WorkToCiteprocTranslator {
         case TRANSLATION:
         case UNDEFINED:
         default:
-            builder.type(CSLType.ARTICLE);
+            // TODO: do we want a default type? Datacite defaults to no type.
+            // builder.type(CSLType.ARTICLE);
             break;
         }
         return builder.build();
@@ -306,8 +307,5 @@ public class WorkToCiteprocTranslator {
         }
         return null;
     }
-    // how do we manage content negotiation using suffixes? or query params?
-    // like this! https://gist.github.com/sathish06/6587432
-    // https://jersey.java.net/apidocs/2.21/jersey/org/glassfish/jersey/server/filter/UriConnegFilter.html
-
+    
 }

@@ -37,11 +37,13 @@ import static org.orcid.core.api.OrcidApiConstants.WORK_SUMMARY;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -109,14 +111,13 @@ public class PublicV2ApiServiceImplBase {
     @Produces(value = {VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON, OrcidApiConstants.APPLICATION_CITEPROC })
     @Path(ACTIVITIES)
     @ApiOperation(value = "Fetch all Activities", response=ActivitiesSummary.class)
-    public Response viewActivities(@PathParam("orcid") String orcid, @HeaderParam("Accept") String accept) {
-        if (OrcidApiConstants.APPLICATION_CITEPROC.equals(accept))
+    public Response viewActivities(@PathParam("orcid") String orcid, @Context HttpServletRequest httpRequest) {
+        if (OrcidApiConstants.APPLICATION_CITEPROC.equals(httpRequest.getHeader("Accept")))
             return viewActivitiesCitations(orcid);
         return serviceDelegator.viewActivities(orcid);
     }
     
     /** Done here instead of as writer as we need additional db access to fulfil request
-     * TODO: check for nulls
      * @param orcid
      * @return a Response wrapping a JSON String
      */
@@ -131,7 +132,7 @@ public class PublicV2ApiServiceImplBase {
             WorkSummary work = group.getWorkSummary().get(0);
             Response r = serviceDelegator.viewWork(orcid, work.getPutCode());
             if (r.getStatus()==200){
-                //TODO: need to get credit name in here
+                //TODO: need to get credit name in here somehow
                 CSLItemData item = tran.toCiteproc((Work)r.getEntity(), true);
                 if (item!=null)
                     response.add(item);
@@ -140,7 +141,6 @@ public class PublicV2ApiServiceImplBase {
         CSLItemDataList data = new CSLItemDataList();
         data.setData(response);
         return Response.ok(data).build();
-        
     }
 
     @GET
