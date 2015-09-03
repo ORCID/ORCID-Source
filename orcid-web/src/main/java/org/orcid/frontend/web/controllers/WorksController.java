@@ -128,7 +128,7 @@ public class WorksController extends BaseWorkspaceController {
                 worksMap = (HashMap<String, WorkForm>) request.getSession().getAttribute(WORKS_MAP);
             }
             for (String workId : workIds) {
-                work = worksMap.get(workId);
+                work = worksMap.get(Long.valueOf(workId));
                 // Set country name
                 if (!PojoUtil.isEmpty(work.getCountryCode())) {
                     Text countryName = Text.valueOf(countries.get(work.getCountryCode().getValue()));
@@ -154,7 +154,7 @@ public class WorksController extends BaseWorkspaceController {
 
     @RequestMapping(value = "/updateToMaxDisplay.json", method = RequestMethod.GET)
     public @ResponseBody
-    boolean updateToMaxDisplay(HttpServletRequest request, @RequestParam(value = "putCode") String putCode) {
+    boolean updateToMaxDisplay(HttpServletRequest request, @RequestParam(value = "putCode") Long putCode) {
         String orcid = getEffectiveUserOrcid();
         return workManager.updateToMaxDisplay(orcid, putCode);
     }
@@ -291,10 +291,10 @@ public class WorksController extends BaseWorkspaceController {
      * */
     @RequestMapping(value = "/getWorkInfo.json", method = RequestMethod.GET)
     public @ResponseBody
-    WorkForm getWorkInfo(@RequestParam(value = "workId") String workId) {
+    WorkForm getWorkInfo(@RequestParam(value = "workId") Long workId) {
         Map<String, String> countries = retrieveIsoCountries();
         Map<String, String> languages = lm.buildLanguageMap(localeManager.getLocale(), false);
-        if (StringUtils.isEmpty(workId))
+        if (workId == null)
             return null;
 
         Work work = workManager.getWork(this.getCurrentUserOrcid(), workId);
@@ -411,7 +411,7 @@ public class WorksController extends BaseWorkspaceController {
         newWork = workManager.createWork(currentProfile.getOrcidIdentifier().getPath(), newWork, false);
 
         // Set the id in the work to be returned
-        String workId = newWork.getPutCode();
+        Long workId = newWork.getPutCode();
         workForm.setPutCode(Text.valueOf(workId));
 
         // make the new work the default display
@@ -718,8 +718,9 @@ public class WorksController extends BaseWorkspaceController {
             setError(work, "manual_work_form_contents.edit_work.undefined_id");
         } else {
             boolean exists = false;
-            for (Work existingWork : works) {
-                if (existingWork.getPutCode().equals(work.getPutCode().getValue())) {
+            Long putCode = Long.valueOf(work.getPutCode().getValue());
+            for (Work existingWork : works) {                                
+                if (existingWork.getPutCode().equals(putCode)) {
                     exists = true;
                     break;
                 }
@@ -752,12 +753,12 @@ public class WorksController extends BaseWorkspaceController {
         String orcid = getEffectiveUserOrcid();
         java.util.Date lastModified = profileEntityManager.getLastModified(orcid);
         List<Work> works = workManager.findWorks(orcid, lastModified.getTime());
-        HashMap<String, WorkForm> worksMap = new HashMap<String, WorkForm>();
+        HashMap<Long, WorkForm> worksMap = new HashMap<Long, WorkForm>();
         List<String> workIds = new ArrayList<String>();
         if (works != null) {
             for (Work work : works) {
                 try {
-                    worksMap.put(String.valueOf(work.getPutCode()), WorkForm.valueOf(work));
+                    worksMap.put(work.getPutCode(), WorkForm.valueOf(work));
                     workIds.add(String.valueOf(work.getPutCode()));
                 } catch (Exception e) {
                     LOGGER.error("ProfileWork failed to parse as Work. Put code" + work.getPutCode());

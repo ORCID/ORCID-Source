@@ -85,7 +85,7 @@ public class MailGunManager {
     @Value("${com.mailgun.regexFilter:.*(orcid\\.org|mailinator\\.com|rcpeters\\.com)$}")
     private String filter;
 
-    private String[] domainsForDedicatedIp = { "vt.com", "qq.com" };
+    private String[] domainsForDedicatedIp = { "vt.edu", "qq.com" };
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MailGunManager.class);
 

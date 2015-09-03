@@ -154,6 +154,9 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
     private Response legacyErrorResponse(Throwable t) {
         if (OrcidApiException.class.isAssignableFrom(t.getClass())) {
             return ((OrcidApiException) t).getResponse();
+        } else if (OrcidValidationException.class.isAssignableFrom(t.getClass())) {
+            OrcidMessage entity = getLegacyOrcidEntity("Bad Request: ", t);
+            return Response.status(Response.Status.BAD_REQUEST).entity(entity).build();
         } else if (WebApplicationException.class.isAssignableFrom(t.getClass())) {
             OrcidMessage entity = getLegacy500OrcidEntity(t);
             WebApplicationException webException = (WebApplicationException) t;
@@ -162,6 +165,9 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
             OrcidMessage entity = getLegacyOrcidEntity("Authentication problem : ", t);
             return Response.status(Response.Status.UNAUTHORIZED).entity(entity).build();
         } else if (OAuth2Exception.class.isAssignableFrom(t.getClass())) {
+            OrcidMessage entity = getLegacyOrcidEntity("OAuth2 problem : ", t);
+            return Response.status(Response.Status.UNAUTHORIZED).entity(entity).build();
+        } else if (OrcidInvalidScopeException.class.isAssignableFrom(t.getClass())) {
             OrcidMessage entity = getLegacyOrcidEntity("OAuth2 problem : ", t);
             return Response.status(Response.Status.UNAUTHORIZED).entity(entity).build();
         } else if (SecurityException.class.isAssignableFrom(t.getClass())) {
@@ -184,7 +190,7 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
             return Response.status(Response.Status.NOT_FOUND).entity(entity).build();
         } else {
             OrcidMessage entity = getLegacy500OrcidEntity(t);
-            return Response.serverError().entity(entity).build();
+            return Response.status(getHttpStatusAndErrorCode(t).getKey()).entity(entity).build();
         }
     }
 

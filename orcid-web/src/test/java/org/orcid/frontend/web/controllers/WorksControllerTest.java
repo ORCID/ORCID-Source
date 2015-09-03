@@ -107,7 +107,7 @@ public class WorksControllerTest extends BaseControllerTest {
 
     @Test
     public void testGetWorkInfo() {
-        WorkForm work = worksController.getWorkInfo("5");
+        WorkForm work = worksController.getWorkInfo(Long.valueOf("5"));
         assertNotNull(work);
         assertEquals("5", work.getPutCode().getValue());
         assertNotNull(work.getPublicationDate());
@@ -242,7 +242,7 @@ public class WorksControllerTest extends BaseControllerTest {
         HttpSession session = mock(HttpSession.class);
         when(servletRequest.getSession()).thenReturn(session);
 
-        WorkForm work = worksController.getWorkInfo("7");
+        WorkForm work = worksController.getWorkInfo(Long.valueOf("7"));
         boolean throwsError = false;
         try {
             worksController.postWork(null, work);
@@ -258,7 +258,7 @@ public class WorksControllerTest extends BaseControllerTest {
         HttpSession session = mock(HttpSession.class);
         when(servletRequest.getSession()).thenReturn(session);
 
-        WorkForm work = worksController.getWorkInfo("6");
+        WorkForm work = worksController.getWorkInfo(Long.valueOf("6"));
         // Set title
         work.setTitle(Text.valueOf("Test update work"));
         work.setSubtitle(Text.valueOf("Test update subtitle"));
@@ -289,7 +289,7 @@ public class WorksControllerTest extends BaseControllerTest {
 
         worksController.postWork(null, work);
 
-        WorkForm updatedWork = worksController.getWorkInfo("6");
+        WorkForm updatedWork = worksController.getWorkInfo(Long.valueOf("6"));
         assertNotNull(updatedWork);
         assertEquals("6", updatedWork.getPutCode().getValue());
         assertEquals("Test update work", updatedWork.getTitle().getValue());

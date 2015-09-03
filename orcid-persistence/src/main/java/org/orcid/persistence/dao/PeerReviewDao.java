@@ -34,7 +34,7 @@ public interface PeerReviewDao extends GenericDao<PeerReviewEntity, Long> {
      *            The id of the element
      * @return a peer review entity that have the give id and belongs to the given user 
      * */
-    PeerReviewEntity getPeerReview(String userOrcid, String peerReviewId);
+    PeerReviewEntity getPeerReview(String userOrcid, Long peerReviewId);
     
     /**
      * Removes the relationship that exists between a peerReview and a profile.
@@ -58,7 +58,7 @@ public interface PeerReviewDao extends GenericDao<PeerReviewEntity, Long> {
      * */
     List<PeerReviewEntity> getByUser(String userOrcid);
     
-    boolean updateToMaxDisplay(String orcid, String id);
+    boolean updateToMaxDisplay(String orcid, Long peerReviewId);
     
     boolean updateVisibilities(String orcid, ArrayList<Long> peerReviewIds, Visibility visibility);
     

@@ -27,7 +27,6 @@ import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * orcid-persistence - Dec 7, 2011 - JpaJaxbEntityAdapterImpl

@@ -77,7 +77,7 @@ public class WorkSummary implements VisibilityType, Activity, GroupableActivity,
     protected CreatedDate createdDate;
 
     @XmlAttribute(name = "put-code")
-    protected String putCode;
+    protected Long putCode;
     @XmlAttribute(name="path")
     protected String path;
     @XmlAttribute
@@ -125,11 +125,11 @@ public class WorkSummary implements VisibilityType, Activity, GroupableActivity,
         this.source = source;
     }
 
-    public String getPutCode() {
+    public Long getPutCode() {
         return putCode;
     }
 
-    public void setPutCode(String putCode) {
+    public void setPutCode(Long putCode) {
         this.putCode = putCode;
     }
 

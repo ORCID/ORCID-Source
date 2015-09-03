@@ -33,7 +33,7 @@ public interface ProfileFundingDao extends GenericDao<ProfileFundingEntity, Long
      *            The id of the element
      * @return a profile funding entity that have the give id and belongs to the given user 
      * */
-    public ProfileFundingEntity getProfileFunding(String userOrcid, String profileFundingId);
+    public ProfileFundingEntity getProfileFunding(String userOrcid, Long profileFundingId);
     
     /**
      * Removes the relationship that exists between a funding and a profile.
@@ -45,7 +45,7 @@ public interface ProfileFundingDao extends GenericDao<ProfileFundingEntity, Long
      *            The user orcid
      * @return true if the relationship was deleted
      * */
-    boolean removeProfileFunding(String userOrcid, String profileFundingId);
+    boolean removeProfileFunding(String userOrcid, Long profileFundingId);
 
     /**
      * Updates the visibility of an existing profile funding relationship
@@ -61,7 +61,7 @@ public interface ProfileFundingDao extends GenericDao<ProfileFundingEntity, Long
      * 
      * @return true if the relationship was updated
      * */
-    boolean updateProfileFundingVisibility(String clientOrcid, String profileFundingId, Visibility visibility);
+    boolean updateProfileFundingVisibility(String clientOrcid, Long profileFundingId, Visibility visibility);
 
     /**
      * Creates a new profile funding relationship between an organization and a
@@ -95,7 +95,7 @@ public interface ProfileFundingDao extends GenericDao<ProfileFundingEntity, Long
      * 
      * @return the ProfileFundingEntity object
      * */
-    ProfileFundingEntity getProfileFundingEntity(String profileFundingId);
+    ProfileFundingEntity getProfileFundingEntity(Long profileFundingId);
     
     /**
      * Get all the profile fundings where the amount is not null
@@ -112,7 +112,7 @@ public interface ProfileFundingDao extends GenericDao<ProfileFundingEntity, Long
      * */
     ProfileFundingEntity updateProfileFunding(ProfileFundingEntity profileFunding);
 
-    boolean updateToMaxDisplay(String orcid, String id);
+    boolean updateToMaxDisplay(String orcid, Long id);
     
     List<BigInteger> findFundingNeedingExternalIdentifiersMigration(int chunkSize);
     

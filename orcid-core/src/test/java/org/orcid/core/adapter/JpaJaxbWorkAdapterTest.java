@@ -126,7 +126,7 @@ public class JpaJaxbWorkAdapterTest {
         assertEquals("work:description", w.getShortDescription());
         assertEquals("work:journalTitle", w.getJournalTitle().getContent());
         assertEquals(CitationType.BIBTEX.value(), w.getWorkCitation().getWorkCitationType().value());
-        assertEquals("12345", w.getPutCode());
+        assertEquals(Long.valueOf(12345), w.getPutCode());
         assertEquals(Visibility.LIMITED.value(), w.getVisibility().value());
         assertEquals("work:title", w.getWorkTitle().getTitle().getContent());
         assertEquals("work:subtitle", w.getWorkTitle().getSubtitle().getContent());
@@ -154,7 +154,7 @@ public class JpaJaxbWorkAdapterTest {
         assertNotNull(work);
         WorkSummary ws = jpaJaxbWorkAdapter.toWorkSummary(work);
         assertNotNull(ws);
-        assertEquals("12345", ws.getPutCode());
+        assertEquals(Long.valueOf(12345), ws.getPutCode());
         assertEquals(Visibility.LIMITED.value(), ws.getVisibility().value());
         assertEquals("1234567890", ws.getDisplayIndex());
         assertNotNull(ws.getExternalIdentifiers());

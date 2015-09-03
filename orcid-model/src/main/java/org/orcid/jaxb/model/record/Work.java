@@ -92,7 +92,7 @@ public class Work implements VisibilityType, Activity, Serializable {
     protected Source source;
     @XmlAttribute(name = "put-code")
     @ApiModelProperty(hidden = true) 
-    protected String putCode;
+    protected Long putCode;
     @XmlAttribute
     protected Visibility visibility;
     @XmlAttribute(name = "path")
@@ -108,7 +108,7 @@ public class Work implements VisibilityType, Activity, Serializable {
      * @return possible object is {@link Object }
      * 
      */
-    public String getPutCode() {
+    public Long getPutCode() {
         return putCode;
     }
 
@@ -119,7 +119,7 @@ public class Work implements VisibilityType, Activity, Serializable {
      *            allowed object is {@link Object }
      * 
      */
-    public void setPutCode(String value) {
+    public void setPutCode(Long value) {
         this.putCode = value;
     }
 

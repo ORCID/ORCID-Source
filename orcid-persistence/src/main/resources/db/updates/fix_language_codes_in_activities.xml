@@ -1,0 +1,70 @@
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2014 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+            
+    <changeSet id="FIX_LANGUAGE_CODES_IN_ACTIVITIES_WORKS_1" author="Angel Montenegro">
+        <sql>update work set translated_title_language_code='ar' where translated_title_language_code in('ar_EG','ar_IQ','ar_SA','ar_SA');</sql>
+		<sql>update work set translated_title_language_code='es' where translated_title_language_code in('es_AR','es_CL','es_ES','es_MX');</sql>
+		<sql>update work set translated_title_language_code='en' where translated_title_language_code in('en_GB','en_US');</sql>		
+    </changeSet>
+    
+    <changeSet id="FIX_LANGUAGE_CODES_IN_ACTIVITIES_WORKS_2" author="Angel Montenegro">
+        <sql>update work set translated_title_language_code='pt' where translated_title_language_code in('pt_BR','pt_PT');</sql>
+		<sql>update work set translated_title_language_code='cs' where translated_title_language_code='cs_CZ';</sql>
+		<sql>update work set translated_title_language_code='da' where translated_title_language_code='da_DK';</sql>
+		<sql>update work set translated_title_language_code='de' where translated_title_language_code='de_DE';</sql>		
+    </changeSet>
+    
+    <changeSet id="FIX_LANGUAGE_CODES_IN_ACTIVITIES_WORKS_3" author="Angel Montenegro">
+        <sql>update work set translated_title_language_code='fr' where translated_title_language_code='fr_FR';</sql>
+		<sql>update work set translated_title_language_code='hr' where translated_title_language_code='hr_HR';</sql>
+		<sql>update work set translated_title_language_code='it' where translated_title_language_code='it_IT';</sql>		
+    </changeSet>
+    
+    <changeSet id="FIX_LANGUAGE_CODES_IN_ACTIVITIES_WORKS_4" author="Angel Montenegro">
+    	<sql>update work set translated_title_language_code='ko' where translated_title_language_code='ko_KR';</sql>
+		<sql>update work set translated_title_language_code='nl' where translated_title_language_code='nl_BE';</sql>
+		<sql>update work set translated_title_language_code='uk' where translated_title_language_code='uk_UA';</sql>		
+    </changeSet>
+    
+    <changeSet id="FIX_LANGUAGE_CODES_IN_ACTIVITIES_WORKS_5" author="Angel Montenegro">
+    	<sql>update work set translated_title_language_code='pl' where translated_title_language_code='pl_PL';</sql>
+		<sql>update work set translated_title_language_code='ru' where translated_title_language_code='ru_RU';</sql>
+		<sql>update work set translated_title_language_code='sk' where translated_title_language_code='sk_SK';</sql>
+    </changeSet>
+    
+    <changeSet id="FIX_LANGUAGE_CODES_IN_ACTIVITIES_WORKS_6" author="Angel Montenegro">
+    	<sql>update work set language_code='uk' where language_code='uk_UA';</sql>
+		<sql>update work set language_code='sk' where language_code='sk_SK';</sql>
+		<sql>update work set language_code='ru' where language_code='ru_RU';</sql>
+    </changeSet>
+    
+	<changeSet id="FIX_LANGUAGE_CODES_IN_ACTIVITIES_WORKS_7" author="Angel Montenegro">
+		<sql>update work set language_code='pl' where language_code='pl_PL';</sql>
+		<sql>update work set language_code='es' where language_code='es_ES';</sql>
+		<sql>update work set language_code='en' where language_code='en_GB';</sql>
+	</changeSet>
+
+	<changeSet id="FIX_LANGUAGE_CODES_IN_ACTIVITIES_WORKS_8" author="Angel Montenegro">
+		<sql>update work set language_code='pt' where language_code in('pt_PT','pt_BR');</sql>
+	</changeSet>
+    
+    
+</databaseChangeLog>

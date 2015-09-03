@@ -108,7 +108,7 @@ public class AffiliationsController extends BaseWorkspaceController {
                 }
             }
             currentProfile.getOrcidActivities().setAffiliations(affiliations);
-            orgRelationAffiliationDao.removeOrgAffiliationRelation(currentProfile.getOrcidIdentifier().getPath(), affiliation.getPutCode().getValue());
+            orgRelationAffiliationDao.removeOrgAffiliationRelation(currentProfile.getOrcidIdentifier().getPath(), Long.valueOf(affiliation.getPutCode().getValue()));
         }
 
         return affiliation;
@@ -134,6 +134,35 @@ public class AffiliationsController extends BaseWorkspaceController {
             }
             for (String affiliationId : affiliationIds) {
                 affiliation = affiliationsMap.get(affiliationId);
+                
+                if(affiliation.getStartDate() == null) {
+                	initializeStartDate(affiliation);
+                } else {
+                	if(affiliation.getStartDate().getDay() == null) {
+                		affiliation.getStartDate().setDay(new String());
+                	}
+                	if(affiliation.getStartDate().getMonth() == null) {
+                		affiliation.getStartDate().setMonth(new String());
+                	}
+                	if(affiliation.getStartDate().getYear() == null) {
+                		affiliation.getStartDate().setYear(new String());
+                	}
+                }
+                
+                if(affiliation.getEndDate() == null) {
+                	initializeEndDate(affiliation);
+                } else {
+                	if(affiliation.getEndDate().getDay() == null) {
+                		affiliation.getEndDate().setDay(new String());
+                	}
+                	if(affiliation.getEndDate().getMonth() == null) {
+                		affiliation.getEndDate().setMonth(new String());
+                	}
+                	if(affiliation.getEndDate().getYear() == null) {
+                		affiliation.getEndDate().setYear(new String());
+                	}
+                }
+                
                 affiliationList.add(affiliation);
             }
         }
@@ -141,7 +170,27 @@ public class AffiliationsController extends BaseWorkspaceController {
         return affiliationList;
     }
 
-    /**
+    private void initializeStartDate(AffiliationForm affiliation) {
+    	if (affiliation.getStartDate() == null) {
+            affiliation.setStartDate(getEmptyDate());
+        }
+	}
+    
+    private void initializeEndDate(AffiliationForm affiliation) {
+    	if (affiliation.getEndDate() == null) {
+            affiliation.setEndDate(getEmptyDate());
+        }
+	}
+    
+    private Date getEmptyDate() {
+    	Date date = new Date();
+        date.setDay(new String());
+        date.setMonth(new String());
+        date.setYear(new String());
+        return date;
+    }
+
+	/**
      * Returns a blank affiliation form
      * */
     @RequestMapping(value = "/affiliation.json", method = RequestMethod.GET)
@@ -213,9 +262,10 @@ public class AffiliationsController extends BaseWorkspaceController {
         copyErrors(affiliationForm.getCountry(), affiliationForm);
         copyErrors(affiliationForm.getDepartmentName(), affiliationForm);
         copyErrors(affiliationForm.getRoleTitle(), affiliationForm);
+        if(!PojoUtil.isEmpty(affiliationForm.getStartDate()))
+            copyErrors(affiliationForm.getStartDate(), affiliationForm);
         if(!PojoUtil.isEmpty(affiliationForm.getEndDate()))
             copyErrors(affiliationForm.getEndDate(), affiliationForm);
-
         if (affiliationForm.getErrors().isEmpty()) {
             if(PojoUtil.isEmpty(affiliationForm.getPutCode()))
                 addAffiliation(affiliationForm);
@@ -319,7 +369,7 @@ public class AffiliationsController extends BaseWorkspaceController {
                     // same affiliation
                     if (orcidAffiliation.getPutCode().equals(affiliation.getPutCode().getValue())) {
                         // Update the privacy of the affiliation
-                        orgRelationAffiliationDao.updateVisibilityOnOrgAffiliationRelation(currentProfile.getOrcidIdentifier().getPath(), affiliation.getPutCode().getValue(), affiliation
+                        orgRelationAffiliationDao.updateVisibilityOnOrgAffiliationRelation(currentProfile.getOrcidIdentifier().getPath(), Long.valueOf(affiliation.getPutCode().getValue()), affiliation
                                 .getVisibility().getVisibility());
                     }
                 }
@@ -444,14 +494,27 @@ public class AffiliationsController extends BaseWorkspaceController {
     @RequestMapping(value = "/affiliation/datesValidate.json", method = RequestMethod.POST)
     public @ResponseBody
     AffiliationForm datesValidate(@RequestBody AffiliationForm affiliationForm) {
+        boolean primaryValidation = true;
+    	
         if(!PojoUtil.isEmpty(affiliationForm.getStartDate()))
             affiliationForm.getStartDate().setErrors(new ArrayList<String>());
         if(!PojoUtil.isEmpty(affiliationForm.getEndDate()))
             affiliationForm.getEndDate().setErrors(new ArrayList<String>());
-        if (!PojoUtil.isEmpty(affiliationForm.getStartDate()) && !PojoUtil.isEmpty(affiliationForm.getEndDate())) {
+        if((PojoUtil.isEmpty(affiliationForm.getStartDate().getYear()) && (!PojoUtil.isEmpty(affiliationForm.getStartDate().getMonth()) || !PojoUtil.isEmpty(affiliationForm.getStartDate().getDay()))) ||
+        		(!PojoUtil.isEmpty(affiliationForm.getStartDate().getYear()) && !PojoUtil.isEmpty(affiliationForm.getStartDate().getDay()) && PojoUtil.isEmpty(affiliationForm.getStartDate().getMonth()))) {
+        	primaryValidation = false;
+        	setError(affiliationForm.getStartDate(), "common.dates.invalid");
+        } 
+        if((PojoUtil.isEmpty(affiliationForm.getEndDate().getYear()) && (!PojoUtil.isEmpty(affiliationForm.getEndDate().getMonth()) || !PojoUtil.isEmpty(affiliationForm.getEndDate().getDay()))) ||
+		(!PojoUtil.isEmpty(affiliationForm.getEndDate().getYear()) && !PojoUtil.isEmpty(affiliationForm.getEndDate().getDay()) && PojoUtil.isEmpty(affiliationForm.getEndDate().getMonth()))) {
+        	primaryValidation = false;
+        	setError(affiliationForm.getEndDate(), "common.dates.invalid");
+        }
+        if (primaryValidation && (!PojoUtil.isEmpty(affiliationForm.getStartDate()) && !PojoUtil.isEmpty(affiliationForm.getEndDate()))) {
             if (affiliationForm.getStartDate().toJavaDate().after(affiliationForm.getEndDate().toJavaDate()))
                 setError(affiliationForm.getEndDate(), "manualAffiliation.endDate.after");
         }
+       
         return affiliationForm;
     }
 

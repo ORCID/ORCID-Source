@@ -33,6 +33,7 @@ import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.GroupIdRecordManager;
 import org.orcid.core.manager.PeerReviewManager;
 import org.orcid.frontend.web.util.LanguagesMap;
+import org.orcid.jaxb.model.groupid.GroupIdRecord;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.record.PeerReview;
@@ -174,7 +175,7 @@ public class PeerReviewsController extends BaseWorkspaceController {
         List<PeerReview> peerReviews = peerReviewManager.findPeerReviews(currentProfile.getOrcidIdentifier().getPath(), lastModified.getTime());
         
         Map<String, String> languages = lm.buildLanguageMap(getUserLocale(), false);
-        HashMap<String, PeerReviewForm> peerReviewMap = new HashMap<>();
+        HashMap<Long, PeerReviewForm> peerReviewMap = new HashMap<>();
         List<String> peerReviewIds = new ArrayList<String>();
 
         if (peerReviews != null) {
@@ -201,7 +202,7 @@ public class PeerReviewsController extends BaseWorkspaceController {
                     form.setCountryForDisplay(getMessage(buildInternationalizationKey(CountryIsoEntity.class, peerReview.getOrganization().getAddress().getCountry()
                             .name())));
                     peerReviewMap.put(peerReview.getPutCode(), form);
-                    peerReviewIds.add(peerReview.getPutCode());
+                    peerReviewIds.add(String.valueOf(peerReview.getPutCode()));
                 } catch (Exception e) {
                     LOGGER.error("Failed to parse as PeerReview. Put code" + peerReview.getPutCode(), e);
                 }
@@ -222,14 +223,14 @@ public class PeerReviewsController extends BaseWorkspaceController {
         String[] peerReviewIds = peerReviewIdsStr.split(",");
 
         if (peerReviewIds != null) {
-            HashMap<String, PeerReviewForm> peerReviewMap = (HashMap<String, PeerReviewForm>) request.getSession().getAttribute(PEER_REVIEW_MAP);
+            HashMap<Long, PeerReviewForm> peerReviewMap = (HashMap<Long, PeerReviewForm>) request.getSession().getAttribute(PEER_REVIEW_MAP);
             // this should never happen, but just in case.
             if (peerReviewMap == null) {
                 createPeerReviewIdList(request);
-                peerReviewMap = (HashMap<String, PeerReviewForm>) request.getSession().getAttribute(PEER_REVIEW_MAP);
+                peerReviewMap = (HashMap<Long, PeerReviewForm>) request.getSession().getAttribute(PEER_REVIEW_MAP);
             }
             for (String peerReviewId : peerReviewIds) {
-                peerReview = peerReviewMap.get(peerReviewId);
+                peerReview = peerReviewMap.get(Long.valueOf(peerReviewId));
                 peerReviewList.add(peerReview);
             }
         }
@@ -302,10 +303,10 @@ public class PeerReviewsController extends BaseWorkspaceController {
      * List peer reviews associated with a profile
      * */
     @RequestMapping(value = "/get-peer-review.json", method = RequestMethod.GET)
-    public @ResponseBody PeerReviewForm getPeerReviewJson(@RequestParam(value = "peerReviewId") String peerReviewIdStr) {
+    public @ResponseBody PeerReviewForm getPeerReviewJson(@RequestParam(value = "peerReviewId") Long peerReviewId) {
         PeerReviewForm result = null;
         try {
-            PeerReview peerReview = peerReviewManager.getPeerReview(getEffectiveUserOrcid(), peerReviewIdStr);
+            PeerReview peerReview = peerReviewManager.getPeerReview(getEffectiveUserOrcid(), peerReviewId);
             if (peerReview != null) {
                 result = PeerReviewForm.valueOf(peerReview);
             }
@@ -323,7 +324,7 @@ public class PeerReviewsController extends BaseWorkspaceController {
         if (peerReview == null || PojoUtil.isEmpty(peerReview.getPutCode())) {
             return null;
         }
-        peerReviewManager.removePeerReview(getEffectiveUserOrcid(), peerReview.getPutCode().getValue());
+        peerReviewManager.removePeerReview(getEffectiveUserOrcid(), Long.valueOf(peerReview.getPutCode().getValue()));
         return peerReview;
     }
 
@@ -333,7 +334,7 @@ public class PeerReviewsController extends BaseWorkspaceController {
         String orcid = getEffectiveUserOrcid();
 
         for (String id : peerReviewIds) {
-            peerReviewManager.removePeerReview(orcid, id);
+            peerReviewManager.removePeerReview(orcid, Long.valueOf(id));
         }
 
         return peerReviewIds;
@@ -638,7 +639,7 @@ public class PeerReviewsController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = "/updateToMaxDisplay.json", method = RequestMethod.GET)
-    public @ResponseBody boolean updateToMaxDisplay(HttpServletRequest request, @RequestParam(value = "putCode") String putCode) {
+    public @ResponseBody boolean updateToMaxDisplay(HttpServletRequest request, @RequestParam(value = "putCode") Long putCode) {
         return peerReviewManager.updateToMaxDisplay(getEffectiveUserOrcid(), putCode);
     }
 
@@ -658,4 +659,12 @@ public class PeerReviewsController extends BaseWorkspaceController {
         peerReviewManager.updateVisibilities(orcid, peerReviewIds, Visibility.fromValue(visibilityStr));
         return peerReviewIds;
     }    
+    
+    /**
+     * Get group information based on the group id
+     * */
+    @RequestMapping(value = "/group/{groupId}", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
+    public @ResponseBody GroupIdRecord getGroupInformation(@PathVariable("groupId") String groupId) {        
+        return groupIdRecordManager.findByGroupId(groupId);
+    }
 }
