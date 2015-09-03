@@ -73,6 +73,9 @@ public abstract class InternalApiServiceImplBase {
     @Produces(value = { MediaType.APPLICATION_JSON })
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public Response obtainOauth2TokenPost(@FormParam("grant_type") String grantType, MultivaluedMap<String, String> formParams) {
+        
+        //TODO!!!! Here we must check that the scope belongs to the list of internal scopes
+        
         String clientId = formParams.getFirst("client_id");
         String clientSecret = formParams.getFirst("client_secret");
         String code = formParams.getFirst("code");

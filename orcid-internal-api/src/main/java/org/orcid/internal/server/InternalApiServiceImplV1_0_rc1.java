@@ -10,7 +10,7 @@ import javax.ws.rs.Path;
  * 
  */
 @Api("Internal API v1.0_rc1")
-@Path("/v1.0_rc1")
+@Path("/")
 public class InternalApiServiceImplV1_0_rc1 extends InternalApiServiceImplBase {
 
 }
