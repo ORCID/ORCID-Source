@@ -16,6 +16,11 @@
  */
 package org.orcid.api.swagger;
 
+import io.swagger.annotations.Api;
+import io.swagger.models.Swagger;
+import io.swagger.models.auth.OAuth2Definition;
+import io.swagger.util.Json;
+
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Application;
@@ -23,16 +28,10 @@ import javax.ws.rs.core.MediaType;
 
 import org.orcid.api.common.swagger.SwaggerJSONResource;
 import org.orcid.core.api.OrcidApiConstants;
-import org.orcid.jaxb.model.message.ScopeConstants;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.springframework.beans.factory.annotation.Value;
 
 import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
-
-import io.swagger.annotations.Api;
-import io.swagger.models.Swagger;
-import io.swagger.models.auth.OAuth2Definition;
-import io.swagger.util.Json;
 
 /**
  * Resource that serves swagger.json

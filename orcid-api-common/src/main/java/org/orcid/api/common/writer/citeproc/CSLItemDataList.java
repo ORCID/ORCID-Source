@@ -14,15 +14,21 @@
  *
  * =============================================================================
  */
-package org.orcid.core.profileEvent;
+package org.orcid.api.common.writer.citeproc;
 
 import java.util.List;
-import java.util.concurrent.Callable;
 
-import org.orcid.persistence.jpa.entities.ProfileEventType;
+import de.undercouch.citeproc.csl.CSLItemData;
 
-public interface ProfileEvent extends Callable<ProfileEventType> {
+public class CSLItemDataList {
 
-    public List<ProfileEventType> outcomes();
+    private List<CSLItemData> data;
 
+    public List<CSLItemData> getData() {
+        return data;
+    }
+
+    public void setData(List<CSLItemData> data) {
+        this.data = data;
+    }
 }
