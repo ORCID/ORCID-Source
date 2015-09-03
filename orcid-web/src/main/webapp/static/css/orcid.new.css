@@ -6021,6 +6021,13 @@ ul.sources-edit-list > li.group-details{
 	padding-bottom: 15px;
     font-size: 15px;
 }
+
+.shibboleth-container{
+	max-width: 353px;
+	margin: 0 auto;	
+	padding-left: 15px;
+	padding-right: 15px; 
+}
 	
 
 
