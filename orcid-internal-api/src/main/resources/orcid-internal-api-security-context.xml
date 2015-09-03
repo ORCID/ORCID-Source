@@ -41,13 +41,14 @@
     <sec:http use-expressions="true" create-session="stateless">
         <sec:anonymous enabled="false" />
         <sec:x509 subject-principal-regex="CN=(.*?)," user-service-ref="x509UserService"/>
-        <sec:intercept-url pattern="**" access="#oauth2.clientHasRole('ROLE_CLIENT')"/>
+        <sec:intercept-url pattern="/**" access="#oauth2.clientHasRole('ROLE_CLIENT')"/>
         <sec:custom-filter ref="orcidResourceServerFilter" before="PRE_AUTH_FILTER" />
         <sec:access-denied-handler ref="orcidOauthAuthenticationEntryPoint" />
         <sec:expression-handler ref="oauthWebExpressionHandler" />
     </sec:http>    
+	
 
-    <!-- A simple authentication manager that will attempt to authenticate the client using the X.509 cert -->
+	<!-- A simple authentication manager that will attempt to authenticate the client using the X.509 cert -->
     <sec:authentication-manager alias="x509AuthenticationManager">
         <sec:authentication-provider user-service-ref="x509UserService"/>
     </sec:authentication-manager>
@@ -215,7 +216,7 @@
 
         
     <bean id="orcidOauthAuthenticationEntryPoint" class="org.orcid.api.common.exception.OrcidOAuth2AuthenticationEntryPoint">
-        <property name="realmName" value="ORCID T2 API" />
+        <property name="realmName" value="ORCID Internal API" />
         <property name="typeName" value="Bearer"/>
         <property name="exceptionRenderer" ref="orcidOauthExceptionRenderer"/>
     </bean>
