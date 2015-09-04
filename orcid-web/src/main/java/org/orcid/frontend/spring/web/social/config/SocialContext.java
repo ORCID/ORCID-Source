@@ -54,21 +54,23 @@ public class SocialContext implements ConnectionSignUp, SignInAdapter {
 		return Long.toString(rand.nextLong());
 	}
 
-	public boolean isSignedIn(HttpServletRequest request, HttpServletResponse response) {
+	public SocialType isSignedIn(HttpServletRequest request, HttpServletResponse response) {
 
-		boolean retVal = false;
+		SocialType connectionType = null;
 		String userId = userCookieGenerator.readCookieValue(request);
 		if (isValidId(userId)) {
 
 			if (isConnectedFacebookUser(userId)) {
-				retVal = true;
+				connectionType = SocialType.FACEBOOK;
+			} else if(isConnectedGoogleUser(userId)) {
+				connectionType = SocialType.GOOGLE;
 			} else {
 				userCookieGenerator.removeCookie(response);
 			}
 		}
 
 		currentUser.set(userId);
-		return retVal;
+		return connectionType;
 	}
 
 	private boolean isValidId(String id) {
@@ -84,6 +86,13 @@ public class SocialContext implements ConnectionSignUp, SignInAdapter {
 		ConnectionRepository connectionRepo = connectionRepository.createConnectionRepository(userId);
 		Connection<Facebook> facebookConnection = connectionRepo.findPrimaryConnection(Facebook.class);
 		return facebookConnection != null;
+	}
+	
+	private boolean isConnectedGoogleUser(String userId) {
+
+		ConnectionRepository connectionRepo = connectionRepository.createConnectionRepository(userId);
+		Connection<Google> googleConnection = connectionRepo.findPrimaryConnection(Google.class);
+		return googleConnection != null;
 	}
 
 	public String getUserId() {

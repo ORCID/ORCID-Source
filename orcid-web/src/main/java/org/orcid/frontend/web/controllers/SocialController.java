@@ -1,11 +1,11 @@
 package org.orcid.frontend.web.controllers;
 
 import javax.annotation.Resource;
-import javax.naming.AuthenticationException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.orcid.frontend.spring.web.social.config.SocialContext;
+import org.orcid.frontend.spring.web.social.config.SocialType;
 import org.orcid.frontend.web.exception.FeatureDisabledException;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
@@ -19,6 +19,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.social.facebook.api.Facebook;
 import org.springframework.social.facebook.api.UserOperations;
+import org.springframework.social.google.api.Google;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -48,8 +49,9 @@ public class SocialController extends BaseController {
     	checkEnabled();
     	
     	String emailId = null;
-    	if (socialContext.isSignedIn(request, response)) {
-    		emailId = retrieveEmail();
+    	SocialType connectionType = socialContext.isSignedIn(request, response);
+    	if (connectionType != null) {
+    		emailId = retrieveEmail(connectionType);
     	}
     	
     	if(emailId == null) {
@@ -83,11 +85,17 @@ public class SocialController extends BaseController {
         }
     }
     
-	private String retrieveEmail() {
-		Facebook facebook = socialContext.getFacebook();
-		String email;
-		UserOperations uo = facebook.userOperations();
-		email = uo.getUserProfile().getEmail();
+	private String retrieveEmail(SocialType connectionType) {
+		String email = null;
+		if(SocialType.FACEBOOK.equals(connectionType)) {
+			Facebook facebook = socialContext.getFacebook();
+			UserOperations uo = facebook.userOperations();
+			email = uo.getUserProfile().getEmail();
+		} else if(SocialType.GOOGLE.equals(connectionType)) {
+			Google google = socialContext.getGoogle();
+			email = google.plusOperations().getGoogleProfile().getAccountEmail();
+		}
+		
 		return email;
 	}
 }
