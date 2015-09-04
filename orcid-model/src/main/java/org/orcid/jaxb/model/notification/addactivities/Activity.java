@@ -56,7 +56,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "activityType", "activityName", "externalIdentifier" })
+@XmlType(name = "", propOrder = { "itemType", "itemName", "externalIdentifier" })
 @XmlRootElement(name = "item")
 public class Activity implements Serializable {
 

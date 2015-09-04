@@ -41,8 +41,7 @@
 			</xs:choice>
 			<xs:element name="host" type="xs:string" minOccurs="0"/>
 		</xs:sequence>
-	</xs:complexType>
-	
+	</xs:complexType>	
 	<xs:element name="notification-subject">
 		<xs:annotation>
 			<xs:documentation>The subject line for the message (displayed to the end user)
@@ -51,8 +50,7 @@
 		<xs:simpleType>
 			<xs:restriction base="xs:string" />
 		</xs:simpleType>
-	</xs:element>
-	
+	</xs:element>	
 	<xs:element name="notification-intro">
 		<xs:annotation>
 			<xs:documentation>A text-only introductory message to be displayed to the end user, and displayed before the example list of items.
@@ -63,11 +61,10 @@
 				<xs:maxLength value="1000" />
 			</xs:restriction>
 		</xs:simpleType>
-	</xs:element>
-	
+	</xs:element>	
 	<xs:complexType name="items">
 		<xs:sequence>
-			<xs:element name="activity" type="notification:item" maxOccurs="unbounded" />
+			<xs:element name="item" type="notification:item" maxOccurs="unbounded" />
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="item">

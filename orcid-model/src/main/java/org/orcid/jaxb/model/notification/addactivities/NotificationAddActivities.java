@@ -62,7 +62,7 @@ import org.orcid.jaxb.model.notification.Notification;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "putCode", "notificationType", "authorizationUrl", "subject", "items", "createdDate", "sentDate", "readDate", "actionedDate", "archivedDate", "source" })
+@XmlType(name = "", propOrder = { "putCode", "notificationType", "authorizationUrl", "subject", "intro", "items", "createdDate", "sentDate", "readDate", "actionedDate", "archivedDate", "source" })
 @XmlRootElement(name = "notification", namespace = "http://www.orcid.org/ns/notification")
 public class NotificationAddActivities extends Notification {
 

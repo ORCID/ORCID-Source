@@ -55,7 +55,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "activities" })
+@XmlType(name = "", propOrder = { "items" })
 @XmlRootElement(name = "items", namespace = "http://www.orcid.org/ns/notification")
 public class Activities implements Serializable {
 
