@@ -33,6 +33,7 @@ import org.orcid.core.exception.OrcidNotificationAlreadyReadException;
 import org.orcid.core.exception.OrcidNotificationNotFoundException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.NotificationManager;
+import org.orcid.core.manager.NotificationValidationManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.security.visibility.aop.AccessControl;
 import org.orcid.jaxb.model.message.ScopePathType;
@@ -52,8 +53,11 @@ public class NotificationsApiServiceDelegatorImpl implements NotificationsApiSer
     private NotificationManager notificationManager;
 
     @Resource
+    private NotificationValidationManager notificationValidationManager;
+
+    @Resource
     private SourceManager sourceManager;
-    
+
     @Resource
     private LocaleManager localeManager;
 
@@ -77,9 +81,9 @@ public class NotificationsApiServiceDelegatorImpl implements NotificationsApiSer
             checkSource(notification);
             return Response.ok(notification).build();
         } else {
-        	Map<String, String> params = new HashMap<String, String>();
-        	params.put("orcid", orcid);
-        	params.put("id", String.valueOf(id));
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("orcid", orcid);
+            params.put("id", String.valueOf(id));
             throw new OrcidNotificationNotFoundException(params);
         }
     }
@@ -88,7 +92,7 @@ public class NotificationsApiServiceDelegatorImpl implements NotificationsApiSer
         String notificationSourceId = notification.getSource().retrieveSourcePath();
         String currentSourceId = sourceManager.retrieveSourceOrcid();
         if (!notificationSourceId.equals(currentSourceId)) {
-        	Object params[] = {currentSourceId};
+            Object params[] = { currentSourceId };
             throw new AccessControlException(localeManager.resolveMessage("apiError.notification_accesscontrol.exception", params));
         }
     }
@@ -98,9 +102,9 @@ public class NotificationsApiServiceDelegatorImpl implements NotificationsApiSer
     public Response flagNotificationAsArchived(String orcid, Long id) throws OrcidNotificationAlreadyReadException {
         Notification notification = notificationManager.flagAsArchived(orcid, id);
         if (notification == null) {
-        	Map<String, String> params = new HashMap<String, String>();
-        	params.put("orcid", orcid);
-        	params.put("id", String.valueOf(id));
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("orcid", orcid);
+            params.put("id", String.valueOf(id));
             throw new OrcidNotificationNotFoundException(params);
         }
         return Response.ok(notification).build();
@@ -109,6 +113,7 @@ public class NotificationsApiServiceDelegatorImpl implements NotificationsApiSer
     @Override
     @AccessControl(requiredScope = ScopePathType.PREMIUM_NOTIFICATION)
     public Response addAddActivitiesNotification(UriInfo uriInfo, String orcid, NotificationAddActivities notification) {
+        notificationValidationManager.validateNotificationAddActivities(notification);
         Notification createdNotification = notificationManager.createNotification(orcid, notification);
         try {
             return Response.created(new URI(uriInfo.getAbsolutePath() + "/" + createdNotification.getPutCode())).build();
