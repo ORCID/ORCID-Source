@@ -63,5 +63,7 @@ final public class ScopeConstants {
     public static final String PERSON_READ_LIMITED = "/person/read-limited";
     public static final String PERSON_UPDATE = "/person/update";
     public static final String ORCID_PROFILE_CREATE = "/orcid-profile/create";
-
+    
+    // Internal API
+    public static final String INTERNAL_PERSON_READ_LIMITED = "/orcid-internal/person/read-limited";
 }
