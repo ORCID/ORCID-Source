@@ -297,6 +297,7 @@
         <property name="version" value="1.2" />
     </bean>
 
+    <bean id="notificationValidationManager" class="org.orcid.core.manager.impl.NotificationValidationManagerImpl" />
 
     <bean id="localeManager" class="org.orcid.core.locale.LocaleManagerImpl" />
 
