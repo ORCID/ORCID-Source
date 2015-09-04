@@ -41,4 +41,13 @@
 		<renameColumn tableName="notification_item" oldColumnName="activity_name" newColumnName="item_name"/>
     </changeSet>
           
+	<changeSet id="RENAME-SEQUENCE" author="Angel Montenegro" dbms="postgresql">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <sequenceExists sequenceName="notification_item_seq" />
+            </not>
+        </preConditions>
+        <createSequence sequenceName="notification_item_seq" />
+    </changeSet>          
+          
 </databaseChangeLog>	

@@ -52,8 +52,8 @@ public class NotificationItemEntity extends BaseEntity<Long> {
 
     @Override
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "notification_activity_seq")
-    @SequenceGenerator(name = "notification_activity_seq", sequenceName = "notification_activity_seq")
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "notification_item_seq")
+    @SequenceGenerator(name = "notification_item_seq", sequenceName = "notification_item_seq")
     public Long getId() {
         return id;
     }
