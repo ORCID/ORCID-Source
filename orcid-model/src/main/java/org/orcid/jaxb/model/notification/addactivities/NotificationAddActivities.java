@@ -27,8 +27,9 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.orcid.jaxb.model.notification.Notification;
 
@@ -61,7 +62,7 @@ import org.orcid.jaxb.model.notification.Notification;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "putCode", "notificationType", "authorizationUrl", "activities", "createdDate", "sentDate", "readDate", "archivedDate", "source" })
+@XmlType(name = "", propOrder = { "putCode", "notificationType", "authorizationUrl", "subject", "items", "createdDate", "sentDate", "readDate", "actionedDate", "archivedDate", "source" })
 @XmlRootElement(name = "notification", namespace = "http://www.orcid.org/ns/notification")
 public class NotificationAddActivities extends Notification {
 
@@ -69,9 +70,14 @@ public class NotificationAddActivities extends Notification {
     @XmlElement(name = "authorization-url", namespace = "http://www.orcid.org/ns/notification", required = true)
     protected AuthorizationUrl authorizationUrl;
     @XmlElement(namespace = "http://www.orcid.org/ns/notification", required = true)
-    protected Activities activities;
-    @XmlTransient
+    protected Activities items;
+    @XmlElement(name = "actioned-date", namespace = "http://www.orcid.org/ns/notification")
+    @XmlSchemaType(name = "dateTime")
+    protected XMLGregorianCalendar actionedDate;
+    @XmlElement(name = "notification-subject", namespace = "http://www.orcid.org/ns/notification")
     protected String subject;
+    @XmlElement(name = "notification-intro", namespace = "http://www.orcid.org/ns/notification")
+    protected String intro;
 
     /**
      * Gets the value of the authorizationUrl property.
@@ -100,8 +106,8 @@ public class NotificationAddActivities extends Notification {
      * @return possible object is {@link Activities }
      * 
      */
-    public Activities getActivities() {
-        return activities;
+    public Activities getItems() {
+        return items;
     }
 
     /**
@@ -111,8 +117,8 @@ public class NotificationAddActivities extends Notification {
      *            allowed object is {@link Activities }
      * 
      */
-    public void setActivities(Activities value) {
-        this.activities = value;
+    public void setItems(Activities value) {
+        this.items = value;
     }
 
     public String getSubject() {
@@ -123,4 +129,19 @@ public class NotificationAddActivities extends Notification {
         this.subject = subject;
     }
 
+    public XMLGregorianCalendar getActionedDate() {
+        return actionedDate;
+    }
+
+    public void setActionedDate(XMLGregorianCalendar actionedDate) {
+        this.actionedDate = actionedDate;
+    }
+
+    public String getIntro() {
+        return intro;
+    }
+
+    public void setIntro(String intro) {
+        this.intro = intro;
+    }           
 }

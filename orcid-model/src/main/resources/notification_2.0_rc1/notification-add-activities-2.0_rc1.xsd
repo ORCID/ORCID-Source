@@ -12,10 +12,13 @@
 			<xs:sequence>
 				<xs:element name="notification-type" type="notification:notification-type"/>
 				<xs:element name="authorization-url" type="notification:authorization-url"/>
-				<xs:element name="activities" type="notification:activities"/>
+				<xs:element ref="notification:notification-subject"/>
+				<xs:element ref="notification:notification-intro"/>
+				<xs:element name="items" type="notification:items"/>
 				<xs:element ref="common:created-date" minOccurs="0"/>
 				<xs:element ref="common:sent-date" minOccurs="0"/>
 				<xs:element ref="common:read-date" minOccurs="0"/>
+				<xs:element name="actioned-date" type="notification:actioned-date" minOccurs="0" />
 				<xs:element ref="common:archived-date" minOccurs="0"/>
 				<xs:element ref="common:source" minOccurs="0"/>
 			</xs:sequence>
@@ -39,15 +42,38 @@
 			<xs:element name="host" type="xs:string" minOccurs="0"/>
 		</xs:sequence>
 	</xs:complexType>
-	<xs:complexType name="activities">
+	
+	<xs:element name="notification-subject">
+		<xs:annotation>
+			<xs:documentation>The subject line for the message (displayed to the end user)
+			</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string" />
+		</xs:simpleType>
+	</xs:element>
+	
+	<xs:element name="notification-intro">
+		<xs:annotation>
+			<xs:documentation>A text-only introductory message to be displayed to the end user, and displayed before the example list of items.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="1000" />
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	
+	<xs:complexType name="items">
 		<xs:sequence>
-			<xs:element name="activity" type="notification:activity" maxOccurs="unbounded" />
+			<xs:element name="activity" type="notification:item" maxOccurs="unbounded" />
 		</xs:sequence>
 	</xs:complexType>
-	<xs:complexType name="activity">
+	<xs:complexType name="item">
 		<xs:sequence>
-			<xs:element name="activity-type" type="notification:activity-type"/>
-			<xs:element name="activity-name" type="xs:string"/>
+			<xs:element name="item-type" type="notification:activity-type"/>
+			<xs:element name="item-name" type="xs:string"/>
 			<xs:element name="external-identifier" type="activities:identifier" minOccurs="0" />
 		</xs:sequence>
 	</xs:complexType>
@@ -59,4 +85,13 @@
             <xs:enumeration value="WORK"></xs:enumeration>
         </xs:restriction>
     </xs:simpleType>
+    <xs:complexType name="actioned-date">        
+	    <xs:annotation>
+	        <xs:documentation>The date time when the user took action on the notification.
+	        </xs:documentation>
+	    </xs:annotation>
+	    <xs:simpleContent>
+	        <xs:extension base="xs:dateTime" />
+	    </xs:simpleContent>        
+    </xs:complexType>
 </xs:schema>

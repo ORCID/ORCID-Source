@@ -71,9 +71,9 @@ public class EmailMessageSenderTest extends BaseTest {
 
         NotificationAddActivities notification1 = new NotificationAddActivities();
         Activities activities1 = new Activities();
-        notification1.setActivities(activities1);
-        activities1.getActivities().add(createActivity(ActivityType.WORK, "Work 1"));
-        activities1.getActivities().add(createActivity(ActivityType.WORK, "Work 2"));
+        notification1.setItems(activities1);
+        activities1.getItems().add(createActivity(ActivityType.WORK, "Work 1"));
+        activities1.getItems().add(createActivity(ActivityType.WORK, "Work 2"));
         notification1.setCreatedDate(DateUtils.convertToXMLGregorianCalendar("2014-07-10T13:39:31"));
         Source source1 = new Source();
         source1.setSourceName(new SourceName("Super Institution 1"));
@@ -83,8 +83,8 @@ public class EmailMessageSenderTest extends BaseTest {
 
         NotificationAddActivities notification2 = new NotificationAddActivities();
         Activities activities2 = new Activities();
-        notification2.setActivities(activities2);
-        activities2.getActivities().add(createActivity(ActivityType.EMPLOYMENT, "Employment 1"));
+        notification2.setItems(activities2);
+        activities2.getItems().add(createActivity(ActivityType.EMPLOYMENT, "Employment 1"));
         notification2.setCreatedDate(DateUtils.convertToXMLGregorianCalendar("2014-08-17T10:22:15"));
         Source source2 = new Source();
         source2.setSourceName(new SourceName("Super Institution 1"));
@@ -94,9 +94,9 @@ public class EmailMessageSenderTest extends BaseTest {
 
         NotificationAddActivities notification3 = new NotificationAddActivities();
         Activities activities3 = new Activities();
-        notification3.setActivities(activities3);
-        activities3.getActivities().add(createActivity(ActivityType.WORK, "Work 3"));
-        activities3.getActivities().add(createActivity(ActivityType.WORK, "Work 4"));
+        notification3.setItems(activities3);
+        activities3.getItems().add(createActivity(ActivityType.WORK, "Work 3"));
+        activities3.getItems().add(createActivity(ActivityType.WORK, "Work 4"));
         notification3.setCreatedDate(DateUtils.convertToXMLGregorianCalendar("2014-07-10T08:53:56"));
         Source source3 = new Source();
         source3.setSourceName(new SourceName("Lovely Publisher 1"));
@@ -130,8 +130,8 @@ public class EmailMessageSenderTest extends BaseTest {
 
     private Activity createActivity(ActivityType actType, String actName) {
         Activity act = new Activity();
-        act.setActivityType(actType);
-        act.setActivityName(actName);
+        act.setItemType(actType);
+        act.setItemName(actName);
         return act;
     }
 

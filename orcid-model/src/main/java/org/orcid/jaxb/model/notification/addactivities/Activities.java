@@ -56,12 +56,12 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = { "activities" })
-@XmlRootElement(name = "activities", namespace = "http://www.orcid.org/ns/notification")
+@XmlRootElement(name = "items", namespace = "http://www.orcid.org/ns/notification")
 public class Activities implements Serializable {
 
     private final static long serialVersionUID = 1L;
-    @XmlElement(name = "activity", namespace = "http://www.orcid.org/ns/notification", required = true)
-    protected List<Activity> activities;
+    @XmlElement(name = "item", namespace = "http://www.orcid.org/ns/notification", required = true)
+    protected List<Activity> items;
 
     public Activities() {
     }
@@ -88,11 +88,11 @@ public class Activities implements Serializable {
      * 
      * 
      */
-    public List<Activity> getActivities() {
-        if (activities == null) {
-            activities = new ArrayList<Activity>();
+    public List<Activity> getItems() {
+        if (items == null) {
+            items= new ArrayList<Activity>();
         }
-        return this.activities;
+        return this.items;
     }
 
 }

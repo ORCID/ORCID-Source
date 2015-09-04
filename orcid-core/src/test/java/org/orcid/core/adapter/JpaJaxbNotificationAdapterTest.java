@@ -104,11 +104,11 @@ public class JpaJaxbNotificationAdapterTest {
         clientId.setPath("APP-5555-5555-5555-5555");
         url.setUri(authorizationUrlString);
         Activities activities = new Activities();
-        notification.setActivities(activities);
+        notification.setItems(activities);
         Activity activity = new Activity();
-        activities.getActivities().add(activity);
-        activity.setActivityType(ActivityType.WORK);
-        activity.setActivityName("Latest Research Article");
+        activities.getItems().add(activity);
+        activity.setItemType(ActivityType.WORK);
+        activity.setItemName("Latest Research Article");
         ExternalIdentifier extId = new ExternalIdentifier();
         activity.setExternalIdentifier(extId);
         extId.setExternalIdType("doi");
