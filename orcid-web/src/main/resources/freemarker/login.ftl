@@ -72,11 +72,11 @@
             </div>
         </div>
     </#if>
-	<div style="margin-left:auto; margin-right:auto;">
-		<h4>Or sign in with :</h4><br><br>
+	<div class="control-group col-md-offset-3 col-md-9 col-sm-9 col-sm-offset-3 col-xs-12">
+		<h5>Or sign in with :</h5>
 		<table>
 			<tr>
-				<td style="padding-left: 20px;">
+				<td>
 					<form action="<@orcid.rootPath '/signin/facebook'/>" method="POST">
 					    <button type="submit" class="btn btn-social-icon btn-facebook"><i class="fa fa-facebook"></i></button>
 					</form>
