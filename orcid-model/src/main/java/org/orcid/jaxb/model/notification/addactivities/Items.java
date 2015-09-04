@@ -57,13 +57,13 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = { "items" })
 @XmlRootElement(name = "items", namespace = "http://www.orcid.org/ns/notification")
-public class Activities implements Serializable {
+public class Items implements Serializable {
 
     private final static long serialVersionUID = 1L;
     @XmlElement(name = "item", namespace = "http://www.orcid.org/ns/notification", required = true)
-    protected List<Activity> items;
+    protected List<Item> items;
 
-    public Activities() {
+    public Items() {
     }
 
     /**
@@ -84,13 +84,13 @@ public class Activities implements Serializable {
      * 
      * 
      * <p>
-     * Objects of the following type(s) are allowed in the list {@link Activity }
+     * Objects of the following type(s) are allowed in the list {@link Item }
      * 
      * 
      */
-    public List<Activity> getItems() {
+    public List<Item> getItems() {
         if (items == null) {
-            items= new ArrayList<Activity>();
+            items= new ArrayList<Item>();
         }
         return this.items;
     }

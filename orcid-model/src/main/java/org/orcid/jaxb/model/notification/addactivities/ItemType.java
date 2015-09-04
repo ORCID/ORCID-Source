@@ -24,6 +24,6 @@ import javax.xml.bind.annotation.XmlEnum;
  *
  */
 @XmlEnum
-public enum ActivityType {
+public enum ItemType {
     EDUCATION, EMPLOYMENT, FUNDING, WORK, ;
 }

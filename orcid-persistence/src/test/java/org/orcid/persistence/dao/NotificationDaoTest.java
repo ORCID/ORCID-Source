@@ -33,8 +33,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.jaxb.model.notification.NotificationType;
-import org.orcid.persistence.jpa.entities.NotificationActivityEntity;
-import org.orcid.persistence.jpa.entities.NotificationAddActivitiesEntity;
+import org.orcid.persistence.jpa.entities.NotificationItemEntity;
+import org.orcid.persistence.jpa.entities.NotificationAddItemsEntity;
 import org.orcid.persistence.jpa.entities.NotificationCustomEntity;
 import org.orcid.persistence.jpa.entities.NotificationEntity;
 import org.orcid.test.DBUnitTest;
@@ -80,10 +80,10 @@ public class NotificationDaoTest extends DBUnitTest {
     public void testFindAddActivitiesNotification() {
         NotificationEntity notification = notificationDao.find(5L);
         assertNotNull(notification);
-        assertTrue(notification instanceof NotificationAddActivitiesEntity);
+        assertTrue(notification instanceof NotificationAddItemsEntity);
         assertEquals(NotificationType.ADD_ACTIVITIES, notification.getNotificationType());
-        NotificationAddActivitiesEntity addActsNotification = (NotificationAddActivitiesEntity) notification;
-        Set<NotificationActivityEntity> acts = addActsNotification.getNotificationActivities();
+        NotificationAddItemsEntity addActsNotification = (NotificationAddItemsEntity) notification;
+        Set<NotificationItemEntity> acts = addActsNotification.getNotificationItems();
         assertNotNull(acts);
         assertEquals(2, acts.size());
     }

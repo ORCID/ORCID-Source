@@ -70,7 +70,7 @@ public class NotificationAddActivities extends Notification {
     @XmlElement(name = "authorization-url", namespace = "http://www.orcid.org/ns/notification", required = true)
     protected AuthorizationUrl authorizationUrl;
     @XmlElement(namespace = "http://www.orcid.org/ns/notification", required = true)
-    protected Activities items;
+    protected Items items;
     @XmlElement(name = "actioned-date", namespace = "http://www.orcid.org/ns/notification")
     @XmlSchemaType(name = "dateTime")
     protected XMLGregorianCalendar actionedDate;
@@ -103,10 +103,10 @@ public class NotificationAddActivities extends Notification {
     /**
      * Gets the value of the activities property.
      * 
-     * @return possible object is {@link Activities }
+     * @return possible object is {@link Items }
      * 
      */
-    public Activities getItems() {
+    public Items getItems() {
         return items;
     }
 
@@ -114,10 +114,10 @@ public class NotificationAddActivities extends Notification {
      * Sets the value of the activities property.
      * 
      * @param value
-     *            allowed object is {@link Activities }
+     *            allowed object is {@link Items }
      * 
      */
-    public void setItems(Activities value) {
+    public void setItems(Items value) {
         this.items = value;
     }
 
