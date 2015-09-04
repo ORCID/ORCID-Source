@@ -111,41 +111,17 @@ public class PublicV2ApiServiceImplBase {
     @ApiOperation(value = "Fetch all Activities", response=ActivitiesSummary.class)
     public Response viewActivities(@PathParam("orcid") String orcid, @Context HttpServletRequest httpRequest) {
         if (OrcidApiConstants.APPLICATION_CITEPROC.equals(httpRequest.getHeader("Accept")))
-            return viewActivitiesCitations(orcid);
+            return serviceDelegator.viewActivitiesCitations(orcid);
         return serviceDelegator.viewActivities(orcid);
-    }
-    
-    /** Done here instead of as writer as we need additional db access to fulfil request
-     * @param orcid
-     * @return a Response wrapping a JSON String
-     */
-    private Response viewActivitiesCitations(@PathParam("orcid") String orcid) {
-        ActivitiesSummary summary = (ActivitiesSummary) serviceDelegator.viewActivities(orcid).getEntity();
-        Works w = summary.getWorks();
-        List<WorkGroup> groups = w.getWorkGroup();
-        List<CSLItemData> response = new ArrayList<CSLItemData>();
-        
-        WorkToCiteprocTranslator tran = new  WorkToCiteprocTranslator();
-        for (WorkGroup group : groups){
-            WorkSummary work = group.getWorkSummary().get(0);
-            Response r = serviceDelegator.viewWork(orcid, work.getPutCode());
-            if (r.getStatus()==200){
-                //TODO: need to get credit name in here somehow
-                CSLItemData item = tran.toCiteproc((Work)r.getEntity(), true);
-                if (item!=null)
-                    response.add(item);
-            }
-        }
-        CSLItemDataList data = new CSLItemDataList();
-        data.setData(response);
-        return Response.ok(data).build();
     }
 
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON,OrcidApiConstants.APPLICATION_CITEPROC })
     @Path(WORK + PUTCODE)
     @ApiOperation(value = "Fetch a Work", notes = "More notes about this method", response = Work.class)
-    public Response viewWork(@PathParam("orcid") String orcid, @PathParam("putCode") Long putCode) {
+    public Response viewWork(@PathParam("orcid") String orcid, @PathParam("putCode") Long putCode, @Context HttpServletRequest httpRequest) {
+        if (OrcidApiConstants.APPLICATION_CITEPROC.equals(httpRequest.getHeader("Accept")))
+            return serviceDelegator.viewWorkCitation(orcid,putCode);
         return serviceDelegator.viewWork(orcid, putCode);
     }
 
