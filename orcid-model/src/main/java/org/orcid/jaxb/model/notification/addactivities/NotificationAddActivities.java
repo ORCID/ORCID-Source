@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
 
@@ -62,7 +63,7 @@ import org.orcid.jaxb.model.notification.Notification;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "putCode", "notificationType", "authorizationUrl", "subject", "intro", "items", "createdDate", "sentDate", "readDate", "actionedDate", "archivedDate", "source" })
+@XmlType(name = "", propOrder = { "putCode", "notificationType", "authorizationUrl", "notificationSubject", "intro", "items", "createdDate", "sentDate", "readDate", "actionedDate", "archivedDate", "source" })
 @XmlRootElement(name = "notification", namespace = "http://www.orcid.org/ns/notification")
 public class NotificationAddActivities extends Notification {
 
@@ -74,8 +75,10 @@ public class NotificationAddActivities extends Notification {
     @XmlElement(name = "actioned-date", namespace = "http://www.orcid.org/ns/notification")
     @XmlSchemaType(name = "dateTime")
     protected XMLGregorianCalendar actionedDate;
-    @XmlElement(name = "notification-subject", namespace = "http://www.orcid.org/ns/notification")
+    @XmlTransient
     protected String subject;
+    @XmlElement(name = "notification-subject", namespace = "http://www.orcid.org/ns/notification")
+    protected String notificationSubject;
     @XmlElement(name = "notification-intro", namespace = "http://www.orcid.org/ns/notification")
     protected String intro;
 
@@ -127,6 +130,14 @@ public class NotificationAddActivities extends Notification {
 
     public void setSubject(String subject) {
         this.subject = subject;
+    }
+    
+    public String getNotificationSubject() {
+        return notificationSubject;
+    }
+
+    public void setNotificationSubject(String notificationSubject) {
+        this.notificationSubject = notificationSubject;
     }
 
     public XMLGregorianCalendar getActionedDate() {

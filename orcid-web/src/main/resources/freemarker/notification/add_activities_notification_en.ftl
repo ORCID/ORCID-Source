@@ -126,11 +126,11 @@
 </head>
 <body data-baseurl="<@spring.url '/'/>" ng-app="appInFrame" ng-controller="iframeController">
 	
-	<#list notification.activities.activities?sort_by("activityType") as activity>
-		<#switch activity.activityType>
+	<#list notification.items.items?sort_by("itemType") as activity>
+		<#switch activity.itemType>
 			 <#case "WORK">
 			  	<#assign aworks = aworks + 1>
-			  	<#assign tworks = tworks + activity.activityName>
+			  	<#assign tworks = tworks + activity.itemName>
 			  	<#if activity.externalId??>
 	           		<#assign tworks = tworks + "(" + activity.externalId.externalIdType + ":" + activity.externalId.externalIdValue + ")">
 	       		</#if>
@@ -143,15 +143,15 @@
 			    <#break>
 			  <#case "EMPLOYMENT">
 			     <#assign aemployment = aemployment + 1>
-			     <#assign temployment = temployment + activity.activityName + "<br/>">
+			     <#assign temployment = temployment + activity.itemName + "<br/>">
 			     <#break>
 			  <#case "EDUCATION">
 			     <#assign aeducation = aeducation + 1>
-			     <#assign teducation = teducation + activity.activityName + "<br/>">
+			     <#assign teducation = teducation + activity.itemName + "<br/>">
 			     <#break>
 			 <#case "FUNDING">
 			     <#assign afunding = afunding + 1>
-			     <#assign tfunding = tfunding + activity.activityName>
+			     <#assign tfunding = tfunding + activity.itemName>
 			     <#if activity.externalId??>
 	           		<#assign tfunding = tfunding + "(" + activity.externalId.externalIdType + ":" + activity.externalId.externalIdValue + ")">
 	       		 </#if>
@@ -159,7 +159,7 @@
 			     <#break>
 			 <#case "PEER_REVIEW">
 			     <#assign apeerreview = apeerreview + 1>
-			     <#assign tpeerreview = tpeerreview + activity.activityName>
+			     <#assign tpeerreview = tpeerreview + activity.itemName>
 			     <#if activity.externalId??>
 	           		<#assign tpeerreview = tpeerreview + "(" + activity.externalId.externalIdType + ":" + activity.externalId.externalIdValue + ")">
 	       		 </#if>
