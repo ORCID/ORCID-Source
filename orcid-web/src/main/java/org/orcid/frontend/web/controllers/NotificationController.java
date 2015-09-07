@@ -128,7 +128,7 @@ public class NotificationController extends BaseController {
         return notificationManager.findByOrcidAndId(currentUserOrcid, Long.valueOf(id));
     }
     
-    @RequestMapping(value = "{id}/action", method = RequestMethod.POST)
+    @RequestMapping(value = "{id}/action", method = RequestMethod.GET)
     public ModelAndView executeAction(@PathVariable("id") String id, @RequestParam(value = "target") String redirectUri) {
         notificationManager.setActionedDate(getCurrentUserOrcid(), Long.valueOf(id));
         return new ModelAndView("redirect:" + redirectUri);        

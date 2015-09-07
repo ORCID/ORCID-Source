@@ -118,7 +118,7 @@
 		  $scope.archive = function(id) {			
 			$parentScope.archive(id);
 			$parentScope.$apply();
-		  };		  
+		  };			 
 		});
 	</script>
 	<!--  Do not remove -->
@@ -137,7 +137,7 @@
 	       		<#assign tworks = tworks + "<br/>">
 	       		<#if notification.authorizationUrl??>
 	       			<#assign wbuttons = true>
-	       			<#assign wurl = notification.authorizationUrl.uri>
+	       			<#assign wUrl = notification.authorizationUrl.uri>
 	       			<#assign wPutCode = notification.putCode>
 	       		</#if>
 			    <#break>
@@ -200,7 +200,7 @@
 			<strong>${tfunding}</strong>
 			<#if fButtons>
 				<div class="notifications-buttons">
-					<a class="btn btn-primary" href="#" target="_blank" ng-click="addNow('${fPutCode?c}','${fUrl?string}')"><span class="glyphicons cloud-upload"></span> Add now</a>  <a class="btn btn-default" href="" ng-click="archive('${fPutCode?c}')" type="reset" ng-hide="archivedDate">Archive</a>
+					<a class="btn btn-primary" href="<@spring.url '/notifications'/>/${fPutCode?c}/action?target=${fUrl?url}" target="_blank"><span class="glyphicons cloud-upload"></span> Add now</a>  <a class="btn btn-default" href="" ng-click="archive('${fPutCode?c}')" type="reset" ng-hide="archivedDate">Archive</a>
 				</div>
 			</#if>
 		</#if>
@@ -212,7 +212,7 @@
 			<strong>${tpeerreview}</strong>
 			<#if pButtons>
 				<div class="notifications-buttons">
-					<a class="btn btn-primary" href="#" target="_blank" ng-click="addNow('${pPutCode?c}','${pUrl?string}')"><span class="glyphicons cloud-upload"></span> Add now</a>  <a class="btn btn-default" href="" ng-click="archive('${pPutCode?c}')" type="reset" ng-hide="archivedDate">Archive</a>
+					<a class="btn btn-primary" href="<@spring.url '/notifications'/>/${pPutCode?c}/action?target=${pUrl?url}" target="_blank"><span class="glyphicons cloud-upload"></span> Add now</a> <a class="btn btn-default" href="" ng-click="archive('${pPutCode?c}')" type="reset" ng-hide="archivedDate">Archive</a>
 				</div>
 			</#if>
 		</#if>
@@ -224,7 +224,7 @@
 			<strong>${tworks}</strong>
 			<#if wbuttons>
 				<div class="notifications-buttons">
-					<a class="btn btn-primary" href="${wUrl}" target="_blank" ng-click="addNow('${wPutCode?c}', '${wUrl?string}')"><span class="glyphicons cloud-upload"></span> Add now</a>  <a class="btn btn-default" href="" ng-click="archive('${wPutCode?c}')" type="reset" ng-hide="archivedDate">Archive</a>
+					<a class="btn btn-primary" href="<@spring.url '/notifications'/>/${wPutCode?c}/action?target=${wUrl?url}" target="_blank"><span class="glyphicons cloud-upload"></span> Add now</a>  <a class="btn btn-default" href="" ng-click="archive('${wPutCode?c}')" type="reset" ng-hide="archivedDate">Archive</a>
 				</div>
 			</#if>
 		</#if>
