@@ -833,7 +833,12 @@ public class NotificationManagerImpl implements NotificationManager {
             return null;
         }
         
-        return null;
+        if(notificationEntity.getActionedDate() == null) {
+            notificationEntity.setActionedDate(new Date());
+            notificationDao.merge(notificationEntity);
+        }
+        
+        return notificationAdapter.toNotification(notificationEntity);
     }
     
 }

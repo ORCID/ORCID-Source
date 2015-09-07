@@ -24,8 +24,8 @@
 <#assign aworks = 0>
 <#assign tworks = "">
 <#assign wbuttons = false>
-<#assign wurl = "">
-<#assign wputCode = "">
+<#assign wUrl = "">
+<#assign wPutCode = "">
 
 <#assign aeducation = 0>
 <#assign teducation = "">
@@ -138,7 +138,7 @@
 	       		<#if notification.authorizationUrl??>
 	       			<#assign wbuttons = true>
 	       			<#assign wurl = notification.authorizationUrl.uri>
-	       			<#assign wputCode = notification.putCode>
+	       			<#assign wPutCode = notification.putCode>
 	       		</#if>
 			    <#break>
 			  <#case "EMPLOYMENT">
@@ -200,7 +200,7 @@
 			<strong>${tfunding}</strong>
 			<#if fButtons>
 				<div class="notifications-buttons">
-					<a class="btn btn-primary" href="${fUrl}" target="_blank"><span class="glyphicons cloud-upload"></span> Add now</a>  <a class="btn btn-default" href="" ng-click="archive('${fPutCode?c}')" type="reset" ng-hide="archivedDate">Archive</a>
+					<a class="btn btn-primary" href="#" target="_blank" ng-click="addNow('${fPutCode?c}','${fUrl?string}')"><span class="glyphicons cloud-upload"></span> Add now</a>  <a class="btn btn-default" href="" ng-click="archive('${fPutCode?c}')" type="reset" ng-hide="archivedDate">Archive</a>
 				</div>
 			</#if>
 		</#if>
@@ -212,7 +212,7 @@
 			<strong>${tpeerreview}</strong>
 			<#if pButtons>
 				<div class="notifications-buttons">
-					<a class="btn btn-primary" href="${pUrl}" target="_blank"><span class="glyphicons cloud-upload"></span> Add now</a>  <a class="btn btn-default" href="" ng-click="archive('${pPutCode?c}')" type="reset" ng-hide="archivedDate">Archive</a>
+					<a class="btn btn-primary" href="#" target="_blank" ng-click="addNow('${pPutCode?c}','${pUrl?string}')"><span class="glyphicons cloud-upload"></span> Add now</a>  <a class="btn btn-default" href="" ng-click="archive('${pPutCode?c}')" type="reset" ng-hide="archivedDate">Archive</a>
 				</div>
 			</#if>
 		</#if>
@@ -224,7 +224,7 @@
 			<strong>${tworks}</strong>
 			<#if wbuttons>
 				<div class="notifications-buttons">
-					<a class="btn btn-primary" href="${wurl}" target="_blank"><span class="glyphicons cloud-upload"></span> Add now</a>  <a class="btn btn-default" href="" ng-click="archive('${wputCode?c}')" type="reset" ng-hide="archivedDate">Archive</a>
+					<a class="btn btn-primary" href="${wUrl}" target="_blank" ng-click="addNow('${wPutCode?c}', '${wUrl?string}')"><span class="glyphicons cloud-upload"></span> Add now</a>  <a class="btn btn-default" href="" ng-click="archive('${wPutCode?c}')" type="reset" ng-hide="archivedDate">Archive</a>
 				</div>
 			</#if>
 		</#if>

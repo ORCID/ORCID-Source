@@ -1402,6 +1402,19 @@ orcidNgModule.factory("notificationsSrvc", ['$rootScope', function ($rootScope) 
                 console.log("error flagging notification as read");
             });
         },
+        addNow: function(notificationId, actionUrl) {
+            $.ajax({
+                url: getBaseUri() + '/notifications/action?target' + actionUrl,
+                type: 'POST',
+                dataType: 'json',
+                success: function(data) {
+                    
+                }
+            }).fail(function() {
+                // something bad is happening!
+                console.log("Unable to add the notificaton");
+            });
+        },
         archive: function(notificationId) {        	
             $.ajax({
                 url: getBaseUri() + '/notifications/' + notificationId + '/archive.json',
