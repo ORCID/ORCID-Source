@@ -1,6 +1,23 @@
+/**
+ * =============================================================================
+ *
+ * ORCID (R) Open Source
+ * http://orcid.org
+ *
+ * Copyright (c) 2012-2014 ORCID, Inc.
+ * Licensed under an MIT-Style License (MIT)
+ * http://orcid.org/open-source-license
+ *
+ * This copyright and license information (including a link to the full license)
+ * shall be included in its entirety in all copies or substantial portion of
+ * the software.
+ *
+ * =============================================================================
+ */
 package org.orcid.internal.server;
 
 import static org.orcid.core.api.OrcidApiConstants.STATUS_PATH;
+import static org.orcid.core.api.OrcidApiConstants.INTERNAL_API_PERSON_READ;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -13,6 +30,7 @@ import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -73,9 +91,6 @@ public abstract class InternalApiServiceImplBase {
     @Produces(value = { MediaType.APPLICATION_JSON })
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public Response obtainOauth2TokenPost(@FormParam("grant_type") String grantType, MultivaluedMap<String, String> formParams) {
-        
-        //TODO!!!! Here we must check that the scope belongs to the list of internal scopes
-        
         String clientId = formParams.getFirst("client_id");
         String clientSecret = formParams.getFirst("client_secret");
         String code = formParams.getFirst("code");
@@ -88,6 +103,14 @@ public abstract class InternalApiServiceImplBase {
         if (StringUtils.isNotEmpty(scopeList)) {
             scopes = OAuth2Utils.parseParameterList(scopeList);
         }
-        return orcidClientCredentialEndPointDelegator.obtainOauth2Token(clientId, clientSecret, grantType, refreshToken, code, scopes, state, redirectUri, resourceId);
+        return orcidClientCredentialEndPointDelegator.obtainOauth2Token(clientId, clientSecret, refreshToken, grantType, code, scopes, state, redirectUri, resourceId);
+    }
+    
+    @GET
+    @Produces(value = { MediaType.APPLICATION_JSON })
+    @Path(INTERNAL_API_PERSON_READ)
+    public Response viewPersonDetails(@PathParam("orcid") String orcid) {
+        Response response = serviceDelegator.viewPersonDetails(orcid); 
+        return response;
     }
 }

@@ -14,19 +14,16 @@
  *
  * =============================================================================
  */
-package org.orcid.internal.server;
+package org.orcid.internal.server.delegator;
 
-import io.swagger.annotations.Api;
+import java.util.Set;
 
-import javax.ws.rs.Path;
+import javax.ws.rs.core.Response;
 
 /**
- * 
  * @author Angel Montenegro
- * 
  */
-@Api("Internal API v1.0_rc1")
-@Path("/")
-public class InternalApiServiceImplV1_0_rc1 extends InternalApiServiceImplBase {
-
+public interface InternalClientCredentialEndPointDelegator {
+    Response obtainOauth2Token(String clientId, String clientSecret, String refreshToken, String grantType, String code, Set<String> scopes, String state,
+            String redirectUri, String resourceId);
 }

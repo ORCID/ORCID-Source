@@ -80,4 +80,6 @@ public class OrcidApiConstants {
     public static final String SWAGGER_PATH = "/resources";
     public static final String SWAGGER_FILE = "/swagger.json";
     public static final String SWAGGER_FILE_YAML = "/swagger.yaml";
+    
+    public static final String INTERNAL_API_PERSON_READ = "/{orcid}/person";
 }       

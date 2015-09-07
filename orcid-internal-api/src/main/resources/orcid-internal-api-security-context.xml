@@ -242,7 +242,7 @@
     </bean>
     
     <!-- As we have a Jersey endpoint, we need to create an extension to the Spring MVC, so we use a delegator -->
-    <bean id="orcidClientCredentialEndPointDelegator" class="com.orcid.api.common.server.delegator.impl.OrcidClientCredentialEndPointDelegatorImpl">
+    <bean id="orcidClientCredentialEndPointDelegator" class="org.orcid.internal.server.delegator.impl.InternalClientCredentialEndPointDelegatorImpl">
         <property name="tokenGranter" ref="tokenGranter"/>
         <property name="clientDetailsService" ref="clientDetailsManager"/>        
     </bean>    
