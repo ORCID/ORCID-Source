@@ -63,7 +63,7 @@ import org.orcid.jaxb.model.notification.Notification;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "putCode", "notificationType", "authorizationUrl", "notificationSubject", "intro", "items", "createdDate", "sentDate", "readDate", "actionedDate", "archivedDate", "source" })
+@XmlType(name = "", propOrder = { "putCode", "notificationType", "authorizationUrl", "notificationSubject", "notificationIntro", "items", "createdDate", "sentDate", "readDate", "actionedDate", "archivedDate", "source" })
 @XmlRootElement(name = "notification", namespace = "http://www.orcid.org/ns/notification")
 public class NotificationAddActivities extends Notification {
 
@@ -80,7 +80,7 @@ public class NotificationAddActivities extends Notification {
     @XmlElement(name = "notification-subject", namespace = "http://www.orcid.org/ns/notification")
     protected String notificationSubject;
     @XmlElement(name = "notification-intro", namespace = "http://www.orcid.org/ns/notification")
-    protected String intro;
+    protected String notificationIntro;
 
     /**
      * Gets the value of the authorizationUrl property.
@@ -148,11 +148,11 @@ public class NotificationAddActivities extends Notification {
         this.actionedDate = actionedDate;
     }
 
-    public String getIntro() {
-        return intro;
+    public String getNotificationIntro() {
+        return notificationIntro;
     }
 
-    public void setIntro(String intro) {
-        this.intro = intro;
+    public void setNotificationIntro(String intro) {
+        this.notificationIntro = intro;
     }           
 }

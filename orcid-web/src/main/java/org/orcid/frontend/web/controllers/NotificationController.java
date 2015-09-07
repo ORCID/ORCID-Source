@@ -126,5 +126,10 @@ public class NotificationController extends BaseController {
         notificationDao.flagAsArchived(currentUserOrcid, Long.valueOf(id));
         return notificationManager.findByOrcidAndId(currentUserOrcid, Long.valueOf(id));
     }
+    
+    @RequestMapping(value = "{id}/action")
+    public ModelAndView executeAction(@RequestParam(value = "target") String redirectUrl) {
+        return null;
+    }
 
 }

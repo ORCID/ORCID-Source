@@ -16,8 +16,6 @@
  */
 package org.orcid.persistence.jpa.entities;
 
-import java.util.Date;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -46,10 +44,7 @@ public class NotificationItemEntity extends BaseEntity<Long> {
     private String itemName;
     private String externalIdType;
     private String externalIdValue;
-    private Date actionedDate;
-    private String notificationSubject;
-    private String notificationIntro;
-
+    
     @Override
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "notification_item_seq")
@@ -97,32 +92,5 @@ public class NotificationItemEntity extends BaseEntity<Long> {
 
     public void setExternalIdValue(String externalIdValue) {
         this.externalIdValue = externalIdValue;
-    }
-
-    @Column(name = "actioned_date")
-    public Date getActionedDate() {
-        return actionedDate;
-    }
-
-    public void setActionedDate(Date actionedDate) {
-        this.actionedDate = actionedDate;
-    }
-
-    @Column(name = "notification_subject")
-    public String getNotificationSubject() {
-        return notificationSubject;
-    }
-
-    public void setNotificationSubject(String notificationSubject) {
-        this.notificationSubject = notificationSubject;
-    }
-
-    @Column(name = "notification_intro")
-    public String getNotificationIntro() {
-        return notificationIntro;
-    }
-
-    public void setNotificationIntro(String notificationIntro) {
-        this.notificationIntro = notificationIntro;
-    }        
+    }   
 }

@@ -825,4 +825,15 @@ public class NotificationManagerImpl implements NotificationManager {
         return notificationAdapter.toNotification(notificationEntity);
     }
 
+    @Override
+    @Transactional
+    public Notification setActionedDate(String orcid, Long id) {
+        NotificationEntity notificationEntity = notificationDao.findByOricdAndId(orcid, id);
+        if (notificationEntity == null) {
+            return null;
+        }
+        
+        return null;
+    }
+    
 }
