@@ -97,6 +97,8 @@ public class JpaJaxbNotificationAdapterTest {
         String authorizationUrlString = "https://orcid.org/oauth/authorize?client_id=APP-U4UKCNSSIM1OCVQY&amp;response_type=code&amp;scope=/orcid-works/create&amp;redirect_uri=http://somethirdparty.com";
         AuthorizationUrl url = new AuthorizationUrl();
         notification.setAuthorizationUrl(url);
+        notification.setNotificationIntro("This is the intro");
+        notification.setNotificationSubject("This is the subject");
         Source source = new Source();
         notification.setSource(source);
         SourceClientId clientId = new SourceClientId();
@@ -118,10 +120,12 @@ public class JpaJaxbNotificationAdapterTest {
 
         assertTrue(notificationEntity instanceof NotificationAddItemsEntity);
         NotificationAddItemsEntity addActivitiesEntity = (NotificationAddItemsEntity) notificationEntity;
-
+        
         assertNotNull(notificationEntity);
         assertEquals(NotificationType.ADD_ACTIVITIES, notificationEntity.getNotificationType());
         assertEquals(authorizationUrlString, addActivitiesEntity.getAuthorizationUrl());
+        assertEquals(notification.getNotificationIntro(), notificationEntity.getNotificationIntro());
+        assertEquals(notification.getNotificationSubject(),notificationEntity.getNotificationSubject());
         assertNotNull(addActivitiesEntity.getSource());
         assertEquals("APP-5555-5555-5555-5555", addActivitiesEntity.getSource().getSourceId());
         Set<NotificationItemEntity> activityEntities = addActivitiesEntity.getNotificationItems();
@@ -132,6 +136,7 @@ public class JpaJaxbNotificationAdapterTest {
         assertEquals("Latest Research Article", activityEntity.getItemName());
         assertEquals("DOI", activityEntity.getExternalIdType());
         assertEquals("1234/abc123", activityEntity.getExternalIdValue());
+        
     }
 
 }
