@@ -30,15 +30,15 @@ import org.orcid.jaxb.model.common.Source;
 import org.orcid.jaxb.model.common.SourceClientId;
 import org.orcid.jaxb.model.notification.Notification;
 import org.orcid.jaxb.model.notification.NotificationType;
-import org.orcid.jaxb.model.notification.addactivities.Activities;
-import org.orcid.jaxb.model.notification.addactivities.Activity;
-import org.orcid.jaxb.model.notification.addactivities.ActivityType;
+import org.orcid.jaxb.model.notification.addactivities.Items;
+import org.orcid.jaxb.model.notification.addactivities.Item;
+import org.orcid.jaxb.model.notification.addactivities.ItemType;
 import org.orcid.jaxb.model.notification.addactivities.AuthorizationUrl;
 import org.orcid.jaxb.model.notification.addactivities.ExternalIdentifier;
 import org.orcid.jaxb.model.notification.addactivities.NotificationAddActivities;
 import org.orcid.jaxb.model.notification.custom.NotificationCustom;
-import org.orcid.persistence.jpa.entities.NotificationActivityEntity;
-import org.orcid.persistence.jpa.entities.NotificationAddActivitiesEntity;
+import org.orcid.persistence.jpa.entities.NotificationItemEntity;
+import org.orcid.persistence.jpa.entities.NotificationAddItemsEntity;
 import org.orcid.persistence.jpa.entities.NotificationCustomEntity;
 import org.orcid.persistence.jpa.entities.NotificationEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
@@ -97,18 +97,20 @@ public class JpaJaxbNotificationAdapterTest {
         String authorizationUrlString = "https://orcid.org/oauth/authorize?client_id=APP-U4UKCNSSIM1OCVQY&amp;response_type=code&amp;scope=/orcid-works/create&amp;redirect_uri=http://somethirdparty.com";
         AuthorizationUrl url = new AuthorizationUrl();
         notification.setAuthorizationUrl(url);
+        notification.setNotificationIntro("This is the intro");
+        notification.setNotificationSubject("This is the subject");
         Source source = new Source();
         notification.setSource(source);
         SourceClientId clientId = new SourceClientId();
         source.setSourceClientId(clientId);
         clientId.setPath("APP-5555-5555-5555-5555");
         url.setUri(authorizationUrlString);
-        Activities activities = new Activities();
-        notification.setActivities(activities);
-        Activity activity = new Activity();
-        activities.getActivities().add(activity);
-        activity.setActivityType(ActivityType.WORK);
-        activity.setActivityName("Latest Research Article");
+        Items activities = new Items();
+        notification.setItems(activities);
+        Item activity = new Item();
+        activities.getItems().add(activity);
+        activity.setItemType(ItemType.WORK);
+        activity.setItemName("Latest Research Article");
         ExternalIdentifier extId = new ExternalIdentifier();
         activity.setExternalIdentifier(extId);
         extId.setExternalIdType("doi");
@@ -116,22 +118,25 @@ public class JpaJaxbNotificationAdapterTest {
 
         NotificationEntity notificationEntity = jpaJaxbNotificationAdapter.toNotificationEntity(notification);
 
-        assertTrue(notificationEntity instanceof NotificationAddActivitiesEntity);
-        NotificationAddActivitiesEntity addActivitiesEntity = (NotificationAddActivitiesEntity) notificationEntity;
-
+        assertTrue(notificationEntity instanceof NotificationAddItemsEntity);
+        NotificationAddItemsEntity addActivitiesEntity = (NotificationAddItemsEntity) notificationEntity;
+        
         assertNotNull(notificationEntity);
         assertEquals(NotificationType.ADD_ACTIVITIES, notificationEntity.getNotificationType());
         assertEquals(authorizationUrlString, addActivitiesEntity.getAuthorizationUrl());
+        assertEquals(notification.getNotificationIntro(), notificationEntity.getNotificationIntro());
+        assertEquals(notification.getNotificationSubject(),notificationEntity.getNotificationSubject());
         assertNotNull(addActivitiesEntity.getSource());
         assertEquals("APP-5555-5555-5555-5555", addActivitiesEntity.getSource().getSourceId());
-        Set<NotificationActivityEntity> activityEntities = addActivitiesEntity.getNotificationActivities();
+        Set<NotificationItemEntity> activityEntities = addActivitiesEntity.getNotificationItems();
         assertNotNull(activityEntities);
         assertEquals(1, activityEntities.size());
-        NotificationActivityEntity activityEntity = activityEntities.iterator().next();
-        assertEquals(ActivityType.WORK, activityEntity.getActivityType());
-        assertEquals("Latest Research Article", activityEntity.getActivityName());
+        NotificationItemEntity activityEntity = activityEntities.iterator().next();
+        assertEquals(ItemType.WORK, activityEntity.getItemType());
+        assertEquals("Latest Research Article", activityEntity.getItemName());
         assertEquals("DOI", activityEntity.getExternalIdType());
         assertEquals("1234/abc123", activityEntity.getExternalIdValue());
+        
     }
 
 }

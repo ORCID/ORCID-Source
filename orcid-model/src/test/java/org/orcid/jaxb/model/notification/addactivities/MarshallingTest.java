@@ -49,7 +49,7 @@ public class MarshallingTest {
         NotificationAddActivities notification = getNotification();
         assertNotNull(notification);
         assertEquals(NotificationType.ADD_ACTIVITIES, notification.getNotificationType());
-        assertEquals(2, notification.getActivities().getActivities().size());
+        assertEquals(2, notification.getItems().getItems().size());
         assertEquals("2014-01-01T14:45:32", notification.getSentDate().toXMLFormat());
 
         // Back the other way

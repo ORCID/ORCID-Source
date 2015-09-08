@@ -117,7 +117,7 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
             if (notification instanceof NotificationAddActivities) {
                 addActivitiesMessageCount++;
                 NotificationAddActivities addActsNotification = (NotificationAddActivities) notification;
-                activityCount += addActsNotification.getActivities().getActivities().size();
+                activityCount += addActsNotification.getItems().getItems().size();
             }
             if (notification instanceof NotificationAmended) {
                 amendedMessageCount++;

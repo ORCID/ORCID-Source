@@ -26,7 +26,7 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import org.orcid.jaxb.model.notification.addactivities.ActivityType;
+import org.orcid.jaxb.model.notification.addactivities.ItemType;
 
 /**
  * 
@@ -34,21 +34,21 @@ import org.orcid.jaxb.model.notification.addactivities.ActivityType;
  *
  */
 @Entity
-@Table(name = "notification_activity")
-public class NotificationActivityEntity extends BaseEntity<Long> {
+@Table(name = "notification_item")
+public class NotificationItemEntity extends BaseEntity<Long> {
 
     private static final long serialVersionUID = 1L;
 
     private Long id;
-    private ActivityType activityType;
-    private String activityName;
+    private ItemType itemType;
+    private String itemName;
     private String externalIdType;
     private String externalIdValue;
-
+    
     @Override
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "notification_activity_seq")
-    @SequenceGenerator(name = "notification_activity_seq", sequenceName = "notification_activity_seq")
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "notification_item_seq")
+    @SequenceGenerator(name = "notification_item_seq", sequenceName = "notification_item_seq")
     public Long getId() {
         return id;
     }
@@ -58,22 +58,22 @@ public class NotificationActivityEntity extends BaseEntity<Long> {
     }
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "activity_type")
-    public ActivityType getActivityType() {
-        return activityType;
+    @Column(name = "item_type")
+    public ItemType getItemType() {
+        return itemType;
     }
 
-    public void setActivityType(ActivityType activityType) {
-        this.activityType = activityType;
+    public void setItemType(ItemType itemType) {
+        this.itemType = itemType;
     }
 
-    @Column(name = "activity_name")
-    public String getActivityName() {
-        return activityName;
+    @Column(name = "item_name")
+    public String getItemName() {
+        return itemName;
     }
 
-    public void setActivityName(String activityName) {
-        this.activityName = activityName;
+    public void setItemName(String itemName) {
+        this.itemName = itemName;
     }
 
     @Column(name = "external_id_type")
@@ -92,6 +92,5 @@ public class NotificationActivityEntity extends BaseEntity<Long> {
 
     public void setExternalIdValue(String externalIdValue) {
         this.externalIdValue = externalIdValue;
-    }
-
+    }   
 }

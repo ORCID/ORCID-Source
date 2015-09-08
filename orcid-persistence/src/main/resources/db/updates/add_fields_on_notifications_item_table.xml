@@ -1,0 +1,56 @@
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2014 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+	<changeSet id="ADD-ACTIONED-DATE" author="Angel Montenegro">
+    	<preConditions onFail="MARK_RAN">
+    		<not>
+    			<columnExists tableName="notification" columnName="actioned_date"/>
+    		</not>                       
+        </preConditions>
+        <addColumn tableName="notification">
+        	<column name="actioned_date" type="TIMESTAMP WITH TIME ZONE" />
+        </addColumn>		
+    </changeSet>
+    
+    <changeSet id="ADD-NOTIFICATION-SUBJECT" author="Angel Montenegro">
+    	<preConditions onFail="MARK_RAN">
+    		<not>
+    			<columnExists tableName="notification" columnName="notification_subject"/>
+    		</not>                       
+        </preConditions>	
+        <addColumn tableName="notification">
+        	<column name="notification_subject" type="TEXT" />
+        </addColumn>	
+    </changeSet>
+    
+    <changeSet id="ADD-NOTIFICATION-INTRO" author="Angel Montenegro">
+    	<preConditions onFail="MARK_RAN">
+    		<not>
+    			<columnExists tableName="notification" columnName="notification_intro"/>
+    		</not>                       
+        </preConditions>
+        <addColumn tableName="notification">
+        	<column name="notification_intro" type="VARCHAR(1000)" />
+        </addColumn>		
+    </changeSet>
+          
+</databaseChangeLog>	

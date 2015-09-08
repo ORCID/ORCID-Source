@@ -27,8 +27,10 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.orcid.jaxb.model.notification.Notification;
 
@@ -61,7 +63,7 @@ import org.orcid.jaxb.model.notification.Notification;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "putCode", "notificationType", "authorizationUrl", "activities", "createdDate", "sentDate", "readDate", "archivedDate", "source" })
+@XmlType(name = "", propOrder = { "putCode", "notificationType", "authorizationUrl", "notificationSubject", "notificationIntro", "items", "createdDate", "sentDate", "readDate", "actionedDate", "archivedDate", "source" })
 @XmlRootElement(name = "notification", namespace = "http://www.orcid.org/ns/notification")
 public class NotificationAddActivities extends Notification {
 
@@ -69,9 +71,16 @@ public class NotificationAddActivities extends Notification {
     @XmlElement(name = "authorization-url", namespace = "http://www.orcid.org/ns/notification", required = true)
     protected AuthorizationUrl authorizationUrl;
     @XmlElement(namespace = "http://www.orcid.org/ns/notification", required = true)
-    protected Activities activities;
+    protected Items items;
+    @XmlElement(name = "actioned-date", namespace = "http://www.orcid.org/ns/notification")
+    @XmlSchemaType(name = "dateTime")
+    protected XMLGregorianCalendar actionedDate;
     @XmlTransient
     protected String subject;
+    @XmlElement(name = "notification-subject", namespace = "http://www.orcid.org/ns/notification")
+    protected String notificationSubject;
+    @XmlElement(name = "notification-intro", namespace = "http://www.orcid.org/ns/notification")
+    protected String notificationIntro;
 
     /**
      * Gets the value of the authorizationUrl property.
@@ -97,22 +106,22 @@ public class NotificationAddActivities extends Notification {
     /**
      * Gets the value of the activities property.
      * 
-     * @return possible object is {@link Activities }
+     * @return possible object is {@link Items }
      * 
      */
-    public Activities getActivities() {
-        return activities;
+    public Items getItems() {
+        return items;
     }
 
     /**
      * Sets the value of the activities property.
      * 
      * @param value
-     *            allowed object is {@link Activities }
+     *            allowed object is {@link Items }
      * 
      */
-    public void setActivities(Activities value) {
-        this.activities = value;
+    public void setItems(Items value) {
+        this.items = value;
     }
 
     public String getSubject() {
@@ -122,5 +131,28 @@ public class NotificationAddActivities extends Notification {
     public void setSubject(String subject) {
         this.subject = subject;
     }
+    
+    public String getNotificationSubject() {
+        return notificationSubject;
+    }
 
+    public void setNotificationSubject(String notificationSubject) {
+        this.notificationSubject = notificationSubject;
+    }
+
+    public XMLGregorianCalendar getActionedDate() {
+        return actionedDate;
+    }
+
+    public void setActionedDate(XMLGregorianCalendar actionedDate) {
+        this.actionedDate = actionedDate;
+    }
+
+    public String getNotificationIntro() {
+        return notificationIntro;
+    }
+
+    public void setNotificationIntro(String intro) {
+        this.notificationIntro = intro;
+    }           
 }

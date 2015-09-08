@@ -56,58 +56,58 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "activityType", "activityName", "externalIdentifier" })
-@XmlRootElement(name = "activity")
-public class Activity implements Serializable {
+@XmlType(name = "", propOrder = { "itemType", "itemName", "externalIdentifier" })
+@XmlRootElement(name = "item")
+public class Item implements Serializable {
 
     private final static long serialVersionUID = 1L;
-    @XmlElement(name = "activity-type", namespace = "http://www.orcid.org/ns/notification", required = true)
-    protected ActivityType activityType;
-    @XmlElement(name = "activity-name", namespace = "http://www.orcid.org/ns/notification", required = true)
-    protected String activityName;
+    @XmlElement(name = "item-type", namespace = "http://www.orcid.org/ns/notification", required = true)
+    protected ItemType itemType;
+    @XmlElement(name = "item-name", namespace = "http://www.orcid.org/ns/notification", required = true)
+    protected String itemName;
     @XmlElement(name = "external-identifier", namespace = "http://www.orcid.org/ns/notification", required = true)
     protected ExternalIdentifier externalIdentifier;
 
     /**
-     * Gets the value of the activityType property.
+     * Gets the value of the itemType property.
      * 
-     * @return possible object is {@link ActivityType }
+     * @return possible object is {@link ItemType }
      * 
      */
-    public ActivityType getActivityType() {
-        return activityType;
+    public ItemType getItemType() {
+        return itemType;
     }
 
     /**
-     * Sets the value of the activityType property.
+     * Sets the value of the itemType property.
      * 
      * @param value
-     *            allowed object is {@link ActivityType }
+     *            allowed object is {@link ItemType }
      * 
      */
-    public void setActivityType(ActivityType value) {
-        this.activityType = value;
+    public void setItemType(ItemType value) {
+        this.itemType = value;
     }
 
     /**
-     * Gets the value of the activityName property.
+     * Gets the value of the itemName property.
      * 
      * @return possible object is {@link String }
      * 
      */
-    public String getActivityName() {
-        return activityName;
+    public String getItemName() {
+        return itemName;
     }
 
     /**
-     * Sets the value of the activityName property.
+     * Sets the value of the itemName property.
      * 
      * @param value
      *            allowed object is {@link String }
      * 
      */
-    public void setActivityName(String value) {
-        this.activityName = value;
+    public void setItemName(String value) {
+        this.itemName = value;
     }
 
     /**

@@ -34,6 +34,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
@@ -125,6 +126,12 @@ public class NotificationController extends BaseController {
         String currentUserOrcid = getCurrentUserOrcid();
         notificationDao.flagAsArchived(currentUserOrcid, Long.valueOf(id));
         return notificationManager.findByOrcidAndId(currentUserOrcid, Long.valueOf(id));
+    }
+    
+    @RequestMapping(value = "{id}/action", method = RequestMethod.GET)
+    public ModelAndView executeAction(@PathVariable("id") String id, @RequestParam(value = "target") String redirectUri) {
+        notificationManager.setActionedDate(getCurrentUserOrcid(), Long.valueOf(id));
+        return new ModelAndView("redirect:" + redirectUri);        
     }
 
 }

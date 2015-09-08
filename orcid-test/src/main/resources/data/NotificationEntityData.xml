@@ -51,6 +51,8 @@
          body_text="Your ORCID record was updated by Super Institution 1.\n\nBest regards,\n\nORCID"
          body_html="Your ORCID record was updated by Super Institution 1.\n\n&lt;em>Best&lt;/em> regards,\n\nORCID"
          source_id="4444-4444-4444-4446"
+         notification_subject="This is the subject"
+         notification_intro="This is the intro"
      />
      
       <notification
@@ -63,6 +65,8 @@
          body_html="Your ORCID record was updated by Super Institution 1.\n\n&lt;em>Best&lt;/em> regards,\n\nORCID"
          source_id="4444-4444-4444-4446"
          sent_date="2014-07-24 14:35:43.00"
+         notification_subject="This is the subject"
+         notification_intro="This is the intro"
      />
      
      <notification
@@ -74,22 +78,22 @@
          sent_date="2014-10-04 06:41:52.00"
      />
      
-     <notification_activity
+     <notification_item
          id="1"
          notification_id="5"
          date_created="2014-10-03 02:56:23.00"
-         activity_type="WORK"
-         activity_name="A research article about something amazing"
+         item_type="WORK"
+         item_name="A research article about something amazing"
          external_id_type="DOI"
-         external_id_value="1234/abc123"
+         external_id_value="1234/abc123"                  
      />
      
-     <notification_activity
+     <notification_item
          id="2"
          notification_id="5"
          date_created="2014-10-03 02:56:23.00"
-         activity_type="EMPLOYMENT"
-         activity_name="Super Cool University"
+         item_type="EMPLOYMENT"
+         item_name="Super Cool University"
      />
      
 </dataset>
