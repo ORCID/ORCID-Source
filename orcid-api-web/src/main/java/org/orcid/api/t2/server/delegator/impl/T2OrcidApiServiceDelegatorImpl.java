@@ -259,7 +259,6 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
     @AccessControl(requiredScope = ScopePathType.ORCID_PROFILE_CREATE)
     public Response createProfile(UriInfo uriInfo, OrcidMessage orcidMessage) {
         OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();
-        checkHasOnlyOneEmail(orcidProfile);
         try {
             setSponsorFromAuthentication(orcidProfile);
             orcidProfile = orcidProfileManager.createOrcidProfileAndNotify(orcidProfile);
@@ -269,15 +268,6 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
                 throw new OrcidBadRequestException(localeManager.resolveMessage("apiError.badrequest_email_exists.exception"));
             }
             throw new OrcidBadRequestException(localeManager.resolveMessage("apiError.badrequest_createorcid.exception"), e);
-        }
-    }
-
-    private void checkHasOnlyOneEmail(OrcidProfile orcidProfile) {
-        if(orcidProfile != null && orcidProfile.getOrcidBio() != null && orcidProfile.getOrcidBio().getContactDetails() != null 
-        		&& orcidProfile.getOrcidBio().getContactDetails().getEmail() != null) {
-        	if(orcidProfile.getOrcidBio().getContactDetails().getEmail().size() > 1) {
-        		throw new OrcidBadRequestException(localeManager.resolveMessage("apiError.badrequest_numberofemails.exception"));
-        	}
         }
     }
 
