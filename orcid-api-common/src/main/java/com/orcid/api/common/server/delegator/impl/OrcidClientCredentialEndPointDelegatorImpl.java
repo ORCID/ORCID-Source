@@ -64,7 +64,7 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
     protected LocaleManager localeManager;
     
     @Transactional
-    public Response obtainOauth2Token(String clientId, String clientSecret, String grantType, String refreshToken, String code, Set<String> scopes, String state,
+    public Response obtainOauth2Token(String clientId, String clientSecret, String refreshToken, String grantType, String code, Set<String> scopes, String state,
             String redirectUri, String resourceId) {
 
         LOGGER.info("OAuth2 authorization requested: clientId={}, grantType={}, refreshToken={}, code={}, scopes={}, state={}, redirectUri={}", new Object[] { clientId,
@@ -95,7 +95,11 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
                 List<String> toRemove = new ArrayList<String>();
                 for (String scope : scopes) {
                     ScopePathType scopeType = ScopePathType.fromValue(scope);
-                    if(isClientCredentialsGrantType) {
+                    if(scopeType.isInternalScope()) {
+                        // You should not allow any internal scope here! go away!
+                        String message = localeManager.resolveMessage("apiError.9015.developerMessage", new Object[]{});
+                        throw new OrcidInvalidScopeException(message);
+                    } else if(isClientCredentialsGrantType) {
                         if(!scopeType.isClientCreditalScope())
                             toRemove.add(scope);
                     } else {

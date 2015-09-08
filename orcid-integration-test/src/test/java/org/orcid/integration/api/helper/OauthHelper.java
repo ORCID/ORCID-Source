@@ -116,17 +116,22 @@ public class OauthHelper {
         params.add("client_secret", clientSecret);
         params.add("grant_type", "client_credentials");
         params.add("scope", scope.value());
+        ClientResponse clientResponse = getResponse(params, usingPublicApi);        
+        assertEquals(200, clientResponse.getStatus());
+        String body = clientResponse.getEntity(String.class);
+        JSONObject jsonObject = new JSONObject(body);
+        String accessToken = (String) jsonObject.get("access_token");
+        return accessToken;
+    }
+    
+    public ClientResponse getResponse(MultivaluedMap<String, String> params, boolean usingPublicApi) {
         ClientResponse clientResponse = null;
         if(!usingPublicApi) {
             clientResponse = oauthT2Client.obtainOauth2TokenPost("client_credentials", params);
         } else {
             clientResponse = oauthT1Client.obtainOauth2TokenPost("client_credentials", params);
         }
-        assertEquals(200, clientResponse.getStatus());
-        String body = clientResponse.getEntity(String.class);
-        JSONObject jsonObject = new JSONObject(body);
-        String accessToken = (String) jsonObject.get("access_token");
-        return accessToken;
+        return clientResponse;
     }
     
     public void closeWebDriver() {
