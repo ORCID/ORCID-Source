@@ -606,12 +606,12 @@
                     </thead>
                     <tbody>
                         <tr ng-repeat="shibbolethAccount in shibbolethAccounts | orderBy:sort.column:sort.descending">
-                            <td width="40%"><a href="{{delegationDetails.delegateSummary.orcidIdentifier.uri}}" target="_blank">{{shibbolethAccount.remoteUser}}</a></td>
-                            <td width="30%"><a href="{{delegationDetails.delegateSummary.orcidIdentifier.uri}}" target="_blank">{{shibbolethAccount.shibIdentityProvider}}</a></td>
+                            <td width="40%"><a href="{{delegationDetails.delegateSummary.orcidIdentifier.uri}}" target="_blank">{{shibbolethAccount.id.provideruserid}}</a></td>
+                            <td width="30%"><a href="{{delegationDetails.delegateSummary.orcidIdentifier.uri}}" target="_blank">{{shibbolethAccount.id.providerid}}</a></td>
                             <td width="20%">{{shibbolethAccount.dateCreated|date:'yyyy-MM-dd'}}</td>
                             <td width="10%">
                                 <a
-                                ng-click="confirmRevoke(shibbolethAccount.remoteUser, shibbolethAccount.id)"
+                                ng-click="confirmRevoke(shibbolethAccount.id)"
                                 class="glyphicon glyphicon-trash grey"
                                 title="${springMacroRequestContext.getMessage("manage.revokeaccess")}"></a>
                             </td>

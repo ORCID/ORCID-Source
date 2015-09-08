@@ -14,22 +14,21 @@
  *
  * =============================================================================
  */
-package org.orcid.frontend.spring.web.social.config;
+package org.orcid.persistence.dao;
+
+import java.util.List;
+
+import org.orcid.persistence.jpa.entities.UserconnectionEntity;
+import org.orcid.persistence.jpa.entities.UserconnectionPK;
 
 /**
  * @author Shobhit Tyagi
  */
-public enum SocialType {
+public interface UserConnectionDao extends GenericDao<UserconnectionEntity, UserconnectionPK> {
 
-	FACEBOOK("facebook"), GOOGLE("google");
+	void updateLoginInformation(String email, String orcid, UserconnectionPK pk);
 	
-	private String value;
+    UserconnectionEntity findByProviderIdAndProviderUserId(String remoteUser, String shibIdentityProvider);
 
-	private SocialType(String value) {
-		this.value = value;
-	}
-	
-	public String value() {
-        return value;
-    }
+    List<UserconnectionEntity> findByOrcid(String orcid);
 }

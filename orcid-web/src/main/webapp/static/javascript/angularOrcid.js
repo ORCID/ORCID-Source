@@ -6028,9 +6028,9 @@ orcidNgModule.controller('ShibbolethCtrl',['$scope', '$compile', function Shibbo
         }
     };
 
-    $scope.confirmRevoke = function(shibbolethRemoteUser, id) {
+    $scope.confirmRevoke = function(id) {
         $scope.errors = [];
-        $scope.shibbolethRemoteUserToRevoke = shibbolethRemoteUser;
+        $scope.shibbolethRemoteUserToRevoke = id.provideruserid;
         $scope.idToManage = id;
         $.colorbox({
             html : $compile($('#revoke-shibboleth-account-modal').html())($scope)
