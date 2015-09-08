@@ -22,11 +22,11 @@ import java.util.Date;
 
 import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
-import javax.xml.bind.annotation.XmlElement;
 
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.security.visibility.aop.AccessControl;
 import org.orcid.internal.server.delegator.InternalApiServiceDelegator;
+import org.orcid.internal.util.LastModifiedResponse;
 import org.orcid.jaxb.model.message.ScopePathType;
 
 public class InternalApiServiceDelegatorImpl implements InternalApiServiceDelegator {
@@ -46,32 +46,6 @@ public class InternalApiServiceDelegatorImpl implements InternalApiServiceDelega
         LastModifiedResponse obj = new LastModifiedResponse(orcid, lastModified.toString());        
         Response response = Response.ok(obj).build(); 
         return response;
-    }
-    
-}
-
-class LastModifiedResponse {
-    @XmlElement(name = "orcid")
-    private String orcid;
-    @XmlElement(name = "last-modified")
-    private String lastModified;
-        
-    public LastModifiedResponse(String orcid, String lastModified) {        
-        this.orcid = orcid;        
-        this.lastModified = lastModified;
-    }
-    
-    public String getOrcid() {
-        return orcid;
-    }
-    public void setOrcid(String orcid) {
-        this.orcid = orcid;
-    }
-    public String getLastModified() {
-        return lastModified;
-    }
-    public void setLastModified(String lastModified) {
-        this.lastModified = lastModified;
     }
     
 }
