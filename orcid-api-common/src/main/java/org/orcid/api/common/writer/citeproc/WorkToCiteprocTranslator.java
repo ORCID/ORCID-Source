@@ -54,15 +54,17 @@ public class WorkToCiteprocTranslator {
      * Turn a work into Citeproc JSON. Uses bibtex citation if present,
      * otherwise attempts to map ORCID metadata
      * 
-     * @param work
+     * @param work the work to translate
+     * @param creditName name to use as author if no bibtex found 
+     * @param abreviate if true, will shorten bibtex derived authorship to 200 characters or 20 authors
      * @return the JSON as a String.
      */
-    public CSLItemData toCiteproc(Work work, boolean abreviate) {
+    public CSLItemData toCiteproc(Work work, String creditName, boolean abreviate) {
         if (work.getWorkCitation() != null && work.getWorkCitation().getWorkCitationType() != null
                 && work.getWorkCitation().getWorkCitationType().equals(CitationType.BIBTEX)) {
             return translateFromBibtexCitation(work, abreviate);
         }
-        return translateFromWorkMetadata(work);
+        return translateFromWorkMetadata(work,creditName);
     }
 
     /**
@@ -144,11 +146,12 @@ public class WorkToCiteprocTranslator {
      * crossref mappings here:
      * https://github.com/lagotto/lagotto/blob/master/config/initializers/
      * constants.rb
+     * @param creditName 
      * 
      * @param worktype
      * @return a CSLItemData, default CSLType.ARTICLE if cannot map type
      */
-    private CSLItemData translateFromWorkMetadata(Work work) {
+    private CSLItemData translateFromWorkMetadata(Work work, String creditName) {
         CSLItemDataBuilder builder = new CSLItemDataBuilder();
         builder.title((work.getWorkTitle() != null) ? work.getWorkTitle().getTitle().getContent() : "No Title");
         String doi = extractID(work, WorkExternalIdentifierType.DOI);
@@ -173,14 +176,14 @@ public class WorkToCiteprocTranslator {
 
         List<String> names = new ArrayList<String>();
         // TODO: Pass in credit name
-        // names.add(creditName);
+        names.add(creditName);
         if (work.getWorkContributors() != null && work.getWorkContributors().getContributor() != null) {
             for (Contributor c : work.getWorkContributors().getContributor()) {
                 names.add(c.getCreditName().getContent());
             }
         }
         CSLNameBuilder name = new CSLNameBuilder();
-        name.literal(Joiner.on(" and ").join(names));
+        name.literal(Joiner.on(" and ").skipNulls().join(names));
         builder.author(name.build());
 
         // TODO: make it work with "Spring", "August", whatever...

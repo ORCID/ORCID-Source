@@ -14,27 +14,17 @@
  *
  * =============================================================================
  */
-package org.orcid.api.common.writer.citeproc;
+package org.orcid.core.manager;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.orcid.jaxb.model.notification.addactivities.NotificationAddActivities;
 
-import de.undercouch.citeproc.csl.CSLItemData;
+/**
+ * 
+ * @author Will Simpson
+ * 
+ */
+public interface NotificationValidationManager {
 
-public class CSLItemDataList {
+    void validateNotificationAddActivities(NotificationAddActivities notification);
 
-    private List<CSLItemData> data = new ArrayList<CSLItemData>();
-
-    public List<CSLItemData> getData() {
-        return data;
-    }
-
-    public void setData(List<CSLItemData> data) {
-        this.data = data;
-    }
-    
-    public void addItem(CSLItemData item){
-        if (item != null)
-            data.add(item);
-    }
 }

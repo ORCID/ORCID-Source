@@ -37,7 +37,7 @@ public class WorkToCiteprocTranslatorTest {
     public void testBibtexWorkTranslationHyperAuthor(){
         Work w = makeWork(bibtexHyper);
         WorkToCiteprocTranslator t = new WorkToCiteprocTranslator();
-        CSLItemData d = t.toCiteproc(w, true);
+        CSLItemData d = t.toCiteproc(w, null, true);
         Assert.assertEquals(d.getAuthor().length, 1);
         Assert.assertEquals(d.getAuthor()[0].getLiteral(), "G. Aad et all.");
         Assert.assertEquals(d.getTitle(), "Observation of a new particle in the search for the Standard Model Higgs boson with the {ATLAS} detector at the {LHC}");
@@ -48,7 +48,7 @@ public class WorkToCiteprocTranslatorTest {
     public void testBibtexWorkTranslationHyperAuthorNoAbrev(){
         Work w = makeWork(bibtexHyper);
         WorkToCiteprocTranslator t = new WorkToCiteprocTranslator();
-        CSLItemData d = t.toCiteproc(w, false);
+        CSLItemData d = t.toCiteproc(w, null, false);
         Assert.assertEquals(d.getAuthor().length, 2932);
     }
     
@@ -65,7 +65,7 @@ public class WorkToCiteprocTranslatorTest {
         w.setWorkExternalIdentifiers(wei);
         
         WorkToCiteprocTranslator t = new WorkToCiteprocTranslator();
-        CSLItemData d = t.toCiteproc(w, true );  
+        CSLItemData d = t.toCiteproc(w, null, true );  
         Assert.assertEquals(d.getAuthor().length, 1);
         Assert.assertEquals(d.getAuthor()[0].getLiteral(), "Altshuler, D.M. and Durbin, R.M. and Abecasis, G.R. and Bentley, D.R. and Chakravarti, A. and Clark, A.G. and Donnelly, P. and Eichler, E.E. and Flicek, P. and Gabriel, S.B. and Gibbs, R.A. and Gre...");
         Assert.assertEquals(d.getDOI(), "10.1234/1234");
