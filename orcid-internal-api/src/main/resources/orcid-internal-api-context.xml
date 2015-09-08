@@ -31,9 +31,9 @@
     <aop:aspectj-autoproxy />
      
     <!--  Internal API -->
-    <bean id="internalV2ApiServiceDelegator" class="org.orcid.internal.server.delegator.impl.InternalApiServiceDelegatorImpl" />
+    <bean id="internalApiServiceDelegator" class="org.orcid.internal.server.delegator.impl.InternalApiServiceDelegatorImpl" />
     <bean id="internalApiServiceImplV1_0_rc1" class="org.orcid.internal.server.InternalApiServiceImplV1_0_rc1">
-        <property name="serviceDelegator" ref="internalV2ApiServiceDelegator"/>
+        <property name="serviceDelegator" ref="internalApiServiceDelegator"/>
     </bean>
 
 

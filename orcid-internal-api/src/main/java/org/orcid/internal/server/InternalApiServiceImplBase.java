@@ -107,10 +107,10 @@ public abstract class InternalApiServiceImplBase {
     }
     
     @GET
-    @Produces(value = { MediaType.APPLICATION_JSON })
+    @Produces(value = { MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     @Path(INTERNAL_API_PERSON_READ)
     public Response viewPersonDetails(@PathParam("orcid") String orcid) {
-        Response response = serviceDelegator.viewPersonDetails(orcid); 
+        Response response = serviceDelegator.viewPersonLastModified(orcid); 
         return response;
     }
 }
