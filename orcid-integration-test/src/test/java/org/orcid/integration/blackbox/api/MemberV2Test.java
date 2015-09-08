@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
 import org.codehaus.jettison.json.JSONException;
@@ -74,6 +75,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.core.util.MultivaluedMapImpl;
 
 /**
  * 
@@ -122,6 +124,18 @@ public class MemberV2Test extends BlackBoxBase {
         cleanActivities();
     }
 
+    @Test
+    public void testCantGetTokenForInternalScopes() {
+        MultivaluedMap<String, String> params = new MultivaluedMapImpl();
+        params.add("client_id", client1ClientId);
+        params.add("client_secret", client1ClientSecret);
+        params.add("grant_type", "client_credentials");
+        params.add("scope", ScopePathType.INTERNAL_PERSON_LAST_MODIFIED.value());
+        ClientResponse clientResponse = oauthHelper.getResponse(params, true);
+        assertNotNull(clientResponse);
+        assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), clientResponse.getStatus());
+    }
+    
     @Test
     public void testGetNotificationToken() throws JSONException, InterruptedException {
         String accessToken = getAccessToken(this.client1ClientId, this.client1ClientSecret);

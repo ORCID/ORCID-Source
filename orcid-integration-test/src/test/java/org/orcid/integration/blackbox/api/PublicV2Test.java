@@ -156,6 +156,7 @@ public class PublicV2Test {
         params.add("scope", ScopePathType.INTERNAL_PERSON_LAST_MODIFIED.value());
         ClientResponse clientResponse = oauthHelper.getResponse(params, true);
         assertNotNull(clientResponse);
+        assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), clientResponse.getStatus());
     }
     
     
