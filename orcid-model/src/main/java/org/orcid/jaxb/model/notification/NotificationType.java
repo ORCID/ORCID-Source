@@ -24,6 +24,7 @@
 package org.orcid.jaxb.model.notification;
 
 import javax.xml.bind.annotation.XmlEnum;
+import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlType;
 
 /**
@@ -40,7 +41,11 @@ import javax.xml.bind.annotation.XmlType;
 @XmlEnum
 public enum NotificationType {
 
-    CUSTOM, PERMISSION, AMENDED;
+    //@formatter:off
+    @XmlEnumValue("custom") CUSTOM,
+    @XmlEnumValue("permission")PERMISSION,
+    @XmlEnumValue("amended") AMENDED;
+    //@formatter:on
 
     public String value() {
         return name();

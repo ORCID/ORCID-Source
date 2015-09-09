@@ -27,7 +27,7 @@
 	</xs:element>
 	<xs:simpleType name="notification-type">
 	   <xs:restriction base="xs:string">
-			<xs:enumeration value="PERMISSION"/>
+			<xs:enumeration value="permission"/>
 		</xs:restriction>
 	</xs:simpleType>
 	<xs:complexType name="authorization-url">
@@ -76,10 +76,10 @@
 	</xs:complexType>
     <xs:simpleType name="activity-type">
         <xs:restriction base="xs:string">
-            <xs:enumeration value="EDUCATION"></xs:enumeration>
-            <xs:enumeration value="EMPLOYMENT"></xs:enumeration>
-            <xs:enumeration value="FUNDING"></xs:enumeration>
-            <xs:enumeration value="WORK"></xs:enumeration>
+            <xs:enumeration value="education"></xs:enumeration>
+            <xs:enumeration value="employment"></xs:enumeration>
+            <xs:enumeration value="funding"></xs:enumeration>
+            <xs:enumeration value="work"></xs:enumeration>
         </xs:restriction>
     </xs:simpleType>
     <xs:complexType name="actioned-date">        
