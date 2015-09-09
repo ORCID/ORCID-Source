@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.jaxb.model.notification.addactivities;
+package org.orcid.jaxb.model.notification.permission;
 
 import javax.xml.bind.annotation.XmlEnum;
 

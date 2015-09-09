@@ -21,14 +21,14 @@
 // Generated on: 2014.11.24 at 04:27:39 PM GMT 
 //
 
-package org.orcid.jaxb.model.notification.addactivities;
+package org.orcid.jaxb.model.notification.permission;
 
 import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 
 /**
@@ -44,9 +44,9 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="uri" type="{http://www.w3.org/2001/XMLSchema}anyURI"/>
- *         &lt;element name="path" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="host" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element ref="{http://www.orcid.org/ns/notification}activity-type"/>
+ *         &lt;element ref="{http://www.orcid.org/ns/notification}activity-name"/>
+ *         &lt;element ref="{http://www.orcid.org/ns/common}external-id" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -56,80 +56,79 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "uri", "path", "host" })
-@XmlRootElement(name = "authorization-url", namespace="http://www.orcid.org/ns/notification")
-public class AuthorizationUrl implements Serializable {
+@XmlType(name = "", propOrder = { "itemType", "itemName", "externalIdentifier" })
+@XmlRootElement(name = "item")
+public class Item implements Serializable {
 
     private final static long serialVersionUID = 1L;
-    @XmlElement(required = true)
-    @XmlSchemaType(name = "anyURI")
-    protected String uri;
-    @XmlElement(required = true)
-    protected String path;
-    @XmlElement(required = true)
-    protected String host;
+    @XmlElement(name = "item-type", namespace = "http://www.orcid.org/ns/notification", required = true)
+    protected ItemType itemType;
+    @XmlElement(name = "item-name", namespace = "http://www.orcid.org/ns/notification", required = true)
+    protected String itemName;
+    @XmlElement(name = "external-identifier", namespace = "http://www.orcid.org/ns/notification", required = true)
+    protected ExternalIdentifier externalIdentifier;
 
     /**
-     * Gets the value of the uri property.
+     * Gets the value of the itemType property.
+     * 
+     * @return possible object is {@link ItemType }
+     * 
+     */
+    public ItemType getItemType() {
+        return itemType;
+    }
+
+    /**
+     * Sets the value of the itemType property.
+     * 
+     * @param value
+     *            allowed object is {@link ItemType }
+     * 
+     */
+    public void setItemType(ItemType value) {
+        this.itemType = value;
+    }
+
+    /**
+     * Gets the value of the itemName property.
      * 
      * @return possible object is {@link String }
      * 
      */
-    public String getUri() {
-        return uri;
+    public String getItemName() {
+        return itemName;
     }
 
     /**
-     * Sets the value of the uri property.
+     * Sets the value of the itemName property.
      * 
      * @param value
      *            allowed object is {@link String }
      * 
      */
-    public void setUri(String value) {
-        this.uri = value;
+    public void setItemName(String value) {
+        this.itemName = value;
     }
 
     /**
-     * Gets the value of the path property.
+     * Gets the value of the externalId property.
      * 
-     * @return possible object is {@link String }
+     * @return possible object is {@link ExternalIdentifier }
      * 
      */
-    public String getPath() {
-        return path;
+    public ExternalIdentifier getExternalIdentifier() {
+        return externalIdentifier;
     }
 
     /**
-     * Sets the value of the path property.
+     * Sets the value of the externalId property.
      * 
      * @param value
-     *            allowed object is {@link String }
+     *            allowed object is {@link ExternalIdentifier }
      * 
      */
-    public void setPath(String value) {
-        this.path = value;
-    }
-
-    /**
-     * Gets the value of the host property.
-     * 
-     * @return possible object is {@link String }
-     * 
-     */
-    public String getHost() {
-        return host;
-    }
-
-    /**
-     * Sets the value of the host property.
-     * 
-     * @param value
-     *            allowed object is {@link String }
-     * 
-     */
-    public void setHost(String value) {
-        this.host = value;
+    public void setExternalIdentifier(ExternalIdentifier value) {
+        this.externalIdentifier = value;
     }
 
 }

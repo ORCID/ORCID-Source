@@ -27,7 +27,7 @@
 	</xs:element>
 	<xs:simpleType name="notification-type">
 	   <xs:restriction base="xs:string">
-			<xs:enumeration value="ADD_ACTIVITIES"/>
+			<xs:enumeration value="PERMISSION"/>
 		</xs:restriction>
 	</xs:simpleType>
 	<xs:complexType name="authorization-url">

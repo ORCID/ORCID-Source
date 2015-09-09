@@ -21,7 +21,7 @@
 // Generated on: 2014.11.24 at 04:27:39 PM GMT 
 //
 
-package org.orcid.jaxb.model.notification.addactivities;
+package org.orcid.jaxb.model.notification.permission;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -65,7 +65,7 @@ import org.orcid.jaxb.model.notification.Notification;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = { "putCode", "notificationType", "authorizationUrl", "notificationSubject", "notificationIntro", "items", "createdDate", "sentDate", "readDate", "actionedDate", "archivedDate", "source" })
 @XmlRootElement(name = "notification", namespace = "http://www.orcid.org/ns/notification")
-public class NotificationAddActivities extends Notification {
+public class NotificationPermission extends Notification {
 
     private final static long serialVersionUID = 1L;
     @XmlElement(name = "authorization-url", namespace = "http://www.orcid.org/ns/notification", required = true)

@@ -16,7 +16,7 @@
  */
 package org.orcid.core.manager;
 
-import org.orcid.jaxb.model.notification.addactivities.NotificationAddActivities;
+import org.orcid.jaxb.model.notification.permission.NotificationPermission;
 
 /**
  * 
@@ -25,6 +25,6 @@ import org.orcid.jaxb.model.notification.addactivities.NotificationAddActivities
  */
 public interface NotificationValidationManager {
 
-    void validateNotificationAddActivities(NotificationAddActivities notification);
+    void validateNotificationPermission(NotificationPermission notification);
 
 }

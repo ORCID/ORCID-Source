@@ -35,11 +35,11 @@ import org.orcid.jaxb.model.common.PublicationDate;
 import org.orcid.jaxb.model.common.SourceClientId;
 import org.orcid.jaxb.model.common.SourceOrcid;
 import org.orcid.jaxb.model.groupid.GroupIdRecord;
-import org.orcid.jaxb.model.notification.addactivities.Item;
-import org.orcid.jaxb.model.notification.addactivities.AuthorizationUrl;
-import org.orcid.jaxb.model.notification.addactivities.NotificationAddActivities;
 import org.orcid.jaxb.model.notification.amended.NotificationAmended;
 import org.orcid.jaxb.model.notification.custom.NotificationCustom;
+import org.orcid.jaxb.model.notification.permission.AuthorizationUrl;
+import org.orcid.jaxb.model.notification.permission.Item;
+import org.orcid.jaxb.model.notification.permission.NotificationPermission;
 import org.orcid.jaxb.model.record.Education;
 import org.orcid.jaxb.model.record.Employment;
 import org.orcid.jaxb.model.record.Funding;
@@ -90,11 +90,11 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         converterFactory.registerConverter("externalIdentifierIdConverter", new ExternalIdentifierTypeConverter());
         mapCommonFields(mapperFactory.classMap(NotificationCustomEntity.class, NotificationCustom.class)).register();
         mapCommonFields(
-                mapperFactory.classMap(NotificationAddItemsEntity.class, NotificationAddActivities.class).field("authorizationUrl", "authorizationUrl.uri")
+                mapperFactory.classMap(NotificationAddItemsEntity.class, NotificationPermission.class).field("authorizationUrl", "authorizationUrl.uri")
                         .field("notificationItems", "items.items")
-                        .customize(new CustomMapper<NotificationAddItemsEntity, NotificationAddActivities>() {
+                        .customize(new CustomMapper<NotificationAddItemsEntity, NotificationPermission>() {
                             @Override
-                            public void mapAtoB(NotificationAddItemsEntity entity, NotificationAddActivities notification, MappingContext context) {
+                            public void mapAtoB(NotificationAddItemsEntity entity, NotificationPermission notification, MappingContext context) {
                                 AuthorizationUrl authUrl = notification.getAuthorizationUrl();
                                 if (authUrl != null) {
                                     authUrl.setPath(extractFullPath(authUrl.getUri()));
@@ -103,7 +103,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
                             }
 
                             @Override
-                            public void mapBtoA(NotificationAddActivities notification, NotificationAddItemsEntity entity, MappingContext context) {
+                            public void mapBtoA(NotificationPermission notification, NotificationAddItemsEntity entity, MappingContext context) {
                                 if (entity.getAuthorizationUrl() == null) {
                                     String authUrl = orcidUrlManager.getBaseUrl() + notification.getAuthorizationUrl().getPath();
                                     entity.setAuthorizationUrl(authUrl);

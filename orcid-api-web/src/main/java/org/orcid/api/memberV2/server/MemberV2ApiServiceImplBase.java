@@ -26,6 +26,9 @@ import static org.orcid.core.api.OrcidApiConstants.FUNDING;
 import static org.orcid.core.api.OrcidApiConstants.FUNDING_SUMMARY;
 import static org.orcid.core.api.OrcidApiConstants.ORCID_JSON;
 import static org.orcid.core.api.OrcidApiConstants.ORCID_XML;
+import static org.orcid.core.api.OrcidApiConstants.PERMISSIONS_FLAG_AS_ARCHIVED_PATH;
+import static org.orcid.core.api.OrcidApiConstants.PERMISSIONS_PATH;
+import static org.orcid.core.api.OrcidApiConstants.PERMISSIONS_VIEW_PATH;
 import static org.orcid.core.api.OrcidApiConstants.PUTCODE;
 import static org.orcid.core.api.OrcidApiConstants.STATUS_PATH;
 import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_JSON;
@@ -55,9 +58,13 @@ import javax.ws.rs.core.UriInfo;
 
 import org.orcid.api.common.swagger.SwaggerUIBuilder;
 import org.orcid.api.memberV2.server.delegator.MemberV2ApiServiceDelegator;
+import org.orcid.api.notifications.server.delegator.NotificationsApiServiceDelegator;
+import org.orcid.core.exception.OrcidNotificationAlreadyReadException;
 import org.orcid.jaxb.model.groupid.GroupIdRecord;
 import org.orcid.jaxb.model.groupid.GroupIdRecords;
 import org.orcid.jaxb.model.message.ScopeConstants;
+import org.orcid.jaxb.model.notification.Notification;
+import org.orcid.jaxb.model.notification.permission.NotificationPermission;
 import org.orcid.jaxb.model.record.Education;
 import org.orcid.jaxb.model.record.Employment;
 import org.orcid.jaxb.model.record.Funding;
@@ -96,8 +103,14 @@ abstract public class MemberV2ApiServiceImplBase {
 
     private MemberV2ApiServiceDelegator serviceDelegator;
 
+    private NotificationsApiServiceDelegator notificationsServiceDelegator;
+
     public void setServiceDelegator(MemberV2ApiServiceDelegator serviceDelegator) {
         this.serviceDelegator = serviceDelegator;
+    }
+
+    public void setNotificationsServiceDelegator(NotificationsApiServiceDelegator notificationsServiceDelegator) {
+        this.notificationsServiceDelegator = notificationsServiceDelegator;
     }
 
     /**
@@ -446,4 +459,51 @@ abstract public class MemberV2ApiServiceImplBase {
     public Response viewError() {
         throw new RuntimeException("Sample Error", new Exception("Sample Exception"));
     }
+
+    // START NOTIFICATIONS
+    // ===================
+    @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(PERMISSIONS_PATH)
+    @ApiOperation(value = "Fetch all notifications for an ORCID ID", hidden = true, authorizations = { @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.PREMIUM_NOTIFICATION, description = "you need this") }) })
+    public Response viewAddActivitiesNotifications(@PathParam("orcid") String orcid) {
+        return notificationsServiceDelegator.findAddActivitiesNotifications(orcid);
+    }
+
+    @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(PERMISSIONS_VIEW_PATH)
+    @ApiOperation(value = "Fetch a notification by id", response = Notification.class, authorizations = { @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.PREMIUM_NOTIFICATION, description = "you need this") }) })
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "Notification found", response = Notification.class),
+            @ApiResponse(code = 404, message = "Notification not found", response = String.class),
+            @ApiResponse(code = 401, message = "Access denied, this is not your notification", response = String.class) })
+    public Response viewAddActivitiesNotification(@PathParam("orcid") String orcid, @PathParam("id") Long id) {
+        return notificationsServiceDelegator.findAddActivitiesNotification(orcid, id);
+    }
+
+    @POST
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(PERMISSIONS_FLAG_AS_ARCHIVED_PATH)
+    @Consumes()
+    @ApiOperation(value = "Archive a notification", response = Notification.class, authorizations = { @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.PREMIUM_NOTIFICATION, description = "you need this") }) })
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "Notification archived, see HTTP Location header for URI", response = Notification.class),
+            @ApiResponse(code = 404, message = "Notification not found", response = String.class),
+            @ApiResponse(code = 401, message = "Access denied, this is not your notification", response = String.class) })
+    public Response flagAsArchivedAddActivitiesNotification(@PathParam("orcid") String orcid, @PathParam("id") Long id) throws OrcidNotificationAlreadyReadException {
+        return notificationsServiceDelegator.flagNotificationAsArchived(orcid, id);
+    }
+
+    @POST
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(PERMISSIONS_PATH)
+    @ApiOperation(value = "Add a notification", response = URI.class, authorizations = { @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.PREMIUM_NOTIFICATION, description = "you need this") }) })
+    @ApiResponses(value = { @ApiResponse(code = 201, message = "Notification added, see HTTP Location header for URI", responseHeaders = @ResponseHeader(name = "Location", description = "The created Notification resource", response = URI.class)) })
+    public Response addAddActivitiesNotification(@PathParam("orcid") String orcid, NotificationPermission notification) {
+        return notificationsServiceDelegator.addAddActivitiesNotification(uriInfo, orcid, notification);
+    }
+    
+    // END NOTIFICATIONS
+    // =================
+
 }

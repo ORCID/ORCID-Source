@@ -38,7 +38,7 @@ import org.orcid.core.manager.SourceManager;
 import org.orcid.core.security.visibility.aop.AccessControl;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.notification.Notification;
-import org.orcid.jaxb.model.notification.addactivities.NotificationAddActivities;
+import org.orcid.jaxb.model.notification.permission.NotificationPermission;
 import org.springframework.stereotype.Component;
 
 /**
@@ -112,8 +112,8 @@ public class NotificationsApiServiceDelegatorImpl implements NotificationsApiSer
 
     @Override
     @AccessControl(requiredScope = ScopePathType.PREMIUM_NOTIFICATION)
-    public Response addAddActivitiesNotification(UriInfo uriInfo, String orcid, NotificationAddActivities notification) {
-        notificationValidationManager.validateNotificationAddActivities(notification);
+    public Response addAddActivitiesNotification(UriInfo uriInfo, String orcid, NotificationPermission notification) {
+        notificationValidationManager.validateNotificationPermission(notification);
         Notification createdNotification = notificationManager.createNotification(orcid, notification);
         try {
             return Response.created(new URI(uriInfo.getAbsolutePath() + "/" + createdNotification.getPutCode())).build();

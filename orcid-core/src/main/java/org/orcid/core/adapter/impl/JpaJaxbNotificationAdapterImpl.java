@@ -25,9 +25,9 @@ import ma.glasnost.orika.MapperFacade;
 
 import org.orcid.core.adapter.JpaJaxbNotificationAdapter;
 import org.orcid.jaxb.model.notification.Notification;
-import org.orcid.jaxb.model.notification.addactivities.NotificationAddActivities;
 import org.orcid.jaxb.model.notification.amended.NotificationAmended;
 import org.orcid.jaxb.model.notification.custom.NotificationCustom;
+import org.orcid.jaxb.model.notification.permission.NotificationPermission;
 import org.orcid.persistence.jpa.entities.NotificationAddItemsEntity;
 import org.orcid.persistence.jpa.entities.NotificationAmendedEntity;
 import org.orcid.persistence.jpa.entities.NotificationCustomEntity;
@@ -44,7 +44,7 @@ public class JpaJaxbNotificationAdapterImpl implements JpaJaxbNotificationAdapte
 
     private static final Map<Class<? extends Notification>, Class<? extends NotificationEntity>> JAXB2JPA_CLASS_MAP = new HashMap<>();
     static {
-        JAXB2JPA_CLASS_MAP.put(NotificationAddActivities.class, NotificationAddItemsEntity.class);
+        JAXB2JPA_CLASS_MAP.put(NotificationPermission.class, NotificationAddItemsEntity.class);
         JAXB2JPA_CLASS_MAP.put(NotificationCustom.class, NotificationCustomEntity.class);
         JAXB2JPA_CLASS_MAP.put(NotificationAmended.class, NotificationAmendedEntity.class);
     }

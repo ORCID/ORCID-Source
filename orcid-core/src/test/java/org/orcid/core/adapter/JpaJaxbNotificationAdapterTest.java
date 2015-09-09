@@ -30,13 +30,13 @@ import org.orcid.jaxb.model.common.Source;
 import org.orcid.jaxb.model.common.SourceClientId;
 import org.orcid.jaxb.model.notification.Notification;
 import org.orcid.jaxb.model.notification.NotificationType;
-import org.orcid.jaxb.model.notification.addactivities.Items;
-import org.orcid.jaxb.model.notification.addactivities.Item;
-import org.orcid.jaxb.model.notification.addactivities.ItemType;
-import org.orcid.jaxb.model.notification.addactivities.AuthorizationUrl;
-import org.orcid.jaxb.model.notification.addactivities.ExternalIdentifier;
-import org.orcid.jaxb.model.notification.addactivities.NotificationAddActivities;
 import org.orcid.jaxb.model.notification.custom.NotificationCustom;
+import org.orcid.jaxb.model.notification.permission.AuthorizationUrl;
+import org.orcid.jaxb.model.notification.permission.ExternalIdentifier;
+import org.orcid.jaxb.model.notification.permission.Item;
+import org.orcid.jaxb.model.notification.permission.ItemType;
+import org.orcid.jaxb.model.notification.permission.Items;
+import org.orcid.jaxb.model.notification.permission.NotificationPermission;
 import org.orcid.persistence.jpa.entities.NotificationItemEntity;
 import org.orcid.persistence.jpa.entities.NotificationAddItemsEntity;
 import org.orcid.persistence.jpa.entities.NotificationCustomEntity;
@@ -92,8 +92,8 @@ public class JpaJaxbNotificationAdapterTest {
 
     @Test
     public void testToNotificationAddActivitiesEntity() {
-        NotificationAddActivities notification = new NotificationAddActivities();
-        notification.setNotificationType(NotificationType.ADD_ACTIVITIES);
+        NotificationPermission notification = new NotificationPermission();
+        notification.setNotificationType(NotificationType.PERMISSION);
         String authorizationUrlString = "https://orcid.org/oauth/authorize?client_id=APP-U4UKCNSSIM1OCVQY&amp;response_type=code&amp;scope=/orcid-works/create&amp;redirect_uri=http://somethirdparty.com";
         AuthorizationUrl url = new AuthorizationUrl();
         notification.setAuthorizationUrl(url);
@@ -122,7 +122,7 @@ public class JpaJaxbNotificationAdapterTest {
         NotificationAddItemsEntity addActivitiesEntity = (NotificationAddItemsEntity) notificationEntity;
         
         assertNotNull(notificationEntity);
-        assertEquals(NotificationType.ADD_ACTIVITIES, notificationEntity.getNotificationType());
+        assertEquals(NotificationType.PERMISSION, notificationEntity.getNotificationType());
         assertEquals(authorizationUrlString, addActivitiesEntity.getAuthorizationUrl());
         assertEquals(notification.getNotificationIntro(), notificationEntity.getNotificationIntro());
         assertEquals(notification.getNotificationSubject(),notificationEntity.getNotificationSubject());

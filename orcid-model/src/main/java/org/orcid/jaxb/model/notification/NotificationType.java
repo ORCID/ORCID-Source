@@ -35,21 +35,12 @@ import javax.xml.bind.annotation.XmlType;
  * this class.
  * <p>
  * 
- * <pre>
- * &lt;simpleType>
- *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
- *     &lt;enumeration value="RECORD_UPDATED_BY_MEMBER"/>
- *     &lt;enumeration value="CUSTOM"/>
- *   &lt;/restriction>
- * &lt;/simpleType>
- * </pre>
- * 
  */
 @XmlType(name = "")
 @XmlEnum
 public enum NotificationType {
 
-    CUSTOM, ADD_ACTIVITIES, AMENDED;
+    CUSTOM, PERMISSION, AMENDED;
 
     public String value() {
         return name();
