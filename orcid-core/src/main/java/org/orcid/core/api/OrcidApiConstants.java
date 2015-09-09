@@ -48,7 +48,6 @@ public class OrcidApiConstants {
     public static final String EMPLOYMENT = "/{orcid}/employment";
     public static final String EMPLOYMENT_SUMMARY = "/{orcid}/employment/summary";
     public static final String PUTCODE = "/{putCode}"; // concated on the end of other paths like FUNDINGS
-    public static final String PERMISSIONS_FLAG_AS_ARCHIVED_PATH = "/{orcid}/notification-permission/{id}/archive";
     public static final String PEER_REVIEW = "/{orcid}/peer-review";
     public static final String PEER_REVIEW_SUMMARY = "/{orcid}/peer-review/summary";
     public static final String GROUP_ID_RECORD = "/group-id-record";

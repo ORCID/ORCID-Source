@@ -16,7 +16,10 @@
  */
 package org.orcid.integration.api.notifications;
 
-import static org.orcid.core.api.OrcidApiConstants.*;
+import static org.orcid.core.api.OrcidApiConstants.PERMISSIONS_PATH;
+import static org.orcid.core.api.OrcidApiConstants.PERMISSIONS_VIEW_PATH;
+import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_JSON;
+import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_XML;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -67,18 +70,16 @@ public class NotificationsApiClientImpl {
         return orcidClientHelper.getClientResponseWithToken(UriBuilder.fromPath(PERMISSIONS_VIEW_PATH).build(orcid, id), VND_ORCID_XML, accessToken);
     }
 
-    public ClientResponse viewPermissionNotificationJson(String orcid, Long id) {
-        // TODO Auto-generated method stub
-        return null;
+    public ClientResponse viewPermissionNotificationJson(String orcid, Long id, String accessToken) {
+        return orcidClientHelper.getClientResponseWithToken(UriBuilder.fromPath(PERMISSIONS_VIEW_PATH).build(orcid, id), VND_ORCID_JSON, accessToken);
     }
 
     public ClientResponse flagAsArchivedPermissionNotificationXml(String orcid, Long id, String accessToken) throws OrcidNotificationAlreadyReadException {
-        return orcidClientHelper.postClientResponseWithToken(UriBuilder.fromPath(PERMISSIONS_FLAG_AS_ARCHIVED_PATH).build(orcid, id), VND_ORCID_XML, null, accessToken);
+        return orcidClientHelper.deleteClientResponseWithToken(UriBuilder.fromPath(PERMISSIONS_VIEW_PATH).build(orcid, id), VND_ORCID_XML, accessToken);
     }
 
-    public ClientResponse flagAsArchivedPermissionNotificationJson(String orcid, Long id) throws OrcidNotificationAlreadyReadException {
-        // TODO Auto-generated method stub
-        return null;
+    public ClientResponse flagAsArchivedPermissionNotificationJson(String orcid, Long id, String accessToken) throws OrcidNotificationAlreadyReadException {
+        return orcidClientHelper.deleteClientResponseWithToken(UriBuilder.fromPath(PERMISSIONS_VIEW_PATH).build(orcid, id), VND_ORCID_JSON, accessToken);
     }
 
     public ClientResponse addPermissionNotificationXml(String orcid, NotificationPermission notification, String accessToken) {

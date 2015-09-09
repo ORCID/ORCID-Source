@@ -24,9 +24,11 @@ import static org.orcid.core.api.OrcidApiConstants.EMPLOYMENT_SUMMARY;
 import static org.orcid.core.api.OrcidApiConstants.ERROR;
 import static org.orcid.core.api.OrcidApiConstants.FUNDING;
 import static org.orcid.core.api.OrcidApiConstants.FUNDING_SUMMARY;
+import static org.orcid.core.api.OrcidApiConstants.GROUP_ID_RECORD;
 import static org.orcid.core.api.OrcidApiConstants.ORCID_JSON;
 import static org.orcid.core.api.OrcidApiConstants.ORCID_XML;
-import static org.orcid.core.api.OrcidApiConstants.PERMISSIONS_FLAG_AS_ARCHIVED_PATH;
+import static org.orcid.core.api.OrcidApiConstants.PEER_REVIEW;
+import static org.orcid.core.api.OrcidApiConstants.PEER_REVIEW_SUMMARY;
 import static org.orcid.core.api.OrcidApiConstants.PERMISSIONS_PATH;
 import static org.orcid.core.api.OrcidApiConstants.PERMISSIONS_VIEW_PATH;
 import static org.orcid.core.api.OrcidApiConstants.PUTCODE;
@@ -35,12 +37,15 @@ import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_JSON;
 import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_XML;
 import static org.orcid.core.api.OrcidApiConstants.WORK;
 import static org.orcid.core.api.OrcidApiConstants.WORK_SUMMARY;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.Authorization;
+import io.swagger.annotations.AuthorizationScope;
+import io.swagger.annotations.ExternalDocs;
+import io.swagger.annotations.ResponseHeader;
 
 import java.net.URI;
-
-import static org.orcid.core.api.OrcidApiConstants.PEER_REVIEW;
-import static org.orcid.core.api.OrcidApiConstants.PEER_REVIEW_SUMMARY;
-import static org.orcid.core.api.OrcidApiConstants.GROUP_ID_RECORD;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -77,14 +82,6 @@ import org.orcid.jaxb.model.record.summary.FundingSummary;
 import org.orcid.jaxb.model.record.summary.PeerReviewSummary;
 import org.orcid.jaxb.model.record.summary.WorkSummary;
 import org.springframework.beans.factory.annotation.Value;
-
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
-import io.swagger.annotations.Authorization;
-import io.swagger.annotations.AuthorizationScope;
-import io.swagger.annotations.ExternalDocs;
-import io.swagger.annotations.ResponseHeader;
 
 /**
  * @author rcpeters
@@ -481,12 +478,12 @@ abstract public class MemberV2ApiServiceImplBase {
         return notificationsServiceDelegator.findPermissionNotification(orcid, id);
     }
 
-    @POST
+    @DELETE
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
-    @Path(PERMISSIONS_FLAG_AS_ARCHIVED_PATH)
+    @Path(PERMISSIONS_VIEW_PATH)
     @Consumes()
     @ApiOperation(value = "Archive a notification", response = Notification.class, authorizations = { @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.PREMIUM_NOTIFICATION, description = "you need this") }) })
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "Notification archived, see HTTP Location header for URI", response = Notification.class),
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "Notification archived", response = Notification.class),
             @ApiResponse(code = 404, message = "Notification not found", response = String.class),
             @ApiResponse(code = 401, message = "Access denied, this is not your notification", response = String.class) })
     public Response flagAsArchivedPermissionNotification(@PathParam("orcid") String orcid, @PathParam("id") Long id) throws OrcidNotificationAlreadyReadException {
