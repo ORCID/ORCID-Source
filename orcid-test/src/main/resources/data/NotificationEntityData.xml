@@ -73,7 +73,7 @@
          id="5"
          orcid="4444-4444-4444-4442"
          date_created="2014-10-03 02:56:23.00"
-         notification_type="ADD_ACTIVITIES"
+         notification_type="PERMISSION"
          source_id="4444-4444-4444-4446"
          sent_date="2014-10-04 06:41:52.00"
      />

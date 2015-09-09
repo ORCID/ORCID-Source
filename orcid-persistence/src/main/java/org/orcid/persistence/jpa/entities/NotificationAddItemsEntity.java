@@ -31,7 +31,7 @@ import javax.persistence.OneToMany;
  *
  */
 @Entity
-@DiscriminatorValue("ADD_ACTIVITIES")
+@DiscriminatorValue("PERMISSION")
 public class NotificationAddItemsEntity extends NotificationEntity {
 
     private static final long serialVersionUID = 1L;

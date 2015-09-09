@@ -38,12 +38,12 @@ import org.orcid.jaxb.model.message.OrcidBio;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.PersonalDetails;
 import org.orcid.jaxb.model.notification.Notification;
-import org.orcid.jaxb.model.notification.addactivities.Items;
-import org.orcid.jaxb.model.notification.addactivities.Item;
-import org.orcid.jaxb.model.notification.addactivities.ItemType;
-import org.orcid.jaxb.model.notification.addactivities.NotificationAddActivities;
 import org.orcid.jaxb.model.notification.amended.NotificationAmended;
 import org.orcid.jaxb.model.notification.custom.NotificationCustom;
+import org.orcid.jaxb.model.notification.permission.Item;
+import org.orcid.jaxb.model.notification.permission.ItemType;
+import org.orcid.jaxb.model.notification.permission.Items;
+import org.orcid.jaxb.model.notification.permission.NotificationPermission;
 import org.orcid.utils.DateUtils;
 
 /**
@@ -69,7 +69,7 @@ public class EmailMessageSenderTest extends BaseTest {
 
         List<Notification> notifications = new ArrayList<>();
 
-        NotificationAddActivities notification1 = new NotificationAddActivities();
+        NotificationPermission notification1 = new NotificationPermission();
         Items activities1 = new Items();
         notification1.setItems(activities1);
         activities1.getItems().add(createActivity(ItemType.WORK, "Work 1"));
@@ -81,7 +81,7 @@ public class EmailMessageSenderTest extends BaseTest {
         notification1.setSource(source1);
         notifications.add(notification1);
 
-        NotificationAddActivities notification2 = new NotificationAddActivities();
+        NotificationPermission notification2 = new NotificationPermission();
         Items activities2 = new Items();
         notification2.setItems(activities2);
         activities2.getItems().add(createActivity(ItemType.EMPLOYMENT, "Employment 1"));
@@ -92,7 +92,7 @@ public class EmailMessageSenderTest extends BaseTest {
         notification2.setSource(source2);
         notifications.add(notification2);
 
-        NotificationAddActivities notification3 = new NotificationAddActivities();
+        NotificationPermission notification3 = new NotificationPermission();
         Items activities3 = new Items();
         notification3.setItems(activities3);
         activities3.getItems().add(createActivity(ItemType.WORK, "Work 3"));

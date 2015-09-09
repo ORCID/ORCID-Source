@@ -14,9 +14,10 @@
  *
  * =============================================================================
  */
-package org.orcid.jaxb.model.notification.addactivities;
+package org.orcid.jaxb.model.notification.permission;
 
 import javax.xml.bind.annotation.XmlEnum;
+import javax.xml.bind.annotation.XmlEnumValue;
 
 /**
  * 
@@ -25,5 +26,10 @@ import javax.xml.bind.annotation.XmlEnum;
  */
 @XmlEnum
 public enum ItemType {
-    EDUCATION, EMPLOYMENT, FUNDING, WORK, ;
+    //@formatter:off
+    @XmlEnumValue("education") EDUCATION,
+    @XmlEnumValue("employment") EMPLOYMENT,
+    @XmlEnumValue("funding") FUNDING,
+    @XmlEnumValue("work") WORK;
+    //@formatter:on
 }

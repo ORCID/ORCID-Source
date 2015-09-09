@@ -21,14 +21,14 @@
 // Generated on: 2014.11.24 at 04:27:39 PM GMT 
 //
 
-package org.orcid.jaxb.model.notification.addactivities;
+package org.orcid.jaxb.model.notification.permission;
 
 import javax.xml.bind.annotation.XmlRegistry;
 
 /**
  * This object contains factory methods for each Java content interface and Java
  * element interface generated in the
- * org.orcid.jaxb.model.notification.addactivities package.
+ * org.orcid.jaxb.model.notification.permission package.
  * <p>
  * An ObjectFactory allows you to programatically construct new instances of the
  * Java representation for XML content. The Java representation of XML content
@@ -43,18 +43,18 @@ public class ObjectFactory {
     /**
      * Create a new ObjectFactory that can be used to create new instances of
      * schema derived classes for package:
-     * org.orcid.jaxb.model.notification.addactivities
+     * org.orcid.jaxb.model.notification.permission
      * 
      */
     public ObjectFactory() {
     }
 
     /**
-     * Create an instance of {@link NotificationAddActivities }
+     * Create an instance of {@link NotificationPermission }
      * 
      */
-    public NotificationAddActivities createNotification() {
-        return new NotificationAddActivities();
+    public NotificationPermission createNotification() {
+        return new NotificationPermission();
     }
 
 }

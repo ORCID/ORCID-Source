@@ -77,11 +77,11 @@ public class NotificationDaoTest extends DBUnitTest {
     }
     
     @Test
-    public void testFindAddActivitiesNotification() {
+    public void testFindPermissionNotification() {
         NotificationEntity notification = notificationDao.find(5L);
         assertNotNull(notification);
         assertTrue(notification instanceof NotificationAddItemsEntity);
-        assertEquals(NotificationType.ADD_ACTIVITIES, notification.getNotificationType());
+        assertEquals(NotificationType.PERMISSION, notification.getNotificationType());
         NotificationAddItemsEntity addActsNotification = (NotificationAddItemsEntity) notification;
         Set<NotificationItemEntity> acts = addActsNotification.getNotificationItems();
         assertNotNull(acts);
