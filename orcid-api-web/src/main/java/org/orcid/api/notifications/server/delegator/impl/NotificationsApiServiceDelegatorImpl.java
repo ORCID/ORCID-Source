@@ -68,14 +68,14 @@ public class NotificationsApiServiceDelegatorImpl implements NotificationsApiSer
 
     @Override
     @AccessControl(requiredScope = ScopePathType.PREMIUM_NOTIFICATION)
-    public Response findAddActivitiesNotifications(String orcid) {
+    public Response findPermissionNotifications(String orcid) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     @AccessControl(requiredScope = ScopePathType.PREMIUM_NOTIFICATION)
-    public Response findAddActivitiesNotification(String orcid, Long id) {
+    public Response findPermissionNotification(String orcid, Long id) {
         Notification notification = notificationManager.findByOrcidAndId(orcid, id);
         if (notification != null) {
             checkSource(notification);
@@ -112,7 +112,7 @@ public class NotificationsApiServiceDelegatorImpl implements NotificationsApiSer
 
     @Override
     @AccessControl(requiredScope = ScopePathType.PREMIUM_NOTIFICATION)
-    public Response addAddActivitiesNotification(UriInfo uriInfo, String orcid, NotificationPermission notification) {
+    public Response addPermissionNotification(UriInfo uriInfo, String orcid, NotificationPermission notification) {
         notificationValidationManager.validateNotificationPermission(notification);
         Notification createdNotification = notificationManager.createNotification(orcid, notification);
         try {

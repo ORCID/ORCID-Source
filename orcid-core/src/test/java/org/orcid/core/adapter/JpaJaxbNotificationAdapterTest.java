@@ -91,7 +91,7 @@ public class JpaJaxbNotificationAdapterTest {
     }
 
     @Test
-    public void testToNotificationAddActivitiesEntity() {
+    public void testToNotificationPermissionEntity() {
         NotificationPermission notification = new NotificationPermission();
         notification.setNotificationType(NotificationType.PERMISSION);
         String authorizationUrlString = "https://orcid.org/oauth/authorize?client_id=APP-U4UKCNSSIM1OCVQY&amp;response_type=code&amp;scope=/orcid-works/create&amp;redirect_uri=http://somethirdparty.com";

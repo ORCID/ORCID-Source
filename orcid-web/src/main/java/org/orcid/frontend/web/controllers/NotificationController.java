@@ -96,7 +96,7 @@ public class NotificationController extends BaseController {
     }
 
     @RequestMapping(value = "/PERMISSION/{id}/notification.html", produces = MediaType.TEXT_HTML_VALUE)
-    public ModelAndView getAddActivitiesNotificationHtml(@PathVariable("id") String id) {
+    public ModelAndView getPermissionNotificationHtml(@PathVariable("id") String id) {
         ModelAndView mav = new ModelAndView();
         Notification notification = notificationManager.findByOrcidAndId(getCurrentUserOrcid(), Long.valueOf(id));
         mav.addObject("notification", notification);

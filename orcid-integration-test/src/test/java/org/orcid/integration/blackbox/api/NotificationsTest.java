@@ -78,12 +78,12 @@ public class NotificationsTest {
     }
 
     @Test
-    public void createAddActivitiesNotification() throws JSONException {
+    public void createPermissionNotification() throws JSONException {
         NotificationPermission notification = unmarshallFromPath("/notification_2.0_rc1/samples/notification-permission-2.0_rc1.xml");
         notification.setPutCode(null);
         String accessToken = oauthHelper.getClientCredentialsAccessToken(client1ClientId, client1ClientSecret, ScopePathType.PREMIUM_NOTIFICATION);
 
-        ClientResponse response = notificationsClient.addAddActivitiesNotificationXml(testUser1OrcidId, notification, accessToken);
+        ClientResponse response = notificationsClient.addPermissionNotificationXml(testUser1OrcidId, notification, accessToken);
         assertNotNull(response);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
         String locationPath = response.getLocation().getPath();
@@ -92,28 +92,28 @@ public class NotificationsTest {
     }
 
     @Test
-    public void createAddActivitiesNotificationWithTrailingSpaceInAuthorizationUrl() throws JSONException {
+    public void createPermissionNotificationWithTrailingSpaceInAuthorizationUrl() throws JSONException {
         NotificationPermission notification = unmarshallFromPath("/notification_2.0_rc1/samples/notification-permission-2.0_rc1.xml");
         notification.setPutCode(null);
         AuthorizationUrl authUrl = notification.getAuthorizationUrl();
         authUrl.setUri(authUrl.getUri() + "    ");
         String accessToken = oauthHelper.getClientCredentialsAccessToken(client1ClientId, client1ClientSecret, ScopePathType.PREMIUM_NOTIFICATION);
 
-        ClientResponse response = notificationsClient.addAddActivitiesNotificationXml(testUser1OrcidId, notification, accessToken);
+        ClientResponse response = notificationsClient.addPermissionNotificationXml(testUser1OrcidId, notification, accessToken);
         assertNotNull(response);
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
         assertNull(response.getLocation());
     }
     
     @Test
-    public void createAddActivitiesNotificationWithEmptyAuthorizationUrl() throws JSONException {
+    public void createPermissionNotificationWithEmptyAuthorizationUrl() throws JSONException {
         NotificationPermission notification = unmarshallFromPath("/notification_2.0_rc1/samples/notification-permission-2.0_rc1.xml");
         notification.setPutCode(null);
         AuthorizationUrl authUrl = notification.getAuthorizationUrl();
         authUrl.setUri("");
         String accessToken = oauthHelper.getClientCredentialsAccessToken(client1ClientId, client1ClientSecret, ScopePathType.PREMIUM_NOTIFICATION);
 
-        ClientResponse response = notificationsClient.addAddActivitiesNotificationXml(testUser1OrcidId, notification, accessToken);
+        ClientResponse response = notificationsClient.addPermissionNotificationXml(testUser1OrcidId, notification, accessToken);
         assertNotNull(response);
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
         assertNull(response.getLocation());

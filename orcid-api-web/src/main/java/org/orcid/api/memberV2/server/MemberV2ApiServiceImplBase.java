@@ -466,8 +466,8 @@ abstract public class MemberV2ApiServiceImplBase {
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(PERMISSIONS_PATH)
     @ApiOperation(value = "Fetch all notifications for an ORCID ID", hidden = true, authorizations = { @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.PREMIUM_NOTIFICATION, description = "you need this") }) })
-    public Response viewAddActivitiesNotifications(@PathParam("orcid") String orcid) {
-        return notificationsServiceDelegator.findAddActivitiesNotifications(orcid);
+    public Response viewPermissionNotifications(@PathParam("orcid") String orcid) {
+        return notificationsServiceDelegator.findPermissionNotifications(orcid);
     }
 
     @GET
@@ -477,8 +477,8 @@ abstract public class MemberV2ApiServiceImplBase {
     @ApiResponses(value = { @ApiResponse(code = 200, message = "Notification found", response = Notification.class),
             @ApiResponse(code = 404, message = "Notification not found", response = String.class),
             @ApiResponse(code = 401, message = "Access denied, this is not your notification", response = String.class) })
-    public Response viewAddActivitiesNotification(@PathParam("orcid") String orcid, @PathParam("id") Long id) {
-        return notificationsServiceDelegator.findAddActivitiesNotification(orcid, id);
+    public Response viewPermissionNotification(@PathParam("orcid") String orcid, @PathParam("id") Long id) {
+        return notificationsServiceDelegator.findPermissionNotification(orcid, id);
     }
 
     @POST
@@ -489,7 +489,7 @@ abstract public class MemberV2ApiServiceImplBase {
     @ApiResponses(value = { @ApiResponse(code = 200, message = "Notification archived, see HTTP Location header for URI", response = Notification.class),
             @ApiResponse(code = 404, message = "Notification not found", response = String.class),
             @ApiResponse(code = 401, message = "Access denied, this is not your notification", response = String.class) })
-    public Response flagAsArchivedAddActivitiesNotification(@PathParam("orcid") String orcid, @PathParam("id") Long id) throws OrcidNotificationAlreadyReadException {
+    public Response flagAsArchivedPermissionNotification(@PathParam("orcid") String orcid, @PathParam("id") Long id) throws OrcidNotificationAlreadyReadException {
         return notificationsServiceDelegator.flagNotificationAsArchived(orcid, id);
     }
 
@@ -499,8 +499,8 @@ abstract public class MemberV2ApiServiceImplBase {
     @Path(PERMISSIONS_PATH)
     @ApiOperation(value = "Add a notification", response = URI.class, authorizations = { @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.PREMIUM_NOTIFICATION, description = "you need this") }) })
     @ApiResponses(value = { @ApiResponse(code = 201, message = "Notification added, see HTTP Location header for URI", responseHeaders = @ResponseHeader(name = "Location", description = "The created Notification resource", response = URI.class)) })
-    public Response addAddActivitiesNotification(@PathParam("orcid") String orcid, NotificationPermission notification) {
-        return notificationsServiceDelegator.addAddActivitiesNotification(uriInfo, orcid, notification);
+    public Response addPermissionNotification(@PathParam("orcid") String orcid, NotificationPermission notification) {
+        return notificationsServiceDelegator.addPermissionNotification(uriInfo, orcid, notification);
     }
     
     // END NOTIFICATIONS

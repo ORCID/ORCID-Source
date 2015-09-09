@@ -48,46 +48,46 @@ public class NotificationsApiClientImpl {
         return null;
     }
 
-    public ClientResponse viewAddActivitiesNotificationsHtml(String orcid) {
+    public ClientResponse viewPermissionNotificationsHtml(String orcid) {
         // TODO Auto-generated method stub
         return null;
     }
 
-    public ClientResponse viewAddActivitiesNotificationsXml(String orcid) {
+    public ClientResponse viewPermissionNotificationsXml(String orcid) {
         // TODO Auto-generated method stub
         return null;
     }
 
-    public ClientResponse viewAddActivitiesNotificationsJson(String orcid) {
+    public ClientResponse viewPermissionNotificationsJson(String orcid) {
         // TODO Auto-generated method stub
         return null;
     }
 
-    public ClientResponse viewAddActivitiesNotificationXml(String orcid, Long id) {
+    public ClientResponse viewPermissionNotificationXml(String orcid, Long id) {
         // TODO Auto-generated method stub
         return null;
     }
 
-    public ClientResponse viewAddActivitiesNotificationJson(String orcid, Long id) {
+    public ClientResponse viewPermissionNotificationJson(String orcid, Long id) {
         // TODO Auto-generated method stub
         return null;
     }
 
-    public ClientResponse flagAsArchivedAddActivitiesNotificationXml(String orcid, Long id) throws OrcidNotificationAlreadyReadException {
+    public ClientResponse flagAsArchivedPermissionNotificationXml(String orcid, Long id) throws OrcidNotificationAlreadyReadException {
         // TODO Auto-generated method stub
         return null;
     }
 
-    public ClientResponse flagAsArchivedAddActivitiesNotificationJson(String orcid, Long id) throws OrcidNotificationAlreadyReadException {
+    public ClientResponse flagAsArchivedPermissionNotificationJson(String orcid, Long id) throws OrcidNotificationAlreadyReadException {
         // TODO Auto-generated method stub
         return null;
     }
 
-    public ClientResponse addAddActivitiesNotificationXml(String orcid, NotificationPermission notification, String accessToken) {
+    public ClientResponse addPermissionNotificationXml(String orcid, NotificationPermission notification, String accessToken) {
         return orcidClientHelper.postClientResponseWithToken(UriBuilder.fromPath(PERMISSIONS_PATH).build(orcid), VND_ORCID_XML, notification, accessToken);
     }
 
-    public ClientResponse addAddActivitiesNotificationJson(String orcid, NotificationPermission notification) {
+    public ClientResponse addPermissionNotificationJson(String orcid, NotificationPermission notification) {
         return orcidClientHelper.postClientResponse(UriBuilder.fromPath(PERMISSIONS_PATH).build(orcid), VND_ORCID_JSON, notification);
     }
 
