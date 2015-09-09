@@ -63,9 +63,8 @@ public class NotificationsApiClientImpl {
         return null;
     }
 
-    public ClientResponse viewPermissionNotificationXml(String orcid, Long id) {
-        // TODO Auto-generated method stub
-        return null;
+    public ClientResponse viewPermissionNotificationXml(String orcid, Long id, String accessToken) {
+        return orcidClientHelper.getClientResponseWithToken(UriBuilder.fromPath(PERMISSIONS_VIEW_PATH).build(orcid, id), VND_ORCID_XML, accessToken);
     }
 
     public ClientResponse viewPermissionNotificationJson(String orcid, Long id) {
@@ -73,9 +72,8 @@ public class NotificationsApiClientImpl {
         return null;
     }
 
-    public ClientResponse flagAsArchivedPermissionNotificationXml(String orcid, Long id) throws OrcidNotificationAlreadyReadException {
-        // TODO Auto-generated method stub
-        return null;
+    public ClientResponse flagAsArchivedPermissionNotificationXml(String orcid, Long id, String accessToken) throws OrcidNotificationAlreadyReadException {
+        return orcidClientHelper.postClientResponseWithToken(UriBuilder.fromPath(PERMISSIONS_FLAG_AS_ARCHIVED_PATH).build(orcid, id), VND_ORCID_XML, null, accessToken);
     }
 
     public ClientResponse flagAsArchivedPermissionNotificationJson(String orcid, Long id) throws OrcidNotificationAlreadyReadException {

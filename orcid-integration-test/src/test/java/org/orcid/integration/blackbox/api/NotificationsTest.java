@@ -92,6 +92,36 @@ public class NotificationsTest {
     }
 
     @Test
+    public void flagAsArchived() throws JSONException {
+        NotificationPermission notification = unmarshallFromPath("/notification_2.0_rc1/samples/notification-permission-2.0_rc1.xml");
+        notification.setPutCode(null);
+        String accessToken = oauthHelper.getClientCredentialsAccessToken(client1ClientId, client1ClientSecret, ScopePathType.PREMIUM_NOTIFICATION);
+
+        ClientResponse postResponse = notificationsClient.addPermissionNotificationXml(testUser1OrcidId, notification, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+        String locationPath = postResponse.getLocation().getPath();
+        assertTrue("Location header path should match pattern, but was " + locationPath,
+                locationPath.matches(".*/v2.0_rc1/" + testUser1OrcidId + "/notification-permission/\\d+"));
+        String putCodeString = locationPath.substring(locationPath.lastIndexOf('/') + 1);
+        Long putCode = Long.valueOf(putCodeString);
+        
+        ClientResponse viewResponse = notificationsClient.viewPermissionNotificationXml(testUser1OrcidId, putCode, accessToken);
+        assertEquals(Response.Status.OK.getStatusCode(), viewResponse.getStatus());
+        NotificationPermission retrievedNotification = viewResponse.getEntity(NotificationPermission.class);
+        assertNotNull(retrievedNotification);
+        assertNull(retrievedNotification.getArchivedDate());
+        
+        ClientResponse archiveResponse = notificationsClient.flagAsArchivedPermissionNotificationXml(testUser1OrcidId, putCode, accessToken);
+        assertEquals(Response.Status.OK.getStatusCode(), archiveResponse.getStatus());
+        
+        ClientResponse viewAfterArchiveResponse = notificationsClient.viewPermissionNotificationXml(testUser1OrcidId, putCode, accessToken);
+        assertEquals(Response.Status.OK.getStatusCode(), viewAfterArchiveResponse.getStatus());
+        NotificationPermission retrievedAfterArchiveNotification = viewAfterArchiveResponse.getEntity(NotificationPermission.class);
+        assertNotNull(retrievedAfterArchiveNotification.getArchivedDate());
+    }
+
+    @Test
     public void createPermissionNotificationWithTrailingSpaceInAuthorizationUrl() throws JSONException {
         NotificationPermission notification = unmarshallFromPath("/notification_2.0_rc1/samples/notification-permission-2.0_rc1.xml");
         notification.setPutCode(null);
@@ -104,7 +134,7 @@ public class NotificationsTest {
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
         assertNull(response.getLocation());
     }
-    
+
     @Test
     public void createPermissionNotificationWithEmptyAuthorizationUrl() throws JSONException {
         NotificationPermission notification = unmarshallFromPath("/notification_2.0_rc1/samples/notification-permission-2.0_rc1.xml");
