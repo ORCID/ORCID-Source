@@ -46,11 +46,6 @@ public class NotificationsApiClientImpl {
         orcidClientHelper = new OrcidClientHelper(baseUri, c);
     }
 
-    public ClientResponse viewStatusText() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
     public ClientResponse viewPermissionNotificationsHtml(String orcid) {
         // TODO Auto-generated method stub
         return null;
