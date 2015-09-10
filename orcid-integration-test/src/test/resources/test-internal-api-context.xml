@@ -33,15 +33,19 @@
         <constructor-arg ref="jerseyClient"/>
     </bean>
     
+	<bean id="InternalOAuthClient" class="org.orcid.integration.api.t2.InternalOAuthOrcidApiClientImpl">
+        <constructor-arg value="${org.orcid.internal.baseUri}"/>
+        <constructor-arg ref="jerseyClient"/>
+    </bean>
+    
     <!-- Override for the jersey client to run OAuth client config and not certificates one -->
     <bean id="clientConfig" class="org.orcid.integration.api.t2.OrcidJerseyT2ClientOAuthConfig">
         <constructor-arg ref="providers" />
         <property name="properties" ref="jerseyProperties" />
     </bean>
     
-    <bean id="oauthHelper" class="org.orcid.integration.api.helper.OauthHelper">
-        <property name="oauthT2Client" ref="t2OAuthClient" />
-        <property name="oauthT1Client" ref="t1OAuthClient" />        
+    <bean id="oauthHelper" class="org.orcid.integration.api.helper.OauthHelper">        
+        <property name="internalT2Client" ref="InternalOAuthClient" />        
     </bean>
 
 </beans>

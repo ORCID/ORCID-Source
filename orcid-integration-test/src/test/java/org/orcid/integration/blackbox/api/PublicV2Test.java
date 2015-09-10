@@ -44,6 +44,7 @@ import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.orcid.api.common.WebDriverHelper;
+import org.orcid.integration.api.helper.APIRequestType;
 import org.orcid.integration.api.helper.OauthHelper;
 import org.orcid.integration.api.memberV2.MemberV2ApiClientImpl;
 import org.orcid.integration.api.pub.PublicV2ApiClientImpl;
@@ -154,7 +155,7 @@ public class PublicV2Test {
         params.add("client_secret", client1ClientSecret);
         params.add("grant_type", "client_credentials");
         params.add("scope", ScopePathType.INTERNAL_PERSON_LAST_MODIFIED.value());
-        ClientResponse clientResponse = oauthHelper.getResponse(params, true);
+        ClientResponse clientResponse = oauthHelper.getResponse(params, APIRequestType.PUBLIC);
         assertNotNull(clientResponse);
         assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), clientResponse.getStatus());
     }
@@ -162,7 +163,7 @@ public class PublicV2Test {
     
     @Test
     public void testPublicClientCanGetAccessToken() throws InterruptedException, JSONException {
-        String publicAccessToken = oauthHelper.getClientCredentialsAccessToken(publicClientId, publicClientSecret, ScopePathType.READ_PUBLIC, true);
+        String publicAccessToken = oauthHelper.getClientCredentialsAccessToken(publicClientId, publicClientSecret, ScopePathType.READ_PUBLIC, APIRequestType.PUBLIC);
         assertFalse(PojoUtil.isEmpty(publicAccessToken));
     }
     

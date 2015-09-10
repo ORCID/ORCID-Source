@@ -40,6 +40,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.orcid.integration.api.helper.APIRequestType;
 import org.orcid.integration.blackbox.BlackBoxBase;
 import org.orcid.jaxb.model.common.Day;
 import org.orcid.jaxb.model.common.FuzzyDate;
@@ -131,7 +132,7 @@ public class MemberV2Test extends BlackBoxBase {
         params.add("client_secret", client1ClientSecret);
         params.add("grant_type", "client_credentials");
         params.add("scope", ScopePathType.INTERNAL_PERSON_LAST_MODIFIED.value());
-        ClientResponse clientResponse = oauthHelper.getResponse(params, true);
+        ClientResponse clientResponse = oauthHelper.getResponse(params, APIRequestType.PUBLIC);
         assertNotNull(clientResponse);
         assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), clientResponse.getStatus());
     }

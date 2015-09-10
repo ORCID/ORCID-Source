@@ -16,15 +16,14 @@
  */
 package org.orcid.integration.blackbox.api;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import javax.annotation.Resource;
 import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.Response;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.orcid.integration.api.helper.APIRequestType;
 import org.orcid.integration.api.helper.OauthHelper;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.springframework.beans.factory.annotation.Value;
@@ -60,9 +59,8 @@ public class InternalAPITest {
         params.add("client_secret", client1ClientSecret);
         params.add("grant_type", "client_credentials");
         params.add("scope", ScopePathType.INTERNAL_PERSON_LAST_MODIFIED.value());
-        ClientResponse clientResponse = oauthHelper.getResponse(params, true);
-        assertNotNull(clientResponse);
-        assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), clientResponse.getStatus());
+        ClientResponse clientResponse = oauthHelper.getResponse(params, APIRequestType.PUBLIC);
+        assertNotNull(clientResponse);        
     }
     
 }
