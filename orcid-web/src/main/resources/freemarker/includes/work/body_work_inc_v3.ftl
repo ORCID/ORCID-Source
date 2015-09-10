@@ -41,7 +41,7 @@
                                                 <li ng-show="bulkEditShow">
                                                     <input type="checkbox" ng-model="bulkEditMap[group.getActive().putCode.value]" class="bulk-edit-input-header ng-valid ng-dirty">
                                                 </li>
-                                            </#if>
+                                            </#if>                                                                                    
                                             <li class="works-details">
                                                 <a ng-click="showDetailsMouseClick(group,$event);" ng-mouseenter="showTooltip(group.groupId+'-showHideDetails')" ng-mouseleave="hideTooltip(group.groupId+'-showHideDetails')">
                                                     <span ng-class="(moreInfo[group.groupId] == true) ? 'glyphicons collapse_top' : 'glyphicons expand'">
@@ -97,6 +97,13 @@
                                               <input type="checkbox" ng-model="bulkEditMap[work.putCode.value]" class="bulk-edit-input ng-pristine ng-valid pull-right">       
                                       </li>
                                   </#if>
+                                  
+                                  <!-- Mozilla Badges -->
+                                  <li class="works-details">
+                                     <a ng-click="showMozillaBadges(work.putCode.value)">
+                                     	<span class="mozilla-badge"></span>                                     	
+                                     </a>
+                                  </li>   
                                   <!-- Show/Hide Details -->
                                   <li class="works-details" ng-hide="editSources[group.groupId] == true">
                                       <a ng-click="showDetailsMouseClick(group,$event);" ng-mouseenter="showTooltip(group.groupId+'-showHideDetails')" ng-mouseleave="hideTooltip(group.groupId+'-showHideDetails')">
@@ -167,6 +174,9 @@
 									 </div>
                                  </li>
                              </ul>
+                         </div>
+                         <div class="col-md-12">
+                         	<div class="badge-container-{{work.putCode.value}}"></div>                         
                          </div>
                      </div>
 

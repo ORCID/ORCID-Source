@@ -850,7 +850,7 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
             loadingDetails: false,
             blankWork: null,
             details: new Object(), // we should think about putting details in the
-            worksToAddIds: null,
+            worksToAddIds: null,             
             addBibtexJson: function(dw) {
                 if (dw.citation && dw.citation.citationType && dw.citation.citationType.value == 'bibtex') {
                     try {
@@ -1141,6 +1141,18 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
                 }).fail(function(){
                     failFunc();
                 });
+            },
+            getDois : function(putCode){
+            	var dois = [];            	
+            	var group = worksSrvc.getGroup(putCode);            	
+            	for (var idx in group.activities) {            		
+            		for (i = 0; i <= group.activities[idx].workExternalIdentifiers.length - 1; i++) {
+            			if (group.activities[idx].workExternalIdentifiers[i].workExternalIdentifierType.value == 'doi')
+            				dois.push(group.activities[idx].workExternalIdentifiers[i].workExternalIdentifierId.value);
+            		}
+                }
+            	console.log(dois);
+            	return dois;
             }
     };
     return worksSrvc;
@@ -5012,6 +5024,11 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     
     $scope.hideURLPopOver = function(id){    	
     	$scope.displayURLPopOver[id] = false;
+    }
+    
+    $scope.showMozillaBadges = function(putCode){
+    	var dois = worksSrvc.getDois(putCode);
+    	
     }
     
     

@@ -6021,6 +6021,17 @@ ul.sources-edit-list > li.group-details{
 	padding-bottom: 15px;
     font-size: 15px;
 }
+
+.mozilla-badge{
+	background: url('../img/mozilla-badge.svg') transparent;
+	width: 17px;
+    height: 17px;
+    display: block;
+    top: 6px;
+    left: 7px;
+    position: absolute;
+    background-size: 17px 17px;
+}
 	
 
 
