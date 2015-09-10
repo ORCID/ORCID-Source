@@ -275,7 +275,7 @@ public class RegistrationController extends BaseController {
         return numCheck;
     }
 
-    public static OrcidProfile toProfile(Registration reg) {
+    public static OrcidProfile toProfile(Registration reg, HttpServletRequest request) {
         OrcidProfile profile = new OrcidProfile();
         OrcidBio bio = new OrcidBio();
 
@@ -311,7 +311,17 @@ public class RegistrationController extends BaseController {
 
         profile.setPassword(reg.getPassword().getValue());
 
+        profile.setUserLastIp(getIpAddress(request));
         return profile;
+    }
+    
+    private static String getIpAddress(HttpServletRequest request) {
+    	String ipAddress = request.getHeader("X-FORWARDED-FOR");  
+        if (ipAddress == null) {  
+                 ipAddress = request.getRemoteAddr();  
+        }
+        
+        return ipAddress;
     }
 
     @RequestMapping(value = "/register.json", method = RequestMethod.POST)
@@ -384,7 +394,7 @@ public class RegistrationController extends BaseController {
             usedCaptcha = true;
         }
         
-        createMinimalRegistrationAndLogUserIn(request, toProfile(reg), usedCaptcha);
+        createMinimalRegistrationAndLogUserIn(request, toProfile(reg, request), usedCaptcha);
         String redirectUrl = calculateRedirectUrl(request, response);
         r.setUrl(redirectUrl);
         return r;

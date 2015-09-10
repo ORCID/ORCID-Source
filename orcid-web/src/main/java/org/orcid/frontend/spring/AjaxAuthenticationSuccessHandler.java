@@ -52,6 +52,8 @@ public class AjaxAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuc
         if (authentication != null) {
             String orcidId = authentication.getName();
             checkLocale(request, response, orcidId);
+            String ipAddress = getIpAddress(request);
+            profileDao.updateIpAddress(orcidId, ipAddress);
         }
         if (targetUrl == null) {
             targetUrl = determineFullTargetUrl(request, response);
@@ -79,6 +81,15 @@ public class AjaxAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuc
                 profileDao.updateLocale(orcidId, cookieLocale);
             }
         }
+    }
+    
+    private static String getIpAddress(HttpServletRequest request) {
+    	String ipAddress = request.getHeader("X-FORWARDED-FOR");  
+        if (ipAddress == null) {  
+                 ipAddress = request.getRemoteAddr();  
+        }
+        
+        return ipAddress;
     }
 
     private String determineFullTargetUrlFromSavedRequest(HttpServletRequest request, HttpServletResponse response) {
