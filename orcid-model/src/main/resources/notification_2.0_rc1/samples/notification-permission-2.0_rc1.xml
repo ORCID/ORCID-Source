@@ -17,28 +17,30 @@
     =============================================================================
 
 -->
-<notification:notification put-code="1" xsi:schemaLocation="http://www.orcid.org/ns/notification ../notification-add-activities-2.0_rc1.xsd" xmlns:common="http://www.orcid.org/ns/common" xmlns:notification="http://www.orcid.org/ns/notification" xmlns:activities="http://www.orcid.org/ns/activities" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-    <notification:notification-type>ADD_ACTIVITIES</notification:notification-type>
+<notification:notification put-code="1" xsi:schemaLocation="http://www.orcid.org/ns/notification ../notification-permission-2.0_rc1.xsd" xmlns:common="http://www.orcid.org/ns/common" xmlns:notification="http://www.orcid.org/ns/notification" xmlns:activities="http://www.orcid.org/ns/activities" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <notification:notification-type>permission</notification:notification-type>
     <notification:authorization-url>
         <!-- API user can specify just the path if they want. -->
         <notification:uri>https://orcid.org/oauth/authorize?client_id=APP-U4UKCNSSIM1OCVQY&amp;response_type=code&amp;scope=/orcid-works/create&amp;redirect_uri=http://somethirdparty.com</notification:uri>
         <notification:path>/oauth/authorize?client_id=APP-U4UKCNSSIM1OCVQY&amp;response_type=code&amp;scope=/orcid-works/create&amp;redirect_uri=http://somethirdparty.com</notification:path>
         <notification:host>orcid.org</notification:host>
     </notification:authorization-url>
-    <notification:activities>
-        <notification:activity>
-            <notification:activity-type>WORK</notification:activity-type>
-            <notification:activity-name>A Really Interesting Research Article</notification:activity-name>
+    <notification:notification-subject>Subject</notification:notification-subject>
+    <notification:notification-intro>Intro</notification:notification-intro>
+    <notification:items>
+        <notification:item>
+            <notification:item-type>work</notification:item-type>
+            <notification:item-name>A Really Interesting Research Article</notification:item-name>
             <notification:external-identifier>
                 <activities:external-identifier-type>doi</activities:external-identifier-type>
                 <activities:external-identifier-id>http://10.5555/12345ABCDE</activities:external-identifier-id>
             </notification:external-identifier>
-        </notification:activity>
-        <notification:activity>
-            <notification:activity-type>EMPLOYMENT</notification:activity-type>
-            <notification:activity-name>Head of Research at NanoBiologica</notification:activity-name>
-        </notification:activity>
-    </notification:activities>
+        </notification:item>
+        <notification:item>
+            <notification:item-type>employment</notification:item-type>
+            <notification:item-name>Head of Research at NanoBiologica</notification:item-name>
+        </notification:item>
+    </notification:items>
     <!--  Read only for API user -->
     <common:created-date>2014-01-01T09:17:56</common:created-date>
     <!--  Read only for API user -->

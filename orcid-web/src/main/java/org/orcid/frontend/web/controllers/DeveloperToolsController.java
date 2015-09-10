@@ -99,6 +99,8 @@ public class DeveloperToolsController extends BaseWorkspaceController {
     RedirectUri getEmptyRedirectUri(HttpServletRequest request) {
         RedirectUri result = new RedirectUri();
         result.setValue(new Text());
+        result.setActType(Text.valueOf(""));
+        result.setGeoArea(Text.valueOf(""));
         result.setType(Text.valueOf(RedirectUriType.DEFAULT.name()));
         return result;
     }

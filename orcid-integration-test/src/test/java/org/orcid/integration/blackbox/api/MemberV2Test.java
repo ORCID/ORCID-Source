@@ -30,7 +30,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
 import org.codehaus.jettison.json.JSONException;
@@ -40,7 +39,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.integration.api.helper.APIRequestType;
 import org.orcid.integration.blackbox.BlackBoxBase;
 import org.orcid.jaxb.model.common.Day;
 import org.orcid.jaxb.model.common.FuzzyDate;
@@ -76,7 +74,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.core.util.MultivaluedMapImpl;
 
 /**
  * 
@@ -123,19 +120,7 @@ public class MemberV2Test extends BlackBoxBase {
     @After
     public void after() throws JSONException, InterruptedException, URISyntaxException {
         cleanActivities();
-    }
-
-    @Test
-    public void testCantGetTokenForInternalScopes() {
-        MultivaluedMap<String, String> params = new MultivaluedMapImpl();
-        params.add("client_id", client1ClientId);
-        params.add("client_secret", client1ClientSecret);
-        params.add("grant_type", "client_credentials");
-        params.add("scope", ScopePathType.INTERNAL_PERSON_LAST_MODIFIED.value());
-        ClientResponse clientResponse = oauthHelper.getResponse(params, APIRequestType.PUBLIC);
-        assertNotNull(clientResponse);
-        assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), clientResponse.getStatus());
-    }
+    }    
     
     @Test
     public void testGetNotificationToken() throws JSONException, InterruptedException {

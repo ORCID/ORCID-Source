@@ -31,10 +31,15 @@
     <bean id="internalOAuthClient" class="org.orcid.integration.api.internal.InternalOAuthOrcidApiClientImpl">
         <constructor-arg value="${org.orcid.internal.baseUri}"/>
         <constructor-arg ref="jerseyClient"/>
+    </bean>    	
+    
+    <bean id="t2OAuthClient" class="org.orcid.integration.api.t2.T2OAuthOrcidApiClientImpl">
+        <constructor-arg value="${org.orcid.api.baseUri}"/>
+        <constructor-arg ref="jerseyClient"/>
     </bean>
     
-	<bean id="InternalOAuthClient" class="org.orcid.integration.api.t2.InternalOAuthOrcidApiClientImpl">
-        <constructor-arg value="${org.orcid.internal.baseUri}"/>
+    <bean id="t1OAuthClient" class="org.orcid.integration.api.t1.T1OAuthOrcidApiClientImpl">
+        <constructor-arg value="${org.orcid.pub.baseUri}"/>
         <constructor-arg ref="jerseyClient"/>
     </bean>
     
@@ -45,7 +50,9 @@
     </bean>
     
     <bean id="oauthHelper" class="org.orcid.integration.api.helper.OauthHelper">        
-        <property name="internalT2Client" ref="InternalOAuthClient" />        
+        <property name="internalClient" ref="internalOAuthClient" />
+        <property name="oauthT2Client" ref="t2OAuthClient" />
+        <property name="oauthT1Client" ref="t1OAuthClient" />         
     </bean>
 
 </beans>

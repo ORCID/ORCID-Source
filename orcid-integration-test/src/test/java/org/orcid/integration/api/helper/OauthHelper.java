@@ -41,7 +41,7 @@ public class OauthHelper {
 
     private WebDriverHelper webDriverHelper;
     
-    private InternalOAuthAPIService<ClientResponse> internalT2Client;
+    private InternalOAuthAPIService<ClientResponse> internalClient;
     private T2OAuthAPIService<ClientResponse> oauthT2Client;
     private T1OAuthAPIService<ClientResponse> oauthT1Client;        
 
@@ -69,12 +69,12 @@ public class OauthHelper {
         this.oauthT2Client = oauthT2Client;
     }
     
-    public InternalOAuthAPIService<ClientResponse> getInternalT2Client() {
-        return internalT2Client;
+    public InternalOAuthAPIService<ClientResponse> getInternalClient() {
+        return internalClient;
     }
 
-    public void setInternalT2Client(InternalOAuthAPIService<ClientResponse> internalT2Client) {
-        this.internalT2Client = internalT2Client;
+    public void setInternalClient(InternalOAuthAPIService<ClientResponse> internalClient) {
+        this.internalClient = internalClient;
     }
 
     public String obtainAccessToken(String clientId, String clientSecret, String scopes, String email, String password, String redirectUri) throws JSONException, InterruptedException {
@@ -138,6 +138,7 @@ public class OauthHelper {
         ClientResponse clientResponse = null;
         switch(apiRequerstType) {
         case INTERNAL:
+            clientResponse = internalClient.obtainOauth2TokenPost("client_credentials", params);
             break;
         case MEMBER:
             clientResponse = oauthT2Client.obtainOauth2TokenPost("client_credentials", params);

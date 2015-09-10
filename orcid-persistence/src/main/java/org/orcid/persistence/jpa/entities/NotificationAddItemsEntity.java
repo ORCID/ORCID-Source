@@ -31,13 +31,13 @@ import javax.persistence.OneToMany;
  *
  */
 @Entity
-@DiscriminatorValue("ADD_ACTIVITIES")
-public class NotificationAddActivitiesEntity extends NotificationEntity {
+@DiscriminatorValue("PERMISSION")
+public class NotificationAddItemsEntity extends NotificationEntity {
 
     private static final long serialVersionUID = 1L;
 
     private String authorizationUrl;
-    private Set<NotificationActivityEntity> notificationActivities;
+    private Set<NotificationItemEntity> notificationItems;
 
     @Column(name = "authorization_url")
     public String getAuthorizationUrl() {
@@ -50,12 +50,12 @@ public class NotificationAddActivitiesEntity extends NotificationEntity {
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "notification_id")
-    public Set<NotificationActivityEntity> getNotificationActivities() {
-        return notificationActivities;
+    public Set<NotificationItemEntity> getNotificationItems() {
+        return notificationItems;
     }
 
-    public void setNotificationActivities(Set<NotificationActivityEntity> notificationActivities) {
-        this.notificationActivities = notificationActivities;
+    public void setNotificationItems(Set<NotificationItemEntity> notificationItems) {
+        this.notificationItems = notificationItems;
     }
 
 }

@@ -21,10 +21,15 @@ import static org.orcid.core.api.OrcidApiConstants.ORCID_JSON;
 import static org.orcid.core.api.OrcidApiConstants.STATUS_PATH;
 import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_JSON;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
+
+import org.orcid.api.common.T2OrcidApiService;
 
 public interface InternalOAuthAPIService<T> {
 
@@ -40,4 +45,19 @@ public interface InternalOAuthAPIService<T> {
     @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
     @Path(AUTHENTICATE_PATH)
     public T viewPersonLastModified(String orcid, String accessToken);
+    
+    /**
+     * * Obtains the parameters necessary to perform an Oauth2 token request
+     * using client_credential authentication
+     * 
+     * @param formParams
+     *            the grant_type grant_type parameter, telling us what the
+     *            client type is.
+     * @return
+     */
+    @POST
+    @Path(T2OrcidApiService.OAUTH_TOKEN)
+    @Produces(value = { MediaType.APPLICATION_JSON })
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    public T obtainOauth2TokenPost(String grantType, MultivaluedMap<String, String> formParams);
 }

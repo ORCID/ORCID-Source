@@ -20,7 +20,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.orcid.core.exception.OrcidNotificationAlreadyReadException;
-import org.orcid.jaxb.model.notification.addactivities.NotificationAddActivities;
+import org.orcid.jaxb.model.notification.permission.NotificationPermission;
 
 /**
  * 
@@ -31,12 +31,12 @@ public interface NotificationsApiServiceDelegator {
 
     Response viewStatusText();
 
-    Response findAddActivitiesNotifications(String orcid);
+    Response findPermissionNotifications(String orcid);
     
-    Response findAddActivitiesNotification(String orcid, Long id);
+    Response findPermissionNotification(String orcid, Long id);
     
     Response flagNotificationAsArchived(String orcid, Long id) throws OrcidNotificationAlreadyReadException;
 
-    Response addAddActivitiesNotification(UriInfo uriInfo, String orcid, NotificationAddActivities notification);
+    Response addPermissionNotification(UriInfo uriInfo, String orcid, NotificationPermission notification);
 
 }

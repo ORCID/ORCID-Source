@@ -179,5 +179,8 @@ public class OrcidUrlManager {
         return sb.toString();
     }
     
-
+    public static String getPathWithoutContextPath(HttpServletRequest request) {
+        return request.getRequestURI().substring(request.getContextPath().length());
+    }
+    
 }

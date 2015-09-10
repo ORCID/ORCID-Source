@@ -25,8 +25,6 @@ package org.orcid.jaxb.model.notification.custom;
 
 import javax.xml.bind.annotation.XmlRegistry;
 
-import org.orcid.jaxb.model.notification.addactivities.NotificationAddActivities;
-
 /**
  * This object contains factory methods for each Java content interface and Java
  * element interface generated in the org.orcid.jaxb.model.notification package.
@@ -50,10 +48,6 @@ public class ObjectFactory {
     public ObjectFactory() {
     }
 
-    /**
-     * Create an instance of {@link NotificationAddActivities }
-     * 
-     */
     public NotificationCustom createNotificationCustom() {
         return new NotificationCustom();
     }

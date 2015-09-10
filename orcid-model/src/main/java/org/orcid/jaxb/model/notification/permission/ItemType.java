@@ -14,20 +14,22 @@
  *
  * =============================================================================
  */
-package org.orcid.api.notifications.server;
+package org.orcid.jaxb.model.notification.permission;
 
-import javax.ws.rs.Path;
-
-import org.orcid.core.api.OrcidApiConstants;
-
-import io.swagger.annotations.Api;
+import javax.xml.bind.annotation.XmlEnum;
+import javax.xml.bind.annotation.XmlEnumValue;
 
 /**
  * 
  * @author Will Simpson
- * 
+ *
  */
-@Path("/v2.0_rc1" + OrcidApiConstants.NOTIFICATIONS_PATH)
-public class NotificationsApiServiceImplV2_0_rc1 extends NotificationsApiServiceImplBase {
-
+@XmlEnum
+public enum ItemType {
+    //@formatter:off
+    @XmlEnumValue("education") EDUCATION,
+    @XmlEnumValue("employment") EMPLOYMENT,
+    @XmlEnumValue("funding") FUNDING,
+    @XmlEnumValue("work") WORK;
+    //@formatter:on
 }

@@ -14,16 +14,27 @@
  *
  * =============================================================================
  */
-package org.orcid.jaxb.model.notification.addactivities;
+package org.orcid.api.common.writer.citeproc;
 
-import javax.xml.bind.annotation.XmlEnum;
+import java.util.ArrayList;
+import java.util.List;
 
-/**
- * 
- * @author Will Simpson
- *
- */
-@XmlEnum
-public enum ActivityType {
-    EDUCATION, EMPLOYMENT, FUNDING, WORK, ;
+import de.undercouch.citeproc.csl.CSLItemData;
+
+public class CSLItemDataList {
+
+    private List<CSLItemData> data = new ArrayList<CSLItemData>();
+
+    public List<CSLItemData> getData() {
+        return data;
+    }
+
+    public void setData(List<CSLItemData> data) {
+        this.data = data;
+    }
+    
+    public void addItem(CSLItemData item){
+        if (item != null)
+            data.add(item);
+    }
 }

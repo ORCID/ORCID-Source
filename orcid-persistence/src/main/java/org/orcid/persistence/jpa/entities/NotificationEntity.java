@@ -68,9 +68,12 @@ abstract public class NotificationEntity extends BaseEntity<Long> implements Pro
     private Long id;
     private ProfileEntity profile;
     private NotificationType notificationType;
+    private String notificationSubject;
+    private String notificationIntro;
     private Date sentDate;
     private Date readDate;
     private Date archivedDate;
+    private Date actionedDate;    
     private boolean sendable;
     private SourceEntity source;
 
@@ -150,5 +153,31 @@ abstract public class NotificationEntity extends BaseEntity<Long> implements Pro
     public void setSource(SourceEntity source) {
         this.source = source;
     }
+    
+    @Column(name = "actioned_date")
+    public Date getActionedDate() {
+        return actionedDate;
+    }
 
+    public void setActionedDate(Date actionedDate) {
+        this.actionedDate = actionedDate;
+    }
+
+    @Column(name = "notification_subject")
+    public String getNotificationSubject() {
+        return notificationSubject;
+    }
+
+    public void setNotificationSubject(String notificationSubject) {
+        this.notificationSubject = notificationSubject;
+    }
+
+    @Column(name = "notification_intro")
+    public String getNotificationIntro() {
+        return notificationIntro;
+    }
+
+    public void setNotificationIntro(String notificationIntro) {
+        this.notificationIntro = notificationIntro;
+    }     
 }

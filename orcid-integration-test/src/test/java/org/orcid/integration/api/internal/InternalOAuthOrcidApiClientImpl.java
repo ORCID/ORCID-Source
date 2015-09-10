@@ -22,16 +22,21 @@ import static org.orcid.core.api.OrcidApiConstants.STATUS_PATH;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriBuilder;
 
 import org.orcid.api.common.OrcidClientHelper;
+import org.orcid.api.common.T2OrcidApiService;
 
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.WebResource;
 
 public class InternalOAuthOrcidApiClientImpl implements InternalOAuthAPIService<ClientResponse> {
 
@@ -58,4 +63,23 @@ public class InternalOAuthOrcidApiClientImpl implements InternalOAuthAPIService<
         URI statusPath = UriBuilder.fromPath(INTERNAL_API_PERSON_READ).build(orcid);
         return orcidClientHelper.getClientResponseWithToken(statusPath, MediaType.TEXT_HTML, accessToken);
     }    
+    
+    /**
+     * * Obtains the parameters necessary to perform an Oauth2 token request
+     * using client_credential authentication
+     * 
+     * @param formParams
+     *            the grant_type grant_type parameter, telling us what the
+     *            client type is.
+     * @return
+     */
+    @Override
+    @POST
+    @Path(T2OrcidApiService.OAUTH_TOKEN)
+    @Produces(value = { MediaType.APPLICATION_JSON })
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    public ClientResponse obtainOauth2TokenPost(String grantType, MultivaluedMap<String, String> formParams) {
+        WebResource resource = orcidClientHelper.createRootResource(T2OrcidApiService.OAUTH_TOKEN);
+        return resource.entity(formParams).post(ClientResponse.class);
+    }
 }
