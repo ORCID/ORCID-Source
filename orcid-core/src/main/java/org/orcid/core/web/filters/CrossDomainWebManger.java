@@ -66,7 +66,7 @@ public class CrossDomainWebManger {
         return false;
     }
 
-    private boolean validateDomain(String url) throws MalformedURLException {
+    public boolean validateDomain(String url) throws MalformedURLException {
         URL netUrl = new URL(url);
         String domain = netUrl.getHost();
         for (String allowedDomain : getAllowedDomainsRegex()) {
