@@ -34,13 +34,13 @@
 	        	</span>
 	        	
 	        	<span class="affiliation-date" ng-show="group.getActive().startDate && group.getActive().endDate">
-	        		<span ng-show="group.getActive().startDate.year">{{group.getActive().startDate.year}}</span><span ng-show="group.getActive().startDate.month">-{{group.getActive().startDate.month}}</span>
+	        		<span ng-show="group.getActive().startDate.year">{{group.getActive().startDate.year}}</span><span ng-show="group.getActive().startDate.month">-{{group.getActive().startDate.month}}</span><span ng-show="group.getActive().startDate.day">-{{group.getActive().startDate.day}}</span>
 	        		<@orcid.msg 'workspace_affiliations.dateSeparator'/>
-	        		<span ng-show="group.getActive().endDate.year">{{group.getActive().endDate.year}}</span><span ng-show="group.getActive().endDate.month">-{{group.getActive().endDate.month}}</span>
+	        		<span ng-show="group.getActive().endDate.year">{{group.getActive().endDate.year}}</span><span ng-show="group.getActive().endDate.month">-{{group.getActive().endDate.month}}</span><span ng-show="group.getActive().endDate.day">-{{group.getActive().endDate.day}}</span>
 	            </span>
 	            
 	            <span class="affiliation-date" ng-show="!group.getActive().startDate && group.getActive().endDate">
-	        	     <span ng-show="group.getActive().endDate.year">{{group.getActive().endDate.year}}</span><span ng-show="group.getActive().endDate.month">-{{group.getActive().endDate.month}}</span>
+	        	     <span ng-show="group.getActive().endDate.year">{{group.getActive().endDate.year}}</span><span ng-show="group.getActive().endDate.month">-{{group.getActive().endDate.month}}</span><span ng-show="group.getActive().endDate.day">-{{group.getActive().endDate.day}}</span>
 	        	</span>
 	        	        	
         	</div>
