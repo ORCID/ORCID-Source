@@ -79,6 +79,7 @@
 				<td>
 					<form action="<@orcid.rootPath '/signin/facebook'/>" method="POST">
 					    <button type="submit" class="btn btn-social-icon btn-facebook"><i class="fa fa-facebook"></i></button>
+					    <input type="hidden" name="scope" value="email" />
 					</form>
 				</td>
 				<td style="padding-left: 20px;">

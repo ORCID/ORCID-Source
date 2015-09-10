@@ -20,6 +20,10 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.orcid.core.manager.OrcidSecurityManager;
+import org.orcid.core.security.DeprecatedProfileException;
+import org.orcid.core.security.SocialLoginException;
+import org.orcid.core.security.UnclaimedProfileExistsException;
 import org.orcid.frontend.spring.web.social.config.SocialContext;
 import org.orcid.frontend.spring.web.social.config.SocialType;
 import org.orcid.frontend.web.exception.FeatureDisabledException;
@@ -31,8 +35,10 @@ import org.orcid.persistence.jpa.entities.UserconnectionPK;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.social.facebook.api.Facebook;
@@ -67,6 +73,9 @@ public class SocialController extends BaseController {
     @Resource
     private UserConnectionDao userConnectionDao;
     
+    @Resource
+    private OrcidSecurityManager securityMgr;
+    
     private String providerUserId;
 
     @RequestMapping(value = { "/access" }, method = RequestMethod.GET)
@@ -81,19 +90,33 @@ public class SocialController extends BaseController {
     	
     	if(emailId == null) {
     		//Possible that the account is not verified. Or the account does not contain a primary email.
-    		return new ModelAndView("redirect:/signin");
+    		throw new SocialLoginException("Did not receieve the login information.");
     	}
     	
         if(!emailManager.emailExists(emailId)) {
         	// redirect to registration screen
-        	return new ModelAndView("redirect:/register");
+        	throw new UsernameNotFoundException("Could not find an orcid account associated with the email id.");
         }
         EmailEntity emailEntity = emailDao.findCaseInsensitive(emailId);
         ProfileEntity profile = null;
         if (emailEntity == null) {
-        	return new ModelAndView("redirect:/signin");
+        	throw new UsernameNotFoundException("Could not find an orcid account associated with the email id.");
         } else {
         	 profile = emailEntity.getProfile();
+        	 if (profile == null) {
+                 throw new UsernameNotFoundException("Could not find an orcid account associated with the email id.");
+             }
+             if (profile.getPrimaryRecord() != null) {
+     			throw new DeprecatedProfileException(
+     					"orcid.frontend.security.deprecated_with_primary", profile
+     							.getPrimaryRecord().getId(), profile.getId());
+             }
+             if (!profile.getClaimed() && !securityMgr.isAdmin()) {
+                 throw new UnclaimedProfileExistsException("orcid.frontend.security.unclaimed_exists");
+             }
+             if (profile.getDeactivationDate() != null && !securityMgr.isAdmin()) {
+                 throw new DisabledException("Account not active, please call helpdesk");
+             }
         	 String userId = socialContext.getUserId();
         	 String providerId = connectionType.value();
         	 UserconnectionPK pk = new UserconnectionPK(userId, providerId, providerUserId);

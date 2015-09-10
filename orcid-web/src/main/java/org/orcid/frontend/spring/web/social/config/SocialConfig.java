@@ -22,6 +22,7 @@ import javax.sql.DataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
@@ -48,11 +49,14 @@ public class SocialConfig implements InitializingBean {
 
 	private static final Logger logger = LoggerFactory.getLogger(SocialConfig.class);
 
-	private static final String FB_KEY = "161378537526754";
-	private static final String FB_SECRET = "9382f990c575be17af9afd7c8b856532";
-	
-	private static final String GG_KEY = "729610675962-s5053analpnp9mdf4iqf4hne8v8ud7ng.apps.googleusercontent.com";
-	private static final String GG_SECRET="D8nykt6q0IBzvy02CZPYp9Ru";
+	@Value("${org.orcid.social.fb.key}")
+	private String fb_key;
+	@Value("${org.orcid.social.fb.secret}")
+	private String fb_secret;
+	@Value("${org.orcid.social.gg.key}")
+	private String gg_key;
+	@Value("${org.orcid.social.gg.secret}")
+	private String gg_secret;
 
 	private SocialContext socialContext;
 
@@ -71,8 +75,8 @@ public class SocialConfig implements InitializingBean {
 	public ConnectionFactoryLocator connectionFactoryLocator() {
 		logger.info("getting connectionFactoryLocator");
 		ConnectionFactoryRegistry registry = new ConnectionFactoryRegistry();
-		registry.addConnectionFactory(new FacebookConnectionFactory(FB_KEY, FB_SECRET));
-		registry.addConnectionFactory(new GoogleConnectionFactory(GG_KEY, GG_SECRET));
+		registry.addConnectionFactory(new FacebookConnectionFactory(fb_key, fb_secret));
+		registry.addConnectionFactory(new GoogleConnectionFactory(gg_key, gg_secret));
 		return registry;
 	}
 
