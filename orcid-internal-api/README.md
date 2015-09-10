@@ -7,6 +7,7 @@ The ORCID-INTERNAL-API is intended to be used for internal ORCID apps, so, only 
 1. Add the scope '/orcid-internal/person/last_modified' to the client you want to use
 
 ``insert into client_scope values('<Client ID>','/orcid-internal/person/last_modified',now() , now() );``
+
 ``update client_details set last_modified=now() where client_details_id='<CLIENT_ID>'`` 
 
 ### How to use it?
