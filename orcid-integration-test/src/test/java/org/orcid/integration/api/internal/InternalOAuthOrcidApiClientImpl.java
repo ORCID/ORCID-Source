@@ -57,11 +57,11 @@ public class InternalOAuthOrcidApiClientImpl implements InternalOAuthAPIService<
 
     @Override
     @GET
-    @Produces({ "application/vnd.orcid+json; qs=4", "application/orcid+json; qs=2", "application/xml", "application/json" })
+    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     @Path("/{orcid}/authenticate")
     public ClientResponse viewPersonLastModified(String orcid, String accessToken) {
         URI statusPath = UriBuilder.fromPath(INTERNAL_API_PERSON_READ).build(orcid);
-        return orcidClientHelper.getClientResponseWithToken(statusPath, MediaType.TEXT_HTML, accessToken);
+        return orcidClientHelper.getClientResponseWithToken(statusPath, MediaType.APPLICATION_JSON, accessToken);
     }    
     
     /**

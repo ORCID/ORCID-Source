@@ -18,6 +18,11 @@ package org.orcid.internal.util;
 
 import javax.xml.bind.annotation.XmlElement;
 
+/**
+ * 
+ * @author Angel Montenegro
+ * 
+ */
 public class LastModifiedResponse {
 
     @XmlElement(name = "orcid")

@@ -37,8 +37,11 @@ import org.springframework.security.oauth2.common.exceptions.UnsupportedGrantTyp
 
 import com.orcid.api.common.server.delegator.impl.OrcidClientCredentialEndPointDelegatorImpl;
 
-
-
+/**
+ * 
+ * @author Angel Montenegro
+ * 
+ */
 public class InternalClientCredentialEndPointDelegatorImpl extends OrcidClientCredentialEndPointDelegatorImpl implements InternalClientCredentialEndPointDelegator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OrcidClientCredentialEndPointDelegatorImpl.class);

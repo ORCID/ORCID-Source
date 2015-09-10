@@ -17,9 +17,7 @@
 package org.orcid.integration.api.internal;
 
 import static org.orcid.core.api.OrcidApiConstants.AUTHENTICATE_PATH;
-import static org.orcid.core.api.OrcidApiConstants.ORCID_JSON;
 import static org.orcid.core.api.OrcidApiConstants.STATUS_PATH;
-import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_JSON;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -42,7 +40,7 @@ public interface InternalOAuthAPIService<T> {
     public T viewStatusText(String orcid, String accessToken);
                
     @GET
-    @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    @Produces(value = { MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     @Path(AUTHENTICATE_PATH)
     public T viewPersonLastModified(String orcid, String accessToken);
     

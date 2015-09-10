@@ -30,6 +30,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.integration.api.helper.APIRequestType;
 import org.orcid.integration.api.helper.OauthHelper;
+import org.orcid.integration.api.internal.InternalOAuthOrcidApiClientImpl;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.beans.factory.annotation.Value;
@@ -54,9 +55,14 @@ public class InternalAPITest {
     public String client1ClientId;
     @Value("${org.orcid.web.testClient1.clientSecret}")
     public String client1ClientSecret;
+    @Value("${org.orcid.web.testUser1.orcidId}")
+    protected String user1OrcidId;
     
     @Resource
     private OauthHelper oauthHelper;
+    
+    @Resource
+    protected InternalOAuthOrcidApiClientImpl internalApiClient;
 
     @Test
     public void testGetTokenForInternalScopes() throws JSONException {
@@ -97,5 +103,30 @@ public class InternalAPITest {
         ClientResponse clientResponse = oauthHelper.getResponse(params, APIRequestType.MEMBER);
         assertNotNull(clientResponse);
         assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), clientResponse.getStatus());
+    }
+    
+    @Test
+    public void testGetLastModifiedDate() throws JSONException {
+        MultivaluedMap<String, String> params = new MultivaluedMapImpl();
+        params.add("client_id", client1ClientId);
+        params.add("client_secret", client1ClientSecret);
+        params.add("grant_type", "client_credentials");
+        params.add("scope", ScopePathType.INTERNAL_PERSON_LAST_MODIFIED.value());
+        ClientResponse clientResponse = oauthHelper.getResponse(params, APIRequestType.INTERNAL);
+        assertNotNull(clientResponse);     
+        assertEquals(Response.Status.OK.getStatusCode(), clientResponse.getStatus());
+        String body = clientResponse.getEntity(String.class);
+        JSONObject jsonObject = new JSONObject(body);
+        String accessToken = (String) jsonObject.get("access_token");
+        assertNotNull(accessToken);
+        assertFalse(PojoUtil.isEmpty(accessToken));
+        
+        ClientResponse lastModifiedResponse = internalApiClient.viewPersonLastModified(user1OrcidId, accessToken);
+        assertNotNull(lastModifiedResponse);
+        String lastModified = lastModifiedResponse.getEntity(String.class);
+        jsonObject = new JSONObject(lastModified);
+        assertNotNull(jsonObject);
+        assertEquals(user1OrcidId, (String)jsonObject.getString("orcid"));
+        assertNotNull((String)jsonObject.getString("last-modified"));                
     }
 }

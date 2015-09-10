@@ -29,6 +29,11 @@ import org.orcid.internal.server.delegator.InternalApiServiceDelegator;
 import org.orcid.internal.util.LastModifiedResponse;
 import org.orcid.jaxb.model.message.ScopePathType;
 
+/**
+ * 
+ * @author Angel Montenegro
+ * 
+ */
 public class InternalApiServiceDelegatorImpl implements InternalApiServiceDelegator {
 
     @Resource
