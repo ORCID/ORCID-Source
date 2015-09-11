@@ -21,7 +21,7 @@ import javax.annotation.Resource;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.api.notifications.server.delegator.NotificationsApiServiceDelegator;
-import org.orcid.core.exception.OrcidNotFoundException;
+import org.orcid.core.exception.OrcidNotificationNotFoundException;
 import org.orcid.core.utils.SecurityContextTestUtils;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.test.DBUnitTest;
@@ -35,10 +35,10 @@ public class NotificationsApiServiceDelegatorTest extends DBUnitTest {
     @Resource
     private NotificationsApiServiceDelegator notificationsApiServiceDelegator;
 
-    @Test(expected = OrcidNotFoundException.class)
+    @Test(expected = OrcidNotificationNotFoundException.class)
     public void testNotFoundError() {
         SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555-5555-5555-5555", ScopePathType.PREMIUM_NOTIFICATION);
-        notificationsApiServiceDelegator.findAddActivitiesNotification("1234-5678-1234-5678", 1L);
+        notificationsApiServiceDelegator.findPermissionNotification("1234-5678-1234-5678", 1L);
     }
 
 }

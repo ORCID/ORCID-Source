@@ -18,6 +18,7 @@
 -->
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
     <changeSet id="ADD-NOTIFICATION-WORK" author="Will Simposn">
         <createTable tableName="notification_work">
             <column name="date_created" type="TIMESTAMP WITH TIME ZONE"/>
@@ -37,4 +38,9 @@
                                  baseColumnNames="work_id" baseTableName="notification_work"
                                  referencedColumnNames="work_id" referencedTableName="work" />
     </changeSet>
+                   
+    <changeSet id="UPDATE-NOTIFICATION-TYPE" author="Will Simpson" dbms="postgresql">
+        <sql>UPDATE notification set notification_type = 'PERMISSION' WHERE notification_type = 'ADD_ACTIVITIES'</sql>
+    </changeSet>
+    
 </databaseChangeLog>

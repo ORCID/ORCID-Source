@@ -67,7 +67,7 @@ public class Classpath {
     }
 
     public static String[] getClasspathFileNames(FileFilter filter, boolean includeBasePath) throws ZipException, IOException {
-        List filenames = new ArrayList();
+        List<String> filenames = new ArrayList<String>();
         for (String filename : getClasspathFileNames(includeBasePath)) {
             if (filter.accept(filename)) {
                 filenames.add(filename);

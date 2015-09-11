@@ -140,11 +140,18 @@
     <include file="/db/updates/set_empty_visibility_fields_to_private.xml" />
     <include file="/db/updates/drop_oauth2_authentication_key_unique_constraint.xml" />
     
-    <include file="/db/updates/notifications_part3.xml" />
-
     <include file="/db/updates/move-work-data-to-work-table.xml" />
     <include file="/db/updates/new-index-for-org-disambiguated-table.xml" />
     <include file="/db/updates/external-ids-as-json.xml" />
     <include file="/db/updates/remove-work-id-fk-on-profile-work.xml" />
     <include file="/db/updates/group-id-record.xml" />
+    <include file="/db/updates/move-all-peer-review-info-to-peer-review-table.xml" />
+    <include file="/db/updates/add_redir_acttype_geoarea.xml" />
+    <include file="/db/updates/add_captcha_field_to_profile.xml" />
+    <include file="/db/updates/remove_profile_work_table.xml" />
+    <include file="/db/updates/add_index_on_language_codes_in_activities.xml" />
+    <include file="/db/updates/fix_language_codes_in_activities.xml" />
+    <include file="/db/updates/rename_activities_tables_and_fields.xml" />
+    <include file="/db/updates/add_fields_on_notifications_item_table.xml" />
+    <include file="/db/updates/notifications_part3.xml" />
 </databaseChangeLog>

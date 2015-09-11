@@ -24,12 +24,15 @@
 package org.orcid.jaxb.model.common;
 
 import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * ISO 3611 country
@@ -92,6 +95,7 @@ public class Country implements Serializable, VisibilityType {
      *            allowed object is {@link String }
      * 
      */
+    @JsonIgnore
     public void setValue(String value) {
         this.value = Iso3166Country.fromValue(value);
     }
@@ -102,6 +106,7 @@ public class Country implements Serializable, VisibilityType {
      * @return possible object is {@link Visibility }
      * 
      */
+    
     public Visibility getVisibility() {
         return visibility;
     }

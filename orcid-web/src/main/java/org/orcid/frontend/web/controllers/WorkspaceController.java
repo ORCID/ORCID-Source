@@ -46,7 +46,6 @@ import org.orcid.frontend.web.util.YearsList;
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.RedirectUri;
 import org.orcid.jaxb.model.message.AffiliationType;
-import org.orcid.jaxb.model.record.CitationType;
 import org.orcid.jaxb.model.message.ContributorRole;
 import org.orcid.jaxb.model.message.ExternalIdentifier;
 import org.orcid.jaxb.model.message.ExternalIdentifiers;
@@ -55,11 +54,12 @@ import org.orcid.jaxb.model.message.FundingType;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.SequenceType;
 import org.orcid.jaxb.model.message.Source;
+import org.orcid.jaxb.model.record.CitationType;
+import org.orcid.jaxb.model.record.PeerReviewType;
+import org.orcid.jaxb.model.record.Role;
 import org.orcid.jaxb.model.record.WorkCategory;
 import org.orcid.jaxb.model.record.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.record.WorkType;
-import org.orcid.jaxb.model.record.PeerReviewType;
-import org.orcid.jaxb.model.record.Role;
 import org.orcid.pojo.ThirdPartyRedirect;
 import org.orcid.pojo.ajaxForm.KeywordsForm;
 import org.orcid.pojo.ajaxForm.OtherNamesForm;
@@ -113,9 +113,9 @@ public class WorkspaceController extends BaseWorkspaceController {
 
     @Resource(name = "languagesMap")
     private LanguagesMap lm;
-
-    @ModelAttribute("workImportWizards")
-    public List<OrcidClient> retrieveWorkImportWizards() {
+    
+    @RequestMapping(value = { "/workspace/retrieve-work-impor-wizards.json" }, method = RequestMethod.GET)
+    public @ResponseBody List<OrcidClient> retrieveWorkImportWizards() {
         return thirdPartyLinkManager.findOrcidClientsWithPredefinedOauthScopeWorksImport();
     }
 
@@ -145,6 +145,8 @@ public class WorkspaceController extends BaseWorkspaceController {
     @ModelAttribute("currencyCodeTypes")
     public Map<String, String> retrieveCurrencyCodesTypesAsMap() {
         Map<String, String> currencyCodeTypes = new LinkedHashMap<String, String>();
+        //Add an empty one
+        currencyCodeTypes.put("", "");
         for (Currency currency : Currency.getAvailableCurrencies()) {
             currencyCodeTypes.put(currency.getCurrencyCode(), currency.getCurrencyCode());
         }

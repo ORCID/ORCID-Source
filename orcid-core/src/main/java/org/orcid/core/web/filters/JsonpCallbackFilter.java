@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Map;
 
+import javax.annotation.Resource;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -44,33 +45,37 @@ public class JsonpCallbackFilter extends OncePerRequestFilter {
 
     private static Log log = LogFactory.getLog(JsonpCallbackFilter.class);
 
+    @Resource
+    CrossDomainWebManger crossDomainWebManger;
+    
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
-
-        @SuppressWarnings("unchecked")
+        
         Map<String, String[]> parms = httpRequest.getParameterMap();
 
         if (parms.containsKey("callback")) {
-            if (log.isDebugEnabled())
-                log.debug("Wrapping response with JSONP callback '" + parms.get("callback")[0] + "'");
+            if(crossDomainWebManger.allowed(request)) {
+                if (log.isDebugEnabled())
+                    log.debug("Wrapping response with JSONP callback '" + parms.get("callback")[0] + "'");
 
-            HttpServletRequestWrapper requestWrapper = new AcceptHeaderRequestWrapper(httpRequest, "application/json");
+                HttpServletRequestWrapper requestWrapper = new AcceptHeaderRequestWrapper(httpRequest, "application/json");
 
-            OutputStream out = httpResponse.getOutputStream();
+                OutputStream out = httpResponse.getOutputStream();
 
-            GenericResponseWrapper responseWrapper = new GenericResponseWrapper(httpResponse);
+                GenericResponseWrapper responseWrapper = new GenericResponseWrapper(httpResponse);
 
-            filterChain.doFilter(requestWrapper, responseWrapper);
+                filterChain.doFilter(requestWrapper, responseWrapper);
 
-            out.write(new String(parms.get("callback")[0] + "(").getBytes());
-            out.write(responseWrapper.getData());
-            out.write(new String(");").getBytes());
+                out.write(new String(parms.get("callback")[0] + "(").getBytes());
+                out.write(responseWrapper.getData());
+                out.write(new String(");").getBytes());
 
-            responseWrapper.setContentType("text/javascript;charset=UTF-8");
+                responseWrapper.setContentType("text/javascript;charset=UTF-8");
 
-            out.close();
+                out.close();
+            }            
         } else {
             filterChain.doFilter(request, response);
         }

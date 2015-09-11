@@ -53,8 +53,8 @@ import org.orcid.jaxb.model.message.SendChangeNotifications;
 import org.orcid.jaxb.model.message.Source;
 import org.orcid.jaxb.model.notification.Notification;
 import org.orcid.jaxb.model.notification.NotificationType;
-import org.orcid.jaxb.model.notification.addactivities.Activities;
-import org.orcid.jaxb.model.notification.addactivities.Activity;
+import org.orcid.jaxb.model.notification.permission.Items;
+import org.orcid.jaxb.model.notification.permission.Item;
 import org.orcid.jaxb.model.notification.amended.AmendedSection;
 import org.orcid.jaxb.model.notification.amended.NotificationAmended;
 import org.orcid.jaxb.model.notification.custom.NotificationCustom;
@@ -387,7 +387,7 @@ public class NotificationManagerImpl implements NotificationManager {
     }
 
     @Override
-    public void sendAmendEmail(OrcidProfile amendedProfile, AmendedSection amendedSection, Collection<Activity> activities) {
+    public void sendAmendEmail(OrcidProfile amendedProfile, AmendedSection amendedSection, Collection<Item> items) {
         String amenderOrcid = sourceManager.retrieveSourceOrcid();
         if (amenderOrcid == null) {
             LOGGER.debug("Not sending amend email, because amender is null: {}", amendedProfile);
@@ -430,8 +430,8 @@ public class NotificationManagerImpl implements NotificationManager {
             NotificationAmended notification = new NotificationAmended();
             notification.setNotificationType(NotificationType.AMENDED);
             notification.setAmendedSection(amendedSection);
-            if (activities != null) {
-                notification.setActivities(new Activities(new ArrayList<>(activities)));
+            if (items != null) {
+                notification.setItems(new Items(new ArrayList<>(items)));
             }
             createNotification(amendedProfile.getOrcidIdentifier().getPath(), notification);
         } else {
@@ -631,8 +631,15 @@ public class NotificationManagerImpl implements NotificationManager {
         templateParams.put("orcid", orcid);
         templateParams.put("subject", getSubject("email.subject.claim_reminder", orcidProfile));
         Source source = orcidProfile.getOrcidHistory().getSource();
-        templateParams.put("creatorName", (source == null || source.getSourceName() == null || source.getSourceName().getContent() == null) ? source.retrieveSourcePath()
-                : source.getSourceName().getContent());
+        String creatorName = "";
+        if(source != null) {
+        	if(source.getSourceName() != null && source.getSourceName().getContent() != null) {
+        		creatorName = source.getSourceName().getContent();
+        	} else {
+        		creatorName = source.retrieveSourcePath();
+        	}
+        }
+        templateParams.put("creatorName", creatorName);
         templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
         templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
         templateParams.put("daysUntilActivation", daysUntilActivation);
@@ -816,10 +823,12 @@ public class NotificationManagerImpl implements NotificationManager {
         }
         String sourceId = sourceManager.retrieveSourceOrcid();
         if (sourceId != null && !sourceId.equals(notificationEntity.getSource().getSourceId())) {
-            throw new WrongSourceException("You are not the source of notification with id=" + id + " for ORCID iD=" + orcid);
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("activity", "notification");
+        	throw new WrongSourceException(params);
         }
         if (notificationEntity.getReadDate() != null) {
-            throw new OrcidNotificationAlreadyReadException("The notification has already been read");
+            throw new OrcidNotificationAlreadyReadException();
         }
         if (notificationEntity.getArchivedDate() == null) {
             notificationEntity.setArchivedDate(new Date());
@@ -828,4 +837,20 @@ public class NotificationManagerImpl implements NotificationManager {
         return notificationAdapter.toNotification(notificationEntity);
     }
 
+    @Override
+    @Transactional
+    public Notification setActionedDate(String orcid, Long id) {
+        NotificationEntity notificationEntity = notificationDao.findByOricdAndId(orcid, id);
+        if (notificationEntity == null) {
+            return null;
+        }
+        
+        if(notificationEntity.getActionedDate() == null) {
+            notificationEntity.setActionedDate(new Date());
+            notificationDao.merge(notificationEntity);
+        }
+        
+        return notificationAdapter.toNotification(notificationEntity);
+    }
+    
 }

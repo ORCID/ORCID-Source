@@ -99,6 +99,8 @@ public class DeveloperToolsController extends BaseWorkspaceController {
     RedirectUri getEmptyRedirectUri(HttpServletRequest request) {
         RedirectUri result = new RedirectUri();
         result.setValue(new Text());
+        result.setActType(Text.valueOf(""));
+        result.setGeoArea(Text.valueOf(""));
         result.setType(Text.valueOf(RedirectUriType.DEFAULT.name()));
         return result;
     }
@@ -322,7 +324,7 @@ public class DeveloperToolsController extends BaseWorkspaceController {
     private List<String> validateRedirectUri(RedirectUri redirectUri) {
         List<String> errors = null;
         String[] schemes = { "http", "https" };
-        UrlValidator urlValidator = new UrlValidator(schemes);
+        UrlValidator urlValidator = new UrlValidator(schemes, UrlValidator.ALLOW_LOCAL_URLS);
         if (!PojoUtil.isEmpty(redirectUri.getValue())) {
             try {
                 String redirectUriString = redirectUri.getValue().getValue();

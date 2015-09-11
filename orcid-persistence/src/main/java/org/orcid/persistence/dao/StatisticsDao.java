@@ -65,4 +65,12 @@ public interface StatisticsDao {
      *         parameters
      * */
     public StatisticValuesEntity getStatistic(long id, String name);
+
+    /** 
+     * Get all statistics by statistic name
+     * 
+     * @param name
+     * @return a list in descending date order
+     */
+    List<StatisticValuesEntity> getStatistic(String name);
 }

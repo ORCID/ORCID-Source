@@ -30,8 +30,10 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.locale.LocaleManager;
+import org.orcid.core.manager.GroupIdRecordManager;
 import org.orcid.core.manager.PeerReviewManager;
 import org.orcid.frontend.web.util.LanguagesMap;
+import org.orcid.jaxb.model.groupid.GroupIdRecord;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.record.PeerReview;
@@ -45,7 +47,6 @@ import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.orcid.persistence.solr.entities.OrgDisambiguatedSolrDocument;
 import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.pojo.ajaxForm.PeerReviewForm;
-import org.orcid.pojo.ajaxForm.PeerReviewSubjectForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.TranslatedTitle;
@@ -83,6 +84,9 @@ public class PeerReviewsController extends BaseWorkspaceController {
 
     @Resource(name = "languagesMap")
     private LanguagesMap lm;    
+    
+    @Resource
+    private GroupIdRecordManager groupIdRecordManager;
 
     public void setLocaleManager(LocaleManager localeManager) {
         this.localeManager = localeManager;
@@ -140,22 +144,13 @@ public class PeerReviewsController extends BaseWorkspaceController {
         form.getUrl().setRequired(false);
         form.setExternalIdentifiers(emptyExtIdsList);
 
-        PeerReviewSubjectForm subjectForm = new PeerReviewSubjectForm();
-        subjectForm.setErrors(Collections.<String> emptyList());
-        subjectForm.setJournalTitle(Text.valueOf(StringUtils.EMPTY));
-        subjectForm.getJournalTitle().setRequired(false);
-        subjectForm.setPutCode(Text.valueOf(StringUtils.EMPTY));
-        subjectForm.getPutCode().setRequired(false);
-        subjectForm.setSubtitle(Text.valueOf(StringUtils.EMPTY));
-        subjectForm.getSubtitle().setRequired(false);
-        subjectForm.setTitle(Text.valueOf(StringUtils.EMPTY));
-        subjectForm.setTranslatedTitle(emptyTranslatedTitle);
-        subjectForm.setUrl(Text.valueOf(StringUtils.EMPTY));
-        subjectForm.getUrl().setRequired(false);
-        subjectForm.setWorkExternalIdentifiers(emptyExtIdsList);
-        subjectForm.setWorkType(Text.valueOf(StringUtils.EMPTY));        
-
-        form.setSubjectForm(subjectForm);
+        form.setGroupId(Text.valueOf(StringUtils.EMPTY));
+        form.setSubjectContainerName(Text.valueOf(StringUtils.EMPTY));        
+        form.setSubjectExternalIdentifier(emptyExternalId);
+        form.setSubjectName(Text.valueOf(StringUtils.EMPTY));
+        form.setSubjectType(Text.valueOf(StringUtils.EMPTY));
+        form.setSubjectUrl(Text.valueOf(StringUtils.EMPTY));
+        
         return form;
     }
 
@@ -180,7 +175,7 @@ public class PeerReviewsController extends BaseWorkspaceController {
         List<PeerReview> peerReviews = peerReviewManager.findPeerReviews(currentProfile.getOrcidIdentifier().getPath(), lastModified.getTime());
         
         Map<String, String> languages = lm.buildLanguageMap(getUserLocale(), false);
-        HashMap<String, PeerReviewForm> peerReviewMap = new HashMap<>();
+        HashMap<Long, PeerReviewForm> peerReviewMap = new HashMap<>();
         List<String> peerReviewIds = new ArrayList<String>();
 
         if (peerReviews != null) {
@@ -196,18 +191,18 @@ public class PeerReviewsController extends BaseWorkspaceController {
                         }
                     }
                     
-                    if (form.getSubjectForm() != null && form.getSubjectForm().getTitle() != null) {
+                    if (form.getTranslatedSubjectName() != null) {
                         // Set translated title language name
-                        if (!(form.getSubjectForm().getTranslatedTitle() == null) && !StringUtils.isEmpty(form.getSubjectForm().getTranslatedTitle().getLanguageCode())) {
-                            String languageName = languages.get(form.getSubjectForm().getTranslatedTitle().getLanguageCode());
-                            form.getSubjectForm().getTranslatedTitle().setLanguageName(languageName);
+                        if (!(form.getTranslatedSubjectName() == null) && !StringUtils.isEmpty(form.getTranslatedSubjectName().getLanguageCode())) {
+                            String languageName = languages.get(form.getTranslatedSubjectName().getLanguageCode());
+                            form.getTranslatedSubjectName().setLanguageName(languageName);
                         }
                     }
 
                     form.setCountryForDisplay(getMessage(buildInternationalizationKey(CountryIsoEntity.class, peerReview.getOrganization().getAddress().getCountry()
                             .name())));
                     peerReviewMap.put(peerReview.getPutCode(), form);
-                    peerReviewIds.add(peerReview.getPutCode());
+                    peerReviewIds.add(String.valueOf(peerReview.getPutCode()));
                 } catch (Exception e) {
                     LOGGER.error("Failed to parse as PeerReview. Put code" + peerReview.getPutCode(), e);
                 }
@@ -228,14 +223,14 @@ public class PeerReviewsController extends BaseWorkspaceController {
         String[] peerReviewIds = peerReviewIdsStr.split(",");
 
         if (peerReviewIds != null) {
-            HashMap<String, PeerReviewForm> peerReviewMap = (HashMap<String, PeerReviewForm>) request.getSession().getAttribute(PEER_REVIEW_MAP);
+            HashMap<Long, PeerReviewForm> peerReviewMap = (HashMap<Long, PeerReviewForm>) request.getSession().getAttribute(PEER_REVIEW_MAP);
             // this should never happen, but just in case.
             if (peerReviewMap == null) {
                 createPeerReviewIdList(request);
-                peerReviewMap = (HashMap<String, PeerReviewForm>) request.getSession().getAttribute(PEER_REVIEW_MAP);
+                peerReviewMap = (HashMap<Long, PeerReviewForm>) request.getSession().getAttribute(PEER_REVIEW_MAP);
             }
             for (String peerReviewId : peerReviewIds) {
-                peerReview = peerReviewMap.get(peerReviewId);
+                peerReview = peerReviewMap.get(Long.valueOf(peerReviewId));
                 peerReviewList.add(peerReview);
             }
         }
@@ -261,11 +256,13 @@ public class PeerReviewsController extends BaseWorkspaceController {
         validateCountry(peerReview);
         validateUrl(peerReview);         
         validateExternalIdentifiers(peerReview);
+        validateGroupId(peerReview);
         copyErrors(peerReview.getOrgName(), peerReview);
         copyErrors(peerReview.getCity(), peerReview);
         copyErrors(peerReview.getRegion(), peerReview);
         copyErrors(peerReview.getCountry(), peerReview);
         copyErrors(peerReview.getUrl(), peerReview);
+        copyErrors(peerReview.getGroupId(), peerReview);
         if(peerReview.getExternalIdentifiers() != null) {
             for(WorkExternalIdentifier extId : peerReview.getExternalIdentifiers()) {
                 copyErrors(extId.getWorkExternalIdentifierId(), peerReview);
@@ -277,23 +274,19 @@ public class PeerReviewsController extends BaseWorkspaceController {
             validateCompletionDate(peerReview);
             copyErrors(peerReview.getCompletionDate(), peerReview);
         }
-        if (peerReview.getSubjectForm() != null) {
-            validateSubjectType(peerReview);
-            validateSubjectTitle(peerReview);
-            validateSubjectUrl(peerReview);
-            validateSubjectExternalIdentifiers(peerReview);
-            PeerReviewSubjectForm subjectForm = peerReview.getSubjectForm();
-            copyErrors(subjectForm.getWorkType(), peerReview);
-            copyErrors(subjectForm.getTitle(), peerReview);
-            copyErrors(subjectForm.getUrl(), peerReview);
-            if(subjectForm.getWorkExternalIdentifiers() != null) {
-                for(WorkExternalIdentifier extId : subjectForm.getWorkExternalIdentifiers()) {
-                    copyErrors(extId.getWorkExternalIdentifierId(), peerReview);
-                    copyErrors(extId.getWorkExternalIdentifierType(), peerReview);
-                }
-            }
-        }
-
+                                
+        validateSubjectType(peerReview);
+        copyErrors(peerReview.getSubjectType(), peerReview);
+        
+        validateSubjectName(peerReview);
+        copyErrors(peerReview.getSubjectName(), peerReview);
+        
+        validateSubjectUrl(peerReview);
+        copyErrors(peerReview.getSubjectUrl(), peerReview);
+        
+        validateSubjectExternalIdentifier(peerReview);
+        copyErrors(peerReview.getSubjectExternalIdentifier(), peerReview);
+            
         // If there are no errors, persist to DB
         if (peerReview.getErrors().isEmpty()) {
             if (PojoUtil.isEmpty(peerReview.getPutCode())) {
@@ -310,10 +303,10 @@ public class PeerReviewsController extends BaseWorkspaceController {
      * List peer reviews associated with a profile
      * */
     @RequestMapping(value = "/get-peer-review.json", method = RequestMethod.GET)
-    public @ResponseBody PeerReviewForm getPeerReviewJson(@RequestParam(value = "peerReviewId") String peerReviewIdStr) {
+    public @ResponseBody PeerReviewForm getPeerReviewJson(@RequestParam(value = "peerReviewId") Long peerReviewId) {
         PeerReviewForm result = null;
         try {
-            PeerReview peerReview = peerReviewManager.getPeerReview(getEffectiveUserOrcid(), peerReviewIdStr);
+            PeerReview peerReview = peerReviewManager.getPeerReview(getEffectiveUserOrcid(), peerReviewId);
             if (peerReview != null) {
                 result = PeerReviewForm.valueOf(peerReview);
             }
@@ -331,7 +324,7 @@ public class PeerReviewsController extends BaseWorkspaceController {
         if (peerReview == null || PojoUtil.isEmpty(peerReview.getPutCode())) {
             return null;
         }
-        peerReviewManager.removePeerReview(getEffectiveUserOrcid(), peerReview.getPutCode().getValue());
+        peerReviewManager.removePeerReview(getEffectiveUserOrcid(), Long.valueOf(peerReview.getPutCode().getValue()));
         return peerReview;
     }
 
@@ -341,7 +334,7 @@ public class PeerReviewsController extends BaseWorkspaceController {
         String orcid = getEffectiveUserOrcid();
 
         for (String id : peerReviewIds) {
-            peerReviewManager.removePeerReview(orcid, id);
+            peerReviewManager.removePeerReview(orcid, Long.valueOf(id));
         }
 
         return peerReviewIds;
@@ -350,7 +343,7 @@ public class PeerReviewsController extends BaseWorkspaceController {
     private PeerReviewForm addPeerReview(PeerReviewForm peerReviewForm) {
         String userOrcid = getEffectiveUserOrcid();
         PeerReview peerReview = peerReviewForm.toPeerReview();
-        peerReview = peerReviewManager.createPeerReview(userOrcid, peerReview);
+        peerReview = peerReviewManager.createPeerReview(userOrcid, peerReview, false);
         peerReviewForm = PeerReviewForm.valueOf(peerReview);
         return peerReviewForm;
     }
@@ -358,7 +351,7 @@ public class PeerReviewsController extends BaseWorkspaceController {
     private PeerReviewForm editPeerReview(PeerReviewForm peerReviewForm) {
         String userOrcid = getEffectiveUserOrcid();
         PeerReview peerReview = peerReviewForm.toPeerReview();
-        peerReview = peerReviewManager.updatePeerReview(userOrcid, peerReview);
+        peerReview = peerReviewManager.updatePeerReview(userOrcid, peerReview, false);
         return PeerReviewForm.valueOf(peerReview);
     }
 
@@ -384,27 +377,12 @@ public class PeerReviewsController extends BaseWorkspaceController {
     }
 
     private void removeEmptyExternalIdsOnSubject(PeerReviewForm peerReview) {
-        if (peerReview.getSubjectForm() == null) {
+        if (peerReview.getSubjectExternalIdentifier() == null) {
             return;
         }
-        List<WorkExternalIdentifier> extIds = peerReview.getSubjectForm().getWorkExternalIdentifiers();
-        List<WorkExternalIdentifier> updatedExtIds = new ArrayList<WorkExternalIdentifier>();
-        if (extIds != null) {
-            // For all external identifiers
-            for (WorkExternalIdentifier extId : extIds) {
-                // Keep only the ones that contains a value or url
-                if (!PojoUtil.isEmpty(extId.getWorkExternalIdentifierId())) {
-                    updatedExtIds.add(extId);
-                }
-            }
-        }
-
-        if (updatedExtIds.isEmpty()) {
-            WorkExternalIdentifier wei = new WorkExternalIdentifier();
-            updatedExtIds.add(wei);
-        }
-
-        peerReview.getSubjectForm().setWorkExternalIdentifiers(updatedExtIds);
+        if(PojoUtil.isEmpty(peerReview.getSubjectExternalIdentifier().getWorkExternalIdentifierId())) {
+            peerReview.setSubjectExternalIdentifier(null);
+        }                    
     }
 
     @RequestMapping(value = "/orgNameValidate.json", method = RequestMethod.POST)
@@ -487,53 +465,48 @@ public class PeerReviewsController extends BaseWorkspaceController {
         return peerReview;
     }
 
-    @RequestMapping(value = "/subject/titleValidate.json", method = RequestMethod.POST)
-    public @ResponseBody PeerReviewForm validateSubjectTitle(@RequestBody PeerReviewForm peerReview) {
-        if(peerReview.getSubjectForm().getTitle() == null) {
-            peerReview.getSubjectForm().setTitle(Text.valueOf(StringUtils.EMPTY));
+    @RequestMapping(value = "/subject/subjectNameValidate.json", method = RequestMethod.POST)
+    public @ResponseBody PeerReviewForm validateSubjectName(@RequestBody PeerReviewForm peerReview) {
+        if(peerReview.getSubjectName() == null) {
+            peerReview.setSubjectName(Text.valueOf(StringUtils.EMPTY));
         }
-        peerReview.getSubjectForm().getTitle().setErrors(new ArrayList<String>());
-        if (PojoUtil.isEmpty(peerReview.getSubjectForm().getTitle())) {
-            setError(peerReview.getSubjectForm().getTitle(), "common.title.not_blank");
-        } else if (peerReview.getSubjectForm().getTitle().getValue().length() > 100) {
-            setError(peerReview.getSubjectForm().getTitle(), "common.length_less_1000");
+        peerReview.getSubjectName().setErrors(new ArrayList<String>());
+        if (PojoUtil.isEmpty(peerReview.getSubjectName())) {
+            setError(peerReview.getSubjectName(), "common.title.not_blank");
+        } else if (peerReview.getSubjectName().getValue().length() > 100) {
+            setError(peerReview.getSubjectName(), "common.length_less_1000");
         }
         return peerReview;
     }
 
     @RequestMapping(value = "/subject/typeValidate.json", method = RequestMethod.POST)
     public @ResponseBody PeerReviewForm validateSubjectType(@RequestBody PeerReviewForm peerReview) {
-        if(peerReview.getSubjectForm().getWorkType() == null) {
-            peerReview.getSubjectForm().setWorkType(Text.valueOf(StringUtils.EMPTY)); 
+        if(peerReview.getSubjectType() == null) {
+            peerReview.setSubjectType(Text.valueOf(StringUtils.EMPTY)); 
         }
-        peerReview.getSubjectForm().getWorkType().setErrors(new ArrayList<String>());
-        if (PojoUtil.isEmpty(peerReview.getSubjectForm().getWorkType())) {
-            setError(peerReview.getSubjectForm().getWorkType(), "peer_review.subject.work_type.not_blank");
+        peerReview.getSubjectType().setErrors(new ArrayList<String>());
+        if (PojoUtil.isEmpty(peerReview.getSubjectType())) {
+            setError(peerReview.getSubjectType(), "peer_review.subject.work_type.not_blank");
         }
         return peerReview;
     }
 
     @RequestMapping(value = "/subject/urlValidate.json", method = RequestMethod.POST)
     public @ResponseBody PeerReviewForm validateSubjectUrl(@RequestBody PeerReviewForm peerReview) {
-        if(peerReview.getSubjectForm().getUrl() == null) {
-            peerReview.getSubjectForm().setUrl(Text.valueOf(StringUtils.EMPTY));
+        if(peerReview.getSubjectUrl() == null) {
+            peerReview.setSubjectUrl(Text.valueOf(StringUtils.EMPTY));
         }
-        peerReview.getSubjectForm().getUrl().setErrors(new ArrayList<String>());
-        validateUrl(peerReview.getSubjectForm().getUrl());
+        peerReview.getSubjectUrl().setErrors(new ArrayList<String>());
+        validateUrl(peerReview.getSubjectUrl());
         return peerReview;
     }
 
     @RequestMapping(value = "/subject/extIdsValidate.json", method = RequestMethod.POST)
-    public @ResponseBody PeerReviewForm validateSubjectExternalIdentifiers(@RequestBody PeerReviewForm peerReview) {
-        if(peerReview.getSubjectForm() == null) {
-            return peerReview;
+    public @ResponseBody PeerReviewForm validateSubjectExternalIdentifier(@RequestBody PeerReviewForm peerReview) {
+        if(peerReview.getSubjectExternalIdentifier() == null) {
+            peerReview.setSubjectExternalIdentifier(new WorkExternalIdentifier());
         }
-        
-        PeerReviewSubjectForm subject = peerReview.getSubjectForm();
-        if(subject.getWorkExternalIdentifiers() != null) {
-            validateExternalIdentifiers(subject.getWorkExternalIdentifiers());
-        }
-        
+        validateExternalIdentifier(peerReview.getSubjectExternalIdentifier());                
         return peerReview;
     }
     
@@ -541,38 +514,41 @@ public class PeerReviewsController extends BaseWorkspaceController {
     public @ResponseBody PeerReviewForm validateExternalIdentifiers(@RequestBody PeerReviewForm peerReview) {
         if(peerReview.getExternalIdentifiers() == null) {
             return peerReview;
-        }
-        
-        validateExternalIdentifiers(peerReview.getExternalIdentifiers());
-        
+        }        
+        for(WorkExternalIdentifier extId : peerReview.getExternalIdentifiers()) {
+            validateExternalIdentifier(extId);
+        }                
         return peerReview;
-    }
+    }        
     
-    private void validateExternalIdentifiers(List<WorkExternalIdentifier> extIds) {
-        for(WorkExternalIdentifier extId : extIds) {
-            //Init fields
-            if(extId.getWorkExternalIdentifierId() == null)
-                extId.setWorkExternalIdentifierId(new Text());
-            if(extId.getWorkExternalIdentifierType() == null)
-                extId.setWorkExternalIdentifierType(new Text());
-            extId.setErrors(new ArrayList<String>());
-            extId.getWorkExternalIdentifierId().setErrors(new ArrayList<String>());
-            extId.getWorkExternalIdentifierType().setErrors(new ArrayList<String>());
-            
-            if(PojoUtil.isEmpty(extId.getWorkExternalIdentifierId()) && !PojoUtil.isEmpty(extId.getWorkExternalIdentifierType())) {
-                //Please select a type
-                setError(extId.getWorkExternalIdentifierId(), "NotBlank.currentWorkExternalIds.id");
-            } else if(!PojoUtil.isEmpty(extId.getWorkExternalIdentifierId()) && PojoUtil.isEmpty(extId.getWorkExternalIdentifierType())) {
-                //Please add a value
-                setError(extId.getWorkExternalIdentifierType(), "NotBlank.currentWorkExternalIds.idType");
-            } 
-            
-            if(!PojoUtil.isEmpty(extId.getWorkExternalIdentifierId()) && extId.getWorkExternalIdentifierId().getValue().length() > 2084) {
-                setError(extId.getWorkExternalIdentifierId(), "manualWork.length_less_2084");
-            }
+    private void validateExternalIdentifier(WorkExternalIdentifier extId) {
+        //Init fields
+        if(extId.getWorkExternalIdentifierId() == null)
+            extId.setWorkExternalIdentifierId(new Text());
+        if(extId.getWorkExternalIdentifierType() == null)
+            extId.setWorkExternalIdentifierType(new Text());
+        if(extId.getRelationship() == null) 
+            extId.setRelationship(new Text());
+        if(extId.getUrl() == null)
+            extId.setUrl(new Text());
+        extId.setErrors(new ArrayList<String>());
+        extId.getWorkExternalIdentifierId().setErrors(new ArrayList<String>());
+        extId.getWorkExternalIdentifierType().setErrors(new ArrayList<String>());
+        extId.getRelationship().setErrors(new ArrayList<String>());
+        extId.getUrl().setErrors(new ArrayList<String>());
+        
+        if(PojoUtil.isEmpty(extId.getWorkExternalIdentifierId()) && !PojoUtil.isEmpty(extId.getWorkExternalIdentifierType())) {
+            //Please select a type
+            setError(extId.getWorkExternalIdentifierId(), "NotBlank.currentWorkExternalIds.id");
+        } else if(!PojoUtil.isEmpty(extId.getWorkExternalIdentifierId()) && PojoUtil.isEmpty(extId.getWorkExternalIdentifierType())) {
+            //Please add a value
+            setError(extId.getWorkExternalIdentifierType(), "NotBlank.currentWorkExternalIds.idType");
+        } 
+        
+        if(!PojoUtil.isEmpty(extId.getWorkExternalIdentifierId()) && extId.getWorkExternalIdentifierId().getValue().length() > 2084) {
+            setError(extId.getWorkExternalIdentifierId(), "manualWork.length_less_2084");
         }
     }
-    
     
     @RequestMapping(value = "/roleValidate.json", method = RequestMethod.POST)
     public @ResponseBody PeerReviewForm validateRole(@RequestBody PeerReviewForm peerReview) {
@@ -598,6 +574,19 @@ public class PeerReviewsController extends BaseWorkspaceController {
         }
 
         return peerReview;
+    }
+    
+    private void validateGroupId(PeerReviewForm peerReview) {
+        if(peerReview.getGroupId() == null) {
+            peerReview.setGroupId(Text.valueOf(StringUtils.EMPTY));
+        }        
+        peerReview.getGroupId().setErrors(new ArrayList<String>());
+        
+        if(!PojoUtil.isEmpty(peerReview.getGroupId())) {
+            if(!groupIdRecordManager.exists(peerReview.getGroupId().getValue())) {
+                setError(peerReview.getGroupId(), "peer_review.group_id.not_valid");
+            }
+        }
     }
 
     /**
@@ -650,7 +639,7 @@ public class PeerReviewsController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = "/updateToMaxDisplay.json", method = RequestMethod.GET)
-    public @ResponseBody boolean updateToMaxDisplay(HttpServletRequest request, @RequestParam(value = "putCode") String putCode) {
+    public @ResponseBody boolean updateToMaxDisplay(HttpServletRequest request, @RequestParam(value = "putCode") Long putCode) {
         return peerReviewManager.updateToMaxDisplay(getEffectiveUserOrcid(), putCode);
     }
 
@@ -669,6 +658,13 @@ public class PeerReviewsController extends BaseWorkspaceController {
             peerReviewIds.add(new Long(peerReviewId));
         peerReviewManager.updateVisibilities(orcid, peerReviewIds, Visibility.fromValue(visibilityStr));
         return peerReviewIds;
+    }    
+    
+    /**
+     * Get group information based on the group id
+     * */
+    @RequestMapping(value = "/group/{groupId}", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
+    public @ResponseBody GroupIdRecord getGroupInformation(@PathVariable("groupId") String groupId) {        
+        return groupIdRecordManager.findByGroupId(groupId);
     }
-
 }

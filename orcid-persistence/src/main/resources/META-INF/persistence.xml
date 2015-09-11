@@ -33,8 +33,8 @@
         <class>org.orcid.persistence.jpa.entities.GivenPermissionByEntity</class>
         <class>org.orcid.persistence.jpa.entities.GivenPermissionToEntity</class>
         <class>org.orcid.persistence.jpa.entities.HearAboutEntity</class>
-        <class>org.orcid.persistence.jpa.entities.NotificationActivityEntity</class>
-        <class>org.orcid.persistence.jpa.entities.NotificationAddActivitiesEntity</class>
+        <class>org.orcid.persistence.jpa.entities.NotificationItemEntity</class>
+        <class>org.orcid.persistence.jpa.entities.NotificationAddItemsEntity</class>
         <class>org.orcid.persistence.jpa.entities.NotificationAmendedEntity</class>
         <class>org.orcid.persistence.jpa.entities.NotificationEntity</class>
         <class>org.orcid.persistence.jpa.entities.NotificationCustomEntity</class>
@@ -44,11 +44,10 @@
         <class>org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity</class>
         <class>org.orcid.persistence.jpa.entities.OrgDisambiguatedExternalIdentifierEntity</class>
         <class>org.orcid.persistence.jpa.entities.OrgEntity</class>
+        <class>org.orcid.persistence.jpa.entities.PeerReviewEntity</class>
         <class>org.orcid.persistence.jpa.entities.ProfileEntity</class>
         <class>org.orcid.persistence.jpa.entities.ProfileEventEntity</class>
         <class>org.orcid.persistence.jpa.entities.EmailEventEntity</class>
-        <class>org.orcid.persistence.jpa.entities.PeerReviewEntity</class>
-        <class>org.orcid.persistence.jpa.entities.PeerReviewSubjectEntity</class>
         <class>org.orcid.persistence.jpa.entities.ProfileFundingEntity</class>
         <class>org.orcid.persistence.jpa.entities.ProfileKeywordEntity</class>
         <class>org.orcid.persistence.jpa.entities.ProfileSummaryEntity</class>

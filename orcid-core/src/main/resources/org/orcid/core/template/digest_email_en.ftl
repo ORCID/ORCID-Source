@@ -35,23 +35,23 @@ ORCID would like to let you know
 <#if sourceId != 'ORCID'>
 <#list digestEmail.notificationsBySourceId[sourceId].notificationsByType?keys?sort as notificationType>
 <#list digestEmail.notificationsBySourceId[sourceId].notificationsByType[notificationType] as notification>
-<#if notificationType == 'ADD_ACTIVITIES'>
+<#if notificationType == 'PERMISSION'>
 ${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sourceId} would like to add the following items to your record.
-<#assign activitiesByType=notification.activities.activitiesByType>
-<#list activitiesByType?keys?sort as activityType>
-${activityType?capitalize}s (${activitiesByType[activityType]?size})
+<#assign itemsByType=notification.items.itemsByType>
+<#list itemsByType?keys?sort as itemType>
+${itemType?capitalize}s (${itemsByType[itemType]?size})
 Visit ${notification.authorizationUrl.uri} to add now.
 
-<#list activitiesByType[activityType] as activity>
-    ${activity.activityName} <#if activity.externalIdentifier??>(${activity.externalIdentifier.externalIdentifierType?lower_case}: ${activity.externalIdentifier.externalIdentifierId})</#if>
+<#list itemsByType[itemType] as item>
+    ${item.itemName} <#if item.externalIdentifier??>(${item.externalIdentifier.externalIdentifierType?lower_case}: ${item.externalIdentifier.externalIdentifierId})</#if>
 </#list>
 </#list>
 <#elseif notificationType == 'AMENDED'>
 ${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sourceId} amended the ${notification.amendedSection?lower_case}s section of your record.
-<#if notification.activities??>
+<#if notification.items??>
 
-<#list notification.activities.activities as activity>
-     ${activity.activityName} <#if activity.externalIdentifier??>(${activity.externalIdentifier.externalIdentifierType?lower_case}: ${activity.externalIdentifier.externalIdentifierId})</#if>
+<#list notification.items.items as item>
+     ${item.itemName} <#if item.externalIdentifier??>(${item.externalIdentifier.externalIdentifierType?lower_case}: ${item.externalIdentifier.externalIdentifierId})</#if>
 </#list>
 </#if>
 <#else>

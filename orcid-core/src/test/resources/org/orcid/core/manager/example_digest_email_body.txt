@@ -22,14 +22,14 @@ Visit https://thirdparty.com/add-to-orcid/abc to add now.
 
     Employment 1 (doi: 12345/abc)
 
+Lovely Publisher 1 amended the fundings section of your record.
+
 Lovely Publisher 1 would like to add the following items to your record.
 Works (2)
 Visit https://thirdparty.com/add-to-orcid/def to add now.
 
     Work 3 (doi: 12345/def)
     Work 4 (doi: 12345/ghi)
-
-Lovely Publisher 1 amended the fundings section of your record.
 
 
 You have received this email in the genuine belief that its contents would be of

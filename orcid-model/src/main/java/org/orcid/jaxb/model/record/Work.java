@@ -43,6 +43,8 @@ import org.orcid.jaxb.model.common.Url;
 import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.jaxb.model.common.VisibilityType;
 
+import io.swagger.annotations.ApiModelProperty;
+
 /**
  * <p>
  * Java class for anonymous complex type.
@@ -89,7 +91,8 @@ public class Work implements VisibilityType, Activity, Serializable {
     @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected Source source;
     @XmlAttribute(name = "put-code")
-    protected String putCode;
+    @ApiModelProperty(hidden = true) 
+    protected Long putCode;
     @XmlAttribute
     protected Visibility visibility;
     @XmlAttribute(name = "path")
@@ -105,7 +108,7 @@ public class Work implements VisibilityType, Activity, Serializable {
      * @return possible object is {@link Object }
      * 
      */
-    public String getPutCode() {
+    public Long getPutCode() {
         return putCode;
     }
 
@@ -116,7 +119,7 @@ public class Work implements VisibilityType, Activity, Serializable {
      *            allowed object is {@link Object }
      * 
      */
-    public void setPutCode(String value) {
+    public void setPutCode(Long value) {
         this.putCode = value;
     }
 
@@ -503,12 +506,12 @@ public class Work implements VisibilityType, Activity, Serializable {
             if (this.getWorkExternalIdentifiers().getExternalIdentifier() != null && !this.getWorkExternalIdentifiers().getExternalIdentifier().isEmpty())
                 return false;
         } else {
-            List<? extends ExternalIdentifier> otherExternalIdentifiers = other.getWorkExternalIdentifiers().getExternalIdentifier();
-            List<? extends ExternalIdentifier> thisExternalIdentifiers = this.getWorkExternalIdentifiers().getExternalIdentifier();
+            List<? extends GroupKey> otherExternalIdentifiers = other.getWorkExternalIdentifiers().getExternalIdentifier();
+            List<? extends GroupKey> thisExternalIdentifiers = this.getWorkExternalIdentifiers().getExternalIdentifier();
             boolean sharedExtId = false;
 
-            start: for (ExternalIdentifier thisId : thisExternalIdentifiers) {
-                for (ExternalIdentifier otherId : otherExternalIdentifiers) {
+            start: for (GroupKey thisId : thisExternalIdentifiers) {
+                for (GroupKey otherId : otherExternalIdentifiers) {
                     if (thisId.equals(otherId)) {
                         sharedExtId = true;
                         break start;

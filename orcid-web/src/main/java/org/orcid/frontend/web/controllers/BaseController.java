@@ -135,6 +135,18 @@ public class BaseController {
 
     protected static final String EMPTY = "empty";
 
+    @Value("${org.orcid.recaptcha.web_site_key:}")
+    private String recaptchaWebKey;
+
+    @ModelAttribute("recaptchaWebKey")
+    public String getRecaptchaWebKey() {
+        return recaptchaWebKey;
+    }
+
+    public void setRecaptchaWebKey(String recaptchaWebKey) {
+        this.recaptchaWebKey = recaptchaWebKey;
+    }
+    
     public LocaleManager getLocaleManager() {
         return localeManager;
     }

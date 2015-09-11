@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.jsoup.helper.StringUtil;
 import org.orcid.jaxb.model.record.FundingExternalIdentifier;
 import org.orcid.jaxb.model.record.WorkExternalIdentifier;
 
@@ -103,4 +104,15 @@ public class Identifier {
         result.setExternalIdentifierType(fundingExtId.getType().value());
         return result;
     }        
+    
+    public static Identifier fromPeerReviewGroupKey(PeerReviewGroupKey groupKey) {
+        Identifier result = new Identifier();
+        if(groupKey != null) {
+            if(!StringUtil.isBlank(groupKey.getGroupId())) {
+                result.setExternalIdentifierId(groupKey.getGroupId());
+                result.setExternalIdentifierType(PeerReviewGroupKey.KEY_NAME);
+            }
+        }
+        return result;
+    }
 }

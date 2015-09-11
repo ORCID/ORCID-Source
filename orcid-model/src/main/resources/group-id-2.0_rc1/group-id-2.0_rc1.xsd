@@ -47,21 +47,9 @@
 								<xs:documentation>Group display name
 								</xs:documentation>
 							</xs:annotation>
-						</xs:element>
-						<xs:element name="group-id" maxOccurs="1" minOccurs="1">
-							<xs:annotation>
-								<xs:documentation>The unique generated identifier of the group
-									id.
-								</xs:documentation>
-							</xs:annotation>
-							<xs:simpleType>
-								<xs:restriction base="common:string-1000">
-									<xs:pattern
-										value="(ringgold:|issn:|orcid-generated:|fundref:).*" />
-								</xs:restriction>
-							</xs:simpleType>
-						</xs:element>
-						<xs:element name="description" type="common:non-empty-string"
+						</xs:element>																		
+						<xs:element name="group-id"  type="common:group-id" maxOccurs="1" minOccurs="1" />
+						<xs:element name="description" type="common:string-1000"
 							maxOccurs="1" minOccurs="1">
 							<xs:annotation>
 								<xs:documentation>Description

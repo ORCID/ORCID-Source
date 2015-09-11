@@ -26,14 +26,15 @@ import org.orcid.core.manager.TemplateManager;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.notification.Notification;
 import org.orcid.jaxb.model.notification.NotificationType;
-import org.orcid.jaxb.model.notification.addactivities.NotificationAddActivities;
 import org.orcid.jaxb.model.notification.amended.NotificationAmended;
 import org.orcid.jaxb.model.notification.custom.NotificationCustom;
+import org.orcid.jaxb.model.notification.permission.NotificationPermission;
 import org.orcid.persistence.dao.NotificationDao;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
@@ -66,8 +67,8 @@ public class NotificationController extends BaseController {
         String currentOrcid = getCurrentUserOrcid();
         List<Notification> notifications = notificationManager.findByOrcid(currentOrcid, includeArchived, firstResult, maxResults);
         for (Notification notification : notifications) {
-            if (notification instanceof NotificationAddActivities) {
-                NotificationAddActivities naa = (NotificationAddActivities) notification;
+            if (notification instanceof NotificationPermission) {
+                NotificationPermission naa = (NotificationPermission) notification;
                 naa.setSubject(getMessage(buildInternationalizationKey(NotificationType.class, naa.getNotificationType().value())));
             }
             else if (notification instanceof NotificationAmended) {
@@ -94,8 +95,8 @@ public class NotificationController extends BaseController {
         }
     }
 
-    @RequestMapping(value = "/ADD_ACTIVITIES/{id}/notification.html", produces = MediaType.TEXT_HTML_VALUE)
-    public ModelAndView getAddActivitiesNotificationHtml(@PathVariable("id") String id) {
+    @RequestMapping(value = "/PERMISSION/{id}/notification.html", produces = MediaType.TEXT_HTML_VALUE)
+    public ModelAndView getPermissionNotificationHtml(@PathVariable("id") String id) {
         ModelAndView mav = new ModelAndView();
         Notification notification = notificationManager.findByOrcidAndId(getCurrentUserOrcid(), Long.valueOf(id));
         mav.addObject("notification", notification);
@@ -125,6 +126,12 @@ public class NotificationController extends BaseController {
         String currentUserOrcid = getCurrentUserOrcid();
         notificationDao.flagAsArchived(currentUserOrcid, Long.valueOf(id));
         return notificationManager.findByOrcidAndId(currentUserOrcid, Long.valueOf(id));
+    }
+    
+    @RequestMapping(value = "{id}/action", method = RequestMethod.GET)
+    public ModelAndView executeAction(@PathVariable("id") String id, @RequestParam(value = "target") String redirectUri) {
+        notificationManager.setActionedDate(getCurrentUserOrcid(), Long.valueOf(id));
+        return new ModelAndView("redirect:" + redirectUri);        
     }
 
 }

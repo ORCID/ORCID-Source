@@ -26,7 +26,7 @@ import org.orcid.jaxb.model.message.WorkExternalIdentifier;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierId;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.message.WorkExternalIdentifiers;
-import org.orcid.jaxb.model.notification.addactivities.ExternalIdentifier;
+import org.orcid.jaxb.model.notification.permission.ExternalIdentifier;
 
 /**
  * 

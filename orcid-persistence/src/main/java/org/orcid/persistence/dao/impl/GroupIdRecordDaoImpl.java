@@ -25,16 +25,31 @@ import org.orcid.persistence.jpa.entities.GroupIdRecordEntity;
 
 public class GroupIdRecordDaoImpl extends GenericDaoImpl<GroupIdRecordEntity, Long> implements GroupIdRecordDao {
 
-	
-	public GroupIdRecordDaoImpl() {
-		super(GroupIdRecordEntity.class);
-	}
+    public GroupIdRecordDaoImpl() {
+        super(GroupIdRecordEntity.class);
+    }
 
-	@Override
-	public List<GroupIdRecordEntity> getGroupIdRecords(int pageSize, int page) {
+    @Override
+    public List<GroupIdRecordEntity> getGroupIdRecords(int pageSize, int page) {
         TypedQuery<GroupIdRecordEntity> query = entityManager.createQuery("from GroupIdRecordEntity order by dateCreated", GroupIdRecordEntity.class);
         query.setFirstResult(pageSize * (page - 1));
         query.setMaxResults(pageSize);
         return query.getResultList();
-	}
+    }
+    
+    @Override
+    public boolean exists(String groupId) {
+        TypedQuery<Long> query = entityManager.createQuery("select count(*) from GroupIdRecordEntity where trim(lower(groupId)) = trim(lower(:groupId))", Long.class);
+        query.setParameter("groupId", groupId);
+        Long result = query.getSingleResult();
+        return (result != null && result > 0);
+    }
+    
+    @Override
+    public GroupIdRecordEntity findByGroupId(String groupId) {
+        TypedQuery<GroupIdRecordEntity> query = entityManager.createQuery("from GroupIdRecordEntity where trim(lower(groupId)) = trim(lower(:groupId))", GroupIdRecordEntity.class);
+        query.setParameter("groupId", groupId);
+        GroupIdRecordEntity result = query.getSingleResult();
+        return result;
+    }
 }

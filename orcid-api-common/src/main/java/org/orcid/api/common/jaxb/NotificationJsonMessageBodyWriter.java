@@ -22,6 +22,7 @@ import java.io.OutputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 
+import javax.annotation.Resource;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
@@ -30,6 +31,7 @@ import javax.ws.rs.ext.MessageBodyWriter;
 import javax.ws.rs.ext.Provider;
 
 import org.orcid.core.api.OrcidApiConstants;
+import org.orcid.core.locale.LocaleManager;
 import org.orcid.jaxb.model.notification.Notification;
 
 /**
@@ -41,6 +43,9 @@ import org.orcid.jaxb.model.notification.Notification;
 @Produces(value = { OrcidApiConstants.VND_ORCID_JSON, OrcidApiConstants.ORCID_JSON, MediaType.APPLICATION_JSON })
 public class NotificationJsonMessageBodyWriter implements MessageBodyWriter<Notification> {
 
+	@Resource
+	LocaleManager localeManager;
+	
     @Override
     public boolean isWriteable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
         return Notification.class.isAssignableFrom(type);
@@ -53,7 +58,7 @@ public class NotificationJsonMessageBodyWriter implements MessageBodyWriter<Noti
         try {
             jaxbJsonProvider.writeTo(notification, type, genericType, annotations, mediaType, null, bos);
         } catch (IOException e) {
-            throw new RuntimeException("Problem getting size of notification body", e);
+            throw new RuntimeException(localeManager.resolveMessage("apiError.fetch_notification_size.exception"), e);
         }
         return bos.size();
     }

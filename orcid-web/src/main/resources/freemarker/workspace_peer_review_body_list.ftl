@@ -27,9 +27,7 @@
 					<div class="col-md-5 col-sm-2 col-xs-12">
 						 <div class="workspace-title">											
 						    <a ng-click="workspaceSrvc.togglePeerReview()" class="toggle-text">
-						  		<i class="glyphicon-chevron-down glyphicon x075" ng-class="{'glyphicon-chevron-right':workspaceSrvc.displayPeerReview==false}"></i> <@orcid.msg 'workspace_peer_review_body_list.peerReview'/>
-						  			(<span ng-bind="peerReviewSrvc.groups.length"></span>)						  			
-						  		</a>						  		
+						  		<i class="glyphicon-chevron-down glyphicon x075" ng-class="{'glyphicon-chevron-right':workspaceSrvc.displayPeerReview==false}"></i> <@orcid.msg 'workspace_peer_review_body_list.peerReview'/> (<span ng-bind="peerReviewSrvc.peerReviewCount()"></span>)
 						   	</a>							    
 						</div>
 					</div>
@@ -40,16 +38,23 @@
                 			  	<li class="hidden-xs">
 									<div class="menu-container">
 										<ul class="toggle-menu">
-									        <li ng-class="{'green-bg' : showBibtexImportWizard == true}"> 
-									            <span class="glyphicon glyphicon-plus"></span> <@orcid.msg 'workspace_peer_review_body_list.addPeerReview'/>                                    
-									            <ul class="menu-options works">						                                
-									                <!-- Add Manually -->
-									                <li>
-									                    <a class="action-option manage-button" ng-click="addPeerReviewModal()">
-									                        <span class="glyphicon glyphicon-plus"></span> <@orcid.msg 'workspace_peer_review_body_list.addManually'/>                                            
-									                    </a>
-									                </li>                                                                                
-									            </ul>
+									        <li> 
+									            <span class="glyphicon glyphicon-plus"></span> <@orcid.msg 'workspace_peer_review_body_list.addPeerReview'/>
+									            <ul class="menu-options works">
+									            	<#if RequestParameters['addpeer']??>
+									            		<li>
+				                                            <a class="action-option manage-button" ng-click="addPeerReviewModal()">
+				                                                <span class="glyphicon glyphicon-plus"></span> Add manually 
+															</a>
+				                                         </li>
+									            	</#if>
+			                                    	<!-- Search & Link -->
+			                                        <li>
+			                                            <a class="action-option manage-button" ng-click="showPeerReviewImportWizard()">
+			                                                <span class="glyphicon glyphicon-cloud-upload"></span> <@orcid.msg 'workspace_peer_review_body_list.searchAndLink'/> 
+														</a>
+			                                         </li>                                                                 
+			                                    </ul>
 									        </li>									        
 									    </ul>									    
 									</div>	
@@ -63,6 +68,24 @@
 						</#if>
 					</div>	
 				</div>			
+			</div>
+			<!--  Import Wizard -->
+			<div ng-show="peerReviewImportWizard == true" class="funding-import-wizard" ng-cloak>
+				<div class="ie7fix-inner">
+					<div class="row">	
+						<div class="col-md-12 col-sm-12 col-xs-12">
+			         		<h1 class="lightbox-title wizard-header">Link Peer Review</h1>
+			         		<span ng-click="showPeerReviewImportWizard()" class="close-wizard">Hide link Peer Review</span>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12 col-sm-12 col-xs-12">
+			    	    	<div class="justify">
+								<p class="wizard-content">ORCID works with our member organizations to make it easy to connect your ORCID iD and link to information in their records. Choose one of the link wizards to get started.</p>
+							</div>            	    	           	
+						</div>
+					</div>	
+				</div>
 			</div>
 			<div class="workspace-accordion-content" ng-show="workspaceSrvc.displayPeerReview == true" >
 				<#include "includes/peer_review/peer_review_body_inc.ftl" />

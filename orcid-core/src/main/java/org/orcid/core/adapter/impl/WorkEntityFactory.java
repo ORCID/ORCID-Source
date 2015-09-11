@@ -19,7 +19,7 @@ package org.orcid.core.adapter.impl;
 import ma.glasnost.orika.MappingContext;
 import ma.glasnost.orika.ObjectFactory;
 
-import org.orcid.jaxb.model.notification.addactivities.Activity;
+import org.orcid.jaxb.model.notification.permission.Item;
 import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.NotificationWorkEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
@@ -39,7 +39,7 @@ public class WorkEntityFactory implements ObjectFactory<NotificationWorkEntity> 
     public NotificationWorkEntity create(Object source, MappingContext mappingContext) {
         mappingContext.getSourceObjects();
         NotificationWorkEntity nwe = new NotificationWorkEntity();
-        String putCode = ((Activity) source).getPutCode();
+        String putCode = ((Item) source).getPutCode();
         if (putCode != null) {
             WorkEntity work = workDao.find(Long.valueOf(putCode));
             nwe.setWork(work);

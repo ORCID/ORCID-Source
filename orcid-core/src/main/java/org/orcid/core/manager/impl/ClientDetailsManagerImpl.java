@@ -29,12 +29,14 @@ import javax.annotation.Resource;
 import javax.persistence.NoResultException;
 
 import org.apache.commons.lang.time.DateUtils;
+import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.manager.AppIdGenerationManager;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.jaxb.model.clientgroup.ClientType;
+import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.RedirectUri;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.dao.ClientDetailsDao;
@@ -79,6 +81,9 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
 
     @Resource
     private AppIdGenerationManager appIdGenerationManager;
+    
+    @Resource
+    private Jpa2JaxbAdapter jpaJaxbAdapter;
     
     @Resource(name = "profileEntityCacheManager")
     ProfileEntityCacheManager profileEntityCacheManager;
@@ -262,6 +267,8 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
             List<ScopePathType> scopesForRedirect = clientRegisteredRedirectUri.getScope();
             String clientPredefinedScopes = scopesForRedirect != null ? ScopePathType.getScopesAsSingleString(scopesForRedirect) : null;
             clientRedirectUriEntity.setPredefinedClientScope(clientPredefinedScopes);
+            clientRedirectUriEntity.setUriActType(clientRegisteredRedirectUri.getActType());
+            clientRedirectUriEntity.setUriGeoArea(clientRegisteredRedirectUri.getGeoArea());
             clientRedirectUriEntities.add(clientRedirectUriEntity);
         }
         return clientRedirectUriEntities;
@@ -315,6 +322,11 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
             LOGGER.error("Error getting client by id:" + clientId, nre);
         }
         return result;
+    }
+    
+    @Override
+    public OrcidClient toOrcidClient(ClientDetailsEntity clientEntity) {
+    	return jpaJaxbAdapter.toOrcidClient(clientEntity);
     }
 
     @Override

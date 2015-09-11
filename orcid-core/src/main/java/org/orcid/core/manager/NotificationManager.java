@@ -24,7 +24,7 @@ import org.orcid.jaxb.model.message.DelegationDetails;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.notification.Notification;
-import org.orcid.jaxb.model.notification.addactivities.Activity;
+import org.orcid.jaxb.model.notification.permission.Item;
 import org.orcid.jaxb.model.notification.amended.AmendedSection;
 
 public interface NotificationManager {
@@ -47,7 +47,7 @@ public interface NotificationManager {
 
     void sendAmendEmail(OrcidProfile amendedProfile, AmendedSection amendedSection);
 
-    void sendAmendEmail(OrcidProfile amendedProfile, AmendedSection amendedSection, Collection<Activity> activities);
+    void sendAmendEmail(OrcidProfile amendedProfile, AmendedSection amendedSection, Collection<Item> activities);
 
     void sendOrcidDeactivateEmail(OrcidProfile orcidToDeactivate);
 
@@ -72,5 +72,7 @@ public interface NotificationManager {
     public Notification createNotification(String orcid, Notification notification);
 
     public Notification flagAsArchived(String orcid, Long id) throws OrcidNotificationAlreadyReadException;
+    
+    public Notification setActionedDate(String orcid, Long id);
 
 }

@@ -42,6 +42,8 @@ import org.orcid.jaxb.model.common.Url;
 import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.jaxb.model.common.VisibilityType;
 
+import io.swagger.annotations.ApiModelProperty;
+
 import java.io.Serializable;
 
 /**
@@ -92,7 +94,8 @@ public class Funding implements VisibilityType, Activity, Serializable, Organiza
     protected CreatedDate createdDate;
 
     @XmlAttribute(name = "put-code")
-    protected String putCode;
+    @ApiModelProperty(hidden = true) 
+    protected Long putCode;
     @XmlAttribute(name = "path")
     protected String path;
     @XmlAttribute
@@ -179,11 +182,11 @@ public class Funding implements VisibilityType, Activity, Serializable, Organiza
     }
 
     @Override
-    public String getPutCode() {
+    public Long getPutCode() {
         return putCode;
     }
 
-    public void setPutCode(String putCode) {
+    public void setPutCode(Long putCode) {
         this.putCode = putCode;
     }
 

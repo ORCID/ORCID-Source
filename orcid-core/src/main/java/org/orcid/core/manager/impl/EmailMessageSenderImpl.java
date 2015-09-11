@@ -37,8 +37,8 @@ import org.orcid.core.manager.TemplateManager;
 import org.orcid.jaxb.model.common.SourceClientId;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.notification.Notification;
-import org.orcid.jaxb.model.notification.addactivities.NotificationAddActivities;
 import org.orcid.jaxb.model.notification.amended.NotificationAmended;
+import org.orcid.jaxb.model.notification.permission.NotificationPermission;
 import org.orcid.persistence.dao.NotificationDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
@@ -117,10 +117,10 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
                     memberIds.add(clientId.getPath());
                 }
             }
-            if (notification instanceof NotificationAddActivities) {
+            if (notification instanceof NotificationPermission) {
                 addActivitiesMessageCount++;
-                NotificationAddActivities addActsNotification = (NotificationAddActivities) notification;
-                activityCount += addActsNotification.getActivities().getActivities().size();
+                NotificationPermission addActsNotification = (NotificationPermission) notification;
+                activityCount += addActsNotification.getItems().getItems().size();
             }
             if (notification instanceof NotificationAmended) {
                 amendedMessageCount++;

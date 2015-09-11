@@ -32,7 +32,7 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.orcid.jaxb.model.notification.Notification;
 import org.orcid.jaxb.model.notification.NotificationType;
-import org.orcid.jaxb.model.notification.addactivities.Activities;
+import org.orcid.jaxb.model.notification.permission.Items;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = { "putCode", "notificationType", "amendedSection", "createdDate", "sentDate", "readDate", "archivedDate", "source" })
@@ -43,7 +43,7 @@ public class NotificationAmended extends Notification {
     @XmlElement(name = "amended-section", namespace = "http://www.orcid.org/ns/notification", required = true)
     protected AmendedSection amendedSection;
     @XmlElement(namespace = "http://www.orcid.org/ns/notification", required = false)
-    protected Activities activities;
+    protected Items items;
     @XmlTransient
     protected String subject;
 
@@ -59,12 +59,12 @@ public class NotificationAmended extends Notification {
         this.amendedSection = amendedSection;
     }
 
-    public Activities getActivities() {
-        return activities;
+    public Items getItems() {
+        return items;
     }
 
-    public void setActivities(Activities value) {
-        this.activities = value;
+    public void setItems(Items value) {
+        this.items = value;
     }
 
     public String getSubject() {

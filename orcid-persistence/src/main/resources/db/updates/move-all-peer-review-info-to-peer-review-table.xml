@@ -1,0 +1,55 @@
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2014 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+	<changeSet id="MOVE-ALL-PEER-REVIEW-INFO-TO-PEER-REVIEW-TABLE" author="Angel Montenegro">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<columnExists tableName="peer_review" columnName="subject_external_identifiers_json" />
+			</not>
+		</preConditions>
+	    <addColumn tableName="peer_review">
+			<column name="subject_external_identifiers_json" type="text" />
+			<column name="subject_type" type="VARCHAR(25)" />				
+			<column name="subject_container_name" type="VARCHAR(1000)" />
+			<column name="subject_name" type="VARCHAR(1000)" />
+			<column name="subject_translated_name" type="VARCHAR(1000)" />
+			<column name="subject_translated_name_language_code" type="VARCHAR(10)" />			
+			<column name="subject_url" type="VARCHAR(350)" />
+			<column name="group_id" type="VARCHAR(100)" />
+		</addColumn>
+    </changeSet>
+        
+    <changeSet id="REMOVE-PEER-REVIEW-SUBJECT-FK" author="Angel Montenegro">
+		<preConditions onFail="MARK_RAN">
+            <foreignKeyConstraintExists foreignKeyTableName="peer_review" foreignKeyName="peer_review_subject_fk"/>            
+        </preConditions>
+		<dropForeignKeyConstraint baseTableName="peer_review" constraintName="peer_review_subject_fk"/>
+		<dropNotNullConstraint columnName="peer_review_subject_id" tableName="peer_review"/>
+    </changeSet>
+    
+    <changeSet id="SUBJECT-EXTERNAL-IDS-AS-JSON" author="Angel Montenegro">
+		<preConditions onFail="MARK_RAN">
+            <foreignKeyConstraintExists foreignKeyTableName="peer_review" foreignKeyName="subject_external_identifiers_json"/>            
+        </preConditions>		
+		<sql>ALTER TABLE peer_review ALTER COLUMN subject_external_identifiers_json TYPE json USING subject_external_identifiers_json::JSON</sql>		
+    </changeSet>           
+</databaseChangeLog>	

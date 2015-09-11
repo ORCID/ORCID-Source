@@ -111,7 +111,7 @@ public class WorkFormTest {
         work.setCountry(new Country(Iso3166Country.US));
         work.setJournalTitle(new Title("Journal title"));
         work.setLanguageCode("en");
-        work.setPutCode("1");
+        work.setPutCode(Long.valueOf("1"));
         work.setShortDescription("Short description");
         work.setSource(new org.orcid.jaxb.model.common.Source("0000-0000-0000-0000"));
         work.setUrl(new Url("http://myurl.com"));

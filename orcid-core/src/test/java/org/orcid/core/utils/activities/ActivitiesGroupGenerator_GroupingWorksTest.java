@@ -57,8 +57,8 @@ public class ActivitiesGroupGenerator_GroupingWorksTest extends ActivitiesGroupG
         assertNotNull(g1.getActivities());
         assertEquals(1, g1.getActivities().size());
         assertTrue(g1.getActivities().contains(work1));
-        assertNotNull(g1.getExternalIdentifiers());
-        assertEquals(3, g1.getExternalIdentifiers().size());
+        assertNotNull(g1.getGroupKeys());
+        assertEquals(3, g1.getGroupKeys().size());
         checkExternalIdentifiers(work1, g1);
         
         //Add another work to the groups
@@ -73,8 +73,8 @@ public class ActivitiesGroupGenerator_GroupingWorksTest extends ActivitiesGroupG
         assertEquals(1, groups.get(0).getActivities().size());
         assertEquals(1, groups.get(1).getActivities().size());
         //There should be 3 ext ids in each group
-        assertEquals(3, groups.get(0).getExternalIdentifiers().size());
-        assertEquals(3, groups.get(1).getExternalIdentifiers().size());                
+        assertEquals(3, groups.get(0).getGroupKeys().size());
+        assertEquals(3, groups.get(1).getGroupKeys().size());                
         //Check work in groups
         checkActivityIsOnGroups(work5, groups);
         
@@ -90,9 +90,9 @@ public class ActivitiesGroupGenerator_GroupingWorksTest extends ActivitiesGroupG
         assertEquals(1, groups.get(1).getActivities().size());
         assertEquals(1, groups.get(2).getActivities().size());
         //There should be 3 ext ids in each group
-        assertEquals(3, groups.get(0).getExternalIdentifiers().size());
-        assertEquals(3, groups.get(1).getExternalIdentifiers().size());                
-        assertEquals(3, groups.get(2).getExternalIdentifiers().size());
+        assertEquals(3, groups.get(0).getGroupKeys().size());
+        assertEquals(3, groups.get(1).getGroupKeys().size());                
+        assertEquals(3, groups.get(2).getGroupKeys().size());
         //Check work in groups
         checkActivityIsOnGroups(work6, groups);
         
@@ -111,10 +111,10 @@ public class ActivitiesGroupGenerator_GroupingWorksTest extends ActivitiesGroupG
         //There should be 3 ext ids in each group, except for one group that doesnt have any ext id
         boolean work8found = false;
         for(int i = 0; i < 4; i++) {
-            if(groups.get(i).getExternalIdentifiers().size() == 0) {                                
+            if(groups.get(i).getGroupKeys().size() == 0) {                                
                 work8found = true;
             } else {
-                assertEquals(3, groups.get(i).getExternalIdentifiers().size());
+                assertEquals(3, groups.get(i).getGroupKeys().size());
             }                                                        
         }
         assertTrue("Work without ext ids was not found", work8found);
@@ -144,8 +144,8 @@ public class ActivitiesGroupGenerator_GroupingWorksTest extends ActivitiesGroupG
         assertEquals(2, g1.getActivities().size());
         assertTrue(g1.getActivities().contains(work1));
         assertTrue(g1.getActivities().contains(work2));
-        assertNotNull(g1.getExternalIdentifiers());
-        assertEquals(5, g1.getExternalIdentifiers().size());
+        assertNotNull(g1.getGroupKeys());
+        assertEquals(5, g1.getGroupKeys().size());
         checkExternalIdentifiers(work1, g1);
         checkExternalIdentifiers(work2, g1);
     }
@@ -175,8 +175,8 @@ public class ActivitiesGroupGenerator_GroupingWorksTest extends ActivitiesGroupG
         assertEquals(2, groups.get(0).getActivities().size());
         assertEquals(2, groups.get(1).getActivities().size());
         //Check there are five external ids in each group
-        assertEquals(5, groups.get(0).getExternalIdentifiers().size());
-        assertEquals(5, groups.get(1).getExternalIdentifiers().size());
+        assertEquals(5, groups.get(0).getGroupKeys().size());
+        assertEquals(5, groups.get(1).getGroupKeys().size());
         //Check each work
         checkActivityIsOnGroups(work1, groups);
         checkActivityIsOnGroups(work2, groups);
@@ -216,8 +216,8 @@ public class ActivitiesGroupGenerator_GroupingWorksTest extends ActivitiesGroupG
         assertEquals(1, groups.get(0).getActivities().size());
         assertEquals(1, groups.get(1).getActivities().size());
         //Check there are five external ids in each group
-        assertEquals(0, groups.get(0).getExternalIdentifiers().size());
-        assertEquals(0, groups.get(1).getExternalIdentifiers().size());
+        assertEquals(0, groups.get(0).getGroupKeys().size());
+        assertEquals(0, groups.get(1).getGroupKeys().size());
         
         checkActivityIsOnGroups(work8, groups);
         checkActivityIsOnGroups(work9, groups);
@@ -263,7 +263,7 @@ public class ActivitiesGroupGenerator_GroupingWorksTest extends ActivitiesGroupG
         assertNotNull(groups);
         assertEquals(1, groups.size());
         assertEquals(4, groups.get(0).getActivities().size());
-        assertEquals(9, groups.get(0).getExternalIdentifiers().size());
+        assertEquals(9, groups.get(0).getGroupKeys().size());
         
         checkActivityIsOnGroups(work1, groups);
         checkActivityIsOnGroups(work2, groups);
@@ -337,10 +337,10 @@ public class ActivitiesGroupGenerator_GroupingWorksTest extends ActivitiesGroupG
         checkActivitiesDontBelongsToTheSameGroup(groups, work10, work11);
         
         //Check the groups dont have any ext id, since all of them should be ignored
-        assertNotNull(groups.get(0).getExternalIdentifiers());
-        assertTrue(groups.get(0).getExternalIdentifiers().isEmpty());
-        assertNotNull(groups.get(1).getExternalIdentifiers());
-        assertTrue(groups.get(1).getExternalIdentifiers().isEmpty());
+        assertNotNull(groups.get(0).getGroupKeys());
+        assertTrue(groups.get(0).getGroupKeys().isEmpty());
+        assertNotNull(groups.get(1).getGroupKeys());
+        assertTrue(groups.get(1).getGroupKeys().isEmpty());
     }
     
     /**

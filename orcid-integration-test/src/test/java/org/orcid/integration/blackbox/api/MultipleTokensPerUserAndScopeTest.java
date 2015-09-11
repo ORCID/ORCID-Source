@@ -67,8 +67,8 @@ public class MultipleTokensPerUserAndScopeTest extends BlackBoxBase {
     @Test
     public void useSameScopesGetDifferentTokensTest() throws InterruptedException, JSONException {
         String scopes = ScopePathType.ACTIVITIES_READ_LIMITED.value() + " " + ScopePathType.PERSON_READ_LIMITED.value();
-        String token1 = getAccessToken(scopes);
-        String token2 = getAccessToken(scopes);
+        String token1 = getAccessToken(scopes, this.client1ClientId, this.client1ClientSecret);
+        String token2 = getAccessToken(scopes, this.client1ClientId, this.client1ClientSecret);
 
         // Check the scopes are not null
         assertNotNull(token1);
@@ -106,7 +106,7 @@ public class MultipleTokensPerUserAndScopeTest extends BlackBoxBase {
         
         // Check a new token with other scope can add the work
         scopes += " " + ScopePathType.ACTIVITIES_UPDATE.value();
-        String token3 = getAccessToken(scopes);
+        String token3 = getAccessToken(scopes, this.client1ClientId, this.client1ClientSecret);
         assertNotNull(token3);
         assertFalse(token1.equals(token3));
         

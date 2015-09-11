@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 
@@ -63,6 +64,12 @@ public class RedirectUri implements Serializable {
 
     @XmlAttribute(required = true)
     private RedirectUriType type;
+    
+    @XmlTransient
+    private String actType;
+    
+    @XmlTransient
+    private String geoArea;
 
     public RedirectUri() {
         super();
@@ -174,4 +181,19 @@ public class RedirectUri implements Serializable {
         this.type = redirectUriType;
     }
 
+	public String getActType() {
+		return actType;
+	}
+
+	public void setActType(String actType) {
+		this.actType = actType;
+	}
+
+	public String getGeoArea() {
+		return geoArea;
+	}
+
+	public void setGeoArea(String geoArea) {
+		this.geoArea = geoArea;
+	}
 }

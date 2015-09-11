@@ -552,18 +552,7 @@ public class AdminController extends BaseController {
             result.getErrors().add(getMessage("admin.lock_profile.error.not_found", orcidOrEmail));
             return result;
         }
-
-        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
-
-        // If the account is already locked
-        if (profile.isAccountNonLocked() == false) {
-            ProfileDetails result = new ProfileDetails();
-            result.setErrors(new ArrayList<String>());
-            result.getErrors().add(getMessage("admin.lock_profile.error.already_locked", orcid));
-            return result;
-        }
-
-        return generateProfileDetails(profile);
+        return generateProfileDetails(orcid, true);
     }
 
     /**
@@ -585,17 +574,7 @@ public class AdminController extends BaseController {
             return result;
         }
 
-        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
-
-        // If the account is not locked
-        if (profile.isAccountNonLocked()) {
-            ProfileDetails result = new ProfileDetails();
-            result.setErrors(new ArrayList<String>());
-            result.getErrors().add(getMessage("admin.unlock_profile.error.non_locked", orcid));
-            return result;
-        }
-
-        return generateProfileDetails(profile);
+        return generateProfileDetails(orcid, false);
     }
 
     private String getOrcidFromParam(String orcidOrEmail) {
@@ -615,15 +594,53 @@ public class AdminController extends BaseController {
 
         return orcid;
     }
+    
+    private ProfileDetails generateProfileDetails(String orcid, boolean isLockRequest) {        
+        OrcidProfile profile = orcidProfileManager.retrieveOrcidProfile(orcid, LoadOptions.BIO_ONLY);        
+        if(isLockRequest) {
+            if(profile.isLocked()) {
+                ProfileDetails result = new ProfileDetails();
+                result.setErrors(new ArrayList<String>());
+                result.getErrors().add(getMessage("admin.lock_profile.error.already_locked", orcid));
+                return result;
+            }
+        } else {
+            if(!profile.isLocked()) {
+                ProfileDetails result = new ProfileDetails();
+                result.setErrors(new ArrayList<String>());
+                result.getErrors().add(getMessage("admin.unlock_profile.error.non_locked", orcid));
+                return result;
+            }
+        }
+        
+        ProfileDetails  profileDetails = new ProfileDetails();
+        
+        profileDetails.setOrcid(orcid);
+        if (profile != null && profile.getOrcidBio().getPersonalDetails() != null) {
+            boolean hasName = false;
+            if (profile.getOrcidBio().getPersonalDetails().getFamilyName() != null) {
+                profileDetails.setFamilyName(profile.getOrcidBio().getPersonalDetails().getFamilyName().getContent());
+                hasName = true;
+            }
+            if (profile.getOrcidBio().getPersonalDetails().getGivenNames() != null) {
+                profileDetails.setGivenNames(profile.getOrcidBio().getPersonalDetails().getGivenNames().getContent());
+                hasName = true;
+            }
 
-    private ProfileDetails generateProfileDetails(ProfileEntity profileEntity) {
-        ProfileDetails result = new ProfileDetails();
-        result.setErrors(new ArrayList<String>());
-        result.setFamilyName(profileEntity.getFamilyName());
-        result.setGivenNames(profileEntity.getGivenNames());
-        result.setOrcid(profileEntity.getId());
-        result.setEmail(profileEntity.getPrimaryEmail().getId());
-        return result;
+            if (!hasName) {
+                profileDetails.setGivenNames(profile.getOrcidBio().getPersonalDetails().getCreditName().getContent());
+            }
+        }
+        if (profile.getOrcidBio().getContactDetails() != null && profile.getOrcidBio().getContactDetails().getEmail() != null) {
+            for (Email email : profile.getOrcidBio().getContactDetails().getEmail()) {
+                if (email.isPrimary()) {
+                    profileDetails.setEmail(email.getValue());
+                    break;
+                }
+            }
+        }        
+        
+        return profileDetails;
     }
 
     /**

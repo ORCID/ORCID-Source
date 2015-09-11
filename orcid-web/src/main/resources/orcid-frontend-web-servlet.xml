@@ -93,5 +93,10 @@
         <property name="cookieName" value="locale_v3" /><!-- must match value in AjaxAuthenticationSuccessHandler -->
         <property name="defaultLocale" value="en"/><!-- Note this makes spring ignore the browsers accepts user agent -->
     </bean>
+    
+    <bean id="recaptchaVerifier" class="org.orcid.frontend.web.util.RecaptchaVerifier">
+    	<constructor-arg value="${org.orcid.recaptcha.verify_url}" />
+    	<constructor-arg value="${org.orcid.recaptcha.secret}" />
+    </bean>
 
 </beans>
