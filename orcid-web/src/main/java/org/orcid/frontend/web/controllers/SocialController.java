@@ -61,7 +61,7 @@ public class SocialController extends BaseController {
 	@Autowired
 	private SocialContext socialContext;
 	
-	@Value("${org.orcid.facebook.enabled:true}")
+	@Value("${org.orcid.social_login.enabled}")
     private boolean enabled;
     
     @Resource
