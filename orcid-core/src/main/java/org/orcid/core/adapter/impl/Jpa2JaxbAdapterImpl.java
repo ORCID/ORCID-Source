@@ -179,10 +179,11 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                     List<ScopePathType> scopePathType = new ArrayList<ScopePathType>(ScopePathType.getScopesFromSpaceSeparatedString(predefinedScope));
                     redirectUri.setScope(scopePathType);
                 }
+                redirectUri.setActType(redirectUriEntity.getUriActType());
+                redirectUri.setGeoArea(redirectUriEntity.getUriGeoArea());
                 redirectUris.getRedirectUri().add(redirectUri);
             }
         }
-
         return client;
     }
 

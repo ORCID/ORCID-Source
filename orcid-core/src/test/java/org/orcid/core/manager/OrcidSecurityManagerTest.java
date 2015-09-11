@@ -16,14 +16,14 @@
  */
 package org.orcid.core.manager;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 import javax.annotation.Resource;
 
 import org.junit.Test;
 import org.orcid.core.BaseTest;
-import org.orcid.core.exception.OrcidForbiddenException;
 import org.orcid.core.exception.OrcidUnauthorizedException;
+import org.orcid.core.exception.OrcidVisibilityException;
 import org.orcid.core.utils.SecurityContextTestUtils;
 import org.orcid.jaxb.model.common.Source;
 import org.orcid.jaxb.model.common.SourceClientId;
@@ -86,7 +86,7 @@ public class OrcidSecurityManagerTest extends BaseTest {
         boolean caughtException = false;
         try {
             orcidSecurityManager.checkVisibility(work);
-        } catch (OrcidForbiddenException e) {
+        } catch (OrcidVisibilityException e) {
             caughtException = true;
         }
         assertTrue(caughtException);
@@ -127,7 +127,7 @@ public class OrcidSecurityManagerTest extends BaseTest {
         boolean caughtException = false;
         try {
             orcidSecurityManager.checkVisibility(work);
-        } catch (OrcidForbiddenException e) {
+        } catch (OrcidVisibilityException e) {
             caughtException = true;
         }
         assertTrue(caughtException);

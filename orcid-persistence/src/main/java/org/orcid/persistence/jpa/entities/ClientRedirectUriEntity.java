@@ -47,6 +47,8 @@ public class ClientRedirectUriEntity extends BaseEntity<ClientRedirectUriPk> imp
     private String predefinedClientScope;
     private ClientDetailsEntity clientDetailsEntity;
     private String redirectUriType;
+    private String uriActType;
+    private String uriGeoArea;
 
     public ClientRedirectUriEntity() {
     }
@@ -158,5 +160,23 @@ public class ClientRedirectUriEntity extends BaseEntity<ClientRedirectUriPk> imp
     public void setRedirectUriType(String redirectUriType) {
         this.redirectUriType = redirectUriType;
     }
+
+    @Column(name = "uri_act_type")
+	public String getUriActType() {
+		return uriActType;
+	}
+
+	public void setUriActType(String uriActType) {
+		this.uriActType = uriActType;
+	}
+
+	@Column(name = "uri_geo_area")
+	public String getUriGeoArea() {
+		return uriGeoArea;
+	}
+
+	public void setUriGeoArea(String uriGeoArea) {
+		this.uriGeoArea = uriGeoArea;
+	}
 
 }

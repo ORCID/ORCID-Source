@@ -17,13 +17,15 @@
 package org.orcid.core.manager.impl;
 
 import java.security.AccessControlException;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Resource;
 
-import org.orcid.core.exception.OrcidForbiddenException;
 import org.orcid.core.exception.OrcidUnauthorizedException;
+import org.orcid.core.exception.OrcidVisibilityException;
 import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.SourceManager;
@@ -72,7 +74,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         if (readLimitedScopes.isEmpty()) {
             // This client only has permission for read public
             if ((visibility == null || Visibility.PRIVATE.equals(visibility)) && clientId != null && !clientId.equals(filterable.retrieveSourcePath())) {
-                throw new OrcidForbiddenException("The activity is private and you are not the source");
+                throw new OrcidVisibilityException();
             }
             if (visibility.isMoreRestrictiveThan(Visibility.PUBLIC)) {
                 throw new OrcidUnauthorizedException("The activity is not public");
@@ -80,7 +82,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         } else {
             // The client has permission for read limited
             if ((visibility == null || Visibility.PRIVATE.equals(visibility)) && clientId != null && !clientId.equals(filterable.retrieveSourcePath())) {
-                throw new OrcidForbiddenException("The activity is private and you are not the source");
+                throw new OrcidVisibilityException();
             }
         }
     }
@@ -89,7 +91,9 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
     public void checkSource(SourceEntity existingSource) {
         String sourceIdOfUpdater = sourceManager.retrieveSourceOrcid();
         if (sourceIdOfUpdater != null && (existingSource == null || !sourceIdOfUpdater.equals(existingSource.getSourceId()))) {
-            throw new WrongSourceException("You are not the source of the work, so you are not allowed to update it");
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("activity", "work");
+        	throw new WrongSourceException(params);
         }
     }
 

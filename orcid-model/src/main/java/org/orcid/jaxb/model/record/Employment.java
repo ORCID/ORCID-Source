@@ -41,6 +41,8 @@ import org.orcid.jaxb.model.common.Source;
 import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.jaxb.model.common.VisibilityType;
 
+import io.swagger.annotations.ApiModelProperty;
+
 /**
  * <p>
  * Java class for anonymous complex type.
@@ -75,7 +77,8 @@ public class Employment implements Serializable, VisibilityType, Activity, Organ
     protected CreatedDate createdDate;
 
     @XmlAttribute(name = "put-code")
-    protected String putCode;
+    @ApiModelProperty(hidden = true) 
+    protected Long putCode;
     @XmlAttribute(name = "path")
     protected String path;
     @XmlAttribute
@@ -234,7 +237,7 @@ public class Employment implements Serializable, VisibilityType, Activity, Organ
      * @return possible object is {@link String }
      * 
      */
-    public String getPutCode() {
+    public Long getPutCode() {
         return putCode;
     }
 
@@ -245,7 +248,7 @@ public class Employment implements Serializable, VisibilityType, Activity, Organ
      *            allowed object is {@link String }
      * 
      */
-    public void setPutCode(String value) {
+    public void setPutCode(Long value) {
         this.putCode = value;
     }
 

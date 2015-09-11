@@ -50,7 +50,7 @@ public class ActivityUtils {
      *            The activity owner
      * */
     public static void setPathToActivity(Activity activity, String orcid) {
-        String putCode = activity.getPutCode();
+        Long putCode = activity.getPutCode();
         String activityType = OrcidApiConstants.ACTIVITY_WORK;
 
         if (Education.class.isInstance(activity) || EducationSummary.class.isInstance(activity)) {

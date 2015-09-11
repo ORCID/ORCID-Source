@@ -37,7 +37,7 @@ public interface ProfileFundingManager {
      *            The client orcid
      * @return true if the relationship was deleted
      * */
-    boolean removeProfileFunding(String clientOrcid, String profileFundingId);
+    boolean removeProfileFunding(String clientOrcid, Long profileFundingId);
 
     /**
      * Updates the visibility of an existing profile funding relationship
@@ -53,7 +53,7 @@ public interface ProfileFundingManager {
      * 
      * @return true if the relationship was updated
      * */
-    boolean updateProfileFundingVisibility(String clientOrcid, String profileFundingId, Visibility visibility);
+    boolean updateProfileFundingVisibility(String clientOrcid, Long profileFundingId, Visibility visibility);
 
     /**
      * Updates an existing profile funding relationship between an organization and a
@@ -102,9 +102,9 @@ public interface ProfileFundingManager {
      * 
      * @return the ProfileFundingEntity object
      * */
-    ProfileFundingEntity getProfileFundingEntity(String profileFundingId);
+    ProfileFundingEntity getProfileFundingEntity(Long profileFundingId);
     
-    boolean updateToMaxDisplay(String orcid, String workId);
+    boolean updateToMaxDisplay(String orcid, Long fundingId);
     
     /**
      * Get a funding based on the orcid and funding id
@@ -114,7 +114,7 @@ public interface ProfileFundingManager {
      *          The funding id
      * @return the Funding          
      * */
-    Funding getFunding(String orcid, String fundingId);
+    Funding getFunding(String orcid, Long fundingId);
     
     /**
      * Get a funding summary based on the orcid and funding id
@@ -124,7 +124,7 @@ public interface ProfileFundingManager {
      *          The funding id
      * @return the FundingSummary          
      * */
-    FundingSummary getSummary(String orcid, String fundingId);
+    FundingSummary getSummary(String orcid, Long fundingId);
     
     /**
      * Add a new funding to the given user
@@ -154,7 +154,7 @@ public interface ProfileFundingManager {
      *          The funding id                 
      * @return true if the funding was deleted, false otherwise
      * */
-    boolean checkSourceAndDelete(String orcid, String fundingId);   
+    boolean checkSourceAndDelete(String orcid, Long fundingId);   
     
     /**
      * Get the list of fundings that belongs to a user

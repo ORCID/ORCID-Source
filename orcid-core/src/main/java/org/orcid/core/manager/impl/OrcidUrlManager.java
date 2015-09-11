@@ -64,6 +64,30 @@ public class OrcidUrlManager {
             return "/";
         return fileNameMatcher.group(1) + "/";
     }
+    
+    /** 
+     * 
+     * @return the path, without additional trailing slash
+     */
+    @ModelAttribute("apiPath")
+    public String getApiPath() {
+        Matcher fileNameMatcher = fileNamePattern.matcher(getApiBaseUrl());
+        if (!fileNameMatcher.find())
+            return "/";
+        return fileNameMatcher.group(1);
+    }
+    
+    /** 
+     * 
+     * @return the path, without additional trailing slash
+     */
+    @ModelAttribute("pubPath")
+    public String getPubPath() {
+        Matcher fileNameMatcher = fileNamePattern.matcher(this.getPubBaseUrl());
+        if (!fileNameMatcher.find())
+            return "/";
+        return fileNameMatcher.group(1);
+    }
 
     
     public String getBaseHost() {
@@ -71,6 +95,28 @@ public class OrcidUrlManager {
             return new URI(this.baseUrl).getHost();
         } catch (URISyntaxException e) {
             throw new RuntimeException("Problem parsing base URI: " + this.baseUrl, e);
+        }
+    }
+    
+    public String getApiHostWithPort() {
+        try {
+            URI uri = new URI(this.apiBaseUrl);
+            if (uri.getPort() >= 0)
+                return uri.getHost() + ":"+uri.getPort();
+            return uri.getHost();
+        } catch (URISyntaxException e) {
+            throw new RuntimeException("Problem parsing base URI: " + this.apiBaseUrl, e);
+        }
+    }
+    
+    public String getPubHostWithPort() {
+        try {
+            URI uri = new URI(this.pubBaseUrl);
+            if (uri.getPort() >= 0)
+                return uri.getHost() + ":"+uri.getPort();
+            return uri.getHost();
+        } catch (URISyntaxException e) {
+            throw new RuntimeException("Problem parsing base URI: " + this.pubBaseUrl, e);
         }
     }
 
@@ -103,5 +149,8 @@ public class OrcidUrlManager {
         return sb.toString();
     }
     
-
+    public static String getPathWithoutContextPath(HttpServletRequest request) {
+        return request.getRequestURI().substring(request.getContextPath().length());
+    }
+    
 }

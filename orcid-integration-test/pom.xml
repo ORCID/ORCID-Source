@@ -18,6 +18,18 @@
         <main.basedir>${project.parent.basedir}</main.basedir>
     </properties>
 
+	<!-- swagger 2 markup repo -->
+	<repositories>
+	    <repository>
+	        <snapshots>
+	            <enabled>false</enabled>
+	        </snapshots>
+	        <id>central</id>
+	        <name>bintray</name>
+	        <url>http://jcenter.bintray.com</url>
+	    </repository>
+	</repositories>
+
     <dependencies>
         <!-- Internal dependencies -->
         <dependency>
@@ -74,7 +86,21 @@
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-java</artifactId>
             <scope>test</scope>
-        </dependency>          
+        </dependency>
+        
+		<!--  swagger2markup -->
+		<dependency>
+		    <groupId>io.github.robwin</groupId>
+		    <artifactId>swagger2markup</artifactId>
+		    <version>0.7.0</version>
+		</dependency> 
+		<!-- fix versioning -->
+   		<dependency>
+   			<groupId>org.apache.commons</groupId>
+   			<artifactId>commons-lang3</artifactId>
+   			<version>3.2</version>
+   		</dependency>
+		         
     </dependencies>
     
     <build>

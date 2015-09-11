@@ -1,0 +1,53 @@
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2014 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+	<changeSet id="REMOVE-TABLE-NOTIFICATION-ACTIVITY-TO-NOTIFICATION-ITEM" author="Angel Montenegro">
+		<preConditions onFail="MARK_RAN">
+            <tableExists tableName="notification_activity"/>            
+        </preConditions>
+		<renameTable newTableName="notification_item" oldTableName="notification_activity"/>		
+    </changeSet>
+    
+    <changeSet id="RENAME-TYPE-FIELD-ON-NOTIFICATION-ITEM-TABLE" author="Angel Montenegro">
+    	<preConditions onFail="MARK_RAN">
+    		<columnExists tableName="notification_item" columnName="activity_type"/>            
+        </preConditions>
+		<renameColumn tableName="notification_item" oldColumnName="activity_type" newColumnName="item_type"/>
+    </changeSet>
+    
+    <changeSet id="RENAME-NAME-FIELD-ON-NOTIFICATION-ITEM-TABLE" author="Angel Montenegro">
+    	<preConditions onFail="MARK_RAN">
+            <columnExists tableName="notification_item" columnName="activity_name"/>            
+        </preConditions>
+		<renameColumn tableName="notification_item" oldColumnName="activity_name" newColumnName="item_name"/>
+    </changeSet>
+          
+	<changeSet id="RENAME-SEQUENCE" author="Angel Montenegro" dbms="postgresql">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <sequenceExists sequenceName="notification_item_seq" />
+            </not>
+        </preConditions>
+        <createSequence sequenceName="notification_item_seq" />
+    </changeSet>          
+          
+</databaseChangeLog>	

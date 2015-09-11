@@ -50,9 +50,6 @@ import org.orcid.jaxb.model.message.Claimed;
 import org.orcid.jaxb.model.message.ContactDetails;
 import org.orcid.jaxb.model.message.CreationMethod;
 import org.orcid.jaxb.model.message.FamilyName;
-import org.orcid.jaxb.model.record.FundingExternalIdentifier;
-import org.orcid.jaxb.model.record.FundingExternalIdentifierType;
-import org.orcid.jaxb.model.record.FundingExternalIdentifiers;
 import org.orcid.jaxb.model.message.GivenNames;
 import org.orcid.jaxb.model.message.OrcidBio;
 import org.orcid.jaxb.model.message.OrcidHistory;
@@ -66,11 +63,14 @@ import org.orcid.jaxb.model.message.SubmissionDate;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.record.Education;
 import org.orcid.jaxb.model.record.Funding;
+import org.orcid.jaxb.model.record.FundingExternalIdentifier;
+import org.orcid.jaxb.model.record.FundingExternalIdentifierType;
+import org.orcid.jaxb.model.record.FundingExternalIdentifiers;
 import org.orcid.jaxb.model.record.FundingTitle;
 import org.orcid.jaxb.model.record.PeerReview;
 import org.orcid.jaxb.model.record.PeerReviewType;
+import org.orcid.jaxb.model.record.Relationship;
 import org.orcid.jaxb.model.record.Role;
-import org.orcid.jaxb.model.record.Subject;
 import org.orcid.jaxb.model.record.Work;
 import org.orcid.jaxb.model.record.WorkExternalIdentifier;
 import org.orcid.jaxb.model.record.WorkExternalIdentifierId;
@@ -241,19 +241,19 @@ public class SourceInActivitiesTest extends BaseTest {
         assertFalse(PojoUtil.isEmpty(funding4.getTitle()));
         assertEquals(userOrcid, funding4.getSource().getSourceId());
 
-        ProfileFundingEntity fromDb1 = profileFundingManager.getProfileFundingEntity(String.valueOf(funding1.getId()));
+        ProfileFundingEntity fromDb1 = profileFundingManager.getProfileFundingEntity(funding1.getId());
         assertNotNull(fromDb1);
         assertEquals(userOrcid, fromDb1.getSource().getSourceId());
 
-        ProfileFundingEntity fromDb2 = profileFundingManager.getProfileFundingEntity(String.valueOf(funding2.getId()));
+        ProfileFundingEntity fromDb2 = profileFundingManager.getProfileFundingEntity(funding2.getId());
         assertNotNull(fromDb2);
         assertEquals(CLIENT_1_ID, fromDb2.getSource().getSourceId());
 
-        ProfileFundingEntity fromDb3 = profileFundingManager.getProfileFundingEntity(String.valueOf(funding3.getId()));
+        ProfileFundingEntity fromDb3 = profileFundingManager.getProfileFundingEntity(funding3.getId());
         assertNotNull(fromDb3);
         assertEquals(CLIENT_2_ID, fromDb3.getSource().getSourceId());
 
-        ProfileFundingEntity fromDb4 = profileFundingManager.getProfileFundingEntity(String.valueOf(funding4.getId()));
+        ProfileFundingEntity fromDb4 = profileFundingManager.getProfileFundingEntity(funding4.getId());
         assertNotNull(fromDb4);
         assertEquals(userOrcid, fromDb4.getSource().getSourceId());
     }
@@ -313,7 +313,7 @@ public class SourceInActivitiesTest extends BaseTest {
         FundingExternalIdentifiers extIdentifiers = new FundingExternalIdentifiers();
         extIdentifiers.getExternalIdentifier().add(extId);
         funding.setExternalIdentifiers(extIdentifiers);
-        funding.setPutCode("111");
+        funding.setPutCode(Long.valueOf(111));
         funding = profileFundingManager.createFunding(userOrcid, funding);
         return profileFundingManager.getProfileFundingEntity(funding.getPutCode());
     }
@@ -323,37 +323,33 @@ public class SourceInActivitiesTest extends BaseTest {
         when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ProfileEntity(userOrcid)));
         PeerReview peerReview1 = getPeerReview(userOrcid);
         assertNotNull(peerReview1);
-        assertNotNull(peerReview1.getSubject());
-        assertNotNull(peerReview1.getSubject().getTitle());
-        assertNotNull(peerReview1.getSubject().getTitle().getTitle());
-        assertFalse(PojoUtil.isEmpty(peerReview1.getSubject().getTitle().getTitle().getContent()));
+        assertNotNull(peerReview1.getSubjectName());
+        assertNotNull(peerReview1.getSubjectName().getTitle());
+        assertFalse(PojoUtil.isEmpty(peerReview1.getSubjectName().getTitle().getContent()));
         assertEquals(userOrcid, peerReview1.retrieveSourcePath());
         
         when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
         PeerReview peerReview2 = getPeerReview(userOrcid);
         assertNotNull(peerReview2);
-        assertNotNull(peerReview2.getSubject());
-        assertNotNull(peerReview2.getSubject().getTitle());
-        assertNotNull(peerReview2.getSubject().getTitle().getTitle());
-        assertFalse(PojoUtil.isEmpty(peerReview2.getSubject().getTitle().getTitle().getContent()));
+        assertNotNull(peerReview2.getSubjectName());
+        assertNotNull(peerReview2.getSubjectName().getTitle());
+        assertFalse(PojoUtil.isEmpty(peerReview2.getSubjectName().getTitle().getContent()));
         assertEquals(CLIENT_1_ID, peerReview2.retrieveSourcePath());
         
         when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_2_ID)));
         PeerReview peerReview3 = getPeerReview(userOrcid);
         assertNotNull(peerReview3);
-        assertNotNull(peerReview3.getSubject());
-        assertNotNull(peerReview3.getSubject().getTitle());
-        assertNotNull(peerReview3.getSubject().getTitle().getTitle());
-        assertFalse(PojoUtil.isEmpty(peerReview3.getSubject().getTitle().getTitle().getContent()));
+        assertNotNull(peerReview3.getSubjectName());
+        assertNotNull(peerReview3.getSubjectName().getTitle());
+        assertFalse(PojoUtil.isEmpty(peerReview3.getSubjectName().getTitle().getContent()));
         assertEquals(CLIENT_2_ID, peerReview3.retrieveSourcePath());
         
         when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ProfileEntity(userOrcid)));
         PeerReview peerReview4 = getPeerReview(userOrcid);
         assertNotNull(peerReview4);
-        assertNotNull(peerReview4.getSubject());
-        assertNotNull(peerReview4.getSubject().getTitle());
-        assertNotNull(peerReview4.getSubject().getTitle().getTitle());
-        assertFalse(PojoUtil.isEmpty(peerReview4.getSubject().getTitle().getTitle().getContent()));
+        assertNotNull(peerReview4.getSubjectName());
+        assertNotNull(peerReview4.getSubjectName().getTitle());
+        assertFalse(PojoUtil.isEmpty(peerReview4.getSubjectName().getTitle().getContent()));
         assertEquals(userOrcid, peerReview4.retrieveSourcePath());
         
         PeerReview fromDb1 = peerReviewManager.getPeerReview(userOrcid, peerReview1.getPutCode());
@@ -420,7 +416,7 @@ public class SourceInActivitiesTest extends BaseTest {
     private Education getAffiliationWithPutCode(String userOrcid) {
         Education education = new Education();
         education.setOrganization(getOrganization());
-        education.setPutCode("111");
+        education.setPutCode(Long.valueOf(111));
         education = affiliationsManager.createEducationAffiliation(userOrcid, education);
         return affiliationsManager.getEducationAffiliation(userOrcid, education.getPutCode());
     }
@@ -451,7 +447,7 @@ public class SourceInActivitiesTest extends BaseTest {
         profile.setOrcidHistory(orcidHistory);
         orcidHistory.setSubmissionDate(new SubmissionDate(DateUtils.convertToXMLGregorianCalendar(new Date())));
         profile.setPassword("password1");
-        return orcidProfileManager.createOrcidProfile(profile, false);
+        return orcidProfileManager.createOrcidProfile(profile, false, false);
     }
 
     private Work getWork(String userOrcid) {
@@ -504,7 +500,7 @@ public class SourceInActivitiesTest extends BaseTest {
         extIdentifiers.getExternalIdentifier().add(extId);
         work.setWorkExternalIdentifiers(extIdentifiers);
         work.setWorkType(org.orcid.jaxb.model.record.WorkType.BOOK);
-        work.setPutCode("111");
+        work.setPutCode(Long.valueOf(111));
         work = workManager.createWork(userOrcid, work, validate);
         return workManager.getWork(userOrcid, work.getPutCode());
     }
@@ -520,6 +516,7 @@ public class SourceInActivitiesTest extends BaseTest {
         extId.setValue("111");
         extId.setType(FundingExternalIdentifierType.GRANT_NUMBER);
         extId.setUrl(new Url("http://test.com"));
+        extId.setRelationship(Relationship.PART_OF);
         FundingExternalIdentifiers extIdentifiers = new FundingExternalIdentifiers();
         extIdentifiers.getExternalIdentifier().add(extId);
         funding.setExternalIdentifiers(extIdentifiers);
@@ -544,15 +541,13 @@ public class SourceInActivitiesTest extends BaseTest {
         WorkExternalIdentifier workExtId = new WorkExternalIdentifier();
         workExtId.setWorkExternalIdentifierId(new WorkExternalIdentifierId("ID"));
         workExtId.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
-        workExtIds.getExternalIdentifier().add(workExtId);
-        Subject subject = new Subject();        
-        subject.setTitle(workTitle);
-        subject.setExternalIdentifiers(workExtIds);
-        subject.setType(WorkType.ARTISTIC_PERFORMANCE);
-        peerReview.setSubject(subject);
+        workExtIds.getExternalIdentifier().add(workExtId);        
+        peerReview.setSubjectName(workTitle);
+        peerReview.setSubjectExternalIdentifier(workExtId);
+        peerReview.setSubjectType(WorkType.ARTISTIC_PERFORMANCE);
         peerReview.setExternalIdentifiers(workExtIds);
         peerReview.setRole(Role.CHAIR);
-        peerReview = peerReviewManager.createPeerReview(userOrcid, peerReview);
+        peerReview = peerReviewManager.createPeerReview(userOrcid, peerReview, false);
         return peerReviewManager.getPeerReview(userOrcid, peerReview.getPutCode());
     }
 

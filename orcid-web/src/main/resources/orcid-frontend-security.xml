@@ -174,7 +174,6 @@
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/statistics(/)?$"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-
 		<sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX](\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/public_widgets/(\d{4}-){3,}\d{3}[\dX]/(.*)/info.json(\?.*)?"
@@ -182,13 +181,13 @@
 		<sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/works.json(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/affiliations.json(\?.*)?"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />		
 		<sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/fundings.json(\?.*)?"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />			
-			
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />						
 		<sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/getWorkInfo.json(\?.*)?"
- 	      	access="IS_AUTHENTICATED_ANONYMOUSLY" />
+ 	      	access="IS_AUTHENTICATED_ANONYMOUSLY" /> 	      	
+ 	    <sec:intercept-url pattern="/public/group/(ringgold:|issn:|orcid-generated:|fundref:).*"
+ 	      	access="IS_AUTHENTICATED_ANONYMOUSLY" /> 	      	
 		<sec:intercept-url pattern="/lang.json(.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/login(\?.*)?"
@@ -356,10 +355,11 @@
             </list>
         </property>
     </bean>
-    <bean id="clientCredentialsTokenEndpointFilter" class="org.orcid.api.common.security.oauth.OrcidOauth2TokenEndPointFilter">
+    <bean id="clientCredentialsTokenEndpointFilter" class="org.orcid.api.common.security.oauth.OrcidWebOauth2TokenEndPointFilter">
         <property name="authenticationEntryPoint" ref="oauthAuthenticationEntryPoint"/>
         <property name="authenticationManager" ref="clientAuthenticationManager"/>
     </bean>
+
     <bean id="tokenGranter" class="org.springframework.security.oauth2.provider.CompositeTokenGranter">
     <constructor-arg>
         <list>

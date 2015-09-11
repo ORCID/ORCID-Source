@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.orcid.jaxb.model.clientgroup.ClientType;
+import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.RedirectUri;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.springframework.security.oauth2.provider.ClientDetailsService;
@@ -162,4 +163,6 @@ public interface ClientDetailsManager extends ClientDetailsService {
     ClientDetailsEntity getPublicClient(String ownerId);
     
     String getMemberName(String clientId);
+
+	OrcidClient toOrcidClient(ClientDetailsEntity clientEntity);
 }

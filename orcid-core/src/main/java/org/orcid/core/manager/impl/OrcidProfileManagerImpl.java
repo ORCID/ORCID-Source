@@ -235,7 +235,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
 
     @Override
     @Transactional
-    public OrcidProfile createOrcidProfile(OrcidProfile orcidProfile, boolean createdByMember) {
+    public OrcidProfile createOrcidProfile(OrcidProfile orcidProfile, boolean createdByMember, boolean usedCaptcha) {
         if (orcidProfile.getOrcidIdentifier() == null) {
             orcidProfile.setOrcidIdentifier(orcidGenerationManager.createNewOrcid());
         }
@@ -249,6 +249,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         addSourceToFundings(orcidProfile, amenderOrcid);
 
         ProfileEntity profileEntity = adapter.toProfileEntity(orcidProfile);
+        profileEntity.setUsedRecaptchaOnRegistration(usedCaptcha);
         encryptAndMapFieldsForProfileEntityPersistence(orcidProfile, profileEntity);
         profileEntity.setAuthorities(getGrantedAuthorities(profileEntity));
         setDefaultVisibility(profileEntity, createdByMember);
@@ -261,7 +262,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
 
     @Override
     public OrcidProfile createOrcidProfileAndNotify(OrcidProfile orcidProfile) {
-        OrcidProfile createdOrcidProfile = createOrcidProfile(orcidProfile, true);
+        OrcidProfile createdOrcidProfile = createOrcidProfile(orcidProfile, true, false);
         notificationManager.sendApiRecordCreationEmail(orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue(), orcidProfile);
         return createdOrcidProfile;
     }
@@ -271,7 +272,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
     public OrcidProfile updateOrcidProfile(OrcidProfile orcidProfile) {
         String amenderOrcid = sourceManager.retrieveSourceOrcid();
         ProfileEntity existingProfileEntity = profileDao.find(orcidProfile.getOrcidIdentifier().getPath());
-        
+
         if (existingProfileEntity != null) {
             profileDao.removeChildrenWithGeneratedIds(existingProfileEntity);
             setWorkPrivacy(orcidProfile, existingProfileEntity.getActivitiesVisibilityDefault());
@@ -286,11 +287,11 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         profileEntity.setLastModified(new Date());
         profileEntity.setIndexingStatus(IndexingStatus.PENDING);
         ProfileEntity updatedProfileEntity = profileDao.merge(profileEntity);
-        
+
         profileDao.flush();
         profileDao.refresh(updatedProfileEntity);
-        OrcidProfile updatedOrcidProfile = convertToOrcidProfile(updatedProfileEntity, LoadOptions.ALL);                
-        
+        OrcidProfile updatedOrcidProfile = convertToOrcidProfile(updatedProfileEntity, LoadOptions.ALL);
+
         orcidProfileCacheManager.put(updatedOrcidProfile);
         return updatedOrcidProfile;
     }
@@ -319,11 +320,11 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
                 for (Email email : contactDetails.getEmail()) {
                     EmailEntity existingEmail = existingMap.get(email.getValue().toLowerCase());
                     if (existingEmail == null) {
-                    	if(OrcidStringUtils.isValidOrcid(amenderOrcid)) {
-                    		email.setSourceClientId(amenderOrcid);
-                    	} else {
-                    		email.setSource(amenderOrcid);
-                    	}
+                        if (OrcidStringUtils.isValidOrcid(amenderOrcid)) {
+                            email.setSourceClientId(amenderOrcid);
+                        } else {
+                            email.setSource(amenderOrcid);
+                        }
                     } else {
                         SourceEntity existingSource = existingEmail.getSource();
                         if (existingSource != null) {
@@ -544,8 +545,8 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         OrcidProfile profileToReturn = updateOrcidProfile(existingProfile);
         notificationManager.sendAmendEmail(profileToReturn, AmendedSection.WORK);
         return profileToReturn;
-    }    
-    
+    }
+
     /**
      * Add new external identifiers to an existing profile
      * 
@@ -1085,15 +1086,15 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         Set<String> titles = new HashSet<String>();
         for (OrcidWork updatedOrcidWork : updatedOrcidWorksList) {
             populateContributorInfo(updatedOrcidWork);
-			//Create the work entity
-			WorkEntity workEntity = jaxb2JpaAdapter.getWorkEntity(updatedOrcidWork, null);
-			workEntity.setProfile(profileEntity);
-			workDao.persist(workEntity);
+            // Create the work entity
+            WorkEntity workEntity = jaxb2JpaAdapter.getWorkEntity(updatedOrcidWork, null);
+            workEntity.setProfile(profileEntity);
+            workDao.persist(workEntity);
             if (updatedOrcidWork.getWorkTitle() != null && updatedOrcidWork.getWorkTitle().getTitle() != null) {
                 String title = updatedOrcidWork.getWorkTitle().getTitle().getContent();
                 if (titles.contains(title)) {
-                    LOG.warn("Request from {} contains dupplicated works on title '{}' and put-code '{}' \n {}", new Object[] { sourceManager.retrieveSourceOrcid(), title,
-                    		workEntity.getId() ,updatedOrcidWork });
+                    LOG.warn("Request from {} contains dupplicated works on title '{}' and put-code '{}' \n {}", new Object[] { sourceManager.retrieveSourceOrcid(),
+                            title, workEntity.getId(), updatedOrcidWork });
                 } else {
                     titles.add(title);
                 }

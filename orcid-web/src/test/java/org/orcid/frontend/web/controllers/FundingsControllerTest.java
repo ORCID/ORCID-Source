@@ -474,7 +474,7 @@ public class FundingsControllerTest extends BaseControllerTest {
         when(servletRequest.getSession()).thenReturn(session);
         when(localeManager.getLocale()).thenReturn(new Locale("us", "EN"));
 
-        FundingForm funding = fundingController.getFundingJson("1");
+        FundingForm funding = fundingController.getFundingJson(Long.valueOf("1"));
         assertNotNull(funding);
         assertNotNull(funding.getFundingTitle());
         assertFalse(PojoUtil.isEmpty(funding.getFundingTitle().getTitle()));
@@ -494,7 +494,7 @@ public class FundingsControllerTest extends BaseControllerTest {
         when(servletRequest.getSession()).thenReturn(session);
         when(localeManager.getLocale()).thenReturn(new Locale("us", "EN"));
 
-        FundingForm funding = fundingController.getFundingJson("3");
+        FundingForm funding = fundingController.getFundingJson(Long.valueOf("3"));
         boolean throwsError = false;
         try {
             fundingController.postFunding(funding);
@@ -512,7 +512,7 @@ public class FundingsControllerTest extends BaseControllerTest {
         when(servletRequest.getSession()).thenReturn(session);
         when(localeManager.getLocale()).thenReturn(new Locale("us", "EN"));
 
-        FundingForm funding = fundingController.getFundingJson("1");
+        FundingForm funding = fundingController.getFundingJson(Long.valueOf("1"));
         funding.getFundingTitle().getTitle().setValue("Grant # 1 - updated");
         TranslatedTitle translatedTitle = new TranslatedTitle();
         translatedTitle.setContent("Grant # 1 - translated title");
@@ -524,7 +524,7 @@ public class FundingsControllerTest extends BaseControllerTest {
         try {
             fundingController.postFunding(funding);
             // Fetch the funding again
-            FundingForm updated = fundingController.getFundingJson("1");
+            FundingForm updated = fundingController.getFundingJson(Long.valueOf("1"));
             assertNotNull(updated);
             assertNotNull(updated.getFundingTitle());
             assertFalse(PojoUtil.isEmpty(updated.getFundingTitle().getTitle()));
@@ -549,7 +549,7 @@ public class FundingsControllerTest extends BaseControllerTest {
         when(servletRequest.getSession()).thenReturn(session);
         when(localeManager.getLocale()).thenReturn(new Locale("us", "EN"));
 
-        FundingForm funding = fundingController.getFundingJson("1");
+        FundingForm funding = fundingController.getFundingJson(Long.valueOf("1"));
         // Check old org
         assertEquals("London", funding.getCity().getValue());
         assertEquals("GB", funding.getCountry().getValue());
@@ -560,7 +560,7 @@ public class FundingsControllerTest extends BaseControllerTest {
         try {
             fundingController.postFunding(funding);
             // Fetch the funding again
-            FundingForm updated = fundingController.getFundingJson("1");
+            FundingForm updated = fundingController.getFundingJson(Long.valueOf("1"));
             assertNotNull(updated);
             // Check new org
             assertEquals("San Jose", funding.getCity().getValue());

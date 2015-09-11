@@ -510,7 +510,7 @@ public class OauthConfirmAccessController extends BaseController {
             checkRegisterForm(request, response, form);
             if (form.getErrors().isEmpty()) {
                 // Register user
-                registrationController.createMinimalRegistration(request, RegistrationController.toProfile(form));
+                registrationController.createMinimalRegistration(request, RegistrationController.toProfile(form), false);
                 // Authenticate user
                 String email = form.getEmail().getValue();
                 String password = form.getPassword().getValue();
@@ -794,7 +794,7 @@ public class OauthConfirmAccessController extends BaseController {
     private boolean hasPersistenTokensEnabled(String clientId) throws IllegalArgumentException {
         ClientDetailsEntity clientDetails = clientDetailsManager.findByClientId(clientId);
         if (clientDetails == null)
-            throw new IllegalArgumentException("Invalid client details id");
+            throw new IllegalArgumentException(getMessage("web.orcid.oauth_invalid_client.exception"));
         return clientDetails.isPersistentTokensEnabled();
     }
 }

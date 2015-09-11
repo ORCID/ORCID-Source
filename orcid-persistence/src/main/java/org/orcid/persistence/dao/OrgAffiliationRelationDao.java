@@ -34,7 +34,7 @@ public interface OrgAffiliationRelationDao extends GenericDao<OrgAffiliationRela
      *            The user orcid
      * @return true if the relationship was deleted
      * */
-    boolean removeOrgAffiliationRelation(String userOrcid, String orgAffiliationRelationId);
+    boolean removeOrgAffiliationRelation(String userOrcid, Long orgAffiliationRelationId);
 
     /**
      * Updates the visibility of an existing profile affiliation relationship
@@ -50,7 +50,7 @@ public interface OrgAffiliationRelationDao extends GenericDao<OrgAffiliationRela
      * 
      * @return true if the relationship was updated
      * */
-    boolean updateVisibilityOnOrgAffiliationRelation(String clientOrcid, String orgAffiliationRelationId, Visibility visibility);
+    boolean updateVisibilityOnOrgAffiliationRelation(String clientOrcid, Long orgAffiliationRelationId, Visibility visibility);
 
     /**
      * Get the affiliation associated with the client orcid and the orgAffiliationRelationId
@@ -63,7 +63,7 @@ public interface OrgAffiliationRelationDao extends GenericDao<OrgAffiliationRela
      * 
      * @return the orgAffiliationRelation object
      * */
-    OrgAffiliationRelationEntity getOrgAffiliationRelation(String userOrcid, String orgAffiliationRelationId);
+    OrgAffiliationRelationEntity getOrgAffiliationRelation(String userOrcid, Long orgAffiliationRelationId);
 
     /**
      * Creates a new profile entity relationship between the provided orgAffilationRelation and

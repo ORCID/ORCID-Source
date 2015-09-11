@@ -20,19 +20,18 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.orcid.jaxb.model.common.FuzzyDate;
-import org.orcid.jaxb.model.common.Subtitle;
-import org.orcid.jaxb.model.common.Title;
-import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.jaxb.model.common.DisambiguatedOrganization;
+import org.orcid.jaxb.model.common.FuzzyDate;
 import org.orcid.jaxb.model.common.Iso3166Country;
 import org.orcid.jaxb.model.common.Organization;
 import org.orcid.jaxb.model.common.OrganizationAddress;
+import org.orcid.jaxb.model.common.Title;
 import org.orcid.jaxb.model.common.Url;
+import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.jaxb.model.record.PeerReview;
 import org.orcid.jaxb.model.record.PeerReviewType;
+import org.orcid.jaxb.model.record.Relationship;
 import org.orcid.jaxb.model.record.Role;
-import org.orcid.jaxb.model.record.Subject;
 import org.orcid.jaxb.model.record.WorkExternalIdentifiers;
 import org.orcid.jaxb.model.record.WorkTitle;
 import org.orcid.jaxb.model.record.WorkType;
@@ -69,9 +68,21 @@ public class PeerReviewForm implements ErrorsInterface, Serializable {
 
     private Text disambiguationSource;
 
-    private Date completionDate;
-
-    private PeerReviewSubjectForm subjectForm;
+    private Date completionDate;    
+    
+    private WorkExternalIdentifier subjectExternalIdentifier;
+    
+    private Text groupId;
+    
+    private Text subjectContainerName;
+    
+    private Text subjectType;
+    
+    private Text subjectName;
+    
+    private TranslatedTitle translatedSubjectName;
+    
+    private Text subjectUrl;
 
     private String source;
 
@@ -193,14 +204,6 @@ public class PeerReviewForm implements ErrorsInterface, Serializable {
         this.completionDate = completionDate;
     }
 
-    public PeerReviewSubjectForm getSubjectForm() {
-        return subjectForm;
-    }
-
-    public void setSubjectForm(PeerReviewSubjectForm subject) {
-        this.subjectForm = subject;
-    }
-
     public String getSource() {
         return source;
     }
@@ -241,11 +244,67 @@ public class PeerReviewForm implements ErrorsInterface, Serializable {
         this.orgName = orgName;
     }
 
+    public Text getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(Text groupId) {
+        this.groupId = groupId;
+    }
+
+    public WorkExternalIdentifier getSubjectExternalIdentifier() {
+        return subjectExternalIdentifier;
+    }
+
+    public void setSubjectExternalIdentifier(WorkExternalIdentifier subjectExternalIdentifier) {
+        this.subjectExternalIdentifier = subjectExternalIdentifier;
+    }
+
+    public Text getSubjectContainerName() {
+        return subjectContainerName;
+    }
+
+    public void setSubjectContainerName(Text subjectContainerName) {
+        this.subjectContainerName = subjectContainerName;
+    }
+
+    public Text getSubjectType() {
+        return subjectType;
+    }
+
+    public void setSubjectType(Text subjectType) {
+        this.subjectType = subjectType;
+    }
+
+    public Text getSubjectName() {
+        return subjectName;
+    }
+
+    public void setSubjectName(Text subjectName) {
+        this.subjectName = subjectName;
+    }
+
+    public TranslatedTitle getTranslatedSubjectName() {
+        return translatedSubjectName;
+    }
+
+    public void setTranslatedSubjectName(TranslatedTitle translatedSubjectName) {
+        this.translatedSubjectName = translatedSubjectName;
+    }
+
+    public Text getSubjectUrl() {
+        return subjectUrl;
+    }
+
+    public void setSubjectUrl(Text subjectUrl) {
+        this.subjectUrl = subjectUrl;
+    }
+
     public PeerReview toPeerReview() {
         PeerReview peerReview = new PeerReview();
         // Put Code
-        if (!PojoUtil.isEmpty(putCode)) {
-            peerReview.setPutCode(putCode.getValue());
+        if (!PojoUtil.isEmpty(putCode)) {            
+            peerReview.setPutCode(Long.valueOf(putCode.getValue()));
         }
         // Visibility
         if (visibility != null) {
@@ -303,56 +362,70 @@ public class PeerReviewForm implements ErrorsInterface, Serializable {
             peerReview.setUrl(new Url(url.getValue()));
         }
 
-        // Subject form
-        if (subjectForm != null) {
-            Subject subject = new Subject();
-            subject.setExternalIdentifiers(new WorkExternalIdentifiers());
-            // External identifiers
-            if (subjectForm.getWorkExternalIdentifiers() != null && !subjectForm.getWorkExternalIdentifiers().isEmpty()) {
-                subject.setExternalIdentifiers(new WorkExternalIdentifiers());
-                for (WorkExternalIdentifier extId : subjectForm.getWorkExternalIdentifiers()) {
-                    subject.getExternalIdentifiers().getExternalIdentifier().add(extId.toRecordWorkExternalIdentifier());
-                }
-            }
-
-            // Journal title
-            if (!PojoUtil.isEmpty(subjectForm.getJournalTitle())) {
-                subject.setJournalTitle(new Title(subjectForm.getJournalTitle().getValue()));
-            }
-
-            // Title
-            WorkTitle title = new WorkTitle();
-            if (!PojoUtil.isEmpty(subjectForm.getTitle())) {
-                title.setTitle(new Title(subjectForm.getTitle().getValue()));
-            }
-            if (!PojoUtil.isEmpty(subjectForm.getSubtitle())) {
-                title.setSubtitle(new Subtitle(subjectForm.getSubtitle().getValue()));
-            }
-            if (subjectForm.getTranslatedTitle() != null && !PojoUtil.isEmpty(subjectForm.getTranslatedTitle().getContent())) {
-                org.orcid.jaxb.model.common.TranslatedTitle translatedTitle = new org.orcid.jaxb.model.common.TranslatedTitle();
-                translatedTitle.setContent(subjectForm.getTranslatedTitle().getContent());
-                translatedTitle.setLanguageCode(subjectForm.getTranslatedTitle().getLanguageCode());
-                title.setTranslatedTitle(translatedTitle);
-            }
-            subject.setTitle(title);
-
-            // Type
-            if (!PojoUtil.isEmpty(subjectForm.getWorkType())) {
-                subject.setType(WorkType.fromValue(subjectForm.getWorkType().getValue()));
-            }
-
-            // Url
-            if (!PojoUtil.isEmpty(subjectForm.getUrl())) {
-                subject.setUrl(new Url(subjectForm.getUrl().getValue()));
-            }
-
-            if(!PojoUtil.isEmpty(subjectForm.getPutCode())) {
-                subject.setPutCode(subjectForm.getPutCode().getValue());
+        // Group id
+        if(!PojoUtil.isEmpty(groupId)) {
+            peerReview.setGroupId(groupId.getValue());
+        }
+        
+        // Subject external id
+        if(!PojoUtil.isEmpty(subjectExternalIdentifier)) {
+            org.orcid.jaxb.model.record.WorkExternalIdentifier subjectExtId = new org.orcid.jaxb.model.record.WorkExternalIdentifier();
+            if(!PojoUtil.isEmpty(subjectExternalIdentifier.getRelationship())) {
+                subjectExtId.setRelationship(Relationship.fromValue(subjectExternalIdentifier.getRelationship().getValue()));
             }
             
-            peerReview.setSubject(subject);
+            if(!PojoUtil.isEmpty(subjectExternalIdentifier.getUrl())) {
+                subjectExtId.setUrl(new Url(subjectExternalIdentifier.getUrl().getValue()));
+            }
+            
+            if(!PojoUtil.isEmpty(subjectExternalIdentifier.getWorkExternalIdentifierId())) {
+                subjectExtId.setWorkExternalIdentifierId(new org.orcid.jaxb.model.record.WorkExternalIdentifierId(subjectExternalIdentifier.getWorkExternalIdentifierId().getValue()));
+            }
+            
+            if(!PojoUtil.isEmpty(subjectExternalIdentifier.getWorkExternalIdentifierType())) {
+                subjectExtId.setWorkExternalIdentifierType(org.orcid.jaxb.model.record.WorkExternalIdentifierType.fromValue(subjectExternalIdentifier.getWorkExternalIdentifierType().getValue()));
+            }
+            
+            peerReview.setSubjectExternalIdentifier(subjectExtId);
         }
-
+        
+        // Subject container name
+        if(!PojoUtil.isEmpty(subjectContainerName)) {
+            Title containerName = new Title(subjectContainerName.getValue());            
+            peerReview.setSubjectContainerName(containerName);
+        }
+        
+        // Subject type
+        if(!PojoUtil.isEmpty(subjectType)) {
+            peerReview.setSubjectType(WorkType.fromValue(subjectType.getValue()));
+        }
+        
+        // Subject name and subject translated name
+        if(!PojoUtil.isEmpty(subjectName) || !PojoUtil.isEmpty(translatedSubjectName)) {
+            WorkTitle workTitle = new WorkTitle();
+            if(!PojoUtil.isEmpty(subjectName)){
+                workTitle.setTitle(new Title(subjectName.getValue()));
+            }
+            
+            if(translatedSubjectName != null) {
+                org.orcid.jaxb.model.common.TranslatedTitle tTitle = new org.orcid.jaxb.model.common.TranslatedTitle();
+                if(!PojoUtil.isEmpty(translatedSubjectName.getContent())) {
+                    tTitle.setContent(translatedSubjectName.getContent());
+                }
+                if(!PojoUtil.isEmpty(translatedSubjectName.getLanguageCode())) {
+                    tTitle.setLanguageCode(translatedSubjectName.getLanguageCode());
+                }
+                workTitle.setTranslatedTitle(tTitle);
+            }            
+            
+            peerReview.setSubjectName(workTitle);
+        }
+        
+        //Subject url
+        if(!PojoUtil.isEmpty(subjectUrl)) {
+            peerReview.setSubjectUrl(new Url(subjectUrl.getValue()));
+        }
+        
         return peerReview;
     }
 
@@ -360,7 +433,7 @@ public class PeerReviewForm implements ErrorsInterface, Serializable {
         PeerReviewForm form = new PeerReviewForm();
 
         // Put code
-        if (!PojoUtil.isEmpty(peerReview.getPutCode())) {
+        if (peerReview.getPutCode() != null) {
             form.setPutCode(Text.valueOf(peerReview.getPutCode()));
         }
 
@@ -426,58 +499,63 @@ public class PeerReviewForm implements ErrorsInterface, Serializable {
             }                                    
         }        
 
-        // Subject
-        if(peerReview.getSubject() != null) {
-            PeerReviewSubjectForm subjectForm = new PeerReviewSubjectForm();
+        // Group Id
+        if(!PojoUtil.isEmpty(peerReview.getGroupId())) {
+            form.setGroupId(Text.valueOf(peerReview.getGroupId()));
+        }
+        
+        // Subject ext Id
+        if(peerReview.getSubjectExternalIdentifier() != null) {
+            WorkExternalIdentifier wExtId = new WorkExternalIdentifier();
+            if(peerReview.getSubjectExternalIdentifier().getRelationship() != null) {
+                wExtId.setRelationship(Text.valueOf(peerReview.getSubjectExternalIdentifier().getRelationship().value()));
+            }
             
-            if(!PojoUtil.isEmpty(peerReview.getSubject().getPutCode())) {
-                subjectForm.setPutCode(Text.valueOf(peerReview.getSubject().getPutCode()));
+            if(peerReview.getSubjectExternalIdentifier().getUrl() != null) {
+                wExtId.setUrl(Text.valueOf(peerReview.getSubjectExternalIdentifier().getUrl().getValue()));
+            }
+            
+            if(peerReview.getSubjectExternalIdentifier().getWorkExternalIdentifierId() != null) {
+                wExtId.setWorkExternalIdentifierId(Text.valueOf(peerReview.getSubjectExternalIdentifier().getWorkExternalIdentifierId().getContent()));
+            }
+            
+            if(peerReview.getSubjectExternalIdentifier().getWorkExternalIdentifierType() != null) {
+                wExtId.setWorkExternalIdentifierType(Text.valueOf(peerReview.getSubjectExternalIdentifier().getWorkExternalIdentifierType().value()));
             }            
             
-            if(peerReview.getSubject().getJournalTitle() != null && !PojoUtil.isEmpty(peerReview.getSubject().getJournalTitle().getContent())) {
-                subjectForm.setJournalTitle(Text.valueOf(peerReview.getSubject().getJournalTitle().getContent()));
-            }
-                        
-            if(!PojoUtil.isEmpty(peerReview.getSubject().getUrl())) {
-                subjectForm.setUrl(Text.valueOf(peerReview.getSubject().getUrl().getValue()));
-            }
-            
-            if(peerReview.getSubject().getType() != null) {
-                subjectForm.setWorkType(Text.valueOf(peerReview.getSubject().getType().value()));
-            }
-                        
-            if(peerReview.getSubject().getTitle() != null) {
-                if(peerReview.getSubject().getTitle().getTitle() != null && !PojoUtil.isEmpty(peerReview.getSubject().getTitle().getTitle().getContent())) {
-                    subjectForm.setTitle(Text.valueOf(peerReview.getSubject().getTitle().getTitle().getContent()));
-                }
-                
-                if(peerReview.getSubject().getTitle().getTranslatedTitle() != null && !PojoUtil.isEmpty(peerReview.getSubject().getTitle().getTranslatedTitle().getContent())) {
-                    TranslatedTitle translatedTitle = new TranslatedTitle();
-                    translatedTitle.setContent(peerReview.getSubject().getTitle().getTranslatedTitle().getContent());
-                    translatedTitle.setLanguageCode(peerReview.getSubject().getTitle().getTranslatedTitle().getLanguageCode());
-                    subjectForm.setTranslatedTitle(translatedTitle);
-                }
-                
-                if(peerReview.getSubject().getTitle().getSubtitle() != null && !PojoUtil.isEmpty(peerReview.getSubject().getTitle().getSubtitle().getContent())) {
-                    subjectForm.setSubtitle(Text.valueOf(peerReview.getSubject().getTitle().getSubtitle().getContent()));
-                }                
-            }
-            
-            if(peerReview.getSubject().getExternalIdentifiers() != null) {
-                List<org.orcid.jaxb.model.record.WorkExternalIdentifier> extIds = peerReview.getSubject().getExternalIdentifiers().getExternalIdentifier();
-                subjectForm.setWorkExternalIdentifiers(new ArrayList<WorkExternalIdentifier> ());
-                if(extIds != null) {
-                    for(org.orcid.jaxb.model.record.WorkExternalIdentifier extId : extIds) {
-                        subjectForm.getWorkExternalIdentifiers().add(WorkExternalIdentifier.valueOf(extId));
-                    }
-                }                
-            }                                   
-            
-            
-            
-            form.setSubjectForm(subjectForm);
-        }        
+            form.setSubjectExternalIdentifier(wExtId);
+        }
+        
+        
+        // Subject Container name
+        if(peerReview.getSubjectContainerName() != null) {
+            form.setSubjectContainerName(Text.valueOf(peerReview.getSubjectContainerName().getContent()));
+        }
+        
+        // Subject type
+        if(peerReview.getSubjectType() != null) {
+            form.setSubjectType(Text.valueOf(peerReview.getSubjectType().value()));
+        }
 
+        // Subject name
+        if(peerReview.getSubjectName() != null) {
+            if(peerReview.getSubjectName().getTitle() != null) {
+                form.setSubjectName(Text.valueOf(peerReview.getSubjectName().getTitle().getContent()));
+            }
+            
+            TranslatedTitle tTitle = new TranslatedTitle();
+            if(peerReview.getSubjectName().getTranslatedTitle() != null) {
+                tTitle.setContent(peerReview.getSubjectName().getTranslatedTitle().getContent());
+                tTitle.setLanguageCode(peerReview.getSubjectName().getTranslatedTitle().getLanguageCode());
+            }
+            form.setTranslatedSubjectName(tTitle);
+        }
+        
+        // Subject url
+        if(peerReview.getSubjectUrl() != null) {
+            form.setSubjectUrl(Text.valueOf(peerReview.getSubjectUrl().getValue()));
+        }
+        
         // Source
         if(peerReview.getSource() != null) {
             form.setSource(peerReview.getSource().retrieveSourcePath());

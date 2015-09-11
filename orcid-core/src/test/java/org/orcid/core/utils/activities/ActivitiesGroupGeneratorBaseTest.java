@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.orcid.jaxb.model.record.GroupableActivity;
-import org.orcid.jaxb.model.record.ExternalIdentifier;
+import org.orcid.jaxb.model.record.GroupKey;
 import org.orcid.jaxb.model.record.ExternalIdentifiersContainer;
 
 public class ActivitiesGroupGeneratorBaseTest {
@@ -99,10 +99,10 @@ public class ActivitiesGroupGeneratorBaseTest {
      * */
     public void checkExternalIdentifiers(GroupableActivity activity, ActivitiesGroup group) {
         ExternalIdentifiersContainer extIdsContainer = activity.getExternalIdentifiers();
-        List<? extends ExternalIdentifier> extIds = extIdsContainer.getExternalIdentifier();
-        Set<ExternalIdentifier> groupExtIds = group.getExternalIdentifiers();
+        List<? extends GroupKey> extIds = extIdsContainer.getExternalIdentifier();
+        Set<GroupKey> groupExtIds = group.getGroupKeys();
         for(Object o : extIds) {
-            ExternalIdentifier extId = (ExternalIdentifier) o;
+            GroupKey extId = (GroupKey) o;
             //If the ext id pass the grouping validation, it must be in the ext ids list
             if(extId.passGroupingValidation())
                 assertTrue(groupExtIds.contains(extId));

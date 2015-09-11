@@ -18,10 +18,12 @@ package org.orcid.api.common.security.oauth;
 
 import java.io.IOException;
 
+import javax.annotation.Resource;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.security.MethodNotAllowedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -39,6 +41,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class OrcidOauth2TokenEndPointFilter extends ClientCredentialsTokenEndpointFilter {
 
     private final static String PUBLIC_ROLE = "ROLE_PUBLIC";
+    
+    @Resource
+    private LocaleManager localeManager;
 
     private OrcidOauth2TokenEndPointFilter() {
         super();
@@ -51,10 +56,8 @@ public class OrcidOauth2TokenEndPointFilter extends ClientCredentialsTokenEndpoi
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException, IOException, ServletException {
         if (request.getMethod().equals(RequestMethod.GET.name())) {
-            String message = "Method GET is not supported for token requests. POST IS supported, "
-                    + "but BASIC authentication is the preferred method of authenticating clients.";
-            InvalidRequestException ire = new InvalidRequestException(message);
-            throw new MethodNotAllowedException(message, ire);
+            InvalidRequestException ire = new InvalidRequestException(localeManager.resolveMessage("apiError.token_request_callmethod.exception"));
+            throw new MethodNotAllowedException(localeManager.resolveMessage("apiError.token_request_callmethod.exception"), ire);
         }
 
         String clientId = request.getParameter("client_id");
@@ -68,7 +71,7 @@ public class OrcidOauth2TokenEndPointFilter extends ClientCredentialsTokenEndpoi
         }
 
         if (clientId == null) {
-            throw new BadCredentialsException("No client credentials presented");
+            throw new BadCredentialsException(localeManager.resolveMessage("apiError.client_credentials.exception"));
         }
 
         if (clientSecret == null) {
@@ -83,9 +86,8 @@ public class OrcidOauth2TokenEndPointFilter extends ClientCredentialsTokenEndpoi
         if (authentication != null) {
             for (GrantedAuthority auth : authentication.getAuthorities()) {
                 if (PUBLIC_ROLE.equals(auth.getAuthority())) {
-                    String message = "Public members are not allowed to use the Members API";
-                    InvalidRequestException ire = new InvalidRequestException(message);
-                    throw new MethodNotAllowedException(message, ire);
+                    InvalidRequestException ire = new InvalidRequestException(localeManager.resolveMessage("apiError.memberapi_access.exception"));
+                    throw new MethodNotAllowedException(localeManager.resolveMessage("apiError.memberapi_access.exception"), ire);
                 }
             }
         }

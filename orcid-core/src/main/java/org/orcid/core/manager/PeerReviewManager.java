@@ -38,7 +38,7 @@ public interface PeerReviewManager {
      *            The peerReview id
      * @return the PeerReview
      * */
-    PeerReview getPeerReview(String orcid, String peerReviewId);
+    PeerReview getPeerReview(String orcid, Long peerReviewId);
 
     /**
      * Get a peerReview summary based on the orcid and peerReview id
@@ -49,7 +49,7 @@ public interface PeerReviewManager {
      *            The peerReview id
      * @return the PeerReviewSummary
      * */
-    PeerReviewSummary getPeerReviewSummary(String orcid, String peerReviewId);
+    PeerReviewSummary getPeerReviewSummary(String orcid, Long peerReviewId);
 
     /**
      * Add a new peerReview to the given user
@@ -58,9 +58,11 @@ public interface PeerReviewManager {
      *            The user to add the peerReview
      * @param peerReview
      *            The peerReview to add
+     * @param isApiRequest
+     *          Indicates if the request comes from the API or not           
      * @return the added peerReview
      * */
-    PeerReview createPeerReview(String orcid, PeerReview peerReview);
+    PeerReview createPeerReview(String orcid, PeerReview peerReview, boolean isApiRequest);
 
     /**
      * Updates a peerReview that belongs to the given user
@@ -69,9 +71,11 @@ public interface PeerReviewManager {
      *            The user
      * @param peerReview
      *            The peerReview to update
+     * @param isApiRequest
+     *          Indicates if the request comes from the API or not
      * @return the updated peerReview
      * */
-    PeerReview updatePeerReview(String orcid, PeerReview peerReview);
+    PeerReview updatePeerReview(String orcid, PeerReview peerReview, boolean isApiRequest);
 
     /**
      * Deletes a given peerReview, if and only if, the client that requested the
@@ -83,7 +87,7 @@ public interface PeerReviewManager {
      *            The peerReview id
      * @return true if the peerReview was deleted, false otherwise
      * */
-    boolean checkSourceAndDelete(String orcid, String peerReviewId);
+    boolean checkSourceAndDelete(String orcid, Long peerReviewId);
 
     /**
      * Transforms a collection of peer review entities into a PeerReview list
@@ -104,7 +108,7 @@ public interface PeerReviewManager {
      * @param peerReviewId
      *            The peerReview id
      * */
-    void removePeerReview(String orcid, String peerReviewId);
+    void removePeerReview(String orcid, Long peerReviewId);
 
     /**
      * Updates the display index of a given peer review
@@ -115,7 +119,7 @@ public interface PeerReviewManager {
      *            The peerReview id
      * @return true if it was able to update the display index
      * */
-    boolean updateToMaxDisplay(String orcid, String peerReviewId);
+    boolean updateToMaxDisplay(String orcid, Long peerReviewId);
 
     /**
      * Updates the visibility of a list of existing peer review

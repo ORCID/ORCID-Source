@@ -45,8 +45,8 @@ public class ActivityCacheManagerImpl extends Object implements ActivityCacheMan
     private WorkManager workManager;
 
     @Cacheable(value = "pub-min-works-maps", key = "#profile.getCacheKey()")
-    public LinkedHashMap<String, WorkForm> pubMinWorksMap(OrcidProfile profile) {
-        LinkedHashMap<String, WorkForm> workMap = new LinkedHashMap<String, WorkForm>();
+    public LinkedHashMap<Long, WorkForm> pubMinWorksMap(OrcidProfile profile) {
+        LinkedHashMap<Long, WorkForm> workMap = new LinkedHashMap<>();
         List<Work> works = workManager.findPublicWorks(profile.getOrcidIdentifier().getPath());
         if (works != null) {
             for (Work work : works) {                
@@ -57,9 +57,9 @@ public class ActivityCacheManagerImpl extends Object implements ActivityCacheMan
     }
     
     @Cacheable(value = "pub-peer-reviews-maps", key = "#orcid.concat('-').concat(#lastModified)")
-    public LinkedHashMap<String, PeerReview> pubPeerReviewsMap(String orcid, long lastModified) {
+    public LinkedHashMap<Long, PeerReview> pubPeerReviewsMap(String orcid, long lastModified) {
         List<PeerReview> peerReviews = peerReviewManager.findPeerReviews(orcid, lastModified);
-        LinkedHashMap<String, PeerReview> peerReviewMap = new LinkedHashMap<String, PeerReview>();
+        LinkedHashMap<Long, PeerReview> peerReviewMap = new LinkedHashMap<>();
         if (peerReviews != null) {
             if (!peerReviews.isEmpty()) {                
                 for(PeerReview peerReview : peerReviews) {
@@ -73,26 +73,26 @@ public class ActivityCacheManagerImpl extends Object implements ActivityCacheMan
     }
     
     @Cacheable(value = "pub-funding-maps", key = "#profile.getCacheKey()")
-    public LinkedHashMap<String, Funding> fundingMap(OrcidProfile profile) {
-        LinkedHashMap<String, Funding> fundingMap = new LinkedHashMap<String, Funding>();
+    public LinkedHashMap<Long, Funding> fundingMap(OrcidProfile profile) {
+        LinkedHashMap<Long, Funding> fundingMap = new LinkedHashMap<>();
         if (profile.getOrcidActivities() != null) {
             if (profile.getOrcidActivities().getFundings() != null) {
                 for (Funding funding : profile.getOrcidActivities().getFundings().getFundings())
                     if (Visibility.PUBLIC.equals(funding.getVisibility()))
-                        fundingMap.put(funding.getPutCode(), funding);
+                        fundingMap.put(Long.valueOf(funding.getPutCode()), funding);
             }
         }
         return fundingMap;
     }
 
     @Cacheable(value = "pub-affiliation-maps", key = "#profile.getCacheKey()")
-    public LinkedHashMap<String, Affiliation> affiliationMap(OrcidProfile profile) {
-        LinkedHashMap<String, Affiliation> affiliationMap = new LinkedHashMap<String, Affiliation>();
+    public LinkedHashMap<Long, Affiliation> affiliationMap(OrcidProfile profile) {
+        LinkedHashMap<Long, Affiliation> affiliationMap = new LinkedHashMap<>();
         if (profile.getOrcidActivities() != null) {
             if (profile.getOrcidActivities().getAffiliations() != null) {
                 for (Affiliation aff:profile.getOrcidActivities().getAffiliations().getAffiliation())
                     if (Visibility.PUBLIC.equals(aff.getVisibility()))
-                        affiliationMap.put(aff.getPutCode(), aff);
+                        affiliationMap.put(Long.valueOf(aff.getPutCode()), aff);
             }
         }
         return affiliationMap;

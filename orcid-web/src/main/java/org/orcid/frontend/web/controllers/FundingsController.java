@@ -211,7 +211,7 @@ public class FundingsController extends BaseWorkspaceController {
             }
             fundings.setFundings(fundingList);
             currentProfile.getOrcidActivities().setFundings(fundings);
-            profileFundingManager.removeProfileFunding(currentProfile.getOrcidIdentifier().getPath(), funding.getPutCode().getValue());
+            profileFundingManager.removeProfileFunding(currentProfile.getOrcidIdentifier().getPath(), Long.valueOf(funding.getPutCode().getValue()));
         }
         return deletedFunding;
     }
@@ -244,7 +244,7 @@ public class FundingsController extends BaseWorkspaceController {
                 try {
                     FundingForm form = FundingForm.valueOf(funding);
                     //XXX: Enhance the external identifiers with the new relationship field
-                    ProfileFundingEntity profileFunding = profileFundingManager.getProfileFundingEntity(funding.getPutCode());
+                    ProfileFundingEntity profileFunding = profileFundingManager.getProfileFundingEntity(Long.valueOf(funding.getPutCode()));
                     if(!PojoUtil.isEmpty(profileFunding.getExternalIdentifiersJson())) {
                         FundingExternalIdentifiers extIdsPojo = JsonUtils.readObjectFromJsonString(profileFunding.getExternalIdentifiersJson(), FundingExternalIdentifiers.class);
                         org.orcid.jaxb.model.record.FundingExternalIdentifiers fundingExternalIdentifiers = extIdsPojo.toRecordPojo();
@@ -310,8 +310,8 @@ public class FundingsController extends BaseWorkspaceController {
      * */
     @RequestMapping(value = "/getFunding.json", method = RequestMethod.GET)
     public @ResponseBody
-    FundingForm getFundingJson(@RequestParam(value = "fundingId") String fundingId) {
-        if (PojoUtil.isEmpty(fundingId))
+    FundingForm getFundingJson(@RequestParam(value = "fundingId") Long fundingId) {
+        if (fundingId == null)
             return null;
         ProfileFundingEntity profileFunding = profileFundingManager.getProfileFundingEntity(fundingId);
         if (profileFunding == null) {
@@ -448,7 +448,7 @@ public class FundingsController extends BaseWorkspaceController {
         }
 
         // make the newly added funding the default
-        profileFundingManager.updateToMaxDisplay(currentProfile.getOrcidIdentifier().getPath(), newProfileFunding.getId().toString());
+        profileFundingManager.updateToMaxDisplay(currentProfile.getOrcidIdentifier().getPath(), newProfileFunding.getId());
 
         // Set the new funding into the cached object
         currentProfile.getOrcidActivities().getFundings().getFundings().add(newFunding);
@@ -478,7 +478,7 @@ public class FundingsController extends BaseWorkspaceController {
         OrcidProfile currentProfile = getEffectiveProfile();
         
         if (!currentProfile.getOrcidIdentifier().getPath().equals(funding.getSource()))
-            throw new Exception("Error source isn't correct");
+        	throw new Exception(getMessage("web.orcid.activity_incorrectsource.exception"));
         
         // Initialize activities if needed
         if (currentProfile.getOrcidActivities() == null) {
@@ -573,7 +573,7 @@ public class FundingsController extends BaseWorkspaceController {
                 for (Funding funding : fundings) {
                     if (funding.getPutCode().equals(fundingForm.getPutCode().getValue())) {
                         // Update the privacy of the funding
-                        profileFundingManager.updateProfileFundingVisibility(currentProfile.getOrcidIdentifier().getPath(), fundingForm.getPutCode().getValue(),
+                        profileFundingManager.updateProfileFundingVisibility(currentProfile.getOrcidIdentifier().getPath(), Long.valueOf(fundingForm.getPutCode().getValue()),
                                 fundingForm.getVisibility().getVisibility());
                     }
                 }
@@ -797,6 +797,11 @@ public class FundingsController extends BaseWorkspaceController {
     FundingForm validateExternalIdentifiers(@RequestBody FundingForm funding) {
         if (funding.getExternalIdentifiers() != null && !funding.getExternalIdentifiers().isEmpty()) {
             for (FundingExternalIdentifierForm extId : funding.getExternalIdentifiers()) {
+                extId.setErrors(new ArrayList<String>()); 
+                if(extId.getType() != null)
+                    extId.getType().setErrors(new ArrayList<String>());
+                if(extId.getUrl() != null)
+                    extId.getUrl().setErrors(new ArrayList<String>());                    
                 if (!PojoUtil.isEmpty(extId.getType()) && extId.getType().getValue().length() > 255)
                     setError(extId.getType(), "fundings.lenght_less_255");
                 if (!PojoUtil.isEmpty(extId.getUrl()) && extId.getUrl().getValue().length() > 350)
@@ -937,7 +942,7 @@ public class FundingsController extends BaseWorkspaceController {
 
     @RequestMapping(value = "/updateToMaxDisplay.json", method = RequestMethod.GET)
     public @ResponseBody
-    boolean updateToMaxDisplay(HttpServletRequest request, @RequestParam(value = "putCode") String putCode) {
+    boolean updateToMaxDisplay(HttpServletRequest request, @RequestParam(value = "putCode") Long putCode) {
         OrcidProfile profile = getEffectiveProfile();
         return profileFundingManager.updateToMaxDisplay(profile.getOrcidIdentifier().getPath(), putCode);
     }

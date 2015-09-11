@@ -25,7 +25,6 @@ import javax.annotation.Resource;
 
 import org.apache.commons.io.IOUtils;
 import org.orcid.core.adapter.JpaJaxbFundingAdapter;
-import org.orcid.core.exception.OrcidDuplicatedActivityException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.OrgManager;
@@ -95,7 +94,7 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
      *            The client orcid
      * @return true if the relationship was deleted
      * */
-    public boolean removeProfileFunding(String clientOrcid, String profileFundingId) {
+    public boolean removeProfileFunding(String clientOrcid, Long profileFundingId) {
         return profileFundingDao.removeProfileFunding(clientOrcid, profileFundingId);
     }
 
@@ -113,7 +112,7 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
      * 
      * @return true if the relationship was updated
      * */
-    public boolean updateProfileFundingVisibility(String clientOrcid, String profileFundingId, Visibility visibility) {
+    public boolean updateProfileFundingVisibility(String clientOrcid, Long profileFundingId, Visibility visibility) {
         return profileFundingDao.updateProfileFundingVisibility(clientOrcid, profileFundingId, visibility);
     }
 
@@ -199,7 +198,7 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
      * 
      * @return the ProfileFundingEntity object
      * */
-    public ProfileFundingEntity getProfileFundingEntity(String profileFundingId) {
+    public ProfileFundingEntity getProfileFundingEntity(Long profileFundingId) {
         return profileFundingDao.getProfileFundingEntity(profileFundingId);
     }
     
@@ -215,8 +214,8 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
         return profileFundingDao.updateProfileFunding(updatedProfileFundingEntity);
     }
     
-    public boolean updateToMaxDisplay(String orcid, String workId) {
-        return profileFundingDao.updateToMaxDisplay(orcid, workId);
+    public boolean updateToMaxDisplay(String orcid, Long fundingId) {
+        return profileFundingDao.updateToMaxDisplay(orcid, fundingId);
     }
     
     /**
@@ -228,7 +227,7 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
      * @return the Funding          
      * */
     @Override
-    public Funding getFunding(String orcid, String fundingId) {
+    public Funding getFunding(String orcid, Long fundingId) {
         ProfileFundingEntity profileFundingEntity = profileFundingDao.getProfileFunding(orcid, fundingId); 
         return jpaJaxbFundingAdapter.toFunding(profileFundingEntity);
     }
@@ -242,7 +241,7 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
      * @return the FundingSummary          
      * */
     @Override
-    public FundingSummary getSummary(String orcid, String fundingId) {
+    public FundingSummary getSummary(String orcid, Long fundingId) {
         ProfileFundingEntity profileFundingEntity = profileFundingDao.getProfileFunding(orcid, fundingId);
         return jpaJaxbFundingAdapter.toFundingSummary(profileFundingEntity);
     }
@@ -258,16 +257,15 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
     @Override
     @Transactional
     public Funding createFunding(String orcid, Funding funding) {
-    	ActivityValidator.validateFunding(funding);
+    	SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
+    	ActivityValidator.validateFunding(funding, sourceEntity, true);
         //Check for duplicates
         List<ProfileFundingEntity> existingFundings = profileFundingDao.getByUser(orcid);
         List<Funding> fundings = jpaJaxbFundingAdapter.toFunding(existingFundings);
         if(fundings != null) {
             for(Funding exstingFunding : fundings) {
-                if(funding.isDuplicated(exstingFunding)) {
-                    LOGGER.error("Trying to create a funding that is duplicated with " + funding.getPutCode());
-                    throw new OrcidDuplicatedActivityException(localeManager.resolveMessage("api.error.duplicated"));
-                }                    
+            	ActivityValidator.checkFundingExternalIdentifiers(funding.getExternalIdentifiers(),
+            			exstingFunding.getExternalIdentifiers(), exstingFunding.getSource(), sourceEntity);
             }
         }
                 
@@ -277,7 +275,7 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
         OrgEntity updatedOrganization = orgManager.getOrgEntity(funding);
         profileFundingEntity.setOrg(updatedOrganization);
         
-        profileFundingEntity.setSource(sourceManager.retrieveSourceEntity());
+        profileFundingEntity.setSource(sourceEntity);
         ProfileEntity profile = profileDao.find(orcid);
         profileFundingEntity.setProfile(profile);
         setIncomingWorkPrivacy(profileFundingEntity, profile);
@@ -308,6 +306,17 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
      * */
     @Override    
     public Funding updateFunding(String orcid, Funding funding) {
+    	SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
+    	ActivityValidator.validateFunding(funding, sourceEntity, false);
+    	List<ProfileFundingEntity> existingFundings = profileFundingDao.getByUser(orcid);
+        for(ProfileFundingEntity existingFunding : existingFundings) {
+        	Funding existing = jpaJaxbFundingAdapter.toFunding(existingFunding);
+            if(!existing.getPutCode().equals(funding.getPutCode())) {
+            	 ActivityValidator.checkFundingExternalIdentifiers(funding.getExternalIdentifiers(),
+            			 existing.getExternalIdentifiers(), existing.getSource(), sourceEntity);
+            }
+        }
+    	
         ProfileFundingEntity pfe = profileFundingDao.getProfileFunding(orcid, funding.getPutCode());
         Visibility originalVisibility = pfe.getVisibility();
         SourceEntity existingSource = pfe.getSource();
@@ -334,7 +343,7 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
      * */
     @Override
     @Transactional    
-    public boolean checkSourceAndDelete(String orcid, String fundingId) {
+    public boolean checkSourceAndDelete(String orcid, Long fundingId) {
         ProfileFundingEntity pfe = profileFundingDao.getProfileFunding(orcid, fundingId);
         orcidSecurityManager.checkSource(pfe.getSource());
         return profileFundingDao.removeProfileFunding(orcid, fundingId);

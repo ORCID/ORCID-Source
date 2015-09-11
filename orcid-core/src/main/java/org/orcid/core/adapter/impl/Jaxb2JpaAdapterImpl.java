@@ -180,6 +180,10 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         setInternalDetails(profileEntity, profile.getOrcidInternal());
         setPreferencesDetails(profileEntity, profile.getOrcidPreferences());
 
+        if(profileEntity.getUsedRecaptchaOnRegistration() == null) {
+            profileEntity.setUsedRecaptchaOnRegistration(false);
+        }
+        
         return profileEntity;
     }
 
@@ -333,7 +337,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                     extId.setRelationship(Relationship.SELF);
                 }                
             } else if(WorkExternalIdentifierType.ISBN.equals(extId.getWorkExternalIdentifierType())) {
-                if(work.getWorkType().equals(org.orcid.jaxb.model.message.WorkType.BOOK_CHAPTER)) {
+                if(work.getWorkType().equals(org.orcid.jaxb.model.message.WorkType.BOOK_CHAPTER) || work.getWorkType().equals(org.orcid.jaxb.model.message.WorkType.CONFERENCE_PAPER)) {
                     extId.setRelationship(Relationship.PART_OF);
                 } else {
                     extId.setRelationship(Relationship.SELF);
@@ -887,7 +891,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
      * */
     @Override
     public ProfileFundingEntity getUpdatedProfileFundingEntity(Funding updatedFunding) {
-        ProfileFundingEntity existingProfileFundingEntity = profileFundingManager.getProfileFundingEntity(updatedFunding.getPutCode());
+        ProfileFundingEntity existingProfileFundingEntity = profileFundingManager.getProfileFundingEntity(Long.valueOf(updatedFunding.getPutCode()));
         ProfileFundingEntity profileFundingEntity = getProfileFundingEntity(updatedFunding, existingProfileFundingEntity);
         return profileFundingEntity;
     }

@@ -36,8 +36,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.apache.commons.lang3.StringUtils;
-
 /**
  * <p>
  * Java class for anonymous complex type.
@@ -95,11 +93,11 @@ public class FundingList implements ActivitiesContainer, Serializable {
     }
 
     @Override
-    public Map<String, ? extends Activity> retrieveActivitiesAsMap() {
-        Map<String, Funding> map = new HashMap<>();
+    public Map<Long, ? extends Activity> retrieveActivitiesAsMap() {
+        Map<Long, Funding> map = new HashMap<>();
         if (fundings != null) {
             for (Funding f : fundings) {
-                if (StringUtils.isNotBlank(f.putCode)) {
+                if (f.putCode != null) {
                     map.put(f.putCode, f);
                 }
             }

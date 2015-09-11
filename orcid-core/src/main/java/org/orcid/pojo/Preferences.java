@@ -25,7 +25,6 @@ import org.orcid.jaxb.model.message.SendChangeNotifications;
 import org.orcid.jaxb.model.message.SendOrcidNews;
 import org.orcid.jaxb.model.message.WorkVisibilityDefault;
 import org.orcid.pojo.ajaxForm.ErrorsInterface;
-import org.springframework.validation.ObjectError;
 
 public class Preferences extends org.orcid.jaxb.model.message.Preferences implements ErrorsInterface {
     /**

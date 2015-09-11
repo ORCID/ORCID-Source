@@ -152,6 +152,9 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
 
     private Date deactivationDate;
 
+    //Captcha validator used on register
+    private Boolean usedRecaptchaOnRegistration;
+        
     @Id
     @Column(name = "orcid", length = 19)
     public String getId() {
@@ -944,7 +947,16 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     public void setDeveloperToolsEnabledDate(Date developerToolsEnabledDate) {
         this.developerToolsEnabledDate = developerToolsEnabledDate;
     }
-    
+        
+    @Column(name = "used_captcha_on_registration")
+    public Boolean getUsedRecaptchaOnRegistration() {
+        return usedRecaptchaOnRegistration;
+    }
+
+    public void setUsedRecaptchaOnRegistration(Boolean usedRecaptchaOnRegistration) {
+        this.usedRecaptchaOnRegistration = usedRecaptchaOnRegistration;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;

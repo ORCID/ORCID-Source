@@ -16,9 +16,13 @@
  */
 package org.orcid.frontend.web.controllers;
 
+import java.util.Map;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
+import org.orcid.core.exception.OrcidBadRequestException;
 import org.orcid.frontend.web.exception.FeatureDisabledException;
 import org.orcid.persistence.dao.ShibbolethAccountDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -47,7 +51,9 @@ import org.springframework.web.servlet.ModelAndView;
 @RequestMapping("/shibboleth")
 public class ShibbolethController extends BaseController {
 
-    private static final String REMOTE_USER_HEADER = "eppn";
+    private static final String[] POSSIBLE_REMOTE_USER_HEADERS = new String[] { "persistent-id", "targeted-id" };
+
+    private static final String SHIB_IDENTITY_PROVIDER_HEADER = "shib-identity-provider";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ShibbolethController.class);
 
@@ -61,9 +67,10 @@ public class ShibbolethController extends BaseController {
     private AuthenticationManager authenticationManager;
 
     @RequestMapping(value = { "/signin" }, method = RequestMethod.GET)
-    public ModelAndView signinHandler(HttpServletRequest request, @RequestHeader(REMOTE_USER_HEADER) String remoteUser,
-            @RequestHeader("Shib-Identity-Provider") String shibIdentityProvider, ModelAndView mav) {
+    public ModelAndView signinHandler(HttpServletRequest request, @RequestHeader Map<String, String> headers, ModelAndView mav) {
         checkEnabled();
+        String remoteUser = retrieveRemoteUser(headers);
+        String shibIdentityProvider = headers.get(SHIB_IDENTITY_PROVIDER_HEADER);
         // Check if the Shibboleth user is already linked to an ORCID account.
         // If so sign them in automatically.
         ShibbolethAccountEntity shibbolethAccountEntity = shibbolethAccountDao.findByRemoteUserAndShibIdentityProvider(remoteUser, shibIdentityProvider);
@@ -84,16 +91,17 @@ public class ShibbolethController extends BaseController {
             // To avoid confusion, force the user to login to ORCID again
             logoutCurrentUser();
             mav.setViewName("shib_link_signin");
-            mav.addObject("remoteUserHeader", REMOTE_USER_HEADER);
+            mav.addObject("remoteUserHeader", StringUtils.join(POSSIBLE_REMOTE_USER_HEADERS, "/"));
             mav.addObject("remoteUser", remoteUser);
         }
         return mav;
     }
 
     @RequestMapping(value = { "/link" }, method = RequestMethod.GET)
-    public ModelAndView linkHandler(@RequestHeader(REMOTE_USER_HEADER) String remoteUser, @RequestHeader("Shib-Identity-Provider") String shibIdentityProvider,
-            ModelAndView mav) {
+    public ModelAndView linkHandler(@RequestHeader() Map<String, String> headers, ModelAndView mav) {
         checkEnabled();
+        String remoteUser = retrieveRemoteUser(headers);
+        String shibIdentityProvider = headers.get(SHIB_IDENTITY_PROVIDER_HEADER);
         ShibbolethAccountEntity shibbolethAccountEntity = shibbolethAccountDao.findByRemoteUserAndShibIdentityProvider(remoteUser, shibIdentityProvider);
         if (shibbolethAccountEntity != null) {
             return new ModelAndView("redirect:/my-orcid");
@@ -112,6 +120,16 @@ public class ShibbolethController extends BaseController {
         if (!enabled) {
             throw new FeatureDisabledException();
         }
+    }
+
+    private String retrieveRemoteUser(Map<String, String> headers) {
+        for (String possibleHeader : POSSIBLE_REMOTE_USER_HEADERS) {
+            String userId = headers.get(possibleHeader);
+            if (userId != null) {
+                return userId;
+            }
+        }
+        throw new OrcidBadRequestException("Couldn't find remote user header");
     }
 
 }

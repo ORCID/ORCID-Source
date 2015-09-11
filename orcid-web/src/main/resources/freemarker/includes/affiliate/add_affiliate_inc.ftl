@@ -171,7 +171,10 @@
                            		<option value="${key}">${days[key]}</option>
                       		</#list>
                     	</select>
-					</div>				
+					</div>
+					<span class="orcid-error" ng-show="editAffiliation.startDate.errors.length > 0">
+						<div ng-repeat='error in editAffiliation.startDate.errors' ng-bind-html="error"></div>
+					</span>			
                 </div>
 
                 <div class="control-group">

@@ -27,13 +27,13 @@ import org.orcid.pojo.ajaxForm.WorkForm;
 
 public interface ActivityCacheManager {
 
-    public LinkedHashMap<String, WorkForm> pubMinWorksMap(OrcidProfile profile);
+    public LinkedHashMap<Long, WorkForm> pubMinWorksMap(OrcidProfile profile);
     
-    public LinkedHashMap<String, PeerReview> pubPeerReviewsMap(String orcid, long lastModified);
+    public LinkedHashMap<Long, PeerReview> pubPeerReviewsMap(String orcid, long lastModified);
     
-    public LinkedHashMap<String, Funding> fundingMap(OrcidProfile profile);
+    public LinkedHashMap<Long, Funding> fundingMap(OrcidProfile profile);
     
-    public LinkedHashMap<String, Affiliation> affiliationMap(OrcidProfile profile);
+    public LinkedHashMap<Long, Affiliation> affiliationMap(OrcidProfile profile);
     
     public String getCreditName(ProfileEntity profile);
     

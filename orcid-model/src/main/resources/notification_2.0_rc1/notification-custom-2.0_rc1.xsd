@@ -12,7 +12,7 @@
 				<xs:element name="notification-type">
 			        <xs:simpleType>
 			            <xs:restriction base="xs:string">
-			                <xs:enumeration value="CUSTOM"/>
+			                <xs:enumeration value="custom"/>
 			            </xs:restriction>
 			        </xs:simpleType>
 			    </xs:element>

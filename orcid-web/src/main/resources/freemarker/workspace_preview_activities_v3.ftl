@@ -44,6 +44,16 @@
 	</div>
 </#if>
 
+<!-- Works -->
+<#if !(worksEmpty)??>		
+	<div id="workspace-works" class="workspace-accordion-item workspace-accordion-active" ng-controller="PublicWorkCtrl" ng-cloak>
+          <#include "includes/work/work_section_header_inc_v3.ftl"/>
+	      <div ng-show="workspaceSrvc.displayWorks" class="workspace-accordion-content">
+				<#include "includes/work/public_works_body_list.ftl" />
+	      </div>
+	</div>
+</#if>
+
 <!-- Peer Review -->
 <#if RequestParameters['peer']??>
 	<#if !(peerReviewsEmpty)??>	
@@ -54,16 +64,6 @@
 		    </div>		     
 		</div>
 	</#if>
-</#if>
-
-<!-- Works -->
-<#if !(worksEmpty)??>		
-	<div id="workspace-works" class="workspace-accordion-item workspace-accordion-active" ng-controller="PublicWorkCtrl" ng-cloak>
-          <#include "includes/work/work_section_header_inc_v3.ftl"/>
-	      <div ng-show="workspaceSrvc.displayWorks" class="workspace-accordion-content">
-				<#include "includes/work/public_works_body_list.ftl" />
-	      </div>
-	</div>
 </#if>
     
     

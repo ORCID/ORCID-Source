@@ -16,31 +16,18 @@
  */
 package org.orcid.core.exception;
 
+import java.util.Map;
+
 /**
  * 
  * @author Will Simpson
  * 
  */
-public class WrongSourceException extends IllegalArgumentException {
+public class WrongSourceException extends ApplicationException {
 
     private static final long serialVersionUID = 1L;
 
-    private static final String DEFAULT_MESSAGE = "We have detected changes to activities you are not the source of. This may be do to a out of date list. Please re-get the activities list and repost with only changes to activities your client is the source of.";
-
-    public WrongSourceException() {
-        super(DEFAULT_MESSAGE);
+    public WrongSourceException(Map<String, String> params) {
+    	super(params);
     }
-
-    public WrongSourceException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public WrongSourceException(String message) {
-        super(message);
-    }
-
-    public WrongSourceException(Throwable cause) {
-        super(DEFAULT_MESSAGE, cause);
-    }
-
 }

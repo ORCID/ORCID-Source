@@ -297,6 +297,7 @@
         <property name="version" value="1.2" />
     </bean>
 
+    <bean id="notificationValidationManager" class="org.orcid.core.manager.impl.NotificationValidationManagerImpl" />
 
     <bean id="localeManager" class="org.orcid.core.locale.LocaleManagerImpl" />
 
@@ -550,4 +551,6 @@
 	<bean id="geonamesApiUrl" class="java.lang.String">
 		<constructor-arg value="http://api.geonames.org/getJSON"/>
 	</bean>	
+	
+	<bean id="crossDomainWebManger" class="org.orcid.core.web.filters.CrossDomainWebManger" />
 </beans>

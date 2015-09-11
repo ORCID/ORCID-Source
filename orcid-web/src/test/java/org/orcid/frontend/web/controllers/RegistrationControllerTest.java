@@ -317,6 +317,18 @@ public class RegistrationControllerTest {
         assertTrue((Boolean) mav.getModel().get("claimResendSuccessful"));
     }
     
+    @Test
+    public void testResetPasswordDontFailIfAnyFieldIsEmtpy() {
+        PasswordTypeAndConfirmForm form = new PasswordTypeAndConfirmForm();        
+        registrationController.resetPasswordConfirmValidate(form);
+        form.setPassword(new Text());
+        form.setRetypedPassword(null);
+        registrationController.resetPasswordConfirmValidate(form);
+        form.setPassword(null);
+        form.setRetypedPassword(new Text());
+        registrationController.resetPasswordConfirmValidate(form);
+    }
+    
     private OrcidProfile orcidWithSecurityQuestion() {
         OrcidProfile orcidProfile = new OrcidProfile();
         orcidProfile.setSecurityQuestionAnswer("Answer");

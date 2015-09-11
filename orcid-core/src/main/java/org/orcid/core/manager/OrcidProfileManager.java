@@ -40,7 +40,7 @@ public interface OrcidProfileManager extends OrcidProfileManagerReadOnly {
      * @return the profile as it is represented in the data store after its
      *         creation
      */
-    OrcidProfile createOrcidProfile(OrcidProfile orcidProfile, boolean createdByMember);
+    OrcidProfile createOrcidProfile(OrcidProfile orcidProfile, boolean createdByMember, boolean usedCaptcha);
 
     /**
      * Creates a new profile, assigning it a new ORCID. Also, sends a

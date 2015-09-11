@@ -61,7 +61,7 @@ public class FundingSummary implements VisibilityType, Activity, GroupableActivi
     protected CreatedDate createdDate;
 
     @XmlAttribute(name="put-code")
-    protected String putCode;
+    protected Long putCode;
     @XmlAttribute(name="path")
     protected String path;
     @XmlAttribute
@@ -133,11 +133,11 @@ public class FundingSummary implements VisibilityType, Activity, GroupableActivi
         this.createdDate = createdDate;
     }
 
-    public String getPutCode() {
+    public Long getPutCode() {
         return putCode;
     }
 
-    public void setPutCode(String putCode) {
+    public void setPutCode(Long putCode) {
         this.putCode = putCode;
     }
 
