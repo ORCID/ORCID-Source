@@ -35,7 +35,7 @@ public class CrossDomainWebManger {
     
     Pattern p = Pattern.compile(".*/public/.*|.*/public_widgets/.*|.*/userStatus\\.json|.*/lang\\.json");
     
-    @Value("${org.orcid.security.cors.allowed_domains:orcid.org}")
+    @Value("${org.orcid.security.cors.allowed_domains:*.orcid.org,orcid.org}")
     private String allowedDomains;
     
     private List<String> domainsRegex;  
@@ -99,7 +99,7 @@ public class CrossDomainWebManger {
 
     private String transformPatternIntoRegex(String domainPattern) {
         String result = domainPattern.replace(".", "\\.");
-        result = domainPattern.replace("*", ".+");
+        result = result.replace("*", ".+");
         return result;
     }    
 }
