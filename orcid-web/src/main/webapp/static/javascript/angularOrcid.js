@@ -1142,16 +1142,20 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
                     failFunc();
                 });
             },
-            getDois : function(putCode){
+            getUniqueDois : function(putCode){
             	var dois = [];            	
-            	var group = worksSrvc.getGroup(putCode);            	
+            	var group = worksSrvc.getGroup(putCode);
+            	
             	for (var idx in group.activities) {            		
             		for (i = 0; i <= group.activities[idx].workExternalIdentifiers.length - 1; i++) {
-            			if (group.activities[idx].workExternalIdentifiers[i].workExternalIdentifierType.value == 'doi')
-            				dois.push(group.activities[idx].workExternalIdentifiers[i].workExternalIdentifierId.value);
+            			if (group.activities[idx].workExternalIdentifiers[i].workExternalIdentifierType.value == 'doi'){
+            				if (isIndexOf.call(dois, group.activities[idx].workExternalIdentifiers[i].workExternalIdentifierId.value) == -1){
+            					dois.push(group.activities[idx].workExternalIdentifiers[i].workExternalIdentifierId.value);
+            				}
+            			}
             		}
                 }
-            	console.log(dois);
+            	
             	return dois;
             }
     };
@@ -4373,6 +4377,7 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     $scope.displayURLPopOver = {};
     $scope.workType = ['All'];
     $scope.geoArea = ['All'];
+    $scope.badgesRequested = {};
     
     $scope.sortState = new ActSortState(GroupedActivities.ABBR_WORK);
     $scope.sort = function(key) {
@@ -5027,8 +5032,23 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     }
     
     $scope.showMozillaBadges = function(putCode){
-    	var dois = worksSrvc.getDois(putCode);
-    	
+    	if ($scope.badgesRequested[putCode] == null){
+	    	var dois = worksSrvc.getUniqueDois(putCode);
+	    	var c = document.getElementsByClassName('badge-container-' + putCode);
+	    	for (i = 0; i <= dois.length - 1; i++){
+	    		var code = 'var conf={"article-doi": "' + dois[i] + '", "container-class": "badge-container-' + putCode + '"};showBadges(conf);';
+	    		var s = document.createElement('script');
+	            s.type = 'text/javascript';
+	            try {
+	              s.appendChild(document.createTextNode(code));
+	              c[0].appendChild(s);
+	            } catch (e) {
+	              s.text = code;
+	              c[0].appendChild(s);
+	            }
+	    	}
+	    	$scope.badgesRequested[putCode] = true;
+    	}
     }
     
     
