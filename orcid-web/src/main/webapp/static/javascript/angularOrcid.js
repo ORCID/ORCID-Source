@@ -850,7 +850,7 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
             loadingDetails: false,
             blankWork: null,
             details: new Object(), // we should think about putting details in the
-            worksToAddIds: null,
+            worksToAddIds: null,             
             addBibtexJson: function(dw) {
                 if (dw.citation && dw.citation.citationType && dw.citation.citationType.value == 'bibtex') {
                     try {
@@ -1141,6 +1141,22 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
                 }).fail(function(){
                     failFunc();
                 });
+            },
+            getUniqueDois : function(putCode){
+            	var dois = [];            	
+            	var group = worksSrvc.getGroup(putCode);
+            	
+            	for (var idx in group.activities) {            		
+            		for (i = 0; i <= group.activities[idx].workExternalIdentifiers.length - 1; i++) {
+            			if (group.activities[idx].workExternalIdentifiers[i].workExternalIdentifierType.value == 'doi'){
+            				if (isIndexOf.call(dois, group.activities[idx].workExternalIdentifiers[i].workExternalIdentifierId.value) == -1){
+            					dois.push(group.activities[idx].workExternalIdentifiers[i].workExternalIdentifierId.value);
+            				}
+            			}
+            		}
+                }
+            	
+            	return dois;
             }
     };
     return worksSrvc;
@@ -4361,6 +4377,7 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     $scope.displayURLPopOver = {};
     $scope.workType = ['All'];
     $scope.geoArea = ['All'];
+    $scope.badgesRequested = {};
     
     $scope.sortState = new ActSortState(GroupedActivities.ABBR_WORK);
     $scope.sort = function(key) {
@@ -5012,6 +5029,26 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     
     $scope.hideURLPopOver = function(id){    	
     	$scope.displayURLPopOver[id] = false;
+    }
+    
+    $scope.showMozillaBadges = function(putCode){
+    	if ($scope.badgesRequested[putCode] == null){
+	    	var dois = worksSrvc.getUniqueDois(putCode);
+	    	var c = document.getElementsByClassName('badge-container-' + putCode);
+	    	for (i = 0; i <= dois.length - 1; i++){
+	    		var code = 'var conf={"article-doi": "' + dois[i] + '", "container-class": "badge-container-' + putCode + '"};showBadges(conf);';
+	    		var s = document.createElement('script');
+	            s.type = 'text/javascript';
+	            try {
+	              s.appendChild(document.createTextNode(code));
+	              c[0].appendChild(s);
+	            } catch (e) {
+	              s.text = code;
+	              c[0].appendChild(s);
+	            }
+	    	}
+	    	$scope.badgesRequested[putCode] = true;
+    	}
     }
     
     
