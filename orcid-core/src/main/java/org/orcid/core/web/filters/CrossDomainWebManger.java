@@ -33,7 +33,7 @@ public class CrossDomainWebManger {
 
     private static final String LOCALHOST = "localhost";
 
-    Pattern p = Pattern.compile(".*/public/.*|.*/public_widgets/.*|.*/userStatus\\.json|.*/lang\\.json");
+    Pattern p = Pattern.compile("/public/.*|/public_widgets/.*|.*/userStatus\\.json|.*/lang\\.json");
 
     @Value("${org.orcid.security.cors.allowed_domains:qa.orcid.org,sandbox.orcid.org,orcid.org}")
     private String allowedDomains;
