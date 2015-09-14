@@ -143,6 +143,7 @@ public class ResaveProfiles {
         doneCount++;
     }
 
+    @SuppressWarnings("resource")
     private void init() {
         ApplicationContext context = new ClassPathXmlApplicationContext("orcid-core-context.xml");
         orcidProfileManager = (OrcidProfileManager) context.getBean("orcidProfileManager");

@@ -99,6 +99,7 @@ public class FindOrcidWorkDuplicates {
 
     }
 
+    @SuppressWarnings("resource")
     private void createOutputFile() throws Exception {
         ApplicationContext context = new ClassPathXmlApplicationContext("orcid-core-context.xml");
         orcidProfileManager = (OrcidProfileManager) context.getBean("orcidProfileManager");

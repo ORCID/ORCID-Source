@@ -109,6 +109,7 @@ public class DeleteOrcidByIdentifier {
         }
     }
 
+    @SuppressWarnings("resource")
     private OrcidProfileManager createOrcidProfileManager() {
         ApplicationContext context = new ClassPathXmlApplicationContext("orcid-core-context.xml");
         return (OrcidProfileManager) context.getBean("orcidProfileManager");
