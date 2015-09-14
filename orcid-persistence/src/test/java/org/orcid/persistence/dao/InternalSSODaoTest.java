@@ -23,7 +23,6 @@ import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -68,25 +67,24 @@ public class InternalSSODaoTest extends DBUnitTest {
         String token = "Token_" + System.currentTimeMillis();
         // Create token
         InternalSSOEntity entity = internalSSODao.insert(ORCID, token);
-        assertNotNull(entity);
-        Date expirationDate = new Date();
+        assertNotNull(entity);        
         // Check the token is not expired yet
-        assertTrue(internalSSODao.verify(ORCID, token, expirationDate));
+        assertTrue(internalSSODao.verify(ORCID, token, 1));
         // Update it
         assertTrue(internalSSODao.update(ORCID, token));
         // Wait and make it expire
         try {
-            Thread.sleep(100);
+            Thread.sleep(60 * 1000);
         } catch (Exception e) {
         }
         // Assert that it is expired
-        assertFalse(internalSSODao.verify(ORCID, token, expirationDate));
+        assertFalse(internalSSODao.verify(ORCID, token, 1));
 
         // Create an invalid token
         String updatedToken = token + "!";
         // Cannot update invalid token
         assertFalse(internalSSODao.update(ORCID, updatedToken));
         // Cannot verify invalid token
-        assertFalse(internalSSODao.verify(ORCID, updatedToken, expirationDate));
+        assertFalse(internalSSODao.verify(ORCID, updatedToken, 1));
     }
 }

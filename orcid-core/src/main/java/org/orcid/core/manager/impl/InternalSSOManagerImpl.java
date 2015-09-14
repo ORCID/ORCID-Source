@@ -26,13 +26,12 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.codec.binary.Base64;
 import org.orcid.core.manager.InternalSSOManager;
 import org.orcid.persistence.dao.InternalSSODao;
-import org.orcid.persistence.jpa.entities.InternalSSOEntity;
 
 public class InternalSSOManagerImpl implements InternalSSOManager {
 
     private static final String COOKIE_NAME = "orcid_token";
-    private static final int MAX_AGE_SECS = 5 * 60;
-    private static final long MAX_AGE_MILLIS = MAX_AGE_SECS * 1000; 
+    private static final int MAX_AGE_MINUTES = 5;
+    private static final int MAX_AGE_SECS = MAX_AGE_MINUTES * 60;
     
     @Resource 
     InternalSSODao internalSSODao;
@@ -89,12 +88,7 @@ public class InternalSSOManagerImpl implements InternalSSOManager {
 
     @Override
     public boolean verifyToken(String orcid, String encryptedToken) {
-        InternalSSOEntity entity = internalSSODao.find(orcid);
-        if(entity.getToken().equals(encryptedToken)) {
-            long lastModified = entity.getLastModified().getTime();
-            long currentTime = System.currentTimeMillis();            
-        }
-        return false;
+        return internalSSODao.verify(orcid, encryptedToken, MAX_AGE_MINUTES);
     }
 
 }
