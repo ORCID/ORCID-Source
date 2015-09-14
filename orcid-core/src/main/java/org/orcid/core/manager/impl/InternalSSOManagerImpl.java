@@ -31,7 +31,8 @@ import org.orcid.persistence.jpa.entities.InternalSSOEntity;
 public class InternalSSOManagerImpl implements InternalSSOManager {
 
     private static final String COOKIE_NAME = "orcid_token";
-    private static final int MAX_AGE = 5 * 60; 
+    private static final int MAX_AGE_SECS = 5 * 60;
+    private static final long MAX_AGE_MILLIS = MAX_AGE_SECS * 1000; 
     
     @Resource 
     InternalSSODao internalSSODao;
@@ -50,7 +51,7 @@ public class InternalSSOManagerImpl implements InternalSSOManager {
         
         //Return it as a cookie in the response
         Cookie tokenCookie = new Cookie(COOKIE_NAME, token);
-        tokenCookie.setMaxAge(MAX_AGE);
+        tokenCookie.setMaxAge(MAX_AGE_SECS);
         response.addCookie(tokenCookie);
     }
 
@@ -59,10 +60,9 @@ public class InternalSSOManagerImpl implements InternalSSOManager {
         if(request.getCookies() != null) {
             for(Cookie cookie : request.getCookies()) {
                 if(cookie.getName().equals(COOKIE_NAME)) {
-                    if(internalSSODao.update(orcid,  cookie.getValue())) {
-                        Cookie tokenCookie = new Cookie(COOKIE_NAME, cookie.getValue());
-                        tokenCookie.setMaxAge(MAX_AGE);
-                        response.addCookie(tokenCookie);
+                    if(internalSSODao.update(orcid,  cookie.getValue())) {                        
+                        cookie.setMaxAge(MAX_AGE_SECS);
+                        response.addCookie(cookie);
                     } else {
                         //TODO: throw error, couldn't update cookie
                     }
@@ -80,7 +80,7 @@ public class InternalSSOManagerImpl implements InternalSSOManager {
                         cookie.setMaxAge(0);
                         response.addCookie(cookie);                        
                     } else {
-                        //TODO: throw error, couldn't update cookie
+                        //TODO: throw error, couldn't delete token
                     }
                 }
             }
@@ -91,7 +91,8 @@ public class InternalSSOManagerImpl implements InternalSSOManager {
     public boolean verifyToken(String orcid, String encryptedToken) {
         InternalSSOEntity entity = internalSSODao.find(orcid);
         if(entity.getToken().equals(encryptedToken)) {
-            //TODO
+            long lastModified = entity.getLastModified().getTime();
+            long currentTime = System.currentTimeMillis();            
         }
         return false;
     }
