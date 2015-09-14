@@ -44,7 +44,7 @@ public class InternalSSODaoImpl extends GenericDaoImpl<InternalSSOEntity, String
         InternalSSOEntity entity = new InternalSSOEntity();
         entity.setDateCreated(new Date());
         entity.setLastModified(new Date());
-        entity.setOrcid(orcid);
+        entity.setId(orcid);
         entity.setToken(token);
         entityManager.persist(entity);
         return entity;
@@ -88,8 +88,7 @@ public class InternalSSODaoImpl extends GenericDaoImpl<InternalSSOEntity, String
             return result;
         } catch(NoResultException nre) {
             
-        }
-        
+        }        
         return null;
     }
 

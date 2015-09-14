@@ -16,7 +16,9 @@
  */
 package org.orcid.persistence.jpa.entities;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.persistence.Table;
 
 /**
@@ -31,18 +33,16 @@ public class InternalSSOEntity extends BaseEntity<String> {
     private String orcid;
     private String token;
 
+    @Id
     @Override
+    @Column(name = "orcid", length = 19)
     public String getId() {
         return orcid;
     }
-
-    public String getOrcid() {
-        return orcid;
-    }
-
-    public void setOrcid(String orcid) {
+    
+    public void setId(String orcid) {
         this.orcid = orcid;
-    }
+    }    
 
     public String getToken() {
         return token;
