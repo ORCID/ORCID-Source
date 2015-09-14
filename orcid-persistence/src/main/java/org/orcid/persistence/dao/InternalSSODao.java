@@ -16,31 +16,51 @@
  */
 package org.orcid.persistence.dao;
 
+import java.util.Date;
+
 import org.orcid.persistence.jpa.entities.InternalSSOEntity;
 
 public interface InternalSSODao extends GenericDao<InternalSSOEntity, String> {
     /**
-     * TODO
+     * Creates a new InternalSSOEntity
+     * @param orcid
+     *          ORCID ID 
+     * @param token
+     *          Token value
+     * @return the new entry         
      * */
     InternalSSOEntity insert(String orcid, String token);
     
     /**
-     * TODO
+     * Deletes the sso key that belongs to the given ORCID ID
+     * @param orcid
+     * @return true if the sso key was deleted
      * */
     boolean delete(String orcid);
     
     /**
-     * TODO
+     * Updates the last modified field of the sso key with the given ORCID id and token
+     * @param orcid
+     * @param token
+     * @return true if it actually updates a key
      * */
-    InternalSSOEntity update(String orcid, String token);
+    boolean update(String orcid, String token);
     
     /**
-     * TODO
+     * Verifies that a token exists and is not older than the given value
+     * @param orcid
+     * @param token
+     * @param maxAge
+     * @return true if the token exists and is not older than the given value  
      * */
-    boolean verify(String orcid, String token, long maxAge);
+    boolean verify(String orcid, String token, Date maxAge);
     
     /**
-     * TODO
+     * Verifies that a token exists and is not older than the given value, if so, return his last modified date
+     * @param orcid
+     * @param token
+     * @param maxAge
+     * @return Date if the token exists and is not older than the given value, null otherwise 
      * */
-    void recordModified(String orcid, String token, long maxAge);   
+    Date getRecordLastModified(String orcid, String token, long maxAge);   
 }
