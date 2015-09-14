@@ -52,6 +52,7 @@ public class AddReadPublicScopeToNoneInstitutionMembers {
 
     }
 
+    @SuppressWarnings("resource")
     private void init() {
         ApplicationContext context = new ClassPathXmlApplicationContext("orcid-core-context.xml");
         clientDetailsManager = (ClientDetailsManager) context.getBean("clientDetailsManager");
