@@ -1101,6 +1101,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
             WorkEntity workEntity = jaxb2JpaAdapter.getWorkEntity(updatedOrcidWork, null);
             workEntity.setProfile(profileEntity);
             workDao.persist(workEntity);
+            updatedOrcidWork.setPutCode(String.valueOf(workEntity.getId()));
             if (updatedOrcidWork.getWorkTitle() != null && updatedOrcidWork.getWorkTitle().getTitle() != null) {
                 String title = updatedOrcidWork.getWorkTitle().getTitle().getContent();
                 if (titles.contains(title)) {

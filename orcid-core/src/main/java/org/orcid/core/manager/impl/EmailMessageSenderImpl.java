@@ -134,6 +134,7 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         params.put("messageArgs", new Object[0]);
         params.put("emailName", emailName);
         params.put("digestEmail", digestEmail);
+        params.put("totalMessageCount", totalMessageCount);
         params.put("orcidMessageCount", orcidMessageCount);
         params.put("addActivitiesMessageCount", addActivitiesMessageCount);
         params.put("activityCount", activityCount);
