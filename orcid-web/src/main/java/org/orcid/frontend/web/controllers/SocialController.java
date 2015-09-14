@@ -26,14 +26,12 @@ import org.orcid.core.security.SocialLoginException;
 import org.orcid.core.security.UnclaimedProfileExistsException;
 import org.orcid.frontend.spring.web.social.config.SocialContext;
 import org.orcid.frontend.spring.web.social.config.SocialType;
-import org.orcid.frontend.web.exception.FeatureDisabledException;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.UserConnectionDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.UserconnectionPK;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.Authentication;
@@ -60,11 +58,8 @@ public class SocialController extends BaseController {
 
 	@Autowired
 	private SocialContext socialContext;
-	
-	@Value("${org.orcid.social_login.enabled}")
-    private boolean enabled;
-    
-    @Resource
+
+	@Resource
     private EmailDao emailDao;
 
     @Resource
@@ -80,7 +75,6 @@ public class SocialController extends BaseController {
 
     @RequestMapping(value = { "/access" }, method = RequestMethod.GET)
     public ModelAndView signinHandler(HttpServletRequest request, HttpServletResponse response) {
-    	checkEnabled();
     	
     	String emailId = null;
     	SocialType connectionType = socialContext.isSignedIn(request, response);
@@ -129,12 +123,6 @@ public class SocialController extends BaseController {
 		SecurityContextHolder.getContext().setAuthentication(authentication);
         
         return new ModelAndView("redirect:/my-orcid");
-    }
-
-    private void checkEnabled() {
-        if (!enabled) {
-            throw new FeatureDisabledException();
-        }
     }
     
 	private String retrieveEmail(SocialType connectionType) {
