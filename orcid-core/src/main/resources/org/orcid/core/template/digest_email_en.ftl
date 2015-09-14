@@ -19,9 +19,7 @@
 <#import "email_macros.ftl" as emailMacros />
 Hi ${emailName},
 
-Here's what has happened since the last time you visited your ORCID record.
-
-Visit ${baseUri}/notifications?lang=${locale} to view all notifications.
+You have <${orcidMessageCount}> new <#if orcidMessageCount == 1>notification<#else>notifications</#if> in your ORCID inbox - see summary below. Please visit your ORCID account inbox to take action. [1]
 
 <#if digestEmail.notificationsBySourceId['ORCID']??>
 ORCID would like to let you know
@@ -63,6 +61,16 @@ ${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sour
 </#if>
 </#list>
 
-<@emailMacros.msg "email.common.you_have_received_this_email_opt_out.1" />${baseUri}/account?lang=${locale}.
+VIEW YOUR ORCID INBOX: https://qa.orcid.org/inbox
+
+You have received this message because you opted in to receive Inbox notifications about your ORCID record. Learn more about how the Inbox works [2].
+You may adjust your email frequency and subscription preferences in your account settings [3].
+>>>>>>> digestEmailUpdate
+
+[1] ORCID account inbox: https://qa.orcid.org/inbox
+[2] About the ORCID Inbox: http://support.orcid.org/knowledgebase/articles/665437
+[3] ORCID account settings: https://qa.orcid.org/account 
+[4] Email preferences: https://qa.orcid.org/account 
+[5] ORCID privacy policy: http://qa.orcid.org/footer/privacy-policy
 
 <#include "email_footer.ftl"/>
