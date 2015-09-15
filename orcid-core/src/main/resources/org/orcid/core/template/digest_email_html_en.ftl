@@ -28,37 +28,68 @@
                 Hi ${emailName},
             </span>
             <p>
-                You have <${orcidMessageCount}> new <#if orcidMessageCount == 1>notification<#else>notifications</#if> in your ORCID inbox - see summary below. Please visit your ORCID <a href="${baseUri}/notifications?lang=${locale}" style="color: #338caf;">account inbox</a> to take action.
-            </p>   
-            <#if addActivitiesMessageCount gt 0>    
-	            <p>
-	                <img src="${baseUri}/static/img/request.png"> Requests to add to or update items in your ORCID record [${addActivitiesMessageCount}] (Please action as soon as possible)
-	            </p>            
-	            <p>  
-	                <ul>
-	                	<#-- Here goes the info -->
-	                    <li></li>                    
-	                </ul>
-	            </p>
-	        </#if>
-            <#if amendedMessageCount gt 0>
-	            <p>
-	                <img src="${baseUri}/static/img/update.png"> Updates to your ORCID record [${amendedMessageCount}]
-	                <ul>
-	                	<#-- Here goes the info -->
-	                    <li></li>                    
-	                </ul>            
-	            </p>
-	        </#if>
+                You have <${totalMessageCount}> new <#if orcidMessageCount == 1>notification<#else>notifications</#if> in your ORCID inbox - see summary below. Please visit your <a href="${baseUri}/inbox?lang=${locale}" style="color: #338caf;">ORCID Inbox</a> to take action or see more details.
+            </p>
+            <#if digestEmail.notificationsBySourceId['ORCID']??><p>
+                ORCID would like to let you know
+                <ul>
+                <#list digestEmail.notificationsBySourceId['ORCID'].allNotifications as notification>    
+                    <li>${notification.subject}</li>
+                </#list>
+                </ul>
+            </p></#if>
+            <#list digestEmail.notificationsBySourceId?keys?sort as sourceId>
+            <#if sourceId != 'ORCID'>
+            <#list digestEmail.notificationsBySourceId[sourceId].notificationsByType?keys?sort as notificationType>
+            <#list digestEmail.notificationsBySourceId[sourceId].notificationsByType[notificationType] as notification>
+            <#if notificationType == 'PERMISSION'>
+            <p>
+                <div><img src="http://testserver.orcid.org/static/img/request.png">${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sourceId} offers to add/update items to your ORCID record.</div>
+                <#assign itemsByType=notification.items.itemsByType>
+                <#list itemsByType?keys?sort as itemType>
+                <div>${itemType?capitalize}s (${itemsByType[itemType]?size})</div>
+                <div>Visit ${baseUri}/inbox/${notification.putCode}/action?target=${notification.authorizationUrl.uri?url} to add now.</div>
+                <ul>
+                <#list itemsByType[itemType] as item>
+                    <li>${item.itemName} <#if item.externalIdentifier??>(${item.externalIdentifier.externalIdentifierType?lower_case}: ${item.externalIdentifier.externalIdentifierId})</#if></li>
+                </#list>
+                </ul>
+                </#list>
+            </p>
+            <#elseif notificationType == 'AMENDED'>
+            <p>
+                <div><img src="http://testserver.orcid.org/static/img/update.png">${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sourceId} has updated recent ${notification.amendedSection?lower_case}s on your ORCID record.</div>
+                <#if notification.items??>
+                <ul>
+                <#list notification.items.items as item>
+                    <li>${item.itemName} <#if item.externalIdentifier??>(${item.externalIdentifier.externalIdentifierType?lower_case}: ${item.externalIdentifier.externalIdentifierId})</#if></li>
+                </#list>
+                </ul>
+                </#if>
+            </p>
+            <#else>
+            ${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sourceId}
+            </#if>
+            </#list>
+            </#list>
+            </#if>
+            </#list>
             <p>
                 <a href="${baseUri}/notifications?lang=${locale}" style="text-decoration: none; text-align: center;">
                     <span style="padding-top: 10px; padding-bottom: 10px; padding-left: 15px; padding-right: 15px; background: #338caf; color: #FFF; display: block; width: 300px;">
-                        View in your ORCID inbox
+                        View details in your ORCID inbox
                     </span>
                 </a>
             </p>
             <p>
-                You have received this message because you opted in to receive Inbox notifications about your ORCID record. <a href="${baseUri}/notifications?lang=${locale}" style="color: #338caf;">Learn more about how the Inbox works.</a>
+                <#assign frequency>
+                <#switch orcidProfile.orcidInternal.preferences.sendEmailFrequencyDays>
+                    <#case "0.0">immediate<#break>
+                    <#case "7.0">weekly<#break>
+                    <#case "91.3105">quarterly<#break>
+                </#switch>
+                </#assign>
+                You have received this message because you opted in to receive ${frequency} inbox notifications about your ORCID record. <a href="${baseUri}/notifications?lang=${locale}" style="color: #338caf;">Learn more about how the Inbox works.</a>
             </p>
             <p>
                 You may adjust your email frequency and subscription preferences in your <a href="${baseUri}/account?lang=${locale}" style="color: #338caf;">account settings</a>.

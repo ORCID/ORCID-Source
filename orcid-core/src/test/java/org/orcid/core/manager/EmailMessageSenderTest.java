@@ -144,7 +144,9 @@ public class EmailMessageSenderTest extends BaseTest {
 
         assertNotNull(emailMessage);
         String expectedBodyText = IOUtils.toString(getClass().getResourceAsStream("example_digest_email_body.txt"));
+        String expectedBodyHtml = IOUtils.toString(getClass().getResourceAsStream("example_digest_email_body.html"));
         assertEquals(expectedBodyText, emailMessage.getBodyText());
+        assertEquals(expectedBodyHtml, emailMessage.getBodyHtml());
         assertEquals("John Watson you have [6] new notifications", emailMessage.getSubject());
     }
 
