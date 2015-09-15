@@ -75,7 +75,7 @@
             </#if>
             </#list>
             <p>
-                <a href="${baseUri}/notifications?lang=${locale}" style="text-decoration: none; text-align: center;">
+                <a href="${baseUri}/inbox?lang=${locale}" style="text-decoration: none; text-align: center;">
                     <span style="padding-top: 10px; padding-bottom: 10px; padding-left: 15px; padding-right: 15px; background: #338caf; color: #FFF; display: block; width: 300px;">
                         View details in your ORCID inbox
                     </span>
@@ -89,7 +89,7 @@
                     <#case "91.3105">quarterly<#break>
                 </#switch>
                 </#assign>
-                You have received this message because you opted in to receive ${frequency} inbox notifications about your ORCID record. <a href="${baseUri}/notifications?lang=${locale}" style="color: #338caf;">Learn more about how the Inbox works.</a>
+                You have received this message because you opted in to receive ${frequency} inbox notifications about your ORCID record. <a href="${baseUri}/inbox?lang=${locale}" style="color: #338caf;">Learn more about how the Inbox works.</a>
             </p>
             <p>
                 You may adjust your email frequency and subscription preferences in your <a href="${baseUri}/account?lang=${locale}" style="color: #338caf;">account settings</a>.
