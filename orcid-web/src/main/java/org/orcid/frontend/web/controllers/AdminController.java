@@ -610,6 +610,11 @@ public class AdminController extends BaseController {
                 result.setErrors(new ArrayList<String>());
                 result.getErrors().add(getMessage("admin.lock_profile.error.already_locked", orcid));
                 return result;
+            } else if(profile.isReviewed()) {
+            	ProfileDetails result = new ProfileDetails();
+                result.setErrors(new ArrayList<String>());
+                result.getErrors().add(getMessage("admin.lock_reviewed_profile.error", orcid));
+                return result;
             }
         } else if(flag == 2) {
             if(!profile.isLocked()) {
