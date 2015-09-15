@@ -54,7 +54,7 @@
                 </#list>
                 </ul>
                 </#list>
-                <div><a class="button" href="${baseUri}/inbox/${notification.putCode}/action?target=${notification.authorizationUrl.uri?url}">Add now</a></div>
+                <div><a href="${baseUri}/inbox#${notification.putCode}">more info...</a> <a class="button" href="${baseUri}/inbox/${notification.putCode}/action?target=${notification.authorizationUrl.uri?url}">Add now</a></div>
             </p>
             <#elseif notificationType == 'AMENDED'>
             <p>
