@@ -19,8 +19,8 @@ package org.orcid.core.security.visibility.filter;
 import java.util.Collection;
 
 import org.orcid.jaxb.model.common.Filterable;
-import org.orcid.jaxb.model.record.Group;
-import org.orcid.jaxb.model.record.summary.ActivitiesSummary;
+import org.orcid.jaxb.model.record_2_rc1.Group;
+import org.orcid.jaxb.model.record_2_rc1.summary.ActivitiesSummary;
 
 /**
  * @author Will Simpson

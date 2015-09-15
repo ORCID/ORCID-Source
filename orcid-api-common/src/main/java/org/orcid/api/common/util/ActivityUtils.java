@@ -17,24 +17,24 @@
 package org.orcid.api.common.util;
 
 import org.orcid.core.api.OrcidApiConstants;
-import org.orcid.jaxb.model.record.Activity;
-import org.orcid.jaxb.model.record.Education;
-import org.orcid.jaxb.model.record.Employment;
-import org.orcid.jaxb.model.record.Funding;
-import org.orcid.jaxb.model.record.PeerReview;
-import org.orcid.jaxb.model.record.Work;
-import org.orcid.jaxb.model.record.summary.ActivitiesSummary;
-import org.orcid.jaxb.model.record.summary.EducationSummary;
-import org.orcid.jaxb.model.record.summary.Educations;
-import org.orcid.jaxb.model.record.summary.EmploymentSummary;
-import org.orcid.jaxb.model.record.summary.Employments;
-import org.orcid.jaxb.model.record.summary.FundingGroup;
-import org.orcid.jaxb.model.record.summary.FundingSummary;
-import org.orcid.jaxb.model.record.summary.Fundings;
-import org.orcid.jaxb.model.record.summary.PeerReviewSummary;
-import org.orcid.jaxb.model.record.summary.WorkGroup;
-import org.orcid.jaxb.model.record.summary.WorkSummary;
-import org.orcid.jaxb.model.record.summary.Works;
+import org.orcid.jaxb.model.record_2_rc1.Activity;
+import org.orcid.jaxb.model.record_2_rc1.Education;
+import org.orcid.jaxb.model.record_2_rc1.Employment;
+import org.orcid.jaxb.model.record_2_rc1.Funding;
+import org.orcid.jaxb.model.record_2_rc1.PeerReview;
+import org.orcid.jaxb.model.record_2_rc1.Work;
+import org.orcid.jaxb.model.record_2_rc1.summary.ActivitiesSummary;
+import org.orcid.jaxb.model.record_2_rc1.summary.EducationSummary;
+import org.orcid.jaxb.model.record_2_rc1.summary.Educations;
+import org.orcid.jaxb.model.record_2_rc1.summary.EmploymentSummary;
+import org.orcid.jaxb.model.record_2_rc1.summary.Employments;
+import org.orcid.jaxb.model.record_2_rc1.summary.FundingGroup;
+import org.orcid.jaxb.model.record_2_rc1.summary.FundingSummary;
+import org.orcid.jaxb.model.record_2_rc1.summary.Fundings;
+import org.orcid.jaxb.model.record_2_rc1.summary.PeerReviewSummary;
+import org.orcid.jaxb.model.record_2_rc1.summary.WorkGroup;
+import org.orcid.jaxb.model.record_2_rc1.summary.WorkSummary;
+import org.orcid.jaxb.model.record_2_rc1.summary.Works;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 
 public class ActivityUtils {

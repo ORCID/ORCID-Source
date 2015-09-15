@@ -20,11 +20,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.orcid.jaxb.model.record.ExternalIdentifiersContainer;
-import org.orcid.jaxb.model.record.GroupKey;
-import org.orcid.jaxb.model.record.GroupableActivity;
-import org.orcid.jaxb.model.record.summary.PeerReviewGroupKey;
-import org.orcid.jaxb.model.record.summary.PeerReviewSummary;
+import org.orcid.jaxb.model.record_2_rc1.ExternalIdentifiersContainer;
+import org.orcid.jaxb.model.record_2_rc1.GroupKey;
+import org.orcid.jaxb.model.record_2_rc1.GroupableActivity;
+import org.orcid.jaxb.model.record_2_rc1.summary.PeerReviewGroupKey;
+import org.orcid.jaxb.model.record_2_rc1.summary.PeerReviewSummary;
 
 public class ActivitiesGroup {
     private Set<GroupKey> groupKeys;

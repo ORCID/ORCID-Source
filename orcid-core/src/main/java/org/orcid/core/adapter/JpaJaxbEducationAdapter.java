@@ -19,8 +19,8 @@ package org.orcid.core.adapter;
 import java.util.Collection;
 import java.util.List;
 
-import org.orcid.jaxb.model.record.Education;
-import org.orcid.jaxb.model.record.summary.EducationSummary;
+import org.orcid.jaxb.model.record_2_rc1.Education;
+import org.orcid.jaxb.model.record_2_rc1.summary.EducationSummary;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 
 /**

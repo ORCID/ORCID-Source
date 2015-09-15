@@ -22,8 +22,8 @@ import java.util.List;
 import ma.glasnost.orika.MapperFacade;
 
 import org.orcid.core.adapter.JpaJaxbFundingAdapter;
-import org.orcid.jaxb.model.record.Funding;
-import org.orcid.jaxb.model.record.summary.FundingSummary;
+import org.orcid.jaxb.model.record_2_rc1.Funding;
+import org.orcid.jaxb.model.record_2_rc1.summary.FundingSummary;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 
 /**

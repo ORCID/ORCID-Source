@@ -27,17 +27,17 @@ import org.orcid.core.exception.OrcidVisibilityException;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.security.visibility.filter.VisibilityFilterV2;
 import org.orcid.jaxb.model.common.Filterable;
-import org.orcid.jaxb.model.record.Group;
-import org.orcid.jaxb.model.record.GroupableActivity;
-import org.orcid.jaxb.model.record.summary.ActivitiesSummary;
-import org.orcid.jaxb.model.record.summary.EducationSummary;
-import org.orcid.jaxb.model.record.summary.Educations;
-import org.orcid.jaxb.model.record.summary.EmploymentSummary;
-import org.orcid.jaxb.model.record.summary.Employments;
-import org.orcid.jaxb.model.record.summary.FundingGroup;
-import org.orcid.jaxb.model.record.summary.Fundings;
-import org.orcid.jaxb.model.record.summary.WorkGroup;
-import org.orcid.jaxb.model.record.summary.Works;
+import org.orcid.jaxb.model.record_2_rc1.Group;
+import org.orcid.jaxb.model.record_2_rc1.GroupableActivity;
+import org.orcid.jaxb.model.record_2_rc1.summary.ActivitiesSummary;
+import org.orcid.jaxb.model.record_2_rc1.summary.EducationSummary;
+import org.orcid.jaxb.model.record_2_rc1.summary.Educations;
+import org.orcid.jaxb.model.record_2_rc1.summary.EmploymentSummary;
+import org.orcid.jaxb.model.record_2_rc1.summary.Employments;
+import org.orcid.jaxb.model.record_2_rc1.summary.FundingGroup;
+import org.orcid.jaxb.model.record_2_rc1.summary.Fundings;
+import org.orcid.jaxb.model.record_2_rc1.summary.WorkGroup;
+import org.orcid.jaxb.model.record_2_rc1.summary.Works;
 import org.springframework.stereotype.Component;
 
 /**

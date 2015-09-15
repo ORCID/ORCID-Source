@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:sch="http://purl.oclc.org/dsdl/schematron" elementFormDefault="qualified"
+	targetNamespace="http://www.orcid.org/ns/internal" xmlns:internal="http://www.orcid.org/ns/internal"
+	xmlns:common="http://www.orcid.org/ns/common">
+	<xs:annotation>
+		<xs:documentation>
+			=============================================================================
+
+			ORCID (R) Open Source
+			http://orcid.org
+
+			Copyright (c) 2012-2014 ORCID,
+			Inc.
+			Licensed under an MIT-Style License (MIT)
+			http://orcid.org/open-source-license
+
+			This copyright and license
+			information (including a link to the full
+			license)
+			shall be included in
+			its entirety in all copies or substantial portion of
+			the software.
+
+			=============================================================================
+			The schema describes the message format used for ORCID API requests
+			and responses.
+			The top level element is orcid-message.
+		</xs:documentation>
+		<xs:appinfo>
+			<sch:title>Schematron validation</sch:title>
+			<sch:ns prefix="orcid" uri="http://www.orcid.org/ns/orcid" />
+		</xs:appinfo>
+	</xs:annotation>
+	
+	<xs:import namespace="http://www.orcid.org/ns/common"
+		schemaLocation="../common_2.0_rc1/common-2.0_rc1.xsd" />
+
+	<xs:element name="internal">
+		<xs:complexType>
+			<xs:annotation>
+				<xs:documentation>(FOR INTERNAL USE ONLY) Container for data that
+					are
+					strictly for internal
+					use only.
+				</xs:documentation>
+			</xs:annotation>
+			<xs:sequence>
+				<xs:element minOccurs="0" name="security-details" type="internal:security-details" />
+				<xs:element minOccurs="0" name="preferences" type="internal:preferences" />
+				<xs:element minOccurs="0" ref="common:group-orcid-identifier">
+					<xs:annotation>
+						<xs:documentation>(FOR INTERNAL USE ONLY) Group ID for API
+							clients.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="referred-by" type="xs:string" minOccurs="0"
+					maxOccurs="1">
+					<xs:annotation>
+						<xs:documentation>(FOR INTERNAL USE ONLY) User registration is
+							know to be driven by Member
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element minOccurs="0" name="salesforce-id" type="internal:salesforce-id" />
+			</xs:sequence>
+			<xs:attribute name="visibility" type="common:visibility" />
+		</xs:complexType>
+	</xs:element>
+	
+	<xs:simpleType name="salesforce-id">
+		<xs:annotation>
+			<xs:documentation>(FOR INTERNAL USE ONLY) An ID that identifies a
+				profile in Salesforce.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:pattern value="([a-zA-Z0-9]){15}" />
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:complexType name="security-details">
+		<xs:annotation>
+			<xs:documentation>(FOR INTERNAL USE ONLY) Security access details
+			</xs:documentation>
+		</xs:annotation>
+
+		<xs:sequence>
+			<xs:element name="encrypted-password" type="internal:encrypted-password" />
+			<xs:element name="security-question-id" type="internal:security-question-id"
+				minOccurs="0" maxOccurs="1" />
+			<xs:element name="encrypted-security-answer" type="internal:encrypted-security-answer"
+				minOccurs="0" maxOccurs="1" />
+			<xs:element name="encrypted-verification-code" type="internal:encrypted-verification-code"
+				minOccurs="1" maxOccurs="1" />
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:complexType name="preferences">
+		<xs:annotation>
+			<xs:documentation>(FOR INTERNAL USE ONLY) Preferences set by the
+				researcher or contributor.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="send-email-frequency-days" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>(FOR INTERNAL USE ONLY)
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="send-change-notifications">
+				<xs:annotation>
+					<xs:documentation>(FOR INTERNAL USE ONLY)
+					</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:boolean" />
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="send-orcid-news">
+				<xs:annotation>
+					<xs:documentation>(FOR INTERNAL USE ONLY)
+					</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:boolean" />
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="send-member-update-requests" type="xs:boolean">
+				<xs:annotation>
+					<xs:documentation>(FOR INTERNAL USE ONLY)
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="activities-visibility-default" type="internal:activities-visibility-default" />
+			<xs:element name="developer-tools-enabled" type="internal:developer-tools-enabled"
+				minOccurs="0" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="encrypted-password" mixed="true">
+		<xs:annotation>
+			<xs:documentation>(FOR INTERNAL USE ONLY)
+			</xs:documentation>
+		</xs:annotation>
+	</xs:complexType>
+	
+	<xs:complexType name="security-question-id">
+		<xs:annotation>
+			<xs:documentation>(FOR INTERNAL USE ONLY)
+			</xs:documentation>
+		</xs:annotation>
+
+		<xs:simpleContent>
+			<xs:extension base="xs:integer" />
+		</xs:simpleContent>
+	</xs:complexType>
+	
+	<xs:complexType mixed="true" name="encrypted-security-answer">
+		<xs:annotation>
+			<xs:documentation>(FOR INTERNAL USE ONLY)
+			</xs:documentation>
+		</xs:annotation>
+	</xs:complexType>
+	
+	<xs:complexType mixed="true" name="activities-visibility-default">
+		<xs:annotation>
+			<xs:documentation>(FOR INTERNAL USE ONLY)
+			</xs:documentation>
+		</xs:annotation>
+		<xs:simpleContent>
+			<xs:extension base="common:visibility" />
+		</xs:simpleContent>
+	</xs:complexType>
+	
+	<xs:complexType name="developer-tools-enabled">
+		<xs:annotation>
+			<xs:documentation>(FOR INTERNAL USE ONLY)
+			</xs:documentation>
+		</xs:annotation>
+		<xs:simpleContent>
+			<xs:extension base="xs:boolean" />
+		</xs:simpleContent>
+	</xs:complexType>
+	
+	<xs:complexType mixed="true" name="encrypted-verification-code">
+		<xs:annotation>
+			<xs:documentation>(FOR INTERNAL USE ONLY)
+			</xs:documentation>
+		</xs:annotation>
+	</xs:complexType>
+
+</xs:schema>

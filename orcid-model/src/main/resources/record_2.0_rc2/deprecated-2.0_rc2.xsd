@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:sch="http://purl.oclc.org/dsdl/schematron" elementFormDefault="qualified"
+	targetNamespace="http://www.orcid.org/ns/deprecated" xmlns:deprecated="http://www.orcid.org/ns/deprecated"
+	xmlns:common="http://www.orcid.org/ns/common">
+	<xs:annotation>
+		<xs:documentation>
+			=============================================================================
+
+			ORCID (R) Open Source
+			http://orcid.org
+
+			Copyright (c) 2012-2014 ORCID,
+			Inc.
+			Licensed under an MIT-Style License (MIT)
+			http://orcid.org/open-source-license
+
+			This copyright and license
+			information (including a link to the full
+			license)
+			shall be included in
+			its entirety in all copies or substantial portion of
+			the software.
+
+			=============================================================================
+			The schema describes the message format used for ORCID API requests
+			and responses.
+			The top level element is orcid-message.
+		</xs:documentation>
+		<xs:appinfo>
+			<sch:title>Schematron validation</sch:title>
+			<sch:ns prefix="orcid" uri="http://www.orcid.org/ns/orcid" />
+		</xs:appinfo>
+	</xs:annotation>
+
+	<xs:import namespace="http://www.orcid.org/ns/common"
+		schemaLocation="../common_2.0_rc1/common-2.0_rc1.xsd" />
+
+	<xs:element name="deprecated">
+		<xs:complexType>
+			<xs:annotation>
+				<xs:documentation>Element to contain the deprecation information of
+					an ORCID iD and Record. Records are deprecated by researchers or
+					contributors when multiple iDs are found that represent the same
+					person.
+				</xs:documentation>
+			</xs:annotation>
+			<xs:sequence>
+				<xs:element name="deprecated-date" type="deprecated:deprecated-date"
+					minOccurs="1" maxOccurs="1" />
+				<xs:element name="primary-record" type="deprecated:primary-record"
+					maxOccurs="1" minOccurs="1" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:complexType name="deprecated-date">
+		<xs:annotation>
+			<xs:documentation>The date and time when the ORCID Record was
+				deprecated, and now points to a different, primary ORCID Record.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:simpleContent>
+			<xs:extension base="xs:dateTime" />
+		</xs:simpleContent>
+	</xs:complexType>
+
+	<xs:complexType name="primary-record">
+		<xs:annotation>
+			<xs:documentation>The new primary record for the ORCID iD. One
+				should
+				note this new value if the iD being read has been deprecated.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="common:orcid-identifier" />
+		</xs:sequence>
+	</xs:complexType>
+
+</xs:schema>

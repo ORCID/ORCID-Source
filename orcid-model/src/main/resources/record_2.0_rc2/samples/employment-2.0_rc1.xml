@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<affiliation:employment put-code="0" visibility="private"
+	xmlns:affiliation="http://www.orcid.org/ns/employment" xmlns:common="http://www.orcid.org/ns/common"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.orcid.org/ns/employment ../employment-2.0_rc1.xsd ">	
+	<affiliation:department-name>affiliation:department-name</affiliation:department-name>
+	<affiliation:role-title>affiliation:role-title</affiliation:role-title>
+	<common:start-date>
+		<common:year>1848</common:year>
+		<common:month>02</common:month>
+		<common:day>02</common:day>
+	</common:start-date>
+	<common:end-date>
+		<common:year>1848</common:year>
+		<common:month>02</common:month>
+		<common:day>02</common:day>
+	</common:end-date>
+	<affiliation:organization>
+		<common:name>common:name</common:name>
+		<common:address>
+			<common:city>common:city</common:city>
+			<common:region>common:region</common:region>
+			<common:country>AF</common:country>
+		</common:address>
+		<common:disambiguated-organization>
+			<common:disambiguated-organization-identifier>common:disambiguated-organization-identifier</common:disambiguated-organization-identifier>
+			<common:disambiguation-source>common:disambiguation-source</common:disambiguation-source>
+		</common:disambiguated-organization>
+	</affiliation:organization>	
+</affiliation:employment>
