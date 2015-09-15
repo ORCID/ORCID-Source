@@ -137,4 +137,8 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     public boolean isDeactivated(String orcid);
     
     public void updateIpAddress(String orcid, String ipAddress);
+
+	boolean reviewProfile(String orcid);
+
+	boolean unreviewProfile(String orcid);
 }

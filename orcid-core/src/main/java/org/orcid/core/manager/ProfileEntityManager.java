@@ -76,4 +76,8 @@ public interface ProfileEntityManager {
     Date getLastModified(String orcid);
     
     boolean isDeactivated(String deactivated);
+
+	boolean unreviewProfile(String orcid);
+
+	boolean reviewProfile(String orcid);
 }

@@ -154,6 +154,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         profile.setGroupType(profileEntity.getGroupType());
         profile.setVerificationCode(profileEntity.getEncryptedVerificationCode());
         profile.setLocked(profileEntity.getRecordLocked());
+        profile.setReviewed(profileEntity.isReviewed());
         return profile;
     }
 
