@@ -35,8 +35,10 @@ import org.orcid.jaxb.model.common.SourceName;
 import org.orcid.jaxb.model.message.FamilyName;
 import org.orcid.jaxb.model.message.GivenNames;
 import org.orcid.jaxb.model.message.OrcidBio;
+import org.orcid.jaxb.model.message.OrcidInternal;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.PersonalDetails;
+import org.orcid.jaxb.model.message.Preferences;
 import org.orcid.jaxb.model.notification.Notification;
 import org.orcid.jaxb.model.notification.amended.AmendedSection;
 import org.orcid.jaxb.model.notification.amended.NotificationAmended;
@@ -69,6 +71,11 @@ public class EmailMessageSenderTest extends BaseTest {
         orcidBio.setPersonalDetails(personalDetails);
         personalDetails.setGivenNames(new GivenNames("John"));
         personalDetails.setFamilyName(new FamilyName("Watson"));
+        OrcidInternal orcidInternal = new OrcidInternal();
+        Preferences preferences = new Preferences();
+        orcidProfile.setOrcidInternal(orcidInternal);
+        orcidInternal.setPreferences(preferences);
+        preferences.setSendEmailFrequencyDays("7.0");
 
         List<Notification> notifications = new ArrayList<>();
 

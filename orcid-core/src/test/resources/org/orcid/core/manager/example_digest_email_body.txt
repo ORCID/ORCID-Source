@@ -1,28 +1,28 @@
 Hi John Watson,
 
-You have <6> new notifications in your ORCID inbox - see summary below. Please visit your ORCID account inbox to take action. [1]
+You have <6> new notifications in your ORCID inbox - see summary below. Please visit your ORCID Inbox (http://testserver.orcid.org/inbox) to take action or see more details.
 
 ORCID would like to let you know
 
     We have release a new messaging feature
     The ORCID registry is now available in Orc
 
-Super Institution 1 would like to add the following items to your record.
+Super Institution 1 offers to add/update items to your ORCID record.
 Works (2)
 Visit https://thirdparty.com/add-to-orcid/12345 to add now.
 
     Work 1 (doi: 123446/67654)
     Work 2 (doi: 123446/67655)
 
-Super Institution 1 would like to add the following items to your record.
+Super Institution 1 offers to add/update items to your ORCID record.
 Employments (1)
 Visit https://thirdparty.com/add-to-orcid/abc to add now.
 
     Employment 1 (doi: 12345/abc)
 
-Lovely Publisher 1 amended the fundings section of your record.
+Lovely Publisher 1 has updated recent fundings on your ORCID record.
 
-Lovely Publisher 1 would like to add the following items to your record.
+Lovely Publisher 1 offers to add/update items to your ORCID record.
 Works (2)
 Visit https://thirdparty.com/add-to-orcid/def to add now.
 
@@ -32,13 +32,8 @@ Visit https://thirdparty.com/add-to-orcid/def to add now.
 
 VIEW YOUR ORCID INBOX: http://testserver.orcid.org/inbox
 
-You have received this message because you opted in to receive Inbox notifications about your ORCID record. Learn more about how the Inbox works [2].
-You may adjust your email frequency and subscription preferences in your account settings [3].
+You have received this message because you opted in to receive weekly inbox notifications about your ORCID record. Learn more about how the Inbox works (http://support.orcid.org/knowledgebase/articles/665437).
 
-[1] ORCID account inbox: http://testserver.orcid.org/inbox
-[2] About the ORCID Inbox: http://support.orcid.org/knowledgebase/articles/665437
-[3] ORCID account settings: http://testserver.orcid.org/account 
-[4] Email preferences: http://testserver.orcid.org/account 
-[5] ORCID privacy policy: http://testserver.orcid.org/footer/privacy-policy
+You may adjust your email frequency and subscription preferences in your account settings (http://testserver.orcid.org/account).
 
 email preferences (http://testserver.orcid.org/account) | privacy policy  (http://testserver.orcid.org/privacy-policy) | ORCID, Inc. | 10411 Motor City Drive, Suite 750, Bethesda, MD 20817, USA | http://testserver.orcid.org

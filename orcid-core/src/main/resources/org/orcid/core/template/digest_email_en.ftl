@@ -19,7 +19,7 @@
 <#import "email_macros.ftl" as emailMacros />
 Hi ${emailName},
 
-You have <${totalMessageCount}> new <#if orcidMessageCount == 1>notification<#else>notifications</#if> in your ORCID inbox - see summary below. Please visit your ORCID account inbox to take action. [1]
+You have <${totalMessageCount}> new <#if orcidMessageCount == 1>notification<#else>notifications</#if> in your ORCID inbox - see summary below. Please visit your ORCID Inbox (${baseUri}/inbox) to take action or see more details.
 
 <#if digestEmail.notificationsBySourceId['ORCID']??>
 ORCID would like to let you know
@@ -34,7 +34,7 @@ ORCID would like to let you know
 <#list digestEmail.notificationsBySourceId[sourceId].notificationsByType?keys?sort as notificationType>
 <#list digestEmail.notificationsBySourceId[sourceId].notificationsByType[notificationType] as notification>
 <#if notificationType == 'PERMISSION'>
-${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sourceId} would like to add the following items to your record.
+${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sourceId} offers to add/update items to your ORCID record.
 <#assign itemsByType=notification.items.itemsByType>
 <#list itemsByType?keys?sort as itemType>
 ${itemType?capitalize}s (${itemsByType[itemType]?size})
@@ -45,7 +45,7 @@ Visit ${notification.authorizationUrl.uri} to add now.
 </#list>
 </#list>
 <#elseif notificationType == 'AMENDED'>
-${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sourceId} amended the ${notification.amendedSection?lower_case}s section of your record.
+${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sourceId} has updated recent ${notification.amendedSection?lower_case}s on your ORCID record.
 <#if notification.items??>
 
 <#list notification.items.items as item>
@@ -63,13 +63,15 @@ ${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sour
 
 VIEW YOUR ORCID INBOX: ${baseUri}/inbox
 
-You have received this message because you opted in to receive Inbox notifications about your ORCID record. Learn more about how the Inbox works [2].
-You may adjust your email frequency and subscription preferences in your account settings [3].
+<#assign frequency>
+    <#switch orcidProfile.orcidInternal.preferences.sendEmailFrequencyDays>
+        <#case "0.0">immediate<#break>
+        <#case "7.0">weekly<#break>
+        <#case "91.3105">quarterly<#break>
+    </#switch>
+</#assign>
+You have received this message because you opted in to receive ${frequency} inbox notifications about your ORCID record. Learn more about how the Inbox works (http://support.orcid.org/knowledgebase/articles/665437).
 
-[1] ORCID account inbox: ${baseUri}/inbox
-[2] About the ORCID Inbox: http://support.orcid.org/knowledgebase/articles/665437
-[3] ORCID account settings: ${baseUri}/account 
-[4] Email preferences: ${baseUri}/account 
-[5] ORCID privacy policy: ${baseUri}/footer/privacy-policy
+You may adjust your email frequency and subscription preferences in your account settings (${baseUri}/account).
 
 <#include "email_footer.ftl"/>

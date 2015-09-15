@@ -132,6 +132,7 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         params.put("locale", locale);
         params.put("messages", messages);
         params.put("messageArgs", new Object[0]);
+        params.put("orcidProfile", orcidProfile);
         params.put("emailName", emailName);
         params.put("digestEmail", digestEmail);
         params.put("totalMessageCount", totalMessageCount);
