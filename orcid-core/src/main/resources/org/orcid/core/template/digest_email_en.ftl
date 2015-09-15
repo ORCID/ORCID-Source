@@ -38,7 +38,7 @@ ${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sour
 <#assign itemsByType=notification.items.itemsByType>
 <#list itemsByType?keys?sort as itemType>
 ${itemType?capitalize}s (${itemsByType[itemType]?size})
-Visit ${notification.authorizationUrl.uri} to add now.
+Visit ${baseUri}/inbox/${notification.putCode}/action?target=${notification.authorizationUrl.uri?url} to add now.
 
 <#list itemsByType[itemType] as item>
     ${item.itemName} <#if item.externalIdentifier??>(${item.externalIdentifier.externalIdentifierType?lower_case}: ${item.externalIdentifier.externalIdentifierId})</#if>

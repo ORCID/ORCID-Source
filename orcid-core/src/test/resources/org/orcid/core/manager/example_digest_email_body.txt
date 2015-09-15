@@ -9,14 +9,14 @@ ORCID would like to let you know
 
 Super Institution 1 offers to add/update items to your ORCID record.
 Works (2)
-Visit https://thirdparty.com/add-to-orcid/12345 to add now.
+Visit http://testserver.orcid.org/inbox/1/action?target=https%3A%2F%2Fthirdparty.com%2Fadd-to-orcid%2F12345 to add now.
 
     Work 1 (doi: 123446/67654)
     Work 2 (doi: 123446/67655)
 
 Super Institution 1 offers to add/update items to your ORCID record.
 Employments (1)
-Visit https://thirdparty.com/add-to-orcid/abc to add now.
+Visit http://testserver.orcid.org/inbox/2/action?target=https%3A%2F%2Fthirdparty.com%2Fadd-to-orcid%2Fabc to add now.
 
     Employment 1 (doi: 12345/abc)
 
@@ -24,7 +24,7 @@ Lovely Publisher 1 has updated recent fundings on your ORCID record.
 
 Lovely Publisher 1 offers to add/update items to your ORCID record.
 Works (2)
-Visit https://thirdparty.com/add-to-orcid/def to add now.
+Visit http://testserver.orcid.org/inbox/3/action?target=https%3A%2F%2Fthirdparty.com%2Fadd-to-orcid%2Fdef to add now.
 
     Work 3 (doi: 12345/def)
     Work 4 (doi: 12345/ghi)
