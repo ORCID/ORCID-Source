@@ -48,13 +48,13 @@
                 <#assign itemsByType=notification.items.itemsByType>
                 <#list itemsByType?keys?sort as itemType>
                 <div>${itemType?capitalize}s (${itemsByType[itemType]?size})</div>
-                <div>Visit ${baseUri}/inbox/${notification.putCode}/action?target=${notification.authorizationUrl.uri?url} to add now.</div>
                 <ul>
                 <#list itemsByType[itemType] as item>
                     <li>${item.itemName} <#if item.externalIdentifier??>(${item.externalIdentifier.externalIdentifierType?lower_case}: ${item.externalIdentifier.externalIdentifierId})</#if></li>
                 </#list>
                 </ul>
                 </#list>
+                <div><a class="button" href="${baseUri}/inbox/${notification.putCode}/action?target=${notification.authorizationUrl.uri?url}">Add now</a></div>
             </p>
             <#elseif notificationType == 'AMENDED'>
             <p>
