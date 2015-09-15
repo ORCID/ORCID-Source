@@ -116,7 +116,7 @@ public class JpaJaxbNotificationAdapterTest {
         activity.setItemName("Latest Research Article");
         ExternalIdentifier extId = new ExternalIdentifier();
         activity.setExternalIdentifier(extId);
-        extId.setExternalIdType("doi");
+        extId.setExternalIdentifierType("doi");
         extId.setExternalIdentifierId("1234/abc123");
 
         NotificationEntity notificationEntity = jpaJaxbNotificationAdapter.toNotificationEntity(notification);
@@ -159,7 +159,7 @@ public class JpaJaxbNotificationAdapterTest {
         activity.setItemName("Latest Research Article");
         ExternalIdentifier extId = new ExternalIdentifier();
         activity.setExternalIdentifier(extId);
-        extId.setExternalIdType("doi");
+        extId.setExternalIdentifierType("doi");
         extId.setExternalIdentifierId("1234/abc123");
 
         NotificationEntity notificationEntity = jpaJaxbNotificationAdapter.toNotificationEntity(notification);

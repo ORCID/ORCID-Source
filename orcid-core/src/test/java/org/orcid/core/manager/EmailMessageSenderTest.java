@@ -155,7 +155,7 @@ public class EmailMessageSenderTest extends BaseTest {
         act.setItemType(actType);
         act.setItemName(actName);
         ExternalIdentifier extId = new ExternalIdentifier();
-        extId.setExternalIdType("DOI");
+        extId.setExternalIdentifierType("DOI");
         extId.setExternalIdentifierId(doi);
         act.setExternalIdentifier(extId);
         return act;

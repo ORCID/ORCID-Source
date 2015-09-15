@@ -55,7 +55,7 @@ public final class SingleWorkExternalIdentifierFromJsonConverter extends Bidirec
         WorkExternalIdentifier workExternalIdentifier = workExternalIdentifierList.get(0);
         ExternalIdentifier extId = new ExternalIdentifier();
         extId.setExternalIdentifierId(workExternalIdentifier.getWorkExternalIdentifierId().getContent());
-        extId.setExternalIdType(workExternalIdentifier.getWorkExternalIdentifierType().value());
+        extId.setExternalIdentifierType(workExternalIdentifier.getWorkExternalIdentifierType().value());
         return extId;
     }
 
