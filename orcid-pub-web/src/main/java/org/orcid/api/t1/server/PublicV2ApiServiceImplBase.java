@@ -97,12 +97,10 @@ public class PublicV2ApiServiceImplBase {
     }
 
     @GET
-    @Produces(value = {VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON, OrcidApiConstants.APPLICATION_CITEPROC })
+    @Produces(value = {VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(ACTIVITIES)
     @ApiOperation(value = "Fetch all Activities", response=ActivitiesSummary.class)
     public Response viewActivities(@PathParam("orcid") String orcid, @Context HttpServletRequest httpRequest) {
-        if (OrcidApiConstants.APPLICATION_CITEPROC.equals(httpRequest.getHeader("Accept")))
-            return serviceDelegator.viewActivitiesCitations(orcid);
         return serviceDelegator.viewActivities(orcid);
     }
 

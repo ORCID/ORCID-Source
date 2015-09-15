@@ -124,20 +124,6 @@ public class PublicV2ApiServiceDelegatorImpl implements PublicV2ApiServiceDelega
     
     @Override
     @AccessControl(requiredScope = ScopePathType.READ_PUBLIC, enableAnonymousAccess = true)
-    public Response viewActivitiesCitations(String orcid) {        
-        ActivitiesSummary summary = (ActivitiesSummary) this.viewActivities(orcid).getEntity();
-        Works w = summary.getWorks();
-        List<WorkGroup> groups = w.getWorkGroup();
-        CSLItemDataList data = new CSLItemDataList();
-        for (WorkGroup group : groups){
-            WorkSummary work = group.getWorkSummary().get(0);
-            data.addItem((CSLItemData) this.viewWorkCitation(orcid, work.getPutCode()).getEntity());
-        }
-        return Response.ok(data).build();
-    }
-    
-    @Override
-    @AccessControl(requiredScope = ScopePathType.READ_PUBLIC, enableAnonymousAccess = true)
     public Response viewWork(String orcid, Long putCode) {        
         Work w = workManager.getWork(orcid, putCode);
         ActivityUtils.cleanEmptyFields(w);
