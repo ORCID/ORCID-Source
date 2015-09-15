@@ -40,7 +40,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
-@RequestMapping("/notifications")
+@RequestMapping({ "/inbox", "/notifications" })
 public class NotificationController extends BaseController {
 
     @Resource
@@ -70,11 +70,10 @@ public class NotificationController extends BaseController {
             if (notification instanceof NotificationPermission) {
                 NotificationPermission naa = (NotificationPermission) notification;
                 naa.setSubject(getMessage(buildInternationalizationKey(NotificationType.class, naa.getNotificationType().value())));
-            }
-            else if (notification instanceof NotificationAmended) {
+            } else if (notification instanceof NotificationAmended) {
                 NotificationAmended na = (NotificationAmended) notification;
                 na.setSubject(getMessage(buildInternationalizationKey(NotificationType.class, na.getNotificationType().value())));
-            };
+            }
         }
         return notifications;
     }
@@ -127,11 +126,11 @@ public class NotificationController extends BaseController {
         notificationDao.flagAsArchived(currentUserOrcid, Long.valueOf(id));
         return notificationManager.findByOrcidAndId(currentUserOrcid, Long.valueOf(id));
     }
-    
+
     @RequestMapping(value = "{id}/action", method = RequestMethod.GET)
     public ModelAndView executeAction(@PathVariable("id") String id, @RequestParam(value = "target") String redirectUri) {
         notificationManager.setActionedDate(getCurrentUserOrcid(), Long.valueOf(id));
-        return new ModelAndView("redirect:" + redirectUri);        
+        return new ModelAndView("redirect:" + redirectUri);
     }
 
 }
