@@ -96,7 +96,7 @@ public class CrossDomainWebManger {
         return result;
     }
 
-    private boolean validatePath(String path) {
+    public boolean validatePath(String path) {
         Matcher m = p.matcher(path);
         if (m.matches()) {
             return true;

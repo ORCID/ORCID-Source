@@ -40,9 +40,15 @@ public class CrossDomainWebMangerTest {
     @Resource
     CrossDomainWebManger crossDomainWebManger;
     
-    String [] allowedDomains = {"https://orcid.org", "https://www.orcid.org", "https://other.orcid.org", "https://qa.orcid.org", "https://qa-1.orcid.org", "https://sandbox.orcid.org", "https://sandbox-1.orcid.org", "http://orcid.org", "http://other.orcid.org", "http://qa.orcid.org", "http://qa-1.orcid.org", "http://sandbox.orcid.org", "http://sandbox-1.orcid.org"};
+    String [] allowedDomains = {"https://orcid.org", "http://orcid.org", "http://qa.orcid.org", "https://qa.orcid.org", "https://sandbox.orcid.org", "http://sandbox.orcid.org"};
     String [] forbiddenDomains = {"http://.orcid.org", "http://www.otherorcid.org", "http://www.myorcid.org", "http://www.ihateorcid.org", "http://qa.ihateorcid.org", "https://.orcid.org", "https://www.otherorcid.org", "https://www.myorcid.org", "https://www.ihateorcid.org", "https://qa.ihateorcid.org"};
     
+    String [] allowedPaths = {"/public/other","/public/","/public_widgets/0000-0000-0000-0000/HASH/info.json","/userStatus.json", "/lang.json"};
+    String [] forbiddenPaths = {"/public","/whatever/public","/whatever/public/","/whatever/public/other",
+            "/public_widgets/","/whatever/public_widgets/","/public_widgets/0000-0000-0000-000/HASH/info.json","/public_widgets/0000-0000-000-0000/HASH/info.json",
+            "/whatever/public_widgets/0000-0000-0000-0000/HASH/info.json","/public_widgets/0000-0000-0000-0000/HASH","/public_widgets/0000-0000-0000-0000//info.json",
+            "/public_widgets/invalid_orcid/HASH/info.json","/whatever/userStatus.json","/userstatus.json","/whatever/lang.json","/userStatus.json/","/userStatus.json/whatever",
+            "/userStatus.jsonwhatever/test","/userStatus.json/whatever","/userStatus.jsonwhatever","/userStatus.jsonwhatever/test"};
     
     @Test
     public void testDomains() throws MalformedURLException {
@@ -52,6 +58,17 @@ public class CrossDomainWebMangerTest {
         
         for(String forbidden : forbiddenDomains) {
             assertFalse("Testing: " + forbidden, crossDomainWebManger.validateDomain(forbidden));
+        }
+    }
+    
+    @Test
+    public void testPaths() throws MalformedURLException {
+        for(String allowed : allowedPaths) {            
+            assertTrue("testing: " +  allowed, crossDomainWebManger.validatePath(allowed));
+        }  
+        
+        for(String forbidden : forbiddenPaths) {
+            assertFalse("Testing: " + forbidden, crossDomainWebManger.validatePath(forbidden));
         }
     }
 }
