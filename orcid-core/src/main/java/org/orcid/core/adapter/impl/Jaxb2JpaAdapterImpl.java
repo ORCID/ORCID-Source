@@ -180,6 +180,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         setInternalDetails(profileEntity, profile.getOrcidInternal());
         setPreferencesDetails(profileEntity, profile.getOrcidPreferences());
         profileEntity.setUserLastIp(profile.getUserLastIp());
+        profileEntity.setReviewed(profile.isReviewed());
 
         if(profileEntity.getUsedRecaptchaOnRegistration() == null) {
             profileEntity.setUsedRecaptchaOnRegistration(false);
