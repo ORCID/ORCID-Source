@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang.StringUtils;
 import org.orcid.core.manager.InternalSSOManager;
 import org.orcid.persistence.dao.InternalSSODao;
 import org.springframework.beans.factory.annotation.Value;
@@ -74,7 +75,7 @@ public class InternalSSOManagerImpl implements InternalSSOManager {
                 if (cookie.getName().equals(COOKIE_NAME)) {
                     if (internalSSODao.update(orcid, cookie.getValue())) {
                         cookie.setMaxAge(maxAgeMinutes * 60);
-                        response.addCookie(cookie);                        
+                        response.addCookie(cookie);
                     } else {
                         // TODO: throw error, couldn't update cookie
                     }
@@ -92,6 +93,7 @@ public class InternalSSOManagerImpl implements InternalSSOManager {
             for (Cookie cookie : request.getCookies()) {
                 if (cookie.getName().equals(COOKIE_NAME)) {
                     cookie.setMaxAge(0);
+                    cookie.setValue(StringUtils.EMPTY);
                     response.addCookie(cookie);
                 }
             }
