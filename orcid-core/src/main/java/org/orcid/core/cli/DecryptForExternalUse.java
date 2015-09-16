@@ -27,6 +27,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * 
  */
 public class DecryptForExternalUse {
+    @SuppressWarnings("resource")
     public static void main(String[] args) throws Exception {
         ApplicationContext context = new ClassPathXmlApplicationContext("orcid-core-context.xml");
         EncryptionManager encyrptionManager = (EncryptionManager) context.getBean("encryptionManager");

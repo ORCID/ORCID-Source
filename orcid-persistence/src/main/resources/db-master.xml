@@ -153,4 +153,7 @@
     <include file="/db/updates/rename_activities_tables_and_fields.xml" />
     <include file="/db/updates/add_fields_on_notifications_item_table.xml" />
     <include file="/db/updates/notifications_part3.xml" />
+    <include file="/db/updates/add_column_ip_to_profile.xml"/>
+    <include file="/db/updates/alter_column_last_ip.xml" />
+    <include file="/db/updates/add_column_reviewed_to_profile.xml" />
 </databaseChangeLog>

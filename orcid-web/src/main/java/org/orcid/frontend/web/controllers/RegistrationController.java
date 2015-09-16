@@ -90,6 +90,7 @@ import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Registration;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.utils.DateUtils;
+import org.orcid.utils.OrcidRequestUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -275,7 +276,7 @@ public class RegistrationController extends BaseController {
         return numCheck;
     }
 
-    public static OrcidProfile toProfile(Registration reg) {
+    public static OrcidProfile toProfile(Registration reg, HttpServletRequest request) {
         OrcidProfile profile = new OrcidProfile();
         OrcidBio bio = new OrcidBio();
 
@@ -311,9 +312,10 @@ public class RegistrationController extends BaseController {
 
         profile.setPassword(reg.getPassword().getValue());
 
+        profile.setUserLastIp(OrcidRequestUtil.getIpAddress(request));
         return profile;
     }
-
+    
     @RequestMapping(value = "/register.json", method = RequestMethod.POST)
     public @ResponseBody Registration setRegister(HttpServletRequest request, @RequestBody Registration reg) {
         validateRegistrationFields(request, reg);
@@ -384,7 +386,7 @@ public class RegistrationController extends BaseController {
             usedCaptcha = true;
         }
         
-        createMinimalRegistrationAndLogUserIn(request, toProfile(reg), usedCaptcha);
+        createMinimalRegistrationAndLogUserIn(request, toProfile(reg, request), usedCaptcha);
         String redirectUrl = calculateRedirectUrl(request, response);
         r.setUrl(redirectUrl);
         return r;

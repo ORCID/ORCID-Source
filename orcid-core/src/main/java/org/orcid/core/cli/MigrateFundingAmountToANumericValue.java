@@ -47,7 +47,7 @@ public class MigrateFundingAmountToANumericValue {
     private ProfileFundingDao profileFundingDao;
     private TransactionTemplate transactionTemplate;
     
-    
+    @SuppressWarnings("resource")
     private void init() {
         ApplicationContext context = new ClassPathXmlApplicationContext("orcid-core-context.xml");
         profileFundingDao = (ProfileFundingDao) context.getBean("profileFundingDao");

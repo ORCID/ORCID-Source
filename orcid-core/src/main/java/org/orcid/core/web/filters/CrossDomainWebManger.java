@@ -32,41 +32,43 @@ import org.springframework.beans.factory.annotation.Value;
 public class CrossDomainWebManger {
 
     private static final String LOCALHOST = "localhost";
-    
-    Pattern p = Pattern.compile(".*/public/.*|.*/public_widgets/.*|.*/userStatus\\.json|.*/lang\\.json");
-    
-    @Value("${org.orcid.security.cors.allowed_domains:orcid.org}")
+
+    Pattern p = Pattern.compile("^/public/.*|^/public_widgets/(?:\\d{4}-){3,}\\d{3}[\\dX]/.+/info\\.json|^/userStatus\\.json|^/lang\\.json");
+
+    @Value("${org.orcid.security.cors.allowed_domains:qa.orcid.org,sandbox.orcid.org,orcid.org}")
     private String allowedDomains;
-    
-    private List<String> domainsRegex;  
-    
+
+    private List<String> domainsRegex;
+
     public boolean allowed(HttpServletRequest request) throws MalformedURLException {
-        String path = OrcidUrlManager.getPathWithoutContextPath(request);        
-        
-        //Check origin header
-        if(!PojoUtil.isEmpty(request.getHeader("origin"))) {
+        String path = OrcidUrlManager.getPathWithoutContextPath(request);
+
+        // Check origin header
+        if (!PojoUtil.isEmpty(request.getHeader("origin"))) {
+            // If it is a valid domain, allow
             if (validateDomain(request.getHeader("origin"))) {
                 return true;
-            }
+            } 
         } else {
-            //Check referer header for localhost
-            if(!PojoUtil.isEmpty(request.getHeader("referer"))) {
+            // Check referer header for localhost
+            if (!PojoUtil.isEmpty(request.getHeader("referer"))) {
                 URL netUrl = new URL(request.getHeader("referer"));
                 String domain = netUrl.getHost();
                 if (LOCALHOST.equals(domain)) {
                     return true;
                 }
             }
-        }                       
-        
-        if(validatePath(path)) {
+        }
+
+        // If it is and invalid domain, validate the path
+        if (validatePath(path)) {
             return true;
-        }        
+        }
         
         return false;
     }
 
-    private boolean validateDomain(String url) throws MalformedURLException {
+    public boolean validateDomain(String url) throws MalformedURLException {
         URL netUrl = new URL(url);
         String domain = netUrl.getHost();
         for (String allowedDomain : getAllowedDomainsRegex()) {
@@ -75,16 +77,8 @@ public class CrossDomainWebManger {
             }
         }
         return false;
-    }    
-    
-    private boolean validatePath(String path) {        
-        Matcher m = p.matcher(path);
-        if(m.matches()) {
-            return true;
-        }
-        return false;
-    }        
-    
+    }
+
     private List<String> getAllowedDomainsRegex() {
         if (domainsRegex == null) {
             domainsRegex = new ArrayList<String>();
@@ -99,7 +93,14 @@ public class CrossDomainWebManger {
 
     private String transformPatternIntoRegex(String domainPattern) {
         String result = domainPattern.replace(".", "\\.");
-        result = domainPattern.replace("*", ".+");
         return result;
-    }    
+    }
+
+    public boolean validatePath(String path) {
+        Matcher m = p.matcher(path);
+        if (m.matches()) {
+            return true;
+        }
+        return false;
+    }
 }

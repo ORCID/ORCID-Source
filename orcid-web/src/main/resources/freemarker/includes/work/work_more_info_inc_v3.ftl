@@ -141,7 +141,13 @@
 					<strong><@orcid.msg 'groups.common.created'/></strong><br />
 	                <div>{{worksSrvc.details[work.putCode.value].createdDate.year}}-{{worksSrvc.details[work.putCode.value].createdDate.month}}-{{worksSrvc.details[work.putCode.value].createdDate.day}}</div>
 				</div>		
+			</div>
+			<div class="col-md-12">
+				<div class="bottomBuffer">
+					<div class="badge-container-{{work.putCode.value}}"></div>
+				</div>                         
 			</div>		
 		</div>
+		
 	</div>	
 </div>

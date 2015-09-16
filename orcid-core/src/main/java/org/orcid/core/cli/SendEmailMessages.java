@@ -27,6 +27,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class SendEmailMessages {
 
+    @SuppressWarnings("resource")
     public static void main(String args[]) {
         ApplicationContext context = new ClassPathXmlApplicationContext("orcid-core-context.xml");
         EmailMessageSender emailMessageSender = (EmailMessageSender) context.getBean("emailMessageSender");

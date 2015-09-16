@@ -34,14 +34,22 @@
                                 <@orcid.msgCapFirst 'groups.common.preferred' />
                             </div>
                             
-                            <div class="col-md-3 col-sm-3 col-xs-3 right">
+                            <div class="col-md-3 col-sm-3 col-xs-3 right padding-left-fix">
                                     <div class="workspace-toolbar">
                                         <ul class="workspace-private-toolbar">
                                             <#if !(isPublicProfile??)>
                                                 <li ng-show="bulkEditShow">
                                                     <input type="checkbox" ng-model="bulkEditMap[group.getActive().putCode.value]" class="bulk-edit-input-header ng-valid ng-dirty">
                                                 </li>
-                                            </#if>
+                                            </#if>  
+                                            <#if RequestParameters['badges']??>
+                                            	<!-- Mozilla Badges -->
+			                                  	<li class="works-details">
+			                                    	 <a ng-click="showMozillaBadges(group.activePutCode)" ng-show="moreInfo[group.groupId]">
+			                                     		<span class="mozilla-badge"></span>                                     	
+			                                     	 </a>
+			                                  	</li>
+			                                </#if>  	                                                                                    
                                             <li class="works-details">
                                                 <a ng-click="showDetailsMouseClick(group,$event);" ng-mouseenter="showTooltip(group.groupId+'-showHideDetails')" ng-mouseleave="hideTooltip(group.groupId+'-showHideDetails')">
                                                     <span ng-class="(moreInfo[group.groupId] == true) ? 'glyphicons collapse_top' : 'glyphicons expand'">
@@ -84,7 +92,7 @@
                                 <span class="journaltitle" ng-show="work.journalTitle.value" ng-bind="work.journalTitle.value"></span>                                
                             </h3>                                                        
                             <div class="info-detail">
-                                <span ng-show="work.publicationDate.year">{{work.publicationDate.year}}</span><span ng-show="work.publicationDate.month">-{{work.publicationDate.month}}</span><span ng-show="work.publicationDate.year"> | </span> <span class="capitalize">{{work.workType.value}}</span>
+                                <span ng-show="work.publicationDate.year">{{work.publicationDate.year}}</span><span ng-show="work.publicationDate.month">-{{work.publicationDate.month}}</span><span ng-show="work.publicationDate.day">-{{work.publicationDate.day}}</span><span ng-show="work.publicationDate.year"> | </span> <span class="capitalize">{{work.workType.value}}</span>
                             </div>
                         </div>
 
@@ -97,6 +105,14 @@
                                               <input type="checkbox" ng-model="bulkEditMap[work.putCode.value]" class="bulk-edit-input ng-pristine ng-valid pull-right">       
                                       </li>
                                   </#if>
+                                  <#if RequestParameters['badges']??>
+	                                  <!-- Mozilla Badges -->
+	                                  <li class="works-details">
+	                                     <a ng-click="showMozillaBadges(group.activePutCode)" ng-show="moreInfo[group.groupId]">
+	                                     	<span class="mozilla-badge"></span>                                     	
+	                                     </a>
+	                                  </li>
+                                  </#if>   
                                   <!-- Show/Hide Details -->
                                   <li class="works-details" ng-hide="editSources[group.groupId] == true">
                                       <a ng-click="showDetailsMouseClick(group,$event);" ng-mouseenter="showTooltip(group.groupId+'-showHideDetails')" ng-mouseleave="hideTooltip(group.groupId+'-showHideDetails')">
@@ -138,7 +154,6 @@
 					            </div>                                    
                                   </div>
                               </#if>
-                              
                           </div>
                      </div>
 

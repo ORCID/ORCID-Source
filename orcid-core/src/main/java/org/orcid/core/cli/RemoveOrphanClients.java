@@ -77,6 +77,7 @@ public class RemoveOrphanClients {
         }
     }
 
+    @SuppressWarnings("resource")
     private void init() {
         ApplicationContext context = new ClassPathXmlApplicationContext("orcid-core-context.xml");
         clientDetailsDao = (ClientDetailsDao) context.getBean("clientDetailsDao");

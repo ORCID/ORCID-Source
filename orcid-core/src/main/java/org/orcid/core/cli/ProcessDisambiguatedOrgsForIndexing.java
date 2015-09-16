@@ -48,6 +48,7 @@ public class ProcessDisambiguatedOrgsForIndexing {
     private void validateArgs(CmdLineParser parser) throws CmdLineException {
     }
 
+    @SuppressWarnings("resource")
     private void init() {
         ApplicationContext context = new ClassPathXmlApplicationContext("orcid-core-context.xml");
         orgDisambiguatedManager = (OrgDisambiguatedManager) context.getBean("orgDisambiguatedManager");
