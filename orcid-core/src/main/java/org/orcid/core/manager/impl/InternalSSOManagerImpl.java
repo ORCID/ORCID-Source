@@ -101,10 +101,10 @@ public class InternalSSOManagerImpl implements InternalSSOManager {
     }
 
     @Override
-    public boolean verifyToken(String orcid, String encryptedToken) {
+    public boolean verifyToken(String orcid, String token) {
         Calendar c = Calendar.getInstance();
         c.add(Calendar.MINUTE, -maxAgeMinutes);
         Date maxAge = c.getTime();
-        return internalSSODao.verify(orcid, encryptedToken, maxAge);
+        return internalSSODao.verify(orcid, token, maxAge);
     }
 }

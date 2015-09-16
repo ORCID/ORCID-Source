@@ -54,7 +54,7 @@ public interface InternalSSOManager {
      * Returns true if the given token is still valid
      * 
      * @param orcid
-     * @param encryptedToken
+     * @param token
      * */
-    boolean verifyToken(String orcid, String encryptedToken);       
+    boolean verifyToken(String orcid, String token);       
 }
