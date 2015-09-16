@@ -18,7 +18,6 @@ package org.orcid.api.t1.server.delegator.impl;
 
 import static org.orcid.core.api.OrcidApiConstants.STATUS_OK_MESSAGE;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -121,20 +120,6 @@ public class PublicV2ApiServiceDelegatorImpl implements PublicV2ApiServiceDelega
         visibilityFilter.filter(as);
         ActivityUtils.setPathToActivity(as, orcid);
         return Response.ok(as).build();
-    }
-    
-    @Override
-    @AccessControl(requiredScope = ScopePathType.READ_PUBLIC, enableAnonymousAccess = true)
-    public Response viewActivitiesCitations(String orcid) {        
-        ActivitiesSummary summary = (ActivitiesSummary) this.viewActivities(orcid).getEntity();
-        Works w = summary.getWorks();
-        List<WorkGroup> groups = w.getWorkGroup();
-        CSLItemDataList data = new CSLItemDataList();
-        for (WorkGroup group : groups){
-            WorkSummary work = group.getWorkSummary().get(0);
-            data.addItem((CSLItemData) this.viewWorkCitation(orcid, work.getPutCode()).getEntity());
-        }
-        return Response.ok(data).build();
     }
     
     @Override

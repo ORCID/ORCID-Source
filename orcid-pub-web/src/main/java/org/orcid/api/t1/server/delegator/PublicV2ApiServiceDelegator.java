@@ -44,7 +44,5 @@ public interface PublicV2ApiServiceDelegator {
     
     Response viewPeerReviewSummary(String orcid, Long putCode);
 
-    Response viewActivitiesCitations(String orcid);
-
     Response viewWorkCitation(String orcid, Long putCode);  
 }

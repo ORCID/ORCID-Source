@@ -27,6 +27,7 @@ import org.orcid.core.manager.InternalSSOManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.jaxb.model.message.Locale;
 import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.utils.OrcidRequestUtil;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
@@ -57,6 +58,7 @@ public class AjaxAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuc
             String orcidId = authentication.getName();
             checkLocale(request, response, orcidId);
             internalSSOManager.writeCookie(orcidId, request, response);
+            profileDao.updateIpAddress(orcidId, OrcidRequestUtil.getIpAddress(request));
         }
         if (targetUrl == null) {
             targetUrl = determineFullTargetUrl(request, response);
@@ -85,7 +87,7 @@ public class AjaxAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuc
             }
         }
     }
-
+    
     private String determineFullTargetUrlFromSavedRequest(HttpServletRequest request, HttpServletResponse response) {
         SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
         String url = null;
