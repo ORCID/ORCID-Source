@@ -92,7 +92,7 @@
                                 <span class="journaltitle" ng-show="work.journalTitle.value" ng-bind="work.journalTitle.value"></span>                                
                             </h3>                                                        
                             <div class="info-detail">
-                                <span ng-show="work.publicationDate.year">{{work.publicationDate.year}}</span><span ng-show="work.publicationDate.month">-{{work.publicationDate.month}}</span><span ng-show="work.publicationDate.year"> | </span> <span class="capitalize">{{work.workType.value}}</span>
+                                <span ng-show="work.publicationDate.year">{{work.publicationDate.year}}</span><span ng-show="work.publicationDate.month">-{{work.publicationDate.month}}</span><span ng-show="work.publicationDate.day">-{{work.publicationDate.day}}</span><span ng-show="work.publicationDate.year"> | </span> <span class="capitalize">{{work.workType.value}}</span>
                             </div>
                         </div>
 
