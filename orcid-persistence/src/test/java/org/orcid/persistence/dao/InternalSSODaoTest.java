@@ -18,16 +18,20 @@ package org.orcid.persistence.dao;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
 
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -52,9 +56,14 @@ public class InternalSSODaoTest extends DBUnitTest {
 
     @BeforeClass
     public static void initDBUnitData() throws Exception {
-        initDBUnitData(DATA_FILES);
+        initDBUnitData(DATA_FILES);        
     }
 
+    @Before
+    public void before() {
+        internalSSODao.delete(ORCID);
+    }
+    
     @AfterClass
     public static void removeDBUnitData() throws Exception {
         List<String> reversedDataFiles = new ArrayList<String>(DATA_FILES);
@@ -65,26 +74,53 @@ public class InternalSSODaoTest extends DBUnitTest {
     @Test
     public void internalSSODaoTest() {
         String token = "Token_" + System.currentTimeMillis();
+        
+        Date now = new Date();
+        
+        Calendar c = Calendar.getInstance();
+        c.setTime(now);
+        c.add(Calendar.MINUTE, -5);
+        Date _5MinutesAgo = c.getTime();
+        
+        c.setTime(now);
+        c.add(Calendar.MINUTE, 15);
+        Date _15MinutesAhead = c.getTime();        
+        
         // Create token
         InternalSSOEntity entity = internalSSODao.insert(ORCID, token);
         assertNotNull(entity);        
         // Check the token is not expired yet
-        assertTrue(internalSSODao.verify(ORCID, token, 1));
+        assertTrue(internalSSODao.verify(ORCID, token, _5MinutesAgo));
         // Update it
-        assertTrue(internalSSODao.update(ORCID, token));
-        // Wait and make it expire
-        try {
-            Thread.sleep(60 * 1000);
-        } catch (Exception e) {
-        }
+        assertTrue(internalSSODao.update(ORCID, token));        
         // Assert that it is expired
-        assertFalse(internalSSODao.verify(ORCID, token, 1));
+        assertFalse(internalSSODao.verify(ORCID, token, _15MinutesAhead));
 
         // Create an invalid token
         String updatedToken = token + "!";
         // Cannot update invalid token
         assertFalse(internalSSODao.update(ORCID, updatedToken));
         // Cannot verify invalid token
-        assertFalse(internalSSODao.verify(ORCID, updatedToken, 1));
+        assertFalse(internalSSODao.verify(ORCID, updatedToken, _5MinutesAgo));
+    }
+    
+    @Test
+    public void RecordLastModifiedTest() {
+        Date now = new Date();
+        
+        Calendar c = Calendar.getInstance();
+        c.setTime(now);
+        c.add(Calendar.MINUTE, -5);
+        Date _5MinutesAgo = c.getTime();
+        
+        c.setTime(now);
+        c.add(Calendar.MINUTE, 15);
+        Date _15MinutesAhead = c.getTime();
+        
+        String token = "Token_" + System.currentTimeMillis();
+        // Create token
+        internalSSODao.insert(ORCID, token);
+        assertNotNull(internalSSODao.getRecordLastModified(ORCID, token, _5MinutesAgo));
+        assertNull(internalSSODao.getRecordLastModified(ORCID, token, _15MinutesAhead));
     }
 }

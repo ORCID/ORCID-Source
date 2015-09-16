@@ -21,6 +21,8 @@ import javax.servlet.http.HttpServletResponse;
 
 public interface InternalSSOManager {
 
+    public static final String COOKIE_NAME = "orcid_token";
+    
     /**
      * Creates a new token and populate it in a cookie
      * 
@@ -54,5 +56,5 @@ public interface InternalSSOManager {
      * @param orcid
      * @param encryptedToken
      * */
-    boolean verifyToken(String orcid, String encryptedToken);
+    boolean verifyToken(String orcid, String encryptedToken);       
 }

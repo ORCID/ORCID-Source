@@ -53,7 +53,7 @@ public interface InternalSSODao extends GenericDao<InternalSSOEntity, String> {
      * @param maxAge
      * @return true if the token exists and is not older than the given value  
      * */
-    boolean verify(String orcid, String token, int maxAgeInMinutes);
+    boolean verify(String orcid, String token, Date maxAge);
     
     /**
      * Verifies that a token exists and is not older than the given value, if so, return his last modified date
@@ -62,5 +62,5 @@ public interface InternalSSODao extends GenericDao<InternalSSOEntity, String> {
      * @param maxAge
      * @return Date if the token exists and is not older than the given value, null otherwise 
      * */
-    Date getRecordLastModified(String orcid, String token, int maxAgeInMinutes);   
+    Date getRecordLastModified(String orcid, String token, Date maxAge);   
 }

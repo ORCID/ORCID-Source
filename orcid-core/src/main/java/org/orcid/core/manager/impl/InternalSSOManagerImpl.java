@@ -17,6 +17,8 @@
 package org.orcid.core.manager.impl;
 
 import java.security.SecureRandom;
+import java.util.Calendar;
+import java.util.Date;
 
 import javax.annotation.Resource;
 import javax.servlet.http.Cookie;
@@ -26,44 +28,55 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.codec.binary.Base64;
 import org.orcid.core.manager.InternalSSOManager;
 import org.orcid.persistence.dao.InternalSSODao;
+import org.springframework.beans.factory.annotation.Value;
 
 public class InternalSSOManagerImpl implements InternalSSOManager {
 
-    private static final String COOKIE_NAME = "orcid_token";
-    private static final int MAX_AGE_MINUTES = 5;
-    private static final int MAX_AGE_SECS = MAX_AGE_MINUTES * 60;
-    
-    @Resource 
+    @Value("${org.orcid.core.soo.token.validity_minutes:10}")
+    private int maxAgeMinutes;
+
+    @Resource
     InternalSSODao internalSSODao;
-    
+
+    public InternalSSOManagerImpl() {
+
+    }
+
+    public InternalSSOManagerImpl(int maxAgeInMunutes) {
+        this.maxAgeMinutes = maxAgeInMunutes;
+    }
+
     @Override
     public void writeCookie(String orcid, HttpServletRequest request, HttpServletResponse response) {
-        //Generate a random token
+        // Deletes previous cookie if exists
+        deleteToken(orcid, request, response);
+        // Generate a random token
         SecureRandom random = new SecureRandom();
-        byte [] bytes = new byte[16];
+        byte[] bytes = new byte[16];
         random.nextBytes(bytes);
-        byte [] encoded = Base64.encodeBase64(bytes);
+        byte[] encoded = Base64.encodeBase64(bytes);
         String token = new String(encoded);
-        
-        //Insert it into the DB
+
+        // Insert it into the DB
         internalSSODao.insert(orcid, token);
-        
-        //Return it as a cookie in the response
+
+        // Return it as a cookie in the response
         Cookie tokenCookie = new Cookie(COOKIE_NAME, token);
-        tokenCookie.setMaxAge(MAX_AGE_SECS);
+        tokenCookie.setMaxAge(maxAgeMinutes * 60);
+        tokenCookie.setPath("/");
         response.addCookie(tokenCookie);
     }
 
     @Override
     public void updateCookie(String orcid, HttpServletRequest request, HttpServletResponse response) {
-        if(request.getCookies() != null) {
-            for(Cookie cookie : request.getCookies()) {
-                if(cookie.getName().equals(COOKIE_NAME)) {
-                    if(internalSSODao.update(orcid,  cookie.getValue())) {                        
-                        cookie.setMaxAge(MAX_AGE_SECS);
-                        response.addCookie(cookie);
+        if (request.getCookies() != null) {
+            for (Cookie cookie : request.getCookies()) {
+                if (cookie.getName().equals(COOKIE_NAME)) {
+                    if (internalSSODao.update(orcid, cookie.getValue())) {
+                        cookie.setMaxAge(maxAgeMinutes * 60);
+                        response.addCookie(cookie);                        
                     } else {
-                        //TODO: throw error, couldn't update cookie
+                        // TODO: throw error, couldn't update cookie
                     }
                 }
             }
@@ -72,15 +85,14 @@ public class InternalSSOManagerImpl implements InternalSSOManager {
 
     @Override
     public void deleteToken(String orcid, HttpServletRequest request, HttpServletResponse response) {
-        if(request.getCookies() != null) {
-            for(Cookie cookie : request.getCookies()) {
-                if(cookie.getName().equals(COOKIE_NAME)) {
-                    if(internalSSODao.delete(orcid)) {
-                        cookie.setMaxAge(0);
-                        response.addCookie(cookie);                        
-                    } else {
-                        //TODO: throw error, couldn't delete token
-                    }
+        // Delete the DB row
+        internalSSODao.delete(orcid);
+        // Delete the cookie
+        if (request.getCookies() != null) {
+            for (Cookie cookie : request.getCookies()) {
+                if (cookie.getName().equals(COOKIE_NAME)) {
+                    cookie.setMaxAge(0);
+                    response.addCookie(cookie);
                 }
             }
         }
@@ -88,7 +100,9 @@ public class InternalSSOManagerImpl implements InternalSSOManager {
 
     @Override
     public boolean verifyToken(String orcid, String encryptedToken) {
-        return internalSSODao.verify(orcid, encryptedToken, MAX_AGE_MINUTES);
+        Calendar c = Calendar.getInstance();
+        c.add(Calendar.MINUTE, -maxAgeMinutes);
+        Date maxAge = c.getTime();
+        return internalSSODao.verify(orcid, encryptedToken, maxAge);
     }
-
 }

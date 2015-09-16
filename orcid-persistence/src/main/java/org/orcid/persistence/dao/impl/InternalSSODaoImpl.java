@@ -68,21 +68,26 @@ public class InternalSSODaoImpl extends GenericDaoImpl<InternalSSOEntity, String
     }
 
     @Override
-    public boolean verify(String orcid, String token, int maxAgeInMinutes) {
-        Query query = entityManager.createNativeQuery("SELECT count(*) FROM internal_sso WHERE orcid = :orcid AND token = :token AND last_modified >= (now() - interval ':minutes minutes')");
+    public boolean verify(String orcid, String token, Date maxAge) {
+        Query query = entityManager.createNativeQuery("SELECT count(*) FROM internal_sso WHERE orcid = :orcid AND token = :token AND last_modified >= :maxAge");
         query.setParameter("orcid", orcid);
         query.setParameter("token", token);
-        query.setParameter("minutes", maxAgeInMinutes);
-        BigInteger result = (BigInteger)query.getSingleResult();
-        return result.longValue() > 0;
+        query.setParameter("maxAge", maxAge);
+        try {
+            BigInteger result = (BigInteger)query.getSingleResult();
+            return result.longValue() > 0;
+        } catch(NoResultException nre) {
+            
+        }
+        return false;
     }
 
     @Override
-    public Date getRecordLastModified(String orcid, String token, int maxAgeInMinutes) {
-        TypedQuery<Date> query = entityManager.createQuery("SELECT lastModified FROM InternalSSOEntity WHERE orcid = :orcid AND token := token AND last_modified >= (now() - interval ':minutes minutes')", Date.class);
+    public Date getRecordLastModified(String orcid, String token, Date maxAge) {
+        TypedQuery<Date> query = entityManager.createQuery("SELECT lastModified FROM InternalSSOEntity WHERE orcid = :orcid AND token = :token AND last_modified >= :maxAge", Date.class);
         query.setParameter("orcid", orcid);
         query.setParameter("token", token);
-        query.setParameter("maxAge", maxAgeInMinutes);
+        query.setParameter("maxAge", maxAge);
         try {
             Date result = query.getSingleResult();
             return result;
