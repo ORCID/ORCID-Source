@@ -6397,9 +6397,11 @@ orcidNgModule.controller('adminVerifyEmailCtrl',['$scope','$compile', function (
 
     $scope.verifyEmail = function(){
         $.ajax({
-            url: getBaseUri()+'/admin-actions/admin-verify-email?email=' + $scope.email,
-            type: 'GET',
+            url: getBaseUri()+'/admin-actions/admin-verify-email.json',
+            type: 'POST',
             dataType: 'text',
+            data: $scope.email,
+            contentType: 'application/json;charset=UTF-8',
             success: function(data){
                 $scope.$apply(function(){
                     $scope.result = data;
@@ -7096,9 +7098,11 @@ orcidNgModule.controller('findIdsCtrl',['$scope','$compile', function findIdsCtr
 
     $scope.findIds = function() {
         $.ajax({
-            url: getBaseUri()+'/admin-actions/find-id?csvEmails=' + $scope.emails,
-            type: 'GET',
+            url: getBaseUri()+'/admin-actions/find-id.json',
+            type: 'POST',
             dataType: 'json',
+            data: $scope.emails,
+            contentType: 'application/json;charset=UTF-8',
             success: function(data){
                 $scope.$apply(function(){
                     if(!$.isEmptyObject(data)) {
