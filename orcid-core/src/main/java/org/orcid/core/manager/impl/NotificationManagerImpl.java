@@ -620,12 +620,12 @@ public class NotificationManagerImpl implements NotificationManager {
         templateParams.put("subject", getSubject("email.subject.claim_reminder", orcidProfile));
         Source source = orcidProfile.getOrcidHistory().getSource();
         String creatorName = "";
-        if(source != null) {
-        	if(source.getSourceName() != null && source.getSourceName().getContent() != null) {
-        		creatorName = source.getSourceName().getContent();
-        	} else {
-        		creatorName = source.retrieveSourcePath();
-        	}
+        if (source != null) {
+            if (source.getSourceName() != null && source.getSourceName().getContent() != null) {
+                creatorName = source.getSourceName().getContent();
+            } else {
+                creatorName = source.retrieveSourcePath();
+            }
         }
         templateParams.put("creatorName", creatorName);
         templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
@@ -813,7 +813,7 @@ public class NotificationManagerImpl implements NotificationManager {
         if (sourceId != null && !sourceId.equals(notificationEntity.getSource().getSourceId())) {
             Map<String, String> params = new HashMap<String, String>();
             params.put("activity", "notification");
-        	throw new WrongSourceException(params);
+            throw new WrongSourceException(params);
         }
         if (notificationEntity.getReadDate() != null) {
             throw new OrcidNotificationAlreadyReadException();
@@ -832,13 +832,13 @@ public class NotificationManagerImpl implements NotificationManager {
         if (notificationEntity == null) {
             return null;
         }
-        
-        if(notificationEntity.getActionedDate() == null) {
+
+        if (notificationEntity.getActionedDate() == null) {
             notificationEntity.setActionedDate(new Date());
             notificationDao.merge(notificationEntity);
         }
-        
+
         return notificationAdapter.toNotification(notificationEntity);
     }
-    
+
 }
