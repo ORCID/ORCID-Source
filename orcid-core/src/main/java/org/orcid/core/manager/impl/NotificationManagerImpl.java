@@ -31,6 +31,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.adapter.JpaJaxbNotificationAdapter;
 import org.orcid.core.constants.EmailConstants;
+import org.orcid.core.exception.OrcidNotFoundException;
 import org.orcid.core.exception.OrcidNotificationAlreadyReadException;
 import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.locale.LocaleManager;
@@ -773,7 +774,11 @@ public class NotificationManagerImpl implements NotificationManager {
             throw new IllegalArgumentException("Put code must be null when creating a new notification");
         }
         NotificationEntity notificationEntity = notificationAdapter.toNotificationEntity(notification);
-        notificationEntity.setProfile(profileDao.find(orcid));
+        ProfileEntity profile = profileDao.find(orcid);
+        if (profile == null) {
+            throw OrcidNotFoundException.newInstance(orcid);
+        }
+        notificationEntity.setProfile(profile);
         notificationEntity.setSource(sourceManager.retrieveSourceEntity());
         notificationDao.persist(notificationEntity);
         return notificationAdapter.toNotification(notificationEntity);
