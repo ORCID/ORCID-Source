@@ -28,7 +28,7 @@ public class OrcidNotFoundException extends ApplicationException {
      */
     private static final long serialVersionUID = 1L;
 
-	public OrcidNotFoundException(Map<String, String> params) {
-		super(params);
-	}
+    public OrcidNotFoundException(Map<String, String> params) {
+        super(params);
+    }
 }
