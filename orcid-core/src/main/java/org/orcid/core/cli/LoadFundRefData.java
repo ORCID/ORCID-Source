@@ -119,6 +119,7 @@ public class LoadFundRefData {
         }
     }
 
+    @SuppressWarnings({ "resource", "unchecked" })
     private void init() {
         ApplicationContext context = new ClassPathXmlApplicationContext("orcid-core-context.xml");
         orgDisambiguatedDao = (OrgDisambiguatedDao) context.getBean("orgDisambiguatedDao");

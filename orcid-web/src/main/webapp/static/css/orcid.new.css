@@ -6021,8 +6021,47 @@ ul.sources-edit-list > li.group-details{
 	padding-bottom: 15px;
     font-size: 15px;
 }
-	
 
+a .mozilla-badge{
+	background: url('../img/mozilla-badge.svg') transparent;
+	width: 17px;
+    height: 17px;
+    display: block;
+    top: 6px;
+    left: 7px;
+    position: absolute;
+    background-size: 17px 17px;
+}
+
+a:hover .mozilla-badge{
+	background: url('../img/mozilla-badge-hover.svg') transparent;
+	width: 17px;
+    height: 17px;
+    display: block;
+    top: 6px;
+    left: 7px;
+    position: absolute;
+    background-size: 17px 17px;	
+}
+
+.badges-active{
+	background: #a6ce39 !important;	
+}
+
+.padding-left-fix{
+	padding-left: 0;
+}
+
+.edit-client-labels {
+	font-size: 12px;
+	white-space: nowrap;
+}
+.edit-client-table {
+	width: 100%;
+}	
+.edit-client-table-col {
+	width: 45%;
+}	
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */

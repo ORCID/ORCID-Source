@@ -154,6 +154,9 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
 
     //Captcha validator used on register
     private Boolean usedRecaptchaOnRegistration;
+    
+    private String userLastIp;
+    private boolean reviewed = Boolean.FALSE;
         
     @Id
     @Column(name = "orcid", length = 19)
@@ -1001,6 +1004,24 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     public void setReferredBy(String referredBy) {
         this.referredBy = referredBy;
     }
+
+    @Column(name = "user_last_ip")
+	public String getUserLastIp() {
+		return userLastIp;
+	}
+
+	public void setUserLastIp(String userLastIp) {
+		this.userLastIp = userLastIp;
+	}
+	
+	@Column(name = "reviewed")
+	public boolean isReviewed() {
+		return reviewed;
+	}
+
+	public void setReviewed(boolean reviewed) {
+		this.reviewed = reviewed;
+	}
 
     /**
      * Generates a string that will be used for caching proposes

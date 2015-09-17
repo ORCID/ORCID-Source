@@ -65,6 +65,7 @@ public class MigratePasswords {
         } while (!profiles.isEmpty());
     }
 
+    @SuppressWarnings("resource")
     private ProfileDao init() {
         ApplicationContext context = new ClassPathXmlApplicationContext("orcid-core-context.xml");
         profileDao = (ProfileDao) context.getBean("profileDao");

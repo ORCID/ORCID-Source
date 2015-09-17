@@ -169,6 +169,7 @@ public class CreateNewClientSecrets {
         output(output);
     }
 
+    @SuppressWarnings("resource")
     private void init() {
         ApplicationContext context = new ClassPathXmlApplicationContext("orcid-core-context.xml");
         encryptionManager = (EncryptionManager) context.getBean("encryptionManager");

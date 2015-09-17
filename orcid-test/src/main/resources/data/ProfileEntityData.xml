@@ -54,6 +54,7 @@
             iso2_country="GB"
             orcid_type="CLIENT"
             client_type="PREMIUM_CREATOR"
+            reviewed="false"
             />
             
     <profile
@@ -86,7 +87,8 @@
             credentials_expiry="2013-02-01"
             biography="Michael Bentine CBE (26 January 1922[1] – 26 November 1996[2]) was a British comedian, comic actor and founding member of the Goons."
             indexing_status="DONE"
-            orcid_type="USER"            
+            orcid_type="USER"
+            reviewed="true"     
             />
 
     <profile
@@ -124,6 +126,7 @@
             iso2_country="GB"
             orcid_type="CLIENT"
             client_type="PREMIUM_CREATOR"
+            reviewed="false"
             />
 
     <profile
@@ -157,6 +160,7 @@
             indexing_status="DONE"
             orcid_type="CLIENT"
             client_type="PREMIUM_CREATOR"
+            reviewed="false"
             />
 
     <profile
@@ -191,6 +195,7 @@
             indexing_status="PENDING"
             orcid_type="CLIENT"
             client_type="PREMIUM_CREATOR"
+            reviewed="false"
             />
 
     <profile
@@ -225,6 +230,7 @@
             indexing_status="PENDING"
             orcid_type="GROUP"
             group_type="PREMIUM_INSTITUTION"
+            reviewed="false"
             />
 
     <profile
@@ -259,6 +265,7 @@
             biography="Otis Ray Redding, Jr. (September 9, 1941 – December 10, 1967) was an American soul singer-songwriter, record producer, arranger, and talent scout."
             indexing_status="DONE"
             orcid_type="USER"
+            reviewed="false"
             />
 
 	<profile
@@ -294,6 +301,7 @@
             indexing_status="DONE"
             primary_record="4444-4444-4444-4441"
             deprecated_date="2013-08-29 15:31:00.00"
+            reviewed="false"
             />
 
 	<profile
@@ -326,7 +334,8 @@
             credentials_expiry="2013-02-01"
             biography="Admin user will be used to execute admin actions on controllers."
             indexing_status="DONE"
-            orcid_type="ADMIN"            
+            orcid_type="ADMIN" 
+            reviewed="false"          
             />            
 
 	<profile
@@ -359,7 +368,8 @@
             credentials_expiry="2013-02-01"
             biography="Michael Bentine CBE (26 January 1922[1] – 26 November 1996[2]) was a British comedian, comic actor and founding member of the Goons."
             indexing_status="DONE"
-            orcid_type="USER"            
+            orcid_type="USER"
+            reviewed="false"          
             />
 
 	<profile
@@ -395,6 +405,7 @@
             group_orcid="4444-4444-4444-4446"
             orcid_type="CLIENT" 
             client_type="PREMIUM_CREATOR"
+            reviewed="false"
             />
 
     <granted_authority

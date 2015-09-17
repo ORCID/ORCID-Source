@@ -33,9 +33,9 @@ import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_JSON;
 import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_XML;
 import static org.orcid.core.api.OrcidApiConstants.WORK;
 import static org.orcid.core.api.OrcidApiConstants.WORK_SUMMARY;
-
-import java.util.ArrayList;
-import java.util.List;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
@@ -47,8 +47,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.orcid.api.common.swagger.SwaggerUIBuilder;
-import org.orcid.api.common.writer.citeproc.CSLItemDataList;
-import org.orcid.api.common.writer.citeproc.WorkToCiteprocTranslator;
 import org.orcid.api.t1.server.delegator.PublicV2ApiServiceDelegator;
 import org.orcid.core.api.OrcidApiConstants;
 import org.orcid.jaxb.model.record.Education;
@@ -61,15 +59,8 @@ import org.orcid.jaxb.model.record.summary.EducationSummary;
 import org.orcid.jaxb.model.record.summary.EmploymentSummary;
 import org.orcid.jaxb.model.record.summary.FundingSummary;
 import org.orcid.jaxb.model.record.summary.PeerReviewSummary;
-import org.orcid.jaxb.model.record.summary.WorkGroup;
 import org.orcid.jaxb.model.record.summary.WorkSummary;
-import org.orcid.jaxb.model.record.summary.Works;
 import org.springframework.beans.factory.annotation.Value;
-
-import de.undercouch.citeproc.csl.CSLItemData;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 
 public class PublicV2ApiServiceImplBase {
 
@@ -106,12 +97,10 @@ public class PublicV2ApiServiceImplBase {
     }
 
     @GET
-    @Produces(value = {VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON, OrcidApiConstants.APPLICATION_CITEPROC })
+    @Produces(value = {VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(ACTIVITIES)
     @ApiOperation(value = "Fetch all Activities", response=ActivitiesSummary.class)
     public Response viewActivities(@PathParam("orcid") String orcid, @Context HttpServletRequest httpRequest) {
-        if (OrcidApiConstants.APPLICATION_CITEPROC.equals(httpRequest.getHeader("Accept")))
-            return serviceDelegator.viewActivitiesCitations(orcid);
         return serviceDelegator.viewActivities(orcid);
     }
 

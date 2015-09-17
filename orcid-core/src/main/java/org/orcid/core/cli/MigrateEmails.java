@@ -79,6 +79,7 @@ public class MigrateEmails {
         LOG.info("Finished migrating emails: doneCount={}, timeTaken={} (H:m:s.S)", doneCount, timeTaken);
     }
 
+    @SuppressWarnings("resource")
     private void init() {
         ApplicationContext context = new ClassPathXmlApplicationContext("orcid-core-context.xml");
         profileDao = (ProfileDao) context.getBean("profileDao");

@@ -14,28 +14,21 @@
  *
  * =============================================================================
  */
-package org.orcid.api.common.writer.citeproc;
+package org.orcid.utils;
 
-import java.util.ArrayList;
-import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 
-import de.undercouch.citeproc.csl.CSLItemData;
+/**
+ * @author Shobhit Tyagi
+ */
+public class OrcidRequestUtil {
 
-@Deprecated
-public class CSLItemDataList {
-
-    private List<CSLItemData> data = new ArrayList<CSLItemData>();
-
-    public List<CSLItemData> getData() {
-        return data;
-    }
-
-    public void setData(List<CSLItemData> data) {
-        this.data = data;
-    }
-    
-    public void addItem(CSLItemData item){
-        if (item != null)
-            data.add(item);
+	 public static String getIpAddress(HttpServletRequest request) {
+    	String ipAddress = request.getHeader("X-FORWARDED-FOR");  
+        if (ipAddress == null) {  
+                 ipAddress = request.getRemoteAddr();  
+        }
+        
+        return ipAddress;
     }
 }
