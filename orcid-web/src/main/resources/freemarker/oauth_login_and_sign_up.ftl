@@ -102,11 +102,11 @@
             </div>                      
        	</div>         	        	
        	
-       	<!-- REGISTER FORM -->
+       	<!-- REGISTER FORM --> 
        	<div id="register" class="oauth-registration" ng-show="showRegisterForm" ng-init="loadAndInitRegistrationForm('${scopesString}','${redirect_uri}','${client_id}','${response_type}')" ng-cloak>
        		<div class="control-group col-md-12 col-sm-12 col-xs-12"> 			    	
 				<p class="pull-right"><@orcid.msg 'orcid.frontend.oauth.alread_have_account'/>&nbsp;<a class="reg" ng-click="switchForm()" id="in-register-switch-form"><@orcid.msg 'orcid.frontend.oauth.alread_have_account.link.text'/></a>.</p>
-	    	</div>
+	    	</div> 
 	    	<div class="">
 	    		<p>${springMacroRequestContext.getMessage("register.labelClause")}</p>
 	    	</div>
@@ -215,8 +215,21 @@
 		            </label>
 		         </div>
 			</div>			   
-		    
-	        <div style="margin-bottom: 15px;">
+		    <div>
+        		<div class="relative recaptcha"  id="recaptcha" style="margin-bottom: 15px;">			
+			 		<div
+                		vc-recaptcha
+                		theme="'light'"
+	                	key="model.key"
+    	            	on-create="setRecaptchaWidgetId(widgetId)"
+        	        	on-success="setRecatchaResponse(response)">
+            	    </div>
+            		<span class="orcid-error" ng-show="register.grecaptcha.errors.length > 0">
+						<div ng-repeat='error in register.grecaptcha.errors track by $index' ng-bind-html="error"></div>
+   					</span>
+        		</div>
+			</div>   
+	        <div style="margin-bottom: 15px;"> 
 		        <div class="row">
 		            <label for="termsConditions" class="col-sm-12">
 		            	<@orcid.msg 'register.labelTermsofUse'/>

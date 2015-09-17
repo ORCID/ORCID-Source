@@ -459,6 +459,11 @@ public class OauthConfirmAccessController extends BaseController {
     @RequestMapping(value = "/custom/register/empty.json", method = RequestMethod.GET)
     public @ResponseBody
     OauthRegistration getRegister(HttpServletRequest request, HttpServletResponse response) {
+        // Remove the session hash if needed
+        if (request.getSession().getAttribute(RegistrationController.GRECAPTCHA_SESSION_ATTRIBUTE_NAME) != null) {
+            request.getSession().removeAttribute(RegistrationController.GRECAPTCHA_SESSION_ATTRIBUTE_NAME);
+        }
+        
         OauthRegistration empty = new OauthRegistration(registrationController.getRegister(request, response));
         // Creation type in oauth will always be member referred
         empty.setCreationType(Text.valueOf(CreationMethod.MEMBER_REFERRED.value()));
@@ -477,18 +482,8 @@ public class OauthConfirmAccessController extends BaseController {
         form.setErrors(new ArrayList<String>());
 
         if (form.getApproved()) {
-            registrationController.registerGivenNameValidate(form);
-            registrationController.registerPasswordValidate(form);
-            registrationController.registerPasswordConfirmValidate(form);
-            registrationController.regEmailValidate(request, form, true);
-            registrationController.registerTermsOfUseValidate(form);
-
-            copyErrors(form.getEmailConfirm(), form);
-            copyErrors(form.getEmail(), form);
-            copyErrors(form.getGivenNames(), form);
-            copyErrors(form.getPassword(), form);
-            copyErrors(form.getPasswordConfirm(), form);
-            copyErrors(form.getTermsOfUse(), form);
+            registrationController.validateRegistrationFields(request, form);
+            registrationController.validateGrcaptcha(request, form);
         } else {
             SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
             String stateParam = null;

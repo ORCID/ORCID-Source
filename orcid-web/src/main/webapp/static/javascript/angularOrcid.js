@@ -8747,7 +8747,7 @@ orcidNgModule.controller('adminDelegatesCtrl',['$scope',function ($scope){
     };
 }]);
 
-orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '$sce', 'commonSrvc',function ($scope, $compile, $sce, commonSrvc){
+orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '$sce', 'commonSrvc', 'vcRecaptchaService', function ($scope, $compile, $sce, commonSrvc, vcRecaptchaService){
     $scope.showClientDescription = false;
     $scope.showRegisterForm = true;
     $scope.isOrcidPresent = false;
@@ -8759,7 +8759,13 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
     $scope.emailTrustAsHtmlErrors = [];
     $scope.enablePersistentToken = true;
     $scope.showLongDescription = {};
+    $scope.recaptchaWidgetId = null;
+    $scope.recatchaResponse = null;
 
+    $scope.model = {
+            key: orcidVar.recaptchaKey
+    };
+    
     $scope.toggleClientDescription = function() {
         $scope.showClientDescription = !$scope.showClientDescription;
     };
@@ -9140,8 +9146,18 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
 	    }
     };
     
-    
-    
+    //------------------
+    //------Recaptcha------
+    //------------------    
+    $scope.setRecaptchaWidgetId = function (widgetId) {                        
+        console.log('Widget ID: ' + widgetId)
+        $scope.recaptchaWidgetId = widgetId;        
+    };
+
+    $scope.setRecatchaResponse = function (response) {        
+        console.log('Yey recaptcha response!');
+        $scope.recatchaResponse = response;        
+    };           
 }]);
 
 orcidNgModule.controller('EmailsController',['$scope', 'emailSrvc',function ($scope, emailSrvc){
