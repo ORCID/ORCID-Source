@@ -29,6 +29,7 @@ import ma.glasnost.orika.converter.ConverterFactory;
 import ma.glasnost.orika.impl.DefaultMapperFactory;
 import ma.glasnost.orika.metadata.ClassMapBuilder;
 
+import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.jaxb.model.common.FuzzyDate;
 import org.orcid.jaxb.model.common.PublicationDate;
@@ -91,8 +92,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         mapCommonFields(mapperFactory.classMap(NotificationCustomEntity.class, NotificationCustom.class)).register();
         mapCommonFields(
                 mapperFactory.classMap(NotificationAddItemsEntity.class, NotificationPermission.class).field("authorizationUrl", "authorizationUrl.uri")
-                        .field("notificationItems", "items.items")
-                        .customize(new CustomMapper<NotificationAddItemsEntity, NotificationPermission>() {
+                        .field("notificationItems", "items.items").customize(new CustomMapper<NotificationAddItemsEntity, NotificationPermission>() {
                             @Override
                             public void mapAtoB(NotificationAddItemsEntity entity, NotificationPermission notification, MappingContext context) {
                                 AuthorizationUrl authUrl = notification.getAuthorizationUrl();
@@ -104,7 +104,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
 
                             @Override
                             public void mapBtoA(NotificationPermission notification, NotificationAddItemsEntity entity, MappingContext context) {
-                                if (entity.getAuthorizationUrl() == null) {
+                                if (StringUtils.isBlank(entity.getAuthorizationUrl())) {
                                     String authUrl = orcidUrlManager.getBaseUrl() + notification.getAuthorizationUrl().getPath();
                                     entity.setAuthorizationUrl(authUrl);
                                 }
@@ -123,6 +123,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
             StringBuilder pathBuilder = new StringBuilder(uri.getPath());
             String query = uri.getQuery();
             if (query != null) {
+                pathBuilder.append('?');
                 pathBuilder.append(query);
             }
             String fragment = uri.getFragment();
@@ -335,7 +336,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         classMap.field("organization.address.region", "org.region");
         classMap.field("organization.address.country", "org.country");
         classMap.field("organization.disambiguatedOrganization.disambiguatedOrganizationIdentifier", "org.orgDisambiguated.sourceId");
-        classMap.field("organization.disambiguatedOrganization.disambiguationSource", "org.orgDisambiguated.sourceType");        
+        classMap.field("organization.disambiguatedOrganization.disambiguationSource", "org.orgDisambiguated.sourceType");
         classMap.field("groupId", "groupId");
         classMap.field("subjectType", "subjectType");
         classMap.field("subjectUrl.value", "subjectUrl");
@@ -345,7 +346,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         classMap.field("subjectContainerName.content", "subjectContainerName");
         classMap.fieldMap("externalIdentifiers", "externalIdentifiersJson").converter("workExternalIdentifiersConverterId").add();
         classMap.fieldMap("subjectExternalIdentifier", "subjectExternalIdentifiersJson").converter("workExternalIdentifierConverterId").add();
-        
+
         classMap.register();
 
         ClassMapBuilder<PeerReviewSummary, PeerReviewEntity> peerReviewSummaryClassMap = mapperFactory.classMap(PeerReviewSummary.class, PeerReviewEntity.class);
