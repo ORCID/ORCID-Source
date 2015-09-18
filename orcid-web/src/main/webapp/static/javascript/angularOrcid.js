@@ -3073,7 +3073,7 @@ orcidNgModule.controller('VerifyEmailCtrl', ['$scope', '$compile', 'emailSrvc', 
                         if ($scope.emailsPojo.emails[i].verified) primeVerified = true;
                     };
                 };
-                if (!primeVerified) {
+                if (!primeVerified && !getBaseUri().contains("sandbox")) {
                     var colorboxHtml = $compile($('#verify-email-modal').html())($scope);
                     $scope.$apply();
                     $.colorbox({
