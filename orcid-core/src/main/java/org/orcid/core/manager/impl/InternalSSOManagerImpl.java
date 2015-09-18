@@ -19,6 +19,7 @@ package org.orcid.core.manager.impl;
 import java.security.SecureRandom;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 
 import javax.annotation.Resource;
 import javax.servlet.http.Cookie;
@@ -28,6 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.manager.InternalSSOManager;
+import org.orcid.core.utils.JsonUtils;
 import org.orcid.persistence.dao.InternalSSODao;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -61,24 +63,38 @@ public class InternalSSOManagerImpl implements InternalSSOManager {
         // Insert it into the DB
         internalSSODao.insert(orcid, token);
 
+        HashMap<String, String> cookieValues = new HashMap<String, String>();
+        cookieValues.put("orcid", orcid);
+        cookieValues.put("token", token);
+        
+        String jsonCookie = JsonUtils.convertToJsonString(cookieValues);
+        
         // Return it as a cookie in the response
-        Cookie tokenCookie = new Cookie(COOKIE_NAME, token);
+        Cookie tokenCookie = new Cookie(COOKIE_NAME, jsonCookie);
         tokenCookie.setMaxAge(maxAgeMinutes * 60);
         tokenCookie.setPath("/");
+        tokenCookie.setHttpOnly(true);
         response.addCookie(tokenCookie);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void updateCookie(String orcid, HttpServletRequest request, HttpServletResponse response) {
         if (request.getCookies() != null) {
             for (Cookie cookie : request.getCookies()) {
                 if (cookie.getName().equals(COOKIE_NAME)) {
-                    if (internalSSODao.update(orcid, cookie.getValue())) {
-                        cookie.setMaxAge(maxAgeMinutes * 60);
-                        response.addCookie(cookie);
+                    HashMap<String, String> cookieValues = JsonUtils.readObjectFromJsonString(cookie.getValue(), HashMap.class);
+                    if(cookieValues.containsKey("token")) {
+                        if (internalSSODao.update(orcid, cookieValues.get("token"))) {
+                            cookie.setMaxAge(maxAgeMinutes * 60);
+                            cookie.setHttpOnly(true);
+                            response.addCookie(cookie);
+                        } else {
+                            // TODO: throw error, couldn't update cookie
+                        }
                     } else {
-                        // TODO: throw error, couldn't update cookie
-                    }
+                            // TODO: throw an exception, the cookie dont have the key
+                    }                        
                 }
             }
         }
@@ -94,6 +110,7 @@ public class InternalSSOManagerImpl implements InternalSSOManager {
                 if (cookie.getName().equals(COOKIE_NAME)) {
                     cookie.setMaxAge(0);
                     cookie.setValue(StringUtils.EMPTY);
+                    cookie.setHttpOnly(true);
                     response.addCookie(cookie);
                 }
             }
