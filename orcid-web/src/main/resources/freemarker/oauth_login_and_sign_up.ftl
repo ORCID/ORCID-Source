@@ -224,8 +224,8 @@
     	            	on-create="setRecaptchaWidgetId(widgetId)"
         	        	on-success="setRecatchaResponse(response)">
             	    </div>
-            		<span class="orcid-error" ng-show="register.grecaptcha.errors.length > 0">
-						<div ng-repeat='error in register.grecaptcha.errors track by $index' ng-bind-html="error"></div>
+            		<span class="orcid-error" ng-show="registrationForm.grecaptcha.errors.length > 0">
+						<div ng-repeat='error in registrationForm.grecaptcha.errors track by $index' ng-bind-html="error"></div>
    					</span>
         		</div>
 			</div>   

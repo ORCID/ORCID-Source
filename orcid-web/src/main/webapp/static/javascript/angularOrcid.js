@@ -8905,6 +8905,14 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
     $scope.register = function() {
         if($scope.enablePersistentToken)
             $scope.registrationForm.persistentTokenEnabled=true;
+        
+        console.log("Recaptcha:");
+        console.log($scope.recatchaResponse);
+        console.log($scope.recaptchaWidgetId);
+        
+        $scope.registrationForm.grecaptcha.value = $scope.recatchaResponse; //Adding the response to the register object
+        $scope.registrationForm.grecaptchaWidgetId.value = $scope.recaptchaWidgetId;
+        
         $.ajax({
             url: getBaseUri() + '/oauth/custom/register.json',
             type: 'POST',
@@ -8914,7 +8922,7 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
             success: function(data) {
                 $scope.registrationForm = data;
                 if($scope.registrationForm.approved) {
-                    if ($scope.registrationForm.errors.length == 0) {
+                    if ($scope.registrationForm.errors == undefined || $scope.registrationForm.errors.length == 0) {
                         $scope.showProcessingColorBox();
                         $scope.getDuplicates();
                     } else {
@@ -8979,7 +8987,6 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
         if($scope.enablePersistentToken)
             auth_scope_prefix = 'AuthorizeP_';
         $scope.showProcessingColorBox();
-        $scope.registrationForm.grecaptcha = "hello"; // extract this from the widget and wire it up to Registration.java to make it work!
         
         $.ajax({
             url: getBaseUri() + '/oauth/custom/registerConfirm.json',
