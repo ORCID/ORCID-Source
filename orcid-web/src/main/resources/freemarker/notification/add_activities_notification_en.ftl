@@ -24,8 +24,8 @@
 <#assign aworks = 0>
 <#assign tworks = "">
 <#assign wbuttons = false>
-<#assign wurl = "">
-<#assign wputCode = "">
+<#assign wUrl = "">
+<#assign wPutCode = "">
 
 <#assign aeducation = 0>
 <#assign teducation = "">
@@ -118,7 +118,7 @@
 		  $scope.archive = function(id) {			
 			$parentScope.archive(id);
 			$parentScope.$apply();
-		  };		  
+		  };			 
 		});
 	</script>
 	<!--  Do not remove -->
@@ -126,32 +126,32 @@
 </head>
 <body data-baseurl="<@spring.url '/'/>" ng-app="appInFrame" ng-controller="iframeController">
 	
-	<#list notification.activities.activities?sort_by("activityType") as activity>
-		<#switch activity.activityType>
+	<#list notification.items.items?sort_by("itemType") as activity>
+		<#switch activity.itemType>
 			 <#case "WORK">
 			  	<#assign aworks = aworks + 1>
-			  	<#assign tworks = tworks + activity.activityName>
+			  	<#assign tworks = tworks + activity.itemName>
 			  	<#if activity.externalId??>
 	           		<#assign tworks = tworks + "(" + activity.externalId.externalIdType + ":" + activity.externalId.externalIdValue + ")">
 	       		</#if>
 	       		<#assign tworks = tworks + "<br/>">
 	       		<#if notification.authorizationUrl??>
 	       			<#assign wbuttons = true>
-	       			<#assign wurl = notification.authorizationUrl.uri>
-	       			<#assign wputCode = notification.putCode>
+	       			<#assign wUrl = notification.authorizationUrl.uri>
+	       			<#assign wPutCode = notification.putCode>
 	       		</#if>
 			    <#break>
 			  <#case "EMPLOYMENT">
 			     <#assign aemployment = aemployment + 1>
-			     <#assign temployment = temployment + activity.activityName + "<br/>">
+			     <#assign temployment = temployment + activity.itemName + "<br/>">
 			     <#break>
 			  <#case "EDUCATION">
 			     <#assign aeducation = aeducation + 1>
-			     <#assign teducation = teducation + activity.activityName + "<br/>">
+			     <#assign teducation = teducation + activity.itemName + "<br/>">
 			     <#break>
 			 <#case "FUNDING">
 			     <#assign afunding = afunding + 1>
-			     <#assign tfunding = tfunding + activity.activityName>
+			     <#assign tfunding = tfunding + activity.itemName>
 			     <#if activity.externalId??>
 	           		<#assign tfunding = tfunding + "(" + activity.externalId.externalIdType + ":" + activity.externalId.externalIdValue + ")">
 	       		 </#if>
@@ -159,7 +159,7 @@
 			     <#break>
 			 <#case "PEER_REVIEW">
 			     <#assign apeerreview = apeerreview + 1>
-			     <#assign tpeerreview = tpeerreview + activity.activityName>
+			     <#assign tpeerreview = tpeerreview + activity.itemName>
 			     <#if activity.externalId??>
 	           		<#assign tpeerreview = tpeerreview + "(" + activity.externalId.externalIdType + ":" + activity.externalId.externalIdValue + ")">
 	       		 </#if>
@@ -200,7 +200,7 @@
 			<strong>${tfunding}</strong>
 			<#if fButtons>
 				<div class="notifications-buttons">
-					<a class="btn btn-primary" href="${fUrl}" target="_blank"><span class="glyphicons cloud-upload"></span> Add now</a>  <a class="btn btn-default" href="" ng-click="archive('${fPutCode?c}')" type="reset" ng-hide="archivedDate">Archive</a>
+					<a class="btn btn-primary" href="<@spring.url '/notifications'/>/${fPutCode?c}/action?target=${fUrl?url}" target="_blank"><span class="glyphicons cloud-upload"></span> <@orcid.msg 'common.add_now' /></a>  <a class="btn btn-default" href="" ng-click="archive('${fPutCode?c}')" type="reset" ng-hide="archivedDate"><@orcid.msg 'notifications.archive' /></a>
 				</div>
 			</#if>
 		</#if>
@@ -212,7 +212,7 @@
 			<strong>${tpeerreview}</strong>
 			<#if pButtons>
 				<div class="notifications-buttons">
-					<a class="btn btn-primary" href="${pUrl}" target="_blank"><span class="glyphicons cloud-upload"></span> Add now</a>  <a class="btn btn-default" href="" ng-click="archive('${pPutCode?c}')" type="reset" ng-hide="archivedDate">Archive</a>
+					<a class="btn btn-primary" href="<@spring.url '/notifications'/>/${pPutCode?c}/action?target=${pUrl?url}" target="_blank"><span class="glyphicons cloud-upload"></span> <@orcid.msg 'common.add_now' /></a> <a class="btn btn-default" href="" ng-click="archive('${pPutCode?c}')" type="reset" ng-hide="archivedDate"><@orcid.msg 'notifications.archive' /></a>
 				</div>
 			</#if>
 		</#if>
@@ -224,7 +224,7 @@
 			<strong>${tworks}</strong>
 			<#if wbuttons>
 				<div class="notifications-buttons">
-					<a class="btn btn-primary" href="${wurl}" target="_blank"><span class="glyphicons cloud-upload"></span> Add now</a>  <a class="btn btn-default" href="" ng-click="archive('${wputCode?c}')" type="reset" ng-hide="archivedDate">Archive</a>
+					<a class="btn btn-primary" href="<@spring.url '/notifications'/>/${wPutCode?c}/action?target=${wUrl?url}" target="_blank"><span class="glyphicons cloud-upload"></span> <@orcid.msg 'common.add_now' /></a>  <a class="btn btn-default" href="" ng-click="archive('${wPutCode?c}')" type="reset" ng-hide="archivedDate"><@orcid.msg 'notifications.archive' /></a>
 				</div>
 			</#if>
 		</#if>

@@ -141,6 +141,7 @@ public class ManageClientGroup {
         System.out.println(group);
     }
 
+    @SuppressWarnings("resource")
     private OrcidClientGroupManager createOrcidClientGroupManager() {
         ApplicationContext context = new ClassPathXmlApplicationContext("orcid-core-context.xml");
         OrcidClientGroupManager manager = (OrcidClientGroupManager) context.getBean("orcidClientGroupManager");

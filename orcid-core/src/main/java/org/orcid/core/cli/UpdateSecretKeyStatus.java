@@ -36,6 +36,7 @@ public class UpdateSecretKeyStatus {
     private ClientSecretDao clientSecretDao;
     private TransactionTemplate transactionTemplate;
     
+    @SuppressWarnings("resource")
     private void init() {
         ApplicationContext context = new ClassPathXmlApplicationContext("orcid-core-context.xml");
         clientSecretDao = (ClientSecretDao) context.getBean("clientSecretDao");

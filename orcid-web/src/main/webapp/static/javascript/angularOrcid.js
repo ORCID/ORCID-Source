@@ -850,7 +850,7 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
             loadingDetails: false,
             blankWork: null,
             details: new Object(), // we should think about putting details in the
-            worksToAddIds: null,
+            worksToAddIds: null,             
             addBibtexJson: function(dw) {
                 if (dw.citation && dw.citation.citationType && dw.citation.citationType.value == 'bibtex') {
                     try {
@@ -1141,6 +1141,22 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
                 }).fail(function(){
                     failFunc();
                 });
+            },
+            getUniqueDois : function(putCode){
+            	var dois = [];            	
+            	var group = worksSrvc.getGroup(putCode);
+            	
+            	for (var idx in group.activities) {            		
+            		for (i = 0; i <= group.activities[idx].workExternalIdentifiers.length - 1; i++) {
+            			if (group.activities[idx].workExternalIdentifiers[i].workExternalIdentifierType.value == 'doi'){
+            				if (isIndexOf.call(dois, group.activities[idx].workExternalIdentifiers[i].workExternalIdentifierId.value) == -1){
+            					dois.push(group.activities[idx].workExternalIdentifiers[i].workExternalIdentifierId.value);
+            				}
+            			}
+            		}
+                }
+            	
+            	return dois;
             }
     };
     return worksSrvc;
@@ -4361,6 +4377,7 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     $scope.displayURLPopOver = {};
     $scope.workType = ['All'];
     $scope.geoArea = ['All'];
+    $scope.badgesRequested = {};
     
     $scope.sortState = new ActSortState(GroupedActivities.ABBR_WORK);
     $scope.sort = function(key) {
@@ -5012,6 +5029,26 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     
     $scope.hideURLPopOver = function(id){    	
     	$scope.displayURLPopOver[id] = false;
+    }
+    
+    $scope.showMozillaBadges = function(putCode){
+    	if ($scope.badgesRequested[putCode] == null){
+	    	var dois = worksSrvc.getUniqueDois(putCode);
+	    	var c = document.getElementsByClassName('badge-container-' + putCode);
+	    	for (i = 0; i <= dois.length - 1; i++){
+	    		var code = 'var conf={"article-doi": "' + dois[i] + '", "container-class": "badge-container-' + putCode + '"};showBadges(conf);';
+	    		var s = document.createElement('script');
+	            s.type = 'text/javascript';
+	            try {
+	              s.appendChild(document.createTextNode(code));
+	              c[0].appendChild(s);
+	            } catch (e) {
+	              s.text = code;
+	              c[0].appendChild(s);
+	            }
+	    	}
+	    	$scope.badgesRequested[putCode] = true;
+    	}
     }
     
     
@@ -7343,6 +7380,126 @@ orcidNgModule.controller('profileLockingCtrl', ['$scope', '$compile', function($
             success: function(data){   
             	$scope.message = data;            	
             	$scope.orcidToUnlock = '';
+            	$scope.$apply();
+            	$scope.closeModal();
+            }
+        }).fail(function(error) {
+            // something bad is happening!
+            console.log("Error while unlocking account");
+        });
+    };
+    
+    $scope.closeModal = function() {        
+        $.colorbox.close();
+    };
+}]);
+
+orcidNgModule.controller('profileReviewCtrl', ['$scope', '$compile', function($scope, $compile){
+	$scope.orcidToReview = '';
+	$scope.orcidToUnreview = '';
+	$scope.showReviewModal = false;
+	$scope.showUnreviewModal = false;
+	$scope.showReviewPopover = false;
+	$scope.profileDetails = null;
+	$scope.message = '';
+	
+	$scope.toggleReviewModal = function(){
+        $scope.showReviewModal = !$scope.showReviewModal;
+        $('#review_modal').toggle();
+    };
+    
+    $scope.toggleUnreviewModal = function(){
+        $scope.showUnreviewModal = !$scope.showUnreviewModal;
+        $('#unreview_modal').toggle();
+    };
+    
+    $scope.checkProfileToReview = function(){
+    	$.ajax({
+            url: getBaseUri()+'/admin-actions/check-account-to-review.json',
+            type: 'POST',
+            data: $scope.orcidToReview,
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            success: function(data){            	
+            	$scope.profileDetails=data;  
+            	if($scope.profileDetails.errors.length) {
+            		$scope.$apply();
+            	}
+            	else {
+            		$scope.showConfirmModal(true);
+            	}            		            
+            }
+        }).fail(function(error) {
+            // something bad is happening!
+            console.log("Error while loading info for the account to review");
+        });
+    };
+    
+    $scope.checkProfileToUnreview = function(){
+    	$.ajax({
+            url: getBaseUri()+'/admin-actions/check-account-to-unreview.json',
+            type: 'POST',
+            data: $scope.orcidToUnreview,
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            success: function(data){            	
+            	$scope.profileDetails=data;  
+            	if($scope.profileDetails.errors.length) {
+            		$scope.$apply();
+            	}
+            	else {
+            		$scope.showConfirmModal(false);
+            	}            		            
+            }
+        }).fail(function(error) {
+            // something bad is happening!
+            console.log("Error while loading info for the account to unreview");
+        });
+    };
+    
+    $scope.showConfirmModal = function(isReviewAction) {
+    	$scope.showReviewPopover = isReviewAction;     	
+        $.colorbox({
+            html : $compile($('#review-confirm-modal').html())($scope),
+                scrolling: true,
+                onLoad: function() {
+                $('#cboxClose').remove();
+            },
+            scrolling: true
+        });
+        $scope.$apply();
+        $.colorbox.resize({width:"425px" , height:"285px"});
+    };
+    
+    $scope.reviewAccount = function() {
+    	$.ajax({
+            url: getBaseUri()+'/admin-actions/review-account.json',
+            type: 'POST',
+            data: $scope.profileDetails.orcid,
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'text',
+            success: function(data){   
+            	$scope.message = data;            	
+            	$scope.orcidToReview = '';
+            	$scope.$apply();
+            	$scope.closeModal();
+            }
+        }).fail(function(error) {
+            // something bad is happening!
+            console.log("Error while reviewing account");
+        });
+    };
+    
+    $scope.unreviewAccount = function() {
+    	$.ajax({
+            url: getBaseUri()+'/admin-actions/unreview-account.json',
+            type: 'POST',
+            data: $scope.profileDetails.orcid,
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'text',
+            success: function(data){   
+            	$scope.message = data;            	
+            	$scope.orcidToUnreview = '';
             	$scope.$apply();
             	$scope.closeModal();
             }

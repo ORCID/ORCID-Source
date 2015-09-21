@@ -29,17 +29,18 @@ import ma.glasnost.orika.converter.ConverterFactory;
 import ma.glasnost.orika.impl.DefaultMapperFactory;
 import ma.glasnost.orika.metadata.ClassMapBuilder;
 
+import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.jaxb.model.common.FuzzyDate;
 import org.orcid.jaxb.model.common.PublicationDate;
 import org.orcid.jaxb.model.common.SourceClientId;
 import org.orcid.jaxb.model.common.SourceOrcid;
 import org.orcid.jaxb.model.groupid.GroupIdRecord;
-import org.orcid.jaxb.model.notification.addactivities.Activity;
-import org.orcid.jaxb.model.notification.addactivities.AuthorizationUrl;
-import org.orcid.jaxb.model.notification.addactivities.NotificationAddActivities;
 import org.orcid.jaxb.model.notification.amended.NotificationAmended;
 import org.orcid.jaxb.model.notification.custom.NotificationCustom;
+import org.orcid.jaxb.model.notification.permission.AuthorizationUrl;
+import org.orcid.jaxb.model.notification.permission.Item;
+import org.orcid.jaxb.model.notification.permission.NotificationPermission;
 import org.orcid.jaxb.model.record.Education;
 import org.orcid.jaxb.model.record.Employment;
 import org.orcid.jaxb.model.record.Funding;
@@ -57,8 +58,8 @@ import org.orcid.jaxb.model.record.summary.WorkSummary;
 import org.orcid.persistence.jpa.entities.CompletionDateEntity;
 import org.orcid.persistence.jpa.entities.EndDateEntity;
 import org.orcid.persistence.jpa.entities.GroupIdRecordEntity;
-import org.orcid.persistence.jpa.entities.NotificationActivityEntity;
-import org.orcid.persistence.jpa.entities.NotificationAddActivitiesEntity;
+import org.orcid.persistence.jpa.entities.NotificationItemEntity;
+import org.orcid.persistence.jpa.entities.NotificationAddItemsEntity;
 import org.orcid.persistence.jpa.entities.NotificationAmendedEntity;
 import org.orcid.persistence.jpa.entities.NotificationCustomEntity;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
@@ -90,11 +91,10 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         converterFactory.registerConverter("externalIdentifierIdConverter", new ExternalIdentifierTypeConverter());
         mapCommonFields(mapperFactory.classMap(NotificationCustomEntity.class, NotificationCustom.class)).register();
         mapCommonFields(
-                mapperFactory.classMap(NotificationAddActivitiesEntity.class, NotificationAddActivities.class).field("authorizationUrl", "authorizationUrl.uri")
-                        .field("notificationActivities", "activities.activities")
-                        .customize(new CustomMapper<NotificationAddActivitiesEntity, NotificationAddActivities>() {
+                mapperFactory.classMap(NotificationAddItemsEntity.class, NotificationPermission.class).field("authorizationUrl", "authorizationUrl.uri")
+                        .field("notificationItems", "items.items").customize(new CustomMapper<NotificationAddItemsEntity, NotificationPermission>() {
                             @Override
-                            public void mapAtoB(NotificationAddActivitiesEntity entity, NotificationAddActivities notification, MappingContext context) {
+                            public void mapAtoB(NotificationAddItemsEntity entity, NotificationPermission notification, MappingContext context) {
                                 AuthorizationUrl authUrl = notification.getAuthorizationUrl();
                                 if (authUrl != null) {
                                     authUrl.setPath(extractFullPath(authUrl.getUri()));
@@ -103,15 +103,15 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
                             }
 
                             @Override
-                            public void mapBtoA(NotificationAddActivities notification, NotificationAddActivitiesEntity entity, MappingContext context) {
-                                if (entity.getAuthorizationUrl() == null) {
+                            public void mapBtoA(NotificationPermission notification, NotificationAddItemsEntity entity, MappingContext context) {
+                                if (StringUtils.isBlank(entity.getAuthorizationUrl())) {
                                     String authUrl = orcidUrlManager.getBaseUrl() + notification.getAuthorizationUrl().getPath();
                                     entity.setAuthorizationUrl(authUrl);
                                 }
                             }
                         })).register();
         mapCommonFields(mapperFactory.classMap(NotificationAmendedEntity.class, NotificationAmended.class)).register();
-        mapperFactory.classMap(NotificationActivityEntity.class, Activity.class).fieldMap("externalIdType", "externalIdentifier.externalIdentifierType")
+        mapperFactory.classMap(NotificationItemEntity.class, Item.class).fieldMap("externalIdType", "externalIdentifier.externalIdentifierType")
                 .converter("externalIdentifierIdConverter").add().field("externalIdValue", "externalIdentifier.externalIdentifierId").byDefault().register();
         addV2SourceMapping(mapperFactory);
         return mapperFactory.getMapperFacade();
@@ -123,6 +123,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
             StringBuilder pathBuilder = new StringBuilder(uri.getPath());
             String query = uri.getQuery();
             if (query != null) {
+                pathBuilder.append('?');
                 pathBuilder.append(query);
             }
             String fragment = uri.getFragment();
@@ -335,7 +336,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         classMap.field("organization.address.region", "org.region");
         classMap.field("organization.address.country", "org.country");
         classMap.field("organization.disambiguatedOrganization.disambiguatedOrganizationIdentifier", "org.orgDisambiguated.sourceId");
-        classMap.field("organization.disambiguatedOrganization.disambiguationSource", "org.orgDisambiguated.sourceType");        
+        classMap.field("organization.disambiguatedOrganization.disambiguationSource", "org.orgDisambiguated.sourceType");
         classMap.field("groupId", "groupId");
         classMap.field("subjectType", "subjectType");
         classMap.field("subjectUrl.value", "subjectUrl");
@@ -345,7 +346,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         classMap.field("subjectContainerName.content", "subjectContainerName");
         classMap.fieldMap("externalIdentifiers", "externalIdentifiersJson").converter("workExternalIdentifiersConverterId").add();
         classMap.fieldMap("subjectExternalIdentifier", "subjectExternalIdentifiersJson").converter("workExternalIdentifierConverterId").add();
-        
+
         classMap.register();
 
         ClassMapBuilder<PeerReviewSummary, PeerReviewEntity> peerReviewSummaryClassMap = mapperFactory.classMap(PeerReviewSummary.class, PeerReviewEntity.class);

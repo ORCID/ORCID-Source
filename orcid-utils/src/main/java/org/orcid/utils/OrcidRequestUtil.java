@@ -14,18 +14,21 @@
  *
  * =============================================================================
  */
-package org.orcid.api.notifications.server;
+package org.orcid.utils;
 
-import javax.ws.rs.Path;
-
-import org.orcid.core.api.OrcidApiConstants;
+import javax.servlet.http.HttpServletRequest;
 
 /**
- * 
- * @author Will Simpson
- * 
+ * @author Shobhit Tyagi
  */
-@Path("/v2.0_rc1" + OrcidApiConstants.NOTIFICATIONS_PATH)
-public class NotificationsApiServiceImplV2_0_rc1 extends NotificationsApiServiceImplBase {
+public class OrcidRequestUtil {
 
+	 public static String getIpAddress(HttpServletRequest request) {
+    	String ipAddress = request.getHeader("X-FORWARDED-FOR");  
+        if (ipAddress == null) {  
+                 ipAddress = request.getRemoteAddr();  
+        }
+        
+        return ipAddress;
+    }
 }

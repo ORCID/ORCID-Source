@@ -34,6 +34,7 @@ import org.orcid.core.api.OrcidApiConstants;
 import de.undercouch.citeproc.csl.CSLItemData;
 import de.undercouch.citeproc.helper.json.StringJsonBuilderFactory;
 
+@Deprecated
 @Provider
 @Produces({ OrcidApiConstants.APPLICATION_CITEPROC }) //text/x-bibliography ?
 public class CSLItemDataListMBWriter implements MessageBodyWriter<CSLItemDataList> {

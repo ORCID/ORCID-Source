@@ -68,5 +68,7 @@ public interface NotificationManager {
     public Notification createNotification(String orcid, Notification notification);
 
     public Notification flagAsArchived(String orcid, Long id) throws OrcidNotificationAlreadyReadException;
+    
+    public Notification setActionedDate(String orcid, Long id);
 
 }

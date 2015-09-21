@@ -734,4 +734,33 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         Date result = query.getSingleResult();
         return (result == null) ? false : true;
     }
+
+	@Override
+	@Transactional
+	public void updateIpAddress(String orcid, String ipAddress) {
+		Query query = entityManager.createNativeQuery("update profile set last_modified=now(), indexing_status='REINDEX', user_last_ip=:ipAddr where orcid=:orcid");
+        query.setParameter("orcid", orcid);
+        query.setParameter("ipAddr", ipAddress);
+        query.executeUpdate();
+	}
+
+	@Override
+	@Transactional
+	public boolean reviewProfile(String orcid) {
+		return changeReviewedStatus(orcid, true);
+	}
+
+	@Override
+	@Transactional
+	public boolean unreviewProfile(String orcid) {
+		return changeReviewedStatus(orcid, false);
+	}
+	
+    @Transactional
+    private boolean changeReviewedStatus(String orcid, boolean reviewFlag) {
+        Query query = entityManager.createNativeQuery("update profile set last_modified=now(), indexing_status='REINDEX', reviewed=:reviewed where orcid=:orcid");
+        query.setParameter("orcid", orcid);
+        query.setParameter("reviewed", reviewFlag);
+        return query.executeUpdate() > 0;
+    }
 }

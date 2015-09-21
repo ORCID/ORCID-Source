@@ -514,6 +514,16 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     public boolean isDeactivated(String orcid) {
         return profileDao.isDeactivated(orcid);
     }
+    
+	@Override
+	public boolean reviewProfile(String orcid) {
+		return profileDao.reviewProfile(orcid);
+	}
+
+	@Override
+	public boolean unreviewProfile(String orcid) {
+		return profileDao.unreviewProfile(orcid);
+	}
 }
 
 class GroupableActivityComparator implements Comparator<GroupableActivity> {
