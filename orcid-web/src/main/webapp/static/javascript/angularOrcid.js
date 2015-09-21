@@ -4240,6 +4240,7 @@ orcidNgModule.controller('PublicWorkCtrl',['$scope', '$compile', '$filter', 'wor
     $scope.editSources = {};
     $scope.showElement = {};
     $scope.displayURLPopOver = {};
+    $scope.badgesRequested = {};
 
     $scope.sortState = new ActSortState(GroupedActivities.ABBR_WORK);
     $scope.sort = function(key) {
@@ -4339,6 +4340,26 @@ orcidNgModule.controller('PublicWorkCtrl',['$scope', '$compile', '$filter', 'wor
 	$scope.showURLPopOver = function(id){
 		$scope.displayURLPopOver[id] = true;
 	};
+	
+	$scope.showMozillaBadges = function(putCode){
+    	if ($scope.badgesRequested[putCode] == null){
+	    	var dois = worksSrvc.getUniqueDois(putCode);
+	    	var c = document.getElementsByClassName('badge-container-' + putCode);
+	    	for (i = 0; i <= dois.length - 1; i++){
+	    		var code = 'var conf={"article-doi": "' + dois[i] + '", "container-class": "badge-container-' + putCode + '"};showBadges(conf);';
+	    		var s = document.createElement('script');
+	            s.type = 'text/javascript';
+	            try {
+	              s.appendChild(document.createTextNode(code));
+	              c[0].appendChild(s);
+	            } catch (e) {
+	              s.text = code;
+	              c[0].appendChild(s);
+	            }
+	    	}
+	    	$scope.badgesRequested[putCode] = true;
+    	}
+    }
 
 }]);
 
