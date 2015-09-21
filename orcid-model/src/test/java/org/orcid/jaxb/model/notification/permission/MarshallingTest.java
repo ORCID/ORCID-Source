@@ -14,9 +14,10 @@
  *
  * =============================================================================
  */
-package org.orcid.jaxb.model.notification.addactivities;
+package org.orcid.jaxb.model.notification.permission;
 
 import static org.junit.Assert.*;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
@@ -32,6 +33,7 @@ import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Test;
 import org.orcid.jaxb.model.notification.NotificationType;
+import org.orcid.jaxb.model.notification.permission.NotificationPermission;
 import org.xml.sax.SAXException;
 
 /**
@@ -42,24 +44,24 @@ import org.xml.sax.SAXException;
 
 public class MarshallingTest {
 
-    private static final String SAMPLE_PATH = "/notification_2.0_rc1/samples/notification-add-activities-2.0_rc1.xml";
+    private static final String SAMPLE_PATH = "/notification_2.0_rc1/samples/notification-permission-2.0_rc1.xml";
 
     @Test
     public void testMarshalling() throws JAXBException, IOException, SAXException {
-        NotificationAddActivities notification = getNotification();
+        NotificationPermission notification = getNotification();
         assertNotNull(notification);
-        assertEquals(NotificationType.ADD_ACTIVITIES, notification.getNotificationType());
-        assertEquals(2, notification.getActivities().getActivities().size());
+        assertEquals(NotificationType.PERMISSION, notification.getNotificationType());
+        assertEquals(2, notification.getItems().getItems().size());
         assertEquals("2014-01-01T14:45:32", notification.getSentDate().toXMLFormat());
 
         // Back the other way
         String expected = IOUtils.toString(getClass().getResourceAsStream(SAMPLE_PATH), "UTF-8");
         Pattern pattern = Pattern.compile("<!--.*?-->\\s*", Pattern.DOTALL);
         expected = pattern.matcher(expected).replaceAll("");
-        JAXBContext context = JAXBContext.newInstance("org.orcid.jaxb.model.notification.addactivities");
+        JAXBContext context = JAXBContext.newInstance("org.orcid.jaxb.model.notification.permission");
         Marshaller marshaller = context.createMarshaller();
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-        marshaller.setProperty(Marshaller.JAXB_SCHEMA_LOCATION, "http://www.orcid.org/ns/notification ../notification-add-activities-2.0_rc1.xsd");
+        marshaller.setProperty(Marshaller.JAXB_SCHEMA_LOCATION, "http://www.orcid.org/ns/notification ../notification-permission-2.0_rc1.xsd");
         StringWriter writer = new StringWriter();
         marshaller.marshal(notification, writer);
         XMLUnit.setIgnoreWhitespace(true);
@@ -67,11 +69,11 @@ public class MarshallingTest {
         assertTrue(diff.identical());
     }
 
-    private NotificationAddActivities getNotification() throws JAXBException {
-        JAXBContext context = JAXBContext.newInstance("org.orcid.jaxb.model.notification.addactivities");
+    private NotificationPermission getNotification() throws JAXBException {
+        JAXBContext context = JAXBContext.newInstance("org.orcid.jaxb.model.notification.permission");
         Unmarshaller unmarshaller = context.createUnmarshaller();
         InputStream inputStream = MarshallingTest.class.getResourceAsStream(SAMPLE_PATH);
-        return (NotificationAddActivities) unmarshaller.unmarshal(inputStream);
+        return (NotificationPermission) unmarshaller.unmarshal(inputStream);
     }
 
 }

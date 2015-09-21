@@ -123,6 +123,12 @@ public class OrcidProfile implements Serializable {
     
     @XmlTransient
     private boolean locked = false;
+    
+    @XmlTransient
+    private String userLastIp;
+    
+    @XmlTransient
+    private boolean reviewed = false;
 
     /**
      * Gets the value of the orcid property.
@@ -634,4 +640,20 @@ public class OrcidProfile implements Serializable {
     public void setLocked(boolean locked) {
         this.locked = locked;
     }
+
+	public String getUserLastIp() {
+		return userLastIp;
+	}
+
+	public void setUserLastIp(String userLastIp) {
+		this.userLastIp = userLastIp;
+	}
+
+	public boolean isReviewed() {
+		return reviewed;
+	}
+
+	public void setReviewed(boolean reviewed) {
+		this.reviewed = reviewed;
+	}
 }

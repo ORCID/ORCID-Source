@@ -82,6 +82,7 @@ public class Classpath {
      * applied only to files that are in the zip files and the directories. In
      * other words, the filter will not be used to sort directories.
      */
+    @SuppressWarnings("resource")
     public static String[] getClasspathFileNames(boolean includeBasePath) throws ZipException, IOException {
         StringTokenizer tokenizer = new StringTokenizer(System.getProperty("java.class.path"), File.pathSeparator, false);
         Set<String> filenames = new LinkedHashSet();

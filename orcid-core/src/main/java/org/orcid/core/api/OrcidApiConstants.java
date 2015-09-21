@@ -35,9 +35,8 @@ public class OrcidApiConstants {
     public static final String WEBHOOKS_PATH = "/{orcid}/webhook/{webhook_uri}";
     public static final String AUTHENTICATE_PATH = "/{orcid}/authenticate";
     public static final String CLIENT_PATH = "/client/{client_id:[^/]+}";
-    public static final String NOTIFICATIONS_PATH ="/{orcid}/notifications";
-    public static final String ADD_ACTIVITIES_PATH = "/add-activities";
-    public static final String ADD_ACTIVITIES_VIEW_PATH = "/add-activities/{id}";
+    public static final String PERMISSIONS_PATH = "/{orcid}/notification-permission";
+    public static final String PERMISSIONS_VIEW_PATH = "/{orcid}/notification-permission/{id}";
     public static final String RECORD = "/{orcid}/record";
     public static final String ACTIVITIES = "/{orcid}/activities";
     public static final String WORK = "/{orcid}/work";
@@ -49,7 +48,6 @@ public class OrcidApiConstants {
     public static final String EMPLOYMENT = "/{orcid}/employment";
     public static final String EMPLOYMENT_SUMMARY = "/{orcid}/employment/summary";
     public static final String PUTCODE = "/{putCode}"; // concated on the end of other paths like FUNDINGS
-    public static final String ADD_ACTIVITIES_FLAG_AS_ARCHIVED_PATH = "/add-activities/{id}/archive";
     public static final String PEER_REVIEW = "/{orcid}/peer-review";
     public static final String PEER_REVIEW_SUMMARY = "/{orcid}/peer-review/summary";
     public static final String GROUP_ID_RECORD = "/group-id-record";
@@ -80,4 +78,6 @@ public class OrcidApiConstants {
     public static final String SWAGGER_PATH = "/resources";
     public static final String SWAGGER_FILE = "/swagger.json";
     public static final String SWAGGER_FILE_YAML = "/swagger.yaml";
+    
+    public static final String APPLICATION_CITEPROC = "application/vnd.citationstyles.csl+json";
 }       

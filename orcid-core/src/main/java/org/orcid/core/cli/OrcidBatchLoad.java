@@ -66,6 +66,7 @@ public class OrcidBatchLoad {
     /**
      * @param args
      */
+    @SuppressWarnings("resource")
     public static void main(String[] args) throws Exception {
 
         int numOrcidsRequired = args.length == 1 ? Integer.parseInt(args[0]) : 2;

@@ -24,6 +24,7 @@
 package org.orcid.jaxb.model.notification;
 
 import javax.xml.bind.annotation.XmlEnum;
+import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlType;
 
 /**
@@ -35,21 +36,16 @@ import javax.xml.bind.annotation.XmlType;
  * this class.
  * <p>
  * 
- * <pre>
- * &lt;simpleType>
- *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
- *     &lt;enumeration value="RECORD_UPDATED_BY_MEMBER"/>
- *     &lt;enumeration value="CUSTOM"/>
- *   &lt;/restriction>
- * &lt;/simpleType>
- * </pre>
- * 
  */
 @XmlType(name = "")
 @XmlEnum
 public enum NotificationType {
 
-    CUSTOM, ADD_ACTIVITIES, AMENDED;
+    //@formatter:off
+    @XmlEnumValue("custom") CUSTOM,
+    @XmlEnumValue("permission")PERMISSION,
+    @XmlEnumValue("amended") AMENDED;
+    //@formatter:on
 
     public String value() {
         return name();

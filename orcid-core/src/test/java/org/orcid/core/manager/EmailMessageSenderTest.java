@@ -38,12 +38,12 @@ import org.orcid.jaxb.model.message.OrcidBio;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.PersonalDetails;
 import org.orcid.jaxb.model.notification.Notification;
-import org.orcid.jaxb.model.notification.addactivities.Activities;
-import org.orcid.jaxb.model.notification.addactivities.Activity;
-import org.orcid.jaxb.model.notification.addactivities.ActivityType;
-import org.orcid.jaxb.model.notification.addactivities.NotificationAddActivities;
 import org.orcid.jaxb.model.notification.amended.NotificationAmended;
 import org.orcid.jaxb.model.notification.custom.NotificationCustom;
+import org.orcid.jaxb.model.notification.permission.Item;
+import org.orcid.jaxb.model.notification.permission.ItemType;
+import org.orcid.jaxb.model.notification.permission.Items;
+import org.orcid.jaxb.model.notification.permission.NotificationPermission;
 import org.orcid.utils.DateUtils;
 
 /**
@@ -69,11 +69,11 @@ public class EmailMessageSenderTest extends BaseTest {
 
         List<Notification> notifications = new ArrayList<>();
 
-        NotificationAddActivities notification1 = new NotificationAddActivities();
-        Activities activities1 = new Activities();
-        notification1.setActivities(activities1);
-        activities1.getActivities().add(createActivity(ActivityType.WORK, "Work 1"));
-        activities1.getActivities().add(createActivity(ActivityType.WORK, "Work 2"));
+        NotificationPermission notification1 = new NotificationPermission();
+        Items activities1 = new Items();
+        notification1.setItems(activities1);
+        activities1.getItems().add(createActivity(ItemType.WORK, "Work 1"));
+        activities1.getItems().add(createActivity(ItemType.WORK, "Work 2"));
         notification1.setCreatedDate(DateUtils.convertToXMLGregorianCalendar("2014-07-10T13:39:31"));
         Source source1 = new Source();
         source1.setSourceName(new SourceName("Super Institution 1"));
@@ -81,10 +81,10 @@ public class EmailMessageSenderTest extends BaseTest {
         notification1.setSource(source1);
         notifications.add(notification1);
 
-        NotificationAddActivities notification2 = new NotificationAddActivities();
-        Activities activities2 = new Activities();
-        notification2.setActivities(activities2);
-        activities2.getActivities().add(createActivity(ActivityType.EMPLOYMENT, "Employment 1"));
+        NotificationPermission notification2 = new NotificationPermission();
+        Items activities2 = new Items();
+        notification2.setItems(activities2);
+        activities2.getItems().add(createActivity(ItemType.EMPLOYMENT, "Employment 1"));
         notification2.setCreatedDate(DateUtils.convertToXMLGregorianCalendar("2014-08-17T10:22:15"));
         Source source2 = new Source();
         source2.setSourceName(new SourceName("Super Institution 1"));
@@ -92,11 +92,11 @@ public class EmailMessageSenderTest extends BaseTest {
         notification2.setSource(source2);
         notifications.add(notification2);
 
-        NotificationAddActivities notification3 = new NotificationAddActivities();
-        Activities activities3 = new Activities();
-        notification3.setActivities(activities3);
-        activities3.getActivities().add(createActivity(ActivityType.WORK, "Work 3"));
-        activities3.getActivities().add(createActivity(ActivityType.WORK, "Work 4"));
+        NotificationPermission notification3 = new NotificationPermission();
+        Items activities3 = new Items();
+        notification3.setItems(activities3);
+        activities3.getItems().add(createActivity(ItemType.WORK, "Work 3"));
+        activities3.getItems().add(createActivity(ItemType.WORK, "Work 4"));
         notification3.setCreatedDate(DateUtils.convertToXMLGregorianCalendar("2014-07-10T08:53:56"));
         Source source3 = new Source();
         source3.setSourceName(new SourceName("Lovely Publisher 1"));
@@ -128,10 +128,10 @@ public class EmailMessageSenderTest extends BaseTest {
         assertEquals("Spike Milligan you have [6] new notifications", emailMessage.getSubject());
     }
 
-    private Activity createActivity(ActivityType actType, String actName) {
-        Activity act = new Activity();
-        act.setActivityType(actType);
-        act.setActivityName(actName);
+    private Item createActivity(ItemType actType, String actName) {
+        Item act = new Item();
+        act.setItemType(actType);
+        act.setItemName(actName);
         return act;
     }
 

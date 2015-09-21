@@ -27,6 +27,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class SearchCrossRef {
 
+    @SuppressWarnings("resource")
     public static void main(String[] args) {
         ApplicationContext context = new ClassPathXmlApplicationContext("orcid-core-context.xml");
         CrossRefManager manager = (CrossRefManager) context.getBean("crossRefManager");

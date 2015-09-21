@@ -37,15 +37,18 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.orcid.api.common.swagger.SwaggerUIBuilder;
 import org.orcid.api.t1.server.delegator.PublicV2ApiServiceDelegator;
+import org.orcid.core.api.OrcidApiConstants;
 import org.orcid.jaxb.model.record.Education;
 import org.orcid.jaxb.model.record.Employment;
 import org.orcid.jaxb.model.record.Funding;
@@ -58,7 +61,6 @@ import org.orcid.jaxb.model.record.summary.FundingSummary;
 import org.orcid.jaxb.model.record.summary.PeerReviewSummary;
 import org.orcid.jaxb.model.record.summary.WorkSummary;
 import org.springframework.beans.factory.annotation.Value;
-
 
 public class PublicV2ApiServiceImplBase {
 
@@ -95,18 +97,20 @@ public class PublicV2ApiServiceImplBase {
     }
 
     @GET
-    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Produces(value = {VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(ACTIVITIES)
     @ApiOperation(value = "Fetch all Activities", response=ActivitiesSummary.class)
-    public Response viewActivities(@PathParam("orcid") String orcid) {
+    public Response viewActivities(@PathParam("orcid") String orcid, @Context HttpServletRequest httpRequest) {
         return serviceDelegator.viewActivities(orcid);
     }
 
     @GET
-    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON,OrcidApiConstants.APPLICATION_CITEPROC })
     @Path(WORK + PUTCODE)
     @ApiOperation(value = "Fetch a Work", notes = "More notes about this method", response = Work.class)
-    public Response viewWork(@PathParam("orcid") String orcid, @PathParam("putCode") Long putCode) {
+    public Response viewWork(@PathParam("orcid") String orcid, @PathParam("putCode") Long putCode, @Context HttpServletRequest httpRequest) {
+        if (OrcidApiConstants.APPLICATION_CITEPROC.equals(httpRequest.getHeader("Accept")))
+            return serviceDelegator.viewWorkCitation(orcid,putCode);
         return serviceDelegator.viewWork(orcid, putCode);
     }
 

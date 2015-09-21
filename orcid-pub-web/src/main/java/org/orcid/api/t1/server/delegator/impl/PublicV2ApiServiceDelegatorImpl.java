@@ -19,12 +19,15 @@ package org.orcid.api.t1.server.delegator.impl;
 import static org.orcid.core.api.OrcidApiConstants.STATUS_OK_MESSAGE;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
 
 import org.orcid.api.common.util.ActivityUtils;
+import org.orcid.api.common.writer.citeproc.CSLItemDataList;
+import org.orcid.api.common.writer.citeproc.WorkToCiteprocTranslator;
 import org.orcid.api.t1.server.delegator.PublicV2ApiServiceDelegator;
 import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.manager.AffiliationsManager;
@@ -38,6 +41,7 @@ import org.orcid.core.manager.WorkManager;
 import org.orcid.core.security.visibility.aop.AccessControl;
 import org.orcid.core.security.visibility.filter.VisibilityFilterV2;
 import org.orcid.jaxb.model.message.ScopePathType;
+import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.record.Education;
 import org.orcid.jaxb.model.record.Employment;
 import org.orcid.jaxb.model.record.Funding;
@@ -48,11 +52,15 @@ import org.orcid.jaxb.model.record.summary.EducationSummary;
 import org.orcid.jaxb.model.record.summary.EmploymentSummary;
 import org.orcid.jaxb.model.record.summary.FundingSummary;
 import org.orcid.jaxb.model.record.summary.PeerReviewSummary;
+import org.orcid.jaxb.model.record.summary.WorkGroup;
 import org.orcid.jaxb.model.record.summary.WorkSummary;
+import org.orcid.jaxb.model.record.summary.Works;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.WebhookDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.springframework.beans.factory.annotation.Value;
+
+import de.undercouch.citeproc.csl.CSLItemData;
 
 public class PublicV2ApiServiceDelegatorImpl implements PublicV2ApiServiceDelegator {
 
@@ -122,6 +130,20 @@ public class PublicV2ApiServiceDelegatorImpl implements PublicV2ApiServiceDelega
         orcidSecurityManager.checkVisibility(w);
         ActivityUtils.setPathToActivity(w, orcid);
         return Response.ok(w).build();
+    }
+    
+    @Override
+    @AccessControl(requiredScope = ScopePathType.READ_PUBLIC, enableAnonymousAccess = true)
+    public Response viewWorkCitation(String orcid, Long putCode) { 
+        Work w = (Work) this.viewWork(orcid, putCode).getEntity();
+        ProfileEntity entity = profileEntityManager.findByOrcid(orcid);
+        String creditName = null;
+        if (!entity.getCreditNameVisibility().isMoreRestrictiveThan(Visibility.PUBLIC)){
+            creditName = entity.getCreditName();
+        }
+        WorkToCiteprocTranslator tran = new  WorkToCiteprocTranslator();
+        CSLItemData item = tran.toCiteproc(w, creditName ,true);
+        return Response.ok(item).build();
     }
 
     @Override

@@ -17,7 +17,9 @@
 package org.orcid.integration.blackbox.api;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -37,7 +39,8 @@ import org.orcid.integration.api.helper.OauthHelper;
 import org.orcid.integration.api.notifications.NotificationsApiClientImpl;
 import org.orcid.integration.api.t2.T2OAuthAPIService;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.notification.addactivities.NotificationAddActivities;
+import org.orcid.jaxb.model.notification.permission.AuthorizationUrl;
+import org.orcid.jaxb.model.notification.permission.NotificationPermission;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -76,33 +79,129 @@ public class NotificationsTest {
     }
 
     @Test
-    public void createAddActivitiesNotification() throws JSONException {
-        NotificationAddActivities notification = unmarshallFromPath("/notification_2.0_rc1/samples/notification-add-activities-2.0_rc1.xml");
+    public void createPermissionNotification() throws JSONException {
+        NotificationPermission notification = unmarshallFromPath("/notification_2.0_rc1/samples/notification-permission-2.0_rc1.xml");
         notification.setPutCode(null);
         String accessToken = oauthHelper.getClientCredentialsAccessToken(client1ClientId, client1ClientSecret, ScopePathType.PREMIUM_NOTIFICATION);
 
-        ClientResponse response = notificationsClient.addAddActivitiesNotificationXml(testUser1OrcidId, notification, accessToken);
+        ClientResponse response = notificationsClient.addPermissionNotificationXml(testUser1OrcidId, notification, accessToken);
         assertNotNull(response);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
         String locationPath = response.getLocation().getPath();
         assertTrue("Location header path should match pattern, but was " + locationPath,
-                locationPath.matches(".*/v2.0_rc1/" + testUser1OrcidId + "/notifications/add-activities/\\d+"));
+                locationPath.matches(".*/v2.0_rc1/" + testUser1OrcidId + "/notification-permission/\\d+"));
     }
 
-    public NotificationAddActivities unmarshallFromPath(String path) {
+    @Test
+    public void flagAsArchived() throws JSONException {
+        NotificationPermission notification = unmarshallFromPath("/notification_2.0_rc1/samples/notification-permission-2.0_rc1.xml");
+        notification.setPutCode(null);
+        String accessToken = oauthHelper.getClientCredentialsAccessToken(client1ClientId, client1ClientSecret, ScopePathType.PREMIUM_NOTIFICATION);
+
+        ClientResponse postResponse = notificationsClient.addPermissionNotificationXml(testUser1OrcidId, notification, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+        String locationPath = postResponse.getLocation().getPath();
+        assertTrue("Location header path should match pattern, but was " + locationPath,
+                locationPath.matches(".*/v2.0_rc1/" + testUser1OrcidId + "/notification-permission/\\d+"));
+        String putCodeString = locationPath.substring(locationPath.lastIndexOf('/') + 1);
+        Long putCode = Long.valueOf(putCodeString);
+
+        ClientResponse viewResponse = notificationsClient.viewPermissionNotificationXml(testUser1OrcidId, putCode, accessToken);
+        assertEquals(Response.Status.OK.getStatusCode(), viewResponse.getStatus());
+        NotificationPermission retrievedNotification = viewResponse.getEntity(NotificationPermission.class);
+        assertNotNull(retrievedNotification);
+        assertNull(retrievedNotification.getArchivedDate());
+
+        ClientResponse archiveResponse = notificationsClient.flagAsArchivedPermissionNotificationXml(testUser1OrcidId, putCode, accessToken);
+        assertEquals(Response.Status.OK.getStatusCode(), archiveResponse.getStatus());
+
+        ClientResponse viewAfterArchiveResponse = notificationsClient.viewPermissionNotificationXml(testUser1OrcidId, putCode, accessToken);
+        assertEquals(Response.Status.OK.getStatusCode(), viewAfterArchiveResponse.getStatus());
+        NotificationPermission retrievedAfterArchiveNotification = viewAfterArchiveResponse.getEntity(NotificationPermission.class);
+        assertNotNull(retrievedAfterArchiveNotification.getArchivedDate());
+    }
+
+    @Test
+    public void createPermissionNotificationWithTrailingSpaceInAuthorizationUrl() throws JSONException {
+        NotificationPermission notification = unmarshallFromPath("/notification_2.0_rc1/samples/notification-permission-2.0_rc1.xml");
+        notification.setPutCode(null);
+        AuthorizationUrl authUrl = notification.getAuthorizationUrl();
+        authUrl.setUri(authUrl.getUri() + "    ");
+        String accessToken = oauthHelper.getClientCredentialsAccessToken(client1ClientId, client1ClientSecret, ScopePathType.PREMIUM_NOTIFICATION);
+
+        ClientResponse response = notificationsClient.addPermissionNotificationXml(testUser1OrcidId, notification, accessToken);
+        assertNotNull(response);
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+        assertNull(response.getLocation());
+    }
+
+    @Test
+    public void createPermissionNotificationWithBlankAuthorizationUri() throws JSONException {
+        NotificationPermission notification = unmarshallFromPath("/notification_2.0_rc1/samples/notification-permission-2.0_rc1.xml");
+        notification.setPutCode(null);
+        AuthorizationUrl authUrl = notification.getAuthorizationUrl();
+        authUrl.setUri("");
+        String accessToken = oauthHelper.getClientCredentialsAccessToken(client1ClientId, client1ClientSecret, ScopePathType.PREMIUM_NOTIFICATION);
+
+        ClientResponse postResponse = notificationsClient.addPermissionNotificationXml(testUser1OrcidId, notification, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+        String locationPath = postResponse.getLocation().getPath();
+        assertTrue("Location header path should match pattern, but was " + locationPath,
+                locationPath.matches(".*/v2.0_rc1/" + testUser1OrcidId + "/notification-permission/\\d+"));
+        String putCodeString = locationPath.substring(locationPath.lastIndexOf('/') + 1);
+        Long putCode = Long.valueOf(putCodeString);
+
+        ClientResponse viewResponse = notificationsClient.viewPermissionNotificationXml(testUser1OrcidId, putCode, accessToken);
+        assertEquals(Response.Status.OK.getStatusCode(), viewResponse.getStatus());
+        NotificationPermission retrievedNotification = viewResponse.getEntity(NotificationPermission.class);
+        assertNotNull(retrievedNotification);
+        assertTrue(retrievedNotification.getAuthorizationUrl().getPath().endsWith(authUrl.getPath()));
+        assertFalse(retrievedNotification.getAuthorizationUrl().getPath().startsWith("http"));
+        assertTrue(retrievedNotification.getAuthorizationUrl().getUri().startsWith("http"));
+    }
+
+    @Test
+    public void createPermissionNotificationWithAbsentAuthorizationUriElement() throws JSONException {
+        NotificationPermission notification = unmarshallFromPath("/notification_2.0_rc1/samples/notification-permission-2.0_rc1.xml");
+        notification.setPutCode(null);
+        AuthorizationUrl authUrl = notification.getAuthorizationUrl();
+        authUrl.setUri("");
+        String accessToken = oauthHelper.getClientCredentialsAccessToken(client1ClientId, client1ClientSecret, ScopePathType.PREMIUM_NOTIFICATION);
+
+        ClientResponse postResponse = notificationsClient.addPermissionNotificationXml(testUser1OrcidId, notification, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+        String locationPath = postResponse.getLocation().getPath();
+        assertTrue("Location header path should match pattern, but was " + locationPath,
+                locationPath.matches(".*/v2.0_rc1/" + testUser1OrcidId + "/notification-permission/\\d+"));
+        String putCodeString = locationPath.substring(locationPath.lastIndexOf('/') + 1);
+        Long putCode = Long.valueOf(putCodeString);
+
+        ClientResponse viewResponse = notificationsClient.viewPermissionNotificationXml(testUser1OrcidId, putCode, accessToken);
+        assertEquals(Response.Status.OK.getStatusCode(), viewResponse.getStatus());
+        NotificationPermission retrievedNotification = viewResponse.getEntity(NotificationPermission.class);
+        assertNotNull(retrievedNotification);
+        assertTrue(retrievedNotification.getAuthorizationUrl().getPath().endsWith(authUrl.getPath()));
+        assertFalse(retrievedNotification.getAuthorizationUrl().getPath().startsWith("http"));
+        assertTrue(retrievedNotification.getAuthorizationUrl().getUri().startsWith("http"));
+    }
+
+    public NotificationPermission unmarshallFromPath(String path) {
         try (Reader reader = new InputStreamReader(getClass().getResourceAsStream(path))) {
-            NotificationAddActivities notification = unmarshall(reader);
+            NotificationPermission notification = unmarshall(reader);
             return notification;
         } catch (IOException e) {
             throw new RuntimeException("Error reading notification from classpath", e);
         }
     }
 
-    public NotificationAddActivities unmarshall(Reader reader) {
+    public NotificationPermission unmarshall(Reader reader) {
         try {
-            JAXBContext context = JAXBContext.newInstance(NotificationAddActivities.class.getPackage().getName());
+            JAXBContext context = JAXBContext.newInstance(NotificationPermission.class.getPackage().getName());
             Unmarshaller unmarshaller = context.createUnmarshaller();
-            return (NotificationAddActivities) unmarshaller.unmarshal(reader);
+            return (NotificationPermission) unmarshaller.unmarshal(reader);
         } catch (JAXBException e) {
             throw new RuntimeException("Unable to unmarshall orcid message" + e);
         }

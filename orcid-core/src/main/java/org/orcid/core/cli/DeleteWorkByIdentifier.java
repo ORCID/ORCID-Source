@@ -108,7 +108,7 @@ public class DeleteWorkByIdentifier {
         }
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "resource"})    
     private GenericDao<WorkEntity, Long> createWorkDao() {
         ApplicationContext context = new ClassPathXmlApplicationContext("orcid-persistence-context.xml");
         return (GenericDao<WorkEntity, Long>) context.getBean("workDao");

@@ -47,7 +47,7 @@ import org.orcid.core.web.filters.ApiVersionFilter;
 import org.orcid.jaxb.model.groupid.GroupIdRecord;
 import org.orcid.jaxb.model.message.ErrorDesc;
 import org.orcid.jaxb.model.message.OrcidMessage;
-import org.orcid.jaxb.model.notification.addactivities.NotificationAddActivities;
+import org.orcid.jaxb.model.notification.permission.NotificationPermission;
 import org.orcid.jaxb.model.record.Education;
 import org.orcid.jaxb.model.record.Employment;
 import org.orcid.jaxb.model.record.Funding;
@@ -71,7 +71,7 @@ public class OrcidValidationJaxbContextResolver implements ContextResolver<Unmar
     private static final Logger logger = Logger.getLogger(OrcidValidationJaxbContextResolver.class);
     private static final Map<Class<?>, String> SCHEMA_FILENAME_PREFIX_BY_CLASS = new HashMap<>();
     static {
-        SCHEMA_FILENAME_PREFIX_BY_CLASS.put(NotificationAddActivities.class, "notification_2.0_rc1/notification-add-activities-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS.put(NotificationPermission.class, "notification_2.0_rc1/notification-permission-");
         SCHEMA_FILENAME_PREFIX_BY_CLASS.put(Work.class, "record_2.0_rc1/work-");
         SCHEMA_FILENAME_PREFIX_BY_CLASS.put(Funding.class, "record_2.0_rc1/funding-");
         SCHEMA_FILENAME_PREFIX_BY_CLASS.put(Education.class, "record_2.0_rc1/education-");

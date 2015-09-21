@@ -23,7 +23,7 @@
     xmlns:notification="http://www.orcid.org/ns/notification"
     xmlns:common="http://www.orcid.org/ns/common"
     xml:lang="en-gb">
-    <notification:notification-type>CUSTOM</notification:notification-type>
+    <notification:notification-type>custom</notification:notification-type>
     <notification:subject>Important Notification from ORCID</notification:subject>
     <notification:body-text>This is an email with important info.
     </notification:body-text>

@@ -28,6 +28,7 @@ public class InitDb {
 
     private static final String CONFIG_FILE_KEY = "org.orcid.config.file";
 
+    @SuppressWarnings("resource")
     public static void main(String[] args) {
         String configFilePath = System.getProperty(CONFIG_FILE_KEY);
         if (StringUtils.isBlank(configFilePath)) {
