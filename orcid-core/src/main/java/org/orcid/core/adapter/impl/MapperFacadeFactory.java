@@ -46,6 +46,7 @@ import org.orcid.jaxb.model.record.Employment;
 import org.orcid.jaxb.model.record.Funding;
 import org.orcid.jaxb.model.record.FundingContributors;
 import org.orcid.jaxb.model.record.PeerReview;
+import org.orcid.jaxb.model.record.ResearcherUrl;
 import org.orcid.jaxb.model.record.Work;
 import org.orcid.jaxb.model.record.WorkContributors;
 import org.orcid.jaxb.model.record.WorkExternalIdentifier;
@@ -66,6 +67,7 @@ import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.PeerReviewEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.persistence.jpa.entities.PublicationDateEntity;
+import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.jpa.entities.StartDateEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
@@ -136,6 +138,19 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         }
     }
 
+    public MapperFacade getResearcherUrlMapperFacade() {
+        MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
+        ClassMapBuilder<ResearcherUrl, ResearcherUrlEntity> researcherUrlClassMap = mapperFactory.classMap(ResearcherUrl.class, ResearcherUrlEntity.class);
+        researcherUrlClassMap.byDefault();
+        addV2DateFields(researcherUrlClassMap);
+        addV2SourceMapping(mapperFactory);
+        researcherUrlClassMap.field("putCode", "id");
+        researcherUrlClassMap.field("url.value", "url");
+        researcherUrlClassMap.field("urlName", "urlName");
+        researcherUrlClassMap.register();
+        return mapperFactory.getMapperFacade();
+    }
+    
     public MapperFacade getWorkMapperFacade() {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
 

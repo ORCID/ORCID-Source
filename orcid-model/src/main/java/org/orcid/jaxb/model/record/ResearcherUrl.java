@@ -27,58 +27,90 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.orcid.jaxb.model.common.CreatedDate;
+import org.orcid.jaxb.model.common.LastModifiedDate;
 import org.orcid.jaxb.model.common.Source;
 import org.orcid.jaxb.model.common.Url;
 import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.jaxb.model.common.VisibilityType;
 
-
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType( propOrder = { "urlName", "url", "source" })
+@XmlType(propOrder = { "urlName", "url", "source" })
 @XmlRootElement(name = "researcher-url")
-public class ResearcherUrl implements VisibilityType, Serializable {        
+public class ResearcherUrl implements VisibilityType, Serializable {
     private static final long serialVersionUID = 1047027166285177589L;
     @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected Url url;
     @XmlElement(name = "url-name", namespace = "http://www.orcid.org/ns/common")
-    protected String urlName;    
+    protected String urlName;
     @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected Source source;
     @XmlAttribute(name = "put-code")
-    @ApiModelProperty(hidden = true) 
+    @ApiModelProperty(hidden = true)
     protected Long putCode;
     @XmlAttribute
     protected Visibility visibility;
+    @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "last-modified-date")
+    protected LastModifiedDate lastModifiedDate;
+    @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "created-date")
+    protected CreatedDate createdDate;
+
     public Url getUrl() {
         return url;
     }
+
     public void setUrl(Url url) {
         this.url = url;
     }
+
     public String getUrlName() {
         return urlName;
     }
+
     public void setUrlName(String urlName) {
         this.urlName = urlName;
     }
+
     public Source getSource() {
         return source;
     }
+
     public void setSource(Source source) {
         this.source = source;
     }
+
     public Long getPutCode() {
         return putCode;
     }
+
     public void setPutCode(Long putCode) {
         this.putCode = putCode;
     }
+
     public Visibility getVisibility() {
         return visibility;
     }
+
     public void setVisibility(Visibility visibility) {
         this.visibility = visibility;
     }
+
+    public LastModifiedDate getLastModifiedDate() {
+        return lastModifiedDate;
+    }
+
+    public void setLastModifiedDate(LastModifiedDate lastModifiedDate) {
+        this.lastModifiedDate = lastModifiedDate;
+    }
+
+    public CreatedDate getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(CreatedDate createdDate) {
+        this.createdDate = createdDate;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -90,6 +122,7 @@ public class ResearcherUrl implements VisibilityType, Serializable {
         result = prime * result + ((visibility == null) ? 0 : visibility.hashCode());
         return result;
     }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -122,5 +155,5 @@ public class ResearcherUrl implements VisibilityType, Serializable {
         if (visibility != other.visibility)
             return false;
         return true;
-    }        
+    }
 }

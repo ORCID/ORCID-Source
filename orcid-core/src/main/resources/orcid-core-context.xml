@@ -542,6 +542,23 @@
         <property name="mapperFacade" ref="groupIdRecordMapperFacade" />
     </bean>
     
+    
+    
+    
+    
+    
+    <bean id="researcherUrlMapperFacade" factory-bean="&amp;mapperFacadeFactory" factory-method="getResearcherUrlMapperFacade"/>
+	<bean id="jpaJaxbResearcherUrlAdapter" class="org.orcid.core.adapter.impl.JpaJaxbResearcherUrlAdapterImpl">
+        <property name="mapperFacade" ref="researcherUrlMapperFacade" />
+    </bean>
+    
+    
+    
+    
+    
+    
+    
+    
     <!-- Geonames username -->
 	<bean id="geonamesUser" class="java.lang.String">
 		<constructor-arg value="orcid"/>

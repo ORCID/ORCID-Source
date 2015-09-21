@@ -37,6 +37,7 @@ import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_JSON;
 import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_XML;
 import static org.orcid.core.api.OrcidApiConstants.WORK;
 import static org.orcid.core.api.OrcidApiConstants.WORK_SUMMARY;
+import static org.orcid.core.api.OrcidApiConstants.RESEARCHER_URLS;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -503,4 +504,12 @@ abstract public class MemberV2ApiServiceImplBase {
     // END NOTIFICATIONS
     // =================
 
+    @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(RESEARCHER_URLS)
+    @ApiOperation(value = "Fetch all researcher urls for an ORCID ID", hidden = true, authorizations = { @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_READ_LIMITED, description = "you need this") }) })
+    public Response viewResearcherUrls(@PathParam("orcid") String orcid) {
+        return serviceDelegator.viewResearcherUrls(orcid);
+    }
+    
 }

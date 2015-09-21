@@ -38,6 +38,7 @@ import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.PeerReviewManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileFundingManager;
+import org.orcid.core.manager.ResearcherUrlManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.core.security.visibility.aop.AccessControl;
@@ -49,6 +50,7 @@ import org.orcid.jaxb.model.record.Education;
 import org.orcid.jaxb.model.record.Employment;
 import org.orcid.jaxb.model.record.Funding;
 import org.orcid.jaxb.model.record.PeerReview;
+import org.orcid.jaxb.model.record.ResearcherUrls;
 import org.orcid.jaxb.model.record.Work;
 import org.orcid.jaxb.model.record.summary.ActivitiesSummary;
 import org.orcid.jaxb.model.record.summary.EducationSummary;
@@ -112,6 +114,9 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
 
     @Resource
     private LocaleManager localeManager;
+    
+    @Resource
+    private ResearcherUrlManager researcherUrlManager;
 
     @Value("${org.orcid.core.baseUri}")
     private String baseUrl;
@@ -425,5 +430,12 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     public Response viewGroupIdRecords(String pageSize, String pageNum) {
         GroupIdRecords records = groupIdRecordManager.getGroupIdRecords(pageSize, pageNum);
         return Response.ok(records).build();
+    }
+    
+    @Override
+    @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED)
+    public Response viewResearcherUrls(String orcid) {
+        ResearcherUrls researcherUrls = researcherUrlManager.getResearcherUrlsV2(orcid);
+        return Response.ok(researcherUrls).build();
     }
 }

@@ -25,6 +25,7 @@ import javax.annotation.Resource;
 import javax.persistence.PersistenceException;
 
 import org.hibernate.exception.ConstraintViolationException;
+import org.orcid.core.adapter.JpaJaxbResearcherUrlAdapter;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ResearcherUrlManager;
 import org.orcid.core.manager.SourceManager;
@@ -55,6 +56,9 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
     
     @Resource
     private ProfileEntityManager profileEntityManager;
+    
+    @Resource 
+    private JpaJaxbResearcherUrlAdapter jpaJaxbResearcherUrlAdapter;
     
     /**
      * Return the list of researcher urls associated to a specific profile
@@ -178,5 +182,21 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
             if (researcherUrl.getUrlName() == null)
                 researcherUrl.setUrlName(new UrlName(new String()));
         }
+    }
+    
+    
+    /**
+     * Return the list of researcher urls associated to a specific profile
+     * @param orcid
+     * @return 
+     *          the list of researcher urls associated with the orcid profile
+     * */
+    @Override
+    public org.orcid.jaxb.model.record.ResearcherUrls getResearcherUrlsV2(String orcid) {
+        List<ResearcherUrlEntity> researcherUrlEntities = researcherUrlDao.getResearcherUrls(orcid);
+        List<org.orcid.jaxb.model.record.ResearcherUrl> researcherUrlList = jpaJaxbResearcherUrlAdapter.toResearcherUrlList(researcherUrlEntities);
+        org.orcid.jaxb.model.record.ResearcherUrls researcherUrls = new org.orcid.jaxb.model.record.ResearcherUrls();
+        researcherUrls.setResearcherUrls(researcherUrlList);
+        return researcherUrls;
     }
 }

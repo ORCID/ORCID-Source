@@ -106,7 +106,7 @@ public class ResearcherUrlEntity extends BaseEntity<Long> implements Comparable<
     public void setUser(ProfileEntity user) {
         this.user = user;
     }
-    
+
     public SourceEntity getSource() {
         return source;
     }
@@ -114,7 +114,7 @@ public class ResearcherUrlEntity extends BaseEntity<Long> implements Comparable<
     public void setSource(SourceEntity source) {
         this.source = source;
     }
-    
+
     @Basic
     @Enumerated(EnumType.STRING)
     public Visibility getVisibility() {
@@ -124,18 +124,18 @@ public class ResearcherUrlEntity extends BaseEntity<Long> implements Comparable<
     public void setVisibility(Visibility visibility) {
         this.visibility = visibility;
     }
-    
+
     @Override
     public int compareTo(ResearcherUrlEntity other) {
         String otherUrl = other.getUrl();
         if (url == null) {
             return otherUrl == null ? 0 : -1;
         } else {
-            if(url.compareTo(otherUrl) != 0)
+            if (url.compareTo(otherUrl) != 0)
                 return url.compareTo(otherUrl);
             else {
                 return otherUrl == null ? 1 : url.compareTo(otherUrl);
-            }                       
+            }
         }
     }
 

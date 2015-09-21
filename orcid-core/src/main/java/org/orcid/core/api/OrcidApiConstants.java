@@ -80,4 +80,6 @@ public class OrcidApiConstants {
     public static final String SWAGGER_FILE_YAML = "/swagger.yaml";
     
     public static final String APPLICATION_CITEPROC = "application/vnd.citationstyles.csl+json";
+    
+    public static final String RESEARCHER_URLS =  "/{orcid}/researcher-urls";
 }       
