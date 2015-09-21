@@ -37,6 +37,7 @@ import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileFundingManager;
 import org.orcid.core.manager.WorkManager;
+import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.core.utils.activities.ActivitiesGroup;
 import org.orcid.core.utils.activities.ActivitiesGroupGenerator;
 import org.orcid.jaxb.model.clientgroup.ClientType;
@@ -514,16 +515,24 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     public boolean isDeactivated(String orcid) {
         return profileDao.isDeactivated(orcid);
     }
-    
-	@Override
-	public boolean reviewProfile(String orcid) {
-		return profileDao.reviewProfile(orcid);
-	}
 
-	@Override
-	public boolean unreviewProfile(String orcid) {
-		return profileDao.unreviewProfile(orcid);
-	}
+    @Override
+    public boolean reviewProfile(String orcid) {
+        return profileDao.reviewProfile(orcid);
+    }
+
+    @Override
+    public boolean unreviewProfile(String orcid) {
+        return profileDao.unreviewProfile(orcid);
+    }
+    
+    @Override
+    public Visibility getResearcherUrlDefaultVisibility(String orcid) {
+        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
+        Visibility result = profile.getResearcherUrlsVisibility() == null ? Visibility.fromValue(OrcidVisibilityDefaults.RESEARCHER_URLS_DEFAULT.getVisibility().value()) : Visibility.fromValue(profile.getResearcherUrlsVisibility().value()); 
+        return result;
+    }
+    
 }
 
 class GroupableActivityComparator implements Comparator<GroupableActivity> {
