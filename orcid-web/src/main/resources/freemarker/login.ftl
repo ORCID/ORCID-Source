@@ -72,23 +72,25 @@
             </div>
         </div>
     </#if>
-	<div class="control-group col-md-offset-3 col-md-9 col-sm-9 col-sm-offset-3 col-xs-12">
-		<h5>Or sign in with :</h5>
-		<table>
-			<tr>
-				<td>
-					<form action="<@orcid.rootPath '/signin/facebook'/>" method="POST">
-					    <button type="submit" class="btn btn-social-icon btn-facebook"><i class="fa fa-facebook"></i></button>
-					    <input type="hidden" name="scope" value="email" />
-					</form>
-				</td>
-				<td style="padding-left: 20px;">
-					<form action="<@orcid.rootPath '/signin/google'/>" method="POST">
-					    <button type="submit" class="btn btn-social-icon btn-google"><i class="fa fa-google"></i></button>
-					    <input type="hidden" name="scope" value="email" />
-					</form>
-				</td>
-			</tr>
-		</table>
-	</div>
+    <#if (RequestParameters['social'])??>
+		<div class="control-group col-md-offset-3 col-md-9 col-sm-9 col-sm-offset-3 col-xs-12">
+			<h5>Or sign in with :</h5>
+			<table>
+				<tr>
+					<td>
+						<form action="<@orcid.rootPath '/signin/facebook'/>" method="POST">
+						    <button type="submit" class="btn btn-social-icon btn-facebook"><i class="fa fa-facebook"></i></button>
+						    <input type="hidden" name="scope" value="email" />
+						</form>
+					</td>
+					<td style="padding-left: 20px;">
+						<form action="<@orcid.rootPath '/signin/google'/>" method="POST">
+						    <button type="submit" class="btn btn-social-icon btn-google"><i class="fa fa-google"></i></button>
+						    <input type="hidden" name="scope" value="email" />
+						</form>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</#if>
 </@public>
