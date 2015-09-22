@@ -240,9 +240,9 @@ public class PublicProfileController extends BaseWorkspaceController {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        if(!profile.isLocked() && profile.getCountGrantedAuthority() > 0
-        		&& (CreationMethod.WEBSITE.equals(profile.getOrcidHistory().getCreationMethod()) 
-        				|| CreationMethod.DIRECT.equals(profile.getOrcidHistory().getCreationMethod()))) {
+        if(profile.isLocked() || profile.getCountTokens() == 0
+        		|| (!CreationMethod.WEBSITE.equals(profile.getOrcidHistory().getCreationMethod()) 
+        				&& !CreationMethod.DIRECT.equals(profile.getOrcidHistory().getCreationMethod()))) {
         	mav.addObject("noIndex", true);
         }
 

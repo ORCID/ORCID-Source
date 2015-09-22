@@ -131,7 +131,7 @@ public class OrcidProfile implements Serializable {
     private boolean reviewed = false;
     
     @XmlTransient
-    private int countGrantedAuthority = 0;
+    private int countTokens = 0;
 
     /**
      * Gets the value of the orcid property.
@@ -660,11 +660,11 @@ public class OrcidProfile implements Serializable {
 		this.reviewed = reviewed;
 	}
 
-	public int getCountGrantedAuthority() {
-		return countGrantedAuthority;
+	public int getCountTokens() {
+		return countTokens;
 	}
 
-	public void setCountGrantedAuthority(int countGrantedAuthority) {
-		this.countGrantedAuthority = countGrantedAuthority;
+	public void setCountTokens(int countTokens) {
+		this.countTokens = countTokens;
 	}
 }

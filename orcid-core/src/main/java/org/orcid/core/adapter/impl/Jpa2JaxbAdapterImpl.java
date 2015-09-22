@@ -156,8 +156,8 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         profile.setLocked(profileEntity.getRecordLocked());
         profile.setReviewed(profileEntity.isReviewed());
         
-        if(profileEntity.getAuthorities() != null) {
-        	profile.setCountGrantedAuthority(profileEntity.getAuthorities().size());
+        if(profileEntity.getTokenDetails() != null) {
+        	profile.setCountTokens(profileEntity.getTokenDetails().size());
         }
         return profile;
     }
