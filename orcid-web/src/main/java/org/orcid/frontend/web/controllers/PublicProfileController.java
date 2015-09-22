@@ -46,6 +46,7 @@ import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.jaxb.model.groupid.GroupIdRecord;
 import org.orcid.jaxb.model.message.Affiliation;
+import org.orcid.jaxb.model.message.CreationMethod;
 import org.orcid.jaxb.model.message.Funding;
 import org.orcid.jaxb.model.message.FundingType;
 import org.orcid.jaxb.model.message.OrcidProfile;
@@ -238,6 +239,11 @@ public class PublicProfileController extends BaseWorkspaceController {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
+        }
+        if(!profile.isLocked() && profile.getCountGrantedAuthority() > 0
+        		&& (CreationMethod.WEBSITE.equals(profile.getOrcidHistory().getCreationMethod()) 
+        				|| CreationMethod.DIRECT.equals(profile.getOrcidHistory().getCreationMethod()))) {
+        	mav.addObject("noIndex", true);
         }
 
         return mav;
