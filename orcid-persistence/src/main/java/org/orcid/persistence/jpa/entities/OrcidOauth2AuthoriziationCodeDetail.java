@@ -171,7 +171,7 @@ public class OrcidOauth2AuthoriziationCodeDetail extends BaseEntity<String> impl
         this.state = state;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "client_details_id")
     public ClientDetailsEntity getClientDetailsEntity() {
         return clientDetailsEntity;
