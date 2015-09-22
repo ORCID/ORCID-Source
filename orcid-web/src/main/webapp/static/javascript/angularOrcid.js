@@ -4741,6 +4741,15 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     			}
     		}
     	}
+    	$scope.workImportWizards.sort(function(obj1, obj2){
+    		if(obj1.displayName < obj2.displayName) {
+    			return -1;
+    		}
+    		if(obj1.displayName > obj2.displayName) {
+    			return 1;
+    		}
+    		return 0;
+    	})
     }
 
     $scope.addWorkModal = function(data){
