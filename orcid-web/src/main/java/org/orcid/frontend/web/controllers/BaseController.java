@@ -276,6 +276,13 @@ public class BaseController {
 
     @ModelAttribute("startupDate")
     public Date getStartupDate() {
+        // If the cdn config file is missing, we are in development env and we
+        // need to refresh the cache
+        ClassPathResource configFile = new ClassPathResource(this.cdnConfigFile);
+        if (!configFile.exists()) {
+            return new Date();
+        }
+
         return startupDate;
     }
 
