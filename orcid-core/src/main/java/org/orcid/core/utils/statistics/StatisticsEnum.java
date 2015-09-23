@@ -22,8 +22,13 @@ public enum StatisticsEnum {
     KEY_IDS_WITH_WORKS("idsWithWorks"),
     KEY_NUMBER_OF_WORKS("works"),
     KEY_WORKS_WITH_DOIS("worksWithDois"),
-    KEY_LOCKED_RECORDS("lockedRecords"),
-    KEY_UNIQUE_DOIS("uniqueDois");
+    KEY_UNIQUE_DOIS("uniqueDois"),
+    KEY_NUMBER_OF_EMPLOYMENT("employment"),
+    KEY_EMPLOYMENT_UNIQUE_ORG("employmentUniqueOrg"),
+    KEY_NUMBER_OF_EDUCATION("education"),
+    KEY_EDUCATION_UNIQUE_ORG("educationUniqueOrg"),
+    KEY_NUMBER_OF_FUNDING("funding"),
+    KEY_FUNDING_UNIQUE_ORG("fundingUniqueOrg");
     
     /** For use as allowable values list for swagger
      * Annoyingly this can only be an inline static final if we want it to work
