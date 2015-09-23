@@ -99,7 +99,7 @@ abstract public class MemberV2ApiServiceImplBase {
     @Value("${org.orcid.core.apiBaseUri}")
     protected String apiBaseUri;
 
-    private MemberV2ApiServiceDelegator serviceDelegator;
+    protected MemberV2ApiServiceDelegator serviceDelegator;
 
     private NotificationsApiServiceDelegator notificationsServiceDelegator;
 
@@ -502,14 +502,5 @@ abstract public class MemberV2ApiServiceImplBase {
     }
     
     // END NOTIFICATIONS
-    // =================
-
-    @GET
-    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
-    @Path(RESEARCHER_URLS)
-    @ApiOperation(value = "Fetch all researcher urls for an ORCID ID", hidden = true, authorizations = { @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_READ_LIMITED, description = "you need this") }) })
-    public Response viewResearcherUrls(@PathParam("orcid") String orcid) {
-        return serviceDelegator.viewResearcherUrls(orcid);
-    }
-    
+    // =================        
 }

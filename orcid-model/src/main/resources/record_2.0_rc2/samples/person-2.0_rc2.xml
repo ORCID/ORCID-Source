@@ -11,7 +11,7 @@
 		</person:other-names>
 	</person:personal-details>
 	<person:biography visibility="private">person:biography</person:biography>
-	<person:researcher-urls visibility="private">
+	<person:researcher-urls>
 		<person:researcher-url visibility="public">
 			<person:url-name>person:url-name#1</person:url-name>
 			<person:url>http://tempuri.org/1</person:url>
@@ -23,7 +23,7 @@
 				</common:source-orcid>
 				<common:source-name />
 			</common:source>
-		</person:researcher-url>						
+		</person:researcher-url>							
 		<person:researcher-url visibility="limited">
 			<person:url-name>person:url-name#2</person:url-name>
 			<person:url>http://tempuri.org/2</person:url>
