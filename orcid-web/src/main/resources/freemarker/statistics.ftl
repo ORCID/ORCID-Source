@@ -43,7 +43,8 @@
     </div>
     <div class="row">        
 	    <div class="col-md-6 col-md-offset-3 col-sm-8 col-xs-7">
-	    	<span class="stat-name"><@orcid.msg 'statistics.number_of_works'/></span>
+	    	<span class="stat-name"><@orcid.msg 'statistics.number_of_works'/></span><br>
+	    	<span class="stat-name-st"><@orcid.msg 'statistics.number_of_works.subtext' /></span>
 	    </div>
 	    <div class="col-md-3 col-sm-4 col-xs-5 right">
 	    	<span class="stat-data"><#if statistics['works']??>${statistics['works']}<#else><@orcid.msg 'statistics.calculating'/></#if></span>	
@@ -56,20 +57,59 @@
 	    <div class="col-md-3 col-sm-4 col-xs-5 right">
 	    	<span class="stat-data"><#if statistics['uniqueDois']??>${statistics['uniqueDois']}<#else><@orcid.msg 'statistics.calculating'/></#if></span>
 		</div>
-    </div>  
+    </div>
+    
     
     
     <div class="row">        
 	    <div class="col-md-6 col-md-offset-3 col-sm-8 col-xs-7">
-			<span class="stat-name"><@orcid.msg 'statistics.number_of_locked_records'/></span>	    
+			<span class="stat-name"><@orcid.msg 'statistics.number_of_employment'/></span>	    
 	    </div>
 	    <div class="col-md-3 col-sm-4 col-xs-5 right">
-	    	<span class="stat-data"><#if statistics['lockedRecords']??>${statistics['lockedRecords']}<#else><@orcid.msg 'statistics.calculating'/></#if></span>
+	    	<span class="stat-data"><#if statistics['employment']??>${statistics['employment']}<#else><@orcid.msg 'statistics.calculating'/></#if></span>
 		</div>
-    </div>  
-    
-    
-    	
+    </div>
+    <div class="row">        
+	    <div class="col-md-6 col-md-offset-3 col-sm-8 col-xs-7">
+			<span class="stat-name"><@orcid.msg 'statistics.number_of_employment_unique_org'/></span>	    
+	    </div>
+	    <div class="col-md-3 col-sm-4 col-xs-5 right">
+	    	<span class="stat-data"><#if statistics['employmentUniqueOrg']??>${statistics['employmentUniqueOrg']}<#else><@orcid.msg 'statistics.calculating'/></#if></span>
+		</div>
+    </div>
+    <div class="row">        
+	    <div class="col-md-6 col-md-offset-3 col-sm-8 col-xs-7">
+			<span class="stat-name"><@orcid.msg 'statistics.number_of_education'/></span>	    
+	    </div>
+	    <div class="col-md-3 col-sm-4 col-xs-5 right">
+	    	<span class="stat-data"><#if statistics['education']??>${statistics['education']}<#else><@orcid.msg 'statistics.calculating'/></#if></span>
+		</div>
+    </div>
+    <div class="row">        
+	    <div class="col-md-6 col-md-offset-3 col-sm-8 col-xs-7">
+			<span class="stat-name"><@orcid.msg 'statistics.number_of_education_unique_org'/></span>	    
+	    </div>
+	    <div class="col-md-3 col-sm-4 col-xs-5 right">
+	    	<span class="stat-data"><#if statistics['educationUniqueOrg']??>${statistics['educationUniqueOrg']}<#else><@orcid.msg 'statistics.calculating'/></#if></span>
+		</div>
+    </div> 
+    <div class="row">        
+	    <div class="col-md-6 col-md-offset-3 col-sm-8 col-xs-7">
+			<span class="stat-name"><@orcid.msg 'statistics.number_of_funding'/></span>	    
+	    </div>
+	    <div class="col-md-3 col-sm-4 col-xs-5 right">
+	    	<span class="stat-data"><#if statistics['funding']??>${statistics['funding']}<#else><@orcid.msg 'statistics.calculating'/></#if></span>
+		</div>
+    </div>
+    <div class="row">        
+	    <div class="col-md-6 col-md-offset-3 col-sm-8 col-xs-7">
+			<span class="stat-name"><@orcid.msg 'statistics.number_of_funding_unique_org'/></span>	    
+	    </div>
+	    <div class="col-md-3 col-sm-4 col-xs-5 right">
+	    	<span class="stat-data"><#if statistics['fundingUniqueOrg']??>${statistics['fundingUniqueOrg']}<#else><@orcid.msg 'statistics.calculating'/></#if></span>
+		</div>
+    </div>
+      
     <div class="row">        
 	    <div class="col-md-9 col-md-offset-3 col-sm-12 col-xs-12">
 			<span class="stat-date"><@orcid.msg 'statistics.statistics_generation_date_label'/>&nbsp;<#if (statistics_date)??>${statistics_date}<#else>NA</#if></span>	    

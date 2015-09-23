@@ -1232,6 +1232,13 @@ ul.privacyHelp li.private {
 	color: #939498;	 
 }
 
+#statistics span.stat-name-st{
+	font-size: 1.0em;
+	font-family: 'Gill Sans W02', 'Helvetica', sans-serif;
+	font-style: normal;
+	color: #939498;	 
+}
+
 #statistics span.stat-data {
 	font-size: 2em;
 	color: #939498;
