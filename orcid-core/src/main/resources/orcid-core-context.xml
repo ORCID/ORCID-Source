@@ -357,6 +357,8 @@
 
 	<bean id="membersManager" class="org.orcid.core.manager.impl.MembersManagerImpl" />
 
+	<bean id="internalSSOManager" class="org.orcid.core.manager.impl.InternalSSOManagerImpl" />
+
 	<bean id="messageSource"
 		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
 		<property name="basenames" value="classpath:i18n/api,classpath:i18n/email,classpath:i18n/javascript,classpath:i18n/messages" />
