@@ -238,7 +238,7 @@
                     <!-- not active row && edit sources -->
                     <div ng-show="group.activePutCode != work.putCode.value" class="row source-line">
                         <div class="col-md-7 col-sm-7 col-xs-7">
-                            <a ng-click="group.activePutCode = work.putCode.value;">
+                            <a ng-click="group.activePutCode = work.putCode.value;;showMozillaBadges(group.activePutCode);">
                                 {{work.sourceName}}
                             </a>
                         </div>
