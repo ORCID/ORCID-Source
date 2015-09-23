@@ -78,7 +78,7 @@ public class PublicV2ApiServiceDelegatorImpl implements PublicV2ApiServiceDelega
 
     @Resource
     private AffiliationsManager affiliationsManager;
-    
+
     @Resource
     private PeerReviewManager peerReviewManager;
 
@@ -96,9 +96,9 @@ public class PublicV2ApiServiceDelegatorImpl implements PublicV2ApiServiceDelega
 
     @Resource(name = "visibilityFilterV2")
     private VisibilityFilterV2 visibilityFilter;
-    
-	@Value("${org.orcid.core.baseUri}")
-	private String baseUrl;
+
+    @Value("${org.orcid.core.baseUri}")
+    private String baseUrl;
 
     @Override
     public Response viewStatusText() {
@@ -108,11 +108,11 @@ public class PublicV2ApiServiceDelegatorImpl implements PublicV2ApiServiceDelega
     @Override
     @AccessControl(requiredScope = ScopePathType.READ_PUBLIC, enableAnonymousAccess = true)
     public Response viewActivities(String orcid) {
-    	ProfileEntity entity = profileEntityManager.findByOrcid(orcid);
-    	if(profileDao.isProfileDeprecated(orcid)) {
-    		StringBuffer primary = new StringBuffer(baseUrl).append("/").append(entity.getPrimaryRecord().getId());
-    		Map<String, String> params = new HashMap<String, String>();
-        	params.put("orcid", primary.toString());
+        ProfileEntity entity = profileEntityManager.findByOrcid(orcid);
+        if (profileDao.isProfileDeprecated(orcid)) {
+            StringBuffer primary = new StringBuffer(baseUrl).append("/").append(entity.getPrimaryRecord().getId());
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("orcid", primary.toString());
             throw new OrcidDeprecatedException(params);
         }
         ActivitiesSummary as = profileEntityManager.getPublicActivitiesSummary(orcid);
@@ -121,7 +121,7 @@ public class PublicV2ApiServiceDelegatorImpl implements PublicV2ApiServiceDelega
         ActivityUtils.setPathToActivity(as, orcid);
         return Response.ok(as).build();
     }
-    
+
     @Override
     @AccessControl(requiredScope = ScopePathType.READ_PUBLIC, enableAnonymousAccess = true)
     public Response viewWork(String orcid, Long putCode) {        
@@ -203,7 +203,7 @@ public class PublicV2ApiServiceDelegatorImpl implements PublicV2ApiServiceDelega
 
     @Override
     @AccessControl(requiredScope = ScopePathType.READ_PUBLIC, enableAnonymousAccess = true)
-    public Response viewEmploymentSummary(String orcid, Long putCode) { 
+    public Response viewEmploymentSummary(String orcid, Long putCode) {
         EmploymentSummary es = affiliationsManager.getEmploymentSummary(orcid, putCode);
         orcidSecurityManager.checkVisibility(es);
         ActivityUtils.setPathToActivity(es, orcid);
