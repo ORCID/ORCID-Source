@@ -19,35 +19,84 @@
 <#import "email_macros.ftl" as emailMacros />
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>${subject}</title>
-    </head>
+    <head></head>
     <body>
-        <div style="padding: 20px; padding-top: 0px;">
+        <div style="padding: 20px; padding-top: 0px; font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666; width: 800px;">
             <img src="https://orcid.org/sites/all/themes/orcid/img/orcid-logo.png" alt="ORCID.org"/>
             <hr />
-            <span style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666; font-weight: bold;">
+            <span style="font-weight: bold;">
                 Hi ${emailName},
             </span>
-            <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
-                Here’s what has happened since the last time you visited your ORCID record.
-                <a href="${baseUri}/notifications?lang=${locale}">View all notifications</a>.
-            </p>            
-            <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
-                <ul style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666; margin-left: 0;">
-                    <#compress>
-                    <#if amendedMessageCount gt 0><li>[${amendedMessageCount}] <#if amendedMessageCount == 1>notification<#else>notifications</#if> from ORCID member organizations that added or updated information on your record</li></#if>
-                    <#if addActivitiesMessageCount gt 0><li>[${addActivitiesMessageCount}] <#if addActivitiesMessageCount == 1>Request<#else>Requests</#if> to add or update your ORCID record</li></#if>
-                    <#if orcidMessageCount gt 0><li>[${orcidMessageCount}] <#if orcidMessageCount == 1>notification<#else>notifications</#if> from ORCID</li></#if>
-                    </#compress>
-                </ul>
-           </p>
-           <p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #666666;">
-                <@emailMacros.msg "email.common.you_have_received_this_email_opt_out.1" />${baseUri}/account?lang=${locale}.
-            </p>                       
-            <p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #666666;">
-               <#include "email_footer_html.ftl"/>
+            <p>
+                You have <${totalMessageCount}> new <#if orcidMessageCount == 1>notification<#else>notifications</#if> in your ORCID inbox - see summary below. Please visit your <a href="${baseUri}/inbox?lang=${locale}" style="color: #338caf;">ORCID Inbox</a> to take action or see more details.
             </p>
-         </div>
-     </body>
- </html>
+            <#if digestEmail.notificationsBySourceId['ORCID']??><p>
+                ORCID would like to let you know
+                <ul>
+                <#list digestEmail.notificationsBySourceId['ORCID'].allNotifications as notification>    
+                    <li>${notification.subject}</li>
+                </#list>
+                </ul>
+            </p></#if>
+            <#list digestEmail.notificationsBySourceId?keys?sort as sourceId>
+            <#if sourceId != 'ORCID'>
+            <#list digestEmail.notificationsBySourceId[sourceId].notificationsByType?keys?sort as notificationType>
+            <#list digestEmail.notificationsBySourceId[sourceId].notificationsByType[notificationType] as notification>
+            <#if notificationType == 'PERMISSION'>
+            <p>
+                <div><img src="http://testserver.orcid.org/static/img/request.png">${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sourceId} offers to add/update items to your ORCID record.</div>
+                <#assign itemsByType=notification.items.itemsByType>
+                <#list itemsByType?keys?sort as itemType>
+                <div>${itemType?capitalize}s (${itemsByType[itemType]?size})</div>
+                <ul>
+                <#list itemsByType[itemType] as item>
+                    <li>${item.itemName} <#if item.externalIdentifier??>(${item.externalIdentifier.externalIdentifierType?lower_case}: ${item.externalIdentifier.externalIdentifierId})</#if></li>
+                </#list>
+                </ul>
+                </#list>
+                <div><a href="${baseUri}/inbox#${notification.putCode}">more info...</a> <a class="button" href="${baseUri}/inbox/${notification.putCode}/action?target=${notification.authorizationUrl.uri?url}">Add now</a></div>
+            </p>
+            <#elseif notificationType == 'AMENDED'>
+            <p>
+                <div><img src="http://testserver.orcid.org/static/img/update.png">${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sourceId} has updated recent ${notification.amendedSection?lower_case}s on your ORCID record.</div>
+                <#if notification.items??>
+                <ul>
+                <#list notification.items.items as item>
+                    <li>${item.itemName} <#if item.externalIdentifier??>(${item.externalIdentifier.externalIdentifierType?lower_case}: ${item.externalIdentifier.externalIdentifierId})</#if></li>
+                </#list>
+                </ul>
+                </#if>
+            </p>
+            <#else>
+            ${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sourceId}
+            </#if>
+            </#list>
+            </#list>
+            </#if>
+            </#list>
+            <p>
+                <a href="${baseUri}/inbox?lang=${locale}" style="text-decoration: none; text-align: center;">
+                    <span style="padding-top: 10px; padding-bottom: 10px; padding-left: 15px; padding-right: 15px; background: #338caf; color: #FFF; display: block; width: 300px;">
+                        View details in your ORCID inbox
+                    </span>
+                </a>
+            </p>
+            <p>
+                <#assign frequency>
+                <#switch orcidProfile.orcidInternal.preferences.sendEmailFrequencyDays>
+                    <#case "0.0">immediate<#break>
+                    <#case "7.0">weekly<#break>
+                    <#case "91.3105">quarterly<#break>
+                </#switch>
+                </#assign>
+                You have received this message because you opted in to receive ${frequency} inbox notifications about your ORCID record. <a href="${baseUri}/inbox?lang=${locale}" style="color: #338caf;">Learn more about how the Inbox works.</a>
+            </p>
+            <p>
+                You may adjust your email frequency and subscription preferences in your <a href="${baseUri}/account?lang=${locale}" style="color: #338caf;">account settings</a>.
+            </p>
+            <p>
+               <#include "email_footer_html.ftl"/>
+            </p>            
+        </div>      
+    </body>
+</html>

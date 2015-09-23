@@ -139,6 +139,7 @@
     <include file="/db/updates/shibboleth.xml" />
     <include file="/db/updates/set_empty_visibility_fields_to_private.xml" />
     <include file="/db/updates/drop_oauth2_authentication_key_unique_constraint.xml" />
+    
     <include file="/db/updates/move-work-data-to-work-table.xml" />
     <include file="/db/updates/new-index-for-org-disambiguated-table.xml" />
     <include file="/db/updates/external-ids-as-json.xml" />
