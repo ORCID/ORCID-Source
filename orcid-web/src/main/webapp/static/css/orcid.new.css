@@ -6029,6 +6029,13 @@ ul.sources-edit-list > li.group-details{
     font-size: 15px;
 }
 
+.shibboleth-container{
+	max-width: 353px;
+	margin: 0 auto;	
+	padding-left: 15px;
+	padding-right: 15px; 
+}
+
 a .mozilla-badge{
 	background: url('../img/mozilla-badge.svg') transparent;
 	width: 17px;

@@ -6149,7 +6149,6 @@ orcidNgModule.controller('ShibbolethCtrl',['$scope', '$compile', function Shibbo
     $scope.closeModal = function() {
         $.colorbox.close();
     };
-
     // init
     $scope.getShibbolethAccounts();
 

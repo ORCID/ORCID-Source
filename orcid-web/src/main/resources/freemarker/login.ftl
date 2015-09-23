@@ -58,12 +58,10 @@
 	    </div>
 	</form>
 	<#if (RequestParameters['shibboleth'])??>
-        <div class="row">
-            <div class="control-group col-md-offset-3 col-md-9 col-sm-9 col-sm-offset-3 col-xs-12">
-                <form class="form-shibboleth-sign-in" id="shibbolethSignInForm" action="<@orcid.rootPath '/shibboleth/link'/>" method="get">
-                    <button id='shibboleth-sign-in-button' class="btn btn-primary" type="submit">Sign in with Shibboleth</button>
-                </form>
-            </div>
+        <div class="row">        	 
+           <div class="control-group col-md-offset-3 col-md-9 col-sm-9 col-sm-offset-3 col-xs-12">
+				<a href="<@orcid.rootPath '/shibboleth/link'/>">${springMacroRequestContext.getMessage("login.shibboleth")}</a>    
+           </div>
         </div>
     </#if>  
 </@public>
