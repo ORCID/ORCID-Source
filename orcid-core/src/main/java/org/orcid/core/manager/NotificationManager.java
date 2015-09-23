@@ -16,6 +16,7 @@
  */
 package org.orcid.core.manager;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.orcid.core.exception.OrcidNotificationAlreadyReadException;
@@ -23,6 +24,7 @@ import org.orcid.jaxb.model.message.DelegationDetails;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.notification.Notification;
+import org.orcid.jaxb.model.notification.permission.Item;
 import org.orcid.jaxb.model.notification.amended.AmendedSection;
 
 public interface NotificationManager {
@@ -44,6 +46,8 @@ public interface NotificationManager {
     void sendNotificationToAddedDelegate(OrcidProfile grantingUser, List<DelegationDetails> delegatesGrantedByUser);
 
     void sendAmendEmail(OrcidProfile amendedProfile, AmendedSection amendedSection);
+
+    void sendAmendEmail(OrcidProfile amendedProfile, AmendedSection amendedSection, Collection<Item> activities);
 
     void sendOrcidDeactivateEmail(OrcidProfile orcidToDeactivate);
 

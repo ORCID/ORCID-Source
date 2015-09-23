@@ -32,7 +32,8 @@ import java.lang.annotation.Target;
 @Documented
 public @interface AccessControl {
     
-    boolean enableAnonymousAccess() default false;    
+    boolean enableAnonymousAccess() default false;   
+    boolean requestComesFromInternalApi() default false;
     ScopePathType requiredScope() default ScopePathType.AUTHENTICATE;
 
 }

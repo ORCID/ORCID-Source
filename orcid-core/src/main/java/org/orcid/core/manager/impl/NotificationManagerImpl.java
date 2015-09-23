@@ -18,6 +18,8 @@ package org.orcid.core.manager.impl;
 
 import java.io.UnsupportedEncodingException;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -31,6 +33,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.adapter.JpaJaxbNotificationAdapter;
 import org.orcid.core.constants.EmailConstants;
+import org.orcid.core.exception.OrcidNotFoundException;
 import org.orcid.core.exception.OrcidNotificationAlreadyReadException;
 import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.locale.LocaleManager;
@@ -51,6 +54,8 @@ import org.orcid.jaxb.model.message.SendChangeNotifications;
 import org.orcid.jaxb.model.message.Source;
 import org.orcid.jaxb.model.notification.Notification;
 import org.orcid.jaxb.model.notification.NotificationType;
+import org.orcid.jaxb.model.notification.permission.Items;
+import org.orcid.jaxb.model.notification.permission.Item;
 import org.orcid.jaxb.model.notification.amended.AmendedSection;
 import org.orcid.jaxb.model.notification.amended.NotificationAmended;
 import org.orcid.jaxb.model.notification.custom.NotificationCustom;
@@ -379,6 +384,11 @@ public class NotificationManagerImpl implements NotificationManager {
 
     @Override
     public void sendAmendEmail(OrcidProfile amendedProfile, AmendedSection amendedSection) {
+        sendAmendEmail(amendedProfile, amendedSection, null);
+    }
+
+    @Override
+    public void sendAmendEmail(OrcidProfile amendedProfile, AmendedSection amendedSection, Collection<Item> items) {
         String amenderOrcid = sourceManager.retrieveSourceOrcid();
         if (amenderOrcid == null) {
             LOGGER.debug("Not sending amend email, because amender is null: {}", amendedProfile);
@@ -421,6 +431,9 @@ public class NotificationManagerImpl implements NotificationManager {
             NotificationAmended notification = new NotificationAmended();
             notification.setNotificationType(NotificationType.AMENDED);
             notification.setAmendedSection(amendedSection);
+            if (items != null) {
+                notification.setItems(new Items(new ArrayList<>(items)));
+            }
             createNotification(amendedProfile.getOrcidIdentifier().getPath(), notification);
         } else {
             String email = amendedProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
@@ -620,12 +633,12 @@ public class NotificationManagerImpl implements NotificationManager {
         templateParams.put("subject", getSubject("email.subject.claim_reminder", orcidProfile));
         Source source = orcidProfile.getOrcidHistory().getSource();
         String creatorName = "";
-        if(source != null) {
-        	if(source.getSourceName() != null && source.getSourceName().getContent() != null) {
-        		creatorName = source.getSourceName().getContent();
-        	} else {
-        		creatorName = source.retrieveSourcePath();
-        	}
+        if (source != null) {
+            if (source.getSourceName() != null && source.getSourceName().getContent() != null) {
+                creatorName = source.getSourceName().getContent();
+            } else {
+                creatorName = source.retrieveSourcePath();
+            }
         }
         templateParams.put("creatorName", creatorName);
         templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
@@ -773,7 +786,11 @@ public class NotificationManagerImpl implements NotificationManager {
             throw new IllegalArgumentException("Put code must be null when creating a new notification");
         }
         NotificationEntity notificationEntity = notificationAdapter.toNotificationEntity(notification);
-        notificationEntity.setProfile(profileDao.find(orcid));
+        ProfileEntity profile = profileDao.find(orcid);
+        if (profile == null) {
+            throw OrcidNotFoundException.newInstance(orcid);
+        }
+        notificationEntity.setProfile(profile);
         notificationEntity.setSource(sourceManager.retrieveSourceEntity());
         notificationDao.persist(notificationEntity);
         return notificationAdapter.toNotification(notificationEntity);
@@ -813,7 +830,7 @@ public class NotificationManagerImpl implements NotificationManager {
         if (sourceId != null && !sourceId.equals(notificationEntity.getSource().getSourceId())) {
             Map<String, String> params = new HashMap<String, String>();
             params.put("activity", "notification");
-        	throw new WrongSourceException(params);
+            throw new WrongSourceException(params);
         }
         if (notificationEntity.getReadDate() != null) {
             throw new OrcidNotificationAlreadyReadException();
@@ -832,13 +849,13 @@ public class NotificationManagerImpl implements NotificationManager {
         if (notificationEntity == null) {
             return null;
         }
-        
-        if(notificationEntity.getActionedDate() == null) {
+
+        if (notificationEntity.getActionedDate() == null) {
             notificationEntity.setActionedDate(new Date());
             notificationDao.merge(notificationEntity);
         }
-        
+
         return notificationAdapter.toNotification(notificationEntity);
     }
-    
+
 }

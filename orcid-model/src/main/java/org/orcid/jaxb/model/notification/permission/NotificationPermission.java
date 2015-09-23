@@ -33,6 +33,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.orcid.jaxb.model.notification.Notification;
+import org.orcid.jaxb.model.notification.NotificationType;
 
 /**
  * <p>
@@ -81,6 +82,10 @@ public class NotificationPermission extends Notification {
     protected String notificationSubject;
     @XmlElement(name = "notification-intro", namespace = "http://www.orcid.org/ns/notification")
     protected String notificationIntro;
+
+    {
+        notificationType = NotificationType.PERMISSION;
+    }
 
     /**
      * Gets the value of the authorizationUrl property.

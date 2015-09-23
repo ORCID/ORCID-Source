@@ -104,6 +104,8 @@ import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.VisibilityType;
 import org.orcid.jaxb.model.message.WorkContributors;
 import org.orcid.jaxb.model.message.WorkExternalIdentifier;
+import org.orcid.jaxb.model.notification.permission.Item;
+import org.orcid.jaxb.model.notification.permission.ItemType;
 import org.orcid.jaxb.model.notification.amended.AmendedSection;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.GenericDao;
@@ -821,9 +823,18 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
 
         persistAddedWorks(orcid, updatedOrcidWorksList);
         profileDao.flush();
+
         boolean notificationsEnabled = existingProfile.getOrcidInternal().getPreferences().isNotificationsEnabled();
         if (notificationsEnabled) {
-            notificationManager.sendAmendEmail(existingProfile, AmendedSection.WORK);
+            List<Item> activities = new ArrayList<>();
+            for (OrcidWork updatedWork : updatedOrcidWorksList) {
+                Item activity = new Item();
+                activity.setItemName(updatedWork.getWorkTitle().getTitle().getContent());
+                activity.setItemType(ItemType.WORK);
+                activity.setPutCode(updatedWork.getPutCode());
+                activities.add(activity);
+            }
+            notificationManager.sendAmendEmail(existingProfile, AmendedSection.WORK, activities);
         }
     }
 
@@ -1090,6 +1101,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
             WorkEntity workEntity = jaxb2JpaAdapter.getWorkEntity(updatedOrcidWork, null);
             workEntity.setProfile(profileEntity);
             workDao.persist(workEntity);
+            updatedOrcidWork.setPutCode(String.valueOf(workEntity.getId()));
             if (updatedOrcidWork.getWorkTitle() != null && updatedOrcidWork.getWorkTitle().getTitle() != null) {
                 String title = updatedOrcidWork.getWorkTitle().getTitle().getContent();
                 if (titles.contains(title)) {
