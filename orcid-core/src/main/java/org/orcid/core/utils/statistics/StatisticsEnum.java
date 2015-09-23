@@ -34,7 +34,7 @@ public enum StatisticsEnum {
      * Annoyingly this can only be an inline static final if we want it to work
      * There is a unit test to check it correctly contains all values in declared order
      */
-    public static final String allowableSwaggerValues = "liveIds,idsWithVerifiedEmail,idsWithWorks,works,worksWithDois,lockedRecords,uniqueDois";
+    public static final String allowableSwaggerValues = "liveIds,idsWithVerifiedEmail,idsWithWorks,works,worksWithDois,uniqueDois,employment,employmentUniqueOrg,education,educationUniqueOrg,funding,fundingUniqueOrg";
     
     private final String value;
 
