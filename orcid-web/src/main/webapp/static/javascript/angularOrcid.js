@@ -5383,6 +5383,15 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
                 dataType: 'json',
                 success: function(data) {
                     $scope.peerReviewImportWizardList = data;
+                	$scope.peerReviewImportWizardList.sort(function(obj1, obj2){
+                		if(obj1.displayName < obj2.displayName) {
+            				return -1;
+            			}
+            			if(obj1.displayName > obj2.displayName) {
+            				return 1;
+            			}
+            			return 0;
+            		});
                 	$scope.$apply();
                 }
             }).fail(function() {
