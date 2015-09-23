@@ -133,11 +133,16 @@ div.IdPSelectPreferredIdPButton div.IdPSelectTextDiv
 {
     margin-left: 2px;
     margin-right: 2px;
+    color: #939598;
 }
 #idpSelectSelectButton, #idpSelectListButton
 {
     margin-left: 5px;
     width: 16%;
+    background: #338CAF;
+    color: #FFF;
+    border: none;
+    border-radius: 3px;
 }
 #idpSelectSelectButton
 {

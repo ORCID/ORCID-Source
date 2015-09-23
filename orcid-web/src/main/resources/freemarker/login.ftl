@@ -60,7 +60,7 @@
 	<#if (RequestParameters['shibboleth'])??>
         <div class="row">        	 
            <div class="control-group col-md-offset-3 col-md-9 col-sm-9 col-sm-offset-3 col-xs-12">
-				<a href="<@orcid.rootPath '/shibboleth/link'/>">Sign in with Shibboleth</a>    
+				<a href="<@orcid.rootPath '/shibboleth/link'/>">${springMacroRequestContext.getMessage("login.shibboleth")}</a>    
            </div>
         </div>
     </#if>  
