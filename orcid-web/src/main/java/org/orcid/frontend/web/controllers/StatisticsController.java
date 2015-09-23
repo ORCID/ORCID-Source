@@ -19,15 +19,13 @@ package org.orcid.frontend.web.controllers;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
-import org.orcid.core.manager.StatisticsManager;
-import org.orcid.persistence.jpa.entities.StatisticKeyEntity;
-import org.orcid.persistence.jpa.entities.StatisticValuesEntity;
+import org.orcid.core.manager.impl.StatisticsCacheManager;
+import org.orcid.jaxb.model.statistics.StatisticsSummary;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,7 +36,7 @@ import org.springframework.web.servlet.ModelAndView;
 @RequestMapping(value = "/statistics")
 public class StatisticsController extends BaseController {    
     @Resource
-    private StatisticsManager statisticsManager;
+    private StatisticsCacheManager statisticsCacheManager;
     
     @Resource
     MessageSource messageSource;
@@ -46,22 +44,18 @@ public class StatisticsController extends BaseController {
     @RequestMapping
     public ModelAndView getStatistics() {        
         ModelAndView mav = new ModelAndView("statistics");
-        Map<String, Long> statisticsMap = new HashMap<String, Long>();
+        Map<String, Long> statisticsMap = null;
                 
-        StatisticKeyEntity latestKey = null; //statisticsManager.getLatestKey();
-        List<StatisticValuesEntity> statistics = statisticsManager.getLatestStatistics();
+        StatisticsSummary statisticsSummary = statisticsCacheManager.retrieve();
         
-        if(statistics != null)
-            for(StatisticValuesEntity statistic : statistics) {
-                statisticsMap.put(statistic.getStatisticName(), statistic.getStatisticValue());
-                if (latestKey == null) 
-                    latestKey = statistic.getKey();
-            }        
-            
+        if(statisticsSummary != null) {
+        	statisticsMap = statisticsSummary.getStatistics();
+        	mav.addObject("statistics_date", formatStatisticsDate(statisticsSummary.getDate()));
+        }
+        if(statisticsMap == null) {
+        	statisticsMap = new HashMap<String, Long>();
+        }
         mav.addObject("statistics", statisticsMap);
-        
-        if(latestKey != null)
-            mav.addObject("statistics_date", formatStatisticsDate(latestKey.getGenerationDate()));
         
         return mav;
     }
@@ -79,7 +73,7 @@ public class StatisticsController extends BaseController {
      * */
     @RequestMapping(value = "/liveids.json")    
     public @ResponseBody String getLiveIdsAmount(HttpServletRequest request) {        
-        return statisticsManager.getLiveIds(request.getLocale());
+        return statisticsCacheManager.retrieveLiveIds(request.getLocale());
     }
     
 }

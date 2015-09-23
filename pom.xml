@@ -51,6 +51,7 @@ the software.
         <module>orcid-test</module>
         <module>orcid-solr-web</module>
         <module>orcid-integration-test</module>
+		<module>orcid-internal-api</module>
     </modules>
 
 
@@ -782,7 +783,7 @@ the software.
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-c3p0</artifactId>
-                <version>4.0.0.CR7</version>
+                <version>3.6.3.Final</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>

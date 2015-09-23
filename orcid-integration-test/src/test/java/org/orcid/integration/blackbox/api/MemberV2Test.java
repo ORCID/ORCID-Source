@@ -120,8 +120,8 @@ public class MemberV2Test extends BlackBoxBase {
     @After
     public void after() throws JSONException, InterruptedException, URISyntaxException {
         cleanActivities();
-    }
-
+    }    
+    
     @Test
     public void testGetNotificationToken() throws JSONException, InterruptedException {
         String accessToken = getAccessToken(this.client1ClientId, this.client1ClientSecret);

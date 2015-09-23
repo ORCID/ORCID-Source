@@ -17,6 +17,7 @@
 
 -->
 <html>
+<#import "/macros/orcid.ftl" as orcid />
 <#assign verDateTime = startupDate?datetime>
 <#assign ver="${verDateTime?iso_utc}">
 <#include "/common/html-head.ftl" />
@@ -63,7 +64,7 @@
 	<!--  Do not remove -->
 	<script type="text/javascript" src="${staticCdn}/javascript/iframeResizer.contentWindow.min.js?v=${ver}"></script>
 </head>
-<body data-baseurl="<@orcid.orcidUrl '/'/>" ng-app="appInFrame" ng-controller="iframeController"> 
+<body data-baseurl="<@orcid.rootPath '/'/>" ng-app="appInFrame" ng-controller="iframeController"> 
     <div>        	        	
     	<p><strong>${notification.source.sourceName.content}</strong> has updated items in the ${notification.amendedSection!?capitalize} section of your record.</p>
         <#if (notification.activities.activities)??>
@@ -73,7 +74,7 @@
                 </#list>
             <p>
         </#if>
-    	<a href="<@orcid.orcidUrl '/my-orcid'/>" target="_parent" class="btn btn-primary">View on your record</a> <a ng-click="archive(putCode)" target="_parent" ng-hide="archivedDate" class="btn btn-default">Archive</a>
+    	<a href="<@orcid.rootPath '/my-orcid'/>" target="_parent" class="btn btn-primary">View on your record</a> <a ng-click="archive(putCode)" target="_parent" ng-hide="archivedDate" class="btn btn-default">Archive</a>
      </div>
  </body>
  </html>
