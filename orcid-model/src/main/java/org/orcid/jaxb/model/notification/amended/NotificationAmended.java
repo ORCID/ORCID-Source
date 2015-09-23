@@ -31,35 +31,9 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 import org.orcid.jaxb.model.notification.Notification;
+import org.orcid.jaxb.model.notification.NotificationType;
+import org.orcid.jaxb.model.notification.permission.Items;
 
-/**
- * <p>
- * Java class for anonymous complex type.
- * 
- * <p>
- * The following schema fragment specifies the expected content contained within
- * this class.
- * 
- * <pre>
- * &lt;complexType>
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element ref="{http://www.orcid.org/ns/common}put-code" minOccurs="0"/>
- *         &lt;element ref="{http://www.orcid.org/ns/notification}notification-type"/>
- *         &lt;element ref="{http://www.orcid.org/ns/notification}authorization-url"/>
- *         &lt;element ref="{http://www.orcid.org/ns/notification}activities"/>
- *         &lt;element ref="{http://www.orcid.org/ns/common}created-date" minOccurs="0"/>
- *         &lt;element ref="{http://www.orcid.org/ns/common}sent-date" minOccurs="0"/>
- *         &lt;element ref="{http://www.orcid.org/ns/common}source" minOccurs="0"/>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
- * </pre>
- * 
- * 
- */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = { "putCode", "notificationType", "amendedSection", "createdDate", "sentDate", "readDate", "archivedDate", "source" })
 @XmlRootElement(name = "notification", namespace = "http://www.orcid.org/ns/notification")
@@ -68,8 +42,14 @@ public class NotificationAmended extends Notification {
     private final static long serialVersionUID = 1L;
     @XmlElement(name = "amended-section", namespace = "http://www.orcid.org/ns/notification", required = true)
     protected AmendedSection amendedSection;
+    @XmlElement(namespace = "http://www.orcid.org/ns/notification", required = false)
+    protected Items items;
     @XmlTransient
     protected String subject;
+
+    {
+        notificationType = NotificationType.AMENDED;
+    }
 
     public AmendedSection getAmendedSection() {
         return amendedSection;
@@ -77,6 +57,14 @@ public class NotificationAmended extends Notification {
 
     public void setAmendedSection(AmendedSection amendedSection) {
         this.amendedSection = amendedSection;
+    }
+
+    public Items getItems() {
+        return items;
+    }
+
+    public void setItems(Items value) {
+        this.items = value;
     }
 
     public String getSubject() {
