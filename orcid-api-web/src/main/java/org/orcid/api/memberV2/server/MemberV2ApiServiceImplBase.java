@@ -37,6 +37,7 @@ import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_JSON;
 import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_XML;
 import static org.orcid.core.api.OrcidApiConstants.WORK;
 import static org.orcid.core.api.OrcidApiConstants.WORK_SUMMARY;
+import static org.orcid.core.api.OrcidApiConstants.RESEARCHER_URLS;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -98,7 +99,7 @@ abstract public class MemberV2ApiServiceImplBase {
     @Value("${org.orcid.core.apiBaseUri}")
     protected String apiBaseUri;
 
-    private MemberV2ApiServiceDelegator serviceDelegator;
+    protected MemberV2ApiServiceDelegator serviceDelegator;
 
     private NotificationsApiServiceDelegator notificationsServiceDelegator;
 
@@ -501,6 +502,5 @@ abstract public class MemberV2ApiServiceImplBase {
     }
     
     // END NOTIFICATIONS
-    // =================
-
+    // =================        
 }

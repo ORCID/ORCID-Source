@@ -67,7 +67,22 @@
 <body data-baseurl="<@orcid.rootPath '/'/>" ng-app="appInFrame" ng-controller="iframeController"> 
     <div>        	        	
     	<p><strong>${notification.source.sourceName.content}</strong> has updated items in the ${notification.amendedSection!?capitalize} section of your record.</p>
+        <#if (notification.activities.activities)??>
+            <p>
+                <#list notification.activities.activities as activity>
+                     <div><strong>${activity.activityName}</strong><#if activity.externalIdentifier??> (${activity.externalIdentifier.externalIdentifierType}: ${activity.externalIdentifier.externalIdentifierId})</#if></div>
+                </#list>
+            <p>
+        </#if>
     	<a href="<@orcid.rootPath '/my-orcid'/>" target="_parent" class="btn btn-primary">View on your record</a> <a ng-click="archive(putCode)" target="_parent" ng-hide="archivedDate" class="btn btn-default">Archive</a>
      </div>
+     <#if notification.sourceDescription??>
+         <div>
+             <strong>About ${notification.source.sourceName.content}</strong>
+         </div>
+         <div>
+             ${notification.sourceDescription}
+         </div>
+     </#if>
  </body>
  </html>

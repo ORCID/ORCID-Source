@@ -31,6 +31,15 @@ public interface ResearcherUrlManager {
      * */
     public List<ResearcherUrlEntity> getResearcherUrls(String orcid);
 
+    
+    /**
+     * Return the list of researcher urls associated to a specific profile
+     * @param orcid
+     * @return 
+     *          the list of researcher urls associated with the orcid profile
+     * */
+    public org.orcid.jaxb.model.record.ResearcherUrls getResearcherUrlsV2(String orcid);
+    
     /**
      * Deleted a researcher url from database
      * @param id
