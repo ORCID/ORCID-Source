@@ -5099,6 +5099,7 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
 	$scope.sortHideOption = true;
 	$scope.displayURLPopOver = {};
 	$scope.peerReviewImportWizard = false;
+	$scope.wizardDescExpanded = {};
     
     $scope.sort = function(key) {
         $scope.sortState.sortBy(key);
@@ -5374,13 +5375,35 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
     };
     
     $scope.showPeerReviewImportWizard = function(){
+    	if(!$scope.peerReviewImportWizard) {
+    		$.ajax({
+                url: getBaseUri() + '/workspace/retrieve-peer-review-import-wizards.json',
+                type: 'GET',
+                contentType: 'application/json;charset=UTF-8',
+                dataType: 'json',
+                success: function(data) {
+                    $scope.peerReviewImportWizardList = data;
+                	$scope.$apply();
+                }
+            }).fail(function() {
+                // something bad is happening!
+                console.log("PeerReviewImportWizardError");
+            });
+    	}
     	$scope.peerReviewImportWizard = !$scope.peerReviewImportWizard;
+    };
+    
+    $scope.toggleWizardDesc = function(id){
+    	$scope.wizardDescExpanded[id] = !$scope.wizardDescExpanded[id];
+    };
+    
+    $scope.openImportWizardUrlFilter = function(url, param) {
+    	url = url + '?client_id='+param.clientId+'&response_type=code&scope='+param.redirectUris.redirectUri[0].scopeAsSingleString+'&redirect_uri='+param.redirectUris.redirectUri[0].value;
+    	openImportWizardUrl(url);
     };
         
     //Init
     $scope.peerReviewSrvc.loadPeerReviews(peerReviewSrvc.constants.access_type.USER);
-    
-    
 }]);
 
 
@@ -6992,6 +7015,9 @@ orcidNgModule.controller('manageMembersCtrl',['$scope', '$compile', function man
         } else if (rUri.type.value == 'import-funding-wizard'){
             rUri.scopes.push('/orcid-profile/read-limited');
             rUri.scopes.push('/funding/create');
+        } else if (rUri.type.value == 'import-peer-review-wizard'){
+            rUri.scopes.push('/orcid-profile/read-limited');
+            rUri.scopes.push('/peer-review/create');
         }
     };
 
