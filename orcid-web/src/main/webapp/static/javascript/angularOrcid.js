@@ -3073,7 +3073,7 @@ orcidNgModule.controller('VerifyEmailCtrl', ['$scope', '$compile', 'emailSrvc', 
                         if ($scope.emailsPojo.emails[i].verified) primeVerified = true;
                     };
                 };
-                if (!primeVerified) {
+                if (!primeVerified && !getBaseUri().contains("sandbox")) {
                     var colorboxHtml = $compile($('#verify-email-modal').html())($scope);
                     $scope.$apply();
                     $.colorbox({
@@ -4741,6 +4741,15 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     			}
     		}
     	}
+    	$scope.workImportWizards.sort(function(obj1, obj2){
+    		if(obj1.displayName < obj2.displayName) {
+    			return -1;
+    		}
+    		if(obj1.displayName > obj2.displayName) {
+    			return 1;
+    		}
+    		return 0;
+    	})
     }
 
     $scope.addWorkModal = function(data){
@@ -6418,9 +6427,11 @@ orcidNgModule.controller('adminVerifyEmailCtrl',['$scope','$compile', function (
 
     $scope.verifyEmail = function(){
         $.ajax({
-            url: getBaseUri()+'/admin-actions/admin-verify-email?email=' + $scope.email,
-            type: 'GET',
+            url: getBaseUri()+'/admin-actions/admin-verify-email.json',
+            type: 'POST',
             dataType: 'text',
+            data: $scope.email,
+            contentType: 'application/json;charset=UTF-8',
             success: function(data){
                 $scope.$apply(function(){
                     $scope.result = data;
@@ -7117,9 +7128,11 @@ orcidNgModule.controller('findIdsCtrl',['$scope','$compile', function findIdsCtr
 
     $scope.findIds = function() {
         $.ajax({
-            url: getBaseUri()+'/admin-actions/find-id?csvEmails=' + $scope.emails,
-            type: 'GET',
+            url: getBaseUri()+'/admin-actions/find-id.json',
+            type: 'POST',
             dataType: 'json',
+            data: $scope.emails,
+            contentType: 'application/json;charset=UTF-8',
             success: function(data){
                 $scope.$apply(function(){
                     if(!$.isEmptyObject(data)) {
@@ -8768,7 +8781,7 @@ orcidNgModule.controller('adminDelegatesCtrl',['$scope',function ($scope){
     };
 }]);
 
-orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '$sce', 'commonSrvc',function ($scope, $compile, $sce, commonSrvc){
+orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '$sce', 'commonSrvc', 'vcRecaptchaService', function ($scope, $compile, $sce, commonSrvc, vcRecaptchaService){
     $scope.showClientDescription = false;
     $scope.showRegisterForm = true;
     $scope.isOrcidPresent = false;
@@ -8780,7 +8793,13 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
     $scope.emailTrustAsHtmlErrors = [];
     $scope.enablePersistentToken = true;
     $scope.showLongDescription = {};
+    $scope.recaptchaWidgetId = null;
+    $scope.recatchaResponse = null;
 
+    $scope.model = {
+            key: orcidVar.recaptchaKey
+    };
+    
     $scope.toggleClientDescription = function() {
         $scope.showClientDescription = !$scope.showClientDescription;
     };
@@ -8920,6 +8939,14 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
     $scope.register = function() {
         if($scope.enablePersistentToken)
             $scope.registrationForm.persistentTokenEnabled=true;
+        
+        console.log("Recaptcha:");
+        console.log($scope.recatchaResponse);
+        console.log($scope.recaptchaWidgetId);
+        
+        $scope.registrationForm.grecaptcha.value = $scope.recatchaResponse; //Adding the response to the register object
+        $scope.registrationForm.grecaptchaWidgetId.value = $scope.recaptchaWidgetId;
+        
         $.ajax({
             url: getBaseUri() + '/oauth/custom/register.json',
             type: 'POST',
@@ -8929,7 +8956,7 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
             success: function(data) {
                 $scope.registrationForm = data;
                 if($scope.registrationForm.approved) {
-                    if ($scope.registrationForm.errors.length == 0) {
+                    if ($scope.registrationForm.errors == undefined || $scope.registrationForm.errors.length == 0) {
                         $scope.showProcessingColorBox();
                         $scope.getDuplicates();
                     } else {
@@ -8994,7 +9021,6 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
         if($scope.enablePersistentToken)
             auth_scope_prefix = 'AuthorizeP_';
         $scope.showProcessingColorBox();
-        $scope.registrationForm.grecaptcha = "hello"; // extract this from the widget and wire it up to Registration.java to make it work!
         
         $.ajax({
             url: getBaseUri() + '/oauth/custom/registerConfirm.json',
@@ -9161,8 +9187,18 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
 	    }
     };
     
-    
-    
+    //------------------
+    //------Recaptcha------
+    //------------------    
+    $scope.setRecaptchaWidgetId = function (widgetId) {                        
+        console.log('Widget ID: ' + widgetId)
+        $scope.recaptchaWidgetId = widgetId;        
+    };
+
+    $scope.setRecatchaResponse = function (response) {        
+        console.log('Yey recaptcha response!');
+        $scope.recatchaResponse = response;        
+    };           
 }]);
 
 orcidNgModule.controller('EmailsController',['$scope', 'emailSrvc',function ($scope, emailSrvc){

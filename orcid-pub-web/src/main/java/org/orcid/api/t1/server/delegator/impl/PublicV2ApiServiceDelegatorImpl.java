@@ -19,14 +19,12 @@ package org.orcid.api.t1.server.delegator.impl;
 import static org.orcid.core.api.OrcidApiConstants.STATUS_OK_MESSAGE;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
 
 import org.orcid.api.common.util.ActivityUtils;
-import org.orcid.api.common.writer.citeproc.CSLItemDataList;
 import org.orcid.api.common.writer.citeproc.WorkToCiteprocTranslator;
 import org.orcid.api.t1.server.delegator.PublicV2ApiServiceDelegator;
 import org.orcid.core.exception.OrcidDeprecatedException;
@@ -52,9 +50,7 @@ import org.orcid.jaxb.model.record.summary.EducationSummary;
 import org.orcid.jaxb.model.record.summary.EmploymentSummary;
 import org.orcid.jaxb.model.record.summary.FundingSummary;
 import org.orcid.jaxb.model.record.summary.PeerReviewSummary;
-import org.orcid.jaxb.model.record.summary.WorkGroup;
 import org.orcid.jaxb.model.record.summary.WorkSummary;
-import org.orcid.jaxb.model.record.summary.Works;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.WebhookDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -78,7 +74,7 @@ public class PublicV2ApiServiceDelegatorImpl implements PublicV2ApiServiceDelega
 
     @Resource
     private AffiliationsManager affiliationsManager;
-    
+
     @Resource
     private PeerReviewManager peerReviewManager;
 
@@ -96,9 +92,9 @@ public class PublicV2ApiServiceDelegatorImpl implements PublicV2ApiServiceDelega
 
     @Resource(name = "visibilityFilterV2")
     private VisibilityFilterV2 visibilityFilter;
-    
-	@Value("${org.orcid.core.baseUri}")
-	private String baseUrl;
+
+    @Value("${org.orcid.core.baseUri}")
+    private String baseUrl;
 
     @Override
     public Response viewStatusText() {
@@ -108,11 +104,11 @@ public class PublicV2ApiServiceDelegatorImpl implements PublicV2ApiServiceDelega
     @Override
     @AccessControl(requiredScope = ScopePathType.READ_PUBLIC, enableAnonymousAccess = true)
     public Response viewActivities(String orcid) {
-    	ProfileEntity entity = profileEntityManager.findByOrcid(orcid);
-    	if(profileDao.isProfileDeprecated(orcid)) {
-    		StringBuffer primary = new StringBuffer(baseUrl).append("/").append(entity.getPrimaryRecord().getId());
-    		Map<String, String> params = new HashMap<String, String>();
-        	params.put("orcid", primary.toString());
+        ProfileEntity entity = profileEntityManager.findByOrcid(orcid);
+        if (profileDao.isProfileDeprecated(orcid)) {
+            StringBuffer primary = new StringBuffer(baseUrl).append("/").append(entity.getPrimaryRecord().getId());
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("orcid", primary.toString());
             throw new OrcidDeprecatedException(params);
         }
         ActivitiesSummary as = profileEntityManager.getPublicActivitiesSummary(orcid);
@@ -121,7 +117,7 @@ public class PublicV2ApiServiceDelegatorImpl implements PublicV2ApiServiceDelega
         ActivityUtils.setPathToActivity(as, orcid);
         return Response.ok(as).build();
     }
-    
+
     @Override
     @AccessControl(requiredScope = ScopePathType.READ_PUBLIC, enableAnonymousAccess = true)
     public Response viewWork(String orcid, Long putCode) {        
@@ -203,7 +199,7 @@ public class PublicV2ApiServiceDelegatorImpl implements PublicV2ApiServiceDelega
 
     @Override
     @AccessControl(requiredScope = ScopePathType.READ_PUBLIC, enableAnonymousAccess = true)
-    public Response viewEmploymentSummary(String orcid, Long putCode) { 
+    public Response viewEmploymentSummary(String orcid, Long putCode) {
         EmploymentSummary es = affiliationsManager.getEmploymentSummary(orcid, putCode);
         orcidSecurityManager.checkVisibility(es);
         ActivityUtils.setPathToActivity(es, orcid);

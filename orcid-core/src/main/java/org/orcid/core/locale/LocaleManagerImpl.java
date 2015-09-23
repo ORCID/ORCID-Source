@@ -100,6 +100,7 @@ public class LocaleManagerImpl implements LocaleManager {
         return countries;
     }
 
+    @SuppressWarnings("rawtypes")
     public static String buildInternationalizationKey(Class theClass, String key) {
         return theClass.getName() + '.' + key;
     }

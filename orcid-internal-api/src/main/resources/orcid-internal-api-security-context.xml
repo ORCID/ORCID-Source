@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2014 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:sec="http://www.springframework.org/schema/security"
+       xmlns:oauth2="http://www.springframework.org/schema/security/oauth2"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.2.xsd
+       http://www.springframework.org/schema/security/oauth2 http://www.springframework.org/schema/security/spring-security-oauth2-2.0.xsd">
+
+	<sec:http pattern="/resources/**" security="none"/>		
+
+    <!-- Authenticate the client before reaching the token endpoint -->
+    <sec:http pattern="/oauth/token" create-session="stateless" authentication-manager-ref="clientAuthenticationManager">
+        <sec:intercept-url pattern="/oauth/token" access="IS_AUTHENTICATED_FULLY" />
+        <sec:anonymous enabled="false" />
+        <sec:http-basic entry-point-ref="orcidOauthAuthenticationEntryPoint" />
+        <!-- include this only if you need to authenticate clients via request parameters -->
+        <sec:custom-filter ref="customFilters" before="BASIC_AUTH_FILTER" />
+        <sec:access-denied-handler ref="oauthAccessDeniedHandler" />
+    </sec:http>
+
+    <!-- Authentication for internal API -->
+    <sec:http use-expressions="true" create-session="stateless">
+        <sec:anonymous enabled="false" />
+        <sec:x509 subject-principal-regex="CN=(.*?)," user-service-ref="x509UserService"/>
+        <sec:intercept-url pattern="/**" access="#oauth2.clientHasRole('ROLE_CLIENT')"/>
+        <sec:custom-filter ref="orcidResourceServerFilter" before="PRE_AUTH_FILTER" />
+        <sec:access-denied-handler ref="orcidOauthAuthenticationEntryPoint" />
+        <sec:expression-handler ref="oauthWebExpressionHandler" />
+    </sec:http>    
+	
+
+	<!-- A simple authentication manager that will attempt to authenticate the client using the X.509 cert -->
+    <sec:authentication-manager alias="x509AuthenticationManager">
+        <sec:authentication-provider user-service-ref="x509UserService"/>
+    </sec:authentication-manager>
+
+    <!-- A simple hard-coded user service that will pick up the CN from the cert and perform a simple match -->
+    <sec:user-service id="x509UserService">
+        <sec:user name="ORCID-INTERNAL-API" authorities="ROLE_SYSTEM"/>
+    </sec:user-service>
+
+    <!-- The authentication manager that wraps the client details user service, that performs a db lookup -->
+    <sec:authentication-manager id="clientAuthenticationManager">
+        <sec:authentication-provider ref="orcidAuthenticationProvider"/>
+    </sec:authentication-manager>
+
+    <!-- Create for the filtering of Oauth2 resources -->    
+    <oauth2:resource-server id="orcidResourceServerFilter" resource-id="orcid" token-services-ref="tokenServices" entry-point-ref="orcidOauthAuthenticationEntryPoint"/>
+
+    <!-- User web expressions to aid the syntax of protection -->
+    <oauth2:web-expression-handler id="oauthWebExpressionHandler" />
+    
+    <bean id="orcidAuthenticationProvider" class="org.orcid.core.oauth.OrcidMultiSecretAuthenticationProvider">
+        <property name="userDetailsService" ref="clientDetailsUserService" />
+    </bean>    
+    
+	<bean id="corsFilter" class="org.orcid.core.web.filters.CorsFilter" />
+	
+	<bean id="acceptFilter" class="org.orcid.core.web.filters.AcceptFilter" />
+
+    <bean id="jsonpCallbackFilter" class="org.orcid.core.web.filters.JsonpCallbackFilter" />
+    
+    <bean id="apiVersionFilter" class="org.orcid.core.web.filters.ApiVersionFilter" />
+    
+     <bean id="oauthAccessDeniedHandler" class="org.springframework.security.oauth2.provider.error.OAuth2AccessDeniedHandler">
+        <property name ="exceptionRenderer" ref="legacyOauthExceptionRenderer"/>
+     </bean>
+     
+     <bean id="legacyOauthExceptionRenderer" class="org.springframework.security.oauth2.provider.error.DefaultOAuth2ExceptionRenderer">
+        <property name="messageConverters">
+            <list>            
+                <ref bean="legacyOrcidJsonMessageConverter"/>
+                <ref bean="legacyXmlMessageConverter"/>
+            </list>
+        </property>
+     </bean>
+     
+     <bean id="orcidOauthExceptionRenderer" class="org.springframework.security.oauth2.provider.error.DefaultOAuth2ExceptionRenderer">
+        <property name="messageConverters">
+            <list>
+                <ref bean="orcidJsonMessageConverter"/>
+                <ref bean="orcidXmlMessageConverter"/>
+            </list>
+        </property>
+     </bean>
+    
+    <bean id="legacyOrcidJsonMessageConverter" class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+        <property name="supportedMediaTypes">
+            <list value-type="org.springframework.http.MediaType">                
+                <bean class="org.springframework.http.MediaType">
+                    <constructor-arg type="java.lang.String" value="application"/>
+                    <constructor-arg type="java.lang.String" value="json"/>
+                </bean>
+                <bean class="org.springframework.http.MediaType"> 
+                    <constructor-arg type="java.lang.String" value="application"/>
+                    <constructor-arg type="java.lang.String" value="orcid+json"/>
+                </bean>
+                <bean class="org.springframework.http.MediaType"> 
+                    <constructor-arg type="java.lang.String" value="application"/>
+                    <constructor-arg type="java.lang.String" value="vnd.orcid+json"/>
+                </bean>
+            </list>
+        </property>    
+    </bean>
+    
+    <bean id="orcidJsonMessageConverter" class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+        <property name="supportedMediaTypes">
+            <list value-type="org.springframework.http.MediaType">                
+                <bean class="org.springframework.http.MediaType">
+                    <constructor-arg type="java.lang.String" value="application"/>
+                    <constructor-arg type="java.lang.String" value="json"/>
+                </bean>
+                <bean class="org.springframework.http.MediaType"> 
+                    <constructor-arg type="java.lang.String" value="application"/>
+                    <constructor-arg type="java.lang.String" value="orcid+json"/>
+                </bean>
+                <bean class="org.springframework.http.MediaType"> 
+                    <constructor-arg type="java.lang.String" value="application"/>
+                    <constructor-arg type="java.lang.String" value="vnd.orcid+json"/>
+                </bean>
+            </list>
+        </property>
+        <property name="prettyPrint" value="true"/>  
+    </bean>
+    
+    <!--  This is supposed to be an XML converter, but seems to be JSON! Leaving this the same for existing APIs. In future APIs it will be XML! -->
+    <bean id="legacyXmlMessageConverter" class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+        <property name="supportedMediaTypes">
+            <list value-type="org.springframework.http.MediaType">
+                <bean class="org.springframework.http.MediaType">
+                    <constructor-arg type="java.lang.String" value="application"/>
+                    <constructor-arg type="java.lang.String" value="xml"/>
+                </bean>
+                <bean class="org.springframework.http.MediaType"> 
+                    <constructor-arg type="java.lang.String" value="application"/>
+                    <constructor-arg type="java.lang.String" value="orcid+xml"/>
+                </bean>
+                <bean class="org.springframework.http.MediaType"> 
+                    <constructor-arg type="java.lang.String" value="application"/>
+                    <constructor-arg type="java.lang.String" value="vnd.orcid+xml"/>
+                </bean>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="orcidXmlMessageConverter" class="org.springframework.http.converter.xml.MarshallingHttpMessageConverter">
+        <property name="supportedMediaTypes">
+            <list value-type="org.springframework.http.MediaType">
+                <bean class="org.springframework.http.MediaType">
+                    <constructor-arg type="java.lang.String" value="application"/>
+                    <constructor-arg type="java.lang.String" value="xml"/>
+                </bean>
+                <bean class="org.springframework.http.MediaType"> 
+                    <constructor-arg type="java.lang.String" value="application"/>
+                    <constructor-arg type="java.lang.String" value="orcid+xml"/>
+                </bean>
+                <bean class="org.springframework.http.MediaType"> 
+                    <constructor-arg type="java.lang.String" value="application"/>
+                    <constructor-arg type="java.lang.String" value="vnd.orcid+xml"/>
+                </bean>
+            </list>
+        </property>   
+        <property name="marshaller" ref="xmlMarshaller"/>
+        <property name="unmarshaller" ref="xmlMarshaller"/>
+    </bean>
+    
+    <bean name="xmlMarshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
+        <property name="classesToBeBound">
+            <list>
+                <value>org.orcid.jaxb.model.error.OrcidError</value>
+            </list>
+        </property>
+        <property name="marshallerProperties">
+            <map>
+                <entry>
+                    <key>
+                        <value>jaxb.formatted.output</value>
+                    </key>
+                    <value type="boolean">true</value>
+                </entry>
+            </map>
+        </property>
+    </bean>
+    
+    <!-- Add in order for it to be referenced in the filter order -->
+    <bean id="customFilters" class="org.springframework.web.filter.CompositeFilter">
+        <property name="filters">
+            <list>
+                <ref bean="clientCredentialsTokenEndpointFilter"/>
+            </list>
+        </property>
+    </bean>
+    <bean id="clientCredentialsTokenEndpointFilter" class="org.orcid.api.common.security.oauth.OrcidOauth2TokenEndPointFilter">
+        <property name="authenticationEntryPoint" ref="orcidOauthAuthenticationEntryPoint"/>
+        <property name="authenticationManager" ref="clientAuthenticationManager"/>
+    </bean>
+
+        
+    <bean id="orcidOauthAuthenticationEntryPoint" class="org.orcid.api.common.exception.OrcidOAuth2AuthenticationEntryPoint">
+        <property name="realmName" value="ORCID Internal API" />
+        <property name="typeName" value="Bearer"/>
+        <property name="exceptionRenderer" ref="orcidOauthExceptionRenderer"/>
+    </bean>
+    
+    <!-- Use the composite granter to enable granting of tokens for both client credentials and auth codes -->
+    <bean id="tokenGranter" class="org.springframework.security.oauth2.provider.CompositeTokenGranter">
+        <constructor-arg>
+            <list>
+                <ref bean="clientCredentialsTokenGranter"/>                
+            </list>
+        </constructor-arg>
+    </bean>
+
+    <!-- A token granter for the client credentials -->
+    <bean id="clientCredentialsTokenGranter" class="org.orcid.core.oauth.OrcidClientCredentialsTokenGranter">
+        <constructor-arg ref="tokenServices"/>
+        <constructor-arg ref="orcidClientCredentialsChecker"/>
+    </bean>
+
+    <bean id="orcidClientCredentialsChecker" class="org.orcid.core.oauth.OrcidClientCredentialsChecker">
+        <constructor-arg ref="clientDetailsManager"/>
+        <constructor-arg ref="oAuth2RequestFactory" />
+    </bean>
+    
+    <!-- As we have a Jersey endpoint, we need to create an extension to the Spring MVC, so we use a delegator -->
+    <bean id="orcidClientCredentialEndPointDelegator" class="org.orcid.internal.server.delegator.impl.InternalClientCredentialEndPointDelegatorImpl">
+        <property name="tokenGranter" ref="tokenGranter"/>
+        <property name="clientDetailsService" ref="clientDetailsManager"/>        
+    </bean>    
+    
+    <bean id="oAuth2RequestFactory" class="org.springframework.security.oauth2.provider.request.DefaultOAuth2RequestFactory">
+        <constructor-arg ref="clientDetailsManager"/>
+    </bean>
+    
+</beans>
