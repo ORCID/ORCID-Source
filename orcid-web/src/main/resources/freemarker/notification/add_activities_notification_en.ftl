@@ -18,6 +18,7 @@
 -->
 <!DOCTYPE html>
 <html>
+<#import "/macros/orcid.ftl" as orcid />
 <#assign verDateTime = startupDate?datetime>
 <#assign ver="${verDateTime?iso_utc}">
 
@@ -124,7 +125,7 @@
 	<!--  Do not remove -->
 	<script type="text/javascript" src="${staticCdn}/javascript/iframeResizer.contentWindow.min.js?v=${ver}"></script>
 </head>
-<body data-baseurl="<@orcid.orcidUrl '/'/>" ng-app="appInFrame" ng-controller="iframeController">
+<body data-baseurl="<@orcid.rootPath '/'/>" ng-app="appInFrame" ng-controller="iframeController">
 	
 	<#list notification.items.items?sort_by("itemType") as activity>
 		<#switch activity.itemType>
@@ -204,7 +205,7 @@
 			<strong>${tfunding}</strong>
 			<#if fButtons>
 				<div class="notifications-buttons">
-					<a class="btn btn-primary" href="<@orcid.orcidUrl '/notifications'/>/${fPutCode?c}/action?target=${fUrl?url}" target="_blank"><span class="glyphicons cloud-upload"></span> Grant permissions</a>  <a class="btn btn-default" href="" ng-click="archive('${fPutCode?c}')" type="reset" ng-hide="archivedDate"><@orcid.msg 'notifications.archivewithoutgranting' /></a>
+					<a class="btn btn-primary" href="<@orcid.rootPath '/notifications'/>/${fPutCode?c}/action?target=${fUrl?url}" target="_blank"><span class="glyphicons cloud-upload"></span> Grant permissions</a>  <a class="btn btn-default" href="" ng-click="archive('${fPutCode?c}')" type="reset" ng-hide="archivedDate"><@orcid.msg 'notifications.archivewithoutgranting' /></a>
 				</div>
 			</#if>
 		</#if>
@@ -216,7 +217,7 @@
 			<strong>${tpeerreview}</strong>
 			<#if pButtons>
 				<div class="notifications-buttons">
-					<a class="btn btn-primary" href="<@orcid.orcidUrl '/notifications'/>/${pPutCode?c}/action?target=${pUrl?url}" target="_blank"><span class="glyphicons cloud-upload"></span> Grant permissions</a> <a class="btn btn-default" href="" ng-click="archive('${pPutCode?c}')" type="reset" ng-hide="archivedDate"><@orcid.msg 'notifications.archivewithoutgranting' /></a>
+					<a class="btn btn-primary" href="<@orcid.rootPath '/notifications'/>/${pPutCode?c}/action?target=${pUrl?url}" target="_blank"><span class="glyphicons cloud-upload"></span> Grant permissions</a> <a class="btn btn-default" href="" ng-click="archive('${pPutCode?c}')" type="reset" ng-hide="archivedDate"><@orcid.msg 'notifications.archivewithoutgranting' /></a>
 				</div>
 			</#if>
 		</#if>
@@ -228,7 +229,7 @@
 			<strong>${tworks}</strong>
 			<#if wbuttons>
 				<div class="notifications-buttons">
-					<a class="btn btn-primary" href="<@orcid.orcidUrl '/notifications'/>/${wPutCode?c}/action?target=${wUrl?url}" target="_blank"><span class="glyphicons cloud-upload"></span> Grant permissions</a>  <a class="btn btn-default" href="" ng-click="archive('${wPutCode?c}')" type="reset" ng-hide="archivedDate"><@orcid.msg 'notifications.archivewithoutgranting' /></a>
+					<a class="btn btn-primary" href="<@orcid.rootPath '/notifications'/>/${wPutCode?c}/action?target=${wUrl?url}" target="_blank"><span class="glyphicons cloud-upload"></span> Grant permissions</a>  <a class="btn btn-default" href="" ng-click="archive('${wPutCode?c}')" type="reset" ng-hide="archivedDate"><@orcid.msg 'notifications.archivewithoutgranting' /></a>
 				</div>
 			</#if>
 		</#if>
