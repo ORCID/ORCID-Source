@@ -20,6 +20,8 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -240,16 +242,42 @@ public class PublicProfileController extends BaseWorkspaceController {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        if(profile.isLocked() || profile.getCountTokens() == 0
-        		|| (!CreationMethod.WEBSITE.equals(profile.getOrcidHistory().getCreationMethod()) 
-        				&& !CreationMethod.DIRECT.equals(profile.getOrcidHistory().getCreationMethod()))) {
+        
+        if(isProfileValidForIndex(profile)) {
+        	if(profile.isLocked() || profile.getCountTokens() == 0
+            		|| (!CreationMethod.WEBSITE.equals(profile.getOrcidHistory().getCreationMethod()) 
+            				&& !CreationMethod.DIRECT.equals(profile.getOrcidHistory().getCreationMethod()))) {
+            	mav.addObject("noIndex", true);
+            }
+        } else {
         	mav.addObject("noIndex", true);
         }
-
+        
         return mav;
     }
 
-    @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/affiliations.json")
+    private boolean isProfileValidForIndex(OrcidProfile profile) {
+    	String orcid = profile.getOrcidIdentifier().getPath();
+    	if(orcid != null) {
+        	int validAge = 3 + (Character.getNumericValue(orcid.charAt(orcid.length() - 2))) / 2;
+        	if(profile.getOrcidHistory() != null && profile.getOrcidHistory().getSubmissionDate() != null
+        			&& profile.getOrcidHistory().getSubmissionDate().getValue() != null) {
+        		Date profileCreationDate = profile.getOrcidHistory().getSubmissionDate().getValue().toGregorianCalendar().getTime();
+            	Date currentDate = new Date();
+            	
+            	Calendar temp = Calendar.getInstance(); 
+            	temp.setTime(profileCreationDate); 
+            	temp.add(Calendar.DATE, validAge);
+            	profileCreationDate = temp.getTime();
+            	if(profileCreationDate.before(currentDate)) {
+            		return true;
+            	}
+        	}
+    	}
+		return false;
+	}
+
+	@RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/affiliations.json")
     public @ResponseBody
     List<AffiliationForm> getAffiliationsJson(HttpServletRequest request, @PathVariable("orcid") String orcid, @RequestParam(value = "affiliationIds") String workIdsStr) {
         List<AffiliationForm> affs = new ArrayList<AffiliationForm>();
