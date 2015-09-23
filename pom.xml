@@ -679,11 +679,6 @@ the software.
                     </exclusion>
                 </exclusions>
             </dependency>
-            <dependency>
-                <groupId>org.springframework.data</groupId>
-                <artifactId>spring-data-jpa</artifactId>
-                <version>1.9.0.RELEASE</version>
-            </dependency>
 
             <dependency>
                 <groupId>com.sun.jersey.contribs</groupId>
@@ -779,11 +774,6 @@ the software.
                 <artifactId>hibernate-c3p0</artifactId>
                 <version>4.3.11.Final</version>
                 <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>c3p0</groupId>
-                <artifactId>c3p0</artifactId>
-                <version>0.9.1.2</version>
             </dependency>
             <dependency>
                 <groupId>org.liquibase</groupId>
