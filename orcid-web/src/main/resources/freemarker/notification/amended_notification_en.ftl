@@ -76,5 +76,13 @@
         </#if>
     	<a href="<@orcid.rootPath '/my-orcid'/>" target="_parent" class="btn btn-primary">View on your record</a> <a ng-click="archive(putCode)" target="_parent" ng-hide="archivedDate" class="btn btn-default">Archive</a>
      </div>
+     <#if notification.sourceDescription??>
+         <div>
+             <strong>About ${notification.source.sourceName.content}</strong>
+         </div>
+         <div>
+             ${notification.sourceDescription}
+         </div>
+     </#if>
  </body>
  </html>

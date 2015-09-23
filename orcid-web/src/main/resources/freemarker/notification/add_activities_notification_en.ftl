@@ -174,10 +174,14 @@
 	</#list>
 
 
-	<!-- Start rendering -->
-	<div>
-	    <strong>${notification.source.sourceName.content}</strong> would like to add the following items to your record:
-	</div>
+    <!-- Start rendering -->
+    <div>
+        <#if notification.notificationIntro??>
+            ${notification.notificationIntro}
+        <#else>
+            <strong>${notification.source.sourceName.content}</strong> would like to add the following items to your record:
+        </#if>
+    </div>
 	<div class="notifications-inner">
 		<#if aeducation gt 0>
 			<!-- Education -->
@@ -201,7 +205,7 @@
 			<strong>${tfunding}</strong>
 			<#if fButtons>
 				<div class="notifications-buttons">
-					<a class="btn btn-primary" href="<@orcid.rootPath '/notifications'/>/${fPutCode?c}/action?target=${fUrl?url}" target="_blank"><span class="glyphicons cloud-upload"></span> <@orcid.msg 'common.add_now' /></a>  <a class="btn btn-default" href="" ng-click="archive('${fPutCode?c}')" type="reset" ng-hide="archivedDate"><@orcid.msg 'notifications.archive' /></a>
+					<a class="btn btn-primary" href="<@orcid.rootPath '/notifications'/>/${fPutCode?c}/action?target=${fUrl?url}" target="_blank"><span class="glyphicons cloud-upload"></span> Grant permissions</a>  <a class="btn btn-default" href="" ng-click="archive('${fPutCode?c}')" type="reset" ng-hide="archivedDate"><@orcid.msg 'notifications.archivewithoutgranting' /></a>
 				</div>
 			</#if>
 		</#if>
@@ -213,7 +217,7 @@
 			<strong>${tpeerreview}</strong>
 			<#if pButtons>
 				<div class="notifications-buttons">
-					<a class="btn btn-primary" href="<@orcid.rootPath '/notifications'/>/${pPutCode?c}/action?target=${pUrl?url}" target="_blank"><span class="glyphicons cloud-upload"></span> <@orcid.msg 'common.add_now' /></a> <a class="btn btn-default" href="" ng-click="archive('${pPutCode?c}')" type="reset" ng-hide="archivedDate"><@orcid.msg 'notifications.archive' /></a>
+					<a class="btn btn-primary" href="<@orcid.rootPath '/notifications'/>/${pPutCode?c}/action?target=${pUrl?url}" target="_blank"><span class="glyphicons cloud-upload"></span> Grant permissions</a> <a class="btn btn-default" href="" ng-click="archive('${pPutCode?c}')" type="reset" ng-hide="archivedDate"><@orcid.msg 'notifications.archivewithoutgranting' /></a>
 				</div>
 			</#if>
 		</#if>
@@ -225,11 +229,19 @@
 			<strong>${tworks}</strong>
 			<#if wbuttons>
 				<div class="notifications-buttons">
-					<a class="btn btn-primary" href="<@orcid.rootPath '/notifications'/>/${wPutCode?c}/action?target=${wUrl?url}" target="_blank"><span class="glyphicons cloud-upload"></span> <@orcid.msg 'common.add_now' /></a>  <a class="btn btn-default" href="" ng-click="archive('${wPutCode?c}')" type="reset" ng-hide="archivedDate"><@orcid.msg 'notifications.archive' /></a>
+					<a class="btn btn-primary" href="<@orcid.rootPath '/notifications'/>/${wPutCode?c}/action?target=${wUrl?url}" target="_blank"><span class="glyphicons cloud-upload"></span> Grant permissions</a>  <a class="btn btn-default" href="" ng-click="archive('${wPutCode?c}')" type="reset" ng-hide="archivedDate"><@orcid.msg 'notifications.archivewithoutgranting' /></a>
 				</div>
 			</#if>
 		</#if>
-	</div>	
+	</div>
+	<#if notification.sourceDescription??>
+        <div>
+            <strong>About ${notification.source.sourceName.content}</strong>
+        </div>
+        <div>
+            ${notification.sourceDescription}
+        </div>
+    </#if>
 	
 </body>
 </html>
