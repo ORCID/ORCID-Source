@@ -55,13 +55,13 @@ public class Registration implements ErrorsInterface, Serializable {
     private Text referredBy;
 
     private Text sendEmailFrequencyDays;
-    
+
     private long valNumServer;
-    
+
     private long valNumClient;
-    
+
     private Text grecaptcha;
-    
+
     private Text grecaptchaWidgetId;
 
     public Registration() {
@@ -135,9 +135,13 @@ public class Registration implements ErrorsInterface, Serializable {
     public Text getPasswordConfirm() {
         return passwordConfirm;
     }
-    
-    public Text getGrecaptcha(){
+
+    public Text getGrecaptcha() {
         return grecaptcha;
+    }
+
+    public void setGrecaptcha(Text grepcatcha) {
+        this.grecaptcha = grepcatcha;
     }
 
     public void setPasswordConfirm(Text passwordConfirm) {
@@ -208,27 +212,27 @@ public class Registration implements ErrorsInterface, Serializable {
         this.sendEmailFrequencyDays = sendEmailFrequencyDays;
     }
 
-	public Text getGrecaptchaWidgetId() {
-		return grecaptchaWidgetId;
-	}
+    public Text getGrecaptchaWidgetId() {
+        return grecaptchaWidgetId;
+    }
 
-	public void setGrecaptchaWidgetId(Text grecaptchaWidgetId) {
-		this.grecaptchaWidgetId = grecaptchaWidgetId;
-	}
+    public void setGrecaptchaWidgetId(Text grecaptchaWidgetId) {
+        this.grecaptchaWidgetId = grecaptchaWidgetId;
+    }
 
-	public long getValNumServer() {
-		return valNumServer;
-	}
+    public long getValNumServer() {
+        return valNumServer;
+    }
 
-	public void setValNumServer(long valNumServer) {
-		this.valNumServer = valNumServer;
-	}
+    public void setValNumServer(long valNumServer) {
+        this.valNumServer = valNumServer;
+    }
 
-	public long getValNumClient() {
-		return valNumClient;
-	}
+    public long getValNumClient() {
+        return valNumClient;
+    }
 
-	public void setValNumClient(long valNumClient) {
-		this.valNumClient = valNumClient;
-	}
+    public void setValNumClient(long valNumClient) {
+        this.valNumClient = valNumClient;
+    }
 }

@@ -10,7 +10,7 @@ A client can access the records with the following 2 scopes :
 
 In order to get access to these scopes, one should manually map the scopes with the client in the table client_scope using the following example query :
 
-``insert into client_scope values(<Client ID>,'/group-id-record/read','2015-07-20 14:08:42.128','2015-07-20 14:08:42.128' );``
+``insert into client_scope values(<Client ID>,'/group-id-record/read',now(),now() );``
 
 ##### Generate the input XML >>>
 
