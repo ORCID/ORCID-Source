@@ -20,7 +20,7 @@ import java.util.List;
 
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 
-public interface ResearcherUrlDao {
+public interface ResearcherUrlDao extends GenericDao<ResearcherUrlEntity, Long> {
 
     /**
      * Return the list of researcher urls associated to a specific profile
@@ -43,15 +43,6 @@ public interface ResearcherUrlDao {
      * @return the ResearcherUrlEntity associated with the parameter id
      * */
     public ResearcherUrlEntity getResearcherUrl(long id);
-
-    /**
-     * Adds a researcher url to a specific profile
-     * @param orcid
-     * @param url
-     * @param urlName
-     * @return true if the researcher url was successfully created on database
-     * */
-    public boolean addResearcherUrls(String orcid, String url, String urlName);
     
     /**
      * Updates an existing researcher url

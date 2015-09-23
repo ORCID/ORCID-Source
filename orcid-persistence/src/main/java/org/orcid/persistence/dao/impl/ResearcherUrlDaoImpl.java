@@ -69,25 +69,6 @@ public class ResearcherUrlDaoImpl extends GenericDaoImpl<ResearcherUrlEntity, Lo
         query.setParameter("id", id);
         return query.getSingleResult();
     }
-
-    /**
-     * Adds a researcher url to a specific profile
-     * @param orcid
-     * @param url
-     * @param urlName
-     * @param isSSO
-     * @return true if the researcher url was successfully created on database
-     * */
-    @Override
-    @Transactional
-    public boolean addResearcherUrls(String orcid, String url, String urlName) {
-        Query query = entityManager
-                .createNativeQuery("INSERT INTO researcher_url (date_created, last_modified, orcid, url, url_name) VALUES (now(), now(), :orcid, :url, :url_name)");
-        query.setParameter("orcid", orcid);
-        query.setParameter("url", url);
-        query.setParameter("url_name", urlName);
-        return query.executeUpdate() > 0 ? true : false;
-    }
     
     /**
      * Updates an existing researcher url

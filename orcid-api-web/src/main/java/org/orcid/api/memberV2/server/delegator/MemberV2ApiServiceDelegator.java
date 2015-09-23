@@ -93,5 +93,7 @@ public interface MemberV2ApiServiceDelegator {
     Response deleteGroupIdRecord(Long putCode);
 
     Response viewGroupIdRecords(String pageSize, String pageNum);
+    
+    Response viewResearcherUrls(String orcid);
 
 }
