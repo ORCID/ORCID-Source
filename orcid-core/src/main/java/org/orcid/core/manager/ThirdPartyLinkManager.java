@@ -34,6 +34,8 @@ public interface ThirdPartyLinkManager {
     public List<OrcidClient> findOrcidClientsWithPredefinedOauthScopeFundingImport();
 
     public List<OrcidClient> findOrcidClientsWithPredefinedOauthScopeReadAccess();
+    
+    List<OrcidClient> findOrcidClientsWithPredefinedOauthScopePeerReviewImport();
 
     void evictAll();
 
