@@ -19,7 +19,7 @@
 <#include "includes/peer_review/del_peer_review_inc.ftl"/>
 
 <#include "includes/peer_review/add_peer_review_inc.ftl"/>
-<div ng-controller="PeerReviewCtrl">
+<div>
 	<div class="workspace-accordion accordion-peer-review" id="workspace-accordion">
 		<div id="workspace-peer-review" class="workspace-accordion-item workspace-accordion-active">
 			<div class="workspace-accordion-header"><a name='workspace-peer-review'></a>
@@ -36,7 +36,7 @@
 						<#if !(isPublicProfile??)>
                 			<ul class="workspace-bar-menu">
                 			  	<li class="hidden-xs">
-									<div class="menu-container">
+									<div class="menu-container" >
 										<ul class="toggle-menu">
 									        <li> 
 									            <span class="glyphicon glyphicon-plus"></span> <@orcid.msg 'workspace_peer_review_body_list.addPeerReview'/>
@@ -50,7 +50,7 @@
 									            	</#if>
 			                                    	<!-- Search & Link -->
 			                                        <li>
-			                                            <a class="action-option manage-button" ng-click="showPeerReviewImportWizard()">
+			                                            <a ng-show="noLinkFlag" class="action-option manage-button" ng-click="showPeerReviewImportWizard()">
 			                                                <span class="glyphicon glyphicon-cloud-upload"></span> <@orcid.msg 'workspace_peer_review_body_list.searchAndLink'/> 
 														</a>
 			                                         </li>                                                                 
