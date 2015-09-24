@@ -41,12 +41,14 @@
 					                    <@orcid.msgCapFirst 'manual_funding_form_contents.add_grant' />    
 					                    <ul class="menu-options funding">
 					                    	<!-- Search & Link -->
-					                        <li>					                        	
-					                        	<a class="action-option manage-button" ng-click="showFundingImportWizard()">
-                                                	<span class="glyphicon glyphicon-cloud-upload"></span>
-                                                	<@orcid.msg 'manual_orcid_record_contents.search_link'/>
-												</a>
-					                        </li>	                    	
+					                        <#if fundingImportWizards?has_content>
+						                        <li>					                        	
+						                        	<a class="action-option manage-button" ng-click="showFundingImportWizard()">
+	                                                	<span class="glyphicon glyphicon-cloud-upload"></span>
+	                                                	<@orcid.msg 'manual_orcid_record_contents.search_link'/>
+													</a>
+						                        </li>
+						                    </#if>                    	
 						                    <!-- Add Manually -->
 						                    <li>
 					                            <a class="action-option manage-button" ng-click="addFundingModal()">
@@ -61,12 +63,14 @@
                         </li>
                         <!-- Mobile Version Workaround -->
 	                   	<!-- Search & Link -->
+	                   	<#if fundingImportWizards?has_content>
 	                       <li class="hidden-md hidden-sm visible-xs-inline">					                        	
 	                       	<a class="action-option manage-button action-funding-mobile" ng-click="showFundingImportWizard()">
 	                                          	<span class="glyphicon glyphicon-cloud-upload"></span>
 	                                          	<@orcid.msg 'manual_orcid_record_contents.search_link'/>
 							</a>
-	                       </li>	                    	
+	                       </li>
+	                    </#if>                   	
 	                    <!-- Add Manually -->
 	                    <li class="hidden-md hidden-sm visible-xs-inline">
 	                           <a class="action-option manage-button action-funding-mobile" ng-click="addFundingModal()">

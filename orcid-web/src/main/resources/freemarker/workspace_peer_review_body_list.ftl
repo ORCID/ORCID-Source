@@ -36,7 +36,7 @@
 						<#if !(isPublicProfile??)>
                 			<ul class="workspace-bar-menu">
                 			  	<li class="hidden-xs">
-									<div class="menu-container">
+									<div class="menu-container" >
 										<ul class="toggle-menu">
 									        <li> 
 									            <span class="glyphicon glyphicon-plus"></span> <@orcid.msg 'workspace_peer_review_body_list.addPeerReview'/>
@@ -50,7 +50,7 @@
 									            	</#if>
 			                                    	<!-- Search & Link -->
 			                                        <li>
-			                                            <a class="action-option manage-button" ng-click="showPeerReviewImportWizard()">
+			                                            <a ng-show="noLinkFlag" class="action-option manage-button" ng-click="showPeerReviewImportWizard()">
 			                                                <span class="glyphicon glyphicon-cloud-upload"></span> <@orcid.msg 'workspace_peer_review_body_list.searchAndLink'/> 
 														</a>
 			                                         </li>                                                                 

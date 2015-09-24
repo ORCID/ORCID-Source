@@ -4399,6 +4399,7 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     $scope.workType = ['All'];
     $scope.geoArea = ['All'];
     $scope.badgesRequested = {};
+    $scope.noLinkFlag = true;
     
     $scope.sortState = new ActSortState(GroupedActivities.ABBR_WORK);
     $scope.sort = function(key) {
@@ -4689,45 +4690,10 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     };
 
     $scope.showWorkImportWizard =  function() {
-    	$.ajax({
-            url: getBaseUri() + '/workspace/retrieve-work-impor-wizards.json',
-            type: 'GET',
-            contentType: 'application/json;charset=UTF-8',
-            dataType: 'json',
-            success: function(data) {
-                $scope.selectedWorkType = 'Articles';
-                $scope.selectedGeoArea = 'Global';
-            	$scope.workImportWizardsOriginal = data;
-            	$scope.bulkEditShow = false;
-            	$scope.showBibtexImportWizard = false;
-            	$scope.workImportWizard = !$scope.workImportWizard;
-            	for(var i = 0; i < $scope.workImportWizardsOriginal.length; i ++) {
-            		for(var j = 0; j < $scope.workImportWizardsOriginal[i].redirectUris.redirectUri.length; j ++) {
-            			$scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].actType =  JSON.parse($scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].actType);
-            			$scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].geoArea =  JSON.parse($scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].geoArea);
-            			for(var k = 0; k < $scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].actType['import-works-wizard'].length; k ++) {
-            				if(!contains($scope.workType, $scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].actType['import-works-wizard'][k]))
-            					$scope.workType.push($scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].actType['import-works-wizard'][k]);
-            			}
-            			
-            			for(var k = 0; k < $scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].geoArea['import-works-wizard'].length; k ++) {
-            				if(!contains($scope.geoArea, $scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].geoArea['import-works-wizard'][k]))
-            					$scope.geoArea.push($scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].geoArea['import-works-wizard'][k]);
-            			}
-            		}
-            	}
-            	console.log(getParameterByName('import_works_wizard'));
-            	if(getParameterByName('import_works_wizard') != 'true') {
-            		$scope.selectedWorkType = 'All';
-                    $scope.selectedGeoArea = 'All';
-            	}
-            	$scope.processWorkImportWizardList();
-            	$scope.$apply();
-            }
-        }).fail(function() {
-            // something bad is happening!
-            console.log("WorkImportWizardError");
-        });
+    	if(!$scope.workImportWizard) {
+    		loadWorkImportWizardList();
+    	}
+    	$scope.workImportWizard = !$scope.workImportWizard;
     };
     
     $scope.processWorkImportWizardList = function() {
@@ -4752,6 +4718,50 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     	})
     }
 
+    function loadWorkImportWizardList() {
+    	$.ajax({
+            url: getBaseUri() + '/workspace/retrieve-work-impor-wizards.json',
+            type: 'GET',
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            success: function(data) {
+            	if(data == null || data.length == 0) {
+                	$scope.noLinkFlag = false;
+                }
+            	
+            	$scope.selectedWorkType = 'Articles';
+                $scope.selectedGeoArea = 'Global';
+            	$scope.workImportWizardsOriginal = data;
+            	$scope.bulkEditShow = false;
+            	$scope.showBibtexImportWizard = false;
+            	for(var i = 0; i < $scope.workImportWizardsOriginal.length; i ++) {
+            		for(var j = 0; j < $scope.workImportWizardsOriginal[i].redirectUris.redirectUri.length; j ++) {
+            			$scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].actType =  JSON.parse($scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].actType);
+            			$scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].geoArea =  JSON.parse($scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].geoArea);
+            			for(var k = 0; k < $scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].actType['import-works-wizard'].length; k ++) {
+            				if(!contains($scope.workType, $scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].actType['import-works-wizard'][k]))
+            					$scope.workType.push($scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].actType['import-works-wizard'][k]);
+            			}
+            			
+            			for(var k = 0; k < $scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].geoArea['import-works-wizard'].length; k ++) {
+            				if(!contains($scope.geoArea, $scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].geoArea['import-works-wizard'][k]))
+            					$scope.geoArea.push($scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].geoArea['import-works-wizard'][k]);
+            			}
+            		}
+            	}
+            	if(getParameterByName('import_works_wizard') != 'true') {
+            		$scope.selectedWorkType = 'All';
+                    $scope.selectedGeoArea = 'All';
+            	}
+            	$scope.processWorkImportWizardList();
+            	$scope.$apply();
+            }
+        }).fail(function() {
+            // something bad is happening!
+            console.log("WorkImportWizardError");
+        });
+    }
+    
     $scope.addWorkModal = function(data){
         if (data == undefined) {
             worksSrvc.getBlankWork(function(data) {
@@ -4900,6 +4910,7 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     
     //init
     $scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);
+    loadWorkImportWizardList();
 
     // remove once grouping is live
     $scope.moreInfoClick = function(work, $event) {
@@ -5100,7 +5111,8 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
 	$scope.displayURLPopOver = {};
 	$scope.peerReviewImportWizard = false;
 	$scope.wizardDescExpanded = {};
-    
+	$scope.noLinkFlag = true;
+	
     $scope.sort = function(key) {
         $scope.sortState.sortBy(key);
     };
@@ -5376,28 +5388,7 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
     
     $scope.showPeerReviewImportWizard = function(){
     	if(!$scope.peerReviewImportWizard) {
-    		$.ajax({
-                url: getBaseUri() + '/workspace/retrieve-peer-review-import-wizards.json',
-                type: 'GET',
-                contentType: 'application/json;charset=UTF-8',
-                dataType: 'json',
-                success: function(data) {
-                    $scope.peerReviewImportWizardList = data;
-                	$scope.peerReviewImportWizardList.sort(function(obj1, obj2){
-                		if(obj1.displayName < obj2.displayName) {
-            				return -1;
-            			}
-            			if(obj1.displayName > obj2.displayName) {
-            				return 1;
-            			}
-            			return 0;
-            		});
-                	$scope.$apply();
-                }
-            }).fail(function() {
-                // something bad is happening!
-                console.log("PeerReviewImportWizardError");
-            });
+    		loadPeerReviewLinks();
     	}
     	$scope.peerReviewImportWizard = !$scope.peerReviewImportWizard;
     };
@@ -5413,6 +5404,35 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
         
     //Init
     $scope.peerReviewSrvc.loadPeerReviews(peerReviewSrvc.constants.access_type.USER);
+    loadPeerReviewLinks();
+    
+    function loadPeerReviewLinks() {
+    	$.ajax({
+            url: getBaseUri() + '/workspace/retrieve-peer-review-import-wizards.json',
+            type: 'GET',
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            success: function(data) {
+                $scope.peerReviewImportWizardList = data;
+                if(data == null || data.length == 0) {
+                	$scope.noLinkFlag = false;
+                }
+            	$scope.peerReviewImportWizardList.sort(function(obj1, obj2){
+            		if(obj1.displayName < obj2.displayName) {
+        				return -1;
+        			}
+        			if(obj1.displayName > obj2.displayName) {
+        				return 1;
+        			}
+        			return 0;
+        		});
+            	$scope.$apply();
+            }
+        }).fail(function() {
+            // something bad is happening!
+            console.log("PeerReviewImportWizardError");
+        });
+    }
 }]);
 
 
