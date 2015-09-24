@@ -150,7 +150,7 @@
     </error-page>
 
 	<filter>
-		<filter-name>jsonpCallbackFilter</filter-name>
+		<filter-name>jsonpCallbackFilterWeb</filter-name>
 		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
 	</filter>
 	
@@ -163,7 +163,7 @@
 	</filter-mapping>
 
 	<filter>
-		<filter-name>corsFilter</filter-name>
+		<filter-name>corsFilterWeb</filter-name>
 		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
 	</filter>
 	
