@@ -5656,8 +5656,9 @@ orcidNgModule.factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
                     		group.groupType = data.type;
                     	});
                     }
-                }).fail(function(){
-                    console.log("error getPeerReviewGroupDetails(groupIDvalue, putCode)");
+                }).fail(function(xhr, status, error){
+                    //console.log("error getPeerReviewGroupDetails(groupIDvalue, putCode)");
+                    console.log("Error: " + status + "\nError: " + error + "\nError detail: " + xhr.responseText);
                 });
             }
     };
