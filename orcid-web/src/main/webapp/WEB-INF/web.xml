@@ -155,7 +155,7 @@
 	</filter>
 	
 	<filter-mapping>
-		<filter-name>jsonpCallbackFilter</filter-name>
+		<filter-name>jsonpCallbackFilterWeb</filter-name>
 		<url-pattern>/lang.json</url-pattern>
 		<url-pattern>/userStatus.json</url-pattern>
 		<url-pattern>/public/*</url-pattern>
