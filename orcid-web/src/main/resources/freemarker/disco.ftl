@@ -20,10 +20,22 @@
 "http://www.w3.org/TR/html4/loose.dtd">
 <html lang="en">
 <head>
-  <title>IDP select test bed</title>
-  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-5" />
-  <link rel="stylesheet" href="${staticCdn}/css/fonts.css"/>
-  <link rel="stylesheet" type="text/css" href="${staticCdn}/css/idpselect.css" />
+    <title>IDP select test bed</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-5" />
+    <link rel="stylesheet" href="${staticCdn}/css/fonts.css"/>
+    <link rel="stylesheet" type="text/css" href="${staticCdn}/css/idpselect.css" />
+    <script type="text/javascript">
+        var orcidVar = {};
+        orcidVar.recaptchaKey = '${recaptchaWebKey}';
+        orcidVar.baseUri = '${baseUri}';
+        orcidVar.baseUriHttp = '${baseUriHttp}';
+        orcidVar.pubBaseUri = '${pubBaseUri}';
+        orcidVar.orcidId = '${(profile.orcidIdentifier.path)!}';
+        orcidVar.orcidIdHash = '${(orcidIdHash)!}';
+        orcidVar.realOrcidId = '${realUserOrcid!}';
+        orcidVar.jsMessages = JSON.parse("${jsMessagesJson}");
+        orcidVar.searchBaseUrl = "${searchBaseUrl}";
+    </script>    
 </head>
 
 <body>
