@@ -135,6 +135,7 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         params.put("orcidProfile", orcidProfile);
         params.put("emailName", emailName);
         params.put("digestEmail", digestEmail);
+        params.put("frequency", orcidProfile.getOrcidInternal().getPreferences().getSendEmailFrequencyDays());
         params.put("totalMessageCount", totalMessageCount);
         params.put("orcidMessageCount", orcidMessageCount);
         params.put("addActivitiesMessageCount", addActivitiesMessageCount);
