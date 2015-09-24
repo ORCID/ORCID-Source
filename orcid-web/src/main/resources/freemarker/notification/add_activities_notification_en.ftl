@@ -240,7 +240,7 @@
 			<strong>${tworks}</strong>			
 			<#if wbuttons>
 				<div class="margin-top">
-					<strong>${notification.source.sourceName.content}</strong> would like your permission to interact with your ORCID Record as a trusted party
+					<strong>${notification.source.sourceName.content}</strong> would like your permission to interact with your ORCID Record as a trusted party?
 				</div>
 				<div class="margin-top pull-right">
 					<a href="" ng-click="archive('${wPutCode?c}')" type="reset" ng-hide="archivedDate"><@orcid.msg 'notifications.archivewithoutgranting' /></a><a class="btn btn-primary" href="<@orcid.rootPath '/notifications'/>/${wPutCode?c}/action?target=${wUrl?url}" target="_blank"><span class="glyphicons cloud-upload"></span> Grant permissions</a>  
