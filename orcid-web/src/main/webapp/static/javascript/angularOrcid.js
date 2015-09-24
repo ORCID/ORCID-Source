@@ -5641,9 +5641,13 @@ orcidNgModule.factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
             },
             getPeerReviewGroupDetails: function(groupIDvalue, putCode){
             	var group = peerReviewSrvc.getGroup(putCode);
+            	
+            	console.log(getBaseUri() + '/public/group/' + groupIDvalue);
+            	
             	$.ajax({
                     url: getBaseUri() + '/public/group/' + groupIDvalue,
                     dataType: 'json',
+                    contentType: 'application/json;charset=UTF-8',
                     type: 'GET',
                     success: function(data) {
                     	$rootScope.$apply(function(){
@@ -5652,8 +5656,9 @@ orcidNgModule.factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
                     		group.groupType = data.type;
                     	});
                     }
-                }).fail(function(){
-                    console.log("error getPeerReviewGroupDetails(groupIDvalue, putCode)");
+                }).fail(function(xhr, status, error){
+                    //console.log("error getPeerReviewGroupDetails(groupIDvalue, putCode)");
+                    console.log("Error: " + status + "\nError: " + error + "\nError detail: " + xhr.responseText);
                 });
             }
     };
