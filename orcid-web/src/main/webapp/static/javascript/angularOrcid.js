@@ -5641,9 +5641,13 @@ orcidNgModule.factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
             },
             getPeerReviewGroupDetails: function(groupIDvalue, putCode){
             	var group = peerReviewSrvc.getGroup(putCode);
+            	
+            	console.log(getBaseUri() + '/public/group/' + groupIDvalue);
+            	
             	$.ajax({
                     url: getBaseUri() + '/public/group/' + groupIDvalue,
                     dataType: 'json',
+                    contentType: 'application/json;charset=UTF-8',
                     type: 'GET',
                     success: function(data) {
                     	$rootScope.$apply(function(){
