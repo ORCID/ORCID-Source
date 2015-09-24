@@ -210,7 +210,7 @@
 			<strong>${tfunding}</strong>
 			<#if fButtons>
 				<div class="margin-top">
-					<strong>${notification.source.sourceName.content}</strong> would like your permission to interact with your ORCID Record as a trusted party
+					<strong>${notification.source.sourceName.content}</strong> would like your permission to interact with your ORCID Record as a trusted party?
 				</div>
 				<div class="margin-top">
 					<a href="" ng-click="archive('${fPutCode?c}')" type="reset" ng-hide="archivedDate"><@orcid.msg 'notifications.archivewithoutgranting' /></a>  <a class="btn btn-primary" href="<@orcid.rootPath '/notifications'/>/${fPutCode?c}/action?target=${fUrl?url}" target="_blank"><span class="glyphicons cloud-upload"></span> Grant permissions</a>  
@@ -225,7 +225,7 @@
 			<strong>${tpeerreview}</strong>
 			<#if pButtons>
 				<div class="margin-top">
-					<strong>${notification.source.sourceName.content}</strong> would like your permission to interact with your ORCID Record as a trusted party
+					<strong>${notification.source.sourceName.content}</strong> would like your permission to interact with your ORCID Record as a trusted party?
 				</div>
 				<div class="margin-top">
 					<a href="" ng-click="archive('${pPutCode?c}')" type="reset" ng-hide="archivedDate"><@orcid.msg 'notifications.archivewithoutgranting' /></a>  <a class="btn btn-primary" href="<@orcid.rootPath '/notifications'/>/${pPutCode?c}/action?target=${pUrl?url}" target="_blank"><span class="glyphicons cloud-upload"></span> Grant permissions</a> 
