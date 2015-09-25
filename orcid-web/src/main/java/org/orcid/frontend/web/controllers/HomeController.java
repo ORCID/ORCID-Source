@@ -26,7 +26,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.apache.commons.lang.StringUtils;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.InternalSSOManager;
 import org.orcid.core.utils.JsonUtils;
@@ -122,6 +121,8 @@ public class HomeController extends BaseController {
             throws NoSuchRequestHandlingMethodException {
         String currentUser = getCurrentUserOrcid();
         
+        UserStatus us = new UserStatus();
+        
         if (logUserOut != null && logUserOut.booleanValue()) {
             SecurityContextHolder.clearContext();
             request.getSession().invalidate();               
@@ -129,9 +130,10 @@ public class HomeController extends BaseController {
             if(!PojoUtil.isEmpty(currentUser)) {
                 internalSSOManager.deleteToken(currentUser, request, response);
             }
+            us.setLoggedIn(false);
+            return us;
         }
-        
-        UserStatus us = new UserStatus();
+                
         if(request.getSession(false) == null) {
             //If user dont have session, check if cookie exists and delete it
             for(Cookie cookie : request.getCookies()){
