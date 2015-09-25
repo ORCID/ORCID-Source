@@ -16,6 +16,7 @@
  */
 package org.orcid.frontend.web.controllers;
 
+import java.util.HashMap;
 import java.util.Locale;
 
 import javax.annotation.Resource;
@@ -25,8 +26,10 @@ import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.commons.lang.StringUtils;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.InternalSSOManager;
+import org.orcid.core.utils.JsonUtils;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.pojo.UserStatus;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -121,22 +124,39 @@ public class HomeController extends BaseController {
         
         if (logUserOut != null && logUserOut.booleanValue()) {
             SecurityContextHolder.clearContext();
-            request.getSession().invalidate();            
+            request.getSession().invalidate();               
+            //Delete token and cookie
             if(!PojoUtil.isEmpty(currentUser)) {
                 internalSSOManager.deleteToken(currentUser, request, response);
             }
         }
         
         UserStatus us = new UserStatus();
-        us.setLoggedIn((currentUser != null));        
-        //If it is login, update the cookie
-        if(!PojoUtil.isEmpty(currentUser) && (logUserOut == null || logUserOut.booleanValue() == false)) {
+        if(request.getSession(false) == null) {
+            //If user dont have session, check if cookie exists and delete it
             for(Cookie cookie : request.getCookies()){
                 if(cookie.getName().equals(InternalSSOManager.COOKIE_NAME)) {
-                    if(internalSSOManager.verifyToken(currentUser, cookie.getValue())) {
-                        internalSSOManager.updateCookie(currentUser, request, response);
-                    } else {
-                        us.setLoggedIn(false);
+                    HashMap<String, String> cookieValues = JsonUtils.readObjectFromJsonString(cookie.getValue(), HashMap.class);
+                    if(cookieValues.containsKey("orcid")) {
+                        internalSSOManager.deleteToken(cookieValues.get(InternalSSOManager.COOKIE_PARAM_ORCID), request, response);
+                    }                    
+                }
+            }
+            
+        } else {                
+            us.setLoggedIn((currentUser != null));
+            //If it is login, update the cookie
+            if(!PojoUtil.isEmpty(currentUser) && (logUserOut == null || logUserOut.booleanValue() == false)) {
+                for(Cookie cookie : request.getCookies()){
+                    if(cookie.getName().equals(InternalSSOManager.COOKIE_NAME)) {
+                        // If the cookie is valid, update it 
+                        if(internalSSOManager.verifyToken(currentUser, cookie.getValue())) {
+                            internalSSOManager.updateCookie(currentUser, request, response);
+                        } else {
+                            // If it isn't valid, delete it
+                            internalSSOManager.deleteToken(currentUser, request, response);
+                            us.setLoggedIn(false);
+                        }
                     }
                 }
             }
