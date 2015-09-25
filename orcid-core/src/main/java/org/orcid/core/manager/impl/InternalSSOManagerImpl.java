@@ -31,6 +31,7 @@ import org.apache.commons.lang.StringUtils;
 import org.orcid.core.manager.InternalSSOManager;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.persistence.dao.InternalSSODao;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.beans.factory.annotation.Value;
 
 public class InternalSSOManagerImpl implements InternalSSOManager {
@@ -88,9 +89,18 @@ public class InternalSSOManagerImpl implements InternalSSOManager {
                     if(cookieValues.containsKey("token")) {
                         if (internalSSODao.update(orcid, cookieValues.get("token"))) {
                             cookie.setMaxAge(maxAgeMinutes * 60);
-                            cookie.setSecure(true);
-                            cookie.setHttpOnly(true);
-                            response.addCookie(cookie);
+                            //Delete old cookie
+                            cookie.setMaxAge(0);
+                            
+                            //Create new cookie
+                            Cookie tokenCookie = new Cookie(COOKIE_NAME, cookie.getValue());
+                            tokenCookie.setMaxAge(maxAgeMinutes * 60);
+                            tokenCookie.setPath("/");
+                            tokenCookie.setSecure(true);
+                            tokenCookie.setHttpOnly(true);
+                            
+                            //Add new cookie to response
+                            response.addCookie(tokenCookie);
                         } else {
                             // TODO: throw error, couldn't update cookie
                         }
@@ -104,27 +114,34 @@ public class InternalSSOManagerImpl implements InternalSSOManager {
 
     @Override
     public void deleteToken(String orcid, HttpServletRequest request, HttpServletResponse response) {
-        // Delete the DB row
-        internalSSODao.delete(orcid);
-        // Delete the cookie
-        if (request.getCookies() != null) {
-            for (Cookie cookie : request.getCookies()) {
-                if (cookie.getName().equals(COOKIE_NAME)) {
-                    cookie.setMaxAge(0);
-                    cookie.setValue(StringUtils.EMPTY);
-                    cookie.setSecure(true);
-                    cookie.setHttpOnly(true);
-                    response.addCookie(cookie);
+        if(!PojoUtil.isEmpty(orcid)) {
+         // Delete the DB row
+            internalSSODao.delete(orcid);
+            // Delete the cookie
+            if (request.getCookies() != null) {
+                for (Cookie cookie : request.getCookies()) {
+                    if (cookie.getName().equals(COOKIE_NAME)) {
+                        cookie.setMaxAge(0);
+                        cookie.setValue(StringUtils.EMPTY);
+                        cookie.setSecure(true);
+                        cookie.setHttpOnly(true);
+                        response.addCookie(cookie);
+                    }
                 }
             }
-        }
+        }        
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public boolean verifyToken(String orcid, String token) {
+    public boolean verifyToken(String orcid, String cookie) {
+        HashMap<String, String> cookieValues = JsonUtils.readObjectFromJsonString(cookie, HashMap.class);
+        if(!cookieValues.containsKey("token")) {
+            return false;
+        }
         Calendar c = Calendar.getInstance();
         c.add(Calendar.MINUTE, -maxAgeMinutes);
         Date maxAge = c.getTime();
-        return internalSSODao.verify(orcid, token, maxAge);
+        return internalSSODao.verify(orcid, cookieValues.get("token"), maxAge);
     }
 }

@@ -117,24 +117,26 @@ public class HomeController extends BaseController {
     public @ResponseBody
     Object getUserStatusJson(HttpServletRequest request, HttpServletResponse response, @RequestParam(value = "logUserOut", required = false) Boolean logUserOut)
             throws NoSuchRequestHandlingMethodException {
-
+        String currentUser = getCurrentUserOrcid();
+        
         if (logUserOut != null && logUserOut.booleanValue()) {
             SecurityContextHolder.clearContext();
-            request.getSession().invalidate();
-            internalSSOManager.deleteToken(getCurrentUserOrcid(), request, response);
+            request.getSession().invalidate();            
+            if(!PojoUtil.isEmpty(currentUser)) {
+                internalSSOManager.deleteToken(currentUser, request, response);
+            }
         }
-
-        String orcid = getCurrentUserOrcid();
+        
         UserStatus us = new UserStatus();
-        us.setLoggedIn((orcid != null));        
+        us.setLoggedIn((currentUser != null));        
         //If it is login, update the cookie
-        if(!PojoUtil.isEmpty(orcid) && (logUserOut == null || logUserOut.booleanValue() == false)) {
+        if(!PojoUtil.isEmpty(currentUser) && (logUserOut == null || logUserOut.booleanValue() == false)) {
             for(Cookie cookie : request.getCookies()){
                 if(cookie.getName().equals(InternalSSOManager.COOKIE_NAME)) {
-                    if(internalSSOManager.verifyToken(orcid, cookie.getValue())) {
-                        internalSSOManager.updateCookie(orcid, request, response);
+                    if(internalSSOManager.verifyToken(currentUser, cookie.getValue())) {
+                        internalSSOManager.updateCookie(currentUser, request, response);
                     } else {
-                        //TODO: throw error, invalid cookie
+                        us.setLoggedIn(false);
                     }
                 }
             }
