@@ -22,6 +22,8 @@ import javax.servlet.http.HttpServletResponse;
 public interface InternalSSOManager {
 
     public static final String COOKIE_NAME = "orcid_token";
+    public static final String COOKIE_PARAM_ORCID = "orcid";
+    public static final String COOKIE_PARAM_TOKEN = "token";
     
     /**
      * Creates a new token and populate it in a cookie
