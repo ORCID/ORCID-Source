@@ -177,7 +177,8 @@
 				maxOccurs="1" />
 			<xs:element ref="common:source" minOccurs="0" maxOccurs="1" />					
 		</xs:sequence>
-		<xs:attribute name="visibility" type="common:visibility" />
+		<xs:attribute name="path" type="common:person-path" use="optional" />
+		<xs:attribute name="visibility" type="common:visibility" />		
 	</xs:complexType>
 	
 	

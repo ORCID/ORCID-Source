@@ -55,6 +55,22 @@ public interface ResearcherUrlManager {
     public ResearcherUrlEntity getResearcherUrl(long id);
 
     /**
+     * Retrieve a researcher url from database
+     * @param id
+     * @return the ResearcherUrlEntity associated with the parameter id
+     * */
+    public org.orcid.jaxb.model.record.ResearcherUrl getResearcherUrlV2(long id);
+    
+    /**
+     * Updates an existing url
+     * @param orcid
+     * @param researcherUrl
+     * @return the updated researcher url
+     * */
+    public org.orcid.jaxb.model.record.ResearcherUrl updateResearcherUrlV2(String orcid, org.orcid.jaxb.model.record.ResearcherUrl researcherUrl);
+    
+    
+    /**
      * Adds a researcher url to a specific profile
      * @param orcid
      * @param url
@@ -63,6 +79,14 @@ public interface ResearcherUrlManager {
      * */
     public void addResearcherUrls(String orcid, String url, String urlName);
 
+    /**
+     * Add a new researcher url to a specific profile
+     * @param researcherUrl
+     * @return true if the researcher url was successfully created on database
+     * */
+    public void addResearcherUrlV2(org.orcid.jaxb.model.record.ResearcherUrl researcherUrl);
+    
+    
     /**
      * Update the researcher urls associated with a specific account
      * @param orcid
