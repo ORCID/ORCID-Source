@@ -19,17 +19,13 @@ package org.orcid.frontend.web.controllers;
 import java.util.Locale;
 
 import javax.annotation.Resource;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.orcid.core.locale.LocaleManager;
-import org.orcid.core.manager.InternalSSOManager;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.pojo.UserStatus;
-import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -48,9 +44,6 @@ public class HomeController extends BaseController {
     @Resource
     private LocaleManager localeManager;
 
-    @Resource
-    private InternalSSOManager internalSSOManager;
-    
 // @formatter:off
 //    @RequestMapping(value = "/")
 //    public ModelAndView homeHandler(HttpServletRequest request) {
@@ -115,33 +108,17 @@ public class HomeController extends BaseController {
     @RequestMapping(value = "/userStatus.json")
     @Produces(value = { MediaType.APPLICATION_JSON })
     public @ResponseBody
-    Object getUserStatusJson(HttpServletRequest request, HttpServletResponse response, @RequestParam(value = "logUserOut", required = false) Boolean logUserOut)
+    Object getUserStatusJson(HttpServletRequest request, @RequestParam(value = "logUserOut", required = false) Boolean logUserOut)
             throws NoSuchRequestHandlingMethodException {
-        String currentUser = getCurrentUserOrcid();
-        
+
         if (logUserOut != null && logUserOut.booleanValue()) {
             SecurityContextHolder.clearContext();
-            request.getSession().invalidate();            
-            if(!PojoUtil.isEmpty(currentUser)) {
-                internalSSOManager.deleteToken(currentUser, request, response);
-            }
+            request.getSession().invalidate();
         }
-        
+
+        String orcid = getCurrentUserOrcid();
         UserStatus us = new UserStatus();
-        us.setLoggedIn((currentUser != null));        
-        //If it is login, update the cookie
-        if(!PojoUtil.isEmpty(currentUser) && (logUserOut == null || logUserOut.booleanValue() == false)) {
-            for(Cookie cookie : request.getCookies()){
-                if(cookie.getName().equals(InternalSSOManager.COOKIE_NAME)) {
-                    if(internalSSOManager.verifyToken(currentUser, cookie.getValue())) {
-                        internalSSOManager.updateCookie(currentUser, request, response);
-                    } else {
-                        us.setLoggedIn(false);
-                    }
-                }
-            }
-        }
-        
+        us.setLoggedIn((orcid != null));
         return us;
     }
 
