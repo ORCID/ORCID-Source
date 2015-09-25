@@ -85,12 +85,8 @@
 		
 		.notifications-inner{
 			padding: 5px 15px;			
-		}
-		
-		.notifications-buttons{
-			margin-top: 15px;
-		}
-		
+		}		
+				
 		.glyphicons{
 			top: -10px;
 			padding-left: 21px;
@@ -100,6 +96,15 @@
 		.glyphicons:before{
 			color: #FFF;
 			font: 16px/1em 'Glyphicons Regular'
+		}
+		
+		.margin-top{
+			margin-top: 15px;
+			clear: both;			
+		}
+		
+		.margin-top .btn-primary{
+			margin-left: 15px;
 		}
 		
 		
@@ -204,8 +209,11 @@
 			</div>
 			<strong>${tfunding}</strong>
 			<#if fButtons>
-				<div class="notifications-buttons">
-					<a class="btn btn-primary" href="<@orcid.rootPath '/notifications'/>/${fPutCode?c}/action?target=${fUrl?url}" target="_blank"><span class="glyphicons cloud-upload"></span> Grant permissions</a>  <a class="btn btn-default" href="" ng-click="archive('${fPutCode?c}')" type="reset" ng-hide="archivedDate"><@orcid.msg 'notifications.archivewithoutgranting' /></a>
+				<div class="margin-top">
+					<strong>${notification.source.sourceName.content}</strong> would like your permission to interact with your ORCID Record as a trusted party?
+				</div>
+				<div class="margin-top">
+					<a href="" ng-click="archive('${fPutCode?c}')" type="reset" ng-hide="archivedDate"><@orcid.msg 'notifications.archivewithoutgranting' /></a>  <a class="btn btn-primary" href="<@orcid.rootPath '/notifications'/>/${fPutCode?c}/action?target=${fUrl?url}" target="_blank"><span class="glyphicons cloud-upload"></span> Grant permissions</a>  
 				</div>
 			</#if>
 		</#if>
@@ -216,32 +224,40 @@
 			</div>
 			<strong>${tpeerreview}</strong>
 			<#if pButtons>
-				<div class="notifications-buttons">
-					<a class="btn btn-primary" href="<@orcid.rootPath '/notifications'/>/${pPutCode?c}/action?target=${pUrl?url}" target="_blank"><span class="glyphicons cloud-upload"></span> Grant permissions</a> <a class="btn btn-default" href="" ng-click="archive('${pPutCode?c}')" type="reset" ng-hide="archivedDate"><@orcid.msg 'notifications.archivewithoutgranting' /></a>
+				<div class="margin-top">
+					<strong>${notification.source.sourceName.content}</strong> would like your permission to interact with your ORCID Record as a trusted party?
 				</div>
+				<div class="margin-top">
+					<a href="" ng-click="archive('${pPutCode?c}')" type="reset" ng-hide="archivedDate"><@orcid.msg 'notifications.archivewithoutgranting' /></a>  <a class="btn btn-primary" href="<@orcid.rootPath '/notifications'/>/${pPutCode?c}/action?target=${pUrl?url}" target="_blank"><span class="glyphicons cloud-upload"></span> Grant permissions</a> 
+				</div>								
 			</#if>
 		</#if>
 		<#if aworks gt 0>
 			<!-- Works -->
 			<div class="workspace-accordion-header">
 				<i class="glyphicon-chevron-down glyphicon x075"></i> Works (${aworks})
-			</div>
-			<strong>${tworks}</strong>
+			</div>			
+			<strong>${tworks}</strong>			
 			<#if wbuttons>
-				<div class="notifications-buttons">
-					<a class="btn btn-primary" href="<@orcid.rootPath '/notifications'/>/${wPutCode?c}/action?target=${wUrl?url}" target="_blank"><span class="glyphicons cloud-upload"></span> Grant permissions</a>  <a class="btn btn-default" href="" ng-click="archive('${wPutCode?c}')" type="reset" ng-hide="archivedDate"><@orcid.msg 'notifications.archivewithoutgranting' /></a>
+				<div class="margin-top">
+					<strong>${notification.source.sourceName.content}</strong> would like your permission to interact with your ORCID Record as a trusted party?
 				</div>
+				<div class="margin-top pull-right">
+					<a href="" ng-click="archive('${wPutCode?c}')" type="reset" ng-hide="archivedDate"><@orcid.msg 'notifications.archivewithoutgranting' /></a><a class="btn btn-primary" href="<@orcid.rootPath '/notifications'/>/${wPutCode?c}/action?target=${wUrl?url}" target="_blank"><span class="glyphicons cloud-upload"></span> Grant permissions</a>  
+				</div>		
 			</#if>
 		</#if>
 	</div>
 	<#if notification.sourceDescription??>
-        <div>
+        <div class="margin-top">
             <strong>About ${notification.source.sourceName.content}</strong>
         </div>
         <div>
             ${notification.sourceDescription}
         </div>
     </#if>
-	
+    <div class="margin-top">
+    	<small>You have received this message because you have opted in to receive notifications from organizations that help maintain the information in your ORCID record. <a href="http://support.orcid.org/knowledgebase/articles/665437" target="_blank">Learn more about how the process works.</a></small>
+    </div>
 </body>
 </html>
