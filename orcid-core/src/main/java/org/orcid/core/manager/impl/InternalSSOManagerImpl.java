@@ -74,7 +74,7 @@ public class InternalSSOManagerImpl implements InternalSSOManager {
         Cookie tokenCookie = new Cookie(COOKIE_NAME, jsonCookie);
         tokenCookie.setMaxAge(maxAgeMinutes * 60);
         tokenCookie.setPath("/");
-        //tokenCookie.setSecure(true);
+        tokenCookie.setSecure(true);
         tokenCookie.setHttpOnly(true);
         response.addCookie(tokenCookie);
     }
@@ -96,7 +96,7 @@ public class InternalSSOManagerImpl implements InternalSSOManager {
                             Cookie tokenCookie = new Cookie(COOKIE_NAME, cookie.getValue());
                             tokenCookie.setMaxAge(maxAgeMinutes * 60);
                             tokenCookie.setPath("/");
-                            //tokenCookie.setSecure(true);
+                            tokenCookie.setSecure(true);
                             tokenCookie.setHttpOnly(true);
                             
                             //Add new cookie to response
@@ -123,7 +123,7 @@ public class InternalSSOManagerImpl implements InternalSSOManager {
                     if (cookie.getName().equals(COOKIE_NAME)) {
                         cookie.setMaxAge(0);
                         cookie.setValue(StringUtils.EMPTY);
-                        //cookie.setSecure(true);
+                        cookie.setSecure(true);
                         cookie.setHttpOnly(true);
                         response.addCookie(cookie);
                     }
