@@ -26,10 +26,7 @@ public class OrcidRequestUtil {
 	 public static String getIpAddress(HttpServletRequest request) {
     	String ipAddress = request.getHeader("X-FORWARDED-FOR");  
     	if (ipAddress != null) {
-    		String[] ipArr = ipAddress.split("\\,");
-            if (ipArr != null && ipArr.length > 0) {
-            	ipAddress = ipArr[0];
-            }
+    		ipAddress = ipAddress.split("\\,")[0];
         } else {
         	ipAddress = request.getRemoteAddr();  
         }
