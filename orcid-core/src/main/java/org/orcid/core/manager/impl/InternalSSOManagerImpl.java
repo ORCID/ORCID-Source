@@ -154,8 +154,7 @@ public class InternalSSOManagerImpl implements InternalSSOManager {
             //Add new cookie to response
             response.addCookie(tokenCookie);
         }
-    }
-    
+    }    
     
     @Override
     public void deleteToken(String orcid) {

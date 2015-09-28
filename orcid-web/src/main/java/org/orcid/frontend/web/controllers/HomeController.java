@@ -182,12 +182,7 @@ public class HomeController extends BaseController {
                             response.addCookie(cookie);
                         } else if(internalSSOManager.verifyToken(orcid, cookie.getValue())) {
                             internalSSOManager.updateCookie(orcid, request, response);
-                        } else {
-                            //Logout user
-                            us.setLoggedIn(false);
-                            request.getSession().invalidate();
-                            SecurityContextHolder.clearContext();
-                        }
+                        } 
                         break;
                     }                    
                 }
