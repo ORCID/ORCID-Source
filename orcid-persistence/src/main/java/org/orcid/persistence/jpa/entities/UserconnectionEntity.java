@@ -56,6 +56,8 @@ public class UserconnectionEntity extends BaseEntity<UserconnectionPK> implement
 	private String refreshtoken;
 
 	private String secret;
+	
+	private boolean isLinked;
 
 	public UserconnectionEntity() {
 	}
@@ -160,7 +162,15 @@ public class UserconnectionEntity extends BaseEntity<UserconnectionPK> implement
 
 	@Override
 	public int compareTo(GroupIdRecordEntity o) {
-		// TODO Auto-generated method stub
 		return 0;
+	}
+
+	@Column(name="is_linked")
+	public boolean isLinked() {
+		return isLinked;
+	}
+
+	public void setLinked(boolean isLinked) {
+		this.isLinked = isLinked;
 	}
 }

@@ -49,6 +49,7 @@
 			<column name="secret" type="VARCHAR(255)"/>
 			<column name="refreshtoken" type="VARCHAR(255)"/>
 			<column name="expiretime" type="BIGINT"/>
+			<column name="is_linked" type="boolean" defaultValueBoolean="false" />	
 			<column name="last_login" type="TIMESTAMP WITH TIME ZONE"/>
 			<column name="date_created" type="TIMESTAMP WITH TIME ZONE" />
 			<column name="last_modified" type="TIMESTAMP WITH TIME ZONE" />	

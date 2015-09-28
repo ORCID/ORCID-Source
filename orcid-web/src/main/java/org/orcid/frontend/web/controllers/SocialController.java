@@ -21,19 +21,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.orcid.core.manager.OrcidSecurityManager;
-import org.orcid.core.security.DeprecatedProfileException;
-import org.orcid.core.security.SocialLoginException;
-import org.orcid.core.security.UnclaimedProfileExistsException;
 import org.orcid.frontend.spring.web.social.config.SocialContext;
 import org.orcid.frontend.spring.web.social.config.SocialType;
+import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.UserConnectionDao;
-import org.orcid.persistence.jpa.entities.EmailEntity;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.UserconnectionEntity;
 import org.orcid.persistence.jpa.entities.UserconnectionPK;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -60,86 +56,108 @@ public class SocialController extends BaseController {
 	private SocialContext socialContext;
 
 	@Resource
-    private EmailDao emailDao;
+	private EmailDao emailDao;
 
-    @Resource
-    private AuthenticationManager authenticationManager;
-    
-    @Resource
-    private UserConnectionDao userConnectionDao;
-    
-    @Resource
-    private OrcidSecurityManager securityMgr;
-    
-    private String providerUserId;
+	@Resource
+	private AuthenticationManager authenticationManager;
 
-    @RequestMapping(value = { "/access" }, method = RequestMethod.GET)
-    public ModelAndView signinHandler(HttpServletRequest request, HttpServletResponse response) {
-    	
-    	String emailId = null;
-    	SocialType connectionType = socialContext.isSignedIn(request, response);
-    	if (connectionType != null) {
-    		emailId = retrieveEmail(connectionType);
-    	}
-    	
-    	if(emailId == null) {
-    		//Possible that the account is not verified. Or the account does not contain a primary email.
-    		throw new SocialLoginException("Did not receieve the login information.");
-    	}
-    	
-        if(!emailManager.emailExists(emailId)) {
-        	// redirect to registration screen
-        	throw new UsernameNotFoundException("Could not find an orcid account associated with the email id.");
-        }
-        EmailEntity emailEntity = emailDao.findCaseInsensitive(emailId);
-        ProfileEntity profile = null;
-        if (emailEntity == null) {
-        	throw new UsernameNotFoundException("Could not find an orcid account associated with the email id.");
-        } else {
-        	 profile = emailEntity.getProfile();
-        	 if (profile == null) {
-                 throw new UsernameNotFoundException("Could not find an orcid account associated with the email id.");
-             }
-             if (profile.getPrimaryRecord() != null) {
-     			throw new DeprecatedProfileException(
-     					"orcid.frontend.security.deprecated_with_primary", profile
-     							.getPrimaryRecord().getId(), profile.getId());
-             }
-             if (!profile.getClaimed() && !securityMgr.isAdmin()) {
-                 throw new UnclaimedProfileExistsException("orcid.frontend.security.unclaimed_exists");
-             }
-             if (profile.getDeactivationDate() != null && !securityMgr.isAdmin()) {
-                 throw new DisabledException("Account not active, please call helpdesk");
-             }
-        	 String userId = socialContext.getUserId();
-        	 String providerId = connectionType.value();
-        	 UserconnectionPK pk = new UserconnectionPK(userId, providerId, providerUserId);
-        	 userConnectionDao.updateLoginInformation(emailId, profile.getId(), pk);
-        }
-  
-        PreAuthenticatedAuthenticationToken token = new PreAuthenticatedAuthenticationToken(profile.getId(), "");
-		token.setDetails(new WebAuthenticationDetails(request));
-		Authentication authentication = authenticationManager.authenticate(token);
-		SecurityContextHolder.getContext().setAuthentication(authentication);
-        
-        return new ModelAndView("redirect:/my-orcid");
-    }
-    
+	@Resource
+	private UserConnectionDao userConnectionDao;
+
+	@Resource
+	private OrcidSecurityManager securityMgr;
+
+	private String providerUserId;
+
+	@RequestMapping(value = { "/access" }, method = RequestMethod.GET)
+	public ModelAndView signinHandler(HttpServletRequest request, HttpServletResponse response) {
+
+		String emailId = null;
+		SocialType connectionType = socialContext.isSignedIn(request, response);
+		if (connectionType != null) {
+			emailId = retrieveEmail(connectionType);
+		}
+
+		if (emailId == null) {
+			throw new UsernameNotFoundException("Could not find an orcid account associated with the email id.");
+		} else {
+			String providerId = connectionType.value();
+			String userId = socialContext.getUserId();
+				
+			UserconnectionEntity userConnectionEntity = userConnectionDao.findByProviderIdAndProviderUserId(providerUserId, providerId);
+			if(userConnectionEntity != null) {
+				if(userConnectionEntity.isLinked()) {
+					UserconnectionPK pk = new UserconnectionPK(userId, providerId, providerUserId);
+					userConnectionDao.updateLoginInformation(emailId, userConnectionEntity.getOrcid(), pk);
+					PreAuthenticatedAuthenticationToken token = new PreAuthenticatedAuthenticationToken(userConnectionEntity.getOrcid(), "");
+					token.setDetails(new WebAuthenticationDetails(request));
+					Authentication authentication = authenticationManager.authenticate(token);
+					SecurityContextHolder.getContext().setAuthentication(authentication);
+					return new ModelAndView("redirect:/my-orcid");
+				} else {
+					ModelAndView mav = new ModelAndView();
+					logoutCurrentUser();
+					mav.setViewName("social_link_signin");
+					mav.addObject("providerId", providerId);
+					mav.addObject("providerUserId", providerUserId);
+					mav.addObject("remoteUser", userId);
+					return mav;
+				}
+			} else {
+				throw new UsernameNotFoundException("Could not find an orcid account associated with the email id.");
+			}
+		}
+	}
+
+	@RequestMapping(value = { "/link" }, method = RequestMethod.GET)
+	public ModelAndView link(HttpServletRequest request, HttpServletResponse response) {
+		SocialType connectionType = socialContext.isSignedIn(request, response);
+		String email = null;
+		if (connectionType != null) {
+			email = retrieveEmail(connectionType);
+		}
+		if(email != null) {
+			String providerId = connectionType.value();
+			UserconnectionEntity userConnectionEntity = userConnectionDao.findByProviderIdAndProviderUserId(providerUserId, providerId);
+			if(userConnectionEntity != null ) {
+				if (userConnectionEntity.isLinked()) {
+					return new ModelAndView("redirect:/my-orcid");
+				} else {
+					OrcidProfile profile = getRealProfile();
+					userConnectionEntity.setLinked(true);
+					userConnectionEntity.setEmail(profile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue());
+			        userConnectionEntity.setOrcid(profile.getOrcidIdentifier().getPath());
+					userConnectionDao.merge(userConnectionEntity);
+				}
+				ModelAndView mav = new ModelAndView();
+				mav.setViewName("social_link_complete");
+				mav.addObject("providerId", providerId);
+				mav.addObject("remoteUser", providerUserId);
+				return mav;
+			} else {
+				throw new UsernameNotFoundException("Could not find an orcid account associated with the email id.");
+			}
+
+		} else {
+			throw new UsernameNotFoundException("Could not find an orcid account associated with the email id.");
+		}
+	}
+
 	private String retrieveEmail(SocialType connectionType) {
 		String email = null;
-		if(SocialType.FACEBOOK.equals(connectionType)) {
+		if (SocialType.FACEBOOK.equals(connectionType)) {
 			Facebook facebook = socialContext.getFacebook();
 			UserOperations uo = facebook.userOperations();
 			User user = uo.getUserProfile();
 			providerUserId = user.getId();
 			email = user.getEmail();
-		} else if(SocialType.GOOGLE.equals(connectionType)) {
+		} else if (SocialType.GOOGLE.equals(connectionType)) {
 			Google google = socialContext.getGoogle();
 			Person person = google.plusOperations().getGoogleProfile();
 			providerUserId = person.getId();
 			email = person.getAccountEmail();
 		}
-		
+
 		return email;
 	}
 }

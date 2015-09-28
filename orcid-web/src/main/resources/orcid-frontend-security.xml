@@ -166,16 +166,16 @@
 		<sec:session-management session-fixation-protection="migrateSession"/>
 	</sec:http>
 	
-	<sec:http pattern="/social/access" access-denied-page="/signin"
+	<sec:http pattern="/social/.*" access-denied-page="/signin"
 		access-decision-manager-ref="accessDecisionManager" create-session="ifRequired"
 		path-type="regex">
 		<sec:intercept-url pattern="/social/access(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<sec:intercept-url pattern="/social/access*" access="ROLE_USER" />		
-		<sec:form-login authentication-failure-url="/signin"
-			login-page="/signin" login-processing-url="/signin/auth"
+		<sec:intercept-url pattern="/social/.*" access="ROLE_USER" />		
+		<sec:form-login authentication-failure-url="/social/access"
+			login-page="/social/access" login-processing-url="/signin/auth"
 			username-parameter="userId" password-parameter="password"
-			default-target-url="/social/access" />
+			default-target-url="/social/link" />
 		<sec:session-management session-fixation-protection="migrateSession"/>
 	</sec:http>
 

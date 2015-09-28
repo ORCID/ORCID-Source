@@ -120,6 +120,7 @@ public class ShibbolethController extends BaseController {
         userConnectionEntity.setDisplayname(profile.getOrcidBio().getPersonalDetails().getGivenNames().getContent());
         userConnectionEntity.setRank(1);
         userConnectionEntity.setId(pk);
+        userConnectionEntity.setLinked(true);
         userConnectionEntity.setLastLogin(new Timestamp(new Date().getTime()));
         userConnectionDao.persist(userConnectionEntity);
         mav.setViewName("shib_link_complete");
