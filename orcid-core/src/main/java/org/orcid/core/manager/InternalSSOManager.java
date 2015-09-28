@@ -22,6 +22,9 @@ import javax.servlet.http.HttpServletResponse;
 public interface InternalSSOManager {
 
     public static final String COOKIE_NAME = "orcid_token";
+    public static final String COOKIE_KEY_TOKEN = "token";
+    public static final String COOKIE_KEY_ORCID = "orcid";
+    
     
     /**
      * Creates a new token and populate it in a cookie
@@ -43,6 +46,13 @@ public interface InternalSSOManager {
     
     /**
      * Deletes an existing token
+     * 
+     * @param orcid
+     * */
+    void deleteToken(String orcid);
+    
+    /**
+     * Deletes an existing token and removes the cookie from the response
      * 
      * @param orcid
      * @param request
