@@ -44,12 +44,12 @@ public class InternalSSOManagerImpl implements InternalSSOManager {
     private String allowedDomain;
     
     @Resource
-    InternalSSODao internalSSODao;
+    InternalSSODao internalSSODao;    
 
     public InternalSSOManagerImpl() {
-
+        
     }
-
+    
     public InternalSSOManagerImpl(int maxAgeInMunutes) {
         this.maxAgeMinutes = maxAgeInMunutes;
     }
