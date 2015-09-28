@@ -44,7 +44,7 @@
             <#list digestEmail.notificationsBySourceId[sourceId].notificationsByType[notificationType] as notification>
             <#if notificationType == 'PERMISSION'>
             <p>
-                <div><img src="http://testserver.orcid.org/static/img/request.png">${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sourceId} offers to add/update items to your ORCID record.</div>
+                <div><img src="${baseUri}/static/img/request.png">${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sourceId} offers to add/update items to your ORCID record.</div>
                 <#assign itemsByType=notification.items.itemsByType>
                 <#list itemsByType?keys?sort as itemType>
                 <div>${itemType?capitalize}s (${itemsByType[itemType]?size})</div>
@@ -54,11 +54,11 @@
                 </#list>
                 </ul>
                 </#list>
-                <div><a href="${baseUri}/inbox#${notification.putCode}">more info...</a> <a class="button" href="${baseUri}/inbox/${notification.putCode}/action?target=${notification.authorizationUrl.uri?url}">Add now</a></div>
+                <div><a href="${baseUri}/inbox#${notification.putCode}">more info...</a> <a class="button" href="${baseUri}/inbox/encrypted/${notification.encryptedPutCode}/action">Add now</a></div>
             </p>
             <#elseif notificationType == 'AMENDED'>
             <p>
-                <div><img src="http://testserver.orcid.org/static/img/update.png">${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sourceId} has updated recent ${notification.amendedSection?lower_case}s on your ORCID record.</div>
+                <div><img src="${baseUri}/static/img/update.png">${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sourceId} has updated recent ${notification.amendedSection?lower_case}s on your ORCID record.</div>
                 <#if notification.items??>
                 <ul>
                 <#list notification.items.items as item>
