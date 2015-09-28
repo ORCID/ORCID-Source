@@ -1,6 +1,6 @@
 Hi John Watson,
 
-You have <6> new notifications in your ORCID inbox - see summary below. Please visit your ORCID Inbox (http://testserver.orcid.org/inbox) to take action or see more details.
+You have 6 new notifications in your ORCID inbox - see summary below. Please visit your ORCID Inbox (http://testserver.orcid.org/inbox) to take action or see more details.
 
 ORCID would like to let you know
 
@@ -15,7 +15,7 @@ Visit http://testserver.orcid.org/inbox/1/action?target=https%3A%2F%2Fthirdparty
     Work 2 (doi: 123446/67655)
 
 Super Institution 1 offers to add/update items to your ORCID record.
-Employments (1)
+Employment (1)
 Visit http://testserver.orcid.org/inbox/2/action?target=https%3A%2F%2Fthirdparty.com%2Fadd-to-orcid%2Fabc to add now.
 
     Employment 1 (doi: 12345/abc)

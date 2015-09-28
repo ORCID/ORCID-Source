@@ -37,7 +37,7 @@ ORCID would like to let you know
 ${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sourceId} offers to add/update items to your ORCID record.
 <#assign itemsByType=notification.items.itemsByType>
 <#list itemsByType?keys?sort as itemType>
-${itemType?capitalize}<#if itemType?capitalize == 'WORK'>s</#if> (${itemsByType[itemType]?size})
+${itemType?capitalize}<#if itemType == 'WORK'>s</#if> (${itemsByType[itemType]?size})
 Visit ${baseUri}/inbox/${notification.putCode}/action?target=${notification.authorizationUrl.uri?url} to add now.
 
 <#list itemsByType[itemType] as item>

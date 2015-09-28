@@ -47,8 +47,7 @@
                 <div><img src="http://testserver.orcid.org/static/img/request.png">${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sourceId} offers to add/update items to your ORCID record.</div>
                 <#assign itemsByType=notification.items.itemsByType>
                 <#list itemsByType?keys?sort as itemType>
-                
-                <div>${itemType?capitalize}<#if itemType?capitalize == 'WORK'>s</#if> (${itemsByType[itemType]?size})</div>
+                <div>${itemType?capitalize}<#if itemType == 'WORK'>s</#if> (${itemsByType[itemType]?size})</div>
                 <ul>
                 <#list itemsByType[itemType] as item>
                     <li>${item.itemName} <#if item.externalIdentifier??>(${item.externalIdentifier.externalIdentifierType?lower_case}: ${item.externalIdentifier.externalIdentifierId})</#if></li>
@@ -97,7 +96,7 @@
             </p>
             <p>
                <#include "email_footer_html.ftl"/>
-            </p>            
+            </p>
         </div>      
     </body>
 </html>
