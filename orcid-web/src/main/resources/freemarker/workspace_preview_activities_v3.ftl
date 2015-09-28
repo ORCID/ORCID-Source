@@ -55,7 +55,6 @@
 </#if>
 
 <!-- Peer Review -->
-<#if RequestParameters['peer']??>
 	<#if !(peerReviewsEmpty)??>	
 		<div id="workspace-peer-review" class="workspace-accordion-item workspace-accordion-active" ng-controller="PublicPeerReviewCtrl" ng-cloack>
 	        <#include "includes/peer_review/peer_review_section_header_inc.ftl" />	        	        	          
@@ -64,6 +63,5 @@
 		    </div>		     
 		</div>
 	</#if>
-</#if>
     
     
