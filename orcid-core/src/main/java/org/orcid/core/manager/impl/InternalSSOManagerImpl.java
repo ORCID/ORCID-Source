@@ -31,6 +31,7 @@ import org.apache.commons.lang.StringUtils;
 import org.orcid.core.manager.InternalSSOManager;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.persistence.dao.InternalSSODao;
+import org.orcid.persistence.jpa.entities.InternalSSOEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -57,16 +58,28 @@ public class InternalSSOManagerImpl implements InternalSSOManager {
     public void writeCookie(String orcid, HttpServletRequest request, HttpServletResponse response) {
         // Deletes previous cookie if exists
         deleteToken(orcid, request, response);
-        // Generate a random token
-        SecureRandom random = new SecureRandom();
-        byte[] bytes = new byte[16];
-        random.nextBytes(bytes);
-        byte[] encoded = Base64.encodeBase64(bytes);
-        String token = new String(encoded);
+        //Generate the token
+        String token = generateAndStoreToken(orcid);
+        //Save the cookie in the response
+        populateCookie(orcid, token, request, response);
+    }
+    
+    /**
+     * Creates a new token and populate it in a cookie
+     * Use this method when a switch user event happens
+     * 
+     * @param orcid
+     * @param request
+     * @param response
+     * */
+    public void writeCookieForSwitchUser(String orcid, HttpServletRequest request, HttpServletResponse response) {
+        //Generate the token
+        String token = generateAndStoreToken(orcid);
+        //Save the cookie in the response
+        populateCookie(orcid, token, request, response);
+    }
 
-        // Insert it into the DB
-        internalSSODao.insert(orcid, token);
-
+    private void populateCookie(String orcid, String token, HttpServletRequest request, HttpServletResponse response) {
         HashMap<String, String> cookieValues = new HashMap<String, String>();
         cookieValues.put(COOKIE_KEY_ORCID, orcid);
         cookieValues.put(COOKIE_KEY_TOKEN, token);
@@ -81,8 +94,21 @@ public class InternalSSOManagerImpl implements InternalSSOManager {
         tokenCookie.setHttpOnly(true);   
         tokenCookie.setDomain(allowedDomain.trim());
         response.addCookie(tokenCookie);        
-    }
+    } 
+    
+    private String generateAndStoreToken(String orcid) {
+        // Generate a random token
+        SecureRandom random = new SecureRandom();
+        byte[] bytes = new byte[16];
+        random.nextBytes(bytes);
+        byte[] encoded = Base64.encodeBase64(bytes);
+        String token = new String(encoded);
 
+        // Insert it into the DB
+        internalSSODao.insert(orcid, token);
+        return token;
+    }
+    
     @SuppressWarnings("unchecked")
     @Override
     public void updateCookie(String orcid, HttpServletRequest request, HttpServletResponse response) {
@@ -101,18 +127,36 @@ public class InternalSSOManagerImpl implements InternalSSOManager {
                             tokenCookie.setDomain(allowedDomain.trim());
                             //Add new cookie to response
                             response.addCookie(tokenCookie);
-                        } else {
-                            // TODO: throw error, couldn't update cookie
-                        }
-                    } else {
-                            // TODO: throw an exception, the cookie dont have the key
-                    }
+                        } 
+                    } 
                     break;
                 }
             }
         }
     }
 
+    @Override
+    public void getAndUpdateCookie(String orcid, HttpServletRequest request, HttpServletResponse response) {
+        InternalSSOEntity existingCookie = internalSSODao.find(orcid);
+        if(existingCookie != null) {
+            internalSSODao.update(existingCookie.getId(), existingCookie.getToken());
+            HashMap<String, String> cookieValues = new HashMap<String, String>();
+            cookieValues.put(COOKIE_KEY_ORCID, orcid);
+            cookieValues.put(COOKIE_KEY_TOKEN, existingCookie.getToken());
+            
+            String jsonCookie = JsonUtils.convertToJsonString(cookieValues);
+            Cookie tokenCookie = new Cookie(COOKIE_NAME, jsonCookie);
+            tokenCookie.setMaxAge(maxAgeMinutes * 60);
+            tokenCookie.setPath("/");
+            tokenCookie.setSecure(true);
+            tokenCookie.setHttpOnly(true);    
+            tokenCookie.setDomain(allowedDomain.trim());
+            //Add new cookie to response
+            response.addCookie(tokenCookie);
+        }
+    }
+    
+    
     @Override
     public void deleteToken(String orcid) {
         if(!PojoUtil.isEmpty(orcid)) {
