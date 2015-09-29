@@ -89,7 +89,9 @@ public class SocialController extends BaseController {
 				if(userConnectionEntity.isLinked()) {
 					UserconnectionPK pk = new UserconnectionPK(userId, providerId, providerUserId);
 					userConnectionDao.updateLoginInformation(emailId, userConnectionEntity.getOrcid(), pk);
-					PreAuthenticatedAuthenticationToken token = new PreAuthenticatedAuthenticationToken(userConnectionEntity.getOrcid(), "");
+					String aCredentials = new StringBuffer(providerId).append(":").append(providerUserId).toString();
+					PreAuthenticatedAuthenticationToken token = 
+							new PreAuthenticatedAuthenticationToken(userConnectionEntity.getOrcid(), aCredentials);
 					token.setDetails(new WebAuthenticationDetails(request));
 					Authentication authentication = authenticationManager.authenticate(token);
 					SecurityContextHolder.getContext().setAuthentication(authentication);
