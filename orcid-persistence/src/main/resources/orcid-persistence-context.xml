@@ -172,12 +172,22 @@
         <property name="jpaVendorAdapter" ref="jpaVendorAdapter" />
         <property name="dataSource" ref="\${org.orcid.persistence.db.dataSource}" />
         <property name="persistenceUnitName" value="orcid" />
+        <property name="jpaPropertyMap">
+            <map>
+                <entry key="hibernate.generate_statistics" value="\${org.orcid.persistence.db.hibernateStatistics:false}" />    
+            </map>
+        </property>
     </bean>
     
     <bean id="entityManagerFactoryReadOnly" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="liquibase">
         <property name="jpaVendorAdapter" ref="jpaVendorAdapter" />
         <property name="dataSource" ref="\${org.orcid.persistence.db.readonly.dataSource}" />
         <property name="persistenceUnitName" value="orcid" />
+        <property name="jpaPropertyMap">
+            <map>
+                <entry key="hibernate.generate_statistics" value="\${org.orcid.persistence.db.readonly.hibernateStatistics:false}" />    
+            </map>
+        </property>
     </bean>
     
     <bean id="orcidEntityManagerFactory" class="org.orcid.persistence.spring.OrcidEntityManagerFactory">
@@ -202,6 +212,11 @@
 	    <property name="jpaVendorAdapter" ref="jpaVendorAdapter" />
         <property name="dataSource" ref="\${org.orcid.persistence.statistics.db.dataSource}" />
         <property name="persistenceUnitName" value="statistics" />
+        <property name="jpaPropertyMap">
+            <map>
+                <entry key="hibernate.generate_statistics" value="\${org.orcid.persistence.statistics.db.hibernateStatistics:false}" />    
+            </map>
+        </property>
     </bean>
     
     <bean id="statisticsLiquibase" class="liquibase.integration.spring.SpringLiquibase">
