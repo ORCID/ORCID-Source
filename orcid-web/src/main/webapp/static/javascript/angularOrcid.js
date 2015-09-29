@@ -1689,14 +1689,11 @@ orcidNgModule.filter('peerReviewExternalIdentifierHtml', function(){
         
         if (peerReviewExternalIdentifier == null) return output;
         
-        
-        
         if(peerReviewExternalIdentifier.relationship != null && peerReviewExternalIdentifier.relationship.value == 'part-of')
         	isPartOf = true;
         
         if (peerReviewExternalIdentifier.workExternalIdentifierId == null) return output;
-        var id = peerReviewExternalIdentifier.workExternalIdentifierId.value;
-        
+        var id = peerReviewExternalIdentifier.workExternalIdentifierId.value;        
         
         if (peerReviewExternalIdentifier.workExternalIdentifierType != null)
             type = peerReviewExternalIdentifier.workExternalIdentifierType.value;
@@ -1707,7 +1704,6 @@ orcidNgModule.filter('peerReviewExternalIdentifierHtml', function(){
 	        		output += "<span class='type'>" + type.toUpperCase() + "</span>: ";
 	        }
         
-
         if (peerReviewExternalIdentifier.url != null && peerReviewExternalIdentifier.url.value != '')
         	link = peerReviewExternalIdentifier.url.value;
         else link = workIdLinkJs.getLink(id,type); 
@@ -1718,12 +1714,10 @@ orcidNgModule.filter('peerReviewExternalIdentifierHtml', function(){
         	}
             output += '<a href="' + link.replace(/'/g, "&#39;") + '" class =""' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(peerReview.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(peerReview.putCode.value + $index)\">" + id.escapeHtml() + '</a>' + ' | ' + '<a href="' + link.replace(/'/g, "&#39;") + '" class ="' + ngclass + '"' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(peerReview.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(peerReview.putCode.value + $index)\">" + link.replace(/'/g, "&#39;") + '</a>';
         }else{
-            output += + id;        
+            output += id;        
         }
         
         if (length > 1 && !last) output = output + ',';
-        
-        
         
         output += '\
         <div class="popover-pos">\
@@ -1739,7 +1733,7 @@ orcidNgModule.filter('peerReviewExternalIdentifierHtml', function(){
         
         if(own)
         	output = '<br/>' + output;
-
+        
        return output;      
       
      
