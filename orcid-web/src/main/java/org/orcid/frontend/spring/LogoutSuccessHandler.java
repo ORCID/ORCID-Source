@@ -42,39 +42,41 @@ public class LogoutSuccessHandler extends SimpleUrlLogoutSuccessHandler {
 
     @SuppressWarnings("unchecked")
     public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-        String orcidId = authentication.getName();
-        Cookie[] cookies = request.getCookies();
-        // Delete cookie and token associated with that cookie
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if (InternalSSOManager.COOKIE_NAME.equals(cookie.getName())) {
-                    try {
-                        // If it is a valid cookie, extract the orcid value and
-                        // remove the token and the cookie
-                        HashMap<String, String> cookieValues = JsonUtils.readObjectFromJsonString(cookie.getValue(), HashMap.class);
-                        if (cookieValues.containsKey(InternalSSOManager.COOKIE_KEY_ORCID) && !PojoUtil.isEmpty(cookieValues.get(InternalSSOManager.COOKIE_KEY_ORCID))) {
-                            internalSSOManager.deleteToken(cookieValues.get(InternalSSOManager.COOKIE_KEY_ORCID), request, response);
-                        } else {
-                            // If it is not valid, just remove the cookie
+        if(internalSSOManager.enableCookie()) {
+            String orcidId = authentication.getName();
+            Cookie[] cookies = request.getCookies();
+            // Delete cookie and token associated with that cookie
+            if (cookies != null) {
+                for (Cookie cookie : cookies) {
+                    if (InternalSSOManager.COOKIE_NAME.equals(cookie.getName())) {
+                        try {
+                            // If it is a valid cookie, extract the orcid value and
+                            // remove the token and the cookie
+                            HashMap<String, String> cookieValues = JsonUtils.readObjectFromJsonString(cookie.getValue(), HashMap.class);
+                            if (cookieValues.containsKey(InternalSSOManager.COOKIE_KEY_ORCID) && !PojoUtil.isEmpty(cookieValues.get(InternalSSOManager.COOKIE_KEY_ORCID))) {
+                                internalSSOManager.deleteToken(cookieValues.get(InternalSSOManager.COOKIE_KEY_ORCID), request, response);
+                            } else {
+                                // If it is not valid, just remove the cookie
+                                cookie.setValue(StringUtils.EMPTY);
+                                cookie.setMaxAge(0);
+                                response.addCookie(cookie);
+                            }
+                        } catch (RuntimeException re) {
+                            // If any exception happens, but, the cookie exists,
+                            // remove the cookie
                             cookie.setValue(StringUtils.EMPTY);
                             cookie.setMaxAge(0);
                             response.addCookie(cookie);
                         }
-                    } catch (RuntimeException re) {
-                        // If any exception happens, but, the cookie exists,
-                        // remove the cookie
-                        cookie.setValue(StringUtils.EMPTY);
-                        cookie.setMaxAge(0);
-                        response.addCookie(cookie);
-                    }
-                    break;
-                }                
+                        break;
+                    }                
+                }
             }
-        }
-
-        // Delete token if exists
-        if (!PojoUtil.isEmpty(orcidId)) {
-            internalSSOManager.deleteToken(orcidId);
+    
+            // Delete token if exists
+            if (!PojoUtil.isEmpty(orcidId)) {
+                internalSSOManager.deleteToken(orcidId);
+            }
         }
 
         super.handle(request, response, authentication);

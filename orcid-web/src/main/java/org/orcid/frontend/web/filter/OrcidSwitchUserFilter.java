@@ -54,24 +54,26 @@ public class OrcidSwitchUserFilter extends SwitchUserFilter {
     @Resource
     private InternalSSOManager internalSSOManager;        
     
-    public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
-        HttpServletRequest request = (HttpServletRequest) req;
-        HttpServletResponse response = (HttpServletResponse) res;
-        if (requiresSwitchUser(request)) {
-            // Add the cookie for the delegate user
-            String targetUserOrcid = request.getParameter(SPRING_SECURITY_SWITCH_USERNAME_KEY);
-            if (!PojoUtil.isEmpty(targetUserOrcid)) {
-                //If it is switching back to the original user
-                if(isSwitchingBack(request)) {
-                    internalSSOManager.getAndUpdateCookie(targetUserOrcid, request, response);
-                } else {
-                    //If it is switching user
-                    internalSSOManager.writeCookieForSwitchUser(targetUserOrcid, request, response);
-                }            
+    public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {                
+        if(internalSSOManager.enableCookie()) {            
+            HttpServletRequest request = (HttpServletRequest) req;
+            HttpServletResponse response = (HttpServletResponse) res;
+            if (requiresSwitchUser(request)) {
+                // Add the cookie for the delegate user
+                String targetUserOrcid = request.getParameter(SPRING_SECURITY_SWITCH_USERNAME_KEY);
+                if (!PojoUtil.isEmpty(targetUserOrcid)) {
+                    //If it is switching back to the original user
+                    if(isSwitchingBack(request)) {
+                        internalSSOManager.getAndUpdateCookie(targetUserOrcid, request, response);
+                    } else {
+                        //If it is switching user
+                        internalSSOManager.writeCookieForSwitchUser(targetUserOrcid, request, response);
+                    }            
+                }
             }
         }
         
-        super.doFilter(request, response, chain);
+        super.doFilter(req, res, chain);
     }
 
     @Override

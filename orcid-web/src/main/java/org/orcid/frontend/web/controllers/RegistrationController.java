@@ -1049,8 +1049,10 @@ public class RegistrationController extends BaseController {
             token.setDetails(new WebAuthenticationDetails(request));
             Authentication authentication = authenticationManager.authenticate(token);
             SecurityContextHolder.getContext().setAuthentication(authentication);            
-            //Set user cookie
-            internalSSOManager.writeCookie(orcidId, request, response);            
+            if(internalSSOManager.enableCookie()) {
+                //Set user cookie
+                internalSSOManager.writeCookie(orcidId, request, response);
+            }
         } catch (AuthenticationException e) {
             // this should never happen
             SecurityContextHolder.getContext().setAuthentication(null);

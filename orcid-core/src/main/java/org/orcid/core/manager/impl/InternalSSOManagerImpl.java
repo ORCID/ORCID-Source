@@ -194,4 +194,9 @@ public class InternalSSOManagerImpl implements InternalSSOManager {
         Date maxAge = c.getTime();
         return internalSSODao.verify(orcid, cookieValues.get(COOKIE_KEY_TOKEN), maxAge);
     }
+    
+    @Override
+    public boolean enableCookie() {
+        return !allowedDomain.equals("localhost");
+    }
 }
