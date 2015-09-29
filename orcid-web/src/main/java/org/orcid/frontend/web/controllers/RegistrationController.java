@@ -404,7 +404,7 @@ public class RegistrationController extends BaseController {
         registerGivenNameValidate(reg);
         registerPasswordValidate(reg);
         registerPasswordConfirmValidate(reg);
-        regEmailValidate(request, reg);
+        regEmailValidate(request, reg, false, false);
         registerTermsOfUseValidate(reg);
 
         copyErrors(reg.getEmailConfirm(), reg);
@@ -505,12 +505,12 @@ public class RegistrationController extends BaseController {
 
     @RequestMapping(value = "/registerEmailValidate.json", method = RequestMethod.POST)
     public @ResponseBody Registration regEmailValidate(HttpServletRequest request, @RequestBody Registration reg) {
-        return regEmailValidate(request, reg, false);
+        return regEmailValidate(request, reg, false, true);
     }
 
-    public Registration regEmailValidate(HttpServletRequest request, Registration reg, boolean isOauthRequest) {
+    public Registration regEmailValidate(HttpServletRequest request, Registration reg, boolean isOauthRequest, boolean isKeyup) {
         reg.getEmail().setErrors(new ArrayList<String>());
-        if (reg.getEmail().getValue() == null || reg.getEmail().getValue().trim().isEmpty()) {
+        if (!isKeyup && (reg.getEmail().getValue() == null || reg.getEmail().getValue().trim().isEmpty())) {
             setError(reg.getEmail(), "Email.registrationForm.email");
         }
         // validate email
