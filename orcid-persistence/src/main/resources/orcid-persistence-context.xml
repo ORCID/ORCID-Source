@@ -168,6 +168,8 @@
 
     <bean id="userConnectionDao" class="org.orcid.persistence.dao.impl.UserConnectionDaoImpl" />
     
+    <bean id="internalSSODao" class="org.orcid.persistence.dao.impl.InternalSSODaoImpl" />
+    
     <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="liquibase">
         <property name="jpaVendorAdapter" ref="jpaVendorAdapter" />
         <property name="dataSource" ref="\${org.orcid.persistence.db.dataSource}" />
@@ -402,7 +404,7 @@
         <property name="poolSize" value="${org.orcid.core.poolSizeForInternalEncryption:16}" />
     </bean>
 
-    <bean id="hibernateStringEncryptor" class="org.jasypt.hibernate.encryptor.HibernatePBEStringEncryptor">
+    <bean id="hibernateStringEncryptor" class="org.jasypt.hibernate4.encryptor.HibernatePBEStringEncryptor">
         <property name="registeredName" value="hibernateStringEncryptor" />
         <property name="encryptor" ref="internalEncryptor" />
     </bean>

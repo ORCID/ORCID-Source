@@ -1337,7 +1337,7 @@ orcidNgModule.factory("notificationsSrvc", ['$rootScope', function ($rootScope) 
         unreadCount: 0,
         showArchived: false,
         getNotifications: function() {
-            var url = getBaseUri() + '/notifications/notifications.json?firstResult=' + serv.firstResult + '&maxResults=' + serv.maxResults;
+            var url = getBaseUri() + '/inbox/notifications.json?firstResult=' + serv.firstResult + '&maxResults=' + serv.maxResults;
             if(serv.showArchived){
                 url += "&includeArchived=true";                
             }
@@ -1370,7 +1370,7 @@ orcidNgModule.factory("notificationsSrvc", ['$rootScope', function ($rootScope) 
         },
         retrieveUnreadCount: function() {
             $.ajax({
-                url: getBaseUri() + '/notifications/unreadCount.json',
+                url: getBaseUri() + '/inbox/unreadCount.json',
                 dataType: 'json',
                 success: function(data) {
                     serv.unreadCount = data;
@@ -1399,7 +1399,7 @@ orcidNgModule.factory("notificationsSrvc", ['$rootScope', function ($rootScope) 
         },
         flagAsRead: function(notificationId) {
             $.ajax({
-                url: getBaseUri() + '/notifications/' + notificationId + '/read.json',
+                url: getBaseUri() + '/inbox/' + notificationId + '/read.json',
                 type: 'POST',
                 dataType: 'json',
                 success: function(data) {
@@ -1420,7 +1420,7 @@ orcidNgModule.factory("notificationsSrvc", ['$rootScope', function ($rootScope) 
         },
         archive: function(notificationId) {        	
             $.ajax({
-                url: getBaseUri() + '/notifications/' + notificationId + '/archive.json',
+                url: getBaseUri() + '/inbox/' + notificationId + '/archive.json',
                 type: 'POST',
                 dataType: 'json',
                 success: function(data) {
@@ -3073,7 +3073,7 @@ orcidNgModule.controller('VerifyEmailCtrl', ['$scope', '$compile', 'emailSrvc', 
                         if ($scope.emailsPojo.emails[i].verified) primeVerified = true;
                     };
                 };
-                if (!primeVerified) {
+                if (!primeVerified && !getBaseUri().contains("sandbox")) {
                     var colorboxHtml = $compile($('#verify-email-modal').html())($scope);
                     $scope.$apply();
                     $.colorbox({
@@ -4399,6 +4399,7 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     $scope.workType = ['All'];
     $scope.geoArea = ['All'];
     $scope.badgesRequested = {};
+    $scope.noLinkFlag = true;
     
     $scope.sortState = new ActSortState(GroupedActivities.ABBR_WORK);
     $scope.sort = function(key) {
@@ -4689,18 +4690,50 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     };
 
     $scope.showWorkImportWizard =  function() {
+    	if(!$scope.workImportWizard) {
+    		loadWorkImportWizardList();
+    	}
+    	$scope.workImportWizard = !$scope.workImportWizard;
+    };
+    
+    $scope.processWorkImportWizardList = function() {
+    	$scope.workImportWizards = [];
+    	for(var i = 0; i < $scope.workImportWizardsOriginal.length; i ++) {
+    		for(var j = 0; j < $scope.workImportWizardsOriginal[i].redirectUris.redirectUri.length; j ++) {
+    			if(($scope.selectedWorkType == 'All' || contains($scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].actType['import-works-wizard'], $scope.selectedWorkType))&&
+    					($scope.selectedGeoArea == 'All' || contains($scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].geoArea['import-works-wizard'], $scope.selectedGeoArea))) {
+    				$scope.workImportWizards.push($scope.workImportWizardsOriginal[i]);
+    				break;
+    			}
+    		}
+    	}
+    	$scope.workImportWizards.sort(function(obj1, obj2){
+    		if(obj1.displayName < obj2.displayName) {
+    			return -1;
+    		}
+    		if(obj1.displayName > obj2.displayName) {
+    			return 1;
+    		}
+    		return 0;
+    	})
+    }
+
+    function loadWorkImportWizardList() {
     	$.ajax({
             url: getBaseUri() + '/workspace/retrieve-work-impor-wizards.json',
             type: 'GET',
             contentType: 'application/json;charset=UTF-8',
             dataType: 'json',
             success: function(data) {
-                $scope.selectedWorkType = 'Articles';
+            	if(data == null || data.length == 0) {
+                	$scope.noLinkFlag = false;
+                }
+            	
+            	$scope.selectedWorkType = 'Articles';
                 $scope.selectedGeoArea = 'Global';
             	$scope.workImportWizardsOriginal = data;
             	$scope.bulkEditShow = false;
             	$scope.showBibtexImportWizard = false;
-            	$scope.workImportWizard = !$scope.workImportWizard;
             	for(var i = 0; i < $scope.workImportWizardsOriginal.length; i ++) {
             		for(var j = 0; j < $scope.workImportWizardsOriginal[i].redirectUris.redirectUri.length; j ++) {
             			$scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].actType =  JSON.parse($scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].actType);
@@ -4716,7 +4749,6 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
             			}
             		}
             	}
-            	console.log(getParameterByName('import_works_wizard'));
             	if(getParameterByName('import_works_wizard') != 'true') {
             		$scope.selectedWorkType = 'All';
                     $scope.selectedGeoArea = 'All';
@@ -4728,21 +4760,8 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
             // something bad is happening!
             console.log("WorkImportWizardError");
         });
-    };
-    
-    $scope.processWorkImportWizardList = function() {
-    	$scope.workImportWizards = [];
-    	for(var i = 0; i < $scope.workImportWizardsOriginal.length; i ++) {
-    		for(var j = 0; j < $scope.workImportWizardsOriginal[i].redirectUris.redirectUri.length; j ++) {
-    			if(($scope.selectedWorkType == 'All' || contains($scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].actType['import-works-wizard'], $scope.selectedWorkType))&&
-    					($scope.selectedGeoArea == 'All' || contains($scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].geoArea['import-works-wizard'], $scope.selectedGeoArea))) {
-    				$scope.workImportWizards.push($scope.workImportWizardsOriginal[i]);
-    				break;
-    			}
-    		}
-    	}
     }
-
+    
     $scope.addWorkModal = function(data){
         if (data == undefined) {
             worksSrvc.getBlankWork(function(data) {
@@ -4891,6 +4910,7 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     
     //init
     $scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);
+    loadWorkImportWizardList();
 
     // remove once grouping is live
     $scope.moreInfoClick = function(work, $event) {
@@ -5090,7 +5110,9 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
 	$scope.sortHideOption = true;
 	$scope.displayURLPopOver = {};
 	$scope.peerReviewImportWizard = false;
-    
+	$scope.wizardDescExpanded = {};
+	$scope.noLinkFlag = true;
+	
     $scope.sort = function(key) {
         $scope.sortState.sortBy(key);
     };
@@ -5365,13 +5387,52 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
     };
     
     $scope.showPeerReviewImportWizard = function(){
+    	if(!$scope.peerReviewImportWizard) {
+    		loadPeerReviewLinks();
+    	}
     	$scope.peerReviewImportWizard = !$scope.peerReviewImportWizard;
+    };
+    
+    $scope.toggleWizardDesc = function(id){
+    	$scope.wizardDescExpanded[id] = !$scope.wizardDescExpanded[id];
+    };
+    
+    $scope.openImportWizardUrlFilter = function(url, param) {
+    	url = url + '?client_id='+param.clientId+'&response_type=code&scope='+param.redirectUris.redirectUri[0].scopeAsSingleString+'&redirect_uri='+param.redirectUris.redirectUri[0].value;
+    	openImportWizardUrl(url);
     };
         
     //Init
     $scope.peerReviewSrvc.loadPeerReviews(peerReviewSrvc.constants.access_type.USER);
+    loadPeerReviewLinks();
     
-    
+    function loadPeerReviewLinks() {
+    	$.ajax({
+            url: getBaseUri() + '/workspace/retrieve-peer-review-import-wizards.json',
+            type: 'GET',
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            success: function(data) {
+                $scope.peerReviewImportWizardList = data;
+                if(data == null || data.length == 0) {
+                	$scope.noLinkFlag = false;
+                }
+            	$scope.peerReviewImportWizardList.sort(function(obj1, obj2){
+            		if(obj1.displayName < obj2.displayName) {
+        				return -1;
+        			}
+        			if(obj1.displayName > obj2.displayName) {
+        				return 1;
+        			}
+        			return 0;
+        		});
+            	$scope.$apply();
+            }
+        }).fail(function() {
+            // something bad is happening!
+            console.log("PeerReviewImportWizardError");
+        });
+    }
 }]);
 
 
@@ -5600,9 +5661,13 @@ orcidNgModule.factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
             },
             getPeerReviewGroupDetails: function(groupIDvalue, putCode){
             	var group = peerReviewSrvc.getGroup(putCode);
+            	
+            	console.log(getBaseUri() + '/public/group/' + groupIDvalue);
+            	
             	$.ajax({
                     url: getBaseUri() + '/public/group/' + groupIDvalue,
                     dataType: 'json',
+                    contentType: 'application/json;charset=UTF-8',
                     type: 'GET',
                     success: function(data) {
                     	$rootScope.$apply(function(){
@@ -5611,8 +5676,9 @@ orcidNgModule.factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
                     		group.groupType = data.type;
                     	});
                     }
-                }).fail(function(){
-                    console.log("error getPeerReviewGroupDetails(groupIDvalue, putCode)");
+                }).fail(function(xhr, status, error){
+                    //console.log("error getPeerReviewGroupDetails(groupIDvalue, putCode)");
+                    console.log("Error: " + status + "\nError: " + error + "\nError detail: " + xhr.responseText);
                 });
             }
     };
@@ -6140,7 +6206,6 @@ orcidNgModule.controller('ShibbolethCtrl',['$scope', '$compile', function Shibbo
     $scope.closeModal = function() {
         $.colorbox.close();
     };
-
     // init
     $scope.getShibbolethAccounts();
 
@@ -6418,9 +6483,11 @@ orcidNgModule.controller('adminVerifyEmailCtrl',['$scope','$compile', function (
 
     $scope.verifyEmail = function(){
         $.ajax({
-            url: getBaseUri()+'/admin-actions/admin-verify-email?email=' + $scope.email,
-            type: 'GET',
+            url: getBaseUri()+'/admin-actions/admin-verify-email.json',
+            type: 'POST',
             dataType: 'text',
+            data: $scope.email,
+            contentType: 'application/json;charset=UTF-8',
             success: function(data){
                 $scope.$apply(function(){
                     $scope.result = data;
@@ -6982,6 +7049,9 @@ orcidNgModule.controller('manageMembersCtrl',['$scope', '$compile', function man
         } else if (rUri.type.value == 'import-funding-wizard'){
             rUri.scopes.push('/orcid-profile/read-limited');
             rUri.scopes.push('/funding/create');
+        } else if (rUri.type.value == 'import-peer-review-wizard'){
+            rUri.scopes.push('/orcid-profile/read-limited');
+            rUri.scopes.push('/peer-review/create');
         }
     };
 
@@ -7117,9 +7187,11 @@ orcidNgModule.controller('findIdsCtrl',['$scope','$compile', function findIdsCtr
 
     $scope.findIds = function() {
         $.ajax({
-            url: getBaseUri()+'/admin-actions/find-id?csvEmails=' + $scope.emails,
-            type: 'GET',
+            url: getBaseUri()+'/admin-actions/find-id.json',
+            type: 'POST',
             dataType: 'json',
+            data: $scope.emails,
+            contentType: 'application/json;charset=UTF-8',
             success: function(data){
                 $scope.$apply(function(){
                     if(!$.isEmptyObject(data)) {
@@ -8768,7 +8840,7 @@ orcidNgModule.controller('adminDelegatesCtrl',['$scope',function ($scope){
     };
 }]);
 
-orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '$sce', 'commonSrvc',function ($scope, $compile, $sce, commonSrvc){
+orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '$sce', 'commonSrvc', 'vcRecaptchaService', function ($scope, $compile, $sce, commonSrvc, vcRecaptchaService){
     $scope.showClientDescription = false;
     $scope.showRegisterForm = true;
     $scope.isOrcidPresent = false;
@@ -8780,7 +8852,13 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
     $scope.emailTrustAsHtmlErrors = [];
     $scope.enablePersistentToken = true;
     $scope.showLongDescription = {};
+    $scope.recaptchaWidgetId = null;
+    $scope.recatchaResponse = null;
 
+    $scope.model = {
+            key: orcidVar.recaptchaKey
+    };
+    
     $scope.toggleClientDescription = function() {
         $scope.showClientDescription = !$scope.showClientDescription;
     };
@@ -8920,6 +8998,14 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
     $scope.register = function() {
         if($scope.enablePersistentToken)
             $scope.registrationForm.persistentTokenEnabled=true;
+        
+        console.log("Recaptcha:");
+        console.log($scope.recatchaResponse);
+        console.log($scope.recaptchaWidgetId);
+        
+        $scope.registrationForm.grecaptcha.value = $scope.recatchaResponse; //Adding the response to the register object
+        $scope.registrationForm.grecaptchaWidgetId.value = $scope.recaptchaWidgetId;
+        
         $.ajax({
             url: getBaseUri() + '/oauth/custom/register.json',
             type: 'POST',
@@ -8929,7 +9015,7 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
             success: function(data) {
                 $scope.registrationForm = data;
                 if($scope.registrationForm.approved) {
-                    if ($scope.registrationForm.errors.length == 0) {
+                    if ($scope.registrationForm.errors == undefined || $scope.registrationForm.errors.length == 0) {
                         $scope.showProcessingColorBox();
                         $scope.getDuplicates();
                     } else {
@@ -8994,7 +9080,6 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
         if($scope.enablePersistentToken)
             auth_scope_prefix = 'AuthorizeP_';
         $scope.showProcessingColorBox();
-        $scope.registrationForm.grecaptcha = "hello"; // extract this from the widget and wire it up to Registration.java to make it work!
         
         $.ajax({
             url: getBaseUri() + '/oauth/custom/registerConfirm.json',
@@ -9161,8 +9246,18 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
 	    }
     };
     
-    
-    
+    //------------------
+    //------Recaptcha------
+    //------------------    
+    $scope.setRecaptchaWidgetId = function (widgetId) {                        
+        console.log('Widget ID: ' + widgetId)
+        $scope.recaptchaWidgetId = widgetId;        
+    };
+
+    $scope.setRecatchaResponse = function (response) {        
+        console.log('Yey recaptcha response!');
+        $scope.recatchaResponse = response;        
+    };           
 }]);
 
 orcidNgModule.controller('EmailsController',['$scope', 'emailSrvc',function ($scope, emailSrvc){

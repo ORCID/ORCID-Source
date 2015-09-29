@@ -532,10 +532,11 @@
 						<#include "includes/work/body_work_inc_v3.ftl"/>						
 	            	</div>
             	</div>
-            	<#if RequestParameters['peer']??>
-               		<!-- Peer Review -->
-               		<#include "workspace_peer_review_body_list.ftl"/>
- 				</#if>
+            	<div ng-controller="PeerReviewCtrl">
+	            	<div ng-hide="peerReviewSrvc.groups.length == 0" ng-cloak>
+	            		<#include "workspace_peer_review_body_list.ftl"/>
+	            	</div>
+	            </div>
             </div>
         </div>
     </div>    

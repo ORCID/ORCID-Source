@@ -1,0 +1,36 @@
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2014 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+	<changeSet author="Angel Montenegro" id="ADD-FIELDS-TO-RESEARCHER-URL">
+	    <addColumn tableName="researcher_url">
+	    	<column name="visibility" type="VARCHAR(19)" />
+	    	<column name="source_id" type="VARCHAR(19)" />
+			<column name="client_source_id" type="VARCHAR(20)" />
+		</addColumn>
+		<addForeignKeyConstraint constraintName="researcher_url_source_id_fk"
+			baseTableName="researcher_url" baseColumnNames="source_id" referencedTableName="profile"
+			referencedColumnNames="orcid" />
+		<addForeignKeyConstraint constraintName="researcher_url_client_source_id_fk"
+			baseTableName="researcher_url" baseColumnNames="client_source_id"
+			referencedTableName="client_details" referencedColumnNames="client_details_id" />
+    </changeSet>
+</databaseChangeLog>

@@ -46,8 +46,8 @@ import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.SourceManager;
-import org.orcid.core.manager.StatisticsManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
+import org.orcid.core.manager.impl.StatisticsCacheManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.frontend.web.forms.LoginForm;
 import org.orcid.frontend.web.forms.validate.OrcidUrlValidator;
@@ -122,7 +122,7 @@ public class BaseController {
     protected EmailManager emailManager;
 
     @Resource
-    private StatisticsManager statisticsManager;
+    private StatisticsCacheManager statisticsCacheManager;
 
     @Resource
     private OrcidUrlManager orcidUrlManager;
@@ -276,6 +276,13 @@ public class BaseController {
 
     @ModelAttribute("startupDate")
     public Date getStartupDate() {
+        // If the cdn config file is missing, we are in development env and we
+        // need to refresh the cache
+        ClassPathResource configFile = new ClassPathResource(this.cdnConfigFile);
+        if (!configFile.exists()) {
+            return new Date();
+        }
+
         return startupDate;
     }
 
@@ -479,7 +486,7 @@ public class BaseController {
 
     @ModelAttribute("liveIds")
     public String getLiveIds() {
-        return statisticsManager.getLiveIds(localeManager.getLocale());
+        return statisticsCacheManager.retrieveLiveIds(localeManager.getLocale());
     }
 
     @ModelAttribute("baseUri")

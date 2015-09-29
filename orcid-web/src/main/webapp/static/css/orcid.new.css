@@ -1232,6 +1232,13 @@ ul.privacyHelp li.private {
 	color: #939498;	 
 }
 
+#statistics span.stat-name-st{
+	font-size: 1.0em;
+	font-family: 'Gill Sans W02', 'Helvetica', sans-serif;
+	font-style: normal;
+	color: #939498;	 
+}
+
 #statistics span.stat-data {
 	font-size: 2em;
 	color: #939498;
@@ -6020,6 +6027,13 @@ ul.sources-edit-list > li.group-details{
 .group-summary-details{
 	padding-bottom: 15px;
     font-size: 15px;
+}
+
+.shibboleth-container{
+	max-width: 353px;
+	margin: 0 auto;	
+	padding-left: 15px;
+	padding-right: 15px; 
 }
 
 a .mozilla-badge{

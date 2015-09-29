@@ -28,6 +28,7 @@ import ma.glasnost.orika.MappingContext;
 import ma.glasnost.orika.converter.ConverterFactory;
 import ma.glasnost.orika.impl.DefaultMapperFactory;
 import ma.glasnost.orika.metadata.ClassMapBuilder;
+import ma.glasnost.orika.metadata.TypeFactory;
 
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.manager.impl.OrcidUrlManager;
@@ -40,12 +41,14 @@ import org.orcid.jaxb.model.notification.amended.NotificationAmended;
 import org.orcid.jaxb.model.notification.custom.NotificationCustom;
 import org.orcid.jaxb.model.notification.permission.AuthorizationUrl;
 import org.orcid.jaxb.model.notification.permission.Item;
+import org.orcid.jaxb.model.notification.permission.ItemType;
 import org.orcid.jaxb.model.notification.permission.NotificationPermission;
 import org.orcid.jaxb.model.record.Education;
 import org.orcid.jaxb.model.record.Employment;
 import org.orcid.jaxb.model.record.Funding;
 import org.orcid.jaxb.model.record.FundingContributors;
 import org.orcid.jaxb.model.record.PeerReview;
+import org.orcid.jaxb.model.record.ResearcherUrl;
 import org.orcid.jaxb.model.record.Work;
 import org.orcid.jaxb.model.record.WorkContributors;
 import org.orcid.jaxb.model.record.WorkExternalIdentifier;
@@ -55,6 +58,7 @@ import org.orcid.jaxb.model.record.summary.EmploymentSummary;
 import org.orcid.jaxb.model.record.summary.FundingSummary;
 import org.orcid.jaxb.model.record.summary.PeerReviewSummary;
 import org.orcid.jaxb.model.record.summary.WorkSummary;
+import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.CompletionDateEntity;
 import org.orcid.persistence.jpa.entities.EndDateEntity;
 import org.orcid.persistence.jpa.entities.GroupIdRecordEntity;
@@ -62,10 +66,12 @@ import org.orcid.persistence.jpa.entities.NotificationItemEntity;
 import org.orcid.persistence.jpa.entities.NotificationAddItemsEntity;
 import org.orcid.persistence.jpa.entities.NotificationAmendedEntity;
 import org.orcid.persistence.jpa.entities.NotificationCustomEntity;
+import org.orcid.persistence.jpa.entities.NotificationWorkEntity;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.PeerReviewEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.persistence.jpa.entities.PublicationDateEntity;
+import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.jpa.entities.StartDateEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
@@ -84,12 +90,26 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     @Resource
     private OrcidUrlManager orcidUrlManager;
 
+    @Resource
+    private WorkDao workDao;
+
     @Override
     public MapperFacade getObject() throws Exception {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
+
+        // Register converters
         ConverterFactory converterFactory = mapperFactory.getConverterFactory();
+        converterFactory.registerConverter("singleWorkExternalIdentifierFromJsonConverter", new SingleWorkExternalIdentifierFromJsonConverter());
         converterFactory.registerConverter("externalIdentifierIdConverter", new ExternalIdentifierTypeConverter());
+
+        // Register factories
+        mapperFactory.registerObjectFactory(new WorkEntityFactory(workDao), TypeFactory.<NotificationWorkEntity> valueOf(NotificationWorkEntity.class),
+                TypeFactory.<Item> valueOf(Item.class));
+
+        // Custom notification
         mapCommonFields(mapperFactory.classMap(NotificationCustomEntity.class, NotificationCustom.class)).register();
+
+        // Permission notification
         mapCommonFields(
                 mapperFactory.classMap(NotificationAddItemsEntity.class, NotificationPermission.class).field("authorizationUrl", "authorizationUrl.uri")
                         .field("notificationItems", "items.items").customize(new CustomMapper<NotificationAddItemsEntity, NotificationPermission>() {
@@ -113,7 +133,21 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         mapCommonFields(mapperFactory.classMap(NotificationAmendedEntity.class, NotificationAmended.class)).register();
         mapperFactory.classMap(NotificationItemEntity.class, Item.class).fieldMap("externalIdType", "externalIdentifier.externalIdentifierType")
                 .converter("externalIdentifierIdConverter").add().field("externalIdValue", "externalIdentifier.externalIdentifierId").byDefault().register();
+
+        // Amended notification
+        mapCommonFields(mapperFactory.classMap(NotificationAmendedEntity.class, NotificationAmended.class)).fieldAToB("notificationWorks", "items.items")
+                .fieldBToA("items.itemsByType['WORK']", "notificationWorks").register();
+        mapperFactory.classMap(NotificationWorkEntity.class, Item.class).fieldAToB("work.id", "putCode").fieldAToB("work.title", "itemName")
+                .fieldMap("work.externalIdentifiersJson", "externalIdentifier").aToB().converter("singleWorkExternalIdentifierFromJsonConverter").add()
+                .customize(new CustomMapper<NotificationWorkEntity, Item>() {
+                    public void mapAtoB(NotificationWorkEntity entity, Item activity, MappingContext context) {
+                        activity.setItemType(ItemType.WORK);
+                    }
+                }).register();
+
+        // All notifications
         addV2SourceMapping(mapperFactory);
+
         return mapperFactory.getMapperFacade();
     }
 
@@ -136,6 +170,19 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         }
     }
 
+    public MapperFacade getResearcherUrlMapperFacade() {
+        MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
+        ClassMapBuilder<ResearcherUrl, ResearcherUrlEntity> researcherUrlClassMap = mapperFactory.classMap(ResearcherUrl.class, ResearcherUrlEntity.class);
+        researcherUrlClassMap.byDefault();
+        addV2DateFields(researcherUrlClassMap);
+        addV2SourceMapping(mapperFactory);
+        researcherUrlClassMap.field("putCode", "id");
+        researcherUrlClassMap.field("url.value", "url");
+        researcherUrlClassMap.field("urlName", "urlName");
+        researcherUrlClassMap.register();
+        return mapperFactory.getMapperFacade();
+    }
+    
     public MapperFacade getWorkMapperFacade() {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
 

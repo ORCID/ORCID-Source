@@ -66,4 +66,9 @@ if (typeof angular == 'undefined') {
 </script>
 
 <script src="https://www.google.com/recaptcha/api.js"></script>
-<script src="https://badges.mozillascience.org/widgets/paper-badger-widget.js"></script>
+<script type="text/javascript">
+   var script = document.createElement("script");
+   script.type = "text/javascript";
+   script.src = "https://badges.mozillascience.org/widgets/paper-badger-widget.js";
+   document.body.appendChild(script);
+</script>

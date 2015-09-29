@@ -51,6 +51,7 @@ the software.
         <module>orcid-test</module>
         <module>orcid-solr-web</module>
         <module>orcid-integration-test</module>
+		<module>orcid-internal-api</module>
     </modules>
 
 
@@ -240,6 +241,7 @@ the software.
                             <exclude>**/src/test/resources/org/orcid/frontend/web/forms/**</exclude>
                             <exclude>**/src/main/webapp/static/css/glyphicons.css</exclude>
                             <exclude>**/src/main/webapp/static/css/idpselect.css</exclude>
+                            <exclude>**/src/main/webapp/static/css/idpselect.old.css</exclude>
                             <exclude>**/src/test/javascript/node_modules/**</exclude>
                             <exclude>**/src/main/webapp/static/javascript/iframeResizer**</exclude>
                             <exclude>**/*.xsd</exclude>
@@ -679,11 +681,6 @@ the software.
                     </exclusion>
                 </exclusions>
             </dependency>
-            <dependency>
-                <groupId>org.springframework.data</groupId>
-                <artifactId>spring-data-jpa</artifactId>
-                <version>1.0.3.RELEASE</version>
-            </dependency>
 
             <dependency>
                 <groupId>com.sun.jersey.contribs</groupId>
@@ -759,36 +756,26 @@ the software.
                 <version>9.3-1101-jdbc41</version>
             </dependency>
             <dependency>
-                <groupId>org.hibernate.java-persistence</groupId>
-                <artifactId>jpa-api</artifactId>
-                <version>2.0-cr-1</version>
-            </dependency>
-            <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-entitymanager</artifactId>
-                <version>3.6.3.Final</version>
+                <version>4.3.11.Final</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-core</artifactId>
-                <version>3.6.3.Final</version>
+                <version>4.3.11.Final</version>
             </dependency>
             <dependency>
                 <groupId>org.hibernate.javax.persistence</groupId>
-                <artifactId>hibernate-jpa-2.0-api</artifactId>
+                <artifactId>hibernate-jpa-2.1-api</artifactId>
                 <version>1.0.0.Final</version>
             </dependency>
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-c3p0</artifactId>
-                <version>4.0.0.CR7</version>
+                <version>4.3.11.Final</version>
                 <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>c3p0</groupId>
-                <artifactId>c3p0</artifactId>
-                <version>0.9.1.2</version>
             </dependency>
             <dependency>
                 <groupId>org.liquibase</groupId>
@@ -880,7 +867,7 @@ the software.
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-validator</artifactId>
-                <version>4.2.0.Final</version>
+                <version>4.3.2.Final</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>
@@ -897,7 +884,7 @@ the software.
             </dependency>
             <dependency>
                 <groupId>org.jasypt</groupId>
-                <artifactId>jasypt-hibernate3</artifactId>
+                <artifactId>jasypt-hibernate4</artifactId>
                 <version>1.9.2</version>
             </dependency>
             <dependency>
@@ -918,7 +905,7 @@ the software.
             <dependency>
                 <groupId>ma.glasnost.orika</groupId>
                 <artifactId>orika-core</artifactId>
-                <version>1.4.5</version>
+                <version>1.4.6</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.jena</groupId>

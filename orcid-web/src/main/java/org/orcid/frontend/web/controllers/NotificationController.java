@@ -20,9 +20,12 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
+import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.TemplateManager;
+import org.orcid.jaxb.model.common.Source;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.notification.Notification;
 import org.orcid.jaxb.model.notification.NotificationType;
@@ -30,6 +33,7 @@ import org.orcid.jaxb.model.notification.amended.NotificationAmended;
 import org.orcid.jaxb.model.notification.custom.NotificationCustom;
 import org.orcid.jaxb.model.notification.permission.NotificationPermission;
 import org.orcid.persistence.dao.NotificationDao;
+import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -40,7 +44,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
-@RequestMapping("/notifications")
+@RequestMapping({ "/inbox", "/notifications" })
 public class NotificationController extends BaseController {
 
     @Resource
@@ -51,6 +55,9 @@ public class NotificationController extends BaseController {
 
     @Resource
     private TemplateManager templateManager;
+
+    @Resource
+    private ClientDetailsManager clientDetailsManager;
 
     @RequestMapping
     public ModelAndView getNotifications() {
@@ -69,12 +76,16 @@ public class NotificationController extends BaseController {
         for (Notification notification : notifications) {
             if (notification instanceof NotificationPermission) {
                 NotificationPermission naa = (NotificationPermission) notification;
-                naa.setSubject(getMessage(buildInternationalizationKey(NotificationType.class, naa.getNotificationType().value())));
-            }
-            else if (notification instanceof NotificationAmended) {
+                String customSubject = naa.getNotificationSubject();
+                if (StringUtils.isNotBlank(customSubject)) {
+                    naa.setSubject(customSubject);
+                } else {
+                    naa.setSubject(getMessage(buildInternationalizationKey(NotificationType.class, naa.getNotificationType().value())));
+                }
+            } else if (notification instanceof NotificationAmended) {
                 NotificationAmended na = (NotificationAmended) notification;
                 na.setSubject(getMessage(buildInternationalizationKey(NotificationType.class, na.getNotificationType().value())));
-            };
+            }
         }
         return notifications;
     }
@@ -99,6 +110,7 @@ public class NotificationController extends BaseController {
     public ModelAndView getPermissionNotificationHtml(@PathVariable("id") String id) {
         ModelAndView mav = new ModelAndView();
         Notification notification = notificationManager.findByOrcidAndId(getCurrentUserOrcid(), Long.valueOf(id));
+        addSourceDescription(notification);
         mav.addObject("notification", notification);
         mav.setViewName("notification/add_activities_notification");
         return mav;
@@ -108,6 +120,7 @@ public class NotificationController extends BaseController {
     public ModelAndView getAmendedNotificationHtml(@PathVariable("id") String id) {
         ModelAndView mav = new ModelAndView();
         Notification notification = notificationManager.findByOrcidAndId(getCurrentUserOrcid(), Long.valueOf(id));
+        addSourceDescription(notification);
         mav.addObject("notification", notification);
         mav.addObject("emailName", notificationManager.deriveEmailFriendlyName(getEffectiveProfile()));
         mav.setViewName("notification/amended_notification");
@@ -127,11 +140,24 @@ public class NotificationController extends BaseController {
         notificationDao.flagAsArchived(currentUserOrcid, Long.valueOf(id));
         return notificationManager.findByOrcidAndId(currentUserOrcid, Long.valueOf(id));
     }
-    
+
     @RequestMapping(value = "{id}/action", method = RequestMethod.GET)
     public ModelAndView executeAction(@PathVariable("id") String id, @RequestParam(value = "target") String redirectUri) {
         notificationManager.setActionedDate(getCurrentUserOrcid(), Long.valueOf(id));
-        return new ModelAndView("redirect:" + redirectUri);        
+        return new ModelAndView("redirect:" + redirectUri);
+    }
+
+    private void addSourceDescription(Notification notification) {
+        Source source = notification.getSource();
+        if (source != null) {
+            String sourcePath = source.retrieveSourcePath();
+            if (sourcePath != null) {
+                ClientDetailsEntity clientDetails = clientDetailsManager.findByClientId(sourcePath);
+                if (clientDetails != null) {
+                    notification.setSourceDescription(clientDetails.getClientDescription());
+                }
+            }
+        }
     }
 
 }

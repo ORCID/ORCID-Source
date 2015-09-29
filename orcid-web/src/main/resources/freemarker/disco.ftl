@@ -20,13 +20,58 @@
 "http://www.w3.org/TR/html4/loose.dtd">
 <html lang="en">
 <head>
-  <title>IDP select test bed</title>
-  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-5" />
-  <link rel="stylesheet" type="text/css" href="${staticCdn}/css/idpselect.css" />
+    <title>IDP select test bed</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-5" />
+    <link rel="stylesheet" href="${staticCdn}/css/fonts.css"/>
+    <link rel="stylesheet" type="text/css" href="${staticCdn}/css/idpselect.css" />
+    <script type="text/javascript">
+        var orcidVar = {};
+        orcidVar.recaptchaKey = '${recaptchaWebKey}';
+        orcidVar.baseUri = '${baseUri}';
+        orcidVar.baseUriHttp = '${baseUriHttp}';
+        orcidVar.pubBaseUri = '${pubBaseUri}';
+        orcidVar.orcidId = '${(profile.orcidIdentifier.path)!}';
+        orcidVar.orcidIdHash = '${(orcidIdHash)!}';
+        orcidVar.realOrcidId = '${realUserOrcid!}';
+        orcidVar.jsMessages = JSON.parse("${jsMessagesJson}");
+        orcidVar.searchBaseUrl = "${searchBaseUrl}";
+    </script>    
 </head>
 
 <body>
-  <div id="idpSelect"></div>
+  	<div id="idpSelectContainer">
+		<div id="idpSelectContainerHeader">
+			<div id="orcid-logo">
+				
+			</div>
+			<div id="header">
+				<span>Institution sign in</span>
+			</div>
+		</div>
+		<div id="idpSelectInner">
+			
+			
+			<!-- Where the widget is going to be injected -->
+			<div id="idpSelect"></div>
+			
+			
+		</div>
+		<div id="idpSelectContainerFooter">
+			<div>
+				<a class="idpSelectContainerFooterReturn" href="">...or, return to ORCID sign in &nbsp;<span class="orcid-mini"></span></a>
+			</div>
+			<div class="idpSelectContainerFooterBar">
+				<ul>
+					<li><a href="http://orcid.org/help/contact-us" target="_blank">About ORCID</a></li>
+					<li>|</li>
+					<li><a href="http://orcid.org/footer/privacy-policy" target="_blank">Privacy Policy</a></li>
+					<li>|</li>
+					<li><a href="http://orcid.org/content/orcid-terms-use" target="_blank">Terms of use</a></li>
+					<li class="orcid-link"><a href="http://orcid.org/" target="_blank">orcid.org</a></li>
+				</ul>
+			</div>
+		</div>		
+	</div>
 
   <script src="${staticCdn}/javascript/shibboleth-embedded-ds/1.1.0/idpselect_config.js" type="text/javascript" language="javascript"></script>
 

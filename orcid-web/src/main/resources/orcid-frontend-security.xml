@@ -198,7 +198,9 @@
 		<sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/fundings.json(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />						
 		<sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/getWorkInfo.json(\?.*)?"
- 	      	access="IS_AUTHENTICATED_ANONYMOUSLY" /> 	      	
+ 	      	access="IS_AUTHENTICATED_ANONYMOUSLY" /> 	      	 	      	
+		<sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/peer-reviews.json(\?.*)?"
+ 	      	access="IS_AUTHENTICATED_ANONYMOUSLY" /> 	      	 	      	 	      	
  	    <sec:intercept-url pattern="/public/group/(ringgold:|issn:|orcid-generated:|fundref:).*"
  	      	access="IS_AUTHENTICATED_ANONYMOUSLY" /> 	      	
 		<sec:intercept-url pattern="/lang.json(.*)?"
@@ -309,9 +311,9 @@
 
 	<!-- <bean id="termsAndConditionsAcceptanceCheckFilter" class="org.orcid.frontend.web.filters.TermsAndConditionsAcceptanceCheckFilter"/> -->
 
-	<bean id="corsFilter" class="org.orcid.core.web.filters.CorsFilter" />
+	<bean id="corsFilterWeb" class="org.orcid.core.web.filters.CorsFilterWeb" />
 
-    <bean id="jsonpCallbackFilter" class="org.orcid.core.web.filters.JsonpCallbackFilter" />
+    <bean id="jsonpCallbackFilterWeb" class="org.orcid.core.web.filters.JsonpCallbackFilterWeb" />
 		
 	<bean id="oauthAccessDeniedHandler" class="org.springframework.security.oauth2.provider.error.OAuth2AccessDeniedHandler" />
 	

@@ -28,5 +28,15 @@ public interface StatisticsGeneratorDao {
 
     public long getNumberOfUniqueDOIs();
     
-    public long getNumberOfLockedRecords();
+	long getNumberOfEmployment();
+
+	long getNumberOfEducation();
+
+	long getNumberOfFunding();
+
+	long getNumberOfEmploymentUniqueOrg();
+
+	long getNumberOfEducationUniqueOrg();
+
+	long getNumberOfFundingUniqueOrg();
 }
