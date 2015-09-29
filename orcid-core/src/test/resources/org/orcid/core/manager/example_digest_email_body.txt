@@ -1,28 +1,28 @@
 Hi John Watson,
 
-You have <6> new notifications in your ORCID inbox - see summary below. Please visit your ORCID Inbox (http://testserver.orcid.org/inbox) to take action or see more details.
+You have 6 new notifications in your ORCID inbox - see summary below. Please visit your ORCID Inbox (http://testserver.orcid.org/inbox) to take action or see more details.
 
 ORCID would like to let you know
 
     We have release a new messaging feature
     The ORCID registry is now available in Orc
 
-Super Institution 1 offers to add/update items to your ORCID record.
+Super Institution 1: Request to add items
 Works (2)
 Visit http://testserver.orcid.org/inbox/encrypted/QWJaZnJrUXVzUGc9/action to add now.
 
     Work 1 (doi: 123446/67654)
     Work 2 (doi: 123446/67655)
 
-Super Institution 1 offers to add/update items to your ORCID record.
-Employments (1)
+Super Institution 1: Request to add items
+Employment (1)
 Visit http://testserver.orcid.org/inbox/encrypted/elV4OGVicFBnNVU9/action to add now.
 
     Employment 1 (doi: 12345/abc)
 
 Lovely Publisher 1 has updated recent fundings on your ORCID record.
 
-Lovely Publisher 1 offers to add/update items to your ORCID record.
+Lovely Publisher 1: Request to add items
 Works (2)
 Visit http://testserver.orcid.org/inbox/encrypted/RWZKTTdhY3ArM3c9/action to add now.
 
