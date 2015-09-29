@@ -821,7 +821,7 @@ public class OauthConfirmAccessController extends BaseController {
     @RequestMapping(value = "/custom/register/validateEmail.json", method = RequestMethod.POST)
     public @ResponseBody
     OauthRegistration validateEmail(HttpServletRequest request, @RequestBody OauthRegistration reg) {
-        registrationController.regEmailValidate(request, reg, true);
+        registrationController.regEmailValidate(request, reg, true, false);
         return reg;
     }
 

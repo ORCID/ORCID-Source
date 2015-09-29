@@ -1337,7 +1337,7 @@ orcidNgModule.factory("notificationsSrvc", ['$rootScope', function ($rootScope) 
         unreadCount: 0,
         showArchived: false,
         getNotifications: function() {
-            var url = getBaseUri() + '/notifications/notifications.json?firstResult=' + serv.firstResult + '&maxResults=' + serv.maxResults;
+            var url = getBaseUri() + '/inbox/notifications.json?firstResult=' + serv.firstResult + '&maxResults=' + serv.maxResults;
             if(serv.showArchived){
                 url += "&includeArchived=true";                
             }
@@ -1370,7 +1370,7 @@ orcidNgModule.factory("notificationsSrvc", ['$rootScope', function ($rootScope) 
         },
         retrieveUnreadCount: function() {
             $.ajax({
-                url: getBaseUri() + '/notifications/unreadCount.json',
+                url: getBaseUri() + '/inbox/unreadCount.json',
                 dataType: 'json',
                 success: function(data) {
                     serv.unreadCount = data;
@@ -1399,7 +1399,7 @@ orcidNgModule.factory("notificationsSrvc", ['$rootScope', function ($rootScope) 
         },
         flagAsRead: function(notificationId) {
             $.ajax({
-                url: getBaseUri() + '/notifications/' + notificationId + '/read.json',
+                url: getBaseUri() + '/inbox/' + notificationId + '/read.json',
                 type: 'POST',
                 dataType: 'json',
                 success: function(data) {
@@ -1420,7 +1420,7 @@ orcidNgModule.factory("notificationsSrvc", ['$rootScope', function ($rootScope) 
         },
         archive: function(notificationId) {        	
             $.ajax({
-                url: getBaseUri() + '/notifications/' + notificationId + '/archive.json',
+                url: getBaseUri() + '/inbox/' + notificationId + '/archive.json',
                 type: 'POST',
                 dataType: 'json',
                 success: function(data) {
