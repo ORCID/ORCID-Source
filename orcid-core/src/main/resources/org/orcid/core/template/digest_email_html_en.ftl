@@ -28,7 +28,7 @@
                 Hi ${emailName},
             </span>
             <p>
-                You have ${totalMessageCount} new <#if orcidMessageCount == 1>notification<#else>notifications</#if> in your ORCID inbox - see summary below. Please visit your <a href="${baseUri}/inbox?lang=${locale}" style="color: #338caf;">ORCID Inbox</a> to take action or see more details.
+                You have ${totalMessageCount} new <#if totalMessageCount == 1>notification<#else>notifications</#if> in your ORCID inbox - see summary below. Please visit your <a href="${baseUri}/inbox?lang=${locale}" style="color: #338caf;">ORCID Inbox</a> to take action or see more details.
             </p>
             <#if digestEmail.notificationsBySourceId['ORCID']??><p>
                 ORCID would like to let you know
@@ -44,7 +44,7 @@
             <#list digestEmail.notificationsBySourceId[sourceId].notificationsByType[notificationType] as notification>
             <#if notificationType == 'PERMISSION'>
             <p>
-                <div><img src="http://testserver.orcid.org/static/img/request.png">${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sourceId} offers to add/update items to your ORCID record.</div>
+                <div><img src="http://testserver.orcid.org/static/img/request.png">${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sourceId}: ${notification.notificationSubject!'Request to add items'}</div>
                 <#assign itemsByType=notification.items.itemsByType>
                 <#list itemsByType?keys?sort as itemType>
                 <div>${itemType?capitalize}<#if itemType == 'WORK'>s</#if> (${itemsByType[itemType]?size})</div>

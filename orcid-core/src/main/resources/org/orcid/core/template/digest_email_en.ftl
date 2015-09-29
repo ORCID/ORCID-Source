@@ -34,7 +34,7 @@ ORCID would like to let you know
 <#list digestEmail.notificationsBySourceId[sourceId].notificationsByType?keys?sort as notificationType>
 <#list digestEmail.notificationsBySourceId[sourceId].notificationsByType[notificationType] as notification>
 <#if notificationType == 'PERMISSION'>
-${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sourceId} offers to add/update items to your ORCID record.
+${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sourceId}: ${notification.notificationSubject!'Request to add items'}
 <#assign itemsByType=notification.items.itemsByType>
 <#list itemsByType?keys?sort as itemType>
 ${itemType?capitalize}<#if itemType == 'WORK'>s</#if> (${itemsByType[itemType]?size})

@@ -7,14 +7,14 @@ ORCID would like to let you know
     We have release a new messaging feature
     The ORCID registry is now available in Orc
 
-Super Institution 1 offers to add/update items to your ORCID record.
+Super Institution 1: Request to add items
 Works (2)
 Visit http://testserver.orcid.org/inbox/1/action?target=https%3A%2F%2Fthirdparty.com%2Fadd-to-orcid%2F12345 to add now.
 
     Work 1 (doi: 123446/67654)
     Work 2 (doi: 123446/67655)
 
-Super Institution 1 offers to add/update items to your ORCID record.
+Super Institution 1: Request to add items
 Employment (1)
 Visit http://testserver.orcid.org/inbox/2/action?target=https%3A%2F%2Fthirdparty.com%2Fadd-to-orcid%2Fabc to add now.
 
@@ -22,7 +22,7 @@ Visit http://testserver.orcid.org/inbox/2/action?target=https%3A%2F%2Fthirdparty
 
 Lovely Publisher 1 has updated recent fundings on your ORCID record.
 
-Lovely Publisher 1 offers to add/update items to your ORCID record.
+Lovely Publisher 1: Request to add items
 Works (2)
 Visit http://testserver.orcid.org/inbox/3/action?target=https%3A%2F%2Fthirdparty.com%2Fadd-to-orcid%2Fdef to add now.
 
