@@ -79,6 +79,11 @@
 	<bean id="ajaxAuthenticationFailureHandler"
 		class="org.orcid.frontend.spring.AjaxAuthenticationFailureHandler" />
 
+	<bean id="logoutSuccessHandler"
+		class="org.orcid.frontend.spring.LogoutSuccessHandler">
+	</bean>
+
+
 	<sec:authentication-manager alias="authenticationManager">
 		<sec:authentication-provider
 			user-service-ref="userDetailsService">
@@ -275,8 +280,8 @@
 			login-processing-url="/signin/auth" -->
 		<!-- username-parameter="userId" password-parameter="password" default-target-url="/my-orcid"/> -->
 
-		<sec:logout logout-success-url="/signin" logout-url="/signout"
-			invalidate-session="true" />
+		<sec:logout logout-url="/signout"
+			invalidate-session="true" success-handler-ref="logoutSuccessHandler"/>
 
 		<sec:form-login login-processing-url="/signin/auth.json"
 			login-page="/signin" authentication-success-handler-ref="ajaxAuthenticationSuccessHandler"
