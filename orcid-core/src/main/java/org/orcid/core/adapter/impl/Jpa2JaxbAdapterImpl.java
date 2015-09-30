@@ -149,7 +149,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
             profile.setOrcidActivities(getOrcidActivities(profileEntity));
         }
         if (loadOptions.isLoadBio()) {
-            profile.setOrcidBio(getOrcidBio(profileEntity, loadOptions));
+            profile.setOrcidBio(getOrcidBio(profileEntity));
         }
         profile.setOrcidHistory(getOrcidHistory(profileEntity));
         if (loadOptions.isLoadInternal()) {
@@ -335,7 +335,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         return null;
     }
 
-    private OrcidBio getOrcidBio(ProfileEntity profileEntity, LoadOptions loadOptions) {
+    private OrcidBio getOrcidBio(ProfileEntity profileEntity) {
         OrcidBio orcidBio = new OrcidBio();
 
         orcidBio.setContactDetails(getContactDetails(profileEntity));
@@ -343,10 +343,8 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         orcidBio.setDelegation(getDelegation(profileEntity));
         orcidBio.setPersonalDetails(getPersonalDetails(profileEntity));
         orcidBio.setKeywords(getKeywords(profileEntity));
-        orcidBio.setBiography(getBiography(profileEntity));
-        if (!LoadOptions.BIO_ONLY.equals(loadOptions)) {
-            orcidBio.setApplications(getApplications(profileEntity));
-        }
+        orcidBio.setBiography(getBiography(profileEntity));        
+        orcidBio.setApplications(getApplications(profileEntity));        
         orcidBio.setResearcherUrls(getResearcherUrls(profileEntity));
         return orcidBio;
     }
