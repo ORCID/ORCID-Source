@@ -34,6 +34,7 @@ import org.apache.commons.lang.StringUtils;
 import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.constants.DefaultPreferences;
 import org.orcid.core.locale.LocaleManager;
+import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
@@ -114,6 +115,9 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     
     @Resource(name = "profileEntityCacheManager")
     ProfileEntityCacheManager profileEntityCacheManager;
+
+    @Resource
+    private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
     
     public Jpa2JaxbAdapterImpl() {
         try {
@@ -159,6 +163,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         profile.setVerificationCode(profileEntity.getEncryptedVerificationCode());
         profile.setLocked(profileEntity.getRecordLocked());
         profile.setReviewed(profileEntity.isReviewed());
+
         int countTokens = orcidOauth2TokenService.findCountByUserName(profileEntity.getId());
         profile.setCountTokens(countTokens);
         return profile;
@@ -317,7 +322,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
 
     private OrcidWorks getOrcidWorks(ProfileEntity profileEntity) {
         LOGGER.debug("About to convert works from entity: " + profileEntity.getId());
-        Set<WorkEntity> works = profileEntity.getWorks();        
+        Set<WorkEntity> works = profileEntity.getWorks();
         if (works != null && !works.isEmpty()) {
             OrcidWorks orcidWorks = new OrcidWorks();
             for (WorkEntity workEntity : works) {
@@ -329,7 +334,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         }
         return null;
     }
-    
+
     private OrcidBio getOrcidBio(ProfileEntity profileEntity) {
         OrcidBio orcidBio = new OrcidBio();
 
@@ -338,8 +343,8 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         orcidBio.setDelegation(getDelegation(profileEntity));
         orcidBio.setPersonalDetails(getPersonalDetails(profileEntity));
         orcidBio.setKeywords(getKeywords(profileEntity));
-        orcidBio.setBiography(getBiography(profileEntity));
-        orcidBio.setApplications(getApplications(profileEntity));
+        orcidBio.setBiography(getBiography(profileEntity));        
+        orcidBio.setApplications(getApplications(profileEntity));        
         orcidBio.setResearcherUrls(getResearcherUrls(profileEntity));
         return orcidBio;
     }
@@ -452,13 +457,13 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
      * */
     private org.orcid.jaxb.model.message.FundingExternalIdentifiers getFundingExternalIdentifiers(ProfileFundingEntity profileFundingEntity) {
         String externalIdsJson = profileFundingEntity.getExternalIdentifiersJson();
-        if(!PojoUtil.isEmpty(externalIdsJson)) {            
+        if (!PojoUtil.isEmpty(externalIdsJson)) {
             FundingExternalIdentifiers fundingExternalIdentifiers = JsonUtils.readObjectFromJsonString(externalIdsJson, FundingExternalIdentifiers.class);
             org.orcid.jaxb.model.message.FundingExternalIdentifiers result = fundingExternalIdentifiers.toMessagePojo();
             return result;
         }
         return new org.orcid.jaxb.model.message.FundingExternalIdentifiers();
-    }    
+    }
 
     /**
      * Get the funding contributors from a profileFundingEntity
@@ -715,7 +720,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         }
         return null;
     }
-    
+
     private Source getSponsor(ProfileEntity profileEntity) {
         SourceEntity sourceEntity = profileEntity.getSource();
         if (sourceEntity != null) {
@@ -749,7 +754,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
             for (OrcidOauth2TokenDetail tokenDetail : tokenDetails) {
                 if (tokenDetail.getTokenDisabled() == null || !tokenDetail.getTokenDisabled()) {
                     ApplicationSummary applicationSummary = new ApplicationSummary();
-                    ClientDetailsEntity acceptedClient = tokenDetail.getClientDetailsEntity();
+                    ClientDetailsEntity acceptedClient = clientDetailsEntityCacheManager.retrieve(tokenDetail.getClientDetailsId());
 
                     if (acceptedClient != null) {
                         applicationSummary.setApplicationOrcid(new ApplicationOrcid(getOrcidIdBase(acceptedClient.getClientId())));
@@ -760,9 +765,9 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                         applicationSummary.setApplicationWebsite(new ApplicationWebsite(acceptedClient.getClientWebsite()));
                         applicationSummary.setApprovalDate(new ApprovalDate(DateUtils.convertToXMLGregorianCalendar(tokenDetail.getDateCreated())));
 
-                        // add group information                        
+                        // add group information
                         if (!PojoUtil.isEmpty(acceptedClient.getGroupProfileId())) {
-                            ProfileEntity groupEntity = profileEntityCacheManager.retrieve(acceptedClient.getGroupProfileId()); 
+                            ProfileEntity groupEntity = profileEntityCacheManager.retrieve(acceptedClient.getGroupProfileId());
                             applicationSummary.setApplicationGroupOrcid(new ApplicationOrcid(groupEntity.getId()));
                             applicationSummary.setApplicationGroupName(new ApplicationName(getGroupDisplayName(groupEntity)));
                         }
@@ -778,7 +783,8 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                             applicationSummary.setScopePaths(scopePaths);
                             // Only add to list if there is a scope (if no
                             // scopes then has been used and is defunct)
-                            //If there are several token with the same scope, add just the oldest one 
+                            // If there are several token with the same scope,
+                            // add just the oldest one
                             checkApplicationsAndAdd(applicationSummary, applications);
                         }
                     }
@@ -789,7 +795,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         }
         return null;
     }
-    
+
     /**
      * Get an application and compare it to the list of existing applications,
      * if it share the same client and scopes, keep just the oldest one
@@ -842,12 +848,11 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                 }
             }
 
-            if(!foundExisting || replaceExisting) {
+            if (!foundExisting || replaceExisting) {
                 applications.getApplicationSummary().add(applicationSummary);
-            } 
+            }
         }
     }
-    
 
     private String getGroupDisplayName(ProfileEntity groupProfile) {
         String creditName = groupProfile.getCreditName();
@@ -868,9 +873,9 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
             displayName += " " + familyName;
         }
         return displayName;
-    }    
-    
-    public OrcidWork getOrcidWork(WorkEntity work) {        
+    }
+
+    public OrcidWork getOrcidWork(WorkEntity work) {
         if (work == null) {
             return null;
         }
@@ -916,9 +921,9 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                 return localeString.substring(0, 5);
             } else if (localeString.startsWith("zh_cn")) {
                 return "zh_CN";
-            } else if(localeString.startsWith("zh_tw")) {
+            } else if (localeString.startsWith("zh_tw")) {
                 return "zh_TW";
-            } else { 
+            } else {
                 return "zh_CN"; // bit of a gamble here :-/
             }
         }
@@ -942,17 +947,17 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         if (work.getTranslatedTitle() != null)
             workTitle.setTranslatedTitle(new TranslatedTitle(work.getTranslatedTitle(), work.getTranslatedTitleLanguageCode()));
         return workTitle;
-    }    
+    }
 
     private WorkExternalIdentifiers getWorkExternalIdentifiers(WorkEntity work) {
         WorkExternalIdentifiers extIds = new WorkExternalIdentifiers();
         String externalIdentifiersJson = work.getExternalIdentifiersJson();
-        if(!PojoUtil.isEmpty(externalIdentifiersJson)) {
+        if (!PojoUtil.isEmpty(externalIdentifiersJson)) {
             extIds = JsonUtils.readObjectFromJsonString(externalIdentifiersJson, WorkExternalIdentifiers.class);
         }
-        return extIds;        
-    }    
-    
+        return extIds;
+    }
+
     private WorkContributors getWorkContributors(WorkEntity work) {
         if (work == null) {
             return null;
@@ -1068,8 +1073,8 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                 profileEntity.getSendChangeNotifications() == null ? DefaultPreferences.SEND_CHANGE_NOTIFICATIONS_DEFAULT : profileEntity.getSendChangeNotifications()));
         preferences.setSendOrcidNews(new SendOrcidNews(profileEntity.getSendOrcidNews() == null ? DefaultPreferences.SEND_ORCID_NEWS_DEFAULT : profileEntity
                 .getSendOrcidNews()));
-        preferences.setSendMemberUpdateRequests(profileEntity.getSendMemberUpdateRequests() == null ? DefaultPreferences.SEND_MEMBER_UPDATE_REQUESTS
-                : profileEntity.getSendMemberUpdateRequests());
+        preferences.setSendMemberUpdateRequests(profileEntity.getSendMemberUpdateRequests() == null ? DefaultPreferences.SEND_MEMBER_UPDATE_REQUESTS : profileEntity
+                .getSendMemberUpdateRequests());
         // This column is constrained as not null in the DB so don't have to
         // worry about null!
         preferences.setActivitiesVisibilityDefault(new ActivitiesVisibilityDefault(profileEntity.getActivitiesVisibilityDefault()));

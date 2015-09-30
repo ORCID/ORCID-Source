@@ -190,7 +190,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
 
         OrcidOauth2TokenDetail token = new OrcidOauth2TokenDetail();
         token.setTokenValue("1234");
-        token.setClientDetailsEntity(clientDetails);
+        token.setClientDetailsId(clientDetails.getId());
         token.setProfile(profileDao.find(delegateProfile.getOrcidIdentifier().getPath()));
         token.setScope(StringUtils.join(new String[] { ScopePathType.ORCID_BIO_READ_LIMITED.value(), ScopePathType.ORCID_BIO_UPDATE.value() }, " "));
         SortedSet<OrcidOauth2TokenDetail> tokens = new TreeSet<>();
