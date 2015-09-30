@@ -71,7 +71,6 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
     private Set<ClientAuthorisedGrantTypeEntity> clientAuthorizedGrantTypes = Collections.emptySet();
     private SortedSet<ClientRedirectUriEntity> clientRegisteredRedirectUris;
     private List<ClientGrantedAuthorityEntity> clientGrantedAuthorities = Collections.emptyList();
-    private Set<OrcidOauth2TokenDetail> tokenDetails;
     private String groupProfileId;
 
     private Set<CustomEmailEntity> customEmails = Collections.emptySet();
@@ -188,16 +187,7 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
 
     public void setClientGrantedAuthorities(List<ClientGrantedAuthorityEntity> clientGrantedAuthorities) {
         this.clientGrantedAuthorities = clientGrantedAuthorities;
-    }
-
-    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, mappedBy = "clientDetailsEntity")
-    public Set<OrcidOauth2TokenDetail> getTokenDetails() {
-        return tokenDetails;
-    }
-
-    public void setTokenDetails(Set<OrcidOauth2TokenDetail> tokenDetails) {
-        this.tokenDetails = tokenDetails;
-    }
+    }    
 
     @Column(name = "group_orcid")
     @JoinColumn(name = "group_orcid")

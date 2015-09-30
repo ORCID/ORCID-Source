@@ -34,6 +34,7 @@ import org.apache.commons.lang.StringUtils;
 import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.constants.DefaultPreferences;
 import org.orcid.core.locale.LocaleManager;
+import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
@@ -111,6 +112,9 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     @Resource(name = "profileEntityCacheManager")
     ProfileEntityCacheManager profileEntityCacheManager;
 
+    @Resource
+    private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
+    
     public Jpa2JaxbAdapterImpl() {
         try {
             datatypeFactory = DatatypeFactory.newInstance();
@@ -749,7 +753,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
             for (OrcidOauth2TokenDetail tokenDetail : tokenDetails) {
                 if (tokenDetail.getTokenDisabled() == null || !tokenDetail.getTokenDisabled()) {
                     ApplicationSummary applicationSummary = new ApplicationSummary();
-                    ClientDetailsEntity acceptedClient = tokenDetail.getClientDetailsEntity();
+                    ClientDetailsEntity acceptedClient = clientDetailsEntityCacheManager.retrieve(tokenDetail.getClientDetailsId());
 
                     if (acceptedClient != null) {
                         applicationSummary.setApplicationOrcid(new ApplicationOrcid(getOrcidIdBase(acceptedClient.getClientId())));

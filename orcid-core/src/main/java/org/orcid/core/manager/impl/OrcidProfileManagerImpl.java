@@ -1240,7 +1240,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
     @SuppressWarnings("deprecation")
     @Override
     @Transactional
-    public OrcidProfile revokeApplication(String userOrcid, String applicationOrcid, Collection<ScopePathType> scopes) {
+    public OrcidProfile revokeApplication(String userOrcid, String applicationClientId, Collection<ScopePathType> scopes) {
         ProfileEntity existingProfile = profileDao.find(userOrcid);
         if (existingProfile == null) {
             return null;
@@ -1250,7 +1250,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
             Iterator<OrcidOauth2TokenDetail> tokenDetailIterator = tokenDetails.iterator();
             while (tokenDetailIterator.hasNext()) {
                 OrcidOauth2TokenDetail tokenDetail = tokenDetailIterator.next();
-                if (tokenDetail.getClientDetailsEntity().getId().equals(applicationOrcid)) {
+                if (tokenDetail.getClientDetailsId().equals(applicationClientId)) {
                     String tokenScope = tokenDetail.getScope();
                     if (tokenScope != null) {
                         Set<ScopePathType> tokenScopes = ScopePathType.getScopesFromSpaceSeparatedString(tokenScope);

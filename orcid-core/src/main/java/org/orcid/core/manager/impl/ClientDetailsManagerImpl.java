@@ -468,4 +468,9 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
     public String getMemberName(String clientId) {
         return clientDetailsDao.getMemberName(clientId);
     }
+    
+    @Override    
+    public Date getLastModified(String clientId) {
+        return clientDetailsDao.getLastModified(clientId);
+    }
 }

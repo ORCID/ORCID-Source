@@ -46,8 +46,8 @@ public class OrcidOauth2TokenDetail extends BaseEntity<Long> implements ProfileA
     private Long id;
 
     private String tokenValue;
-    private ProfileEntity profile;
-    private ClientDetailsEntity clientDetailsEntity;
+    private String clientDetailsId;
+    private ProfileEntity profile;    
     private boolean approved = false;
     private String resourceId;
     private String redirectUri;
@@ -100,14 +100,14 @@ public class OrcidOauth2TokenDetail extends BaseEntity<Long> implements ProfileA
         this.profile = profile;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "client_details_id")
-    public ClientDetailsEntity getClientDetailsEntity() {
-        return clientDetailsEntity;
+    
+    @Column(name = "client_details_id")
+    public String getClientDetailsId() {
+        return clientDetailsId;
     }
 
-    public void setClientDetailsEntity(ClientDetailsEntity clientDetailsEntity) {
-        this.clientDetailsEntity = clientDetailsEntity;
+    public void setClientDetailsId(String clientDetailsId) {
+        this.clientDetailsId = clientDetailsId;
     }
 
     @Column(name = "refresh_token_expiration")
@@ -238,20 +238,15 @@ public class OrcidOauth2TokenDetail extends BaseEntity<Long> implements ProfileA
 
     @Override
     public int compareTo(OrcidOauth2TokenDetail other) {
-        ProfileEntity clientProfileEntity = clientDetailsEntity.getProfile();        
-        ProfileEntity otherClientProfileEntity = other.getClientDetailsEntity().getProfile();
-        String clientName = clientDetailsEntity.getClientName();
-        String otherClientName = other.getClientDetailsEntity() == null ? "" : other.getClientDetailsEntity().getClientName();
-        int compareName = 0;
-        if(StringUtils.isNotBlank(clientName)){ 
-            compareName = clientName.compareTo(otherClientName);            
-        } else {
-            String name = (clientProfileEntity.getGivenNames() == null ? "" : clientProfileEntity.getGivenNames()) + (clientProfileEntity.getFamilyName() == null ? "" : clientProfileEntity.getFamilyName());
-            String otherName = (otherClientProfileEntity.getGivenNames() == null ? "" : otherClientProfileEntity.getGivenNames()) + (otherClientProfileEntity.getFamilyName() == null ? "" : otherClientProfileEntity.getFamilyName());
-            compareName = name.compareTo(otherName);            
-        }
-        if (compareName != 0) {
-            return compareName;
+        String clientId = clientDetailsId;
+        String otherClientId = other.getClientDetailsId();
+        int compareClientId = 0;
+        if(StringUtils.isNotBlank(clientId)){ 
+            compareClientId = clientId.compareTo(otherClientId);            
+        } 
+        
+        if (compareClientId != 0) {
+            return compareClientId;
         }
         Date thisDateCreated = getDateCreated();
         if (thisDateCreated != null) {
