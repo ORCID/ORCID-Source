@@ -38,6 +38,7 @@ import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
+import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.security.DefaultPermissionChecker;
 import org.orcid.core.security.PermissionChecker;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
@@ -108,7 +109,10 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
 
     @Resource
     private ProfileEntityManager profileEntityManager;
-
+    
+    @Resource
+    private OrcidOauth2TokenDetailService orcidOauth2TokenService;
+    
     @Resource(name = "profileEntityCacheManager")
     ProfileEntityCacheManager profileEntityCacheManager;
 
@@ -160,9 +164,8 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         profile.setLocked(profileEntity.getRecordLocked());
         profile.setReviewed(profileEntity.isReviewed());
 
-        if (profileEntity.getTokenDetails() != null) {
-            profile.setCountTokens(profileEntity.getTokenDetails().size());
-        }
+        int countTokens = orcidOauth2TokenService.findCountByUserName(profileEntity.getId());
+        profile.setCountTokens(countTokens);
         return profile;
     }
 

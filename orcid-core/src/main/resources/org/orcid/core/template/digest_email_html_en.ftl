@@ -44,7 +44,7 @@
             <#list digestEmail.notificationsBySourceId[sourceId].notificationsByType[notificationType] as notification>
             <#if notificationType == 'PERMISSION'>
             <p>
-                <div><img src="http://testserver.orcid.org/static/img/request.png">${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sourceId}: ${notification.notificationSubject!'Request to add items'}</div>
+                <div><img src="${baseUri}/static/img/request.png">${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sourceId}: ${notification.notificationSubject!'Request to add items'}</div>
                 <#assign itemsByType=notification.items.itemsByType>
                 <#list itemsByType?keys?sort as itemType>
                 <div>${itemType?capitalize}<#if itemType == 'WORK'>s</#if> (${itemsByType[itemType]?size})</div>
@@ -54,11 +54,11 @@
                 </#list>
                 </ul>
                 </#list>
-                <div><a href="${baseUri}/inbox#${notification.putCode}">more info...</a> <a style="display: inline-block;margin-bottom: 0;font-weight: 400;text-align: center;vertical-align: middle;cursor: pointer;background-image: none;white-space: nowrap;padding: 6px 12px;font-size: 14px;line-height: 1.428571429;border-radius: 4px; color: #fff; background-color: #428bca;border-color: #357ebd;text-decoration: none;" href="${baseUri}/inbox/${notification.putCode}/action?target=${notification.authorizationUrl.uri?url}">Add now</a></div>
+                <div><a href="${baseUri}/inbox#${notification.putCode}">more info...</a> <a style="display: inline-block;margin-bottom: 0;font-weight: 400;text-align: center;vertical-align: middle;cursor: pointer;background-image: none;white-space: nowrap;padding: 6px 12px;font-size: 14px;line-height: 1.428571429;border-radius: 4px; color: #fff; background-color: #428bca;border-color: #357ebd;text-decoration: none;" href="${baseUri}/inbox/encrypted/${notification.encryptedPutCode}/action">Add now</a></div>
             </p>
             <#elseif notificationType == 'AMENDED'>
             <p>
-                <div><img src="http://testserver.orcid.org/static/img/update.png">${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sourceId} has updated recent ${notification.amendedSection?lower_case}s on your ORCID record.</div>
+                <div><img src="${baseUri}/static/img/update.png">${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sourceId} has updated recent ${notification.amendedSection?lower_case}s on your ORCID record.</div>
                 <#if notification.items??>
                 <ul>
                 <#list notification.items.items as item>

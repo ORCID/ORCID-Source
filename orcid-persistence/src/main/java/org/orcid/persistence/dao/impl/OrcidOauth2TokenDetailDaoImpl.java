@@ -206,4 +206,13 @@ public class OrcidOauth2TokenDetailDaoImpl extends GenericDaoImpl<OrcidOauth2Tok
         query.setParameter("userName", userName);
         return query.getResultList();
     }
+    
+    @Override
+    public int findCountByUserName(String userName) {
+    	Query query = entityManager
+                .createNativeQuery("select count(*) from oauth2_token_detail where user_orcid=:userName");
+        query.setParameter("userName", userName);
+        int count = ((java.math.BigInteger)query.getSingleResult()).intValue();
+        return count;
+    }
 }
