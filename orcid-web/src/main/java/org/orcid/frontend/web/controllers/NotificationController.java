@@ -16,15 +16,19 @@
  */
 package org.orcid.frontend.web.controllers;
 
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.manager.ClientDetailsManager;
+import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.TemplateManager;
+import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.jaxb.model.common.Source;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.notification.Notification;
@@ -34,6 +38,9 @@ import org.orcid.jaxb.model.notification.custom.NotificationCustom;
 import org.orcid.jaxb.model.notification.permission.NotificationPermission;
 import org.orcid.persistence.dao.NotificationDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+import org.orcid.persistence.jpa.entities.NotificationAddItemsEntity;
+import org.orcid.persistence.jpa.entities.NotificationEntity;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -58,6 +65,9 @@ public class NotificationController extends BaseController {
 
     @Resource
     private ClientDetailsManager clientDetailsManager;
+
+    @Resource
+    private EncryptionManager encryptionManager;
 
     @RequestMapping
     public ModelAndView getNotifications() {
@@ -145,6 +155,31 @@ public class NotificationController extends BaseController {
     public ModelAndView executeAction(@PathVariable("id") String id, @RequestParam(value = "target") String redirectUri) {
         notificationManager.setActionedDate(getCurrentUserOrcid(), Long.valueOf(id));
         return new ModelAndView("redirect:" + redirectUri);
+    }
+
+    @RequestMapping(value = "/encrypted/{encryptedId}/action", method = RequestMethod.GET)
+    public ModelAndView executeAction(@PathVariable("encryptedId") String encryptedId) {
+        String idString;
+        try {
+            idString = encryptionManager.decryptForExternalUse(new String(Base64.decodeBase64(encryptedId), "UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException("Problem decoding " + encryptedId, e);
+        }
+        Long id = Long.valueOf(idString);
+        NotificationAddItemsEntity notification = (NotificationAddItemsEntity) notificationDao.find(id);
+        String redirectUrl = notification.getAuthorizationUrl();
+        String notificationOrcid = notification.getProfile().getId();
+        OrcidProfileUserDetails user = getCurrentUser();
+        if (user != null) {
+            // The user is logged in
+            if (!user.getOrcid().equals(notificationOrcid)) {
+                return new ModelAndView("wrong_user");
+            }
+        } else {
+            redirectUrl += "&orcid=" + notificationOrcid;
+        }
+        notificationManager.setActionedDate(notificationOrcid, id);
+        return new ModelAndView("redirect:" + redirectUrl);
     }
 
     private void addSourceDescription(Notification notification) {
