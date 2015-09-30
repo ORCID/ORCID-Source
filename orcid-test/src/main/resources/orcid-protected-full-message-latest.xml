@@ -81,7 +81,7 @@
             </researcher-urls>
             <contact-details>
                 <email visibility="limited" primary="true" current="true" verified="true" source="4444-4444-4444-4446">josiah_carberry@brown.edu</email>
-                <email visibility="limited" primary="false" current="true" verified="false" source-client-id="APP-0000000000000000">josiah_carberry_1@brown.edu</email>
+                <email visibility="limited" primary="false" current="true" verified="false" source="4444-4444-4444-4446">josiah_carberry_1@brown.edu</email>
                 <address>
                     <country>US</country>
                 </address>
