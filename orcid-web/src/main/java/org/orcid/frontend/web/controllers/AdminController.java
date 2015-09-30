@@ -411,9 +411,6 @@ public class AdminController extends BaseController {
     /**
      * Admin switch user
      * */
-    /**
-     * Admin switch user
-     * */
     @RequestMapping(value = "/admin-switch-user", method = RequestMethod.GET)
     public @ResponseBody Map<String, String> adminSwitchUser(@ModelAttribute("orcidOrEmail") String orcidOrEmail, RedirectAttributes redirectAttributes) {
         if (StringUtils.isNotBlank(orcidOrEmail))

@@ -41,6 +41,15 @@
 			height: auto; /* Do not change */
 			padding-bottom: 30px; /* Do not change */
 		}		
+		
+		.margin-top{
+			margin-top: 15px;
+			clear: both;			
+		}
+		
+		.margin-top .btn-primary{
+			margin-left: 15px;
+		}
 	</style>
 	<script type="text/javascript">
 		var appInIframe = angular.module('appInFrame', []);
@@ -74,10 +83,12 @@
                 </#list>
             <p>
         </#if>
-    	<a href="<@orcid.rootPath '/my-orcid'/>" target="_parent" class="btn btn-primary">View on your record</a> <a ng-click="archive(putCode)" target="_parent" ng-hide="archivedDate" class="btn btn-default">Archive</a>
+        <div class="pull-right margin-top">
+    		<a ng-click="archive(putCode)" target="_parent" ng-hide="archivedDate" class="">Archive</a>  <a href="<@orcid.rootPath '/my-orcid'/>" target="_parent" class="btn btn-primary">View on your record</a>
+    	</div>
      </div>
      <#if notification.sourceDescription??>
-         <div>
+         <div class="margin-top">
              <strong>About ${notification.source.sourceName.content}</strong>
          </div>
          <div>

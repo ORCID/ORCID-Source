@@ -177,11 +177,15 @@ public class OauthConfirmAccessController extends BaseController {
             if (matcher.find()) {
                 clientId = matcher.group(1);
                 if (clientId != null) {
+                	try {
+                		clientId = URLDecoder.decode(clientId, "UTF-8").trim();
+                	} catch (UnsupportedEncodingException e) {
+                    }
                     Matcher emailMatcher = RegistrationController.emailPattern.matcher(url);
                     if (emailMatcher.find()) {
                         String tempEmail = emailMatcher.group(1);
                         try {
-                            tempEmail = URLDecoder.decode(tempEmail, "UTF-8");
+                            tempEmail = URLDecoder.decode(tempEmail, "UTF-8").trim();
                         } catch (UnsupportedEncodingException e) {
                         }
                         if (orcidProfileManager.emailExists(tempEmail))
@@ -192,7 +196,7 @@ public class OauthConfirmAccessController extends BaseController {
                     if (orcidMatcher.find()) {
                         String tempOrcid = orcidMatcher.group(2);
                         try {
-                            tempOrcid = URLDecoder.decode(tempOrcid, "UTF-8");
+                            tempOrcid = URLDecoder.decode(tempOrcid, "UTF-8").trim();
                         } catch (UnsupportedEncodingException e) {
                         }
                         if (orcidProfileManager.exists(tempOrcid))
@@ -203,7 +207,8 @@ public class OauthConfirmAccessController extends BaseController {
                     if (scopeMatcher.find()) {
                         scope = scopeMatcher.group(1);
                         try {
-                            scope = URLDecoder.decode(scope, "UTF-8");
+                            scope = URLDecoder.decode(scope, "UTF-8").trim();
+                            scope = scope.replaceAll(" +", " ");
                         } catch (UnsupportedEncodingException e) {
                         }
                     }
@@ -211,7 +216,7 @@ public class OauthConfirmAccessController extends BaseController {
                     Matcher redirectUriMatcher = redirectUriPattern.matcher(url);
                     if (redirectUriMatcher.find()) {
                         try {
-                            redirectUri = URLDecoder.decode(redirectUriMatcher.group(1), "UTF-8");
+                            redirectUri = URLDecoder.decode(redirectUriMatcher.group(1), "UTF-8").trim();
                         } catch (UnsupportedEncodingException e) {
                         }
                     }
@@ -219,6 +224,10 @@ public class OauthConfirmAccessController extends BaseController {
                     Matcher responseTypeMatcher = responseTypePattern.matcher(url);
                     if (responseTypeMatcher.find()) {
                         responseType = responseTypeMatcher.group(1);
+                        try {
+                        	responseType = URLDecoder.decode(responseType, "UTF-8").trim();
+                        } catch (UnsupportedEncodingException e) {
+                        }
                     }
 
                     // Get client name
@@ -278,7 +287,10 @@ public class OauthConfirmAccessController extends BaseController {
     @RequestMapping(value = "/confirm_access", method = RequestMethod.GET)
     public ModelAndView loginGetHandler(HttpServletRequest request,  HttpServletResponse response, ModelAndView mav, @RequestParam("client_id") String clientId, @RequestParam("scope") String scope, @RequestParam("redirect_uri") String redirectUri) {
         OrcidProfile profile = orcidProfileManager.retrieveOrcidProfile(getCurrentUserOrcid(), LoadOptions.BIO_ONLY);
-
+        clientId = (clientId != null) ? clientId.trim() : clientId;
+        scope = (scope != null) ? scope.trim().replaceAll(" +", " ") : scope;
+        redirectUri = (redirectUri != null) ? redirectUri.trim() : redirectUri;
+       
         Boolean justRegistered = (Boolean) request.getSession().getAttribute(JUST_REGISTERED);
         if (justRegistered != null) {
             request.getSession().removeAttribute(JUST_REGISTERED);
@@ -290,7 +302,7 @@ public class OauthConfirmAccessController extends BaseController {
         String clientWebsite = "";
 
         boolean usePersistentTokens = false;
-
+        
         ClientDetailsEntity clientDetails = clientDetailsManager.findByClientId(clientId);
         clientName = clientDetails.getClientName() == null ? "" : clientDetails.getClientName();
         clientDescription = clientDetails.getClientDescription() == null ? "" : clientDetails.getClientDescription();
@@ -809,7 +821,7 @@ public class OauthConfirmAccessController extends BaseController {
     @RequestMapping(value = "/custom/register/validateEmail.json", method = RequestMethod.POST)
     public @ResponseBody
     OauthRegistration validateEmail(HttpServletRequest request, @RequestBody OauthRegistration reg) {
-        registrationController.regEmailValidate(request, reg, true);
+        registrationController.regEmailValidate(request, reg, true, false);
         return reg;
     }
 

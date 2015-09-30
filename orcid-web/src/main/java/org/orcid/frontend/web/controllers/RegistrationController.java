@@ -38,6 +38,7 @@ import javax.validation.Valid;
 import org.apache.commons.codec.binary.Base64;
 import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
 import org.orcid.core.manager.EncryptionManager;
+import org.orcid.core.manager.InternalSSOManager;
 import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidProfileManager;
@@ -173,6 +174,9 @@ public class RegistrationController extends BaseController {
 
     @Resource
     private RecaptchaVerifier recaptchaVerifier;
+    
+    @Resource
+    private InternalSSOManager internalSSOManager;
 
     public void setEncryptionManager(EncryptionManager encryptionManager) {
         this.encryptionManager = encryptionManager;
@@ -390,7 +394,7 @@ public class RegistrationController extends BaseController {
             return r;
         }        
 
-        createMinimalRegistrationAndLogUserIn(request, toProfile(reg, request), usedCaptcha);
+        createMinimalRegistrationAndLogUserIn(request, response, toProfile(reg, request), usedCaptcha);
         String redirectUrl = calculateRedirectUrl(request, response);
         r.setUrl(redirectUrl);
         return r;
@@ -404,7 +408,7 @@ public class RegistrationController extends BaseController {
         registerGivenNameValidate(reg);
         registerPasswordValidate(reg);
         registerPasswordConfirmValidate(reg);
-        regEmailValidate(request, reg);
+        regEmailValidate(request, reg, false, false);
         registerTermsOfUseValidate(reg);
 
         copyErrors(reg.getEmailConfirm(), reg);
@@ -505,12 +509,12 @@ public class RegistrationController extends BaseController {
 
     @RequestMapping(value = "/registerEmailValidate.json", method = RequestMethod.POST)
     public @ResponseBody Registration regEmailValidate(HttpServletRequest request, @RequestBody Registration reg) {
-        return regEmailValidate(request, reg, false);
+        return regEmailValidate(request, reg, false, true);
     }
 
-    public Registration regEmailValidate(HttpServletRequest request, Registration reg, boolean isOauthRequest) {
+    public Registration regEmailValidate(HttpServletRequest request, Registration reg, boolean isOauthRequest, boolean isKeyup) {
         reg.getEmail().setErrors(new ArrayList<String>());
-        if (reg.getEmail().getValue() == null || reg.getEmail().getValue().trim().isEmpty()) {
+        if (!isKeyup && (reg.getEmail().getValue() == null || reg.getEmail().getValue().trim().isEmpty())) {
             setError(reg.getEmail(), "Email.registrationForm.email");
         }
         // validate email
@@ -1035,15 +1039,20 @@ public class RegistrationController extends BaseController {
 
     }
 
-    public void createMinimalRegistrationAndLogUserIn(HttpServletRequest request, OrcidProfile profileToSave, boolean usedCaptchaVerification) {
+    public void createMinimalRegistrationAndLogUserIn(HttpServletRequest request, HttpServletResponse response, OrcidProfile profileToSave, boolean usedCaptchaVerification) {
         String password = profileToSave.getPassword();
         UsernamePasswordAuthenticationToken token = null;
         try {
             profileToSave = createMinimalRegistration(request, profileToSave, usedCaptchaVerification);
+            String orcidId = profileToSave.getOrcidIdentifier().getPath();
             token = new UsernamePasswordAuthenticationToken(profileToSave.getOrcidIdentifier().getPath(), password);
             token.setDetails(new WebAuthenticationDetails(request));
             Authentication authentication = authenticationManager.authenticate(token);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+            SecurityContextHolder.getContext().setAuthentication(authentication);            
+            if(internalSSOManager.enableCookie()) {
+                //Set user cookie
+                internalSSOManager.writeCookie(orcidId, request, response);
+            }
         } catch (AuthenticationException e) {
             // this should never happen
             SecurityContextHolder.getContext().setAuthentication(null);

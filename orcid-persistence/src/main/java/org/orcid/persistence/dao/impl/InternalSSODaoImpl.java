@@ -24,6 +24,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
+import org.orcid.persistence.aop.ExcludeFromProfileLastModifiedUpdate;
 import org.orcid.persistence.dao.InternalSSODao;
 import org.orcid.persistence.jpa.entities.InternalSSOEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,6 +41,7 @@ public class InternalSSODaoImpl extends GenericDaoImpl<InternalSSOEntity, String
 
     @Override
     @Transactional
+    @ExcludeFromProfileLastModifiedUpdate
     public InternalSSOEntity insert(String orcid, String token) {
         InternalSSOEntity entity = new InternalSSOEntity();
         entity.setDateCreated(new Date());
@@ -52,6 +54,7 @@ public class InternalSSODaoImpl extends GenericDaoImpl<InternalSSOEntity, String
 
     @Override
     @Transactional
+    @ExcludeFromProfileLastModifiedUpdate
     public boolean delete(String orcid) {
         Query query = entityManager.createNativeQuery("DELETE FROM internal_sso WHERE orcid = :orcid");
         query.setParameter("orcid", orcid);
@@ -60,6 +63,7 @@ public class InternalSSODaoImpl extends GenericDaoImpl<InternalSSOEntity, String
 
     @Override
     @Transactional
+    @ExcludeFromProfileLastModifiedUpdate
     public boolean update(String orcid, String token) {
         Query query = entityManager.createNativeQuery("UPDATE internal_sso SET last_modified = now() WHERE orcid = :orcid AND token = :token");
         query.setParameter("orcid", orcid);

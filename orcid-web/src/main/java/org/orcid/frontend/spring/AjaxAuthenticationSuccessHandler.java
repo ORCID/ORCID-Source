@@ -57,7 +57,9 @@ public class AjaxAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuc
         if (authentication != null) {
             String orcidId = authentication.getName();
             checkLocale(request, response, orcidId);
-            internalSSOManager.writeCookie(orcidId, request, response);
+            if(internalSSOManager.enableCookie()) {
+                internalSSOManager.writeCookie(orcidId, request, response);
+            }            
             profileDao.updateIpAddress(orcidId, OrcidRequestUtil.getIpAddress(request));
         }
         if (targetUrl == null) {
