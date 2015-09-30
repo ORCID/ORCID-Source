@@ -28,6 +28,7 @@ import javax.persistence.PersistenceException;
 
 import org.hibernate.exception.ConstraintViolationException;
 import org.orcid.core.adapter.JpaJaxbResearcherUrlAdapter;
+import org.orcid.core.exception.WrongOwnerException;
 import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ResearcherUrlManager;
@@ -206,15 +207,20 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
     }
 
     @Override
-    public org.orcid.jaxb.model.record.ResearcherUrl getResearcherUrlV2(long id) {
+    public org.orcid.jaxb.model.record.ResearcherUrl getResearcherUrlV2(String orcid, long id) {
         ResearcherUrlEntity researcherUrlEntity = researcherUrlDao.getResearcherUrl(id);
+        if(!researcherUrlEntity.getUser().getId().equals(orcid)) {
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("element", "researcherUrl");
+            params.put("user", orcid);
+            throw new WrongOwnerException(params);
+        }
         return jpaJaxbResearcherUrlAdapter.toResearcherUrl(researcherUrlEntity);        
     }
 
     @Override
     public org.orcid.jaxb.model.record.ResearcherUrl updateResearcherUrlV2(String orcid, org.orcid.jaxb.model.record.ResearcherUrl researcherUrl) {
-        SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
-        ResearcherUrlEntity researcherUrlEntity = researcherUrlDao.getResearcherUrl(researcherUrl.getPutCode());
+        SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();        
         //Validate the researcher url
         PersonValidator.validateResearcherUrl(researcherUrl, sourceEntity, false);
         //Validate the source

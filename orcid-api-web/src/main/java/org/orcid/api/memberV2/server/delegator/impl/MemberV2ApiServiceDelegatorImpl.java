@@ -50,6 +50,7 @@ import org.orcid.jaxb.model.record.Education;
 import org.orcid.jaxb.model.record.Employment;
 import org.orcid.jaxb.model.record.Funding;
 import org.orcid.jaxb.model.record.PeerReview;
+import org.orcid.jaxb.model.record.ResearcherUrl;
 import org.orcid.jaxb.model.record.ResearcherUrls;
 import org.orcid.jaxb.model.record.Work;
 import org.orcid.jaxb.model.record.summary.ActivitiesSummary;
@@ -432,10 +433,101 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
         return Response.ok(records).build();
     }
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     @Override
     @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED)
     public Response viewResearcherUrls(String orcid) {
         ResearcherUrls researcherUrls = researcherUrlManager.getResearcherUrlsV2(orcid);
         return Response.ok(researcherUrls).build();
     }
+    
+    @Override
+    @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED)
+    public Response viewResearcherUrl(String orcid, String putCode) {
+        ResearcherUrl researcherUrl = researcherUrlManager.getResearcherUrlV2(orcid, Long.valueOf(putCode));
+        return Response.ok(researcherUrl).build();
+    }
+    
+    @Override
+    @AccessControl(requiredScope = ScopePathType.PERSON_UPDATE)
+    public Response updateResearcherUrl(String orcid, String putCode, ResearcherUrl researcherUrl) {
+        
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 }
