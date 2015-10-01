@@ -31,7 +31,6 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
@@ -44,11 +43,11 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-persistence-context.xml" })
-public class OrcidOauth2AuthorisationDetailsDaoTest extends DBUnitTest {
+public class OrcidOauth2AuthorizationDetailsDaoTest extends DBUnitTest {
 
     @Resource(name = "orcidOauth2TokenDetailDao")
     private OrcidOauth2TokenDetailDao orcidOauth2TokenDetailDao;
-
+    
     @BeforeClass
     public static void initDBUnitData() throws Exception {
         initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SubjectEntityData.xml", "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml",
@@ -151,8 +150,7 @@ public class OrcidOauth2AuthorisationDetailsDaoTest extends DBUnitTest {
         assertEquals(5, all.size());
 
         for (OrcidOauth2TokenDetail detail : all) {
-            ClientDetailsEntity clientDetailsEntity = detail.getClientDetailsEntity();
-            List<OrcidOauth2TokenDetail> allForClient = orcidOauth2TokenDetailDao.findByClientId(clientDetailsEntity.getId());
+            List<OrcidOauth2TokenDetail> allForClient = orcidOauth2TokenDetailDao.findByClientId(detail.getClientDetailsId());
             assertEquals(1, allForClient.size());
         }
     }

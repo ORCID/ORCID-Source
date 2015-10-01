@@ -16,6 +16,7 @@
  */
 package org.orcid.persistence.dao.impl;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -398,10 +399,15 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         return result;
     }
 
-    public Date retrieveLastModifiedDate(String orcid) {
-        TypedQuery<Date> query = entityManager.createQuery("select lastModified from ProfileEntity where orcid = :orcid", Date.class);
-        query.setParameter("orcid", orcid);
-        return query.getSingleResult();
+	@SuppressWarnings("unchecked")
+	public Date retrieveLastModifiedDate(String orcid) {
+        Query nativeQuery = entityManager.createNativeQuery("Select p.last_modified FROM profile p WHERE p.orcid =:orcid");
+        nativeQuery.setParameter("orcid", orcid);
+        List<Timestamp> tsList = nativeQuery.getResultList();
+        if(tsList != null && !tsList.isEmpty()) {
+        	return new Date(tsList.get(0).getTime());
+        }
+        return null;
     }
 
     @Override

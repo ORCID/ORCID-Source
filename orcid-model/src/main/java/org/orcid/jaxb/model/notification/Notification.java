@@ -92,6 +92,8 @@ abstract public class Notification implements Serializable {
     protected Source source;
     @XmlTransient
     protected String sourceDescription;
+    @XmlTransient
+    protected String encryptedPutCode;
 
     /**
      * Gets the value of the putCode property.
@@ -246,6 +248,14 @@ abstract public class Notification implements Serializable {
 
     public void setSourceDescription(String sourceDescription) {
         this.sourceDescription = sourceDescription;
+    }
+
+    public String getEncryptedPutCode() {
+        return encryptedPutCode;
+    }
+
+    public void setEncryptedPutCode(String encryptedPutCode) {
+        this.encryptedPutCode = encryptedPutCode;
     }
 
 }

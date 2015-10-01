@@ -44,7 +44,7 @@
         <level value="INFO" />
     </logger>
     
-    <logger name="com.mchange.v2.c3p0">
+    <logger name="com.mchange.v2">
        <level value="WARN" />
     </logger>
     
