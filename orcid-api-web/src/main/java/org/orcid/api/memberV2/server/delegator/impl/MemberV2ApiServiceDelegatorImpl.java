@@ -489,8 +489,19 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     @Override
     @AccessControl(requiredScope = ScopePathType.PERSON_UPDATE)
     public Response updateResearcherUrl(String orcid, String putCode, ResearcherUrl researcherUrl) {
-        
+        ResearcherUrl updatedResearcherUrl = researcherUrlManager.updateResearcherUrlV2(orcid, researcherUrl);
+        return Response.ok(updatedResearcherUrl).build();
     }
+    
+    @Override
+    @AccessControl(requiredScope = ScopePathType.PERSON_UPDATE)
+    public Response createResearcherUrl(String orcid, ResearcherUrl researcherUrl) {
+        researcherUrlManager.addResearcherUrlV2(orcid, researcherUrl);
+        return Response.ok(researcherUrl).build();
+    }
+    
+    
+    
     
     
     

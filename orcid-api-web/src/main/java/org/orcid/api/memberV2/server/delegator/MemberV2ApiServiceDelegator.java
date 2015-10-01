@@ -100,5 +100,7 @@ public interface MemberV2ApiServiceDelegator {
     Response viewResearcherUrl(String orcid, String putCode);
     
     Response updateResearcherUrl(String orcid, String putCode, ResearcherUrl researcherUrl);
+    
+    Response createResearcherUrl(String orcid, ResearcherUrl researcherUrl);
 
 }
