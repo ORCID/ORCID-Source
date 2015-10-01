@@ -44,6 +44,7 @@ import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileKeywordManager;
 import org.orcid.core.manager.ResearcherUrlManager;
+import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.frontend.web.forms.ChangePersonalInfoForm;
 import org.orcid.frontend.web.forms.ChangeSecurityQuestionForm;
 import org.orcid.frontend.web.forms.ManagePasswordOptionsForm;
@@ -76,10 +77,12 @@ import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.ShibbolethAccountDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
+import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileSummaryEntity;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 import org.orcid.persistence.jpa.entities.ShibbolethAccountEntity;
+import org.orcid.pojo.ApplicationSummary;
 import org.orcid.pojo.ChangePassword;
 import org.orcid.pojo.ManageDelegate;
 import org.orcid.pojo.ManageShibbolethAccount;
@@ -161,6 +164,9 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     @Resource
     private EmailManager emailManager;
+    
+    @Resource
+    private OrcidOauth2TokenDetailService orcidOauth2TokenService;
 
     @Resource(name = "profileEntityCacheManager")
     ProfileEntityCacheManager profileEntityCacheManager;
@@ -349,9 +355,9 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     @RequestMapping(value = "/revoke-application")
     public ModelAndView revokeApplication(@RequestParam("applicationOrcid") String applicationOrcid,
-            @RequestParam(value = "scopePaths", required = false, defaultValue = "") String[] scopePaths) {
+            @RequestParam(value = "scopePaths", required = false, defaultValue = "") ScopePathType[] scopePaths) {
         String userOrcid = getCurrentUserOrcid();
-        orcidProfileManager.revokeApplication(userOrcid, applicationOrcid, ScopePathType.getScopesFromStrings(Arrays.asList(scopePaths)));
+        orcidProfileManager.revokeApplication(userOrcid, applicationOrcid, Arrays.asList(scopePaths));
         ModelAndView mav = new ModelAndView("redirect:/account?activeTab=application-tab");
         return mav;
     }
@@ -1082,6 +1088,14 @@ public class ManageProfileController extends BaseWorkspaceController {
         }
 
         return mav;
+    }
+    
+    @RequestMapping(value = { "/get-trusted-orgs" }, method = RequestMethod.GET)
+    public @ResponseBody List<ApplicationSummary> getTrustedOrgs() {
+    	String orcid = getCurrentUserOrcid();
+    	List<OrcidOauth2TokenDetail> tokenDetails = orcidOauth2TokenService.findByUserName(orcid);
+    	List<ApplicationSummary> trustedOrgsList = profileEntityManager.getApplications(tokenDetails);
+    	return trustedOrgsList;
     }
 
     /**

@@ -131,6 +131,8 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
 
     @Resource
     private OrcidOauth2TokenDetailDao orcidOauth2TokenDetailDao;
+    
+    
 
     @Resource
     private EncryptionManager encryptionManager;
@@ -323,8 +325,9 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
     public void testUpdateProfileWhenTokenPresent() {
         OrcidProfile profile1 = orcidProfileManager.retrieveOrcidProfile(DELEGATE_ORCID);
         assertNotNull(profile1);
-        assertNotNull(profile1.getOrcidBio().getApplications());
-        assertEquals(1, profile1.getOrcidBio().getApplications().getApplicationSummary().size());
+//		Applications are not linked with OrcidProfile object anymore.
+//        assertNotNull(profile1.getOrcidBio().getApplications());
+//        assertEquals(1, profile1.getOrcidBio().getApplications().getApplicationSummary().size());
 
         OrcidProfile profile2 = createBasicProfile();
         profile2.setOrcidIdentifier(DELEGATE_ORCID);
@@ -333,8 +336,9 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
 
         OrcidProfile resultProfile = orcidProfileManager.retrieveOrcidProfile(DELEGATE_ORCID);
         assertNotNull(resultProfile);
-        assertNotNull(resultProfile.getOrcidBio().getApplications());
-        assertEquals(1, resultProfile.getOrcidBio().getApplications().getApplicationSummary().size());
+//		Applications are not linked with OrcidProfile object anymore.
+//        assertNotNull(resultProfile.getOrcidBio().getApplications());
+//        assertEquals(1, resultProfile.getOrcidBio().getApplications().getApplicationSummary().size());
         assertEquals("Will", resultProfile.getOrcidBio().getPersonalDetails().getGivenNames().getContent());
         assertEquals(1, resultProfile.retrieveOrcidWorks().getOrcidWork().size());
         assertEquals(1, resultProfile.getOrcidBio().getResearcherUrls().getResearcherUrl().size());
@@ -818,34 +822,27 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
     @Rollback(true)
     public void testRevokeApplication() {
         OrcidProfile userProfile = orcidProfileManager.retrieveOrcidProfile(DELEGATE_ORCID);
-        assertNotNull(userProfile);
-        assertNotNull(userProfile.getOrcidBio().getApplications());
-        assertEquals(1, userProfile.getOrcidBio().getApplications().getApplicationSummary().size());
-
-        orcidProfileManager.revokeApplication(DELEGATE_ORCID, APPLICATION_ORCID,
-                Arrays.asList(new ScopePathType[] { ScopePathType.ORCID_BIO_READ_LIMITED, ScopePathType.ORCID_BIO_UPDATE }));
-
-        OrcidProfile retrievedProfile = orcidProfileManager.retrieveOrcidProfile(DELEGATE_ORCID);
-        assertNotNull(retrievedProfile);
-        assertNull(retrievedProfile.getOrcidBio().getApplications());
+    	List<OrcidOauth2TokenDetail> tokenDetails = orcidOauth2TokenDetailDao.findByUserName(userProfile.getOrcidIdentifier().getPath());
+    	assertEquals(1, tokenDetails.size());
+    	orcidProfileManager.revokeApplication(DELEGATE_ORCID, APPLICATION_ORCID,
+              Arrays.asList(new ScopePathType[] { ScopePathType.ORCID_BIO_READ_LIMITED, ScopePathType.ORCID_BIO_UPDATE }));
+    	tokenDetails = orcidOauth2TokenDetailDao.findByUserName(userProfile.getOrcidIdentifier().getPath());
+    	assertEquals(0, tokenDetails.size());
     }
 
     @Test
     @Transactional
     @Rollback(true)
     public void testRevokeApplicationWithWrongScope() {
-        OrcidProfile userProfile = orcidProfileManager.retrieveOrcidProfile(DELEGATE_ORCID);
-        assertNotNull(userProfile);
-        assertNotNull(userProfile.getOrcidBio().getApplications());
-        assertEquals(1, userProfile.getOrcidBio().getApplications().getApplicationSummary().size());
+    	OrcidProfile userProfile = orcidProfileManager.retrieveOrcidProfile(DELEGATE_ORCID);
+    	List<OrcidOauth2TokenDetail> tokenDetails = orcidOauth2TokenDetailDao.findByUserName(userProfile.getOrcidIdentifier().getPath());
+    	assertEquals(1, tokenDetails.size());
 
         // Shouldn't remove the token because scopes different
         orcidProfileManager.revokeApplication(DELEGATE_ORCID, APPLICATION_ORCID, Arrays.asList(new ScopePathType[] { ScopePathType.ORCID_BIO_READ_LIMITED }));
 
-        OrcidProfile retrievedProfile = orcidProfileManager.retrieveOrcidProfile(DELEGATE_ORCID);
-        assertNotNull(retrievedProfile);
-        assertNotNull(retrievedProfile.getOrcidBio().getApplications());
-        assertEquals(1, retrievedProfile.getOrcidBio().getApplications().getApplicationSummary().size());
+        tokenDetails = orcidOauth2TokenDetailDao.findByUserName(userProfile.getOrcidIdentifier().getPath());
+    	assertEquals(1, tokenDetails.size());
     }
 
     @Test

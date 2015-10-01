@@ -36,6 +36,21 @@ function contains(arr, obj) {
     return false;
 }
 
+function formatDate(oldDate) {
+	var date = new Date(oldDate);
+	var day = date.getDate();
+	var month = date.getMonth() + 1;
+	var year = date.getFullYear();
+	if(month < 10) {
+		month = '0' + month;
+	}
+	if(day < 10) {
+		day = '0' + day;
+	}
+	return (year + '-' + month + '-' + day);
+}
+
+
 var PRIVACY = {};
 PRIVACY.PUBLIC = 'PUBLIC';
 PRIVACY.LIMITED = 'LIMITED';
@@ -6820,10 +6835,13 @@ orcidNgModule.controller('profileDeprecationCtrl',['$scope','$compile', function
 }]);
 
 orcidNgModule.controller('revokeApplicationFormCtrl',['$scope', '$compile', function ($scope,$compile){
-    $scope.confirmRevoke = function(appName, appGroupName, appIndex){
-        $scope.appName = appName;
-        $scope.appIndex = appIndex;
-        $scope.appGroupName = appGroupName;
+    $scope.confirmRevoke = function(applicationSummary){
+        $scope.appName = applicationSummary.name;
+        $scope.appClientId = applicationSummary.orcidPath;
+        $scope.appScopePaths = [];
+        for (var scopePath in applicationSummary.scopePaths) {
+        	 $scope.appScopePaths.push(scopePath);
+    	}
         $.colorbox({
             html : $compile($('#confirm-revoke-access-modal').html())($scope),
             transition: 'fade',
@@ -6837,13 +6855,45 @@ orcidNgModule.controller('revokeApplicationFormCtrl',['$scope', '$compile', func
     };
 
     $scope.revokeAccess = function(){
-        orcidGA.gaPush(['_trackEvent', 'Disengagement', 'Revoke_Access', 'OAuth '+ orcidGA.buildClientString($scope.appGroupName, $scope.appName)]);
-        orcidGA.gaFormSumbitDelay($('#revokeApplicationForm' + $scope.appIndex));
+        $.ajax({
+            url: getBaseUri() + '/account/revoke-application.json?applicationOrcid='+$scope.appClientId+'&scopePaths='+$scope.appScopePaths,
+            type: 'POST',
+            success: function(data) {
+                $scope.getApplications();
+                $scope.$apply();
+                $scope.closeModal();
+            }
+        }).fail(function() {
+            // something bad is happening!
+            console.log("revokeApplicationFormCtrl.revoke() error");
+        });
     };
 
     $scope.closeModal = function() {
         $.colorbox.close();
     };
+    
+    $scope.getApplications = function() {
+	    $.ajax({
+	        url: getBaseUri()+'/account/get-trusted-orgs.json',
+	        type: 'GET',
+	        dataType: 'json',
+	        success: function(data){
+	        	$scope.$apply(function(){
+	        		for(var index1 = 0; index1 < data.length; index1 ++) {
+	        			data[index1].approvalDate = formatDate(data[index1].approvalDate);
+	            	}
+	        		$scope.applicationSummaryList = data;
+	        	});
+	        }
+	    }).fail(function(error) {
+	        // something bad is happening!
+	        console.log("Error finding the information");
+	    });
+    }
+    
+    $scope.getApplications();
+    
 }]);
 
 /**
