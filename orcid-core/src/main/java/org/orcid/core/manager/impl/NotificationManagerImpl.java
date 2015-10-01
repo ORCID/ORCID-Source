@@ -40,10 +40,10 @@ import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.CustomEmailManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.NotificationManager;
+import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.TemplateManager;
-import org.orcid.jaxb.model.message.ApplicationSummary;
-import org.orcid.jaxb.model.message.Applications;
+import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.jaxb.model.message.Delegation;
 import org.orcid.jaxb.model.message.DelegationDetails;
 import org.orcid.jaxb.model.message.Email;
@@ -54,11 +54,11 @@ import org.orcid.jaxb.model.message.SendChangeNotifications;
 import org.orcid.jaxb.model.message.Source;
 import org.orcid.jaxb.model.notification.Notification;
 import org.orcid.jaxb.model.notification.NotificationType;
-import org.orcid.jaxb.model.notification.permission.Items;
-import org.orcid.jaxb.model.notification.permission.Item;
 import org.orcid.jaxb.model.notification.amended.AmendedSection;
 import org.orcid.jaxb.model.notification.amended.NotificationAmended;
 import org.orcid.jaxb.model.notification.custom.NotificationCustom;
+import org.orcid.jaxb.model.notification.permission.Item;
+import org.orcid.jaxb.model.notification.permission.Items;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.NotificationDao;
 import org.orcid.persistence.dao.ProfileDao;
@@ -66,6 +66,7 @@ import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.CustomEmailEntity;
 import org.orcid.persistence.jpa.entities.EmailType;
 import org.orcid.persistence.jpa.entities.NotificationEntity;
+import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventType;
@@ -137,6 +138,9 @@ public class NotificationManagerImpl implements NotificationManager {
 
     @Resource
     private JpaJaxbNotificationAdapter notificationAdapter;
+    
+    @Resource
+    private ProfileEntityManager profileEntityManager;
 
     @Resource
     private NotificationDao notificationDao;
@@ -146,6 +150,9 @@ public class NotificationManagerImpl implements NotificationManager {
 
     @Resource
     private LocaleManager localeManager;
+    
+    @Resource
+    private OrcidOauth2TokenDetailService orcidOauth2TokenDetailService;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NotificationManagerImpl.class);
 
@@ -693,11 +700,12 @@ public class NotificationManagerImpl implements NotificationManager {
                 }
             }
         }
-        Applications applications = orcidProfile.getOrcidBio().getApplications();
-        if (applications != null && applications.getApplicationSummary() != null && !applications.getApplicationSummary().isEmpty()) {
-            for (ApplicationSummary applicationSummary : applications.getApplicationSummary()) {
-                if (amenderOrcid.equals(applicationSummary.getApplicationOrcid().getPath())) {
-                    return applicationSummary.getApplicationName().getContent();
+        List<OrcidOauth2TokenDetail> tokenDetails = orcidOauth2TokenDetailService.findByUserName(orcidProfile.getOrcidIdentifier().getPath());
+        List<org.orcid.pojo.ApplicationSummary> applications = profileEntityManager.getApplications(tokenDetails);
+        if (applications != null && !applications.isEmpty()) {
+            for (org.orcid.pojo.ApplicationSummary applicationSummary : applications) {
+                if (amenderOrcid.equals(applicationSummary.getOrcidPath())) {
+                    return applicationSummary.getName();
                 }
             }
         }
