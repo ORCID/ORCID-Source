@@ -74,14 +74,14 @@ import org.orcid.password.constants.OrcidPasswordConstants;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.GivenPermissionToDao;
 import org.orcid.persistence.dao.ProfileDao;
-import org.orcid.persistence.dao.ShibbolethAccountDao;
+import org.orcid.persistence.dao.UserConnectionDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileSummaryEntity;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
-import org.orcid.persistence.jpa.entities.ShibbolethAccountEntity;
+import org.orcid.persistence.jpa.entities.UserconnectionEntity;
 import org.orcid.pojo.ApplicationSummary;
 import org.orcid.pojo.ChangePassword;
 import org.orcid.pojo.ManageDelegate;
@@ -157,7 +157,7 @@ public class ManageProfileController extends BaseWorkspaceController {
     private EmailDao emailDao;
 
     @Resource
-    private ShibbolethAccountDao shibbolethAccountDao;
+    private UserConnectionDao userConnectionDao;
 
     @Resource
     private OrcidSocialManager orcidSocialManager;
@@ -334,10 +334,10 @@ public class ManageProfileController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = "/shibbolethAccounts.json", method = RequestMethod.GET)
-    public @ResponseBody List<ShibbolethAccountEntity> getShibbolethAccountsJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
+    public @ResponseBody List<UserconnectionEntity> getShibbolethAccountsJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
         String orcid = getCurrentUserOrcid();
-        List<ShibbolethAccountEntity> shibbolethAccounts = shibbolethAccountDao.findByOrcid(orcid);
-        return shibbolethAccounts;
+        List<UserconnectionEntity> userConnectionEntities = userConnectionDao.findByOrcid(orcid);
+        return userConnectionEntities;
     }
     
     @RequestMapping(value = "/revokeShibbolethAccount.json", method = RequestMethod.POST)
@@ -348,8 +348,7 @@ public class ManageProfileController extends BaseWorkspaceController {
             manageShibbolethAccount.getErrors().add(getMessage("check_password_modal.incorrect_password"));
             return manageShibbolethAccount;
         }
-        String orcid = getCurrentUserOrcid();
-        shibbolethAccountDao.removeByIdAndOrcid(manageShibbolethAccount.getIdToManage(), orcid);
+        userConnectionDao.remove(manageShibbolethAccount.getIdToManage());
         return manageShibbolethAccount;
     }
 

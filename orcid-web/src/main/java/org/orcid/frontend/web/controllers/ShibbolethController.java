@@ -16,7 +16,11 @@
  */
 package org.orcid.frontend.web.controllers;
 
+import java.sql.Timestamp;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Map;
+import java.util.Random;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -24,9 +28,10 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.exception.OrcidBadRequestException;
 import org.orcid.frontend.web.exception.FeatureDisabledException;
-import org.orcid.persistence.dao.ShibbolethAccountDao;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.persistence.jpa.entities.ShibbolethAccountEntity;
+import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.persistence.dao.UserConnectionDao;
+import org.orcid.persistence.jpa.entities.UserconnectionEntity;
+import org.orcid.persistence.jpa.entities.UserconnectionPK;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -61,7 +66,7 @@ public class ShibbolethController extends BaseController {
     private boolean enabled;
 
     @Resource
-    private ShibbolethAccountDao shibbolethAccountDao;
+    private UserConnectionDao userConnectionDao;
 
     @Resource
     private AuthenticationManager authenticationManager;
@@ -73,11 +78,10 @@ public class ShibbolethController extends BaseController {
         String shibIdentityProvider = headers.get(SHIB_IDENTITY_PROVIDER_HEADER);
         // Check if the Shibboleth user is already linked to an ORCID account.
         // If so sign them in automatically.
-        ShibbolethAccountEntity shibbolethAccountEntity = shibbolethAccountDao.findByRemoteUserAndShibIdentityProvider(remoteUser, shibIdentityProvider);
-        if (shibbolethAccountEntity != null) {
-            ProfileEntity profileEntity = shibbolethAccountEntity.getProfile();
+        UserconnectionEntity userConnectionEntity = userConnectionDao.findByProviderIdAndProviderUserId(remoteUser, shibIdentityProvider);
+        if (userConnectionEntity != null) {
             try {
-                PreAuthenticatedAuthenticationToken token = new PreAuthenticatedAuthenticationToken(profileEntity.getId(), remoteUser);
+                PreAuthenticatedAuthenticationToken token = new PreAuthenticatedAuthenticationToken(userConnectionEntity.getOrcid(), remoteUser);
                 token.setDetails(new WebAuthenticationDetails(request));
                 Authentication authentication = authenticationManager.authenticate(token);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -100,19 +104,27 @@ public class ShibbolethController extends BaseController {
     @RequestMapping(value = { "/link" }, method = RequestMethod.GET)
     public ModelAndView linkHandler(@RequestHeader() Map<String, String> headers, ModelAndView mav) {
         checkEnabled();
-        String remoteUser = retrieveRemoteUser(headers);
-        String shibIdentityProvider = headers.get(SHIB_IDENTITY_PROVIDER_HEADER);
-        ShibbolethAccountEntity shibbolethAccountEntity = shibbolethAccountDao.findByRemoteUserAndShibIdentityProvider(remoteUser, shibIdentityProvider);
-        if (shibbolethAccountEntity != null) {
+        String providerUserId = retrieveRemoteUser(headers);
+        String providerId = headers.get(SHIB_IDENTITY_PROVIDER_HEADER);
+        UserconnectionEntity userConnectionEntity = userConnectionDao.findByProviderIdAndProviderUserId(providerUserId, providerId);
+        if (userConnectionEntity != null) {
             return new ModelAndView("redirect:/my-orcid");
         }
-        shibbolethAccountEntity = new ShibbolethAccountEntity();
-        shibbolethAccountEntity.setRemoteUser(remoteUser);
-        shibbolethAccountEntity.setShibIdentityProvider(shibIdentityProvider);
-        shibbolethAccountEntity.setProfile(new ProfileEntity(getCurrentUserOrcid()));
-        shibbolethAccountDao.persist(shibbolethAccountEntity);
+        userConnectionEntity = new UserconnectionEntity();
+        String randomId = Long.toString(new Random(Calendar.getInstance().getTimeInMillis()).nextLong());
+        UserconnectionPK pk = new UserconnectionPK(randomId, providerId, providerUserId);
+        OrcidProfile profile = getRealProfile();
+        userConnectionEntity.setEmail(profile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue());
+        userConnectionEntity.setOrcid(profile.getOrcidIdentifier().getPath());
+        userConnectionEntity.setProfileurl(profile.getOrcidIdentifier().getUri());
+        userConnectionEntity.setDisplayname(profile.getOrcidBio().getPersonalDetails().getGivenNames().getContent());
+        userConnectionEntity.setRank(1);
+        userConnectionEntity.setId(pk);
+        userConnectionEntity.setLinked(true);
+        userConnectionEntity.setLastLogin(new Timestamp(new Date().getTime()));
+        userConnectionDao.persist(userConnectionEntity);
         mav.setViewName("shib_link_complete");
-        mav.addObject("remoteUser", remoteUser);
+        mav.addObject("remoteUser", providerUserId);
         return mav;
     }
 
