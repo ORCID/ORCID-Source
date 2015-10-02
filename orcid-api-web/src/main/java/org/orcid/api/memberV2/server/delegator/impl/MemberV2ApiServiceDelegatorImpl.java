@@ -27,6 +27,7 @@ import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
 
 import org.orcid.api.common.util.ActivityUtils;
+import org.orcid.api.common.util.ElementUtils;
 import org.orcid.api.memberV2.server.delegator.MemberV2ApiServiceDelegator;
 import org.orcid.core.exception.MismatchedPutCodeException;
 import org.orcid.core.exception.OrcidDeprecatedException;
@@ -476,6 +477,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED)
     public Response viewResearcherUrls(String orcid) {
         ResearcherUrls researcherUrls = researcherUrlManager.getResearcherUrlsV2(orcid);
+        ElementUtils.setPathToResearcherUrls(researcherUrls, orcid);
         return Response.ok(researcherUrls).build();
     }
     
@@ -496,8 +498,12 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     @Override
     @AccessControl(requiredScope = ScopePathType.PERSON_UPDATE)
     public Response createResearcherUrl(String orcid, ResearcherUrl researcherUrl) {
-        researcherUrlManager.addResearcherUrlV2(orcid, researcherUrl);
-        return Response.ok(researcherUrl).build();
+        researcherUrl = researcherUrlManager.createResearcherUrlV2(orcid, researcherUrl);        
+        try {
+            return Response.created(new URI(String.valueOf(researcherUrl.getPutCode()))).build();
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(localeManager.resolveMessage("apiError.createelement_response.exception"), e);
+        }       
     }
     
     

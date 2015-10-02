@@ -82,7 +82,7 @@ public interface ResearcherUrlManager {
      * @param researcherUrl
      * @return true if the researcher url was successfully created on database
      * */
-    public void addResearcherUrlV2(String orcid, org.orcid.jaxb.model.record.ResearcherUrl researcherUrl);  
+    public org.orcid.jaxb.model.record.ResearcherUrl createResearcherUrlV2(String orcid, org.orcid.jaxb.model.record.ResearcherUrl researcherUrl);  
     
     /**
      * Updates an existing url

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
 	xmlns:sch="http://purl.oclc.org/dsdl/schematron" elementFormDefault="qualified"
-	targetNamespace="http://www.orcid.org/ns/researcher-url" xmlns:person="http://www.orcid.org/ns/researcher-url"
+	targetNamespace="http://www.orcid.org/ns/researcher-url" xmlns:researcher-url="http://www.orcid.org/ns/researcher-url"
 	xmlns:common="http://www.orcid.org/ns/common">
 	<xs:annotation>
 		<xs:documentation>
@@ -34,6 +34,22 @@
 	</xs:annotation>
 	<xs:import namespace="http://www.orcid.org/ns/common"
 		schemaLocation="../common_2.0_rc2/common-2.0_rc2.xsd" />
+	<xs:element name="researcher-urls">
+		<xs:complexType>
+			<xs:annotation>
+				<xs:documentation>Container for URLs of the researcher or
+					contributor's sites. The visibility attribute (private, limited or
+					public) can be set at record creation, and indicates who can see
+					this section of information.
+				</xs:documentation>
+			</xs:annotation>
+			<xs:sequence>
+				<xs:element ref="researcher-url:researcher-url" minOccurs="1" maxOccurs="unbounded"/>
+			</xs:sequence>
+			<xs:attribute name="path" type="common:person-path" use="required" />
+		</xs:complexType>
+	</xs:element>		
+		
 	<xs:element name="researcher-url">
 		<xs:complexType>
 			<xs:annotation>
@@ -62,6 +78,7 @@
 			</xs:sequence>
 			<xs:attribute name="path" type="common:person-path" use="optional" />
 			<xs:attribute name="visibility" type="common:visibility" />		
+			<xs:attribute name="put-code" type="common:put-code" use="optional" />
 		</xs:complexType>
 	</xs:element>
 </xs:schema>

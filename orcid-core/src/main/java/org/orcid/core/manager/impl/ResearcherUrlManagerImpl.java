@@ -28,12 +28,14 @@ import javax.persistence.PersistenceException;
 
 import org.hibernate.exception.ConstraintViolationException;
 import org.orcid.core.adapter.JpaJaxbResearcherUrlAdapter;
+import org.orcid.core.exception.OrcidDuplicatedElementException;
 import org.orcid.core.exception.WrongOwnerException;
-import org.orcid.core.exception.WrongSourceException;
+import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ResearcherUrlManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.validator.PersonValidator;
+import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.jaxb.model.message.ResearcherUrl;
 import org.orcid.jaxb.model.message.ResearcherUrls;
 import org.orcid.jaxb.model.message.Url;
@@ -46,6 +48,7 @@ import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
 
 public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
 
@@ -65,6 +68,9 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
 
     @Resource
     private JpaJaxbResearcherUrlAdapter jpaJaxbResearcherUrlAdapter;
+    
+    @Resource
+    private OrcidSecurityManager orcidSecurityManager;
 
     /**
      * Return the list of researcher urls associated to a specific profile
@@ -208,7 +214,7 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
         List<ResearcherUrlEntity> researcherUrlEntities = researcherUrlDao.getResearcherUrls(orcid);
         List<org.orcid.jaxb.model.record.ResearcherUrl> researcherUrlList = jpaJaxbResearcherUrlAdapter.toResearcherUrlList(researcherUrlEntities);
         org.orcid.jaxb.model.record.ResearcherUrls researcherUrls = new org.orcid.jaxb.model.record.ResearcherUrls();
-        researcherUrls.setResearcherUrls(researcherUrlList);
+        researcherUrls.setResearcherUrls(researcherUrlList);        
         return researcherUrls;
     }
 
@@ -225,35 +231,37 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
     }
 
     @Override
+    @Transactional
     public org.orcid.jaxb.model.record.ResearcherUrl updateResearcherUrlV2(String orcid, org.orcid.jaxb.model.record.ResearcherUrl researcherUrl) {
-        SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
+        SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();        
+        
         // Validate the researcher url
         PersonValidator.validateResearcherUrl(researcherUrl, sourceEntity, false);
-        // Validate the source
-        if (researcherUrl.getSource() == null || !sourceEntity.getSourceId().equals(researcherUrl.getSource().retrieveSourcePath())) {
-            Map<String, String> params = new HashMap<String, String>();
-            params.put("element", "researcherUrl");
-            throw new WrongSourceException(params);
-        }
+        
         // Validate it is not duplicated
         List<ResearcherUrlEntity> existingResearcherUrls = researcherUrlDao.getResearcherUrls(orcid);
         for (ResearcherUrlEntity existing : existingResearcherUrls) {
             if (isDuplicated(existing, researcherUrl, sourceEntity)) {
-                // TODO: throw duplicated exception
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("type", "researcher-url");
+                params.put("value", researcherUrl.getUrlName());
+                throw new OrcidDuplicatedElementException(params);
             }
         }
-
-        ResearcherUrlEntity newEntity = jpaJaxbResearcherUrlAdapter.toResearcherUrlEntity(researcherUrl);
-        ProfileEntity profile = new ProfileEntity(orcid);
-        newEntity.setUser(profile);
-        newEntity.setDateCreated(new Date());
-        setIncomingPrivacy(newEntity, profile);
-        researcherUrlDao.persist(newEntity);
-        return jpaJaxbResearcherUrlAdapter.toResearcherUrl(newEntity);
+                
+        ResearcherUrlEntity updatedResearcherUrlEntity = researcherUrlDao.getResearcherUrl(Long.valueOf(researcherUrl.getPutCode()));
+        Visibility originalVisibility = Visibility.fromValue(updatedResearcherUrlEntity.getVisibility().value());        
+        SourceEntity existingSource = updatedResearcherUrlEntity.getSource();
+        orcidSecurityManager.checkSource(existingSource);
+        jpaJaxbResearcherUrlAdapter.toResearcherUrlEntity(researcherUrl, updatedResearcherUrlEntity);        
+        updatedResearcherUrlEntity.setLastModified(new Date());
+        updatedResearcherUrlEntity.setVisibility(originalVisibility);
+        researcherUrlDao.merge(updatedResearcherUrlEntity);
+        return jpaJaxbResearcherUrlAdapter.toResearcherUrl(updatedResearcherUrlEntity);
     }
 
     @Override
-    public void addResearcherUrlV2(String orcid, org.orcid.jaxb.model.record.ResearcherUrl researcherUrl) {
+    public org.orcid.jaxb.model.record.ResearcherUrl createResearcherUrlV2(String orcid, org.orcid.jaxb.model.record.ResearcherUrl researcherUrl) {
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
         // Validate the researcher url
         PersonValidator.validateResearcherUrl(researcherUrl, sourceEntity, true);
@@ -261,7 +269,10 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
         List<ResearcherUrlEntity> existingResearcherUrls = researcherUrlDao.getResearcherUrls(orcid);
         for (ResearcherUrlEntity existing : existingResearcherUrls) {
             if (isDuplicated(existing, researcherUrl, sourceEntity)) {
-                // TODO: throw duplicated exception
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("type", "researcher-url");
+                params.put("value", researcherUrl.getUrlName());
+                throw new OrcidDuplicatedElementException(params);
             }
         }
         
@@ -269,9 +280,10 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
         ProfileEntity profile = new ProfileEntity(orcid);
         newEntity.setUser(profile);
         newEntity.setDateCreated(new Date());
+        newEntity.setSource(sourceEntity);
         setIncomingPrivacy(newEntity, profile);
         researcherUrlDao.persist(newEntity);
-        researcherUrl = jpaJaxbResearcherUrlAdapter.toResearcherUrl(newEntity);
+        return jpaJaxbResearcherUrlAdapter.toResearcherUrl(newEntity);
     }
 
     private boolean isDuplicated(ResearcherUrlEntity existing, org.orcid.jaxb.model.record.ResearcherUrl newResearcherUrl, SourceEntity source) {
@@ -280,7 +292,7 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
                 // If they have the same source
                 if (!PojoUtil.isEmpty(existing.getSource().getSourceId()) && existing.getSource().getSourceId().equals(source.getSourceId())) {
                     // If the url is the same
-                    if (existing.getUrl() != null && existing.getUrl().equals(newResearcherUrl.getUrl())) {
+                    if (existing.getUrl() != null && existing.getUrl().equals(newResearcherUrl.getUrl().getValue())) {
                         return true;
                     }
                 }

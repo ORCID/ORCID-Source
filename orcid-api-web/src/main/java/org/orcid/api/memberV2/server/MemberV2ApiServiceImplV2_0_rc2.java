@@ -68,7 +68,7 @@ public class MemberV2ApiServiceImplV2_0_rc2 extends MemberV2ApiServiceImplBase {
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(RESEARCHER_URLS)
     @ApiOperation(value = "Add a new researcher url for an ORCID ID", hidden = true, authorizations = { @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_UPDATE, description = "you need this") }) })
-    public Response addResearcherUrl(@PathParam("orcid") String orcid, ResearcherUrl researcherUrl) {
+    public Response createResearcherUrl(@PathParam("orcid") String orcid, ResearcherUrl researcherUrl) {
         return serviceDelegator.createResearcherUrl(orcid, researcherUrl);
     }
     
