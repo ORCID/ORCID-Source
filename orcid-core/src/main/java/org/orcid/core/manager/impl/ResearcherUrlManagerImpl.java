@@ -291,9 +291,9 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
 
     private void setIncomingPrivacy(ResearcherUrlEntity entity, ProfileEntity profile) {
         org.orcid.jaxb.model.common.Visibility incomingWorkVisibility = entity.getVisibility();
-        org.orcid.jaxb.model.common.Visibility defaultResearcherUrlsVisibility = org.orcid.jaxb.model.common.Visibility.fromValue(profile.getResearcherUrlsVisibility()
+        org.orcid.jaxb.model.common.Visibility defaultResearcherUrlsVisibility = profile.getResearcherUrlsVisibility() == null ? org.orcid.jaxb.model.common.Visibility.PRIVATE : org.orcid.jaxb.model.common.Visibility.fromValue(profile.getResearcherUrlsVisibility()
                 .value());
-        if (profile.getClaimed()) {
+        if (profile.getClaimed() != null && profile.getClaimed()) {
             if (defaultResearcherUrlsVisibility.isMoreRestrictiveThan(incomingWorkVisibility)) {
                 entity.setVisibility(defaultResearcherUrlsVisibility);
             }
