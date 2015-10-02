@@ -30,5 +30,5 @@ public interface UserConnectionDao extends GenericDao<UserconnectionEntity, User
 	
     UserconnectionEntity findByProviderIdAndProviderUserId(String remoteUser, String shibIdentityProvider);
 
-	List<UserconnectionEntity> findByOrcid(String orcid, boolean flag);
+	List<UserconnectionEntity> findByOrcid(String orcid);
 }

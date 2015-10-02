@@ -85,7 +85,6 @@ import org.orcid.persistence.jpa.entities.UserconnectionEntity;
 import org.orcid.pojo.ApplicationSummary;
 import org.orcid.pojo.ChangePassword;
 import org.orcid.pojo.ManageDelegate;
-import org.orcid.pojo.ManageShibbolethAccount;
 import org.orcid.pojo.ManageSocialAccount;
 import org.orcid.pojo.SecurityQuestion;
 import org.orcid.pojo.ajaxForm.BiographyForm;
@@ -333,31 +332,12 @@ public class ManageProfileController extends BaseWorkspaceController {
         ModelAndView mav = new ModelAndView("redirect:/account/view-account-settings");
         return mav;
     }
-
-    @RequestMapping(value = "/shibbolethAccounts.json", method = RequestMethod.GET)
-    public @ResponseBody List<UserconnectionEntity> getShibbolethAccountsJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
-        String orcid = getCurrentUserOrcid();
-        List<UserconnectionEntity> userConnectionEntities = userConnectionDao.findByOrcid(orcid, true);
-        return userConnectionEntities;
-    }
     
     @RequestMapping(value = "/socialAccounts.json", method = RequestMethod.GET)
     public @ResponseBody List<UserconnectionEntity> getSocialAccountsJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
         String orcid = getCurrentUserOrcid();
-        List<UserconnectionEntity> userConnectionEntities = userConnectionDao.findByOrcid(orcid, false);
+        List<UserconnectionEntity> userConnectionEntities = userConnectionDao.findByOrcid(orcid);
         return userConnectionEntities;
-    }
-    
-    @RequestMapping(value = "/revokeShibbolethAccount.json", method = RequestMethod.POST)
-    public @ResponseBody ManageShibbolethAccount revokeShibbolethAccount(@RequestBody ManageShibbolethAccount manageShibbolethAccount) {
-        // Check password
-        String password = manageShibbolethAccount.getPassword();
-        if (StringUtils.isBlank(password) || !encryptionManager.hashMatches(password, getEffectiveProfile().getPassword())) {
-            manageShibbolethAccount.getErrors().add(getMessage("check_password_modal.incorrect_password"));
-            return manageShibbolethAccount;
-        }
-        userConnectionDao.remove(manageShibbolethAccount.getIdToManage());
-        return manageShibbolethAccount;
     }
     
     @RequestMapping(value = "/revokeSocialAccount.json", method = RequestMethod.POST)

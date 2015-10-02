@@ -16,8 +16,6 @@
     =============================================================================
 
 -->
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-social/4.10.0/bootstrap-social.min.css" />
 <@protected classes=['manage'] nav="settings">
 <#if twitter?? && twitter>
      <div class="alert alert-success">
@@ -566,41 +564,7 @@
             </div>
             <div id="no-results-alert" class="orcid-hide alert alert-error no-delegate-matches"><@spring.message "orcid.frontend.web.no_results"/></div>
         </div>
-        <#if (RequestParameters['shibboleth'])??>
-        <div>
-            <h1>
-                Shibboleth accounts
-            </h1>
-            <p>
-                Click <a href="<@orcid.rootPath '/shibboleth/link'/>">here</a> to link a new Shibboleth account.
-            </p>
-            <div ng-controller="ShibbolethCtrl" id="ShibbolethCtrl">
-                <table class="table table-bordered settings-table normal-width" ng-show="shibbolethAccounts" ng-cloak>
-                    <thead>
-                        <tr>
-                            <th width="40%" ng-click="changeSorting('remoteUser')">Shibboleth Account ID</th>
-                            <th width="30%" ng-click="changeSorting('shibIdentityProvider')">Identity Provider</th>
-                            <th width="20%" ng-click="changeSorting('dateCreated')"><@orcid.msg 'manage_delegators.delegates_table.access_granted' /></th>
-                            <td width="10%"></td>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr ng-repeat="shibbolethAccount in shibbolethAccounts | orderBy:sort.column:sort.descending">
-                            <td width="40%"><a href="{{delegationDetails.delegateSummary.orcidIdentifier.uri}}" target="_blank">{{shibbolethAccount.id.provideruserid}}</a></td>
-                            <td width="30%"><a href="{{delegationDetails.delegateSummary.orcidIdentifier.uri}}" target="_blank">{{shibbolethAccount.id.providerid}}</a></td>
-                            <td width="20%">{{shibbolethAccount.dateCreated|date:'yyyy-MM-dd'}}</td>
-                            <td width="10%">
-                                <a
-                                ng-click="confirmRevoke(shibbolethAccount.id)"
-                                class="glyphicon glyphicon-trash grey"
-                                title="${springMacroRequestContext.getMessage("manage.revokeaccess")}"></a>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </#if>
-        <#if (RequestParameters['social'])??>
+        <#if ((RequestParameters['social'])?? ||(RequestParameters['shibboleth'])??)>
         <div>
             <h1>
                 Social accounts
@@ -610,15 +574,18 @@
 					<tr>
 						<td>
 							<form action="<@orcid.rootPath '/signin/facebook'/>" method="POST">
-							    Click <button type="submit" class="btn btn-social-icon btn-facebook btn-xs"><i class="fa fa-facebook"></i></button>
+							    Click <button type="submit" class="btn-link socialButton">Facebook</button>
 							    <input type="hidden" name="scope" value="email" />
 							</form>
 						</td>
 						<td>
 							<form action="<@orcid.rootPath '/signin/google'/>" method="POST">
-							    &nbsp;or&nbsp;<button type="submit" class="btn btn-xs btn-social-icon btn-google"><i class="fa fa-google"></i></button> to link a new Social account
+							  ,<button type="submit" class="btn-link socialButton">Google</button>
 							    <input type="hidden" name="scope" value="email" />
 							</form>
+						</td>
+						<td>
+							or <a href="<@orcid.rootPath '/shibboleth/link'/>" class="btn-link">Shibboleth</a> to link a new Social account
 						</td>
 				</table>
             </p>
