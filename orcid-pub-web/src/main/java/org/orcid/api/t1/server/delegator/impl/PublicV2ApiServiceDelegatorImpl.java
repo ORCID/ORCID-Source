@@ -232,7 +232,7 @@ public class PublicV2ApiServiceDelegatorImpl implements PublicV2ApiServiceDelega
     }
     
     @Override
-    @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED)
+    @AccessControl(requiredScope = ScopePathType.READ_PUBLIC, enableAnonymousAccess = true)
     public Response viewResearcherUrls(String orcid) {
         ResearcherUrls researcherUrls = researcherUrlManager.getResearcherUrlsV2(orcid);
         ElementUtils.setPathToResearcherUrls(researcherUrls, orcid);
@@ -240,7 +240,7 @@ public class PublicV2ApiServiceDelegatorImpl implements PublicV2ApiServiceDelega
     }
     
     @Override
-    @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED)
+    @AccessControl(requiredScope = ScopePathType.READ_PUBLIC, enableAnonymousAccess = true)
     public Response viewResearcherUrl(String orcid, String putCode) {
         ResearcherUrl researcherUrl = researcherUrlManager.getResearcherUrlV2(orcid, Long.valueOf(putCode));
         return Response.ok(researcherUrl).build();
