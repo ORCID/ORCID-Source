@@ -42,7 +42,7 @@ import io.swagger.annotations.AuthorizationScope;
 
 /**
  * 
- * @author rcpeters
+ * @author Angel Montenegro
  * 
  */
 @Api("Member API v2.0_rc2")

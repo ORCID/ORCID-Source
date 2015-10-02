@@ -36,13 +36,13 @@ import org.orcid.jaxb.model.common.VisibilityType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "urlName", "url", "createdDate", "lastModifiedDate", "source" })
-@XmlRootElement(name = "researcher-url")
+@XmlRootElement(name = "researcher-url", namespace = "http://www.orcid.org/ns/person")
 public class ResearcherUrl implements VisibilityType, Serializable {
-    private static final long serialVersionUID = 1047027166285177589L;
-    @XmlElement(namespace = "http://www.orcid.org/ns/common")
-    protected Url url;
-    @XmlElement(name = "url-name", namespace = "http://www.orcid.org/ns/common")
+    private static final long serialVersionUID = 1047027166285177589L;    
+    @XmlElement(name = "url-name", namespace = "http://www.orcid.org/ns/person")
     protected String urlName;
+    @XmlElement(namespace = "http://www.orcid.org/ns/person")
+    protected Url url;
     @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected Source source;
     @XmlAttribute(name = "put-code")
