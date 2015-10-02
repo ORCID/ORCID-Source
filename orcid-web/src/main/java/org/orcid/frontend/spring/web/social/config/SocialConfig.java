@@ -64,6 +64,9 @@ public class SocialConfig implements InitializingBean {
 
 	@Resource
 	private DataSource simpleDataSource;
+	
+	@Value("${org.orcid.core.baseUri}")
+	private String appUrl;
 
 	@Bean
 	public SocialContext socialContext() {
@@ -111,6 +114,7 @@ public class SocialConfig implements InitializingBean {
 		ProviderSignInController providerSigninController = new ProviderSignInController(connectionFactoryLocator(),
 				usersConnectionRepository(), socialContext);
 		providerSigninController.setPostSignInUrl("/social/link");
+		providerSigninController.setApplicationUrl(appUrl);
 		return providerSigninController;
 	}
 
