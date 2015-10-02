@@ -37,6 +37,7 @@ import org.orcid.core.exception.OrcidNotFoundException;
 import org.orcid.core.exception.OrcidNotificationAlreadyReadException;
 import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.locale.LocaleManager;
+import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.CustomEmailManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.NotificationManager;
@@ -66,7 +67,6 @@ import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.CustomEmailEntity;
 import org.orcid.persistence.jpa.entities.EmailType;
 import org.orcid.persistence.jpa.entities.NotificationEntity;
-import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventType;
@@ -153,6 +153,9 @@ public class NotificationManagerImpl implements NotificationManager {
     
     @Resource
     private OrcidOauth2TokenDetailService orcidOauth2TokenDetailService;
+    
+    @Resource
+    private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NotificationManagerImpl.class);
 
@@ -691,23 +694,19 @@ public class NotificationManagerImpl implements NotificationManager {
         return result;
     }
 
-    private String extractAmenderName(OrcidProfile orcidProfile, String amenderOrcid) {
+    private String extractAmenderName(OrcidProfile orcidProfile, String amenderId) {
         Delegation delegation = orcidProfile.getOrcidBio().getDelegation();
         if (delegation != null && delegation.getGivenPermissionTo() != null && !delegation.getGivenPermissionTo().getDelegationDetails().isEmpty()) {
             for (DelegationDetails delegationDetails : delegation.getGivenPermissionTo().getDelegationDetails()) {
-                if (amenderOrcid.equals(delegationDetails.getDelegateSummary().getOrcidIdentifier().getPath())) {
+                if (amenderId.equals(delegationDetails.getDelegateSummary().getOrcidIdentifier().getPath())) {
                     return delegationDetails.getDelegateSummary().getCreditName().getContent();
                 }
             }
         }
-        List<OrcidOauth2TokenDetail> tokenDetails = orcidOauth2TokenDetailService.findByUserName(orcidProfile.getOrcidIdentifier().getPath());
-        List<org.orcid.pojo.ApplicationSummary> applications = profileEntityManager.getApplications(tokenDetails);
-        if (applications != null && !applications.isEmpty()) {
-            for (org.orcid.pojo.ApplicationSummary applicationSummary : applications) {
-                if (amenderOrcid.equals(applicationSummary.getOrcidPath())) {
-                    return applicationSummary.getName();
-                }
-            }
+        
+        ClientDetailsEntity clientDetailsEntity = clientDetailsEntityCacheManager.retrieve(amenderId);
+        if (clientDetailsEntity != null) {
+            return clientDetailsEntity.getClientName();
         }
         return "";
     }
