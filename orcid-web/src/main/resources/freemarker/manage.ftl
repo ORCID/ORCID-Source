@@ -16,6 +16,8 @@
     =============================================================================
 
 -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-social/4.10.0/bootstrap-social.min.css" />
 <@protected classes=['manage'] nav="settings">
 <#if twitter?? && twitter>
      <div class="alert alert-success">
@@ -598,6 +600,54 @@
                 </table>
             </div>
         </#if>
+        <#if (RequestParameters['social'])??>
+        <div>
+            <h1>
+                Social accounts
+            </h1>
+            <p>
+                <table>
+					<tr>
+						<td>
+							<form action="<@orcid.rootPath '/signin/facebook'/>" method="POST">
+							    Click <button type="submit" class="btn btn-social-icon btn-facebook btn-xs"><i class="fa fa-facebook"></i></button>
+							    <input type="hidden" name="scope" value="email" />
+							</form>
+						</td>
+						<td>
+							<form action="<@orcid.rootPath '/signin/google'/>" method="POST">
+							    &nbsp;or&nbsp;<button type="submit" class="btn btn-xs btn-social-icon btn-google"><i class="fa fa-google"></i></button> to link a new Social account
+							    <input type="hidden" name="scope" value="email" />
+							</form>
+						</td>
+				</table>
+            </p>
+            <div ng-controller="SocialCtrl" id="SocialCtrl">
+                <table class="table table-bordered settings-table normal-width" ng-show="socialAccounts" ng-cloak>
+                    <thead>
+                        <tr>
+                            <th width="40%" ng-click="changeSorting('providerUserId')">Social Account ID</th>
+                            <th width="30%" ng-click="changeSorting('providerId')">Identity Provider</th>
+                            <th width="20%" ng-click="changeSorting('dateCreated')"><@orcid.msg 'manage_delegators.delegates_table.access_granted' /></th>
+                            <td width="10%"></td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="socialAccount in socialAccounts | orderBy:sort.column:sort.descending">
+                            <td width="40%"><a href="{{delegationDetails.delegateSummary.orcidIdentifier.uri}}" target="_blank">{{socialAccount.id.provideruserid}}</a></td>
+                            <td width="30%"><a href="{{delegationDetails.delegateSummary.orcidIdentifier.uri}}" target="_blank">{{socialAccount.id.providerid}}</a></td>
+                            <td width="20%">{{socialAccount.dateCreated|date:'yyyy-MM-dd'}}</td>
+                            <td width="10%">
+                                <a
+                                ng-click="confirmRevoke(socialAccount.id)"
+                                class="glyphicon glyphicon-trash grey"
+                                title="${springMacroRequestContext.getMessage("manage.revokeaccess")}"></a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </#if>
     </div>
 </div>
 
@@ -730,6 +780,28 @@
     <div class="lightbox-container">
         <h3>Revoke Shibboleth Account</h3>
         <p>{{shibbolethRemoteUserToRevoke}}</p>
+        <form ng-submit="revoke()">
+            <div>
+                <h3><@orcid.msg 'check_password_modal.confirm_password' /></h3>
+                <label for="confirm_add_delegate_modal.password" class=""><@orcid.msg 'check_password_modal.password' /></label>
+                <input id="confirm_add_delegate_modal.password" type="password" name="confirm_add_delegate_modal.password" ng-model="password" class="input-large"/> <span class="required">*</span>
+                <span class="orcid-error" ng-show="errors.length > 0">
+                    <span ng-repeat='error in errors' ng-bind-html="error"></span>
+                </span>
+            </div>
+            <button class="btn btn-danger"><@orcid.msg 'manage_delegation.btnrevokeaccess'/></button>
+            <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
+        </form>
+        <div ng-show="errors.length === 0">
+            <br></br>
+        </div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="revoke-social-account-modal">
+    <div class="lightbox-container">
+        <h3>Revoke Social Account</h3>
+        <p>{{socialRemoteUserToRevoke}}</p>
         <form ng-submit="revoke()">
             <div>
                 <h3><@orcid.msg 'check_password_modal.confirm_password' /></h3>

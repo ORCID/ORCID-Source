@@ -6220,6 +6220,82 @@ orcidNgModule.controller('ShibbolethCtrl',['$scope', '$compile', function Shibbo
 
 }]);
 
+orcidNgModule.controller('SocialCtrl',['$scope', '$compile', function SocialCtrl($scope, $compile){
+    $scope.showLoader = false;
+    $scope.sort = {
+        column: 'providerUserId',
+        descending: false
+    };
+
+    $scope.changeSorting = function(column) {
+        var sort = $scope.sort;
+        if (sort.column === column) {
+            sort.descending = !sort.descending;
+        } else {
+            sort.column = column;
+            sort.descending = false;
+        }
+    };
+
+    $scope.confirmRevoke = function(id) {
+        $scope.errors = [];
+        $scope.socialRemoteUserToRevoke = id.provideruserid;
+        $scope.idToManage = id;
+        $.colorbox({
+            html : $compile($('#revoke-social-account-modal').html())($scope)
+
+        });
+        $.colorbox.resize();
+    };
+
+    $scope.revoke = function () {
+        var revokeSocialAccount = {};
+        revokeSocialAccount.idToManage = $scope.idToManage;
+        revokeSocialAccount.password = $scope.password;
+        $.ajax({
+            url: getBaseUri() + '/account/revokeSocialAccount.json',
+            type: 'POST',
+            data:  angular.toJson(revokeSocialAccount),
+            contentType: 'application/json;charset=UTF-8',
+            success: function(data) {
+                if(data.errors.length === 0){
+                    $scope.getSocialAccounts();
+                    $scope.$apply();
+                    $scope.closeModal();
+                }
+                else{
+                    $scope.errors = data.errors;
+                    $scope.$apply();
+                }
+            }
+        }).fail(function() {
+            // something bad is happening!
+            console.log("$SocialCtrl.revoke() error");
+        });
+    };
+
+    $scope.getSocialAccounts = function() {
+        $.ajax({
+            url: getBaseUri() + '/account/socialAccounts.json',
+            dataType: 'json',
+            success: function(data) {
+                $scope.socialAccounts = data;
+                $scope.$apply();
+            }
+        }).fail(function() {
+            // something bad is happening!
+            console.log("error getting social accounts");
+        });
+    };
+
+    $scope.closeModal = function() {
+        $.colorbox.close();
+    };
+    // init
+    $scope.getSocialAccounts();
+
+}]);
+
 
 // Controller for notifications
 orcidNgModule.controller('NotificationsCtrl',['$scope', '$compile', 'notificationsSrvc', function ($scope, $compile, notificationsSrvc){

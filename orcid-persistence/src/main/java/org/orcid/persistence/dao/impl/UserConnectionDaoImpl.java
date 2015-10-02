@@ -55,8 +55,16 @@ public class UserConnectionDaoImpl extends GenericDaoImpl<UserconnectionEntity, 
     }
 
     @Override
-    public List<UserconnectionEntity> findByOrcid(String orcid) {
-        TypedQuery<UserconnectionEntity> query = entityManager.createQuery("from UserconnectionEntity where orcid = :orcid", UserconnectionEntity.class);
+    public List<UserconnectionEntity> findByOrcid(String orcid, boolean flag) {
+    	TypedQuery<UserconnectionEntity> query = null;
+    	if(flag) {
+    		//shibboleth
+    		query = entityManager.createQuery("from UserconnectionEntity where orcid = :orcid and (providerid <> 'facebook' and providerid <> 'google')", UserconnectionEntity.class);
+    	} else {
+    		//social accounts
+    		query = entityManager.createQuery("from UserconnectionEntity where orcid = :orcid and (providerid = 'facebook' or providerid = 'google')", UserconnectionEntity.class);
+    	}
+        
         query.setParameter("orcid", orcid);
         return query.getResultList();
     }

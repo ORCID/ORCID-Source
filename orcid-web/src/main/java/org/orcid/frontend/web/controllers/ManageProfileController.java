@@ -86,6 +86,7 @@ import org.orcid.pojo.ApplicationSummary;
 import org.orcid.pojo.ChangePassword;
 import org.orcid.pojo.ManageDelegate;
 import org.orcid.pojo.ManageShibbolethAccount;
+import org.orcid.pojo.ManageSocialAccount;
 import org.orcid.pojo.SecurityQuestion;
 import org.orcid.pojo.ajaxForm.BiographyForm;
 import org.orcid.pojo.ajaxForm.CountryForm;
@@ -336,7 +337,14 @@ public class ManageProfileController extends BaseWorkspaceController {
     @RequestMapping(value = "/shibbolethAccounts.json", method = RequestMethod.GET)
     public @ResponseBody List<UserconnectionEntity> getShibbolethAccountsJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
         String orcid = getCurrentUserOrcid();
-        List<UserconnectionEntity> userConnectionEntities = userConnectionDao.findByOrcid(orcid);
+        List<UserconnectionEntity> userConnectionEntities = userConnectionDao.findByOrcid(orcid, true);
+        return userConnectionEntities;
+    }
+    
+    @RequestMapping(value = "/socialAccounts.json", method = RequestMethod.GET)
+    public @ResponseBody List<UserconnectionEntity> getSocialAccountsJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
+        String orcid = getCurrentUserOrcid();
+        List<UserconnectionEntity> userConnectionEntities = userConnectionDao.findByOrcid(orcid, false);
         return userConnectionEntities;
     }
     
@@ -350,6 +358,18 @@ public class ManageProfileController extends BaseWorkspaceController {
         }
         userConnectionDao.remove(manageShibbolethAccount.getIdToManage());
         return manageShibbolethAccount;
+    }
+    
+    @RequestMapping(value = "/revokeSocialAccount.json", method = RequestMethod.POST)
+    public @ResponseBody ManageSocialAccount revokeSocialAccount(@RequestBody ManageSocialAccount manageSocialAccount) {
+        // Check password
+        String password = manageSocialAccount.getPassword();
+        if (StringUtils.isBlank(password) || !encryptionManager.hashMatches(password, getEffectiveProfile().getPassword())) {
+        	manageSocialAccount.getErrors().add(getMessage("check_password_modal.incorrect_password"));
+            return manageSocialAccount;
+        }
+        userConnectionDao.remove(manageSocialAccount.getIdToManage());
+        return manageSocialAccount;
     }
 
     @RequestMapping(value = "/revoke-application")
