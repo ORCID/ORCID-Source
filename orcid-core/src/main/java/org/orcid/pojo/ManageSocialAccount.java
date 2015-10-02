@@ -23,11 +23,9 @@ import org.orcid.persistence.jpa.entities.UserconnectionPK;
 import org.orcid.pojo.ajaxForm.ErrorsInterface;
 
 /**
- * 
- * @author Will Simpson
- * 
+ * @author Shobhit Tyagi
  */
-public class ManageShibbolethAccount implements ErrorsInterface {
+public class ManageSocialAccount implements ErrorsInterface {
 
     private List<String> errors = new ArrayList<String>();
     private UserconnectionPK idToMange;
@@ -56,5 +54,4 @@ public class ManageShibbolethAccount implements ErrorsInterface {
     public void setErrors(List<String> errors) {
         this.errors = errors;
     }
-
 }

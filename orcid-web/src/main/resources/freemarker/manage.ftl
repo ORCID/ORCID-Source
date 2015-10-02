@@ -564,32 +564,49 @@
             </div>
             <div id="no-results-alert" class="orcid-hide alert alert-error no-delegate-matches"><@spring.message "orcid.frontend.web.no_results"/></div>
         </div>
-        <#if (RequestParameters['shibboleth'])??>
+        <#if ((RequestParameters['social'])?? ||(RequestParameters['shibboleth'])??)>
         <div>
             <h1>
-                Shibboleth accounts
+                Social accounts
             </h1>
             <p>
-                Click <a href="<@orcid.rootPath '/shibboleth/link'/>">here</a> to link a new Shibboleth account.
+                <table>
+					<tr>
+						<td>
+							<form action="<@orcid.rootPath '/signin/facebook'/>" method="POST">
+							    Click <button type="submit" class="btn-link socialButton">Facebook</button>
+							    <input type="hidden" name="scope" value="email" />
+							</form>
+						</td>
+						<td>
+							<form action="<@orcid.rootPath '/signin/google'/>" method="POST">
+							  ,<button type="submit" class="btn-link socialButton">Google</button>
+							    <input type="hidden" name="scope" value="email" />
+							</form>
+						</td>
+						<td>
+							or <a href="<@orcid.rootPath '/shibboleth/link'/>" class="btn-link">Shibboleth</a> to link a new Social account
+						</td>
+				</table>
             </p>
-            <div ng-controller="ShibbolethCtrl" id="ShibbolethCtrl">
-                <table class="table table-bordered settings-table normal-width" ng-show="shibbolethAccounts" ng-cloak>
+            <div ng-controller="SocialCtrl" id="SocialCtrl">
+                <table class="table table-bordered settings-table normal-width" ng-show="socialAccounts" ng-cloak>
                     <thead>
                         <tr>
-                            <th width="40%" ng-click="changeSorting('remoteUser')">Shibboleth Account ID</th>
-                            <th width="30%" ng-click="changeSorting('shibIdentityProvider')">Identity Provider</th>
+                            <th width="40%" ng-click="changeSorting('providerUserId')">Social Account ID</th>
+                            <th width="30%" ng-click="changeSorting('providerId')">Identity Provider</th>
                             <th width="20%" ng-click="changeSorting('dateCreated')"><@orcid.msg 'manage_delegators.delegates_table.access_granted' /></th>
                             <td width="10%"></td>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr ng-repeat="shibbolethAccount in shibbolethAccounts | orderBy:sort.column:sort.descending">
-                            <td width="40%"><a href="{{delegationDetails.delegateSummary.orcidIdentifier.uri}}" target="_blank">{{shibbolethAccount.id.provideruserid}}</a></td>
-                            <td width="30%"><a href="{{delegationDetails.delegateSummary.orcidIdentifier.uri}}" target="_blank">{{shibbolethAccount.id.providerid}}</a></td>
-                            <td width="20%">{{shibbolethAccount.dateCreated|date:'yyyy-MM-dd'}}</td>
+                        <tr ng-repeat="socialAccount in socialAccounts | orderBy:sort.column:sort.descending">
+                            <td width="40%"><a href="{{delegationDetails.delegateSummary.orcidIdentifier.uri}}" target="_blank">{{socialAccount.id.provideruserid}}</a></td>
+                            <td width="30%"><a href="{{delegationDetails.delegateSummary.orcidIdentifier.uri}}" target="_blank">{{socialAccount.id.providerid}}</a></td>
+                            <td width="20%">{{socialAccount.dateCreated|date:'yyyy-MM-dd'}}</td>
                             <td width="10%">
                                 <a
-                                ng-click="confirmRevoke(shibbolethAccount.id)"
+                                ng-click="confirmRevoke(socialAccount.id)"
                                 class="glyphicon glyphicon-trash grey"
                                 title="${springMacroRequestContext.getMessage("manage.revokeaccess")}"></a>
                             </td>
@@ -730,6 +747,28 @@
     <div class="lightbox-container">
         <h3>Revoke Shibboleth Account</h3>
         <p>{{shibbolethRemoteUserToRevoke}}</p>
+        <form ng-submit="revoke()">
+            <div>
+                <h3><@orcid.msg 'check_password_modal.confirm_password' /></h3>
+                <label for="confirm_add_delegate_modal.password" class=""><@orcid.msg 'check_password_modal.password' /></label>
+                <input id="confirm_add_delegate_modal.password" type="password" name="confirm_add_delegate_modal.password" ng-model="password" class="input-large"/> <span class="required">*</span>
+                <span class="orcid-error" ng-show="errors.length > 0">
+                    <span ng-repeat='error in errors' ng-bind-html="error"></span>
+                </span>
+            </div>
+            <button class="btn btn-danger"><@orcid.msg 'manage_delegation.btnrevokeaccess'/></button>
+            <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
+        </form>
+        <div ng-show="errors.length === 0">
+            <br></br>
+        </div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="revoke-social-account-modal">
+    <div class="lightbox-container">
+        <h3>Revoke Social Account</h3>
+        <p>{{socialRemoteUserToRevoke}}</p>
         <form ng-submit="revoke()">
             <div>
                 <h3><@orcid.msg 'check_password_modal.confirm_password' /></h3>

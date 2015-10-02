@@ -6075,7 +6075,11 @@ a:hover .mozilla-badge{
 }	
 .edit-client-table-col {
 	width: 45%;
-}	
+}
+.socialButton {
+	font-size: 16px;
+	padding:0;
+}
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */

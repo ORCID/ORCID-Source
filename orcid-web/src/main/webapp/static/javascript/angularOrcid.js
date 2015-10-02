@@ -6148,11 +6148,10 @@ orcidNgModule.controller('DelegatorsCtrl',['$scope', '$compile', function ($scop
 
 }]);
 
-//Controller for Shibboleth accounts
-orcidNgModule.controller('ShibbolethCtrl',['$scope', '$compile', function ShibbolethCtrl($scope, $compile){
+orcidNgModule.controller('SocialCtrl',['$scope', '$compile', function SocialCtrl($scope, $compile){
     $scope.showLoader = false;
     $scope.sort = {
-        column: 'remoteUser',
+        column: 'providerUserId',
         descending: false
     };
 
@@ -6168,29 +6167,30 @@ orcidNgModule.controller('ShibbolethCtrl',['$scope', '$compile', function Shibbo
 
     $scope.confirmRevoke = function(id) {
         $scope.errors = [];
-        $scope.shibbolethRemoteUserToRevoke = id.provideruserid;
+        $scope.socialRemoteUserToRevoke = id.provideruserid;
         $scope.idToManage = id;
         $.colorbox({
-            html : $compile($('#revoke-shibboleth-account-modal').html())($scope)
+            html : $compile($('#revoke-social-account-modal').html())($scope)
 
         });
         $.colorbox.resize();
     };
 
     $scope.revoke = function () {
-        var revokeShibbolethAccount = {};
-        revokeShibbolethAccount.idToManage = $scope.idToManage;
-        revokeShibbolethAccount.password = $scope.password;
+        var revokeSocialAccount = {};
+        revokeSocialAccount.idToManage = $scope.idToManage;
+        revokeSocialAccount.password = $scope.password;
         $.ajax({
-            url: getBaseUri() + '/account/revokeShibbolethAccount.json',
+            url: getBaseUri() + '/account/revokeSocialAccount.json',
             type: 'POST',
-            data:  angular.toJson(revokeShibbolethAccount),
+            data:  angular.toJson(revokeSocialAccount),
             contentType: 'application/json;charset=UTF-8',
             success: function(data) {
                 if(data.errors.length === 0){
-                    $scope.getShibbolethAccounts();
+                    $scope.getSocialAccounts();
                     $scope.$apply();
                     $scope.closeModal();
+                    $scope.password = "";
                 }
                 else{
                     $scope.errors = data.errors;
@@ -6199,21 +6199,21 @@ orcidNgModule.controller('ShibbolethCtrl',['$scope', '$compile', function Shibbo
             }
         }).fail(function() {
             // something bad is happening!
-            console.log("$ShibbolethCtrl.revoke() error");
+            console.log("$SocialCtrl.revoke() error");
         });
     };
 
-    $scope.getShibbolethAccounts = function() {
+    $scope.getSocialAccounts = function() {
         $.ajax({
-            url: getBaseUri() + '/account/shibbolethAccounts.json',
+            url: getBaseUri() + '/account/socialAccounts.json',
             dataType: 'json',
             success: function(data) {
-                $scope.shibbolethAccounts = data;
+                $scope.socialAccounts = data;
                 $scope.$apply();
             }
         }).fail(function() {
             // something bad is happening!
-            console.log("error getting shibboleth accounts");
+            console.log("error getting social accounts");
         });
     };
 
@@ -6221,7 +6221,7 @@ orcidNgModule.controller('ShibbolethCtrl',['$scope', '$compile', function Shibbo
         $.colorbox.close();
     };
     // init
-    $scope.getShibbolethAccounts();
+    $scope.getSocialAccounts();
 
 }]);
 

@@ -56,7 +56,7 @@ public class UserConnectionDaoImpl extends GenericDaoImpl<UserconnectionEntity, 
 
     @Override
     public List<UserconnectionEntity> findByOrcid(String orcid) {
-        TypedQuery<UserconnectionEntity> query = entityManager.createQuery("from UserconnectionEntity where orcid = :orcid", UserconnectionEntity.class);
+    	TypedQuery<UserconnectionEntity> query = entityManager.createQuery("from UserconnectionEntity where orcid = :orcid)", UserconnectionEntity.class);
         query.setParameter("orcid", orcid);
         return query.getResultList();
     }
