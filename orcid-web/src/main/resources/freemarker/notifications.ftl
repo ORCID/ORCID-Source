@@ -31,8 +31,14 @@
                 ${springMacroRequestContext.getMessage("notifications.showArchived")}
             </label>
         </div>
-        <div ng-hide="notifications.length > 0">${springMacroRequestContext.getMessage("notifications.none")}</div>
-        <div ng-show="notifications.length > 0">            
+        <div ng-show="notificationsSrvc.loading == true" class="text-center" id="workSpinner">
+            <i class="glyphicon glyphicon-refresh spin x4 green" id="spinner"></i><!-- Hidden with a CSS hack on IE 7 only -->
+            <!--[if lt IE 8]>    
+                <img src="${staticCdn}/img/spin-big.gif" width="85" height ="85"/>
+            <![endif]-->
+        </div>
+        <div ng-cloak ng-show="notificationsSrvc.loading == false && notifications.length == 0">${springMacroRequestContext.getMessage("notifications.none")}</div>
+        <div ng-cloak ng-show="notificationsSrvc.loading == false && notifications.length &gt; 0">            
             <table class="table table-responsive table-condensed notifications">
            		<thead>					
 	                <tr>
