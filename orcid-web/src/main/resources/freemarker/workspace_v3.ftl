@@ -533,7 +533,7 @@
 	            	</div>
             	</div>
             	<div ng-controller="PeerReviewCtrl">
-	            	<div ng-hide="peerReviewSrvc.groups.length == 0" ng-cloak>
+	            	<div ng-show="peerReviewSrvc.groups.length > 0 || noLinkFlag" ng-cloak>
 	            		<#include "workspace_peer_review_body_list.ftl"/>
 	            	</div>
 	            </div>
