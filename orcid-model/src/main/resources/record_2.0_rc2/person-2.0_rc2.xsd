@@ -48,7 +48,7 @@
 					minOccurs="0" maxOccurs="1" />
 				<xs:element name="biography" type="person:biography" minOccurs="0"
 					maxOccurs="1" />
-				<xs:element name="researcher-urls" type="person:researcher-urls"
+				<xs:element ref="researcher-url:researcher-urls"
 					minOccurs="0" maxOccurs="1" />
 				<xs:element name="contact-details" type="person:contact-details"
 					minOccurs="0" maxOccurs="1" />
@@ -134,20 +134,7 @@
 		<xs:restriction base="xs:string">
 			<xs:maxLength value="5000" />
 		</xs:restriction>
-	</xs:simpleType>
-	<xs:complexType name="researcher-urls">
-		<xs:annotation>
-			<xs:documentation>Container for URLs of the researcher or
-				contributor's sites. The visibility attribute (private, limited or
-				public) can be set at record creation, and indicates who can see
-				this section of information.
-			</xs:documentation>
-		</xs:annotation>
-		<xs:sequence>
-			<xs:element minOccurs="0" maxOccurs="unbounded" 
-				ref="researcher-url:researcher-url" />
-		</xs:sequence>		
-	</xs:complexType>				
+	</xs:simpleType>			
 	<xs:complexType name="contact-details">
 		<xs:annotation>
 			<xs:documentation>Container for the researcher or contributor's

@@ -46,7 +46,7 @@
 			<xs:sequence>
 				<xs:element ref="researcher-url:researcher-url" minOccurs="1" maxOccurs="unbounded"/>
 			</xs:sequence>
-			<xs:attribute name="path" type="common:person-path" use="required" />
+			<xs:attribute name="path" type="common:person-path" use="optional" />
 		</xs:complexType>
 	</xs:element>		
 		

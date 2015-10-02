@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<person:person xmlns:common="http://www.orcid.org/ns/common"
+<person:person xmlns:common="http://www.orcid.org/ns/common" xmlns:researcher-url="http://www.orcid.org/ns/researcher-url"
 	xmlns:person="http://www.orcid.org/ns/person" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.orcid.org/ns/person ../person-2.0_rc2.xsd ">
 	<person:personal-details>
@@ -10,11 +10,11 @@
 			<person:otherName>person:otherName</person:otherName>
 		</person:other-names>
 	</person:personal-details>
-	<person:biography visibility="private">person:biography</person:biography>
-	<person:researcher-urls>
-		<person:researcher-url visibility="public">
-			<person:url-name>person:url-name#1</person:url-name>
-			<person:url>http://tempuri.org/1</person:url>
+	<person:biography visibility="private">person:biography</person:biography>	
+	<researcher-url:researcher-urls>
+		<researcher-url:researcher-url visibility="public">
+			<researcher-url:url-name>person:url-name#1</researcher-url:url-name>
+			<researcher-url:url>http://tempuri.org/1</researcher-url:url>
 			<common:source>
 				<common:source-orcid>
 					<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
@@ -23,10 +23,10 @@
 				</common:source-orcid>
 				<common:source-name />
 			</common:source>
-		</person:researcher-url>							
-		<person:researcher-url visibility="limited">
-			<person:url-name>person:url-name#2</person:url-name>
-			<person:url>http://tempuri.org/2</person:url>
+		</researcher-url:researcher-url>							
+		<researcher-url:researcher-url visibility="limited">
+			<researcher-url:url-name>person:url-name#2</researcher-url:url-name>
+			<researcher-url:url>http://tempuri.org/2</researcher-url:url>
 			<common:source>
 				<common:source-orcid>
 					<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
@@ -35,8 +35,8 @@
 				</common:source-orcid>
 				<common:source-name />
 			</common:source>
-		</person:researcher-url>				
-	</person:researcher-urls>
+		</researcher-url:researcher-url>				
+	</researcher-url:researcher-urls>
 	<person:contact-details>
 		<person:email current="true" primary="true" source="0000-0000-0000-0000"
 			source-client-id="APP-0000000000000000" verified="false" visibility="private">person@email.com</person:email>
