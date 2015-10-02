@@ -58,6 +58,7 @@ import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.exception.OrcidVisibilityException;
 import org.orcid.core.exception.OrcidWebhookNotFoundException;
+import org.orcid.core.exception.PutCodeRequiredException;
 import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.security.aop.LockedException;
@@ -137,6 +138,7 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OrcidDuplicatedActivityException.class, new ImmutablePair<>(Response.Status.CONFLICT, 9021));
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(DuplicatedGroupIdRecordException.class, new ImmutablePair<>(Response.Status.CONFLICT, 9025));
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OrcidDuplicatedElementException.class, new ImmutablePair<>(Response.Status.CONFLICT, 9030));
+        HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(PutCodeRequiredException.class, new ImmutablePair<>(Response.Status.CONFLICT, 9031));        
     }
 
     @Override

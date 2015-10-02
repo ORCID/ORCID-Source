@@ -39,11 +39,12 @@ public interface ResearcherUrlManager {
     public boolean updateResearcherUrls(String orcid, ResearcherUrls researcherUrls);
     
     /**
-     * Deleted a researcher url from database
+     * Delete a researcher url
+     * @param orcid
      * @param id
-     * @return true if the researcher url was successfully deleted
+     * @return true if the researcher url was deleted
      * */
-    public boolean deleteResearcherUrl(long id);
+    public boolean deleteResearcherUrl(String orcid, String id);
 
     /**
      * Retrieve a researcher url from database
@@ -85,10 +86,10 @@ public interface ResearcherUrlManager {
     public org.orcid.jaxb.model.record.ResearcherUrl createResearcherUrlV2(String orcid, org.orcid.jaxb.model.record.ResearcherUrl researcherUrl);  
     
     /**
-     * Updates an existing url
+     * Updates an existing researcher url
      * @param orcid
      * @param researcherUrl
      * @return the updated researcher url
      * */
-    public org.orcid.jaxb.model.record.ResearcherUrl updateResearcherUrlV2(String orcid, org.orcid.jaxb.model.record.ResearcherUrl researcherUrl);
+    public org.orcid.jaxb.model.record.ResearcherUrl updateResearcherUrlV2(String orcid, org.orcid.jaxb.model.record.ResearcherUrl researcherUrl);        
 }

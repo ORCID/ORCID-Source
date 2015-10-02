@@ -83,15 +83,21 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
         return researcherUrlDao.getResearcherUrls(orcid);
     }
 
-    /**
-     * Deleted a researcher url from database
-     * 
-     * @param id
-     * @return true if the researcher url was successfully deleted
-     * */
     @Override
-    public boolean deleteResearcherUrl(long id) {
-        return researcherUrlDao.deleteResearcherUrl(id);
+    public boolean deleteResearcherUrl(String orcid, String id) {
+        boolean result = true;
+        Long researcherUrlId = Long.valueOf(id);
+        ResearcherUrlEntity toDelete = researcherUrlDao.getResearcherUrl(researcherUrlId);                
+        SourceEntity existingSource = toDelete.getSource();
+        orcidSecurityManager.checkSource(existingSource);
+        
+        try {            
+            researcherUrlDao.deleteResearcherUrl(orcid, researcherUrlId);
+        } catch(Exception e) {
+            LOGGER.error("Unable to delete researcherUrl with ID: " + researcherUrlId);
+            result = false;
+        }
+        return result;
     }
 
     /**
@@ -148,7 +154,7 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
                 newResearcherUrls.remove(researcherUrl);
             } else {
                 // Delete researcher urls deleted by user
-                researcherUrlDao.deleteResearcherUrl(existingResearcherUrl.getId());
+                researcherUrlDao.deleteResearcherUrl(orcid, existingResearcherUrl.getId());
             }
         }
 
@@ -256,6 +262,7 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
         jpaJaxbResearcherUrlAdapter.toResearcherUrlEntity(researcherUrl, updatedResearcherUrlEntity);        
         updatedResearcherUrlEntity.setLastModified(new Date());
         updatedResearcherUrlEntity.setVisibility(originalVisibility);
+        updatedResearcherUrlEntity.setSource(existingSource);
         researcherUrlDao.merge(updatedResearcherUrlEntity);
         return jpaJaxbResearcherUrlAdapter.toResearcherUrl(updatedResearcherUrlEntity);
     }
@@ -312,5 +319,5 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
         } else if (incomingWorkVisibility == null) {
             entity.setVisibility(org.orcid.jaxb.model.common.Visibility.PRIVATE);
         }
-    }
+    }        
 }

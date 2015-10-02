@@ -52,9 +52,10 @@ public class ResearcherUrlDaoImpl extends GenericDaoImpl<ResearcherUrlEntity, Lo
      * */
     @Override
     @Transactional
-    public boolean deleteResearcherUrl(long id) {
-        Query query = entityManager.createQuery("DELETE FROM ResearcherUrlEntity WHERE id = :id");
-        query.setParameter("id", id);
+    public boolean deleteResearcherUrl(String orcid, long id) {
+        Query query = entityManager.createNativeQuery("DELETE FROM researcher_url WHERE orcid = :orcid and id = :id");
+        query.setParameter("orcid", orcid);
+        query.setParameter("id", id);        
         return query.executeUpdate() > 0 ? true : false;
     }
 

@@ -23,6 +23,7 @@ import static org.orcid.core.api.OrcidApiConstants.PUTCODE;
 import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_JSON;
 import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_XML;
 
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -78,5 +79,13 @@ public class MemberV2ApiServiceImplV2_0_rc2 extends MemberV2ApiServiceImplBase {
     @ApiOperation(value = "Edits researcher url for an ORCID ID", hidden = true, authorizations = { @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_UPDATE, description = "you need this") }) })
     public Response editResearcherUrl(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode, ResearcherUrl researcherUrl) {
         return serviceDelegator.updateResearcherUrl(orcid, putCode, researcherUrl);
+    }
+    
+    @DELETE
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(RESEARCHER_URLS + PUTCODE)
+    @ApiOperation(value = "Delete one researcher url from an ORCID ID", hidden = true, authorizations = { @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_UPDATE, description = "you need this") }) })
+    public Response deleteResearcherUrl(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
+        return serviceDelegator.deleteResearcherUrl(orcid, putCode);
     }
 }

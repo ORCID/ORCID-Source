@@ -14,14 +14,21 @@
  *
  * =============================================================================
  */
-package org.orcid.api.common.util;
+package org.orcid.core.exception;
 
-import org.orcid.jaxb.model.record.ResearcherUrls;
+import java.util.Map;
 
-public class ElementUtils {
+/**
+ * 
+ * @author Angel Montenegro
+ * 
+ */
+public class PutCodeRequiredException extends ApplicationException {
 
-    public static void setPathToResearcherUrls(ResearcherUrls researcherUrls, String orcid) {
-        researcherUrls.setPath('/' + orcid + "/researcher-urls" );
-    }
+    private static final long serialVersionUID = 1L;
+
+	public PutCodeRequiredException(Map<String, String> params) {
+		super(params);
+	}
 
 }

@@ -506,7 +506,12 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
         }       
     }
     
-    
+    @Override
+    @AccessControl(requiredScope = ScopePathType.PERSON_UPDATE)
+    public Response deleteResearcherUrl(String orcid, String putCode) {
+        researcherUrlManager.deleteResearcherUrl(orcid, putCode);
+        return Response.noContent().build();
+    }
     
     
     

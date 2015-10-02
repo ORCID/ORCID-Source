@@ -115,7 +115,7 @@ public class ResearcherUrlDaoTest extends DBUnitTest {
         List<ResearcherUrlEntity> researcherUrls = researcherUrlDao.getResearcherUrls("4444-4444-4444-4443");
         assertNotNull(researcherUrls);
         assertEquals(2, researcherUrls.size());
-        researcherUrlDao.deleteResearcherUrl(researcherUrls.get(0).getId());
+        researcherUrlDao.deleteResearcherUrl("4444-4444-4444-4443", researcherUrls.get(0).getId());
         researcherUrls = researcherUrlDao.getResearcherUrls("4444-4444-4444-4443");
         assertNotNull(researcherUrls);
         assertEquals(1, researcherUrls.size());
