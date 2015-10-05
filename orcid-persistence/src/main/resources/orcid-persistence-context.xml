@@ -76,8 +76,6 @@
 
     <bean id="workDao" class="org.orcid.persistence.dao.impl.WorkDaoImpl" />
     
-    <bean id="workExternalIdentifierDao" class="org.orcid.persistence.dao.impl.WorkExternalIdentifierDaoImpl" />
-    
     <bean id="clientDetailsDao" class="org.orcid.persistence.dao.impl.ClientDetailsDaoImpl" />
     
     <bean id="clientSecretDao" class="org.orcid.persistence.dao.impl.ClientSecretDaoImpl" />
