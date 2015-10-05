@@ -39,8 +39,6 @@ import org.orcid.jaxb.model.notification.permission.NotificationPermission;
 import org.orcid.persistence.dao.NotificationDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.NotificationAddItemsEntity;
-import org.orcid.persistence.jpa.entities.NotificationEntity;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
