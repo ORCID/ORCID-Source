@@ -171,12 +171,6 @@ public class MemberV2ApiClientImpl {
         return orcidClientHelper.deleteClientResponseWithToken(deleteURI, VND_ORCID_XML, accessToken);
     }
     
-    
-    
-    
-    
-    
-    
     public ClientResponse createResearcherUrls(String orcid, ResearcherUrl rUrl, String accessToken) {
         URI createURI = UriBuilder.fromPath(RESEARCHER_URLS).build(orcid);
         return orcidClientHelper.postClientResponseWithToken(createURI, VND_ORCID_XML, rUrl, accessToken);      
