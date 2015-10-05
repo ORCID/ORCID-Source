@@ -1345,6 +1345,7 @@ orcidNgModule.factory("notificationsSrvc", ['$rootScope', function ($rootScope) 
     var defaultMaxResults = 10;
     var serv = {
         loading: true,
+        loadingMore: false,
         firstResult: 0,
         maxResults: defaultMaxResults,
         areMoreFlag: false,
@@ -1353,7 +1354,6 @@ orcidNgModule.factory("notificationsSrvc", ['$rootScope', function ($rootScope) 
         unreadCount: 0,
         showArchived: false,
         getNotifications: function() {
-            serv.loading = true;
             var url = getBaseUri() + '/inbox/notifications.json?firstResult=' + serv.firstResult + '&maxResults=' + serv.maxResults;
             if(serv.showArchived){
                 url += "&includeArchived=true";                
@@ -1372,11 +1372,13 @@ orcidNgModule.factory("notificationsSrvc", ['$rootScope', function ($rootScope) 
                         serv.notifications.push(data[i]);
                     }
                     serv.loading = false;
+                    serv.loadingMore = false;
                     $rootScope.$apply();
                     serv.resizeIframes();
                 }
             }).fail(function() {
                 serv.loading = false;
+                serv.loadingMore = false;
                 // something bad is happening!
                 console.log("error with getting notifications");
             });
@@ -1411,6 +1413,7 @@ orcidNgModule.factory("notificationsSrvc", ['$rootScope', function ($rootScope) 
             return serv.unreadCount;
         },
         showMore: function() {
+            serv.loadingMore = true;
             serv.firstResult += serv.maxResults;
             serv.getNotifications();
         },
