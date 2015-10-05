@@ -67,7 +67,7 @@ public class OrcidSwitchUserFilter extends SwitchUserFilter {
                         internalSSOManager.getAndUpdateCookie(targetUserOrcid, request, response);
                     } else {
                         //If it is switching user
-                        internalSSOManager.writeCookieForSwitchUser(targetUserOrcid, request, response);
+                        internalSSOManager.writeCookie(targetUserOrcid, request, response);
                     }            
                 }
             }
