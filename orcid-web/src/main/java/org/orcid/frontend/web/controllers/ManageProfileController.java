@@ -1139,7 +1139,7 @@ public class ManageProfileController extends BaseWorkspaceController {
         resendUrl.append(orcidUrlManager.getServerStringWithContextPath(request));
         resendUrl.append("/notifications");
         if (urlEncodedEmail != null) {
-            resendUrl.append("?email=");
+            resendUrl.append("/");
             resendUrl.append(urlEncodedEmail);
         }
         return resendUrl.toString();
