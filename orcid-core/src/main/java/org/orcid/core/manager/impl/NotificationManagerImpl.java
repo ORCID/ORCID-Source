@@ -37,13 +37,14 @@ import org.orcid.core.exception.OrcidNotFoundException;
 import org.orcid.core.exception.OrcidNotificationAlreadyReadException;
 import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.locale.LocaleManager;
+import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.CustomEmailManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.NotificationManager;
+import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.TemplateManager;
-import org.orcid.jaxb.model.message.ApplicationSummary;
-import org.orcid.jaxb.model.message.Applications;
+import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.jaxb.model.message.Delegation;
 import org.orcid.jaxb.model.message.DelegationDetails;
 import org.orcid.jaxb.model.message.Email;
@@ -54,11 +55,11 @@ import org.orcid.jaxb.model.message.SendChangeNotifications;
 import org.orcid.jaxb.model.message.Source;
 import org.orcid.jaxb.model.notification.Notification;
 import org.orcid.jaxb.model.notification.NotificationType;
-import org.orcid.jaxb.model.notification.permission.Items;
-import org.orcid.jaxb.model.notification.permission.Item;
 import org.orcid.jaxb.model.notification.amended.AmendedSection;
 import org.orcid.jaxb.model.notification.amended.NotificationAmended;
 import org.orcid.jaxb.model.notification.custom.NotificationCustom;
+import org.orcid.jaxb.model.notification.permission.Item;
+import org.orcid.jaxb.model.notification.permission.Items;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.NotificationDao;
 import org.orcid.persistence.dao.ProfileDao;
@@ -137,6 +138,9 @@ public class NotificationManagerImpl implements NotificationManager {
 
     @Resource
     private JpaJaxbNotificationAdapter notificationAdapter;
+    
+    @Resource
+    private ProfileEntityManager profileEntityManager;
 
     @Resource
     private NotificationDao notificationDao;
@@ -146,6 +150,12 @@ public class NotificationManagerImpl implements NotificationManager {
 
     @Resource
     private LocaleManager localeManager;
+    
+    @Resource
+    private OrcidOauth2TokenDetailService orcidOauth2TokenDetailService;
+    
+    @Resource
+    private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NotificationManagerImpl.class);
 
@@ -684,22 +694,19 @@ public class NotificationManagerImpl implements NotificationManager {
         return result;
     }
 
-    private String extractAmenderName(OrcidProfile orcidProfile, String amenderOrcid) {
+    private String extractAmenderName(OrcidProfile orcidProfile, String amenderId) {
         Delegation delegation = orcidProfile.getOrcidBio().getDelegation();
         if (delegation != null && delegation.getGivenPermissionTo() != null && !delegation.getGivenPermissionTo().getDelegationDetails().isEmpty()) {
             for (DelegationDetails delegationDetails : delegation.getGivenPermissionTo().getDelegationDetails()) {
-                if (amenderOrcid.equals(delegationDetails.getDelegateSummary().getOrcidIdentifier().getPath())) {
+                if (amenderId.equals(delegationDetails.getDelegateSummary().getOrcidIdentifier().getPath())) {
                     return delegationDetails.getDelegateSummary().getCreditName().getContent();
                 }
             }
         }
-        Applications applications = orcidProfile.getOrcidBio().getApplications();
-        if (applications != null && applications.getApplicationSummary() != null && !applications.getApplicationSummary().isEmpty()) {
-            for (ApplicationSummary applicationSummary : applications.getApplicationSummary()) {
-                if (amenderOrcid.equals(applicationSummary.getApplicationOrcid().getPath())) {
-                    return applicationSummary.getApplicationName().getContent();
-                }
-            }
+        
+        ClientDetailsEntity clientDetailsEntity = clientDetailsEntityCacheManager.retrieve(amenderId);
+        if (clientDetailsEntity != null) {
+            return clientDetailsEntity.getClientName();
         }
         return "";
     }
