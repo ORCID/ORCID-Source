@@ -17,6 +17,7 @@
 package org.orcid.frontend.web.controllers;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -44,6 +45,7 @@ import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileKeywordManager;
 import org.orcid.core.manager.ResearcherUrlManager;
+import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.frontend.web.forms.ChangePersonalInfoForm;
 import org.orcid.frontend.web.forms.ChangeSecurityQuestionForm;
@@ -94,6 +96,8 @@ import org.orcid.pojo.ajaxForm.Errors;
 import org.orcid.pojo.ajaxForm.NamesForm;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.utils.DateUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.MapBindingResult;
@@ -166,7 +170,12 @@ public class ManageProfileController extends BaseWorkspaceController {
     private EmailManager emailManager;
     
     @Resource
+    private OrcidUrlManager orcidUrlManager;
+    
+    @Resource
     private OrcidOauth2TokenDetailService orcidOauth2TokenService;
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(ManageProfileController.class);
 
     @Resource(name = "profileEntityCacheManager")
     ProfileEntityCacheManager profileEntityCacheManager;
@@ -1095,6 +1104,45 @@ public class ManageProfileController extends BaseWorkspaceController {
     	List<OrcidOauth2TokenDetail> tokenDetails = orcidOauth2TokenService.findByUserName(orcid);
     	List<ApplicationSummary> trustedOrgsList = profileEntityManager.getApplications(tokenDetails);
     	return trustedOrgsList;
+    }
+    
+    @RequestMapping(value = { "/notifications" }, method = RequestMethod.GET)
+    public ModelAndView getNotificationPreferencesWindow() {
+    	return new ModelAndView("unsubscribe");
+    }
+    
+    @RequestMapping(value = "/notifications/{encryptedEmail}", method = RequestMethod.GET)
+    public ModelAndView getNotificationPreferencesWindow(HttpServletRequest request, 
+    		@PathVariable("encryptedEmail") String encryptedEmail) throws Exception {
+        ModelAndView result = null;
+        String decryptedEmail = encryptionManager.decryptForExternalUse(new String(Base64.decodeBase64(encryptedEmail), "UTF-8"));
+        OrcidProfile profile = getEffectiveProfile();
+
+        String primaryEmail = profile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
+
+        if (decryptedEmail.equals(primaryEmail)) {
+        	result = new ModelAndView("unsubscribe");
+        }
+
+        return result;
+    }
+    
+
+    private String createUnsubscribeLink(String email, HttpServletRequest request) {
+        String urlEncodedEmail = null;
+        try {
+            urlEncodedEmail = URLEncoder.encode(email, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            LOGGER.debug("Unable to url encode email address: {}", email, e);
+        }
+        StringBuilder resendUrl = new StringBuilder();
+        resendUrl.append(orcidUrlManager.getServerStringWithContextPath(request));
+        resendUrl.append("/notifications");
+        if (urlEncodedEmail != null) {
+            resendUrl.append("?email=");
+            resendUrl.append(urlEncodedEmail);
+        }
+        return resendUrl.toString();
     }
 
     /**
