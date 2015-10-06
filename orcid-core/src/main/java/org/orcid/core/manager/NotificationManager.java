@@ -81,4 +81,6 @@ public interface NotificationManager {
     public void addMessageParams(Map<String, Object> templateParams, OrcidProfile orcidProfile);
 
     public String getSubject(String code, OrcidProfile orcidProfile);
+    
+    public boolean sendServiceAnnouncement_1_For_2015(OrcidProfile orcidProfile);
 }
