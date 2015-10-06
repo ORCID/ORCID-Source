@@ -542,7 +542,7 @@ public class ManageProfileController extends BaseWorkspaceController {
         profile.getOrcidInternal().getPreferences();
         return profile.getOrcidInternal().getPreferences() != null ? profile.getOrcidInternal().getPreferences() : new Preferences();
     }
-
+    
     @RequestMapping(value = "/preferences.json", method = RequestMethod.POST)
     public @ResponseBody Preferences setDefaultPreference(HttpServletRequest request, @RequestBody Preferences preferences) {
         orcidProfileManager.updatePreferences(getCurrentUserOrcid(), preferences);
