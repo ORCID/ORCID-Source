@@ -44,6 +44,8 @@ public interface NotificationManager {
     public String deriveEmailFriendlyName(OrcidProfile orcidProfile);
 
     void sendNotificationToAddedDelegate(OrcidProfile grantingUser, List<DelegationDetails> delegatesGrantedByUser);
+    
+    void sendAmendEmail(String orcid, AmendedSection amendedSection, Item item);
 
     void sendAmendEmail(OrcidProfile amendedProfile, AmendedSection amendedSection);
 
@@ -72,7 +74,7 @@ public interface NotificationManager {
     public Notification createNotification(String orcid, Notification notification);
 
     public Notification flagAsArchived(String orcid, Long id) throws OrcidNotificationAlreadyReadException;
-    
+
     public Notification setActionedDate(String orcid, Long id);
 
 }

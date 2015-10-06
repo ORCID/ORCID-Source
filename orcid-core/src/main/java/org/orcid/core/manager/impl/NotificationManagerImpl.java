@@ -35,12 +35,16 @@ import org.orcid.core.adapter.JpaJaxbNotificationAdapter;
 import org.orcid.core.constants.EmailConstants;
 import org.orcid.core.exception.OrcidNotFoundException;
 import org.orcid.core.exception.OrcidNotificationAlreadyReadException;
+import org.orcid.core.exception.OrcidNotificationException;
 import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.CustomEmailManager;
 import org.orcid.core.manager.EncryptionManager;
+import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.NotificationManager;
+import org.orcid.core.manager.OrcidProfileManager;
+import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.TemplateManager;
@@ -138,7 +142,7 @@ public class NotificationManagerImpl implements NotificationManager {
 
     @Resource
     private JpaJaxbNotificationAdapter notificationAdapter;
-    
+
     @Resource
     private ProfileEntityManager profileEntityManager;
 
@@ -150,13 +154,19 @@ public class NotificationManagerImpl implements NotificationManager {
 
     @Resource
     private LocaleManager localeManager;
-    
+
     @Resource
     private OrcidOauth2TokenDetailService orcidOauth2TokenDetailService;
-    
+
     @Resource
     private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
 
+    @Resource
+    private OrcidProfileManager orcidProfileManager;
+
+    @Resource
+    private ProfileEntityCacheManager profileEntityCacheManager;
+    
     private static final Logger LOGGER = LoggerFactory.getLogger(NotificationManagerImpl.class);
 
     public boolean isApiRecordCreationEmailEnabled() {
@@ -395,6 +405,14 @@ public class NotificationManagerImpl implements NotificationManager {
     @Override
     public void sendAmendEmail(OrcidProfile amendedProfile, AmendedSection amendedSection) {
         sendAmendEmail(amendedProfile, amendedSection, null);
+    }
+
+    @Override
+    public void sendAmendEmail(String orcid, AmendedSection amendedSection, Item item) {
+        OrcidProfile amendedProfile = orcidProfileManager.retrieveOrcidProfile(orcid, LoadOptions.BIO_AND_INTERNAL_ONLY);
+        Collection<Item> items = new ArrayList<Item>(1);
+        items.add(item);
+        sendAmendEmail(amendedProfile, amendedSection, items);
     }
 
     @Override
@@ -703,7 +721,7 @@ public class NotificationManagerImpl implements NotificationManager {
                 }
             }
         }
-        
+
         ClientDetailsEntity clientDetailsEntity = clientDetailsEntityCacheManager.retrieve(amenderId);
         if (clientDetailsEntity != null) {
             return clientDetailsEntity.getClientName();
@@ -793,9 +811,14 @@ public class NotificationManagerImpl implements NotificationManager {
             throw new IllegalArgumentException("Put code must be null when creating a new notification");
         }
         NotificationEntity notificationEntity = notificationAdapter.toNotificationEntity(notification);
-        ProfileEntity profile = profileDao.find(orcid);
+        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         if (profile == null) {
             throw OrcidNotFoundException.newInstance(orcid);
+        }
+        if(profile.getSendMemberUpdateRequests() != null && profile.getSendMemberUpdateRequests()) {
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("orcid", orcid);
+            throw new OrcidNotificationException(params);
         }
         notificationEntity.setProfile(profile);
         notificationEntity.setSource(sourceManager.retrieveSourceEntity());
