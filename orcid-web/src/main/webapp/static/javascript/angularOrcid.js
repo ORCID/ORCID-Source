@@ -3003,13 +3003,13 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
     };
     
     
-    $scope.setRecaptchaWidgetId = function (widgetId) {
-        console.log('Widget ID: ' + widgetId)
+    $scope.setRecaptchaWidgetId = function (widgetId) {  
+    	console.log('Widget ID: ' + widgetId)
     	$scope.recaptchaWidgetId = widgetId;
     };
 
     $scope.setRecatchaResponse = function (response) {
-        console.log('Yey recaptcha response!');
+    	console.log('Yey recaptcha response!');
         $scope.recatchaResponse = response;
     };
     //init

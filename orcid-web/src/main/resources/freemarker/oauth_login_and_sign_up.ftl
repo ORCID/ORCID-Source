@@ -208,11 +208,7 @@
 		            <label class="checkbox">
 		                <input type="checkbox" tabindex="7" name="sendOrcidChangeNotifications" ng-model="registrationForm.sendChangeNotifications.value"/>
 		                <@orcid.msg 'register.labelsendmenotifications'/>
-		            </label>
-		            <label class="checkbox">
-		                <input type="checkbox" tabindex="8" name="sendOrcidNews" ng-model="registrationForm.sendOrcidNews.value"/>
-		                <@orcid.msg 'register.labelsendinformation'/>
-		            </label>
+		            </label>		            
 		         </div>
 			</div>			   
 		    <div>
