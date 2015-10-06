@@ -54,9 +54,10 @@ public class ServiceAnnouncement_1_For_2015 implements ProfileEvent {
 	 * 
 	 */
 
-	private List<ProfileEventType> pes = Collections.unmodifiableList(Arrays.asList(
-			ProfileEventType.SERVICE_ANNOUNCEMENT_SENT_1_FOR_2015, ProfileEventType.SERVICE_ANNOUNCEMENT_FAIL_1_FOR_2015,
-			ProfileEventType.SERVICE_ANNOUNCEMENT_SKIPPED_1_FOR_2015));
+	private List<ProfileEventType> pes = Collections
+			.unmodifiableList(Arrays.asList(ProfileEventType.SERVICE_ANNOUNCEMENT_SENT_1_FOR_2015,
+					ProfileEventType.SERVICE_ANNOUNCEMENT_FAIL_1_FOR_2015,
+					ProfileEventType.SERVICE_ANNOUNCEMENT_SKIPPED_1_FOR_2015));
 
 	ServiceAnnouncement_1_For_2015(OrcidProfile op) {
 		this.orcidProfile = op;
@@ -64,22 +65,29 @@ public class ServiceAnnouncement_1_For_2015 implements ProfileEvent {
 
 	@Override
 	public ProfileEventType call() throws Exception {
-		// Has email email check
+		// Doesn't have email check
 		if (orcidProfile.getOrcidBio() == null || orcidProfile.getOrcidBio().getContactDetails() == null
 				|| orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail() == null
 				|| orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue() == null)
 			return ProfileEventType.SERVICE_ANNOUNCEMENT_SKIPPED_1_FOR_2015;
 
-		// Is locked check
+		// Is locked
 		if (orcidProfile.isLocked())
 			return ProfileEventType.SERVICE_ANNOUNCEMENT_SKIPPED_1_FOR_2015;
 
-		// Isn't claimed
-		if (orcidProfile.getOrcidHistory() != null && orcidProfile.getOrcidHistory().getClaimed() != null
-				&& orcidProfile.getOrcidHistory().getClaimed().isValue() == false)
-			return ProfileEventType.SERVICE_ANNOUNCEMENT_SKIPPED_1_FOR_2015;
-
-		// Deactivated
+		
+		if (orcidProfile.getOrcidHistory() != null) {
+			// id deprecated
+			if (orcidProfile.getOrcidDeprecated() != null)
+				return ProfileEventType.SERVICE_ANNOUNCEMENT_SKIPPED_1_FOR_2015;
+			
+			// Isn't claimed
+			if (orcidProfile.getOrcidHistory().getClaimed() != null
+					&& orcidProfile.getOrcidHistory().getClaimed().isValue() == false)
+				return ProfileEventType.SERVICE_ANNOUNCEMENT_SKIPPED_1_FOR_2015;
+		}
+		
+		// Is deactivated
 		if (orcidProfile.isDeactivated())
 			return ProfileEventType.SERVICE_ANNOUNCEMENT_SKIPPED_1_FOR_2015;
 
