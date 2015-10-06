@@ -85,5 +85,5 @@ public interface ProfileEntityManager {
     
     Visibility getResearcherUrlDefaultVisibility(String orcid);
 
-	List<ApplicationSummary> getApplications(List<OrcidOauth2TokenDetail> tokenDetails);
+    List<ApplicationSummary> getApplications(List<OrcidOauth2TokenDetail> tokenDetails);
 }
