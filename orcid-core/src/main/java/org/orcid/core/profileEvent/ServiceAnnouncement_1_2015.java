@@ -46,7 +46,9 @@ public class ServiceAnnouncement_1_2015 implements ProfileEvent {
 	/*
 	 * export MAVEN_OPTS=
 	 * "-Xmx1024m -XX:MaxPermSize=256m -Dorg.orcid.config.file=file:///Users/rcpeters/git/ORCID-Source/orcid-persistence/src/main/resources/staging-persistence.properties"
-	 * ; mvn exec:java
+	 * ;
+	 * mvn install 
+	 * mvn exec:java
 	 * -Dexec.mainClass="org.orcid.core.profileEvent.ProfileEventManager"
 	 * -Dexec.args="-bean serviceAnnouncement_1_2015 -callOnAll true"
 	 * 
