@@ -18,9 +18,7 @@ package org.orcid.core.profileEvent;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -28,25 +26,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.orcid.core.manager.NotificationManager;
-import org.orcid.core.manager.TemplateManager;
-import org.orcid.core.manager.impl.MailGunManager;
-import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.persistence.jpa.entities.ProfileEventType;
 
 public class ServiceAnnouncement_1_For_2015 implements ProfileEvent {
 
 	private static Logger LOG = LoggerFactory.getLogger(ServiceAnnouncement_1_For_2015.class);
-
-	@Resource
-	private MailGunManager mailGunManager;
-
-	@Resource
-	private TemplateManager templateManager;
-
-	@Resource
-	private OrcidUrlManager orcidUrlManager;
 
 	@Resource
 	private NotificationManager notificationManager;
