@@ -233,7 +233,7 @@ public class NotificationManagerTest extends BaseTest {
             notificationManager.sendVerificationReminderEmail(orcidProfile, orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue());
         }
     }
-    
+
     @Test
     public void testClaimReminderEmail() throws JAXBException, IOException, URISyntaxException {
         for (Locale locale : Locale.values()) {
