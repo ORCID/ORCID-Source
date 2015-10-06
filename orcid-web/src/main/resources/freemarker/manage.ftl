@@ -339,9 +339,10 @@
                     </td>
                 </tr>
                 <#if !profile.orcidInternal.preferences.notificationsEnabled>
-	                <tr ng-controller="EmailPreferencesCtrl">
-	                    <th>Update your email preferences</th>
-	                    <td><a name="editEmailPreferences" href="<@orcid.rootPath '/manage/notifications'/>" target="_blank">Update</a></td>
+	                <tr>
+	                    <th><a name="editEmailPreferences"></a>${springMacroRequestContext.getMessage("manage.email_preferences")}</th>
+	                    <td><a href="" ng-click="toggleEmailPreferencesEdit()"
+	                        ng-bind="emailPreferencesToggleText"></a></td>
 	                </tr>
 	                <tr ng-controller="EmailPreferencesCtrl"
 	                    ng-show="showEditEmailPreferences" ng-cloak>

@@ -1936,6 +1936,40 @@ orcidNgModule.controller('EmailFrequencyCtrl',['$scope', '$compile', 'emailSrvc'
     $scope.emailSrvc = emailSrvc;
 }]);
 
+orcidNgModule.controller('EmailFrequencyLinkCtrl',['$scope','$rootScope', function ($scope, $rootScope) {
+	$scope.getEmailFrequencies = function() {
+		$.ajax({
+            url: getBaseUri() + '/notifications/email-frequencies.json',
+            type: 'GET',
+            dataType: 'json',
+            success: function(data) {
+                $scope.emailFrequency = data;
+                $rootScope.$apply();
+            }
+        }).fail(function() {
+            console.log("error with frequency");
+        });
+	};
+	
+    $scope.saveEmailFrequencies = function() {
+        $.ajax({
+            url: getBaseUri() + '/notifications/email-frequencies.json',
+            type: 'POST',
+            data: angular.toJson($scope.emailFrequency),
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            success: function(data) {
+                $scope.emailFrequency = data;
+                $rootScope.$apply();
+            }
+        }).fail(function() {
+            console.log("error with frequency");
+        });
+    };
+    
+    $scope.getEmailFrequencies();
+}]);
+
 orcidNgModule.controller('WorksPrivacyPreferencesCtrl',['$scope', 'prefsSrvc', function ($scope, prefsSrvc) {
     $scope.prefsSrvc = prefsSrvc;
     $scope.privacyHelp = {};
