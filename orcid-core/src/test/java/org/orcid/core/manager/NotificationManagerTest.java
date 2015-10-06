@@ -219,6 +219,14 @@ public class NotificationManagerTest extends BaseTest {
     }
 
     @Test
+    public void testSendServiceAnnouncement_1_For_2015() throws JAXBException, IOException, URISyntaxException {
+        for (Locale locale : Locale.values()) {
+            OrcidProfile orcidProfile = getProfile(locale);
+            notificationManager.sendServiceAnnouncement_1_For_2015(orcidProfile);
+        }
+    }
+
+    @Test
     public void testSendVerificationReminderEmail() throws JAXBException, IOException, URISyntaxException {
         for (Locale locale : Locale.values()) {
             OrcidProfile orcidProfile = getProfile(locale);

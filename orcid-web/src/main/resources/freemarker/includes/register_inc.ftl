@@ -136,11 +136,7 @@
                 <label class="checkbox">
                     <input type="checkbox" tabindex="7" name="sendOrcidChangeNotifications" ng-model="register.sendChangeNotifications.value"/>
                     ${springMacroRequestContext.getMessage("register.labelsendmenotifications")}
-                </label>
-                <label class="checkbox">
-                    <input type="checkbox" tabindex="8" name="sendOrcidNews" ng-model="register.sendOrcidNews.value"/>
-                    ${springMacroRequestContext.getMessage("register.labelsendinformation")}
-                </label>
+                </label>                
             </#if>
          </div>
 	</div>

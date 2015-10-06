@@ -18,6 +18,7 @@ package org.orcid.core.manager;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import org.orcid.core.exception.OrcidNotificationAlreadyReadException;
 import org.orcid.jaxb.model.message.DelegationDetails;
@@ -76,5 +77,10 @@ public interface NotificationManager {
     public Notification flagAsArchived(String orcid, Long id) throws OrcidNotificationAlreadyReadException;
 
     public Notification setActionedDate(String orcid, Long id);
+    
+    public void addMessageParams(Map<String, Object> templateParams, OrcidProfile orcidProfile);
 
+    public String getSubject(String code, OrcidProfile orcidProfile);
+    
+    public boolean sendServiceAnnouncement_1_For_2015(OrcidProfile orcidProfile);
 }
