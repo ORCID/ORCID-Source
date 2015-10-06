@@ -179,10 +179,7 @@
 	                                ${springMacroRequestContext.getMessage("change_notification_preferences.sendmemberupdaterequests")}
 	                            </label>
                                 <h5>${springMacroRequestContext.getMessage("change_notification_preferences.newstitle")}</h5>
-	                            <label class="checkbox"> <input type="checkbox"
-                                    id="sendOrcidNews" name="sendOrcidNews"
-                                    ng-model="prefsSrvc.prefs.sendOrcidNews"
-                                    ng-change="prefsSrvc.savePrivacyPreferences()" />
+	                            <label>
                                     ${springMacroRequestContext.getMessage("change_notification_preferences.sendinformation")}
                                 </label>
 	                        </div>

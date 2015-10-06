@@ -83,11 +83,7 @@
 		                        <label class="checkbox">
 		                            <input type="checkbox" name="sendOrcidChangeNotifications" ng-model="register.sendChangeNotifications.value"/>
 		                            ${springMacroRequestContext.getMessage("register.labelsendmenotifications")}
-		                        </label>
-		                        <label class="checkbox">
-		                            <input type="checkbox" name="sendOrcidNews" ng-model="register.sendOrcidNews.value"/>
-		                            ${springMacroRequestContext.getMessage("register.labelsendinformation")}
-		                        </label>
+		                        </label>		                        
 		                     </div>
 						</div>
 	                    <div class="margin-top-box">
