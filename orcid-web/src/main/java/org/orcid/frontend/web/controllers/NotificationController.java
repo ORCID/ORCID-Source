@@ -17,9 +17,11 @@
 package org.orcid.frontend.web.controllers;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.List;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
@@ -28,30 +30,37 @@ import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.TemplateManager;
+import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.jaxb.model.common.Source;
 import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.jaxb.model.message.Preferences;
 import org.orcid.jaxb.model.notification.Notification;
 import org.orcid.jaxb.model.notification.NotificationType;
 import org.orcid.jaxb.model.notification.amended.NotificationAmended;
 import org.orcid.jaxb.model.notification.custom.NotificationCustom;
 import org.orcid.jaxb.model.notification.permission.NotificationPermission;
 import org.orcid.persistence.dao.NotificationDao;
+import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.NotificationAddItemsEntity;
-import org.orcid.persistence.jpa.entities.NotificationEntity;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 @RequestMapping({ "/inbox", "/notifications" })
+@SessionAttributes("primaryEmail")
 public class NotificationController extends BaseController {
 
     @Resource
@@ -68,6 +77,14 @@ public class NotificationController extends BaseController {
 
     @Resource
     private EncryptionManager encryptionManager;
+    
+    @Resource
+    private OrcidUrlManager orcidUrlManager;
+    
+    @Resource
+    private ProfileDao profileDao;
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(NotificationController.class);
 
     @RequestMapping
     public ModelAndView getNotifications() {
@@ -181,6 +198,55 @@ public class NotificationController extends BaseController {
         notificationManager.setActionedDate(notificationOrcid, id);
         return new ModelAndView("redirect:" + redirectUrl);
     }
+    
+    @RequestMapping(value = "/email-frequencies.json", method = RequestMethod.GET)
+    public @ResponseBody Preferences getDefaultPreference(HttpServletRequest request, @ModelAttribute("primaryEmail") String emailId) {
+    	OrcidProfile profile = orcidProfileManager.retrieveOrcidProfileByEmail(emailId);
+        profile.getOrcidInternal().getPreferences();
+        return profile.getOrcidInternal().getPreferences() != null ? profile.getOrcidInternal().getPreferences() : new Preferences();
+    }
+    
+    @RequestMapping(value = "/email-frequencies.json", method = RequestMethod.POST)
+    public @ResponseBody Preferences setPreference(HttpServletRequest request, @RequestBody Preferences preferences, @ModelAttribute("primaryEmail") String emailId) {
+    	OrcidProfile profile = orcidProfileManager.retrieveOrcidProfileByEmail(emailId);
+    	orcidProfileManager.updatePreferences(profile.getOrcidIdentifier().getPath(), preferences);
+        return preferences;
+    }
+    
+    @RequestMapping(value = "/frequencies/{encryptedEmail}", method = RequestMethod.GET)
+    public ModelAndView getNotificationFrequenciesWindow(HttpServletRequest request, 
+    		@PathVariable("encryptedEmail") String encryptedEmail) throws Exception {
+        ModelAndView result = null;
+        String decryptedEmail = encryptionManager.decryptForExternalUse(new String(Base64.decodeBase64(encryptedEmail), "UTF-8"));
+        OrcidProfile profile = getEffectiveProfile();
+
+        String primaryEmail = profile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
+
+        if (decryptedEmail.equals(primaryEmail)) {
+        	result = new ModelAndView("email_frequency");
+        	result.addObject("primaryEmail", primaryEmail);
+        }
+
+        return result;
+    }
+
+    //USE THIS METHOD TO GENERATE AN ENCRYPTED UNSUBSCRIBE LINK
+    public String createUpdateEmailFrequencyLink(String email, HttpServletRequest request) {
+        String urlEncodedEmail = null;
+        try {
+            urlEncodedEmail = URLEncoder.encode(email, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            LOGGER.debug("Unable to url encode email address: {}", email, e);
+        }
+        StringBuilder resendUrl = new StringBuilder();
+        resendUrl.append(orcidUrlManager.getServerStringWithContextPath(request));
+        resendUrl.append("/frequencies");
+        if (urlEncodedEmail != null) {
+            resendUrl.append("/");
+            resendUrl.append(urlEncodedEmail);
+        }
+        return resendUrl.toString();
+    }
 
     private void addSourceDescription(Notification notification) {
         Source source = notification.getSource();
@@ -194,5 +260,4 @@ public class NotificationController extends BaseController {
             }
         }
     }
-
 }
