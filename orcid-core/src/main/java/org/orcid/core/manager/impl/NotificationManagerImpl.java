@@ -138,7 +138,7 @@ public class NotificationManagerImpl implements NotificationManager {
 
     @Resource
     private JpaJaxbNotificationAdapter notificationAdapter;
-    
+
     @Resource
     private ProfileEntityManager profileEntityManager;
 
@@ -150,10 +150,10 @@ public class NotificationManagerImpl implements NotificationManager {
 
     @Resource
     private LocaleManager localeManager;
-    
+
     @Resource
     private OrcidOauth2TokenDetailService orcidOauth2TokenDetailService;
-    
+
     @Resource
     private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
 
@@ -703,7 +703,7 @@ public class NotificationManagerImpl implements NotificationManager {
                 }
             }
         }
-        
+
         ClientDetailsEntity clientDetailsEntity = clientDetailsEntityCacheManager.retrieve(amenderId);
         if (clientDetailsEntity != null) {
             return clientDetailsEntity.getClientName();

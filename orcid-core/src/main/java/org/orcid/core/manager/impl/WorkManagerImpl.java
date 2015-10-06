@@ -47,10 +47,10 @@ import org.springframework.transaction.annotation.Transactional;
 public class WorkManagerImpl implements WorkManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WorkManagerImpl.class);
-    
+
     @Resource
     private WorkDao workDao;
-    
+
     @Resource
     private Jpa2JaxbAdapter jpa2JaxbAdapter;
 
@@ -62,14 +62,14 @@ public class WorkManagerImpl implements WorkManager {
 
     @Resource
     private OrcidSecurityManager orcidSecurityManager;
-    
+
     @Resource
     private ProfileDao profileDao;
-    
+
     @Override
     public void setSourceManager(SourceManager sourceManager) {
         this.sourceManager = sourceManager;
-    }       
+    }
 
     /**
      * Find the works for a specific user
@@ -79,7 +79,7 @@ public class WorkManagerImpl implements WorkManager {
      * @return the list of works associated to the specific user
      * */
     @Cacheable(value = "works", key = "#orcid.concat('-').concat(#lastModified)")
-    public List<Work> findWorks(String orcid, long lastModified) {        
+    public List<Work> findWorks(String orcid, long lastModified) {
         List<MinimizedWorkEntity> minimizedWorks = workDao.findWorks(orcid);
         return jpaJaxbWorkAdapter.toMinimizedWork(minimizedWorks);
     }
@@ -108,7 +108,7 @@ public class WorkManagerImpl implements WorkManager {
     public boolean updateVisibilities(String orcid, List<Long> workIds, Visibility visibility) {
         return workDao.updateVisibilities(orcid, workIds, visibility);
     }
-    
+
     /**
      * Removes a work.
      * 
@@ -122,25 +122,27 @@ public class WorkManagerImpl implements WorkManager {
     public boolean removeWorks(String clientOrcid, List<Long> workIds) {
         return workDao.removeWorks(clientOrcid, workIds);
     }
-    
+
     /**
      * Sets the display index of the new work
-     * @param orcid     
-     *          The work owner
+     * 
+     * @param orcid
+     *            The work owner
      * @param workId
-     *          The work id
-     * @return true if the work index was correctly set                  
+     *            The work id
+     * @return true if the work index was correctly set
      * */
-    public boolean updateToMaxDisplay(String orcid, Long workId) {        
+    public boolean updateToMaxDisplay(String orcid, Long workId) {
         return workDao.updateToMaxDisplay(orcid, workId);
-    }        
+    }
 
     /**
      * Get the given Work from the database
+     * 
      * @param orcid
-     *          The work owner
+     *            The work owner
      * @param workId
-     *          The work id             
+     *            The work id
      * */
     @Override
     public Work getWork(String orcid, Long workId) {
@@ -150,40 +152,40 @@ public class WorkManagerImpl implements WorkManager {
     @Override
     public WorkSummary getWorkSummary(String orcid, Long workId) {
         return jpaJaxbWorkAdapter.toWorkSummary(workDao.find(workId));
-    }    
-    
+    }
+
     @Override
     @Transactional
-    public Work createWork(String orcid, Work work, boolean applyValidations) { 
-    	SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
-    	if (sourceEntity != null) {
-             Source source = new Source();
-             if (sourceEntity.getSourceClient() != null) {
-                 source.setSourceClientId(new SourceClientId(sourceEntity.getSourceClient().getClientId()));
-             } else if (sourceEntity.getSourceProfile() != null) {
-                 source.setSourceOrcid(new SourceOrcid(sourceEntity.getSourceProfile().getId()));
-             }
-             work.setSource(source);
+    public Work createWork(String orcid, Work work, boolean applyValidations) {
+        SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
+        if (sourceEntity != null) {
+            Source source = new Source();
+            if (sourceEntity.getSourceClient() != null) {
+                source.setSourceClientId(new SourceClientId(sourceEntity.getSourceClient().getClientId()));
+            } else if (sourceEntity.getSourceProfile() != null) {
+                source.setSourceOrcid(new SourceOrcid(sourceEntity.getSourceProfile().getId()));
+            }
+            work.setSource(source);
         }
-    	
-    	if(applyValidations) {
-        	ActivityValidator.validateWork(work, true, sourceEntity);
-        	List<MinimizedWorkEntity> works = workDao.findWorks(orcid);
-        	// If it is the user adding the peer review, allow him to add duplicates
-        	if (!sourceEntity.getSourceId().equals(orcid)) {
-        		if (works != null) {
-        			List<Work> workEntities = jpaJaxbWorkAdapter.toMinimizedWork(works);
+
+        if (applyValidations) {
+            ActivityValidator.validateWork(work, true, sourceEntity);
+            List<MinimizedWorkEntity> works = workDao.findWorks(orcid);
+            // If it is the user adding the peer review, allow him to add
+            // duplicates
+            if (!sourceEntity.getSourceId().equals(orcid)) {
+                if (works != null) {
+                    List<Work> workEntities = jpaJaxbWorkAdapter.toMinimizedWork(works);
                     for (Work existing : workEntities) {
-                    	 ActivityValidator.checkExternalIdentifiers(work.getExternalIdentifiers(),
-                    			 existing.getExternalIdentifiers(), existing.getSource(), sourceEntity);
+                        ActivityValidator.checkExternalIdentifiers(work.getExternalIdentifiers(), existing.getExternalIdentifiers(), existing.getSource(), sourceEntity);
                     }
-        		}
-        	}
+                }
+            }
         }
-    	
+
         WorkEntity workEntity = jpaJaxbWorkAdapter.toWorkEntity(work);
         ProfileEntity profile = profileDao.find(orcid);
-        workEntity.setProfile(profile);        
+        workEntity.setProfile(profile);
         workEntity.setAddedToProfileDate(new Date());
         setIncomingWorkPrivacy(workEntity, profile);
         workDao.persist(workEntity);
@@ -193,15 +195,14 @@ public class WorkManagerImpl implements WorkManager {
     @Override
     @Transactional
     public Work updateWork(String orcid, Work work, boolean applyValidations) {
-    	SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
-        if(applyValidations) {
-        	ActivityValidator.validateWork(work, false, sourceEntity);
-        	List<Work> existingWorks = this.findWorks(orcid, System.currentTimeMillis());
-            for(Work existing : existingWorks) {
-                //Dont compare the updated peer review with the DB version
-                if(!existing.getPutCode().equals(work.getPutCode())) {
-               	 ActivityValidator.checkExternalIdentifiers(work.getExternalIdentifiers(),
-            			 existing.getExternalIdentifiers(), existing.getSource(), sourceEntity);
+        SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
+        if (applyValidations) {
+            ActivityValidator.validateWork(work, false, sourceEntity);
+            List<Work> existingWorks = this.findWorks(orcid, System.currentTimeMillis());
+            for (Work existing : existingWorks) {
+                // Dont compare the updated peer review with the DB version
+                if (!existing.getPutCode().equals(work.getPutCode())) {
+                    ActivityValidator.checkExternalIdentifiers(work.getExternalIdentifiers(), existing.getExternalIdentifiers(), existing.getSource(), sourceEntity);
                 }
             }
         }
@@ -216,7 +217,6 @@ public class WorkManagerImpl implements WorkManager {
         return jpaJaxbWorkAdapter.toWork(workEntity);
     }
 
-    
     @Override
     public boolean checkSourceAndRemoveWork(String orcid, Long workIdStr) {
         boolean result = true;
@@ -224,40 +224,39 @@ public class WorkManagerImpl implements WorkManager {
         WorkEntity workEntity = workDao.find(workId);
         SourceEntity existingSource = workEntity.getSource();
         orcidSecurityManager.checkSource(existingSource);
-        try {            
+        try {
             workDao.removeWork(orcid, workId);
-        } catch(Exception e) {
+        } catch (Exception e) {
             LOGGER.error("Unable to delete work with ID: " + workIdStr);
             result = false;
         }
         return result;
     }
-    
+
     private void setIncomingWorkPrivacy(WorkEntity workEntity, ProfileEntity profile) {
         org.orcid.jaxb.model.message.Visibility incomingWorkVisibility = workEntity.getVisibility();
         org.orcid.jaxb.model.message.Visibility defaultWorkVisibility = profile.getActivitiesVisibilityDefault();
         if (profile.getClaimed()) {
             if (defaultWorkVisibility.isMoreRestrictiveThan(incomingWorkVisibility)) {
-                workEntity.setVisibility(defaultWorkVisibility);                
+                workEntity.setVisibility(defaultWorkVisibility);
             }
         } else if (incomingWorkVisibility == null) {
-            workEntity.setVisibility(org.orcid.jaxb.model.message.Visibility.PRIVATE);            
+            workEntity.setVisibility(org.orcid.jaxb.model.message.Visibility.PRIVATE);
         }
-    }   
-    
+    }
+
     /**
      * Get the list of works that belongs to a user
      * 
      * @param userOrcid
      * @param lastModified
-     *          Last modified date used to check the cache
+     *            Last modified date used to check the cache
      * @return the list of works that belongs to this user
      * */
     @Override
     @Cacheable(value = "works-summaries", key = "#orcid.concat('-').concat(#lastModified)")
     public List<WorkSummary> getWorksSummaryList(String orcid, long lastModified) {
-    	List<MinimizedWorkEntity> works = workDao.findWorks(orcid);        
-    	return jpaJaxbWorkAdapter.toWorkSummaryFromMinimized(works);
+        List<MinimizedWorkEntity> works = workDao.findWorks(orcid);
+        return jpaJaxbWorkAdapter.toWorkSummaryFromMinimized(works);
     }
 }
-
