@@ -40,7 +40,9 @@ import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.CustomEmailManager;
 import org.orcid.core.manager.EncryptionManager;
+import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.NotificationManager;
+import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.TemplateManager;
@@ -138,7 +140,7 @@ public class NotificationManagerImpl implements NotificationManager {
 
     @Resource
     private JpaJaxbNotificationAdapter notificationAdapter;
-    
+
     @Resource
     private ProfileEntityManager profileEntityManager;
 
@@ -150,12 +152,15 @@ public class NotificationManagerImpl implements NotificationManager {
 
     @Resource
     private LocaleManager localeManager;
-    
+
     @Resource
     private OrcidOauth2TokenDetailService orcidOauth2TokenDetailService;
-    
+
     @Resource
     private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
+
+    @Resource
+    private OrcidProfileManager orcidProfileManager;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NotificationManagerImpl.class);
 
@@ -395,6 +400,14 @@ public class NotificationManagerImpl implements NotificationManager {
     @Override
     public void sendAmendEmail(OrcidProfile amendedProfile, AmendedSection amendedSection) {
         sendAmendEmail(amendedProfile, amendedSection, null);
+    }
+
+    @Override
+    public void sendAmendEmail(String orcid, AmendedSection amendedSection, Item item) {
+        OrcidProfile amendedProfile = orcidProfileManager.retrieveOrcidProfile(orcid, LoadOptions.BIO_AND_INTERNAL_ONLY);
+        Collection<Item> items = new ArrayList<Item>(1);
+        items.add(item);
+        sendAmendEmail(amendedProfile, amendedSection, items);
     }
 
     @Override
@@ -703,7 +716,7 @@ public class NotificationManagerImpl implements NotificationManager {
                 }
             }
         }
-        
+
         ClientDetailsEntity clientDetailsEntity = clientDetailsEntityCacheManager.retrieve(amenderId);
         if (clientDetailsEntity != null) {
             return clientDetailsEntity.getClientName();

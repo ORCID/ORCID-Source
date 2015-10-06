@@ -30,6 +30,7 @@ public enum ItemType {
     @XmlEnumValue("education") EDUCATION,
     @XmlEnumValue("employment") EMPLOYMENT,
     @XmlEnumValue("funding") FUNDING,
+    @XmlEnumValue("peer-review") PEER_REVIEW,
     @XmlEnumValue("work") WORK;
     //@formatter:on
 }
