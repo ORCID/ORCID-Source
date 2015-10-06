@@ -16,6 +16,7 @@
     =============================================================================
 
 -->
+<#import "email_macros.ftl" as emailMacros />
 <!DOCTYPE html>
 <html>
 	<head>
@@ -28,6 +29,7 @@
 		  	<span style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666; font-weight: bold;">
 		    Dear ${emailName},
 		    </span>
+		    <#if verificationUrl??>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
 		    	At ORCID we care about the accuracy and security of your information. Help us in this effort by verifying
 		    	the primary email address associated with your ORCID iD. Please click on the link below (or paste it into
@@ -37,6 +39,7 @@
 		    	<a href="${verificationUrl}">${verificationUrl}</a><br>
 		    	<br>
 		    </p>
+		    </#if>
 			<p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
 				DID YOU KNOW?<br>
 				The ORCID Registry is constantly under development, with new releases often, sometimes weekly! Explore some of our recent updates:

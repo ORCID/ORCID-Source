@@ -323,14 +323,14 @@ public class NotificationManagerImpl implements NotificationManager {
         return mailGunManager.sendEmail(UPDATE_NOTIFY_ORCID_ORG, email, ORCID_PRIVACY_POLICY_UPDATES, text, html);
     }
 
-    private void addMessageParams(Map<String, Object> templateParams, OrcidProfile orcidProfile) {
+    public void addMessageParams(Map<String, Object> templateParams, OrcidProfile orcidProfile) {
         Locale locale = localeManager.getLocaleFromOrcidProfile(orcidProfile);
         templateParams.put("messages", this.messages);
         templateParams.put("messageArgs", new Object[0]);
         templateParams.put("locale", locale);
     }
 
-    private String getSubject(String code, OrcidProfile orcidProfile) {
+    public String getSubject(String code, OrcidProfile orcidProfile) {
         Locale locale = localeManager.getLocaleFromOrcidProfile(orcidProfile);
         return messages.getMessage(code, null, locale);
     }
