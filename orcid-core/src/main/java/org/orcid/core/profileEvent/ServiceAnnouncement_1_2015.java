@@ -50,21 +50,18 @@ public class ServiceAnnouncement_1_2015 implements ProfileEvent {
 
 	@Resource
 	private NotificationManager notificationManager;
-	
-    @Resource
-    private MessageSource messages;
 
+	@Resource
+	private MessageSource messages;
 
 	private OrcidProfile orcidProfile;
 
 	/*
 	 * export MAVEN_OPTS=
 	 * "-Xmx1024m -XX:MaxPermSize=256m -Dorg.orcid.config.file=file:///Users/rcpeters/git/ORCID-Source/orcid-persistence/src/main/resources/staging-persistence.properties"
-	 * ;
-	 * mvn install 
-	 * mvn exec:java
+	 * ; mvn install; mvn exec:java
 	 * -Dexec.mainClass="org.orcid.core.profileEvent.ProfileEventManager"
-	 * -Dexec.args="-bean serviceAnnouncement_1_2015 -callOnAll true"
+	 * -Dexec.args="-bean serviceAnnouncement_1_2015 -callOnAll true";
 	 * 
 	 * Following https://github.com/ORCID/ORCID-Source/blob/
 	 * eeae0d0933c68aacc4ef0fbf0846fb99ae9a1257/orcid-core/src/main/java/org/
@@ -82,9 +79,23 @@ public class ServiceAnnouncement_1_2015 implements ProfileEvent {
 
 	@Override
 	public ProfileEventType call() throws Exception {
+		// Has email email check
 		if (orcidProfile.getOrcidBio() == null || orcidProfile.getOrcidBio().getContactDetails() == null
 				|| orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail() == null
 				|| orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue() == null)
+			return ProfileEventType.SERVICE_ANNOUNCEMENT_SKIPPED_1_2015;
+
+		// Is locked check
+		if (orcidProfile.isLocked())
+			return ProfileEventType.SERVICE_ANNOUNCEMENT_SKIPPED_1_2015;
+
+		// Isn't claimed
+		if (orcidProfile.getOrcidHistory() != null && orcidProfile.getOrcidHistory().getClaimed() != null
+				&& orcidProfile.getOrcidHistory().getClaimed().isValue() == false)
+			return ProfileEventType.SERVICE_ANNOUNCEMENT_SKIPPED_1_2015;
+
+		// Deactivated
+		if (orcidProfile.isDeactivated())
 			return ProfileEventType.SERVICE_ANNOUNCEMENT_SKIPPED_1_2015;
 
 		boolean needsVerification = !orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().isVerified()
