@@ -44,6 +44,8 @@ public interface NotificationManager {
     public String deriveEmailFriendlyName(OrcidProfile orcidProfile);
 
     void sendNotificationToAddedDelegate(OrcidProfile grantingUser, List<DelegationDetails> delegatesGrantedByUser);
+    
+    void sendAmendEmail(String orcid, AmendedSection amendedSection, Item item);
 
     void sendAmendEmail(OrcidProfile amendedProfile, AmendedSection amendedSection);
 

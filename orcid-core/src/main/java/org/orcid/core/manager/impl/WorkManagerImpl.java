@@ -23,6 +23,7 @@ import javax.annotation.Resource;
 
 import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.adapter.JpaJaxbWorkAdapter;
+import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.WorkManager;
@@ -31,6 +32,9 @@ import org.orcid.jaxb.model.common.Source;
 import org.orcid.jaxb.model.common.SourceClientId;
 import org.orcid.jaxb.model.common.SourceOrcid;
 import org.orcid.jaxb.model.common.Visibility;
+import org.orcid.jaxb.model.notification.amended.AmendedSection;
+import org.orcid.jaxb.model.notification.permission.Item;
+import org.orcid.jaxb.model.notification.permission.ItemType;
 import org.orcid.jaxb.model.record.Work;
 import org.orcid.jaxb.model.record.summary.WorkSummary;
 import org.orcid.persistence.dao.ProfileDao;
@@ -65,6 +69,9 @@ public class WorkManagerImpl implements WorkManager {
 
     @Resource
     private ProfileDao profileDao;
+
+    @Resource
+    private NotificationManager notificationManager;
 
     @Override
     public void setSourceManager(SourceManager sourceManager) {
@@ -189,6 +196,8 @@ public class WorkManagerImpl implements WorkManager {
         workEntity.setAddedToProfileDate(new Date());
         setIncomingWorkPrivacy(workEntity, profile);
         workDao.persist(workEntity);
+        workDao.flush();
+        notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, createItem(workEntity));
         return jpaJaxbWorkAdapter.toWork(workEntity);
     }
 
@@ -214,6 +223,8 @@ public class WorkManagerImpl implements WorkManager {
         workEntity.setVisibility(org.orcid.jaxb.model.message.Visibility.fromValue(originalVisibility.value()));
         workEntity.setSource(existingSource);
         workDao.merge(workEntity);
+        workDao.flush();
+        notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, createItem(workEntity));
         return jpaJaxbWorkAdapter.toWork(workEntity);
     }
 
@@ -225,7 +236,10 @@ public class WorkManagerImpl implements WorkManager {
         SourceEntity existingSource = workEntity.getSource();
         orcidSecurityManager.checkSource(existingSource);
         try {
+            Item item = createItem(workEntity);
             workDao.removeWork(orcid, workId);
+            workDao.flush();
+            notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, item);
         } catch (Exception e) {
             LOGGER.error("Unable to delete work with ID: " + workIdStr);
             result = false;
@@ -259,4 +273,13 @@ public class WorkManagerImpl implements WorkManager {
         List<MinimizedWorkEntity> works = workDao.findWorks(orcid);
         return jpaJaxbWorkAdapter.toWorkSummaryFromMinimized(works);
     }
+
+    private Item createItem(WorkEntity workEntity) {
+        Item item = new Item();
+        item.setItemName(workEntity.getTitle());
+        item.setItemType(ItemType.WORK);
+        item.setPutCode(String.valueOf(workEntity.getId()));
+        return item;
+    }
+
 }

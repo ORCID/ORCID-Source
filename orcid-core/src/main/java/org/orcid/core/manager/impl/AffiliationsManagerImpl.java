@@ -23,12 +23,16 @@ import javax.annotation.Resource;
 import org.orcid.core.adapter.JpaJaxbEducationAdapter;
 import org.orcid.core.adapter.JpaJaxbEmploymentAdapter;
 import org.orcid.core.manager.AffiliationsManager;
+import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.OrgManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.validator.ActivityValidator;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.AffiliationType;
+import org.orcid.jaxb.model.notification.amended.AmendedSection;
+import org.orcid.jaxb.model.notification.permission.Item;
+import org.orcid.jaxb.model.notification.permission.ItemType;
 import org.orcid.jaxb.model.record.Education;
 import org.orcid.jaxb.model.record.Employment;
 import org.orcid.jaxb.model.record.summary.EducationSummary;
@@ -64,6 +68,9 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
 
     @Resource
     private OrcidSecurityManager orcidSecurityManager;
+
+    @Resource
+    private NotificationManager notificationManager;
 
     @Override
     public void setSourceManager(SourceManager sourceManager) {
@@ -148,6 +155,8 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
         setIncomingWorkPrivacy(educationEntity, profile);
         educationEntity.setAffiliationType(org.orcid.jaxb.model.message.AffiliationType.fromValue(AffiliationType.EDUCATION.value()));
         affiliationsDao.persist(educationEntity);
+        affiliationsDao.flush();
+        notificationManager.sendAmendEmail(orcid, AmendedSection.EDUCATION, createItem(educationEntity));
         return jpaJaxbEducationAdapter.toEducation(educationEntity);
     }
 
@@ -178,6 +187,8 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
 
         educationEntity.setAffiliationType(org.orcid.jaxb.model.message.AffiliationType.fromValue(AffiliationType.EDUCATION.value()));
         educationEntity = affiliationsDao.merge(educationEntity);
+        affiliationsDao.flush();
+        notificationManager.sendAmendEmail(orcid, AmendedSection.EDUCATION, createItem(educationEntity));
         return jpaJaxbEducationAdapter.toEducation(educationEntity);
     }
 
@@ -237,6 +248,8 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
         setIncomingWorkPrivacy(employmentEntity, profile);
         employmentEntity.setAffiliationType(org.orcid.jaxb.model.message.AffiliationType.fromValue(AffiliationType.EMPLOYMENT.value()));
         affiliationsDao.persist(employmentEntity);
+        affiliationsDao.flush();
+        notificationManager.sendAmendEmail(orcid, AmendedSection.EMPLOYMENT, createItem(employmentEntity));
         return jpaJaxbEmploymentAdapter.toEmployment(employmentEntity);
     }
 
@@ -267,6 +280,8 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
 
         employmentEntity.setAffiliationType(org.orcid.jaxb.model.message.AffiliationType.fromValue(AffiliationType.EMPLOYMENT.value()));
         employmentEntity = affiliationsDao.merge(employmentEntity);
+        affiliationsDao.flush();
+        notificationManager.sendAmendEmail(orcid, AmendedSection.EMPLOYMENT, createItem(employmentEntity));
         return jpaJaxbEmploymentAdapter.toEmployment(employmentEntity);
     }
 
@@ -284,6 +299,7 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
     public boolean checkSourceAndDelete(String orcid, Long affiliationId) {
         OrgAffiliationRelationEntity affiliationEntity = affiliationsDao.getOrgAffiliationRelation(orcid, affiliationId);
         orcidSecurityManager.checkSource(affiliationEntity.getSource());
+        notificationManager.sendAmendEmail(orcid, AmendedSection.EMPLOYMENT, createItem(affiliationEntity));
         return affiliationsDao.removeOrgAffiliationRelation(orcid, affiliationId);
     }
 
@@ -328,4 +344,13 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
         List<OrgAffiliationRelationEntity> educationEntities = findAffiliationsByUserAndType(userOrcid, AffiliationType.EDUCATION);
         return jpaJaxbEducationAdapter.toEducationSummary(educationEntities);
     }
+
+    private Item createItem(OrgAffiliationRelationEntity orgAffiliationEntity) {
+        Item item = new Item();
+        item.setItemName(orgAffiliationEntity.getOrg().getName());
+        item.setItemType(AffiliationType.EDUCATION.equals(orgAffiliationEntity.getAffiliationType()) ? ItemType.EDUCATION : ItemType.EMPLOYMENT);
+        item.setPutCode(String.valueOf(orgAffiliationEntity.getId()));
+        return item;
+    }
+
 }
