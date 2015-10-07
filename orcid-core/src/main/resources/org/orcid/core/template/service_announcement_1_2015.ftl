@@ -17,33 +17,71 @@
 
 -->
 <#import "email_macros.ftl" as emailMacros />
-Dear ${emailName},
+<@emailMacros.msg "email.common.dear" />${emailName},
+
+<@emailMacros.msg "email.service_announcement.body_intro" /><@emailMacros.msg "email.service_announcement.privacy_link" /><@emailMacros.msg "email.service_announcement.dot_bottom" />
+
+
+<@emailMacros.msg "email.service_announcement.body_inbox_title" />
+
+<@emailMacros.msg "email.service_announcement.body_inbox1" />
+<@emailMacros.msg "email.service_announcement.inbox_link" />
+<@emailMacros.msg "email.service_announcement.body_inbox2" />
+<@emailMacros.msg "email.service_announcement.inbox_about_link" />
+<@emailMacros.msg "email.service_announcement.body_inbox3" />
+
+
+<@emailMacros.msg "email.service_announcement.body_permission_title" />
+
+<@emailMacros.msg "email.service_announcement.body_permission1" />
+<@emailMacros.msg "email.service_announcement.crossref_link" />
+<@emailMacros.msg "email.service_announcement.body_permission2" />
+<@emailMacros.msg "email.service_announcement.datacite_link" />
+<@emailMacros.msg "email.service_announcement.body_permission3" />
+<@emailMacros.msg "email.service_announcement.updates_link" />
+<@emailMacros.msg "email.service_announcement.body_permission4" />
+<@emailMacros.msg "email.service_announcement.inbox_about_link" />
+<@emailMacros.msg "email.service_announcement.body_permission5" />
+
+
+<@emailMacros.msg "email.service_announcement.body_privacy_policy_title" />
+
+<@emailMacros.msg "email.service_announcement.body_privacy_policy" />
 
 <#if verificationUrl??>
-At ORCID we care about the accuracy and security of your information. Help us in this effort
-by verifying the primary email address associated with your ORCID iD. Please click on the 
-link below (or paste it into your browser), and then sign into your ORCID account. 
+
+<@emailMacros.msg "email.service_announcement.verify_account" />
 
 ${verificationUrl}
+
 </#if>
 
-DID YOU KNOW?
-The ORCID Registry is constantly under development, with new releases often, sometimes 
-weekly! Explore some of our recent updates:
+<@emailMacros.msg "email.service_announcement.body_updates1" />
 
-    * Easier privacy management
-    * The ability to associate multiple emails with your account
-    * Great new connections and updates with ORCID Member organizations including
-            * CrossRef:  improved search for adding works to your ORCID record
-            * ResearcherID: more connections between your ResearcherID profile and ORCID record
-            * KNODE:  automatic cross-link to your ORCID iD with public data sources
 
-See these and other updates by clicking on the link above, or reading our blog 
-(http://orcid.org/about/news)
+<@emailMacros.msg "email.service_announcement.steamlined_link" /><@emailMacros.msg "email.service_announcement.body_updates2" />
 
-Regards,
-The ORCID Team
-support@orcid.org
+<@emailMacros.msg "email.service_announcement.body_updates3" /><@emailMacros.msg "email.service_announcement.wizard_link" /><@emailMacros.msg "email.service_announcement.body_updates4" />
 
-You have received this email as a service announcement related to your ORCID Account.
-<#include "email_footer.ftl"/>
+<@emailMacros.msg "email.service_announcement.qr_link" />
+
+<@emailMacros.msg "email.service_announcement.language_link" /><@emailMacros.msg "email.service_announcement.body_updates5" />
+
+<@emailMacros.msg "email.service_announcement.body_updates6" />
+
+<@emailMacros.msg "email.service_announcement.body_updates7" /><@emailMacros.msg "email.service_announcement.here_link" /><@emailMacros.msg "email.service_announcement.body_updates8" />
+
+
+<@emailMacros.msg "email.service_announcement.regards" />
+
+<@emailMacros.msg "email.service_announcement.orcid_team" />
+
+<@emailMacros.msg "email.service_announcement.support_id" />
+
+
+<@emailMacros.msg "email.service_announcement.footer_text1_title" />
+
+<@emailMacros.msg "email.service_announcement.footer_text1" />[<@emailMacros.msg "email.service_announcement.footer_frequency_link" />]
+<@emailMacros.msg "email.service_announcement.footer_text2" />[<@emailMacros.msg "email.service_announcement.footer_account_link" />]
+
+<@emailMacros.msg "email.service_announcement.footer_orcid_id" />${baseUri}${orcid}

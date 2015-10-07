@@ -17,7 +17,6 @@
 package org.orcid.frontend.web.controllers;
 
 import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -44,8 +43,6 @@ import org.orcid.persistence.dao.NotificationDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.NotificationAddItemsEntity;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -84,8 +81,6 @@ public class NotificationController extends BaseController {
     @Resource
     private ProfileDao profileDao;
     
-    private static final Logger LOGGER = LoggerFactory.getLogger(NotificationController.class);
-
     @RequestMapping
     public ModelAndView getNotifications() {
         ModelAndView mav = new ModelAndView("notifications");
@@ -228,24 +223,6 @@ public class NotificationController extends BaseController {
         }
 
         return result;
-    }
-
-    //USE THIS METHOD TO GENERATE AN ENCRYPTED UNSUBSCRIBE LINK
-    public String createUpdateEmailFrequencyLink(String email, HttpServletRequest request) {
-        String urlEncodedEmail = null;
-        try {
-            urlEncodedEmail = URLEncoder.encode(email, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            LOGGER.debug("Unable to url encode email address: {}", email, e);
-        }
-        StringBuilder resendUrl = new StringBuilder();
-        resendUrl.append(orcidUrlManager.getServerStringWithContextPath(request));
-        resendUrl.append("/frequencies");
-        if (urlEncodedEmail != null) {
-            resendUrl.append("/");
-            resendUrl.append(urlEncodedEmail);
-        }
-        return resendUrl.toString();
     }
 
     private void addSourceDescription(Notification notification) {
