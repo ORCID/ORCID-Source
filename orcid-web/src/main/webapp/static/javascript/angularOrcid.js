@@ -6404,6 +6404,10 @@ orcidNgModule.controller('languageCtrl',['$scope', '$cookies', 'widgetSrvc', fun
                 "label": 'Français'
             },
             {
+                "value": 'it',
+                "label": 'Italiano'
+            },
+            {
                 "value": 'ja',
                 "label": '日本語'
             },
