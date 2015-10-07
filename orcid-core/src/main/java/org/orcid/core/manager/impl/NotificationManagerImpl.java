@@ -836,7 +836,7 @@ public class NotificationManagerImpl implements NotificationManager {
         if (profile == null) {
             throw OrcidNotFoundException.newInstance(orcid);
         }
-        if(profile.getSendMemberUpdateRequests() != null && profile.getSendMemberUpdateRequests()) {
+        if(profile.getSendMemberUpdateRequests() != null && !profile.getSendMemberUpdateRequests()) {
             Map<String, String> params = new HashMap<String, String>();
             params.put("orcid", orcid);
             throw new OrcidNotificationException(params);
