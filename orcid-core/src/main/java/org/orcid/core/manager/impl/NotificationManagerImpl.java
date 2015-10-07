@@ -750,7 +750,8 @@ public class NotificationManagerImpl implements NotificationManager {
         return "";
     }
 
-    private String createClaimVerificationUrl(String email, String baseUri) {
+    @Override
+    public String createClaimVerificationUrl(String email, String baseUri) {
         return createEmailBaseUrl(email, baseUri, "claim");
     }
 

@@ -83,4 +83,6 @@ public interface NotificationManager {
     public String getSubject(String code, OrcidProfile orcidProfile);
     
     public boolean sendServiceAnnouncement_1_For_2015(OrcidProfile orcidProfile);
+    
+    public String createClaimVerificationUrl(String email, String baseUri);
 }
