@@ -5493,8 +5493,11 @@ ul.oauth-icons li {
 	cursor: pointer;
 }
 
-
-
+.notification-top-bar{
+	display: block;
+    height: 40px;
+    width: 100%;    
+}
 
 .vertical-align-middle {
 	line-height: 0px;
