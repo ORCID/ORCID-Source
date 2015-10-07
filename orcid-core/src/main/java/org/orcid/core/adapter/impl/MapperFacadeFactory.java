@@ -154,13 +154,13 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     private String extractFullPath(String uriString) {
         try {
             URI uri = new URI(uriString);
-            StringBuilder pathBuilder = new StringBuilder(uri.getPath());
-            String query = uri.getQuery();
+            StringBuilder pathBuilder = new StringBuilder(uri.getRawPath());
+            String query = uri.getRawQuery();
             if (query != null) {
                 pathBuilder.append('?');
                 pathBuilder.append(query);
             }
-            String fragment = uri.getFragment();
+            String fragment = uri.getRawFragment();
             if (fragment != null) {
                 pathBuilder.append(fragment);
             }
