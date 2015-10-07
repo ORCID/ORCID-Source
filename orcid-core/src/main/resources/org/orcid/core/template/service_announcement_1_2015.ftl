@@ -17,33 +17,23 @@
 
 -->
 <#import "email_macros.ftl" as emailMacros />
-Dear ${emailName},
+<@emailMacros.msg "email.common.dear" />${emailName},
 
 <#if verificationUrl??>
-At ORCID we care about the accuracy and security of your information. Help us in this effort
-by verifying the primary email address associated with your ORCID iD. Please click on the 
-link below (or paste it into your browser), and then sign into your ORCID account. 
+
+<@emailMacros.msg "email.service_announcement.verify_account" />
 
 ${verificationUrl}
+
 </#if>
 
-DID YOU KNOW?
-The ORCID Registry is constantly under development, with new releases often, sometimes 
-weekly! Explore some of our recent updates:
+<@emailMacros.msg "email.service_announcement.did_you_know" />
 
-    * Easier privacy management
-    * The ability to associate multiple emails with your account
-    * Great new connections and updates with ORCID Member organizations including
-            * CrossRef:  improved search for adding works to your ORCID record
-            * ResearcherID: more connections between your ResearcherID profile and ORCID record
-            * KNODE:  automatic cross-link to your ORCID iD with public data sources
+<@emailMacros.msg "email.service_announcement.read_our_blog" />
+<@emailMacros.msg "email.service_announcement.blog_link" />
 
-See these and other updates by clicking on the link above, or reading our blog 
-(http://orcid.org/about/news)
+<@emailMacros.msg "email.common.kind_regards" />
 
-Regards,
-The ORCID Team
-support@orcid.org
+<@emailMacros.msg "email.common.you_have_received_this_email" />
 
-You have received this email as a service announcement related to your ORCID Account.
 <#include "email_footer.ftl"/>

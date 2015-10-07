@@ -27,13 +27,11 @@
 			<img src="https://orcid.org/sites/all/themes/orcid/img/orcid-logo.png" alt="ORCID.org"/>
 		    <hr />
 		  	<span style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666; font-weight: bold;">
-		    Dear ${emailName},
+		    <@emailMacros.msg "email.common.dear" />${emailName},
 		    </span>
 		    <#if verificationUrl??>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
-		    	At ORCID we care about the accuracy and security of your information. Help us in this effort by verifying
-		    	the primary email address associated with your ORCID iD. Please click on the link below (or paste it into
-		    	your browser), and then sign into your ORCID account.
+		    	<@emailMacros.msg "email.service_announcement.verify_account" />
 		    </p>
 		    <p>
 		    	<a href="${verificationUrl}">${verificationUrl}</a><br>
@@ -41,30 +39,27 @@
 		    </p>
 		    </#if>
 			<p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
-				DID YOU KNOW?<br>
-				The ORCID Registry is constantly under development, with new releases often, sometimes weekly! Explore some of our recent updates:
+				<@emailMacros.msg "email.service_announcement.did_you_know_htm" />
 			</p>	
 			<ul style="font-family: arial, helvetica, sans-serif; font-size: 13px; color: #666666;">
-				<li>Easier privacy management</li>
-		    	<li>The ability to associate multiple emails with your account</li>
-		    	<li>Great new connections and updates with ORCID Member organizations including
+				<li><@emailMacros.msg "email.service_announcement.update_privacy" /></li>
+		    	<li><@emailMacros.msg "email.service_announcement.update_emails" /></li>
+		    	<li><@emailMacros.msg "email.service_announcement.update_connections" />
 		    		<ul style="font-family: arial, helvetica, sans-serif; font-size: 13px; color: #666666;">
-		        		<li>CrossRef: improved search for adding works to your ORCID record</li>
-		           		<li>ResearcherID: more connections between your ResearcherID profile and ORCID record</li>
-		           		<li>KNODE: automatic cross-link to your ORCID iD with public data sources</li>
+		        		<li><@emailMacros.msg "email.service_announcement.update_connections_crossref" /></li>
+		           		<li><@emailMacros.msg "email.service_announcement.update_connections_researcher" /></li>
+		           		<li><@emailMacros.msg "email.service_announcement.update_connections_knode" /></li>
 		        	</ul>
 		    	</li>
 		  	</ul>
 		  	<p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #666666;">
-				See these and other updates by clicking on the link above, or reading our blog 
-				<a href="http://orcid.org/about/news">(http://orcid.org/about/news)</a>.<br>
+				<@emailMacros.msg "email.service_announcement.read_our_blog" />
+				<a href="http://orcid.org/about/news"><@emailMacros.msg "email.service_announcement.blog_link" /></a><br>
 				<br>
-				Regards,<br>
-				The ORCID Team<br>
-				support@orcid.org<br>
+				<@emailMacros.msg "email.common.kind_regards" />
 			</p>
 			<p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #666666;">
-				You have received this email as a service announcement related to your ORCID Account.
+				<@emailMacros.msg "email.common.you_have_received_this_email" />
 			</p>
 			<#include "email_footer.ftl"/>
 		 </div>
