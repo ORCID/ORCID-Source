@@ -52,10 +52,13 @@
 	                    </div>
 	                    <br>
 	                    <div>
-	                    ${springMacroRequestContext.getMessage("manage.service_announcements")}
+	                    ${springMacroRequestContext.getMessage("manage.service_announcements.notification")} 
 	                    <br>
 	                    ${springMacroRequestContext.getMessage("unsubscribe.email_for_more_info")}
 	                    ${springMacroRequestContext.getMessage("unsubscribe.email_link_privacy_policy")}
+	                    </div>
+	                    <div>
+	                    	<small class="italic">${springMacroRequestContext.getMessage("manage.service_announcements.note")}</small>
 	                    </div>
 	                </div>
 	            </td>
