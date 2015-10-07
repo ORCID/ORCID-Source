@@ -17,8 +17,8 @@
 
 -->
 <small>
-<a href="${baseUri}/account"><@emailMacros.msg "email.common.email.preferences" /></a> 
-| <a href="${baseUri}/privacy-policy"><@emailMacros.msg "email.common.privacy_policy" /></a> 
+<a href="${baseUri}/account" style="color: #338caf;"><@emailMacros.msg "email.common.email.preferences" /></a> 
+| <a href="${baseUri}/privacy-policy" style="color: #338caf;"><@emailMacros.msg "email.common.privacy_policy" /></a> 
 | <@emailMacros.msg "email.common.address" /> 
-| <a href="${baseUri}">ORCID.org</a>
+| <a href="${baseUri}" style="color: #338caf;">ORCID.org</a>
 </small>
