@@ -28,7 +28,7 @@
                 Hi ${emailName},
             </span>
             <p>
-                You have ${totalMessageCount} new <#if totalMessageCount == 1>notification<#else>notifications</#if> in your ORCID inbox - see summary below. Please visit your <a href="${baseUri}/inbox?lang=${locale}" style="color: #338caf;">ORCID Inbox</a> to take action or see more details.
+                You have ${totalMessageCount} new <#if ((totalMessageCount?number) == 1)>notification<#else>notifications</#if> in your ORCID inbox - see summary below. Please visit your <a href="${baseUri}/inbox?lang=${locale}" style="color: #338caf;">ORCID Inbox</a> to take action or see more details.
             </p>
             <#if digestEmail.notificationsBySourceId['ORCID']??><p>
                 ORCID would like to let you know
