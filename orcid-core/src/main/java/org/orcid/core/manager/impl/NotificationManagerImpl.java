@@ -17,6 +17,7 @@
 package org.orcid.core.manager.impl;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -27,6 +28,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.codec.binary.Base64;
@@ -311,6 +313,8 @@ public class NotificationManagerImpl implements NotificationManager {
 		if (needsVerification) {
 			templateParams.put("verificationUrl", verificationUrl);
 		}
+		String emailFrequencyUrl = createUpdateEmailFrequencyUrl(orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue());
+		templateParams.put("emailFrequencyUrl", emailFrequencyUrl);
 		templateParams.put("orcid", orcidProfile.getOrcidIdentifier().getPath());
 		templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
 		addMessageParams(templateParams, orcidProfile);
@@ -320,6 +324,10 @@ public class NotificationManagerImpl implements NotificationManager {
 		return sent;
 	}
     
+	public String createUpdateEmailFrequencyUrl(String email) {
+		return createEmailBaseUrl(email, orcidUrlManager.getBaseUrl(), "notifications/frequencies");
+    }
+	
     // look like the following is our best best for i18n emails
     // http://stackoverflow.com/questions/9605828/email-internationalization-using-velocity-freemarker-templates
     public boolean sendPrivPolicyEmail2014_03(OrcidProfile orcidProfile) {

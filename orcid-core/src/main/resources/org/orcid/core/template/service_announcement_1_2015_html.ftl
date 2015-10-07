@@ -27,46 +27,61 @@
 			<img src="https://orcid.org/sites/all/themes/orcid/img/orcid-logo.png" alt="ORCID.org"/>
 		    <hr />
 		  	<span style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666; font-weight: bold;">
-		    Dear ${emailName},
+		    <@emailMacros.msg "email.common.dear" />${emailName},
 		    </span>
-		    <#if verificationUrl??>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
-		    	At ORCID we care about the accuracy and security of your information. Help us in this effort by verifying
-		    	the primary email address associated with your ORCID iD. Please click on the link below (or paste it into
-		    	your browser), and then sign into your ORCID account.
+		    	<@emailMacros.msg "email.service_announcement.body_intro" />
+		    	<a href="https://orcid.org/privacy-policy" target="_blank"><@emailMacros.msg "email.service_announcement.privacy_link" /></a><@emailMacros.msg "email.service_announcement.dot_bottom" />
 		    </p>
-		    <p>
-		    	<a href="${verificationUrl}">${verificationUrl}</a><br>
-		    	<br>
+		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
+		    	<span style="font-weight:bold"><@emailMacros.msg "email.service_announcement.body_inbox_title" /></span><br>
+		    	<@emailMacros.msg "email.service_announcement.body_inbox1" />
+				<a href="http://orcid.org/inbox" target="_blank"><@emailMacros.msg "email.service_announcement.inbox_link" /></a>
+				<@emailMacros.msg "email.service_announcement.body_inbox2" />
+				<a href="http://support.orcid.org/knowledgebase/articles/665437" target="_blank"><@emailMacros.msg "email.service_announcement.inbox_about_link" /></a>
+				<@emailMacros.msg "email.service_announcement.body_inbox3" />
 		    </p>
+		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
+		    	<span style="font-weight:bold"><@emailMacros.msg "email.service_announcement.body_permission_title" /></span><br>
+		    	<@emailMacros.msg "email.service_announcement.body_permission1" /><br>
+				<a href="http://www.crossref.org/" target="_blank"><@emailMacros.msg "email.service_announcement.crossref_link" /></a>
+				<@emailMacros.msg "email.service_announcement.body_permission2" />
+				<a href="https://www.datacite.org/" target="_blank"><@emailMacros.msg "email.service_announcement.datacite_link" /></a>
+				<@emailMacros.msg "email.service_announcement.body_permission3" />
+				<a href="http://orcid.org/blog/2015/01/13/new-webinar-metadata-round-trip" target="_blank"><@emailMacros.msg "email.service_announcement.updates_link" /></a>
+				<@emailMacros.msg "email.service_announcement.body_permission4" />
+				<a href="http://support.orcid.org/knowledgebase/articles/665437" target="_blank"><@emailMacros.msg "email.service_announcement.inbox_about_link" /></a>
+				<@emailMacros.msg "email.service_announcement.body_permission5" />
+		    </p>
+		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
+		    	<span style="font-weight:bold"><@emailMacros.msg "email.service_announcement.body_privacy_policy_title" /></span><br>
+		    	<@emailMacros.msg "email.service_announcement.body_privacy_policy" />
+		    </p>
+		    <#if verificationUrl??>
+			    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
+			    	<@emailMacros.msg "email.service_announcement.verify_account" />
+			    	<a href="${verificationUrl}">${verificationUrl}</a>
+			    	<br>
+			    </p>
 		    </#if>
-			<p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
-				DID YOU KNOW?<br>
-				The ORCID Registry is constantly under development, with new releases often, sometimes weekly! Explore some of our recent updates:
-			</p>	
-			<ul style="font-family: arial, helvetica, sans-serif; font-size: 13px; color: #666666;">
-				<li>Easier privacy management</li>
-		    	<li>The ability to associate multiple emails with your account</li>
-		    	<li>Great new connections and updates with ORCID Member organizations including
-		    		<ul style="font-family: arial, helvetica, sans-serif; font-size: 13px; color: #666666;">
-		        		<li>CrossRef: improved search for adding works to your ORCID record</li>
-		           		<li>ResearcherID: more connections between your ResearcherID profile and ORCID record</li>
-		           		<li>KNODE: automatic cross-link to your ORCID iD with public data sources</li>
-		        	</ul>
-		    	</li>
-		  	</ul>
 		  	<p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #666666;">
-				See these and other updates by clicking on the link above, or reading our blog 
-				<a href="http://orcid.org/about/news">(http://orcid.org/about/news)</a>.<br>
-				<br>
-				Regards,<br>
-				The ORCID Team<br>
-				support@orcid.org<br>
+				<@emailMacros.msg "email.service_announcement.body_updates1" />
+				<br><br><a href="http://orcid.org/blog/2014/12/11/new-feature-friday-new-orcid-record-interface" target="_blank"><@emailMacros.msg "email.service_announcement.steamlined_link" /></a><@emailMacros.msg "email.service_announcement.body_updates2" />
+				<br><@emailMacros.msg "email.service_announcement.body_updates3" /><a href="http://orcid.org/blog/2015/06/17/humanists-rejoice-mla-international-bibliography-now-connects-orcid" target="_blank"><@emailMacros.msg "email.service_announcement.wizard_link" /></a><@emailMacros.msg "email.service_announcement.body_updates4" />
+				<br><a href="http://orcid.org/blog/2014/11/14/new-functionality-friday-orcid-id-qr-codes" target="_blank"><@emailMacros.msg "email.service_announcement.qr_link" /></a>
+				<br><a href="http://orcid.org/blog/2014/11/28/new-functionality-friday-orcid-site-%D1%80%D1%83%D1%81%D1%81%D0%BA%D0%B8%D0%B9-and-portugu%C3%AAs" target="_blank"><@emailMacros.msg "email.service_announcement.language_link" /></a><@emailMacros.msg "email.service_announcement.body_updates5" />
+				<br><@emailMacros.msg "email.service_announcement.body_updates6" />
+				<br><@emailMacros.msg "email.service_announcement.body_updates7" /><a href="http://support.orcid.org/knowledgebase/articles/460004" target="_blank"><@emailMacros.msg "email.service_announcement.here_link" /></a><@emailMacros.msg "email.service_announcement.body_updates8" />
+				<br><br><@emailMacros.msg "email.service_announcement.regards" />
+				<br><@emailMacros.msg "email.service_announcement.orcid_team" />
+				<br><@emailMacros.msg "email.service_announcement.support_id" />
 			</p>
 			<p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #666666;">
-				You have received this email as a service announcement related to your ORCID Account.
+				<span style="font-weight:bold"><@emailMacros.msg "email.service_announcement.footer_text1_title" /></span>
+				<br><@emailMacros.msg "email.service_announcement.footer_text1" /><a href="${emailFrequencyUrl}" target="_blank">[<@emailMacros.msg "email.service_announcement.footer_frequency_link" />]</a>
+				<br><@emailMacros.msg "email.service_announcement.footer_text2" /><a href="${baseUri}/account" target="_blank">[<@emailMacros.msg "email.service_announcement.footer_account_link" />]</a>
+				<br><br><@emailMacros.msg "email.service_announcement.footer_orcid_id" /><a href="${baseUri}${orcid}" target="_blank">${baseUri}${orcid}</a>
 			</p>
-			<#include "email_footer.ftl"/>
 		 </div>
 	 </body>
  </html>
