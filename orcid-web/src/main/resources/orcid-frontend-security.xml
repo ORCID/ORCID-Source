@@ -191,7 +191,7 @@
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/statistics(/)?$"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<sec:intercept-url pattern="/notifications/frequencies(\?.*)?"
+		<sec:intercept-url pattern="/notifications/frequencies/[^\/\?#]*"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/notifications/email-frequencies.json(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
