@@ -568,24 +568,6 @@
             </h1>
             <p>
             	<@orcid.msg 'manage_signin_subtitle' />
-                <table>
-					<tr>
-						<td>
-							<form action="<@orcid.rootPath '/signin/facebook'/>" method="POST">
-							    <@orcid.msg 'manage_signin_click' /><button type="submit" class="btn-link socialButton"><@orcid.msg 'manage_signin_title_fb' /></button>
-							    <input type="hidden" name="scope" value="email" />
-							</form>
-						</td>
-						<td>
-							<form action="<@orcid.rootPath '/signin/google'/>" method="POST">
-							 <@orcid.msg 'manage_signin_separator1' /><button type="submit" class="btn-link socialButton"><@orcid.msg 'manage_signin_title_google' /></button>
-							    <input type="hidden" name="scope" value="email" />
-							</form>
-						</td>
-						<td>
-							<@orcid.msg 'manage_signin_separator2' /><a href="<@orcid.rootPath '/shibboleth/link'/>" class="btn-link"><@orcid.msg 'manage_signin_title_shibboleth' /></a>&nbsp;<@orcid.msg 'manage_signin_text_link_account' />
-						</td>
-				</table>
             </p>
             <div ng-controller="SocialCtrl" id="SocialCtrl">
                 <table class="table table-bordered settings-table normal-width" ng-show="socialAccounts" ng-cloak>
