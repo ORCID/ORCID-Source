@@ -71,6 +71,8 @@ ${verificationUrl}
 
 <@emailMacros.msg "email.service_announcement.footer_text1" />
 
-<@emailMacros.msg "email.service_announcement.footer_text3" /><@emailMacros.msg "email.service_announcement.footer_text2" />[<@emailMacros.msg "email.service_announcement.footer_frequency_link" />]
+<@emailMacros.msg "email.service_announcement.footer_text2" /> [${emailFrequencyUrl}]
+
+<@emailMacros.msg "email.service_announcement.footer_text3" /> [${baseUri}/account}]
 
 <@emailMacros.msg "email.service_announcement.footer_orcid_id" />${baseUri}${orcid}

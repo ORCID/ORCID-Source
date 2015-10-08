@@ -1939,7 +1939,7 @@ orcidNgModule.controller('EmailFrequencyCtrl',['$scope', '$compile', 'emailSrvc'
 orcidNgModule.controller('EmailFrequencyLinkCtrl',['$scope','$rootScope', function ($scope, $rootScope) {
 	$scope.getEmailFrequencies = function() {
 		$.ajax({
-            url: getBaseUri() + '/notifications/email-frequencies.json',
+            url: window.location.href + '/email-frequencies.json',
             type: 'GET',
             dataType: 'json',
             success: function(data) {
@@ -1953,7 +1953,7 @@ orcidNgModule.controller('EmailFrequencyLinkCtrl',['$scope','$rootScope', functi
 	
     $scope.saveEmailFrequencies = function() {
         $.ajax({
-            url: getBaseUri() + '/notifications/email-frequencies.json',
+            url: window.location.href + '/email-frequencies.json',
             type: 'POST',
             data: angular.toJson($scope.emailFrequency),
             contentType: 'application/json;charset=UTF-8',
