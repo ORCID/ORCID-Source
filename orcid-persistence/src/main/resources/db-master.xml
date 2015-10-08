@@ -161,5 +161,6 @@
     <include file="/db/updates/add_column_reviewed_to_profile.xml" />
     <include file="/db/updates/fix-notification-item-sequence.xml" />
     <include file="/db/updates/add_source_to_researcher_url.xml"/>
+    <include file="/db/updates/drop_legacy_work_external_identifiers_table.xml"/>
     <include file="/db/updates/delete_notification_work_entries.xml"/>
 </databaseChangeLog>
