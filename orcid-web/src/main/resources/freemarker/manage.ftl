@@ -479,7 +479,7 @@
 		                    	</div>
 		                    </td>
 		                    <td width="5%">
-	            				<a id="revokeAppBtn" name="applicationSummary.applicationOrcid.path" ng-click="confirmRevoke(applicationSummary)"
+	            				<a id="revokeAppBtn" name="{{applicationSummary.groupOrcidPath}}" ng-click="confirmRevoke(applicationSummary)"
 	            					class="glyphicon glyphicon-trash grey" title="${springMacroRequestContext.getMessage("manage.revokeaccess")}"></a>
 		    				</td>
 		                </tr>

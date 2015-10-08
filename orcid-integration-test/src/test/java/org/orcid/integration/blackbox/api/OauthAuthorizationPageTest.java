@@ -384,8 +384,9 @@ public class OauthAuthorizationPageTest extends BlackBoxBase {
 
         // Then, ask again for permissions over other scopes. Note that the user
         // is already logged in
-        webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, client1ClientId,
-                ScopePathType.AFFILIATIONS_CREATE.getContent(), redirectUri));
+        String url = String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, client1ClientId,
+                ScopePathType.AFFILIATIONS_CREATE.getContent(), redirectUri);
+        webDriver.get(url);
 
         By authorizeElementLocator = By.id("authorize");
         (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(authorizeElementLocator));

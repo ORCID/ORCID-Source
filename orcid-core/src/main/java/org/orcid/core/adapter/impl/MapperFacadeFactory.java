@@ -136,18 +136,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         mapCommonFields(mapperFactory.classMap(NotificationAmendedEntity.class, NotificationAmended.class)).register();
         mapperFactory.classMap(NotificationItemEntity.class, Item.class).fieldMap("externalIdType", "externalIdentifier.externalIdentifierType")
                 .converter("externalIdentifierIdConverter").add().field("externalIdValue", "externalIdentifier.externalIdentifierId").byDefault().register();
-
-        // Amended notification
-        mapCommonFields(mapperFactory.classMap(NotificationAmendedEntity.class, NotificationAmended.class)).fieldAToB("notificationWorks", "items.items")
-                .fieldBToA("items.itemsByType['WORK']", "notificationWorks").register();
-        mapperFactory.classMap(NotificationWorkEntity.class, Item.class).fieldAToB("work.id", "putCode").fieldAToB("work.title", "itemName")
-                .fieldMap("work.externalIdentifiersJson", "externalIdentifier").aToB().converter("singleWorkExternalIdentifierFromJsonConverter").add()
-                .customize(new CustomMapper<NotificationWorkEntity, Item>() {
-                    public void mapAtoB(NotificationWorkEntity entity, Item activity, MappingContext context) {
-                        activity.setItemType(ItemType.WORK);
-                    }
-                }).register();
-
+        
         // All notifications
         addV2SourceMapping(mapperFactory);
 
