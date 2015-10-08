@@ -31,6 +31,7 @@ import ma.glasnost.orika.metadata.ClassMapBuilder;
 import ma.glasnost.orika.metadata.TypeFactory;
 
 import org.apache.commons.lang3.StringUtils;
+import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.jaxb.model.common.FuzzyDate;
 import org.orcid.jaxb.model.common.PublicationDate;
@@ -173,7 +174,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
             URI uri = new URI(uriString);
             return uri;
         } catch (URISyntaxException e) {
-            throw new RuntimeException("Problem parsing uri", e);
+            throw new OrcidValidationException("Problem parsing uri", e);
         }
     }
 
