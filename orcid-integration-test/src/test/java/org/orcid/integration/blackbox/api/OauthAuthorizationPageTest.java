@@ -80,43 +80,6 @@ public class OauthAuthorizationPageTest extends BlackBoxBase {
     @After
     public void after() {
         webDriver.quit();
-    }    
-
-    @Test
-    public void stateParamIsPersistentAndReturnedOnRegisterTest() throws JSONException, InterruptedException, URISyntaxException {
-        webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s&state=%s", webBaseUrl, client1ClientId, SCOPES,
-                redirectUri, STATE_PARAM));
-        By registerForm = By.id("register");
-        (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(registerForm));
-
-        String time = String.valueOf(System.currentTimeMillis());
-
-        webDriver.findElement(By.id("register-form-given-names")).sendKeys(time);
-        webDriver.findElement(By.id("register-form-email")).sendKeys(time + "@" + time + ".com");
-        webDriver.findElement(By.id("register-form-confirm-email")).sendKeys(time + "@" + time + ".com");
-        webDriver.findElement(By.id("register-form-password")).sendKeys(time + "a");
-        webDriver.findElement(By.id("register-form-confirm-password")).sendKeys(time + "a");
-
-        WebElement terms = webDriver.findElement(By.id("register-form-term-box"));
-        assertNotNull(terms);
-        if (!terms.isSelected()) {
-            terms.click();
-        }
-        // Click the authorize button
-        webDriver.findElement(By.id("register-form-authorize")).click();
-
-        (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(new ExpectedCondition<Boolean>() {
-            public Boolean apply(WebDriver d) {
-                return d.getTitle().equals("ORCID Playground");
-            }
-        });
-
-        String currentUrl = webDriver.getCurrentUrl();
-        Matcher matcher = STATE_PARAM_PATTERN.matcher(currentUrl);
-        assertTrue(matcher.find());
-        String stateParam = matcher.group(1);
-        assertFalse(PojoUtil.isEmpty(stateParam));
-        assertEquals(STATE_PARAM, stateParam);
     }
 
     @Test
