@@ -28,7 +28,7 @@
         <div class="notification-top-bar">
             <label class="checkbox pull-right">
                 <input type="checkbox" ng-model="notificationsSrvc.showArchived" ng-change="reloadNotifications()"></input>
-                ${springMacroRequestContext.getMessage("notifications.showArchived")}
+                ${springMacroRequestContext.getMessage("notifications.show_archived")}
             </label>
         </div>
         <div ng-show="notificationsSrvc.loading == true" class="text-center" id="notificationsSpinner">
@@ -73,7 +73,7 @@
             <br/><br/>
         </div>   
         <div ng-cloak>
-            <button ng-show="areMore() && notificationsSrvc.loadingMore == false" ng-click="showMore()" class="btn" type="submit" id="show-more-button">Show more</button>
+            <button ng-show="areMore() && notificationsSrvc.loadingMore == false" ng-click="showMore()" class="btn" type="submit" id="show-more-button">${springMacroRequestContext.getMessage("notifications.show_more")}</button>
         </div>
         <div ng-cloak ng-show="notificationsSrvc.loadingMore == true" id="moreNotificationsSpinner">
             <i class="glyphicon glyphicon-refresh spin x4 green" id="spinner"></i><!-- Hidden with a CSS hack on IE 7 only -->
