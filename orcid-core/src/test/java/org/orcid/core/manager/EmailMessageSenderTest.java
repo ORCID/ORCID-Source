@@ -147,7 +147,7 @@ public class EmailMessageSenderTest extends BaseTest {
         String expectedBodyHtml = IOUtils.toString(getClass().getResourceAsStream("example_digest_email_body.html"));
         assertEquals(expectedBodyText, emailMessage.getBodyText());
         assertEquals(expectedBodyHtml, emailMessage.getBodyHtml());
-        assertEquals("[ORCID] John Watson you have [6] new notifications", emailMessage.getSubject());
+        assertEquals("[ORCID] John Watson you have 6 new notifications", emailMessage.getSubject());
     }
 
     private Item createActivity(ItemType actType, String actName, String doi) {
