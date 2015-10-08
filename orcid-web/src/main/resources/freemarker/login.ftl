@@ -40,10 +40,12 @@
 		    <div class="control-group col-md-offset-3 col-md-9 col-sm-9 col-sm-offset-3 col-xs-12 submit-login">		        		        	
 	            <table>
 	            	<tr>
-	            		<td><button id='form-sign-in-button' class="btn btn-primary" type="submit">${springMacroRequestContext.getMessage("login.signin")}</button></td>
+	            		<td>
+	            			<button id='form-sign-in-button' class="btn btn-primary" type="submit">${springMacroRequestContext.getMessage("login.signin")}</button>
+	            			<span id="ajax-loader" class="no-visible"><i id="ajax-loader" class="glyphicon glyphicon-refresh spin x2 green"></i></span>
+	            		</td>
 	            	</tr>
-	            </table>
-	            <span id="ajax-loader" class="no-visible"><i id="ajax-loader" class="glyphicon glyphicon-refresh spin x2 green"></i></span>	            
+	            </table>	            	            
 	            <#if (RequestParameters['alreadyClaimed'])??>
 			        <div class="alert"><@spring.message "orcid.frontend.security.already_claimed"/></div>
 			    </#if>   
