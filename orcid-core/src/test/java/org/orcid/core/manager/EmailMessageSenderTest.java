@@ -84,7 +84,7 @@ public class EmailMessageSenderTest extends BaseTest {
         Items activities1 = new Items();
         notification1.setItems(activities1);
         activities1.getItems().add(createActivity(ItemType.WORK, "Work 1", "123446/67654"));
-        activities1.getItems().add(createActivity(ItemType.WORK, "Work 2", "123446/67655"));
+        activities1.getItems().add(createActivity(ItemType.WORK, "Work 2", "http://dx.doi.org/123446/67655"));
         notification1.setCreatedDate(DateUtils.convertToXMLGregorianCalendar("2014-07-10T13:39:31"));
         notification1.setAuthorizationUrl(new AuthorizationUrl("https://thirdparty.com/add-to-orcid/12345"));
         Source source1 = new Source();

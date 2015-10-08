@@ -49,8 +49,8 @@
                 <#list itemsByType?keys?sort as itemType>
                 <div>${itemType?capitalize}<#if itemType == 'WORK'>s</#if> (${itemsByType[itemType]?size})</div>
                 <ul>
-                <#list itemsByType[itemType] as item>
-                    <li>${item.itemName} <#if item.externalIdentifier??>(${item.externalIdentifier.externalIdentifierType?lower_case}: ${item.externalIdentifier.externalIdentifierId})</#if></li>
+                <#list itemsByType[itemType] as item>                	
+                    <li>${item.itemName} <#if item.externalIdentifier??>(${item.externalIdentifier.externalIdentifierType?lower_case}: <#if item.externalIdentifier.externalIdentifierId?starts_with("http")><a href="${item.externalIdentifier.externalIdentifierId}" style="color: #338caf;">${item.externalIdentifier.externalIdentifierId}</a><#else>${item.externalIdentifier.externalIdentifierId}</#if>)</#if></li>
                 </#list>
                 </ul>
                 </#list>
