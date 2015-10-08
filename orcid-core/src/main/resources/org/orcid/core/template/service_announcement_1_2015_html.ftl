@@ -67,7 +67,9 @@
 				      <a href="http://orcid.org/blog/2014/11/28/new-functionality-friday-orcid-site-%D1%80%D1%83%D1%81%D1%81%D0%BA%D0%B8%D0%B9-and-portugu%C3%AAs" target="_blank"><@emailMacros.msg "email.service_announcement.language_link" /></a><@emailMacros.msg "email.service_announcement.body_updates5" />
 				    </li>
 				</ul>
-				<br><@emailMacros.msg "email.service_announcement.body_updates6" />
+		   </p>
+		   <p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #666666;">
+				<@emailMacros.msg "email.service_announcement.body_updates6" />
 				<br><@emailMacros.msg "email.service_announcement.body_updates7" /><a href="http://support.orcid.org/knowledgebase/articles/460004" target="_blank"><@emailMacros.msg "email.service_announcement.here_link" /></a><@emailMacros.msg "email.service_announcement.body_updates8" />
 				<br><br><@emailMacros.msg "email.service_announcement.regards" />
 				<br><@emailMacros.msg "email.service_announcement.orcid_team" />
