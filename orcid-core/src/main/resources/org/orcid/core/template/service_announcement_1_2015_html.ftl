@@ -53,7 +53,7 @@
 		    </#if>
 		  	<p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #666666;">
 				<@emailMacros.msg "email.service_announcement.body_updates1" />
-				<ul>
+				<ul style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #666666;">
 				   <li>
 				     <a href="http://orcid.org/blog/2014/12/11/new-feature-friday-new-orcid-record-interface" target="_blank"><@emailMacros.msg "email.service_announcement.steamlined_link" /></a><@emailMacros.msg "email.service_announcement.body_updates2" />
 				   </li>
