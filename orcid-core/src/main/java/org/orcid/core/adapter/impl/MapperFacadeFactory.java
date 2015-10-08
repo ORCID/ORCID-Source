@@ -126,6 +126,8 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
                             public void mapBtoA(NotificationPermission notification, NotificationAddItemsEntity entity, MappingContext context) {
                                 if (StringUtils.isBlank(entity.getAuthorizationUrl())) {
                                     String authUrl = orcidUrlManager.getBaseUrl() + notification.getAuthorizationUrl().getPath();
+                                    // validate
+                                    validateAndConvertToURI(authUrl);
                                     entity.setAuthorizationUrl(authUrl);
                                 }
                             }
@@ -152,21 +154,26 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     }
 
     private String extractFullPath(String uriString) {
+        URI uri = validateAndConvertToURI(uriString);
+        StringBuilder pathBuilder = new StringBuilder(uri.getRawPath());
+        String query = uri.getRawQuery();
+        if (query != null) {
+            pathBuilder.append('?');
+            pathBuilder.append(query);
+        }
+        String fragment = uri.getRawFragment();
+        if (fragment != null) {
+            pathBuilder.append(fragment);
+        }
+        return pathBuilder.toString();
+    }
+
+    private URI validateAndConvertToURI(String uriString) {
         try {
             URI uri = new URI(uriString);
-            StringBuilder pathBuilder = new StringBuilder(uri.getRawPath());
-            String query = uri.getRawQuery();
-            if (query != null) {
-                pathBuilder.append('?');
-                pathBuilder.append(query);
-            }
-            String fragment = uri.getRawFragment();
-            if (fragment != null) {
-                pathBuilder.append(fragment);
-            }
-            return pathBuilder.toString();
+            return uri;
         } catch (URISyntaxException e) {
-            throw new RuntimeException("Profile parsing uri for notication", e);
+            throw new RuntimeException("Problem parsing uri", e);
         }
     }
 
@@ -182,7 +189,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         researcherUrlClassMap.register();
         return mapperFactory.getMapperFacade();
     }
-    
+
     public MapperFacade getWorkMapperFacade() {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
 
