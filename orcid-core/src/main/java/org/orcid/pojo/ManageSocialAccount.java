@@ -19,24 +19,23 @@ package org.orcid.pojo;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.orcid.persistence.jpa.entities.UserconnectionPK;
 import org.orcid.pojo.ajaxForm.ErrorsInterface;
 
 /**
- * 
- * @author Will Simpson
- * 
+ * @author Shobhit Tyagi
  */
-public class ManageShibbolethAccount implements ErrorsInterface {
+public class ManageSocialAccount implements ErrorsInterface {
 
     private List<String> errors = new ArrayList<String>();
-    private Long idToMange;
+    private UserconnectionPK idToMange;
     private String password;
 
-    public Long getIdToManage() {
+    public UserconnectionPK getIdToManage() {
         return idToMange;
     }
 
-    public void setIdToManage(Long idToManage) {
+    public void setIdToManage(UserconnectionPK idToManage) {
         this.idToMange = idToManage;
     }
 
@@ -55,5 +54,4 @@ public class ManageShibbolethAccount implements ErrorsInterface {
     public void setErrors(List<String> errors) {
         this.errors = errors;
     }
-
 }

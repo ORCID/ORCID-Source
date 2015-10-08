@@ -28,7 +28,7 @@
                 Hi ${emailName},
             </span>
             <p>
-                You have ${totalMessageCount} new <#if totalMessageCount == 1>notification<#else>notifications</#if> in your ORCID inbox - see summary below. Please visit your <a href="${baseUri}/inbox?lang=${locale}" style="color: #338caf;">ORCID Inbox</a> to take action or see more details.
+                You have ${totalMessageCount} new <#if ((totalMessageCount?number) == 1)>notification<#else>notifications</#if> in your ORCID inbox - see summary below. Please visit your <a href="${baseUri}/inbox?lang=${locale}" style="color: #338caf;">ORCID Inbox</a> to take action or see more details.
             </p>
             <#if digestEmail.notificationsBySourceId['ORCID']??><p>
                 ORCID would like to let you know
@@ -49,12 +49,12 @@
                 <#list itemsByType?keys?sort as itemType>
                 <div>${itemType?capitalize}<#if itemType == 'WORK'>s</#if> (${itemsByType[itemType]?size})</div>
                 <ul>
-                <#list itemsByType[itemType] as item>
-                    <li>${item.itemName} <#if item.externalIdentifier??>(${item.externalIdentifier.externalIdentifierType?lower_case}: ${item.externalIdentifier.externalIdentifierId})</#if></li>
+                <#list itemsByType[itemType] as item>                	
+                    <li>${item.itemName} <#if item.externalIdentifier??>(${item.externalIdentifier.externalIdentifierType?lower_case}: <#if item.externalIdentifier.externalIdentifierId?starts_with("http")><a href="${item.externalIdentifier.externalIdentifierId}" style="color: #338caf;">${item.externalIdentifier.externalIdentifierId}</a><#else>${item.externalIdentifier.externalIdentifierId}</#if>)</#if></li>
                 </#list>
                 </ul>
                 </#list>
-                <div><a href="${baseUri}/inbox#${notification.putCode}">more info...</a> <a style="display: inline-block;margin-bottom: 0;font-weight: 400;text-align: center;vertical-align: middle;cursor: pointer;background-image: none;white-space: nowrap;padding: 6px 12px;font-size: 14px;line-height: 1.428571429;border-radius: 4px; color: #fff; background-color: #428bca;border-color: #357ebd;text-decoration: none;" href="${baseUri}/inbox/encrypted/${notification.encryptedPutCode}/action">Add now</a></div>
+                <div><a href="${baseUri}/inbox#${notification.putCode}" style="color: #338caf;">more info...</a> <a style="display: inline-block;margin-bottom: 0;font-weight: 400;text-align: center;vertical-align: middle;cursor: pointer;background-image: none;white-space: nowrap;padding: 6px 12px;font-size: 14px;line-height: 1.428571429;border-radius: 4px; color: #fff; background-color: #428bca;border-color: #357ebd;text-decoration: none;" href="${baseUri}/inbox/encrypted/${notification.encryptedPutCode}/action">Add now</a></div>
             </p>
             <#elseif notificationType == 'AMENDED'>
             <p>
@@ -75,7 +75,7 @@
             </#if>
             </#list>
             <p>
-                <a href="${baseUri}/inbox?lang=${locale}" style="text-decoration: none; text-align: center;">
+                <a href="${baseUri}/inbox?lang=${locale}" style="text-decoration: none; text-align: center; color: #338caf;">
                     <span style="padding-top: 10px; padding-bottom: 10px; padding-left: 15px; padding-right: 15px; background: #338caf; color: #FFF; display: block; width: 300px;">
                         View details in your ORCID inbox
                     </span>

@@ -35,16 +35,6 @@ public interface InternalSSOManager {
     void writeCookie(String orcid, HttpServletRequest request, HttpServletResponse response);
 
     /**
-     * Creates a new token and populate it in a cookie Use this method when a
-     * switch user event happens
-     * 
-     * @param orcid
-     * @param request
-     * @param response
-     * */
-    void writeCookieForSwitchUser(String orcid, HttpServletRequest request, HttpServletResponse response);
-
-    /**
      * Updates an existing cookie
      * 
      * @param orcid

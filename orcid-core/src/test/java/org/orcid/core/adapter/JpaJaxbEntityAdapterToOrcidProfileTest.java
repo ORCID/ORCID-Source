@@ -306,9 +306,9 @@ public class JpaJaxbEntityAdapterToOrcidProfileTest extends DBUnitTest {
         checkDelegation(orcidBio.getDelegation());
 
         assertNull(orcidBio.getScope());
-
-        assertNotNull(orcidBio.getApplications());
-        checkApplications(orcidBio.getApplications());
+//		Applications are not linked with OrcidProfile object anymore.
+//        assertNotNull(orcidBio.getApplications());
+//        checkApplications(orcidBio.getApplications());
 
         ResearcherUrls researcherUrls = orcidBio.getResearcherUrls();
         List<ResearcherUrl> urls = researcherUrls.getResearcherUrl();

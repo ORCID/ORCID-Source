@@ -21,8 +21,9 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.Iterator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Resource;
@@ -48,7 +49,103 @@ import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
 import org.orcid.jaxb.model.clientgroup.RedirectUri;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.jaxb.model.clientgroup.RedirectUris;
-import org.orcid.jaxb.model.message.*;
+import org.orcid.jaxb.model.message.ActivitiesVisibilityDefault;
+import org.orcid.jaxb.model.message.Address;
+import org.orcid.jaxb.model.message.Affiliation;
+import org.orcid.jaxb.model.message.Affiliations;
+import org.orcid.jaxb.model.message.Amount;
+import org.orcid.jaxb.model.message.ApprovalDate;
+import org.orcid.jaxb.model.message.Biography;
+import org.orcid.jaxb.model.message.Citation;
+import org.orcid.jaxb.model.message.Claimed;
+import org.orcid.jaxb.model.message.CompletionDate;
+import org.orcid.jaxb.model.message.ContactDetails;
+import org.orcid.jaxb.model.message.Contributor;
+import org.orcid.jaxb.model.message.ContributorOrcid;
+import org.orcid.jaxb.model.message.Country;
+import org.orcid.jaxb.model.message.CreatedDate;
+import org.orcid.jaxb.model.message.CreationMethod;
+import org.orcid.jaxb.model.message.CreditName;
+import org.orcid.jaxb.model.message.Day;
+import org.orcid.jaxb.model.message.DeactivationDate;
+import org.orcid.jaxb.model.message.DelegateSummary;
+import org.orcid.jaxb.model.message.Delegation;
+import org.orcid.jaxb.model.message.DelegationDetails;
+import org.orcid.jaxb.model.message.DeprecatedDate;
+import org.orcid.jaxb.model.message.DeveloperToolsEnabled;
+import org.orcid.jaxb.model.message.DisambiguatedOrganization;
+import org.orcid.jaxb.model.message.Email;
+import org.orcid.jaxb.model.message.EncryptedPassword;
+import org.orcid.jaxb.model.message.EncryptedSecurityAnswer;
+import org.orcid.jaxb.model.message.EncryptedVerificationCode;
+import org.orcid.jaxb.model.message.ExternalIdCommonName;
+import org.orcid.jaxb.model.message.ExternalIdReference;
+import org.orcid.jaxb.model.message.ExternalIdUrl;
+import org.orcid.jaxb.model.message.ExternalIdentifier;
+import org.orcid.jaxb.model.message.ExternalIdentifiers;
+import org.orcid.jaxb.model.message.FamilyName;
+import org.orcid.jaxb.model.message.Funding;
+import org.orcid.jaxb.model.message.FundingContributor;
+import org.orcid.jaxb.model.message.FundingContributors;
+import org.orcid.jaxb.model.message.FundingList;
+import org.orcid.jaxb.model.message.FundingTitle;
+import org.orcid.jaxb.model.message.FuzzyDate;
+import org.orcid.jaxb.model.message.GivenNames;
+import org.orcid.jaxb.model.message.GivenPermissionBy;
+import org.orcid.jaxb.model.message.GivenPermissionTo;
+import org.orcid.jaxb.model.message.Iso3166Country;
+import org.orcid.jaxb.model.message.Keyword;
+import org.orcid.jaxb.model.message.Keywords;
+import org.orcid.jaxb.model.message.LastModifiedDate;
+import org.orcid.jaxb.model.message.Locale;
+import org.orcid.jaxb.model.message.Month;
+import org.orcid.jaxb.model.message.OrcidActivities;
+import org.orcid.jaxb.model.message.OrcidBio;
+import org.orcid.jaxb.model.message.OrcidDeprecated;
+import org.orcid.jaxb.model.message.OrcidHistory;
+import org.orcid.jaxb.model.message.OrcidIdBase;
+import org.orcid.jaxb.model.message.OrcidIdentifier;
+import org.orcid.jaxb.model.message.OrcidInternal;
+import org.orcid.jaxb.model.message.OrcidPreferences;
+import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.jaxb.model.message.OrcidType;
+import org.orcid.jaxb.model.message.OrcidWork;
+import org.orcid.jaxb.model.message.OrcidWorks;
+import org.orcid.jaxb.model.message.Organization;
+import org.orcid.jaxb.model.message.OrganizationAddress;
+import org.orcid.jaxb.model.message.OrganizationDefinedFundingSubType;
+import org.orcid.jaxb.model.message.OtherNames;
+import org.orcid.jaxb.model.message.PersonalDetails;
+import org.orcid.jaxb.model.message.Preferences;
+import org.orcid.jaxb.model.message.PrimaryRecord;
+import org.orcid.jaxb.model.message.PublicationDate;
+import org.orcid.jaxb.model.message.ReferredBy;
+import org.orcid.jaxb.model.message.ResearcherUrl;
+import org.orcid.jaxb.model.message.ResearcherUrls;
+import org.orcid.jaxb.model.message.SalesforceId;
+import org.orcid.jaxb.model.message.ScopePathType;
+import org.orcid.jaxb.model.message.SecurityDetails;
+import org.orcid.jaxb.model.message.SecurityQuestionId;
+import org.orcid.jaxb.model.message.SendChangeNotifications;
+import org.orcid.jaxb.model.message.SendOrcidNews;
+import org.orcid.jaxb.model.message.Source;
+import org.orcid.jaxb.model.message.SourceClientId;
+import org.orcid.jaxb.model.message.SourceDate;
+import org.orcid.jaxb.model.message.SourceName;
+import org.orcid.jaxb.model.message.SourceOrcid;
+import org.orcid.jaxb.model.message.SubmissionDate;
+import org.orcid.jaxb.model.message.Subtitle;
+import org.orcid.jaxb.model.message.Title;
+import org.orcid.jaxb.model.message.TranslatedTitle;
+import org.orcid.jaxb.model.message.Url;
+import org.orcid.jaxb.model.message.UrlName;
+import org.orcid.jaxb.model.message.VerifiedEmail;
+import org.orcid.jaxb.model.message.VerifiedPrimaryEmail;
+import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.jaxb.model.message.WorkContributors;
+import org.orcid.jaxb.model.message.WorkExternalIdentifiers;
+import org.orcid.jaxb.model.message.WorkTitle;
+import org.orcid.jaxb.model.message.Year;
 import org.orcid.persistence.jpa.entities.BaseEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
@@ -344,7 +441,6 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         orcidBio.setPersonalDetails(getPersonalDetails(profileEntity));
         orcidBio.setKeywords(getKeywords(profileEntity));
         orcidBio.setBiography(getBiography(profileEntity));        
-        orcidBio.setApplications(getApplications(profileEntity));        
         orcidBio.setResearcherUrls(getResearcherUrls(profileEntity));
         return orcidBio;
     }
@@ -740,8 +836,9 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         return null;
     }
 
-    private Applications getApplications(ProfileEntity profileEntity) {
-        Set<OrcidOauth2TokenDetail> tokenDetails = profileEntity.getTokenDetails();
+    @Override
+    public List<org.orcid.pojo.ApplicationSummary> getApplications(List<OrcidOauth2TokenDetail> tokenDetails) {
+    	List<org.orcid.pojo.ApplicationSummary> applications = new ArrayList<org.orcid.pojo.ApplicationSummary>();
 
         if (tokenDetails != null && !tokenDetails.isEmpty()) {
             // verify tokens don't need scopes removed.
@@ -750,50 +847,46 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
             for (OrcidOauth2TokenDetail tokenDetail : tokenDetails)
                 defaultPermissionChecker.removeUserGrantWriteScopePastValitity(tokenDetail);
 
-            Applications applications = new Applications();
             for (OrcidOauth2TokenDetail tokenDetail : tokenDetails) {
                 if (tokenDetail.getTokenDisabled() == null || !tokenDetail.getTokenDisabled()) {
-                    ApplicationSummary applicationSummary = new ApplicationSummary();
+                	org.orcid.pojo.ApplicationSummary applicationSummary = new org.orcid.pojo.ApplicationSummary();
                     ClientDetailsEntity acceptedClient = clientDetailsEntityCacheManager.retrieve(tokenDetail.getClientDetailsId());
 
                     if (acceptedClient != null) {
-                        applicationSummary.setApplicationOrcid(new ApplicationOrcid(getOrcidIdBase(acceptedClient.getClientId())));
-
-                        // Set the name application name
-                        applicationSummary.setApplicationName(new ApplicationName(acceptedClient.getClientName()));
-                        // Set application website
-                        applicationSummary.setApplicationWebsite(new ApplicationWebsite(acceptedClient.getClientWebsite()));
-                        applicationSummary.setApprovalDate(new ApprovalDate(DateUtils.convertToXMLGregorianCalendar(tokenDetail.getDateCreated())));
-
-                        // add group information
+                    	OrcidIdBase idBase = getOrcidIdBase(acceptedClient.getClientId());
+                    	applicationSummary.setOrcidHost(idBase.getHost());
+                    	applicationSummary.setOrcidPath(idBase.getPath());
+                    	applicationSummary.setOrcidUri(idBase.getUri());
+                        applicationSummary.setName(acceptedClient.getClientName());
+                        applicationSummary.setWebsiteValue(acceptedClient.getClientWebsite());
+                        applicationSummary.setApprovalDate(tokenDetail.getDateCreated());
+                        // add group information                        
                         if (!PojoUtil.isEmpty(acceptedClient.getGroupProfileId())) {
-                            ProfileEntity groupEntity = profileEntityCacheManager.retrieve(acceptedClient.getGroupProfileId());
-                            applicationSummary.setApplicationGroupOrcid(new ApplicationOrcid(groupEntity.getId()));
-                            applicationSummary.setApplicationGroupName(new ApplicationName(getGroupDisplayName(groupEntity)));
+                            ProfileEntity groupEntity = profileEntityCacheManager.retrieve(acceptedClient.getGroupProfileId()); 
+                            applicationSummary.setGroupOrcidPath(groupEntity.getId());
+                            applicationSummary.setGroupName(getGroupDisplayName(groupEntity));
                         }
 
                         // Scopes
                         Set<ScopePathType> scopesGrantedToClient = ScopePathType.getScopesFromSpaceSeparatedString(tokenDetail.getScope());
-                        if (scopesGrantedToClient != null && !scopesGrantedToClient.isEmpty()) {
-                            ScopePaths scopePaths = new ScopePaths();
-                            for (ScopePathType scopesForClient : scopesGrantedToClient) {
-                                scopePaths.getScopePath().add(new ScopePath(scopesForClient));
-                            }
-
-                            applicationSummary.setScopePaths(scopePaths);
-                            // Only add to list if there is a scope (if no
-                            // scopes then has been used and is defunct)
-                            // If there are several token with the same scope,
-                            // add just the oldest one
-                            checkApplicationsAndAdd(applicationSummary, applications);
+                        Map<ScopePathType, String> scopePathMap = new HashMap<ScopePathType, String>();
+                        StringBuffer tempBuffer;
+                        for(ScopePathType tempScope : scopesGrantedToClient) {
+                        	tempBuffer = new StringBuffer();
+                        	tempBuffer.append(tempScope.getClass().getName()).append(".").append(tempScope.toString());
+                        	scopePathMap.put(tempScope, localeManager.resolveMessage(tempBuffer.toString()));
+                        }
+                        if(!scopePathMap.isEmpty()) {
+                        	applicationSummary.setScopePaths(scopePathMap);
+                        	checkApplicationsAndAdd(applicationSummary, applications);
                         }
                     }
 
                 }
             }
-            return applications;
         }
-        return null;
+        
+        return applications;
     }
 
     /**
@@ -805,51 +898,36 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
      * @param applications
      *            The list of applications already evaluated
      * */
-    private void checkApplicationsAndAdd(ApplicationSummary applicationSummary, Applications applications) {
-        if (applications == null) {
-            return;
-        }
+    private void checkApplicationsAndAdd(org.orcid.pojo.ApplicationSummary applicationSummary, List<org.orcid.pojo.ApplicationSummary> applications) {
 
-        if (applications.getApplicationSummary().isEmpty()) {
-            applications.getApplicationSummary().add(applicationSummary);
+        if (applications.isEmpty()) {
+            applications.add(applicationSummary);
         } else {
             boolean replaceExisting = false;
             boolean foundExisting = false;
-            Iterator<ApplicationSummary> it = applications.getApplicationSummary().iterator();
-            while (it.hasNext()) {
-                ApplicationSummary existingSummary = it.next();
-                // Check if both apps refer to the same client
-                if (existingSummary.getApplicationOrcid().equals(applicationSummary.getApplicationOrcid())) {
-                    // Check if both apps share all scopes
-                    if (existingSummary.getScopePaths().getScopePath().containsAll(applicationSummary.getScopePaths().getScopePath())) {
-                        if (applicationSummary.getScopePaths().getScopePath().containsAll(existingSummary.getScopePaths().getScopePath())) {
-                            // If they do share the scopes, keep the oldest one
-                            if (applicationSummary.getApprovalDate() != null && applicationSummary.getApprovalDate().getValue() != null) {
-                                foundExisting = true;
-                                XMLGregorianCalendar approvalDate = applicationSummary.getApprovalDate().getValue();
-                                XMLGregorianCalendar existingApprovalDate = null;
-                                if (existingSummary.getApprovalDate() != null && existingSummary.getApprovalDate().getValue() != null) {
-                                    existingApprovalDate = existingSummary.getApprovalDate().getValue();
-                                }
-
-                                if (existingApprovalDate == null) {
-                                    it.remove();
-                                    replaceExisting = true;
-                                    break;
-                                } else if (approvalDate.toGregorianCalendar().before(existingApprovalDate.toGregorianCalendar())) {
-                                    it.remove();
-                                    replaceExisting = true;
-                                    break;
-                                }
-
-                            }
-                        }
+            int index = 0;
+            for(org.orcid.pojo.ApplicationSummary existingSummary : applications) {
+                if (existingSummary.getOrcidPath().equals(applicationSummary.getOrcidPath()) 
+                		&& existingSummary.getScopePaths().keySet().containsAll(applicationSummary.getScopePaths().keySet())
+                		&& applicationSummary.getScopePaths().keySet().containsAll(existingSummary.getScopePaths().keySet())
+                		&& applicationSummary.getApprovalDate() != null) {
+                    foundExisting = true;
+                    Date existingApprovalDate = null;
+                    if (existingSummary.getApprovalDate() != null) {
+                        existingApprovalDate = existingSummary.getApprovalDate();
+                    }
+                    if (existingApprovalDate == null || applicationSummary.getApprovalDate().before(existingApprovalDate)) {
+                        replaceExisting = true;
+                        break;
                     }
                 }
+                index ++;
             }
-
-            if (!foundExisting || replaceExisting) {
-                applications.getApplicationSummary().add(applicationSummary);
+            if(replaceExisting) {
+            	applications.remove(index);
+            	applications.add(applicationSummary);
+            } else if(!foundExisting) {
+            	applications.add(applicationSummary);
             }
         }
     }

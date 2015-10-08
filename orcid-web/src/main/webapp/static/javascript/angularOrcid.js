@@ -36,6 +36,21 @@ function contains(arr, obj) {
     return false;
 }
 
+function formatDate(oldDate) {
+	var date = new Date(oldDate);
+	var day = date.getDate();
+	var month = date.getMonth() + 1;
+	var year = date.getFullYear();
+	if(month < 10) {
+		month = '0' + month;
+	}
+	if(day < 10) {
+		day = '0' + day;
+	}
+	return (year + '-' + month + '-' + day);
+}
+
+
 var PRIVACY = {};
 PRIVACY.PUBLIC = 'PUBLIC';
 PRIVACY.LIMITED = 'LIMITED';
@@ -1329,6 +1344,8 @@ orcidNgModule.factory("prefsSrvc", function ($rootScope) {
 orcidNgModule.factory("notificationsSrvc", ['$rootScope', function ($rootScope) {
     var defaultMaxResults = 10;
     var serv = {
+        loading: true,
+        loadingMore: false,
         firstResult: 0,
         maxResults: defaultMaxResults,
         areMoreFlag: false,
@@ -1354,15 +1371,20 @@ orcidNgModule.factory("notificationsSrvc", ['$rootScope', function ($rootScope) 
                     for(var i = 0; i < data.length; i++){                    	
                         serv.notifications.push(data[i]);
                     }
+                    serv.loading = false;
+                    serv.loadingMore = false;
                     $rootScope.$apply();
                     serv.resizeIframes();
                 }
             }).fail(function() {
+                serv.loading = false;
+                serv.loadingMore = false;
                 // something bad is happening!
                 console.log("error with getting notifications");
             });
         },
         reloadNotifications: function() {
+            serv.loading = true;
             serv.notifications.length = 0;
             serv.firstResult = 0;
             serv.maxResults = defaultMaxResults;
@@ -1391,6 +1413,7 @@ orcidNgModule.factory("notificationsSrvc", ['$rootScope', function ($rootScope) 
             return serv.unreadCount;
         },
         showMore: function() {
+            serv.loadingMore = true;
             serv.firstResult += serv.maxResults;
             serv.getNotifications();
         },
@@ -1911,6 +1934,40 @@ orcidNgModule.controller('NotificationPreferencesCtrl',['$scope', '$compile', 'e
 orcidNgModule.controller('EmailFrequencyCtrl',['$scope', '$compile', 'emailSrvc', 'prefsSrvc', 'emailSrvc', function ($scope, $compile, emailSrvc, prefsSrvc, emailSrvc) {
     $scope.prefsSrvc = prefsSrvc;
     $scope.emailSrvc = emailSrvc;
+}]);
+
+orcidNgModule.controller('EmailFrequencyLinkCtrl',['$scope','$rootScope', function ($scope, $rootScope) {
+	$scope.getEmailFrequencies = function() {
+		$.ajax({
+            url: window.location.href + '/email-frequencies.json',
+            type: 'GET',
+            dataType: 'json',
+            success: function(data) {
+                $scope.emailFrequency = data;
+                $rootScope.$apply();
+            }
+        }).fail(function() {
+            console.log("error with frequency");
+        });
+	};
+	
+    $scope.saveEmailFrequencies = function() {
+        $.ajax({
+            url: window.location.href + '/email-frequencies.json',
+            type: 'POST',
+            data: angular.toJson($scope.emailFrequency),
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            success: function(data) {
+                $scope.emailFrequency = data;
+                $rootScope.$apply();
+            }
+        }).fail(function() {
+            console.log("error with frequency");
+        });
+    };
+    
+    $scope.getEmailFrequencies();
 }]);
 
 orcidNgModule.controller('WorksPrivacyPreferencesCtrl',['$scope', 'prefsSrvc', function ($scope, prefsSrvc) {
@@ -2946,13 +3003,13 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
     };
     
     
-    $scope.setRecaptchaWidgetId = function (widgetId) {
-        console.log('Widget ID: ' + widgetId)
+    $scope.setRecaptchaWidgetId = function (widgetId) {  
+    	console.log('Widget ID: ' + widgetId)
     	$scope.recaptchaWidgetId = widgetId;
     };
 
     $scope.setRecatchaResponse = function (response) {
-        console.log('Yey recaptcha response!');
+    	console.log('Yey recaptcha response!');
         $scope.recatchaResponse = response;
     };
     //init
@@ -6128,11 +6185,10 @@ orcidNgModule.controller('DelegatorsCtrl',['$scope', '$compile', function ($scop
 
 }]);
 
-//Controller for Shibboleth accounts
-orcidNgModule.controller('ShibbolethCtrl',['$scope', '$compile', function ShibbolethCtrl($scope, $compile){
+orcidNgModule.controller('SocialCtrl',['$scope', '$compile', function SocialCtrl($scope, $compile){
     $scope.showLoader = false;
     $scope.sort = {
-        column: 'remoteUser',
+        column: 'providerUserId',
         descending: false
     };
 
@@ -6146,31 +6202,32 @@ orcidNgModule.controller('ShibbolethCtrl',['$scope', '$compile', function Shibbo
         }
     };
 
-    $scope.confirmRevoke = function(shibbolethRemoteUser, id) {
+    $scope.confirmRevoke = function(id) {
         $scope.errors = [];
-        $scope.shibbolethRemoteUserToRevoke = shibbolethRemoteUser;
+        $scope.socialRemoteUserToRevoke = id.provideruserid;
         $scope.idToManage = id;
         $.colorbox({
-            html : $compile($('#revoke-shibboleth-account-modal').html())($scope)
+            html : $compile($('#revoke-social-account-modal').html())($scope)
 
         });
         $.colorbox.resize();
     };
 
     $scope.revoke = function () {
-        var revokeShibbolethAccount = {};
-        revokeShibbolethAccount.idToManage = $scope.idToManage;
-        revokeShibbolethAccount.password = $scope.password;
+        var revokeSocialAccount = {};
+        revokeSocialAccount.idToManage = $scope.idToManage;
+        revokeSocialAccount.password = $scope.password;
         $.ajax({
-            url: getBaseUri() + '/account/revokeShibbolethAccount.json',
+            url: getBaseUri() + '/account/revokeSocialAccount.json',
             type: 'POST',
-            data:  angular.toJson(revokeShibbolethAccount),
+            data:  angular.toJson(revokeSocialAccount),
             contentType: 'application/json;charset=UTF-8',
             success: function(data) {
                 if(data.errors.length === 0){
-                    $scope.getShibbolethAccounts();
+                    $scope.getSocialAccounts();
                     $scope.$apply();
                     $scope.closeModal();
+                    $scope.password = "";
                 }
                 else{
                     $scope.errors = data.errors;
@@ -6179,21 +6236,21 @@ orcidNgModule.controller('ShibbolethCtrl',['$scope', '$compile', function Shibbo
             }
         }).fail(function() {
             // something bad is happening!
-            console.log("$ShibbolethCtrl.revoke() error");
+            console.log("$SocialCtrl.revoke() error");
         });
     };
 
-    $scope.getShibbolethAccounts = function() {
+    $scope.getSocialAccounts = function() {
         $.ajax({
-            url: getBaseUri() + '/account/shibbolethAccounts.json',
+            url: getBaseUri() + '/account/socialAccounts.json',
             dataType: 'json',
             success: function(data) {
-                $scope.shibbolethAccounts = data;
+                $scope.socialAccounts = data;
                 $scope.$apply();
             }
         }).fail(function() {
             // something bad is happening!
-            console.log("error getting shibboleth accounts");
+            console.log("error getting social accounts");
         });
     };
 
@@ -6201,7 +6258,7 @@ orcidNgModule.controller('ShibbolethCtrl',['$scope', '$compile', function Shibbo
         $.colorbox.close();
     };
     // init
-    $scope.getShibbolethAccounts();
+    $scope.getSocialAccounts();
 
 }]);
 
@@ -6345,6 +6402,10 @@ orcidNgModule.controller('languageCtrl',['$scope', '$cookies', 'widgetSrvc', fun
             {
                 "value": 'fr',
                 "label": 'Français'
+            },
+            {
+                "value": 'it',
+                "label": 'Italiano'
             },
             {
                 "value": 'ja',
@@ -6820,10 +6881,13 @@ orcidNgModule.controller('profileDeprecationCtrl',['$scope','$compile', function
 }]);
 
 orcidNgModule.controller('revokeApplicationFormCtrl',['$scope', '$compile', function ($scope,$compile){
-    $scope.confirmRevoke = function(appName, appGroupName, appIndex){
-        $scope.appName = appName;
-        $scope.appIndex = appIndex;
-        $scope.appGroupName = appGroupName;
+    $scope.confirmRevoke = function(applicationSummary){
+        $scope.appName = applicationSummary.name;
+        $scope.appClientId = applicationSummary.orcidPath;
+        $scope.appScopePaths = [];
+        for (var scopePath in applicationSummary.scopePaths) {
+        	 $scope.appScopePaths.push(scopePath);
+    	}
         $.colorbox({
             html : $compile($('#confirm-revoke-access-modal').html())($scope),
             transition: 'fade',
@@ -6837,13 +6901,45 @@ orcidNgModule.controller('revokeApplicationFormCtrl',['$scope', '$compile', func
     };
 
     $scope.revokeAccess = function(){
-        orcidGA.gaPush(['_trackEvent', 'Disengagement', 'Revoke_Access', 'OAuth '+ orcidGA.buildClientString($scope.appGroupName, $scope.appName)]);
-        orcidGA.gaFormSumbitDelay($('#revokeApplicationForm' + $scope.appIndex));
+        $.ajax({
+            url: getBaseUri() + '/account/revoke-application.json?applicationOrcid='+$scope.appClientId+'&scopePaths='+$scope.appScopePaths,
+            type: 'POST',
+            success: function(data) {
+                $scope.getApplications();
+                $scope.$apply();
+                $scope.closeModal();
+            }
+        }).fail(function() {
+            // something bad is happening!
+            console.log("revokeApplicationFormCtrl.revoke() error");
+        });
     };
 
     $scope.closeModal = function() {
         $.colorbox.close();
     };
+    
+    $scope.getApplications = function() {
+	    $.ajax({
+	        url: getBaseUri()+'/account/get-trusted-orgs.json',
+	        type: 'GET',
+	        dataType: 'json',
+	        success: function(data){
+	        	$scope.$apply(function(){
+	        		for(var index1 = 0; index1 < data.length; index1 ++) {
+	        			data[index1].approvalDate = formatDate(data[index1].approvalDate);
+	            	}
+	        		$scope.applicationSummaryList = data;
+	        	});
+	        }
+	    }).fail(function(error) {
+	        // something bad is happening!
+	        console.log("Error finding the information");
+	    });
+    }
+    
+    $scope.getApplications();
+    
 }]);
 
 /**

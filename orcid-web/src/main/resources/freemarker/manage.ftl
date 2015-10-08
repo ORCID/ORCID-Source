@@ -179,10 +179,7 @@
 	                                ${springMacroRequestContext.getMessage("change_notification_preferences.sendmemberupdaterequests")}
 	                            </label>
                                 <h5>${springMacroRequestContext.getMessage("change_notification_preferences.newstitle")}</h5>
-	                            <label class="checkbox"> <input type="checkbox"
-                                    id="sendOrcidNews" name="sendOrcidNews"
-                                    ng-model="prefsSrvc.prefs.sendOrcidNews"
-                                    ng-change="prefsSrvc.savePrivacyPreferences()" />
+	                            <label>
                                     ${springMacroRequestContext.getMessage("change_notification_preferences.sendinformation")}
                                 </label>
 	                        </div>
@@ -213,6 +210,7 @@
                                     </select>
                                 </div>
                                 <div>${springMacroRequestContext.getMessage("manage.service_announcements")}</div>
+                                <div><small class="italic">${springMacroRequestContext.getMessage("manage.service_announcements.note")}</small></div>
                             </div>
                         </td>
                     </tr>
@@ -455,61 +453,39 @@
             <a href="${springMacroRequestContext.getMessage("manage.findoutmore.trustedOrganizations.url")}"
                 target=_blank"">${springMacroRequestContext.getMessage("manage.findoutmore")}</a>
         </p>
-        <#if (profile.orcidBio.applications.applicationSummary)?? && (profile.orcidBio.applications.applicationSummary?size > 0)>
-        <table ng-controller="revokeApplicationFormCtrl"
-            class="table table-bordered settings-table normal-width">
-            <thead>
-                <tr>
-                    <th width="35%">${springMacroRequestContext.getMessage("manage.thproxy")}</th>
-                    <th width="5%">${springMacroRequestContext.getMessage("manage.thapprovaldate")}</th>
-                    <th width="35%">${springMacroRequestContext.getMessage("manage.thaccesstype")}</th>
-                    <td width="5%"></td>
-                </tr>
-            </thead>
-            <tbody>
-                <#list profile.orcidBio.applications.applicationSummary as
-                applicationSummary>
-                <tr>
-                    <form action="manage/revoke-application" method="post"
-                        class="revokeApplicationForm"
-                        id="revokeApplicationForm${applicationSummary_index}">
-                        <td class="revokeApplicationName">${(applicationSummary.applicationName.content)!?html}<br />
-                        <#if (applicationSummary.applicationWebsite)??>
-                        <a href="<@orcid.absUrl applicationSummary.applicationWebsite/>">${applicationSummary.applicationWebsite.value?html}</a>
-                        </#if>
-                        </td>
-                        <td width="35%">${applicationSummary.approvalDate.value.toGregorianCalendar().time?date?iso_local}</td>
-                        <td width="5%"><input type="hidden" name="applicationOrcid"
-                            value="${applicationSummary.applicationOrcid.path}" /> <input
-                            type="hidden" name="confirmed" value="no" /> <input type="hidden"
-                            name="revokeApplicationName"
-                            value="${applicationSummary.applicationName.content?html}" /> <#if
-                            applicationSummary.scopePaths??> <#list
-                            applicationSummary.scopePaths.scopePath as scopePath> <input
-                            type="hidden" name="scopePaths"
-                            value="${scopePath.value.value()}" /> <@spring.message
-                            "${scopePath.value.declaringClass.name}.${scopePath.value}"/>
-                            <#if scopePath_has_next>;&nbsp;</#if> </#list> </#if></td width="35%">
-                        <td width="5%">
-                            <#if (applicationSummary.applicationGroupName)??>
-                                <a id="revokeAppBtn" name="${applicationSummary.applicationOrcid.path}" ng-click="confirmRevoke('${applicationSummary.applicationName.content?js_string}','${applicationSummary.applicationGroupName.content?js_string}', '${applicationSummary_index}')"
-                                class="glyphicon glyphicon-trash grey"
-                                title="${springMacroRequestContext.getMessage("manage.revokeaccess")}"></a>
-                            <#else>
-                                <a id="revokeAppBtn" name="${applicationSummary.applicationOrcid.path}" ng-click="confirmRevoke('${applicationSummary.applicationName.content?js_string}','', '${applicationSummary_index}')"
-                                class="glyphicon glyphicon-trash grey"
-                                title="${springMacroRequestContext.getMessage("manage.revokeaccess")}"></a>
-                            </#if>
-                        </td>
-                    </form>
-                </tr>
-                </#list>
-            </tbody>
-        </table>
-        <#else>
-        	<div id="noApplications"></div>
-        </#if>
-        
+        <div ng-controller="revokeApplicationFormCtrl" >
+        	<div ng-show="applicationSummaryList.length > 0">
+		        <table class="table table-bordered settings-table normal-width">
+		            <thead>
+		                <tr>
+		                    <th width="35%">${springMacroRequestContext.getMessage("manage.thproxy")}</th>
+		                    <th width="5%">${springMacroRequestContext.getMessage("manage.thapprovaldate")}</th>
+		                    <th width="35%">${springMacroRequestContext.getMessage("manage.thaccesstype")}</th>
+		                    <td width="5%"></td>
+		                </tr>
+		            </thead>
+		            <tbody>
+		                <tr data-ng-repeat="applicationSummary in applicationSummaryList">
+		                	<td class="revokeApplicationName">{{applicationSummary.name}}<br />
+		                        <a data-ng-hide="applicationSummary.websiteValue == null" href="{{applicationSummary.websiteValue}}">{{applicationSummary.websiteValue}}</a>
+		                    </td>
+		                    <td width="35%">{{applicationSummary.approvalDate}}</td>
+		                    <td width="5%">
+		                        <div data-ng-show="applicationSummary.scopePaths">
+		                        	<span data-ng-repeat="(key, value) in applicationSummary.scopePaths">
+		                        	{{value}}
+		                    		</span>
+		                    	</div>
+		                    </td>
+		                    <td width="5%">
+	            				<a id="revokeAppBtn" name="{{applicationSummary.groupOrcidPath}}" ng-click="confirmRevoke(applicationSummary)"
+	            					class="glyphicon glyphicon-trash grey" title="${springMacroRequestContext.getMessage("manage.revokeaccess")}"></a>
+		    				</td>
+		                </tr>
+		            </tbody>
+		        </table>
+			</div>
+        </div>
         <h1>
             ${springMacroRequestContext.getMessage("settings.tdtrustindividual")}
         </h1>
@@ -586,32 +562,32 @@
             </div>
             <div id="no-results-alert" class="orcid-hide alert alert-error no-delegate-matches"><@spring.message "orcid.frontend.web.no_results"/></div>
         </div>
-        <#if (RequestParameters['shibboleth'])??>
+        <#if ((RequestParameters['social'])?? ||(RequestParameters['shibboleth'])??)>
         <div>
             <h1>
-                Shibboleth accounts
+                <@orcid.msg 'manage_signin_title' />
             </h1>
             <p>
-                Click <a href="<@orcid.rootPath '/shibboleth/link'/>">here</a> to link a new Shibboleth account.
+            	<@orcid.msg 'manage_signin_subtitle' />
             </p>
-            <div ng-controller="ShibbolethCtrl" id="ShibbolethCtrl">
-                <table class="table table-bordered settings-table normal-width" ng-show="shibbolethAccounts" ng-cloak>
+            <div ng-controller="SocialCtrl" id="SocialCtrl">
+                <table class="table table-bordered settings-table normal-width" ng-show="socialAccounts" ng-cloak>
                     <thead>
                         <tr>
-                            <th width="40%" ng-click="changeSorting('remoteUser')">Shibboleth Account ID</th>
-                            <th width="30%" ng-click="changeSorting('shibIdentityProvider')">Identity Provider</th>
+                            <th width="40%" ng-click="changeSorting('providerUserId')"><@orcid.msg 'manage_signin_table_header1' /></th>
+                            <th width="30%" ng-click="changeSorting('providerId')"><@orcid.msg 'manage_signin_table_header2' /></th>
                             <th width="20%" ng-click="changeSorting('dateCreated')"><@orcid.msg 'manage_delegators.delegates_table.access_granted' /></th>
                             <td width="10%"></td>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr ng-repeat="shibbolethAccount in shibbolethAccounts | orderBy:sort.column:sort.descending">
-                            <td width="40%"><a href="{{delegationDetails.delegateSummary.orcidIdentifier.uri}}" target="_blank">{{shibbolethAccount.remoteUser}}</a></td>
-                            <td width="30%"><a href="{{delegationDetails.delegateSummary.orcidIdentifier.uri}}" target="_blank">{{shibbolethAccount.shibIdentityProvider}}</a></td>
-                            <td width="20%">{{shibbolethAccount.dateCreated|date:'yyyy-MM-dd'}}</td>
+                        <tr ng-repeat="socialAccount in socialAccounts | orderBy:sort.column:sort.descending">
+                            <td width="40%"><a href="{{delegationDetails.delegateSummary.orcidIdentifier.uri}}" target="_blank">{{socialAccount.id.provideruserid}}</a></td>
+                            <td width="30%"><a href="{{delegationDetails.delegateSummary.orcidIdentifier.uri}}" target="_blank">{{socialAccount.id.providerid}}</a></td>
+                            <td width="20%">{{socialAccount.dateCreated|date:'yyyy-MM-dd'}}</td>
                             <td width="10%">
                                 <a
-                                ng-click="confirmRevoke(shibbolethAccount.remoteUser, shibbolethAccount.id)"
+                                ng-click="confirmRevoke(socialAccount.id)"
                                 class="glyphicon glyphicon-trash grey"
                                 title="${springMacroRequestContext.getMessage("manage.revokeaccess")}"></a>
                             </td>
@@ -752,6 +728,28 @@
     <div class="lightbox-container">
         <h3>Revoke Shibboleth Account</h3>
         <p>{{shibbolethRemoteUserToRevoke}}</p>
+        <form ng-submit="revoke()">
+            <div>
+                <h3><@orcid.msg 'check_password_modal.confirm_password' /></h3>
+                <label for="confirm_add_delegate_modal.password" class=""><@orcid.msg 'check_password_modal.password' /></label>
+                <input id="confirm_add_delegate_modal.password" type="password" name="confirm_add_delegate_modal.password" ng-model="password" class="input-large"/> <span class="required">*</span>
+                <span class="orcid-error" ng-show="errors.length > 0">
+                    <span ng-repeat='error in errors' ng-bind-html="error"></span>
+                </span>
+            </div>
+            <button class="btn btn-danger"><@orcid.msg 'manage_delegation.btnrevokeaccess'/></button>
+            <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
+        </form>
+        <div ng-show="errors.length === 0">
+            <br></br>
+        </div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="revoke-social-account-modal">
+    <div class="lightbox-container">
+        <h3>Revoke Social Account</h3>
+        <p>{{socialRemoteUserToRevoke}}</p>
         <form ng-submit="revoke()">
             <div>
                 <h3><@orcid.msg 'check_password_modal.confirm_password' /></h3>

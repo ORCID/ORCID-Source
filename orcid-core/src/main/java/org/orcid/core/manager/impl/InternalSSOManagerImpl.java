@@ -63,21 +63,6 @@ public class InternalSSOManagerImpl implements InternalSSOManager {
         //Save the cookie in the response
         populateCookie(orcid, token, request, response);
     }
-    
-    /**
-     * Creates a new token and populate it in a cookie
-     * Use this method when a switch user event happens
-     * 
-     * @param orcid
-     * @param request
-     * @param response
-     * */
-    public void writeCookieForSwitchUser(String orcid, HttpServletRequest request, HttpServletResponse response) {
-        //Generate the token
-        String token = generateAndStoreToken(orcid);
-        //Save the cookie in the response
-        populateCookie(orcid, token, request, response);
-    }
 
     private void populateCookie(String orcid, String token, HttpServletRequest request, HttpServletResponse response) {
         HashMap<String, String> cookieValues = new HashMap<String, String>();

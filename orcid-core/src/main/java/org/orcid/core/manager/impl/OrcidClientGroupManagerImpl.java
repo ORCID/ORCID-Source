@@ -671,7 +671,7 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
 
     private void addPremiumOnlyScopes(Set<String> scopes) {
         scopes.add(ScopePathType.WEBHOOK.value());
-        scopes.add(ScopePathType.PREMIUM_NOTIFICATION.value());
+        // scopes.add(ScopePathType.PREMIUM_NOTIFICATION.value());
     }
 
     /**

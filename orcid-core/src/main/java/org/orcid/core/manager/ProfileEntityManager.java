@@ -26,7 +26,9 @@ import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.record.summary.ActivitiesSummary;
+import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.pojo.ApplicationSummary;
 
 /**
  * User: Declan Newman (declan) Date: 10/02/2012 </p>
@@ -82,4 +84,6 @@ public interface ProfileEntityManager {
     boolean reviewProfile(String orcid);
     
     Visibility getResearcherUrlDefaultVisibility(String orcid);
+
+    List<ApplicationSummary> getApplications(List<OrcidOauth2TokenDetail> tokenDetails);
 }

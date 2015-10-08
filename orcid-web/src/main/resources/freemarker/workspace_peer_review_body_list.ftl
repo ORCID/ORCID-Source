@@ -49,8 +49,8 @@
 				                                         </li>
 									            	</#if>
 			                                    	<!-- Search & Link -->
-			                                        <li>
-			                                            <a ng-show="noLinkFlag" class="action-option manage-button" ng-click="showPeerReviewImportWizard()">
+			                                        <li ng-show="noLinkFlag">
+			                                            <a class="action-option manage-button" ng-click="showPeerReviewImportWizard()">
 			                                                <span class="glyphicon glyphicon-cloud-upload"></span> <@orcid.msg 'workspace_peer_review_body_list.searchAndLink'/> 
 														</a>
 			                                         </li>                                                                 

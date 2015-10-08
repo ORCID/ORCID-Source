@@ -19,7 +19,7 @@
 <#import "email_macros.ftl" as emailMacros />
 Hi ${emailName},
 
-You have ${totalMessageCount} new <#if totalMessageCount == 1>notification<#else>notifications</#if> in your ORCID inbox - see summary below. Please visit your ORCID Inbox (${baseUri}/inbox) to take action or see more details.
+You have ${totalMessageCount} new <#if ((totalMessageCount?number) == 1)>notification<#else>notifications</#if> in your ORCID inbox - see summary below. Please visit your ORCID Inbox (${baseUri}/inbox) to take action or see more details.
 
 <#if digestEmail.notificationsBySourceId['ORCID']??>
 ORCID would like to let you know

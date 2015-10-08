@@ -170,6 +170,18 @@
 			default-target-url="/shibboleth/link" />
 		<sec:session-management session-fixation-protection="migrateSession"/>
 	</sec:http>
+	
+	<sec:http pattern="/social/.*" access-denied-page="/signin"
+		access-decision-manager-ref="accessDecisionManager" create-session="ifRequired"
+		path-type="regex">
+		<sec:intercept-url pattern="/social/access(\?.*)?"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/social/.*" access="ROLE_USER" />		
+		<sec:form-login authentication-failure-url="/social/access"
+			login-page="/social/access" login-processing-url="/signin/auth"
+			username-parameter="userId" password-parameter="password" />
+		<sec:session-management session-fixation-protection="migrateSession"/>
+	</sec:http>
 
 	<sec:http access-denied-page="/signin"
 		access-decision-manager-ref="accessDecisionManager" create-session="ifRequired"
@@ -178,6 +190,10 @@
 		<sec:intercept-url pattern="/statistics/liveids.json(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/statistics(/)?$"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/notifications/frequencies/[^\/\?#:]*(\?.*)?"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/notifications/frequencies/[^\/\?#:]*/email-frequencies.json(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX](\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
@@ -200,6 +216,10 @@
 		<sec:intercept-url pattern="/login(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/signin(\?.*)?"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/signin/facebook(\?.*)?"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/signin/google(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/userStatus.json(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />

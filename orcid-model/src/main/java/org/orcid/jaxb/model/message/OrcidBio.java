@@ -63,7 +63,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType( propOrder = { "personalDetails", "biography", "researcherUrls", "contactDetails", "keywords", "externalIdentifiers", "delegation", "applications" })
+@XmlType( propOrder = { "personalDetails", "biography", "researcherUrls", "contactDetails", "keywords", "externalIdentifiers", "delegation"})
 public class OrcidBio implements Serializable {
 
     private final static long serialVersionUID = 1L;
@@ -79,7 +79,6 @@ public class OrcidBio implements Serializable {
     @XmlElement(name = "external-identifiers")
     protected ExternalIdentifiers externalIdentifiers;
     protected Delegation delegation;
-    protected Applications applications;
     @XmlAttribute
     protected Scope scope;
 
@@ -205,27 +204,6 @@ public class OrcidBio implements Serializable {
     }
 
     /**
-     * Gets the value of the applications property.
-     * 
-     * @return possible object is {@link Applications }
-     * 
-     */
-    public Applications getApplications() {
-        return applications;
-    }
-
-    /**
-     * Sets the value of the applications property.
-     * 
-     * @param value
-     *            allowed object is {@link Applications }
-     * 
-     */
-    public void setApplications(Applications value) {
-        this.applications = value;
-    }
-
-    /**
      * Gets the value of the scope property.
      * 
      * @return possible object is {@link Scope }
@@ -258,7 +236,6 @@ public class OrcidBio implements Serializable {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((applications == null) ? 0 : applications.hashCode());
         result = prime * result + ((biography == null) ? 0 : biography.hashCode());
         result = prime * result + ((contactDetails == null) ? 0 : contactDetails.hashCode());
         result = prime * result + ((delegation == null) ? 0 : delegation.hashCode());
@@ -279,11 +256,6 @@ public class OrcidBio implements Serializable {
         if (getClass() != obj.getClass())
             return false;
         OrcidBio other = (OrcidBio) obj;
-        if (applications == null) {
-            if (other.applications != null)
-                return false;
-        } else if (!applications.equals(other.applications))
-            return false;
         if (biography == null) {
             if (other.biography != null)
                 return false;
