@@ -14,16 +14,20 @@
  *
  * =============================================================================
  */
-package org.orcid.jaxb.model.notification.amended;
+package org.orcid.core.exception;
 
-import javax.xml.bind.annotation.XmlEnum;
+import java.util.Map;
 
 /**
  * 
- * @author Will Simpson
- *
+ * @author Angel Montenegro
+ * 
  */
-@XmlEnum
-public enum AmendedSection {
-    AFFILIATION, BIO, EDUCATION, EMPLOYMENT, EXTERNAL_IDENTIFIERS, FUNDING, PEER_REVIEW, PREFERENCES, WORK, UNKNOWN;
+public class OrcidNotificationException extends ApplicationException {
+
+    private static final long serialVersionUID = 1L;
+
+	public OrcidNotificationException(Map<String, String> params) {
+		super(params);
+	}
 }

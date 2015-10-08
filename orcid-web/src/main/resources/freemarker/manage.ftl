@@ -179,10 +179,7 @@
 	                                ${springMacroRequestContext.getMessage("change_notification_preferences.sendmemberupdaterequests")}
 	                            </label>
                                 <h5>${springMacroRequestContext.getMessage("change_notification_preferences.newstitle")}</h5>
-	                            <label class="checkbox"> <input type="checkbox"
-                                    id="sendOrcidNews" name="sendOrcidNews"
-                                    ng-model="prefsSrvc.prefs.sendOrcidNews"
-                                    ng-change="prefsSrvc.savePrivacyPreferences()" />
+	                            <label>
                                     ${springMacroRequestContext.getMessage("change_notification_preferences.sendinformation")}
                                 </label>
 	                        </div>
@@ -213,6 +210,7 @@
                                     </select>
                                 </div>
                                 <div>${springMacroRequestContext.getMessage("manage.service_announcements")}</div>
+                                <div><small class="italic">${springMacroRequestContext.getMessage("manage.service_announcements.note")}</small></div>
                             </div>
                         </td>
                     </tr>
@@ -567,34 +565,17 @@
         <#if ((RequestParameters['social'])?? ||(RequestParameters['shibboleth'])??)>
         <div>
             <h1>
-                Social accounts
+                <@orcid.msg 'manage_signin_title' />
             </h1>
             <p>
-                <table>
-					<tr>
-						<td>
-							<form action="<@orcid.rootPath '/signin/facebook'/>" method="POST">
-							    Click <button type="submit" class="btn-link socialButton">Facebook</button>
-							    <input type="hidden" name="scope" value="email" />
-							</form>
-						</td>
-						<td>
-							<form action="<@orcid.rootPath '/signin/google'/>" method="POST">
-							  ,<button type="submit" class="btn-link socialButton">Google</button>
-							    <input type="hidden" name="scope" value="email" />
-							</form>
-						</td>
-						<td>
-							or <a href="<@orcid.rootPath '/shibboleth/link'/>" class="btn-link">Shibboleth</a> to link a new Social account
-						</td>
-				</table>
+            	<@orcid.msg 'manage_signin_subtitle' />
             </p>
             <div ng-controller="SocialCtrl" id="SocialCtrl">
                 <table class="table table-bordered settings-table normal-width" ng-show="socialAccounts" ng-cloak>
                     <thead>
                         <tr>
-                            <th width="40%" ng-click="changeSorting('providerUserId')">Social Account ID</th>
-                            <th width="30%" ng-click="changeSorting('providerId')">Identity Provider</th>
+                            <th width="40%" ng-click="changeSorting('providerUserId')"><@orcid.msg 'manage_signin_table_header1' /></th>
+                            <th width="30%" ng-click="changeSorting('providerId')"><@orcid.msg 'manage_signin_table_header2' /></th>
                             <th width="20%" ng-click="changeSorting('dateCreated')"><@orcid.msg 'manage_delegators.delegates_table.access_granted' /></th>
                             <td width="10%"></td>
                         </tr>

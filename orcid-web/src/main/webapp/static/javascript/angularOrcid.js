@@ -1345,6 +1345,7 @@ orcidNgModule.factory("notificationsSrvc", ['$rootScope', function ($rootScope) 
     var defaultMaxResults = 10;
     var serv = {
         loading: true,
+        loadingMore: false,
         firstResult: 0,
         maxResults: defaultMaxResults,
         areMoreFlag: false,
@@ -1353,7 +1354,6 @@ orcidNgModule.factory("notificationsSrvc", ['$rootScope', function ($rootScope) 
         unreadCount: 0,
         showArchived: false,
         getNotifications: function() {
-            serv.loading = true;
             var url = getBaseUri() + '/inbox/notifications.json?firstResult=' + serv.firstResult + '&maxResults=' + serv.maxResults;
             if(serv.showArchived){
                 url += "&includeArchived=true";                
@@ -1372,11 +1372,13 @@ orcidNgModule.factory("notificationsSrvc", ['$rootScope', function ($rootScope) 
                         serv.notifications.push(data[i]);
                     }
                     serv.loading = false;
+                    serv.loadingMore = false;
                     $rootScope.$apply();
                     serv.resizeIframes();
                 }
             }).fail(function() {
                 serv.loading = false;
+                serv.loadingMore = false;
                 // something bad is happening!
                 console.log("error with getting notifications");
             });
@@ -1411,6 +1413,7 @@ orcidNgModule.factory("notificationsSrvc", ['$rootScope', function ($rootScope) 
             return serv.unreadCount;
         },
         showMore: function() {
+            serv.loadingMore = true;
             serv.firstResult += serv.maxResults;
             serv.getNotifications();
         },
@@ -1931,6 +1934,40 @@ orcidNgModule.controller('NotificationPreferencesCtrl',['$scope', '$compile', 'e
 orcidNgModule.controller('EmailFrequencyCtrl',['$scope', '$compile', 'emailSrvc', 'prefsSrvc', 'emailSrvc', function ($scope, $compile, emailSrvc, prefsSrvc, emailSrvc) {
     $scope.prefsSrvc = prefsSrvc;
     $scope.emailSrvc = emailSrvc;
+}]);
+
+orcidNgModule.controller('EmailFrequencyLinkCtrl',['$scope','$rootScope', function ($scope, $rootScope) {
+	$scope.getEmailFrequencies = function() {
+		$.ajax({
+            url: window.location.href + '/email-frequencies.json',
+            type: 'GET',
+            dataType: 'json',
+            success: function(data) {
+                $scope.emailFrequency = data;
+                $rootScope.$apply();
+            }
+        }).fail(function() {
+            console.log("error with frequency");
+        });
+	};
+	
+    $scope.saveEmailFrequencies = function() {
+        $.ajax({
+            url: window.location.href + '/email-frequencies.json',
+            type: 'POST',
+            data: angular.toJson($scope.emailFrequency),
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            success: function(data) {
+                $scope.emailFrequency = data;
+                $rootScope.$apply();
+            }
+        }).fail(function() {
+            console.log("error with frequency");
+        });
+    };
+    
+    $scope.getEmailFrequencies();
 }]);
 
 orcidNgModule.controller('WorksPrivacyPreferencesCtrl',['$scope', 'prefsSrvc', function ($scope, prefsSrvc) {
@@ -2966,13 +3003,13 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
     };
     
     
-    $scope.setRecaptchaWidgetId = function (widgetId) {
-        console.log('Widget ID: ' + widgetId)
+    $scope.setRecaptchaWidgetId = function (widgetId) {  
+    	console.log('Widget ID: ' + widgetId)
     	$scope.recaptchaWidgetId = widgetId;
     };
 
     $scope.setRecatchaResponse = function (response) {
-        console.log('Yey recaptcha response!');
+    	console.log('Yey recaptcha response!');
         $scope.recatchaResponse = response;
     };
     //init
@@ -6365,6 +6402,10 @@ orcidNgModule.controller('languageCtrl',['$scope', '$cookies', 'widgetSrvc', fun
             {
                 "value": 'fr',
                 "label": 'Français'
+            },
+            {
+                "value": 'it',
+                "label": 'Italiano'
             },
             {
                 "value": 'ja',

@@ -80,6 +80,7 @@
             <xs:enumeration value="employment"></xs:enumeration>
             <xs:enumeration value="funding"></xs:enumeration>
             <xs:enumeration value="work"></xs:enumeration>
+            <xs:enumeration value="peer-review"></xs:enumeration>
         </xs:restriction>
     </xs:simpleType>
     <xs:complexType name="actioned-date">        
