@@ -79,7 +79,7 @@
 				<br>
 				<br><@emailMacros.msg "email.service_announcement.footer_text2" /><a href="${emailFrequencyUrl}" target="_blank">[<@emailMacros.msg "email.service_announcement.footer_frequency_link" />]</a>
 				<br>
-				<br><@emailMacros.msg "email.service_announcement.footer_text2" /><a href="${baseUri}/account" target="_blank">[<@emailMacros.msg "email.service_announcement.footer_account_link" />]</a>
+				<br><@emailMacros.msg "email.service_announcement.footer_text3" /><a href="${baseUri}/account" target="_blank">[<@emailMacros.msg "email.service_announcement.footer_account_link" />]</a>
 				<br>
 				<br><@emailMacros.msg "email.service_announcement.footer_orcid_id" /><a href="${baseUri}/${orcid}" target="_blank">${baseUri}/${orcid}</a>
 			</p>

@@ -194,16 +194,18 @@ public class NotificationController extends BaseController {
         return new ModelAndView("redirect:" + redirectUrl);
     }
     
-    @RequestMapping(value = "/email-frequencies.json", method = RequestMethod.GET)
-    public @ResponseBody Preferences getDefaultPreference(HttpServletRequest request, @ModelAttribute("primaryEmail") String emailId) {
-    	OrcidProfile profile = orcidProfileManager.retrieveOrcidProfileByEmail(emailId);
-        profile.getOrcidInternal().getPreferences();
-        return profile.getOrcidInternal().getPreferences() != null ? profile.getOrcidInternal().getPreferences() : new Preferences();
+    @RequestMapping(value = "/frequencies/{encryptedEmail}/email-frequencies.json", method = RequestMethod.GET)
+    public @ResponseBody Preferences getDefaultPreference(HttpServletRequest request, @PathVariable("encryptedEmail") String encryptedEmail) throws UnsupportedEncodingException {
+    	String decryptedEmail = encryptionManager.decryptForExternalUse(new String(Base64.decodeBase64(encryptedEmail), "UTF-8"));
+    	OrcidProfile profile = orcidProfileManager.retrieveOrcidProfileByEmail(decryptedEmail);
+    	Preferences pref = profile.getOrcidInternal().getPreferences();
+        return pref != null ? pref : new Preferences();
     }
     
-    @RequestMapping(value = "/email-frequencies.json", method = RequestMethod.POST)
-    public @ResponseBody Preferences setPreference(HttpServletRequest request, @RequestBody Preferences preferences, @ModelAttribute("primaryEmail") String emailId) {
-    	OrcidProfile profile = orcidProfileManager.retrieveOrcidProfileByEmail(emailId);
+    @RequestMapping(value = "/frequencies/{encryptedEmail}/email-frequencies.json", method = RequestMethod.POST)
+    public @ResponseBody Preferences setPreference(HttpServletRequest request, @RequestBody Preferences preferences, @PathVariable("encryptedEmail") String encryptedEmail) throws UnsupportedEncodingException {
+    	String decryptedEmail = encryptionManager.decryptForExternalUse(new String(Base64.decodeBase64(encryptedEmail), "UTF-8"));
+    	OrcidProfile profile = orcidProfileManager.retrieveOrcidProfileByEmail(decryptedEmail);
     	orcidProfileManager.updatePreferences(profile.getOrcidIdentifier().getPath(), preferences);
         return preferences;
     }
@@ -213,7 +215,7 @@ public class NotificationController extends BaseController {
     		@PathVariable("encryptedEmail") String encryptedEmail) throws Exception {
         ModelAndView result = null;
         String decryptedEmail = encryptionManager.decryptForExternalUse(new String(Base64.decodeBase64(encryptedEmail), "UTF-8"));
-        OrcidProfile profile = getEffectiveProfile();
+        OrcidProfile profile = orcidProfileManager.retrieveOrcidProfileByEmail(decryptedEmail);
 
         String primaryEmail = profile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
 
