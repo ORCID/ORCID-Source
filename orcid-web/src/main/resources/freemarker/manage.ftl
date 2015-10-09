@@ -582,8 +582,8 @@
                     </thead>
                     <tbody>
                         <tr ng-repeat="socialAccount in socialAccounts | orderBy:sort.column:sort.descending">
-                            <td width="40%"><a href="{{delegationDetails.delegateSummary.orcidIdentifier.uri}}" target="_blank">{{socialAccount.id.provideruserid}}</a></td>
-                            <td width="30%"><a href="{{delegationDetails.delegateSummary.orcidIdentifier.uri}}" target="_blank">{{socialAccount.id.providerid}}</a></td>
+                            <td width="40%">{{socialAccount.email}}</a></td>
+                            <td width="30%">{{socialAccount.id.providerid}}</a></td>
                             <td width="20%">{{socialAccount.dateCreated|date:'yyyy-MM-dd'}}</td>
                             <td width="10%">
                                 <a
