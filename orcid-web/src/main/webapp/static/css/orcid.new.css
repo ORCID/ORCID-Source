@@ -2912,6 +2912,7 @@ a.btn-primary:hover {
 
 #loginForm #form-sign-in-button {
 	z-index: 1001;
+	float: left;
 }
 
 .oauth-login #loginForm #userId,.oauth-login #loginForm #password {
@@ -3254,12 +3255,10 @@ ul.personal-inf-display li:last-child{
 	font-size: 800%;	
 }
 
-#loginForm #ajax-loader{
-	vertical-align: -6px;
-}
-/*Safari Windows Hack*/
-::i-block-chrome,#loginForm #ajax-loader{
-	vertical-align: -43px;
+#loginForm #ajax-loader{	
+	float: left;    
+    margin-top: 5px;
+    margin-left: 5px;
 }
 
 #edit-affiliation #remove-disambiguated{
@@ -6423,8 +6422,8 @@ a:hover .mozilla-badge{
 	#loginForm #form-sign-in-button {
 		font-size: 18px;
 		height: 50px;
-		margin: 32px 0 0 0;
-		width: 100%;
+		margin: 32px 0 0 0;		
+		float: left;
 	}
 	#loginForm #login-error-mess {
 		line-height: 25px;
@@ -6435,9 +6434,10 @@ a:hover .mozilla-badge{
 		text-align: center;
 		top: 165px; /* Login layout top */
 	}
-	#loginForm #ajax-loader {
-		width: 100%;
+	#loginForm #ajax-loader {		
 		text-align: center;
+		float: left;
+		margin-top: 20px;
 	}
 	
 	

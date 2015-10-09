@@ -184,80 +184,80 @@
         <#if notification.notificationIntro??>
             ${notification.notificationIntro}
         <#else>
-            <strong>${notification.source.sourceName.content}</strong> would like to add the following items to your record:
+            <strong>${notification.source.sourceName.content}</strong> <@orcid.msg 'notifications.would_add'/>
         </#if>
     </div>
 	<div class="notifications-inner">
 		<#if aeducation gt 0>
 			<!-- Education -->
 			<div class="workspace-accordion-header">
-				<i class="glyphicon-chevron-down glyphicon x075"></i> Education (${aeducation})
+				<i class="glyphicon-chevron-down glyphicon x075"></i> <@orcid.msg 'notifications.education_label'/> (${aeducation})
 			</div>
 			<strong>${teducation}</strong>
 		</#if>
 		<#if aemployment gt 0>
 			<!-- Employment -->
 			<div class="workspace-accordion-header">
-				<i class="glyphicon-chevron-down glyphicon x075"></i> Employment (${aemployment})
+				<i class="glyphicon-chevron-down glyphicon x075"></i> <@orcid.msg 'notifications.employment_label'/> (${aemployment})
 			</div>
 			<strong>${temployment}</strong>
 		</#if>
 		<#if afunding gt 0>
 			<!-- Funding -->
 			<div class="workspace-accordion-header">
-				<i class="glyphicon-chevron-down glyphicon x075"></i> Fundings (${afunding})
+				<i class="glyphicon-chevron-down glyphicon x075"></i> <@orcid.msg 'notifications.fundings_label'/> (${afunding})
 			</div>
 			<strong>${tfunding}</strong>
 			<#if fButtons>
 				<div class="margin-top">
-					<strong>${notification.source.sourceName.content}</strong> would like your permission to interact with your ORCID Record as a trusted party?
+					<strong>${notification.source.sourceName.content}</strong> <@orcid.msg 'notifications.would_permission'/>
 				</div>
 				<div class="margin-top">
-					<a href="" ng-click="archive('${fPutCode?c}')" type="reset" ng-hide="archivedDate"><@orcid.msg 'notifications.archivewithoutgranting' /></a>  <a class="btn btn-primary" href="<@orcid.rootPath '/inbox'/>/${fPutCode?c}/action?target=${fUrl?url}" target="_blank"><span class="glyphicons cloud-upload"></span> Grant permissions</a>  
+					<a href="" ng-click="archive('${fPutCode?c}')" type="reset" ng-hide="archivedDate"><@orcid.msg 'notifications.archivewithoutgranting' /></a>  <a class="btn btn-primary" href="<@orcid.rootPath '/inbox'/>/${fPutCode?c}/action?target=${fUrl?url}" target="_blank"><span class="glyphicons cloud-upload"></span> <@orcid.msg 'notifications.grant_permissions'/></a>  
 				</div>
 			</#if>
 		</#if>
 		<#if apeerreview gt 0>
 			<!-- Peer Review -->
 			<div class="workspace-accordion-header">
-				<i class="glyphicon-chevron-down glyphicon x075"></i> Peer Review (${apeerreview})
 			</div>
+				<i class="glyphicon-chevron-down glyphicon x075"></i> <@orcid.msg 'notifications.peer_review_label'/> (${apeerreview})
 			<strong>${tpeerreview}</strong>
 			<#if pButtons>
 				<div class="margin-top">
-					<strong>${notification.source.sourceName.content}</strong> would like your permission to interact with your ORCID Record as a trusted party?
+					<strong>${notification.source.sourceName.content}</strong> <@orcid.msg 'notifications.would_permission' />
 				</div>
 				<div class="margin-top">
-					<a href="" ng-click="archive('${pPutCode?c}')" type="reset" ng-hide="archivedDate"><@orcid.msg 'notifications.archivewithoutgranting' /></a>  <a class="btn btn-primary" href="<@orcid.rootPath '/inbox'/>/${pPutCode?c}/action?target=${pUrl?url}" target="_blank"><span class="glyphicons cloud-upload"></span> Grant permissions</a> 
+					<a href="" ng-click="archive('${pPutCode?c}')" type="reset" ng-hide="archivedDate"><@orcid.msg 'notifications.archivewithoutgranting' /></a>  <a class="btn btn-primary" href="<@orcid.rootPath '/inbox'/>/${pPutCode?c}/action?target=${pUrl?url}" target="_blank"><span class="glyphicons cloud-upload"></span> <@orcid.msg 'notifications.grant_permissions'/></a> 
 				</div>								
 			</#if>
 		</#if>
 		<#if aworks gt 0>
 			<!-- Works -->
 			<div class="workspace-accordion-header">
-				<i class="glyphicon-chevron-down glyphicon x075"></i> Works (${aworks})
+				<i class="glyphicon-chevron-down glyphicon x075"></i> <@orcid.msg 'notifications.works_label' /> (${aworks})
 			</div>			
 			<strong>${tworks}</strong>			
 			<#if wbuttons>
 				<div class="margin-top">
-					<strong>${notification.source.sourceName.content}</strong> would like your permission to interact with your ORCID Record as a trusted party?
+					<strong>${notification.source.sourceName.content}</strong> <@orcid.msg 'notifications.would_permission' />
 				</div>
 				<div class="margin-top pull-right">
-					<a href="" ng-click="archive('${wPutCode?c}')" type="reset" ng-hide="archivedDate"><@orcid.msg 'notifications.archivewithoutgranting' /></a><a class="btn btn-primary" href="<@orcid.rootPath '/inbox'/>/${wPutCode?c}/action?target=${wUrl?url}" target="_blank"><span class="glyphicons cloud-upload"></span> Grant permissions</a>  
+					<a href="" ng-click="archive('${wPutCode?c}')" type="reset" ng-hide="archivedDate"><@orcid.msg 'notifications.archivewithoutgranting' /></a><a class="btn btn-primary" href="<@orcid.rootPath '/inbox'/>/${wPutCode?c}/action?target=${wUrl?url}" target="_blank"><span class="glyphicons cloud-upload"></span> <@orcid.msg 'notifications.grant_permissions'/></a>  
 				</div>		
 			</#if>
 		</#if>
 	</div>
 	<#if notification.sourceDescription??>
         <div class="margin-top">
-            <strong>About ${notification.source.sourceName.content}</strong>
+            <strong><@orcid.msg 'notifications.about' /> ${notification.source.sourceName.content}</strong>
         </div>
         <div>
             ${notification.sourceDescription}
         </div>
     </#if>
     <div class="margin-top">
-    	<small>You have received this message because you have opted in to receive notifications from organizations that help maintain the information in your ORCID record. <a href="http://support.orcid.org/knowledgebase/articles/665437" target="_blank">Learn more about how the process works.</a></small>
+    	<small><@orcid.msg 'notifications.agreement_advice'/> <a href="http://support.orcid.org/knowledgebase/articles/665437" target="_blank"><@orcid.msg 'notifications.learn_more'/></a></small>
     </div>
 </body>
 </html>

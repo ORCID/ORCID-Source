@@ -89,7 +89,7 @@
                     <#case "91.3105">quarterly<#break>
                 </#switch>
                 </#assign>
-                You have received this message because you opted in to receive ${frequency} inbox notifications about your ORCID record. <a href="${baseUri}/inbox?lang=${locale}" style="color: #338caf;">Learn more about how the Inbox works.</a>
+                You have received this message because you opted in to receive ${frequency} inbox notifications about your ORCID record. <a href="http://support.orcid.org/knowledgebase/articles/665437" style="color: #338caf;">Learn more about how the Inbox works.</a>
             </p>
             <p>
                 You may adjust your email frequency and subscription preferences in your <a href="${baseUri}/account?lang=${locale}" style="color: #338caf;">account settings</a>.
