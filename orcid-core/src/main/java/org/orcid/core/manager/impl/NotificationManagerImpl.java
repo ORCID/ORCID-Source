@@ -35,7 +35,6 @@ import org.orcid.core.adapter.JpaJaxbNotificationAdapter;
 import org.orcid.core.constants.EmailConstants;
 import org.orcid.core.exception.OrcidNotFoundException;
 import org.orcid.core.exception.OrcidNotificationAlreadyReadException;
-import org.orcid.core.exception.OrcidNotificationException;
 import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
@@ -842,11 +841,6 @@ public class NotificationManagerImpl implements NotificationManager {
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         if (profile == null) {
             throw OrcidNotFoundException.newInstance(orcid);
-        }
-        if(profile.getSendMemberUpdateRequests() != null && !profile.getSendMemberUpdateRequests()) {
-            Map<String, String> params = new HashMap<String, String>();
-            params.put("orcid", orcid);
-            throw new OrcidNotificationException(params);
         }
         notificationEntity.setProfile(profile);
         notificationEntity.setSource(sourceManager.retrieveSourceEntity());
