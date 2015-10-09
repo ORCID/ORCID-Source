@@ -29,16 +29,20 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.orcid.api.notifications.server.delegator.NotificationsApiServiceDelegator;
+import org.orcid.core.exception.OrcidNotFoundException;
 import org.orcid.core.exception.OrcidNotificationAlreadyReadException;
+import org.orcid.core.exception.OrcidNotificationException;
 import org.orcid.core.exception.OrcidNotificationNotFoundException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.NotificationValidationManager;
+import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.security.visibility.aop.AccessControl;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.notification.Notification;
 import org.orcid.jaxb.model.notification.permission.NotificationPermission;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.springframework.stereotype.Component;
 
 /**
@@ -60,6 +64,9 @@ public class NotificationsApiServiceDelegatorImpl implements NotificationsApiSer
 
     @Resource
     private LocaleManager localeManager;
+
+    @Resource
+    private ProfileEntityCacheManager profileEntityCacheManager;
 
     @Override
     public Response viewStatusText() {
@@ -114,6 +121,15 @@ public class NotificationsApiServiceDelegatorImpl implements NotificationsApiSer
     @AccessControl(requiredScope = ScopePathType.PREMIUM_NOTIFICATION)
     public Response addPermissionNotification(UriInfo uriInfo, String orcid, NotificationPermission notification) {
         notificationValidationManager.validateNotificationPermission(notification);
+        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
+        if (profile == null) {
+            throw OrcidNotFoundException.newInstance(orcid);
+        }
+        if (profile.getSendMemberUpdateRequests() != null && !profile.getSendMemberUpdateRequests()) {
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("orcid", orcid);
+            throw new OrcidNotificationException(params);
+        }
         Notification createdNotification = notificationManager.createNotification(orcid, notification);
         try {
             return Response.created(new URI(uriInfo.getAbsolutePath() + "/" + createdNotification.getPutCode())).build();
