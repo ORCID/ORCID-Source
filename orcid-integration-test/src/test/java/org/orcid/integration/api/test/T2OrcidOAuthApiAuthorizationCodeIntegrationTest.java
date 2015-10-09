@@ -21,6 +21,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -40,6 +41,7 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.orcid.api.common.WebDriverHelper;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.OrcidSSOManager;
+import org.orcid.integration.api.helper.TokenStore;
 import org.orcid.integration.api.t2.T2OAuthAPIService;
 import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.AffiliationType;
@@ -119,6 +121,9 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
     public static final String CONTRIBUTOR_CREDIT_NAME = "My Credit Name";
     public static final String CONTRIBUTOR_EMAIL = "my.email@contributor.com";
 
+    public static final String USER = "michael@bentine.com";
+    public static final String PASSWORD = "password";
+
     private static final String DEFAULT = "default";
 
     private WebDriver webDriver;
@@ -148,7 +153,7 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
 
     @Resource
     private WorkDao workDao;
-    
+
     @Resource
     OrcidSSOManager ssoManager;
 
@@ -158,8 +163,9 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
     private String redirectUri;
 
     private static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml", "/data/SecurityQuestionEntityData.xml",
-            "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/WorksEntityData.xml", 
-            "/data/ClientDetailsEntityData.xml", "/data/Oauth2TokenDetailsData.xml", "/data/WebhookEntityData.xml");
+            "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml");
+
+    public List<TokenStore> tokens = new ArrayList<TokenStore>();
 
     @BeforeClass
     public static void initDBUnitData() throws Exception {
@@ -195,8 +201,7 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
     @Test
     public void testGetBioReadLimited() throws JSONException, InterruptedException {
         String scopes = "/orcid-bio/read-limited";
-        String authorizationCode = webDriverHelper.obtainAuthorizationCode(scopes, CLIENT_DETAILS_ID, "michael@bentine.com", "password");
-        String accessToken = obtainAccessToken(authorizationCode, scopes);
+        String accessToken = obtainAccessToken(scopes);
 
         ClientResponse bioResponse1 = oauthT2Client.viewBioDetailsJson("4444-4444-4444-4442", accessToken);
         assertEquals(200, bioResponse1.getStatus());
@@ -217,8 +222,7 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
     public void testGetBioReadLimitedWhenAlreadySignedIn() throws JSONException, InterruptedException {
         String scopes = "/orcid-bio/read-limited";
         webDriverHelper.signIn("michael@bentine.com", "password");
-        String authorizationCode = webDriverHelper.obtainAuthorizationCodeWhenAlreadySignedIn(scopes, CLIENT_DETAILS_ID);
-        String accessToken = obtainAccessToken(authorizationCode, scopes);
+        String accessToken = obtainAccessToken(scopes, true);
 
         ClientResponse bioResponse1 = oauthT2Client.viewBioDetailsJson("4444-4444-4444-4442", accessToken);
         assertEquals(200, bioResponse1.getStatus());
@@ -238,16 +242,15 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
     @Test
     public void testGetAuthenticate() throws JSONException, InterruptedException {
         String scopes = "/authenticate";
-        String authorizationCode = webDriverHelper.obtainAuthorizationCode(scopes, CLIENT_DETAILS_ID, "michael@bentine.com", "password");
-        String accessToken = obtainAccessToken(authorizationCode, scopes);
+        String accessToken = obtainAccessToken(scopes);
         assertNotNull(accessToken);
         assertTrue(StringUtils.isNotBlank(accessToken));
     }
 
     @Test
     public void testInvalidCodesFail() throws JSONException, InterruptedException {
-        String scopes = "/orcid-bio/read-limited";
-        String authorizationCode = webDriverHelper.obtainAuthorizationCode(scopes, CLIENT_DETAILS_ID, "michael@bentine.com", "password");
+        String scopes = "/orcid-bio/update";
+        String authorizationCode = webDriverHelper.obtainAuthorizationCode(scopes, CLIENT_DETAILS_ID, USER, PASSWORD);
         String wrongScope = "/myscope";
         MultivaluedMap<String, String> params = new MultivaluedMapImpl();
         params.add("client_id", CLIENT_DETAILS_ID);
@@ -269,7 +272,7 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
     @Test
     public void dontFailWithGrantScopes() throws JSONException, InterruptedException {
         String scopes = "/funding/read-limited";
-        String authorizationCode = webDriverHelper.obtainAuthorizationCode(scopes, CLIENT_DETAILS_ID, "michael@bentine.com", "password");
+        String authorizationCode = webDriverHelper.obtainAuthorizationCode(scopes, CLIENT_DETAILS_ID, USER, PASSWORD);
         String wrongScope = "/orcid-grants/read-limited";
         MultivaluedMap<String, String> params = new MultivaluedMapImpl();
         params.add("client_id", CLIENT_DETAILS_ID);
@@ -286,8 +289,7 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
     public void testAddWork() throws InterruptedException, JSONException {
         String orcid = "4444-4444-4444-4442";
         String scopes = "/orcid-works/create";
-        String authorizationCode = webDriverHelper.obtainAuthorizationCode(scopes, CLIENT_DETAILS_ID, "michael@bentine.com", "password");
-        String accessToken = obtainAccessToken(authorizationCode, scopes);
+        String accessToken = obtainAccessToken(scopes);
 
         OrcidMessage orcidMessage = new OrcidMessage();
         orcidMessage.setMessageVersion(OrcidMessage.DEFAULT_VERSION);
@@ -305,18 +307,17 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
         String title = "Work added by integration test " + System.currentTimeMillis();
         workTitle.setTitle(new Title(title));
 
-        
         ClientResponse clientResponse = oauthT2Client.addWorksJson(orcid, orcidMessage, accessToken);
         assertEquals(201, clientResponse.getStatus());
         List<MinimizedWorkEntity> works = workDao.findWorks(orcid);
         assertNotNull(works);
         long workId = -1;
-        for(MinimizedWorkEntity work : works) {
-            if(work.getTitle().equals(title)) {
+        for (MinimizedWorkEntity work : works) {
+            if (work.getTitle().equals(title)) {
                 workId = work.getId();
             }
         }
-        
+
         assertFalse(workId == -1);
         WorkEntity work = workDao.find(workId);
         assertNotNull(work);
@@ -325,14 +326,13 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
         assertNotNull(work.getSource());
         assertEquals(CLIENT_DETAILS_ID, work.getSource().getSourceId());
         assertNotNull(work.getVisibility());
-        assertNotNull(work.getAddedToProfileDate());               
+        assertNotNull(work.getAddedToProfileDate());
     }
 
     @Test
     public void testAddWorkWithTranslatedTitleJournalTitleAndLanguageCode() throws InterruptedException, JSONException {
         String scopes = "/orcid-works/create";
-        String authorizationCode = webDriverHelper.obtainAuthorizationCode(scopes, CLIENT_DETAILS_ID, "michael@bentine.com", "password");
-        String accessToken = obtainAccessToken(authorizationCode, scopes);
+        String accessToken = obtainAccessToken(scopes);
 
         OrcidMessage orcidMessage = new OrcidMessage();
         orcidMessage.setMessageVersion("1.0.22");
@@ -367,8 +367,7 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
     @Test
     public void testAddWorkWithNewWorkTypesForV1_1() throws InterruptedException, JSONException {
         String scopes = "/orcid-works/create";
-        String authorizationCode = webDriverHelper.obtainAuthorizationCode(scopes, CLIENT_DETAILS_ID, "michael@bentine.com", "password");
-        String accessToken = obtainAccessToken(authorizationCode, scopes);
+        String accessToken = obtainAccessToken(scopes);
 
         OrcidMessage orcidMessage = new OrcidMessage();
         orcidMessage.setMessageVersion("1.1");
@@ -392,8 +391,7 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
     @Test
     public void testAddWorkWithEmptyTitle() throws InterruptedException, JSONException {
         String scopes = "/orcid-works/create";
-        String authorizationCode = webDriverHelper.obtainAuthorizationCode(scopes, CLIENT_DETAILS_ID, "michael@bentine.com", "password");
-        String accessToken = obtainAccessToken(authorizationCode, scopes);
+        String accessToken = obtainAccessToken(scopes);
 
         OrcidMessage orcidMessage = new OrcidMessage();
         orcidMessage.setMessageVersion(OrcidMessage.DEFAULT_VERSION);
@@ -416,15 +414,14 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
         OrcidMessage errorMessage = clientResponse.getEntity(OrcidMessage.class);
         assertNotNull(errorMessage);
         assertNotNull(errorMessage.getErrorDesc());
-        assertEquals("Bad Request: Invalid incoming message: org.orcid.core.exception.OrcidValidationException: Invalid Title: title cannot be null nor emtpy", errorMessage
-                .getErrorDesc().getContent());
+        assertEquals("Bad Request: Invalid incoming message: org.orcid.core.exception.OrcidValidationException: Invalid Title: title cannot be null nor emtpy",
+                errorMessage.getErrorDesc().getContent());
     }
 
     @Test
-    public void testAddWorkWithoutExtIdsFor1_2rc5() throws InterruptedException, JSONException {    	
-    	String scopes = "/orcid-works/create";
-        String authorizationCode = webDriverHelper.obtainAuthorizationCode(scopes, CLIENT_DETAILS_ID, "michael@bentine.com", "password");
-        String accessToken = obtainAccessToken(authorizationCode, scopes);
+    public void testAddWorkWithoutExtIdsFor1_2rc5() throws InterruptedException, JSONException {
+        String scopes = "/orcid-works/create";
+        String accessToken = obtainAccessToken(scopes);
 
         OrcidMessage orcidMessage = new OrcidMessage();
         orcidMessage.setMessageVersion("1.2_rc5");
@@ -454,8 +451,7 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
     @Test
     public void testAddWorkWithoutExtIdsForLowerThan1_2rc5() throws InterruptedException, JSONException {
         String scopes = "/orcid-works/create";
-        String authorizationCode = webDriverHelper.obtainAuthorizationCode(scopes, CLIENT_DETAILS_ID, "michael@bentine.com", "password");
-        String accessToken = obtainAccessToken(authorizationCode, scopes);
+        String accessToken = obtainAccessToken(scopes);
 
         OrcidMessage orcidMessage = new OrcidMessage();
         orcidMessage.setMessageVersion("1.2_rc2");
@@ -479,8 +475,7 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
     @Test
     public void testAddWorkWithExtIdsFor1_2rc5() throws InterruptedException, JSONException {
         String scopes = "/orcid-works/create";
-        String authorizationCode = webDriverHelper.obtainAuthorizationCode(scopes, CLIENT_DETAILS_ID, "michael@bentine.com", "password");
-        String accessToken = obtainAccessToken(authorizationCode, scopes);
+        String accessToken = obtainAccessToken(scopes);
 
         OrcidMessage orcidMessage = new OrcidMessage();
         orcidMessage.setMessageVersion("1.2_rc5");
@@ -510,8 +505,7 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
     @Test
     public void testAddAffiliation() throws InterruptedException, JSONException {
         String scopes = "/affiliations/create /affiliations/read-limited";
-        String authorizationCode = webDriverHelper.obtainAuthorizationCode(scopes, CLIENT_DETAILS_ID, "michael@bentine.com", "password");
-        String accessToken = obtainAccessToken(authorizationCode, scopes);
+        String accessToken = obtainAccessToken(scopes);
 
         OrcidMessage orcidMessage = new OrcidMessage();
         orcidMessage.setMessageVersion("1.2_rc2");
@@ -546,8 +540,7 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
     @Test
     public void testAddFunding() throws InterruptedException, JSONException {
         String scopes = "/funding/create /funding/read-limited";
-        String authorizationCode = webDriverHelper.obtainAuthorizationCode(scopes, CLIENT_DETAILS_ID, "michael@bentine.com", "password");
-        String accessToken = obtainAccessToken(authorizationCode, scopes);
+        String accessToken = obtainAccessToken(scopes);
 
         OrcidMessage orcidMessage = new OrcidMessage();
         orcidMessage.setMessageVersion("1.2_rc2");
@@ -599,7 +592,7 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
 
         ClientResponse clientResponse = oauthT2Client1_2_rc2.addFundingXml("4444-4444-4444-4442", orcidMessage, accessToken);
         assertEquals(201, clientResponse.getStatus());
-        
+
         ClientResponse resultResponse = oauthT2Client1_2_rc2.viewFundingDetailsXml("4444-4444-4444-4442", accessToken);
         assertEquals(200, resultResponse.getStatus());
         OrcidMessage resultMessage = resultResponse.getEntity(OrcidMessage.class);
@@ -611,8 +604,7 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
     @Test
     public void testAddFundingWithOrganizationDefinedFundingType() throws InterruptedException, JSONException {
         String scopes = "/funding/create";
-        String authorizationCode = webDriverHelper.obtainAuthorizationCode(scopes, CLIENT_DETAILS_ID, "michael@bentine.com", "password");
-        String accessToken = obtainAccessToken(authorizationCode, scopes);
+        String accessToken = obtainAccessToken(scopes);
 
         OrcidMessage orcidMessage = new OrcidMessage();
         orcidMessage.setMessageVersion("1.2_rc5");
@@ -670,8 +662,7 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
     @Test
     public void testAddFundingWithIncorrectFormat() throws InterruptedException, JSONException {
         String scopes = "/funding/create";
-        String authorizationCode = webDriverHelper.obtainAuthorizationCode(scopes, CLIENT_DETAILS_ID, "michael@bentine.com", "password");
-        String accessToken = obtainAccessToken(authorizationCode, scopes);
+        String accessToken = obtainAccessToken(scopes);
 
         OrcidMessage orcidMessage = new OrcidMessage();
         orcidMessage.setMessageVersion("1.2_rc2");
@@ -733,8 +724,7 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
     @Test
     public void testAddFundingWithExtIdsFor1_2rc5() throws InterruptedException, JSONException {
         String scopes = "/funding/create";
-        String authorizationCode = webDriverHelper.obtainAuthorizationCode(scopes, CLIENT_DETAILS_ID, "michael@bentine.com", "password");
-        String accessToken = obtainAccessToken(authorizationCode, scopes);
+        String accessToken = obtainAccessToken(scopes);
 
         OrcidMessage orcidMessage = new OrcidMessage();
         orcidMessage.setMessageVersion("1.2_rc3");
@@ -791,8 +781,7 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
     @Test
     public void testAddFundingWithoutExtIdsFor1_2rc5() throws InterruptedException, JSONException {
         String scopes = "/funding/create";
-        String authorizationCode = webDriverHelper.obtainAuthorizationCode(scopes, CLIENT_DETAILS_ID, "michael@bentine.com", "password");
-        String accessToken = obtainAccessToken(authorizationCode, scopes);
+        String accessToken = obtainAccessToken(scopes);
 
         OrcidMessage orcidMessage = new OrcidMessage();
         orcidMessage.setMessageVersion("1.2_rc3");
@@ -847,9 +836,8 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
 
     @Test
     public void testAddFundingWithoutExtIdsForLowerThan1_2rc5() throws InterruptedException, JSONException {
-    	String scopes = "/funding/create";
-        String authorizationCode = webDriverHelper.obtainAuthorizationCode(scopes, CLIENT_DETAILS_ID, "michael@bentine.com", "password");
-        String accessToken = obtainAccessToken(authorizationCode, scopes);
+        String scopes = "/funding/create";
+        String accessToken = obtainAccessToken(scopes);
 
         OrcidMessage orcidMessage = new OrcidMessage();
         orcidMessage.setMessageVersion("1.2_rc2");
@@ -899,8 +887,7 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
     @Test
     public void testAddWorkToWrongProfile() throws InterruptedException, JSONException {
         String scopes = "/orcid-works/create";
-        String authorizationCode = webDriverHelper.obtainAuthorizationCode(scopes, CLIENT_DETAILS_ID, "michael@bentine.com", "password");
-        String accessToken = obtainAccessToken(authorizationCode, scopes);
+        String accessToken = obtainAccessToken(scopes);
 
         OrcidMessage orcidMessage = new OrcidMessage();
         orcidMessage.setMessageVersion(OrcidMessage.DEFAULT_VERSION);
@@ -921,7 +908,20 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
         assertEquals(403, clientResponse.getStatus());
     }
 
-    private String obtainAccessToken(String authorizationCode, String scopes) throws JSONException {
+    private String obtainAccessToken(String scopes) throws JSONException, InterruptedException {
+        return obtainAccessToken(scopes, false);
+    }
+    
+    private String obtainAccessToken(String scopes, boolean isLoggedIn) throws JSONException, InterruptedException {
+
+        for (TokenStore token : tokens) {
+            if (token.getScope().equals(scopes) && token.getUser().equals(USER) && token.getClientId().equals(CLIENT_DETAILS_ID)) {
+                return token.getToken();
+            }
+        }
+
+        String authorizationCode = webDriverHelper.obtainAuthorizationCode(scopes, CLIENT_DETAILS_ID, USER, PASSWORD, isLoggedIn);
+
         MultivaluedMap<String, String> params = new MultivaluedMapImpl();
         params.add("client_id", CLIENT_DETAILS_ID);
         params.add("client_secret", "client-secret");
@@ -935,6 +935,11 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
         JSONObject jsonObject = new JSONObject(body);
         String accessToken = (String) jsonObject.get("access_token");
         assertNotNull(accessToken);
+
+        TokenStore newToken = new TokenStore(CLIENT_DETAILS_ID, USER, scopes, accessToken);
+
+        tokens.add(newToken);
+
         return accessToken;
     }
 
