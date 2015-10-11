@@ -17,7 +17,7 @@
 
 -->
 <#import "email_macros.ftl" as emailMacros />
-<@emailMacros.msg "email.common.dear" />${emailName},
+<@emailMacros.msg "email.service_announcement.dear1" />${emailName}<@emailMacros.msg "email.service_announcement.dear2" />,
 
 <@emailMacros.msg "email.service_announcement.body_intro" /><@emailMacros.msg "email.service_announcement.privacy_link" /><@emailMacros.msg "email.service_announcement.dot_bottom" />
 
@@ -71,8 +71,12 @@ ${verificationUrl}
 
 <@emailMacros.msg "email.service_announcement.footer_text1" />
 
-<@emailMacros.msg "email.service_announcement.footer_text2" /> [${emailFrequencyUrl}]
+<@emailMacros.msg "email.service_announcement.footer_text2" />
 
-<@emailMacros.msg "email.service_announcement.footer_text3" /> [${baseUri}/account}]
+<@emailMacros.msg "email.service_announcement.footer_text_unsubscribe" /> [${emailFrequencyUrl}]
+
+<@emailMacros.msg "email.service_announcement.footer_text3" /> [${baseUri}/account}] <@emailMacros.msg "email.service_announcement.footer_text4" />
 
 <@emailMacros.msg "email.service_announcement.footer_orcid_id" />${baseUri}${orcid}
+
+<#include "email_footer.ftl"/>
