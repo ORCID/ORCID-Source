@@ -27,7 +27,7 @@
 			<img src="https://orcid.org/sites/all/themes/orcid/img/orcid-logo.png" alt="ORCID.org"/>
 		    <hr />
 		  	<span style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666; font-weight: bold;">
-		    <@emailMacros.msg "email.common.dear" />${emailName},
+		    <@emailMacros.msg "email.service_announcement.dear1" />${emailName}<@emailMacros.msg "email.service_announcement.dear2" />,
 		    </span>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
 		    	<@emailMacros.msg "email.service_announcement.body_intro" />
@@ -66,12 +66,16 @@
 				   <li>
 				      <a href="http://orcid.org/blog/2014/11/28/new-functionality-friday-orcid-site-%D1%80%D1%83%D1%81%D1%81%D0%BA%D0%B8%D0%B9-and-portugu%C3%AAs" target="_blank"><@emailMacros.msg "email.service_announcement.language_link" /></a><@emailMacros.msg "email.service_announcement.body_updates5" />
 				    </li>
+				    <li>
+				    	<@emailMacros.msg "email.service_announcement.body_updates6" />
+				    </li>
+				    <li>
+				    	<@emailMacros.msg "email.service_announcement.body_updates7" /><a href="http://support.orcid.org/knowledgebase/articles/460004" target="_blank"><@emailMacros.msg "email.service_announcement.here_link" /></a><@emailMacros.msg "email.service_announcement.body_updates8" />
+				    </li>
 				</ul>
 		   </p>
 		   <p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #666666;">
-				<@emailMacros.msg "email.service_announcement.body_updates6" />
-				<br><@emailMacros.msg "email.service_announcement.body_updates7" /><a href="http://support.orcid.org/knowledgebase/articles/460004" target="_blank"><@emailMacros.msg "email.service_announcement.here_link" /></a><@emailMacros.msg "email.service_announcement.body_updates8" />
-				<br><br><@emailMacros.msg "email.service_announcement.regards" />
+				<@emailMacros.msg "email.service_announcement.regards" />
 				<br><@emailMacros.msg "email.service_announcement.orcid_team" />
 				<br><@emailMacros.msg "email.service_announcement.support_id" />
 			</p>
@@ -79,11 +83,16 @@
 				<span style="font-weight:bold"><@emailMacros.msg "email.service_announcement.footer_text1_title" /></span>
 				<br><@emailMacros.msg "email.service_announcement.footer_text1" />
 				<br>
-				<br><@emailMacros.msg "email.service_announcement.footer_text2" /><a href="${emailFrequencyUrl}" target="_blank">[<@emailMacros.msg "email.service_announcement.footer_frequency_link" />]</a>
+				<br><@emailMacros.msg "email.service_announcement.footer_text2" />
 				<br>
-				<br><@emailMacros.msg "email.service_announcement.footer_text3" /><a href="${baseUri}/account" target="_blank">[<@emailMacros.msg "email.service_announcement.footer_account_link" />]</a>
+				<br><@emailMacros.msg "email.service_announcement.footer_text_unsubscribe" /><a href="${emailFrequencyUrl}" target="_blank">[<@emailMacros.msg "email.service_announcement.footer_frequency_link" />]</a>
+				<br>
+				<br><@emailMacros.msg "email.service_announcement.footer_text3" /><a href="${baseUri}/account" target="_blank">[<@emailMacros.msg "email.service_announcement.footer_account_link" />]</a><@emailMacros.msg "email.service_announcement.footer_text4" />
 				<br>
 				<br><@emailMacros.msg "email.service_announcement.footer_orcid_id" /><a href="${baseUri}/${orcid}" target="_blank">${baseUri}/${orcid}</a>
+			</p>
+			<p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #666666;">
+				<#include "email_footer.ftl"/>
 			</p>
 		 </div>
 	 </body>
