@@ -570,15 +570,15 @@
             <div id="no-results-alert" class="orcid-hide alert alert-error no-delegate-matches"><@spring.message "orcid.frontend.web.no_results"/></div>
         </div>
         <#if ((RequestParameters['social'])?? ||(RequestParameters['shibboleth'])??)>
-        <div>
+        <div ng-controller="SocialCtrl" id="SocialCtrl" ng-show="socialAccounts" ng-cloak>
             <h1>
                 <@orcid.msg 'manage_signin_title' />
             </h1>
             <p>
             	<@orcid.msg 'manage_signin_subtitle' />
             </p>
-            <div ng-controller="SocialCtrl" id="SocialCtrl">
-                <table class="table table-bordered settings-table normal-width" ng-show="socialAccounts" ng-cloak>
+            <div>
+                <table class="table table-bordered settings-table normal-width">
                     <thead>
                         <tr>
                             <th width="40%" ng-click="changeSorting('providerUserId')"><@orcid.msg 'manage_signin_table_header1' /></th>
