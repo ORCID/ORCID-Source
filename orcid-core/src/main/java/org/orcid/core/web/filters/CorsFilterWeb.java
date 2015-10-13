@@ -24,6 +24,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 /**
@@ -40,7 +41,14 @@ public class CorsFilterWeb extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         if(crossDomainWebManger.allowed(request)) {
-            response.addHeader("Access-Control-Allow-Origin", "*");
+            String origin = request.getHeader("origin");
+            if(PojoUtil.isEmpty(origin)) {
+                response.addHeader("Access-Control-Allow-Origin", "*");
+            } else {
+                response.addHeader("Access-Control-Allow-Origin", origin);
+                response.addHeader("Access-Control-Allow-Credentials", "true");
+            }
+            
             if (request.getHeader("Access-Control-Request-Method") != null && "OPTIONS".equals(request.getMethod())) {
                 // CORS "pre-flight" request
                 response.addHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");

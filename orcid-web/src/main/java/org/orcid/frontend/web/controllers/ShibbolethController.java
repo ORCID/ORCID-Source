@@ -114,7 +114,7 @@ public class ShibbolethController extends BaseController {
         String randomId = Long.toString(new Random(Calendar.getInstance().getTimeInMillis()).nextLong());
         UserconnectionPK pk = new UserconnectionPK(randomId, providerId, providerUserId);
         OrcidProfile profile = getRealProfile();
-        userConnectionEntity.setEmail(profile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue());
+        userConnectionEntity.setEmail(providerUserId);
         userConnectionEntity.setOrcid(profile.getOrcidIdentifier().getPath());
         userConnectionEntity.setProfileurl(profile.getOrcidIdentifier().getUri());
         userConnectionEntity.setDisplayname(profile.getOrcidBio().getPersonalDetails().getGivenNames().getContent());
