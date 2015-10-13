@@ -42,7 +42,6 @@ public class CorsFilterWeb extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         if(crossDomainWebManger.allowed(request)) {
             String origin = request.getHeader("origin");
-            System.out.println(origin);
             if(PojoUtil.isEmpty(origin)) {
                 response.addHeader("Access-Control-Allow-Origin", "*");
             } else {
