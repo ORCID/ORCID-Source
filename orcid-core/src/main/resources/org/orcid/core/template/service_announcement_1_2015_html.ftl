@@ -20,7 +20,7 @@
 <!DOCTYPE html>
 <html>
 	<head>
-	<title><@emailMacros.msg "email.service_announcement.subject" /></title>
+	<title><@emailMacros.msg "email.service_announcement.subject.imporant_information" /></title>
 	</head>
 	<body>
 		<div style="padding: 20px; padding-top: 0px;">
