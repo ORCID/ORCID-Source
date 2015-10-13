@@ -141,8 +141,17 @@ var OrcidGA = function() {
     };
     this.gaPush = function(trackArray) {
         if (gaEnabled) {
-            ga(trackArray[0], trackArray[1], trackArray[2], trackArray[3], trackArray[4], trackArray[5]);
-            console.log("_gap.push for " + trackArray);
+        	if(typeof trackArray === 'function') {
+        		trackArray();
+        	} else {
+        		if(trackArray[5] == undefined) {
+                	ga(trackArray[0], trackArray[1], trackArray[2], trackArray[3], trackArray[4]);
+                } else {
+                	ga(trackArray[0], trackArray[1], trackArray[2], trackArray[3], trackArray[4], trackArray[5]);
+                }
+            	
+                console.log("_gap.push for " + trackArray);
+        	}        	
         } else {
             // if it's a function and _gap isn't available run (typically only
             // on dev)
@@ -313,7 +322,7 @@ $(function() {
 
     // track when deactived people are pushed to signin page
     if (window.location.href.endsWith("signin#deactivated")) {
-        orcidGA.gaPush([ '_trackEvent', 'Disengagement', 'Deactivate_Complete',
+        orcidGA.gaPush([ 'send', 'event', 'Disengagement', 'Deactivate_Complete',
                 'Website' ]);
         showLoginError(om.get('orcid.frontend.security.orcid_deactivated'));
     }
@@ -375,7 +384,8 @@ $(function() {
                                     'form#loginForm input[name="client_group_name"]')
                                     .val();
                             orcidGA.gaPush([
-                                    '_trackEvent',
+                                    'send',
+                                    'event',
                                     'RegGrowth',
                                     'Sign-In-Submit',
                                     'OAuth '
@@ -384,7 +394,7 @@ $(function() {
                                                             clientGroupName,
                                                             clientName) ]);
                         } else
-                            orcidGA.gaPush([ '_trackEvent', 'RegGrowth',
+                            orcidGA.gaPush([ 'send', 'event', 'RegGrowth',
                                     'Sign-In-Submit', 'Website' ]);
                         $('form#loginForm').attr('disabled', 'disabled');
                         $('#ajax-loader').show();
@@ -411,7 +421,8 @@ $(function() {
                                                                 .val();
                                                         orcidGA
                                                                 .gaPush([
-                                                                        '_trackEvent',
+                                                                        'send',
+                                                                        'event',
                                                                         'RegGrowth',
                                                                         'Sign-In',
                                                                         'OAuth '
@@ -421,7 +432,8 @@ $(function() {
                                                                                                 clientName) ]);
                                                     } else
                                                         orcidGA.gaPush([
-                                                                '_trackEvent',
+                                                                'send',
+                                                                'event',
                                                                 'RegGrowth',
                                                                 'Sign-In',
                                                                 'Website' ]);
