@@ -127,7 +127,7 @@ public class SocialController extends BaseController {
 				} else {
 					OrcidProfile profile = getRealProfile();
 					userConnectionEntity.setLinked(true);
-					userConnectionEntity.setEmail(profile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue());
+					userConnectionEntity.setEmail(email);
 			        userConnectionEntity.setOrcid(profile.getOrcidIdentifier().getPath());
 					userConnectionDao.merge(userConnectionEntity);
 				}
