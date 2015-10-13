@@ -16,4 +16,4 @@
     =============================================================================
 
 -->
-<@emailMacros.msg "email.common.email.preferences" /> (${baseUri}/account) | <@emailMacros.msg "email.common.privacy_policy" />  (${baseUri}/privacy-policy) | <@emailMacros.msg "email.common.address" /> | ${baseUri}
+<a href="${baseUri}/account" target="_blank"><@emailMacros.msg "email.common.email.preferences" /></a> | <a href="${baseUri}/privacy-policy" target="_blank"><@emailMacros.msg "email.common.privacy_policy" /></a> | <@emailMacros.msg "email.common.address" /> | <a href="${baseUri}" target="_blank"><@emailMacros.msg "email.common.orcid.link" /></a>
