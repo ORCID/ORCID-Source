@@ -133,16 +133,18 @@ var OrcidGA = function() {
     // test and make sure _gaq is working. disconnect.me chrome plugin has
     // caused silent _gaq failures. This check allows us to detect that
     // situation
-    var gaEnabled = true;
+    var gaEnabled = false;
+    if(window.ga && ga.create) {
+    	gaEnabled = true;
+    }
     
-
     this.buildClientString = function(clientGroupName, clientName) {
         return clientGroupName + ' - ' + clientName
     };
     this.gaPush = function(trackArray) {
         if (gaEnabled) {
         	if(typeof trackArray === 'function') {
-        		trackArray();
+        		ga(trackArray);
         	} else {
         		if(trackArray[5] == undefined) {
                 	ga(trackArray[0], trackArray[1], trackArray[2], trackArray[3], trackArray[4]);
