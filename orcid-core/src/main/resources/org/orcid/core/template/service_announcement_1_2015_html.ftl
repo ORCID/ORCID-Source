@@ -92,7 +92,7 @@
 				<br><@emailMacros.msg "email.service_announcement.footer_orcid_id" /><a href="${baseUri}/${orcid}" target="_blank">${baseUri}/${orcid}</a>
 			</p>
 			<p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #666666;">
-				<#include "email_footer.ftl"/>
+				<#include "email_footer_html.ftl"/>
 			</p>
 		 </div>
 	 </body>
