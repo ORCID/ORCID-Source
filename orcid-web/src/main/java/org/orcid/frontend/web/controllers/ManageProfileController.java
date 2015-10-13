@@ -353,12 +353,11 @@ public class ManageProfileController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = "/revoke-application")
-    public ModelAndView revokeApplication(@RequestParam("applicationOrcid") String applicationOrcid,
+    public @ResponseBody boolean revokeApplication(@RequestParam("applicationOrcid") String applicationOrcid,
             @RequestParam(value = "scopePaths", required = false, defaultValue = "") ScopePathType[] scopePaths) {
         String userOrcid = getCurrentUserOrcid();
         orcidProfileManager.revokeApplication(userOrcid, applicationOrcid, Arrays.asList(scopePaths));
-        ModelAndView mav = new ModelAndView("redirect:/account?activeTab=application-tab");
-        return mav;
+        return true;
     }
 
     @RequestMapping(value = "/revoke-application-from-summary-view", method = RequestMethod.GET)
