@@ -65,10 +65,10 @@
                     <th><a name="editEmail"></a>${springMacroRequestContext.getMessage("manage.thEmail")}</th>
                     <td><a href="" ng-click="toggleEmailEdit()" ng-bind="emailToggleText"></a></td>
                 </tr>
-                <tr ng-controller="EmailEditCtrl" ng-show="showEditEmail" ng-cloak>
+                <tr>
                 	
                     <!-- Email edit -->
-                    <td colspan="2">
+                    <td colspan="2" ng-controller="EmailEditCtrl" ng-show="showEditEmail" ng-cloak>
                         <div class="editTablePadCell35">
                             <!-- we should never see errors here, but just to be safe -->
                             <span class="orcid-error" ng-show="emailSrvc.emails.errors.length > 0">
@@ -148,20 +148,22 @@
                                         </span>
                                     </div>
                                     <div class="col-md-12">
-                                    <label>
-                                        ${springMacroRequestContext.getMessage("manage.verificationEmail.1")} <a href="${aboutUri}/content/orcid-terms-use" target="_blank">${springMacroRequestContext.getMessage("manage.verificationEmail.2")}</a>${springMacroRequestContext.getMessage("manage.verificationEmail.3")}
-                                    </label>
+                                    <p>
+                                    	<small>
+                                        	${springMacroRequestContext.getMessage("manage.verificationEmail.1")} <a href="${aboutUri}/content/orcid-terms-use" target="_blank">${springMacroRequestContext.getMessage("manage.verificationEmail.2")}</a>${springMacroRequestContext.getMessage("manage.verificationEmail.3")}
+                                        </small>
+                                    </p>
                                     </div>
                                 </div>
+                                
+                                <!-- Email frecuency -->
                                 <#if profile.orcidInternal.preferences.notificationsEnabled>
-	                                <div class="row">
-			                           	<strong class="green">Email frecuency</strong>
-			                         </div>
-			                    	 <div class="editTablePadCell35" ng-controller="EmailFrequencyCtrl" ng-show="showEditEmailFrequency" ng-cloak>
+	                                <div ng-controller="EmailFrequencyCtrl" ng-cloak>
+		                                <div class="row bottomBuffer" >
+				                           	<strong class="green">Email frequency</strong>
+				                         </div>				                    	 
 			                    	 	<div class="control-group">
-								            <div>${springMacroRequestContext.getMessage("manage.send_email_to_primary_1")}{{emailSrvc.primaryEmail.value}}${springMacroRequestContext.getMessage("manage.send_email_to_primary_2")}<a href="" ng-click="openEmailEdit()">${springMacroRequestContext.getMessage("manage.send_email_to_primary_3")}</a></div>
-								            <label for="sendEmailFrequencyDays"
-								                class="">${springMacroRequestContext.getMessage("manage.send_email_frequency")}</label>
+								            <p>${springMacroRequestContext.getMessage("manage.send_email_to_primary_1")} <a href="${aboutUri}/inbox" target="_blank">${springMacroRequestContext.getMessage("manage.send_email_to_primary_2")}</a>${springMacroRequestContext.getMessage("manage.send_email_to_primary_3")}</p>
 								            <div class="relative">
 								                <select id="sendEmailFrequencyDays" name="sendEmailFrequencyDays"
 								                    class="input-xlarge"
@@ -173,15 +175,15 @@
 								                    </#list>
 								                </select>
 								            </div>
-								            <div>${springMacroRequestContext.getMessage("manage.service_announcements")}</div>
-								            <div><small class="italic">${springMacroRequestContext.getMessage("manage.service_announcements.note")}</small></div>
+								            <p>${springMacroRequestContext.getMessage("manage.send_email_to_primary_4")}{{emailSrvc.primaryEmail.value}}${springMacroRequestContext.getMessage("manage.send_email_to_primary_5")}</p>
+								            <p>${springMacroRequestContext.getMessage("manage.service_announcements")}</p>
+								            <p style="line-height: 12px;"><small class="italic">${springMacroRequestContext.getMessage("manage.service_announcements.note")}</small></p>
 								        </div>
 			                    	 </div>
                                  </#if>
                             </div>
                         </div>
-                    </td> 
-                    
+                    </td>
                 </tr>
                 <!-- Notifications -->
                 <#if profile.orcidInternal.preferences.notificationsEnabled>
@@ -273,6 +275,7 @@
                         </div>
                     </td>
                 </tr>
+                
                 
                 <!-- Privacy preferences -->
                 <tr>
