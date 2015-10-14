@@ -270,9 +270,15 @@ function logOffReload(reload_param) {
 
 // jquery ready
 $(function() {
-
+    // CSRF
+    var token = $("meta[name='_csrf']").attr("content");
+    var header = $("meta[name='_csrf_header']").attr("content");
+    $(document).ajaxSend(function(e, xhr, options) {
+        xhr.setRequestHeader(header, token);
+    });
+    
     // Common
-
+    
     window.baseUrl = $('body').data('baseurl');
     window.basePath = window.location.pathname;
 
