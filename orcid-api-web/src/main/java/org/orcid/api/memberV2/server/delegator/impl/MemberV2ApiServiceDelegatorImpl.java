@@ -33,6 +33,7 @@ import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.AffiliationsManager;
 import org.orcid.core.manager.ClientDetailsManager;
+import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.GroupIdRecordManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.PeerReviewManager;
@@ -47,6 +48,7 @@ import org.orcid.jaxb.model.groupid.GroupIdRecord;
 import org.orcid.jaxb.model.groupid.GroupIdRecords;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record.Education;
+import org.orcid.jaxb.model.record.Emails;
 import org.orcid.jaxb.model.record.Employment;
 import org.orcid.jaxb.model.record.Funding;
 import org.orcid.jaxb.model.record.PeerReview;
@@ -118,6 +120,9 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     @Resource
     private ResearcherUrlManager researcherUrlManager;
 
+    @Resource
+    private EmailManager emailManager;
+    
     @Value("${org.orcid.core.baseUri}")
     private String baseUrl;
 
@@ -442,7 +447,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     @Override
     @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED)
     public Response viewEmails(String orcid) {
-        
-        return Response.ok().build();
+        Emails emails = emailManager.getEmails(orcid);
+        return Response.ok(emails).build();
     }
 }

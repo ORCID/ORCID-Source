@@ -17,10 +17,10 @@
 package org.orcid.core.manager;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 import org.orcid.jaxb.model.message.Email;
+import org.orcid.jaxb.model.record.Emails;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 
 /**
@@ -54,5 +54,5 @@ public interface EmailManager {
     
     boolean moveEmailToOtherAccount(String email, String origin, String destination);
     
-    List<Email> getEmails(String orcid);    
+    Emails getEmails(String orcid);    
 }

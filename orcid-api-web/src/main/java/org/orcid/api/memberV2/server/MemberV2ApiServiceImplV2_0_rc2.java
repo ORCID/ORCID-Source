@@ -58,6 +58,6 @@ public class MemberV2ApiServiceImplV2_0_rc2 extends MemberV2ApiServiceImplBase {
     @Path(EMAIL)
     @ApiOperation(value = "Fetch all emails for an ORCID ID", hidden = true, authorizations = { @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_READ_LIMITED, description = "you need this") }) })
     public Response viewEmails(@PathParam("orcid") String orcid) {
-        return serviceDelegator.viewResearcherUrls(orcid);
+        return serviceDelegator.viewEmails(orcid);
     }
 }
