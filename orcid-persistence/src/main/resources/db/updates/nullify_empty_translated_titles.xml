@@ -20,8 +20,11 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
             
     <changeSet id="NULLIFY-EMPTY-TRANSLATED-TITLES" author="Angel Montenegro">
-        <sql>update profile set last_modified=now(), indexing_status='PENDING' where orcid in (select distinct(orcid) from work where trim(translated_title) = '');</sql>
+    	<sql>drop table if exists tmp_profiles_to_update;</sql>
+    	<sql>create temp table tmp_profiles_to_update as (select distinct(orcid) from work where trim(translated_title) = '');</sql>        
         <sql>update work set translated_title=null, translated_title_language_code=null where trim(translated_title) = '';</sql>
+        <sql>update profile set last_modified=now(), indexing_status='PENDING' where orcid in (select orcid from tmp_profiles_to_update);</sql>
+        <sql>drop table if exists tmp_profiles_to_update;</sql>
     </changeSet>
     
 </databaseChangeLog>
