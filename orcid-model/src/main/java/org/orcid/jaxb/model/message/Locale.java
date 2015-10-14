@@ -78,7 +78,10 @@ public enum Locale implements Serializable {
     ZH_TW("zh_TW"),
 
     @XmlEnumValue("it")
-    IT("it");
+    IT("it"),
+    
+    @XmlEnumValue("ja")
+    JA("ja");
     
     private final String value;
 
