@@ -27,7 +27,7 @@
 
 <@emailMacros.msg "email.service_announcement.body_permission_title" />
 
-<@emailMacros.msg "email.service_announcement.body_permission1" /><@emailMacros.msg "email.service_announcement.crossref_link" /><@emailMacros.msg "email.service_announcement.body_permission2" /><@emailMacros.msg "email.service_announcement.datacite_link" /><@emailMacros.msg "email.service_announcement.body_permission3" /><@emailMacros.msg "email.service_announcement.updates_link" /><@emailMacros.msg "email.service_announcement.body_permission4" /><@emailMacros.msg "email.service_announcement.inbox_about_link" /><@emailMacros.msg "email.service_announcement.body_permission5" />
+<@emailMacros.msg "email.service_announcement.body_permission1" /><@emailMacros.msg "email.service_announcement.crossref_link" /> (http://www.crossref.org/)<@emailMacros.msg "email.service_announcement.body_permission2" /><@emailMacros.msg "email.service_announcement.datacite_link" /> (https://www.datacite.org/)<@emailMacros.msg "email.service_announcement.body_permission3" /><@emailMacros.msg "email.service_announcement.updates_link" /> (http://orcid.org/blog/2015/01/13/new-webinar-metadata-round-trip)<@emailMacros.msg "email.service_announcement.body_permission4" /><@emailMacros.msg "email.service_announcement.inbox_about_link" /><@emailMacros.msg "email.service_announcement.body_permission5" /> (http://support.orcid.org/knowledgebase/articles/665437)<@emailMacros.msg "email.service_announcement.body_permission6" />
 
 
 <@emailMacros.msg "email.service_announcement.body_privacy_policy_title" />
