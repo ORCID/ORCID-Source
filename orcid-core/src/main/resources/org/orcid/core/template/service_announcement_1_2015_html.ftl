@@ -20,7 +20,7 @@
 <!DOCTYPE html>
 <html>
 	<head>
-	<title>Please verify your email - ORCID.org</title>
+	<title><@emailMacros.msg "email.service_announcement.subject.imporant_information" /></title>
 	</head>
 	<body>
 		<div style="padding: 20px; padding-top: 0px;">
@@ -85,14 +85,14 @@
 				<br>
 				<br><@emailMacros.msg "email.service_announcement.footer_text2" />
 				<br>
-				<br><@emailMacros.msg "email.service_announcement.footer_text_unsubscribe" /><a href="${emailFrequencyUrl}" target="_blank">[<@emailMacros.msg "email.service_announcement.footer_frequency_link" />]</a>
+				<br><@emailMacros.msg "email.service_announcement.footer_text_unsubscribe" /><a href="${emailFrequencyUrl}" target="_blank"><@emailMacros.msg "email.service_announcement.footer_frequency_link" /></a>
 				<br>
-				<br><@emailMacros.msg "email.service_announcement.footer_text3" /><a href="${baseUri}/account" target="_blank">[<@emailMacros.msg "email.service_announcement.footer_account_link" />]</a><@emailMacros.msg "email.service_announcement.footer_text4" />
+				<br><@emailMacros.msg "email.service_announcement.footer_text3" /><a href="${baseUri}/account" target="_blank"><@emailMacros.msg "email.service_announcement.footer_account_link" /></a><@emailMacros.msg "email.service_announcement.footer_text4" />
 				<br>
 				<br><@emailMacros.msg "email.service_announcement.footer_orcid_id" /><a href="${baseUri}/${orcid}" target="_blank">${baseUri}/${orcid}</a>
 			</p>
 			<p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #666666;">
-				<#include "email_footer.ftl"/>
+				<#include "email_footer_html.ftl"/>
 			</p>
 		 </div>
 	 </body>
