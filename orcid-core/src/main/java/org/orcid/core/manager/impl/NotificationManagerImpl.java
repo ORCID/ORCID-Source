@@ -315,9 +315,10 @@ public class NotificationManagerImpl implements NotificationManager {
 		templateParams.put("orcid", orcidProfile.getOrcidIdentifier().getPath());
 		templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
 		addMessageParams(templateParams, orcidProfile);
+		String subject = localeManager.resolveMessage("email.service_announcement.subject.imporant_information");
 		String text = templateManager.processTemplate("service_announcement_1_2015.ftl", templateParams);
 		String html = templateManager.processTemplate("service_announcement_1_2015_html.ftl", templateParams);
-		boolean sent = mailGunManager.sendEmail("support@notify.orcid.org", email, "Service Announcment", text, html);
+		boolean sent = mailGunManager.sendEmail("support@notify.orcid.org", email, subject, text, html);
 		return sent;
 	}
     
