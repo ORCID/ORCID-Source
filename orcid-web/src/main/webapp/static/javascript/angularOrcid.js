@@ -1879,21 +1879,6 @@ orcidNgModule.controller('EditTableCtrl', ['$scope', function ($scope) {
     $scope.showEditEmailPreferences = (window.location.hash === "#editEmailPreferences");
     $scope.emailPreferencesUpdateToggleText();
     
-    // email frequency edit row
-    $scope.emailFrequencyUpdateToggleText = function () {
-        if ($scope.showEditEmailFrequency) $scope.emailFrequencyToggleText = om.get("manage.editTable.hide");
-        else $scope.emailFrequencyToggleText = om.get("manage.editTable.edit");
-    };
-
-    $scope.toggleEmailFrequencyEdit = function() {
-        $scope.showEditEmailFrequency = !$scope.showEditEmailFrequency;
-        $scope.emailFrequencyUpdateToggleText();
-    };
-
-    // init email frequency
-    $scope.showEditEmailFrequency = (window.location.hash === "#editEmailFrequency");
-    $scope.emailFrequencyUpdateToggleText();
-    
     // security question edit row
     $scope.securityQuestionUpdateToggleText = function () {
         if ($scope.showEditSecurityQuestion) $scope.securityQuestionToggleText = om.get("manage.editTable.hide");
