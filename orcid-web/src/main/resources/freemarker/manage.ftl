@@ -160,7 +160,7 @@
                                 <#if profile.orcidInternal.preferences.notificationsEnabled>
 	                                <div ng-controller="EmailFrequencyCtrl" ng-cloak>
 		                                <div class="row bottomBuffer" >
-				                           	<strong class="green">Email frequency</strong>
+				                           	<strong class="green">${springMacroRequestContext.getMessage("manage.email.email_frequency")}</strong>
 				                         </div>				                    	 
 			                    	 	<div class="control-group">
 								            <p>${springMacroRequestContext.getMessage("manage.send_email_to_primary_1")} <a href="${aboutUri}/inbox" target="_blank">${springMacroRequestContext.getMessage("manage.send_email_to_primary_2")}</a>${springMacroRequestContext.getMessage("manage.send_email_to_primary_3")}</p>
