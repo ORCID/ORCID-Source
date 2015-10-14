@@ -96,4 +96,6 @@ public interface MemberV2ApiServiceDelegator {
     
     Response viewResearcherUrls(String orcid);
 
+    Response viewEmails(String orcid);
+    
 }

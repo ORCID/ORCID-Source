@@ -42,9 +42,9 @@ import org.orcid.jaxb.model.notification.amended.NotificationAmended;
 import org.orcid.jaxb.model.notification.custom.NotificationCustom;
 import org.orcid.jaxb.model.notification.permission.AuthorizationUrl;
 import org.orcid.jaxb.model.notification.permission.Item;
-import org.orcid.jaxb.model.notification.permission.ItemType;
 import org.orcid.jaxb.model.notification.permission.NotificationPermission;
 import org.orcid.jaxb.model.record.Education;
+import org.orcid.jaxb.model.record.Email;
 import org.orcid.jaxb.model.record.Employment;
 import org.orcid.jaxb.model.record.Funding;
 import org.orcid.jaxb.model.record.FundingContributors;
@@ -61,6 +61,7 @@ import org.orcid.jaxb.model.record.summary.PeerReviewSummary;
 import org.orcid.jaxb.model.record.summary.WorkSummary;
 import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.CompletionDateEntity;
+import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.EndDateEntity;
 import org.orcid.persistence.jpa.entities.GroupIdRecordEntity;
 import org.orcid.persistence.jpa.entities.NotificationAddItemsEntity;
@@ -178,7 +179,17 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         researcherUrlClassMap.register();
         return mapperFactory.getMapperFacade();
     }
-
+    
+    public MapperFacade getEmailMapperFacade() {
+        MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
+        ClassMapBuilder<Email, EmailEntity> emailClassMap = mapperFactory.classMap(Email.class, EmailEntity.class);
+        emailClassMap.byDefault();
+        addV2DateFields(emailClassMap);
+        addV2SourceMapping(mapperFactory);
+        emailClassMap.register();
+        return mapperFactory.getMapperFacade();
+    }
+                
     public MapperFacade getWorkMapperFacade() {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
 

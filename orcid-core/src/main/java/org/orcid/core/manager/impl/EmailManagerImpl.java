@@ -144,4 +144,14 @@ public class EmailManagerImpl implements EmailManager {
     public boolean moveEmailToOtherAccount(String email, String origin, String destination) {
         return emailDao.moveEmailToOtherAccountAsNonPrimary(email, origin, destination);
     }
+    
+    @Override
+    public List<Email> getEmails(String orcid) {
+        List<EmailEntity> entities = emailDao.findByOrcid(orcid);
+        if(entities != null) {
+            
+        }
+        return null;
+    }
+    
 }

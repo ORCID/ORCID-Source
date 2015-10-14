@@ -438,4 +438,11 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
         ResearcherUrls researcherUrls = researcherUrlManager.getResearcherUrlsV2(orcid);
         return Response.ok(researcherUrls).build();
     }
+    
+    @Override
+    @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED)
+    public Response viewEmails(String orcid) {
+        
+        return Response.ok().build();
+    }
 }
