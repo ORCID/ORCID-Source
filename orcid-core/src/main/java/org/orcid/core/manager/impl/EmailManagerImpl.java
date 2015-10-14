@@ -26,6 +26,7 @@ import java.util.TreeMap;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
+import org.orcid.core.adapter.JpaJaxbEmailAdapter;
 import org.orcid.core.manager.EmailManager;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.persistence.dao.EmailDao;
@@ -42,6 +43,9 @@ public class EmailManagerImpl implements EmailManager {
     @Resource
     private EmailDao emailDao;
 
+    @Resource
+    private JpaJaxbEmailAdapter jpaJaxbEmailAdapter; 
+    
     @Override
     public boolean emailExists(String email) {
         return emailDao.emailExists(email);
