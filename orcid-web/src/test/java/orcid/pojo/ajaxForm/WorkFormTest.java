@@ -48,6 +48,7 @@ import org.orcid.jaxb.model.record.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.record.WorkExternalIdentifiers;
 import org.orcid.jaxb.model.record.WorkTitle;
 import org.orcid.jaxb.model.record.WorkType;
+import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.WorkForm;
 import org.orcid.utils.DateUtils;
 
@@ -66,6 +67,23 @@ public class WorkFormTest extends XMLTestCase {
         Work work = getWork();
         WorkForm workForm =  WorkForm.valueOf(work);
         MemoryEfficientByteArrayOutputStream.serialize(workForm);
+    }
+    
+    @Test
+    public void testEmptyTranslatedTitleDontGetIntoTheEntity() {
+        WorkForm form = new WorkForm();
+        form.setTitle(Text.valueOf("The title"));
+        org.orcid.pojo.ajaxForm.TranslatedTitle translatedTitle = new org.orcid.pojo.ajaxForm.TranslatedTitle();
+        translatedTitle.setContent(" ");
+        translatedTitle.setLanguageCode("en");
+        form.setTranslatedTitle(translatedTitle);
+        
+        Work work = form.toWork();
+        assertNotNull(work);
+        assertNotNull(work.getWorkTitle());
+        assertNotNull(work.getWorkTitle().getTitle());
+        assertEquals("The title", work.getWorkTitle().getTitle().getContent());
+        assertNull(work.getWorkTitle().getTranslatedTitle());        
     }
 
     public static Work getWork() {
