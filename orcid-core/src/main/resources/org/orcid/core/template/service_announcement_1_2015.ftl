@@ -65,7 +65,7 @@
 
 <@emailMacros.msg "email.service_announcement.footer_text_unsubscribe" /><@emailMacros.msg "email.service_announcement.footer_frequency_link" /> [${emailFrequencyUrl}]
 
-<@emailMacros.msg "email.service_announcement.footer_text3" /><@emailMacros.msg "email.service_announcement.footer_account_link" /> [${baseUri}/account}] <@emailMacros.msg "email.service_announcement.footer_text4" />
+<@emailMacros.msg "email.service_announcement.footer_text3" /><@emailMacros.msg "email.service_announcement.footer_account_link" /> [${baseUri}/account] <@emailMacros.msg "email.service_announcement.footer_text4" />
 
 <@emailMacros.msg "email.service_announcement.footer_orcid_id" />${baseUri}/${orcid}
 
