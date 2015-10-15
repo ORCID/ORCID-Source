@@ -152,12 +152,12 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
 
     private Date deactivationDate;
 
-    //Captcha validator used on register
+    // Captcha validator used on register
     private Boolean usedRecaptchaOnRegistration;
-    
+
     private String userLastIp;
     private boolean reviewed = Boolean.FALSE;
-        
+
     @Id
     @Column(name = "orcid", length = 19)
     public String getId() {
@@ -501,7 +501,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     public void setProfileFunding(SortedSet<ProfileFundingEntity> funding) {
         this.profileFunding = funding;
     }
-    
+
     /**
      * @return the works
      */
@@ -518,7 +518,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     public void setWorks(SortedSet<WorkEntity> works) {
         this.works = works;
     }
-    
+
     /**
      * @return the peer reviews
      * */
@@ -527,15 +527,15 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     public SortedSet<PeerReviewEntity> getPeerReviews() {
         return peerReviews;
     }
-    
+
     /**
      * @param peerReviews
-     *          the peer reviews set
+     *            the peer reviews set
      * */
     public void setPeerReviews(SortedSet<PeerReviewEntity> peerReviews) {
         this.peerReviews = peerReviews;
     }
-    
+
     /**
      * @return the researcherUrls
      */
@@ -950,7 +950,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     public void setDeveloperToolsEnabledDate(Date developerToolsEnabledDate) {
         this.developerToolsEnabledDate = developerToolsEnabledDate;
     }
-        
+
     @Column(name = "used_captcha_on_registration")
     public Boolean getUsedRecaptchaOnRegistration() {
         return usedRecaptchaOnRegistration;
@@ -1006,22 +1006,22 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     }
 
     @Column(name = "user_last_ip")
-	public String getUserLastIp() {
-		return userLastIp;
-	}
+    public String getUserLastIp() {
+        return userLastIp;
+    }
 
-	public void setUserLastIp(String userLastIp) {
-		this.userLastIp = userLastIp;
-	}
-	
-	@Column(name = "reviewed")
-	public boolean isReviewed() {
-		return reviewed;
-	}
+    public void setUserLastIp(String userLastIp) {
+        this.userLastIp = userLastIp;
+    }
 
-	public void setReviewed(boolean reviewed) {
-		this.reviewed = reviewed;
-	}
+    @Column(name = "reviewed")
+    public boolean isReviewed() {
+        return reviewed;
+    }
+
+    public void setReviewed(boolean reviewed) {
+        this.reviewed = reviewed;
+    }
 
     /**
      * Generates a string that will be used for caching proposes

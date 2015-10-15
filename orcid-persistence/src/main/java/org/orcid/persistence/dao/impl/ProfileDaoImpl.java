@@ -399,13 +399,13 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         return result;
     }
 
-	@SuppressWarnings("unchecked")
-	public Date retrieveLastModifiedDate(String orcid) {
+    @SuppressWarnings("unchecked")
+    public Date retrieveLastModifiedDate(String orcid) {
         Query nativeQuery = entityManager.createNativeQuery("Select p.last_modified FROM profile p WHERE p.orcid =:orcid");
         nativeQuery.setParameter("orcid", orcid);
         List<Timestamp> tsList = nativeQuery.getResultList();
-        if(tsList != null && !tsList.isEmpty()) {
-        	return new Date(tsList.get(0).getTime());
+        if (tsList != null && !tsList.isEmpty()) {
+            return new Date(tsList.get(0).getTime());
         }
         return null;
     }
@@ -684,7 +684,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     @Transactional
     public boolean removeProfile(String orcid) {
         ProfileEntity toDelete = this.find(orcid);
-        if (toDelete.getDeactivationDate() != null) {            
+        if (toDelete.getDeactivationDate() != null) {
             this.remove(toDelete);
             return true;
         }
@@ -741,27 +741,27 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         return (result == null) ? false : true;
     }
 
-	@Override
-	@Transactional
-	public void updateIpAddress(String orcid, String ipAddress) {
-		Query query = entityManager.createNativeQuery("update profile set last_modified=now(), indexing_status='REINDEX', user_last_ip=:ipAddr where orcid=:orcid");
+    @Override
+    @Transactional
+    public void updateIpAddress(String orcid, String ipAddress) {
+        Query query = entityManager.createNativeQuery("update profile set last_modified=now(), indexing_status='REINDEX', user_last_ip=:ipAddr where orcid=:orcid");
         query.setParameter("orcid", orcid);
         query.setParameter("ipAddr", ipAddress);
         query.executeUpdate();
-	}
+    }
 
-	@Override
-	@Transactional
-	public boolean reviewProfile(String orcid) {
-		return changeReviewedStatus(orcid, true);
-	}
+    @Override
+    @Transactional
+    public boolean reviewProfile(String orcid) {
+        return changeReviewedStatus(orcid, true);
+    }
 
-	@Override
-	@Transactional
-	public boolean unreviewProfile(String orcid) {
-		return changeReviewedStatus(orcid, false);
-	}
-	
+    @Override
+    @Transactional
+    public boolean unreviewProfile(String orcid) {
+        return changeReviewedStatus(orcid, false);
+    }
+
     @Transactional
     private boolean changeReviewedStatus(String orcid, boolean reviewFlag) {
         Query query = entityManager.createNativeQuery("update profile set last_modified=now(), indexing_status='REINDEX', reviewed=:reviewed where orcid=:orcid");
