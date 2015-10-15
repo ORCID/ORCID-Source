@@ -28,12 +28,11 @@
 	<#if userId??>
 		<#assign user_id = userId>
 	</#if>
-	
 	<#assign js_group_name = client_group_name?replace('"', '&quot;')?js_string>
-    <#assign js_client_name = client_name?replace('"', '&quot;')?js_string>
-    <#assign js_scopes_string = "">                
+	<#assign js_client_name = client_name?replace('"', '&quot;')?js_string>
+	<#assign js_scopes_string = "">                
 	<#list scopes as scope>
-    	<#assign js_scopes_string = js_scopes_string + scope.name()?replace("ORCID_", "")?js_string + " ">
+		<#assign js_scopes_string = js_scopes_string + scope.name()?replace("ORCID_", "")?js_string + " ">
 	</#list>				      
 	
 	<!-- /Freemarker and GA variables -->
