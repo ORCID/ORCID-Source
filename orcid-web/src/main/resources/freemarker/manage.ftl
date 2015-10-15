@@ -170,7 +170,14 @@
 	                                ng-model="prefsSrvc.prefs.sendChangeNotifications.value"
 	                                ng-change="prefsSrvc.savePrivacyPreferences()" />
 	                                ${springMacroRequestContext.getMessage("change_notification_preferences.sendnotification")}
-	                            </label>                                
+	                            </label>
+	                            <label class="checkbox"> <input type="checkbox"
+                                    id="sendAdministrativeChangeNotifcations"
+                                    name="sendAdministrativeChangeNotifcations"
+                                    ng-model="prefsSrvc.prefs.sendAdministrativeChangeNotifications.value"
+                                    ng-change="prefsSrvc.savePrivacyPreferences()" />
+                                    ${springMacroRequestContext.getMessage("change_notification_preferences.sendadministrativenotification")}
+                                </label>                                
 	                            <label class="checkbox"> <input type="checkbox"
 	                                id="sendMemberUpdateRequests" name="sendMemberUpdateRequests"
 	                                ng-model="prefsSrvc.prefs.sendMemberUpdateRequests"

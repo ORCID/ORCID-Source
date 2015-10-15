@@ -126,6 +126,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     private SortedSet<PeerReviewEntity> peerReviews;
     private Locale locale = Locale.EN;
     private Boolean sendChangeNotifications;
+    private Boolean sendAdministrativeChangeNotifications;
     private Boolean sendOrcidNews;
     private Boolean sendMemberUpdateRequests;
     private SortedSet<ClientDetailsEntity> clients;
@@ -714,6 +715,15 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
 
     public void setSendChangeNotifications(Boolean sendChangeNotifications) {
         this.sendChangeNotifications = sendChangeNotifications;
+    }
+    
+    @Column(name = "send_administrative_change_notifications")
+    public Boolean getSendAdministrativeChangeNotifications() {
+        return sendAdministrativeChangeNotifications;
+    }
+
+    public void setSendAdministrativeChangeNotifications(Boolean sendAdministrativeChangeNotifications) {
+        this.sendAdministrativeChangeNotifications = sendAdministrativeChangeNotifications;
     }
 
     @Column(name = "send_orcid_news")

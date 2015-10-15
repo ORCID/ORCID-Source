@@ -530,12 +530,13 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     @Override
     @Transactional
-    public void updatePreferences(String orcid, boolean sendChangeNotifications, boolean sendOrcidNews, boolean sendMemberUpdateRequests,
-            Visibility activitiesVisibilityDefault, boolean enableDeveloperTools, float sendEmailFrequencyDays) {
+    public void updatePreferences(String orcid, boolean sendChangeNotifications, boolean sendAdministrativeChangeNotifications, boolean sendOrcidNews,
+            boolean sendMemberUpdateRequests, Visibility activitiesVisibilityDefault, boolean enableDeveloperTools, float sendEmailFrequencyDays) {
         Query updateQuery = entityManager
-                .createQuery("update ProfileEntity set lastModified = now(), sendChangeNotifications = :sendChangeNotifications, sendOrcidNews = :sendOrcidNews, sendMemberUpdateRequests = :sendMemberUpdateRequests, activitiesVisibilityDefault = :activitiesVisibilityDefault, enableDeveloperTools = :enableDeveloperTools, sendEmailFrequencyDays = :sendEmailFrequencyDays where orcid = :orcid");
+                .createQuery("update ProfileEntity set lastModified = now(), sendChangeNotifications = :sendChangeNotifications, sendAdministrativeChangeNotifications = :sendAdministrativeChangeNotifications, sendOrcidNews = :sendOrcidNews, sendMemberUpdateRequests = :sendMemberUpdateRequests, activitiesVisibilityDefault = :activitiesVisibilityDefault, enableDeveloperTools = :enableDeveloperTools, sendEmailFrequencyDays = :sendEmailFrequencyDays where orcid = :orcid");
         updateQuery.setParameter("orcid", orcid);
         updateQuery.setParameter("sendChangeNotifications", sendChangeNotifications);
+        updateQuery.setParameter("sendAdministrativeChangeNotifications", sendAdministrativeChangeNotifications);
         updateQuery.setParameter("sendOrcidNews", sendOrcidNews);
         updateQuery.setParameter("sendMemberUpdateRequests", sendMemberUpdateRequests);
         updateQuery.setParameter("activitiesVisibilityDefault", activitiesVisibilityDefault);
