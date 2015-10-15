@@ -20,7 +20,7 @@
 <!DOCTYPE html>
 <html>
 	<head>
-	<title>Please verify your email - ORCID.org</title>
+	<title><@emailMacros.msg "email.service_announcement.subject.imporant_information" /></title>
 	</head>
 	<body>
 		<div style="padding: 20px; padding-top: 0px;">
@@ -35,10 +35,10 @@
 		    </p>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
 		    	<span style="font-weight:bold"><@emailMacros.msg "email.service_announcement.body_inbox_title" /></span><br>
-		    	<@emailMacros.msg "email.service_announcement.body_inbox1" /><a href="http://orcid.org/inbox" target="_blank"><@emailMacros.msg "email.service_announcement.inbox_link" /></a><@emailMacros.msg "email.service_announcement.body_inbox2" /><a href="http://support.orcid.org/knowledgebase/articles/665437" target="_blank"><@emailMacros.msg "email.service_announcement.inbox_about_link" /></a><@emailMacros.msg "email.service_announcement.body_inbox3" />
+		    	<@emailMacros.msg "email.service_announcement.body_inbox1" /><a href="http://orcid.org/inbox" target="_blank"><@emailMacros.msg "email.service_announcement.inbox_link" /></a><@emailMacros.msg "email.service_announcement.body_inbox2" /><a href="http://support.orcid.org/knowledgebase/articles/665437" target="_blank"><@emailMacros.msg "email.service_announcement.inbox_about_link" /></a><@emailMacros.msg "email.service_announcement.body_inbox3" /><@emailMacros.msg "email.service_announcement.body_inbox4" />
 		    </p>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
-		    	<span style="font-weight:bold"><@emailMacros.msg "email.service_announcement.body_permission_title" /></span><br><@emailMacros.msg "email.service_announcement.body_permission1" /> <a href="http://www.crossref.org/" target="_blank"><@emailMacros.msg "email.service_announcement.crossref_link" /></a><@emailMacros.msg "email.service_announcement.body_permission2" /><a href="https://www.datacite.org/" target="_blank"><@emailMacros.msg "email.service_announcement.datacite_link" /></a><@emailMacros.msg "email.service_announcement.body_permission3" /><a href="http://orcid.org/blog/2015/01/13/new-webinar-metadata-round-trip" target="_blank"><@emailMacros.msg "email.service_announcement.updates_link" /></a><@emailMacros.msg "email.service_announcement.body_permission4" /><a href="http://support.orcid.org/knowledgebase/articles/665437" target="_blank"><@emailMacros.msg "email.service_announcement.inbox_about_link" /></a><@emailMacros.msg "email.service_announcement.body_permission5" />
+		    	<span style="font-weight:bold"><@emailMacros.msg "email.service_announcement.body_permission_title" /></span><br><@emailMacros.msg "email.service_announcement.body_permission1" /> <a href="http://www.crossref.org/" target="_blank"><@emailMacros.msg "email.service_announcement.crossref_link" /></a><@emailMacros.msg "email.service_announcement.body_permission2" /><a href="https://www.datacite.org/" target="_blank"><@emailMacros.msg "email.service_announcement.datacite_link" /></a><@emailMacros.msg "email.service_announcement.body_permission3" /><a href="http://orcid.org/blog/2015/01/13/new-webinar-metadata-round-trip" target="_blank"><@emailMacros.msg "email.service_announcement.updates_link" /></a><@emailMacros.msg "email.service_announcement.body_permission4" /><a href="http://support.orcid.org/knowledgebase/articles/665437" target="_blank"><@emailMacros.msg "email.service_announcement.inbox_about_link" /></a><@emailMacros.msg "email.service_announcement.body_permission5" /><@emailMacros.msg "email.service_announcement.body_permission6" />
 		    </p>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
 		    	<span style="font-weight:bold"><@emailMacros.msg "email.service_announcement.body_privacy_policy_title" /></span><br>
@@ -85,14 +85,14 @@
 				<br>
 				<br><@emailMacros.msg "email.service_announcement.footer_text2" />
 				<br>
-				<br><@emailMacros.msg "email.service_announcement.footer_text_unsubscribe" /><a href="${emailFrequencyUrl}" target="_blank">[<@emailMacros.msg "email.service_announcement.footer_frequency_link" />]</a>
+				<br><@emailMacros.msg "email.service_announcement.footer_text_unsubscribe" /><a href="${emailFrequencyUrl}" target="_blank"><@emailMacros.msg "email.service_announcement.footer_frequency_link" /></a>
 				<br>
-				<br><@emailMacros.msg "email.service_announcement.footer_text3" /><a href="${baseUri}/account" target="_blank">[<@emailMacros.msg "email.service_announcement.footer_account_link" />]</a><@emailMacros.msg "email.service_announcement.footer_text4" />
+				<br><@emailMacros.msg "email.service_announcement.footer_text3" /><a href="${baseUri}/account" target="_blank"><@emailMacros.msg "email.service_announcement.footer_account_link" /></a><@emailMacros.msg "email.service_announcement.footer_text4" />
 				<br>
 				<br><@emailMacros.msg "email.service_announcement.footer_orcid_id" /><a href="${baseUri}/${orcid}" target="_blank">${baseUri}/${orcid}</a>
 			</p>
 			<p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #666666;">
-				<#include "email_footer.ftl"/>
+				<#include "email_footer_html.ftl"/>
 			</p>
 		 </div>
 	 </body>

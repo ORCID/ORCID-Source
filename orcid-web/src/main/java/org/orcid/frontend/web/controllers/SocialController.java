@@ -37,7 +37,6 @@ import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.social.facebook.api.Facebook;
 import org.springframework.social.facebook.api.User;
-import org.springframework.social.facebook.api.UserOperations;
 import org.springframework.social.google.api.Google;
 import org.springframework.social.google.api.plus.Person;
 import org.springframework.stereotype.Controller;
@@ -103,6 +102,7 @@ public class SocialController extends BaseController {
 					mav.addObject("providerId", providerId);
 					mav.addObject("providerUserId", providerUserId);
 					mav.addObject("remoteUser", userId);
+					mav.addObject("emailId", emailId);
 					return mav;
 				}
 			} else {
@@ -135,6 +135,7 @@ public class SocialController extends BaseController {
 				mav.setViewName("social_link_complete");
 				mav.addObject("providerId", providerId);
 				mav.addObject("remoteUser", providerUserId);
+				mav.addObject("emailId", email);
 				return mav;
 			} else {
 				throw new UsernameNotFoundException("Could not find an orcid account associated with the email id.");
@@ -149,8 +150,7 @@ public class SocialController extends BaseController {
 		String email = null;
 		if (SocialType.FACEBOOK.equals(connectionType)) {
 			Facebook facebook = socialContext.getFacebook();
-			UserOperations uo = facebook.userOperations();
-			User user = uo.getUserProfile();
+			User user = facebook.fetchObject("me", User.class, "id", "email");
 			providerUserId = user.getId();
 			email = user.getEmail();
 		} else if (SocialType.GOOGLE.equals(connectionType)) {

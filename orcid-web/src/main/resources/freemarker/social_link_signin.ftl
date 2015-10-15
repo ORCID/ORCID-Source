@@ -24,7 +24,7 @@
 	            <div class="">
 		            <h4>Link your ${providerId} account to your ORCID account?</h4>
 		            <p>
-			            You are logged into <i>${providerId} </i> as <i>${providerUserId}</i>.<br />
+			            You are logged into <i>${providerId} </i> as <i>${emailId}</i>.<br />
 			            Sign in to your ORCID account to complete the linkage.<br />
 		            </p>
 	            </div>
