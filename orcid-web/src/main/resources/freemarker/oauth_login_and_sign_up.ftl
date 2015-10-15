@@ -23,13 +23,13 @@
 		<#if userId??>
 			<#assign user_id = userId>
         </#if>
-        <#assign js_group_name = client_group_name?js_string>
-        <#assign js_client_name = client_name?js_string>
+        <#assign js_group_name = client_group_name?replace('"', '&quot;')?js_string>
+        <#assign js_client_name = client_name?replace('"', '&quot;')?js_string>
         <#assign js_scopes_string = "">                
         <#list scopes as scope>
         	<#assign js_scopes_string = js_scopes_string + scope.name()?replace("ORCID_", "")?js_string + " ">
 		</#list>				      
-	    <!-- /Freemarker and GA variables -->
+	    <!-- /Freemarker and GA variables -->	    
 		<div class="app-client-name" ng-init="initGroupClientNameAndScopes('${js_group_name}','${js_client_name}', '${js_scopes_string}')">
 			<h3 ng-click="toggleClientDescription()">${client_name}
 				<a class="glyphicon glyphicon-question-sign oauth-question-sign"></a>
@@ -40,7 +40,7 @@
 				<span class="uppercase gray-bold-about"><@orcid.msg 'oauth_sign_in.about'/></span> ${client_description}
 			</p>
 		</div>
-		<div>
+		<div> 
 			<p><@orcid.msg 'orcid.frontend.oauth.have_asked'/></p>
 		</div>
 		<div>
