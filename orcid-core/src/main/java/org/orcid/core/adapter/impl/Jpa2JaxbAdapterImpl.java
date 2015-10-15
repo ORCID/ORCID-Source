@@ -878,7 +878,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                         }
                         if(!scopePathMap.isEmpty()) {
                         	applicationSummary.setScopePaths(scopePathMap);
-                        	checkApplicationsAndAdd(applicationSummary, applications);
+                        	applications.add(applicationSummary);
                         }
                     }
 
@@ -887,50 +887,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         }
         
         return applications;
-    }
-
-    /**
-     * Get an application and compare it to the list of existing applications,
-     * if it share the same client and scopes, keep just the oldest one
-     * 
-     * @param applicationSummary
-     *            The application that want to be added
-     * @param applications
-     *            The list of applications already evaluated
-     * */
-    private void checkApplicationsAndAdd(org.orcid.pojo.ApplicationSummary applicationSummary, List<org.orcid.pojo.ApplicationSummary> applications) {
-
-        if (applications.isEmpty()) {
-            applications.add(applicationSummary);
-        } else {
-            boolean replaceExisting = false;
-            boolean foundExisting = false;
-            int index = 0;
-            for(org.orcid.pojo.ApplicationSummary existingSummary : applications) {
-                if (existingSummary.getOrcidPath().equals(applicationSummary.getOrcidPath()) 
-                		&& existingSummary.getScopePaths().keySet().containsAll(applicationSummary.getScopePaths().keySet())
-                		&& applicationSummary.getScopePaths().keySet().containsAll(existingSummary.getScopePaths().keySet())
-                		&& applicationSummary.getApprovalDate() != null) {
-                    foundExisting = true;
-                    Date existingApprovalDate = null;
-                    if (existingSummary.getApprovalDate() != null) {
-                        existingApprovalDate = existingSummary.getApprovalDate();
-                    }
-                    if (existingApprovalDate == null || applicationSummary.getApprovalDate().before(existingApprovalDate)) {
-                        replaceExisting = true;
-                        break;
-                    }
-                }
-                index ++;
-            }
-            if(replaceExisting) {
-            	applications.remove(index);
-            	applications.add(applicationSummary);
-            } else if(!foundExisting) {
-            	applications.add(applicationSummary);
-            }
-        }
-    }
+    }    
 
     private String getGroupDisplayName(ProfileEntity groupProfile) {
         String creditName = groupProfile.getCreditName();
