@@ -148,8 +148,8 @@
                                         </span>
                                     </div>
                                     <div class="col-md-12">
-                                    <p>
-                                    	<small>
+                                   <p style="line-height: 12px;">
+                                   		<small class="italic">
                                         	${springMacroRequestContext.getMessage("manage.verificationEmail.1")} <a href="${aboutUri}/content/orcid-terms-use" target="_blank">${springMacroRequestContext.getMessage("manage.verificationEmail.2")}</a>${springMacroRequestContext.getMessage("manage.verificationEmail.3")}
                                         </small>
                                     </p>
@@ -175,7 +175,7 @@
 								                    </#list>
 								                </select>
 								            </div>
-								            <p>${springMacroRequestContext.getMessage("manage.send_email_to_primary_4")}{{emailSrvc.primaryEmail.value}}${springMacroRequestContext.getMessage("manage.send_email_to_primary_5")}</p>
+								            <p>${springMacroRequestContext.getMessage("manage.send_email_to_primary_4")} {{emailSrvc.primaryEmail.value}}${springMacroRequestContext.getMessage("manage.send_email_to_primary_5")}</p>
 								            <p>${springMacroRequestContext.getMessage("manage.service_announcements")}</p>
 								            <p style="line-height: 12px;"><small class="italic">${springMacroRequestContext.getMessage("manage.service_announcements.note")}</small></p>
 								        </div>
@@ -300,9 +300,6 @@
                     </td>
                 </tr>
                 <tr>
-                
-                
-                
                     <th><a name="editSecurityQuestion"></a>${springMacroRequestContext.getMessage("manage.security_question")}</th>
                     <td><a href="" ng-click="toggleSecurityQuestionEdit()"
                         ng-bind="securityQuestionToggleText"></a></td>
