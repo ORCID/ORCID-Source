@@ -184,6 +184,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
         ClassMapBuilder<Email, EmailEntity> emailClassMap = mapperFactory.classMap(Email.class, EmailEntity.class);
         emailClassMap.byDefault();
+        emailClassMap.field("email", "id");
         addV2DateFields(emailClassMap);
         addV2SourceMapping(mapperFactory);
         emailClassMap.register();

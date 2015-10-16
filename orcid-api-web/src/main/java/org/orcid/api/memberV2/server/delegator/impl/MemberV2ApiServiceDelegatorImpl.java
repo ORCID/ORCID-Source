@@ -21,6 +21,7 @@ import static org.orcid.core.api.OrcidApiConstants.STATUS_OK_MESSAGE;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -49,6 +50,7 @@ import org.orcid.jaxb.model.groupid.GroupIdRecord;
 import org.orcid.jaxb.model.groupid.GroupIdRecords;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record.Education;
+import org.orcid.jaxb.model.record.Email;
 import org.orcid.jaxb.model.record.Emails;
 import org.orcid.jaxb.model.record.Employment;
 import org.orcid.jaxb.model.record.Funding;
@@ -439,10 +441,12 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
         return Response.ok(records).build();
     }
     
+    @SuppressWarnings("unchecked")
     @Override
     @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED)
     public Response viewResearcherUrls(String orcid) {
         ResearcherUrls researcherUrls = researcherUrlManager.getResearcherUrlsV2(orcid);
+        researcherUrls.setResearcherUrls((List<ResearcherUrl>) visibilityFilter.filter(researcherUrls.getResearcherUrls()));
         ElementUtils.setPathToResearcherUrls(researcherUrls, orcid);
         return Response.ok(researcherUrls).build();
     }
@@ -477,10 +481,12 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
         return Response.noContent().build();
     }    
     
+    @SuppressWarnings("unchecked")
     @Override
     @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED)
     public Response viewEmails(String orcid) {
         Emails emails = emailManager.getEmails(orcid);
+        emails.setEmails((List<Email>) visibilityFilter.filter(emails.getEmails()));
         return Response.ok(emails).build();
     }
 }

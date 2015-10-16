@@ -16,14 +16,17 @@
  */
 package org.orcid.api.memberV2.server;
 
+import static org.orcid.core.api.OrcidApiConstants.EMAIL;
 import static org.orcid.core.api.OrcidApiConstants.ORCID_JSON;
 import static org.orcid.core.api.OrcidApiConstants.ORCID_XML;
-import static org.orcid.core.api.OrcidApiConstants.RESEARCHER_URLS;
 import static org.orcid.core.api.OrcidApiConstants.PUTCODE;
+import static org.orcid.core.api.OrcidApiConstants.RESEARCHER_URLS;
 import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_JSON;
 import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_XML;
-import static org.orcid.core.api.OrcidApiConstants.RESEARCHER_URLS;
-import static org.orcid.core.api.OrcidApiConstants.EMAIL;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.Authorization;
+import io.swagger.annotations.AuthorizationScope;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -37,11 +40,6 @@ import javax.ws.rs.core.Response;
 
 import org.orcid.jaxb.model.message.ScopeConstants;
 import org.orcid.jaxb.model.record.ResearcherUrl;
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.Authorization;
-import io.swagger.annotations.AuthorizationScope;
 
 /**
  * 

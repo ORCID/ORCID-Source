@@ -28,16 +28,16 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.orcid.jaxb.model.common.CreatedDate;
+import org.orcid.jaxb.model.common.Filterable;
 import org.orcid.jaxb.model.common.LastModifiedDate;
 import org.orcid.jaxb.model.common.Source;
 import org.orcid.jaxb.model.common.Url;
 import org.orcid.jaxb.model.common.Visibility;
-import org.orcid.jaxb.model.common.VisibilityType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "urlName", "url", "createdDate", "lastModifiedDate", "source" })
 @XmlRootElement(name = "researcher-url", namespace = "http://www.orcid.org/ns/researcher-url")
-public class ResearcherUrl implements VisibilityType, Serializable {
+public class ResearcherUrl implements Filterable, Serializable {
     private static final long serialVersionUID = 1047027166285177589L;    
     @XmlElement(name = "url-name", namespace = "http://www.orcid.org/ns/researcher-url")
     protected String urlName;
@@ -160,5 +160,13 @@ public class ResearcherUrl implements VisibilityType, Serializable {
         if (visibility != other.visibility)
             return false;
         return true;
+    }
+
+    @Override
+    public String retrieveSourcePath() {
+        if (source != null) {
+            return source.retrieveSourcePath();
+        }
+        return null;
     }    
 }

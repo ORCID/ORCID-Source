@@ -26,15 +26,15 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.orcid.jaxb.model.common.CreatedDate;
+import org.orcid.jaxb.model.common.Filterable;
 import org.orcid.jaxb.model.common.LastModifiedDate;
 import org.orcid.jaxb.model.common.Source;
 import org.orcid.jaxb.model.common.Visibility;
-import org.orcid.jaxb.model.common.VisibilityType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "email", "createdDate", "lastModifiedDate", "source" })
 @XmlRootElement(name = "email", namespace = "http://www.orcid.org/ns/email")
-public class Email implements VisibilityType, Serializable {
+public class Email implements Filterable, Serializable {
     private static final long serialVersionUID = 7986448691143979246L;
     @XmlElement(namespace = "http://www.orcid.org/ns/email")
     protected String email;
@@ -122,5 +122,13 @@ public class Email implements VisibilityType, Serializable {
             return false;
 
         return true;
+    }
+
+    @Override
+    public String retrieveSourcePath() {
+        if (source != null) {
+            return source.retrieveSourcePath();
+        }
+        return null;
     }
 }
