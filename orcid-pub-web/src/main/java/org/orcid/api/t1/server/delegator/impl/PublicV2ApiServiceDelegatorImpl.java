@@ -19,6 +19,7 @@ package org.orcid.api.t1.server.delegator.impl;
 import static org.orcid.core.api.OrcidApiConstants.STATUS_OK_MESSAGE;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -31,6 +32,7 @@ import org.orcid.api.t1.server.delegator.PublicV2ApiServiceDelegator;
 import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.manager.AffiliationsManager;
 import org.orcid.core.manager.ClientDetailsManager;
+import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.PeerReviewManager;
 import org.orcid.core.manager.ProfileEntityManager;
@@ -43,6 +45,8 @@ import org.orcid.core.security.visibility.filter.VisibilityFilterV2;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.record.Education;
+import org.orcid.jaxb.model.record.Email;
+import org.orcid.jaxb.model.record.Emails;
 import org.orcid.jaxb.model.record.Employment;
 import org.orcid.jaxb.model.record.Funding;
 import org.orcid.jaxb.model.record.PeerReview;
@@ -103,6 +107,9 @@ public class PublicV2ApiServiceDelegatorImpl implements PublicV2ApiServiceDelega
     @Value("${org.orcid.core.baseUri}")
     private String baseUrl;
 
+    @Resource
+    private EmailManager emailManager;
+    
     @Override
     public Response viewStatusText() {
         return Response.ok(STATUS_OK_MESSAGE).build();
@@ -244,5 +251,14 @@ public class PublicV2ApiServiceDelegatorImpl implements PublicV2ApiServiceDelega
     public Response viewResearcherUrl(String orcid, String putCode) {
         ResearcherUrl researcherUrl = researcherUrlManager.getResearcherUrlV2(orcid, Long.valueOf(putCode));
         return Response.ok(researcherUrl).build();
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Override
+    @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED, enableAnonymousAccess = true)
+    public Response viewEmails(String orcid) {
+        Emails emails = emailManager.getEmails(orcid);
+        emails.setEmails((List<Email>) visibilityFilter.filter(emails.getEmails()));
+        return Response.ok(emails).build();
     }
 }
