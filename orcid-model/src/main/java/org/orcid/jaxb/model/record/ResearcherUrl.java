@@ -36,25 +36,28 @@ import org.orcid.jaxb.model.common.VisibilityType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "urlName", "url", "createdDate", "lastModifiedDate", "source" })
-@XmlRootElement(name = "researcher-url")
+@XmlRootElement(name = "researcher-url", namespace = "http://www.orcid.org/ns/researcher-url")
 public class ResearcherUrl implements VisibilityType, Serializable {
-    private static final long serialVersionUID = 1047027166285177589L;
-    @XmlElement(namespace = "http://www.orcid.org/ns/common")
-    protected Url url;
-    @XmlElement(name = "url-name", namespace = "http://www.orcid.org/ns/common")
+    private static final long serialVersionUID = 1047027166285177589L;    
+    @XmlElement(name = "url-name", namespace = "http://www.orcid.org/ns/researcher-url")
     protected String urlName;
+    @XmlElement(namespace = "http://www.orcid.org/ns/researcher-url")
+    protected Url url;
     @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected Source source;
     @XmlAttribute(name = "put-code")
     @ApiModelProperty(hidden = true)
     protected Long putCode;
-    @XmlAttribute
-    protected Visibility visibility;
     @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "last-modified-date")
     protected LastModifiedDate lastModifiedDate;
     @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "created-date")
     protected CreatedDate createdDate;
-
+    @XmlAttribute
+    protected Visibility visibility;
+    @XmlAttribute
+    protected String path;
+    
+    
     public Url getUrl() {
         return url;
     }
@@ -111,12 +114,19 @@ public class ResearcherUrl implements VisibilityType, Serializable {
         this.createdDate = createdDate;
     }
 
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((putCode == null) ? 0 : putCode.hashCode());
-        result = prime * result + ((source == null) ? 0 : source.hashCode());
+        result = prime * result + ((path == null) ? 0 : path.hashCode());
         result = prime * result + ((url == null) ? 0 : url.hashCode());
         result = prime * result + ((urlName == null) ? 0 : urlName.hashCode());
         result = prime * result + ((visibility == null) ? 0 : visibility.hashCode());
@@ -132,15 +142,10 @@ public class ResearcherUrl implements VisibilityType, Serializable {
         if (getClass() != obj.getClass())
             return false;
         ResearcherUrl other = (ResearcherUrl) obj;
-        if (putCode == null) {
-            if (other.putCode != null)
+        if (path == null) {
+            if (other.path != null)
                 return false;
-        } else if (!putCode.equals(other.putCode))
-            return false;
-        if (source == null) {
-            if (other.source != null)
-                return false;
-        } else if (!source.equals(other.source))
+        } else if (!path.equals(other.path))
             return false;
         if (url == null) {
             if (other.url != null)
@@ -155,5 +160,5 @@ public class ResearcherUrl implements VisibilityType, Serializable {
         if (visibility != other.visibility)
             return false;
         return true;
-    }
+    }    
 }

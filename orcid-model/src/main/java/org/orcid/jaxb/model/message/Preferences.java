@@ -24,6 +24,7 @@
 package org.orcid.jaxb.model.message;
 
 import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -59,7 +60,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "sendEmailFrequencyDays", "sendChangeNotifications", "sendOrcidNews", "sendMemberUpdateRequests", "activitiesVisibilityDefault",
+@XmlType(name = "", propOrder = { "sendEmailFrequencyDays", "sendChangeNotifications", "sendAdministrativeChangeNotifications", "sendOrcidNews", "sendMemberUpdateRequests", "activitiesVisibilityDefault",
         "workVisibilityDefault", "developerToolsEnabled" })
 @XmlRootElement(name = "preferences")
 public class Preferences implements Serializable {
@@ -69,6 +70,8 @@ public class Preferences implements Serializable {
     protected String sendEmailFrequencyDays;
     @XmlElement(name = "send-change-notifications", required = true)
     protected SendChangeNotifications sendChangeNotifications;
+    @XmlElement(name = "send-administrative-change-notifications", required = true)
+    protected SendAdministrativeChangeNotifications sendAdministrativeChangeNotifications;
     @XmlElement(name = "send-orcid-news", required = true)
     protected SendOrcidNews sendOrcidNews;
     @XmlElement(name = "send-member-update-requests", required = true)
@@ -120,6 +123,14 @@ public class Preferences implements Serializable {
     public void setSendChangeNotifications(SendChangeNotifications value) {
         this.sendChangeNotifications = value;
     }
+    
+    public SendAdministrativeChangeNotifications getSendAdministrativeChangeNotifications() {
+        return sendAdministrativeChangeNotifications;
+    }
+
+    public void setSendAdministrativeChangeNotifications(SendAdministrativeChangeNotifications sendAdministrativeChangeNotifications) {
+        this.sendAdministrativeChangeNotifications = sendAdministrativeChangeNotifications;
+    }
 
     /**
      * Gets the value of the sendOrcidNews property.
@@ -154,6 +165,7 @@ public class Preferences implements Serializable {
      * Gets the value of the workVisibilityDefault property.
      * 
      * @deprecated use             {@getActivitiesVisibilityDefault
+     * 
      * 
      * 
      * 

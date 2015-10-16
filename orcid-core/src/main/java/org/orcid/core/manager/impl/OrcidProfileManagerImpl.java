@@ -94,6 +94,7 @@ import org.orcid.jaxb.model.message.Preferences;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.message.SecurityDetails;
 import org.orcid.jaxb.model.message.SecurityQuestionId;
+import org.orcid.jaxb.model.message.SendAdministrativeChangeNotifications;
 import org.orcid.jaxb.model.message.SendChangeNotifications;
 import org.orcid.jaxb.model.message.SendOrcidNews;
 import org.orcid.jaxb.model.message.Source;
@@ -756,6 +757,8 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
     public void updatePreferences(String orcid, Preferences preferences) {
         boolean sendChangeNotifications = preferences.getSendChangeNotifications() == null ? DefaultPreferences.SEND_CHANGE_NOTIFICATIONS_DEFAULT : preferences
                 .getSendChangeNotifications().isValue();
+        boolean sendAdministrativeChangeNotifications = preferences.getSendAdministrativeChangeNotifications() == null ? sendChangeNotifications : preferences
+                .getSendAdministrativeChangeNotifications().isValue();
         boolean sendOrcidNews = preferences.getSendOrcidNews() == null ? DefaultPreferences.SEND_ORCID_NEWS_DEFAULT : preferences.getSendOrcidNews().isValue();
         boolean sendMemberUpdateRequests = preferences.getSendMemberUpdateRequests() == null ? DefaultPreferences.SEND_MEMBER_UPDATE_REQUESTS : preferences
                 .getSendMemberUpdateRequests();
@@ -764,13 +767,14 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
                 .getDeveloperToolsEnabled().isValue();
         float sendEmailFrequencyDays = Float.valueOf(preferences.getSendEmailFrequencyDays() == null ? DefaultPreferences.SEND_EMAIL_FREQUENCY_DAYS : preferences
                 .getSendEmailFrequencyDays());
-        profileDao.updatePreferences(orcid, sendChangeNotifications, sendOrcidNews, sendMemberUpdateRequests, activitiesVisibilityDefault, developerToolsEnabled,
-                sendEmailFrequencyDays);
+        profileDao.updatePreferences(orcid, sendChangeNotifications, sendAdministrativeChangeNotifications, sendOrcidNews, sendMemberUpdateRequests,
+                activitiesVisibilityDefault, developerToolsEnabled, sendEmailFrequencyDays);
         OrcidProfile cachedProfile = orcidProfileCacheManager.retrieve(orcid);
         if (cachedProfile != null) {
             profileDao.flush();
             Preferences cachedPreferences = cachedProfile.getOrcidInternal().getPreferences();
             cachedPreferences.setSendChangeNotifications(new SendChangeNotifications(sendChangeNotifications));
+            cachedPreferences.setSendAdministrativeChangeNotifications(new SendAdministrativeChangeNotifications(sendAdministrativeChangeNotifications));
             cachedPreferences.setSendOrcidNews(new SendOrcidNews(sendOrcidNews));
             cachedPreferences.setActivitiesVisibilityDefault(new ActivitiesVisibilityDefault(activitiesVisibilityDefault));
             cachedPreferences.setDeveloperToolsEnabled(new DeveloperToolsEnabled(developerToolsEnabled));

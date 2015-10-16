@@ -2,7 +2,7 @@
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
 	xmlns:sch="http://purl.oclc.org/dsdl/schematron" elementFormDefault="qualified"
 	targetNamespace="http://www.orcid.org/ns/person" xmlns:person="http://www.orcid.org/ns/person"
-	xmlns:common="http://www.orcid.org/ns/common">
+	xmlns:common="http://www.orcid.org/ns/common" xmlns:researcher-url="http://www.orcid.org/ns/researcher-url">
 	<xs:annotation>
 		<xs:documentation>
 			=============================================================================
@@ -34,6 +34,8 @@
 	</xs:annotation>
 	<xs:import namespace="http://www.orcid.org/ns/common"
 		schemaLocation="../common_2.0_rc2/common-2.0_rc2.xsd" />
+	<xs:import namespace="http://www.orcid.org/ns/researcher-url"
+		schemaLocation="../record_2.0_rc2/researcher-url-2.0_rc2.xsd" />
 	<xs:element name="person">
 		<xs:complexType>
 			<xs:annotation>
@@ -46,7 +48,7 @@
 					minOccurs="0" maxOccurs="1" />
 				<xs:element name="biography" type="person:biography" minOccurs="0"
 					maxOccurs="1" />
-				<xs:element name="researcher-urls" type="person:researcher-urls"
+				<xs:element ref="researcher-url:researcher-urls"
 					minOccurs="0" maxOccurs="1" />
 				<xs:element name="contact-details" type="person:contact-details"
 					minOccurs="0" maxOccurs="1" />
@@ -132,59 +134,7 @@
 		<xs:restriction base="xs:string">
 			<xs:maxLength value="5000" />
 		</xs:restriction>
-	</xs:simpleType>
-	<xs:complexType name="researcher-urls">
-		<xs:annotation>
-			<xs:documentation>Container for URLs of the researcher or
-				contributor's sites. The visibility attribute (private, limited or
-				public) can be set at record creation, and indicates who can see
-				this section of information.
-			</xs:documentation>
-		</xs:annotation>
-		<xs:sequence>
-			<xs:element minOccurs="0" maxOccurs="unbounded" name="researcher-url"
-				type="person:researcher-url" />
-		</xs:sequence>		
-	</xs:complexType>
-	
-	
-	
-	
-	<xs:complexType name="researcher-url">
-		<xs:annotation>
-			<xs:documentation>The display name and URL for one of the researcher
-				or contributor's sites.
-			</xs:documentation>
-		</xs:annotation>
-		<xs:sequence>
-			<xs:element minOccurs="0" maxOccurs="1" name="url-name"
-				type="common:non-empty-string">
-				<xs:annotation>
-					<xs:documentation>A short display name describing the URL.
-					</xs:documentation>
-				</xs:annotation>
-			</xs:element>
-			<xs:element name="url" type="common:url" minOccurs="0"
-				maxOccurs="1">
-				<xs:annotation>
-					<xs:documentation>The URL (including http:// or https://).
-					</xs:documentation>
-				</xs:annotation>
-			</xs:element>
-			<xs:element ref="common:created-date" minOccurs="0"
-				maxOccurs="1" />
-			<xs:element ref="common:last-modified-date" minOccurs="0"
-				maxOccurs="1" />
-			<xs:element ref="common:source" minOccurs="0" maxOccurs="1" />					
-		</xs:sequence>
-		<xs:attribute name="visibility" type="common:visibility" />
-	</xs:complexType>
-	
-	
-	
-	
-	
-	
+	</xs:simpleType>			
 	<xs:complexType name="contact-details">
 		<xs:annotation>
 			<xs:documentation>Container for the researcher or contributor's

@@ -36,4 +36,8 @@ You have received this message because you opted in to receive weekly inbox noti
 
 You may adjust your email frequency and subscription preferences in your account settings (http://testserver.orcid.org/account).
 
-email preferences (http://testserver.orcid.org/account) | privacy policy  (http://testserver.orcid.org/privacy-policy) | ORCID, Inc. | 10411 Motor City Drive, Suite 750, Bethesda, MD 20817, USA | http://testserver.orcid.org
+email preferences (http://testserver.orcid.org/account)
+privacy policy (http://testserver.orcid.org/privacy-policy)
+ORCID, Inc.
+10411 Motor City Drive, Suite 750, Bethesda, MD 20817, USA
+http://testserver.orcid.org

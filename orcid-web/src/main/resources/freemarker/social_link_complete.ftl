@@ -25,7 +25,7 @@
         			<div class="grey-box">
         				<h4>Congratulations!</h4>
 			            <p>
-				            You have linked your ${providerId} account ${remoteUser}<br />
+				            You have linked your ${providerId} account ${emailId}<br />
 				            to your ORCID account ${effectiveUserOrcid}.<br />
 				            You will now be able to signin to ORCID using ${providerId}.<br />
 				            You can now <a href="<@orcid.rootPath '/my-orcid'/>">continue to your ORCID record</a>.

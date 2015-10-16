@@ -140,7 +140,7 @@ public class OauthConfirmAccessController extends BaseController {
         }
         Response res = null;
         try {
-        	res = orcidClientCredentialEndPointDelegator.obtainOauth2Token(clientId, clientSecret, grantType, refreshToken, code, scopes, state, redirectUri, resourceId);
+        	res = orcidClientCredentialEndPointDelegator.obtainOauth2Token(clientId, clientSecret, refreshToken, grantType, code, scopes, state, redirectUri, resourceId);
         } catch(Exception e) {
             return getLegacyOrcidEntity("OAuth2 problem", e);
         }

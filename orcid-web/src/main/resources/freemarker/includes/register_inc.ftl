@@ -27,9 +27,11 @@
         </label>
         <div class="relative">
         	<#if (client_name)??>
-        	<input type="hidden" name="client_name" value="${client_name}" />
-        	<input type="hidden" name="client_id" value="${client_id}" />
-        	<input type="hidden" name="client_group_name" value="${client_group_name}" />
+        	<#assign js_group_name = client_group_name?replace('"', '&quot;')?js_string>
+	        <#assign js_client_name = client_name?replace('"', '&quot;')?js_string>	        
+        	<input type="hidden" name="client_group_name" value="${js_group_name}" />
+        	<input type="hidden" name="client_name" value="${js_client_name}" />
+        	<input type="hidden" name="client_id" value="${client_id}" />        	
         	</#if>
             <input name="givenNames234" type="text" tabindex="1" class="input-xlarge" ng-model="register.givenNames.value" ng-model-onblur ng-change="serverValidate('GivenNames')"/>
             <span class="required" ng-class="isValidClass(register.givenNames)">*</span>
