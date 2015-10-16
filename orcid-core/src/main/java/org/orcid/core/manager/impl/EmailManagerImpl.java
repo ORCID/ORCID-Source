@@ -157,6 +157,7 @@ public class EmailManagerImpl implements EmailManager {
             List<org.orcid.jaxb.model.record.Email> emailList = jpaJaxbEmailAdapter.toEmailList(entities);
             Emails emails = new Emails();
             emails.setEmails(emailList);
+            return emails;
         }
         return null;
     }

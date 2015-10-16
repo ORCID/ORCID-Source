@@ -22,6 +22,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
@@ -31,6 +32,7 @@ import javax.xml.bind.annotation.XmlType;
 public class Emails implements Serializable {
     
     private static final long serialVersionUID = -4412096758081316953L;
+    @XmlElement(name = "email", namespace = "http://www.orcid.org/ns/email")
     List<Email> emails;
     @XmlAttribute
     protected String path;
