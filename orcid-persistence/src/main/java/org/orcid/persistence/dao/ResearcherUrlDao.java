@@ -32,10 +32,11 @@ public interface ResearcherUrlDao extends GenericDao<ResearcherUrlEntity, Long> 
 
     /**
      * Deleted a researcher url from database
+     * @param orcid
      * @param id
      * @return true if the researcher url was successfully deleted
      * */
-    public boolean deleteResearcherUrl(long id);
+    public boolean deleteResearcherUrl(String orcid, long id);
 
     /**
      * Retrieve a researcher url from database

@@ -29,8 +29,38 @@ public interface ResearcherUrlManager {
      * @return 
      *          the list of researcher urls associated with the orcid profile
      * */
-    public List<ResearcherUrlEntity> getResearcherUrls(String orcid);
+    public List<ResearcherUrlEntity> getResearcherUrls(String orcid);        
+    
+    /**
+     * Update the researcher urls associated with a specific account
+     * @param orcid
+     * @param researcherUrls
+     * */
+    public boolean updateResearcherUrls(String orcid, ResearcherUrls researcherUrls);
+    
+    /**
+     * Delete a researcher url
+     * @param orcid
+     * @param id
+     * @return true if the researcher url was deleted
+     * */
+    public boolean deleteResearcherUrl(String orcid, String id);
 
+    /**
+     * Retrieve a researcher url from database
+     * @param id
+     * @return the ResearcherUrlEntity associated with the parameter id
+     * */
+    public ResearcherUrlEntity getResearcherUrl(long id);                
+    
+    /**
+     * Adds a researcher url to a specific profile
+     * @param orcid
+     * @param url
+     * @param urlName
+     * @return true if the researcher url was successfully created on database
+     * */
+    public void addResearcherUrls(String orcid, String url, String urlName);            
     
     /**
      * Return the list of researcher urls associated to a specific profile
@@ -41,32 +71,25 @@ public interface ResearcherUrlManager {
     public org.orcid.jaxb.model.record.ResearcherUrls getResearcherUrlsV2(String orcid);
     
     /**
-     * Deleted a researcher url from database
-     * @param id
-     * @return true if the researcher url was successfully deleted
-     * */
-    public boolean deleteResearcherUrl(long id);
-
-    /**
      * Retrieve a researcher url from database
      * @param id
      * @return the ResearcherUrlEntity associated with the parameter id
      * */
-    public ResearcherUrlEntity getResearcherUrl(long id);
-
+    public org.orcid.jaxb.model.record.ResearcherUrl getResearcherUrlV2(String orcid, long id);
+    
     /**
-     * Adds a researcher url to a specific profile
+     * Add a new researcher url to a specific profile
      * @param orcid
-     * @param url
-     * @param urlName
+     * @param researcherUrl
      * @return true if the researcher url was successfully created on database
      * */
-    public void addResearcherUrls(String orcid, String url, String urlName);
-
+    public org.orcid.jaxb.model.record.ResearcherUrl createResearcherUrlV2(String orcid, org.orcid.jaxb.model.record.ResearcherUrl researcherUrl);  
+    
     /**
-     * Update the researcher urls associated with a specific account
+     * Updates an existing researcher url
      * @param orcid
-     * @param researcherUrls
+     * @param researcherUrl
+     * @return the updated researcher url
      * */
-    public boolean updateResearcherUrls(String orcid, ResearcherUrls researcherUrls);
+    public org.orcid.jaxb.model.record.ResearcherUrl updateResearcherUrlV2(String orcid, org.orcid.jaxb.model.record.ResearcherUrl researcherUrl);        
 }

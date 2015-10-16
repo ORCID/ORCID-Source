@@ -21,17 +21,22 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType( propOrder = { "researcherUrls" })
-@XmlRootElement(name = "researcher-urls")
+@XmlRootElement(name = "researcher-urls", namespace = "http://www.orcid.org/ns/researcher-url")
 public class ResearcherUrls implements Serializable {        
     private static final long serialVersionUID = 6312730308815255894L;
     
+    @XmlElement(name = "researcher-url", namespace = "http://www.orcid.org/ns/researcher-url")
     List<ResearcherUrl> researcherUrls;
+    @XmlAttribute
+    protected String path;
 
     public List<ResearcherUrl> getResearcherUrls() {
         return researcherUrls;
@@ -41,10 +46,19 @@ public class ResearcherUrls implements Serializable {
         this.researcherUrls = researcherUrls;
     }
 
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
+        result = prime * result + ((path == null) ? 0 : path.hashCode());
         result = prime * result + ((researcherUrls == null) ? 0 : researcherUrls.hashCode());
         return result;
     }
@@ -58,11 +72,16 @@ public class ResearcherUrls implements Serializable {
         if (getClass() != obj.getClass())
             return false;
         ResearcherUrls other = (ResearcherUrls) obj;
+        if (path == null) {
+            if (other.path != null)
+                return false;
+        } else if (!path.equals(other.path))
+            return false;
         if (researcherUrls == null) {
             if (other.researcherUrls != null)
                 return false;
         } else if (!researcherUrls.equals(other.researcherUrls))
             return false;
         return true;
-    }        
+    }       
 }

@@ -126,6 +126,7 @@ import org.orcid.jaxb.model.message.SalesforceId;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.message.SecurityDetails;
 import org.orcid.jaxb.model.message.SecurityQuestionId;
+import org.orcid.jaxb.model.message.SendAdministrativeChangeNotifications;
 import org.orcid.jaxb.model.message.SendChangeNotifications;
 import org.orcid.jaxb.model.message.SendOrcidNews;
 import org.orcid.jaxb.model.message.Source;
@@ -206,16 +207,16 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
 
     @Resource
     private ProfileEntityManager profileEntityManager;
-    
+
     @Resource
     private OrcidOauth2TokenDetailService orcidOauth2TokenService;
-    
+
     @Resource(name = "profileEntityCacheManager")
     ProfileEntityCacheManager profileEntityCacheManager;
 
     @Resource
     private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
-    
+
     public Jpa2JaxbAdapterImpl() {
         try {
             datatypeFactory = DatatypeFactory.newInstance();
@@ -440,7 +441,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         orcidBio.setDelegation(getDelegation(profileEntity));
         orcidBio.setPersonalDetails(getPersonalDetails(profileEntity));
         orcidBio.setKeywords(getKeywords(profileEntity));
-        orcidBio.setBiography(getBiography(profileEntity));        
+        orcidBio.setBiography(getBiography(profileEntity));
         orcidBio.setResearcherUrls(getResearcherUrls(profileEntity));
         return orcidBio;
     }
@@ -838,7 +839,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
 
     @Override
     public List<org.orcid.pojo.ApplicationSummary> getApplications(List<OrcidOauth2TokenDetail> tokenDetails) {
-    	List<org.orcid.pojo.ApplicationSummary> applications = new ArrayList<org.orcid.pojo.ApplicationSummary>();
+        List<org.orcid.pojo.ApplicationSummary> applications = new ArrayList<org.orcid.pojo.ApplicationSummary>();
 
         if (tokenDetails != null && !tokenDetails.isEmpty()) {
             // verify tokens don't need scopes removed.
@@ -849,20 +850,20 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
 
             for (OrcidOauth2TokenDetail tokenDetail : tokenDetails) {
                 if (tokenDetail.getTokenDisabled() == null || !tokenDetail.getTokenDisabled()) {
-                	org.orcid.pojo.ApplicationSummary applicationSummary = new org.orcid.pojo.ApplicationSummary();
+                    org.orcid.pojo.ApplicationSummary applicationSummary = new org.orcid.pojo.ApplicationSummary();
                     ClientDetailsEntity acceptedClient = clientDetailsEntityCacheManager.retrieve(tokenDetail.getClientDetailsId());
 
                     if (acceptedClient != null) {
-                    	OrcidIdBase idBase = getOrcidIdBase(acceptedClient.getClientId());
-                    	applicationSummary.setOrcidHost(idBase.getHost());
-                    	applicationSummary.setOrcidPath(idBase.getPath());
-                    	applicationSummary.setOrcidUri(idBase.getUri());
+                        OrcidIdBase idBase = getOrcidIdBase(acceptedClient.getClientId());
+                        applicationSummary.setOrcidHost(idBase.getHost());
+                        applicationSummary.setOrcidPath(idBase.getPath());
+                        applicationSummary.setOrcidUri(idBase.getUri());
                         applicationSummary.setName(acceptedClient.getClientName());
                         applicationSummary.setWebsiteValue(acceptedClient.getClientWebsite());
                         applicationSummary.setApprovalDate(tokenDetail.getDateCreated());
-                        // add group information                        
+                        // add group information
                         if (!PojoUtil.isEmpty(acceptedClient.getGroupProfileId())) {
-                            ProfileEntity groupEntity = profileEntityCacheManager.retrieve(acceptedClient.getGroupProfileId()); 
+                            ProfileEntity groupEntity = profileEntityCacheManager.retrieve(acceptedClient.getGroupProfileId());
                             applicationSummary.setGroupOrcidPath(groupEntity.getId());
                             applicationSummary.setGroupName(getGroupDisplayName(groupEntity));
                         }
@@ -871,66 +872,24 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                         Set<ScopePathType> scopesGrantedToClient = ScopePathType.getScopesFromSpaceSeparatedString(tokenDetail.getScope());
                         Map<ScopePathType, String> scopePathMap = new HashMap<ScopePathType, String>();
                         StringBuffer tempBuffer;
-                        for(ScopePathType tempScope : scopesGrantedToClient) {
-                        	tempBuffer = new StringBuffer();
-                        	tempBuffer.append(tempScope.getClass().getName()).append(".").append(tempScope.toString());
-                        	scopePathMap.put(tempScope, localeManager.resolveMessage(tempBuffer.toString()));
+                        for (ScopePathType tempScope : scopesGrantedToClient) {
+                            tempBuffer = new StringBuffer();
+                            tempBuffer.append(tempScope.getClass().getName()).append(".").append(tempScope.toString());
+                            scopePathMap.put(tempScope, localeManager.resolveMessage(tempBuffer.toString()));
                         }
                         if(!scopePathMap.isEmpty()) {
                         	applicationSummary.setScopePaths(scopePathMap);
-                        	checkApplicationsAndAdd(applicationSummary, applications);
+                        	applications.add(applicationSummary);
                         }
                     }
 
                 }
             }
         }
-        
+
         return applications;
-    }
 
-    /**
-     * Get an application and compare it to the list of existing applications,
-     * if it share the same client and scopes, keep just the oldest one
-     * 
-     * @param applicationSummary
-     *            The application that want to be added
-     * @param applications
-     *            The list of applications already evaluated
-     * */
-    private void checkApplicationsAndAdd(org.orcid.pojo.ApplicationSummary applicationSummary, List<org.orcid.pojo.ApplicationSummary> applications) {
-
-        if (applications.isEmpty()) {
-            applications.add(applicationSummary);
-        } else {
-            boolean replaceExisting = false;
-            boolean foundExisting = false;
-            int index = 0;
-            for(org.orcid.pojo.ApplicationSummary existingSummary : applications) {
-                if (existingSummary.getOrcidPath().equals(applicationSummary.getOrcidPath()) 
-                		&& existingSummary.getScopePaths().keySet().containsAll(applicationSummary.getScopePaths().keySet())
-                		&& applicationSummary.getScopePaths().keySet().containsAll(existingSummary.getScopePaths().keySet())
-                		&& applicationSummary.getApprovalDate() != null) {
-                    foundExisting = true;
-                    Date existingApprovalDate = null;
-                    if (existingSummary.getApprovalDate() != null) {
-                        existingApprovalDate = existingSummary.getApprovalDate();
-                    }
-                    if (existingApprovalDate == null || applicationSummary.getApprovalDate().before(existingApprovalDate)) {
-                        replaceExisting = true;
-                        break;
-                    }
-                }
-                index ++;
-            }
-            if(replaceExisting) {
-            	applications.remove(index);
-            	applications.add(applicationSummary);
-            } else if(!foundExisting) {
-            	applications.add(applicationSummary);
-            }
-        }
-    }
+    }    
 
     private String getGroupDisplayName(ProfileEntity groupProfile) {
         String creditName = groupProfile.getCreditName();
@@ -1149,6 +1108,9 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         preferences.setSendEmailFrequencyDays(String.valueOf(profileEntity.getSendEmailFrequencyDays()));
         preferences.setSendChangeNotifications(new SendChangeNotifications(
                 profileEntity.getSendChangeNotifications() == null ? DefaultPreferences.SEND_CHANGE_NOTIFICATIONS_DEFAULT : profileEntity.getSendChangeNotifications()));
+        preferences.setSendAdministrativeChangeNotifications(new SendAdministrativeChangeNotifications(
+                profileEntity.getSendAdministrativeChangeNotifications() == null ? preferences.getSendChangeNotifications().isValue() : profileEntity
+                        .getSendAdministrativeChangeNotifications()));
         preferences.setSendOrcidNews(new SendOrcidNews(profileEntity.getSendOrcidNews() == null ? DefaultPreferences.SEND_ORCID_NEWS_DEFAULT : profileEntity
                 .getSendOrcidNews()));
         preferences.setSendMemberUpdateRequests(profileEntity.getSendMemberUpdateRequests() == null ? DefaultPreferences.SEND_MEMBER_UPDATE_REQUESTS : profileEntity

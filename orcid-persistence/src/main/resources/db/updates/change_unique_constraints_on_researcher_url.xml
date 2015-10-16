@@ -1,0 +1,40 @@
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2014 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+	<changeSet author="Angel Montenegro" id="CHANGE-UNIQUE-CONSTRAINTS-ON-RESEARCHER-URL" dbms="postgresql">
+		<preConditions onFail="MARK_RAN">
+    		<sqlCheck expectedResult="0">select count (*) from pg_constraint where conname='researcher_url_orcid_source_unique_key'</sqlCheck>
+  		</preConditions>
+		<sql>ALTER TABLE researcher_url DROP CONSTRAINT IF EXISTS researcher_url_orcid_unique_key;</sql>
+		<sql>ALTER TABLE researcher_url ADD CONSTRAINT researcher_url_orcid_source_unique_key UNIQUE (url, orcid, source_id)</sql>
+		<sql>ALTER TABLE researcher_url ADD CONSTRAINT researcher_url_orcid_client_source_unique_key UNIQUE (url, orcid, client_source_id)</sql>
+    </changeSet>
+    
+    <changeSet author="Angel Montenegro" id="CHANGE-UNIQUE-CONSTRAINTS-ON-RESEARCHER-URL-HSQL" dbms="hsqldb">
+    	<preConditions>
+			<dbms type="hsqldb"/>
+		</preConditions>
+    	<dropUniqueConstraint tableName="researcher_url" constraintName="researcher_url_orcid_unique_key"/>
+    	<addUniqueConstraint tableName="researcher_url" columnNames="url, orcid, source_id" constraintName="researcher_url_orcid_source_unique_key"/>
+    	<addUniqueConstraint tableName="researcher_url" columnNames="url, orcid, client_source_id" constraintName="researcher_url_orcid_client_source_unique_key"/>
+    </changeSet>
+</databaseChangeLog>

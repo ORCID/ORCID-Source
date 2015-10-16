@@ -33,16 +33,18 @@ ORCID would like to let you know
 <#if sourceId != 'ORCID'>
 <#list digestEmail.notificationsBySourceId[sourceId].notificationsByType?keys?sort as notificationType>
 <#list digestEmail.notificationsBySourceId[sourceId].notificationsByType[notificationType] as notification>
+
 <#if notificationType == 'PERMISSION'>
 ${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sourceId}: ${notification.notificationSubject!'Request to add items'}
 <#assign itemsByType=notification.items.itemsByType>
 <#list itemsByType?keys?sort as itemType>
 ${itemType?capitalize}<#if itemType == 'WORK'>s</#if> (${itemsByType[itemType]?size})
-Visit ${baseUri}/inbox/encrypted/${notification.encryptedPutCode}/action to add now.
-
 <#list itemsByType[itemType] as item>
-    ${item.itemName} <#if item.externalIdentifier??>(${item.externalIdentifier.externalIdentifierType?lower_case}: ${item.externalIdentifier.externalIdentifierId})</#if>
+    ${item.itemName?trim} <#if item.externalIdentifier??>(${item.externalIdentifier.externalIdentifierType?lower_case}: ${item.externalIdentifier.externalIdentifierId})</#if>
 </#list>
+
+ADD NOW: ${baseUri}/inbox/encrypted/${notification.encryptedPutCode}/action
+MORE INFO: ${baseUri}/inbox#${notification.putCode}
 </#list>
 <#elseif notificationType == 'AMENDED'>
 ${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sourceId} has updated recent ${notification.amendedSection?lower_case}s on your ORCID record.
@@ -61,6 +63,8 @@ ${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sour
 </#if>
 </#list>
 
+<#if ((totalMessageCount?number) > 1)>
+</#if>
 VIEW YOUR ORCID INBOX: ${baseUri}/inbox
 
 <#assign frequency>
@@ -74,4 +78,5 @@ You have received this message because you opted in to receive ${frequency} inbo
 
 You may adjust your email frequency and subscription preferences in your account settings (${baseUri}/account).
 
+---
 <#include "email_footer.ftl"/>

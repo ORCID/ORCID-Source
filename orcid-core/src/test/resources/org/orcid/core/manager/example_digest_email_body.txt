@@ -7,27 +7,34 @@ ORCID would like to let you know
     We have release a new messaging feature
     The ORCID registry is now available in Orc
 
+
 Super Institution 1: Request to add items
 Works (2)
-Visit http://testserver.orcid.org/inbox/encrypted/QWJaZnJrUXVzUGc9/action to add now.
-
     Work 1 (doi: 123446/67654)
     Work 2 (doi: http://dx.doi.org/123446/67655)
 
+ADD NOW: http://testserver.orcid.org/inbox/encrypted/QWJaZnJrUXVzUGc9/action
+MORE INFO: http://testserver.orcid.org/inbox#1
+
+
 Super Institution 1: Request to add items
 Employment (1)
-Visit http://testserver.orcid.org/inbox/encrypted/elV4OGVicFBnNVU9/action to add now.
-
     Employment 1 (doi: 12345/abc)
+
+ADD NOW: http://testserver.orcid.org/inbox/encrypted/elV4OGVicFBnNVU9/action
+MORE INFO: http://testserver.orcid.org/inbox#2
+
 
 Lovely Publisher 1 has updated recent fundings on your ORCID record.
 
+
 Lovely Publisher 1: Request to add items
 Works (2)
-Visit http://testserver.orcid.org/inbox/encrypted/RWZKTTdhY3ArM3c9/action to add now.
-
     Work 3 (doi: 12345/def)
     Work 4 (doi: 12345/ghi)
+
+ADD NOW: http://testserver.orcid.org/inbox/encrypted/RWZKTTdhY3ArM3c9/action
+MORE INFO: http://testserver.orcid.org/inbox#3
 
 
 VIEW YOUR ORCID INBOX: http://testserver.orcid.org/inbox
@@ -36,6 +43,7 @@ You have received this message because you opted in to receive weekly inbox noti
 
 You may adjust your email frequency and subscription preferences in your account settings (http://testserver.orcid.org/account).
 
+---
 email preferences (http://testserver.orcid.org/account)
 privacy policy (http://testserver.orcid.org/privacy-policy)
 ORCID, Inc.
