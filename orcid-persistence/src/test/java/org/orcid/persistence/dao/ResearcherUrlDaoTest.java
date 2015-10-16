@@ -115,7 +115,7 @@ public class ResearcherUrlDaoTest extends DBUnitTest {
         List<ResearcherUrlEntity> researcherUrls = researcherUrlDao.getResearcherUrls("4444-4444-4444-4443");
         assertNotNull(researcherUrls);
         assertEquals(2, researcherUrls.size());
-        researcherUrlDao.deleteResearcherUrl(researcherUrls.get(0).getId());
+        researcherUrlDao.deleteResearcherUrl("4444-4444-4444-4443", researcherUrls.get(0).getId());
         researcherUrls = researcherUrlDao.getResearcherUrls("4444-4444-4444-4443");
         assertNotNull(researcherUrls);
         assertEquals(1, researcherUrls.size());
@@ -129,7 +129,7 @@ public class ResearcherUrlDaoTest extends DBUnitTest {
             ResearcherUrlEntity newRUrl = new ResearcherUrlEntity();
             newRUrl.setDateCreated(new Date());
             newRUrl.setLastModified(new Date());
-            newRUrl.setSource(new SourceEntity(new ClientDetailsEntity("APP-5555555555555555")));
+            newRUrl.setSource(new SourceEntity(new ClientDetailsEntity("4444-4444-4444-4443")));
             newRUrl.setUrl("http://www.researcherurl2.com?id=1");
             newRUrl.setUrlName("test");
             newRUrl.setUser(new ProfileEntity("4444-4444-4444-4443"));

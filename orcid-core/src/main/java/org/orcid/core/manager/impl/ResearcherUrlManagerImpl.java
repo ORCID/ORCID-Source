@@ -18,17 +18,24 @@ package org.orcid.core.manager.impl;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.persistence.PersistenceException;
 
 import org.hibernate.exception.ConstraintViolationException;
 import org.orcid.core.adapter.JpaJaxbResearcherUrlAdapter;
+import org.orcid.core.exception.OrcidDuplicatedElementException;
+import org.orcid.core.exception.WrongOwnerException;
+import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ResearcherUrlManager;
 import org.orcid.core.manager.SourceManager;
+import org.orcid.core.manager.validator.PersonValidator;
+import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.jaxb.model.message.ResearcherUrl;
 import org.orcid.jaxb.model.message.ResearcherUrls;
 import org.orcid.jaxb.model.message.Url;
@@ -38,8 +45,10 @@ import org.orcid.persistence.dao.ResearcherUrlDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
 
 public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
 
@@ -47,42 +56,53 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
 
     @Resource
     private ResearcherUrlDao researcherUrlDao;
-    
+
     @Resource
     private ProfileDao profileDao;
 
     @Resource
     private SourceManager sourceManager;
-    
+
     @Resource
     private ProfileEntityManager profileEntityManager;
-    
-    @Resource 
+
+    @Resource
     private JpaJaxbResearcherUrlAdapter jpaJaxbResearcherUrlAdapter;
     
+    @Resource
+    private OrcidSecurityManager orcidSecurityManager;
+
     /**
      * Return the list of researcher urls associated to a specific profile
+     * 
      * @param orcid
-     * @return 
-     *          the list of researcher urls associated with the orcid profile
+     * @return the list of researcher urls associated with the orcid profile
      * */
     @Override
     public List<ResearcherUrlEntity> getResearcherUrls(String orcid) {
         return researcherUrlDao.getResearcherUrls(orcid);
     }
 
-    /**
-     * Deleted a researcher url from database
-     * @param id
-     * @return true if the researcher url was successfully deleted
-     * */
     @Override
-    public boolean deleteResearcherUrl(long id) {
-        return researcherUrlDao.deleteResearcherUrl(id);
+    public boolean deleteResearcherUrl(String orcid, String id) {
+        boolean result = true;
+        Long researcherUrlId = Long.valueOf(id);
+        ResearcherUrlEntity toDelete = researcherUrlDao.getResearcherUrl(researcherUrlId);                
+        SourceEntity existingSource = toDelete.getSource();
+        orcidSecurityManager.checkSource(existingSource);
+        
+        try {            
+            researcherUrlDao.deleteResearcherUrl(orcid, researcherUrlId);
+        } catch(Exception e) {
+            LOGGER.error("Unable to delete researcherUrl with ID: " + researcherUrlId);
+            result = false;
+        }
+        return result;
     }
 
     /**
      * Retrieve a researcher url from database
+     * 
      * @param id
      * @return the ResearcherUrlEntity associated with the parameter id
      * */
@@ -93,6 +113,7 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
 
     /**
      * Adds a researcher url to a specific profile
+     * 
      * @param orcid
      * @param url
      * @param urlName
@@ -109,11 +130,12 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
         entity.setUrl(url);
         entity.setUrlName(urlName);
         entity.setUser(new ProfileEntity(orcid));
-        entity.setVisibility(profileEntityManager.getResearcherUrlDefaultVisibility(orcid));               
+        entity.setVisibility(profileEntityManager.getResearcherUrlDefaultVisibility(orcid));
     }
 
     /**
      * Update the researcher urls associated with a specific account
+     * 
      * @param orcid
      * @param researcherUrls
      * */
@@ -127,21 +149,22 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
         while (currentIterator.hasNext()) {
             ResearcherUrlEntity existingResearcherUrl = currentIterator.next();
             ResearcherUrl researcherUrl = new ResearcherUrl(new Url(existingResearcherUrl.getUrl()), new UrlName(existingResearcherUrl.getUrlName()));
-            //Delete non modified researcher urls from the parameter list
+            // Delete non modified researcher urls from the parameter list
             if (newResearcherUrls.contains(researcherUrl)) {
                 newResearcherUrls.remove(researcherUrl);
             } else {
-                //Delete researcher urls deleted by user
-                researcherUrlDao.deleteResearcherUrl(existingResearcherUrl.getId());
+                // Delete researcher urls deleted by user
+                researcherUrlDao.deleteResearcherUrl(orcid, existingResearcherUrl.getId());
             }
         }
 
         SourceEntity source = sourceManager.retrieveSourceEntity();
-        
-        //Init null fields
+
+        // Init null fields
         initNullSafeValues(newResearcherUrls);
-        //At this point, only new researcher urls are in the list newResearcherUrls
-        //Insert all these researcher urls on database
+        // At this point, only new researcher urls are in the list
+        // newResearcherUrls
+        // Insert all these researcher urls on database
         for (ResearcherUrl newResearcherUrl : newResearcherUrls) {
             try {
                 ResearcherUrlEntity entity = new ResearcherUrlEntity();
@@ -152,27 +175,29 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
                 entity.setUrl(newResearcherUrl.getUrl().getValue());
                 entity.setUrlName(newResearcherUrl.getUrlName().getContent());
                 entity.setUser(new ProfileEntity(orcid));
-                entity.setVisibility(profileEntityManager.getResearcherUrlDefaultVisibility(orcid));   
-                researcherUrlDao.merge(entity);                               
+                entity.setVisibility(profileEntityManager.getResearcherUrlDefaultVisibility(orcid));
+                researcherUrlDao.merge(entity);
             } catch (PersistenceException e) {
-                //If the researcher url was duplicated, log the error
+                // If the researcher url was duplicated, log the error
                 if (e.getCause() != null && e.getCause().getClass().isAssignableFrom(ConstraintViolationException.class)) {
                     LOGGER.warn("Duplicated researcher url was found, the url {} already exists for {}", newResearcherUrl.getUrl().getValue(), orcid);
                     hasErrors = true;
                 } else {
-                    //If the error is not a duplicated error, something else happened, so, log the error and throw an exception
+                    // If the error is not a duplicated error, something else
+                    // happened, so, log the error and throw an exception
                     LOGGER.warn("Error inserting new researcher url {} for {}", newResearcherUrl.getUrl().getValue(), orcid);
                     throw new IllegalArgumentException("Unable to create Researcher Url", e);
                 }
             }
         }
-        
+
         profileDao.updateResearcherUrlsVisibility(orcid, researcherUrls.getVisibility());
         return hasErrors;
     }
 
     /**
      * Init null safe values for researcher urls
+     * 
      * @param researcherUrls
      * */
     private void initNullSafeValues(ArrayList<ResearcherUrl> newResearcherUrls) {
@@ -183,20 +208,116 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
                 researcherUrl.setUrlName(new UrlName(new String()));
         }
     }
-    
-    
+
     /**
      * Return the list of researcher urls associated to a specific profile
+     * 
      * @param orcid
-     * @return 
-     *          the list of researcher urls associated with the orcid profile
+     * @return the list of researcher urls associated with the orcid profile
      * */
     @Override
     public org.orcid.jaxb.model.record.ResearcherUrls getResearcherUrlsV2(String orcid) {
         List<ResearcherUrlEntity> researcherUrlEntities = researcherUrlDao.getResearcherUrls(orcid);
         List<org.orcid.jaxb.model.record.ResearcherUrl> researcherUrlList = jpaJaxbResearcherUrlAdapter.toResearcherUrlList(researcherUrlEntities);
         org.orcid.jaxb.model.record.ResearcherUrls researcherUrls = new org.orcid.jaxb.model.record.ResearcherUrls();
-        researcherUrls.setResearcherUrls(researcherUrlList);
+        researcherUrls.setResearcherUrls(researcherUrlList);        
         return researcherUrls;
     }
+
+    @Override
+    public org.orcid.jaxb.model.record.ResearcherUrl getResearcherUrlV2(String orcid, long id) {
+        ResearcherUrlEntity researcherUrlEntity = researcherUrlDao.getResearcherUrl(id);
+        if (!researcherUrlEntity.getUser().getId().equals(orcid)) {
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("element", "researcherUrl");
+            params.put("user", orcid);
+            throw new WrongOwnerException(params);
+        }
+        return jpaJaxbResearcherUrlAdapter.toResearcherUrl(researcherUrlEntity);
+    }
+
+    @Override
+    @Transactional
+    public org.orcid.jaxb.model.record.ResearcherUrl updateResearcherUrlV2(String orcid, org.orcid.jaxb.model.record.ResearcherUrl researcherUrl) {
+        SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();        
+        
+        // Validate the researcher url
+        PersonValidator.validateResearcherUrl(researcherUrl, sourceEntity, false);
+        
+        // Validate it is not duplicated
+        List<ResearcherUrlEntity> existingResearcherUrls = researcherUrlDao.getResearcherUrls(orcid);
+        for (ResearcherUrlEntity existing : existingResearcherUrls) {
+            if (isDuplicated(existing, researcherUrl, sourceEntity)) {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("type", "researcher-url");
+                params.put("value", researcherUrl.getUrlName());
+                throw new OrcidDuplicatedElementException(params);
+            }
+        }
+                
+        ResearcherUrlEntity updatedResearcherUrlEntity = researcherUrlDao.getResearcherUrl(Long.valueOf(researcherUrl.getPutCode()));
+        Visibility originalVisibility = Visibility.fromValue(updatedResearcherUrlEntity.getVisibility().value());        
+        SourceEntity existingSource = updatedResearcherUrlEntity.getSource();
+        orcidSecurityManager.checkSource(existingSource);
+        jpaJaxbResearcherUrlAdapter.toResearcherUrlEntity(researcherUrl, updatedResearcherUrlEntity);        
+        updatedResearcherUrlEntity.setLastModified(new Date());
+        updatedResearcherUrlEntity.setVisibility(originalVisibility);
+        updatedResearcherUrlEntity.setSource(existingSource);
+        researcherUrlDao.merge(updatedResearcherUrlEntity);
+        return jpaJaxbResearcherUrlAdapter.toResearcherUrl(updatedResearcherUrlEntity);
+    }
+
+    @Override
+    public org.orcid.jaxb.model.record.ResearcherUrl createResearcherUrlV2(String orcid, org.orcid.jaxb.model.record.ResearcherUrl researcherUrl) {
+        SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
+        // Validate the researcher url
+        PersonValidator.validateResearcherUrl(researcherUrl, sourceEntity, true);
+        // Validate it is not duplicated
+        List<ResearcherUrlEntity> existingResearcherUrls = researcherUrlDao.getResearcherUrls(orcid);
+        for (ResearcherUrlEntity existing : existingResearcherUrls) {
+            if (isDuplicated(existing, researcherUrl, sourceEntity)) {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("type", "researcher-url");
+                params.put("value", researcherUrl.getUrlName());
+                throw new OrcidDuplicatedElementException(params);
+            }
+        }
+        
+        ResearcherUrlEntity newEntity = jpaJaxbResearcherUrlAdapter.toResearcherUrlEntity(researcherUrl);
+        ProfileEntity profile = new ProfileEntity(orcid);
+        newEntity.setUser(profile);
+        newEntity.setDateCreated(new Date());
+        newEntity.setSource(sourceEntity);
+        setIncomingPrivacy(newEntity, profile);
+        researcherUrlDao.persist(newEntity);
+        return jpaJaxbResearcherUrlAdapter.toResearcherUrl(newEntity);
+    }
+
+    private boolean isDuplicated(ResearcherUrlEntity existing, org.orcid.jaxb.model.record.ResearcherUrl newResearcherUrl, SourceEntity source) {
+        if (!existing.getId().equals(newResearcherUrl.getPutCode())) {
+            if (existing.getSource() != null) {
+                // If they have the same source
+                if (!PojoUtil.isEmpty(existing.getSource().getSourceId()) && existing.getSource().getSourceId().equals(source.getSourceId())) {
+                    // If the url is the same
+                    if (existing.getUrl() != null && existing.getUrl().equals(newResearcherUrl.getUrl().getValue())) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    private void setIncomingPrivacy(ResearcherUrlEntity entity, ProfileEntity profile) {
+        org.orcid.jaxb.model.common.Visibility incomingWorkVisibility = entity.getVisibility();
+        org.orcid.jaxb.model.common.Visibility defaultResearcherUrlsVisibility = profile.getResearcherUrlsVisibility() == null ? org.orcid.jaxb.model.common.Visibility.PRIVATE : org.orcid.jaxb.model.common.Visibility.fromValue(profile.getResearcherUrlsVisibility()
+                .value());
+        if (profile.getClaimed() != null && profile.getClaimed()) {
+            if (defaultResearcherUrlsVisibility.isMoreRestrictiveThan(incomingWorkVisibility)) {
+                entity.setVisibility(defaultResearcherUrlsVisibility);
+            }
+        } else if (incomingWorkVisibility == null) {
+            entity.setVisibility(org.orcid.jaxb.model.common.Visibility.PRIVATE);
+        }
+    }        
 }
