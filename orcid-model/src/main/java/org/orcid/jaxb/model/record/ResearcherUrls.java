@@ -22,6 +22,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
@@ -32,6 +33,7 @@ import javax.xml.bind.annotation.XmlType;
 public class ResearcherUrls implements Serializable {        
     private static final long serialVersionUID = 6312730308815255894L;
     
+    @XmlElement(name = "researcher-url", namespace = "http://www.orcid.org/ns/researcher-url")
     List<ResearcherUrl> researcherUrls;
     @XmlAttribute
     protected String path;
