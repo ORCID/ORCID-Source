@@ -116,10 +116,10 @@ public class PublicV2Test {
     @Resource(name = "t2OAuthClient")
     private T2OAuthAPIService<ClientResponse> t2OAuthClient;
 
-    @Resource
+    @Resource(name = "memberV2ApiClient_rc1")
     private MemberV2ApiClientImpl memberV2ApiClient;
 
-    @Resource
+    @Resource(name = "publicV2ApiClient_rc1")
     private PublicV2ApiClientImpl publicV2ApiClient;
 
     private WebDriver webDriver;

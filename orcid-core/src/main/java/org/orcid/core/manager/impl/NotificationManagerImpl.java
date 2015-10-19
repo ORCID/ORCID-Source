@@ -165,7 +165,7 @@ public class NotificationManagerImpl implements NotificationManager {
 
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(NotificationManagerImpl.class);
 
     public boolean isApiRecordCreationEmailEnabled() {
@@ -505,9 +505,9 @@ public class NotificationManagerImpl implements NotificationManager {
 
         for (DelegationDetails newDelegation : delegatesGrantedByUser) {
             ProfileEntity delegateProfileEntity = profileDao.find(newDelegation.getDelegateSummary().getOrcidIdentifier().getPath());
-            Boolean sendChangeNotifications = delegateProfileEntity.getSendChangeNotifications();
-            if (sendChangeNotifications == null || !sendChangeNotifications) {
-                LOGGER.debug("Not sending added delegate email, because option to send change notifications not set to true for delegate: {}",
+            Boolean sendAdministrativeChangeNotifications = delegateProfileEntity.getSendAdministrativeChangeNotifications();
+            if (sendAdministrativeChangeNotifications == null || !sendAdministrativeChangeNotifications) {
+                LOGGER.debug("Not sending added delegate email, because option to send administrative change notifications not set to true for delegate: {}",
                         delegateProfileEntity.getId());
                 return;
             }

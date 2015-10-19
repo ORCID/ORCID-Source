@@ -40,11 +40,11 @@ import org.orcid.integration.api.helper.OauthHelper;
 import org.orcid.integration.api.memberV2.MemberV2ApiClientImpl;
 import org.orcid.integration.api.t2.T2OAuthAPIService;
 import org.orcid.integration.blackbox.web.SigninTest;
-import org.orcid.jaxb.model.record.Activity;
 import org.orcid.jaxb.model.record.Education;
 import org.orcid.jaxb.model.record.Employment;
 import org.orcid.jaxb.model.record.Funding;
 import org.orcid.jaxb.model.record.PeerReview;
+import org.orcid.jaxb.model.record.ResearcherUrl;
 import org.orcid.jaxb.model.record.Work;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.beans.factory.annotation.Value;
@@ -82,7 +82,7 @@ public class BlackBoxBase {
     protected String user1OrcidId;
     @Resource(name = "t2OAuthClient")
     protected T2OAuthAPIService<ClientResponse> t2OAuthClient;
-    @Resource
+    @Resource(name = "memberV2ApiClient_rc1")
     protected MemberV2ApiClientImpl memberV2ApiClient;
 
     protected WebDriver webDriver;
@@ -101,10 +101,10 @@ public class BlackBoxBase {
         return accessToken;
     }
 
-    public Activity unmarshallFromPath(String path, Class<? extends Activity> type) {
+    public Object unmarshallFromPath(String path, Class<?> type) {
         try (Reader reader = new InputStreamReader(getClass().getResourceAsStream(path))) {
             Object obj = unmarshall(reader, type);
-            Activity result = null;
+            Object result = null;
             if (Education.class.equals(type)) {
                 result = (Education) obj;
             } else if (Employment.class.equals(type)) {
@@ -115,6 +115,8 @@ public class BlackBoxBase {
                 result = (Work) obj;
             } else if (PeerReview.class.equals(type)) {
                 result = (PeerReview) obj;
+            } else if(ResearcherUrl.class.equals(type)) {
+                result = (ResearcherUrl) obj;
             }
             return result;
         } catch (IOException e) {
@@ -122,7 +124,7 @@ public class BlackBoxBase {
         }
     }
 
-    public Object unmarshall(Reader reader, Class<? extends Activity> type) {
+    public Object unmarshall(Reader reader, Class<?> type) {
         try {
             JAXBContext context = JAXBContext.newInstance(type);
             Unmarshaller unmarshaller = context.createUnmarshaller();

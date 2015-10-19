@@ -25,6 +25,7 @@ import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
 
 import org.orcid.api.common.util.ActivityUtils;
+import org.orcid.api.common.util.ElementUtils;
 import org.orcid.api.common.writer.citeproc.WorkToCiteprocTranslator;
 import org.orcid.api.t1.server.delegator.PublicV2ApiServiceDelegator;
 import org.orcid.core.exception.OrcidDeprecatedException;
@@ -34,6 +35,7 @@ import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.PeerReviewManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileFundingManager;
+import org.orcid.core.manager.ResearcherUrlManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.core.security.visibility.aop.AccessControl;
@@ -44,6 +46,8 @@ import org.orcid.jaxb.model.record.Education;
 import org.orcid.jaxb.model.record.Employment;
 import org.orcid.jaxb.model.record.Funding;
 import org.orcid.jaxb.model.record.PeerReview;
+import org.orcid.jaxb.model.record.ResearcherUrl;
+import org.orcid.jaxb.model.record.ResearcherUrls;
 import org.orcid.jaxb.model.record.Work;
 import org.orcid.jaxb.model.record.summary.ActivitiesSummary;
 import org.orcid.jaxb.model.record.summary.EducationSummary;
@@ -89,6 +93,9 @@ public class PublicV2ApiServiceDelegatorImpl implements PublicV2ApiServiceDelega
 
     @Resource
     private OrcidSecurityManager orcidSecurityManager;
+    
+    @Resource
+    private ResearcherUrlManager researcherUrlManager;
 
     @Resource(name = "visibilityFilterV2")
     private VisibilityFilterV2 visibilityFilter;
@@ -222,5 +229,20 @@ public class PublicV2ApiServiceDelegatorImpl implements PublicV2ApiServiceDelega
         orcidSecurityManager.checkVisibility(summary);
         ActivityUtils.setPathToActivity(summary, orcid);
         return Response.ok(summary).build();
+    }
+    
+    @Override
+    @AccessControl(requiredScope = ScopePathType.READ_PUBLIC, enableAnonymousAccess = true)
+    public Response viewResearcherUrls(String orcid) {
+        ResearcherUrls researcherUrls = researcherUrlManager.getResearcherUrlsV2(orcid);
+        ElementUtils.setPathToResearcherUrls(researcherUrls, orcid);
+        return Response.ok(researcherUrls).build();
+    }
+    
+    @Override
+    @AccessControl(requiredScope = ScopePathType.READ_PUBLIC, enableAnonymousAccess = true)
+    public Response viewResearcherUrl(String orcid, String putCode) {
+        ResearcherUrl researcherUrl = researcherUrlManager.getResearcherUrlV2(orcid, Long.valueOf(putCode));
+        return Response.ok(researcherUrl).build();
     }
 }

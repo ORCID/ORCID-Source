@@ -1990,6 +1990,7 @@
 			<xs:sequence>
 				<xs:element ref="orcid:send-email-frequency-days"/>
 				<xs:element ref="orcid:send-change-notifications"/>
+				<xs:element ref="orcid:send-administrative-change-notifications"/>
 				<xs:element ref="orcid:send-orcid-news"/>
 				<xs:element ref="orcid:send-member-update-requests"/>
 				<xs:element ref="orcid:activities-visibility-default"/>
@@ -2029,6 +2030,17 @@
 		</xs:annotation>
 	</xs:element>
 	<xs:element name="send-change-notifications">
+		<xs:annotation>
+			<xs:documentation>(FOR INTERNAL USE ONLY)
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:simpleContent>
+				<xs:extension base="xs:boolean"/>
+			</xs:simpleContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="send-administrative-change-notifications">
 		<xs:annotation>
 			<xs:documentation>(FOR INTERNAL USE ONLY)
 			</xs:documentation>

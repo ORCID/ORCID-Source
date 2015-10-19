@@ -465,6 +465,7 @@
             url="www.4444-4444-4444-4441.com"
             url_name="444_1"
             orcid="4444-4444-4444-4441"
+            source_id="4444-4444-4444-4441"
             />
 
     <researcher_url
@@ -472,6 +473,7 @@
             url="http://www.researcherurl2.com?id=1"
             url_name="443_1"
             orcid="4444-4444-4444-4443"
+            source_id="4444-4444-4444-4443"
             />
 
     <researcher_url
@@ -479,12 +481,14 @@
             url="http://www.researcherurl2.com?id=2"
             url_name="443_2"
             orcid="4444-4444-4444-4443"
+            source_id="4444-4444-4444-4443"
             />
 
     <researcher_url
             id="4"
             url="www.4444-4444-4444-4445.com"
             orcid="4444-4444-4444-4445"
+            source_id="4444-4444-4444-4445"
             />  
 
     <other_name

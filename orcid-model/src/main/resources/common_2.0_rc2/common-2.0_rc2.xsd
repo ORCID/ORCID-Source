@@ -876,6 +876,16 @@
 		</xs:restriction>
 	</xs:simpleType>	
 
+	<xs:simpleType name="person-path">
+		<xs:annotation>
+			<xs:documentation>The person-path attribute is present only when reading
+				elements. It will be of the form /{orcid}/person/{element-name}/{put-code}
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+		</xs:restriction>
+	</xs:simpleType>
+
 	<xs:simpleType name="visibility">
 		<xs:annotation>
 			<xs:documentation>Indicates who can see the value of the element when
