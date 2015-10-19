@@ -81,12 +81,14 @@
 						<form action="<@orcid.rootPath '/signin/facebook'/>" method="POST">
 						    <button type="submit" class="btn btn-social-icon btn-facebook"><i class="fa fa-facebook"></i></button>
 						    <input type="hidden" name="scope" value="email" />
+						    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 						</form>
 					</td>
 					<td style="padding-left: 20px;">
 						<form action="<@orcid.rootPath '/signin/google'/>" method="POST">
 						    <button type="submit" class="btn btn-social-icon btn-google"><i class="fa fa-google"></i></button>
 						    <input type="hidden" name="scope" value="email" />
+						    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 						</form>
 					</td>
 				</tr>
