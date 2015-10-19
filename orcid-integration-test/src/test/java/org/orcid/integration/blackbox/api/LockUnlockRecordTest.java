@@ -16,6 +16,12 @@
  */
 package org.orcid.integration.blackbox.api;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import javax.annotation.Resource;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
@@ -24,14 +30,18 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.orcid.api.common.T2OrcidApiService;
 import org.orcid.integration.blackbox.BlackBoxBase;
 import org.orcid.integration.blackbox.web.SigninTest;
+import org.orcid.jaxb.model.message.OrcidMessage;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.sun.jersey.api.client.ClientResponse;
+
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-oauth-orcid-api-client-context.xml" })
+@ContextConfiguration(locations = { "classpath:orcid-api-client-context.xml" })
 public class LockUnlockRecordTest extends BlackBoxBase {
 
 	private WebDriver webDriver;
@@ -45,32 +55,18 @@ public class LockUnlockRecordTest extends BlackBoxBase {
     @Value("${org.orcid.web.testUser1.username}")
     public String user1Username;
     
-    private boolean isLockedAlready = false;
-
+    @Resource(name = "t2OrcidApiClient1_2")
+    private T2OrcidApiService<ClientResponse> t2Client1_2;
+    
     @Test
     public void lockUnlockTest() throws InterruptedException {
-    	checkIfAlreadyLocked();
-    	if(isLockedAlready) {
-    		lockedToUnLocked();
-    		unlockedToLocked();
-    	} else {
-    		unlockedToLocked();
-    		lockedToUnLocked();
-    	}
-    }
-    
-    private void checkIfAlreadyLocked() {
-    	webDriver = new FirefoxDriver();
-        webDriver.get(webBaseUrl + "/" + user1OrcidId);
-        
-        if(webDriver.findElements(By.id("error_locked")).size() != 0) {
-        	isLockedAlready = true;
-        }
-        webDriver.quit();
-    }
-	
-    private void unlockedToLocked() {
+    	//Init.. Should be unlocked.
+    	assertFalse(checkIfLockedWeb());
+    	assertFalse(checkIfLockedPub());
+    	//assertFalse(checkIfLockedWeb());
+    	//Login Admin
     	adminSignIn();
+    	//Lock the account
     	WebDriverWait wait = new WebDriverWait(webDriver, 10);
 		WebElement lockProfileLink = webDriver.findElement(By.linkText("Lock profile"));
 		lockProfileLink.click();
@@ -81,13 +77,16 @@ public class LockUnlockRecordTest extends BlackBoxBase {
 		wait.until(ExpectedConditions.presenceOfElementLocated(By.id("btn-lock")));
 		WebElement confirmLockButton = webDriver.findElement(By.id("btn-lock"));
 		confirmLockButton.click();
-		
 		webDriver.quit();
-    }
-
-	private void lockedToUnLocked() {
+    	//Verify
+		assertTrue(checkIfLockedWeb());
+		assertTrue(checkIfLockedPub());
+		//assertTrue(checkIfLockedWeb());
+		
+		//Login Admin
 		adminSignIn();
-		WebDriverWait wait = new WebDriverWait(webDriver, 10);
+		//Unlock the account
+		wait = new WebDriverWait(webDriver, 10);
 		WebElement unLockProfileLink = webDriver.findElement(By.linkText("Unlock profile"));
 		unLockProfileLink.click();
 		WebElement unLockProfileOrcidId = webDriver.findElement(By.id("orcid_to_unlock"));
@@ -97,8 +96,29 @@ public class LockUnlockRecordTest extends BlackBoxBase {
 		wait.until(ExpectedConditions.presenceOfElementLocated(By.id("btn-unlock")));
 		WebElement confirmUnLockButton = webDriver.findElement(By.id("btn-unlock"));
 		confirmUnLockButton.click();
-		
-		webDriver.quit();
+    	webDriver.quit();
+    	//Verify
+    	assertFalse(checkIfLockedWeb());
+    	assertFalse(checkIfLockedPub());
+    	//assertFalse(checkIfLockedWeb());
+    }
+    
+    private boolean checkIfLockedWeb() {
+    	webDriver = new FirefoxDriver();
+        webDriver.get(webBaseUrl + "/" + user1OrcidId);
+        if(webDriver.findElements(By.id("error_locked")).size() != 0) {
+        	webDriver.quit();
+        	return true;
+        }
+        webDriver.quit();
+        return false;
+    }
+    
+    public boolean checkIfLockedPub() {
+    	ClientResponse response = t2Client1_2.viewFullDetailsXml(user1OrcidId);
+        assertNotNull(response);
+        OrcidMessage message = response.getEntity(OrcidMessage.class);
+        return message.getOrcidProfile().isLocked();
     }
 	
     private void adminSignIn() {
