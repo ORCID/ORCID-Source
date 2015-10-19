@@ -203,7 +203,7 @@ public class Preferences implements Serializable {
         this.developerToolsEnabled = developerToolsEnabled;
     }
 
-    public Boolean isNotificationsEnabled() {
+    public Boolean getNotificationsEnabled() {
         return notificationsEnabled;
     }
 
