@@ -828,7 +828,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         persistAddedWorks(orcid, updatedOrcidWorksList);
         profileDao.flush();
 
-        boolean notificationsEnabled = existingProfile.getOrcidInternal().getPreferences().isNotificationsEnabled();
+        boolean notificationsEnabled = existingProfile.getOrcidInternal().getPreferences().getNotificationsEnabled();
         if (notificationsEnabled) {
             List<Item> activities = new ArrayList<>();
             for (OrcidWork updatedWork : updatedOrcidWorksList) {
@@ -1313,7 +1313,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         checkForAlreadyExistingAffiliations(existingAffiliations, updatedAffiliationsList);
         persistAddedAffiliations(orcid, updatedAffiliationsList);
         profileDao.flush();
-        boolean notificationsEnabled = existingProfile.getOrcidInternal().getPreferences().isNotificationsEnabled();
+        boolean notificationsEnabled = existingProfile.getOrcidInternal().getPreferences().getNotificationsEnabled();
         if (notificationsEnabled) {
             notificationManager.sendAmendEmail(existingProfile, AmendedSection.AFFILIATION);
         }
@@ -1370,7 +1370,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         checkForAlreadyExistingFundings(existingFundingList, updatedList);
         persistAddedFundings(orcid, updatedList);
         profileDao.flush();
-        boolean notificationsEnabled = existingProfile.getOrcidInternal().getPreferences().isNotificationsEnabled();
+        boolean notificationsEnabled = existingProfile.getOrcidInternal().getPreferences().getNotificationsEnabled();
         if (notificationsEnabled) {
             notificationManager.sendAmendEmail(existingProfile, AmendedSection.FUNDING);
         }
