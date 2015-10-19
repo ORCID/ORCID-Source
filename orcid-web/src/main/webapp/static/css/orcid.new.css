@@ -2198,6 +2198,14 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input{
 	right: 10px;
 }
 
+.settings-table{
+	table-layout:fixed;
+}
+
+.settings-table .editTablePadCell35{
+	margin-right: 0;
+}
+
 .settings-table .settings-table td,.settings-table th {
 	width: 50%;
 	position: relative;
@@ -2209,6 +2217,36 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input{
     padding-left: 0;
 }
 
+.settings-table.table-bordered>tbody>tr>td{
+	padding-right: 0;
+}
+
+.settings-table a{
+	word-break: normal;
+}
+
+.settings-table .table td{
+	border: none;
+}
+
+.settings-table .table td:nth-child(1),
+.settings-table .table td:nth-child(2){
+    width: 100%;
+}
+
+.settings-table .table td:nth-child(3),
+.settings-table .table td:nth-child(4){
+    width: 1%;
+}
+
+.settings-table .table>tbody>tr>td{
+	padding: 3px 5px;
+}
+
+.settings-table .table td:last-child{
+	padding: 5px 0 5px 5px;
+}
+
 .normal-width td,.normal-width th {
 	width: auto;
 }
@@ -2216,6 +2254,10 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input{
 .settings-table .popover {
 	top: 80%;
 	left: -220px;
+}
+
+.settings-table .table-responsive{
+	margin-top: 10px;
 }
 
 .popover-large {
@@ -7243,6 +7285,15 @@ a:hover .mozilla-badge{
 	ul.toggle-menu > li .menu-options.sort .glyphicon.glyphicon-sort-by-alphabet{
 		vertical-align: middle;
     	line-height: 25px;
+	}
+	
+	.settings-table .table td:nth-child(3){
+		min-width: 100px;
+	}
+	
+	.editTablePadCell35 .email{
+		word-break: break-all;
+		
 	}
 	
 }
