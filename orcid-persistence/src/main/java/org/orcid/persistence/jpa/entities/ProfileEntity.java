@@ -136,7 +136,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     private boolean enableDeveloperTools;
     private Date developerToolsEnabledDate;
     private float sendEmailFrequencyDays;
-    private Boolean enableNotifications;
+    private Boolean enableNotifications = Boolean.TRUE;
 
     // Visibility settings
     private Visibility creditNameVisibility;
@@ -809,7 +809,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
         return enableNotifications;
     }
 
-    public void setEnableNotifications(boolean enableNotifications) {
+    public void setEnableNotifications(Boolean enableNotifications) {
         this.enableNotifications = enableNotifications;
     }
 

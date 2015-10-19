@@ -207,7 +207,7 @@ public class Preferences implements Serializable {
         return notificationsEnabled;
     }
 
-    public void setNotificationsEnabled(boolean notificationsEnabled) {
+    public void setNotificationsEnabled(Boolean notificationsEnabled) {
         this.notificationsEnabled = notificationsEnabled;
     }
 
