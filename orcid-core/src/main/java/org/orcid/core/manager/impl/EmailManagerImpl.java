@@ -28,6 +28,7 @@ import javax.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.adapter.JpaJaxbEmailAdapter;
 import org.orcid.core.manager.EmailManager;
+import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.record.Emails;
 import org.orcid.persistence.dao.EmailDao;
@@ -154,6 +155,18 @@ public class EmailManagerImpl implements EmailManager {
     public Emails getEmails(String orcid) {
         List<EmailEntity> entities = emailDao.findByOrcid(orcid);
         if(entities != null) {
+            List<org.orcid.jaxb.model.record.Email> emailList = jpaJaxbEmailAdapter.toEmailList(entities);
+            Emails emails = new Emails();
+            emails.setEmails(emailList);
+            return emails;
+        }
+        return null;
+    }
+    
+    @Override
+    public Emails getPublicEmails(String orcid) {
+        List<EmailEntity> entities = emailDao.findByOrcid(orcid, Visibility.PUBLIC);
+        if(entities != null) {            
             List<org.orcid.jaxb.model.record.Email> emailList = jpaJaxbEmailAdapter.toEmailList(entities);
             Emails emails = new Emails();
             emails.setEmails(emailList);

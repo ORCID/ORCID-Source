@@ -188,4 +188,13 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
         List<EmailEntity> results = query.getResultList();
         return results.isEmpty() ? null : results;
     }
+    
+    @Override
+    public List<EmailEntity> findByOrcid(String orcid, org.orcid.jaxb.model.common.Visibility visibility) {
+        TypedQuery<EmailEntity> query = entityManager.createQuery("from EmailEntity where orcid = :orcid and visibility = :visibility", EmailEntity.class);
+        query.setParameter("orcid", orcid);
+        query.setParameter("visibility", org.orcid.jaxb.model.message.Visibility.fromValue(visibility.value()));
+        List<EmailEntity> results = query.getResultList();
+        return results.isEmpty() ? null : results;
+    }
 }

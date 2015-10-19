@@ -21,6 +21,7 @@ import java.util.List;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
+import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.persistence.dao.ResearcherUrlDao;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,6 +46,22 @@ public class ResearcherUrlDaoImpl extends GenericDaoImpl<ResearcherUrlEntity, Lo
         return query.getResultList();
     }
 
+    /**
+     * Return the list of researcher urls associated to a specific profile
+     * @param orcid
+     * @param visibility
+     * @return 
+     *          the list of researcher urls associated with the orcid profile
+     * */
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<ResearcherUrlEntity> getResearcherUrls(String orcid, Visibility visibility) {
+        Query query = entityManager.createQuery("FROM ResearcherUrlEntity WHERE orcid = :orcid AND visibility = :visibility");
+        query.setParameter("orcid", orcid);
+        query.setParameter("visibility", visibility);
+        return query.getResultList();
+    }
+    
     /**
      * Deleted a researcher url from database
      * @param id

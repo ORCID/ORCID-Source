@@ -58,4 +58,6 @@ public interface EmailDao extends GenericDao<EmailEntity, String> {
     boolean moveEmailToOtherAccountAsNonPrimary(String email, String origin, String destination);
     
     List<EmailEntity> findByOrcid(String orcid);
+    
+    List<EmailEntity> findByOrcid(String orcid, org.orcid.jaxb.model.common.Visibility visibility);
 }

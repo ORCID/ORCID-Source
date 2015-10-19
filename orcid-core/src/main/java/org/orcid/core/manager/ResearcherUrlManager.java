@@ -63,6 +63,14 @@ public interface ResearcherUrlManager {
     public void addResearcherUrls(String orcid, String url, String urlName);            
     
     /**
+     * Return the list of public researcher urls associated to a specific profile
+     * @param orcid
+     * @return 
+     *          the list of public researcher urls associated with the orcid profile
+     * */
+    public org.orcid.jaxb.model.record.ResearcherUrls getPublicResearcherUrlsV2(String orcid);
+    
+    /**
      * Return the list of researcher urls associated to a specific profile
      * @param orcid
      * @return 

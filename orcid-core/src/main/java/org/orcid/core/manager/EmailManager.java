@@ -54,5 +54,7 @@ public interface EmailManager {
     
     boolean moveEmailToOtherAccount(String email, String origin, String destination);
     
-    Emails getEmails(String orcid);    
+    Emails getEmails(String orcid);
+    
+    Emails getPublicEmails(String orcid);
 }
