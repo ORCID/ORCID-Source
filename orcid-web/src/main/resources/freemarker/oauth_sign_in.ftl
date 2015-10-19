@@ -24,8 +24,11 @@
         <form id="loginForm" action="<@orcid.rootPath '/signin/auth'/>" method="post">	            
             <@spring.bind "loginForm" />
             <@spring.showErrors "<br/>" "error" />
-			<input type="hidden" name="client_name" value="${client_name}" />
-			<input type="hidden" name="client_group_name" value="${client_group_name}" />
+            
+			<#assign js_group_name = client_group_name?replace('"', '&quot;')?js_string>
+			<#assign js_client_name = client_name?replace('"', '&quot;')?js_string>            
+			<input type="hidden" name="client_name" value="${js_client_name}" />
+			<input type="hidden" name="client_group_name" value="${js_group_name}" /> 
             <div>
                 <label for="userId"><@orcid.msg 'oauth_sign_in.labelemailorID'/></label>
                 <div class="relative">

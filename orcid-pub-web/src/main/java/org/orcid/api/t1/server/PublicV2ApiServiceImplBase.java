@@ -64,7 +64,7 @@ import org.springframework.beans.factory.annotation.Value;
 
 public class PublicV2ApiServiceImplBase {
 
-    private PublicV2ApiServiceDelegator serviceDelegator;
+    protected PublicV2ApiServiceDelegator serviceDelegator;
     
     @Value("${org.orcid.core.baseUri}")
     protected String baseUri;
