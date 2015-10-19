@@ -97,7 +97,7 @@ public class EmailMessageSenderTest extends BaseTest {
         notification2.setPutCode(2L);
         Items activities2 = new Items();
         notification2.setItems(activities2);
-        activities2.getItems().add(createActivity(ItemType.EMPLOYMENT, "Employment 1", "12345/abc"));
+        activities2.getItems().add(createActivity(ItemType.EMPLOYMENT, "Employment 1 ", "12345/abc"));
         notification2.setCreatedDate(DateUtils.convertToXMLGregorianCalendar("2014-08-17T10:22:15"));
         notification2.setAuthorizationUrl(new AuthorizationUrl("https://thirdparty.com/add-to-orcid/abc"));
         Source source2 = new Source();
