@@ -466,6 +466,7 @@
             url_name="444_1"
             orcid="4444-4444-4444-4441"
             source_id="4444-4444-4444-4441"
+            visibility="PUBLIC"
             />
 
     <researcher_url
@@ -474,6 +475,7 @@
             url_name="443_1"
             orcid="4444-4444-4444-4443"
             source_id="4444-4444-4444-4443"
+            visibility="PUBLIC"
             />
 
     <researcher_url
@@ -482,6 +484,7 @@
             url_name="443_2"
             orcid="4444-4444-4444-4443"
             source_id="4444-4444-4444-4443"
+            visibility="PUBLIC"
             />
 
     <researcher_url
@@ -489,7 +492,17 @@
             url="www.4444-4444-4444-4445.com"
             orcid="4444-4444-4444-4445"
             source_id="4444-4444-4444-4445"
+            visibility="PUBLIC"
             />  
+
+	<researcher_url
+            id="5"
+            url="http://www.researcherurl2.com?id=5"
+            url_name="443_3"
+            orcid="4444-4444-4444-4443"
+            client_source_id="APP-5555555555555555"
+            visibility="LIMITED"
+            />
 
     <other_name
             other_name_id="1"

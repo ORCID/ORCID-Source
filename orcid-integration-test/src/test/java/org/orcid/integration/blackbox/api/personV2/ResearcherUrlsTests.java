@@ -223,6 +223,21 @@ public class ResearcherUrlsTests extends BlackBoxBase {
             memberV2ApiClient.deletePeerReviewXml(this.user1OrcidId, rUrl.getPutCode(), accessToken);
         }
     }
+    
+    @Test
+    public void testGetWithPublicAPI() {
+        ClientResponse getAllResponse = publicV2ApiClient.viewResearcherUrlsXML(user1OrcidId);
+        assertNotNull(getAllResponse);
+        ResearcherUrls researcherUrls = getAllResponse.getEntity(ResearcherUrls.class);
+        assertNotNull(researcherUrls);
+        for(ResearcherUrl rUrl : researcherUrls.getResearcherUrls()) {
+            assertNotNull(rUrl);
+            ClientResponse theRUrl = publicV2ApiClient.viewResearcherUrlXML(user1OrcidId, String.valueOf(rUrl.getPutCode()));
+            assertNotNull(theRUrl);
+            ResearcherUrl researcherUrl = getAllResponse.getEntity(ResearcherUrl.class);
+            assertEquals(researcherUrl, rUrl);
+        }
+    }
 
     public String getAccessToken(String clientId, String clientSecret) throws InterruptedException, JSONException {
         if (accessTokens.containsKey(clientId)) {

@@ -16,9 +16,11 @@
  */
 package org.orcid.api.memberV2.server.delegator;
 
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.core.AnyOf.anyOf;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
@@ -28,6 +30,7 @@ import static org.junit.Assert.fail;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
@@ -53,6 +56,8 @@ import org.orcid.jaxb.model.record.Education;
 import org.orcid.jaxb.model.record.Employment;
 import org.orcid.jaxb.model.record.Funding;
 import org.orcid.jaxb.model.record.PeerReview;
+import org.orcid.jaxb.model.record.ResearcherUrl;
+import org.orcid.jaxb.model.record.ResearcherUrls;
 import org.orcid.jaxb.model.record.Work;
 import org.orcid.jaxb.model.record.WorkTitle;
 import org.orcid.jaxb.model.record.WorkType;
@@ -61,6 +66,7 @@ import org.orcid.jaxb.model.record.summary.PeerReviewSummary;
 import org.orcid.jaxb.model.record.summary.WorkGroup;
 import org.orcid.jaxb.model.record.summary.WorkSummary;
 import org.orcid.jaxb.model.record.summary.Works;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
@@ -447,7 +453,128 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         GroupIdRecords groupIdRecords2 = (GroupIdRecords) response.getEntity();
         assertNotNull(groupIdRecords2);
         assertNotNull(groupIdRecords2.getGroupIdRecord());
-        assertEquals(groupIdRecords2.getTotal(), 1);
-        
+        assertEquals(groupIdRecords2.getTotal(), 1);        
     }
+    
+    @SuppressWarnings("unchecked")
+    @Test
+    public void testViewResearcherUrls() {
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE);
+        Response response = serviceDelegator.viewResearcherUrls("4444-4444-4444-4443");
+        assertNotNull(response);
+        ResearcherUrls researcherUrls = (ResearcherUrls)response.getEntity();
+        assertNotNull(researcherUrls);
+        assertEquals("/4444-4444-4444-4443/researcher-urls", researcherUrls.getPath());
+        assertNotNull(researcherUrls.getResearcherUrls());
+        assertEquals(3, researcherUrls.getResearcherUrls().size());
+        for(ResearcherUrl rUrl : researcherUrls.getResearcherUrls()) {
+            assertThat(rUrl.getPutCode(), anyOf(equalTo(Long.valueOf(2)), equalTo(Long.valueOf(3)), equalTo(Long.valueOf(5))));
+            assertNotNull(rUrl.getSource());
+            assertFalse(PojoUtil.isEmpty(rUrl.getSource().retrieveSourcePath()));
+            assertNotNull(rUrl.getUrl());
+            assertNotNull(rUrl.getUrlName());
+            assertNotNull(rUrl.getVisibility());
+            if(rUrl.getPutCode().equals(Long.valueOf(5))) {
+                assertEquals("APP-5555555555555555", rUrl.getSource().retrieveSourcePath());
+            }
+        }
+    }
+    
+    @Test
+    public void testViewResearcherUrl() {
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE);
+        Response response = serviceDelegator.viewResearcherUrl("4444-4444-4444-4443", "2");
+        assertNotNull(response);
+        ResearcherUrl researcherUrl = (ResearcherUrl)response.getEntity();
+        assertNotNull(researcherUrl);
+        assertEquals("4444-4444-4444-4443", researcherUrl.getSource().retrieveSourcePath());
+        assertEquals("http://www.researcherurl2.com?id=1", researcherUrl.getUrl().getValue());
+        assertEquals("443_1", researcherUrl.getUrlName());
+        assertEquals(Visibility.PUBLIC, researcherUrl.getVisibility());
+        
+        response = serviceDelegator.viewResearcherUrl("4444-4444-4444-4443", "3");
+        assertNotNull(response);
+        researcherUrl = (ResearcherUrl)response.getEntity();
+        assertNotNull(researcherUrl);
+        assertEquals("4444-4444-4444-4443", researcherUrl.getSource().retrieveSourcePath());
+        assertEquals("http://www.researcherurl2.com?id=2", researcherUrl.getUrl().getValue());
+        assertEquals("443_2", researcherUrl.getUrlName());
+        assertEquals(Visibility.PUBLIC, researcherUrl.getVisibility());
+        
+        response = serviceDelegator.viewResearcherUrl("4444-4444-4444-4443", "5");
+        assertNotNull(response);
+        researcherUrl = (ResearcherUrl)response.getEntity();
+        assertNotNull(researcherUrl);
+        assertEquals("APP-5555555555555555", researcherUrl.getSource().retrieveSourcePath());
+        assertEquals("http://www.researcherurl2.com?id=5", researcherUrl.getUrl().getValue());
+        assertEquals("443_3", researcherUrl.getUrlName());
+        assertEquals(Visibility.LIMITED, researcherUrl.getVisibility());
+    }
+    
+    @SuppressWarnings("rawtypes")
+    @Test
+    public void testAddResearcherUrl() {
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.ACTIVITIES_READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        ResearcherUrl rUrl = new ResearcherUrl();
+        rUrl.setUrl(new Url("http://www.myRUrl.com"));
+        rUrl.setUrlName("My researcher Url");
+        rUrl.setVisibility(Visibility.LIMITED);
+        
+        Response response = serviceDelegator.createResearcherUrl("4444-4444-4444-4443", rUrl);
+        assertNotNull(response);
+        assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
+        Map map = response.getMetadata();
+        assertNotNull(map);
+        assertTrue(map.containsKey("Location"));
+        List resultWithPutCode = (List)map.get("Location");
+        String putCode = String.valueOf(resultWithPutCode.get(0));
+                
+        response = serviceDelegator.viewResearcherUrl("4444-4444-4444-4443", putCode);        
+        assertNotNull(response);
+        ResearcherUrl researcherUrl = (ResearcherUrl)response.getEntity();
+        assertNotNull(researcherUrl);
+        assertEquals("APP-5555555555555555", researcherUrl.getSource().retrieveSourcePath());
+        assertEquals("http://www.myRUrl.com", researcherUrl.getUrl().getValue());
+        assertEquals("My researcher Url", researcherUrl.getUrlName());
+        assertEquals(Visibility.LIMITED, researcherUrl.getVisibility());
+        
+        rUrl.setUrl(new Url("http://wqerqwelrqjwerlkqwejr.com"));
+        response = serviceDelegator.createResearcherUrl("4444-4444-4444-4443", rUrl);
+        assertNotNull(response);
+    }
+    
+    @Test
+    public void testUpdateResearcherUrl() {
+        Response response = serviceDelegator.viewResearcherUrl("4444-4444-4444-4443", "5");        
+        assertNotNull(response);
+        ResearcherUrl researcherUrl = (ResearcherUrl)response.getEntity();
+        assertNotNull(researcherUrl);
+        assertNotNull(researcherUrl.getUrl());
+        assertEquals("http://www.researcherurl2.com?id=5", researcherUrl.getUrl().getValue());
+        assertEquals("443_3", researcherUrl.getUrlName());
+        
+        researcherUrl.setUrl(new Url("http://theNewResearcherUrl.com"));
+        researcherUrl.setUrlName("My Updated Researcher Url");
+        
+        response = serviceDelegator.updateResearcherUrl("4444-4444-4444-4443", "5", researcherUrl);
+        assertNotNull(response);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        
+        response = serviceDelegator.viewResearcherUrl("4444-4444-4444-4443", "5");        
+        assertNotNull(response);
+        researcherUrl = (ResearcherUrl)response.getEntity();
+        assertNotNull(researcherUrl);
+        assertNotNull(researcherUrl.getUrl());
+        assertEquals("http://theNewResearcherUrl.com", researcherUrl.getUrl().getValue());
+        assertEquals("My Updated Researcher Url", researcherUrl.getUrlName());
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
 }
