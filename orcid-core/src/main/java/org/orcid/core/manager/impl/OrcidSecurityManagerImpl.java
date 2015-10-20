@@ -151,5 +151,17 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
             throw new AccessControlException("Cannot access method with authentication type " + authentication != null ? authentication.toString() : ", as it's null!");
         }
     }
+    
+    @Override
+    public String getClientIdFromAPIRequest() {
+        SecurityContext context = SecurityContextHolder.getContext();
+        Authentication authentication = context.getAuthentication();
+        if (OAuth2Authentication.class.isAssignableFrom(authentication.getClass())) {
+            OAuth2Authentication oAuth2Authentication = (OAuth2Authentication) authentication;
+            OAuth2Request request = oAuth2Authentication.getOAuth2Request();
+            return request.getClientId();
+        } 
+        return null;
+    }
 
 }

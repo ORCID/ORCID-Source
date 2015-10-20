@@ -31,4 +31,6 @@ public interface OrcidSecurityManager {
     void checkSource(SourceEntity existingSource);
     
     boolean isAdmin();
+    
+    String getClientIdFromAPIRequest();
 }
