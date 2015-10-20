@@ -139,7 +139,7 @@ public class ProfileEventManager {
 				} catch (ExecutionException e) {
 					LOG.error("failed calling task ", e);
 				}
-				getProfileEventDao().persist(new ProfileEventEntity(per.getOrcidProfile().getOrcidIdentifier().getPath(),per.getOutcome()));
+				getProfileEventDao().persist(new ProfileEventEntity(per.getOrcidId(),per.getOutcome()));
             }
             LOG.info("Current done count: {}", doneCount);
         } while (!orcids.isEmpty());
