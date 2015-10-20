@@ -19,6 +19,7 @@ package org.orcid.api.memberV2.server.delegator;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.core.AnyOf.anyOf;
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -53,6 +54,8 @@ import org.orcid.jaxb.model.groupid.GroupIdRecords;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record.Citation;
 import org.orcid.jaxb.model.record.Education;
+import org.orcid.jaxb.model.record.Email;
+import org.orcid.jaxb.model.record.Emails;
 import org.orcid.jaxb.model.record.Employment;
 import org.orcid.jaxb.model.record.Funding;
 import org.orcid.jaxb.model.record.PeerReview;
@@ -569,9 +572,70 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals("My Updated Researcher Url", researcherUrl.getUrlName());
     }
     
+    @Test
+    public void testDeleteResearcherUrl() {
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE);
+        Response response = serviceDelegator.viewResearcherUrls("4444-4444-4444-4443");
+        assertNotNull(response);
+        ResearcherUrls researcherUrls = (ResearcherUrls)response.getEntity();
+        assertNotNull(researcherUrls);
+        assertNotNull(researcherUrls.getResearcherUrls());
+        assertFalse(researcherUrls.getResearcherUrls().isEmpty());
+        ResearcherUrl toDelete = null;
+        
+        for(ResearcherUrl rurl : researcherUrls.getResearcherUrls()) {
+            if(rurl.getSource().retrieveSourcePath().equals("APP-5555555555555555")) {
+                toDelete = rurl;
+                break;
+            }
+        }
+        
+        assertNotNull(toDelete);
+        
+        response = serviceDelegator.deleteResearcherUrl("4444-4444-4444-4443", String.valueOf(toDelete.getPutCode()));
+        assertNotNull(response);
+        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
+        
+        int size = researcherUrls.getResearcherUrls().size();
+        
+        response = serviceDelegator.viewResearcherUrls("4444-4444-4444-4443");
+        assertNotNull(response);
+        researcherUrls = (ResearcherUrls)response.getEntity();
+        assertNotNull(researcherUrls);
+        assertNotNull(researcherUrls.getResearcherUrls());
+        assertEquals((size - 1), researcherUrls.getResearcherUrls().size());
+        for(ResearcherUrl rurl : researcherUrls.getResearcherUrls()) {
+            assertThat(rurl.getPutCode(), not(toDelete.getPutCode()));
+        }        
+    }
     
-    
-    
+    @SuppressWarnings("unchecked")
+    @Test
+    public void testViewEmails() {
+        Response response = serviceDelegator.viewEmails("4444-4444-4444-4443");
+        assertNotNull(response);
+        Emails emails = (Emails)response.getEntity();
+        assertNotNull(emails);
+        assertNotNull(emails.getEmails());
+        assertEquals(3, emails.getEmails().size());
+        for(Email email : emails.getEmails()) {
+            assertThat(email.getEmail(), anyOf(is("teddybass2@semantico.com"), is("teddybass3public@semantico.com"), is("teddybass3private@semantico.com")));
+            switch(email.getEmail()) {
+            case "teddybass2@semantico.com":
+                assertEquals(Visibility.LIMITED, email.getVisibility());
+                assertEquals("4444-4444-4444-4443", email.retrieveSourcePath());
+                break;
+            case "teddybass3public@semantico.com":
+                assertEquals(Visibility.PUBLIC, email.getVisibility());
+                assertEquals("4444-4444-4444-4443", email.retrieveSourcePath());
+                break;
+            case "teddybass3private@semantico.com":
+                assertEquals(Visibility.PRIVATE, email.getVisibility());
+                assertEquals("APP-5555555555555555", email.retrieveSourcePath());
+                break;
+            }
+        }
+    }
     
     
     

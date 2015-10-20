@@ -639,8 +639,28 @@
         is_primary="false"
         is_current="true"
         is_verified="false"
-        visibility="PRIVATE"
+        visibility="LIMITED"
         source_id="4444-4444-4444-4443"
+    />
+    
+    <email
+        orcid="4444-4444-4444-4443"
+        email="teddybass3public@semantico.com"
+        is_primary="false"
+        is_current="true"
+        is_verified="false"
+        visibility="PUBLIC"
+        source_id="4444-4444-4444-4443"
+    />
+    
+    <email
+        orcid="4444-4444-4444-4443"
+        email="teddybass3private@semantico.com"
+        is_primary="false"
+        is_current="true"
+        is_verified="false"
+        visibility="PRIVATE"
+        client_source_id="APP-5555555555555555"
     />
     
     <email
