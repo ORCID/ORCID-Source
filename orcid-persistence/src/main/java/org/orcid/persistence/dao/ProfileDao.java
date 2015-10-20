@@ -39,7 +39,7 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
 
     public boolean exists(String orcid);
 
-    List<String> findByEventTypes(int maxResults, List<ProfileEventType> pet, Collection<String> orcidsToExclude, boolean not);
+    List<String> findByMissingEventTypes(int maxResults, List<ProfileEventType> pet, Collection<String> orcidsToExclude, boolean not);
 
     List<String> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults);
 

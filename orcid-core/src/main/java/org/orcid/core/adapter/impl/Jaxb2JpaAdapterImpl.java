@@ -811,6 +811,8 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                 if (preferences.getDeveloperToolsEnabled() != null) {
                     profileEntity.setEnableDeveloperTools(preferences.getDeveloperToolsEnabled().isValue());
                 }
+                
+                profileEntity.setEnableNotifications(preferences.getNotificationsEnabled() == null ? DefaultPreferences.NOTIFICATIONS_ENABLED : preferences.getNotificationsEnabled());
             }
             if (orcidInternal.getSalesforceId() != null) {
                 profileEntity.setSalesforeId(orcidInternal.getSalesforceId().getContent());

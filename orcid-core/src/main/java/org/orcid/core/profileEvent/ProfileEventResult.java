@@ -16,16 +16,34 @@
  */
 package org.orcid.core.profileEvent;
 
-import java.util.List;
-import org.orcid.jaxb.model.message.OrcidProfile;
-import java.util.concurrent.Callable;
-
 import org.orcid.persistence.jpa.entities.ProfileEventType;
 
-public interface ProfileEvent extends Callable<ProfileEventResult> {
+public class ProfileEventResult {
 
-	public List<ProfileEventType> outcomes();
+    private ProfileEventType outcome;
 
-	public OrcidProfile getOrcidProfile();
+    private String orcidId;
+
+    public ProfileEventResult(String orcidId, ProfileEventType outcome) {
+        this.setOrcidId(orcidId);
+        this.setOutcome(outcome);
+    }
+
+    public ProfileEventType getOutcome() {
+        return outcome;
+    }
+
+    public void setOutcome(ProfileEventType outcome) {
+        this.outcome = outcome;
+    }
+
+    public String getOrcidId() {
+        return orcidId;
+    }
+
+    public void setOrcidId(String orcidId) {
+        this.orcidId = orcidId;
+    }
+
 
 }
