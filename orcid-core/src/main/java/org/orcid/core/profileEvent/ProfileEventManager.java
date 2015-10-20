@@ -31,6 +31,7 @@ import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
+import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.persistence.dao.GenericDao;
@@ -127,7 +128,8 @@ public class ProfileEventManager {
 			Set<ProfileEvent> callables = new HashSet<ProfileEvent>();
 			for (final String orcid : orcids) {
 				LOG.info("Calling bean " + classStr + " for " + orcid);
-				OrcidProfile orcidProfile = getOrcidProfileManager().retrieveOrcidProfile(orcid);
+				// TODO: parameterize load options.
+				OrcidProfile orcidProfile = getOrcidProfileManager().retrieveOrcidProfile(orcid,new LoadOptions(true,false,true));
 				callables.add((ProfileEvent) context.getBean(classStr, orcidProfile));
 				doneCount++;
 			}
