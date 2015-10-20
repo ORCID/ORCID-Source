@@ -24,8 +24,8 @@ import org.orcid.persistence.jpa.entities.ProfileEventType;
 
 public interface ProfileEvent extends Callable<ProfileEventResult> {
 
-    public List<ProfileEventType> outcomes();
-    
-    public OrcidProfile getOrcidProfile();
+	public List<ProfileEventType> outcomes();
+
+	public OrcidProfile getOrcidProfile();
 
 }
