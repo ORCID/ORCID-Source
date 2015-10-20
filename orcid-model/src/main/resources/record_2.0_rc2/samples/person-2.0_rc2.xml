@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <person:person xmlns:common="http://www.orcid.org/ns/common"
 	xmlns:person="http://www.orcid.org/ns/person" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.orcid.org/ns/person ../person-2.0_rc1.xsd ">
+	xsi:schemaLocation="http://www.orcid.org/ns/person ../person-2.0_rc2.xsd ">
 	<person:personal-details>
 		<person:given-names>person:given-names</person:given-names>
 		<person:family-name>person:family-name</person:family-name>

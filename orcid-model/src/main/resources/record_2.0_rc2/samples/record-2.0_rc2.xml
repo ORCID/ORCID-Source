@@ -7,7 +7,7 @@
 	xmlns:internal="http://www.orcid.org/ns/internal" xmlns:person="http://www.orcid.org/ns/person"
 	xmlns:preferences="http://www.orcid.org/ns/preferences" xmlns:record="http://www.orcid.org/ns/record"
 	xmlns:work="http://www.orcid.org/ns/work" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.orcid.org/ns/record ../record-2.0_rc1.xsd ">
+	xsi:schemaLocation="http://www.orcid.org/ns/record ../record-2.0_rc2.xsd ">
 	<common:orcid-identifier>
 		<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
 		<common:path>8888-8888-8888-8880</common:path>
@@ -145,7 +145,9 @@
 		</person:applications>
 	</person:person>
 	<activities:activities-summary>
+		<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
 		<activities:educations>
+			<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
 			<education:education-summary put-code="0"
 				visibility="private">
 				<common:created-date>2001-12-31T12:00:00</common:created-date>
@@ -186,6 +188,7 @@
 			</education:education-summary>
 		</activities:educations>
 		<activities:employments>
+			<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
 			<affiliation:employment-summary
 				put-code="0" visibility="private">
 				<common:created-date>2001-12-31T12:00:00</common:created-date>
@@ -227,6 +230,7 @@
 		</activities:employments>
 
 		<activities:fundings>
+			<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
 			<activities:group>
 				<activities:identifiers>
 					<activities:identifier>
@@ -272,6 +276,7 @@
 			</activities:group>
 		</activities:fundings>
 		<activities:works>
+			<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
 			<activities:group>
 				<activities:identifiers>
 					<activities:identifier>

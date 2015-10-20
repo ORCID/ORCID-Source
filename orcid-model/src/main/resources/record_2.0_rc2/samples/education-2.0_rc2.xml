@@ -2,7 +2,7 @@
 <education:education put-code="0" visibility="private"
 	xmlns:common="http://www.orcid.org/ns/common" xmlns:education="http://www.orcid.org/ns/education"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.orcid.org/ns/education ../education-2.0_rc1.xsd ">	
+	xsi:schemaLocation="http://www.orcid.org/ns/education ../education-2.0_rc2.xsd ">	
 	<education:department-name>education:department-name</education:department-name>
 	<education:role-title>education:role-title</education:role-title>
 	<common:start-date>

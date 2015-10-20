@@ -26,12 +26,16 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.orcid.jaxb.model.common.LastModifiedDate;
+
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "summaries" })
+@XmlType(propOrder = { "lastModifiedDate", "summaries" })
 @XmlRootElement(name = "employments", namespace = "http://www.orcid.org/ns/activities")
 public class Employments implements Serializable {
 
     private static final long serialVersionUID = 3293976926416154039L;
+    @XmlElement(name="last-modified-date", namespace = "http://www.orcid.org/ns/common")
+    protected LastModifiedDate lastModifiedDate;
     @XmlElement(name = "employment-summary", namespace = "http://www.orcid.org/ns/employment")
     private List<EmploymentSummary> summaries;
 
@@ -65,4 +69,12 @@ public class Employments implements Serializable {
             return false;
         return true;
     }
+
+	public LastModifiedDate getLastModifiedDate() {
+		return lastModifiedDate;
+	}
+
+	public void setLastModifiedDate(LastModifiedDate lastModifiedDate) {
+		this.lastModifiedDate = lastModifiedDate;
+	}
 }

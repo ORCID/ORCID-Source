@@ -35,6 +35,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.orcid.jaxb.model.common.LastModifiedDate;
 import org.orcid.jaxb.model.record_2_rc1.ActivitiesContainer;
 import org.orcid.jaxb.model.record_2_rc1.Activity;
 import org.orcid.jaxb.model.record_2_rc1.RecordUtil;
@@ -51,11 +52,13 @@ import org.orcid.jaxb.model.record_2_rc1.RecordUtil;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "educations", "employments", "fundings", "peerReviews", "works" })
+@XmlType(propOrder = { "lastModifiedDate", "educations", "employments", "fundings", "peerReviews", "works" })
 @XmlRootElement(name = "activities-summary", namespace = "http://www.orcid.org/ns/activities")
 public class ActivitiesSummary implements Serializable, ActivitiesContainer {
 
     private static final long serialVersionUID = 1L;
+    @XmlElement(name="last-modified-date", namespace = "http://www.orcid.org/ns/common")
+    protected LastModifiedDate lastModifiedDate;
     @XmlElement(name = "educations", namespace = "http://www.orcid.org/ns/activities")
     protected Educations educations;
     @XmlElement(name = "employments", namespace = "http://www.orcid.org/ns/activities")
@@ -229,4 +232,12 @@ public class ActivitiesSummary implements Serializable, ActivitiesContainer {
 
         return activities;
     }
+
+	public LastModifiedDate getLastModifiedDate() {
+		return lastModifiedDate;
+	}
+
+	public void setLastModifiedDate(LastModifiedDate lastModifiedDate) {
+		this.lastModifiedDate = lastModifiedDate;
+	}
 }
