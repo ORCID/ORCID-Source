@@ -17,7 +17,13 @@
 package org.orcid.core.profileEvent;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import javax.annotation.Resource;
 
@@ -34,8 +40,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
 /**
@@ -45,124 +49,127 @@ import org.springframework.transaction.support.TransactionTemplate;
  */
 public class ProfileEventManager {
 
-    static ApplicationContext context;
+	static ApplicationContext context;
 
-    @Resource
-    private ProfileDao profileDao;
+	@Resource
+	private ProfileDao profileDao;
 
-    @Resource
-    private OrcidProfileManager orcidProfileManager;
+	@Resource
+	private OrcidProfileManager orcidProfileManager;
 
-    @Resource
-    private GenericDao<ProfileEventEntity, Long> profileEventDao;
+	@Resource
+	private GenericDao<ProfileEventEntity, Long> profileEventDao;
 
-    @Resource
-    private TransactionTemplate transactionTemplate;
+	@Resource
+	private TransactionTemplate transactionTemplate;
 
-    private static Logger LOG = LoggerFactory.getLogger(ProfileEventManager.class);
+	private static Logger LOG = LoggerFactory.getLogger(ProfileEventManager.class);
 
-    private static final int CHUNK_SIZE = 1000;
+	private static final int CHUNK_SIZE = 1000;
 
-    @Option(name = "-testSendToOrcids", usage = "Call only on passed ORCID Ids")
-    private String orcs;
+	@Option(name = "-testSendToOrcids", usage = "Call only on passed ORCID Ids")
+	private String orcs;
 
-    @Option(name = "-callOnAll", usage = "Calls on all orcids")
-    private String callOnAll;
+	@Option(name = "-callOnAll", usage = "Calls on all orcids")
+	private String callOnAll;
 
-    @Option(name = "-bean", usage = "ProfileEvent class to instantiate", required = true)
-    private String bean;
+	@Option(name = "-bean", usage = "ProfileEvent class to instantiate", required = true)
+	private String bean;
 
-    public static void main(String... args) {
-        context = new ClassPathXmlApplicationContext("orcid-core-context.xml");
-        ProfileEventManager pem = (ProfileEventManager) context.getBean("profileEventManager");
+	ExecutorService pool = Executors.newFixedThreadPool(4);
 
-        CmdLineParser parser = new CmdLineParser(pem);
-        if (args == null) {
-            parser.printUsage(System.err);
-        }
-        try {
-            parser.parseArgument(args);
-            pem.execute(pem);
-        } catch (CmdLineException e) {
-            System.err.println(e.getMessage());
-            parser.printUsage(System.err);
-        }
-        System.exit(0);
-    }
+	public static void main(String... args) {
+		context = new ClassPathXmlApplicationContext("orcid-core-context.xml");
+		ProfileEventManager pem = (ProfileEventManager) context.getBean("profileEventManager");
 
-    private void execute(ProfileEventManager pem) {
-        if (callOnAll != null) {
-            callOnceOnAll(bean);
-        } else if (orcs != null) {
-            for (String orc : orcs.split(" ")) {
-                OrcidProfile orcidProfile = getOrcidProfileManager().retrieveOrcidProfile(orc);
-                ProfileEvent pe = (ProfileEvent)context.getBean(bean,orcidProfile);
-                try {
-                    pe.call();
-                } catch (Exception e) {
-                    LOG.error("Error calling ", e);
-                }
-            }
-        }
-    }
+		CmdLineParser parser = new CmdLineParser(pem);
+		if (args == null) {
+			parser.printUsage(System.err);
+		}
+		try {
+			parser.parseArgument(args);
+			pem.execute(pem);
+		} catch (CmdLineException e) {
+			System.err.println(e.getMessage());
+			parser.printUsage(System.err);
+		}
+		System.exit(0);
+	}
 
-    private void callOnceOnAll(final String classStr) {
-        ProfileEvent dummyPe = (ProfileEvent)context.getBean(classStr, (ProfileEvent)null);
-        long startTime = System.currentTimeMillis();
-        @SuppressWarnings("unchecked")
-        List<String> orcids = Collections.EMPTY_LIST;
-        int doneCount = 0;
-        do {
-            orcids = getProfileDao().findByEventTypes(CHUNK_SIZE, dummyPe.outcomes(), null, true);
-            for (final String orcid : orcids) {
-                LOG.info("Calling bean "+ classStr + " for "+ orcid);
-                call(orcid, classStr);
-                doneCount++;
-            }
-            LOG.info("Current done count: {}", doneCount);
-        } while (!orcids.isEmpty());
-        long endTime = System.currentTimeMillis();
-        String timeTaken = DurationFormatUtils.formatDurationHMS(endTime - startTime);
-        LOG.info("Profile Event " + classStr + ": doneCount={}, timeTaken={} (H:m:s.S)", doneCount, timeTaken);
-    }
-    
-    public void call(final String orcid, final String classStr) {
-        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-            @Override
-            protected void doInTransactionWithoutResult(TransactionStatus status) {
-                OrcidProfile orcidProfile = getOrcidProfileManager().retrieveOrcidProfile(orcid);
-                try {
-                    ProfileEvent pe = (ProfileEvent)context.getBean(classStr,orcidProfile);
-                    getProfileEventDao().persist(new ProfileEventEntity(orcidProfile.getOrcidIdentifier().getPath(), pe.call()));
-                } catch (Exception e) {
-                    LOG.error("Error calling ", e);
-                }
-            }
-        });
-    }
+	private void execute(ProfileEventManager pem) {
+		if (callOnAll != null) {
+			try {
+				callOnceOnAll(bean);
+			} catch (InterruptedException e) {
+				LOG.error("InterruptedException ", e);
+			}
+		} else if (orcs != null) {
+			for (String orc : orcs.split(" ")) {
+				OrcidProfile orcidProfile = getOrcidProfileManager().retrieveOrcidProfile(orc);
+				ProfileEvent pe = (ProfileEvent) context.getBean(bean, orcidProfile);
+				try {
+					pe.call();
+				} catch (Exception e) {
+					LOG.error("Error calling ", e);
+				}
+			}
+		}
+	}
 
-    public ProfileDao getProfileDao() {
-        return profileDao;
-    }
+	private void callOnceOnAll(final String classStr) throws InterruptedException {
+		ProfileEvent dummyPe = (ProfileEvent) context.getBean(classStr, (ProfileEvent) null);
+		long startTime = System.currentTimeMillis();
+		@SuppressWarnings("unchecked")
+		List<String> orcids = Collections.EMPTY_LIST;
+		int doneCount = 0;
+		do {
+			orcids = getProfileDao().findByMissingEventTypes(CHUNK_SIZE, dummyPe.outcomes(), null, true);
+			Set<ProfileEvent> callables = new HashSet<ProfileEvent>();
+			for (final String orcid : orcids) {
+				LOG.info("Calling bean " + classStr + " for " + orcid);
+				OrcidProfile orcidProfile = getOrcidProfileManager().retrieveOrcidProfile(orcid);
+				callables.add((ProfileEvent) context.getBean(classStr, orcidProfile));
+				doneCount++;
+			}
+			List<Future<ProfileEventResult>> futures = pool.invokeAll(callables);
+			for (Future<ProfileEventResult> future : futures) {
+				ProfileEventResult per = null;
+				try {
+					per = future.get();
+				} catch (ExecutionException e) {
+					LOG.error("failed calling task ", e);
+				}
+				getProfileEventDao().persist(new ProfileEventEntity(per.getOrcidId(), per.getOutcome()));
+			}
+			LOG.info("Current done count: {}", doneCount);
+		} while (!orcids.isEmpty());
+		long endTime = System.currentTimeMillis();
+		String timeTaken = DurationFormatUtils.formatDurationHMS(endTime - startTime);
+		LOG.info("Profile Event " + classStr + ": doneCount={}, timeTaken={} (H:m:s.S)", doneCount, timeTaken);
+	}
 
-    public void setProfileDao(ProfileDao profileDao) {
-        this.profileDao = profileDao;
-    }
+	public ProfileDao getProfileDao() {
+		return profileDao;
+	}
 
-    public OrcidProfileManager getOrcidProfileManager() {
-        return orcidProfileManager;
-    }
+	public void setProfileDao(ProfileDao profileDao) {
+		this.profileDao = profileDao;
+	}
 
-    public void setOrcidProfileManager(OrcidProfileManager orcidProfileManager) {
-        this.orcidProfileManager = orcidProfileManager;
-    }
+	public OrcidProfileManager getOrcidProfileManager() {
+		return orcidProfileManager;
+	}
 
-    public GenericDao<ProfileEventEntity, Long> getProfileEventDao() {
-        return profileEventDao;
-    }
+	public void setOrcidProfileManager(OrcidProfileManager orcidProfileManager) {
+		this.orcidProfileManager = orcidProfileManager;
+	}
 
-    public void setProfileEventDao(GenericDao<ProfileEventEntity, Long> profileEventDao) {
-        this.profileEventDao = profileEventDao;
-    }
+	public GenericDao<ProfileEventEntity, Long> getProfileEventDao() {
+		return profileEventDao;
+	}
+
+	public void setProfileEventDao(GenericDao<ProfileEventEntity, Long> profileEventDao) {
+		this.profileEventDao = profileEventDao;
+	}
 
 }
