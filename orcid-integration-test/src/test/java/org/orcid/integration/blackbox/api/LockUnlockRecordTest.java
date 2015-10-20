@@ -16,6 +16,7 @@
  */
 package org.orcid.integration.blackbox.api;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -31,6 +32,7 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.orcid.api.common.T2OrcidApiService;
+import org.orcid.integration.api.pub.PublicV1ApiClientImpl;
 import org.orcid.integration.blackbox.BlackBoxBase;
 import org.orcid.integration.blackbox.web.SigninTest;
 import org.orcid.jaxb.model.message.OrcidMessage;
@@ -41,7 +43,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.sun.jersey.api.client.ClientResponse;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:orcid-api-client-context.xml" })
+@ContextConfiguration(locations = { "classpath:test-publicV2-context.xml", "classpath:orcid-api-client-context.xml" })
 public class LockUnlockRecordTest extends BlackBoxBase {
 
 	private WebDriver webDriver;
@@ -58,12 +60,15 @@ public class LockUnlockRecordTest extends BlackBoxBase {
     @Resource(name = "t2OrcidApiClient1_2")
     private T2OrcidApiService<ClientResponse> t2Client1_2;
     
+    @Resource
+    private PublicV1ApiClientImpl publicV1ApiClient;
+    
     @Test
     public void lockUnlockTest() throws InterruptedException {
     	//Init.. Should be unlocked.
-    	assertFalse(checkIfLockedWeb());
+    	assertFalse(checkIfLockedUI());
+    	assertFalse(checkIfLockedApi());
     	assertFalse(checkIfLockedPub());
-    	//assertFalse(checkIfLockedWeb());
     	//Login Admin
     	adminSignIn();
     	//Lock the account
@@ -79,9 +84,9 @@ public class LockUnlockRecordTest extends BlackBoxBase {
 		confirmLockButton.click();
 		webDriver.quit();
     	//Verify
-		assertTrue(checkIfLockedWeb());
+		assertTrue(checkIfLockedUI());
+		assertTrue(checkIfLockedApi());
 		assertTrue(checkIfLockedPub());
-		//assertTrue(checkIfLockedWeb());
 		
 		//Login Admin
 		adminSignIn();
@@ -98,12 +103,12 @@ public class LockUnlockRecordTest extends BlackBoxBase {
 		confirmUnLockButton.click();
     	webDriver.quit();
     	//Verify
-    	assertFalse(checkIfLockedWeb());
+    	assertFalse(checkIfLockedUI());
+    	assertFalse(checkIfLockedApi());
     	assertFalse(checkIfLockedPub());
-    	//assertFalse(checkIfLockedWeb());
     }
     
-    private boolean checkIfLockedWeb() {
+    private boolean checkIfLockedUI() {
     	webDriver = new FirefoxDriver();
         webDriver.get(webBaseUrl + "/" + user1OrcidId);
         if(webDriver.findElements(By.id("error_locked")).size() != 0) {
@@ -114,11 +119,26 @@ public class LockUnlockRecordTest extends BlackBoxBase {
         return false;
     }
     
-    public boolean checkIfLockedPub() {
+    public boolean checkIfLockedApi() {
     	ClientResponse response = t2Client1_2.viewFullDetailsXml(user1OrcidId);
         assertNotNull(response);
         OrcidMessage message = response.getEntity(OrcidMessage.class);
-        return message.getOrcidProfile().isLocked();
+        if(message.getOrcidProfile() == null && message.getErrorDesc() != null) {
+        	assertEquals(message.getErrorDesc().getContent(), "Account locked : The given account 0000-0003-0718-7552 is locked");
+        	return true;
+        }
+        return false;
+    }
+    
+    public boolean checkIfLockedPub() {
+    	ClientResponse response = publicV1ApiClient.viewPublicProfile(user1OrcidId);
+        assertNotNull(response);
+        OrcidMessage message = response.getEntity(OrcidMessage.class);
+        if(message.getOrcidProfile() == null && message.getErrorDesc() != null) {
+        	assertEquals(message.getErrorDesc().getContent(), "Account locked : The given account 0000-0003-0718-7552 is locked");
+        	return true;
+        }
+        return false;
     }
 	
     private void adminSignIn() {
