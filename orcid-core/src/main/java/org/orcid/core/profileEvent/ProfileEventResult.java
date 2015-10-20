@@ -24,10 +24,10 @@ public class ProfileEventResult {
 
 	private ProfileEventType outcome;
 
-	private OrcidProfile orcidProfile;
+	private String orcidId;
 
-	public ProfileEventResult(OrcidProfile orcidProfile, ProfileEventType outcome) {
-		this.setOrcidProfile(orcidProfile);
+	public ProfileEventResult(String orcidId, ProfileEventType outcome) {
+		this.setOrcidId(orcidId);
 		this.setOutcome(outcome);
 	}
 
@@ -39,12 +39,12 @@ public class ProfileEventResult {
 		this.outcome = outcome;
 	}
 
-	public OrcidProfile getOrcidProfile() {
-		return orcidProfile;
+	public String getOrcidId() {
+		return orcidId;
 	}
 
-	public void setOrcidProfile(OrcidProfile orcidProfile) {
-		this.orcidProfile = orcidProfile;
+	public void setOrcidId(String orcidId) {
+		this.orcidId = orcidId;
 	}
 
 
