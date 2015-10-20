@@ -22,32 +22,39 @@
         <div class="row">
         	<div class="col-md-offset-3 col-md-9 col-sm-offset-3 col-sm-9 col-xs-12">
 	            <div class="">
-		            <h4>Link your ${providerId} account to your ORCID account?</h4>
-		            <p>
-			            You are logged into <i>${providerId} </i> as <i>${emailId}</i>.<br />
-			            Sign in to your ORCID account to complete the linkage.<br />
+		            <h4>${springMacroRequestContext.getMessage("social.link.you_are")} ${providerId} ${springMacroRequestContext.getMessage("social.link.as")} ${emailId}</h4>
+			        <p>	
+			        	${springMacroRequestContext.getMessage("social.link.to_finish")} ${providerId} ${springMacroRequestContext.getMessage("social.link.account_to_orcid")}
 		            </p>
+		            <br>${springMacroRequestContext.getMessage("social.link.you_will_only")} <a href="http://support.orcid.org" target="_blank" >${springMacroRequestContext.getMessage("social.link.visit_knowledgebase_link")}</a>
 	            </div>
             </div>
         </div>
+        <br><br><br>
         <div class="row">
+        	<div class="col-md-offset-3 col-md-9 col-sm-9 col-sm-offset-3 col-xs-12">
+        		<b>${springMacroRequestContext.getMessage("social.link.link_this_account")}</b>
+        	</div>
             <@spring.bind "loginForm" />             
             <@spring.showErrors "<br/>" "error" />             
             <#include "/common/browser-checks.ftl" />
             <div class="control-group col-md-offset-3 col-md-9 col-sm-9 col-sm-offset-3 col-xs-12">
-                <label for="userId" class="control-label">${springMacroRequestContext.getMessage("login.username")}</label>
+                <label for="userId" class="control-label">${springMacroRequestContext.getMessage("social.link.email_or_orcid")}</label>
                 <div>                
-                    <input type="text" id="userId" name="userId" value="" placeholder="${springMacroRequestContext.getMessage("login.username")}">
+                    <input type="text" id="userId" name="userId" value="" placeholder="${springMacroRequestContext.getMessage("social.link.email_or_orcid")}">
                 </div>                    
             </div>
-            <div class="control-group col-md-offset-3 col-md-9 col-sm-9 col-sm-offset-3 col-xs-12 password">
+            <div class="control-group col-md-offset-3 col-md-9 col-sm-9 col-sm-offset-3 col-xs-12 password social-password-txt">
                 <label for="password" class="control-label">${springMacroRequestContext.getMessage("login.password")}</label>
                 <div>
                     <input type="password" id="password" name="password" value="" placeholder="${springMacroRequestContext.getMessage("login.password")}">
                 </div>
             </div>
-            <div class="control-group col-md-offset-3 col-md-9 col-sm-9 col-sm-offset-3 col-xs-12 submit-login">                                    
-                <button id='form-sign-in-button' class="btn btn-primary" type="submit">${springMacroRequestContext.getMessage("login.signin")}</button>                
+            <div class="control-group col-md-offset-3 col-md-9 col-sm-9 col-sm-offset-3 col-xs-12 password social-password-lnk">
+	            <a href="<@orcid.rootPath '/reset-password'/>">${springMacroRequestContext.getMessage("login.reset")}</a>&nbsp;&nbsp;
+            </div>
+            <div class="control-group col-md-offset-3 col-md-9 col-sm-9 col-sm-offset-3 col-xs-12">                                    
+                <button id='form-sign-in-button' class="btn btn-primary social-signin-btn" type="submit">${springMacroRequestContext.getMessage("login.signin")}</button>                
                 <span id="ajax-loader" class="no-visible"><i id="ajax-loader" class="glyphicon glyphicon-refresh spin x2 green"></i></span>                
                 <#if (RequestParameters['alreadyClaimed'])??>
                     <div class="alert"><@spring.message "orcid.frontend.security.already_claimed"/></div>
@@ -59,12 +66,12 @@
         </div>
         <div class="row">
             <div class="control-group col-md-offset-3 col-md-9 col-sm-9 col-sm-offset-3 col-xs-12"> 
-                <div id="login-reset">
-                    <a href="<@orcid.rootPath '/reset-password'/>">${springMacroRequestContext.getMessage("login.reset")}</a>&nbsp;&nbsp;
-                </div>
-                <div id="login-register">
-                    <a class="reg" href="<@orcid.rootPath '/register'/>">${springMacroRequestContext.getMessage("login.register")}</a>
-                </div>
+            	${springMacroRequestContext.getMessage("social.link.dont_have_orcid")} <a class="reg" href="<@orcid.rootPath '/register'/>">${springMacroRequestContext.getMessage("social.link.register_now")}</a>
+            </div>            
+        </div>
+        <div class="row">
+            <div class="control-group col-md-offset-3 col-md-9 col-sm-9 col-sm-offset-3 col-xs-12"> 
+            	<b>${springMacroRequestContext.getMessage("social.link.no_thanks")}</b> <a class="reg" href="<@orcid.rootPath '/signin'/>">${springMacroRequestContext.getMessage("social.link.return_to_signin")}</a>
             </div>            
         </div>
     </form>

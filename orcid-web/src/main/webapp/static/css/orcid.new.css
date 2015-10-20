@@ -7495,3 +7495,13 @@ a:hover .mozilla-badge{
 @media only screen and (-webkit-min-device-pixel-ratio: 2) , only screen and (min-device-pixel-ratio: 2) {
 	
 }
+.social-password-lnk {
+	font-size: 14px;
+}
+.social-signin-btn {
+	width: 360px;
+	margin-bottom: 0;
+}
+.social-password-txt {
+	margin-bottom : 0;
+}
