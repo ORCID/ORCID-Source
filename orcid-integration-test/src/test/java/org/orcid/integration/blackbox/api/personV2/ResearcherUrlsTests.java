@@ -88,7 +88,7 @@ public class ResearcherUrlsTests extends BlackBoxBase {
     @Resource(name = "memberV2ApiClient_rc2")
     private MemberV2ApiClientImpl memberV2ApiClient;
 
-    @Resource(name = "publicV2ApiClient_rc1")
+    @Resource(name = "publicV2ApiClient_rc2")
     private PublicV2ApiClientImpl publicV2ApiClient;
 
     @Resource
@@ -232,6 +232,7 @@ public class ResearcherUrlsTests extends BlackBoxBase {
         assertNotNull(researcherUrls);
         for(ResearcherUrl rUrl : researcherUrls.getResearcherUrls()) {
             assertNotNull(rUrl);
+            assertEquals(Visibility.PUBLIC, rUrl.getVisibility());
             ClientResponse theRUrl = publicV2ApiClient.viewResearcherUrlXML(user1OrcidId, String.valueOf(rUrl.getPutCode()));
             assertNotNull(theRUrl);
             ResearcherUrl researcherUrl = getAllResponse.getEntity(ResearcherUrl.class);
