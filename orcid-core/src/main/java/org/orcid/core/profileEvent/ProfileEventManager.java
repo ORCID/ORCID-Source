@@ -17,7 +17,13 @@
 package org.orcid.core.profileEvent;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import javax.annotation.Resource;
 
@@ -34,8 +40,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
 /**
@@ -72,6 +76,8 @@ public class ProfileEventManager {
     @Option(name = "-bean", usage = "ProfileEvent class to instantiate", required = true)
     private String bean;
 
+    ExecutorService pool = Executors.newFixedThreadPool(4);
+    
     public static void main(String... args) {
         context = new ClassPathXmlApplicationContext("orcid-core-context.xml");
         ProfileEventManager pem = (ProfileEventManager) context.getBean("profileEventManager");
@@ -92,7 +98,11 @@ public class ProfileEventManager {
 
     private void execute(ProfileEventManager pem) {
         if (callOnAll != null) {
-            callOnceOnAll(bean);
+            try {
+				callOnceOnAll(bean);
+			} catch (InterruptedException e) {
+				LOG.error("InterruptedException ", e);
+			}
         } else if (orcs != null) {
             for (String orc : orcs.split(" ")) {
                 OrcidProfile orcidProfile = getOrcidProfileManager().retrieveOrcidProfile(orc);
@@ -106,18 +116,30 @@ public class ProfileEventManager {
         }
     }
 
-    private void callOnceOnAll(final String classStr) {
+    private void callOnceOnAll(final String classStr) throws InterruptedException {
         ProfileEvent dummyPe = (ProfileEvent)context.getBean(classStr, (ProfileEvent)null);
         long startTime = System.currentTimeMillis();
         @SuppressWarnings("unchecked")
         List<String> orcids = Collections.EMPTY_LIST;
         int doneCount = 0;
         do {
-            orcids = getProfileDao().findByEventTypes(CHUNK_SIZE, dummyPe.outcomes(), null, true);
+            orcids = getProfileDao().findByMissingEventTypes(CHUNK_SIZE, dummyPe.outcomes(), null, true);
+            Set<ProfileEvent> callables = new HashSet<ProfileEvent>();
             for (final String orcid : orcids) {
                 LOG.info("Calling bean "+ classStr + " for "+ orcid);
-                call(orcid, classStr);
+                OrcidProfile orcidProfile = getOrcidProfileManager().retrieveOrcidProfile(orcid);
+                callables.add((ProfileEvent)context.getBean(classStr,orcidProfile));    
                 doneCount++;
+            }
+            List<Future<ProfileEventResult>> futures = pool.invokeAll(callables);
+            for (Future<ProfileEventResult> future: futures) {
+            	ProfileEventResult per = null;
+				try {
+					per = future.get();
+				} catch (ExecutionException e) {
+					LOG.error("failed calling task ", e);
+				}
+				getProfileEventDao().persist(new ProfileEventEntity(per.getOrcidProfile().getOrcidIdentifier().getPath(),per.getOutcome()));
             }
             LOG.info("Current done count: {}", doneCount);
         } while (!orcids.isEmpty());
@@ -126,20 +148,6 @@ public class ProfileEventManager {
         LOG.info("Profile Event " + classStr + ": doneCount={}, timeTaken={} (H:m:s.S)", doneCount, timeTaken);
     }
     
-    public void call(final String orcid, final String classStr) {
-        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-            @Override
-            protected void doInTransactionWithoutResult(TransactionStatus status) {
-                OrcidProfile orcidProfile = getOrcidProfileManager().retrieveOrcidProfile(orcid);
-                try {
-                    ProfileEvent pe = (ProfileEvent)context.getBean(classStr,orcidProfile);
-                    getProfileEventDao().persist(new ProfileEventEntity(orcidProfile.getOrcidIdentifier().getPath(), pe.call()));
-                } catch (Exception e) {
-                    LOG.error("Error calling ", e);
-                }
-            }
-        });
-    }
 
     public ProfileDao getProfileDao() {
         return profileDao;
