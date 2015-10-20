@@ -62,48 +62,53 @@ public class ServiceAnnouncement_1_For_2015 implements ProfileEvent {
 	ServiceAnnouncement_1_For_2015(OrcidProfile op) {
 		this.orcidProfile = op;
 	}
+	
+	@Override
+	public OrcidProfile getOrcidProfile() {
+		return orcidProfile;
+	}
 
 	@Override
-	public ProfileEventType call() throws Exception {
+	public ProfileEventResult call() throws Exception {
 		// Doesn't have email check
 		if (orcidProfile.getOrcidBio() == null || orcidProfile.getOrcidBio().getContactDetails() == null
 				|| orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail() == null
 				|| orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue() == null)
-			return ProfileEventType.SERVICE_ANNOUNCEMENT_SKIPPED_1_FOR_2015;
+			return new ProfileEventResult(orcidProfile, ProfileEventType.SERVICE_ANNOUNCEMENT_SKIPPED_1_FOR_2015);
 
 		// Is locked
 		if (orcidProfile.isLocked())
-			return ProfileEventType.SERVICE_ANNOUNCEMENT_SKIPPED_1_FOR_2015;
+			return new ProfileEventResult(orcidProfile, ProfileEventType.SERVICE_ANNOUNCEMENT_SKIPPED_1_FOR_2015);
 
 		
 		if (orcidProfile.getOrcidHistory() != null) {
 			// id deprecated
 			if (orcidProfile.getOrcidDeprecated() != null)
-				return ProfileEventType.SERVICE_ANNOUNCEMENT_SKIPPED_1_FOR_2015;
+				return new ProfileEventResult(orcidProfile, ProfileEventType.SERVICE_ANNOUNCEMENT_SKIPPED_1_FOR_2015);
 			
 			// Isn't claimed
 			if (orcidProfile.getOrcidHistory().getClaimed() != null
 					&& orcidProfile.getOrcidHistory().getClaimed().isValue() == false)
-				return ProfileEventType.SERVICE_ANNOUNCEMENT_SKIPPED_1_FOR_2015;
+				return new ProfileEventResult(orcidProfile, ProfileEventType.SERVICE_ANNOUNCEMENT_SKIPPED_1_FOR_2015);
 		}
 		
 		// Is deactivated
 		if (orcidProfile.isDeactivated())
-			return ProfileEventType.SERVICE_ANNOUNCEMENT_SKIPPED_1_FOR_2015;
+			return new ProfileEventResult(orcidProfile, ProfileEventType.SERVICE_ANNOUNCEMENT_SKIPPED_1_FOR_2015);
 
-		ProfileEventType pet = ProfileEventType.SERVICE_ANNOUNCEMENT_SENT_1_FOR_2015;
+		ProfileEventResult pes = new ProfileEventResult(orcidProfile, ProfileEventType.SERVICE_ANNOUNCEMENT_SENT_1_FOR_2015);
 		try {
 			boolean sent = notificationManager.sendServiceAnnouncement_1_For_2015(orcidProfile);
 			if (!sent)
-				pet = ProfileEventType.SERVICE_ANNOUNCEMENT_FAIL_1_FOR_2015;
+				pes = new ProfileEventResult(orcidProfile, ProfileEventType.SERVICE_ANNOUNCEMENT_FAIL_1_FOR_2015);
 		} catch (Exception e) {
 			LOG.error("ProfileEventType exception trying to send email to: " + orcidProfile.retrieveOrcidUriAsString(),
 					e);
-			pet = ProfileEventType.SERVICE_ANNOUNCEMENT_FAIL_1_FOR_2015;
+			pes = new ProfileEventResult(orcidProfile, ProfileEventType.SERVICE_ANNOUNCEMENT_FAIL_1_FOR_2015);
 		}
-		return pet;
+		return pes;
 	}
-
+	
 	@Override
 	public List<ProfileEventType> outcomes() {
 		return pes;
