@@ -37,6 +37,7 @@ import javax.validation.Valid;
 
 import org.apache.commons.codec.binary.Base64;
 import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
+import org.orcid.core.constants.DefaultPreferences;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.InternalSSOManager;
 import org.orcid.core.manager.LoadOptions;
@@ -233,8 +234,8 @@ public class RegistrationController extends BaseController {
         reg.getSendChangeNotifications().setValue(true);
         reg.getSendOrcidNews().setValue(true);
         reg.getSendMemberUpdateRequests().setValue(true);
-        reg.getSendEmailFrequencyDays().setValue(SendEmailFrequency.DAILY.value());
-        reg.getTermsOfUse().setValue(false);
+        reg.getSendEmailFrequencyDays().setValue(SendEmailFrequency.WEEKLY.value());
+        reg.getTermsOfUse().setValue(false);        
         setError(reg.getTermsOfUse(), "AssertTrue.registrationForm.acceptTermsAndConditions");
 
         SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
@@ -290,11 +291,21 @@ public class RegistrationController extends BaseController {
         contactDetails.addOrReplacePrimaryEmail(new org.orcid.jaxb.model.message.Email(reg.getEmail().getValue()));
         Preferences preferences = new Preferences();
         preferences.setSendChangeNotifications(new SendChangeNotifications(reg.getSendChangeNotifications().getValue()));
-        preferences.setSendOrcidNews(new SendOrcidNews(reg.getSendOrcidNews().getValue()));
-        preferences.setSendMemberUpdateRequests(reg.getSendMemberUpdateRequests().getValue());
-        preferences.setSendEmailFrequencyDays(reg.getSendEmailFrequencyDays().getValue());
+        preferences.setSendOrcidNews(new SendOrcidNews(reg.getSendOrcidNews().getValue()));                
         preferences.setActivitiesVisibilityDefault(new ActivitiesVisibilityDefault(Visibility.fromValue(reg.getActivitiesVisibilityDefault().getVisibility().value())));
-
+        preferences.setNotificationsEnabled(DefaultPreferences.NOTIFICATIONS_ENABLED);
+        if(PojoUtil.isEmpty(reg.getSendEmailFrequencyDays())) {
+            preferences.setSendEmailFrequencyDays(DefaultPreferences.SEND_EMAIL_FREQUENCY_DAYS);
+        } else {
+            preferences.setSendEmailFrequencyDays(reg.getSendEmailFrequencyDays().getValue());
+        }
+        
+        if(reg.getSendMemberUpdateRequests() == null) {
+            preferences.setSendMemberUpdateRequests(DefaultPreferences.SEND_MEMBER_UPDATE_REQUESTS);
+        } else {
+            preferences.setSendMemberUpdateRequests(reg.getSendMemberUpdateRequests().getValue());
+        }
+                      
         PersonalDetails personalDetails = new PersonalDetails();
         personalDetails.setFamilyName(new FamilyName(reg.getFamilyNames().getValue()));
         personalDetails.setGivenNames(new GivenNames(reg.getGivenNames().getValue()));

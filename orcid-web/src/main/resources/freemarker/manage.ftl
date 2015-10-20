@@ -21,28 +21,30 @@
      <div class="alert alert-success">
          <strong><@spring.message "orcid_social.twitter.enabled"/></strong>
      </div>
- </#if>
- <#if admin_delegate_approved??>
-     <div class="alert alert-success">
-         <strong>${admin_delegate_approved}</strong>
-     </div>
- </#if>
-  <#if admin_delegate_failed??>
-     <div class="alert alert-success">
-         <strong>${admin_delegate_failed}</strong>
-     </div>
- </#if>
- <#if admin_delegate_not_you??>
-     <div class="alert alert-success">
-         <strong><@orcid.msg 'wrong_user.Wronguser' /></strong> <a href="<@orcid.rootPath '/signout'/>"><@orcid.msg 'public-layout.sign_out' /></a> <@orcid.msg 'wrong_user.andtryagain' />
-     </div>
- </#if>
+</#if>
+<#if admin_delegate_approved??>
+    <div class="alert alert-success">
+        <strong>${admin_delegate_approved}</strong>
+    </div>
+</#if>
+ <#if admin_delegate_failed??>
+    <div class="alert alert-success">
+        <strong>${admin_delegate_failed}</strong>
+    </div>
+</#if>
+<#if admin_delegate_not_you??>
+    <div class="alert alert-success">
+        <strong><@orcid.msg 'wrong_user.Wronguser' /></strong> <a href="<@orcid.rootPath '/signout'/>"><@orcid.msg 'public-layout.sign_out' /></a> <@orcid.msg 'wrong_user.andtryagain' />
+    </div>
+</#if>
+
 <div class="row">
-    <div class="col-md-3 col-sm-12 col-xs-12 padding-fix">
+	<div class="col-md-3 col-sm-12 col-xs-12 padding-fix">
         <#include "admin_menu.ftl"/>
     </div>
+    <!-- Right side -->
     <div class="col-md-9 col-sm-12 col-xs-12">
-        <h1 id="account-settings">${springMacroRequestContext.getMessage("manage.account_settings")}</h1>
+    	<h1 id="account-settings">${springMacroRequestContext.getMessage("manage.account_settings")}</h1>
         <#assign open = "" />
 
         <table class="table table-bordered settings-table"
@@ -66,11 +68,10 @@
                     <td><a href="" ng-click="toggleEmailEdit()" ng-bind="emailToggleText"></a></td>
                 </tr>
                 <tr>
-                	
                     <!-- Email edit -->
                     <td colspan="2" ng-controller="EmailEditCtrl" ng-show="showEditEmail" ng-cloak>
                         <div class="editTablePadCell35">
-                            <!-- we should never see errors here, but just to be safe -->
+                       		<!-- we should never see errors here, but just to be safe -->
                             <span class="orcid-error" ng-show="emailSrvc.emails.errors.length > 0">
                                 <span ng-repeat='error in emailSrvc.emails.errors'
                                 ng-bind-html="error"></span>
@@ -79,110 +80,109 @@
                             <div class="row">
                             	<strong class="green">${springMacroRequestContext.getMessage("manage.email.my_email_addresses")}</strong>
                             </div>
-                            <div ng-repeat="email in emailSrvc.emails.emails | orderBy:['value']" class="data-row-group">
-                            	
-                                <div class="row">
-                                    <!-- Primary Email -->
-                                    <div ng-class="{primaryEmail:email.primary}"
-                                        ng-bind="email.value" class="col-md-3 col-xs-12 email"></div>
-                                    <!-- Set Primary options -->
-                                    <div class="col-md-2 col-xs-12">
-                                        <span ng-hide="email.primary"> <a href=""
-                                            ng-click="emailSrvc.setPrimary(email)">${springMacroRequestContext.getMessage("manage.email.set_primary")}</a>
-                                        </span> <span ng-show="email.primary" class="muted"
-                                            style="color: #bd362f;">
-                                            ${springMacroRequestContext.getMessage("manage.email.primary_email")}
-                                        </span>
-                                    </div>
-                                    
-                                    <div class="data-row-group">
-                                        <div class="col-md-3 col-xs-4">
-                                            <!-- Current -->
-                                            <div class="left">
-                                                <select style="width: 100px; margin: 0px;" ng-change="emailSrvc.saveEmail()" ng-model="email.current">
-                                                    <option value="true" ng-selected="email.current == true"><@orcid.msg 'manage.email.current.true' /></option>
-                                                    <option value="false" ng-selected="email.current == false"><@orcid.msg 'manage.email.current.false' /></option>
-                                                </select>
+                            
+                            <!-- Email table -->
+                            
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <tr ng-repeat="email in emailSrvc.emails.emails | orderBy:['value']" class="data-row-group">
+                                        <!-- Primary Email -->
+                                        <td ng-class="{primaryEmail:email.primary}" ng-bind="email.value" class="col-md-3 col-xs-12 email">
+                                        </td>
+                                        <!-- Set Primary options -->
+                                        <td>
+	                                        <span ng-hide="email.primary"> <a href=""
+	                                            ng-click="emailSrvc.setPrimary(email)">${springMacroRequestContext.getMessage("manage.email.set_primary")}</a>
+	                                        </span> <span ng-show="email.primary" class="muted"
+	                                            style="color: #bd362f;">
+	                                            ${springMacroRequestContext.getMessage("manage.email.primary_email")}
+	                                        </span>
+                                        </td>
+                                        <td>
+                                        	<select ng-change="emailSrvc.saveEmail()" ng-model="email.current">
+                                                <option value="true" ng-selected="email.current == true"><@orcid.msg 'manage.email.current.true' /></option>
+                                                <option value="false" ng-selected="email.current == false"><@orcid.msg 'manage.email.current.false' /></option>
+                                            </select>
+                                        </td>
+                                        <td class="email-verified">
+                                        	<span ng-hide="email.verified" class="left">
+                                        	<a ng-click="verifyEmail(email)">${springMacroRequestContext.getMessage("manage.email.verify")}</a></span>
+                                            <span ng-show="email.verified" class="left">${springMacroRequestContext.getMessage("manage.email.verified")}</span>
+                                        </td>
+                                        <td width="26">
+                                        	<a href="" class="glyphicon glyphicon-trash grey"
+	                                            ng-show="email.primary == false"
+	                                            ng-click="confirmDeleteEmail(email)"></a>
+                                        </td>
+                                        <td width="100" style="padding-top: 0;">
+                                        	<div class="emailVisibility" style="float: right;">
+                                                <@orcid.privacyToggle3
+                                                    angularModel="email.visibility"
+                                                    questionClick="toggleClickPrivacyHelp(email.value)"
+                                                    clickedClassCheck="{'popover-help-container-show':privacyHelp[email.value]==true}" 
+                                                    publicClick="setPrivacy(email, 'PUBLIC', $event)" 
+                                                    limitedClick="setPrivacy(email, 'LIMITED', $event)" 
+                                                    privateClick="setPrivacy(email, 'PRIVATE', $event)" 
+                                                    elementId="email.value" />    
                                             </div>
-                                        </div>
-                                        <div class="col-md-2 col-xs-4">
-                                            <!-- Email verified -->
-                                            <div class="email-verified left">
-                                                <span ng-hide="email.verified" class="left"><a href=""
-                                                    ng-click="verifyEmail(email)">${springMacroRequestContext.getMessage("manage.email.verify")}</a></span>
-                                                <span ng-show="email.verified" class="left">${springMacroRequestContext.getMessage("manage.email.verified")}</span>
-                                            </div>
-                                            <!-- Icon Trash / Privacy Settings -->
-                                            <div class="right">
-                                                <a href="" class="glyphicon glyphicon-trash grey"
-                                                    ng-show="email.primary == false"
-                                                    ng-click="confirmDeleteEmail(email)"></a>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-2 col-xs-4">
-                                        
-                                            <div class="emailVisibility">
-	                                            <@orcid.privacyToggle3
-	                                            	angularModel="email.visibility"
-													questionClick="toggleClickPrivacyHelp(email.value)"
-													clickedClassCheck="{'popover-help-container-show':privacyHelp[email.value]==true}" 
-													publicClick="setPrivacy(email, 'PUBLIC', $event)" 
-								                  	limitedClick="setPrivacy(email, 'LIMITED', $event)" 
-								                  	privateClick="setPrivacy(email, 'PRIVATE', $event)" 
-								                  	elementId="email.value" />    
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                                        </td>
+                                    </tr>
+                                </table>
                             </div>
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            <!-- End Email table -->
+                            
                             <div class="row bottom-row">
-                                    <div class="col-md-12 add-email">
-                                        <input type="email" placeholder="${springMacroRequestContext.getMessage("manage.add_another_email")}"
-                                            ng-enter="checkCredentials()" class="input-xlarge inline-input" ng-model="emailSrvc.inputEmail.value"
-                                            required /> <span
-                                            ng-click="checkCredentials()" class="btn btn-primary">${springMacroRequestContext.getMessage("manage.spanadd")}</span>
-                                        <span class="orcid-error"
-                                            ng-show="emailSrvc.inputEmail.errors.length > 0"> <span
-                                            ng-repeat='error in emailSrvc.inputEmail.errors'
-                                            ng-bind-html="error"></span>
-                                        </span>
-                                    </div>
-                                    <div class="col-md-12">
-                                   <p style="line-height: 12px;">
-                                   		<small class="italic">
-                                        	${springMacroRequestContext.getMessage("manage.verificationEmail.1")} <a href="${aboutUri}/content/orcid-terms-use" target="_blank">${springMacroRequestContext.getMessage("manage.verificationEmail.2")}</a>${springMacroRequestContext.getMessage("manage.verificationEmail.3")}
-                                        </small>
-                                    </p>
-                                    </div>
+                                <div class="col-md-12 add-email">
+                                    <input type="email" placeholder="${springMacroRequestContext.getMessage("manage.add_another_email")}"
+                                        ng-enter="checkCredentials()" class="input-xlarge inline-input" ng-model="emailSrvc.inputEmail.value"
+                                        required /> <span
+                                        ng-click="checkCredentials()" class="btn btn-primary">${springMacroRequestContext.getMessage("manage.spanadd")}</span>
+                                    <span class="orcid-error"
+                                        ng-show="emailSrvc.inputEmail.errors.length > 0"> <span
+                                        ng-repeat='error in emailSrvc.inputEmail.errors'
+                                        ng-bind-html="error"></span>
+                                    </span>
                                 </div>
-                                
-                                <!-- Email frecuency -->
-                                <#if profile.orcidInternal.preferences.notificationsEnabled>
-	                                <div ng-controller="EmailFrequencyCtrl" ng-cloak>
-		                                <div class="row bottomBuffer" >
-				                           	<strong class="green">${springMacroRequestContext.getMessage("manage.email.email_frequency")}</strong>
-				                         </div>				                    	 
-			                    	 	<div class="control-group">
-								            <p>${springMacroRequestContext.getMessage("manage.send_email_to_primary_1")} <a href="${aboutUri}/inbox" target="_blank">${springMacroRequestContext.getMessage("manage.send_email_to_primary_2")}</a>${springMacroRequestContext.getMessage("manage.send_email_to_primary_3")}</p>
-								            <div class="relative">
-								                <select id="sendEmailFrequencyDays" name="sendEmailFrequencyDays"
-								                    class="input-xlarge"
-								                    ng-model="prefsSrvc.prefs.sendEmailFrequencyDays"
-								                    ng-change="prefsSrvc.savePrivacyPreferences()">
-								                    <#list sendEmailFrequencies?keys as key>
-								                    <option value="${key}"
-								                        ng-selected="prefsSrvc.prefs.sendEmailFrequencyDays === ${key}">${sendEmailFrequencies[key]}</option>
-								                    </#list>
-								                </select>
-								            </div>
-								            <p>${springMacroRequestContext.getMessage("manage.send_email_to_primary_4")} {{emailSrvc.primaryEmail.value}}${springMacroRequestContext.getMessage("manage.send_email_to_primary_5")}</p>
-								            <p>${springMacroRequestContext.getMessage("manage.service_announcements")}</p>
-								            <p style="line-height: 12px;"><small class="italic">${springMacroRequestContext.getMessage("manage.service_announcements.note")}</small></p>
-								        </div>
-			                    	 </div>
-                                 </#if>
+                                <div class="col-md-12">
+                               <p style="line-height: 12px;">
+                               		<small class="italic">
+                                    	${springMacroRequestContext.getMessage("manage.verificationEmail.1")} <a href="${aboutUri}/content/orcid-terms-use" target="_blank">${springMacroRequestContext.getMessage("manage.verificationEmail.2")}</a>${springMacroRequestContext.getMessage("manage.verificationEmail.3")}
+                                    </small>
+                                </p>
+                                </div>
                             </div>
-                        </div>
+                       		<!-- Email frecuency -->
+                            <#if profile.orcidInternal.preferences.notificationsEnabled>
+							    <div ng-controller="EmailFrequencyCtrl" ng-cloak>
+							        <div class="row bottomBuffer">
+							            <strong class="green">${springMacroRequestContext.getMessage("manage.email.email_frequency")}</strong>
+							        </div>
+							        <div class="control-group">
+							            <p>${springMacroRequestContext.getMessage("manage.send_email_to_primary_1")} <a href="${aboutUri}/inbox" target="_blank">${springMacroRequestContext.getMessage("manage.send_email_to_primary_2")}</a>${springMacroRequestContext.getMessage("manage.send_email_to_primary_3")}</p>
+							            <div class="relative">
+							                <select id="sendEmailFrequencyDays" name="sendEmailFrequencyDays" class="input-xlarge" ng-model="prefsSrvc.prefs.sendEmailFrequencyDays" ng-change="prefsSrvc.savePrivacyPreferences()">
+							                    <#list sendEmailFrequencies?keys as key>
+							                        <option value="${key}" ng-selected="prefsSrvc.prefs.sendEmailFrequencyDays === ${key}">${sendEmailFrequencies[key]}</option>
+							                    </#list>
+							                </select>
+							            </div>
+							            <p>${springMacroRequestContext.getMessage("manage.send_email_to_primary_4")} {{emailSrvc.primaryEmail.value}}${springMacroRequestContext.getMessage("manage.send_email_to_primary_5")}</p>
+							            <p>${springMacroRequestContext.getMessage("manage.service_announcements")}</p>
+							            <p style="line-height: 12px;"><small class="italic">${springMacroRequestContext.getMessage("manage.service_announcements.note")}</small>
+							            </p>
+							        </div>
+							    </div>
+							</#if>
+                      	</div>
                     </td>
                 </tr>
                 <!-- Notifications -->
@@ -579,40 +579,41 @@
             <div id="no-results-alert" class="orcid-hide alert alert-error no-delegate-matches"><@spring.message "orcid.frontend.web.no_results"/></div>
         </div>
         <#if ((RequestParameters['social'])?? ||(RequestParameters['shibboleth'])??)>
-        <div ng-controller="SocialCtrl" id="SocialCtrl" ng-show="socialAccounts" ng-cloak>
-            <h1>
-                <@orcid.msg 'manage_signin_title' />
-            </h1>
-            <p>
-            	<@orcid.msg 'manage_signin_subtitle' />
-            </p>
-            <div>
-                <table class="table table-bordered settings-table normal-width">
-                    <thead>
-                        <tr>
-                            <th width="40%" ng-click="changeSorting('providerUserId')"><@orcid.msg 'manage_signin_table_header1' /></th>
-                            <th width="30%" ng-click="changeSorting('providerId')"><@orcid.msg 'manage_signin_table_header2' /></th>
-                            <th width="20%" ng-click="changeSorting('dateCreated')"><@orcid.msg 'manage_delegators.delegates_table.access_granted' /></th>
-                            <td width="10%"></td>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr ng-repeat="socialAccount in socialAccounts | orderBy:sort.column:sort.descending">
-                            <td width="40%">{{socialAccount.email}}</a></td>
-                            <td width="30%">{{socialAccount.id.providerid}}</a></td>
-                            <td width="20%">{{socialAccount.dateCreated|date:'yyyy-MM-dd'}}</td>
-                            <td width="10%">
-                                <a
-                                ng-click="confirmRevoke(socialAccount.id)"
-                                class="glyphicon glyphicon-trash grey"
-                                title="${springMacroRequestContext.getMessage("manage.revokeaccess")}"></a>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </#if>
-    </div>
+	        <div ng-controller="SocialCtrl" id="SocialCtrl" ng-show="socialAccounts" ng-cloak>
+	            <h1>
+	                <@orcid.msg 'manage_signin_title' />
+	            </h1>
+	            <p>
+	            	<@orcid.msg 'manage_signin_subtitle' />
+	            </p>
+	            <div>
+	                <table class="table table-bordered settings-table normal-width">
+	                    <thead>
+	                        <tr>
+	                            <th width="40%" ng-click="changeSorting('providerUserId')"><@orcid.msg 'manage_signin_table_header1' /></th>
+	                            <th width="30%" ng-click="changeSorting('providerId')"><@orcid.msg 'manage_signin_table_header2' /></th>
+	                            <th width="20%" ng-click="changeSorting('dateCreated')"><@orcid.msg 'manage_delegators.delegates_table.access_granted' /></th>
+	                            <td width="10%"></td>
+	                        </tr>
+	                    </thead>
+	                    <tbody>
+	                        <tr ng-repeat="socialAccount in socialAccounts | orderBy:sort.column:sort.descending">
+	                            <td width="40%">{{socialAccount.email}}</a></td>
+	                            <td width="30%">{{socialAccount.id.providerid}}</a></td>
+	                            <td width="20%">{{socialAccount.dateCreated|date:'yyyy-MM-dd'}}</td>
+	                            <td width="10%">
+	                                <a
+	                                ng-click="confirmRevoke(socialAccount.id)"
+	                                class="glyphicon glyphicon-trash grey"
+	                                title="${springMacroRequestContext.getMessage("manage.revokeaccess")}"></a>
+	                            </td>
+	                        </tr>
+	                    </tbody>
+	                </table>
+	            </div>
+        	</#if>
+        </div>
+	</div>
 </div>
 
 <script type="text/ng-template" id="deactivate-account-modal">
