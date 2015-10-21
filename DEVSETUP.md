@@ -250,7 +250,13 @@ Find the **service** element/tag and the following connector:
 	* Go to the main menu and select *Run* → *Run Configurations* 
 	* Select the JUnit run configurations
 	* Open the "*Arguments*" tab 
-	* On the "*VM arguments*" add "-Dorg.orcid.config.file=classpath:staging-persistence.properties" 
+	* On the "*VM arguments*" add the following arguments:
+		--> "-Dorg.orcid.config.file=classpath:staging-persistence.properties" 
+		--> "-Dorg.orcid.config.file=classpath:staging-persistence.properties" 
+		--> "-Dorg.orcid.config.file=classpath:staging-persistence.properties" 
+		--> "-Dorg.orcid.config.file=classpath:staging-persistence.properties" 
+		--> "-Dorg.orcid.config.file=classpath:staging-persistence.properties" 
+		--> "-Dorg.orcid.config.file=classpath:staging-persistence.properties" --> "-Dorg.orcid.config.file=classpath:staging-persistence.properties" 
 	* Click "*Apply*" 
 	
 * Make sure you have firefox installed so selenium can run the tests.  Note sometimes firefox is out of sync with selenium support or visa versa, so pick up the version before latest.  At time of writing latest selenium 2.45 works with firefox version 37 but not 38. Archives can be found at https://https://ftp.mozilla.org/pub/mozilla.org/firefox/releases/37.0.2/
