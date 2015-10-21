@@ -133,6 +133,7 @@
 
 	<xs:complexType name="work-group">
 		<xs:sequence>
+			<xs:element ref="common:last-modified-date" minOccurs="1" maxOccurs="1" />
 			<xs:element name="identifiers" type="activities:identifiers"></xs:element>
 			<xs:sequence>
 				<xs:element maxOccurs="unbounded" minOccurs="0"
@@ -143,6 +144,7 @@
 
 	<xs:complexType name="funding-group">
 		<xs:sequence>
+			<xs:element ref="common:last-modified-date" minOccurs="1" maxOccurs="1" />
 			<xs:element name="identifiers" type="activities:identifiers"></xs:element>
 			<xs:sequence>
 				<xs:element maxOccurs="unbounded" minOccurs="0"
@@ -153,6 +155,7 @@
 
 	<xs:complexType name="peer-review-group">
 		<xs:sequence>
+			<xs:element ref="common:last-modified-date" minOccurs="1" maxOccurs="1" />
 			<xs:element name="identifiers" type="activities:identifiers"></xs:element>
 			<xs:sequence>
 				<xs:element maxOccurs="unbounded" minOccurs="0"

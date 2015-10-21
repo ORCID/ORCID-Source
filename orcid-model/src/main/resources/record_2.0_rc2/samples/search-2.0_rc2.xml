@@ -236,6 +236,7 @@
 				<activities:fundings>
 					<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
 					<activities:group>
+						<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
 						<activities:identifiers>
 							<activities:identifier>
 								<activities:external-identifier-type>agr</activities:external-identifier-type>
@@ -283,6 +284,7 @@
 				<activities:works>
 					<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
 					<activities:group>
+						<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
 						<activities:identifiers>
 							<activities:identifier>
 								<activities:external-identifier-type>agr</activities:external-identifier-type>

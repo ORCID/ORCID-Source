@@ -27,14 +27,18 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.orcid.jaxb.model.common.LastModifiedDate;
 import org.orcid.jaxb.model.record_2_rc2.Group;
 import org.orcid.jaxb.model.record_2_rc2.GroupableActivity;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "identifiers", "fundingSummary" })
+@XmlType(propOrder = { "lastModifiedDate", "identifiers", "fundingSummary" })
 @XmlRootElement(name = "funding-group", namespace = "http://www.orcid.org/ns/activities")
 public class FundingGroup implements Group, Serializable {
     private static final long serialVersionUID = 1L;
+    
+    @XmlElement(name="last-modified-date", namespace = "http://www.orcid.org/ns/common")
+    protected LastModifiedDate lastModifiedDate;
     @XmlElement(name = "identifiers", namespace = "http://www.orcid.org/ns/activities")
     private Identifiers identifiers;
     @XmlElement(name = "summary", namespace = "http://www.orcid.org/ns/funding")
@@ -87,5 +91,13 @@ public class FundingGroup implements Group, Serializable {
             return false;
         return true;
     }
+
+	public LastModifiedDate getLastModifiedDate() {
+		return lastModifiedDate;
+	}
+
+	public void setLastModifiedDate(LastModifiedDate lastModifiedDate) {
+		this.lastModifiedDate = lastModifiedDate;
+	}
 
 }
