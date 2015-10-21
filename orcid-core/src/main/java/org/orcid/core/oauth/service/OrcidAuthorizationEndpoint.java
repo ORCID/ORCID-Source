@@ -22,8 +22,6 @@ import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.annotation.Resource;
-
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.security.aop.LockedException;
@@ -52,10 +50,13 @@ public class OrcidAuthorizationEndpoint extends AuthorizationEndpoint {
     private String oauthError = "forward:/oauth/error";
     
     private OrcidOAuth2RequestValidator orcidOAuth2RequestValidator;
-    
-    @Resource
+        
     private ProfileEntityCacheManager profileEntityCacheManager;
     
+    public void setProfileEntityCacheManager(ProfileEntityCacheManager profileEntityCacheManager) {
+        this.profileEntityCacheManager = profileEntityCacheManager;
+    }
+
     @Override
     @ExceptionHandler(HttpSessionRequiredException.class)
     public ModelAndView handleHttpSessionRequiredException(HttpSessionRequiredException e, ServletWebRequest webRequest) throws Exception {
