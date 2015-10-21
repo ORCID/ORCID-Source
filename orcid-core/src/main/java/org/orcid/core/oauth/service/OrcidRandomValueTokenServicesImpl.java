@@ -25,7 +25,6 @@ import java.util.UUID;
 import javax.annotation.Resource;
 
 import org.orcid.core.constants.OauthTokensConstants;
-import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.oauth.OrcidOauth2AuthInfo;
 import org.orcid.core.oauth.OrcidRandomValueTokenServices;
 import org.orcid.jaxb.model.message.ScopePathType;
@@ -61,10 +60,7 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
     private TokenEnhancer customTokenEnhancer;
     
     @Resource
-    private OrcidOauth2AuthoriziationCodeDetailDao orcidOauth2AuthoriziationCodeDetailDao;
-
-    @Resource
-    private ClientDetailsManager clientDetailsManager;        
+    private OrcidOauth2AuthoriziationCodeDetailDao orcidOauth2AuthoriziationCodeDetailDao;       
 
     public OrcidRandomValueTokenServicesImpl() {        
     }

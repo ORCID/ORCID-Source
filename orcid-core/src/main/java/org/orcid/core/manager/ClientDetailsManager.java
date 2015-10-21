@@ -167,5 +167,5 @@ public interface ClientDetailsManager extends ClientDetailsService {
     
     String getMemberName(String clientId);
 
-	OrcidClient toOrcidClient(ClientDetailsEntity clientEntity);
+    OrcidClient toOrcidClient(ClientDetailsEntity clientEntity);
 }

@@ -21,36 +21,46 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.Resource;
+
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.constants.OauthTokensConstants;
+import org.orcid.core.manager.ClientDetailsEntityCacheManager;
+import org.orcid.core.manager.ProfileEntityCacheManager;
+import org.orcid.core.security.aop.LockedException;
 import org.orcid.jaxb.model.message.ScopePathType;
+import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.springframework.security.oauth2.common.exceptions.InvalidGrantException;
 import org.springframework.security.oauth2.common.exceptions.InvalidScopeException;
 import org.springframework.security.oauth2.common.util.OAuth2Utils;
 import org.springframework.security.oauth2.provider.AuthorizationRequest;
 import org.springframework.security.oauth2.provider.ClientDetails;
-import org.springframework.security.oauth2.provider.ClientDetailsService;
 import org.springframework.security.oauth2.provider.OAuth2Request;
 import org.springframework.security.oauth2.provider.OAuth2RequestFactory;
 import org.springframework.security.oauth2.provider.TokenRequest;
 
 /**
  * @author Declan Newman (declan) Date: 10/05/2012
- */
+ */ 
 public class OrcidClientCredentialsChecker {
-
-    private final ClientDetailsService clientDetailsService;
+    
+    @Resource
+    private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
+    @Resource
+    private ProfileEntityCacheManager profileEntityCacheManager;
+    
     private final OAuth2RequestFactory oAuth2RequestFactory;
 
-    public OrcidClientCredentialsChecker(ClientDetailsService clientDetailsService, OAuth2RequestFactory oAuth2RequestFactory) {
-        this.clientDetailsService = clientDetailsService;
+    public OrcidClientCredentialsChecker(OAuth2RequestFactory oAuth2RequestFactory) {
         this.oAuth2RequestFactory = oAuth2RequestFactory;
     }
 
     public OAuth2Request validateCredentials(String grantType, TokenRequest tokenRequest) {
         String clientId = tokenRequest.getClientId();
         Set<String> scopes = tokenRequest.getScope();
-        ClientDetails clientDetails = clientDetailsService.loadClientByClientId(clientId);
+        ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(clientId);                        
+        validateMemberIsActive(clientDetails.getGroupProfileId(), clientId);
         validateGrantType(grantType, clientDetails);
         if (scopes != null) {
             validateScope(clientDetails, scopes);
@@ -114,4 +124,11 @@ public class OrcidClientCredentialsChecker {
         }
     }
 
+    private void validateMemberIsActive(String memberId, String clientId) {
+        ProfileEntity memberEntity = profileEntityCacheManager.retrieve(memberId);
+        //If it is locked
+        if(!memberEntity.isAccountNonLocked()) {
+            throw new LockedException("The given client " + clientId + " is locked because his member " + memberId + " is also locked", memberId); 
+        }                 
+    }    
 }

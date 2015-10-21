@@ -23,8 +23,13 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import org.orcid.core.manager.ClientDetailsEntityCacheManager;
+import org.orcid.core.manager.ProfileEntityCacheManager;
+import org.orcid.core.security.aop.LockedException;
 import org.orcid.persistence.dao.OrcidOauth2AuthoriziationCodeDetailDao;
+import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.OrcidOauth2AuthoriziationCodeDetail;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -58,6 +63,11 @@ public class OrcidAuthorizationCodeTokenGranter extends AbstractTokenGranter {
     @Resource(name = "orcidOauth2AuthoriziationCodeDetailDao")
     private OrcidOauth2AuthoriziationCodeDetailDao orcidOauth2AuthoriziationCodeDetailDao;
     
+    @Resource
+    private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
+    @Resource
+    private ProfileEntityCacheManager profileEntityCacheManager;
+    
     public OrcidAuthorizationCodeTokenGranter(AuthorizationServerTokenServices tokenServices, AuthorizationCodeServices authorizationCodeServices,
             ClientDetailsService clientDetailsService, OAuth2RequestFactory oAuth2RequestFactory) {
         super(tokenServices, clientDetailsService, oAuth2RequestFactory, GRANT_TYPE);
@@ -78,6 +88,10 @@ public class OrcidAuthorizationCodeTokenGranter extends AbstractTokenGranter {
             throw new OAuth2Exception("An authorization code must be supplied.");
         }
 
+        //Validate the client is active
+        ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(tokenRequest.getClientId());                        
+        validateMemberIsActive(clientDetails.getGroupProfileId(), tokenRequest.getClientId());
+        
         //Validate scopes
         OrcidOauth2AuthoriziationCodeDetail codeDetails = orcidOauth2AuthoriziationCodeDetailDao.find(authorizationCode);        
         if(codeDetails == null) {
@@ -140,4 +154,12 @@ public class OrcidAuthorizationCodeTokenGranter extends AbstractTokenGranter {
 
     }
 
+    private void validateMemberIsActive(String memberId, String clientId) {
+        ProfileEntity memberEntity = profileEntityCacheManager.retrieve(memberId);
+        //If it is locked
+        if(!memberEntity.isAccountNonLocked()) {
+            throw new LockedException("The given client " + clientId + " is locked because his member " + memberId + " is also locked", memberId); 
+        }                 
+    }
+    
 }

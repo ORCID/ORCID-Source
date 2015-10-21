@@ -29,13 +29,10 @@ import javax.annotation.Resource;
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.constants.OauthTokensConstants;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
-import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
-import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.oauth.OrcidOAuth2Authentication;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.oauth.OrcidOauth2UserAuthentication;
-import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -70,15 +67,6 @@ public class OrcidTokenStoreServiceImpl implements TokenStore {
     @Resource
     private OrcidOauth2TokenDetailService orcidOauthTokenDetailService;
 
-    @Resource
-    private ClientDetailsManager clientDetailsManager;
-
-    @Resource
-    private ProfileEntityManager profileEntityManager;
-
-    @Resource
-    private ProfileDao profileDao;
-    
     @Resource(name = "profileEntityCacheManager")
     ProfileEntityCacheManager profileEntityCacheManager;
     

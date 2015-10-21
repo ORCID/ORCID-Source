@@ -407,7 +407,6 @@
         <property name="clientDetailsService" ref="clientDetailsManager"/>        
     </bean>
     <bean id="orcidClientCredentialsChecker" class="org.orcid.core.oauth.OrcidClientCredentialsChecker">
-        <constructor-arg ref="clientDetailsManager"/>
         <constructor-arg ref="oAuth2RequestFactory" />
     </bean>
     <bean id="clientCredentialsTokenGranter" class="org.orcid.core.oauth.OrcidClientCredentialsTokenGranter">
