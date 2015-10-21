@@ -26,7 +26,7 @@ import org.orcid.persistence.dao.StatisticsGeneratorDao;
 public class StatisticsGeneratorDaoImpl implements StatisticsGeneratorDao {
 
     protected EntityManager entityManager;
-    
+
     public void setEntityManager(EntityManager entityManager) {
         this.entityManager = entityManager;
     }
@@ -57,50 +57,51 @@ public class StatisticsGeneratorDaoImpl implements StatisticsGeneratorDao {
     }
 
     public long getNumberOfUniqueDOIs() {
-        Query query = entityManager.createNativeQuery("SELECT COUNT(DISTINCT j->'workExternalIdentifierId'->>'content') FROM (SELECT json_array_elements(json_extract_path(external_ids_json, 'workExternalIdentifier')) AS j FROM work) AS a WHERE j->>'workExternalIdentifierType' = 'DOI'");
+        Query query = entityManager
+                .createNativeQuery("SELECT COUNT(DISTINCT j->'workExternalIdentifierId'->>'content') FROM (SELECT json_array_elements(json_extract_path(external_ids_json, 'workExternalIdentifier')) AS j FROM work) AS a WHERE j->>'workExternalIdentifierType' = 'DOI'");
         BigInteger numberOfWorksWithDOIs = (BigInteger) query.getSingleResult();
         return numberOfWorksWithDOIs.longValue();
     }
 
-	@Override
-	public long getNumberOfEmployment() {
-		Query query = entityManager.createNativeQuery("select count(*) from org_affiliation_relation where org_affiliation_relation_role = 'EMPLOYMENT'");
+    @Override
+    public long getNumberOfEmployment() {
+        Query query = entityManager.createNativeQuery("select count(*) from org_affiliation_relation where org_affiliation_relation_role = 'EMPLOYMENT'");
         BigInteger numberOfWorks = (BigInteger) query.getSingleResult();
         return numberOfWorks.longValue();
-	}
+    }
 
-	@Override
-	public long getNumberOfEducation() {
-		Query query = entityManager.createNativeQuery("select count(*) from org_affiliation_relation where org_affiliation_relation_role = 'EDUCATION'");
+    @Override
+    public long getNumberOfEducation() {
+        Query query = entityManager.createNativeQuery("select count(*) from org_affiliation_relation where org_affiliation_relation_role = 'EDUCATION'");
         BigInteger numberOfWorks = (BigInteger) query.getSingleResult();
         return numberOfWorks.longValue();
-	}
+    }
 
-	@Override
-	public long getNumberOfFunding() {
-		Query query = entityManager.createNativeQuery("select count(*) from profile_funding");
+    @Override
+    public long getNumberOfFunding() {
+        Query query = entityManager.createNativeQuery("select count(*) from profile_funding");
         BigInteger numberOfWorks = (BigInteger) query.getSingleResult();
         return numberOfWorks.longValue();
-	}
+    }
 
-	@Override
-	public long getNumberOfEmploymentUniqueOrg() {
-		Query query = entityManager.createNativeQuery("select count(distinct(org_id)) from org_affiliation_relation where org_affiliation_relation_role = 'EMPLOYMENT'");
+    @Override
+    public long getNumberOfEmploymentUniqueOrg() {
+        Query query = entityManager.createNativeQuery("select count(distinct(org_id)) from org_affiliation_relation where org_affiliation_relation_role = 'EMPLOYMENT'");
         BigInteger numberOfWorks = (BigInteger) query.getSingleResult();
         return numberOfWorks.longValue();
-	}
+    }
 
-	@Override
-	public long getNumberOfEducationUniqueOrg() {
-		Query query = entityManager.createNativeQuery("select count(distinct(org_id)) from org_affiliation_relation where org_affiliation_relation_role = 'EDUCATION'");
+    @Override
+    public long getNumberOfEducationUniqueOrg() {
+        Query query = entityManager.createNativeQuery("select count(distinct(org_id)) from org_affiliation_relation where org_affiliation_relation_role = 'EDUCATION'");
         BigInteger numberOfWorks = (BigInteger) query.getSingleResult();
         return numberOfWorks.longValue();
-	}
+    }
 
-	@Override
-	public long getNumberOfFundingUniqueOrg() {
-		Query query = entityManager.createNativeQuery("select count(distinct(org_id)) from profile_funding");
+    @Override
+    public long getNumberOfFundingUniqueOrg() {
+        Query query = entityManager.createNativeQuery("select count(distinct(org_id)) from profile_funding");
         BigInteger numberOfWorks = (BigInteger) query.getSingleResult();
         return numberOfWorks.longValue();
-	}
+    }
 }
