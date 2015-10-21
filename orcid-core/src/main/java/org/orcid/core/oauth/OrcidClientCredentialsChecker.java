@@ -56,6 +56,15 @@ public class OrcidClientCredentialsChecker {
         this.oAuth2RequestFactory = oAuth2RequestFactory;
     }
 
+    public void setClientDetailsEntityCacheManager(ClientDetailsEntityCacheManager clientDetailsEntityCacheManager) {
+        this.clientDetailsEntityCacheManager = clientDetailsEntityCacheManager;
+    }
+    
+    public void setProfileEntityCacheManager(ProfileEntityCacheManager profileEntityCacheManager) {
+        this.profileEntityCacheManager = profileEntityCacheManager;
+        
+    }
+    
     public OAuth2Request validateCredentials(String grantType, TokenRequest tokenRequest) {
         String clientId = tokenRequest.getClientId();
         Set<String> scopes = tokenRequest.getScope();
