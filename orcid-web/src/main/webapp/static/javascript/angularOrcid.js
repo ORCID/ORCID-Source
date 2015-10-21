@@ -1304,6 +1304,7 @@ orcidNgModule.factory("emailSrvc", function ($rootScope) {
 orcidNgModule.factory("prefsSrvc", function ($rootScope) {
     var serv = {
             prefs: null,
+            saved: false,
             getPrivacyPreferences: function() {
                 $.ajax({
                     url: getBaseUri() + '/account/preferences.json',
@@ -1326,12 +1327,16 @@ orcidNgModule.factory("prefsSrvc", function ($rootScope) {
                     dataType: 'json',
                     success: function(data) {
                         serv.prefs = data;
+                        serv.saved = true;
                         $rootScope.$apply();
                     }
                 }).fail(function() {
                     // something bad is happening!
                     console.log("error with prefs");
                 });
+            },
+            clearMessage: function(){
+                serv.saved = false;
             }
         };
 

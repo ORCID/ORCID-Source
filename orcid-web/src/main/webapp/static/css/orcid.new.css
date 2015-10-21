@@ -2519,15 +2519,15 @@ input.error {
 /*
 TODO: fix up button colours in less
 */
-.btn-primary {
+.btn-primary, input[type="submit"].btn-primary {
 	background: #31789B;
 }
 
-.btn-primary:hover {
+.btn-primary:hover, input[type="submit"].btn-primary:hover {
 	background: #a6ce39;
 	text-shadow: none;
 	border-color: #A6CE39; 
-}
+} 
 
 .oauth-question-sign {
 	color: #31789B !important;
