@@ -17,7 +17,7 @@
 package org.orcid.jaxb.model.record_2_rc2.summary;
 
 import org.jsoup.helper.StringUtil;
-import org.orcid.jaxb.model.record_2_rc1.GroupKey;
+import org.orcid.jaxb.model.record_2_rc2.GroupKey;
 
 public class PeerReviewGroupKey implements GroupKey {    
     public static String KEY_NAME = "PEER-REVIEW"; 

@@ -23,8 +23,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.jsoup.helper.StringUtil;
-import org.orcid.jaxb.model.record_2_rc1.FundingExternalIdentifier;
-import org.orcid.jaxb.model.record_2_rc1.WorkExternalIdentifier;
+import org.orcid.jaxb.model.record_2_rc2.FundingExternalIdentifier;
+import org.orcid.jaxb.model.record_2_rc2.WorkExternalIdentifier;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "externalIdentifierType", "externalIdentifierId" })

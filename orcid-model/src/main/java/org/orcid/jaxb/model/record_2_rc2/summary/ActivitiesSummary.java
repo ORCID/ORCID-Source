@@ -36,9 +36,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.orcid.jaxb.model.common.LastModifiedDate;
-import org.orcid.jaxb.model.record_2_rc1.ActivitiesContainer;
-import org.orcid.jaxb.model.record_2_rc1.Activity;
-import org.orcid.jaxb.model.record_2_rc1.RecordUtil;
+import org.orcid.jaxb.model.record_2_rc2.ActivitiesContainer;
+import org.orcid.jaxb.model.record_2_rc2.Activity;
+import org.orcid.jaxb.model.record_2_rc2.RecordUtil;
 
 /**
  * <p>

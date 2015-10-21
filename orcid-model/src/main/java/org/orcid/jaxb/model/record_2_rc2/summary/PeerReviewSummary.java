@@ -32,9 +32,9 @@ import org.orcid.jaxb.model.common.LastModifiedDate;
 import org.orcid.jaxb.model.common.Organization;
 import org.orcid.jaxb.model.common.Source;
 import org.orcid.jaxb.model.common.Visibility;
-import org.orcid.jaxb.model.record_2_rc1.Activity;
-import org.orcid.jaxb.model.record_2_rc1.GroupableActivity;
-import org.orcid.jaxb.model.record_2_rc1.WorkExternalIdentifiers;
+import org.orcid.jaxb.model.record_2_rc2.Activity;
+import org.orcid.jaxb.model.record_2_rc2.GroupableActivity;
+import org.orcid.jaxb.model.record_2_rc2.WorkExternalIdentifiers;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "createdDate", "lastModifiedDate", "source", "externalIdentifiers", "organization", "groupId", "completionDate" })

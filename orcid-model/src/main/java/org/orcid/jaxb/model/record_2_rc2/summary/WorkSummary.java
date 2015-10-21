@@ -38,11 +38,12 @@ import org.orcid.jaxb.model.common.PublicationDate;
 import org.orcid.jaxb.model.common.Source;
 import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.jaxb.model.common.VisibilityType;
-import org.orcid.jaxb.model.record_2_rc1.Activity;
-import org.orcid.jaxb.model.record_2_rc1.GroupableActivity;
-import org.orcid.jaxb.model.record_2_rc1.WorkExternalIdentifiers;
-import org.orcid.jaxb.model.record_2_rc1.WorkTitle;
-import org.orcid.jaxb.model.record_2_rc1.WorkType;
+import org.orcid.jaxb.model.record_2_rc2.Activity;
+import org.orcid.jaxb.model.record_2_rc2.GroupableActivity;
+import org.orcid.jaxb.model.record_2_rc2.WorkExternalIdentifiers;
+import org.orcid.jaxb.model.record_2_rc2.WorkSource;
+import org.orcid.jaxb.model.record_2_rc2.WorkTitle;
+import org.orcid.jaxb.model.record_2_rc2.WorkType;
 
 /**
  * <p>
