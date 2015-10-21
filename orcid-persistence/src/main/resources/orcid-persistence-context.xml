@@ -124,7 +124,11 @@
     <bean id="webhookDao" class="org.orcid.persistence.dao.impl.WebhookDaoImpl" />
      
     <!-- Statistics Generation DAO -->
-	<bean id="statisticsGeneratorDao" class="org.orcid.persistence.dao.impl.StatisticsGeneratorDaoImpl" />
+	<bean id="statisticsGeneratorDao" class="org.orcid.persistence.dao.impl.StatisticsGeneratorDaoImpl">
+		<property name="entityManager" ref="entityManagerReadOnly" />
+	</bean>
+	
+	
 	<!-- Statistics DAO -->
 	<bean id="statisticsDao" class="org.orcid.persistence.dao.impl.StatisticsDaoImpl" />
      
