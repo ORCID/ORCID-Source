@@ -572,22 +572,15 @@
         <property name="mapperFacade" ref="groupIdRecordMapperFacade" />
     </bean>
     
-    
-    
-    
-    
-    
     <bean id="researcherUrlMapperFacade" factory-bean="&amp;mapperFacadeFactory" factory-method="getResearcherUrlMapperFacade"/>
 	<bean id="jpaJaxbResearcherUrlAdapter" class="org.orcid.core.adapter.impl.JpaJaxbResearcherUrlAdapterImpl">
         <property name="mapperFacade" ref="researcherUrlMapperFacade" />
     </bean>
     
-    
-    
-    
-    
-    
-    
+    <bean id="emailMapperFacade" factory-bean="&amp;mapperFacadeFactory" factory-method="getEmailMapperFacade"/>
+	<bean id="jpaJaxbEmailAdapter" class="org.orcid.core.adapter.impl.JpaJaxbEmailAdapterImpl">
+        <property name="mapperFacade" ref="emailMapperFacade" />
+    </bean>
     
     <!-- Geonames username -->
 	<bean id="geonamesUser" class="java.lang.String">

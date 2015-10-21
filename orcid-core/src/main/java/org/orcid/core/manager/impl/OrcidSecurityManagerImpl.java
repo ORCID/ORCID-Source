@@ -35,9 +35,11 @@ import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record.Education;
+import org.orcid.jaxb.model.record.Email;
 import org.orcid.jaxb.model.record.Employment;
 import org.orcid.jaxb.model.record.Funding;
 import org.orcid.jaxb.model.record.PeerReview;
+import org.orcid.jaxb.model.record.ResearcherUrl;
 import org.orcid.jaxb.model.record.Work;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.springframework.security.core.Authentication;
@@ -124,6 +126,8 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
             readLimitedScopes.add(ScopePathType.AFFILIATIONS_READ_LIMITED.value());
         } else if (filterable instanceof PeerReview) {
             readLimitedScopes.add(ScopePathType.PEER_REVIEW_READ_LIMITED.value());
+        } else if (filterable instanceof ResearcherUrl || filterable instanceof Email) {
+            readLimitedScopes.add(ScopePathType.PERSON_READ_LIMITED.value());
         }
         readLimitedScopes.retainAll(requestedScopes);
         return readLimitedScopes;

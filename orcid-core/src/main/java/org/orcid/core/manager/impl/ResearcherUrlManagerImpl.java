@@ -210,6 +210,17 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
     }
 
     /**
+     * Return the list of public researcher urls associated to a specific profile
+     * 
+     * @param orcid
+     * @return the list of public researcher urls associated with the orcid profile
+     * */
+    @Override
+    public org.orcid.jaxb.model.record.ResearcherUrls getPublicResearcherUrlsV2(String orcid) {
+        return getResearcherUrlsV2(orcid, Visibility.PUBLIC);
+    }
+    
+    /**
      * Return the list of researcher urls associated to a specific profile
      * 
      * @param orcid
@@ -217,7 +228,23 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
      * */
     @Override
     public org.orcid.jaxb.model.record.ResearcherUrls getResearcherUrlsV2(String orcid) {
-        List<ResearcherUrlEntity> researcherUrlEntities = researcherUrlDao.getResearcherUrls(orcid);
+        return getResearcherUrlsV2(orcid, null);
+    }
+    
+    /**
+     * Return the list of researcher urls associated to a specific profile
+     * 
+     * @param orcid
+     * @return the list of researcher urls associated with the orcid profile
+     * */
+    private org.orcid.jaxb.model.record.ResearcherUrls getResearcherUrlsV2(String orcid, Visibility visibility) {
+        List<ResearcherUrlEntity> researcherUrlEntities = null; 
+        if(visibility == null) {
+            researcherUrlEntities = researcherUrlDao.getResearcherUrls(orcid);
+        } else {
+            researcherUrlEntities = researcherUrlDao.getResearcherUrls(orcid, visibility);
+        }       
+        
         List<org.orcid.jaxb.model.record.ResearcherUrl> researcherUrlList = jpaJaxbResearcherUrlAdapter.toResearcherUrlList(researcherUrlEntities);
         org.orcid.jaxb.model.record.ResearcherUrls researcherUrls = new org.orcid.jaxb.model.record.ResearcherUrls();
         researcherUrls.setResearcherUrls(researcherUrlList);        

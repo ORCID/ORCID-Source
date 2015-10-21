@@ -104,4 +104,6 @@ public interface MemberV2ApiServiceDelegator {
     Response createResearcherUrl(String orcid, ResearcherUrl researcherUrl);
 
     Response deleteResearcherUrl(String orcid, String putCode);
+    
+    Response viewEmails(String orcid);       
 }

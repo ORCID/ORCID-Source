@@ -88,7 +88,7 @@ public class ResearcherUrlsTests extends BlackBoxBase {
     @Resource(name = "memberV2ApiClient_rc2")
     private MemberV2ApiClientImpl memberV2ApiClient;
 
-    @Resource(name = "publicV2ApiClient_rc1")
+    @Resource(name = "publicV2ApiClient_rc2")
     private PublicV2ApiClientImpl publicV2ApiClient;
 
     @Resource
@@ -102,11 +102,15 @@ public class ResearcherUrlsTests extends BlackBoxBase {
         assertNotNull(accessToken);
         ResearcherUrl rUrlToCreate = (ResearcherUrl) unmarshallFromPath("/record_2.0_rc2/samples/researcher-url-2.0_rc2.xml", ResearcherUrl.class);
         assertNotNull(rUrlToCreate);
+        Long time = System.currentTimeMillis();
         rUrlToCreate.setCreatedDate(null);
         rUrlToCreate.setLastModifiedDate(null);
         rUrlToCreate.setPath(null);
         rUrlToCreate.setPutCode(null);
         rUrlToCreate.setSource(null);
+        rUrlToCreate.setUrl(new Url(rUrlToCreate.getUrl().getValue() + time));
+        rUrlToCreate.setUrlName(String.valueOf(time));
+        
         // Create
         ClientResponse postResponse = memberV2ApiClient.createResearcherUrls(user1OrcidId, rUrlToCreate, accessToken);
         assertNotNull(postResponse);
@@ -124,8 +128,8 @@ public class ResearcherUrlsTests extends BlackBoxBase {
         assertNotNull(gotResearcherUrl.getCreatedDate());
         assertNotNull(gotResearcherUrl.getLastModifiedDate());
         assertEquals(this.client1ClientId, gotResearcherUrl.getSource().retrieveSourcePath());
-        assertEquals("http://site1.com/", gotResearcherUrl.getUrl().getValue());
-        assertEquals("Site # 1", gotResearcherUrl.getUrlName());
+        assertEquals("http://site1.com/" + time, gotResearcherUrl.getUrl().getValue());
+        assertEquals(String.valueOf(time), gotResearcherUrl.getUrlName());
         assertEquals("public", gotResearcherUrl.getVisibility().value());
 
         // Update
@@ -139,8 +143,8 @@ public class ResearcherUrlsTests extends BlackBoxBase {
         assertEquals(Response.Status.OK.getStatusCode(), updatedResearcherUrlResponse.getStatus());
         ResearcherUrl updatedResearcherUrl = updatedResearcherUrlResponse.getEntity(ResearcherUrl.class);
         assertNotNull(updatedResearcherUrl);
-        assertEquals("http://site1.com/" + currentTime, updatedResearcherUrl.getUrl().getValue());
-        assertEquals("Site # 1 - " + currentTime, updatedResearcherUrl.getUrlName());
+        assertEquals("http://site1.com/" + time + currentTime, updatedResearcherUrl.getUrl().getValue());
+        assertEquals(String.valueOf(time) + " - " + currentTime, updatedResearcherUrl.getUrlName());
         // Keep it public, since it is more restrictive than the user visibility
         // default
         assertEquals("public", updatedResearcherUrl.getVisibility().value());
@@ -221,6 +225,23 @@ public class ResearcherUrlsTests extends BlackBoxBase {
         // Clean
         for (ResearcherUrl rUrl : researcherUrls.getResearcherUrls()) {
             memberV2ApiClient.deletePeerReviewXml(this.user1OrcidId, rUrl.getPutCode(), accessToken);
+        }
+    }
+    
+    @Test
+    public void testGetWithPublicAPI() {
+        ClientResponse getAllResponse = publicV2ApiClient.viewResearcherUrlsXML(user1OrcidId);
+        assertNotNull(getAllResponse);
+        ResearcherUrls researcherUrls = getAllResponse.getEntity(ResearcherUrls.class);
+        assertNotNull(researcherUrls);
+        assertNotNull(researcherUrls.getResearcherUrls());
+        for(ResearcherUrl rUrl : researcherUrls.getResearcherUrls()) {
+            assertNotNull(rUrl);
+            assertEquals(Visibility.PUBLIC, rUrl.getVisibility());
+            ClientResponse theRUrl = publicV2ApiClient.viewResearcherUrlXML(user1OrcidId, String.valueOf(rUrl.getPutCode()));
+            assertNotNull(theRUrl);
+            ResearcherUrl researcherUrl = theRUrl.getEntity(ResearcherUrl.class);
+            assertEquals(researcherUrl, rUrl);
         }
     }
 

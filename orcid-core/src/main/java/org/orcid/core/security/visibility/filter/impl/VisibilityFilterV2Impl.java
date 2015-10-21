@@ -43,7 +43,7 @@ import org.springframework.stereotype.Component;
 /**
  * 
  * @author Will Simpson
- *
+ * 
  */
 @Component("visibilityFilterV2")
 public class VisibilityFilterV2Impl implements VisibilityFilterV2 {
