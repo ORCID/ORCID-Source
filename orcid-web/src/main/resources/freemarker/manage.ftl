@@ -130,14 +130,6 @@
                                 </table>
                             </div>
                             
-                            
-                            
-                            
-                            
-                            
-                            
-                            
-                            
                             <!-- End Email table -->
                             
                             <div class="row bottom-row">
@@ -168,14 +160,24 @@
 							        </div>
 							        <div class="control-group">
 							            <p>${springMacroRequestContext.getMessage("manage.send_email_to_primary_1")} <a href="${aboutUri}/inbox" target="_blank">${springMacroRequestContext.getMessage("manage.send_email_to_primary_2")}</a>${springMacroRequestContext.getMessage("manage.send_email_to_primary_3")}</p>
-							            <div class="relative">
-							                <select id="sendEmailFrequencyDays" name="sendEmailFrequencyDays" class="input-xlarge" ng-model="prefsSrvc.prefs.sendEmailFrequencyDays" ng-change="prefsSrvc.savePrivacyPreferences()">
-							                    <#list sendEmailFrequencies?keys as key>
-							                        <option value="${key}" ng-selected="prefsSrvc.prefs.sendEmailFrequencyDays === ${key}">${sendEmailFrequencies[key]}</option>
-							                    </#list>
-							                </select>
-							            </div>
-							            <p>${springMacroRequestContext.getMessage("manage.send_email_to_primary_4")} {{emailSrvc.primaryEmail.value}}${springMacroRequestContext.getMessage("manage.send_email_to_primary_5")}</p>
+							            
+							            <form class="form-inline">
+											<div class="form-group">
+											 	<div class="input-group">
+													<select id="sendEmailFrequencyDays" name="sendEmailFrequencyDays" class="input-xlarge" ng-model="prefsSrvc.prefs.sendEmailFrequencyDays" ng-change="prefsSrvc.clearMessage()">
+									                    <#list sendEmailFrequencies?keys as key>
+									                        <option value="${key}" ng-selected="prefsSrvc.prefs.sendEmailFrequencyDays === ${key}">${sendEmailFrequencies[key]}</option>
+									                    </#list>
+									                </select>
+									             </div>
+											</div>
+											<button ng-click="prefsSrvc.savePrivacyPreferences()" class="btn btn-primary">${springMacroRequestContext.getMessage("manage.send_email_frequency_save")}</button>
+											<small class="green" ng-show="prefsSrvc.saved">${springMacroRequestContext.getMessage("manage.send_email_frequency_saved")}</small>    
+							            </form>
+							            
+							        </div>
+							        <div>
+							        	<p>${springMacroRequestContext.getMessage("manage.send_email_to_primary_4")} {{emailSrvc.primaryEmail.value}}${springMacroRequestContext.getMessage("manage.send_email_to_primary_5")}</p>
 							            <p>${springMacroRequestContext.getMessage("manage.service_announcements")}</p>
 							            <p style="line-height: 12px;"><small class="italic">${springMacroRequestContext.getMessage("manage.service_announcements.note")}</small>
 							            </p>
@@ -470,7 +472,7 @@
                 target=_blank"">${springMacroRequestContext.getMessage("manage.findoutmore")}</a>
         </p>
         <div ng-controller="revokeApplicationFormCtrl" >
-        	<div ng-show="applicationSummaryList.length > 0">
+        	<div ng-show="applicationSummaryList.length > 0" ng-cloak>
 		        <table class="table table-bordered settings-table normal-width">
 		            <thead>
 		                <tr>

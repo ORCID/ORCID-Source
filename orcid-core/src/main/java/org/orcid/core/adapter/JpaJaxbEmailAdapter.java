@@ -14,23 +14,20 @@
  *
  * =============================================================================
  */
-package org.orcid.core.security.visibility.filter;
+package org.orcid.core.adapter;
 
 import java.util.Collection;
+import java.util.List;
 
-import org.orcid.jaxb.model.common.Filterable;
-import org.orcid.jaxb.model.record.Group;
-import org.orcid.jaxb.model.record.summary.ActivitiesSummary;
+import org.orcid.jaxb.model.record.Email;
+import org.orcid.persistence.jpa.entities.EmailEntity;
 
-/**
- * @author Will Simpson
- */
-public interface VisibilityFilterV2 {
+public interface JpaJaxbEmailAdapter {
+    EmailEntity toEmailEntity(Email email);
 
-    ActivitiesSummary filter(ActivitiesSummary activitiesSummary);
+    Email toEmail(EmailEntity entity);
     
-    Collection<? extends Filterable> filter(Collection<? extends Filterable> filterables);
-        
-    Collection<? extends Group> filterGroups(Collection<? extends Group> groups);
-
+    List<Email> toEmailList(Collection<EmailEntity> entities);
+    
+    EmailEntity toEmailEntity(Email email, EmailEntity existing);
 }

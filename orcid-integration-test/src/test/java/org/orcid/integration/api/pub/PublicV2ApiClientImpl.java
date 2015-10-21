@@ -30,6 +30,7 @@ import static org.orcid.core.api.OrcidApiConstants.WORK;
 import static org.orcid.core.api.OrcidApiConstants.WORK_SUMMARY;
 import static org.orcid.core.api.OrcidApiConstants.PEER_REVIEW;
 import static org.orcid.core.api.OrcidApiConstants.PEER_REVIEW_SUMMARY;
+import static org.orcid.core.api.OrcidApiConstants.EMAIL;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -157,7 +158,12 @@ public class PublicV2ApiClientImpl {
     public ClientResponse viewResearcherUrlXML(String orcid, String putCode) {
         URI getURI = UriBuilder.fromPath(RESEARCHER_URLS + PUTCODE).build(orcid, putCode);
         return getClientReponse(getURI, null);        
-    }        
+    }     
+    
+    public ClientResponse viewEmailXML(String orcid) {
+        URI getURI = UriBuilder.fromPath(EMAIL).build(orcid);
+        return getClientReponse(getURI, null); 
+    }
     
     private ClientResponse getClientReponse(URI uri, String token) {
         ClientResponse result = null;

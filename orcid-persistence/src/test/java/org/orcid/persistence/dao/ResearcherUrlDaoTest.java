@@ -73,7 +73,7 @@ public class ResearcherUrlDaoTest extends DBUnitTest {
     public void testfindResearcherUrls() {
         List<ResearcherUrlEntity> researcherUrls = researcherUrlDao.getResearcherUrls("4444-4444-4444-4443");
         assertNotNull(researcherUrls);
-        assertEquals(2, researcherUrls.size());
+        assertEquals(3, researcherUrls.size());
     }
 
     @Test
@@ -89,7 +89,7 @@ public class ResearcherUrlDaoTest extends DBUnitTest {
     @Rollback(true)
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void testAddResearcherUrl() {
-        assertEquals(2, researcherUrlDao.getResearcherUrls("4444-4444-4444-4443").size());
+        assertEquals(3, researcherUrlDao.getResearcherUrls("4444-4444-4444-4443").size());
         ResearcherUrlEntity newRUrl = new ResearcherUrlEntity();
         newRUrl.setDateCreated(new Date());
         newRUrl.setLastModified(new Date());
@@ -100,7 +100,7 @@ public class ResearcherUrlDaoTest extends DBUnitTest {
         newRUrl.setVisibility(Visibility.PUBLIC);
         newRUrl = researcherUrlDao.merge(newRUrl);
         assertNotNull(newRUrl);
-        assertEquals(3, researcherUrlDao.getResearcherUrls("4444-4444-4444-4443").size());
+        assertEquals(4, researcherUrlDao.getResearcherUrls("4444-4444-4444-4443").size());
         for(ResearcherUrlEntity rUrl : researcherUrlDao.getResearcherUrls("4444-4444-4444-4443")) {
             if("www.4443.com".equals(rUrl.getUrl())) {
                 assertEquals("APP-5555555555555555", rUrl.getSource().getSourceId());
@@ -114,11 +114,11 @@ public class ResearcherUrlDaoTest extends DBUnitTest {
     public void testDeleteResearcherUrl() {
         List<ResearcherUrlEntity> researcherUrls = researcherUrlDao.getResearcherUrls("4444-4444-4444-4443");
         assertNotNull(researcherUrls);
-        assertEquals(2, researcherUrls.size());
+        assertEquals(3, researcherUrls.size());
         researcherUrlDao.deleteResearcherUrl("4444-4444-4444-4443", researcherUrls.get(0).getId());
         researcherUrls = researcherUrlDao.getResearcherUrls("4444-4444-4444-4443");
         assertNotNull(researcherUrls);
-        assertEquals(1, researcherUrls.size());
+        assertEquals(2, researcherUrls.size());
     }
 
     @Test

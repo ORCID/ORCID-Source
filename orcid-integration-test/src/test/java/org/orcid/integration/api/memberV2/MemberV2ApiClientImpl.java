@@ -27,6 +27,7 @@ import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_XML;
 import static org.orcid.core.api.OrcidApiConstants.WORK;
 import static org.orcid.core.api.OrcidApiConstants.GROUP_ID_RECORD;
 import static org.orcid.core.api.OrcidApiConstants.RESEARCHER_URLS;
+import static org.orcid.core.api.OrcidApiConstants.EMAIL;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -194,5 +195,10 @@ public class MemberV2ApiClientImpl {
     public ClientResponse deleteResearcherUrl(String orcid, Long putCode, String accessToken) {
         URI createURI = UriBuilder.fromPath(RESEARCHER_URLS + PUTCODE).build(orcid, putCode);
         return orcidClientHelper.deleteClientResponseWithToken(createURI, VND_ORCID_XML, accessToken);      
+    }
+    
+    public ClientResponse getEmails(String orcid, String accessToken) {
+        URI getURI = UriBuilder.fromPath(EMAIL).build(orcid);
+        return orcidClientHelper.getClientResponseWithToken(getURI, VND_ORCID_XML, accessToken);        
     }
 }

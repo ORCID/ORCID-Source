@@ -49,4 +49,6 @@ public interface PublicV2ApiServiceDelegator {
     Response viewResearcherUrl(String orcid, String putCode);
     
     Response viewResearcherUrls(String orcid);
+    
+    Response viewEmails(String orcid);
 }

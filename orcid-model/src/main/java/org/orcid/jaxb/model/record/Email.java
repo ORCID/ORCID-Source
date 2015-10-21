@@ -16,8 +16,6 @@
  */
 package org.orcid.jaxb.model.record;
 
-import io.swagger.annotations.ApiModelProperty;
-
 import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -31,47 +29,30 @@ import org.orcid.jaxb.model.common.CreatedDate;
 import org.orcid.jaxb.model.common.Filterable;
 import org.orcid.jaxb.model.common.LastModifiedDate;
 import org.orcid.jaxb.model.common.Source;
-import org.orcid.jaxb.model.common.Url;
 import org.orcid.jaxb.model.common.Visibility;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "urlName", "url", "createdDate", "lastModifiedDate", "source" })
-@XmlRootElement(name = "researcher-url", namespace = "http://www.orcid.org/ns/researcher-url")
-public class ResearcherUrl implements Filterable, Serializable {
-    private static final long serialVersionUID = 1047027166285177589L;    
-    @XmlElement(name = "url-name", namespace = "http://www.orcid.org/ns/researcher-url")
-    protected String urlName;
-    @XmlElement(namespace = "http://www.orcid.org/ns/researcher-url")
-    protected Url url;
+@XmlType(propOrder = { "email", "createdDate", "lastModifiedDate", "source" })
+@XmlRootElement(name = "email", namespace = "http://www.orcid.org/ns/email")
+public class Email implements Filterable, Serializable {
+    private static final long serialVersionUID = 7986448691143979246L;
+    @XmlElement(namespace = "http://www.orcid.org/ns/email")
+    protected String email;
     @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected Source source;
-    @XmlAttribute(name = "put-code")
-    @ApiModelProperty(hidden = true)
-    protected Long putCode;
+    @XmlAttribute
+    protected Visibility visibility;
     @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "last-modified-date")
     protected LastModifiedDate lastModifiedDate;
     @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "created-date")
     protected CreatedDate createdDate;
-    @XmlAttribute
-    protected Visibility visibility;
-    @XmlAttribute
-    protected String path;
-    
-    
-    public Url getUrl() {
-        return url;
+
+    public String getEmail() {
+        return email;
     }
 
-    public void setUrl(Url url) {
-        this.url = url;
-    }
-
-    public String getUrlName() {
-        return urlName;
-    }
-
-    public void setUrlName(String urlName) {
-        this.urlName = urlName;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public Source getSource() {
@@ -80,15 +61,7 @@ public class ResearcherUrl implements Filterable, Serializable {
 
     public void setSource(Source source) {
         this.source = source;
-    }
-
-    public Long getPutCode() {
-        return putCode;
-    }
-
-    public void setPutCode(Long putCode) {
-        this.putCode = putCode;
-    }
+    }    
 
     public Visibility getVisibility() {
         return visibility;
@@ -114,21 +87,14 @@ public class ResearcherUrl implements Filterable, Serializable {
         this.createdDate = createdDate;
     }
 
-    public String getPath() {
-        return path;
-    }
-
-    public void setPath(String path) {
-        this.path = path;
-    }
-
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((path == null) ? 0 : path.hashCode());
-        result = prime * result + ((url == null) ? 0 : url.hashCode());
-        result = prime * result + ((urlName == null) ? 0 : urlName.hashCode());
+        result = prime * result + ((createdDate == null) ? 0 : createdDate.hashCode());
+        result = prime * result + ((email == null) ? 0 : email.hashCode());
+        result = prime * result + ((lastModifiedDate == null) ? 0 : lastModifiedDate.hashCode());
+        result = prime * result + ((source == null) ? 0 : source.hashCode());
         result = prime * result + ((visibility == null) ? 0 : visibility.hashCode());
         return result;
     }
@@ -141,24 +107,20 @@ public class ResearcherUrl implements Filterable, Serializable {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        ResearcherUrl other = (ResearcherUrl) obj;
-        if (path == null) {
-            if (other.path != null)
+        Email other = (Email) obj;
+
+        if (email == null) {
+            if (other.email != null)
                 return false;
-        } else if (!path.equals(other.path))
+        } else if (!email.equals(other.email))
             return false;
-        if (url == null) {
-            if (other.url != null)
+
+        if (source == null) {
+            if (other.source != null)
                 return false;
-        } else if (!url.equals(other.url))
+        } else if (!source.equals(other.source))
             return false;
-        if (urlName == null) {
-            if (other.urlName != null)
-                return false;
-        } else if (!urlName.equals(other.urlName))
-            return false;
-        if (visibility != other.visibility)
-            return false;
+
         return true;
     }
 
@@ -168,5 +130,5 @@ public class ResearcherUrl implements Filterable, Serializable {
             return source.retrieveSourcePath();
         }
         return null;
-    }    
+    }
 }
