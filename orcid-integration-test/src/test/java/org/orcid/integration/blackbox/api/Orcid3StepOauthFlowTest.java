@@ -42,100 +42,150 @@ import com.sun.jersey.api.client.ClientResponse;
 @ContextConfiguration(locations = { "classpath:test-oauth-orcid-api-client-context.xml" })
 public class Orcid3StepOauthFlowTest extends BlackBoxBase {
 
-    private static final Pattern ERROR_PATTERN = Pattern.compile("error=(.+)&");
-    
-    private static final Pattern ERROR_DESCRIPTION_PATTERN = Pattern.compile("error_description=(.+)");
-    
-    private static final String ERROR_NAME = "invalid_scope";
-    
-    private WebDriver webDriver;
+	private static final Pattern ERROR_PATTERN = Pattern.compile("error=(.+)&");
 
-    @Resource(name = "t2OAuthClient")
-    private T2OAuthAPIService<ClientResponse> oauthT2Client;
+	private static final Pattern ERROR_DESCRIPTION_PATTERN = Pattern
+			.compile("error_description=(.+)");
 
-    @Before
-    @Transactional
-    public void before() {
-        webDriver = new FirefoxDriver();
-    }
+	private static final String ERROR_NAME = "invalid_scope";
 
-    @After
-    public void after() {
-        webDriver.quit();
-    }
-    
-    @Test
-    public void testInvalidScopeThrowException() throws JSONException, InterruptedException {
-        String scopes="/orcid-profile/create";
-        webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, client1ClientId, scopes, redirectUri));
-        String url = webDriver.getCurrentUrl();
-        evaluateUrl(url, "/orcid-profile/create");
-                
-        scopes="/orcid-works/create /orcid-profile/create";
-        webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, client1ClientId, scopes, redirectUri));
-        url = webDriver.getCurrentUrl();
-        evaluateUrl(url, "/orcid-profile/create");
-                        
-        scopes="/orcid-profile/create /orcid-works/create";
-        webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, client1ClientId, scopes, redirectUri));
-        url = webDriver.getCurrentUrl();
-        evaluateUrl(url, "/orcid-profile/create");        
-        
-        scopes="/read-public";
-        webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, client1ClientId, scopes, redirectUri));
-        url = webDriver.getCurrentUrl();
-        evaluateUrl(url, "/read-public");        
-        
-        scopes="/orcid-works/create /read-public";
-        webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, client1ClientId, scopes, redirectUri));
-        url = webDriver.getCurrentUrl();
-        evaluateUrl(url, "/read-public");
-        
-        scopes="/read-public /orcid-works/create";
-        webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, client1ClientId, scopes, redirectUri));
-        url = webDriver.getCurrentUrl();
-        evaluateUrl(url, "/read-public");
-                
-        scopes="/webhook";
-        webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, client1ClientId, scopes, redirectUri));
-        url = webDriver.getCurrentUrl();
-        evaluateUrl(url, "/webhook");
-        
-        scopes="/orcid-works/create /webhook";
-        webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, client1ClientId, scopes, redirectUri));
-        url = webDriver.getCurrentUrl();
-        evaluateUrl(url, "/webhook");
-        
-        scopes="/webhook /orcid-works/create";
-        webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, client1ClientId, scopes, redirectUri));
-        url = webDriver.getCurrentUrl();
-        evaluateUrl(url, "/webhook");                
-        
-        scopes="/premium-notification";
-        webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, client1ClientId, scopes, redirectUri));
-        url = webDriver.getCurrentUrl();
-        evaluateUrl(url, "/premium-notification");
-        
-        scopes="/orcid-works/create /premium-notification";
-        webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, client1ClientId, scopes, redirectUri));
-        url = webDriver.getCurrentUrl();
-        evaluateUrl(url, "/premium-notification");
-        
-        scopes="/premium-notification /orcid-works/create";
-        webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, client1ClientId, scopes, redirectUri));
-        url = webDriver.getCurrentUrl();
-        evaluateUrl(url, "/premium-notification");
-    }
-    
-    private void evaluateUrl(String currentUrl, String invalidScope) {
-        Matcher matcher = ERROR_PATTERN.matcher(currentUrl);
-        assertTrue(matcher.find());
-        String error = matcher.group(1);
-        assertTrue(ERROR_NAME.equals(error));
-        
-        matcher = ERROR_DESCRIPTION_PATTERN.matcher(currentUrl);
-        assertTrue(matcher.find());
-        String errorDescription = matcher.group(1);
-        assertTrue(errorDescription.contains(invalidScope));
-    }
+	private WebDriver webDriver;
+
+	@Resource(name = "t2OAuthClient")
+	private T2OAuthAPIService<ClientResponse> oauthT2Client;
+
+	@Before
+	@Transactional
+	public void before() {
+		webDriver = new FirefoxDriver();
+	}
+
+	@After
+	public void after() {
+		webDriver.quit();
+	}
+
+	@Test
+	public void testInvalidScopeThrowException() throws JSONException,
+			InterruptedException {
+		String scopes = "/orcid-profile/create";
+		webDriver
+				.get(String
+						.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s",
+								webBaseUrl, client1ClientId, scopes,
+								redirectUri));
+		String url = webDriver.getCurrentUrl();
+		evaluateUrl(url, "/orcid-profile/create");
+
+		scopes = "/orcid-works/create /orcid-profile/create";
+		webDriver
+				.get(String
+						.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s",
+								webBaseUrl, client1ClientId, scopes,
+								redirectUri));
+		url = webDriver.getCurrentUrl();
+		evaluateUrl(url, "/orcid-profile/create");
+
+		scopes = "/orcid-profile/create /orcid-works/create";
+		webDriver
+				.get(String
+						.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s",
+								webBaseUrl, client1ClientId, scopes,
+								redirectUri));
+		url = webDriver.getCurrentUrl();
+		evaluateUrl(url, "/orcid-profile/create");
+
+		scopes = "/read-public";
+		webDriver
+				.get(String
+						.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s",
+								webBaseUrl, client1ClientId, scopes,
+								redirectUri));
+		url = webDriver.getCurrentUrl();
+		evaluateUrl(url, "/read-public");
+
+		scopes = "/orcid-works/create /read-public";
+		webDriver
+				.get(String
+						.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s",
+								webBaseUrl, client1ClientId, scopes,
+								redirectUri));
+		url = webDriver.getCurrentUrl();
+		evaluateUrl(url, "/read-public");
+
+		scopes = "/read-public /orcid-works/create";
+		webDriver
+				.get(String
+						.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s",
+								webBaseUrl, client1ClientId, scopes,
+								redirectUri));
+		url = webDriver.getCurrentUrl();
+		evaluateUrl(url, "/read-public");
+
+		scopes = "/webhook";
+		webDriver
+				.get(String
+						.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s",
+								webBaseUrl, client1ClientId, scopes,
+								redirectUri));
+		url = webDriver.getCurrentUrl();
+		evaluateUrl(url, "/webhook");
+
+		scopes = "/orcid-works/create /webhook";
+		webDriver
+				.get(String
+						.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s",
+								webBaseUrl, client1ClientId, scopes,
+								redirectUri));
+		url = webDriver.getCurrentUrl();
+		evaluateUrl(url, "/webhook");
+
+		scopes = "/webhook /orcid-works/create";
+		webDriver
+				.get(String
+						.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s",
+								webBaseUrl, client1ClientId, scopes,
+								redirectUri));
+		url = webDriver.getCurrentUrl();
+		evaluateUrl(url, "/webhook");
+
+		scopes = "/premium-notification";
+		webDriver
+				.get(String
+						.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s",
+								webBaseUrl, client1ClientId, scopes,
+								redirectUri));
+		url = webDriver.getCurrentUrl();
+		evaluateUrl(url, "/premium-notification");
+
+		scopes = "/orcid-works/create /premium-notification";
+		webDriver
+				.get(String
+						.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s",
+								webBaseUrl, client1ClientId, scopes,
+								redirectUri));
+		url = webDriver.getCurrentUrl();
+		evaluateUrl(url, "/premium-notification");
+
+		scopes = "/premium-notification /orcid-works/create";
+		webDriver
+				.get(String
+						.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s",
+								webBaseUrl, client1ClientId, scopes,
+								redirectUri));
+		url = webDriver.getCurrentUrl();
+		evaluateUrl(url, "/premium-notification");
+	}
+
+	private void evaluateUrl(String currentUrl, String invalidScope) {
+		Matcher matcher = ERROR_PATTERN.matcher(currentUrl);
+		assertTrue(matcher.find());
+		String error = matcher.group(1);
+		assertTrue(ERROR_NAME.equals(error));
+
+		matcher = ERROR_DESCRIPTION_PATTERN.matcher(currentUrl);
+		assertTrue(matcher.find());
+		String errorDescription = matcher.group(1);
+		assertTrue(errorDescription.contains(invalidScope));
+	}
 }

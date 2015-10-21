@@ -41,112 +41,115 @@ import com.sun.jersey.core.util.MultivaluedMapImpl;
 public class Orcid2StepOauthFlowTest extends BlackBoxBase {
 
 	@Resource(name = "t2OAuthClient")
-    private T2OAuthAPIService<ClientResponse> oauthT2Client;
+	private T2OAuthAPIService<ClientResponse> oauthT2Client;
 
 	@Test
-    public void testWebhook() throws InterruptedException, JSONException {        
-        ClientResponse tokenResponse = getClientResponse("/webhook");
-        assertEquals(200, tokenResponse.getStatus());
-        String body = tokenResponse.getEntity(String.class);
-        JSONObject jsonObject = new JSONObject(body);
-        String accessToken = (String) jsonObject.get("access_token");
-        assertNotNull(accessToken);
-        assertFalse(accessToken.length() == 0);
-        
-        int expiresIn = (Integer) jsonObject.get("expires_in"); 
-        assertNotNull(expiresIn);        
-        //It expires in 20 years less some secs
-        assertTrue(expiresIn > (631138519) - 120);
-        
-        String scope = (String) jsonObject.get("scope");
-        assertNotNull(scope);
-        assertEquals("/webhook", scope);
-        
-    }
-        
-    @Test
-    public void testReadPublic() throws InterruptedException, JSONException {
-        ClientResponse tokenResponse = getClientResponse("/read-public");
-        assertEquals(200, tokenResponse.getStatus());
-        String body = tokenResponse.getEntity(String.class);
-        JSONObject jsonObject = new JSONObject(body);
-        String accessToken = (String) jsonObject.get("access_token");
-        assertNotNull(accessToken);
-        assertFalse(accessToken.length() == 0);
-        
-        int expiresIn = (Integer) jsonObject.get("expires_in"); 
-        assertNotNull(expiresIn);        
-        //It expires in 20 years less some secs
-        assertTrue(expiresIn > (631138519) - 120);
-        
-        String scope = (String) jsonObject.get("scope");
-        assertNotNull(scope);
-        assertEquals("/read-public", scope);
-        
-    }
-    
-    @Test
-    public void testOrcidProfileCreate() throws InterruptedException, JSONException {        
-        ClientResponse tokenResponse = getClientResponse("/orcid-profile/create");
-        assertEquals(200, tokenResponse.getStatus());
-        String body = tokenResponse.getEntity(String.class);
-        JSONObject jsonObject = new JSONObject(body);
-        String accessToken = (String) jsonObject.get("access_token");
-        assertNotNull(accessToken);
-        assertFalse(accessToken.length() == 0);
-        
-        int expiresIn = (Integer) jsonObject.get("expires_in"); 
-        assertNotNull(expiresIn);        
-        //It expires in 20 years less some secs
-        assertTrue(expiresIn > (631138519) - 120);
-        
-        String scope = (String) jsonObject.get("scope");
-        assertNotNull(scope);
-        assertEquals("/orcid-profile/create", scope);
-        
-    }
-    
-    @Test
-    public void testInvalidScopesAreIgnored() throws InterruptedException, JSONException {
-        ClientResponse tokenResponse = getClientResponse("/orcid-profile/create /orcid-profile/read-limited");
-        assertEquals(200, tokenResponse.getStatus());
-        String body = tokenResponse.getEntity(String.class);
-        JSONObject jsonObject = new JSONObject(body);
-        String scope = (String) jsonObject.get("scope");
-        assertNotNull(scope);
-        assertEquals("/orcid-profile/create", scope);
-        
-        tokenResponse = getClientResponse("/orcid-profile/create /orcid-works/read-limited");
-        assertEquals(200, tokenResponse.getStatus());
-        body = tokenResponse.getEntity(String.class);
-        jsonObject = new JSONObject(body);
-        scope = (String) jsonObject.get("scope");
-        assertNotNull(scope);
-        assertEquals("/orcid-profile/create", scope);
-        
-        tokenResponse = getClientResponse("/orcid-profile/create /funding/create");
-        assertEquals(200, tokenResponse.getStatus());
-        body = tokenResponse.getEntity(String.class);
-        jsonObject = new JSONObject(body);
-        scope = (String) jsonObject.get("scope");
-        assertNotNull(scope);
-        assertEquals("/orcid-profile/create", scope);
-        
-        tokenResponse = getClientResponse("/orcid-profile/create /affiliations/update");
-        assertEquals(200, tokenResponse.getStatus());
-        body = tokenResponse.getEntity(String.class);
-        jsonObject = new JSONObject(body);
-        scope = (String) jsonObject.get("scope");
-        assertNotNull(scope);
-        assertEquals("/orcid-profile/create", scope);
-    }
+	public void testWebhook() throws InterruptedException, JSONException {
+		ClientResponse tokenResponse = getClientResponse("/webhook");
+		assertEquals(200, tokenResponse.getStatus());
+		String body = tokenResponse.getEntity(String.class);
+		JSONObject jsonObject = new JSONObject(body);
+		String accessToken = (String) jsonObject.get("access_token");
+		assertNotNull(accessToken);
+		assertFalse(accessToken.length() == 0);
 
-    private ClientResponse getClientResponse(String scope) {
-        MultivaluedMap<String, String> params = new MultivaluedMapImpl();
-        params.add("client_id", client1ClientId);
-        params.add("client_secret", client1ClientSecret);
-        params.add("grant_type", "client_credentials");
-        params.add("scope", scope);
-        return oauthT2Client.obtainOauth2TokenPost("client_credentials", params);
-    }
+		int expiresIn = (Integer) jsonObject.get("expires_in");
+		assertNotNull(expiresIn);
+		// It expires in 20 years less some secs
+		assertTrue(expiresIn > (631138519) - 120);
+
+		String scope = (String) jsonObject.get("scope");
+		assertNotNull(scope);
+		assertEquals("/webhook", scope);
+
+	}
+
+	@Test
+	public void testReadPublic() throws InterruptedException, JSONException {
+		ClientResponse tokenResponse = getClientResponse("/read-public");
+		assertEquals(200, tokenResponse.getStatus());
+		String body = tokenResponse.getEntity(String.class);
+		JSONObject jsonObject = new JSONObject(body);
+		String accessToken = (String) jsonObject.get("access_token");
+		assertNotNull(accessToken);
+		assertFalse(accessToken.length() == 0);
+
+		int expiresIn = (Integer) jsonObject.get("expires_in");
+		assertNotNull(expiresIn);
+		// It expires in 20 years less some secs
+		assertTrue(expiresIn > (631138519) - 120);
+
+		String scope = (String) jsonObject.get("scope");
+		assertNotNull(scope);
+		assertEquals("/read-public", scope);
+
+	}
+
+	@Test
+	public void testOrcidProfileCreate() throws InterruptedException,
+			JSONException {
+		ClientResponse tokenResponse = getClientResponse("/orcid-profile/create");
+		assertEquals(200, tokenResponse.getStatus());
+		String body = tokenResponse.getEntity(String.class);
+		JSONObject jsonObject = new JSONObject(body);
+		String accessToken = (String) jsonObject.get("access_token");
+		assertNotNull(accessToken);
+		assertFalse(accessToken.length() == 0);
+
+		int expiresIn = (Integer) jsonObject.get("expires_in");
+		assertNotNull(expiresIn);
+		// It expires in 20 years less some secs
+		assertTrue(expiresIn > (631138519) - 120);
+
+		String scope = (String) jsonObject.get("scope");
+		assertNotNull(scope);
+		assertEquals("/orcid-profile/create", scope);
+
+	}
+
+	@Test
+	public void testInvalidScopesAreIgnored() throws InterruptedException,
+			JSONException {
+		ClientResponse tokenResponse = getClientResponse("/orcid-profile/create /orcid-profile/read-limited");
+		assertEquals(200, tokenResponse.getStatus());
+		String body = tokenResponse.getEntity(String.class);
+		JSONObject jsonObject = new JSONObject(body);
+		String scope = (String) jsonObject.get("scope");
+		assertNotNull(scope);
+		assertEquals("/orcid-profile/create", scope);
+
+		tokenResponse = getClientResponse("/orcid-profile/create /orcid-works/read-limited");
+		assertEquals(200, tokenResponse.getStatus());
+		body = tokenResponse.getEntity(String.class);
+		jsonObject = new JSONObject(body);
+		scope = (String) jsonObject.get("scope");
+		assertNotNull(scope);
+		assertEquals("/orcid-profile/create", scope);
+
+		tokenResponse = getClientResponse("/orcid-profile/create /funding/create");
+		assertEquals(200, tokenResponse.getStatus());
+		body = tokenResponse.getEntity(String.class);
+		jsonObject = new JSONObject(body);
+		scope = (String) jsonObject.get("scope");
+		assertNotNull(scope);
+		assertEquals("/orcid-profile/create", scope);
+
+		tokenResponse = getClientResponse("/orcid-profile/create /affiliations/update");
+		assertEquals(200, tokenResponse.getStatus());
+		body = tokenResponse.getEntity(String.class);
+		jsonObject = new JSONObject(body);
+		scope = (String) jsonObject.get("scope");
+		assertNotNull(scope);
+		assertEquals("/orcid-profile/create", scope);
+	}
+
+	private ClientResponse getClientResponse(String scope) {
+		MultivaluedMap<String, String> params = new MultivaluedMapImpl();
+		params.add("client_id", client1ClientId);
+		params.add("client_secret", client1ClientSecret);
+		params.add("grant_type", "client_credentials");
+		params.add("scope", scope);
+		return oauthT2Client
+				.obtainOauth2TokenPost("client_credentials", params);
+	}
 }
