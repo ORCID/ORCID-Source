@@ -28,6 +28,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.apache.commons.codec.binary.Base64;
@@ -608,7 +609,7 @@ public class ManageProfileController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = "/confirm-deactivate-orcid/{encryptedEmail}", method = RequestMethod.GET)
-    public ModelAndView confirmDeactivateOrcidAccount(HttpServletRequest request, @PathVariable("encryptedEmail") String encryptedEmail,
+    public ModelAndView confirmDeactivateOrcidAccount(HttpServletRequest request, HttpServletResponse response, @PathVariable("encryptedEmail") String encryptedEmail,
             RedirectAttributes redirectAttributes) throws Exception {
         ModelAndView result = null;
         String decryptedEmail = encryptionManager.decryptForExternalUse(new String(Base64.decodeBase64(encryptedEmail), "UTF-8"));
@@ -620,7 +621,8 @@ public class ManageProfileController extends BaseWorkspaceController {
 
         if (decryptedEmail.equals(primaryEmail)) {
             orcidProfileManager.deactivateOrcidProfile(profile);
-            result = new ModelAndView("redirect:/signout#deactivated");
+            logoutCurrentUser(request, response);
+            result = new ModelAndView("redirect:/signin#deactivated");
         } else {
             redirectAttributes.addFlashAttribute("emailDoesntMatch", true);
             return new ModelAndView("redirect:/my-orcid");

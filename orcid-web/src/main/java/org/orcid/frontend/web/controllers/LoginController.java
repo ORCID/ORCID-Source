@@ -20,6 +20,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.orcid.core.manager.ClientDetailsManager;
 import org.springframework.stereotype.Controller;
@@ -42,10 +44,18 @@ public class LoginController extends BaseController {
     }
 
     @RequestMapping(value = { "/signin", "/login" }, method = RequestMethod.GET)
-    public ModelAndView loginGetHandler(ModelAndView mav) {
+    public ModelAndView loginGetHandler(HttpServletRequest request, HttpServletResponse response) {
         // in case have come via a link that requires them to be signed out
-        logoutCurrentUser();
-        mav.setViewName("login");
+    	ModelAndView mav = new ModelAndView("login");
+        return mav;
+    }
+
+    // We should go back to regular spring sign out with CSRF protection
+    @RequestMapping(value = { "/signout"}, method = RequestMethod.GET)
+    public ModelAndView signout(HttpServletRequest request, HttpServletResponse response) {
+        // in case have come via a link that requires them to be signed out
+        logoutCurrentUser(request, response);
+        ModelAndView mav = new ModelAndView("redirect:/signin");
         return mav;
     }
 
