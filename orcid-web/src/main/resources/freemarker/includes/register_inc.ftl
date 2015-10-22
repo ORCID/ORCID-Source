@@ -115,13 +115,7 @@
     <div>
         <div class="relative">
             <#if RequestParameters['notifications']??>
-                <label>${springMacroRequestContext.getMessage("claim.notifications")}</label>
-                <#--
-                <label class="checkbox">
-                    <input type="checkbox" tabindex="8" name="sendOrcidNews" ng-model="register.sendMemberUpdateRequests.value"/>
-                    ${springMacroRequestContext.getMessage("register.labelsendmemberupdaterequests")}
-                </label>
-                -->
+                <h4>${springMacroRequestContext.getMessage("claim.notifications")}</h4>                
                 <label>
                     ${springMacroRequestContext.getMessage("claim.notificationsemailfrequency")}
                     <select id="sendEmailFrequencyDays" name="sendEmailFrequencyDays"
