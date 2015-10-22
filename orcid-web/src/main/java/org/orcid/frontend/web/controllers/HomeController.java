@@ -131,39 +131,7 @@ public class HomeController extends BaseController {
                 request.getSession().invalidate();
             }   
             
-            if(internalSSOManager.enableCookie()) {
-                Cookie [] cookies = request.getCookies();            
-                //Delete cookie and token associated with that cookie
-                if(cookies != null) {
-                    for(Cookie cookie : cookies) {
-                        if(InternalSSOManager.COOKIE_NAME.equals(cookie.getName())) {
-                            try {
-                                //If it is a valid cookie, extract the orcid value and remove the token and the cookie                        
-                                HashMap<String, String> cookieValues = JsonUtils.readObjectFromJsonString(cookie.getValue(), HashMap.class);
-                                if(cookieValues.containsKey(InternalSSOManager.COOKIE_KEY_ORCID) && !PojoUtil.isEmpty(cookieValues.get(InternalSSOManager.COOKIE_KEY_ORCID))) {
-                                    internalSSOManager.deleteToken(cookieValues.get(InternalSSOManager.COOKIE_KEY_ORCID), request, response);
-                                } else {
-                                    //If it is not valid, just remove the cookie
-                                    cookie.setValue(StringUtils.EMPTY);
-                                    cookie.setMaxAge(0);
-                                    response.addCookie(cookie);
-                                }
-                            } catch(RuntimeException re) {
-                                //If for some reason failed to read the token value, remove the cookie                          
-                                cookie.setValue(StringUtils.EMPTY);
-                                cookie.setMaxAge(0);
-                                response.addCookie(cookie);
-                            }
-                            break;
-                        }                    
-                    }
-                }
-                
-                if(!PojoUtil.isEmpty(orcid)) {
-                    //Delete token if exists
-                    internalSSOManager.deleteToken(orcid);
-                }
-            }
+            logoutCurrentUser(request, response);
             
             UserStatus us = new UserStatus();
             us.setLoggedIn(false);
