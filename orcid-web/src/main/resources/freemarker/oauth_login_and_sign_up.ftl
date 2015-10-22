@@ -202,9 +202,9 @@
 					privateClick="updateActivitiesVisibilityDefault('PRIVATE', $event)" />
 		    </div>                    		   		   
 		   <div>
-	        <div class="relative">	            
-				<@orcid.registrationEmailFrequencySelector angularElementName="registrationForm" />
-			</div>
+        		<div class="relative">	            
+        			<@orcid.registrationEmailFrequencySelector angularElementName="registrationForm" />
+        		</div>
 		   </div>		   		   		   		    		  
 		    <div>
         		<div class="relative recaptcha"  id="recaptcha" style="margin-bottom: 15px;">			
