@@ -34,7 +34,6 @@ import org.orcid.core.manager.AppIdGenerationManager;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
-import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.RedirectUri;
@@ -42,7 +41,6 @@ import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.ClientRedirectDao;
 import org.orcid.persistence.dao.ClientSecretDao;
-import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ClientAuthorisedGrantTypeEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientGrantedAuthorityEntity;
@@ -71,13 +69,7 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
     ClientRedirectDao clientRedirectDao;
 
     @Resource
-    private ProfileEntityManager profileEntityManager;
-
-    @Resource
-    private EncryptionManager encryptionManager;
-
-    @Resource
-    private ProfileDao profileDao;
+    private EncryptionManager encryptionManager;    
 
     @Resource
     private AppIdGenerationManager appIdGenerationManager;

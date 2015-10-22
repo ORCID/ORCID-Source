@@ -22,8 +22,6 @@ import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.annotation.Resource;
-
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.springframework.security.oauth2.common.exceptions.ClientAuthenticationException;
@@ -45,8 +43,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class OrcidAuthorizationEndpoint extends AuthorizationEndpoint {
 
     private String redirectUriError = "forward:/oauth/error/redirect-uri-mismatch";
-    private String oauthError = "forward:/oauth/error";
-    @Resource
+    private String oauthError = "forward:/oauth/error";    
     private OrcidOAuth2RequestValidator orcidOAuth2RequestValidator;
         
     @Override

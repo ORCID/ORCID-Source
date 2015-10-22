@@ -29,13 +29,11 @@ import javax.persistence.NoResultException;
 
 import org.orcid.core.constants.OauthTokensConstants;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
-import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.oauth.OrcidOauth2AuthInfo;
 import org.orcid.core.oauth.OrcidOauth2UserAuthentication;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.persistence.dao.OrcidOauth2AuthoriziationCodeDetailDao;
-import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.OrcidOauth2AuthoriziationCodeDetail;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -67,13 +65,10 @@ public class OrcidAuthorizationCodeServiceImpl extends RandomValueAuthorizationC
     private static final String RESPONSE_TYPE = "response_type";           
 
     @Resource(name = "orcidOauth2AuthoriziationCodeDetailDao")
-    private OrcidOauth2AuthoriziationCodeDetailDao orcidOauth2AuthoriziationCodeDetailDao;      
-    
-    @Resource
-    private ProfileDao profileDao;
+    private OrcidOauth2AuthoriziationCodeDetailDao orcidOauth2AuthoriziationCodeDetailDao;              
     
     @Resource(name = "profileEntityCacheManager")
-    ProfileEntityCacheManager profileEntityCacheManager;
+    private ProfileEntityCacheManager profileEntityCacheManager;
     
     @Resource
     private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
