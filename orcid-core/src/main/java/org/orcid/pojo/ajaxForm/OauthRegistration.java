@@ -50,6 +50,7 @@ public class OauthRegistration extends Registration implements OauthForm {
         this.setFamilyNames(reg.getFamilyNames());
         this.setCreationType(reg.getCreationType());
         this.setReferredBy(reg.getReferredBy());
+        this.setSendEmailFrequencyDays(reg.getSendEmailFrequencyDays());
         this.clientId = new Text();
         this.redirectUri = new Text();
         this.scope = new Text();
