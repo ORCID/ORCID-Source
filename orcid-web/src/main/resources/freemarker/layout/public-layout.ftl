@@ -456,7 +456,7 @@
 					</@security.authorize>
 					 
 					<@security.authorize ifAnyGranted="ROLE_USER, ROLE_ADMIN, ROLE_BASIC, ROLE_PREMIUM, ROLE_BASIC_INSTITUTION, ROLE_PREMIUM_INSTITUTION">
-						<a href="<@orcid.rootPath '/signout'/>"><@orcid.msg 'public-layout.sign_out'/></a>
+						<a href="<@orcid.rootPath "/signout" />"><@orcid.msg 'public-layout.sign_out'/></a>
 					</@security.authorize>
 					
 				</li>

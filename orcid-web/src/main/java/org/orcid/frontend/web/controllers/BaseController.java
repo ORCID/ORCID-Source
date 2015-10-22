@@ -26,6 +26,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -35,20 +36,26 @@ import java.util.ResourceBundle;
 import javax.annotation.Resource;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
+import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.validator.routines.UrlValidator;
+import org.eclipse.jetty.util.log.Log;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.EmailManager;
+import org.orcid.core.manager.InternalSSOManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.manager.impl.StatisticsCacheManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
+import org.orcid.core.utils.JsonUtils;
 import org.orcid.frontend.web.forms.LoginForm;
 import org.orcid.frontend.web.forms.validate.OrcidUrlValidator;
 import org.orcid.jaxb.model.message.Email;
@@ -68,6 +75,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -132,6 +140,9 @@ public class BaseController {
 
     @Resource
     private ProfileEntityManager profileEntityManager;
+    
+    @Resource
+    private InternalSSOManager internalSSOManager;
 
     protected static final String EMPTY = "empty";
 
@@ -300,9 +311,54 @@ public class BaseController {
         return getEffectiveUserOrcid();
     }
 
-    protected void logoutCurrentUser() {
-        SecurityContextHolder.getContext().getAuthentication().setAuthenticated(false);
-    }
+	protected void logoutCurrentUser(HttpServletRequest request, HttpServletResponse response) {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		if (internalSSOManager.enableCookie()) {
+			String orcidId = authentication.getName();
+			Cookie[] cookies = request.getCookies();
+			// Delete cookie and token associated with that cookie
+			if (cookies != null) {
+				for (Cookie cookie : cookies) {
+					if (InternalSSOManager.COOKIE_NAME.equals(cookie.getName())) {
+						try {
+							// If it is a valid cookie, extract the orcid value
+							// and
+							// remove the token and the cookie
+							@SuppressWarnings("unchecked")
+							HashMap<String, String> cookieValues = JsonUtils.readObjectFromJsonString(cookie.getValue(),
+									HashMap.class);
+							if (cookieValues.containsKey(InternalSSOManager.COOKIE_KEY_ORCID)
+									&& !PojoUtil.isEmpty(cookieValues.get(InternalSSOManager.COOKIE_KEY_ORCID))) {
+								internalSSOManager.deleteToken(cookieValues.get(InternalSSOManager.COOKIE_KEY_ORCID),
+										request, response);
+							} else {
+								// If it is not valid, just remove the cookie
+								cookie.setValue(StringUtils.EMPTY);
+								cookie.setMaxAge(0);
+								response.addCookie(cookie);
+							}
+						} catch (RuntimeException re) {
+							// If any exception happens, but, the cookie exists,
+							// remove the cookie
+							cookie.setValue(StringUtils.EMPTY);
+							cookie.setMaxAge(0);
+							response.addCookie(cookie);
+						}
+						break;
+					}
+				}
+			}
+
+			// Delete token if exists
+			if (!PojoUtil.isEmpty(orcidId)) {
+				internalSSOManager.deleteToken(orcidId);
+			}
+		}
+		if (authentication != null && authentication.isAuthenticated()) {
+			new SecurityContextLogoutHandler().logout(request, response, authentication);
+		}
+		String debug;
+	}
 
     protected boolean isEmailOkForCurrentUser(String decryptedEmail) {
         OrcidProfileUserDetails userDetails = getCurrentUser();

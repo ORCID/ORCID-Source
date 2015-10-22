@@ -97,7 +97,7 @@ public class SocialController extends BaseController {
 					return new ModelAndView("redirect:/my-orcid");
 				} else {
 					ModelAndView mav = new ModelAndView();
-					logoutCurrentUser();
+					logoutCurrentUser(request, response);
 					mav.setViewName("social_link_signin");
 					mav.addObject("providerId", providerId);
 					mav.addObject("emailId", emailId);
