@@ -33,10 +33,10 @@ import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.oauth.OrcidOAuth2Authentication;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.oauth.OrcidOauth2UserAuthentication;
-import org.orcid.core.security.aop.LockedException;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.common.DefaultExpiringOAuth2RefreshToken;
 import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
@@ -61,9 +61,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service("orcidTokenStore")
 public class OrcidTokenStoreServiceImpl implements TokenStore {
-
-    public static final String PERSISTENT = "persistent";
-    public static final String DATE_CREATED = "date_created";
 
     @Resource
     private OrcidOauth2TokenDetailService orcidOauthTokenDetailService;
@@ -288,13 +285,23 @@ public class OrcidTokenStoreServiceImpl implements TokenStore {
                 }
                 token.setRefreshToken(rt);
             }
-            ProfileEntity profile = detail.getProfile();
+            ProfileEntity profile = detail.getProfile();                        
             if (profile != null) {
                 Map<String, Object> additionalInfo = new HashMap<String, Object>();
-                additionalInfo.put("orcid", profile.getId());
-                additionalInfo.put(PERSISTENT, detail.isPersistent());
-                additionalInfo.put(DATE_CREATED, detail.getDateCreated());
+                additionalInfo.put(OauthTokensConstants.ORCID, profile.getId());
+                additionalInfo.put(OauthTokensConstants.PERSISTENT, detail.isPersistent());
+                additionalInfo.put(OauthTokensConstants.DATE_CREATED, detail.getDateCreated());
                 additionalInfo.put(OauthTokensConstants.TOKEN_VERSION, detail.getVersion());
+                token.setAdditionalInformation(additionalInfo);
+            }
+            
+            String clientId = detail.getClientDetailsId();
+            if(!PojoUtil.isEmpty(clientId)) {
+                Map<String, Object> additionalInfo = token.getAdditionalInformation();
+                if(additionalInfo == null) {
+                    additionalInfo = new HashMap<String, Object>();
+                } 
+                additionalInfo.put(OauthTokensConstants.CLIENT_ID, clientId);
                 token.setAdditionalInformation(additionalInfo);
             }
         }

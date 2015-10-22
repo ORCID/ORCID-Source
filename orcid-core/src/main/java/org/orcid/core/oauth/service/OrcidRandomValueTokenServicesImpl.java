@@ -25,10 +25,13 @@ import java.util.UUID;
 import javax.annotation.Resource;
 
 import org.orcid.core.constants.OauthTokensConstants;
+import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.oauth.OrcidOauth2AuthInfo;
 import org.orcid.core.oauth.OrcidRandomValueTokenServices;
+import org.orcid.core.security.aop.LockedException;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.dao.OrcidOauth2AuthoriziationCodeDetailDao;
+import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -62,6 +65,11 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
     @Resource
     private OrcidOauth2AuthoriziationCodeDetailDao orcidOauth2AuthoriziationCodeDetailDao;       
 
+    @Resource
+    private OrcidOAuth2RequestValidator orcidOAuth2RequestValidator;
+    @Resource
+    private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
+    
     public OrcidRandomValueTokenServicesImpl() {        
     }
     
@@ -181,6 +189,16 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
                 orcidtokenStore.removeAccessToken(accessToken);
                 throw new InvalidTokenException("Access token expired: " + accessTokenValue);
             }
+            Map<String, Object> additionalInfo = accessToken.getAdditionalInformation();
+            if(additionalInfo != null) {
+                String clientId = (String)additionalInfo.get(OauthTokensConstants.CLIENT_ID);
+                ClientDetailsEntity clientEntity = clientDetailsEntityCacheManager.retrieve(clientId);
+                try {
+                    orcidOAuth2RequestValidator.validateClientIsEnabled(clientEntity);
+                } catch (LockedException le) {
+                    throw new InvalidTokenException(le.getMessage());
+                }
+            }                        
         }
                 
         OAuth2Authentication result = orcidtokenStore.readAuthentication(accessToken);

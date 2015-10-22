@@ -27,4 +27,6 @@ public class OauthTokensConstants {
     public static final String GRANT_TYPE = "grant_type";
     public static final String GRANT_TYPE_CLIENT_CREDENTIALS = "client_credentials";
     public static final String DATE_CREATED = "date_created";
+    public static final String CLIENT_ID = "client_id";
+    public static final String ORCID = "orcid";
 }
