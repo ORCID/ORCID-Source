@@ -594,5 +594,7 @@
 	
 	<bean id="crossDomainWebManger" class="org.orcid.core.web.filters.CrossDomainWebManger" />
 	
-	<bean id="orcidOAuth2RequestValidator" class="org.orcid.core.oauth.service.OrcidOAuth2RequestValidator" />
+	<bean id="orcidOAuth2RequestValidator" class="org.orcid.core.oauth.service.OrcidOAuth2RequestValidator">
+		<constructor-arg ref="profileEntityCacheManager" />
+	</bean>
 </beans>

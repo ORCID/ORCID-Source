@@ -220,7 +220,7 @@ public class DeveloperToolsController extends BaseWorkspaceController {
         return orcidSSOManager.resetClientSecret(clientId);
     }
 
-    @RequestMapping(value = "/get-sso-credentials.json", method = RequestMethod.GET)
+    @RequestMapping(value = "/get-sso-credentials.json", method = RequestMethod.POST)
     public @ResponseBody
     SSOCredentials getSSOCredentialsJson() {
         SSOCredentials credentials = new SSOCredentials();

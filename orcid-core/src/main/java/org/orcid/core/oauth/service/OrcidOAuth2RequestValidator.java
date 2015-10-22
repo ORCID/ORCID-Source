@@ -19,8 +19,6 @@ package org.orcid.core.oauth.service;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.Resource;
-
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.security.aop.LockedException;
 import org.orcid.jaxb.model.message.ScopePathType;
@@ -33,9 +31,12 @@ import org.springframework.security.oauth2.provider.request.DefaultOAuth2Request
 
 public class OrcidOAuth2RequestValidator extends DefaultOAuth2RequestValidator {
     
-    @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;    
     
+    public OrcidOAuth2RequestValidator(ProfileEntityCacheManager profileEntityCacheManager) {
+        this.profileEntityCacheManager = profileEntityCacheManager;
+    }
+
     public void validateParameters(Map<String, String> parameters, ClientDetails clientDetails) {
         if (parameters.containsKey("scope")) {
             if (clientDetails.isScoped()) {

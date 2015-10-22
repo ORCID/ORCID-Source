@@ -100,22 +100,22 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     private JpaJaxbWorkAdapter jpaJaxbWorkAdapter;
     
     @Resource
-    private Jpa2JaxbAdapter jpa2JaxbAdapter;
-
-    @Resource(name = "profileEntityCacheManager")
-    ProfileEntityCacheManager profileEntityCacheManager;
+    private Jpa2JaxbAdapter jpa2JaxbAdapter;    
 
     @Resource
-    AffiliationsManager affiliationsManager;
+    private AffiliationsManager affiliationsManager;
 
     @Resource
-    ProfileFundingManager fundingManager;
+    private ProfileFundingManager fundingManager;
 
     @Resource
-    PeerReviewManager peerReviewManager;
+    private PeerReviewManager peerReviewManager;
 
     @Resource
-    WorkManager workManager;
+    private WorkManager workManager;
+    
+    @Resource
+    private ProfileEntityCacheManager profileEntityCacheManager;
 
     /**
      * Fetch a ProfileEntity from the database Instead of calling this function,

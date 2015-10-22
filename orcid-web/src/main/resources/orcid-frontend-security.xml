@@ -30,8 +30,6 @@
 	
 	<sec:global-method-security pre-post-annotations="enabled" />
 
-	<bean id="orcidOAuth2RequestValidator" class="org.orcid.core.oauth.service.OrcidOAuth2RequestValidator" />		
-
 	<bean id="authorizationEndpoint" class="org.orcid.core.oauth.service.OrcidAuthorizationEndpoint">
 		<property name="authorizationCodeServices" ref="orcidAuthorizationCodeService" />
 		<property name="clientDetailsService" ref="clientDetailsManager" />
