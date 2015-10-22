@@ -28,7 +28,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
-import org.orcid.core.manager.ProfileEntityCacheManager;
+import org.orcid.core.oauth.service.OrcidOAuth2RequestValidator;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientScopeEntity;
@@ -51,7 +51,7 @@ public class OrcidClientCredentialsCheckerTest {
     private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
 
     @Mock 
-    private ProfileEntityCacheManager profileEntityCacheManager;
+    private OrcidOAuth2RequestValidator orcidOAuth2RequestValidator;
     
     private OAuth2RequestFactory oAuth2RequestFactory;
 
@@ -63,7 +63,7 @@ public class OrcidClientCredentialsCheckerTest {
         oAuth2RequestFactory = new DefaultOAuth2RequestFactory(clientDetailsService); 
         checker = new OrcidClientCredentialsChecker(oAuth2RequestFactory);
         checker.setClientDetailsEntityCacheManager(clientDetailsEntityCacheManager);
-        checker.setProfileEntityCacheManager(profileEntityCacheManager);
+        checker.setOrcidOAuth2RequestValidator(orcidOAuth2RequestValidator);
     }
 
     @Test(expected = InvalidScopeException.class)
@@ -105,6 +105,5 @@ public class OrcidClientCredentialsCheckerTest {
         profile.setRecordLocked(false);
         when(clientDetailsService.loadClientByClientId(clientId)).thenReturn(clientDetailsEntity);
         when(clientDetailsEntityCacheManager.retrieve(clientId)).thenReturn(clientDetailsEntity);
-        when(profileEntityCacheManager.retrieve(memberId)).thenReturn(profile);
     }
 }

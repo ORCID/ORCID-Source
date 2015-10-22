@@ -24,12 +24,10 @@ import java.util.Set;
 import javax.annotation.Resource;
 
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
-import org.orcid.core.manager.ProfileEntityCacheManager;
-import org.orcid.core.security.aop.LockedException;
+import org.orcid.core.oauth.service.OrcidOAuth2RequestValidator;
 import org.orcid.persistence.dao.OrcidOauth2AuthoriziationCodeDetailDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.OrcidOauth2AuthoriziationCodeDetail;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -64,9 +62,10 @@ public class OrcidAuthorizationCodeTokenGranter extends AbstractTokenGranter {
     private OrcidOauth2AuthoriziationCodeDetailDao orcidOauth2AuthoriziationCodeDetailDao;
     
     @Resource
-    private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
+    private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;    
+    
     @Resource
-    private ProfileEntityCacheManager profileEntityCacheManager;
+    private OrcidOAuth2RequestValidator orcidOAuth2RequestValidator;
     
     public OrcidAuthorizationCodeTokenGranter(AuthorizationServerTokenServices tokenServices, AuthorizationCodeServices authorizationCodeServices,
             ClientDetailsService clientDetailsService, OAuth2RequestFactory oAuth2RequestFactory) {
@@ -90,7 +89,7 @@ public class OrcidAuthorizationCodeTokenGranter extends AbstractTokenGranter {
 
         //Validate the client is active
         ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(tokenRequest.getClientId());                        
-        validateMemberIsActive(clientDetails.getGroupProfileId(), tokenRequest.getClientId());
+        orcidOAuth2RequestValidator.validateClientIsEnabled(clientDetails);
         
         //Validate scopes
         OrcidOauth2AuthoriziationCodeDetail codeDetails = orcidOauth2AuthoriziationCodeDetailDao.find(authorizationCode);        
@@ -152,14 +151,5 @@ public class OrcidAuthorizationCodeTokenGranter extends AbstractTokenGranter {
         Authentication userAuth = storedAuth.getUserAuthentication();
         return new OAuth2Authentication(pendingAuthorizationRequest, userAuth);
 
-    }
-
-    private void validateMemberIsActive(String memberId, String clientId) {
-        ProfileEntity memberEntity = profileEntityCacheManager.retrieve(memberId);
-        //If it is locked
-        if(!memberEntity.isAccountNonLocked()) {
-            throw new LockedException("The given client " + clientId + " is locked because his member " + memberId + " is also locked", memberId); 
-        }                 
-    }
-    
+    }        
 }

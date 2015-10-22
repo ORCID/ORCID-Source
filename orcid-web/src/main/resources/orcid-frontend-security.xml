@@ -36,8 +36,7 @@
 		<property name="authorizationCodeServices" ref="orcidAuthorizationCodeService" />
 		<property name="clientDetailsService" ref="clientDetailsManager" />
 		<property name="tokenGranter" ref="tokenGranter" />
-		<property name="orcidOAuth2RequestValidator" ref="orcidOAuth2RequestValidator" />
-		<property name="profileEntityCacheManager" ref="profileEntityCacheManager" />
+		<property name="orcidOAuth2RequestValidator" ref="orcidOAuth2RequestValidator" />		
 	</bean>
 
 	<bean id="userDetailsService" class="org.orcid.core.security.OrcidUserDetailsService" />

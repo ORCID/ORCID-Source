@@ -26,11 +26,9 @@ import javax.annotation.Resource;
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.constants.OauthTokensConstants;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
-import org.orcid.core.manager.ProfileEntityCacheManager;
-import org.orcid.core.security.aop.LockedException;
+import org.orcid.core.oauth.service.OrcidOAuth2RequestValidator;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.springframework.security.oauth2.common.exceptions.InvalidGrantException;
 import org.springframework.security.oauth2.common.exceptions.InvalidScopeException;
 import org.springframework.security.oauth2.common.util.OAuth2Utils;
@@ -47,10 +45,15 @@ public class OrcidClientCredentialsChecker {
     
     @Resource
     private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
-    @Resource
-    private ProfileEntityCacheManager profileEntityCacheManager;
     
-    private final OAuth2RequestFactory oAuth2RequestFactory;
+    @Resource
+    private OrcidOAuth2RequestValidator orcidOAuth2RequestValidator;
+    
+    private final OAuth2RequestFactory oAuth2RequestFactory;        
+
+    public void setOrcidOAuth2RequestValidator(OrcidOAuth2RequestValidator orcidOAuth2RequestValidator) {
+        this.orcidOAuth2RequestValidator = orcidOAuth2RequestValidator;
+    }
 
     public OrcidClientCredentialsChecker(OAuth2RequestFactory oAuth2RequestFactory) {
         this.oAuth2RequestFactory = oAuth2RequestFactory;
@@ -58,18 +61,13 @@ public class OrcidClientCredentialsChecker {
 
     public void setClientDetailsEntityCacheManager(ClientDetailsEntityCacheManager clientDetailsEntityCacheManager) {
         this.clientDetailsEntityCacheManager = clientDetailsEntityCacheManager;
-    }
-    
-    public void setProfileEntityCacheManager(ProfileEntityCacheManager profileEntityCacheManager) {
-        this.profileEntityCacheManager = profileEntityCacheManager;
-        
-    }
+    }        
     
     public OAuth2Request validateCredentials(String grantType, TokenRequest tokenRequest) {
         String clientId = tokenRequest.getClientId();
         Set<String> scopes = tokenRequest.getScope();
         ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(clientId);                        
-        validateMemberIsActive(clientDetails.getGroupProfileId(), clientId);
+        orcidOAuth2RequestValidator.validateClientIsEnabled(clientDetails);
         validateGrantType(grantType, clientDetails);
         if (scopes != null) {
             validateScope(clientDetails, scopes);
@@ -131,13 +129,5 @@ public class OrcidClientCredentialsChecker {
         if (authorizedGrantTypes != null && !authorizedGrantTypes.isEmpty() && !authorizedGrantTypes.contains(grantType)) {
             throw new InvalidGrantException("Unauthorized grant type: " + grantType);
         }
-    }
-
-    private void validateMemberIsActive(String memberId, String clientId) {
-        ProfileEntity memberEntity = profileEntityCacheManager.retrieve(memberId);
-        //If it is locked
-        if(!memberEntity.isAccountNonLocked()) {
-            throw new LockedException("The given client " + clientId + " is locked because his member " + memberId + " is also locked", memberId); 
-        }                 
-    }    
+    }  
 }

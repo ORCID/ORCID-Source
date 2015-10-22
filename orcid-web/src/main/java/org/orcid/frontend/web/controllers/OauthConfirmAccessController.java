@@ -40,6 +40,7 @@ import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.oauth.OrcidRandomValueTokenServices;
 import org.orcid.core.oauth.service.OrcidAuthorizationEndpoint;
+import org.orcid.core.oauth.service.OrcidOAuth2RequestValidator;
 import org.orcid.core.security.aop.LockedException;
 import org.orcid.jaxb.model.message.CreationMethod;
 import org.orcid.jaxb.model.message.ErrorDesc;
@@ -115,7 +116,9 @@ public class OauthConfirmAccessController extends BaseController {
     @Resource
     private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
     @Resource
-    private EncryptionManager encryptionManager;
+    private EncryptionManager encryptionManager;    
+    @Resource
+    private OrcidOAuth2RequestValidator orcidOAuth2RequestValidator;
 
     private static String REDIRECT_URI_ERROR = "/oauth/error/redirect-uri-mismatch?client_id={0}";
         
@@ -237,7 +240,7 @@ public class OauthConfirmAccessController extends BaseController {
                     // validate client scopes
                     try {
                         authorizationEndpoint.validateScope(scope, clientDetails);
-                        authorizationEndpoint.validateClientIsEnabled(clientDetails);
+                        orcidOAuth2RequestValidator.validateClientIsEnabled(clientDetails);
                     } catch (InvalidScopeException ise) {
                         String redirectUriWithParams = redirectUri;
                         redirectUriWithParams += "?error=invalid_scope&error_description=" + ise.getMessage();
@@ -317,7 +320,7 @@ public class OauthConfirmAccessController extends BaseController {
         // validate client scopes
         try {
             authorizationEndpoint.validateScope(scope, clientDetails);
-            authorizationEndpoint.validateClientIsEnabled(clientDetails);
+            orcidOAuth2RequestValidator.validateClientIsEnabled(clientDetails);
         } catch (InvalidScopeException ise) {
             String redirectUriWithParams = redirectUri;
             redirectUriWithParams += "?error=invalid_scope&error_description=" + ise.getMessage();

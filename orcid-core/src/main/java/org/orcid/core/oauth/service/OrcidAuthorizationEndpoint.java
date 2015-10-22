@@ -22,12 +22,10 @@ import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
 import org.apache.commons.lang3.StringUtils;
-import org.orcid.core.manager.ProfileEntityCacheManager;
-import org.orcid.core.security.aop.LockedException;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.springframework.security.oauth2.common.exceptions.ClientAuthenticationException;
 import org.springframework.security.oauth2.common.exceptions.InvalidScopeException;
 import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
@@ -48,15 +46,9 @@ public class OrcidAuthorizationEndpoint extends AuthorizationEndpoint {
 
     private String redirectUriError = "forward:/oauth/error/redirect-uri-mismatch";
     private String oauthError = "forward:/oauth/error";
-    
+    @Resource
     private OrcidOAuth2RequestValidator orcidOAuth2RequestValidator;
         
-    private ProfileEntityCacheManager profileEntityCacheManager;
-    
-    public void setProfileEntityCacheManager(ProfileEntityCacheManager profileEntityCacheManager) {
-        this.profileEntityCacheManager = profileEntityCacheManager;
-    }
-
     @Override
     @ExceptionHandler(HttpSessionRequiredException.class)
     public ModelAndView handleHttpSessionRequiredException(HttpSessionRequiredException e, ServletWebRequest webRequest) throws Exception {
@@ -147,13 +139,5 @@ public class OrcidAuthorizationEndpoint extends AuthorizationEndpoint {
 
     public void setOrcidOAuth2RequestValidator(OrcidOAuth2RequestValidator orcidOAuth2RequestValidator) {
         this.orcidOAuth2RequestValidator = orcidOAuth2RequestValidator;
-    }    
-    
-    public void validateClientIsEnabled(ClientDetailsEntity clientDetails) {
-        ProfileEntity memberEntity = profileEntityCacheManager.retrieve(clientDetails.getGroupProfileId());
-        //If it is locked
-        if(!memberEntity.isAccountNonLocked()) {
-            throw new LockedException("The given client " + clientDetails.getClientId() + " is locked because his member " + clientDetails.getGroupProfileId() + " is also locked", clientDetails.getGroupProfileId());
-        }
-    }
+    }            
 }

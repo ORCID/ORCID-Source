@@ -19,14 +19,23 @@ package org.orcid.core.oauth.service;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.Resource;
+
+import org.orcid.core.manager.ProfileEntityCacheManager;
+import org.orcid.core.security.aop.LockedException;
 import org.orcid.jaxb.model.message.ScopePathType;
+import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.springframework.security.oauth2.common.exceptions.InvalidScopeException;
 import org.springframework.security.oauth2.common.util.OAuth2Utils;
 import org.springframework.security.oauth2.provider.ClientDetails;
 import org.springframework.security.oauth2.provider.request.DefaultOAuth2RequestValidator;
 
 public class OrcidOAuth2RequestValidator extends DefaultOAuth2RequestValidator {
-        
+    
+    @Resource
+    private ProfileEntityCacheManager profileEntityCacheManager;    
+    
     public void validateParameters(Map<String, String> parameters, ClientDetails clientDetails) {
         if (parameters.containsKey("scope")) {
             if (clientDetails.isScoped()) {
@@ -39,6 +48,14 @@ public class OrcidOAuth2RequestValidator extends DefaultOAuth2RequestValidator {
                         throw new InvalidScopeException("Invalid scope: " + scope);
                 }
             }
+        }
+    }
+    
+    public void validateClientIsEnabled(ClientDetailsEntity clientDetails) {
+        ProfileEntity memberEntity = profileEntityCacheManager.retrieve(clientDetails.getGroupProfileId());
+        //If it is locked
+        if(!memberEntity.isAccountNonLocked()) {
+            throw new LockedException("The given client " + clientDetails.getClientId() + " is locked because his member " + clientDetails.getGroupProfileId() + " is also locked", clientDetails.getGroupProfileId());
         }
     }
 

@@ -33,6 +33,7 @@ import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.oauth.OrcidOAuth2Authentication;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.oauth.OrcidOauth2UserAuthentication;
+import org.orcid.core.security.aop.LockedException;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -73,6 +74,9 @@ public class OrcidTokenStoreServiceImpl implements TokenStore {
     @Resource
     ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
 
+    @Resource
+    private OrcidOAuth2RequestValidator orcidOAuth2RequestValidator;
+    
     private static final AuthenticationKeyGenerator KEY_GENERATOR = new DefaultAuthenticationKeyGenerator();
 
     /**
@@ -304,6 +308,8 @@ public class OrcidTokenStoreServiceImpl implements TokenStore {
             Authentication authentication = null;
             AuthorizationRequest request = null;
             if (clientDetailsEntity != null) {
+                //Check member is not locked                
+                orcidOAuth2RequestValidator.validateClientIsEnabled(clientDetailsEntity);
                 Set<String> scopes = OAuth2Utils.parseParameterList(details.getScope());
                 request = new AuthorizationRequest(clientDetailsEntity.getClientId(), scopes);
                 request.setAuthorities(clientDetailsEntity.getAuthorities());
@@ -401,6 +407,5 @@ public class OrcidTokenStoreServiceImpl implements TokenStore {
             }
         }
         return accessTokens;
-    }
-
+    }       
 }
