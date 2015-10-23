@@ -200,17 +200,12 @@
 					publicClick="updateActivitiesVisibilityDefault('PUBLIC', $event)"
 					limitedClick="updateActivitiesVisibilityDefault('LIMITED', $event)"
 					privateClick="updateActivitiesVisibilityDefault('PRIVATE', $event)" />
-		    </div>                    
-		   
-		    <div style="margin-bottom: 15px;">
-		        <div class="relative">
-		            <label><@orcid.msg 'claim.notificationemail'/></label>
-		            <label class="checkbox">
-		                <input type="checkbox" tabindex="7" name="sendOrcidChangeNotifications" ng-model="registrationForm.sendChangeNotifications.value"/>
-		                <@orcid.msg 'register.labelsendmenotifications'/>
-		            </label>		            
-		         </div>
-			</div>			   
+		    </div>                    		   		   
+		   <div>
+        		<div class="relative">	            
+        			<@orcid.registrationEmailFrequencySelector angularElementName="registrationForm" />
+        		</div>
+		   </div>		   		   		   		    		  
 		    <div>
         		<div class="relative recaptcha"  id="recaptcha" style="margin-bottom: 15px;">			
 			 		<div

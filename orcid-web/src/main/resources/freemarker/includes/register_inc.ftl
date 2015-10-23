@@ -114,32 +114,7 @@
     </div>                    
     <div>
         <div class="relative">
-            <#if RequestParameters['notifications']??>
-                <label>${springMacroRequestContext.getMessage("claim.notifications")}</label>
-                <#--
-                <label class="checkbox">
-                    <input type="checkbox" tabindex="8" name="sendOrcidNews" ng-model="register.sendMemberUpdateRequests.value"/>
-                    ${springMacroRequestContext.getMessage("register.labelsendmemberupdaterequests")}
-                </label>
-                -->
-                <label>
-                    ${springMacroRequestContext.getMessage("claim.notificationsemailfrequency")}
-                    <select id="sendEmailFrequencyDays" name="sendEmailFrequencyDays"
-                        class="input-xlarge"
-                        ng-model="register.sendEmailFrequencyDays.value"
-                        <#list sendEmailFrequencies?keys as key>
-                            <option value="${key}"
-                                ng-selected="register.sendEmailFrequencyDays.value === ${key}">${sendEmailFrequencies[key]}</option>
-                        </#list>
-                    </select>
-                </label>
-            <#else>
-                <label>${springMacroRequestContext.getMessage("claim.notificationemail")}</label>
-                <label class="checkbox">
-                    <input type="checkbox" tabindex="7" name="sendOrcidChangeNotifications" ng-model="register.sendChangeNotifications.value"/>
-                    ${springMacroRequestContext.getMessage("register.labelsendmenotifications")}
-                </label>                
-            </#if>
+            <@orcid.registrationEmailFrequencySelector angularElementName="register" />
          </div>
 	</div>
     <div>
