@@ -17,12 +17,13 @@
 
 -->
 <#import "email_macros.ftl" as emailMacros />
-Hi ${emailName},
+<@emailMacros.msg "email.common.hi" />${emailName}<@emailMacros.msg "email.common.dear.comma" />
 
-You have ${totalMessageCount} new <#if ((totalMessageCount?number) == 1)>notification<#else>notifications</#if> in your ORCID inbox - see summary below. Please visit your ORCID Inbox (${baseUri}/inbox) to take action or see more details.
+<@emailMacros.msg "email.digest.youhave" />${totalMessageCount}<@emailMacros.msg "email.digest.new" /><#if ((totalMessageCount?number) == 1)><@emailMacros.msg "email.digest.notification" /><#else><@emailMacros.msg "email.digest.notifications" /></#if><@emailMacros.msg "email.digest.inyourinbox" /><@emailMacros.msg "email.digest.pleasevisit_1" /><@emailMacros.msg "email.digest.orcidinbox" /><@emailMacros.msg "email.digest.pleasevisit_2" />${baseUri}/inbox<@emailMacros.msg "email.digest.pleasevisit_3" /><@emailMacros.msg "email.digest.pleasevisit_4" />
 
 <#if digestEmail.notificationsBySourceId['ORCID']??>
-ORCID would like to let you know
+<@emailMacros.msg "email.digest.orcidwouldlikeyoutoknow" />
+
 
 <#list digestEmail.notificationsBySourceId['ORCID'].allNotifications as notification>    
     ${notification.subject}
@@ -35,19 +36,20 @@ ORCID would like to let you know
 <#list digestEmail.notificationsBySourceId[sourceId].notificationsByType[notificationType] as notification>
 
 <#if notificationType == 'PERMISSION'>
-${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sourceId}: ${notification.notificationSubject!'Request to add items'}
+${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sourceId}: <#if notification.notificationSubject??>${notification.notificationSubject}<#else><@emailMacros.msg "email.digest.requesttoadd" /></#if>
 <#assign itemsByType=notification.items.itemsByType>
 <#list itemsByType?keys?sort as itemType>
-${itemType?capitalize}<#if itemType == 'WORK'>s</#if> (${itemsByType[itemType]?size})
+<@emailMacros.msg "email.common.recordsection." + itemType /> (${itemsByType[itemType]?size})
 <#list itemsByType[itemType] as item>
     ${item.itemName?trim} <#if item.externalIdentifier??>(${item.externalIdentifier.externalIdentifierType?lower_case}: ${item.externalIdentifier.externalIdentifierId})</#if>
 </#list>
 
-ADD NOW: ${baseUri}/inbox/encrypted/${notification.encryptedPutCode}/action
-MORE INFO: ${baseUri}/inbox#${notification.putCode}
+<@emailMacros.msg "email.digest.plaintext.addnow" />${baseUri}/inbox/encrypted/${notification.encryptedPutCode}/action
+<@emailMacros.msg "email.digest.plaintext.moreinfo" />${baseUri}/inbox#${notification.putCode}
 </#list>
 <#elseif notificationType == 'AMENDED'>
-${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sourceId} has updated recent ${notification.amendedSection?lower_case}s on your ORCID record.
+<#assign amendedSection><@emailMacros.msg "email.common.recordsection." + notification.amendedSection /></#assign>
+<@emailMacros.msg "email.digest.hasupdated_1" />${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sourceId}<@emailMacros.msg "email.digest.hasupdated_2" />${amendedSection?lower_case}<@emailMacros.msg "email.digest.hasupdated_3" />
 <#if notification.items??>
 
 <#list notification.items.items as item>
@@ -65,18 +67,15 @@ ${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sour
 
 <#if ((totalMessageCount?number) > 1)>
 </#if>
-VIEW YOUR ORCID INBOX: ${baseUri}/inbox
+<@emailMacros.msg "email.digest.plaintext.viewyourinbox" />${baseUri}/inbox
 
 <#assign frequency>
     <#switch orcidProfile.orcidInternal.preferences.sendEmailFrequencyDays>
-        <#case "0.0">immediate<#break>
-        <#case "7.0">weekly<#break>
-        <#case "91.3105">quarterly<#break>
+        <#case "0.0"><@emailMacros.msg "email.digest.frequency.immediate" /><#break>
+        <#case "7.0"><@emailMacros.msg "email.digest.frequency.weekly" /><#break>
+        <#case "91.3105"><@emailMacros.msg "email.digest.frequency.quarterly" /><#break>
     </#switch>
 </#assign>
-You have received this message because you opted in to receive ${frequency} inbox notifications about your ORCID record. Learn more about how the Inbox works (http://support.orcid.org/knowledgebase/articles/665437).
-
-You may adjust your email frequency and subscription preferences in your account settings (${baseUri}/account).
-
----
+<@emailMacros.msg "email.digest.youhavereceived_1" />${frequency}<@emailMacros.msg "email.digest.youhavereceived_2" /><@emailMacros.msg "email.digest.plaintext.learnmore_1" /><@emailMacros.msg "email.digest.learnmorelink" /><@emailMacros.msg "email.digest.plaintext.learnmore_2" />
+<@emailMacros.msg "email.digest.youmayadjust_1" /><@emailMacros.msg "email.digest.accountsettings" /><@emailMacros.msg "email.digest.youmayadjust_2" />${baseUri}/account<@emailMacros.msg "email.digest.youmayadjust_3" />
 <#include "email_footer.ftl"/>
