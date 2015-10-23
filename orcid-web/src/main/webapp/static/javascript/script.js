@@ -3767,9 +3767,6 @@ this.w3cLatexCharMap = {
 
 
 
-/* START: orcidSearchUrlJs v0.0.1 */
-/* https://github.com/ORCID/orcidSearchUrlJs */
-
 /* START: workIdLinkJs v0.0.8 */
 /* https://github.com/ORCID/workIdLinkJs */
 
@@ -3931,11 +3928,13 @@ this.w3cLatexCharMap = {
 /* END: workIdLinkJs */
 
 
+/* START: orcidSearchUrlJs v0.0.1 */
+/* https://github.com/ORCID/orcidSearchUrlJs */
 
 /* browser and NodeJs compatible */
 (function(exports) {
 
-    var baseUrl = 'https://orcid.org/v1.1/search/orcid-bio/';
+    var baseUrl = 'https://orcid.org/v1.2/search/orcid-bio/';
     var quickSearchEDisMax = '{!edismax qf="given-and-family-names^50.0 family-name^10.0 given-names^5.0 credit-name^10.0 other-names^5.0 text^1.0" pf="given-and-family-names^50.0" mm=1}';
     var orcidPathRegex = new RegExp("(\\d{4}-){3,}\\d{3}[\\dX]");
     var orcidFullRegex = new RegExp(
