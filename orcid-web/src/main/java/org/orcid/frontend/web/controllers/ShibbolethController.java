@@ -24,6 +24,7 @@ import java.util.Random;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.exception.OrcidBadRequestException;
@@ -72,7 +73,7 @@ public class ShibbolethController extends BaseController {
     private AuthenticationManager authenticationManager;
 
     @RequestMapping(value = { "/signin" }, method = RequestMethod.GET)
-    public ModelAndView signinHandler(HttpServletRequest request, @RequestHeader Map<String, String> headers, ModelAndView mav) {
+    public ModelAndView signinHandler(HttpServletRequest request, HttpServletResponse response, @RequestHeader Map<String, String> headers, ModelAndView mav) {
         checkEnabled();
         String remoteUser = retrieveRemoteUser(headers);
         String shibIdentityProvider = headers.get(SHIB_IDENTITY_PROVIDER_HEADER);
@@ -93,7 +94,7 @@ public class ShibbolethController extends BaseController {
             return new ModelAndView("redirect:/my-orcid");
         } else {
             // To avoid confusion, force the user to login to ORCID again
-            logoutCurrentUser();
+            logoutCurrentUser(request, response);
             mav.setViewName("shib_link_signin");
             mav.addObject("remoteUserHeader", StringUtils.join(POSSIBLE_REMOTE_USER_HEADERS, "/"));
             mav.addObject("remoteUser", remoteUser);
