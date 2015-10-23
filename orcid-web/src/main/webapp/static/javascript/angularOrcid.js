@@ -7783,7 +7783,7 @@ orcidNgModule.controller('SSOPreferencesCtrl',['$scope', '$compile', '$sce', 'em
         $.ajax({
             url: getBaseUri()+'/developer-tools/get-sso-credentials.json',
             contentType: 'application/json;charset=UTF-8',
-            type: 'POST',
+            type: 'GET',
             success: function(data){
                 $scope.$apply(function(){
                     if(data != null && data.clientSecret != null) {
