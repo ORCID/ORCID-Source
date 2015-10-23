@@ -25,7 +25,7 @@ ADD NOW: http://testserver.orcid.org/inbox/encrypted/elV4OGVicFBnNVU9/action
 MORE INFO: http://testserver.orcid.org/inbox#2
 
 
-Lovely Publisher 1 has updated recent fundings on your ORCID record.
+Lovely Publisher 1 has updated recent funding on your ORCID record.
 
 
 Lovely Publisher 1: Request to add items
