@@ -16,7 +16,6 @@
  */
 package org.orcid.frontend.web.controllers;
 
-import java.util.HashMap;
 import java.util.Locale;
 
 import javax.annotation.Resource;
@@ -29,7 +28,6 @@ import javax.ws.rs.core.MediaType;
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.InternalSSOManager;
-import org.orcid.core.utils.JsonUtils;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.pojo.UserStatus;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -114,8 +112,7 @@ public class HomeController extends BaseController {
         return localeManager.getJavascriptMessages(locale);
 
     }
-
-    @SuppressWarnings("unchecked")
+    
     @RequestMapping(value = "/userStatus.json")
     @Produces(value = { MediaType.APPLICATION_JSON })
     public @ResponseBody

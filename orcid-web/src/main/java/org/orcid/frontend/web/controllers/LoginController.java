@@ -54,8 +54,9 @@ public class LoginController extends BaseController {
     @RequestMapping(value = { "/signout"}, method = RequestMethod.GET)
     public ModelAndView signout(HttpServletRequest request, HttpServletResponse response) {
         // in case have come via a link that requires them to be signed out
-        logoutCurrentUser(request, response);
-        ModelAndView mav = new ModelAndView("redirect:/signin");
+        logoutCurrentUser(request, response);    
+        String redirectString = "redirect:" + orcidUrlManager.getBaseUrl()  + "/signin";
+        ModelAndView mav = new ModelAndView(redirectString);
         return mav;
     }
 
