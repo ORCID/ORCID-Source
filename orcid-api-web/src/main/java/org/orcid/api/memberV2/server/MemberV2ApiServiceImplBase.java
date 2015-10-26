@@ -98,7 +98,7 @@ abstract public class MemberV2ApiServiceImplBase {
     @Value("${org.orcid.core.apiBaseUri}")
     protected String apiBaseUri;
 
-    private MemberV2ApiServiceDelegator serviceDelegator;
+    protected MemberV2ApiServiceDelegator serviceDelegator;
 
     private NotificationsApiServiceDelegator notificationsServiceDelegator;
 
@@ -501,6 +501,5 @@ abstract public class MemberV2ApiServiceImplBase {
     }
     
     // END NOTIFICATIONS
-    // =================
-
+    // =================        
 }

@@ -94,6 +94,7 @@ import org.orcid.jaxb.model.message.Preferences;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.message.SecurityDetails;
 import org.orcid.jaxb.model.message.SecurityQuestionId;
+import org.orcid.jaxb.model.message.SendAdministrativeChangeNotifications;
 import org.orcid.jaxb.model.message.SendChangeNotifications;
 import org.orcid.jaxb.model.message.SendOrcidNews;
 import org.orcid.jaxb.model.message.Source;
@@ -104,6 +105,8 @@ import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.VisibilityType;
 import org.orcid.jaxb.model.message.WorkContributors;
 import org.orcid.jaxb.model.message.WorkExternalIdentifier;
+import org.orcid.jaxb.model.notification.permission.Item;
+import org.orcid.jaxb.model.notification.permission.ItemType;
 import org.orcid.jaxb.model.notification.amended.AmendedSection;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.GenericDao;
@@ -754,6 +757,8 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
     public void updatePreferences(String orcid, Preferences preferences) {
         boolean sendChangeNotifications = preferences.getSendChangeNotifications() == null ? DefaultPreferences.SEND_CHANGE_NOTIFICATIONS_DEFAULT : preferences
                 .getSendChangeNotifications().isValue();
+        boolean sendAdministrativeChangeNotifications = preferences.getSendAdministrativeChangeNotifications() == null ? sendChangeNotifications : preferences
+                .getSendAdministrativeChangeNotifications().isValue();
         boolean sendOrcidNews = preferences.getSendOrcidNews() == null ? DefaultPreferences.SEND_ORCID_NEWS_DEFAULT : preferences.getSendOrcidNews().isValue();
         boolean sendMemberUpdateRequests = preferences.getSendMemberUpdateRequests() == null ? DefaultPreferences.SEND_MEMBER_UPDATE_REQUESTS : preferences
                 .getSendMemberUpdateRequests();
@@ -762,13 +767,14 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
                 .getDeveloperToolsEnabled().isValue();
         float sendEmailFrequencyDays = Float.valueOf(preferences.getSendEmailFrequencyDays() == null ? DefaultPreferences.SEND_EMAIL_FREQUENCY_DAYS : preferences
                 .getSendEmailFrequencyDays());
-        profileDao.updatePreferences(orcid, sendChangeNotifications, sendOrcidNews, sendMemberUpdateRequests, activitiesVisibilityDefault, developerToolsEnabled,
-                sendEmailFrequencyDays);
+        profileDao.updatePreferences(orcid, sendChangeNotifications, sendAdministrativeChangeNotifications, sendOrcidNews, sendMemberUpdateRequests,
+                activitiesVisibilityDefault, developerToolsEnabled, sendEmailFrequencyDays);
         OrcidProfile cachedProfile = orcidProfileCacheManager.retrieve(orcid);
         if (cachedProfile != null) {
             profileDao.flush();
             Preferences cachedPreferences = cachedProfile.getOrcidInternal().getPreferences();
             cachedPreferences.setSendChangeNotifications(new SendChangeNotifications(sendChangeNotifications));
+            cachedPreferences.setSendAdministrativeChangeNotifications(new SendAdministrativeChangeNotifications(sendAdministrativeChangeNotifications));
             cachedPreferences.setSendOrcidNews(new SendOrcidNews(sendOrcidNews));
             cachedPreferences.setActivitiesVisibilityDefault(new ActivitiesVisibilityDefault(activitiesVisibilityDefault));
             cachedPreferences.setDeveloperToolsEnabled(new DeveloperToolsEnabled(developerToolsEnabled));
@@ -821,9 +827,18 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
 
         persistAddedWorks(orcid, updatedOrcidWorksList);
         profileDao.flush();
-        boolean notificationsEnabled = existingProfile.getOrcidInternal().getPreferences().isNotificationsEnabled();
+
+        boolean notificationsEnabled = existingProfile.getOrcidInternal().getPreferences().getNotificationsEnabled();
         if (notificationsEnabled) {
-            notificationManager.sendAmendEmail(existingProfile, AmendedSection.WORK);
+            List<Item> activities = new ArrayList<>();
+            for (OrcidWork updatedWork : updatedOrcidWorksList) {
+                Item activity = new Item();
+                activity.setItemName(updatedWork.getWorkTitle().getTitle().getContent());
+                activity.setItemType(ItemType.WORK);
+                activity.setPutCode(updatedWork.getPutCode());
+                activities.add(activity);
+            }
+            notificationManager.sendAmendEmail(existingProfile, AmendedSection.WORK, activities);
         }
     }
 
@@ -1090,6 +1105,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
             WorkEntity workEntity = jaxb2JpaAdapter.getWorkEntity(updatedOrcidWork, null);
             workEntity.setProfile(profileEntity);
             workDao.persist(workEntity);
+            updatedOrcidWork.setPutCode(String.valueOf(workEntity.getId()));
             if (updatedOrcidWork.getWorkTitle() != null && updatedOrcidWork.getWorkTitle().getTitle() != null) {
                 String title = updatedOrcidWork.getWorkTitle().getTitle().getContent();
                 if (titles.contains(title)) {
@@ -1228,7 +1244,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
     @SuppressWarnings("deprecation")
     @Override
     @Transactional
-    public OrcidProfile revokeApplication(String userOrcid, String applicationOrcid, Collection<ScopePathType> scopes) {
+    public OrcidProfile revokeApplication(String userOrcid, String applicationClientId, Collection<ScopePathType> scopes) {
         ProfileEntity existingProfile = profileDao.find(userOrcid);
         if (existingProfile == null) {
             return null;
@@ -1238,7 +1254,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
             Iterator<OrcidOauth2TokenDetail> tokenDetailIterator = tokenDetails.iterator();
             while (tokenDetailIterator.hasNext()) {
                 OrcidOauth2TokenDetail tokenDetail = tokenDetailIterator.next();
-                if (tokenDetail.getClientDetailsEntity().getId().equals(applicationOrcid)) {
+                if (tokenDetail.getClientDetailsId().equals(applicationClientId)) {
                     String tokenScope = tokenDetail.getScope();
                     if (tokenScope != null) {
                         Set<ScopePathType> tokenScopes = ScopePathType.getScopesFromSpaceSeparatedString(tokenScope);
@@ -1297,7 +1313,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         checkForAlreadyExistingAffiliations(existingAffiliations, updatedAffiliationsList);
         persistAddedAffiliations(orcid, updatedAffiliationsList);
         profileDao.flush();
-        boolean notificationsEnabled = existingProfile.getOrcidInternal().getPreferences().isNotificationsEnabled();
+        boolean notificationsEnabled = existingProfile.getOrcidInternal().getPreferences().getNotificationsEnabled();
         if (notificationsEnabled) {
             notificationManager.sendAmendEmail(existingProfile, AmendedSection.AFFILIATION);
         }
@@ -1354,7 +1370,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         checkForAlreadyExistingFundings(existingFundingList, updatedList);
         persistAddedFundings(orcid, updatedList);
         profileDao.flush();
-        boolean notificationsEnabled = existingProfile.getOrcidInternal().getPreferences().isNotificationsEnabled();
+        boolean notificationsEnabled = existingProfile.getOrcidInternal().getPreferences().getNotificationsEnabled();
         if (notificationsEnabled) {
             notificationManager.sendAmendEmail(existingProfile, AmendedSection.FUNDING);
         }

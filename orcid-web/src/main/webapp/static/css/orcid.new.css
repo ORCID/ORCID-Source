@@ -1232,6 +1232,13 @@ ul.privacyHelp li.private {
 	color: #939498;	 
 }
 
+#statistics span.stat-name-st{
+	font-size: 1.0em;
+	font-family: 'Gill Sans W02', 'Helvetica', sans-serif;
+	font-style: normal;
+	color: #939498;	 
+}
+
 #statistics span.stat-data {
 	font-size: 2em;
 	color: #939498;
@@ -2191,6 +2198,14 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input{
 	right: 10px;
 }
 
+.settings-table{
+	table-layout:fixed;
+}
+
+.settings-table .editTablePadCell35{
+	margin-right: 0;
+}
+
 .settings-table .settings-table td,.settings-table th {
 	width: 50%;
 	position: relative;
@@ -2202,6 +2217,36 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input{
     padding-left: 0;
 }
 
+.settings-table.table-bordered>tbody>tr>td{
+	padding-right: 0;
+}
+
+.settings-table a{
+	word-break: normal;
+}
+
+.settings-table .table td{
+	border: none;
+}
+
+.settings-table .table td:nth-child(1),
+.settings-table .table td:nth-child(2){
+    width: 100%;
+}
+
+.settings-table .table td:nth-child(3),
+.settings-table .table td:nth-child(4){
+    width: 1%;
+}
+
+.settings-table .table>tbody>tr>td{
+	padding: 3px 5px;
+}
+
+.settings-table .table td:last-child{
+	padding: 5px 0 5px 5px;
+}
+
 .normal-width td,.normal-width th {
 	width: auto;
 }
@@ -2209,6 +2254,10 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input{
 .settings-table .popover {
 	top: 80%;
 	left: -220px;
+}
+
+.settings-table .table-responsive{
+	margin-top: 10px;
 }
 
 .popover-large {
@@ -2470,15 +2519,15 @@ input.error {
 /*
 TODO: fix up button colours in less
 */
-.btn-primary {
+.btn-primary, input[type="submit"].btn-primary {
 	background: #31789B;
 }
 
-.btn-primary:hover {
+.btn-primary:hover, input[type="submit"].btn-primary:hover {
 	background: #a6ce39;
 	text-shadow: none;
 	border-color: #A6CE39; 
-}
+} 
 
 .oauth-question-sign {
 	color: #31789B !important;
@@ -2905,6 +2954,7 @@ a.btn-primary:hover {
 
 #loginForm #form-sign-in-button {
 	z-index: 1001;
+	float: left;
 }
 
 .oauth-login #loginForm #userId,.oauth-login #loginForm #password {
@@ -3247,12 +3297,10 @@ ul.personal-inf-display li:last-child{
 	font-size: 800%;	
 }
 
-#loginForm #ajax-loader{
-	vertical-align: -6px;
-}
-/*Safari Windows Hack*/
-::i-block-chrome,#loginForm #ajax-loader{
-	vertical-align: -43px;
+#loginForm #ajax-loader{	
+	float: left;    
+    margin-top: 5px;
+    margin-left: 5px;
 }
 
 #edit-affiliation #remove-disambiguated{
@@ -5486,8 +5534,11 @@ ul.oauth-icons li {
 	cursor: pointer;
 }
 
-
-
+.notification-top-bar{
+	display: block;
+    height: 40px;
+    width: 100%;    
+}
 
 .vertical-align-middle {
 	line-height: 0px;
@@ -6020,8 +6071,59 @@ ul.sources-edit-list > li.group-details{
 .group-summary-details{
 	padding-bottom: 15px;
     font-size: 15px;
-}	
+}
 
+.shibboleth-container{
+	max-width: 353px;
+	margin: 0 auto;	
+	padding-left: 15px;
+	padding-right: 15px; 
+}
+
+a .mozilla-badge{
+	background: url('../img/mozilla-badge.svg') transparent;
+	width: 17px;
+    height: 17px;
+    display: block;
+    top: 6px;
+    left: 7px;
+    position: absolute;
+    background-size: 17px 17px;
+}
+
+a:hover .mozilla-badge{
+	background: url('../img/mozilla-badge-hover.svg') transparent;
+	width: 17px;
+    height: 17px;
+    display: block;
+    top: 6px;
+    left: 7px;
+    position: absolute;
+    background-size: 17px 17px;	
+}
+
+.badges-active{
+	background: #a6ce39 !important;	
+}
+
+.padding-left-fix{
+	padding-left: 0;
+}
+
+.edit-client-labels {
+	font-size: 12px;
+	white-space: nowrap;
+}
+.edit-client-table {
+	width: 100%;
+}	
+.edit-client-table-col {
+	width: 45%;
+}
+.socialButton {
+	font-size: 16px;
+	padding:0;
+}
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
@@ -6362,8 +6464,8 @@ ul.sources-edit-list > li.group-details{
 	#loginForm #form-sign-in-button {
 		font-size: 18px;
 		height: 50px;
-		margin: 32px 0 0 0;
-		width: 100%;
+		margin: 32px 0 0 0;		
+		float: left;
 	}
 	#loginForm #login-error-mess {
 		line-height: 25px;
@@ -6374,9 +6476,10 @@ ul.sources-edit-list > li.group-details{
 		text-align: center;
 		top: 165px; /* Login layout top */
 	}
-	#loginForm #ajax-loader {
-		width: 100%;
+	#loginForm #ajax-loader {		
 		text-align: center;
+		float: left;
+		margin-top: 20px;
 	}
 	
 	
@@ -7184,6 +7287,15 @@ ul.sources-edit-list > li.group-details{
     	line-height: 25px;
 	}
 	
+	.settings-table .table td:nth-child(3){
+		min-width: 100px;
+	}
+	
+	.editTablePadCell35 .email{
+		word-break: break-all;
+		
+	}
+	
 }
 
 @media (min-width : 768px) and (max-width : 991px) { /* Tablet */
@@ -7382,4 +7494,14 @@ ul.sources-edit-list > li.group-details{
 
 @media only screen and (-webkit-min-device-pixel-ratio: 2) , only screen and (min-device-pixel-ratio: 2) {
 	
+}
+.social-password-lnk {
+	font-size: 14px;
+}
+.social-signin-btn {
+	width: 360px;
+	margin-bottom: 0;
+}
+.social-password-txt {
+	margin-bottom : 0;
 }

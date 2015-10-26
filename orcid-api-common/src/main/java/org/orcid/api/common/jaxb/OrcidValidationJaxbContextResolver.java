@@ -49,9 +49,11 @@ import org.orcid.jaxb.model.message.ErrorDesc;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.notification.permission.NotificationPermission;
 import org.orcid.jaxb.model.record.Education;
+import org.orcid.jaxb.model.record.Email;
 import org.orcid.jaxb.model.record.Employment;
 import org.orcid.jaxb.model.record.Funding;
 import org.orcid.jaxb.model.record.PeerReview;
+import org.orcid.jaxb.model.record.ResearcherUrl;
 import org.orcid.jaxb.model.record.Work;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -79,6 +81,8 @@ public class OrcidValidationJaxbContextResolver implements ContextResolver<Unmar
         SCHEMA_FILENAME_PREFIX_BY_CLASS.put(PeerReview.class, "record_2.0_rc1/peer-review-");
         SCHEMA_FILENAME_PREFIX_BY_CLASS.put(OrcidMessage.class, "orcid-message-");
         SCHEMA_FILENAME_PREFIX_BY_CLASS.put(GroupIdRecord.class, "group-id-2.0_rc1/group-id-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS.put(ResearcherUrl.class, "record_2.0_rc2/researcher-url-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS.put(Email.class, "record_2.0_rc2/email-");
     }
     private JAXBContext jaxbContext;
     private Map<String, Schema> schemaByPath = new ConcurrentHashMap<>();

@@ -1,14 +1,39 @@
+body{
+    padding: 0;
+    margin: 0;
+    font-family: 'Gill Sans W02', 'Helvetica', sans-serif;
+    font-style: normal;  
+    color: #939598;
+    font-size: 16px;   
+}
+
+a, a:visited{
+    text-decoration: none !important;
+}
+
+#idpSelectContainer{
+    border-top: 10px solid #A6CE39;
+    width: 413px;
+    height: auto;
+}
+
 /* Top level is idpSelectIdPSelector */
 #idpSelectIdPSelector
 {
-    width: 389px;
+    width: 388px;
     text-align: left;
     background-color: #FFFFFF;
-    border: 2px #A40000 solid;
-    padding: 10px;
+    border: 2px solid #A6CE39;
+    padding: 5px;
+    margin: 5px;
+    position: relative;
 }
 
 /* Next down are the idpSelectPreferredIdPTile, idpSelectIdPEntryTile & idpSelectIdPListTile */
+
+#idpSelectIdPEntryTile{
+    padding-left: 5px;
+}
 
 /** 
  * The preferred IdP tile (if present) has a specified height, so
@@ -49,8 +74,9 @@ div.IdPSelectPreferredIdPButton a
 }
 div.IdPSelectTextDiv{
     height: 3.5ex; /* Add some height to separate the text from the boxes */
-    font-size: 15px;
+    font-size: 11px;
     clear: left;
+    color: #338CAF;
 }
 
 div.IdPSelectPreferredIdPImg
@@ -62,6 +88,7 @@ div.IdPSelectPreferredIdPImg
 
 img.IdPSelectIdPImg {
    width:auto;
+   color: #338CAF;
 }
 
 div.IdPSelectPreferredIdPButton img
@@ -95,6 +122,8 @@ div.IdPSelectPreferredIdPButton div.IdPSelectTextDiv
 #idpSelectInput, #idpSelectSelector
 {
     width: 80%;
+    border: 1px solid #939598;
+    font-family: 'Gill Sans W02', 'Helvetica', sans-serif;
 }
 /*
  * For some reason a <select> width includes the border and an
@@ -104,17 +133,25 @@ div.IdPSelectPreferredIdPButton div.IdPSelectTextDiv
 {
     margin-left: 2px;
     margin-right: 2px;
-
+    color: #939598;
 }
 #idpSelectSelectButton, #idpSelectListButton
 {
     margin-left: 5px;
     width: 16%;
+    background: #338CAF;
+    color: #FFF;
+    border: none;
+    border-radius: 3px;
 }
 #idpSelectSelectButton
 {
     padding-left: 2px;
     padding-right: 2px;
+    background: #338CAF;
+    color: #FFF;
+    border: none;
+    border-radius: 3px;
 }
 
 /*
@@ -146,6 +183,15 @@ a.IdPSelectDropDownToggle
 {
     display: inline-block;
     width: 80%;
+    font-size: 11px;
+    margin-top: 5px;
+    color: #338CAF;
+}
+
+a.IdPSelectDropDownToggle:hover,
+a.IdPSelectHelpButton:hover,
+a.idpSelectContainerFooterReturn:hover{
+    color: #A6CE39;
 }
 
 a.IdPSelectHelpButton
@@ -153,6 +199,11 @@ a.IdPSelectHelpButton
     display: inline-block;
     text-align: right;
     width: 20%;
+    font-size: 11px;
+    color: #338CAF;
+    position: absolute;
+    top: 5px;
+    right: 5px;
 }
 
 /**
@@ -203,3 +254,99 @@ div.IdPSelectDropDown div {
     color: white;
 }
 /* END */
+
+
+
+/* Custom style */
+
+#idpSelectContainerHeader{
+    height: 50px;
+    width: 100%;
+}
+
+
+#idpSelectContainerHeader #orcid-logo{
+    background: url('https://orcid.org/static/img/orcid-logo.png') no-repeat 0 0;
+    width: 140px;
+    height: 43px;
+    margin: 5px;
+    float: left;
+}
+
+
+#idpSelectContainerHeader #header{
+    width: 245px;
+    margin-left: 15px;
+    float: left;
+}
+
+#idpSelectContainerHeader #header span{
+    margin-top: 27px;
+    display: block;
+    float: left;
+    width: auto;
+    height: 30px;
+    font-size: 22px;
+}
+
+#idpSelectContainerFooter div{
+    height: 15px;
+    width: 100%;
+}
+
+#idpSelectContainerFooter a.idpSelectContainerFooterReturn{
+    font-size: 11px;
+    color: #3366cc;
+    text-decoration: none;
+    float: right;
+    line-height: 21px;
+    margin-right: 5px;
+}
+
+#idpSelectContainerFooter a.idpSelectContainerFooterReturn span.orcid-mini{
+    background:  url('https://orcid.org/static/img/mini-icon.png') no-repeat 0 0;
+    background-size: 20px 20px;
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+    float: right;
+}
+
+.idpSelectContainerFooterBar{
+    width: 100%;
+    background: #939598;
+    height: 20px;
+    font-size: 10px;
+    color: #FFF;
+    margin-top: 10px;
+    padding-top: 5px;
+}
+
+.idpSelectContainerFooterBar ul{
+    padding: 0;
+    margin: 0 5px;
+    width: 100%;
+}
+
+.idpSelectContainerFooterBar ul li{
+    display: inline-block;
+
+}
+
+.idpSelectContainerFooterBar ul li a{
+    color: #FFF;
+}
+
+.idpSelectContainerFooterBar ul li a:hover,
+.idpSelectContainerFooterBar ul li a:focus{
+    color: #A6CE39;
+}
+
+.idpSelectContainerFooterBar ul li a:visited{
+    color: #FFF;    
+}
+
+.idpSelectContainerFooterBar .orcid-link{
+    float: right;
+    margin-right: 10px;
+}

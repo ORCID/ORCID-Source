@@ -21,6 +21,7 @@ import java.util.List;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
+import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.persistence.dao.ResearcherUrlDao;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,15 +47,32 @@ public class ResearcherUrlDaoImpl extends GenericDaoImpl<ResearcherUrlEntity, Lo
     }
 
     /**
+     * Return the list of researcher urls associated to a specific profile
+     * @param orcid
+     * @param visibility
+     * @return 
+     *          the list of researcher urls associated with the orcid profile
+     * */
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<ResearcherUrlEntity> getResearcherUrls(String orcid, Visibility visibility) {
+        Query query = entityManager.createQuery("FROM ResearcherUrlEntity WHERE orcid = :orcid AND visibility = :visibility");
+        query.setParameter("orcid", orcid);
+        query.setParameter("visibility", visibility);
+        return query.getResultList();
+    }
+    
+    /**
      * Deleted a researcher url from database
      * @param id
      * @return true if the researcher url was successfully deleted
      * */
     @Override
     @Transactional
-    public boolean deleteResearcherUrl(long id) {
-        Query query = entityManager.createQuery("DELETE FROM ResearcherUrlEntity WHERE id = :id");
-        query.setParameter("id", id);
+    public boolean deleteResearcherUrl(String orcid, long id) {
+        Query query = entityManager.createNativeQuery("DELETE FROM researcher_url WHERE orcid = :orcid and id = :id");
+        query.setParameter("orcid", orcid);
+        query.setParameter("id", id);        
         return query.executeUpdate() > 0 ? true : false;
     }
 
@@ -68,25 +86,6 @@ public class ResearcherUrlDaoImpl extends GenericDaoImpl<ResearcherUrlEntity, Lo
         TypedQuery<ResearcherUrlEntity> query = entityManager.createQuery("FROM ResearcherUrlEntity WHERE id = :id", ResearcherUrlEntity.class);
         query.setParameter("id", id);
         return query.getSingleResult();
-    }
-
-    /**
-     * Adds a researcher url to a specific profile
-     * @param orcid
-     * @param url
-     * @param urlName
-     * @param isSSO
-     * @return true if the researcher url was successfully created on database
-     * */
-    @Override
-    @Transactional
-    public boolean addResearcherUrls(String orcid, String url, String urlName) {
-        Query query = entityManager
-                .createNativeQuery("INSERT INTO researcher_url (date_created, last_modified, orcid, url, url_name) VALUES (now(), now(), :orcid, :url, :url_name)");
-        query.setParameter("orcid", orcid);
-        query.setParameter("url", url);
-        query.setParameter("url_name", urlName);
-        return query.executeUpdate() > 0 ? true : false;
     }
     
     /**

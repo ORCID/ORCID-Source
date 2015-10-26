@@ -83,88 +83,6 @@ public class OauthAuthorizationPageTest extends BlackBoxBase {
     }
 
     @Test
-    public void testAuthorizeAndRegister() throws JSONException, InterruptedException, URISyntaxException {
-        webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, client1ClientId, SCOPES, redirectUri));
-        By registerForm = By.id("register");
-        (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(registerForm));
-
-        String time = String.valueOf(System.currentTimeMillis());
-
-        webDriver.findElement(By.id("register-form-given-names")).sendKeys(time);
-        webDriver.findElement(By.id("register-form-email")).sendKeys(time + "@" + time + ".com");
-        webDriver.findElement(By.id("register-form-confirm-email")).sendKeys(time + "@" + time + ".com");
-        webDriver.findElement(By.id("register-form-password")).sendKeys(time + "a");
-        webDriver.findElement(By.id("register-form-confirm-password")).sendKeys(time + "a");
-
-        WebElement terms = webDriver.findElement(By.id("register-form-term-box"));
-        assertNotNull(terms);
-        if (!terms.isSelected()) {
-            terms.click();
-        }
-        // Click the authorize button
-        webDriver.findElement(By.id("register-form-authorize")).click();
-
-        (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(new ExpectedCondition<Boolean>() {
-            public Boolean apply(WebDriver d) {
-                return d.getTitle().equals("ORCID Playground");
-            }
-        });
-
-        String currentUrl = webDriver.getCurrentUrl();
-        Matcher matcher = AUTHORIZATION_CODE_PATTERN.matcher(currentUrl);
-        assertTrue(matcher.find());
-        String authorizationCode = matcher.group(1);
-        assertFalse(PojoUtil.isEmpty(authorizationCode));
-
-        ClientResponse token = getClientResponse(client1ClientId, client1ClientSecret, SCOPES, redirectUri, authorizationCode);
-        assertEquals(200, token.getStatus());
-        String body = token.getEntity(String.class);
-        JSONObject jsonObject = new JSONObject(body);
-        String accessToken = (String) jsonObject.get("access_token");
-        assertNotNull(accessToken);
-
-        String scopes = (String) jsonObject.get("scope");
-        assertEquals(SCOPES, scopes);
-    }
-
-    @Test
-    public void stateParamIsPersistentAndReturnedOnRegisterTest() throws JSONException, InterruptedException, URISyntaxException {
-        webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s&state=%s", webBaseUrl, client1ClientId, SCOPES,
-                redirectUri, STATE_PARAM));
-        By registerForm = By.id("register");
-        (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(registerForm));
-
-        String time = String.valueOf(System.currentTimeMillis());
-
-        webDriver.findElement(By.id("register-form-given-names")).sendKeys(time);
-        webDriver.findElement(By.id("register-form-email")).sendKeys(time + "@" + time + ".com");
-        webDriver.findElement(By.id("register-form-confirm-email")).sendKeys(time + "@" + time + ".com");
-        webDriver.findElement(By.id("register-form-password")).sendKeys(time + "a");
-        webDriver.findElement(By.id("register-form-confirm-password")).sendKeys(time + "a");
-
-        WebElement terms = webDriver.findElement(By.id("register-form-term-box"));
-        assertNotNull(terms);
-        if (!terms.isSelected()) {
-            terms.click();
-        }
-        // Click the authorize button
-        webDriver.findElement(By.id("register-form-authorize")).click();
-
-        (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(new ExpectedCondition<Boolean>() {
-            public Boolean apply(WebDriver d) {
-                return d.getTitle().equals("ORCID Playground");
-            }
-        });
-
-        String currentUrl = webDriver.getCurrentUrl();
-        Matcher matcher = STATE_PARAM_PATTERN.matcher(currentUrl);
-        assertTrue(matcher.find());
-        String stateParam = matcher.group(1);
-        assertFalse(PojoUtil.isEmpty(stateParam));
-        assertEquals(STATE_PARAM, stateParam);
-    }
-
-    @Test
     public void stateParamIsPersistentAndReturnedOnLoginTest() throws JSONException, InterruptedException, URISyntaxException {
         webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s&state=%s", webBaseUrl, client1ClientId, SCOPES,
                 redirectUri, STATE_PARAM));
@@ -429,8 +347,9 @@ public class OauthAuthorizationPageTest extends BlackBoxBase {
 
         // Then, ask again for permissions over other scopes. Note that the user
         // is already logged in
-        webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, client1ClientId,
-                ScopePathType.AFFILIATIONS_CREATE.getContent(), redirectUri));
+        String url = String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, client1ClientId,
+                ScopePathType.AFFILIATIONS_CREATE.getContent(), redirectUri);
+        webDriver.get(url);
 
         By authorizeElementLocator = By.id("authorize");
         (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(authorizeElementLocator));

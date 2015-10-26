@@ -297,8 +297,8 @@ public class AdminController extends BaseController {
         return result;
     }
 
-    @RequestMapping(value = "/find-id", method = RequestMethod.GET)
-    public @ResponseBody List<ProfileDetails> findIdByEmail(@RequestParam("csvEmails") String csvEmails) {
+    @RequestMapping(value = "/find-id.json", method = RequestMethod.POST)
+    public @ResponseBody List<ProfileDetails> findIdByEmail(@RequestBody String csvEmails) {
         Map<String, String> emailMap = findIdByEmailHelper(csvEmails);
         List<ProfileDetails> profileDetList = new ArrayList<ProfileDetails>();
         ProfileDetails tempObj;
@@ -411,9 +411,6 @@ public class AdminController extends BaseController {
     /**
      * Admin switch user
      * */
-    /**
-     * Admin switch user
-     * */
     @RequestMapping(value = "/admin-switch-user", method = RequestMethod.GET)
     public @ResponseBody Map<String, String> adminSwitchUser(@ModelAttribute("orcidOrEmail") String orcidOrEmail, RedirectAttributes redirectAttributes) {
         if (StringUtils.isNotBlank(orcidOrEmail))
@@ -450,8 +447,8 @@ public class AdminController extends BaseController {
     /**
      * Admin verify email
      * */
-    @RequestMapping(value = "/admin-verify-email", method = RequestMethod.GET)
-    public @ResponseBody String adminVerifyEmail(@RequestParam("email") String email) {
+    @RequestMapping(value = "/admin-verify-email.json", method = RequestMethod.POST)
+    public @ResponseBody String adminVerifyEmail(@RequestBody String email) {
         String result = getMessage("admin.verify_email.success", email);
         if (emailManager.emailExists(email)) {
             emailManager.verifyEmail(email);

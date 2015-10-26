@@ -16,6 +16,7 @@
  */
 package org.orcid.persistence.dao.impl;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -206,7 +207,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
      */
     @SuppressWarnings("unchecked")
     @Override
-    public List<String> findByEventTypes(int maxResults, List<ProfileEventType> pets, Collection<String> orcidsToExclude, boolean not) {
+    public List<String> findByMissingEventTypes(int maxResults, List<ProfileEventType> pets, Collection<String> orcidsToExclude, boolean not) {
         /*
          * builder produces a query that will look like the following
          * 
@@ -398,10 +399,15 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         return result;
     }
 
+    @SuppressWarnings("unchecked")
     public Date retrieveLastModifiedDate(String orcid) {
-        TypedQuery<Date> query = entityManager.createQuery("select lastModified from ProfileEntity where orcid = :orcid", Date.class);
-        query.setParameter("orcid", orcid);
-        return query.getSingleResult();
+        Query nativeQuery = entityManager.createNativeQuery("Select p.last_modified FROM profile p WHERE p.orcid =:orcid");
+        nativeQuery.setParameter("orcid", orcid);
+        List<Timestamp> tsList = nativeQuery.getResultList();
+        if (tsList != null && !tsList.isEmpty()) {
+            return new Date(tsList.get(0).getTime());
+        }
+        return null;
     }
 
     @Override
@@ -524,12 +530,13 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     @Override
     @Transactional
-    public void updatePreferences(String orcid, boolean sendChangeNotifications, boolean sendOrcidNews, boolean sendMemberUpdateRequests,
-            Visibility activitiesVisibilityDefault, boolean enableDeveloperTools, float sendEmailFrequencyDays) {
+    public void updatePreferences(String orcid, boolean sendChangeNotifications, boolean sendAdministrativeChangeNotifications, boolean sendOrcidNews,
+            boolean sendMemberUpdateRequests, Visibility activitiesVisibilityDefault, boolean enableDeveloperTools, float sendEmailFrequencyDays) {
         Query updateQuery = entityManager
-                .createQuery("update ProfileEntity set lastModified = now(), sendChangeNotifications = :sendChangeNotifications, sendOrcidNews = :sendOrcidNews, sendMemberUpdateRequests = :sendMemberUpdateRequests, activitiesVisibilityDefault = :activitiesVisibilityDefault, enableDeveloperTools = :enableDeveloperTools, sendEmailFrequencyDays = :sendEmailFrequencyDays where orcid = :orcid");
+                .createQuery("update ProfileEntity set lastModified = now(), sendChangeNotifications = :sendChangeNotifications, sendAdministrativeChangeNotifications = :sendAdministrativeChangeNotifications, sendOrcidNews = :sendOrcidNews, sendMemberUpdateRequests = :sendMemberUpdateRequests, activitiesVisibilityDefault = :activitiesVisibilityDefault, enableDeveloperTools = :enableDeveloperTools, sendEmailFrequencyDays = :sendEmailFrequencyDays where orcid = :orcid");
         updateQuery.setParameter("orcid", orcid);
         updateQuery.setParameter("sendChangeNotifications", sendChangeNotifications);
+        updateQuery.setParameter("sendAdministrativeChangeNotifications", sendAdministrativeChangeNotifications);
         updateQuery.setParameter("sendOrcidNews", sendOrcidNews);
         updateQuery.setParameter("sendMemberUpdateRequests", sendMemberUpdateRequests);
         updateQuery.setParameter("activitiesVisibilityDefault", activitiesVisibilityDefault);
@@ -678,7 +685,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     @Transactional
     public boolean removeProfile(String orcid) {
         ProfileEntity toDelete = this.find(orcid);
-        if (toDelete.getDeactivationDate() != null) {            
+        if (toDelete.getDeactivationDate() != null) {
             this.remove(toDelete);
             return true;
         }
@@ -735,27 +742,27 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         return (result == null) ? false : true;
     }
 
-	@Override
-	@Transactional
-	public void updateIpAddress(String orcid, String ipAddress) {
-		Query query = entityManager.createNativeQuery("update profile set last_modified=now(), indexing_status='REINDEX', user_last_ip=:ipAddr where orcid=:orcid");
+    @Override
+    @Transactional
+    public void updateIpAddress(String orcid, String ipAddress) {
+        Query query = entityManager.createNativeQuery("update profile set last_modified=now(), indexing_status='REINDEX', user_last_ip=:ipAddr where orcid=:orcid");
         query.setParameter("orcid", orcid);
         query.setParameter("ipAddr", ipAddress);
         query.executeUpdate();
-	}
+    }
 
-	@Override
-	@Transactional
-	public boolean reviewProfile(String orcid) {
-		return changeReviewedStatus(orcid, true);
-	}
+    @Override
+    @Transactional
+    public boolean reviewProfile(String orcid) {
+        return changeReviewedStatus(orcid, true);
+    }
 
-	@Override
-	@Transactional
-	public boolean unreviewProfile(String orcid) {
-		return changeReviewedStatus(orcid, false);
-	}
-	
+    @Override
+    @Transactional
+    public boolean unreviewProfile(String orcid) {
+        return changeReviewedStatus(orcid, false);
+    }
+
     @Transactional
     private boolean changeReviewedStatus(String orcid, boolean reviewFlag) {
         Query query = entityManager.createNativeQuery("update profile set last_modified=now(), indexing_status='REINDEX', reviewed=:reviewed where orcid=:orcid");

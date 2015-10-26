@@ -29,6 +29,14 @@ if (typeof jQuery.ui == 'undefined') {
     document.write(unescape("%3Cscript src='${staticCdn}/javascript/jqueryui/1.10.0/jquery-ui.min.js' type='text/javascript'%3E%3C/script%3E"));
 }
 </script>
+<script type="text/javascript" >
+    // CSRF
+    var token = $("meta[name='_csrf']").attr("content");
+    var header = $("meta[name='_csrf_header']").attr("content");
+    $(document).ajaxSend(function(e, xhr, options) {
+        xhr.setRequestHeader(header, token);
+    });
+</script>
 
 <script type="text/javascript" src="${staticCdn}/javascript/typeahead/0.9.3/typeahead.min.js"></script>
 
@@ -47,12 +55,23 @@ if (typeof angular == 'undefined') {
     document.write(unescape("%3Cscript src='${staticCdn}/javascript/angularjs/1.2.28/angular-sanitize.min.js' type='text/javascript'%3E%3C/script%3E"));    
 }
 </script>
-<script src="//www.google.com/recaptcha/api.js?onload=vcRecaptchaApiLoaded&render=explicit"></script>
+<script type="text/javascript" src="${staticCdn}/javascript/script.js?v=${ver}"></script>
+
+<script type="text/javascript">
+	var lang = OrcidCookie.getCookie('locale_v3');
+	var script = document.createElement("script");
+	script.type = "text/javascript";
+    script.src = "https://www.google.com/recaptcha/api.js?onload=vcRecaptchaApiLoaded&render=explicit&hl=" + lang;
+    document.body.appendChild(script);
+</script>
+
+
+
 <script src="${staticCdn}/javascript/angularjs/1.2.28/angular-recaptcha.min.js"></script>
 
 <script type="text/javascript" src="${staticCdn}/javascript/angularOrcid.js?v=${ver}"></script>
 
-<script type="text/javascript" src="${staticCdn}/javascript/script.js?v=${ver}"></script>
+
 
 <script type="text/javascript">
     var MTIProjectId='078e0d2f-8275-4c25-8aa9-5d902d8e4491';
@@ -65,5 +84,9 @@ if (typeof angular == 'undefined') {
    })();
 </script>
 
-<script src="https://www.google.com/recaptcha/api.js"></script>
-<script src="https://badges.mozillascience.org/widgets/paper-badger-widget.js"></script>
+<script type="text/javascript">
+   var script = document.createElement("script");
+   script.type = "text/javascript";
+   script.src = "https://badges.mozillascience.org/widgets/paper-badger-widget.js";
+   document.body.appendChild(script);
+</script>

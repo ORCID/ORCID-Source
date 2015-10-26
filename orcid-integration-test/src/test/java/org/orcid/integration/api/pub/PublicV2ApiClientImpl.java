@@ -18,6 +18,7 @@ package org.orcid.integration.api.pub;
 
 import static org.orcid.core.api.OrcidApiConstants.ACTIVITIES;
 import static org.orcid.core.api.OrcidApiConstants.PUTCODE;
+import static org.orcid.core.api.OrcidApiConstants.RESEARCHER_URLS;
 import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_XML;
 import static org.orcid.core.api.OrcidApiConstants.EDUCATION;
 import static org.orcid.core.api.OrcidApiConstants.EDUCATION_SUMMARY;
@@ -29,6 +30,7 @@ import static org.orcid.core.api.OrcidApiConstants.WORK;
 import static org.orcid.core.api.OrcidApiConstants.WORK_SUMMARY;
 import static org.orcid.core.api.OrcidApiConstants.PEER_REVIEW;
 import static org.orcid.core.api.OrcidApiConstants.PEER_REVIEW_SUMMARY;
+import static org.orcid.core.api.OrcidApiConstants.EMAIL;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -146,6 +148,21 @@ public class PublicV2ApiClientImpl {
     public ClientResponse viewPeerReviewSummaryXml(String orcid, String putCode, String token) {
         URI uri = UriBuilder.fromPath(PEER_REVIEW_SUMMARY + PUTCODE).build(orcid, putCode);
         return getClientReponse(uri, token);
+    }    
+    
+    public ClientResponse viewResearcherUrlsXML(String orcid) {
+        URI getURI = UriBuilder.fromPath(RESEARCHER_URLS).build(orcid);
+        return getClientReponse(getURI, null);        
+    }
+    
+    public ClientResponse viewResearcherUrlXML(String orcid, String putCode) {
+        URI getURI = UriBuilder.fromPath(RESEARCHER_URLS + PUTCODE).build(orcid, putCode);
+        return getClientReponse(getURI, null);        
+    }     
+    
+    public ClientResponse viewEmailXML(String orcid) {
+        URI getURI = UriBuilder.fromPath(EMAIL).build(orcid);
+        return getClientReponse(getURI, null); 
     }
     
     private ClientResponse getClientReponse(URI uri, String token) {

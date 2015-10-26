@@ -129,6 +129,9 @@ public class OrcidProfile implements Serializable {
     
     @XmlTransient
     private boolean reviewed = false;
+    
+    @XmlTransient
+    private int countTokens = 0;
 
     /**
      * Gets the value of the orcid property.
@@ -655,5 +658,13 @@ public class OrcidProfile implements Serializable {
 
 	public void setReviewed(boolean reviewed) {
 		this.reviewed = reviewed;
+	}
+
+	public int getCountTokens() {
+		return countTokens;
+	}
+
+	public void setCountTokens(int countTokens) {
+		this.countTokens = countTokens;
 	}
 }

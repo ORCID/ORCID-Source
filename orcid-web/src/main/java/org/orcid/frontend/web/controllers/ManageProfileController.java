@@ -28,6 +28,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.apache.commons.codec.binary.Base64;
@@ -44,6 +45,7 @@ import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileKeywordManager;
 import org.orcid.core.manager.ResearcherUrlManager;
+import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.frontend.web.forms.ChangePersonalInfoForm;
 import org.orcid.frontend.web.forms.ChangeSecurityQuestionForm;
 import org.orcid.frontend.web.forms.ManagePasswordOptionsForm;
@@ -73,16 +75,18 @@ import org.orcid.password.constants.OrcidPasswordConstants;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.GivenPermissionToDao;
 import org.orcid.persistence.dao.ProfileDao;
-import org.orcid.persistence.dao.ShibbolethAccountDao;
+import org.orcid.persistence.dao.UserConnectionDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
+import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileSummaryEntity;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
-import org.orcid.persistence.jpa.entities.ShibbolethAccountEntity;
+import org.orcid.persistence.jpa.entities.UserconnectionEntity;
+import org.orcid.pojo.ApplicationSummary;
 import org.orcid.pojo.ChangePassword;
 import org.orcid.pojo.ManageDelegate;
-import org.orcid.pojo.ManageShibbolethAccount;
+import org.orcid.pojo.ManageSocialAccount;
 import org.orcid.pojo.SecurityQuestion;
 import org.orcid.pojo.ajaxForm.BiographyForm;
 import org.orcid.pojo.ajaxForm.CountryForm;
@@ -154,13 +158,16 @@ public class ManageProfileController extends BaseWorkspaceController {
     private EmailDao emailDao;
 
     @Resource
-    private ShibbolethAccountDao shibbolethAccountDao;
+    private UserConnectionDao userConnectionDao;
 
     @Resource
     private OrcidSocialManager orcidSocialManager;
 
     @Resource
     private EmailManager emailManager;
+    
+    @Resource
+    private OrcidOauth2TokenDetailService orcidOauth2TokenService;
 
     @Resource(name = "profileEntityCacheManager")
     ProfileEntityCacheManager profileEntityCacheManager;
@@ -326,34 +333,32 @@ public class ManageProfileController extends BaseWorkspaceController {
         ModelAndView mav = new ModelAndView("redirect:/account/view-account-settings");
         return mav;
     }
-
-    @RequestMapping(value = "/shibbolethAccounts.json", method = RequestMethod.GET)
-    public @ResponseBody List<ShibbolethAccountEntity> getShibbolethAccountsJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
+    
+    @RequestMapping(value = "/socialAccounts.json", method = RequestMethod.GET)
+    public @ResponseBody List<UserconnectionEntity> getSocialAccountsJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
         String orcid = getCurrentUserOrcid();
-        List<ShibbolethAccountEntity> shibbolethAccounts = shibbolethAccountDao.findByOrcid(orcid);
-        return shibbolethAccounts;
+        List<UserconnectionEntity> userConnectionEntities = userConnectionDao.findByOrcid(orcid);
+        return userConnectionEntities;
     }
     
-    @RequestMapping(value = "/revokeShibbolethAccount.json", method = RequestMethod.POST)
-    public @ResponseBody ManageShibbolethAccount revokeShibbolethAccount(@RequestBody ManageShibbolethAccount manageShibbolethAccount) {
+    @RequestMapping(value = "/revokeSocialAccount.json", method = RequestMethod.POST)
+    public @ResponseBody ManageSocialAccount revokeSocialAccount(@RequestBody ManageSocialAccount manageSocialAccount) {
         // Check password
-        String password = manageShibbolethAccount.getPassword();
+        String password = manageSocialAccount.getPassword();
         if (StringUtils.isBlank(password) || !encryptionManager.hashMatches(password, getEffectiveProfile().getPassword())) {
-            manageShibbolethAccount.getErrors().add(getMessage("check_password_modal.incorrect_password"));
-            return manageShibbolethAccount;
+        	manageSocialAccount.getErrors().add(getMessage("check_password_modal.incorrect_password"));
+            return manageSocialAccount;
         }
-        String orcid = getCurrentUserOrcid();
-        shibbolethAccountDao.removeByIdAndOrcid(manageShibbolethAccount.getIdToManage(), orcid);
-        return manageShibbolethAccount;
+        userConnectionDao.remove(manageSocialAccount.getIdToManage());
+        return manageSocialAccount;
     }
 
     @RequestMapping(value = "/revoke-application")
-    public ModelAndView revokeApplication(@RequestParam("applicationOrcid") String applicationOrcid,
-            @RequestParam(value = "scopePaths", required = false, defaultValue = "") String[] scopePaths) {
+    public @ResponseBody boolean revokeApplication(@RequestParam("applicationOrcid") String applicationOrcid,
+            @RequestParam(value = "scopePaths", required = false, defaultValue = "") ScopePathType[] scopePaths) {
         String userOrcid = getCurrentUserOrcid();
-        orcidProfileManager.revokeApplication(userOrcid, applicationOrcid, ScopePathType.getScopesFromStrings(Arrays.asList(scopePaths)));
-        ModelAndView mav = new ModelAndView("redirect:/account?activeTab=application-tab");
-        return mav;
+        orcidProfileManager.revokeApplication(userOrcid, applicationOrcid, Arrays.asList(scopePaths));
+        return true;
     }
 
     @RequestMapping(value = "/revoke-application-from-summary-view", method = RequestMethod.GET)
@@ -537,7 +542,7 @@ public class ManageProfileController extends BaseWorkspaceController {
         profile.getOrcidInternal().getPreferences();
         return profile.getOrcidInternal().getPreferences() != null ? profile.getOrcidInternal().getPreferences() : new Preferences();
     }
-
+    
     @RequestMapping(value = "/preferences.json", method = RequestMethod.POST)
     public @ResponseBody Preferences setDefaultPreference(HttpServletRequest request, @RequestBody Preferences preferences) {
         orcidProfileManager.updatePreferences(getCurrentUserOrcid(), preferences);
@@ -604,7 +609,7 @@ public class ManageProfileController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = "/confirm-deactivate-orcid/{encryptedEmail}", method = RequestMethod.GET)
-    public ModelAndView confirmDeactivateOrcidAccount(HttpServletRequest request, @PathVariable("encryptedEmail") String encryptedEmail,
+    public ModelAndView confirmDeactivateOrcidAccount(HttpServletRequest request, HttpServletResponse response, @PathVariable("encryptedEmail") String encryptedEmail,
             RedirectAttributes redirectAttributes) throws Exception {
         ModelAndView result = null;
         String decryptedEmail = encryptionManager.decryptForExternalUse(new String(Base64.decodeBase64(encryptedEmail), "UTF-8"));
@@ -616,7 +621,8 @@ public class ManageProfileController extends BaseWorkspaceController {
 
         if (decryptedEmail.equals(primaryEmail)) {
             orcidProfileManager.deactivateOrcidProfile(profile);
-            result = new ModelAndView("redirect:/signout#deactivated");
+            logoutCurrentUser(request, response);
+            result = new ModelAndView("redirect:/signin#deactivated");
         } else {
             redirectAttributes.addFlashAttribute("emailDoesntMatch", true);
             return new ModelAndView("redirect:/my-orcid");
@@ -1082,6 +1088,14 @@ public class ManageProfileController extends BaseWorkspaceController {
         }
 
         return mav;
+    }
+    
+    @RequestMapping(value = { "/get-trusted-orgs" }, method = RequestMethod.GET)
+    public @ResponseBody List<ApplicationSummary> getTrustedOrgs() {
+    	String orcid = getCurrentUserOrcid();
+    	List<OrcidOauth2TokenDetail> tokenDetails = orcidOauth2TokenService.findByUserName(orcid);
+    	List<ApplicationSummary> trustedOrgsList = profileEntityManager.getApplications(tokenDetails);
+    	return trustedOrgsList;
     }
 
     /**

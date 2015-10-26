@@ -16,8 +16,7 @@
  */
 package org.orcid.integration.blackbox.api;
 
-import static org.hamcrest.core.AnyOf.anyOf;
-import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -65,6 +64,7 @@ import org.orcid.jaxb.model.record.summary.EducationSummary;
 import org.orcid.jaxb.model.record.summary.EmploymentSummary;
 import org.orcid.jaxb.model.record.summary.FundingGroup;
 import org.orcid.jaxb.model.record.summary.FundingSummary;
+import org.orcid.jaxb.model.record.summary.Identifier;
 import org.orcid.jaxb.model.record.summary.PeerReviewGroup;
 import org.orcid.jaxb.model.record.summary.PeerReviewSummary;
 import org.orcid.jaxb.model.record.summary.WorkGroup;
@@ -120,8 +120,8 @@ public class MemberV2Test extends BlackBoxBase {
     @After
     public void after() throws JSONException, InterruptedException, URISyntaxException {
         cleanActivities();
-    }
-
+    }    
+    
     @Test
     public void testGetNotificationToken() throws JSONException, InterruptedException {
         String accessToken = getAccessToken(this.client1ClientId, this.client1ClientSecret);
@@ -767,7 +767,6 @@ public class MemberV2Test extends BlackBoxBase {
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), postResponse.getStatus());
     }    
     
-    @SuppressWarnings("unchecked")
     @Test
     public void testWorksWithPartOfRelationshipDontGetGrouped () throws JSONException, InterruptedException, URISyntaxException {
         long time = System.currentTimeMillis();
@@ -779,7 +778,7 @@ public class MemberV2Test extends BlackBoxBase {
         work1.setVisibility(Visibility.PUBLIC);
         work1.getExternalIdentifiers().getExternalIdentifier().clear();
         org.orcid.jaxb.model.record.WorkTitle title1 = new org.orcid.jaxb.model.record.WorkTitle();
-        title1.setTitle(new Title("Work # 1"));
+        title1.setTitle(new Title("Work # 1" + time));
         work1.setWorkTitle(title1);
         WorkExternalIdentifier wExtId1 = new WorkExternalIdentifier();
         wExtId1.setWorkExternalIdentifierId(new WorkExternalIdentifierId("Work Id " + time));
@@ -793,7 +792,7 @@ public class MemberV2Test extends BlackBoxBase {
         work2.setPutCode(null);
         work2.setVisibility(Visibility.PUBLIC);
         org.orcid.jaxb.model.record.WorkTitle title2 = new org.orcid.jaxb.model.record.WorkTitle();
-        title2.setTitle(new Title("Work # 2"));
+        title2.setTitle(new Title("Work # 2" + time));
         work2.setWorkTitle(title2);
         work2.getExternalIdentifiers().getExternalIdentifier().clear();
         WorkExternalIdentifier wExtId2 = new WorkExternalIdentifier();
@@ -808,7 +807,7 @@ public class MemberV2Test extends BlackBoxBase {
         work3.setPutCode(null);
         work3.setVisibility(Visibility.PUBLIC);
         org.orcid.jaxb.model.record.WorkTitle title3 = new org.orcid.jaxb.model.record.WorkTitle();
-        title3.setTitle(new Title("Work # 3"));
+        title3.setTitle(new Title("Work # 3" + time));
         work3.setWorkTitle(title3);        
         work3.getExternalIdentifiers().getExternalIdentifier().clear();
         WorkExternalIdentifier wExtId3 = new WorkExternalIdentifier();
@@ -837,54 +836,48 @@ public class MemberV2Test extends BlackBoxBase {
         ActivitiesSummary activities = activitiesResponse.getEntity(ActivitiesSummary.class);
         assertNotNull(activities);
         assertFalse(activities.getWorks().getWorkGroup().isEmpty());
-        assertEquals(2, activities.getWorks().getWorkGroup().size());
         
-        WorkGroup group0 = activities.getWorks().getWorkGroup().get(0);
-        WorkGroup group1 = activities.getWorks().getWorkGroup().get(1);
+        WorkGroup work1Group = null; 
+        WorkGroup work2Group = null;
+        WorkGroup work3Group = null;
         
-        boolean group0isOk = false;
-        boolean group1isOk = false;
-        
-        //Check if group0 contain the non grouped work
-        if(group0.getWorkSummary().size() == 1) {
-            assertNotNull(group0.getIdentifiers().getIdentifier());            
-            assertEquals(1, group0.getIdentifiers().getIdentifier().size());
-            assertNotNull(group0.getWorkSummary());
-            assertNotNull(group0.getWorkSummary().get(0));
-            assertEquals("Work # 2", group0.getWorkSummary().get(0).getTitle().getTitle().getContent());
-            group0isOk = true;
-        } else {
-            assertNotNull(group0.getIdentifiers().getIdentifier());
-            assertEquals(1, group0.getIdentifiers().getIdentifier().size());
-            assertEquals("Work Id " + time, group0.getIdentifiers().getIdentifier().get(0).getExternalIdentifierId());
-            assertNotNull(group0.getWorkSummary());            
-            assertEquals(2, group0.getWorkSummary().size());
-            assertThat(group0.getWorkSummary().get(0).getTitle().getTitle().getContent(), anyOf(is("Work # 1"), is("Work # 3")));
-            assertThat(group0.getWorkSummary().get(1).getTitle().getTitle().getContent(), anyOf(is("Work # 1"), is("Work # 3")));
-            group0isOk = true;
-        }
-                        
-        //Check if group1 contain the non grouped work
-        if(group1.getWorkSummary().size() == 1) {
-            assertNotNull(group1.getIdentifiers().getIdentifier());
-            assertEquals(0, group1.getIdentifiers().getIdentifier().size());            
-            assertNotNull(group1.getWorkSummary());
-            assertNotNull(group1.getWorkSummary().get(0));            
-            assertEquals("Work # 2", group1.getWorkSummary().get(0).getTitle().getTitle().getContent());
-            group1isOk = true;
-        } else {
-            assertNotNull(group1.getIdentifiers().getIdentifier());
-            assertEquals(1, group1.getIdentifiers().getIdentifier().size());
-            assertEquals("Work Id " + time, group1.getIdentifiers().getIdentifier().get(0).getExternalIdentifierId());
-            assertNotNull(group1.getWorkSummary());            
-            assertEquals(2, group1.getWorkSummary().size());
-            assertThat(group1.getWorkSummary().get(0).getTitle().getTitle().getContent(), anyOf(is("Work # 1"), is("Work # 3")));
-            assertThat(group1.getWorkSummary().get(1).getTitle().getTitle().getContent(), anyOf(is("Work # 1"), is("Work # 3")));
-            group1isOk = true;
+        boolean work1found = false;
+        boolean work2found = false;
+        boolean work3found = false;
+                                
+        for(WorkGroup group : activities.getWorks().getWorkGroup()) {
+            if(group.getIdentifiers().getIdentifier() == null || group.getIdentifiers().getIdentifier().isEmpty()) {
+                for(WorkSummary summary : group.getWorkSummary()) {
+                    String title = summary.getTitle().getTitle().getContent(); 
+                    if (("Work # 2" + time).equals(title)) {
+                        work2found = true;
+                        work2Group = group;
+                    }
+                }
+            } else {
+                for(Identifier id : group.getIdentifiers().getIdentifier()) {
+                    //If it is the ID is the one we are looking for
+                    if(id.getExternalIdentifierId().equals("Work Id " + time)) {                    
+                        for(WorkSummary summary : group.getWorkSummary()) {
+                            String title = summary.getTitle().getTitle().getContent(); 
+                            if(("Work # 1" + time).equals(title)) {
+                                work1found = true;
+                                work1Group = group;
+                            } else if(("Work # 3" + time).equals(title)) {
+                                work3found = true;
+                                work3Group = group;
+                            }
+                        }
+                    }
+                }
+            }            
         }
         
-        assertTrue(group0isOk);
-        assertTrue(group1isOk);
+        assertTrue(work1found && work2found && work3found);
+        //Check that work # 1 and Work # 3 are in the same work
+        assertEquals(work1Group, work3Group);
+        //Check that work # 2 is not in the same group than group # 1
+        assertThat(work2Group, not(work1Group));
     }
     
     @Test

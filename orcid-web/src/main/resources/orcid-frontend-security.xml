@@ -119,6 +119,7 @@
 	<sec:http pattern="/oauth/.*" access-denied-page="/oauth/signin"
 		access-decision-manager-ref="accessDecisionManager" create-session="ifRequired"
 		path-type="regex">
+		<sec:csrf/>
 		<sec:intercept-url pattern="/oauth/login(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/oauth/signin(\?.*)?"
@@ -147,15 +148,16 @@
 			
 		<sec:intercept-url pattern="/oauth/.*" access="ROLE_USER" />		
 		<sec:form-login authentication-failure-url="/oauth/signin"
-			login-page="/oauth/signin" login-processing-url="/signin/auth"
+			login-page="${org.orcid.core.baseUri}/oauth/signin" login-processing-url="/signin/auth"
 			username-parameter="userId" password-parameter="password"
-			default-target-url="/my-orcid" />
+			default-target-url="${org.orcid.core.baseUri}/my-orcid" />
 		<sec:session-management session-fixation-protection="migrateSession"/>
 	</sec:http>
 	
 	<sec:http pattern="/shibboleth/.*" access-denied-page="/shibboleth/signin"
 		access-decision-manager-ref="accessDecisionManager" create-session="ifRequired"
 		path-type="regex">
+		<sec:csrf/>
 		<sec:intercept-url pattern="/shibboleth/signin(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/shibboleth/.*" access="ROLE_USER" />		
@@ -165,14 +167,32 @@
 			default-target-url="/shibboleth/link" />
 		<sec:session-management session-fixation-protection="migrateSession"/>
 	</sec:http>
+	
+	<sec:http pattern="/social/.*" access-denied-page="/signin"
+		access-decision-manager-ref="accessDecisionManager" create-session="ifRequired"
+		path-type="regex">
+		<sec:csrf/>
+		<sec:intercept-url pattern="/social/access(\?.*)?"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/social/.*" access="ROLE_USER" />		
+		<sec:form-login authentication-failure-url="/social/access"
+			login-page="/social/access" login-processing-url="/signin/auth"
+			username-parameter="userId" password-parameter="password" />
+		<sec:session-management session-fixation-protection="migrateSession"/>
+	</sec:http>
 
 	<sec:http access-denied-page="/signin"
 		access-decision-manager-ref="accessDecisionManager" create-session="ifRequired"
 		path-type="regex">
+		<sec:csrf/>
 		<sec:custom-filter position="SWITCH_USER_FILTER" ref="switchUserProcessingFilter" />
 		<sec:intercept-url pattern="/statistics/liveids.json(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/statistics(/)?$"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/notifications/frequencies/[^\/\?#:]*(\?.*)?"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/notifications/frequencies/[^\/\?#:]*/email-frequencies.json(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX](\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
@@ -185,7 +205,9 @@
 		<sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/fundings.json(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />						
 		<sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/getWorkInfo.json(\?.*)?"
- 	      	access="IS_AUTHENTICATED_ANONYMOUSLY" /> 	      	
+ 	      	access="IS_AUTHENTICATED_ANONYMOUSLY" /> 	      	 	      	
+		<sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/peer-reviews.json(\?.*)?"
+ 	      	access="IS_AUTHENTICATED_ANONYMOUSLY" /> 	      	 	      	 	      	
  	    <sec:intercept-url pattern="/public/group/(ringgold:|issn:|orcid-generated:|fundref:).*"
  	      	access="IS_AUTHENTICATED_ANONYMOUSLY" /> 	      	
 		<sec:intercept-url pattern="/lang.json(.*)?"
@@ -193,6 +215,10 @@
 		<sec:intercept-url pattern="/login(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/signin(\?.*)?"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/signin/facebook(\?.*)?"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/signin/google(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/userStatus.json(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
@@ -242,6 +268,8 @@
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/oauth-complete-signup(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/inbox/encrypted/.*?/action?"
+            access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/orgs/.*" 
 			access="ROLE_USER"/>
 		<sec:intercept-url pattern="/developer-tools" 
@@ -273,11 +301,8 @@
 			login-processing-url="/signin/auth" -->
 		<!-- username-parameter="userId" password-parameter="password" default-target-url="/my-orcid"/> -->
 
-		<sec:logout logout-success-url="/signin" logout-url="/signout"
-			invalidate-session="true" />
-
 		<sec:form-login login-processing-url="/signin/auth.json"
-			login-page="/signin" authentication-success-handler-ref="ajaxAuthenticationSuccessHandler"
+			login-page="${org.orcid.core.baseUri}/signin" authentication-success-handler-ref="ajaxAuthenticationSuccessHandler"
 			authentication-failure-handler-ref="ajaxAuthenticationFailureHandler"
 			username-parameter="userId" password-parameter="password" />
 		<sec:session-management session-fixation-protection="migrateSession"/>
@@ -292,9 +317,9 @@
 
 	<!-- <bean id="termsAndConditionsAcceptanceCheckFilter" class="org.orcid.frontend.web.filters.TermsAndConditionsAcceptanceCheckFilter"/> -->
 
-	<bean id="corsFilter" class="org.orcid.core.web.filters.CorsFilter" />
+	<bean id="corsFilterWeb" class="org.orcid.core.web.filters.CorsFilterWeb" />
 
-    <bean id="jsonpCallbackFilter" class="org.orcid.core.web.filters.JsonpCallbackFilter" />
+    <bean id="jsonpCallbackFilterWeb" class="org.orcid.core.web.filters.JsonpCallbackFilterWeb" />
 		
 	<bean id="oauthAccessDeniedHandler" class="org.springframework.security.oauth2.provider.error.OAuth2AccessDeniedHandler" />
 	

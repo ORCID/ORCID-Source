@@ -84,7 +84,7 @@ public class ExternalIdentifier implements Serializable {
      *            allowed object is {@link String }
      * 
      */
-    public void setExternalIdType(String value) {
+    public void setExternalIdentifierType(String value) {
         this.externalIdentifierType = value;
     }
 

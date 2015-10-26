@@ -27,6 +27,7 @@ import javax.ws.rs.core.Response;
 import org.codehaus.jettison.json.JSONException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.orcid.integration.api.helper.APIRequestType;
 import org.orcid.integration.api.helper.OauthHelper;
 import org.orcid.integration.api.pub.PublicV1ApiClientImpl;
 import org.orcid.jaxb.model.message.OrcidMessage;
@@ -166,7 +167,7 @@ public class PublicV1Test {
     
     @Test
     public void testPublicSearchUsingPublicClient() throws InterruptedException, JSONException {
-        String accessToken = oauthHelper.getClientCredentialsAccessToken(publicClientId, publicClientSecret, ScopePathType.READ_PUBLIC, true);
+        String accessToken = oauthHelper.getClientCredentialsAccessToken(publicClientId, publicClientSecret, ScopePathType.READ_PUBLIC, APIRequestType.PUBLIC);
         ClientResponse response = publicV1ApiClient.doPublicSearch(user1OrcidId, accessToken);
         assertNotNull(response);
         OrcidMessage orcidMessage = response.getEntity(OrcidMessage.class);

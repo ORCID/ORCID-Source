@@ -18,10 +18,10 @@ package org.orcid.persistence.dao;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.fail;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -32,7 +32,11 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.orcid.jaxb.model.common.Visibility;
+import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
+import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.annotation.Rollback;
@@ -69,7 +73,7 @@ public class ResearcherUrlDaoTest extends DBUnitTest {
     public void testfindResearcherUrls() {
         List<ResearcherUrlEntity> researcherUrls = researcherUrlDao.getResearcherUrls("4444-4444-4444-4443");
         assertNotNull(researcherUrls);
-        assertEquals(2, researcherUrls.size());
+        assertEquals(3, researcherUrls.size());
     }
 
     @Test
@@ -85,10 +89,23 @@ public class ResearcherUrlDaoTest extends DBUnitTest {
     @Rollback(true)
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void testAddResearcherUrl() {
-        assertEquals(2, researcherUrlDao.getResearcherUrls("4444-4444-4444-4443").size());
-        boolean result = researcherUrlDao.addResearcherUrls("4444-4444-4444-4443", "www.4443.com", "test");
-        assertTrue(result);
         assertEquals(3, researcherUrlDao.getResearcherUrls("4444-4444-4444-4443").size());
+        ResearcherUrlEntity newRUrl = new ResearcherUrlEntity();
+        newRUrl.setDateCreated(new Date());
+        newRUrl.setLastModified(new Date());
+        newRUrl.setSource(new SourceEntity(new ClientDetailsEntity("APP-5555555555555555")));
+        newRUrl.setUrl("www.4443.com");
+        newRUrl.setUrlName("test");
+        newRUrl.setUser(new ProfileEntity("4444-4444-4444-4443"));
+        newRUrl.setVisibility(Visibility.PUBLIC);
+        newRUrl = researcherUrlDao.merge(newRUrl);
+        assertNotNull(newRUrl);
+        assertEquals(4, researcherUrlDao.getResearcherUrls("4444-4444-4444-4443").size());
+        for(ResearcherUrlEntity rUrl : researcherUrlDao.getResearcherUrls("4444-4444-4444-4443")) {
+            if("www.4443.com".equals(rUrl.getUrl())) {
+                assertEquals("APP-5555555555555555", rUrl.getSource().getSourceId());
+            }
+        }
     }
 
     @Test
@@ -97,11 +114,11 @@ public class ResearcherUrlDaoTest extends DBUnitTest {
     public void testDeleteResearcherUrl() {
         List<ResearcherUrlEntity> researcherUrls = researcherUrlDao.getResearcherUrls("4444-4444-4444-4443");
         assertNotNull(researcherUrls);
-        assertEquals(2, researcherUrls.size());
-        researcherUrlDao.deleteResearcherUrl(researcherUrls.get(0).getId());
+        assertEquals(3, researcherUrls.size());
+        researcherUrlDao.deleteResearcherUrl("4444-4444-4444-4443", researcherUrls.get(0).getId());
         researcherUrls = researcherUrlDao.getResearcherUrls("4444-4444-4444-4443");
         assertNotNull(researcherUrls);
-        assertEquals(1, researcherUrls.size());
+        assertEquals(2, researcherUrls.size());
     }
 
     @Test
@@ -109,7 +126,16 @@ public class ResearcherUrlDaoTest extends DBUnitTest {
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void testCannotAddDuplicatedResearcherUrl() {
         try {
-            researcherUrlDao.addResearcherUrls("4444-4444-4444-4443", "http://www.researcherurl2.com?id=1", "test");
+            ResearcherUrlEntity newRUrl = new ResearcherUrlEntity();
+            newRUrl.setDateCreated(new Date());
+            newRUrl.setLastModified(new Date());
+            newRUrl.setSource(new SourceEntity(new ClientDetailsEntity("4444-4444-4444-4443")));
+            newRUrl.setUrl("http://www.researcherurl2.com?id=1");
+            newRUrl.setUrlName("test");
+            newRUrl.setUser(new ProfileEntity("4444-4444-4444-4443"));
+            newRUrl.setVisibility(Visibility.PUBLIC);
+            newRUrl = researcherUrlDao.merge(newRUrl);
+            assertNotNull(newRUrl);
             fail();
         } catch (PersistenceException e) {
 

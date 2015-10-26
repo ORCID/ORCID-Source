@@ -23,10 +23,11 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.orcid.core.manager.InternalSSOManager;
+import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.jaxb.model.message.Locale;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.utils.OrcidRequestUtil;
-import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
@@ -47,19 +48,25 @@ public class AjaxAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuc
     
     @Resource
     private ProfileDao profileDao;
+    
+    @Resource
+    private InternalSSOManager internalSSOManager;
 
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         String targetUrl = determineFullTargetUrlFromSavedRequest(request, response);
         if (authentication != null) {
             String orcidId = authentication.getName();
             checkLocale(request, response, orcidId);
+            if(internalSSOManager.enableCookie()) {
+                internalSSOManager.writeCookie(orcidId, request, response);
+            }            
             profileDao.updateIpAddress(orcidId, OrcidRequestUtil.getIpAddress(request));
         }
         if (targetUrl == null) {
             targetUrl = determineFullTargetUrl(request, response);
         }
         response.setContentType("application/json");
-        response.getWriter().println("{\"success\": true, \"url\": \"" + targetUrl.replaceAll("^/", "") + "\"}");
+        response.getWriter().println("{\"success\": true, \"url\": \"" + targetUrl.replaceAll("^/", "") + "\"}");        
     }
 
     // new method - persist which ever local they logged in with

@@ -26,6 +26,7 @@ import java.util.Set;
 import javax.annotation.Resource;
 import javax.persistence.NoResultException;
 
+import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.adapter.JpaJaxbEducationAdapter;
 import org.orcid.core.adapter.JpaJaxbEmploymentAdapter;
 import org.orcid.core.adapter.JpaJaxbFundingAdapter;
@@ -37,6 +38,7 @@ import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileFundingManager;
 import org.orcid.core.manager.WorkManager;
+import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.core.utils.activities.ActivitiesGroup;
 import org.orcid.core.utils.activities.ActivitiesGroupGenerator;
 import org.orcid.jaxb.model.clientgroup.ClientType;
@@ -66,7 +68,9 @@ import org.orcid.jaxb.model.record.summary.WorkGroup;
 import org.orcid.jaxb.model.record.summary.WorkSummary;
 import org.orcid.jaxb.model.record.summary.Works;
 import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.pojo.ApplicationSummary;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -94,6 +98,9 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
 
     @Resource
     private JpaJaxbWorkAdapter jpaJaxbWorkAdapter;
+    
+    @Resource
+    private Jpa2JaxbAdapter jpa2JaxbAdapter;
 
     @Resource(name = "profileEntityCacheManager")
     ProfileEntityCacheManager profileEntityCacheManager;
@@ -514,16 +521,29 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     public boolean isDeactivated(String orcid) {
         return profileDao.isDeactivated(orcid);
     }
-    
-	@Override
-	public boolean reviewProfile(String orcid) {
-		return profileDao.reviewProfile(orcid);
-	}
 
-	@Override
-	public boolean unreviewProfile(String orcid) {
-		return profileDao.unreviewProfile(orcid);
-	}
+    @Override
+    public boolean reviewProfile(String orcid) {
+        return profileDao.reviewProfile(orcid);
+    }
+
+    @Override
+    public boolean unreviewProfile(String orcid) {
+        return profileDao.unreviewProfile(orcid);
+    }
+    
+    @Override
+    public Visibility getResearcherUrlDefaultVisibility(String orcid) {
+        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
+        Visibility result = profile.getResearcherUrlsVisibility() == null ? Visibility.fromValue(OrcidVisibilityDefaults.RESEARCHER_URLS_DEFAULT.getVisibility().value()) : Visibility.fromValue(profile.getResearcherUrlsVisibility().value()); 
+        return result;
+    }
+    
+    @Override
+    public List<ApplicationSummary> getApplications(List<OrcidOauth2TokenDetail> tokenDetails) {
+    	return jpa2JaxbAdapter.getApplications(tokenDetails);
+    }
+    
 }
 
 class GroupableActivityComparator implements Comparator<GroupableActivity> {

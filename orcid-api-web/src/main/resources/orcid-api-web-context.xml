@@ -131,9 +131,20 @@
     <!--  Notifications -->
     <bean id="notificationsApiServiceDelegator" class="org.orcid.api.notifications.server.delegator.impl.NotificationsApiServiceDelegatorImpl" />
 
-    <!--  Member_2 API -->
+    <!--  Member_2 API RC1-->
     <bean id="memberV2ApiServiceDelegator" class="org.orcid.api.memberV2.server.delegator.impl.MemberV2ApiServiceDelegatorImpl" />
     <bean id="memberV2ApiServiceImplV2_0_rc1" class="org.orcid.api.memberV2.server.MemberV2ApiServiceImplV2_0_rc1">
+        <property name="serviceDelegator" ref="memberV2ApiServiceDelegator"/>
+        <property name="notificationsServiceDelegator" ref="notificationsApiServiceDelegator"/>
+    </bean>
+    
+    
+    
+    
+    
+    
+    <!--  Member_2 API RC2-->
+    <bean id="memberV2ApiServiceImplV2_0_rc2" class="org.orcid.api.memberV2.server.MemberV2ApiServiceImplV2_0_rc2">    	
         <property name="serviceDelegator" ref="memberV2ApiServiceDelegator"/>
         <property name="notificationsServiceDelegator" ref="notificationsApiServiceDelegator"/>
     </bean>

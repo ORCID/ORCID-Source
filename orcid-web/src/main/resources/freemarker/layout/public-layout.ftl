@@ -149,7 +149,7 @@
 						<@security.authorize ifAnyGranted="ROLE_USER, ROLE_ADMIN, ROLE_BASIC, ROLE_PREMIUM, ROLE_BASIC_INSTITUTION, ROLE_PREMIUM_INSTITUTION">
 							<#if profile?? && profile.orcidInternal?? && profile.orcidInternal.preferences.notificationsEnabled?? && profile.orcidInternal.preferences.notificationsEnabled == true>
 								<li ng-controller="NotificationsAlertCtrl">
-									<a ${(nav=="notifications")?string('class="active" ', '')}href="<@orcid.rootPath "/notifications" />">${springMacroRequestContext.getMessage("workspace.notifications")} <span ng-cloak ng-hide="getUnreadCount() === 0">({{getUnreadCount()}})</span></a>
+									<a ${(nav=="notifications")?string('class="active" ', '')}href="<@orcid.rootPath "/inbox" />">${springMacroRequestContext.getMessage("workspace.notifications")} <span ng-cloak ng-hide="getUnreadCount() === 0">({{getUnreadCount()}})</span></a>
 								</li>
 							</#if>
 						</@security.authorize>
@@ -456,7 +456,7 @@
 					</@security.authorize>
 					 
 					<@security.authorize ifAnyGranted="ROLE_USER, ROLE_ADMIN, ROLE_BASIC, ROLE_PREMIUM, ROLE_BASIC_INSTITUTION, ROLE_PREMIUM_INSTITUTION">
-						<a href="<@orcid.rootPath '/signout'/>"><@orcid.msg 'public-layout.sign_out'/></a>
+						<a href="<@orcid.rootPath "/signout" />"><@orcid.msg 'public-layout.sign_out'/></a>
 					</@security.authorize>
 					
 				</li>

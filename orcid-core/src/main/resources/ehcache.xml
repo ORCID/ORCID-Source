@@ -76,6 +76,11 @@
 		<persistence strategy="none" />
 	</cache>
 
+	<cache name="import-peer-review-clients" maxElementsInMemory="200"
+		eternal="true" copyOnRead="false" copyOnWrite="false">
+		<persistence strategy="none" />
+	</cache>
+	
 	<cache name="read-access-clients" maxElementsInMemory="200"
 		eternal="true" copyOnRead="false" copyOnWrite="false">
 		<persistence strategy="none" />
@@ -153,6 +158,12 @@
 	</cache>
 
 	<cache name="profile-entity" maxElementsInMemory="5000"
+		maxElementsOnDisk="20000" timeToLiveSeconds="86400" copyOnRead="false"
+		copyOnWrite="false" eternal="false">
+		<persistence strategy="localTempSwap" />
+	</cache>
+	
+	<cache name="statistics-entity" maxElementsInMemory="5000"
 		maxElementsOnDisk="20000" timeToLiveSeconds="86400" copyOnRead="false"
 		copyOnWrite="false" eternal="false">
 		<persistence strategy="localTempSwap" />

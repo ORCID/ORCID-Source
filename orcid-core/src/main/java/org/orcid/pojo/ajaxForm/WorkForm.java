@@ -437,7 +437,7 @@ public class WorkForm implements ErrorsInterface, Serializable {
         }
         
         // Set translated title        
-        if(this.getTranslatedTitle() != null) {
+        if(this.getTranslatedTitle() != null && !PojoUtil.isEmpty(this.getTranslatedTitle().getContent())) {
             org.orcid.jaxb.model.common.TranslatedTitle translatedTitle = new org.orcid.jaxb.model.common.TranslatedTitle();
             translatedTitle.setContent(this.getTranslatedTitle().getContent());
             translatedTitle.setLanguageCode(this.getTranslatedTitle().getLanguageCode());

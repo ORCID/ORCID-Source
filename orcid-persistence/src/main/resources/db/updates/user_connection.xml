@@ -1,0 +1,64 @@
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2014 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+            
+    <changeSet id="CREATE-USERCONNECTION-TABLE" author="Shobhit Tyagi">
+        <preConditions onFail="MARK_RAN">
+            <!-- Only perform the initial database create if key table doesn't exist -->
+            <not>
+                <tableExists tableName="userconnection"/>
+            </not>
+		</preConditions>
+		
+		<createTable tableName="userconnection">
+           	<column name="userid" type="VARCHAR(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="email" type="VARCHAR(350)"/>		
+			<column name="orcid" type="VARCHAR(19)"/>
+			<column name="providerid" type="VARCHAR(1000)">
+				<constraints nullable="false" />
+			</column>
+			<column name="provideruserid" type="VARCHAR(1000)">
+				<constraints nullable="false" />
+			</column>
+			<column name="rank" type="INTEGER">
+				<constraints nullable="false" />
+			</column>
+			<column name="displayname" type="VARCHAR(1000)"/>
+			<column name="profileurl" type="VARCHAR(512)"/>
+			<column name="imageurl" type="VARCHAR(512)"/>
+			<column name="accesstoken" type="VARCHAR(1024)"/>
+			<column name="secret" type="VARCHAR(255)"/>
+			<column name="refreshtoken" type="VARCHAR(255)"/>
+			<column name="expiretime" type="BIGINT"/>
+			<column name="is_linked" type="boolean" defaultValueBoolean="false" />	
+			<column name="last_login" type="TIMESTAMP WITH TIME ZONE"/>
+			<column name="date_created" type="TIMESTAMP WITH TIME ZONE" />
+			<column name="last_modified" type="TIMESTAMP WITH TIME ZONE" />	
+        </createTable>
+        <addPrimaryKey constraintName="userconnection_pkey" tableName="userconnection" columnNames="userid, providerid, provideruserid"/>
+        <createIndex tableName="userconnection" indexName="userconnectionrank">
+        	<column name="userid" />
+        	<column name="providerid" />
+        	<column name="rank" />
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>

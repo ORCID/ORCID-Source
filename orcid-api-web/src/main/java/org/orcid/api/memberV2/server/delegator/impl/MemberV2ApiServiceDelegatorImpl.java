@@ -21,23 +21,27 @@ import static org.orcid.core.api.OrcidApiConstants.STATUS_OK_MESSAGE;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
 
 import org.orcid.api.common.util.ActivityUtils;
+import org.orcid.api.common.util.ElementUtils;
 import org.orcid.api.memberV2.server.delegator.MemberV2ApiServiceDelegator;
 import org.orcid.core.exception.MismatchedPutCodeException;
 import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.AffiliationsManager;
 import org.orcid.core.manager.ClientDetailsManager;
+import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.GroupIdRecordManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.PeerReviewManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileFundingManager;
+import org.orcid.core.manager.ResearcherUrlManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.core.security.visibility.aop.AccessControl;
@@ -46,9 +50,13 @@ import org.orcid.jaxb.model.groupid.GroupIdRecord;
 import org.orcid.jaxb.model.groupid.GroupIdRecords;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record.Education;
+import org.orcid.jaxb.model.record.Email;
+import org.orcid.jaxb.model.record.Emails;
 import org.orcid.jaxb.model.record.Employment;
 import org.orcid.jaxb.model.record.Funding;
 import org.orcid.jaxb.model.record.PeerReview;
+import org.orcid.jaxb.model.record.ResearcherUrl;
+import org.orcid.jaxb.model.record.ResearcherUrls;
 import org.orcid.jaxb.model.record.Work;
 import org.orcid.jaxb.model.record.summary.ActivitiesSummary;
 import org.orcid.jaxb.model.record.summary.EducationSummary;
@@ -112,7 +120,13 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
 
     @Resource
     private LocaleManager localeManager;
+    
+    @Resource
+    private ResearcherUrlManager researcherUrlManager;
 
+    @Resource
+    private EmailManager emailManager;
+    
     @Value("${org.orcid.core.baseUri}")
     private String baseUrl;
 
@@ -425,5 +439,54 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     public Response viewGroupIdRecords(String pageSize, String pageNum) {
         GroupIdRecords records = groupIdRecordManager.getGroupIdRecords(pageSize, pageNum);
         return Response.ok(records).build();
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Override
+    @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED)
+    public Response viewResearcherUrls(String orcid) {
+        ResearcherUrls researcherUrls = researcherUrlManager.getResearcherUrlsV2(orcid);
+        researcherUrls.setResearcherUrls((List<ResearcherUrl>) visibilityFilter.filter(researcherUrls.getResearcherUrls()));
+        ElementUtils.setPathToResearcherUrls(researcherUrls, orcid);
+        return Response.ok(researcherUrls).build();
+    }
+        
+    public Response viewResearcherUrl(String orcid, String putCode) {
+        ResearcherUrl researcherUrl = researcherUrlManager.getResearcherUrlV2(orcid, Long.valueOf(putCode));
+        return Response.ok(researcherUrl).build();
+    }
+    
+    @Override
+    @AccessControl(requiredScope = ScopePathType.PERSON_UPDATE)
+    public Response updateResearcherUrl(String orcid, String putCode, ResearcherUrl researcherUrl) {
+        ResearcherUrl updatedResearcherUrl = researcherUrlManager.updateResearcherUrlV2(orcid, researcherUrl);
+        return Response.ok(updatedResearcherUrl).build();
+    }
+    
+    @Override
+    @AccessControl(requiredScope = ScopePathType.PERSON_UPDATE)
+    public Response createResearcherUrl(String orcid, ResearcherUrl researcherUrl) {
+        researcherUrl = researcherUrlManager.createResearcherUrlV2(orcid, researcherUrl);        
+        try {
+            return Response.created(new URI(String.valueOf(researcherUrl.getPutCode()))).build();
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(localeManager.resolveMessage("apiError.createelement_response.exception"), e);
+        }       
+    }
+    
+    @Override
+    @AccessControl(requiredScope = ScopePathType.PERSON_UPDATE)
+    public Response deleteResearcherUrl(String orcid, String putCode) {
+        researcherUrlManager.deleteResearcherUrl(orcid, putCode);
+        return Response.noContent().build();
+    }    
+    
+    @SuppressWarnings("unchecked")
+    @Override
+    @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED)
+    public Response viewEmails(String orcid) {
+        Emails emails = emailManager.getEmails(orcid);
+        emails.setEmails((List<Email>) visibilityFilter.filter(emails.getEmails()));
+        return Response.ok(emails).build();
     }
 }

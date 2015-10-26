@@ -43,6 +43,7 @@ import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.orcid.api.common.WebDriverHelper;
+import org.orcid.integration.api.helper.APIRequestType;
 import org.orcid.integration.api.helper.OauthHelper;
 import org.orcid.integration.api.memberV2.MemberV2ApiClientImpl;
 import org.orcid.integration.api.pub.PublicV2ApiClientImpl;
@@ -115,10 +116,10 @@ public class PublicV2Test {
     @Resource(name = "t2OAuthClient")
     private T2OAuthAPIService<ClientResponse> t2OAuthClient;
 
-    @Resource
+    @Resource(name = "memberV2ApiClient_rc1")
     private MemberV2ApiClientImpl memberV2ApiClient;
 
-    @Resource
+    @Resource(name = "publicV2ApiClient_rc1")
     private PublicV2ApiClientImpl publicV2ApiClient;
 
     private WebDriver webDriver;
@@ -146,8 +147,14 @@ public class PublicV2Test {
     }
 
     @Test
+    public void testCantGetTokenForInternalScopes() {
+        
+    }
+    
+    
+    @Test
     public void testPublicClientCanGetAccessToken() throws InterruptedException, JSONException {
-        String publicAccessToken = oauthHelper.getClientCredentialsAccessToken(publicClientId, publicClientSecret, ScopePathType.READ_PUBLIC, true);
+        String publicAccessToken = oauthHelper.getClientCredentialsAccessToken(publicClientId, publicClientSecret, ScopePathType.READ_PUBLIC, APIRequestType.PUBLIC);
         assertFalse(PojoUtil.isEmpty(publicAccessToken));
     }
     

@@ -33,7 +33,6 @@ import org.orcid.persistence.dao.StatisticsDao;
 import org.orcid.persistence.jpa.entities.StatisticValuesEntity;
 import org.orcid.persistence.jpa.entities.StatisticKeyEntity;
 import org.springframework.context.MessageSource;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
 
 public class StatisticsManagerImpl implements StatisticsManager {
@@ -81,7 +80,6 @@ public class StatisticsManagerImpl implements StatisticsManager {
      *         parameters
      * */
     @Override
-    @Cacheable("statistics")
     public StatisticValuesEntity getStatistic(StatisticKeyEntity id, String name) {
         return statisticsDao.getStatistic(id.getId(), name);
     }
@@ -92,7 +90,6 @@ public class StatisticsManagerImpl implements StatisticsManager {
      * @return a list that contains the latest set of statistics
      * */
     @Override
-    @Cacheable("statistics")
     public List<StatisticValuesEntity> getLatestStatistics() {
         StatisticKeyEntity latestKey = statisticsDao.getLatestKey();
         if(latestKey != null)
@@ -105,7 +102,6 @@ public class StatisticsManagerImpl implements StatisticsManager {
      * @param statisticName
      * @return the latest statistics value for the statistics name parameter
      * */
-    @Cacheable("statistics")
     public StatisticValuesEntity getLatestStatistics(String statisticName){
         StatisticKeyEntity latestKey = statisticsDao.getLatestKey();
         if(latestKey != null)
@@ -118,7 +114,6 @@ public class StatisticsManagerImpl implements StatisticsManager {
      * @param statisticName
      * @return all statistics values for the statistics name parameter
      * */
-    @Cacheable("statistics")
     public StatisticsTimeline getStatisticsTimelineModel(StatisticsEnum statisticName){
         List<StatisticValuesEntity> list = statisticsDao.getStatistic(statisticName.value());
         if (list == null)
@@ -141,7 +136,6 @@ public class StatisticsManagerImpl implements StatisticsManager {
      * @return a list that contains the latest set of statistics
      * */
     @Override
-    @Cacheable("statistics")
     public StatisticsSummary getLatestStatisticsModel() {
         StatisticKeyEntity latestKey = statisticsDao.getLatestKey();
         if(latestKey == null)
@@ -167,7 +161,6 @@ public class StatisticsManagerImpl implements StatisticsManager {
      * @param locale
      * @return the latest statistics live ids statistics
      * */
-    @Cacheable("statistics")
     public String getLiveIds(Locale locale) {
         StatisticValuesEntity entity = getLatestStatistics(StatisticsEnum.KEY_LIVE_IDS.value());        
         long amount = entity == null ? 0 : entity.getStatisticValue();        

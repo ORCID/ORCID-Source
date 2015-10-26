@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<researcher-url:researcher-url put-code="1248" visibility="public" xmlns:researcher-url="http://www.orcid.org/ns/researcher-url"
+	xmlns:common="http://www.orcid.org/ns/common">
+	<researcher-url:url-name>Site # 1</researcher-url:url-name>
+	<researcher-url:url>http://site1.com/</researcher-url:url>
+	<common:source>
+		<common:source-orcid>
+			<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
+			<common:path>8888-8888-8888-8880</common:path>
+			<common:host>orcid.org</common:host>
+		</common:source-orcid>
+		<common:source-name />
+	</common:source>
+</researcher-url:researcher-url>

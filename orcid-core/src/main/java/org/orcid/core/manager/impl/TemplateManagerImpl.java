@@ -61,6 +61,7 @@ public class TemplateManagerImpl implements TemplateManager, InitializingBean {
     public void afterPropertiesSet() throws IOException {
         freeMarkerConfiguration = new Configuration();
         freeMarkerConfiguration.setClassForTemplateLoading(this.getClass(), "/org/orcid/core/template");
+        freeMarkerConfiguration.setURLEscapingCharset("UTF-8");
     }
 
 }

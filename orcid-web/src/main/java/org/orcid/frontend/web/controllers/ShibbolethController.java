@@ -16,17 +16,22 @@
  */
 package org.orcid.frontend.web.controllers;
 
+import java.sql.Timestamp;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Map;
+import java.util.Random;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.exception.OrcidBadRequestException;
 import org.orcid.frontend.web.exception.FeatureDisabledException;
-import org.orcid.persistence.dao.ShibbolethAccountDao;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.persistence.jpa.entities.ShibbolethAccountEntity;
+import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.persistence.dao.UserConnectionDao;
+import org.orcid.persistence.jpa.entities.UserconnectionEntity;
+import org.orcid.persistence.jpa.entities.UserconnectionPK;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -61,23 +66,22 @@ public class ShibbolethController extends BaseController {
     private boolean enabled;
 
     @Resource
-    private ShibbolethAccountDao shibbolethAccountDao;
+    private UserConnectionDao userConnectionDao;
 
     @Resource
     private AuthenticationManager authenticationManager;
 
     @RequestMapping(value = { "/signin" }, method = RequestMethod.GET)
-    public ModelAndView signinHandler(HttpServletRequest request, @RequestHeader Map<String, String> headers, ModelAndView mav) {
+    public ModelAndView signinHandler(HttpServletRequest request, HttpServletResponse response, @RequestHeader Map<String, String> headers, ModelAndView mav) {
         checkEnabled();
         String remoteUser = retrieveRemoteUser(headers);
         String shibIdentityProvider = headers.get(SHIB_IDENTITY_PROVIDER_HEADER);
         // Check if the Shibboleth user is already linked to an ORCID account.
         // If so sign them in automatically.
-        ShibbolethAccountEntity shibbolethAccountEntity = shibbolethAccountDao.findByRemoteUserAndShibIdentityProvider(remoteUser, shibIdentityProvider);
-        if (shibbolethAccountEntity != null) {
-            ProfileEntity profileEntity = shibbolethAccountEntity.getProfile();
+        UserconnectionEntity userConnectionEntity = userConnectionDao.findByProviderIdAndProviderUserId(remoteUser, shibIdentityProvider);
+        if (userConnectionEntity != null) {
             try {
-                PreAuthenticatedAuthenticationToken token = new PreAuthenticatedAuthenticationToken(profileEntity.getId(), remoteUser);
+                PreAuthenticatedAuthenticationToken token = new PreAuthenticatedAuthenticationToken(userConnectionEntity.getOrcid(), remoteUser);
                 token.setDetails(new WebAuthenticationDetails(request));
                 Authentication authentication = authenticationManager.authenticate(token);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -89,10 +93,10 @@ public class ShibbolethController extends BaseController {
             return new ModelAndView("redirect:/my-orcid");
         } else {
             // To avoid confusion, force the user to login to ORCID again
-            logoutCurrentUser();
-            mav.setViewName("shib_link_signin");
-            mav.addObject("remoteUserHeader", StringUtils.join(POSSIBLE_REMOTE_USER_HEADERS, "/"));
-            mav.addObject("remoteUser", remoteUser);
+        	logoutCurrentUser(request, response);
+            mav.setViewName("social_link_signin");
+			mav.addObject("providerId", "shibboleth");
+			mav.addObject("emailId", remoteUser);
         }
         return mav;
     }
@@ -100,20 +104,25 @@ public class ShibbolethController extends BaseController {
     @RequestMapping(value = { "/link" }, method = RequestMethod.GET)
     public ModelAndView linkHandler(@RequestHeader() Map<String, String> headers, ModelAndView mav) {
         checkEnabled();
-        String remoteUser = retrieveRemoteUser(headers);
-        String shibIdentityProvider = headers.get(SHIB_IDENTITY_PROVIDER_HEADER);
-        ShibbolethAccountEntity shibbolethAccountEntity = shibbolethAccountDao.findByRemoteUserAndShibIdentityProvider(remoteUser, shibIdentityProvider);
-        if (shibbolethAccountEntity != null) {
-            return new ModelAndView("redirect:/my-orcid");
-        }
-        shibbolethAccountEntity = new ShibbolethAccountEntity();
-        shibbolethAccountEntity.setRemoteUser(remoteUser);
-        shibbolethAccountEntity.setShibIdentityProvider(shibIdentityProvider);
-        shibbolethAccountEntity.setProfile(new ProfileEntity(getCurrentUserOrcid()));
-        shibbolethAccountDao.persist(shibbolethAccountEntity);
-        mav.setViewName("shib_link_complete");
-        mav.addObject("remoteUser", remoteUser);
-        return mav;
+        String providerUserId = retrieveRemoteUser(headers);
+        String providerId = headers.get(SHIB_IDENTITY_PROVIDER_HEADER);
+        UserconnectionEntity userConnectionEntity = userConnectionDao.findByProviderIdAndProviderUserId(providerUserId, providerId);
+    	if (userConnectionEntity == null) {
+	        userConnectionEntity = new UserconnectionEntity();
+	        String randomId = Long.toString(new Random(Calendar.getInstance().getTimeInMillis()).nextLong());
+	        UserconnectionPK pk = new UserconnectionPK(randomId, providerId, providerUserId);
+	        OrcidProfile profile = getRealProfile();
+	        userConnectionEntity.setEmail(providerUserId);
+	        userConnectionEntity.setOrcid(profile.getOrcidIdentifier().getPath());
+	        userConnectionEntity.setProfileurl(profile.getOrcidIdentifier().getUri());
+	        userConnectionEntity.setDisplayname(profile.getOrcidBio().getPersonalDetails().getGivenNames().getContent());
+	        userConnectionEntity.setRank(1);
+	        userConnectionEntity.setId(pk);
+	        userConnectionEntity.setLinked(true);
+	        userConnectionEntity.setLastLogin(new Timestamp(new Date().getTime()));
+	        userConnectionDao.persist(userConnectionEntity);
+    	}
+    	 return new ModelAndView("redirect:/my-orcid");
     }
 
     private void checkEnabled() {

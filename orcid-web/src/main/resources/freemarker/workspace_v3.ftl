@@ -387,9 +387,9 @@
 				                 		<div class="justify">												
 											<p class="wizard-description" ng-class="{'ellipsis-on' : wizardDescExpanded[wtw.clientId] == false || wizardDescExpanded[wtw.clientId] == null}">
 												{{wtw.shortDescription}}													
-												<a ng-click="toggleWizardDesc(wtw.clientId)" ng-show="wizardDescExpanded[wtw.clientId] == true"><span class="glyphicon glyphicon-chevron-down wizard-chevron"></span></a>
+												<a ng-click="toggleWizardDesc(wtw.clientId)" ng-show="wizardDescExpanded[wtw.clientId] == true"><span class="glyphicon glyphicon-chevron-right wizard-chevron"></span></a>
 											</p>												
-											<a ng-click="toggleWizardDesc(wtw.clientId)" ng-show="wizardDescExpanded[wtw.clientId] == false || wizardDescExpanded[wtw.clientId] == null" class="toggle-wizard-desc"><span class="glyphicon glyphicon-chevron-right wizard-chevron"></span></a>
+											<a ng-click="toggleWizardDesc(wtw.clientId)" ng-show="wizardDescExpanded[wtw.clientId] == false || wizardDescExpanded[wtw.clientId] == null" class="toggle-wizard-desc"><span class="glyphicon glyphicon-chevron-down wizard-chevron"></span></a>
 										</div>
 					                    <hr/>
 				                	</div>
@@ -532,10 +532,11 @@
 						<#include "includes/work/body_work_inc_v3.ftl"/>						
 	            	</div>
             	</div>
-            	<#if RequestParameters['peer']??>
-               		<!-- Peer Review -->
-               		<#include "workspace_peer_review_body_list.ftl"/>
- 				</#if>
+            	<div ng-controller="PeerReviewCtrl">
+	            	<div ng-show="peerReviewSrvc.groups.length > 0 || noLinkFlag" ng-cloak>
+	            		<#include "workspace_peer_review_body_list.ftl"/>
+	            	</div>
+	            </div>
             </div>
         </div>
     </div>    

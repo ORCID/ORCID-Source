@@ -125,7 +125,10 @@ public class OrcidApiAuthorizationSecurityAspect {
     }
 
     @AfterReturning(pointcut = "@annotation(accessControl)", returning = "response")
-    public void visibilityResponseFilter(Response response, AccessControl accessControl) {
+    public void visibilityResponseFilter(Response response, AccessControl accessControl) {    
+        if(accessControl.requestComesFromInternalApi()) {
+            return;
+        }
         Object entity = response.getEntity();
         if (entity != null && OrcidMessage.class.isAssignableFrom(entity.getClass())) {
             OrcidMessage orcidMessage = (OrcidMessage) entity;

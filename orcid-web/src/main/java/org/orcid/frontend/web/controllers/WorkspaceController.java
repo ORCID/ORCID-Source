@@ -123,6 +123,11 @@ public class WorkspaceController extends BaseWorkspaceController {
     public List<OrcidClient> retrieveFundingImportWizards() {
         return thirdPartyLinkManager.findOrcidClientsWithPredefinedOauthScopeFundingImport();
     }
+    
+    @RequestMapping(value = { "/workspace/retrieve-peer-review-import-wizards.json" }, method = RequestMethod.GET)
+    public @ResponseBody List<OrcidClient> retrievePeerReviewImportWizards() {
+        return thirdPartyLinkManager.findOrcidClientsWithPredefinedOauthScopePeerReviewImport();
+    }
 
     @ModelAttribute("affiliationTypes")
     public Map<String, String> retrieveAffiliationTypesAsMap() {

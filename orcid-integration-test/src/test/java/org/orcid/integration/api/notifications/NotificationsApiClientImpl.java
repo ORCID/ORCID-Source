@@ -81,8 +81,8 @@ public class NotificationsApiClientImpl {
         return orcidClientHelper.postClientResponseWithToken(UriBuilder.fromPath(PERMISSIONS_PATH).build(orcid), VND_ORCID_XML, notification, accessToken);
     }
 
-    public ClientResponse addPermissionNotificationJson(String orcid, NotificationPermission notification) {
-        return orcidClientHelper.postClientResponse(UriBuilder.fromPath(PERMISSIONS_PATH).build(orcid), VND_ORCID_JSON, notification);
+    public ClientResponse addPermissionNotificationJson(String orcid, NotificationPermission notification, String accessToken) {
+        return orcidClientHelper.postClientResponseWithToken(UriBuilder.fromPath(PERMISSIONS_PATH).build(orcid), VND_ORCID_JSON, notification, accessToken);
     }
 
 }

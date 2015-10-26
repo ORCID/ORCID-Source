@@ -30,7 +30,7 @@ public interface VisibilityFilterV2 {
     ActivitiesSummary filter(ActivitiesSummary activitiesSummary);
     
     Collection<? extends Filterable> filter(Collection<? extends Filterable> filterables);
-
+        
     Collection<? extends Group> filterGroups(Collection<? extends Group> groups);
 
 }

@@ -26,6 +26,8 @@ import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_JSON;
 import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_XML;
 import static org.orcid.core.api.OrcidApiConstants.WORK;
 import static org.orcid.core.api.OrcidApiConstants.GROUP_ID_RECORD;
+import static org.orcid.core.api.OrcidApiConstants.RESEARCHER_URLS;
+import static org.orcid.core.api.OrcidApiConstants.EMAIL;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -38,6 +40,7 @@ import org.orcid.jaxb.model.record.Education;
 import org.orcid.jaxb.model.record.Employment;
 import org.orcid.jaxb.model.record.Funding;
 import org.orcid.jaxb.model.record.PeerReview;
+import org.orcid.jaxb.model.record.ResearcherUrl;
 import org.orcid.jaxb.model.record.Work;
 
 import com.sun.jersey.api.client.Client;
@@ -160,12 +163,42 @@ public class MemberV2ApiClientImpl {
     }
     
     public ClientResponse createGroupIdRecord(GroupIdRecord groupId, String accessToken) {
-        URI createUri = UriBuilder.fromPath(GROUP_ID_RECORD).build(null);
+        URI createUri = UriBuilder.fromPath(GROUP_ID_RECORD).build();
         return orcidClientHelper.postClientResponseWithToken(createUri, VND_ORCID_XML, groupId, accessToken);
     }
     
     public ClientResponse deleteGroupIdRecord(Long putCode, String accessToken) {
         URI deleteURI = UriBuilder.fromPath(GROUP_ID_RECORD + PUTCODE).build(putCode);
         return orcidClientHelper.deleteClientResponseWithToken(deleteURI, VND_ORCID_XML, accessToken);
+    }
+    
+    public ClientResponse createResearcherUrls(String orcid, ResearcherUrl rUrl, String accessToken) {
+        URI createURI = UriBuilder.fromPath(RESEARCHER_URLS).build(orcid);
+        return orcidClientHelper.postClientResponseWithToken(createURI, VND_ORCID_XML, rUrl, accessToken);      
+    }
+    
+    public ClientResponse updateResearcherUrls(String orcid, ResearcherUrl rUrl, String accessToken) {
+        URI createURI = UriBuilder.fromPath(RESEARCHER_URLS + PUTCODE).build(orcid, rUrl.getPutCode());
+        return orcidClientHelper.putClientResponseWithToken(createURI, VND_ORCID_XML, rUrl, accessToken);      
+    }
+    
+    public ClientResponse getResearcherUrls(String orcid, String accessToken) {
+        URI getURI = UriBuilder.fromPath(RESEARCHER_URLS).build(orcid);
+        return orcidClientHelper.getClientResponseWithToken(getURI, VND_ORCID_XML, accessToken);        
+    }
+    
+    public ClientResponse getResearcherUrl(String orcid, String putCode, String accessToken) {
+        URI getURI = UriBuilder.fromPath(RESEARCHER_URLS + PUTCODE).build(orcid, putCode);
+        return orcidClientHelper.getClientResponseWithToken(getURI, VND_ORCID_XML, accessToken);        
+    }
+    
+    public ClientResponse deleteResearcherUrl(String orcid, Long putCode, String accessToken) {
+        URI createURI = UriBuilder.fromPath(RESEARCHER_URLS + PUTCODE).build(orcid, putCode);
+        return orcidClientHelper.deleteClientResponseWithToken(createURI, VND_ORCID_XML, accessToken);      
+    }
+    
+    public ClientResponse getEmails(String orcid, String accessToken) {
+        URI getURI = UriBuilder.fromPath(EMAIL).build(orcid);
+        return orcidClientHelper.getClientResponseWithToken(getURI, VND_ORCID_XML, accessToken);        
     }
 }

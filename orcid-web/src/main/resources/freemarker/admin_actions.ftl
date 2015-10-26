@@ -484,7 +484,7 @@
 				</div>
 			</div>
 			<div class="controls save-btns pull-left">
-				<span id="bottom-confirm-lock-profile" ng-click="checkProfileToUnlock()" class="btn btn-primary"><@orcid.msg 'admin.unlock_profile.btn.unlock'/></span>		
+				<span id="bottom-confirm-unlock-profile" ng-click="checkProfileToUnlock()" class="btn btn-primary"><@orcid.msg 'admin.unlock_profile.btn.unlock'/></span>		
 			</div>
 		</div>
 	</div>

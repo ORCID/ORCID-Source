@@ -61,10 +61,10 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
     private OrcidOauth2AuthoriziationCodeDetailDao orcidOauth2AuthoriziationCodeDetailDao;
     
     @Resource
-    private LocaleManager localeManager;
+    protected LocaleManager localeManager;
     
     @Transactional
-    public Response obtainOauth2Token(String clientId, String clientSecret, String grantType, String refreshToken, String code, Set<String> scopes, String state,
+    public Response obtainOauth2Token(String clientId, String clientSecret, String refreshToken, String grantType, String code, Set<String> scopes, String state,
             String redirectUri, String resourceId) {
 
         LOGGER.info("OAuth2 authorization requested: clientId={}, grantType={}, refreshToken={}, code={}, scopes={}, state={}, redirectUri={}", new Object[] { clientId,
@@ -90,13 +90,16 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
         }
 
         try {
-            boolean isClientCredentialsGrantType = OauthTokensConstants.GRANT_TYPE_CLIENT_CREDENTIALS.equals(grantType);
-            
+            boolean isClientCredentialsGrantType = OauthTokensConstants.GRANT_TYPE_CLIENT_CREDENTIALS.equals(grantType);            
             if (scopes != null) {
                 List<String> toRemove = new ArrayList<String>();
                 for (String scope : scopes) {
                     ScopePathType scopeType = ScopePathType.fromValue(scope);
-                    if(isClientCredentialsGrantType) {
+                    if(scopeType.isInternalScope()) {
+                        // You should not allow any internal scope here! go away!
+                        String message = localeManager.resolveMessage("apiError.9015.developerMessage", new Object[]{});
+                        throw new OrcidInvalidScopeException(message);
+                    } else if(isClientCredentialsGrantType) {
                         if(!scopeType.isClientCreditalScope())
                             toRemove.add(scope);
                     } else {
@@ -113,10 +116,13 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
             String message = localeManager.resolveMessage("apiError.9015.developerMessage", new Object[]{});
             throw new OrcidInvalidScopeException(message);
         }
-                           
-        String clientName = client.getName();
-        LOGGER.info("Comparing passed clientId and client name from spring auth: clientId={}, client.name={}", clientId, clientName);
-        clientId = clientName;
+        
+        OAuth2AccessToken token = generateToken(client, scopes, code, redirectUri, grantType, refreshToken, state);
+        return getResponse(token);
+    }
+
+    protected OAuth2AccessToken generateToken(Authentication client, Set<String> scopes, String code, String redirectUri, String grantType, String refreshToken, String state) {        
+        String clientId = client.getName();
         Map<String, String> authorizationParameters = new HashMap<String, String>();
         
         if(scopes != null) {
@@ -160,10 +166,11 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
         }
         LOGGER.info("OAuth2 access token granted: clientId={}, grantType={}, refreshToken={}, code={}, scopes={}, state={}, redirectUri={}, token={}", new Object[] {
                 clientId, grantType, refreshToken, code, scopes, state, redirectUri, token });
-        return getResponse(token);
+        
+        return token;
     }
-
-    private Response getResponse(OAuth2AccessToken accessToken) {
+    
+    protected Response getResponse(OAuth2AccessToken accessToken) {
         if(accessToken != null && accessToken.getAdditionalInformation() != null) {
             if(accessToken.getAdditionalInformation().containsKey(OauthTokensConstants.TOKEN_VERSION))
                 accessToken.getAdditionalInformation().remove(OauthTokensConstants.TOKEN_VERSION);
@@ -176,7 +183,7 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
         return Response.ok(accessToken).header("Cache-Control", "no-store").header("Pragma", "no-cache").build();
     }
 
-    private Authentication getClientAuthentication() {
+    protected Authentication getClientAuthentication() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null) {
             return authentication;

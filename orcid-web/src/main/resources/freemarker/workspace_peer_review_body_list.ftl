@@ -19,7 +19,7 @@
 <#include "includes/peer_review/del_peer_review_inc.ftl"/>
 
 <#include "includes/peer_review/add_peer_review_inc.ftl"/>
-<div ng-controller="PeerReviewCtrl">
+<div>
 	<div class="workspace-accordion accordion-peer-review" id="workspace-accordion">
 		<div id="workspace-peer-review" class="workspace-accordion-item workspace-accordion-active">
 			<div class="workspace-accordion-header"><a name='workspace-peer-review'></a>
@@ -36,7 +36,7 @@
 						<#if !(isPublicProfile??)>
                 			<ul class="workspace-bar-menu">
                 			  	<li class="hidden-xs">
-									<div class="menu-container">
+									<div class="menu-container" >
 										<ul class="toggle-menu">
 									        <li> 
 									            <span class="glyphicon glyphicon-plus"></span> <@orcid.msg 'workspace_peer_review_body_list.addPeerReview'/>
@@ -49,7 +49,7 @@
 				                                         </li>
 									            	</#if>
 			                                    	<!-- Search & Link -->
-			                                        <li>
+			                                        <li ng-show="noLinkFlag">
 			                                            <a class="action-option manage-button" ng-click="showPeerReviewImportWizard()">
 			                                                <span class="glyphicon glyphicon-cloud-upload"></span> <@orcid.msg 'workspace_peer_review_body_list.searchAndLink'/> 
 														</a>
@@ -84,7 +84,22 @@
 								<p class="wizard-content">ORCID works with our member organizations to make it easy to connect your ORCID iD and link to information in their records. Choose one of the link wizards to get started.</p>
 							</div>            	    	           	
 						</div>
-					</div>	
+					</div>
+					<div class="row wizards">
+						<div class="col-md-12 col-sm-12 col-xs-12">
+		    		    	<div ng-repeat="peerReview in peerReviewImportWizardList">
+		                   		<strong><a ng-click="openImportWizardUrlFilter('<@orcid.rootPath '/oauth/authorize'/>', peerReview)">{{peerReview.displayName}}</a></strong><br />					                   							                   		                		
+		                 		<div class="justify">												
+									<p class="wizard-description" ng-class="{'ellipsis-on' : wizardDescExpanded[peerReview.clientId] == false || wizardDescExpanded[peerReview.clientId] == null}">
+										{{peerReview.shortDescription}}													
+										<a ng-click="toggleWizardDesc(peerReview.clientId)" ng-show="wizardDescExpanded[peerReview.clientId] == true"><span class="glyphicon glyphicon-chevron-right wizard-chevron"></span></a>
+									</p>												
+									<a ng-click="toggleWizardDesc(peerReview.clientId)" ng-show="wizardDescExpanded[peerReview.clientId] == false || wizardDescExpanded[peerReview.clientId] == null" class="toggle-wizard-desc"><span class="glyphicon glyphicon-chevron-down wizard-chevron"></span></a>
+								</div>
+			                    <hr/>
+		                	</div>
+						</div>
+					</div>
 				</div>
 			</div>
 			<div class="workspace-accordion-content" ng-show="workspaceSrvc.displayPeerReview == true" >

@@ -34,6 +34,7 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.constants.OauthTokensConstants;
 import org.orcid.core.manager.ClientDetailsManager;
+import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
@@ -115,6 +116,9 @@ public class OauthConfirmAccessController extends BaseController {
     
     @Resource(name = "profileEntityCacheManager")
     ProfileEntityCacheManager profileEntityCacheManager;
+    
+    @Resource
+    private EncryptionManager encryptionManager;
 
     private static String REDIRECT_URI_ERROR = "/oauth/error/redirect-uri-mismatch?client_id={0}";
         
@@ -136,7 +140,7 @@ public class OauthConfirmAccessController extends BaseController {
         }
         Response res = null;
         try {
-        	res = orcidClientCredentialEndPointDelegator.obtainOauth2Token(clientId, clientSecret, grantType, refreshToken, code, scopes, state, redirectUri, resourceId);
+        	res = orcidClientCredentialEndPointDelegator.obtainOauth2Token(clientId, clientSecret, refreshToken, grantType, code, scopes, state, redirectUri, resourceId);
         } catch(Exception e) {
             return getLegacyOrcidEntity("OAuth2 problem", e);
         }
@@ -173,11 +177,15 @@ public class OauthConfirmAccessController extends BaseController {
             if (matcher.find()) {
                 clientId = matcher.group(1);
                 if (clientId != null) {
+                	try {
+                		clientId = URLDecoder.decode(clientId, "UTF-8").trim();
+                	} catch (UnsupportedEncodingException e) {
+                    }
                     Matcher emailMatcher = RegistrationController.emailPattern.matcher(url);
                     if (emailMatcher.find()) {
                         String tempEmail = emailMatcher.group(1);
                         try {
-                            tempEmail = URLDecoder.decode(tempEmail, "UTF-8");
+                            tempEmail = URLDecoder.decode(tempEmail, "UTF-8").trim();
                         } catch (UnsupportedEncodingException e) {
                         }
                         if (orcidProfileManager.emailExists(tempEmail))
@@ -188,7 +196,7 @@ public class OauthConfirmAccessController extends BaseController {
                     if (orcidMatcher.find()) {
                         String tempOrcid = orcidMatcher.group(2);
                         try {
-                            tempOrcid = URLDecoder.decode(tempOrcid, "UTF-8");
+                            tempOrcid = URLDecoder.decode(tempOrcid, "UTF-8").trim();
                         } catch (UnsupportedEncodingException e) {
                         }
                         if (orcidProfileManager.exists(tempOrcid))
@@ -199,7 +207,8 @@ public class OauthConfirmAccessController extends BaseController {
                     if (scopeMatcher.find()) {
                         scope = scopeMatcher.group(1);
                         try {
-                            scope = URLDecoder.decode(scope, "UTF-8");
+                            scope = URLDecoder.decode(scope, "UTF-8").trim();
+                            scope = scope.replaceAll(" +", " ");
                         } catch (UnsupportedEncodingException e) {
                         }
                     }
@@ -207,7 +216,7 @@ public class OauthConfirmAccessController extends BaseController {
                     Matcher redirectUriMatcher = redirectUriPattern.matcher(url);
                     if (redirectUriMatcher.find()) {
                         try {
-                            redirectUri = URLDecoder.decode(redirectUriMatcher.group(1), "UTF-8");
+                            redirectUri = URLDecoder.decode(redirectUriMatcher.group(1), "UTF-8").trim();
                         } catch (UnsupportedEncodingException e) {
                         }
                     }
@@ -215,6 +224,10 @@ public class OauthConfirmAccessController extends BaseController {
                     Matcher responseTypeMatcher = responseTypePattern.matcher(url);
                     if (responseTypeMatcher.find()) {
                         responseType = responseTypeMatcher.group(1);
+                        try {
+                        	responseType = URLDecoder.decode(responseType, "UTF-8").trim();
+                        } catch (UnsupportedEncodingException e) {
+                        }
                     }
 
                     // Get client name
@@ -274,7 +287,10 @@ public class OauthConfirmAccessController extends BaseController {
     @RequestMapping(value = "/confirm_access", method = RequestMethod.GET)
     public ModelAndView loginGetHandler(HttpServletRequest request,  HttpServletResponse response, ModelAndView mav, @RequestParam("client_id") String clientId, @RequestParam("scope") String scope, @RequestParam("redirect_uri") String redirectUri) {
         OrcidProfile profile = orcidProfileManager.retrieveOrcidProfile(getCurrentUserOrcid(), LoadOptions.BIO_ONLY);
-
+        clientId = (clientId != null) ? clientId.trim() : clientId;
+        scope = (scope != null) ? scope.trim().replaceAll(" +", " ") : scope;
+        redirectUri = (redirectUri != null) ? redirectUri.trim() : redirectUri;
+       
         Boolean justRegistered = (Boolean) request.getSession().getAttribute(JUST_REGISTERED);
         if (justRegistered != null) {
             request.getSession().removeAttribute(JUST_REGISTERED);
@@ -286,7 +302,7 @@ public class OauthConfirmAccessController extends BaseController {
         String clientWebsite = "";
 
         boolean usePersistentTokens = false;
-
+        
         ClientDetailsEntity clientDetails = clientDetailsManager.findByClientId(clientId);
         clientName = clientDetails.getClientName() == null ? "" : clientDetails.getClientName();
         clientDescription = clientDetails.getClientDescription() == null ? "" : clientDetails.getClientDescription();
@@ -459,6 +475,11 @@ public class OauthConfirmAccessController extends BaseController {
     @RequestMapping(value = "/custom/register/empty.json", method = RequestMethod.GET)
     public @ResponseBody
     OauthRegistration getRegister(HttpServletRequest request, HttpServletResponse response) {
+        // Remove the session hash if needed
+        if (request.getSession().getAttribute(RegistrationController.GRECAPTCHA_SESSION_ATTRIBUTE_NAME) != null) {
+            request.getSession().removeAttribute(RegistrationController.GRECAPTCHA_SESSION_ATTRIBUTE_NAME);
+        }
+        
         OauthRegistration empty = new OauthRegistration(registrationController.getRegister(request, response));
         // Creation type in oauth will always be member referred
         empty.setCreationType(Text.valueOf(CreationMethod.MEMBER_REFERRED.value()));
@@ -477,18 +498,8 @@ public class OauthConfirmAccessController extends BaseController {
         form.setErrors(new ArrayList<String>());
 
         if (form.getApproved()) {
-            registrationController.registerGivenNameValidate(form);
-            registrationController.registerPasswordValidate(form);
-            registrationController.registerPasswordConfirmValidate(form);
-            registrationController.regEmailValidate(request, form, true);
-            registrationController.registerTermsOfUseValidate(form);
-
-            copyErrors(form.getEmailConfirm(), form);
-            copyErrors(form.getEmail(), form);
-            copyErrors(form.getGivenNames(), form);
-            copyErrors(form.getPassword(), form);
-            copyErrors(form.getPasswordConfirm(), form);
-            copyErrors(form.getTermsOfUse(), form);
+            registrationController.validateRegistrationFields(request, form);
+            registrationController.validateGrcaptcha(request, form);
         } else {
             SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
             String stateParam = null;
@@ -506,11 +517,47 @@ public class OauthConfirmAccessController extends BaseController {
     public @ResponseBody
     OauthRegistration registerAndAuthorize(HttpServletRequest request, HttpServletResponse response, @RequestBody OauthRegistration form) {                
         if (form.getApproved()) {
+            boolean usedCaptcha = false;
+
+            // If recatcha wasn't loaded do nothing. This is for countries that
+            // block google.
+            if (form.getGrecaptchaWidgetId().getValue() != null) {
+                // If the captcha verified key is not in the session, redirect to
+                // the login page
+                if (request.getSession().getAttribute(RegistrationController.GRECAPTCHA_SESSION_ATTRIBUTE_NAME) == null || PojoUtil.isEmpty(form.getGrecaptcha())
+                        || !encryptionManager.encryptForExternalUse(form.getGrecaptcha().getValue()).equals(request.getSession().getAttribute(RegistrationController.GRECAPTCHA_SESSION_ATTRIBUTE_NAME))) {
+                    String redirectUri = this.getBaseUri() + REDIRECT_URI_ERROR;
+                    // Set the client id
+                    redirectUri = redirectUri.replace("{0}", form.getClientId().getValue());
+                    // Set the response type if needed
+                    if (!PojoUtil.isEmpty(form.getResponseType()))
+                        redirectUri += "&response_type=" + form.getResponseType().getValue();
+                    // Set the redirect uri
+                    if (!PojoUtil.isEmpty(form.getRedirectUri()))
+                        redirectUri += "&redirect_uri=" + form.getRedirectUri().getValue();
+                    // Set the scope param
+                    if (!PojoUtil.isEmpty(form.getScope()))
+                        redirectUri += "&scope=" + form.getScope().getValue();
+                    // Copy the state param if present
+                    if(!PojoUtil.isEmpty(request.getParameter("state")))                    
+                        redirectUri += "&state=" + request.getParameter("state");
+                    form.setRedirectUri(Text.valueOf(redirectUri));
+                    return form;
+                }
+                
+                usedCaptcha = true;
+            }
+
+            // Remove the session hash if needed
+            if (request.getSession().getAttribute(RegistrationController.GRECAPTCHA_SESSION_ATTRIBUTE_NAME) != null) {
+                request.getSession().removeAttribute(RegistrationController.GRECAPTCHA_SESSION_ATTRIBUTE_NAME);
+            }                        
+            
             // Check there are no errors
-            checkRegisterForm(request, response, form);
+            registrationController.validateRegistrationFields(request, form);
             if (form.getErrors().isEmpty()) {
                 // Register user
-                registrationController.createMinimalRegistration(request, RegistrationController.toProfile(form, request), false);
+                registrationController.createMinimalRegistration(request, RegistrationController.toProfile(form, request), usedCaptcha);
                 // Authenticate user
                 String email = form.getEmail().getValue();
                 String password = form.getPassword().getValue();
@@ -774,7 +821,7 @@ public class OauthConfirmAccessController extends BaseController {
     @RequestMapping(value = "/custom/register/validateEmail.json", method = RequestMethod.POST)
     public @ResponseBody
     OauthRegistration validateEmail(HttpServletRequest request, @RequestBody OauthRegistration reg) {
-        registrationController.regEmailValidate(request, reg, true);
+        registrationController.regEmailValidate(request, reg, true, false);
         return reg;
     }
 

@@ -33,6 +33,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.orcid.jaxb.model.notification.Notification;
+import org.orcid.jaxb.model.notification.NotificationType;
 
 /**
  * <p>
@@ -79,6 +80,10 @@ public class NotificationCustom extends Notification implements Serializable {
     protected String bodyHtml;
     @XmlAttribute(name = "lang", namespace = "http://www.w3.org/XML/1998/namespace")
     protected String lang;
+
+    {
+        notificationType = NotificationType.CUSTOM;
+    }
 
     /**
      * Gets the value of the subject property.

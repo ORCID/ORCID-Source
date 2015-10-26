@@ -23,6 +23,7 @@ import org.orcid.jaxb.model.record.Education;
 import org.orcid.jaxb.model.record.Employment;
 import org.orcid.jaxb.model.record.Funding;
 import org.orcid.jaxb.model.record.PeerReview;
+import org.orcid.jaxb.model.record.ResearcherUrl;
 import org.orcid.jaxb.model.record.Work;
 
 /**
@@ -93,5 +94,16 @@ public interface MemberV2ApiServiceDelegator {
     Response deleteGroupIdRecord(Long putCode);
 
     Response viewGroupIdRecords(String pageSize, String pageNum);
+    
+    Response viewResearcherUrls(String orcid);
+    
+    Response viewResearcherUrl(String orcid, String putCode);
+    
+    Response updateResearcherUrl(String orcid, String putCode, ResearcherUrl researcherUrl);
+    
+    Response createResearcherUrl(String orcid, ResearcherUrl researcherUrl);
 
+    Response deleteResearcherUrl(String orcid, String putCode);
+    
+    Response viewEmails(String orcid);       
 }

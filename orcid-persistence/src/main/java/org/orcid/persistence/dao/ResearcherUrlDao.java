@@ -18,9 +18,10 @@ package org.orcid.persistence.dao;
 
 import java.util.List;
 
+import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 
-public interface ResearcherUrlDao {
+public interface ResearcherUrlDao extends GenericDao<ResearcherUrlEntity, Long> {
 
     /**
      * Return the list of researcher urls associated to a specific profile
@@ -31,11 +32,21 @@ public interface ResearcherUrlDao {
     public List<ResearcherUrlEntity> getResearcherUrls(String orcid);
 
     /**
+     * Return the list of researcher urls associated to a specific profile
+     * @param orcid
+     * @param visibility
+     * @return 
+     *          the list of researcher urls associated with the orcid profile
+     * */
+    public List<ResearcherUrlEntity> getResearcherUrls(String orcid, Visibility visibility);
+    
+    /**
      * Deleted a researcher url from database
+     * @param orcid
      * @param id
      * @return true if the researcher url was successfully deleted
      * */
-    public boolean deleteResearcherUrl(long id);
+    public boolean deleteResearcherUrl(String orcid, long id);
 
     /**
      * Retrieve a researcher url from database
@@ -43,15 +54,6 @@ public interface ResearcherUrlDao {
      * @return the ResearcherUrlEntity associated with the parameter id
      * */
     public ResearcherUrlEntity getResearcherUrl(long id);
-
-    /**
-     * Adds a researcher url to a specific profile
-     * @param orcid
-     * @param url
-     * @param urlName
-     * @return true if the researcher url was successfully created on database
-     * */
-    public boolean addResearcherUrls(String orcid, String url, String urlName);
     
     /**
      * Updates an existing researcher url

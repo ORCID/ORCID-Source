@@ -130,6 +130,11 @@ public class OrcidOauth2TokenDetailServiceImpl implements OrcidOauth2TokenDetail
             return null;
         }
     }
+    
+    @Override
+    public int findCountByUserName(String userName) {
+        return orcidOauth2TokenDetailDao.findCountByUserName(userName);
+    }
 
     @Override
     public List<OrcidOauth2TokenDetail> findByClientId(String clientId) {

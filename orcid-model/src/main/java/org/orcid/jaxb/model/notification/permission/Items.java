@@ -25,13 +25,19 @@ package org.orcid.jaxb.model.notification.permission;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * <p>
  * Java class for anonymous complex type.
@@ -45,7 +51,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element ref="{http://www.orcid.org/ns/orcid}activity" maxOccurs="unbounded"/>
+ *         &lt;element ref="{http://www.orcid.org/ns/orcid}item" maxOccurs="unbounded"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -66,20 +72,24 @@ public class Items implements Serializable {
     public Items() {
     }
 
+    public Items(List<Item> items) {
+        this.items = items;
+    }
+
     /**
-     * Gets the value of the activities property.
+     * Gets the value of the items property.
      * 
      * <p>
      * This accessor method returns a reference to the live list, not a
      * snapshot. Therefore any modification you make to the returned list will
      * be present inside the JAXB object. This is why there is not a
-     * <CODE>set</CODE> method for the activities property.
+     * <CODE>set</CODE> method for the items property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * 
      * <pre>
-     * getActivities().add(newItem);
+     * getItems().add(newItem);
      * </pre>
      * 
      * 
@@ -93,6 +103,25 @@ public class Items implements Serializable {
             items= new ArrayList<Item>();
         }
         return this.items;
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public Map<String, List<Item>> getItemsByType() {
+        Map<String, List<Item>> itemsMap = new HashMap<>();
+        if (items != null) {
+            for (Item item : items) {
+                ItemType activityType = item.getItemType();
+                String key = activityType.name();
+                List<Item> activitiesForType = itemsMap.get(key);
+                if (activitiesForType == null) {
+                    activitiesForType = new ArrayList<>();
+                    itemsMap.put(key, activitiesForType);
+                }
+                activitiesForType.add(item);
+            }
+        }
+        return itemsMap;
     }
 
 }

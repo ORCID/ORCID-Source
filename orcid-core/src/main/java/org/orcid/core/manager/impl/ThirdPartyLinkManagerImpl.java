@@ -149,9 +149,16 @@ public class ThirdPartyLinkManagerImpl implements ThirdPartyLinkManager {
         LOGGER.debug("Updating cache for read-access-clients, new version: " + this.localCacheVersion);
         return getClients(RedirectUriType.GRANT_READ_WIZARD);
     }
+    
+	@Override
+	@Cacheable("import-peer-review-clients")
+	public List<OrcidClient> findOrcidClientsWithPredefinedOauthScopePeerReviewImport() {
+		updateLocalCacheVersion();
+        return getClients(RedirectUriType.IMPORT_PEER_REVIEW_WIZARD);
+	}
 
     @Override
-    @CacheEvict(value = { "read-access-clients", "import-works-clients", "import-funding-clients" }, allEntries = true)
+    @CacheEvict(value = { "read-access-clients", "import-works-clients", "import-funding-clients", "import-peer-review-clients" }, allEntries = true)
     public void evictAll() {
         LOGGER.debug("read-access-clients and import-works-clients all keys  evicted");
     }
@@ -184,5 +191,4 @@ public class ThirdPartyLinkManagerImpl implements ThirdPartyLinkManager {
         }
         return orcidClients;
     }
-
 }

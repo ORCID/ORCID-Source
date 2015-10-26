@@ -37,7 +37,9 @@ import javax.validation.Valid;
 
 import org.apache.commons.codec.binary.Base64;
 import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
+import org.orcid.core.constants.DefaultPreferences;
 import org.orcid.core.manager.EncryptionManager;
+import org.orcid.core.manager.InternalSSOManager;
 import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidProfileManager;
@@ -134,6 +136,8 @@ public class RegistrationController extends BaseController {
 
     final static Integer DUP_SEARCH_ROWS = 25;
 
+    public final static String GRECAPTCHA_SESSION_ATTRIBUTE_NAME = "verified-recaptcha-hash";
+    
     private static Random rand = new Random();
 
     @Resource
@@ -171,6 +175,9 @@ public class RegistrationController extends BaseController {
 
     @Resource
     private RecaptchaVerifier recaptchaVerifier;
+    
+    @Resource
+    private InternalSSOManager internalSSOManager;
 
     public void setEncryptionManager(EncryptionManager encryptionManager) {
         this.encryptionManager = encryptionManager;
@@ -207,8 +214,8 @@ public class RegistrationController extends BaseController {
     @RequestMapping(value = "/register.json", method = RequestMethod.GET)
     public @ResponseBody Registration getRegister(HttpServletRequest request, HttpServletResponse response) {
         // Remove the session hash if needed
-        if (request.getSession().getAttribute("verified-recaptcha-hash") != null) {
-            request.getSession().removeAttribute("verified-recaptcha-hash");
+        if (request.getSession().getAttribute(GRECAPTCHA_SESSION_ATTRIBUTE_NAME) != null) {
+            request.getSession().removeAttribute(GRECAPTCHA_SESSION_ATTRIBUTE_NAME);
         }
         Registration reg = new Registration();
 
@@ -227,8 +234,8 @@ public class RegistrationController extends BaseController {
         reg.getSendChangeNotifications().setValue(true);
         reg.getSendOrcidNews().setValue(true);
         reg.getSendMemberUpdateRequests().setValue(true);
-        reg.getSendEmailFrequencyDays().setValue(SendEmailFrequency.DAILY.value());
-        reg.getTermsOfUse().setValue(false);
+        reg.getSendEmailFrequencyDays().setValue(SendEmailFrequency.WEEKLY.value());
+        reg.getTermsOfUse().setValue(false);        
         setError(reg.getTermsOfUse(), "AssertTrue.registrationForm.acceptTermsAndConditions");
 
         SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
@@ -284,11 +291,21 @@ public class RegistrationController extends BaseController {
         contactDetails.addOrReplacePrimaryEmail(new org.orcid.jaxb.model.message.Email(reg.getEmail().getValue()));
         Preferences preferences = new Preferences();
         preferences.setSendChangeNotifications(new SendChangeNotifications(reg.getSendChangeNotifications().getValue()));
-        preferences.setSendOrcidNews(new SendOrcidNews(reg.getSendOrcidNews().getValue()));
-        preferences.setSendMemberUpdateRequests(reg.getSendMemberUpdateRequests().getValue());
-        preferences.setSendEmailFrequencyDays(reg.getSendEmailFrequencyDays().getValue());
+        preferences.setSendOrcidNews(new SendOrcidNews(reg.getSendOrcidNews().getValue()));                
         preferences.setActivitiesVisibilityDefault(new ActivitiesVisibilityDefault(Visibility.fromValue(reg.getActivitiesVisibilityDefault().getVisibility().value())));
-
+        preferences.setNotificationsEnabled(DefaultPreferences.NOTIFICATIONS_ENABLED);
+        if(PojoUtil.isEmpty(reg.getSendEmailFrequencyDays())) {
+            preferences.setSendEmailFrequencyDays(DefaultPreferences.SEND_EMAIL_FREQUENCY_DAYS);
+        } else {
+            preferences.setSendEmailFrequencyDays(reg.getSendEmailFrequencyDays().getValue());
+        }
+        
+        if(reg.getSendMemberUpdateRequests() == null) {
+            preferences.setSendMemberUpdateRequests(DefaultPreferences.SEND_MEMBER_UPDATE_REQUESTS);
+        } else {
+            preferences.setSendMemberUpdateRequests(reg.getSendMemberUpdateRequests().getValue());
+        }
+                      
         PersonalDetails personalDetails = new PersonalDetails();
         personalDetails.setFamilyName(new FamilyName(reg.getFamilyNames().getValue()));
         personalDetails.setGivenNames(new GivenNames(reg.getGivenNames().getValue()));
@@ -315,14 +332,20 @@ public class RegistrationController extends BaseController {
         profile.setUserLastIp(OrcidRequestUtil.getIpAddress(request));
         return profile;
     }
-    
+
     @RequestMapping(value = "/register.json", method = RequestMethod.POST)
     public @ResponseBody Registration setRegister(HttpServletRequest request, @RequestBody Registration reg) {
         validateRegistrationFields(request, reg);
+        validateGrcaptcha(request, reg);
+        return reg;
+    }
+
+    public void validateGrcaptcha(HttpServletRequest request, @RequestBody Registration reg) {
         // If recatcha wasn't loaded do nothing. This is for countries that
         // block google.
         if (reg.getGrecaptchaWidgetId().getValue() != null) {
             if (reg.getGrecaptcha() == null) {
+                reg.setGrecaptcha(new Text());
                 reg.getGrecaptcha().setErrors(new ArrayList<String>());
                 setError(reg.getGrecaptcha(), "registrationForm.recaptcha.error");
                 setError(reg, "registrationForm.recaptcha.error");
@@ -330,8 +353,8 @@ public class RegistrationController extends BaseController {
                 reg.getGrecaptcha().setErrors(new ArrayList<String>());
             }
 
-            if (request.getSession().getAttribute("verified-recaptcha-hash") != null) {
-                if (!encryptionManager.encryptForExternalUse(reg.getGrecaptcha().getValue()).equals(request.getSession().getAttribute("verified-recaptcha-hash"))) {
+            if (request.getSession().getAttribute(GRECAPTCHA_SESSION_ATTRIBUTE_NAME) != null) {
+                if (!encryptionManager.encryptForExternalUse(reg.getGrecaptcha().getValue()).equals(request.getSession().getAttribute(GRECAPTCHA_SESSION_ATTRIBUTE_NAME))) {
                     setError(reg.getGrecaptcha(), "registrationForm.recaptcha.error");
                     setError(reg, "registrationForm.recaptcha.error");
                 }
@@ -340,32 +363,34 @@ public class RegistrationController extends BaseController {
                 setError(reg.getGrecaptcha(), "registrationForm.recaptcha.error");
                 setError(reg, "registrationForm.recaptcha.error");
             } else {
-                request.getSession().setAttribute("verified-recaptcha-hash", encryptionManager.encryptForExternalUse(reg.getGrecaptcha().getValue()));
+                request.getSession().setAttribute(GRECAPTCHA_SESSION_ATTRIBUTE_NAME, encryptionManager.encryptForExternalUse(reg.getGrecaptcha().getValue()));
             }
         }
-
-        return reg;
     }
 
     @RequestMapping(value = "/registerConfirm.json", method = RequestMethod.POST)
     public @ResponseBody Redirect setRegisterConfirm(HttpServletRequest request, HttpServletResponse response, @RequestBody Registration reg) {
         Redirect r = new Redirect();
 
+        boolean usedCaptcha = false;
+
         // If recatcha wasn't loaded do nothing. This is for countries that
         // block google.
         if (reg.getGrecaptchaWidgetId().getValue() != null) {
             // If the captcha verified key is not in the session, redirect to
             // the login page
-            if (request.getSession().getAttribute("verified-recaptcha-hash") == null || PojoUtil.isEmpty(reg.getGrecaptcha())
-                    || !encryptionManager.encryptForExternalUse(reg.getGrecaptcha().getValue()).equals(request.getSession().getAttribute("verified-recaptcha-hash"))) {
+            if (request.getSession().getAttribute(GRECAPTCHA_SESSION_ATTRIBUTE_NAME) == null || PojoUtil.isEmpty(reg.getGrecaptcha())
+                    || !encryptionManager.encryptForExternalUse(reg.getGrecaptcha().getValue()).equals(request.getSession().getAttribute(GRECAPTCHA_SESSION_ATTRIBUTE_NAME))) {
                 r.setUrl(getBaseUri() + "/register");
                 return r;
             }
+            
+            usedCaptcha = true;
         }
 
         // Remove the session hash if needed
-        if (request.getSession().getAttribute("verified-recaptcha-hash") != null) {
-            request.getSession().removeAttribute("verified-recaptcha-hash");
+        if (request.getSession().getAttribute(GRECAPTCHA_SESSION_ATTRIBUTE_NAME) != null) {
+            request.getSession().removeAttribute(GRECAPTCHA_SESSION_ATTRIBUTE_NAME);
         }
 
         // make sure validation still passes
@@ -378,27 +403,23 @@ public class RegistrationController extends BaseController {
         if (reg.getValNumServer() == 0 || reg.getValNumClient() != reg.getValNumServer() / 2) {
             r.setUrl(getBaseUri() + "/register");
             return r;
-        }
+        }        
 
-        boolean usedCaptcha = false;
-        
-        if(reg.getGrecaptchaWidgetId().getValue() != null){
-            usedCaptcha = true;
-        }
-        
-        createMinimalRegistrationAndLogUserIn(request, toProfile(reg, request), usedCaptcha);
+        createMinimalRegistrationAndLogUserIn(request, response, toProfile(reg, request), usedCaptcha);
         String redirectUrl = calculateRedirectUrl(request, response);
         r.setUrl(redirectUrl);
         return r;
     }
+    
+    
 
-    private void validateRegistrationFields(HttpServletRequest request, Registration reg) {
+    public void validateRegistrationFields(HttpServletRequest request, Registration reg) {
         reg.setErrors(new ArrayList<String>());
 
         registerGivenNameValidate(reg);
         registerPasswordValidate(reg);
         registerPasswordConfirmValidate(reg);
-        regEmailValidate(request, reg);
+        regEmailValidate(request, reg, false, false);
         registerTermsOfUseValidate(reg);
 
         copyErrors(reg.getEmailConfirm(), reg);
@@ -499,12 +520,12 @@ public class RegistrationController extends BaseController {
 
     @RequestMapping(value = "/registerEmailValidate.json", method = RequestMethod.POST)
     public @ResponseBody Registration regEmailValidate(HttpServletRequest request, @RequestBody Registration reg) {
-        return regEmailValidate(request, reg, false);
+        return regEmailValidate(request, reg, false, true);
     }
 
-    public Registration regEmailValidate(HttpServletRequest request, Registration reg, boolean isOauthRequest) {
+    public Registration regEmailValidate(HttpServletRequest request, Registration reg, boolean isOauthRequest, boolean isKeyup) {
         reg.getEmail().setErrors(new ArrayList<String>());
-        if (reg.getEmail().getValue() == null || reg.getEmail().getValue().trim().isEmpty()) {
+        if (!isKeyup && (reg.getEmail().getValue() == null || reg.getEmail().getValue().trim().isEmpty())) {
             setError(reg.getEmail(), "Email.registrationForm.email");
         }
         // validate email
@@ -1029,15 +1050,20 @@ public class RegistrationController extends BaseController {
 
     }
 
-    public void createMinimalRegistrationAndLogUserIn(HttpServletRequest request, OrcidProfile profileToSave, boolean usedCaptchaVerification) {
+    public void createMinimalRegistrationAndLogUserIn(HttpServletRequest request, HttpServletResponse response, OrcidProfile profileToSave, boolean usedCaptchaVerification) {
         String password = profileToSave.getPassword();
         UsernamePasswordAuthenticationToken token = null;
         try {
             profileToSave = createMinimalRegistration(request, profileToSave, usedCaptchaVerification);
+            String orcidId = profileToSave.getOrcidIdentifier().getPath();
             token = new UsernamePasswordAuthenticationToken(profileToSave.getOrcidIdentifier().getPath(), password);
             token.setDetails(new WebAuthenticationDetails(request));
             Authentication authentication = authenticationManager.authenticate(token);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+            SecurityContextHolder.getContext().setAuthentication(authentication);            
+            if(internalSSOManager.enableCookie()) {
+                //Set user cookie
+                internalSSOManager.writeCookie(orcidId, request, response);
+            }
         } catch (AuthenticationException e) {
             // this should never happen
             SecurityContextHolder.getContext().setAuthentication(null);

@@ -76,8 +76,6 @@
 
     <bean id="workDao" class="org.orcid.persistence.dao.impl.WorkDaoImpl" />
     
-    <bean id="workExternalIdentifierDao" class="org.orcid.persistence.dao.impl.WorkExternalIdentifierDaoImpl" />
-    
     <bean id="clientDetailsDao" class="org.orcid.persistence.dao.impl.ClientDetailsDaoImpl" />
     
     <bean id="clientSecretDao" class="org.orcid.persistence.dao.impl.ClientSecretDaoImpl" />
@@ -126,7 +124,11 @@
     <bean id="webhookDao" class="org.orcid.persistence.dao.impl.WebhookDaoImpl" />
      
     <!-- Statistics Generation DAO -->
-	<bean id="statisticsGeneratorDao" class="org.orcid.persistence.dao.impl.StatisticsGeneratorDaoImpl" />
+	<bean id="statisticsGeneratorDao" class="org.orcid.persistence.dao.impl.StatisticsGeneratorDaoImpl">
+		<property name="entityManager" ref="entityManagerReadOnly" />
+	</bean>
+	
+	
 	<!-- Statistics DAO -->
 	<bean id="statisticsDao" class="org.orcid.persistence.dao.impl.StatisticsDaoImpl" />
      
@@ -165,17 +167,31 @@
     </bean>  
 
 	<bean id="shibbolethAccountDao" class="org.orcid.persistence.dao.impl.ShibbolethAccountDaoImpl" />
+
+    <bean id="userConnectionDao" class="org.orcid.persistence.dao.impl.UserConnectionDaoImpl" />
+    
+    <bean id="internalSSODao" class="org.orcid.persistence.dao.impl.InternalSSODaoImpl" />
     
     <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="liquibase">
         <property name="jpaVendorAdapter" ref="jpaVendorAdapter" />
         <property name="dataSource" ref="\${org.orcid.persistence.db.dataSource}" />
         <property name="persistenceUnitName" value="orcid" />
+        <property name="jpaPropertyMap">
+            <map>
+                <entry key="hibernate.generate_statistics" value="\${org.orcid.persistence.db.hibernateStatistics:false}" />    
+            </map>
+        </property>
     </bean>
     
     <bean id="entityManagerFactoryReadOnly" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="liquibase">
         <property name="jpaVendorAdapter" ref="jpaVendorAdapter" />
         <property name="dataSource" ref="\${org.orcid.persistence.db.readonly.dataSource}" />
         <property name="persistenceUnitName" value="orcid" />
+        <property name="jpaPropertyMap">
+            <map>
+                <entry key="hibernate.generate_statistics" value="\${org.orcid.persistence.db.readonly.hibernateStatistics:false}" />    
+            </map>
+        </property>
     </bean>
     
     <bean id="orcidEntityManagerFactory" class="org.orcid.persistence.spring.OrcidEntityManagerFactory">
@@ -200,6 +216,11 @@
 	    <property name="jpaVendorAdapter" ref="jpaVendorAdapter" />
         <property name="dataSource" ref="\${org.orcid.persistence.statistics.db.dataSource}" />
         <property name="persistenceUnitName" value="statistics" />
+        <property name="jpaPropertyMap">
+            <map>
+                <entry key="hibernate.generate_statistics" value="\${org.orcid.persistence.statistics.db.hibernateStatistics:false}" />    
+            </map>
+        </property>
     </bean>
     
     <bean id="statisticsLiquibase" class="liquibase.integration.spring.SpringLiquibase">
@@ -400,7 +421,7 @@
         <property name="poolSize" value="${org.orcid.core.poolSizeForInternalEncryption:16}" />
     </bean>
 
-    <bean id="hibernateStringEncryptor" class="org.jasypt.hibernate.encryptor.HibernatePBEStringEncryptor">
+    <bean id="hibernateStringEncryptor" class="org.jasypt.hibernate4.encryptor.HibernatePBEStringEncryptor">
         <property name="registeredName" value="hibernateStringEncryptor" />
         <property name="encryptor" ref="internalEncryptor" />
     </bean>

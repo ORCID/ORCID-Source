@@ -28,6 +28,7 @@ import javax.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.constants.OauthTokensConstants;
+import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
@@ -80,6 +81,9 @@ public class OrcidTokenStoreServiceImpl implements TokenStore {
     
     @Resource(name = "profileEntityCacheManager")
     ProfileEntityCacheManager profileEntityCacheManager;
+    
+    @Resource
+    ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
 
     private static final AuthenticationKeyGenerator KEY_GENERATOR = new DefaultAuthenticationKeyGenerator();
 
@@ -308,7 +312,7 @@ public class OrcidTokenStoreServiceImpl implements TokenStore {
 
     private OAuth2Authentication getOAuth2AuthenticationFromDetails(OrcidOauth2TokenDetail details) {
         if (details != null) {
-            ClientDetailsEntity clientDetailsEntity = details.getClientDetailsEntity();
+            ClientDetailsEntity clientDetailsEntity = clientDetailsEntityCacheManager.retrieve(details.getClientDetailsId());
             Authentication authentication = null;
             AuthorizationRequest request = null;
             if (clientDetailsEntity != null) {
@@ -336,10 +340,9 @@ public class OrcidTokenStoreServiceImpl implements TokenStore {
             detail = new OrcidOauth2TokenDetail();
         }
         String clientId = authorizationRequest.getClientId();
-        ClientDetailsEntity clientDetails = clientDetailsManager.findByClientId(clientId);
         String authKey = KEY_GENERATOR.extractKey(authentication);
         detail.setAuthenticationKey(authKey);
-        detail.setClientDetailsEntity(clientDetails);
+        detail.setClientDetailsId(clientId);
 
         OAuth2RefreshToken refreshToken = token.getRefreshToken();
         if (refreshToken != null && StringUtils.isNotBlank(refreshToken.getValue())) {
@@ -367,6 +370,7 @@ public class OrcidTokenStoreServiceImpl implements TokenStore {
 
         Set<String> resourceIds = authorizationRequest.getResourceIds();
         if(resourceIds == null || resourceIds.isEmpty()) {
+            ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(clientId);
             resourceIds = clientDetails.getResourceIds();
         }
         
