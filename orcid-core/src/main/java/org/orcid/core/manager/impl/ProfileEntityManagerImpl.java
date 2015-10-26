@@ -16,6 +16,7 @@
  */
 package org.orcid.core.manager.impl;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -33,6 +34,7 @@ import org.orcid.core.adapter.JpaJaxbFundingAdapter;
 import org.orcid.core.adapter.JpaJaxbPeerReviewAdapter;
 import org.orcid.core.adapter.JpaJaxbWorkAdapter;
 import org.orcid.core.manager.AffiliationsManager;
+import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.PeerReviewManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
@@ -72,6 +74,7 @@ import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ApplicationSummary;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -116,6 +119,9 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
 
     @Resource
     WorkManager workManager;
+    
+    @Resource
+    private EncryptionManager encryptionManager;
 
     /**
      * Fetch a ProfileEntity from the database Instead of calling this function,
@@ -542,6 +548,16 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     @Override
     public List<ApplicationSummary> getApplications(List<OrcidOauth2TokenDetail> tokenDetails) {
     	return jpa2JaxbAdapter.getApplications(tokenDetails);
+    }
+    
+    @Override
+    @Cacheable(value = "orcid-hash")
+    public String getOrcidHash(String orcid) throws NoSuchAlgorithmException {     
+        if(PojoUtil.isEmpty(orcid)) {
+            return null;
+        }
+        System.out.println("NOT USING CACHE!!!!");
+        return encryptionManager.sha256Hash(orcid);
     }
     
 }
