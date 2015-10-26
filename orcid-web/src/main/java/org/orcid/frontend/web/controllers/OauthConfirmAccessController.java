@@ -41,6 +41,7 @@ import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.oauth.OrcidRandomValueTokenServices;
 import org.orcid.core.oauth.service.OrcidAuthorizationEndpoint;
+import org.orcid.core.utils.JsonUtils;
 import org.orcid.jaxb.model.message.CreationMethod;
 import org.orcid.jaxb.model.message.ErrorDesc;
 import org.orcid.jaxb.model.message.OrcidMessage;
@@ -144,7 +145,8 @@ public class OauthConfirmAccessController extends BaseController {
         } catch(Exception e) {
             return getLegacyOrcidEntity("OAuth2 problem", e);
         }
-        return res.getEntity();
+        String result = JsonUtils.convertToJsonString(res.getEntity());
+        return result;
     }
     
     private OrcidMessage getLegacyOrcidEntity(String prefix, Throwable e) {
