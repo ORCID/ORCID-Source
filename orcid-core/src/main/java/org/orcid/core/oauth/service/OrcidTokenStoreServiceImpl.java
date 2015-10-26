@@ -297,10 +297,12 @@ public class OrcidTokenStoreServiceImpl implements TokenStore {
             
             String clientId = detail.getClientDetailsId();
             if(!PojoUtil.isEmpty(clientId)) {
-                Map<String, Object> additionalInfo = token.getAdditionalInformation();
-                if(additionalInfo == null) {
-                    additionalInfo = new HashMap<String, Object>();
+                Map<String, Object> additionalInfo = new HashMap<String, Object>(); 
+                Map<String, Object> additionalInfoInToken = token.getAdditionalInformation();
+                if(additionalInfoInToken != null && !additionalInfoInToken.isEmpty()) {
+                    additionalInfo.putAll(additionalInfoInToken);
                 } 
+                // Copy to a new one to avoid unmodifiable  
                 additionalInfo.put(OauthTokensConstants.CLIENT_ID, clientId);
                 token.setAdditionalInformation(additionalInfo);
             }
