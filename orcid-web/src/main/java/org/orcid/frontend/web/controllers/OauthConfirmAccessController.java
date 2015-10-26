@@ -41,6 +41,7 @@ import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.oauth.OrcidRandomValueTokenServices;
 import org.orcid.core.oauth.service.OrcidAuthorizationEndpoint;
+import org.orcid.core.utils.JsonUtils;
 import org.orcid.jaxb.model.message.CreationMethod;
 import org.orcid.jaxb.model.message.ErrorDesc;
 import org.orcid.jaxb.model.message.OrcidMessage;
@@ -58,6 +59,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.common.exceptions.InvalidScopeException;
 import org.springframework.security.oauth2.common.exceptions.RedirectMismatchException;
 import org.springframework.security.oauth2.common.util.OAuth2Utils;
@@ -142,9 +144,10 @@ public class OauthConfirmAccessController extends BaseController {
         try {
         	res = orcidClientCredentialEndPointDelegator.obtainOauth2Token(clientId, clientSecret, refreshToken, grantType, code, scopes, state, redirectUri, resourceId);
         } catch(Exception e) {
-            return getLegacyOrcidEntity("OAuth2 problem", e);
+            throw e;
         }
-        return res.getEntity();
+        String result = JsonUtils.convertToJsonString(res.getEntity());
+        return result;
     }
     
     private OrcidMessage getLegacyOrcidEntity(String prefix, Throwable e) {
