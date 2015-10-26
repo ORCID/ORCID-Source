@@ -556,7 +556,6 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         if(PojoUtil.isEmpty(orcid)) {
             return null;
         }
-        System.out.println("NOT USING CACHE!!!!");
         return encryptionManager.sha256Hash(orcid);
     }
     
