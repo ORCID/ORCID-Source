@@ -18,6 +18,8 @@ package org.orcid.jaxb.model.record_2_rc2;
 
 import java.util.Collection;
 
+import org.orcid.jaxb.model.common.LastModifiedDate;
+
 /**
  * 
  * @author Will Simpson
@@ -26,5 +28,7 @@ import java.util.Collection;
 public interface Group {
 
     Collection<? extends GroupableActivity> getActivities();
+
+	void setLastModifiedDate(LastModifiedDate lastModifiedDate);
     
 }
