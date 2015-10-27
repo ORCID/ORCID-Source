@@ -1,39 +1,14 @@
-body{
-    padding: 0;
-    margin: 0;
-    font-family: 'Gill Sans W02', 'Helvetica', sans-serif;
-    font-style: normal;  
-    color: #939598;
-    font-size: 16px;   
-}
-
-a, a:visited{
-    text-decoration: none !important;
-}
-
-#idpSelectContainer{
-    border-top: 10px solid #A6CE39;
-    width: 413px;
-    height: auto;
-}
-
 /* Top level is idpSelectIdPSelector */
 #idpSelectIdPSelector
 {
-    width: 388px;
+    width: 389px;
     text-align: left;
     background-color: #FFFFFF;
-    border: 2px solid #A6CE39;
-    padding: 5px;
-    margin: 5px;
-    position: relative;
+    border: 2px #A40000 solid;
+    padding: 10px;
 }
 
 /* Next down are the idpSelectPreferredIdPTile, idpSelectIdPEntryTile & idpSelectIdPListTile */
-
-#idpSelectIdPEntryTile{
-    padding-left: 5px;
-}
 
 /** 
  * The preferred IdP tile (if present) has a specified height, so
@@ -74,9 +49,8 @@ div.IdPSelectPreferredIdPButton a
 }
 div.IdPSelectTextDiv{
     height: 3.5ex; /* Add some height to separate the text from the boxes */
-    font-size: 11px;
+    font-size: 15px;
     clear: left;
-    color: #338CAF;
 }
 
 div.IdPSelectPreferredIdPImg
@@ -88,7 +62,6 @@ div.IdPSelectPreferredIdPImg
 
 img.IdPSelectIdPImg {
    width:auto;
-   color: #338CAF;
 }
 
 div.IdPSelectPreferredIdPButton img
@@ -122,8 +95,6 @@ div.IdPSelectPreferredIdPButton div.IdPSelectTextDiv
 #idpSelectInput, #idpSelectSelector
 {
     width: 80%;
-    border: 1px solid #939598;
-    font-family: 'Gill Sans W02', 'Helvetica', sans-serif;
 }
 /*
  * For some reason a <select> width includes the border and an
@@ -133,25 +104,17 @@ div.IdPSelectPreferredIdPButton div.IdPSelectTextDiv
 {
     margin-left: 2px;
     margin-right: 2px;
-    color: #939598;
+
 }
 #idpSelectSelectButton, #idpSelectListButton
 {
     margin-left: 5px;
     width: 16%;
-    background: #338CAF;
-    color: #FFF;
-    border: none;
-    border-radius: 3px;
 }
 #idpSelectSelectButton
 {
     padding-left: 2px;
     padding-right: 2px;
-    background: #338CAF;
-    color: #FFF;
-    border: none;
-    border-radius: 3px;
 }
 
 /*
@@ -183,15 +146,6 @@ a.IdPSelectDropDownToggle
 {
     display: inline-block;
     width: 80%;
-    font-size: 11px;
-    margin-top: 5px;
-    color: #338CAF;
-}
-
-a.IdPSelectDropDownToggle:hover,
-a.IdPSelectHelpButton:hover,
-a.idpSelectContainerFooterReturn:hover{
-    color: #A6CE39;
 }
 
 a.IdPSelectHelpButton
@@ -199,11 +153,6 @@ a.IdPSelectHelpButton
     display: inline-block;
     text-align: right;
     width: 20%;
-    font-size: 11px;
-    color: #338CAF;
-    position: absolute;
-    top: 5px;
-    right: 5px;
 }
 
 /**

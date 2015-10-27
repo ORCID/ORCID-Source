@@ -6083,6 +6083,10 @@ a:hover .mozilla-badge{
 	margin-top: 125px;
 }
 
+.login .title{
+	color: #494A4C;
+}
+
 .login .login-messages{
 	margin-top: 50px;
 }
@@ -6106,6 +6110,55 @@ input:-webkit-autofill {
 	text-align: center;
 	font-size: 20px;
 }
+
+.login .social-login .btn-facebook{
+	background: url('../img/svg/fb.svg') transparent no-repeat;
+	background-size: 40px 40px;
+	width: 40px;
+	height: 40px;
+	displat: block;
+}
+
+.login .social-login .btn-google{
+	background: url('../img/svg/google.svg') transparent no-repeat;
+	background-size: 40px 40px;
+	width: 40px;
+	height: 40px;
+	displat: block;
+}
+
+.login .social-login ul.social-icons{
+	margin: 0;
+	padding:0;
+}
+
+.login .social-login ul.social-icons li{
+	display: inline-block;
+}
+
+.login .social-login ul.social-icons li:not(:first-child){
+	margin-left: 25px;
+}
+
+.login .login-left-column{
+	position: relative;
+}
+
+.login .login-left-column .or{
+	display: block;
+    width: 85px;
+    height: 60px;
+    background: #FFF;
+    position: absolute;
+    right: -50px;
+    top: 90px;
+    font-size: 25px;
+    text-transform: uppercase;
+    vertical-align: middle;
+    padding: 15px;
+}
+	
+
 
 
 /* Media Queries */
@@ -7241,6 +7294,36 @@ input:-webkit-autofill {
 		
 	}
 	
+	.login .form-sign-in input[type="text"],
+	.login .form-sign-in input[type="password"],
+	.login .form-sign-in #form-sign-in-button{
+		width: 100%;
+	}
+	
+	.login .login-left-column{
+		border-right: none;
+		border-bottom: 1px solid #C9CACB;
+		padding-bottom: 30px;
+		margin-bottom: 30px;
+	}
+	
+	
+	.login .login-left-column .or {
+	    display: block;
+	    width: 70px;
+	    height: 60px;
+	    background: #FFF;
+	    position: absolute;
+	    bottom: -30px;
+	    left: calc(50% - 35px);
+	    right: quto;
+	    top: auto;
+	    font-size: 25px;
+	    text-transform: uppercase;
+	    vertical-align: middle;
+	    padding: 15px;
+	}
+	
 }
 
 @media (min-width : 768px) and (max-width : 991px) { /* Tablet */
@@ -7410,6 +7493,38 @@ input:-webkit-autofill {
 	#workspace-publications{
 		padding: 0;
 	}
+	
+	.login .form-sign-in input[type="text"],
+	.login .form-sign-in input[type="password"],
+	.login .form-sign-in #form-sign-in-button{
+		width: 100%;
+	}
+	
+	.login .login-left-column{
+		border-right: none;
+		border-bottom: 1px solid #C9CACB;
+		padding-bottom: 30px;
+		margin-bottom: 30px;
+	}
+	
+	
+	.login .login-left-column .or {
+	    display: block;
+	    width: 70px;
+	    height: 60px;
+	    background: #FFF;
+	    position: absolute;
+	    bottom: -30px;
+	    left: calc(50% - 35px);
+	    right: quto;
+	    top: auto;
+	    font-size: 25px;
+	    text-transform: uppercase;
+	    vertical-align: middle;
+	    padding: 15px;
+	}
+	
+	
 }
 
 @media (min-width : 500px) and (max-width: 767px){ 
@@ -7429,6 +7544,7 @@ input:-webkit-autofill {
     .col-xs-offset-3-fix{
     	margin-left: 25%;
     }
+    
 }
 
 @media(min-width:1200px){

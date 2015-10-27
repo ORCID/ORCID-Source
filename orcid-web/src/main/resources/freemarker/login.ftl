@@ -26,7 +26,8 @@
 	<div class="login">
 		<div class="row">
 			<!-- ORCID login form -->
-			<div class="col-md-offset-1 col-md-5 login-left-column">
+			<div class="col-md-offset-1 col-md-5 login-left-column col-xs-12">
+				<p class="title">Sign in with your ORCID account</p>
 				<form class="form-sign-in" id="loginForm" action="<@orcid.rootPath '/signin/auth'/>" method="post">
 			        <div class="control-group">
 			            <label for="userId" class="control-label">${springMacroRequestContext.getMessage("login.username")}</label>
@@ -60,10 +61,12 @@
 			            </div>			            
 			        </div>				    
 				</form>
+				<span class="or">OR</span>
 			</div>			
 			<!-- Shibboleth and Social Login -->			
 			<div class="col-md-offset-1 col-md-5 login-right-column">
 				<#if (RequestParameters['shibboleth'])??>
+					<p class="title">Sign in via your institution</p>
 					<div id="idpSelectContainer">				   
 					    <div id="idpSelectInner">
 					        <!-- Where the widget is going to be injected -->
@@ -72,19 +75,33 @@
 					</div>
 				</#if>
 				<#if (RequestParameters['social'])??>
-				    <div class="social-login">				        				        
-	                    <form action="<@orcid.rootPath '/signin/facebook'/>" method="POST">
-	                        <button type="submit" class="btn btn-social-icon btn-facebook"><i class="fa fa-facebook"></i></button>
-	                        <input type="hidden" name="scope" value="email" />
-	                        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-	                    </form>
-	        
-	                    <form action="<@orcid.rootPath '/signin/google'/>" method="POST">
-	                        <button type="submit" class="btn btn-social-icon btn-google"><i class="fa fa-google"></i></button>
-	                        <input type="hidden" name="scope" value="email" />
-	                        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-	                    </form>				        
-				        
+				    <div class="social-login">
+				    	<p class="title">Sign in with a social account</p>
+				    	<ul class="social-icons">
+				    		<li>
+				    			<form action="<@orcid.rootPath '/signin/facebook'/>" method="POST">
+			                        <button type="submit" class="btn btn-social-icon btn-facebook"></button>
+			                        <input type="hidden" name="scope" value="email" />
+			                        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+			                    </form>
+				    		</li>
+				    		<!-- 
+				    		<li>
+				    			<form action="<@orcid.rootPath '/signin/twitter'/>" method="POST">
+			                        <button type="submit" class="btn btn-social-icon btn-twitter"></button>
+			                        <input type="hidden" name="scope" value="email" />
+			                        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+			                    </form>
+				    		</li>
+				    		 -->
+				    		 <li>
+				    			<form action="<@orcid.rootPath '/signin/google'/>" method="POST">
+			                        <button type="submit" class="btn btn-social-icon btn-google"></button>
+			                        <input type="hidden" name="scope" value="email" />
+			                        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+			                    </form>
+				    		</li>
+				    	</ul>				        
 				    </div>
 				</#if>
 					
