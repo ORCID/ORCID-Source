@@ -23,6 +23,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.CountryManager;
@@ -35,6 +36,7 @@ import org.orcid.core.security.visibility.filter.VisibilityFilter;
 import org.orcid.frontend.web.util.YearsList;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
 /**
@@ -46,6 +48,8 @@ public class BaseWorkspaceController extends BaseController {
 
     protected static final String PUBLIC_WORKS_RESULTS_ATTRIBUTE = "public_works_results_attribute";
 
+    protected static final String ORCID_ID_HASH = "orcid_hash";
+    
     @Resource
     protected SponsorManager sponsorManager;
     
@@ -113,8 +117,14 @@ public class BaseWorkspaceController extends BaseController {
     }
     
     @ModelAttribute("orcidIdHash")
-    String getOrcidHash() throws Exception {                
-        return profileEntityManager.getOrcidHash(getEffectiveUserOrcid());
+    String getOrcidHash(HttpServletRequest request) throws Exception {   
+        String hash = (String)request.getSession().getAttribute(ORCID_ID_HASH);
+        if(!PojoUtil.isEmpty(hash)) {
+            return hash;
+        }
+        hash = profileEntityManager.getOrcidHash(getEffectiveUserOrcid());
+        request.getSession().setAttribute(ORCID_ID_HASH, hash);
+        return hash;
     }
     
     public String getCountryName(OrcidProfile profile) {

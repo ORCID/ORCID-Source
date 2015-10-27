@@ -74,7 +74,6 @@ import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ApplicationSummary;
 import org.orcid.pojo.ajaxForm.PojoUtil;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -550,8 +549,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     	return jpa2JaxbAdapter.getApplications(tokenDetails);
     }
     
-    @Override
-    @Cacheable(value = "orcid-hash")
+    @Override    
     public String getOrcidHash(String orcid) throws NoSuchAlgorithmException {     
         if(PojoUtil.isEmpty(orcid)) {
             return null;

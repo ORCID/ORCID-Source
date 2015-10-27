@@ -104,12 +104,6 @@
 		<persistence strategy="localTempSwap" />
 	</cache>
 
-	<cache name="orcid-hash" maxElementsInMemory="20000"
-		maxElementsOnDisk="50000" timeToLiveSeconds="600" copyOnRead="false"
-		copyOnWrite="false" eternal="false">
-		<persistence strategy="localTempSwap" />
-	</cache>
-
 	<cache name="statistics" maxElementsInMemory="100"
 		timeToLiveSeconds="600" copyOnRead="false" copyOnWrite="false"
 		eternal="false">
