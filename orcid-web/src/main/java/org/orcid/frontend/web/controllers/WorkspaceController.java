@@ -60,6 +60,7 @@ import org.orcid.jaxb.model.record.Role;
 import org.orcid.jaxb.model.record.WorkCategory;
 import org.orcid.jaxb.model.record.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.record.WorkType;
+import org.orcid.persistence.constants.SiteConstants;
 import org.orcid.pojo.ThirdPartyRedirect;
 import org.orcid.pojo.ajaxForm.KeywordsForm;
 import org.orcid.pojo.ajaxForm.OtherNamesForm;
@@ -404,8 +405,8 @@ public class WorkspaceController extends BaseWorkspaceController {
             w.getUrl().setErrors(new ArrayList<String>());
             w.getName().setErrors(new ArrayList<String>());
             //Validate
-            validateUrl(w.getUrl());
-            validateNoLongerThan(350, w.getName(), "manualWork.length_less_350");
+            validateUrl(w.getUrl(), SiteConstants.URL_MAX_LENGTH);
+            validateNoLongerThan(SiteConstants.URL_MAX_LENGTH, w.getName());
             if (websitesHm.containsKey(w.getUrl().getValue()))
                 setError(w.getUrl(), "common.duplicate_url");
             else

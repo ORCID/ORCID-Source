@@ -245,6 +245,51 @@ public class ResearcherUrlsTests extends BlackBoxBase {
         }
     }
 
+    
+    
+    
+    
+    @Test
+    public void testTryingToAddInvalidResearcherUrls() throws InterruptedException, JSONException, URISyntaxException {
+        String accessToken = getAccessToken(this.client1ClientId, this.client1ClientSecret);
+        assertNotNull(accessToken);
+        ResearcherUrl rUrlToCreate = new ResearcherUrl();
+        rUrlToCreate.setUrl(new Url(""));
+        rUrlToCreate.setUrlName("");
+        // Create
+        ClientResponse postResponse = memberV2ApiClient.createResearcherUrls(user1OrcidId, rUrlToCreate, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), postResponse.getStatus());
+        
+        String _2001Chars = new String();
+        for(int i = 0; i < 2001; i++) {
+            _2001Chars += "a";
+        }
+        
+        rUrlToCreate.setUrl(new Url(_2001Chars));
+        postResponse = memberV2ApiClient.createResearcherUrls(user1OrcidId, rUrlToCreate, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), postResponse.getStatus());
+        
+        rUrlToCreate.setUrl(new Url("http://myurl.com"));
+        rUrlToCreate.setUrlName(_2001Chars);
+        postResponse = memberV2ApiClient.createResearcherUrls(user1OrcidId, rUrlToCreate, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), postResponse.getStatus());
+        
+        rUrlToCreate.setUrlName("The name");
+        postResponse = memberV2ApiClient.createResearcherUrls(user1OrcidId, rUrlToCreate, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+        
+        // Read it to delete it
+        ClientResponse getResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
+        assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
+        ResearcherUrl gotResearcherUrl = getResponse.getEntity(ResearcherUrl.class);        
+        ClientResponse deleteResponse = memberV2ApiClient.deleteResearcherUrl(this.user1OrcidId, gotResearcherUrl.getPutCode(), accessToken);
+        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), deleteResponse.getStatus());
+    }
+    
     public String getAccessToken(String clientId, String clientSecret) throws InterruptedException, JSONException {
         if (accessTokens.containsKey(clientId)) {
             return accessTokens.get(clientId);

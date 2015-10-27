@@ -666,6 +666,10 @@ public class BaseController {
     }
 
     protected void validateUrl(Text url) {
+        validateUrl(url, 350);
+    }
+    
+    protected void validateUrl(Text url, int maxLength) {
         url.setErrors(new ArrayList<String>());
         if (!PojoUtil.isEmpty(url.getValue())) {
             // trim if required
@@ -673,7 +677,7 @@ public class BaseController {
                 url.setValue(url.getValue().trim());
 
             // check length
-            validateNoLongerThan(350, url, "manualWork.length_less_350");
+            validateNoLongerThan(maxLength, url);
             
             // add protocall if missing
             if (!urlValidator.isValid(url.getValue())) {
@@ -688,13 +692,13 @@ public class BaseController {
         }
     }
     
-    protected void validateNoLongerThan(int maxLenght, Text text, String errorCode) {
+    protected void validateNoLongerThan(int maxLength, Text text) {
         if(PojoUtil.isEmpty(text)) {
             return;
         }
         
-        if(text.getValue().length() > maxLenght) {
-            setError(text, errorCode);
+        if(text.getValue().length() > maxLength) {
+            setError(text, "manualWork.length_less_X", maxLength);
         }
     }
     
