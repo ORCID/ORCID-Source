@@ -16,21 +16,29 @@
  */
 package org.orcid.integration.blackbox.api;
 
-import java.util.HashMap;
-import java.util.Map;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 import javax.annotation.Resource;
 
 import org.codehaus.jettison.json.JSONException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.orcid.integration.api.memberV2.MemberV2ApiClientImpl;
 import org.orcid.integration.api.pub.PublicV2ApiClientImpl;
 import org.orcid.integration.blackbox.BlackBoxBase;
 import org.orcid.jaxb.model.message.ScopePathType;
+import org.orcid.jaxb.model.record.Emails;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import com.sun.jersey.api.client.ClientResponse;
 
 /**
  * 
@@ -41,16 +49,14 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @ContextConfiguration(locations = { "classpath:test-publicV2-context.xml" })
 public class LockedClientsTest extends BlackBoxBase {
     
-    protected static Map<String, String> accessTokens = new HashMap<String, String>();
-    
     //ADMIN USER DATA
     @Value("${org.orcid.web.adminUser.username}")
     public String adminUserName;
     @Value("${org.orcid.web.adminUser.password}")
     public String adminPassword;
-    @Value("${org.orcid.web.testUser1.orcidId}")
     
     //USER DATA
+    @Value("${org.orcid.web.testUser1.orcidId}")        
     public String user1OrcidId;
     @Value("${org.orcid.web.testUser1.username}")
     public String user1Username;
@@ -65,53 +71,46 @@ public class LockedClientsTest extends BlackBoxBase {
     public String lockedClientSecret;
     @Value("${org.orcid.web.locked.member.client.ruri}")
     public String lockedClientRedirectUri;
-    
-    //USER WITH PUBLIC CLIENT DATA
-    @Value("${org.orcid.web.locked.public.id}")
-    public String lockedPublicMemberId;
-    //PUBLIC CLIENT DATA
-    @Value("${org.orcid.web.locked.public.client.id}")
-    public String lockedPublicClientId;
-    @Value("${org.orcid.web.locked.public.client.secret}")
-    public String lockedPublicClientSecret;
-    @Value("${org.orcid.web.locked.public.client.ruri}")
-    public String lockedPublicClientRedirectUri;
-    
     @Resource(name = "memberV2ApiClient_rc2")
     private MemberV2ApiClientImpl memberV2ApiClient;
-
-    @Resource(name = "publicV2ApiClient_rc2")
-    private PublicV2ApiClientImpl publicV2ApiClient;
     
     @Test
-    public void unlockAndTestClient() throws InterruptedException, JSONException {
-        //Check if unlocked
+    public void testMember() throws InterruptedException, JSONException {
+        //The member must be unlocked to begin the test
+        String accessToken = getAccessTokenWithScopePath(ScopePathType.PERSON_READ_LIMITED, lockedClientId, lockedClientSecret, lockedClientRedirectUri);
+        ClientResponse getAllResponse = memberV2ApiClient.getEmails(user1OrcidId, accessToken);
+        assertNotNull(getAllResponse);
+        Emails emails = getAllResponse.getEntity(Emails.class);
+        assertNotNull(emails);
+        assertNotNull(emails.getEmails());
+        assertFalse(emails.getEmails().isEmpty());
+        
+        //Lock and try to get authorization code
+        adminLockAccount(adminUserName, adminPassword, memberId);
+        lookForErrorsOnAuthorizationCodePage(lockedClientId, ScopePathType.PERSON_READ_LIMITED.value(), lockedClientRedirectUri);
+        
+        //Try to use access token while the client is locked
+        getAllResponse = memberV2ApiClient.getEmails(user1OrcidId, accessToken);
+        assertNotNull(getAllResponse);
+        
+        
+        //unlock to finish
         adminUnlockAccount(adminUserName, adminPassword, memberId);
-        //String accessToken = getAccessToken(lockedClientId, lockedClientSecret);
-    }
+    }              
     
-    @Test
-    public void lockAndTestClient() {
-        
-    }
-    
-    @Test
-    public void unlockAndTestPublicClient() {
-        
-    }
-    
-    @Test
-    public void lockAndTestPublicClient() {
-        
-    }
-    
-    public String getAccessToken(String clientId, String clientSecret, String redirectUri) throws InterruptedException, JSONException {
-        if (accessTokens.containsKey(clientId)) {
-            return accessTokens.get(clientId);
-        }
-
-        String accessToken = super.getAccessToken(ScopePathType.PERSON_READ_LIMITED.value(), clientId, clientSecret, redirectUri);
-        accessTokens.put(clientId, accessToken);
+    private String getAccessTokenWithScopePath(ScopePathType scope, String clientId, String clientSecret, String redirectUri) throws InterruptedException, JSONException {        
+        String accessToken = super.getAccessToken(scope.value(), clientId, clientSecret, redirectUri);        
         return accessToken;
+    }
+    
+    private void lookForErrorsOnAuthorizationCodePage(String clientId, String scopes, String redirectUri) {
+        webDriver = new FirefoxDriver();
+        webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, clientId, scopes, redirectUri));
+        (new WebDriverWait(webDriver, 10)).until(ExpectedConditions.urlContains("error"));
+        String currentUrl = webDriver.getCurrentUrl();
+        if(currentUrl.contains("error=client_locked")) {
+            return;
+        }
+        fail();
     }
 }
