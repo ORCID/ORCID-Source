@@ -673,9 +673,8 @@ public class BaseController {
                 url.setValue(url.getValue().trim());
 
             // check length
-            if (url.getValue().length() > 350)
-                setError(url, "manualWork.length_less_350");
-
+            validateNoLongerThan(350, url, "manualWork.length_less_350");
+            
             // add protocall if missing
             if (!urlValidator.isValid(url.getValue())) {
                 String tempUrl = "http://" + url.getValue();
@@ -688,7 +687,17 @@ public class BaseController {
             }
         }
     }
-
+    
+    protected void validateNoLongerThan(int maxLenght, Text text, String errorCode) {
+        if(PojoUtil.isEmpty(text)) {
+            return;
+        }
+        
+        if(text.getValue().length() > maxLenght) {
+            setError(text, errorCode);
+        }
+    }
+    
     void givenNameValidate(Text givenName) {
         // validate given name isn't blank
         givenName.setErrors(new ArrayList<String>());

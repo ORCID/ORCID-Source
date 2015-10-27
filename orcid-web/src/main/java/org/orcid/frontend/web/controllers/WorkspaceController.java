@@ -399,12 +399,19 @@ public class WorkspaceController extends BaseWorkspaceController {
         ws.setErrors(new ArrayList<String>());
         HashMap<String, Website> websitesHm = new HashMap<String, Website>(); 
         for (Website w:ws.getWebsites()) {
+            //Clean old errors
+            w.setErrors(new ArrayList<String>());
+            w.getUrl().setErrors(new ArrayList<String>());
+            w.getName().setErrors(new ArrayList<String>());
+            //Validate
             validateUrl(w.getUrl());
+            validateNoLongerThan(350, w.getName(), "manualWork.length_less_350");
             if (websitesHm.containsKey(w.getUrl().getValue()))
                 setError(w.getUrl(), "common.duplicate_url");
             else
                 websitesHm.put(w.getUrl().getValue(), w);
             copyErrors(w.getUrl(), ws);
+            copyErrors(w.getName(), ws);
         }   
         if (ws.getErrors().size()>0) return ws;        
         OrcidProfile currentProfile = getEffectiveProfile();
