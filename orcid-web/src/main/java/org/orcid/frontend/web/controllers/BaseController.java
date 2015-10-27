@@ -36,7 +36,6 @@ import java.util.ResourceBundle;
 import javax.annotation.Resource;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
-import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -45,7 +44,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.validator.routines.UrlValidator;
-import org.eclipse.jetty.util.log.Log;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.InternalSSOManager;
@@ -133,7 +131,7 @@ public class BaseController {
     private StatisticsCacheManager statisticsCacheManager;
 
     @Resource
-    private OrcidUrlManager orcidUrlManager;
+    protected OrcidUrlManager orcidUrlManager;
 
     @Resource
     protected SourceManager sourceManager;
@@ -356,8 +354,7 @@ public class BaseController {
 		}
 		if (authentication != null && authentication.isAuthenticated()) {
 			new SecurityContextLogoutHandler().logout(request, response, authentication);
-		}
-		String debug;
+		}		
 	}
 
     protected boolean isEmailOkForCurrentUser(String decryptedEmail) {
@@ -704,7 +701,7 @@ public class BaseController {
     protected String createSearchBaseUrl() {
         String baseUrlWithCorrectedProtocol = orcidUrlManager.getBaseUrl().replaceAll("^https?:", "");
         String baseUrlWithCorrectedContext = baseUrlWithCorrectedProtocol.replaceAll("/orcid-web$", "/orcid-pub-web");
-        return baseUrlWithCorrectedContext + "/v1.1/search/orcid-bio/";
+        return baseUrlWithCorrectedContext + "/v1.2/search/orcid-bio/";
     }
 
     @ModelAttribute("locked")
