@@ -18,7 +18,9 @@ package org.orcid.jaxb.model.record_2_rc1.summary;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -26,17 +28,20 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.orcid.jaxb.model.record_2_rc1.ActivitiesContainer;
+import org.orcid.jaxb.model.record_2_rc1.Activity;
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "summaries" })
 @XmlRootElement(name = "educations", namespace = "http://www.orcid.org/ns/activities")
-public class Educations implements Serializable {
+public class Educations implements ActivitiesContainer, Serializable {
 
     private static final long serialVersionUID = 3293976926416154039L;
     @XmlElement(name = "education-summary", namespace = "http://www.orcid.org/ns/education")
     private List<EducationSummary> summaries;
 
     public List<EducationSummary> getSummaries() {
-        if(summaries == null)
+        if (summaries == null)
             summaries = new ArrayList<>();
         return summaries;
     }
@@ -65,4 +70,15 @@ public class Educations implements Serializable {
             return false;
         return true;
     }
+
+    @Override
+    public Map<Long, ? extends Activity> retrieveActivitiesAsMap() {
+        throw new UnsupportedOperationException("Not implemented yet");
+    }
+
+    @Override
+    public Collection<? extends Activity> retrieveActivities() {
+        return (Collection<? extends Activity>) summaries; 
+    }
+
 }

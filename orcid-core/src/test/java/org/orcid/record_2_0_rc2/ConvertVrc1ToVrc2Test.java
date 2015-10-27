@@ -3,6 +3,8 @@ package org.orcid.record_2_0_rc2;
 import static org.junit.Assert.assertTrue;
 
 import java.io.InputStream;
+import java.util.Collection;
+import java.util.Iterator;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -17,9 +19,9 @@ import ma.glasnost.orika.impl.DefaultMapperFactory;
 
 import org.junit.Test;
 import org.orcid.jaxb.model.common.LastModifiedDate;
+import org.orcid.jaxb.model.record_2_rc1.ActivitiesContainer;
+import org.orcid.jaxb.model.record_2_rc1.Activity;
 import org.orcid.jaxb.model.record_2_rc1.summary.ActivitiesSummary;
-import org.orcid.jaxb.model.record_2_rc1.summary.EducationSummary;
-import org.orcid.jaxb.model.record_2_rc1.summary.EmploymentSummary;
 import org.orcid.jaxb.model.record_2_rc1.summary.FundingGroup;
 import org.orcid.jaxb.model.record_2_rc1.summary.FundingSummary;
 import org.orcid.jaxb.model.record_2_rc1.summary.PeerReviewGroup;
@@ -47,30 +49,10 @@ public class ConvertVrc1ToVrc2Test {
                         XMLGregorianCalendar latestActSummary = null;
 
                         // ==========Education============
-                        if (actSummaryRc1.getEducations().getSummaries() != null && !actSummaryRc1.getEducations().getSummaries().isEmpty()) {
-                            XMLGregorianCalendar latest = actSummaryRc1.getEducations().getSummaries().get(0).getLastModifiedDate().getValue();
-                            for (EducationSummary educationSummaryRc1 : actSummaryRc1.getEducations().getSummaries()) {
-                                if (latest.compare(educationSummaryRc1.getLastModifiedDate().getValue()) == -1) {
-                                    latest = educationSummaryRc1.getLastModifiedDate().getValue();
-                                }
-                            }
-                            latestActSummary = latest;
-                            actSummaryRc2.getEducations().setLastModifiedDate(new LastModifiedDate(latest));
-                        }
+                        latestActSummary = calculateLatests(actSummaryRc1.getEducations(), actSummaryRc2.getEducations());
 
                         // ==========Employment============
-                        if (actSummaryRc1.getEmployments().getSummaries() != null && !actSummaryRc1.getEmployments().getSummaries().isEmpty()) {
-                            XMLGregorianCalendar latest = actSummaryRc1.getEmployments().getSummaries().get(0).getLastModifiedDate().getValue();
-                            for (EmploymentSummary employmentSummaryRc1 : actSummaryRc1.getEmployments().getSummaries()) {
-                                if (latest.compare(employmentSummaryRc1.getLastModifiedDate().getValue()) == -1) {
-                                    latest = employmentSummaryRc1.getLastModifiedDate().getValue();
-                                }
-                            }
-                            if (latestActSummary != null && latestActSummary.compare(latest) == -1) {
-                                latestActSummary = latest;
-                            }
-                            actSummaryRc2.getEmployments().setLastModifiedDate(new LastModifiedDate(latest));
-                        }
+                        latestActSummary = calculateLatests(actSummaryRc1.getEmployments(), actSummaryRc2.getEmployments());
 
                         // ==========Fundings============
                         if (actSummaryRc1.getFundings().getFundingGroup() != null && !actSummaryRc1.getFundings().getFundingGroup().isEmpty()) {
@@ -156,6 +138,25 @@ public class ConvertVrc1ToVrc2Test {
                         }
 
                         actSummaryRc2.setLastModifiedDate(new LastModifiedDate(latestActSummary));
+                    }
+
+                    private XMLGregorianCalendar calculateLatests(ActivitiesContainer actContainerRc1,
+                            org.orcid.jaxb.model.record_2_rc2.ActivitiesContainer actContainerRc2) {
+                        XMLGregorianCalendar latestActSummary = null;
+                        Collection<? extends Activity> activities = actContainerRc1.retrieveActivities();
+                        if (activities != null && !activities.isEmpty()) {
+                            Iterator<? extends Activity> activitiesIterator = activities.iterator();
+                            XMLGregorianCalendar latest = activitiesIterator.next().getLastModifiedDate().getValue();
+                            while (activitiesIterator.hasNext()) {
+                                Activity activity = activitiesIterator.next();
+                                if (latest.compare(activity.getLastModifiedDate().getValue()) == -1) {
+                                    latest = activity.getLastModifiedDate().getValue();
+                                }
+                            }
+                            latestActSummary = latest;
+                            actContainerRc2.setLastModifiedDate(new LastModifiedDate(latest));
+                        }
+                        return latestActSummary;
                     }
                 }).register();
         mapper = mapperFactory.getMapperFacade();

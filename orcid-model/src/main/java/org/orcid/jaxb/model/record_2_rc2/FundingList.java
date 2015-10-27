@@ -36,6 +36,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.orcid.jaxb.model.common.LastModifiedDate;
+
 /**
  * <p>
  * Java class for anonymous complex type.
@@ -132,6 +134,12 @@ public class FundingList implements ActivitiesContainer, Serializable {
     public int hashCode() {
         int result = fundings != null ? fundings.hashCode() : 0;
         return result;
+    }
+
+    @Override
+    public void setLastModifiedDate(LastModifiedDate lastModifiedDate) {
+        // TODO Auto-generated method stub
+        
     }
 
 }

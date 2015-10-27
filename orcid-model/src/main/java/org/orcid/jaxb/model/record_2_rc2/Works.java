@@ -35,6 +35,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.orcid.jaxb.model.common.LastModifiedDate;
+
 /**
  * <p>
  * Java class for anonymous complex type.
@@ -125,6 +127,12 @@ public class Works implements Serializable, ActivitiesContainer {
         int result = works != null ? works.hashCode() : 0;
         result = 31 * result;
         return result;
+    }
+
+    @Override
+    public void setLastModifiedDate(LastModifiedDate lastModifiedDate) {
+        // TODO Auto-generated method stub
+        
     }
 
 }
