@@ -89,9 +89,6 @@ public class FundingExternalIdentifier extends ExternalIdentifierBase implements
             return false;
         }
         FundingExternalIdentifier other = (FundingExternalIdentifier) obj;
-        if (!super.equals(other)) {
-            return false;
-        }
         if (type != other.type) {
             return false;
         }

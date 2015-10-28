@@ -149,9 +149,7 @@ public class WorkExternalIdentifier extends ExternalIdentifierBase implements Se
             return false;
         }
         WorkExternalIdentifier other = (WorkExternalIdentifier) obj;
-        if(super.equals(other)) {
-            return false;
-        }
+        
         if (workExternalIdentifierId == null) {
             if (other.workExternalIdentifierId != null) {
                 return false;
