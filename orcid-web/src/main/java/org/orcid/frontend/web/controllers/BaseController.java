@@ -60,6 +60,7 @@ import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.SendEmailFrequency;
 import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.persistence.constants.SiteConstants;
 import org.orcid.pojo.ajaxForm.ErrorsInterface;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
@@ -666,7 +667,7 @@ public class BaseController {
     }
 
     protected void validateUrl(Text url) {
-        validateUrl(url, 350);
+        validateUrl(url, SiteConstants.URL_MAX_LENGTH);
     }
     
     protected void validateUrl(Text url, int maxLength) {
