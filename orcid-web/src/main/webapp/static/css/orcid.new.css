@@ -6120,10 +6120,34 @@ a:hover .mozilla-badge{
 .edit-client-table-col {
 	width: 45%;
 }
-.socialButton {
+
+.form-social-sign-in input{
+	width: 50%;
+}
+
+.form-social-sign-in .socialButton {
 	font-size: 16px;
 	padding:0;
 }
+
+.form-social-sign-in .social-signin-btn{
+	width: 50%;
+}
+
+.form-social-sign-in .social-password-lnk {
+	font-size: 14px;
+}
+
+
+.form-social-sign-in .social-password-txt {
+	margin-bottom : 0;
+}
+
+.form-social-sign-in .reg{
+	font-size: 18px;
+}
+
+
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
@@ -7296,6 +7320,10 @@ a:hover .mozilla-badge{
 		
 	}
 	
+	.form-social-sign-in .social-signin-btn{
+		width: 100%;
+	}
+	
 }
 
 @media (min-width : 768px) and (max-width : 991px) { /* Tablet */
@@ -7494,14 +7522,4 @@ a:hover .mozilla-badge{
 
 @media only screen and (-webkit-min-device-pixel-ratio: 2) , only screen and (min-device-pixel-ratio: 2) {
 	
-}
-.social-password-lnk {
-	font-size: 14px;
-}
-.social-signin-btn {
-	width: 360px;
-	margin-bottom: 0;
-}
-.social-password-txt {
-	margin-bottom : 0;
 }
