@@ -261,18 +261,18 @@ public class ResearcherUrlsTests extends BlackBoxBase {
         assertNotNull(postResponse);
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), postResponse.getStatus());
         
-        String _2001Chars = new String();
-        for(int i = 0; i < 2001; i++) {
-            _2001Chars += "a";
+        String _351Chars = new String();
+        for(int i = 0; i < 531; i++) {
+            _351Chars += "a";
         }
         
-        rUrlToCreate.setUrl(new Url(_2001Chars));
+        rUrlToCreate.setUrl(new Url(_351Chars));
         postResponse = memberV2ApiClient.createResearcherUrls(user1OrcidId, rUrlToCreate, accessToken);
         assertNotNull(postResponse);
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), postResponse.getStatus());
         
         rUrlToCreate.setUrl(new Url("http://myurl.com"));
-        rUrlToCreate.setUrlName(_2001Chars);
+        rUrlToCreate.setUrlName(_351Chars);
         postResponse = memberV2ApiClient.createResearcherUrls(user1OrcidId, rUrlToCreate, accessToken);
         assertNotNull(postResponse);
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), postResponse.getStatus());

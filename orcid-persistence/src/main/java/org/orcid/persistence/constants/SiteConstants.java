@@ -17,5 +17,5 @@
 package org.orcid.persistence.constants;
 
 public class SiteConstants {
-    public static final int URL_MAX_LENGTH = 2000;
+    public static final int URL_MAX_LENGTH = 350;
 }

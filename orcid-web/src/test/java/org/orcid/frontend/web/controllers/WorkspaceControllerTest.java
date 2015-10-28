@@ -41,17 +41,17 @@ public class WorkspaceControllerTest {
     @Test
     public void validateSmallerThanTest() {
         Text text = new Text();
-        workspaceController.validateNoLongerThan(10, text, "manualWork.length_less_350");
+        workspaceController.validateNoLongerThan(10, text);
         assertTrue(text.getErrors().isEmpty());
         text.setValue(tenCharsStr);
-        workspaceController.validateNoLongerThan(10, text, "manualWork.length_less_350");
+        workspaceController.validateNoLongerThan(10, text);
         assertTrue(text.getErrors().isEmpty());        
         text.setValue(tenCharsStr + '!');
-        workspaceController.validateNoLongerThan(10, text, "manualWork.length_less_350");
+        workspaceController.validateNoLongerThan(10, text);
         assertEquals(workspaceController.getMessage("manualWork.length_less_350"), text.getErrors().get(0));
         text.setValue(tenCharsStr);
         text.setErrors(new ArrayList<String>());
-        workspaceController.validateNoLongerThan(10, text, "manualWork.length_less_350");
+        workspaceController.validateNoLongerThan(10, text);
         assertTrue(text.getErrors().isEmpty());
     }
 
