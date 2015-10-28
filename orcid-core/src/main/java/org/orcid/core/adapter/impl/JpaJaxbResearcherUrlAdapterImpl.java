@@ -22,7 +22,7 @@ import java.util.List;
 import ma.glasnost.orika.MapperFacade;
 
 import org.orcid.core.adapter.JpaJaxbResearcherUrlAdapter;
-import org.orcid.jaxb.model.record.ResearcherUrl;
+import org.orcid.jaxb.model.record_rc1.ResearcherUrl;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 
 public class JpaJaxbResearcherUrlAdapterImpl implements JpaJaxbResearcherUrlAdapter {

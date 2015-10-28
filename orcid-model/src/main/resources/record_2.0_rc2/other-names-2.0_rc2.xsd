@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
 	xmlns:sch="http://purl.oclc.org/dsdl/schematron" elementFormDefault="qualified"
-	targetNamespace="http://www.orcid.org/ns/other-names" xmlns:researcher-url="http://www.orcid.org/ns/other-names"
+	targetNamespace="http://www.orcid.org/ns/other-name" xmlns:researcher-url="http://www.orcid.org/ns/other-name"
 	xmlns:common="http://www.orcid.org/ns/common">
 	<xs:annotation>
 		<xs:documentation>
@@ -29,7 +29,7 @@
 		</xs:documentation>
 		<xs:appinfo>
 			<sch:title>Schematron validation</sch:title>
-			<sch:ns prefix="other-names" uri="http://www.orcid.org/ns/other-names" />
+			<sch:ns prefix="other-name" uri="http://www.orcid.org/ns/other-name" />
 		</xs:appinfo>
 	</xs:annotation>
 	<xs:import namespace="http://www.orcid.org/ns/common"
@@ -44,7 +44,8 @@
 				</xs:documentation>
 			</xs:annotation>
 			<xs:sequence>
-				<xs:element ref="other-names:other-name" minOccurs="1" maxOccurs="unbounded"/>
+				<xs:element ref="other-name:other-name" minOccurs="1" maxOccurs="unbounded"/>
+				<xs:element ref="common:last-modified-date" minOccurs="0" maxOccurs="1" />
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>		
@@ -55,17 +56,10 @@
 				<xs:documentation>The display name and URL for one of the researcher or contributor's sites.</xs:documentation>
 			</xs:annotation>
 			<xs:sequence>
-				<xs:element minOccurs="1" maxOccurs="1" name="url-name"
+				<xs:element minOccurs="1" name="content"
 					type="common:non-empty-string">
 					<xs:annotation>
 						<xs:documentation>A short display name describing the URL.
-						</xs:documentation>
-					</xs:annotation>
-				</xs:element>
-				<xs:element name="url" type="common:url" minOccurs="1"
-					maxOccurs="1">
-					<xs:annotation>
-						<xs:documentation>The URL (including http:// or https://).
 						</xs:documentation>
 					</xs:annotation>
 				</xs:element>

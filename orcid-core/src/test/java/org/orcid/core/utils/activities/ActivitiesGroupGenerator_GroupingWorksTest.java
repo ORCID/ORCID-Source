@@ -26,12 +26,12 @@ import java.util.Map;
 
 import org.junit.Test;
 import org.orcid.jaxb.model.common.Title;
-import org.orcid.jaxb.model.record.WorkExternalIdentifier;
-import org.orcid.jaxb.model.record.WorkExternalIdentifierId;
-import org.orcid.jaxb.model.record.WorkExternalIdentifierType;
-import org.orcid.jaxb.model.record.WorkExternalIdentifiers;
-import org.orcid.jaxb.model.record.WorkTitle;
-import org.orcid.jaxb.model.record.summary.WorkSummary;
+import org.orcid.jaxb.model.record.summary_rc1.WorkSummary;
+import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifier;
+import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierId;
+import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType;
+import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifiers;
+import org.orcid.jaxb.model.record_rc1.WorkTitle;
 
 /**
  * 

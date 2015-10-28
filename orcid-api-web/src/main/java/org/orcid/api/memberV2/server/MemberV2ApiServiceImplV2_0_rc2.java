@@ -39,9 +39,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.orcid.jaxb.model.message.OtherName;
 import org.orcid.jaxb.model.message.ScopeConstants;
-import org.orcid.jaxb.model.record.ResearcherUrl;
+import org.orcid.jaxb.model.record_rc1.ResearcherUrl;
+import org.orcid.jaxb.model.record_rc2.OtherName;
 
 /**
  * 
@@ -106,21 +106,28 @@ public class MemberV2ApiServiceImplV2_0_rc2 extends MemberV2ApiServiceImplBase {
     public Response viewOtherName(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
         return serviceDelegator.viewOtherName(orcid, putCode);
     }
+
+    @GET
+    @Path(OTHER_NAMES)
+    @ApiOperation(value = "Fetch Other names", hidden = true, authorizations = { @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_READ_LIMITED, description = "you need this") }) })
+    public Response viewOtherNames(@PathParam("orcid") String orcid) {
+        return serviceDelegator.viewOtherNames(orcid);
+    }
     
     @POST
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(OTHER_NAMES)
     @ApiOperation(value = "Add other name", hidden = true, authorizations = { @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_UPDATE, description = "you need this") }) })
-    public Response createOtherName(@PathParam("orcid") String orcid, OtherName researcherUrl) {
-        return serviceDelegator.createOtherName(orcid, researcherUrl);
+    public Response createOtherName(@PathParam("orcid") String orcid, OtherName otherName) {
+        return serviceDelegator.createOtherName(orcid, otherName);
     }
     
     @PUT
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(OTHER_NAMES + PUTCODE)
     @ApiOperation(value = "Edit other name", hidden = true, authorizations = { @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_UPDATE, description = "you need this") }) })
-    public Response editOtherName(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode, ResearcherUrl researcherUrl) {
-        return serviceDelegator.updateOtherName(orcid, putCode, researcherUrl);
+    public Response editOtherName(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode, OtherName otherName) {
+        return serviceDelegator.updateOtherName(orcid, putCode, otherName);
     }
     
     @DELETE
