@@ -16,6 +16,7 @@
  */
 package org.orcid.core.manager;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 import java.util.List;
 
@@ -86,4 +87,6 @@ public interface ProfileEntityManager {
     Visibility getResearcherUrlDefaultVisibility(String orcid);
 
     List<ApplicationSummary> getApplications(List<OrcidOauth2TokenDetail> tokenDetails);
+    
+    String getOrcidHash(String orcid) throws NoSuchAlgorithmException;
 }
