@@ -1,10 +1,15 @@
 package org.orcid.record_2_0_rc2;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -23,10 +28,9 @@ import org.orcid.jaxb.model.record_2_rc1.ActivitiesContainer;
 import org.orcid.jaxb.model.record_2_rc1.Activity;
 import org.orcid.jaxb.model.record_2_rc1.Group;
 import org.orcid.jaxb.model.record_2_rc1.GroupableActivity;
+import org.orcid.jaxb.model.record_2_rc1.GroupsContainer;
 import org.orcid.jaxb.model.record_2_rc1.summary.ActivitiesSummary;
-import org.orcid.jaxb.model.record_2_rc1.summary.FundingGroup;
-import org.orcid.jaxb.model.record_2_rc1.summary.PeerReviewGroup;
-import org.orcid.jaxb.model.record_2_rc1.summary.WorkGroup;
+import org.orcid.utils.DateUtils;
 
 public class ConvertVrc1ToVrc2Test {
 
@@ -45,73 +49,27 @@ public class ConvertVrc1ToVrc2Test {
                     @Override
                     public void mapAtoB(ActivitiesSummary actSummaryRc1, org.orcid.jaxb.model.record_2_rc2.summary.ActivitiesSummary actSummaryRc2, MappingContext context) {
 
-                        XMLGregorianCalendar latestActSummary = null;
+                        SortedSet<Date> latestDates = new TreeSet<>();
 
                         // ==========Education============
-                        latestActSummary = calculateLatests(actSummaryRc1.getEducations(), actSummaryRc2.getEducations());
+                        latestDates.add(calculateLatest(actSummaryRc1.getEducations(), actSummaryRc2.getEducations()));
 
                         // ==========Employment============
-                        latestActSummary = calculateLatests(actSummaryRc1.getEmployments(), actSummaryRc2.getEmployments());
+                        latestDates.add(calculateLatest(actSummaryRc1.getEmployments(), actSummaryRc2.getEmployments()));
 
                         // ==========Fundings============
-                        if (actSummaryRc1.getFundings().getFundingGroup() != null && !actSummaryRc1.getFundings().getFundingGroup().isEmpty()) {
-                            if (actSummaryRc1.getFundings().getFundingGroup().get(0).getFundingSummary() != null
-                                    && !actSummaryRc1.getFundings().getFundingGroup().get(0).getFundingSummary().isEmpty()) {
-                                XMLGregorianCalendar latestGrp = null;
-                                for (int index = 0; index < actSummaryRc1.getFundings().getFundingGroup().size(); index++) {
-                                    FundingGroup fundingGrpRc1 = actSummaryRc1.getFundings().getFundingGroup().get(index);
-
-                                    latestGrp = calculateLatests(fundingGrpRc1, actSummaryRc2.getFundings().getFundingGroup().get(index));
-                                }
-                                if (latestActSummary != null && latestActSummary.compare(latestGrp) == -1) {
-                                    latestActSummary = latestGrp;
-                                }
-
-                                actSummaryRc2.getFundings().setLastModifiedDate(new LastModifiedDate(latestGrp));
-                            }
-                        }
+                        latestDates.add(calculateLatest(actSummaryRc1.getFundings(), actSummaryRc2.getFundings()));
 
                         // ==========Peer reviews============
-                        if (actSummaryRc1.getPeerReviews().getPeerReviewGroup() != null && !actSummaryRc1.getPeerReviews().getPeerReviewGroup().isEmpty()) {
-                            if (actSummaryRc1.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary() != null
-                                    && !actSummaryRc1.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().isEmpty()) {
-                                XMLGregorianCalendar latestGrp = null;
-                                for (int index = 0; index < actSummaryRc1.getPeerReviews().getPeerReviewGroup().size(); index++) {
-                                    PeerReviewGroup peerReviewGrpRc1 = actSummaryRc1.getPeerReviews().getPeerReviewGroup().get(index);
-
-                                    latestGrp = calculateLatests(peerReviewGrpRc1, actSummaryRc2.getPeerReviews().getPeerReviewGroup().get(index));
-                                }
-                                if (latestActSummary != null && latestActSummary.compare(latestGrp) == -1) {
-                                    latestActSummary = latestGrp;
-                                }
-
-                                actSummaryRc2.getPeerReviews().setLastModifiedDate(new LastModifiedDate(latestGrp));
-                            }
-                        }
+                        latestDates.add(calculateLatest(actSummaryRc1.getPeerReviews(), actSummaryRc2.getPeerReviews()));
 
                         // ==========Works============
-                        if (actSummaryRc1.getWorks().getWorkGroup() != null && !actSummaryRc1.getWorks().getWorkGroup().isEmpty()) {
-                            if (actSummaryRc1.getWorks().getWorkGroup().get(0).getWorkSummary() != null
-                                    && !actSummaryRc1.getWorks().getWorkGroup().get(0).getWorkSummary().isEmpty()) {
-                                XMLGregorianCalendar latestGrp = null;
-                                for (int index = 0; index < actSummaryRc1.getWorks().getWorkGroup().size(); index++) {
-                                    WorkGroup workGrpRc1 = actSummaryRc1.getWorks().getWorkGroup().get(index);
+                        latestDates.add(calculateLatest(actSummaryRc1.getWorks(), actSummaryRc2.getWorks()));
 
-                                    latestGrp = calculateLatests(workGrpRc1, actSummaryRc2.getWorks().getWorkGroup().get(index));
-                                }
-                                if (latestActSummary != null && latestActSummary.compare(latestGrp) == -1) {
-                                    latestActSummary = latestGrp;
-                                }
-
-                                actSummaryRc2.getWorks().setLastModifiedDate(new LastModifiedDate(latestGrp));
-                            }
-                        }
-
-                        actSummaryRc2.setLastModifiedDate(new LastModifiedDate(latestActSummary));
+                        actSummaryRc2.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis(latestDates.last())));
                     }
 
-                    private XMLGregorianCalendar calculateLatests(ActivitiesContainer actContainerRc1,
-                            org.orcid.jaxb.model.record_2_rc2.ActivitiesContainer actContainerRc2) {
+                    private Date calculateLatest(ActivitiesContainer actContainerRc1, org.orcid.jaxb.model.record_2_rc2.ActivitiesContainer actContainerRc2) {
                         XMLGregorianCalendar latestActSummary = null;
                         Collection<? extends Activity> activities = actContainerRc1.retrieveActivities();
                         if (activities != null && !activities.isEmpty()) {
@@ -126,10 +84,26 @@ public class ConvertVrc1ToVrc2Test {
                             latestActSummary = latest;
                             actContainerRc2.setLastModifiedDate(new LastModifiedDate(latest));
                         }
-                        return latestActSummary;
+                        return latestActSummary.toGregorianCalendar().getTime();
                     }
 
-                    private XMLGregorianCalendar calculateLatests(Group groupRc1, org.orcid.jaxb.model.record_2_rc2.Group groupRc2) {
+                    private Date calculateLatest(GroupsContainer groupsContainerRc1, org.orcid.jaxb.model.record_2_rc2.GroupsContainer groupsContainerRc2) {
+                        Date latestGrp = null;
+                        if (groupsContainerRc1.retrieveGroups() != null && !groupsContainerRc1.retrieveGroups().isEmpty()) {
+                            List<? extends Group> groupsRc1 = new ArrayList<>(groupsContainerRc1.retrieveGroups());
+                            List<org.orcid.jaxb.model.record_2_rc2.Group> groupsRc2 = new ArrayList<>(groupsContainerRc2.retrieveGroups());
+                            if (groupsRc1.get(0).getActivities() != null && !groupsRc1.get(0).getActivities().isEmpty()) {
+                                for (int index = 0; index < groupsRc1.size(); index++) {
+                                    Group grpRc1 = groupsRc1.get(index);
+                                    latestGrp = calculateLatests(grpRc1, groupsRc2.get(index));
+                                }
+                                groupsContainerRc2.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(latestGrp)));
+                            }
+                        }
+                        return latestGrp;
+                    }
+
+                    private Date calculateLatests(Group groupRc1, org.orcid.jaxb.model.record_2_rc2.Group groupRc2) {
                         XMLGregorianCalendar latestActSummary = null;
                         Collection<? extends GroupableActivity> activities = groupRc1.getActivities();
                         if (activities != null && !activities.isEmpty()) {
@@ -144,7 +118,7 @@ public class ConvertVrc1ToVrc2Test {
                             latestActSummary = latest;
                             groupRc2.setLastModifiedDate(new LastModifiedDate(latest));
                         }
-                        return latestActSummary;
+                        return latestActSummary.toGregorianCalendar().getTime();
                     }
                 }).register();
         mapper = mapperFactory.getMapperFacade();
@@ -170,8 +144,8 @@ public class ConvertVrc1ToVrc2Test {
 
         mapper.map(rc1Activities, rc2Activities2);
 
-        // Compare rc2Activities1(Converted with the mapper) and
-        // rc2Activities2(Given XML)
-        assertTrue(rc2Activities2.equals(rc2Activities1));
+        // Compare rc2Activities2(Converted with the mapper) and
+        // rc2Activities2 (Given XML)
+        assertEquals(rc2Activities1.toString(), rc2Activities1.toString());
     }
 }

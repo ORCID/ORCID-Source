@@ -18,6 +18,7 @@ package org.orcid.jaxb.model.record_2_rc1.summary;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -26,10 +27,13 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.orcid.jaxb.model.record_2_rc1.Group;
+import org.orcid.jaxb.model.record_2_rc1.GroupsContainer;
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "fundingGroup" })
 @XmlRootElement(name = "fundings", namespace = "http://www.orcid.org/ns/activities")
-public class Fundings implements Serializable {
+public class Fundings implements GroupsContainer, Serializable {
 
     private static final long serialVersionUID = -1446924819201177350L;
     @XmlElement(name = "group", namespace = "http://www.orcid.org/ns/activities")
@@ -39,6 +43,11 @@ public class Fundings implements Serializable {
         if (fundingGroup == null)
             fundingGroup = new ArrayList<FundingGroup>();
         return fundingGroup;
+    }
+    
+    @Override
+    public Collection<? extends Group> retrieveGroups() {
+        return getFundingGroup();
     }
 
     @Override
@@ -65,4 +74,5 @@ public class Fundings implements Serializable {
             return false;
         return true;
     }
+
 }
