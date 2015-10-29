@@ -108,4 +108,23 @@ public class FundingExternalIdentifier extends ExternalIdentifierBase implements
             return false;
         return true;
     }
+
+    @Override
+    public boolean matches(GroupKey obj) {
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        FundingExternalIdentifier other = (FundingExternalIdentifier) obj;
+        if (type != other.type) {
+            return false;
+        }
+        if (value == null) {
+            if (other.value != null) {
+                return false;
+            }
+        } else if (!value.equals(other.value)) {
+            return false;
+        }
+        return true;
+    }
 }

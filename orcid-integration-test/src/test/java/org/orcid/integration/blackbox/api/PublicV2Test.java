@@ -200,7 +200,7 @@ public class PublicV2Test {
         assertNotNull(getWorkResponse);
         Work work = getWorkResponse.getEntity(Work.class);
         assertNotNull(work);
-        assertEquals("common:title", work.getWorkTitle().getTitle().getContent());
+        assertEquals("Current treatment of left main coronary artery disease", work.getWorkTitle().getTitle().getContent());
 
         ClientResponse getWorkSummaryResponse = null;
         
@@ -214,7 +214,7 @@ public class PublicV2Test {
         checkResponse(getWorkSummaryResponse);
         WorkSummary summary = getWorkSummaryResponse.getEntity(WorkSummary.class);
         assertNotNull(summary);
-        assertEquals("common:title", summary.getTitle().getTitle().getContent());
+        assertEquals("Current treatment of left main coronary artery disease", summary.getTitle().getTitle().getContent());
     }
 
     @Test

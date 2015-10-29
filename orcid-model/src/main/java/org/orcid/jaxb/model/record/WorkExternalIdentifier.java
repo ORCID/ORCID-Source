@@ -126,7 +126,7 @@ public class WorkExternalIdentifier extends ExternalIdentifierBase implements Se
             return false;
 
         return true;
-    }    
+    }
 
     @Override
     public int hashCode() {
@@ -149,7 +149,7 @@ public class WorkExternalIdentifier extends ExternalIdentifierBase implements Se
             return false;
         }
         WorkExternalIdentifier other = (WorkExternalIdentifier) obj;
-        
+
         if (workExternalIdentifierId == null) {
             if (other.workExternalIdentifierId != null) {
                 return false;
@@ -172,5 +172,25 @@ public class WorkExternalIdentifier extends ExternalIdentifierBase implements Se
             newExtId.setWorkExternalIdentifierType(WorkExternalIdentifierType.fromValue(oldExtId.getWorkExternalIdentifierType().value()));
         }
         return newExtId;
+    }
+
+    @Override
+    public boolean matches(GroupKey obj) {
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        WorkExternalIdentifier other = (WorkExternalIdentifier) obj;
+
+        if (workExternalIdentifierId == null) {
+            if (other.workExternalIdentifierId != null) {
+                return false;
+            }
+        } else if (!workExternalIdentifierId.equals(other.workExternalIdentifierId)) {
+            return false;
+        }
+        if (workExternalIdentifierType != other.workExternalIdentifierType) {
+            return false;
+        }
+        return true;
     }
 }

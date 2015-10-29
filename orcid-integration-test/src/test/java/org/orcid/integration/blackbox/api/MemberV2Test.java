@@ -148,7 +148,7 @@ public class MemberV2Test extends BlackBoxBase {
         ClientResponse getResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
         Work gotWork = getResponse.getEntity(Work.class);
-        assertEquals("common:title", gotWork.getWorkTitle().getTitle().getContent());
+        assertEquals("Current treatment of left main coronary artery disease", gotWork.getWorkTitle().getTitle().getContent());
         gotWork.getWorkTitle().getTitle().setContent("updated title");
         ClientResponse putResponse = memberV2ApiClient.updateLocationXml(postResponse.getLocation(), accessToken, gotWork);
         assertEquals(Response.Status.OK.getStatusCode(), putResponse.getStatus());
@@ -189,7 +189,7 @@ public class MemberV2Test extends BlackBoxBase {
         ClientResponse getAfterUpdateResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), getAfterUpdateResponse.getStatus());
         Work gotAfterUpdateWork = getAfterUpdateResponse.getEntity(Work.class);
-        assertEquals("common:title", gotAfterUpdateWork.getWorkTitle().getTitle().getContent());
+        assertEquals("Current treatment of left main coronary artery disease", gotAfterUpdateWork.getWorkTitle().getTitle().getContent());
         ClientResponse deleteResponse = memberV2ApiClient.deleteWorkXml(user1OrcidId, gotWork.getPutCode(), accessToken);
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), deleteResponse.getStatus());
     }
@@ -720,7 +720,7 @@ public class MemberV2Test extends BlackBoxBase {
         found1 = found2 = found3 = false;
         for (WorkGroup group : activities.getWorks().getWorkGroup()) {
             for(WorkSummary summary : group.getWorkSummary()) {
-                if(summary.getTitle().getTitle().getContent().equals("common:title")) {
+                if(summary.getTitle().getTitle().getContent().equals("Current treatment of left main coronary artery disease")) {
                     found1 = true;
                 } else if(summary.getTitle().getTitle().getContent().equals("Work # 2")) {
                     found2 = true;
