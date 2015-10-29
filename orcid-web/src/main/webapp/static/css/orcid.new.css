@@ -3252,9 +3252,8 @@ ul.personal-inf-display li:last-child{
 }
 
 #loginForm #ajax-loader{	
-	float: left;    
-    margin-top: 5px;
-    margin-left: 5px;
+	float: left;
+    margin-left: 5px;        
 }
 
 #edit-affiliation #remove-disambiguated{
@@ -6102,12 +6101,28 @@ input:-webkit-autofill {
 
 .login .login-left-column{
 	border-right: 1px solid #C9CACB;
+	position: relative;
+	min-height: 370px;
 }
 
 .login .form-sign-in input[type="text"],
 .login .form-sign-in input[type="password"],
 .login .form-sign-in #form-sign-in-button{
-	width: 80%;
+	width: 80%;	
+}
+
+.login .form-sign-in #form-sign-in-button{
+	float: left;
+}
+
+.login .form-sign-in input[type="password"]{
+	margin-bottom: 0;
+}
+
+.login .form-sign-in .submit-login{
+	float: left;
+	margin-top: 20px;
+	width: 100%;
 }
 
 .login .login-register{
@@ -6116,12 +6131,16 @@ input:-webkit-autofill {
 	font-size: 20px;
 }
 
+.login .social-login{
+	margin-top: 30px;
+}
+
 .login .social-login .btn-facebook{
 	background: url('../img/svg/fb.svg') transparent no-repeat;
 	background-size: 40px 40px;
 	width: 40px;
 	height: 40px;
-	displat: block;
+	displat: block;	
 }
 
 .login .social-login .btn-google{
@@ -6145,10 +6164,6 @@ input:-webkit-autofill {
 	margin-left: 25px;
 }
 
-.login .login-left-column{
-	position: relative;
-}
-
 .login .login-left-column .or{
 	display: block;
     width: 85px;
@@ -6156,7 +6171,7 @@ input:-webkit-autofill {
     background: #FFF;
     position: absolute;
     right: -50px;
-    top: 90px;
+    top: calc( 50% - 30px);
     font-size: 25px;
     text-transform: uppercase;
     vertical-align: middle;
@@ -6181,6 +6196,21 @@ input:-webkit-autofill {
 }
 
 
+.login-right-column a.shibboleth-help:hover .glyphicon-question-sign{
+	cursor: pointer;
+}
+
+.login #login-reset{
+	float: left;
+	clear: both;
+	font-size: 14px;
+}
+
+.login #login-error-mess{
+	float: left;
+	width: 80%;
+}
+
 
 
 /* Media Queries */
@@ -6203,9 +6233,6 @@ input:-webkit-autofill {
 	}
 	.main {
 		margin-top: 100px;
-	}
-	#loginForm .control-group {
-		padding-left: 15px;
 	}
 	
 	.see-more {
@@ -6874,7 +6901,7 @@ input:-webkit-autofill {
 	}
 	
 	#loginForm #login-reset{
-		margin-top: 80px;
+		margin-top: 0;
 	}
 	
 	#loginForm #login-reset,
@@ -7350,6 +7377,17 @@ input:-webkit-autofill {
 		width: 100%;
 	}
 	
+	.login .login-right-column{
+		float: left;
+	}
+	
+	
+	#loginForm #ajax-loader{
+	    width: 100%;
+	    text-align: center;
+	    margin-top: 5px;
+	}
+	
 }
 
 @media (min-width : 768px) and (max-width : 991px) { /* Tablet */
@@ -7468,9 +7506,9 @@ input:-webkit-autofill {
 		padding-left: 15px;
 	}
 	
-	#loginForm #login-error-mess{
-		padding-left: 280px;
+	#loginForm #login-error-mess{		
 		text-align:left;
+		width: 100%;
 	}
 	
 	.oauth-login #loginForm #login-error-mess{
@@ -7479,11 +7517,7 @@ input:-webkit-autofill {
 	
 	#signout{
 		max-width:100px;
-	}
-	
-	#loginForm #login-reset{
-		margin-top: 25px;
-	}
+	}	
 	
 	.workspace-profile{		
 		padding: 15px;				
@@ -7549,6 +7583,17 @@ input:-webkit-autofill {
 	    vertical-align: middle;
 	    padding: 15px;
 	}
+	
+	.login .login-right-column{
+		float: left;
+	}
+	
+	#loginForm #ajax-loader{
+	    width: 100%;
+	    text-align: center;
+	    margin-top: 5px;
+	}    
+	
 	
 	
 }

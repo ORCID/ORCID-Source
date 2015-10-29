@@ -1,11 +1,11 @@
 /* Top level is idpSelectIdPSelector */
+
 #idpSelectIdPSelector
 {
     width: 389px;
     text-align: left;
-    background-color: #FFFFFF;
-    border: 2px #A40000 solid;
-    padding: 10px;
+    background-color: #FFFFFF;    
+    padding: 5px 0px;
 }
 
 /* Next down are the idpSelectPreferredIdPTile, idpSelectIdPEntryTile & idpSelectIdPListTile */
@@ -94,27 +94,49 @@ div.IdPSelectPreferredIdPButton div.IdPSelectTextDiv
  */
 #idpSelectInput, #idpSelectSelector
 {
-    width: 80%;
+    width: 60%;
+    margin-bottom: 0;
 }
 /*
  * For some reason a <select> width includes the border and an
  * <input> doesn't hence we have to force a margin onto the <select>
  */
 #idpSelectSelector
-{
-    margin-left: 2px;
+{    
     margin-right: 2px;
 
 }
 #idpSelectSelectButton, #idpSelectListButton
 {
     margin-left: 5px;
-    width: 16%;
+    width: auto;
 }
-#idpSelectSelectButton
+#idpSelectSelectButton, #idpSelectListButton
 {
     padding-left: 2px;
     padding-right: 2px;
+    background: #338caf;
+    display: inline-block;
+    margin-bottom: 0;
+    font-weight: 400;
+    text-align: center;
+    vertical-align: middle;
+    cursor: pointer;
+    background-image: none;
+    border: 1px solid #357ebd;
+    white-space: nowrap;
+    padding: 6px 12px;
+    font-size: 14px;
+    line-height: 1.428571429;
+    border-radius: 4px;
+    -webkit-user-select: none;    
+    opacity: 1;
+    vertical-align: top;
+}
+
+#idpSelectSelectButton:hover, #idpSelectListButton:hover{
+	background: #a6ce39;
+	border: 1px solid  #a6ce39;
 }
 
 /*
@@ -132,7 +154,7 @@ div.IdPSelectPreferredIdPButton div.IdPSelectTextDiv
 
 #idpSelectIdPSelector a:hover 
 {
-    text-decoration: underline;
+    text-decoration: none;
 }
 
 
@@ -146,11 +168,17 @@ a.IdPSelectDropDownToggle
 {
     display: inline-block;
     width: 80%;
+    text-decoration: none;
+}
+
+a.IdPSelectDropDownToggle:visited,
+a.IdPSelectDropDownToggle:hover{
+	text-decoration: none;
 }
 
 a.IdPSelectHelpButton
 {
-    display: inline-block;
+    display: none;
     text-align: right;
     width: 20%;
 }
