@@ -129,10 +129,10 @@ public class ActivityValidator {
         if (existingExtIds != null && newExtIds != null) {
             for (WorkExternalIdentifier existingId : existingExtIds.getExternalIdentifier()) {
                 for (WorkExternalIdentifier newId : newExtIds.getExternalIdentifier()) {
-                    if (existingId.getRelationship().equals(Relationship.SELF) && newId.getRelationship().equals(Relationship.SELF)
-                            && newId.getWorkExternalIdentifierId().getContent().equals(existingId.getWorkExternalIdentifierId().getContent())
-                            && newId.getWorkExternalIdentifierType().equals(existingId.getWorkExternalIdentifierType())
-                            && sourceEntity.getSourceId().equals(getExistingSource(existingSource))) {
+                    if (isDupRelationship(newId, existingId) &&
+                    		isDupValue(newId, existingId) &&
+                    		isDupType(newId, existingId) &&
+                    		sourceEntity.getSourceId().equals(getExistingSource(existingSource))) {
                         Map<String, String> params = new HashMap<String, String>();
                         params.put("clientName", sourceEntity.getSourceName());
                         throw new OrcidDuplicatedActivityException(params);
@@ -142,7 +142,23 @@ public class ActivityValidator {
         }
     }
 
-    public static void checkFundingExternalIdentifiers(FundingExternalIdentifiers newExtIds, FundingExternalIdentifiers existingExtIds, Source existingSource,
+	private static boolean isDupRelationship(WorkExternalIdentifier newId, WorkExternalIdentifier existingId) {
+    	return existingId.getRelationship() != null && existingId.getRelationship().equals(Relationship.SELF) &&
+    			newId.getRelationship() != null && newId.getRelationship().equals(Relationship.SELF);
+	}
+	
+    private static boolean isDupValue(WorkExternalIdentifier newId, WorkExternalIdentifier existingId) {
+		return existingId.getWorkExternalIdentifierId() != null && existingId.getWorkExternalIdentifierId().getContent() != null
+				&& newId.getWorkExternalIdentifierId() != null && newId.getWorkExternalIdentifierId().getContent() != null
+				&& newId.getWorkExternalIdentifierId().getContent().equals(existingId.getWorkExternalIdentifierId().getContent());
+	}
+    
+    private static boolean isDupType(WorkExternalIdentifier newId, WorkExternalIdentifier existingId) {
+		return existingId.getWorkExternalIdentifierType() != null && newId.getWorkExternalIdentifierType() != null
+				&& newId.getWorkExternalIdentifierType().equals(existingId.getWorkExternalIdentifierType());
+	}
+
+	public static void checkFundingExternalIdentifiers(FundingExternalIdentifiers newExtIds, FundingExternalIdentifiers existingExtIds, Source existingSource,
             SourceEntity sourceEntity) {
         if (existingExtIds != null && newExtIds != null) {
             for (FundingExternalIdentifier existingId : existingExtIds.getExternalIdentifier()) {

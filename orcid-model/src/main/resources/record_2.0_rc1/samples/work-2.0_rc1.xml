@@ -1,49 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<work:work put-code="123" visibility="private"
-	xmlns:common="http://www.orcid.org/ns/common" xmlns:work="http://www.orcid.org/ns/work"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.orcid.org/ns/work ../work-2.0_rc1.xsd ">	
+<work:work xmlns:common="http://www.orcid.org/ns/common"
+	xmlns:work="http://www.orcid.org/ns/work" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<work:title>
-		<common:title>common:title</common:title>
-		<common:subtitle />
-		<common:translated-title language-code="en">common:translated-title</common:translated-title>
+		<common:title>Current treatment of left main coronary artery disease</common:title>
 	</work:title>
-	<work:journal-title />
-	<work:short-description>work:short-description</work:short-description>
-	<work:citation>
-		<work:citation-type>formatted-unspecified</work:citation-type>
-		<work:citation>work:citation</work:citation>
-	</work:citation>
-	<work:type>artistic-performance</work:type>
+	<work:journal-title>Cor et Vasa</work:journal-title>
+	<work:type>journal-article</work:type>
 	<common:publication-date>
-		<common:year>1848</common:year>
-		<common:month>02</common:month>
-		<common:day>02</common:day>
+		<common:year>2015</common:year>
+		<common:month>06</common:month>
+		<common:day>01</common:day>
 	</common:publication-date>
 	<work:external-identifiers>
 		<work:work-external-identifier>
-			<common:external-identifier-url>http://orcid.org</common:external-identifier-url>
+			<common:external-identifier-url></common:external-identifier-url>
 			<common:relationship>self</common:relationship>
-			<work:external-identifier-type>agr</work:external-identifier-type>
-			<work:external-identifier-id>work:external-identifier-id</work:external-identifier-id>
+			<work:external-identifier-type>doi</work:external-identifier-type>
+			<work:external-identifier-id>10.1016/j.crvasa.2015.05.007</work:external-identifier-id>
 		</work:work-external-identifier>
 	</work:external-identifiers>
-	<work:url>http://tempuri.org</work:url>
-	<work:contributors>
-		<work:contributor>
-			<common:contributor-orcid>
-				<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
-				<common:path>8888-8888-8888-8880</common:path>
-				<common:host>orcid.org</common:host>
-			</common:contributor-orcid>
-			<work:credit-name visibility="private">work:credit-name</work:credit-name>
-			<work:contributor-email>work@contributor.email</work:contributor-email>
-			<work:contributor-attributes>
-				<work:contributor-sequence>first</work:contributor-sequence>
-				<work:contributor-role>author</work:contributor-role>
-			</work:contributor-attributes>
-		</work:contributor>
-	</work:contributors>
-	<common:language-code>en</common:language-code>
-	<common:country visibility="private">AF</common:country>	
 </work:work>

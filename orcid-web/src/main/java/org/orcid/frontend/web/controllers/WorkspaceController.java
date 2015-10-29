@@ -60,6 +60,7 @@ import org.orcid.jaxb.model.record.Role;
 import org.orcid.jaxb.model.record.WorkCategory;
 import org.orcid.jaxb.model.record.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.record.WorkType;
+import org.orcid.persistence.constants.SiteConstants;
 import org.orcid.pojo.ThirdPartyRedirect;
 import org.orcid.pojo.ajaxForm.KeywordsForm;
 import org.orcid.pojo.ajaxForm.OtherNamesForm;
@@ -399,12 +400,19 @@ public class WorkspaceController extends BaseWorkspaceController {
         ws.setErrors(new ArrayList<String>());
         HashMap<String, Website> websitesHm = new HashMap<String, Website>(); 
         for (Website w:ws.getWebsites()) {
-            validateUrl(w.getUrl());
+            //Clean old errors
+            w.setErrors(new ArrayList<String>());
+            w.getUrl().setErrors(new ArrayList<String>());
+            w.getName().setErrors(new ArrayList<String>());
+            //Validate
+            validateUrl(w.getUrl(), SiteConstants.URL_MAX_LENGTH);
+            validateNoLongerThan(SiteConstants.URL_MAX_LENGTH, w.getName());
             if (websitesHm.containsKey(w.getUrl().getValue()))
                 setError(w.getUrl(), "common.duplicate_url");
             else
                 websitesHm.put(w.getUrl().getValue(), w);
             copyErrors(w.getUrl(), ws);
+            copyErrors(w.getName(), ws);
         }   
         if (ws.getErrors().size()>0) return ws;        
         OrcidProfile currentProfile = getEffectiveProfile();
