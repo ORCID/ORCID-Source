@@ -60,7 +60,7 @@ public class ConvertVrc1ToVrc2Test {
                                 XMLGregorianCalendar latestGrp = null;
                                 for (int index = 0; index < actSummaryRc1.getFundings().getFundingGroup().size(); index++) {
                                     FundingGroup fundingGrpRc1 = actSummaryRc1.getFundings().getFundingGroup().get(index);
-                                    
+
                                     latestGrp = calculateLatests(fundingGrpRc1, actSummaryRc2.getFundings().getFundingGroup().get(index));
                                 }
                                 if (latestActSummary != null && latestActSummary.compare(latestGrp) == -1) {
@@ -78,7 +78,7 @@ public class ConvertVrc1ToVrc2Test {
                                 XMLGregorianCalendar latestGrp = null;
                                 for (int index = 0; index < actSummaryRc1.getPeerReviews().getPeerReviewGroup().size(); index++) {
                                     PeerReviewGroup peerReviewGrpRc1 = actSummaryRc1.getPeerReviews().getPeerReviewGroup().get(index);
-                                    
+
                                     latestGrp = calculateLatests(peerReviewGrpRc1, actSummaryRc2.getPeerReviews().getPeerReviewGroup().get(index));
                                 }
                                 if (latestActSummary != null && latestActSummary.compare(latestGrp) == -1) {
@@ -96,7 +96,7 @@ public class ConvertVrc1ToVrc2Test {
                                 XMLGregorianCalendar latestGrp = null;
                                 for (int index = 0; index < actSummaryRc1.getWorks().getWorkGroup().size(); index++) {
                                     WorkGroup workGrpRc1 = actSummaryRc1.getWorks().getWorkGroup().get(index);
-                                    
+
                                     latestGrp = calculateLatests(workGrpRc1, actSummaryRc2.getWorks().getWorkGroup().get(index));
                                 }
                                 if (latestActSummary != null && latestActSummary.compare(latestGrp) == -1) {
@@ -128,16 +128,15 @@ public class ConvertVrc1ToVrc2Test {
                         }
                         return latestActSummary;
                     }
-                    
-                    private XMLGregorianCalendar calculateLatests(Group groupRc1,
-                            org.orcid.jaxb.model.record_2_rc2.Group groupRc2) {
+
+                    private XMLGregorianCalendar calculateLatests(Group groupRc1, org.orcid.jaxb.model.record_2_rc2.Group groupRc2) {
                         XMLGregorianCalendar latestActSummary = null;
                         Collection<? extends GroupableActivity> activities = groupRc1.getActivities();
                         if (activities != null && !activities.isEmpty()) {
                             Iterator<? extends GroupableActivity> activitiesIterator = activities.iterator();
                             XMLGregorianCalendar latest = activitiesIterator.next().getLastModifiedDate().getValue();
                             while (activitiesIterator.hasNext()) {
-                            	GroupableActivity activity = activitiesIterator.next();
+                                GroupableActivity activity = activitiesIterator.next();
                                 if (latest.compare(activity.getLastModifiedDate().getValue()) == -1) {
                                     latest = activity.getLastModifiedDate().getValue();
                                 }
