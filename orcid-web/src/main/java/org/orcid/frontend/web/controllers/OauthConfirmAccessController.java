@@ -518,6 +518,7 @@ public class OauthConfirmAccessController extends BaseController {
             }
             form.setRedirectUri(Text.valueOf(buildDenyRedirectUri(form.getRedirectUri().getValue(), stateParam)));
         }
+        LOGGER.info("OauthConfirmAccessController form.getRedirectUri being sent to client browser: " + form.getRedirectUri());
         return form;
     }
 
@@ -610,7 +611,7 @@ public class OauthConfirmAccessController extends BaseController {
         } else {
             form.setRedirectUri(Text.valueOf(buildDenyRedirectUri(form.getRedirectUri().getValue(), request.getParameter("state"))));
         }
-
+        LOGGER.info("OauthConfirmAccessController form.getRedirectUri being sent to client browser: " + form.getRedirectUri());
         return form;
     }
 
