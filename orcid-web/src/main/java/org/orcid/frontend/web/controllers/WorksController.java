@@ -805,7 +805,7 @@ public class WorksController extends BaseWorkspaceController {
             for (WorkType workType : workCategory.getSubTypes()) {
                 // Dont put work type UNDEFINED
                 if (!workType.equals(WorkType.UNDEFINED)) {
-                    types.add(new KeyValue(workType.value(), getMessage(buildInternationalizationKey(WorkType.class, workType.value()))));
+                    types.add(new KeyValue(workType.value(), getMessage(new StringBuffer("org.orcid.jaxb.model.record.WorkType.").append(workType.value()).toString())));
                 }
             }
         } else {
@@ -813,7 +813,7 @@ public class WorksController extends BaseWorkspaceController {
             for (WorkType workType : WorkType.values()) {
                 // Dont put work type UNDEFINED
                 if (!workType.equals(WorkType.UNDEFINED)) {
-                    types.add(new KeyValue(workType.value(), getMessage(buildInternationalizationKey(WorkType.class, workType.value()))));
+                    types.add(new KeyValue(workType.value(), getMessage(new StringBuffer("org.orcid.jaxb.model.record.WorkType.").append(workType.value()).toString())));
                 }
             }
         }

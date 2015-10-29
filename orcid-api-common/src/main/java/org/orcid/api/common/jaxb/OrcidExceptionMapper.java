@@ -79,6 +79,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 
+import com.sun.jersey.api.NotFoundException;
+
 /**
  * orcid-api - Nov 8, 2011 - OrcidExceptionMapper
  * 
@@ -155,7 +157,13 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
         if(PojoUtil.isEmpty(clientId)) {
             LOGGER.error("An exception has occured, no client id info provided", t);
         } else {
-            LOGGER.error("An exception has occured processing request from client " + clientId, t);
+        	if(t instanceof NotFoundException) {
+        		StringBuffer temp = new StringBuffer("An exception has occured processing request from client ").append(clientId)
+        				.append(". ").append(t.getMessage());
+        		LOGGER.error(temp.toString());
+        	} else {
+        		LOGGER.error("An exception has occured processing request from client " + clientId, t);
+        	}
         }
         
         switch (getApiSection()) {

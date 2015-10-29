@@ -16,6 +16,7 @@
  */
 package org.orcid.core.manager.impl;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -33,6 +34,7 @@ import org.orcid.core.adapter.JpaJaxbFundingAdapter;
 import org.orcid.core.adapter.JpaJaxbPeerReviewAdapter;
 import org.orcid.core.adapter.JpaJaxbWorkAdapter;
 import org.orcid.core.manager.AffiliationsManager;
+import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.PeerReviewManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
@@ -116,6 +118,9 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
 
     @Resource
     WorkManager workManager;
+    
+    @Resource
+    private EncryptionManager encryptionManager;
 
     /**
      * Fetch a ProfileEntity from the database Instead of calling this function,
@@ -542,6 +547,14 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     @Override
     public List<ApplicationSummary> getApplications(List<OrcidOauth2TokenDetail> tokenDetails) {
     	return jpa2JaxbAdapter.getApplications(tokenDetails);
+    }
+    
+    @Override    
+    public String getOrcidHash(String orcid) throws NoSuchAlgorithmException {     
+        if(PojoUtil.isEmpty(orcid)) {
+            return null;
+        }
+        return encryptionManager.sha256Hash(orcid);
     }
     
 }

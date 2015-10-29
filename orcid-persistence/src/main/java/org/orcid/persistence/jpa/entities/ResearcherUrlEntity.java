@@ -31,6 +31,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.orcid.jaxb.model.common.Visibility;
+import org.orcid.persistence.constants.SiteConstants;
 
 /**
  * orcid-entities - Dec 6, 2011 - ElectronicResourceNumTypeEntity
@@ -66,7 +67,7 @@ public class ResearcherUrlEntity extends BaseEntity<Long> implements Comparable<
         this.id = id;
     }
 
-    @Column(name = "url", length = 350)
+    @Column(name = "url", length = SiteConstants.URL_MAX_LENGTH)
     public String getUrl() {
         return url;
     }
@@ -75,7 +76,7 @@ public class ResearcherUrlEntity extends BaseEntity<Long> implements Comparable<
         this.url = url;
     }
 
-    @Column(name = "url_name", length = 350)
+    @Column(name = "url_name", length = SiteConstants.URL_MAX_LENGTH)
     public String getUrlName() {
         return urlName;
     }
