@@ -313,7 +313,6 @@ public class BaseController {
 	protected void logoutCurrentUser(HttpServletRequest request, HttpServletResponse response) {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		if (internalSSOManager.enableCookie()) {
-			String orcidId = authentication.getName();
 			Cookie[] cookies = request.getCookies();
 			// Delete cookie and token associated with that cookie
 			if (cookies != null) {
@@ -347,10 +346,9 @@ public class BaseController {
 					}
 				}
 			}
-
 			// Delete token if exists
-			if (!PojoUtil.isEmpty(orcidId)) {
-				internalSSOManager.deleteToken(orcidId);
+			if (authentication !=null && !PojoUtil.isEmpty(authentication.getName())) {
+				internalSSOManager.deleteToken(authentication.getName());
 			}
 		}
 		if (authentication != null && authentication.isAuthenticated()) {
