@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
 	xmlns:sch="http://purl.oclc.org/dsdl/schematron" elementFormDefault="qualified"
-	targetNamespace="http://www.orcid.org/ns/other-name" xmlns:researcher-url="http://www.orcid.org/ns/other-name"
+	targetNamespace="http://www.orcid.org/ns/other-name" xmlns:other-name="http://www.orcid.org/ns/other-name"
 	xmlns:common="http://www.orcid.org/ns/common">
 	<xs:annotation>
 		<xs:documentation>

@@ -519,8 +519,15 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
 	@Override
 	public Response updateOtherName(String orcid, String putCode,
 			org.orcid.jaxb.model.record_rc2.OtherName otherName) {
+		if (!putCode.equals(otherName.getPutCode())) {
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("urlPutCode", String.valueOf(putCode));
+            params.put("bodyPutCode", String.valueOf(otherName.getPutCode()));
+            throw new MismatchedPutCodeException(params);
+        }
+
 		org.orcid.jaxb.model.record_rc2.OtherName updatedOtherName = otherNameManager.updateOtherNameV2(orcid, putCode, otherName);
-        return Response.ok(updatedOtherName).build();
+		return Response.ok(updatedOtherName).build();
 	}
 
 	@Override

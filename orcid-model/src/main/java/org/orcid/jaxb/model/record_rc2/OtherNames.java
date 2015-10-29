@@ -29,7 +29,7 @@ import org.orcid.jaxb.model.common.LastModifiedDate;
 
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType( propOrder = { "otherNames", "lastModifiedDate" })
+@XmlType( propOrder = { "lastModifiedDate", "otherNames" })
 @XmlRootElement(name = "other-names", namespace = "http://www.orcid.org/ns/other-name")
 public class OtherNames implements Serializable {        
     private static final long serialVersionUID = 6312730308815255894L;
