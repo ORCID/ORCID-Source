@@ -615,10 +615,10 @@ public class OauthConfirmAccessController extends BaseController {
                 }
                 // Approve
                 RedirectView view = (RedirectView) authorizationEndpoint.approveOrDeny(approvalParams, model, status, auth);
-                form.setRedirectUri(Text.valueOf(view.getUrl()));                
+                form.setRedirectUri(Text.valueOf(view.getUrl()));
             }
         } else {
-            form.setRedirectUri(Text.valueOf(buildDenyRedirectUri(form.getRedirectUri().getValue(), request.getParameter("state"))));            
+            form.setRedirectUri(Text.valueOf(buildDenyRedirectUri(form.getRedirectUri().getValue(), request.getParameter("state"))));
         }
         LOGGER.info("OauthConfirmAccessController form.getRedirectUri being sent to client browser: " + form.getRedirectUri());
         return form;
@@ -713,7 +713,8 @@ public class OauthConfirmAccessController extends BaseController {
         
         // Approve
         RedirectView view = (RedirectView) authorizationEndpoint.approveOrDeny(approvalParams, model, status, auth);
-        form.setRedirectUri(Text.valueOf(view.getUrl()));
+        form.setRedirectUri(Text.valueOf(view.getUrl()));                
+        LOGGER.info("OauthConfirmAccessController form.getRedirectUri being sent to client browser: " + form.getRedirectUri());        
         return form;
     }
 
