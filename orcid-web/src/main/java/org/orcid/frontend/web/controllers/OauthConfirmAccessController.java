@@ -40,7 +40,6 @@ import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.oauth.OrcidRandomValueTokenServices;
-import org.orcid.core.oauth.service.OrcidAuthorizationCodeServiceImpl;
 import org.orcid.core.oauth.service.OrcidAuthorizationEndpoint;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.jaxb.model.message.CreationMethod;
@@ -421,6 +420,8 @@ public class OauthConfirmAccessController extends BaseController {
         // Clean form errors
         form.setErrors(new ArrayList<String>());
         SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
+        boolean willBeRedirected = false;
+        
         if (form.getApproved()) {
             // Validate name and password
             validateUserNameAndPassword(form);
@@ -457,11 +458,13 @@ public class OauthConfirmAccessController extends BaseController {
                         if (params != null && params.containsKey("state"))
                             redirectUri += "&state=" + params.get("state");
                         form.setRedirectUri(Text.valueOf(redirectUri));
+                        LOGGER.info("OauthConfirmAccessController form.getRedirectUri being sent to client browser: " + form.getRedirectUri());
                         return form;
                     }
                     // Approve
                     RedirectView view = (RedirectView) authorizationEndpoint.approveOrDeny(approvalParams, model, status, auth);
                     form.setRedirectUri(Text.valueOf(view.getUrl()));
+                    willBeRedirected = true;
                 } catch (AuthenticationException ae) {
                     form.getErrors().add(getMessage("orcid.frontend.security.bad_credentials"));
                 }
@@ -474,9 +477,13 @@ public class OauthConfirmAccessController extends BaseController {
                     stateParam = savedRequest.getParameterValues("state")[0];
             }
             form.setRedirectUri(Text.valueOf(buildDenyRedirectUri(form.getRedirectUri().getValue(), stateParam)));
+            willBeRedirected = true;
         }
-
-        LOGGER.info("OauthConfirmAccessController form.getRedirectUri being sent to client browser: " + form.getRedirectUri());
+        
+        //If there was an authentication error, dont log since the user will not be redirected yet
+        if (willBeRedirected) {
+            LOGGER.info("OauthConfirmAccessController form.getRedirectUri being sent to client browser: " + form.getRedirectUri());
+        }
         return form;
     }
 
@@ -518,7 +525,7 @@ public class OauthConfirmAccessController extends BaseController {
             }
             form.setRedirectUri(Text.valueOf(buildDenyRedirectUri(form.getRedirectUri().getValue(), stateParam)));
         }
-        LOGGER.info("OauthConfirmAccessController form.getRedirectUri being sent to client browser: " + form.getRedirectUri());
+        
         return form;
     }
 
@@ -551,6 +558,7 @@ public class OauthConfirmAccessController extends BaseController {
                     if(!PojoUtil.isEmpty(request.getParameter("state")))                    
                         redirectUri += "&state=" + request.getParameter("state");
                     form.setRedirectUri(Text.valueOf(redirectUri));
+                    LOGGER.info("OauthConfirmAccessController form.getRedirectUri being sent to client browser: " + form.getRedirectUri());
                     return form;
                 }
                 
@@ -602,14 +610,15 @@ public class OauthConfirmAccessController extends BaseController {
                     if (params != null && params.containsKey("state"))
                         redirectUri += "&state=" + params.get("state");
                     form.setRedirectUri(Text.valueOf(redirectUri));
+                    LOGGER.info("OauthConfirmAccessController form.getRedirectUri being sent to client browser: " + form.getRedirectUri());
                     return form;
                 }
                 // Approve
                 RedirectView view = (RedirectView) authorizationEndpoint.approveOrDeny(approvalParams, model, status, auth);
-                form.setRedirectUri(Text.valueOf(view.getUrl()));
+                form.setRedirectUri(Text.valueOf(view.getUrl()));                
             }
         } else {
-            form.setRedirectUri(Text.valueOf(buildDenyRedirectUri(form.getRedirectUri().getValue(), request.getParameter("state"))));
+            form.setRedirectUri(Text.valueOf(buildDenyRedirectUri(form.getRedirectUri().getValue(), request.getParameter("state"))));            
         }
         LOGGER.info("OauthConfirmAccessController form.getRedirectUri being sent to client browser: " + form.getRedirectUri());
         return form;
