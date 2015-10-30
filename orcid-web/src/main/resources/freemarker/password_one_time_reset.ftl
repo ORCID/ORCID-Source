@@ -28,6 +28,7 @@
     		</#if>               
     		<div ng-controller="ResetPasswordCtrl">
 	            <form id="reset-password-one-time" name="oneTimeResetForm" action="<@orcid.rootPath '/one-time-password/${encryptedEmail}'/>" method="post" autocomplete="off">
+	                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 	                    <div class="control-group">
 	                        <label for="passwordTypeAndConfirmForm.password.value" class="control-label">${springMacroRequestContext.getMessage("password_one_time_reset.labelpassword")}</label>
 	                        <div class="controls">
