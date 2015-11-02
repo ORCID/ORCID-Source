@@ -124,7 +124,7 @@
 				<a id="mobile-search" class="mobile-button mobile-search" ng-click="toggleSearch()" ng-class="{'mobile-menu-active': searchVisible == true}">
 					<span class="glyphicon glyphicon-search"></span>
 				</a>
-				<a href="<@orcid.rootPath "/signin" />" id="mobile-sign-in" class="mobile-button mobile-sign-in">
+				<a href="<@orcid.rootPath " signin" />" id="mobile-sign-in" class="mobile-button mobile-sign-in">
 					<span class="glyphicon glyphicon-user"></span>
 				</a>				
 				
@@ -132,7 +132,7 @@
 				<ul class="menu" ng-show="menuVisible == true" ng-cloak resize>
 					<!-- FOR RESEARCHERS -->
 					<li class="first expanded active-trail"><a
-						href="<@orcid.rootPath " /" />" ng-click="handleMobileMenuOption($event)" title=""><@orcid.msg
+						href="<@orcid.rootPath " signin" />" ng-click="handleMobileMenuOption($event)" title=""><@orcid.msg
 						'public-layout.for_researchers'/></a>
 						<ul class="menu lang-fixes">
 						<!-- Mobile view Only -->
