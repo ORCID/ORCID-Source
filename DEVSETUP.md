@@ -35,7 +35,7 @@ We'll set up postgres using the default settings in
     
     psql -c "CREATE USER orcidro WITH PASSWORD 'orcidro';"
     psql -c "GRANT CONNECT ON DATABASE orcid to orcidro;"
-    psql -c "GRANT SELECT ON ALL TABLES IN SCHEMA public to orcidro;" orcid
+    psql -c "GRANT SELECT ON ALL TABLES IN SCHEMA public to orcidro;"
     ```
     
 * Exit postgres user prompt
