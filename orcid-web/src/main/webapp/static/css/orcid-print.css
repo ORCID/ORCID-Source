@@ -1,0 +1,83 @@
+/**
+ * =============================================================================
+ *
+ * ORCID (R) Open Source
+ * http://orcid.org
+ *
+ * Copyright (c) 2012-2014 ORCID, Inc.
+ * Licensed under an MIT-Style License (MIT)
+ * http://orcid.org/open-source-license
+ *
+ * This copyright and license information (including a link to the full license)
+ * shall be included in its entirety in all copies or substantial portion of
+ * the software.
+ *
+ * =============================================================================
+ */
+@media print{
+.workspace-body-list > li, .workspace-accordion-content > li, .workspace-border-box{
+	border: none;
+	box-shadow: none;
+}
+
+body{
+	color: #000;
+}
+*, .workspace-left{
+	margin: 0;
+	padding: 0;
+}
+
+.alert, 
+.footer, 
+.header, 
+.id-banner-header, 
+.orcid-id-options, 
+.action-button-bar, 
+.workspace-private-toolbar, 
+.source-line, 
+.gray-button, 
+.qrcode-container,
+.id-banner .row .col-md-3,
+.glyphicon-pencil,
+.workspace-profile span.glyphicon-pencil{
+	display: none;
+}
+.left-aside, .col-md-3, .col-sm-3, .col-xs-12{
+	width: 100%;
+}
+
+h2.full-name{
+	color: #000;
+	font-size: 2em;
+	font-weight: normal;
+}
+
+.id-banner .oid{
+	border: 0;
+}
+
+.workspace-accordion-header{
+	border: 0;
+	background-color: #fff;
+	margin: 0;
+	padding: 0;
+}
+
+.work-title a.toggle-text, .workspace-accordion-header .row{
+	color: #000;
+	border-bottom: 1px solid #000;
+	width: 100%;
+
+}
+
+h3 .workspace-title{
+	border: 0;
+}
+
+, 
+
+
+
+
+}

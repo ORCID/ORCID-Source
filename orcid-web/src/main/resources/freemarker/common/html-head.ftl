@@ -79,6 +79,7 @@
         <link rel="stylesheet" href="${staticCdn}/twitter-bootstrap/3.1.0/css/bootstrap-ie7.css?v=${ver}"/>	                
     <![endif]-->
     <link rel="stylesheet" href="${staticCdn}/css/orcid.new.css?v=${ver}"/>
+
     <!--[if lt IE 8]>
     	<link rel="stylesheet" href="${staticCdn}/css/orcid-ie7.css?v=${ver}"/>
     <![endif]-->
@@ -112,5 +113,5 @@
 
     <#include "/layout/google_analytics.ftl">
 
-    
+    <link rel="stylesheet" href="${staticCdn}/css/orcid-print.css?v=${ver}"/>
 </head>
