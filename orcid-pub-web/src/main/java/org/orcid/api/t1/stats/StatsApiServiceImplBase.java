@@ -61,12 +61,12 @@ abstract public class StatsApiServiceImplBase {
      * @return A time series for a given statistic
      */
     @GET
-    @Produces(value = { MediaType.APPLICATION_JSON, "text/csv" })
+    @Produces(value = { MediaType.APPLICATION_JSON, OrcidApiConstants.TEXT_CSV })
     @Path(OrcidApiConstants.STATS_ALL)
     @ApiOperation(value = "Fetch a time series for all statistics")
     @ApiResponses(value = { @ApiResponse(code = 200, message = "Statistic found", response = StatsTimelineList.class),
             @ApiResponse(code = 404, message = "Statistic not found") })
-    public Response viewStatsCSV() {
+    public Response viewAllStatsTimelines() {
         return serviceDelegator.getAllStatsTimelines();
     }
 
