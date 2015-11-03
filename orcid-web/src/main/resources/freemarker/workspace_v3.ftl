@@ -54,6 +54,9 @@
             
             <#include "includes/orcid_public_record_widget.ftl"/>
             
+            <#include "includes/print_record.ftl"/>
+
+            
             
             
             <div class="qrcode-container">

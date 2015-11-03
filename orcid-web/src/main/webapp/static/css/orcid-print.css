@@ -40,7 +40,10 @@ body{
 .qrcode-container,
 .id-banner .row .col-md-3,
 .glyphicon-pencil,
-.workspace-profile span.glyphicon-pencil{
+.workspace-profile span.glyphicon-pencil,
+.container .header .navigation,
+.header .center,
+.search{
 	display: none;
 }
 .left-aside, .col-md-3, .col-sm-3, .col-xs-12{
