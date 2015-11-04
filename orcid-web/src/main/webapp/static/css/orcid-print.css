@@ -95,7 +95,6 @@ h3.workspace-title{
 	border: 0;
 	font-size: 16px;
 	font-weight: bold;
-	line-height: 31px;
 }
 
 .full-name{
@@ -152,5 +151,23 @@ ul.sources-edit-list > li{
 a.toggle-text[href]:after {
     content: none;
 }
+
+h1, h2, h3, h4, h5 {
+  page-break-after: avoid;
+}
+
+.workspace-accordion-content .workspace-title .journaltitle{
+	font-weight: normal;
+	font-style: italic;
+}
+
+.affiliation-date::after{
+	content: " | ";
+}
+
+.role{
+	margin-left: 4px;
+}
+
 
 }
