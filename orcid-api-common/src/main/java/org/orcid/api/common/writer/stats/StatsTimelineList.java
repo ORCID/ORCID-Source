@@ -14,18 +14,27 @@
  *
  * =============================================================================
  */
-package org.orcid.api.t1.stats.delegator;
+package org.orcid.api.common.writer.stats;
 
-import javax.ws.rs.core.Response;
+import java.util.ArrayList;
+import java.util.List;
 
-import org.orcid.core.utils.statistics.StatisticsEnum;
+import org.orcid.jaxb.model.statistics.StatisticsTimeline;
 
-public interface StatsApiServiceDelegator {
+public class StatsTimelineList  {
 
-    public Response getStatsSummary();
+    private List<StatisticsTimeline> statistics = new ArrayList<StatisticsTimeline>();
 
-    public Response getAllStatsTimelines();
+    public StatsTimelineList() {
+    }
 
-    public Response getStatsTimeline(StatisticsEnum type);
+    public List<StatisticsTimeline> getTimelines() {
+        return statistics;
+    }
 
+    public void setTimelines(List<StatisticsTimeline> timelines) {
+        this.statistics = timelines;
+    }
+    
+    
 }
