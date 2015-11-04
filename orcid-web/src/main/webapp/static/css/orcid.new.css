@@ -3358,14 +3358,7 @@ p.orcid-id-container{
 	width: 100%;
 }
 
-.mini-orcid-icon{
-	background: url('../img/mini-icon.png') transparent no-repeat;
-	background-size: 20px 20px;	
-	width: 20px;
-	height: 20px;
-	display: block;
-	float: left;
-}
+qrcode-help
 
 .mini-icon {	
 	width: 30px;
