@@ -16,7 +16,7 @@
     =============================================================================
 
 -->
-
+<#if RequestParameters['print']??>
 	<div class="print-orcid-record">
 		<a href="${baseUriHttp}/${(profile.orcidIdentifier.path)!}" onClick="window.print();return false"><span class="glyphicon glyphicon-print"></span> Print your ORCID record</a>
 		<#--<@orcid.msg 'id_banner.viewpublicprofile'/>-->
@@ -44,6 +44,6 @@
             </div>
         </div>
 	</div>
-
+</#if>
 
 
