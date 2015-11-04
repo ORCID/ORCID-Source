@@ -22,10 +22,13 @@
 
 body{
 	color: #000;
+	font-size: 12px;
+
 }
 *, .workspace-left{
 	margin: 0;
 	padding: 0;
+	font-family: Helvetica, Arial, sans-serif;
 }
 .main{
 	margin: 0;
@@ -56,9 +59,7 @@ body{
 .country-edit,
 .biography-edit,
 .popover-help-container,
-.privacyToggle,
-.ng-hide,
-.edit-option{
+.divisor{
 	display: none;
 }
 .left-aside, .col-md-3, .col-sm-3, .col-xs-12{
@@ -82,15 +83,22 @@ h2.full-name{
 	padding: 0;
 }
 
-.work-title a.toggle-text, .workspace-accordion-header .row{
+.work-title a.toggle-text, 
+.workspace-accordion-header .row, 
+#workspace-personal .row:first-child{
 	color: #000;
 	border-bottom: 1px solid #000;
 	width: 100%;
+	font-size: 14px;
+	font-weight: bold;
+	line-height: normal;
+	height: inherit;
 
 }
 
-h3 .workspace-title{
+h3.workspace-title{
 	border: 0;
+	font-size: 14px;
 }
 
 .mini-orcid-icon{
@@ -100,6 +108,9 @@ h3 .workspace-title{
 	height: 20px;
 	display: block;
 	float: left;
+}
+.divisor{
+
 }
 
 
