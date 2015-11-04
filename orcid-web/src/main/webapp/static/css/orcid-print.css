@@ -27,6 +27,9 @@ body{
 	margin: 0;
 	padding: 0;
 }
+.main{
+	margin: 0;
+}
 
 .alert, 
 .footer, 
@@ -42,8 +45,20 @@ body{
 .glyphicon-pencil,
 .workspace-profile span.glyphicon-pencil,
 .container .header .navigation,
-.header .center,
-.search{
+.container .header,
+.search,
+.print-orcid-record,
+.bio-edit,
+.names-edit,
+.other-names-edit,
+.keywords-edit,
+.websites-edit,
+.country-edit,
+.biography-edit,
+.popover-help-container,
+.privacyToggle,
+.ng-hide,
+.edit-option{
 	display: none;
 }
 .left-aside, .col-md-3, .col-sm-3, .col-xs-12{
@@ -78,7 +93,14 @@ h3 .workspace-title{
 	border: 0;
 }
 
-, 
+.mini-orcid-icon{
+	background: url('../img/mini-icon.png') transparent no-repeat;
+	background-size: 20px 20px;	
+	width: 20px;
+	height: 20px;
+	display: block;
+	float: left;
+}
 
 
 

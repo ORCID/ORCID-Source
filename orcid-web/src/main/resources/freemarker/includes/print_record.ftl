@@ -18,6 +18,8 @@
 -->
 
 	<div class="print-orcid-record">
-		<a href="${baseUriHttp}/${(profile.orcidIdentifier.path)!}" onClick="window.print();return false" class="button"><span class="glyphicons glyphicons-print"></span> Print your ORCID record</a>
+		<a href="${baseUriHttp}/${(profile.orcidIdentifier.path)!}" onClick="window.print();return false" class="button"><span class="glyphicon glyphicon-print"></span> Print your ORCID record</a>
 		<#--<@orcid.msg 'id_banner.viewpublicprofile'/>-->
 	</div>
+
+
