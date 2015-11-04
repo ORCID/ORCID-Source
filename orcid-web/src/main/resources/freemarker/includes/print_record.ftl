@@ -18,8 +18,12 @@
 -->
 
 	<div class="print-orcid-record">
-		<a href="${baseUriHttp}/${(profile.orcidIdentifier.path)!}" onClick="window.print();return false" class="button"><span class="glyphicon glyphicon-print"></span> Print your ORCID record</a>
+		<a href="${baseUriHttp}/${(profile.orcidIdentifier.path)!}" onClick="window.print();return false"><span class="glyphicon glyphicon-print"></span> Print your ORCID record</a>
 		<#--<@orcid.msg 'id_banner.viewpublicprofile'/>-->
+    </div>
+    <div class="print-orcid-record">
+        <a href="http://pdfmyurl.com/api?license=M9ldpIx9K1iU&url=${baseUriHttp}/${(profile.orcidIdentifier.path)!}&page_size=Letter&orientation=portrait&css_media_type=print&filename=ORCID-record&javascript_time=600"><span class="glyphicon glyphicon-floppy-save"></span></span> Save PDF</a>
 	</div>
+
 
 
