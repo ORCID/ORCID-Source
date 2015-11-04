@@ -25,20 +25,22 @@ body{
 	font-size: 12px;
 
 }
-*, .workspace-left{
+*, .workspace-left, .full-name, .orcid-id, h3.workspace-title{
 	margin: 0;
 	padding: 0;
 	font-family: Helvetica, Arial, sans-serif;
 }
+
 .main{
 	margin: 0;
 }
 
 .alert, 
 .footer, 
-.header, 
+.container .header, 
 .id-banner-header, 
 .orcid-id-options, 
+.mini-orcid-icon,
 .action-button-bar, 
 .workspace-private-toolbar, 
 .source-line, 
@@ -47,9 +49,6 @@ body{
 .id-banner .row .col-md-3,
 .glyphicon-pencil,
 .workspace-profile span.glyphicon-pencil,
-.container .header .navigation,
-.container .header,
-.search,
 .print-orcid-record,
 .bio-edit,
 .names-edit,
@@ -59,24 +58,20 @@ body{
 .country-edit,
 .biography-edit,
 .popover-help-container,
-.divisor{
+.divisor,
+i.glyphicon-chevron-down,
+.workspace-toolbar{
 	display: none;
 }
 .left-aside, .col-md-3, .col-sm-3, .col-xs-12{
 	width: 100%;
 }
 
-h2.full-name{
-	color: #000;
-	font-size: 2em;
-	font-weight: normal;
-}
-
 .id-banner .oid{
 	border: 0;
 }
 
-.workspace-accordion-header{
+.workspace-accordion-header, .id-banner .oid .orcid-id-container{
 	border: 0;
 	background-color: #fff;
 	margin: 0;
@@ -93,27 +88,69 @@ h2.full-name{
 	font-weight: bold;
 	line-height: normal;
 	height: inherit;
-
+	margin-bottom: 16px;
 }
 
 h3.workspace-title{
 	border: 0;
+	font-size: 16px;
+	font-weight: bold;
+	line-height: 31px;
+}
+
+.full-name{
+	font-size: 32px;
+}
+
+#orcid-id{
 	font-size: 14px;
 }
 
-.mini-orcid-icon{
-	background: url('../img/mini-icon.png') transparent no-repeat;
-	background-size: 20px 20px;	
-	width: 20px;
-	height: 20px;
+#orcid-id:before{
+	content: url('https://orcid.org/sites/default/files/files/ID_symbol_B-W_16x16.png');
+	width: 16px;
+	height: 16px;
+	display: block;
+	float: left;
+	margin-right: 4px;
+}
+.workspace-profile .workspace-section{
+	margin: 4px;
+	padding: 0;
 	display: block;
 	float: left;
 }
-.divisor{
-
+.workspace-profile .workspace-section .workspace-section-header .workspace-section-title{
+	float: left;
+	font-weight: bold;
+	margin-right: 4px;
+}
+.mobile-box{
+	padding: 0;
 }
 
+.workspace-accordion-content, .info-detail{
+	font-size: 12px;
+	line-height: normal;
+}
 
+.workspace-accordion-content .workspace-title span{
+	font-size: 12px;
+	font-weight: bold;
+	line-height: normal;
+}
 
+.bottom-margin-medium,
+.bottomBuffer{
+	margin: 0;
+}
+
+ul.sources-edit-list > li{
+	border: 0;
+}
+
+a.toggle-text[href]:after {
+    content: none;
+}
 
 }
