@@ -23,6 +23,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceUnit;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import org.orcid.persistence.dao.StatisticsDao;
@@ -62,15 +63,9 @@ public class StatisticsDaoImpl implements StatisticsDao {
     @Override
     @Transactional("statisticsTransactionManager")
     public StatisticKeyEntity getLatestKey() {
-        StatisticKeyEntity result = null;
-        TypedQuery<StatisticKeyEntity> query = entityManager.createQuery("FROM StatisticKeyEntity ORDER BY generationDate DESC", StatisticKeyEntity.class);
-        query.setMaxResults(1);
-        try {
-            result = query.getSingleResult();
-        } catch(NoResultException nre){
-            LOG.warn("Couldnt find any statistics key, the cron job needs to run for the first time.");
-        }
-        return result;
+		return (StatisticKeyEntity) entityManager.createNativeQuery(
+				"SELECT * FROM statistic_key WHERE id IN (SELECT max(key_id) FROM statistic_values) ORDER BY generation_date DESC LIMIT 1;",
+				StatisticKeyEntity.class).getSingleResult();
     }
 
     /**
