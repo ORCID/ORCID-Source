@@ -60,13 +60,18 @@ public class StatisticsDaoImpl implements StatisticsDao {
      * 
      * @return the latest statistics key
      * */
-    @Override
-    @Transactional("statisticsTransactionManager")
-    public StatisticKeyEntity getLatestKey() {
-		return (StatisticKeyEntity) entityManager.createNativeQuery(
-				"SELECT * FROM statistic_key WHERE id IN (SELECT max(key_id) FROM statistic_values) ORDER BY generation_date DESC LIMIT 1;",
-				StatisticKeyEntity.class).getSingleResult();
-    }
+	@Override
+	@Transactional("statisticsTransactionManager")
+	public StatisticKeyEntity getLatestKey() {
+		try {
+			return (StatisticKeyEntity) entityManager.createNativeQuery(
+					"SELECT * FROM statistic_key WHERE id IN (SELECT max(key_id) FROM statistic_values) ORDER BY generation_date DESC LIMIT 1;",
+					StatisticKeyEntity.class).getSingleResult();
+		} catch (NoResultException nre) {
+			LOG.warn("Couldnt find any statistics key, the cron job needs to run for the first time.");
+		}
+		return null;
+	}
 
     /**
      * Save an statistics record on database
@@ -80,9 +85,10 @@ public class StatisticsDaoImpl implements StatisticsDao {
      * */
     @Override
     @Transactional("statisticsTransactionManager")
-    public StatisticValuesEntity saveStatistic(StatisticValuesEntity statistic) {
-        entityManager.persist(statistic);
-        return statistic;
+    public List<StatisticValuesEntity> saveStatistics(List<StatisticValuesEntity> statistics) {
+        for (StatisticValuesEntity statistic:statistics)
+    	    entityManager.persist(statistic);
+        return statistics;
     }
 
     /**

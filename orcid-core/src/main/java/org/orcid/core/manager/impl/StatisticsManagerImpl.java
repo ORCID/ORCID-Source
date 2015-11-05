@@ -17,6 +17,7 @@
 package org.orcid.core.manager.impl;
 
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -66,9 +67,8 @@ public class StatisticsManagerImpl implements StatisticsManager {
      * */
     @Override
     @Transactional
-    public StatisticValuesEntity saveStatistic(StatisticKeyEntity id, String name, long value) {
-        StatisticValuesEntity statisticEntity = new StatisticValuesEntity(id, name, value);
-        return statisticsDao.saveStatistic(statisticEntity);
+    public void saveStatistics(List<StatisticValuesEntity> statistics) {
+       statisticsDao.saveStatistics(statistics);
     }
 
     /**

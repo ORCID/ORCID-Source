@@ -46,7 +46,7 @@ public interface StatisticsDao {
      *            the statistic value
      * @return the statistic value object
      * */
-    public StatisticValuesEntity saveStatistic(StatisticValuesEntity statistic);
+    public List<StatisticValuesEntity> saveStatistics(List<StatisticValuesEntity> statistics);
 
     /**
      * Get an statistics object from database
