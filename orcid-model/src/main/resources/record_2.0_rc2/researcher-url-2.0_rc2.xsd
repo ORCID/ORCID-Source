@@ -45,6 +45,7 @@
 			</xs:annotation>
 			<xs:sequence>
 				<xs:element ref="researcher-url:researcher-url" minOccurs="1" maxOccurs="unbounded"/>
+				<xs:element ref="common:last-modified-date" minOccurs="0" maxOccurs="1" />
 			</xs:sequence>
 			<xs:attribute name="path" type="common:person-path" use="optional" />
 		</xs:complexType>

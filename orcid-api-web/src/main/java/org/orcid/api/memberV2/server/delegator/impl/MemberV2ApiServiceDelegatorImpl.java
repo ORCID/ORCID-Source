@@ -62,9 +62,9 @@ import org.orcid.jaxb.model.record_rc1.Emails;
 import org.orcid.jaxb.model.record_rc1.Employment;
 import org.orcid.jaxb.model.record_rc1.Funding;
 import org.orcid.jaxb.model.record_rc1.PeerReview;
-import org.orcid.jaxb.model.record_rc1.ResearcherUrl;
-import org.orcid.jaxb.model.record_rc1.ResearcherUrls;
 import org.orcid.jaxb.model.record_rc1.Work;
+import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
+import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.WebhookDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -519,7 +519,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
 	@Override
 	public Response updateOtherName(String orcid, String putCode,
 			org.orcid.jaxb.model.record_rc2.OtherName otherName) {
-		if (!putCode.equals(otherName.getPutCode())) {
+		if (!putCode.equals(String.valueOf(otherName.getPutCode()))) {
             Map<String, String> params = new HashMap<String, String>();
             params.put("urlPutCode", String.valueOf(putCode));
             params.put("bodyPutCode", String.valueOf(otherName.getPutCode()));

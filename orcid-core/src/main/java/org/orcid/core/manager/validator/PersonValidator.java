@@ -23,7 +23,7 @@ import org.orcid.core.exception.InvalidPutCodeException;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.exception.PutCodeRequiredException;
 import org.orcid.jaxb.model.record_rc2.OtherName;
-import org.orcid.jaxb.model.record_rc1.ResearcherUrl;
+import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import org.orcid.persistence.constants.SiteConstants;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
