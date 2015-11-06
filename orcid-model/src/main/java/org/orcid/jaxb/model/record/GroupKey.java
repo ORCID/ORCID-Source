@@ -18,4 +18,5 @@ package org.orcid.jaxb.model.record;
 
 public interface GroupKey {
     boolean passGroupingValidation();
+    boolean matches(GroupKey obj);
 }

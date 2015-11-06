@@ -137,7 +137,7 @@ public class ActivitiesGroup {
                     //First check keys restrictions
                     if(extId.passGroupingValidation()) {
                         //If any of the keys already exists on this group, return true
-                        if(groupKeys.contains(extId))
+                        if(containsKey(extId))
                             return true;
                     }
                 }
@@ -168,4 +168,14 @@ public class ActivitiesGroup {
             activities.add(activity);
         }
     }
+    
+    private boolean containsKey(GroupKey key) {
+        for(GroupKey existingKey : groupKeys) {
+            if(existingKey.matches(key)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
 }

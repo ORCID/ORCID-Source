@@ -135,7 +135,7 @@ public class LockUnlockRecordTest extends BlackBoxBase {
 		OrcidMessage message = response.getEntity(OrcidMessage.class);
 		if (message.getOrcidProfile() == null && message.getErrorDesc() != null) {
 			assertEquals(message.getErrorDesc().getContent(),
-					"Account locked : The given account 0000-0003-0718-7552 is locked");
+					"Account locked : The given account " + user1OrcidId + " is locked");
 			return true;
 		}
 		return false;
@@ -148,7 +148,7 @@ public class LockUnlockRecordTest extends BlackBoxBase {
 		OrcidMessage message = response.getEntity(OrcidMessage.class);
 		if (message.getOrcidProfile() == null && message.getErrorDesc() != null) {
 			assertEquals(message.getErrorDesc().getContent(),
-					"Account locked : The given account 0000-0003-0718-7552 is locked");
+					"Account locked : The given account " + user1OrcidId + " is locked");
 			return true;
 		}
 		return false;
