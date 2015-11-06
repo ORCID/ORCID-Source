@@ -16,10 +16,14 @@
  */
 package org.orcid.api.t1.stats.delegator.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.orcid.api.common.writer.stats.StatsTimelineList;
 import org.orcid.api.t1.stats.delegator.StatsApiServiceDelegator;
 import org.orcid.core.manager.impl.StatisticsCacheManager;
 import org.orcid.core.security.visibility.aop.AccessControl;
@@ -42,6 +46,21 @@ public class StatsApiServiceDelegatorImpl implements StatsApiServiceDelegator {
 
         return Response.ok(summary).build();
     }
+    
+    @Override
+    @AccessControl(requiredScope = ScopePathType.READ_PUBLIC, enableAnonymousAccess = true)
+    public Response getAllStatsTimelines() {
+        StatisticsSummary summary = statisticsCacheManager.retrieve();
+        if (summary == null)
+            return Response.status(Status.NOT_FOUND).build();
+        StatsTimelineList statsTimelines = new StatsTimelineList();
+        for (String key : summary.getStatistics().keySet()){
+            StatisticsTimeline timeline = statisticsCacheManager.getStatisticsTimelineModel(StatisticsEnum.fromString(key));
+            if (timeline !=null)
+                statsTimelines.getTimelines().add(timeline);
+        }
+        return Response.ok(statsTimelines).build();
+    }
 
     @Override
     @AccessControl(requiredScope = ScopePathType.READ_PUBLIC, enableAnonymousAccess = true)
@@ -52,4 +71,5 @@ public class StatsApiServiceDelegatorImpl implements StatsApiServiceDelegator {
 
         return Response.ok(timeline).build();
     }
+    
 }

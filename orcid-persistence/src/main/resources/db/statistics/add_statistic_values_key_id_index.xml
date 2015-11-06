@@ -20,19 +20,12 @@
 <databaseChangeLog
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
-    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
 
-    <!--
-       If you're reading this after (or before) adding a visibility column
-       Please use the property as the 'type' e.g.
-       <column name="personal_details_visibility" type="${visibility.type}"/>
-     -->
+    <changeSet author="rcpeters" id="add_statistic_values_key_id_index" dbms="postgresql">
+       <sql>
+          CREATE INDEX statistic_values_key_id_idx ON statistic_values (key_id);
+       </sql>
+    </changeSet>
 
-    <property name="visibility.type" value="VARCHAR(20)" dbms="postgresql"/>
-    <property name="visibility.type" value="VARCHAR(25)" dbms="hsqldb"/>
-
-    <include file="/db/statistics/install.xml"/>
-    <include file="/db/statistics/add_statistic_values_key_id_index.xml"/>
-        
 </databaseChangeLog>

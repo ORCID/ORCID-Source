@@ -26,7 +26,7 @@ import org.orcid.jaxb.model.common.Url;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "url", "relationship" })
-public class ExternalIdentifierBase implements GroupKey {
+public abstract class ExternalIdentifierBase implements GroupKey { 
     @XmlElement(name="relationship", namespace = "http://www.orcid.org/ns/common")
     protected Relationship relationship;
     @XmlElement(name="external-identifier-url", namespace = "http://www.orcid.org/ns/common")
@@ -80,4 +80,5 @@ public class ExternalIdentifierBase implements GroupKey {
             return false;
         return true;
     }
+    
 }

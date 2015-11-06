@@ -76,6 +76,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
+import org.springframework.security.web.csrf.CsrfToken;
+import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -142,6 +144,9 @@ public class BaseController {
     
     @Resource
     private InternalSSOManager internalSSOManager;
+    
+    @Resource
+    protected CsrfTokenRepository csrfTokenRepository;
 
     protected static final String EMPTY = "empty";
 
@@ -313,7 +318,6 @@ public class BaseController {
 	protected void logoutCurrentUser(HttpServletRequest request, HttpServletResponse response) {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		if (internalSSOManager.enableCookie()) {
-			String orcidId = authentication.getName();
 			Cookie[] cookies = request.getCookies();
 			// Delete cookie and token associated with that cookie
 			if (cookies != null) {
@@ -347,15 +351,17 @@ public class BaseController {
 					}
 				}
 			}
-
 			// Delete token if exists
-			if (!PojoUtil.isEmpty(orcidId)) {
-				internalSSOManager.deleteToken(orcidId);
+			if (authentication !=null && !PojoUtil.isEmpty(authentication.getName())) {
+				internalSSOManager.deleteToken(authentication.getName());
 			}
 		}
 		if (authentication != null && authentication.isAuthenticated()) {
 			new SecurityContextLogoutHandler().logout(request, response, authentication);
-		}		
+		}
+		CsrfToken token = csrfTokenRepository.generateToken(request);
+		csrfTokenRepository.saveToken(token, request, response);
+		request.setAttribute("_csrf", token);
 	}
 
     protected boolean isEmailOkForCurrentUser(String decryptedEmail) {

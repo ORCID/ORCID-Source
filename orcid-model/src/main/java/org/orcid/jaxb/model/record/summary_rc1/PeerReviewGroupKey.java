@@ -61,5 +61,10 @@ public class PeerReviewGroupKey implements GroupKey {
         } else if (!groupId.equals(other.groupId))
             return false;
         return true;
+    }
+
+    @Override
+    public boolean matches(GroupKey other) {        
+        return this.equals(other);
     }        
 }

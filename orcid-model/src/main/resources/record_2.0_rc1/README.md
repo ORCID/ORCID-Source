@@ -7,21 +7,21 @@ undetected into the code during the previous development period. Release candida
 
 ## XSDs and current state (all stable)
 - [activities-2.0_rc1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc1/activities-2.0_rc1.xsd) 
-**stable**, further model changes will be expressed in v2.0_rc1
+**stable**, further model changes will be expressed in v2.0_rc2
 - [common-2.0_rc1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/common_2.0_rc1/common-2.0_rc1.xsd)
-**stable**, further model changes will be expressed in v2.0_rc1
+**stable**, further model changes will be expressed in v2.0_rc2
 - [education-2.0_rc1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc1/education-2.0_rc1.xsd)
-**stable**, further model changes will be expressed in v2.0_rc1
+**stable**, further model changes will be expressed in v2.0_rc2
 - [employment-2.0_rc1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc1/employment-2.0_rc1.xsd)
-**stable**, further model changes will be expressed in v2.0_rc1
+**stable**, further model changes will be expressed in v2.0_rc2
 - [error-2.0_rc1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc1/error-2.0_rc1.xsd)
-**stable**, further model changes will be expressed in v2.0_rc1
+**stable**, further model changes will be expressed in v2.0_rc2
 - [funding-2.0_rc1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc1/funding-2.0_rc1.xsd)
-**stable**, further model changes will be expressed in v2.0_rc1
+**stable**, further model changes will be expressed in v2.0_rc2
 - [peer-review-2.0_rc1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc1/peer-review-2.0_rc1.xsd)
-**stable**, further model changes will be expressed in v2.0_rc1
+**stable**, further model changes will be expressed in v2.0_rc2
 - [work-2.0_rc1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc1/work-2.0_rc1.xsd)
-**stable**, further model changes will be expressed in v2.0_rc1
+**stable**, further model changes will be expressed in v2.0_rc2
 
 ## Changes
 Not Applicable v2.0_rc1 is a first draft.
