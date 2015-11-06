@@ -1,0 +1,37 @@
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2014 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+	<changeSet author="Shobhit Tyagi" id="ADD-FIELDS-TO-OTHER-NAMES">
+		<sql>ALTER TABLE other_name ADD visibility VARCHAR(19)</sql>
+		<sql>ALTER TABLE other_name ADD source_id VARCHAR(19)</sql>
+		<sql>ALTER TABLE other_name ADD client_source_id VARCHAR(20)</sql>
+		<sql>ALTER TABLE other_name ADD CONSTRAINT other_name_source_id_fk FOREIGN KEY (source_id) REFERENCES profile(orcid)</sql>
+		<sql>ALTER TABLE other_name ADD CONSTRAINT other_name_client_source_id_fk FOREIGN KEY (client_source_id) REFERENCES client_details(client_details_id)</sql>
+    </changeSet>
+    <changeSet author="Shobhit Tyagi" id="UPDATE_EXISTING-DATA-OTHER-NAMES">
+		<sql>UPDATE other_name a SET visibility = (Select other_names_visibility from profile b where a.orcid = b.orcid) where a.visibility is null</sql>
+		<sql>UPDATE other_name a 
+				SET source_id = (Select orcid from profile b where a.orcid = b.orcid and b.claimed=true), 
+				client_source_id = (Select client_source_id from profile b where a.orcid = b.orcid and b.claimed=false)
+				WHERE a.source_id is null and a.client_source_id is null</sql>
+    </changeSet>
+</databaseChangeLog>

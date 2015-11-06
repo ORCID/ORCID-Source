@@ -98,8 +98,8 @@ import org.orcid.jaxb.model.message.TranslatedTitle;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkContributors;
 import org.orcid.jaxb.model.message.WorkTitle;
-import org.orcid.jaxb.model.record.Relationship;
-import org.orcid.jaxb.model.record.WorkExternalIdentifierType;
+import org.orcid.jaxb.model.record_rc1.Relationship;
+import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.OrgAffiliationRelationDao;
@@ -325,13 +325,13 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             return null;
         }
         //Transform the external id v1.2 into an external id v2.0
-        org.orcid.jaxb.model.record.WorkExternalIdentifiers recordExternalIdentifiers = org.orcid.jaxb.model.record.WorkExternalIdentifiers.valueOf(work.getWorkExternalIdentifiers());
+        org.orcid.jaxb.model.record_rc1.WorkExternalIdentifiers recordExternalIdentifiers = org.orcid.jaxb.model.record_rc1.WorkExternalIdentifiers.valueOf(work.getWorkExternalIdentifiers());
         
         /**
          * Transform the external identifiers according to the rules in: 
          * https://trello.com/c/pqboi7EJ/1368-activity-identifiers-add-self-or-part-of
          * */
-        for(org.orcid.jaxb.model.record.WorkExternalIdentifier extId : recordExternalIdentifiers.getExternalIdentifier()) {
+        for(org.orcid.jaxb.model.record_rc1.WorkExternalIdentifier extId : recordExternalIdentifiers.getExternalIdentifier()) {
             if(WorkExternalIdentifierType.ISSN.equals(extId.getWorkExternalIdentifierType())) {
                 if(!work.getWorkType().equals(org.orcid.jaxb.model.message.WorkType.BOOK)){
                     extId.setRelationship(Relationship.PART_OF);
