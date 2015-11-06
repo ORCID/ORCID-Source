@@ -43,6 +43,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.orcid.integration.api.t2.T2OAuthAPIService;
 import org.orcid.integration.blackbox.BlackBoxBase;
+import org.orcid.integration.blackbox.web.SigninTest;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -101,6 +102,34 @@ public class OauthAuthorizationPageTest extends BlackBoxBase {
         WebElement submitButton = webDriver.findElement(By.id("authorize-button"));
         submitButton.click();
 
+        (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(new ExpectedCondition<Boolean>() {
+            public Boolean apply(WebDriver d) {
+                return d.getTitle().equals("ORCID Playground");
+            }
+        });
+
+        String currentUrl = webDriver.getCurrentUrl();
+        Matcher matcher = STATE_PARAM_PATTERN.matcher(currentUrl);
+        assertTrue(matcher.find());
+        String stateParam = matcher.group(1);
+        assertFalse(PojoUtil.isEmpty(stateParam));
+        assertEquals(STATE_PARAM, stateParam);
+    }
+    
+    @Test
+    public void stateParamIsPersistentAndReurnedWhenAlreadyLoggedInTest() throws JSONException, InterruptedException, URISyntaxException {
+        WebDriver webDriver = new FirefoxDriver();        
+        webDriver.get(webBaseUrl + "/userStatus.json?logUserOut=true");
+        webDriver.get(webBaseUrl + "/my-orcid");
+        //Sign in
+        SigninTest.signIn(webDriver, user1UserName, user1Password);
+        //Go to the authroization page
+        webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s&state=%s", webBaseUrl, client1ClientId, SCOPES,
+                redirectUri, STATE_PARAM));
+        By userIdElementLocator = By.id("authorize");
+        (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(userIdElementLocator));
+        WebElement authorizeButton = webDriver.findElement(By.id("authorize"));
+        authorizeButton.click();
         (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(new ExpectedCondition<Boolean>() {
             public Boolean apply(WebDriver d) {
                 return d.getTitle().equals("ORCID Playground");
