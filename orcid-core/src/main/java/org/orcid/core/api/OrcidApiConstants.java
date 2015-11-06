@@ -53,6 +53,7 @@ public class OrcidApiConstants {
     public static final String GROUP_ID_RECORD = "/group-id-record";
     public static final String STATS_PATH = "/statistics";
     public static final String STATS = "/{type}";
+    public static final String STATS_ALL = "/all";
     
     public static final String ERROR = "/error";
     
@@ -66,6 +67,7 @@ public class OrcidApiConstants {
     public static final String VND_ORCID_JSON = "application/vnd.orcid+json; qs=4";
 
     public static final String HTML = "text/html; qs=1";
+    public static final String TEXT_CSV = "text/csv";
 
     public static final String STATUS_OK_MESSAGE = "OK I am here";
         
@@ -79,7 +81,9 @@ public class OrcidApiConstants {
     public static final String SWAGGER_FILE = "/swagger.json";
     public static final String SWAGGER_FILE_YAML = "/swagger.yaml";
     public static final String APPLICATION_CITEPROC = "application/vnd.citationstyles.csl+json";
-    public static final String RESEARCHER_URLS =  "/{orcid}/researcher-urls";    
+    public static final String RESEARCHER_URLS =  "/{orcid}/researcher-urls";
+    public static final String EMAIL =  "/{orcid}/email";
 
     public static final String INTERNAL_API_PERSON_READ = "/{orcid}/person";
+    public static final String OTHER_NAMES =  "/{orcid}/other-names";
 }       

@@ -9,11 +9,13 @@ XML for the ```permission``` notifications follows the [notification-permission-
 
 - **notification:notification-type**: The type of notification - for this type of notification, the value is always ```permission```. 
 
-- **notification:item-type**: DISPLAYED TO END USER. A plain text value for describing to the user the type of items that you'll plan to add to his/her record once permission is granted. This value should be short (fewer than 25 characters), and can be a bit more descriptive, for example, "your recent publications", or "validated affiliations", or it can simply mirror the value used for ```notification:item-type``` below (education, employment, etc. You should assume that this text will be used in the middle of a sentence _(for example, the message subject line of "Add &lt;notification:item-type&gt; to your ORCID record")_, so you should use discretion on capitalization and length.
-
-- **notification:intro-message**: DISPLAYED TO END USER. A short message that will be included in the inbox message to the end-user. This message will be presented before the list of activities that you have included in the message. Your intro message should not exceed 1000 characters.
-
 - **notification:authorization-url**: This field is the URL string that you would call if you were asking for the permission from the user from your own application. It is formatted as a URL string, using the format found for the call [GET OAUTH/AUTHORIZE](http://members.orcid.org/api/get-oauthauthorize). _Note: one may specify only the URL path if desired. This approach is useful if you want to use identical code in multiple environments, for example on the ORCID Sandbox and Production environments._
+
+- **notification:notification-subject**: DISPLAYED TO END USER. A plain text value for describing to the user the type of items that you'll plan to add to his/her record once permission is granted. This value should be short (fewer than 25 characters), and can be a bit more descriptive, for example, "your recent publications", or "validated affiliations", or it can simply mirror the value used for ```notification:item-type``` below (education, employment, etc. You should assume that this text will be used in the middle of a sentence _(for example, the message subject line of "Add &lt;notification:item-type&gt; to your ORCID record")_, so you should use discretion on capitalization and length.
+
+- **notification:notification-intro**: DISPLAYED TO END USER. A short message that will be included in the inbox message to the end-user. This message will be presented before the list of activities that you have included in the message. Your intro message should not exceed 1000 characters.
+
+
 
 **notification:items block**
 

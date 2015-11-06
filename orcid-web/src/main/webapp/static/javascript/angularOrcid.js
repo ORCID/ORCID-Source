@@ -1304,6 +1304,7 @@ orcidNgModule.factory("emailSrvc", function ($rootScope) {
 orcidNgModule.factory("prefsSrvc", function ($rootScope) {
     var serv = {
             prefs: null,
+            saved: false,
             getPrivacyPreferences: function() {
                 $.ajax({
                     url: getBaseUri() + '/account/preferences.json',
@@ -1326,12 +1327,16 @@ orcidNgModule.factory("prefsSrvc", function ($rootScope) {
                     dataType: 'json',
                     success: function(data) {
                         serv.prefs = data;
+                        serv.saved = true;
                         $rootScope.$apply();
                     }
                 }).fail(function() {
                     // something bad is happening!
                     console.log("error with prefs");
                 });
+            },
+            clearMessage: function(){
+                serv.saved = false;
             }
         };
 
@@ -2797,29 +2802,27 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
             dataType: 'json',
             success: function(data) {
                $scope.register = data;
-            $scope.$apply();
-
-            // make sure inputs stayed trimmed
-            $scope.$watch('register.email.value', function() {
-                trimAjaxFormText($scope.register.email);
-                $scope.serverValidate('Email');
-            }); // initialize the watch
-
-            // make sure email is trimmed
-            $scope.$watch('register.emailConfirm.value', function() {
-                 trimAjaxFormText($scope.register.emailConfirm);
-                 $scope.serverValidate('EmailConfirm');
-            }); // initialize the watch
-
-            $scope.$watch('register.givenNames.value', function() {
-                trimAjaxFormText($scope.register.givenNames);
-            }); // initialize the watch
-
-            $scope.$watch('register.familyNames.value', function() {
-                 trimAjaxFormText($scope.register.familyNames);
-            }); // initialize the watch
-
-
+                $scope.$apply();
+    
+                // make sure inputs stayed trimmed
+                $scope.$watch('register.email.value', function() {
+                    trimAjaxFormText($scope.register.email);
+                    $scope.serverValidate('Email');
+                }); // initialize the watch
+    
+                // make sure email is trimmed
+                $scope.$watch('register.emailConfirm.value', function() {
+                     trimAjaxFormText($scope.register.emailConfirm);
+                     $scope.serverValidate('EmailConfirm');
+                }); // initialize the watch
+    
+                $scope.$watch('register.givenNames.value', function() {
+                    trimAjaxFormText($scope.register.givenNames);
+                }); // initialize the watch
+    
+                $scope.$watch('register.familyNames.value', function() {
+                     trimAjaxFormText($scope.register.familyNames);
+                }); // initialize the watch
             }
         }).fail(function(){
         // something bad is happening!
@@ -7778,7 +7781,7 @@ orcidNgModule.controller('SSOPreferencesCtrl',['$scope', '$compile', '$sce', 'em
         $.ajax({
             url: getBaseUri()+'/developer-tools/get-sso-credentials.json',
             contentType: 'application/json;charset=UTF-8',
-            type: 'POST',
+            type: 'GET',
             success: function(data){
                 $scope.$apply(function(){
                     if(data != null && data.clientSecret != null) {

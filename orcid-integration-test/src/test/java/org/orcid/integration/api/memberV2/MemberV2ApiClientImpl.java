@@ -27,6 +27,7 @@ import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_XML;
 import static org.orcid.core.api.OrcidApiConstants.WORK;
 import static org.orcid.core.api.OrcidApiConstants.GROUP_ID_RECORD;
 import static org.orcid.core.api.OrcidApiConstants.RESEARCHER_URLS;
+import static org.orcid.core.api.OrcidApiConstants.EMAIL;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -35,12 +36,12 @@ import javax.ws.rs.core.UriBuilder;
 
 import org.orcid.api.common.OrcidClientHelper;
 import org.orcid.jaxb.model.groupid.GroupIdRecord;
-import org.orcid.jaxb.model.record.Education;
-import org.orcid.jaxb.model.record.Employment;
-import org.orcid.jaxb.model.record.Funding;
-import org.orcid.jaxb.model.record.PeerReview;
-import org.orcid.jaxb.model.record.ResearcherUrl;
-import org.orcid.jaxb.model.record.Work;
+import org.orcid.jaxb.model.record_rc1.Education;
+import org.orcid.jaxb.model.record_rc1.Employment;
+import org.orcid.jaxb.model.record_rc1.Funding;
+import org.orcid.jaxb.model.record_rc1.PeerReview;
+import org.orcid.jaxb.model.record_rc1.ResearcherUrl;
+import org.orcid.jaxb.model.record_rc1.Work;
 
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
@@ -194,5 +195,10 @@ public class MemberV2ApiClientImpl {
     public ClientResponse deleteResearcherUrl(String orcid, Long putCode, String accessToken) {
         URI createURI = UriBuilder.fromPath(RESEARCHER_URLS + PUTCODE).build(orcid, putCode);
         return orcidClientHelper.deleteClientResponseWithToken(createURI, VND_ORCID_XML, accessToken);      
+    }
+    
+    public ClientResponse getEmails(String orcid, String accessToken) {
+        URI getURI = UriBuilder.fromPath(EMAIL).build(orcid);
+        return orcidClientHelper.getClientResponseWithToken(getURI, VND_ORCID_XML, accessToken);        
     }
 }

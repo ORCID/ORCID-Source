@@ -16,8 +16,10 @@
  */
 package org.orcid.core.cron.impl;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -26,6 +28,7 @@ import org.orcid.core.cron.StatisticsGeneratorCronJob;
 import org.orcid.core.manager.StatisticsGeneratorManager;
 import org.orcid.core.manager.StatisticsManager;
 import org.orcid.persistence.jpa.entities.StatisticKeyEntity;
+import org.orcid.persistence.jpa.entities.StatisticValuesEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,7 +52,7 @@ public class StatisticsGeneratorCronJobImpl implements StatisticsGeneratorCronJo
 
     /**
      * Cron job that will generate statistics and store them on database
-     * */
+     */
     @Override
     public void generateStatistics() {
         LOG.debug("About to run statistics generator thread");
@@ -76,17 +79,20 @@ public class StatisticsGeneratorCronJobImpl implements StatisticsGeneratorCronJo
             LOG.info("Last time the statistics cron job ran: {}", new Date());
             Map<String, Long> statistics = statisticsGeneratorManager.generateStatistics();
             StatisticKeyEntity statisticKey = statisticsManager.createKey();
+            List<StatisticValuesEntity> entities = new ArrayList<StatisticValuesEntity>();
 
             // Store statistics on database
-            for (String key : statistics.keySet()) {
-                statisticsManager.saveStatistic(statisticKey, key, statistics.get(key));
+            for (Map.Entry<String, Long> entry : statistics.entrySet()) {
+                entities.add(new StatisticValuesEntity(statisticKey, entry.getKey(), entry.getValue()));
+
             }
+            statisticsManager.saveStatistics(entities);
         }
     }
 
     /**
      * @return true if it is Friday 11:30 PM or later, false otherwise.
-     * */
+     */
     public boolean isFridayNearMidnight() {
         Calendar c = Calendar.getInstance();
         int dayOfWeek = c.get(Calendar.DAY_OF_WEEK);

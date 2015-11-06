@@ -85,7 +85,7 @@ public class Preferences implements Serializable {
     @XmlElement(name = "developer-tools-enabled")
     private DeveloperToolsEnabled developerToolsEnabled;
     @XmlTransient
-    private boolean notificationsEnabled;
+    private Boolean notificationsEnabled;
 
     /**
      * Gets the value of the sendEmailFrequencyDays property.
@@ -203,11 +203,11 @@ public class Preferences implements Serializable {
         this.developerToolsEnabled = developerToolsEnabled;
     }
 
-    public boolean isNotificationsEnabled() {
+    public Boolean getNotificationsEnabled() {
         return notificationsEnabled;
     }
 
-    public void setNotificationsEnabled(boolean notificationsEnabled) {
+    public void setNotificationsEnabled(Boolean notificationsEnabled) {
         this.notificationsEnabled = notificationsEnabled;
     }
 

@@ -24,5 +24,8 @@ public interface StatsApiServiceDelegator {
 
     public Response getStatsSummary();
 
+    public Response getAllStatsTimelines();
+
     public Response getStatsTimeline(StatisticsEnum type);
+
 }

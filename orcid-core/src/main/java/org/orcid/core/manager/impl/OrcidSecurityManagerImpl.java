@@ -34,11 +34,13 @@ import org.orcid.jaxb.model.common.Filterable;
 import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.record.Education;
-import org.orcid.jaxb.model.record.Employment;
-import org.orcid.jaxb.model.record.Funding;
-import org.orcid.jaxb.model.record.PeerReview;
-import org.orcid.jaxb.model.record.Work;
+import org.orcid.jaxb.model.record_rc1.Education;
+import org.orcid.jaxb.model.record_rc1.Email;
+import org.orcid.jaxb.model.record_rc1.Employment;
+import org.orcid.jaxb.model.record_rc1.Funding;
+import org.orcid.jaxb.model.record_rc1.PeerReview;
+import org.orcid.jaxb.model.record_rc1.ResearcherUrl;
+import org.orcid.jaxb.model.record_rc1.Work;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -124,6 +126,8 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
             readLimitedScopes.add(ScopePathType.AFFILIATIONS_READ_LIMITED.value());
         } else if (filterable instanceof PeerReview) {
             readLimitedScopes.add(ScopePathType.PEER_REVIEW_READ_LIMITED.value());
+        } else if (filterable instanceof ResearcherUrl || filterable instanceof Email) {
+            readLimitedScopes.add(ScopePathType.PERSON_READ_LIMITED.value());
         }
         readLimitedScopes.retainAll(requestedScopes);
         return readLimitedScopes;
@@ -150,6 +154,18 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
 
             throw new AccessControlException("Cannot access method with authentication type " + authentication != null ? authentication.toString() : ", as it's null!");
         }
+    }
+    
+    @Override
+    public String getClientIdFromAPIRequest() {
+        SecurityContext context = SecurityContextHolder.getContext();
+        Authentication authentication = context.getAuthentication();
+        if (OAuth2Authentication.class.isAssignableFrom(authentication.getClass())) {
+            OAuth2Authentication oAuth2Authentication = (OAuth2Authentication) authentication;
+            OAuth2Request request = oAuth2Authentication.getOAuth2Request();
+            return request.getClientId();
+        } 
+        return null;
     }
 
 }

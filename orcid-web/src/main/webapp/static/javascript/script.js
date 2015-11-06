@@ -277,12 +277,6 @@ function logOffReload(reload_param) {
 
 // jquery ready
 $(function() {
-    // CSRF
-    var token = $("meta[name='_csrf']").attr("content");
-    var header = $("meta[name='_csrf_header']").attr("content");
-    $(document).ajaxSend(function(e, xhr, options) {
-        xhr.setRequestHeader(header, token);
-    });
     
     // Common
     
@@ -381,6 +375,7 @@ $(function() {
     $('form#loginForm')
             .submit(
                     function() {
+                        var loginUrl = baseUrl + 'signin/auth.json';
                         if ($('form#loginForm').attr('disabled')) {
                             return false;
                         }
@@ -404,12 +399,15 @@ $(function() {
                         } else
                             orcidGA.gaPush([ 'send', 'event', 'RegGrowth',
                                     'Sign-In-Submit', 'Website' ]);
+                        if (basePath.startsWith(baseUrl + 'shibboleth')) {
+                            loginUrl = baseUrl + 'shibboleth/signin/auth.json';
+                        }
                         $('form#loginForm').attr('disabled', 'disabled');
                         $('#ajax-loader').show();
                         $
                                 .ajax(
                                         {
-                                            url : baseUrl + 'signin/auth.json',
+                                            url : loginUrl,
                                             type : 'POST',
                                             data : 'userId=' + encodeURIComponent(orcidLoginFitler($('input[name=userId]').val())) + '&password=' + encodeURIComponent($('input[name=password]').val()),
                                             dataType : 'json',
@@ -3773,9 +3771,6 @@ this.w3cLatexCharMap = {
 
 
 
-/* START: orcidSearchUrlJs v0.0.1 */
-/* https://github.com/ORCID/orcidSearchUrlJs */
-
 /* START: workIdLinkJs v0.0.8 */
 /* https://github.com/ORCID/workIdLinkJs */
 
@@ -3937,11 +3932,13 @@ this.w3cLatexCharMap = {
 /* END: workIdLinkJs */
 
 
+/* START: orcidSearchUrlJs v0.0.1 */
+/* https://github.com/ORCID/orcidSearchUrlJs */
 
 /* browser and NodeJs compatible */
 (function(exports) {
 
-    var baseUrl = 'https://orcid.org/v1.1/search/orcid-bio/';
+    var baseUrl = 'https://orcid.org/v1.2/search/orcid-bio/';
     var quickSearchEDisMax = '{!edismax qf="given-and-family-names^50.0 family-name^10.0 given-names^5.0 credit-name^10.0 other-names^5.0 text^1.0" pf="given-and-family-names^50.0" mm=1}';
     var orcidPathRegex = new RegExp("(\\d{4}-){3,}\\d{3}[\\dX]");
     var orcidFullRegex = new RegExp(

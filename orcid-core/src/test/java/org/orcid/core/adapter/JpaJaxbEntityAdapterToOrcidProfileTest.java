@@ -40,8 +40,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.jaxb.model.message.Address;
 import org.orcid.jaxb.model.message.Affiliation;
-import org.orcid.jaxb.model.message.ApplicationSummary;
-import org.orcid.jaxb.model.message.Applications;
 import org.orcid.jaxb.model.message.Citation;
 import org.orcid.jaxb.model.message.CitationType;
 import org.orcid.jaxb.model.message.ContactDetails;
@@ -88,9 +86,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.xml.sax.SAXException;
-
-import com.google.common.base.Function;
-import com.google.common.collect.Maps;
 
 /**
  * orcid-persistence - Dec 7, 2011 - JpaJaxbEntityAdapterTest
@@ -313,7 +308,7 @@ public class JpaJaxbEntityAdapterToOrcidProfileTest extends DBUnitTest {
         ResearcherUrls researcherUrls = orcidBio.getResearcherUrls();
         List<ResearcherUrl> urls = researcherUrls.getResearcherUrl();
         Collections.sort(urls);
-        assertEquals(2, urls.size());
+        assertEquals(3, urls.size());
         Url url1 = urls.get(0).getUrl();
         String url1Name = urls.get(0).getUrlName().getContent();
         assertEquals(url1Name, "443_1");
@@ -324,6 +319,11 @@ public class JpaJaxbEntityAdapterToOrcidProfileTest extends DBUnitTest {
         assertEquals(url2Name, "443_2");
         assertEquals("http://www.researcherurl2.com?id=2", url2.getValue());
 
+        Url url3 = urls.get(2).getUrl();
+        String url3Name = urls.get(2).getUrlName().getContent();
+        assertEquals(url3Name, "443_3");
+        assertEquals("http://www.researcherurl2.com?id=5", url3.getValue());
+        
         checkKeywords(orcidBio.getKeywords());
 
     }
@@ -403,7 +403,7 @@ public class JpaJaxbEntityAdapterToOrcidProfileTest extends DBUnitTest {
         assertNotNull(contactDetails);
 
         List<Email> emails = contactDetails.getEmail();
-        assertEquals(4, emails.size());
+        assertEquals(6, emails.size());
         Map<String, Email> emailMap = new HashMap<>();
         for (Email email : emails) {
             emailMap.put(email.getValue(), email);
@@ -416,11 +416,26 @@ public class JpaJaxbEntityAdapterToOrcidProfileTest extends DBUnitTest {
         assertTrue(primaryEmail.isCurrent());
         assertFalse(primaryEmail.isVerified());
 
-        String[] alternativeEmails = new String[] { "teddybass@semantico.com", "teddybass2@semantico.com" };
+        String[] alternativeEmails = new String[] { "teddybass@semantico.com", "teddybass2@semantico.com", "teddybass3public@semantico.com", "teddybass3private@semantico.com" };
         for (String alternativeEmail : alternativeEmails) {
             Email email = emailMap.get(alternativeEmail);
             assertNotNull(email);
-            assertEquals("PRIVATE", email.getVisibility().name());
+            switch(email.getValue()) {
+            case "teddybass@semantico.com":
+                assertEquals("PRIVATE", email.getVisibility().name());
+                break;
+            case "teddybass2@semantico.com":
+                assertEquals("LIMITED", email.getVisibility().name());
+                break;
+            case "teddybass3public@semantico.com":
+                assertEquals("PUBLIC", email.getVisibility().name());
+                break;
+            case "teddybass3private@semantico.com":
+                assertEquals("PRIVATE", email.getVisibility().name());
+                break;
+            }
+            
+            
             assertFalse(email.isPrimary());
             assertTrue(email.isCurrent());
             assertFalse(email.isVerified());
@@ -435,21 +450,7 @@ public class JpaJaxbEntityAdapterToOrcidProfileTest extends DBUnitTest {
     private void checkAddress(OrganizationAddress address) {
         assertNotNull(address);
         assertEquals(Iso3166Country.GB, address.getCountry());
-    }
-
-    private void checkApplications(Applications applications) {
-        assertEquals(2, applications.getApplicationSummary().size());
-        Map<String, ApplicationSummary> applicationsMappedByOrcid = Maps.uniqueIndex(applications.getApplicationSummary(), new Function<ApplicationSummary, String>() {
-            public String apply(ApplicationSummary applicationSummary) {
-                return applicationSummary.getApplicationOrcid().getPath();
-            }
-        });
-        ApplicationSummary application1 = applicationsMappedByOrcid.get("4444-4444-4444-4441");
-        assertNotNull(application1);
-        assertEquals("S. Milligan", application1.getApplicationName().getContent());
-        assertEquals("www.4444-4444-4444-4441.com", application1.getApplicationWebsite().getValue());
-        assertEquals(DateUtils.convertToDate("2012-07-23T08:16:00"), application1.getApprovalDate().getValue().toGregorianCalendar().getTime());
-    }
+    }    
 
     private void checkOrcidInternal(OrcidInternal orcidInternal) {
         SecurityDetails securityDetails = orcidInternal.getSecurityDetails();

@@ -21,8 +21,8 @@
     <title>${title!"ORCID"}</title>
     <meta name="description" content="">
     <meta name="author" content="ORCID">
-    <meta name="_csrf" content="${_csrf.token}"/>
-    <meta name="_csrf_header" content="${_csrf.headerName}"/>
+    <meta name="_csrf" content="${(_csrf.token)!}"/>
+    <meta name="_csrf_header" content="${(_csrf.headerName)!}"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
      <#if (noIndex)??>
@@ -66,6 +66,7 @@
       orcidVar.realOrcidId = '${realUserOrcid!}';
       orcidVar.jsMessages = JSON.parse("${jsMessagesJson}");
       orcidVar.searchBaseUrl = "${searchBaseUrl}";
+      
     </script>    
     
     <link rel="stylesheet" href="${staticLoc}/css/fonts.css?v=${ver}"/>
@@ -79,6 +80,8 @@
         <link rel="stylesheet" href="${staticCdn}/twitter-bootstrap/3.1.0/css/bootstrap-ie7.css?v=${ver}"/>	                
     <![endif]-->
     <link rel="stylesheet" href="${staticCdn}/css/orcid.new.css?v=${ver}"/>
+    <link rel="stylesheet" type="text/css" href="${staticCdn}/css/idpselect.css" />
+    
     <!--[if lt IE 8]>
     	<link rel="stylesheet" href="${staticCdn}/css/orcid-ie7.css?v=${ver}"/>
     <![endif]-->

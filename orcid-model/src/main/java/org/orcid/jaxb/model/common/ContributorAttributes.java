@@ -29,7 +29,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.orcid.jaxb.model.record.SequenceType;
+import org.orcid.jaxb.model.record_rc1.SequenceType;
 
 import java.io.Serializable;
 

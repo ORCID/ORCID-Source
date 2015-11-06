@@ -20,11 +20,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.orcid.jaxb.model.record.ExternalIdentifiersContainer;
-import org.orcid.jaxb.model.record.GroupKey;
-import org.orcid.jaxb.model.record.GroupableActivity;
-import org.orcid.jaxb.model.record.summary.PeerReviewGroupKey;
-import org.orcid.jaxb.model.record.summary.PeerReviewSummary;
+import org.orcid.jaxb.model.record.summary_rc1.PeerReviewGroupKey;
+import org.orcid.jaxb.model.record.summary_rc1.PeerReviewSummary;
+import org.orcid.jaxb.model.record_rc1.ExternalIdentifiersContainer;
+import org.orcid.jaxb.model.record_rc1.GroupKey;
+import org.orcid.jaxb.model.record_rc1.GroupableActivity;
 
 public class ActivitiesGroup {
     private Set<GroupKey> groupKeys;
@@ -137,7 +137,7 @@ public class ActivitiesGroup {
                     //First check keys restrictions
                     if(extId.passGroupingValidation()) {
                         //If any of the keys already exists on this group, return true
-                        if(groupKeys.contains(extId))
+                        if(containsKey(extId))
                             return true;
                     }
                 }
@@ -168,4 +168,14 @@ public class ActivitiesGroup {
             activities.add(activity);
         }
     }
+    
+    private boolean containsKey(GroupKey key) {
+        for(GroupKey existingKey : groupKeys) {
+            if(existingKey.matches(key)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
 }

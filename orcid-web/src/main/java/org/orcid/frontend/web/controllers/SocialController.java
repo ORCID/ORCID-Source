@@ -97,11 +97,9 @@ public class SocialController extends BaseController {
 					return new ModelAndView("redirect:/my-orcid");
 				} else {
 					ModelAndView mav = new ModelAndView();
-					logoutCurrentUser();
+					logoutCurrentUser(request, response);
 					mav.setViewName("social_link_signin");
 					mav.addObject("providerId", providerId);
-					mav.addObject("providerUserId", providerUserId);
-					mav.addObject("remoteUser", userId);
 					mav.addObject("emailId", emailId);
 					return mav;
 				}
@@ -122,21 +120,14 @@ public class SocialController extends BaseController {
 			String providerId = connectionType.value();
 			UserconnectionEntity userConnectionEntity = userConnectionDao.findByProviderIdAndProviderUserId(providerUserId, providerId);
 			if(userConnectionEntity != null ) {
-				if (userConnectionEntity.isLinked()) {
-					return new ModelAndView("redirect:/my-orcid");
-				} else {
+				if (!userConnectionEntity.isLinked()) {
 					OrcidProfile profile = getRealProfile();
 					userConnectionEntity.setLinked(true);
 					userConnectionEntity.setEmail(email);
 			        userConnectionEntity.setOrcid(profile.getOrcidIdentifier().getPath());
 					userConnectionDao.merge(userConnectionEntity);
 				}
-				ModelAndView mav = new ModelAndView();
-				mav.setViewName("social_link_complete");
-				mav.addObject("providerId", providerId);
-				mav.addObject("remoteUser", providerUserId);
-				mav.addObject("emailId", email);
-				return mav;
+				return new ModelAndView("redirect:/my-orcid");
 			} else {
 				throw new UsernameNotFoundException("Could not find an orcid account associated with the email id.");
 			}

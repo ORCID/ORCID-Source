@@ -959,7 +959,6 @@ select {
 	width: 100%;
 }
 
-/* Mbile menu icon */
 .header .navigation>.mobile-button {
 	display: none;
 }
@@ -2198,6 +2197,14 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input{
 	right: 10px;
 }
 
+.settings-table{
+	table-layout:fixed;
+}
+
+.settings-table .editTablePadCell35{
+	margin-right: 0;
+}
+
 .settings-table .settings-table td,.settings-table th {
 	width: 50%;
 	position: relative;
@@ -2209,6 +2216,36 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input{
     padding-left: 0;
 }
 
+.settings-table.table-bordered>tbody>tr>td{
+	padding-right: 0;
+}
+
+.settings-table a{
+	word-break: normal;
+}
+
+.settings-table .table td{
+	border: none;
+}
+
+.settings-table .table td:nth-child(1),
+.settings-table .table td:nth-child(2){
+    width: 100%;
+}
+
+.settings-table .table td:nth-child(3),
+.settings-table .table td:nth-child(4){
+    width: 1%;
+}
+
+.settings-table .table>tbody>tr>td{
+	padding: 3px 5px;
+}
+
+.settings-table .table td:last-child{
+	padding: 5px 0 5px 5px;
+}
+
 .normal-width td,.normal-width th {
 	width: auto;
 }
@@ -2216,6 +2253,10 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input{
 .settings-table .popover {
 	top: 80%;
 	left: -220px;
+}
+
+.settings-table .table-responsive{
+	margin-top: 10px;
 }
 
 .popover-large {
@@ -2477,15 +2518,15 @@ input.error {
 /*
 TODO: fix up button colours in less
 */
-.btn-primary {
+.btn-primary, input[type="submit"].btn-primary {
 	background: #31789B;
 }
 
-.btn-primary:hover {
+.btn-primary:hover, input[type="submit"].btn-primary:hover {
 	background: #a6ce39;
 	text-shadow: none;
 	border-color: #A6CE39; 
-}
+} 
 
 .oauth-question-sign {
 	color: #31789B !important;
@@ -2889,32 +2930,6 @@ a.btn-primary:hover {
 	background-color: #ffcccc !important;
 }
 
-/* Login Form */
-#loginForm {
-	position: relative;
-}
-
-#loginForm #form-sign-in-button:hover {
-	border-color: #A6CE39;
-}
-
-#loginForm #userId,
-#loginForm #password {
-	width: 50%;
-}
-
-#loginForm .submit-login,
-#loginForm .submit-login div{
-	z-index: 1001;
-	height: 45px;
-	margin-top: 40px;
-}
-
-#loginForm #form-sign-in-button {
-	z-index: 1001;
-	float: left;
-}
-
 .oauth-login #loginForm #userId,.oauth-login #loginForm #password {
 	width: 80%;
 }
@@ -2929,25 +2944,6 @@ a.btn-primary:hover {
 	width: 80%;
 	z-index: -1;
 	padding-left: 0;
-}
-
-#loginForm #form-sign-in-button {
-	margin: 10px 0;
-}
-
-#loginForm #login-reset,#loginForm #login-register {
-	padding-left: 0;
-	margin-top: 10px;
-}
-
-#loginForm #login-error-mess {
-	top: 141px;
-	position: absolute;
-	z-index: 1000;
-	height: auto;
-	overflow: hidden;
-	width: 100%;
-	padding-left: 225px;
 }
 
 /* Personal Profile */
@@ -3256,9 +3252,8 @@ ul.personal-inf-display li:last-child{
 }
 
 #loginForm #ajax-loader{	
-	float: left;    
-    margin-top: 5px;
-    margin-left: 5px;
+	float: left;
+    margin-left: 5px;        
 }
 
 #edit-affiliation #remove-disambiguated{
@@ -6078,10 +6073,145 @@ a:hover .mozilla-badge{
 .edit-client-table-col {
 	width: 45%;
 }
-.socialButton {
+
+.form-social-sign-in input{
+	width: 50%;
+}
+
+.form-social-sign-in .socialButton {
 	font-size: 16px;
 	padding:0;
 }
+
+.login{
+	margin-top: 125px;
+}
+
+.login .title{
+	color: #494A4C;
+}
+
+.login .login-messages{
+	margin-top: 50px;
+}
+
+input:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0px 1000px white inset;    
+}
+
+.login .login-left-column{
+	border-right: 1px solid #C9CACB;
+	position: relative;
+	min-height: 370px;
+}
+
+.login .form-sign-in input[type="text"],
+.login .form-sign-in input[type="password"],
+.login .form-sign-in #form-sign-in-button{
+	width: 80%;	
+}
+
+.login .form-sign-in #form-sign-in-button{
+	float: left;
+}
+
+.login .form-sign-in input[type="password"]{
+	margin-bottom: 0;
+}
+
+.login .form-sign-in .submit-login{
+	float: left;
+	margin-top: 20px;
+	width: 100%;
+}
+
+.login .login-register{
+	margin-top: 50px;
+	text-align: center;
+	font-size: 20px;
+}
+
+.login .social-login{
+	margin-top: 30px;
+}
+
+.login .social-login .btn-facebook{
+	background: url('../img/svg/fb.svg') transparent no-repeat;
+	background-size: 40px 40px;
+	width: 40px;
+	height: 40px;
+	displat: block;	
+}
+
+.login .social-login .btn-google{
+	background: url('../img/svg/google.svg') transparent no-repeat;
+	background-size: 40px 40px;
+	width: 40px;
+	height: 40px;
+	displat: block;
+}
+
+.login .social-login ul.social-icons{
+	margin: 0;
+	padding:0;
+}
+
+.login .social-login ul.social-icons li{
+	display: inline-block;
+}
+
+.login .social-login ul.social-icons li:not(:first-child){
+	margin-left: 25px;
+}
+
+.login .login-left-column .or{
+	display: block;
+    width: 85px;
+    height: 60px;
+    background: #FFF;
+    position: absolute;
+    right: -50px;
+    top: calc( 50% - 30px);
+    font-size: 25px;
+    text-transform: uppercase;
+    vertical-align: middle;
+    padding: 15px;
+}
+	
+.form-social-sign-in .social-signin-btn{
+	width: 50%;
+}
+
+.form-social-sign-in .social-password-lnk {
+	font-size: 14px;
+}
+
+
+.form-social-sign-in .social-password-txt {
+	margin-bottom : 0;
+}
+
+.form-social-sign-in .reg{
+	font-size: 18px;
+}
+
+
+.login-right-column a.shibboleth-help:hover .glyphicon-question-sign{
+	cursor: pointer;
+}
+
+.login #login-reset{
+	float: left;
+	clear: both;
+	font-size: 14px;
+}
+
+.login #login-error-mess{
+	float: left;
+	width: 80%;
+}
+
+
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
@@ -6103,9 +6233,6 @@ a:hover .mozilla-badge{
 	}
 	.main {
 		margin-top: 100px;
-	}
-	#loginForm .control-group {
-		padding-left: 15px;
 	}
 	
 	.see-more {
@@ -6399,46 +6526,8 @@ a:hover .mozilla-badge{
 		width: 100%;
 	}
 
-	/* Login Form */
-	#loginForm #login-reset{
-		margin-top: 50px;
-		padding-left: 15px;
-	}
 	
-	#loginForm #login-register{
-		margin-top: 20px;
-		padding-left: 15px;
-	}
 	
-	#loginForm .btn {
-		margin-top: 10px;
-	}	
-	
-	#loginForm #userId,
-	#loginForm #password {
-		width: 100%;
-	}	
-	
-	#loginForm #form-sign-in-button {
-		font-size: 18px;
-		height: 50px;
-		margin: 32px 0 0 0;		
-		float: left;
-	}
-	#loginForm #login-error-mess {
-		line-height: 25px;
-		margin: 0;
-		padding: 0;
-		min-height: 30px;
-		height: 50px;
-		text-align: center;
-		top: 165px; /* Login layout top */
-	}
-	#loginForm #ajax-loader {		
-		text-align: center;
-		float: left;
-		margin-top: 20px;
-	}
 	
 	
 	/* Registration */
@@ -6812,7 +6901,7 @@ a:hover .mozilla-badge{
 	}
 	
 	#loginForm #login-reset{
-		margin-top: 80px;
+		margin-top: 0;
 	}
 	
 	#loginForm #login-reset,
@@ -7245,6 +7334,60 @@ a:hover .mozilla-badge{
     	line-height: 25px;
 	}
 	
+	.settings-table .table td:nth-child(3){
+		min-width: 100px;
+	}
+	
+	.editTablePadCell35 .email{
+		word-break: break-all;
+		
+	}
+	
+	.login .form-sign-in input[type="text"],
+	.login .form-sign-in input[type="password"],
+	.login .form-sign-in #form-sign-in-button{
+		width: 100%;
+	}
+	
+	.login .login-left-column{
+		border-right: none;
+		border-bottom: 1px solid #C9CACB;
+		padding-bottom: 30px;
+		margin-bottom: 30px;
+	}
+	
+	
+	.login .login-left-column .or {
+	    display: block;
+	    width: 70px;
+	    height: 60px;
+	    background: #FFF;
+	    position: absolute;
+	    bottom: -30px;
+	    left: calc(50% - 35px);
+	    right: quto;
+	    top: auto;
+	    font-size: 25px;
+	    text-transform: uppercase;
+	    vertical-align: middle;
+	    padding: 15px;
+	}
+	
+	.form-social-sign-in .social-signin-btn{
+		width: 100%;
+	}
+	
+	.login .login-right-column{
+		float: left;
+	}
+	
+	
+	#loginForm #ajax-loader{
+	    width: 100%;
+	    text-align: center;
+	    margin-top: 5px;
+	}
+	
 }
 
 @media (min-width : 768px) and (max-width : 991px) { /* Tablet */
@@ -7363,9 +7506,9 @@ a:hover .mozilla-badge{
 		padding-left: 15px;
 	}
 	
-	#loginForm #login-error-mess{
-		padding-left: 280px;
+	#loginForm #login-error-mess{		
 		text-align:left;
+		width: 100%;
 	}
 	
 	.oauth-login #loginForm #login-error-mess{
@@ -7374,11 +7517,7 @@ a:hover .mozilla-badge{
 	
 	#signout{
 		max-width:100px;
-	}
-	
-	#loginForm #login-reset{
-		margin-top: 25px;
-	}
+	}	
 	
 	.workspace-profile{		
 		padding: 15px;				
@@ -7414,6 +7553,49 @@ a:hover .mozilla-badge{
 	#workspace-publications{
 		padding: 0;
 	}
+	
+	.login .form-sign-in input[type="text"],
+	.login .form-sign-in input[type="password"],
+	.login .form-sign-in #form-sign-in-button{
+		width: 100%;
+	}
+	
+	.login .login-left-column{
+		border-right: none;
+		border-bottom: 1px solid #C9CACB;
+		padding-bottom: 30px;
+		margin-bottom: 30px;
+	}
+	
+	
+	.login .login-left-column .or {
+	    display: block;
+	    width: 70px;
+	    height: 60px;
+	    background: #FFF;
+	    position: absolute;
+	    bottom: -30px;
+	    left: calc(50% - 35px);
+	    right: quto;
+	    top: auto;
+	    font-size: 25px;
+	    text-transform: uppercase;
+	    vertical-align: middle;
+	    padding: 15px;
+	}
+	
+	.login .login-right-column{
+		float: left;
+	}
+	
+	#loginForm #ajax-loader{
+	    width: 100%;
+	    text-align: center;
+	    margin-top: 5px;
+	}    
+	
+	
+	
 }
 
 @media (min-width : 500px) and (max-width: 767px){ 
@@ -7433,6 +7615,7 @@ a:hover .mozilla-badge{
     .col-xs-offset-3-fix{
     	margin-left: 25%;
     }
+    
 }
 
 @media(min-width:1200px){
