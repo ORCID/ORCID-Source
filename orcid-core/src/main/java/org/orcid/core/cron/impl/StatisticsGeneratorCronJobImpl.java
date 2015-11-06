@@ -52,7 +52,7 @@ public class StatisticsGeneratorCronJobImpl implements StatisticsGeneratorCronJo
 
     /**
      * Cron job that will generate statistics and store them on database
-     * */
+     */
     @Override
     public void generateStatistics() {
         LOG.debug("About to run statistics generator thread");
@@ -80,11 +80,11 @@ public class StatisticsGeneratorCronJobImpl implements StatisticsGeneratorCronJo
             Map<String, Long> statistics = statisticsGeneratorManager.generateStatistics();
             StatisticKeyEntity statisticKey = statisticsManager.createKey();
             List<StatisticValuesEntity> entities = new ArrayList<StatisticValuesEntity>();
-         	
+
             // Store statistics on database
             for (Map.Entry<String, Long> entry : statistics.entrySet()) {
-            	entities.add(new StatisticValuesEntity(statisticKey, entry.getKey(), entry.getValue()));
-                
+                entities.add(new StatisticValuesEntity(statisticKey, entry.getKey(), entry.getValue()));
+
             }
             statisticsManager.saveStatistics(entities);
         }
@@ -92,7 +92,7 @@ public class StatisticsGeneratorCronJobImpl implements StatisticsGeneratorCronJo
 
     /**
      * @return true if it is Friday 11:30 PM or later, false otherwise.
-     * */
+     */
     public boolean isFridayNearMidnight() {
         Calendar c = Calendar.getInstance();
         int dayOfWeek = c.get(Calendar.DAY_OF_WEEK);

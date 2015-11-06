@@ -73,7 +73,7 @@ public class StatisticsCacheManagerImpl implements StatisticsCacheManager {
     @Override
     public String retrieveLiveIds(Locale locale) {
         StatisticsSummary statisticsSummary = retrieve();
-        if(statisticsSummary == null){
+        if (statisticsSummary == null) {
             return "0";
         }
         long amount = statisticsSummary.getStatistics().get(StatisticsEnum.KEY_LIVE_IDS.value());

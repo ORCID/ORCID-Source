@@ -59,8 +59,7 @@ public class StatisticsDaoTest extends DBUnitTest {
 
     @AfterClass
     public static void removeDBUnitData() throws Exception {
-        removeDBUnitData(Arrays.asList("/data/WorksEntityData.xml", "/data/ProfileEntityData.xml",
-                "/data/SecurityQuestionEntityData.xml"));
+        removeDBUnitData(Arrays.asList("/data/WorksEntityData.xml", "/data/ProfileEntityData.xml", "/data/SecurityQuestionEntityData.xml"));
     }
 
     @Before
@@ -87,7 +86,7 @@ public class StatisticsDaoTest extends DBUnitTest {
         entities.add(os3);
         entities.add(os4);
         entities.add(os5);
-        
+
         statisticsDao.saveStatistics(entities);
 
         StatisticKeyEntity latestKey = statisticsDao.getLatestKey();
