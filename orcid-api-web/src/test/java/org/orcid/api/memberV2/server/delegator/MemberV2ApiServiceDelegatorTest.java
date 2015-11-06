@@ -548,7 +548,8 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     
     @Test
     public void testUpdateResearcherUrl() {
-        Response response = serviceDelegator.viewResearcherUrl("4444-4444-4444-4443", "5");        
+    	SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE);
+    	Response response = serviceDelegator.viewResearcherUrl("4444-4444-4444-4443", "5");        
         assertNotNull(response);
         ResearcherUrl researcherUrl = (ResearcherUrl)response.getEntity();
         assertNotNull(researcherUrl);
