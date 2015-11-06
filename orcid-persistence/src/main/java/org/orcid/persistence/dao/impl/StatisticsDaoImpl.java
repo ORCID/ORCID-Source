@@ -23,6 +23,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceUnit;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import org.orcid.persistence.dao.StatisticsDao;
@@ -59,19 +60,18 @@ public class StatisticsDaoImpl implements StatisticsDao {
      * 
      * @return the latest statistics key
      * */
-    @Override
-    @Transactional("statisticsTransactionManager")
-    public StatisticKeyEntity getLatestKey() {
-        StatisticKeyEntity result = null;
-        TypedQuery<StatisticKeyEntity> query = entityManager.createQuery("FROM StatisticKeyEntity ORDER BY generationDate DESC", StatisticKeyEntity.class);
-        query.setMaxResults(1);
-        try {
-            result = query.getSingleResult();
-        } catch(NoResultException nre){
-            LOG.warn("Couldnt find any statistics key, the cron job needs to run for the first time.");
-        }
-        return result;
-    }
+	@Override
+	@Transactional("statisticsTransactionManager")
+	public StatisticKeyEntity getLatestKey() {
+		try {
+			return (StatisticKeyEntity) entityManager.createNativeQuery(
+					"SELECT * FROM statistic_key WHERE id IN (SELECT max(key_id) FROM statistic_values) ORDER BY generation_date DESC LIMIT 1;",
+					StatisticKeyEntity.class).getSingleResult();
+		} catch (NoResultException nre) {
+			LOG.warn("Couldnt find any statistics key, the cron job needs to run for the first time.");
+		}
+		return null;
+	}
 
     /**
      * Save an statistics record on database
@@ -85,9 +85,10 @@ public class StatisticsDaoImpl implements StatisticsDao {
      * */
     @Override
     @Transactional("statisticsTransactionManager")
-    public StatisticValuesEntity saveStatistic(StatisticValuesEntity statistic) {
-        entityManager.persist(statistic);
-        return statistic;
+    public List<StatisticValuesEntity> saveStatistics(List<StatisticValuesEntity> statistics) {
+        for (StatisticValuesEntity statistic:statistics)
+    	    entityManager.persist(statistic);
+        return statistics;
     }
 
     /**
