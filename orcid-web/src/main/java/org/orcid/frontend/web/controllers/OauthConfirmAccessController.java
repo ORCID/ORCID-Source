@@ -458,6 +458,8 @@ public class OauthConfirmAccessController extends BaseController {
                         if (params != null && params.containsKey("state"))
                             redirectUri += "&state=" + params.get("state");
                         form.setRedirectUri(Text.valueOf(redirectUri));
+                        if(savedRequest != null)
+                            LOGGER.info("OauthConfirmAccessController original request: " + savedRequest.getRedirectUrl());
                         LOGGER.info("OauthConfirmAccessController form.getRedirectUri being sent to client browser: " + form.getRedirectUri());
                         return form;
                     }
@@ -482,6 +484,8 @@ public class OauthConfirmAccessController extends BaseController {
         
         //If there was an authentication error, dont log since the user will not be redirected yet
         if (willBeRedirected) {
+            if(savedRequest != null)
+                LOGGER.info("OauthConfirmAccessController original request: " + savedRequest.getRedirectUrl());
             LOGGER.info("OauthConfirmAccessController form.getRedirectUri being sent to client browser: " + form.getRedirectUri());
         }
         return form;
@@ -558,6 +562,9 @@ public class OauthConfirmAccessController extends BaseController {
                     if(!PojoUtil.isEmpty(request.getParameter("state")))                    
                         redirectUri += "&state=" + request.getParameter("state");
                     form.setRedirectUri(Text.valueOf(redirectUri));
+                    SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
+                    if(savedRequest != null)
+                        LOGGER.info("OauthConfirmAccessController original request: " + savedRequest.getRedirectUrl());
                     LOGGER.info("OauthConfirmAccessController form.getRedirectUri being sent to client browser: " + form.getRedirectUri());
                     return form;
                 }
@@ -620,6 +627,9 @@ public class OauthConfirmAccessController extends BaseController {
         } else {
             form.setRedirectUri(Text.valueOf(buildDenyRedirectUri(form.getRedirectUri().getValue(), request.getParameter("state"))));
         }
+        SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
+        if(savedRequest != null)
+            LOGGER.info("OauthConfirmAccessController original request: " + savedRequest.getRedirectUrl());
         LOGGER.info("OauthConfirmAccessController form.getRedirectUri being sent to client browser: " + form.getRedirectUri());
         return form;
     }
@@ -681,7 +691,7 @@ public class OauthConfirmAccessController extends BaseController {
         
     @RequestMapping(value = { "/custom/authorize.json" }, method = RequestMethod.POST)
     public @ResponseBody
-    OauthAuthorizeForm authorize(HttpServletRequest request, @RequestBody OauthAuthorizeForm form) {
+    OauthAuthorizeForm authorize(HttpServletRequest request, HttpServletResponse response, @RequestBody OauthAuthorizeForm form) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         AuthorizationRequest authorizationRequest = (AuthorizationRequest) request.getSession().getAttribute("authorizationRequest");
         Map<String, String> requestParams = new HashMap<String, String>(authorizationRequest.getRequestParameters());
@@ -713,7 +723,10 @@ public class OauthConfirmAccessController extends BaseController {
         
         // Approve
         RedirectView view = (RedirectView) authorizationEndpoint.approveOrDeny(approvalParams, model, status, auth);
-        form.setRedirectUri(Text.valueOf(view.getUrl()));                
+        form.setRedirectUri(Text.valueOf(view.getUrl()));    
+        SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
+        if(savedRequest != null)
+            LOGGER.info("OauthConfirmAccessController original request: " + savedRequest.getRedirectUrl());
         LOGGER.info("OauthConfirmAccessController form.getRedirectUri being sent to client browser: " + form.getRedirectUri());        
         return form;
     }
