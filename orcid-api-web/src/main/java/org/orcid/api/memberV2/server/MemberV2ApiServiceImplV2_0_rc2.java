@@ -40,8 +40,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.orcid.jaxb.model.message.ScopeConstants;
-import org.orcid.jaxb.model.record_rc1.ResearcherUrl;
 import org.orcid.jaxb.model.record_rc2.OtherName;
+import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 
 /**
  * 

@@ -68,7 +68,7 @@ public interface ResearcherUrlManager {
      * @return 
      *          the list of public researcher urls associated with the orcid profile
      * */
-    public org.orcid.jaxb.model.record_rc1.ResearcherUrls getPublicResearcherUrlsV2(String orcid);
+    public org.orcid.jaxb.model.record_rc2.ResearcherUrls getPublicResearcherUrlsV2(String orcid);
     
     /**
      * Return the list of researcher urls associated to a specific profile
@@ -76,14 +76,14 @@ public interface ResearcherUrlManager {
      * @return 
      *          the list of researcher urls associated with the orcid profile
      * */
-    public org.orcid.jaxb.model.record_rc1.ResearcherUrls getResearcherUrlsV2(String orcid);
+    public org.orcid.jaxb.model.record_rc2.ResearcherUrls getResearcherUrlsV2(String orcid);
     
     /**
      * Retrieve a researcher url from database
      * @param id
      * @return the ResearcherUrlEntity associated with the parameter id
      * */
-    public org.orcid.jaxb.model.record_rc1.ResearcherUrl getResearcherUrlV2(String orcid, long id);
+    public org.orcid.jaxb.model.record_rc2.ResearcherUrl getResearcherUrlV2(String orcid, long id);
     
     /**
      * Add a new researcher url to a specific profile
@@ -91,7 +91,7 @@ public interface ResearcherUrlManager {
      * @param researcherUrl
      * @return true if the researcher url was successfully created on database
      * */
-    public org.orcid.jaxb.model.record_rc1.ResearcherUrl createResearcherUrlV2(String orcid, org.orcid.jaxb.model.record_rc1.ResearcherUrl researcherUrl);  
+    public org.orcid.jaxb.model.record_rc2.ResearcherUrl createResearcherUrlV2(String orcid, org.orcid.jaxb.model.record_rc2.ResearcherUrl researcherUrl);  
     
     /**
      * Updates an existing researcher url
@@ -99,5 +99,5 @@ public interface ResearcherUrlManager {
      * @param researcherUrl
      * @return the updated researcher url
      * */
-    public org.orcid.jaxb.model.record_rc1.ResearcherUrl updateResearcherUrlV2(String orcid, org.orcid.jaxb.model.record_rc1.ResearcherUrl researcherUrl);        
+    public org.orcid.jaxb.model.record_rc2.ResearcherUrl updateResearcherUrlV2(String orcid, org.orcid.jaxb.model.record_rc2.ResearcherUrl researcherUrl);        
 }

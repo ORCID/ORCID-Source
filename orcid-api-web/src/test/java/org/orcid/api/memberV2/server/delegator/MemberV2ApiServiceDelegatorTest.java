@@ -64,11 +64,11 @@ import org.orcid.jaxb.model.record_rc1.Emails;
 import org.orcid.jaxb.model.record_rc1.Employment;
 import org.orcid.jaxb.model.record_rc1.Funding;
 import org.orcid.jaxb.model.record_rc1.PeerReview;
-import org.orcid.jaxb.model.record_rc1.ResearcherUrl;
-import org.orcid.jaxb.model.record_rc1.ResearcherUrls;
 import org.orcid.jaxb.model.record_rc1.Work;
 import org.orcid.jaxb.model.record_rc1.WorkTitle;
 import org.orcid.jaxb.model.record_rc1.WorkType;
+import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
+import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
@@ -548,7 +548,8 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     
     @Test
     public void testUpdateResearcherUrl() {
-        Response response = serviceDelegator.viewResearcherUrl("4444-4444-4444-4443", "5");        
+    	SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE);
+    	Response response = serviceDelegator.viewResearcherUrl("4444-4444-4444-4443", "5");        
         assertNotNull(response);
         ResearcherUrl researcherUrl = (ResearcherUrl)response.getEntity();
         assertNotNull(researcherUrl);
