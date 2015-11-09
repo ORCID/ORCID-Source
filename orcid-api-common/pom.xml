@@ -118,6 +118,7 @@
 			<artifactId>locales</artifactId>
 			<version>1.0.1-SNAPSHOT</version>
 		</dependency>
+		
         <!-- Test dependencies -->
 
         <dependency>

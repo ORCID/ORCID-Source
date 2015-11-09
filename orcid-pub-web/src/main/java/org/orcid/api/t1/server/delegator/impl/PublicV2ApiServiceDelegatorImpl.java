@@ -23,10 +23,16 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
+
 import javax.xml.datatype.XMLGregorianCalendar;
+import javax.xml.bind.JAXBElement;
+import javax.xml.namespace.QName;
+
 
 import org.orcid.api.common.util.ActivityUtils;
 import org.orcid.api.common.util.ElementUtils;
+import org.orcid.api.common.writer.cerif.CerifClassEnum;
+import org.orcid.api.common.writer.cerif.CerifClassSchemeEnum;
 import org.orcid.api.common.writer.citeproc.WorkToCiteprocTranslator;
 import org.orcid.api.t1.server.delegator.PublicV2ApiServiceDelegator;
 import org.orcid.core.exception.OrcidDeprecatedException;
@@ -66,6 +72,12 @@ import org.orcid.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Value;
 
 import de.undercouch.citeproc.csl.CSLItemData;
+import xmlns.org.eurocris.cerif_1.CERIF;
+import xmlns.org.eurocris.cerif_1.CfFedIdClassType;
+import xmlns.org.eurocris.cerif_1.CfFedIdEmbType;
+import xmlns.org.eurocris.cerif_1.CfFedIdType;
+import xmlns.org.eurocris.cerif_1.CfPersType;
+import xmlns.org.eurocris.cerif_1.ObjectFactory;
 
 public class PublicV2ApiServiceDelegatorImpl implements PublicV2ApiServiceDelegator {
 
@@ -138,6 +150,25 @@ public class PublicV2ApiServiceDelegatorImpl implements PublicV2ApiServiceDelega
         visibilityFilter.filter(as);
         ActivityUtils.setPathToActivity(as, orcid);
         return Response.ok(as).build();
+    }
+    
+    @Override
+    @AccessControl(requiredScope = ScopePathType.READ_PUBLIC, enableAnonymousAccess = true)
+    public Response viewCerifActivities(String orcid) { 
+        ObjectFactory objectFactory = new ObjectFactory();        
+        //ProfileEntity entity = profileEntityManager.findByOrcid(orcid);        
+        CERIF cerif = objectFactory.createCERIF();
+        CfPersType person = objectFactory.createCfPersType();        
+        person.setCfPersId(orcid);
+        cerif.getCfClassOrCfClassSchemeOrCfClassSchemeDescr().add(person);
+        
+        CfFedIdEmbType fedId = objectFactory.createCfFedIdEmbType();
+        fedId.setCfFedId(orcid);
+        fedId.setCfClassId(CerifClassEnum.ORCID.getUuid());
+        fedId.setCfClassSchemeId(CerifClassSchemeEnum.IDENTIFIER_TYPES.getUuid());
+        person.getCfResIntOrCfKeywOrCfPersPers().add(objectFactory.createCfPersTypeCfFedId(fedId));    
+                
+        return Response.ok(cerif).build();
     }
 
     @Override
