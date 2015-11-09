@@ -67,6 +67,7 @@ public class OrcidApiConstants {
     public static final String VND_ORCID_JSON = "application/vnd.orcid+json; qs=4";
 
     public static final String HTML = "text/html; qs=1";
+
     public static final String TEXT_CSV = "text/csv";
 
     public static final String STATUS_OK_MESSAGE = "OK I am here";
