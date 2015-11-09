@@ -26,18 +26,18 @@ import org.orcid.core.exception.InvalidPutCodeException;
 import org.orcid.core.exception.OrcidDuplicatedActivityException;
 import org.orcid.jaxb.model.common.Source;
 import org.orcid.jaxb.model.groupid.GroupIdRecord;
-import org.orcid.jaxb.model.record.Education;
-import org.orcid.jaxb.model.record.Employment;
-import org.orcid.jaxb.model.record.Funding;
-import org.orcid.jaxb.model.record.FundingExternalIdentifier;
-import org.orcid.jaxb.model.record.FundingExternalIdentifiers;
-import org.orcid.jaxb.model.record.FundingTitle;
-import org.orcid.jaxb.model.record.PeerReview;
-import org.orcid.jaxb.model.record.Relationship;
-import org.orcid.jaxb.model.record.Work;
-import org.orcid.jaxb.model.record.WorkExternalIdentifier;
-import org.orcid.jaxb.model.record.WorkExternalIdentifiers;
-import org.orcid.jaxb.model.record.WorkTitle;
+import org.orcid.jaxb.model.record_rc1.Education;
+import org.orcid.jaxb.model.record_rc1.Employment;
+import org.orcid.jaxb.model.record_rc1.Funding;
+import org.orcid.jaxb.model.record_rc1.FundingExternalIdentifier;
+import org.orcid.jaxb.model.record_rc1.FundingExternalIdentifiers;
+import org.orcid.jaxb.model.record_rc1.FundingTitle;
+import org.orcid.jaxb.model.record_rc1.PeerReview;
+import org.orcid.jaxb.model.record_rc1.Relationship;
+import org.orcid.jaxb.model.record_rc1.Work;
+import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifier;
+import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifiers;
+import org.orcid.jaxb.model.record_rc1.WorkTitle;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 
 public class ActivityValidator {
@@ -129,10 +129,10 @@ public class ActivityValidator {
         if (existingExtIds != null && newExtIds != null) {
             for (WorkExternalIdentifier existingId : existingExtIds.getExternalIdentifier()) {
                 for (WorkExternalIdentifier newId : newExtIds.getExternalIdentifier()) {
-                    if (existingId.getRelationship().equals(Relationship.SELF) && newId.getRelationship().equals(Relationship.SELF)
-                            && newId.getWorkExternalIdentifierId().getContent().equals(existingId.getWorkExternalIdentifierId().getContent())
-                            && newId.getWorkExternalIdentifierType().equals(existingId.getWorkExternalIdentifierType())
-                            && sourceEntity.getSourceId().equals(getExistingSource(existingSource))) {
+                    if (isDupRelationship(newId, existingId) &&
+                    		isDupValue(newId, existingId) &&
+                    		isDupType(newId, existingId) &&
+                    		sourceEntity.getSourceId().equals(getExistingSource(existingSource))) {
                         Map<String, String> params = new HashMap<String, String>();
                         params.put("clientName", sourceEntity.getSourceName());
                         throw new OrcidDuplicatedActivityException(params);
@@ -142,7 +142,23 @@ public class ActivityValidator {
         }
     }
 
-    public static void checkFundingExternalIdentifiers(FundingExternalIdentifiers newExtIds, FundingExternalIdentifiers existingExtIds, Source existingSource,
+	private static boolean isDupRelationship(WorkExternalIdentifier newId, WorkExternalIdentifier existingId) {
+    	return existingId.getRelationship() != null && existingId.getRelationship().equals(Relationship.SELF) &&
+    			newId.getRelationship() != null && newId.getRelationship().equals(Relationship.SELF);
+	}
+	
+    private static boolean isDupValue(WorkExternalIdentifier newId, WorkExternalIdentifier existingId) {
+		return existingId.getWorkExternalIdentifierId() != null && existingId.getWorkExternalIdentifierId().getContent() != null
+				&& newId.getWorkExternalIdentifierId() != null && newId.getWorkExternalIdentifierId().getContent() != null
+				&& newId.getWorkExternalIdentifierId().getContent().equals(existingId.getWorkExternalIdentifierId().getContent());
+	}
+    
+    private static boolean isDupType(WorkExternalIdentifier newId, WorkExternalIdentifier existingId) {
+		return existingId.getWorkExternalIdentifierType() != null && newId.getWorkExternalIdentifierType() != null
+				&& newId.getWorkExternalIdentifierType().equals(existingId.getWorkExternalIdentifierType());
+	}
+
+	public static void checkFundingExternalIdentifiers(FundingExternalIdentifiers newExtIds, FundingExternalIdentifiers existingExtIds, Source existingSource,
             SourceEntity sourceEntity) {
         if (existingExtIds != null && newExtIds != null) {
             for (FundingExternalIdentifier existingId : existingExtIds.getExternalIdentifier()) {

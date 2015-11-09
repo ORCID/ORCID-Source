@@ -59,6 +59,7 @@ import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.exception.OrcidVisibilityException;
 import org.orcid.core.exception.OrcidWebhookNotFoundException;
+import org.orcid.core.exception.OtherNameNotFoundException;
 import org.orcid.core.exception.PutCodeRequiredException;
 import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.locale.LocaleManager;
@@ -78,6 +79,8 @@ import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
+
+import com.sun.jersey.api.NotFoundException;
 
 /**
  * orcid-api - Nov 8, 2011 - OrcidExceptionMapper
@@ -117,7 +120,8 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(ActivityTitleValidationException.class, new ImmutablePair<>(Response.Status.BAD_REQUEST, 9022));
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(ActivityIdentifierValidationException.class, new ImmutablePair<>(Response.Status.BAD_REQUEST, 9023));
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(GroupIdRecordNotFoundException.class, new ImmutablePair<>(Response.Status.BAD_REQUEST, 9026));
-
+        HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OtherNameNotFoundException.class, new ImmutablePair<>(Response.Status.BAD_REQUEST, 9033));
+        
         // 401
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(AuthenticationException.class, new ImmutablePair<>(Response.Status.UNAUTHORIZED, 9002));
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OAuth2Exception.class, new ImmutablePair<>(Response.Status.UNAUTHORIZED, 9003));
@@ -155,7 +159,13 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
         if(PojoUtil.isEmpty(clientId)) {
             LOGGER.error("An exception has occured, no client id info provided", t);
         } else {
-            LOGGER.error("An exception has occured processing request from client " + clientId, t);
+        	if(t instanceof NotFoundException) {
+        		StringBuffer temp = new StringBuffer("An exception has occured processing request from client ").append(clientId)
+        				.append(". ").append(t.getMessage());
+        		LOGGER.error(temp.toString());
+        	} else {
+        		LOGGER.error("An exception has occured processing request from client " + clientId, t);
+        	}
         }
         
         switch (getApiSection()) {

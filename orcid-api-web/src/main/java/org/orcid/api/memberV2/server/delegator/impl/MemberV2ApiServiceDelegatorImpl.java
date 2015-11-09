@@ -38,6 +38,7 @@ import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.GroupIdRecordManager;
 import org.orcid.core.manager.OrcidSecurityManager;
+import org.orcid.core.manager.OtherNameManager;
 import org.orcid.core.manager.PeerReviewManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileFundingManager;
@@ -49,21 +50,21 @@ import org.orcid.core.security.visibility.filter.VisibilityFilterV2;
 import org.orcid.jaxb.model.groupid.GroupIdRecord;
 import org.orcid.jaxb.model.groupid.GroupIdRecords;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.record.Education;
-import org.orcid.jaxb.model.record.Email;
-import org.orcid.jaxb.model.record.Emails;
-import org.orcid.jaxb.model.record.Employment;
-import org.orcid.jaxb.model.record.Funding;
-import org.orcid.jaxb.model.record.PeerReview;
-import org.orcid.jaxb.model.record.ResearcherUrl;
-import org.orcid.jaxb.model.record.ResearcherUrls;
-import org.orcid.jaxb.model.record.Work;
-import org.orcid.jaxb.model.record.summary.ActivitiesSummary;
-import org.orcid.jaxb.model.record.summary.EducationSummary;
-import org.orcid.jaxb.model.record.summary.EmploymentSummary;
-import org.orcid.jaxb.model.record.summary.FundingSummary;
-import org.orcid.jaxb.model.record.summary.PeerReviewSummary;
-import org.orcid.jaxb.model.record.summary.WorkSummary;
+import org.orcid.jaxb.model.record.summary_rc1.ActivitiesSummary;
+import org.orcid.jaxb.model.record.summary_rc1.EducationSummary;
+import org.orcid.jaxb.model.record.summary_rc1.EmploymentSummary;
+import org.orcid.jaxb.model.record.summary_rc1.FundingSummary;
+import org.orcid.jaxb.model.record.summary_rc1.PeerReviewSummary;
+import org.orcid.jaxb.model.record.summary_rc1.WorkSummary;
+import org.orcid.jaxb.model.record_rc1.Education;
+import org.orcid.jaxb.model.record_rc1.Email;
+import org.orcid.jaxb.model.record_rc1.Emails;
+import org.orcid.jaxb.model.record_rc1.Employment;
+import org.orcid.jaxb.model.record_rc1.Funding;
+import org.orcid.jaxb.model.record_rc1.PeerReview;
+import org.orcid.jaxb.model.record_rc1.ResearcherUrl;
+import org.orcid.jaxb.model.record_rc1.ResearcherUrls;
+import org.orcid.jaxb.model.record_rc1.Work;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.WebhookDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -124,6 +125,9 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     @Resource
     private ResearcherUrlManager researcherUrlManager;
 
+    @Resource
+    private OtherNameManager otherNameManager;
+    
     @Resource
     private EmailManager emailManager;
     
@@ -489,4 +493,46 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
         emails.setEmails((List<Email>) visibilityFilter.filter(emails.getEmails()));
         return Response.ok(emails).build();
     }
+
+	@Override
+	public Response viewOtherNames(String orcid) {
+		org.orcid.jaxb.model.record_rc2.OtherNames otherNames = otherNameManager.getOtherNamesV2(orcid);
+        return Response.ok(otherNames).build();
+	}
+    
+    @Override
+	public Response viewOtherName(String orcid, String putCode) {
+		org.orcid.jaxb.model.record_rc2.OtherName otherName = otherNameManager.getOtherNameV2(orcid, putCode);
+        return Response.ok(otherName).build();
+	}
+
+	@Override
+	public Response createOtherName(String orcid, org.orcid.jaxb.model.record_rc2.OtherName otherName) {
+		otherName = otherNameManager.createOtherNameV2(orcid, otherName);        
+        try {
+            return Response.created(new URI(String.valueOf(otherName.getPutCode()))).build();
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(localeManager.resolveMessage("apiError.createelement_response.exception"), e);
+        }   
+	}
+
+	@Override
+	public Response updateOtherName(String orcid, String putCode,
+			org.orcid.jaxb.model.record_rc2.OtherName otherName) {
+		if (!putCode.equals(otherName.getPutCode())) {
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("urlPutCode", String.valueOf(putCode));
+            params.put("bodyPutCode", String.valueOf(otherName.getPutCode()));
+            throw new MismatchedPutCodeException(params);
+        }
+
+		org.orcid.jaxb.model.record_rc2.OtherName updatedOtherName = otherNameManager.updateOtherNameV2(orcid, putCode, otherName);
+		return Response.ok(updatedOtherName).build();
+	}
+
+	@Override
+	public Response deleteOtherName(String orcid, String putCode) {
+		otherNameManager.deleteOtherNameV2(orcid, putCode);
+        return Response.noContent().build();
+	}
 }

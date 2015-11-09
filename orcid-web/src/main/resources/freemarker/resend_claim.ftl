@@ -38,6 +38,7 @@
             <h2><@spring.message "resend_claim.title"/></h2>
             <p><small><@spring.message "resend_claim.resend_help"/> <a href="mailto:support@orcid.org">${springMacroRequestContext.getMessage("resend_claim.labelorg")}</a>.</small></p>      		
         	<form id="resend-claim-form" name="emailAddressForm" action="resend-claim" method="post">
+         		<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
         		<fieldset>
         			<div class="control-group">
             			<label for="givenNames" class="control-label">${springMacroRequestContext.getMessage("resend_claim.labelEmailAddress")} </label>

@@ -60,6 +60,7 @@ import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.SendEmailFrequency;
 import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.persistence.constants.SiteConstants;
 import org.orcid.pojo.ajaxForm.ErrorsInterface;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
@@ -75,6 +76,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
+import org.springframework.security.web.csrf.CsrfToken;
+import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -141,6 +144,9 @@ public class BaseController {
     
     @Resource
     private InternalSSOManager internalSSOManager;
+    
+    @Resource
+    protected CsrfTokenRepository csrfTokenRepository;
 
     protected static final String EMPTY = "empty";
 
@@ -312,7 +318,6 @@ public class BaseController {
 	protected void logoutCurrentUser(HttpServletRequest request, HttpServletResponse response) {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		if (internalSSOManager.enableCookie()) {
-			String orcidId = authentication.getName();
 			Cookie[] cookies = request.getCookies();
 			// Delete cookie and token associated with that cookie
 			if (cookies != null) {
@@ -346,15 +351,17 @@ public class BaseController {
 					}
 				}
 			}
-
 			// Delete token if exists
-			if (!PojoUtil.isEmpty(orcidId)) {
-				internalSSOManager.deleteToken(orcidId);
+			if (authentication !=null && !PojoUtil.isEmpty(authentication.getName())) {
+				internalSSOManager.deleteToken(authentication.getName());
 			}
 		}
 		if (authentication != null && authentication.isAuthenticated()) {
 			new SecurityContextLogoutHandler().logout(request, response, authentication);
-		}		
+		}
+		CsrfToken token = csrfTokenRepository.generateToken(request);
+		csrfTokenRepository.saveToken(token, request, response);
+		request.setAttribute("_csrf", token);
 	}
 
     protected boolean isEmailOkForCurrentUser(String decryptedEmail) {
@@ -666,6 +673,10 @@ public class BaseController {
     }
 
     protected void validateUrl(Text url) {
+        validateUrl(url, SiteConstants.URL_MAX_LENGTH);
+    }
+    
+    protected void validateUrl(Text url, int maxLength) {
         url.setErrors(new ArrayList<String>());
         if (!PojoUtil.isEmpty(url.getValue())) {
             // trim if required
@@ -673,9 +684,8 @@ public class BaseController {
                 url.setValue(url.getValue().trim());
 
             // check length
-            if (url.getValue().length() > 350)
-                setError(url, "manualWork.length_less_350");
-
+            validateNoLongerThan(maxLength, url);
+            
             // add protocall if missing
             if (!urlValidator.isValid(url.getValue())) {
                 String tempUrl = "http://" + url.getValue();
@@ -688,7 +698,17 @@ public class BaseController {
             }
         }
     }
-
+    
+    protected void validateNoLongerThan(int maxLength, Text text) {
+        if(PojoUtil.isEmpty(text)) {
+            return;
+        }
+        
+        if(text.getValue().length() > maxLength) {
+            setError(text, "manualWork.length_less_X", maxLength);
+        }
+    }
+    
     void givenNameValidate(Text givenName) {
         // validate given name isn't blank
         givenName.setErrors(new ArrayList<String>());

@@ -19,12 +19,12 @@ package org.orcid.api.memberV2.server.delegator;
 import javax.ws.rs.core.Response;
 
 import org.orcid.jaxb.model.groupid.GroupIdRecord;
-import org.orcid.jaxb.model.record.Education;
-import org.orcid.jaxb.model.record.Employment;
-import org.orcid.jaxb.model.record.Funding;
-import org.orcid.jaxb.model.record.PeerReview;
-import org.orcid.jaxb.model.record.ResearcherUrl;
-import org.orcid.jaxb.model.record.Work;
+import org.orcid.jaxb.model.record_rc1.Education;
+import org.orcid.jaxb.model.record_rc1.Employment;
+import org.orcid.jaxb.model.record_rc1.Funding;
+import org.orcid.jaxb.model.record_rc1.PeerReview;
+import org.orcid.jaxb.model.record_rc1.ResearcherUrl;
+import org.orcid.jaxb.model.record_rc1.Work;
 
 /**
  * 
@@ -105,5 +105,15 @@ public interface MemberV2ApiServiceDelegator {
 
     Response deleteResearcherUrl(String orcid, String putCode);
     
-    Response viewEmails(String orcid);       
+    Response viewEmails(String orcid);
+    
+	Response viewOtherNames(String orcid);
+
+	Response viewOtherName(String orcid, String putCode);
+
+	Response createOtherName(String orcid, org.orcid.jaxb.model.record_rc2.OtherName otherName);
+
+	Response updateOtherName(String orcid, String putCode, org.orcid.jaxb.model.record_rc2.OtherName otherName);  
+	
+	Response deleteOtherName(String orcid, String putCode);     
 }

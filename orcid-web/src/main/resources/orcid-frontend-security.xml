@@ -78,6 +78,13 @@
 	</bean>
 	<bean id="ajaxAuthenticationFailureHandler"
 		class="org.orcid.frontend.spring.AjaxAuthenticationFailureHandler" />
+		
+	<bean id="ajaxAuthenticationSuccessHandlerShibboleth"
+        class="org.orcid.frontend.spring.AjaxAuthenticationSuccessHandler">
+        <property name="defaultTargetUrl" value="/shibboleth/link" />
+    </bean>
+    <bean id="ajaxAuthenticationFailureHandlerShibboleth"
+        class="org.orcid.frontend.spring.AjaxAuthenticationFailureHandler" />
 
 	<sec:authentication-manager alias="authenticationManager">
 		<sec:authentication-provider
@@ -96,6 +103,8 @@
             </bean>
         </property>
     </bean>
+    
+    <bean id="csrfTokenRepo" class="org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository"/>
 
 	<sec:http pattern="/" security="none" />
 	<sec:http pattern="/robots.txt" security="none" create-session="stateless" />
@@ -119,7 +128,7 @@
 	<sec:http pattern="/oauth/.*" access-denied-page="/oauth/signin"
 		access-decision-manager-ref="accessDecisionManager" create-session="ifRequired"
 		path-type="regex">
-		<sec:csrf/>
+		<sec:csrf token-repository-ref="csrfTokenRepo"/>
 		<sec:intercept-url pattern="/oauth/login(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/oauth/signin(\?.*)?"
@@ -157,21 +166,22 @@
 	<sec:http pattern="/shibboleth/.*" access-denied-page="/shibboleth/signin"
 		access-decision-manager-ref="accessDecisionManager" create-session="ifRequired"
 		path-type="regex">
-		<sec:csrf/>
+		<sec:csrf token-repository-ref="csrfTokenRepo"/>
 		<sec:intercept-url pattern="/shibboleth/signin(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/shibboleth/.*" access="ROLE_USER" />		
-		<sec:form-login authentication-failure-url="/shibboleth/signin"
-			login-page="/shibboleth/signin" login-processing-url="/signin/auth"
-			username-parameter="userId" password-parameter="password"
-			default-target-url="/shibboleth/link" />
+		<sec:form-login login-processing-url="/shibboleth/signin/auth.json"
+            login-page="${org.orcid.core.baseUri}/shibboleth/signin" authentication-success-handler-ref="ajaxAuthenticationSuccessHandlerShibboleth"
+            authentication-failure-handler-ref="ajaxAuthenticationFailureHandlerShibboleth"
+            username-parameter="userId" password-parameter="password" 
+            default-target-url="/shibboleth/link" />
 		<sec:session-management session-fixation-protection="migrateSession"/>
 	</sec:http>
 	
 	<sec:http pattern="/social/.*" access-denied-page="/signin"
 		access-decision-manager-ref="accessDecisionManager" create-session="ifRequired"
 		path-type="regex">
-		<sec:csrf/>
+		<sec:csrf token-repository-ref="csrfTokenRepo"/>
 		<sec:intercept-url pattern="/social/access(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/social/.*" access="ROLE_USER" />		
@@ -184,7 +194,7 @@
 	<sec:http access-denied-page="/signin"
 		access-decision-manager-ref="accessDecisionManager" create-session="ifRequired"
 		path-type="regex">
-		<sec:csrf/>
+		<sec:csrf token-repository-ref="csrfTokenRepo"/>
 		<sec:custom-filter position="SWITCH_USER_FILTER" ref="switchUserProcessingFilter" />
 		<sec:intercept-url pattern="/statistics/liveids.json(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />

@@ -40,8 +40,8 @@ import org.orcid.jaxb.model.common.LastModifiedDate;
 import org.orcid.jaxb.model.common.Url;
 import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.record.ResearcherUrl;
-import org.orcid.jaxb.model.record.ResearcherUrls;
+import org.orcid.jaxb.model.record_rc1.ResearcherUrl;
+import org.orcid.jaxb.model.record_rc1.ResearcherUrls;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -245,6 +245,51 @@ public class ResearcherUrlsTests extends BlackBoxBase {
         }
     }
 
+    
+    
+    
+    
+    @Test
+    public void testTryingToAddInvalidResearcherUrls() throws InterruptedException, JSONException, URISyntaxException {
+        String accessToken = getAccessToken(this.client1ClientId, this.client1ClientSecret);
+        assertNotNull(accessToken);
+        ResearcherUrl rUrlToCreate = new ResearcherUrl();
+        rUrlToCreate.setUrl(new Url(""));
+        rUrlToCreate.setUrlName("");
+        // Create
+        ClientResponse postResponse = memberV2ApiClient.createResearcherUrls(user1OrcidId, rUrlToCreate, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), postResponse.getStatus());
+        
+        String _351Chars = new String();
+        for(int i = 0; i < 531; i++) {
+            _351Chars += "a";
+        }
+        
+        rUrlToCreate.setUrl(new Url(_351Chars));
+        postResponse = memberV2ApiClient.createResearcherUrls(user1OrcidId, rUrlToCreate, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), postResponse.getStatus());
+        
+        rUrlToCreate.setUrl(new Url("http://myurl.com"));
+        rUrlToCreate.setUrlName(_351Chars);
+        postResponse = memberV2ApiClient.createResearcherUrls(user1OrcidId, rUrlToCreate, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), postResponse.getStatus());
+        
+        rUrlToCreate.setUrlName("The name");
+        postResponse = memberV2ApiClient.createResearcherUrls(user1OrcidId, rUrlToCreate, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+        
+        // Read it to delete it
+        ClientResponse getResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
+        assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
+        ResearcherUrl gotResearcherUrl = getResponse.getEntity(ResearcherUrl.class);        
+        ClientResponse deleteResponse = memberV2ApiClient.deleteResearcherUrl(this.user1OrcidId, gotResearcherUrl.getPutCode(), accessToken);
+        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), deleteResponse.getStatus());
+    }
+    
     public String getAccessToken(String clientId, String clientSecret) throws InterruptedException, JSONException {
         if (accessTokens.containsKey(clientId)) {
             return accessTokens.get(clientId);
