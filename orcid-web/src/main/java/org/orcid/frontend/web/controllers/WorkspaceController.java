@@ -54,12 +54,13 @@ import org.orcid.jaxb.model.message.FundingType;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.SequenceType;
 import org.orcid.jaxb.model.message.Source;
-import org.orcid.jaxb.model.record.CitationType;
-import org.orcid.jaxb.model.record.PeerReviewType;
-import org.orcid.jaxb.model.record.Role;
-import org.orcid.jaxb.model.record.WorkCategory;
-import org.orcid.jaxb.model.record.WorkExternalIdentifierType;
-import org.orcid.jaxb.model.record.WorkType;
+import org.orcid.jaxb.model.record_rc1.CitationType;
+import org.orcid.jaxb.model.record_rc1.PeerReviewType;
+import org.orcid.jaxb.model.record_rc1.Role;
+import org.orcid.jaxb.model.record_rc1.WorkCategory;
+import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType;
+import org.orcid.jaxb.model.record_rc1.WorkType;
+import org.orcid.persistence.constants.SiteConstants;
 import org.orcid.pojo.ThirdPartyRedirect;
 import org.orcid.pojo.ajaxForm.KeywordsForm;
 import org.orcid.pojo.ajaxForm.OtherNamesForm;
@@ -172,7 +173,7 @@ public class WorkspaceController extends BaseWorkspaceController {
         Map<String, String> workCategories = new LinkedHashMap<String, String>();
 
         for (WorkCategory workCategory : WorkCategory.values()) {
-            workCategories.put(workCategory.value(), getMessage(buildInternationalizationKey(WorkCategory.class, workCategory.value())));
+            workCategories.put(workCategory.value(), getMessage(new StringBuffer("org.orcid.jaxb.model.record.WorkCategory.").append(workCategory.value()).toString()));
         }
 
         return workCategories;
@@ -183,7 +184,7 @@ public class WorkspaceController extends BaseWorkspaceController {
         Map<String, String> citationTypes = new LinkedHashMap<String, String>();
 
         for (CitationType citationType : CitationType.values()) {
-            citationTypes.put(citationType.value(), getMessage(buildInternationalizationKey(CitationType.class, citationType.value())));
+            citationTypes.put(citationType.value(), getMessage(new StringBuffer("org.orcid.jaxb.model.record.CitationType.").append(citationType.value()).toString()));
         }
 
         return FunctionsOverCollections.sortMapsByValues(citationTypes);
@@ -243,7 +244,7 @@ public class WorkspaceController extends BaseWorkspaceController {
         Map<String, String> map = new TreeMap<String, String>();
 
         for (WorkExternalIdentifierType type : WorkExternalIdentifierType.values()) {
-            map.put(getMessage(buildInternationalizationKey(WorkExternalIdentifierType.class, type.value())), type.value());
+            map.put(getMessage(new StringBuffer("org.orcid.jaxb.model.record.WorkExternalIdentifierType.").append(type.value()).toString()), type.value());
         }
 
         return FunctionsOverCollections.sortMapsByValues(map);
@@ -289,7 +290,7 @@ public class WorkspaceController extends BaseWorkspaceController {
     public Map<String, String> retrievePeerReviewRolesAsMap() {
         Map<String, String> peerReviewRoles = new LinkedHashMap<String, String>();
         for (Role role : Role.values()) {
-            peerReviewRoles.put(role.value(), getMessage(buildInternationalizationKey(Role.class, role.name())));
+            peerReviewRoles.put(role.value(), getMessage(new StringBuffer("org.orcid.jaxb.model.record.Role.").append(role.name()).toString()));
         }
         return FunctionsOverCollections.sortMapsByValues(peerReviewRoles);
     }
@@ -298,7 +299,7 @@ public class WorkspaceController extends BaseWorkspaceController {
     public Map<String, String> retrievePeerReviewTypesAsMap() {
         Map<String, String> peerReviewTypes = new LinkedHashMap<String, String>();
         for (PeerReviewType type : PeerReviewType.values()) {
-            peerReviewTypes.put(type.value(), getMessage(buildInternationalizationKey(PeerReviewType.class, type.name())));
+            peerReviewTypes.put(type.value(), getMessage(new StringBuffer("org.orcid.jaxb.model.record.PeerReviewType.").append(type.name()).toString()));
         }
         return FunctionsOverCollections.sortMapsByValues(peerReviewTypes);
     }
@@ -307,7 +308,7 @@ public class WorkspaceController extends BaseWorkspaceController {
     public Map<String, String> retrieveWorkTypesAsMap() {
         Map<String, String> types = new LinkedHashMap<String, String>();
         for (WorkType type : WorkType.values()) {
-            types.put(type.value(), getMessage(buildInternationalizationKey(WorkType.class, type.value())));
+            types.put(type.value(), getMessage(new StringBuffer("org.orcid.jaxb.model.record.WorkType.").append(type.value()).toString()));
         }
         return FunctionsOverCollections.sortMapsByValues(types);
     }
@@ -399,12 +400,19 @@ public class WorkspaceController extends BaseWorkspaceController {
         ws.setErrors(new ArrayList<String>());
         HashMap<String, Website> websitesHm = new HashMap<String, Website>(); 
         for (Website w:ws.getWebsites()) {
-            validateUrl(w.getUrl());
+            //Clean old errors
+            w.setErrors(new ArrayList<String>());
+            w.getUrl().setErrors(new ArrayList<String>());
+            w.getName().setErrors(new ArrayList<String>());
+            //Validate
+            validateUrl(w.getUrl(), SiteConstants.URL_MAX_LENGTH);
+            validateNoLongerThan(SiteConstants.URL_MAX_LENGTH, w.getName());
             if (websitesHm.containsKey(w.getUrl().getValue()))
                 setError(w.getUrl(), "common.duplicate_url");
             else
                 websitesHm.put(w.getUrl().getValue(), w);
             copyErrors(w.getUrl(), ws);
+            copyErrors(w.getName(), ws);
         }   
         if (ws.getErrors().size()>0) return ws;        
         OrcidProfile currentProfile = getEffectiveProfile();

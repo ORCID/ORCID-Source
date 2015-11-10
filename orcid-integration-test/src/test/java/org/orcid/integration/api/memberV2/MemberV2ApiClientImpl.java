@@ -36,12 +36,12 @@ import javax.ws.rs.core.UriBuilder;
 
 import org.orcid.api.common.OrcidClientHelper;
 import org.orcid.jaxb.model.groupid.GroupIdRecord;
-import org.orcid.jaxb.model.record.Education;
-import org.orcid.jaxb.model.record.Employment;
-import org.orcid.jaxb.model.record.Funding;
-import org.orcid.jaxb.model.record.PeerReview;
-import org.orcid.jaxb.model.record.ResearcherUrl;
-import org.orcid.jaxb.model.record.Work;
+import org.orcid.jaxb.model.record_rc1.Education;
+import org.orcid.jaxb.model.record_rc1.Employment;
+import org.orcid.jaxb.model.record_rc1.Funding;
+import org.orcid.jaxb.model.record_rc1.PeerReview;
+import org.orcid.jaxb.model.record_rc1.Work;
+import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;

@@ -29,7 +29,7 @@ import javax.xml.bind.Unmarshaller;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.jaxb.model.common.Visibility;
-import org.orcid.jaxb.model.record.ResearcherUrl;
+import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;

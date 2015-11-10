@@ -100,8 +100,6 @@ public class SocialController extends BaseController {
 					logoutCurrentUser(request, response);
 					mav.setViewName("social_link_signin");
 					mav.addObject("providerId", providerId);
-					mav.addObject("providerUserId", providerUserId);
-					mav.addObject("remoteUser", userId);
 					mav.addObject("emailId", emailId);
 					return mav;
 				}

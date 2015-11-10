@@ -54,27 +54,27 @@ import org.orcid.jaxb.model.common.Year;
 import org.orcid.jaxb.model.error.OrcidError;
 import org.orcid.jaxb.model.groupid.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.record.Activity;
-import org.orcid.jaxb.model.record.Education;
-import org.orcid.jaxb.model.record.Employment;
-import org.orcid.jaxb.model.record.Funding;
-import org.orcid.jaxb.model.record.FundingExternalIdentifier;
-import org.orcid.jaxb.model.record.FundingExternalIdentifierType;
-import org.orcid.jaxb.model.record.PeerReview;
-import org.orcid.jaxb.model.record.Relationship;
-import org.orcid.jaxb.model.record.Work;
-import org.orcid.jaxb.model.record.WorkExternalIdentifier;
-import org.orcid.jaxb.model.record.WorkExternalIdentifierId;
-import org.orcid.jaxb.model.record.WorkExternalIdentifierType;
-import org.orcid.jaxb.model.record.summary.ActivitiesSummary;
-import org.orcid.jaxb.model.record.summary.EducationSummary;
-import org.orcid.jaxb.model.record.summary.EmploymentSummary;
-import org.orcid.jaxb.model.record.summary.FundingGroup;
-import org.orcid.jaxb.model.record.summary.FundingSummary;
-import org.orcid.jaxb.model.record.summary.PeerReviewGroup;
-import org.orcid.jaxb.model.record.summary.PeerReviewSummary;
-import org.orcid.jaxb.model.record.summary.WorkGroup;
-import org.orcid.jaxb.model.record.summary.WorkSummary;
+import org.orcid.jaxb.model.record.summary_rc1.ActivitiesSummary;
+import org.orcid.jaxb.model.record.summary_rc1.EducationSummary;
+import org.orcid.jaxb.model.record.summary_rc1.EmploymentSummary;
+import org.orcid.jaxb.model.record.summary_rc1.FundingGroup;
+import org.orcid.jaxb.model.record.summary_rc1.FundingSummary;
+import org.orcid.jaxb.model.record.summary_rc1.PeerReviewGroup;
+import org.orcid.jaxb.model.record.summary_rc1.PeerReviewSummary;
+import org.orcid.jaxb.model.record.summary_rc1.WorkGroup;
+import org.orcid.jaxb.model.record.summary_rc1.WorkSummary;
+import org.orcid.jaxb.model.record_rc1.Activity;
+import org.orcid.jaxb.model.record_rc1.Education;
+import org.orcid.jaxb.model.record_rc1.Employment;
+import org.orcid.jaxb.model.record_rc1.Funding;
+import org.orcid.jaxb.model.record_rc1.FundingExternalIdentifier;
+import org.orcid.jaxb.model.record_rc1.FundingExternalIdentifierType;
+import org.orcid.jaxb.model.record_rc1.PeerReview;
+import org.orcid.jaxb.model.record_rc1.Relationship;
+import org.orcid.jaxb.model.record_rc1.Work;
+import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifier;
+import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierId;
+import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
@@ -200,7 +200,7 @@ public class PublicV2Test {
         assertNotNull(getWorkResponse);
         Work work = getWorkResponse.getEntity(Work.class);
         assertNotNull(work);
-        assertEquals("common:title", work.getWorkTitle().getTitle().getContent());
+        assertEquals("Current treatment of left main coronary artery disease", work.getWorkTitle().getTitle().getContent());
 
         ClientResponse getWorkSummaryResponse = null;
         
@@ -214,7 +214,7 @@ public class PublicV2Test {
         checkResponse(getWorkSummaryResponse);
         WorkSummary summary = getWorkSummaryResponse.getEntity(WorkSummary.class);
         assertNotNull(summary);
-        assertEquals("common:title", summary.getTitle().getTitle().getContent());
+        assertEquals("Current treatment of left main coronary artery disease", summary.getTitle().getTitle().getContent());
     }
 
     @Test

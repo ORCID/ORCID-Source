@@ -237,16 +237,14 @@
         	   <div ng-show="showEdit == true" ng-cloak>
         	      <div ng-repeat="website in websitesForm.websites" class="mobile-box">
         	          <input type="text" ng-model="website.name.value" ng-enter="setWebsitesForm()" placeholder="${springMacroRequestContext.getMessage("manual_work_form_contents.labeldescription")}"></input>
-        	          <input type="text" ng-model="website.url.value" ng-enter="setWebsitesForm()" placeholder="${springMacroRequestContext.getMessage("common.url")}" style="padding-right: 5px;"></input>
-	        	      <a ng-click="deleteWebsite(website)"><span class="glyphicon glyphicon-trash grey pull-right"></span></a>
-	        	      
-        	          
-        	          <span class="orcid-error" ng-show="website.url.errors.length > 0">
-					     <div ng-repeat='error in website.url.errors' ng-bind-html="error"></div>
-				      </span>
         	          <span class="orcid-error" ng-show="website.name.errors.length > 0">
 					     <div ng-repeat='error in website.name.errors' ng-bind-html="error"></div>
 				      </span>
+        	          <input type="text" ng-model="website.url.value" ng-enter="setWebsitesForm()" placeholder="${springMacroRequestContext.getMessage("common.url")}" style="padding-right: 5px;"></input>
+	        	      <a ng-click="deleteWebsite(website)"><span class="glyphicon glyphicon-trash grey pull-right"></span></a>	        	              	          
+        	          <span class="orcid-error" ng-show="website.url.errors.length > 0">
+					     <div ng-repeat='error in website.url.errors' ng-bind-html="error"></div>
+				      </span>        	          
 				      <span class="dotted-bar left"></span>
         	      </div>
         	      <ul class="workspace-section-toolbar">

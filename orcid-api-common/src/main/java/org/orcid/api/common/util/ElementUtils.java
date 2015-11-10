@@ -16,7 +16,7 @@
  */
 package org.orcid.api.common.util;
 
-import org.orcid.jaxb.model.record.ResearcherUrls;
+import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
 
 public class ElementUtils {
 

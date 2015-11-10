@@ -28,29 +28,8 @@
         </addColumn>
         
     </changeSet>
-    <changeSet id="POPULATE-ADMINISTRATIVE-CHANGES-OPTION-COLUMN" author="Will Simposn" dbms="postgresql">
-        <createProcedure>
-<![CDATA[
-CREATE OR REPLACE FUNCTION populate_send_administrative_change_notifications() RETURNS VOID AS $$
-DECLARE
-    orcid_to_update VARCHAR;
-    orcid_cursor CURSOR FOR SELECT orcid FROM profile WHERE send_administrative_change_notifications IS NULL AND send_change_notifications IS NOT NULL;
-BEGIN
-    RAISE NOTICE 'Populating send administrative change notifications option...';
-    FOR orcid_record IN orcid_cursor
-    LOOP
-        orcid_to_update := orcid_record.orcid;
-        RAISE NOTICE 'Updating % ', orcid_to_update;
-        EXECUTE 'UPDATE profile set send_administrative_change_notifications = send_change_notifications WHERE orcid = $1' USING orcid_to_update;
-    END LOOP;
-
-    RAISE NOTICE 'Finished populating send administrative change notifications option.';
-    RETURN;
-END;
-$$ LANGUAGE plpgsql;
-]]>
-        </createProcedure>
-        <sql>select populate_send_administrative_change_notifications()</sql>
+    <changeSet id="CUSTOM-POPULATE-ADMINISTRATIVE-CHANGES-OPTION-COLUMN" author="Will Simposn" dbms="postgresql">
+        <customChange class="org.orcid.persistence.liquibase.AdministrativeChangesOptionChangeTask" />
     </changeSet>
     
 </databaseChangeLog>

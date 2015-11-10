@@ -21,7 +21,7 @@ import java.util.List;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.jpa.entities.OtherNameEntity;
 
-public interface OtherNameDao {
+public interface OtherNameDao extends GenericDao<OtherNameEntity, Long> {
 
     /**
      * Get other names for an specific orcid account

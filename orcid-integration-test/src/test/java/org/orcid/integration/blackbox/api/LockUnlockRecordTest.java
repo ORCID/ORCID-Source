@@ -67,15 +67,15 @@ public class LockUnlockRecordTest extends BlackBoxBase {
         assertFalse(checkIfLockedPub());
         // Lock account
         adminLockAccount(adminUserName, adminPassword, user1OrcidId);
-        
+
         // Verify
         assertTrue(checkIfLockedUI());
         assertTrue(checkIfLockedApi());
         assertTrue(checkIfLockedPub());
 
-        ///Unlock account
+        // /Unlock account
         adminUnlockAccount(adminUserName, adminPassword, user1OrcidId);
-                        
+
         // Verify
         assertFalse(checkIfLockedUI());
         assertFalse(checkIfLockedApi());
@@ -98,7 +98,7 @@ public class LockUnlockRecordTest extends BlackBoxBase {
         assertNotNull(response);
         OrcidMessage message = response.getEntity(OrcidMessage.class);
         if (message.getOrcidProfile() == null && message.getErrorDesc() != null) {
-            assertEquals("Account locked : The given account " + user1OrcidId + " is locked", message.getErrorDesc().getContent());
+            assertEquals(message.getErrorDesc().getContent(), "Account locked : The given account " + user1OrcidId + " is locked");
             return true;
         }
         return false;
@@ -109,9 +109,9 @@ public class LockUnlockRecordTest extends BlackBoxBase {
         assertNotNull(response);
         OrcidMessage message = response.getEntity(OrcidMessage.class);
         if (message.getOrcidProfile() == null && message.getErrorDesc() != null) {
-            assertEquals("Account locked : The given account " + user1OrcidId + " is locked", message.getErrorDesc().getContent());
+            assertEquals(message.getErrorDesc().getContent(), "Account locked : The given account " + user1OrcidId + " is locked");
             return true;
         }
         return false;
-    }    
+    }
 }
