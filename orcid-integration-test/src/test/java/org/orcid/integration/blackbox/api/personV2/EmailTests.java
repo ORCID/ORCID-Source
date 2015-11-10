@@ -57,7 +57,7 @@ public class EmailTests extends BlackBoxBase {
     @Value("${org.orcid.web.base.url:http://localhost:8080/orcid-web}")
     private String webBaseUrl;
     @Value("${org.orcid.web.testClient1.redirectUri}")
-    private String redirectUri;
+    private String client1RedirectUri;
     @Value("${org.orcid.web.testClient1.clientId}")
     public String client1ClientId;
     @Value("${org.orcid.web.testClient1.clientSecret}")
@@ -65,7 +65,9 @@ public class EmailTests extends BlackBoxBase {
     @Value("${org.orcid.web.testClient2.clientId}")
     public String client2ClientId;
     @Value("${org.orcid.web.testClient2.clientSecret}")
-    public String client2ClientSecret;
+    public String client2ClientSecret;    
+    @Value("${org.orcid.web.testClient2.redirectUri}")
+    public String client2RedirectUri;    
     @Value("${org.orcid.web.testUser1.orcidId}")
     public String user1OrcidId;
     @Value("${org.orcid.web.testUser1.username}")
@@ -113,7 +115,7 @@ public class EmailTests extends BlackBoxBase {
      * */
     @Test
     public void testGetWithMembersAPI() throws InterruptedException, JSONException {
-        String accessToken = getAccessToken(this.client1ClientId, this.client1ClientSecret);
+        String accessToken = getAccessToken(this.client1ClientId, this.client1ClientSecret, this.client1RedirectUri);
         ClientResponse getAllResponse = memberV2ApiClient.getEmails(user1OrcidId, accessToken);
         assertNotNull(getAllResponse);
         Emails emails = getAllResponse.getEntity(Emails.class);
@@ -135,12 +137,12 @@ public class EmailTests extends BlackBoxBase {
         fail();
     }
     
-    public String getAccessToken(String clientId, String clientSecret) throws InterruptedException, JSONException {
+    public String getAccessToken(String clientId, String clientSecret, String clientRedirectUri) throws InterruptedException, JSONException {
         if (accessTokens.containsKey(clientId)) {
             return accessTokens.get(clientId);
         }
 
-        String accessToken = super.getAccessToken(ScopePathType.PERSON_UPDATE.value(), clientId, clientSecret);
+        String accessToken = super.getAccessToken(ScopePathType.PERSON_UPDATE.value(), clientId, clientSecret, clientRedirectUri);
         accessTokens.put(clientId, accessToken);
         return accessToken;
     }

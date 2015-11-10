@@ -124,7 +124,7 @@ public class MemberV2Test extends BlackBoxBase {
     
     @Test
     public void testGetNotificationToken() throws JSONException, InterruptedException {
-        String accessToken = getAccessToken(this.client1ClientId, this.client1ClientSecret);
+        String accessToken = getAccessToken(this.client1ClientId, this.client1ClientSecret, this.client1RedirectUri);
         assertNotNull(accessToken);
     }
 
@@ -139,7 +139,7 @@ public class MemberV2Test extends BlackBoxBase {
         wExtId.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
         wExtId.setRelationship(Relationship.PART_OF);
         workToCreate.getExternalIdentifiers().getWorkExternalIdentifier().add(wExtId);
-        String accessToken = getAccessToken(this.client1ClientId, this.client1ClientSecret);
+        String accessToken = getAccessToken(this.client1ClientId, this.client1ClientSecret, this.client1RedirectUri);
         ClientResponse postResponse = memberV2ApiClient.createWorkXml(user1OrcidId, workToCreate, accessToken);
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
@@ -172,7 +172,7 @@ public class MemberV2Test extends BlackBoxBase {
         wExtId.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
         wExtId.setRelationship(Relationship.SELF);
         workToCreate.getExternalIdentifiers().getWorkExternalIdentifier().add(wExtId);
-        String accessToken = getAccessToken(this.client1ClientId, this.client1ClientSecret);
+        String accessToken = getAccessToken(this.client1ClientId, this.client1ClientSecret, this.client1RedirectUri);
         ClientResponse postResponse = memberV2ApiClient.createWorkXml(user1OrcidId, workToCreate, accessToken);
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
@@ -199,7 +199,7 @@ public class MemberV2Test extends BlackBoxBase {
         Education education = (Education) unmarshallFromPath("/record_2.0_rc1/samples/education-2.0_rc1.xml", Education.class);
         education.setPutCode(null);
         education.setVisibility(Visibility.PUBLIC);
-        String accessToken = getAccessToken(this.client1ClientId, this.client1ClientSecret);
+        String accessToken = getAccessToken(this.client1ClientId, this.client1ClientSecret, this.client1RedirectUri);
         ClientResponse postResponse = memberV2ApiClient.createEducationXml(user1OrcidId, education, accessToken);
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
@@ -228,7 +228,7 @@ public class MemberV2Test extends BlackBoxBase {
         Education education = (Education) unmarshallFromPath("/record_2.0_rc1/samples/education-2.0_rc1.xml", Education.class);
         education.setPutCode(null);
         education.setVisibility(Visibility.PUBLIC);
-        String accessToken = getAccessToken(this.client1ClientId, this.client1ClientSecret);
+        String accessToken = getAccessToken(this.client1ClientId, this.client1ClientSecret, this.client1RedirectUri);
         ClientResponse postResponse = memberV2ApiClient.createEducationXml(user1OrcidId, education, accessToken);
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
@@ -258,7 +258,7 @@ public class MemberV2Test extends BlackBoxBase {
         Employment employment = (Employment) unmarshallFromPath("/record_2.0_rc1/samples/employment-2.0_rc1.xml", Employment.class);
         employment.setPutCode(null);
         employment.setVisibility(Visibility.PUBLIC);
-        String accessToken = getAccessToken(this.client1ClientId, this.client1ClientSecret);
+        String accessToken = getAccessToken(this.client1ClientId, this.client1ClientSecret, this.client1RedirectUri);
         ClientResponse postResponse = memberV2ApiClient.createEmploymentXml(user1OrcidId, employment, accessToken);
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
@@ -287,7 +287,7 @@ public class MemberV2Test extends BlackBoxBase {
         Employment employment = (Employment) unmarshallFromPath("/record_2.0_rc1/samples/employment-2.0_rc1.xml", Employment.class);
         employment.setPutCode(null);
         employment.setVisibility(Visibility.PUBLIC);
-        String accessToken = getAccessToken(this.client1ClientId, this.client1ClientSecret);
+        String accessToken = getAccessToken(this.client1ClientId, this.client1ClientSecret, this.client1RedirectUri);
         ClientResponse postResponse = memberV2ApiClient.createEmploymentXml(user1OrcidId, employment, accessToken);
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
@@ -324,7 +324,7 @@ public class MemberV2Test extends BlackBoxBase {
         fExtId.setValue("Funding Id " + time);
         fExtId.setRelationship(Relationship.SELF);
         funding.getExternalIdentifiers().getExternalIdentifier().add(fExtId);
-        String accessToken = getAccessToken(this.client1ClientId, this.client1ClientSecret);
+        String accessToken = getAccessToken(this.client1ClientId, this.client1ClientSecret, this.client1RedirectUri);
         ClientResponse postResponse = memberV2ApiClient.createFundingXml(user1OrcidId, funding, accessToken);
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
@@ -363,7 +363,7 @@ public class MemberV2Test extends BlackBoxBase {
         fExtId.setValue("Funding Id " + time);
         fExtId.setRelationship(Relationship.SELF);
         funding.getExternalIdentifiers().getExternalIdentifier().add(fExtId);
-        String accessToken = getAccessToken(this.client1ClientId, this.client1ClientSecret);
+        String accessToken = getAccessToken(this.client1ClientId, this.client1ClientSecret, this.client1RedirectUri);
         ClientResponse postResponse = memberV2ApiClient.createFundingXml(user1OrcidId, funding, accessToken);
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
@@ -403,7 +403,7 @@ public class MemberV2Test extends BlackBoxBase {
         wExtId.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
         wExtId.setRelationship(Relationship.SELF);
         peerReviewToCreate.getExternalIdentifiers().getExternalIdentifier().add(wExtId);
-        String accessToken = getAccessToken(this.client1ClientId, this.client1ClientSecret);
+        String accessToken = getAccessToken(this.client1ClientId, this.client1ClientSecret, this.client1RedirectUri);
 
         ClientResponse postResponse = memberV2ApiClient.createPeerReviewXml(user1OrcidId, peerReviewToCreate, accessToken);
         assertNotNull(postResponse);
@@ -443,7 +443,7 @@ public class MemberV2Test extends BlackBoxBase {
         wExtId.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
         wExtId.setRelationship(Relationship.SELF);
         peerReviewToCreate.getExternalIdentifiers().getWorkExternalIdentifier().add(wExtId);
-        String accessToken = getAccessToken(this.client1ClientId, this.client1ClientSecret);
+        String accessToken = getAccessToken(this.client1ClientId, this.client1ClientSecret, this.client1RedirectUri);
 
         ClientResponse postResponse = memberV2ApiClient.createPeerReviewXml(user1OrcidId, peerReviewToCreate, accessToken);
         assertNotNull(postResponse);
@@ -470,8 +470,8 @@ public class MemberV2Test extends BlackBoxBase {
     public void testViewActivitiesSummaries() throws JSONException, InterruptedException, URISyntaxException {
         long time = System.currentTimeMillis();
         
-        String accessTokenForClient1 = getAccessToken(this.client1ClientId, this.client1ClientSecret);
-        String accessTokenForClient2 = getAccessToken(this.client2ClientId, this.client2ClientSecret);
+        String accessTokenForClient1 = getAccessToken(this.client1ClientId, this.client1ClientSecret, this.client1RedirectUri);
+        String accessTokenForClient2 = getAccessToken(this.client2ClientId, this.client2ClientSecret, this.client2RedirectUri);
         
         Education education = (Education) unmarshallFromPath("/record_2.0_rc1/samples/education-2.0_rc1.xml", Education.class);
         education.setPutCode(null);
@@ -760,7 +760,7 @@ public class MemberV2Test extends BlackBoxBase {
         peerReview.setGroupId(groupRecords.get(0).getGroupId());
         peerReview.getExternalIdentifiers().getExternalIdentifier().clear();        
         
-        String accessToken = getAccessToken(this.client1ClientId, this.client1ClientSecret);
+        String accessToken = getAccessToken(this.client1ClientId, this.client1ClientSecret, this.client1RedirectUri);
 
         ClientResponse postResponse = memberV2ApiClient.createPeerReviewXml(user1OrcidId, peerReview, accessToken);
         assertNotNull(postResponse);
@@ -770,8 +770,8 @@ public class MemberV2Test extends BlackBoxBase {
     @Test
     public void testWorksWithPartOfRelationshipDontGetGrouped () throws JSONException, InterruptedException, URISyntaxException {
         long time = System.currentTimeMillis();
-        String accessTokenForClient1 = getAccessToken(this.client1ClientId, this.client1ClientSecret);
-        String accessTokenForClient2 = getAccessToken(this.client2ClientId, this.client2ClientSecret);
+        String accessTokenForClient1 = getAccessToken(this.client1ClientId, this.client1ClientSecret, this.client1RedirectUri);
+        String accessTokenForClient2 = getAccessToken(this.client2ClientId, this.client2ClientSecret, this.client2RedirectUri);
         
         Work work1 = (Work) unmarshallFromPath("/record_2.0_rc1/samples/work-2.0_rc1.xml", Work.class);
         work1.setPutCode(null);
@@ -883,7 +883,7 @@ public class MemberV2Test extends BlackBoxBase {
     @Test
     public void testTokenWorksOnlyForTheScopeItWasIssued() throws JSONException, InterruptedException, URISyntaxException {
         long time = System.currentTimeMillis();
-        String accessToken =  getAccessToken(ScopePathType.FUNDING_CREATE, this.client1ClientId, this.client1ClientSecret);
+        String accessToken =  getAccessToken(ScopePathType.FUNDING_CREATE, this.client1ClientId, this.client1ClientSecret, this.client1RedirectUri);
         Work work1 = (Work) unmarshallFromPath("/record_2.0_rc1/samples/work-2.0_rc1.xml", Work.class);
         work1.setPutCode(null);
         work1.getExternalIdentifiers().getExternalIdentifier().clear();
@@ -932,7 +932,7 @@ public class MemberV2Test extends BlackBoxBase {
         pExtId.setRelationship(Relationship.SELF);
         peerReview.getExternalIdentifiers().getExternalIdentifier().add(pExtId);
         
-        String accessToken = getAccessToken(this.client1ClientId, this.client1ClientSecret);
+        String accessToken = getAccessToken(this.client1ClientId, this.client1ClientSecret, this.client1RedirectUri);
 
         //Pattern not valid
         ClientResponse postResponse = memberV2ApiClient.createPeerReviewXml(user1OrcidId, peerReview, accessToken);
@@ -956,28 +956,7 @@ public class MemberV2Test extends BlackBoxBase {
         postResponse = memberV2ApiClient.createPeerReviewXml(user1OrcidId, peerReview, accessToken);
         assertNotNull(postResponse);
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), postResponse.getStatus());        
-    }
-    
-    public String getAccessToken(ScopePathType scope, String clientId, String clientSecret) throws InterruptedException, JSONException {
-        String accessToken = super.getAccessToken(scope.value(), clientId, clientSecret);
-        return accessToken;
-    }
-    
-    public String getAccessToken(String clientId, String clientSecret) throws InterruptedException, JSONException {        
-        if(accessTokens.containsKey(clientId)) {
-            return accessTokens.get(clientId);
-        }
-        
-        String accessToken = super.getAccessToken(ScopePathType.ACTIVITIES_UPDATE.value(), clientId, clientSecret);        
-        accessTokens.put(clientId,  accessToken);        
-        return accessToken;
-    }    
-
-    public void cleanActivities() throws JSONException, InterruptedException, URISyntaxException {
-        for(String token : accessTokens.values()) {
-            cleanActivities(token);
-        }
-    }
+    }        
     
     private void cleanActivities(String token) throws JSONException, InterruptedException, URISyntaxException {
         // Remove all activities        
@@ -1053,5 +1032,26 @@ public class MemberV2Test extends BlackBoxBase {
         groups.add(g2);
         
         return groups;
+    }
+    
+    public String getAccessToken(ScopePathType scope, String clientId, String clientSecret, String clientRedirectUri) throws InterruptedException, JSONException {
+        String accessToken = super.getAccessToken(scope.value(), clientId, clientSecret, clientRedirectUri);
+        return accessToken;
+    }
+    
+    public String getAccessToken(String clientId, String clientSecret, String clientRedirectUri) throws InterruptedException, JSONException {        
+        if(accessTokens.containsKey(clientId)) {
+            return accessTokens.get(clientId);
+        }
+        
+        String accessToken = super.getAccessToken(ScopePathType.ACTIVITIES_UPDATE.value(), clientId, clientSecret, clientRedirectUri);        
+        accessTokens.put(clientId,  accessToken);        
+        return accessToken;
+    }    
+
+    public void cleanActivities() throws JSONException, InterruptedException, URISyntaxException {
+        for(String token : accessTokens.values()) {
+            cleanActivities(token);
+        }
     }
 }

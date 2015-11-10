@@ -236,8 +236,7 @@
         <constructor-arg ref="orcidClientCredentialsChecker"/>
     </bean>
 
-    <bean id="orcidClientCredentialsChecker" class="org.orcid.core.oauth.OrcidClientCredentialsChecker">
-        <constructor-arg ref="clientDetailsManager"/>
+    <bean id="orcidClientCredentialsChecker" class="org.orcid.core.oauth.OrcidClientCredentialsChecker">        
         <constructor-arg ref="oAuth2RequestFactory" />
     </bean>
     

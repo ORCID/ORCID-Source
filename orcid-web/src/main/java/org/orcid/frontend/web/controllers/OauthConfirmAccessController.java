@@ -33,14 +33,15 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.constants.OauthTokensConstants;
-import org.orcid.core.manager.ClientDetailsManager;
+import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
-import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.oauth.OrcidRandomValueTokenServices;
 import org.orcid.core.oauth.service.OrcidAuthorizationEndpoint;
+import org.orcid.core.oauth.service.OrcidOAuth2RequestValidator;
+import org.orcid.core.security.aop.LockedException;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.jaxb.model.message.CreationMethod;
 import org.orcid.jaxb.model.message.ErrorDesc;
@@ -105,15 +106,11 @@ public class OauthConfirmAccessController extends BaseController {
     @Resource
     private OrcidProfileManager orcidProfileManager;
     @Resource
-    private ClientDetailsManager clientDetailsManager;
-    @Resource
     private AuthenticationManager authenticationManager;
     @Resource
     private OrcidAuthorizationEndpoint authorizationEndpoint;
     @Resource
     private RegistrationController registrationController;
-    @Resource
-    private ProfileEntityManager profileEntityManager;
     @Resource
     private OrcidRandomValueTokenServices tokenServices;
     @Resource
@@ -121,9 +118,12 @@ public class OauthConfirmAccessController extends BaseController {
     
     @Resource(name = "profileEntityCacheManager")
     ProfileEntityCacheManager profileEntityCacheManager;
-    
     @Resource
-    private EncryptionManager encryptionManager;
+    private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
+    @Resource
+    private EncryptionManager encryptionManager;    
+    @Resource
+    private OrcidOAuth2RequestValidator orcidOAuth2RequestValidator;
 
     private static String REDIRECT_URI_ERROR = "/oauth/error/redirect-uri-mismatch?client_id={0}";
         
@@ -145,7 +145,7 @@ public class OauthConfirmAccessController extends BaseController {
         }
         Response res = null;
         try {
-        	res = orcidClientCredentialEndPointDelegator.obtainOauth2Token(clientId, clientSecret, refreshToken, grantType, code, scopes, state, redirectUri, resourceId);
+            res = orcidClientCredentialEndPointDelegator.obtainOauth2Token(clientId, clientSecret, refreshToken, grantType, code, scopes, state, redirectUri, resourceId);
         } catch(Exception e) {
         	return getLegacyOrcidEntity("OAuth2 problem", e);
         }
@@ -237,7 +237,7 @@ public class OauthConfirmAccessController extends BaseController {
                     }
 
                     // Get client name
-                    ClientDetailsEntity clientDetails = clientDetailsManager.findByClientId(clientId);
+                    ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(clientId);
 
                     // Check if the client has persistent tokens enabled
                     if (clientDetails.isPersistentTokensEnabled())
@@ -246,9 +246,18 @@ public class OauthConfirmAccessController extends BaseController {
                     // validate client scopes
                     try {
                         authorizationEndpoint.validateScope(scope, clientDetails);
+                        orcidOAuth2RequestValidator.validateClientIsEnabled(clientDetails);
                     } catch (InvalidScopeException ise) {
                         String redirectUriWithParams = redirectUri;
                         redirectUriWithParams += "?error=invalid_scope&error_description=" + ise.getMessage();
+                        RedirectView rView = new RedirectView(redirectUriWithParams);
+
+                        ModelAndView error = new ModelAndView();
+                        error.setView(rView);
+                        return error;
+                    } catch(LockedException le) {
+                        String redirectUriWithParams = redirectUri;
+                        redirectUriWithParams += "?error=client_locked&error_description=" + le.getMessage();
                         RedirectView rView = new RedirectView(redirectUriWithParams);
 
                         ModelAndView error = new ModelAndView();
@@ -309,7 +318,7 @@ public class OauthConfirmAccessController extends BaseController {
 
         boolean usePersistentTokens = false;
         
-        ClientDetailsEntity clientDetails = clientDetailsManager.findByClientId(clientId);
+        ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(clientId);
         clientName = clientDetails.getClientName() == null ? "" : clientDetails.getClientName();
         clientDescription = clientDetails.getClientDescription() == null ? "" : clientDetails.getClientDescription();
         clientWebsite = clientDetails.getClientWebsite() == null ? "" : clientDetails.getClientWebsite();
@@ -317,9 +326,18 @@ public class OauthConfirmAccessController extends BaseController {
         // validate client scopes
         try {
             authorizationEndpoint.validateScope(scope, clientDetails);
+            orcidOAuth2RequestValidator.validateClientIsEnabled(clientDetails);
         } catch (InvalidScopeException ise) {
             String redirectUriWithParams = redirectUri;
             redirectUriWithParams += "?error=invalid_scope&error_description=" + ise.getMessage();
+            RedirectView rView = new RedirectView(redirectUriWithParams);
+
+            ModelAndView error = new ModelAndView();
+            error.setView(rView);
+            return error;
+        } catch(LockedException le) {
+            String redirectUriWithParams = redirectUri;
+            redirectUriWithParams += "?error=client_locked&error_description=" + le.getMessage();
             RedirectView rView = new RedirectView(redirectUriWithParams);
 
             ModelAndView error = new ModelAndView();
@@ -331,10 +349,7 @@ public class OauthConfirmAccessController extends BaseController {
         if (clientDetails.isPersistentTokensEnabled()) {
             usePersistentTokens = true;
         }
-
-        // TODO: If persistent tokens are enabled, check for the existing tokens
-        // for this client, if one exists with the same scopes, just return the
-        // authorization code
+        
         if (usePersistentTokens) {
             boolean tokenAlreadyExists = tokenServices.tokenAlreadyExists(clientId, getEffectiveUserOrcid(), OAuth2Utils.parseParameterList(scope));
             if (tokenAlreadyExists) {                
@@ -871,7 +886,7 @@ public class OauthConfirmAccessController extends BaseController {
      * @throws IllegalArgumentException
      * */
     private boolean hasPersistenTokensEnabled(String clientId) throws IllegalArgumentException {
-        ClientDetailsEntity clientDetails = clientDetailsManager.findByClientId(clientId);
+        ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(clientId);
         if (clientDetails == null)
             throw new IllegalArgumentException(getMessage("web.orcid.oauth_invalid_client.exception"));
         return clientDetails.isPersistentTokensEnabled();

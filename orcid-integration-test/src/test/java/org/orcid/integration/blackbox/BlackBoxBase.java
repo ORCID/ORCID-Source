@@ -65,7 +65,7 @@ public class BlackBoxBase {
     @Value("${org.orcid.web.base.url:http://localhost:8080/orcid-web}")
     protected String webBaseUrl;
     @Value("${org.orcid.web.testClient1.redirectUri}")
-    protected String redirectUri;
+    protected String client1RedirectUri;
     @Value("${org.orcid.web.testClient1.clientId}")
     protected String client1ClientId;
     @Value("${org.orcid.web.testClient1.clientSecret}")
@@ -73,7 +73,9 @@ public class BlackBoxBase {
     @Value("${org.orcid.web.testClient2.clientId}")
     protected String client2ClientId;
     @Value("${org.orcid.web.testClient2.clientSecret}")
-    protected String client2ClientSecret;
+    protected String client2ClientSecret;    
+    @Value("${org.orcid.web.testClient2.redirectUri}")
+    protected String client2RedirectUri;    
     @Value("${org.orcid.web.testUser1.username}")
     protected String user1UserName;
     @Value("${org.orcid.web.testUser1.password}")
@@ -92,11 +94,11 @@ public class BlackBoxBase {
     @Resource
     protected OauthHelper oauthHelper;
            
-    public String getAccessToken(String scopes, String clientId, String clientSecret) throws InterruptedException, JSONException {
+    public String getAccessToken(String scopes, String clientId, String clientSecret, String clientRedirectUri) throws InterruptedException, JSONException {
         webDriver = new FirefoxDriver();
-        webDriverHelper = new WebDriverHelper(webDriver, webBaseUrl, redirectUri);
+        webDriverHelper = new WebDriverHelper(webDriver, webBaseUrl, clientRedirectUri);
         oauthHelper.setWebDriverHelper(webDriverHelper);
-        String accessToken = oauthHelper.obtainAccessToken(clientId, clientSecret, scopes, user1UserName, user1Password, redirectUri);
+        String accessToken = oauthHelper.obtainAccessToken(clientId, clientSecret, scopes, user1UserName, user1Password, clientRedirectUri);
         webDriver.quit();
         return accessToken;
     }
@@ -208,5 +210,46 @@ public class BlackBoxBase {
             webDriver.get(baseUrl + "/userStatus.json?logUserOut=true");
             webDriver.quit();
         }
+    }
+    
+    public void adminSignIn(String adminUserName, String adminPassword) {
+        webDriver = new FirefoxDriver();
+        webDriver.get(webBaseUrl + "/userStatus.json?logUserOut=true");
+        webDriver.get(webBaseUrl + "/admin-actions");
+        SigninTest.signIn(webDriver, adminUserName, adminPassword);
+        SigninTest.dismissVerifyEmailModal(webDriver);
+    }
+    
+    public void adminUnlockAccount(String adminUserName, String adminPassword, String orcidToUnlock) {
+        // Login Admin
+        adminSignIn(adminUserName, adminPassword);
+        // Unlock the account
+        WebDriverWait wait = new WebDriverWait(webDriver, 10);
+        WebElement unLockProfileLink = webDriver.findElement(By.linkText("Unlock profile"));
+        unLockProfileLink.click();
+        WebElement unLockProfileOrcidId = webDriver.findElement(By.id("orcid_to_unlock"));
+        unLockProfileOrcidId.sendKeys(orcidToUnlock);
+        WebElement unLockButton = webDriver.findElement(By.id("bottom-confirm-unlock-profile"));
+        unLockButton.click();
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.id("btn-unlock")));
+        WebElement confirmUnLockButton = webDriver.findElement(By.id("btn-unlock"));
+        confirmUnLockButton.click();
+        webDriver.quit();
+    }
+    
+    public void adminLockAccount(String adminUserName, String adminPassword, String orcidToLock) {
+        adminSignIn(adminUserName, adminPassword);
+        // Lock the account
+        WebDriverWait wait = new WebDriverWait(webDriver, 10);
+        WebElement lockProfileLink = webDriver.findElement(By.linkText("Lock profile"));
+        lockProfileLink.click();
+        WebElement lockProfileOrcidId = webDriver.findElement(By.id("orcid_to_lock"));
+        lockProfileOrcidId.sendKeys(orcidToLock);
+        WebElement lockButton = webDriver.findElement(By.id("bottom-confirm-lock-profile"));
+        lockButton.click();
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.id("btn-lock")));
+        WebElement confirmLockButton = webDriver.findElement(By.id("btn-lock"));
+        confirmLockButton.click();
+        webDriver.quit();
     }
 }

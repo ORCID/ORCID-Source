@@ -30,13 +30,11 @@
 	
 	<sec:global-method-security pre-post-annotations="enabled" />
 
-	<bean id="orcidOAuth2RequestValidator" class="org.orcid.core.oauth.service.OrcidOAuth2RequestValidator" />		
-
 	<bean id="authorizationEndpoint" class="org.orcid.core.oauth.service.OrcidAuthorizationEndpoint">
 		<property name="authorizationCodeServices" ref="orcidAuthorizationCodeService" />
 		<property name="clientDetailsService" ref="clientDetailsManager" />
 		<property name="tokenGranter" ref="tokenGranter" />
-		<property name="orcidOAuth2RequestValidator" ref="orcidOAuth2RequestValidator" />
+		<property name="orcidOAuth2RequestValidator" ref="orcidOAuth2RequestValidator" />		
 	</bean>
 
 	<bean id="userDetailsService" class="org.orcid.core.security.OrcidUserDetailsService" />
@@ -409,7 +407,6 @@
         <property name="clientDetailsService" ref="clientDetailsManager"/>        
     </bean>
     <bean id="orcidClientCredentialsChecker" class="org.orcid.core.oauth.OrcidClientCredentialsChecker">
-        <constructor-arg ref="clientDetailsManager"/>
         <constructor-arg ref="oAuth2RequestFactory" />
     </bean>
     <bean id="clientCredentialsTokenGranter" class="org.orcid.core.oauth.OrcidClientCredentialsTokenGranter">
