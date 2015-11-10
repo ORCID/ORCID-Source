@@ -115,17 +115,17 @@ public class OauthAuthorizationPageTest extends BlackBoxBase {
         assertFalse(PojoUtil.isEmpty(stateParam));
         assertEquals(STATE_PARAM, stateParam);
     }
-    
+
     @Test
     public void stateParamIsPersistentAndReurnedWhenAlreadyLoggedInTest() throws JSONException, InterruptedException, URISyntaxException {
-        WebDriver webDriver = new FirefoxDriver();        
+        WebDriver webDriver = new FirefoxDriver();
         webDriver.get(webBaseUrl + "/userStatus.json?logUserOut=true");
         webDriver.get(webBaseUrl + "/my-orcid");
-        //Sign in
+        // Sign in
         SigninTest.signIn(webDriver, user1UserName, user1Password);
-        //Go to the authroization page
+        // Go to the authroization page
         webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s&state=%s", webBaseUrl, client1ClientId, SCOPES,
-                redirectUri, STATE_PARAM));
+                client1RedirectUri, STATE_PARAM));
         By userIdElementLocator = By.id("authorize");
         (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(userIdElementLocator));
         WebElement authorizeButton = webDriver.findElement(By.id("authorize"));
@@ -366,7 +366,8 @@ public class OauthAuthorizationPageTest extends BlackBoxBase {
         String authorizationCode = matcher.group(1);
         assertFalse(PojoUtil.isEmpty(authorizationCode));
 
-        ClientResponse tokenResponse = getClientResponse(client1ClientId, client1ClientSecret, ScopePathType.FUNDING_CREATE.getContent(), client1RedirectUri, authorizationCode);
+        ClientResponse tokenResponse = getClientResponse(client1ClientId, client1ClientSecret, ScopePathType.FUNDING_CREATE.getContent(), client1RedirectUri,
+                authorizationCode);
         assertEquals(200, tokenResponse.getStatus());
         String body = tokenResponse.getEntity(String.class);
         JSONObject jsonObject = new JSONObject(body);
