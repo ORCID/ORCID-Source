@@ -823,7 +823,7 @@ public class RegistrationController extends BaseController {
     }
 
     @RequestMapping(value = "/one-time-password/{encryptedEmail}", method = RequestMethod.POST)
-    public ModelAndView confirmPasswordOneTimeResetView(@PathVariable("encryptedEmail") String encryptedEmail,
+    public ModelAndView confirmPasswordOneTimeResetView(HttpServletRequest request, HttpServletResponse response, @PathVariable("encryptedEmail") String encryptedEmail,
             @Valid PasswordTypeAndConfirmForm passwordTypeAndConfirmForm, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
 
         PasswordResetToken passwordResetToken = buildResetTokenFromEncryptedLink(encryptedEmail);
@@ -840,11 +840,11 @@ public class RegistrationController extends BaseController {
 
         OrcidProfile passwordOnlyProfileUpdate = orcidProfileManager.retrieveOrcidProfileByEmail(passwordResetToken.getEmail(), LoadOptions.INTERNAL_ONLY);
         passwordOnlyProfileUpdate.setPassword(passwordTypeAndConfirmForm.getPassword() == null ? null : passwordTypeAndConfirmForm.getPassword().getValue());
-        return updatePasswordAndGoToAccountsPage(passwordOnlyProfileUpdate);
+        return updatePasswordAndGoToAccountsPage(request, response, passwordOnlyProfileUpdate);
     }
 
     @RequestMapping(value = "/reset-password-email/{encryptedEmail}", method = RequestMethod.POST)
-    public ModelAndView submitPasswordReset(@PathVariable("encryptedEmail") String encryptedEmail, @Valid OneTimeResetPasswordForm oneTimeResetPasswordForm,
+    public ModelAndView submitPasswordReset(HttpServletRequest request, HttpServletResponse response, @PathVariable("encryptedEmail") String encryptedEmail, @Valid OneTimeResetPasswordForm oneTimeResetPasswordForm,
             BindingResult bindingResult, RedirectAttributes redirectAttributes) {
 
         PasswordResetToken passwordResetToken = buildResetTokenFromEncryptedLink(encryptedEmail);
@@ -869,14 +869,14 @@ public class RegistrationController extends BaseController {
             profileToUpdate.setSecurityQuestionAnswer(oneTimeResetPasswordForm.getSecurityQuestionAnswer());
         }
 
-        return updatePasswordAndGoToAccountsPage(profileToUpdate);
+        return updatePasswordAndGoToAccountsPage(request, response, profileToUpdate);
 
     }
 
-    private ModelAndView updatePasswordAndGoToAccountsPage(OrcidProfile updatedProfile) {
-
-        orcidProfileManager.updatePasswordInformation(updatedProfile);
-        return new ModelAndView("redirect:/my-orcid");
+    private ModelAndView updatePasswordAndGoToAccountsPage(HttpServletRequest request, HttpServletResponse response, OrcidProfile updatedProfile) {
+        orcidProfileManager.updatePasswordInformation(updatedProfile);        
+        String redirectUrl = calculateRedirectUrl(request, response);           
+        return new ModelAndView("redirect:" + redirectUrl);
     }
 
     private Integer deriveSecurityIdByEmailForUser(String email) {

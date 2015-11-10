@@ -19,8 +19,8 @@ package org.orcid.core.adapter;
 import java.util.Collection;
 import java.util.List;
 
-import org.orcid.jaxb.model.record.Employment;
-import org.orcid.jaxb.model.record.summary.EmploymentSummary;
+import org.orcid.jaxb.model.record.summary_rc1.EmploymentSummary;
+import org.orcid.jaxb.model.record_rc1.Employment;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 
 /**

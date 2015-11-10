@@ -102,5 +102,4 @@ public class OtherNameDaoImpl extends GenericDaoImpl<OtherNameEntity, Long> impl
         return result;
 
     }
-
 }

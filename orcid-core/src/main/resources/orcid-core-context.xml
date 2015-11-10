@@ -582,6 +582,11 @@
         <property name="mapperFacade" ref="emailMapperFacade" />
     </bean>
     
+    <bean id="otherNameUrlMapperFacade" factory-bean="&amp;mapperFacadeFactory" factory-method="getOtherNameMapperFacade"/>
+	<bean id="jpaJaxbOtherNameAdapter" class="org.orcid.core.adapter.impl.JpaJaxbOtherNameAdapterImpl">
+        <property name="mapperFacade" ref="otherNameUrlMapperFacade" />
+    </bean>
+    
     <!-- Geonames username -->
 	<bean id="geonamesUser" class="java.lang.String">
 		<constructor-arg value="orcid"/>

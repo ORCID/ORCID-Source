@@ -79,21 +79,21 @@ public class FundingExternalIdentifiersConversionsTest {
 
     @Test
     public void recordToCoreObjectTest() {
-        org.orcid.jaxb.model.record.FundingExternalIdentifiers recordFei = new org.orcid.jaxb.model.record.FundingExternalIdentifiers();
-        org.orcid.jaxb.model.record.FundingExternalIdentifier f1 = new org.orcid.jaxb.model.record.FundingExternalIdentifier();
-        f1.setType(org.orcid.jaxb.model.record.FundingExternalIdentifierType.GRANT_NUMBER);
+        org.orcid.jaxb.model.record_rc1.FundingExternalIdentifiers recordFei = new org.orcid.jaxb.model.record_rc1.FundingExternalIdentifiers();
+        org.orcid.jaxb.model.record_rc1.FundingExternalIdentifier f1 = new org.orcid.jaxb.model.record_rc1.FundingExternalIdentifier();
+        f1.setType(org.orcid.jaxb.model.record_rc1.FundingExternalIdentifierType.GRANT_NUMBER);
         f1.setUrl(new org.orcid.jaxb.model.common.Url("www.f1.com"));
         f1.setValue("f1");
         recordFei.getExternalIdentifier().add(f1);
 
-        org.orcid.jaxb.model.record.FundingExternalIdentifier f2 = new org.orcid.jaxb.model.record.FundingExternalIdentifier();
-        f2.setType(org.orcid.jaxb.model.record.FundingExternalIdentifierType.GRANT_NUMBER);
+        org.orcid.jaxb.model.record_rc1.FundingExternalIdentifier f2 = new org.orcid.jaxb.model.record_rc1.FundingExternalIdentifier();
+        f2.setType(org.orcid.jaxb.model.record_rc1.FundingExternalIdentifierType.GRANT_NUMBER);
         f2.setUrl(new org.orcid.jaxb.model.common.Url("www.f2.com"));
         f2.setValue("f2");
         recordFei.getExternalIdentifier().add(f2);
 
-        org.orcid.jaxb.model.record.FundingExternalIdentifier f3 = new org.orcid.jaxb.model.record.FundingExternalIdentifier();
-        f3.setType(org.orcid.jaxb.model.record.FundingExternalIdentifierType.GRANT_NUMBER);
+        org.orcid.jaxb.model.record_rc1.FundingExternalIdentifier f3 = new org.orcid.jaxb.model.record_rc1.FundingExternalIdentifier();
+        f3.setType(org.orcid.jaxb.model.record_rc1.FundingExternalIdentifierType.GRANT_NUMBER);
         f3.setUrl(new org.orcid.jaxb.model.common.Url("www.f3.com"));
         f3.setValue("f3");
         recordFei.getExternalIdentifier().add(f3);
@@ -160,12 +160,12 @@ public class FundingExternalIdentifiersConversionsTest {
     @Test
     public void coreObjectToRecordTest() {
         FundingExternalIdentifiers fei = getFundingExternalIdentifiers();
-        org.orcid.jaxb.model.record.FundingExternalIdentifiers messageObject = fei.toRecordPojo();
+        org.orcid.jaxb.model.record_rc1.FundingExternalIdentifiers messageObject = fei.toRecordPojo();
         assertNotNull(messageObject);
         assertEquals(3, messageObject.getExternalIdentifier().size());
 
         boolean found1 = false, found2 = false, found3 = false;
-        for (org.orcid.jaxb.model.record.FundingExternalIdentifier f : messageObject.getExternalIdentifier()) {
+        for (org.orcid.jaxb.model.record_rc1.FundingExternalIdentifier f : messageObject.getExternalIdentifier()) {
             if (f.getValue().equals("f1")) {
                 found1 = true;
                 assertEquals("www.f1.com", f.getUrl().getValue());
