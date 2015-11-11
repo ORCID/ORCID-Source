@@ -6180,6 +6180,7 @@ input:-webkit-autofill {
 	
 .form-social-sign-in .social-signin-btn{
 	width: 50%;
+	float: left;
 }
 
 .form-social-sign-in .social-password-lnk {
@@ -7593,6 +7594,11 @@ input:-webkit-autofill {
 	    text-align: center;
 	    margin-top: 5px;
 	}    
+	
+	#loginForm #ajax-loader{
+		width: auto;
+		margin-top: 0;
+	}
 	
 	
 	
