@@ -26,7 +26,11 @@
 	<div class="login">
 		<div class="row">
 			<!-- ORCID login form -->
-			<div class="col-md-offset-1 col-md-5 login-left-column col-xs-12">
+			<#if (RequestParameters['shibboleth']?? || RequestParameters['social'])??>
+				<div class="col-md-offset-1 col-md-5 login-left-column col-xs-12">
+			<#else>
+				<div class="col-md-offset-1 col-md-5 col-xs-12">
+			</#if>
 				<p class="title">Sign in with your ORCID account</p>
 				<form class="form-sign-in" id="loginForm" action="<@orcid.rootPath '/signin/auth'/>" method="post">
 			        <div class="control-group">
@@ -58,7 +62,9 @@
 			            </#if>              
 			        </div>			    
 				</form>
-				<span class="or">OR</span>
+				<#if (RequestParameters['shibboleth']?? || RequestParameters['social'])??>
+					<span class="or">OR</span>
+				</#if>	
 			</div>			
 			<!-- Shibboleth and Social Login -->			
 			<div class="col-md-offset-1 col-md-5 login-right-column">
