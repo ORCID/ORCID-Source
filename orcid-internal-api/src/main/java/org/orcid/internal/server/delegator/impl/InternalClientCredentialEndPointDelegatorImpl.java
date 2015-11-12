@@ -22,7 +22,7 @@ import java.util.Set;
 import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
 
-import org.orcid.core.constants.OauthTokensConstants;
+import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.exception.OrcidInvalidScopeException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.internal.server.delegator.InternalClientCredentialEndPointDelegator;
@@ -67,7 +67,7 @@ public class InternalClientCredentialEndPointDelegatorImpl extends OrcidClientCr
         } 
         
         // Verify it is a client_credentials grant type request
-        if(!OauthTokensConstants.GRANT_TYPE_CLIENT_CREDENTIALS.equals(grantType)) {
+        if(!OrcidOauth2Constants.GRANT_TYPE_CLIENT_CREDENTIALS.equals(grantType)) {
             Object params[] = {grantType};
             throw new UnsupportedGrantTypeException(localeManager.resolveMessage("apiError.unsupported_client_type.exception", params));
         }

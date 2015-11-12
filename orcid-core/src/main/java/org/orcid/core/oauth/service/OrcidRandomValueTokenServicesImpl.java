@@ -24,7 +24,7 @@ import java.util.UUID;
 
 import javax.annotation.Resource;
 
-import org.orcid.core.constants.OauthTokensConstants;
+import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.oauth.OrcidOauth2AuthInfo;
 import org.orcid.core.oauth.OrcidRandomValueTokenServices;
@@ -144,8 +144,8 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
         if (authorizationRequest != null) {
             Map<String, String> params = authorizationRequest.getRequestParameters();
             if (params != null) {
-                if (params.containsKey(OauthTokensConstants.IS_PERSISTENT)) {
-                    String isPersistent = params.get(OauthTokensConstants.IS_PERSISTENT);
+                if (params.containsKey(OrcidOauth2Constants.IS_PERSISTENT)) {
+                    String isPersistent = params.get(OrcidOauth2Constants.IS_PERSISTENT);
                     if (Boolean.valueOf(isPersistent)) {
                         return true;
                     }
@@ -169,9 +169,9 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
     private boolean isClientCredentialsGrantType(OAuth2Request authorizationRequest) {
         Map<String, String> params = authorizationRequest.getRequestParameters();
         if (params != null) {
-            if (params.containsKey(OauthTokensConstants.GRANT_TYPE)) {
-                String grantType = params.get(OauthTokensConstants.GRANT_TYPE);
-                if (OauthTokensConstants.GRANT_TYPE_CLIENT_CREDENTIALS.equals(grantType))
+            if (params.containsKey(OrcidOauth2Constants.GRANT_TYPE)) {
+                String grantType = params.get(OrcidOauth2Constants.GRANT_TYPE);
+                if (OrcidOauth2Constants.GRANT_TYPE_CLIENT_CREDENTIALS.equals(grantType))
                     return true;
             }
         }
@@ -191,7 +191,7 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
             }
             Map<String, Object> additionalInfo = accessToken.getAdditionalInformation();
             if(additionalInfo != null) {
-                String clientId = (String)additionalInfo.get(OauthTokensConstants.CLIENT_ID);
+                String clientId = (String)additionalInfo.get(OrcidOauth2Constants.CLIENT_ID);
                 ClientDetailsEntity clientEntity = clientDetailsEntityCacheManager.retrieve(clientId);
                 try {
                     orcidOAuth2RequestValidator.validateClientIsEnabled(clientEntity);

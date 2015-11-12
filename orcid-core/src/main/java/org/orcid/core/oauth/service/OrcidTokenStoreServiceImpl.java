@@ -27,7 +27,7 @@ import java.util.Set;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
-import org.orcid.core.constants.OauthTokensConstants;
+import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.oauth.OrcidOAuth2Authentication;
@@ -288,10 +288,10 @@ public class OrcidTokenStoreServiceImpl implements TokenStore {
             ProfileEntity profile = detail.getProfile();                        
             if (profile != null) {
                 Map<String, Object> additionalInfo = new HashMap<String, Object>();
-                additionalInfo.put(OauthTokensConstants.ORCID, profile.getId());
-                additionalInfo.put(OauthTokensConstants.PERSISTENT, detail.isPersistent());
-                additionalInfo.put(OauthTokensConstants.DATE_CREATED, detail.getDateCreated());
-                additionalInfo.put(OauthTokensConstants.TOKEN_VERSION, detail.getVersion());
+                additionalInfo.put(OrcidOauth2Constants.ORCID, profile.getId());
+                additionalInfo.put(OrcidOauth2Constants.PERSISTENT, detail.isPersistent());
+                additionalInfo.put(OrcidOauth2Constants.DATE_CREATED, detail.getDateCreated());
+                additionalInfo.put(OrcidOauth2Constants.TOKEN_VERSION, detail.getVersion());
                 token.setAdditionalInformation(additionalInfo);
             }
             
@@ -303,7 +303,7 @@ public class OrcidTokenStoreServiceImpl implements TokenStore {
                     additionalInfo.putAll(additionalInfoInToken);
                 } 
                 // Copy to a new one to avoid unmodifiable  
-                additionalInfo.put(OauthTokensConstants.CLIENT_ID, clientId);
+                additionalInfo.put(OrcidOauth2Constants.CLIENT_ID, clientId);
                 token.setAdditionalInformation(additionalInfo);
             }
         }
@@ -383,18 +383,18 @@ public class OrcidTokenStoreServiceImpl implements TokenStore {
 
         Map<String, Object> additionalInfo = token.getAdditionalInformation();
         if (additionalInfo != null) {
-            if (additionalInfo.containsKey(OauthTokensConstants.TOKEN_VERSION)) {
-                String sVersion = String.valueOf(additionalInfo.get(OauthTokensConstants.TOKEN_VERSION));
+            if (additionalInfo.containsKey(OrcidOauth2Constants.TOKEN_VERSION)) {
+                String sVersion = String.valueOf(additionalInfo.get(OrcidOauth2Constants.TOKEN_VERSION));
                 detail.setVersion(Long.valueOf(sVersion));
             } else {
                 // TODO: As of Jan 2015 all tokens will be new tokens, so, we
                 // will have to remove the token version code and
                 // treat all tokens as new tokens
-                detail.setVersion(Long.valueOf(OauthTokensConstants.PERSISTENT_TOKEN));
+                detail.setVersion(Long.valueOf(OrcidOauth2Constants.PERSISTENT_TOKEN));
             }
 
-            if (additionalInfo.containsKey(OauthTokensConstants.PERSISTENT)) {
-                boolean isPersistentKey = (Boolean) additionalInfo.get(OauthTokensConstants.PERSISTENT);
+            if (additionalInfo.containsKey(OrcidOauth2Constants.PERSISTENT)) {
+                boolean isPersistentKey = (Boolean) additionalInfo.get(OrcidOauth2Constants.PERSISTENT);
                 detail.setPersistent(isPersistentKey);
             } else {
                 detail.setPersistent(false);
