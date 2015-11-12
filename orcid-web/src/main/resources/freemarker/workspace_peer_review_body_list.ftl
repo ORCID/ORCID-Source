@@ -49,7 +49,7 @@
 				                                         </li>
 									            	</#if>
 			                                    	<!-- Search & Link -->
-			                                        <li ng-show="noLinkFlag">
+			                                        <li ng-show="noLinkFlag" ng-cloak>
 			                                            <a class="action-option manage-button" ng-click="showPeerReviewImportWizard()">
 			                                                <span class="glyphicon glyphicon-cloud-upload"></span> <@orcid.msg 'workspace_peer_review_body_list.searchAndLink'/> 
 														</a>
@@ -92,9 +92,9 @@
 		                 		<div class="justify">												
 									<p class="wizard-description" ng-class="{'ellipsis-on' : wizardDescExpanded[peerReview.clientId] == false || wizardDescExpanded[peerReview.clientId] == null}">
 										{{peerReview.shortDescription}}													
-										<a ng-click="toggleWizardDesc(peerReview.clientId)" ng-show="wizardDescExpanded[peerReview.clientId] == true"><span class="glyphicon glyphicon-chevron-right wizard-chevron"></span></a>
+										<a ng-click="toggleWizardDesc(peerReview.clientId)" ng-show="wizardDescExpanded[peerReview.clientId] == true" ng-cloak><span class="glyphicon glyphicon-chevron-right wizard-chevron"></span></a>
 									</p>												
-									<a ng-click="toggleWizardDesc(peerReview.clientId)" ng-show="wizardDescExpanded[peerReview.clientId] == false || wizardDescExpanded[peerReview.clientId] == null" class="toggle-wizard-desc"><span class="glyphicon glyphicon-chevron-down wizard-chevron"></span></a>
+									<a ng-click="toggleWizardDesc(peerReview.clientId)" ng-show="wizardDescExpanded[peerReview.clientId] == false || wizardDescExpanded[peerReview.clientId] == null" class="toggle-wizard-desc" ng-cloak><span class="glyphicon glyphicon-chevron-down wizard-chevron"></span></a>
 								</div>
 			                    <hr/>
 		                	</div>
