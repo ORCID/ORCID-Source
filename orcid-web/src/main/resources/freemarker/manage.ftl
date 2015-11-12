@@ -485,7 +485,7 @@
 		            <tbody>
 		                <tr data-ng-repeat="applicationSummary in applicationSummaryList">
 		                	<td class="revokeApplicationName">{{applicationSummary.name}}<br />
-		                        <a data-ng-hide="applicationSummary.websiteValue == null" href="{{applicationSummary.websiteValue}}">{{applicationSummary.websiteValue}}</a>
+		                        <a data-ng-hide="applicationSummary.websiteValue == null" href="{{getApplicationUrlLink(applicationSummary)}}" target="_blank">{{applicationSummary.websiteValue}}</a>
 		                    </td>
 		                    <td width="35%">{{applicationSummary.approvalDate}}</td>
 		                    <td width="5%">
