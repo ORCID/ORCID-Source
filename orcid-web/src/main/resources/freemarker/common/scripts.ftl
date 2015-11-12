@@ -92,7 +92,7 @@ if (typeof angular == 'undefined') {
 </script>
 
 <!-- Shibboleth -->
-<#if (RequestParameters['shibboleth'])??>
+<#if request.requestURI?ends_with("signin") && (RequestParameters['shibboleth'] )??>
 	<script src="${staticCdn}/javascript/shibboleth-embedded-ds/1.1.0/idpselect_config.js" type="text/javascript" language="javascript"></script>
 	<script src="${staticCdn}/javascript/shibboleth-embedded-ds/1.1.0/idpselect.js" type="text/javascript" language="javascript"></script>
 	
