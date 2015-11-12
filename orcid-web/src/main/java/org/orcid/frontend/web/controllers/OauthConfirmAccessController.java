@@ -427,51 +427,8 @@ public class OauthConfirmAccessController extends BaseController {
         empty.setClientName(emptyText);
         empty.setMemberName(emptyText);
         
-        SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
-                
-        if(savedRequest == null) {
-            throw new InvalidRequestException("Unable to find saved request");
-        }
-        
-        //Save state param
-        if (savedRequest.getParameterValues("state") != null) {
-            if (savedRequest.getParameterValues("state").length > 0)
-                empty.setStateParam(Text.valueOf(savedRequest.getParameterValues("state")[0]));
-        }
-        
-        //Get and set client info
-        if(savedRequest.getParameterValues("client_id") == null) {
-            throw new InvalidRequestException("Empty client id");
-        }
-        String clientId = savedRequest.getParameterValues("client_id")[0];
-        try {
-            clientId = URLDecoder.decode(clientId, "UTF-8").trim();
-        } catch (UnsupportedEncodingException e) {
-            throw new InvalidRequestException("Unable to parse client id: " + e);
-        }
-        
-        ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(clientId);
-        try {
-            orcidOAuth2RequestValidator.validateClientIsEnabled(clientDetails);
-        } catch (LockedException le) {
-            throw new InvalidRequestException("Client " + clientId + " is locked");
-        }
-        
-        String clientName = clientDetails.getClientName() == null ? "" : clientDetails.getClientName();
-        String memberName = null;
-        // If it is the 
-        if (ClientType.PUBLIC_CLIENT.equals(clientDetails.getClientType())) {
-            memberName = PUBLIC_MEMBER_NAME;
-        } else {
-            ProfileEntity groupProfile = profileEntityCacheManager.retrieve(clientDetails.getGroupProfileId());
-            memberName = groupProfile.getCreditName();
-        }
-        
-        clientName = StringEscapeUtils.escapeHtml(clientName);
-        memberName = StringEscapeUtils.escapeHtml(clientName);
-        
-        empty.setClientName(Text.valueOf(clientName));
-        empty.setMemberName(Text.valueOf(memberName));
+        //Set the state param and the client and member names
+        fillOauthFormWithRequestInformation(empty, request, response);
         return empty;
     }
 
@@ -578,19 +535,71 @@ public class OauthConfirmAccessController extends BaseController {
         empty.setRedirectUri(emptyText);
         empty.setResponseType(emptyText);
         empty.setScope(emptyText);
-        
-        SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
-        
-        if (savedRequest != null && savedRequest.getParameterMap() != null && savedRequest.getParameterValues("state") != null) {
-            if (savedRequest.getParameterValues("state").length > 0)
-                empty.setStateParam(Text.valueOf(savedRequest.getParameterValues("state")[0]));
-        }
-        
+
+        //Set the state param and the client and member names
+        fillOauthFormWithRequestInformation(empty, request, response);        
         return empty;
     }
     
-    private void fillOauthFormWithRequestInformation() {
+    /**
+     * Fill the for with the state param and the client and member names.
+     * 
+     * @param form
+     * @param request
+     * @param response
+     * */
+    private void fillOauthFormWithRequestInformation(OauthForm form, HttpServletRequest request, HttpServletResponse response) {
+        SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
         
+        if(savedRequest == null) {
+            throw new InvalidRequestException("Unable to find saved request");
+        }
+        
+        //Save state param
+        if (savedRequest.getParameterValues(OrcidOauth2Constants.STATE_PARAM) != null) {
+            if (savedRequest.getParameterValues(OrcidOauth2Constants.STATE_PARAM).length > 0)
+                form.setStateParam(Text.valueOf(savedRequest.getParameterValues(OrcidOauth2Constants.STATE_PARAM)[0]));
+        }
+        
+        //Get and set client info
+        if(savedRequest.getParameterValues(OrcidOauth2Constants.CLIENT_ID_PARAM) == null) {
+            throw new InvalidRequestException("Empty client id");
+        }
+        String clientId = savedRequest.getParameterValues(OrcidOauth2Constants.CLIENT_ID_PARAM)[0];
+        try {
+            clientId = URLDecoder.decode(clientId, "UTF-8").trim();
+        } catch (UnsupportedEncodingException e) {
+            throw new InvalidRequestException("Unable to parse client id: " + e);
+        }
+        
+        ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(clientId);
+        try {
+            orcidOAuth2RequestValidator.validateClientIsEnabled(clientDetails);
+        } catch (LockedException le) {
+            throw new InvalidRequestException("Client " + clientId + " is locked");
+        }
+        
+        String clientName = clientDetails.getClientName() == null ? "" : clientDetails.getClientName();
+        String memberName = null;
+        // If it is the 
+        if (ClientType.PUBLIC_CLIENT.equals(clientDetails.getClientType())) {
+            memberName = PUBLIC_MEMBER_NAME;
+        } else {
+            ProfileEntity groupProfile = profileEntityCacheManager.retrieve(clientDetails.getGroupProfileId());
+            memberName = groupProfile.getCreditName();
+        }
+        
+        clientName = StringEscapeUtils.escapeJavaScript(clientName);
+        memberName = StringEscapeUtils.escapeJavaScript(clientName);
+        
+        form.setClientName(Text.valueOf(clientName));
+        form.setMemberName(Text.valueOf(memberName));
+        form.setClientId(Text.valueOf(clientId));
+        
+        //If it is a new registration, set the referred by flag
+        if(form instanceof OauthRegistrationForm) {
+            ((OauthRegistrationForm) form).setReferredBy(Text.valueOf(clientId));
+        }
     }
     
     
