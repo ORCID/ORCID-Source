@@ -6915,7 +6915,7 @@ orcidNgModule.controller('revokeApplicationFormCtrl',['$scope', '$compile', func
 	        success: function(data){
 	        	$scope.$apply(function(){
 	        		for(var index1 = 0; index1 < data.length; index1 ++) {
-	        			data[index1].approvalDate = formatDate(data[index1].approvalDate);
+	        			data[index1].approvalDate = formatDate(data[index1].approvalDate);	        			
 	            	}
 	        		$scope.applicationSummaryList = data;
 	        	});
@@ -6924,6 +6924,17 @@ orcidNgModule.controller('revokeApplicationFormCtrl',['$scope', '$compile', func
 	        // something bad is happening!
 	        console.log("Error finding the information");
 	    });
+    }
+    
+    $scope.getApplicationUrlLink = function(application) {
+        if(application.websiteValue != null) {
+            if(application.websiteValue.lastIndexOf('http://') === -1 && application.websiteValue.lastIndexOf('https://') === -1) {
+                return '//' + application.websiteValue;
+            } else {
+                return application.websiteValue;
+            }
+        }
+        return '';
     }
     
     $scope.getApplications();
@@ -7696,7 +7707,7 @@ orcidNgModule.controller('SSOPreferencesCtrl',['$scope', '$compile', '$sce', 'em
     $scope.descriptionToDisplay = '';
     $scope.verifyEmailSent=false;
     $scope.accepted=false;
-    $scope.expanded = false;
+    $scope.expanded = false;    
     
     $scope.verifyEmail = function() {
         var funct = function() {
@@ -7787,7 +7798,7 @@ orcidNgModule.controller('SSOPreferencesCtrl',['$scope', '$compile', '$sce', 'em
                     if(data != null && data.clientSecret != null) {
                         $scope.playgroundExample = '';
                         $scope.userCredentials = data;
-                        $scope.hideGoogleUri = false;
+                        $scope.hideGoogleUri = false;                        
                         $scope.selectedRedirectUri = $scope.userCredentials.redirectUris[0];
                         for(var i = 0; i < $scope.userCredentials.redirectUris.length; i++) {
                             if($scope.googleUri == $scope.userCredentials.redirectUris[i].value.value) {
@@ -8093,6 +8104,17 @@ orcidNgModule.controller('SSOPreferencesCtrl',['$scope', '$compile', '$sce', 'em
     
     $scope.collapse = function(){
     	$scope.expanded = false;
+    }
+    
+    $scope.getClientUrl = function(userCredentials) {
+        if(userCredentials.clientWebsite != null && userCredentials.clientWebsite.value != null) {
+            if(userCredentials.clientWebsite.value.lastIndexOf('http://') === -1 && userCredentials.clientWebsite.value.lastIndexOf('https://') === -1) {
+                return '//' + userCredentials.clientWebsite.value;
+            } else {
+                return userCredentials.clientWebsite.value;
+            }
+        }
+        return '';
     }
     
 }]);
@@ -8562,6 +8584,21 @@ orcidNgModule.controller('ClientEditCtrl',['$scope', '$compile', function ($scop
     
     $scope.collapse = function(){
     	$scope.expanded = false;
+    }
+    
+    $scope.getClientUrl = function(client) {
+        if(client != null) {
+            if(client.website != null){
+                if(client.website.value != null) {
+                    if(client.website.value.lastIndexOf('http://') === -1 && client.website.value.lastIndexOf('https://') === -1) {
+                        return '//' + client.website.value;
+                    } else {
+                        return client.website.value;
+                    }
+                }
+            }
+        }
+        return '';
     }
     
 }]);
