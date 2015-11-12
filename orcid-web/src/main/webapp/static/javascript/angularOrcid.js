@@ -9259,8 +9259,7 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
             success: function(data) {
                 $scope.authorizationForm = data;
                 $scope.authorizationForm.scope.value=scopes;
-                $scope.authorizationForm.redirectUri.value=redirect_uri;
-                $scope.authorizationForm.clientId.value=client_id;
+                $scope.authorizationForm.redirectUri.value=redirect_uri;                
                 $scope.authorizationForm.responseType.value=response_type;
             }
         }).fail(function() {

@@ -31,7 +31,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.Response;
 
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
@@ -401,16 +400,14 @@ public class OauthConfirmAccessController extends BaseController {
         mav.addObject("client_group_name", clientGroupName);
         mav.addObject("client_website", clientWebsite);
         mav.addObject("scopes", ScopePathType.getScopesFromSpaceSeparatedString(scope));
-        mav.addObject("scopesString", scope);
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        mav.addObject("auth", authentication);
-        mav.setViewName("confirm-oauth-access");
+        mav.addObject("scopesString", scope);        
         mav.addObject("hideUserVoiceScript", true);
-        mav.addObject("profile", getEffectiveProfile());
         mav.addObject("usePersistentTokens", usePersistentTokens);
+        mav.setViewName("confirm-oauth-access");        
         return mav;
     }
 
+    //XXX
     @RequestMapping(value = "/custom/authorize/empty.json", method = RequestMethod.GET)
     public @ResponseBody OauthAuthorizeForm getEmptyAuthorizeForm(HttpServletRequest request, HttpServletResponse response) {
         OauthAuthorizeForm empty = new OauthAuthorizeForm();
@@ -426,6 +423,8 @@ public class OauthConfirmAccessController extends BaseController {
         empty.setClientId(emptyText);
         empty.setClientName(emptyText);
         empty.setMemberName(emptyText);
+        
+        String string = request.getRequestURL().toString();
         
         //Set the state param and the client and member names
         fillOauthFormWithRequestInformation(empty, request, response);
@@ -549,10 +548,18 @@ public class OauthConfirmAccessController extends BaseController {
      * @param response
      * */
     private void fillOauthFormWithRequestInformation(OauthForm form, HttpServletRequest request, HttpServletResponse response) {
+        Map<String, String[]> requestParams = null;
         SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
         
-        if(savedRequest == null) {
-            throw new InvalidRequestException("Unable to find saved request");
+        if(savedRequest != null) {            
+            requestParams = savedRequest.getParameterMap();                        
+        } else {
+            AuthorizationRequest authorizationRequest = (AuthorizationRequest) request.getSession().getAttribute("authorizationRequest");
+            requestParams = new HashMap<String, String>(authorizationRequest.getRequestParameters());
+        }
+        
+        if(requestParams == null) {
+            throw new InvalidRequestException("Unable to find parameters");
         }
         
         //Save state param
@@ -588,9 +595,6 @@ public class OauthConfirmAccessController extends BaseController {
             ProfileEntity groupProfile = profileEntityCacheManager.retrieve(clientDetails.getGroupProfileId());
             memberName = groupProfile.getCreditName();
         }
-        
-        clientName = StringEscapeUtils.escapeJavaScript(clientName);
-        memberName = StringEscapeUtils.escapeJavaScript(clientName);
         
         form.setClientName(Text.valueOf(clientName));
         form.setMemberName(Text.valueOf(memberName));
