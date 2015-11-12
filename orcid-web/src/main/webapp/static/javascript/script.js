@@ -402,6 +402,9 @@ $(function() {
                         if (basePath.startsWith(baseUrl + 'shibboleth')) {
                             loginUrl = baseUrl + 'shibboleth/signin/auth.json';
                         }
+                        else if (basePath.startsWith(baseUrl + 'social')) {
+                            loginUrl = baseUrl + 'social/signin/auth.json';
+                        }
                         $('form#loginForm').attr('disabled', 'disabled');
                         $('#ajax-loader').show();
                         $
