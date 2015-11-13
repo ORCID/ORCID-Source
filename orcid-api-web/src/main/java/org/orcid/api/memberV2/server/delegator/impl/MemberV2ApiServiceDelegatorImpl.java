@@ -26,7 +26,6 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
-import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.orcid.api.common.util.ActivityUtils;
 import org.orcid.api.common.util.ElementUtils;

@@ -318,9 +318,9 @@ public class DefaultPermissionChecker implements PermissionChecker {
                 ProfileEntity entity = profileEntityCacheManager.retrieve(orcid);
                 Map<String, String> params = new HashMap<String, String>();
                 StringBuffer primary = new StringBuffer(baseUrl).append("/").append(entity.getPrimaryRecord().getId());
-            	params.put(OrcidDeprecatedException.ORCID, primary.toString());
-            	if(entity.getDeprecatedDate() != null)
-            	    params.put(OrcidDeprecatedException.DEPRECATED_DATE, entity.getDeprecatedDate().toString());
+                params.put(OrcidDeprecatedException.ORCID, primary.toString());
+                if (entity.getDeprecatedDate() != null)
+                    params.put(OrcidDeprecatedException.DEPRECATED_DATE, entity.getDeprecatedDate().toString());
                 throw new OrcidDeprecatedException(params);
             }
         }
