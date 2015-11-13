@@ -207,7 +207,8 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
             OrcidMessage entity = getLegacyOrcidEntity("Bad Request : ", t);
             return Response.status(Response.Status.BAD_REQUEST).entity(entity).build();
         } else if (OrcidDeprecatedException.class.isAssignableFrom(t.getClass())) {
-            OrcidError entity = (OrcidError)newStyleErrorResponse(t).getEntity();
+            OrcidError error = (OrcidError)newStyleErrorResponse(t).getEntity();           
+            OrcidMessage entity = getLegacyOrcidEntity(error.getUserMessage(), t);
             return Response.status(Response.Status.MOVED_PERMANENTLY).entity(entity).build();
         } else if (LockedException.class.isAssignableFrom(t.getClass())) {
             OrcidMessage entity = getLegacyOrcidEntity("Account locked : ", t);
@@ -232,7 +233,10 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
     private OrcidMessage getLegacyOrcidEntity(String prefix, Throwable e) {
         OrcidMessage entity = new OrcidMessage();
         entity.setMessageVersion(OrcidMessage.DEFAULT_VERSION);
-        entity.setErrorDesc(new ErrorDesc(prefix + e.getMessage()));
+        if(e != null && !PojoUtil.isEmpty(e.getMessage()))
+            entity.setErrorDesc(new ErrorDesc(prefix + e.getMessage()));
+        else
+            entity.setErrorDesc(new ErrorDesc(prefix));
         return entity;
     }
 
