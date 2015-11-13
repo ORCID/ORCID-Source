@@ -223,7 +223,8 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
                 }
                 if(params.containsKey(OrcidDeprecatedException.DEPRECATED_DATE)) {
                     DeprecatedDate dd = new DeprecatedDate();
-                    dd.setValue(DateUtils.convertToXMLGregorianCalendar(params.get(OrcidDeprecatedException.DEPRECATED_DATE)));
+                    String dateString = params.get(OrcidDeprecatedException.DEPRECATED_DATE);   
+                    dd.setValue(DateUtils.convertToXMLGregorianCalendar(dateString, false));
                     depreciatedError.setDate(dd);
                 }
             }

@@ -23,6 +23,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.orcid.api.t2.server.delegator.T2OrcidApiServiceDelegator;
 import org.orcid.core.exception.OrcidBadRequestException;
@@ -42,6 +43,7 @@ import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.orcid.utils.DateUtils;
 
 /**
  * 
@@ -350,8 +352,11 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
                 if(entity.getDeprecatedDate() != null) {
                     Map<String, String> params = new HashMap<String, String>(); 
                     StringBuffer primary = new StringBuffer(orcidUrlManager.getBaseUrl()).append("/").append(entity.getPrimaryRecord().getId());
-                    params.put(OrcidDeprecatedException.ORCID, primary.toString());
-                    params.put(OrcidDeprecatedException.DEPRECATED_DATE, entity.getDeprecatedDate().toString());
+                    params.put(OrcidDeprecatedException.ORCID, primary.toString());                    
+                    if(entity.getDeprecatedDate() != null) {
+                        XMLGregorianCalendar calendar = DateUtils.convertToXMLGregorianCalendar(entity.getDeprecatedDate());
+                        params.put(OrcidDeprecatedException.DEPRECATED_DATE, calendar.toString());
+                    }                    
                     throw new OrcidDeprecatedException(params);                    
                 }                
             }
@@ -371,7 +376,7 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
         if (orcidMessage != null && orcidMessage.getOrcidProfile() != null && orcidMessage.getOrcidProfile().getOrcidDeprecated() != null) {
             Map<String, String> params = new HashMap<String, String>();
             params.put(OrcidDeprecatedException.ORCID, orcidMessage.getOrcidProfile().getOrcidDeprecated().getPrimaryRecord().getOrcidIdentifier().getUri());
-            params.put(OrcidDeprecatedException.DEPRECATED_DATE, orcidMessage.getOrcidProfile().getOrcidDeprecated().getDate().getValue().toString());
+            params.put(OrcidDeprecatedException.DEPRECATED_DATE, orcidMessage.getOrcidProfile().getOrcidDeprecated().getDate().getValue().toXMLFormat());
             throw new OrcidDeprecatedException(params);
         }
         return response;

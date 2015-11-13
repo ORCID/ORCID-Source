@@ -26,6 +26,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
+import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.orcid.api.common.util.ActivityUtils;
 import org.orcid.api.common.util.ElementUtils;
@@ -68,6 +69,7 @@ import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.WebhookDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -157,8 +159,9 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
             StringBuffer primary = new StringBuffer(baseUrl).append("/").append(entity.getPrimaryRecord().getId());
             Map<String, String> params = new HashMap<String, String>();
             params.put(OrcidDeprecatedException.ORCID, primary.toString());
-            if(entity.getDeprecatedDate() != null) {                
-                params.put(OrcidDeprecatedException.DEPRECATED_DATE, entity.getDeprecatedDate().toString());
+            if(entity.getDeprecatedDate() != null) {
+                XMLGregorianCalendar calendar = DateUtils.convertToXMLGregorianCalendar(entity.getDeprecatedDate());
+                params.put(OrcidDeprecatedException.DEPRECATED_DATE, calendar.toString());
             } 
             throw new OrcidDeprecatedException(params);
         }
