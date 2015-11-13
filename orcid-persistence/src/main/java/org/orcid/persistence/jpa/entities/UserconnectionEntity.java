@@ -22,6 +22,7 @@ import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 /**
  * The persistent class for the userconnection database table.
@@ -92,6 +93,17 @@ public class UserconnectionEntity extends BaseEntity<UserconnectionPK> implement
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    @Transient
+    public String getAccountIdForDisplay() {
+        if (email != null) {
+            return email;
+        }
+        if (displayname != null) {
+            return displayname;
+        }
+        return id.getProvideruserid();
     }
 
     public Long getExpiretime() {
