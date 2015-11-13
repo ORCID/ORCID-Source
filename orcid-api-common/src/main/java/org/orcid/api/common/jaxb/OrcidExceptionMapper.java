@@ -207,7 +207,7 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
             OrcidMessage entity = getLegacyOrcidEntity("Bad Request : ", t);
             return Response.status(Response.Status.BAD_REQUEST).entity(entity).build();
         } else if (OrcidDeprecatedException.class.isAssignableFrom(t.getClass())) {
-            OrcidMessage entity = (OrcidMessage) newStyleErrorResponse(t).getEntity();
+            OrcidError entity = (OrcidError)newStyleErrorResponse(t).getEntity();
             return Response.status(Response.Status.MOVED_PERMANENTLY).entity(entity).build();
         } else if (LockedException.class.isAssignableFrom(t.getClass())) {
             OrcidMessage entity = getLegacyOrcidEntity("Account locked : ", t);
