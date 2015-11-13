@@ -6213,6 +6213,41 @@ input:-webkit-autofill {
 }
 
 
+#old-login input{
+    width: 50%;
+}
+
+#old-login .submit-login, #old-login .submit-login div {
+    z-index: 1001;
+    height: 45px;
+    margin-top: 50px;
+}
+
+#old-login #login-register {
+    padding-left: 0;
+    margin-top: 10px;
+}
+
+
+#old-login #form-sign-in-button{
+	float: left;
+}
+
+#old-login #login-error-mess {
+    top: 141px;
+    position: absolute;
+    z-index: 1000;
+    height: auto;
+    overflow: hidden;
+    width: 100%;
+    padding-left: 225px;
+}
+
+#old-login .form-sign-in{
+	position: relative;
+}
+
+
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
@@ -7389,6 +7424,42 @@ input:-webkit-autofill {
 	    margin-top: 5px;
 	}
 	
+	
+	#old-login .control-group{
+		padding-left: 15px;
+	}
+	
+	#old-login input{
+		width: 100%;
+	}
+	
+	#old-login #form-sign-in-button {
+	    font-size: 18px;
+	    height: 50px;
+	    margin: 32px 0 0 0;
+	    float: left;
+	}
+	
+	#loginForm .submit-login, #loginForm .submit-login div{
+		width: 100%;
+	}
+	
+	#loginForm #login-reset, #loginForm #login-register{
+		padding-left: 0;
+	}
+	
+	#loginForm #login-reset {
+	    margin-top: 80px;
+	}
+	
+	#old-login #login-error-mess{
+		padding-left: 0;
+	}
+	
+	#old-login #loginForm #ajax-loader{
+		width:  auto;
+		margin-top: 22px;
+	} 
 }
 
 @media (min-width : 768px) and (max-width : 991px) { /* Tablet */
@@ -7600,7 +7671,9 @@ input:-webkit-autofill {
 		margin-top: 0;
 	}
 	
-	
+	#old-login #login-error-mess{
+		padding-left: 170px;
+	}
 	
 }
 
