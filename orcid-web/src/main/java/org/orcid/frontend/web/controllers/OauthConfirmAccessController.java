@@ -424,8 +424,6 @@ public class OauthConfirmAccessController extends BaseController {
         empty.setClientName(emptyText);
         empty.setMemberName(emptyText);
         
-        String string = request.getRequestURL().toString();
-        
         //Set the state param and the client and member names
         fillOauthFormWithRequestInformation(empty, request, response);
         return empty;
@@ -548,31 +546,36 @@ public class OauthConfirmAccessController extends BaseController {
      * @param response
      * */
     private void fillOauthFormWithRequestInformation(OauthForm form, HttpServletRequest request, HttpServletResponse response) {
-        Map<String, String[]> requestParams = null;
+        Map<String, String[]> requestParams = new HashMap<String, String[]>();
         SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
-        
+
+        //Get the params from the saved request
         if(savedRequest != null) {            
             requestParams = savedRequest.getParameterMap();                        
         } else {
+            //If there are no saved request, get them from the session
             AuthorizationRequest authorizationRequest = (AuthorizationRequest) request.getSession().getAttribute("authorizationRequest");
-            requestParams = new HashMap<String, String>(authorizationRequest.getRequestParameters());
+            Map<String, String> authRequestParams = new HashMap<String, String>(authorizationRequest.getRequestParameters());
+            for(String param : authRequestParams.keySet()) {
+                requestParams.put(param, new String []{authRequestParams.get(param)});
+            }
         }
         
-        if(requestParams == null) {
+        if(requestParams == null || requestParams.isEmpty()) {
             throw new InvalidRequestException("Unable to find parameters");
         }
         
         //Save state param
-        if (savedRequest.getParameterValues(OrcidOauth2Constants.STATE_PARAM) != null) {
-            if (savedRequest.getParameterValues(OrcidOauth2Constants.STATE_PARAM).length > 0)
-                form.setStateParam(Text.valueOf(savedRequest.getParameterValues(OrcidOauth2Constants.STATE_PARAM)[0]));
+        if (requestParams.containsKey(OrcidOauth2Constants.STATE_PARAM)) {
+            if (requestParams.get(OrcidOauth2Constants.STATE_PARAM).length > 0)
+                form.setStateParam(Text.valueOf(requestParams.get(OrcidOauth2Constants.STATE_PARAM)[0]));
         }
         
         //Get and set client info
-        if(savedRequest.getParameterValues(OrcidOauth2Constants.CLIENT_ID_PARAM) == null) {
+        if(!requestParams.containsKey(OrcidOauth2Constants.CLIENT_ID_PARAM)) {
             throw new InvalidRequestException("Empty client id");
         }
-        String clientId = savedRequest.getParameterValues(OrcidOauth2Constants.CLIENT_ID_PARAM)[0];
+        String clientId = requestParams.get(OrcidOauth2Constants.CLIENT_ID_PARAM)[0];
         try {
             clientId = URLDecoder.decode(clientId, "UTF-8").trim();
         } catch (UnsupportedEncodingException e) {
