@@ -68,9 +68,14 @@ import org.orcid.core.security.aop.LockedException;
 import org.orcid.core.version.ApiSection;
 import org.orcid.core.web.filters.ApiVersionFilter;
 import org.orcid.jaxb.model.error.OrcidError;
+import org.orcid.jaxb.model.message.DeprecatedDate;
 import org.orcid.jaxb.model.message.ErrorDesc;
+import org.orcid.jaxb.model.message.Orcid;
+import org.orcid.jaxb.model.message.OrcidDeprecated;
 import org.orcid.jaxb.model.message.OrcidMessage;
+import org.orcid.jaxb.model.message.PrimaryRecord;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.orcid.utils.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
@@ -207,9 +212,22 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
             OrcidMessage entity = getLegacyOrcidEntity("Bad Request : ", t);
             return Response.status(Response.Status.BAD_REQUEST).entity(entity).build();
         } else if (OrcidDeprecatedException.class.isAssignableFrom(t.getClass())) {
-            OrcidError error = (OrcidError)newStyleErrorResponse(t).getEntity();           
-            OrcidMessage entity = getLegacyOrcidEntity(error.getUserMessage(), t);
-            return Response.status(Response.Status.MOVED_PERMANENTLY).entity(entity).build();
+            OrcidDeprecatedException exception = (OrcidDeprecatedException) t;           
+            OrcidDeprecated depreciatedError = new OrcidDeprecated();
+            Map<String, String> params = exception.getParams();
+            if(params != null) {
+                if(params.containsKey(OrcidDeprecatedException.ORCID)) {
+                    PrimaryRecord pr = new PrimaryRecord();
+                    pr.setOrcid(new Orcid(params.get(OrcidDeprecatedException.ORCID)));
+                    depreciatedError.setPrimaryRecord(pr);
+                }
+                if(params.containsKey(OrcidDeprecatedException.DEPRECATED_DATE)) {
+                    DeprecatedDate dd = new DeprecatedDate();
+                    dd.setValue(DateUtils.convertToXMLGregorianCalendar(params.get(OrcidDeprecatedException.DEPRECATED_DATE)));
+                    depreciatedError.setDate(dd);
+                }
+            }
+            return Response.status(Response.Status.MOVED_PERMANENTLY).entity(depreciatedError).build();
         } else if (LockedException.class.isAssignableFrom(t.getClass())) {
             OrcidMessage entity = getLegacyOrcidEntity("Account locked : ", t);
             return Response.status(Response.Status.CONFLICT).entity(entity).build();

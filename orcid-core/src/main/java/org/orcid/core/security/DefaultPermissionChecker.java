@@ -61,12 +61,12 @@ public class DefaultPermissionChecker implements PermissionChecker {
     
     @Resource(name = "profileEntityManager")
     private ProfileEntityManager profileEntityManager;
+   
+    	@Resource
+    	private ProfileDao profileDao;
     
-	@Resource
-	private ProfileDao profileDao;
-
-	@Value("${org.orcid.core.baseUri}")
-	private String baseUrl;
+    	@Value("${org.orcid.core.baseUri}")
+    	private String baseUrl;
 	
     @Resource
     private OrcidOauth2TokenDetailService orcidOauthTokenDetailService;
@@ -315,9 +315,12 @@ public class DefaultPermissionChecker implements PermissionChecker {
                 // update private information.
                 return;
             } else if(profileDao.isProfileDeprecated(orcid)) {
-            	StringBuffer primary = new StringBuffer(baseUrl).append("/").append(userOrcid);
-        		Map<String, String> params = new HashMap<String, String>();
-            	params.put("orcid", primary.toString());
+                ProfileEntity entity = profileEntityCacheManager.retrieve(orcid);
+                Map<String, String> params = new HashMap<String, String>();
+                StringBuffer primary = new StringBuffer(baseUrl).append("/").append(entity.getPrimaryRecord().getId());
+            	params.put(OrcidDeprecatedException.ORCID, primary.toString());
+            	if(entity.getDeprecatedDate() != null)
+            	    params.put(OrcidDeprecatedException.DEPRECATED_DATE, entity.getDeprecatedDate().toString());
                 throw new OrcidDeprecatedException(params);
             }
         }

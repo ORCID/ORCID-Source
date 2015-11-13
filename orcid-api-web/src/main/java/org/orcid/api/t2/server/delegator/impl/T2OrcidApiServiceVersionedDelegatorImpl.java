@@ -29,16 +29,18 @@ import org.orcid.core.exception.OrcidBadRequestException;
 import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.locale.LocaleManager;
+import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ValidationBehaviour;
 import org.orcid.core.manager.ValidationManager;
+import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.manager.impl.ValidationManagerImpl;
 import org.orcid.core.version.OrcidMessageVersionConverterChain;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.OrcidHistory;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.persistence.dao.EmailDao;
-import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 
 /**
@@ -63,13 +65,16 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
     private boolean supportsAffiliations = true;
 
     @Resource
-    private ProfileDao profileDao;
-
-    @Resource
     private EmailDao emailDao;
     
     @Resource
     private LocaleManager localeManager;
+    
+    @Resource(name = "profileEntityCacheManager")
+    private ProfileEntityCacheManager profileEntityCacheManager;        
+    
+    @Resource
+    private OrcidUrlManager orcidUrlManager;
     
     public void setExternalVersion(String externalVersion) {
         this.externalVersion = externalVersion;
@@ -340,11 +345,15 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
     private void checkDeprecation(OrcidMessage orcidMessage) {
         if (orcidMessage != null && orcidMessage.getOrcidProfile() != null && orcidMessage.getOrcidProfile().getOrcidIdentifier() != null) {
             String orcid = orcidMessage.getOrcidProfile().getOrcidIdentifier().getPath();
-            String primaryOrcid = this.profileDao.retrievePrimaryAccountOrcid(orcid);
-            if (primaryOrcid != null) {
-        		Map<String, String> params = new HashMap<String, String>();
-            	params.put("orcid", primaryOrcid);
-                throw new OrcidDeprecatedException(params);
+            ProfileEntity entity = profileEntityCacheManager.retrieve(orcid);            
+            if (entity != null) {
+                if(entity.getDeprecatedDate() != null) {
+                    Map<String, String> params = new HashMap<String, String>(); 
+                    StringBuffer primary = new StringBuffer(orcidUrlManager.getBaseUrl()).append("/").append(entity.getPrimaryRecord().getId());
+                    params.put(OrcidDeprecatedException.ORCID, primary.toString());
+                    params.put(OrcidDeprecatedException.DEPRECATED_DATE, entity.getDeprecatedDate().toString());
+                    throw new OrcidDeprecatedException(params);                    
+                }                
             }
         }
     }
@@ -360,8 +369,9 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
     protected Response checkProfileStatus(Response response) {
         OrcidMessage orcidMessage = (OrcidMessage) response.getEntity();
         if (orcidMessage != null && orcidMessage.getOrcidProfile() != null && orcidMessage.getOrcidProfile().getOrcidDeprecated() != null) {
-    		Map<String, String> params = new HashMap<String, String>();
-        	params.put("orcid", orcidMessage.getOrcidProfile().getOrcidDeprecated().getPrimaryRecord().getOrcidIdentifier().getPath());
+            Map<String, String> params = new HashMap<String, String>();
+            params.put(OrcidDeprecatedException.ORCID, orcidMessage.getOrcidProfile().getOrcidDeprecated().getPrimaryRecord().getOrcidIdentifier().getUri());
+            params.put(OrcidDeprecatedException.DEPRECATED_DATE, orcidMessage.getOrcidProfile().getOrcidDeprecated().getDate().getValue().toString());
             throw new OrcidDeprecatedException(params);
         }
         return response;

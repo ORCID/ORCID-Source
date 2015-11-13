@@ -34,6 +34,7 @@ import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.PeerReviewManager;
+import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileFundingManager;
 import org.orcid.core.manager.ResearcherUrlManager;
@@ -108,6 +109,9 @@ public class PublicV2ApiServiceDelegatorImpl implements PublicV2ApiServiceDelega
     @Resource
     private EmailManager emailManager;
     
+    @Resource(name = "profileEntityCacheManager")
+    ProfileEntityCacheManager profileEntityCacheManager;
+    
     @Override
     public Response viewStatusText() {
         return Response.ok(STATUS_OK_MESSAGE).build();
@@ -117,10 +121,12 @@ public class PublicV2ApiServiceDelegatorImpl implements PublicV2ApiServiceDelega
     @AccessControl(requiredScope = ScopePathType.READ_PUBLIC, enableAnonymousAccess = true)
     public Response viewActivities(String orcid) {        
         if (profileDao.isProfileDeprecated(orcid)) {
-            ProfileEntity entity = profileEntityManager.findByOrcid(orcid);
+            ProfileEntity entity = profileEntityCacheManager.retrieve(orcid);
             StringBuffer primary = new StringBuffer(baseUrl).append("/").append(entity.getPrimaryRecord().getId());
             Map<String, String> params = new HashMap<String, String>();
-            params.put("orcid", primary.toString());
+            params.put(OrcidDeprecatedException.ORCID, primary.toString());
+            if(entity.getDeprecatedDate() != null)
+                params.put(OrcidDeprecatedException.DEPRECATED_DATE, entity.getDeprecatedDate().toString());
             throw new OrcidDeprecatedException(params);
         }
         ActivitiesSummary as = profileEntityManager.getPublicActivitiesSummary(orcid);
