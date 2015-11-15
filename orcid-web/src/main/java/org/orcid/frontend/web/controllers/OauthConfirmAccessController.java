@@ -502,19 +502,6 @@ public class OauthConfirmAccessController extends BaseController {
         }
         return form;
     }
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     
     @RequestMapping(value = "/custom/register/empty.json", method = RequestMethod.GET)
     public @ResponseBody OauthRegistrationForm getRegister(HttpServletRequest request, HttpServletResponse response) {
@@ -608,30 +595,6 @@ public class OauthConfirmAccessController extends BaseController {
             ((OauthRegistrationForm) form).setReferredBy(Text.valueOf(clientId));
         }
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     
     @RequestMapping(value = "/custom/register.json", method = RequestMethod.POST)
     public @ResponseBody OauthRegistrationForm checkRegisterForm(HttpServletRequest request, HttpServletResponse response, @RequestBody OauthRegistrationForm form) {
