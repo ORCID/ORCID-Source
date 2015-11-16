@@ -769,17 +769,19 @@
     <div class="lightbox-container">
         <h3>Revoke Social Account</h3>
         <p>{{socialRemoteUserToRevoke}}</p>
+ 		<h3><@orcid.msg 'check_password_modal.confirm_password' /></h3>
         <form ng-submit="revoke()">
-            <div>
-                <h3><@orcid.msg 'check_password_modal.confirm_password' /></h3>
-                <label for="confirm_add_delegate_modal.password" class=""><@orcid.msg 'check_password_modal.password' /></label>
-                <input id="confirm_add_delegate_modal.password" type="password" name="confirm_add_delegate_modal.password" ng-model="password" class="input-large"/> <span class="required">*</span>
-                <span class="orcid-error" ng-show="errors.length > 0">
-                    <span ng-repeat='error in errors' ng-bind-html="error"></span>
-                </span>
-            </div>
-            <button class="btn btn-danger"><@orcid.msg 'manage_delegation.btnrevokeaccess'/></button>
+            <div class="form-group">
+    			<label for="confirm_add_delegate_modal.password" class=""><@orcid.msg 'check_password_modal.password' /></label><span class="required">*</span>
+                <input id="confirm_add_delegate_modal.password" type="password" name="confirm_add_delegate_modal.password" ng-model="password" class="form-control"/> 
+  			</div>
+			
+           	<button class="btn btn-danger"><@orcid.msg 'manage_delegation.btnrevokeaccess'/></button>
+				<span class="orcid-error" ng-show="errors.length > 0">
+					<span ng-repeat='error in errors' ng-bind-html="error"></span>
+            	</span>
             <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
+			
         </form>
         <div ng-show="errors.length === 0">
             <br></br>
