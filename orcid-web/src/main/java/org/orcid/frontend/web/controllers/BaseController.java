@@ -141,10 +141,10 @@ public class BaseController {
 
     @Resource
     private ProfileEntityManager profileEntityManager;
-    
+
     @Resource
     private InternalSSOManager internalSSOManager;
-    
+
     @Resource
     protected CsrfTokenRepository csrfTokenRepository;
 
@@ -161,7 +161,7 @@ public class BaseController {
     public void setRecaptchaWebKey(String recaptchaWebKey) {
         this.recaptchaWebKey = recaptchaWebKey;
     }
-    
+
     public LocaleManager getLocaleManager() {
         return localeManager;
     }
@@ -315,54 +315,51 @@ public class BaseController {
         return getEffectiveUserOrcid();
     }
 
-	protected void logoutCurrentUser(HttpServletRequest request, HttpServletResponse response) {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		if (internalSSOManager.enableCookie()) {
-			Cookie[] cookies = request.getCookies();
-			// Delete cookie and token associated with that cookie
-			if (cookies != null) {
-				for (Cookie cookie : cookies) {
-					if (InternalSSOManager.COOKIE_NAME.equals(cookie.getName())) {
-						try {
-							// If it is a valid cookie, extract the orcid value
-							// and
-							// remove the token and the cookie
-							@SuppressWarnings("unchecked")
-							HashMap<String, String> cookieValues = JsonUtils.readObjectFromJsonString(cookie.getValue(),
-									HashMap.class);
-							if (cookieValues.containsKey(InternalSSOManager.COOKIE_KEY_ORCID)
-									&& !PojoUtil.isEmpty(cookieValues.get(InternalSSOManager.COOKIE_KEY_ORCID))) {
-								internalSSOManager.deleteToken(cookieValues.get(InternalSSOManager.COOKIE_KEY_ORCID),
-										request, response);
-							} else {
-								// If it is not valid, just remove the cookie
-								cookie.setValue(StringUtils.EMPTY);
-								cookie.setMaxAge(0);
-								response.addCookie(cookie);
-							}
-						} catch (RuntimeException re) {
-							// If any exception happens, but, the cookie exists,
-							// remove the cookie
-							cookie.setValue(StringUtils.EMPTY);
-							cookie.setMaxAge(0);
-							response.addCookie(cookie);
-						}
-						break;
-					}
-				}
-			}
-			// Delete token if exists
-			if (authentication !=null && !PojoUtil.isEmpty(authentication.getName())) {
-				internalSSOManager.deleteToken(authentication.getName());
-			}
-		}
-		if (authentication != null && authentication.isAuthenticated()) {
-			new SecurityContextLogoutHandler().logout(request, response, authentication);
-		}
-		CsrfToken token = csrfTokenRepository.generateToken(request);
-		csrfTokenRepository.saveToken(token, request, response);
-		request.setAttribute("_csrf", token);
-	}
+    protected void logoutCurrentUser(HttpServletRequest request, HttpServletResponse response) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (internalSSOManager.enableCookie()) {
+            Cookie[] cookies = request.getCookies();
+            // Delete cookie and token associated with that cookie
+            if (cookies != null) {
+                for (Cookie cookie : cookies) {
+                    if (InternalSSOManager.COOKIE_NAME.equals(cookie.getName())) {
+                        try {
+                            // If it is a valid cookie, extract the orcid value
+                            // and
+                            // remove the token and the cookie
+                            @SuppressWarnings("unchecked")
+                            HashMap<String, String> cookieValues = JsonUtils.readObjectFromJsonString(cookie.getValue(), HashMap.class);
+                            if (cookieValues.containsKey(InternalSSOManager.COOKIE_KEY_ORCID) && !PojoUtil.isEmpty(cookieValues.get(InternalSSOManager.COOKIE_KEY_ORCID))) {
+                                internalSSOManager.deleteToken(cookieValues.get(InternalSSOManager.COOKIE_KEY_ORCID), request, response);
+                            } else {
+                                // If it is not valid, just remove the cookie
+                                cookie.setValue(StringUtils.EMPTY);
+                                cookie.setMaxAge(0);
+                                response.addCookie(cookie);
+                            }
+                        } catch (RuntimeException re) {
+                            // If any exception happens, but, the cookie exists,
+                            // remove the cookie
+                            cookie.setValue(StringUtils.EMPTY);
+                            cookie.setMaxAge(0);
+                            response.addCookie(cookie);
+                        }
+                        break;
+                    }
+                }
+            }
+            // Delete token if exists
+            if (authentication != null && !PojoUtil.isEmpty(authentication.getName())) {
+                internalSSOManager.deleteToken(authentication.getName());
+            }
+        }
+        if (authentication != null && authentication.isAuthenticated()) {
+            new SecurityContextLogoutHandler().logout(request, response, authentication);
+        }
+        CsrfToken token = csrfTokenRepository.generateToken(request);
+        csrfTokenRepository.saveToken(token, request, response);
+        request.setAttribute("_csrf", token);
+    }
 
     protected boolean isEmailOkForCurrentUser(String decryptedEmail) {
         OrcidProfileUserDetails userDetails = getCurrentUser();
@@ -437,7 +434,7 @@ public class BaseController {
     protected void validateEmailAddress(String email, HttpServletRequest request, BindingResult bindingResult) {
         validateEmailAddress(email, true, false, request, bindingResult);
     }
-    
+
     protected void validateEmailAddressOnRegister(String email, HttpServletRequest request, BindingResult bindingResult) {
         validateEmailAddress(email, true, true, request, bindingResult);
     }
@@ -453,10 +450,10 @@ public class BaseController {
                 OrcidProfile orcidProfile = orcidProfileManager.retrieveOrcidProfileByEmail(email);
                 if (orcidProfile.getOrcidHistory().isClaimed()) {
                     String[] codes = null;
-                    if(isRegisterRequest) {
-                        codes = new String[]{ "orcid.frontend.verify.duplicate_email" };
+                    if (isRegisterRequest) {
+                        codes = new String[] { "orcid.frontend.verify.duplicate_email" };
                     } else {
-                        codes = new String[]{ "orcid.frontend.verify.claimed_email" };
+                        codes = new String[] { "orcid.frontend.verify.claimed_email" };
                     }
                     String[] args = { email };
                     bindingResult.addError(new FieldError("email", "email", email, false, codes, args, "Email already exists"));
@@ -675,7 +672,7 @@ public class BaseController {
     protected void validateUrl(Text url) {
         validateUrl(url, SiteConstants.URL_MAX_LENGTH);
     }
-    
+
     protected void validateUrl(Text url, int maxLength) {
         url.setErrors(new ArrayList<String>());
         if (!PojoUtil.isEmpty(url.getValue())) {
@@ -685,7 +682,7 @@ public class BaseController {
 
             // check length
             validateNoLongerThan(maxLength, url);
-            
+
             // add protocall if missing
             if (!urlValidator.isValid(url.getValue())) {
                 String tempUrl = "http://" + url.getValue();
@@ -698,17 +695,17 @@ public class BaseController {
             }
         }
     }
-    
+
     protected void validateNoLongerThan(int maxLength, Text text) {
-        if(PojoUtil.isEmpty(text)) {
+        if (PojoUtil.isEmpty(text)) {
             return;
         }
-        
-        if(text.getValue().length() > maxLength) {
+
+        if (text.getValue().length() > maxLength) {
             setError(text, "manualWork.length_less_X", maxLength);
         }
     }
-    
+
     void givenNameValidate(Text givenName) {
         // validate given name isn't blank
         givenName.setErrors(new ArrayList<String>());

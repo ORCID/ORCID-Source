@@ -95,7 +95,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         if (sourceIdOfUpdater != null && (existingSource == null || !sourceIdOfUpdater.equals(existingSource.getSourceId()))) {
             Map<String, String> params = new HashMap<String, String>();
             params.put("activity", "work");
-        	throw new WrongSourceException(params);
+            throw new WrongSourceException(params);
         }
     }
 
@@ -155,7 +155,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
             throw new AccessControlException("Cannot access method with authentication type " + authentication != null ? authentication.toString() : ", as it's null!");
         }
     }
-    
+
     @Override
     public String getClientIdFromAPIRequest() {
         SecurityContext context = SecurityContextHolder.getContext();
@@ -164,7 +164,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
             OAuth2Authentication oAuth2Authentication = (OAuth2Authentication) authentication;
             OAuth2Request request = oAuth2Authentication.getOAuth2Request();
             return request.getClientId();
-        } 
+        }
         return null;
     }
 

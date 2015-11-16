@@ -165,7 +165,7 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     @Resource
     private EmailManager emailManager;
-    
+
     @Resource
     private OrcidOauth2TokenDetailService orcidOauth2TokenService;
 
@@ -333,20 +333,20 @@ public class ManageProfileController extends BaseWorkspaceController {
         ModelAndView mav = new ModelAndView("redirect:/account/view-account-settings");
         return mav;
     }
-    
+
     @RequestMapping(value = "/socialAccounts.json", method = RequestMethod.GET)
     public @ResponseBody List<UserconnectionEntity> getSocialAccountsJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
         String orcid = getCurrentUserOrcid();
         List<UserconnectionEntity> userConnectionEntities = userConnectionDao.findByOrcid(orcid);
         return userConnectionEntities;
     }
-    
+
     @RequestMapping(value = "/revokeSocialAccount.json", method = RequestMethod.POST)
     public @ResponseBody ManageSocialAccount revokeSocialAccount(@RequestBody ManageSocialAccount manageSocialAccount) {
         // Check password
         String password = manageSocialAccount.getPassword();
         if (StringUtils.isBlank(password) || !encryptionManager.hashMatches(password, getEffectiveProfile().getPassword())) {
-        	manageSocialAccount.getErrors().add(getMessage("check_password_modal.incorrect_password"));
+            manageSocialAccount.getErrors().add(getMessage("check_password_modal.incorrect_password"));
             return manageSocialAccount;
         }
         userConnectionDao.remove(manageSocialAccount.getIdToManage());
@@ -542,7 +542,7 @@ public class ManageProfileController extends BaseWorkspaceController {
         profile.getOrcidInternal().getPreferences();
         return profile.getOrcidInternal().getPreferences() != null ? profile.getOrcidInternal().getPreferences() : new Preferences();
     }
-    
+
     @RequestMapping(value = "/preferences.json", method = RequestMethod.POST)
     public @ResponseBody Preferences setDefaultPreference(HttpServletRequest request, @RequestBody Preferences preferences) {
         orcidProfileManager.updatePreferences(getCurrentUserOrcid(), preferences);
@@ -833,7 +833,7 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     @RequestMapping(value = "/countryForm.json", method = RequestMethod.POST)
     public @ResponseBody CountryForm setProfileCountryJson(HttpServletRequest request, @RequestBody CountryForm countryForm) throws NoSuchRequestHandlingMethodException {
-    	OrcidProfile currentProfile = getEffectiveProfile();
+        OrcidProfile currentProfile = getEffectiveProfile();
         countryForm.populateProfile(currentProfile);
         // only update entity attributes
         orcidProfileManager.updateCountry(currentProfile);
@@ -1089,13 +1089,13 @@ public class ManageProfileController extends BaseWorkspaceController {
 
         return mav;
     }
-    
+
     @RequestMapping(value = { "/get-trusted-orgs" }, method = RequestMethod.GET)
     public @ResponseBody List<ApplicationSummary> getTrustedOrgs() {
-    	String orcid = getCurrentUserOrcid();
-    	List<OrcidOauth2TokenDetail> tokenDetails = orcidOauth2TokenService.findByUserName(orcid);
-    	List<ApplicationSummary> trustedOrgsList = profileEntityManager.getApplications(tokenDetails);
-    	return trustedOrgsList;
+        String orcid = getCurrentUserOrcid();
+        List<OrcidOauth2TokenDetail> tokenDetails = orcidOauth2TokenService.findByUserName(orcid);
+        List<ApplicationSummary> trustedOrgsList = profileEntityManager.getApplications(tokenDetails);
+        return trustedOrgsList;
     }
 
     /**
