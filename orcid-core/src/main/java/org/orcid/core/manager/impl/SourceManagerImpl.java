@@ -34,6 +34,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.OAuth2Request;
+import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.security.web.authentication.switchuser.SwitchUserGrantedAuthority;
 
 /**
@@ -45,7 +46,7 @@ public class SourceManagerImpl implements SourceManager {
 
     @Resource
     private ProfileDao profileDao;
-    
+
     @Resource
     private ClientDetailsManager clientDetailsManager;
 
@@ -135,7 +136,8 @@ public class SourceManagerImpl implements SourceManager {
                     if (authority instanceof SwitchUserGrantedAuthority) {
                         SwitchUserGrantedAuthority suga = (SwitchUserGrantedAuthority) authority;
                         Authentication sourceAuthentication = suga.getSource();
-                        if (sourceAuthentication instanceof UsernamePasswordAuthenticationToken && sourceAuthentication.getPrincipal() instanceof OrcidProfileUserDetails) {
+                        if ((sourceAuthentication instanceof UsernamePasswordAuthenticationToken || sourceAuthentication instanceof PreAuthenticatedAuthenticationToken)
+                                && sourceAuthentication.getPrincipal() instanceof OrcidProfileUserDetails) {
                             return ((OrcidProfileUserDetails) sourceAuthentication.getPrincipal()).getOrcid();
                         }
                     }
