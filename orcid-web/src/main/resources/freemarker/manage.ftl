@@ -592,7 +592,7 @@
 	                <table class="table table-bordered settings-table normal-width">
 	                    <thead>
 	                        <tr>
-	                            <th width="40%" ng-click="changeSorting('providerUserId')"><@orcid.msg 'manage_signin_table_header1' /></th>
+	                            <th width="40%" ng-click="changeSorting('accountIdForDisplay')"><@orcid.msg 'manage_signin_table_header1' /></th>
 	                            <th width="30%" ng-click="changeSorting('providerId')"><@orcid.msg 'manage_signin_table_header2' /></th>
 	                            <th width="20%" ng-click="changeSorting('dateCreated')"><@orcid.msg 'manage_delegators.delegates_table.access_granted' /></th>
 	                            <td width="10%"></td>
@@ -600,7 +600,7 @@
 	                    </thead>
 	                    <tbody>
 	                        <tr ng-repeat="socialAccount in socialAccounts | orderBy:sort.column:sort.descending">
-	                            <td width="40%">{{socialAccount.email}}</a></td>
+	                            <td width="40%">{{socialAccount.accountIdForDisplay}}</a></td>
 	                            <td width="30%">{{socialAccount.id.providerid}}</a></td>
 	                            <td width="20%">{{socialAccount.dateCreated|date:'yyyy-MM-dd'}}</td>
 	                            <td width="10%">
