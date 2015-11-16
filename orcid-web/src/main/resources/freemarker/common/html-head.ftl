@@ -66,7 +66,7 @@
       orcidVar.realOrcidId = '${realUserOrcid!}';
       orcidVar.jsMessages = JSON.parse("${jsMessagesJson}");
       orcidVar.searchBaseUrl = "${searchBaseUrl}";
-      
+      orcidVar.isPasswordConfirmationRequired = ${isPasswordConfirmationRequired?string};
     </script>    
     
     <link rel="stylesheet" href="${staticLoc}/css/fonts.css?v=${ver}"/>

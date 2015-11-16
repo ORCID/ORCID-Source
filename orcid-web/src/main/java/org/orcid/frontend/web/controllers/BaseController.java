@@ -48,6 +48,7 @@ import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.InternalSSOManager;
 import org.orcid.core.manager.OrcidProfileManager;
+import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
@@ -138,6 +139,9 @@ public class BaseController {
 
     @Resource
     protected SourceManager sourceManager;
+    
+    @Resource
+    protected OrcidSecurityManager orcidSecurityManager;
 
     @Resource
     private ProfileEntityManager profileEntityManager;
@@ -401,6 +405,11 @@ public class BaseController {
     @ModelAttribute("isDelegatedByAdmin")
     public boolean isDelegatedByAdmin() {
         return sourceManager.isDelegatedByAnAdmin();
+    }
+    
+    @ModelAttribute("isPasswordConfirmationRequired")
+    public boolean isPasswordConfirmationRequired(){
+        return orcidSecurityManager.isPasswordConfirmationRequired();
     }
 
     @ModelAttribute("request")

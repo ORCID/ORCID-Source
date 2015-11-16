@@ -113,6 +113,11 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         return false;
     }
 
+    @Override
+    public boolean isPasswordConfirmationRequired() {
+        return sourceManager.isInDelegationMode() && !sourceManager.isDelegatedByAnAdmin();
+    }
+
     private Set<String> getReadLimitedScopesThatTheClientHas(OAuth2Request authorizationRequest, Filterable filterable) {
         Set<String> requestedScopes = ScopePathType.getCombinedScopesFromStringsAsStrings(authorizationRequest.getScope());
         Set<String> readLimitedScopes = new HashSet<>();
