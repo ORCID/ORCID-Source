@@ -25,6 +25,9 @@ import java.util.Map;
  */
 public class OrcidDeprecatedException extends ApplicationException {
     private static final long serialVersionUID = 1L;
+    
+    public static final String ORCID = "orcid";
+    public static final String DEPRECATED_DATE = "deprecated_date";
 
     public OrcidDeprecatedException() {
     	super();

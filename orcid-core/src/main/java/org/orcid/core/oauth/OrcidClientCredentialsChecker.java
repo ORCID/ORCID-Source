@@ -21,36 +21,53 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.Resource;
+
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.constants.OauthTokensConstants;
+import org.orcid.core.manager.ClientDetailsEntityCacheManager;
+import org.orcid.core.oauth.service.OrcidOAuth2RequestValidator;
 import org.orcid.jaxb.model.message.ScopePathType;
+import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.springframework.security.oauth2.common.exceptions.InvalidGrantException;
 import org.springframework.security.oauth2.common.exceptions.InvalidScopeException;
 import org.springframework.security.oauth2.common.util.OAuth2Utils;
 import org.springframework.security.oauth2.provider.AuthorizationRequest;
 import org.springframework.security.oauth2.provider.ClientDetails;
-import org.springframework.security.oauth2.provider.ClientDetailsService;
 import org.springframework.security.oauth2.provider.OAuth2Request;
 import org.springframework.security.oauth2.provider.OAuth2RequestFactory;
 import org.springframework.security.oauth2.provider.TokenRequest;
 
 /**
  * @author Declan Newman (declan) Date: 10/05/2012
- */
+ */ 
 public class OrcidClientCredentialsChecker {
+    
+    @Resource
+    private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
+    
+    @Resource
+    private OrcidOAuth2RequestValidator orcidOAuth2RequestValidator;
+    
+    private final OAuth2RequestFactory oAuth2RequestFactory;        
 
-    private final ClientDetailsService clientDetailsService;
-    private final OAuth2RequestFactory oAuth2RequestFactory;
+    public void setOrcidOAuth2RequestValidator(OrcidOAuth2RequestValidator orcidOAuth2RequestValidator) {
+        this.orcidOAuth2RequestValidator = orcidOAuth2RequestValidator;
+    }
 
-    public OrcidClientCredentialsChecker(ClientDetailsService clientDetailsService, OAuth2RequestFactory oAuth2RequestFactory) {
-        this.clientDetailsService = clientDetailsService;
+    public OrcidClientCredentialsChecker(OAuth2RequestFactory oAuth2RequestFactory) {
         this.oAuth2RequestFactory = oAuth2RequestFactory;
     }
 
+    public void setClientDetailsEntityCacheManager(ClientDetailsEntityCacheManager clientDetailsEntityCacheManager) {
+        this.clientDetailsEntityCacheManager = clientDetailsEntityCacheManager;
+    }        
+    
     public OAuth2Request validateCredentials(String grantType, TokenRequest tokenRequest) {
         String clientId = tokenRequest.getClientId();
         Set<String> scopes = tokenRequest.getScope();
-        ClientDetails clientDetails = clientDetailsService.loadClientByClientId(clientId);
+        ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(clientId);                        
+        orcidOAuth2RequestValidator.validateClientIsEnabled(clientDetails);
         validateGrantType(grantType, clientDetails);
         if (scopes != null) {
             validateScope(clientDetails, scopes);
@@ -112,6 +129,5 @@ public class OrcidClientCredentialsChecker {
         if (authorizedGrantTypes != null && !authorizedGrantTypes.isEmpty() && !authorizedGrantTypes.contains(grantType)) {
             throw new InvalidGrantException("Unauthorized grant type: " + grantType);
         }
-    }
-
+    }  
 }

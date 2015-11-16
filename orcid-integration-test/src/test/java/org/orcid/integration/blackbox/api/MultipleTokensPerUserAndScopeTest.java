@@ -30,8 +30,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.integration.blackbox.BlackBoxBase;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.record.Work;
-import org.orcid.jaxb.model.record.summary.ActivitiesSummary;
+import org.orcid.jaxb.model.record.summary_rc1.ActivitiesSummary;
+import org.orcid.jaxb.model.record_rc1.Work;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -67,8 +67,8 @@ public class MultipleTokensPerUserAndScopeTest extends BlackBoxBase {
     @Test
     public void useSameScopesGetDifferentTokensTest() throws InterruptedException, JSONException {
         String scopes = ScopePathType.ACTIVITIES_READ_LIMITED.value() + " " + ScopePathType.PERSON_READ_LIMITED.value();
-        String token1 = getAccessToken(scopes, this.client1ClientId, this.client1ClientSecret);
-        String token2 = getAccessToken(scopes, this.client1ClientId, this.client1ClientSecret);
+        String token1 = getAccessToken(scopes, this.client1ClientId, this.client1ClientSecret, this.client1RedirectUri);
+        String token2 = getAccessToken(scopes, this.client1ClientId, this.client1ClientSecret, this.client1RedirectUri);
 
         // Check the scopes are not null
         assertNotNull(token1);
@@ -106,7 +106,7 @@ public class MultipleTokensPerUserAndScopeTest extends BlackBoxBase {
         
         // Check a new token with other scope can add the work
         scopes += " " + ScopePathType.ACTIVITIES_UPDATE.value();
-        String token3 = getAccessToken(scopes, this.client1ClientId, this.client1ClientSecret);
+        String token3 = getAccessToken(scopes, this.client1ClientId, this.client1ClientSecret, this.client1RedirectUri);
         assertNotNull(token3);
         assertFalse(token1.equals(token3));
         

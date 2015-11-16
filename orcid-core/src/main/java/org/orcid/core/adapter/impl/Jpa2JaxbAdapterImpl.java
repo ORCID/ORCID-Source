@@ -20,15 +20,12 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Resource;
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.lang.StringUtils;
@@ -197,8 +194,6 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     @Value("${org.orcid.core.baseUri:http://orcid.org}")
     private String baseUri = null;
 
-    private DatatypeFactory datatypeFactory = null;
-
     @Resource(name = "defaultPermissionChecker")
     private PermissionChecker permissionChecker;
 
@@ -216,15 +211,6 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
 
     @Resource
     private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
-
-    public Jpa2JaxbAdapterImpl() {
-        try {
-            datatypeFactory = DatatypeFactory.newInstance();
-        } catch (DatatypeConfigurationException e) {
-            // We're in serious trouble and can't carry on
-            throw new IllegalStateException("Cannot create new DatatypeFactory");
-        }
-    }
 
     @Override
     public OrcidProfile toOrcidProfile(ProfileEntity profileEntity) {
@@ -1135,13 +1121,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     }
 
     private XMLGregorianCalendar toXMLGregorianCalendar(Date date) {
-        if (date != null) {
-            GregorianCalendar c = new GregorianCalendar();
-            c.setTime(date);
-            return datatypeFactory.newXMLGregorianCalendar(c);
-        } else {
-            return null;
-        }
+        return DateUtils.convertToXMLGregorianCalendar(date);
     }
 
 }

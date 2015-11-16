@@ -59,6 +59,7 @@ import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.exception.OrcidVisibilityException;
 import org.orcid.core.exception.OrcidWebhookNotFoundException;
+import org.orcid.core.exception.OtherNameNotFoundException;
 import org.orcid.core.exception.PutCodeRequiredException;
 import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.locale.LocaleManager;
@@ -67,9 +68,14 @@ import org.orcid.core.security.aop.LockedException;
 import org.orcid.core.version.ApiSection;
 import org.orcid.core.web.filters.ApiVersionFilter;
 import org.orcid.jaxb.model.error.OrcidError;
+import org.orcid.jaxb.model.message.DeprecatedDate;
 import org.orcid.jaxb.model.message.ErrorDesc;
+import org.orcid.jaxb.model.message.Orcid;
+import org.orcid.jaxb.model.message.OrcidDeprecated;
 import org.orcid.jaxb.model.message.OrcidMessage;
+import org.orcid.jaxb.model.message.PrimaryRecord;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.orcid.utils.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
@@ -119,7 +125,8 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(ActivityTitleValidationException.class, new ImmutablePair<>(Response.Status.BAD_REQUEST, 9022));
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(ActivityIdentifierValidationException.class, new ImmutablePair<>(Response.Status.BAD_REQUEST, 9023));
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(GroupIdRecordNotFoundException.class, new ImmutablePair<>(Response.Status.BAD_REQUEST, 9026));
-
+        HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OtherNameNotFoundException.class, new ImmutablePair<>(Response.Status.BAD_REQUEST, 9033));
+        
         // 401
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(AuthenticationException.class, new ImmutablePair<>(Response.Status.UNAUTHORIZED, 9002));
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OAuth2Exception.class, new ImmutablePair<>(Response.Status.UNAUTHORIZED, 9003));
@@ -205,8 +212,23 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
             OrcidMessage entity = getLegacyOrcidEntity("Bad Request : ", t);
             return Response.status(Response.Status.BAD_REQUEST).entity(entity).build();
         } else if (OrcidDeprecatedException.class.isAssignableFrom(t.getClass())) {
-            OrcidMessage entity = (OrcidMessage) newStyleErrorResponse(t).getEntity();
-            return Response.status(Response.Status.MOVED_PERMANENTLY).entity(entity).build();
+            OrcidDeprecatedException exception = (OrcidDeprecatedException) t;           
+            OrcidDeprecated depreciatedError = new OrcidDeprecated();
+            Map<String, String> params = exception.getParams();
+            if(params != null) {
+                if(params.containsKey(OrcidDeprecatedException.ORCID)) {
+                    PrimaryRecord pr = new PrimaryRecord();
+                    pr.setOrcid(new Orcid(params.get(OrcidDeprecatedException.ORCID)));
+                    depreciatedError.setPrimaryRecord(pr);
+                }
+                if(params.containsKey(OrcidDeprecatedException.DEPRECATED_DATE)) {
+                    DeprecatedDate dd = new DeprecatedDate();
+                    String dateString = params.get(OrcidDeprecatedException.DEPRECATED_DATE);   
+                    dd.setValue(DateUtils.convertToXMLGregorianCalendar(dateString, false));
+                    depreciatedError.setDate(dd);
+                }
+            }
+            return Response.status(Response.Status.MOVED_PERMANENTLY).entity(depreciatedError).build();
         } else if (LockedException.class.isAssignableFrom(t.getClass())) {
             OrcidMessage entity = getLegacyOrcidEntity("Account locked : ", t);
             return Response.status(Response.Status.CONFLICT).entity(entity).build();
@@ -230,7 +252,10 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
     private OrcidMessage getLegacyOrcidEntity(String prefix, Throwable e) {
         OrcidMessage entity = new OrcidMessage();
         entity.setMessageVersion(OrcidMessage.DEFAULT_VERSION);
-        entity.setErrorDesc(new ErrorDesc(prefix + e.getMessage()));
+        if(e != null && !PojoUtil.isEmpty(e.getMessage()))
+            entity.setErrorDesc(new ErrorDesc(prefix + e.getMessage()));
+        else
+            entity.setErrorDesc(new ErrorDesc(prefix));
         return entity;
     }
 

@@ -22,155 +22,166 @@ import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-
+import javax.persistence.Transient;
 
 /**
  * The persistent class for the userconnection database table.
  * 
  */
 @Entity
-@Table(name="Userconnection")
+@Table(name = "Userconnection")
 public class UserconnectionEntity extends BaseEntity<UserconnectionPK> implements Comparable<GroupIdRecordEntity> {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private UserconnectionPK id;
+    private UserconnectionPK id;
 
-	private String accesstoken;
+    private String accesstoken;
 
-	private String displayname;
+    private String displayname;
 
-	private String email;
+    private String email;
 
-	private Long expiretime;
+    private Long expiretime;
 
-	private String imageurl;
+    private String imageurl;
 
-	private Timestamp lastLogin;
+    private Timestamp lastLogin;
 
-	private String orcid;
+    private String orcid;
 
-	private String profileurl;
+    private String profileurl;
 
-	private Integer rank;
+    private Integer rank;
 
-	private String refreshtoken;
+    private String refreshtoken;
 
-	private String secret;
-	
-	private boolean isLinked;
+    private String secret;
 
-	public UserconnectionEntity() {
-	}
+    private boolean isLinked;
 
-	@EmbeddedId
-	public UserconnectionPK getId() {
-		return this.id;
-	}
+    public UserconnectionEntity() {
+    }
 
-	public void setId(UserconnectionPK id) {
-		this.id = id;
-	}
+    @EmbeddedId
+    public UserconnectionPK getId() {
+        return this.id;
+    }
 
-	public String getAccesstoken() {
-		return this.accesstoken;
-	}
+    public void setId(UserconnectionPK id) {
+        this.id = id;
+    }
 
-	public void setAccesstoken(String accesstoken) {
-		this.accesstoken = accesstoken;
-	}
+    public String getAccesstoken() {
+        return this.accesstoken;
+    }
 
-	public String getDisplayname() {
-		return this.displayname;
-	}
+    public void setAccesstoken(String accesstoken) {
+        this.accesstoken = accesstoken;
+    }
 
-	public void setDisplayname(String displayname) {
-		this.displayname = displayname;
-	}
+    public String getDisplayname() {
+        return this.displayname;
+    }
 
-	public String getEmail() {
-		return this.email;
-	}
+    public void setDisplayname(String displayname) {
+        this.displayname = displayname;
+    }
 
-	public void setEmail(String email) {
-		this.email = email;
-	}
+    public String getEmail() {
+        return this.email;
+    }
 
-	public Long getExpiretime() {
-		return this.expiretime;
-	}
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
-	public void setExpiretime(Long expiretime) {
-		this.expiretime = expiretime;
-	}
+    @Transient
+    public String getAccountIdForDisplay() {
+        if (email != null) {
+            return email;
+        }
+        if (displayname != null) {
+            return displayname;
+        }
+        return id.getProvideruserid();
+    }
 
-	public String getImageurl() {
-		return this.imageurl;
-	}
+    public Long getExpiretime() {
+        return this.expiretime;
+    }
 
-	public void setImageurl(String imageurl) {
-		this.imageurl = imageurl;
-	}
+    public void setExpiretime(Long expiretime) {
+        this.expiretime = expiretime;
+    }
 
-	@Column(name="last_login")
-	public Timestamp getLastLogin() {
-		return this.lastLogin;
-	}
+    public String getImageurl() {
+        return this.imageurl;
+    }
 
-	public void setLastLogin(Timestamp lastLogin) {
-		this.lastLogin = lastLogin;
-	}
+    public void setImageurl(String imageurl) {
+        this.imageurl = imageurl;
+    }
 
-	public String getOrcid() {
-		return this.orcid;
-	}
+    @Column(name = "last_login")
+    public Timestamp getLastLogin() {
+        return this.lastLogin;
+    }
 
-	public void setOrcid(String orcid) {
-		this.orcid = orcid;
-	}
+    public void setLastLogin(Timestamp lastLogin) {
+        this.lastLogin = lastLogin;
+    }
 
-	public String getProfileurl() {
-		return this.profileurl;
-	}
+    public String getOrcid() {
+        return this.orcid;
+    }
 
-	public void setProfileurl(String profileurl) {
-		this.profileurl = profileurl;
-	}
+    public void setOrcid(String orcid) {
+        this.orcid = orcid;
+    }
 
-	public Integer getRank() {
-		return this.rank;
-	}
+    public String getProfileurl() {
+        return this.profileurl;
+    }
 
-	public void setRank(Integer rank) {
-		this.rank = rank;
-	}
+    public void setProfileurl(String profileurl) {
+        this.profileurl = profileurl;
+    }
 
-	public String getRefreshtoken() {
-		return this.refreshtoken;
-	}
+    public Integer getRank() {
+        return this.rank;
+    }
 
-	public void setRefreshtoken(String refreshtoken) {
-		this.refreshtoken = refreshtoken;
-	}
+    public void setRank(Integer rank) {
+        this.rank = rank;
+    }
 
-	public String getSecret() {
-		return this.secret;
-	}
+    public String getRefreshtoken() {
+        return this.refreshtoken;
+    }
 
-	public void setSecret(String secret) {
-		this.secret = secret;
-	}
+    public void setRefreshtoken(String refreshtoken) {
+        this.refreshtoken = refreshtoken;
+    }
 
-	@Override
-	public int compareTo(GroupIdRecordEntity o) {
-		return 0;
-	}
+    public String getSecret() {
+        return this.secret;
+    }
 
-	@Column(name="is_linked")
-	public boolean isLinked() {
-		return isLinked;
-	}
+    public void setSecret(String secret) {
+        this.secret = secret;
+    }
 
-	public void setLinked(boolean isLinked) {
-		this.isLinked = isLinked;
-	}
+    @Override
+    public int compareTo(GroupIdRecordEntity o) {
+        return 0;
+    }
+
+    @Column(name = "is_linked")
+    public boolean isLinked() {
+        return isLinked;
+    }
+
+    public void setLinked(boolean isLinked) {
+        this.isLinked = isLinked;
+    }
 }

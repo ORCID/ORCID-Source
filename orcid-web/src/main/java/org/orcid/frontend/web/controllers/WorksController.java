@@ -35,11 +35,11 @@ import org.orcid.core.manager.WorkManager;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.jaxb.model.record.CitationType;
-import org.orcid.jaxb.model.record.Relationship;
-import org.orcid.jaxb.model.record.Work;
-import org.orcid.jaxb.model.record.WorkCategory;
-import org.orcid.jaxb.model.record.WorkType;
+import org.orcid.jaxb.model.record_rc1.CitationType;
+import org.orcid.jaxb.model.record_rc1.Relationship;
+import org.orcid.jaxb.model.record_rc1.Work;
+import org.orcid.jaxb.model.record_rc1.WorkCategory;
+import org.orcid.jaxb.model.record_rc1.WorkType;
 import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.KeyValue;
@@ -805,7 +805,7 @@ public class WorksController extends BaseWorkspaceController {
             for (WorkType workType : workCategory.getSubTypes()) {
                 // Dont put work type UNDEFINED
                 if (!workType.equals(WorkType.UNDEFINED)) {
-                    types.add(new KeyValue(workType.value(), getMessage(buildInternationalizationKey(WorkType.class, workType.value()))));
+                    types.add(new KeyValue(workType.value(), getMessage(new StringBuffer("org.orcid.jaxb.model.record.WorkType.").append(workType.value()).toString())));
                 }
             }
         } else {
@@ -813,7 +813,7 @@ public class WorksController extends BaseWorkspaceController {
             for (WorkType workType : WorkType.values()) {
                 // Dont put work type UNDEFINED
                 if (!workType.equals(WorkType.UNDEFINED)) {
-                    types.add(new KeyValue(workType.value(), getMessage(buildInternationalizationKey(WorkType.class, workType.value()))));
+                    types.add(new KeyValue(workType.value(), getMessage(new StringBuffer("org.orcid.jaxb.model.record.WorkType.").append(workType.value()).toString())));
                 }
             }
         }

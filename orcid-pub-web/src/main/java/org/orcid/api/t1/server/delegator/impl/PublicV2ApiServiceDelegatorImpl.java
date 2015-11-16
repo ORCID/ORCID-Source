@@ -23,6 +23,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
+import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.orcid.api.common.util.ActivityUtils;
 import org.orcid.api.common.util.ElementUtils;
@@ -34,6 +35,7 @@ import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.PeerReviewManager;
+import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileFundingManager;
 import org.orcid.core.manager.ResearcherUrlManager;
@@ -43,23 +45,24 @@ import org.orcid.core.security.visibility.aop.AccessControl;
 import org.orcid.core.security.visibility.filter.VisibilityFilterV2;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.message.Visibility;
-import org.orcid.jaxb.model.record.Education;
-import org.orcid.jaxb.model.record.Emails;
-import org.orcid.jaxb.model.record.Employment;
-import org.orcid.jaxb.model.record.Funding;
-import org.orcid.jaxb.model.record.PeerReview;
-import org.orcid.jaxb.model.record.ResearcherUrl;
-import org.orcid.jaxb.model.record.ResearcherUrls;
-import org.orcid.jaxb.model.record.Work;
-import org.orcid.jaxb.model.record.summary.ActivitiesSummary;
-import org.orcid.jaxb.model.record.summary.EducationSummary;
-import org.orcid.jaxb.model.record.summary.EmploymentSummary;
-import org.orcid.jaxb.model.record.summary.FundingSummary;
-import org.orcid.jaxb.model.record.summary.PeerReviewSummary;
-import org.orcid.jaxb.model.record.summary.WorkSummary;
+import org.orcid.jaxb.model.record.summary_rc1.ActivitiesSummary;
+import org.orcid.jaxb.model.record.summary_rc1.EducationSummary;
+import org.orcid.jaxb.model.record.summary_rc1.EmploymentSummary;
+import org.orcid.jaxb.model.record.summary_rc1.FundingSummary;
+import org.orcid.jaxb.model.record.summary_rc1.PeerReviewSummary;
+import org.orcid.jaxb.model.record.summary_rc1.WorkSummary;
+import org.orcid.jaxb.model.record_rc1.Education;
+import org.orcid.jaxb.model.record_rc1.Emails;
+import org.orcid.jaxb.model.record_rc1.Employment;
+import org.orcid.jaxb.model.record_rc1.Funding;
+import org.orcid.jaxb.model.record_rc1.PeerReview;
+import org.orcid.jaxb.model.record_rc1.Work;
+import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
+import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.WebhookDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Value;
 
 import de.undercouch.citeproc.csl.CSLItemData;
@@ -108,6 +111,9 @@ public class PublicV2ApiServiceDelegatorImpl implements PublicV2ApiServiceDelega
     @Resource
     private EmailManager emailManager;
     
+    @Resource(name = "profileEntityCacheManager")
+    ProfileEntityCacheManager profileEntityCacheManager;
+    
     @Override
     public Response viewStatusText() {
         return Response.ok(STATUS_OK_MESSAGE).build();
@@ -117,10 +123,14 @@ public class PublicV2ApiServiceDelegatorImpl implements PublicV2ApiServiceDelega
     @AccessControl(requiredScope = ScopePathType.READ_PUBLIC, enableAnonymousAccess = true)
     public Response viewActivities(String orcid) {        
         if (profileDao.isProfileDeprecated(orcid)) {
-            ProfileEntity entity = profileEntityManager.findByOrcid(orcid);
+            ProfileEntity entity = profileEntityCacheManager.retrieve(orcid);
             StringBuffer primary = new StringBuffer(baseUrl).append("/").append(entity.getPrimaryRecord().getId());
             Map<String, String> params = new HashMap<String, String>();
-            params.put("orcid", primary.toString());
+            params.put(OrcidDeprecatedException.ORCID, primary.toString());
+            if(entity.getDeprecatedDate() != null) {
+                XMLGregorianCalendar calendar = DateUtils.convertToXMLGregorianCalendar(entity.getDeprecatedDate());
+                params.put(OrcidDeprecatedException.DEPRECATED_DATE, calendar.toString());
+            }            
             throw new OrcidDeprecatedException(params);
         }
         ActivitiesSummary as = profileEntityManager.getPublicActivitiesSummary(orcid);

@@ -17,9 +17,9 @@
 package org.orcid.core.adapter;
 
 import java.util.Collection;
-import java.util.List;
 
-import org.orcid.jaxb.model.record.ResearcherUrl;
+import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
+import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 
 public interface JpaJaxbResearcherUrlAdapter {
@@ -27,7 +27,7 @@ public interface JpaJaxbResearcherUrlAdapter {
 
     ResearcherUrl toResearcherUrl(ResearcherUrlEntity entity);
     
-    List<ResearcherUrl> toResearcherUrlList(Collection<ResearcherUrlEntity> entities);
+    ResearcherUrls toResearcherUrlList(Collection<ResearcherUrlEntity> entities);
     
     ResearcherUrlEntity toResearcherUrlEntity(ResearcherUrl researcherUrl, ResearcherUrlEntity existing);
 }

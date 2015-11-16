@@ -43,11 +43,9 @@ import org.springframework.web.servlet.ModelAndView;
 public class OrcidAuthorizationEndpoint extends AuthorizationEndpoint {
 
     private String redirectUriError = "forward:/oauth/error/redirect-uri-mismatch";
-    private String oauthError = "forward:/oauth/error";
-    
+    private String oauthError = "forward:/oauth/error";    
     private OrcidOAuth2RequestValidator orcidOAuth2RequestValidator;
-    
-    
+        
     @Override
     @ExceptionHandler(HttpSessionRequiredException.class)
     public ModelAndView handleHttpSessionRequiredException(HttpSessionRequiredException e, ServletWebRequest webRequest) throws Exception {
@@ -98,9 +96,7 @@ public class OrcidAuthorizationEndpoint extends AuthorizationEndpoint {
         
         //Check the user have permissions to the other scopes
         orcidOAuth2RequestValidator.validateParameters(parameters, clientDetails);
-    }
-    
-   
+    }       
     
     private URI buildRedirectUri(ServletWebRequest webRequest) throws URISyntaxException {
         String[] referers = webRequest.getHeaderValues("referer");
@@ -140,5 +136,5 @@ public class OrcidAuthorizationEndpoint extends AuthorizationEndpoint {
 
     public void setOrcidOAuth2RequestValidator(OrcidOAuth2RequestValidator orcidOAuth2RequestValidator) {
         this.orcidOAuth2RequestValidator = orcidOAuth2RequestValidator;
-    }        
+    }            
 }

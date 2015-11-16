@@ -22,7 +22,8 @@ import java.util.Map;
 import org.orcid.core.exception.InvalidPutCodeException;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.exception.PutCodeRequiredException;
-import org.orcid.jaxb.model.record.ResearcherUrl;
+import org.orcid.jaxb.model.record_rc2.OtherName;
+import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import org.orcid.persistence.constants.SiteConstants;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -71,6 +72,23 @@ public class PersonValidator {
             }                        
         } else {
             if(researcherUrl.getPutCode() == null) {
+                Map<String, String> params = new HashMap<String, String>();                
+                throw new PutCodeRequiredException(params);
+            }
+        }
+    }
+    
+    public static void validateOtherName(OtherName otherName, SourceEntity sourceEntity, boolean createFlag) {
+        if(createFlag) {
+            if(otherName.getPutCode() != null) {
+                Map<String, String> params = new HashMap<String, String>();
+                if (sourceEntity != null) {
+                    params.put("clientName", sourceEntity.getSourceName());
+                }
+                throw new InvalidPutCodeException(params);
+            }                        
+        } else {
+            if(otherName.getPutCode() == null) {
                 Map<String, String> params = new HashMap<String, String>();                
                 throw new PutCodeRequiredException(params);
             }

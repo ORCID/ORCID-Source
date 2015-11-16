@@ -375,6 +375,7 @@ $(function() {
     $('form#loginForm')
             .submit(
                     function() {
+                        var loginUrl = baseUrl + 'signin/auth.json';
                         if ($('form#loginForm').attr('disabled')) {
                             return false;
                         }
@@ -398,12 +399,18 @@ $(function() {
                         } else
                             orcidGA.gaPush([ 'send', 'event', 'RegGrowth',
                                     'Sign-In-Submit', 'Website' ]);
+                        if (basePath.startsWith(baseUrl + 'shibboleth')) {
+                            loginUrl = baseUrl + 'shibboleth/signin/auth.json';
+                        }
+                        else if (basePath.startsWith(baseUrl + 'social')) {
+                            loginUrl = baseUrl + 'social/signin/auth.json';
+                        }
                         $('form#loginForm').attr('disabled', 'disabled');
                         $('#ajax-loader').show();
                         $
                                 .ajax(
                                         {
-                                            url : baseUrl + 'signin/auth.json',
+                                            url : loginUrl,
                                             type : 'POST',
                                             data : 'userId=' + encodeURIComponent(orcidLoginFitler($('input[name=userId]').val())) + '&password=' + encodeURIComponent($('input[name=password]').val()),
                                             dataType : 'json',

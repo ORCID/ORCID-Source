@@ -28,6 +28,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.persistence.NoResultException;
 import javax.ws.rs.core.Response;
+import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.orcid.api.common.delegator.OrcidApiServiceDelegator;
 import org.orcid.core.adapter.Jpa2JaxbAdapter;
@@ -38,6 +39,7 @@ import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.OrcidProfileManagerReadOnly;
 import org.orcid.core.manager.OrcidSearchManager;
+import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.security.aop.NonLocked;
 import org.orcid.core.security.visibility.aop.AccessControl;
 import org.orcid.core.security.visibility.aop.VisibilityControl;
@@ -410,8 +412,12 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
         Response response = null;
 
         if (isProfileDeprecated) {
-        	Map<String, String> params = new HashMap<String, String>();
-        	params.put("orcid", orcidProfile.getOrcidDeprecated().getPrimaryRecord().getOrcidIdentifier().getUri());
+            Map<String, String> params = new HashMap<String, String>();
+            params.put(OrcidDeprecatedException.ORCID, orcidProfile.getOrcidDeprecated().getPrimaryRecord().getOrcidIdentifier().getUri()); 
+            if(orcidProfile.getOrcidDeprecated().getDate() != null) {
+                XMLGregorianCalendar deprecatedDate = orcidProfile.getOrcidDeprecated().getDate().getValue();
+                params.put(OrcidDeprecatedException.DEPRECATED_DATE, deprecatedDate.toString());
+            }        	
             throw new OrcidDeprecatedException(params);
         } else {
             response = Response.ok(orcidMessage).build();

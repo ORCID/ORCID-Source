@@ -166,4 +166,5 @@
     <include file="/db/updates/delete_notification_work_entries.xml"/>
     <include file="/db/updates/add_administrative_changes_option.xml"/>
     <include file="/db/updates/nullify_empty_translated_titles.xml"/>
+    <include file="/db/updates/add_source_to_other_names.xml" />
 </databaseChangeLog>

@@ -26,6 +26,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.exception.OrcidBadRequestException;
 import org.orcid.frontend.web.exception.FeatureDisabledException;
 import org.orcid.jaxb.model.message.OrcidProfile;
@@ -75,6 +76,7 @@ public class ShibbolethController extends BaseController {
     public ModelAndView signinHandler(HttpServletRequest request, HttpServletResponse response, @RequestHeader Map<String, String> headers, ModelAndView mav) {
         checkEnabled();
         String remoteUser = retrieveRemoteUser(headers);
+        String displayName = retrieveDisplayName(headers);
         String shibIdentityProvider = headers.get(SHIB_IDENTITY_PROVIDER_HEADER);
         // Check if the Shibboleth user is already linked to an ORCID account.
         // If so sign them in automatically.
@@ -93,10 +95,10 @@ public class ShibbolethController extends BaseController {
             return new ModelAndView("redirect:/my-orcid");
         } else {
             // To avoid confusion, force the user to login to ORCID again
-        	logoutCurrentUser(request, response);
+            logoutCurrentUser(request, response);
             mav.setViewName("social_link_signin");
-			mav.addObject("providerId", "shibboleth");
-			mav.addObject("emailId", remoteUser);
+            mav.addObject("providerId", "shibboleth");
+            mav.addObject("emailId", displayName);
         }
         return mav;
     }
@@ -107,22 +109,21 @@ public class ShibbolethController extends BaseController {
         String providerUserId = retrieveRemoteUser(headers);
         String providerId = headers.get(SHIB_IDENTITY_PROVIDER_HEADER);
         UserconnectionEntity userConnectionEntity = userConnectionDao.findByProviderIdAndProviderUserId(providerUserId, providerId);
-    	if (userConnectionEntity == null) {
-	        userConnectionEntity = new UserconnectionEntity();
-	        String randomId = Long.toString(new Random(Calendar.getInstance().getTimeInMillis()).nextLong());
-	        UserconnectionPK pk = new UserconnectionPK(randomId, providerId, providerUserId);
-	        OrcidProfile profile = getRealProfile();
-	        userConnectionEntity.setEmail(providerUserId);
-	        userConnectionEntity.setOrcid(profile.getOrcidIdentifier().getPath());
-	        userConnectionEntity.setProfileurl(profile.getOrcidIdentifier().getUri());
-	        userConnectionEntity.setDisplayname(profile.getOrcidBio().getPersonalDetails().getGivenNames().getContent());
-	        userConnectionEntity.setRank(1);
-	        userConnectionEntity.setId(pk);
-	        userConnectionEntity.setLinked(true);
-	        userConnectionEntity.setLastLogin(new Timestamp(new Date().getTime()));
-	        userConnectionDao.persist(userConnectionEntity);
-    	}
-    	 return new ModelAndView("redirect:/my-orcid");
+        if (userConnectionEntity == null) {
+            userConnectionEntity = new UserconnectionEntity();
+            String randomId = Long.toString(new Random(Calendar.getInstance().getTimeInMillis()).nextLong());
+            UserconnectionPK pk = new UserconnectionPK(randomId, providerId, providerUserId);
+            OrcidProfile profile = getRealProfile();
+            userConnectionEntity.setOrcid(profile.getOrcidIdentifier().getPath());
+            userConnectionEntity.setProfileurl(profile.getOrcidIdentifier().getUri());
+            userConnectionEntity.setDisplayname(retrieveDisplayName(headers));
+            userConnectionEntity.setRank(1);
+            userConnectionEntity.setId(pk);
+            userConnectionEntity.setLinked(true);
+            userConnectionEntity.setLastLogin(new Timestamp(new Date().getTime()));
+            userConnectionDao.persist(userConnectionEntity);
+        }
+        return new ModelAndView("redirect:/my-orcid");
     }
 
     private void checkEnabled() {
@@ -139,6 +140,28 @@ public class ShibbolethController extends BaseController {
             }
         }
         throw new OrcidBadRequestException("Couldn't find remote user header");
+    }
+
+    private String retrieveDisplayName(Map<String, String> headers) {
+        String eppn = headers.get("eppn");
+        if (StringUtils.isNotBlank(eppn)) {
+            return eppn;
+        }
+        String displayName = headers.get("displayName");
+        if (StringUtils.isNotBlank(displayName)) {
+            return displayName;
+        }
+        String givenName = headers.get("givenName");
+        String sn = headers.get("sn");
+        String combinedNames = StringUtils.join(new String[] { givenName, sn }, ' ');
+        if (StringUtils.isNotBlank(combinedNames)) {
+            return combinedNames;
+        }
+        String remoteUser = retrieveRemoteUser(headers);
+        if (StringUtils.isNotBlank(remoteUser)) {
+            return remoteUser.substring(remoteUser.lastIndexOf("!"));
+        }
+        throw new OrcidBadRequestException("Couldn't find any user display name headers");
     }
 
 }

@@ -56,7 +56,14 @@ public class DateUtils {
     }
 
     public static XMLGregorianCalendar convertToXMLGregorianCalendar(String dateString) {
-        String tidyDateString = tidy(dateString);
+        return convertToXMLGregorianCalendar(dateString, true);
+    }
+    
+    public static XMLGregorianCalendar convertToXMLGregorianCalendar(String dateString, boolean tidy) {
+        String tidyDateString = dateString;
+        if(tidy) {
+            tidyDateString = tidy(dateString);
+        }
         if (tidyDateString == null) {
             return null;
         }

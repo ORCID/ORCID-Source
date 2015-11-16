@@ -27,9 +27,12 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.orcid.core.manager.ClientDetailsEntityCacheManager;
+import org.orcid.core.oauth.service.OrcidOAuth2RequestValidator;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientScopeEntity;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.springframework.security.oauth2.common.exceptions.InvalidScopeException;
 import org.springframework.security.oauth2.provider.ClientDetailsService;
 import org.springframework.security.oauth2.provider.OAuth2RequestFactory;
@@ -43,53 +46,64 @@ public class OrcidClientCredentialsCheckerTest {
 
     @Mock
     private ClientDetailsService clientDetailsService;
+    
+    @Mock
+    private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
 
+    @Mock 
+    private OrcidOAuth2RequestValidator orcidOAuth2RequestValidator;
+    
     private OAuth2RequestFactory oAuth2RequestFactory;
+
+    private OrcidClientCredentialsChecker checker;
     
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        oAuth2RequestFactory = new DefaultOAuth2RequestFactory(clientDetailsService);
+        oAuth2RequestFactory = new DefaultOAuth2RequestFactory(clientDetailsService); 
+        checker = new OrcidClientCredentialsChecker(oAuth2RequestFactory);
+        checker.setClientDetailsEntityCacheManager(clientDetailsEntityCacheManager);
+        checker.setOrcidOAuth2RequestValidator(orcidOAuth2RequestValidator);
     }
 
     @Test(expected = InvalidScopeException.class)
     public void testInvalidCredentialsScopes() throws Exception {
-        ClientDetailsEntity clientDetailsEntity = new ClientDetailsEntity();
-        Set<ClientScopeEntity> scopes = new HashSet<ClientScopeEntity>(2);
-        scopes.add(new ClientScopeEntity(ScopePathType.ORCID_WORKS_UPDATE.value()));
-        scopes.add(new ClientScopeEntity(ScopePathType.ORCID_BIO_READ_LIMITED.value()));
-        clientDetailsEntity.setClientScopes(scopes);
-        String orcid = "2875-8158-1475-6194";
-        when(clientDetailsService.loadClientByClientId(orcid)).thenReturn(clientDetailsEntity);
-        OrcidClientCredentialsChecker checker = new OrcidClientCredentialsChecker(clientDetailsService, oAuth2RequestFactory);
-        Set<String> requestedScopes = new HashSet<String>(Arrays.asList(ScopePathType.ORCID_WORKS_UPDATE.value()));
-        checker.validateCredentials("client_credentials", new TokenRequest(Collections.<String, String> emptyMap(), orcid, requestedScopes, "client_credentials"));        
+        String memberId = "2875-8158-1475-6194";
+        String clientId = "APP-1";
+        setupMocks(clientId, memberId);
+        Set<String> requestedScopes = new HashSet<String>(Arrays.asList(ScopePathType.FUNDING_CREATE.value()));
+        checker.validateCredentials("client_credentials", new TokenRequest(Collections.<String, String> emptyMap(), clientId, requestedScopes, "client_credentials"));
     }
 
     @Test
     public void testValidCredentialsScopes() throws Exception {
-        ClientDetailsEntity clientDetailsEntity = new ClientDetailsEntity();
-        Set<ClientScopeEntity> scopes = new HashSet<ClientScopeEntity>(2);
-        scopes.add(new ClientScopeEntity(ScopePathType.ORCID_WORKS_UPDATE.value()));
-        scopes.add(new ClientScopeEntity(ScopePathType.ORCID_BIO_READ_LIMITED.value()));
-        clientDetailsEntity.setClientScopes(scopes);
-        String orcid = "2875-8158-1475-6194";
-        when(clientDetailsService.loadClientByClientId(orcid)).thenReturn(clientDetailsEntity);
-        OrcidClientCredentialsChecker checker = new OrcidClientCredentialsChecker(clientDetailsService, oAuth2RequestFactory);
-        Set<String> requestedScopes = new HashSet<String>(Arrays.asList(ScopePathType.READ_PUBLIC.value()));        
-        checker.validateCredentials("client_credentials", new TokenRequest(Collections.<String, String> emptyMap(), orcid, requestedScopes, "client_credentials"));
+        String memberId = "2875-8158-1475-6194";
+        String clientId = "APP-1";
+        setupMocks(clientId, memberId);
+        Set<String> requestedScopes = new HashSet<String>(Arrays.asList(ScopePathType.READ_PUBLIC.value()));
+        checker.validateCredentials("client_credentials", new TokenRequest(Collections.<String, String> emptyMap(), clientId, requestedScopes, "client_credentials"));
     }
 
     @Test
     public void testValidCredentialsScopesForClientOnly() throws Exception {
+        String memberId = "2875-8158-1475-6194";
+        String clientId = "APP-1";
+        setupMocks(clientId, memberId);
+        Set<String> requestedScopes = new HashSet<String>(Arrays.asList(ScopePathType.READ_PUBLIC.value()));
+        checker.validateCredentials("client_credentials", new TokenRequest(Collections.<String, String> emptyMap(), clientId, requestedScopes, "client_credentials"));
+    }
+    
+    private void setupMocks(String clientId, String memberId) {
         ClientDetailsEntity clientDetailsEntity = new ClientDetailsEntity();
-        Set<ClientScopeEntity> scopes = new HashSet<ClientScopeEntity>(2);
+        Set<ClientScopeEntity> scopes = new HashSet<ClientScopeEntity>(3);
+        scopes.add(new ClientScopeEntity(ScopePathType.ORCID_WORKS_UPDATE.value()));
+        scopes.add(new ClientScopeEntity(ScopePathType.ORCID_BIO_READ_LIMITED.value()));
         scopes.add(new ClientScopeEntity(ScopePathType.ORCID_PROFILE_CREATE.value()));
         clientDetailsEntity.setClientScopes(scopes);
-        String orcid = "2875-8158-1475-6194";
-        when(clientDetailsService.loadClientByClientId(orcid)).thenReturn(clientDetailsEntity);
-        OrcidClientCredentialsChecker checker = new OrcidClientCredentialsChecker(clientDetailsService, oAuth2RequestFactory);
-        Set<String> requestedScopes = new HashSet<String>(Arrays.asList(ScopePathType.READ_PUBLIC.value()));        
-        checker.validateCredentials("client_credentials", new TokenRequest(Collections.<String, String> emptyMap(), orcid, requestedScopes, "client_credentials"));
+        clientDetailsEntity.setGroupProfileId(memberId);
+        ProfileEntity profile = new ProfileEntity(memberId);
+        profile.setRecordLocked(false);
+        when(clientDetailsService.loadClientByClientId(clientId)).thenReturn(clientDetailsEntity);
+        when(clientDetailsEntityCacheManager.retrieve(clientId)).thenReturn(clientDetailsEntity);
     }
 }
