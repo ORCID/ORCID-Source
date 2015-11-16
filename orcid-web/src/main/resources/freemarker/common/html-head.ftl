@@ -81,6 +81,7 @@
     <![endif]-->
     <link rel="stylesheet" href="${staticCdn}/css/orcid.new.css?v=${ver}"/>
     <link rel="stylesheet" type="text/css" href="${staticCdn}/css/idpselect.css" />
+
     <!--[if lt IE 8]>
     	<link rel="stylesheet" href="${staticCdn}/css/orcid-ie7.css?v=${ver}"/>
     <![endif]-->
