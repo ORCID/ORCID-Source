@@ -24,7 +24,7 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
 
 import org.orcid.core.manager.ProfileEntityCacheManager;
-import org.orcid.core.manager.ProfileEntityManager;
+import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.utils.ReleaseNameUtils;
 import org.slf4j.Logger;
@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
 public class ProfileEntityCacheManagerImpl implements ProfileEntityCacheManager {
 
     @Resource
-    ProfileEntityManager profileEntityManager;
+    private ProfileDao profileDao;
 
     LockerObjectsManager pubLocks = new LockerObjectsManager();
 
@@ -56,7 +56,7 @@ public class ProfileEntityCacheManagerImpl implements ProfileEntityCacheManager 
                 synchronized (lockers.obtainLock(orcid)) {
                     profile = toProfileEntity(profileCache.get(orcid));
                     if (needsFresh(dbDate, profile)) {
-                        profile = profileEntityManager.findByOrcid(orcid);
+                        profile = profileDao.find(orcid);
                         if(profile == null)
                             throw new IllegalArgumentException("Invalid orcid " + orcid);
                         profileCache.put(new Element(key, profile));
@@ -96,7 +96,7 @@ public class ProfileEntityCacheManagerImpl implements ProfileEntityCacheManager 
     private Date retrieveLastModifiedDate(String orcid) {
         Date date = null;
         try {
-            date = profileEntityManager.getLastModified(orcid);
+            date = profileDao.retrieveLastModifiedDate(orcid);
         } catch (javax.persistence.NoResultException e) {
              LOG.debug("Missing retrieveLastModifiedDate orcid:" + orcid);   
         }

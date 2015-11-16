@@ -13,6 +13,7 @@ function IdPSelectUIParms(){
     this.defaultReturn = orcidVar.baseUri + '/Shibboleth.sso/Login?SAMLDS=1&target=' + orcidVar.baseUri + '/shibboleth/link';       // If non null, then the default place to send users who are not
                                      // Approaching via the Discovery Protocol for example
     //this.defaultReturn = "https://example.org/Shibboleth.sso/DS?SAMLDS=1&target=https://example.org/secure";
+    this.ignoreURLParams = true;
     this.defaultReturnIDParam = null;
     this.helpURL = 'https://wiki.shibboleth.net/confluence/display/SHIB2/DSRoadmap';
     this.ie6Hack = null;             // An array of structures to disable when drawing the pull down (needed to 

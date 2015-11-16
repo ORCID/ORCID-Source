@@ -36,6 +36,10 @@
 	
     <context:mbean-server />
 
+	<bean id="orcidOAuth2RequestValidator" class="org.orcid.core.oauth.service.OrcidOAuth2RequestValidator">
+		<constructor-arg ref="profileEntityCacheManager" />
+	</bean>
+
 	<bean id="templateManager" class="org.orcid.core.manager.impl.TemplateManagerImpl" />
 
 	<bean id="notificationManager" class="org.orcid.core.manager.impl.NotificationManagerImpl">
@@ -582,6 +586,11 @@
         <property name="mapperFacade" ref="emailMapperFacade" />
     </bean>
     
+    <bean id="otherNameUrlMapperFacade" factory-bean="&amp;mapperFacadeFactory" factory-method="getOtherNameMapperFacade"/>
+	<bean id="jpaJaxbOtherNameAdapter" class="org.orcid.core.adapter.impl.JpaJaxbOtherNameAdapterImpl">
+        <property name="mapperFacade" ref="otherNameUrlMapperFacade" />
+    </bean>
+    
     <!-- Geonames username -->
 	<bean id="geonamesUser" class="java.lang.String">
 		<constructor-arg value="orcid"/>
@@ -592,5 +601,5 @@
 		<constructor-arg value="http://api.geonames.org/getJSON"/>
 	</bean>	
 	
-	<bean id="crossDomainWebManger" class="org.orcid.core.web.filters.CrossDomainWebManger" />
+	<bean id="crossDomainWebManger" class="org.orcid.core.web.filters.CrossDomainWebManger" />		
 </beans>

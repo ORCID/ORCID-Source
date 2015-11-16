@@ -31,8 +31,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.orcid.jaxb.model.record.City;
-import org.orcid.jaxb.model.record.Region;
+import org.orcid.jaxb.model.record_rc1.City;
+import org.orcid.jaxb.model.record_rc1.Region;
 
 /**
  * <p>

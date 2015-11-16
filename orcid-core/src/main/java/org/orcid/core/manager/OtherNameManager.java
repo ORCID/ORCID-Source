@@ -62,4 +62,14 @@ public interface OtherNameManager {
      * @param otherNames
      * */
     public void updateOtherNames(String orcid, OtherNames otherNames);
+
+    org.orcid.jaxb.model.record_rc2.OtherNames getOtherNamesV2(String orcid);
+    
+    org.orcid.jaxb.model.record_rc2.OtherName getOtherNameV2(String orcid, String putCode);
+
+    boolean deleteOtherNameV2(String orcid, String putCode);
+
+    org.orcid.jaxb.model.record_rc2.OtherName createOtherNameV2(String orcid, org.orcid.jaxb.model.record_rc2.OtherName otherName);
+
+    org.orcid.jaxb.model.record_rc2.OtherName updateOtherNameV2(String orcid, String putCode, org.orcid.jaxb.model.record_rc2.OtherName otherName);
 }

@@ -76,6 +76,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
+import org.springframework.security.web.csrf.CsrfToken;
+import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -142,6 +144,9 @@ public class BaseController {
     
     @Resource
     private InternalSSOManager internalSSOManager;
+    
+    @Resource
+    protected CsrfTokenRepository csrfTokenRepository;
 
     protected static final String EMPTY = "empty";
 
@@ -353,7 +358,10 @@ public class BaseController {
 		}
 		if (authentication != null && authentication.isAuthenticated()) {
 			new SecurityContextLogoutHandler().logout(request, response, authentication);
-		}		
+		}
+		CsrfToken token = csrfTokenRepository.generateToken(request);
+		csrfTokenRepository.saveToken(token, request, response);
+		request.setAttribute("_csrf", token);
 	}
 
     protected boolean isEmailOkForCurrentUser(String decryptedEmail) {

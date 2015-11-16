@@ -30,13 +30,11 @@
 	
 	<sec:global-method-security pre-post-annotations="enabled" />
 
-	<bean id="orcidOAuth2RequestValidator" class="org.orcid.core.oauth.service.OrcidOAuth2RequestValidator" />		
-
 	<bean id="authorizationEndpoint" class="org.orcid.core.oauth.service.OrcidAuthorizationEndpoint">
 		<property name="authorizationCodeServices" ref="orcidAuthorizationCodeService" />
 		<property name="clientDetailsService" ref="clientDetailsManager" />
 		<property name="tokenGranter" ref="tokenGranter" />
-		<property name="orcidOAuth2RequestValidator" ref="orcidOAuth2RequestValidator" />
+		<property name="orcidOAuth2RequestValidator" ref="orcidOAuth2RequestValidator" />		
 	</bean>
 
 	<bean id="userDetailsService" class="org.orcid.core.security.OrcidUserDetailsService" />
@@ -78,6 +76,20 @@
 	</bean>
 	<bean id="ajaxAuthenticationFailureHandler"
 		class="org.orcid.frontend.spring.AjaxAuthenticationFailureHandler" />
+		
+	<bean id="ajaxAuthenticationSuccessHandlerShibboleth"
+        class="org.orcid.frontend.spring.AjaxAuthenticationSuccessHandler">
+        <property name="defaultTargetUrl" value="/shibboleth/link" />
+    </bean>
+    <bean id="ajaxAuthenticationFailureHandlerShibboleth"
+        class="org.orcid.frontend.spring.AjaxAuthenticationFailureHandler" />
+        
+    <bean id="ajaxAuthenticationSuccessHandlerSocial"
+        class="org.orcid.frontend.spring.AjaxAuthenticationSuccessHandler">
+        <property name="defaultTargetUrl" value="/social/link" />
+    </bean>
+    <bean id="ajaxAuthenticationFailureHandlerSocial"
+        class="org.orcid.frontend.spring.AjaxAuthenticationFailureHandler" />
 
 	<sec:authentication-manager alias="authenticationManager">
 		<sec:authentication-provider
@@ -96,6 +108,8 @@
             </bean>
         </property>
     </bean>
+    
+    <bean id="csrfTokenRepo" class="org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository"/>
 
 	<sec:http pattern="/" security="none" />
 	<sec:http pattern="/robots.txt" security="none" create-session="stateless" />
@@ -119,7 +133,7 @@
 	<sec:http pattern="/oauth/.*" access-denied-page="/oauth/signin"
 		access-decision-manager-ref="accessDecisionManager" create-session="ifRequired"
 		path-type="regex">
-		<sec:csrf/>
+		<sec:csrf token-repository-ref="csrfTokenRepo"/>
 		<sec:intercept-url pattern="/oauth/login(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/oauth/signin(\?.*)?"
@@ -157,13 +171,14 @@
 	<sec:http pattern="/shibboleth/.*" access-denied-page="/shibboleth/signin"
 		access-decision-manager-ref="accessDecisionManager" create-session="ifRequired"
 		path-type="regex">
-		<sec:csrf/>
+		<sec:csrf token-repository-ref="csrfTokenRepo"/>
 		<sec:intercept-url pattern="/shibboleth/signin(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/shibboleth/.*" access="ROLE_USER" />		
-		<sec:form-login authentication-failure-url="/shibboleth/signin"
-			login-page="/shibboleth/signin" login-processing-url="/signin/auth"
-			username-parameter="userId" password-parameter="password"
+		<sec:form-login login-processing-url="/shibboleth/signin/auth.json"
+			login-page="${org.orcid.core.baseUri}/shibboleth/signin" authentication-success-handler-ref="ajaxAuthenticationSuccessHandlerShibboleth"
+			authentication-failure-handler-ref="ajaxAuthenticationFailureHandlerShibboleth"
+			username-parameter="userId" password-parameter="password" 
 			default-target-url="/shibboleth/link" />
 		<sec:session-management session-fixation-protection="migrateSession"/>
 	</sec:http>
@@ -171,20 +186,22 @@
 	<sec:http pattern="/social/.*" access-denied-page="/signin"
 		access-decision-manager-ref="accessDecisionManager" create-session="ifRequired"
 		path-type="regex">
-		<sec:csrf/>
+		<sec:csrf token-repository-ref="csrfTokenRepo"/>
 		<sec:intercept-url pattern="/social/access(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/social/.*" access="ROLE_USER" />		
-		<sec:form-login authentication-failure-url="/social/access"
-			login-page="/social/access" login-processing-url="/signin/auth"
-			username-parameter="userId" password-parameter="password" />
+		<sec:form-login login-processing-url="/social/signin/auth.json"
+			login-page="${org.orcid.core.baseUri}/social/access" authentication-success-handler-ref="ajaxAuthenticationSuccessHandlerSocial"
+			authentication-failure-handler-ref="ajaxAuthenticationFailureHandlerSocial"
+			username-parameter="userId" password-parameter="password" 
+			default-target-url="/social/link" />
 		<sec:session-management session-fixation-protection="migrateSession"/>
 	</sec:http>
 
 	<sec:http access-denied-page="/signin"
 		access-decision-manager-ref="accessDecisionManager" create-session="ifRequired"
 		path-type="regex">
-		<sec:csrf/>
+		<sec:csrf token-repository-ref="csrfTokenRepo"/>
 		<sec:custom-filter position="SWITCH_USER_FILTER" ref="switchUserProcessingFilter" />
 		<sec:intercept-url pattern="/statistics/liveids.json(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
@@ -399,7 +416,6 @@
         <property name="clientDetailsService" ref="clientDetailsManager"/>        
     </bean>
     <bean id="orcidClientCredentialsChecker" class="org.orcid.core.oauth.OrcidClientCredentialsChecker">
-        <constructor-arg ref="clientDetailsManager"/>
         <constructor-arg ref="oAuth2RequestFactory" />
     </bean>
     <bean id="clientCredentialsTokenGranter" class="org.orcid.core.oauth.OrcidClientCredentialsTokenGranter">

@@ -27,7 +27,7 @@ import java.io.Serializable;
 
 import org.orcid.jaxb.model.message.FundingExternalIdentifierType;
 import org.orcid.jaxb.model.message.Url;
-import org.orcid.jaxb.model.record.Relationship;
+import org.orcid.jaxb.model.record_rc1.Relationship;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 
 public class FundingExternalIdentifier implements Serializable {
@@ -120,11 +120,11 @@ public class FundingExternalIdentifier implements Serializable {
         return messagePojo;
     }
 
-    public org.orcid.jaxb.model.record.FundingExternalIdentifier toRecordPojo() {
-        org.orcid.jaxb.model.record.FundingExternalIdentifier recordPojo = new org.orcid.jaxb.model.record.FundingExternalIdentifier();
+    public org.orcid.jaxb.model.record_rc1.FundingExternalIdentifier toRecordPojo() {
+        org.orcid.jaxb.model.record_rc1.FundingExternalIdentifier recordPojo = new org.orcid.jaxb.model.record_rc1.FundingExternalIdentifier();
 
         if (this.getType() != null) {
-            org.orcid.jaxb.model.record.FundingExternalIdentifierType type = org.orcid.jaxb.model.record.FundingExternalIdentifierType.fromValue(this.getType().value());
+            org.orcid.jaxb.model.record_rc1.FundingExternalIdentifierType type = org.orcid.jaxb.model.record_rc1.FundingExternalIdentifierType.fromValue(this.getType().value());
             recordPojo.setType(type);
         }
 
@@ -161,7 +161,7 @@ public class FundingExternalIdentifier implements Serializable {
         return result;
     }
 
-    public static FundingExternalIdentifier fromRecordPojo(org.orcid.jaxb.model.record.FundingExternalIdentifier recordPojo) {
+    public static FundingExternalIdentifier fromRecordPojo(org.orcid.jaxb.model.record_rc1.FundingExternalIdentifier recordPojo) {
         FundingExternalIdentifier result = new FundingExternalIdentifier();
         if (recordPojo.getType() != null) {
             result.setType(FundingExternalIdentifierType.fromValue(recordPojo.getType().value()));

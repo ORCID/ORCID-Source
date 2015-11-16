@@ -66,6 +66,7 @@
       orcidVar.realOrcidId = '${realUserOrcid!}';
       orcidVar.jsMessages = JSON.parse("${jsMessagesJson}");
       orcidVar.searchBaseUrl = "${searchBaseUrl}";
+      
     </script>    
     
     <link rel="stylesheet" href="${staticLoc}/css/fonts.css?v=${ver}"/>
@@ -79,7 +80,8 @@
         <link rel="stylesheet" href="${staticCdn}/twitter-bootstrap/3.1.0/css/bootstrap-ie7.css?v=${ver}"/>	                
     <![endif]-->
     <link rel="stylesheet" href="${staticCdn}/css/orcid.new.css?v=${ver}"/>
-
+    <link rel="stylesheet" type="text/css" href="${staticCdn}/css/idpselect.css" />
+    
     <!--[if lt IE 8]>
     	<link rel="stylesheet" href="${staticCdn}/css/orcid-ie7.css?v=${ver}"/>
     <![endif]-->
