@@ -243,14 +243,16 @@ public class PublicProfileController extends BaseWorkspaceController {
             e.printStackTrace();
         }
         
-        if(isProfileValidForIndex(profile)) {
-        	if(profile.isLocked() || profile.getCountTokens() == 0
-            		|| (!CreationMethod.WEBSITE.equals(profile.getOrcidHistory().getCreationMethod()) 
-            				&& !CreationMethod.DIRECT.equals(profile.getOrcidHistory().getCreationMethod()))) {
+        if(!profile.isReviewed()) {
+        	if(isProfileValidForIndex(profile)) {
+            	if(profile.isLocked() || profile.getCountTokens() == 0
+                		|| (!CreationMethod.WEBSITE.equals(profile.getOrcidHistory().getCreationMethod()) 
+                				&& !CreationMethod.DIRECT.equals(profile.getOrcidHistory().getCreationMethod()))) {
+                	mav.addObject("noIndex", true);
+                }
+            } else {
             	mav.addObject("noIndex", true);
             }
-        } else {
-        	mav.addObject("noIndex", true);
         }
         
         return mav;
