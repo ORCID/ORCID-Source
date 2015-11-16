@@ -3893,7 +3893,6 @@ ul.sso-options li span {
 	width: 100%;
 }
 
-
 /**************/
 
 .delegation-mode-warning {
@@ -4453,7 +4452,7 @@ ul.sources-edit-list > li{
 
 .workspace-profile span.glyphicon-pencil,
 #workspace-personal span.glyphicon-pencil{
-	float: right;
+	//float: right;
 	background: #949599;
 	padding: 5px;
 	border-radius: 50%;
@@ -5251,35 +5250,42 @@ ul.workspace-private-toolbar .popover-help-container .popover{
 	clear: both;
 }
 
-.qrcode-container{
+.qrcode-container,
+.print-orcid-record{
 	display: block;
 	width: 100%;
 	float: left; 
 	margin: 10px 0; 
 }
 
-.qrcode-container .orcid-qr{
+.qrcode-container .orcid-qr,
+.print-orcid-record .glyphicons-print{
 	padding-right: 19px;
 	padding-left: 0;
 	
 }
 
-.qrcode-container .orcid-qr:before{
+.qrcode-container .orcid-qr:before,
+.print-orcid-record .glyphicons-print:before{
 	color: #338caf;
 	top: -10px;
 	font: 16px/1em 'Glyphicons Regular'
 }
 
-.qrcode-container a{
+.qrcode-container a, 
+.print-orcid-record a{
 	color: #338caf;
 }
 
 .qrcode-container a:hover,
-.qrcode-container a:hover span:before{
+.qrcode-container a:hover span:before,
+.print-orcid-record a:hover,
+.print-orcid-record a:hover span:before{
 	color: #a6ce39;
 }
 
-.qrcode-container a:focus{
+.qrcode-container a:focus,
+.print-orcid-record a:focus{
 	text-decoration: none;
 }
 
