@@ -28,7 +28,7 @@
             last_modified="2011-07-02 15:31:00.00"           
             claimed="true"
             credit_name="Source Client Group 1"
-            credit_name_visibility="PUBLIC"
+            names_visibility="PUBLIC"
             profile_address_visibility="PRIVATE"
             external_identifiers_visibility="LIMITED"
             biography_visibility="PUBLIC"
