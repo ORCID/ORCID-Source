@@ -25,7 +25,6 @@
 			=============================================================================
 			The schema describes the message format used for ORCID API requests
 			and responses.
-			The top level element is orcid-message.
 		</xs:documentation>
 		<xs:appinfo>
 			<sch:title>Schematron validation</sch:title>
@@ -37,10 +36,11 @@
 	<xs:element name="other-names">
 		<xs:complexType>
 			<xs:annotation>
-				<xs:documentation>Container for URLs of the researcher or
-					contributor's sites. The visibility attribute (private, limited or
-					public) can be set at record creation, and indicates who can see
-					this section of information.
+				<xs:documentation>(Optional) Container that includes other name(s)
+						that the researcher or contributor may be known by. (see element
+						for more details.) The visibility attribute (private, limited or
+						public) can be set at record creation, and indicates who can see
+						this section of information.
 				</xs:documentation>
 			</xs:annotation>
 			<xs:sequence>

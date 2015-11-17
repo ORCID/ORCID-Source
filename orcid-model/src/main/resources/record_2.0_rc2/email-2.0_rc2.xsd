@@ -24,8 +24,7 @@
 
 			=============================================================================
 			The schema describes the message format used for ORCID API requests
-			and responses.
-			The top level element is orcid-message.
+			and responses.			
 		</xs:documentation>
 		<xs:appinfo>
 			<sch:title>Schematron validation</sch:title>
