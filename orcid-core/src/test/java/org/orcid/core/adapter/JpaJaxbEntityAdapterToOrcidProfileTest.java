@@ -467,10 +467,22 @@ public class JpaJaxbEntityAdapterToOrcidProfileTest extends DBUnitTest {
     }
 
     private void validateAgainstSchema(OrcidMessage orcidMessage) throws SAXException, IOException {
+        //We need to manually remove the visibility from the given and family names to match the schema
+        removeVisibilityAttributeFromNames(orcidMessage);
         SchemaFactory factory = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
         Schema schema = factory.newSchema(getClass().getResource("/orcid-message-" + OrcidMessage.DEFAULT_VERSION + ".xsd"));
         Validator validator = schema.newValidator();
         validator.validate(orcidMessage.toSource());
     }
 
+    private void removeVisibilityAttributeFromNames(OrcidMessage orcidMessage) {
+        if(orcidMessage != null && orcidMessage.getOrcidProfile() != null && orcidMessage.getOrcidProfile().getOrcidBio() != null && orcidMessage.getOrcidProfile().getOrcidBio().getPersonalDetails() != null) {
+            if(orcidMessage.getOrcidProfile().getOrcidBio().getPersonalDetails().getFamilyName() != null) {
+                orcidMessage.getOrcidProfile().getOrcidBio().getPersonalDetails().getFamilyName().setVisibility(null);
+            }
+            if(orcidMessage.getOrcidProfile().getOrcidBio().getPersonalDetails().getGivenNames() != null) {
+                orcidMessage.getOrcidProfile().getOrcidBio().getPersonalDetails().getGivenNames().setVisibility(null); 
+            }
+        }
+    }
 }
