@@ -222,6 +222,10 @@ public class OrcidApiAuthorizationSecurityAspect {
                             empty.setContent(StringUtils.EMPTY);
                             orcidMessage.getOrcidProfile().getOrcidBio().getPersonalDetails().setGivenNames(empty);
                         }
+                        
+                        if(orcidMessage.getOrcidProfile().getOrcidBio().getPersonalDetails().getFamilyName() != null) {
+                            orcidMessage.getOrcidProfile().getOrcidBio().getPersonalDetails().getFamilyName().setVisibility(null); 
+                        }
                     }
                 }                
             }                        
