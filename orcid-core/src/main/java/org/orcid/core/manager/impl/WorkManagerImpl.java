@@ -17,12 +17,15 @@
 package org.orcid.core.manager.impl;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
 import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.adapter.JpaJaxbWorkAdapter;
+import org.orcid.core.exception.WrongOwnerException;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.SourceManager;
@@ -153,12 +156,26 @@ public class WorkManagerImpl implements WorkManager {
      * */
     @Override
     public Work getWork(String orcid, Long workId) {
-        return jpaJaxbWorkAdapter.toWork(workDao.find(workId));
+        WorkEntity work = workDao.find(workId);
+        if(!orcid.equals(work.getProfile().getId())) {
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("element", "work");
+            params.put("user", orcid);
+            throw new WrongOwnerException(params);
+        }
+        return jpaJaxbWorkAdapter.toWork(work);
     }
 
     @Override
     public WorkSummary getWorkSummary(String orcid, Long workId) {
-        return jpaJaxbWorkAdapter.toWorkSummary(workDao.find(workId));
+        WorkEntity work = workDao.find(workId);
+        if(!orcid.equals(work.getProfile().getId())) {
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("element", "work");
+            params.put("user", orcid);
+            throw new WrongOwnerException(params);
+        }
+        return jpaJaxbWorkAdapter.toWorkSummary(work);
     }
 
     @Override
@@ -208,12 +225,18 @@ public class WorkManagerImpl implements WorkManager {
         if (applyValidations) {
             ActivityValidator.validateWork(work, false, sourceEntity);
             List<Work> existingWorks = this.findWorks(orcid, System.currentTimeMillis());
+            if(existingWorks == null || existingWorks.isEmpty()) {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("element", "work");
+                params.put("user", orcid);
+                throw new WrongOwnerException(params);
+            }
             for (Work existing : existingWorks) {
                 // Dont compare the updated peer review with the DB version
                 if (!existing.getPutCode().equals(work.getPutCode())) {
                     ActivityValidator.checkExternalIdentifiers(work.getExternalIdentifiers(), existing.getExternalIdentifiers(), existing.getSource(), sourceEntity);
                 }
-            }
+            }            
         }
         WorkEntity workEntity = workDao.find(Long.valueOf(work.getPutCode()));
         Visibility originalVisibility = Visibility.fromValue(workEntity.getVisibility().value());
