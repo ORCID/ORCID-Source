@@ -194,7 +194,7 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
     @NonLocked
     public Response findFullDetailsFromPublicCache(String orcid) {
         try {
-            OrcidMessage orcidMessage = orcidSearchManager.findPublicProfileById(orcid);
+            OrcidMessage orcidMessage = orcidSearchManager.findPublicProfileById(orcid);            
             return getOrcidMessageResponse(orcidMessage, orcid);
         } catch (OrcidSearchException e) {
             LOGGER.warn("Error searching, so falling back to DB", e);
@@ -422,7 +422,17 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
         } else {
             response = Response.ok(orcidMessage).build();
         }
-
+        
+        //Remove visibility from given and family names
+        if(orcidProfile.getOrcidBio() != null && orcidProfile.getOrcidBio().getPersonalDetails() != null) {
+            if(orcidProfile.getOrcidBio().getPersonalDetails().getGivenNames() != null) {
+                orcidProfile.getOrcidBio().getPersonalDetails().getGivenNames().setVisibility(null);
+            }
+            
+            if(orcidProfile.getOrcidBio().getPersonalDetails().getFamilyName() != null) {
+                orcidProfile.getOrcidBio().getPersonalDetails().getFamilyName().setVisibility(null);
+            }
+        }
         return response;
     }
 

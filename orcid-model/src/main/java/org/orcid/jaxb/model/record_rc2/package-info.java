@@ -21,11 +21,12 @@
 // Generated on: 2012.04.18 at 12:45:00 PM BST 
 //
 
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://www.orcid.org/ns/person", xmlns={
-		@javax.xml.bind.annotation.XmlNs(prefix = "other-name", namespaceURI = "http://www.orcid.org/ns/other-name"),
-		@javax.xml.bind.annotation.XmlNs(prefix = "common", namespaceURI = "http://www.orcid.org/ns/common"),
-		@javax.xml.bind.annotation.XmlNs(prefix = "person", namespaceURI = "http://www.orcid.org/ns/person"),
-        @javax.xml.bind.annotation.XmlNs(prefix = "researcher-url", namespaceURI = "http://www.orcid.org/ns/researcher-url")},
-		elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
+@javax.xml.bind.annotation.XmlSchema(namespace = "http://www.orcid.org/ns/person", xmlns = {
+        @javax.xml.bind.annotation.XmlNs(prefix = "other-name", namespaceURI = "http://www.orcid.org/ns/other-name"),
+        @javax.xml.bind.annotation.XmlNs(prefix = "common", namespaceURI = "http://www.orcid.org/ns/common"),
+        @javax.xml.bind.annotation.XmlNs(prefix = "person", namespaceURI = "http://www.orcid.org/ns/person"),
+        @javax.xml.bind.annotation.XmlNs(prefix = "researcher-url", namespaceURI = "http://www.orcid.org/ns/researcher-url"),
+        @javax.xml.bind.annotation.XmlNs(prefix = "personal-details", namespaceURI = "http://www.orcid.org/ns/personal-details") },
+        elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
 package org.orcid.jaxb.model.record_rc2;
 

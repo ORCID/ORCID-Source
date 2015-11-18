@@ -25,9 +25,13 @@ package org.orcid.jaxb.model.message;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
+
+import org.orcid.jaxb.model.message.Visibility;
+
 import java.io.Serializable;
 
 /**
@@ -58,6 +62,8 @@ public class GivenNames implements Serializable {
 
     @XmlValue
     protected String content;
+    @XmlAttribute
+    protected Visibility visibility;
 
     public GivenNames() {
     }
@@ -85,6 +91,27 @@ public class GivenNames implements Serializable {
      */
     public void setContent(String value) {
         this.content = value;
+    }
+        
+    /**
+     * Gets the value of the visibility attribute.
+     * 
+     * @return possible object is {@link Visibility }
+     * 
+     */
+    public Visibility getVisibility() {
+        return visibility;
+    }
+
+    /**
+     * Sets the value of the visibility attribute.
+     * 
+     * @param visibility
+     *            allowed object is {@link Visibility }
+     * 
+     */
+    public void setVisibility(Visibility visibility) {
+        this.visibility = visibility;
     }
 
     @Override

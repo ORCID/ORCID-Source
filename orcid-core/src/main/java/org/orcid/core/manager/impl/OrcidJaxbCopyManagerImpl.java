@@ -488,7 +488,7 @@ public class OrcidJaxbCopyManagerImpl implements OrcidJaxbCopyManager {
 
         // otherwise take into account the visibility of updated and existing
         Visibility existingVisibility = (existingCreditName != null && existingCreditName.getVisibility() != null) ? existingCreditName.getVisibility()
-                : OrcidVisibilityDefaults.CREDIT_NAME_DEFAULT.getVisibility();
+                : OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility();
         // If it is private, ignore the request
         if (!existingVisibility.equals(Visibility.PRIVATE)) {
             Visibility updatedVisibility = (updatedCreditName != null && updatedCreditName.getVisibility() != null) ? updatedCreditName.getVisibility()

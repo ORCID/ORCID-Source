@@ -41,33 +41,29 @@ public class PersonalDetailsManagerImpl implements PersonalDetailsManager {
     private SourceManager sourceManager;
     
     @Resource
-    private ProfileEntityCacheManager profileEntityManager;
+    private ProfileEntityCacheManager profileEntityCacheManager;
     
     @Resource
     private OtherNameManager otherNamesManager;
     
     @Override
     public PersonalDetails getPersonalDetails(String orcid) {
-        ProfileEntity profileEntity = profileEntityManager.retrieve(orcid);
+        ProfileEntity profileEntity = profileEntityCacheManager.retrieve(orcid);
         OtherNames otherNames = otherNamesManager.getOtherNamesV2(orcid);
         PersonalDetails personalDetails = new PersonalDetails();
         if(profileEntity != null) {
+            Visibility visibility = null;
+            if(!PojoUtil.isEmpty(profileEntity.getNamesVisibility().value())) {
+                visibility = Visibility.fromValue(profileEntity.getNamesVisibility().value());
+            }
             if(!PojoUtil.isEmpty(profileEntity.getCreditName())) {
-                Visibility visibility = null;
-                if(!PojoUtil.isEmpty(profileEntity.getNamesVisibility().value())) {
-                    visibility = Visibility.fromValue(profileEntity.getNamesVisibility().value());
-                }
-                personalDetails.setCreditName(new CreditName(profileEntity.getCreditName(), visibility));
+             personalDetails.setCreditName(new CreditName(profileEntity.getCreditName(), visibility));
             }
             if(!PojoUtil.isEmpty(profileEntity.getFamilyName())) {
-                FamilyName familyName = new FamilyName();
-                familyName.setContent(profileEntity.getFamilyName());
-                personalDetails.setFamilyName(familyName);
+                personalDetails.setFamilyName(new FamilyName(profileEntity.getFamilyName(), visibility));                
             }
             if(!PojoUtil.isEmpty(profileEntity.getGivenNames())){
-                GivenNames givenNames = new GivenNames();
-                givenNames.setContent(profileEntity.getGivenNames());
-                personalDetails.setGivenNames(givenNames);
+                personalDetails.setGivenNames(new GivenNames(profileEntity.getGivenNames(), visibility));
             }
             personalDetails.setOtherNames(otherNames);
         }        

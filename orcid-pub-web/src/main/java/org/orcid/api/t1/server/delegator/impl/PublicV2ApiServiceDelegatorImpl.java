@@ -157,7 +157,7 @@ public class PublicV2ApiServiceDelegatorImpl implements PublicV2ApiServiceDelega
         Work w = (Work) this.viewWork(orcid, putCode).getEntity();
         ProfileEntity entity = profileEntityManager.findByOrcid(orcid);
         String creditName = null;
-        if (!entity.getCreditNameVisibility().isMoreRestrictiveThan(Visibility.PUBLIC)){
+        if (!entity.getNamesVisibility().isMoreRestrictiveThan(Visibility.PUBLIC)){
             creditName = entity.getCreditName();
         }
         WorkToCiteprocTranslator tran = new  WorkToCiteprocTranslator();

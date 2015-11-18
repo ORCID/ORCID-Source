@@ -29,9 +29,9 @@ import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.jaxb.model.common.VisibilityType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType( propOrder = { "content" })
+@XmlType(propOrder = { "content" })
 @XmlRootElement(name = "family-name")
-public class FamilyName implements Serializable, VisibilityType {        
+public class FamilyName implements Serializable, VisibilityType {
     private static final long serialVersionUID = -3413526274697486506L;
 
     @XmlValue
@@ -39,6 +39,19 @@ public class FamilyName implements Serializable, VisibilityType {
 
     @XmlAttribute
     protected Visibility visibility;
+
+    public FamilyName() {
+
+    }
+
+    public FamilyName(String content) {
+        this.content = content;
+    }
+
+    public FamilyName(String content, Visibility visibility) {
+        this.content = content;
+        this.visibility = visibility;
+    }
 
     public String getContent() {
         return content;
@@ -82,5 +95,5 @@ public class FamilyName implements Serializable, VisibilityType {
         if (visibility != other.visibility)
             return false;
         return true;
-    }            
+    }
 }

@@ -433,9 +433,9 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     }
 
     private PersonalDetails getPersonalDetails(ProfileEntity profileEntity) {
-        PersonalDetails personalDetails = new PersonalDetails();
-        personalDetails.setGivenNames(getGivenNames(profileEntity.getGivenNames()));
-        personalDetails.setFamilyName(getFamilyName(profileEntity.getFamilyName()));
+        PersonalDetails personalDetails = new PersonalDetails();   
+        personalDetails.setGivenNames(getGivenNames(profileEntity));
+        personalDetails.setFamilyName(getFamilyName(profileEntity));
         personalDetails.setCreditName(getCreditName(profileEntity));
         personalDetails.setOtherNames(getOtherNames(profileEntity));
         return personalDetails;
@@ -885,8 +885,8 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                 // it regardless of privacy.
                 return creditName;
             }
-            Visibility creditNameVisibilty = groupProfile.getCreditNameVisibility();
-            if (Visibility.PUBLIC.equals(creditNameVisibilty)) {
+            Visibility namesVisibilty = groupProfile.getNamesVisibility();
+            if (Visibility.PUBLIC.equals(namesVisibilty)) {
                 return creditName;
             }
         }
@@ -1039,19 +1039,21 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         return otherNames;
     }
 
-    private GivenNames getGivenNames(String givenNames) {
-        if (StringUtils.isNotBlank(givenNames)) {
+    private GivenNames getGivenNames(ProfileEntity profileEntity) {
+        if (StringUtils.isNotBlank(profileEntity.getGivenNames())) {
             GivenNames names = new GivenNames();
-            names.setContent(givenNames);
+            names.setContent(profileEntity.getGivenNames());
+            names.setVisibility(profileEntity.getNamesVisibility());
             return names;
         }
         return null;
     }
 
-    private FamilyName getFamilyName(String familyName) {
-        if (StringUtils.isNotBlank(familyName)) {
+    private FamilyName getFamilyName(ProfileEntity profileEntity) {
+        if (StringUtils.isNotBlank(profileEntity.getFamilyName())) {
             FamilyName name = new FamilyName();
-            name.setContent(familyName);
+            name.setContent(profileEntity.getFamilyName());
+            name.setVisibility(profileEntity.getNamesVisibility());
             return name;
         }
         return null;
@@ -1062,7 +1064,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         if (StringUtils.isNotBlank(creditName)) {
             CreditName name = new CreditName();
             name.setContent(creditName);
-            name.setVisibility(profileEntity.getCreditNameVisibility());
+            name.setVisibility(profileEntity.getNamesVisibility());
             return name;
         }
         return null;

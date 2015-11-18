@@ -40,6 +40,19 @@ public class GivenNames implements Serializable, VisibilityType {
     @XmlAttribute
     protected Visibility visibility;
 
+    public GivenNames() {
+
+    }
+
+    public GivenNames(String content) {
+        this.content = content;
+    }
+
+    public GivenNames(String content, Visibility visibility) {
+        this.content = content;
+        this.visibility = visibility;
+    }
+    
     public String getContent() {
         return content;
     }

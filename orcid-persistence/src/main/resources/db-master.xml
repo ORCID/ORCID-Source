@@ -167,4 +167,5 @@
     <include file="/db/updates/add_administrative_changes_option.xml"/>
     <include file="/db/updates/nullify_empty_translated_titles.xml"/>
     <include file="/db/updates/add_source_to_other_names.xml" />
+    <include file="/db/updates/rename_credit_name_visibility_to_names_visibility.xml" />
 </databaseChangeLog>
