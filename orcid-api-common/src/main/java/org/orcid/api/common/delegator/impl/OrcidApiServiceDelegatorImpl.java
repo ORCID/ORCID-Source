@@ -39,7 +39,6 @@ import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.OrcidProfileManagerReadOnly;
 import org.orcid.core.manager.OrcidSearchManager;
-import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.security.aop.NonLocked;
 import org.orcid.core.security.visibility.aop.AccessControl;
 import org.orcid.core.security.visibility.aop.VisibilityControl;
@@ -421,18 +420,7 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
             throw new OrcidDeprecatedException(params);
         } else {
             response = Response.ok(orcidMessage).build();
-        }
-        
-        //Remove visibility from given and family names
-        if(orcidProfile.getOrcidBio() != null && orcidProfile.getOrcidBio().getPersonalDetails() != null) {
-            if(orcidProfile.getOrcidBio().getPersonalDetails().getGivenNames() != null) {
-                orcidProfile.getOrcidBio().getPersonalDetails().getGivenNames().setVisibility(null);
-            }
-            
-            if(orcidProfile.getOrcidBio().getPersonalDetails().getFamilyName() != null) {
-                orcidProfile.getOrcidBio().getPersonalDetails().getFamilyName().setVisibility(null);
-            }
-        }
+        }        
         return response;
     }
 

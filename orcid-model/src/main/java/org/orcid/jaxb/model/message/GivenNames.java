@@ -56,7 +56,7 @@ import java.io.Serializable;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType( propOrder = { "content" })
 @XmlRootElement(name = "given-names")
-public class GivenNames implements Serializable {
+public class GivenNames implements Serializable, VisibilityType {
 
     private static final long serialVersionUID = 1L;
 

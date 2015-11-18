@@ -25,6 +25,7 @@ import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import org.apache.commons.lang.StringUtils;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
@@ -32,6 +33,8 @@ import org.orcid.core.oauth.OrcidOAuth2Authentication;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.security.PermissionChecker;
 import org.orcid.core.security.visibility.filter.VisibilityFilter;
+import org.orcid.jaxb.model.message.FamilyName;
+import org.orcid.jaxb.model.message.GivenNames;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.ScopePathType;
@@ -209,16 +212,29 @@ public class OrcidApiAuthorizationSecurityAspect {
             }
             
             //If the returning message contains the given or family names visibility, remove it
-            if(orcidMessage.getOrcidProfile() != null && orcidMessage.getOrcidProfile().getOrcidBio() != null && orcidMessage.getOrcidProfile().getOrcidBio().getPersonalDetails() != null) {
-                if(orcidMessage.getOrcidProfile().getOrcidBio().getPersonalDetails().getFamilyName() != null) {
-                    orcidMessage.getOrcidProfile().getOrcidBio().getPersonalDetails().getFamilyName().setVisibility(null); 
-                }
-                
-                if(orcidMessage.getOrcidProfile().getOrcidBio().getPersonalDetails().getGivenNames() != null) {
-                    orcidMessage.getOrcidProfile().getOrcidBio().getPersonalDetails().getGivenNames().setVisibility(null); 
-                }
-            }
-            
+            if(orcidMessage.getOrcidProfile() != null) {
+                if(orcidMessage.getOrcidProfile().getOrcidBio() != null) {
+                    if(orcidMessage.getOrcidProfile().getOrcidBio().getPersonalDetails() != null) {
+                        if(orcidMessage.getOrcidProfile().getOrcidBio().getPersonalDetails().getFamilyName() != null) {
+                            orcidMessage.getOrcidProfile().getOrcidBio().getPersonalDetails().getFamilyName().setVisibility(null); 
+                        } else {
+                            //Null family name could break client integrations, so, lets return an empty string
+                            FamilyName empty = new FamilyName();
+                            empty.setContent(StringUtils.EMPTY);
+                            orcidMessage.getOrcidProfile().getOrcidBio().getPersonalDetails().setFamilyName(empty);
+                        }
+                        
+                        if(orcidMessage.getOrcidProfile().getOrcidBio().getPersonalDetails().getGivenNames() != null) {
+                            orcidMessage.getOrcidProfile().getOrcidBio().getPersonalDetails().getGivenNames().setVisibility(null); 
+                        } else {
+                            //Null given names could break client integrations, so, lets return an empty string
+                            GivenNames empty = new GivenNames();
+                            empty.setContent(StringUtils.EMPTY);
+                            orcidMessage.getOrcidProfile().getOrcidBio().getPersonalDetails().setGivenNames(empty);
+                        }
+                    }
+                }                
+            }                        
         }
     }
 
