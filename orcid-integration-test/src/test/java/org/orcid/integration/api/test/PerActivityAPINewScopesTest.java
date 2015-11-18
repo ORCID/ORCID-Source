@@ -277,7 +277,7 @@ public class PerActivityAPINewScopesTest extends IntegrationTestBase {
     @Test
     public void activitiesReadLimitedTest() throws InterruptedException, JSONException {
         String userOrcid = user.getOrcidIdentifier().getPath();
-        String accessToken = oauthHelper.obtainAccessToken(client.getClientId(), client.getClientSecret(), "/activities/read-limited /activities/update", email, password, getRedirectUri(), true);
+        String accessToken = oauthHelper.obtainAccessToken(client.getClientId(), client.getClientSecret(), "/read-limited /activities/update", email, password, getRedirectUri(), true);
         String workTitle = addWork(userOrcid, accessToken);
         String fundingTitle = addFunding(userOrcid, accessToken);
         String orgName = addAffiliation(userOrcid, accessToken);
