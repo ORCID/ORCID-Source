@@ -8969,6 +8969,7 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
     $scope.showLongDescription = {};
     $scope.recaptchaWidgetId = null;
     $scope.recatchaResponse = null;
+    $scope.personalLogin = true;
 
     $scope.model = {
             key: orcidVar.recaptchaKey
@@ -9372,8 +9373,49 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
     $scope.setRecatchaResponse = function (response) {        
         console.log('Yey recaptcha response!');
         $scope.recatchaResponse = response;        
-    };           
+    };   
+    
+    
 }]);
+
+orcidNgModule.controller('LoginLayoutController',['$scope', function ($scope){
+    
+    $scope.personalLogin = true; //Flag to show or not Personal or Institution Account Login
+    $scope.scriptsInjected = false; //Flag to show or not the spinner
+    $scope.counter = 0; //To hide the spinner when the second script has been loaded, not the first one.
+    
+    $scope.showPersonalLogin = function () {        
+        $scope.personalLogin = true;        
+    };
+    
+    $scope.showInstitutionLogin = function () {
+        $scope.personalLogin = false; //Hide Personal Login
+        
+        if(!$scope.scriptsInjected){ //If shibboleth scripts haven't been loaded yet.            
+            var scripts = ['/static/javascript/shibboleth-embedded-ds/1.1.0/idpselect_config.js', '/static/javascript/shibboleth-embedded-ds/1.1.0/idpselect.js'];            
+            angular.forEach(scripts, function(key) {                
+                $scope.addShibbolethScript(key);                
+            });
+        };
+    };
+    
+    $scope.addShibbolethScript = function(url){        
+        var head = document.getElementsByTagName('head')[0];
+        var script = document.createElement('script');
+        script.src = getBaseUri() + url;
+        script.onload =  function() {           
+            $scope.counter ++;
+            if ((!script.readyState || script.readyState == 'complete') && $scope.counter == 2){ //Second script will hide the spinner              
+                $scope.scriptsInjected = true;
+                $scope.$apply();
+            }
+        };
+        head.appendChild(script); //Inject the script
+    };
+    
+}]);
+
+
 
 orcidNgModule.controller('EmailsController',['$scope', 'emailSrvc',function ($scope, emailSrvc){
 	$scope.emailSrvc = emailSrvc;
