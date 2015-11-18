@@ -665,7 +665,7 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
                 ScopePathType.AFFILIATIONS_UPDATE, ScopePathType.AUTHENTICATE, ScopePathType.FUNDING_CREATE, ScopePathType.FUNDING_READ_LIMITED,
                 ScopePathType.FUNDING_UPDATE, ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE, ScopePathType.ORCID_BIO_READ_LIMITED, ScopePathType.ORCID_BIO_UPDATE,
                 ScopePathType.ORCID_PROFILE_READ_LIMITED, ScopePathType.ORCID_WORKS_CREATE, ScopePathType.ORCID_WORKS_READ_LIMITED, ScopePathType.ORCID_WORKS_UPDATE,
-                ScopePathType.READ_PUBLIC, ScopePathType.ACTIVITIES_UPDATE, ScopePathType.PERSON_UPDATE, ScopePathType.ACTIVITIES_READ_LIMITED,
+                ScopePathType.READ_PUBLIC, ScopePathType.ACTIVITIES_UPDATE, ScopePathType.PERSON_UPDATE, ScopePathType.ACTIVITIES_READ_LIMITED, ScopePathType.READ_LIMITED,
                 ScopePathType.PERSON_READ_LIMITED));
     }
 

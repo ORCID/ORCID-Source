@@ -263,7 +263,7 @@ public class PublicV2ApiServiceDelegatorImpl implements PublicV2ApiServiceDelega
     }
     
     @Override
-    @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED, enableAnonymousAccess = true)
+    @AccessControl(requiredScope = ScopePathType.READ_LIMITED, enableAnonymousAccess = true)
     public Response viewEmails(String orcid) {
         Emails emails = emailManager.getPublicEmails(orcid);        
         return Response.ok(emails).build();

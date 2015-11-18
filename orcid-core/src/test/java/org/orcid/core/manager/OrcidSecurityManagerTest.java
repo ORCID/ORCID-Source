@@ -94,7 +94,7 @@ public class OrcidSecurityManagerTest extends BaseTest {
 
     @Test
     public void testCheckVisibilityOfActivityWhenUsingReadLimitedScopeAndActivityIsPublicAndIsSource() {
-        SecurityContextTestUtils.setUpSecurityContext(ScopePathType.ACTIVITIES_READ_LIMITED);
+        SecurityContextTestUtils.setUpSecurityContext(ScopePathType.READ_LIMITED);
         Work work = createWork();
         orcidSecurityManager.checkVisibility(work);
         // There should be no exceptions
@@ -102,7 +102,7 @@ public class OrcidSecurityManagerTest extends BaseTest {
 
     @Test
     public void testCheckVisibilityOfActivityWhenUsingReadLimitedScopeAndActivityIsLimitedAndIsSource() {
-        SecurityContextTestUtils.setUpSecurityContext(ScopePathType.ACTIVITIES_READ_LIMITED);
+        SecurityContextTestUtils.setUpSecurityContext(ScopePathType.READ_LIMITED);
         Work work = createWork();
         work.setVisibility(Visibility.LIMITED);
         orcidSecurityManager.checkVisibility(work);
@@ -111,7 +111,7 @@ public class OrcidSecurityManagerTest extends BaseTest {
 
     @Test
     public void testCheckVisibilityOfActivityWhenUsingReadLimitedScopeAndActivityIsPrivateAndIsSource() {
-        SecurityContextTestUtils.setUpSecurityContext(ScopePathType.ACTIVITIES_READ_LIMITED);
+        SecurityContextTestUtils.setUpSecurityContext(ScopePathType.READ_LIMITED);
         Work work = createWork();
         work.setVisibility(Visibility.PRIVATE);
         orcidSecurityManager.checkVisibility(work);
@@ -120,7 +120,7 @@ public class OrcidSecurityManagerTest extends BaseTest {
 
     @Test
     public void testCheckVisibilityOfActivityWhenUsingReadLimitedScopeAndActivityIsPrivateAndIsNotSource() {
-        SecurityContextTestUtils.setUpSecurityContext(ScopePathType.ACTIVITIES_READ_LIMITED);
+        SecurityContextTestUtils.setUpSecurityContext(ScopePathType.READ_LIMITED);
         Work work = createWork();
         work.setVisibility(Visibility.PRIVATE);
         work.getSource().setSourceClientId(new SourceClientId("APP-1111111111111111"));

@@ -94,7 +94,7 @@
     <client_scope client_details_id="4444-4444-4444-4445" scope_type="/affiliations/read-limited"/>
     <client_scope client_details_id="4444-4444-4444-4445" scope_type="/premium-notification"/>
     <client_scope client_details_id="4444-4444-4444-4445" scope_type="/activities/update"/>
-    <client_scope client_details_id="4444-4444-4444-4445" scope_type="/activities/read-limited"/>
+    <client_scope client_details_id="4444-4444-4444-4445" scope_type="/read-limited"/>
     <client_scope client_details_id="4444-4444-4444-4445" scope_type="/person/read-limited"/>
     <client_scope client_details_id="4444-4444-4444-4445" scope_type="/peer-review/create"/>
     <client_scope client_details_id="4444-4444-4444-4445" scope_type="/group-id-record/read"/>
