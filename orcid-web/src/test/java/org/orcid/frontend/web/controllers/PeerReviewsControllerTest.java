@@ -32,7 +32,6 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.bcel.verifier.statics.Pass1Verifier;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
