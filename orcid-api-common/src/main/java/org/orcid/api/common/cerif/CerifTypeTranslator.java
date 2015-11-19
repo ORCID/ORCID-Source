@@ -28,6 +28,8 @@ import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
  * https://github.com/openaire/guidelines/blob/master/docs/cris/ and products:
  * https://github.com/openaire/guidelines/blob/master/docs/cris/
  * cerif_xml_product_entity.rst
+ * 
+ * Note we also use the OTHER type, which is NOT in the OpenAIRE vocab.
  */
 public class CerifTypeTranslator {
 
@@ -63,10 +65,10 @@ public class CerifTypeTranslator {
         case URN:
             return CerifClassEnum.URI;
         case ISSN: {
-            // not in our lib!
+            return CerifClassEnum.ISSN;
         }
         case ISBN: {
-            // not it our lib!
+            return CerifClassEnum.ISBN;
         }
         default:
             return CerifClassEnum.OTHER;
@@ -84,11 +86,11 @@ public class CerifTypeTranslator {
      */
     public CerifClassEnum translate(ExternalIdentifierEntity id) {
         if ("".equals(id.getExternalIdCommonName())) {
-            return CerifClassEnum.OTHER;
+            return CerifClassEnum.ISNI;
         } else if ("".equals(id.getExternalIdCommonName())) {
-            return CerifClassEnum.OTHER;
+            return CerifClassEnum.SCOPUSAUTHORID;
         } else if ("".equals(id.getExternalIdCommonName())) {
-            return CerifClassEnum.OTHER;
+            return CerifClassEnum.RESEARCHERID;
         }
         return CerifClassEnum.OTHER;
     }
@@ -101,14 +103,21 @@ public class CerifTypeTranslator {
         return (publicationTypefromWorkType(type) == null);
     }
 
+    /** Mapping is difficult here - little overlap of vocab
+     * We map dataset and other.
+     * 
+     * @param type
+     * @return
+     */
     private CerifClassEnum productTypefromWorkType(WorkType type) {
-        // this fails because we don't have the definitions.
-        /*
-         * TODO: find definitions and add them to CerifClassEnum Collection
-         * Dataset Event Image Interactive Resource Model Physical Object
-         * Service Software Sound Text
-         */
-        return CerifClassEnum.OTHER;
+        switch (type) {
+        // products
+        case DATA_SET:
+            return CerifClassEnum.PRODUCT_DATASET;
+        default:
+            return CerifClassEnum.OTHER;
+        }
+
     }
 
     private CerifClassEnum publicationTypefromWorkType(WorkType type) {
@@ -169,7 +178,6 @@ public class CerifTypeTranslator {
         // everything else is a product
         default:
             return null;
-
         }
 
     }

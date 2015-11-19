@@ -22,15 +22,15 @@ import javax.xml.bind.JAXBElement;
 
 import org.apache.commons.lang.StringUtils;
 import org.orcid.jaxb.model.message.Visibility;
-import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifier;
-import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.record.summary_rc1.ActivitiesSummary;
 import org.orcid.jaxb.model.record.summary_rc1.WorkGroup;
 import org.orcid.jaxb.model.record.summary_rc1.WorkSummary;
-//import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
+import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifier;
+import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 
 import com.google.common.collect.ImmutableSet;
+
 import xmlns.org.eurocris.cerif_1.CERIF;
 import xmlns.org.eurocris.cerif_1.CfCoreClassWithFractionType;
 import xmlns.org.eurocris.cerif_1.CfFedIdEmbType;
@@ -91,20 +91,29 @@ public class Cerif16Builder {
         // add in other external ids here
         // TODO: why is this throwing JPA exceptions?                
         //if (!profile.getExternalIdentifiersVisibility().isMoreRestrictiveThan(Visibility.PUBLIC)) {
-        //    for (ExternalIdentifierEntity id : profile.getExternalIdentifiers()) {
-        //        if (translator.translate(id) != CerifClassEnum.OTHER){
-        //            person.getCfResIntOrCfKeywOrCfPersPers().add(buildFedID(id.getExternalIdReference(), translator.translate(id)));                    
-        //        }
-        //    }
+            //for (ExternalIdentifierEntity id : profile.getExternalIdentifiers()) {
+                //if (translator.translate(id) != CerifClassEnum.OTHER){
+                    //person.getCfResIntOrCfKeywOrCfPersPers().add(buildFedID(id.getExternalIdReference(), translator.translate(id)));                    
+                //}
+            //}
+        //git status
         //}
 
-        if (!profile.getCreditNameVisibility().isMoreRestrictiveThan(Visibility.PUBLIC)) {
-            // TODO: we need to check name visibility properly here!
-            CfPersNamePers name = objectFactory.createCfPersTypeCfPersNamePers();
-            name.setCfFirstNames(profile.getGivenNames());
-            name.setCfFamilyNames(profile.getFamilyName());
-            person.getCfResIntOrCfKeywOrCfPersPers().add(objectFactory.createCfPersTypeCfPersNamePers(name));
+        // TODO: we need to check name visibility properly here!
+        CfPersNamePers name = objectFactory.createCfPersTypeCfPersNamePers();
+        name.setCfFirstNames(profile.getGivenNames());
+        name.setCfFamilyNames(profile.getFamilyName());
+        person.getCfResIntOrCfKeywOrCfPersPers().add(objectFactory.createCfPersTypeCfPersNamePers(name));
+
+        if (!profile.getCreditNameVisibility().isMoreRestrictiveThan(Visibility.PUBLIC)
+                && StringUtils.isNotEmpty(profile.getCreditName())) {
+            CfPersNamePers creditname = objectFactory.createCfPersTypeCfPersNamePers();
+            creditname.setCfClassId(CerifClassEnum.PRESENTED_NAME.getUuid());
+            creditname.setCfClassSchemeId(CerifClassSchemeEnum.PERSON_NAMES.getUuid());
+            creditname.setCfOtherNames(profile.getCreditName());
+            person.getCfResIntOrCfKeywOrCfPersPers().add(objectFactory.createCfPersTypeCfPersNamePers(creditname));
         }
+        
         cerif.getCfClassOrCfClassSchemeOrCfClassSchemeDescr().add(person);
         return this;
     }
