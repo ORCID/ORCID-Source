@@ -153,14 +153,22 @@ public class VerifyOrcidBeforeFetchElementTest extends BlackBoxBase {
         assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
         Work gotWork = getResponse.getEntity(Work.class);
         assertEquals("Current treatment of left main coronary artery disease", gotWork.getWorkTitle().getTitle().getContent());
-        // Try to fetch it with other user orcid
         String user2AccessToken = getAccessToken(this.client1ClientId, this.client1ClientSecret, this.client1RedirectUri, this.user2UserName, this.user2Password);
+        // Try to fetch it with other user orcid
+        // Using the members API        
         ClientResponse user2GetResponse = memberV2ApiClient.viewWorkXml(this.user2OrcidId, gotWork.getPutCode(), user2AccessToken);
         assertNotNull(user2GetResponse);
         assertEquals(Response.Status.CONFLICT.getStatusCode(), user2GetResponse.getStatus());
         OrcidError error = user2GetResponse.getEntity(OrcidError.class);
         assertNotNull(error);
-        assertEquals(Integer.valueOf(9034), error.getErrorCode());  
+        assertEquals(Integer.valueOf(9034), error.getErrorCode());
+        // Using the public API        
+        user2GetResponse = publicV2ApiClient.viewWorkXml(this.user2OrcidId, String.valueOf(gotWork.getPutCode()));
+        assertNotNull(user2GetResponse);
+        assertEquals(Response.Status.CONFLICT.getStatusCode(), user2GetResponse.getStatus());
+        error = user2GetResponse.getEntity(OrcidError.class);
+        assertNotNull(error);
+        assertEquals(Integer.valueOf(9034), error.getErrorCode());
         // Delete it
         ClientResponse deletedResponse = memberV2ApiClient.deleteWorkXml(this.user1OrcidId, gotWork.getPutCode(), user1AccessToken);
         assertNotNull(deletedResponse);
@@ -185,12 +193,20 @@ public class VerifyOrcidBeforeFetchElementTest extends BlackBoxBase {
         Education gotEducation = getResponse.getEntity(Education.class);
         assertEquals("education:department-name", gotEducation.getDepartmentName());
         assertEquals("education:role-title", gotEducation.getRoleTitle());                
-        // Try to fetch it with other user orcid
         String user2AccessToken = getAccessToken(this.client1ClientId, this.client1ClientSecret, this.client1RedirectUri, this.user2UserName, this.user2Password);
+        // Try to fetch it with other user orcid
+        // Using the members API        
         ClientResponse user2GetResponse = memberV2ApiClient.viewEducationXml(this.user2OrcidId, gotEducation.getPutCode(), user2AccessToken);
         assertNotNull(user2GetResponse);
         assertEquals(Response.Status.CONFLICT.getStatusCode(), user2GetResponse.getStatus());
         OrcidError error = user2GetResponse.getEntity(OrcidError.class);
+        assertNotNull(error);
+        assertEquals(Integer.valueOf(9034), error.getErrorCode());
+        // Using the public API
+        user2GetResponse = publicV2ApiClient.viewEducationXml(this.user2OrcidId, String.valueOf(gotEducation.getPutCode()));
+        assertNotNull(user2GetResponse);
+        assertEquals(Response.Status.CONFLICT.getStatusCode(), user2GetResponse.getStatus());
+        error = user2GetResponse.getEntity(OrcidError.class);
         assertNotNull(error);
         assertEquals(Integer.valueOf(9034), error.getErrorCode());
         // Delete it
@@ -218,13 +234,21 @@ public class VerifyOrcidBeforeFetchElementTest extends BlackBoxBase {
         assertEquals("affiliation:department-name", gotEmployment.getDepartmentName());
         assertEquals("affiliation:role-title", gotEmployment.getRoleTitle());        
         // Try to fetch it with other user orcid
+        // Using the members API
         String user2AccessToken = getAccessToken(this.client1ClientId, this.client1ClientSecret, this.client1RedirectUri, this.user2UserName, this.user2Password);
         ClientResponse user2GetResponse = memberV2ApiClient.viewEmploymentXml(this.user2OrcidId, gotEmployment.getPutCode(), user2AccessToken);
         assertNotNull(user2GetResponse);
         assertEquals(Response.Status.CONFLICT.getStatusCode(), user2GetResponse.getStatus());
         OrcidError error = user2GetResponse.getEntity(OrcidError.class);
         assertNotNull(error);
-        assertEquals(Integer.valueOf(9034), error.getErrorCode());  
+        assertEquals(Integer.valueOf(9034), error.getErrorCode());
+        // Using the public API
+        user2GetResponse = publicV2ApiClient.viewEmploymentXml(this.user2OrcidId, String.valueOf(gotEmployment.getPutCode()));
+        assertNotNull(user2GetResponse);
+        assertEquals(Response.Status.CONFLICT.getStatusCode(), user2GetResponse.getStatus());
+        error = user2GetResponse.getEntity(OrcidError.class);
+        assertNotNull(error);
+        assertEquals(Integer.valueOf(9034), error.getErrorCode());
         // Delete it
         ClientResponse deletedResponse = memberV2ApiClient.deleteEducationXml(this.user1OrcidId, gotEmployment.getPutCode(), user1AccessToken);
         assertNotNull(deletedResponse);
@@ -257,13 +281,21 @@ public class VerifyOrcidBeforeFetchElementTest extends BlackBoxBase {
         assertEquals("common:title", gotFunding.getTitle().getTitle().getContent());
         assertEquals("common:translated-title", gotFunding.getTitle().getTranslatedTitle().getContent());
         // Try to fetch it with other user orcid
+        // Using the members API
         String user2AccessToken = getAccessToken(this.client1ClientId, this.client1ClientSecret, this.client1RedirectUri, this.user2UserName, this.user2Password);
         ClientResponse user2GetResponse = memberV2ApiClient.viewFundingXml(this.user2OrcidId, gotFunding.getPutCode(), user2AccessToken);
         assertNotNull(user2GetResponse);
         assertEquals(Response.Status.CONFLICT.getStatusCode(), user2GetResponse.getStatus());
         OrcidError error = user2GetResponse.getEntity(OrcidError.class);
         assertNotNull(error);
-        assertEquals(Integer.valueOf(9034), error.getErrorCode());  
+        assertEquals(Integer.valueOf(9034), error.getErrorCode());
+        // Using the public API
+        user2GetResponse = publicV2ApiClient.viewFundingXml(this.user2OrcidId, String.valueOf(gotFunding.getPutCode()));
+        assertNotNull(user2GetResponse);
+        assertEquals(Response.Status.CONFLICT.getStatusCode(), user2GetResponse.getStatus());
+        error = user2GetResponse.getEntity(OrcidError.class);
+        assertNotNull(error);
+        assertEquals(Integer.valueOf(9034), error.getErrorCode());
         // Delete it
         ClientResponse deletedResponse = memberV2ApiClient.deleteFundingXml(this.user1OrcidId, gotFunding.getPutCode(), user1AccessToken);
         assertNotNull(deletedResponse);
@@ -296,13 +328,21 @@ public class VerifyOrcidBeforeFetchElementTest extends BlackBoxBase {
         assertEquals("peer-review:url", gotPeerReview.getUrl().getValue());
         assertEquals("peer-review:subject-name", gotPeerReview.getSubjectName().getTitle().getContent());
          // Try to fetch it with other user orcid
+        // Using the members API
         String user2AccessToken = getAccessToken(this.client1ClientId, this.client1ClientSecret, this.client1RedirectUri, this.user2UserName, this.user2Password);
         ClientResponse user2GetResponse = memberV2ApiClient.viewPeerReviewXml(this.user2OrcidId, gotPeerReview.getPutCode(), user2AccessToken);
         assertNotNull(user2GetResponse);
         assertEquals(Response.Status.CONFLICT.getStatusCode(), user2GetResponse.getStatus());
         OrcidError error = user2GetResponse.getEntity(OrcidError.class);
         assertNotNull(error);
-        assertEquals(Integer.valueOf(9034), error.getErrorCode());  
+        assertEquals(Integer.valueOf(9034), error.getErrorCode());          
+        //Using the public API
+        user2GetResponse = publicV2ApiClient.viewPeerReviewXml(this.user2OrcidId, String.valueOf(gotPeerReview.getPutCode()));
+        assertNotNull(user2GetResponse);
+        assertEquals(Response.Status.CONFLICT.getStatusCode(), user2GetResponse.getStatus());
+        error = user2GetResponse.getEntity(OrcidError.class);
+        assertNotNull(error);
+        assertEquals(Integer.valueOf(9034), error.getErrorCode());                
         // Delete it
         ClientResponse deletedResponse = memberV2ApiClient.deletePeerReviewXml(this.user1OrcidId, gotPeerReview.getPutCode(), user1AccessToken);
         assertNotNull(deletedResponse);
