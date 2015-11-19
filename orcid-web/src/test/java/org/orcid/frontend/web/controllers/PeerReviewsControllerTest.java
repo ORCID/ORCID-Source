@@ -183,7 +183,7 @@ public class PeerReviewsControllerTest extends BaseControllerTest {
         assertTrue(form.getErrors().contains(peerReviewsController.getMessage("peer_review.group_id.not_valid")));
     }
     
-    @Test
+    @Test    
     public void testDeletePeerReview() {
         HttpSession session = mock(HttpSession.class);
         when(servletRequest.getSession()).thenReturn(session);
@@ -193,7 +193,7 @@ public class PeerReviewsControllerTest extends BaseControllerTest {
         assertFalse(PojoUtil.isEmpty(newForm.getPutCode()));
 
         String putCode = newForm.getPutCode().getValue();
-        peerReviewsController.deletePeerReviewJson(servletRequest, newForm);
+        peerReviewsController.deletePeerReviewJson(newForm);
         PeerReviewForm deleted = peerReviewsController.getPeerReviewJson(Long.valueOf(putCode));
         assertNull(deleted);
     }

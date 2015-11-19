@@ -31,7 +31,6 @@ import javax.ws.rs.core.Response;
 import org.codehaus.jettison.json.JSONException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.integration.api.helper.OauthHelper;
 import org.orcid.integration.api.memberV2.MemberV2ApiClientImpl;
 import org.orcid.integration.api.pub.PublicV2ApiClientImpl;
 import org.orcid.integration.blackbox.BlackBoxBase;
@@ -88,11 +87,6 @@ public class ResearcherUrlsTests extends BlackBoxBase {
 
     @Resource(name = "publicV2ApiClient_rc2")
     private PublicV2ApiClientImpl publicV2ApiClient;
-
-    @Resource
-    private OauthHelper oauthHelper;
-
-    static String accessToken = null;
 
     @Test
     public void testResearcherUrl() throws InterruptedException, JSONException, URISyntaxException {

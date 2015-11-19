@@ -320,7 +320,7 @@ public class PeerReviewsController extends BaseWorkspaceController {
      * Deletes a peer review
      * */
     @RequestMapping(value = "/peer-review.json", method = RequestMethod.DELETE)
-    public @ResponseBody PeerReviewForm deletePeerReviewJson(HttpServletRequest request, @RequestBody PeerReviewForm peerReview) {
+    public @ResponseBody PeerReviewForm deletePeerReviewJson(@RequestBody PeerReviewForm peerReview) {
         if (peerReview == null || PojoUtil.isEmpty(peerReview.getPutCode())) {
             return null;
         }
