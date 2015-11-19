@@ -140,7 +140,10 @@
                         <exclude>**/.gitignore</exclude>
                         <exclude>**/rebel.xml</exclude>
                         <exclude>**/xmlns/org/eurocris/cerif_1/*.java</exclude>
-                        <exclude>**/CERIF_1.6_2.xsd</exclude>
+                        <exclude>**/xmlns/org/eurocris/cerif_api/*.java</exclude>
+                        <exclude>**/cerif/*.xsd</exclude>
+                        <exclude>**/cerif/*.xml</exclude>                        
+                        <exclude>**/cerif/cerif-api/*.xsd</exclude>
                     </excludes>               
                 </configuration>
             </plugin>

@@ -51,6 +51,4 @@ public interface PublicV2ApiServiceDelegator {
     Response viewResearcherUrls(String orcid);
     
     Response viewEmails(String orcid);
-
-    Response viewCerifActivities(String orcid);
 }

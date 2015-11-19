@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.api.common.writer.cerif;
+package org.orcid.api.common.cerif;
 
 /** Derived from https://github.com/EKT/CERIF-Tools/blob/master/CERIF%201.6/cerif-jpa-model/src/main/java/gr/ekt/cerif/entities/link/ClassScheme_Class.java
  * Licenced at ...

@@ -31,6 +31,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.orcid.core.api.OrcidApiConstants;
 import org.orcid.jaxb.model.message.ScopeConstants;
 
 import io.swagger.annotations.Api;
@@ -71,4 +72,5 @@ public class PublicV2ApiServiceImplV2_0_rc2 extends PublicV2ApiServiceImplBase {
     public Response viewEmails(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewEmails(orcid);
     }
+    
 }
