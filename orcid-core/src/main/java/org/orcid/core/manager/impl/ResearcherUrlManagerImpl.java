@@ -87,7 +87,18 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
     public boolean deleteResearcherUrl(String orcid, String id) {
         boolean result = true;
         Long researcherUrlId = Long.valueOf(id);
-        ResearcherUrlEntity toDelete = researcherUrlDao.getResearcherUrl(researcherUrlId);                
+        ResearcherUrlEntity toDelete = researcherUrlDao.getResearcherUrl(researcherUrlId);  
+        
+        if(toDelete == null)
+            return false;
+        
+        if(!orcid.equals(toDelete.getProfile().getId())) {
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("element", "researcher url");
+            params.put("orcid", orcid);
+            throw new WrongOwnerException(params);            
+        }
+        
         SourceEntity existingSource = toDelete.getSource();
         orcidSecurityManager.checkSource(existingSource);
         
@@ -251,10 +262,10 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
     @Override
     public org.orcid.jaxb.model.record_rc2.ResearcherUrl getResearcherUrlV2(String orcid, long id) {
         ResearcherUrlEntity researcherUrlEntity = researcherUrlDao.getResearcherUrl(id);
-        if (!researcherUrlEntity.getUser().getId().equals(orcid)) {
+        if (!orcid.equals(researcherUrlEntity.getUser().getId())) {
             Map<String, String> params = new HashMap<String, String>();
-            params.put("element", "researcherUrl");
-            params.put("user", orcid);
+            params.put("element", "researcher url");
+            params.put("orcid", orcid);
             throw new WrongOwnerException(params);
         }
         return jpaJaxbResearcherUrlAdapter.toResearcherUrl(researcherUrlEntity);
@@ -270,6 +281,7 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
         
         // Validate it is not duplicated
         List<ResearcherUrlEntity> existingResearcherUrls = researcherUrlDao.getResearcherUrls(orcid);
+        
         for (ResearcherUrlEntity existing : existingResearcherUrls) {
             if (isDuplicated(existing, researcherUrl, sourceEntity)) {
                 Map<String, String> params = new HashMap<String, String>();
@@ -280,6 +292,12 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
         }
                 
         ResearcherUrlEntity updatedResearcherUrlEntity = researcherUrlDao.getResearcherUrl(Long.valueOf(researcherUrl.getPutCode()));
+        if(updatedResearcherUrlEntity == null || !orcid.equals(updatedResearcherUrlEntity.getProfile().getId())) {            
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("element", "researcher url");
+            params.put("orcid", orcid);
+            throw new WrongOwnerException(params);            
+        }
         Visibility originalVisibility = Visibility.fromValue(updatedResearcherUrlEntity.getVisibility().value());        
         SourceEntity existingSource = updatedResearcherUrlEntity.getSource();
         orcidSecurityManager.checkSource(existingSource);

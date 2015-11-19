@@ -18,12 +18,15 @@ package org.orcid.core.manager.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
 import org.orcid.core.adapter.JpaJaxbPeerReviewAdapter;
 import org.orcid.core.exception.OrcidValidationException;
+import org.orcid.core.exception.WrongOwnerException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.GroupIdRecordManager;
 import org.orcid.core.manager.NotificationManager;
@@ -46,7 +49,6 @@ import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.jpa.entities.PeerReviewEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.cache.annotation.Cacheable;
@@ -91,13 +93,25 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
 
     @Override
     public PeerReview getPeerReview(String orcid, Long peerReviewId) {
-        PeerReviewEntity peerReviewEntity = peerReviewDao.getPeerReview(orcid, peerReviewId);
+        PeerReviewEntity peerReviewEntity = peerReviewDao.find(peerReviewId);
+        if(peerReviewEntity == null || !orcid.equals(peerReviewEntity.getProfile().getId())) {
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("element", "peer review");
+            params.put("orcid", orcid);
+            throw new WrongOwnerException(params);
+        }
         return jpaJaxbPeerReviewAdapter.toPeerReview(peerReviewEntity);
     }
 
     @Override
     public PeerReviewSummary getPeerReviewSummary(String orcid, Long peerReviewId) {
         PeerReviewEntity peerReviewEntity = peerReviewDao.getPeerReview(orcid, peerReviewId);
+        if(peerReviewEntity == null || !orcid.equals(peerReviewEntity.getProfile().getId())) {
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("element", "peer review");
+            params.put("orcid", orcid);
+            throw new WrongOwnerException(params);
+        }
         return jpaJaxbPeerReviewAdapter.toPeerReviewSummary(peerReviewEntity);
     }
 
@@ -108,7 +122,6 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
 
     @Override
     public PeerReview createPeerReview(String orcid, PeerReview peerReview, boolean isApiRequest) {
-
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
 
         // Set the source to the peerReview before looking for duplicates
@@ -174,6 +187,12 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
             }
         }
         PeerReviewEntity existingEntity = peerReviewDao.getPeerReview(orcid, peerReview.getPutCode());
+        if(existingEntity == null || !orcid.equals(existingEntity.getProfile().getId())) {
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("element", "peer review");
+            params.put("orcid", orcid);
+            throw new WrongOwnerException(params);
+        }
         PeerReviewEntity updatedEntity = new PeerReviewEntity();
         Visibility originalVisibility = existingEntity.getVisibility();
         SourceEntity existingSource = existingEntity.getSource();
@@ -193,6 +212,12 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
     @Override
     public boolean checkSourceAndDelete(String orcid, Long peerReviewId) {
         PeerReviewEntity pr = peerReviewDao.getPeerReview(orcid, peerReviewId);
+        if(pr == null || !orcid.equals(pr.getProfile().getId())) {
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("element", "peer review");
+            params.put("orcid", orcid);
+            throw new WrongOwnerException(params);
+        }
         orcidSecurityManager.checkSource(pr.getSource());
         Item item = createItem(pr);
         boolean result = deletePeerReview(pr, orcid);
@@ -201,7 +226,7 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
     }
 
     @Transactional
-    private boolean deletePeerReview(PeerReviewEntity entity, String orcid) {
+    private boolean deletePeerReview(PeerReviewEntity entity, String orcid) {        
         return peerReviewDao.removePeerReview(orcid, entity.getId());
     }
 
