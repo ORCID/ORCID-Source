@@ -142,7 +142,7 @@ public class NotificationsTest {
         notification.setPutCode(null);
         AuthorizationUrl authUrl = notification.getAuthorizationUrl();
         authUrl.setUri(null);
-        authUrl.setPath("/oauth/authorize?client_id=0000-0003-4223-0632&response_type=code&scope=/activities/read-limited /activities/update&redirect_uri=https://developers.google.com/oauthplayground");
+        authUrl.setPath("/oauth/authorize?client_id=0000-0003-4223-0632&response_type=code&scope=/read-limited /activities/update&redirect_uri=https://developers.google.com/oauthplayground");
         String accessToken = oauthHelper.getClientCredentialsAccessToken(client1ClientId, client1ClientSecret, ScopePathType.PREMIUM_NOTIFICATION);
 
         ClientResponse response = notificationsClient.addPermissionNotificationXml(testUser1OrcidId, notification, accessToken);
