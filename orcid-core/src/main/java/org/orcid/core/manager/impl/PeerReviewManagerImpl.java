@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.persistence.NoResultException;
 
 import org.orcid.core.adapter.JpaJaxbPeerReviewAdapter;
 import org.orcid.core.exception.OrcidValidationException;
@@ -93,13 +94,16 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
 
     @Override
     public PeerReview getPeerReview(String orcid, Long peerReviewId) {
-        PeerReviewEntity peerReviewEntity = peerReviewDao.find(peerReviewId);
-        if(peerReviewEntity == null || !orcid.equals(peerReviewEntity.getProfile().getId())) {
+        PeerReviewEntity peerReviewEntity = null;
+        
+        try {
+            peerReviewEntity = peerReviewDao.getPeerReview(orcid, peerReviewId);
+        } catch (NoResultException nre) {
             Map<String, String> params = new HashMap<String, String>();
             params.put("element", "peer review");
             params.put("orcid", orcid);
             throw new WrongOwnerException(params);
-        }
+        }                
         return jpaJaxbPeerReviewAdapter.toPeerReview(peerReviewEntity);
     }
 

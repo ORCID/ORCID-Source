@@ -19,7 +19,6 @@ package org.orcid.frontend.web.controllers;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
@@ -33,12 +32,14 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.bcel.verifier.statics.Pass1Verifier;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.orcid.core.exception.WrongOwnerException;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidWebRole;
@@ -55,14 +56,11 @@ import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Lists;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml", "classpath:orcid-frontend-web-servlet.xml" })
-@Transactional(propagation = Propagation.REQUIRES_NEW)
 public class PeerReviewsControllerTest extends BaseControllerTest {
 
     private static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml", "/data/SecurityQuestionEntityData.xml",
@@ -194,8 +192,13 @@ public class PeerReviewsControllerTest extends BaseControllerTest {
 
         String putCode = newForm.getPutCode().getValue();
         peerReviewsController.deletePeerReviewJson(newForm);
-        PeerReviewForm deleted = peerReviewsController.getPeerReviewJson(Long.valueOf(putCode));
-        assertNull(deleted);
+        try {
+            peerReviewsController.getPeerReviewJson(Long.valueOf(putCode));
+            fail();
+        } catch(WrongOwnerException woe) {
+            
+        }
+        
     }
 
     private PeerReviewForm getForm() {
