@@ -16,8 +16,8 @@
  */
 package org.orcid.api.common.cerif;
 
-import org.orcid.jaxb.model.record.WorkExternalIdentifierType;
-import org.orcid.jaxb.model.record.WorkType;
+import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType;
+import org.orcid.jaxb.model.record_rc1.WorkType;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
 
 /**
