@@ -65,19 +65,19 @@ The ```put-code``` for a specific item can be obtained by reading a summary of a
 
 Other notable differences between v2.0_rcX previous versions include:
 
-- Only 2 scopes are used: ```/activities/read-limited``` and ```/activities/update```
+- Only 2 scopes are used: ```/read-limited``` and ```/activities/update```
 - An explicit ```DELETE``` method is used to remove record items
 
 ###Read Activities Summary
 | Action                   | HTTP method | Scope                    | URL                                                      |
 |-------------------------|-------------|--------------------------|----------------------------------------------------------|
-| Read activities summary | GET         | /activities/read-limited | http://api.sandbox.orcid.org/v2.0_rc1/[ORCID-iD]/activities |
+| Read activities summary | GET         | /read-limited | http://api.sandbox.orcid.org/v2.0_rc1/[ORCID-iD]/activities |
 
 ###Read/Modifiy Peer Review Activities
 | Action             | HTTP method | Scope                    | URL                                                                      |
 |--------------------|-------------|--------------------------|--------------------------------------------------------------------------|
 | Add peer-review item    | POST        | /activities/update       | http://api.sandbox.orcid.org/v2.0_rc1/[ORCID-iD]/peer-review            |
-| Read peer-review item   | GET         | /activities/read-limited | http://api.sandbox.orcid.org/v2.0_rc1/[ORCID-iD]/peer-review/[PUT-CODE] |
+| Read peer-review item   | GET         | /read-limited | http://api.sandbox.orcid.org/v2.0_rc1/[ORCID-iD]/peer-review/[PUT-CODE] |
 | Update peer-review item | PUT         | /activities/update       | http://api.sandbox.orcid.org/v2.0_rc1/[ORCID-iD]/peer-review/[PUT-CODE] |
 | Delete peer-review item | DELETE      | /activities/update       | http://api.sandbox.orcid.org/v2.0_rc1/[ORCID-iD]/peer-review/[PUT-CODE] |
 

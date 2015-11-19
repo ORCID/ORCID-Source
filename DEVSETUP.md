@@ -258,6 +258,9 @@ Find the **service** element/tag and the following connector:
 		* "-Dorg.orcid.web.testUser1.username=Test user's email id" 
 		* "-Dorg.orcid.web.testUser1.password=Test user's password" 
 		* "-Dorg.orcid.web.testUser1.orcidId=Test user's orcid id" 
+		* "-Dorg.orcid.web.testUser2.username=Test user #2 email id"
+		* "-Dorg.orcid.web.testUser2.password=Test user #2 password"
+		* "-Dorg.orcid.web.testUser2.orcidId=Test user #2 orcid id"
 		* "-Dorg.orcid.web.testClient1.redirectUri=1st test client's redirect uri" 
 		* "-Dorg.orcid.web.testClient1.clientId=1st test client's Id" 
 		* "-Dorg.orcid.web.testClient1.clientSecret=1st test client's secret" 
@@ -266,6 +269,10 @@ Find the **service** element/tag and the following connector:
 		* "-Dorg.orcid.web.testClient2.clientSecret=2nd test client's secret"  
 		* "-Dorg.orcid.web.adminUser.username=Test admin user's email id" 
 		* "-Dorg.orcid.web.adminUser.password=Test admin user's password" 
+		* "-Dorg.orcid.web.locked.member.id=Member id to lock" 
+		* "-Dorg.orcid.web.locked.member.client.id=Client id that must belong to the member defined in the previous param" 
+		* "-Dorg.orcid.web.locked.member.client.secret=Client secret" 
+		* "-Dorg.orcid.web.locked.member.client.ruri=Client redirect URI" 
 	* Click "*Apply*" 
 	
 * Make sure you have firefox installed so selenium can run the tests.  Note sometimes firefox is out of sync with selenium support or visa versa, so pick up the version before latest.  At time of writing latest selenium 2.45 works with firefox version 37 but not 38. Archives can be found at https://https://ftp.mozilla.org/pub/mozilla.org/firefox/releases/37.0.2/

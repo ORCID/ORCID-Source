@@ -50,13 +50,13 @@ undetected into the code during the previous development period. Release candida
 ### Activities summary
 | Item                    | HTTP method | Scope                    | URL                                                      |
 |-------------------------|-------------|--------------------------|----------------------------------------------------------|
-| Read activities summary | GET         | /activities/read-limited | http://api.sandbox.orcid.org/v2.0_rc2/[ORCID]/activities |
+| Read activities summary | GET         | /read-limited            | http://api.sandbox.orcid.org/v2.0_rc2/[ORCID]/activities |
 
 ### Individual activities
 | Action             | HTTP method | Scope                    | URL                                                                      |
 |--------------------|-------------|--------------------------|--------------------------------------------------------------------------|
 | Add an activity    | POST        | /activities/update       | http://api.sandbox.orcid.org/v2.0_rc2/[ORCID]/[ACTIVITY-TYPE]            |
-| Read an activity   | GET         | /activities/read-limited | http://api.sandbox.orcid.org/v2.0_rc2/[ORCID]/[ACTIVITY-TYPE]/[PUT-CODE] |
+| Read an activity   | GET         | /read-limited            | http://api.sandbox.orcid.org/v2.0_rc2/[ORCID]/[ACTIVITY-TYPE]/[PUT-CODE] |
 | Update an activity | PUT         | /activities/update       | http://api.sandbox.orcid.org/v2.0_rc2/[ORCID]/[ACTIVITY-TYPE]/[PUT-CODE] |
 | Delete an activity | DELETE      | /activities/update       | http://api.sandbox.orcid.org/v2.0_rc2/[ORCID]/[ACTIVITY-TYPE]/[PUT-CODE] |
 
@@ -73,12 +73,12 @@ undetected into the code during the previous development period. Release candida
 ### Read Record Items
 | Item               | v2.0 Scope               | v1.2 Scope (deprecated)                               | Example cURL Statement                                         |
 |--------------------|--------------------------|-------------------------------------------------------|----------------------------------------------------------------|
-| Activities summary | /activities/read-limited |  /orcid-profile/read-limited                          | ```curl -i -H "Accept: application/orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'http://api.sandbox.orcid.org/v2.0_rc2/0000-0002-1306-4180/activities'```|
-| Education          | /activities/read-limited | /orcid-profile/read-limited /affiliations/read-limited |```curl -i -H "Accept: application/orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'http://api.sandbox.orcid.org/v2.0_rc2/0000-0002-1306-4180/education/14613'```|
-| Employment         | /activities/read-limited | /orcid-profile/read-limited /affiliations/read-limited  |```curl -i -H "Accept: application/orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'http://api.sandbox.orcid.org/v2.0_rc2/0000-0002-1306-4180/employment/14612'```| 
-| Funding            | /activities/read-limited | /orcid-profile/read-limited /funding/read-limited  |```curl -i -H "Accept: application/orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'http://api.sandbox.orcid.org/v2.0_rc2/0000-0002-1306-4180/funding/2629'```|
-| Peer review        | /activities/read-limited |  NONE  |```curl -i -H "Accept: application/orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'http://api.sandbox.orcid.org/v2.0_rc2/0000-0002-1306-4180/peer-review/1579'```|
-| Work               | /activities/read-limited | /orcid-profile/read-limited <br>/orcid-works/read-limited  |```curl -i -H "Accept: application/orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'http://api.sandbox.orcid.org/v2.0_rc2/0000-0002-1306-4180/work/469271'```|
+| Activities summary | /read-limited            |  /orcid-profile/read-limited                          | ```curl -i -H "Accept: application/orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'http://api.sandbox.orcid.org/v2.0_rc2/0000-0002-1306-4180/activities'```|
+| Education          | /read-limited            | /orcid-profile/read-limited /affiliations/read-limited |```curl -i -H "Accept: application/orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'http://api.sandbox.orcid.org/v2.0_rc2/0000-0002-1306-4180/education/14613'```|
+| Employment         | /read-limited            | /orcid-profile/read-limited /affiliations/read-limited  |```curl -i -H "Accept: application/orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'http://api.sandbox.orcid.org/v2.0_rc2/0000-0002-1306-4180/employment/14612'```| 
+| Funding            | /read-limited            | /orcid-profile/read-limited /funding/read-limited  |```curl -i -H "Accept: application/orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'http://api.sandbox.orcid.org/v2.0_rc2/0000-0002-1306-4180/funding/2629'```|
+| Peer review        | /read-limited            |  NONE  |```curl -i -H "Accept: application/orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'http://api.sandbox.orcid.org/v2.0_rc2/0000-0002-1306-4180/peer-review/1579'```|
+| Work               | /read-limited            | /orcid-profile/read-limited <br>/orcid-works/read-limited  |```curl -i -H "Accept: application/orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'http://api.sandbox.orcid.org/v2.0_rc2/0000-0002-1306-4180/work/469271'```|
 
 ### Add Record Items
 |Item    |v2.0 Scope       | v1.2 Scope (deprecated)| Example cURL Statement  |

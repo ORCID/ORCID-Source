@@ -152,7 +152,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
      *         {@link org.orcid.jaxb.model.message.OrcidMessage} within it
      */
     @Override
-    @AccessControl(requiredScope = ScopePathType.ACTIVITIES_READ_LIMITED)
+    @AccessControl(requiredScope = ScopePathType.READ_LIMITED)
     public Response viewActivities(String orcid) {
         ProfileEntity entity = profileEntityManager.findByOrcid(orcid);
         if (profileDao.isProfileDeprecated(orcid)) {
@@ -453,7 +453,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     
     @SuppressWarnings("unchecked")
     @Override
-    @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED)
+    @AccessControl(requiredScope = ScopePathType.READ_LIMITED)
     public Response viewResearcherUrls(String orcid) {
         ResearcherUrls researcherUrls = researcherUrlManager.getResearcherUrlsV2(orcid);
         researcherUrls.setResearcherUrls((List<ResearcherUrl>) visibilityFilter.filter(researcherUrls.getResearcherUrls()));
@@ -493,7 +493,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     
     @SuppressWarnings("unchecked")
     @Override
-    @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED)
+    @AccessControl(requiredScope = ScopePathType.READ_LIMITED)
     public Response viewEmails(String orcid) {
         Emails emails = emailManager.getEmails(orcid);
         emails.setEmails((List<Email>) visibilityFilter.filter(emails.getEmails()));
