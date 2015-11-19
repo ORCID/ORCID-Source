@@ -16,29 +16,36 @@
  */
 package org.orcid.jaxb.model.record_rc2;
 
-import java.io.Serializable;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType( propOrder = { "content" })
-@XmlRootElement(name = "given-names")
-public class GivenNames implements Serializable {    
-    private static final long serialVersionUID = -2364354286804334251L;
+import org.orcid.jaxb.model.common.Visibility;
 
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(propOrder = { "content" })
+@XmlRootElement(name = "biography")
+public class Biography {
     @XmlValue
     protected String content;
 
-    public GivenNames() {
+    @XmlAttribute
+    protected Visibility visibility;
 
+    public Biography() {
+        
+    }
+    
+    public Biography(String content) {
+        this.content = content;
     }
 
-    public GivenNames(String content) {
+    public Biography(String content, Visibility visibility) {
         this.content = content;
+        this.visibility = visibility;
     }
 
     public String getContent() {
@@ -49,28 +56,45 @@ public class GivenNames implements Serializable {
         this.content = content;
     }
 
+    public Visibility getVisibility() {
+        return visibility;
+    }
+
+    public void setVisibility(Visibility visibility) {
+        this.visibility = visibility;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((content == null) ? 0 : content.hashCode());
+        result = prime * result + ((visibility == null) ? 0 : visibility.hashCode());
         return result;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
-        GivenNames other = (GivenNames) obj;
+        }
+        Biography other = (Biography) obj;
         if (content == null) {
-            if (other.content != null)
+            if (other.content != null) {
                 return false;
-        } else if (!content.equals(other.content))
+            }
+        } else if (!content.equals(other.content)) {
             return false;
+        }
+        if (visibility != other.visibility) {
+            return false;
+        }
         return true;
-    }            
+    }
 }

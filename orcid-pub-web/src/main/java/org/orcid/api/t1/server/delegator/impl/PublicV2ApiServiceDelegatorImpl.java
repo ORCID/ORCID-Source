@@ -35,6 +35,7 @@ import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.PeerReviewManager;
+import org.orcid.core.manager.PersonalDetailsManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileFundingManager;
@@ -113,7 +114,10 @@ public class PublicV2ApiServiceDelegatorImpl implements PublicV2ApiServiceDelega
     private EmailManager emailManager;
     
     @Resource(name = "profileEntityCacheManager")
-    ProfileEntityCacheManager profileEntityCacheManager;
+    private ProfileEntityCacheManager profileEntityCacheManager;
+    
+    @Resource
+    PersonalDetailsManager personalDetailsManager;
     
     @Override
     public Response viewStatusText() {
@@ -273,7 +277,7 @@ public class PublicV2ApiServiceDelegatorImpl implements PublicV2ApiServiceDelega
     @Override
     @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewPersonalDetails(String orcid) {
-        PersonalDetails personalDetails = null;
+        PersonalDetails personalDetails = personalDetailsManager.getPublicPersonalDetails(orcid);
         return Response.ok(personalDetails).build();
     }
     

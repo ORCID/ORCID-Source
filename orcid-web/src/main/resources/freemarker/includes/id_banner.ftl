@@ -50,15 +50,14 @@
 		   </span>
 		   <label for="lastName">${springMacroRequestContext.getMessage("manage_bio_settings.labellastname")}</label>
 		   <input type="text" ng-model="nameForm.familyName.value" ng-enter="setNameForm()" class="full-width-input"></input>
-		   <label for="creditName">${springMacroRequestContext.getMessage("manage_bio_settings.labelpublishedname")}</label>
+		   <label for="creditName">${springMacroRequestContext.getMessage("manage_bio_settings.labelpublishedname")}</label>		   		        	   
+		   <input type="text" ng-model="nameForm.creditName.value" ng-enter="setNameForm()" class="full-width-input"></input>
 		   <@orcid.privacyToggle  angularModel="nameForm.creditNameVisibility.visibility"
 				             questionClick="toggleClickPrivacyHelp()"
 				             clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
 				             publicClick="setCreditNameVisibility('PUBLIC', $event)" 
 	                 	     limitedClick="setCreditNameVisibility('LIMITED', $event)" 
 	                 	     privateClick="setCreditNameVisibility('PRIVATE', $event)" />
-		        	   
-		   <input type="text" ng-model="nameForm.creditName.value" ng-enter="setNameForm()" class="full-width-input"></input>
 		   <ul class="workspace-section-toolbar">
  				<li class="pull-right">
 		   			<button class="btn btn-primary" ng-click="setNameForm()"><@spring.message "freemarker.btnsavechanges"/></button>

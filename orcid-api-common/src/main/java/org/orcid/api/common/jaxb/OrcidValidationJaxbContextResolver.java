@@ -55,7 +55,7 @@ import org.orcid.jaxb.model.record_rc1.Funding;
 import org.orcid.jaxb.model.record_rc1.PeerReview;
 import org.orcid.jaxb.model.record_rc1.Work;
 import org.orcid.jaxb.model.record_rc2.OtherName;
-import org.orcid.jaxb.model.record_rc2.PersonalDetails;
+import org.orcid.jaxb.model.record_rc2.Name;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -86,7 +86,7 @@ public class OrcidValidationJaxbContextResolver implements ContextResolver<Unmar
         SCHEMA_FILENAME_PREFIX_BY_CLASS.put(ResearcherUrl.class, "record_2.0_rc2/researcher-url-");
         SCHEMA_FILENAME_PREFIX_BY_CLASS.put(Email.class, "record_2.0_rc2/email-");
         SCHEMA_FILENAME_PREFIX_BY_CLASS.put(OtherName.class, "record_2.0_rc2/other-names-");
-        SCHEMA_FILENAME_PREFIX_BY_CLASS.put(PersonalDetails.class, "record_2.0_rc2/personal-details-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS.put(Name.class, "record_2.0_rc2/personal-details-");
     }
     private JAXBContext jaxbContext;
     private Map<String, Schema> schemaByPath = new ConcurrentHashMap<>();

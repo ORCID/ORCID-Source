@@ -88,7 +88,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
             }
         }
     }
-
+    
     @Override
     public void checkSource(SourceEntity existingSource) {
         String sourceIdOfUpdater = sourceManager.retrieveSourceOrcid();
@@ -133,7 +133,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         readLimitedScopes.retainAll(requestedScopes);
         return readLimitedScopes;
     }
-
+    
     private OAuth2Authentication getOAuth2Authentication() {
         SecurityContext context = SecurityContextHolder.getContext();
         Authentication authentication = context.getAuthentication();

@@ -16,49 +16,36 @@
  */
 package org.orcid.jaxb.model.record_rc2;
 
+import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.orcid.jaxb.model.common.CreditName;
-
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "givenNames", "familyName", "creditName", "otherNames" })
-@XmlRootElement(name = "persona-details", namespace = "http://www.orcid.org/ns/personal-details")
-public class PersonalDetails {
-    @XmlElement(name = "given-names", namespace = "http://www.orcid.org/ns/personal-details")
-    private GivenNames givenNames;
-    @XmlElement(name = "family-name", namespace = "http://www.orcid.org/ns/personal-details")
-    private FamilyName familyName;
-    @XmlElement(name = "credit-name", namespace = "http://www.orcid.org/ns/common")
-    private CreditName creditName;
-    @XmlElement(name = "other-names", namespace = "http://www.orcid.org/ns/other-name")
+@XmlType(propOrder = { "name", "otherNames", "biography" })
+@XmlRootElement(name = "personal-details", namespace = "http://www.orcid.org/ns/personal-details")
+public class PersonalDetails implements Serializable {
+    private static final long serialVersionUID = 8496158434601501884L;
+    @XmlElement(name = "name", namespace = "http://www.orcid.org/ns/personal-details")
+    private Name name;
+    @XmlElement(name = "other-names", namespace = "http://www.orcid.org/ns/personal-details")
     private OtherNames otherNames;
-
-    public GivenNames getGivenNames() {
-        return givenNames;
+    @XmlElement(name = "biography", namespace = "http://www.orcid.org/ns/personal-details")
+    private Biography biography;
+    @XmlAttribute
+    protected String path;
+    
+    
+    public Name getName() {
+        return name;
     }
 
-    public void setGivenNames(GivenNames givenNames) {
-        this.givenNames = givenNames;
-    }
-
-    public FamilyName getFamilyName() {
-        return familyName;
-    }
-
-    public void setFamilyName(FamilyName familyName) {
-        this.familyName = familyName;
-    }
-
-    public CreditName getCreditName() {
-        return creditName;
-    }
-
-    public void setCreditName(CreditName creditName) {
-        this.creditName = creditName;
+    public void setName(Name name) {
+        this.name = name;
     }
 
     public OtherNames getOtherNames() {
@@ -69,46 +56,65 @@ public class PersonalDetails {
         this.otherNames = otherNames;
     }
 
+    public Biography getBiography() {
+        return biography;
+    }
+
+    public void setBiography(Biography biography) {
+        this.biography = biography;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((creditName == null) ? 0 : creditName.hashCode());
-        result = prime * result + ((familyName == null) ? 0 : familyName.hashCode());
-        result = prime * result + ((givenNames == null) ? 0 : givenNames.hashCode());
+        result = prime * result + ((biography == null) ? 0 : biography.hashCode());
+        result = prime * result + ((name == null) ? 0 : name.hashCode());
         result = prime * result + ((otherNames == null) ? 0 : otherNames.hashCode());
         return result;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         PersonalDetails other = (PersonalDetails) obj;
-        if (creditName == null) {
-            if (other.creditName != null)
+        if (biography == null) {
+            if (other.biography != null) {
                 return false;
-        } else if (!creditName.equals(other.creditName))
+            }
+        } else if (!biography.equals(other.biography)) {
             return false;
-        if (familyName == null) {
-            if (other.familyName != null)
+        }
+        if (name == null) {
+            if (other.name != null) {
                 return false;
-        } else if (!familyName.equals(other.familyName))
+            }
+        } else if (!name.equals(other.name)) {
             return false;
-        if (givenNames == null) {
-            if (other.givenNames != null)
-                return false;
-        } else if (!givenNames.equals(other.givenNames))
-            return false;
+        }
         if (otherNames == null) {
-            if (other.otherNames != null)
+            if (other.otherNames != null) {
                 return false;
-        } else if (!otherNames.equals(other.otherNames))
+            }
+        } else if (!otherNames.equals(other.otherNames)) {
             return false;
+        }
         return true;
     }
 }

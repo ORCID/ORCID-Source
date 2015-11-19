@@ -20,25 +20,18 @@ import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 
-import org.orcid.jaxb.model.common.Visibility;
-import org.orcid.jaxb.model.common.VisibilityType;
-
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "content" })
 @XmlRootElement(name = "family-name")
-public class FamilyName implements Serializable, VisibilityType {
+public class FamilyName implements Serializable {
     private static final long serialVersionUID = -3413526274697486506L;
 
     @XmlValue
     protected String content;
-
-    @XmlAttribute
-    protected Visibility visibility;
 
     public FamilyName() {
 
@@ -46,11 +39,6 @@ public class FamilyName implements Serializable, VisibilityType {
 
     public FamilyName(String content) {
         this.content = content;
-    }
-
-    public FamilyName(String content, Visibility visibility) {
-        this.content = content;
-        this.visibility = visibility;
     }
 
     public String getContent() {
@@ -61,20 +49,11 @@ public class FamilyName implements Serializable, VisibilityType {
         this.content = content;
     }
 
-    public Visibility getVisibility() {
-        return visibility;
-    }
-
-    public void setVisibility(Visibility visibility) {
-        this.visibility = visibility;
-    }
-
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((content == null) ? 0 : content.hashCode());
-        result = prime * result + ((visibility == null) ? 0 : visibility.hashCode());
         return result;
     }
 
@@ -91,8 +70,6 @@ public class FamilyName implements Serializable, VisibilityType {
             if (other.content != null)
                 return false;
         } else if (!content.equals(other.content))
-            return false;
-        if (visibility != other.visibility)
             return false;
         return true;
     }

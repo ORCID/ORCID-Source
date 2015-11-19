@@ -20,4 +20,5 @@ import org.orcid.jaxb.model.record_rc2.PersonalDetails;
 
 public interface PersonalDetailsManager {
     PersonalDetails getPersonalDetails(String orcid);
+    PersonalDetails getPublicPersonalDetails(String orcid);
 }
