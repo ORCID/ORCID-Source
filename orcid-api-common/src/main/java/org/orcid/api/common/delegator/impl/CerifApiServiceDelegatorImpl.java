@@ -14,28 +14,36 @@
  *
  * =============================================================================
  */
-package org.orcid.api.t1.cerif.delegator.impl;
+package org.orcid.api.common.delegator.impl;
+
+import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.orcid.api.common.cerif.Cerif10APIFactory;
 import org.orcid.api.common.cerif.Cerif16Builder;
 import org.orcid.api.common.cerif.CerifTypeTranslator;
+import org.orcid.api.common.delegator.CerifApiServiceDelgator;
 import org.orcid.api.common.util.ActivityUtils;
-import org.orcid.api.t1.cerif.delegator.PublicCerifApiServiceDelgator;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.core.security.visibility.aop.AccessControl;
 import org.orcid.core.security.visibility.filter.VisibilityFilterV2;
 import org.orcid.jaxb.model.message.ScopePathType;
+import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.record.summary_rc1.ActivitiesSummary;
 import org.orcid.jaxb.model.record.summary_rc1.WorkSummary;
+import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.google.common.base.Optional;
+import com.google.common.collect.Sets;
 
 /**
  * Produces CERIF formatted representations of ORCID reseources cerif openAIRE
@@ -47,7 +55,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @author tom
  *
  */
-public class PublicCerifApiServiceDelegatorImpl implements PublicCerifApiServiceDelgator {
+public class CerifApiServiceDelegatorImpl implements CerifApiServiceDelgator {
 
     @Resource
     private ProfileEntityManager profileEntityManager;
@@ -60,20 +68,47 @@ public class PublicCerifApiServiceDelegatorImpl implements PublicCerifApiService
 
     private CerifTypeTranslator translator = new CerifTypeTranslator();
 
-
     @Transactional
     @Override
     @AccessControl(requiredScope = ScopePathType.READ_PUBLIC, enableAnonymousAccess = true)
     public Response getPerson(String orcid) {
+        return this.getPerson(orcid, Visibility.PUBLIC);
+    }
+    
+    /** Selective visibility profile
+     * 
+     * TODO: re-factor to remove and use new V2 visibility for names when available.
+     * 
+     * @param orcid
+     * @param vis
+     * @return
+     */
+     protected Response getPerson(String orcid, Visibility vis) {
         ProfileEntity profile = profileEntityManager.findByOrcid(orcid);
         if (profile == null)
             return Response.status(404).build();
-        ActivitiesSummary as = profileEntityManager.getPublicActivitiesSummary(orcid);
+       
+        Optional<String> creditname = Optional.absent();
+        if (!profile.getCreditNameVisibility().isMoreRestrictiveThan(vis)) {
+            creditname = Optional.of(profile.getCreditName());
+        }
+        
+        Set<ExternalIdentifierEntity> externalIDs = Sets.newHashSet();
+        if (!profile.getExternalIdentifiersVisibility().isMoreRestrictiveThan(vis)) {
+            externalIDs = profile.getExternalIdentifiers();
+        }
+        
+        // TODO: we also need to check name visibility properly here, in line with V2 changes
+        Optional<String> given = Optional.fromNullable(profile.getGivenNames());
+        Optional<String> family = Optional.fromNullable(profile.getFamilyName());
+
+        ActivitiesSummary as = profileEntityManager.getActivitiesSummary(orcid);
         ActivityUtils.cleanEmptyFields(as);
-        visibilityFilter.filter(as);        
+        visibilityFilter.filter(as);
+
         return Response.ok(
                 new Cerif16Builder()
-                .addPerson(profile)
+                .addPerson(profile.getId(), given, family, creditname, externalIDs)
                 .concatPublications(as, orcid, false)
                 .concatProducts(as, orcid, false)
                 .build()
@@ -133,7 +168,8 @@ public class PublicCerifApiServiceDelegatorImpl implements PublicCerifApiService
      * 
      * @param id
      * @return Pair of ids, left = ORCID, right = PutCode
-     * @throws Exception if can't parse
+     * @throws Exception
+     *             if can't parse
      */
     private Pair<String, Long> parseActivityID(String id) throws Exception {
         String[] ids = id.split(":");

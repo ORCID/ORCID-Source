@@ -21,15 +21,14 @@ import java.util.Set;
 import javax.xml.bind.JAXBElement;
 
 import org.apache.commons.lang.StringUtils;
-import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.record.summary_rc1.ActivitiesSummary;
 import org.orcid.jaxb.model.record.summary_rc1.WorkGroup;
 import org.orcid.jaxb.model.record.summary_rc1.WorkSummary;
 import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifier;
 import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableSet;
 
 import xmlns.org.eurocris.cerif_1.CERIF;
@@ -80,38 +79,40 @@ public class Cerif16Builder {
 
     /** Add a person entity to the underlying CERIF document
      * 
-     * @param profile
      * @param orcid
+     * @param given
+     * @param family
+     * @param creditname
+     * @param externalIDs
      * @return
      */
-    public Cerif16Builder addPerson(ProfileEntity profile) {
+    public Cerif16Builder addPerson(String orcid, Optional<String> given, Optional<String> family, Optional<String> creditname, Set<ExternalIdentifierEntity> externalIDs) {
         person = objectFactory.createCfPersType();
-        person.setCfPersId(profile.getId());
-        person.getCfResIntOrCfKeywOrCfPersPers().add(buildFedID(profile.getId(), CerifClassEnum.ORCID));
+        person.setCfPersId(orcid);
+        person.getCfResIntOrCfKeywOrCfPersPers().add(buildFedID(orcid, CerifClassEnum.ORCID));
         
-        // add in other external ids here
-        // TODO: why is this throwing JPA exceptions?                
-        if (!profile.getExternalIdentifiersVisibility().isMoreRestrictiveThan(Visibility.PUBLIC)) {
-            for (ExternalIdentifierEntity id : profile.getExternalIdentifiers()) {
-                if (translator.translate(id) != CerifClassEnum.OTHER){
-                    person.getCfResIntOrCfKeywOrCfPersPers().add(buildFedID(id.getExternalIdReference(), translator.translate(id)));                    
-                }
+        // add in other external ids here   
+        for (ExternalIdentifierEntity id : externalIDs) {
+            if (translator.translate(id) != CerifClassEnum.OTHER){
+                person.getCfResIntOrCfKeywOrCfPersPers().add(buildFedID(id.getExternalIdReference(), translator.translate(id)));                    
             }
         }
+    
+        if (given.isPresent() || family.isPresent()){
+            CfPersNamePers name = objectFactory.createCfPersTypeCfPersNamePers();
+            if (given.isPresent())
+                name.setCfFirstNames(given.get());
+            if (family.isPresent())
+                name.setCfFamilyNames(family.get());
+            person.getCfResIntOrCfKeywOrCfPersPers().add(objectFactory.createCfPersTypeCfPersNamePers(name));            
+        }
 
-        // TODO: we need to check name visibility properly here!
-        CfPersNamePers name = objectFactory.createCfPersTypeCfPersNamePers();
-        name.setCfFirstNames(profile.getGivenNames());
-        name.setCfFamilyNames(profile.getFamilyName());
-        person.getCfResIntOrCfKeywOrCfPersPers().add(objectFactory.createCfPersTypeCfPersNamePers(name));
-
-        if (!profile.getCreditNameVisibility().isMoreRestrictiveThan(Visibility.PUBLIC)
-                && StringUtils.isNotEmpty(profile.getCreditName())) {
-            CfPersNamePers creditname = objectFactory.createCfPersTypeCfPersNamePers();
-            creditname.setCfClassId(CerifClassEnum.PRESENTED_NAME.getUuid());
-            creditname.setCfClassSchemeId(CerifClassSchemeEnum.PERSON_NAMES.getUuid());
-            creditname.setCfOtherNames(profile.getCreditName());
-            person.getCfResIntOrCfKeywOrCfPersPers().add(objectFactory.createCfPersTypeCfPersNamePers(creditname));
+        if (creditname.isPresent()) {
+            CfPersNamePers cn = objectFactory.createCfPersTypeCfPersNamePers();
+            cn.setCfClassId(CerifClassEnum.PRESENTED_NAME.getUuid());
+            cn.setCfClassSchemeId(CerifClassSchemeEnum.PERSON_NAMES.getUuid());
+            cn.setCfOtherNames(creditname.get());
+            person.getCfResIntOrCfKeywOrCfPersPers().add(objectFactory.createCfPersTypeCfPersNamePers(cn));
         }
         
         cerif.getCfClassOrCfClassSchemeOrCfClassSchemeDescr().add(person);
@@ -122,7 +123,7 @@ public class Cerif16Builder {
      * Add a ResultPublication to the underlying CERIF.
      * 
      * @param orcid
-     * @param ws
+     * @param ws please ensure this has been filtered for visibility before passing in
      * @param objectFactory
      * @return
      */
@@ -165,7 +166,7 @@ public class Cerif16Builder {
      * Add a ResultProduct to the underlying CERIF document
      * 
      * @param orcid
-     * @param ws
+     * @param ws please ensure this has been filtered for visibility before passing in
      * @param objectFactory
      * @return
      */
@@ -207,10 +208,10 @@ public class Cerif16Builder {
      * 
      * NOTE: will fail if you have not already added a person via addPerson()
      * 
-     * @param objectFactory
+     * @param as please ensure this has been filtered for visibility before passing in
      * @param orcid
-     * @param addFullPublication
-     *            if true, include the complete publications in the CERIF
+     * @param addFullPublications
+     * @return
      */
     public Cerif16Builder concatPublications(ActivitiesSummary as, String orcid, boolean addFullPublications) {
         for (WorkGroup w : as.getWorks().getWorkGroup()) {
@@ -238,10 +239,10 @@ public class Cerif16Builder {
      * 
      * NOTE: will fail if you have not already added a person via addPerson()
      * 
-     * @param objectFactory
+     * @param as please ensure this has been filtered for visibility before passing in
      * @param orcid
-     * @param addFull
-     *            if true, include the complete product in the CERIF
+     * @param addFullPublications
+     * @return
      */
     public Cerif16Builder concatProducts(ActivitiesSummary as, String orcid, boolean addFullProducts) {
         for (WorkGroup w : as.getWorks().getWorkGroup()) {

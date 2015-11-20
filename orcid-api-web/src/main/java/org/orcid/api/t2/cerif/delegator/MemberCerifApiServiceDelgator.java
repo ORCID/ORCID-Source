@@ -14,20 +14,10 @@
  *
  * =============================================================================
  */
-package org.orcid.api.t1.cerif.delegator;
+package org.orcid.api.t2.cerif.delegator;
 
-import javax.ws.rs.core.Response;
+import org.orcid.api.common.delegator.CerifApiServiceDelgator;
 
-public interface PublicCerifApiServiceDelgator {
-
-    Response getPerson(String id);
-
-    Response getPublication(String id);
-
-    Response getProduct(String id);
-
-    Response getEntities();
-
-    Response getSemantics();
+public interface MemberCerifApiServiceDelgator extends CerifApiServiceDelgator{
 
 }

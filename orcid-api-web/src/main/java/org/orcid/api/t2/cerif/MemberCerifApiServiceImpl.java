@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.api.t1.cerif;
+package org.orcid.api.t2.cerif;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -23,13 +23,17 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.orcid.api.common.delegator.CerifApiServiceDelgator;
+import org.orcid.api.t2.cerif.delegator.MemberCerifApiServiceDelgator;
 import org.orcid.core.api.OrcidApiConstants;
+import org.orcid.jaxb.model.message.ScopeConstants;
+import org.orcid.jaxb.model.record_rc1.Work;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.Authorization;
+import io.swagger.annotations.AuthorizationScope;
 
 /**
  * Implements the CERIF V1.0 API defined at
@@ -46,27 +50,19 @@ import io.swagger.annotations.ApiResponses;
  */
 @Api("CERIF API")
 @Path(OrcidApiConstants.CERIF_PATH)
-public class PublicCerifApiServiceImpl {
+public class MemberCerifApiServiceImpl {
 
-    private CerifApiServiceDelgator serviceDelegator;
+    private MemberCerifApiServiceDelgator serviceDelegator;
 
-    public void setServiceDelegator(CerifApiServiceDelgator serviceDelegator) {
+    public void setServiceDelegator(MemberCerifApiServiceDelgator serviceDelegator) {
         this.serviceDelegator = serviceDelegator;
     }
-
-    /*
-     * TODO: implement query params
-     * fedIds={true/false}&classifications={true/fal
-     * se}&links={true/false/{cerifEntity1;cerifEntit
-     * y2;...;cerifEntityN}}&linkedObjects={true | false}&linkedSemantics={true
-     * | false}
-     */
 
     @GET
     @Produces(value = { MediaType.APPLICATION_XML })
     @Path("/persons/{id}")
-    @ApiOperation(value = "Fetch a person record")
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "Person found"), @ApiResponse(code = 404, message = "Person not found") })
+    @ApiOperation(value = "Fetch a person record", authorizations = { @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "Person found"), @ApiResponse(code = 404, message = "Person not found"), @ApiResponse(code = 403, message = "You do not have the required permission") })
     public Response viewPerson(@PathParam("id") String id) {
         return serviceDelegator.getPerson(id);
     }
@@ -74,8 +70,8 @@ public class PublicCerifApiServiceImpl {
     @GET
     @Produces(value = { MediaType.APPLICATION_XML })
     @Path("/publications/{id}")
-    @ApiOperation(value = "Fetch a research publication record")
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "Publication found"), @ApiResponse(code = 404, message = "Publication not found") })
+    @ApiOperation(value = "Fetch a research publication record", authorizations = { @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "Publication found"), @ApiResponse(code = 404, message = "Publication not found"), @ApiResponse(code = 403, message = "You do not have the required permission") })
     public Response viewPublication(@PathParam("id") String id) {
         return serviceDelegator.getPublication(id);
     }
@@ -83,8 +79,8 @@ public class PublicCerifApiServiceImpl {
     @GET
     @Produces(value = { MediaType.APPLICATION_XML })
     @Path("/products/{id}")
-    @ApiOperation(value = "Fetch a research product record")
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "Product found"), @ApiResponse(code = 404, message = "Product not found") })
+    @ApiOperation(value = "Fetch a research product record", authorizations = { @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "Product found"), @ApiResponse(code = 404, message = "Product not found"), @ApiResponse(code = 403, message = "You do not have the required permission") })
     public Response viewProduct(@PathParam("id") String id) {
         return serviceDelegator.getProduct(id);
     }
@@ -92,7 +88,7 @@ public class PublicCerifApiServiceImpl {
     @GET
     @Produces(value = { MediaType.APPLICATION_XML })
     @Path("/entities")
-    @ApiOperation(value = "Fetch the list of supported entities")
+    @ApiOperation(value = "Fetch the list of supported entities", authorizations = { @Authorization(value = "orcid_auth") })
     @ApiResponses(value = { @ApiResponse(code = 200, message = "OK") })
     public Response viewEntities() {
         return serviceDelegator.getEntities();
@@ -101,7 +97,7 @@ public class PublicCerifApiServiceImpl {
     @GET
     @Produces(value = { MediaType.APPLICATION_XML })
     @Path("/semantics")
-    @ApiOperation(value = "Fetch the CERIF semantics")
+    @ApiOperation(value = "Fetch the CERIF semantics", authorizations = { @Authorization(value = "orcid_auth") })
     @ApiResponses(value = { @ApiResponse(code = 200, message = "OK") })
     public Response viewSemantics() {
         return serviceDelegator.getSemantics();
