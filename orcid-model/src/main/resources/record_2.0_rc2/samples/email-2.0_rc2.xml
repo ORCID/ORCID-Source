@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<researcher-url:researcher-urls
-	xmlns:researcher-url="http://www.orcid.org/ns/researcher-url"
+<email:emails
+	xmlns:email="http://www.orcid.org/ns/email"
 	xmlns:common="http://www.orcid.org/ns/common" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.orcid.org/ns/researcher-url ../researcher-url-2.0_rc2.xsd ">
-	<researcher-url:researcher-url put-code="1248"
-		visibility="public">
-		<researcher-url:url-name>Site # 1</researcher-url:url-name>
-		<researcher-url:url>http://site1.com/</researcher-url:url>
+	xsi:schemaLocation="http://www.orcid.org/ns/email ../email-2.0_rc2.xsd ">
+	<email:email visibility="public">
+		<email:email>user1@email.com</email:email>
 		<common:created-date>2001-12-31T12:00:00</common:created-date>
 		<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
 		<common:source>
@@ -17,11 +15,9 @@
 			</common:source-orcid>
 			<common:source-name />
 		</common:source>
-	</researcher-url:researcher-url>
-	<researcher-url:researcher-url put-code="1249"
-		visibility="public">
-		<researcher-url:url-name>Site # 2</researcher-url:url-name>
-		<researcher-url:url>http://site2.com/</researcher-url:url>
+	</email:email>
+	<email:email visibility="public">
+		<email:email>user2@email.com</email:email>
 		<common:created-date>2001-12-31T12:00:00</common:created-date>
 		<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
 		<common:source>
@@ -32,5 +28,5 @@
 			</common:source-orcid>
 			<common:source-name />
 		</common:source>
-	</researcher-url:researcher-url>
-</researcher-url:researcher-urls>
+	</email:email>
+</email:emails>
