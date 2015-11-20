@@ -40,6 +40,9 @@ import org.orcid.jaxb.model.record_rc1.Employment;
 import org.orcid.jaxb.model.record_rc1.Funding;
 import org.orcid.jaxb.model.record_rc1.PeerReview;
 import org.orcid.jaxb.model.record_rc1.Work;
+import org.orcid.jaxb.model.record_rc2.Biography;
+import org.orcid.jaxb.model.record_rc2.Name;
+import org.orcid.jaxb.model.record_rc2.OtherName;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.springframework.security.core.Authentication;
@@ -85,6 +88,45 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
             // The client has permission for read limited
             if ((visibility == null || Visibility.PRIVATE.equals(visibility)) && clientId != null && !clientId.equals(filterable.retrieveSourcePath())) {
                 throw new OrcidVisibilityException();
+            }
+        }
+    }
+    
+    @Override
+    public void checkVisibility(Name name) {        
+        if(Visibility.PRIVATE.equals(name.getVisibility())) {
+            throw new OrcidVisibilityException();
+        }
+        boolean hasReadLimitedScope = hasScope(ScopePathType.READ_LIMITED);
+        if(!hasReadLimitedScope) {
+            if(Visibility.LIMITED.equals(name.getVisibility())) {
+                throw new OrcidUnauthorizedException("You dont have permissions to view this element");
+            }
+        }
+    }
+    
+    @Override
+    public void checkVisibility(Biography biography) {
+        if(Visibility.PRIVATE.equals(biography.getVisibility())) {
+            throw new OrcidVisibilityException();
+        }
+        boolean hasReadLimitedScope = hasScope(ScopePathType.READ_LIMITED);
+        if(!hasReadLimitedScope) {
+            if(Visibility.LIMITED.equals(biography.getVisibility())) {
+                throw new OrcidUnauthorizedException("You dont have permissions to view this element");
+            }
+        }
+    }
+    
+    @Override
+    public void checkVisibility(OtherName otherName) {
+        if(Visibility.PRIVATE.equals(otherName.getVisibility())) {
+            throw new OrcidVisibilityException();
+        }
+        boolean hasReadLimitedScope = hasScope(ScopePathType.READ_LIMITED);
+        if(!hasReadLimitedScope) {
+            if(Visibility.LIMITED.equals(otherName.getVisibility())) {
+                throw new OrcidUnauthorizedException("You dont have permissions to view this element");
             }
         }
     }
@@ -167,6 +209,19 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
             return request.getClientId();
         } 
         return null;
+    }
+    
+    private boolean hasScope(ScopePathType scope) {
+        OAuth2Authentication oAuth2Authentication = getOAuth2Authentication();
+        if(oAuth2Authentication != null) {
+            OAuth2Request authorizationRequest = oAuth2Authentication.getOAuth2Request();
+            Set<String> requestedScopes = ScopePathType.getCombinedScopesFromStringsAsStrings(authorizationRequest.getScope());
+            if(requestedScopes.contains(scope.value())) {
+                return true;
+            }
+        }
+        
+        return false;
     }
 
 }

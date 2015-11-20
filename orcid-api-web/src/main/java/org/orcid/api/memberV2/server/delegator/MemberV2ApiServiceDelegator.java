@@ -94,26 +94,28 @@ public interface MemberV2ApiServiceDelegator {
     Response deleteGroupIdRecord(Long putCode);
 
     Response viewGroupIdRecords(String pageSize, String pageNum);
-    
+
     Response viewResearcherUrls(String orcid);
-    
+
     Response viewResearcherUrl(String orcid, String putCode);
-    
+
     Response updateResearcherUrl(String orcid, String putCode, ResearcherUrl researcherUrl);
-    
+
     Response createResearcherUrl(String orcid, ResearcherUrl researcherUrl);
 
     Response deleteResearcherUrl(String orcid, String putCode);
-    
+
     Response viewEmails(String orcid);
-    
-	Response viewOtherNames(String orcid);
 
-	Response viewOtherName(String orcid, String putCode);
+    Response viewOtherNames(String orcid);
 
-	Response createOtherName(String orcid, org.orcid.jaxb.model.record_rc2.OtherName otherName);
+    Response viewOtherName(String orcid, String putCode);
 
-	Response updateOtherName(String orcid, String putCode, org.orcid.jaxb.model.record_rc2.OtherName otherName);  
-	
-	Response deleteOtherName(String orcid, String putCode);     
+    Response createOtherName(String orcid, org.orcid.jaxb.model.record_rc2.OtherName otherName);
+
+    Response updateOtherName(String orcid, String putCode, org.orcid.jaxb.model.record_rc2.OtherName otherName);
+
+    Response deleteOtherName(String orcid, String putCode);
+
+    Response viewPersonalDetails(String orcid);
 }

@@ -17,6 +17,9 @@
 package org.orcid.core.manager;
 
 import org.orcid.jaxb.model.common.Filterable;
+import org.orcid.jaxb.model.record_rc2.Biography;
+import org.orcid.jaxb.model.record_rc2.Name;
+import org.orcid.jaxb.model.record_rc2.OtherName;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 
 /**
@@ -27,6 +30,12 @@ import org.orcid.persistence.jpa.entities.SourceEntity;
 public interface OrcidSecurityManager {
 
     void checkVisibility(Filterable filterable);   
+    
+    void checkVisibility(Name name);
+    
+    void checkVisibility(Biography biography);
+    
+    void checkVisibility(OtherName otherName);
     
     void checkSource(SourceEntity existingSource);
     
