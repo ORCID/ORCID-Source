@@ -176,11 +176,10 @@ public class ActivitiesGroup {
     }
     
     private boolean containsKey(GroupAble key) {
-        for(GroupAble existingKey : groupKeys) {
-            if(existingKey.matches(key)) {
-                return true;
-            }
-        }
+        for (GroupAble existingKey : groupKeys)
+            if (existingKey.getGroupId() != null)
+                if (existingKey.getGroupId().equals(key.getGroupId()))
+                    return true;
         return false;
     }
     

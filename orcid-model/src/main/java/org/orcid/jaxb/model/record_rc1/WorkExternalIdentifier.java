@@ -181,23 +181,4 @@ public class WorkExternalIdentifier extends ExternalIdentifierBase implements Se
         return newExtId;
     }
 
-    @Override
-    public boolean matches(GroupAble obj) {
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        WorkExternalIdentifier other = (WorkExternalIdentifier) obj;
-
-        if (workExternalIdentifierId == null) {
-            if (other.workExternalIdentifierId != null) {
-                return false;
-            }
-        } else if (!workExternalIdentifierId.equals(other.workExternalIdentifierId)) {
-            return false;
-        }
-        if (workExternalIdentifierType != other.workExternalIdentifierType) {
-            return false;
-        }
-        return true;
-    }
 }

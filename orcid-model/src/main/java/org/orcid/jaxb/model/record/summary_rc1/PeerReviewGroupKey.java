@@ -62,9 +62,4 @@ public class PeerReviewGroupKey implements GroupAble {
             return false;
         return true;
     }
-
-    @Override
-    public boolean matches(GroupAble other) {        
-        return this.equals(other);
-    }        
 }
