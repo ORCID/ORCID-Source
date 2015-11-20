@@ -16,16 +16,26 @@
  */
 package org.orcid.integration.blackbox.api.personV2;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.junit.Test;
 import org.orcid.integration.api.helper.OauthHelper;
 import org.orcid.integration.api.memberV2.MemberV2ApiClientImpl;
 import org.orcid.integration.api.pub.PublicV2ApiClientImpl;
 import org.orcid.integration.blackbox.BlackBoxBase;
+import org.orcid.jaxb.model.common.Visibility;
+import org.orcid.jaxb.model.record_rc2.PersonalDetails;
+import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
+import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
 import org.springframework.beans.factory.annotation.Value;
+
+import com.sun.jersey.api.client.ClientResponse;
 
 public class PersonalDetailsTest extends BlackBoxBase {
     protected static Map<String, String> accessTokens = new HashMap<String, String>();
@@ -63,5 +73,15 @@ public class PersonalDetailsTest extends BlackBoxBase {
 
     @Resource
     private OauthHelper oauthHelper;
+    
+    @Test
+    public void testGetWithPublicAPI() {
+        ClientResponse getAllResponse = publicV2ApiClient.viewResearcherUrlsXML(user1OrcidId);
+        assertNotNull(getAllResponse);
+        PersonalDetails personalDetails = getAllResponse.getEntity(PersonalDetails.class);
+        assertNotNull(personalDetails);
+        assertNotNull(personalDetails.getBiography());
+        //TODO
+    }
     
 }
