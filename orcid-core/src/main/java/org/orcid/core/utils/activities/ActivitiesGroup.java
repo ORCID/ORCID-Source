@@ -34,25 +34,16 @@ public class ActivitiesGroup {
         groupKeys = new HashSet<GroupAble>();        
         activities = new HashSet<GroupableActivity>();
         
-        if(activity != null) {
+        if(activity != null)
             if(PeerReviewSummary.class.isAssignableFrom(activity.getClass())) {
                 PeerReviewSummary peerReviewSummary = (PeerReviewSummary) activity;
                 PeerReviewGroupKey prgk = new PeerReviewGroupKey(); 
                 prgk.setGroupId(peerReviewSummary.getGroupId());                
                 groupKeys.add(prgk);                               
-            } else {
-                ExternalIdentifiersContainer container = activity.getExternalIdentifiers();
-                if(container != null) {
-                    List<? extends GroupAble> extIds = (List<? extends GroupAble>)container.getExternalIdentifier();
-                    for(GroupAble extId : extIds) {
-                        //Dont add grouping keys  that dont pass the validation
-                        if(extId.isGroupAble())
-                            groupKeys.add(extId);
-                    }
-                }
-            }            
-        }
-        
+            } else if (activity.getExternalIdentifiers() != null)
+                for (GroupAble extId : activity.getExternalIdentifiers().getExternalIdentifier())
+                    // Dont add grouping keys that dont pass the validation
+                    if (extId.isGroupAble()) groupKeys.add(extId);   
         activities.add(activity);
     }
             
