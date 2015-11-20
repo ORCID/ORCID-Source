@@ -67,6 +67,11 @@ public class FundingExternalIdentifier extends ExternalIdentifierBase implements
     public void setValue(String value) {
         this.value = value;
     }
+    
+    @Override
+    public String getGroupId() {
+        return this.value + this.type.toString();
+    }
 
     @Override
     public int hashCode() {
@@ -103,14 +108,14 @@ public class FundingExternalIdentifier extends ExternalIdentifierBase implements
     }
 
     @Override
-    public boolean passGroupingValidation() {
-        if (!super.passGroupingValidation())
+    public boolean isGroupAble() {
+        if (!super.isGroupAble())
             return false;
         return true;
     }
 
     @Override
-    public boolean matches(GroupKey obj) {
+    public boolean matches(GroupAble obj) {
         if (getClass() != obj.getClass()) {
             return false;
         }

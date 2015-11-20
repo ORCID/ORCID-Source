@@ -97,6 +97,13 @@ public class WorkExternalIdentifier extends ExternalIdentifierBase implements Se
     public void setWorkExternalIdentifierId(WorkExternalIdentifierId value) {
         this.workExternalIdentifierId = value;
     }
+    
+    @Override
+    public String getGroupId() {
+        String workIdVal = this.workExternalIdentifierId == null ? null : this.workExternalIdentifierId.getContent();
+        String typeVal = this.workExternalIdentifierType == null ? null : this.workExternalIdentifierType.toString();
+        return workIdVal + typeVal; 
+    }
 
     @Override
     public String toString() {
@@ -111,9 +118,9 @@ public class WorkExternalIdentifier extends ExternalIdentifierBase implements Se
     }
 
     @Override
-    public boolean passGroupingValidation() {
+    public boolean isGroupAble() {
         // Perform general validations
-        if (!super.passGroupingValidation())
+        if (!super.isGroupAble())
             return false;
 
         // Dont groups works where the external id is empty
@@ -175,7 +182,7 @@ public class WorkExternalIdentifier extends ExternalIdentifierBase implements Se
     }
 
     @Override
-    public boolean matches(GroupKey obj) {
+    public boolean matches(GroupAble obj) {
         if (getClass() != obj.getClass()) {
             return false;
         }
