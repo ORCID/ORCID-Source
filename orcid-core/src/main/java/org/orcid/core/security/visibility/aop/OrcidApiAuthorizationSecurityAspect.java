@@ -34,8 +34,10 @@ import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.security.PermissionChecker;
 import org.orcid.core.security.visibility.filter.VisibilityFilter;
 import org.orcid.jaxb.model.message.GivenNames;
+import org.orcid.jaxb.model.message.OrcidBio;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.jaxb.model.message.PersonalDetails;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.notification.Notification;
@@ -150,6 +152,13 @@ public class OrcidApiAuthorizationSecurityAspect {
             } else {
                 visibilities = permissionChecker.obtainVisibilitiesForAuthentication(getAuthentication(), accessControl.requiredScope(), orcidMessage);
             }
+            //If the message contains a bio, and the given name is filtered, restore it as an empty space
+            boolean setEmptyGivenNameIfFiltered = false;
+            if(orcidMessage.getOrcidProfile() != null) {
+                if(orcidMessage.getOrcidProfile() != null && orcidMessage.getOrcidProfile().getOrcidBio() != null) {
+                    setEmptyGivenNameIfFiltered = true;
+                }
+            }
             
             ScopePathType requiredScope = accessControl.requiredScope();
             // If the required scope is */read-limited or */update
@@ -208,6 +217,20 @@ public class OrcidApiAuthorizationSecurityAspect {
 
             } else {
                 visibilityFilter.filter(orcidMessage, null, false, false, false, false, visibilities.toArray(new Visibility[visibilities.size()]));
+            }
+            
+            //This applies for given names that were filtered because of the new visibility field applied on them
+            //If the given name was set at the beginning and now is fileted, it means we should restore it as an empty field
+            if(setEmptyGivenNameIfFiltered) {
+                if(orcidMessage.getOrcidProfile() != null) {
+                    if(orcidMessage.getOrcidProfile().getOrcidBio() == null) {
+                        orcidMessage.getOrcidProfile().setOrcidBio(new OrcidBio());
+                    }
+                    
+                    if(orcidMessage.getOrcidProfile().getOrcidBio().getPersonalDetails() == null) {
+                        orcidMessage.getOrcidProfile().getOrcidBio().setPersonalDetails(new PersonalDetails());
+                    }
+                }
             }
             
             //If the returning message contains the given or family names visibility, remove it
