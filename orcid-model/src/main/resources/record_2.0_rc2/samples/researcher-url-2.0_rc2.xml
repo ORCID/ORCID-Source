@@ -17,20 +17,5 @@
 			</common:source-orcid>
 			<common:source-name />
 		</common:source>
-	</researcher-url:researcher-url>
-	<researcher-url:researcher-url put-code="1249"
-		visibility="public">
-		<researcher-url:url-name>Site # 2</researcher-url:url-name>
-		<researcher-url:url>http://site2.com/</researcher-url:url>
-		<common:created-date>2001-12-31T12:00:00</common:created-date>
-		<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
-		<common:source>
-			<common:source-orcid>
-				<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
-				<common:path>8888-8888-8888-8880</common:path>
-				<common:host>orcid.org</common:host>
-			</common:source-orcid>
-			<common:source-name />
-		</common:source>
-	</researcher-url:researcher-url>
+	</researcher-url:researcher-url>	
 </researcher-url:researcher-urls>
