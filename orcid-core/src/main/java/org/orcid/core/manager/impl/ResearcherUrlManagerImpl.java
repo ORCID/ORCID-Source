@@ -256,11 +256,9 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
     @Override
     @Transactional
     public org.orcid.jaxb.model.record_rc2.ResearcherUrl updateResearcherUrlV2(String orcid, org.orcid.jaxb.model.record_rc2.ResearcherUrl researcherUrl) {
-        SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();        
-        
+        SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();                
         // Validate the researcher url
-        PersonValidator.validateResearcherUrl(researcherUrl, sourceEntity, false);
-        
+        PersonValidator.validateResearcherUrl(researcherUrl, sourceEntity, false);        
         // Validate it is not duplicated
         List<ResearcherUrlEntity> existingResearcherUrls = researcherUrlDao.getResearcherUrls(orcid);
         

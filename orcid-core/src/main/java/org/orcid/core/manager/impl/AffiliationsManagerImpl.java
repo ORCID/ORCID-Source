@@ -172,8 +172,7 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
      * */
     @Override
     public Education updateEducationAffiliation(String orcid, Education education) {
-        OrgAffiliationRelationEntity educationEntity = affiliationsDao.getOrgAffiliationRelation(orcid, education.getPutCode());
-                
+        OrgAffiliationRelationEntity educationEntity = affiliationsDao.getOrgAffiliationRelation(orcid, education.getPutCode());                
         Visibility originalVisibility = educationEntity.getVisibility();
         SourceEntity existingSource = educationEntity.getSource();
         orcidSecurityManager.checkSource(existingSource);
@@ -266,8 +265,7 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
      * */
     @Override
     public Employment updateEmploymentAffiliation(String orcid, Employment employment) {
-        OrgAffiliationRelationEntity employmentEntity = affiliationsDao.getOrgAffiliationRelation(orcid, employment.getPutCode());
-        
+        OrgAffiliationRelationEntity employmentEntity = affiliationsDao.getOrgAffiliationRelation(orcid, employment.getPutCode());        
         Visibility originalVisibility = employmentEntity.getVisibility();
         SourceEntity existingSource = employmentEntity.getSource();
         orcidSecurityManager.checkSource(existingSource);
@@ -300,8 +298,7 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
      * */
     @Override
     public boolean checkSourceAndDelete(String orcid, Long affiliationId) {
-        OrgAffiliationRelationEntity affiliationEntity = affiliationsDao.getOrgAffiliationRelation(orcid, affiliationId);
-                
+        OrgAffiliationRelationEntity affiliationEntity = affiliationsDao.getOrgAffiliationRelation(orcid, affiliationId);                
         orcidSecurityManager.checkSource(affiliationEntity.getSource());
         boolean result = affiliationsDao.removeOrgAffiliationRelation(orcid, affiliationId);
         if(result)

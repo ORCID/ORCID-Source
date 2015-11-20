@@ -215,10 +215,9 @@ public class WorkManagerImpl implements WorkManager {
                 if (!existing.getPutCode().equals(work.getPutCode())) {
                     ActivityValidator.checkExternalIdentifiers(work.getExternalIdentifiers(), existing.getExternalIdentifiers(), existing.getSource(), sourceEntity);
                 }
-            }            
+            }
         }
-        WorkEntity workEntity = workDao.getWork(orcid, work.getPutCode());
-        
+        WorkEntity workEntity = workDao.getWork(orcid, work.getPutCode());        
         Visibility originalVisibility = Visibility.fromValue(workEntity.getVisibility().value());
         SourceEntity existingSource = workEntity.getSource();
         orcidSecurityManager.checkSource(existingSource);
