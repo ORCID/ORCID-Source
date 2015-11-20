@@ -18,16 +18,13 @@ package org.orcid.core.manager.impl;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 
 import org.apache.commons.io.IOUtils;
 import org.orcid.core.adapter.JpaJaxbFundingAdapter;
-import org.orcid.core.exception.WrongOwnerException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidSecurityManager;
@@ -238,13 +235,7 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
      * */
     @Override
     public Funding getFunding(String orcid, Long fundingId) {
-        ProfileFundingEntity profileFundingEntity = profileFundingDao.find(fundingId); 
-        if(profileFundingEntity == null || !orcid.equals(profileFundingEntity.getProfile().getId())) {
-            Map<String, String> params = new HashMap<String, String>();
-            params.put("element", "funding");
-            params.put("orcid", orcid);
-            throw new WrongOwnerException(params);
-        }
+        ProfileFundingEntity profileFundingEntity = profileFundingDao.getProfileFunding(orcid, fundingId); 
         return jpaJaxbFundingAdapter.toFunding(profileFundingEntity);
     }
     
@@ -259,12 +250,6 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
     @Override
     public FundingSummary getSummary(String orcid, Long fundingId) {
         ProfileFundingEntity profileFundingEntity = profileFundingDao.getProfileFunding(orcid, fundingId);
-        if(profileFundingEntity == null || !orcid.equals(profileFundingEntity.getProfile().getId())) {
-            Map<String, String> params = new HashMap<String, String>();
-            params.put("element", "funding");
-            params.put("orcid", orcid);
-            throw new WrongOwnerException(params);
-        }
         return jpaJaxbFundingAdapter.toFundingSummary(profileFundingEntity);
     }
     
@@ -342,12 +327,6 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
         }
     	
         ProfileFundingEntity pfe = profileFundingDao.getProfileFunding(orcid, funding.getPutCode());
-        if(pfe == null || !orcid.equals(pfe.getProfile().getId())) {
-            Map<String, String> params = new HashMap<String, String>();
-            params.put("element", "funding");
-            params.put("orcid", orcid);
-            throw new WrongOwnerException(params);
-        }
         Visibility originalVisibility = pfe.getVisibility();
         SourceEntity existingSource = pfe.getSource();
         orcidSecurityManager.checkSource(existingSource);
@@ -377,12 +356,6 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
     @Transactional    
     public boolean checkSourceAndDelete(String orcid, Long fundingId) {
         ProfileFundingEntity pfe = profileFundingDao.getProfileFunding(orcid, fundingId);
-        if(pfe == null || !orcid.equals(pfe.getProfile().getId())) {
-            Map<String, String> params = new HashMap<String, String>();
-            params.put("element", "funding");
-            params.put("orcid", orcid);
-            throw new WrongOwnerException(params);
-        }
         orcidSecurityManager.checkSource(pfe.getSource());
         Item item = createItem(pfe);
         boolean result = profileFundingDao.removeProfileFunding(orcid, fundingId);

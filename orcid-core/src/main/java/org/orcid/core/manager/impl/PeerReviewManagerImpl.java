@@ -18,16 +18,12 @@ package org.orcid.core.manager.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.Resource;
-import javax.persistence.NoResultException;
 
 import org.orcid.core.adapter.JpaJaxbPeerReviewAdapter;
 import org.orcid.core.exception.OrcidValidationException;
-import org.orcid.core.exception.WrongOwnerException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.GroupIdRecordManager;
 import org.orcid.core.manager.NotificationManager;
@@ -94,28 +90,13 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
 
     @Override
     public PeerReview getPeerReview(String orcid, Long peerReviewId) {
-        PeerReviewEntity peerReviewEntity = null;
-        
-        try {
-            peerReviewEntity = peerReviewDao.getPeerReview(orcid, peerReviewId);
-        } catch (NoResultException nre) {
-            Map<String, String> params = new HashMap<String, String>();
-            params.put("element", "peer review");
-            params.put("orcid", orcid);
-            throw new WrongOwnerException(params);
-        }                
+        PeerReviewEntity peerReviewEntity = peerReviewDao.getPeerReview(orcid, peerReviewId);                       
         return jpaJaxbPeerReviewAdapter.toPeerReview(peerReviewEntity);
     }
 
     @Override
     public PeerReviewSummary getPeerReviewSummary(String orcid, Long peerReviewId) {
         PeerReviewEntity peerReviewEntity = peerReviewDao.getPeerReview(orcid, peerReviewId);
-        if(peerReviewEntity == null || !orcid.equals(peerReviewEntity.getProfile().getId())) {
-            Map<String, String> params = new HashMap<String, String>();
-            params.put("element", "peer review");
-            params.put("orcid", orcid);
-            throw new WrongOwnerException(params);
-        }
         return jpaJaxbPeerReviewAdapter.toPeerReviewSummary(peerReviewEntity);
     }
 
@@ -190,13 +171,7 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
                 }
             }
         }
-        PeerReviewEntity existingEntity = peerReviewDao.getPeerReview(orcid, peerReview.getPutCode());
-        if(existingEntity == null || !orcid.equals(existingEntity.getProfile().getId())) {
-            Map<String, String> params = new HashMap<String, String>();
-            params.put("element", "peer review");
-            params.put("orcid", orcid);
-            throw new WrongOwnerException(params);
-        }
+        PeerReviewEntity existingEntity = peerReviewDao.getPeerReview(orcid, peerReview.getPutCode());        
         PeerReviewEntity updatedEntity = new PeerReviewEntity();
         Visibility originalVisibility = existingEntity.getVisibility();
         SourceEntity existingSource = existingEntity.getSource();
@@ -216,12 +191,6 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
     @Override
     public boolean checkSourceAndDelete(String orcid, Long peerReviewId) {
         PeerReviewEntity pr = peerReviewDao.getPeerReview(orcid, peerReviewId);
-        if(pr == null || !orcid.equals(pr.getProfile().getId())) {
-            Map<String, String> params = new HashMap<String, String>();
-            params.put("element", "peer review");
-            params.put("orcid", orcid);
-            throw new WrongOwnerException(params);
-        }
         orcidSecurityManager.checkSource(pr.getSource());
         Item item = createItem(pr);
         boolean result = deletePeerReview(pr, orcid);

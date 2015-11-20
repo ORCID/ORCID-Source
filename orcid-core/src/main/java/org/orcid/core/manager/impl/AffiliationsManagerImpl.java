@@ -16,23 +16,20 @@
  */
 package org.orcid.core.manager.impl;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.Resource;
 
 import org.orcid.core.adapter.JpaJaxbEducationAdapter;
 import org.orcid.core.adapter.JpaJaxbEmploymentAdapter;
-import org.orcid.core.exception.WrongOwnerException;
 import org.orcid.core.manager.AffiliationsManager;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.OrgManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.validator.ActivityValidator;
-import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.AffiliationType;
+import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.notification.amended.AmendedSection;
 import org.orcid.jaxb.model.notification.permission.Item;
 import org.orcid.jaxb.model.notification.permission.ItemType;
@@ -84,15 +81,7 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
     public OrgAffiliationRelationEntity findAffiliationByUserAndId(String userOrcid, Long affiliationId) {
         if (PojoUtil.isEmpty(userOrcid) || affiliationId == null)
             return null;
-        OrgAffiliationRelationEntity affiliation = affiliationsDao.find(affiliationId);
-        if(affiliation != null) {
-            if(!userOrcid.equals(affiliation.getProfile().getId())) {
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("element", "affiliation");
-                params.put("orcid", userOrcid);
-                throw new WrongOwnerException(params);
-            }
-        }
+        OrgAffiliationRelationEntity affiliation = affiliationsDao.getOrgAffiliationRelation(userOrcid, affiliationId);
         return affiliation;
     }
 
@@ -184,13 +173,6 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
     @Override
     public Education updateEducationAffiliation(String orcid, Education education) {
         OrgAffiliationRelationEntity educationEntity = affiliationsDao.getOrgAffiliationRelation(orcid, education.getPutCode());
-        
-        if(educationEntity == null || !orcid.equals(educationEntity.getProfile().getId())) {
-            Map<String, String> params = new HashMap<String, String>();
-            params.put("element", "affiliation");
-            params.put("orcid", orcid);
-            throw new WrongOwnerException(params);
-        }
                 
         Visibility originalVisibility = educationEntity.getVisibility();
         SourceEntity existingSource = educationEntity.getSource();
@@ -286,15 +268,6 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
     public Employment updateEmploymentAffiliation(String orcid, Employment employment) {
         OrgAffiliationRelationEntity employmentEntity = affiliationsDao.getOrgAffiliationRelation(orcid, employment.getPutCode());
         
-        if(employmentEntity == null || !orcid.equals(employmentEntity.getProfile().getId())) {
-            if(!orcid.equals(employmentEntity.getProfile().getId())) {
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("element", "affiliation");
-                params.put("orcid", orcid);
-                throw new WrongOwnerException(params);
-            }
-        }
-        
         Visibility originalVisibility = employmentEntity.getVisibility();
         SourceEntity existingSource = employmentEntity.getSource();
         orcidSecurityManager.checkSource(existingSource);
@@ -328,13 +301,6 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
     @Override
     public boolean checkSourceAndDelete(String orcid, Long affiliationId) {
         OrgAffiliationRelationEntity affiliationEntity = affiliationsDao.getOrgAffiliationRelation(orcid, affiliationId);
-        
-        if(affiliationEntity == null || !orcid.equals(affiliationEntity.getProfile().getId())) {
-            Map<String, String> params = new HashMap<String, String>();
-            params.put("element", "affiliation");
-            params.put("orcid", orcid);
-            throw new WrongOwnerException(params);
-        }
                 
         orcidSecurityManager.checkSource(affiliationEntity.getSource());
         boolean result = affiliationsDao.removeOrgAffiliationRelation(orcid, affiliationId);
