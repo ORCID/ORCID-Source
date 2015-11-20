@@ -35,6 +35,7 @@ import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record.summary_rc1.ActivitiesSummary;
 import org.orcid.jaxb.model.record.summary_rc1.WorkSummary;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Produces CERIF formatted representations of ORCID reseources cerif openAIRE
@@ -59,18 +60,24 @@ public class PublicCerifApiServiceDelegatorImpl implements PublicCerifApiService
 
     private CerifTypeTranslator translator = new CerifTypeTranslator();
 
+
+    @Transactional
     @Override
     @AccessControl(requiredScope = ScopePathType.READ_PUBLIC, enableAnonymousAccess = true)
     public Response getPerson(String orcid) {
         ProfileEntity profile = profileEntityManager.findByOrcid(orcid);
         if (profile == null)
             return Response.status(404).build();
-
         ActivitiesSummary as = profileEntityManager.getPublicActivitiesSummary(orcid);
         ActivityUtils.cleanEmptyFields(as);
-        visibilityFilter.filter(as);
-        
-        return Response.ok(new Cerif16Builder().addPerson(profile, orcid).concatPublications(as, orcid, false).concatProducts(as, orcid, false).build()).build();
+        visibilityFilter.filter(as);        
+        return Response.ok(
+                new Cerif16Builder()
+                .addPerson(profile)
+                .concatPublications(as, orcid, false)
+                .concatProducts(as, orcid, false)
+                .build()
+        ).build();
     }
 
     @Override

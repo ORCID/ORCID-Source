@@ -27,6 +27,7 @@ import org.orcid.jaxb.model.record.summary_rc1.WorkGroup;
 import org.orcid.jaxb.model.record.summary_rc1.WorkSummary;
 import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifier;
 import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType;
+import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 
 import com.google.common.collect.ImmutableSet;
@@ -83,21 +84,20 @@ public class Cerif16Builder {
      * @param orcid
      * @return
      */
-    public Cerif16Builder addPerson(ProfileEntity profile, String orcid) {
+    public Cerif16Builder addPerson(ProfileEntity profile) {
         person = objectFactory.createCfPersType();
-        person.setCfPersId(orcid);
-        person.getCfResIntOrCfKeywOrCfPersPers().add(buildFedID(orcid, CerifClassEnum.ORCID));
+        person.setCfPersId(profile.getId());
+        person.getCfResIntOrCfKeywOrCfPersPers().add(buildFedID(profile.getId(), CerifClassEnum.ORCID));
         
         // add in other external ids here
         // TODO: why is this throwing JPA exceptions?                
-        //if (!profile.getExternalIdentifiersVisibility().isMoreRestrictiveThan(Visibility.PUBLIC)) {
-            //for (ExternalIdentifierEntity id : profile.getExternalIdentifiers()) {
-                //if (translator.translate(id) != CerifClassEnum.OTHER){
-                    //person.getCfResIntOrCfKeywOrCfPersPers().add(buildFedID(id.getExternalIdReference(), translator.translate(id)));                    
-                //}
-            //}
-        //git status
-        //}
+        if (!profile.getExternalIdentifiersVisibility().isMoreRestrictiveThan(Visibility.PUBLIC)) {
+            for (ExternalIdentifierEntity id : profile.getExternalIdentifiers()) {
+                if (translator.translate(id) != CerifClassEnum.OTHER){
+                    person.getCfResIntOrCfKeywOrCfPersPers().add(buildFedID(id.getExternalIdReference(), translator.translate(id)));                    
+                }
+            }
+        }
 
         // TODO: we need to check name visibility properly here!
         CfPersNamePers name = objectFactory.createCfPersTypeCfPersNamePers();

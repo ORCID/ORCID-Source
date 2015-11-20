@@ -78,18 +78,20 @@ public class CerifTypeTranslator {
     /**
      * Author id translations
      * 
-     * ORCID, ResearcherID, ScopusAuthorID, STAFFID, DNR, ISNI TODO: work out
-     * how they're represented in the db.
+     * ORCID, ResearcherID, ScopusAuthorID, STAFFID, DNR, ISNI
+     * 
+     * Used select source_id, client_source_id, external_id_type, count(*) from external_identifier group by source_id, client_source_id, external_id_type;
+     * to discover names.
      * 
      * @param id
      * @return
      */
     public CerifClassEnum translate(ExternalIdentifierEntity id) {
-        if ("".equals(id.getExternalIdCommonName())) {
+        if ("ISNI".equals(id.getExternalIdCommonName())) {
             return CerifClassEnum.ISNI;
-        } else if ("".equals(id.getExternalIdCommonName())) {
+        } else if ("Scopus Author ID".equals(id.getExternalIdCommonName())) {
             return CerifClassEnum.SCOPUSAUTHORID;
-        } else if ("".equals(id.getExternalIdCommonName())) {
+        } else if ("ResearcherID".equals(id.getExternalIdCommonName())) {
             return CerifClassEnum.RESEARCHERID;
         }
         return CerifClassEnum.OTHER;
