@@ -26,6 +26,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.orcid.core.adapter.JpaJaxbOtherNameAdapter;
+import org.orcid.core.exception.ApplicationException;
 import org.orcid.core.exception.OrcidDuplicatedElementException;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.exception.OtherNameNotFoundException;
@@ -40,6 +41,7 @@ import org.orcid.persistence.jpa.entities.OtherNameEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.springframework.transaction.annotation.Transactional;
 
 public class OtherNameManagerImpl implements OtherNameManager {
 
@@ -255,7 +257,100 @@ public class OtherNameManagerImpl implements OtherNameManager {
         otherNameDao.merge(updatedOtherNameEntity);
         return jpaJaxbOtherNameAdapter.toOtherName(updatedOtherNameEntity);
     }
+    
+    
+    
+    
+    
+    
+    
+    
+    @Override
+    @Transactional
+    public org.orcid.jaxb.model.record_rc2.OtherNames updateOtherNamesV2(String orcid, org.orcid.jaxb.model.record_rc2.OtherNames otherNames, org.orcid.jaxb.model.common.Visibility defaultVisiblity) {
+        List<OtherNameEntity> existingOtherNamesEntityList = otherNameDao.getOtherName(orcid);
+        //Delete the deleted ones
+        for(OtherNameEntity existingOtherName : existingOtherNamesEntityList) {
+            boolean deleteMe = true;
+            for(org.orcid.jaxb.model.record_rc2.OtherName updatedOrNew : otherNames.getOtherNames()) {
+                if(existingOtherName.getId().equals(updatedOrNew.getPutCode())) {
+                    deleteMe = false;
+                    break;
+                }
+            }
+            
+            if(deleteMe) {
+                try {
+                    otherNameDao.deleteOtherName(existingOtherName);
+                } catch (Exception e) {
+                    throw new ApplicationException("Unable to delete other name " + existingOtherName.getId(), e);
+                }
+            }
+        }
+        
+        if(otherNames != null && otherNames.getOtherNames() != null) {
+            for(org.orcid.jaxb.model.record_rc2.OtherName updatedOrNew : otherNames.getOtherNames()) {
+                if(updatedOrNew.getPutCode() != null) {
+                    //Update the existing ones or create new ones
+                   for(OtherNameEntity existingOtherName : existingOtherNamesEntityList) {
+                       if(existingOtherName.getId().equals(updatedOrNew.getPutCode())) {
+                           existingOtherName.setLastModified(new Date());
+                           existingOtherName.setVisibility(Visibility.fromValue(defaultVisiblity.value()));
+                           existingOtherName.setDisplayName(updatedOrNew.getContent());
+                           otherNameDao.merge(existingOtherName);
+                       }
+                   }
+                } else {
+                    //Add the new ones
+                    OtherNameEntity newOtherName = jpaJaxbOtherNameAdapter.toOtherNameEntity(updatedOrNew);
+                    SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
+                    ProfileEntity profile = new ProfileEntity(orcid);
+                    newOtherName.setProfile(profile);
+                    newOtherName.setDateCreated(new Date());
+                    newOtherName.setSource(sourceEntity);
+                    newOtherName.setVisibility(Visibility.fromValue(defaultVisiblity.value()));
+                    otherNameDao.persist(newOtherName);
+                    
+                }
+            }
+        }
+        
+        if (defaultVisiblity != null)
+            otherNameDao.updateOtherNamesVisibility(orcid, org.orcid.jaxb.model.message.Visibility.fromValue(defaultVisiblity.value()));
+        
+        return otherNames;
+    }
 
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     private boolean isDuplicated(OtherNameEntity existing, org.orcid.jaxb.model.record_rc2.OtherName otherName, SourceEntity source) {
         if (!existing.getId().equals(otherName.getPutCode())) {
             if (existing.getSource() != null) {

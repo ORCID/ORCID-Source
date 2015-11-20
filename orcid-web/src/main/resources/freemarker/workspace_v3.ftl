@@ -55,9 +55,6 @@
             <#include "includes/orcid_public_record_widget.ftl"/>
             
             <#include "includes/print_record.ftl"/>
-
-            
-            
             
             <div class="qrcode-container">
                 <a href="http://qrcode.orcid.org" target="_blank"><span class="glyphicons qrcode orcid-qr"></span><@orcid.msg 'workspace.qrcode.link.text'/></a>
@@ -70,9 +67,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            
-	       	
+            </div>            	       	
 	       	
 	       	<!-- Also known as -->
 	       	<div ng-controller="OtherNamesCtrl" class="workspace-section other-names">
@@ -80,12 +75,12 @@
         	   <div class="workspace-section-header">
         	   	   <span class="workspace-section-title"><@orcid.msg 'workspace.Alsoknownas'/></span>
 	        	   <span ng-hide="showEdit == true" ng-click="openEdit()">		        	   	  
-	        	      <span class="glyphicon glyphicon-pencil edit-other-names edit-option pull-right" title=""></span>
-	        	      <span ng-repeat="otherNames in otherNamesForm.otherNames" ng-cloak>
-	        	         {{ $last?otherNames.value:otherNames.value+ ", "}}
+	        	      <span class="glyphicon glyphicon-pencil edit-other-names edit-option pull-right" title="" id="other-names-show-edit-section"></span>
+	        	      <span ng-repeat="otherName in otherNamesForm.otherNames" ng-cloak>
+	        	         {{ $last?otherName.content:otherName.content + ", "}}
 	        	      </span>
 	        	   </span>
-	        	   <span class="pull-right" ng-show="showEdit == true" ng-cloak>
+	        	   <span class="pull-right" ng-show="showEdit == true" id="other-names-visibility" ng-cloak>
 		        	   <@orcid.privacyToggle3  angularModel="otherNamesForm.visibility.visibility"
 			             questionClick="toggleClickPrivacyHelp($index)"
 			             clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
@@ -98,14 +93,11 @@
         	   
         	   <!-- Edit -->
         	   <div ng-show="showEdit == true" ng-cloak>
-        	      <div ng-repeat="otherNames in otherNamesForm.otherNames" class="icon-inside-input">
-        	          <input type="text" ng-model="otherNames.value" ng-enter="setOtherNamesForm()">
-        	          <a ng-click="deleteKeyword(otherNames)" class="glyphicon glyphicon-trash grey icon-inside"></a>
-        	          <span class="orcid-error" ng-show="otherNames.url.errors.length > 0">
-					     <div ng-repeat='error in otherNames.url.errors' ng-bind-html="error"></div>
-				      </span>
-        	          <span class="orcid-error" ng-show="otherNames.name.errors.length > 0">
-					     <div ng-repeat='error in otherNames.name.errors' ng-bind-html="error"></div>
+        	      <div ng-repeat="otherName in otherNamesForm.otherNames" class="icon-inside-input">
+        	          <input type="text" ng-model="otherName.content" ng-enter="setOtherNamesForm()">
+        	          <a ng-click="deleteKeyword(otherName)" class="glyphicon glyphicon-trash grey icon-inside"></a>
+        	          <span class="orcid-error" ng-show="otherName.errors.length > 0">
+					     <div ng-repeat='error in otherName.errors' ng-bind-html="error"></div>
 				      </span>
         	      </div>
         	      <ul class="workspace-section-toolbar">
