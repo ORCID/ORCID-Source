@@ -64,7 +64,7 @@ public class PublicCerifApiServiceImpl {
 
     @GET
     @Produces(value = { MediaType.APPLICATION_XML })
-    @Path("/persons/{id}")
+    @Path(OrcidApiConstants.CERIF_PERSONS_PATH)
     @ApiOperation(value = "Fetch a person record")
     @ApiResponses(value = { @ApiResponse(code = 200, message = "Person found"), @ApiResponse(code = 404, message = "Person not found") })
     public Response viewPerson(@PathParam("id") String id) {
@@ -73,7 +73,7 @@ public class PublicCerifApiServiceImpl {
 
     @GET
     @Produces(value = { MediaType.APPLICATION_XML })
-    @Path("/publications/{id}")
+    @Path(OrcidApiConstants.CERIF_PUBLICATIONS_PATH)
     @ApiOperation(value = "Fetch a research publication record")
     @ApiResponses(value = { @ApiResponse(code = 200, message = "Publication found"), @ApiResponse(code = 404, message = "Publication not found") })
     public Response viewPublication(@PathParam("id") String id) {
@@ -82,7 +82,7 @@ public class PublicCerifApiServiceImpl {
 
     @GET
     @Produces(value = { MediaType.APPLICATION_XML })
-    @Path("/products/{id}")
+    @Path(OrcidApiConstants.CERIF_PRODUCTS_PATH)
     @ApiOperation(value = "Fetch a research product record")
     @ApiResponses(value = { @ApiResponse(code = 200, message = "Product found"), @ApiResponse(code = 404, message = "Product not found") })
     public Response viewProduct(@PathParam("id") String id) {
@@ -91,7 +91,7 @@ public class PublicCerifApiServiceImpl {
 
     @GET
     @Produces(value = { MediaType.APPLICATION_XML })
-    @Path("/entities")
+    @Path(OrcidApiConstants.CERIF_ENTITIES_PATH)
     @ApiOperation(value = "Fetch the list of supported entities")
     @ApiResponses(value = { @ApiResponse(code = 200, message = "OK") })
     public Response viewEntities() {
@@ -100,7 +100,7 @@ public class PublicCerifApiServiceImpl {
 
     @GET
     @Produces(value = { MediaType.APPLICATION_XML })
-    @Path("/semantics")
+    @Path(OrcidApiConstants.CERIF_SEMANTICS_PATH)
     @ApiOperation(value = "Fetch the CERIF semantics")
     @ApiResponses(value = { @ApiResponse(code = 200, message = "OK") })
     public Response viewSemantics() {

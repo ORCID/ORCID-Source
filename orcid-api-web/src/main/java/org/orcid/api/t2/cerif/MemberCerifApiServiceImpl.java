@@ -60,7 +60,7 @@ public class MemberCerifApiServiceImpl {
 
     @GET
     @Produces(value = { MediaType.APPLICATION_XML })
-    @Path("/persons/{id}")
+    @Path(OrcidApiConstants.CERIF_PERSONS_PATH)
     @ApiOperation(value = "Fetch a person record", authorizations = { @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
     @ApiResponses(value = { @ApiResponse(code = 200, message = "Person found"), @ApiResponse(code = 404, message = "Person not found"), @ApiResponse(code = 403, message = "You do not have the required permission") })
     public Response viewPerson(@PathParam("id") String id) {
@@ -69,7 +69,7 @@ public class MemberCerifApiServiceImpl {
 
     @GET
     @Produces(value = { MediaType.APPLICATION_XML })
-    @Path("/publications/{id}")
+    @Path(OrcidApiConstants.CERIF_PUBLICATIONS_PATH)
     @ApiOperation(value = "Fetch a research publication record", authorizations = { @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
     @ApiResponses(value = { @ApiResponse(code = 200, message = "Publication found"), @ApiResponse(code = 404, message = "Publication not found"), @ApiResponse(code = 403, message = "You do not have the required permission") })
     public Response viewPublication(@PathParam("id") String id) {
@@ -78,7 +78,7 @@ public class MemberCerifApiServiceImpl {
 
     @GET
     @Produces(value = { MediaType.APPLICATION_XML })
-    @Path("/products/{id}")
+    @Path(OrcidApiConstants.CERIF_PRODUCTS_PATH)
     @ApiOperation(value = "Fetch a research product record", authorizations = { @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
     @ApiResponses(value = { @ApiResponse(code = 200, message = "Product found"), @ApiResponse(code = 404, message = "Product not found"), @ApiResponse(code = 403, message = "You do not have the required permission") })
     public Response viewProduct(@PathParam("id") String id) {
@@ -87,7 +87,7 @@ public class MemberCerifApiServiceImpl {
 
     @GET
     @Produces(value = { MediaType.APPLICATION_XML })
-    @Path("/entities")
+    @Path(OrcidApiConstants.CERIF_ENTITIES_PATH)
     @ApiOperation(value = "Fetch the list of supported entities", authorizations = { @Authorization(value = "orcid_auth") })
     @ApiResponses(value = { @ApiResponse(code = 200, message = "OK") })
     public Response viewEntities() {
@@ -96,7 +96,7 @@ public class MemberCerifApiServiceImpl {
 
     @GET
     @Produces(value = { MediaType.APPLICATION_XML })
-    @Path("/semantics")
+    @Path(OrcidApiConstants.CERIF_SEMANTICS_PATH)
     @ApiOperation(value = "Fetch the CERIF semantics", authorizations = { @Authorization(value = "orcid_auth") })
     @ApiResponses(value = { @ApiResponse(code = 200, message = "OK") })
     public Response viewSemantics() {
