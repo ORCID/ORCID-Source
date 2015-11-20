@@ -43,7 +43,8 @@ public class ActivitiesGroup {
             } else if (activity.getExternalIdentifiers() != null)
                 for (GroupAble extId : activity.getExternalIdentifiers().getExternalIdentifier())
                     // Dont add grouping keys that dont pass the validation
-                    if (extId.isGroupAble()) groupKeys.add(extId);   
+                    if (extId.isGroupAble())
+                        groupKeys.add(extId);
         activities.add(activity);
     }
             
