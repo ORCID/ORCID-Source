@@ -252,7 +252,7 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
      * */
     @Override
     public WorkEntity getWork(String orcid, Long id) {
-        TypedQuery<WorkEntity> query = entityManager.createQuery("FROM work WHERE work_id = :workId and orcid = :orcid", WorkEntity.class);        
+        TypedQuery<WorkEntity> query = entityManager.createQuery("FROM WorkEntity WHERE id = :workId and profile.id = :orcid", WorkEntity.class);        
         query.setParameter("workId", id);
         query.setParameter("orcid", orcid);
         return query.getSingleResult();

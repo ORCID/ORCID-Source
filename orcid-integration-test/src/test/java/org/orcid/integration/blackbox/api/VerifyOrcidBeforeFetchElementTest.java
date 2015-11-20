@@ -158,14 +158,14 @@ public class VerifyOrcidBeforeFetchElementTest extends BlackBoxBase {
         // Using the members API        
         ClientResponse user2GetResponse = memberV2ApiClient.viewWorkXml(this.user2OrcidId, gotWork.getPutCode(), user2AccessToken);
         assertNotNull(user2GetResponse);
-        assertEquals(Response.Status.CONFLICT.getStatusCode(), user2GetResponse.getStatus());
+        assertEquals(Response.Status.NOT_FOUND.getStatusCode(), user2GetResponse.getStatus());
         OrcidError error = user2GetResponse.getEntity(OrcidError.class);
         assertNotNull(error);
         assertEquals(Integer.valueOf(9034), error.getErrorCode());
         // Using the public API        
         user2GetResponse = publicV2ApiClient.viewWorkXml(this.user2OrcidId, String.valueOf(gotWork.getPutCode()));
         assertNotNull(user2GetResponse);
-        assertEquals(Response.Status.CONFLICT.getStatusCode(), user2GetResponse.getStatus());
+        assertEquals(Response.Status.NOT_FOUND.getStatusCode(), user2GetResponse.getStatus());
         error = user2GetResponse.getEntity(OrcidError.class);
         assertNotNull(error);
         assertEquals(Integer.valueOf(9034), error.getErrorCode());
@@ -198,14 +198,14 @@ public class VerifyOrcidBeforeFetchElementTest extends BlackBoxBase {
         // Using the members API        
         ClientResponse user2GetResponse = memberV2ApiClient.viewEducationXml(this.user2OrcidId, gotEducation.getPutCode(), user2AccessToken);
         assertNotNull(user2GetResponse);
-        assertEquals(Response.Status.CONFLICT.getStatusCode(), user2GetResponse.getStatus());
+        assertEquals(Response.Status.NOT_FOUND.getStatusCode(), user2GetResponse.getStatus());
         OrcidError error = user2GetResponse.getEntity(OrcidError.class);
         assertNotNull(error);
         assertEquals(Integer.valueOf(9034), error.getErrorCode());
         // Using the public API
         user2GetResponse = publicV2ApiClient.viewEducationXml(this.user2OrcidId, String.valueOf(gotEducation.getPutCode()));
         assertNotNull(user2GetResponse);
-        assertEquals(Response.Status.CONFLICT.getStatusCode(), user2GetResponse.getStatus());
+        assertEquals(Response.Status.NOT_FOUND.getStatusCode(), user2GetResponse.getStatus());
         error = user2GetResponse.getEntity(OrcidError.class);
         assertNotNull(error);
         assertEquals(Integer.valueOf(9034), error.getErrorCode());
@@ -238,14 +238,14 @@ public class VerifyOrcidBeforeFetchElementTest extends BlackBoxBase {
         String user2AccessToken = getAccessToken(this.client1ClientId, this.client1ClientSecret, this.client1RedirectUri, this.user2UserName, this.user2Password);
         ClientResponse user2GetResponse = memberV2ApiClient.viewEmploymentXml(this.user2OrcidId, gotEmployment.getPutCode(), user2AccessToken);
         assertNotNull(user2GetResponse);
-        assertEquals(Response.Status.CONFLICT.getStatusCode(), user2GetResponse.getStatus());
+        assertEquals(Response.Status.NOT_FOUND.getStatusCode(), user2GetResponse.getStatus());
         OrcidError error = user2GetResponse.getEntity(OrcidError.class);
         assertNotNull(error);
         assertEquals(Integer.valueOf(9034), error.getErrorCode());
         // Using the public API
         user2GetResponse = publicV2ApiClient.viewEmploymentXml(this.user2OrcidId, String.valueOf(gotEmployment.getPutCode()));
         assertNotNull(user2GetResponse);
-        assertEquals(Response.Status.CONFLICT.getStatusCode(), user2GetResponse.getStatus());
+        assertEquals(Response.Status.NOT_FOUND.getStatusCode(), user2GetResponse.getStatus());
         error = user2GetResponse.getEntity(OrcidError.class);
         assertNotNull(error);
         assertEquals(Integer.valueOf(9034), error.getErrorCode());
@@ -285,14 +285,14 @@ public class VerifyOrcidBeforeFetchElementTest extends BlackBoxBase {
         String user2AccessToken = getAccessToken(this.client1ClientId, this.client1ClientSecret, this.client1RedirectUri, this.user2UserName, this.user2Password);
         ClientResponse user2GetResponse = memberV2ApiClient.viewFundingXml(this.user2OrcidId, gotFunding.getPutCode(), user2AccessToken);
         assertNotNull(user2GetResponse);
-        assertEquals(Response.Status.CONFLICT.getStatusCode(), user2GetResponse.getStatus());
+        assertEquals(Response.Status.NOT_FOUND.getStatusCode(), user2GetResponse.getStatus());
         OrcidError error = user2GetResponse.getEntity(OrcidError.class);
         assertNotNull(error);
         assertEquals(Integer.valueOf(9034), error.getErrorCode());
         // Using the public API
         user2GetResponse = publicV2ApiClient.viewFundingXml(this.user2OrcidId, String.valueOf(gotFunding.getPutCode()));
         assertNotNull(user2GetResponse);
-        assertEquals(Response.Status.CONFLICT.getStatusCode(), user2GetResponse.getStatus());
+        assertEquals(Response.Status.NOT_FOUND.getStatusCode(), user2GetResponse.getStatus());
         error = user2GetResponse.getEntity(OrcidError.class);
         assertNotNull(error);
         assertEquals(Integer.valueOf(9034), error.getErrorCode());
@@ -332,14 +332,14 @@ public class VerifyOrcidBeforeFetchElementTest extends BlackBoxBase {
         String user2AccessToken = getAccessToken(this.client1ClientId, this.client1ClientSecret, this.client1RedirectUri, this.user2UserName, this.user2Password);
         ClientResponse user2GetResponse = memberV2ApiClient.viewPeerReviewXml(this.user2OrcidId, gotPeerReview.getPutCode(), user2AccessToken);
         assertNotNull(user2GetResponse);
-        assertEquals(Response.Status.CONFLICT.getStatusCode(), user2GetResponse.getStatus());
+        assertEquals(Response.Status.NOT_FOUND.getStatusCode(), user2GetResponse.getStatus());
         OrcidError error = user2GetResponse.getEntity(OrcidError.class);
         assertNotNull(error);
         assertEquals(Integer.valueOf(9034), error.getErrorCode());          
         //Using the public API
         user2GetResponse = publicV2ApiClient.viewPeerReviewXml(this.user2OrcidId, String.valueOf(gotPeerReview.getPutCode()));
         assertNotNull(user2GetResponse);
-        assertEquals(Response.Status.CONFLICT.getStatusCode(), user2GetResponse.getStatus());
+        assertEquals(Response.Status.NOT_FOUND.getStatusCode(), user2GetResponse.getStatus());
         error = user2GetResponse.getEntity(OrcidError.class);
         assertNotNull(error);
         assertEquals(Integer.valueOf(9034), error.getErrorCode());                
