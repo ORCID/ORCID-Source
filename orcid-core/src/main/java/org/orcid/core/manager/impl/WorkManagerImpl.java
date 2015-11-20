@@ -17,15 +17,12 @@
 package org.orcid.core.manager.impl;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.Resource;
 
 import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.adapter.JpaJaxbWorkAdapter;
-import org.orcid.core.exception.WrongOwnerException;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.SourceManager;
@@ -156,25 +153,13 @@ public class WorkManagerImpl implements WorkManager {
      * */
     @Override
     public Work getWork(String orcid, Long workId) {
-        WorkEntity work = workDao.find(workId);
-        if(!orcid.equals(work.getProfile().getId())) {
-            Map<String, String> params = new HashMap<String, String>();
-            params.put("element", "work");
-            params.put("orcid", orcid);
-            throw new WrongOwnerException(params);
-        }
+        WorkEntity work = workDao.getWork(orcid, workId);
         return jpaJaxbWorkAdapter.toWork(work);
     }
 
     @Override
     public WorkSummary getWorkSummary(String orcid, Long workId) {
-        WorkEntity work = workDao.find(workId);
-        if(!orcid.equals(work.getProfile().getId())) {
-            Map<String, String> params = new HashMap<String, String>();
-            params.put("element", "work");
-            params.put("orcid", orcid);
-            throw new WrongOwnerException(params);
-        }
+        WorkEntity work = workDao.getWork(orcid, workId);
         return jpaJaxbWorkAdapter.toWorkSummary(work);
     }
 
@@ -232,13 +217,8 @@ public class WorkManagerImpl implements WorkManager {
                 }
             }            
         }
-        WorkEntity workEntity = workDao.find(Long.valueOf(work.getPutCode()));
-        if(workEntity == null || !orcid.equals(workEntity.getProfile().getId())) {
-            Map<String, String> params = new HashMap<String, String>();
-            params.put("element", "work");
-            params.put("orcid", orcid);
-            throw new WrongOwnerException(params);
-        }
+        WorkEntity workEntity = workDao.getWork(orcid, work.getPutCode());
+        
         Visibility originalVisibility = Visibility.fromValue(workEntity.getVisibility().value());
         SourceEntity existingSource = workEntity.getSource();
         orcidSecurityManager.checkSource(existingSource);
@@ -254,15 +234,7 @@ public class WorkManagerImpl implements WorkManager {
     @Override
     public boolean checkSourceAndRemoveWork(String orcid, Long workId) {
         boolean result = true;
-        WorkEntity workEntity = workDao.find(workId);
-        if(workEntity == null)
-            return false;
-        if(!orcid.equals(workEntity.getProfile().getId())) {
-            Map<String, String> params = new HashMap<String, String>();
-            params.put("element", "work");
-            params.put("orcid", orcid);
-            throw new WrongOwnerException(params);
-        }
+        WorkEntity workEntity = workDao.getWork(orcid, workId);
         SourceEntity existingSource = workEntity.getSource();
         orcidSecurityManager.checkSource(existingSource);
         try {

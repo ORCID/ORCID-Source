@@ -29,6 +29,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.annotation.Resource;
+import javax.persistence.NoResultException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -38,7 +39,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.orcid.core.exception.WrongOwnerException;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidWebRole;
@@ -194,9 +194,10 @@ public class PeerReviewsControllerTest extends BaseControllerTest {
         try {
             peerReviewsController.getPeerReviewJson(Long.valueOf(putCode));
             fail();
-        } catch(WrongOwnerException woe) {
+        } catch(NoResultException nre) {
             
         }
+        
         
     }
 
