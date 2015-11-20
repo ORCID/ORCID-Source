@@ -349,7 +349,7 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
         assertEquals(orcid, retrievedMessage.getOrcidProfile().getOrcidIdentifier().getPath());
         GivenNames givenNames = retrievedMessage.getOrcidProfile().getOrcidBio().getPersonalDetails().getGivenNames();
         assertNotNull(givenNames);
-        assertEquals("Reserved For Claim", givenNames.getContent());
+        assertEquals("", givenNames.getContent());
     }
 
     @Test
