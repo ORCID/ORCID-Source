@@ -19,9 +19,12 @@ package org.orcid.jaxb.model.record_rc1;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 import org.orcid.jaxb.model.common.Url;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -46,11 +49,11 @@ public abstract class ExternalIdentifierBase implements GroupAble {
     }
     
     @Override
+    @JsonIgnore
     public boolean isGroupAble() {
         //Dont group if it is a part-of identifier
         if(Relationship.PART_OF.equals(relationship))
             return false;
-        
         return true;
     }
     
