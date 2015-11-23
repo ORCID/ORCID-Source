@@ -29,6 +29,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.io.Serializable;
 
 /**
@@ -99,6 +101,7 @@ public class WorkExternalIdentifier extends ExternalIdentifierBase implements Se
     }
     
     @Override
+    @JsonIgnore
     public String getGroupId() {
         String workIdVal = this.workExternalIdentifierId == null ? null : this.workExternalIdentifierId.getContent();
         String typeVal = this.workExternalIdentifierType == null ? null : this.workExternalIdentifierType.toString();
