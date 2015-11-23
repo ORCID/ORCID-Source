@@ -23,6 +23,8 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.orcid.jaxb.model.common.Url;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "url", "relationship" })
@@ -46,11 +48,11 @@ public abstract class ExternalIdentifierBase implements GroupAble {
     }
     
     @Override
+    @JsonIgnore
     public boolean isGroupAble() {
         //Dont group if it is a part-of identifier
         if(Relationship.PART_OF.equals(relationship))
             return false;
-        
         return true;
     }
     
