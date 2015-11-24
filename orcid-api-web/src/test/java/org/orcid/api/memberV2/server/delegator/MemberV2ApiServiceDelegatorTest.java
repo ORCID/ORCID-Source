@@ -98,7 +98,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testViewActitivies() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.ACTIVITIES_READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
         Response response = serviceDelegator.viewActivities("4444-4444-4444-4446");
         assertNotNull(response);
         ActivitiesSummary summary = (ActivitiesSummary) response.getEntity();
@@ -204,7 +204,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     
     @Test
     public void testViewWork() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.ACTIVITIES_READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
         Response response = serviceDelegator.viewWork("4444-4444-4444-4446", Long.valueOf("5"));
         assertNotNull(response);
         Work work = (Work) response.getEntity();
@@ -242,7 +242,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     
     @Test
     public void testViewFunding() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.ACTIVITIES_READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
         Response response = serviceDelegator.viewFunding("4444-4444-4444-4446", Long.valueOf(Long.valueOf("4")));
         assertNotNull(response);
         Funding funding = (Funding) response.getEntity();
@@ -257,7 +257,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
 
     @Test
     public void testViewEducation() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.ACTIVITIES_READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
         Response response = serviceDelegator.viewEducation("4444-4444-4444-4446", Long.valueOf("6"));
         assertNotNull(response);
         Education education = (Education) response.getEntity();
@@ -270,7 +270,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
 
     @Test
     public void testViewEmployment() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.ACTIVITIES_READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
         Response response = serviceDelegator.viewEmployment("4444-4444-4444-4446", Long.valueOf("5"));
         assertNotNull(response);
         Employment employment = (Employment) response.getEntity();
@@ -283,7 +283,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     
     @Test
     public void testViewPeerReview() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.ACTIVITIES_READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
         Response response = serviceDelegator.viewPeerReview("4444-4444-4444-4446", Long.valueOf(1));
         assertNotNull(response);
         PeerReview peerReview= (PeerReview) response.getEntity();
@@ -311,7 +311,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     
     @Test
     public void testViewPeerReviewSummary() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.ACTIVITIES_READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
         Response response = serviceDelegator.viewPeerReviewSummary("4444-4444-4444-4446", Long.valueOf(1));
         assertNotNull(response);
         PeerReviewSummary peerReview= (PeerReviewSummary) response.getEntity();
@@ -328,7 +328,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     
     @Test
     public void testUpdatePeerReview() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.ACTIVITIES_READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
         Response response = serviceDelegator.viewPeerReview("4444-4444-4444-4446", Long.valueOf(1));
         assertNotNull(response);
         PeerReview peerReview= (PeerReview) response.getEntity();
@@ -345,7 +345,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     
     @Test
     public void testUpdatePeerReviewWhenNotSource() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.ACTIVITIES_READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
         Response response = serviceDelegator.viewPeerReview("4444-4444-4444-4447", Long.valueOf(2));
         assertNotNull(response);
         PeerReview peerReview= (PeerReview) response.getEntity();
@@ -462,7 +462,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     @SuppressWarnings("unchecked")
     @Test
     public void testViewResearcherUrls() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.READ_LIMITED, ScopePathType.PERSON_UPDATE);
         Response response = serviceDelegator.viewResearcherUrls("4444-4444-4444-4443");
         assertNotNull(response);
         ResearcherUrls researcherUrls = (ResearcherUrls)response.getEntity();
@@ -485,7 +485,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     
     @Test
     public void testViewResearcherUrl() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.READ_LIMITED, ScopePathType.PERSON_UPDATE);
         Response response = serviceDelegator.viewResearcherUrl("4444-4444-4444-4443", "2");
         assertNotNull(response);
         ResearcherUrl researcherUrl = (ResearcherUrl)response.getEntity();
@@ -517,7 +517,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     @SuppressWarnings("rawtypes")
     @Test
     public void testAddResearcherUrl() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.ACTIVITIES_READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
         ResearcherUrl rUrl = new ResearcherUrl();
         rUrl.setUrl(new Url("http://www.myRUrl.com"));
         rUrl.setUrlName("My researcher Url");
@@ -548,7 +548,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     
     @Test
     public void testUpdateResearcherUrl() {
-    	SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE);
+    	SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.READ_LIMITED, ScopePathType.PERSON_UPDATE);
     	Response response = serviceDelegator.viewResearcherUrl("4444-4444-4444-4443", "5");        
         assertNotNull(response);
         ResearcherUrl researcherUrl = (ResearcherUrl)response.getEntity();
@@ -575,7 +575,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     
     @Test
     public void testDeleteResearcherUrl() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.READ_LIMITED, ScopePathType.PERSON_UPDATE);
         Response response = serviceDelegator.viewResearcherUrls("4444-4444-4444-4443");
         assertNotNull(response);
         ResearcherUrls researcherUrls = (ResearcherUrls)response.getEntity();

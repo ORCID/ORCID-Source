@@ -26,7 +26,7 @@ import org.orcid.jaxb.model.common.Url;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "url", "relationship" })
-public abstract class ExternalIdentifierBase implements GroupKey { 
+public abstract class ExternalIdentifierBase implements GroupAble { 
     @XmlElement(name="relationship", namespace = "http://www.orcid.org/ns/common")
     protected Relationship relationship;
     @XmlElement(name="external-identifier-url", namespace = "http://www.orcid.org/ns/common")
@@ -46,7 +46,7 @@ public abstract class ExternalIdentifierBase implements GroupKey {
     }
     
     @Override
-    public boolean passGroupingValidation() {
+    public boolean isGroupAble() {
         //Dont group if it is a part-of identifier
         if(Relationship.PART_OF.equals(relationship))
             return false;
