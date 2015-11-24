@@ -26,9 +26,9 @@ import org.orcid.persistence.jpa.entities.UserconnectionPK;
  */
 public interface UserConnectionDao extends GenericDao<UserconnectionEntity, UserconnectionPK> {
 
-	void updateLoginInformation(String email, String orcid, UserconnectionPK pk);
+	void updateLoginInformation(UserconnectionPK pk);
 	
-    UserconnectionEntity findByProviderIdAndProviderUserId(String remoteUser, String shibIdentityProvider);
+    UserconnectionEntity findByProviderIdAndProviderUserId(String providerUserId, String providerId);
 
 	List<UserconnectionEntity> findByOrcid(String orcid);
 }
