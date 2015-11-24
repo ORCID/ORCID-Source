@@ -75,7 +75,7 @@ public class LockedClientsTest extends BlackBoxBase {
     @Test
     public void testMember() throws InterruptedException, JSONException {
         // The member must be unlocked to begin the test
-        String accessToken = getAccessTokenWithScopePath(ScopePathType.PERSON_READ_LIMITED, lockedClientId, lockedClientSecret, lockedClientRedirectUri);
+        String accessToken = getAccessTokenWithScopePath(ScopePathType.READ_LIMITED, lockedClientId, lockedClientSecret, lockedClientRedirectUri);
         ClientResponse getAllResponse = memberV2ApiClient.getEmails(user1OrcidId, accessToken);
         assertNotNull(getAllResponse);
         Emails emails = getAllResponse.getEntity(Emails.class);
@@ -85,7 +85,7 @@ public class LockedClientsTest extends BlackBoxBase {
 
         // Lock and try to get authorization code
         adminLockAccount(adminUserName, adminPassword, memberId);
-        lookForErrorsOnAuthorizationCodePage(lockedClientId, ScopePathType.PERSON_READ_LIMITED.value(), lockedClientRedirectUri);
+        lookForErrorsOnAuthorizationCodePage(lockedClientId, ScopePathType.READ_LIMITED.value(), lockedClientRedirectUri);
 
         // Try to use access token while the client is locked
         getAllResponse = memberV2ApiClient.getEmails(user1OrcidId, accessToken);

@@ -43,6 +43,7 @@ import org.orcid.core.oauth.service.OrcidAuthorizationEndpoint;
 import org.orcid.core.oauth.service.OrcidOAuth2RequestValidator;
 import org.orcid.core.security.aop.LockedException;
 import org.orcid.core.utils.JsonUtils;
+import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.message.CreationMethod;
 import org.orcid.jaxb.model.message.ErrorDesc;
 import org.orcid.jaxb.model.message.OrcidMessage;
@@ -269,7 +270,7 @@ public class OauthConfirmAccessController extends BaseController {
                     clientDescription = clientDetails.getClientDescription() == null ? "" : clientDetails.getClientDescription();
 
                     // If client type is null it means it is a public client
-                    if (clientDetails.getClientType() == null) {
+                    if (ClientType.PUBLIC_CLIENT.equals(clientDetails.getClientType())) {
                         clientGroupName = PUBLIC_CLIENT_GROUP_NAME;
                     } else if (!PojoUtil.isEmpty(clientDetails.getGroupProfileId())) {                        
                         ProfileEntity groupProfile = profileEntityCacheManager.retrieve(clientDetails.getGroupProfileId());
@@ -387,7 +388,7 @@ public class OauthConfirmAccessController extends BaseController {
             }
         }
         
-        if (clientDetails.getClientType() == null) {
+        if (ClientType.PUBLIC_CLIENT.equals(clientDetails.getClientType())) {
             clientGroupName = PUBLIC_CLIENT_GROUP_NAME;
         } else if (!PojoUtil.isEmpty(clientDetails.getGroupProfileId())) {
             ProfileEntity groupProfile = profileEntityCacheManager.retrieve(clientDetails.getGroupProfileId());
