@@ -3251,11 +3251,6 @@ ul.personal-inf-display li:last-child{
 	font-size: 800%;	
 }
 
-#loginForm #ajax-loader{	
-	float: left;
-    margin-left: 5px;        
-}
-
 #edit-affiliation #remove-disambiguated{
 	text-align: right;
 }
@@ -6080,144 +6075,11 @@ a:hover .mozilla-badge{
 	width: 45%;
 }
 
-.form-social-sign-in input{
-	width: 50%;
+#old-login .login-register{
+    margin-top: 50px;
+    text-align: center;
+    font-size: 20px;
 }
-
-.form-social-sign-in .socialButton {
-	font-size: 16px;
-	padding:0;
-}
-
-.login{
-	margin-top: 125px;
-}
-
-.login .title{
-	color: #494A4C;
-}
-
-.login .login-messages{
-	margin-top: 50px;
-}
-
-input:-webkit-autofill {
-    -webkit-box-shadow: 0 0 0px 1000px white inset;    
-}
-
-.login .login-left-column{
-	border-right: 1px solid #C9CACB;
-	position: relative;
-	min-height: 370px;
-}
-
-.login .form-sign-in input[type="text"],
-.login .form-sign-in input[type="password"],
-.login .form-sign-in #form-sign-in-button{
-	width: 80%;	
-}
-
-.login .form-sign-in #form-sign-in-button{
-	float: left;
-}
-
-.login .form-sign-in input[type="password"]{
-	margin-bottom: 0;
-}
-
-.login .form-sign-in .submit-login{
-	float: left;
-	margin-top: 20px;
-	width: 100%;
-}
-
-.login .login-register{
-	margin-top: 50px;
-	text-align: center;
-	font-size: 20px;
-}
-
-.login .social-login{
-	margin-top: 30px;
-}
-
-.login .social-login .btn-facebook{
-	background: url('../img/svg/fb.svg') transparent no-repeat;
-	background-size: 40px 40px;
-	width: 40px;
-	height: 40px;
-	displat: block;	
-}
-
-.login .social-login .btn-google{
-	background: url('../img/svg/google.svg') transparent no-repeat;
-	background-size: 40px 40px;
-	width: 40px;
-	height: 40px;
-	displat: block;
-}
-
-.login .social-login ul.social-icons{
-	margin: 0;
-	padding:0;
-}
-
-.login .social-login ul.social-icons li{
-	display: inline-block;
-}
-
-.login .social-login ul.social-icons li:not(:first-child){
-	margin-left: 25px;
-}
-
-.login .login-left-column .or{
-	display: block;
-    width: 85px;
-    height: 60px;
-    background: #FFF;
-    position: absolute;
-    right: -50px;
-    top: calc( 50% - 30px);
-    font-size: 25px;
-    text-transform: uppercase;
-    vertical-align: middle;
-    padding: 15px;
-}
-	
-.form-social-sign-in .social-signin-btn{
-	width: 50%;
-	float: left;
-}
-
-.form-social-sign-in .social-password-lnk {
-	font-size: 14px;
-}
-
-
-.form-social-sign-in .social-password-txt {
-	margin-bottom : 0;
-}
-
-.form-social-sign-in .reg{
-	font-size: 18px;
-}
-
-
-.login-right-column a.shibboleth-help:hover .glyphicon-question-sign{
-	cursor: pointer;
-}
-
-.login #login-reset{
-	float: left;
-	clear: both;
-	font-size: 14px;
-}
-
-.login #login-error-mess{
-	float: left;
-	width: 80%;
-}
-
 
 #old-login input{
     width: 50%;
@@ -6251,6 +6113,108 @@ input:-webkit-autofill {
 
 #old-login .form-sign-in{
 	position: relative;
+}
+
+/* LOGIN v3 */
+/* Login Layout */
+
+.login{
+	padding-top: 50px;
+}
+
+.login .login-box{
+	padding: 15px 30px;
+}
+
+.login #ajax-loader{
+	text-align:center;	
+	margin-top: 15px;
+	min-height: 55px;
+}
+
+/* Login tab buttons*/
+.login .btn-group a{
+	font-size: 18px;
+}
+
+.login .glyphicons.bank{
+	padding-left: 20px;
+}
+
+.login .glyphicons:before{
+	font: 20px/1em 'Glyphicons Regular';
+	top: -12px;	
+}
+
+.login .btn-group a:hover,
+.login .btn-group a:active{
+	background: #C9C9CA;		
+}
+
+.login .btn-group a.active{
+	background: #C9C9CA;
+	box-shadow: none;
+}
+
+
+.login .glyphicon-user{
+	font-size: 20px;
+	top: 4px;
+}
+
+.login button{
+	width: 100%;
+}
+
+
+/* Login text*/
+.login .title{
+	text-align: center;
+	font-size: 20px;
+	color: #494A4C;
+}
+
+.login #login-reset{
+	margin-top: 5px;	
+}
+
+
+/* Social Login */
+.login .social-login{
+    margin-top: 50px;
+    margin-bottom: 50px;
+}
+
+.login .social-login .btn-facebook{
+    background: url('../img/svg/fb.svg') transparent no-repeat;
+    background-size: 40px 40px;
+    width: 40px;
+    height: 40px;
+    displat: block; 
+}
+
+.login .social-login .btn-google{
+    background: url('../img/svg/google.svg') transparent no-repeat;
+    background-size: 40px 40px;
+    width: 40px;
+    height: 40px;
+    displat: block;
+}
+
+.login .social-login ul.social-icons{
+    margin: 0;
+    padding:0;
+    display: block;
+    width: 110px;
+    margin:0 auto;
+}
+
+.login .social-login ul.social-icons li{
+    display: inline-block;
+}
+
+.login .social-login ul.social-icons li:not(:first-child){
+    margin-left: 25px;
 }
 
 

@@ -92,10 +92,9 @@ if (typeof angular == 'undefined') {
 </script>
 
 <!-- Shibboleth -->
-<#if request.requestURI?ends_with("signin") && (RequestParameters['shibboleth'] )??>
-	<script src="${staticCdn}/javascript/shibboleth-embedded-ds/1.1.0/idpselect_config.js" type="text/javascript" language="javascript"></script>
-	<script src="${staticCdn}/javascript/shibboleth-embedded-ds/1.1.0/idpselect.js" type="text/javascript" language="javascript"></script>
+<#if request.requestURI?ends_with("signin") && (RequestParameters['newlogin'] )??>
 	
+	 
 	<noscript>
 	  <!-- If you need to care about non javascript browsers you will need to 
 	       generate a hyperlink to a non-js DS.
