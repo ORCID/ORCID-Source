@@ -31,7 +31,7 @@
             family_name="Milligan"
             vocative_name="Spike Milligan"
             credit_name="S. Milligan"
-            credit_name_visibility="PUBLIC"
+            names_visibility="PUBLIC"
             profile_address_visibility="PRIVATE"
             external_identifiers_visibility="LIMITED"
             biography_visibility="PUBLIC"
