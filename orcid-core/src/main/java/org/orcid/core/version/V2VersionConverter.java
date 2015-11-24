@@ -28,8 +28,8 @@ public interface V2VersionConverter {
 
     String getToVersion();
 
-    Object downgrade(Object objectToDowngrade);
+    Object downgrade(Object targetObject, Object objectToDowngrade);
 
-    Object upgrade(Object objectToUpgrade);
+    Object upgrade(Object targetObject, Object objectToUpgrade);
 
 }
