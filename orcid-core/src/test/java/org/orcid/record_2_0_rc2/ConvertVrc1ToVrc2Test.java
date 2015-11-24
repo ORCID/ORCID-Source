@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import javax.annotation.Resource;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
@@ -23,6 +24,8 @@ import ma.glasnost.orika.MappingContext;
 import ma.glasnost.orika.impl.DefaultMapperFactory;
 
 import org.junit.Test;
+import org.orcid.core.BaseTest;
+import org.orcid.core.version.V2VersionConverter;
 import org.orcid.jaxb.model.common.LastModifiedDate;
 import org.orcid.jaxb.model.record_2_rc1.ActivitiesContainer;
 import org.orcid.jaxb.model.record_2_rc1.Activity;
@@ -32,9 +35,12 @@ import org.orcid.jaxb.model.record_2_rc1.GroupsContainer;
 import org.orcid.jaxb.model.record_2_rc1.summary.ActivitiesSummary;
 import org.orcid.utils.DateUtils;
 
-public class ConvertVrc1ToVrc2Test {
+public class ConvertVrc1ToVrc2Test extends BaseTest {
 
     private final static MapperFacade mapper;
+    
+    @Resource
+    private V2VersionConverter versionConverterV2_0_rc1ToV2_0rc2;
 
     static {
         final MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
@@ -140,12 +146,10 @@ public class ConvertVrc1ToVrc2Test {
         org.orcid.jaxb.model.record_2_rc2.summary.ActivitiesSummary rc2Activities1 = (org.orcid.jaxb.model.record_2_rc2.summary.ActivitiesSummary) jaxbUnmarshaller
                 .unmarshal(rc2Stream);
 
-        org.orcid.jaxb.model.record_2_rc2.summary.ActivitiesSummary rc2Activities2 = new org.orcid.jaxb.model.record_2_rc2.summary.ActivitiesSummary();
-
-        mapper.map(rc1Activities, rc2Activities2);
+        org.orcid.jaxb.model.record_2_rc2.summary.ActivitiesSummary rc2Activities2 = (org.orcid.jaxb.model.record_2_rc2.summary.ActivitiesSummary) versionConverterV2_0_rc1ToV2_0rc2.upgrade(rc1Activities);
 
         // Compare rc2Activities2(Converted with the mapper) and
-        // rc2Activities2 (Given XML)
-        assertEquals(rc2Activities1.toString(), rc2Activities1.toString());
+        // rc2Activities1 (Given XML)
+        assertEquals(rc2Activities1.toString(), rc2Activities2.toString());
     }
 }
