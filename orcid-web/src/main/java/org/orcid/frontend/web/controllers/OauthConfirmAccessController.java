@@ -381,7 +381,6 @@ public class OauthConfirmAccessController extends BaseController {
                 return authCodeView;
             }
         }
-
         if (clientDetails.getClientType() == null) {
             clientGroupName = PUBLIC_MEMBER_NAME;
         } else if (!PojoUtil.isEmpty(clientDetails.getGroupProfileId())) {

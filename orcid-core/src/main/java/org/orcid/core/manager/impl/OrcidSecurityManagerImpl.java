@@ -116,6 +116,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
     private Set<String> getReadLimitedScopesThatTheClientHas(OAuth2Request authorizationRequest, Filterable filterable) {
         Set<String> requestedScopes = ScopePathType.getCombinedScopesFromStringsAsStrings(authorizationRequest.getScope());
         Set<String> readLimitedScopes = new HashSet<>();
+        readLimitedScopes.add(ScopePathType.READ_LIMITED.value());
         readLimitedScopes.add(ScopePathType.ACTIVITIES_READ_LIMITED.value());
         readLimitedScopes.add(ScopePathType.ORCID_PROFILE_READ_LIMITED.value());
         if (filterable instanceof Work) {

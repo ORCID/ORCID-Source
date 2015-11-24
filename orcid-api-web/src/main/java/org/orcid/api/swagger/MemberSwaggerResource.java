@@ -62,7 +62,7 @@ public class MemberSwaggerResource extends SwaggerJSONResource {
 
         OAuth2Definition oauth = new OAuth2Definition();
         oauth.accessCode(this.authEndPoint, this.tokenEndPoint);
-        oauth.scope(ScopePathType.ACTIVITIES_READ_LIMITED.value(), "Read activities");
+        oauth.scope(ScopePathType.READ_LIMITED.value(), "Read Limited record");
         oauth.scope(ScopePathType.ACTIVITIES_UPDATE.value(), "Update activities");
         oauth.scope(ScopePathType.GROUP_ID_RECORD_READ.value(), "Read groups");
         oauth.scope(ScopePathType.GROUP_ID_RECORD_UPDATE.value(), "Update groups");
