@@ -16,6 +16,9 @@
  */
 package org.orcid.frontend.web.controllers;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -66,26 +69,21 @@ public class SocialController extends BaseController {
     @Resource
     private OrcidSecurityManager securityMgr;
 
-    private String providerUserId;
-    
-    private String userName;
-    
-    private String email;
-
     @RequestMapping(value = { "/access" }, method = RequestMethod.GET)
     public ModelAndView signinHandler(HttpServletRequest request, HttpServletResponse response) {
 
         SocialType connectionType = socialContext.isSignedIn(request, response);
         if (connectionType != null) {
-            retrieveUserDetails(connectionType);
+        	Map<String, String> userMap = retrieveUserDetails(connectionType);
+            
             String providerId = connectionType.value();
             String userId = socialContext.getUserId();
-            UserconnectionEntity userConnectionEntity = userConnectionDao.findByProviderIdAndProviderUserId(providerUserId, providerId);
+            UserconnectionEntity userConnectionEntity = userConnectionDao.findByProviderIdAndProviderUserId(userMap.get("providerUserId"), providerId);
             if (userConnectionEntity != null) {
                 if (userConnectionEntity.isLinked()) {
-                    UserconnectionPK pk = new UserconnectionPK(userId, providerId, providerUserId);
+                    UserconnectionPK pk = new UserconnectionPK(userId, providerId, userMap.get("providerUserId"));
                     userConnectionDao.updateLoginInformation(pk);
-                    String aCredentials = new StringBuffer(providerId).append(":").append(providerUserId).toString();
+                    String aCredentials = new StringBuffer(providerId).append(":").append(userMap.get("providerUserId")).toString();
                     PreAuthenticatedAuthenticationToken token = new PreAuthenticatedAuthenticationToken(userConnectionEntity.getOrcid(), aCredentials);
                     token.setDetails(new WebAuthenticationDetails(request));
                     Authentication authentication = authenticationManager.authenticate(token);
@@ -96,7 +94,7 @@ public class SocialController extends BaseController {
                     logoutCurrentUser(request, response);
                     mav.setViewName("social_link_signin");
                     mav.addObject("providerId", providerId);
-                    mav.addObject("emailId", getAccountIdForDisplay());
+                    mav.addObject("emailId", getAccountIdForDisplay(userMap));
                     return mav;
                 }
             } else {
@@ -111,14 +109,14 @@ public class SocialController extends BaseController {
     public ModelAndView link(HttpServletRequest request, HttpServletResponse response) {
         SocialType connectionType = socialContext.isSignedIn(request, response);
         if (connectionType != null) {
-        	retrieveUserDetails(connectionType);
+        	Map<String, String> userMap = retrieveUserDetails(connectionType);
             String providerId = connectionType.value();
-            UserconnectionEntity userConnectionEntity = userConnectionDao.findByProviderIdAndProviderUserId(providerUserId, providerId);
+            UserconnectionEntity userConnectionEntity = userConnectionDao.findByProviderIdAndProviderUserId(userMap.get("providerUserId"), providerId);
             if (userConnectionEntity != null) {
                 if (!userConnectionEntity.isLinked()) {
                     OrcidProfile profile = getRealProfile();
                     userConnectionEntity.setLinked(true);
-                    userConnectionEntity.setEmail(email);
+                    userConnectionEntity.setEmail(userMap.get("email"));
                     userConnectionEntity.setOrcid(profile.getOrcidIdentifier().getPath());
                     userConnectionDao.merge(userConnectionEntity);
                 }
@@ -131,29 +129,33 @@ public class SocialController extends BaseController {
         }
     }
 
-    private void retrieveUserDetails(SocialType connectionType) {
-        if (SocialType.FACEBOOK.equals(connectionType)) {
+    private Map<String, String> retrieveUserDetails(SocialType connectionType) {
+        
+    	Map<String, String> userMap = new HashMap<String, String>();
+    	if (SocialType.FACEBOOK.equals(connectionType)) {
             Facebook facebook = socialContext.getFacebook();
             User user = facebook.fetchObject("me", User.class, "id", "email", "name");
-            providerUserId = user.getId();
-            userName = user.getName();
-            email = user.getEmail();
+            userMap.put("providerUserId", user.getId());
+            userMap.put("userName", user.getName());
+            userMap.put("email", user.getEmail());
         } else if (SocialType.GOOGLE.equals(connectionType)) {
             Google google = socialContext.getGoogle();
             Person person = google.plusOperations().getGoogleProfile();
-            providerUserId = person.getId();
-            userName = person.getDisplayName();
-            email = person.getAccountEmail();
+            userMap.put("providerUserId", person.getId());
+            userMap.put("userName", person.getDisplayName());
+            userMap.put("email", person.getAccountEmail());
         }
+    	
+    	return userMap;
     }
     
-    private String getAccountIdForDisplay() {
-        if (email != null) {
-            return email;
+    private String getAccountIdForDisplay(Map<String, String> userMap) {
+        if (userMap.get("email") != null) {
+            return userMap.get("email");
         }
-        if (userName != null) {
-            return userName;
+        if (userMap.get("userName") != null) {
+            return userMap.get("userName");
         }
-        return providerUserId;
+        return userMap.get("providerUserId");
     }
 }
