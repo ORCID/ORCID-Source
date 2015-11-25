@@ -9355,9 +9355,9 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
 	    }
     };
     
-    //------------------
+    //---------------------
     //------Recaptcha------
-    //------------------    
+    //---------------------   
     $scope.setRecaptchaWidgetId = function (widgetId) {                        
         console.log('Widget ID: ' + widgetId)
         $scope.recaptchaWidgetId = widgetId;        
@@ -9366,7 +9366,27 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
     $scope.setRecatchaResponse = function (response) {        
         console.log('Yey recaptcha response!');
         $scope.recatchaResponse = response;        
-    };   
+    };
+    
+    //------------------------
+    //------OAuth Layout------
+    //------------------------
+    $scope.showPersonalLogin = function () {        
+        $scope.personalLogin = true;        
+    };
+    
+    $scope.showInstitutionLogin = function () {
+        $scope.personalLogin = false; //Hide Personal Login
+        
+        if(!$scope.scriptsInjected){ //If shibboleth scripts haven't been loaded yet.            
+            var scripts = ['/static/javascript/shibboleth-embedded-ds/1.1.0/idpselect_config.js', '/static/javascript/shibboleth-embedded-ds/1.1.0/idpselect.js'];            
+            angular.forEach(scripts, function(key) {                
+                //$scope.addShibbolethScript(key);                
+            });
+        };
+    };
+    
+    
     
     
 }]);
