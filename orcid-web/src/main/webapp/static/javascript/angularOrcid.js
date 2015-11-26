@@ -9372,7 +9372,8 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
     //------OAuth Layout------
     //------------------------
     $scope.showPersonalLogin = function () {        
-        $scope.personalLogin = true;        
+        $scope.personalLogin = true;
+        console.log($scope.personalLogin);
     };
     
     $scope.showInstitutionLogin = function () {
@@ -9381,12 +9382,24 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
         if(!$scope.scriptsInjected){ //If shibboleth scripts haven't been loaded yet.            
             var scripts = ['/static/javascript/shibboleth-embedded-ds/1.1.0/idpselect_config.js', '/static/javascript/shibboleth-embedded-ds/1.1.0/idpselect.js'];            
             angular.forEach(scripts, function(key) {                
-                //$scope.addShibbolethScript(key);                
+                $scope.addShibbolethScript(key);                
             });
         };
     };
     
-    
+    $scope.addShibbolethScript = function(url){        
+        var head = document.getElementsByTagName('head')[0];
+        var script = document.createElement('script');
+        script.src = getBaseUri() + url;
+        script.onload =  function() {           
+            $scope.counter ++;
+            if ((!script.readyState || script.readyState == 'complete') && $scope.counter == 2){ //Second script will hide the spinner              
+                $scope.scriptsInjected = true;
+                $scope.$apply();
+            }
+        };
+        head.appendChild(script); //Inject the script
+    };
     
     
 }]);

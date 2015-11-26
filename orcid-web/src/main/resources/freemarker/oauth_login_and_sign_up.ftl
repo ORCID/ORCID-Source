@@ -52,27 +52,105 @@
 			<div class="login">
 				<div class="row">
 					<div class="col-md-12">
-						<p class="title">Sign in using your</p>
+						<p class="title" ng-show="showRegisterForm" ng-cloak>Sign into ORCID or <a href=#"" ng-click="switchForm()">Register now</a></p>
+						<p class="title" ng-show="!showRegisterForm" ng-cloak>Already have an ORCID iD? <a href=#"" ng-click="switchForm()">Sign In</a></p>
 					</div>
 				</div>
 				<div class="row">
 					<div class="col-md-12">
-						<div class="btn-group btn-group-justified" role="group">
+						<div class="btn-group btn-group-justified" role="group" ng-show="showRegisterForm" ng-cloak>
 			  				<a ng-click="showPersonalLogin()" class="btn btn-default" ng-class="{active: personalLogin == true}" role="button"><span class="glyphicon glyphicon-user"></span> Personal Account</a>
 			  				<a ng-click="showInstitutionLogin()" class="btn btn-default" ng-class="{active: personalLogin == false}" role="button"><span class="glyphicons bank"></span> Institution Account</a>
 						</div>
 						<!-- Personal Login -->
-						<div class="row personal-login" ng-hide="personalLogin == false" ng-cloak>
-							
-						
-						
-							
+						<!-- Login form -->
+						<div class="personal-account-login" ng-show="personalLogin && showRegisterForm" ng-init="loadAndInitLoginForm('${scopesString}','${redirect_uri}', '${response_type}', '${user_id}')" ng-cloak>
+							<div class="login-box">
+								<p class="title">Sign in with your ORCID account</p>
+								<div class="row personal-login">
+									<div class="form-group">
+									    <label for="userId" class="control-label"><@orcid.msg 'oauth_sign_in.labelemailorID'/> *</label>									   
+									    <input type="text" name="userId" id="userId" ng-model="authorizationForm.userName.value" placeholder="<@orcid.msg 'login.username'/>" class="form-control" >									    									    
+									</div>
+									<div class="form-group">
+									    <label for="password" class="control-label"><@orcid.msg 'oauth_sign_in.labelpassword'/></label>
+									    <input type="password" id="password" ng-model="authorizationForm.password.value" name="password" placeholder="<@orcid.msg 'login.password'/>" class="form-control">
+									    <div id="login-reset">
+									        <a href="<@orcid.rootPath '/reset-password'/>"><@orcid.msg 'login.reset'/></a>
+									    </div>
+									</div>			
+								</div>
+								<div class="row">
+									<div class="col-md-6">
+										<a class="oauth_deny_link pull-right" name="deny" value="<@orcid.msg 'confirm-oauth-access.Deny'/>" ng-click="loginAndDeny()">
+											<@orcid.msg 'confirm-oauth-access.Deny' />
+										</a>
+									</div>
+									<div class="col-md-6">				                                		            		               					
+										<button class="btn btn-primary pull-right" id="authorize-button" name="authorize" value="<@orcid.msg 'confirm-oauth-access.Authorize'/>" ng-click="loginAndAuthorize()">
+											<@orcid.msg 'confirm-oauth-access.Authorize' />
+										</button>
+									</div>
+					            </div>
+							</div>
+							<!-- SOCIAL LOGIN -->					            
+			                <div class="social-login">
+			                    <p class="title">Sign in with a social account <a href="${springMacroRequestContext.getMessage('common.support_url')}" target="_blank" class="shibboleth-help"><i class="glyphicon glyphicon-question-sign"></i></a></p>
+			                    <ul class="social-icons">
+			                        <li>
+			                            <form action="<@orcid.rootPath '/signin/facebook'/>" method="POST">
+			                                <button type="submit" class="btn btn-social-icon btn-facebook"></button>
+			                                <input type="hidden" name="scope" value="email" />
+			                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+			                            </form>
+			                        </li>
+			                        <!-- 
+			                        <li>
+			                            <form action="<@orcid.rootPath '/signin/twitter'/>" method="POST">
+			                                <button type="submit" class="btn btn-social-icon btn-twitter"></button>
+			                                <input type="hidden" name="scope" value="email" />
+			                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+			                            </form>
+			                        </li>
+			                         -->
+			                         <li>
+			                            <form action="<@orcid.rootPath '/signin/google'/>" method="POST">
+			                                <button type="submit" class="btn btn-social-icon btn-google"></button>
+			                                <input type="hidden" name="scope" value="email" />
+			                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+			                            </form>
+			                        </li>
+			                    </ul>                       
+			                </div>            	
 						</div>
-						<!-- Institution Login -->
-						<div class="row institution-login" ng-show="personalLogin == false"  ng-cloak>
+						<!-- SHIBBOLETH -->
+						<div class="row institution-login" ng-show="personalLogin == false && showRegisterForm"  ng-cloak>
+							<div class="col-md-12">
+								<div class="login-box">
+									<div class="federate-login">
+										<p class="title">Sign in via your institution <a href="${springMacroRequestContext.getMessage('common.support_url')}" target="_blank" class="shibboleth-help"><i class="glyphicon glyphicon-question-sign"></i></a></p>
+						                <div id="idpSelectContainer">                  
+						                    <div id="idpSelectInner">
+						                    	<div ng-show="scriptsInjected == false;" class="text-center" ng-cloak>
+												    <i class="glyphicon glyphicon-refresh spin x4 green" id="spinner"></i>											    
+												</div>
+						                        <!-- Where the widget is going to be injected -->
+						                        <div id="idpSelect"></div>
+						                    </div>                  
+						                </div>
+									</div>
+								</div>
+							</div>
+						</div>
 						
 						
-							
+						
+						<!-- Register form -->
+						<div class="personal-account-login" ng-show="personalLogin == true && !showRegisterForm" ng-init="loadAndInitRegistrationForm('${scopesString}','${redirect_uri}','${response_type}')" ng-cloak>
+							Register
+						
+						
+						
 						</div>
 					</div>
 				</div>
