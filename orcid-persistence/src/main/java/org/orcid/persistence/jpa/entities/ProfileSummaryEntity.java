@@ -92,7 +92,7 @@ public class ProfileSummaryEntity extends BaseEntity<String> {
 
     @Basic
     @Enumerated(EnumType.STRING)
-    @Column(name = "credit_name_visibility")
+    @Column(name = "names_visibility")
     public Visibility getCreditNameVisibility() {
         return creditNameVisibility;
     }

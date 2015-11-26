@@ -22,15 +22,13 @@
 		<#assign user_id = "">			
 		<#if userId??>
 			<#assign user_id = userId>
-        </#if>
-        <#assign js_group_name = client_group_name?replace('"', '&quot;')?js_string>
-        <#assign js_client_name = client_name?replace('"', '&quot;')?js_string>
+        </#if>        
         <#assign js_scopes_string = "">                
         <#list scopes as scope>
         	<#assign js_scopes_string = js_scopes_string + scope.name()?replace("ORCID_", "")?js_string + " ">
 		</#list>				      
 	    <!-- /Freemarker and GA variables -->	    
-		<div class="app-client-name" ng-init="initGroupClientNameAndScopes('${js_group_name}','${js_client_name}', '${js_scopes_string}')">
+		<div class="app-client-name" ng-init="initScopes('${js_scopes_string}')">
 			<h3 ng-click="toggleClientDescription()">${client_name}
 				<a class="glyphicon glyphicon-question-sign oauth-question-sign"></a>
 			</h3>
@@ -51,7 +49,7 @@
 		</div>
 		 
 		<!-- LOGIN FORM -->			
-		<div id="login" class="oauth-login-form" ng-show="!showRegisterForm" ng-init="loadAndInitLoginForm('${scopesString}','${redirect_uri}','${client_id}','${response_type}', '${user_id}')" ng-cloak>
+		<div id="login" class="oauth-login-form" ng-show="!showRegisterForm" ng-init="loadAndInitLoginForm('${scopesString}','${redirect_uri}', '${response_type}', '${user_id}')" ng-cloak>
 			 <div class="row">
 				 <div class="control-group col-md-12 col-sm-12 col-xs-12"> 			    	
 					<p class="pull-right"><@orcid.msg 'common.dont_have_an_id'/>&nbsp;<a class="reg" ng-click="switchForm()" id="in-signin-switch-form"><@orcid.msg 'oauth_sign_up.btnregister'/></a>.</p>			    	
@@ -103,7 +101,7 @@
        	</div>         	        	
        	
        	<!-- REGISTER FORM --> 
-       	<div id="register" class="oauth-registration" ng-show="showRegisterForm" ng-init="loadAndInitRegistrationForm('${scopesString}','${redirect_uri}','${client_id}','${response_type}')" ng-cloak>
+       	<div id="register" class="oauth-registration" ng-show="showRegisterForm" ng-init="loadAndInitRegistrationForm('${scopesString}','${redirect_uri}','${response_type}')" ng-cloak>
        		<div class="control-group col-md-12 col-sm-12 col-xs-12"> 			    	
 				<p class="pull-right"><@orcid.msg 'orcid.frontend.oauth.alread_have_account'/>&nbsp;<a class="reg" ng-click="switchForm()" id="in-register-switch-form"><@orcid.msg 'orcid.frontend.oauth.alread_have_account.link.text'/></a>.</p>
 	    	</div> 

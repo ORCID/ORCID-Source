@@ -142,6 +142,7 @@ public class OauthAuthorizationPageTest extends BlackBoxBase {
         String stateParam = matcher.group(1);
         assertFalse(PojoUtil.isEmpty(stateParam));
         assertEquals(STATE_PARAM, stateParam);
+        webDriver.close();
     }
 
     @Test

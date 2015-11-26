@@ -27,7 +27,7 @@ import java.util.Set;
 import javax.annotation.Resource;
 import javax.persistence.NoResultException;
 
-import org.orcid.core.constants.OauthTokensConstants;
+import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.oauth.OrcidOauth2AuthInfo;
@@ -161,9 +161,9 @@ public class OrcidAuthorizationCodeServiceImpl extends RandomValueAuthorizationC
         //Set token version to persistent token
         //TODO: As of Jan 2015 all tokens will be new tokens, so, we will have to remove the token version code and 
         //treat all tokens as new tokens
-        detail.setVersion(Long.valueOf(OauthTokensConstants.PERSISTENT_TOKEN));
-        if(requestParameters.containsKey(OauthTokensConstants.GRANT_PERSISTENT_TOKEN)) {
-            String grantPersitentToken = (String)requestParameters.get(OauthTokensConstants.GRANT_PERSISTENT_TOKEN);
+        detail.setVersion(Long.valueOf(OrcidOauth2Constants.PERSISTENT_TOKEN));
+        if(requestParameters.containsKey(OrcidOauth2Constants.GRANT_PERSISTENT_TOKEN)) {
+            String grantPersitentToken = (String)requestParameters.get(OrcidOauth2Constants.GRANT_PERSISTENT_TOKEN);
             if(Boolean.parseBoolean(grantPersitentToken)) {
                 isPersistentTokenEnabledByUser = true;                
             }

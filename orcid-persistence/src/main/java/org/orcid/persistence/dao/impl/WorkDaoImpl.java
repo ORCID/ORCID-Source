@@ -21,6 +21,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
 import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.persistence.dao.WorkDao;
@@ -241,6 +242,20 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
         query.setParameter("extIdType", extIdType);
         query.setParameter("workType", workType);
         return query.getResultList();
+    }
+    
+    /**
+     * Retrieve a work from database
+     * @param orcid
+     * @param id
+     * @return the WorkEntity associated with the parameter id
+     * */
+    @Override
+    public WorkEntity getWork(String orcid, Long id) {
+        TypedQuery<WorkEntity> query = entityManager.createQuery("FROM WorkEntity WHERE id = :workId and profile.id = :orcid", WorkEntity.class);        
+        query.setParameter("workId", id);
+        query.setParameter("orcid", orcid);
+        return query.getSingleResult();
     }
 }
 
