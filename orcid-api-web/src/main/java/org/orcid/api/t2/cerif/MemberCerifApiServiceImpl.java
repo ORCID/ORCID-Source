@@ -23,10 +23,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.orcid.api.t2.cerif.delegator.MemberCerifApiServiceDelgator;
 import org.orcid.core.api.OrcidApiConstants;
 import org.orcid.jaxb.model.message.ScopeConstants;
-import org.orcid.jaxb.model.record_rc1.Work;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -73,7 +73,12 @@ public class MemberCerifApiServiceImpl {
     @ApiOperation(value = "Fetch a research publication record", authorizations = { @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
     @ApiResponses(value = { @ApiResponse(code = 200, message = "Publication found"), @ApiResponse(code = 404, message = "Publication not found"), @ApiResponse(code = 403, message = "You do not have the required permission") })
     public Response viewPublication(@PathParam("id") String id) {
-        return serviceDelegator.getPublication(id);
+        try {
+            Pair<String, Long> ids = serviceDelegator.parseActivityID(id);
+            return serviceDelegator.getPublication(ids.getLeft(),ids.getRight());
+        } catch (Exception e) {
+            return Response.status(400).build();
+        }
     }
 
     @GET
@@ -82,7 +87,12 @@ public class MemberCerifApiServiceImpl {
     @ApiOperation(value = "Fetch a research product record", authorizations = { @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
     @ApiResponses(value = { @ApiResponse(code = 200, message = "Product found"), @ApiResponse(code = 404, message = "Product not found"), @ApiResponse(code = 403, message = "You do not have the required permission") })
     public Response viewProduct(@PathParam("id") String id) {
-        return serviceDelegator.getProduct(id);
+        try {
+            Pair<String, Long> ids = serviceDelegator.parseActivityID(id);
+            return serviceDelegator.getProduct(ids.getLeft(),ids.getRight());
+        } catch (Exception e) {
+            return Response.status(400).build();
+        }
     }
 
     @GET
@@ -102,4 +112,5 @@ public class MemberCerifApiServiceImpl {
     public Response viewSemantics() {
         return serviceDelegator.getSemantics();
     }
+    
 }

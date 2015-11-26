@@ -23,6 +23,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.orcid.api.common.delegator.CerifApiServiceDelgator;
 import org.orcid.core.api.OrcidApiConstants;
 
@@ -77,7 +78,12 @@ public class PublicCerifApiServiceImpl {
     @ApiOperation(value = "Fetch a research publication record")
     @ApiResponses(value = { @ApiResponse(code = 200, message = "Publication found"), @ApiResponse(code = 404, message = "Publication not found") })
     public Response viewPublication(@PathParam("id") String id) {
-        return serviceDelegator.getPublication(id);
+        try {
+            Pair<String, Long> ids = serviceDelegator.parseActivityID(id);
+            return serviceDelegator.getPublication(ids.getLeft(),ids.getRight());
+        } catch (IllegalArgumentException e) {
+            return Response.status(400).build();
+        }
     }
 
     @GET
@@ -86,7 +92,12 @@ public class PublicCerifApiServiceImpl {
     @ApiOperation(value = "Fetch a research product record")
     @ApiResponses(value = { @ApiResponse(code = 200, message = "Product found"), @ApiResponse(code = 404, message = "Product not found") })
     public Response viewProduct(@PathParam("id") String id) {
-        return serviceDelegator.getProduct(id);
+        try {
+            Pair<String, Long> ids = serviceDelegator.parseActivityID(id);
+            return serviceDelegator.getProduct(ids.getLeft(),ids.getRight());
+        } catch (IllegalArgumentException e) {
+            return Response.status(400).build();
+        }
     }
 
     @GET
@@ -106,4 +117,5 @@ public class PublicCerifApiServiceImpl {
     public Response viewSemantics() {
         return serviceDelegator.getSemantics();
     }
+    
 }

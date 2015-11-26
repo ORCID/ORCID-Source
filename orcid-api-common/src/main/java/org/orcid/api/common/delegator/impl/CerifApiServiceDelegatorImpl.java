@@ -22,7 +22,6 @@ import javax.annotation.Resource;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.orcid.api.common.cerif.Cerif10APIFactory;
 import org.orcid.api.common.cerif.Cerif16Builder;
@@ -32,9 +31,7 @@ import org.orcid.api.common.util.ActivityUtils;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.WorkManager;
-import org.orcid.core.security.visibility.aop.AccessControl;
 import org.orcid.core.security.visibility.filter.VisibilityFilterV2;
-import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.record.summary_rc1.ActivitiesSummary;
 import org.orcid.jaxb.model.record.summary_rc1.WorkSummary;
@@ -70,7 +67,6 @@ public class CerifApiServiceDelegatorImpl implements CerifApiServiceDelgator {
 
     @Transactional
     @Override
-    @AccessControl(requiredScope = ScopePathType.READ_PUBLIC, enableAnonymousAccess = true)
     public Response getPerson(String orcid) {
         return this.getPerson(orcid, Visibility.PUBLIC);
     }
@@ -116,41 +112,25 @@ public class CerifApiServiceDelegatorImpl implements CerifApiServiceDelgator {
     }
 
     @Override
-    @AccessControl(requiredScope = ScopePathType.READ_PUBLIC, enableAnonymousAccess = true)
-    public Response getPublication(String id) {
-        Pair<String, Long> ids;
-        try {
-            ids = parseActivityID(id);
-        } catch (Exception e) {
-            return Response.status(400).build();
-        }
-
-        WorkSummary ws = workManager.getWorkSummary(ids.getLeft(), ids.getRight());
+    public Response getPublication(String orcid, Long id) {
+        WorkSummary ws = workManager.getWorkSummary(orcid,id);
         ActivityUtils.cleanEmptyFields(ws);
-        orcidSecurityManager.checkVisibility(ws);
+        orcidSecurityManager.checkVisibility(ws);        
         if (ws == null || !translator.isPublication(ws.getType()))
             return Response.status(404).build();
 
-        return Response.ok(new Cerif16Builder().addPublication(ids.getLeft(), ws).build()).build();
+        return Response.ok(new Cerif16Builder().addPublication(orcid, ws).build()).build();
     }
 
     @Override
-    @AccessControl(requiredScope = ScopePathType.READ_PUBLIC, enableAnonymousAccess = true)
-    public Response getProduct(String id) {
-        Pair<String, Long> ids;
-        try {
-            ids = parseActivityID(id);
-        } catch (Exception e) {
-            return Response.status(400).build();
-        }
-
-        WorkSummary ws = workManager.getWorkSummary(ids.getLeft(), ids.getRight());
+    public Response getProduct(String orcid, Long id) {
+        WorkSummary ws = workManager.getWorkSummary(orcid,id);
         ActivityUtils.cleanEmptyFields(ws);
         orcidSecurityManager.checkVisibility(ws);
         if (ws == null || !translator.isProduct(ws.getType()))
             return Response.status(404).build();
 
-        return Response.ok(new Cerif16Builder().addProduct(ids.getLeft(), ws).build()).build();
+        return Response.ok(new Cerif16Builder().addProduct(orcid, ws).build()).build();
     }
 
     @Override
@@ -171,14 +151,14 @@ public class CerifApiServiceDelegatorImpl implements CerifApiServiceDelgator {
      * @throws Exception
      *             if can't parse
      */
-    private Pair<String, Long> parseActivityID(String id) throws Exception {
+    public Pair<String, Long> parseActivityID(String id) throws IllegalArgumentException {
         String[] ids = id.split(":");
         if (ids.length != 2)
-            throw new Exception("Bad activity ID");
+            throw new IllegalArgumentException("Bad activity ID");
         try {
             Long.parseLong(ids[1]);
         } catch (NumberFormatException e) {
-            throw new Exception("Bad put code ");
+            throw new IllegalArgumentException("Bad put code ");
         }
         return Pair.of(ids[0], Long.parseLong(ids[1]));
     }

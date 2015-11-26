@@ -119,7 +119,7 @@
     </bean>
     
     <!--  CERIF API -->
-    <bean id="cerifApiServiceDelegator" class="org.orcid.api.common.delegator.impl.CerifApiServiceDelegatorImpl" />
+    <bean id="cerifApiServiceDelegator" class="org.orcid.api.t1.cerif.delegator.impl.PublicCerifApiServiceDelegatorImpl" />
     <bean id="cerifApiServiceImpl" class="org.orcid.api.t1.cerif.PublicCerifApiServiceImpl">
         <property name="serviceDelegator" ref="cerifApiServiceDelegator"/>
     </bean>

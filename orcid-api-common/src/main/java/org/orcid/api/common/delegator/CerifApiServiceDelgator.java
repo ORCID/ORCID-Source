@@ -18,16 +18,20 @@ package org.orcid.api.common.delegator;
 
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang3.tuple.Pair;
+
 public interface CerifApiServiceDelgator {
 
     Response getPerson(String id);
 
-    Response getPublication(String id);
+    Response getPublication(String orcid, Long id);
 
-    Response getProduct(String id);
+    Response getProduct(String orcid, Long id);
 
     Response getEntities();
 
     Response getSemantics();
+    
+    Pair<String, Long> parseActivityID(String id) throws IllegalArgumentException;
 
 }
