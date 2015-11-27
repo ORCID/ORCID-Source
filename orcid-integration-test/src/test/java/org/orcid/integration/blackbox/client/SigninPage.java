@@ -36,8 +36,7 @@ public class SigninPage {
         emailEl.sendKeys(username);
         WebElement passwordEl = xpath.findElement("//input[@name='password']");
         passwordEl.sendKeys(password);
-        WebElement buttonEl = xpath.findElement("//button[@id='form-sign-in-button']");
-        buttonEl.click();
+        xpath.click("//button[@id='form-sign-in-button']");
         utils.getWait().until(ExpectedConditions.presenceOfElementLocated(By.xpath("//a[text()='Sign out']")));
         dismissVerifyEmailModal();
     }

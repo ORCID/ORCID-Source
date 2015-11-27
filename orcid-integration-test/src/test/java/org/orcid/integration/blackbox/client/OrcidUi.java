@@ -3,11 +3,8 @@ package org.orcid.integration.blackbox.client;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 /**
  * 
@@ -18,10 +15,12 @@ public class OrcidUi {
 
     private String baseUri;
     private WebDriver webDriver;
+    private XPath xpath;
 
     public OrcidUi(String baseUri, WebDriver webDriver) {
         this.baseUri = baseUri;
         this.webDriver = webDriver;
+        this.xpath = new XPath(webDriver);
     }
 
     public SigninPage getSigninPage() {
@@ -39,40 +38,34 @@ public class OrcidUi {
     public void quit() {
         webDriver.quit();
     }
-    
-    private WebDriverWait getWait() {
-        WebDriverWait wait = new WebDriverWait(webDriver, 10);
-        return wait;
-    }
 
     public class AccountSwitcherSection {
-        
-        public void open(){
-            By openButton = By.xpath("//div[@ng-controller='SwitchUserCtrl']/a[2]");
-            getWait().until(ExpectedConditions.elementToBeClickable(openButton));
-            webDriver.findElement(openButton).click();
+
+        public void open() {
+            xpath.click("//div[@ng-controller='SwitchUserCtrl']/a[2]");
         }
 
         public List<AccountToSwitchTo> getAccountsToSwitchTo() {
-            List<WebElement> accountRows = webDriver.findElements(By.xpath("//div[@ng-controller='SwitchUserCtrl']//ul/li[position() > 2 and position() != last()]"));
+            List<WebElement> accountRows = xpath.findElements("//div[@ng-controller='SwitchUserCtrl']//ul/li[position() > 2 and position() != last()]");
             return accountRows.stream().map(AccountToSwitchTo::new).collect(Collectors.toList());
         }
     }
 
     public class AccountToSwitchTo {
 
-        private WebElement accountElement;
+        private LocalXPath localXPath;
 
         private AccountToSwitchTo(WebElement accountElement) {
-            this.accountElement = accountElement;
+            this.localXPath = new LocalXPath(accountElement);
         }
-        
-        public void switchTo(){
-            accountElement.findElement(By.xpath("a")).click();
+
+        public void switchTo() {
+            localXPath.click("a");
         }
-        
-        public String getAccountId(){
-            return accountElement.findElement(By.xpath("a/ul/li[2]")).getText().replaceFirst(".*/", "");
+
+        public String getAccountId() {
+            return localXPath.findElement("a/ul/li[2]").getText().replaceFirst(".*/", "");
         }
     }
+    
 }
