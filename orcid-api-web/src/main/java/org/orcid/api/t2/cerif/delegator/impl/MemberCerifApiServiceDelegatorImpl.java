@@ -30,7 +30,7 @@ public class MemberCerifApiServiceDelegatorImpl extends CerifApiServiceDelegator
 
     @Override
     @AccessControl(requiredScope = ScopePathType.READ_LIMITED, enableAnonymousAccess = false)
-    @Transactional
+    @Transactional(readOnly=true)
     public Response getPerson(String id) {
         return super.getPerson(id,Visibility.LIMITED);
     }

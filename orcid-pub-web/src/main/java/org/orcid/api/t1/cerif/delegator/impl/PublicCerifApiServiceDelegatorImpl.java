@@ -11,7 +11,7 @@ public class PublicCerifApiServiceDelegatorImpl extends CerifApiServiceDelegator
 
     @Override
     @AccessControl(requiredScope = ScopePathType.READ_PUBLIC, enableAnonymousAccess = true)
-    @Transactional
+    @Transactional(readOnly=true)
     public Response getPerson(String id) {
         return super.getPerson(id);
     }
