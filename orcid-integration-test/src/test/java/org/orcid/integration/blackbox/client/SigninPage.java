@@ -18,11 +18,12 @@ public class SigninPage {
 
     private String baseUri;
     private WebDriver webDriver;
-    private Utils utils = new Utils();
+    private Utils utils;
     
     SigninPage(String baseUri, WebDriver webDriver) {
         this.baseUri = baseUri;
         this.webDriver = webDriver;
+        this.utils = new Utils(webDriver);
     }
     
     public void visit(){
@@ -42,12 +43,11 @@ public class SigninPage {
     }
     
     public void dismissVerifyEmailModal() {
-        WebDriverWait wait = new WebDriverWait(webDriver, 10);
         List<WebElement> weList = webDriver.findElements(By.xpath("//div[@ng-controller='VerifyEmailCtrl']"));
         if (weList.size() > 0) {// we need to wait for the color box to appear
-            wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath("//div[@ng-controller='VerifyEmailCtrl' and @orcid-loading='false']")));
+            utils.getWait().until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath("//div[@ng-controller='VerifyEmailCtrl' and @orcid-loading='false']")));
             ((JavascriptExecutor) webDriver).executeScript("$.colorbox.close();");
-            utils.colorBoxIsClosed(wait);
+            utils.colorBoxIsClosed();
         }
     }
     

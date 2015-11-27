@@ -1,6 +1,7 @@
 package org.orcid.integration.blackbox.client;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -11,11 +12,18 @@ import org.openqa.selenium.support.ui.WebDriverWait;
  */
 public class Utils {
 
-    Utils() {
+    private WebDriver webDriver;
+    
+    Utils(WebDriver webDriver) {
+        this.webDriver = webDriver;
     }
     
-    public void colorBoxIsClosed(WebDriverWait wait) {
-        wait.until(ExpectedConditions.not(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath("//div[@id='colorbox']"))));
+    WebDriverWait getWait() {
+        return new WebDriverWait(webDriver, 10);
+    }
+
+    public void colorBoxIsClosed() {
+        getWait().until(ExpectedConditions.not(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath("//div[@id='colorbox']"))));
     }
 
 }
