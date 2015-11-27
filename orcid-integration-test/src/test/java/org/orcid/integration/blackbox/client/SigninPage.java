@@ -7,7 +7,6 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 /**
  * 
@@ -19,11 +18,13 @@ public class SigninPage {
     private String baseUri;
     private WebDriver webDriver;
     private Utils utils;
+    private XPath xpath;
     
     SigninPage(String baseUri, WebDriver webDriver) {
         this.baseUri = baseUri;
         this.webDriver = webDriver;
         this.utils = new Utils(webDriver);
+        this.xpath = new XPath(webDriver);
     }
     
     public void visit(){
@@ -31,14 +32,13 @@ public class SigninPage {
     }
 
     public void signIn(String username, String password){
-        WebElement emailEl = webDriver.findElement(By.xpath("//input[@name='userId']"));
+        WebElement emailEl = xpath.findElement("//input[@name='userId']");
         emailEl.sendKeys(username);
-        WebElement passwordEl = webDriver.findElement(By.xpath("//input[@name='password']"));
+        WebElement passwordEl = xpath.findElement("//input[@name='password']");
         passwordEl.sendKeys(password);
-        WebElement buttonEl = webDriver.findElement(By.xpath("//button[@id='form-sign-in-button']"));
+        WebElement buttonEl = xpath.findElement("//button[@id='form-sign-in-button']");
         buttonEl.click();
-        WebDriverWait wait = new WebDriverWait(webDriver, 10);
-        wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//a[text()='Sign out']")));
+        utils.getWait().until(ExpectedConditions.presenceOfElementLocated(By.xpath("//a[text()='Sign out']")));
         dismissVerifyEmailModal();
     }
     
