@@ -5,38 +5,33 @@ import java.util.List;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 
 /**
  * 
  * @author Will Simpson
  *
  */
-public class XPath {
+public class LocalXPath {
+    
+    private WebElement baseElement;
 
-    private WebDriver webDriver;
-    private Utils utils;
-
-    XPath(WebDriver webDriver) {
-        this.webDriver = webDriver;
-        this.utils = new Utils(webDriver);
+    LocalXPath(WebElement baseElement) {
+        this.baseElement = baseElement;
     }
 
     public WebElement findElement(String xpath) {
         By by = By.xpath(xpath);
-        utils.getWait().until(ExpectedConditions.presenceOfElementLocated(by));
-        return webDriver.findElement(by);
+        return baseElement.findElement(by);
     }
 
     List<WebElement> findElements(String xpath) {
         By by = By.xpath(xpath);
-        return webDriver.findElements(by);
+        return baseElement.findElements(by);
     }
 
     public WebElement waitToBeClickable(String xpath) {
         By by = By.xpath(xpath);
-        utils.getWait().until(ExpectedConditions.elementToBeClickable(by));
-        WebElement webElement = webDriver.findElement(by);
+        WebElement webElement = baseElement.findElement(by);
         return webElement;
     }
 

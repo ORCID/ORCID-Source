@@ -67,20 +67,20 @@ public class AccountSettingsPage {
     }
 
     public class Email {
-        private WebElement emailElement;
+        private LocalXPath localXPath;
 
         private Email(WebElement emailElement) {
-            this.emailElement = emailElement;
+            this.localXPath = new LocalXPath(emailElement);
         }
 
         public String getEmail() {
-            return emailElement.findElement(By.xpath("td[1]")).getText();
+            return localXPath.findElement("td[1]").getText();
         }
 
         public void delete() {
             EmailsSection emailsSection = getEmailsSection();
             final int numberOfEmailsBefore = emailsSection.getEmails().size();
-            emailElement.findElement(By.xpath("td[5]/a")).click();
+            localXPath.click("td[5]/a");
             xpath.click("//button[@ng-click='deleteEmail(emailSrvc.delEmail)']");
             utils.getWait().until(new Predicate<WebDriver>() {
                 @Override
@@ -112,43 +112,37 @@ public class AccountSettingsPage {
     }
 
     public class Delegate {
-
-        private WebElement delegateElement;
+        private LocalXPath localXPath;
 
         private Delegate(WebElement delegateElement) {
-            this.delegateElement = delegateElement;
+            this.localXPath = new LocalXPath(delegateElement);
         }
 
         public String getDelegateId() {
-            return delegateElement.findElement(By.xpath("td[2]/a")).getText();
+            return localXPath.findElement("td[2]/a").getText();
         }
 
         public void revoke() {
-            delegateElement.findElement(By.xpath("(td[4]/a)")).click();
-            By confirmRevoke = By.xpath("//form[@ng-submit='revoke()']/button");
-            utils.getWait().until(ExpectedConditions.elementToBeClickable(confirmRevoke));
-            webDriver.findElement(confirmRevoke).click();
+            localXPath.click("(td[4]/a)");
+            xpath.click("//form[@ng-submit='revoke()']/button");
             utils.colorBoxIsClosed();
         }
     }
 
     public class DelegateSearchResult {
-
-        private WebElement delegateElement;
+        private LocalXPath localXPath;
 
         private DelegateSearchResult(WebElement delegateElement) {
-            this.delegateElement = delegateElement;
+            this.localXPath = new LocalXPath(delegateElement);
         }
 
         public String getDelegateId() {
-            return delegateElement.findElement(By.xpath("(td/a)[2]")).getText();
+            return localXPath.findElement("(td/a)[2]").getText();
         }
 
         public void add() {
-            delegateElement.findElement(By.xpath("td[3]/span/span")).click();
-            By confirmAdd = By.xpath("//form[@ng-submit='addDelegate()']/button");
-            utils.getWait().until(ExpectedConditions.elementToBeClickable(confirmAdd));
-            webDriver.findElement(confirmAdd).click();
+            localXPath.click("td[3]/span/span");
+            xpath.click("//form[@ng-submit='addDelegate()']/button");
             utils.colorBoxIsClosed();
         }
     }
