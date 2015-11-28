@@ -8970,6 +8970,8 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
     $scope.recaptchaWidgetId = null;
     $scope.recatchaResponse = null;
     $scope.personalLogin = true;
+    $scope.scriptsInjected = false;
+    $scope.counter = 0;
 
     $scope.model = {
             key: orcidVar.recaptchaKey
@@ -9375,7 +9377,6 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
     //------------------------
     $scope.showPersonalLogin = function () {        
         $scope.personalLogin = true;
-        console.log($scope.personalLogin);
     };
     
     $scope.showInstitutionLogin = function () {

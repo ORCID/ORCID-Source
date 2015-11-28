@@ -52,8 +52,8 @@
 			<div class="login">
 				<div class="row">
 					<div class="col-md-12">
-						<p class="title" ng-show="showRegisterForm" ng-cloak>Sign into ORCID or <a href=#"" ng-click="switchForm()">Register now</a></p>
-						<p class="title" ng-show="!showRegisterForm" ng-cloak>Already have an ORCID iD? <a href=#"" ng-click="switchForm()">Sign In</a></p>
+						<p class="title" ng-show="showRegisterForm" ng-cloak>Sign into ORCID or <a href="#" ng-click="switchForm()">Register now</a></p>
+						<p class="title" ng-show="!showRegisterForm" ng-cloak>Already have an ORCID iD? <a href="#" ng-click="switchForm()">Sign In</a></p>
 					</div>
 				</div>
 				<div class="row">
@@ -124,25 +124,26 @@
 			                </div>            	
 						</div>
 						<!-- SHIBBOLETH -->
-						<div class="row institution-login" ng-show="personalLogin == false && showRegisterForm"  ng-cloak>
-							<div class="col-md-12">
-								<div class="login-box">
-									<div class="federate-login">
-										<p class="title">Sign in via your institution <a href="${springMacroRequestContext.getMessage('common.support_url')}" target="_blank" class="shibboleth-help"><i class="glyphicon glyphicon-question-sign"></i></a></p>
-						                <div id="idpSelectContainer">                  
-						                    <div id="idpSelectInner">
-						                    	<div ng-show="scriptsInjected == false;" class="text-center" ng-cloak>
-												    <i class="glyphicon glyphicon-refresh spin x4 green" id="spinner"></i>											    
-												</div>
-						                        <!-- Where the widget is going to be injected -->
-						                        <div id="idpSelect"></div>
-						                    </div>                  
-						                </div>
+						<div ng-show="personalLogin == false && showRegisterForm"  ng-cloak>
+							<div class="row institution-login">
+								<div class="col-md-12">
+									<div class="login-box">
+										<div class="federate-login">
+											<p class="title">Sign in via your institution <a href="${springMacroRequestContext.getMessage('common.support_url')}" target="_blank" class="shibboleth-help"><i class="glyphicon glyphicon-question-sign"></i></a></p>
+							                <div id="idpSelectContainer">                  
+							                    <div id="idpSelectInner">
+							                    	<div ng-show="scriptsInjected == false;" class="text-center" ng-cloak>
+													    <i class="glyphicon glyphicon-refresh spin x4 green" id="spinner"></i>											    
+													</div>
+							                        <!-- Where the widget is going to be injected -->
+							                        <div id="idpSelect"></div>
+							                    </div>                  
+							                </div>
+										</div>
 									</div>
 								</div>
 							</div>
 						</div>
-						
 						<!-- Register form -->
 						<div class="personal-account-login" ng-show="personalLogin == true && !showRegisterForm" ng-init="loadAndInitRegistrationForm('${scopesString}','${redirect_uri}','${response_type}')" ng-cloak>
 							<div id="register" class="oauth-registration">
