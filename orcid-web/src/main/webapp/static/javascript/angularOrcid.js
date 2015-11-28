@@ -9315,6 +9315,8 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
 
     $scope.switchForm = function() {
         $scope.showRegisterForm = !$scope.showRegisterForm;
+        if (!$scope.personalLogin) 
+        	$scope.personalLogin = true;
     };
 
     $scope.showProcessingColorBox = function () {
