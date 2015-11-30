@@ -2779,7 +2779,7 @@ orcidNgModule.controller('ResetPasswordCtrl', ['$scope', '$compile', 'commonSrvc
 }]);
 
 orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc', 'vcRecaptchaService', function ($scope, $compile, commonSrvc, vcRecaptchaService) {
-    $scope.privacyHelp = {};
+	$scope.privacyHelp = {};
     $scope.recaptchaWidgetId = null;
     $scope.recatchaResponse = null;
     
@@ -2796,13 +2796,16 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
             $scope.privacyHelp[key]=!$scope.privacyHelp[key];
     };
 
-    $scope.getRegister = function(){
+    $scope.getRegister = function(givenName, familyName, email){
         $.ajax({
             url: getBaseUri() + '/register.json',
             dataType: 'json',
             success: function(data) {
                $scope.register = data;
-                $scope.$apply();
+               $scope.register.givenNames.value=givenName;
+               $scope.register.familyNames.value=familyName;
+               $scope.register.email.value=email;
+               $scope.$apply();
     
                 // make sure inputs stayed trimmed
                 $scope.$watch('register.email.value', function() {
@@ -3001,7 +3004,7 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
         $scope.recatchaResponse = response;
     };
     //init
-    $scope.getRegister();
+//    $scope.getRegister();
     //$scope.getDuplicates();
 
 }]);
