@@ -68,6 +68,10 @@ public class AccountSettingsPage {
             return emailRows.stream().map(Email::new).collect(Collectors.toList());
         }
 
+        public boolean canAddEmail() {
+            return xpath.isPresent("//input[@type='email']") && !xpath.isPresent("id('addEmailNotAllowed')");
+        }
+
         public void addEmail(String emailValue) {
             final int numberOfEmailsBefore = getEmails().size();
             WebElement emailInputElement = xpath.waitToBeClickable("//input[@type='email']");

@@ -132,7 +132,7 @@
                             
                             <!-- End Email table -->
                             <#if isPasswordConfirmationRequired>
-                                ${springMacroRequestContext.getMessage("manage.add_another_email.not_allowed")}
+                                <div id="addEmailNotAllowed">${springMacroRequestContext.getMessage("manage.add_another_email.not_allowed")}</div>
                             <#else>
                                 <div class="row bottom-row">
                                     <div class="col-md-12 add-email">

@@ -16,7 +16,9 @@
  */
 package org.orcid.integration.blackbox.web.account;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 import java.util.Optional;
@@ -92,6 +94,7 @@ public class AccountSettingsTest {
         accountSettingsPage.visit();
         EmailsSection emailsSection = accountSettingsPage.getEmailsSection();
         emailsSection.toggleEdit();
+        assertTrue("Should be able to add email", emailsSection.canAddEmail());
         String emailValue = "added.email." + System.currentTimeMillis() + "@test.com";
         emailsSection.addEmail(emailValue);
         List<Email> emails = emailsSection.getEmails();
@@ -134,6 +137,13 @@ public class AccountSettingsTest {
                 .get();
         assertNotNull(accountToSwitchTo);
         accountToSwitchTo.switchTo();
+        // Got to account settings page as delegate
+        accountSettingsPage = orcidUi.getAccountSettingsPage();
+        accountSettingsPage.visit();
+        // Check that add email section is not there
+        EmailsSection emailsSection = accountSettingsPage.getEmailsSection();
+        emailsSection.toggleEdit();
+        assertFalse("Should NOT be able to add email", emailsSection.canAddEmail());
     }
 
 }

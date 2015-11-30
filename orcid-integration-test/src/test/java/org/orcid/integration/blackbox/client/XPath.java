@@ -19,6 +19,7 @@ package org.orcid.integration.blackbox.client;
 import java.util.List;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -44,6 +45,14 @@ public class XPath {
         return webDriver.findElement(by);
     }
 
+    public boolean isPresent(String xpath) {
+        try {
+            return webDriver.findElement(By.xpath(xpath)) != null;
+        } catch (NoSuchElementException e) {
+            return false;
+        }
+    }
+
     List<WebElement> findElements(String xpath) {
         By by = By.xpath(xpath);
         return webDriver.findElements(by);
@@ -60,4 +69,5 @@ public class XPath {
         WebElement webElement = waitToBeClickable(xpath);
         webElement.click();
     }
+
 }
