@@ -90,12 +90,26 @@ public class SocialController extends BaseController {
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                     return new ModelAndView("redirect:/my-orcid");
                 } else {
-                    ModelAndView mav = new ModelAndView();
+                    //For registration form autofill
+                	String firstName = "", lastName = "", emailId;
+                    if(userMap.get("userName") != null) {
+                    	String []names = userMap.get("userName").split("\\ ");
+                    	firstName = names[0];
+                    	if(names.length > 1) {
+                    		lastName = names[1];
+                    	}
+                    }
+                    emailId = (userMap.get("email") == null) ? "" : userMap.get("email");
+                	
+                	ModelAndView mav = new ModelAndView();
                     logoutCurrentUser(request, response);
                     mav.setViewName("social_link_signin");
                     mav.addObject("providerId", providerId);
-                    mav.addObject("emailId", getAccountIdForDisplay(userMap));
+                    mav.addObject("accountId", getAccountIdForDisplay(userMap));
                     mav.addObject("linkType", "social");
+                    mav.addObject("emailId", emailId);
+                    mav.addObject("firstName", firstName);
+                    mav.addObject("lastName", lastName);
                     return mav;
                 }
             } else {
