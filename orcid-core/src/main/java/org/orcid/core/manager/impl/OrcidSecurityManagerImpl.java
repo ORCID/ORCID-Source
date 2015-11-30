@@ -34,6 +34,11 @@ import org.orcid.jaxb.model.common.Filterable;
 import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.ScopePathType;
+import org.orcid.jaxb.model.record.summary_rc1.EducationSummary;
+import org.orcid.jaxb.model.record.summary_rc1.EmploymentSummary;
+import org.orcid.jaxb.model.record.summary_rc1.FundingSummary;
+import org.orcid.jaxb.model.record.summary_rc1.PeerReviewSummary;
+import org.orcid.jaxb.model.record.summary_rc1.WorkSummary;
 import org.orcid.jaxb.model.record_rc1.Education;
 import org.orcid.jaxb.model.record_rc1.Email;
 import org.orcid.jaxb.model.record_rc1.Employment;
@@ -42,6 +47,7 @@ import org.orcid.jaxb.model.record_rc1.PeerReview;
 import org.orcid.jaxb.model.record_rc1.Work;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import org.orcid.persistence.jpa.entities.SourceEntity;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
@@ -73,6 +79,13 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
             readLimitedScopes = getReadLimitedScopesThatTheClientHas(authorizationRequest, filterable);
         }
 
+        // If the client is the source of the object, you don't need to worry about the visibility
+        if(!PojoUtil.isEmpty(filterable.retrieveSourcePath())){
+            if(filterable.retrieveSourcePath().equals(clientId)) {
+                return;
+            }
+        }
+        
         if (readLimitedScopes.isEmpty()) {
             // This client only has permission for read public
             if ((visibility == null || Visibility.PRIVATE.equals(visibility)) && clientId != null && !clientId.equals(filterable.retrieveSourcePath())) {
@@ -119,13 +132,13 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         readLimitedScopes.add(ScopePathType.READ_LIMITED.value());
         readLimitedScopes.add(ScopePathType.ACTIVITIES_READ_LIMITED.value());
         readLimitedScopes.add(ScopePathType.ORCID_PROFILE_READ_LIMITED.value());
-        if (filterable instanceof Work) {
+        if (filterable instanceof Work || filterable instanceof WorkSummary) {
             readLimitedScopes.add(ScopePathType.ORCID_WORKS_READ_LIMITED.value());
-        } else if (filterable instanceof Funding) {
+        } else if (filterable instanceof Funding || filterable instanceof FundingSummary) {
             readLimitedScopes.add(ScopePathType.FUNDING_READ_LIMITED.value());
-        } else if (filterable instanceof Education || filterable instanceof Employment) {
+        } else if (filterable instanceof Education || filterable instanceof Employment || filterable instanceof EducationSummary || filterable instanceof EmploymentSummary) {
             readLimitedScopes.add(ScopePathType.AFFILIATIONS_READ_LIMITED.value());
-        } else if (filterable instanceof PeerReview) {
+        } else if (filterable instanceof PeerReview || filterable instanceof PeerReviewSummary) {
             readLimitedScopes.add(ScopePathType.PEER_REVIEW_READ_LIMITED.value());
         } else if (filterable instanceof ResearcherUrl || filterable instanceof Email) {
             readLimitedScopes.add(ScopePathType.PERSON_READ_LIMITED.value());

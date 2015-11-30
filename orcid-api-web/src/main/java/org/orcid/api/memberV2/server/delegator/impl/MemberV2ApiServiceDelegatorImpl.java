@@ -365,6 +365,8 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     @AccessControl(requiredScope = ScopePathType.PEER_REVIEW_READ_LIMITED)
     public Response viewPeerReview(String orcid, Long putCode) {
         PeerReview peerReview = peerReviewManager.getPeerReview(orcid, putCode);
+        orcidSecurityManager.checkVisibility(peerReview);
+        ActivityUtils.setPathToActivity(peerReview, orcid);
         return Response.ok(peerReview).build();
     }
 
@@ -372,6 +374,8 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     @AccessControl(requiredScope = ScopePathType.PEER_REVIEW_READ_LIMITED)
     public Response viewPeerReviewSummary(String orcid, Long putCode) {
         PeerReviewSummary summary = peerReviewManager.getPeerReviewSummary(orcid, putCode);
+        orcidSecurityManager.checkVisibility(summary);
+        ActivityUtils.setPathToActivity(summary, orcid);
         return Response.ok(summary).build();
     }
 
@@ -455,7 +459,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     @Override
     @AccessControl(requiredScope = ScopePathType.READ_LIMITED)
     public Response viewResearcherUrls(String orcid) {
-        ResearcherUrls researcherUrls = researcherUrlManager.getResearcherUrlsV2(orcid);
+        ResearcherUrls researcherUrls = researcherUrlManager.getResearcherUrlsV2(orcid);        
         researcherUrls.setResearcherUrls((List<ResearcherUrl>) visibilityFilter.filter(researcherUrls.getResearcherUrls()));
         ElementUtils.setPathToResearcherUrls(researcherUrls, orcid);
         return Response.ok(researcherUrls).build();
@@ -463,6 +467,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
         
     public Response viewResearcherUrl(String orcid, String putCode) {
         ResearcherUrl researcherUrl = researcherUrlManager.getResearcherUrlV2(orcid, Long.valueOf(putCode));
+        orcidSecurityManager.checkVisibility(researcherUrl);
         return Response.ok(researcherUrl).build();
     }
     
