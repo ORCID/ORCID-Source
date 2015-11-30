@@ -28,7 +28,7 @@
             last_modified="2011-07-02 15:31:00.00"           
             claimed="true"
             credit_name="Source Client Group 1"
-            credit_name_visibility="PUBLIC"
+            names_visibility="PUBLIC"
             profile_address_visibility="PRIVATE"
             external_identifiers_visibility="LIMITED"
             biography_visibility="PUBLIC"
@@ -91,7 +91,7 @@
     <client_scope client_details_id="APP-5555555555555555" scope_type="/affiliations/read-limited"/>
     <client_scope client_details_id="APP-5555555555555555" scope_type="/premium-notification"/>
     <client_scope client_details_id="APP-5555555555555555" scope_type="/activities/update"/>
-    <client_scope client_details_id="APP-5555555555555555" scope_type="/activities/read-limited"/>    
+    <client_scope client_details_id="APP-5555555555555555" scope_type="/read-limited"/>    
     <client_scope client_details_id="APP-5555555555555555" scope_type="/peer-review/create"/>
     <client_scope client_details_id="APP-5555555555555555" scope_type="/orcid-internal/person/read"/>
     <client_scope client_details_id="APP-5555555555555555" scope_type="/person/read-limited"/>

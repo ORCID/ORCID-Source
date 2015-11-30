@@ -30,6 +30,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
+import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
@@ -49,9 +50,11 @@ public class JpaJaxbResearcherUrlAdapterTest {
 
     @Test
     public void testToResearcherUrlEntity() throws JAXBException {
-        ResearcherUrl r = getResearcherUrl();
+        ResearcherUrls r = getResearcherUrls();
         assertNotNull(r);
-        ResearcherUrlEntity entity = jpaJaxbResearcherUrlAdapter.toResearcherUrlEntity(r);
+        assertNotNull(r.getResearcherUrls());
+        assertEquals(1, r.getResearcherUrls().size());
+        ResearcherUrlEntity entity = jpaJaxbResearcherUrlAdapter.toResearcherUrlEntity(r.getResearcherUrls().get(0));
         assertNotNull(entity);
         //General info
         assertEquals(Long.valueOf(1248), entity.getId());
@@ -76,12 +79,12 @@ public class JpaJaxbResearcherUrlAdapterTest {
         assertEquals("APP-0001", r.getSource().retrieveSourcePath());
     }      
     
-    private ResearcherUrl getResearcherUrl() throws JAXBException {
-        JAXBContext context = JAXBContext.newInstance(new Class[] { ResearcherUrl.class });
+    private ResearcherUrls getResearcherUrls() throws JAXBException {
+        JAXBContext context = JAXBContext.newInstance(new Class[] { ResearcherUrls.class });
         Unmarshaller unmarshaller = context.createUnmarshaller();
         String name = "/record_2.0_rc2/samples/researcher-url-2.0_rc2.xml";             
         InputStream inputStream = getClass().getResourceAsStream(name);
-        return (ResearcherUrl) unmarshaller.unmarshal(inputStream);
+        return (ResearcherUrls) unmarshaller.unmarshal(inputStream);
     }
     
     private ResearcherUrlEntity getResearcherUrlEntity() {

@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Resource;
+import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.exception.OrcidDeprecatedException;
@@ -42,6 +43,7 @@ import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -61,12 +63,12 @@ public class DefaultPermissionChecker implements PermissionChecker {
     
     @Resource(name = "profileEntityManager")
     private ProfileEntityManager profileEntityManager;
+   
+    	@Resource
+    	private ProfileDao profileDao;
     
-	@Resource
-	private ProfileDao profileDao;
-
-	@Value("${org.orcid.core.baseUri}")
-	private String baseUrl;
+    	@Value("${org.orcid.core.baseUri}")
+    	private String baseUrl;
 	
     @Resource
     private OrcidOauth2TokenDetailService orcidOauthTokenDetailService;
@@ -315,9 +317,14 @@ public class DefaultPermissionChecker implements PermissionChecker {
                 // update private information.
                 return;
             } else if(profileDao.isProfileDeprecated(orcid)) {
-            	StringBuffer primary = new StringBuffer(baseUrl).append("/").append(userOrcid);
-        		Map<String, String> params = new HashMap<String, String>();
-            	params.put("orcid", primary.toString());
+                ProfileEntity entity = profileEntityCacheManager.retrieve(orcid);
+                Map<String, String> params = new HashMap<String, String>();
+                StringBuffer primary = new StringBuffer(baseUrl).append("/").append(entity.getPrimaryRecord().getId());
+                params.put(OrcidDeprecatedException.ORCID, primary.toString());
+                if(entity.getDeprecatedDate() != null) {
+                    XMLGregorianCalendar calendar = DateUtils.convertToXMLGregorianCalendar(entity.getDeprecatedDate());
+                    params.put(OrcidDeprecatedException.DEPRECATED_DATE, calendar.toString());
+                }
                 throw new OrcidDeprecatedException(params);
             }
         }

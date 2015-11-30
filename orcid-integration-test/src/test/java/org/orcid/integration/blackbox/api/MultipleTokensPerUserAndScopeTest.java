@@ -66,7 +66,7 @@ public class MultipleTokensPerUserAndScopeTest extends BlackBoxBase {
     
     @Test
     public void useSameScopesGetDifferentTokensTest() throws InterruptedException, JSONException {
-        String scopes = ScopePathType.ACTIVITIES_READ_LIMITED.value() + " " + ScopePathType.PERSON_READ_LIMITED.value();
+        String scopes = ScopePathType.READ_LIMITED.value();
         String token1 = getAccessToken(scopes, this.client1ClientId, this.client1ClientSecret, this.client1RedirectUri);
         String token2 = getAccessToken(scopes, this.client1ClientId, this.client1ClientSecret, this.client1RedirectUri);
 

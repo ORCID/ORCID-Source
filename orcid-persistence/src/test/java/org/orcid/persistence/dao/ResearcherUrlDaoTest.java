@@ -25,6 +25,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceException;
 
 import org.junit.AfterClass;
@@ -80,9 +81,17 @@ public class ResearcherUrlDaoTest extends DBUnitTest {
     @Rollback(true)
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void testfindResearcherUrl() {
-        ResearcherUrlEntity researcherUrl = researcherUrlDao.getResearcherUrl(1);
+        ResearcherUrlEntity researcherUrl = researcherUrlDao.getResearcherUrl("4444-4444-4444-4441", 1L);
         assertNotNull(researcherUrl);
         assertEquals("444_1", researcherUrl.getUrlName());
+        
+        try {
+            researcherUrl = researcherUrlDao.getResearcherUrl("4444-4444-4444-5555", 1L);
+            fail();
+        } catch(NoResultException e) {
+            
+        }
+        
     }
 
     @Test

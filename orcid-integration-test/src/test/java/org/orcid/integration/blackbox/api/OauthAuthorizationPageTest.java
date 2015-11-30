@@ -63,7 +63,7 @@ import com.sun.jersey.core.util.MultivaluedMapImpl;
 public class OauthAuthorizationPageTest extends BlackBoxBase {
 
     private static final String STATE_PARAM = "MyStateParam";
-    private static final String SCOPES = "/activities/update /activities/read-limited";
+    private static final String SCOPES = "/activities/update /read-limited";
     private static final int DEFAULT_TIMEOUT_SECONDS = 10;
     private static final Pattern AUTHORIZATION_CODE_PATTERN = Pattern.compile("code=(.+)");
     private static final Pattern STATE_PARAM_PATTERN = Pattern.compile("state=(.+)");
@@ -142,6 +142,7 @@ public class OauthAuthorizationPageTest extends BlackBoxBase {
         String stateParam = matcher.group(1);
         assertFalse(PojoUtil.isEmpty(stateParam));
         assertEquals(STATE_PARAM, stateParam);
+        webDriver.close();
     }
 
     @Test

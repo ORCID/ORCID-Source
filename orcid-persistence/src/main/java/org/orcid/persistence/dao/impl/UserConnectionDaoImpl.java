@@ -36,10 +36,8 @@ public class UserConnectionDaoImpl extends GenericDaoImpl<UserconnectionEntity, 
 	}
 	
 	@Override
-	public void updateLoginInformation(String email, String orcid, UserconnectionPK pk) {
+	public void updateLoginInformation(UserconnectionPK pk) {
 		UserconnectionEntity entity = find(pk);
-		entity.setEmail(email);
-		entity.setOrcid(orcid);
 		entity.setLastLogin(new Timestamp(new Date().getTime()));
 		merge(entity);
 	}

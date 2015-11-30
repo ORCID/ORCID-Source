@@ -153,12 +153,14 @@ public class WorkManagerImpl implements WorkManager {
      * */
     @Override
     public Work getWork(String orcid, Long workId) {
-        return jpaJaxbWorkAdapter.toWork(workDao.find(workId));
+        WorkEntity work = workDao.getWork(orcid, workId);
+        return jpaJaxbWorkAdapter.toWork(work);
     }
 
     @Override
     public WorkSummary getWorkSummary(String orcid, Long workId) {
-        return jpaJaxbWorkAdapter.toWorkSummary(workDao.find(workId));
+        WorkEntity work = workDao.getWork(orcid, workId);
+        return jpaJaxbWorkAdapter.toWorkSummary(work);
     }
 
     @Override
@@ -207,7 +209,7 @@ public class WorkManagerImpl implements WorkManager {
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
         if (applyValidations) {
             ActivityValidator.validateWork(work, false, sourceEntity);
-            List<Work> existingWorks = this.findWorks(orcid, System.currentTimeMillis());
+            List<Work> existingWorks = this.findWorks(orcid, System.currentTimeMillis());            
             for (Work existing : existingWorks) {
                 // Dont compare the updated peer review with the DB version
                 if (!existing.getPutCode().equals(work.getPutCode())) {
@@ -215,7 +217,7 @@ public class WorkManagerImpl implements WorkManager {
                 }
             }
         }
-        WorkEntity workEntity = workDao.find(Long.valueOf(work.getPutCode()));
+        WorkEntity workEntity = workDao.getWork(orcid, work.getPutCode());        
         Visibility originalVisibility = Visibility.fromValue(workEntity.getVisibility().value());
         SourceEntity existingSource = workEntity.getSource();
         orcidSecurityManager.checkSource(existingSource);
@@ -229,10 +231,9 @@ public class WorkManagerImpl implements WorkManager {
     }
 
     @Override
-    public boolean checkSourceAndRemoveWork(String orcid, Long workIdStr) {
+    public boolean checkSourceAndRemoveWork(String orcid, Long workId) {
         boolean result = true;
-        Long workId = Long.valueOf(workIdStr);
-        WorkEntity workEntity = workDao.find(workId);
+        WorkEntity workEntity = workDao.getWork(orcid, workId);
         SourceEntity existingSource = workEntity.getSource();
         orcidSecurityManager.checkSource(existingSource);
         try {
@@ -241,7 +242,7 @@ public class WorkManagerImpl implements WorkManager {
             workDao.flush();
             notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, item);
         } catch (Exception e) {
-            LOGGER.error("Unable to delete work with ID: " + workIdStr);
+            LOGGER.error("Unable to delete work with ID: " + workId);
             result = false;
         }
         return result;

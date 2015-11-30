@@ -50,10 +50,11 @@ public interface ResearcherUrlDao extends GenericDao<ResearcherUrlEntity, Long> 
 
     /**
      * Retrieve a researcher url from database
+     * @param orcid
      * @param id
      * @return the ResearcherUrlEntity associated with the parameter id
      * */
-    public ResearcherUrlEntity getResearcherUrl(long id);
+    public ResearcherUrlEntity getResearcherUrl(String orcid, Long id);
     
     /**
      * Updates an existing researcher url

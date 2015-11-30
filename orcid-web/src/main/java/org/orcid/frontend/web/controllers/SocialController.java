@@ -16,6 +16,9 @@
  */
 package org.orcid.frontend.web.controllers;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -66,29 +69,21 @@ public class SocialController extends BaseController {
     @Resource
     private OrcidSecurityManager securityMgr;
 
-    private String providerUserId;
-
     @RequestMapping(value = { "/access" }, method = RequestMethod.GET)
     public ModelAndView signinHandler(HttpServletRequest request, HttpServletResponse response) {
 
-        String emailId = null;
         SocialType connectionType = socialContext.isSignedIn(request, response);
         if (connectionType != null) {
-            emailId = retrieveEmail(connectionType);
-        }
-
-        if (emailId == null) {
-            throw new UsernameNotFoundException("Could not find an orcid account associated with the email id.");
-        } else {
+        	Map<String, String> userMap = retrieveUserDetails(connectionType);
+            
             String providerId = connectionType.value();
             String userId = socialContext.getUserId();
-
-            UserconnectionEntity userConnectionEntity = userConnectionDao.findByProviderIdAndProviderUserId(providerUserId, providerId);
+            UserconnectionEntity userConnectionEntity = userConnectionDao.findByProviderIdAndProviderUserId(userMap.get("providerUserId"), providerId);
             if (userConnectionEntity != null) {
                 if (userConnectionEntity.isLinked()) {
-                    UserconnectionPK pk = new UserconnectionPK(userId, providerId, providerUserId);
-                    userConnectionDao.updateLoginInformation(emailId, userConnectionEntity.getOrcid(), pk);
-                    String aCredentials = new StringBuffer(providerId).append(":").append(providerUserId).toString();
+                    UserconnectionPK pk = new UserconnectionPK(userId, providerId, userMap.get("providerUserId"));
+                    userConnectionDao.updateLoginInformation(pk);
+                    String aCredentials = new StringBuffer(providerId).append(":").append(userMap.get("providerUserId")).toString();
                     PreAuthenticatedAuthenticationToken token = new PreAuthenticatedAuthenticationToken(userConnectionEntity.getOrcid(), aCredentials);
                     token.setDetails(new WebAuthenticationDetails(request));
                     Authentication authentication = authenticationManager.authenticate(token);
@@ -99,30 +94,29 @@ public class SocialController extends BaseController {
                     logoutCurrentUser(request, response);
                     mav.setViewName("social_link_signin");
                     mav.addObject("providerId", providerId);
-                    mav.addObject("emailId", emailId);
+                    mav.addObject("emailId", getAccountIdForDisplay(userMap));
                     return mav;
                 }
             } else {
                 throw new UsernameNotFoundException("Could not find an orcid account associated with the email id.");
             }
+        } else {
+        	throw new UsernameNotFoundException("Could not find an orcid account associated with the email id.");
         }
     }
 
     @RequestMapping(value = { "/link" }, method = RequestMethod.GET)
     public ModelAndView link(HttpServletRequest request, HttpServletResponse response) {
         SocialType connectionType = socialContext.isSignedIn(request, response);
-        String email = null;
         if (connectionType != null) {
-            email = retrieveEmail(connectionType);
-        }
-        if (email != null) {
+        	Map<String, String> userMap = retrieveUserDetails(connectionType);
             String providerId = connectionType.value();
-            UserconnectionEntity userConnectionEntity = userConnectionDao.findByProviderIdAndProviderUserId(providerUserId, providerId);
+            UserconnectionEntity userConnectionEntity = userConnectionDao.findByProviderIdAndProviderUserId(userMap.get("providerUserId"), providerId);
             if (userConnectionEntity != null) {
                 if (!userConnectionEntity.isLinked()) {
                     OrcidProfile profile = getRealProfile();
                     userConnectionEntity.setLinked(true);
-                    userConnectionEntity.setEmail(email);
+                    userConnectionEntity.setEmail(userMap.get("email"));
                     userConnectionEntity.setOrcid(profile.getOrcidIdentifier().getPath());
                     userConnectionDao.merge(userConnectionEntity);
                 }
@@ -130,26 +124,38 @@ public class SocialController extends BaseController {
             } else {
                 throw new UsernameNotFoundException("Could not find an orcid account associated with the email id.");
             }
-
         } else {
             throw new UsernameNotFoundException("Could not find an orcid account associated with the email id.");
         }
     }
 
-    private String retrieveEmail(SocialType connectionType) {
-        String email = null;
-        if (SocialType.FACEBOOK.equals(connectionType)) {
+    private Map<String, String> retrieveUserDetails(SocialType connectionType) {
+        
+    	Map<String, String> userMap = new HashMap<String, String>();
+    	if (SocialType.FACEBOOK.equals(connectionType)) {
             Facebook facebook = socialContext.getFacebook();
-            User user = facebook.fetchObject("me", User.class, "id", "email");
-            providerUserId = user.getId();
-            email = user.getEmail();
+            User user = facebook.fetchObject("me", User.class, "id", "email", "name");
+            userMap.put("providerUserId", user.getId());
+            userMap.put("userName", user.getName());
+            userMap.put("email", user.getEmail());
         } else if (SocialType.GOOGLE.equals(connectionType)) {
             Google google = socialContext.getGoogle();
             Person person = google.plusOperations().getGoogleProfile();
-            providerUserId = person.getId();
-            email = person.getAccountEmail();
+            userMap.put("providerUserId", person.getId());
+            userMap.put("userName", person.getDisplayName());
+            userMap.put("email", person.getAccountEmail());
         }
-
-        return email;
+    	
+    	return userMap;
+    }
+    
+    private String getAccountIdForDisplay(Map<String, String> userMap) {
+        if (userMap.get("email") != null) {
+            return userMap.get("email");
+        }
+        if (userMap.get("userName") != null) {
+            return userMap.get("userName");
+        }
+        return userMap.get("providerUserId");
     }
 }

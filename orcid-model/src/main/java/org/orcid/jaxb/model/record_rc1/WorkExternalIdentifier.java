@@ -29,6 +29,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.io.Serializable;
 
 /**
@@ -97,6 +99,14 @@ public class WorkExternalIdentifier extends ExternalIdentifierBase implements Se
     public void setWorkExternalIdentifierId(WorkExternalIdentifierId value) {
         this.workExternalIdentifierId = value;
     }
+    
+    @Override
+    @JsonIgnore
+    public String getGroupId() {
+        String workIdVal = this.workExternalIdentifierId == null ? null : this.workExternalIdentifierId.getContent();
+        String typeVal = this.workExternalIdentifierType == null ? null : this.workExternalIdentifierType.toString();
+        return workIdVal + typeVal; 
+    }
 
     @Override
     public String toString() {
@@ -111,9 +121,9 @@ public class WorkExternalIdentifier extends ExternalIdentifierBase implements Se
     }
 
     @Override
-    public boolean passGroupingValidation() {
+    public boolean isGroupAble() {
         // Perform general validations
-        if (!super.passGroupingValidation())
+        if (!super.isGroupAble())
             return false;
 
         // Dont groups works where the external id is empty
@@ -174,23 +184,4 @@ public class WorkExternalIdentifier extends ExternalIdentifierBase implements Se
         return newExtId;
     }
 
-    @Override
-    public boolean matches(GroupKey obj) {
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        WorkExternalIdentifier other = (WorkExternalIdentifier) obj;
-
-        if (workExternalIdentifierId == null) {
-            if (other.workExternalIdentifierId != null) {
-                return false;
-            }
-        } else if (!workExternalIdentifierId.equals(other.workExternalIdentifierId)) {
-            return false;
-        }
-        if (workExternalIdentifierType != other.workExternalIdentifierType) {
-            return false;
-        }
-        return true;
-    }
 }
