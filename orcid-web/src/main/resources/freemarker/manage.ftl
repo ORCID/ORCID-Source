@@ -145,11 +145,11 @@
                                     </span>
                                 </div>
                                 <div class="col-md-12">
-                               <p style="line-height: 12px;">
-                               		<small class="italic">
-                                    	${springMacroRequestContext.getMessage("manage.verificationEmail.1")} <a href="${aboutUri}/content/orcid-terms-use" target="_blank">${springMacroRequestContext.getMessage("manage.verificationEmail.2")}</a>${springMacroRequestContext.getMessage("manage.verificationEmail.3")}
-                                    </small>
-                                </p>
+                                    <p style="line-height: 12px;">
+                               	        <small class="italic">
+                                    	    ${springMacroRequestContext.getMessage("manage.verificationEmail.1")} <a href="${aboutUri}/content/orcid-terms-use" target="_blank">${springMacroRequestContext.getMessage("manage.verificationEmail.2")}</a>${springMacroRequestContext.getMessage("manage.verificationEmail.3")}
+                                        </small>
+                                    </p>
                                 </div>
                             </div>
                        		<!-- Email frecuency -->
