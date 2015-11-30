@@ -48,10 +48,11 @@ public interface ResearcherUrlManager {
 
     /**
      * Retrieve a researcher url from database
+     * @param orcid
      * @param id
      * @return the ResearcherUrlEntity associated with the parameter id
      * */
-    public ResearcherUrlEntity getResearcherUrl(long id);                
+    public ResearcherUrlEntity getResearcherUrl(String orcid, Long id);                
     
     /**
      * Adds a researcher url to a specific profile

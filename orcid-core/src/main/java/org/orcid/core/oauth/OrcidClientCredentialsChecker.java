@@ -24,7 +24,7 @@ import java.util.Set;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
-import org.orcid.core.constants.OauthTokensConstants;
+import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.oauth.service.OrcidOAuth2RequestValidator;
 import org.orcid.jaxb.model.message.ScopePathType;
@@ -75,7 +75,7 @@ public class OrcidClientCredentialsChecker {
         
         Map<String, String> authorizationParams = new HashMap<String, String>();
         authorizationParams.putAll(tokenRequest.getRequestParameters());
-        authorizationParams.put(OauthTokensConstants.GRANT_TYPE, grantType);
+        authorizationParams.put(OrcidOauth2Constants.GRANT_TYPE, grantType);
         authorizationParams.put(OAuth2Utils.SCOPE, StringUtils.join(scopes, ' '));
         authorizationParams.put(OAuth2Utils.CLIENT_ID, clientId);
         

@@ -28,8 +28,8 @@ import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.OrgManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.validator.ActivityValidator;
-import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.AffiliationType;
+import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.notification.amended.AmendedSection;
 import org.orcid.jaxb.model.notification.permission.Item;
 import org.orcid.jaxb.model.notification.permission.ItemType;
@@ -81,7 +81,8 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
     public OrgAffiliationRelationEntity findAffiliationByUserAndId(String userOrcid, Long affiliationId) {
         if (PojoUtil.isEmpty(userOrcid) || affiliationId == null)
             return null;
-        return affiliationsDao.getOrgAffiliationRelation(userOrcid, affiliationId);
+        OrgAffiliationRelationEntity affiliation = affiliationsDao.getOrgAffiliationRelation(userOrcid, affiliationId);
+        return affiliation;
     }
 
     @Override
@@ -171,7 +172,7 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
      * */
     @Override
     public Education updateEducationAffiliation(String orcid, Education education) {
-        OrgAffiliationRelationEntity educationEntity = affiliationsDao.getOrgAffiliationRelation(orcid, education.getPutCode());
+        OrgAffiliationRelationEntity educationEntity = affiliationsDao.getOrgAffiliationRelation(orcid, education.getPutCode());                
         Visibility originalVisibility = educationEntity.getVisibility();
         SourceEntity existingSource = educationEntity.getSource();
         orcidSecurityManager.checkSource(existingSource);
@@ -264,7 +265,7 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
      * */
     @Override
     public Employment updateEmploymentAffiliation(String orcid, Employment employment) {
-        OrgAffiliationRelationEntity employmentEntity = affiliationsDao.getOrgAffiliationRelation(orcid, employment.getPutCode());
+        OrgAffiliationRelationEntity employmentEntity = affiliationsDao.getOrgAffiliationRelation(orcid, employment.getPutCode());        
         Visibility originalVisibility = employmentEntity.getVisibility();
         SourceEntity existingSource = employmentEntity.getSource();
         orcidSecurityManager.checkSource(existingSource);
@@ -297,10 +298,12 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
      * */
     @Override
     public boolean checkSourceAndDelete(String orcid, Long affiliationId) {
-        OrgAffiliationRelationEntity affiliationEntity = affiliationsDao.getOrgAffiliationRelation(orcid, affiliationId);
+        OrgAffiliationRelationEntity affiliationEntity = affiliationsDao.getOrgAffiliationRelation(orcid, affiliationId);                
         orcidSecurityManager.checkSource(affiliationEntity.getSource());
-        notificationManager.sendAmendEmail(orcid, AmendedSection.EMPLOYMENT, createItem(affiliationEntity));
-        return affiliationsDao.removeOrgAffiliationRelation(orcid, affiliationId);
+        boolean result = affiliationsDao.removeOrgAffiliationRelation(orcid, affiliationId);
+        if(result)
+            notificationManager.sendAmendEmail(orcid, AmendedSection.EMPLOYMENT, createItem(affiliationEntity));
+        return result; 
     }
 
     private void setIncomingWorkPrivacy(OrgAffiliationRelationEntity orgAffiliationRelationEntity, ProfileEntity profile) {

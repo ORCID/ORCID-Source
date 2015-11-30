@@ -406,7 +406,8 @@ $(function() {
                             loginUrl = baseUrl + 'social/signin/auth.json';
                         }
                         $('form#loginForm').attr('disabled', 'disabled');
-                        $('#ajax-loader').show();
+                        $('#login-error-mess').hide();
+                        $('#ajax-loader').css('display', 'block');
                         $
                                 .ajax(
                                         {

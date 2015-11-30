@@ -46,7 +46,6 @@ import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.jpa.entities.PeerReviewEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.cache.annotation.Cacheable;
@@ -91,7 +90,7 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
 
     @Override
     public PeerReview getPeerReview(String orcid, Long peerReviewId) {
-        PeerReviewEntity peerReviewEntity = peerReviewDao.getPeerReview(orcid, peerReviewId);
+        PeerReviewEntity peerReviewEntity = peerReviewDao.getPeerReview(orcid, peerReviewId);                       
         return jpaJaxbPeerReviewAdapter.toPeerReview(peerReviewEntity);
     }
 
@@ -108,7 +107,6 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
 
     @Override
     public PeerReview createPeerReview(String orcid, PeerReview peerReview, boolean isApiRequest) {
-
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
 
         // Set the source to the peerReview before looking for duplicates
@@ -173,7 +171,7 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
                 }
             }
         }
-        PeerReviewEntity existingEntity = peerReviewDao.getPeerReview(orcid, peerReview.getPutCode());
+        PeerReviewEntity existingEntity = peerReviewDao.getPeerReview(orcid, peerReview.getPutCode());        
         PeerReviewEntity updatedEntity = new PeerReviewEntity();
         Visibility originalVisibility = existingEntity.getVisibility();
         SourceEntity existingSource = existingEntity.getSource();
@@ -201,7 +199,7 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
     }
 
     @Transactional
-    private boolean deletePeerReview(PeerReviewEntity entity, String orcid) {
+    private boolean deletePeerReview(PeerReviewEntity entity, String orcid) {        
         return peerReviewDao.removePeerReview(orcid, entity.getId());
     }
 

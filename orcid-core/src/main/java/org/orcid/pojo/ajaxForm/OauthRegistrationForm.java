@@ -16,19 +16,22 @@
  */
 package org.orcid.pojo.ajaxForm;
 
-public class OauthRegistration extends Registration implements OauthForm {
+public class OauthRegistrationForm extends Registration implements OauthForm {
     /**
      * 
      */
     private static final long serialVersionUID = 1L;
     Text clientId;
+    Text clientName;
+    Text memberName;
     Text redirectUri;
     Text scope;
     Text responseType;
+    Text stateParam;
     boolean approved = false;
     boolean persistentTokenEnabled = false;
 
-    public OauthRegistration() {
+    public OauthRegistrationForm() {
         super();
         this.clientId = new Text();
         this.redirectUri = new Text();
@@ -36,7 +39,7 @@ public class OauthRegistration extends Registration implements OauthForm {
         this.responseType = new Text();
     }
 
-    public OauthRegistration(Registration reg) {
+    public OauthRegistrationForm(Registration reg) {
         this.setErrors(reg.getErrors());
         this.setSendChangeNotifications(reg.getSendChangeNotifications());
         this.setSendOrcidNews(reg.getSendOrcidNews());
@@ -65,6 +68,22 @@ public class OauthRegistration extends Registration implements OauthForm {
         this.clientId = clientId;
     }
 
+    public Text getClientName() {
+        return clientName;
+    }
+
+    public void setClientName(Text clientName) {
+        this.clientName = clientName;
+    }
+
+    public Text getMemberName() {
+        return memberName;
+    }
+
+    public void setMemberName(Text memberName) {
+        this.memberName = memberName;
+    }
+    
     public Text getRedirectUri() {
         return redirectUri;
     }
@@ -103,5 +122,13 @@ public class OauthRegistration extends Registration implements OauthForm {
 
     public void setPersistentTokenEnabled(boolean persistentTokenEnabled) {
         this.persistentTokenEnabled = persistentTokenEnabled;
+    }
+    
+    public Text getStateParam() {
+        return stateParam;
+    }
+
+    public void setStateParam(Text stateParam) {
+        this.stateParam = stateParam;
     }
 }

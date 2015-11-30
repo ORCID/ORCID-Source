@@ -21,6 +21,14 @@ public interface OauthForm {
 
     void setClientId(Text clientId);
 
+    Text getClientName();
+
+    void setClientName(Text clientName);
+
+    Text getMemberName();
+
+    void setMemberName(Text memberName);
+    
     Text getRedirectUri();
 
     void setRedirectUri(Text redirectUri);
@@ -30,7 +38,11 @@ public interface OauthForm {
     void setScope(Text scope);
 
     Text getResponseType();
+    
+    Text getStateParam();
 
+    void setStateParam(Text stateParam);
+    
     void setResponseType(Text responseType);
     
     boolean getApproved();
