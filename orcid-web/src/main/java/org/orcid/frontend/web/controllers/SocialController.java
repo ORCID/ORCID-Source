@@ -95,6 +95,7 @@ public class SocialController extends BaseController {
                     mav.setViewName("social_link_signin");
                     mav.addObject("providerId", providerId);
                     mav.addObject("emailId", getAccountIdForDisplay(userMap));
+                    mav.addObject("linkType", "social");
                     return mav;
                 }
             } else {

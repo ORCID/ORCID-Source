@@ -411,7 +411,10 @@ public class RegistrationController extends BaseController {
         }        
 
         createMinimalRegistrationAndLogUserIn(request, response, toProfile(reg, request), usedCaptcha);
-        if(reg.isLinkRequest() && socialContext.isSignedIn(request, response) != null) {
+        if("social".equals(reg.getLinkType()) && socialContext.isSignedIn(request, response) != null) {
+        	r.setUrl(getBaseUri() + "/social/link");
+        	return r;
+        } else if("shibboleth".equals(reg.getLinkType())) {
         	r.setUrl(getBaseUri() + "/social/link");
         	return r;
         }

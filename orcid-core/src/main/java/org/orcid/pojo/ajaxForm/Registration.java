@@ -64,7 +64,7 @@ public class Registration implements ErrorsInterface, Serializable {
 
     private Text grecaptchaWidgetId;
     
-    private boolean linkRequest;
+    private String linkType;
 
     public Registration() {
         errors = new ArrayList<String>();
@@ -238,11 +238,11 @@ public class Registration implements ErrorsInterface, Serializable {
         this.valNumClient = valNumClient;
     }
 
-	public boolean isLinkRequest() {
-		return linkRequest;
+	public String getLinkType() {
+		return linkType;
 	}
 
-	public void setLinkRequest(boolean linkRequest) {
-		this.linkRequest = linkRequest;
+	public void setLinkType(String linkType) {
+		this.linkType = linkType;
 	}
 }

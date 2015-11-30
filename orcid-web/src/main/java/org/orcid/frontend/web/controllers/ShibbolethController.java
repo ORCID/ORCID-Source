@@ -99,6 +99,7 @@ public class ShibbolethController extends BaseController {
             mav.setViewName("social_link_signin");
             mav.addObject("providerId", "shibboleth");
             mav.addObject("emailId", displayName);
+            mav.addObject("linkType", "shibboleth");
         }
         return mav;
     }

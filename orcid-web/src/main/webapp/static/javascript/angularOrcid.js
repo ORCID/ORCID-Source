@@ -2864,7 +2864,7 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
     };
 
     $scope.postRegister = function (linkFlag) {
-    	
+    	console.log(linkFlag);
         if (basePath.startsWith(baseUrl + 'oauth')) {
             var clientName = $('div#RegistrationCtr input[name="client_name"]').val();
             $scope.register.referredBy = $('div#RegistrationCtr input[name="client_id"]').val();
@@ -2878,7 +2878,7 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
         
         $scope.register.grecaptcha.value = $scope.recatchaResponse; //Adding the response to the register object
         $scope.register.grecaptchaWidgetId.value = $scope.recaptchaWidgetId;
-        $scope.register.linkRequest = linkFlag;
+        $scope.register.linkType = linkFlag;
         $.ajax({
             url: getBaseUri() + '/register.json',
             type: 'POST',
