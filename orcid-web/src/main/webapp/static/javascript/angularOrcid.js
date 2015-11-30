@@ -2863,7 +2863,7 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
         $scope.register.activitiesVisibilityDefault.visibility = priv;
     };
 
-    $scope.postRegister = function () {
+    $scope.postRegister = function (linkFlag) {
     	
         if (basePath.startsWith(baseUrl + 'oauth')) {
             var clientName = $('div#RegistrationCtr input[name="client_name"]').val();
@@ -2878,7 +2878,7 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
         
         $scope.register.grecaptcha.value = $scope.recatchaResponse; //Adding the response to the register object
         $scope.register.grecaptchaWidgetId.value = $scope.recaptchaWidgetId;
-        
+        $scope.register.linkRequest = linkFlag;
         $.ajax({
             url: getBaseUri() + '/register.json',
             type: 'POST',

@@ -49,6 +49,7 @@ import org.orcid.core.manager.RegistrationRoleManager;
 import org.orcid.core.manager.SecurityQuestionManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.utils.PasswordResetToken;
+import org.orcid.frontend.spring.web.social.config.SocialContext;
 import org.orcid.frontend.web.controllers.helper.SearchOrcidSolrCriteria;
 import org.orcid.frontend.web.forms.ChangeSecurityQuestionForm;
 import org.orcid.frontend.web.forms.EmailAddressForm;
@@ -95,6 +96,7 @@ import org.orcid.utils.DateUtils;
 import org.orcid.utils.OrcidRequestUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -178,6 +180,9 @@ public class RegistrationController extends BaseController {
     
     @Resource
     private InternalSSOManager internalSSOManager;
+    
+    @Autowired
+    private SocialContext socialContext;
 
     public void setEncryptionManager(EncryptionManager encryptionManager) {
         this.encryptionManager = encryptionManager;
@@ -406,6 +411,10 @@ public class RegistrationController extends BaseController {
         }        
 
         createMinimalRegistrationAndLogUserIn(request, response, toProfile(reg, request), usedCaptcha);
+        if(reg.isLinkRequest() && socialContext.isSignedIn(request, response) != null) {
+        	r.setUrl(getBaseUri() + "/social/link");
+        	return r;
+        }
         String redirectUrl = calculateRedirectUrl(request, response);
         r.setUrl(redirectUrl);
         return r;

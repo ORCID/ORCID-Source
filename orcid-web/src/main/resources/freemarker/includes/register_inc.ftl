@@ -144,7 +144,11 @@
         </div>
 	</div>   
     <div class="relative">
-          <button type="submit" tabindex="10" class="btn btn-primary" ng-click="postRegister()">${springMacroRequestContext.getMessage("header.register")}</button>
+    	<#if (RequestParameters['linkRequest'])??>
+    		<button type="submit" tabindex="10" class="btn btn-primary" ng-click="postRegister(true)">${springMacroRequestContext.getMessage("header.register")}</button>
+    	<#else>
+    		<button type="submit" tabindex="10" class="btn btn-primary" ng-click="postRegister(false)">${springMacroRequestContext.getMessage("header.register")}</button>
+    	</#if>
     </div>  
 </fn-form>
 
