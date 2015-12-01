@@ -105,6 +105,8 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OrcidExceptionMapper.class);
 
+    private static final String LOCATION_HEADER = "location";
+    
     @Context
     private UriInfo uriInfo;
     
@@ -241,7 +243,7 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
             
             Response response = null;
             if(location != null) {
-                response = Response.status(Response.Status.MOVED_PERMANENTLY).header("location", location).entity(depreciatedError).build();
+                response = Response.status(Response.Status.MOVED_PERMANENTLY).header(LOCATION_HEADER, location).entity(depreciatedError).build();
             } else {
                 response = Response.status(Response.Status.MOVED_PERMANENTLY).entity(depreciatedError).build();
             }
@@ -314,7 +316,7 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
             
             Response response = null;
             if(location != null) {
-                response = Response.status(status).header("location", location).entity(orcidError).build();
+                response = Response.status(status).header(LOCATION_HEADER, location).entity(orcidError).build();
             } else {
                 response = Response.status(status).entity(orcidError).build();
             }
