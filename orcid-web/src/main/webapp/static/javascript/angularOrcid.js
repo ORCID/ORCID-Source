@@ -6192,7 +6192,7 @@ orcidNgModule.controller('SocialCtrl',['$scope', '$compile', function SocialCtrl
 
     $scope.confirmRevoke = function(id) {
         $scope.errors = [];
-        $scope.socialRemoteUserToRevoke = id.provideruserid;
+        $scope.socialRemoteUserToRevoke = id.providerid;
         $scope.idToManage = id;
         $.colorbox({
             html : $compile($('#revoke-social-account-modal').html())($scope)
