@@ -17,6 +17,7 @@
 package org.orcid.core.manager;
 
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import javax.annotation.Resource;
 
@@ -54,13 +55,11 @@ public class OrcidSecurityManagerTest extends BaseTest {
         SecurityContextTestUtils.setUpSecurityContext(ScopePathType.READ_PUBLIC);
         Work work = createWork();
         work.setVisibility(Visibility.LIMITED);
-        boolean caughtException = false;
         try {
             orcidSecurityManager.checkVisibility(work);
         } catch (OrcidUnauthorizedException e) {
-            caughtException = true;
+            fail();
         }
-        assertTrue(caughtException);
     }
 
     @Test
@@ -68,13 +67,11 @@ public class OrcidSecurityManagerTest extends BaseTest {
         SecurityContextTestUtils.setUpSecurityContext(ScopePathType.READ_PUBLIC);
         Work work = createWork();
         work.setVisibility(Visibility.PRIVATE);
-        boolean caughtException = false;
         try {
             orcidSecurityManager.checkVisibility(work);
         } catch (OrcidUnauthorizedException e) {
-            caughtException = true;
+            fail();
         }
-        assertTrue(caughtException);
     }
 
     @Test
