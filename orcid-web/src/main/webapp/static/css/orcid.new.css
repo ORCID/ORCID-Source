@@ -6217,6 +6217,13 @@ a:hover .mozilla-badge{
     margin-left: 25px;
 }
 
+.login #authorize-button{
+	min-width: 100px;
+    width: auto;
+    float: left !important; /*Overwrite Bootstrap defaults*/
+    display: block;
+}
+
 
 
 /* Media Queries */

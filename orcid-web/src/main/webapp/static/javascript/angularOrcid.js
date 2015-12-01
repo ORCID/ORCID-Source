@@ -6195,7 +6195,7 @@ orcidNgModule.controller('SocialCtrl',['$scope', '$compile', function SocialCtrl
 
     $scope.confirmRevoke = function(id) {
         $scope.errors = [];
-        $scope.socialRemoteUserToRevoke = id.provideruserid;
+        $scope.socialRemoteUserToRevoke = id.providerid;
         $scope.idToManage = id;
         $.colorbox({
             html : $compile($('#revoke-social-account-modal').html())($scope)
@@ -8973,6 +8973,8 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
     $scope.recaptchaWidgetId = null;
     $scope.recatchaResponse = null;
     $scope.personalLogin = true;
+    $scope.scriptsInjected = false;
+    $scope.counter = 0;
 
     $scope.model = {
             key: orcidVar.recaptchaKey
@@ -9318,6 +9320,8 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
 
     $scope.switchForm = function() {
         $scope.showRegisterForm = !$scope.showRegisterForm;
+        if (!$scope.personalLogin) 
+        	$scope.personalLogin = true;
     };
 
     $scope.showProcessingColorBox = function () {
@@ -9358,9 +9362,9 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
 	    }
     };
     
-    //------------------
+    //---------------------
     //------Recaptcha------
-    //------------------    
+    //---------------------   
     $scope.setRecaptchaWidgetId = function (widgetId) {                        
         console.log('Widget ID: ' + widgetId)
         $scope.recaptchaWidgetId = widgetId;        
@@ -9369,7 +9373,39 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
     $scope.setRecatchaResponse = function (response) {        
         console.log('Yey recaptcha response!');
         $scope.recatchaResponse = response;        
-    };   
+    };
+    
+    //------------------------
+    //------OAuth Layout------
+    //------------------------
+    $scope.showPersonalLogin = function () {        
+        $scope.personalLogin = true;
+    };
+    
+    $scope.showInstitutionLogin = function () {
+        $scope.personalLogin = false; //Hide Personal Login
+        
+        if(!$scope.scriptsInjected){ //If shibboleth scripts haven't been loaded yet.            
+            var scripts = ['/static/javascript/shibboleth-embedded-ds/1.1.0/idpselect_config.js', '/static/javascript/shibboleth-embedded-ds/1.1.0/idpselect.js'];            
+            angular.forEach(scripts, function(key) {                
+                $scope.addShibbolethScript(key);                
+            });
+        };
+    };
+    
+    $scope.addShibbolethScript = function(url){        
+        var head = document.getElementsByTagName('head')[0];
+        var script = document.createElement('script');
+        script.src = getBaseUri() + url;
+        script.onload =  function() {           
+            $scope.counter ++;
+            if ((!script.readyState || script.readyState == 'complete') && $scope.counter == 2){ //Second script will hide the spinner              
+                $scope.scriptsInjected = true;
+                $scope.$apply();
+            }
+        };
+        head.appendChild(script); //Inject the script
+    };
     
     
 }]);
