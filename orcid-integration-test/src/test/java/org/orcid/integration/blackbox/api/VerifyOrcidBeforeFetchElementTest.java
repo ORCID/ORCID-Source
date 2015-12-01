@@ -73,7 +73,7 @@ public class VerifyOrcidBeforeFetchElementTest extends BlackBoxBase {
 
     protected static Map<String, String> accessTokens = new HashMap<String, String>();
 
-    private static final String SCOPES = ScopePathType.ACTIVITIES_UPDATE.value() + " " + ScopePathType.ACTIVITIES_READ_LIMITED.value();
+    private static final String SCOPES = ScopePathType.ACTIVITIES_UPDATE.value();
     
     @Value("${org.orcid.web.base.url:http://localhost:8080/orcid-web}")
     private String webBaseUrl;
