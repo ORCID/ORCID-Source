@@ -70,6 +70,8 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         OAuth2Authentication oAuth2Authentication = getOAuth2Authentication();
         // If it is null, it might be a call from the public API
         Set<String> readLimitedScopes = new HashSet<String>();
+        // If it is null, it might be a call from the public API
+        Set<String> updateScopes = new HashSet<String>();
         Visibility visibility = filterable.getVisibility();
         String clientId = null;
 
@@ -77,15 +79,17 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
             OAuth2Request authorizationRequest = oAuth2Authentication.getOAuth2Request();
             clientId = authorizationRequest.getClientId();
             readLimitedScopes = getReadLimitedScopesThatTheClientHas(authorizationRequest, filterable);
+            updateScopes = getUpdateScopesThatTheClientHas(authorizationRequest, filterable);
         }
-
-        //TODO!!! Is this the right way of doing this?
-        // If the client is the source of the object, you don't need to worry about the visibility
-        if(!PojoUtil.isEmpty(filterable.retrieveSourcePath())){
-            if(filterable.retrieveSourcePath().equals(clientId)) {
-                return;
+            
+        //If we are using a read-limited or update scope and the client is the source of the object, we should not worry about the visibility
+        if(!readLimitedScopes.isEmpty() || !updateScopes.isEmpty()) {
+            if(!PojoUtil.isEmpty(filterable.retrieveSourcePath())){
+                if(filterable.retrieveSourcePath().equals(clientId)) {
+                    return;
+                }
             }
-        }
+        }        
         
         if (readLimitedScopes.isEmpty()) {
             // This client only has permission for read public
@@ -148,6 +152,26 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         return readLimitedScopes;
     }
 
+    private Set<String> getUpdateScopesThatTheClientHas(OAuth2Request authorizationRequest, Filterable filterable) {
+        Set<String> requestedScopes = ScopePathType.getCombinedScopesFromStringsAsStrings(authorizationRequest.getScope());
+        Set<String> updateScopes = new HashSet<>();
+        updateScopes.add(ScopePathType.ACTIVITIES_UPDATE.value());
+        updateScopes.add(ScopePathType.PERSON_UPDATE.value());
+        if (filterable instanceof Work || filterable instanceof WorkSummary) {
+            updateScopes.add(ScopePathType.ORCID_WORKS_UPDATE.value());
+        } else if (filterable instanceof Funding || filterable instanceof FundingSummary) {
+            updateScopes.add(ScopePathType.FUNDING_UPDATE.value());
+        } else if (filterable instanceof Education || filterable instanceof Employment || filterable instanceof EducationSummary || filterable instanceof EmploymentSummary) {
+            updateScopes.add(ScopePathType.AFFILIATIONS_UPDATE.value());
+        } else if (filterable instanceof PeerReview || filterable instanceof PeerReviewSummary) {
+            updateScopes.add(ScopePathType.PEER_REVIEW_UPDATE.value());
+        } else if (filterable instanceof ResearcherUrl || filterable instanceof Email) {
+            updateScopes.add(ScopePathType.PERSON_UPDATE.value());
+        }
+        updateScopes.retainAll(requestedScopes);
+        return updateScopes;        
+    }
+    
     private OAuth2Authentication getOAuth2Authentication() {
         SecurityContext context = SecurityContextHolder.getContext();
         Authentication authentication = context.getAuthentication();
