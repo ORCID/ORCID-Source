@@ -84,7 +84,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
             
         //If we are using a read-limited or update scope and the client is the source of the object, we should not worry about the visibility
         if(!readLimitedScopes.isEmpty() || !updateScopes.isEmpty()) {
-            if(!PojoUtil.isEmpty(filterable.retrieveSourcePath())){
+            if(!PojoUtil.isEmpty(filterable.retrieveSourcePath())) {
                 if(filterable.retrieveSourcePath().equals(clientId)) {
                     return;
                 }

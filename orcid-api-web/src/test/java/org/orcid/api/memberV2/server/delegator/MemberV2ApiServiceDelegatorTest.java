@@ -234,7 +234,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     @Test
     public void testViewPrivateWork() {
         //Use the smallest scope in the pyramid to verify that you can read your own limited and private data
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_PUBLIC);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED);
         Response response = serviceDelegator.viewWork("4444-4444-4444-4446", 7L);
         assertNotNull(response);
         Work work = (Work) response.getEntity();
@@ -320,7 +320,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     @Test
     public void testViewPrivateFunding() {
         //Use the smallest scope in the pyramid to verify that you can read your own limited and private data
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_PUBLIC);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED);
         Response response = serviceDelegator.viewFunding("4444-4444-4444-4446", 4L);
         assertNotNull(response);
         Funding funding = (Funding) response.getEntity();
@@ -379,7 +379,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     
     @Test
     public void testViewPrivateEducation() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_PUBLIC);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED);
         Response response = serviceDelegator.viewEducation("4444-4444-4444-4446", 6L);
         assertNotNull(response);
         Education education = (Education) response.getEntity();
@@ -436,7 +436,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     
     @Test
     public void testViewPrivateEmployment() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_PUBLIC);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED);
         Response response = serviceDelegator.viewEmployment("4444-4444-4444-4446", 5L);
         assertNotNull(response);
         Employment employment = (Employment) response.getEntity();
@@ -509,7 +509,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     
     @Test
     public void testViewPrivatePeerReview() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_PUBLIC);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED);
         Response response = serviceDelegator.viewPeerReview("4444-4444-4444-4446", 4L);
         assertNotNull(response);
         PeerReview peerReview= (PeerReview) response.getEntity();
