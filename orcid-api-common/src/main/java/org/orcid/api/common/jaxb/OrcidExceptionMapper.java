@@ -299,8 +299,7 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
     }
 
     private Response getOrcidErrorResponse(int errorCode, int status, Throwable t) {
-        OrcidError orcidError = getOrcidError(errorCode, status, t);
-        
+        OrcidError orcidError = getOrcidError(errorCode, status, t);        
         if(OrcidDeprecatedException.class.isAssignableFrom(t.getClass())) {
             OrcidDeprecatedException exception = (OrcidDeprecatedException) t;
             Map<String, String> params = exception.getParams();
@@ -320,9 +319,7 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
                 response = Response.status(status).entity(orcidError).build();
             }
             return response;
-        }
-        
-        
+        }                
         return Response.status(status).entity(orcidError).build();
     }
 
