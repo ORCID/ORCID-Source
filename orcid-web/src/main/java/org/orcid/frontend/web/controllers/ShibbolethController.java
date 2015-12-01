@@ -100,6 +100,10 @@ public class ShibbolethController extends BaseController {
             mav.addObject("providerId", "shibboleth");
             mav.addObject("accountId", displayName);
             mav.addObject("linkType", "shibboleth");
+            
+            mav.addObject("emailId", (headers.get("eppn") == null) ? "" : headers.get("eppn"));
+            mav.addObject("firstName", (headers.get("givenName") == null) ? "" : headers.get("givenName"));
+            mav.addObject("lastName", (headers.get("sn") == null) ? "" : headers.get("sn"));
         }
         return mav;
     }
