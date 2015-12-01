@@ -79,6 +79,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
             readLimitedScopes = getReadLimitedScopesThatTheClientHas(authorizationRequest, filterable);
         }
 
+        //TODO!!! Is this the right way of doing this?
         // If the client is the source of the object, you don't need to worry about the visibility
         if(!PojoUtil.isEmpty(filterable.retrieveSourcePath())){
             if(filterable.retrieveSourcePath().equals(clientId)) {
