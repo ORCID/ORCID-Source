@@ -57,8 +57,9 @@ public class OrcidSecurityManagerTest extends BaseTest {
         work.setVisibility(Visibility.LIMITED);
         try {
             orcidSecurityManager.checkVisibility(work);
-        } catch (OrcidUnauthorizedException e) {
             fail();
+        } catch (OrcidUnauthorizedException e) {
+            
         }
     }
 
@@ -69,8 +70,9 @@ public class OrcidSecurityManagerTest extends BaseTest {
         work.setVisibility(Visibility.PRIVATE);
         try {
             orcidSecurityManager.checkVisibility(work);
-        } catch (OrcidUnauthorizedException e) {
             fail();
+        } catch (OrcidUnauthorizedException e) {
+            
         }
     }
 
