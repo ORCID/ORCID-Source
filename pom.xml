@@ -369,16 +369,13 @@ the software.
 					<groupId>org.apache.jena</groupId>
 					<artifactId>jena-maven-tools</artifactId>
 					<version>${jena.version}</version>
-					<executions>
-						<execution>
-							<id>schemagen</id>
-							<goals>
-								<goal>translate</goal>
-							</goals>
-						</execution>
-					</executions>
-				</plugin>            
-            </plugins>
+				</plugin>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>build-helper-maven-plugin</artifactId>
+					<version>1.10</version>		
+	            </plugin>
+	        </plugins>
         </pluginManagement>
     </build>
 

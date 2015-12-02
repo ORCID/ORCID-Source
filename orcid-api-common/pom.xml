@@ -149,6 +149,7 @@
 		      <executions>
 		        <execution>
 		          <id>schemagen</id>
+                          <phase>generate-sources</phase>
 		          <goals>
 		            <goal>translate</goal>
 		          </goals>
@@ -189,7 +190,6 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>build-helper-maven-plugin</artifactId>
-				<version>1.10</version>		
 				<executions>
 					<execution>
 						<id>add-source</id>
@@ -199,7 +199,7 @@
 						</goals>
 						<configuration>
 							<sources>
-								<source>{$jena.dir}</source>
+								<source>${jena.dir}</source>
 							</sources>
 						</configuration>
 					</execution>
