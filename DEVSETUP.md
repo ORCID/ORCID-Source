@@ -301,5 +301,5 @@ Please note that the integration tests set up test data, and **remove all other 
 	
 	* Click Run
 
-* Finally help out by improving these instructions!    
+* Finally help out by improving these instructions!     
    
