@@ -129,7 +129,7 @@ public class RDFWriterTest {
         assertTrue(str.contains("foaf:givenName>John<"));
         assertTrue(str.contains("foaf:familyName>Doe<"));
         assertTrue(str.contains("foaf:account"));
-        assertTrue(str.contains("http://orcid.example.com/000-1337/"));
+        assertTrue(str.contains("http://orcid.example.com/000-1337#profile"));
         assertFalse(str.contains("subClassOf"));
         assertTrue(str.contains("foaf:mbox"));
         assertTrue(str.contains("mailto:john@example.org"));

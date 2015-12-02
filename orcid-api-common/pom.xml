@@ -15,6 +15,7 @@
 
     <properties>
         <main.basedir>${project.parent.basedir}</main.basedir>
+        <jena.dir>${project.build.directory}/generated-sources/jena</jena.dir>
     </properties>
 
 	<repositories>
@@ -154,21 +155,56 @@
 		        </execution>
 		      </executions>
 		      <configuration>
+		      	
 		      	<includes>
   					<include>src/main/vocabs/*.rdf</include>  					 
 				</includes>
 				<fileOptions>
 			        <source>
 			          <input>default</input>
-			          <package-name>org.orcid.api.common.writer.rdf.vocabs</package-name>			          
+			          <package-name>org.orcid.api.common.writer.rdf.vocabs</package-name>
+			          <output>${jena.dir}</output>		          
+			        </source>
+			        <source>
+			          <input>src/main/vocabs/prov-o.rdf</input>
+			          <className>PROV</className>
+			          <output>${jena.dir}</output>
+			          <ontology>true</ontology>		          
+			        </source>
+			        <source>
+			          <input>src/main/vocabs/pav.rdf</input>
+			          <className>PAV</className>
+			          <output>${jena.dir}</output>
+			          <ontology>true</ontology>		          
 			        </source>
 			        <source>
 			          <input>src/main/vocabs/geonames_v3.1.rdf</input>
-			          <className>Geonames</className>			          
+			          <className>Geonames</className>
+			          <output>${jena.dir}</output>
+			          <ontology>true</ontology>				          
 			        </source>			        
 		        </fileOptions>
 		      </configuration>
-		    </plugin>            
+		    </plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>1.10</version>		
+				<executions>
+					<execution>
+						<id>add-source</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>add-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>{$jena.dir}</source>
+							</sources>
+						</configuration>
+					</execution>
+				</executions>
+                </plugin>		              
         </plugins>
     </build>
 
