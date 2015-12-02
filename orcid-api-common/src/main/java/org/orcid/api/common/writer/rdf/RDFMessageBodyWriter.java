@@ -27,6 +27,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
+import java.net.URI;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
@@ -74,7 +75,7 @@ import org.apache.jena.rdf.model.ResIterator;
 @Provider
 @Produces({ APPLICATION_RDFXML, TEXT_TURTLE, TEXT_N3, JSON_LD, N_TRIPLES })
 public class RDFMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
-
+	
 	/** 
 	 * Extension of Jena's outdated FOAF vocabulary
 	 *
@@ -112,9 +113,7 @@ public class RDFMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
     private static final String URL_NAME_FOAF = "foaf";
     private static final String URL_NAME_WEBID = "webid";
 
-    private static final Charset UTF8 = Charset.forName("UTF-8");
 	private static OntModel countries;
-
 
     @Value("${org.orcid.core.baseUri:http://orcid.org}")
     private String baseUri = "http://orcid.org";
@@ -219,26 +218,32 @@ public class RDFMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
 
         OrcidProfile orcidProfile = xml.getOrcidProfile();
         // System.out.println(httpHeaders);
+        Individual profileDoc = null;
         if (orcidProfile != null) {
             Individual person = describePerson(orcidProfile, m);
             if (person != null) {
-                Individual account = describeAccount(orcidProfile, m, person);
+                profileDoc = describeAccount(orcidProfile, m, person);
             }
         }
         MediaType jsonLd = new MediaType("application", "ld+json");
         MediaType nTriples = new MediaType("application", "n-triples");
         MediaType rdfXml = new MediaType("application", "rdf+xml");
+        String base = null;
+        if (getUriInfo() != null) {
+        	getUriInfo().getAbsolutePath().toASCIIString();
+        }
         if (mediaType.isCompatible(nTriples)) { 
+        	// NOTE: N-Triples requires absolute URIs
         	m.write(entityStream, "N-TRIPLES");
         }
         else if (mediaType.isCompatible(jsonLd)) {
-        	m.write(entityStream, "JSON-LD");
+        	m.write(entityStream, "JSON-LD", base);
         }
         else if (mediaType.isCompatible(rdfXml)) {
-            m.write(entityStream, "RDF/XML");        
+            m.write(entityStream, "RDF/XML", base);        
         } else {
-        	// Turtle is the safest default
-            m.write(entityStream, "TURTLE");            
+        	// Turtle is the safest default        	
+            m.write(entityStream, "TURTLE", base);            
         }
     }
 
@@ -250,7 +255,8 @@ public class RDFMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
     }
 
     private Individual describeAccount(OrcidProfile orcidProfile, OntModel m, Individual person) {
-        String orcidPublicationsUri = orcidProfile.getOrcidIdentifier().getUri() + "#workspace-works";
+        String orcidURI = orcidProfile.getOrcidIdentifier().getUri();
+		String orcidPublicationsUri = orcidURI + "#workspace-works";
         Individual publications = m.createIndividual(orcidPublicationsUri, FOAF.Document);
 
         // list of publications
@@ -259,7 +265,7 @@ public class RDFMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
         person.addProperty(FOAF.publications, publications);
 
         
-        String orcidAccountUri = orcidProfile.getOrcidIdentifier().getUri() + "#orcid-id";               
+        String orcidAccountUri = orcidURI + "#orcid-id";               
         Individual account = m.createIndividual(orcidAccountUri, FOAF.OnlineAccount);        
         person.addProperty(FOAF.account, account);
         Individual webSite = null;
@@ -272,7 +278,7 @@ public class RDFMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
         account.addLabel(orcId, null);
 
         
-        // The current page ("") is the foaf:PersonalProfileDocument - this assumes
+        // The current page is the foaf:PersonalProfileDocument - this assumes
         // we have done a 303 See Other redirect to the RDF resource, so that it 
         // differs from the ORCID uri. 
         // for example:
@@ -282,7 +288,17 @@ public class RDFMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
         //  
         //     HTTP/1.1 303 See Other
         //     Location: https://pub.orcid.org/experimental_rdf_v1/0000-0001-9842-9718
-        Individual profileDoc = m.createIndividual("", FOAF.PersonalProfileDocument);
+        
+        String profileUri;
+        if (getUriInfo() != null) {
+        	profileUri = getUriInfo().getAbsolutePath().toASCIIString();
+        } else { 
+        	// Some kind of fallback, although the PersonalProfiledocument should be an 
+        	// information resource without #anchor
+        	profileUri = orcidURI + "#personalProfileDocument";
+        }
+        Individual profileDoc = m.createIndividual(profileUri, 
+        		FOAF.PersonalProfileDocument);
         profileDoc.addProperty(FOAF.primaryTopic, person);
         OrcidHistory history = orcidProfile.getOrcidHistory();
         if (history != null) {
