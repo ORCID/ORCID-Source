@@ -145,11 +145,10 @@
 		    <plugin>
 		      <groupId>org.apache.jena</groupId>
 		      <artifactId>jena-maven-tools</artifactId>
-		      <version>3.0.0</version>
 		      <executions>
 		        <execution>
 		          <id>schemagen</id>
-                          <phase>generate-sources</phase>
+                  <phase>generate-sources</phase>
 		          <goals>
 		            <goal>translate</goal>
 		          </goals>
@@ -206,6 +205,37 @@
 				</executions>
                 </plugin>		              
         </plugins>
+        <!-- m2eclipse setting to execute jena-maven-tools plugin -->
+		<pluginManagement>
+		  <plugins>
+		    <plugin>
+		     <groupId>org.eclipse.m2e</groupId>
+		     <artifactId>lifecycle-mapping</artifactId>
+		     <version>1.0.0</version>
+		     <configuration>
+		       <lifecycleMappingMetadata>
+		         <pluginExecutions>
+		           <pluginExecution>
+		             <pluginExecutionFilter>
+				      <groupId>org.apache.jena</groupId>
+				      <artifactId>jena-maven-tools</artifactId>
+		               <versionRange>[${jena.version},)</versionRange>
+		               <goals>
+		                 <goal>translate</goal>
+		               </goals>
+		             </pluginExecutionFilter>
+		             <action>
+		               <execute>
+		               	<runOnIncremental>true</runOnIncremental>
+		               </execute>
+		             </action>
+		           </pluginExecution>
+		         </pluginExecutions>
+		       </lifecycleMappingMetadata>
+		     </configuration>
+		    </plugin>
+		  </plugins>
+		</pluginManagement>        
     </build>
 
 </project>
