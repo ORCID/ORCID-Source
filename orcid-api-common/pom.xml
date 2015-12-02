@@ -93,7 +93,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.jena</groupId>
-            <artifactId>jena-core</artifactId>
+            <artifactId>jena-arq</artifactId>
         </dependency>
 
 		<dependency>
@@ -141,6 +141,34 @@
                     </excludes>               
                 </configuration>
             </plugin>
+		    <plugin>
+		      <groupId>org.apache.jena</groupId>
+		      <artifactId>jena-maven-tools</artifactId>
+		      <version>3.0.0</version>
+		      <executions>
+		        <execution>
+		          <id>schemagen</id>
+		          <goals>
+		            <goal>translate</goal>
+		          </goals>
+		        </execution>
+		      </executions>
+		      <configuration>
+		      	<includes>
+  					<include>src/main/vocabs/*.rdf</include>  					 
+				</includes>
+				<fileOptions>
+			        <source>
+			          <input>default</input>
+			          <package-name>org.orcid.api.common.writer.rdf.vocabs</package-name>			          
+			        </source>
+			        <source>
+			          <input>src/main/vocabs/geonames_v3.1.rdf</input>
+			          <className>Geonames</className>			          
+			        </source>			        
+		        </fileOptions>
+		      </configuration>
+		    </plugin>            
         </plugins>
     </build>
 

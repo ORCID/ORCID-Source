@@ -31,6 +31,7 @@ the software.
         <jersey.version>1.18.3</jersey.version>
         <solr.version>4.10.4</solr.version>
         <aspectj.version>1.8.4</aspectj.version>
+        <jena.version>3.0.0</jena.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <servlet.port>9437</servlet.port>
@@ -364,6 +365,19 @@ the software.
 						</execution>
 					</executions>
 			    </plugin>
+			    <plugin>
+					<groupId>org.apache.jena</groupId>
+					<artifactId>jena-maven-tools</artifactId>
+					<version>${jena.version}</version>
+					<executions>
+						<execution>
+							<id>schemagen</id>
+							<goals>
+								<goal>translate</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>            
             </plugins>
         </pluginManagement>
     </build>
@@ -909,8 +923,8 @@ the software.
             </dependency>
             <dependency>
                 <groupId>org.apache.jena</groupId>
-                <artifactId>jena-core</artifactId>
-                <version>2.10.1</version>
+                <artifactId>jena-arq</artifactId>
+                <version>${jena.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.bouncycastle</groupId>
