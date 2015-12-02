@@ -223,7 +223,7 @@ function checkOrcidLoggedIn() {
     $
             .ajax(
                     {
-                        url : getBaseUri() + '/userStatus.json?callback=?',
+                        url : orcidVar.baseUri + '/userStatus.json?callback=?',
                         type : 'POST',
                         dataType : 'json',
                         success : function(data) {
