@@ -128,9 +128,14 @@ public class RDFWriterTest {
         assertTrue(str.contains("foaf:name>John F Doe<"));
         assertTrue(str.contains("foaf:givenName>John<"));
         assertTrue(str.contains("foaf:familyName>Doe<"));
-        assertTrue(str.contains("foaf:account"));
-        assertTrue(str.contains("http://orcid.example.com/000-1337#profile"));
+        assertTrue(str.contains("foaf:account"));        
+        assertTrue(str.contains("http://orcid.example.com/000-1337#orcid-id"));
+        assertTrue(str.contains(">000-1337<"));
+        // relative URI reference
+        assertTrue(str.contains("\"\""));
         assertFalse(str.contains("subClassOf"));
+        assertTrue(str.contains("foaf:publications"));
+        assertTrue(str.contains("http://orcid.example.com/000-1337#workspace-works"));
         assertTrue(str.contains("foaf:mbox"));
         assertTrue(str.contains("mailto:john@example.org"));
         assertTrue(str.contains("mailto:doe@example.com"));
@@ -161,7 +166,10 @@ public class RDFWriterTest {
         System.out.println(str);
         assertTrue(str.contains("<http://orcid.example.com/000-1337>"));
         assertTrue(str.contains("foaf:account"));
-        assertTrue(str.contains("<http://orcid.example.com/000-1337#profile>"));
+        assertTrue(str.contains("<http://orcid.example.com/000-1337#orcid-id>"));
+        assertTrue(str.contains("\"000-1337\""));
+        assertTrue(str.contains("<>"));
+        assertTrue(str.contains("foaf:primaryTopic"));
         assertTrue(str.contains("foaf:Person"));
         assertTrue(str.contains("foaf:familyName"));
         assertTrue(str.contains("\"Doe\""));
