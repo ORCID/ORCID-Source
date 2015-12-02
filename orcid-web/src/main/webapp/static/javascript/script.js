@@ -224,7 +224,7 @@ function checkOrcidLoggedIn() {
             .ajax(
                     {
                         url : getBaseUri() + '/userStatus.json?callback=?',
-                        type : 'GET',
+                        type : 'POST',
                         dataType : 'json',
                         success : function(data) {
                             if (data.loggedIn == false
@@ -237,10 +237,12 @@ function checkOrcidLoggedIn() {
 
                         }
                     }).fail(
-                    function() {
-                        // something bad is happening!
-                        console.log("error with loggin check on :"
+                        // detects server is down or CSRF mismatches
+                        // do to session expiration or server bounces 
+                        function() {
+                            console.log("error with loggin check on :"
                                 + window.location.href);
+                            window.location.reload();
                     });
 
 }
