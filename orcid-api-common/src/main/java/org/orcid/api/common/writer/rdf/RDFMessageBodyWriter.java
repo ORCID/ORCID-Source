@@ -19,11 +19,12 @@ package org.orcid.api.common.writer.rdf;
 import static org.orcid.core.api.OrcidApiConstants.APPLICATION_RDFXML;
 import static org.orcid.core.api.OrcidApiConstants.TEXT_N3;
 import static org.orcid.core.api.OrcidApiConstants.TEXT_TURTLE;
+import static org.orcid.core.api.OrcidApiConstants.JSON_LD;
+import static org.orcid.core.api.OrcidApiConstants.N_TRIPLES;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.StringWriter;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.nio.charset.Charset;
@@ -59,12 +60,8 @@ import org.orcid.jaxb.model.message.ResearcherUrls;
 import org.springframework.beans.factory.annotation.Value;
 
 import org.apache.jena.datatypes.xsd.XSDDatatype;
-import org.apache.jena.ontology.DatatypeProperty;
 import org.apache.jena.ontology.Individual;
-import org.apache.jena.ontology.ObjectProperty;
-import org.apache.jena.ontology.OntClass;
 import org.apache.jena.ontology.OntModel;
-import org.apache.jena.ontology.Ontology;
 import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
@@ -75,7 +72,7 @@ import org.apache.jena.rdf.model.ResIterator;
  * @author Stian Soiland-Reyes
  */
 @Provider
-@Produces({ APPLICATION_RDFXML, TEXT_TURTLE, TEXT_N3 })
+@Produces({ APPLICATION_RDFXML, TEXT_TURTLE, TEXT_N3, JSON_LD, N_TRIPLES })
 public class RDFMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
 
 	/** 
@@ -110,8 +107,6 @@ public class RDFMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
     private static final String COUNTRIES_TTL = "countries.ttl";
 	private static final String MEMBER_API = "https://api.orcid.org/";
     private static final String EN = "en";
-
-    protected static final String TMP_BASE = "app://614879b4-48c3-45ab-a828-2a72e43f80d9/";
 
     private static final List<String> URL_NAME_HOMEPAGE = Arrays.asList("homepage", "home", "home page", "personal", "personal homepage", "personal home page");
     private static final String URL_NAME_FOAF = "foaf";
@@ -230,26 +225,26 @@ public class RDFMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
                 Individual account = describeAccount(orcidProfile, m, person);
             }
         }
+        MediaType jsonLd = new MediaType("application", "ld+json");
+        MediaType nTriples = new MediaType("application", "n-triples");
         MediaType rdfXml = new MediaType("application", "rdf+xml");
-        if (mediaType.isCompatible(rdfXml)) {
-            m.write(entityStream, "RDF/XML", TMP_BASE);
+        if (mediaType.isCompatible(nTriples)) { 
+        	m.write(entityStream, "N-TRIPLES");
+        }
+        else if (mediaType.isCompatible(jsonLd)) {
+        	m.write(entityStream, "JSON-LD");
+        }
+        else if (mediaType.isCompatible(rdfXml)) {
+            m.write(entityStream, "RDF/XML");        
         } else {
-            // Silly workaround to generate relative URIs
-
-            // The below would not correctly relativize according to TMP_BASE
-            // https://issues.apache.org/jira/browse/JENA-132
-            // m.write(entityStream, "N3", TMP_BASE);
-
-            StringWriter writer = new StringWriter();
-            m.write(writer, "TURTLE", TMP_BASE);
-            String relativizedTurtle = writer.toString().replace(TMP_BASE, "");
-            entityStream.write(relativizedTurtle.getBytes(UTF8));
+        	// Turtle is the safest default
+            m.write(entityStream, "TURTLE");            
         }
     }
 
     protected void describeError(ErrorDesc errorDesc, OntModel m) {
         String error = errorDesc.getContent();
-        Individual root = m.createIndividual(TMP_BASE, null);
+        Individual root = m.createIndividual(m.createResource());
         root.setLabel("Error", EN);
         root.setComment(error, EN);
     }

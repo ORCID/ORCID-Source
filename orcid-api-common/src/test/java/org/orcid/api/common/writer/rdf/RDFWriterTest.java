@@ -182,6 +182,67 @@ public class RDFWriterTest {
     }
 
     @Test
+    public void writeNtriples() throws Exception {
+
+        ByteArrayOutputStream entityStream = new ByteArrayOutputStream(1024);
+        rdfWriter.writeTo(fakeBio(), OrcidMessage.class, null, null, new MediaType("application", "n-triples"), null, entityStream);
+
+        String str = entityStream.toString("utf-8");
+        System.out.println(str);
+        assertTrue(str.contains("<http://orcid.example.com/000-1337>"));
+        assertTrue(str.contains("<http://xmlns.com/foaf/0.1/account>"));
+        assertTrue(str.contains("<http://orcid.example.com/000-1337#profile>"));
+        assertTrue(str.contains("<http://xmlns.com/foaf/0.1/Person>"));
+        assertTrue(str.contains("<http://xmlns.com/foaf/0.1/familyName>"));
+        assertTrue(str.contains("\"Doe\""));
+        assertTrue(str.contains("<http://xmlns.com/foaf/0.1/givenName>"));
+        assertTrue(str.contains("\"John\""));
+        // and the credit name, which here includes initial F
+        assertTrue(str.contains("<http://xmlns.com/foaf/0.1/name>"));
+        assertTrue(str.contains("\"John F Doe\""));
+        // ontology details should NOT be included
+        assertFalse(str.contains("subClassOf"));
+        // provenance
+        assertTrue(str.contains("<http://purl.org/pav/lastUpdateOn>"));
+        assertTrue(str.contains("1980-12-31T23:29:29.999Z"));
+        // location
+        assertTrue(str.contains("<http://www.geonames.org/ontology#countryCode>"));
+        assertTrue(str.contains("GB"));
+
+    }
+
+    @Test
+    public void writeJsonLD() throws Exception {
+
+        ByteArrayOutputStream entityStream = new ByteArrayOutputStream(1024);
+        rdfWriter.writeTo(fakeBio(), OrcidMessage.class, null, null, new MediaType("application", "ld+json"), null, entityStream);
+
+        String str = entityStream.toString("utf-8");
+        System.out.println(str);
+        assertTrue(str.contains("\"http://orcid.example.com/000-1337\""));
+        assertTrue(str.contains("account"));
+        assertTrue(str.contains("\"http://orcid.example.com/000-1337#profile\""));
+        assertTrue(str.contains("Person"));
+        assertTrue(str.contains("familyName"));
+        assertTrue(str.contains("\"Doe\""));
+        assertTrue(str.contains("givenName"));
+        assertTrue(str.contains("\"John\""));
+        // and the credit name, which here includes initial F
+        assertTrue(str.contains("name"));
+        assertTrue(str.contains("\"John F Doe\""));
+        // ontology details should NOT be included
+        assertFalse(str.contains("subClassOf"));
+        // provenance
+        assertTrue(str.contains("lastUpdateOn"));
+        assertTrue(str.contains("1980-12-31T23:29:29.999Z"));
+        // location
+        assertTrue(str.contains("countryCode"));
+        assertTrue(str.contains("GB"));
+
+    }
+
+    
+    @Test
     public void missingCreditName() throws Exception {
 
         ByteArrayOutputStream entityStream = new ByteArrayOutputStream(1024);
