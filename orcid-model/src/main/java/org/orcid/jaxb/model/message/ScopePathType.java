@@ -167,6 +167,10 @@ public enum ScopePathType implements Serializable {
             return true;
         case FUNDING_READ_LIMITED:
             return true;
+        case AFFILIATIONS_READ_LIMITED:
+            return true;
+        case PEER_REVIEW_READ_LIMITED:
+            return true;
         case ORCID_PATENTS_READ_LIMITED:
             return true;
         case ACTIVITIES_READ_LIMITED:

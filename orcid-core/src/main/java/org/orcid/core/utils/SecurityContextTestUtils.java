@@ -49,9 +49,11 @@ public class SecurityContextTestUtils {
         SecurityContextHolder.setContext(securityContext);
         when(mockedAuthentication.getPrincipal()).thenReturn(new ProfileEntity(userOrcid));
         Set<String> scopes = new HashSet<String>();
-        for (ScopePathType scopePathType : scopePathTypes) {
-            scopes.add(scopePathType.value());
-        }
+        if(scopePathTypes != null) {
+            for (ScopePathType scopePathType : scopePathTypes) {
+                scopes.add(scopePathType.value());
+            }
+        }        
         OAuth2Request authorizationRequest = new OAuth2Request(Collections.<String, String> emptyMap(), "APP-5555555555555555",
                 Collections.<GrantedAuthority> emptyList(), true, scopes, Collections.<String> emptySet(), null, Collections.<String> emptySet(),
                 Collections.<String, Serializable> emptyMap());

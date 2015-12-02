@@ -82,7 +82,7 @@ public class JpaJaxbResearcherUrlAdapterTest {
     private ResearcherUrls getResearcherUrls() throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(new Class[] { ResearcherUrls.class });
         Unmarshaller unmarshaller = context.createUnmarshaller();
-        String name = "/record_2.0_rc2/samples/researcher-url-2.0_rc2.xml";             
+        String name = "/record_2.0_rc2/samples/researcher-urls-2.0_rc2.xml";             
         InputStream inputStream = getClass().getResourceAsStream(name);
         return (ResearcherUrls) unmarshaller.unmarshal(inputStream);
     }
