@@ -11,9 +11,9 @@ function IdPSelectUIParms(){
     this.defaultLogoWidth = 1;
     this.defaultLogoHeight = 1 ;
     
-    this.currentLocation =  window.location.href;
+    this.currentLocation = window.location.href;
     
-    if (this.currentLocation.indexOf("oauth"))
+    if (this.currentLocation.indexOf("oauth") > 0)
     	this.defaultReturn = orcidVar.baseUri + '/oauth/Shibboleth.sso/Login?SAMLDS=1&target=' + orcidVar.baseUri + '/oauth/shibboleth/link';       // If non null, then the default place to send users who are not
     else
     	this.defaultReturn = orcidVar.baseUri + '/Shibboleth.sso/Login?SAMLDS=1&target=' + orcidVar.baseUri + '/shibboleth/link';       // If non null, then the default place to send users who are not 
