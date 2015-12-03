@@ -6127,8 +6127,11 @@ a:hover .mozilla-badge{
 }
 
 .login #ajax-loader{
-	text-align:center;	
-	margin-top: 15px;
+	margin-left: 10px;
+    margin-top: 4px;
+}
+
+.submit-login table{
 	min-height: 55px;
 }
 
