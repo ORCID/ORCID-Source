@@ -98,10 +98,11 @@ public class WorksControllerTest extends BaseControllerTest {
         List<String> work_ids = worksController.getWorksJson(servletRequest);
 
         assertNotNull(work_ids);
-        assertEquals(3, work_ids.size());
+        assertEquals(4, work_ids.size());
         assertTrue(work_ids.contains("5"));
         assertTrue(work_ids.contains("6"));
         assertTrue(work_ids.contains("7"));
+        assertTrue(work_ids.contains("8"));
 
     }
 
