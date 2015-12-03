@@ -6127,12 +6127,19 @@ a:hover .mozilla-badge{
 }
 
 .login #ajax-loader{
-	margin-left: 10px;
-    margin-top: 4px;
+	text-align:center;	
+	margin-top: 15px;
+	min-height: 55px;
 }
 
-.submit-login table{
-	min-height: 55px;
+#old-login #ajax-loader{
+    margin-left: 10px;
+    margin-top: 4px;
+    min-height: auto;
+}
+
+#old-login .submit-login table{
+	min-height:55px;
 }
 
 /* Login tab buttons*/
