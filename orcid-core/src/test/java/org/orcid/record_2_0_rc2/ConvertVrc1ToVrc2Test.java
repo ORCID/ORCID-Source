@@ -1,3 +1,19 @@
+/**
+ * =============================================================================
+ *
+ * ORCID (R) Open Source
+ * http://orcid.org
+ *
+ * Copyright (c) 2012-2014 ORCID, Inc.
+ * Licensed under an MIT-Style License (MIT)
+ * http://orcid.org/open-source-license
+ *
+ * This copyright and license information (including a link to the full license)
+ * shall be included in its entirety in all copies or substantial portion of
+ * the software.
+ *
+ * =============================================================================
+ */
 package org.orcid.record_2_0_rc2;
 
 import static org.junit.Assert.assertEquals;
@@ -11,6 +27,7 @@ import javax.xml.bind.Unmarshaller;
 
 import org.junit.Test;
 import org.orcid.core.BaseTest;
+import org.orcid.core.version.V2Convertible;
 import org.orcid.core.version.V2VersionConverter;
 import org.orcid.jaxb.model.record_2_rc1.summary.ActivitiesSummary;
 
@@ -38,10 +55,10 @@ public class ConvertVrc1ToVrc2Test extends BaseTest {
 
         org.orcid.jaxb.model.record_2_rc2.summary.ActivitiesSummary rc2Activities2 = 
         		new org.orcid.jaxb.model.record_2_rc2.summary.ActivitiesSummary();
-        		versionConverterV2_0_rc1ToV2_0rc2.upgrade(rc2Activities2, rc1Activities);
+        		versionConverterV2_0_rc1ToV2_0rc2.upgrade(rc2Activities2, new V2Convertible(rc1Activities, "v2_rc1"));
 
         // Compare rc2Activities2(Converted with the mapper) and
         // rc2Activities1 (Given XML)
-        assertEquals(rc2Activities1.toString(), rc2Activities2.toString());
+       assertEquals(rc2Activities1.toString(), rc2Activities2.toString());
     }
 }

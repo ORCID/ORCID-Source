@@ -24,12 +24,12 @@ package org.orcid.core.version;
  */
 public interface V2VersionConverter {
 
-    String getFromVersion();
+    String getLowerVersion();
 
-    String getToVersion();
+    String getUpperVersion();
 
-    Object downgrade(Object targetObject, Object objectToDowngrade);
+    V2Convertible downgrade(Object targetObject, V2Convertible objectToDowngrade);
 
-    Object upgrade(Object targetObject, Object objectToUpgrade);
+    V2Convertible upgrade(Object targetObject, V2Convertible objectToUpgrade);
 
 }

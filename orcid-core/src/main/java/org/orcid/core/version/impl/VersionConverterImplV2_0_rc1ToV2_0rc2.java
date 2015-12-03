@@ -1,3 +1,19 @@
+/**
+ * =============================================================================
+ *
+ * ORCID (R) Open Source
+ * http://orcid.org
+ *
+ * Copyright (c) 2012-2014 ORCID, Inc.
+ * Licensed under an MIT-Style License (MIT)
+ * http://orcid.org/open-source-license
+ *
+ * This copyright and license information (including a link to the full license)
+ * shall be included in its entirety in all copies or substantial portion of
+ * the software.
+ *
+ * =============================================================================
+ */
 package org.orcid.core.version.impl;
 
 import java.util.ArrayList;
@@ -16,6 +32,7 @@ import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.MappingContext;
 import ma.glasnost.orika.impl.DefaultMapperFactory;
 
+import org.orcid.core.version.V2Convertible;
 import org.orcid.core.version.V2VersionConverter;
 import org.orcid.jaxb.model.common.LastModifiedDate;
 import org.orcid.jaxb.model.record_2_rc1.ActivitiesContainer;
@@ -28,11 +45,11 @@ import org.orcid.utils.DateUtils;
 
 public class VersionConverterImplV2_0_rc1ToV2_0rc2 implements V2VersionConverter {
 
-    private static final String FROM_VERSION = "2.0_rc1";
-    private static final String TO_VERSION = "2.0_rc2";
-    
+    private static final String LOWER_VERSION = "2.0_rc1";
+    private static final String UPPER_VERSION = "2.0_rc2";
+
     private final static MapperFacade mapper;
-    
+
     static {
         final MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
 
@@ -113,24 +130,25 @@ public class VersionConverterImplV2_0_rc1ToV2_0rc2 implements V2VersionConverter
     }
 
     @Override
-    public String getFromVersion() {
-        return FROM_VERSION;
+    public String getLowerVersion() {
+        return LOWER_VERSION;
     }
 
     @Override
-    public String getToVersion() {
-        return TO_VERSION;
+    public String getUpperVersion() {
+        return UPPER_VERSION;
     }
 
     @Override
-    public Object downgrade(Object targetObject, Object objectToDowngrade) {
+    public V2Convertible downgrade(Object targetObject, V2Convertible objectToDowngrade) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public Object upgrade(Object targetObject, Object objectToUpgrade) {
-    	mapper.map(objectToUpgrade, targetObject);
-    	return targetObject;
+    public V2Convertible upgrade(Object targetObject, V2Convertible objectToUpgrade) {
+        mapper.map(objectToUpgrade.getObjectToConvert(), targetObject);
+        return new V2Convertible(objectToUpgrade.getObjectToConvert(), UPPER_VERSION);
     }
+
 }
