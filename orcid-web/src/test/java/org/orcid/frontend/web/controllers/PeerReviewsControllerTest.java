@@ -119,11 +119,8 @@ public class PeerReviewsControllerTest extends BaseControllerTest {
         existingIds.add("5");
         
         assertNotNull(ids);
-
-        assertEquals(4, ids.size());
-        assertTrue(ids.containsAll(existingIds));
-        assertTrue(existingIds.containsAll(ids));
         
+        assertTrue(ids.containsAll(existingIds));
     }
 
     @Test
