@@ -152,7 +152,9 @@
 				            	<tr>
 				            		<td>
 				            			<button id='form-sign-in-button' class="btn btn-primary" type="submit">${springMacroRequestContext.getMessage("login.signin")}</button>
-				            			<span id="ajax-loader" class="no-visible"><i id="ajax-loader" class="glyphicon glyphicon-refresh spin x2 green"></i></span>
+				            		</td>
+				            		<td>
+				            			<span id="ajax-loader" class="no-visible"><i id="" class="glyphicon glyphicon-refresh spin x2 green"></i></span>
 				            		</td>
 				            	</tr>
 				            </table>	            	            
