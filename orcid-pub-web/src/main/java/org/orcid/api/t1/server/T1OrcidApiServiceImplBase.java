@@ -181,7 +181,7 @@ abstract public class T1OrcidApiServiceImplBase implements OrcidApiService<Respo
      * 
      * @param orcid
      *            the ORCID that corresponds to the user's record
-     * @return A 307 redirect
+     * @return A 303 See Other redirect
      */
     @GET
     @Produces(value = { APPLICATION_RDFXML })
@@ -194,7 +194,7 @@ abstract public class T1OrcidApiServiceImplBase implements OrcidApiService<Respo
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        return Response.temporaryRedirect(uri).build();
+        return Response.seeOther(uri).build();
     }
 
     /**
@@ -218,7 +218,7 @@ abstract public class T1OrcidApiServiceImplBase implements OrcidApiService<Respo
      * 
      * @param orcid
      *            the ORCID that corresponds to the user's record
-     * @return A 307 redirect
+     * @return A 303 See Other redirect
      */
     @GET
     @Produces(value = { TEXT_N3, TEXT_TURTLE })
@@ -231,7 +231,7 @@ abstract public class T1OrcidApiServiceImplBase implements OrcidApiService<Respo
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        return Response.temporaryRedirect(uri).build();
+        return Response.seeOther(uri).build();
     }
 
     /**
