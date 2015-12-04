@@ -27,6 +27,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
+import java.net.URI;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
@@ -74,7 +75,7 @@ import org.apache.jena.rdf.model.ResIterator;
 @Provider
 @Produces({ APPLICATION_RDFXML, TEXT_TURTLE, TEXT_N3, JSON_LD, N_TRIPLES })
 public class RDFMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
-
+	
 	/** 
 	 * Extension of Jena's outdated FOAF vocabulary
 	 *
@@ -112,9 +113,7 @@ public class RDFMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
     private static final String URL_NAME_FOAF = "foaf";
     private static final String URL_NAME_WEBID = "webid";
 
-    private static final Charset UTF8 = Charset.forName("UTF-8");
 	private static OntModel countries;
-
 
     @Value("${org.orcid.core.baseUri:http://orcid.org}")
     private String baseUri = "http://orcid.org";
@@ -219,26 +218,32 @@ public class RDFMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
 
         OrcidProfile orcidProfile = xml.getOrcidProfile();
         // System.out.println(httpHeaders);
+        Individual profileDoc = null;
         if (orcidProfile != null) {
             Individual person = describePerson(orcidProfile, m);
             if (person != null) {
-                Individual account = describeAccount(orcidProfile, m, person);
+                profileDoc = describeAccount(orcidProfile, m, person);
             }
         }
         MediaType jsonLd = new MediaType("application", "ld+json");
         MediaType nTriples = new MediaType("application", "n-triples");
         MediaType rdfXml = new MediaType("application", "rdf+xml");
+        String base = null;
+        if (getUriInfo() != null) {
+        	getUriInfo().getAbsolutePath().toASCIIString();
+        }
         if (mediaType.isCompatible(nTriples)) { 
+        	// NOTE: N-Triples requires absolute URIs
         	m.write(entityStream, "N-TRIPLES");
         }
         else if (mediaType.isCompatible(jsonLd)) {
-        	m.write(entityStream, "JSON-LD");
+        	m.write(entityStream, "JSON-LD", base);
         }
         else if (mediaType.isCompatible(rdfXml)) {
-            m.write(entityStream, "RDF/XML");        
+            m.write(entityStream, "RDF/XML", base);        
         } else {
-        	// Turtle is the safest default
-            m.write(entityStream, "TURTLE");            
+        	// Turtle is the safest default        	
+            m.write(entityStream, "TURTLE", base);            
         }
     }
 
@@ -250,16 +255,19 @@ public class RDFMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
     }
 
     private Individual describeAccount(OrcidProfile orcidProfile, OntModel m, Individual person) {
-        String orcidProfileUri = orcidProfile.getOrcidIdentifier().getUri() + "#profile";        
+        String orcidURI = orcidProfile.getOrcidIdentifier().getUri();
+		String orcidPublicationsUri = orcidURI + "#workspace-works";
+        Individual publications = m.createIndividual(orcidPublicationsUri, FOAF.Document);
 
-        Individual account = m.createIndividual(orcidProfileUri, FOAF.OnlineAccount);
+        // list of publications
+        // (anchor in the HTML rendering - foaf:publications goes to a foaf:Document - not to an
+        // RDF list of publications - although we should probably also have that)
+        person.addProperty(FOAF.publications, publications);
+
         
+        String orcidAccountUri = orcidURI + "#orcid-id";               
+        Individual account = m.createIndividual(orcidAccountUri, FOAF.OnlineAccount);        
         person.addProperty(FOAF.account, account);
-        // which is also the list of publications
-        // (at least in the HTML rendering - foaf:publications
-        // goes to a foaf:Document)
-        person.addProperty(FOAF.publications, account);
-
         Individual webSite = null;
         if (baseUri != null) {
             webSite = m.createIndividual(baseUri, null);
@@ -269,14 +277,34 @@ public class RDFMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
         account.addProperty(FOAF.accountName, orcId);
         account.addLabel(orcId, null);
 
-        // The account as a potential foaf:PersonalProfileDocument
-        account.addProperty(FOAF.primaryTopic, person);
+        
+        // The current page is the foaf:PersonalProfileDocument - this assumes
+        // we have done a 303 See Other redirect to the RDF resource, so that it 
+        // differs from the ORCID uri. 
+        // for example:
+        // 
+        //     GET http://orcid.org/0000-0003-4654-1403
+        //     Accept: text/turtle
+        //  
+        //     HTTP/1.1 303 See Other
+        //     Location: https://pub.orcid.org/experimental_rdf_v1/0000-0001-9842-9718
+        
+        String profileUri;
+        if (getUriInfo() != null) {
+        	profileUri = getUriInfo().getAbsolutePath().toASCIIString();
+        } else { 
+        	// Some kind of fallback, although the PersonalProfiledocument should be an 
+        	// information resource without #anchor
+        	profileUri = orcidURI + "#personalProfileDocument";
+        }
+        Individual profileDoc = m.createIndividual(profileUri, 
+        		FOAF.PersonalProfileDocument);
+        profileDoc.addProperty(FOAF.primaryTopic, person);
         OrcidHistory history = orcidProfile.getOrcidHistory();
         if (history != null) {
             if (history.isClaimed().booleanValue()) {
                 // Set account as PersonalProfileDocument
-                account.addRDFType(FOAF.PersonalProfileDocument);
-                account.addProperty(FOAF.maker, person);
+            	profileDoc.addProperty(FOAF.maker, person);
 
             }
             // Who made the profile?
@@ -284,45 +312,45 @@ public class RDFMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
             case DIRECT:
             case MEMBER_REFERRED:
             case WEBSITE:
-                account.addProperty(PAV.createdBy, person);
-                account.addProperty(PROV.wasAttributedTo, person);
+            	profileDoc.addProperty(PAV.createdBy, person);
+            	profileDoc.addProperty(PROV.wasAttributedTo, person);
                 if (webSite != null && 
                 		(history.getCreationMethod() == CreationMethod.WEBSITE || history.getCreationMethod() == CreationMethod.DIRECT)) {
-                    account.addProperty(PAV.createdWith, webSite);
+                	profileDoc.addProperty(PAV.createdWith, webSite);
                 }
                 break;
             case API:
                 Individual api = m.createIndividual(MEMBER_API, PROV.SoftwareAgent);
-                account.addProperty(PAV.importedBy, api);
+                profileDoc.addProperty(PAV.importedBy, api);
 
                 if (history.isClaimed().booleanValue()) {
-                    account.addProperty(PAV.curatedBy, person);
+                	profileDoc.addProperty(PAV.curatedBy, person);
                 }
 
                 break;
             default:
                 // Some unknown agent!
-                account.addProperty(PAV.createdWith, m.createIndividual(null, PROV.Agent));
+            	profileDoc.addProperty(PAV.createdWith, m.createIndividual(null, PROV.Agent));
             }
 
             if (history.getLastModifiedDate() != null) {
                 Literal when = calendarAsLiteral(history.getLastModifiedDate().getValue(), m);
-                account.addLiteral(PAV.lastUpdateOn, when);
-                account.addLiteral(PROV.generatedAtTime, when);
+                profileDoc.addLiteral(PAV.lastUpdateOn, when);
+                profileDoc.addLiteral(PROV.generatedAtTime, when);
             }
             if (history.getSubmissionDate() != null) {
-                account.addLiteral(PAV.createdOn, calendarAsLiteral(history.getSubmissionDate().getValue(), m));
+            	profileDoc.addLiteral(PAV.createdOn, calendarAsLiteral(history.getSubmissionDate().getValue(), m));
             }
             if (history.getCompletionDate() != null) {
-                account.addLiteral(PAV.contributedOn, calendarAsLiteral(history.getCompletionDate().getValue(), m));
+            	profileDoc.addLiteral(PAV.contributedOn, calendarAsLiteral(history.getCompletionDate().getValue(), m));
             }
             if (history.getDeactivationDate() != null) {
-                account.addLiteral(PROV.invalidatedAtTime, calendarAsLiteral(history.getDeactivationDate().getValue(), m));
+            	profileDoc.addLiteral(PROV.invalidatedAtTime, calendarAsLiteral(history.getDeactivationDate().getValue(), m));
             }
 
         }
 
-        return account;
+        return profileDoc;
     }
 
     private Literal calendarAsLiteral(XMLGregorianCalendar cal, OntModel m) {
