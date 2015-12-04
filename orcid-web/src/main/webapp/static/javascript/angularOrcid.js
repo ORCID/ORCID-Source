@@ -9383,7 +9383,7 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
         $scope.personalLogin = false; //Hide Personal Login
         
         if(!$scope.scriptsInjected){ //If shibboleth scripts haven't been loaded yet.            
-            var scripts = ['/static/javascript/shibboleth-embedded-ds/1.1.0/idpselect_config.js', '/static/javascript/shibboleth-embedded-ds/1.1.0/idpselect.js'];            
+            var scripts = ['/static/javascript/shibboleth-embedded-ds/1.1.0/idpselect_config.js?v=' + orcidVar.version, '/static/javascript/shibboleth-embedded-ds/1.1.0/idpselect.js?v=' + orcidVar.version];            
             angular.forEach(scripts, function(key) {                
                 $scope.addShibbolethScript(key);                
             });
@@ -9421,7 +9421,7 @@ orcidNgModule.controller('LoginLayoutController',['$scope', function ($scope){
         $scope.personalLogin = false; //Hide Personal Login
         
         if(!$scope.scriptsInjected){ //If shibboleth scripts haven't been loaded yet.            
-            var scripts = ['/static/javascript/shibboleth-embedded-ds/1.1.0/idpselect_config.js', '/static/javascript/shibboleth-embedded-ds/1.1.0/idpselect.js'];            
+            var scripts = ['/static/javascript/shibboleth-embedded-ds/1.1.0/idpselect_config.js?v=' + orcidVar.version, '/static/javascript/shibboleth-embedded-ds/1.1.0/idpselect.js?v=' + orcidVar.version];            
             angular.forEach(scripts, function(key) {                
                 $scope.addShibbolethScript(key);                
             });

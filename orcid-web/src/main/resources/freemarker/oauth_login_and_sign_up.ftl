@@ -27,7 +27,7 @@
         <#list scopes as scope>
         	<#assign js_scopes_string = js_scopes_string + scope.name()?replace("ORCID_", "")?js_string + " ">
 		</#list>				      
-	    <!-- /Freemarker and GA variables -->	    
+	    <!-- Freemarker and GA variables -->	    
 		<div class="app-client-name" ng-init="initScopes('${js_scopes_string}')">
 			<h3 ng-click="toggleClientDescription()">${client_name}
 				<a class="glyphicon glyphicon-question-sign oauth-question-sign"></a>
@@ -52,19 +52,19 @@
 			<div class="login">
 				<div class="row">
 					<div class="col-md-12">
-						<p class="title" ng-show="showRegisterForm" ng-cloak>Sign into ORCID or <a href="#" ng-click="switchForm()">Register now</a></p>
-						<p class="title" ng-show="!showRegisterForm" ng-cloak>Already have an ORCID iD? <a href="#" ng-click="switchForm()">Sign In</a></p>
+						<p class="title" ng-show="!showRegisterForm" ng-cloak>Sign into ORCID or <a href="#" ng-click="switchForm()">Register now</a></p>
+						<p class="title" ng-show="showRegisterForm" ng-cloak>Already have an ORCID iD? <a href="#" ng-click="switchForm()">Sign In</a></p>
 					</div>
 				</div>
 				<div class="row">
 					<div class="col-md-12">
-						<div class="btn-group btn-group-justified" role="group" ng-show="showRegisterForm" ng-cloak>
+						<div class="btn-group btn-group-justified" role="group" ng-show="!showRegisterForm" ng-cloak>
 			  				<a ng-click="showPersonalLogin()" class="btn btn-default" ng-class="{active: personalLogin == true}" role="button"><span class="glyphicon glyphicon-user"></span> Personal Account</a>
 			  				<a ng-click="showInstitutionLogin()" class="btn btn-default" ng-class="{active: personalLogin == false}" role="button"><span class="glyphicons bank"></span> Institution Account</a>
 						</div>
 						<!-- Personal Login -->
 						<!-- Login form -->
-						<div class="personal-account-login" ng-show="personalLogin && showRegisterForm" ng-init="loadAndInitLoginForm('${scopesString}','${redirect_uri}', '${response_type}', '${user_id}')" ng-cloak>
+						<div class="personal-account-login" ng-show="personalLogin && !showRegisterForm" ng-init="loadAndInitLoginForm('${scopesString}','${redirect_uri}', '${response_type}', '${user_id}')" ng-cloak>
 							<div class="login-box">
 								<p class="title">Sign in with your ORCID account</p>
 								<div class="row personal-login">
@@ -124,7 +124,7 @@
 			                </div>            	
 						</div>
 						<!-- SHIBBOLETH -->
-						<div ng-show="personalLogin == false && showRegisterForm"  ng-cloak>
+						<div ng-show="personalLogin == false && !showRegisterForm"  ng-cloak>
 							<div class="row institution-login">
 								<div class="col-md-12">
 									<div class="login-box">
@@ -145,7 +145,7 @@
 							</div>
 						</div>
 						<!-- Register form -->
-						<div class="personal-account-login" ng-show="personalLogin == true && !showRegisterForm" ng-init="loadAndInitRegistrationForm('${scopesString}','${redirect_uri}','${response_type}')" ng-cloak>
+						<div class="personal-account-login" ng-show="personalLogin == true && showRegisterForm" ng-init="loadAndInitRegistrationForm('${scopesString}','${redirect_uri}','${response_type}')" ng-cloak>
 							<div id="register" class="oauth-registration">
 						    	<div class="">
 						    		<p>${springMacroRequestContext.getMessage("register.labelClause")}</p>
