@@ -129,7 +129,7 @@ public class RDFWriterTest {
         assertTrue(str.contains("foaf:givenName>John<"));
         assertTrue(str.contains("foaf:familyName>Doe<"));
         assertTrue(str.contains("foaf:account"));
-        assertTrue(str.contains("http://orcid.example.com/000-1337/"));
+        assertTrue(str.contains("http://orcid.example.com/000-1337#profile"));
         assertFalse(str.contains("subClassOf"));
         assertTrue(str.contains("foaf:mbox"));
         assertTrue(str.contains("mailto:john@example.org"));
@@ -161,12 +161,15 @@ public class RDFWriterTest {
         System.out.println(str);
         assertTrue(str.contains("<http://orcid.example.com/000-1337>"));
         assertTrue(str.contains("foaf:account"));
-        assertTrue(str.contains("<http://orcid.example.com/000-1337/>"));
+        assertTrue(str.contains("<http://orcid.example.com/000-1337#profile>"));
         assertTrue(str.contains("foaf:Person"));
-        assertTrue(str.contains("foaf:familyName \"Doe"));
-        assertTrue(str.contains("foaf:givenName \"John"));
+        assertTrue(str.contains("foaf:familyName"));
+        assertTrue(str.contains("\"Doe\""));
+        assertTrue(str.contains("foaf:givenName"));
+        assertTrue(str.contains("\"John\""));
         // and the credit name, which here includes initial F
-        assertTrue(str.contains("foaf:name \"John F Doe"));
+        assertTrue(str.contains("foaf:name"));
+        assertTrue(str.contains("\"John F Doe\""));
         // ontology details should NOT be included
         assertFalse(str.contains("subClassOf"));
         // provenance
@@ -192,10 +195,13 @@ public class RDFWriterTest {
         // Should NOT include a foaf:name
         assertFalse(str.contains("foaf:name"));
         // but do include a concatenation as a label
-        assertTrue(str.contains("rdfs:label \"John Doe"));
+        assertTrue(str.contains("rdfs:label"));
+        assertTrue(str.contains("\"John Doe\""));
         // And family/given
-        assertTrue(str.contains("foaf:familyName \"Doe"));
-        assertTrue(str.contains("foaf:givenName \"John"));
+        assertTrue(str.contains("foaf:familyName"));
+        assertTrue(str.contains("\"Doe\""));
+        assertTrue(str.contains("foaf:givenName"));
+        assertTrue(str.contains("\"John\""));
     }
 
 }
