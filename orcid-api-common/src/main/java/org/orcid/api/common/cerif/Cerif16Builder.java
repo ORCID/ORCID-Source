@@ -27,6 +27,7 @@ import org.orcid.jaxb.model.record.summary_rc1.WorkSummary;
 import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifier;
 import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
+import org.orcid.pojo.ajaxForm.TranslatedTitle;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableSet;
@@ -104,6 +105,8 @@ public class Cerif16Builder {
                 name.setCfFirstNames(given.get());
             if (family.isPresent())
                 name.setCfFamilyNames(family.get());
+            name.setCfClassId(CerifClassEnum.PASSPORT_NAME.getUuid());
+            name.setCfClassSchemeId(CerifClassSchemeEnum.PERSON_NAMES.getUuid());            
             person.getCfResIntOrCfKeywOrCfPersPers().add(objectFactory.createCfPersTypeCfPersNamePers(name));            
         }
 
@@ -135,8 +138,17 @@ public class Cerif16Builder {
         // add title
         CfMLangStringType titleString = objectFactory.createCfMLangStringType();
         titleString.setValue(ws.getTitle().getTitle().getContent());
+        titleString.setCfLangCode("en");
         pub.getCfTitleOrCfAbstrOrCfKeyw().add(objectFactory.createCfResPublTypeCfTitle(titleString));
 
+        if (ws.getTitle().getTranslatedTitle() != null){
+            org.orcid.jaxb.model.common.TranslatedTitle trans = ws.getTitle().getTranslatedTitle();
+            CfMLangStringType transTitle = objectFactory.createCfMLangStringType();
+            titleString.setValue(trans.getContent());
+            titleString.setCfLangCode(trans.getLanguageCode());
+            pub.getCfTitleOrCfAbstrOrCfKeyw().add(objectFactory.createCfResProdTypeCfName(transTitle));
+        }  
+        
         // add type info
         CfCoreClassWithFractionType type = objectFactory.createCfCoreClassWithFractionType();
         type.setCfClassSchemeId(CerifClassSchemeEnum.OUTPUT_TYPES.getUuid());
@@ -157,6 +169,8 @@ public class Cerif16Builder {
         }
         xmlns.org.eurocris.cerif_1.CfResPublType.CfPersResPubl persRes = objectFactory.createCfResPublTypeCfPersResPubl();
         persRes.setCfPersId(orcid);
+        persRes.setCfClassId(CerifClassEnum.CONTRIBUTOR.getUuid());
+        persRes.setCfClassSchemeId(CerifClassSchemeEnum.PERSON_OUTPUT_CONTRIBUTIONS.getUuid());
         pub.getCfTitleOrCfAbstrOrCfKeyw().add(objectFactory.createCfResPublTypeCfPersResPubl(persRes));
         cerif.getCfClassOrCfClassSchemeOrCfClassSchemeDescr().add(pub);
         return this;
@@ -176,8 +190,17 @@ public class Cerif16Builder {
         prod.setCfResProdId(orcid + ":" + ws.getPutCode());
         CfMLangStringType titleString = objectFactory.createCfMLangStringType();
         titleString.setValue(ws.getTitle().getTitle().getContent());
-        prod.getCfNameOrCfDescrOrCfKeyw().add(objectFactory.createCfResProdTypeCfName((titleString)));
-
+        titleString.setCfLangCode("en");
+        prod.getCfNameOrCfDescrOrCfKeyw().add(objectFactory.createCfResProdTypeCfName(titleString));
+        
+        if (ws.getTitle().getTranslatedTitle() != null){
+            org.orcid.jaxb.model.common.TranslatedTitle trans = ws.getTitle().getTranslatedTitle();
+            CfMLangStringType transTitle = objectFactory.createCfMLangStringType();
+            titleString.setValue(trans.getContent());
+            titleString.setCfLangCode(trans.getLanguageCode());
+            prod.getCfNameOrCfDescrOrCfKeyw().add(objectFactory.createCfResProdTypeCfName(transTitle));
+        }        
+        
         // add type info
         CfCoreClassWithFractionType type = objectFactory.createCfCoreClassWithFractionType();
         type.setCfClassSchemeId(CerifClassSchemeEnum.OUTPUT_TYPES.getUuid());
@@ -198,6 +221,8 @@ public class Cerif16Builder {
         }
         xmlns.org.eurocris.cerif_1.CfResProdType.CfPersResProd persRes = objectFactory.createCfResProdTypeCfPersResProd();
         persRes.setCfPersId(orcid);
+        persRes.setCfClassId(CerifClassEnum.CONTRIBUTOR.getUuid());
+        persRes.setCfClassSchemeId(CerifClassSchemeEnum.PERSON_OUTPUT_CONTRIBUTIONS.getUuid());
         prod.getCfNameOrCfDescrOrCfKeyw().add(objectFactory.createCfResProdTypeCfPersResProd(persRes));
         cerif.getCfClassOrCfClassSchemeOrCfClassSchemeDescr().add(prod);
         return this;
@@ -224,6 +249,8 @@ public class Cerif16Builder {
             String resID = orcid + ":" + ws.getPutCode();
             xmlns.org.eurocris.cerif_1.CfPersType.CfPersResPubl link = objectFactory.createCfPersTypeCfPersResPubl();
             link.setCfResPublId(resID);
+            link.setCfClassId(CerifClassEnum.CONTRIBUTOR.getUuid());
+            link.setCfClassSchemeId(CerifClassSchemeEnum.PERSON_OUTPUT_CONTRIBUTIONS.getUuid());
             person.getCfResIntOrCfKeywOrCfPersPers().add(objectFactory.createCfPersTypeCfPersResPubl(link));
 
             // add the full record if required
@@ -255,6 +282,8 @@ public class Cerif16Builder {
             String resID = orcid + ":" + ws.getPutCode();
             xmlns.org.eurocris.cerif_1.CfPersType.CfPersResProd link = objectFactory.createCfPersTypeCfPersResProd();
             link.setCfResProdId(resID);
+            link.setCfClassId(CerifClassEnum.CONTRIBUTOR.getUuid());
+            link.setCfClassSchemeId(CerifClassSchemeEnum.PERSON_OUTPUT_CONTRIBUTIONS.getUuid());
             person.getCfResIntOrCfKeywOrCfPersPers().add(objectFactory.createCfPersTypeCfPersResProd(link));
 
             if (addFullProducts) {

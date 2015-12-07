@@ -26,20 +26,20 @@ public enum CerifClassEnum {
     
     
     //derived from http://www.eurocris.org/Uploads/Web%20pages/OpenAIRE-GL/OpenAIRE_CERIF_Semantics_v.1.0.xml
-    ISBN("c424da87-2d94-471a-977a-2412b7eb89fd","ISBN"),
-    ISSN("117a8179-1779-494b-9fb3-4f8bb806ebce","ISSN"),
+    ISBN("c424da87-2d94-471a-977a-2412b7eb89fd","ISBN", "OpenAIRE"),
+    ISSN("117a8179-1779-494b-9fb3-4f8bb806ebce","ISSN", "OpenAIRE"),
     
-    PRODUCT_AUDIOVISUAL("fcff62b8-0950-4b13-bc8d-7c0c1ec7090d","Audiovisual"),
-    PRODUCT_COLLECTION("f150e5de-204e-4b24-94a6-bed814e99ddf","Collection"),
-    PRODUCT_DATASET("ee980a23-4d75-42ce-a990-653d06de0350","Dataset"),
-    PRODUCT_IMAGE("20947cb9-79ae-47c5-8595-982626dd010f","Image"),
-    PRODUCT_INTERACTIVE_RESOURCE("6f989fd8-5f13-49b5-b2d3-2688915e85de","Interactive resource"),
-    PRODUCT_MODEL("51de0361-0180-4e58-b38b-f643e095ea89","Model"),
-    PRODUCT_PHYSICAL_OBJECT("7b637bfe-9480-4332-a1b4-86226d910306","Physical object"),
-    PRODUCT_SOFTWARE("74ff535e-9b4a-4b9a-aa94-8396b1c33e70","Software"),
-    PRODUCT_SOUND("b88a4ab2-e680-41af-8912-9615c3a1b13e","Sound"),
-    PRODUCT_TEXT("9c3a4abc-2005-4f50-8eff-4eb14e273cff","Text"),
-    PRODUCT_WORKFLOW("ba334c03-34fe-4b36-915e-9c9345412671","Workflow"),
+    PRODUCT_AUDIOVISUAL("fcff62b8-0950-4b13-bc8d-7c0c1ec7090d","Audiovisual", "OpenAIRE"),
+    PRODUCT_COLLECTION("f150e5de-204e-4b24-94a6-bed814e99ddf","Collection", "OpenAIRE"),
+    PRODUCT_DATASET("ee980a23-4d75-42ce-a990-653d06de0350","Dataset", "OpenAIRE"),
+    PRODUCT_IMAGE("20947cb9-79ae-47c5-8595-982626dd010f","Image", "OpenAIRE"),
+    PRODUCT_INTERACTIVE_RESOURCE("6f989fd8-5f13-49b5-b2d3-2688915e85de","Interactive resource", "OpenAIRE"),
+    PRODUCT_MODEL("51de0361-0180-4e58-b38b-f643e095ea89","Model", "OpenAIRE"),
+    PRODUCT_PHYSICAL_OBJECT("7b637bfe-9480-4332-a1b4-86226d910306","Physical object", "OpenAIRE"),
+    PRODUCT_SOFTWARE("74ff535e-9b4a-4b9a-aa94-8396b1c33e70","Software", "OpenAIRE"),
+    PRODUCT_SOUND("b88a4ab2-e680-41af-8912-9615c3a1b13e","Sound", "OpenAIRE"),
+    PRODUCT_TEXT("9c3a4abc-2005-4f50-8eff-4eb14e273cff","Text", "OpenAIRE"),
+    PRODUCT_WORKFLOW("ba334c03-34fe-4b36-915e-9c9345412671","Workflow", "OpenAIRE"),
     
     PERSON("cf7799e0-3477-11e1-b86c-0800200c9a66","Person"),
     PROJECT("cf7799e1-3477-11e1-b86c-0800200c9a66","Project"),
@@ -493,6 +493,11 @@ public enum CerifClassEnum {
     private String name;
     
     /**
+     * The name.
+     */
+    private String source = "CERIF Task Group";
+    
+    /**
      * Constructor.
      * @param uuid Universally unique identifier (UUID) of type 4.
      * @param name The name.
@@ -500,6 +505,17 @@ public enum CerifClassEnum {
     private CerifClassEnum(String uuid, String name) {
             this.uuid = uuid;
             this.name = name;
+    }
+    
+    /**
+     * Constructor.
+     * @param uuid Universally unique identifier (UUID) of type 4.
+     * @param name The name.
+     */
+    private CerifClassEnum(String uuid, String name, String source) {
+            this.uuid = uuid;
+            this.name = name;
+            this.source = source;
     }
 
     /**
@@ -516,6 +532,13 @@ public enum CerifClassEnum {
             return name;
     }
     
+    /**
+     * @return the name
+     */
+    public String getSource() {
+            return source;
+    }
+    
     
     /**
      * Return a string representation of this code.
@@ -524,7 +547,7 @@ public enum CerifClassEnum {
     public String toString() {
             StringBuilder sb = new StringBuilder();
             sb.append("ClassEnum [");
-            sb.append("uuid=" + uuid + ", name=" + name);
+            sb.append("uuid=" + uuid + ", name=" + name +", source="+source);
             sb.append("]");
             return sb.toString();
     }
