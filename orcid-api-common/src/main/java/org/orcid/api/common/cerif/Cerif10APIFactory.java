@@ -65,7 +65,7 @@ public class Cerif10APIFactory {
             CerifClassEnum.ORCID,
             CerifClassEnum.ISNI,
             CerifClassEnum.SCOPUSAUTHORID);
-public static final Set<CerifClassEnum> outSet = Sets.immutableEnumSet(                              
+    public static final Set<CerifClassEnum> outSet = Sets.immutableEnumSet(                              
             CerifClassEnum.PRODUCT_DATASET,
             CerifClassEnum.RESEARCHERID,
             CerifClassEnum.BOOK,

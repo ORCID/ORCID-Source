@@ -19,7 +19,6 @@ package org.orcid.api.common.delegator.impl;
 import java.util.Set;
 
 import javax.annotation.Resource;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -70,31 +69,34 @@ public class CerifApiServiceDelegatorImpl implements CerifApiServiceDelgator {
     public Response getPerson(String orcid) {
         return this.getPerson(orcid, Visibility.PUBLIC);
     }
-    
-    /** Selective visibility profile
+
+    /**
+     * Selective visibility profile
      * 
-     * TODO: re-factor to remove and use new V2 visibility for names when available.
+     * TODO: re-factor to remove and use new V2 visibility for names when
+     * available.
      * 
      * @param orcid
      * @param vis
      * @return
      */
-     protected Response getPerson(String orcid, Visibility vis) {
+    protected Response getPerson(String orcid, Visibility vis) {
         ProfileEntity profile = profileEntityManager.findByOrcid(orcid);
         if (profile == null)
             return Response.status(404).build();
-       
+
         Optional<String> creditname = Optional.absent();
         if (!profile.getCreditNameVisibility().isMoreRestrictiveThan(vis)) {
             creditname = Optional.of(profile.getCreditName());
         }
-        
+
         Set<ExternalIdentifierEntity> externalIDs = Sets.newHashSet();
         if (!profile.getExternalIdentifiersVisibility().isMoreRestrictiveThan(vis)) {
             externalIDs = profile.getExternalIdentifiers();
         }
-        
-        // TODO: we also need to check name visibility properly here, in line with V2 changes
+
+        // TODO: we also need to check name visibility properly here, in line
+        // with V2 changes
         Optional<String> given = Optional.fromNullable(profile.getGivenNames());
         Optional<String> family = Optional.fromNullable(profile.getFamilyName());
 
@@ -102,20 +104,15 @@ public class CerifApiServiceDelegatorImpl implements CerifApiServiceDelgator {
         ActivityUtils.cleanEmptyFields(as);
         visibilityFilter.filter(as);
 
-        return Response.ok(
-                new Cerif16Builder()
-                .addPerson(profile.getId(), given, family, creditname, externalIDs)
-                .concatPublications(as, orcid, false)
-                .concatProducts(as, orcid, false)
-                .build()
-        ).build();
+        return Response.ok(new Cerif16Builder().addPerson(profile.getId(), given, family, creditname, externalIDs).concatPublications(as, orcid, false)
+                .concatProducts(as, orcid, false).build()).build();
     }
 
     @Override
     public Response getPublication(String orcid, Long id) {
-        WorkSummary ws = workManager.getWorkSummary(orcid,id);
+        WorkSummary ws = workManager.getWorkSummary(orcid, id);
         ActivityUtils.cleanEmptyFields(ws);
-        orcidSecurityManager.checkVisibility(ws);        
+        orcidSecurityManager.checkVisibility(ws);
         if (ws == null || !translator.isPublication(ws.getType()))
             return Response.status(404).build();
 
@@ -124,7 +121,7 @@ public class CerifApiServiceDelegatorImpl implements CerifApiServiceDelgator {
 
     @Override
     public Response getProduct(String orcid, Long id) {
-        WorkSummary ws = workManager.getWorkSummary(orcid,id);
+        WorkSummary ws = workManager.getWorkSummary(orcid, id);
         ActivityUtils.cleanEmptyFields(ws);
         orcidSecurityManager.checkVisibility(ws);
         if (ws == null || !translator.isProduct(ws.getType()))
@@ -140,7 +137,7 @@ public class CerifApiServiceDelegatorImpl implements CerifApiServiceDelgator {
 
     @Override
     public Response getSemantics() {
-        return Response.ok(new Cerif10APIFactory().getSemantics()).type(MediaType.APPLICATION_XML).build();
+        return Response.ok(new Cerif10APIFactory().getSemantics()).build();
     }
 
     /**

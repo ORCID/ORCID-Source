@@ -27,7 +27,6 @@ import org.orcid.jaxb.model.record.summary_rc1.WorkSummary;
 import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifier;
 import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
-import org.orcid.pojo.ajaxForm.TranslatedTitle;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableSet;
