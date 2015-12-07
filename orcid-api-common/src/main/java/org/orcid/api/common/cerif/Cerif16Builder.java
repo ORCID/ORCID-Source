@@ -61,6 +61,7 @@ public class Cerif16Builder {
     private CerifTypeTranslator translator;
     private CERIF cerif;
     private CfPersType person;
+    private Cerif10APIFactory apifactory;
 
     /**
      * Types we export to CERIF.
@@ -75,6 +76,7 @@ public class Cerif16Builder {
         objectFactory = new ObjectFactory();
         cerif = objectFactory.createCERIF();
         translator = new CerifTypeTranslator();
+        apifactory = new Cerif10APIFactory();
     }
 
     /** Add a person entity to the underlying CERIF document
@@ -299,16 +301,7 @@ public class Cerif16Builder {
      * @return
      */
     public Cerifapitype build() {
-        Cerifapitype apiType = new Cerifapitype();
-        Headertype header = new Headertype();
-        header.setApiVersion("1.0");
-        //header.setSource("http://pub.orcid.org/cerif/1_0");
-        //header.setQuery("http://pub.orcid.org/cerif/1_0/blah/0000-0000-0000-0000");
-        apiType.setHeader(header);
-        Payloadtype payload = new Payloadtype();
-        payload.setCERIF(cerif);
-        apiType.setPayload(payload);
-        return apiType;
+        return apifactory.wrap(cerif);
     }
     
     /** Create a federated identifer element suitable for use by all entities

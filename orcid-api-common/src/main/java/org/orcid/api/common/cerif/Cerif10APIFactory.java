@@ -46,7 +46,7 @@ import xmlns.org.eurocris.cerif_api.Payloadtype;
  */
 public class Cerif10APIFactory {
     
-    private CERIF semanticsCERIF = null;
+    private static Cerifapitype semanticsCERIF = null;
     private static Cerifapitype entities = null;
     
     public static final Set<CerifClassEnum> nameSet = Sets.immutableEnumSet(
@@ -116,17 +116,8 @@ public class Cerif10APIFactory {
             list.getEntity().add(pubs);
             Entitytype prods = new Entitytype();
             prods.setValue(Cerifentitytype.PRODUCTS);
-            list.getEntity().add(prods);
-            
-            
-            Cerifapitype apiType = new Cerifapitype();
-            Headertype header = new Headertype();
-            header.setApiVersion("1.0");
-            apiType.setHeader(header);
-            Payloadtype payload = new Payloadtype();
-            payload.setEntities(list);
-            apiType.setPayload(payload);            
-            entities = apiType;
+            list.getEntity().add(prods);         
+            entities = wrap(list);
         }
         return entities;
     }
@@ -135,7 +126,7 @@ public class Cerif10APIFactory {
      * 
      * @return
      */
-    public CERIF getSemantics(){
+    public Cerifapitype getSemantics(){
         if (semanticsCERIF != null)
             return semanticsCERIF;
         
@@ -169,7 +160,29 @@ public class Cerif10APIFactory {
             }
             cerif.getCfClassOrCfClassSchemeOrCfClassSchemeDescr().add(c);
         }        
-        semanticsCERIF = cerif;
+        semanticsCERIF = wrap(cerif);
         return semanticsCERIF;
+    }
+    
+    public Cerifapitype wrap(Entitylisttype list){
+        Cerifapitype apiType = new Cerifapitype();
+        Headertype header = new Headertype();
+        header.setApiVersion("1.0");
+        apiType.setHeader(header);
+        Payloadtype payload = new Payloadtype();
+        payload.setEntities(list);
+        apiType.setPayload(payload);
+        return apiType;
+    }
+    
+    public Cerifapitype wrap(CERIF cerif){
+        Cerifapitype apiType = new Cerifapitype();
+        Headertype header = new Headertype();
+        header.setApiVersion("1.0");
+        apiType.setHeader(header);
+        Payloadtype payload = new Payloadtype();
+        payload.setCERIF(cerif);
+        apiType.setPayload(payload);
+        return apiType;
     }
 }
