@@ -112,13 +112,15 @@ public class PeerReviewsControllerTest extends BaseControllerTest {
         HttpSession session = mock(HttpSession.class);
         when(servletRequest.getSession()).thenReturn(session);
         List<String> ids = peerReviewsController.getPeerReviewIdsJson(servletRequest);
+        List<String> existingIds = new ArrayList<String>();
+        existingIds.add("1");
+        existingIds.add("3");
+        existingIds.add("4");
+        existingIds.add("5");
+        
         assertNotNull(ids);
-
-        assertEquals(1, ids.size());
-        assertEquals("1", ids.get(0));
-        PeerReviewForm peerReview = peerReviewsController.getPeerReviewJson(Long.valueOf(1));
-        assertNotNull(peerReview);
-        assertEquals("http://peer_review.com", peerReview.getUrl().getValue());
+        
+        assertTrue(ids.containsAll(existingIds));
     }
 
     @Test

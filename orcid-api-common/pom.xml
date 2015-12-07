@@ -15,6 +15,7 @@
 
     <properties>
         <main.basedir>${project.parent.basedir}</main.basedir>
+        <jena.dir>${project.build.directory}/generated-sources/jena</jena.dir>
     </properties>
 
 	<repositories>
@@ -93,7 +94,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.jena</groupId>
-            <artifactId>jena-core</artifactId>
+            <artifactId>jena-arq</artifactId>
         </dependency>
 
 		<dependency>
@@ -147,7 +148,100 @@
                     </excludes>               
                 </configuration>
             </plugin>
+		    <plugin>
+		      <groupId>org.apache.jena</groupId>
+		      <artifactId>jena-maven-tools</artifactId>
+		      <executions>
+		        <execution>
+		          <id>schemagen</id>
+                  <phase>generate-sources</phase>
+		          <goals>
+		            <goal>translate</goal>
+		          </goals>
+		        </execution>
+		      </executions>
+		      <configuration>
+		      	
+		      	<includes>
+  					<include>src/main/vocabs/*.rdf</include>  					 
+				</includes>
+				<fileOptions>
+			        <source>
+			          <input>default</input>
+			          <package-name>org.orcid.api.common.writer.rdf.vocabs</package-name>
+			          <output>${jena.dir}</output>		          
+			        </source>
+			        <source>
+			          <input>src/main/vocabs/prov-o.rdf</input>
+			          <className>PROV</className>
+			          <output>${jena.dir}</output>
+			          <ontology>true</ontology>		          
+			        </source>
+			        <source>
+			          <input>src/main/vocabs/pav.rdf</input>
+			          <className>PAV</className>
+			          <output>${jena.dir}</output>
+			          <ontology>true</ontology>		          
+			        </source>
+			        <source>
+			          <input>src/main/vocabs/geonames_v3.1.rdf</input>
+			          <className>Geonames</className>
+			          <output>${jena.dir}</output>
+			          <ontology>true</ontology>				          
+			        </source>			        
+		        </fileOptions>
+		      </configuration>
+		    </plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>add-source</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>add-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>${jena.dir}</source>
+							</sources>
+						</configuration>
+					</execution>
+				</executions>
+                </plugin>		              
         </plugins>
+        <!-- m2eclipse setting to execute jena-maven-tools plugin -->
+		<pluginManagement>
+		  <plugins>
+		    <plugin>
+		     <groupId>org.eclipse.m2e</groupId>
+		     <artifactId>lifecycle-mapping</artifactId>
+		     <version>1.0.0</version>
+		     <configuration>
+		       <lifecycleMappingMetadata>
+		         <pluginExecutions>
+		           <pluginExecution>
+		             <pluginExecutionFilter>
+				      <groupId>org.apache.jena</groupId>
+				      <artifactId>jena-maven-tools</artifactId>
+		               <versionRange>[${jena.version},)</versionRange>
+		               <goals>
+		                 <goal>translate</goal>
+		               </goals>
+		             </pluginExecutionFilter>
+		             <action>
+		               <execute>
+		               	<runOnIncremental>true</runOnIncremental>
+		               </execute>
+		             </action>
+		           </pluginExecution>
+		         </pluginExecutions>
+		       </lifecycleMappingMetadata>
+		     </configuration>
+		    </plugin>
+		  </plugins>
+		</pluginManagement>        
     </build>
 
 </project>

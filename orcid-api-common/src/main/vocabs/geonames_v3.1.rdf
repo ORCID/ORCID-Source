@@ -20,6 +20,7 @@
       <dcterms:description xml:lang="en">The Geonames ontologies provides elements of description for geographical features, in particular those defined in the geonames.org data base</dcterms:description>
       <adms:relatedDocumentation rdf:resource="http://www.geonames.org/ontology/documentation.html"/>
       <cc:license rdf:resource="http://creativecommons.org/licenses/by/3.0/"/>
+	<!-- disabled to work around Jena's schemagen bugs
       <dcterms:creator>
             <foaf:Person rdf:about="http://data.semanticweb.org/person/bernard-vatant">
                   <foaf:name>Bernard Vatant</foaf:name>
@@ -27,9 +28,11 @@
                   <foaf:workplaceHomepage  rdf:resource="http://www.mondeca.com"/>
             </foaf:Person>
       </dcterms:creator>
+      -->
       <dcterms:contributor>Erik Bolstad (norwegian and swedish translations)</dcterms:contributor>
       <dcterms:contributor>Valery Hronusov (russian translation)</dcterms:contributor>
       <dcterms:contributor>Roman Rachkov (bulgarian translation)</dcterms:contributor>
+	<!-- disabled to work around Jena's schemagen bugs
       <dcterms:publisher>
             <foaf:Organization rdf:about="http://dbpedia.org/resource/GeoNames">
                   <foaf:name>GeoNames</foaf:name>
@@ -41,6 +44,7 @@
                   </mrel:dtm>
             </foaf:Organization>
       </dcterms:publisher>
+      -->
       <rdfs:comment xml:lang="en">Modifications from version 3.01 :
             Added : gn:GeonamesFeature, subclass of gn:Feature.
             Added : explicit property gn:geonamesID, mandatory and unique for each gn:GeonamesFeature instance.
