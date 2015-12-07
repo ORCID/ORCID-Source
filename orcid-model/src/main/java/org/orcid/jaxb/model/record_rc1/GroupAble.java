@@ -14,20 +14,9 @@
  *
  * =============================================================================
  */
-package org.orcid.core.exception;
+package org.orcid.jaxb.model.record_rc1;
 
-import java.util.Map;
-
-/**
- * 
- * @author Angel Montenegro
- * 
- */
-public class WrongOwnerException extends ApplicationException {
-
-    private static final long serialVersionUID = 1L;
-
-    public WrongOwnerException(Map<String, String> params) {
-    	super(params);
-    }
+public interface GroupAble {
+    boolean isGroupAble();
+    String getGroupId();
 }

@@ -66,6 +66,7 @@
       orcidVar.realOrcidId = '${realUserOrcid!}';
       orcidVar.jsMessages = JSON.parse("${jsMessagesJson}");
       orcidVar.searchBaseUrl = "${searchBaseUrl}";
+      orcidVar.version = "${ver}";
       
     </script>    
     

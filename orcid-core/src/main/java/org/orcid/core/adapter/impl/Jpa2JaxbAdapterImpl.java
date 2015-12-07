@@ -1043,7 +1043,11 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         if (StringUtils.isNotBlank(profileEntity.getGivenNames())) {
             GivenNames names = new GivenNames();
             names.setContent(profileEntity.getGivenNames());
-            names.setVisibility(profileEntity.getNamesVisibility());
+            Visibility visibility = OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility();
+            if(profileEntity.getNamesVisibility() != null) {
+            	visibility = profileEntity.getNamesVisibility();
+            } 
+            names.setVisibility(visibility);
             return names;
         }
         return null;
@@ -1053,7 +1057,11 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         if (StringUtils.isNotBlank(profileEntity.getFamilyName())) {
             FamilyName name = new FamilyName();
             name.setContent(profileEntity.getFamilyName());
-            name.setVisibility(profileEntity.getNamesVisibility());
+            Visibility visibility = OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility();
+            if(profileEntity.getNamesVisibility() != null) {
+            	visibility = profileEntity.getNamesVisibility();
+            } 
+            name.setVisibility(visibility);
             return name;
         }
         return null;
@@ -1064,7 +1072,11 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         if (StringUtils.isNotBlank(creditName)) {
             CreditName name = new CreditName();
             name.setContent(creditName);
-            name.setVisibility(profileEntity.getNamesVisibility());
+            Visibility visibility = OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility();
+            if(profileEntity.getNamesVisibility() != null) {
+            	visibility = profileEntity.getNamesVisibility();
+            } 
+            name.setVisibility(visibility);
             return name;
         }
         return null;

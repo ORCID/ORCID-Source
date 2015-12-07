@@ -467,6 +467,8 @@
             orcid="4444-4444-4444-4441"
             source_id="4444-4444-4444-4441"
             visibility="PUBLIC"
+            last_modified="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
             />
 
     <researcher_url
@@ -495,8 +497,10 @@
             id="4"
             url="www.4444-4444-4444-4445.com"
             orcid="4444-4444-4444-4445"
-            source_id="4444-4444-4444-4445"
+            client_source_id="APP-5555555555555555"
             visibility="PUBLIC"
+            last_modified="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
             />  
 
 	<researcher_url
@@ -509,6 +513,39 @@
             last_modified="2011-07-02 15:31:00.00"
             date_created="2011-06-29 15:31:00.00"
             />
+
+	<researcher_url
+            id="6"
+            url="http://www.researcherurl2.com?id=6"
+            url_name="443_4"
+            orcid="4444-4444-4444-4443"
+            source_id="4444-4444-4444-4443"
+            visibility="PRIVATE"
+            last_modified="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
+            />            	
+
+	<researcher_url
+            id="7"
+            url="http://www.researcherurl2.com?id=7"
+            url_name="443_5"
+            orcid="4444-4444-4444-4443"
+            client_source_id="APP-5555555555555555"
+            visibility="PRIVATE"
+            last_modified="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
+            />
+
+	<researcher_url
+            id="8"
+            url="http://www.researcherurl2.com?id=8"
+            url_name="443_6"
+            orcid="4444-4444-4444-4443"
+            source_id="4444-4444-4444-4443"
+            visibility="LIMITED"
+            last_modified="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
+            />	
 
     <other_name
             other_name_id="1"

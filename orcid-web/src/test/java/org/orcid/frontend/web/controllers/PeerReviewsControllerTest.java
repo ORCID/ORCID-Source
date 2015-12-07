@@ -19,7 +19,6 @@ package org.orcid.frontend.web.controllers;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
@@ -30,6 +29,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.annotation.Resource;
+import javax.persistence.NoResultException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -55,14 +55,11 @@ import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Lists;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml", "classpath:orcid-frontend-web-servlet.xml" })
-@Transactional(propagation = Propagation.REQUIRES_NEW)
 public class PeerReviewsControllerTest extends BaseControllerTest {
 
     private static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml", "/data/SecurityQuestionEntityData.xml",
@@ -115,13 +112,15 @@ public class PeerReviewsControllerTest extends BaseControllerTest {
         HttpSession session = mock(HttpSession.class);
         when(servletRequest.getSession()).thenReturn(session);
         List<String> ids = peerReviewsController.getPeerReviewIdsJson(servletRequest);
+        List<String> existingIds = new ArrayList<String>();
+        existingIds.add("1");
+        existingIds.add("3");
+        existingIds.add("4");
+        existingIds.add("5");
+        
         assertNotNull(ids);
-
-        assertEquals(1, ids.size());
-        assertEquals("1", ids.get(0));
-        PeerReviewForm peerReview = peerReviewsController.getPeerReviewJson(Long.valueOf(1));
-        assertNotNull(peerReview);
-        assertEquals("http://peer_review.com", peerReview.getUrl().getValue());
+        
+        assertTrue(ids.containsAll(existingIds));
     }
 
     @Test
@@ -183,7 +182,7 @@ public class PeerReviewsControllerTest extends BaseControllerTest {
         assertTrue(form.getErrors().contains(peerReviewsController.getMessage("peer_review.group_id.not_valid")));
     }
     
-    @Test
+    @Test    
     public void testDeletePeerReview() {
         HttpSession session = mock(HttpSession.class);
         when(servletRequest.getSession()).thenReturn(session);
@@ -193,9 +192,15 @@ public class PeerReviewsControllerTest extends BaseControllerTest {
         assertFalse(PojoUtil.isEmpty(newForm.getPutCode()));
 
         String putCode = newForm.getPutCode().getValue();
-        peerReviewsController.deletePeerReviewJson(servletRequest, newForm);
-        PeerReviewForm deleted = peerReviewsController.getPeerReviewJson(Long.valueOf(putCode));
-        assertNull(deleted);
+        peerReviewsController.deletePeerReviewJson(newForm);
+        try {
+            peerReviewsController.getPeerReviewJson(Long.valueOf(putCode));
+            fail();
+        } catch(NoResultException nre) {
+            
+        }
+        
+        
     }
 
     private PeerReviewForm getForm() {

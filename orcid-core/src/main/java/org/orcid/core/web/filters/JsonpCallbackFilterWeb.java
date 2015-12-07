@@ -68,7 +68,10 @@ public class JsonpCallbackFilterWeb extends OncePerRequestFilter {
 
                 filterChain.doFilter(requestWrapper, responseWrapper);
 
-                out.write(new String(parms.get("callback")[0] + "(").getBytes());
+                String callbackParam = (parms.get("callback")[0]).replaceAll("[^0-9a-zA-Z_$]", "");
+                
+                
+                out.write(new String(callbackParam + "(").getBytes());
                 out.write(responseWrapper.getData());
                 out.write(new String(");").getBytes());
 
@@ -80,5 +83,4 @@ public class JsonpCallbackFilterWeb extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
         }
     }
-
 }

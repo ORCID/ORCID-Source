@@ -176,6 +176,7 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
         boolean foundWorkFromAnotherSource = false;
         boolean foundExisting = false;
         boolean foundNew = false;
+        boolean foundExistingPrivate = false;
         // Should have the added work, plus existing private work and work from
         // another source
         for (OrcidWork retrievedWork : retreivedWorksList) {
@@ -188,6 +189,11 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
                 assertEquals("Journal article C", retrievedWork.getWorkTitle().getTitle().getContent());
                 assertEquals(Visibility.PRIVATE, retrievedWork.getVisibility());
                 foundExisting = true;
+            } else if ("8".equals(retrievedWork.getPutCode())) {
+                // Existing private work added by the user
+                assertEquals("Journal article D", retrievedWork.getWorkTitle().getTitle().getContent());
+                assertEquals(Visibility.PRIVATE, retrievedWork.getVisibility());
+                foundExistingPrivate = true;
             } else {
                 // The added work
                 assertEquals("Added by works update", retrievedWork.getWorkTitle().getTitle().getContent());
@@ -197,7 +203,8 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
         assertTrue("Work from other source should be there", foundWorkFromAnotherSource);
         assertTrue("New work should be there", foundNew);
         assertTrue("Existing private work should be there", foundExisting);
-        assertEquals(3, retreivedWorksList.size());
+        assertTrue("Existing private work added by the user should be there", foundExistingPrivate);
+        assertEquals(4, retreivedWorksList.size());
     }
 
     @Test
@@ -234,6 +241,7 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
         boolean foundWorkFromAnotherSource = false;
         boolean foundUpdated = false;
         boolean foundExisting = false;
+        boolean foundExistingPrivate = false;
         for (OrcidWork retrievedWork : retreivedWorksList) {
             if ("5".equals(retrievedWork.getPutCode())) {
                 // The updated work
@@ -249,12 +257,18 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
                 assertEquals("Journal article C", retrievedWork.getWorkTitle().getTitle().getContent());
                 assertEquals(Visibility.PRIVATE, retrievedWork.getVisibility());
                 foundExisting = true;
+            } else if ("8".equals(retrievedWork.getPutCode())) {
+                // Existing private work added by the user
+                assertEquals("Journal article D", retrievedWork.getWorkTitle().getTitle().getContent());
+                assertEquals(Visibility.PRIVATE, retrievedWork.getVisibility());
+                foundExistingPrivate = true;
             }
         }
         assertTrue("Work from other source should be there", foundWorkFromAnotherSource);
         assertTrue("Updated work should be there", foundUpdated);
         assertTrue("Existing private work should be there", foundExisting);
-        assertEquals(3, retreivedWorksList.size());
+        assertTrue("Existing private work added by the user should be there", foundExistingPrivate);
+        assertEquals(4, retreivedWorksList.size());
     }
 
     @Test(expected = WrongSourceException.class)
@@ -349,7 +363,7 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
         assertEquals(orcid, retrievedMessage.getOrcidProfile().getOrcidIdentifier().getPath());
         GivenNames givenNames = retrievedMessage.getOrcidProfile().getOrcidBio().getPersonalDetails().getGivenNames();
         assertNotNull(givenNames);
-        assertEquals("", givenNames.getContent());
+        assertEquals("Reserved For Claim", givenNames.getContent());
     }
 
     @Test

@@ -158,7 +158,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.jena</groupId>
-            <artifactId>jena-core</artifactId>
+            <artifactId>jena-arq</artifactId>
         </dependency>
         <dependency>
             <groupId>ma.glasnost.orika</groupId>

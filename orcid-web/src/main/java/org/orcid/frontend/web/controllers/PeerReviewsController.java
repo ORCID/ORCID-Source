@@ -25,7 +25,6 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.annotation.Resource;
-import javax.persistence.NoResultException;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
@@ -304,23 +303,19 @@ public class PeerReviewsController extends BaseWorkspaceController {
      * */
     @RequestMapping(value = "/get-peer-review.json", method = RequestMethod.GET)
     public @ResponseBody PeerReviewForm getPeerReviewJson(@RequestParam(value = "peerReviewId") Long peerReviewId) {
-        PeerReviewForm result = null;
-        try {
-            PeerReview peerReview = peerReviewManager.getPeerReview(getEffectiveUserOrcid(), peerReviewId);
-            if (peerReview != null) {
-                result = PeerReviewForm.valueOf(peerReview);
-            }
-        } catch (NoResultException nre) {
-            // There is no peer review with that id, just return a null one
+        PeerReview peerReview = peerReviewManager.getPeerReview(getEffectiveUserOrcid(), peerReviewId);
+        if (peerReview != null) {
+            return PeerReviewForm.valueOf(peerReview);
         }
-        return result;
+        
+        return null;
     }
 
     /**
      * Deletes a peer review
      * */
     @RequestMapping(value = "/peer-review.json", method = RequestMethod.DELETE)
-    public @ResponseBody PeerReviewForm deletePeerReviewJson(HttpServletRequest request, @RequestBody PeerReviewForm peerReview) {
+    public @ResponseBody PeerReviewForm deletePeerReviewJson(@RequestBody PeerReviewForm peerReview) {
         if (peerReview == null || PojoUtil.isEmpty(peerReview.getPutCode())) {
             return null;
         }

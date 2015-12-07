@@ -361,7 +361,6 @@ public class WorkspaceController extends BaseWorkspaceController {
         profileKeywordManager.updateProfileKeyword(currentProfile.getOrcidIdentifier().getPath(), kf.toKeywords());
         return kf;
     }
-
     
     @RequestMapping(value = "/my-orcid/otherNamesForms.json", method = RequestMethod.GET)
     public @ResponseBody
@@ -379,9 +378,6 @@ public class WorkspaceController extends BaseWorkspaceController {
         
         return form;
     }
-    
-    
-    
     
     @RequestMapping(value = "/my-orcid/otherNamesForms.json", method = RequestMethod.POST)
     public @ResponseBody

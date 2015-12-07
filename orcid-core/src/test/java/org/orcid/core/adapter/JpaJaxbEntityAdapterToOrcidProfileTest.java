@@ -126,7 +126,6 @@ public class JpaJaxbEntityAdapterToOrcidProfileTest extends DBUnitTest {
         long start = System.currentTimeMillis();
         OrcidProfile orcidProfile = adapter.toOrcidProfile(profileEntity);
         System.out.println("Took: " + Long.toString(System.currentTimeMillis() - start));
-
         checkOrcidProfile(orcidProfile);
         validateAgainstSchema(new OrcidMessage(orcidProfile));
     }
@@ -308,7 +307,7 @@ public class JpaJaxbEntityAdapterToOrcidProfileTest extends DBUnitTest {
         ResearcherUrls researcherUrls = orcidBio.getResearcherUrls();
         List<ResearcherUrl> urls = researcherUrls.getResearcherUrl();
         Collections.sort(urls);
-        assertEquals(3, urls.size());
+        assertEquals(6, urls.size());
         Url url1 = urls.get(0).getUrl();
         String url1Name = urls.get(0).getUrlName().getContent();
         assertEquals(url1Name, "443_1");
@@ -323,6 +322,21 @@ public class JpaJaxbEntityAdapterToOrcidProfileTest extends DBUnitTest {
         String url3Name = urls.get(2).getUrlName().getContent();
         assertEquals(url3Name, "443_3");
         assertEquals("http://www.researcherurl2.com?id=5", url3.getValue());
+        
+        Url url4 = urls.get(3).getUrl();
+        String url4Name = urls.get(3).getUrlName().getContent();
+        assertEquals(url4Name, "443_4");
+        assertEquals("http://www.researcherurl2.com?id=6", url4.getValue());
+        
+        Url url5 = urls.get(4).getUrl();
+        String url5Name = urls.get(4).getUrlName().getContent();
+        assertEquals(url5Name, "443_5");
+        assertEquals("http://www.researcherurl2.com?id=7", url5.getValue());
+        
+        Url url6 = urls.get(5).getUrl();
+        String url6Name = urls.get(5).getUrlName().getContent();
+        assertEquals(url6Name, "443_6");
+        assertEquals("http://www.researcherurl2.com?id=8", url6.getValue());
         
         checkKeywords(orcidBio.getKeywords());
 

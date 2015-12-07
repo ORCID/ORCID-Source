@@ -28,7 +28,7 @@
 		</xs:documentation>
 		<xs:appinfo>
 			<sch:title>Schematron validation</sch:title>
-			<sch:ns prefix="orcid" uri="http://www.orcid.org/ns/orcid" />
+			<sch:ns prefix="email" uri="http://www.orcid.org/ns/email" />
 		</xs:appinfo>
 	</xs:annotation>
 	<xs:import namespace="http://www.orcid.org/ns/common"

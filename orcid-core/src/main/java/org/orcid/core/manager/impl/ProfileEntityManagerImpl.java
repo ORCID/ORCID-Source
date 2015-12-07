@@ -66,7 +66,7 @@ import org.orcid.jaxb.model.record.summary_rc1.WorkGroup;
 import org.orcid.jaxb.model.record.summary_rc1.WorkSummary;
 import org.orcid.jaxb.model.record.summary_rc1.Works;
 import org.orcid.jaxb.model.record_rc1.FundingExternalIdentifier;
-import org.orcid.jaxb.model.record_rc1.GroupKey;
+import org.orcid.jaxb.model.record_rc1.GroupAble;
 import org.orcid.jaxb.model.record_rc1.GroupableActivity;
 import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifier;
 import org.orcid.persistence.dao.ProfileDao;
@@ -415,11 +415,11 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         List<ActivitiesGroup> groups = groupGenerator.getGroups();
 
         for (ActivitiesGroup group : groups) {
-            Set<GroupKey> externalIdentifiers = group.getGroupKeys();
+            Set<GroupAble> externalIdentifiers = group.getGroupKeys();
             Set<GroupableActivity> activities = group.getActivities();
             WorkGroup workGroup = new WorkGroup();
             // Fill the work groups with the external identifiers
-            for (GroupKey extId : externalIdentifiers) {
+            for (GroupAble extId : externalIdentifiers) {
                 WorkExternalIdentifier workExtId = (WorkExternalIdentifier) extId;
                 workGroup.getIdentifiers().getIdentifier().add(Identifier.fromWorkExternalIdentifier(workExtId));
             }
@@ -454,12 +454,12 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         List<ActivitiesGroup> groups = groupGenerator.getGroups();
 
         for (ActivitiesGroup group : groups) {
-            Set<GroupKey> externalIdentifiers = group.getGroupKeys();
+            Set<GroupAble> externalIdentifiers = group.getGroupKeys();
             Set<GroupableActivity> activities = group.getActivities();
             FundingGroup fundingGroup = new FundingGroup();
 
             // Fill the funding groups with the external identifiers
-            for (GroupKey extId : externalIdentifiers) {
+            for (GroupAble extId : externalIdentifiers) {
                 FundingExternalIdentifier fundingExtId = (FundingExternalIdentifier) extId;
                 fundingGroup.getIdentifiers().getIdentifier().add(Identifier.fromFundingExternalIdentifier(fundingExtId));
             }
@@ -494,11 +494,11 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         List<ActivitiesGroup> groups = groupGenerator.getGroups();
 
         for (ActivitiesGroup group : groups) {
-            Set<GroupKey> groupKeys = group.getGroupKeys();
+            Set<GroupAble> groupKeys = group.getGroupKeys();
             Set<GroupableActivity> activities = group.getActivities();
             PeerReviewGroup peerReviewGroup = new PeerReviewGroup();
             // Fill the peer review groups with the external identifiers
-            for (GroupKey groupKey : groupKeys) {
+            for (GroupAble groupKey : groupKeys) {
                 PeerReviewGroupKey key = (PeerReviewGroupKey) groupKey;
                 peerReviewGroup.getIdentifiers().getIdentifier().add(Identifier.fromPeerReviewGroupKey(key));
             }

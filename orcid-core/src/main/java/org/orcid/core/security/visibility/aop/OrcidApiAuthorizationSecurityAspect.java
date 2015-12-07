@@ -220,7 +220,7 @@ public class OrcidApiAuthorizationSecurityAspect {
             }
             
             //This applies for given names that were filtered because of the new visibility field applied on them
-            //If the given name was set at the beginning and now is fileted, it means we should restore it as an empty field
+            //If the given name was set at the beginning and now is filtered, it means we should restore it as an empty field
             if(setEmptyGivenNameIfFiltered) {
                 if(orcidMessage.getOrcidProfile() != null) {
                     if(orcidMessage.getOrcidProfile().getOrcidBio() == null) {
@@ -233,7 +233,7 @@ public class OrcidApiAuthorizationSecurityAspect {
                 }
             }
             
-            //If the returning message contains the given or family names visibility, remove it
+            //Filter given or family names visibility 
             if(orcidMessage.getOrcidProfile() != null) {
                 if(orcidMessage.getOrcidProfile().getOrcidBio() != null) {
                     if(orcidMessage.getOrcidProfile().getOrcidBio().getPersonalDetails() != null) {

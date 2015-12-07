@@ -26,7 +26,7 @@ import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
-import org.orcid.core.constants.OauthTokensConstants;
+import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.exception.OrcidInvalidScopeException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.jaxb.model.message.ScopePathType;
@@ -90,7 +90,7 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
         }
 
         try {
-            boolean isClientCredentialsGrantType = OauthTokensConstants.GRANT_TYPE_CLIENT_CREDENTIALS.equals(grantType);            
+            boolean isClientCredentialsGrantType = OrcidOauth2Constants.GRANT_TYPE_CLIENT_CREDENTIALS.equals(grantType);            
             if (scopes != null) {
                 List<String> toRemove = new ArrayList<String>();
                 for (String scope : scopes) {
@@ -137,9 +137,9 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
             
             if(authorizationCodeEntity != null) {
                 if(orcidOauth2AuthoriziationCodeDetailDao.isPersistentToken(code)) {
-                    authorizationParameters.put(OauthTokensConstants.IS_PERSISTENT, "true");
+                    authorizationParameters.put(OrcidOauth2Constants.IS_PERSISTENT, "true");
                 } else {
-                    authorizationParameters.put(OauthTokensConstants.IS_PERSISTENT, "false");
+                    authorizationParameters.put(OrcidOauth2Constants.IS_PERSISTENT, "false");
                 }
                 
                 if(!authorizationParameters.containsKey(OAuth2Utils.SCOPE) || PojoUtil.isEmpty(authorizationParameters.get(OAuth2Utils.SCOPE))) {
@@ -147,7 +147,7 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
                     authorizationParameters.put(OAuth2Utils.SCOPE, scopesString);
                 }
             } else {
-                authorizationParameters.put(OauthTokensConstants.IS_PERSISTENT, "false");
+                authorizationParameters.put(OrcidOauth2Constants.IS_PERSISTENT, "false");
             }                        
         }
         if (redirectUri != null) {
@@ -172,12 +172,12 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
     
     protected Response getResponse(OAuth2AccessToken accessToken) {
         if(accessToken != null && accessToken.getAdditionalInformation() != null) {
-            if(accessToken.getAdditionalInformation().containsKey(OauthTokensConstants.TOKEN_VERSION))
-                accessToken.getAdditionalInformation().remove(OauthTokensConstants.TOKEN_VERSION);
-            if(accessToken.getAdditionalInformation().containsKey(OauthTokensConstants.PERSISTENT))
-                accessToken.getAdditionalInformation().remove(OauthTokensConstants.PERSISTENT);
-            if(accessToken.getAdditionalInformation().containsKey(OauthTokensConstants.DATE_CREATED))
-                accessToken.getAdditionalInformation().remove(OauthTokensConstants.DATE_CREATED);
+            if(accessToken.getAdditionalInformation().containsKey(OrcidOauth2Constants.TOKEN_VERSION))
+                accessToken.getAdditionalInformation().remove(OrcidOauth2Constants.TOKEN_VERSION);
+            if(accessToken.getAdditionalInformation().containsKey(OrcidOauth2Constants.PERSISTENT))
+                accessToken.getAdditionalInformation().remove(OrcidOauth2Constants.PERSISTENT);
+            if(accessToken.getAdditionalInformation().containsKey(OrcidOauth2Constants.DATE_CREATED))
+                accessToken.getAdditionalInformation().remove(OrcidOauth2Constants.DATE_CREATED);
         }
         
         return Response.ok(accessToken).header("Cache-Control", "no-store").header("Pragma", "no-cache").build();

@@ -258,13 +258,6 @@ public class OtherNameManagerImpl implements OtherNameManager {
         return jpaJaxbOtherNameAdapter.toOtherName(updatedOtherNameEntity);
     }
     
-    
-    
-    
-    
-    
-    
-    
     @Override
     @Transactional
     public org.orcid.jaxb.model.record_rc2.OtherNames updateOtherNamesV2(String orcid, org.orcid.jaxb.model.record_rc2.OtherNames otherNames, org.orcid.jaxb.model.common.Visibility defaultVisiblity) {
@@ -321,36 +314,6 @@ public class OtherNameManagerImpl implements OtherNameManager {
         return otherNames;
     }
 
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     private boolean isDuplicated(OtherNameEntity existing, org.orcid.jaxb.model.record_rc2.OtherName otherName, SourceEntity source) {
         if (!existing.getId().equals(otherName.getPutCode())) {
             if (existing.getSource() != null) {
