@@ -19,7 +19,6 @@ package org.orcid.integration.blackbox.api;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -73,7 +72,7 @@ public class VerifyOrcidBeforeFetchElementTest extends BlackBoxBase {
 
     protected static Map<String, String> accessTokens = new HashMap<String, String>();
 
-    private static final String SCOPES = ScopePathType.ACTIVITIES_UPDATE.value() + " " + ScopePathType.ACTIVITIES_READ_LIMITED.value();
+    private static final String SCOPES = ScopePathType.ACTIVITIES_UPDATE.value();
     
     @Value("${org.orcid.web.base.url:http://localhost:8080/orcid-web}")
     private String webBaseUrl;
@@ -347,15 +346,6 @@ public class VerifyOrcidBeforeFetchElementTest extends BlackBoxBase {
         ClientResponse deletedResponse = memberV2ApiClient.deletePeerReviewXml(this.user1OrcidId, gotPeerReview.getPutCode(), user1AccessToken);
         assertNotNull(deletedResponse);
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), deletedResponse.getStatus());
-    }
-
-    @Test
-    public void failUntillWeFix_UPDATE_Scopes() {
-        //We need to fix the ACTIVITIES_UPDATE scope so we can use it also to read public activities or activities where we are the source
-        //So, if we are still using ACTIVITIES_UPDATE + ACTIVITIES_READ_LIMITED scopes combined, this method should fail
-        if(SCOPES.equals(ScopePathType.ACTIVITIES_UPDATE.value() + " " + ScopePathType.ACTIVITIES_READ_LIMITED.value())) {
-            fail();
-        }
     }
     
     public String getAccessToken(String clientId, String clientSecret, String clientRedirectUri, String userName, String userPassword) throws InterruptedException,

@@ -624,7 +624,7 @@
 		<field name="profile-last-modified-date" type="date" indexed="true"
 			stored="true" multiValued="false" />
 		<field name="public-profile-message" type="string" indexed="false"
-			stored="true" multiValued="false" />
+			stored="false" multiValued="false" />
 		<field name="primary-record" type="string" indexed="true"
 			stored="true" multiValued="false" />
 		<!-- Dynamic field definitions. If a field name is not found, dynamicFields 

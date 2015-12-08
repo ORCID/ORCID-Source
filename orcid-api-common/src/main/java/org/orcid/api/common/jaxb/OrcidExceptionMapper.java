@@ -25,8 +25,10 @@ import javax.persistence.NoResultException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
@@ -76,6 +78,7 @@ import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.PrimaryRecord;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.DateUtils;
+import org.orcid.utils.OrcidStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
@@ -102,6 +105,11 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OrcidExceptionMapper.class);
 
+    private static final String LOCATION_HEADER = "location";
+    
+    @Context
+    private UriInfo uriInfo;
+    
     @Resource
     private MessageSource messageSource;
 
@@ -215,11 +223,15 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
             OrcidDeprecatedException exception = (OrcidDeprecatedException) t;           
             OrcidDeprecated depreciatedError = new OrcidDeprecated();
             Map<String, String> params = exception.getParams();
+            String location = null;
             if(params != null) {
                 if(params.containsKey(OrcidDeprecatedException.ORCID)) {
                     PrimaryRecord pr = new PrimaryRecord();
                     pr.setOrcid(new Orcid(params.get(OrcidDeprecatedException.ORCID)));
                     depreciatedError.setPrimaryRecord(pr);
+                    String deprecatedOrcid = OrcidStringUtils.getOrcidNumber(uriInfo.getAbsolutePath().toString());
+                    String primaryOrcid = OrcidStringUtils.getOrcidNumber(params.get(OrcidDeprecatedException.ORCID));
+                    location = uriInfo.getAbsolutePath().toString().replace(deprecatedOrcid, primaryOrcid);
                 }
                 if(params.containsKey(OrcidDeprecatedException.DEPRECATED_DATE)) {
                     DeprecatedDate dd = new DeprecatedDate();
@@ -227,8 +239,15 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
                     dd.setValue(DateUtils.convertToXMLGregorianCalendar(dateString, false));
                     depreciatedError.setDate(dd);
                 }
+            }                                    
+            
+            Response response = null;
+            if(location != null) {
+                response = Response.status(Response.Status.MOVED_PERMANENTLY).header(LOCATION_HEADER, location).entity(depreciatedError).build();
+            } else {
+                response = Response.status(Response.Status.MOVED_PERMANENTLY).entity(depreciatedError).build();
             }
-            return Response.status(Response.Status.MOVED_PERMANENTLY).entity(depreciatedError).build();
+            return response;
         } else if (LockedException.class.isAssignableFrom(t.getClass())) {
             OrcidMessage entity = getLegacyOrcidEntity("Account locked : ", t);
             return Response.status(Response.Status.CONFLICT).entity(entity).build();
@@ -282,7 +301,27 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
     }
 
     private Response getOrcidErrorResponse(int errorCode, int status, Throwable t) {
-        OrcidError orcidError = getOrcidError(errorCode, status, t);
+        OrcidError orcidError = getOrcidError(errorCode, status, t);        
+        if(OrcidDeprecatedException.class.isAssignableFrom(t.getClass())) {
+            OrcidDeprecatedException exception = (OrcidDeprecatedException) t;
+            Map<String, String> params = exception.getParams();
+            String location = null;
+            if(params != null) {
+                if(params.containsKey(OrcidDeprecatedException.ORCID)) {
+                    String deprecatedOrcid = OrcidStringUtils.getOrcidNumber(uriInfo.getAbsolutePath().toString());
+                    String primaryOrcid = OrcidStringUtils.getOrcidNumber(params.get(OrcidDeprecatedException.ORCID));
+                    location = uriInfo.getAbsolutePath().toString().replace(deprecatedOrcid, primaryOrcid);
+                }
+            }                                    
+            
+            Response response = null;
+            if(location != null) {
+                response = Response.status(status).header(LOCATION_HEADER, location).entity(orcidError).build();
+            } else {
+                response = Response.status(status).entity(orcidError).build();
+            }
+            return response;
+        }                
         return Response.status(status).entity(orcidError).build();
     }
 
