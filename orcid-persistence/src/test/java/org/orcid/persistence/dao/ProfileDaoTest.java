@@ -430,7 +430,7 @@ public class ProfileDaoTest extends DBUnitTest {
         profile.setBiography("Updated Biography");
         profile.setBiographyVisibility(Visibility.PRIVATE);
         profile.setCreditName("Updated Credit Name");
-        profile.setCreditNameVisibility(Visibility.PRIVATE);
+        profile.setNamesVisibility(Visibility.PRIVATE);
         profile.setGivenNames("Updated Give Name");
         profile.setFamilyName("Updated Last Name");
         profile.setIso2Country(Iso3166Country.US);
@@ -444,7 +444,7 @@ public class ProfileDaoTest extends DBUnitTest {
         assertEquals("Updated Biography", profile.getBiography());
         assertEquals(Visibility.PRIVATE.value(), profile.getBiographyVisibility().value());
         assertEquals("Updated Credit Name", profile.getCreditName());
-        assertEquals(Visibility.PRIVATE.value(), profile.getCreditNameVisibility().value());
+        assertEquals(Visibility.PRIVATE.value(), profile.getNamesVisibility().value());
         assertEquals("Updated Give Name", profile.getGivenNames());
         assertEquals("Updated Last Name", profile.getFamilyName());
         assertEquals(Iso3166Country.US, profile.getIso2Country());

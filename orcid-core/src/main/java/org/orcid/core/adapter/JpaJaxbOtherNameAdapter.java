@@ -23,12 +23,14 @@ import org.orcid.jaxb.model.record_rc2.OtherNames;
 import org.orcid.persistence.jpa.entities.OtherNameEntity;
 
 public interface JpaJaxbOtherNameAdapter {
-    
-	OtherNameEntity toOtherNameEntity(OtherName otherName);
 
-	OtherName toOtherName(OtherNameEntity entity);
-    
+    OtherNameEntity toOtherNameEntity(OtherName otherName);
+
+    OtherName toOtherName(OtherNameEntity entity);
+
     OtherNames toOtherNameList(Collection<OtherNameEntity> entities);
     
+    OtherNames toMinimizedOtherNameList(Collection<OtherNameEntity> entities);
+
     OtherNameEntity toOtherNameEntity(OtherName otherName, OtherNameEntity existing);
 }

@@ -45,6 +45,7 @@ import org.orcid.jaxb.model.record_rc1.Employment;
 import org.orcid.jaxb.model.record_rc1.Funding;
 import org.orcid.jaxb.model.record_rc1.PeerReview;
 import org.orcid.jaxb.model.record_rc1.Work;
+import org.orcid.jaxb.model.record_rc2.PersonalDetails;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.beans.factory.annotation.Value;
@@ -119,6 +120,8 @@ public class BlackBoxBase {
                 result = (PeerReview) obj;
             } else if(ResearcherUrl.class.equals(type)) {
                 result = (ResearcherUrl) obj;
+            } else if(PersonalDetails.class.equals(type)) {
+                result = (PersonalDetails) obj;
             }
             return result;
         } catch (IOException e) {

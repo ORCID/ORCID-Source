@@ -410,17 +410,17 @@ public class PublicProfileController extends BaseWorkspaceController {
                         if (profileEntManager.orcidExists(contributorOrcid)) {
                             ProfileEntity profileEntity = profileEntityCacheManager.retrieve(contributorOrcid);
                             String publicContributorCreditName = cacheManager.getPublicCreditName(profileEntity);
-                            if (profileEntity.getCreditNameVisibility() != null) {
+                            if (profileEntity.getNamesVisibility() != null) {
                                 contributor.setCreditName(Text.valueOf(publicContributorCreditName));
-                                contributor.setCreditNameVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(profileEntity.getCreditNameVisibility()));
+                                contributor.setCreditNameVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(profileEntity.getNamesVisibility()));
                             } else {
                                 contributor.setCreditName(Text.valueOf(publicContributorCreditName));
-                                contributor.setCreditNameVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(OrcidVisibilityDefaults.CREDIT_NAME_DEFAULT
+                                contributor.setCreditNameVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(OrcidVisibilityDefaults.NAMES_DEFAULT
                                         .getVisibility()));
                             }
                         } else {
                             if (contributor.getCreditNameVisibility() == null) {
-                                contributor.setCreditNameVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(OrcidVisibilityDefaults.CREDIT_NAME_DEFAULT
+                                contributor.setCreditNameVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(OrcidVisibilityDefaults.NAMES_DEFAULT
                                         .getVisibility()));
                             }
                         }

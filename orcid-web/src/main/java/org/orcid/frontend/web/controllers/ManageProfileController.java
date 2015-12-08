@@ -42,6 +42,7 @@ import org.orcid.core.manager.OrcidSearchManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.OrcidSocialManager;
 import org.orcid.core.manager.OtherNameManager;
+import org.orcid.core.manager.PersonalDetailsManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileKeywordManager;
@@ -72,6 +73,7 @@ import org.orcid.jaxb.model.message.Url;
 import org.orcid.jaxb.model.message.UrlName;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
+import org.orcid.jaxb.model.record_rc2.PersonalDetails;
 import org.orcid.password.constants.OrcidPasswordConstants;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.GivenPermissionToDao;
@@ -171,7 +173,10 @@ public class ManageProfileController extends BaseWorkspaceController {
     private OrcidOauth2TokenDetailService orcidOauth2TokenService;
 
     @Resource(name = "profileEntityCacheManager")
-    ProfileEntityCacheManager profileEntityCacheManager;
+    private ProfileEntityCacheManager profileEntityCacheManager;
+    
+    @Resource
+    private PersonalDetailsManager personalDetailsManager;
 
     @Resource
     OrcidSecurityManager orcidSecurityManager;
@@ -836,8 +841,8 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     @RequestMapping(value = "/nameForm.json", method = RequestMethod.GET)
     public @ResponseBody NamesForm getNameForm(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
-        OrcidProfile currentProfile = getEffectiveProfile();
-        NamesForm nf = NamesForm.valueOf(currentProfile.getOrcidBio().getPersonalDetails());
+        PersonalDetails personalDetails = personalDetailsManager.getPersonalDetails(getCurrentUserOrcid());
+        NamesForm nf = NamesForm.valueOf(personalDetails);
         return nf;
     }
 
@@ -850,9 +855,8 @@ public class ManageProfileController extends BaseWorkspaceController {
         copyErrors(nf.getGivenNames(), nf);
         if (nf.getErrors().size() > 0)
             return nf;
-        OrcidProfile currentProfile = getEffectiveProfile();
-        nf.populatePersonalDetails(currentProfile.getOrcidBio().getPersonalDetails());
-        orcidProfileManager.updateNames(currentProfile);
+        PersonalDetails personalDetails = nf.toPersonalDetails();
+        orcidProfileManager.updateNames(getCurrentUserOrcid(), personalDetails);
         return nf;
     }
 

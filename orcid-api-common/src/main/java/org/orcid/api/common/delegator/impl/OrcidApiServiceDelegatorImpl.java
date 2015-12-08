@@ -39,7 +39,6 @@ import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.OrcidProfileManagerReadOnly;
 import org.orcid.core.manager.OrcidSearchManager;
-import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.security.aop.NonLocked;
 import org.orcid.core.security.visibility.aop.AccessControl;
 import org.orcid.core.security.visibility.aop.VisibilityControl;
@@ -194,7 +193,7 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
     @NonLocked
     public Response findFullDetailsFromPublicCache(String orcid) {
         try {
-            OrcidMessage orcidMessage = orcidSearchManager.findPublicProfileById(orcid);
+            OrcidMessage orcidMessage = orcidSearchManager.findPublicProfileById(orcid);            
             return getOrcidMessageResponse(orcidMessage, orcid);
         } catch (OrcidSearchException e) {
             LOGGER.warn("Error searching, so falling back to DB", e);
@@ -421,8 +420,7 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
             throw new OrcidDeprecatedException(params);
         } else {
             response = Response.ok(orcidMessage).build();
-        }
-
+        }        
         return response;
     }
 

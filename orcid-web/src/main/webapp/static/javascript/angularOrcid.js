@@ -2409,7 +2409,6 @@ orcidNgModule.controller('NameCtrl', ['$scope', '$compile',function NameCtrl($sc
         $scope.showEdit = false;
     };
 
-
     $scope.getNameForm = function(){
         $.ajax({
             url: getBaseUri() + '/account/nameForm.json',
@@ -2443,9 +2442,9 @@ orcidNgModule.controller('NameCtrl', ['$scope', '$compile',function NameCtrl($sc
         });
     };
 
-    $scope.setCreditNameVisibility = function(priv, $event) {
+    $scope.setNamesVisibility = function(priv, $event) {
         $event.preventDefault();
-        $scope.nameForm.creditNameVisibility.visibility = priv;
+        $scope.nameForm.namesVisibility.visibility = priv;
     };
 
     $scope.getNameForm();
@@ -2469,16 +2468,15 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile',function ($scope
     };
 
     $scope.addNew = function() {
-        $scope.otherNamesForm.otherNames.push({value: ""});
+        $scope.otherNamesForm.otherNames.push({"errors":[],"content":"","putCode":null,"visibility":null});
     };
 
     $scope.getOtherNamesForm = function(){
         $.ajax({
             url: getBaseUri() + '/my-orcid/otherNamesForms.json',
             dataType: 'json',
-            success: function(data) {
+            success: function(data) {            	
                 $scope.otherNamesForm = data;
-                var otherNames = $scope.otherNamesForm.otherNames;
                 $scope.$apply();
             }
         }).fail(function(){
@@ -2497,7 +2495,6 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile',function ($scope
     };
 
     $scope.setOtherNamesForm = function(){
-        var otherNames = $scope.otherNamesForm.otherNames;
         $.ajax({
             url: getBaseUri() + '/my-orcid/otherNamesForms.json',
             type: 'POST',
@@ -2518,18 +2515,16 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile',function ($scope
     
     $scope.showTooltip = function(elem){
     	$scope.showElement[elem] = true;
-    }
+    };
 
     $scope.hideTooltip = function(elem){
     	$scope.showElement[elem] = false;	
-    }
+    };
 
     $scope.setPrivacy = function(priv, $event) {
         $event.preventDefault();
         $scope.otherNamesForm.visibility.visibility = priv;
-    };
-    
-    
+    };        
 
     $scope.getOtherNamesForm();
 }]);

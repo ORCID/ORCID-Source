@@ -535,7 +535,7 @@ public class FundingsController extends BaseWorkspaceController {
                     if (creditNameVisibility != null) {
                         contributor.setCreditNameVisibility(creditNameVisibility);
                     } else {
-                        contributor.setCreditNameVisibility(Visibility.valueOf(OrcidVisibilityDefaults.CREDIT_NAME_DEFAULT.getVisibility()));
+                        contributor.setCreditNameVisibility(Visibility.valueOf(OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility()));
                     }
                 }
             }

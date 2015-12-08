@@ -404,7 +404,7 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
      * @return
      */
     private Response getOrcidMessageResponse(OrcidProfile profile, String requestedOrcid) {
-        if (profile != null) {
+        if (profile != null) {            
             OrcidMessage orcidMessage = new OrcidMessage(profile);
             return Response.ok(orcidMessage).build();
         } else {

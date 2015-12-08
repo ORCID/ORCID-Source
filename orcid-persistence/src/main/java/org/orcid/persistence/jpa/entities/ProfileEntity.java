@@ -139,7 +139,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     private Boolean enableNotifications = Boolean.TRUE;
 
     // Visibility settings
-    private Visibility creditNameVisibility;
+    private Visibility namesVisibility;
     private Visibility otherNamesVisibility;
     private Visibility biographyVisibility;
     private Visibility keywordsVisibility;
@@ -816,12 +816,12 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     @Basic
     @Enumerated(EnumType.STRING)
     @Column(name = "names_visibility")
-    public Visibility getCreditNameVisibility() {
-        return creditNameVisibility;
+    public Visibility getNamesVisibility() {
+        return namesVisibility;
     }
 
-    public void setCreditNameVisibility(Visibility creditNameVisibility) {
-        this.creditNameVisibility = creditNameVisibility;
+    public void setNamesVisibility(Visibility namesVisibility) {
+        this.namesVisibility = namesVisibility;
     }
 
     @Basic

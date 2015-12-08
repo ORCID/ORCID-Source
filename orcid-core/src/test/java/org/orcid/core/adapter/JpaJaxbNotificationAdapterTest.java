@@ -43,7 +43,6 @@ import org.orcid.persistence.jpa.entities.NotificationAmendedEntity;
 import org.orcid.persistence.jpa.entities.NotificationCustomEntity;
 import org.orcid.persistence.jpa.entities.NotificationEntity;
 import org.orcid.persistence.jpa.entities.NotificationItemEntity;
-import org.orcid.persistence.jpa.entities.NotificationWorkEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.utils.DateUtils;
 import org.springframework.test.context.ContextConfiguration;
