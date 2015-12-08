@@ -405,6 +405,16 @@
     <bean name="responseParser" class="org.apache.solr.client.solrj.impl.XMLResponseParser"></bean>
 
     <bean id="externalEncryptor" class="org.jasypt.encryption.pbe.PooledPBEStringEncryptor">
+        <property name="algorithm" value="PBEWITHSHA256AND128BITAES-CBC-BC" />
+        <property name="provider">
+			<bean class="org.bouncycastle.jce.provider.BouncyCastleProvider" />
+		</property>
+        <property name="password" value="#{ T(org.springframework.util.StringUtils).trimTrailingWhitespace('${org.orcid.core.passPhraseForExternalEncryption:HGFEDCBA}') }" />
+        <property name="keyObtentionIterations" value="${org.orcid.core.iterationCountForExternalEncryption:19}" />
+        <property name="poolSize" value="${org.orcid.core.poolSizeForExternalEncryption:4}" />
+    </bean>
+
+    <bean id="legacyExternalEncryptor" class="org.jasypt.encryption.pbe.PooledPBEStringEncryptor">
         <property name="algorithm" value="PBEWithMD5AndDES" />
         <property name="password" value="#{ T(org.springframework.util.StringUtils).trimTrailingWhitespace('${org.orcid.core.passPhraseForExternalEncryption:HGFEDCBA}') }" />
         <property name="keyObtentionIterations" value="${org.orcid.core.iterationCountForExternalEncryption:19}" />
