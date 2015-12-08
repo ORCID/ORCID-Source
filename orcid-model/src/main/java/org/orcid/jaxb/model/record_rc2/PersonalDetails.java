@@ -32,7 +32,7 @@ public class PersonalDetails implements Serializable {
     private static final long serialVersionUID = 8496158434601501884L;
     @XmlElement(name = "name", namespace = "http://www.orcid.org/ns/personal-details")
     private Name name;
-    @XmlElement(name = "other-names", namespace = "http://www.orcid.org/ns/personal-details")
+    @XmlElement(name = "other-names", namespace = "http://www.orcid.org/ns/other-name")
     private OtherNames otherNames;
     @XmlElement(name = "biography", namespace = "http://www.orcid.org/ns/personal-details")
     private Biography biography;
