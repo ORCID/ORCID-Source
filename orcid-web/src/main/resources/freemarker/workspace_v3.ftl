@@ -70,12 +70,11 @@
             </div>            	       	
 	       	
 	       	<!-- Also known as -->
-	       	<div ng-controller="OtherNamesCtrl" class="workspace-section other-names">
-        	   
+	       	<div ng-controller="OtherNamesCtrl" class="workspace-section other-names" id="other-names-section">        	   
         	   <div class="workspace-section-header">
         	   	   <span class="workspace-section-title"><@orcid.msg 'workspace.Alsoknownas'/></span>
 	        	   <span ng-hide="showEdit == true" ng-click="openEdit()">		        	   	  
-	        	      <span class="glyphicon glyphicon-pencil edit-other-names edit-option pull-right" title="" id="other-names-show-edit-section"></span>
+	        	      <span class="glyphicon glyphicon-pencil edit-other-names edit-option pull-right" title="" id="open-edit-other-names"></span>
 	        	      <span ng-repeat="otherName in otherNamesForm.otherNames" ng-cloak>
 	        	         {{ $last?otherName.content:otherName.content + ", "}}
 	        	      </span>
@@ -87,7 +86,7 @@
 			             publicClick="setPrivacy('PUBLIC', $event)" 
 	                	     limitedClick="setPrivacy('LIMITED', $event)" 
 	                	     privateClick="setPrivacy('PRIVATE', $event)"
-	                	     elementId="$index"/>
+	                	     elementId="$index" />
                    </span>
         	   </div>
         	   

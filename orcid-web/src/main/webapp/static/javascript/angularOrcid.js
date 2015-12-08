@@ -2399,7 +2399,6 @@ orcidNgModule.controller('NameCtrl', ['$scope', '$compile',function NameCtrl($sc
         $scope.showEdit = false;
     };
 
-
     $scope.getNameForm = function(){
         $.ajax({
             url: getBaseUri() + '/account/nameForm.json',
@@ -2433,9 +2432,9 @@ orcidNgModule.controller('NameCtrl', ['$scope', '$compile',function NameCtrl($sc
         });
     };
 
-    $scope.setCreditNameVisibility = function(priv, $event) {
+    $scope.setNamesVisibility = function(priv, $event) {
         $event.preventDefault();
-        $scope.nameForm.creditNameVisibility.visibility = priv;
+        $scope.nameForm.namesVisibility.visibility = priv;
     };
 
     $scope.getNameForm();

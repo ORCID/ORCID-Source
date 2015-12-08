@@ -18,6 +18,14 @@ package org.orcid.integration.blackbox.api.personV2;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.hamcrest.core.AnyOf.anyOf;
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,21 +33,39 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.orcid.integration.api.helper.OauthHelper;
 import org.orcid.integration.api.memberV2.MemberV2ApiClientImpl;
 import org.orcid.integration.api.pub.PublicV2ApiClientImpl;
 import org.orcid.integration.blackbox.BlackBoxBase;
+import org.orcid.integration.blackbox.web.SigninTest;
 import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.jaxb.model.record_rc2.PersonalDetails;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.sun.jersey.api.client.ClientResponse;
 
+/**
+ * 
+ * @author Angel Montenegro
+ * 
+ */
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = { "classpath:test-publicV2-context.xml" })
 public class PersonalDetailsTest extends BlackBoxBase {
     protected static Map<String, String> accessTokens = new HashMap<String, String>();
 
+    private static int WAIT = 10;
+    
     @Value("${org.orcid.web.base.url:http://localhost:8080/orcid-web}")
     private String webBaseUrl;
     @Value("${org.orcid.web.testClient1.redirectUri}")
@@ -74,14 +100,212 @@ public class PersonalDetailsTest extends BlackBoxBase {
     @Resource
     private OauthHelper oauthHelper;
     
-    @Test
+    @SuppressWarnings("unchecked")
+    //@Test
     public void testGetWithPublicAPI() {
-        ClientResponse getAllResponse = publicV2ApiClient.viewResearcherUrlsXML(user1OrcidId);
-        assertNotNull(getAllResponse);
-        PersonalDetails personalDetails = getAllResponse.getEntity(PersonalDetails.class);
+        ClientResponse getPersonalDetailsResponse = publicV2ApiClient.viewPersonalDetailsXML(user1OrcidId);
+        assertNotNull(getPersonalDetailsResponse);
+        PersonalDetails personalDetails = getPersonalDetailsResponse.getEntity(PersonalDetails.class);
         assertNotNull(personalDetails);
+        //Check bio
         assertNotNull(personalDetails.getBiography());
-        //TODO
+        assertEquals("This is my bio", personalDetails.getBiography().getContent());
+        assertEquals(Visibility.PUBLIC, personalDetails.getBiography().getVisibility());
+        //Check names
+        assertNotNull(personalDetails.getName());
+        assertNotNull(personalDetails.getName().getGivenNames());
+        assertEquals("One", personalDetails.getName().getGivenNames().getContent());
+        assertNotNull(personalDetails.getName().getFamilyName());
+        assertEquals("User", personalDetails.getName().getFamilyName().getContent());
+        assertNotNull(personalDetails.getName().getCreditName());
+        assertEquals("Credit Name", personalDetails.getName().getCreditName().getContent());
+        assertEquals(Visibility.PUBLIC, personalDetails.getName().getVisibility());
+        //Check other names
+        assertNotNull(personalDetails.getOtherNames());
+        assertNotNull(personalDetails.getOtherNames().getOtherNames());
+        assertEquals(2, personalDetails.getOtherNames().getOtherNames().size());
+        assertThat(personalDetails.getOtherNames().getOtherNames().get(0).getContent(), anyOf(is("other-name-1"), is("other-name-2")));
+        assertThat(personalDetails.getOtherNames().getOtherNames().get(1).getContent(), anyOf(is("other-name-1"), is("other-name-2")));
+        assertEquals(Visibility.PUBLIC, personalDetails.getOtherNames().getOtherNames().get(0).getVisibility());
+        assertEquals(Visibility.PUBLIC, personalDetails.getOtherNames().getOtherNames().get(10).getVisibility());
+    }
+    
+    @Test
+    public void changeToLimitedAndCheckWithPublicAPI() {
+        webDriver = new FirefoxDriver();
+        webDriver.get(webBaseUrl + "/userStatus.json?logUserOut=true");
+        webDriver.get(webBaseUrl + "/signin");
+        SigninTest.signIn(webDriver, user1OrcidId, user1Password);
+        SigninTest.dismissVerifyEmailModal(webDriver);    
+        //Change names to limited
+        try {                                    
+            By openEditNames = By.xpath("//div[@id = 'names-section']//span[@id = 'open-edit-names']"); 
+            (new WebDriverWait(webDriver, WAIT)).until(ExpectedConditions.presenceOfElementLocated(openEditNames));            
+            WebElement openEditNamesElement = webDriver.findElement(openEditNames);
+            openEditNamesElement.click();
+            
+            By namesVisibility = By.xpath("//div[@id = 'names-section']//ul[@class='privacyToggle']/li[2]/a");
+            (new WebDriverWait(webDriver, WAIT)).until(ExpectedConditions.presenceOfElementLocated(namesVisibility));
+            WebElement namesVisibilityElement = webDriver.findElement(namesVisibility);
+            namesVisibilityElement.click();
+            
+            By saveButton = By.xpath("//div[@id = 'names-section']//ul[@class='workspace-section-toolbar']//li[1]//button");
+            (new WebDriverWait(webDriver, WAIT)).until(ExpectedConditions.presenceOfElementLocated(saveButton));
+            WebElement button = webDriver.findElement(saveButton);
+            button.click();
+        } catch (Exception e) {
+            System.out.println("Unable to find names-visibility-limited element");
+            e.printStackTrace();
+            throw e;
+        }
+        
+        ClientResponse getPersonalDetailsResponse = publicV2ApiClient.viewPersonalDetailsXML(user1OrcidId);
+        assertNotNull(getPersonalDetailsResponse);
+        PersonalDetails personalDetails = getPersonalDetailsResponse.getEntity(PersonalDetails.class);
+        assertNotNull(personalDetails);
+        assertNull(personalDetails.getName());
+        assertNotNull(personalDetails.getBiography());
+        assertEquals("This is my bio", personalDetails.getBiography().getContent());
+        assertNotNull(personalDetails.getOtherNames());
+        assertNotNull(personalDetails.getOtherNames().getOtherNames());
+        assertEquals(2, personalDetails.getOtherNames().getOtherNames().size());
+        assertThat(personalDetails.getOtherNames().getOtherNames().get(0).getContent(), anyOf(is("other-name-1"), is("other-name-2")));
+        assertThat(personalDetails.getOtherNames().getOtherNames().get(1).getContent(), anyOf(is("other-name-1"), is("other-name-2")));
+                
+        
+        //Change other names to limited
+        try {
+            By openEditOtherNames = By.xpath("//div[@id = 'other-names-section']//span[@id = 'open-edit-other-names']"); 
+            (new WebDriverWait(webDriver, WAIT)).until(ExpectedConditions.presenceOfElementLocated(openEditOtherNames));            
+            WebElement openEditOtherNamesElement = webDriver.findElement(openEditOtherNames);
+            openEditOtherNamesElement.click();
+            
+            By namesVisibility = By.xpath("//div[@id = 'other-names-section']//ul[@class='privacyToggle']/li[2]/a");
+            (new WebDriverWait(webDriver, WAIT)).until(ExpectedConditions.presenceOfElementLocated(namesVisibility));
+            WebElement namesVisibilityElement = webDriver.findElement(namesVisibility);
+            namesVisibilityElement.click();
+            
+            By saveButton = By.xpath("//div[@id = 'other-names-section']//ul[@class='workspace-section-toolbar']//li[2]//button");
+            (new WebDriverWait(webDriver, WAIT)).until(ExpectedConditions.presenceOfElementLocated(saveButton));
+            WebElement button = webDriver.findElement(saveButton);
+            button.click();
+        } catch (Exception e) {
+            System.out.println("Unable to find biography-visibility-limited element");
+            e.printStackTrace();
+            throw e;
+        }
+        
+        getPersonalDetailsResponse = publicV2ApiClient.viewPersonalDetailsXML(user1OrcidId);
+        assertNotNull(getPersonalDetailsResponse);
+        personalDetails = getPersonalDetailsResponse.getEntity(PersonalDetails.class);
+        assertNotNull(personalDetails);
+        assertNull(personalDetails.getName());
+        assertNotNull(personalDetails.getBiography());
+        assertEquals("This is my bio", personalDetails.getBiography().getContent());
+        assertNull(personalDetails.getOtherNames());        
+        
+        //Change bio to limited
+        try {
+            By bioOPrivacySelectorLimited = By.xpath("//div[@id = 'bio-section']//ul[@class = 'bio-edit']//li[2]////ul[@class='privacyToggle']/li[2]/a"); 
+            (new WebDriverWait(webDriver, WAIT)).until(ExpectedConditions.presenceOfElementLocated(bioOPrivacySelectorLimited));            
+            WebElement bioOPrivacySelectorLimitedElement = webDriver.findElement(bioOPrivacySelectorLimited);
+            bioOPrivacySelectorLimitedElement.click();                        
+        } catch (Exception e) {
+            System.out.println("Unable to find nother-names-visibility-limited element");
+            e.printStackTrace();
+            throw e;
+        }
+        
+        getPersonalDetailsResponse = publicV2ApiClient.viewPersonalDetailsXML(user1OrcidId);
+        assertNotNull(getPersonalDetailsResponse);
+        personalDetails = getPersonalDetailsResponse.getEntity(PersonalDetails.class);
+        assertNotNull(personalDetails);
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        ////////////////////////////
+        //Rollback to public again//
+        //////////////////////////
+        
+        //Change names to public
+        try {
+            By namesVisibility = By.id("names-visibility-public");
+            (new WebDriverWait(webDriver, WAIT)).until(ExpectedConditions.presenceOfElementLocated(namesVisibility));
+            WebElement namesVisibilityElement = webDriver.findElement(namesVisibility);
+            namesVisibilityElement.click();
+        } catch (Exception e) {
+            System.out.println("Unable to find names-visibility-public element");
+            e.printStackTrace();
+            throw e;
+        }
+        //Change other names to public
+        try {
+            By namesVisibility = By.id("other-names-visibility-public");
+            (new WebDriverWait(webDriver, WAIT)).until(ExpectedConditions.presenceOfElementLocated(namesVisibility));
+            WebElement namesVisibilityElement = webDriver.findElement(namesVisibility);
+            namesVisibilityElement.click();
+        } catch (Exception e) {
+            System.out.println("Unable to find other-names-visibility-public element");
+            e.printStackTrace();
+            throw e;
+        }
+        //Change bio to public
+        try {
+            By namesVisibility = By.id("biography-visibility-public");
+            (new WebDriverWait(webDriver, WAIT)).until(ExpectedConditions.presenceOfElementLocated(namesVisibility));
+            WebElement namesVisibilityElement = webDriver.findElement(namesVisibility);
+            namesVisibilityElement.click();
+        } catch (Exception e) {
+            System.out.println("Unable to find biography-visibility-public element");
+            e.printStackTrace();
+            throw e;
+        }
+        
+        //Test that the testGetWithPublicAPI test pass
+        testGetWithPublicAPI();
+    }
+    
+    //@Test
+    public void testGetWithMemberAPI() {
+        
     }
     
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

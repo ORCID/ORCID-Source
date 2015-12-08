@@ -45,8 +45,6 @@ import java.util.concurrent.TimeoutException;
 
 import javax.annotation.Resource;
 
-import net.sf.ehcache.Element;
-
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.adapter.Jaxb2JpaAdapter;
 import org.orcid.core.constants.DefaultPreferences;
@@ -105,9 +103,9 @@ import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.VisibilityType;
 import org.orcid.jaxb.model.message.WorkContributors;
 import org.orcid.jaxb.model.message.WorkExternalIdentifier;
+import org.orcid.jaxb.model.notification.amended.AmendedSection;
 import org.orcid.jaxb.model.notification.permission.Item;
 import org.orcid.jaxb.model.notification.permission.ItemType;
-import org.orcid.jaxb.model.notification.amended.AmendedSection;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.GivenPermissionToDao;
@@ -135,6 +133,8 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
+
+import net.sf.ehcache.Element;
 
 /**
  * The profile manager is responsible for passing onto the persistence layer
@@ -751,6 +751,14 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
 
         profileDao.updateNames(orcid, givenNames, familyName, creditName, creditNameVisibility);
     }
+        
+    public void updateNames(String orcid, org.orcid.jaxb.model.record_rc2.PersonalDetails personalDetails) {
+        String givenNames = personalDetails.getName().getGivenNames() != null ? personalDetails.getName().getGivenNames().getContent() : null;
+        String familyName = personalDetails.getName().getFamilyName() != null ? personalDetails.getName().getFamilyName().getContent() : null;
+        String creditName = personalDetails.getName().getCreditName() != null ? personalDetails.getName().getCreditName().getContent() : null;
+        Visibility namesVisibility = personalDetails.getName().getVisibility() != null ? Visibility.fromValue(personalDetails.getName().getVisibility().value()) : null;
+        profileDao.updateNames(orcid, givenNames, familyName, creditName, namesVisibility);
+    }            
 
     @Override
     @Transactional

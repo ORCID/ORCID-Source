@@ -26,6 +26,7 @@ import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
 import org.orcid.jaxb.model.message.Preferences;
 import org.orcid.jaxb.model.message.ScopePathType;
+import org.orcid.jaxb.model.record_rc2.PersonalDetails;
 
 /**
  * @author Will Simpson
@@ -269,6 +270,8 @@ public interface OrcidProfileManager extends OrcidProfileManagerReadOnly {
     OrcidWorks dedupeWorks(OrcidWorks orcidWorks);
 
     public void updateNames(OrcidProfile orcidProfile);
+    
+    public void updateNames(String orcid, PersonalDetails personalDetails);
 
     Date updateLastModifiedDate(String orcid);
 

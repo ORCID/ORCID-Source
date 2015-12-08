@@ -576,14 +576,14 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     @Override
     @Transactional
-    public void updateNames(String orcid, String givenNames, String familyName, String creditName, Visibility creditNameVisibility) {
+    public void updateNames(String orcid, String givenNames, String familyName, String creditName, Visibility namesVisibility) {
         Query updateQuery = entityManager
-                .createQuery("update ProfileEntity set lastModified = now(), family_name = :familyName, given_names = :givenNames, credit_name = :creditName, names_visibility=:creditNameVisibility where orcid = :orcid");
+                .createQuery("update ProfileEntity set lastModified = now(), family_name = :familyName, given_names = :givenNames, credit_name = :creditName, names_visibility=:namesVisibility where orcid = :orcid");
         updateQuery.setParameter("orcid", orcid);
         updateQuery.setParameter("givenNames", givenNames);
         updateQuery.setParameter("familyName", familyName);
         updateQuery.setParameter("creditName", creditName);
-        updateQuery.setParameter("creditNameVisibility", creditNameVisibility == null ? null : StringUtils.upperCase(creditNameVisibility.value()));
+        updateQuery.setParameter("namesVisibility", namesVisibility == null ? null : StringUtils.upperCase(namesVisibility.value()));
         updateQuery.executeUpdate();
     }
 

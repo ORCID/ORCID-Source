@@ -22,22 +22,22 @@
     <#if inDelegationMode><span class="delegation-mode-warning">${springMacroRequestContext.getMessage("delegate.managing_record")}</span></#if>
     
     <!-- Name -->    
-	<div ng-controller="NameCtrl" class="workspace-section">
+	<div ng-controller="NameCtrl" class="workspace-section" id="names-section">
 		<div ng-show="showEdit == false" ng-click="toggleEdit()">
 			<div class="row">
 				<div class="col-md-9 col-sm-9 col-xs-10">
 					<h2 class="full-name">
 						<span ng-hide="nameForm != null 
-						    && (nameForm.creditName == null || nameForm.creditNameVisibility.visibility != 'PUBLIC')" ng-bind="nameForm.creditName.value" ng-cloak>
+						    && (nameForm.creditName == null || nameForm.namesVisibility.visibility != 'PUBLIC')" ng-bind="nameForm.creditName.value" ng-cloak>
 						</span>
 						<span ng-show="nameForm != null 
-						    && (nameForm.creditName == null || nameForm.creditNameVisibility.visibility != 'PUBLIC')" ng-cloak>
+						    && (nameForm.creditName == null || nameForm.namesVisibility.visibility != 'PUBLIC')" ng-cloak>
 						    {{nameForm.givenNames.value}} {{nameForm.familyName.value}}
 						</span>						 
 					</h2>
 				</div>
 				<div class="col-md-3 col-sm-3 col-xs-2">
-					<span class="glyphicon glyphicon-pencil edit-name edit-option right" title="" ng-hide="showEdit == true"></span>
+					<span class="glyphicon glyphicon-pencil edit-name edit-option right" title="" ng-hide="showEdit == true" id="open-edit-names"></span>
 				</div>
 			</div>
 		</div>
@@ -51,13 +51,13 @@
 		   <label for="lastName">${springMacroRequestContext.getMessage("manage_bio_settings.labellastname")}</label>
 		   <input type="text" ng-model="nameForm.familyName.value" ng-enter="setNameForm()" class="full-width-input"></input>
 		   <label for="creditName">${springMacroRequestContext.getMessage("manage_bio_settings.labelpublishedname")}</label>		   		        	   
-		   <input type="text" ng-model="nameForm.creditName.value" ng-enter="setNameForm()" class="full-width-input"></input>
-		   <@orcid.privacyToggle  angularModel="nameForm.creditNameVisibility.visibility"
+		   <input type="text" ng-model="nameForm.creditName.value" ng-enter="setNameForm()" class="full-width-input"></input>		   
+		   <@orcid.privacyToggle  angularModel="nameForm.namesVisibility.visibility"
 				             questionClick="toggleClickPrivacyHelp()"
 				             clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
-				             publicClick="setCreditNameVisibility('PUBLIC', $event)" 
-	                 	     limitedClick="setCreditNameVisibility('LIMITED', $event)" 
-	                 	     privateClick="setCreditNameVisibility('PRIVATE', $event)" />
+				             publicClick="setNamesVisibility('PUBLIC', $event)" 
+	                 	     limitedClick="setNamesVisibility('LIMITED', $event)" 
+	                 	     privateClick="setNamesVisibility('PRIVATE', $event)" />
 		   <ul class="workspace-section-toolbar">
  				<li class="pull-right">
 		   			<button class="btn btn-primary" ng-click="setNameForm()"><@spring.message "freemarker.btnsavechanges"/></button>
@@ -68,10 +68,6 @@
 		   	</ul>
 		</div>
 	</div>
-	
-	
-	<!--  -->
-	
 	<div class="oid">
 		<div class="id-banner-header">
 			<span><@orcid.msg 'common.orcid_id' /></span>
