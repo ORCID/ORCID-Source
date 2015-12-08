@@ -740,18 +740,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
     }
 
     @Override
-    @Transactional
-    public void updateNames(OrcidProfile orcidProfile) {
-        String orcid = orcidProfile.getOrcidIdentifier().getPath();
-        PersonalDetails pd = orcidProfile.getOrcidBio().getPersonalDetails();
-        String givenNames = pd.getGivenNames() != null ? pd.getGivenNames().getContent() : null;
-        String familyName = pd.getFamilyName() != null ? pd.getFamilyName().getContent() : null;
-        String creditName = pd.getCreditName() != null ? pd.getCreditName().getContent() : null;
-        Visibility creditNameVisibility = pd.getCreditName() != null ? pd.getCreditName().getVisibility() : null;
-
-        profileDao.updateNames(orcid, givenNames, familyName, creditName, creditNameVisibility);
-    }
-        
+    @Transactional    
     public void updateNames(String orcid, org.orcid.jaxb.model.record_rc2.PersonalDetails personalDetails) {
         String givenNames = personalDetails.getName().getGivenNames() != null ? personalDetails.getName().getGivenNames().getContent() : null;
         String familyName = personalDetails.getName().getFamilyName() != null ? personalDetails.getName().getFamilyName().getContent() : null;
