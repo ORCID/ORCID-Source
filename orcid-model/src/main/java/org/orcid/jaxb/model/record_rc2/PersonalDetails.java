@@ -25,6 +25,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.orcid.jaxb.model.record_rc1.RecordUtil;
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "name", "otherNames", "biography" })
 @XmlRootElement(name = "personal-details", namespace = "http://www.orcid.org/ns/personal-details")
@@ -116,5 +118,10 @@ public class PersonalDetails implements Serializable {
             return false;
         }
         return true;
+    }
+    
+    @Override
+    public String toString() {
+        return RecordUtil.convertToString(this);
     }
 }
