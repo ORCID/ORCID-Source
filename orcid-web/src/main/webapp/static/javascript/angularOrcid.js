@@ -2038,10 +2038,15 @@ orcidNgModule.controller('SecurityQuestionEditCtrl', ['$scope', '$compile', func
 
     $scope.checkCredentials = function() {
         $scope.password=null;
-        $.colorbox({
-            html: $compile($('#check-password-modal').html())($scope)
-        });
-        $.colorbox.resize();
+        if(orcidVar.isPasswordConfirmationRequired){
+            $.colorbox({
+                html: $compile($('#check-password-modal').html())($scope)
+            });
+            $.colorbox.resize();
+        }
+        else{
+            $scope.submitModal();
+        }
     };
 
     $scope.submitModal = function() {
@@ -2195,10 +2200,15 @@ orcidNgModule.controller('EmailEditCtrl', ['$scope', '$compile', 'emailSrvc' ,fu
 
     $scope.checkCredentials = function() {
         $scope.password=null;
-        $.colorbox({
-            html: $compile($('#check-password-modal').html())($scope)
-        });
-        $.colorbox.resize();
+        if(orcidVar.isPasswordConfirmationRequired){
+            $.colorbox({
+                html: $compile($('#check-password-modal').html())($scope)
+            });
+            $.colorbox.resize();
+        }
+        else{
+            $scope.submitModal();
+        }
     };
     
     $scope.showTooltip = function(el){
@@ -5838,6 +5848,7 @@ orcidNgModule.controller('DelegatesCtrl',['$scope', '$compile', function Delegat
         column: 'delegateSummary.creditName.content',
         descending: false
     };
+    $scope.isPasswordConfirmationRequired = orcidVar.isPasswordConfirmationRequired;
 
     $scope.changeSorting = function(column) {
         var sort = $scope.sort;
@@ -6174,6 +6185,7 @@ orcidNgModule.controller('SocialCtrl',['$scope', '$compile', function SocialCtrl
         column: 'providerUserId',
         descending: false
     };
+    $scope.isPasswordConfirmationRequired = orcidVar.isPasswordConfirmationRequired;
 
     $scope.changeSorting = function(column) {
         var sort = $scope.sort;

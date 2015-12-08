@@ -39,6 +39,7 @@ import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidSearchManager;
+import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.OrcidSocialManager;
 import org.orcid.core.manager.OtherNameManager;
 import org.orcid.core.manager.PersonalDetailsManager;
@@ -167,7 +168,7 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     @Resource
     private EmailManager emailManager;
-    
+
     @Resource
     private OrcidOauth2TokenDetailService orcidOauth2TokenService;
 
@@ -176,6 +177,9 @@ public class ManageProfileController extends BaseWorkspaceController {
     
     @Resource
     private PersonalDetailsManager personalDetailsManager;
+
+    @Resource
+    OrcidSecurityManager orcidSecurityManager;
 
     public EncryptionManager getEncryptionManager() {
         return encryptionManager;
@@ -275,7 +279,8 @@ public class ManageProfileController extends BaseWorkspaceController {
     public @ResponseBody ManageDelegate addDelegate(@RequestBody ManageDelegate addDelegate) {
         // Check password
         String password = addDelegate.getPassword();
-        if (StringUtils.isBlank(password) || !encryptionManager.hashMatches(password, getEffectiveProfile().getPassword())) {
+        if (orcidSecurityManager.isPasswordConfirmationRequired()
+                && (StringUtils.isBlank(password) || !encryptionManager.hashMatches(password, getEffectiveProfile().getPassword()))) {
             addDelegate.getErrors().add(getMessage("check_password_modal.incorrect_password"));
             return addDelegate;
         }
@@ -322,7 +327,8 @@ public class ManageProfileController extends BaseWorkspaceController {
     public @ResponseBody ManageDelegate revokeDelegate(@RequestBody ManageDelegate manageDelegate) {
         // Check password
         String password = manageDelegate.getPassword();
-        if (StringUtils.isBlank(password) || !encryptionManager.hashMatches(password, getEffectiveProfile().getPassword())) {
+        if (orcidSecurityManager.isPasswordConfirmationRequired()
+                && (StringUtils.isBlank(password) || !encryptionManager.hashMatches(password, getEffectiveProfile().getPassword()))) {
             manageDelegate.getErrors().add(getMessage("check_password_modal.incorrect_password"));
             return manageDelegate;
         }
@@ -331,27 +337,20 @@ public class ManageProfileController extends BaseWorkspaceController {
         return manageDelegate;
     }
 
-    @RequestMapping(value = "/revoke-delegate-from-summary-view", method = RequestMethod.GET)
-    public ModelAndView revokeDelegateFromSummaryView(@RequestParam("orcid") String receiverOrcid) {
-        String giverOrcid = getCurrentUserOrcid();
-        orcidProfileManager.revokeDelegate(giverOrcid, receiverOrcid);
-        ModelAndView mav = new ModelAndView("redirect:/account/view-account-settings");
-        return mav;
-    }
-    
     @RequestMapping(value = "/socialAccounts.json", method = RequestMethod.GET)
     public @ResponseBody List<UserconnectionEntity> getSocialAccountsJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
         String orcid = getCurrentUserOrcid();
         List<UserconnectionEntity> userConnectionEntities = userConnectionDao.findByOrcid(orcid);
         return userConnectionEntities;
     }
-    
+
     @RequestMapping(value = "/revokeSocialAccount.json", method = RequestMethod.POST)
     public @ResponseBody ManageSocialAccount revokeSocialAccount(@RequestBody ManageSocialAccount manageSocialAccount) {
         // Check password
         String password = manageSocialAccount.getPassword();
-        if (StringUtils.isBlank(password) || !encryptionManager.hashMatches(password, getEffectiveProfile().getPassword())) {
-        	manageSocialAccount.getErrors().add(getMessage("check_password_modal.incorrect_password"));
+        if (orcidSecurityManager.isPasswordConfirmationRequired()
+                && (StringUtils.isBlank(password) || !encryptionManager.hashMatches(password, getEffectiveProfile().getPassword()))) {
+            manageSocialAccount.getErrors().add(getMessage("check_password_modal.incorrect_password"));
             return manageSocialAccount;
         }
         userConnectionDao.remove(manageSocialAccount.getIdToManage());
@@ -364,14 +363,6 @@ public class ManageProfileController extends BaseWorkspaceController {
         String userOrcid = getCurrentUserOrcid();
         orcidProfileManager.revokeApplication(userOrcid, applicationOrcid, Arrays.asList(scopePaths));
         return true;
-    }
-
-    @RequestMapping(value = "/revoke-application-from-summary-view", method = RequestMethod.GET)
-    public ModelAndView revokeApplicationFromSummaryView(@RequestParam("applicationOrcid") String applicationOrcid, @RequestParam("scopePaths") String[] scopePaths) {
-        String userOrcid = getCurrentUserOrcid();
-        orcidProfileManager.revokeApplication(userOrcid, applicationOrcid, ScopePathType.getScopesFromStrings(Arrays.asList(scopePaths)));
-        ModelAndView mav = new ModelAndView("redirect:/account/view-account-settings");
-        return mav;
     }
 
     @RequestMapping(value = "/admin-switch-user", method = RequestMethod.GET)
@@ -516,7 +507,8 @@ public class ManageProfileController extends BaseWorkspaceController {
         if (securityQuestion.getSecurityQuestionId() != 0 && (securityQuestion.getSecurityAnswer() == null || securityQuestion.getSecurityAnswer().trim() == ""))
             errors.add(getMessage("manage.pleaseProvideAnAnswer"));
 
-        if (securityQuestion.getPassword() == null || !encryptionManager.hashMatches(securityQuestion.getPassword(), getEffectiveProfile().getPassword())) {
+        if (orcidSecurityManager.isPasswordConfirmationRequired()
+                && (securityQuestion.getPassword() == null || !encryptionManager.hashMatches(securityQuestion.getPassword(), getEffectiveProfile().getPassword()))) {
             errors.add(getMessage("check_password_modal.incorrect_password"));
         }
 
@@ -547,7 +539,7 @@ public class ManageProfileController extends BaseWorkspaceController {
         profile.getOrcidInternal().getPreferences();
         return profile.getOrcidInternal().getPreferences() != null ? profile.getOrcidInternal().getPreferences() : new Preferences();
     }
-    
+
     @RequestMapping(value = "/preferences.json", method = RequestMethod.POST)
     public @ResponseBody Preferences setDefaultPreference(HttpServletRequest request, @RequestBody Preferences preferences) {
         orcidProfileManager.updatePreferences(getCurrentUserOrcid(), preferences);
@@ -683,7 +675,8 @@ public class ManageProfileController extends BaseWorkspaceController {
     public @ResponseBody org.orcid.pojo.Email addEmailsJson(HttpServletRequest request, @RequestBody org.orcid.pojo.AddEmail email) {
         List<String> errors = new ArrayList<String>();
         // Check password
-        if (email.getPassword() == null || !encryptionManager.hashMatches(email.getPassword(), getEffectiveProfile().getPassword())) {
+        if (orcidSecurityManager.isPasswordConfirmationRequired()
+                && (email.getPassword() == null || !encryptionManager.hashMatches(email.getPassword(), getEffectiveProfile().getPassword()))) {
             errors.add(getMessage("check_password_modal.incorrect_password"));
         }
 
@@ -838,7 +831,7 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     @RequestMapping(value = "/countryForm.json", method = RequestMethod.POST)
     public @ResponseBody CountryForm setProfileCountryJson(HttpServletRequest request, @RequestBody CountryForm countryForm) throws NoSuchRequestHandlingMethodException {
-    	OrcidProfile currentProfile = getEffectiveProfile();
+        OrcidProfile currentProfile = getEffectiveProfile();
         countryForm.populateProfile(currentProfile);
         // only update entity attributes
         orcidProfileManager.updateCountry(currentProfile);
@@ -1093,13 +1086,13 @@ public class ManageProfileController extends BaseWorkspaceController {
 
         return mav;
     }
-    
+
     @RequestMapping(value = { "/get-trusted-orgs" }, method = RequestMethod.GET)
     public @ResponseBody List<ApplicationSummary> getTrustedOrgs() {
-    	String orcid = getCurrentUserOrcid();
-    	List<OrcidOauth2TokenDetail> tokenDetails = orcidOauth2TokenService.findByUserName(orcid);
-    	List<ApplicationSummary> trustedOrgsList = profileEntityManager.getApplications(tokenDetails);
-    	return trustedOrgsList;
+        String orcid = getCurrentUserOrcid();
+        List<OrcidOauth2TokenDetail> tokenDetails = orcidOauth2TokenService.findByUserName(orcid);
+        List<ApplicationSummary> trustedOrgsList = profileEntityManager.getApplications(tokenDetails);
+        return trustedOrgsList;
     }
 
     /**

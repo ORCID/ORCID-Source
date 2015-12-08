@@ -38,8 +38,10 @@ public interface OrcidSecurityManager {
     void checkVisibility(OtherName otherName);
     
     void checkSource(SourceEntity existingSource);
-    
+
     boolean isAdmin();
-    
+
+    boolean isPasswordConfirmationRequired();
+
     String getClientIdFromAPIRequest();
 }

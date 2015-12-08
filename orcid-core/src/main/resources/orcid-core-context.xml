@@ -80,6 +80,7 @@
 			value="${org.orcid.core.iterationCountForInternalEncryption:1111}" />
 		<property name="internalEncryptor" ref="internalEncryptor" />
 		<property name="externalEncryptor" ref="externalEncryptor" />
+		<property name="legacyExternalEncryptor" ref="legacyExternalEncryptor" />
 		<property name="passwordEncryptor">
 			<bean class="org.jasypt.digest.PooledStringDigester">
 				<property name="config">

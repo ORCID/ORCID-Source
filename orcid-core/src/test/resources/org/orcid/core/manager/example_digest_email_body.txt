@@ -13,7 +13,7 @@ Works (2)
     Work 1 (doi: 123446/67654)
     Work 2 (doi: http://dx.doi.org/123446/67655)
 
-ADD NOW: http://testserver.orcid.org/inbox/encrypted/QWJaZnJrUXVzUGc9/action
+ADD NOW: http://testserver.orcid.org/inbox/encrypted/VHlKVHczQ1J5RHhMWlpVYUJsQjkrM2t2dGtFWHpqVWp4SzFGVmJZTDNvcz0/action
 MORE INFO: http://testserver.orcid.org/inbox#1
 
 
@@ -21,7 +21,7 @@ Super Institution 1: Request to add items
 Employment (1)
     Employment 1 (doi: 12345/abc)
 
-ADD NOW: http://testserver.orcid.org/inbox/encrypted/elV4OGVicFBnNVU9/action
+ADD NOW: http://testserver.orcid.org/inbox/encrypted/QmRERUswRkR6Zkw0M2tDOUEvY3hMMHp3akRUM2NoMTRsQVA1R1BCQ2xoWT0/action
 MORE INFO: http://testserver.orcid.org/inbox#2
 
 
@@ -33,7 +33,7 @@ Works (2)
     Work 3 (doi: 12345/def)
     Work 4 (doi: 12345/ghi)
 
-ADD NOW: http://testserver.orcid.org/inbox/encrypted/RWZKTTdhY3ArM3c9/action
+ADD NOW: http://testserver.orcid.org/inbox/encrypted/cmMzTGdmRDR1R24vSDlEYjYwN0w2REZxNEh5WTJaMXBaOHd2V0o0NnJtQT0/action
 MORE INFO: http://testserver.orcid.org/inbox#3
 
 
