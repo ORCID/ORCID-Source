@@ -16,22 +16,19 @@
  */
 package org.orcid.integration.blackbox.api.personV2;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.hamcrest.core.AnyOf.anyOf;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.codehaus.jettison.json.JSONException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
@@ -45,9 +42,8 @@ import org.orcid.integration.api.pub.PublicV2ApiClientImpl;
 import org.orcid.integration.blackbox.BlackBoxBase;
 import org.orcid.integration.blackbox.web.SigninTest;
 import org.orcid.jaxb.model.common.Visibility;
+import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record_rc2.PersonalDetails;
-import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
-import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -101,7 +97,7 @@ public class PersonalDetailsTest extends BlackBoxBase {
     private OauthHelper oauthHelper;
     
     @SuppressWarnings("unchecked")
-    //@Test
+    @Test
     public void testGetWithPublicAPI() {
         ClientResponse getPersonalDetailsResponse = publicV2ApiClient.viewPersonalDetailsXML(user1OrcidId);
         assertNotNull(getPersonalDetailsResponse);
@@ -127,37 +123,19 @@ public class PersonalDetailsTest extends BlackBoxBase {
         assertThat(personalDetails.getOtherNames().getOtherNames().get(0).getContent(), anyOf(is("other-name-1"), is("other-name-2")));
         assertThat(personalDetails.getOtherNames().getOtherNames().get(1).getContent(), anyOf(is("other-name-1"), is("other-name-2")));
         assertEquals(Visibility.PUBLIC, personalDetails.getOtherNames().getOtherNames().get(0).getVisibility());
-        assertEquals(Visibility.PUBLIC, personalDetails.getOtherNames().getOtherNames().get(10).getVisibility());
+        assertEquals(Visibility.PUBLIC, personalDetails.getOtherNames().getOtherNames().get(1).getVisibility());
     }
     
+    @SuppressWarnings("unchecked")
     @Test
-    public void changeToLimitedAndCheckWithPublicAPI() {
+    public void changeToLimitedAndCheckWithPublicAPI() throws Exception {
         webDriver = new FirefoxDriver();
         webDriver.get(webBaseUrl + "/userStatus.json?logUserOut=true");
         webDriver.get(webBaseUrl + "/signin");
         SigninTest.signIn(webDriver, user1OrcidId, user1Password);
         SigninTest.dismissVerifyEmailModal(webDriver);    
         //Change names to limited
-        try {                                    
-            By openEditNames = By.xpath("//div[@id = 'names-section']//span[@id = 'open-edit-names']"); 
-            (new WebDriverWait(webDriver, WAIT)).until(ExpectedConditions.presenceOfElementLocated(openEditNames));            
-            WebElement openEditNamesElement = webDriver.findElement(openEditNames);
-            openEditNamesElement.click();
-            
-            By namesVisibility = By.xpath("//div[@id = 'names-section']//ul[@class='privacyToggle']/li[2]/a");
-            (new WebDriverWait(webDriver, WAIT)).until(ExpectedConditions.presenceOfElementLocated(namesVisibility));
-            WebElement namesVisibilityElement = webDriver.findElement(namesVisibility);
-            namesVisibilityElement.click();
-            
-            By saveButton = By.xpath("//div[@id = 'names-section']//ul[@class='workspace-section-toolbar']//li[1]//button");
-            (new WebDriverWait(webDriver, WAIT)).until(ExpectedConditions.presenceOfElementLocated(saveButton));
-            WebElement button = webDriver.findElement(saveButton);
-            button.click();
-        } catch (Exception e) {
-            System.out.println("Unable to find names-visibility-limited element");
-            e.printStackTrace();
-            throw e;
-        }
+        changeNamesVisibility(Visibility.LIMITED);
         
         ClientResponse getPersonalDetailsResponse = publicV2ApiClient.viewPersonalDetailsXML(user1OrcidId);
         assertNotNull(getPersonalDetailsResponse);
@@ -171,29 +149,9 @@ public class PersonalDetailsTest extends BlackBoxBase {
         assertEquals(2, personalDetails.getOtherNames().getOtherNames().size());
         assertThat(personalDetails.getOtherNames().getOtherNames().get(0).getContent(), anyOf(is("other-name-1"), is("other-name-2")));
         assertThat(personalDetails.getOtherNames().getOtherNames().get(1).getContent(), anyOf(is("other-name-1"), is("other-name-2")));
-                
-        
+                        
         //Change other names to limited
-        try {
-            By openEditOtherNames = By.xpath("//div[@id = 'other-names-section']//span[@id = 'open-edit-other-names']"); 
-            (new WebDriverWait(webDriver, WAIT)).until(ExpectedConditions.presenceOfElementLocated(openEditOtherNames));            
-            WebElement openEditOtherNamesElement = webDriver.findElement(openEditOtherNames);
-            openEditOtherNamesElement.click();
-            
-            By namesVisibility = By.xpath("//div[@id = 'other-names-section']//ul[@class='privacyToggle']/li[2]/a");
-            (new WebDriverWait(webDriver, WAIT)).until(ExpectedConditions.presenceOfElementLocated(namesVisibility));
-            WebElement namesVisibilityElement = webDriver.findElement(namesVisibility);
-            namesVisibilityElement.click();
-            
-            By saveButton = By.xpath("//div[@id = 'other-names-section']//ul[@class='workspace-section-toolbar']//li[2]//button");
-            (new WebDriverWait(webDriver, WAIT)).until(ExpectedConditions.presenceOfElementLocated(saveButton));
-            WebElement button = webDriver.findElement(saveButton);
-            button.click();
-        } catch (Exception e) {
-            System.out.println("Unable to find biography-visibility-limited element");
-            e.printStackTrace();
-            throw e;
-        }
+        changeOtherNamesVisibility(Visibility.LIMITED);
         
         getPersonalDetailsResponse = publicV2ApiClient.viewPersonalDetailsXML(user1OrcidId);
         assertNotNull(getPersonalDetailsResponse);
@@ -205,107 +163,209 @@ public class PersonalDetailsTest extends BlackBoxBase {
         assertNull(personalDetails.getOtherNames());        
         
         //Change bio to limited
-        try {
-            By bioOPrivacySelectorLimited = By.xpath("//div[@id = 'bio-section']//ul[@class = 'bio-edit']//li[2]////ul[@class='privacyToggle']/li[2]/a"); 
-            (new WebDriverWait(webDriver, WAIT)).until(ExpectedConditions.presenceOfElementLocated(bioOPrivacySelectorLimited));            
-            WebElement bioOPrivacySelectorLimitedElement = webDriver.findElement(bioOPrivacySelectorLimited);
-            bioOPrivacySelectorLimitedElement.click();                        
-        } catch (Exception e) {
-            System.out.println("Unable to find nother-names-visibility-limited element");
-            e.printStackTrace();
-            throw e;
-        }
+        changeBioVisibility(Visibility.LIMITED);
         
         getPersonalDetailsResponse = publicV2ApiClient.viewPersonalDetailsXML(user1OrcidId);
         assertNotNull(getPersonalDetailsResponse);
         personalDetails = getPersonalDetailsResponse.getEntity(PersonalDetails.class);
         assertNotNull(personalDetails);
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
+        assertNull(personalDetails.getBiography());
+        assertNull(personalDetails.getName());
+        assertNull(personalDetails.getOtherNames());
         
         ////////////////////////////
         //Rollback to public again//
-        //////////////////////////
-        
-        //Change names to public
-        try {
-            By namesVisibility = By.id("names-visibility-public");
-            (new WebDriverWait(webDriver, WAIT)).until(ExpectedConditions.presenceOfElementLocated(namesVisibility));
-            WebElement namesVisibilityElement = webDriver.findElement(namesVisibility);
-            namesVisibilityElement.click();
-        } catch (Exception e) {
-            System.out.println("Unable to find names-visibility-public element");
-            e.printStackTrace();
-            throw e;
-        }
-        //Change other names to public
-        try {
-            By namesVisibility = By.id("other-names-visibility-public");
-            (new WebDriverWait(webDriver, WAIT)).until(ExpectedConditions.presenceOfElementLocated(namesVisibility));
-            WebElement namesVisibilityElement = webDriver.findElement(namesVisibility);
-            namesVisibilityElement.click();
-        } catch (Exception e) {
-            System.out.println("Unable to find other-names-visibility-public element");
-            e.printStackTrace();
-            throw e;
-        }
-        //Change bio to public
-        try {
-            By namesVisibility = By.id("biography-visibility-public");
-            (new WebDriverWait(webDriver, WAIT)).until(ExpectedConditions.presenceOfElementLocated(namesVisibility));
-            WebElement namesVisibilityElement = webDriver.findElement(namesVisibility);
-            namesVisibilityElement.click();
-        } catch (Exception e) {
-            System.out.println("Unable to find biography-visibility-public element");
-            e.printStackTrace();
-            throw e;
-        }
+        ////////////////////////////                
+        changeNamesVisibility(Visibility.PUBLIC);
+        changeOtherNamesVisibility(Visibility.PUBLIC);
+        changeBioVisibility(Visibility.PUBLIC);
         
         //Test that the testGetWithPublicAPI test pass
         testGetWithPublicAPI();
+        webDriver.close();
     }
     
-    //@Test
-    public void testGetWithMemberAPI() {
+    @SuppressWarnings("unchecked")
+    @Test
+    public void testGetWithMemberAPI() throws Exception {
+        String accessToken = getAccessToken(this.client1ClientId, this.client1ClientSecret, this.client1RedirectUri);
+        assertNotNull(accessToken);
+        ClientResponse getPersonalDetailsResponse = memberV2ApiClient.viewPersonalDetailsXML(this.user1OrcidId, accessToken);        
+        assertNotNull(getPersonalDetailsResponse);
+        PersonalDetails personalDetails = getPersonalDetailsResponse.getEntity(PersonalDetails.class);
+        assertNotNull(personalDetails);        
+        //Check bio
+        assertNotNull(personalDetails.getBiography());
+        assertEquals("This is my bio", personalDetails.getBiography().getContent());
+        assertEquals(Visibility.PUBLIC.value(), personalDetails.getBiography().getVisibility().value());
+        //Check other names
+        assertNotNull(personalDetails.getOtherNames());
+        assertNotNull(personalDetails.getOtherNames().getOtherNames());
+        assertEquals(2, personalDetails.getOtherNames().getOtherNames().size());
+        assertThat(personalDetails.getOtherNames().getOtherNames().get(0).getContent(), anyOf(is("other-name-1"), is("other-name-2")));
+        assertThat(personalDetails.getOtherNames().getOtherNames().get(1).getContent(), anyOf(is("other-name-1"), is("other-name-2")));
+        assertEquals(Visibility.PUBLIC.value(), personalDetails.getOtherNames().getOtherNames().get(0).getVisibility().value());
+        assertEquals(Visibility.PUBLIC.value(), personalDetails.getOtherNames().getOtherNames().get(1).getVisibility().value());
+        //Check names
+        assertNotNull(personalDetails.getName());
+        assertNotNull(personalDetails.getName().getGivenNames());
+        assertEquals("One", personalDetails.getName().getGivenNames().getContent());
+        assertNotNull(personalDetails.getName().getFamilyName());
+        assertEquals("User", personalDetails.getName().getFamilyName().getContent());
+        assertNotNull(personalDetails.getName().getCreditName());
+        assertEquals("Credit Name", personalDetails.getName().getCreditName().getContent());
+        assertEquals(Visibility.PUBLIC, personalDetails.getName().getVisibility());
         
+        webDriver = new FirefoxDriver();
+        webDriver.get(webBaseUrl + "/userStatus.json?logUserOut=true");
+        webDriver.get(webBaseUrl + "/signin");
+        SigninTest.signIn(webDriver, user1OrcidId, user1Password);
+        SigninTest.dismissVerifyEmailModal(webDriver);
+        
+        //Change all to LIMITED
+        changeNamesVisibility(Visibility.LIMITED);
+        changeOtherNamesVisibility(Visibility.LIMITED);
+        changeBioVisibility(Visibility.LIMITED);
+        
+        //Verify they are still visible
+        getPersonalDetailsResponse = memberV2ApiClient.viewPersonalDetailsXML(this.user1OrcidId, accessToken);        
+        assertNotNull(getPersonalDetailsResponse);        
+        personalDetails = getPersonalDetailsResponse.getEntity(PersonalDetails.class);
+        assertNotNull(personalDetails);        
+        //Check bio
+        assertNotNull(personalDetails.getBiography());
+        assertEquals("This is my bio", personalDetails.getBiography().getContent());
+        assertEquals(Visibility.LIMITED.value(), personalDetails.getBiography().getVisibility().value());
+        //Check other names
+        assertNotNull(personalDetails.getOtherNames());
+        assertNotNull(personalDetails.getOtherNames().getOtherNames());
+        assertEquals(2, personalDetails.getOtherNames().getOtherNames().size());
+        assertThat(personalDetails.getOtherNames().getOtherNames().get(0).getContent(), anyOf(is("other-name-1"), is("other-name-2")));
+        assertThat(personalDetails.getOtherNames().getOtherNames().get(1).getContent(), anyOf(is("other-name-1"), is("other-name-2")));
+        assertEquals(Visibility.LIMITED.value(), personalDetails.getOtherNames().getOtherNames().get(0).getVisibility().value());
+        assertEquals(Visibility.LIMITED.value(), personalDetails.getOtherNames().getOtherNames().get(1).getVisibility().value());
+        //Check names
+        assertNotNull(personalDetails.getName());
+        assertNotNull(personalDetails.getName().getGivenNames());
+        assertEquals("One", personalDetails.getName().getGivenNames().getContent());
+        assertNotNull(personalDetails.getName().getFamilyName());
+        assertEquals("User", personalDetails.getName().getFamilyName().getContent());
+        assertNotNull(personalDetails.getName().getCreditName());
+        assertEquals("Credit Name", personalDetails.getName().getCreditName().getContent());
+        assertEquals(Visibility.LIMITED, personalDetails.getName().getVisibility());
+        
+        //Change all to PRIVATE
+        changeNamesVisibility(Visibility.PRIVATE);
+        changeOtherNamesVisibility(Visibility.PRIVATE);
+        changeBioVisibility(Visibility.PRIVATE);
+        
+        //Check nothing is visible
+        getPersonalDetailsResponse = memberV2ApiClient.viewPersonalDetailsXML(this.user1OrcidId, accessToken);        
+        assertNotNull(getPersonalDetailsResponse);
+        personalDetails = getPersonalDetailsResponse.getEntity(PersonalDetails.class);
+        assertNotNull(personalDetails);
+        assertNull(personalDetails.getBiography());
+        assertNull(personalDetails.getName());
+        assertNull(personalDetails.getOtherNames());
+        
+        //Change all to PUBLIC
+        changeNamesVisibility(Visibility.PUBLIC);
+        changeOtherNamesVisibility(Visibility.PUBLIC);
+        changeBioVisibility(Visibility.PUBLIC);
+                
+        webDriver.close();
     }
     
+    private void changeNamesVisibility(Visibility changeTo) throws Exception {
+        int privacyIndex = getPrivacyIndex(changeTo);
+        
+        try {                                    
+            By openEditNames = By.xpath("//div[@id = 'names-section']//span[@id = 'open-edit-names']"); 
+            (new WebDriverWait(webDriver, WAIT)).until(ExpectedConditions.presenceOfElementLocated(openEditNames));            
+            WebElement openEditNamesElement = webDriver.findElement(openEditNames);
+            openEditNamesElement.click();
+            
+            By namesVisibility = By.xpath("//div[@id = 'names-section']//ul[@class='privacyToggle']/li[" + privacyIndex + "]/a");
+            (new WebDriverWait(webDriver, WAIT)).until(ExpectedConditions.presenceOfElementLocated(namesVisibility));
+            WebElement namesVisibilityElement = webDriver.findElement(namesVisibility);
+            namesVisibilityElement.click();
+            
+            By saveButton = By.xpath("//div[@id = 'names-section']//ul[@class='workspace-section-toolbar']//li[1]//button");
+            (new WebDriverWait(webDriver, WAIT)).until(ExpectedConditions.presenceOfElementLocated(saveButton));
+            WebElement button = webDriver.findElement(saveButton);
+            button.click();
+            Thread.sleep(1000);
+        } catch (Exception e) {
+            System.out.println("Unable to find names-visibility-limited element");
+            e.printStackTrace();
+            throw e;
+        }
+    }
+    
+    private void changeOtherNamesVisibility(Visibility changeTo) throws Exception {
+        int privacyIndex = getPrivacyIndex(changeTo);
+        
+        try {
+            By openEditOtherNames = By.xpath("//div[@id = 'other-names-section']//span[@id = 'open-edit-other-names']"); 
+            (new WebDriverWait(webDriver, WAIT)).until(ExpectedConditions.presenceOfElementLocated(openEditOtherNames));            
+            WebElement openEditOtherNamesElement = webDriver.findElement(openEditOtherNames);
+            openEditOtherNamesElement.click();
+            
+            By namesVisibility = By.xpath("//div[@id = 'other-names-section']//ul[@class='privacyToggle']/li[" + privacyIndex + "]/a");
+            (new WebDriverWait(webDriver, WAIT)).until(ExpectedConditions.presenceOfElementLocated(namesVisibility));
+            WebElement namesVisibilityElement = webDriver.findElement(namesVisibility);
+            namesVisibilityElement.click();
+            
+            By saveButton = By.xpath("//div[@id = 'other-names-section']//ul[@class='workspace-section-toolbar']//li[2]//button");
+            (new WebDriverWait(webDriver, WAIT)).until(ExpectedConditions.presenceOfElementLocated(saveButton));
+            WebElement button = webDriver.findElement(saveButton);
+            button.click();
+            Thread.sleep(1000);
+        } catch (Exception e) {
+            System.out.println("Unable to find biography-visibility-limited element");
+            e.printStackTrace();
+            throw e;
+        }
+    }
+    
+    private void changeBioVisibility(Visibility changeTo) throws Exception {
+        int privacyIndex = getPrivacyIndex(changeTo);
+        
+        try {
+            By bioOPrivacySelectorLimited = By.xpath("//div[@id = 'bio-section']//ul[@class='privacyToggle']/li[" + privacyIndex + "]/a"); 
+            (new WebDriverWait(webDriver, WAIT)).until(ExpectedConditions.presenceOfElementLocated(bioOPrivacySelectorLimited));            
+            WebElement bioOPrivacySelectorLimitedElement = webDriver.findElement(bioOPrivacySelectorLimited);
+            bioOPrivacySelectorLimitedElement.click();  
+            Thread.sleep(1000);
+        } catch (Exception e) {
+            System.out.println("Unable to find nother-names-visibility-limited element");
+            e.printStackTrace();
+            throw e;
+        }
+    } 
+    
+    private int getPrivacyIndex(Visibility visibility) {
+        switch(visibility) {
+        case PUBLIC:
+            return 1;
+        case LIMITED:
+            return 2;
+        case PRIVATE:
+            return 3;
+        default:
+            return 1;
+        }
+    }
+    
+    
+    
+    public String getAccessToken(String clientId, String clientSecret, String redirectUri) throws InterruptedException, JSONException {
+        if (accessTokens.containsKey(clientId)) {
+            return accessTokens.get(clientId);
+        }
+
+        String accessToken = super.getAccessToken(ScopePathType.READ_LIMITED.value(), clientId, clientSecret, redirectUri);
+        accessTokens.put(clientId, accessToken);
+        return accessToken;
+    }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
