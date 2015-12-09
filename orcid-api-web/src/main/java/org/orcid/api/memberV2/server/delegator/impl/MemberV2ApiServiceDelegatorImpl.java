@@ -41,6 +41,7 @@ import org.orcid.core.manager.GroupIdRecordManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.OtherNameManager;
 import org.orcid.core.manager.PeerReviewManager;
+import org.orcid.core.manager.PersonalDetailsManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileFundingManager;
 import org.orcid.core.manager.ResearcherUrlManager;
@@ -64,6 +65,7 @@ import org.orcid.jaxb.model.record_rc1.Employment;
 import org.orcid.jaxb.model.record_rc1.Funding;
 import org.orcid.jaxb.model.record_rc1.PeerReview;
 import org.orcid.jaxb.model.record_rc1.Work;
+import org.orcid.jaxb.model.record_rc2.PersonalDetails;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
 import org.orcid.persistence.dao.ProfileDao;
@@ -136,6 +138,9 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     @Value("${org.orcid.core.baseUri}")
     private String baseUrl;
 
+    @Resource
+    private PersonalDetailsManager personalDetailsManager;
+    
     @Override
     public Response viewStatusText() {
         return Response.ok(STATUS_OK_MESSAGE).build();
@@ -546,4 +551,13 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
 		otherNameManager.deleteOtherNameV2(orcid, putCode);
         return Response.noContent().build();
 	}
+	
+    @Override
+    @AccessControl(requiredScope = ScopePathType.READ_LIMITED)
+    public Response viewPersonalDetails(String orcid) {
+        PersonalDetails personalDetails = personalDetailsManager.getPersonalDetails(orcid);
+        personalDetails = visibilityFilter.filter(personalDetails);
+        ElementUtils.setPathToPersonalDetails(personalDetails, orcid);
+        return Response.ok(personalDetails).build();
+    }
 }

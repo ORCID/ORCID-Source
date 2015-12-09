@@ -106,7 +106,7 @@
             credit_name="P. Sellers III"            
             names_visibility="LIMITED"
             external_identifiers_visibility="LIMITED"
-            biography_visibility="PUBLIC"
+            biography_visibility="LIMITED"
             keywords_visibility="LIMITED"
             other_names_visibility="PRIVATE"
             researcher_urls_visibility="PUBLIC"          
@@ -551,24 +551,28 @@
             other_name_id="1"
             display_name="Slibberdy Slabinah"
             orcid="4444-4444-4444-4443"
+            visibility="PUBLIC"
             />
 
     <other_name
             other_name_id="2"
             display_name="Flibberdy Flabinah"
             orcid="4444-4444-4444-4443"
+            visibility="LIMITED"
             />
 
     <other_name
             other_name_id="3"
             display_name="Flobberdy Flip"
             orcid="4444-4444-4444-4446"
+            visibility="PUBLIC"
             />
 	
 	<other_name
             other_name_id="4"
             display_name="Other Name"
             orcid="4444-4444-4444-4441"
+            visibility="PUBLIC"
             />
 
     <address

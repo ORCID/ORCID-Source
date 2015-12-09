@@ -629,7 +629,7 @@ public class OauthConfirmAccessController extends BaseController {
                 // the login page
                 if (request.getSession().getAttribute(RegistrationController.GRECAPTCHA_SESSION_ATTRIBUTE_NAME) == null
                         || PojoUtil.isEmpty(form.getGrecaptcha())
-                        || !encryptionManager.encryptForExternalUse(form.getGrecaptcha().getValue()).equals(
+                        || !form.getGrecaptcha().getValue().equals(
                                 request.getSession().getAttribute(RegistrationController.GRECAPTCHA_SESSION_ATTRIBUTE_NAME))) {
                     String redirectUri = this.getBaseUri() + REDIRECT_URI_ERROR;
                     // Set the client id

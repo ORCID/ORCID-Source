@@ -20,10 +20,12 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.orcid.jaxb.model.message.CreditName;
-import org.orcid.jaxb.model.message.FamilyName;
-import org.orcid.jaxb.model.message.GivenNames;
-import org.orcid.jaxb.model.message.PersonalDetails;
+import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
+import org.orcid.jaxb.model.common.CreditName;
+import org.orcid.jaxb.model.record_rc2.FamilyName;
+import org.orcid.jaxb.model.record_rc2.GivenNames;
+import org.orcid.jaxb.model.record_rc2.Name;
+import org.orcid.jaxb.model.record_rc2.PersonalDetails;
 
 public class NamesForm implements ErrorsInterface, Serializable {
 
@@ -34,51 +36,66 @@ public class NamesForm implements ErrorsInterface, Serializable {
     private Text givenNames;
     private Text familyName;
     private Text creditName;
-
-    
-    private Visibility creditNameVisibility;
+    private Visibility namesVisibility;
 
     public static NamesForm valueOf(PersonalDetails personalDetails) {
         NamesForm nf = new NamesForm();
-        if (personalDetails.getGivenNames() != null)
-            nf.setGivenNames(Text.valueOf(personalDetails.getGivenNames().getContent()));
-        if (personalDetails.getFamilyName() != null)
-            nf.setFamilyName(Text.valueOf(personalDetails.getFamilyName().getContent()));
-        if (personalDetails.getCreditName() != null) 
-            nf.setCreditName(Text.valueOf(personalDetails.getCreditName().getContent()));
-        if (personalDetails.getCreditName() != null && personalDetails.getCreditName().getVisibility() != null)
-            nf.setCreditNameVisibility(Visibility.valueOf(personalDetails.getCreditName().getVisibility()));
-        else
-            nf.setCreditNameVisibility(new Visibility());
+
+        if (personalDetails.getName() != null) {
+            if (personalDetails.getName().getGivenNames() != null) {
+                nf.setGivenNames(Text.valueOf(personalDetails.getName().getGivenNames().getContent()));
+            }
+
+            if (personalDetails.getName().getFamilyName() != null) {
+                nf.setFamilyName(Text.valueOf(personalDetails.getName().getFamilyName().getContent()));
+            }
+
+            if (personalDetails.getName().getCreditName() != null) {
+                nf.setCreditName(Text.valueOf(personalDetails.getName().getCreditName().getContent()));
+            }
+
+            if (personalDetails.getName().getVisibility() != null) {
+                nf.setNamesVisibility(Visibility.valueOf(personalDetails.getName().getVisibility()));
+            } else {
+                nf.setNamesVisibility(Visibility.valueOf(OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility()));
+            }
+        }
+
         return nf;
     }
-
-    public void populatePersonalDetails (PersonalDetails personalDetails) {
-        if (this.givenNames != null) {
-            if (personalDetails.getGivenNames() == null) personalDetails.setGivenNames(new GivenNames());
-            personalDetails.getGivenNames().setContent(this.givenNames.getValue());
-        }
-        if (this.familyName != null) {
-            if (personalDetails.getFamilyName() == null) personalDetails.setFamilyName(new FamilyName());
-            personalDetails.getFamilyName().setContent(this.familyName.getValue());
-        }
-        if (this.creditName != null) {
-            if (personalDetails.getCreditName() == null)
-                personalDetails.setCreditName(new CreditName());     
-            personalDetails.getCreditName().setContent(this.creditName.getValue());
-            personalDetails.getCreditName().setVisibility(creditNameVisibility.getVisibility());
-        }
-    }
     
-    public Visibility getCreditNameVisibility() {
-        return creditNameVisibility;
-    }
-
-    public void setCreditNameVisibility(Visibility visibility) {
-        this.creditNameVisibility = visibility;
-    }
-
+    public PersonalDetails toPersonalDetails() {
+        PersonalDetails personalDetails = new PersonalDetails();
+        personalDetails.setName(new Name());
+        if(!PojoUtil.isEmpty(givenNames)) {
+            personalDetails.getName().setGivenNames(new GivenNames(givenNames.getValue()));
+        }
         
+        if(!PojoUtil.isEmpty(familyName)) {
+            personalDetails.getName().setFamilyName(new FamilyName(familyName.getValue()));
+        }
+
+        if(!PojoUtil.isEmpty(creditName)) {
+            personalDetails.getName().setCreditName(new CreditName(creditName.getValue()));
+        }
+        
+        if(namesVisibility != null && namesVisibility.getVisibility() != null) {
+            personalDetails.getName().setVisibility(org.orcid.jaxb.model.common.Visibility.fromValue(namesVisibility.getVisibility().value()));
+        } else {
+            personalDetails.getName().setVisibility(org.orcid.jaxb.model.common.Visibility.fromValue(OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility().value()));
+        }
+        
+        return personalDetails;
+    }
+
+    public Visibility getNamesVisibility() {
+        return namesVisibility;
+    }
+
+    public void setNamesVisibility(Visibility visibility) {
+        this.namesVisibility = visibility;
+    }
+
     public List<String> getErrors() {
         return errors;
     }
@@ -87,40 +104,27 @@ public class NamesForm implements ErrorsInterface, Serializable {
         this.errors = errors;
     }
 
-
-
     public Text getGivenNames() {
         return givenNames;
     }
-
-
 
     public void setGivenNames(Text givenNames) {
         this.givenNames = givenNames;
     }
 
-
-
     public Text getFamilyName() {
         return familyName;
     }
-
-
 
     public void setFamilyName(Text familyName) {
         this.familyName = familyName;
     }
 
-
-
     public Text getCreditName() {
         return creditName;
     }
 
-
-
     public void setCreditName(Text creditName) {
         this.creditName = creditName;
     }
-
 }

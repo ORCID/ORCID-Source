@@ -116,8 +116,8 @@ the software.
                 <artifactId>maven-compiler-plugin</artifactId>
                 <inherited>true</inherited>
                 <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
+                    <source>1.8</source>
+                    <target>1.8</target>
                 </configuration>
             </plugin>
             <plugin>
@@ -930,8 +930,8 @@ the software.
             </dependency>
             <dependency>
                 <groupId>org.bouncycastle</groupId>
-                <artifactId>bcprov-jdk16</artifactId>
-                <version>1.46</version>
+                <artifactId>bcprov-jdk15on</artifactId>
+                <version>1.53</version>
             </dependency>
             
             <!-- Test -->
@@ -989,6 +989,12 @@ the software.
                 <version>1.2.7</version>
                 <scope>test</scope>
             </dependency>
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>18.0</version>
+            </dependency>
+            
         </dependencies>
     </dependencyManagement>
 

@@ -21,6 +21,7 @@ import static org.orcid.core.api.OrcidApiConstants.EDUCATION;
 import static org.orcid.core.api.OrcidApiConstants.EMPLOYMENT;
 import static org.orcid.core.api.OrcidApiConstants.FUNDING;
 import static org.orcid.core.api.OrcidApiConstants.PEER_REVIEW;
+import static org.orcid.core.api.OrcidApiConstants.PERSONAL_DETAILS;
 import static org.orcid.core.api.OrcidApiConstants.PUTCODE;
 import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_JSON;
 import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_XML;
@@ -200,5 +201,10 @@ public class MemberV2ApiClientImpl {
     public ClientResponse getEmails(String orcid, String accessToken) {
         URI getURI = UriBuilder.fromPath(EMAIL).build(orcid);
         return orcidClientHelper.getClientResponseWithToken(getURI, VND_ORCID_XML, accessToken);        
+    }
+    
+    public ClientResponse viewPersonalDetailsXML(String orcid, String accessToken) {
+        URI getURI = UriBuilder.fromPath(PERSONAL_DETAILS).build(orcid);
+        return orcidClientHelper.getClientResponseWithToken(getURI, VND_ORCID_XML, accessToken);
     }
 }

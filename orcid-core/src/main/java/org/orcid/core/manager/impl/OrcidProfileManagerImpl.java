@@ -45,8 +45,6 @@ import java.util.concurrent.TimeoutException;
 
 import javax.annotation.Resource;
 
-import net.sf.ehcache.Element;
-
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.adapter.Jaxb2JpaAdapter;
 import org.orcid.core.constants.DefaultPreferences;
@@ -105,9 +103,9 @@ import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.VisibilityType;
 import org.orcid.jaxb.model.message.WorkContributors;
 import org.orcid.jaxb.model.message.WorkExternalIdentifier;
+import org.orcid.jaxb.model.notification.amended.AmendedSection;
 import org.orcid.jaxb.model.notification.permission.Item;
 import org.orcid.jaxb.model.notification.permission.ItemType;
-import org.orcid.jaxb.model.notification.amended.AmendedSection;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.GivenPermissionToDao;
@@ -135,6 +133,8 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
+
+import net.sf.ehcache.Element;
 
 /**
  * The profile manager is responsible for passing onto the persistence layer
@@ -740,17 +740,14 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
     }
 
     @Override
-    @Transactional
-    public void updateNames(OrcidProfile orcidProfile) {
-        String orcid = orcidProfile.getOrcidIdentifier().getPath();
-        PersonalDetails pd = orcidProfile.getOrcidBio().getPersonalDetails();
-        String givenNames = pd.getGivenNames() != null ? pd.getGivenNames().getContent() : null;
-        String familyName = pd.getFamilyName() != null ? pd.getFamilyName().getContent() : null;
-        String creditName = pd.getCreditName() != null ? pd.getCreditName().getContent() : null;
-        Visibility creditNameVisibility = pd.getCreditName() != null ? pd.getCreditName().getVisibility() : null;
-
-        profileDao.updateNames(orcid, givenNames, familyName, creditName, creditNameVisibility);
-    }
+    @Transactional    
+    public void updateNames(String orcid, org.orcid.jaxb.model.record_rc2.PersonalDetails personalDetails) {
+        String givenNames = personalDetails.getName().getGivenNames() != null ? personalDetails.getName().getGivenNames().getContent() : null;
+        String familyName = personalDetails.getName().getFamilyName() != null ? personalDetails.getName().getFamilyName().getContent() : null;
+        String creditName = personalDetails.getName().getCreditName() != null ? personalDetails.getName().getCreditName().getContent() : null;
+        Visibility namesVisibility = personalDetails.getName().getVisibility() != null ? Visibility.fromValue(personalDetails.getName().getVisibility().value()) : null;
+        profileDao.updateNames(orcid, givenNames, familyName, creditName, namesVisibility);
+    }            
 
     @Override
     @Transactional
@@ -1132,7 +1129,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
                 if (contributor.getContributorOrcid() != null) {
                     ProfileEntity profile = profileDao.find(contributor.getContributorOrcid().getPath());
                     if (profile != null) {
-                        if (Visibility.PUBLIC.equals(profile.getCreditNameVisibility())) {
+                        if (Visibility.PUBLIC.equals(profile.getNamesVisibility())) {
                             contributor.setCreditName(new CreditName(profile.getCreditName()));
                         }
                     }
@@ -1145,7 +1142,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
                     if (emailEntity != null) {
                         ProfileEntity profileEntity = emailEntity.getProfile();
                         contributor.setContributorOrcid(new ContributorOrcid(profileEntity.getId()));
-                        if (Visibility.PUBLIC.equals(profileEntity.getCreditNameVisibility())) {
+                        if (Visibility.PUBLIC.equals(profileEntity.getNamesVisibility())) {
                             contributor.setCreditName(new CreditName(profileEntity.getCreditName()));
                         } else {
                             contributor.setCreditName(null);
@@ -1900,9 +1897,9 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
                         : OrcidVisibilityDefaults.RESEARCHER_URLS_DEFAULT.getVisibility());
             }
 
-            if (profileEntity.getCreditNameVisibility() == null) {
-                profileEntity.setCreditNameVisibility(useMemberDefaults ? OrcidVisibilityDefaults.CREATED_BY_MEMBER_DEFAULT.getVisibility()
-                        : OrcidVisibilityDefaults.CREDIT_NAME_DEFAULT.getVisibility());
+            if (profileEntity.getNamesVisibility() == null) {
+                profileEntity.setNamesVisibility(useMemberDefaults ? OrcidVisibilityDefaults.CREATED_BY_MEMBER_DEFAULT.getVisibility()
+                        : OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility());
             }
 
             if (profileEntity.getOtherNamesVisibility() == null) {
