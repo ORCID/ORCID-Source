@@ -136,7 +136,7 @@ public class RegistrationController extends BaseController {
 
     final static Integer DUP_SEARCH_ROWS = 25;
 
-    public final static String GRECAPTCHA_SESSION_ATTRIBUTE_NAME = "verified-recaptcha-hash";
+    public final static String GRECAPTCHA_SESSION_ATTRIBUTE_NAME = "verified-recaptcha";
     
     private static Random rand = new Random();
 
@@ -354,7 +354,7 @@ public class RegistrationController extends BaseController {
             }
 
             if (request.getSession().getAttribute(GRECAPTCHA_SESSION_ATTRIBUTE_NAME) != null) {
-                if (!encryptionManager.encryptForExternalUse(reg.getGrecaptcha().getValue()).equals(request.getSession().getAttribute(GRECAPTCHA_SESSION_ATTRIBUTE_NAME))) {
+                if (!reg.getGrecaptcha().getValue().equals(request.getSession().getAttribute(GRECAPTCHA_SESSION_ATTRIBUTE_NAME))) {
                     setError(reg.getGrecaptcha(), "registrationForm.recaptcha.error");
                     setError(reg, "registrationForm.recaptcha.error");
                 }
@@ -363,7 +363,7 @@ public class RegistrationController extends BaseController {
                 setError(reg.getGrecaptcha(), "registrationForm.recaptcha.error");
                 setError(reg, "registrationForm.recaptcha.error");
             } else {
-                request.getSession().setAttribute(GRECAPTCHA_SESSION_ATTRIBUTE_NAME, encryptionManager.encryptForExternalUse(reg.getGrecaptcha().getValue()));
+                request.getSession().setAttribute(GRECAPTCHA_SESSION_ATTRIBUTE_NAME, reg.getGrecaptcha().getValue());
             }
         }
     }
@@ -380,7 +380,7 @@ public class RegistrationController extends BaseController {
             // If the captcha verified key is not in the session, redirect to
             // the login page
             if (request.getSession().getAttribute(GRECAPTCHA_SESSION_ATTRIBUTE_NAME) == null || PojoUtil.isEmpty(reg.getGrecaptcha())
-                    || !encryptionManager.encryptForExternalUse(reg.getGrecaptcha().getValue()).equals(request.getSession().getAttribute(GRECAPTCHA_SESSION_ATTRIBUTE_NAME))) {
+                    || !reg.getGrecaptcha().getValue().equals(request.getSession().getAttribute(GRECAPTCHA_SESSION_ATTRIBUTE_NAME))) {
                 r.setUrl(getBaseUri() + "/register");
                 return r;
             }
