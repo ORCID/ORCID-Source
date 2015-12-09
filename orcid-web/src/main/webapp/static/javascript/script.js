@@ -142,6 +142,13 @@ var OrcidGA = function() {
         return clientGroupName + ' - ' + clientName
     };
     this.gaPush = function(trackArray) {
+        //Recheck ga is enabled
+        if(!gaEnabled) {
+            if(window.ga && ga.create) {
+                gaEnabled = true;
+            }
+        }
+        
         if (gaEnabled) {
         	if(typeof trackArray === 'function') {
         		ga(trackArray);
