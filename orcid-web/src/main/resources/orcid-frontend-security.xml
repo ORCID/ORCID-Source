@@ -28,6 +28,8 @@
 
 	<context:annotation-config />
 	
+	<bean class="org.orcid.frontend.spring.web.social.config.SocialConfig"/>
+	
 	<sec:global-method-security pre-post-annotations="enabled" />
 
 	<bean id="authorizationEndpoint" class="org.orcid.core.oauth.service.OrcidAuthorizationEndpoint">
@@ -195,7 +197,7 @@
 			login-page="${org.orcid.core.baseUri}/social/access" authentication-success-handler-ref="ajaxAuthenticationSuccessHandlerSocial"
 			authentication-failure-handler-ref="ajaxAuthenticationFailureHandlerSocial"
 			username-parameter="userId" password-parameter="password" 
-			default-target-url="/social/link" />
+			default-target-url="/social/access" />
 		<sec:session-management session-fixation-protection="migrateSession"/>
 	</sec:http>
 

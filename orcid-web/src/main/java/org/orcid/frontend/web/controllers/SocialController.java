@@ -104,24 +104,6 @@ public class SocialController extends BaseController {
         }
     }
 
-    @RequestMapping(value = { "/link" }, method = RequestMethod.GET)
-    public ModelAndView link(HttpServletRequest request, HttpServletResponse response) {
-    	ModelAndView mav = new ModelAndView();
-    	SocialType connectionType = socialContext.isSignedIn(request, response);
-         if (connectionType != null) {
-         	Map<String, String> userMap = retrieveUserDetails(connectionType);
-             
-             String providerId = connectionType.value();
-	    	logoutCurrentUser(request, response);
-	        mav.setViewName("social_link_signin");
-	        mav.addObject("providerId", providerId);
-	        mav.addObject("emailId", getAccountIdForDisplay(userMap));
-         } else {
-             throw new UsernameNotFoundException("Could not find an orcid account associated with the email id.");
-         }
-        return mav;
-    }
-
     private Map<String, String> retrieveUserDetails(SocialType connectionType) {
         
     	Map<String, String> userMap = new HashMap<String, String>();

@@ -113,7 +113,7 @@ public class SocialConfig implements InitializingBean {
 	public ProviderSignInController providerSignInController() {
 		ProviderSignInController providerSigninController = new ProviderSignInController(connectionFactoryLocator(),
 				usersConnectionRepository(), socialContext);
-		providerSigninController.setPostSignInUrl("/social/link");
+		providerSigninController.setPostSignInUrl("/social/access");
 		providerSigninController.setApplicationUrl(appUrl);
 		return providerSigninController;
 	}
