@@ -146,15 +146,17 @@
 		<xs:sequence>
 			<xs:element ref="common:orcid-identifier" />
 			<xs:element ref="common:last-modified-date" />
-			<xs:element name="credit-name" type="person:credit-name" />
+			<xs:element name="credit-name" type="person:credit-name"
+				minOccurs="0" maxOccurs="1" />
 		</xs:sequence>
 	</xs:complexType>
 
 	<xs:complexType name="credit-name">
-		<xs:sequence>
-			<xs:element name="credit-name" type="personal-details:credit-name" />
-		</xs:sequence>
-		<xs:attribute name="visibility" type="common:visibility" />
+		<xs:simpleContent>
+			<xs:extension base="common:non-empty-string">
+				<xs:attribute name="visibility" type="common:visibility" />
+			</xs:extension>
+		</xs:simpleContent>
 	</xs:complexType>
 
 	<xs:complexType name="applications">
@@ -181,8 +183,22 @@
 			<xs:element name="application-website" type="common:url"
 				minOccurs="1" maxOccurs="1" />
 			<xs:element ref="common:approval-date" minOccurs="0" />
+			<xs:element name="scope-paths" type="person:scope-paths"
+				minOccurs="1" maxOccurs="1" />
 			<xs:element ref="common:application-group-orcid" />
+			<xs:element name="application-group-name" type="person:application-group-name" />
 		</xs:sequence>
 	</xs:complexType>
+
+	<xs:complexType name="scope-paths">
+		<xs:sequence>
+			<xs:element name="scope-path" type="common:scope-path-type"
+				minOccurs="1" maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:simpleType name="application-group-name">
+		<xs:restriction base="xs:string" />
+	</xs:simpleType>
 
 </xs:schema>
