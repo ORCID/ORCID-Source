@@ -57,6 +57,49 @@
 		</xs:complexType>
 	</xs:element>
 
+	<xs:element name="name">
+		<xs:annotation>
+			<xs:documentation>Container for the
+				researcher or contributor name.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="name" type="personal-details:name"
+					minOccurs="0" maxOccurs="1" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="credit-name">
+		<xs:annotation>
+			<xs:documentation>Container for the
+				researcher or contributor credit name.
+			</xs:documentation>
+		</xs:annotation>		
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="credit-name" type="personal-details:credit-name"
+					minOccurs="0" maxOccurs="1" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="biography">
+		<xs:annotation>
+			<xs:documentation>Container for the
+				researcher or contributor biography.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="biography" type="personal-details:biography"
+					minOccurs="0" maxOccurs="1" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+
 	<xs:complexType name="name">
 		<xs:annotation>
 			<xs:documentation>Container for the names of the
@@ -126,9 +169,11 @@
 		</xs:simpleContent>
 	</xs:complexType>
 
-	<xs:complexType name="credit-name">		
+	<xs:complexType name="credit-name">
 		<xs:simpleContent>
-			<xs:extension base="common:non-empty-string" />
+			<xs:extension base="common:non-empty-string">
+				<xs:attribute name="visibility" type="common:visibility" />
+			</xs:extension>
 		</xs:simpleContent>
 	</xs:complexType>
 </xs:schema>

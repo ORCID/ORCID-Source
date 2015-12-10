@@ -8,7 +8,7 @@
 	xmlns:external-identifier="http://www.orcid.org/ns/external-identifier"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.orcid.org/ns/person ../person-2.0_rc2.xsd ">
-	<person:name visibility="public">
+	<person:name visibility="public"> 
 		<personal-details:given-names>give-names
 		</personal-details:given-names>
 		<personal-details:family-name>family-name
