@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<email:emails xmlns:email="http://www.orcid.org/ns/email"
+<address:addresses xmlns:address="http://www.orcid.org/ns/address"
 	xmlns:common="http://www.orcid.org/ns/common" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.orcid.org/ns/email ../email-2.0_rc2.xsd ">
-	<email:email visibility="public">
-		<email:email>user1@email.com</email:email>
+	xsi:schemaLocation="http://www.orcid.org/ns/address ../address-2.0_rc2.xsd ">
+	<address:address visibility="public" put-code="1">
+		<address:country>US</address:country>
 		<common:created-date>2001-12-31T12:00:00</common:created-date>
 		<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
 		<common:source>
@@ -14,9 +14,9 @@
 			</common:source-orcid>
 			<common:source-name />
 		</common:source>
-	</email:email>
-	<email:email visibility="public">
-		<email:email>user2@email.com</email:email>
+	</address:address>
+	<address:address visibility="public" put-code="2">
+		<address:country>CR</address:country>
 		<common:created-date>2001-12-31T12:00:00</common:created-date>
 		<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
 		<common:source>
@@ -27,5 +27,5 @@
 			</common:source-orcid>
 			<common:source-name />
 		</common:source>
-	</email:email>
-</email:emails>
+	</address:address>
+</address:addresses>

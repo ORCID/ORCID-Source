@@ -92,6 +92,18 @@
         </xs:complexType>
     </xs:element>
 
+	<xs:element name="approval-date">
+        <xs:complexType>
+            <xs:annotation>
+                <xs:documentation>The date time when element was approved.
+                </xs:documentation>
+            </xs:annotation>
+            <xs:simpleContent>
+                <xs:extension base="xs:dateTime" />
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+
 	<xs:element name="source" type="common:source-type" />
 
 	<xs:complexType name="source-type">
