@@ -593,15 +593,18 @@
             </#if>
         </div>
         <#if ((RequestParameters['social'])?? ||(RequestParameters['shibboleth'])??)>
-	        <div ng-controller="SocialCtrl" id="SocialCtrl" ng-show="socialAccounts" ng-cloak>
+	        <div ng-controller="SocialCtrl" id="SocialCtrl" ng-cloak>
 	            <h1>
 	                <@orcid.msg 'manage_signin_title' />
 	            </h1>
 	            <p>
 	            	<@orcid.msg 'manage_signin_subtitle' />
+	            	<br>
+	            	<a href="${springMacroRequestContext.getMessage("common.support_url")}"
+                target=_blank"">${springMacroRequestContext.getMessage("manage.findoutmore")}</a>
 	            </p>
 	            <div>
-	                <table class="table table-bordered settings-table normal-width">
+	                <table class="table table-bordered settings-table normal-width" ng-show="socialAccounts">
 	                    <thead>
 	                        <tr>
 	                            <th width="40%" ng-click="changeSorting('accountIdForDisplay')"><@orcid.msg 'manage_signin_table_header1' /></th>
@@ -612,9 +615,9 @@
 	                    </thead>
 	                    <tbody>
 	                        <tr ng-repeat="socialAccount in socialAccounts | orderBy:sort.column:sort.descending">
-	                            <td width="40%">{{socialAccount.accountIdForDisplay}}</a></td>
-	                            <td width="30%">{{socialAccount.id.providerid}}</a></td>
-	                            <td width="20%">{{socialAccount.dateCreated|date:'yyyy-MM-dd'}}</td>
+	                            <td width="40%" style="word-break:break-all">{{socialAccount.accountIdForDisplay}}</a></td>
+	                            <td width="30%" style="word-break:break-all">{{socialAccount.id.providerid}}</a></td>
+	                            <td width="20%" style="word-break:break-all">{{socialAccount.dateCreated|date:'yyyy-MM-dd'}}</td>
 	                            <td width="10%">
 	                                <a
 	                                ng-click="confirmRevoke(socialAccount.id)"
