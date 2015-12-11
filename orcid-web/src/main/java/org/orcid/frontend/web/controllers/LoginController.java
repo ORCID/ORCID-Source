@@ -24,6 +24,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.orcid.core.manager.ClientDetailsManager;
+import org.orcid.core.oauth.OrcidProfileUserDetails;
+import org.orcid.jaxb.model.message.OrcidType;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -46,7 +51,19 @@ public class LoginController extends BaseController {
     @RequestMapping(value = { "/signin", "/login" }, method = RequestMethod.GET)
     public ModelAndView loginGetHandler(HttpServletRequest request, HttpServletResponse response) {
         // in case have come via a link that requires them to be signed out
-    	ModelAndView mav = new ModelAndView("login");
+        ModelAndView mav = new ModelAndView("login");
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        Authentication authentication = securityContext.getAuthentication();
+        if (authentication != null) {
+            Object principal = authentication.getPrincipal();
+            if (principal instanceof OrcidProfileUserDetails) {
+                OrcidProfileUserDetails userDetails = (OrcidProfileUserDetails) principal;
+                if(OrcidType.USER.equals(userDetails.getOrcidType())) {
+                    mav = new ModelAndView("redirect:/my-orcid");
+                }
+            }
+        }
+                    	
         return mav;
     }
 
