@@ -134,7 +134,7 @@ var OrcidGA = function() {
     // caused silent _gaq failures. This check allows us to detect that
     // situation
     var gaEnabled = false;
-    if(window.ga && ga.create) {
+    if(window.ga) {
     	gaEnabled = true;
     }
     
@@ -144,7 +144,7 @@ var OrcidGA = function() {
     this.gaPush = function(trackArray) {
         //Recheck ga is enabled
         if(!gaEnabled) {
-            if(window.ga && ga.create) {
+            if(window.ga) {
                 gaEnabled = true;
             }
         }
