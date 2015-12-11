@@ -19,6 +19,8 @@ package org.orcid.integration.blackbox.api;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import javax.annotation.Resource;
 import javax.ws.rs.core.MultivaluedMap;
@@ -31,6 +33,7 @@ import org.junit.runner.RunWith;
 import org.orcid.integration.api.helper.APIRequestType;
 import org.orcid.integration.api.helper.OauthHelper;
 import org.orcid.integration.api.internal.InternalOAuthOrcidApiClientImpl;
+import org.orcid.internal.util.MemberInfo;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.beans.factory.annotation.Value;
@@ -57,6 +60,8 @@ public class InternalAPITest {
     public String client1ClientSecret;
     @Value("${org.orcid.web.testUser1.orcidId}")
     protected String user1OrcidId;
+    @Value("${org.orcid.web.locked.member.id}")
+    public String memberId;
     
     @Resource
     private OauthHelper oauthHelper;
@@ -128,5 +133,32 @@ public class InternalAPITest {
         assertNotNull(jsonObject);
         assertEquals(user1OrcidId, (String)jsonObject.getString("orcid"));
         assertNotNull((String)jsonObject.getString("last-modified"));                
+    }
+    
+    @Test
+    public void testGetMemberInfo() {
+        ClientResponse response = internalApiClient.viewMemberDetails(memberId);
+        assertNotNull(response);
+        MemberInfo info = response.getEntity(MemberInfo.class);
+        assertNotNull(info);
+        assertEquals(memberId, info.getId());
+        assertNotNull(info.getName());
+        assertNotNull(info.getClients());
+        assertFalse(info.getClients().isEmpty());
+        
+        response = internalApiClient.viewMemberDetails(info.getName());
+        assertNotNull(response);
+        MemberInfo infoByName = response.getEntity(MemberInfo.class);
+        assertNotNull(infoByName);
+        assertEquals(memberId, infoByName.getId());
+        assertEquals(info, infoByName);
+        
+        response = internalApiClient.viewMemberDetails("invalid name");
+        assertNotNull(response);
+        MemberInfo emptyInfo = response.getEntity(MemberInfo.class);
+        assertNotNull(emptyInfo);
+        assertNull(emptyInfo.getId());
+        assertNull(emptyInfo.getName());
+        assertTrue(emptyInfo.getClients().isEmpty());
     }
 }

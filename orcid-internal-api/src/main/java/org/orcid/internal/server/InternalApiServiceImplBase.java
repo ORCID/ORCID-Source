@@ -16,13 +16,12 @@
  */
 package org.orcid.internal.server;
 
-import static org.orcid.core.api.OrcidApiConstants.STATUS_PATH;
 import static org.orcid.core.api.OrcidApiConstants.INTERNAL_API_PERSON_READ;
+import static org.orcid.core.api.OrcidApiConstants.MEMBER_INFO;
+import static org.orcid.core.api.OrcidApiConstants.STATUS_PATH;
 
 import java.util.HashSet;
 import java.util.Set;
-
-import io.swagger.annotations.ApiOperation;
 
 import javax.annotation.Resource;
 import javax.ws.rs.Consumes;
@@ -43,8 +42,11 @@ import org.orcid.api.common.T2OrcidApiService;
 import org.orcid.internal.server.delegator.InternalApiServiceDelegator;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.oauth2.common.util.OAuth2Utils;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.orcid.api.common.server.delegator.OrcidClientCredentialEndPointDelegator;
+
+import io.swagger.annotations.ApiOperation;
 
 /**
  * 
@@ -107,10 +109,23 @@ public abstract class InternalApiServiceImplBase {
     }
     
     @GET
-    @Produces(value = { MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+    @Produces(value = { MediaType.APPLICATION_JSON })
     @Path(INTERNAL_API_PERSON_READ)
     public Response viewPersonDetails(@PathParam("orcid") String orcid) {
         Response response = serviceDelegator.viewPersonLastModified(orcid); 
+        return response;
+    }
+    
+    /**
+     * 
+     * @param formParams
+     * @return
+     */
+    @POST
+    @Path(MEMBER_INFO)
+    @Produces(value = { MediaType.APPLICATION_JSON })
+    public Response viewMemberDetails(@RequestParam String member) {
+        Response response = serviceDelegator.viewMemberInfo(member);
         return response;
     }
 }

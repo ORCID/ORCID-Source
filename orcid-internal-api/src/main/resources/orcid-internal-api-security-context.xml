@@ -39,9 +39,9 @@
 
     <!-- Authentication for internal API -->
     <sec:http use-expressions="true" create-session="stateless">
-        <sec:anonymous enabled="false" />
+        <sec:anonymous enabled="true" />
         <sec:x509 subject-principal-regex="CN=(.*?)," user-service-ref="x509UserService"/>
-        <sec:intercept-url pattern="/**" access="#oauth2.clientHasRole('ROLE_CLIENT')"/>
+        <sec:intercept-url pattern="/**" access="#oauth2.clientHasRole('ROLE_CLIENT') or isAnonymous()"/>
         <sec:custom-filter ref="orcidResourceServerFilter" before="PRE_AUTH_FILTER" />
         <sec:access-denied-handler ref="orcidOauthAuthenticationEntryPoint" />
         <sec:expression-handler ref="oauthWebExpressionHandler" />

@@ -28,6 +28,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 
 import org.orcid.api.common.T2OrcidApiService;
+import org.orcid.core.api.OrcidApiConstants;
 
 public interface InternalOAuthAPIService<T> {
 
@@ -58,4 +59,10 @@ public interface InternalOAuthAPIService<T> {
     @Produces(value = { MediaType.APPLICATION_JSON })
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public T obtainOauth2TokenPost(String grantType, MultivaluedMap<String, String> formParams);
+            
+    @GET
+    @Path(OrcidApiConstants.MEMBER_INFO)
+    @Produces(value = { MediaType.APPLICATION_JSON })
+    @Consumes(MediaType.TEXT_PLAIN)
+    public T viewMemberDetails(String member);
 }
