@@ -1,0 +1,90 @@
+/**
+ * =============================================================================
+ *
+ * ORCID (R) Open Source
+ * http://orcid.org
+ *
+ * Copyright (c) 2012-2014 ORCID, Inc.
+ * Licensed under an MIT-Style License (MIT)
+ * http://orcid.org/open-source-license
+ *
+ * This copyright and license information (including a link to the full license)
+ * shall be included in its entirety in all copies or substantial portion of
+ * the software.
+ *
+ * =============================================================================
+ */
+package org.orcid.frontend.spring;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.orcid.frontend.spring.web.social.config.SocialContext;
+import org.orcid.frontend.spring.web.social.config.SocialType;
+import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.persistence.jpa.entities.UserconnectionEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.social.facebook.api.Facebook;
+import org.springframework.social.facebook.api.User;
+import org.springframework.social.google.api.Google;
+import org.springframework.social.google.api.plus.Person;
+
+public class SocialAjaxAuthenticationSuccessHandler extends AjaxAuthenticationSuccessHandlerBase {
+
+	@Resource
+    private SocialContext socialContext;
+    
+    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+        
+    	SocialType connectionType = socialContext.isSignedIn(request, response);
+        if (connectionType != null) {
+        	Map<String, String> userMap = retrieveUserDetails(connectionType);
+            String providerId = connectionType.value();
+            UserconnectionEntity userConnectionEntity = userConnectionDao.findByProviderIdAndProviderUserId(userMap.get("providerUserId"), providerId);
+            if (userConnectionEntity != null) {
+                if (!userConnectionEntity.isLinked()) {
+                    OrcidProfile profile = getRealProfile();
+                    userConnectionEntity.setLinked(true);
+                    userConnectionEntity.setEmail(userMap.get("email"));
+                    userConnectionEntity.setOrcid(profile.getOrcidIdentifier().getPath());
+                    userConnectionDao.merge(userConnectionEntity);
+                }
+            } else {
+                throw new UsernameNotFoundException("Could not find an orcid account associated with the email id.");
+            }
+        } else {
+            throw new UsernameNotFoundException("Could not find an orcid account associated with the email id.");
+        }
+    	
+        String targetUrl = getTargetUrl(request, response, authentication);
+        response.setContentType("application/json");
+        response.getWriter().println("{\"success\": true, \"url\": \"" + targetUrl.replaceAll("^/", "") + "\"}");        
+    }
+    
+    private Map<String, String> retrieveUserDetails(SocialType connectionType) {
+        
+    	Map<String, String> userMap = new HashMap<String, String>();
+    	if (SocialType.FACEBOOK.equals(connectionType)) {
+            Facebook facebook = socialContext.getFacebook();
+            User user = facebook.fetchObject("me", User.class, "id", "email", "name");
+            userMap.put("providerUserId", user.getId());
+            userMap.put("userName", user.getName());
+            userMap.put("email", user.getEmail());
+        } else if (SocialType.GOOGLE.equals(connectionType)) {
+            Google google = socialContext.getGoogle();
+            Person person = google.plusOperations().getGoogleProfile();
+            userMap.put("providerUserId", person.getId());
+            userMap.put("userName", person.getDisplayName());
+            userMap.put("email", person.getAccountEmail());
+        }
+    	
+    	return userMap;
+    }
+}
