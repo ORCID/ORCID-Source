@@ -805,9 +805,8 @@ public class OauthConfirmAccessController extends BaseController {
         // Approve
         RedirectView view = (RedirectView) authorizationEndpoint.approveOrDeny(approvalParams, model, status, auth);
         form.setRedirectUri(Text.valueOf(view.getUrl()));
-        SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
-        if (savedRequest != null)
-            LOGGER.info("OauthConfirmAccessController original request: " + savedRequest.getRedirectUrl());
+        if(new HttpSessionRequestCache().getRequest(request, response) != null)
+            new HttpSessionRequestCache().removeRequest(request, response);
         LOGGER.info("OauthConfirmAccessController form.getRedirectUri being sent to client browser: " + form.getRedirectUri());
         return form;
     }
