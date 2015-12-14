@@ -139,6 +139,8 @@ public class MemberV2ApiServiceImplV2_0_rc2 extends MemberV2ApiServiceImplBase {
         return serviceDelegator.deleteOtherName(orcid, putCode);
     }
     
+    //Personal details
+    
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(PERSONAL_DETAILS)
@@ -146,4 +148,6 @@ public class MemberV2ApiServiceImplV2_0_rc2 extends MemberV2ApiServiceImplBase {
     public Response viewPersonalDetails(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewPersonalDetails(orcid);
     }
+    
+    // External Identifiers
 }

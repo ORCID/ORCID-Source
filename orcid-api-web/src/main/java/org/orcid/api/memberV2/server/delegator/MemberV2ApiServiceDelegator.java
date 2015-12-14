@@ -118,4 +118,19 @@ public interface MemberV2ApiServiceDelegator {
     Response deleteOtherName(String orcid, String putCode);
 
     Response viewPersonalDetails(String orcid);
+    
+    
+    
+    
+    
+    Response viewExternalIdentifiers(String orcid);
+
+    Response viewExternalIdentifier(String orcid, String putCode);
+
+    Response updateExternalIdentifier(String orcid, String putCode, ExternalIdentifier externalIdentifier);
+
+    Response createExternalIdentifier(String orcid, ExternalIdentifier externalIdentifier);
+
+    Response deleteExternalIdentifier(String orcid, String putCode);
+
 }
