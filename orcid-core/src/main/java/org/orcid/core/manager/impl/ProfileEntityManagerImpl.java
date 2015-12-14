@@ -132,6 +132,11 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     }
 
     @Override
+    public String findByCreditName(String creditName) {
+        return profileDao.findOrcidByCreditName(creditName);
+    }
+    
+    @Override
     public boolean orcidExists(String orcid) {
         return profileDao.orcidExists(orcid);
     }

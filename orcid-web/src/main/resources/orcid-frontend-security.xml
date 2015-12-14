@@ -28,6 +28,8 @@
 
 	<context:annotation-config />
 	
+	<bean class="org.orcid.frontend.spring.web.social.config.SocialConfig"/>
+	
 	<sec:global-method-security pre-post-annotations="enabled" />
 
 	<bean id="authorizationEndpoint" class="org.orcid.core.oauth.service.OrcidAuthorizationEndpoint">
@@ -78,16 +80,12 @@
 		class="org.orcid.frontend.spring.AjaxAuthenticationFailureHandler" />
 		
 	<bean id="ajaxAuthenticationSuccessHandlerShibboleth"
-        class="org.orcid.frontend.spring.AjaxAuthenticationSuccessHandler">
-        <property name="defaultTargetUrl" value="/shibboleth/link" />
+        class="org.orcid.frontend.spring.ShibbolethAjaxAuthenticationSuccessHandler">
+        <property name="defaultTargetUrl" value="/my-orcid" />
     </bean>
     <bean id="ajaxAuthenticationFailureHandlerShibboleth"
         class="org.orcid.frontend.spring.AjaxAuthenticationFailureHandler" />
-        
-    <bean id="ajaxAuthenticationSuccessHandlerSocial"
-        class="org.orcid.frontend.spring.AjaxAuthenticationSuccessHandler">
-        <property name="defaultTargetUrl" value="/social/link" />
-    </bean>
+    
     <bean id="ajaxAuthenticationFailureHandlerSocial"
         class="org.orcid.frontend.spring.AjaxAuthenticationFailureHandler" />
 
@@ -179,9 +177,14 @@
 			login-page="${org.orcid.core.baseUri}/shibboleth/signin" authentication-success-handler-ref="ajaxAuthenticationSuccessHandlerShibboleth"
 			authentication-failure-handler-ref="ajaxAuthenticationFailureHandlerShibboleth"
 			username-parameter="userId" password-parameter="password" 
-			default-target-url="/shibboleth/link" />
+			default-target-url="/shibboleth/signin" />
 		<sec:session-management session-fixation-protection="migrateSession"/>
 	</sec:http>
+	
+	<bean id="ajaxAuthenticationSuccessHandlerSocial"
+        class="org.orcid.frontend.spring.SocialAjaxAuthenticationSuccessHandler">
+        <property name="defaultTargetUrl" value="/my-orcid" />
+    </bean>
 	
 	<sec:http pattern="/social/.*" access-denied-page="/signin"
 		access-decision-manager-ref="accessDecisionManager" create-session="ifRequired"
@@ -194,7 +197,7 @@
 			login-page="${org.orcid.core.baseUri}/social/access" authentication-success-handler-ref="ajaxAuthenticationSuccessHandlerSocial"
 			authentication-failure-handler-ref="ajaxAuthenticationFailureHandlerSocial"
 			username-parameter="userId" password-parameter="password" 
-			default-target-url="/social/link" />
+			default-target-url="/social/access" />
 		<sec:session-management session-fixation-protection="migrateSession"/>
 	</sec:http>
 

@@ -36,6 +36,8 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     List<ProfileEntity> retrieveSelectableSponsors();
 
     List<String> findOrcidsByName(String name);
+    
+    String findOrcidByCreditName(String creditName);
 
     public boolean exists(String orcid);
 

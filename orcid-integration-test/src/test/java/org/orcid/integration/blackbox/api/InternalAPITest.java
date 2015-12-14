@@ -31,6 +31,7 @@ import org.junit.runner.RunWith;
 import org.orcid.integration.api.helper.APIRequestType;
 import org.orcid.integration.api.helper.OauthHelper;
 import org.orcid.integration.api.internal.InternalOAuthOrcidApiClientImpl;
+import org.orcid.jaxb.model.error.OrcidError;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.beans.factory.annotation.Value;
@@ -57,6 +58,8 @@ public class InternalAPITest {
     public String client1ClientSecret;
     @Value("${org.orcid.web.testUser1.orcidId}")
     protected String user1OrcidId;
+    @Value("${org.orcid.web.locked.member.id}")
+    public String memberId;
     
     @Resource
     private OauthHelper oauthHelper;
@@ -128,5 +131,20 @@ public class InternalAPITest {
         assertNotNull(jsonObject);
         assertEquals(user1OrcidId, (String)jsonObject.getString("orcid"));
         assertNotNull((String)jsonObject.getString("last-modified"));                
+    }
+    
+    @Test
+    public void testGetMemberInfo() {
+        ClientResponse response = internalApiClient.viewMemberDetails(memberId);
+        assertNotNull(response);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        
+        response = internalApiClient.viewMemberDetails("invalid name");
+        assertNotNull(response);
+        assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
+        OrcidError error = response.getEntity(OrcidError.class);
+        assertNotNull(error);
+        assertEquals(new Integer(0), error.getErrorCode());
+        assertEquals("Member id or name not found for: invalid name", error.getDeveloperMessage());
     }
 }

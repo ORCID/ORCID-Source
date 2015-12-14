@@ -231,7 +231,7 @@
 					</div>							
 				</div>	
 				
-				<@security.authorize ifAnyGranted="ROLE_PREMIUM_INSTITUTION">																					
+				<@security.authorize ifAnyGranted="ROLE_PREMIUM_INSTITUTION, ROLE_BASIC_INSTITUTION">																					
 					<div class="row bottomBuffer">
 						<!-- Custom Emails -->
 						<div class="col-md-3 col-sm-3 col-xs-12">
