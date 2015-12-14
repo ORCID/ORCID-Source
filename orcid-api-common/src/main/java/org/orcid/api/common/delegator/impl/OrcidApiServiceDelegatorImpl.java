@@ -379,7 +379,6 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
      * @return
      */
     private Response getOrcidMessageResponse(OrcidProfile profile, String requestedOrcid) {
-
         if (profile == null) {
         	Map<String, String> params = new HashMap<String, String>();
         	params.put("orcid", requestedOrcid);

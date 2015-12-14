@@ -29,6 +29,7 @@ import org.orcid.core.security.visibility.aop.AccessControl;
 import org.orcid.internal.server.delegator.InternalApiServiceDelegator;
 import org.orcid.internal.util.LastModifiedResponse;
 import org.orcid.internal.util.MemberInfo;
+import org.orcid.jaxb.model.error.OrcidError;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.pojo.ajaxForm.Member;
 
@@ -63,6 +64,15 @@ public class InternalApiServiceDelegatorImpl implements InternalApiServiceDelega
     @Override
     public Response viewMemberInfo(String memberIdOrName){
         Member member = memberManager.getMember(memberIdOrName); 
+        if(member == null || (member.getErrors() != null && !member.getErrors().isEmpty())) {
+            OrcidError orcidError = new OrcidError();
+            orcidError.setResponseCode(404);
+            orcidError.setErrorCode(0);
+            orcidError.setMoreInfo("Unable to find member info for: " + memberIdOrName);
+            orcidError.setDeveloperMessage("Member id or name not found for: " + memberIdOrName);
+            orcidError.setUserMessage("Unable to find member info for: " + memberIdOrName);
+            return Response.status(Response.Status.NOT_FOUND).entity(orcidError).build();
+        }
         MemberInfo memberInfo = MemberInfo.fromMember(member);
         return Response.ok(memberInfo).build();        
     }        

@@ -19,8 +19,6 @@ package org.orcid.integration.blackbox.api;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
 import javax.annotation.Resource;
 import javax.ws.rs.core.MultivaluedMap;
@@ -33,7 +31,7 @@ import org.junit.runner.RunWith;
 import org.orcid.integration.api.helper.APIRequestType;
 import org.orcid.integration.api.helper.OauthHelper;
 import org.orcid.integration.api.internal.InternalOAuthOrcidApiClientImpl;
-import org.orcid.internal.util.MemberInfo;
+import org.orcid.jaxb.model.error.OrcidError;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.beans.factory.annotation.Value;
@@ -139,26 +137,14 @@ public class InternalAPITest {
     public void testGetMemberInfo() {
         ClientResponse response = internalApiClient.viewMemberDetails(memberId);
         assertNotNull(response);
-        MemberInfo info = response.getEntity(MemberInfo.class);
-        assertNotNull(info);
-        assertEquals(memberId, info.getId());
-        assertNotNull(info.getName());
-        assertNotNull(info.getClients());
-        assertFalse(info.getClients().isEmpty());
-        
-        response = internalApiClient.viewMemberDetails(info.getName());
-        assertNotNull(response);
-        MemberInfo infoByName = response.getEntity(MemberInfo.class);
-        assertNotNull(infoByName);
-        assertEquals(memberId, infoByName.getId());
-        assertEquals(info, infoByName);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         
         response = internalApiClient.viewMemberDetails("invalid name");
         assertNotNull(response);
-        MemberInfo emptyInfo = response.getEntity(MemberInfo.class);
-        assertNotNull(emptyInfo);
-        assertNull(emptyInfo.getId());
-        assertNull(emptyInfo.getName());
-        assertTrue(emptyInfo.getClients().isEmpty());
+        assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
+        OrcidError error = response.getEntity(OrcidError.class);
+        assertNotNull(error);
+        assertEquals(new Integer(0), error.getErrorCode());
+        assertEquals("Member id or name not found for: invalid name", error.getDeveloperMessage());
     }
 }
