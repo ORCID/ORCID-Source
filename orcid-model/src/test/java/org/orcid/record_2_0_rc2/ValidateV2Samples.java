@@ -19,7 +19,9 @@ package org.orcid.record_2_0_rc2;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
-
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.AnyOf.anyOf;
+import static org.junit.Assert.assertThat;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -29,6 +31,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
 import org.junit.Test;
+import org.orcid.jaxb.model.common.CreditName;
 import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.jaxb.model.record_rc1.Education;
 import org.orcid.jaxb.model.record_rc1.Employment;
@@ -36,6 +39,9 @@ import org.orcid.jaxb.model.record_rc1.Funding;
 import org.orcid.jaxb.model.record_rc1.PeerReview;
 import org.orcid.jaxb.model.record_rc1.Work;
 import org.orcid.jaxb.model.record_rc2.Biography;
+import org.orcid.jaxb.model.record_rc2.ExternalIdentifier;
+import org.orcid.jaxb.model.record_rc2.ExternalIdentifiers;
+import org.orcid.jaxb.model.record_rc2.Name;
 import org.orcid.jaxb.model.record_rc2.PersonalDetails;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
 
@@ -99,7 +105,10 @@ public class ValidateV2Samples {
     
     @Test
     public void testUnmarshallCreditName() {
-        fail();
+        CreditName creditName = (CreditName) unmarshallFromPath("/record_2.0_rc2/samples/credit-name-2.0_rc2.xml", CreditName.class);
+        assertNotNull(creditName);
+        assertEquals("credit-name", creditName.getContent());
+        assertEquals(Visibility.PUBLIC.value(), creditName.getVisibility().value());
     }
     
     @Test
@@ -109,7 +118,19 @@ public class ValidateV2Samples {
     
     @Test
     public void testUnmarshallExternalIdentifiers() {
-        fail();
+        ExternalIdentifiers externalIdentifiers = (ExternalIdentifiers) unmarshallFromPath("/record_2.0_rc2/samples/external-identifier-2.0_rc2.xml", ExternalIdentifiers.class);
+        assertNotNull(externalIdentifiers);
+        assertNotNull(externalIdentifiers.getExternalIdentifier());
+        assertEquals(2, externalIdentifiers.getExternalIdentifier().size());
+        for(ExternalIdentifier extId : externalIdentifiers.getExternalIdentifier()) {
+            assertThat(extId.getPutCode(), anyOf(is(1L), is(2L)));
+            assertThat(extId.getCommonName(), anyOf(is("common-name-1"), is("common-name-2")));
+            assertThat(extId.getReference(), anyOf(is("id-reference-1"), is("id-reference-2")));
+            assertNotNull(extId.getUrl());
+            assertThat(extId.getUrl().getValue(), anyOf(is("http://url/1"), is("http://url/2")));
+            assertNotNull(extId.getSource());
+            assertEquals("8888-8888-8888-8880", extId.getSource().retrieveSourcePath());
+        }
     }
     
     @Test
@@ -119,7 +140,16 @@ public class ValidateV2Samples {
     
     @Test
     public void testUnmarshallName() {
-        fail();
+        Name name = (Name) unmarshallFromPath("/record_2.0_rc2/samples/name-2.0_rc2.xml", Name.class);
+        assertNotNull(name);
+        assertNotNull(name.getCreditName());
+        assertEquals("credit-name", name.getCreditName().getContent());
+        assertNotNull(name.getFamilyName());
+        assertEquals("family-name", name.getFamilyName().getContent());
+        assertNotNull(name.getGivenNames());
+        assertEquals("given-names", name.getGivenNames().getContent());
+        assertNotNull(name.getVisibility());
+        assertEquals(Visibility.PUBLIC, name.getVisibility());       
     }
     
     @Test
@@ -140,7 +170,17 @@ public class ValidateV2Samples {
                 result = (ResearcherUrls) obj;
             } else if(PersonalDetails.class.equals(type)) {
                 result = (PersonalDetails) obj;
-            } 
+            } else if(ExternalIdentifier.class.equals(type)) {
+                result = (ExternalIdentifier) obj;
+            } else if(ExternalIdentifiers.class.equals(type)) {
+                result = (ExternalIdentifiers) obj;
+            } else if(Biography.class.equals(type)) {
+                result = (Biography) obj;
+            } else if(Name.class.equals(type)) {                
+                result = (Name) obj;
+            } else if(CreditName.class.equals(type)) {
+                result = (CreditName) obj;
+            }
             return result;
         } catch (IOException e) {
             throw new RuntimeException("Error reading notification from classpath", e);

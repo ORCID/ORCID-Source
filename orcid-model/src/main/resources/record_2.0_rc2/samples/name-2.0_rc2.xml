@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<personal-details:name
+<personal-details:name visibility="public"
 	xmlns:personal-details="http://www.orcid.org/ns/personal-details"	
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.orcid.org/ns/personal-details ../personal-details-2.0_rc2.xsd">
-	<personal-details:name visibility="public">		
-		<personal-details:given-names>given-names</personal-details:given-names>
-		<personal-details:family-name>family-name</personal-details:family-name>
-		<personal-details:credit-name>credit-name</personal-details:credit-name>
-	</personal-details:name>
+	xsi:schemaLocation="http://www.orcid.org/ns/personal-details ../personal-details-2.0_rc2.xsd">	
+	<personal-details:given-names>given-names</personal-details:given-names>
+	<personal-details:family-name>family-name</personal-details:family-name>
+	<personal-details:credit-name>credit-name</personal-details:credit-name>
 </personal-details:name>

@@ -64,10 +64,9 @@
 			</xs:documentation>
 		</xs:annotation>
 		<xs:complexType>
-			<xs:sequence>
-				<xs:element name="name" type="personal-details:name"
-					minOccurs="0" maxOccurs="1" />
-			</xs:sequence>
+			<xs:complexContent>
+				<xs:extension base="personal-details:name"></xs:extension>
+			</xs:complexContent>			
 		</xs:complexType>
 	</xs:element>
 
@@ -78,10 +77,9 @@
 			</xs:documentation>
 		</xs:annotation>		
 		<xs:complexType>
-			<xs:sequence>
-				<xs:element name="credit-name" type="personal-details:credit-name"
-					minOccurs="0" maxOccurs="1" />
-			</xs:sequence>
+			<xs:simpleContent>
+				<xs:extension base="personal-details:credit-name" />
+			</xs:simpleContent>			
 		</xs:complexType>
 	</xs:element>
 
@@ -92,10 +90,9 @@
 			</xs:documentation>
 		</xs:annotation>
 		<xs:complexType>
-			<xs:sequence>
-				<xs:element name="biography" type="personal-details:biography"
-					minOccurs="0" maxOccurs="1" />
-			</xs:sequence>
+			<xs:simpleContent>
+				<xs:extension base="personal-details:biography" />
+			</xs:simpleContent>			
 		</xs:complexType>
 	</xs:element>
 
