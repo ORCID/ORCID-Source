@@ -18,6 +18,7 @@ package org.orcid.record_2_0_rc2;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -34,6 +35,7 @@ import org.orcid.jaxb.model.record_rc1.Employment;
 import org.orcid.jaxb.model.record_rc1.Funding;
 import org.orcid.jaxb.model.record_rc1.PeerReview;
 import org.orcid.jaxb.model.record_rc1.Work;
+import org.orcid.jaxb.model.record_rc2.Biography;
 import org.orcid.jaxb.model.record_rc2.PersonalDetails;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
 
@@ -80,6 +82,54 @@ public class ValidateV2Samples {
         assertNotNull(rUrls.getResearcherUrls().get(0).getSource());
         assertEquals("http://orcid.org/8888-8888-8888-8880", rUrls.getResearcherUrls().get(0).getSource().retriveSourceUri());
         assertEquals("8888-8888-8888-8880", rUrls.getResearcherUrls().get(0).getSource().retrieveSourcePath());
+    }
+    
+    @Test
+    public void testUnmarshallAddress() {
+        
+    }
+    
+    @Test
+    public void testUnmarshallBiography() {
+        Biography bio = (Biography) unmarshallFromPath("/record_2.0_rc2/samples/biography-2.0_rc2.xml", Biography.class);
+        assertNotNull(bio);
+        assertEquals("biography", bio.getContent());
+        assertEquals(Visibility.PUBLIC.value(), bio.getVisibility().value());
+    }
+    
+    @Test
+    public void testUnmarshallCreditName() {
+        fail();
+    }
+    
+    @Test
+    public void testUnmarshallEmails() {
+        fail();
+    }
+    
+    @Test
+    public void testUnmarshallExternalIdentifiers() {
+        fail();
+    }
+    
+    @Test
+    public void testUnmarshallKeyword() {
+        fail();
+    }
+    
+    @Test
+    public void testUnmarshallName() {
+        fail();
+    }
+    
+    @Test
+    public void testUnmarshallOtherNames() {
+        fail();
+    }
+    
+    @Test
+    public void testUnmarshallPerson() {
+        fail();
     }
     
     private Object unmarshallFromPath(String path, Class<?> type) {
