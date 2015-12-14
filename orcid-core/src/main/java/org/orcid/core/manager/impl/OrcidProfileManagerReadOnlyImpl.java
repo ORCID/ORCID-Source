@@ -30,6 +30,7 @@ import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.OrcidProfileCacheManager;
 import org.orcid.core.manager.OrcidProfileManagerReadOnly;
 import org.orcid.core.manager.SourceManager;
+import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.core.security.visibility.aop.VisibilityControl;
 import org.orcid.jaxb.model.message.Claimed;
 import org.orcid.jaxb.model.message.GivenNames;
@@ -279,6 +280,7 @@ public class OrcidProfileManagerReadOnlyImpl implements OrcidProfileManagerReadO
         GivenNames gn = new GivenNames();
         PersonalDetails pd = new PersonalDetails();
         gn.setContent(localeManager.resolveMessage("orcid.reserved_for_claim"));
+        gn.setVisibility(OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility());
         pd.setGivenNames(gn);
         OrcidBio ob = new OrcidBio();
         ob.setPersonalDetails(pd);

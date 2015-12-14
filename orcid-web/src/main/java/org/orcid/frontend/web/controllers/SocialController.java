@@ -26,7 +26,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.frontend.spring.web.social.config.SocialContext;
 import org.orcid.frontend.spring.web.social.config.SocialType;
-import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.UserConnectionDao;
 import org.orcid.persistence.jpa.entities.UserconnectionEntity;
@@ -90,9 +89,7 @@ public class SocialController extends BaseController {
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                     return new ModelAndView("redirect:/my-orcid");
                 } else {
-                	
-                	ModelAndView mav = new ModelAndView();
-                    logoutCurrentUser(request, response);
+                    ModelAndView mav = new ModelAndView();
                     mav.setViewName("social_link_signin");
                     mav.addObject("providerId", providerId);
                     mav.addObject("accountId", getAccountIdForDisplay(userMap));
@@ -107,30 +104,6 @@ public class SocialController extends BaseController {
             }
         } else {
         	throw new UsernameNotFoundException("Could not find an orcid account associated with the email id.");
-        }
-    }
-
-    @RequestMapping(value = { "/link" }, method = RequestMethod.GET)
-    public ModelAndView link(HttpServletRequest request, HttpServletResponse response) {
-        SocialType connectionType = socialContext.isSignedIn(request, response);
-        if (connectionType != null) {
-        	Map<String, String> userMap = retrieveUserDetails(connectionType);
-            String providerId = connectionType.value();
-            UserconnectionEntity userConnectionEntity = userConnectionDao.findByProviderIdAndProviderUserId(userMap.get("providerUserId"), providerId);
-            if (userConnectionEntity != null) {
-                if (!userConnectionEntity.isLinked()) {
-                    OrcidProfile profile = getRealProfile();
-                    userConnectionEntity.setLinked(true);
-                    userConnectionEntity.setEmail(userMap.get("email"));
-                    userConnectionEntity.setOrcid(profile.getOrcidIdentifier().getPath());
-                    userConnectionDao.merge(userConnectionEntity);
-                }
-                return new ModelAndView("redirect:/my-orcid");
-            } else {
-                throw new UsernameNotFoundException("Could not find an orcid account associated with the email id.");
-            }
-        } else {
-            throw new UsernameNotFoundException("Could not find an orcid account associated with the email id.");
         }
     }
 

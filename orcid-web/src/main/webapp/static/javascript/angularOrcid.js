@@ -2038,10 +2038,15 @@ orcidNgModule.controller('SecurityQuestionEditCtrl', ['$scope', '$compile', func
 
     $scope.checkCredentials = function() {
         $scope.password=null;
-        $.colorbox({
-            html: $compile($('#check-password-modal').html())($scope)
-        });
-        $.colorbox.resize();
+        if(orcidVar.isPasswordConfirmationRequired){
+            $.colorbox({
+                html: $compile($('#check-password-modal').html())($scope)
+            });
+            $.colorbox.resize();
+        }
+        else{
+            $scope.submitModal();
+        }
     };
 
     $scope.submitModal = function() {
@@ -2195,10 +2200,15 @@ orcidNgModule.controller('EmailEditCtrl', ['$scope', '$compile', 'emailSrvc' ,fu
 
     $scope.checkCredentials = function() {
         $scope.password=null;
-        $.colorbox({
-            html: $compile($('#check-password-modal').html())($scope)
-        });
-        $.colorbox.resize();
+        if(orcidVar.isPasswordConfirmationRequired){
+            $.colorbox({
+                html: $compile($('#check-password-modal').html())($scope)
+            });
+            $.colorbox.resize();
+        }
+        else{
+            $scope.submitModal();
+        }
     };
     
     $scope.showTooltip = function(el){
@@ -2399,7 +2409,6 @@ orcidNgModule.controller('NameCtrl', ['$scope', '$compile',function NameCtrl($sc
         $scope.showEdit = false;
     };
 
-
     $scope.getNameForm = function(){
         $.ajax({
             url: getBaseUri() + '/account/nameForm.json',
@@ -2433,9 +2442,9 @@ orcidNgModule.controller('NameCtrl', ['$scope', '$compile',function NameCtrl($sc
         });
     };
 
-    $scope.setCreditNameVisibility = function(priv, $event) {
+    $scope.setNamesVisibility = function(priv, $event) {
         $event.preventDefault();
-        $scope.nameForm.creditNameVisibility.visibility = priv;
+        $scope.nameForm.namesVisibility.visibility = priv;
     };
 
     $scope.getNameForm();
@@ -2459,16 +2468,15 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile',function ($scope
     };
 
     $scope.addNew = function() {
-        $scope.otherNamesForm.otherNames.push({value: ""});
+        $scope.otherNamesForm.otherNames.push({"errors":[],"content":"","putCode":null,"visibility":null});
     };
 
     $scope.getOtherNamesForm = function(){
         $.ajax({
             url: getBaseUri() + '/my-orcid/otherNamesForms.json',
             dataType: 'json',
-            success: function(data) {
+            success: function(data) {            	
                 $scope.otherNamesForm = data;
-                var otherNames = $scope.otherNamesForm.otherNames;
                 $scope.$apply();
             }
         }).fail(function(){
@@ -2487,7 +2495,6 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile',function ($scope
     };
 
     $scope.setOtherNamesForm = function(){
-        var otherNames = $scope.otherNamesForm.otherNames;
         $.ajax({
             url: getBaseUri() + '/my-orcid/otherNamesForms.json',
             type: 'POST',
@@ -2508,18 +2515,16 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile',function ($scope
     
     $scope.showTooltip = function(elem){
     	$scope.showElement[elem] = true;
-    }
+    };
 
     $scope.hideTooltip = function(elem){
     	$scope.showElement[elem] = false;	
-    }
+    };
 
     $scope.setPrivacy = function(priv, $event) {
         $event.preventDefault();
         $scope.otherNamesForm.visibility.visibility = priv;
-    };
-    
-    
+    };        
 
     $scope.getOtherNamesForm();
 }]);
@@ -2867,7 +2872,6 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
     };
 
     $scope.postRegister = function (linkFlag) {
-    	console.log(linkFlag);
         if (basePath.startsWith(baseUrl + 'oauth')) {
             var clientName = $('div#RegistrationCtr input[name="client_name"]').val();
             $scope.register.referredBy = $('div#RegistrationCtr input[name="client_id"]').val();
@@ -2881,6 +2885,7 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
         
         $scope.register.grecaptcha.value = $scope.recatchaResponse; //Adding the response to the register object
         $scope.register.grecaptchaWidgetId.value = $scope.recaptchaWidgetId;
+        console.log('link flag is : '+ linkFlag);
         $scope.register.linkType = linkFlag;
         $.ajax({
             url: getBaseUri() + '/register.json',
@@ -5846,6 +5851,7 @@ orcidNgModule.controller('DelegatesCtrl',['$scope', '$compile', function Delegat
         column: 'delegateSummary.creditName.content',
         descending: false
     };
+    $scope.isPasswordConfirmationRequired = orcidVar.isPasswordConfirmationRequired;
 
     $scope.changeSorting = function(column) {
         var sort = $scope.sort;
@@ -6182,6 +6188,7 @@ orcidNgModule.controller('SocialCtrl',['$scope', '$compile', function SocialCtrl
         column: 'providerUserId',
         descending: false
     };
+    $scope.isPasswordConfirmationRequired = orcidVar.isPasswordConfirmationRequired;
 
     $scope.changeSorting = function(column) {
         var sort = $scope.sort;
@@ -9386,7 +9393,7 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
         $scope.personalLogin = false; //Hide Personal Login
         
         if(!$scope.scriptsInjected){ //If shibboleth scripts haven't been loaded yet.            
-            var scripts = ['/static/javascript/shibboleth-embedded-ds/1.1.0/idpselect_config.js', '/static/javascript/shibboleth-embedded-ds/1.1.0/idpselect.js'];            
+            var scripts = ['/static/javascript/shibboleth-embedded-ds/1.1.0/idpselect_config.js?v=' + orcidVar.version, '/static/javascript/shibboleth-embedded-ds/1.1.0/idpselect.js?v=' + orcidVar.version];            
             angular.forEach(scripts, function(key) {                
                 $scope.addShibbolethScript(key);                
             });
@@ -9424,7 +9431,7 @@ orcidNgModule.controller('LoginLayoutController',['$scope', function ($scope){
         $scope.personalLogin = false; //Hide Personal Login
         
         if(!$scope.scriptsInjected){ //If shibboleth scripts haven't been loaded yet.            
-            var scripts = ['/static/javascript/shibboleth-embedded-ds/1.1.0/idpselect_config.js', '/static/javascript/shibboleth-embedded-ds/1.1.0/idpselect.js'];            
+            var scripts = ['/static/javascript/shibboleth-embedded-ds/1.1.0/idpselect_config.js?v=' + orcidVar.version, '/static/javascript/shibboleth-embedded-ds/1.1.0/idpselect.js?v=' + orcidVar.version];            
             angular.forEach(scripts, function(key) {                
                 $scope.addShibbolethScript(key);                
             });

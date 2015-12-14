@@ -31,6 +31,7 @@ the software.
         <jersey.version>1.18.3</jersey.version>
         <solr.version>4.10.4</solr.version>
         <aspectj.version>1.8.4</aspectj.version>
+        <jena.version>3.0.0</jena.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <servlet.port>9437</servlet.port>
@@ -115,8 +116,8 @@ the software.
                 <artifactId>maven-compiler-plugin</artifactId>
                 <inherited>true</inherited>
                 <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
+                    <source>1.8</source>
+                    <target>1.8</target>
                 </configuration>
             </plugin>
             <plugin>
@@ -364,7 +365,17 @@ the software.
 						</execution>
 					</executions>
 			    </plugin>
-            </plugins>
+			    <plugin>
+					<groupId>org.apache.jena</groupId>
+					<artifactId>jena-maven-tools</artifactId>
+					<version>${jena.version}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>build-helper-maven-plugin</artifactId>
+					<version>1.10</version>		
+	            </plugin>
+	        </plugins>
         </pluginManagement>
     </build>
 
@@ -908,14 +919,19 @@ the software.
                 <version>1.4.6</version>
             </dependency>
             <dependency>
+                <groupId>xml-apis</groupId>
+                <artifactId>xml-apis</artifactId>
+                <version>1.4.01</version>
+            </dependency>
+            <dependency>
                 <groupId>org.apache.jena</groupId>
-                <artifactId>jena-core</artifactId>
-                <version>2.10.1</version>
+                <artifactId>jena-arq</artifactId>
+                <version>${jena.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.bouncycastle</groupId>
-                <artifactId>bcprov-jdk16</artifactId>
-                <version>1.46</version>
+                <artifactId>bcprov-jdk15on</artifactId>
+                <version>1.53</version>
             </dependency>
             
             <!-- Test -->
@@ -973,6 +989,12 @@ the software.
                 <version>1.2.7</version>
                 <scope>test</scope>
             </dependency>
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>18.0</version>
+            </dependency>
+            
         </dependencies>
     </dependencyManagement>
 

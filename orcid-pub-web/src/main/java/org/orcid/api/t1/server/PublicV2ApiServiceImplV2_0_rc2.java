@@ -17,6 +17,7 @@
 package org.orcid.api.t1.server;
 
 import static org.orcid.core.api.OrcidApiConstants.EMAIL;
+import static org.orcid.core.api.OrcidApiConstants.PERSONAL_DETAILS;
 import static org.orcid.core.api.OrcidApiConstants.ORCID_JSON;
 import static org.orcid.core.api.OrcidApiConstants.ORCID_XML;
 import static org.orcid.core.api.OrcidApiConstants.PUTCODE;
@@ -70,5 +71,14 @@ public class PublicV2ApiServiceImplV2_0_rc2 extends PublicV2ApiServiceImplBase {
     @ApiOperation(value = "Fetch all emails for an ORCID ID", hidden = true, authorizations = { @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_READ_LIMITED, description = "you need this") }) })
     public Response viewEmails(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewEmails(orcid);
+    }
+    
+
+    @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(PERSONAL_DETAILS)
+    @ApiOperation(value = "Fetch personal details for an ORCID ID", hidden = true, authorizations = { @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_READ_LIMITED, description = "you need this") }) })
+    public Response viewPersonalDetails(@PathParam("orcid") String orcid) {
+        return serviceDelegator.viewPersonalDetails(orcid);
     }
 }

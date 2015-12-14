@@ -142,6 +142,13 @@ var OrcidGA = function() {
         return clientGroupName + ' - ' + clientName
     };
     this.gaPush = function(trackArray) {
+        //Recheck ga is enabled
+        if(!gaEnabled) {
+            if(window.ga && ga.create) {
+                gaEnabled = true;
+            }
+        }
+        
         if (gaEnabled) {
         	if(typeof trackArray === 'function') {
         		ga(trackArray);
@@ -223,8 +230,8 @@ function checkOrcidLoggedIn() {
     $
             .ajax(
                     {
-                        url : getBaseUri() + '/userStatus.json?callback=?',
-                        type : 'GET',
+                        url : orcidVar.baseUri + '/userStatus.json?callback=?',
+                        type : 'POST',
                         dataType : 'json',
                         success : function(data) {
                             if (data.loggedIn == false
@@ -237,10 +244,12 @@ function checkOrcidLoggedIn() {
 
                         }
                     }).fail(
-                    function() {
-                        // something bad is happening!
-                        console.log("error with loggin check on :"
+                        // detects server is down or CSRF mismatches
+                        // do to session expiration or server bounces 
+                        function() {
+                            console.log("error with loggin check on :"
                                 + window.location.href);
+                            window.location.reload();
                     });
 
 }

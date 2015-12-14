@@ -132,6 +132,11 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     }
 
     @Override
+    public String findByCreditName(String creditName) {
+        return profileDao.findOrcidByCreditName(creditName);
+    }
+    
+    @Override
     public boolean orcidExists(String orcid) {
         return profileDao.orcidExists(orcid);
     }
@@ -195,7 +200,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         profile.setKeywordsVisibility(orcidProfile.getOrcidBio().getKeywords().getVisibility());
         profile.setResearcherUrlsVisibility(orcidProfile.getOrcidBio().getResearcherUrls().getVisibility());
         profile.setOtherNamesVisibility(orcidProfile.getOrcidBio().getPersonalDetails().getOtherNames().getVisibility());
-        profile.setCreditNameVisibility(orcidProfile.getOrcidBio().getPersonalDetails().getCreditName().getVisibility());
+        profile.setNamesVisibility(orcidProfile.getOrcidBio().getPersonalDetails().getCreditName().getVisibility());
         profile.setProfileAddressVisibility(orcidProfile.getOrcidBio().getContactDetails().getAddress().getCountry().getVisibility());
         profile.setId(orcidProfile.getOrcidIdentifier().getPath());
         return profile;

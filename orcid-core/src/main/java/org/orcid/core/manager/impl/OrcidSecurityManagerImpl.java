@@ -34,14 +34,23 @@ import org.orcid.jaxb.model.common.Filterable;
 import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.ScopePathType;
+import org.orcid.jaxb.model.record.summary_rc1.EducationSummary;
+import org.orcid.jaxb.model.record.summary_rc1.EmploymentSummary;
+import org.orcid.jaxb.model.record.summary_rc1.FundingSummary;
+import org.orcid.jaxb.model.record.summary_rc1.PeerReviewSummary;
+import org.orcid.jaxb.model.record.summary_rc1.WorkSummary;
 import org.orcid.jaxb.model.record_rc1.Education;
 import org.orcid.jaxb.model.record_rc1.Email;
 import org.orcid.jaxb.model.record_rc1.Employment;
 import org.orcid.jaxb.model.record_rc1.Funding;
 import org.orcid.jaxb.model.record_rc1.PeerReview;
 import org.orcid.jaxb.model.record_rc1.Work;
+import org.orcid.jaxb.model.record_rc2.Biography;
+import org.orcid.jaxb.model.record_rc2.Name;
+import org.orcid.jaxb.model.record_rc2.OtherName;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import org.orcid.persistence.jpa.entities.SourceEntity;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
@@ -64,6 +73,8 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         OAuth2Authentication oAuth2Authentication = getOAuth2Authentication();
         // If it is null, it might be a call from the public API
         Set<String> readLimitedScopes = new HashSet<String>();
+        // If it is null, it might be a call from the public API
+        Set<String> updateScopes = new HashSet<String>();
         Visibility visibility = filterable.getVisibility();
         String clientId = null;
 
@@ -71,8 +82,18 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
             OAuth2Request authorizationRequest = oAuth2Authentication.getOAuth2Request();
             clientId = authorizationRequest.getClientId();
             readLimitedScopes = getReadLimitedScopesThatTheClientHas(authorizationRequest, filterable);
+            updateScopes = getUpdateScopesThatTheClientHas(authorizationRequest, filterable);
         }
-
+            
+        //If we are using a read-limited or update scope and the client is the source of the object, we should not worry about the visibility
+        if(!readLimitedScopes.isEmpty() || !updateScopes.isEmpty()) {
+            if(!PojoUtil.isEmpty(filterable.retrieveSourcePath())) {
+                if(filterable.retrieveSourcePath().equals(clientId)) {
+                    return;
+                }
+            }
+        }        
+        
         if (readLimitedScopes.isEmpty()) {
             // This client only has permission for read public
             if ((visibility == null || Visibility.PRIVATE.equals(visibility)) && clientId != null && !clientId.equals(filterable.retrieveSourcePath())) {
@@ -88,14 +109,53 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
             }
         }
     }
-
+    
+    @Override
+    public void checkVisibility(Name name) {        
+        if(Visibility.PRIVATE.equals(name.getVisibility())) {
+            throw new OrcidVisibilityException();
+        }
+        boolean hasReadLimitedScope = hasScope(ScopePathType.READ_LIMITED);
+        if(!hasReadLimitedScope) {
+            if(Visibility.LIMITED.equals(name.getVisibility())) {
+                throw new OrcidUnauthorizedException("You dont have permissions to view this element");
+            }
+        }
+    }
+    
+    @Override
+    public void checkVisibility(Biography biography) {
+        if(Visibility.PRIVATE.equals(biography.getVisibility())) {
+            throw new OrcidVisibilityException();
+        }
+        boolean hasReadLimitedScope = hasScope(ScopePathType.READ_LIMITED);
+        if(!hasReadLimitedScope) {
+            if(Visibility.LIMITED.equals(biography.getVisibility())) {
+                throw new OrcidUnauthorizedException("You dont have permissions to view this element");
+            }
+        }
+    }
+    
+    @Override
+    public void checkVisibility(OtherName otherName) {
+        if(Visibility.PRIVATE.equals(otherName.getVisibility())) {
+            throw new OrcidVisibilityException();
+        }
+        boolean hasReadLimitedScope = hasScope(ScopePathType.READ_LIMITED);
+        if(!hasReadLimitedScope) {
+            if(Visibility.LIMITED.equals(otherName.getVisibility())) {
+                throw new OrcidUnauthorizedException("You dont have permissions to view this element");
+            }
+        }
+    }
+    
     @Override
     public void checkSource(SourceEntity existingSource) {
         String sourceIdOfUpdater = sourceManager.retrieveSourceOrcid();
         if (sourceIdOfUpdater != null && (existingSource == null || !sourceIdOfUpdater.equals(existingSource.getSourceId()))) {
             Map<String, String> params = new HashMap<String, String>();
             params.put("activity", "work");
-        	throw new WrongSourceException(params);
+            throw new WrongSourceException(params);
         }
     }
 
@@ -113,19 +173,24 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         return false;
     }
 
+    @Override
+    public boolean isPasswordConfirmationRequired() {
+        return sourceManager.isInDelegationMode() && !sourceManager.isDelegatedByAnAdmin();
+    }
+
     private Set<String> getReadLimitedScopesThatTheClientHas(OAuth2Request authorizationRequest, Filterable filterable) {
         Set<String> requestedScopes = ScopePathType.getCombinedScopesFromStringsAsStrings(authorizationRequest.getScope());
         Set<String> readLimitedScopes = new HashSet<>();
         readLimitedScopes.add(ScopePathType.READ_LIMITED.value());
         readLimitedScopes.add(ScopePathType.ACTIVITIES_READ_LIMITED.value());
         readLimitedScopes.add(ScopePathType.ORCID_PROFILE_READ_LIMITED.value());
-        if (filterable instanceof Work) {
+        if (filterable instanceof Work || filterable instanceof WorkSummary) {
             readLimitedScopes.add(ScopePathType.ORCID_WORKS_READ_LIMITED.value());
-        } else if (filterable instanceof Funding) {
+        } else if (filterable instanceof Funding || filterable instanceof FundingSummary) {
             readLimitedScopes.add(ScopePathType.FUNDING_READ_LIMITED.value());
-        } else if (filterable instanceof Education || filterable instanceof Employment) {
+        } else if (filterable instanceof Education || filterable instanceof Employment || filterable instanceof EducationSummary || filterable instanceof EmploymentSummary) {
             readLimitedScopes.add(ScopePathType.AFFILIATIONS_READ_LIMITED.value());
-        } else if (filterable instanceof PeerReview) {
+        } else if (filterable instanceof PeerReview || filterable instanceof PeerReviewSummary) {
             readLimitedScopes.add(ScopePathType.PEER_REVIEW_READ_LIMITED.value());
         } else if (filterable instanceof ResearcherUrl || filterable instanceof Email) {
             readLimitedScopes.add(ScopePathType.PERSON_READ_LIMITED.value());
@@ -134,6 +199,27 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         return readLimitedScopes;
     }
 
+    private Set<String> getUpdateScopesThatTheClientHas(OAuth2Request authorizationRequest, Filterable filterable) {
+        Set<String> requestedScopes = ScopePathType.getCombinedScopesFromStringsAsStrings(authorizationRequest.getScope());
+        Set<String> updateScopes = new HashSet<>();
+        updateScopes.add(ScopePathType.ACTIVITIES_UPDATE.value());
+        updateScopes.add(ScopePathType.PERSON_UPDATE.value());
+        if (filterable instanceof Work || filterable instanceof WorkSummary) {
+            updateScopes.add(ScopePathType.ORCID_WORKS_UPDATE.value());
+        } else if (filterable instanceof Funding || filterable instanceof FundingSummary) {
+            updateScopes.add(ScopePathType.FUNDING_UPDATE.value());
+        } else if (filterable instanceof Education || filterable instanceof Employment || filterable instanceof EducationSummary || filterable instanceof EmploymentSummary) {
+            updateScopes.add(ScopePathType.AFFILIATIONS_UPDATE.value());
+        } else if (filterable instanceof PeerReview || filterable instanceof PeerReviewSummary) {
+            updateScopes.add(ScopePathType.PEER_REVIEW_UPDATE.value());
+        } else if (filterable instanceof ResearcherUrl || filterable instanceof Email) {
+            updateScopes.add(ScopePathType.PERSON_UPDATE.value());
+        }
+        updateScopes.retainAll(requestedScopes);
+        return updateScopes;        
+    }
+
+    
     private OAuth2Authentication getOAuth2Authentication() {
         SecurityContext context = SecurityContextHolder.getContext();
         Authentication authentication = context.getAuthentication();
@@ -156,7 +242,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
             throw new AccessControlException("Cannot access method with authentication type " + authentication != null ? authentication.toString() : ", as it's null!");
         }
     }
-    
+
     @Override
     public String getClientIdFromAPIRequest() {
         SecurityContext context = SecurityContextHolder.getContext();
@@ -165,8 +251,21 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
             OAuth2Authentication oAuth2Authentication = (OAuth2Authentication) authentication;
             OAuth2Request request = oAuth2Authentication.getOAuth2Request();
             return request.getClientId();
-        } 
+        }
         return null;
+    }
+    
+    private boolean hasScope(ScopePathType scope) {
+        OAuth2Authentication oAuth2Authentication = getOAuth2Authentication();
+        if(oAuth2Authentication != null) {
+            OAuth2Request authorizationRequest = oAuth2Authentication.getOAuth2Request();
+            Set<String> requestedScopes = ScopePathType.getCombinedScopesFromStringsAsStrings(authorizationRequest.getScope());
+            if(requestedScopes.contains(scope.value())) {
+                return true;
+            }
+        }
+        
+        return false;
     }
 
 }

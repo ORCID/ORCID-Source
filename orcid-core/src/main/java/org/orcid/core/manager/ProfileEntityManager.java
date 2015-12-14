@@ -37,6 +37,8 @@ import org.orcid.pojo.ApplicationSummary;
 public interface ProfileEntityManager {
 
     ProfileEntity findByOrcid(String orcid);
+    
+    String findByCreditName(String creditName);
 
     boolean orcidExists(String orcid);
 
@@ -46,31 +48,31 @@ public interface ProfileEntityManager {
 
     Long getConfirmedProfileCount();
 
-    public boolean updateProfile(OrcidProfile profile);
+    boolean updateProfile(OrcidProfile profile);
 
-    public boolean updateProfile(ProfileEntity profile);
+    boolean updateProfile(ProfileEntity profile);
 
-    public boolean deprecateProfile(ProfileEntity deprecatedProfile, ProfileEntity primaryProfile);
+    boolean deprecateProfile(ProfileEntity deprecatedProfile, ProfileEntity primaryProfile);
 
-    public List<ProfileEntity> findProfilesByOrcidType(OrcidType type);
+    List<ProfileEntity> findProfilesByOrcidType(OrcidType type);
 
-    public boolean enableDeveloperTools(OrcidProfile profile);
+    boolean enableDeveloperTools(OrcidProfile profile);
 
-    public boolean disableDeveloperTools(OrcidProfile profile);
+    boolean disableDeveloperTools(OrcidProfile profile);
 
-    public Iso3166Country getCountry(String orcid);
+    Iso3166Country getCountry(String orcid);
 
-    public boolean isProfileClaimed(String orcid);
+    boolean isProfileClaimed(String orcid);
 
     ClientType getClientType(String orcid);
 
     MemberType getGroupType(String orcid);
 
-    public boolean lockProfile(String orcid);
+    boolean lockProfile(String orcid);
 
-    public boolean unlockProfile(String orcid);
+    boolean unlockProfile(String orcid);
 
-    public boolean isLocked(String orcid);
+    boolean isLocked(String orcid);
 
     ActivitiesSummary getActivitiesSummary(String orcid);
 

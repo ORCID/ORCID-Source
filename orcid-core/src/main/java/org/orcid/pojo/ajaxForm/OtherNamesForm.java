@@ -20,8 +20,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.orcid.jaxb.model.message.OtherName;
-import org.orcid.jaxb.model.message.OtherNames;
+import org.orcid.jaxb.model.record_rc2.OtherName;
+import org.orcid.jaxb.model.record_rc2.OtherNames;
 
 public class OtherNamesForm implements ErrorsInterface, Serializable {
 
@@ -29,7 +29,7 @@ public class OtherNamesForm implements ErrorsInterface, Serializable {
 
     private List<String> errors = new ArrayList<String>();
 
-    private List<Text> otherNames = new ArrayList<Text>();
+    private List<OtherNameForm> otherNames = new ArrayList<OtherNameForm>();
     
     private Visibility visibility;
 
@@ -39,44 +39,27 @@ public class OtherNamesForm implements ErrorsInterface, Serializable {
             on.setVisibility(new Visibility());
             return on;
         }
-        if (otherNames.getOtherName() != null) {
-            for (OtherName otherName:otherNames.getOtherName())
-                if (otherName.getContent() != null)
-                    on.getOtherNames().add(Text.valueOf(otherName.getContent()));
-        }
-        if (otherNames.getVisibility() == null) on.setVisibility(new Visibility());
-        else on.setVisibility(Visibility.valueOf(otherNames.getVisibility()));
+        if (otherNames.getOtherNames() != null) {
+            for (OtherName otherName : otherNames.getOtherNames()) {
+                on.getOtherNames().add(OtherNameForm.valueOf(otherName));
+            }
+                
+        }        
         return on;
     }
-
-    public OtherNames toOtherNames() {
-        OtherNames otherName = new OtherNames();
-        List<OtherName> kList = new ArrayList<OtherName>();
-        for (Text text : this.otherNames)
-            if (!PojoUtil.isEmpty(text))
-                kList.add(text.toOtherName());
-        otherName.setOtherName(kList);
-        otherName.setVisibility(this.getVisibility().getVisibility());
-        return otherName;
-    }
-
     
-    public Visibility getVisibility() {
-        return visibility;
-    }
-
-    public void setVisibility(Visibility visibility) {
-        this.visibility = visibility;
-    }
-
-    public List<Text> getOtherNames() {
+    public OtherNames toOtherNames() {
+        OtherNames otherNames = new OtherNames();
+        if(this.otherNames != null && !this.otherNames.isEmpty()) {
+            otherNames.setOtherNames(new ArrayList<OtherName>());
+            for(OtherNameForm otherNameForm : this.otherNames) {
+                otherNames.getOtherNames().add(otherNameForm.toOtherName());
+            }
+        }
+        
         return otherNames;
     }
 
-    public void setOtherNames(List<Text> othernames) {
-        this.otherNames = othernames;
-    }
-    
     public List<String> getErrors() {
         return errors;
     }
@@ -85,4 +68,19 @@ public class OtherNamesForm implements ErrorsInterface, Serializable {
         this.errors = errors;
     }
 
+    public List<OtherNameForm> getOtherNames() {
+        return otherNames;
+    }
+
+    public void setOtherNames(List<OtherNameForm> otherNames) {
+        this.otherNames = otherNames;
+    }
+
+    public Visibility getVisibility() {
+        return visibility;
+    }
+
+    public void setVisibility(Visibility visibility) {
+        this.visibility = visibility;
+    }        
 }

@@ -118,14 +118,17 @@ public class ActivityCacheManagerImpl extends Object implements ActivityCacheMan
     @Cacheable(value = "pub-credit-name", key = "#profile.getCacheKey()")
     public String getPublicCreditName(ProfileEntity profile) {
         if(profile != null) {
-            if (Visibility.PUBLIC.equals(profile.getCreditNameVisibility()) && StringUtils.isNotBlank(profile.getCreditName())) {
-                return profile.getCreditName();
-            } else {
-                String givenName = profile.getGivenNames();
-                String familyName = profile.getFamilyName();
-                String composedCreditName = (PojoUtil.isEmpty(givenName) ? "" : givenName) + " " + (PojoUtil.isEmpty(familyName) ? "" : familyName);
-                return composedCreditName;
-            }
+            if (Visibility.PUBLIC.equals(profile.getNamesVisibility()) && StringUtils.isNotBlank(profile.getCreditName())) {
+                String publicCreditName = null;
+                if(!PojoUtil.isEmpty(profile.getCreditName())) {
+                    publicCreditName = profile.getCreditName();
+                } else {
+                    String givenName = profile.getGivenNames();
+                    String familyName = profile.getFamilyName();
+                    publicCreditName = (PojoUtil.isEmpty(givenName) ? "" : givenName) + " " + (PojoUtil.isEmpty(familyName) ? "" : familyName);
+                }
+                return publicCreditName;
+            } 
         }
         
         return null;

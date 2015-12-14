@@ -106,7 +106,7 @@
             credit_name="P. Sellers III"            
             names_visibility="LIMITED"
             external_identifiers_visibility="LIMITED"
-            biography_visibility="PUBLIC"
+            biography_visibility="LIMITED"
             keywords_visibility="LIMITED"
             other_names_visibility="PRIVATE"
             researcher_urls_visibility="PUBLIC"          
@@ -350,7 +350,7 @@
             given_names="Michael"
             family_name="Bentine"
             vocative_name="Michael Bentine"
-            credit_name="M. Bentine"
+            credit_name="Credit Name"
             external_identifiers_visibility="LIMITED"
             biography_visibility="PUBLIC"
             keywords_visibility="REGISTERED_ONLY"
@@ -384,7 +384,7 @@
             given_names="Michael"
             family_name="Bentine"
             vocative_name="Michael Bentine"
-            credit_name="M. Bentine"
+            credit_name="Credit Name"
             external_identifiers_visibility="LIMITED"
             biography_visibility="PUBLIC"
             keywords_visibility="REGISTERED_ONLY"
@@ -467,6 +467,8 @@
             orcid="4444-4444-4444-4441"
             source_id="4444-4444-4444-4441"
             visibility="PUBLIC"
+            last_modified="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
             />
 
     <researcher_url
@@ -495,8 +497,10 @@
             id="4"
             url="www.4444-4444-4444-4445.com"
             orcid="4444-4444-4444-4445"
-            source_id="4444-4444-4444-4445"
+            client_source_id="APP-5555555555555555"
             visibility="PUBLIC"
+            last_modified="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
             />  
 
 	<researcher_url
@@ -510,28 +514,65 @@
             date_created="2011-06-29 15:31:00.00"
             />
 
+	<researcher_url
+            id="6"
+            url="http://www.researcherurl2.com?id=6"
+            url_name="443_4"
+            orcid="4444-4444-4444-4443"
+            source_id="4444-4444-4444-4443"
+            visibility="PRIVATE"
+            last_modified="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
+            />            	
+
+	<researcher_url
+            id="7"
+            url="http://www.researcherurl2.com?id=7"
+            url_name="443_5"
+            orcid="4444-4444-4444-4443"
+            client_source_id="APP-5555555555555555"
+            visibility="PRIVATE"
+            last_modified="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
+            />
+
+	<researcher_url
+            id="8"
+            url="http://www.researcherurl2.com?id=8"
+            url_name="443_6"
+            orcid="4444-4444-4444-4443"
+            source_id="4444-4444-4444-4443"
+            visibility="LIMITED"
+            last_modified="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
+            />	
+
     <other_name
             other_name_id="1"
             display_name="Slibberdy Slabinah"
             orcid="4444-4444-4444-4443"
+            visibility="PUBLIC"
             />
 
     <other_name
             other_name_id="2"
             display_name="Flibberdy Flabinah"
             orcid="4444-4444-4444-4443"
+            visibility="LIMITED"
             />
 
     <other_name
             other_name_id="3"
             display_name="Flobberdy Flip"
             orcid="4444-4444-4444-4446"
+            visibility="PUBLIC"
             />
 	
 	<other_name
             other_name_id="4"
             display_name="Other Name"
             orcid="4444-4444-4444-4441"
+            visibility="PUBLIC"
             />
 
     <address

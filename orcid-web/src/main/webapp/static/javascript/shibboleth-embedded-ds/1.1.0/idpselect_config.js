@@ -11,12 +11,12 @@ function IdPSelectUIParms(){
     this.defaultLogoWidth = 1;
     this.defaultLogoHeight = 1 ;
     
-    this.currentLocation =  window.location.href;
+    this.currentLocation = window.location.href;
     
-    if (this.currentLocation.indexOf("oauth"))
-    	this.defaultReturn = orcidVar.baseUri + '/oauth/Shibboleth.sso/Login?SAMLDS=1&target=' + orcidVar.baseUri + '/oauth/shibboleth/link';       // If non null, then the default place to send users who are not
+    if (this.currentLocation.indexOf("oauth") > 0)
+    	this.defaultReturn = orcidVar.baseUri + '/oauth/Shibboleth.sso/Login?SAMLDS=1&target=' + orcidVar.baseUri + '/oauth/shibboleth/signin';       // If non null, then the default place to send users who are not
     else
-    	this.defaultReturn = orcidVar.baseUri + '/Shibboleth.sso/Login?SAMLDS=1&target=' + orcidVar.baseUri + '/shibboleth/link';       // If non null, then the default place to send users who are not 
+    	this.defaultReturn = orcidVar.baseUri + '/Shibboleth.sso/Login?SAMLDS=1&target=' + orcidVar.baseUri + '/shibboleth/signin';       // If non null, then the default place to send users who are not 
     
     // Approaching via the Discovery Protocol for example
     //this.defaultReturn = "https://example.org/Shibboleth.sso/DS?SAMLDS=1&target=https://example.org/secure";

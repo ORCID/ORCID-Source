@@ -60,8 +60,10 @@ public class OrcidApiConstants {
     public static final String ORCID_XML = "application/orcid+xml; qs=3";
     public static final String ORCID_JSON = "application/orcid+json; qs=2";
     public static final String TEXT_TURTLE = "text/turtle; qs=3";
-    public static final String TEXT_N3 = "text/n3; qs=2";
-
+    public static final String TEXT_N3 = "text/n3; qs=2";    
+    public static final String N_TRIPLES = "application/n-triples; qs=3";
+    public static final String JSON_LD = "application/ld+json; qs=2";
+    
     public static final String APPLICATION_RDFXML = "application/rdf+xml; qs=2";
     public static final String VND_ORCID_XML = "application/vnd.orcid+xml; qs=5";
     public static final String VND_ORCID_JSON = "application/vnd.orcid+json; qs=4";
@@ -86,4 +88,8 @@ public class OrcidApiConstants {
 
     public static final String INTERNAL_API_PERSON_READ = "/{orcid}/person";
     public static final String OTHER_NAMES =  "/{orcid}/other-names";
+    
+    public static final String PERSONAL_DETAILS = "/{orcid}/personal-details";
+    
+    public static final String MEMBER_INFO = "/member-info";
 }       

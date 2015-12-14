@@ -41,6 +41,7 @@
 		    var params = loc.split('?')[1];
 			
 			var script = document.createElement('script');
+			script.async = true;
 			script.src = baseURL + '/static/javascript/orcid-summary-widget.js' + '?' + params;
 			var head = document.getElementsByTagName('head')[0];
 			head.appendChild(script);	

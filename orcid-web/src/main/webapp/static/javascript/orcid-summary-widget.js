@@ -76,6 +76,7 @@
 	    if(url.indexOf('?') === -1){ url = url+'?'; }
 	    else{ url = url+'&'; }
 	    var jsonpScript = document.createElement('script');
+	    jsonpScript.async = true;
 	    jsonpScript.setAttribute("src", url+method+'='+generatedFunction);
 	    document.getElementsByTagName("head")[0].appendChild(jsonpScript);
 	  };

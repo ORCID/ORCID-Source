@@ -6132,6 +6132,16 @@ a:hover .mozilla-badge{
 	min-height: 55px;
 }
 
+#old-login #ajax-loader{
+    margin-left: 10px;
+    margin-top: 4px;
+    min-height: auto;
+}
+
+#old-login .submit-login table{
+	min-height:55px;
+}
+
 /* Login tab buttons*/
 .login .btn-group a{
 	font-size: 18px;

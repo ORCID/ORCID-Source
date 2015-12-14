@@ -16,11 +16,7 @@
  */
 package org.orcid.frontend.web.controllers;
 
-import java.sql.Timestamp;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.Map;
-import java.util.Random;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -29,10 +25,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.exception.OrcidBadRequestException;
 import org.orcid.frontend.web.exception.FeatureDisabledException;
-import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.persistence.dao.UserConnectionDao;
 import org.orcid.persistence.jpa.entities.UserconnectionEntity;
-import org.orcid.persistence.jpa.entities.UserconnectionPK;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -95,7 +89,6 @@ public class ShibbolethController extends BaseController {
             return new ModelAndView("redirect:/my-orcid");
         } else {
             // To avoid confusion, force the user to login to ORCID again
-            logoutCurrentUser(request, response);
             mav.setViewName("social_link_signin");
             mav.addObject("providerId", "shibboleth");
             mav.addObject("accountId", displayName);
@@ -106,29 +99,6 @@ public class ShibbolethController extends BaseController {
             mav.addObject("lastName", (headers.get("sn") == null) ? "" : headers.get("sn"));
         }
         return mav;
-    }
-
-    @RequestMapping(value = { "/link" }, method = RequestMethod.GET)
-    public ModelAndView linkHandler(@RequestHeader() Map<String, String> headers, ModelAndView mav) {
-        checkEnabled();
-        String providerUserId = retrieveRemoteUser(headers);
-        String providerId = headers.get(SHIB_IDENTITY_PROVIDER_HEADER);
-        UserconnectionEntity userConnectionEntity = userConnectionDao.findByProviderIdAndProviderUserId(providerUserId, providerId);
-        if (userConnectionEntity == null) {
-            userConnectionEntity = new UserconnectionEntity();
-            String randomId = Long.toString(new Random(Calendar.getInstance().getTimeInMillis()).nextLong());
-            UserconnectionPK pk = new UserconnectionPK(randomId, providerId, providerUserId);
-            OrcidProfile profile = getRealProfile();
-            userConnectionEntity.setOrcid(profile.getOrcidIdentifier().getPath());
-            userConnectionEntity.setProfileurl(profile.getOrcidIdentifier().getUri());
-            userConnectionEntity.setDisplayname(retrieveDisplayName(headers));
-            userConnectionEntity.setRank(1);
-            userConnectionEntity.setId(pk);
-            userConnectionEntity.setLinked(true);
-            userConnectionEntity.setLastLogin(new Timestamp(new Date().getTime()));
-            userConnectionDao.persist(userConnectionEntity);
-        }
-        return new ModelAndView("redirect:/my-orcid");
     }
 
     private void checkEnabled() {

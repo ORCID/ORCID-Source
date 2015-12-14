@@ -36,6 +36,8 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     List<ProfileEntity> retrieveSelectableSponsors();
 
     List<String> findOrcidsByName(String name);
+    
+    String findOrcidByCreditName(String creditName);
 
     public boolean exists(String orcid);
 
@@ -114,7 +116,7 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
 
     List<ProfileEntity> findProfilesByOrcidType(OrcidType type);
 
-    public void updateNames(String orcid, String givenName, String familyName, String creditName, Visibility creditNameVisibility);
+    public void updateNames(String orcid, String givenName, String familyName, String creditName, Visibility namesVisibility);
 
     boolean updateDeveloperTools(String orcid, boolean enabled);
 

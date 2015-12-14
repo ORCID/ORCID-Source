@@ -148,13 +148,11 @@
         </div>
 	</div>   
     <div class="relative">
-    	<#if (RequestParameters['linkRequest'] == 'social')??>
-    		<button type="submit" tabindex="10" class="btn btn-primary" ng-click="postRegister('social')">${springMacroRequestContext.getMessage("header.register")}</button>
-    	<#elseif (RequestParameters['linkRequest'] == 'shibboleth')??>
-    		<button type="submit" tabindex="10" class="btn btn-primary" ng-click="postRegister('shibboleth')">${springMacroRequestContext.getMessage("header.register")}</button>
-    	<#else>
-    		<button type="submit" tabindex="10" class="btn btn-primary" ng-click="postRegister(null)">${springMacroRequestContext.getMessage("header.register")}</button>
-    	</#if>
+    	<#if (RequestParameters['linkRequest'])??>
+			<button type="submit" tabindex="10" class="btn btn-primary" ng-click="postRegister('${RequestParameters.linkRequest}')">${springMacroRequestContext.getMessage("header.register")}</button>
+		<#else>
+			<button type="submit" tabindex="10" class="btn btn-primary" ng-click="postRegister(null)">${springMacroRequestContext.getMessage("header.register")}</button>
+		</#if>
     </div>  
 </fn-form>
 

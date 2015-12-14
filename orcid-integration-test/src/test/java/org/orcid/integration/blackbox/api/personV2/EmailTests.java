@@ -142,7 +142,7 @@ public class EmailTests extends BlackBoxBase {
             return accessTokens.get(clientId);
         }
 
-        String accessToken = super.getAccessToken(ScopePathType.PERSON_UPDATE.value(), clientId, clientSecret, clientRedirectUri);
+        String accessToken = super.getAccessToken(ScopePathType.READ_LIMITED.value(), clientId, clientSecret, clientRedirectUri);
         accessTokens.put(clientId, accessToken);
         return accessToken;
     }

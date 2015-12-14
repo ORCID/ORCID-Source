@@ -49,6 +49,8 @@ import org.orcid.core.manager.RegistrationRoleManager;
 import org.orcid.core.manager.SecurityQuestionManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.utils.PasswordResetToken;
+import org.orcid.frontend.spring.ShibbolethAjaxAuthenticationSuccessHandler;
+import org.orcid.frontend.spring.SocialAjaxAuthenticationSuccessHandler;
 import org.orcid.frontend.spring.web.social.config.SocialContext;
 import org.orcid.frontend.web.controllers.helper.SearchOrcidSolrCriteria;
 import org.orcid.frontend.web.forms.ChangeSecurityQuestionForm;
@@ -138,7 +140,7 @@ public class RegistrationController extends BaseController {
 
     final static Integer DUP_SEARCH_ROWS = 25;
 
-    public final static String GRECAPTCHA_SESSION_ATTRIBUTE_NAME = "verified-recaptcha-hash";
+    public final static String GRECAPTCHA_SESSION_ATTRIBUTE_NAME = "verified-recaptcha";
     
     private static Random rand = new Random();
 
@@ -183,6 +185,12 @@ public class RegistrationController extends BaseController {
     
     @Autowired
     private SocialContext socialContext;
+    
+    @Resource
+    private SocialAjaxAuthenticationSuccessHandler ajaxAuthenticationSuccessHandlerSocial;
+    
+    @Resource
+    private ShibbolethAjaxAuthenticationSuccessHandler ajaxAuthenticationSuccessHandlerShibboleth;
 
     public void setEncryptionManager(EncryptionManager encryptionManager) {
         this.encryptionManager = encryptionManager;
@@ -359,7 +367,7 @@ public class RegistrationController extends BaseController {
             }
 
             if (request.getSession().getAttribute(GRECAPTCHA_SESSION_ATTRIBUTE_NAME) != null) {
-                if (!encryptionManager.encryptForExternalUse(reg.getGrecaptcha().getValue()).equals(request.getSession().getAttribute(GRECAPTCHA_SESSION_ATTRIBUTE_NAME))) {
+                if (!reg.getGrecaptcha().getValue().equals(request.getSession().getAttribute(GRECAPTCHA_SESSION_ATTRIBUTE_NAME))) {
                     setError(reg.getGrecaptcha(), "registrationForm.recaptcha.error");
                     setError(reg, "registrationForm.recaptcha.error");
                 }
@@ -368,7 +376,7 @@ public class RegistrationController extends BaseController {
                 setError(reg.getGrecaptcha(), "registrationForm.recaptcha.error");
                 setError(reg, "registrationForm.recaptcha.error");
             } else {
-                request.getSession().setAttribute(GRECAPTCHA_SESSION_ATTRIBUTE_NAME, encryptionManager.encryptForExternalUse(reg.getGrecaptcha().getValue()));
+                request.getSession().setAttribute(GRECAPTCHA_SESSION_ATTRIBUTE_NAME, reg.getGrecaptcha().getValue());
             }
         }
     }
@@ -385,7 +393,7 @@ public class RegistrationController extends BaseController {
             // If the captcha verified key is not in the session, redirect to
             // the login page
             if (request.getSession().getAttribute(GRECAPTCHA_SESSION_ATTRIBUTE_NAME) == null || PojoUtil.isEmpty(reg.getGrecaptcha())
-                    || !encryptionManager.encryptForExternalUse(reg.getGrecaptcha().getValue()).equals(request.getSession().getAttribute(GRECAPTCHA_SESSION_ATTRIBUTE_NAME))) {
+                    || !reg.getGrecaptcha().getValue().equals(request.getSession().getAttribute(GRECAPTCHA_SESSION_ATTRIBUTE_NAME))) {
                 r.setUrl(getBaseUri() + "/register");
                 return r;
             }
@@ -412,10 +420,12 @@ public class RegistrationController extends BaseController {
 
         createMinimalRegistrationAndLogUserIn(request, response, toProfile(reg, request), usedCaptcha);
         if("social".equals(reg.getLinkType()) && socialContext.isSignedIn(request, response) != null) {
-        	r.setUrl(getBaseUri() + "/social/link");
+        	ajaxAuthenticationSuccessHandlerSocial.linkSocialAccount(request, response);
+        	r.setUrl(getBaseUri() + "/my-orcid");
         	return r;
         } else if("shibboleth".equals(reg.getLinkType())) {
-        	r.setUrl(getBaseUri() + "/social/link");
+        	ajaxAuthenticationSuccessHandlerShibboleth.linkShibbolethAccount(request, response);
+        	r.setUrl(getBaseUri() + "/my-orcid");
         	return r;
         }
         String redirectUrl = calculateRedirectUrl(request, response);

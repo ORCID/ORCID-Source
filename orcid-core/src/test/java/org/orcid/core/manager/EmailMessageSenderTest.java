@@ -18,6 +18,7 @@ package org.orcid.core.manager;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -145,8 +146,12 @@ public class EmailMessageSenderTest extends BaseTest {
         assertNotNull(emailMessage);
         String expectedBodyText = IOUtils.toString(getClass().getResourceAsStream("example_digest_email_body.txt"));
         String expectedBodyHtml = IOUtils.toString(getClass().getResourceAsStream("example_digest_email_body.html"));
-        assertEquals(expectedBodyText, emailMessage.getBodyText());
-        assertEquals(expectedBodyHtml, emailMessage.getBodyHtml());
+        assertTrue(expectedBodyText.contains("Lovely Publisher 1 has updated recent funding on your ORCID record."));
+        assertTrue(expectedBodyHtml.contains("Lovely Publisher 1 has updated recent funding on your ORCID record."));
+        assertTrue(expectedBodyText.contains("Super Institution 1: Request to add items"));
+        assertTrue(expectedBodyHtml.contains("Super Institution 1: Request to add items"));
+        assertTrue(expectedBodyText.contains("/action"));
+        assertTrue(expectedBodyHtml.contains("/action"));
         assertEquals("[ORCID] John Watson you have 6 new notifications", emailMessage.getSubject());
     }
 

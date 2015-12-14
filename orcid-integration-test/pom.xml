@@ -42,6 +42,11 @@
             <artifactId>orcid-api-common</artifactId>
             <version>${project.parent.version}</version>
         </dependency>		
+		<dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>orcid-internal-api</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
 
         <!-- External dependencies -->
         <dependency>
@@ -85,6 +90,11 @@
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-java</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
             <scope>test</scope>
         </dependency>
         

@@ -16,6 +16,7 @@
  */
 package org.orcid.api.common.util;
 
+import org.orcid.jaxb.model.record_rc2.PersonalDetails;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
 
 public class ElementUtils {
@@ -24,4 +25,7 @@ public class ElementUtils {
         researcherUrls.setPath('/' + orcid + "/researcher-urls" );
     }
 
+    public static void setPathToPersonalDetails(PersonalDetails personalDetails, String orcid) {
+        personalDetails.setPath('/' + orcid + "/personal-details" );
+    }
 }

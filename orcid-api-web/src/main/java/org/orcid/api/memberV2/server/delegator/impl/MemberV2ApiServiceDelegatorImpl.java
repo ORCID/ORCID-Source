@@ -41,6 +41,7 @@ import org.orcid.core.manager.GroupIdRecordManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.OtherNameManager;
 import org.orcid.core.manager.PeerReviewManager;
+import org.orcid.core.manager.PersonalDetailsManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileFundingManager;
 import org.orcid.core.manager.ResearcherUrlManager;
@@ -64,6 +65,7 @@ import org.orcid.jaxb.model.record_rc1.Employment;
 import org.orcid.jaxb.model.record_rc1.Funding;
 import org.orcid.jaxb.model.record_rc1.PeerReview;
 import org.orcid.jaxb.model.record_rc1.Work;
+import org.orcid.jaxb.model.record_rc2.PersonalDetails;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
 import org.orcid.persistence.dao.ProfileDao;
@@ -136,6 +138,9 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     @Value("${org.orcid.core.baseUri}")
     private String baseUrl;
 
+    @Resource
+    private PersonalDetailsManager personalDetailsManager;
+    
     @Override
     public Response viewStatusText() {
         return Response.ok(STATUS_OK_MESSAGE).build();
@@ -365,6 +370,8 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     @AccessControl(requiredScope = ScopePathType.PEER_REVIEW_READ_LIMITED)
     public Response viewPeerReview(String orcid, Long putCode) {
         PeerReview peerReview = peerReviewManager.getPeerReview(orcid, putCode);
+        orcidSecurityManager.checkVisibility(peerReview);
+        ActivityUtils.setPathToActivity(peerReview, orcid);
         return Response.ok(peerReview).build();
     }
 
@@ -372,6 +379,8 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     @AccessControl(requiredScope = ScopePathType.PEER_REVIEW_READ_LIMITED)
     public Response viewPeerReviewSummary(String orcid, Long putCode) {
         PeerReviewSummary summary = peerReviewManager.getPeerReviewSummary(orcid, putCode);
+        orcidSecurityManager.checkVisibility(summary);
+        ActivityUtils.setPathToActivity(summary, orcid);
         return Response.ok(summary).build();
     }
 
@@ -455,7 +464,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     @Override
     @AccessControl(requiredScope = ScopePathType.READ_LIMITED)
     public Response viewResearcherUrls(String orcid) {
-        ResearcherUrls researcherUrls = researcherUrlManager.getResearcherUrlsV2(orcid);
+        ResearcherUrls researcherUrls = researcherUrlManager.getResearcherUrlsV2(orcid);        
         researcherUrls.setResearcherUrls((List<ResearcherUrl>) visibilityFilter.filter(researcherUrls.getResearcherUrls()));
         ElementUtils.setPathToResearcherUrls(researcherUrls, orcid);
         return Response.ok(researcherUrls).build();
@@ -463,6 +472,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
         
     public Response viewResearcherUrl(String orcid, String putCode) {
         ResearcherUrl researcherUrl = researcherUrlManager.getResearcherUrlV2(orcid, Long.valueOf(putCode));
+        orcidSecurityManager.checkVisibility(researcherUrl);
         return Response.ok(researcherUrl).build();
     }
     
@@ -541,4 +551,13 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
 		otherNameManager.deleteOtherNameV2(orcid, putCode);
         return Response.noContent().build();
 	}
+	
+    @Override
+    @AccessControl(requiredScope = ScopePathType.READ_LIMITED)
+    public Response viewPersonalDetails(String orcid) {
+        PersonalDetails personalDetails = personalDetailsManager.getPersonalDetails(orcid);
+        personalDetails = visibilityFilter.filter(personalDetails);
+        ElementUtils.setPathToPersonalDetails(personalDetails, orcid);
+        return Response.ok(personalDetails).build();
+    }
 }
