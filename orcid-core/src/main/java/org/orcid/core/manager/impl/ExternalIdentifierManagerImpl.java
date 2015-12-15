@@ -43,26 +43,26 @@ public class ExternalIdentifierManagerImpl implements ExternalIdentifierManager 
 
     @Resource
     private ExternalIdentifierDao externalIdentifierDao;
-    
+
     @Resource
     private JpaJaxbExternalIdentifierAdapter jpaJaxbExternalIdentifierAdapter;
-    
+
     @Resource
     private SourceManager sourceManager;
-    
+
     @Resource
     private OrcidSecurityManager orcidSecurityManager;
 
     /**
-     * Removes an external identifier from database based on his ID.
-     * The ID for external identifiers consists of the "orcid" of the owner and
-     * the "externalIdReference" which is an identifier of the external id.
+     * Removes an external identifier from database based on his ID. The ID for
+     * external identifiers consists of the "orcid" of the owner and the
+     * "externalIdReference" which is an identifier of the external id.
      * 
      * @param orcid
      *            The orcid of the owner
      * @param externalIdReference
      *            Identifier of the external id.
-     * */
+     */
     @Override
     public void removeExternalIdentifier(String orcid, String externalIdReference) {
         externalIdentifierDao.removeExternalIdentifier(orcid, externalIdReference);
@@ -80,15 +80,15 @@ public class ExternalIdentifierManagerImpl implements ExternalIdentifierManager 
 
     private ExternalIdentifiers getExternalIdentifiesV2(String orcid, Visibility visibility) {
         List<ExternalIdentifierEntity> externalIdentifiers = new ArrayList<ExternalIdentifierEntity>();
-        if(visibility == null) {
+        if (visibility == null) {
             externalIdentifiers = externalIdentifierDao.getExternalIdentifiers(orcid);
         } else {
             externalIdentifiers = externalIdentifierDao.getExternalIdentifiers(orcid, visibility);
         }
-        
+
         return jpaJaxbExternalIdentifierAdapter.toExternalIdentifierList(externalIdentifiers);
     }
-    
+
     @Override
     public ExternalIdentifier getExternalIdentifierV2(String orcid, long id) {
         ExternalIdentifierEntity entity = externalIdentifierDao.getExternalIdentifierEntity(orcid, id);
@@ -98,7 +98,7 @@ public class ExternalIdentifierManagerImpl implements ExternalIdentifierManager 
     @Override
     public ExternalIdentifier createExternalIdentifierV2(String orcid, ExternalIdentifier externalIdentifier) {
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
-        //Validate external identifier
+        // Validate external identifier
         PersonValidator.validateExternalIdentifier(externalIdentifier, sourceEntity, true);
         // Validate it is not duplicated
         List<ExternalIdentifierEntity> existingExternalIdentifiers = externalIdentifierDao.getExternalIdentifiers(orcid);
@@ -110,7 +110,7 @@ public class ExternalIdentifierManagerImpl implements ExternalIdentifierManager 
                 throw new OrcidDuplicatedElementException(params);
             }
         }
-                        
+
         ExternalIdentifierEntity newEntity = jpaJaxbExternalIdentifierAdapter.toExternalIdentifierEntity(externalIdentifier);
         ProfileEntity profile = new ProfileEntity(orcid);
         newEntity.setOwner(profile);
@@ -124,7 +124,7 @@ public class ExternalIdentifierManagerImpl implements ExternalIdentifierManager 
     @Override
     public ExternalIdentifier updateExternalIdentifierV2(String orcid, ExternalIdentifier externalIdentifier) {
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
-        //Validate external identifier
+        // Validate external identifier
         PersonValidator.validateExternalIdentifier(externalIdentifier, sourceEntity, true);
         // Validate it is not duplicated
         List<ExternalIdentifierEntity> existingExternalIdentifiers = externalIdentifierDao.getExternalIdentifiers(orcid);
@@ -136,13 +136,13 @@ public class ExternalIdentifierManagerImpl implements ExternalIdentifierManager 
                 throw new OrcidDuplicatedElementException(params);
             }
         }
-        
+
         ExternalIdentifierEntity updatedExternalIdentifierEntity = externalIdentifierDao.getExternalIdentifierEntity(orcid, externalIdentifier.getPutCode());
-        Visibility originalVisibility = Visibility.fromValue(updatedExternalIdentifierEntity.getVisibility().value());   
+        Visibility originalVisibility = Visibility.fromValue(updatedExternalIdentifierEntity.getVisibility().value());
         SourceEntity existingSource = updatedExternalIdentifierEntity.getSource();
         orcidSecurityManager.checkSource(existingSource);
         jpaJaxbExternalIdentifierAdapter.toExternalIdentifierEntity(externalIdentifier, updatedExternalIdentifierEntity);
-        
+
         updatedExternalIdentifierEntity.setLastModified(new Date());
         updatedExternalIdentifierEntity.setVisibility(originalVisibility);
         updatedExternalIdentifierEntity.setSource(existingSource);
@@ -150,7 +150,6 @@ public class ExternalIdentifierManagerImpl implements ExternalIdentifierManager 
         return jpaJaxbExternalIdentifierAdapter.toExternalIdentifier(updatedExternalIdentifierEntity);
     }
 
-    
     private boolean isDuplicated(ExternalIdentifierEntity existing, ExternalIdentifier newExternalIdentifier, SourceEntity source) {
         if (!existing.getId().equals(newExternalIdentifier.getPutCode())) {
             if (existing.getSource() != null) {
@@ -165,11 +164,11 @@ public class ExternalIdentifierManagerImpl implements ExternalIdentifierManager 
         }
         return false;
     }
-    
+
     private void setIncomingPrivacy(ExternalIdentifierEntity entity, ProfileEntity profile) {
         org.orcid.jaxb.model.common.Visibility incomingExternalIdentifierVisibility = entity.getVisibility();
-        org.orcid.jaxb.model.common.Visibility defaultExternalIdentifierVisibility = profile.getExternalIdentifiersVisibility() == null ? org.orcid.jaxb.model.common.Visibility.PRIVATE : org.orcid.jaxb.model.common.Visibility.fromValue(profile.getExternalIdentifiersVisibility()
-                .value());
+        org.orcid.jaxb.model.common.Visibility defaultExternalIdentifierVisibility = profile.getExternalIdentifiersVisibility() == null
+                ? org.orcid.jaxb.model.common.Visibility.PRIVATE : org.orcid.jaxb.model.common.Visibility.fromValue(profile.getExternalIdentifiersVisibility().value());
         if (profile.getClaimed() != null && profile.getClaimed()) {
             if (defaultExternalIdentifierVisibility.isMoreRestrictiveThan(incomingExternalIdentifierVisibility)) {
                 entity.setVisibility(defaultExternalIdentifierVisibility);
@@ -177,6 +176,6 @@ public class ExternalIdentifierManagerImpl implements ExternalIdentifierManager 
         } else if (incomingExternalIdentifierVisibility == null) {
             entity.setVisibility(org.orcid.jaxb.model.common.Visibility.PRIVATE);
         }
-    } 
-    
+    }
+
 }
