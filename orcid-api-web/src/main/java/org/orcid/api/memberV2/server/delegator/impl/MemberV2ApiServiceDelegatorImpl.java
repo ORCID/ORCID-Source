@@ -65,6 +65,7 @@ import org.orcid.jaxb.model.record_rc1.Employment;
 import org.orcid.jaxb.model.record_rc1.Funding;
 import org.orcid.jaxb.model.record_rc1.PeerReview;
 import org.orcid.jaxb.model.record_rc1.Work;
+import org.orcid.jaxb.model.record_rc2.ExternalIdentifier;
 import org.orcid.jaxb.model.record_rc2.PersonalDetails;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
@@ -559,5 +560,35 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
         personalDetails = visibilityFilter.filter(personalDetails);
         ElementUtils.setPathToPersonalDetails(personalDetails, orcid);
         return Response.ok(personalDetails).build();
+    }
+
+    @Override
+    public Response viewExternalIdentifiers(String orcid) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Response viewExternalIdentifier(String orcid, String putCode) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Response updateExternalIdentifier(String orcid, String putCode, ExternalIdentifier externalIdentifier) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Response createExternalIdentifier(String orcid, ExternalIdentifier externalIdentifier) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Response deleteExternalIdentifier(String orcid, String putCode) {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

@@ -24,6 +24,7 @@ import org.orcid.jaxb.model.record_rc1.Employment;
 import org.orcid.jaxb.model.record_rc1.Funding;
 import org.orcid.jaxb.model.record_rc1.PeerReview;
 import org.orcid.jaxb.model.record_rc1.Work;
+import org.orcid.jaxb.model.record_rc2.ExternalIdentifier;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 
 /**
@@ -118,10 +119,6 @@ public interface MemberV2ApiServiceDelegator {
     Response deleteOtherName(String orcid, String putCode);
 
     Response viewPersonalDetails(String orcid);
-    
-    
-    
-    
     
     Response viewExternalIdentifiers(String orcid);
 

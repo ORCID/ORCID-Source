@@ -21,13 +21,12 @@ import java.util.List;
 
 import javax.xml.datatype.XMLGregorianCalendar;
 
-import ma.glasnost.orika.MapperFacade;
-
 import org.orcid.core.adapter.JpaJaxbOtherNameAdapter;
-import org.orcid.persistence.jpa.entities.OtherNameEntity;
-import org.orcid.jaxb.model.common.LastModifiedDate;
 import org.orcid.jaxb.model.record_rc2.OtherName;
 import org.orcid.jaxb.model.record_rc2.OtherNames;
+import org.orcid.persistence.jpa.entities.OtherNameEntity;
+
+import ma.glasnost.orika.MapperFacade;
 
 public class JpaJaxbOtherNameAdapterImpl implements JpaJaxbOtherNameAdapter {
 
@@ -72,8 +71,6 @@ public class JpaJaxbOtherNameAdapterImpl implements JpaJaxbOtherNameAdapter {
                 }
             }
         }
-        if (tempDate != null)
-            otherNames.setLastModifiedDate(new LastModifiedDate(tempDate));
 
         return otherNames;
     }

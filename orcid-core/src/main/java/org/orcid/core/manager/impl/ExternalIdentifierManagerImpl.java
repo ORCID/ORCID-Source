@@ -19,6 +19,8 @@ package org.orcid.core.manager.impl;
 import javax.annotation.Resource;
 
 import org.orcid.core.manager.ExternalIdentifierManager;
+import org.orcid.jaxb.model.record_rc2.ExternalIdentifier;
+import org.orcid.jaxb.model.record_rc2.ExternalIdentifiers;
 import org.orcid.persistence.dao.ExternalIdentifierDao;
 
 public class ExternalIdentifierManagerImpl implements ExternalIdentifierManager {
@@ -39,6 +41,36 @@ public class ExternalIdentifierManagerImpl implements ExternalIdentifierManager 
     @Override
     public void removeExternalIdentifier(String orcid, String externalIdReference) {
         externalIdentifierDao.removeExternalIdentifier(orcid, externalIdReference);
+    }
+
+    @Override
+    public ExternalIdentifiers getPublicExternalIdentifiersV2(String orcid) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public ExternalIdentifiers getExternalIdentifiersV2(String orcid) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public ExternalIdentifier getExternalIdentifierV2(String orcid, long id) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public ExternalIdentifier createExternalIdentifierV2(String orcid, ExternalIdentifier externalIdentifier) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public ExternalIdentifier updateExternalIdentifierV2(String orcid, ExternalIdentifier externalIdentifier) {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }
