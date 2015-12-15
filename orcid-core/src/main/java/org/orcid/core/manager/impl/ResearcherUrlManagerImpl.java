@@ -271,7 +271,7 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
             }
         }
                 
-        ResearcherUrlEntity updatedResearcherUrlEntity = researcherUrlDao.getResearcherUrl(orcid, Long.valueOf(researcherUrl.getPutCode()));        
+        ResearcherUrlEntity updatedResearcherUrlEntity = researcherUrlDao.getResearcherUrl(orcid, researcherUrl.getPutCode());        
         Visibility originalVisibility = Visibility.fromValue(updatedResearcherUrlEntity.getVisibility().value());        
         SourceEntity existingSource = updatedResearcherUrlEntity.getSource();
         orcidSecurityManager.checkSource(existingSource);
