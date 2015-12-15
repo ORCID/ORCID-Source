@@ -27,27 +27,26 @@ import javax.xml.bind.annotation.XmlType;
 
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType( propOrder = { "otherNames" })
-@XmlRootElement(name = "other-names", namespace = "http://www.orcid.org/ns/other-name")
-public class OtherNames implements Serializable {        
-    private static final long serialVersionUID = 6312730308815255894L;
-    
-    @XmlElement(name = "other-name", namespace = "http://www.orcid.org/ns/other-name")
-    List<OtherName> otherNames;
+@XmlType( propOrder = { "keywords" })
+@XmlRootElement(name = "keywords", namespace = "http://www.orcid.org/ns/keyword")
+public class Keywords implements Serializable {            
+    private static final long serialVersionUID = 8977681069375479763L;
+    @XmlElement(name = "keyword", namespace = "http://www.orcid.org/ns/keyword")
+    List<Keyword> keywords;
 
-    public List<OtherName> getOtherNames() {
-        return otherNames;
+    public List<Keyword> getKeywords() {
+        return keywords;
     }
 
-    public void setOtherNames(List<OtherName> otherNames) {
-        this.otherNames = otherNames;
+    public void setKeywords(List<Keyword> keywords) {
+        this.keywords = keywords;
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((otherNames == null) ? 0 : otherNames.hashCode());
+        result = prime * result + ((keywords == null) ? 0 : keywords.hashCode());
         return result;
     }
 
@@ -59,11 +58,11 @@ public class OtherNames implements Serializable {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        OtherNames other = (OtherNames) obj;
-        if (otherNames == null) {
-            if (other.otherNames != null)
+        Keywords other = (Keywords) obj;
+        if (keywords == null) {
+            if (other.keywords != null)
                 return false;
-        } else if (!otherNames.equals(other.otherNames))
+        } else if (!keywords.equals(other.keywords))
             return false;
         return true;
     }	 

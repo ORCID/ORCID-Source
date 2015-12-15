@@ -45,16 +45,30 @@
 				</xs:documentation>
 			</xs:annotation>
 			<xs:sequence>
-				<xs:element name="other-name" type="other-name:other-name" minOccurs="0"
-					maxOccurs="unbounded" />
+				<xs:element name="other-name" type="other-name:other-name"
+					minOccurs="0" maxOccurs="unbounded" />
 			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="other-name">
+		<xs:annotation>
+			<xs:documentation>(Optional) Other name(s)
+				that the researcher or contributor may be known by.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="other-name:other-name"></xs:extension>
+			</xs:complexContent>
 		</xs:complexType>
 	</xs:element>
 
 	<xs:complexType name="other-name">
 		<xs:annotation>
 			<xs:documentation>The display name and URL for one of the researcher
-				or contributor's sites.</xs:documentation>
+				or contributor's sites.
+			</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
 			<xs:element minOccurs="1" name="content" type="common:non-empty-string">

@@ -38,12 +38,23 @@
 	<xs:element name="keywords">
 		<xs:complexType>
 			<xs:annotation>
-				<xs:documentation>Keyworks</xs:documentation>
+				<xs:documentation>Keyworks container</xs:documentation>
 			</xs:annotation>
 			<xs:sequence>
 				<xs:element name="keyword" type="keyword:keyword" minOccurs="0"
 					maxOccurs="unbounded" />
 			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="keyword">
+		<xs:annotation>
+			<xs:documentation>Keyword</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="keyword:keyword" />
+			</xs:complexContent>
 		</xs:complexType>
 	</xs:element>
 

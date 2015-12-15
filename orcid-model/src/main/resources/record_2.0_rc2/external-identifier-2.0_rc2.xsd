@@ -49,6 +49,17 @@
 		</xs:complexType>
 	</xs:element>
 
+	<xs:element name="external-identifier">
+		<xs:annotation>
+			<xs:documentation>External identifier</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="external-identifier:external-identifier" />
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+
 	<xs:complexType name="external-identifier">
 		<xs:annotation>
 			<xs:documentation>External identifier container</xs:documentation>

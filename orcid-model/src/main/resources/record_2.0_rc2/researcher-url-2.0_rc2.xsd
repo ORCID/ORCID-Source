@@ -51,6 +51,19 @@
 		</xs:complexType>
 	</xs:element>
 
+	<xs:element name="researcher-url">
+		<xs:annotation>
+			<xs:documentation>URLs of the researcher or
+					contributor's sites
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="researcher-url:researcher-url"></xs:extension>
+			</xs:complexContent>			
+		</xs:complexType>
+	</xs:element>
+
 	<xs:complexType name="researcher-url">
 		<xs:annotation>
 			<xs:documentation>The display name and URL for one of the researcher
