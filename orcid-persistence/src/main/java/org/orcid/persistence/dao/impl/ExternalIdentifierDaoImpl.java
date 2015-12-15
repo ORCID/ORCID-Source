@@ -16,8 +16,11 @@
  */
 package org.orcid.persistence.dao.impl;
 
+import java.util.List;
+
 import javax.persistence.Query;
 
+import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.persistence.dao.ExternalIdentifierDao;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,15 +32,15 @@ public class ExternalIdentifierDaoImpl extends GenericDaoImpl<ExternalIdentifier
     }
 
     /**
-     * Removes an external identifier from database based on his ID.
-     * The ID for external identifiers consists of the "orcid" of the owner and
-     * the "externalIdReference" which is an identifier of the external id.
+     * Removes an external identifier from database based on his ID. The ID for
+     * external identifiers consists of the "orcid" of the owner and the
+     * "externalIdReference" which is an identifier of the external id.
      * 
      * @param orcid
      *            The orcid of the owner
      * @param externalIdReference
      *            Identifier of the external id.
-     * */
+     */
     @Override
     @Transactional
     public boolean removeExternalIdentifier(String orcid, String externalIdReference) {
@@ -45,6 +48,31 @@ public class ExternalIdentifierDaoImpl extends GenericDaoImpl<ExternalIdentifier
         query.setParameter("orcid", orcid);
         query.setParameter("externalIdReference", externalIdReference);
         return query.executeUpdate() > 0 ? true : false;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<ExternalIdentifierEntity> getExternalIdentifiers(String orcid) {
+        Query query = entityManager.createQuery("FROM ExternalIdentifierEntity WHERE owner.id = :orcid");
+        query.setParameter("orcid", orcid);
+        return query.getResultList();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<ExternalIdentifierEntity> getExternalIdentifiers(String orcid, Visibility visibility) {
+        Query query = entityManager.createQuery("FROM ExternalIdentifierEntity WHERE owner.id = :orcid and visibility = :visibility");
+        query.setParameter("orcid", orcid);
+        query.setParameter("visibility", visibility);
+        return query.getResultList();
+    }
+
+    @Override
+    public ExternalIdentifierEntity getExternalIdentifierEntity(String orcid, Long id) {
+        Query query = entityManager.createQuery("FROM ExternalIdentifierEntity WHERE owner.id = :orcid and id = :id");
+        query.setParameter("orcid", orcid);
+        query.setParameter("id", id);
+        return (ExternalIdentifierEntity) query.getSingleResult();
     }
 
 }

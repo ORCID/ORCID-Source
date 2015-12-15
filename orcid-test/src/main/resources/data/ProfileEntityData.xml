@@ -445,19 +445,51 @@
             />
 
     <external_identifier
+    		id="1"
             external_id_reference="d3clan"
             external_id_type="Facebook"
             orcid="4444-4444-4444-4443"
             external_id_url="http://www.facebook.com/d3clan"
             source_id="4444-4444-4444-4441"
+            visibility="PUBLIC"
+            date_created="2011-06-29 15:31:00.00"            
+            last_modified="2011-07-02 15:31:00.00"
             />
 
     <external_identifier
+    		id="2"
             external_id_reference="abc123"
             external_id_type="Facebook"
             orcid="4444-4444-4444-4442"
             external_id_url="http://www.facebook.com/abc123"
             source_id="4444-4444-4444-4441"
+            visibility="PUBLIC"
+            date_created="2011-06-29 15:31:00.00"            
+            last_modified="2011-07-02 15:31:00.00"
+            />
+
+	<external_identifier
+			id="3"
+            external_id_reference="abc456"
+            external_id_type="Facebook"
+            orcid="4444-4444-4444-4442"
+            external_id_url="http://www.facebook.com/abc456"
+            source_id="4444-4444-4444-4441"
+            visibility="PUBLIC"
+            date_created="2011-06-29 15:31:00.00"            
+            last_modified="2011-07-02 15:31:00.00"
+            />
+
+	<external_identifier
+			id="4"
+            external_id_reference="abc789"
+            external_id_type="Facebook"
+            orcid="4444-4444-4444-4442"
+            external_id_url="http://www.facebook.com/abc789"
+            source_id="4444-4444-4444-4441"
+            visibility="LIMITED"
+            date_created="2011-06-29 15:31:00.00"            
+            last_modified="2011-07-02 15:31:00.00"
             />
 
     <researcher_url
