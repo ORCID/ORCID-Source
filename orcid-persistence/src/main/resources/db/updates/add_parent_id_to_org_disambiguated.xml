@@ -47,15 +47,15 @@
      <changeSet id="ORG-DISAMBIGUATED-DESCENDENT-TYPE" author="Will Simpson" dbms="postgresql">
         <preConditions onFail="MARK_RAN">
             <not>
-                <sqlCheck expectedResult="1">SELECT 1 FROM information_schema.user_defined_types WHERE user_defined_type_name = 'org_disambiguated_descendent'</sqlCheck>
+                <sqlCheck expectedResult="1">SELECT count(*) FROM information_schema.user_defined_types WHERE user_defined_type_name = 'org_disambiguated_descendent'</sqlCheck>
             </not>
         </preConditions>
-        <sql>CREATE TYPE org_disambiguated_descendent AS (id bigint, source_id varchar, source_parent_id varchar, org_type varchar, name varchar, city varchar, region varchar, country varchar, level varchar);</sql>
+        <sql>CREATE TYPE org_disambiguated_descendent AS (id BIGINT, source_id VARCHAR, source_parent_id VARCHAR, org_type VARCHAR, name VARCHAR, city VARCHAR, region VARCHAR, country VARCHAR, level INT);</sql>
     </changeSet>
     
     <changeSet id="ORG-DISAMBIGUATED-DESCENDENT-FUNCTIONS" author="Will Simpson" dbms="postgresql">
         <createProcedure>
-CREATE OR REPLACE FUNCTION find_org_disambiguated_descendents(required_source_id VARCHAR, required_source_type varchar, current_level INT) RETURNS SETOF org_disambiguated_descendent
+CREATE OR REPLACE FUNCTION find_org_disambiguated_descendents(required_source_id VARCHAR, required_source_type VARCHAR, current_level INT) RETURNS SETOF org_disambiguated_descendent
 AS $$
 DECLARE
     current_result org_disambiguated_descendent;
