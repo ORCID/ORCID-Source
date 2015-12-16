@@ -176,7 +176,7 @@
                      <!-- active row  source display -->
                       <div class="row source-line" ng-show="group.activePutCode == work.putCode.value">
                           <div class="col-md-7 col-sm-7 col-xs-7" ng-show="editSources[group.groupId] == true">
-                              {{work.sourceName}}
+                              {{(work.sourceName == null || work.sourceName == '') ? work.source : work.sourceName }}
                           </div>
                           <div class="col-md-3 col-sm-3 col-xs-3" ng-show="editSources[group.groupId] == true">
 
@@ -238,8 +238,8 @@
                     <!-- not active row && edit sources -->
                     <div ng-show="group.activePutCode != work.putCode.value" class="row source-line">
                         <div class="col-md-7 col-sm-7 col-xs-7">
-                            <a ng-click="group.activePutCode = work.putCode.value;;showMozillaBadges(group.activePutCode);">
-                                {{work.sourceName}}
+                            <a ng-click="group.activePutCode = work.putCode.value;;showMozillaBadges(group.activePutCode);">                                
+                                {{(work.sourceName == null || work.sourceName == '') ? work.source : work.sourceName }}
                             </a>
                         </div>
                         
@@ -296,7 +296,7 @@
                     <div class="row source-line" ng-hide="editSources[group.groupId] == true">                        
                         
                         <div class="col-md-7 col-sm-7 col-xs-7">
-                             <@orcid.msg 'groups.common.source'/>: {{work.sourceName}}
+                             <@orcid.msg 'groups.common.source'/>: {{(work.sourceName == null || work.sourceName == '') ? work.source : work.sourceName }}
                         </div>
                         
                         <div class="col-md-3 col-sm-3 col-xs-3">

@@ -33,6 +33,7 @@ import javax.ws.rs.core.UriBuilder;
 
 import org.orcid.api.common.OrcidClientHelper;
 import org.orcid.api.common.T2OrcidApiService;
+import org.orcid.core.api.OrcidApiConstants;
 
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
@@ -81,5 +82,16 @@ public class InternalOAuthOrcidApiClientImpl implements InternalOAuthAPIService<
     public ClientResponse obtainOauth2TokenPost(String grantType, MultivaluedMap<String, String> formParams) {
         WebResource resource = orcidClientHelper.createRootResource(T2OrcidApiService.OAUTH_TOKEN);
         return resource.entity(formParams).post(ClientResponse.class);
+    }
+    
+    @Override
+    @GET
+    @Path(OrcidApiConstants.MEMBER_INFO)
+    @Produces(value = { MediaType.APPLICATION_JSON })
+    @Consumes(MediaType.TEXT_PLAIN)
+    public ClientResponse viewMemberDetails(String member) {
+        URI statusPath = UriBuilder.fromPath(OrcidApiConstants.MEMBER_INFO).build();
+        WebResource webResource = orcidClientHelper.createRootResource(statusPath);
+        return webResource.entity(member).post(ClientResponse.class);
     }
 }

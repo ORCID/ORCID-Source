@@ -432,7 +432,11 @@ public class WorkspaceController extends BaseWorkspaceController {
             //Clean old errors
             w.setErrors(new ArrayList<String>());
             w.getUrl().setErrors(new ArrayList<String>());
-            w.getName().setErrors(new ArrayList<String>());
+            // Name can be null
+            if(w.getName() != null) {
+                w.getName().setErrors(new ArrayList<String>());
+            }
+            
             //Validate
             validateUrl(w.getUrl(), SiteConstants.URL_MAX_LENGTH);
             validateNoLongerThan(SiteConstants.URL_MAX_LENGTH, w.getName());

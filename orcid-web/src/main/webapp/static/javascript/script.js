@@ -131,42 +131,35 @@ var OrcidCookie = new function() {
 
 var OrcidGA = function() {
     // test and make sure _gaq is working. disconnect.me chrome plugin has
-    // caused silent _gaq failures. This check allows us to detect that
-    // situation
-    var gaEnabled = false;
-    if(window.ga && ga.create) {
-    	gaEnabled = true;
-    }
-    
     this.buildClientString = function(clientGroupName, clientName) {
         return clientGroupName + ' - ' + clientName
     };
     this.gaPush = function(trackArray) {
-        //Recheck ga is enabled
-        if(!gaEnabled) {
-            if(window.ga && ga.create) {
-                gaEnabled = true;
-            }
-        }
-        
-        if (gaEnabled) {
-        	if(typeof trackArray === 'function') {
-        		ga(trackArray);
-        	} else {
-        		if(trackArray[5] == undefined) {
-                	ga(trackArray[0], trackArray[1], trackArray[2], trackArray[3], trackArray[4]);
+        if(window.ga) {
+            if(typeof trackArray === 'function') {
+                ga(trackArray);
+            } else {
+                if(trackArray[5] == undefined) {
+                    ga(trackArray[0], trackArray[1], trackArray[2], trackArray[3], trackArray[4]);
                 } else {
-                	ga(trackArray[0], trackArray[1], trackArray[2], trackArray[3], trackArray[4], trackArray[5]);
-                }
-            	
+                    ga(trackArray[0], trackArray[1], trackArray[2], trackArray[3], trackArray[4], trackArray[5]);
+                }                
                 console.log("_gap.push for " + trackArray);
-        	}        	
+            }
+            
+            setTimeout(function(){
+                if(!ga.create) {
+                    // if it's a function and _gap isn't available run (typically only
+                    // on dev)
+                    console.log("no _gap.push for " + trackArray);
+                    if (typeof trackArray === 'function')
+                        trackArray();
+                }
+            }, 200); 
         } else {
-            // if it's a function and _gap isn't available run (typically only
-            // on dev)
             console.log("no _gap.push for " + trackArray);
             if (typeof trackArray === 'function')
-                trackArray();
+                trackArray();                      
         }
     };
 

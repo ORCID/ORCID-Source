@@ -71,6 +71,14 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         query.setParameter("name", name);
         return query.getResultList();
     }
+    
+    @Override
+    public String findOrcidByCreditName(String creditName) {
+        TypedQuery<String> query = entityManager.createQuery("select id from ProfileEntity where lower(creditName) like lower(:credit_name || '%')",
+                String.class);
+        query.setParameter("credit_name", creditName);
+        return query.getSingleResult();
+    }
 
     @SuppressWarnings("unchecked")
     public List<String> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults) {

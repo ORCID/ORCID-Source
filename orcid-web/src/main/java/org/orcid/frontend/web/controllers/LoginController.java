@@ -46,7 +46,7 @@ public class LoginController extends BaseController {
     @RequestMapping(value = { "/signin", "/login" }, method = RequestMethod.GET)
     public ModelAndView loginGetHandler(HttpServletRequest request, HttpServletResponse response) {
         // in case have come via a link that requires them to be signed out
-    	ModelAndView mav = new ModelAndView("login");
+        ModelAndView mav = new ModelAndView("login");
         return mav;
     }
 

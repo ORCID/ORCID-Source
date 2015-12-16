@@ -26,4 +26,5 @@ import javax.ws.rs.core.Response;
 public interface InternalApiServiceDelegator {
     Response viewStatusText();
     Response viewPersonLastModified(String orcid);
+    Response viewMemberInfo(String memberIdOrName);
 }
