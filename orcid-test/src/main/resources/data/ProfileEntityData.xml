@@ -462,7 +462,7 @@
             external_id_type="Facebook"
             orcid="4444-4444-4444-4442"
             external_id_url="http://www.facebook.com/abc123"
-            source_id="4444-4444-4444-4441"
+            client_source_id="APP-5555555555555555"
             visibility="PUBLIC"
             date_created="2011-06-29 15:31:00.00"            
             last_modified="2011-07-02 15:31:00.00"
@@ -474,8 +474,8 @@
             external_id_type="Facebook"
             orcid="4444-4444-4444-4442"
             external_id_url="http://www.facebook.com/abc456"
-            source_id="4444-4444-4444-4441"
-            visibility="PUBLIC"
+            source_id="4444-4444-4444-4442"
+            visibility="LIMITED"
             date_created="2011-06-29 15:31:00.00"            
             last_modified="2011-07-02 15:31:00.00"
             />
@@ -487,7 +487,19 @@
             orcid="4444-4444-4444-4442"
             external_id_url="http://www.facebook.com/abc789"
             source_id="4444-4444-4444-4441"
-            visibility="LIMITED"
+            visibility="PRIVATE"
+            date_created="2011-06-29 15:31:00.00"            
+            last_modified="2011-07-02 15:31:00.00"
+            />
+
+	<external_identifier
+			id="5"
+            external_id_reference="abc012"
+            external_id_type="Facebook"
+            orcid="4444-4444-4444-4442"
+            external_id_url="http://www.facebook.com/abc012"
+            client_source_id="APP-5555555555555555"
+            visibility="PRIVATE"
             date_created="2011-06-29 15:31:00.00"            
             last_modified="2011-07-02 15:31:00.00"
             />

@@ -68,6 +68,8 @@ import org.orcid.jaxb.model.record_rc1.PeerReview;
 import org.orcid.jaxb.model.record_rc1.Work;
 import org.orcid.jaxb.model.record_rc1.WorkTitle;
 import org.orcid.jaxb.model.record_rc1.WorkType;
+import org.orcid.jaxb.model.record_rc2.ExternalIdentifier;
+import org.orcid.jaxb.model.record_rc2.ExternalIdentifiers;
 import org.orcid.jaxb.model.record_rc2.OtherName;
 import org.orcid.jaxb.model.record_rc2.OtherNames;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
@@ -1035,9 +1037,9 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         OtherName updatedOtherName = (OtherName) response.getEntity();
         assertNotNull(updatedOtherName);
-        assertEquals("Updated Other Name", otherName.getContent());
+        assertEquals("Updated Other Name", updatedOtherName.getContent());
         //Visibility should not change to something more restrictive
-        assertEquals(Visibility.PUBLIC, otherName.getVisibility());
+        assertEquals(Visibility.PUBLIC, updatedOtherName.getVisibility());
     }        
     
     @Test(expected = WrongSourceException.class)
@@ -1089,7 +1091,32 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     @SuppressWarnings("unchecked")
     @Test
     public void testViewExternalIdentifiers() {
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.READ_LIMITED);
+        Response response = serviceDelegator.viewExternalIdentifiers("4444-4444-4444-4442");
+        assertNotNull(response);
+        ExternalIdentifiers extIds = (ExternalIdentifiers)response.getEntity();
+        assertNotNull(extIds);
+        List<ExternalIdentifier> extIdsList = extIds.getExternalIdentifier();
+        assertNotNull(extIdsList);
+        assertEquals(3, extIdsList.size());
         
+        for(ExternalIdentifier extId : extIdsList) {
+            assertThat(extId.getPutCode(), anyOf(is(2L), is(3L), is(5L)));
+            assertThat(extId.getReference(), anyOf(is("abc123"), is("abc456"), is("abc012")));
+            assertThat(extId.getUrl(), anyOf(is("http://www.facebook.com/abc123"), is("http://www.facebook.com/abc456"), is("http://www.facebook.com/abc012")));
+            assertEquals("Facebook", extId.getCommonName());
+            assertNotNull(extId.getSource());
+            if(extId.getPutCode().equals(2L)) {
+                assertEquals(Visibility.PUBLIC, extId.getVisibility());
+                assertEquals("APP-5555555555555555", extId.getSource().retrieveSourcePath());
+            } else if(extId.getPutCode().equals(3L)) {
+                assertEquals(Visibility.LIMITED, extId.getVisibility());
+                assertEquals("4444-4444-4444-4442", extId.getSource().retrieveSourcePath());
+            } else {
+                assertEquals(Visibility.PRIVATE, extId.getVisibility());
+                assertEquals("APP-5555555555555555", extId.getSource().retrieveSourcePath());
+            }
+        }
     }
     
     @Test
