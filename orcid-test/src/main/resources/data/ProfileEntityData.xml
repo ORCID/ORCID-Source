@@ -584,27 +584,39 @@
             display_name="Slibberdy Slabinah"
             orcid="4444-4444-4444-4443"
             visibility="PUBLIC"
+            client_source_id="APP-5555555555555555"
+            last_modified="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
             />
 
     <other_name
             other_name_id="2"
             display_name="Flibberdy Flabinah"
             orcid="4444-4444-4444-4443"
-            visibility="LIMITED"
+            visibility="PUBLIC"
+            client_source_id="APP-5555555555555555"
+            last_modified="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
             />
 
     <other_name
             other_name_id="3"
             display_name="Flobberdy Flip"
             orcid="4444-4444-4444-4446"
-            visibility="PUBLIC"
+            visibility="LIMITED"
+            client_source_id="APP-5555555555555555"
+            last_modified="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
             />
 	
 	<other_name
             other_name_id="4"
             display_name="Other Name"
             orcid="4444-4444-4444-4441"
-            visibility="PUBLIC"
+            visibility="PRIVATE"
+            client_source_id="APP-5555555555555555"
+            last_modified="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
             />
 
     <address

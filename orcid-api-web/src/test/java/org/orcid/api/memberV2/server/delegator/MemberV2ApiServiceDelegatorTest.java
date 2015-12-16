@@ -807,8 +807,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         serviceDelegator.viewResearcherUrl("4444-4444-4444-4443", "1");
         fail();
     }
-    
-    
+        
     @SuppressWarnings("rawtypes")
     @Test
     public void testAddResearcherUrl() {
@@ -926,5 +925,117 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
                 break;
             }
         }
-    }                    
+    }
+        
+    /**
+     * TEST OTHER NAMES
+     * */
+    @SuppressWarnings("unchecked")
+    @Test
+    public void testViewOtherNames() {
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED);
+        Response response = serviceDelegator.viewWork("4444-4444-4444-4446", 5L);
+    }
+    
+    @Test
+    public void testViewOtherName() {
+        
+    }
+    
+    @Test
+    public void testViewPublicOtherName() {
+        
+    }
+    
+    @Test
+    public void testViewLimitedOtherName() {
+        
+    }
+    
+    @Test
+    public void testViewPrivateOtherName() {
+        
+    }
+    
+    @Test(expected = OrcidVisibilityException.class)
+    public void testViewPrivateOtherNameWhereYouAreNotTheSource() {
+        
+    }
+    
+    @Test(expected = NoResultException.class)
+    public void testViewOtherNameThatDontBelongToTheUser() {
+        
+    }
+        
+    @SuppressWarnings("rawtypes")
+    @Test
+    public void testAddOtherName() {
+        
+    }
+    
+    @Test
+    public void testUpdateOtherName() {
+        
+    }
+    
+    @Test
+    public void testDeleteOtherName() {
+        
+    }
+    
+    /**
+     * TEST EXTERNAL IDENTIFIERS
+     * */
+    @SuppressWarnings("unchecked")
+    @Test
+    public void testViewExternalIdentifiers() {
+        
+    }
+    
+    @Test
+    public void testViewExternalIdentifier() {
+        
+    }
+    
+    @Test
+    public void testViewPublicExternalIdentifier() {
+        
+    }
+    
+    @Test
+    public void testViewLimitedExternalIdentifier() {
+        
+    }
+    
+    @Test
+    public void testViewPrivateExternalIdentifier() {
+        
+    }
+    
+    @Test(expected = OrcidVisibilityException.class)
+    public void testViewPrivateExternalIdentifierWhereYouAreNotTheSource() {
+        
+    }
+    
+    @Test(expected = NoResultException.class)
+    public void testViewExternalIdentifierThatDontBelongToTheUser() {
+        
+    }
+        
+    @SuppressWarnings("rawtypes")
+    @Test
+    public void testAddExternalIdentifier() {
+        
+    }
+    
+    @Test
+    public void testUpdateExternalIdentifier() {
+        
+    }
+    
+    @Test
+    public void testDeleteExternalIdentifier() {
+        
+    }
+    
 }

@@ -68,6 +68,8 @@ import org.orcid.jaxb.model.record_rc1.PeerReview;
 import org.orcid.jaxb.model.record_rc1.Work;
 import org.orcid.jaxb.model.record_rc2.ExternalIdentifier;
 import org.orcid.jaxb.model.record_rc2.ExternalIdentifiers;
+import org.orcid.jaxb.model.record_rc2.OtherName;
+import org.orcid.jaxb.model.record_rc2.OtherNames;
 import org.orcid.jaxb.model.record_rc2.PersonalDetails;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
@@ -485,7 +487,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     @Override
     @AccessControl(requiredScope = ScopePathType.PERSON_UPDATE)
     public Response updateResearcherUrl(String orcid, String putCode, ResearcherUrl researcherUrl) {
-        if (!putCode.equals(researcherUrl.getPutCode())) {
+        if (!putCode.equals(String.valueOf(researcherUrl.getPutCode()))) {
             Map<String, String> params = new HashMap<String, String>();
             params.put("urlPutCode", String.valueOf(putCode));
             params.put("bodyPutCode", String.valueOf(researcherUrl.getPutCode()));
@@ -522,15 +524,20 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
         return Response.ok(emails).build();
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public Response viewOtherNames(String orcid) {
-        org.orcid.jaxb.model.record_rc2.OtherNames otherNames = otherNameManager.getOtherNamesV2(orcid);
+        OtherNames otherNames = otherNameManager.getOtherNamesV2(orcid);
+        List<OtherName> allOtherNames = otherNames.getOtherNames();
+        List<OtherName> filterdOtherNames = (List<OtherName>) visibilityFilter.filter(allOtherNames);
+        otherNames.setOtherNames(filterdOtherNames);
         return Response.ok(otherNames).build();
     }
 
     @Override
     public Response viewOtherName(String orcid, String putCode) {
-        org.orcid.jaxb.model.record_rc2.OtherName otherName = otherNameManager.getOtherNameV2(orcid, putCode);
+        OtherName otherName = otherNameManager.getOtherNameV2(orcid, putCode);
+        orcidSecurityManager.checkVisibility(otherName);
         return Response.ok(otherName).build();
     }
 
@@ -572,16 +579,21 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
         return Response.ok(personalDetails).build();
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public Response viewExternalIdentifiers(String orcid) {
         ExternalIdentifiers extIds = externalIdentifierManager.getExternalIdentifiersV2(orcid);
-        return null;
+        List<ExternalIdentifier> allExtIds = extIds.getExternalIdentifier();
+        List<ExternalIdentifier> filteredExtIds = (List<ExternalIdentifier>) visibilityFilter.filter(allExtIds);
+        extIds.setExternalIdentifiers(filteredExtIds);
+        return Response.ok(extIds).build();
     }
 
     @Override
     public Response viewExternalIdentifier(String orcid, String putCode) {
         ExternalIdentifier extId = externalIdentifierManager.getExternalIdentifierV2(orcid, Long.valueOf(putCode));
-        return null;
+        orcidSecurityManager.checkVisibility(extId);
+        return Response.ok(extId).build();
     }
 
     @Override

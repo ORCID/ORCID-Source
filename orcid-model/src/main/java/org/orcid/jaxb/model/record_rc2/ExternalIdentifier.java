@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.orcid.jaxb.model.common.CreatedDate;
+import org.orcid.jaxb.model.common.Filterable;
 import org.orcid.jaxb.model.common.LastModifiedDate;
 import org.orcid.jaxb.model.common.Source;
 import org.orcid.jaxb.model.common.Url;
@@ -36,7 +37,7 @@ import io.swagger.annotations.ApiModelProperty;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "commonName", "reference", "url", "createdDate", "lastModifiedDate", "source" })
 @XmlRootElement(name = "external-identifier", namespace = "http://www.orcid.org/ns/external-identifier")
-public class ExternalIdentifier implements Serializable {
+public class ExternalIdentifier implements Serializable, Filterable {
     private static final long serialVersionUID = 8340033850223164314L;
     @XmlElement(name="external-id-common-name", namespace = "http://www.orcid.org/ns/external-identifier")
     protected String commonName;
@@ -178,5 +179,12 @@ public class ExternalIdentifier implements Serializable {
         if (visibility != other.visibility)
             return false;
         return true;
+    }
+    @Override
+    public String retrieveSourcePath() {
+        if (source != null) {
+            return source.retrieveSourcePath();
+        }
+        return null;
     }        
 }
