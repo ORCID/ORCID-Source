@@ -97,6 +97,7 @@ public class LoadRinggoldData {
             System.exit(1);
         } catch (Throwable t) {
             System.err.println(t);
+            t.printStackTrace();
             System.exit(2);
         }
         System.exit(0);
@@ -247,6 +248,7 @@ public class LoadRinggoldData {
     }
 
     private void processLine(String[] line, Map<String, String> altNames) {
+        String gpCode = line[0];
         String pCode = line[1];
         String name = line[2];
         String extName = line[3];
@@ -269,13 +271,13 @@ public class LoadRinggoldData {
          * Look for the name in the alt names map, if there is one name, replace
          * the one found in the parents file
          */
-        if (altNames.containsKey(pCode)) {
+        if (altNames != null && altNames.containsKey(pCode)) {
             if (!PojoUtil.isEmpty(altNames.get(pCode))) {
                 name = altNames.get(pCode);
             }
         }
 
-        processOrg(pCode, name, city, state, country, type);
+        processOrg(gpCode, pCode, name, city, state, country, type);
     }
 
     private Map<String, String> processAltNamesFile(Reader reader) throws IOException {
@@ -348,35 +350,36 @@ public class LoadRinggoldData {
         }
     }
 
-    private void processOrg(String pCode, String name, String city, String state, Iso3166Country country, String type) {
+    private void processOrg(String gpCode, String pCode, String name, String city, String state, Iso3166Country country, String type) {
         OrgDisambiguatedEntity existingEntity = orgDisambiguatedDao.findBySourceIdAndSourceType(pCode, RINGGOLD_SOURCE_TYPE);
         if (existingEntity == null) {
             LOGGER.info("No existing disambiguated org with sourceId={} and sourceType={}", pCode, RINGGOLD_SOURCE_TYPE);
-            processNew(pCode, name, city, state, country, type);
+            processNew(gpCode, pCode, name, city, state, country, type);
         } else {
             LOGGER.info("Found existing disambiguated org with sourceId={} and sourceType={}", pCode, RINGGOLD_SOURCE_TYPE);
-            processExisting(existingEntity, pCode, name, city, country, state, type);
+            processExisting(existingEntity, gpCode, pCode, name, city, country, state, type);
         }
     }
 
-    private void processNew(String pCode, String name, String city, String state, Iso3166Country country, String type) {
+    private void processNew(String gpCode, String pCode, String name, String city, String state, Iso3166Country country, String type) {
         if (isDuplicate(pCode, name, city, state, country)) {
             return;
         }
         OrgDisambiguatedEntity orgDisambiguatedEntity = new OrgDisambiguatedEntity();
-        setFields(orgDisambiguatedEntity, pCode, name, city, country, state, type);
+        setFields(orgDisambiguatedEntity, gpCode, pCode, name, city, country, state, type);
         orgDisambiguatedDao.persist(orgDisambiguatedEntity);
         createOrUpdateOrg(name, city, country, state, orgDisambiguatedEntity.getId());
         numAdded++;
     }
 
-    private void processExisting(OrgDisambiguatedEntity existingEntity, String pCode, String name, String city, Iso3166Country country, String state, String type) {
-        if (!hasChanged(existingEntity, name, city, country, state, type)) {
+    private void processExisting(OrgDisambiguatedEntity existingEntity, String gpCode, String pCode, String name, String city, Iso3166Country country, String state,
+            String type) {
+        if (!hasChanged(existingEntity, gpCode, name, city, country, state, type)) {
             numUnchanged++;
             return;
         }
         existingEntity.setIndexingStatus(IndexingStatus.PENDING);
-        setFields(existingEntity, pCode, name, city, country, state, type);
+        setFields(existingEntity, gpCode, pCode, name, city, country, state, type);
         orgDisambiguatedDao.merge(existingEntity);
         createOrUpdateOrg(name, city, country, state, existingEntity.getId());
         numUpdated++;
@@ -404,7 +407,10 @@ public class LoadRinggoldData {
         orgManager.createUpdate(orgEntity, orgDisambiguatedId);
     }
 
-    private boolean hasChanged(OrgDisambiguatedEntity existingEntity, String name, String city, Iso3166Country country, String state, String type) {
+    private boolean hasChanged(OrgDisambiguatedEntity existingEntity, String gpCode, String name, String city, Iso3166Country country, String state, String type) {
+        if (!gpCode.equals(existingEntity.getSourceParentId())) {
+            return true;
+        }
         if (!name.equals(existingEntity.getName())) {
             return true;
         }
@@ -428,13 +434,15 @@ public class LoadRinggoldData {
         return false;
     }
 
-    private void setFields(OrgDisambiguatedEntity orgDisambiguatedEntity, String pCode, String name, String city, Iso3166Country country, String state, String type) {
+    private void setFields(OrgDisambiguatedEntity orgDisambiguatedEntity, String gpCode, String pCode, String name, String city, Iso3166Country country, String state,
+            String type) {
         orgDisambiguatedEntity.setName(name);
         orgDisambiguatedEntity.setCity(city);
         orgDisambiguatedEntity.setRegion(state);
         orgDisambiguatedEntity.setCountry(country);
         orgDisambiguatedEntity.setOrgType(type);
         orgDisambiguatedEntity.setSourceId(pCode);
+        orgDisambiguatedEntity.setSourceParentId(gpCode);
         orgDisambiguatedEntity.setSourceType(RINGGOLD_SOURCE_TYPE);
     }
 

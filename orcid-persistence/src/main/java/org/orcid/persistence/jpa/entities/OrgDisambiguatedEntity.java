@@ -55,6 +55,7 @@ public class OrgDisambiguatedEntity extends BaseEntity<Long> {
 
     private Long id;
     private String sourceId;
+    private String sourceParentId;
     private String sourceUrl;
     private String sourceType;
     private String orgType;
@@ -89,6 +90,15 @@ public class OrgDisambiguatedEntity extends BaseEntity<Long> {
 
     public void setSourceId(String sourceId) {
         this.sourceId = sourceId;
+    }
+
+    @Column(name = "source_parent_id")
+    public String getSourceParentId() {
+        return sourceParentId;
+    }
+
+    public void setSourceParentId(String sourceParentId) {
+        this.sourceParentId = sourceParentId;
     }
 
     @Column(name = "source_url")
