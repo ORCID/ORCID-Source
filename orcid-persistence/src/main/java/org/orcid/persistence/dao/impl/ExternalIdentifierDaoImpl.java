@@ -75,4 +75,13 @@ public class ExternalIdentifierDaoImpl extends GenericDaoImpl<ExternalIdentifier
         return (ExternalIdentifierEntity) query.getSingleResult();
     }
 
+    @Override
+    @Transactional
+    public boolean removeExternalIdentifier(String orcid, Long id) {
+        Query query = entityManager.createQuery("delete from ExternalIdentifierEntity where owner.id=:orcid and id=:id");
+        query.setParameter("orcid", orcid);
+        query.setParameter("id", id);
+        return query.executeUpdate() > 0 ? true : false;
+    }
+
 }

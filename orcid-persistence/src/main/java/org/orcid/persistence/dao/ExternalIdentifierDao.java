@@ -63,4 +63,15 @@ public interface ExternalIdentifierDao extends GenericDao<ExternalIdentifierEnti
      * @return an external identifier that matches the given id and profile id
      */
     ExternalIdentifierEntity getExternalIdentifierEntity(String orcid, Long id);
+    
+    /**
+     * Removes an external identifier from database based on his ID and the orcid.
+     * 
+     * @param orcid
+     *            The orcid of the owner
+     * @param externalIdReference
+     *            Identifier of the external id.
+     * @return true if an external identifier was deleted           
+     */
+    boolean removeExternalIdentifier(String orcid, Long id);
 }

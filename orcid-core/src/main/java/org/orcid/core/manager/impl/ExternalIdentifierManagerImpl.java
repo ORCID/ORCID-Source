@@ -90,7 +90,7 @@ public class ExternalIdentifierManagerImpl implements ExternalIdentifierManager 
     }
 
     @Override
-    public ExternalIdentifier getExternalIdentifierV2(String orcid, long id) {
+    public ExternalIdentifier getExternalIdentifierV2(String orcid, Long id) {  
         ExternalIdentifierEntity entity = externalIdentifierDao.getExternalIdentifierEntity(orcid, id);
         return jpaJaxbExternalIdentifierAdapter.toExternalIdentifier(entity);
     }
@@ -176,6 +176,11 @@ public class ExternalIdentifierManagerImpl implements ExternalIdentifierManager 
         } else if (incomingExternalIdentifierVisibility == null) {
             entity.setVisibility(org.orcid.jaxb.model.common.Visibility.PRIVATE);
         }
+    }    
+
+    @Override
+    public boolean deleteExternalIdentifier(String orcid, Long id) {
+        return externalIdentifierDao.removeExternalIdentifier(orcid, id);        
     }
 
 }

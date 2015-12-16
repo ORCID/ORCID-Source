@@ -129,5 +129,4 @@ public interface MemberV2ApiServiceDelegator {
     Response createExternalIdentifier(String orcid, ExternalIdentifier externalIdentifier);
 
     Response deleteExternalIdentifier(String orcid, String putCode);
-
 }
