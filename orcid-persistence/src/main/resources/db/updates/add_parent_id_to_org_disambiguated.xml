@@ -53,38 +53,29 @@
         <sql>CREATE TYPE org_disambiguated_descendent AS (id bigint, source_id varchar, source_parent_id varchar, org_type varchar, name varchar, city varchar, region varchar, country varchar, level varchar);</sql>
     </changeSet>
     
-    <changeSet id="ORG-DISAMBIGUATED-DESCENDENT-FUNCTION" author="Will Simpson" dbms="postgresql">
+    <changeSet id="ORG-DISAMBIGUATED-DESCENDENT-FUNCTIONS" author="Will Simpson" dbms="postgresql">
         <createProcedure>
+CREATE OR REPLACE FUNCTION find_org_disambiguated_descendents(required_source_id VARCHAR, required_source_type varchar, current_level INT) RETURNS SETOF org_disambiguated_descendent
+AS $$
+DECLARE
+    current_result org_disambiguated_descendent;
+BEGIN
+FOR current_result IN SELECT p1.id, p1.source_id, p1.source_parent_id, p1.org_type, p1.name, p1.city, p1.region, p1.country, current_level AS level FROM org_disambiguated p1 WHERE p1.source_parent_id = required_source_id AND p1.source_type = required_source_type LOOP
+    RETURN NEXT current_result;
+    RETURN QUERY SELECT * FROM find_org_disambiguated_descendents(current_result.source_id, required_source_type, current_level + 1);    
+END LOOP;
+END
+$$ LANGUAGE plpgsql
+IMMUTABLE
+RETURNS NULL ON NULL INPUT;
+
 CREATE OR REPLACE FUNCTION find_org_disambiguated_descendents(source_id varchar, source_type varchar) RETURNS SETOF org_disambiguated_descendent
 AS $$
-SELECT p1.id, p1.source_id, p1.source_parent_id, p1.org_type, p1.name, p1.city, p1.region, p1.country, 'child' AS level FROM org_disambiguated p1
-WHERE p1.source_parent_id = $1 AND p1.source_type = $2
-UNION
-SELECT p2.id, p2.source_id, p2.source_parent_id, p2.org_type, p2.name, p2.city, p2.region, p2.country, 'grandchild' AS level FROM org_disambiguated p1
-JOIN org_disambiguated p2 ON p2.source_parent_id = p1.source_id AND p2.source_type = $2
-WHERE p1.source_parent_id = $1 AND p1.source_type = $2
-UNION
-SELECT p3.id, p3.source_id, p3.source_parent_id, p3.org_type, p3.name, p3.city, p3.region, p3.country, 'great grandchild' AS level FROM org_disambiguated p1
-JOIN org_disambiguated p2 ON p2.source_parent_id = p1.source_id AND p2.source_type = $2
-JOIN org_disambiguated p3 ON p3.source_parent_id = p2.source_id AND p3.source_type = $2
-WHERE p1.source_parent_id = $1 AND p1.source_type = $2
-UNION
-SELECT p4.id, p4.source_id, p4.source_parent_id, p4.org_type, p4.name, p4.city, p4.region, p4.country, 'great great grandchild' AS level FROM org_disambiguated p1
-JOIN org_disambiguated p2 ON p2.source_parent_id = p1.source_id AND p2.source_type = $2
-JOIN org_disambiguated p3 ON p3.source_parent_id = p2.source_id AND p3.source_type = $2
-JOIN org_disambiguated p4 ON p4.source_parent_id = p3.source_id AND p4.source_type = $2
-WHERE p1.source_parent_id = $1 AND p1.source_type = $2
-UNION 
-SELECT p5.id, p5.source_id, p5.source_parent_id, p5.org_type, p5.name, p5.city, p5.region, p5.country, 'great great great grandchild' AS level FROM org_disambiguated p1
-JOIN org_disambiguated p2 ON p2.source_parent_id = p1.source_id AND p2.source_type = $2
-JOIN org_disambiguated p3 ON p3.source_parent_id = p2.source_id AND p3.source_type = $2
-JOIN org_disambiguated p4 ON p4.source_parent_id = p3.source_id AND p4.source_type = $2
-JOIN org_disambiguated p5 ON p5.source_parent_id = p4.source_id AND p5.source_type = $2
-WHERE p1.source_parent_id = $1 AND p1.source_type = $2
+SELECT * FROM find_org_disambiguated_descendents(source_id, source_type, 1)
 ORDER BY level, source_parent_id, name;
 $$ LANGUAGE SQL
 IMMUTABLE
-RETURNS NULL ON NULL INPUT;     
+RETURNS NULL ON NULL INPUT;
         </createProcedure>
     </changeSet>
     
