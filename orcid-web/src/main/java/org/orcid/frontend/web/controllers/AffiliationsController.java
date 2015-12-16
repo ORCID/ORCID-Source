@@ -344,7 +344,7 @@ public class AffiliationsController extends BaseWorkspaceController {
                     affiliationsMap.put(affiliation.getPutCode(), form);
                     affiliationIds.add(affiliation.getPutCode());
                 } catch (Exception e) {
-                    LOGGER.error("Failed to parse as Affiliation. Put code" + affiliation.getPutCode());
+                    LOGGER.error("Failed to parse as Affiliation. Put code" + affiliation.getPutCode(), e);
                 }
             }
             request.getSession().setAttribute(AFFILIATIONS_MAP, affiliationsMap);
