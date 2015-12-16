@@ -69,7 +69,7 @@ $$ LANGUAGE plpgsql
 IMMUTABLE
 RETURNS NULL ON NULL INPUT;
 
-CREATE OR REPLACE FUNCTION find_org_disambiguated_descendents(source_id varchar, source_type varchar) RETURNS SETOF org_disambiguated_descendent
+CREATE OR REPLACE FUNCTION find_org_disambiguated_descendents(source_id VARCHAR, source_type VARCHAR) RETURNS SETOF org_disambiguated_descendent
 AS $$
 SELECT * FROM find_org_disambiguated_descendents(source_id, source_type, 1)
 ORDER BY level, source_parent_id, name;
