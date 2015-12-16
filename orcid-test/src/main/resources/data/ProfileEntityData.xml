@@ -594,7 +594,7 @@
             display_name="Flibberdy Flabinah"
             orcid="4444-4444-4444-4443"
             visibility="PUBLIC"
-            client_source_id="APP-5555555555555555"
+            source_id="4444-4444-4444-4443"
             last_modified="2011-07-02 15:31:00.00"
             date_created="2011-06-29 15:31:00.00"
             />
@@ -602,24 +602,64 @@
     <other_name
             other_name_id="3"
             display_name="Flobberdy Flip"
-            orcid="4444-4444-4444-4446"
-            visibility="LIMITED"
-            client_source_id="APP-5555555555555555"
+            orcid="4444-4444-4444-4441"
+            visibility="PUBLIC"
+            source_id="4444-4444-4444-4441"
             last_modified="2011-07-02 15:31:00.00"
             date_created="2011-06-29 15:31:00.00"
             />
 	
 	<other_name
             other_name_id="4"
-            display_name="Other Name"
-            orcid="4444-4444-4444-4441"
-            visibility="PRIVATE"
+            display_name="Other Name # 1"
+            orcid="4444-4444-4444-4446"
+            visibility="PUBLIC"
             client_source_id="APP-5555555555555555"
             last_modified="2011-07-02 15:31:00.00"
             date_created="2011-06-29 15:31:00.00"
             />
 
-    <address
+	<other_name
+            other_name_id="5"
+            display_name="Other Name # 2"
+            orcid="4444-4444-4444-4446"
+            visibility="LIMITED"
+            source_id="4444-4444-4444-4446"
+            last_modified="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
+            />
+
+	<other_name
+            other_name_id="6"
+            display_name="Other Name # 3"
+            orcid="4444-4444-4444-4446"
+            visibility="PRIVATE"
+            source_id="4444-4444-4444-4446"
+            last_modified="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
+            />
+
+	<other_name
+            other_name_id="7"
+            display_name="Other Name # 4"
+            orcid="4444-4444-4444-4446"
+            visibility="PRIVATE"            
+            client_source_id="APP-5555555555555555"
+            last_modified="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
+            />
+
+	<other_name
+            other_name_id="8"
+            display_name="Other Name # 1"
+            orcid="4444-4444-4444-4447"
+            visibility="PUBLIC"            
+            client_source_id="APP-5555555555555555"
+            last_modified="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
+            />
+
+	<address
             id="1"
             address_line_1="Address 1"
             address_line_2="Address 2"

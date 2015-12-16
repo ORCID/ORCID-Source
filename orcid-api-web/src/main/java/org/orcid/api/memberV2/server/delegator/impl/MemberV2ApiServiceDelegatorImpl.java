@@ -478,7 +478,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
         return Response.ok(researcherUrls).build();
     }
 
-    public Response viewResearcherUrl(String orcid, String putCode) {
+    public Response viewResearcherUrl(String orcid, Long putCode) {
         ResearcherUrl researcherUrl = researcherUrlManager.getResearcherUrlV2(orcid, Long.valueOf(putCode));
         orcidSecurityManager.checkVisibility(researcherUrl);
         return Response.ok(researcherUrl).build();
@@ -486,8 +486,8 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
 
     @Override
     @AccessControl(requiredScope = ScopePathType.PERSON_UPDATE)
-    public Response updateResearcherUrl(String orcid, String putCode, ResearcherUrl researcherUrl) {
-        if (!putCode.equals(String.valueOf(researcherUrl.getPutCode()))) {
+    public Response updateResearcherUrl(String orcid, Long putCode, ResearcherUrl researcherUrl) {
+        if (!putCode.equals(researcherUrl.getPutCode())) {
             Map<String, String> params = new HashMap<String, String>();
             params.put("urlPutCode", String.valueOf(putCode));
             params.put("bodyPutCode", String.valueOf(researcherUrl.getPutCode()));
@@ -510,7 +510,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
 
     @Override
     @AccessControl(requiredScope = ScopePathType.PERSON_UPDATE)
-    public Response deleteResearcherUrl(String orcid, String putCode) {
+    public Response deleteResearcherUrl(String orcid, Long putCode) {
         researcherUrlManager.deleteResearcherUrl(orcid, putCode);
         return Response.noContent().build();
     }
@@ -535,7 +535,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     }
 
     @Override
-    public Response viewOtherName(String orcid, String putCode) {
+    public Response viewOtherName(String orcid, Long putCode) {
         OtherName otherName = otherNameManager.getOtherNameV2(orcid, putCode);
         orcidSecurityManager.checkVisibility(otherName);
         return Response.ok(otherName).build();
@@ -552,8 +552,8 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     }
 
     @Override
-    public Response updateOtherName(String orcid, String putCode, org.orcid.jaxb.model.record_rc2.OtherName otherName) {
-        if (!putCode.equals(String.valueOf(otherName.getPutCode()))) {
+    public Response updateOtherName(String orcid, Long putCode, org.orcid.jaxb.model.record_rc2.OtherName otherName) {
+        if (!putCode.equals(otherName.getPutCode())) {
             Map<String, String> params = new HashMap<String, String>();
             params.put("urlPutCode", String.valueOf(putCode));
             params.put("bodyPutCode", String.valueOf(otherName.getPutCode()));
@@ -565,7 +565,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     }
 
     @Override
-    public Response deleteOtherName(String orcid, String putCode) {
+    public Response deleteOtherName(String orcid, Long putCode) {
         otherNameManager.deleteOtherNameV2(orcid, putCode);
         return Response.noContent().build();
     }
@@ -590,15 +590,15 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     }
 
     @Override
-    public Response viewExternalIdentifier(String orcid, String putCode) {
+    public Response viewExternalIdentifier(String orcid, Long putCode) {
         ExternalIdentifier extId = externalIdentifierManager.getExternalIdentifierV2(orcid, Long.valueOf(putCode));
         orcidSecurityManager.checkVisibility(extId);
         return Response.ok(extId).build();
     }
 
     @Override
-    public Response updateExternalIdentifier(String orcid, String putCode, ExternalIdentifier externalIdentifier) {
-        if (!putCode.equals(String.valueOf(externalIdentifier.getPutCode()))) {
+    public Response updateExternalIdentifier(String orcid, Long putCode, ExternalIdentifier externalIdentifier) {
+        if (!putCode.equals(externalIdentifier.getPutCode())) {
             Map<String, String> params = new HashMap<String, String>();
             params.put("urlPutCode", String.valueOf(putCode));
             params.put("bodyPutCode", String.valueOf(externalIdentifier.getPutCode()));
@@ -619,7 +619,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     }
 
     @Override
-    public Response deleteExternalIdentifier(String orcid, String putCode) {
+    public Response deleteExternalIdentifier(String orcid, Long putCode) {
         externalIdentifierManager.deleteExternalIdentifier(orcid, Long.valueOf(putCode));
         return Response.noContent().build();
     }

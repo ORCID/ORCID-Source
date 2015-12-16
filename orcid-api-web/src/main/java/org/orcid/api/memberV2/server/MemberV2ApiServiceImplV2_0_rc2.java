@@ -64,7 +64,7 @@ public class MemberV2ApiServiceImplV2_0_rc2 extends MemberV2ApiServiceImplBase {
     @Path(RESEARCHER_URLS + PUTCODE)
     @ApiOperation(value = "Fetch one researcher url for an ORCID ID", hidden = true, authorizations = { @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_READ_LIMITED, description = "you need this") }) })
     public Response viewResearcherUrl(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
-        return serviceDelegator.viewResearcherUrl(orcid, putCode);
+        return serviceDelegator.viewResearcherUrl(orcid, Long.valueOf(putCode));
     }
     
     @POST
@@ -80,7 +80,7 @@ public class MemberV2ApiServiceImplV2_0_rc2 extends MemberV2ApiServiceImplBase {
     @Path(RESEARCHER_URLS + PUTCODE)
     @ApiOperation(value = "Edits researcher url for an ORCID ID", hidden = true, authorizations = { @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_UPDATE, description = "you need this") }) })
     public Response editResearcherUrl(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode, ResearcherUrl researcherUrl) {
-        return serviceDelegator.updateResearcherUrl(orcid, putCode, researcherUrl);
+        return serviceDelegator.updateResearcherUrl(orcid, Long.valueOf(putCode), researcherUrl);
     }
     
     @DELETE
@@ -88,7 +88,7 @@ public class MemberV2ApiServiceImplV2_0_rc2 extends MemberV2ApiServiceImplBase {
     @Path(RESEARCHER_URLS + PUTCODE)
     @ApiOperation(value = "Delete one researcher url from an ORCID ID", hidden = true, authorizations = { @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_UPDATE, description = "you need this") }) })
     public Response deleteResearcherUrl(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
-        return serviceDelegator.deleteResearcherUrl(orcid, putCode);
+        return serviceDelegator.deleteResearcherUrl(orcid, Long.valueOf(putCode));
     }
     
     @GET
@@ -105,7 +105,7 @@ public class MemberV2ApiServiceImplV2_0_rc2 extends MemberV2ApiServiceImplBase {
     @Path(OTHER_NAMES + PUTCODE)
     @ApiOperation(value = "Fetch Other name", hidden = true, authorizations = { @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_READ_LIMITED, description = "you need this") }) })
     public Response viewOtherName(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
-        return serviceDelegator.viewOtherName(orcid, putCode);
+        return serviceDelegator.viewOtherName(orcid, Long.valueOf(putCode));
     }
 
     @GET
@@ -128,7 +128,7 @@ public class MemberV2ApiServiceImplV2_0_rc2 extends MemberV2ApiServiceImplBase {
     @Path(OTHER_NAMES + PUTCODE)
     @ApiOperation(value = "Edit other name", hidden = true, authorizations = { @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_UPDATE, description = "you need this") }) })
     public Response editOtherName(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode, OtherName otherName) {
-        return serviceDelegator.updateOtherName(orcid, putCode, otherName);
+        return serviceDelegator.updateOtherName(orcid, Long.valueOf(putCode), otherName);
     }
     
     @DELETE
@@ -136,7 +136,7 @@ public class MemberV2ApiServiceImplV2_0_rc2 extends MemberV2ApiServiceImplBase {
     @Path(OTHER_NAMES + PUTCODE)
     @ApiOperation(value = "Delete other name", hidden = true, authorizations = { @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_UPDATE, description = "you need this") }) })
     public Response deleteOtherName(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
-        return serviceDelegator.deleteOtherName(orcid, putCode);
+        return serviceDelegator.deleteOtherName(orcid, Long.valueOf(putCode));
     }
     
     //Personal details
