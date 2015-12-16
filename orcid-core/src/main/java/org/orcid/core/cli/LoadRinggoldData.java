@@ -139,10 +139,8 @@ public class LoadRinggoldData {
         LOGGER.info("Checking for duplicates");
         List<OrgDisambiguatedEntity> duplicates = orgDisambiguatedDao.findDuplicates();
         for (OrgDisambiguatedEntity duplicate : duplicates) {
-            LOGGER.info(
-                    "Found duplicate: {}\t{}\t{}\t{}\t{}\t{}\t{}",
-                    new Object[] { duplicate.getSourceType(), duplicate.getSourceId(), duplicate.getName(), duplicate.getCity(), duplicate.getRegion(),
-                            duplicate.getCountry(), duplicate.getOrgType() });
+            LOGGER.info("Found duplicate: {}\t{}\t{}\t{}\t{}\t{}\t{}", new Object[] { duplicate.getSourceType(), duplicate.getSourceId(), duplicate.getName(),
+                    duplicate.getCity(), duplicate.getRegion(), duplicate.getCountry(), duplicate.getOrgType() });
         }
         LOGGER.info("Finished checking for duplicates");
     }
@@ -171,20 +169,20 @@ public class LoadRinggoldData {
                     LOGGER.info("Found deleted ids file: " + entryName);
                     deletedIdsEntry = entry;
                 }
-                if(entryName.endsWith("alt_names.csv")) {
+                if (entryName.endsWith("alt_names.csv")) {
                     LOGGER.info("Found alt names file: " + entryName);
                     altNamesEntry = entry;
                 }
             }
             if (parentsEntry != null) {
                 Reader reader = getReader(zip, parentsEntry);
-                if(altNamesEntry != null) {
+                if (altNamesEntry != null) {
                     Reader altNamesReader = getReader(zip, altNamesEntry);
                     Map<String, String> altNames = processAltNamesFile(altNamesReader);
                     processReader(reader, altNames);
                 } else {
                     processReader(reader, null);
-                }                                    
+                }
             }
             if (deletedIdsEntry != null) {
                 Reader reader = getReader(zip, deletedIdsEntry);
@@ -235,8 +233,8 @@ public class LoadRinggoldData {
                 processLine(line, altNames);
             }
         } finally {
-            LOGGER.info("Number added={}, number updated={}, number unchanged={}, num skipped={}, total={}", new Object[] { numAdded, numUpdated, numUnchanged,
-                    numSkipped, getTotal() });
+            LOGGER.info("Number added={}, number updated={}, number unchanged={}, num skipped={}, total={}",
+                    new Object[] { numAdded, numUpdated, numUnchanged, numSkipped, getTotal() });
         }
     }
 
@@ -268,14 +266,15 @@ public class LoadRinggoldData {
         String type = line[9];
 
         /**
-         * Look for the name in the alt names map, if there is one name, replace the one found in the parents file
-         * */
-        if(altNames.containsKey(pCode)) {            
-            if(!PojoUtil.isEmpty(altNames.get(pCode))) {
+         * Look for the name in the alt names map, if there is one name, replace
+         * the one found in the parents file
+         */
+        if (altNames.containsKey(pCode)) {
+            if (!PojoUtil.isEmpty(altNames.get(pCode))) {
                 name = altNames.get(pCode);
-            } 
+            }
         }
-        
+
         processOrg(pCode, name, city, state, country, type);
     }
 
@@ -285,67 +284,70 @@ public class LoadRinggoldData {
         try (CSVReader csvReader = createCSVReader(reader)) {
             String[] line;
             while ((line = csvReader.readNext()) != null) {
-                //If the DN indicator exists
-                if(!PojoUtil.isEmpty(line[7]) && DN.equals(line[7])) {
+                // If the DN indicator exists
+                if (!PojoUtil.isEmpty(line[7]) && DN.equals(line[7])) {
                     String name = null;
-                    //Get the name
-                    //If the ext_name is not empty, use it
-                    if(!PojoUtil.isEmpty(line[2])) {
-                        LOGGER.info("Using ext_name {} for pCode {}", new Object[] {line[2], line[0]});
+                    // Get the name
+                    // If the ext_name is not empty, use it
+                    if (!PojoUtil.isEmpty(line[2])) {
+                        LOGGER.info("Using ext_name {} for pCode {}", new Object[] { line[2], line[0] });
                         name = line[2];
                     } else {
-                        LOGGER.info("Using name {} for pCode {}", new Object[] {line[2], line[0]});
+                        LOGGER.info("Using name {} for pCode {}", new Object[] { line[2], line[0] });
                         name = line[1];
                     }
-                    
-                    //get the timestamp
+
+                    // get the timestamp
                     Date timestamp = null;
                     try {
                         timestamp = getDateFromTimestamp(line[8]);
-                    } catch(ParseException p) {
-                        LOGGER.warn("Unable to parse timestamp {} for p_code {}", new Object[] {line[8], line[0]});
+                    } catch (ParseException p) {
+                        LOGGER.warn("Unable to parse timestamp {} for p_code {}", new Object[] { line[8], line[0] });
                     }
-                    
-                    //Check if there is already a name for that pCode
-                    if(altNamesMap.containsKey(line[0])) {
-                        //If the timestamp is not empty, check it against the new timestamp
-                       if(altNamesTimestamps.containsKey(line[0]) && altNamesTimestamps.get(line[0]) != null) {
-                           Date existing = altNamesTimestamps.get(line[0]);
-                           if(existing.before(timestamp)) {
-                               LOGGER.info("Replacing old name {}({}) with {}({})", new Object[] {altNamesMap.get(line[0]), altNamesTimestamps.get(line[0]), name, timestamp});
-                               altNamesMap.put(line[0], name);
-                               altNamesTimestamps.put(line[0], timestamp);
-                           } else {
-                               LOGGER.info("Leaving old name {}({}) instead of using this one {}({})", new Object[] {altNamesMap.get(line[0]), altNamesTimestamps.get(line[0]), name, timestamp});
-                           }
-                       } else {
-                           //Else, just replace it with the new one
-                           altNamesMap.put(line[0], name);
-                           altNamesTimestamps.put(line[0], timestamp);
-                       }
+
+                    // Check if there is already a name for that pCode
+                    if (altNamesMap.containsKey(line[0])) {
+                        // If the timestamp is not empty, check it against the
+                        // new timestamp
+                        if (altNamesTimestamps.containsKey(line[0]) && altNamesTimestamps.get(line[0]) != null) {
+                            Date existing = altNamesTimestamps.get(line[0]);
+                            if (existing.before(timestamp)) {
+                                LOGGER.info("Replacing old name {}({}) with {}({})",
+                                        new Object[] { altNamesMap.get(line[0]), altNamesTimestamps.get(line[0]), name, timestamp });
+                                altNamesMap.put(line[0], name);
+                                altNamesTimestamps.put(line[0], timestamp);
+                            } else {
+                                LOGGER.info("Leaving old name {}({}) instead of using this one {}({})",
+                                        new Object[] { altNamesMap.get(line[0]), altNamesTimestamps.get(line[0]), name, timestamp });
+                            }
+                        } else {
+                            // Else, just replace it with the new one
+                            altNamesMap.put(line[0], name);
+                            altNamesTimestamps.put(line[0], timestamp);
+                        }
                     } else {
                         altNamesMap.put(line[0], name);
                         altNamesTimestamps.put(line[0], timestamp);
                     }
-                }                                                
+                }
             }
         } finally {
-            LOGGER.info("Number added={}, number updated={}, number unchanged={}, num skipped={}, total={}", new Object[] { numAdded, numUpdated, numUnchanged,
-                    numSkipped, getTotal() });
-        }        
-        
+            LOGGER.info("Number added={}, number updated={}, number unchanged={}, num skipped={}, total={}",
+                    new Object[] { numAdded, numUpdated, numUnchanged, numSkipped, getTotal() });
+        }
+
         return altNamesMap;
     }
-    
+
     private Date getDateFromTimestamp(String timestamp) throws ParseException {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
-        try {            
-            return formatter.parse(timestamp);            
-        } catch (ParseException e) {            
+        try {
+            return formatter.parse(timestamp);
+        } catch (ParseException e) {
             throw e;
         }
     }
-    
+
     private void processOrg(String pCode, String name, String city, String state, Iso3166Country country, String type) {
         OrgDisambiguatedEntity existingEntity = orgDisambiguatedDao.findBySourceIdAndSourceType(pCode, RINGGOLD_SOURCE_TYPE);
         if (existingEntity == null) {
