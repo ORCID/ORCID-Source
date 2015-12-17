@@ -58,7 +58,9 @@ import org.orcid.jaxb.model.common.Iso3166Country;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record.summary_rc1.ActivitiesSummary;
 import org.orcid.jaxb.model.record.summary_rc1.EducationSummary;
+import org.orcid.jaxb.model.record.summary_rc1.EmploymentSummary;
 import org.orcid.jaxb.model.record.summary_rc1.FundingGroup;
+import org.orcid.jaxb.model.record.summary_rc1.PeerReviewGroup;
 import org.orcid.jaxb.model.record.summary_rc1.PeerReviewSummary;
 import org.orcid.jaxb.model.record.summary_rc1.WorkGroup;
 import org.orcid.jaxb.model.record.summary_rc1.WorkSummary;
@@ -75,7 +77,9 @@ import org.orcid.jaxb.model.record_rc1.FundingExternalIdentifiers;
 import org.orcid.jaxb.model.record_rc1.FundingTitle;
 import org.orcid.jaxb.model.record_rc1.FundingType;
 import org.orcid.jaxb.model.record_rc1.PeerReview;
+import org.orcid.jaxb.model.record_rc1.PeerReviewType;
 import org.orcid.jaxb.model.record_rc1.Relationship;
+import org.orcid.jaxb.model.record_rc1.Role;
 import org.orcid.jaxb.model.record_rc1.Work;
 import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifier;
 import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierId;
@@ -553,14 +557,8 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         fExtId.setValue("new-funding-ext-id");
         FundingExternalIdentifiers fExtIds = new FundingExternalIdentifiers();
         fExtIds.getExternalIdentifier().add(fExtId);
-        newFunding.setExternalIdentifiers(fExtIds);
-        Organization org = new Organization();
-        org.setName("Org Name");
-        OrganizationAddress add = new OrganizationAddress();
-        add.setCity("city");
-        add.setCountry(Iso3166Country.TT);
-        org.setAddress(add);
-        newFunding.setOrganization(org);
+        newFunding.setExternalIdentifiers(fExtIds);        
+        newFunding.setOrganization(getOrganization());
 
         response = serviceDelegator.createFunding("4444-4444-4444-4447", newFunding);
         assertNotNull(response);
@@ -749,13 +747,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         Education education = new Education();
         education.setDepartmentName("My department name");
         education.setRoleTitle("My Role");
-        Organization org = new Organization();
-        org.setName("My organization");
-        OrganizationAddress add = new OrganizationAddress();
-        add.setCity("My city");
-        add.setCountry(Iso3166Country.AQ);
-        org.setAddress(add);
-        education.setOrganization(org);
+        education.setOrganization(getOrganization());
         
         response = serviceDelegator.createEducation("4444-4444-4444-4442", education);
         assertNotNull(response);
@@ -856,7 +848,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     @Test(expected = WrongSourceException.class)
     public void testDeleteEducationYouAreNotTheSourceOf() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
-        serviceDelegator.deleteAffiliation("4444-4444-4444-4446", 11L);
+        serviceDelegator.deleteAffiliation("4444-4444-4444-4446", 9L);
         fail();
     }
 
@@ -919,29 +911,124 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     @SuppressWarnings("rawtypes")
     @Test
     public void testAddEmployment() {
-        fail();
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        Response response = serviceDelegator.viewActivities("4444-4444-4444-4447");
+        assertNotNull(response);
+        ActivitiesSummary summary = (ActivitiesSummary) response.getEntity();
+        assertNotNull(summary);
+        assertNotNull(summary.getEmployments());
+        assertNotNull(summary.getEmployments().getSummaries());
+        assertNotNull(summary.getEmployments().getSummaries().get(0));
+        assertEquals(Long.valueOf(13), summary.getEmployments().getSummaries().get(0).getPutCode());
+
+        Employment employment = new Employment();
+        employment.setDepartmentName("My department name");
+        employment.setRoleTitle("My Role");
+        employment.setOrganization(getOrganization());
+        
+        response = serviceDelegator.createEmployment("4444-4444-4444-4447", employment);
+        assertNotNull(response);
+        assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
+        Map map = response.getMetadata();
+        assertNotNull(map);
+        assertTrue(map.containsKey("Location"));
+        List resultWithPutCode = (List) map.get("Location");
+        Long putCode = Long.valueOf(String.valueOf(resultWithPutCode.get(0)));
+
+        response = serviceDelegator.viewActivities("4444-4444-4444-4447");
+        assertNotNull(response);
+        summary = (ActivitiesSummary) response.getEntity();
+        assertNotNull(summary);
+        assertNotNull(summary.getEmployments());
+        assertNotNull(summary.getEmployments().getSummaries());
+
+        boolean haveOld = false;
+        boolean haveNew = false;
+
+        for (EmploymentSummary EmploymentSummary : summary.getEmployments().getSummaries()) {
+            assertNotNull(EmploymentSummary.getPutCode());
+            if (EmploymentSummary.getPutCode() == 13L) {
+                assertEquals("Employment Dept # 1", EmploymentSummary.getDepartmentName());
+                haveOld = true;
+            } else {
+                assertEquals(putCode, EmploymentSummary.getPutCode());
+                assertEquals("My department name", EmploymentSummary.getDepartmentName());
+                haveNew = true;
+            }
+        }
+
+        assertTrue(haveOld);
+        assertTrue(haveNew);
     }
 
     @Test
     public void testUpdateEmployment() {
-        fail();
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        Response response = serviceDelegator.viewEmployment("4444-4444-4444-4446", 5L);
+        assertNotNull(response);
+        Employment employment = (Employment) response.getEntity();
+        assertNotNull(employment);
+        assertEquals("Employment Dept # 1", employment.getDepartmentName());
+        assertEquals("Researcher", employment.getRoleTitle());
+
+        employment.setDepartmentName("Updated department name");
+        employment.setRoleTitle("The updated role title");
+
+        response = serviceDelegator.updateEmployment("4444-4444-4444-4446", 5L, employment);
+        assertNotNull(response);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+
+        response = serviceDelegator.viewEmployment("4444-4444-4444-4446", 5L);
+        assertNotNull(response);
+        employment = (Employment) response.getEntity();
+        assertNotNull(employment);
+        assertEquals("Updated department name", employment.getDepartmentName());
+        assertEquals("The updated role title", employment.getRoleTitle());
+
+        // Rollback changes
+        employment.setDepartmentName("Employment Dept # 1");
+        employment.setRoleTitle("Researcher");
+
+        response = serviceDelegator.updateEmployment("4444-4444-4444-4446", 5L, employment);
+        assertNotNull(response);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
     }
 
     @Test(expected = WrongSourceException.class)
     public void testUpdateEmploymentYouAreNotTheSourceOf() {
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        Response response = serviceDelegator.viewEmployment("4444-4444-4444-4446", 11L);
+        assertNotNull(response);
+        Employment employment = (Employment) response.getEntity();
+        assertNotNull(employment);
+        employment.setDepartmentName("Updated department name");
+        employment.setRoleTitle("The updated role title");
+        serviceDelegator.updateEmployment("4444-4444-4444-4446", 11L, employment);
         fail();
     }
 
-    @Test
-    public void testDeleteEmployment() {
-        fail();
+    @Test(expected = NoResultException.class)
+    public void testDeleteEmployment() {        
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4444", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        Response response = serviceDelegator.viewEmployment("4444-4444-4444-4444", 14L);
+        assertNotNull(response);
+        Employment employment = (Employment) response.getEntity();
+        assertNotNull(employment);
+        
+        response = serviceDelegator.deleteAffiliation("4444-4444-4444-4444", 14L);
+        assertNotNull(response);
+        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
+        
+        serviceDelegator.viewEmployment("4444-4444-4444-4444", 14L);
     }
 
     @Test(expected = WrongSourceException.class)
     public void testDeleteEmploymentYouAreNotTheSourceOf() {
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        serviceDelegator.deleteAffiliation("4444-4444-4444-4446", 11L);
         fail();
     }
-
+    
     /**
      * TEST PEER REVIEWS
      */
@@ -1082,20 +1169,97 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals("http://peer_review.com/2", peerReview.getUrl().getValue());
         assertEquals("APP-6666666666666666", peerReview.getSource().retrieveSourcePath());
     }
-
-    @SuppressWarnings("rawtypes")
+    
+    @SuppressWarnings({ "unused", "rawtypes" })
     @Test
     public void testAddPeerReview() {
-        fail();
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4444", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        Response response = serviceDelegator.viewActivities("4444-4444-4444-4444");
+        assertNotNull(response);
+        ActivitiesSummary summary = (ActivitiesSummary) response.getEntity();
+        assertNotNull(summary);
+        assertNotNull(summary.getPeerReviews());
+        assertNotNull(summary.getPeerReviews().getPeerReviewGroup());
+        assertEquals(1, summary.getPeerReviews().getPeerReviewGroup().size());        
+        assertNotNull(summary.getPeerReviews().getPeerReviewGroup().get(0));
+        assertNotNull(summary.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary());
+        assertNotNull(summary.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0));
+        assertEquals("issn:0000001", summary.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getGroupId());
+        
+        PeerReview peerReview = new PeerReview();
+        WorkExternalIdentifiers weis = new WorkExternalIdentifiers();
+        WorkExternalIdentifier wei1 = new WorkExternalIdentifier();
+        wei1.setRelationship(Relationship.PART_OF);
+        wei1.setUrl(new Url("http://myUrl.com"));
+        wei1.setWorkExternalIdentifierId(new WorkExternalIdentifierId("work-external-identifier-id"));
+        wei1.setWorkExternalIdentifierType(WorkExternalIdentifierType.DOI);
+        weis.getExternalIdentifier().add(wei1);
+        peerReview.setExternalIdentifiers(weis);
+        peerReview.setGroupId("issn:0000003");                
+        peerReview.setOrganization(getOrganization());
+        peerReview.setRole(Role.CHAIR);
+        peerReview.setSubjectContainerName(new Title("subject-container-name"));                        
+        peerReview.setSubjectExternalIdentifier(wei1);
+        WorkTitle workTitle = new WorkTitle();
+        workTitle.setTitle(new Title("work-title"));
+        peerReview.setSubjectName(workTitle);
+        peerReview.setSubjectType(WorkType.DATA_SET);
+        peerReview.setType(PeerReviewType.EVALUATION);
+        
+        response = serviceDelegator.createPeerReview("4444-4444-4444-4444", peerReview);
+        assertNotNull(response);
+        assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
+        Map map = response.getMetadata();
+        assertNotNull(map);
+        assertTrue(map.containsKey("Location"));
+        List resultWithPutCode = (List) map.get("Location");
+        Long putCode = Long.valueOf(String.valueOf(resultWithPutCode.get(0)));
+        
+        response = serviceDelegator.viewActivities("4444-4444-4444-4444");
+        assertNotNull(response);
+        summary = (ActivitiesSummary) response.getEntity();
+        assertNotNull(summary);
+        assertNotNull(summary.getPeerReviews());
+        assertNotNull(summary.getPeerReviews().getPeerReviewGroup());
+        assertEquals(2, summary.getPeerReviews().getPeerReviewGroup().size());
+        
+        boolean haveOld = false;
+        boolean haveNew = false;
+        
+        for(PeerReviewGroup group : summary.getPeerReviews().getPeerReviewGroup()) {
+            if("issn:0000001".equals(group.getPeerReviewSummary().get(0).getGroupId())) {
+                haveOld = true;
+            } else {
+                assertEquals("issn:0000003", group.getPeerReviewSummary().get(0).getGroupId());
+                haveNew = true;
+            }            
+        }
+        
+        assertTrue(haveOld);
+        assertTrue(haveNew);
     }
 
     @Test
     public void testDeletePeerReview() {
-        fail();
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        Response response = serviceDelegator.viewPeerReview("4444-4444-4444-4443", 8L);
+        assertNotNull(response);
+        PeerReview review = (PeerReview) response.getEntity();
+        assertNotNull(review);
+        assertNotNull(review.getSubjectName());
+        assertNotNull(review.getSubjectName().getTitle());
+        assertEquals("Peer Review # 3", review.getSubjectName().getTitle().getContent());
+        
+        response = serviceDelegator.deletePeerReview("4444-4444-4444-4443", 8L);
+        assertNotNull(response);
+        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
+        
     }
 
     @Test(expected = WrongSourceException.class)
     public void testDeletePeerReviewYouAreNotTheSourceOf() {
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        serviceDelegator.deletePeerReview("4444-4444-4444-4447", 2L);
         fail();
     }
 
@@ -1846,4 +2010,13 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         fail();
     }
 
+    private Organization getOrganization(){
+        Organization org = new Organization();
+        org.setName("Org Name");
+        OrganizationAddress add = new OrganizationAddress();
+        add.setCity("city");
+        add.setCountry(Iso3166Country.TT);
+        org.setAddress(add);
+        return org;
+    }
 }

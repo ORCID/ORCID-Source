@@ -233,7 +233,7 @@
             orcid="4444-4444-4444-4447"
             org_affiliation_relation_role="EDUCATION"
             org_affiliation_relation_title="Researcher"
-            department="Employment Dept # 4"
+            department="Education Dept # 1"
             date_created="2010-07-02 15:31:00.00"
             last_modified="2010-07-02 15:31:00.00"
             start_year="2011"
@@ -244,5 +244,44 @@
             end_day="07"
             visibility="LIMITED"
             client_source_id="APP-5555555555555555"
-            />                                                                        
+            />  
+            
+	<org_affiliation_relation
+            id="13"
+            org_id="3"
+            orcid="4444-4444-4444-4447"
+            org_affiliation_relation_role="EMPLOYMENT"
+            org_affiliation_relation_title="Researcher"
+            department="Employment Dept # 1"
+            date_created="2010-07-02 15:31:00.00"
+            last_modified="2010-07-02 15:31:00.00"
+            start_year="2011"
+            start_month="09"
+            start_day="22"
+            end_year="2012"
+            end_month="11"
+            end_day="07"
+            visibility="LIMITED"
+            client_source_id="APP-5555555555555555"
+            />       
+            
+	<org_affiliation_relation
+            id="14"
+            org_id="3"
+            orcid="4444-4444-4444-4444"
+            org_affiliation_relation_role="EMPLOYMENT"
+            org_affiliation_relation_title="Researcher"
+            department="Employment Dept # 1"
+            date_created="2010-07-02 15:31:00.00"
+            last_modified="2010-07-02 15:31:00.00"
+            start_year="2011"
+            start_month="09"
+            start_day="22"
+            end_year="2012"
+            end_month="11"
+            end_day="07"
+            visibility="LIMITED"
+            client_source_id="APP-5555555555555555"
+            />                               
+                                                                                    
 </dataset>

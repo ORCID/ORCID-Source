@@ -652,8 +652,10 @@ public class BaseController {
     }
 
     protected static void copyErrors(ErrorsInterface from, ErrorsInterface into) {
-        for (String s : from.getErrors()) {
-            into.getErrors().add(s);
+        if(from != null && from.getErrors() != null) {
+            for (String s : from.getErrors()) {
+                into.getErrors().add(s);
+            }
         }
     }
 
@@ -700,7 +702,6 @@ public class BaseController {
                     url.setValue("http://" + url.getValue());
                 else
                     setError(url, "common.invalid_url");
-
             }
         }
     }

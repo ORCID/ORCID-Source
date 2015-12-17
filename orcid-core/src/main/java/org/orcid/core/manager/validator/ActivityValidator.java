@@ -22,6 +22,7 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.exception.ActivityIdentifierValidationException;
 import org.orcid.core.exception.ActivityTitleValidationException;
+import org.orcid.core.exception.ActivityTypeValidationException;
 import org.orcid.core.exception.InvalidPutCodeException;
 import org.orcid.core.exception.OrcidDuplicatedActivityException;
 import org.orcid.jaxb.model.common.Source;
@@ -111,6 +112,10 @@ public class ActivityValidator {
             Map<String, String> params = new HashMap<String, String>();
             params.put("clientName", sourceEntity.getSourceName());
             throw new InvalidPutCodeException(params);
+        }
+        
+        if(peerReview.getType() == null) {
+            throw new ActivityTypeValidationException();
         }
     }
 
