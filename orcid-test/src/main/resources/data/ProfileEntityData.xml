@@ -504,6 +504,18 @@
             last_modified="2011-07-02 15:31:00.00"
             />
 
+	<external_identifier
+			id="6"
+            external_id_reference="xyz012"
+            external_id_type="Google"
+            orcid="4444-4444-4444-4444"
+            external_id_url="http://www.google.com/xyz012"
+            client_source_id="APP-5555555555555555"
+            visibility="PUBLIC"
+            date_created="2011-06-29 15:31:00.00"            
+            last_modified="2011-07-02 15:31:00.00"
+            />
+
     <researcher_url
             id="1"
             url="www.4444-4444-4444-4441.com"

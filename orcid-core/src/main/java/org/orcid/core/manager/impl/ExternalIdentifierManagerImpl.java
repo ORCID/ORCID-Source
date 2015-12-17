@@ -125,7 +125,7 @@ public class ExternalIdentifierManagerImpl implements ExternalIdentifierManager 
     public ExternalIdentifier updateExternalIdentifierV2(String orcid, ExternalIdentifier externalIdentifier) {
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
         // Validate external identifier
-        PersonValidator.validateExternalIdentifier(externalIdentifier, sourceEntity, true);
+        PersonValidator.validateExternalIdentifier(externalIdentifier, sourceEntity, false);
         // Validate it is not duplicated
         List<ExternalIdentifierEntity> existingExternalIdentifiers = externalIdentifierDao.getExternalIdentifiers(orcid);
         for (ExternalIdentifierEntity existing : existingExternalIdentifiers) {
@@ -180,6 +180,12 @@ public class ExternalIdentifierManagerImpl implements ExternalIdentifierManager 
 
     @Override
     public boolean deleteExternalIdentifier(String orcid, Long id) {
+        ExternalIdentifierEntity extIdEntity = externalIdentifierDao.find(id);
+        if (extIdEntity == null) {
+            return false;
+        }
+        SourceEntity existingSource = extIdEntity.getSource();
+        orcidSecurityManager.checkSource(existingSource);
         return externalIdentifierDao.removeExternalIdentifier(orcid, id);        
     }
 

@@ -83,8 +83,9 @@ import org.springframework.test.context.ContextConfiguration;
 @ContextConfiguration(locations = { "classpath:orcid-api-web-context.xml", "classpath:orcid-api-security-context.xml" })
 public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     private static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml", "/data/SecurityQuestionEntityData.xml",
-            "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/WorksEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/Oauth2TokenDetailsData.xml",
-            "/data/OrgsEntityData.xml", "/data/ProfileFundingEntityData.xml", "/data/OrgAffiliationEntityData.xml", "/data/PeerReviewEntityData.xml", "/data/GroupIdRecordEntityData.xml");
+            "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/WorksEntityData.xml", "/data/ClientDetailsEntityData.xml",
+            "/data/Oauth2TokenDetailsData.xml", "/data/OrgsEntityData.xml", "/data/ProfileFundingEntityData.xml", "/data/OrgAffiliationEntityData.xml",
+            "/data/PeerReviewEntityData.xml", "/data/GroupIdRecordEntityData.xml");
 
     @Resource(name = "memberV2ApiServiceDelegator")
     private MemberV2ApiServiceDelegator serviceDelegator;
@@ -111,34 +112,32 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         // Check works
         assertNotNull(summary.getWorks());
         assertEquals(3, summary.getWorks().getWorkGroup().size());
-        assertThat(summary.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getPutCode(),
-                anyOf(is(Long.valueOf(5)), is(Long.valueOf(6)), is(Long.valueOf(7))));
-        assertThat(summary.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getPath(), anyOf(is("/4444-4444-4444-4446/work/5"), is("/4444-4444-4444-4446/work/6"), is("/4444-4444-4444-4446/work/7")));
+        assertThat(summary.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getPutCode(), anyOf(is(Long.valueOf(5)), is(Long.valueOf(6)), is(Long.valueOf(7))));
+        assertThat(summary.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getPath(),
+                anyOf(is("/4444-4444-4444-4446/work/5"), is("/4444-4444-4444-4446/work/6"), is("/4444-4444-4444-4446/work/7")));
         assertThat(summary.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getTitle().getTitle().getContent(),
                 anyOf(is("Journal article A"), is("Journal article B"), is("Journal article C")));
-        assertThat(summary.getWorks().getWorkGroup().get(1).getWorkSummary().get(0).getPutCode(),
-                anyOf(is(Long.valueOf(5)), is(Long.valueOf(6)), is(Long.valueOf(7))));
-        assertThat(summary.getWorks().getWorkGroup().get(1).getWorkSummary().get(0).getPath(), anyOf(is("/4444-4444-4444-4446/work/5"), is("/4444-4444-4444-4446/work/6"), is("/4444-4444-4444-4446/work/7")));
+        assertThat(summary.getWorks().getWorkGroup().get(1).getWorkSummary().get(0).getPutCode(), anyOf(is(Long.valueOf(5)), is(Long.valueOf(6)), is(Long.valueOf(7))));
+        assertThat(summary.getWorks().getWorkGroup().get(1).getWorkSummary().get(0).getPath(),
+                anyOf(is("/4444-4444-4444-4446/work/5"), is("/4444-4444-4444-4446/work/6"), is("/4444-4444-4444-4446/work/7")));
         assertThat(summary.getWorks().getWorkGroup().get(1).getWorkSummary().get(0).getTitle().getTitle().getContent(),
-                anyOf(is("Journal article A"), is("Journal article B"), is("Journal article C")));                        
-        assertThat(summary.getWorks().getWorkGroup().get(2).getWorkSummary().get(0).getPutCode(),
-                anyOf(is(Long.valueOf(5)), is(Long.valueOf(6)), is(Long.valueOf(7))));
-        assertThat(summary.getWorks().getWorkGroup().get(2).getWorkSummary().get(0).getPath(), anyOf(is("/4444-4444-4444-4446/work/5"), is("/4444-4444-4444-4446/work/6"), is("/4444-4444-4444-4446/work/7")));
+                anyOf(is("Journal article A"), is("Journal article B"), is("Journal article C")));
+        assertThat(summary.getWorks().getWorkGroup().get(2).getWorkSummary().get(0).getPutCode(), anyOf(is(Long.valueOf(5)), is(Long.valueOf(6)), is(Long.valueOf(7))));
+        assertThat(summary.getWorks().getWorkGroup().get(2).getWorkSummary().get(0).getPath(),
+                anyOf(is("/4444-4444-4444-4446/work/5"), is("/4444-4444-4444-4446/work/6"), is("/4444-4444-4444-4446/work/7")));
         assertThat(summary.getWorks().getWorkGroup().get(2).getWorkSummary().get(0).getTitle().getTitle().getContent(),
                 anyOf(is("Journal article A"), is("Journal article B"), is("Journal article C")));
 
         // Check fundings
         assertNotNull(summary.getFundings());
         assertEquals(2, summary.getFundings().getFundingGroup().size());
-        assertThat(summary.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getPutCode(),
-                anyOf(is(Long.valueOf(4)), is(Long.valueOf(5))));        
+        assertThat(summary.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getPutCode(), anyOf(is(Long.valueOf(4)), is(Long.valueOf(5))));
         assertThat(summary.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getPath(),
                 anyOf(is("/4444-4444-4444-4446/funding/4"), is("/4444-4444-4444-4446/funding/5")));
-        
+
         assertThat(summary.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getTitle().getTitle().getContent(),
                 anyOf(is("Private Funding"), is("Public Funding")));
-        assertThat(summary.getFundings().getFundingGroup().get(1).getFundingSummary().get(0).getPutCode(),
-                anyOf(is(Long.valueOf(4)), is(Long.valueOf(5))));
+        assertThat(summary.getFundings().getFundingGroup().get(1).getFundingSummary().get(0).getPutCode(), anyOf(is(Long.valueOf(4)), is(Long.valueOf(5))));
         assertThat(summary.getFundings().getFundingGroup().get(1).getFundingSummary().get(0).getPath(),
                 anyOf(is("/4444-4444-4444-4446/funding/4"), is("/4444-4444-4444-4446/funding/5")));
         assertThat(summary.getFundings().getFundingGroup().get(1).getFundingSummary().get(0).getTitle().getTitle().getContent(),
@@ -149,30 +148,34 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(summary.getEducations().getSummaries());
         assertEquals(3, summary.getEducations().getSummaries().size());
         assertThat(summary.getEducations().getSummaries().get(0).getPutCode(), anyOf(is(Long.valueOf(6)), is(Long.valueOf(7))));
-        assertThat(summary.getEducations().getSummaries().get(0).getPath(), anyOf(is("/4444-4444-4444-4446/education/6"), is("/4444-4444-4444-4446/education/7"), is("/4444-4444-4444-4446/education/9")));
-        assertThat(summary.getEducations().getSummaries().get(0).getDepartmentName(), anyOf(is("Education Dept # 1"), is("Education Dept # 2"), is("Education Dept # 3")));
+        assertThat(summary.getEducations().getSummaries().get(0).getPath(),
+                anyOf(is("/4444-4444-4444-4446/education/6"), is("/4444-4444-4444-4446/education/7"), is("/4444-4444-4444-4446/education/9")));
+        assertThat(summary.getEducations().getSummaries().get(0).getDepartmentName(),
+                anyOf(is("Education Dept # 1"), is("Education Dept # 2"), is("Education Dept # 3")));
 
         // Check Employments
         assertNotNull(summary.getEmployments());
         assertNotNull(summary.getEmployments().getSummaries());
         assertEquals(3, summary.getEmployments().getSummaries().size());
         assertThat(summary.getEmployments().getSummaries().get(0).getPutCode(), anyOf(is(Long.valueOf(5)), is(Long.valueOf(8))));
-        assertThat(summary.getEmployments().getSummaries().get(0).getPath(), anyOf(is("/4444-4444-4444-4446/employment/5"), is("/4444-4444-4444-4446/employment/8"), is("/4444-4444-4444-4446/employment/11")));
-        assertThat(summary.getEmployments().getSummaries().get(0).getDepartmentName(), anyOf(is("Employment Dept # 1"), is("Employment Dept # 2"), is("Employment Dept # 4")));
-        
+        assertThat(summary.getEmployments().getSummaries().get(0).getPath(),
+                anyOf(is("/4444-4444-4444-4446/employment/5"), is("/4444-4444-4444-4446/employment/8"), is("/4444-4444-4444-4446/employment/11")));
+        assertThat(summary.getEmployments().getSummaries().get(0).getDepartmentName(),
+                anyOf(is("Employment Dept # 1"), is("Employment Dept # 2"), is("Employment Dept # 4")));
+
         // Check Peer reviews
         assertNotNull(summary.getPeerReviews());
         assertEquals(4, summary.getPeerReviews().getPeerReviewGroup().size());
         PeerReviewSummary peerReviewSummary = summary.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0);
-        
-        assertThat(peerReviewSummary.getPutCode(), anyOf(is(Long.valueOf(1)), is(Long.valueOf(3)), is(Long.valueOf(6))));      
+
+        assertThat(peerReviewSummary.getPutCode(), anyOf(is(Long.valueOf(1)), is(Long.valueOf(3)), is(Long.valueOf(6))));
     }
 
     @Test
     public void testCleanEmptyFieldsOnActivities() {
         Works works = new Works();
         WorkGroup group = new WorkGroup();
-        for(int i = 0; i < 5; i++) {
+        for (int i = 0; i < 5; i++) {
             WorkSummary summary = new WorkSummary();
             WorkTitle title = new WorkTitle();
             title.setTitle(new Title("Work " + i));
@@ -183,27 +186,27 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         works.getWorkGroup().add(group);
         ActivitiesSummary as = new ActivitiesSummary();
         as.setWorks(works);
-        
+
         ActivityUtils.cleanEmptyFields(as);
-        
+
         assertNotNull(as);
         assertNotNull(as.getWorks());
         assertNotNull(as.getWorks().getWorkGroup());
         assertEquals(1, as.getWorks().getWorkGroup().size());
         assertNotNull(as.getWorks().getWorkGroup().get(0).getWorkSummary());
         assertEquals(5, as.getWorks().getWorkGroup().get(0).getWorkSummary().size());
-        for(WorkSummary summary : as.getWorks().getWorkGroup().get(0).getWorkSummary()) {
+        for (WorkSummary summary : as.getWorks().getWorkGroup().get(0).getWorkSummary()) {
             assertNotNull(summary.getTitle());
             assertNotNull(summary.getTitle().getTitle());
             assertTrue(summary.getTitle().getTitle().getContent().startsWith("Work "));
             assertNull(summary.getTitle().getTranslatedTitle());
         }
-        
+
     }
-    
+
     /**
      * TEST WORKS
-     * */            
+     */
     @Test
     public void testViewPublicWork() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED);
@@ -219,7 +222,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals(WorkType.JOURNAL_ARTICLE, work.getWorkType());
         assertEquals(Visibility.PUBLIC.value(), work.getVisibility().value());
     }
-    
+
     @Test
     public void testViewLimitedWork() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED);
@@ -234,10 +237,11 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals(WorkType.JOURNAL_ARTICLE, work.getWorkType());
         assertEquals(Visibility.LIMITED.value(), work.getVisibility().value());
     }
-                        
+
     @Test
     public void testViewPrivateWork() {
-        //Use the smallest scope in the pyramid to verify that you can read your own limited and private data
+        // Use the smallest scope in the pyramid to verify that you can read
+        // your own limited and private data
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED);
         Response response = serviceDelegator.viewWork("4444-4444-4444-4446", 7L);
         assertNotNull(response);
@@ -250,21 +254,21 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals(WorkType.JOURNAL_ARTICLE, work.getWorkType());
         assertEquals(Visibility.PRIVATE.value(), work.getVisibility().value());
     }
-    
+
     @Test(expected = OrcidVisibilityException.class)
     public void testViewPrivateWorkYouAreNotTheSourceOf() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED);
         serviceDelegator.viewWork("4444-4444-4444-4446", 8L);
         fail();
     }
-    
+
     @Test(expected = NoResultException.class)
     public void testViewWorkThatDontBelongToTheUser() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.READ_LIMITED);
         serviceDelegator.viewWork("4444-4444-4444-4443", 5L);
         fail();
     }
-    
+
     @Test
     public void testCleanEmptyFieldsOnWorks() {
         Work work = new Work();
@@ -274,23 +278,23 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         title.setSubtitle(new Subtitle("My subtitle"));
         title.setTranslatedTitle(new TranslatedTitle("", ""));
         work.setWorkTitle(title);
-        
+
         ActivityUtils.cleanEmptyFields(work);
-        
+
         assertNotNull(work);
-        assertNotNull(work.getWorkTitle());        
+        assertNotNull(work.getWorkTitle());
         assertNotNull(work.getWorkTitle().getTitle());
         assertNotNull(work.getWorkTitle().getSubtitle());
         assertEquals("My Work", work.getWorkTitle().getTitle().getContent());
         assertEquals("My subtitle", work.getWorkTitle().getSubtitle().getContent());
-        
+
         assertNull(work.getWorkCitation());
         assertNull(work.getWorkTitle().getTranslatedTitle());
     }
-        
+
     /**
      * TEST FUNDINGS
-     * */         
+     */
     @Test
     public void testViewPublicFunding() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED);
@@ -305,9 +309,9 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals("Public Funding", funding.getTitle().getTitle().getContent());
         assertEquals(Visibility.PUBLIC.value(), funding.getVisibility().value());
     }
-        
+
     @Test
-    public void testViewLimitedFunding() {        
+    public void testViewLimitedFunding() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.READ_LIMITED);
         Response response = serviceDelegator.viewFunding("4444-4444-4444-4443", 1L);
         assertNotNull(response);
@@ -320,10 +324,11 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals("Grant # 1", funding.getTitle().getTitle().getContent());
         assertEquals(Visibility.LIMITED.value(), funding.getVisibility().value());
     }
-    
+
     @Test
     public void testViewPrivateFunding() {
-        //Use the smallest scope in the pyramid to verify that you can read your own limited and private data
+        // Use the smallest scope in the pyramid to verify that you can read
+        // your own limited and private data
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED);
         Response response = serviceDelegator.viewFunding("4444-4444-4444-4446", 4L);
         assertNotNull(response);
@@ -336,25 +341,25 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals("Private Funding", funding.getTitle().getTitle().getContent());
         assertEquals(Visibility.PRIVATE.value(), funding.getVisibility().value());
     }
-    
+
     @Test(expected = OrcidVisibilityException.class)
     public void testViewPrivateFundingWhereYouAreNotTheSource() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.READ_LIMITED);
-            serviceDelegator.viewFunding("4444-4444-4444-4443", 3L);
-            fail();
+        serviceDelegator.viewFunding("4444-4444-4444-4443", 3L);
+        fail();
     }
 
     @Test(expected = NoResultException.class)
     public void testViewFundingThatDontBelongToTheUser() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED);
-        //Funding 1 belongs to 4444-4444-4444-4443
+        // Funding 1 belongs to 4444-4444-4444-4443
         serviceDelegator.viewFunding("4444-4444-4444-4446", 1L);
-        fail();        
+        fail();
     }
-    
+
     /**
      * TEST EDUCATIONS
-     * */     
+     */
     @Test
     public void testViewPublicEducation() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED);
@@ -367,7 +372,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals("Education Dept # 2", education.getDepartmentName());
         assertEquals(Visibility.PUBLIC.value(), education.getVisibility().value());
     }
-    
+
     @Test
     public void testViewLimitedEducation() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED);
@@ -380,7 +385,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals("Education Dept # 3", education.getDepartmentName());
         assertEquals(Visibility.LIMITED.value(), education.getVisibility().value());
     }
-    
+
     @Test
     public void testViewPrivateEducation() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED);
@@ -400,51 +405,51 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         serviceDelegator.viewEducation("4444-4444-4444-4446", 10L);
         fail();
     }
-    
+
     @Test(expected = NoResultException.class)
     public void testViewEducationThatDontBelongToTheUser() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED);
-        //Education 1 belongs to 4444-4444-4444-4442
+        // Education 1 belongs to 4444-4444-4444-4442
         serviceDelegator.viewEducation("4444-4444-4444-4446", 1L);
         fail();
     }
-    
+
     /**
      * TEST EMPLOYMENTS
-     * */
+     */
     @Test
     public void testViewEmployment() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED);
         Response response = serviceDelegator.viewEmployment("4444-4444-4444-4446", 5L);
         assertNotNull(response);
         Employment employment = (Employment) response.getEntity();
-        assertNotNull(employment);        
+        assertNotNull(employment);
         assertEquals(Long.valueOf(5L), employment.getPutCode());
         assertEquals("/4444-4444-4444-4446/employment/5", employment.getPath());
         assertEquals("Employment Dept # 1", employment.getDepartmentName());
         assertEquals(Visibility.PRIVATE.value(), employment.getVisibility().value());
     }
-    
+
     @Test
     public void testViewLimitedEmployment() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED);
         Response response = serviceDelegator.viewEmployment("4444-4444-4444-4446", 11L);
         assertNotNull(response);
         Employment employment = (Employment) response.getEntity();
-        assertNotNull(employment);        
+        assertNotNull(employment);
         assertEquals(Long.valueOf(11L), employment.getPutCode());
         assertEquals("/4444-4444-4444-4446/employment/11", employment.getPath());
         assertEquals("Employment Dept # 4", employment.getDepartmentName());
         assertEquals(Visibility.LIMITED.value(), employment.getVisibility().value());
     }
-    
+
     @Test
     public void testViewPrivateEmployment() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED);
         Response response = serviceDelegator.viewEmployment("4444-4444-4444-4446", 5L);
         assertNotNull(response);
         Employment employment = (Employment) response.getEntity();
-        assertNotNull(employment);        
+        assertNotNull(employment);
         assertEquals(Long.valueOf(5L), employment.getPutCode());
         assertEquals("/4444-4444-4444-4446/employment/5", employment.getPath());
         assertEquals("Employment Dept # 1", employment.getDepartmentName());
@@ -456,22 +461,22 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED);
         serviceDelegator.viewEmployment("4444-4444-4444-4446", 10L);
     }
-    
+
     @Test(expected = NoResultException.class)
     public void testViewEmploymentThatDontBelongToTheUser() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED);
         serviceDelegator.viewEmployment("4444-4444-4444-4446", 4L);
     }
-    
+
     /**
      * TEST PEER REVIEWS
-     * */
+     */
     @Test
     public void testViewPeerReview() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED);
         Response response = serviceDelegator.viewPeerReview("4444-4444-4444-4446", 1L);
         assertNotNull(response);
-        PeerReview peerReview= (PeerReview) response.getEntity();
+        PeerReview peerReview = (PeerReview) response.getEntity();
         assertNotNull(peerReview);
         assertEquals(Long.valueOf(1L), peerReview.getPutCode());
         assertNotNull(peerReview.getCompletionDate());
@@ -488,18 +493,18 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals("es", peerReview.getSubjectName().getTranslatedTitle().getLanguageCode());
         assertEquals("artistic-performance", peerReview.getSubjectType().value());
         assertEquals("http://work.com", peerReview.getSubjectUrl().getValue());
-        assertEquals("Peer Review # 1 container name", peerReview.getSubjectContainerName().getContent());        
+        assertEquals("Peer Review # 1 container name", peerReview.getSubjectContainerName().getContent());
         assertEquals("peer-review:subject-external-identifier-id#1", peerReview.getSubjectExternalIdentifier().getWorkExternalIdentifierId().getContent());
         assertEquals("agr", peerReview.getSubjectExternalIdentifier().getWorkExternalIdentifierType().value());
         assertEquals("issn:0000001", peerReview.getGroupId());
     }
-    
+
     @Test
     public void testViewLimitedPeerReview() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED);
         Response response = serviceDelegator.viewPeerReview("4444-4444-4444-4446", 3L);
         assertNotNull(response);
-        PeerReview peerReview= (PeerReview) response.getEntity();
+        PeerReview peerReview = (PeerReview) response.getEntity();
         assertNotNull(peerReview);
         assertEquals(Long.valueOf(3L), peerReview.getPutCode());
         assertNotNull(peerReview.getCompletionDate());
@@ -510,13 +515,13 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals("limited", peerReview.getVisibility().value());
         assertEquals("issn:0000002", peerReview.getGroupId());
     }
-    
+
     @Test
     public void testViewPrivatePeerReview() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED);
         Response response = serviceDelegator.viewPeerReview("4444-4444-4444-4446", 4L);
         assertNotNull(response);
-        PeerReview peerReview= (PeerReview) response.getEntity();
+        PeerReview peerReview = (PeerReview) response.getEntity();
         assertNotNull(peerReview);
         assertEquals(Long.valueOf(4L), peerReview.getPutCode());
         assertNotNull(peerReview.getCompletionDate());
@@ -527,253 +532,255 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals("limited", peerReview.getVisibility().value());
         assertEquals("issn:0000003", peerReview.getGroupId());
     }
-    
+
     @Test(expected = OrcidVisibilityException.class)
     public void testViewPrivatePeerReviewWhereYouAreNotTheSource() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED);
         serviceDelegator.viewPeerReview("4444-4444-4444-4446", 5L);
         fail();
     }
-    
+
     @Test(expected = NoResultException.class)
     public void testViewPeerReviewThatDontBelongToTheUser() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED);
         serviceDelegator.viewPeerReview("4444-4444-4444-4446", 2L);
         fail();
     }
-    
+
     @Test
     public void testViewPeerReviewSummary() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED);
         Response response = serviceDelegator.viewPeerReviewSummary("4444-4444-4444-4446", Long.valueOf(1));
         assertNotNull(response);
-        PeerReviewSummary peerReview= (PeerReviewSummary) response.getEntity();
+        PeerReviewSummary peerReview = (PeerReviewSummary) response.getEntity();
         assertNotNull(peerReview);
         assertEquals(Long.valueOf("1"), peerReview.getPutCode());
         assertNotNull(peerReview.getCompletionDate());
         assertEquals("01", peerReview.getCompletionDate().getDay().getValue());
         assertEquals("01", peerReview.getCompletionDate().getMonth().getValue());
         assertEquals("2015", peerReview.getCompletionDate().getYear().getValue());
-        assertEquals("work:external-identifier-id#1", peerReview.getExternalIdentifiers().getExternalIdentifier().get(0).getWorkExternalIdentifierId().getContent());        
+        assertEquals("work:external-identifier-id#1", peerReview.getExternalIdentifiers().getExternalIdentifier().get(0).getWorkExternalIdentifierId().getContent());
         assertEquals("APP-5555555555555555", peerReview.getSource().retrieveSourcePath());
-        assertEquals("public", peerReview.getVisibility().value());                
+        assertEquals("public", peerReview.getVisibility().value());
     }
-    
+
     @Test
     public void testUpdatePeerReview() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.ACTIVITIES_UPDATE);
         Response response = serviceDelegator.viewPeerReview("4444-4444-4444-4447", 6L);
         assertNotNull(response);
-        PeerReview peerReview= (PeerReview) response.getEntity();
+        PeerReview peerReview = (PeerReview) response.getEntity();
         assertNotNull(peerReview);
         peerReview.setUrl(new Url("http://updated.com/url"));
         peerReview.getSubjectName().getTitle().setContent("Updated Title");
         serviceDelegator.updatePeerReview("4444-4444-4444-4447", 6L, peerReview);
         response = serviceDelegator.viewPeerReview("4444-4444-4444-4447", 6L);
-        PeerReview updatedPeerReview= (PeerReview) response.getEntity();
+        PeerReview updatedPeerReview = (PeerReview) response.getEntity();
         assertNotNull(updatedPeerReview);
         assertEquals("http://updated.com/url", updatedPeerReview.getUrl().getValue());
         assertEquals("Updated Title", updatedPeerReview.getSubjectName().getTitle().getContent());
     }
-    
+
     @Test
     public void testUpdatePeerReviewWhenNotSource() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
         Response response = serviceDelegator.viewPeerReview("4444-4444-4444-4447", 2L);
         assertNotNull(response);
-        PeerReview peerReview= (PeerReview) response.getEntity();
+        PeerReview peerReview = (PeerReview) response.getEntity();
         assertNotNull(peerReview);
         assertEquals("http://peer_review.com/2", peerReview.getUrl().getValue());
         assertEquals("APP-6666666666666666", peerReview.getSource().retrieveSourcePath());
-        
-        //Update the info
+
+        // Update the info
         peerReview.setUrl(new Url("http://updated.com/url"));
         peerReview.getSubjectName().getTitle().setContent("Updated Title");
-        
-        //Try to update it
+
+        // Try to update it
         try {
             response = serviceDelegator.updatePeerReview("4444-4444-4444-4447", 2L, peerReview);
             fail();
-        } catch(WrongSourceException wse) {
-            
+        } catch (WrongSourceException wse) {
+
         }
         response = serviceDelegator.viewPeerReview("4444-4444-4444-4447", Long.valueOf(2));
-        peerReview= (PeerReview) response.getEntity();
+        peerReview = (PeerReview) response.getEntity();
         assertNotNull(peerReview);
         assertEquals("http://peer_review.com/2", peerReview.getUrl().getValue());
         assertEquals("APP-6666666666666666", peerReview.getSource().retrieveSourcePath());
     }
-        
+
     /**
      * TEST GROUP ID
-     * */    
+     */
     @Test
     public void testGetGroupIdRecord() {
-    	SecurityContextTestUtils.setUpSecurityContextForGroupIdClientOnly();
+        SecurityContextTestUtils.setUpSecurityContextForGroupIdClientOnly();
         Response response = serviceDelegator.viewGroupIdRecord(Long.valueOf("2"));
         assertNotNull(response);
         GroupIdRecord groupIdRecord = (GroupIdRecord) response.getEntity();
-        assertNotNull(groupIdRecord);        
+        assertNotNull(groupIdRecord);
         assertEquals(Long.valueOf(2), groupIdRecord.getPutCode());
         assertEquals("issn:0000002", groupIdRecord.getGroupId());
         assertEquals("TestGroup2", groupIdRecord.getName());
         assertEquals("TestDescription2", groupIdRecord.getDescription());
         assertEquals("publisher", groupIdRecord.getType());
     }
-    
+
     @Test
     public void testCreateGroupIdRecord() {
-    	SecurityContextTestUtils.setUpSecurityContextForGroupIdClientOnly();
-    	GroupIdRecord newRecord = new GroupIdRecord();
-    	newRecord.setGroupId("issn:0000005");
-    	newRecord.setName("TestGroup5");
-    	newRecord.setDescription("TestDescription5");
-    	newRecord.setType("publisher");
-    	Response response = serviceDelegator.createGroupIdRecord(newRecord);
-    	//Response created with location as the group-id
-    	assertNotNull(response.getMetadata().get("Location").get(0));
-    	assertEquals(response.getMetadata().get("Location").get(0).toString(), "5");
+        SecurityContextTestUtils.setUpSecurityContextForGroupIdClientOnly();
+        GroupIdRecord newRecord = new GroupIdRecord();
+        newRecord.setGroupId("issn:0000005");
+        newRecord.setName("TestGroup5");
+        newRecord.setDescription("TestDescription5");
+        newRecord.setType("publisher");
+        Response response = serviceDelegator.createGroupIdRecord(newRecord);
+        // Response created with location as the group-id
+        assertNotNull(response.getMetadata().get("Location").get(0));
+        assertEquals(response.getMetadata().get("Location").get(0).toString(), "5");
     }
-    
+
     @Test
     public void testUpdateGroupIdRecord() {
-    	SecurityContextTestUtils.setUpSecurityContextForGroupIdClientOnly();
+        SecurityContextTestUtils.setUpSecurityContextForGroupIdClientOnly();
         Response response = serviceDelegator.viewGroupIdRecord(Long.valueOf("3"));
         assertNotNull(response);
         GroupIdRecord groupIdRecord = (GroupIdRecord) response.getEntity();
         assertNotNull(groupIdRecord);
-        //Verify the name
+        // Verify the name
         assertEquals(groupIdRecord.getName(), "TestGroup3");
-        //Set a new name for update
+        // Set a new name for update
         groupIdRecord.setName("TestGroup33");
         serviceDelegator.updateGroupIdRecord(groupIdRecord, Long.valueOf("3"));
-        
-        //Get the entity again and verify the name
+
+        // Get the entity again and verify the name
         response = serviceDelegator.viewGroupIdRecord(Long.valueOf("3"));
         assertNotNull(response);
         GroupIdRecord groupIdRecordNew = (GroupIdRecord) response.getEntity();
         assertNotNull(groupIdRecordNew);
-        //Verify the name
+        // Verify the name
         assertEquals(groupIdRecordNew.getName(), "TestGroup33");
-        
+
     }
-    
-    @Test(expected=GroupIdRecordNotFoundException.class)
+
+    @Test(expected = GroupIdRecordNotFoundException.class)
     public void testDeleteGroupIdRecord() {
-    	SecurityContextTestUtils.setUpSecurityContextForGroupIdClientOnly();
-    	//Verify if the record exists
-    	Response response = serviceDelegator.viewGroupIdRecord(4L);
+        SecurityContextTestUtils.setUpSecurityContextForGroupIdClientOnly();
+        // Verify if the record exists
+        Response response = serviceDelegator.viewGroupIdRecord(4L);
         assertNotNull(response);
         GroupIdRecord groupIdRecord = (GroupIdRecord) response.getEntity();
         assertNotNull(groupIdRecord);
-        //Delete the record
+        // Delete the record
         serviceDelegator.deleteGroupIdRecord(Long.valueOf("4"));
-        //Throws a record not found exception
+        // Throws a record not found exception
         serviceDelegator.viewGroupIdRecord(Long.valueOf("4"));
     }
-    
+
     @Test
     public void testGetGroupIdRecords() {
-    	SecurityContextTestUtils.setUpSecurityContextForGroupIdClientOnly();
-    	/*
-    	 * At this point there should be at least 3 group ids and no more than 5, 
-    	 * since we are not sure if testDeleteGroupIdRecord and testCreateGroupIdRecord have ran or not
-    	 */
-    	
-    	//So, get a page with all
-    	Response response = serviceDelegator.viewGroupIdRecords("5", "1");
+        SecurityContextTestUtils.setUpSecurityContextForGroupIdClientOnly();
+        /*
+         * At this point there should be at least 3 group ids and no more than
+         * 5, since we are not sure if testDeleteGroupIdRecord and
+         * testCreateGroupIdRecord have ran or not
+         */
+
+        // So, get a page with all
+        Response response = serviceDelegator.viewGroupIdRecords("5", "1");
         assertNotNull(response);
         GroupIdRecords groupIdRecords1 = (GroupIdRecords) response.getEntity();
         assertNotNull(groupIdRecords1);
         assertNotNull(groupIdRecords1.getGroupIdRecord());
-        
+
         int total = groupIdRecords1.getTotal();
-        if(total < 3 || total > 5) {
+        if (total < 3 || total > 5) {
             fail("There are more group ids than the expected, we are expecting between 3 and 5, total: " + total);
-        }                
+        }
     }
-    
+
     /**
      * TEST RESEARCHER URLS
-     * */
+     */
     @SuppressWarnings("unchecked")
     @Test
     public void testViewResearcherUrls() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.READ_LIMITED);
         Response response = serviceDelegator.viewResearcherUrls("4444-4444-4444-4443");
         assertNotNull(response);
-        ResearcherUrls researcherUrls = (ResearcherUrls)response.getEntity();
+        ResearcherUrls researcherUrls = (ResearcherUrls) response.getEntity();
         assertNotNull(researcherUrls);
         assertEquals("/4444-4444-4444-4443/researcher-urls", researcherUrls.getPath());
         assertNotNull(researcherUrls.getResearcherUrls());
         assertEquals(5, researcherUrls.getResearcherUrls().size());
-        for(ResearcherUrl rUrl : researcherUrls.getResearcherUrls()) {
-            assertThat(rUrl.getPutCode(), anyOf(equalTo(Long.valueOf(2)), equalTo(Long.valueOf(3)), equalTo(Long.valueOf(5)), equalTo(Long.valueOf(7)), equalTo(Long.valueOf(8))));
+        for (ResearcherUrl rUrl : researcherUrls.getResearcherUrls()) {
+            assertThat(rUrl.getPutCode(),
+                    anyOf(equalTo(Long.valueOf(2)), equalTo(Long.valueOf(3)), equalTo(Long.valueOf(5)), equalTo(Long.valueOf(7)), equalTo(Long.valueOf(8))));
             assertNotNull(rUrl.getSource());
             assertFalse(PojoUtil.isEmpty(rUrl.getSource().retrieveSourcePath()));
             assertNotNull(rUrl.getUrl());
             assertNotNull(rUrl.getUrlName());
             assertNotNull(rUrl.getVisibility());
-            if(rUrl.getPutCode().equals(Long.valueOf(5)) || rUrl.getPutCode().equals(Long.valueOf(7))) {
+            if (rUrl.getPutCode().equals(Long.valueOf(5)) || rUrl.getPutCode().equals(Long.valueOf(7))) {
                 assertEquals("APP-5555555555555555", rUrl.getSource().retrieveSourcePath());
             }
         }
-    }    
-    
+    }
+
     @Test
     public void testViewPublicResearcherUrl() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.READ_LIMITED);
         Response response = serviceDelegator.viewResearcherUrl("4444-4444-4444-4443", 2L);
         assertNotNull(response);
-        ResearcherUrl researcherUrl = (ResearcherUrl)response.getEntity();
+        ResearcherUrl researcherUrl = (ResearcherUrl) response.getEntity();
         assertNotNull(researcherUrl);
         assertEquals("4444-4444-4444-4443", researcherUrl.getSource().retrieveSourcePath());
         assertEquals("http://www.researcherurl2.com?id=1", researcherUrl.getUrl().getValue());
         assertEquals("443_1", researcherUrl.getUrlName());
         assertEquals(Visibility.PUBLIC, researcherUrl.getVisibility());
     }
-    
+
     @Test
     public void testViewLimitedResearcherUrl() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.READ_LIMITED);
         Response response = serviceDelegator.viewResearcherUrl("4444-4444-4444-4443", 8L);
         assertNotNull(response);
-        ResearcherUrl researcherUrl = (ResearcherUrl)response.getEntity();
+        ResearcherUrl researcherUrl = (ResearcherUrl) response.getEntity();
         assertNotNull(researcherUrl);
         assertEquals("4444-4444-4444-4443", researcherUrl.getSource().retrieveSourcePath());
         assertEquals("http://www.researcherurl2.com?id=8", researcherUrl.getUrl().getValue());
         assertEquals("443_6", researcherUrl.getUrlName());
         assertEquals(Visibility.LIMITED, researcherUrl.getVisibility());
     }
-    
+
     @Test
     public void testViewPrivateResearcherUrl() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.READ_LIMITED);
         Response response = serviceDelegator.viewResearcherUrl("4444-4444-4444-4443", 7L);
         assertNotNull(response);
-        ResearcherUrl researcherUrl = (ResearcherUrl)response.getEntity();
+        ResearcherUrl researcherUrl = (ResearcherUrl) response.getEntity();
         assertNotNull(researcherUrl);
-        
+
         assertEquals("APP-5555555555555555", researcherUrl.getSource().retrieveSourcePath());
         assertEquals("http://www.researcherurl2.com?id=7", researcherUrl.getUrl().getValue());
         assertEquals("443_5", researcherUrl.getUrlName());
         assertEquals(Visibility.PRIVATE, researcherUrl.getVisibility());
     }
-    
+
     @Test(expected = OrcidVisibilityException.class)
     public void testViewPrivateResearcherUrlWhereYouAreNotTheSource() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.READ_LIMITED);
         serviceDelegator.viewResearcherUrl("4444-4444-4444-4443", 6L);
         fail();
     }
-    
+
     @Test(expected = NoResultException.class)
     public void testViewResearcherUrlThatDontBelongToTheUser() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.READ_LIMITED);
         serviceDelegator.viewResearcherUrl("4444-4444-4444-4443", 1L);
         fail();
     }
-        
+
     @SuppressWarnings("rawtypes")
     @Test
     public void testAddResearcherUrl() {
@@ -782,116 +789,116 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         rUrl.setUrl(new Url("http://www.myRUrl.com"));
         rUrl.setUrlName("My researcher Url");
         rUrl.setVisibility(Visibility.LIMITED);
-        
+
         Response response = serviceDelegator.createResearcherUrl("4444-4444-4444-4441", rUrl);
         assertNotNull(response);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
         Map map = response.getMetadata();
         assertNotNull(map);
         assertTrue(map.containsKey("Location"));
-        List resultWithPutCode = (List)map.get("Location");
+        List resultWithPutCode = (List) map.get("Location");
         Long putCode = Long.valueOf(String.valueOf(resultWithPutCode.get(0)));
-                
-        response = serviceDelegator.viewResearcherUrl("4444-4444-4444-4441", putCode);        
+
+        response = serviceDelegator.viewResearcherUrl("4444-4444-4444-4441", putCode);
         assertNotNull(response);
-        ResearcherUrl researcherUrl = (ResearcherUrl)response.getEntity();
+        ResearcherUrl researcherUrl = (ResearcherUrl) response.getEntity();
         assertNotNull(researcherUrl);
         assertEquals("APP-5555555555555555", researcherUrl.getSource().retrieveSourcePath());
         assertEquals("http://www.myRUrl.com", researcherUrl.getUrl().getValue());
         assertEquals("My researcher Url", researcherUrl.getUrlName());
         assertEquals(Visibility.LIMITED, researcherUrl.getVisibility());
     }
-    
+
     @Test
     public void testUpdateResearcherUrl() {
-    	SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.PERSON_UPDATE);
-    	Response response = serviceDelegator.viewResearcherUrl("4444-4444-4444-4443", 5L);        
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.PERSON_UPDATE);
+        Response response = serviceDelegator.viewResearcherUrl("4444-4444-4444-4443", 5L);
         assertNotNull(response);
-        ResearcherUrl researcherUrl = (ResearcherUrl)response.getEntity();
+        ResearcherUrl researcherUrl = (ResearcherUrl) response.getEntity();
         assertNotNull(researcherUrl);
         assertNotNull(researcherUrl.getUrl());
         assertEquals("http://www.researcherurl2.com?id=5", researcherUrl.getUrl().getValue());
         assertEquals("443_3", researcherUrl.getUrlName());
-        
+
         researcherUrl.setUrl(new Url("http://theNewResearcherUrl.com"));
         researcherUrl.setUrlName("My Updated Researcher Url");
-        
+
         response = serviceDelegator.updateResearcherUrl("4444-4444-4444-4443", 5L, researcherUrl);
         assertNotNull(response);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        
-        response = serviceDelegator.viewResearcherUrl("4444-4444-4444-4443", 5L);        
+
+        response = serviceDelegator.viewResearcherUrl("4444-4444-4444-4443", 5L);
         assertNotNull(response);
-        researcherUrl = (ResearcherUrl)response.getEntity();
+        researcherUrl = (ResearcherUrl) response.getEntity();
         assertNotNull(researcherUrl);
         assertNotNull(researcherUrl.getUrl());
         assertEquals("http://theNewResearcherUrl.com", researcherUrl.getUrl().getValue());
         assertEquals("My Updated Researcher Url", researcherUrl.getUrlName());
     }
-    
+
     @Test(expected = WrongSourceException.class)
     public void testUpdateResearcherUrlYouAreNotTheSourceOf() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.PERSON_UPDATE, ScopePathType.READ_LIMITED);
-        Response response = serviceDelegator.viewResearcherUrl("4444-4444-4444-4443", 8L);        
+        Response response = serviceDelegator.viewResearcherUrl("4444-4444-4444-4443", 8L);
         assertNotNull(response);
-        ResearcherUrl researcherUrl = (ResearcherUrl)response.getEntity();
+        ResearcherUrl researcherUrl = (ResearcherUrl) response.getEntity();
         assertNotNull(researcherUrl);
         assertNotNull(researcherUrl.getUrl());
         assertEquals("http://www.researcherurl2.com?id=8", researcherUrl.getUrl().getValue());
         assertEquals("443_6", researcherUrl.getUrlName());
-        
+
         researcherUrl.setUrlName("Updated Name");
         serviceDelegator.updateResearcherUrl("4444-4444-4444-4443", 8L, researcherUrl);
     }
-    
+
     @Test
     public void testDeleteResearcherUrl() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4445", ScopePathType.READ_LIMITED, ScopePathType.PERSON_UPDATE);
         Response response = serviceDelegator.viewResearcherUrls("4444-4444-4444-4445");
         assertNotNull(response);
-        ResearcherUrls researcherUrls = (ResearcherUrls)response.getEntity();
+        ResearcherUrls researcherUrls = (ResearcherUrls) response.getEntity();
         assertNotNull(researcherUrls);
         assertNotNull(researcherUrls.getResearcherUrls());
         assertFalse(researcherUrls.getResearcherUrls().isEmpty());
         ResearcherUrl toDelete = null;
-        
-        for(ResearcherUrl rurl : researcherUrls.getResearcherUrls()) {
-            if(rurl.getSource().retrieveSourcePath().equals("APP-5555555555555555")) {
+
+        for (ResearcherUrl rurl : researcherUrls.getResearcherUrls()) {
+            if (rurl.getSource().retrieveSourcePath().equals("APP-5555555555555555")) {
                 toDelete = rurl;
                 break;
             }
         }
-        
+
         assertNotNull(toDelete);
-        
+
         response = serviceDelegator.deleteResearcherUrl("4444-4444-4444-4445", toDelete.getPutCode());
         assertNotNull(response);
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
-        
+
         response = serviceDelegator.viewResearcherUrls("4444-4444-4444-4445");
         assertNotNull(response);
-        researcherUrls = (ResearcherUrls)response.getEntity();
+        researcherUrls = (ResearcherUrls) response.getEntity();
         assertNotNull(researcherUrls);
         assertNotNull(researcherUrls.getResearcherUrls());
-        assertEquals(0, researcherUrls.getResearcherUrls().size());               
+        assertEquals(0, researcherUrls.getResearcherUrls().size());
     }
-    
+
     /**
      * TEST EMAILS
-     * */
+     */
     @SuppressWarnings("unchecked")
     @Test
     public void testViewEmails() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.READ_LIMITED);
         Response response = serviceDelegator.viewEmails("4444-4444-4444-4443");
         assertNotNull(response);
-        Emails emails = (Emails)response.getEntity();
+        Emails emails = (Emails) response.getEntity();
         assertNotNull(emails);
         assertNotNull(emails.getEmails());
         assertEquals(3, emails.getEmails().size());
-        for(Email email : emails.getEmails()) {
+        for (Email email : emails.getEmails()) {
             assertThat(email.getEmail(), anyOf(is("teddybass2@semantico.com"), is("teddybass3public@semantico.com"), is("teddybass3private@semantico.com")));
-            switch(email.getEmail()) {
+            switch (email.getEmail()) {
             case "teddybass2@semantico.com":
                 assertEquals(Visibility.LIMITED, email.getVisibility());
                 assertEquals("4444-4444-4444-4443", email.retrieveSourcePath());
@@ -907,24 +914,24 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
             }
         }
     }
-        
+
     /**
      * TEST OTHER NAMES
-     * */
+     */
     @SuppressWarnings("unchecked")
     @Test
     public void testViewOtherNames() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED);
         Response response = serviceDelegator.viewOtherNames("4444-4444-4444-4446");
         assertNotNull(response);
-        OtherNames otherNames= (OtherNames)response.getEntity();
+        OtherNames otherNames = (OtherNames) response.getEntity();
         assertNotNull(otherNames);
         assertNotNull(otherNames.getOtherNames());
         assertEquals(3, otherNames.getOtherNames().size());
-        for(OtherName otherName : otherNames.getOtherNames()) {
+        for (OtherName otherName : otherNames.getOtherNames()) {
             assertThat(otherName.getPutCode(), anyOf(is(4L), is(5L), is(7L)));
             assertThat(otherName.getContent(), anyOf(is("Other Name # 1"), is("Other Name # 2"), is("Other Name # 4")));
-            if(otherName.getPutCode() == 4L) {
+            if (otherName.getPutCode() == 4L) {
                 assertEquals(Visibility.PUBLIC, otherName.getVisibility());
                 assertEquals("APP-5555555555555555", otherName.getSource().retrieveSourcePath());
             } else if (otherName.getPutCode() == 5L) {
@@ -936,57 +943,57 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
             }
         }
     }
-           
+
     @Test
     public void testViewPublicOtherName() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED);
         Response response = serviceDelegator.viewOtherName("4444-4444-4444-4446", 4L);
-        assertNotNull(response);        
-        OtherName otherName= (OtherName)response.getEntity();
+        assertNotNull(response);
+        OtherName otherName = (OtherName) response.getEntity();
         assertNotNull(otherName);
         assertEquals("Other Name # 1", otherName.getContent());
         assertEquals(Visibility.PUBLIC, otherName.getVisibility());
         assertEquals("APP-5555555555555555", otherName.getSource().retrieveSourcePath());
     }
-    
+
     @Test
     public void testViewLimitedOtherName() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED);
         Response response = serviceDelegator.viewOtherName("4444-4444-4444-4446", 5L);
-        assertNotNull(response);        
-        OtherName otherName= (OtherName)response.getEntity();
+        assertNotNull(response);
+        OtherName otherName = (OtherName) response.getEntity();
         assertNotNull(otherName);
         assertEquals("Other Name # 2", otherName.getContent());
         assertEquals(Visibility.LIMITED, otherName.getVisibility());
         assertEquals("4444-4444-4444-4446", otherName.getSource().retrieveSourcePath());
     }
-    
+
     @Test
     public void testViewPrivateOtherName() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED);
         Response response = serviceDelegator.viewOtherName("4444-4444-4444-4446", 7L);
-        assertNotNull(response);        
-        OtherName otherName= (OtherName)response.getEntity();
+        assertNotNull(response);
+        OtherName otherName = (OtherName) response.getEntity();
         assertNotNull(otherName);
         assertEquals("Other Name # 4", otherName.getContent());
         assertEquals(Visibility.PRIVATE, otherName.getVisibility());
         assertEquals("APP-5555555555555555", otherName.getSource().retrieveSourcePath());
     }
-    
+
     @Test(expected = OrcidVisibilityException.class)
     public void testViewPrivateOtherNameWhereYouAreNotTheSource() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED);
         serviceDelegator.viewOtherName("4444-4444-4444-4446", 6L);
         fail();
     }
-    
+
     @Test(expected = NoResultException.class)
     public void testViewOtherNameThatDontBelongToTheUser() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED);
         serviceDelegator.viewOtherName("4444-4444-4444-4446", 1L);
         fail();
     }
-        
+
     @SuppressWarnings("rawtypes")
     @Test
     public void testAddOtherName() {
@@ -1000,13 +1007,13 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         Map map = response.getMetadata();
         assertNotNull(map);
         assertTrue(map.containsKey("Location"));
-        List resultWithPutCode = (List)map.get("Location");
+        List resultWithPutCode = (List) map.get("Location");
         Long putCode = Long.valueOf(String.valueOf(resultWithPutCode.get(0)));
-        
+
         response = serviceDelegator.viewOtherName("4444-4444-4444-4441", putCode);
         assertNotNull(response);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        OtherName newOtherName = (OtherName)response.getEntity();
+        OtherName newOtherName = (OtherName) response.getEntity();
         assertNotNull(newOtherName);
         assertEquals("New Other Name", newOtherName.getContent());
         assertEquals(Visibility.LIMITED, newOtherName.getVisibility());
@@ -1015,53 +1022,54 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(newOtherName.getCreatedDate());
         assertNotNull(newOtherName.getLastModifiedDate());
     }
-    
+
     @Test
     public void testUpdateOtherName() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.READ_LIMITED);
-        Response response  = serviceDelegator.viewOtherName("4444-4444-4444-4443", 1L);
+        Response response = serviceDelegator.viewOtherName("4444-4444-4444-4443", 1L);
         assertNotNull(response);
         OtherName otherName = (OtherName) response.getEntity();
         assertNotNull(otherName);
         assertEquals("Slibberdy Slabinah", otherName.getContent());
         assertEquals(Visibility.PUBLIC, otherName.getVisibility());
-        
+
         otherName.setContent("Updated Other Name");
         otherName.setVisibility(Visibility.PRIVATE);
-        
+
         response = serviceDelegator.updateOtherName("4444-4444-4444-4443", 1L, otherName);
         assertNotNull(response);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        
+
         response = serviceDelegator.viewOtherName("4444-4444-4444-4443", 1L);
         assertNotNull(response);
         OtherName updatedOtherName = (OtherName) response.getEntity();
         assertNotNull(updatedOtherName);
         assertEquals("Updated Other Name", updatedOtherName.getContent());
-        //Visibility should not change to something more restrictive
+        // Visibility should not change to something more restrictive
         assertEquals(Visibility.PUBLIC, updatedOtherName.getVisibility());
-    }        
-    
+    }
+
     @Test(expected = WrongSourceException.class)
     public void testUpdateOtherNameYouAreNotTheSourceOf() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.READ_LIMITED);
-        Response response  = serviceDelegator.viewOtherName("4444-4444-4444-4443", 2L);
+        Response response = serviceDelegator.viewOtherName("4444-4444-4444-4443", 2L);
         assertNotNull(response);
         OtherName otherName = (OtherName) response.getEntity();
         assertNotNull(otherName);
         assertEquals("Flibberdy Flabinah", otherName.getContent());
         assertEquals(Visibility.PUBLIC, otherName.getVisibility());
-        
-        otherName.setContent("Updated Other Name");
+
+        otherName.setContent("Updated Other Name " + System.currentTimeMillis());
         otherName.setVisibility(Visibility.PRIVATE);
-        
-        response = serviceDelegator.updateOtherName("4444-4444-4444-4443", 2L, otherName);
+
+        serviceDelegator.updateOtherName("4444-4444-4444-4443", 2L, otherName);
+        fail();
     }
-    
+
     @Test
     public void testDeleteOtherName() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.READ_LIMITED);
-        Response response  = serviceDelegator.viewOtherNames("4444-4444-4444-4447");
+        Response response = serviceDelegator.viewOtherNames("4444-4444-4444-4447");
         assertNotNull(response);
         OtherNames otherNames = (OtherNames) response.getEntity();
         assertNotNull(otherNames);
@@ -1070,46 +1078,48 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         response = serviceDelegator.deleteOtherName("4444-4444-4444-4447", 8L);
         assertNotNull(response);
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
-        response  = serviceDelegator.viewOtherNames("4444-4444-4444-4447");
+        response = serviceDelegator.viewOtherNames("4444-4444-4444-4447");
         assertNotNull(response);
         otherNames = (OtherNames) response.getEntity();
         assertNotNull(otherNames);
         assertNotNull(otherNames.getOtherNames());
         assertTrue(otherNames.getOtherNames().isEmpty());
     }
-    
+
     @Test(expected = WrongSourceException.class)
     public void testDeleteOtherNameYouAreNotTheSourceOf() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED);
         serviceDelegator.deleteOtherName("4444-4444-4444-4446", 6L);
-        
+        fail();
     }
-    
+
     /**
      * TEST EXTERNAL IDENTIFIERS
-     * */
+     */
     @SuppressWarnings("unchecked")
     @Test
     public void testViewExternalIdentifiers() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.READ_LIMITED);
         Response response = serviceDelegator.viewExternalIdentifiers("4444-4444-4444-4442");
         assertNotNull(response);
-        ExternalIdentifiers extIds = (ExternalIdentifiers)response.getEntity();
+        ExternalIdentifiers extIds = (ExternalIdentifiers) response.getEntity();
         assertNotNull(extIds);
         List<ExternalIdentifier> extIdsList = extIds.getExternalIdentifier();
         assertNotNull(extIdsList);
         assertEquals(3, extIdsList.size());
-        
-        for(ExternalIdentifier extId : extIdsList) {
+
+        for (ExternalIdentifier extId : extIdsList) {
             assertThat(extId.getPutCode(), anyOf(is(2L), is(3L), is(5L)));
             assertThat(extId.getReference(), anyOf(is("abc123"), is("abc456"), is("abc012")));
-            assertThat(extId.getUrl(), anyOf(is("http://www.facebook.com/abc123"), is("http://www.facebook.com/abc456"), is("http://www.facebook.com/abc012")));
+            assertNotNull(extId.getUrl());
+            assertThat(extId.getUrl().getValue(),
+                    anyOf(is("http://www.facebook.com/abc123"), is("http://www.facebook.com/abc456"), is("http://www.facebook.com/abc012")));
             assertEquals("Facebook", extId.getCommonName());
             assertNotNull(extId.getSource());
-            if(extId.getPutCode().equals(2L)) {
+            if (extId.getPutCode().equals(2L)) {
                 assertEquals(Visibility.PUBLIC, extId.getVisibility());
                 assertEquals("APP-5555555555555555", extId.getSource().retrieveSourcePath());
-            } else if(extId.getPutCode().equals(3L)) {
+            } else if (extId.getPutCode().equals(3L)) {
                 assertEquals(Visibility.LIMITED, extId.getVisibility());
                 assertEquals("4444-4444-4444-4442", extId.getSource().retrieveSourcePath());
             } else {
@@ -1118,61 +1128,227 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
             }
         }
     }
-    
-    @Test
-    public void testViewExternalIdentifier() {
-        
-    }
-    
+
     @Test
     public void testViewPublicExternalIdentifier() {
-        
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.READ_LIMITED);
+        Response response = serviceDelegator.viewExternalIdentifier("4444-4444-4444-4442", 2L);
+        assertNotNull(response);
+        ExternalIdentifier extId = (ExternalIdentifier) response.getEntity();
+        assertNotNull(extId);
+        assertEquals("Facebook", extId.getCommonName());
+        assertEquals(Long.valueOf(2), extId.getPutCode());
+        assertEquals("abc123", extId.getReference());
+        assertNotNull(extId.getUrl());
+        assertEquals("http://www.facebook.com/abc123", extId.getUrl().getValue());
+        assertEquals(Visibility.PUBLIC, extId.getVisibility());
+
+        assertNotNull(extId.getSource());
+        assertEquals("APP-5555555555555555", extId.getSource().retrieveSourcePath());
+        assertNotNull(extId.getCreatedDate());
+        assertNotNull(extId.getLastModifiedDate());
     }
-    
+
     @Test
     public void testViewLimitedExternalIdentifier() {
-        
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.READ_LIMITED);
+        Response response = serviceDelegator.viewExternalIdentifier("4444-4444-4444-4442", 3L);
+        assertNotNull(response);
+        ExternalIdentifier extId = (ExternalIdentifier) response.getEntity();
+        assertNotNull(extId);
+        assertEquals("Facebook", extId.getCommonName());
+        assertEquals(Long.valueOf(3), extId.getPutCode());
+        assertEquals("abc456", extId.getReference());
+        assertNotNull(extId.getUrl());
+        assertEquals("http://www.facebook.com/abc456", extId.getUrl().getValue());
+        assertEquals(Visibility.LIMITED, extId.getVisibility());
+
+        assertNotNull(extId.getSource());
+        assertEquals("4444-4444-4444-4442", extId.getSource().retrieveSourcePath());
+        assertNotNull(extId.getCreatedDate());
+        assertNotNull(extId.getLastModifiedDate());
     }
-    
+
     @Test
     public void testViewPrivateExternalIdentifier() {
-        
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.READ_LIMITED);
+        Response response = serviceDelegator.viewExternalIdentifier("4444-4444-4444-4442", 5L);
+        assertNotNull(response);
+        ExternalIdentifier extId = (ExternalIdentifier) response.getEntity();
+        assertNotNull(extId);
+        assertEquals("Facebook", extId.getCommonName());
+        assertEquals(Long.valueOf(5), extId.getPutCode());
+        assertEquals("abc012", extId.getReference());
+        assertNotNull(extId.getUrl());
+        assertEquals("http://www.facebook.com/abc012", extId.getUrl().getValue());
+        assertEquals(Visibility.PRIVATE, extId.getVisibility());
+
+        assertNotNull(extId.getSource());
+        assertEquals("APP-5555555555555555", extId.getSource().retrieveSourcePath());
+        assertNotNull(extId.getCreatedDate());
+        assertNotNull(extId.getLastModifiedDate());
     }
-    
+
     @Test(expected = OrcidVisibilityException.class)
     public void testViewPrivateExternalIdentifierWhereYouAreNotTheSource() {
-        
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.READ_LIMITED);
+        serviceDelegator.viewExternalIdentifier("4444-4444-4444-4442", 4L);
+        fail();
     }
-    
+
     @Test(expected = NoResultException.class)
     public void testViewExternalIdentifierThatDontBelongToTheUser() {
-        
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.READ_LIMITED);
+        serviceDelegator.viewExternalIdentifier("4444-4444-4444-4442", 1L);
+        fail();
     }
-        
+
     @SuppressWarnings("rawtypes")
     @Test
     public void testAddExternalIdentifier() {
-        
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.READ_LIMITED, ScopePathType.PERSON_UPDATE);
+        Response response = serviceDelegator.viewExternalIdentifiers("4444-4444-4444-4443");
+        assertNotNull(response);
+        ExternalIdentifiers extIds = (ExternalIdentifiers) response.getEntity();
+        assertNotNull(extIds);
+        assertNotNull(extIds.getExternalIdentifier());
+        assertEquals(1, extIds.getExternalIdentifier().size());
+        assertEquals(Long.valueOf(1), extIds.getExternalIdentifier().get(0).getPutCode());
+        assertNotNull(extIds.getExternalIdentifier().get(0).getUrl());
+        assertEquals("http://www.facebook.com/d3clan", extIds.getExternalIdentifier().get(0).getUrl().getValue());
+        assertEquals("d3clan", extIds.getExternalIdentifier().get(0).getReference());
+        assertEquals(Visibility.PUBLIC, extIds.getExternalIdentifier().get(0).getVisibility());
+
+        ExternalIdentifier newExtId = new ExternalIdentifier();
+        newExtId.setCommonName("new-common-name");
+        newExtId.setReference("new-reference");
+        newExtId.setUrl(new Url("http://newUrl.com"));
+        newExtId.setVisibility(Visibility.LIMITED);
+
+        response = serviceDelegator.createExternalIdentifier("4444-4444-4444-4443", newExtId);
+        assertNotNull(response);
+        assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
+
+        Map map = response.getMetadata();
+        assertNotNull(map);
+        assertTrue(map.containsKey("Location"));
+        List resultWithPutCode = (List) map.get("Location");
+        Long putCode = Long.valueOf(String.valueOf(resultWithPutCode.get(0)));
+
+        response = serviceDelegator.viewExternalIdentifiers("4444-4444-4444-4443");
+        assertNotNull(response);
+        extIds = (ExternalIdentifiers) response.getEntity();
+        assertNotNull(extIds);
+        assertNotNull(extIds.getExternalIdentifier());
+        assertEquals(2, extIds.getExternalIdentifier().size());
+
+        for (ExternalIdentifier extId : extIds.getExternalIdentifier()) {
+            assertNotNull(extId.getUrl());
+            if (extId.getPutCode() != 1L) {
+                assertEquals(Visibility.LIMITED, extId.getVisibility());
+                assertEquals("new-common-name", extId.getCommonName());
+                assertEquals("new-reference", extId.getReference());
+                assertEquals("http://newUrl.com", extId.getUrl().getValue());
+                assertEquals(putCode, extId.getPutCode());
+            } else {
+                assertEquals(Visibility.PUBLIC, extId.getVisibility());
+                assertEquals("Facebook", extId.getCommonName());
+                assertEquals("d3clan", extId.getReference());
+                assertEquals("http://www.facebook.com/d3clan", extId.getUrl().getValue());
+            }
+        }
     }
-    
+
     @Test
     public void testUpdateExternalIdentifier() {
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.READ_LIMITED, ScopePathType.PERSON_UPDATE);
+        Response response = serviceDelegator.viewExternalIdentifier("4444-4444-4444-4442", 2L);
+        assertNotNull(response);
+        ExternalIdentifier extId = (ExternalIdentifier) response.getEntity();
+        assertNotNull(extId);
+        assertEquals("Facebook", extId.getCommonName());
+        assertEquals("abc123", extId.getReference());
+        assertNotNull(extId.getUrl());
+        assertEquals("http://www.facebook.com/abc123", extId.getUrl().getValue());
+        extId.setCommonName("updated-common-name");
+        extId.setReference("updated-reference");
+        extId.setUrl(new Url("http://updatedUrl.com"));
+        response = serviceDelegator.updateExternalIdentifier("4444-4444-4444-4442", 2L, extId);
+        assertNotNull(response);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        response = serviceDelegator.viewExternalIdentifier("4444-4444-4444-4442", 2L);
+        assertNotNull(response);
+        ExternalIdentifier updatedExtId = (ExternalIdentifier) response.getEntity();
+        assertNotNull(updatedExtId);
+        assertEquals("updated-common-name", updatedExtId.getCommonName());
+        assertEquals("updated-reference", updatedExtId.getReference());
+        assertNotNull(updatedExtId.getUrl());
+        assertEquals("http://updatedUrl.com", updatedExtId.getUrl().getValue());
         
+        //Revert changes so other tests still works
+        extId.setCommonName("Facebook");
+        extId.setReference("abc123");
+        extId.setUrl(new Url("http://www.facebook.com/abc123"));
+        response = serviceDelegator.updateExternalIdentifier("4444-4444-4444-4442", 2L, extId);
+        assertNotNull(response);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
     }
-    
-    @Test
+
+    @Test(expected = WrongSourceException.class)
     public void testUpdateExaternalIdentifierYouAreNotTheSourceOf() {
-        
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.READ_LIMITED, ScopePathType.PERSON_UPDATE);
+        Response response = serviceDelegator.viewExternalIdentifier("4444-4444-4444-4442", 3L);
+        assertNotNull(response);
+        ExternalIdentifier extId = (ExternalIdentifier) response.getEntity();
+        assertNotNull(extId);
+        assertEquals("Facebook", extId.getCommonName());
+        assertEquals("abc456", extId.getReference());
+        assertNotNull(extId.getUrl());
+        assertEquals("http://www.facebook.com/abc456", extId.getUrl().getValue());
+        extId.setCommonName("other-common-name");
+        extId.setReference("other-reference");
+        extId.setUrl(new Url("http://otherUrl.com"));
+        serviceDelegator.updateExternalIdentifier("4444-4444-4444-4442", 3L, extId);
+        fail();
     }
-    
+
     @Test
     public void testDeleteExternalIdentifier() {
-        
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4444", ScopePathType.READ_LIMITED, ScopePathType.PERSON_UPDATE);
+        Response response = serviceDelegator.viewExternalIdentifiers("4444-4444-4444-4444");
+        assertNotNull(response);
+        ExternalIdentifiers extIds = (ExternalIdentifiers) response.getEntity();
+        assertNotNull(extIds);
+        assertNotNull(extIds.getExternalIdentifier());
+        assertEquals(1, extIds.getExternalIdentifier().size());
+        assertEquals(Long.valueOf(6), extIds.getExternalIdentifier().get(0).getPutCode());
+
+        response = serviceDelegator.deleteExternalIdentifier("4444-4444-4444-4444", 6L);
+        assertNotNull(response);
+        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
+
+        response = serviceDelegator.viewExternalIdentifiers("4444-4444-4444-4444");
+        assertNotNull(response);
+        extIds = (ExternalIdentifiers) response.getEntity();
+        assertNotNull(extIds);
+        assertNotNull(extIds.getExternalIdentifier());
+        assertTrue(extIds.getExternalIdentifier().isEmpty());
     }
-    
+
     @Test(expected = WrongSourceException.class)
     public void testDeleteExternalIdentifierYouAreNotTheSourceOf() {
-        
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.READ_LIMITED, ScopePathType.PERSON_UPDATE);
+        Response response = serviceDelegator.viewExternalIdentifier("4444-4444-4444-4442", 3L);
+        assertNotNull(response);
+        ExternalIdentifier extId = (ExternalIdentifier) response.getEntity();
+        assertNotNull(extId);
+        assertEquals("Facebook", extId.getCommonName());
+        assertEquals("abc456", extId.getReference());
+        assertNotNull(extId.getUrl());
+        assertEquals("http://www.facebook.com/abc456", extId.getUrl().getValue());
+
+        serviceDelegator.deleteExternalIdentifier("4444-4444-4444-4442", 3L);
+        fail();
     }
-    
+
 }
