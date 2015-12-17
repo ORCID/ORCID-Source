@@ -1539,6 +1539,8 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
 
     @Test(expected = WrongSourceException.class)
     public void testDeleteResearcherUrlYouAreNotTheSourceOf() {
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.READ_LIMITED, ScopePathType.PERSON_UPDATE);
+        serviceDelegator.deleteResearcherUrl("4444-4444-4444-4443", 8L);
         fail();
     }
 
