@@ -57,6 +57,7 @@ import org.orcid.jaxb.model.groupid.GroupIdRecords;
 import org.orcid.jaxb.model.common.Iso3166Country;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record.summary_rc1.ActivitiesSummary;
+import org.orcid.jaxb.model.record.summary_rc1.EducationSummary;
 import org.orcid.jaxb.model.record.summary_rc1.FundingGroup;
 import org.orcid.jaxb.model.record.summary_rc1.PeerReviewSummary;
 import org.orcid.jaxb.model.record.summary_rc1.WorkGroup;
@@ -220,7 +221,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
 
     /**
      * TEST WORKS
-     */    
+     */
     @Test
     public void testViewPublicWork() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED);
@@ -320,7 +321,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(summary.getWorks().getWorkGroup().get(0));
         assertNotNull(summary.getWorks().getWorkGroup().get(0).getWorkSummary());
         assertEquals(1, summary.getWorks().getWorkGroup().get(0).getWorkSummary().size());
-        
+
         Work work = new Work();
         WorkTitle workTitle = new WorkTitle();
         workTitle.setTitle(new Title("A new work!"));
@@ -332,12 +333,13 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         extId.setRelationship(Relationship.PART_OF);
         extId.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
         extId.setWorkExternalIdentifierId(new WorkExternalIdentifierId("ext-id-" + System.currentTimeMillis()));
-        extId.setUrl(new Url("http://thisIsANewUrl.com"));;
+        extId.setUrl(new Url("http://thisIsANewUrl.com"));
+        ;
         extIds.getExternalIdentifier().add(extId);
         work.setWorkExternalIdentifiers(extIds);
         response = serviceDelegator.createWork("4444-4444-4444-4445", work);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
-        
+
         response = serviceDelegator.viewActivities("4444-4444-4444-4445");
         assertNotNull(response);
         summary = (ActivitiesSummary) response.getEntity();
@@ -346,23 +348,23 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(summary.getWorks());
         assertNotNull(summary.getWorks().getWorkGroup());
         assertEquals(2, summary.getWorks().getWorkGroup().size());
-        
+
         boolean haveOld = false;
         boolean haveNew = false;
-        
-        for(WorkGroup group : summary.getWorks().getWorkGroup()) {
+
+        for (WorkGroup group : summary.getWorks().getWorkGroup()) {
             assertNotNull(group.getWorkSummary());
             assertNotNull(group.getWorkSummary().get(0));
             WorkSummary workSummary = group.getWorkSummary().get(0);
             assertNotNull(workSummary.getTitle());
             assertNotNull(workSummary.getTitle().getTitle());
-            if("A Book With Contributors JSON".equals(workSummary.getTitle().getTitle().getContent())) {
+            if ("A Book With Contributors JSON".equals(workSummary.getTitle().getTitle().getContent())) {
                 haveOld = true;
-            } else if("A new work!".equals(workSummary.getTitle().getTitle().getContent())) {
+            } else if ("A new work!".equals(workSummary.getTitle().getTitle().getContent())) {
                 haveNew = true;
             }
-        }        
-        
+        }
+
         assertTrue(haveOld);
         assertTrue(haveNew);
     }
@@ -379,14 +381,14 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(work.getWorkTitle().getTitle());
         assertEquals("A day in the life", work.getWorkTitle().getTitle().getContent());
         assertEquals(WorkType.BOOK, work.getWorkType());
-        
+
         work.setWorkType(WorkType.EDITED_BOOK);
         work.getWorkTitle().getTitle().setContent("Updated work title");
-        
+
         response = serviceDelegator.updateWork("4444-4444-4444-4443", 1L, work);
         assertNotNull(response);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        
+
         response = serviceDelegator.viewWork("4444-4444-4444-4443", 1L);
         assertNotNull(response);
         work = (Work) response.getEntity();
@@ -396,8 +398,8 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(work.getWorkTitle().getTitle());
         assertEquals("Updated work title", work.getWorkTitle().getTitle().getContent());
         assertEquals(WorkType.EDITED_BOOK, work.getWorkType());
-        
-        //Rollback changes so we dont break other tests
+
+        // Rollback changes so we dont break other tests
         work.setWorkType(WorkType.BOOK);
         work.getWorkTitle().getTitle().setContent("A day in the life");
         response = serviceDelegator.updateWork("4444-4444-4444-4443", 1L, work);
@@ -417,19 +419,20 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(work.getWorkTitle().getTitle());
         assertEquals("Another day in the life", work.getWorkTitle().getTitle().getContent());
         assertEquals(WorkType.BOOK, work.getWorkType());
-        
+
         work.setWorkType(WorkType.EDITED_BOOK);
         work.getWorkTitle().getTitle().setContent("Updated work title");
-        
+
         WorkExternalIdentifiers extIds = new WorkExternalIdentifiers();
         WorkExternalIdentifier extId = new WorkExternalIdentifier();
         extId.setRelationship(Relationship.PART_OF);
         extId.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
         extId.setWorkExternalIdentifierId(new WorkExternalIdentifierId("ext-id-" + System.currentTimeMillis()));
-        extId.setUrl(new Url("http://thisIsANewUrl.com"));;
+        extId.setUrl(new Url("http://thisIsANewUrl.com"));
+        ;
         extIds.getExternalIdentifier().add(extId);
         work.setWorkExternalIdentifiers(extIds);
-        
+
         serviceDelegator.updateWork("4444-4444-4444-4443", 2L, work);
         fail();
     }
@@ -441,12 +444,12 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         Work work = (Work) response.getEntity();
         assertNotNull(work);
-        
+
         response = serviceDelegator.deleteWork("4444-4444-4444-4447", 9L);
         assertNotNull(response);
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
-        
-        serviceDelegator.viewWork("4444-4444-4444-4447", 9L);        
+
+        serviceDelegator.viewWork("4444-4444-4444-4447", 9L);
     }
 
     @Test(expected = WrongSourceException.class)
@@ -537,7 +540,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(summary.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getTitle());
         assertNotNull(summary.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getTitle().getTitle());
         assertEquals("Public Funding # 1", summary.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getTitle().getTitle().getContent());
-        
+
         Funding newFunding = new Funding();
         FundingTitle title = new FundingTitle();
         title.setTitle(new Title("Public Funding # 2"));
@@ -555,14 +558,14 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         org.setName("Org Name");
         OrganizationAddress add = new OrganizationAddress();
         add.setCity("city");
-        add.setCountry(Iso3166Country.TT);        
+        add.setCountry(Iso3166Country.TT);
         org.setAddress(add);
-        newFunding.setOrganization(org);        
-        
+        newFunding.setOrganization(org);
+
         response = serviceDelegator.createFunding("4444-4444-4444-4447", newFunding);
         assertNotNull(response);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
-        
+
         response = serviceDelegator.viewActivities("4444-4444-4444-4447");
         assertNotNull(response);
         summary = (ActivitiesSummary) response.getEntity();
@@ -570,22 +573,22 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(summary.getFundings());
         assertNotNull(summary.getFundings().getFundingGroup());
         assertEquals(2, summary.getFundings().getFundingGroup().size());
-        
+
         boolean haveOld = false;
         boolean haveNew = false;
-        
-        for(FundingGroup group : summary.getFundings().getFundingGroup()) {
+
+        for (FundingGroup group : summary.getFundings().getFundingGroup()) {
             assertNotNull(group.getFundingSummary().get(0));
             assertNotNull(group.getFundingSummary().get(0).getTitle());
             assertNotNull(group.getFundingSummary().get(0).getTitle().getTitle());
             assertNotNull(group.getFundingSummary().get(0).getTitle().getTitle().getContent());
-            if("Public Funding # 1".equals(group.getFundingSummary().get(0).getTitle().getTitle().getContent())) {
+            if ("Public Funding # 1".equals(group.getFundingSummary().get(0).getTitle().getTitle().getContent())) {
                 haveOld = true;
             } else if ("Public Funding # 2".equals(group.getFundingSummary().get(0).getTitle().getTitle().getContent())) {
                 haveNew = true;
             }
         }
-        
+
         assertTrue(haveOld);
         assertTrue(haveNew);
     }
@@ -599,7 +602,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(funding);
         assertEquals("Public Funding # 1", funding.getTitle().getTitle().getContent());
         assertEquals("This is the description for funding with id 6", funding.getDescription());
-        
+
         funding.getTitle().getTitle().setContent("Updated funding title");
         funding.setDescription("This is an updated description");
         FundingExternalIdentifier fExtId = new FundingExternalIdentifier();
@@ -610,21 +613,21 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         FundingExternalIdentifiers fExtIds = new FundingExternalIdentifiers();
         fExtIds.getExternalIdentifier().add(fExtId);
         funding.setExternalIdentifiers(fExtIds);
-        
+
         response = serviceDelegator.updateFunding("4444-4444-4444-4447", 6L, funding);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        
+
         response = serviceDelegator.viewFunding("4444-4444-4444-4447", 6L);
         assertNotNull(response);
         funding = (Funding) response.getEntity();
         assertNotNull(funding);
         assertEquals("Updated funding title", funding.getTitle().getTitle().getContent());
         assertEquals("This is an updated description", funding.getDescription());
-        
-        //Rollback changes
+
+        // Rollback changes
         funding.getTitle().getTitle().setContent("Public Funding # 1");
         funding.setDescription("This is the description for funding with id 6");
-        
+
         response = serviceDelegator.updateFunding("4444-4444-4444-4447", 6L, funding);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
     }
@@ -636,7 +639,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         Funding funding = (Funding) response.getEntity();
         assertNotNull(funding);
-        
+
         funding.getTitle().getTitle().setContent("Updated funding title");
         FundingExternalIdentifier fExtId = new FundingExternalIdentifier();
         fExtId.setRelationship(Relationship.PART_OF);
@@ -646,7 +649,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         FundingExternalIdentifiers fExtIds = new FundingExternalIdentifiers();
         fExtIds.getExternalIdentifier().add(fExtId);
         funding.setExternalIdentifiers(fExtIds);
-        
+
         serviceDelegator.updateFunding("4444-4444-4444-4446", 5L, funding);
         fail();
     }
@@ -656,13 +659,13 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
         Response response = serviceDelegator.viewFunding("4444-4444-4444-4442", 7L);
         assertNotNull(response);
-        Funding funding = (Funding)response.getEntity();
+        Funding funding = (Funding) response.getEntity();
         assertNotNull(funding);
-        
+
         response = serviceDelegator.deleteFunding("4444-4444-4444-4442", 7L);
         assertNotNull(response);
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
-        
+
         serviceDelegator.viewFunding("4444-4444-4444-4442", 7L);
     }
 
@@ -672,7 +675,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         serviceDelegator.deleteFunding("4444-4444-4444-4446", 5L);
         fail();
     }
-    
+
     /**
      * TEST EDUCATIONS
      */
@@ -733,29 +736,130 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     @SuppressWarnings("rawtypes")
     @Test
     public void testAddEducation() {
-        fail();
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        Response response = serviceDelegator.viewActivities("4444-4444-4444-4442");
+        assertNotNull(response);
+        ActivitiesSummary summary = (ActivitiesSummary) response.getEntity();
+        assertNotNull(summary);
+        assertNotNull(summary.getEducations());
+        assertNotNull(summary.getEducations().getSummaries());
+        assertNotNull(summary.getEducations().getSummaries().get(0));
+        assertEquals(Long.valueOf(1), summary.getEducations().getSummaries().get(0).getPutCode());
+
+        Education education = new Education();
+        education.setDepartmentName("My department name");
+        education.setRoleTitle("My Role");
+        Organization org = new Organization();
+        org.setName("My organization");
+        OrganizationAddress add = new OrganizationAddress();
+        add.setCity("My city");
+        add.setCountry(Iso3166Country.AQ);
+        org.setAddress(add);
+        education.setOrganization(org);
+        
+        response = serviceDelegator.createEducation("4444-4444-4444-4442", education);
+        assertNotNull(response);
+        assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
+        Map map = response.getMetadata();
+        assertNotNull(map);
+        assertTrue(map.containsKey("Location"));
+        List resultWithPutCode = (List) map.get("Location");
+        Long putCode = Long.valueOf(String.valueOf(resultWithPutCode.get(0)));
+
+        response = serviceDelegator.viewActivities("4444-4444-4444-4442");
+        assertNotNull(response);
+        summary = (ActivitiesSummary) response.getEntity();
+        assertNotNull(summary);
+        assertNotNull(summary.getEducations());
+        assertNotNull(summary.getEducations().getSummaries());
+
+        boolean haveOld = false;
+        boolean haveNew = false;
+
+        for (EducationSummary educationSummary : summary.getEducations().getSummaries()) {
+            assertNotNull(educationSummary.getPutCode());
+            if (educationSummary.getPutCode() == 1L) {
+                assertEquals("A Department", educationSummary.getDepartmentName());
+                haveOld = true;
+            } else {
+                assertEquals(putCode, educationSummary.getPutCode());
+                assertEquals("My department name", educationSummary.getDepartmentName());
+                haveNew = true;
+            }
+        }
+
+        assertTrue(haveOld);
+        assertTrue(haveNew);
     }
 
     @Test
     public void testUpdateEducation() {
-        fail();
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        Response response = serviceDelegator.viewEducation("4444-4444-4444-4443", 3L);
+        assertNotNull(response);
+        Education education = (Education) response.getEntity();
+        assertNotNull(education);
+        assertEquals("Another Department", education.getDepartmentName());
+        assertEquals("Student", education.getRoleTitle());
+
+        education.setDepartmentName("Updated department name");
+        education.setRoleTitle("The updated role title");
+
+        response = serviceDelegator.updateEducation("4444-4444-4444-4443", 3L, education);
+        assertNotNull(response);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+
+        response = serviceDelegator.viewEducation("4444-4444-4444-4443", 3L);
+        assertNotNull(response);
+        education = (Education) response.getEntity();
+        assertNotNull(education);
+        assertEquals("Updated department name", education.getDepartmentName());
+        assertEquals("The updated role title", education.getRoleTitle());
+
+        // Rollback changes
+        education.setDepartmentName("Another Department");
+        education.setRoleTitle("Student");
+
+        response = serviceDelegator.updateEducation("4444-4444-4444-4443", 3L, education);
+        assertNotNull(response);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
     }
 
     @Test(expected = WrongSourceException.class)
     public void testUpdateEducationYouAreNotTheSourceOf() {
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        Response response = serviceDelegator.viewEducation("4444-4444-4444-4442", 1L);
+        assertNotNull(response);
+        Education education = (Education) response.getEntity();
+        assertNotNull(education);
+        education.setDepartmentName("Updated department name");
+        education.setRoleTitle("The updated role title");
+        serviceDelegator.updateEducation("4444-4444-4444-4442", 1L, education);
         fail();
     }
 
-    @Test
-    public void testDeleteEducation() {
-        fail();
+    @Test(expected = NoResultException.class)
+    public void testDeleteEducation() {        
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        Response response = serviceDelegator.viewEducation("4444-4444-4444-4447", 12L);
+        assertNotNull(response);
+        Education education = (Education) response.getEntity();
+        assertNotNull(education);
+        
+        response = serviceDelegator.deleteAffiliation("4444-4444-4444-4447", 12L);
+        assertNotNull(response);
+        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
+        
+        serviceDelegator.viewEducation("4444-4444-4444-4447", 12L);
     }
 
     @Test(expected = WrongSourceException.class)
     public void testDeleteEducationYouAreNotTheSourceOf() {
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        serviceDelegator.deleteAffiliation("4444-4444-4444-4446", 11L);
         fail();
     }
-    
+
     /**
      * TEST EMPLOYMENTS
      */
@@ -837,7 +941,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     public void testDeleteEmploymentYouAreNotTheSourceOf() {
         fail();
     }
-    
+
     /**
      * TEST PEER REVIEWS
      */
@@ -983,7 +1087,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     @Test
     public void testAddPeerReview() {
         fail();
-    }    
+    }
 
     @Test
     public void testDeletePeerReview() {
@@ -994,7 +1098,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     public void testDeletePeerReviewYouAreNotTheSourceOf() {
         fail();
     }
-    
+
     /**
      * TEST GROUP ID
      */
@@ -1273,7 +1377,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     public void testDeleteResearcherUrlYouAreNotTheSourceOf() {
         fail();
     }
-    
+
     /**
      * TEST EMAILS
      */
