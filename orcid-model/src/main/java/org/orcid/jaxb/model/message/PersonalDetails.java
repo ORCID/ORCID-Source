@@ -165,7 +165,7 @@ public class PersonalDetails implements Serializable {
                 if (creditName.getContent() != null)
                     return creditName.getContent();
                 else
-                    return givenNames.getContent() + familyName != null ? familyName.getContent() : "";
+                    return familyName != null ? givenNames.getContent() + " " + familyName.getContent() : givenNames.getContent();
         return "";
     }
 
