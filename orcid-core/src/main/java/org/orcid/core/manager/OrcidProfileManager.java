@@ -283,4 +283,5 @@ public interface OrcidProfileManager extends OrcidProfileManagerReadOnly {
     
     public void setCompareWorksUsingScopusWay(boolean compareWorksUsingScopusWay);
 
+    String retrivePublicDisplayName(String orcid);
 }
