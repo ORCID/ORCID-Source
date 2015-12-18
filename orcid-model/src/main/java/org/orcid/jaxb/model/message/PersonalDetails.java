@@ -158,19 +158,15 @@ public class PersonalDetails implements Serializable {
         this.otherNames = value;
     }
 
+    // credit name visibility is now mapped to profile.names_visibility in db
     public String retrievePublicDisplayName() {
-        if (creditName != null) {
-            if (Visibility.PUBLIC.equals(creditName.getVisibility())) {
-                return creditName.getContent();
-            }
-        }
-        StringBuilder builder = new StringBuilder();
-        builder.append(givenNames.getContent());
-        if (familyName != null) {
-            builder.append(" ");
-            builder.append(familyName.getContent());
-        }
-        return builder.toString();
+        if (creditName != null)
+            if (Visibility.PUBLIC.equals(creditName.getVisibility()))
+                if (creditName.getContent() != null)
+                    return creditName.getContent();
+                else
+                    return givenNames.getContent() + familyName != null ? familyName.getContent() : "";
+        return "";
     }
 
     public String retrieveDisplayNameIgnoringVisibility() {
