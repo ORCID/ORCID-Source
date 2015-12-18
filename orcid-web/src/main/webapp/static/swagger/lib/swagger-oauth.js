@@ -5,6 +5,8 @@ var clientId;
 var realm;
 var redirect_uri;
 var clientSecret;
+var scopeSeparator;
+var additionalQueryStringParams;
 
 function handleLogin() {
   var scopes = [];
@@ -16,7 +18,6 @@ function handleLogin() {
     for(key in defs) {
       var auth = defs[key];
       if(auth.type === 'oauth2' && auth.scopes) {
-        //oauth2KeyName = key;  
         var scope;
         if(Array.isArray(auth.scopes)) {
           // 1.2 support
@@ -40,6 +41,7 @@ function handleLogin() {
     appName = window.swaggerUi.api.info.title;
   }
 
+  $('.api-popup-dialog').remove(); 
   popupDialog = $(
     [
       '<div class="api-popup-dialog">',
@@ -63,7 +65,10 @@ function handleLogin() {
     scope = scopes[i];
     str = '<li><input type="checkbox" id="scope_' + i + '" scope="' + scope.scope + '"' +'" oauthtype="' + scope.OAuthSchemeKey +'"/>' + '<label for="scope_' + i + '">' + scope.scope ;
     if (scope.description) {
-      str += '<br/><span class="api-scope-desc">' + '['+ scope.OAuthSchemeKey+'] ' + scope.description + '</span>';
+      if ($.map(auths, function(n, i) { return i; }).length > 1) //if we have more than one scheme, display schemes
+	    str += '<br/><span class="api-scope-desc">' + scope.description + ' ('+ scope.OAuthSchemeKey+')' +'</span>';
+	  else
+	    str += '<br/><span class="api-scope-desc">' + scope.description + '</span>';
     }
     str += '</label></li>';
     popup.append(str);
@@ -113,17 +118,12 @@ function handleLogin() {
       if (OAuthSchemeKeys.indexOf(OAuthSchemeKey) === -1)
           OAuthSchemeKeys.push(OAuthSchemeKey);
     }
+    
+    //TODO: merge not replace if scheme is different from any existing 
+    //(needs to be aware of schemes to do so correctly)
     window.enabledScopes=scopes;    
     
-    console.log("---")
-    console.log(authSchemes);
-    console.log(OAuthSchemeKeys);
-    console.log(scopes);
     for (var key in authSchemes) { 
-       console.log("---")
-       console.log(key);
-       console.log(authSchemes[key]);
-       console.log(OAuthSchemeKeys.indexOf(key));
       if (authSchemes.hasOwnProperty(key) && OAuthSchemeKeys.indexOf(key) != -1) { //only look at keys that match this scope.
         var flow = authSchemes[key].flow;
 
@@ -166,8 +166,11 @@ function handleLogin() {
     url += '&redirect_uri=' + encodeURIComponent(redirectUrl);
     url += '&realm=' + encodeURIComponent(realm);
     url += '&client_id=' + encodeURIComponent(clientId);
-    url += '&scope=' + encodeURIComponent(scopes.join(' '));
+    url += '&scope=' + encodeURIComponent(scopes.join(scopeSeparator));
     url += '&state=' + encodeURIComponent(state);
+    for (var key in additionalQueryStringParams) {
+        url += '&' + key + '=' + encodeURIComponent(additionalQueryStringParams[key]);
+    }
 
     window.open(url);
   });
@@ -179,8 +182,8 @@ function handleLogin() {
 
 
 function handleLogout() {
-  for(key in window.authorizations.authz){
-    window.authorizations.remove(key)
+  for(key in window.swaggerUi.api.clientAuthorizations.authz){
+    window.swaggerUi.api.clientAuthorizations.remove(key)
   }
   window.enabledScopes = null;
   $('.api-ic.ic-on').addClass('ic-off');
@@ -199,8 +202,10 @@ function initOAuth(opts) {
   popupMask = (o.popupMask||$('#api-common-mask'));
   popupDialog = (o.popupDialog||$('.api-popup-dialog'));
   clientId = (o.clientId||errors.push('missing client id'));
-  clientSecret = (o.clientSecret||errors.push('missing client secret'));
+  clientSecret = (o.clientSecret||null);
   realm = (o.realm||errors.push('missing realm'));
+  scopeSeparator = (o.scopeSeparator||' ');
+  additionalQueryStringParams = (o.additionalQueryStringParams||{});
 
   if(errors.length > 0){
     log('auth unable initialize oauth: ' + errors);
@@ -244,15 +249,18 @@ function clientCredentialsFlow(scopes, tokenUrl, OAuthSchemeKey) {
   }
 
 window.processOAuthCode = function processOAuthCode(data) {
-  console.log(data);
   var OAuthSchemeKey = data.state;
   var params = {
     'client_id': clientId,
-    'client_secret': clientSecret,
     'code': data.code,
     'grant_type': 'authorization_code',
     'redirect_uri': redirect_uri
+  };
+
+  if (clientSecret) {
+    params.client_secret = clientSecret;
   }
+
   $.ajax(
   {
     url : window.swaggerUi.tokenUrl,
@@ -267,7 +275,7 @@ window.processOAuthCode = function processOAuthCode(data) {
       onOAuthComplete("");
     }
   });
-}
+};
 
 window.onOAuthComplete = function onOAuthComplete(token,OAuthSchemeKey) {
   if(token) {
@@ -286,7 +294,7 @@ window.onOAuthComplete = function onOAuthComplete(token,OAuthSchemeKey) {
       if(b){
         // if all roles are satisfied
         var o = null;
-        $.each($('.auth #api_information_panel'), function(k, v) {
+        $.each($('.auth .api-ic .api_information_panel'), function(k, v) { 
           var children = v;
           if(children && children.childNodes) {
             var requiredScopes = [];
@@ -303,7 +311,7 @@ window.onOAuthComplete = function onOAuthComplete(token,OAuthSchemeKey) {
               }
             }
             if(diff.length > 0){
-              o = v.parentNode;
+              o = v.parentNode.parentNode;
               $(o.parentNode).find('.api-ic.ic-on').addClass('ic-off');
               $(o.parentNode).find('.api-ic.ic-on').removeClass('ic-on');
 
@@ -312,7 +320,7 @@ window.onOAuthComplete = function onOAuthComplete(token,OAuthSchemeKey) {
               $(o).find('.api-ic').removeClass('ic-error');
             }
             else {
-              o = v.parentNode;
+              o = v.parentNode.parentNode;
               $(o.parentNode).find('.api-ic.ic-off').addClass('ic-on');
               $(o.parentNode).find('.api-ic.ic-off').removeClass('ic-off');
 
@@ -323,9 +331,8 @@ window.onOAuthComplete = function onOAuthComplete(token,OAuthSchemeKey) {
             }
           }
         });
-        console.log("adding bearer token: "+b +" - "+OAuthSchemeKey)
         window.swaggerUi.api.clientAuthorizations.add(OAuthSchemeKey, new SwaggerClient.ApiKeyAuthorization('Authorization', 'Bearer ' + b, 'header'));
       }
     }
   }
-}
+};
