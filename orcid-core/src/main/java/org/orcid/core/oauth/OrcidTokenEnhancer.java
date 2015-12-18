@@ -22,9 +22,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.orcid.core.constants.OrcidOauth2Constants;
-import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.OrcidProfileManager;
-import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.persistence.dao.OrcidOauth2AuthoriziationCodeDetailDao;
 import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
@@ -62,9 +60,8 @@ public class OrcidTokenEnhancer implements TokenEnhancer {
         // If the additional info object already contains the name info, leave
         // it
         if (!additionalInfo.containsKey("name")) {
-            if (userOrcid != null) {
-                OrcidProfile orcidProfile = orcidProfileManager.retrieveOrcidProfile(userOrcid, LoadOptions.BIO_ONLY);
-                String name = orcidProfile.getOrcidBio().getPersonalDetails().retrievePublicDisplayName();
+            if (userOrcid != null) {                
+                String name = orcidProfileManager.retrivePublicDisplayName(userOrcid);
                 additionalInfo.put("name", name);
             }
         }
