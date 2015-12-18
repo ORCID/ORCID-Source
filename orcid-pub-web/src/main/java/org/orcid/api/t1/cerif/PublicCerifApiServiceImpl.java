@@ -26,11 +26,14 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.lang3.tuple.Pair;
 import org.orcid.api.common.delegator.CerifApiServiceDelgator;
 import org.orcid.core.api.OrcidApiConstants;
+import org.orcid.jaxb.model.message.ScopeConstants;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.Authorization;
+import io.swagger.annotations.AuthorizationScope;
 
 /**
  * Implements the CERIF V1.0 API defined at
@@ -89,7 +92,7 @@ public class PublicCerifApiServiceImpl {
     @GET
     @Produces(value = { MediaType.APPLICATION_XML })
     @Path(OrcidApiConstants.CERIF_PRODUCTS_PATH)
-    @ApiOperation(value = "Fetch a research product record")
+    @ApiOperation(value = "Fetch a research product record", authorizations = { @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_PUBLIC, description = "you need this") }) })
     @ApiResponses(value = { @ApiResponse(code = 200, message = "Product found"), @ApiResponse(code = 404, message = "Product not found") })
     public Response viewProduct(@PathParam("id") String id) {
         try {

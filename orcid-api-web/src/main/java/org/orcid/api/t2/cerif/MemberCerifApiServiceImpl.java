@@ -98,7 +98,7 @@ public class MemberCerifApiServiceImpl {
     @GET
     @Produces(value = { MediaType.APPLICATION_XML })
     @Path(OrcidApiConstants.CERIF_ENTITIES_PATH)
-    @ApiOperation(value = "Fetch the list of supported entities", authorizations = { @Authorization(value = "orcid_auth") })
+    @ApiOperation(value = "Fetch the list of supported entities", authorizations = { @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_PUBLIC, description = "you need this") }) })
     @ApiResponses(value = { @ApiResponse(code = 200, message = "OK") })
     public Response viewEntities() {
         return serviceDelegator.getEntities();
@@ -107,7 +107,7 @@ public class MemberCerifApiServiceImpl {
     @GET
     @Produces(value = { MediaType.APPLICATION_XML })
     @Path(OrcidApiConstants.CERIF_SEMANTICS_PATH)
-    @ApiOperation(value = "Fetch the CERIF semantics", authorizations = { @Authorization(value = "orcid_auth") })
+    @ApiOperation(value = "Fetch the CERIF semantics", authorizations = { @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_PUBLIC, description = "you need this") }) })
     @ApiResponses(value = { @ApiResponse(code = 200, message = "OK") })
     public Response viewSemantics() {
         return serviceDelegator.getSemantics();

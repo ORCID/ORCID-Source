@@ -45,15 +45,18 @@ import xmlns.org.eurocris.cerif_api.Payloadtype;
  *
  */
 public class Cerif10APIFactory {
-    
+
     private static Cerifapitype semanticsCERIF = null;
     private static Cerifapitype entities = null;
-    
+
+    //@formatter:off
     public static final Set<CerifClassEnum> nameSet = Sets.immutableEnumSet(
             CerifClassEnum.PASSPORT_NAME,
             CerifClassEnum.PRESENTED_NAME);
+    //@formatter:off
     public static final  Set<CerifClassEnum> roleSet = Sets.immutableEnumSet(               
             CerifClassEnum.CONTRIBUTOR);
+    //@formatter:off
     public static final  Set<CerifClassEnum> idSet = Sets.immutableEnumSet(                       
             CerifClassEnum.DOI,
             CerifClassEnum.HANDLE,
@@ -65,6 +68,7 @@ public class Cerif10APIFactory {
             CerifClassEnum.ORCID,
             CerifClassEnum.ISNI,
             CerifClassEnum.SCOPUSAUTHORID);
+    //@formatter:off
     public static final Set<CerifClassEnum> outSet = Sets.immutableEnumSet(                              
             CerifClassEnum.PRODUCT_DATASET,
             CerifClassEnum.RESEARCHERID,
