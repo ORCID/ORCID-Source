@@ -16,8 +16,11 @@
  */
 package org.orcid.integration.blackbox.api.personV2;
 
+import static org.hamcrest.core.AnyOf.anyOf;
+import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.util.HashMap;
@@ -88,6 +91,7 @@ public class OtherNamesTest extends BlackBoxBase {
      * @throws JSONException 
      * @throws InterruptedException 
      * */
+    @SuppressWarnings("unchecked")
     @Test
     public void testGetOtherNamesWihtMembersAPI() throws InterruptedException, JSONException {
         String accessToken = getAccessToken(this.client1ClientId, this.client1ClientSecret, this.client1RedirectUri);
@@ -97,9 +101,11 @@ public class OtherNamesTest extends BlackBoxBase {
         OtherNames otherNames = getResponse.getEntity(OtherNames.class);
         assertNotNull(otherNames);
         assertNotNull(otherNames.getOtherNames());
-        assertEquals(1, otherNames.getOtherNames().size());
-        assertEquals("Other name", otherNames.getOtherNames().get(0).getContent());
+        assertEquals(2, otherNames.getOtherNames().size());
+        assertThat(otherNames.getOtherNames().get(0).getContent(), anyOf(is("other-name-1"), is("other-name-2")));
+        assertThat(otherNames.getOtherNames().get(1).getContent(), anyOf(is("other-name-1"), is("other-name-2")));
         assertEquals(Visibility.PUBLIC, otherNames.getOtherNames().get(0).getVisibility());
+        assertEquals(Visibility.PUBLIC, otherNames.getOtherNames().get(1).getVisibility());
     }
     
     
@@ -127,15 +133,19 @@ public class OtherNamesTest extends BlackBoxBase {
         OtherNames otherNames = response.getEntity(OtherNames.class);
         assertNotNull(otherNames);
         assertNotNull(otherNames.getOtherNames());
-        assertEquals(2, otherNames.getOtherNames().size());
+        assertEquals(3, otherNames.getOtherNames().size());
         
-        boolean haveOld = false;
+        boolean haveOld1 = false;
+        boolean haveOld2 = false;        
         boolean haveNew = false;
         
         for(OtherName existingOtherName : otherNames.getOtherNames()) {
-            if("Other name".equals(existingOtherName.getContent())) {
+            if("other-name-1".equals(existingOtherName.getContent())) {
                 assertEquals(Visibility.PUBLIC, existingOtherName.getVisibility());
-                haveOld = true;
+                haveOld1 = true;
+            } else if("other-name-2".equals(existingOtherName.getContent())) {
+                assertEquals(Visibility.PUBLIC, existingOtherName.getVisibility());
+                haveOld2 = true;
             } else {
                 assertEquals("Other Name #1", existingOtherName.getContent());
                 assertEquals(Visibility.LIMITED, existingOtherName.getVisibility());
@@ -143,7 +153,8 @@ public class OtherNamesTest extends BlackBoxBase {
             }
         }
         
-        assertTrue(haveOld);
+        assertTrue(haveOld1);
+        assertTrue(haveOld2);
         assertTrue(haveNew);
         
         //Get it
