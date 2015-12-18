@@ -40,6 +40,7 @@ import org.orcid.integration.api.helper.OauthHelper;
 import org.orcid.integration.api.memberV2.MemberV2ApiClientImpl;
 import org.orcid.integration.api.t2.T2OAuthAPIService;
 import org.orcid.integration.blackbox.web.SigninTest;
+import org.orcid.jaxb.model.record_rc2.ExternalIdentifier;
 import org.orcid.jaxb.model.record_rc1.Education;
 import org.orcid.jaxb.model.record_rc1.Employment;
 import org.orcid.jaxb.model.record_rc1.Funding;
@@ -125,6 +126,8 @@ public class BlackBoxBase {
                 result = (PersonalDetails) obj;
             } else if(OtherName.class.equals(type)) {
                 result = (OtherName) obj;
+            } else if(ExternalIdentifier.class.equals(type)) {
+                result = (ExternalIdentifier) obj;
             }
             return result;
         } catch (IOException e) {

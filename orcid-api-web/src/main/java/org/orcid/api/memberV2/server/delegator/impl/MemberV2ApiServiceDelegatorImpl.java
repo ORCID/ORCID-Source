@@ -479,7 +479,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     }
 
     public Response viewResearcherUrl(String orcid, Long putCode) {
-        ResearcherUrl researcherUrl = researcherUrlManager.getResearcherUrlV2(orcid, Long.valueOf(putCode));
+        ResearcherUrl researcherUrl = researcherUrlManager.getResearcherUrlV2(orcid, putCode);
         orcidSecurityManager.checkVisibility(researcherUrl);
         return Response.ok(researcherUrl).build();
     }
@@ -591,7 +591,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
 
     @Override
     public Response viewExternalIdentifier(String orcid, Long putCode) {
-        ExternalIdentifier extId = externalIdentifierManager.getExternalIdentifierV2(orcid, Long.valueOf(putCode));
+        ExternalIdentifier extId = externalIdentifierManager.getExternalIdentifierV2(orcid, putCode);
         orcidSecurityManager.checkVisibility(extId);
         return Response.ok(extId).build();
     }
@@ -620,7 +620,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
 
     @Override
     public Response deleteExternalIdentifier(String orcid, Long putCode) {
-        externalIdentifierManager.deleteExternalIdentifier(orcid, Long.valueOf(putCode));
+        externalIdentifierManager.deleteExternalIdentifier(orcid, putCode);
         return Response.noContent().build();
     }
 }

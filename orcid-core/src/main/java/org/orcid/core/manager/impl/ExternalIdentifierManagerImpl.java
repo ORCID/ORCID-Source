@@ -180,7 +180,7 @@ public class ExternalIdentifierManagerImpl implements ExternalIdentifierManager 
 
     @Override
     public boolean deleteExternalIdentifier(String orcid, Long id) {
-        ExternalIdentifierEntity extIdEntity = externalIdentifierDao.find(id);
+        ExternalIdentifierEntity extIdEntity = externalIdentifierDao.getExternalIdentifierEntity(orcid, id);
         if (extIdEntity == null) {
             return false;
         }

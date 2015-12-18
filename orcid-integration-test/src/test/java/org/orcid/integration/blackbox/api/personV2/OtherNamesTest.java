@@ -169,7 +169,7 @@ public class OtherNamesTest extends BlackBoxBase {
         assertEquals(putCode, otherName.getPutCode());        
         
         //Delete
-        response = memberV2ApiClient.deleteOtherName(this.client1ClientId, putCode, accessToken);
+        response = memberV2ApiClient.deleteOtherName(this.user1OrcidId, putCode, accessToken);
         assertNotNull(response);
         assertEquals(ClientResponse.Status.NO_CONTENT.getStatusCode(), response.getStatus());
         
@@ -198,6 +198,5 @@ public class OtherNamesTest extends BlackBoxBase {
         otherName.setCreatedDate(null);
         otherName.setPutCode(null);
         return otherName;
-    }
-    
+    }    
 }

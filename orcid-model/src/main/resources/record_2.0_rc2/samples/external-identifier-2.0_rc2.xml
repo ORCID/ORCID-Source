@@ -3,9 +3,9 @@
 	xmlns:external-identifier="http://www.orcid.org/ns/external-identifier"
 	xmlns:common="http://www.orcid.org/ns/common" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.orcid.org/ns/external-identifier ../external-identifier-2.0_rc2.xsd ">	
-	<external-identifier:external-id-common-name>common-name-1</external-identifier:external-id-common-name>
-	<external-identifier:external-id-reference>id-reference-1</external-identifier:external-id-reference>
-	<external-identifier:url>http://url/1</external-identifier:url>
+	<external-identifier:external-id-common-name>A-0003</external-identifier:external-id-common-name>
+	<external-identifier:external-id-reference>A-0003</external-identifier:external-id-reference>
+	<external-identifier:url>http://ext-id/A-0003</external-identifier:url>
 	<common:created-date>2001-12-31T12:00:00</common:created-date>
 	<common:last-modified-date>2001-12-31T12:00:00
 	</common:last-modified-date>
