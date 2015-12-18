@@ -45,6 +45,7 @@ import org.orcid.jaxb.model.record_rc1.Employment;
 import org.orcid.jaxb.model.record_rc1.Funding;
 import org.orcid.jaxb.model.record_rc1.PeerReview;
 import org.orcid.jaxb.model.record_rc1.Work;
+import org.orcid.jaxb.model.record_rc2.OtherName;
 import org.orcid.jaxb.model.record_rc2.PersonalDetails;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -122,6 +123,8 @@ public class BlackBoxBase {
                 result = (ResearcherUrl) obj;
             } else if(PersonalDetails.class.equals(type)) {
                 result = (PersonalDetails) obj;
+            } else if(OtherName.class.equals(type)) {
+                result = (OtherName) obj;
             }
             return result;
         } catch (IOException e) {

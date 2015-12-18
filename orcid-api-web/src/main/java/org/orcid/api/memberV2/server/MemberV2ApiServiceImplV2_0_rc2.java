@@ -188,26 +188,3 @@ public class MemberV2ApiServiceImplV2_0_rc2 extends MemberV2ApiServiceImplBase {
         return serviceDelegator.deleteExternalIdentifier(orcid, Long.valueOf(putCode));
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

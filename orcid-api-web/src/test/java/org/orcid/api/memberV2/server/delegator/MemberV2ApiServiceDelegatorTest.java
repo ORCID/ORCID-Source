@@ -338,7 +338,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         extId.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
         extId.setWorkExternalIdentifierId(new WorkExternalIdentifierId("ext-id-" + System.currentTimeMillis()));
         extId.setUrl(new Url("http://thisIsANewUrl.com"));
-        ;
+        
         extIds.getExternalIdentifier().add(extId);
         work.setWorkExternalIdentifiers(extIds);
         response = serviceDelegator.createWork("4444-4444-4444-4445", work);
