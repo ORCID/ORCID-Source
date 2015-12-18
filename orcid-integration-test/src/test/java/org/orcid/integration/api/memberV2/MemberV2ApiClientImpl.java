@@ -29,6 +29,8 @@ import static org.orcid.core.api.OrcidApiConstants.WORK;
 import static org.orcid.core.api.OrcidApiConstants.GROUP_ID_RECORD;
 import static org.orcid.core.api.OrcidApiConstants.RESEARCHER_URLS;
 import static org.orcid.core.api.OrcidApiConstants.EMAIL;
+import static org.orcid.core.api.OrcidApiConstants.OTHER_NAMES;
+import static org.orcid.core.api.OrcidApiConstants.EXTERNAL_IDENTIFIERS;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -42,6 +44,8 @@ import org.orcid.jaxb.model.record_rc1.Employment;
 import org.orcid.jaxb.model.record_rc1.Funding;
 import org.orcid.jaxb.model.record_rc1.PeerReview;
 import org.orcid.jaxb.model.record_rc1.Work;
+import org.orcid.jaxb.model.record_rc2.ExternalIdentifier;
+import org.orcid.jaxb.model.record_rc2.OtherName;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 
 import com.sun.jersey.api.client.Client;
@@ -207,4 +211,44 @@ public class MemberV2ApiClientImpl {
         URI getURI = UriBuilder.fromPath(PERSONAL_DETAILS).build(orcid);
         return orcidClientHelper.getClientResponseWithToken(getURI, VND_ORCID_XML, accessToken);
     }
+    
+    public ClientResponse createOtherName(String orcid, OtherName otherName, String accessToken) {
+        URI createURI = UriBuilder.fromPath(OTHER_NAMES).build(orcid);
+        return orcidClientHelper.postClientResponseWithToken(createURI, VND_ORCID_XML, otherName, accessToken);      
+    }
+    
+    public ClientResponse updateOtherName(String orcid, OtherName otherName, String accessToken) {
+        URI createURI = UriBuilder.fromPath(OTHER_NAMES + PUTCODE).build(orcid, otherName.getPutCode());
+        return orcidClientHelper.putClientResponseWithToken(createURI, VND_ORCID_XML, otherName, accessToken);      
+    }
+    
+    public ClientResponse getOtherNames(String orcid, String accessToken) {
+        URI getURI = UriBuilder.fromPath(OTHER_NAMES).build(orcid);
+        return orcidClientHelper.getClientResponseWithToken(getURI, VND_ORCID_XML, accessToken);        
+    }
+    
+    public ClientResponse getOtherName(String orcid, String putCode, String accessToken) {
+        URI getURI = UriBuilder.fromPath(OTHER_NAMES + PUTCODE).build(orcid, putCode);
+        return orcidClientHelper.getClientResponseWithToken(getURI, VND_ORCID_XML, accessToken);        
+    }
+    
+    public ClientResponse createExternalIdentifier(String orcid, ExternalIdentifier externalIdentifier, String accessToken) {
+        URI createURI = UriBuilder.fromPath(EXTERNAL_IDENTIFIERS).build(orcid);
+        return orcidClientHelper.postClientResponseWithToken(createURI, VND_ORCID_XML, externalIdentifier, accessToken);      
+    }
+    
+    public ClientResponse updateExternalIdentifier(String orcid, ExternalIdentifier externalIdentifier, String accessToken) {
+        URI createURI = UriBuilder.fromPath(EXTERNAL_IDENTIFIERS + PUTCODE).build(orcid, externalIdentifier.getPutCode());
+        return orcidClientHelper.putClientResponseWithToken(createURI, VND_ORCID_XML, externalIdentifier, accessToken);      
+    }
+    
+    public ClientResponse getExternalIdentifiers(String orcid, String accessToken) {
+        URI getURI = UriBuilder.fromPath(EXTERNAL_IDENTIFIERS).build(orcid);
+        return orcidClientHelper.getClientResponseWithToken(getURI, VND_ORCID_XML, accessToken);        
+    }
+    
+    public ClientResponse getExternalIdentifier(String orcid, String putCode, String accessToken) {
+        URI getURI = UriBuilder.fromPath(EXTERNAL_IDENTIFIERS + PUTCODE).build(orcid, putCode);
+        return orcidClientHelper.getClientResponseWithToken(getURI, VND_ORCID_XML, accessToken);        
+    }    
 }
