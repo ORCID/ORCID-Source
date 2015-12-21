@@ -540,10 +540,12 @@ public class OauthConfirmAccessController extends BaseController {
         } else {
             //If there are no saved request, get them from the session
             AuthorizationRequest authorizationRequest = (AuthorizationRequest) request.getSession().getAttribute("authorizationRequest");
-            Map<String, String> authRequestParams = new HashMap<String, String>(authorizationRequest.getRequestParameters());
-            for(String param : authRequestParams.keySet()) {
-                requestParams.put(param, new String []{authRequestParams.get(param)});
-            }
+            if(authorizationRequest != null) {
+                Map<String, String> authRequestParams = new HashMap<String, String>(authorizationRequest.getRequestParameters());
+                for(String param : authRequestParams.keySet()) {
+                    requestParams.put(param, new String []{authRequestParams.get(param)});
+                }
+            }            
         }
         
         if(requestParams == null || requestParams.isEmpty()) {
