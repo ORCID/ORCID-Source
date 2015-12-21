@@ -281,7 +281,5 @@ public interface OrcidProfileManager extends OrcidProfileManagerReadOnly {
     
     public void checkWorkExternalIdentifiersAreNotDuplicated(List<OrcidWork> newOrcidWorksList, List<OrcidWork> existingWorkList);
     
-    public void setCompareWorksUsingScopusWay(boolean compareWorksUsingScopusWay);
-
-    String retrivePublicDisplayName(String orcid);
+    public void setCompareWorksUsingScopusWay(boolean compareWorksUsingScopusWay);    
 }

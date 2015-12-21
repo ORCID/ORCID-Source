@@ -22,7 +22,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.orcid.core.constants.OrcidOauth2Constants;
-import org.orcid.core.manager.OrcidProfileManager;
+import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.persistence.dao.OrcidOauth2AuthoriziationCodeDetailDao;
 import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
@@ -31,9 +31,8 @@ import org.springframework.security.oauth2.provider.OAuth2Request;
 import org.springframework.security.oauth2.provider.token.TokenEnhancer;
 
 public class OrcidTokenEnhancer implements TokenEnhancer {
-
     @Resource
-    private OrcidProfileManager orcidProfileManager;
+    private ProfileEntityManager profileEntityManager;
 
     @Resource
     private OrcidOauth2AuthoriziationCodeDetailDao orcidOauth2AuthoriziationCodeDetailDao;
@@ -61,7 +60,7 @@ public class OrcidTokenEnhancer implements TokenEnhancer {
         // it
         if (!additionalInfo.containsKey("name")) {
             if (userOrcid != null) {                
-                String name = orcidProfileManager.retrivePublicDisplayName(userOrcid);
+                String name = profileEntityManager.retrivePublicDisplayName(userOrcid);
                 additionalInfo.put("name", name);
             }
         }

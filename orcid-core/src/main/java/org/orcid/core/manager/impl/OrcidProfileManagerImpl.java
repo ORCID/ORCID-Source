@@ -1919,31 +1919,4 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
 
         }
     }
-
-    @Override
-    public String retrivePublicDisplayName(String orcid) {
-        OrcidProfile orcidProfile = retrieveOrcidProfile(orcid, LoadOptions.BIO_ONLY);
-        PersonalDetails personalDetails = orcidProfile.getOrcidBio().getPersonalDetails();
-        Visibility visibility = OrcidVisibilityDefaults.OTHER_NAMES_DEFAULT.getVisibility();
-        if (personalDetails.getCreditName() != null && personalDetails.getCreditName().getVisibility() != null) {
-            visibility = personalDetails.getCreditName().getVisibility();
-        } else if (personalDetails.getGivenNames() != null && personalDetails.getGivenNames().getVisibility() != null) {
-            visibility = personalDetails.getGivenNames().getVisibility();
-        }
-
-        String publicName = StringUtils.EMPTY;
-
-        if (Visibility.PUBLIC.equals(visibility)) {
-            if (personalDetails.getCreditName() != null && !PojoUtil.isEmpty(personalDetails.getCreditName().getContent())) {
-                publicName = personalDetails.getCreditName().getContent();
-            } else {
-                publicName = personalDetails.getGivenNames() != null ? personalDetails.getGivenNames().getContent() : "";
-                if(personalDetails.getFamilyName() != null && !PojoUtil.isEmpty(personalDetails.getFamilyName().getContent())) {
-                    publicName += " " + personalDetails.getFamilyName().getContent(); 
-                }                        
-            }
-        }
-
-        return publicName;
-    }
 }
