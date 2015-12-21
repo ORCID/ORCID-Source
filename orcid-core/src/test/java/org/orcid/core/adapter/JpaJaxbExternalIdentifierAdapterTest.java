@@ -51,9 +51,9 @@ public class JpaJaxbExternalIdentifierAdapterTest {
     public void testToExternalIdentifierEntity() throws JAXBException {
         ExternalIdentifierEntity entity = jpaJaxbExternalIdentifierAdapter.toExternalIdentifierEntity(getExternalIdentifier());
         assertNotNull(entity);
-        assertEquals("common-name-1", entity.getExternalIdCommonName());
-        assertEquals("id-reference-1", entity.getExternalIdReference());
-        assertEquals("http://url/1", entity.getExternalIdUrl());
+        assertEquals("A-0003", entity.getExternalIdCommonName());
+        assertEquals("A-0003", entity.getExternalIdReference());
+        assertEquals("http://ext-id/A-0003", entity.getExternalIdUrl());
         assertEquals(Long.valueOf(1), entity.getId());
         assertNotNull(entity.getDateCreated());
         assertNotNull(entity.getLastModified());
