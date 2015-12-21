@@ -21,6 +21,8 @@ import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
@@ -114,6 +116,26 @@ public class ProfileDaoTest extends DBUnitTest {
         assertEquals("Spike", profile.getGivenNames());
         assertEquals("Milligan", profile.getFamilyName());
         assertEquals("Spike Milligan", profile.getVocativeName());
+    }
+    
+    @Test
+    public void testFindByCreditName() {
+        String orcid = profileDao.findOrcidByCreditName("S. Milligan");
+        assertEquals("4444-4444-4444-4441", orcid);
+        try {
+            //Multiple profiles with the same credit name
+            profileDao.findOrcidByCreditName("Credit Name");
+            fail();
+        } catch(Exception e) {
+            
+        }
+        
+        try {
+            profileDao.findOrcidByCreditName("Am not a credit name");
+            fail();
+        } catch (Exception e) {
+            
+        }
     }
 
     @Test
@@ -430,7 +452,7 @@ public class ProfileDaoTest extends DBUnitTest {
         profile.setBiography("Updated Biography");
         profile.setBiographyVisibility(Visibility.PRIVATE);
         profile.setCreditName("Updated Credit Name");
-        profile.setCreditNameVisibility(Visibility.PRIVATE);
+        profile.setNamesVisibility(Visibility.PRIVATE);
         profile.setGivenNames("Updated Give Name");
         profile.setFamilyName("Updated Last Name");
         profile.setIso2Country(Iso3166Country.US);
@@ -444,7 +466,7 @@ public class ProfileDaoTest extends DBUnitTest {
         assertEquals("Updated Biography", profile.getBiography());
         assertEquals(Visibility.PRIVATE.value(), profile.getBiographyVisibility().value());
         assertEquals("Updated Credit Name", profile.getCreditName());
-        assertEquals(Visibility.PRIVATE.value(), profile.getCreditNameVisibility().value());
+        assertEquals(Visibility.PRIVATE.value(), profile.getNamesVisibility().value());
         assertEquals("Updated Give Name", profile.getGivenNames());
         assertEquals("Updated Last Name", profile.getFamilyName());
         assertEquals(Iso3166Country.US, profile.getIso2Country());

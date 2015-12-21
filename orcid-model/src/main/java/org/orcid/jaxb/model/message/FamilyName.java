@@ -25,9 +25,13 @@ package org.orcid.jaxb.model.message;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
+
+import org.orcid.jaxb.model.message.Visibility;
+
 import java.io.Serializable;
 
 /**
@@ -52,12 +56,14 @@ import java.io.Serializable;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType( propOrder = { "content" })
 @XmlRootElement(name = "family-name")
-public class FamilyName implements Serializable {
+public class FamilyName implements Serializable, VisibilityType {
 
     private static final long serialVersionUID = 1L;
 
     @XmlValue
     protected String content;
+    @XmlAttribute
+    protected Visibility visibility;
 
     public FamilyName() {
     }
@@ -87,6 +93,27 @@ public class FamilyName implements Serializable {
         this.content = value;
     }
 
+    /**
+     * Gets the value of the visibility attribute.
+     * 
+     * @return possible object is {@link Visibility }
+     * 
+     */
+    public Visibility getVisibility() {
+        return visibility;
+    }
+
+    /**
+     * Sets the value of the visibility attribute.
+     * 
+     * @param visibility
+     *            allowed object is {@link Visibility }
+     * 
+     */
+    public void setVisibility(Visibility visibility) {
+        this.visibility = visibility;
+    }
+    
     @Override
     public boolean equals(Object o) {
         if (this == o)

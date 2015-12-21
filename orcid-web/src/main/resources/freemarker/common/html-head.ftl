@@ -40,6 +40,9 @@
 			}
 		</script>
     <![endif]-->
+    
+    <#include "/layout/google_analytics.ftl">
+    
     <script type="text/javascript">
         var orcidVar = {};
         orcidVar.recaptchaKey = '${recaptchaWebKey}';
@@ -66,8 +69,8 @@
       orcidVar.realOrcidId = '${realUserOrcid!}';
       orcidVar.jsMessages = JSON.parse("${jsMessagesJson}");
       orcidVar.searchBaseUrl = "${searchBaseUrl}";
+      orcidVar.isPasswordConfirmationRequired = ${isPasswordConfirmationRequired?string};
       orcidVar.version = "${ver}";
-      
     </script>    
     
     <link rel="stylesheet" href="${staticLoc}/css/fonts.css?v=${ver}"/>
@@ -113,8 +116,5 @@
 
     <link rel="shortcut icon" href="${staticCdn}/img/favicon.ico"/>
     <link rel="apple-touch-icon" href="${staticCdn}/img/apple-touch-icon.png" />	
-
-    <#include "/layout/google_analytics.ftl">
-
     <link rel="stylesheet" href="${staticCdn}/css/orcid-print.css?v=${ver}"/>
 </head>

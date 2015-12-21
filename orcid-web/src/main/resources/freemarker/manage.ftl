@@ -131,27 +131,30 @@
                             </div>
                             
                             <!-- End Email table -->
-                            
-                            <div class="row bottom-row">
-                                <div class="col-md-12 add-email">
-                                    <input type="email" placeholder="${springMacroRequestContext.getMessage("manage.add_another_email")}"
-                                        ng-enter="checkCredentials()" class="input-xlarge inline-input" ng-model="emailSrvc.inputEmail.value"
-                                        required /> <span
-                                        ng-click="checkCredentials()" class="btn btn-primary">${springMacroRequestContext.getMessage("manage.spanadd")}</span>
-                                    <span class="orcid-error"
-                                        ng-show="emailSrvc.inputEmail.errors.length > 0"> <span
-                                        ng-repeat='error in emailSrvc.inputEmail.errors'
-                                        ng-bind-html="error"></span>
-                                    </span>
+                            <#if isPasswordConfirmationRequired>
+                                <div id="addEmailNotAllowed">${springMacroRequestContext.getMessage("manage.add_another_email.not_allowed")}</div>
+                            <#else>
+                                <div class="row bottom-row">
+                                    <div class="col-md-12 add-email">
+                                        <input type="email" placeholder="${springMacroRequestContext.getMessage("manage.add_another_email")}"
+                                            ng-enter="checkCredentials()" class="input-xlarge inline-input" ng-model="emailSrvc.inputEmail.value"
+                                            required /> <span
+                                            ng-click="checkCredentials()" class="btn btn-primary">${springMacroRequestContext.getMessage("manage.spanadd")}</span>
+                                        <span class="orcid-error"
+                                            ng-show="emailSrvc.inputEmail.errors.length > 0"> <span
+                                            ng-repeat='error in emailSrvc.inputEmail.errors'
+                                            ng-bind-html="error"></span>
+                                        </span>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <p style="line-height: 12px;">
+                                   	        <small class="italic">
+                                        	    ${springMacroRequestContext.getMessage("manage.verificationEmail.1")} <a href="${aboutUri}/content/orcid-terms-use" target="_blank">${springMacroRequestContext.getMessage("manage.verificationEmail.2")}</a>${springMacroRequestContext.getMessage("manage.verificationEmail.3")}
+                                            </small>
+                                        </p>
+                                    </div>
                                 </div>
-                                <div class="col-md-12">
-                               <p style="line-height: 12px;">
-                               		<small class="italic">
-                                    	${springMacroRequestContext.getMessage("manage.verificationEmail.1")} <a href="${aboutUri}/content/orcid-terms-use" target="_blank">${springMacroRequestContext.getMessage("manage.verificationEmail.2")}</a>${springMacroRequestContext.getMessage("manage.verificationEmail.3")}
-                                    </small>
-                                </p>
-                                </div>
-                            </div>
+                            </#if>
                        		<!-- Email frecuency -->
                             <#if profile.orcidInternal.preferences.notificationsEnabled>
 							    <div ng-controller="EmailFrequencyCtrl" ng-cloak>
@@ -344,13 +347,17 @@
                                         ng-enter="checkCredentials()">
                                 </div>
                             </div>
-                            <div class="control-group">
-                                <button id="bottom-submit-security-question"
-                                    class="btn btn-primary" ng-click="checkCredentials()"><@orcid.msg 'freemarker.btnsavechanges' /></button>
-                                <button id="bottom-reset-security-question"
-                                    class="btn close-parent-popover"
-                                    ng-click="getSecurityQuestion()"><@orcid.msg 'freemarker.btncancel' /></button>
-                            </div>
+                            <#if isPasswordConfirmationRequired>
+                                <@orcid.msg 'manage.security_question.not_allowed' />
+                            <#else>
+                                <div class="control-group">
+                                    <button id="bottom-submit-security-question"
+                                        class="btn btn-primary" ng-click="checkCredentials()"><@orcid.msg 'freemarker.btnsavechanges' /></button>
+                                    <button id="bottom-reset-security-question"
+                                        class="btn close-parent-popover"
+                                        ng-click="getSecurityQuestion()"><@orcid.msg 'freemarker.btncancel' /></button>
+                                </div>
+                            </#if>
                         </div>
                     </td>
                 </tr>
@@ -497,7 +504,8 @@
 		                    </td>
 		                    <td width="5%">
 	            				<a id="revokeAppBtn" name="{{applicationSummary.orcidPath}}" ng-click="confirmRevoke(applicationSummary)"
-	            					class="glyphicon glyphicon-trash grey" title="${springMacroRequestContext.getMessage("manage.revokeaccess")}"></a>
+	            					class="glyphicon glyphicon-trash grey" title="${springMacroRequestContext.getMessage("manage.revokeaccess")}"
+	            					ng-hide="isPasswordConfirmationRequired"></a>
 		    				</td>
 		                </tr>
 		            </tbody>
@@ -529,7 +537,7 @@
                         <td width="20%">{{delegationDetails.approvalDate.value|date:'yyyy-MM-dd'}}</td>
                         <td width="10%">
                             <a
-                            ng-hide="realUserOrcid === delegationDetails.delegateSummary.orcidIdentifier.path"
+                            ng-hide="realUserOrcid === delegationDetails.delegateSummary.orcidIdentifier.path || isPasswordConfirmationRequired"
                             ng-click="confirmRevoke(delegationDetails.delegateSummary.creditName.content, delegationDetails.delegateSummary.orcidIdentifier.path)"
                             class="glyphicon glyphicon-trash grey"
                             title="${springMacroRequestContext.getMessage("manage.revokeaccess")}"></a>
@@ -538,58 +546,65 @@
                     </tr>
                 </tbody>
             </table>
-            <p>${springMacroRequestContext.getMessage("manage_delegation.searchfortrustedindividuals")}</p>
-            <div>
-                <form ng-submit="search()">
-                    <input type="text" placeholder="${springMacroRequestContext.getMessage("manage_delegation.searchplaceholder")}" class="input-xlarge inline-input" ng-model="input.text"></input>
-                    <input type="submit" class="btn btn-primary" value="<@orcid.msg 'search_for_delegates.btnSearch'/>"></input>
-                </form>
-            </div>
-            <div>
-                <table class="ng-cloak table" ng-show="areResults()">
-                    <thead>
-                        <tr>
-                            <th width="20%">${springMacroRequestContext.getMessage("manage.thproxy")}</th>
-                            <th width="25%">${springMacroRequestContext.getMessage("search_results.thORCIDID")}</th>
-                            <th width="10%"></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr ng-repeat='result in results' class="new-search-result">
-                            <td width="20%"><a href="{{result['orcid-profile']['orcid-identifier'].uri}}" target="_blank" ng-bind="getDisplayName(result)"></a></td>
-                            <td width="25%" class='search-result-orcid-id'><a href="{{result['orcid-profile']['orcid-identifier'].uri}}" target="_blank">{{result['orcid-profile']['orcid-identifier'].path}}</td>
-                            <td width="10%">
-                                <span ng-show="effectiveUserOrcid !== result['orcid-profile']['orcid-identifier'].path">
-                                    <span ng-show="!delegatesByOrcid[result['orcid-profile']['orcid-identifier'].path]"
-                                        ng-click="confirmAddDelegate(result['orcid-profile']['orcid-bio']['personal-details']['given-names'].value + ' ' + result['orcid-profile']['orcid-bio']['personal-details']['family-name'].value, result['orcid-profile']['orcid-identifier'].path, $index)"
-                                        class="btn btn-primary">${springMacroRequestContext.getMessage("manage.spanadd")}</span>
-                                    <a ng-show="delegatesByOrcid[result['orcid-profile']['orcid-identifier'].path]"
-                                        ng-click="confirmRevoke(result['orcid-profile']['orcid-bio']['personal-details']['given-names'].value + ' ' + result['orcid-profile']['orcid-bio']['personal-details']['family-name'].value, result['orcid-profile']['orcid-identifier'].path, $index)"
-                                        class="glyphicon glyphicon-trash grey"
-                                        title="${springMacroRequestContext.getMessage("manage.revokeaccess")}"></a>
-                                </span>
-                                <span ng-show="effectiveUserOrcid === result['orcid-profile']['orcid-identifier'].path">${springMacroRequestContext.getMessage("manage_delegation.you")}</span>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-                <div id="show-more-button-container">
-                    <button id="show-more-button" type="submit" class="ng-cloak btn" ng-click="getMoreResults()" ng-show="areMoreResults">Show more</button>
-                    <span id="ajax-loader" class="ng-cloak" ng-show="showLoader"><i class="glyphicon glyphicon-refresh spin x2 green"></i></span>
+            <#if isPasswordConfirmationRequired>
+                ${springMacroRequestContext.getMessage("manage_delegation.notallowed")}
+            <#else>
+                <p>${springMacroRequestContext.getMessage("manage_delegation.searchfortrustedindividuals")}</p>
+                <div>
+                    <form ng-submit="search()">
+                        <input type="text" placeholder="${springMacroRequestContext.getMessage("manage_delegation.searchplaceholder")}" class="input-xlarge inline-input" ng-model="input.text"></input>
+                        <input type="submit" class="btn btn-primary" value="<@orcid.msg 'search_for_delegates.btnSearch'/>"></input>
+                    </form>
                 </div>
-            </div>
-            <div id="no-results-alert" class="orcid-hide alert alert-error no-delegate-matches"><@spring.message "orcid.frontend.web.no_results"/></div>
+                <div>
+                    <table class="ng-cloak table" ng-show="areResults()">
+                        <thead>
+                            <tr>
+                                <th width="20%">${springMacroRequestContext.getMessage("manage.thproxy")}</th>
+                                <th width="25%">${springMacroRequestContext.getMessage("search_results.thORCIDID")}</th>
+                                <th width="10%"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat='result in results' class="new-search-result">
+                                <td width="20%"><a href="{{result['orcid-profile']['orcid-identifier'].uri}}" target="_blank" ng-bind="getDisplayName(result)"></a></td>
+                                <td width="25%" class='search-result-orcid-id'><a href="{{result['orcid-profile']['orcid-identifier'].uri}}" target="_blank">{{result['orcid-profile']['orcid-identifier'].path}}</td>
+                                <td width="10%">
+                                    <span ng-show="effectiveUserOrcid !== result['orcid-profile']['orcid-identifier'].path">
+                                        <span ng-show="!delegatesByOrcid[result['orcid-profile']['orcid-identifier'].path]"
+                                            ng-click="confirmAddDelegate(result['orcid-profile']['orcid-bio']['personal-details']['given-names'].value + ' ' + result['orcid-profile']['orcid-bio']['personal-details']['family-name'].value, result['orcid-profile']['orcid-identifier'].path, $index)"
+                                            class="btn btn-primary">${springMacroRequestContext.getMessage("manage.spanadd")}</span>
+                                        <a ng-show="delegatesByOrcid[result['orcid-profile']['orcid-identifier'].path]"
+                                            ng-click="confirmRevoke(result['orcid-profile']['orcid-bio']['personal-details']['given-names'].value + ' ' + result['orcid-profile']['orcid-bio']['personal-details']['family-name'].value, result['orcid-profile']['orcid-identifier'].path, $index)"
+                                            class="glyphicon glyphicon-trash grey"
+                                            title="${springMacroRequestContext.getMessage("manage.revokeaccess")}"></a>
+                                    </span>
+                                    <span ng-show="effectiveUserOrcid === result['orcid-profile']['orcid-identifier'].path">${springMacroRequestContext.getMessage("manage_delegation.you")}</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div id="show-more-button-container">
+                        <button id="show-more-button" type="submit" class="ng-cloak btn" ng-click="getMoreResults()" ng-show="areMoreResults">Show more</button>
+                        <span id="ajax-loader" class="ng-cloak" ng-show="showLoader"><i class="glyphicon glyphicon-refresh spin x2 green"></i></span>
+                    </div>
+                </div>
+                <div id="no-results-alert" class="orcid-hide alert alert-error no-delegate-matches"><@spring.message "orcid.frontend.web.no_results"/></div>
+            </#if>
         </div>
         <#if ((RequestParameters['social'])?? ||(RequestParameters['shibboleth'])??)>
-	        <div ng-controller="SocialCtrl" id="SocialCtrl" ng-show="socialAccounts" ng-cloak>
+	        <div ng-controller="SocialCtrl" id="SocialCtrl" ng-cloak>
 	            <h1>
 	                <@orcid.msg 'manage_signin_title' />
 	            </h1>
 	            <p>
 	            	<@orcid.msg 'manage_signin_subtitle' />
+	            	<br>
+	            	<a href="${springMacroRequestContext.getMessage("common.support_url")}"
+                target=_blank"">${springMacroRequestContext.getMessage("manage.findoutmore")}</a>
 	            </p>
 	            <div>
-	                <table class="table table-bordered settings-table normal-width">
+	                <table class="table table-bordered settings-table normal-width" ng-show="socialAccounts">
 	                    <thead>
 	                        <tr>
 	                            <th width="40%" ng-click="changeSorting('accountIdForDisplay')"><@orcid.msg 'manage_signin_table_header1' /></th>
@@ -600,18 +615,22 @@
 	                    </thead>
 	                    <tbody>
 	                        <tr ng-repeat="socialAccount in socialAccounts | orderBy:sort.column:sort.descending">
-	                            <td width="40%">{{socialAccount.accountIdForDisplay}}</a></td>
-	                            <td width="30%">{{socialAccount.id.providerid}}</a></td>
-	                            <td width="20%">{{socialAccount.dateCreated|date:'yyyy-MM-dd'}}</td>
+	                            <td width="40%" style="word-break:break-all">{{socialAccount.accountIdForDisplay}}</a></td>
+	                            <td width="30%" style="word-break:break-all">{{socialAccount.id.providerid}}</a></td>
+	                            <td width="20%" style="word-break:break-all">{{socialAccount.dateCreated|date:'yyyy-MM-dd'}}</td>
 	                            <td width="10%">
 	                                <a
 	                                ng-click="confirmRevoke(socialAccount.id)"
+	                                ng-hide="isPasswordConfirmationRequired"
 	                                class="glyphicon glyphicon-trash grey"
 	                                title="${springMacroRequestContext.getMessage("manage.revokeaccess")}"></a>
 	                            </td>
 	                        </tr>
 	                    </tbody>
 	                </table>
+                    <#if isPasswordConfirmationRequired>
+                        <@orcid.msg 'manage_signin_not_allowed' />
+                    </#if>
 	            </div>
         	</#if>
         </div>
@@ -669,7 +688,7 @@
        <div ng-hide="effectiveUserOrcid === delegateToAdd">
           <p>{{delegateNameToAdd}} ({{delegateToAdd}})</p>
           <form ng-submit="addDelegate()">
-              <div>
+              <div ng-show="isPasswordConfirmationRequired">
                   <h3><@orcid.msg 'check_password_modal.confirm_password' /></h3>
                   <label for="confirm_add_delegate_modal.password" class=""><@orcid.msg 'check_password_modal.password' /></label>
                   <input id="confirm_add_delegate_modal.password" type="password" name="confirm_add_delegate_modal.password" ng-model="password" class="input-large"/> <span class="required">*</span>
@@ -702,7 +721,7 @@
         <div ng-show="!emailSearchResult.isSelf && emailSearchResult.found">
             <p>{{input.text}}</p>
             <form ng-submit="addDelegateByEmail(input.text)">
-                <div>
+                <div ng-show="isPasswordConfirmationRequired">
                     <h3><@orcid.msg 'check_password_modal.confirm_password' /></h3>
                     <label for="confirm_add_delegate_modal.password" class=""><@orcid.msg 'check_password_modal.password' /></label>
                     <input id="confirm_add_delegate_modal.password" type="password" name="confirm_add_delegate_modal.password" ng-model="password" class="input-large"/> <span class="required">*</span>
@@ -725,7 +744,7 @@
         <h3><@orcid.msg 'manage_delegation.confirmrevoketrustedindividual'/></h3>
         <p> {{delegateNameToRevoke}} ({{delegateToRevoke}})</p>
         <form ng-submit="revoke()">
-            <div>
+            <div ng-show="isPasswordConfirmationRequired">
                 <h3><@orcid.msg 'check_password_modal.confirm_password' /></h3>
                 <label for="confirm_add_delegate_modal.password" class=""><@orcid.msg 'check_password_modal.password' /></label>
                 <input id="confirm_add_delegate_modal.password" type="password" name="confirm_add_delegate_modal.password" ng-model="password" class="input-large"/> <span class="required">*</span>
@@ -748,7 +767,7 @@
         <h3>Revoke Shibboleth Account</h3>
         <p>{{shibbolethRemoteUserToRevoke}}</p>
         <form ng-submit="revoke()">
-            <div>
+            <div ng-show="isPasswordConfirmationRequired">
                 <h3><@orcid.msg 'check_password_modal.confirm_password' /></h3>
                 <label for="confirm_add_delegate_modal.password" class=""><@orcid.msg 'check_password_modal.password' /></label>
                 <input id="confirm_add_delegate_modal.password" type="password" name="confirm_add_delegate_modal.password" ng-model="password" class="input-large"/> <span class="required">*</span>
@@ -771,17 +790,18 @@
         <p>{{socialRemoteUserToRevoke}}</p>
  		<h3><@orcid.msg 'check_password_modal.confirm_password' /></h3>
         <form ng-submit="revoke()">
-            <div class="form-group">
-    			<label for="confirm_add_delegate_modal.password" class=""><@orcid.msg 'check_password_modal.password' /></label><span class="required">*</span>
-                <input id="confirm_add_delegate_modal.password" type="password" name="confirm_add_delegate_modal.password" ng-model="password" class="form-control"/> 
-  			</div>
-			
-           	<button class="btn btn-danger"><@orcid.msg 'manage_delegation.btnrevokeaccess'/></button>
-				<span class="orcid-error" ng-show="errors.length > 0">
-					<span ng-repeat='error in errors' ng-bind-html="error"></span>
-            	</span>
+            <div ng-show="isPasswordConfirmationRequired">
+                <h3><@orcid.msg 'check_password_modal.confirm_password' /></h3>
+                <div class="form-group">
+                    <label for="confirm_add_delegate_modal.password" class=""><@orcid.msg 'check_password_modal.password' /></label><span class="required">*</span>
+                    <input id="confirm_add_delegate_modal.password" type="password" name="confirm_add_delegate_modal.password" ng-model="password" class="form-control"/>
+                </div>
+                <span class="orcid-error" ng-show="errors.length > 0">
+                    <span ng-repeat='error in errors' ng-bind-html="error"></span>
+                </span>
+            </div>
+            <button class="btn btn-danger"><@orcid.msg 'manage_delegation.btnrevokeaccess'/></button>
             <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
-			
         </form>
         <div ng-show="errors.length === 0">
             <br></br>

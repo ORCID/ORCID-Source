@@ -101,12 +101,18 @@ public class MembersManagerImpl implements MembersManager {
         String orcid = memberId;
         if (!OrcidStringUtils.isValidOrcid(memberId)) {
             Map<String, String> ids = emailManager.findIdByEmail(memberId);
+            //Check if it is using the email
             if (ids != null && ids.containsKey(memberId)) {
                 orcid = ids.get(memberId);
             } else {
-                member.getErrors().add(getMessage("manage_member.email_not_found"));
-                orcid = null;
-            }
+                //Check if can find it by name
+                try {
+                    orcid = profileEntityManager.findByCreditName(memberId);
+                } catch (Exception e) {
+                    member.getErrors().add(getMessage("manage_member.email_not_found"));
+                    orcid = null;
+                }                
+            } 
         }
 
         if (orcid != null) {

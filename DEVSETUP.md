@@ -2,7 +2,9 @@
 
 ##Prerequisites 
 
-1. Install [Java](http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html). Add an environment variable JAVA_HOME. (Verify Java. Go to cmd and type "java -version". It should display the version of Java)
+1. Install [Java 8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html). Add an environment variable JAVA_HOME. (Verify Java. Go to cmd and type "java -version". It should display the version of Java)
+
+* Install [Java JCE](http://www.oracle.com/technetwork/java/javase/downloads/jce8-download-2133166.html). see: [OSX](http://stackoverflow.com/questions/12245179/how-to-install-unlimited-strength-jce-for-jre-7-in-macosx) or [Windows](http://help.boomi.com/atomsphere/GUID-D7FA3445-6483-45C5-85AD-60CA5BB15719.html)
     
 * Install [Maven](http://maven.apache.org/index.html). Add an environment variable M2_HOME. (Verify Maven. Go to cmd and type "mvn -version". It should display the version of Maven)
 

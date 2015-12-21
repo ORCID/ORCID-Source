@@ -36,6 +36,7 @@ import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.PeerReviewManager;
+import org.orcid.core.manager.PersonalDetailsManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileFundingManager;
@@ -58,6 +59,7 @@ import org.orcid.jaxb.model.record_rc1.Employment;
 import org.orcid.jaxb.model.record_rc1.Funding;
 import org.orcid.jaxb.model.record_rc1.PeerReview;
 import org.orcid.jaxb.model.record_rc1.Work;
+import org.orcid.jaxb.model.record_rc2.PersonalDetails;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
 import org.orcid.persistence.dao.ProfileDao;
@@ -113,7 +115,10 @@ public class PublicV2ApiServiceDelegatorImpl implements PublicV2ApiServiceDelega
     private EmailManager emailManager;
     
     @Resource(name = "profileEntityCacheManager")
-    ProfileEntityCacheManager profileEntityCacheManager;
+    private ProfileEntityCacheManager profileEntityCacheManager;
+    
+    @Resource
+    PersonalDetailsManager personalDetailsManager;
     
     @Override
     public Response viewStatusText() {
@@ -157,7 +162,7 @@ public class PublicV2ApiServiceDelegatorImpl implements PublicV2ApiServiceDelega
         Work w = (Work) this.viewWork(orcid, putCode).getEntity();
         ProfileEntity entity = profileEntityManager.findByOrcid(orcid);
         String creditName = null;
-        if (!entity.getCreditNameVisibility().isMoreRestrictiveThan(Visibility.PUBLIC)){
+        if (!entity.getNamesVisibility().isMoreRestrictiveThan(Visibility.PUBLIC)){
             creditName = entity.getCreditName();
         }
         WorkToCiteprocTranslator tran = new  WorkToCiteprocTranslator();
@@ -269,4 +274,12 @@ public class PublicV2ApiServiceDelegatorImpl implements PublicV2ApiServiceDelega
         Emails emails = emailManager.getPublicEmails(orcid);        
         return Response.ok(emails).build();
     }
+    
+    @Override
+    @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED, enableAnonymousAccess = true)
+    public Response viewPersonalDetails(String orcid) {
+        PersonalDetails personalDetails = personalDetailsManager.getPublicPersonalDetails(orcid);
+        return Response.ok(personalDetails).build();
+    }
+    
 }

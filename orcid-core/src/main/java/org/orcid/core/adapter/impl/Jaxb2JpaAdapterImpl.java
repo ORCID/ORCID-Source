@@ -465,7 +465,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
 
     private void setCreditNameDetails(ProfileEntity profileEntity, CreditName creditName) {
         if (creditName != null) {
-            profileEntity.setCreditNameVisibility(creditName.getVisibility());
+            profileEntity.setNamesVisibility(creditName.getVisibility());
             profileEntity.setCreditName(creditName.getContent());
         }
     }

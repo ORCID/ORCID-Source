@@ -123,7 +123,7 @@ public class ChangePersonalInfoForm {
         }
 
         if (currentOrcidProfile.getOrcidBio().getPersonalDetails().getCreditName().getVisibility() == null) {
-            currentOrcidProfile.getOrcidBio().getPersonalDetails().getCreditName().setVisibility(OrcidVisibilityDefaults.CREDIT_NAME_DEFAULT.getVisibility());
+            currentOrcidProfile.getOrcidBio().getPersonalDetails().getCreditName().setVisibility(OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility());
         }
 
         if (currentOrcidProfile.getOrcidBio().getPersonalDetails().getFamilyName() == null) {

@@ -306,11 +306,14 @@
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element name="given-names" minOccurs="1" type="orcid:non-empty-string">
+				<xs:element name="given-names" minOccurs="1">
 					<xs:annotation>
 						<xs:documentation>The given (first and middle) name(s) of the researcher or contributor.
 						</xs:documentation>
 					</xs:annotation>
+					<xs:simpleType>
+						<xs:union memberTypes="orcid:non-empty-string orcid:empty"/>
+					</xs:simpleType>
 				</xs:element>
 				<xs:element name="family-name" minOccurs="0" type="orcid:non-empty-string">
 					<xs:annotation>

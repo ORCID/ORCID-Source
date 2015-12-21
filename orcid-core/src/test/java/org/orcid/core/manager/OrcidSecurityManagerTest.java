@@ -26,11 +26,17 @@ import org.orcid.core.BaseTest;
 import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.exception.OrcidVisibilityException;
 import org.orcid.core.utils.SecurityContextTestUtils;
+import org.orcid.jaxb.model.common.CreditName;
 import org.orcid.jaxb.model.common.Source;
 import org.orcid.jaxb.model.common.SourceClientId;
 import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record_rc1.Work;
+import org.orcid.jaxb.model.record_rc2.Biography;
+import org.orcid.jaxb.model.record_rc2.FamilyName;
+import org.orcid.jaxb.model.record_rc2.GivenNames;
+import org.orcid.jaxb.model.record_rc2.Name;
+import org.orcid.jaxb.model.record_rc2.OtherName;
 
 /**
  * 
@@ -168,6 +174,123 @@ public class OrcidSecurityManagerTest extends BaseTest {
         work.setSource(source);
         source.setSourceClientId(new SourceClientId("APP-5555555555555555"));
         return work;
+    }
+    
+    @Test
+    public void testCheckVisibilityOfNameUsingReadLimited() {
+        SecurityContextTestUtils.setUpSecurityContext(ScopePathType.READ_PUBLIC);
+        Name name = createName();
+        //Check public with any scope
+        orcidSecurityManager.checkVisibility(name);
+        name.setVisibility(Visibility.LIMITED);
+        try {
+            //Check limited with any scope
+            orcidSecurityManager.checkVisibility(name);
+            fail();
+        } catch(OrcidUnauthorizedException ua) {
+            
+        } catch(Exception e) {
+            fail();
+        }
+        
+        SecurityContextTestUtils.setUpSecurityContext(ScopePathType.READ_LIMITED);
+        //Check limited with read_limited scope
+        orcidSecurityManager.checkVisibility(name);
+        
+        name.setVisibility(Visibility.PRIVATE);
+        try {
+            //Check private always fail
+            orcidSecurityManager.checkVisibility(name);
+        } catch(OrcidVisibilityException ua) {
+            
+        } catch(Exception e) {
+            fail();
+        }        
+    }
+    
+    @Test
+    public void testCheckVisibilityOfBiography() {
+        SecurityContextTestUtils.setUpSecurityContext(ScopePathType.READ_PUBLIC);
+        Biography bio = createBiography();
+        //Check public with any scope
+        orcidSecurityManager.checkVisibility(bio);
+        bio.setVisibility(Visibility.LIMITED);
+        try {
+            //Check limited with any scope
+            orcidSecurityManager.checkVisibility(bio);
+            fail();
+        } catch(OrcidUnauthorizedException ua) {
+            
+        } catch(Exception e) {
+            fail();
+        }
+        
+        SecurityContextTestUtils.setUpSecurityContext(ScopePathType.READ_LIMITED);
+        //Check limited with read_limited scope
+        orcidSecurityManager.checkVisibility(bio);
+        
+        bio.setVisibility(Visibility.PRIVATE);
+        try {
+            //Check private always fail
+            orcidSecurityManager.checkVisibility(bio);
+        } catch(OrcidVisibilityException ua) {
+            
+        } catch(Exception e) {
+            fail();
+        }
+    }
+    
+    @Test
+    public void testOtherName() {
+        SecurityContextTestUtils.setUpSecurityContext(ScopePathType.READ_PUBLIC);
+        OtherName otherName = createOtherName();
+        
+        //Check public with any scope
+        orcidSecurityManager.checkVisibility(otherName);
+        otherName.setVisibility(Visibility.LIMITED);
+        try {
+            //Check limited with any scope
+            orcidSecurityManager.checkVisibility(otherName);
+            fail();
+        } catch(OrcidUnauthorizedException ua) {
+            
+        } catch(Exception e) {
+            fail();
+        }
+        
+        SecurityContextTestUtils.setUpSecurityContext(ScopePathType.READ_LIMITED);
+        //Check limited with read_limited scope
+        orcidSecurityManager.checkVisibility(otherName);
+        
+        otherName.setVisibility(Visibility.PRIVATE);
+        try {
+            //Check private always fail
+            orcidSecurityManager.checkVisibility(otherName);
+        } catch(OrcidVisibilityException ua) {
+            
+        } catch(Exception e) {
+            fail();
+        }
+    }
+    
+    private Name createName() {
+        Name name = new Name();
+        name.setCreditName(new CreditName("Credit Name"));
+        name.setFamilyName(new FamilyName("Family Name"));
+        name.setGivenNames(new GivenNames("Given Names"));
+        name.setVisibility(Visibility.PUBLIC);
+        return name;
+    }
+    
+    private Biography createBiography() {
+        return new Biography("Biography", Visibility.PUBLIC);
+    }
+    
+    private OtherName createOtherName() {
+        OtherName otherName = new OtherName();
+        otherName.setContent("other-name");
+        otherName.setVisibility(Visibility.PUBLIC);
+        return otherName;
     }
 
 }

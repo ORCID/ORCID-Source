@@ -95,4 +95,8 @@ public class OrcidApiConstants {
 
     public static final String INTERNAL_API_PERSON_READ = "/{orcid}/person";
     public static final String OTHER_NAMES =  "/{orcid}/other-names";
+    
+    public static final String PERSONAL_DETAILS = "/{orcid}/personal-details";
+    
+    public static final String MEMBER_INFO = "/member-info";
 }       

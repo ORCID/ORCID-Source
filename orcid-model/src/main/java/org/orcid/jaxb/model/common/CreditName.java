@@ -69,6 +69,11 @@ public class CreditName implements Serializable, VisibilityType {
     public CreditName(String content) {
         this.content = content;
     }
+    
+    public CreditName(String content, Visibility visibility) {
+        this.content = content;
+        this.visibility = visibility;
+    }
 
     /**
      * Gets the value of the content property.

@@ -162,10 +162,8 @@ public class OrcidIndexManagerImplTest extends BaseTest {
     @Test
     @Rollback
     public void mandatoryOnlyFieldsPersistCorrectly() throws Exception {
-
         orcidIndexManager.persistProfileInformationForIndexing(getOrcidProfileMandatoryOnly());
         verify(solrDao).persist(eq(mandatoryDBFieldsSolrDocumentForPersistence()));
-
     }
 
     @Test
@@ -194,6 +192,8 @@ public class OrcidIndexManagerImplTest extends BaseTest {
     private OrcidProfile orcidProfileLimitedVisiblityCreditNameAndOtherNames() {
         OrcidProfile limitedOrcid = getStandardOrcid();
         // hide other names fields
+        limitedOrcid.getOrcidBio().getPersonalDetails().getGivenNames().setVisibility(Visibility.LIMITED);
+        limitedOrcid.getOrcidBio().getPersonalDetails().getFamilyName().setVisibility(Visibility.LIMITED);
         limitedOrcid.getOrcidBio().getPersonalDetails().getOtherNames().setVisibility(Visibility.LIMITED);
         limitedOrcid.getOrcidBio().getPersonalDetails().getCreditName().setVisibility(Visibility.LIMITED);
         return limitedOrcid;
@@ -234,8 +234,12 @@ public class OrcidIndexManagerImplTest extends BaseTest {
         contactDetails.addOrReplacePrimaryEmail(new Email("stan@test.com"));
         orcidBio.setContactDetails(contactDetails);
         PersonalDetails personalDetails = new PersonalDetails();
-        personalDetails.setFamilyName(new FamilyName("Logan"));
-        personalDetails.setGivenNames(new GivenNames("Donald Edward"));
+        FamilyName familyName = new FamilyName("Logan");
+        familyName.setVisibility(Visibility.PUBLIC);
+        personalDetails.setFamilyName(familyName);
+        GivenNames givenNames = new GivenNames("Donald Edward");
+        givenNames.setVisibility(Visibility.PUBLIC);
+        personalDetails.setGivenNames(givenNames);
         orcidBio.setPersonalDetails(personalDetails);
 
         OrcidActivities orcidActivities = new OrcidActivities();
@@ -387,13 +391,17 @@ public class OrcidIndexManagerImplTest extends BaseTest {
         creditName.setVisibility(Visibility.PUBLIC);
         personalDetails.setCreditName(creditName);
 
-        personalDetails.setFamilyName(new FamilyName("familyName"));
+        FamilyName familyName = new FamilyName("familyName");
+        familyName.setVisibility(Visibility.PUBLIC);
+        personalDetails.setFamilyName(familyName);
         OtherNames otherNames = new OtherNames();
         otherNames.setVisibility(Visibility.PUBLIC);
         otherNames.getOtherName().add(new OtherName("Other 1"));
         otherNames.getOtherName().add(new OtherName("Other 2"));
         personalDetails.setOtherNames(otherNames);
-        personalDetails.setGivenNames(new GivenNames("givenNames"));
+        GivenNames givenNames = new GivenNames("givenNames");
+        givenNames.setVisibility(Visibility.PUBLIC);
+        personalDetails.setGivenNames(givenNames);
         orcidBio.setPersonalDetails(personalDetails);
 
         ExternalIdentifiers externalIdentifiers = new ExternalIdentifiers();
@@ -454,6 +462,9 @@ public class OrcidIndexManagerImplTest extends BaseTest {
         OrcidSolrDocument orcidSolrDocument = fullyPopulatedSolrDocumentForPersistence();
         orcidSolrDocument.setCreditName(null);
         orcidSolrDocument.setOtherNames(null);
+        orcidSolrDocument.setGivenNames(null);
+        orcidSolrDocument.setFamilyName(null);
+        orcidSolrDocument.setGivenAndFamilyNames(null);
         OrcidProfile orcidProfile = orcidProfileLimitedVisiblityCreditNameAndOtherNames();
         OrcidMessage orcidMessage = createFilteredOrcidMessage(orcidProfile);
         orcidSolrDocument.setPublicProfileMessage(orcidMessage.toString());

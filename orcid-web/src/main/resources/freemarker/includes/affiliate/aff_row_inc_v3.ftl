@@ -70,7 +70,7 @@
 		<div class="sources-container-header">          
 			<div class="row">
 				<div class="col-md-7 col-sm-7 col-xs-7">
-					<@orcid.msg 'groups.common.source'/>: {{group.getActive().sourceName}}	
+					<@orcid.msg 'groups.common.source'/>: {{(group.getActive().sourceName == null || group.getActive().sourceName == '') ? group.getActive().source : group.getActive().sourceName}}	
 				</div>
 				<div class="col-md-3 col-sm-3 col-xs-3">
 					<@orcid.msg 'groups.common.created'/>: <span ng-bind="group.getActive().createdDate | ajaxFormDateToISO8601"></span>

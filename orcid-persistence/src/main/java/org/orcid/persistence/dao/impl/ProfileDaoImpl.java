@@ -71,6 +71,14 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         query.setParameter("name", name);
         return query.getResultList();
     }
+    
+    @Override
+    public String findOrcidByCreditName(String creditName) {
+        TypedQuery<String> query = entityManager.createQuery("select id from ProfileEntity where lower(creditName) like lower(:credit_name || '%')",
+                String.class);
+        query.setParameter("credit_name", creditName);
+        return query.getSingleResult();
+    }
 
     @SuppressWarnings("unchecked")
     public List<String> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults) {
@@ -379,7 +387,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     @Transactional
     public boolean updateProfile(ProfileEntity profile) {
         Query query = entityManager
-                .createNativeQuery("update profile set last_modified=now(), credit_name=:credit_name, family_name=:family_name, given_names=:given_names, biography=:biography, iso2_country=:iso2_country, biography_visibility=:biography_visibility, keywords_visibility=:keywords_visibility, researcher_urls_visibility=:researcher_urls_visibility, other_names_visibility=:other_names_visibility, names_visibility=:credit_name_visibility, profile_address_visibility=:profile_address_visibility, indexing_status='PENDING' where orcid=:orcid");
+                .createNativeQuery("update profile set last_modified=now(), credit_name=:credit_name, family_name=:family_name, given_names=:given_names, biography=:biography, iso2_country=:iso2_country, biography_visibility=:biography_visibility, keywords_visibility=:keywords_visibility, researcher_urls_visibility=:researcher_urls_visibility, other_names_visibility=:other_names_visibility, names_visibility=:names_visibility, profile_address_visibility=:profile_address_visibility, indexing_status='PENDING' where orcid=:orcid");
         query.setParameter("credit_name", profile.getCreditName());
         query.setParameter("family_name", profile.getFamilyName());
         query.setParameter("given_names", profile.getGivenNames());
@@ -390,7 +398,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         query.setParameter("keywords_visibility", StringUtils.upperCase(profile.getKeywordsVisibility().value()));
         query.setParameter("researcher_urls_visibility", StringUtils.upperCase(profile.getResearcherUrlsVisibility().value()));
         query.setParameter("other_names_visibility", StringUtils.upperCase(profile.getOtherNamesVisibility().value()));
-        query.setParameter("credit_name_visibility", StringUtils.upperCase(profile.getCreditNameVisibility().value()));
+        query.setParameter("names_visibility", StringUtils.upperCase(profile.getNamesVisibility().value()));
         query.setParameter("profile_address_visibility", StringUtils.upperCase(profile.getProfileAddressVisibility().value()));
         query.setParameter("orcid", profile.getId());
 
@@ -576,14 +584,14 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     @Override
     @Transactional
-    public void updateNames(String orcid, String givenNames, String familyName, String creditName, Visibility creditNameVisibility) {
+    public void updateNames(String orcid, String givenNames, String familyName, String creditName, Visibility namesVisibility) {
         Query updateQuery = entityManager
-                .createQuery("update ProfileEntity set lastModified = now(), family_name = :familyName, given_names = :givenNames, credit_name = :creditName, names_visibility=:creditNameVisibility where orcid = :orcid");
+                .createQuery("update ProfileEntity set lastModified = now(), family_name = :familyName, given_names = :givenNames, credit_name = :creditName, names_visibility=:namesVisibility where orcid = :orcid");
         updateQuery.setParameter("orcid", orcid);
         updateQuery.setParameter("givenNames", givenNames);
         updateQuery.setParameter("familyName", familyName);
         updateQuery.setParameter("creditName", creditName);
-        updateQuery.setParameter("creditNameVisibility", creditNameVisibility == null ? null : StringUtils.upperCase(creditNameVisibility.value()));
+        updateQuery.setParameter("namesVisibility", namesVisibility == null ? null : StringUtils.upperCase(namesVisibility.value()));
         updateQuery.executeUpdate();
     }
 
