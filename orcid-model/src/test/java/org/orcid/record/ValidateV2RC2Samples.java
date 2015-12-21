@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.record_2_0_rc2;
+package org.orcid.record;
 
 import static org.hamcrest.core.AnyOf.anyOf;
 import static org.hamcrest.core.Is.is;
@@ -32,7 +32,11 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
 import org.junit.Test;
+import org.orcid.jaxb.model.common.Country;
+import org.orcid.jaxb.model.common.Iso3166Country;
 import org.orcid.jaxb.model.common.Visibility;
+import org.orcid.jaxb.model.record_rc2.Address;
+import org.orcid.jaxb.model.record_rc2.Addresses;
 import org.orcid.jaxb.model.record_rc2.Biography;
 import org.orcid.jaxb.model.record_rc2.CreditName;
 import org.orcid.jaxb.model.record_rc2.ExternalIdentifier;
@@ -46,7 +50,7 @@ import org.orcid.jaxb.model.record_rc2.PersonalDetails;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
 
-public class ValidateV2Samples {
+public class ValidateV2RC2Samples {
     @Test
     public void testUnmarshallPersonalDetails() {
         PersonalDetails personalDetails = (PersonalDetails) unmarshallFromPath("/record_2.0_rc2/samples/personal-details-2.0_rc2.xml", PersonalDetails.class);
@@ -103,7 +107,32 @@ public class ValidateV2Samples {
 
     @Test
     public void testUnmarshallAddress() {
-        fail();
+        Addresses addresses = (Addresses) unmarshallFromPath("/record_2.0_rc2/samples/addresses-2.0_rc2.xml", Addresses.class);
+        assertNotNull(addresses);
+        assertNotNull(addresses.getAddress());
+        assertEquals(2, addresses.getAddress().size());
+        for(Address address : addresses.getAddress()) {
+            assertNotNull(address.getPutCode());
+            assertNotNull(address.getCreatedDate());
+            assertNotNull(address.getLastModifiedDate());
+            assertNotNull(address.getCountry());
+            if(address.getPutCode().equals(new Long(1))) {                
+                assertEquals(Iso3166Country.US, address.getCountry().getValue());
+                assertEquals(Visibility.PUBLIC, address.getVisibility());
+            } else {
+                assertEquals(Iso3166Country.CR, address.getCountry().getValue());
+                assertEquals(Visibility.LIMITED, address.getVisibility());
+            }            
+        }
+        
+        Address address = (Address) unmarshallFromPath("/record_2.0_rc2/samples/address-2.0_rc2.xml", Address.class);
+        assertNotNull(address);
+        assertNotNull(address.getPutCode());
+        assertNotNull(address.getCreatedDate());
+        assertNotNull(address.getLastModifiedDate());
+        assertNotNull(address.getCountry());
+        assertEquals(Iso3166Country.US, address.getCountry().getValue());
+        assertEquals(Visibility.PUBLIC, address.getVisibility());
     }
 
     @Test
@@ -120,12 +149,7 @@ public class ValidateV2Samples {
         assertNotNull(creditName);
         assertEquals("credit-name", creditName.getContent());
         assertEquals(Visibility.PUBLIC.value(), creditName.getVisibility().value());
-    }
-
-    @Test
-    public void testUnmarshallEmails() {
-        fail();
-    }
+    }    
 
     @SuppressWarnings("unchecked")
     @Test
@@ -149,11 +173,11 @@ public class ValidateV2Samples {
 
         ExternalIdentifier extId = (ExternalIdentifier) unmarshallFromPath("/record_2.0_rc2/samples/external-identifier-2.0_rc2.xml", ExternalIdentifier.class);
         assertNotNull(extId);
-        assertEquals("common-name-1", extId.getCommonName());
+        assertEquals("A-0003", extId.getCommonName());
         assertEquals(Long.valueOf(1), extId.getPutCode());
-        assertEquals("id-reference-1", extId.getReference());
+        assertEquals("A-0003", extId.getReference());
         assertNotNull(extId.getUrl());
-        assertEquals("http://url/1", extId.getUrl().getValue());
+        assertEquals("http://ext-id/A-0003", extId.getUrl().getValue());
         assertEquals(Visibility.PUBLIC.value(), extId.getVisibility().value());
         assertNotNull(extId.getCreatedDate());
         assertNotNull(extId.getLastModifiedDate());
@@ -238,6 +262,11 @@ public class ValidateV2Samples {
         fail();
     }
 
+    @Test
+    public void testUnmarshallEmails() {
+        fail();
+    }
+    
     private Object unmarshallFromPath(String path, Class<?> type) {
         try (Reader reader = new InputStreamReader(getClass().getResourceAsStream(path))) {
             Object obj = unmarshall(reader, type);
@@ -266,6 +295,10 @@ public class ValidateV2Samples {
                 result = (Keywords) obj;
             } else if (Keyword.class.equals(type)) {
                 result = (Keyword) obj;
+            } else if (Addresses.class.equals(type)) {
+                result = (Addresses) obj;
+            } else if(Address.class.equals(type)) {
+                result = (Address) obj;
             }
             return result;
         } catch (IOException e) {
