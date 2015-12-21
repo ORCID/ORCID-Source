@@ -27,7 +27,7 @@ import org.orcid.jaxb.model.common.Visibility;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "content" })
-@XmlRootElement(name = "biography")
+@XmlRootElement(name = "biography", namespace = "http://www.orcid.org/ns/personal-details")
 public class Biography {
     @XmlValue
     protected String content;

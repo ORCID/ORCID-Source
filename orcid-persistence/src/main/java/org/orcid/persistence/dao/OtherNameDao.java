@@ -29,7 +29,7 @@ public interface OtherNameDao extends GenericDao<OtherNameEntity, Long> {
      * @return
      *           The list of other names related with the specified orcid profile
      * */
-    public List<OtherNameEntity> getOtherName(String orcid);
+    List<OtherNameEntity> getOtherNames(String orcid);
 
     /**
      * Update other name entity with new values
@@ -37,7 +37,7 @@ public interface OtherNameDao extends GenericDao<OtherNameEntity, Long> {
      * @return
      *          true if the other name was sucessfully updated, false otherwise
      * */
-    public boolean updateOtherName(OtherNameEntity otherName);
+    boolean updateOtherName(OtherNameEntity otherName);
 
     /**
      * Create other name for the specified account
@@ -46,7 +46,7 @@ public interface OtherNameDao extends GenericDao<OtherNameEntity, Long> {
      * @return
      *          true if the other name was successfully created, false otherwise 
      * */
-    public boolean addOtherName(String orcid, String displayName);
+    boolean addOtherName(String orcid, String displayName);
 
     /**
      * Delete other name from database
@@ -54,7 +54,9 @@ public interface OtherNameDao extends GenericDao<OtherNameEntity, Long> {
      * @return 
      *          true if the other name was successfully deleted, false otherwise
      * */
-    public boolean deleteOtherName(OtherNameEntity otherName);
+    boolean deleteOtherName(OtherNameEntity otherName);
     
-    public boolean updateOtherNamesVisibility(String orcid, Visibility visibility);
+    boolean updateOtherNamesVisibility(String orcid, Visibility visibility);
+    
+    OtherNameEntity getOtherName(String orcid, Long putCode);
 }

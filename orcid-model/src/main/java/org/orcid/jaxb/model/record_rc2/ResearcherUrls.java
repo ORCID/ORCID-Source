@@ -26,18 +26,14 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.orcid.jaxb.model.common.LastModifiedDate;
-
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "lastModifiedDate", "researcherUrls" })
+@XmlType(propOrder = { "researcherUrls" })
 @XmlRootElement(name = "researcher-urls", namespace = "http://www.orcid.org/ns/researcher-url")
 public class ResearcherUrls implements Serializable {
     private static final long serialVersionUID = 6312730308815255894L;
 
     @XmlElement(name = "researcher-url", namespace = "http://www.orcid.org/ns/researcher-url")
     List<ResearcherUrl> researcherUrls;
-    @XmlElement(name = "last-modified-date", namespace = "http://www.orcid.org/ns/common")
-    protected LastModifiedDate lastModifiedDate;
     @XmlAttribute
     protected String path;
 
@@ -55,14 +51,6 @@ public class ResearcherUrls implements Serializable {
 
     public void setPath(String path) {
         this.path = path;
-    }
-
-    public LastModifiedDate getLastModifiedDate() {
-        return lastModifiedDate;
-    }
-
-    public void setLastModifiedDate(LastModifiedDate lastModifiedDate) {
-        this.lastModifiedDate = lastModifiedDate;
     }
 
     @Override
