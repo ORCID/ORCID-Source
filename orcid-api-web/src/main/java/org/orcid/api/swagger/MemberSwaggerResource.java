@@ -18,8 +18,6 @@ package org.orcid.api.swagger;
 
 import io.swagger.annotations.Api;
 import io.swagger.models.Swagger;
-import io.swagger.models.auth.ApiKeyAuthDefinition;
-import io.swagger.models.auth.In;
 import io.swagger.models.auth.OAuth2Definition;
 import io.swagger.util.Json;
 
@@ -72,14 +70,10 @@ public class MemberSwaggerResource extends SwaggerJSONResource {
 
         OAuth2Definition oauthTwoLegs = new OAuth2Definition();
         oauthTwoLegs.application(this.tokenEndPoint);
-        oauthTwoLegs.scope(ScopePathType.PREMIUM_NOTIFICATION.value(), "Notifications (TWO LEGS)");
-        oauthTwoLegs.scope(ScopePathType.READ_PUBLIC.value(), "Read Public record (TWO LEGS)");
+        oauthTwoLegs.scope(ScopePathType.PREMIUM_NOTIFICATION.value(), "Notifications");
+        oauthTwoLegs.scope(ScopePathType.READ_PUBLIC.value(), "Read Public record");
         s.securityDefinition("orcid_two_legs",oauthTwoLegs);        
         
-        // TODO: fix swagger UI to recognize two legged auth flow.
-        // or we can put bearer tokens in as implicit params...
-        //s.securityDefinition("bearer_token", new
-        //ApiKeyAuthDefinition("bearer_token", In.HEADER));
         return s;
     }
 

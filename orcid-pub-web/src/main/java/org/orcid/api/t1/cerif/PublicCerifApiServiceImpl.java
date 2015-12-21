@@ -58,18 +58,10 @@ public class PublicCerifApiServiceImpl {
         this.serviceDelegator = serviceDelegator;
     }
 
-    /*
-     * TODO: implement query params
-     * fedIds={true/false}&classifications={true/fal
-     * se}&links={true/false/{cerifEntity1;cerifEntit
-     * y2;...;cerifEntityN}}&linkedObjects={true | false}&linkedSemantics={true
-     * | false}
-     */
-
     @GET
     @Produces(value = { MediaType.APPLICATION_XML })
     @Path(OrcidApiConstants.CERIF_PERSONS_PATH)
-    @ApiOperation(value = "Fetch a person record")
+    @ApiOperation(value = "Fetch a person record", authorizations = { @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_PUBLIC, description = "you need this") }) })
     @ApiResponses(value = { @ApiResponse(code = 200, message = "Person found"), @ApiResponse(code = 404, message = "Person not found") })
     public Response viewPerson(@PathParam("id") String id) {
         return serviceDelegator.getPerson(id);
@@ -78,7 +70,7 @@ public class PublicCerifApiServiceImpl {
     @GET
     @Produces(value = { MediaType.APPLICATION_XML })
     @Path(OrcidApiConstants.CERIF_PUBLICATIONS_PATH)
-    @ApiOperation(value = "Fetch a research publication record")
+    @ApiOperation(value = "Fetch a research publication record", authorizations = { @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_PUBLIC, description = "you need this") }) })
     @ApiResponses(value = { @ApiResponse(code = 200, message = "Publication found"), @ApiResponse(code = 404, message = "Publication not found") })
     public Response viewPublication(@PathParam("id") String id) {
         try {
@@ -106,7 +98,7 @@ public class PublicCerifApiServiceImpl {
     @GET
     @Produces(value = { MediaType.APPLICATION_XML })
     @Path(OrcidApiConstants.CERIF_ENTITIES_PATH)
-    @ApiOperation(value = "Fetch the list of supported entities")
+    @ApiOperation(value = "Fetch the list of supported entities", authorizations = { @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_PUBLIC, description = "you need this") }) })
     @ApiResponses(value = { @ApiResponse(code = 200, message = "OK") })
     public Response viewEntities() {
         return serviceDelegator.getEntities();
@@ -115,7 +107,7 @@ public class PublicCerifApiServiceImpl {
     @GET
     @Produces(value = { MediaType.APPLICATION_XML })
     @Path(OrcidApiConstants.CERIF_SEMANTICS_PATH)
-    @ApiOperation(value = "Fetch the CERIF semantics")
+    @ApiOperation(value = "Fetch the CERIF semantics", authorizations = { @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_PUBLIC, description = "you need this") }) })
     @ApiResponses(value = { @ApiResponse(code = 200, message = "OK") })
     public Response viewSemantics() {
         return serviceDelegator.getSemantics();
