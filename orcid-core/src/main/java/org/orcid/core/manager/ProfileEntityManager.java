@@ -91,4 +91,6 @@ public interface ProfileEntityManager {
     List<ApplicationSummary> getApplications(List<OrcidOauth2TokenDetail> tokenDetails);
     
     String getOrcidHash(String orcid) throws NoSuchAlgorithmException;
+    
+    String retrivePublicDisplayName(String orcid);
 }
