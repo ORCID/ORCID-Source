@@ -47,6 +47,15 @@ public class OtherNameDaoImpl extends GenericDaoImpl<OtherNameEntity, Long> impl
         return query.getResultList();
     }
 
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<OtherNameEntity> getOtherNames(String orcid, org.orcid.jaxb.model.common.Visibility visibility) {
+        Query query = entityManager.createQuery("FROM OtherNameEntity WHERE profile.id=:orcid AND visibility=:visibility");
+        query.setParameter("orcid", orcid);
+        query.setParameter("visibility", visibility);
+        return query.getResultList();
+    }
+    
     /**
      * Update other name entity with new values
      * @param otherName

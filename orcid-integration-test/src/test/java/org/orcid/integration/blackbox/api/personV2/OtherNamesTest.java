@@ -87,7 +87,7 @@ public class OtherNamesTest extends BlackBoxBase {
     
     /**
      * PRECONDITIONS: 
-     *          The user should have just one other name "Other name" which should be public
+     *          The user should have two public other names "other-name-1" and "other-name-2"
      * @throws JSONException 
      * @throws InterruptedException 
      * */
@@ -106,8 +106,7 @@ public class OtherNamesTest extends BlackBoxBase {
         assertThat(otherNames.getOtherNames().get(1).getContent(), anyOf(is("other-name-1"), is("other-name-2")));
         assertEquals(Visibility.PUBLIC, otherNames.getOtherNames().get(0).getVisibility());
         assertEquals(Visibility.PUBLIC, otherNames.getOtherNames().get(1).getVisibility());
-    }
-    
+    }    
     
     @SuppressWarnings({ "rawtypes", "deprecation" })
     @Test
@@ -186,6 +185,38 @@ public class OtherNamesTest extends BlackBoxBase {
         
         //Check it was actually deleted
         testGetOtherNamesWihtMembersAPI();
+    }
+    
+    /**
+     * PRECONDITIONS: 
+     *          The user should have two public other names "other-name-1" and "other-name-2"
+     * @throws JSONException 
+     * @throws InterruptedException 
+     * */
+    @SuppressWarnings("unchecked")
+    @Test
+    public void testGetOtherNamesWithPublicAPI() throws InterruptedException, JSONException {
+        ClientResponse getResponse = publicV2ApiClient.viewOtherNamesXML(user1OrcidId);
+        assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
+        OtherNames otherNames = getResponse.getEntity(OtherNames.class);
+        assertNotNull(otherNames);
+        assertNotNull(otherNames.getOtherNames());
+        assertEquals(2, otherNames.getOtherNames().size());
+        assertThat(otherNames.getOtherNames().get(0).getContent(), anyOf(is("other-name-1"), is("other-name-2")));
+        assertThat(otherNames.getOtherNames().get(1).getContent(), anyOf(is("other-name-1"), is("other-name-2")));
+        assertEquals(Visibility.PUBLIC, otherNames.getOtherNames().get(0).getVisibility());
+        assertEquals(Visibility.PUBLIC, otherNames.getOtherNames().get(1).getVisibility());
+        
+        OtherName otherName1 = otherNames.getOtherNames().get(0);
+        
+        getResponse = publicV2ApiClient.viewOtherNameXML(user1OrcidId, otherName1.getPutCode());
+        assertNotNull(getResponse);
+        
+        OtherName otherName = getResponse.getEntity(OtherName.class);
+        assertNotNull(otherName);
+        assertEquals(otherName1.getContent(), otherName.getContent());
+        assertEquals(otherName1.getVisibility(), otherName.getVisibility());
+        assertEquals(otherName1.getPutCode(), otherName.getPutCode());
     }
     
     public String getAccessToken(String clientId, String clientSecret, String redirectUri) throws InterruptedException, JSONException {

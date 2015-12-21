@@ -65,6 +65,8 @@ public interface OtherNameManager {
 
     org.orcid.jaxb.model.record_rc2.OtherNames getOtherNamesV2(String orcid);
     
+    org.orcid.jaxb.model.record_rc2.OtherNames getPublicOtherNamesV2(String orcid);
+    
     org.orcid.jaxb.model.record_rc2.OtherNames getMinimizedOtherNamesV2(String orcid);
     
     org.orcid.jaxb.model.record_rc2.OtherName getOtherNameV2(String orcid, Long putCode);

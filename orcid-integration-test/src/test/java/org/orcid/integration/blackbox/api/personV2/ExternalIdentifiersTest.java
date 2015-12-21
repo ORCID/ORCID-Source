@@ -205,6 +205,38 @@ public class ExternalIdentifiersTest extends BlackBoxBase {
         testGetExternalIdentifiersWihtMembersAPI();
     }
     
+    /**
+     * PRECONDITIONS: 
+     *          The user should have one public external identifiers: 
+     *          1) A-0001 PUBLIC
+     * @throws JSONException 
+     * @throws InterruptedException 
+     * */
+    @Test
+    public void testGetExternalIdentifiersWihtPublicAPI() throws InterruptedException, JSONException {
+        String accessToken = getAccessToken(this.client1ClientId, this.client1ClientSecret, this.client1RedirectUri);
+        assertNotNull(accessToken);
+        ClientResponse getResponse = publicV2ApiClient.viewExternalIdentifiersXML(user1OrcidId);
+        assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
+        ExternalIdentifiers externalIdentifiers = getResponse.getEntity(ExternalIdentifiers.class);
+        assertNotNull(externalIdentifiers);
+        assertNotNull(externalIdentifiers.getExternalIdentifier());
+        assertEquals(1, externalIdentifiers.getExternalIdentifier().size());
+        assertEquals("A-0001", externalIdentifiers.getExternalIdentifier().get(0).getCommonName());
+        assertEquals("A-0001", externalIdentifiers.getExternalIdentifier().get(0).getReference());
+        assertEquals("http://ext-id/A-0001", externalIdentifiers.getExternalIdentifier().get(0).getUrl().getValue());
+        
+        Long putCode = externalIdentifiers.getExternalIdentifier().get(0).getPutCode();
+        getResponse = publicV2ApiClient.viewExternalIdentifierXML(user1OrcidId, putCode);
+        assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
+        ExternalIdentifier extId = getResponse.getEntity(ExternalIdentifier.class);
+        assertEquals("A-0001", extId.getCommonName());
+        assertEquals("A-0001", extId.getReference());
+        assertEquals("http://ext-id/A-0001", extId.getUrl().getValue());
+        assertEquals(putCode, extId.getPutCode());
+        
+    }
+    
     public String getAccessToken(String clientId, String clientSecret, String redirectUri) throws InterruptedException, JSONException {
         if (accessTokens.containsKey(clientId)) {
             return accessTokens.get(clientId);
