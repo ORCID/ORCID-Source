@@ -21,7 +21,7 @@
 // Generated on: 2012.01.18 at 10:32:14 AM GMT 
 //
 
-package org.orcid.jaxb.model.record.summary_rc1;
+package org.orcid.jaxb.model.record.summary_rc2;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -36,8 +36,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.orcid.jaxb.model.record.util.RecordUtil;
-import org.orcid.jaxb.model.record_rc1.ActivitiesContainer;
-import org.orcid.jaxb.model.record_rc1.Activity;
+import org.orcid.jaxb.model.record_rc2.ActivitiesContainer;
+import org.orcid.jaxb.model.record_rc2.Activity;
 
 /**
  * <p>
@@ -181,7 +181,7 @@ public class ActivitiesSummary implements Serializable, ActivitiesContainer {
                     }
                 }
             }
-        }
+        } 
         
         //Set peer reviews
         if(peerReviews != null){
