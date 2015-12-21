@@ -163,6 +163,12 @@ public class OtherNameManagerImpl implements OtherNameManager {
     }
     
     @Override
+    public org.orcid.jaxb.model.record_rc2.OtherNames getPublicOtherNamesV2(String orcid) {
+        List<OtherNameEntity> otherNameEntityList = otherNameDao.getOtherNames(orcid, Visibility.PUBLIC);
+        return jpaJaxbOtherNameAdapter.toOtherNameList(otherNameEntityList);
+    }
+    
+    @Override
     public org.orcid.jaxb.model.record_rc2.OtherNames getMinimizedOtherNamesV2(String orcid) {
         List<OtherNameEntity> otherNameEntityList = otherNameDao.getOtherNames(orcid);
         return jpaJaxbOtherNameAdapter.toMinimizedOtherNameList(otherNameEntityList);

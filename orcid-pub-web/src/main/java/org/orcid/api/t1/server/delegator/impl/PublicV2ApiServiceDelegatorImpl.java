@@ -296,30 +296,30 @@ public class PublicV2ApiServiceDelegatorImpl implements PublicV2ApiServiceDelega
     @Override
     @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewOtherNames(String orcid) {
-        OtherNames otherNames = otherNameManager.getOtherNamesV2(orcid);
+        OtherNames otherNames = otherNameManager.getPublicOtherNamesV2(orcid);
         return Response.ok(otherNames).build();
     }
 
     @Override
+    @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewOtherName(String orcid, Long putCode) {
         OtherName otherName = otherNameManager.getOtherNameV2(orcid, putCode);
+        orcidSecurityManager.checkVisibility(otherName);
         return Response.ok(otherName).build();
     }
 
     @Override
+    @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewExternalIdentifiers(String orcid) {
-        ExternalIdentifiers extIds = externalIdentifierManager.getExternalIdentifiersV2(orcid);        
+        ExternalIdentifiers extIds = externalIdentifierManager.getPublicExternalIdentifiersV2(orcid);        
         return Response.ok(extIds).build();
     }
 
     @Override
+    @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewExternalIdentifier(String orcid, Long putCode) {
         ExternalIdentifier extId = externalIdentifierManager.getExternalIdentifierV2(orcid, putCode);        
+        orcidSecurityManager.checkVisibility(extId);
         return Response.ok(extId).build();
-    }
-    
-    
-    
-    
-    
+    }    
 }
