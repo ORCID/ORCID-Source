@@ -138,6 +138,10 @@
             <param-name>com.sun.jersey.config.property.packages</param-name>
             <param-value>org.orcid.api.t1;org.orcid.api.client;org.orcid.api.common;com.fasterxml.jackson.jaxrs.json</param-value>
         </init-param>
+        <init-param>
+            <param-name>com.sun.jersey.spi.container.ContainerRequestFilters</param-name>
+            <param-value>org.orcid.core.web.filters.ApiVersionCheckFilter</param-value>
+        </init-param>
     </filter>
 
     <filter-mapping>
