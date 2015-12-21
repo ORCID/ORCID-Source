@@ -32,13 +32,14 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
 import org.junit.Test;
-import org.orcid.jaxb.model.common.Country;
 import org.orcid.jaxb.model.common.Iso3166Country;
 import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.jaxb.model.record_rc2.Address;
 import org.orcid.jaxb.model.record_rc2.Addresses;
 import org.orcid.jaxb.model.record_rc2.Biography;
 import org.orcid.jaxb.model.record_rc2.CreditName;
+import org.orcid.jaxb.model.record_rc2.Email;
+import org.orcid.jaxb.model.record_rc2.Emails;
 import org.orcid.jaxb.model.record_rc2.ExternalIdentifier;
 import org.orcid.jaxb.model.record_rc2.ExternalIdentifiers;
 import org.orcid.jaxb.model.record_rc2.Keyword;
@@ -258,14 +259,38 @@ public class ValidateV2RC2Samples {
     }
 
     @Test
+    public void testUnmarshallEmails() {
+        Emails emails = (Emails) unmarshallFromPath("/record_2.0_rc2/samples/emails-2.0_rc2.xml", Emails.class);
+        assertNotNull(emails);
+        assertNotNull(emails.getEmails());
+        assertEquals(2, emails.getEmails().size());
+        
+        for(Email email : emails.getEmails()) {
+            assertNotNull(email.getPutCode());
+            assertNotNull(email.getCreatedDate());
+            assertNotNull(email.getLastModifiedDate());
+            if(email.getPutCode().equals(Long.valueOf(1))) {
+                assertEquals(Visibility.PUBLIC, email.getVisibility());
+                assertEquals("user1@email.com", email.getEmail());
+            } else {
+                assertEquals(Visibility.PUBLIC, email.getVisibility());
+                assertEquals("user2@email.com", email.getEmail());
+            }
+        }
+        
+        Email email= (Email) unmarshallFromPath("/record_2.0_rc2/samples/email-2.0_rc2.xml", Email.class);
+        assertNotNull(email);
+        assertNotNull(email.getPutCode());
+        assertNotNull(email.getCreatedDate());
+        assertNotNull(email.getLastModifiedDate());
+        assertEquals(Visibility.PUBLIC, email.getVisibility());
+        assertEquals("user1@email.com", email.getEmail());
+    }
+    
+    @Test
     public void testUnmarshallPerson() {
         fail();
-    }
-
-    @Test
-    public void testUnmarshallEmails() {
-        fail();
-    }
+    }    
     
     private Object unmarshallFromPath(String path, Class<?> type) {
         try (Reader reader = new InputStreamReader(getClass().getResourceAsStream(path))) {
@@ -299,6 +324,10 @@ public class ValidateV2RC2Samples {
                 result = (Addresses) obj;
             } else if(Address.class.equals(type)) {
                 result = (Address) obj;
+            } else if (Emails.class.equals(type)) {
+                result = (Emails) obj;
+            } else if(Email.class.equals(type)) {
+                result = (Email) obj;
             }
             return result;
         } catch (IOException e) {

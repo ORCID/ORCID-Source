@@ -31,6 +31,8 @@ import org.orcid.jaxb.model.common.LastModifiedDate;
 import org.orcid.jaxb.model.common.Source;
 import org.orcid.jaxb.model.common.Visibility;
 
+import io.swagger.annotations.ApiModelProperty;
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "email", "createdDate", "lastModifiedDate", "source" })
 @XmlRootElement(name = "email", namespace = "http://www.orcid.org/ns/email")
@@ -40,12 +42,17 @@ public class Email implements Filterable, Serializable {
     protected String email;
     @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected Source source;
-    @XmlAttribute
-    protected Visibility visibility;
     @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "last-modified-date")
     protected LastModifiedDate lastModifiedDate;
     @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "created-date")
     protected CreatedDate createdDate;
+    @XmlAttribute(name = "put-code")
+    @ApiModelProperty(hidden = true)
+    protected Long putCode;
+    @XmlAttribute
+    protected String path;
+    @XmlAttribute
+    protected Visibility visibility;
 
     public String getEmail() {
         return email;
@@ -61,14 +68,6 @@ public class Email implements Filterable, Serializable {
 
     public void setSource(Source source) {
         this.source = source;
-    }    
-
-    public Visibility getVisibility() {
-        return visibility;
-    }
-
-    public void setVisibility(Visibility visibility) {
-        this.visibility = visibility;
     }
 
     public LastModifiedDate getLastModifiedDate() {
@@ -87,6 +86,30 @@ public class Email implements Filterable, Serializable {
         this.createdDate = createdDate;
     }
 
+    public Long getPutCode() {
+        return putCode;
+    }
+
+    public void setPutCode(Long putCode) {
+        this.putCode = putCode;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+
+    public Visibility getVisibility() {
+        return visibility;
+    }
+
+    public void setVisibility(Visibility visibility) {
+        this.visibility = visibility;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -94,6 +117,8 @@ public class Email implements Filterable, Serializable {
         result = prime * result + ((createdDate == null) ? 0 : createdDate.hashCode());
         result = prime * result + ((email == null) ? 0 : email.hashCode());
         result = prime * result + ((lastModifiedDate == null) ? 0 : lastModifiedDate.hashCode());
+        result = prime * result + ((path == null) ? 0 : path.hashCode());
+        result = prime * result + ((putCode == null) ? 0 : putCode.hashCode());
         result = prime * result + ((source == null) ? 0 : source.hashCode());
         result = prime * result + ((visibility == null) ? 0 : visibility.hashCode());
         return result;
@@ -108,19 +133,38 @@ public class Email implements Filterable, Serializable {
         if (getClass() != obj.getClass())
             return false;
         Email other = (Email) obj;
-
+        if (createdDate == null) {
+            if (other.createdDate != null)
+                return false;
+        } else if (!createdDate.equals(other.createdDate))
+            return false;
         if (email == null) {
             if (other.email != null)
                 return false;
         } else if (!email.equals(other.email))
             return false;
-
+        if (lastModifiedDate == null) {
+            if (other.lastModifiedDate != null)
+                return false;
+        } else if (!lastModifiedDate.equals(other.lastModifiedDate))
+            return false;
+        if (path == null) {
+            if (other.path != null)
+                return false;
+        } else if (!path.equals(other.path))
+            return false;
+        if (putCode == null) {
+            if (other.putCode != null)
+                return false;
+        } else if (!putCode.equals(other.putCode))
+            return false;
         if (source == null) {
             if (other.source != null)
                 return false;
         } else if (!source.equals(other.source))
             return false;
-
+        if (visibility != other.visibility)
+            return false;
         return true;
     }
 
