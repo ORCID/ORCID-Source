@@ -29,6 +29,8 @@ import static org.orcid.core.api.OrcidApiConstants.WORK;
 import static org.orcid.core.api.OrcidApiConstants.GROUP_ID_RECORD;
 import static org.orcid.core.api.OrcidApiConstants.RESEARCHER_URLS;
 import static org.orcid.core.api.OrcidApiConstants.EMAIL;
+import static org.orcid.core.api.OrcidApiConstants.OTHER_NAMES;
+import static org.orcid.core.api.OrcidApiConstants.EXTERNAL_IDENTIFIERS;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -42,6 +44,8 @@ import org.orcid.jaxb.model.record_rc1.Employment;
 import org.orcid.jaxb.model.record_rc1.Funding;
 import org.orcid.jaxb.model.record_rc1.PeerReview;
 import org.orcid.jaxb.model.record_rc1.Work;
+import org.orcid.jaxb.model.record_rc2.ExternalIdentifier;
+import org.orcid.jaxb.model.record_rc2.OtherName;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 
 import com.sun.jersey.api.client.Client;
@@ -70,8 +74,8 @@ public class MemberV2ApiClientImpl {
     }
     
     public ClientResponse viewWorkXml(String orcid, Long putCode, String accessToken) {
-        URI workUri = UriBuilder.fromPath(WORK + PUTCODE).build(orcid, putCode);
-        return orcidClientHelper.getClientResponseWithToken(workUri, VND_ORCID_XML, accessToken);
+        URI uri = UriBuilder.fromPath(WORK + PUTCODE).build(orcid, putCode);
+        return orcidClientHelper.getClientResponseWithToken(uri, VND_ORCID_XML, accessToken);
     }
 
     public ClientResponse createWorkXml(String orcid, Work work, String accessToken) {
@@ -83,13 +87,13 @@ public class MemberV2ApiClientImpl {
     }
 
     public ClientResponse deleteWorkXml(String orcid, Long putCode, String accessToken) {
-        URI deleteWorkUri = UriBuilder.fromPath(WORK + PUTCODE).build(orcid, putCode);
-        return orcidClientHelper.deleteClientResponseWithToken(deleteWorkUri, VND_ORCID_XML, accessToken);
+        URI uri = UriBuilder.fromPath(WORK + PUTCODE).build(orcid, putCode);
+        return orcidClientHelper.deleteClientResponseWithToken(uri, VND_ORCID_XML, accessToken);
     }
     
     public ClientResponse viewEducationXml(String orcid, Long putCode, String accessToken) {
-        URI educationUri = UriBuilder.fromPath(EDUCATION + PUTCODE).build(orcid, putCode);
-        return orcidClientHelper.getClientResponseWithToken(educationUri, VND_ORCID_XML, accessToken);
+        URI uri = UriBuilder.fromPath(EDUCATION + PUTCODE).build(orcid, putCode);
+        return orcidClientHelper.getClientResponseWithToken(uri, VND_ORCID_XML, accessToken);
     }
 
     public ClientResponse createEducationXml(String orcid, Education education, String accessToken) {
@@ -101,13 +105,13 @@ public class MemberV2ApiClientImpl {
     }
         
     public ClientResponse deleteEducationXml(String orcid, Long putCode, String accessToken) {
-        URI deleteEducationUri = UriBuilder.fromPath(EDUCATION + PUTCODE).build(orcid, putCode);
-        return orcidClientHelper.deleteClientResponseWithToken(deleteEducationUri, VND_ORCID_XML, accessToken);
+        URI uri = UriBuilder.fromPath(EDUCATION + PUTCODE).build(orcid, putCode);
+        return orcidClientHelper.deleteClientResponseWithToken(uri, VND_ORCID_XML, accessToken);
     }           
     
     public ClientResponse viewEmploymentXml(String orcid, Long putCode, String accessToken) {
-        URI employmentUri = UriBuilder.fromPath(EMPLOYMENT + PUTCODE).build(orcid, putCode);
-        return orcidClientHelper.getClientResponseWithToken(employmentUri, VND_ORCID_XML, accessToken);
+        URI uri = UriBuilder.fromPath(EMPLOYMENT + PUTCODE).build(orcid, putCode);
+        return orcidClientHelper.getClientResponseWithToken(uri, VND_ORCID_XML, accessToken);
     }
 
     public ClientResponse createEmploymentXml(String orcid, Employment employment, String accessToken) {
@@ -119,13 +123,13 @@ public class MemberV2ApiClientImpl {
     }
     
     public ClientResponse deleteEmploymentXml(String orcid, Long putCode, String accessToken) {
-        URI deleteEmploymentUri = UriBuilder.fromPath(EMPLOYMENT + PUTCODE).build(orcid, putCode);
-        return orcidClientHelper.deleteClientResponseWithToken(deleteEmploymentUri, VND_ORCID_XML, accessToken);
+        URI uri = UriBuilder.fromPath(EMPLOYMENT + PUTCODE).build(orcid, putCode);
+        return orcidClientHelper.deleteClientResponseWithToken(uri, VND_ORCID_XML, accessToken);
     }
         
     public ClientResponse viewFundingXml(String orcid, Long putCode, String accessToken) {
-        URI fundingUri = UriBuilder.fromPath(FUNDING + PUTCODE).build(orcid, putCode);
-        return orcidClientHelper.getClientResponseWithToken(fundingUri, VND_ORCID_XML, accessToken);
+        URI uri = UriBuilder.fromPath(FUNDING + PUTCODE).build(orcid, putCode);
+        return orcidClientHelper.getClientResponseWithToken(uri, VND_ORCID_XML, accessToken);
     }
 
     public ClientResponse createFundingXml(String orcid, Funding funding, String accessToken) {
@@ -137,8 +141,8 @@ public class MemberV2ApiClientImpl {
     }
             
     public ClientResponse deleteFundingXml(String orcid, Long putCode, String accessToken) {
-        URI deleteFundingUri = UriBuilder.fromPath(FUNDING + PUTCODE).build(orcid, putCode);
-        return orcidClientHelper.deleteClientResponseWithToken(deleteFundingUri, VND_ORCID_XML, accessToken);
+        URI uri = UriBuilder.fromPath(FUNDING + PUTCODE).build(orcid, putCode);
+        return orcidClientHelper.deleteClientResponseWithToken(uri, VND_ORCID_XML, accessToken);
     }
                 
     public ClientResponse updateLocationXml(URI location, String accessToken, Object jaxbRootElement){
@@ -146,8 +150,8 @@ public class MemberV2ApiClientImpl {
     }   
     
     public ClientResponse viewPeerReviewXml(String orcid, Long putCode, String accessToken) {
-        URI putCodeUri = UriBuilder.fromPath(PEER_REVIEW + PUTCODE).build(orcid, putCode);
-        return orcidClientHelper.getClientResponseWithToken(putCodeUri, VND_ORCID_XML, accessToken);
+        URI uri = UriBuilder.fromPath(PEER_REVIEW + PUTCODE).build(orcid, putCode);
+        return orcidClientHelper.getClientResponseWithToken(uri, VND_ORCID_XML, accessToken);
     }
 
     public ClientResponse createPeerReviewXml(String orcid, PeerReview peerReview, String accessToken) {
@@ -159,52 +163,102 @@ public class MemberV2ApiClientImpl {
     }
     
     public ClientResponse deletePeerReviewXml(String orcid, Long putCode, String accessToken) {
-        URI deletePeerReviewUri = UriBuilder.fromPath(PEER_REVIEW + PUTCODE).build(orcid, putCode);
-        return orcidClientHelper.deleteClientResponseWithToken(deletePeerReviewUri, VND_ORCID_XML, accessToken);
+        URI uri = UriBuilder.fromPath(PEER_REVIEW + PUTCODE).build(orcid, putCode);
+        return orcidClientHelper.deleteClientResponseWithToken(uri, VND_ORCID_XML, accessToken);
     }
     
     public ClientResponse createGroupIdRecord(GroupIdRecord groupId, String accessToken) {
-        URI createUri = UriBuilder.fromPath(GROUP_ID_RECORD).build();
-        return orcidClientHelper.postClientResponseWithToken(createUri, VND_ORCID_XML, groupId, accessToken);
+        URI uri = UriBuilder.fromPath(GROUP_ID_RECORD).build();
+        return orcidClientHelper.postClientResponseWithToken(uri, VND_ORCID_XML, groupId, accessToken);
     }
     
     public ClientResponse deleteGroupIdRecord(Long putCode, String accessToken) {
-        URI deleteURI = UriBuilder.fromPath(GROUP_ID_RECORD + PUTCODE).build(putCode);
-        return orcidClientHelper.deleteClientResponseWithToken(deleteURI, VND_ORCID_XML, accessToken);
+        URI uri = UriBuilder.fromPath(GROUP_ID_RECORD + PUTCODE).build(putCode);
+        return orcidClientHelper.deleteClientResponseWithToken(uri, VND_ORCID_XML, accessToken);
     }
     
     public ClientResponse createResearcherUrls(String orcid, ResearcherUrl rUrl, String accessToken) {
-        URI createURI = UriBuilder.fromPath(RESEARCHER_URLS).build(orcid);
-        return orcidClientHelper.postClientResponseWithToken(createURI, VND_ORCID_XML, rUrl, accessToken);      
+        URI uri = UriBuilder.fromPath(RESEARCHER_URLS).build(orcid);
+        return orcidClientHelper.postClientResponseWithToken(uri, VND_ORCID_XML, rUrl, accessToken);      
     }
     
     public ClientResponse updateResearcherUrls(String orcid, ResearcherUrl rUrl, String accessToken) {
-        URI createURI = UriBuilder.fromPath(RESEARCHER_URLS + PUTCODE).build(orcid, rUrl.getPutCode());
-        return orcidClientHelper.putClientResponseWithToken(createURI, VND_ORCID_XML, rUrl, accessToken);      
+        URI uri = UriBuilder.fromPath(RESEARCHER_URLS + PUTCODE).build(orcid, rUrl.getPutCode());
+        return orcidClientHelper.putClientResponseWithToken(uri, VND_ORCID_XML, rUrl, accessToken);      
     }
     
     public ClientResponse getResearcherUrls(String orcid, String accessToken) {
-        URI getURI = UriBuilder.fromPath(RESEARCHER_URLS).build(orcid);
-        return orcidClientHelper.getClientResponseWithToken(getURI, VND_ORCID_XML, accessToken);        
+        URI uri = UriBuilder.fromPath(RESEARCHER_URLS).build(orcid);
+        return orcidClientHelper.getClientResponseWithToken(uri, VND_ORCID_XML, accessToken);        
     }
     
-    public ClientResponse getResearcherUrl(String orcid, String putCode, String accessToken) {
-        URI getURI = UriBuilder.fromPath(RESEARCHER_URLS + PUTCODE).build(orcid, putCode);
-        return orcidClientHelper.getClientResponseWithToken(getURI, VND_ORCID_XML, accessToken);        
+    public ClientResponse getResearcherUrl(String orcid, Long putCode, String accessToken) {
+        URI uri = UriBuilder.fromPath(RESEARCHER_URLS + PUTCODE).build(orcid, putCode);
+        return orcidClientHelper.getClientResponseWithToken(uri, VND_ORCID_XML, accessToken);        
     }
     
     public ClientResponse deleteResearcherUrl(String orcid, Long putCode, String accessToken) {
-        URI createURI = UriBuilder.fromPath(RESEARCHER_URLS + PUTCODE).build(orcid, putCode);
-        return orcidClientHelper.deleteClientResponseWithToken(createURI, VND_ORCID_XML, accessToken);      
+        URI uri = UriBuilder.fromPath(RESEARCHER_URLS + PUTCODE).build(orcid, putCode);
+        return orcidClientHelper.deleteClientResponseWithToken(uri, VND_ORCID_XML, accessToken);      
     }
     
     public ClientResponse getEmails(String orcid, String accessToken) {
-        URI getURI = UriBuilder.fromPath(EMAIL).build(orcid);
-        return orcidClientHelper.getClientResponseWithToken(getURI, VND_ORCID_XML, accessToken);        
+        URI uri = UriBuilder.fromPath(EMAIL).build(orcid);
+        return orcidClientHelper.getClientResponseWithToken(uri, VND_ORCID_XML, accessToken);        
     }
     
     public ClientResponse viewPersonalDetailsXML(String orcid, String accessToken) {
-        URI getURI = UriBuilder.fromPath(PERSONAL_DETAILS).build(orcid);
-        return orcidClientHelper.getClientResponseWithToken(getURI, VND_ORCID_XML, accessToken);
+        URI uri = UriBuilder.fromPath(PERSONAL_DETAILS).build(orcid);
+        return orcidClientHelper.getClientResponseWithToken(uri, VND_ORCID_XML, accessToken);
     }
+    
+    public ClientResponse createOtherName(String orcid, OtherName otherName, String accessToken) {
+        URI uri = UriBuilder.fromPath(OTHER_NAMES).build(orcid);
+        return orcidClientHelper.postClientResponseWithToken(uri, VND_ORCID_XML, otherName, accessToken);      
+    }
+    
+    public ClientResponse updateOtherName(String orcid, OtherName otherName, String accessToken) {
+        URI uri = UriBuilder.fromPath(OTHER_NAMES + PUTCODE).build(orcid, otherName.getPutCode());
+        return orcidClientHelper.putClientResponseWithToken(uri, VND_ORCID_XML, otherName, accessToken);      
+    }
+    
+    public ClientResponse deleteOtherName(String orcid, Long putCode, String accessToken) {
+        URI uri = UriBuilder.fromPath(OTHER_NAMES + PUTCODE).build(orcid, putCode);
+        return orcidClientHelper.deleteClientResponseWithToken(uri, VND_ORCID_XML, accessToken);      
+    }
+                
+    public ClientResponse viewOtherNames(String orcid, String accessToken) {
+        URI uri = UriBuilder.fromPath(OTHER_NAMES).build(orcid);
+        return orcidClientHelper.getClientResponseWithToken(uri, VND_ORCID_XML, accessToken);        
+    }
+    
+    public ClientResponse viewOtherName(String orcid, Long putCode, String accessToken) {
+        URI uri = UriBuilder.fromPath(OTHER_NAMES + PUTCODE).build(orcid, putCode);
+        return orcidClientHelper.getClientResponseWithToken(uri, VND_ORCID_XML, accessToken);        
+    }
+    
+    public ClientResponse createExternalIdentifier(String orcid, ExternalIdentifier externalIdentifier, String accessToken) {
+        URI uri = UriBuilder.fromPath(EXTERNAL_IDENTIFIERS).build(orcid);
+        return orcidClientHelper.postClientResponseWithToken(uri, VND_ORCID_XML, externalIdentifier, accessToken);      
+    }
+    
+    public ClientResponse updateExternalIdentifier(String orcid, ExternalIdentifier externalIdentifier, String accessToken) {
+        URI uri = UriBuilder.fromPath(EXTERNAL_IDENTIFIERS + PUTCODE).build(orcid, externalIdentifier.getPutCode());
+        return orcidClientHelper.putClientResponseWithToken(uri, VND_ORCID_XML, externalIdentifier, accessToken);      
+    }
+        
+    public ClientResponse deleteExternalIdentifier(String orcid, Long putCode, String accessToken) {
+        URI uri = UriBuilder.fromPath(EXTERNAL_IDENTIFIERS + PUTCODE).build(orcid, putCode);
+        return orcidClientHelper.deleteClientResponseWithToken(uri, VND_ORCID_XML, accessToken);      
+    }
+                
+    public ClientResponse viewExternalIdentifiers(String orcid, String accessToken) {
+        URI uri = UriBuilder.fromPath(EXTERNAL_IDENTIFIERS).build(orcid);
+        return orcidClientHelper.getClientResponseWithToken(uri, VND_ORCID_XML, accessToken);        
+    }
+    
+    public ClientResponse viewExternalIdentifier(String orcid, Long putCode, String accessToken) {
+        URI uri = UriBuilder.fromPath(EXTERNAL_IDENTIFIERS + PUTCODE).build(orcid, putCode);
+        return orcidClientHelper.getClientResponseWithToken(uri, VND_ORCID_XML, accessToken);        
+    }    
 }

@@ -50,11 +50,11 @@ public class JpaJaxbResearcherUrlAdapterTest {
 
     @Test
     public void testToResearcherUrlEntity() throws JAXBException {
-        ResearcherUrls r = getResearcherUrls();
-        assertNotNull(r);
-        assertNotNull(r.getResearcherUrls());
-        assertEquals(1, r.getResearcherUrls().size());
-        ResearcherUrlEntity entity = jpaJaxbResearcherUrlAdapter.toResearcherUrlEntity(r.getResearcherUrls().get(0));
+        ResearcherUrls rUrls = getResearcherUrls();
+        assertNotNull(rUrls);
+        assertNotNull(rUrls.getResearcherUrls());
+        assertEquals(1, rUrls.getResearcherUrls().size());
+        ResearcherUrlEntity entity = jpaJaxbResearcherUrlAdapter.toResearcherUrlEntity(rUrls.getResearcherUrls().get(0));
         assertNotNull(entity);
         //General info
         assertEquals(Long.valueOf(1248), entity.getId());
@@ -62,7 +62,8 @@ public class JpaJaxbResearcherUrlAdapterTest {
         assertEquals("http://site1.com/", entity.getUrl());
         assertEquals("Site # 1", entity.getUrlName());                
         //Source
-        assertEquals("8888-8888-8888-8880", entity.getSource().getSourceId());                
+        assertNotNull(entity.getSource());
+        assertEquals("8888-8888-8888-8880", entity.getSource().getSourceId());  
     }
 
     @Test

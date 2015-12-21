@@ -445,19 +445,75 @@
             />
 
     <external_identifier
+    		id="1"
             external_id_reference="d3clan"
             external_id_type="Facebook"
             orcid="4444-4444-4444-4443"
             external_id_url="http://www.facebook.com/d3clan"
             source_id="4444-4444-4444-4441"
+            visibility="PUBLIC"
+            date_created="2011-06-29 15:31:00.00"            
+            last_modified="2011-07-02 15:31:00.00"
             />
 
     <external_identifier
+    		id="2"
             external_id_reference="abc123"
             external_id_type="Facebook"
             orcid="4444-4444-4444-4442"
             external_id_url="http://www.facebook.com/abc123"
+            client_source_id="APP-5555555555555555"
+            visibility="PUBLIC"
+            date_created="2011-06-29 15:31:00.00"            
+            last_modified="2011-07-02 15:31:00.00"
+            />
+
+	<external_identifier
+			id="3"
+            external_id_reference="abc456"
+            external_id_type="Facebook"
+            orcid="4444-4444-4444-4442"
+            external_id_url="http://www.facebook.com/abc456"
+            source_id="4444-4444-4444-4442"
+            visibility="LIMITED"
+            date_created="2011-06-29 15:31:00.00"            
+            last_modified="2011-07-02 15:31:00.00"
+            />
+
+	<external_identifier
+			id="4"
+            external_id_reference="abc789"
+            external_id_type="Facebook"
+            orcid="4444-4444-4444-4442"
+            external_id_url="http://www.facebook.com/abc789"
             source_id="4444-4444-4444-4441"
+            visibility="PRIVATE"
+            date_created="2011-06-29 15:31:00.00"            
+            last_modified="2011-07-02 15:31:00.00"
+            />
+
+	<external_identifier
+			id="5"
+            external_id_reference="abc012"
+            external_id_type="Facebook"
+            orcid="4444-4444-4444-4442"
+            external_id_url="http://www.facebook.com/abc012"
+            client_source_id="APP-5555555555555555"
+            visibility="PRIVATE"
+            date_created="2011-06-29 15:31:00.00"            
+            last_modified="2011-07-02 15:31:00.00"
+            />
+
+	<external_identifier
+			id="6"
+            external_id_reference="xyz012"
+            external_id_type="Google"
+            orcid="4444-4444-4444-4444"
+            external_id_url="http://www.google.com/xyz012"
+            client_source_id="APP-5555555555555555"
+            visibility="PUBLIC"
+            date_created="2011-06-29 15:31:00.00"            
+            last_modified="2011-07-02 15:31:00.00"
             />
 
     <researcher_url
@@ -552,30 +608,82 @@
             display_name="Slibberdy Slabinah"
             orcid="4444-4444-4444-4443"
             visibility="PUBLIC"
+            client_source_id="APP-5555555555555555"
+            last_modified="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
             />
 
     <other_name
             other_name_id="2"
             display_name="Flibberdy Flabinah"
             orcid="4444-4444-4444-4443"
-            visibility="LIMITED"
+            visibility="PUBLIC"
+            source_id="4444-4444-4444-4443"
+            last_modified="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
             />
 
     <other_name
             other_name_id="3"
             display_name="Flobberdy Flip"
-            orcid="4444-4444-4444-4446"
+            orcid="4444-4444-4444-4441"
             visibility="PUBLIC"
+            source_id="4444-4444-4444-4441"
+            last_modified="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
             />
 	
 	<other_name
             other_name_id="4"
-            display_name="Other Name"
-            orcid="4444-4444-4444-4441"
+            display_name="Other Name # 1"
+            orcid="4444-4444-4444-4446"
             visibility="PUBLIC"
+            client_source_id="APP-5555555555555555"
+            last_modified="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
             />
 
-    <address
+	<other_name
+            other_name_id="5"
+            display_name="Other Name # 2"
+            orcid="4444-4444-4444-4446"
+            visibility="LIMITED"
+            source_id="4444-4444-4444-4446"
+            last_modified="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
+            />
+
+	<other_name
+            other_name_id="6"
+            display_name="Other Name # 3"
+            orcid="4444-4444-4444-4446"
+            visibility="PRIVATE"
+            source_id="4444-4444-4444-4446"
+            last_modified="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
+            />
+
+	<other_name
+            other_name_id="7"
+            display_name="Other Name # 4"
+            orcid="4444-4444-4444-4446"
+            visibility="PRIVATE"            
+            client_source_id="APP-5555555555555555"
+            last_modified="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
+            />
+
+	<other_name
+            other_name_id="8"
+            display_name="Other Name # 1"
+            orcid="4444-4444-4444-4447"
+            visibility="PUBLIC"            
+            client_source_id="APP-5555555555555555"
+            last_modified="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
+            />
+
+	<address
             id="1"
             address_line_1="Address 1"
             address_line_2="Address 2"

@@ -67,13 +67,13 @@ public interface OtherNameManager {
     
     org.orcid.jaxb.model.record_rc2.OtherNames getMinimizedOtherNamesV2(String orcid);
     
-    org.orcid.jaxb.model.record_rc2.OtherName getOtherNameV2(String orcid, String putCode);
+    org.orcid.jaxb.model.record_rc2.OtherName getOtherNameV2(String orcid, Long putCode);
 
-    boolean deleteOtherNameV2(String orcid, String putCode);
+    boolean deleteOtherNameV2(String orcid, Long putCode);
 
     org.orcid.jaxb.model.record_rc2.OtherName createOtherNameV2(String orcid, org.orcid.jaxb.model.record_rc2.OtherName otherName);
 
-    org.orcid.jaxb.model.record_rc2.OtherName updateOtherNameV2(String orcid, String putCode, org.orcid.jaxb.model.record_rc2.OtherName otherName);
+    org.orcid.jaxb.model.record_rc2.OtherName updateOtherNameV2(String orcid, Long putCode, org.orcid.jaxb.model.record_rc2.OtherName otherName);
     
     org.orcid.jaxb.model.record_rc2.OtherNames updateOtherNamesV2(String orcid, org.orcid.jaxb.model.record_rc2.OtherNames otherNames, org.orcid.jaxb.model.common.Visibility defaultVisiblity);
 }

@@ -58,12 +58,14 @@ import org.orcid.jaxb.model.record_rc1.Work;
 import org.orcid.jaxb.model.record_rc1.WorkContributors;
 import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifier;
 import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifiers;
+import org.orcid.jaxb.model.record_rc2.ExternalIdentifier;
 import org.orcid.jaxb.model.record_rc2.OtherName;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.CompletionDateEntity;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.EndDateEntity;
+import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.GroupIdRecordEntity;
 import org.orcid.persistence.jpa.entities.NotificationAddItemsEntity;
 import org.orcid.persistence.jpa.entities.NotificationAmendedEntity;
@@ -169,6 +171,20 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         }
     }
 
+    public MapperFacade getExternalIdentifierMapperFacade() {
+        MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
+        ClassMapBuilder<ExternalIdentifier, ExternalIdentifierEntity> externalIdentifierClassMap = mapperFactory.classMap(ExternalIdentifier.class, ExternalIdentifierEntity.class);
+        externalIdentifierClassMap.byDefault();
+        addV2DateFields(externalIdentifierClassMap);
+        addV2SourceMapping(mapperFactory);
+        externalIdentifierClassMap.field("putCode", "id");
+        externalIdentifierClassMap.field("commonName", "externalIdCommonName");
+        externalIdentifierClassMap.field("reference", "externalIdReference");
+        externalIdentifierClassMap.field("url.value", "externalIdUrl");
+        externalIdentifierClassMap.register();
+        return mapperFactory.getMapperFacade();
+    }
+    
     public MapperFacade getResearcherUrlMapperFacade() {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
         ClassMapBuilder<ResearcherUrl, ResearcherUrlEntity> researcherUrlClassMap = mapperFactory.classMap(ResearcherUrl.class, ResearcherUrlEntity.class);
