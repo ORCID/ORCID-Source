@@ -34,20 +34,20 @@ import org.springframework.transaction.annotation.Transactional;
 public class MemberCerifApiServiceDelegatorImpl extends CerifApiServiceDelegatorImpl implements MemberCerifApiServiceDelgator {
 
     @Override
-    @AccessControl(requiredScope = ScopePathType.READ_PUBLIC, enableAnonymousAccess = false)
+    @AccessControl(requiredScope = ScopePathType.READ_LIMITED, enableAnonymousAccess = false)
     @Transactional(readOnly = true)
     public Response getPerson(String id) {
         return super.getPerson(id);
     }
 
     @Override
-    @AccessControl(requiredScope = ScopePathType.READ_PUBLIC, enableAnonymousAccess = false)
+    @AccessControl(requiredScope = ScopePathType.READ_LIMITED, enableAnonymousAccess = false)
     public Response getPublication(String orcid, Long id) {
         return super.getPublication(orcid, id);
     }
 
     @Override
-    @AccessControl(requiredScope = ScopePathType.READ_PUBLIC, enableAnonymousAccess = false)
+    @AccessControl(requiredScope = ScopePathType.READ_LIMITED, enableAnonymousAccess = false)
     public Response getProduct(String orcid, Long id) {
         return super.getProduct(orcid, id);
     }
