@@ -36,6 +36,8 @@ import org.orcid.jaxb.model.common.Iso3166Country;
 import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.jaxb.model.record_rc2.Address;
 import org.orcid.jaxb.model.record_rc2.Addresses;
+import org.orcid.jaxb.model.record_rc2.ApplicationSummary;
+import org.orcid.jaxb.model.record_rc2.Applications;
 import org.orcid.jaxb.model.record_rc2.Biography;
 import org.orcid.jaxb.model.record_rc2.CreditName;
 import org.orcid.jaxb.model.record_rc2.Delegation;
@@ -51,6 +53,7 @@ import org.orcid.jaxb.model.record_rc2.OtherNames;
 import org.orcid.jaxb.model.record_rc2.PersonalDetails;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
+import org.orcid.jaxb.model.record_rc2.ScopePath;
 
 public class ValidateV2RC2Samples {
     @Test
@@ -113,20 +116,20 @@ public class ValidateV2RC2Samples {
         assertNotNull(addresses);
         assertNotNull(addresses.getAddress());
         assertEquals(2, addresses.getAddress().size());
-        for(Address address : addresses.getAddress()) {
+        for (Address address : addresses.getAddress()) {
             assertNotNull(address.getPutCode());
             assertNotNull(address.getCreatedDate());
             assertNotNull(address.getLastModifiedDate());
             assertNotNull(address.getCountry());
-            if(address.getPutCode().equals(new Long(1))) {                
+            if (address.getPutCode().equals(new Long(1))) {
                 assertEquals(Iso3166Country.US, address.getCountry().getValue());
                 assertEquals(Visibility.PUBLIC, address.getVisibility());
             } else {
                 assertEquals(Iso3166Country.CR, address.getCountry().getValue());
                 assertEquals(Visibility.LIMITED, address.getVisibility());
-            }            
+            }
         }
-        
+
         Address address = (Address) unmarshallFromPath("/record_2.0_rc2/samples/address-2.0_rc2.xml", Address.class);
         assertNotNull(address);
         assertNotNull(address.getPutCode());
@@ -151,7 +154,7 @@ public class ValidateV2RC2Samples {
         assertNotNull(creditName);
         assertEquals("credit-name", creditName.getContent());
         assertEquals(Visibility.PUBLIC.value(), creditName.getVisibility().value());
-    }    
+    }
 
     @SuppressWarnings("unchecked")
     @Test
@@ -265,12 +268,12 @@ public class ValidateV2RC2Samples {
         assertNotNull(emails);
         assertNotNull(emails.getEmails());
         assertEquals(2, emails.getEmails().size());
-        
-        for(Email email : emails.getEmails()) {
+
+        for (Email email : emails.getEmails()) {
             assertNotNull(email.getPutCode());
             assertNotNull(email.getCreatedDate());
             assertNotNull(email.getLastModifiedDate());
-            if(email.getPutCode().equals(Long.valueOf(1))) {
+            if (email.getPutCode().equals(Long.valueOf(1))) {
                 assertEquals(Visibility.PUBLIC, email.getVisibility());
                 assertEquals("user1@email.com", email.getEmail());
             } else {
@@ -278,8 +281,8 @@ public class ValidateV2RC2Samples {
                 assertEquals("user2@email.com", email.getEmail());
             }
         }
-        
-        Email email= (Email) unmarshallFromPath("/record_2.0_rc2/samples/email-2.0_rc2.xml", Email.class);
+
+        Email email = (Email) unmarshallFromPath("/record_2.0_rc2/samples/email-2.0_rc2.xml", Email.class);
         assertNotNull(email);
         assertNotNull(email.getPutCode());
         assertNotNull(email.getCreatedDate());
@@ -287,7 +290,7 @@ public class ValidateV2RC2Samples {
         assertEquals(Visibility.PUBLIC, email.getVisibility());
         assertEquals("user1@email.com", email.getEmail());
     }
-    
+
     @Test
     public void testUnmarshallDelegation() {
         Delegation delegation = (Delegation) unmarshallFromPath("/record_2.0_rc2/samples/delegation-2.0_rc2.xml", Delegation.class);
@@ -310,7 +313,6 @@ public class ValidateV2RC2Samples {
         assertEquals(1, delegation.getGivenPermissionBy().getDelegationDetails().getDelegateSummary().getLastModifiedDate().getValue().getDay());
         assertNotNull(delegation.getGivenPermissionBy().getDelegationDetails().getDelegateSummary().getOrcidIdentifier());
         assertEquals("8888-8888-8888-8880", delegation.getGivenPermissionBy().getDelegationDetails().getDelegateSummary().getOrcidIdentifier().getPath());
-        
         assertNotNull(delegation.getGivenPermissionTo());
         assertNotNull(delegation.getGivenPermissionTo().getDelegationDetails());
         assertNotNull(delegation.getGivenPermissionTo().getDelegationDetails().getApprovalDate());
@@ -330,17 +332,41 @@ public class ValidateV2RC2Samples {
         assertNotNull(delegation.getGivenPermissionTo().getDelegationDetails().getDelegateSummary().getOrcidIdentifier());
         assertEquals("8888-8888-8888-8880", delegation.getGivenPermissionTo().getDelegationDetails().getDelegateSummary().getOrcidIdentifier().getPath());
     }
-    
+
+    @SuppressWarnings("unchecked")
     @Test
     public void testUnmarshallApplications() {
-        
+        Applications applications = (Applications) unmarshallFromPath("/record_2.0_rc2/samples/applications-2.0_rc2.xml", Applications.class);
+        assertNotNull(applications);
+        assertEquals(Visibility.PUBLIC, applications.getVisibility());
+        assertNotNull(applications.getApplicationSummary());
+        assertEquals(1, applications.getApplicationSummary().size());
+        ApplicationSummary summary = applications.getApplicationSummary().get(0); 
+        assertNotNull(summary.getApplicationOrcid());
+        assertEquals("8888-8888-8888-8880", summary.getApplicationOrcid().getPath());        
+        assertEquals("application-name", summary.getApplicationName());
+        assertNotNull(summary.getApplicationWebsite());
+        assertEquals("http://application.com", summary.getApplicationWebsite().getValue());
+        assertNotNull(summary.getApprovalDate());
+        assertEquals(2015, summary.getApprovalDate().getValue().getYear());
+        assertEquals(12, summary.getApprovalDate().getValue().getMonth());
+        assertEquals(31, summary.getApprovalDate().getValue().getDay());                
+        assertNotNull(summary.getScopePaths());
+        assertNotNull(summary.getScopePaths().getScopePath());
+        assertEquals(2, summary.getScopePaths().getScopePath().size());        
+        for(ScopePath scope : summary.getScopePaths().getScopePath()) {
+            assertThat(scope.getContent(), anyOf(is("/authenticate"), is("/read-limited")));
+        }    
+        assertNotNull(summary.getGroupOrcid());
+        assertEquals("8888-8888-8888-8880", summary.getGroupOrcid().getPath());
+        assertEquals("application-group-name", summary.getGroupName());                
     }
-    
+
     @Test
     public void testUnmarshallPerson() {
         fail();
-    }    
-    
+    }
+
     private Object unmarshallFromPath(String path, Class<?> type) {
         try (Reader reader = new InputStreamReader(getClass().getResourceAsStream(path))) {
             Object obj = unmarshall(reader, type);
@@ -371,14 +397,16 @@ public class ValidateV2RC2Samples {
                 result = (Keyword) obj;
             } else if (Addresses.class.equals(type)) {
                 result = (Addresses) obj;
-            } else if(Address.class.equals(type)) {
+            } else if (Address.class.equals(type)) {
                 result = (Address) obj;
             } else if (Emails.class.equals(type)) {
                 result = (Emails) obj;
-            } else if(Email.class.equals(type)) {
+            } else if (Email.class.equals(type)) {
                 result = (Email) obj;
-            } else if(Delegation.class.equals(type)) {
+            } else if (Delegation.class.equals(type)) {
                 result = (Delegation) obj;
+            } else if (Applications.class.equals(type)) {
+                result = (Applications) obj;
             }
             return result;
         } catch (IOException e) {

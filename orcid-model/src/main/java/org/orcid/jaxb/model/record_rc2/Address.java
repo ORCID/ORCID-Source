@@ -41,16 +41,6 @@ import org.orcid.jaxb.model.common.Visibility;
 
 import io.swagger.annotations.ApiModelProperty;
 
-/**
- * <p>
- * Java class for anonymous complex type.
- * 
- * <p>
- * The following schema fragment specifies the expected content contained within
- * this class.
- * 
- * 
- */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "country", "createdDate", "lastModifiedDate", "source" })
 @XmlRootElement(name = "address", namespace = "http://www.orcid.org/ns/address")
