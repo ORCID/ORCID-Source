@@ -16,6 +16,8 @@
  */
 package org.orcid.api.common.cerif;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 import javax.xml.bind.JAXBElement;
@@ -26,6 +28,7 @@ import org.orcid.jaxb.model.record.summary_rc1.WorkGroup;
 import org.orcid.jaxb.model.record.summary_rc1.WorkSummary;
 import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifier;
 import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType;
+import org.orcid.jaxb.model.record_rc2.ExternalIdentifier;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
 
 import com.google.common.base.Optional;
@@ -88,15 +91,15 @@ public class Cerif16Builder {
      * @param externalIDs
      * @return
      */
-    public Cerif16Builder addPerson(String orcid, Optional<String> given, Optional<String> family, Optional<String> creditname, Set<ExternalIdentifierEntity> externalIDs) {
+    public Cerif16Builder addPerson(String orcid, Optional<String> given, Optional<String> family, Optional<String> creditname, List<ExternalIdentifier> externalIDs) {
         person = objectFactory.createCfPersType();
         person.setCfPersId(orcid);
         person.getCfResIntOrCfKeywOrCfPersPers().add(buildFedID(orcid, CerifClassEnum.ORCID));
         
         // add in other external ids here   
-        for (ExternalIdentifierEntity id : externalIDs) {
+        for (ExternalIdentifier id : externalIDs) {
             if (translator.translate(id) != CerifClassEnum.OTHER){
-                person.getCfResIntOrCfKeywOrCfPersPers().add(buildFedID(id.getExternalIdReference(), translator.translate(id)));                    
+                person.getCfResIntOrCfKeywOrCfPersPers().add(buildFedID(id.getReference(), translator.translate(id)));                    
             }
         }
     

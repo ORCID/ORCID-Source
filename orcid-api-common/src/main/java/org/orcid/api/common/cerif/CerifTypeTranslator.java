@@ -18,6 +18,7 @@ package org.orcid.api.common.cerif;
 
 import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.record_rc1.WorkType;
+import org.orcid.jaxb.model.record_rc2.ExternalIdentifier;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
 
 /**
@@ -86,12 +87,12 @@ public class CerifTypeTranslator {
      * @param id
      * @return
      */
-    public CerifClassEnum translate(ExternalIdentifierEntity id) {
-        if ("ISNI".equals(id.getExternalIdCommonName())) {
+    public CerifClassEnum translate(ExternalIdentifier id) {
+        if ("ISNI".equals(id.getCommonName())) {
             return CerifClassEnum.ISNI;
-        } else if ("Scopus Author ID".equals(id.getExternalIdCommonName())) {
+        } else if ("Scopus Author ID".equals(id.getCommonName())) {
             return CerifClassEnum.SCOPUSAUTHORID;
-        } else if ("ResearcherID".equals(id.getExternalIdCommonName())) {
+        } else if ("ResearcherID".equals(id.getCommonName())) {
             return CerifClassEnum.RESEARCHERID;
         }
         return CerifClassEnum.OTHER;

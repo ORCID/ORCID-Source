@@ -16,6 +16,7 @@
  */
 package org.orcid.api.common.delegator.impl;
 
+import java.util.List;
 import java.util.Set;
 
 import javax.annotation.Resource;
@@ -27,13 +28,18 @@ import org.orcid.api.common.cerif.Cerif16Builder;
 import org.orcid.api.common.cerif.CerifTypeTranslator;
 import org.orcid.api.common.delegator.CerifApiServiceDelgator;
 import org.orcid.api.common.util.ActivityUtils;
+import org.orcid.core.manager.ExternalIdentifierManager;
 import org.orcid.core.manager.OrcidSecurityManager;
+import org.orcid.core.manager.PersonalDetailsManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.core.security.visibility.filter.VisibilityFilterV2;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.record.summary_rc1.ActivitiesSummary;
 import org.orcid.jaxb.model.record.summary_rc1.WorkSummary;
+import org.orcid.jaxb.model.record_rc2.ExternalIdentifier;
+import org.orcid.jaxb.model.record_rc2.ExternalIdentifiers;
+import org.orcid.jaxb.model.record_rc2.PersonalDetails;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,8 +52,6 @@ import com.google.common.collect.Sets;
  * docs here: https://github.com/openaire/guidelines/blob/master/docs/cris/
  * cerif_xml_publication_entity.rst
  * 
- * This looks hideous as code because the XLS generates messy JAXB classes.
- * 
  * @author tom
  *
  */
@@ -55,6 +59,11 @@ public class CerifApiServiceDelegatorImpl implements CerifApiServiceDelgator {
 
     @Resource
     private ProfileEntityManager profileEntityManager;
+    
+    @Resource
+    private PersonalDetailsManager personalDetailsManager;
+    @Resource
+    private ExternalIdentifierManager externalIdentifierManager;
     @Resource(name = "visibilityFilterV2")
     private VisibilityFilterV2 visibilityFilter;
     @Resource
@@ -64,47 +73,35 @@ public class CerifApiServiceDelegatorImpl implements CerifApiServiceDelgator {
 
     private CerifTypeTranslator translator = new CerifTypeTranslator();
 
-    @Transactional
-    @Override
-    public Response getPerson(String orcid) {
-        return this.getPerson(orcid, Visibility.PUBLIC);
-    }
-
     /**
-     * Selective visibility profile
-     * 
-     * TODO: re-factor to remove and use new V2 visibility for names when
-     * available.
+     * Visibility filtered profile
      * 
      * @param orcid
-     * @param vis
      * @return
      */
-    protected Response getPerson(String orcid, Visibility vis) {
-        ProfileEntity profile = profileEntityManager.findByOrcid(orcid);
-        if (profile == null)
+    @Override
+    public Response getPerson(String orcid) {
+        PersonalDetails personalDetails = personalDetailsManager.getPersonalDetails(orcid);
+        if (personalDetails == null)
             return Response.status(404).build();
-
-        Optional<String> creditname = Optional.absent();
-        //if (!profile.getCreditNameVisibility().isMoreRestrictiveThan(vis)) {
-            creditname = Optional.of(profile.getCreditName());
-        //}
-
-        Set<ExternalIdentifierEntity> externalIDs = Sets.newHashSet();
-        if (!profile.getExternalIdentifiersVisibility().isMoreRestrictiveThan(vis)) {
-            externalIDs = profile.getExternalIdentifiers();
-        }
-
-        // TODO: we also need to check name visibility properly here, in line
-        // with V2 changes
-        Optional<String> given = Optional.fromNullable(profile.getGivenNames());
-        Optional<String> family = Optional.fromNullable(profile.getFamilyName());
-
+        personalDetails = visibilityFilter.filter(personalDetails);
+                
+        Optional<String> creditname = (personalDetails.getName() != null && personalDetails.getName().getCreditName() != null)? 
+                Optional.fromNullable(personalDetails.getName().getCreditName().getContent()) : Optional.absent();
+        Optional<String> given = (personalDetails.getName() != null && personalDetails.getName().getGivenNames() != null)?
+                Optional.fromNullable(personalDetails.getName().getGivenNames().getContent()) : Optional.absent();
+        Optional<String> family = (personalDetails.getName() != null && personalDetails.getName().getFamilyName() != null)?
+                Optional.fromNullable(personalDetails.getName().getFamilyName().getContent()): Optional.absent();
+        
+        List<ExternalIdentifier> allExtIds = externalIdentifierManager.getExternalIdentifiersV2(orcid).getExternalIdentifier();
+        @SuppressWarnings("unchecked")
+        List<ExternalIdentifier> filteredExtIds = (List<ExternalIdentifier>) visibilityFilter.filter(allExtIds);
+        
         ActivitiesSummary as = profileEntityManager.getActivitiesSummary(orcid);
         ActivityUtils.cleanEmptyFields(as);
         visibilityFilter.filter(as);
 
-        return Response.ok(new Cerif16Builder().addPerson(profile.getId(), given, family, creditname, externalIDs).concatPublications(as, orcid, false)
+        return Response.ok(new Cerif16Builder().addPerson(orcid, given, family, creditname, filteredExtIds).concatPublications(as, orcid, false)
                 .concatProducts(as, orcid, false).build()).build();
     }
 
