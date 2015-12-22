@@ -26,7 +26,12 @@
         @javax.xml.bind.annotation.XmlNs(prefix = "common", namespaceURI = "http://www.orcid.org/ns/common"),
         @javax.xml.bind.annotation.XmlNs(prefix = "person", namespaceURI = "http://www.orcid.org/ns/person"),
         @javax.xml.bind.annotation.XmlNs(prefix = "researcher-url", namespaceURI = "http://www.orcid.org/ns/researcher-url"),
-        @javax.xml.bind.annotation.XmlNs(prefix = "personal-details", namespaceURI = "http://www.orcid.org/ns/personal-details") },
+        @javax.xml.bind.annotation.XmlNs(prefix = "personal-details", namespaceURI = "http://www.orcid.org/ns/personal-details"), 
+        @javax.xml.bind.annotation.XmlNs(prefix = "address", namespaceURI = "http://www.orcid.org/ns/address"),
+        @javax.xml.bind.annotation.XmlNs(prefix = "email", namespaceURI = "http://www.orcid.org/ns/email"),
+        @javax.xml.bind.annotation.XmlNs(prefix = "external-identifier", namespaceURI = "http://www.orcid.org/ns/external-identifier"),
+        @javax.xml.bind.annotation.XmlNs(prefix = "keyword", namespaceURI = "http://www.orcid.org/ns/keyword"),
+        @javax.xml.bind.annotation.XmlNs(prefix = "other-name", namespaceURI = "http://www.orcid.org/ns/other-name")},
         elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
 package org.orcid.jaxb.model.record_rc2;
 

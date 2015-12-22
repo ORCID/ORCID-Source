@@ -86,9 +86,9 @@ public class CerifApiServiceDelegatorImpl implements CerifApiServiceDelgator {
             return Response.status(404).build();
 
         Optional<String> creditname = Optional.absent();
-        if (!profile.getCreditNameVisibility().isMoreRestrictiveThan(vis)) {
+        //if (!profile.getCreditNameVisibility().isMoreRestrictiveThan(vis)) {
             creditname = Optional.of(profile.getCreditName());
-        }
+        //}
 
         Set<ExternalIdentifierEntity> externalIDs = Sets.newHashSet();
         if (!profile.getExternalIdentifiersVisibility().isMoreRestrictiveThan(vis)) {

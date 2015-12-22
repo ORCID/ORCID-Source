@@ -46,7 +46,20 @@ undetected into the code during the previous development period. Release candida
 - [researcher-url-2.0_rc2.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/samples/researcher-url-2.0_rc2.xml)
 - [other-names-2.0_rc2.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/samples/other-names-2.0_rc2.xml)
 - [person-2.0_rc2.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/samples/person-2.0_rc2.xml)
-
+- [address-2.0_rc2.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/samples/address-2.0_rc2.xml)
+- [biography-2.0_rc2.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/samples/biography-2.0_rc2.xml)
+- [credit-name-2.0_rc2.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/samples/credit-name-2.0_rc2.xml)
+- [emails-2.0_rc2.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/samples/emails-2.0_rc2.xml)
+- [external-identifier-2.0_rc2.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/samples/external-identifier-2.0_rc2.xml)
+- [external-identifiers-2.0_rc2.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/samples/external-identifiers-2.0_rc2.xml)
+- [keyword-2.0_rc2.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/samples/keyword-2.0_rc2.xml)
+- [keywords-2.0_rc2.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/samples/keywords-2.0_rc2.xml)
+- [name-2.0_rc2.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/samples/name-2.0_rc2.xml)
+- [other-name-2.0_rc2.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/samples/other-name-2.0_rc2.xml)
+- [other-names-2.0_rc2.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/samples/other-names-2.0_rc2.xml)
+- [personal-details-2.0_rc2.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/samples/personal-details-2.0_rc2.xml)
+- [researcher-url-2.0_rc2.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/samples/researcher-url-2.0_rc2.xml)
+- [researcher-urls-2.0_rc2.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/samples/researcher-url-2.0_rc2.xml)
 
 
 **Note:** These files contain system-generated elements/attributes that are returned when reading items from ORCID, but should not be included when posting items to ORCID

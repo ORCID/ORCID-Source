@@ -562,6 +562,24 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         return encryptionManager.sha256Hash(orcid);
     }
     
+    @Override
+    public String retrivePublicDisplayName(String orcid) {
+        String publicName = ""; 
+        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
+        if(profile != null) {
+            Visibility namesVisibility = (profile.getNamesVisibility() != null) ? Visibility.fromValue(profile.getNamesVisibility().value()) : Visibility.fromValue(OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility().value());
+            if(Visibility.PUBLIC.equals(namesVisibility)) {
+                if(!PojoUtil.isEmpty(profile.getCreditName())) {
+                    publicName = profile.getCreditName();
+                } else {
+                    publicName = PojoUtil.isEmpty(profile.getGivenNames()) ? "" : profile.getGivenNames();
+                    publicName += PojoUtil.isEmpty(profile.getFamilyName()) ? "" : " " + profile.getFamilyName();
+                }
+            }
+        }
+        return publicName;
+    }
+    
 }
 
 class GroupableActivityComparator implements Comparator<GroupableActivity> {

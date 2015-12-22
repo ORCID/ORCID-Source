@@ -32,6 +32,8 @@ import static org.orcid.core.api.OrcidApiConstants.PEER_REVIEW;
 import static org.orcid.core.api.OrcidApiConstants.PEER_REVIEW_SUMMARY;
 import static org.orcid.core.api.OrcidApiConstants.EMAIL;
 import static org.orcid.core.api.OrcidApiConstants.PERSONAL_DETAILS;
+import static org.orcid.core.api.OrcidApiConstants.OTHER_NAMES;
+import static org.orcid.core.api.OrcidApiConstants.EXTERNAL_IDENTIFIERS;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -57,8 +59,8 @@ public class PublicV2ApiClientImpl {
     }
     
     public ClientResponse viewActivities(String orcid, String token) {
-        URI activitiesUri = UriBuilder.fromPath(ACTIVITIES).build(orcid);
-        return getClientReponse(activitiesUri, token);
+        URI uri = UriBuilder.fromPath(ACTIVITIES).build(orcid);
+        return getClientReponse(uri, token);
     }
     
     public ClientResponse viewWorkXml(String orcid, String putCode) {
@@ -152,25 +154,45 @@ public class PublicV2ApiClientImpl {
     }    
     
     public ClientResponse viewResearcherUrlsXML(String orcid) {
-        URI getURI = UriBuilder.fromPath(RESEARCHER_URLS).build(orcid);
-        return getClientReponse(getURI, null);        
+        URI uri = UriBuilder.fromPath(RESEARCHER_URLS).build(orcid);
+        return getClientReponse(uri, null);        
     }
     
     public ClientResponse viewResearcherUrlXML(String orcid, String putCode) {
-        URI getURI = UriBuilder.fromPath(RESEARCHER_URLS + PUTCODE).build(orcid, putCode);
-        return getClientReponse(getURI, null);        
+        URI uri = UriBuilder.fromPath(RESEARCHER_URLS + PUTCODE).build(orcid, putCode);
+        return getClientReponse(uri, null);        
     }     
     
     public ClientResponse viewEmailXML(String orcid) {
-        URI getURI = UriBuilder.fromPath(EMAIL).build(orcid);
-        return getClientReponse(getURI, null); 
+        URI uri = UriBuilder.fromPath(EMAIL).build(orcid);
+        return getClientReponse(uri, null); 
     }
     
     public ClientResponse viewPersonalDetailsXML(String orcid) {
-        URI getURI = UriBuilder.fromPath(PERSONAL_DETAILS).build(orcid);
-        return getClientReponse(getURI, null);
+        URI uri = UriBuilder.fromPath(PERSONAL_DETAILS).build(orcid);
+        return getClientReponse(uri, null);
+    }        
+    
+    public ClientResponse viewOtherNamesXML(String orcid) {
+        URI uri = UriBuilder.fromPath(OTHER_NAMES).build(orcid);
+        return getClientReponse(uri, null);
     }
     
+    public ClientResponse viewOtherNameXML(String orcid, Long putCode) {
+        URI uri = UriBuilder.fromPath(OTHER_NAMES + PUTCODE).build(orcid, putCode);
+        return getClientReponse(uri, null);
+    }
+    
+    public ClientResponse viewExternalIdentifiersXML(String orcid) {
+        URI uri = UriBuilder.fromPath(EXTERNAL_IDENTIFIERS).build(orcid);
+        return getClientReponse(uri, null);
+    }
+    
+    public ClientResponse viewExternalIdentifierXML(String orcid, Long putCode) {
+        URI uri = UriBuilder.fromPath(EXTERNAL_IDENTIFIERS + PUTCODE).build(orcid, putCode);
+        return getClientReponse(uri, null);
+    }
+        
     private ClientResponse getClientReponse(URI uri, String token) {
         ClientResponse result = null;
         if(PojoUtil.isEmpty(token)) {
