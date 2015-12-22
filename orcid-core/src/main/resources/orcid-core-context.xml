@@ -607,8 +607,8 @@
 	<bean id="crossDomainWebManger" class="org.orcid.core.web.filters.CrossDomainWebManger" />
 	
 	<!-- Need to create a bean for this, so can access in Jersey filter -->
-    <bean id="v1xDisabled" class="java.lang.Boolean">
-        <constructor-arg value="${org.orcid.core.v1_x.disabled}"/>
-    </bean>
-    
+	<bean id="v1xDisabled" class="java.lang.Boolean">
+		<constructor-arg value="${org.orcid.core.v1_x.disabled}"/>
+	</bean>
+
 </beans>
