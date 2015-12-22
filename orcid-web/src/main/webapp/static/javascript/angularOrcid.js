@@ -2916,8 +2916,12 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
     $scope.postRegisterConfirm = function () {
         $scope.showProcessingColorBox();
         $scope.register.valNumClient = $scope.register.valNumServer / 2;
+        var baseUri = getBaseUri();
+        if($scope.register.linkType === 'shibboleth'){
+            baseUri += '/shibboleth';
+        }
         $.ajax({
-            url: getBaseUri() + '/registerConfirm.json',
+            url: baseUri + '/registerConfirm.json',
             type: 'POST',
             data:  angular.toJson($scope.register),
             contentType: 'application/json;charset=UTF-8',

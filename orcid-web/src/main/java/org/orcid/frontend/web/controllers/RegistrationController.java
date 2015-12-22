@@ -381,7 +381,7 @@ public class RegistrationController extends BaseController {
         }
     }
 
-    @RequestMapping(value = "/registerConfirm.json", method = RequestMethod.POST)
+    @RequestMapping(value = {"/registerConfirm.json", "/shibboleth/registerConfirm.json"}, method = RequestMethod.POST)
     public @ResponseBody Redirect setRegisterConfirm(HttpServletRequest request, HttpServletResponse response, @RequestBody Registration reg) {
         Redirect r = new Redirect();
 
