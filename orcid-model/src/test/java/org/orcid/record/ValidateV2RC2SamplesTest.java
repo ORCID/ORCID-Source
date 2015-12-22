@@ -50,6 +50,7 @@ import org.orcid.jaxb.model.record_rc2.Keywords;
 import org.orcid.jaxb.model.record_rc2.Name;
 import org.orcid.jaxb.model.record_rc2.OtherName;
 import org.orcid.jaxb.model.record_rc2.OtherNames;
+import org.orcid.jaxb.model.record_rc2.Person;
 import org.orcid.jaxb.model.record_rc2.PersonalDetails;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
@@ -364,6 +365,33 @@ public class ValidateV2RC2SamplesTest {
 
     @Test
     public void testUnmarshallPerson() {
+        Person person = (Person) unmarshallFromPath("/record_2.0_rc2/samples/person-2.0_rc2.xml", Person.class);
+        assertNotNull(person);
+        assertNotNull(person.getName());
+        assertEquals("give-names", person.getName().getGivenNames().getContent());
+        assertEquals("family-name", person.getName().getFamilyName().getContent());
+        assertEquals("credit-name", person.getName().getCreditName().getContent());
+        assertEquals(Visibility.PUBLIC, person.getName().getVisibility());
+        assertNotNull(person.getOtherNames());
+        assertNotNull(person.getOtherNames().getOtherNames());
+        assertEquals(1, person.getOtherNames().getOtherNames().size());
+        assertEquals("other-name-1", person.getOtherNames().getOtherNames().get(0).getContent());
+        assertNotNull(person.getOtherNames().getOtherNames().get(0).getCreatedDate());
+        assertNotNull(person.getOtherNames().getOtherNames().get(0).getCreatedDate().getValue());
+        assertEquals(2001, person.getOtherNames().getOtherNames().get(0).getCreatedDate().getValue().getYear());
+        assertEquals(12, person.getOtherNames().getOtherNames().get(0).getCreatedDate().getValue().getMonth());
+        assertEquals(31, person.getOtherNames().getOtherNames().get(0).getCreatedDate().getValue().getDay());
+        
+        assertNotNull(person.getOtherNames().getOtherNames().get(0).getLastModifiedDate().getValue());
+        assertEquals(2001, person.getOtherNames().getOtherNames().get(0).getLastModifiedDate().getValue().getYear());
+        assertEquals(12, person.getOtherNames().getOtherNames().get(0).getLastModifiedDate().getValue().getMonth());
+        assertEquals(31, person.getOtherNames().getOtherNames().get(0).getLastModifiedDate().getValue().getDay());
+        
+        assertNotNull(person.getOtherNames().getOtherNames().get(0).getSource());
+        assertNotNull(person.getOtherNames().getOtherNames().get(0).getSource().getSourceOrcid());
+        assertEquals("8888-8888-8888-8880", person.getOtherNames().getOtherNames().get(0).getSource().getSourceOrcid().getPath());
+        
+        
         fail();
     }
 
@@ -407,6 +435,8 @@ public class ValidateV2RC2SamplesTest {
                 result = (Delegation) obj;
             } else if (Applications.class.equals(type)) {
                 result = (Applications) obj;
+            } else if(Person.class.equals(type)) {
+                result = (Person) obj;
             }
             return result;
         } catch (IOException e) {
