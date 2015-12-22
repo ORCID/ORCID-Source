@@ -16,12 +16,16 @@
  */
 package org.orcid.api.common.cerif;
 
-/** Derived from https://github.com/EKT/CERIF-Tools/blob/master/CERIF%201.6/cerif-jpa-model/src/main/java/gr/ekt/cerif/entities/link/ClassScheme_Class.java
- * Licenced at ...
+/**
+ * Derived from
+ * https://github.com/EKT/CERIF-Tools/blob/master/CERIF%201.6/cerif-jpa-model/
+ * src/main/java/gr/ekt/cerif/entities/link/ClassScheme_Class.java Licenced at
+ * repo
  * 
  * @author tom
  *
  */
+//@formatter:off
 public enum CerifClassEnum {
     
     

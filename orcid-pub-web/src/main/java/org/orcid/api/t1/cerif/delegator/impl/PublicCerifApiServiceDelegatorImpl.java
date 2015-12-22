@@ -23,11 +23,11 @@ import org.orcid.core.security.visibility.aop.AccessControl;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.springframework.transaction.annotation.Transactional;
 
-public class PublicCerifApiServiceDelegatorImpl extends CerifApiServiceDelegatorImpl{
+public class PublicCerifApiServiceDelegatorImpl extends CerifApiServiceDelegatorImpl {
 
     @Override
     @AccessControl(requiredScope = ScopePathType.READ_PUBLIC, enableAnonymousAccess = true)
-    @Transactional(readOnly=true)
+    @Transactional(readOnly = true)
     public Response getPerson(String id) {
         return super.getPerson(id);
     }
@@ -41,6 +41,6 @@ public class PublicCerifApiServiceDelegatorImpl extends CerifApiServiceDelegator
     @Override
     @AccessControl(requiredScope = ScopePathType.READ_PUBLIC, enableAnonymousAccess = true)
     public Response getProduct(String orcid, Long id) {
-        return super.getProduct(orcid,id);
+        return super.getProduct(orcid, id);
     }
 }

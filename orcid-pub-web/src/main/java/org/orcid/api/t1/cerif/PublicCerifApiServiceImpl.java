@@ -61,7 +61,8 @@ public class PublicCerifApiServiceImpl {
     @GET
     @Produces(value = { MediaType.APPLICATION_XML })
     @Path(OrcidApiConstants.CERIF_PERSONS_PATH)
-    @ApiOperation(value = "Fetch a person record", authorizations = { @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_PUBLIC, description = "you need this") }) })
+    @ApiOperation(value = "Fetch a person record", authorizations = {
+            @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_PUBLIC, description = "you need this") }) })
     @ApiResponses(value = { @ApiResponse(code = 200, message = "Person found"), @ApiResponse(code = 404, message = "Person not found") })
     public Response viewPerson(@PathParam("id") String id) {
         return serviceDelegator.getPerson(id);
@@ -70,12 +71,13 @@ public class PublicCerifApiServiceImpl {
     @GET
     @Produces(value = { MediaType.APPLICATION_XML })
     @Path(OrcidApiConstants.CERIF_PUBLICATIONS_PATH)
-    @ApiOperation(value = "Fetch a research publication record", authorizations = { @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_PUBLIC, description = "you need this") }) })
+    @ApiOperation(value = "Fetch a research publication record", authorizations = {
+            @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_PUBLIC, description = "you need this") }) })
     @ApiResponses(value = { @ApiResponse(code = 200, message = "Publication found"), @ApiResponse(code = 404, message = "Publication not found") })
     public Response viewPublication(@PathParam("id") String id) {
         try {
             Pair<String, Long> ids = serviceDelegator.parseActivityID(id);
-            return serviceDelegator.getPublication(ids.getLeft(),ids.getRight());
+            return serviceDelegator.getPublication(ids.getLeft(), ids.getRight());
         } catch (IllegalArgumentException e) {
             return Response.status(400).build();
         }
@@ -84,12 +86,13 @@ public class PublicCerifApiServiceImpl {
     @GET
     @Produces(value = { MediaType.APPLICATION_XML })
     @Path(OrcidApiConstants.CERIF_PRODUCTS_PATH)
-    @ApiOperation(value = "Fetch a research product record", authorizations = { @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_PUBLIC, description = "you need this") }) })
+    @ApiOperation(value = "Fetch a research product record", authorizations = {
+            @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_PUBLIC, description = "you need this") }) })
     @ApiResponses(value = { @ApiResponse(code = 200, message = "Product found"), @ApiResponse(code = 404, message = "Product not found") })
     public Response viewProduct(@PathParam("id") String id) {
         try {
             Pair<String, Long> ids = serviceDelegator.parseActivityID(id);
-            return serviceDelegator.getProduct(ids.getLeft(),ids.getRight());
+            return serviceDelegator.getProduct(ids.getLeft(), ids.getRight());
         } catch (IllegalArgumentException e) {
             return Response.status(400).build();
         }
@@ -98,7 +101,8 @@ public class PublicCerifApiServiceImpl {
     @GET
     @Produces(value = { MediaType.APPLICATION_XML })
     @Path(OrcidApiConstants.CERIF_ENTITIES_PATH)
-    @ApiOperation(value = "Fetch the list of supported entities", authorizations = { @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_PUBLIC, description = "you need this") }) })
+    @ApiOperation(value = "Fetch the list of supported entities", authorizations = {
+            @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_PUBLIC, description = "you need this") }) })
     @ApiResponses(value = { @ApiResponse(code = 200, message = "OK") })
     public Response viewEntities() {
         return serviceDelegator.getEntities();
@@ -107,10 +111,11 @@ public class PublicCerifApiServiceImpl {
     @GET
     @Produces(value = { MediaType.APPLICATION_XML })
     @Path(OrcidApiConstants.CERIF_SEMANTICS_PATH)
-    @ApiOperation(value = "Fetch the CERIF semantics", authorizations = { @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_PUBLIC, description = "you need this") }) })
+    @ApiOperation(value = "Fetch the CERIF semantics", authorizations = {
+            @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_PUBLIC, description = "you need this") }) })
     @ApiResponses(value = { @ApiResponse(code = 200, message = "OK") })
     public Response viewSemantics() {
         return serviceDelegator.getSemantics();
     }
-    
+
 }

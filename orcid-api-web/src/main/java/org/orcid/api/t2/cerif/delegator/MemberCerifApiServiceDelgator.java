@@ -18,6 +18,6 @@ package org.orcid.api.t2.cerif.delegator;
 
 import org.orcid.api.common.delegator.CerifApiServiceDelgator;
 
-public interface MemberCerifApiServiceDelgator extends CerifApiServiceDelgator{
+public interface MemberCerifApiServiceDelgator extends CerifApiServiceDelgator {
 
 }

@@ -16,7 +16,6 @@
  */
 package org.orcid.api.common.cerif;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -29,7 +28,6 @@ import org.orcid.jaxb.model.record.summary_rc1.WorkSummary;
 import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifier;
 import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.record_rc2.ExternalIdentifier;
-import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableSet;
@@ -44,8 +42,6 @@ import xmlns.org.eurocris.cerif_1.CfResProdType;
 import xmlns.org.eurocris.cerif_1.CfResPublType;
 import xmlns.org.eurocris.cerif_1.ObjectFactory;
 import xmlns.org.eurocris.cerif_api.Cerifapitype;
-import xmlns.org.eurocris.cerif_api.Headertype;
-import xmlns.org.eurocris.cerif_api.Payloadtype;
 
 /**
  * Builds JAXB Cerif 1.6.2 objects from ORCID records and wraps them in 1.0
@@ -82,7 +78,8 @@ public class Cerif16Builder {
         apifactory = new Cerif10APIFactory();
     }
 
-    /** Add a person entity to the underlying CERIF document
+    /**
+     * Add a person entity to the underlying CERIF document
      * 
      * @param orcid
      * @param given
@@ -95,23 +92,23 @@ public class Cerif16Builder {
         person = objectFactory.createCfPersType();
         person.setCfPersId(orcid);
         person.getCfResIntOrCfKeywOrCfPersPers().add(buildFedID(orcid, CerifClassEnum.ORCID));
-        
-        // add in other external ids here   
+
+        // add in other external ids here
         for (ExternalIdentifier id : externalIDs) {
-            if (translator.translate(id) != CerifClassEnum.OTHER){
-                person.getCfResIntOrCfKeywOrCfPersPers().add(buildFedID(id.getReference(), translator.translate(id)));                    
+            if (translator.translate(id) != CerifClassEnum.OTHER) {
+                person.getCfResIntOrCfKeywOrCfPersPers().add(buildFedID(id.getReference(), translator.translate(id)));
             }
         }
-    
-        if (given.isPresent() || family.isPresent()){
+
+        if (given.isPresent() || family.isPresent()) {
             CfPersNamePers name = objectFactory.createCfPersTypeCfPersNamePers();
             if (given.isPresent())
                 name.setCfFirstNames(given.get());
             if (family.isPresent())
                 name.setCfFamilyNames(family.get());
             name.setCfClassId(CerifClassEnum.PASSPORT_NAME.getUuid());
-            name.setCfClassSchemeId(CerifClassSchemeEnum.PERSON_NAMES.getUuid());            
-            person.getCfResIntOrCfKeywOrCfPersPers().add(objectFactory.createCfPersTypeCfPersNamePers(name));            
+            name.setCfClassSchemeId(CerifClassSchemeEnum.PERSON_NAMES.getUuid());
+            person.getCfResIntOrCfKeywOrCfPersPers().add(objectFactory.createCfPersTypeCfPersNamePers(name));
         }
 
         if (creditname.isPresent()) {
@@ -121,7 +118,7 @@ public class Cerif16Builder {
             cn.setCfOtherNames(creditname.get());
             person.getCfResIntOrCfKeywOrCfPersPers().add(objectFactory.createCfPersTypeCfPersNamePers(cn));
         }
-        
+
         cerif.getCfClassOrCfClassSchemeOrCfClassSchemeDescr().add(person);
         return this;
     }
@@ -130,7 +127,9 @@ public class Cerif16Builder {
      * Add a ResultPublication to the underlying CERIF.
      * 
      * @param orcid
-     * @param ws please ensure this has been filtered for visibility before passing in
+     * @param ws
+     *            please ensure this has been filtered for visibility before
+     *            passing in
      * @param objectFactory
      * @return
      */
@@ -145,14 +144,14 @@ public class Cerif16Builder {
         titleString.setCfLangCode("en");
         pub.getCfTitleOrCfAbstrOrCfKeyw().add(objectFactory.createCfResPublTypeCfTitle(titleString));
 
-        if (ws.getTitle().getTranslatedTitle() != null){
+        if (ws.getTitle().getTranslatedTitle() != null) {
             org.orcid.jaxb.model.common.TranslatedTitle trans = ws.getTitle().getTranslatedTitle();
             CfMLangStringType transTitle = objectFactory.createCfMLangStringType();
             titleString.setValue(trans.getContent());
             titleString.setCfLangCode(trans.getLanguageCode());
             pub.getCfTitleOrCfAbstrOrCfKeyw().add(objectFactory.createCfResProdTypeCfName(transTitle));
-        }  
-        
+        }
+
         // add type info
         CfCoreClassWithFractionType type = objectFactory.createCfCoreClassWithFractionType();
         type.setCfClassSchemeId(CerifClassSchemeEnum.OUTPUT_TYPES.getUuid());
@@ -163,11 +162,8 @@ public class Cerif16Builder {
         if (ws.getExternalIdentifiers() != null && ws.getExternalIdentifiers().getWorkExternalIdentifier() != null) {
             for (WorkExternalIdentifier id : ws.getExternalIdentifiers().getWorkExternalIdentifier()) {
                 if (exportedIDs.contains(id.getWorkExternalIdentifierType()) && StringUtils.isNotEmpty(id.getWorkExternalIdentifierId().getContent())) {
-                    pub.getCfTitleOrCfAbstrOrCfKeyw().add(
-                        this.buildFedID(
-                            id.getWorkExternalIdentifierId().getContent(), 
-                            translator.translate(id.getWorkExternalIdentifierType())
-                    ));
+                    pub.getCfTitleOrCfAbstrOrCfKeyw()
+                            .add(this.buildFedID(id.getWorkExternalIdentifierId().getContent(), translator.translate(id.getWorkExternalIdentifierType())));
                 }
             }
         }
@@ -184,7 +180,9 @@ public class Cerif16Builder {
      * Add a ResultProduct to the underlying CERIF document
      * 
      * @param orcid
-     * @param ws please ensure this has been filtered for visibility before passing in
+     * @param ws
+     *            please ensure this has been filtered for visibility before
+     *            passing in
      * @param objectFactory
      * @return
      */
@@ -196,15 +194,15 @@ public class Cerif16Builder {
         titleString.setValue(ws.getTitle().getTitle().getContent());
         titleString.setCfLangCode("en");
         prod.getCfNameOrCfDescrOrCfKeyw().add(objectFactory.createCfResProdTypeCfName(titleString));
-        
-        if (ws.getTitle().getTranslatedTitle() != null){
+
+        if (ws.getTitle().getTranslatedTitle() != null) {
             org.orcid.jaxb.model.common.TranslatedTitle trans = ws.getTitle().getTranslatedTitle();
             CfMLangStringType transTitle = objectFactory.createCfMLangStringType();
             titleString.setValue(trans.getContent());
             titleString.setCfLangCode(trans.getLanguageCode());
             prod.getCfNameOrCfDescrOrCfKeyw().add(objectFactory.createCfResProdTypeCfName(transTitle));
-        }        
-        
+        }
+
         // add type info
         CfCoreClassWithFractionType type = objectFactory.createCfCoreClassWithFractionType();
         type.setCfClassSchemeId(CerifClassSchemeEnum.OUTPUT_TYPES.getUuid());
@@ -215,11 +213,8 @@ public class Cerif16Builder {
         if (ws.getExternalIdentifiers() != null && ws.getExternalIdentifiers().getWorkExternalIdentifier() != null) {
             for (WorkExternalIdentifier id : ws.getExternalIdentifiers().getWorkExternalIdentifier()) {
                 if (exportedIDs.contains(id.getWorkExternalIdentifierType()) && StringUtils.isNotEmpty(id.getWorkExternalIdentifierId().getContent())) {
-                    prod.getCfNameOrCfDescrOrCfKeyw().add(
-                        this.buildFedID(
-                                id.getWorkExternalIdentifierId().getContent(), 
-                                translator.translate(id.getWorkExternalIdentifierType())
-                    ));
+                    prod.getCfNameOrCfDescrOrCfKeyw()
+                            .add(this.buildFedID(id.getWorkExternalIdentifierId().getContent(), translator.translate(id.getWorkExternalIdentifierType())));
                 }
             }
         }
@@ -237,7 +232,9 @@ public class Cerif16Builder {
      * 
      * NOTE: will fail if you have not already added a person via addPerson()
      * 
-     * @param as please ensure this has been filtered for visibility before passing in
+     * @param as
+     *            please ensure this has been filtered for visibility before
+     *            passing in
      * @param orcid
      * @param addFullPublications
      * @return
@@ -270,7 +267,9 @@ public class Cerif16Builder {
      * 
      * NOTE: will fail if you have not already added a person via addPerson()
      * 
-     * @param as please ensure this has been filtered for visibility before passing in
+     * @param as
+     *            please ensure this has been filtered for visibility before
+     *            passing in
      * @param orcid
      * @param addFullPublications
      * @return
@@ -306,8 +305,9 @@ public class Cerif16Builder {
     public Cerifapitype build() {
         return apifactory.wrap(cerif);
     }
-    
-    /** Create a federated identifer element suitable for use by all entities
+
+    /**
+     * Create a federated identifer element suitable for use by all entities
      * 
      * @param id
      * @param type

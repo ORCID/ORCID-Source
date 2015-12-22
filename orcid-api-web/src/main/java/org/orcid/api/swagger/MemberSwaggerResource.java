@@ -72,8 +72,8 @@ public class MemberSwaggerResource extends SwaggerJSONResource {
         oauthTwoLegs.application(this.tokenEndPoint);
         oauthTwoLegs.scope(ScopePathType.PREMIUM_NOTIFICATION.value(), "Notifications");
         oauthTwoLegs.scope(ScopePathType.READ_PUBLIC.value(), "Read Public record");
-        s.securityDefinition("orcid_two_legs",oauthTwoLegs);        
-        
+        s.securityDefinition("orcid_two_legs", oauthTwoLegs);
+
         return s;
     }
 

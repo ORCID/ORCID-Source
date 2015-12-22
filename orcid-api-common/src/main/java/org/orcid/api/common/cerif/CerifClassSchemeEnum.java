@@ -16,11 +16,15 @@
  */
 package org.orcid.api.common.cerif;
 
-/** Derived from https://github.com/EKT/CERIF-Tools/blob/master/CERIF%201.6/cerif-jpa-model/src/main/java/gr/ekt/cerif/enumerations/semantics/ClassSchemeEnum.java
+/**
+ * Derived from
+ * https://github.com/EKT/CERIF-Tools/blob/master/CERIF%201.6/cerif-jpa-model/
+ * src/main/java/gr/ekt/cerif/enumerations/semantics/ClassSchemeEnum.java
  * 
  * @author tom
  *
  */
+//@formatter:off
 public enum CerifClassSchemeEnum {
     
     CERIF_ENTITIES("6e0d9af0-1cd6-11e1-8bc2-0800200c9a66","CERIF Entities"),

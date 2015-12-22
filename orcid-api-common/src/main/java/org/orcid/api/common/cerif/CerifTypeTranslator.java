@@ -19,7 +19,6 @@ package org.orcid.api.common.cerif;
 import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.record_rc1.WorkType;
 import org.orcid.jaxb.model.record_rc2.ExternalIdentifier;
-import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
 
 /**
  * Maps ORCID-CERIF work/identifier types and distinguishes between Publications
@@ -81,8 +80,9 @@ public class CerifTypeTranslator {
      * 
      * ORCID, ResearcherID, ScopusAuthorID, STAFFID, DNR, ISNI
      * 
-     * Used select source_id, client_source_id, external_id_type, count(*) from external_identifier group by source_id, client_source_id, external_id_type;
-     * to discover names.
+     * Used select source_id, client_source_id, external_id_type, count(*) from
+     * external_identifier group by source_id, client_source_id,
+     * external_id_type; to discover names.
      * 
      * @param id
      * @return
@@ -106,8 +106,9 @@ public class CerifTypeTranslator {
         return (publicationTypefromWorkType(type) == null);
     }
 
-    /** Mapping is difficult here - little overlap of vocab
-     * We map dataset and other.
+    /**
+     * Mapping is difficult here - little overlap of vocab We map dataset and
+     * other.
      * 
      * @param type
      * @return

@@ -17,7 +17,6 @@
 package org.orcid.api.common.delegator.impl;
 
 import java.util.List;
-import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
@@ -34,18 +33,12 @@ import org.orcid.core.manager.PersonalDetailsManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.core.security.visibility.filter.VisibilityFilterV2;
-import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.record.summary_rc1.ActivitiesSummary;
 import org.orcid.jaxb.model.record.summary_rc1.WorkSummary;
 import org.orcid.jaxb.model.record_rc2.ExternalIdentifier;
-import org.orcid.jaxb.model.record_rc2.ExternalIdentifiers;
 import org.orcid.jaxb.model.record_rc2.PersonalDetails;
-import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Optional;
-import com.google.common.collect.Sets;
 
 /**
  * Produces CERIF formatted representations of ORCID reseources cerif openAIRE
@@ -59,7 +52,7 @@ public class CerifApiServiceDelegatorImpl implements CerifApiServiceDelgator {
 
     @Resource
     private ProfileEntityManager profileEntityManager;
-    
+
     @Resource
     private PersonalDetailsManager personalDetailsManager;
     @Resource
@@ -85,18 +78,18 @@ public class CerifApiServiceDelegatorImpl implements CerifApiServiceDelgator {
         if (personalDetails == null)
             return Response.status(404).build();
         personalDetails = visibilityFilter.filter(personalDetails);
-                
-        Optional<String> creditname = (personalDetails.getName() != null && personalDetails.getName().getCreditName() != null)? 
-                Optional.fromNullable(personalDetails.getName().getCreditName().getContent()) : Optional.absent();
-        Optional<String> given = (personalDetails.getName() != null && personalDetails.getName().getGivenNames() != null)?
-                Optional.fromNullable(personalDetails.getName().getGivenNames().getContent()) : Optional.absent();
-        Optional<String> family = (personalDetails.getName() != null && personalDetails.getName().getFamilyName() != null)?
-                Optional.fromNullable(personalDetails.getName().getFamilyName().getContent()): Optional.absent();
-        
+
+        Optional<String> creditname = (personalDetails.getName() != null && personalDetails.getName().getCreditName() != null)
+                ? Optional.fromNullable(personalDetails.getName().getCreditName().getContent()) : Optional.absent();
+        Optional<String> given = (personalDetails.getName() != null && personalDetails.getName().getGivenNames() != null)
+                ? Optional.fromNullable(personalDetails.getName().getGivenNames().getContent()) : Optional.absent();
+        Optional<String> family = (personalDetails.getName() != null && personalDetails.getName().getFamilyName() != null)
+                ? Optional.fromNullable(personalDetails.getName().getFamilyName().getContent()) : Optional.absent();
+
         List<ExternalIdentifier> allExtIds = externalIdentifierManager.getExternalIdentifiersV2(orcid).getExternalIdentifier();
         @SuppressWarnings("unchecked")
         List<ExternalIdentifier> filteredExtIds = (List<ExternalIdentifier>) visibilityFilter.filter(allExtIds);
-        
+
         ActivitiesSummary as = profileEntityManager.getActivitiesSummary(orcid);
         ActivityUtils.cleanEmptyFields(as);
         visibilityFilter.filter(as);

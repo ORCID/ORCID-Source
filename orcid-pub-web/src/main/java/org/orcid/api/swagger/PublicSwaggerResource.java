@@ -45,7 +45,7 @@ import io.swagger.util.Json;
 public class PublicSwaggerResource extends SwaggerJSONResource {
     @Value("${org.orcid.swagger.tokenendpoint}")
     private String tokenEndPoint;
-    
+
     /**
      * Scan the classes and add in the OAuth information
      * 
@@ -59,8 +59,8 @@ public class PublicSwaggerResource extends SwaggerJSONResource {
         OAuth2Definition oauthTwoLegs = new OAuth2Definition();
         oauthTwoLegs.application(this.tokenEndPoint);
         oauthTwoLegs.scope(ScopePathType.READ_PUBLIC.value(), "Read Public record");
-        s.securityDefinition("orcid_two_legs",oauthTwoLegs);        
-        
+        s.securityDefinition("orcid_two_legs", oauthTwoLegs);
+
         return s;
     }
 }
