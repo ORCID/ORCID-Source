@@ -17,7 +17,6 @@
 package org.orcid.jaxb.model.record_rc2;
 
 import java.io.Serializable;
-import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -26,26 +25,26 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType( propOrder = { "address" })
-@XmlRootElement(name = "addresses", namespace = "http://www.orcid.org/ns/address")
-public class Addresses implements Serializable {
-    private static final long serialVersionUID = -128015751933210030L;
-    @XmlElement(name = "address", namespace = "http://www.orcid.org/ns/address")
-    List<Address> address;
+@XmlType(propOrder = { "delegationDetails" })
+@XmlRootElement(name = "given-permission-by", namespace = "http://www.orcid.org/ns/person")
+public class GivenPermissionBy implements Serializable {
+    private static final long serialVersionUID = 4364407407203629185L;
+    @XmlElement(namespace = "http://www.orcid.org/ns/person", name = "delegation-details")
+    protected DelegationDetails delegationDetails;
 
-    public List<Address> getAddress() {
-        return address;
+    public DelegationDetails getDelegationDetails() {
+        return delegationDetails;
     }
 
-    public void setAddress(List<Address> address) {
-        this.address = address;
+    public void setDelegationDetails(DelegationDetails delegationDetails) {
+        this.delegationDetails = delegationDetails;
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((address == null) ? 0 : address.hashCode());
+        result = prime * result + ((delegationDetails == null) ? 0 : delegationDetails.hashCode());
         return result;
     }
 
@@ -57,12 +56,12 @@ public class Addresses implements Serializable {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        Addresses other = (Addresses) obj;
-        if (address == null) {
-            if (other.address != null)
+        GivenPermissionBy other = (GivenPermissionBy) obj;
+        if (delegationDetails == null) {
+            if (other.delegationDetails != null)
                 return false;
-        } else if (!address.equals(other.address))
+        } else if (!delegationDetails.equals(other.delegationDetails))
             return false;
         return true;
-    }        
+    }
 }

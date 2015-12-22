@@ -16,17 +16,6 @@
  */
 package org.orcid.jaxb.model.record_rc2;
 
-import java.io.Serializable;
+public class Applications {
 
-public class Person implements Serializable {
-
-    Name name;
-    OtherNames otherNames;
-    Biography biography;
-    ResearcherUrls researcherUrls;
-    Emails emails;
-    Addresses addresses;
-    Keywords keywords;
-    ExternalIdentifiers externalIdentifiers;
-    Delegation delegation;
 }

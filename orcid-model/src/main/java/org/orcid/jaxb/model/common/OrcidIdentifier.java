@@ -14,19 +14,27 @@
  *
  * =============================================================================
  */
-package org.orcid.jaxb.model.record_rc2;
+package org.orcid.jaxb.model.common;
 
 import java.io.Serializable;
 
-public class Person implements Serializable {
+import javax.xml.bind.annotation.XmlRootElement;
 
-    Name name;
-    OtherNames otherNames;
-    Biography biography;
-    ResearcherUrls researcherUrls;
-    Emails emails;
-    Addresses addresses;
-    Keywords keywords;
-    ExternalIdentifiers externalIdentifiers;
-    Delegation delegation;
+@XmlRootElement(name = "orcid-identifier")
+public class OrcidIdentifier extends OrcidIdBase implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+    public OrcidIdentifier() {
+        super();
+    }
+
+    public OrcidIdentifier(String path) {
+        super(path);
+    }
+
+    public OrcidIdentifier(OrcidIdBase other) {
+        super(other);
+    }
+
 }

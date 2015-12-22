@@ -62,7 +62,6 @@ import io.swagger.annotations.ApiModelProperty;
         "publicationDate", "externalIdentifiers", "url", "contributors", "languageCode", "country" })
 @XmlRootElement(name = "work", namespace = "http://www.orcid.org/ns/work")
 public class Work implements VisibilityType, Activity, Serializable {
-
     private static final long serialVersionUID = 1L;
     @XmlElement(namespace = "http://www.orcid.org/ns/work")
     protected WorkTitle title;
