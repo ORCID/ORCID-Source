@@ -31,9 +31,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
-public class ValidateV2RC1Samples {
+public class ValidateV2RC1SamplesTest {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ValidateV2RC1Samples.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ValidateV2RC1SamplesTest.class);
 
     String[] sampleNames = { "activities", "deprecated", "education", "employment", "error", "funding", "history", "person", "preferences", "record", "search", "work" };
 

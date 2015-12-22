@@ -55,7 +55,7 @@ import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
 import org.orcid.jaxb.model.record_rc2.ScopePath;
 
-public class ValidateV2RC2Samples {
+public class ValidateV2RC2SamplesTest {
     @Test
     public void testUnmarshallPersonalDetails() {
         PersonalDetails personalDetails = (PersonalDetails) unmarshallFromPath("/record_2.0_rc2/samples/personal-details-2.0_rc2.xml", PersonalDetails.class);
