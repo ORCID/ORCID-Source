@@ -33,7 +33,9 @@ import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.manager.AffiliationsManager;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.EmailManager;
+import org.orcid.core.manager.ExternalIdentifierManager;
 import org.orcid.core.manager.OrcidSecurityManager;
+import org.orcid.core.manager.OtherNameManager;
 import org.orcid.core.manager.PeerReviewManager;
 import org.orcid.core.manager.PersonalDetailsManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
@@ -58,6 +60,10 @@ import org.orcid.jaxb.model.record_rc1.Employment;
 import org.orcid.jaxb.model.record_rc1.Funding;
 import org.orcid.jaxb.model.record_rc1.PeerReview;
 import org.orcid.jaxb.model.record_rc1.Work;
+import org.orcid.jaxb.model.record_rc2.ExternalIdentifier;
+import org.orcid.jaxb.model.record_rc2.ExternalIdentifiers;
+import org.orcid.jaxb.model.record_rc2.OtherName;
+import org.orcid.jaxb.model.record_rc2.OtherNames;
 import org.orcid.jaxb.model.record_rc2.PersonalDetails;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
@@ -118,6 +124,12 @@ public class PublicV2ApiServiceDelegatorImpl implements PublicV2ApiServiceDelega
     
     @Resource
     PersonalDetailsManager personalDetailsManager;
+    
+    @Resource
+    private OtherNameManager otherNameManager;
+    
+    @Resource
+    private ExternalIdentifierManager externalIdentifierManager;
     
     @Override
     public Response viewStatusText() {
@@ -261,7 +273,7 @@ public class PublicV2ApiServiceDelegatorImpl implements PublicV2ApiServiceDelega
     
     @Override
     @AccessControl(requiredScope = ScopePathType.READ_PUBLIC, enableAnonymousAccess = true)
-    public Response viewResearcherUrl(String orcid, String putCode) {
+    public Response viewResearcherUrl(String orcid, Long putCode) {
         ResearcherUrl researcherUrl = researcherUrlManager.getResearcherUrlV2(orcid, Long.valueOf(putCode));
         orcidSecurityManager.checkVisibility(researcherUrl);
         return Response.ok(researcherUrl).build();
@@ -279,6 +291,35 @@ public class PublicV2ApiServiceDelegatorImpl implements PublicV2ApiServiceDelega
     public Response viewPersonalDetails(String orcid) {
         PersonalDetails personalDetails = personalDetailsManager.getPublicPersonalDetails(orcid);
         return Response.ok(personalDetails).build();
+    }    
+
+    @Override
+    @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED, enableAnonymousAccess = true)
+    public Response viewOtherNames(String orcid) {
+        OtherNames otherNames = otherNameManager.getPublicOtherNamesV2(orcid);
+        return Response.ok(otherNames).build();
     }
-    
+
+    @Override
+    @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED, enableAnonymousAccess = true)
+    public Response viewOtherName(String orcid, Long putCode) {
+        OtherName otherName = otherNameManager.getOtherNameV2(orcid, putCode);
+        orcidSecurityManager.checkVisibility(otherName);
+        return Response.ok(otherName).build();
+    }
+
+    @Override
+    @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED, enableAnonymousAccess = true)
+    public Response viewExternalIdentifiers(String orcid) {
+        ExternalIdentifiers extIds = externalIdentifierManager.getPublicExternalIdentifiersV2(orcid);        
+        return Response.ok(extIds).build();
+    }
+
+    @Override
+    @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED, enableAnonymousAccess = true)
+    public Response viewExternalIdentifier(String orcid, Long putCode) {
+        ExternalIdentifier extId = externalIdentifierManager.getExternalIdentifierV2(orcid, putCode);        
+        orcidSecurityManager.checkVisibility(extId);
+        return Response.ok(extId).build();
+    }    
 }

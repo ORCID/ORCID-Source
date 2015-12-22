@@ -59,7 +59,8 @@ public class Client implements ErrorsInterface, Serializable {
             }            
             
             client.persistentTokenEnabled = new Checkbox();
-            client.persistentTokenEnabled.setValue(clientDetails.isPersistentTokensEnabled());                                    
+            client.persistentTokenEnabled.setValue(clientDetails.isPersistentTokensEnabled());     
+            if(clientDetails.getClientType() != null)
             client.setType(Text.valueOf(clientDetails.getClientType().value()));
             
             if(clientDetails.isScoped())

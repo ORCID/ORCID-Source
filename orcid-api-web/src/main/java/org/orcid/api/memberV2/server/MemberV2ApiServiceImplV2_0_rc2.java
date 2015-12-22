@@ -25,6 +25,7 @@ import static org.orcid.core.api.OrcidApiConstants.RESEARCHER_URLS;
 import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_JSON;
 import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_XML;
 import static org.orcid.core.api.OrcidApiConstants.OTHER_NAMES;
+import static org.orcid.core.api.OrcidApiConstants.EXTERNAL_IDENTIFIERS;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;
@@ -41,6 +42,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.orcid.jaxb.model.message.ScopeConstants;
+import org.orcid.jaxb.model.record_rc2.ExternalIdentifier;
 import org.orcid.jaxb.model.record_rc2.OtherName;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 
@@ -64,7 +66,7 @@ public class MemberV2ApiServiceImplV2_0_rc2 extends MemberV2ApiServiceImplBase {
     @Path(RESEARCHER_URLS + PUTCODE)
     @ApiOperation(value = "Fetch one researcher url for an ORCID ID", hidden = true, authorizations = { @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_READ_LIMITED, description = "you need this") }) })
     public Response viewResearcherUrl(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
-        return serviceDelegator.viewResearcherUrl(orcid, putCode);
+        return serviceDelegator.viewResearcherUrl(orcid, Long.valueOf(putCode));
     }
     
     @POST
@@ -80,7 +82,7 @@ public class MemberV2ApiServiceImplV2_0_rc2 extends MemberV2ApiServiceImplBase {
     @Path(RESEARCHER_URLS + PUTCODE)
     @ApiOperation(value = "Edits researcher url for an ORCID ID", hidden = true, authorizations = { @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_UPDATE, description = "you need this") }) })
     public Response editResearcherUrl(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode, ResearcherUrl researcherUrl) {
-        return serviceDelegator.updateResearcherUrl(orcid, putCode, researcherUrl);
+        return serviceDelegator.updateResearcherUrl(orcid, Long.valueOf(putCode), researcherUrl);
     }
     
     @DELETE
@@ -88,7 +90,7 @@ public class MemberV2ApiServiceImplV2_0_rc2 extends MemberV2ApiServiceImplBase {
     @Path(RESEARCHER_URLS + PUTCODE)
     @ApiOperation(value = "Delete one researcher url from an ORCID ID", hidden = true, authorizations = { @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_UPDATE, description = "you need this") }) })
     public Response deleteResearcherUrl(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
-        return serviceDelegator.deleteResearcherUrl(orcid, putCode);
+        return serviceDelegator.deleteResearcherUrl(orcid, Long.valueOf(putCode));
     }
     
     @GET
@@ -99,13 +101,12 @@ public class MemberV2ApiServiceImplV2_0_rc2 extends MemberV2ApiServiceImplBase {
         return serviceDelegator.viewEmails(orcid);
     }
 
-    //Other names
-    
+    //Other names    
     @GET
     @Path(OTHER_NAMES + PUTCODE)
     @ApiOperation(value = "Fetch Other name", hidden = true, authorizations = { @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_READ_LIMITED, description = "you need this") }) })
     public Response viewOtherName(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
-        return serviceDelegator.viewOtherName(orcid, putCode);
+        return serviceDelegator.viewOtherName(orcid, Long.valueOf(putCode));
     }
 
     @GET
@@ -128,7 +129,7 @@ public class MemberV2ApiServiceImplV2_0_rc2 extends MemberV2ApiServiceImplBase {
     @Path(OTHER_NAMES + PUTCODE)
     @ApiOperation(value = "Edit other name", hidden = true, authorizations = { @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_UPDATE, description = "you need this") }) })
     public Response editOtherName(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode, OtherName otherName) {
-        return serviceDelegator.updateOtherName(orcid, putCode, otherName);
+        return serviceDelegator.updateOtherName(orcid, Long.valueOf(putCode), otherName);
     }
     
     @DELETE
@@ -136,14 +137,54 @@ public class MemberV2ApiServiceImplV2_0_rc2 extends MemberV2ApiServiceImplBase {
     @Path(OTHER_NAMES + PUTCODE)
     @ApiOperation(value = "Delete other name", hidden = true, authorizations = { @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_UPDATE, description = "you need this") }) })
     public Response deleteOtherName(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
-        return serviceDelegator.deleteOtherName(orcid, putCode);
+        return serviceDelegator.deleteOtherName(orcid, Long.valueOf(putCode));
     }
     
+    //Personal details    
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(PERSONAL_DETAILS)
     @ApiOperation(value = "Fetch personal details for an ORCID ID", hidden = true, authorizations = { @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_READ_LIMITED, description = "you need this") }) })
     public Response viewPersonalDetails(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewPersonalDetails(orcid);
+    }
+    
+    // External Identifiers
+    @GET
+    @Path(EXTERNAL_IDENTIFIERS + PUTCODE)
+    @ApiOperation(value = "Fetch external identifier", hidden = true, authorizations = { @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_READ_LIMITED, description = "you need this") }) })
+    public Response viewExternalIdentifier(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
+        return serviceDelegator.viewExternalIdentifier(orcid, Long.valueOf(putCode));
+    }
+
+    @GET
+    @Path(EXTERNAL_IDENTIFIERS)
+    @ApiOperation(value = "Fetch external identifiers", hidden = true, authorizations = { @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_READ_LIMITED, description = "you need this") }) })
+    public Response viewExternalIdentifiers(@PathParam("orcid") String orcid) {
+        return serviceDelegator.viewExternalIdentifiers(orcid);
+    }
+    
+    @POST
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(EXTERNAL_IDENTIFIERS)
+    @ApiOperation(value = "Add external identifier", hidden = true, authorizations = { @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_UPDATE, description = "you need this") }) })
+    public Response createExternalIdentifier(@PathParam("orcid") String orcid, ExternalIdentifier externalIdentifier) {
+        return serviceDelegator.createExternalIdentifier(orcid, externalIdentifier);
+    }
+    
+    @PUT
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(EXTERNAL_IDENTIFIERS + PUTCODE)
+    @ApiOperation(value = "Edit external identifier", hidden = true, authorizations = { @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_UPDATE, description = "you need this") }) })
+    public Response editExternalIdentifier(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode, ExternalIdentifier externalIdentifier) {
+        return serviceDelegator.updateExternalIdentifier(orcid, Long.valueOf(putCode), externalIdentifier);
+    }
+    
+    @DELETE
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(EXTERNAL_IDENTIFIERS + PUTCODE)
+    @ApiOperation(value = "Delete external identifier", hidden = true, authorizations = { @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_UPDATE, description = "you need this") }) })
+    public Response deleteExternalIdentifier(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
+        return serviceDelegator.deleteExternalIdentifier(orcid, Long.valueOf(putCode));
     }
 }

@@ -19,27 +19,24 @@ package org.orcid.core.adapter.impl;
 import java.util.Collection;
 import java.util.List;
 
-import javax.xml.datatype.XMLGregorianCalendar;
-
-import ma.glasnost.orika.MapperFacade;
-
 import org.orcid.core.adapter.JpaJaxbResearcherUrlAdapter;
-import org.orcid.jaxb.model.common.LastModifiedDate;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 
+import ma.glasnost.orika.MapperFacade;
+
 public class JpaJaxbResearcherUrlAdapterImpl implements JpaJaxbResearcherUrlAdapter {
 
     private MapperFacade mapperFacade;
-    
+
     public void setMapperFacade(MapperFacade mapperFacade) {
         this.mapperFacade = mapperFacade;
     }
-    
+
     @Override
     public ResearcherUrlEntity toResearcherUrlEntity(ResearcherUrl researcherUrl) {
-        if(researcherUrl == null) {
+        if (researcherUrl == null) {
             return null;
         }
         return mapperFacade.map(researcherUrl, ResearcherUrlEntity.class);
@@ -47,7 +44,7 @@ public class JpaJaxbResearcherUrlAdapterImpl implements JpaJaxbResearcherUrlAdap
 
     @Override
     public ResearcherUrl toResearcherUrl(ResearcherUrlEntity entity) {
-        if(entity == null) {
+        if (entity == null) {
             return null;
         }
         return mapperFacade.map(entity, ResearcherUrl.class);
@@ -55,31 +52,18 @@ public class JpaJaxbResearcherUrlAdapterImpl implements JpaJaxbResearcherUrlAdap
 
     @Override
     public ResearcherUrls toResearcherUrlList(Collection<ResearcherUrlEntity> entities) {
-        if(entities == null) {
+        if (entities == null) {
             return null;
         }
         List<ResearcherUrl> researchUrlList = mapperFacade.mapAsList(entities, ResearcherUrl.class);
         ResearcherUrls researchUrls = new ResearcherUrls();
-		XMLGregorianCalendar tempDate = null;
-		researchUrls.setResearcherUrls(researchUrlList);
-		
-		if(researchUrlList != null && !researchUrlList.isEmpty()) {
-			tempDate = researchUrlList.get(0).getLastModifiedDate().getValue();
-			for(ResearcherUrl researchUrl : researchUrlList) {
-				if(tempDate.compare(researchUrl.getLastModifiedDate().getValue()) == -1) {
-					tempDate = researchUrl.getLastModifiedDate().getValue();
-				}
-			}
-		}
-		if(tempDate != null)
-			researchUrls.setLastModifiedDate(new LastModifiedDate(tempDate));
-		
+        researchUrls.setResearcherUrls(researchUrlList);
         return researchUrls;
     }
 
     @Override
     public ResearcherUrlEntity toResearcherUrlEntity(ResearcherUrl researcherUrl, ResearcherUrlEntity existing) {
-        if(researcherUrl == null) {
+        if (researcherUrl == null) {
             return null;
         }
         mapperFacade.map(researcherUrl, existing);

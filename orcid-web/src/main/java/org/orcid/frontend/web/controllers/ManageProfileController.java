@@ -96,6 +96,7 @@ import org.orcid.pojo.ajaxForm.CountryForm;
 import org.orcid.pojo.ajaxForm.Emails;
 import org.orcid.pojo.ajaxForm.Errors;
 import org.orcid.pojo.ajaxForm.NamesForm;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.utils.DateUtils;
 import org.springframework.stereotype.Controller;
@@ -861,22 +862,24 @@ public class ManageProfileController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = "/biographyForm.json", method = RequestMethod.GET)
-    public @ResponseBody BiographyForm getBiographyForm(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
+    public @ResponseBody BiographyForm getBiographyForm() {
         OrcidProfile currentProfile = getEffectiveProfile();
         BiographyForm bf = BiographyForm.valueOf(currentProfile);
         return bf;
     }
 
     @RequestMapping(value = "/biographyForm.json", method = RequestMethod.POST)
-    public @ResponseBody BiographyForm setBiographyFormJson(HttpServletRequest request, @RequestBody BiographyForm bf) throws NoSuchRequestHandlingMethodException {
+    public @ResponseBody BiographyForm setBiographyFormJson(@RequestBody BiographyForm bf) {
         bf.setErrors(new ArrayList<String>());
-        validateBiography(bf.getBiography());
-        copyErrors(bf.getBiography(), bf);
-        if (bf.getErrors().size() > 0)
-            return bf;
-        OrcidProfile currentProfile = getEffectiveProfile();
-        bf.populateProfile(currentProfile);
-        orcidProfileManager.updateBiography(currentProfile);
+        if (!PojoUtil.isEmpty(bf.getBiography())) {
+            validateBiography(bf.getBiography());
+            copyErrors(bf.getBiography(), bf);
+            if (bf.getErrors().size() > 0)
+                return bf;
+            OrcidProfile currentProfile = getEffectiveProfile();
+            bf.populateProfile(currentProfile);
+            orcidProfileManager.updateBiography(currentProfile);
+        }
         return bf;
     }
 

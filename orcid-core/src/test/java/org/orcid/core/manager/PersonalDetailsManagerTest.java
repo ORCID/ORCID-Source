@@ -77,9 +77,8 @@ public class PersonalDetailsManagerTest extends BaseTest {
         assertNotNull(personalDetails);
         assertNotNull(personalDetails.getOtherNames());        
         assertNotNull(personalDetails.getOtherNames().getOtherNames());
-        assertEquals(1, personalDetails.getOtherNames().getOtherNames().size());
+        assertEquals(2, personalDetails.getOtherNames().getOtherNames().size());
         assertNull(personalDetails.getBiography());
         assertNull(personalDetails.getName());
-    }
-    
+    }    
 }

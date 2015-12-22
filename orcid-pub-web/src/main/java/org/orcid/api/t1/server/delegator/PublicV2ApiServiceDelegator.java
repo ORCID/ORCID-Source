@@ -46,11 +46,19 @@ public interface PublicV2ApiServiceDelegator {
 
     Response viewWorkCitation(String orcid, Long putCode);  
     
-    Response viewResearcherUrl(String orcid, String putCode);
+    Response viewResearcherUrl(String orcid, Long putCode);
     
     Response viewResearcherUrls(String orcid);
     
     Response viewEmails(String orcid);
             
     Response viewPersonalDetails(String orcid);
+    
+    Response viewOtherNames(String orcid);
+    
+    Response viewOtherName(String orcid, Long putCode);
+    
+    Response viewExternalIdentifiers(String orcid);
+
+    Response viewExternalIdentifier(String orcid, Long putCode);
 }

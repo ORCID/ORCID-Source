@@ -16,8 +16,11 @@
  */
 package org.orcid.persistence.jpa.entities;
 
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -27,6 +30,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+
+import org.orcid.jaxb.model.common.Visibility;
 
 /**
  * orcid-entities - Dec 6, 2011 - ExternalIdentifierEntity
@@ -45,6 +50,7 @@ public class ExternalIdentifierEntity extends BaseEntity<Long> implements Compar
     private ProfileEntity owner;
     private SourceEntity source;
     private Long id;
+    private Visibility visibility;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "external_identifier_id_seq")
@@ -115,7 +121,17 @@ public class ExternalIdentifierEntity extends BaseEntity<Long> implements Compar
     public void setExternalIdUrl(String externalIdUrl) {
         this.externalIdUrl = externalIdUrl;
     }
+    
+    @Basic
+    @Enumerated(EnumType.STRING)
+    public Visibility getVisibility() {
+        return visibility;
+    }
 
+    public void setVisibility(Visibility visibility) {
+        this.visibility = visibility;
+    }
+    
     @Override
     public int compareTo(ExternalIdentifierEntity other) {
         if (other == null) {

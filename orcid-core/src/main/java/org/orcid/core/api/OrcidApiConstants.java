@@ -85,6 +85,7 @@ public class OrcidApiConstants {
     public static final String APPLICATION_CITEPROC = "application/vnd.citationstyles.csl+json";
     public static final String RESEARCHER_URLS =  "/{orcid}/researcher-urls";
     public static final String EMAIL =  "/{orcid}/email";
+    public static final String EXTERNAL_IDENTIFIERS = "/{orcid}/external-identifiers";
 
     public static final String INTERNAL_API_PERSON_READ = "/{orcid}/person";
     public static final String OTHER_NAMES =  "/{orcid}/other-names";

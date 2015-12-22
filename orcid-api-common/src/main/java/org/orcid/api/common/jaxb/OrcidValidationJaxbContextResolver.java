@@ -55,8 +55,12 @@ import org.orcid.jaxb.model.record_rc1.Funding;
 import org.orcid.jaxb.model.record_rc1.PeerReview;
 import org.orcid.jaxb.model.record_rc1.Work;
 import org.orcid.jaxb.model.record_rc2.OtherName;
+import org.orcid.jaxb.model.record_rc2.OtherNames;
+import org.orcid.jaxb.model.record_rc2.ExternalIdentifier;
+import org.orcid.jaxb.model.record_rc2.ExternalIdentifiers;
 import org.orcid.jaxb.model.record_rc2.Name;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
+import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.xml.sax.SAXException;
@@ -84,9 +88,13 @@ public class OrcidValidationJaxbContextResolver implements ContextResolver<Unmar
         SCHEMA_FILENAME_PREFIX_BY_CLASS.put(OrcidMessage.class, "orcid-message-");
         SCHEMA_FILENAME_PREFIX_BY_CLASS.put(GroupIdRecord.class, "group-id-2.0_rc1/group-id-");
         SCHEMA_FILENAME_PREFIX_BY_CLASS.put(ResearcherUrl.class, "record_2.0_rc2/researcher-url-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS.put(ResearcherUrls.class, "record_2.0_rc2/researcher-url-");
         SCHEMA_FILENAME_PREFIX_BY_CLASS.put(Email.class, "record_2.0_rc2/email-");
-        SCHEMA_FILENAME_PREFIX_BY_CLASS.put(OtherName.class, "record_2.0_rc2/other-names-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS.put(OtherName.class, "record_2.0_rc2/other-name-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS.put(OtherNames.class, "record_2.0_rc2/other-name-");
         SCHEMA_FILENAME_PREFIX_BY_CLASS.put(Name.class, "record_2.0_rc2/personal-details-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS.put(ExternalIdentifier.class, "record_2.0_rc2/external-identifier-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS.put(ExternalIdentifiers.class, "record_2.0_rc2/external-identifier-");
     }
     private JAXBContext jaxbContext;
     private Map<String, Schema> schemaByPath = new ConcurrentHashMap<>();
