@@ -60,11 +60,7 @@
 			</not>
 		</preConditions>
         <createSequence sequenceName="keyword_seq" startValue="1000" />        
-    </changeSet>
-    
-    <changeSet id="CREATE-AUTOCOLS" author="Angel Montenegro" dbms="hsqldb">    	
-        <addAutoIncrement tableName="profile_keyword" columnName="id" columnDataType="bigint"/>        
-    </changeSet>    
+    </changeSet>          
     
     <changeSet id="ADD-ID-TO-KEYWORDS" author="Angel Montenegro">
     	<preConditions onFail="MARK_RAN">
@@ -75,7 +71,11 @@
 		<sql>ALTER TABLE profile_keyword ADD id bigint;</sql>					
     </changeSet>                
     
-    <changeSet id="SET-ID-TO-KEYWORDS" author="Angel Montenegro">
+    <changeSet id="CREATE-AUTOCOLS" author="Angel Montenegro" dbms="hsqldb">    	
+        <addAutoIncrement tableName="profile_keyword" columnName="id" columnDataType="bigint"/>        
+    </changeSet> 
+    
+    <changeSet id="SET-ID-TO-KEYWORDS" author="Angel Montenegro" dbms="postgresql">
     	<sql>UPDATE profile_keyword SET id=nextval('keyword_seq') WHERE id IS NULL;</sql>
     </changeSet>    
 </databaseChangeLog>
