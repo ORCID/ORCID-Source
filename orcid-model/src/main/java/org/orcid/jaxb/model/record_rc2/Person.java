@@ -33,7 +33,7 @@ public class Person implements Serializable {
     Name name;
     @XmlElement(name = "other-names", namespace = "http://www.orcid.org/ns/other-name")
     OtherNames otherNames;
-    @XmlElement(name = "biography", namespace = "http://www.orcid.org/ns/personal-details")
+    @XmlElement(name = "biography", namespace = "http://www.orcid.org/ns/person")
     Biography biography;
     @XmlElement(name = "researcher-urls", namespace = "http://www.orcid.org/ns/researcher-url")
     ResearcherUrls researcherUrls;

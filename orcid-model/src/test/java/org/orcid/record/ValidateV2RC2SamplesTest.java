@@ -375,23 +375,64 @@ public class ValidateV2RC2SamplesTest {
         assertNotNull(person.getOtherNames());
         assertNotNull(person.getOtherNames().getOtherNames());
         assertEquals(1, person.getOtherNames().getOtherNames().size());
-        assertEquals("other-name-1", person.getOtherNames().getOtherNames().get(0).getContent());
-        assertNotNull(person.getOtherNames().getOtherNames().get(0).getCreatedDate());
-        assertNotNull(person.getOtherNames().getOtherNames().get(0).getCreatedDate().getValue());
-        assertEquals(2001, person.getOtherNames().getOtherNames().get(0).getCreatedDate().getValue().getYear());
-        assertEquals(12, person.getOtherNames().getOtherNames().get(0).getCreatedDate().getValue().getMonth());
-        assertEquals(31, person.getOtherNames().getOtherNames().get(0).getCreatedDate().getValue().getDay());
         
-        assertNotNull(person.getOtherNames().getOtherNames().get(0).getLastModifiedDate().getValue());
-        assertEquals(2001, person.getOtherNames().getOtherNames().get(0).getLastModifiedDate().getValue().getYear());
-        assertEquals(12, person.getOtherNames().getOtherNames().get(0).getLastModifiedDate().getValue().getMonth());
-        assertEquals(31, person.getOtherNames().getOtherNames().get(0).getLastModifiedDate().getValue().getDay());
+        OtherName otherName = person.getOtherNames().getOtherNames().get(0);        
+        assertEquals("other-name-1", otherName.getContent());
+        assertNotNull(otherName.getCreatedDate());
+        assertNotNull(otherName.getCreatedDate().getValue());
+        assertEquals(2001, otherName.getCreatedDate().getValue().getYear());
+        assertEquals(12, otherName.getCreatedDate().getValue().getMonth());
+        assertEquals(31, otherName.getCreatedDate().getValue().getDay());        
+        assertNotNull(otherName.getLastModifiedDate().getValue());
+        assertEquals(2001, otherName.getLastModifiedDate().getValue().getYear());
+        assertEquals(12, otherName.getLastModifiedDate().getValue().getMonth());
+        assertEquals(31, otherName.getLastModifiedDate().getValue().getDay());        
+        assertNotNull(otherName.getSource());
+        assertEquals("8888-8888-8888-8880", otherName.getSource().retrieveSourcePath());
         
-        assertNotNull(person.getOtherNames().getOtherNames().get(0).getSource());
-        assertNotNull(person.getOtherNames().getOtherNames().get(0).getSource().getSourceOrcid());
-        assertEquals("8888-8888-8888-8880", person.getOtherNames().getOtherNames().get(0).getSource().getSourceOrcid().getPath());
+        assertNotNull(person.getBiography());
+        assertEquals(Visibility.PUBLIC, person.getBiography().getVisibility());
+        assertEquals("biography", person.getBiography().getContent());        
+        assertNotNull(person.getResearcherUrls());
+        assertNotNull(person.getResearcherUrls().getResearcherUrls());
+        assertEquals(1, person.getResearcherUrls().getResearcherUrls().size());
         
+        ResearcherUrl rUrl = person.getResearcherUrls().getResearcherUrls().get(0);        
+        assertEquals(Visibility.PUBLIC, rUrl.getVisibility());
+        assertEquals(Long.valueOf(1248), rUrl.getPutCode());        
+        assertEquals("url-name-1", rUrl.getUrlName());
+        assertNotNull(rUrl.getUrl());
+        assertEquals("http://url.com/", rUrl.getUrl().getValue());        
+        assertNotNull(rUrl.getCreatedDate());
+        assertEquals(2001, rUrl.getCreatedDate().getValue().getYear());
+        assertEquals(12, rUrl.getCreatedDate().getValue().getMonth());
+        assertEquals(31, rUrl.getCreatedDate().getValue().getDay());                
+        assertNotNull(rUrl.getLastModifiedDate());
+        assertEquals(2001, rUrl.getLastModifiedDate().getValue().getYear());
+        assertEquals(12, rUrl.getLastModifiedDate().getValue().getMonth());
+        assertEquals(31, rUrl.getLastModifiedDate().getValue().getDay());        
+        assertNotNull(rUrl.getSource());
+        assertEquals("8888-8888-8888-8880", rUrl.getSource().retrieveSourcePath());
         
+        assertNotNull(person.getEmails());
+        assertNotNull(person.getEmails().getEmails());
+        assertEquals(1, person.getEmails().getEmails().size());
+        
+        Email email = person.getEmails().getEmails().get(0);
+        assertEquals(Visibility.PUBLIC, email.getVisibility());
+        assertEquals("user1@email.com", email.getEmail());
+        assertNotNull(email.getCreatedDate());
+        assertNotNull(email.getCreatedDate().getValue());
+        assertEquals(2001, email.getCreatedDate().getValue().getYear());
+        assertEquals(12, email.getCreatedDate().getValue().getMonth());
+        assertEquals(31, email.getCreatedDate().getValue().getDay());        
+        assertNotNull(email.getLastModifiedDate());
+        assertNotNull(email.getLastModifiedDate().getValue());
+        assertEquals(2001, email.getLastModifiedDate().getValue().getYear());
+        assertEquals(12, email.getLastModifiedDate().getValue().getMonth());
+        assertEquals(31, email.getLastModifiedDate().getValue().getDay());
+        assertNotNull(email.getSource());
+        assertEquals("8888-8888-8888-8880", email.retrieveSourcePath());
         fail();
     }
 
