@@ -21,7 +21,6 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -342,27 +341,28 @@ public class ValidateV2RC2SamplesTest {
         assertEquals(Visibility.PUBLIC, applications.getVisibility());
         assertNotNull(applications.getApplicationSummary());
         assertEquals(1, applications.getApplicationSummary().size());
-        ApplicationSummary summary = applications.getApplicationSummary().get(0); 
+        ApplicationSummary summary = applications.getApplicationSummary().get(0);
         assertNotNull(summary.getApplicationOrcid());
-        assertEquals("8888-8888-8888-8880", summary.getApplicationOrcid().getPath());        
+        assertEquals("8888-8888-8888-8880", summary.getApplicationOrcid().getPath());
         assertEquals("application-name", summary.getApplicationName());
         assertNotNull(summary.getApplicationWebsite());
         assertEquals("http://application.com", summary.getApplicationWebsite().getValue());
         assertNotNull(summary.getApprovalDate());
         assertEquals(2015, summary.getApprovalDate().getValue().getYear());
         assertEquals(12, summary.getApprovalDate().getValue().getMonth());
-        assertEquals(31, summary.getApprovalDate().getValue().getDay());                
+        assertEquals(31, summary.getApprovalDate().getValue().getDay());
         assertNotNull(summary.getScopePaths());
         assertNotNull(summary.getScopePaths().getScopePath());
-        assertEquals(2, summary.getScopePaths().getScopePath().size());        
-        for(ScopePath scope : summary.getScopePaths().getScopePath()) {
+        assertEquals(2, summary.getScopePaths().getScopePath().size());
+        for (ScopePath scope : summary.getScopePaths().getScopePath()) {
             assertThat(scope.getContent(), anyOf(is("/authenticate"), is("/read-limited")));
-        }    
+        }
         assertNotNull(summary.getGroupOrcid());
         assertEquals("8888-8888-8888-8880", summary.getGroupOrcid().getPath());
-        assertEquals("application-group-name", summary.getGroupName());                
+        assertEquals("application-group-name", summary.getGroupName());
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void testUnmarshallPerson() {
         Person person = (Person) unmarshallFromPath("/record_2.0_rc2/samples/person-2.0_rc2.xml", Person.class);
@@ -375,49 +375,44 @@ public class ValidateV2RC2SamplesTest {
         assertNotNull(person.getOtherNames());
         assertNotNull(person.getOtherNames().getOtherNames());
         assertEquals(1, person.getOtherNames().getOtherNames().size());
-        
-        OtherName otherName = person.getOtherNames().getOtherNames().get(0);        
+        OtherName otherName = person.getOtherNames().getOtherNames().get(0);
         assertEquals("other-name-1", otherName.getContent());
         assertNotNull(otherName.getCreatedDate());
         assertNotNull(otherName.getCreatedDate().getValue());
         assertEquals(2001, otherName.getCreatedDate().getValue().getYear());
         assertEquals(12, otherName.getCreatedDate().getValue().getMonth());
-        assertEquals(31, otherName.getCreatedDate().getValue().getDay());        
+        assertEquals(31, otherName.getCreatedDate().getValue().getDay());
         assertNotNull(otherName.getLastModifiedDate().getValue());
         assertEquals(2001, otherName.getLastModifiedDate().getValue().getYear());
         assertEquals(12, otherName.getLastModifiedDate().getValue().getMonth());
-        assertEquals(31, otherName.getLastModifiedDate().getValue().getDay());        
+        assertEquals(31, otherName.getLastModifiedDate().getValue().getDay());
         assertNotNull(otherName.getSource());
         assertEquals("8888-8888-8888-8880", otherName.getSource().retrieveSourcePath());
-        
         assertNotNull(person.getBiography());
         assertEquals(Visibility.PUBLIC, person.getBiography().getVisibility());
-        assertEquals("biography", person.getBiography().getContent());        
+        assertEquals("biography", person.getBiography().getContent());
         assertNotNull(person.getResearcherUrls());
         assertNotNull(person.getResearcherUrls().getResearcherUrls());
         assertEquals(1, person.getResearcherUrls().getResearcherUrls().size());
-        
-        ResearcherUrl rUrl = person.getResearcherUrls().getResearcherUrls().get(0);        
+        ResearcherUrl rUrl = person.getResearcherUrls().getResearcherUrls().get(0);
         assertEquals(Visibility.PUBLIC, rUrl.getVisibility());
-        assertEquals(Long.valueOf(1248), rUrl.getPutCode());        
+        assertEquals(Long.valueOf(1248), rUrl.getPutCode());
         assertEquals("url-name-1", rUrl.getUrlName());
         assertNotNull(rUrl.getUrl());
-        assertEquals("http://url.com/", rUrl.getUrl().getValue());        
+        assertEquals("http://url.com/", rUrl.getUrl().getValue());
         assertNotNull(rUrl.getCreatedDate());
         assertEquals(2001, rUrl.getCreatedDate().getValue().getYear());
         assertEquals(12, rUrl.getCreatedDate().getValue().getMonth());
-        assertEquals(31, rUrl.getCreatedDate().getValue().getDay());                
+        assertEquals(31, rUrl.getCreatedDate().getValue().getDay());
         assertNotNull(rUrl.getLastModifiedDate());
         assertEquals(2001, rUrl.getLastModifiedDate().getValue().getYear());
         assertEquals(12, rUrl.getLastModifiedDate().getValue().getMonth());
-        assertEquals(31, rUrl.getLastModifiedDate().getValue().getDay());        
+        assertEquals(31, rUrl.getLastModifiedDate().getValue().getDay());
         assertNotNull(rUrl.getSource());
         assertEquals("8888-8888-8888-8880", rUrl.getSource().retrieveSourcePath());
-        
         assertNotNull(person.getEmails());
         assertNotNull(person.getEmails().getEmails());
         assertEquals(1, person.getEmails().getEmails().size());
-        
         Email email = person.getEmails().getEmails().get(0);
         assertEquals(Visibility.PUBLIC, email.getVisibility());
         assertEquals("user1@email.com", email.getEmail());
@@ -425,7 +420,7 @@ public class ValidateV2RC2SamplesTest {
         assertNotNull(email.getCreatedDate().getValue());
         assertEquals(2001, email.getCreatedDate().getValue().getYear());
         assertEquals(12, email.getCreatedDate().getValue().getMonth());
-        assertEquals(31, email.getCreatedDate().getValue().getDay());        
+        assertEquals(31, email.getCreatedDate().getValue().getDay());
         assertNotNull(email.getLastModifiedDate());
         assertNotNull(email.getLastModifiedDate().getValue());
         assertEquals(2001, email.getLastModifiedDate().getValue().getYear());
@@ -433,7 +428,128 @@ public class ValidateV2RC2SamplesTest {
         assertEquals(31, email.getLastModifiedDate().getValue().getDay());
         assertNotNull(email.getSource());
         assertEquals("8888-8888-8888-8880", email.retrieveSourcePath());
-        fail();
+        assertNotNull(person.getAddresses());
+        assertNotNull(person.getAddresses().getAddress());
+        assertEquals(1, person.getAddresses().getAddress().size());
+        Address address = person.getAddresses().getAddress().get(0);
+        assertEquals(Visibility.PUBLIC, address.getVisibility());
+        assertEquals(Long.valueOf(1), address.getPutCode());
+        assertNotNull(address.getCountry());
+        assertEquals(Iso3166Country.US, address.getCountry().getValue());
+        assertNotNull(address.getCreatedDate());
+        assertNotNull(address.getCreatedDate().getValue());
+        assertEquals(2001, address.getCreatedDate().getValue().getYear());
+        assertEquals(12, address.getCreatedDate().getValue().getMonth());
+        assertEquals(31, address.getCreatedDate().getValue().getDay());
+        assertNotNull(address.getLastModifiedDate());
+        assertNotNull(address.getLastModifiedDate().getValue());
+        assertEquals(2001, address.getLastModifiedDate().getValue().getYear());
+        assertEquals(12, address.getLastModifiedDate().getValue().getMonth());
+        assertEquals(31, address.getLastModifiedDate().getValue().getDay());
+        assertNotNull(address.getSource());
+        assertEquals("8888-8888-8888-8880", address.getSource().retrieveSourcePath());
+        assertNotNull(person.getKeywords());
+        assertNotNull(person.getKeywords().getKeywords());
+        assertEquals(1, person.getKeywords().getKeywords().size());
+        Keyword keyword = person.getKeywords().getKeywords().get(0);
+        assertEquals(Visibility.PUBLIC, keyword.getVisibility());
+        assertEquals(Long.valueOf(1), keyword.getPutCode());
+        assertEquals("keyword1", keyword.getContent());
+        assertNotNull(keyword.getCreatedDate());
+        assertNotNull(keyword.getCreatedDate().getValue());
+        assertEquals(2001, keyword.getCreatedDate().getValue().getYear());
+        assertEquals(12, keyword.getCreatedDate().getValue().getMonth());
+        assertEquals(31, keyword.getCreatedDate().getValue().getDay());
+        assertNotNull(keyword.getLastModifiedDate());
+        assertNotNull(keyword.getLastModifiedDate().getValue());
+        assertEquals(2001, keyword.getLastModifiedDate().getValue().getYear());
+        assertEquals(12, keyword.getLastModifiedDate().getValue().getMonth());
+        assertEquals(31, keyword.getLastModifiedDate().getValue().getDay());
+        assertNotNull(keyword.getSource());
+        assertEquals("8888-8888-8888-8880", keyword.getSource().retrieveSourcePath());
+        assertNotNull(person.getExternalIdentifiers());
+        assertNotNull(person.getExternalIdentifiers().getExternalIdentifier());
+        assertEquals(1, person.getExternalIdentifiers().getExternalIdentifier().size());
+        ExternalIdentifier extId = person.getExternalIdentifiers().getExternalIdentifier().get(0);
+        assertEquals(Visibility.PUBLIC, extId.getVisibility());
+        assertEquals(Long.valueOf(1), extId.getPutCode());
+        assertEquals("common-name-1", extId.getCommonName());
+        assertEquals("id-reference-1", extId.getReference());
+        assertNotNull(extId.getUrl());
+        assertEquals("http://url.com/1", extId.getUrl().getValue());
+        assertNotNull(extId.getCreatedDate());
+        assertNotNull(extId.getCreatedDate().getValue());
+        assertEquals(2001, extId.getCreatedDate().getValue().getYear());
+        assertEquals(12, extId.getCreatedDate().getValue().getMonth());
+        assertEquals(31, extId.getCreatedDate().getValue().getDay());
+        assertNotNull(extId.getLastModifiedDate());
+        assertNotNull(extId.getLastModifiedDate().getValue());
+        assertEquals(2001, extId.getLastModifiedDate().getValue().getYear());
+        assertEquals(12, extId.getLastModifiedDate().getValue().getMonth());
+        assertEquals(31, extId.getLastModifiedDate().getValue().getDay());
+        assertNotNull(extId.getSource());
+        assertEquals("8888-8888-8888-8880", extId.getSource().retrieveSourcePath());
+        assertNotNull(person.getDelegation());
+        assertNotNull(person.getDelegation().getGivenPermissionBy());
+        assertNotNull(person.getDelegation().getGivenPermissionBy().getDelegationDetails());
+        assertNotNull(person.getDelegation().getGivenPermissionBy().getDelegationDetails().getApprovalDate());
+        assertNotNull(person.getDelegation().getGivenPermissionBy().getDelegationDetails().getApprovalDate().getValue());
+        assertEquals(2001, person.getDelegation().getGivenPermissionBy().getDelegationDetails().getApprovalDate().getValue().getYear());
+        assertEquals(12, person.getDelegation().getGivenPermissionBy().getDelegationDetails().getApprovalDate().getValue().getMonth());
+        assertEquals(31, person.getDelegation().getGivenPermissionBy().getDelegationDetails().getApprovalDate().getValue().getDay());
+        assertNotNull(person.getDelegation().getGivenPermissionBy().getDelegationDetails().getDelegateSummary());
+        assertNotNull(person.getDelegation().getGivenPermissionBy().getDelegationDetails().getDelegateSummary().getCreditName());
+        assertEquals("credit-name", person.getDelegation().getGivenPermissionBy().getDelegationDetails().getDelegateSummary().getCreditName().getContent());
+        assertEquals(Visibility.PUBLIC, person.getDelegation().getGivenPermissionBy().getDelegationDetails().getDelegateSummary().getCreditName().getVisibility());
+        assertNotNull(person.getDelegation().getGivenPermissionBy().getDelegationDetails().getDelegateSummary().getLastModifiedDate());
+        assertNotNull(person.getDelegation().getGivenPermissionBy().getDelegationDetails().getDelegateSummary().getLastModifiedDate().getValue());
+        assertEquals(2001, person.getDelegation().getGivenPermissionBy().getDelegationDetails().getDelegateSummary().getLastModifiedDate().getValue().getYear());
+        assertEquals(12, person.getDelegation().getGivenPermissionBy().getDelegationDetails().getDelegateSummary().getLastModifiedDate().getValue().getMonth());
+        assertEquals(31, person.getDelegation().getGivenPermissionBy().getDelegationDetails().getDelegateSummary().getLastModifiedDate().getValue().getDay());
+        assertNotNull(person.getDelegation().getGivenPermissionBy().getDelegationDetails().getDelegateSummary().getOrcidIdentifier());
+        assertEquals("8888-8888-8888-8880", person.getDelegation().getGivenPermissionBy().getDelegationDetails().getDelegateSummary().getOrcidIdentifier().getPath());
+        assertNotNull(person.getDelegation().getGivenPermissionTo());
+        assertNotNull(person.getDelegation().getGivenPermissionTo().getDelegationDetails());
+        assertNotNull(person.getDelegation().getGivenPermissionTo().getDelegationDetails().getApprovalDate());
+        assertNotNull(person.getDelegation().getGivenPermissionTo().getDelegationDetails().getApprovalDate().getValue());
+        assertEquals(2001, person.getDelegation().getGivenPermissionTo().getDelegationDetails().getApprovalDate().getValue().getYear());
+        assertEquals(12, person.getDelegation().getGivenPermissionTo().getDelegationDetails().getApprovalDate().getValue().getMonth());
+        assertEquals(31, person.getDelegation().getGivenPermissionTo().getDelegationDetails().getApprovalDate().getValue().getDay());
+        assertNotNull(person.getDelegation().getGivenPermissionTo().getDelegationDetails().getDelegateSummary());
+        assertNotNull(person.getDelegation().getGivenPermissionTo().getDelegationDetails().getDelegateSummary().getCreditName());
+        assertEquals("credit-name", person.getDelegation().getGivenPermissionTo().getDelegationDetails().getDelegateSummary().getCreditName().getContent());
+        assertEquals(Visibility.PUBLIC, person.getDelegation().getGivenPermissionTo().getDelegationDetails().getDelegateSummary().getCreditName().getVisibility());
+        assertNotNull(person.getDelegation().getGivenPermissionTo().getDelegationDetails().getDelegateSummary().getLastModifiedDate());
+        assertNotNull(person.getDelegation().getGivenPermissionTo().getDelegationDetails().getDelegateSummary().getLastModifiedDate().getValue());
+        assertEquals(2001, person.getDelegation().getGivenPermissionTo().getDelegationDetails().getDelegateSummary().getLastModifiedDate().getValue().getYear());
+        assertEquals(12, person.getDelegation().getGivenPermissionTo().getDelegationDetails().getDelegateSummary().getLastModifiedDate().getValue().getMonth());
+        assertEquals(31, person.getDelegation().getGivenPermissionTo().getDelegationDetails().getDelegateSummary().getLastModifiedDate().getValue().getDay());
+        assertNotNull(person.getDelegation().getGivenPermissionTo().getDelegationDetails().getDelegateSummary().getOrcidIdentifier());
+        assertEquals("8888-8888-8888-8880", person.getDelegation().getGivenPermissionTo().getDelegationDetails().getDelegateSummary().getOrcidIdentifier().getPath());
+        assertNotNull(person.getApplications());
+        assertNotNull(person.getApplications().getApplicationSummary());
+        assertEquals(Visibility.PUBLIC, person.getApplications().getVisibility());
+        assertEquals(1, person.getApplications().getApplicationSummary().size());
+
+        ApplicationSummary application = person.getApplications().getApplicationSummary().get(0);
+        assertEquals("application-name", application.getApplicationName());
+        assertNotNull(application.getApplicationOrcid());
+        assertEquals("8888-8888-8888-8880", application.getApplicationOrcid().getPath());
+        assertNotNull(application.getApplicationWebsite());
+        assertEquals("http://application.com", application.getApplicationWebsite().getValue());
+        assertNotNull(application.getApprovalDate());
+        assertNotNull(application.getApprovalDate().getValue());
+        assertEquals(2001, application.getApprovalDate().getValue().getYear());
+        assertEquals(12, application.getApprovalDate().getValue().getMonth());
+        assertEquals(31, application.getApprovalDate().getValue().getDay());
+        assertNotNull(application.getScopePaths());
+        assertNotNull(application.getScopePaths().getScopePath());
+        assertEquals(2, application.getScopePaths().getScopePath().size());
+        assertThat(application.getScopePaths().getScopePath().get(0).getContent(), anyOf(is("/authenticate"), is("/read-limited")));
+        assertThat(application.getScopePaths().getScopePath().get(1).getContent(), anyOf(is("/authenticate"), is("/read-limited")));
+        assertNotNull(application.getGroupOrcid());
+        assertEquals("8888-8888-8888-8880", application.getGroupOrcid().getPath());
+        assertEquals("application-group-name", application.getGroupName());
     }
 
     private Object unmarshallFromPath(String path, Class<?> type) {
@@ -476,7 +592,7 @@ public class ValidateV2RC2SamplesTest {
                 result = (Delegation) obj;
             } else if (Applications.class.equals(type)) {
                 result = (Applications) obj;
-            } else if(Person.class.equals(type)) {
+            } else if (Person.class.equals(type)) {
                 result = (Person) obj;
             }
             return result;
