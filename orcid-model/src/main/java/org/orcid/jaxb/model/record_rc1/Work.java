@@ -42,6 +42,7 @@ import org.orcid.jaxb.model.common.Title;
 import org.orcid.jaxb.model.common.Url;
 import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.jaxb.model.common.VisibilityType;
+import org.orcid.jaxb.model.record.util.RecordUtil;
 
 import io.swagger.annotations.ApiModelProperty;
 
@@ -61,7 +62,6 @@ import io.swagger.annotations.ApiModelProperty;
         "publicationDate", "externalIdentifiers", "url", "contributors", "languageCode", "country" })
 @XmlRootElement(name = "work", namespace = "http://www.orcid.org/ns/work")
 public class Work implements VisibilityType, Activity, Serializable {
-
     private static final long serialVersionUID = 1L;
     @XmlElement(namespace = "http://www.orcid.org/ns/work")
     protected WorkTitle title;

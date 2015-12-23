@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<person:applications visibility="public" xmlns:common="http://www.orcid.org/ns/common"
+	xmlns:person="http://www.orcid.org/ns/person" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.orcid.org/ns/person ../person-2.0_rc2.xsd ">		
+	<person:application-summary>
+		<common:application-orcid>
+			<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
+			<common:path>8888-8888-8888-8880</common:path>
+			<common:host>orcid.org</common:host>
+		</common:application-orcid>
+		<person:application-name>application-name</person:application-name>
+		<person:application-website>http://application.com</person:application-website>
+		<common:approval-date>2015-12-31T12:00:00</common:approval-date>
+		<person:scope-paths>
+			<person:scope-path>/authenticate</person:scope-path>
+			<person:scope-path>/read-limited</person:scope-path>
+		</person:scope-paths>
+		<common:application-group-orcid>
+			<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
+			<common:path>8888-8888-8888-8880</common:path>
+			<common:host>orcid.org</common:host>
+		</common:application-group-orcid>
+		<person:application-group-name>application-group-name</person:application-group-name>
+	</person:application-summary>
+</person:applications>

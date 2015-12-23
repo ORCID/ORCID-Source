@@ -9,12 +9,9 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.orcid.org/ns/person ../person-2.0_rc2.xsd ">
 	<person:name visibility="public"> 
-		<personal-details:given-names>give-names
-		</personal-details:given-names>
-		<personal-details:family-name>family-name
-		</personal-details:family-name>
-		<personal-details:credit-name>credit-name
-		</personal-details:credit-name>
+		<personal-details:given-names>give-names</personal-details:given-names>
+		<personal-details:family-name>family-name</personal-details:family-name>
+		<personal-details:credit-name>credit-name</personal-details:credit-name>
 	</person:name>
 	<other-name:other-names>
 		<other-name:other-name visibility="public"
@@ -32,8 +29,7 @@
 			</common:source>
 		</other-name:other-name>
 	</other-name:other-names>
-	<person:biography visibility="public">biography
-	</person:biography>
+	<person:biography visibility="public">biography</person:biography>
 	<researcher-url:researcher-urls>
 		<researcher-url:researcher-url put-code="1248"
 			visibility="public">
