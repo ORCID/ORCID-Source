@@ -16,18 +16,22 @@
  */
 package org.orcid.persistence.jpa.entities;
 
-import org.orcid.persistence.jpa.entities.keys.ProfileKeywordEntityPk;
-
+import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Transient;
+
+import org.orcid.jaxb.model.common.Visibility;
 
 /**
  * orcid-entities - Dec 6, 2011 - ProfileInstitutionEntity
@@ -36,16 +40,16 @@ import javax.persistence.Transient;
  */
 @Entity
 @Table(name = "profile_keyword")
-@IdClass(ProfileKeywordEntityPk.class)
-public class ProfileKeywordEntity extends BaseEntity<ProfileKeywordEntityPk> implements Comparable<ProfileKeywordEntity>, ProfileAware {
+public class ProfileKeywordEntity extends BaseEntity<Long> implements Comparable<ProfileKeywordEntity>, ProfileAware {
 
     private static final long serialVersionUID = -3187757614938904392L;
 
-    private ProfileKeywordEntityPk id;
-
+    private Long id;
     private ProfileEntity profile;
     private String keywordName;
-
+    private Visibility visibility;
+    private SourceEntity source;
+    
     public ProfileKeywordEntity() {
 
     }
@@ -55,9 +59,23 @@ public class ProfileKeywordEntity extends BaseEntity<ProfileKeywordEntityPk> imp
         this.keywordName = keywordName;
     }
 
-    @Transient
-    public ProfileKeywordEntityPk getId() {
+    /**
+     * @return the id of the other_name
+     */
+    @Id
+    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "keyword_seq")
+    @SequenceGenerator(name = "keyword_seq", sequenceName = "keyword_seq")
+    public Long getId() {
         return id;
+    }
+
+    /**
+     * @param id
+     *            the id of the other_name
+     */
+    public void setId(Long id) {
+        this.id = id;
     }
 
     /**
@@ -95,6 +113,24 @@ public class ProfileKeywordEntity extends BaseEntity<ProfileKeywordEntityPk> imp
         this.keywordName = keywordName;
     }
 
+    @Basic
+    @Enumerated(EnumType.STRING)
+    public Visibility getVisibility() {
+        return visibility;
+    }
+
+    public void setVisibility(Visibility visibility) {
+        this.visibility = visibility;
+    }
+    
+    public SourceEntity getSource() {
+        return source;
+    }
+
+    public void setSource(SourceEntity source) {
+        this.source = source;
+    }
+    
     @Override
     public int compareTo(ProfileKeywordEntity profileKeywordEntity) {
         if (keywordName != null && profileKeywordEntity != null) {
@@ -103,4 +139,50 @@ public class ProfileKeywordEntity extends BaseEntity<ProfileKeywordEntityPk> imp
             return 0;
         }
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result + ((keywordName == null) ? 0 : keywordName.hashCode());
+        result = prime * result + ((profile == null) ? 0 : profile.hashCode());
+        result = prime * result + ((source == null) ? 0 : source.hashCode());
+        result = prime * result + ((visibility == null) ? 0 : visibility.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        ProfileKeywordEntity other = (ProfileKeywordEntity) obj;
+        if (id == null) {
+            if (other.id != null)
+                return false;
+        } else if (!id.equals(other.id))
+            return false;
+        if (keywordName == null) {
+            if (other.keywordName != null)
+                return false;
+        } else if (!keywordName.equals(other.keywordName))
+            return false;
+        if (profile == null) {
+            if (other.profile != null)
+                return false;
+        } else if (!profile.equals(other.profile))
+            return false;
+        if (source == null) {
+            if (other.source != null)
+                return false;
+        } else if (!source.equals(other.source))
+            return false;
+        if (visibility != other.visibility)
+            return false;
+        return true;
+    }        
 }

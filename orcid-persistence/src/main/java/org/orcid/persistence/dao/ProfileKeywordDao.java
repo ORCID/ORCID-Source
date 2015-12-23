@@ -47,5 +47,5 @@ public interface ProfileKeywordDao {
      * @param keyword
      * @return true if the keyword was successfully created on database
      * */
-    public boolean addProfileKeyword(String orcid, String keyword);
+    public boolean addProfileKeyword(String orcid, String keyword, String sourceId, String clientSourceId);
 }

@@ -60,6 +60,7 @@ import org.orcid.jaxb.model.record_rc1.Employment;
 import org.orcid.jaxb.model.record_rc1.Funding;
 import org.orcid.jaxb.model.record_rc1.PeerReview;
 import org.orcid.jaxb.model.record_rc1.Work;
+import org.orcid.jaxb.model.record_rc2.Biography;
 import org.orcid.jaxb.model.record_rc2.ExternalIdentifier;
 import org.orcid.jaxb.model.record_rc2.ExternalIdentifiers;
 import org.orcid.jaxb.model.record_rc2.OtherName;
@@ -322,4 +323,16 @@ public class PublicV2ApiServiceDelegatorImpl implements PublicV2ApiServiceDelega
         orcidSecurityManager.checkVisibility(extId);
         return Response.ok(extId).build();
     }    
+    
+    @Override
+    @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED, enableAnonymousAccess = true)
+    public Response viewBiography(String orcid) {
+        Biography bio = profileEntityManager.getBiography(orcid);
+        if(bio != null) {
+            if(!Visibility.PUBLIC.equals(bio.getVisibility())) {
+                bio.setContent("");
+            }
+        }
+        return Response.ok(bio).build();
+    }
 }

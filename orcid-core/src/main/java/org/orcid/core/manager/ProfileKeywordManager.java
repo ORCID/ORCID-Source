@@ -52,4 +52,20 @@ public interface ProfileKeywordManager {
      * @param keywords    
      * */
     public void updateProfileKeyword(String orcid, Keywords keywords);
+    
+    /**
+     * Return the list of keywords associated to a specific profile
+     * @param orcid
+     * @return 
+     *          the list of keywords associated with the orcid profile
+     * */
+    Keywords getKeywords(String orcid);
+    
+    /**
+     * Return the list of public keywords associated to a specific profile
+     * @param orcid
+     * @return 
+     *          the list of keywords associated with the orcid profile
+     * */
+    Keywords getPublicKeywords(String orcid);
 }

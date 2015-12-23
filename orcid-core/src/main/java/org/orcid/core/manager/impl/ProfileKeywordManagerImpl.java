@@ -23,15 +23,22 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.orcid.core.manager.ProfileKeywordManager;
+import org.orcid.core.manager.SourceManager;
+import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.jaxb.model.message.Keywords;
+import org.orcid.jaxb.model.record_rc2.Keyword;
 import org.orcid.persistence.dao.ProfileKeywordDao;
 import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
+import org.orcid.persistence.jpa.entities.SourceEntity;
 
 public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
 
     @Resource
     ProfileKeywordDao profileKeywordDao;
 
+    @Resource
+    private SourceManager sourceManager;
+    
     /**
      * Return the list of keywords associated to a specific profile
      * @param orcid
@@ -62,7 +69,17 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
      * */
     @Override
     public void addProfileKeyword(String orcid, String keyword) {
-        profileKeywordDao.addProfileKeyword(orcid, keyword);
+        SourceEntity source = sourceManager.retrieveSourceEntity();
+        String sourceId = null;
+        String clientSourceId = null;
+        if(source.getSourceProfile() != null) {
+            sourceId = source.getSourceProfile().getId();
+        }
+        
+        if(source.getSourceClient() != null) {
+            clientSourceId = source.getSourceClient().getId();
+        }
+        profileKeywordDao.addProfileKeyword(orcid, keyword, sourceId, clientSourceId);
     }
 
     /**
@@ -88,12 +105,39 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
         }
 
         //At this point, only new other names are in the parameter list otherNames
-        //Insert all these other names on database
+        //Insert all these other names on database        
         for (String newKeyword : newKeywords) {
-            profileKeywordDao.addProfileKeyword(orcid, newKeyword);
+            profileKeywordDao.addProfileKeyword(orcid, newKeyword, orcid, null);
         }
         if (keywords.getVisibility() != null)
             profileKeywordDao.updateKeywordsVisibility(orcid, keywords.getVisibility());
     }
 
+    @Override
+    public Keywords getKeywords(String orcid) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Keywords getPublicKeywords(String orcid) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    private List<Keyword> getKeywords(String orcid, Visibility visibility) {
+        List<ProfileKeywordEntity> keywords = profileKeywordDao.getProfileKeywors(orcid);
+        if(visibility != null) {
+            Iterator<ProfileKeywordEntity> it = keywords.iterator();
+            while(it.hasNext()) {
+                ProfileKeywordEntity keywordEntity = it.next();
+                if(!visibility.equals(keywordEntity.getVisibility())) {
+                    it.remove();
+                }
+            }
+        } 
+        
+        return null;
+    }
+    
 }

@@ -69,6 +69,7 @@ import org.orcid.jaxb.model.record_rc1.FundingExternalIdentifier;
 import org.orcid.jaxb.model.record_rc1.GroupAble;
 import org.orcid.jaxb.model.record_rc1.GroupableActivity;
 import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifier;
+import org.orcid.jaxb.model.record_rc2.Biography;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -579,7 +580,15 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         }
         return publicName;
     }
-    
+
+    @Override
+    public Biography getBiography(String orcid) {
+        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
+        Biography bio = new Biography();
+        bio.setVisibility(Visibility.fromValue(profile.getBiographyVisibility() == null ? OrcidVisibilityDefaults.BIOGRAPHY_DEFAULT.getVisibility().value() : profile.getBiographyVisibility().value()));
+        bio.setContent(profile.getBiography());
+        return bio;
+    }   
 }
 
 class GroupableActivityComparator implements Comparator<GroupableActivity> {

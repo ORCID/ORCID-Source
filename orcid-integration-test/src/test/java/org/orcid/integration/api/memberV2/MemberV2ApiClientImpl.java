@@ -31,6 +31,7 @@ import static org.orcid.core.api.OrcidApiConstants.RESEARCHER_URLS;
 import static org.orcid.core.api.OrcidApiConstants.EMAIL;
 import static org.orcid.core.api.OrcidApiConstants.OTHER_NAMES;
 import static org.orcid.core.api.OrcidApiConstants.EXTERNAL_IDENTIFIERS;
+import static org.orcid.core.api.OrcidApiConstants.BIOGRAPHY;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -260,5 +261,10 @@ public class MemberV2ApiClientImpl {
     public ClientResponse viewExternalIdentifier(String orcid, Long putCode, String accessToken) {
         URI uri = UriBuilder.fromPath(EXTERNAL_IDENTIFIERS + PUTCODE).build(orcid, putCode);
         return orcidClientHelper.getClientResponseWithToken(uri, VND_ORCID_XML, accessToken);        
-    }    
+    }   
+    
+    public ClientResponse viewBiography(String orcid, String accessToken) {
+        URI uri = UriBuilder.fromPath(BIOGRAPHY).build(orcid);
+        return orcidClientHelper.getClientResponseWithToken(uri, VND_ORCID_XML, accessToken);        
+    } 
 }

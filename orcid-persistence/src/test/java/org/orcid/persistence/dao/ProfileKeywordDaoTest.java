@@ -74,7 +74,7 @@ public class ProfileKeywordDaoTest extends DBUnitTest {
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void testAddProfileKeyword() {
         assertEquals(2, profileKeywordDao.getProfileKeywors("4444-4444-4444-4443").size());
-        boolean result = profileKeywordDao.addProfileKeyword("4444-4444-4444-4443", "new_keyword");
+        boolean result = profileKeywordDao.addProfileKeyword("4444-4444-4444-4443", "new_keyword", "4444-4444-4444-4443", null);
         assertTrue(result);
         assertEquals(3, profileKeywordDao.getProfileKeywors("4444-4444-4444-4443").size());
     }

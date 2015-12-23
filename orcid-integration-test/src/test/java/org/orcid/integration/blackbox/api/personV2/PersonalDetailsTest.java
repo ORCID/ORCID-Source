@@ -343,7 +343,7 @@ public class PersonalDetailsTest extends BlackBoxBase {
             throw e;
         }
     } 
-    
+
     private int getPrivacyIndex(Visibility visibility) {
         switch(visibility) {
         case PUBLIC:
@@ -356,9 +356,7 @@ public class PersonalDetailsTest extends BlackBoxBase {
             return 1;
         }
     }
-    
-    
-    
+
     public String getAccessToken(String clientId, String clientSecret, String redirectUri) throws InterruptedException, JSONException {
         if (accessTokens.containsKey(clientId)) {
             return accessTokens.get(clientId);

@@ -61,4 +61,6 @@ public interface PublicV2ApiServiceDelegator {
     Response viewExternalIdentifiers(String orcid);
 
     Response viewExternalIdentifier(String orcid, Long putCode);
+    
+    Response viewBiography(String orcid);
 }

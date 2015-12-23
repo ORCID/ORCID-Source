@@ -66,6 +66,7 @@ import org.orcid.jaxb.model.record_rc1.Employment;
 import org.orcid.jaxb.model.record_rc1.Funding;
 import org.orcid.jaxb.model.record_rc1.PeerReview;
 import org.orcid.jaxb.model.record_rc1.Work;
+import org.orcid.jaxb.model.record_rc2.Biography;
 import org.orcid.jaxb.model.record_rc2.ExternalIdentifier;
 import org.orcid.jaxb.model.record_rc2.ExternalIdentifiers;
 import org.orcid.jaxb.model.record_rc2.OtherName;
@@ -622,5 +623,12 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     public Response deleteExternalIdentifier(String orcid, Long putCode) {
         externalIdentifierManager.deleteExternalIdentifier(orcid, putCode);
         return Response.noContent().build();
+    }
+
+    @Override
+    public Response viewBiography(String orcid) {
+        Biography bio = profileEntityManager.getBiography(orcid);
+        orcidSecurityManager.checkVisibility(bio);
+        return Response.ok(bio).build();
     }
 }
