@@ -44,6 +44,8 @@
     <bean id="swaggerSerializers" class="io.swagger.jaxrs.listing.SwaggerSerializers" scope="singleton"/>    
     <bean id="apiListingResource" class="org.orcid.api.swagger.PublicSwaggerResource"/>
          
+    <bean id="acceptFilter" class="org.orcid.core.web.filters.AcceptFilter" />
+	
 	<bean id="sanitizeAuthenticationFilter" class="org.orcid.core.web.filters.SanitizeAuthenticationFilter" />
 	
 	<bean id="corsFilter" class="org.orcid.core.web.filters.CorsFilter" />
