@@ -83,17 +83,16 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
     }
 
     @Override
-    public boolean deleteResearcherUrl(String orcid, String id) {
-        boolean result = true;
-        Long researcherUrlId = Long.valueOf(id);
-        ResearcherUrlEntity toDelete = researcherUrlDao.getResearcherUrl(orcid, researcherUrlId);  
+    public boolean deleteResearcherUrl(String orcid, Long id) {
+        boolean result = true;        
+        ResearcherUrlEntity toDelete = researcherUrlDao.getResearcherUrl(orcid, id);  
         SourceEntity existingSource = toDelete.getSource();
         orcidSecurityManager.checkSource(existingSource);
         
         try {            
-            researcherUrlDao.deleteResearcherUrl(orcid, researcherUrlId);
+            researcherUrlDao.deleteResearcherUrl(orcid, id);
         } catch(Exception e) {
-            LOGGER.error("Unable to delete researcherUrl with ID: " + researcherUrlId);
+            LOGGER.error("Unable to delete researcherUrl with ID: " + id);
             result = false;
         }
         return result;
@@ -271,7 +270,7 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
             }
         }
                 
-        ResearcherUrlEntity updatedResearcherUrlEntity = researcherUrlDao.getResearcherUrl(orcid, Long.valueOf(researcherUrl.getPutCode()));        
+        ResearcherUrlEntity updatedResearcherUrlEntity = researcherUrlDao.getResearcherUrl(orcid, researcherUrl.getPutCode());        
         Visibility originalVisibility = Visibility.fromValue(updatedResearcherUrlEntity.getVisibility().value());        
         SourceEntity existingSource = updatedResearcherUrlEntity.getSource();
         orcidSecurityManager.checkSource(existingSource);

@@ -25,19 +25,15 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.orcid.jaxb.model.common.LastModifiedDate;
-
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType( propOrder = { "lastModifiedDate", "otherNames" })
+@XmlType( propOrder = { "otherNames" })
 @XmlRootElement(name = "other-names", namespace = "http://www.orcid.org/ns/other-name")
 public class OtherNames implements Serializable {        
     private static final long serialVersionUID = 6312730308815255894L;
     
     @XmlElement(name = "other-name", namespace = "http://www.orcid.org/ns/other-name")
     List<OtherName> otherNames;
-    @XmlElement(name="last-modified-date", namespace = "http://www.orcid.org/ns/common")
-    protected LastModifiedDate lastModifiedDate;
 
     public List<OtherName> getOtherNames() {
         return otherNames;
@@ -70,13 +66,5 @@ public class OtherNames implements Serializable {
         } else if (!otherNames.equals(other.otherNames))
             return false;
         return true;
-    }
-
-	public LastModifiedDate getLastModifiedDate() {
-		return lastModifiedDate;
-	}
-
-	public void setLastModifiedDate(LastModifiedDate lastModifiedDate) {
-		this.lastModifiedDate = lastModifiedDate;
-	}       
+    }	 
 }

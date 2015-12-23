@@ -236,8 +236,8 @@ public class JpaJaxbEntityAdapterToOrcidProfileTest extends DBUnitTest {
                 assertNotNull(contributors);
                 assertEquals(2, contributors.getContributor().size());
                 assertEquals("Jaylen Kessler", contributors.getContributor().get(0).getCreditName().getContent());
-                assertEquals(Visibility.LIMITED, contributors.getContributor().get(0).getCreditName().getVisibility());
-                assertEquals(Visibility.LIMITED, orcidWork.getVisibility());
+                assertEquals(Visibility.PUBLIC, contributors.getContributor().get(0).getCreditName().getVisibility());
+                assertEquals(Visibility.PUBLIC, orcidWork.getVisibility());
                 assertNull(orcidWork.getJournalTitle());
             } else if (orcidWork.getPutCode().equals("3")) {
                 WorkContributors contributors = orcidWork.getWorkContributors();

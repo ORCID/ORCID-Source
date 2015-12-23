@@ -37,6 +37,7 @@ import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.AffiliationsManager;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.EmailManager;
+import org.orcid.core.manager.ExternalIdentifierManager;
 import org.orcid.core.manager.GroupIdRecordManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.OtherNameManager;
@@ -65,6 +66,10 @@ import org.orcid.jaxb.model.record_rc1.Employment;
 import org.orcid.jaxb.model.record_rc1.Funding;
 import org.orcid.jaxb.model.record_rc1.PeerReview;
 import org.orcid.jaxb.model.record_rc1.Work;
+import org.orcid.jaxb.model.record_rc2.ExternalIdentifier;
+import org.orcid.jaxb.model.record_rc2.ExternalIdentifiers;
+import org.orcid.jaxb.model.record_rc2.OtherName;
+import org.orcid.jaxb.model.record_rc2.OtherNames;
 import org.orcid.jaxb.model.record_rc2.PersonalDetails;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
@@ -125,22 +130,25 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
 
     @Resource
     private LocaleManager localeManager;
-    
+
     @Resource
     private ResearcherUrlManager researcherUrlManager;
 
     @Resource
     private OtherNameManager otherNameManager;
-    
+
     @Resource
     private EmailManager emailManager;
-    
+
+    @Resource
+    private ExternalIdentifierManager externalIdentifierManager;
+
     @Value("${org.orcid.core.baseUri}")
     private String baseUrl;
 
     @Resource
     private PersonalDetailsManager personalDetailsManager;
-    
+
     @Override
     public Response viewStatusText() {
         return Response.ok(STATUS_OK_MESSAGE).build();
@@ -164,10 +172,10 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
             StringBuffer primary = new StringBuffer(baseUrl).append("/").append(entity.getPrimaryRecord().getId());
             Map<String, String> params = new HashMap<String, String>();
             params.put(OrcidDeprecatedException.ORCID, primary.toString());
-            if(entity.getDeprecatedDate() != null) {
+            if (entity.getDeprecatedDate() != null) {
                 XMLGregorianCalendar calendar = DateUtils.convertToXMLGregorianCalendar(entity.getDeprecatedDate());
                 params.put(OrcidDeprecatedException.DEPRECATED_DATE, calendar.toString());
-            } 
+            }
             throw new OrcidDeprecatedException(params);
         }
         ActivitiesSummary as = visibilityFilter.filter(profileEntityManager.getActivitiesSummary(orcid));
@@ -459,48 +467,54 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
         GroupIdRecords records = groupIdRecordManager.getGroupIdRecords(pageSize, pageNum);
         return Response.ok(records).build();
     }
-    
+
     @SuppressWarnings("unchecked")
     @Override
     @AccessControl(requiredScope = ScopePathType.READ_LIMITED)
     public Response viewResearcherUrls(String orcid) {
-        ResearcherUrls researcherUrls = researcherUrlManager.getResearcherUrlsV2(orcid);        
+        ResearcherUrls researcherUrls = researcherUrlManager.getResearcherUrlsV2(orcid);
         researcherUrls.setResearcherUrls((List<ResearcherUrl>) visibilityFilter.filter(researcherUrls.getResearcherUrls()));
         ElementUtils.setPathToResearcherUrls(researcherUrls, orcid);
         return Response.ok(researcherUrls).build();
     }
-        
-    public Response viewResearcherUrl(String orcid, String putCode) {
-        ResearcherUrl researcherUrl = researcherUrlManager.getResearcherUrlV2(orcid, Long.valueOf(putCode));
+
+    public Response viewResearcherUrl(String orcid, Long putCode) {
+        ResearcherUrl researcherUrl = researcherUrlManager.getResearcherUrlV2(orcid, putCode);
         orcidSecurityManager.checkVisibility(researcherUrl);
         return Response.ok(researcherUrl).build();
     }
-    
+
     @Override
     @AccessControl(requiredScope = ScopePathType.PERSON_UPDATE)
-    public Response updateResearcherUrl(String orcid, String putCode, ResearcherUrl researcherUrl) {
+    public Response updateResearcherUrl(String orcid, Long putCode, ResearcherUrl researcherUrl) {
+        if (!putCode.equals(researcherUrl.getPutCode())) {
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("urlPutCode", String.valueOf(putCode));
+            params.put("bodyPutCode", String.valueOf(researcherUrl.getPutCode()));
+            throw new MismatchedPutCodeException(params);
+        }
         ResearcherUrl updatedResearcherUrl = researcherUrlManager.updateResearcherUrlV2(orcid, researcherUrl);
         return Response.ok(updatedResearcherUrl).build();
     }
-    
+
     @Override
     @AccessControl(requiredScope = ScopePathType.PERSON_UPDATE)
     public Response createResearcherUrl(String orcid, ResearcherUrl researcherUrl) {
-        researcherUrl = researcherUrlManager.createResearcherUrlV2(orcid, researcherUrl);        
+        researcherUrl = researcherUrlManager.createResearcherUrlV2(orcid, researcherUrl);
         try {
             return Response.created(new URI(String.valueOf(researcherUrl.getPutCode()))).build();
         } catch (URISyntaxException e) {
             throw new RuntimeException(localeManager.resolveMessage("apiError.createelement_response.exception"), e);
-        }       
+        }
     }
-    
+
     @Override
     @AccessControl(requiredScope = ScopePathType.PERSON_UPDATE)
-    public Response deleteResearcherUrl(String orcid, String putCode) {
+    public Response deleteResearcherUrl(String orcid, Long putCode) {
         researcherUrlManager.deleteResearcherUrl(orcid, putCode);
         return Response.noContent().build();
-    }    
-    
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     @AccessControl(requiredScope = ScopePathType.READ_LIMITED)
@@ -510,48 +524,52 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
         return Response.ok(emails).build();
     }
 
-	@Override
-	public Response viewOtherNames(String orcid) {
-		org.orcid.jaxb.model.record_rc2.OtherNames otherNames = otherNameManager.getOtherNamesV2(orcid);
-        return Response.ok(otherNames).build();
-	}
-    
+    @SuppressWarnings("unchecked")
     @Override
-	public Response viewOtherName(String orcid, String putCode) {
-		org.orcid.jaxb.model.record_rc2.OtherName otherName = otherNameManager.getOtherNameV2(orcid, putCode);
-        return Response.ok(otherName).build();
-	}
+    public Response viewOtherNames(String orcid) {
+        OtherNames otherNames = otherNameManager.getOtherNamesV2(orcid);
+        List<OtherName> allOtherNames = otherNames.getOtherNames();
+        List<OtherName> filterdOtherNames = (List<OtherName>) visibilityFilter.filter(allOtherNames);
+        otherNames.setOtherNames(filterdOtherNames);
+        return Response.ok(otherNames).build();
+    }
 
-	@Override
-	public Response createOtherName(String orcid, org.orcid.jaxb.model.record_rc2.OtherName otherName) {
-		otherName = otherNameManager.createOtherNameV2(orcid, otherName);        
+    @Override
+    public Response viewOtherName(String orcid, Long putCode) {
+        OtherName otherName = otherNameManager.getOtherNameV2(orcid, putCode);
+        orcidSecurityManager.checkVisibility(otherName);
+        return Response.ok(otherName).build();
+    }
+
+    @Override
+    public Response createOtherName(String orcid, org.orcid.jaxb.model.record_rc2.OtherName otherName) {
+        otherName = otherNameManager.createOtherNameV2(orcid, otherName);
         try {
             return Response.created(new URI(String.valueOf(otherName.getPutCode()))).build();
         } catch (URISyntaxException e) {
             throw new RuntimeException(localeManager.resolveMessage("apiError.createelement_response.exception"), e);
-        }   
-	}
+        }
+    }
 
-	@Override
-	public Response updateOtherName(String orcid, String putCode,
-			org.orcid.jaxb.model.record_rc2.OtherName otherName) {
-		if (!putCode.equals(String.valueOf(otherName.getPutCode()))) {
+    @Override
+    public Response updateOtherName(String orcid, Long putCode, org.orcid.jaxb.model.record_rc2.OtherName otherName) {
+        if (!putCode.equals(otherName.getPutCode())) {
             Map<String, String> params = new HashMap<String, String>();
             params.put("urlPutCode", String.valueOf(putCode));
             params.put("bodyPutCode", String.valueOf(otherName.getPutCode()));
             throw new MismatchedPutCodeException(params);
         }
 
-		org.orcid.jaxb.model.record_rc2.OtherName updatedOtherName = otherNameManager.updateOtherNameV2(orcid, putCode, otherName);
-		return Response.ok(updatedOtherName).build();
-	}
+        org.orcid.jaxb.model.record_rc2.OtherName updatedOtherName = otherNameManager.updateOtherNameV2(orcid, putCode, otherName);
+        return Response.ok(updatedOtherName).build();
+    }
 
-	@Override
-	public Response deleteOtherName(String orcid, String putCode) {
-		otherNameManager.deleteOtherNameV2(orcid, putCode);
+    @Override
+    public Response deleteOtherName(String orcid, Long putCode) {
+        otherNameManager.deleteOtherNameV2(orcid, putCode);
         return Response.noContent().build();
-	}
-	
+    }
+
     @Override
     @AccessControl(requiredScope = ScopePathType.READ_LIMITED)
     public Response viewPersonalDetails(String orcid) {
@@ -559,5 +577,50 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
         personalDetails = visibilityFilter.filter(personalDetails);
         ElementUtils.setPathToPersonalDetails(personalDetails, orcid);
         return Response.ok(personalDetails).build();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public Response viewExternalIdentifiers(String orcid) {
+        ExternalIdentifiers extIds = externalIdentifierManager.getExternalIdentifiersV2(orcid);
+        List<ExternalIdentifier> allExtIds = extIds.getExternalIdentifier();
+        List<ExternalIdentifier> filteredExtIds = (List<ExternalIdentifier>) visibilityFilter.filter(allExtIds);
+        extIds.setExternalIdentifiers(filteredExtIds);
+        return Response.ok(extIds).build();
+    }
+
+    @Override
+    public Response viewExternalIdentifier(String orcid, Long putCode) {
+        ExternalIdentifier extId = externalIdentifierManager.getExternalIdentifierV2(orcid, putCode);
+        orcidSecurityManager.checkVisibility(extId);
+        return Response.ok(extId).build();
+    }
+
+    @Override
+    public Response updateExternalIdentifier(String orcid, Long putCode, ExternalIdentifier externalIdentifier) {
+        if (!putCode.equals(externalIdentifier.getPutCode())) {
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("urlPutCode", String.valueOf(putCode));
+            params.put("bodyPutCode", String.valueOf(externalIdentifier.getPutCode()));
+            throw new MismatchedPutCodeException(params);
+        }
+        ExternalIdentifier extId = externalIdentifierManager.updateExternalIdentifierV2(orcid, externalIdentifier);
+        return Response.ok(extId).build();
+    }
+
+    @Override
+    public Response createExternalIdentifier(String orcid, ExternalIdentifier externalIdentifier) {
+        externalIdentifier = externalIdentifierManager.createExternalIdentifierV2(orcid, externalIdentifier);
+        try {
+            return Response.created(new URI(String.valueOf(externalIdentifier.getPutCode()))).build();
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(localeManager.resolveMessage("apiError.createelement_response.exception"), e);
+        }
+    }
+
+    @Override
+    public Response deleteExternalIdentifier(String orcid, Long putCode) {
+        externalIdentifierManager.deleteExternalIdentifier(orcid, putCode);
+        return Response.noContent().build();
     }
 }

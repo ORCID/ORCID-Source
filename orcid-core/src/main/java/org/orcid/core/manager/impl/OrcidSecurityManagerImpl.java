@@ -111,8 +111,8 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
     }
     
     @Override
-    public void checkVisibility(Name name) {        
-        if(Visibility.PRIVATE.equals(name.getVisibility())) {
+    public void checkVisibility(Name name) {         
+        if(Visibility.PRIVATE.equals(name.getVisibility())) {                       
             throw new OrcidVisibilityException();
         }
         boolean hasReadLimitedScope = hasScope(ScopePathType.READ_LIMITED);
@@ -125,7 +125,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
     
     @Override
     public void checkVisibility(Biography biography) {
-        if(Visibility.PRIVATE.equals(biography.getVisibility())) {
+        if(Visibility.PRIVATE.equals(biography.getVisibility())) {            
             throw new OrcidVisibilityException();
         }
         boolean hasReadLimitedScope = hasScope(ScopePathType.READ_LIMITED);
@@ -139,7 +139,17 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
     @Override
     public void checkVisibility(OtherName otherName) {
         if(Visibility.PRIVATE.equals(otherName.getVisibility())) {
-            throw new OrcidVisibilityException();
+            OAuth2Authentication oAuth2Authentication = getOAuth2Authentication();
+            String clientId = null;
+
+            if (oAuth2Authentication != null) {
+                OAuth2Request authorizationRequest = oAuth2Authentication.getOAuth2Request();
+                clientId = authorizationRequest.getClientId();         
+            }
+
+            if(clientId == null || otherName.getSource() == null || !clientId.equals(otherName.getSource().retrieveSourcePath())) {
+                throw new OrcidVisibilityException();
+            }
         }
         boolean hasReadLimitedScope = hasScope(ScopePathType.READ_LIMITED);
         if(!hasReadLimitedScope) {

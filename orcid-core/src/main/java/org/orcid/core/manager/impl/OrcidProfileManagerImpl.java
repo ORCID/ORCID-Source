@@ -45,7 +45,7 @@ import java.util.concurrent.TimeoutException;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.orcid.core.adapter.Jaxb2JpaAdapter;
 import org.orcid.core.constants.DefaultPreferences;
 import org.orcid.core.manager.LoadOptions;

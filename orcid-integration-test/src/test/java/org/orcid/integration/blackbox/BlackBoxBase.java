@@ -40,11 +40,13 @@ import org.orcid.integration.api.helper.OauthHelper;
 import org.orcid.integration.api.memberV2.MemberV2ApiClientImpl;
 import org.orcid.integration.api.t2.T2OAuthAPIService;
 import org.orcid.integration.blackbox.web.SigninTest;
+import org.orcid.jaxb.model.record_rc2.ExternalIdentifier;
 import org.orcid.jaxb.model.record_rc1.Education;
 import org.orcid.jaxb.model.record_rc1.Employment;
 import org.orcid.jaxb.model.record_rc1.Funding;
 import org.orcid.jaxb.model.record_rc1.PeerReview;
 import org.orcid.jaxb.model.record_rc1.Work;
+import org.orcid.jaxb.model.record_rc2.OtherName;
 import org.orcid.jaxb.model.record_rc2.PersonalDetails;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -122,6 +124,10 @@ public class BlackBoxBase {
                 result = (ResearcherUrl) obj;
             } else if(PersonalDetails.class.equals(type)) {
                 result = (PersonalDetails) obj;
+            } else if(OtherName.class.equals(type)) {
+                result = (OtherName) obj;
+            } else if(ExternalIdentifier.class.equals(type)) {
+                result = (ExternalIdentifier) obj;
             }
             return result;
         } catch (IOException e) {

@@ -594,6 +594,11 @@
         <property name="mapperFacade" ref="otherNameUrlMapperFacade" />
     </bean>
     
+    <bean id="externalIdentifierMapperFacade" factory-bean="&amp;mapperFacadeFactory" factory-method="getExternalIdentifierMapperFacade"/>
+	<bean id="jpaJaxbExternalIdentifierAdapter" class="org.orcid.core.adapter.impl.JpaJaxbExternalIdentifierAdapterImpl">
+        <property name="mapperFacade" ref="externalIdentifierMapperFacade" />
+    </bean>
+            
     <!-- Geonames username -->
 	<bean id="geonamesUser" class="java.lang.String">
 		<constructor-arg value="orcid"/>

@@ -356,7 +356,7 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
     @Transactional    
     public boolean checkSourceAndDelete(String orcid, Long fundingId) {
         ProfileFundingEntity pfe = profileFundingDao.getProfileFunding(orcid, fundingId);
-        orcidSecurityManager.checkSource(pfe.getSource());
+        orcidSecurityManager.checkSource(pfe.getSource());        
         Item item = createItem(pfe);
         boolean result = profileFundingDao.removeProfileFunding(orcid, fundingId);
         notificationManager.sendAmendEmail(orcid, AmendedSection.FUNDING, item);

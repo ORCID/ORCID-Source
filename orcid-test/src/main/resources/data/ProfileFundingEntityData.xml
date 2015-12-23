@@ -93,5 +93,35 @@
 			display_index="2"
 			/>  
 			
-			  		    	
+	<profile_funding 
+			id="6" 
+			orcid="4444-4444-4444-4447" 
+			org_id="1" 
+			title="Public Funding # 1" 
+			type="SALARY_AWARD" 
+			currency_code="USD" 
+			numeric_amount="2500"
+			description="This is the description for funding with id 6" 
+			visibility="PUBLIC" 
+			date_created="2014-07-03 15:31:00.00"
+            last_modified="2014-07-03 15:31:00.00"
+			client_source_id="APP-5555555555555555"
+			display_index="2"
+			/> 	
+			
+	<profile_funding 
+			id="7" 
+			orcid="4444-4444-4444-4442" 
+			org_id="1" 
+			title="Public Funding # 1" 
+			type="SALARY_AWARD" 
+			currency_code="USD" 
+			numeric_amount="2500"
+			description="This is the description for funding with id 7" 
+			visibility="PUBLIC" 
+			date_created="2014-07-03 15:31:00.00"
+            last_modified="2014-07-03 15:31:00.00"
+			client_source_id="APP-5555555555555555"
+			display_index="2"
+			/>					  		    		
 </dataset>
