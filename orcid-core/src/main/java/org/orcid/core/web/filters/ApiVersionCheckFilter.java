@@ -19,7 +19,6 @@ package org.orcid.core.web.filters;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.annotation.Resource;
 import javax.ws.rs.ext.Provider;
 
 import org.orcid.core.exception.OrcidBadRequestException;
@@ -36,7 +35,6 @@ public class ApiVersionCheckFilter implements ContainerRequestFilter {
     private Boolean v1xDisabled;
     
     @InjectParam("localeManager")
-    @Resource
     private LocaleManager localeManager;
 
     private static final Pattern VERSION_PATTERN = Pattern.compile("v(\\d.*?)/");
