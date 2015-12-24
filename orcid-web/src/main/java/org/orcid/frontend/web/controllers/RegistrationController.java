@@ -49,6 +49,9 @@ import org.orcid.core.manager.RegistrationRoleManager;
 import org.orcid.core.manager.SecurityQuestionManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.utils.PasswordResetToken;
+import org.orcid.frontend.spring.ShibbolethAjaxAuthenticationSuccessHandler;
+import org.orcid.frontend.spring.SocialAjaxAuthenticationSuccessHandler;
+import org.orcid.frontend.spring.web.social.config.SocialContext;
 import org.orcid.frontend.web.controllers.helper.SearchOrcidSolrCriteria;
 import org.orcid.frontend.web.forms.ChangeSecurityQuestionForm;
 import org.orcid.frontend.web.forms.EmailAddressForm;
@@ -95,6 +98,7 @@ import org.orcid.utils.DateUtils;
 import org.orcid.utils.OrcidRequestUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -178,6 +182,15 @@ public class RegistrationController extends BaseController {
     
     @Resource
     private InternalSSOManager internalSSOManager;
+    
+    @Autowired
+    private SocialContext socialContext;
+    
+    @Resource
+    private SocialAjaxAuthenticationSuccessHandler ajaxAuthenticationSuccessHandlerSocial;
+    
+    @Resource
+    private ShibbolethAjaxAuthenticationSuccessHandler ajaxAuthenticationSuccessHandlerShibboleth;
 
     public void setEncryptionManager(EncryptionManager encryptionManager) {
         this.encryptionManager = encryptionManager;
@@ -368,7 +381,7 @@ public class RegistrationController extends BaseController {
         }
     }
 
-    @RequestMapping(value = "/registerConfirm.json", method = RequestMethod.POST)
+    @RequestMapping(value = {"/registerConfirm.json", "/shibboleth/registerConfirm.json"}, method = RequestMethod.POST)
     public @ResponseBody Redirect setRegisterConfirm(HttpServletRequest request, HttpServletResponse response, @RequestBody Registration reg) {
         Redirect r = new Redirect();
 
@@ -406,6 +419,15 @@ public class RegistrationController extends BaseController {
         }        
 
         createMinimalRegistrationAndLogUserIn(request, response, toProfile(reg, request), usedCaptcha);
+        if("social".equals(reg.getLinkType()) && socialContext.isSignedIn(request, response) != null) {
+        	ajaxAuthenticationSuccessHandlerSocial.linkSocialAccount(request, response);
+        	r.setUrl(getBaseUri() + "/my-orcid");
+        	return r;
+        } else if("shibboleth".equals(reg.getLinkType())) {
+        	ajaxAuthenticationSuccessHandlerShibboleth.linkShibbolethAccount(request, response);
+        	r.setUrl(getBaseUri() + "/my-orcid");
+        	return r;
+        }
         String redirectUrl = calculateRedirectUrl(request, response);
         r.setUrl(redirectUrl);
         return r;

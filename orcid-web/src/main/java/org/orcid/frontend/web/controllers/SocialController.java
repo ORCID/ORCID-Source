@@ -92,7 +92,11 @@ public class SocialController extends BaseController {
                     ModelAndView mav = new ModelAndView();
                     mav.setViewName("social_link_signin");
                     mav.addObject("providerId", providerId);
-                    mav.addObject("emailId", getAccountIdForDisplay(userMap));
+                    mav.addObject("accountId", getAccountIdForDisplay(userMap));
+                    mav.addObject("linkType", "social");
+                    mav.addObject("emailId", (userMap.get("email") == null) ? "" : userMap.get("email"));
+                    mav.addObject("firstName", (userMap.get("firstName") == null) ? "" : userMap.get("firstName"));
+                    mav.addObject("lastName", (userMap.get("lastName") == null) ? "" : userMap.get("lastName"));
                     return mav;
                 }
             } else {
@@ -108,16 +112,20 @@ public class SocialController extends BaseController {
     	Map<String, String> userMap = new HashMap<String, String>();
     	if (SocialType.FACEBOOK.equals(connectionType)) {
             Facebook facebook = socialContext.getFacebook();
-            User user = facebook.fetchObject("me", User.class, "id", "email", "name");
+            User user = facebook.fetchObject("me", User.class, "id", "email", "name", "first_name", "last_name");
             userMap.put("providerUserId", user.getId());
             userMap.put("userName", user.getName());
             userMap.put("email", user.getEmail());
+            userMap.put("firstName", user.getFirstName());
+            userMap.put("lastName", user.getLastName());
         } else if (SocialType.GOOGLE.equals(connectionType)) {
             Google google = socialContext.getGoogle();
             Person person = google.plusOperations().getGoogleProfile();
             userMap.put("providerUserId", person.getId());
             userMap.put("userName", person.getDisplayName());
             userMap.put("email", person.getAccountEmail());
+            userMap.put("firstName", person.getGivenName());
+            userMap.put("lastName", person.getFamilyName());
         }
     	
     	return userMap;

@@ -42,7 +42,13 @@ public class SocialAjaxAuthenticationSuccessHandler extends AjaxAuthenticationSu
     private SocialContext socialContext;
     
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-        
+    	linkSocialAccount(request, response);
+        String targetUrl = getTargetUrl(request, response, authentication);
+        response.setContentType("application/json");
+        response.getWriter().println("{\"success\": true, \"url\": \"" + targetUrl.replaceAll("^/", "") + "\"}");        
+    }
+    
+    public void linkSocialAccount(HttpServletRequest request, HttpServletResponse response) {
     	SocialType connectionType = socialContext.isSignedIn(request, response);
         if (connectionType != null) {
         	Map<String, String> userMap = retrieveUserDetails(connectionType);
@@ -62,13 +68,9 @@ public class SocialAjaxAuthenticationSuccessHandler extends AjaxAuthenticationSu
         } else {
             throw new UsernameNotFoundException("Could not find an orcid account associated with the email id.");
         }
-    	
-        String targetUrl = getTargetUrl(request, response, authentication);
-        response.setContentType("application/json");
-        response.getWriter().println("{\"success\": true, \"url\": \"" + targetUrl.replaceAll("^/", "") + "\"}");        
-    }
-    
-    private Map<String, String> retrieveUserDetails(SocialType connectionType) {
+	}
+
+	private Map<String, String> retrieveUserDetails(SocialType connectionType) {
         
     	Map<String, String> userMap = new HashMap<String, String>();
     	if (SocialType.FACEBOOK.equals(connectionType)) {
