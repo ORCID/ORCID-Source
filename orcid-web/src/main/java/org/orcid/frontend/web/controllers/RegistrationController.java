@@ -17,8 +17,6 @@
 package org.orcid.frontend.web.controllers;
 
 import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Date;
@@ -421,12 +419,8 @@ public class RegistrationController extends BaseController {
         createMinimalRegistrationAndLogUserIn(request, response, toProfile(reg, request), usedCaptcha);
         if ("social".equals(reg.getLinkType()) && socialContext.isSignedIn(request, response) != null) {
             ajaxAuthenticationSuccessHandlerSocial.linkSocialAccount(request, response);
-            r.setUrl(getBaseUri() + "/my-orcid");
-            return r;
         } else if ("shibboleth".equals(reg.getLinkType())) {
             ajaxAuthenticationSuccessHandlerShibboleth.linkShibbolethAccount(request, response);
-            r.setUrl(getBaseUri() + "/my-orcid");
-            return r;
         }
         String redirectUrl = calculateRedirectUrl(request, response);
         r.setUrl(redirectUrl);
@@ -448,25 +442,6 @@ public class RegistrationController extends BaseController {
         copyErrors(reg.getPassword(), reg);
         copyErrors(reg.getPasswordConfirm(), reg);
         copyErrors(reg.getTermsOfUse(), reg);
-    }
-
-    private String calculateRedirectUrl(HttpServletRequest request, HttpServletResponse response) {
-        SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
-        if (savedRequest != null) {
-            String savedUrl = savedRequest.getRedirectUrl();
-            if (savedUrl != null) {
-                try {
-                    String path = new URL(savedUrl).getPath();
-                    if (path != null && path.contains("/oauth/")) {
-                        // This redirect url is OK
-                        return savedUrl;
-                    }
-                } catch (MalformedURLException e) {
-                    LOGGER.debug("Malformed saved redirect url: {}", savedUrl);
-                }
-            }
-        }
-        return getBaseUri() + "/my-orcid";
     }
 
     @RequestMapping(value = "/registerPasswordConfirmValidate.json", method = RequestMethod.POST)

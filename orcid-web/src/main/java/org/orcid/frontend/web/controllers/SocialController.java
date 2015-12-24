@@ -87,7 +87,7 @@ public class SocialController extends BaseController {
                     token.setDetails(new WebAuthenticationDetails(request));
                     Authentication authentication = authenticationManager.authenticate(token);
                     SecurityContextHolder.getContext().setAuthentication(authentication);
-                    return new ModelAndView("redirect:/my-orcid");
+                    return new ModelAndView("redirect:" + calculateRedirectUrl(request, response));
                 } else {
                     ModelAndView mav = new ModelAndView();
                     mav.setViewName("social_link_signin");
