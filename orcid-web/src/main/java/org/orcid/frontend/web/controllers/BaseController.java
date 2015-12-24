@@ -751,6 +751,7 @@ public class BaseController {
                     String path = new URL(savedUrl).getPath();
                     if (path != null && path.contains("/oauth/")) {
                         // This redirect url is OK
+                        savedUrl = correctContext(request, savedUrl);
                         return savedUrl;
                     }
                 } catch (MalformedURLException e) {
@@ -760,4 +761,12 @@ public class BaseController {
         }
         return getBaseUri() + "/my-orcid";
     }
+
+    private String correctContext(HttpServletRequest request, String savedUrl) {
+        String contextPath =  request.getContextPath();
+        if (orcidUrlManager.getBasePath().equals("/") && !contextPath.equals("/"))
+            savedUrl = savedUrl.replaceFirst(contextPath.replace("/", "\\/"), "");
+        return savedUrl;
+    }
+    
 }
