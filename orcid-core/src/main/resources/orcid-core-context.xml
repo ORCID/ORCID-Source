@@ -598,6 +598,19 @@
 	<bean id="jpaJaxbExternalIdentifierAdapter" class="org.orcid.core.adapter.impl.JpaJaxbExternalIdentifierAdapterImpl">
         <property name="mapperFacade" ref="externalIdentifierMapperFacade" />
     </bean>
+    
+    
+    
+    <bean id="keywordMapperFacade" factory-bean="&amp;mapperFacadeFactory" factory-method="getKeywordMapperFacade"/>
+	<bean id="jpaJaxbKeywordAdapter" class="org.orcid.core.adapter.impl.JpaJaxbKeywordAdapterImpl">
+        <property name="mapperFacade" ref="keywordMapperFacade" />
+    </bean>
+    
+    
+    
+    
+    
+    
             
     <!-- Geonames username -->
 	<bean id="geonamesUser" class="java.lang.String">

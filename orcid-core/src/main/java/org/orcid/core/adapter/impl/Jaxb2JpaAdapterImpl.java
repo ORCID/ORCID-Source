@@ -500,7 +500,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         Map<String, ProfileKeywordEntity> map = new HashMap<>();
         if (profileKeywordEntities != null) {
             for (ProfileKeywordEntity entity : profileKeywordEntities) {
-                String keyword = entity.getKeyword();
+                String keyword = entity.getKeywordName();
                 map.put(keyword, entity);
             }
         }

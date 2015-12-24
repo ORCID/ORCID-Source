@@ -96,11 +96,11 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
         while (currentIt.hasNext()) {
             ProfileKeywordEntity existingKeyword = currentIt.next();
             //Delete non modified other names from the parameter list
-            if (newKeywords.contains(existingKeyword.getKeyword())) {
-                newKeywords.remove(existingKeyword.getKeyword());
+            if (newKeywords.contains(existingKeyword.getKeywordName())) {
+                newKeywords.remove(existingKeyword.getKeywordName());
             } else {
                 //Delete other names deleted by user
-                profileKeywordDao.deleteProfileKeyword(orcid, existingKeyword.getKeyword());
+                profileKeywordDao.deleteProfileKeyword(orcid, existingKeyword.getKeywordName());
             }
         }
 

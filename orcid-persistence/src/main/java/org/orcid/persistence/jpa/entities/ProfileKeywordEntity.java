@@ -101,7 +101,7 @@ public class ProfileKeywordEntity extends BaseEntity<Long> implements Comparable
      */
     @Id
     @Column(name = "keywords_name", length = 255)
-    public String getKeyword() {
+    public String getKeywordName() {
         return keywordName;
     }
 
@@ -109,7 +109,7 @@ public class ProfileKeywordEntity extends BaseEntity<Long> implements Comparable
      * @param keywordName
      *            the institutionEntity to set
      */
-    public void setKeyword(String keywordName) {
+    public void setKeywordName(String keywordName) {
         this.keywordName = keywordName;
     }
 
@@ -134,7 +134,7 @@ public class ProfileKeywordEntity extends BaseEntity<Long> implements Comparable
     @Override
     public int compareTo(ProfileKeywordEntity profileKeywordEntity) {
         if (keywordName != null && profileKeywordEntity != null) {
-            return keywordName.compareTo(profileKeywordEntity.getKeyword());
+            return keywordName.compareTo(profileKeywordEntity.getKeywordName());
         } else {
             return 0;
         }

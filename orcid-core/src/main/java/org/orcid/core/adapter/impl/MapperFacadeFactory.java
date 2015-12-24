@@ -59,6 +59,7 @@ import org.orcid.jaxb.model.record_rc1.WorkContributors;
 import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifier;
 import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifiers;
 import org.orcid.jaxb.model.record_rc2.ExternalIdentifier;
+import org.orcid.jaxb.model.record_rc2.Keyword;
 import org.orcid.jaxb.model.record_rc2.OtherName;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import org.orcid.persistence.dao.WorkDao;
@@ -76,6 +77,7 @@ import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.OtherNameEntity;
 import org.orcid.persistence.jpa.entities.PeerReviewEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
+import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
 import org.orcid.persistence.jpa.entities.PublicationDateEntity;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
@@ -208,6 +210,18 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         otherNameClassMap.field("content", "displayName");
         otherNameClassMap.field("path", "profile.orcid");
         otherNameClassMap.register();
+        return mapperFactory.getMapperFacade();
+    }
+    
+    public MapperFacade getKeywordMapperFacade() {
+        MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
+        ClassMapBuilder<Keyword, ProfileKeywordEntity> keywordClassMap = mapperFactory.classMap(Keyword.class, ProfileKeywordEntity.class);
+        keywordClassMap.byDefault();
+        addV2DateFields(keywordClassMap);
+        addV2SourceMapping(mapperFactory);
+        keywordClassMap.field("putCode", "id");
+        keywordClassMap.field("content", "keywordName");
+        keywordClassMap.register();        
         return mapperFactory.getMapperFacade();
     }
     
