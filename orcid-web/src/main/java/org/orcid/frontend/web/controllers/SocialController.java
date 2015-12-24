@@ -73,8 +73,8 @@ public class SocialController extends BaseController {
 
         SocialType connectionType = socialContext.isSignedIn(request, response);
         if (connectionType != null) {
-        	Map<String, String> userMap = retrieveUserDetails(connectionType);
-            
+            Map<String, String> userMap = retrieveUserDetails(connectionType);
+
             String providerId = connectionType.value();
             String userId = socialContext.getUserId();
             UserconnectionEntity userConnectionEntity = userConnectionDao.findByProviderIdAndProviderUserId(userMap.get("providerUserId"), providerId);
@@ -87,7 +87,7 @@ public class SocialController extends BaseController {
                     token.setDetails(new WebAuthenticationDetails(request));
                     Authentication authentication = authenticationManager.authenticate(token);
                     SecurityContextHolder.getContext().setAuthentication(authentication);
-                    return new ModelAndView("redirect:/my-orcid");
+                    return new ModelAndView("redirect:" + calculateRedirectUrl(request, response));
                 } else {
                     ModelAndView mav = new ModelAndView();
                     mav.setViewName("social_link_signin");
@@ -103,14 +103,14 @@ public class SocialController extends BaseController {
                 throw new UsernameNotFoundException("Could not find an orcid account associated with the email id.");
             }
         } else {
-        	throw new UsernameNotFoundException("Could not find an orcid account associated with the email id.");
+            throw new UsernameNotFoundException("Could not find an orcid account associated with the email id.");
         }
     }
 
     private Map<String, String> retrieveUserDetails(SocialType connectionType) {
-        
-    	Map<String, String> userMap = new HashMap<String, String>();
-    	if (SocialType.FACEBOOK.equals(connectionType)) {
+
+        Map<String, String> userMap = new HashMap<String, String>();
+        if (SocialType.FACEBOOK.equals(connectionType)) {
             Facebook facebook = socialContext.getFacebook();
             User user = facebook.fetchObject("me", User.class, "id", "email", "name", "first_name", "last_name");
             userMap.put("providerUserId", user.getId());
@@ -127,10 +127,10 @@ public class SocialController extends BaseController {
             userMap.put("firstName", person.getGivenName());
             userMap.put("lastName", person.getFamilyName());
         }
-    	
-    	return userMap;
+
+        return userMap;
     }
-    
+
     private String getAccountIdForDisplay(Map<String, String> userMap) {
         if (userMap.get("email") != null) {
             return userMap.get("email");

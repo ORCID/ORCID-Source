@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -79,6 +80,8 @@ import org.springframework.security.web.authentication.logout.SecurityContextLog
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
+import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
+import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -737,5 +740,24 @@ public class BaseController {
         if (profile == null)
             return false;
         return profile.isLocked();
+    }
+
+    protected String calculateRedirectUrl(HttpServletRequest request, HttpServletResponse response) {
+        SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
+        if (savedRequest != null) {
+            String savedUrl = savedRequest.getRedirectUrl();
+            if (savedUrl != null) {
+                try {
+                    String path = new URL(savedUrl).getPath();
+                    if (path != null && path.contains("/oauth/")) {
+                        // This redirect url is OK
+                        return savedUrl;
+                    }
+                } catch (MalformedURLException e) {
+                    LOGGER.debug("Malformed saved redirect url: {}", savedUrl);
+                }
+            }
+        }
+        return getBaseUri() + "/my-orcid";
     }
 }
