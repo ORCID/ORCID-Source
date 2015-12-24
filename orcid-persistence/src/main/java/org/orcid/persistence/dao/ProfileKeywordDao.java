@@ -21,7 +21,7 @@ import java.util.List;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
 
-public interface ProfileKeywordDao {
+public interface ProfileKeywordDao extends GenericDao<ProfileKeywordEntity, Long> {
 
     /**
      * Return the list of keywords associated to a specific profile
@@ -29,7 +29,7 @@ public interface ProfileKeywordDao {
      * @return 
      *          the list of keywords associated with the orcid profile
      * */
-    public List<ProfileKeywordEntity> getProfileKeywors(String orcid);
+    List<ProfileKeywordEntity> getProfileKeywors(String orcid);
 
     /**
      * Deleted a keyword from database
@@ -37,9 +37,9 @@ public interface ProfileKeywordDao {
      * @param keyword
      * @return true if the keyword was successfully deleted
      * */
-    public boolean deleteProfileKeyword(String orcid, String keyword);
+    boolean deleteProfileKeyword(String orcid, String keyword);
     
-    public boolean updateKeywordsVisibility(String orcid, Visibility visibility);
+    boolean updateKeywordsVisibility(String orcid, Visibility visibility);
 
     /**
      * Adds a keyword to a specific profile
@@ -47,5 +47,9 @@ public interface ProfileKeywordDao {
      * @param keyword
      * @return true if the keyword was successfully created on database
      * */
-    public boolean addProfileKeyword(String orcid, String keyword, String sourceId, String clientSourceId);
+    boolean addProfileKeyword(String orcid, String keyword, String sourceId, String clientSourceId);
+    
+    boolean deleteProfileKeyword(ProfileKeywordEntity entity);
+    
+    ProfileKeywordEntity getProfileKeyword(String orcid, Long putCode);
 }

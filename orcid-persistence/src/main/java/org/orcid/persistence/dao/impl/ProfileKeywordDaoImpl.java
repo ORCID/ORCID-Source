@@ -91,4 +91,19 @@ public class ProfileKeywordDaoImpl extends GenericDaoImpl<ProfileKeywordEntity, 
         return query.executeUpdate() > 0 ? true : false;
     }
 
+    @Override
+    public ProfileKeywordEntity getProfileKeyword(String orcid, Long putCode) {
+        Query query = entityManager.createQuery("FROM ProfileKeywordEntity WHERE profile.id=:orcid and id=:id");
+        query.setParameter("orcid", orcid);
+        query.setParameter("id", putCode);
+        return (ProfileKeywordEntity) query.getSingleResult();
+    }
+
+    @Override
+    public boolean deleteProfileKeyword(ProfileKeywordEntity entity) {        
+        Query query = entityManager.createQuery("DELETE FROM ProfileKeywordEntity WHERE id=:id");
+        query.setParameter("id", entity.getId());
+        return query.executeUpdate() > 0 ? true : false;
+    }
+
 }
