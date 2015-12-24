@@ -238,10 +238,25 @@ public class ProfileDaoTest extends DBUnitTest {
         subjects.add(new SubjectEntity("Stealin"));
         SortedSet<ProfileKeywordEntity> keywords = new TreeSet<ProfileKeywordEntity>();
         profile.setKeywords(keywords);
-        keywords.add(new ProfileKeywordEntity(profile, "Bilocation"));
-        keywords.add(new ProfileKeywordEntity(profile, "Humour"));
-        keywords.add(new ProfileKeywordEntity(profile, "Ceramics"));
-
+        
+        ProfileKeywordEntity entity = new ProfileKeywordEntity();
+        entity.setProfile(profile);
+        entity.setKeywordName("Bilocation");
+        entity.setId(1L);
+        keywords.add(entity);
+        
+        entity = new ProfileKeywordEntity();
+        entity.setProfile(profile);
+        entity.setKeywordName("Humour");
+        entity.setId(2L);
+        keywords.add(entity);
+        
+        entity = new ProfileKeywordEntity();
+        entity.setProfile(profile);
+        entity.setKeywordName("Ceramics");
+        entity.setId(3L);
+        keywords.add(entity);
+        
         profileDao.persist(profile);
         profileDao.flush();
 

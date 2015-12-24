@@ -89,6 +89,8 @@ import org.orcid.jaxb.model.record_rc1.WorkTitle;
 import org.orcid.jaxb.model.record_rc1.WorkType;
 import org.orcid.jaxb.model.record_rc2.ExternalIdentifier;
 import org.orcid.jaxb.model.record_rc2.ExternalIdentifiers;
+import org.orcid.jaxb.model.record_rc2.Keyword;
+import org.orcid.jaxb.model.record_rc2.Keywords;
 import org.orcid.jaxb.model.record_rc2.OtherName;
 import org.orcid.jaxb.model.record_rc2.OtherNames;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
@@ -2009,6 +2011,187 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals("http://www.facebook.com/abc456", extId.getUrl().getValue());
 
         serviceDelegator.deleteExternalIdentifier("4444-4444-4444-4442", 3L);
+        fail();
+    }
+    
+    /**
+     * TEST KEYWORDS
+     */
+    @SuppressWarnings("unchecked")
+    @Test
+    public void testViewKeywords() {
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.READ_LIMITED);
+        Response response = serviceDelegator.viewKeywords("4444-4444-4444-4443");
+        assertNotNull(response);
+        Keywords keywords = (Keywords) response.getEntity();
+        assertNotNull(keywords);
+        assertNotNull(keywords.getKeywords());
+        assertEquals(3, keywords.getKeywords().size());
+        
+        for (Keyword keyword : keywords.getKeywords()) {
+            assertThat(keyword.getPutCode(), anyOf(is(1L), is(2L), is(4L)));
+            assertThat(keyword.getContent(), anyOf(is("tea making"), is("coffee making"), is("what else can we make?")));
+            if (keyword.getPutCode() == 1L) {
+                assertEquals(Visibility.PUBLIC, keyword.getVisibility());
+                assertEquals("APP-5555555555555555", keyword.getSource().retrieveSourcePath());
+            } else if (keyword.getPutCode() == 2L) {
+                assertEquals(Visibility.LIMITED, keyword.getVisibility());
+                assertEquals("4444-4444-4444-4443", keyword.getSource().retrieveSourcePath());
+            } else {
+                assertEquals(Visibility.PRIVATE, keyword.getVisibility());
+                assertEquals("APP-5555555555555555", keyword.getSource().retrieveSourcePath());
+            }
+        }
+    }
+
+    @Test
+    public void testViewPublicKeyword() {
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.READ_LIMITED);
+        Response response = serviceDelegator.viewKeyword("4444-4444-4444-4443", 1L);
+        assertNotNull(response);
+        Keyword keyword = (Keyword) response.getEntity();
+        assertNotNull(keyword);
+        assertEquals("tea making", keyword.getContent());
+        assertEquals(Visibility.PUBLIC, keyword.getVisibility());
+        assertEquals("APP-5555555555555555", keyword.getSource().retrieveSourcePath());
+    }
+
+    @Test
+    public void testViewLimitedKeyword() {
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.READ_LIMITED);
+        Response response = serviceDelegator.viewOtherName("4444-4444-4444-4443", 2L);
+        assertNotNull(response);
+        Keyword keyword = (Keyword) response.getEntity();
+        assertNotNull(keyword);
+        assertEquals("coffee making", keyword.getContent());
+        assertEquals(Visibility.LIMITED, keyword.getVisibility());
+        assertEquals("4444-4444-4444-4443", keyword.getSource().retrieveSourcePath());
+    }
+
+    @Test
+    public void testViewPrivateKeyword() {
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.READ_LIMITED);
+        Response response = serviceDelegator.viewOtherName("4444-4444-4444-4443", 4L);
+        assertNotNull(response);
+        Keyword keyword = (Keyword) response.getEntity();
+        assertNotNull(keyword);
+        assertEquals("what else can we make?", keyword.getContent());
+        assertEquals(Visibility.PRIVATE, keyword.getVisibility());
+        assertEquals("APP-5555555555555555", keyword.getSource().retrieveSourcePath());
+    }
+
+    @Test(expected = OrcidVisibilityException.class)
+    public void testViewPrivateKeywordWhereYouAreNotTheSource() {
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.READ_LIMITED);
+        serviceDelegator.viewOtherName("4444-4444-4444-4443", 3L);
+        fail();
+    }
+
+    @Test(expected = NoResultException.class)
+    public void testViewKeywordThatDontBelongToTheUser() {
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.READ_LIMITED);
+        serviceDelegator.viewOtherName("4444-4444-4444-4443", 5L);
+        fail();
+    }
+
+    @SuppressWarnings("rawtypes")
+    @Test
+    public void testAddKeyword() {
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4441", ScopePathType.READ_LIMITED);
+        Keyword keyword = new Keyword();
+        keyword.setContent("New keyword");
+        keyword.setVisibility(Visibility.LIMITED);
+        Response response = serviceDelegator.createKeyword("4444-4444-4444-4441", keyword);
+        assertNotNull(response);
+        assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
+        Map map = response.getMetadata();
+        assertNotNull(map);
+        assertTrue(map.containsKey("Location"));
+        List resultWithPutCode = (List) map.get("Location");
+        Long putCode = Long.valueOf(String.valueOf(resultWithPutCode.get(0)));
+
+        response = serviceDelegator.viewKeyword("4444-4444-4444-4441", putCode);
+        assertNotNull(response);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        Keyword newKeyword = (Keyword) response.getEntity();
+        assertNotNull(newKeyword);
+        assertEquals("New keyword", newKeyword.getContent());
+        assertEquals(Visibility.LIMITED, newKeyword.getVisibility());
+        assertNotNull(newKeyword.getSource());
+        assertEquals("APP-5555555555555555", newKeyword.getSource().retrieveSourcePath());
+        assertNotNull(newKeyword.getCreatedDate());
+        assertNotNull(newKeyword.getLastModifiedDate());
+    }
+
+    @Test
+    public void testUpdateKeyword() {
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4441", ScopePathType.READ_LIMITED);
+        Response response = serviceDelegator.viewKeyword("4444-4444-4444-4441", 6L);
+        assertNotNull(response);
+        Keyword keyword = (Keyword) response.getEntity();
+        assertNotNull(keyword);
+        assertEquals("key 2", keyword.getContent());
+        assertEquals(Visibility.PUBLIC, keyword.getVisibility());
+
+        keyword.setContent("Updated keyword");
+        keyword.setVisibility(Visibility.PRIVATE);
+
+        response = serviceDelegator.updateKeyword("4444-4444-4444-4441", 6L, keyword);
+        assertNotNull(response);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+
+        response = serviceDelegator.viewKeyword("4444-4444-4444-4441", 6L);
+        assertNotNull(response);
+        keyword = (Keyword) response.getEntity();
+        assertNotNull(keyword);
+        assertEquals("Updated keyword", keyword.getContent());
+        // Visibility should not change to something more restrictive
+        assertEquals(Visibility.PUBLIC, keyword.getVisibility());
+    }
+
+    @Test(expected = WrongSourceException.class)
+    public void testUpdateKeywordYouAreNotTheSourceOf() {
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.READ_LIMITED);
+        Response response = serviceDelegator.viewOtherName("4444-4444-4444-4443", 2L);
+        assertNotNull(response);
+        Keyword keyword = (Keyword) response.getEntity();
+        assertNotNull(keyword);
+        assertEquals("coffee making", keyword.getContent());
+        assertEquals(Visibility.LIMITED, keyword.getVisibility());
+        assertNotNull(keyword.getSource());
+        assertEquals("4444-4444-4444-4443", keyword.getSource().retrieveSourcePath());
+
+        keyword.setContent("Updated Keyword " + System.currentTimeMillis());
+        keyword.setVisibility(Visibility.PRIVATE);
+
+        serviceDelegator.updateKeyword("4444-4444-4444-4443", 2L, keyword);
+        fail();
+    }
+
+    @Test
+    public void testDeleteKeyword() {
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.READ_LIMITED);
+        Response response = serviceDelegator.viewKeywords("4444-4444-4444-4442");
+        assertNotNull(response);
+        Keywords keywords = (Keywords) response.getEntity();
+        assertNotNull(keywords);
+        assertNotNull(keywords.getKeywords());
+        assertEquals(1, keywords.getKeywords().size());
+        response = serviceDelegator.deleteKeyword("4444-4444-4444-4442", 7L);
+        assertNotNull(response);
+        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
+        response = serviceDelegator.viewKeywords("4444-4444-4444-4442");
+        assertNotNull(response);
+        keywords = (Keywords) response.getEntity();
+        assertNotNull(keywords);
+        assertNotNull(keywords.getKeywords());
+        assertTrue(keywords.getKeywords().isEmpty());
+    }
+
+    @Test(expected = WrongSourceException.class)
+    public void testDeleteKeywordYouAreNotTheSourceOf() {
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.READ_LIMITED);
+        serviceDelegator.deleteOtherName("4444-4444-4444-4443", 5L);
         fail();
     }
 

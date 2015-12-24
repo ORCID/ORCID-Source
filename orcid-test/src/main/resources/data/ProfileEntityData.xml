@@ -910,21 +910,71 @@
     />        
       
     <profile_keyword 
+    	id="1"            
         profile_orcid="4444-4444-4444-4443"
         keywords_name="tea making"
+        visibility="PUBLIC"            
+        client_source_id="APP-5555555555555555"
+        last_modified="2011-07-02 15:31:00.00"
+		date_created="2011-06-29 15:31:00.00"
     />
-     <profile_keyword 
+     <profile_keyword
+     	id="2" 
         profile_orcid="4444-4444-4444-4443"
         keywords_name="coffee making"
+        visibility="LIMITED"            
+        source_id="4444-4444-4444-4443"
+        last_modified="2011-07-02 15:31:00.00"
+		date_created="2011-06-29 15:31:00.00"
+    />
+    
+    <profile_keyword
+    	id="3" 
+        profile_orcid="4444-4444-4444-4443"
+        keywords_name="chocolat making"
+        visibility="PRIVATE"            
+        source_id="4444-4444-4444-4443"
+        last_modified="2011-07-02 15:31:00.00"
+		date_created="2011-06-29 15:31:00.00"
+    />
+    
+    <profile_keyword
+    	id="4" 
+        profile_orcid="4444-4444-4444-4443"
+        keywords_name="what else can we make?"
+        visibility="PRIVATE"                    
+        client_source_id="APP-5555555555555555"
+        last_modified="2011-07-02 15:31:00.00"
+		date_created="2011-06-29 15:31:00.00"
+    />
+    
+    <profile_keyword
+    	id="5" 
+        profile_orcid="4444-4444-4444-4441"
+        keywords_name="key 1"
+        visibility="PUBLIC"            
+        client_source_id="APP-5555555555555555"
+        last_modified="2011-07-02 15:31:00.00"
+		date_created="2011-06-29 15:31:00.00"
+    />
+    <profile_keyword 
+    	id="6"
+        profile_orcid="4444-4444-4444-4441"
+        keywords_name="key 2"
+        visibility="PUBLIC"            
+        client_source_id="APP-5555555555555555"
+        last_modified="2011-07-02 15:31:00.00"
+		date_created="2011-06-29 15:31:00.00"
     />
     
     <profile_keyword 
-        profile_orcid="4444-4444-4444-4441"
-        keywords_name="key 1"
-    />
-    <profile_keyword 
-        profile_orcid="4444-4444-4444-4441"
-        keywords_name="key 2"
+    	id="7"
+        profile_orcid="4444-4444-4444-4442"
+        keywords_name="My keyword"
+        visibility="PUBLIC"            
+        client_source_id="APP-5555555555555555"
+        last_modified="2011-07-02 15:31:00.00"
+		date_created="2011-06-29 15:31:00.00"
     />
     
 </dataset>

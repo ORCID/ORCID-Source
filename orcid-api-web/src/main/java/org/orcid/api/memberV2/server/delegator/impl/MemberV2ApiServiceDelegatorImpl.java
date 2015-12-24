@@ -45,6 +45,7 @@ import org.orcid.core.manager.PeerReviewManager;
 import org.orcid.core.manager.PersonalDetailsManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileFundingManager;
+import org.orcid.core.manager.ProfileKeywordManager;
 import org.orcid.core.manager.ResearcherUrlManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.WorkManager;
@@ -69,6 +70,8 @@ import org.orcid.jaxb.model.record_rc1.Work;
 import org.orcid.jaxb.model.record_rc2.Biography;
 import org.orcid.jaxb.model.record_rc2.ExternalIdentifier;
 import org.orcid.jaxb.model.record_rc2.ExternalIdentifiers;
+import org.orcid.jaxb.model.record_rc2.Keyword;
+import org.orcid.jaxb.model.record_rc2.Keywords;
 import org.orcid.jaxb.model.record_rc2.OtherName;
 import org.orcid.jaxb.model.record_rc2.OtherNames;
 import org.orcid.jaxb.model.record_rc2.PersonalDetails;
@@ -149,6 +152,9 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
 
     @Resource
     private PersonalDetailsManager personalDetailsManager;
+    
+    @Resource
+    private ProfileKeywordManager keywordsManager;
 
     @Override
     public Response viewStatusText() {
@@ -631,4 +637,46 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
         orcidSecurityManager.checkVisibility(bio);
         return Response.ok(bio).build();
     }
+        
+    @Override
+    public Response viewKeywords(String orcid) {
+        Keywords keywords = keywordsManager.getKeywordsV2(orcid);
+        return Response.ok(keywords).build();
+    }
+
+    @Override
+    public Response viewKeyword(String orcid, Long putCode) {
+        Keyword keyword = keywordsManager.getKeywordV2(orcid, putCode);
+        orcidSecurityManager.checkVisibility(keyword);
+        return Response.ok(keyword).build();
+    }
+
+    @Override
+    public Response createKeyword(String orcid, Keyword keyword) {
+        keyword = keywordsManager.createKeywordV2(orcid, keyword);
+        try {
+            return Response.created(new URI(String.valueOf(keyword.getPutCode()))).build();
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(localeManager.resolveMessage("apiError.createelement_response.exception"), e);
+        }
+    }
+
+    @Override
+    public Response updateKeyword(String orcid, Long putCode, Keyword keyword) {
+        if (!putCode.equals(keyword.getPutCode())) {
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("urlPutCode", String.valueOf(putCode));
+            params.put("bodyPutCode", String.valueOf(keyword.getPutCode()));
+            throw new MismatchedPutCodeException(params);
+        }
+
+        keyword = keywordsManager.updateKeywordV2(orcid, putCode, keyword);        
+        return Response.ok(keyword).build();
+    }
+
+    @Override
+    public Response deleteKeyword(String orcid, Long putCode) {
+        keywordsManager.deleteKeywordV2(orcid, putCode);
+        return Response.noContent().build();
+    }    
 }

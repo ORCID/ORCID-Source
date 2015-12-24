@@ -40,7 +40,7 @@ import org.orcid.jaxb.model.common.Visibility;
  */
 @Entity
 @Table(name = "profile_keyword")
-public class ProfileKeywordEntity extends BaseEntity<Long> implements Comparable<ProfileKeywordEntity>, ProfileAware {
+public class ProfileKeywordEntity extends BaseEntity<Long> implements Comparable<ProfileKeywordEntity>, ProfileAware, SourceAware {
 
     private static final long serialVersionUID = -3187757614938904392L;
 
@@ -48,16 +48,7 @@ public class ProfileKeywordEntity extends BaseEntity<Long> implements Comparable
     private ProfileEntity profile;
     private String keywordName;
     private Visibility visibility;
-    private SourceEntity source;
-    
-    public ProfileKeywordEntity() {
-
-    }
-
-    public ProfileKeywordEntity(ProfileEntity profile, String keywordName) {
-        this.profile = profile;
-        this.keywordName = keywordName;
-    }
+    private SourceEntity source;       
 
     /**
      * @return the id of the other_name

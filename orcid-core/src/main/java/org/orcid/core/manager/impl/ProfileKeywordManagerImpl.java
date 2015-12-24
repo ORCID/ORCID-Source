@@ -213,7 +213,7 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
 
         // Validate the keyword
-        PersonValidator.validateKeyword(keyword, sourceEntity, true);
+        PersonValidator.validateKeyword(keyword, sourceEntity, false);
         // Validate it is not duplicated
         List<ProfileKeywordEntity> existingKeywords = profileKeywordDao.getProfileKeywors(orcid);
         for (ProfileKeywordEntity existing : existingKeywords) {
