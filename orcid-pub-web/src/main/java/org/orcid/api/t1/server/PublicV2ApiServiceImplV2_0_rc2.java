@@ -38,6 +38,7 @@ import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_JSON;
 import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_XML;
 import static org.orcid.core.api.OrcidApiConstants.WORK;
 import static org.orcid.core.api.OrcidApiConstants.WORK_SUMMARY;
+import static org.orcid.core.api.OrcidApiConstants.KEYWORDS;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
@@ -71,8 +72,6 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import io.swagger.annotations.Authorization;
 import io.swagger.annotations.AuthorizationScope;
-
-
 
 /**
  * 
@@ -232,7 +231,6 @@ protected PublicV2ApiServiceDelegator serviceDelegator;
         return serviceDelegator.viewEmails(orcid);
     }
     
-
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(PERSONAL_DETAILS)
@@ -267,5 +265,20 @@ protected PublicV2ApiServiceDelegator serviceDelegator;
     @ApiOperation(value = "Fetch external identifier", hidden = true, authorizations = { @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_READ_LIMITED, description = "you need this") }) })
     public Response viewExternalIdentifier(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
         return serviceDelegator.viewExternalIdentifier(orcid, Long.valueOf(putCode));
-    }        
+    }      
+    
+    @GET
+    @Path(KEYWORDS)
+    @ApiOperation(value = "Fetch keywords", hidden = true, authorizations = { @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_READ_LIMITED, description = "you need this") }) })
+    public Response viewKeywords(@PathParam("orcid") String orcid) {
+        return serviceDelegator.viewKeywords(orcid);
+    }
+    
+    @GET
+    @Path(KEYWORDS + PUTCODE)
+    @ApiOperation(value = "Fetch keyword", hidden = true, authorizations = { @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_READ_LIMITED, description = "you need this") }) })
+    public Response viewKeyword(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
+        return serviceDelegator.viewKeyword(orcid, Long.valueOf(putCode));
+    }
+    
 }

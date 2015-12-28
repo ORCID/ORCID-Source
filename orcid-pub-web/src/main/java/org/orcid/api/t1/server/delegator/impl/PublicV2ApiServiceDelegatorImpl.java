@@ -41,6 +41,7 @@ import org.orcid.core.manager.PersonalDetailsManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileFundingManager;
+import org.orcid.core.manager.ProfileKeywordManager;
 import org.orcid.core.manager.ResearcherUrlManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.WorkManager;
@@ -63,6 +64,8 @@ import org.orcid.jaxb.model.record_rc1.Work;
 import org.orcid.jaxb.model.record_rc2.Biography;
 import org.orcid.jaxb.model.record_rc2.ExternalIdentifier;
 import org.orcid.jaxb.model.record_rc2.ExternalIdentifiers;
+import org.orcid.jaxb.model.record_rc2.Keyword;
+import org.orcid.jaxb.model.record_rc2.Keywords;
 import org.orcid.jaxb.model.record_rc2.OtherName;
 import org.orcid.jaxb.model.record_rc2.OtherNames;
 import org.orcid.jaxb.model.record_rc2.PersonalDetails;
@@ -132,6 +135,9 @@ public class PublicV2ApiServiceDelegatorImpl implements PublicV2ApiServiceDelega
     @Resource
     private ExternalIdentifierManager externalIdentifierManager;
     
+    @Resource
+    private ProfileKeywordManager keywordsManager;
+        
     @Override
     public Response viewStatusText() {
         return Response.ok(STATUS_OK_MESSAGE).build();
@@ -335,4 +341,19 @@ public class PublicV2ApiServiceDelegatorImpl implements PublicV2ApiServiceDelega
         }
         return Response.ok(bio).build();
     }
+            
+    @Override
+    @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED, enableAnonymousAccess = true)
+    public Response viewKeywords(String orcid) {
+        Keywords keywords = keywordsManager.getPublicKeywordsV2(orcid);
+        return Response.ok(keywords).build();
+    }
+
+    @Override
+    @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED, enableAnonymousAccess = true)
+    public Response viewKeyword(String orcid, Long putCode) {
+        Keyword keyword = keywordsManager.getKeywordV2(orcid, putCode);
+        orcidSecurityManager.checkVisibility(keyword);
+        return Response.ok(keyword).build();
+    }        
 }

@@ -58,6 +58,8 @@ import org.orcid.jaxb.model.record_rc2.OtherName;
 import org.orcid.jaxb.model.record_rc2.OtherNames;
 import org.orcid.jaxb.model.record_rc2.ExternalIdentifier;
 import org.orcid.jaxb.model.record_rc2.ExternalIdentifiers;
+import org.orcid.jaxb.model.record_rc2.Keyword;
+import org.orcid.jaxb.model.record_rc2.Keywords;
 import org.orcid.jaxb.model.record_rc2.Name;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
@@ -91,10 +93,12 @@ public class OrcidValidationJaxbContextResolver implements ContextResolver<Unmar
         SCHEMA_FILENAME_PREFIX_BY_CLASS.put(ResearcherUrls.class, "record_2.0_rc2/researcher-url-");
         SCHEMA_FILENAME_PREFIX_BY_CLASS.put(Email.class, "record_2.0_rc2/email-");
         SCHEMA_FILENAME_PREFIX_BY_CLASS.put(OtherName.class, "record_2.0_rc2/other-name-");
-        SCHEMA_FILENAME_PREFIX_BY_CLASS.put(OtherNames.class, "record_2.0_rc2/other-name-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS.put(OtherNames.class, "record_2.0_rc2/other-name-");        
         SCHEMA_FILENAME_PREFIX_BY_CLASS.put(Name.class, "record_2.0_rc2/personal-details-");
         SCHEMA_FILENAME_PREFIX_BY_CLASS.put(ExternalIdentifier.class, "record_2.0_rc2/external-identifier-");
         SCHEMA_FILENAME_PREFIX_BY_CLASS.put(ExternalIdentifiers.class, "record_2.0_rc2/external-identifier-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS.put(Keyword.class, "record_2.0_rc2/keyword-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS.put(Keywords.class, "record_2.0_rc2/keyword-");
     }
     private JAXBContext jaxbContext;
     private Map<String, Schema> schemaByPath = new ConcurrentHashMap<>();

@@ -43,6 +43,7 @@ import static org.orcid.core.api.OrcidApiConstants.FUNDING;
 import static org.orcid.core.api.OrcidApiConstants.FUNDING_SUMMARY;
 import static org.orcid.core.api.OrcidApiConstants.GROUP_ID_RECORD;
 import static org.orcid.core.api.OrcidApiConstants.BIOGRAPHY;
+import static org.orcid.core.api.OrcidApiConstants.KEYWORDS;
 
 import java.net.URI;
 import io.swagger.annotations.Api;
@@ -87,6 +88,7 @@ import org.orcid.jaxb.model.record_rc1.Funding;
 import org.orcid.jaxb.model.record_rc1.PeerReview;
 import org.orcid.jaxb.model.record_rc1.Work;
 import org.orcid.jaxb.model.record_rc2.ExternalIdentifier;
+import org.orcid.jaxb.model.record_rc2.Keyword;
 import org.orcid.jaxb.model.record_rc2.OtherName;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import org.springframework.beans.factory.annotation.Value;
@@ -656,4 +658,42 @@ public class MemberV2ApiServiceImplV2_0_rc2 {
         return serviceDelegator.viewBiography(orcid);
     }
     
+    //Keywords
+    @GET
+    @Path(KEYWORDS + PUTCODE)
+    @ApiOperation(value = "Fetch keyword", hidden = true, authorizations = { @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_READ_LIMITED, description = "you need this") }) })
+    public Response viewOtherKeyword(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
+        return serviceDelegator.viewKeyword(orcid, Long.valueOf(putCode));
+    }
+
+    @GET
+    @Path(KEYWORDS)
+    @ApiOperation(value = "Fetch keywords", hidden = true, authorizations = { @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_READ_LIMITED, description = "you need this") }) })
+    public Response viewKeywords(@PathParam("orcid") String orcid) {
+        return serviceDelegator.viewKeywords(orcid);
+    }
+    
+    @POST
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(KEYWORDS)
+    @ApiOperation(value = "Add keyword", hidden = true, authorizations = { @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_UPDATE, description = "you need this") }) })
+    public Response createKeyword(@PathParam("orcid") String orcid, Keyword keyword) {
+        return serviceDelegator.createKeyword(orcid, keyword);
+    }
+    
+    @PUT
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(KEYWORDS + PUTCODE)
+    @ApiOperation(value = "Edit keyword", hidden = true, authorizations = { @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_UPDATE, description = "you need this") }) })
+    public Response editKeyword(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode, Keyword keyword) {
+        return serviceDelegator.updateKeyword(orcid, Long.valueOf(putCode), keyword);
+    }
+    
+    @DELETE
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(KEYWORDS + PUTCODE)
+    @ApiOperation(value = "Delete keyword", hidden = true, authorizations = { @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_UPDATE, description = "you need this") }) })
+    public Response deleteKeyword(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
+        return serviceDelegator.deleteKeyword(orcid, Long.valueOf(putCode));
+    }
 }

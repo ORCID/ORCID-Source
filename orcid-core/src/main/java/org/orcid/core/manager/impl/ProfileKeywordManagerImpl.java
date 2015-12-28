@@ -130,7 +130,12 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
         // otherNames
         // Insert all these other names on database
         for (String newKeyword : newKeywords) {
-            profileKeywordDao.addProfileKeyword(orcid, newKeyword, orcid, null);
+            ProfileKeywordEntity entity = new ProfileKeywordEntity();
+            entity.setProfile(new ProfileEntity(orcid));
+            entity.setSource(new SourceEntity(new ProfileEntity(orcid)));
+            entity.setKeywordName(newKeyword);
+            entity.setVisibility(Visibility.fromValue(keywords.getVisibility() == null ? OrcidVisibilityDefaults.KEYWORD_DEFAULT.getVisibility().value() : keywords.getVisibility().value()));
+            profileKeywordDao.persist(entity);
         }
         if (keywords.getVisibility() != null)
             profileKeywordDao.updateKeywordsVisibility(orcid, keywords.getVisibility());
