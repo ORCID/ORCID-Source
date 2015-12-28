@@ -17,7 +17,6 @@
 package org.orcid.persistence.jpa.entities;
 
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -53,7 +52,7 @@ public class ProfileKeywordEntity extends BaseEntity<Long> implements Comparable
     /**
      * @return the id of the other_name
      */
-    @Id
+    @Id    
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "keyword_seq")
     @SequenceGenerator(name = "keyword_seq", sequenceName = "keyword_seq")
@@ -71,9 +70,8 @@ public class ProfileKeywordEntity extends BaseEntity<Long> implements Comparable
 
     /**
      * @return the profile
-     */
-    @Id
-    @ManyToOne(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.DETACH })
+     */    
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "profile_orcid", nullable = false)
     public ProfileEntity getProfile() {
         return profile;
@@ -90,7 +88,6 @@ public class ProfileKeywordEntity extends BaseEntity<Long> implements Comparable
     /**
      * @return the institutionEntity
      */
-    @Id
     @Column(name = "keywords_name", length = 255)
     public String getKeywordName() {
         return keywordName;

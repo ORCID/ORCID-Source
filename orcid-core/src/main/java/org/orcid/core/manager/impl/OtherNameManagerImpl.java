@@ -184,10 +184,7 @@ public class OtherNameManagerImpl implements OtherNameManager {
 
     @Override
     public boolean deleteOtherNameV2(String orcid, Long putCode) {        
-        OtherNameEntity otherNameEntity = otherNameDao.getOtherName(orcid, putCode);
-        if (otherNameEntity == null) {
-            throw new OtherNameNotFoundException();
-        }
+        OtherNameEntity otherNameEntity = otherNameDao.getOtherName(orcid, putCode);        
         SourceEntity existingSource = otherNameEntity.getSource();
         orcidSecurityManager.checkSource(existingSource);
 

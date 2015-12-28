@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.transaction.Transactional;
 
 import org.orcid.core.adapter.JpaJaxbKeywordAdapter;
 import org.orcid.core.exception.ApplicationException;
@@ -183,6 +184,7 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
     }
 
     @Override
+    @Transactional
     public Keyword createKeywordV2(String orcid, Keyword keyword) {
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
         // Validate the keyword
@@ -209,6 +211,7 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
     }
 
     @Override
+    @Transactional
     public Keyword updateKeywordV2(String orcid, Long putCode, Keyword keyword) {
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
 
@@ -242,6 +245,7 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
     }
 
     @Override
+    @Transactional
     public Keywords updateKeywordsV2(String orcid, Keywords keywords, Visibility defaultVisiblity) {
         List<ProfileKeywordEntity> existingKeywordsList = profileKeywordDao.getProfileKeywors(orcid);
         // Delete the deleted ones

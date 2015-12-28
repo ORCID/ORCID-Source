@@ -2059,7 +2059,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     @Test
     public void testViewLimitedKeyword() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.READ_LIMITED);
-        Response response = serviceDelegator.viewOtherName("4444-4444-4444-4443", 2L);
+        Response response = serviceDelegator.viewKeyword("4444-4444-4444-4443", 2L);
         assertNotNull(response);
         Keyword keyword = (Keyword) response.getEntity();
         assertNotNull(keyword);
@@ -2071,7 +2071,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     @Test
     public void testViewPrivateKeyword() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.READ_LIMITED);
-        Response response = serviceDelegator.viewOtherName("4444-4444-4444-4443", 4L);
+        Response response = serviceDelegator.viewKeyword("4444-4444-4444-4443", 4L);
         assertNotNull(response);
         Keyword keyword = (Keyword) response.getEntity();
         assertNotNull(keyword);
@@ -2083,7 +2083,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     @Test(expected = OrcidVisibilityException.class)
     public void testViewPrivateKeywordWhereYouAreNotTheSource() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.READ_LIMITED);
-        serviceDelegator.viewOtherName("4444-4444-4444-4443", 3L);
+        serviceDelegator.viewKeyword("4444-4444-4444-4443", 3L);
         fail();
     }
 
@@ -2152,7 +2152,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     @Test(expected = WrongSourceException.class)
     public void testUpdateKeywordYouAreNotTheSourceOf() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.READ_LIMITED);
-        Response response = serviceDelegator.viewOtherName("4444-4444-4444-4443", 2L);
+        Response response = serviceDelegator.viewKeyword("4444-4444-4444-4443", 2L);
         assertNotNull(response);
         Keyword keyword = (Keyword) response.getEntity();
         assertNotNull(keyword);
@@ -2191,7 +2191,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     @Test(expected = WrongSourceException.class)
     public void testDeleteKeywordYouAreNotTheSourceOf() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.READ_LIMITED);
-        serviceDelegator.deleteOtherName("4444-4444-4444-4443", 5L);
+        serviceDelegator.deleteKeyword("4444-4444-4444-4443", 3L);
         fail();
     }
 

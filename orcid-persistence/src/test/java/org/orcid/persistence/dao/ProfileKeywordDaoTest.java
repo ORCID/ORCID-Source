@@ -30,13 +30,13 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.orcid.jaxb.model.common.Visibility;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
+import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-persistence-context.xml" })
@@ -45,6 +45,12 @@ public class ProfileKeywordDaoTest extends DBUnitTest {
     @Resource
     private ProfileKeywordDao profileKeywordDao;
 
+    @Resource
+    private OtherNameDao otherNameDao;
+    
+    @Resource
+    private ProfileDao profileDao;
+    
     @BeforeClass
     public static void initDBUnitData() throws Exception {
         initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SubjectEntityData.xml", "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml"));
@@ -60,31 +66,34 @@ public class ProfileKeywordDaoTest extends DBUnitTest {
         assertNotNull(profileKeywordDao);
     }
 
-    @Test
-    @Rollback(true)
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Test    
     public void testfindProfileKeywords() {
-        List<ProfileKeywordEntity> keywords = profileKeywordDao.getProfileKeywors("4444-4444-4444-4443");
+        List<ProfileKeywordEntity> keywords = profileKeywordDao.getProfileKeywors("4444-4444-4444-4441");
         assertNotNull(keywords);
         assertEquals(2, keywords.size());
     }
 
-    @Test
-    @Rollback(true)
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Test    
     public void testAddProfileKeyword() {
-        assertEquals(2, profileKeywordDao.getProfileKeywors("4444-4444-4444-4443").size());
+        assertEquals(4, profileKeywordDao.getProfileKeywors("4444-4444-4444-4443").size());
         boolean result = profileKeywordDao.addProfileKeyword("4444-4444-4444-4443", "new_keyword", "4444-4444-4444-4443", null);
-        assertTrue(result);
-        assertEquals(3, profileKeywordDao.getProfileKeywors("4444-4444-4444-4443").size());
+        assertTrue(result);    
+        assertEquals(5, profileKeywordDao.getProfileKeywors("4444-4444-4444-4443").size());
+        
+        ProfileKeywordEntity entity = new ProfileKeywordEntity();
+        entity.setKeywordName("this is my keyword");
+        entity.setProfile(new ProfileEntity("4444-4444-4444-4443"));
+        entity.setSource(new SourceEntity(new ProfileEntity("4444-4444-4444-4443")));
+        entity.setVisibility(Visibility.PUBLIC);        
+        
+        profileKeywordDao.persist(entity);        
+        assertEquals(6, profileKeywordDao.getProfileKeywors("4444-4444-4444-4443").size());
     }
-
+        
     @Test
-    @Rollback(true)
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void testDeleteProfileKeyword() {
-        assertEquals(2, profileKeywordDao.getProfileKeywors("4444-4444-4444-4443").size());
-        profileKeywordDao.deleteProfileKeyword("4444-4444-4444-4443", "tea making");
-        assertEquals(1, profileKeywordDao.getProfileKeywors("4444-4444-4444-4443").size());
+        assertEquals(1, profileKeywordDao.getProfileKeywors("4444-4444-4444-4442").size());
+        profileKeywordDao.deleteProfileKeyword("4444-4444-4444-4442", "My keyword");
+        assertEquals(0, profileKeywordDao.getProfileKeywors("4444-4444-4444-4442").size());
     }
 }

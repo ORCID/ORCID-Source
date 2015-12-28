@@ -56,7 +56,7 @@ public class ProfileKeywordDaoImpl extends GenericDaoImpl<ProfileKeywordEntity, 
     @Override
     @Transactional
     public boolean deleteProfileKeyword(String orcid, String keyword) {
-        Query query = entityManager.createQuery("DELETE FROM ProfileKeywordEntity WHERE profile.id = :orcid AND keyword = :keyword");
+        Query query = entityManager.createQuery("DELETE FROM ProfileKeywordEntity WHERE profile.id = :orcid AND keywordName = :keyword");
         query.setParameter("orcid", orcid);
         query.setParameter("keyword", keyword);
         return query.executeUpdate() > 0 ? true : false;
@@ -100,6 +100,7 @@ public class ProfileKeywordDaoImpl extends GenericDaoImpl<ProfileKeywordEntity, 
     }
 
     @Override
+    @Transactional
     public boolean deleteProfileKeyword(ProfileKeywordEntity entity) {        
         Query query = entityManager.createQuery("DELETE FROM ProfileKeywordEntity WHERE id=:id");
         query.setParameter("id", entity.getId());

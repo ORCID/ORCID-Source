@@ -241,20 +241,17 @@ public class ProfileDaoTest extends DBUnitTest {
         
         ProfileKeywordEntity entity = new ProfileKeywordEntity();
         entity.setProfile(profile);
-        entity.setKeywordName("Bilocation");
-        entity.setId(1L);
+        entity.setKeywordName("Bilocation");        
         keywords.add(entity);
         
         entity = new ProfileKeywordEntity();
         entity.setProfile(profile);
-        entity.setKeywordName("Humour");
-        entity.setId(2L);
+        entity.setKeywordName("Humour");        
         keywords.add(entity);
         
         entity = new ProfileKeywordEntity();
         entity.setProfile(profile);
-        entity.setKeywordName("Ceramics");
-        entity.setId(3L);
+        entity.setKeywordName("Ceramics");        
         keywords.add(entity);
         
         profileDao.persist(profile);

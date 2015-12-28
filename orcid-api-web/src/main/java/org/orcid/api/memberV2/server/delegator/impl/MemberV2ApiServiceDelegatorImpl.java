@@ -638,9 +638,13 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
         return Response.ok(bio).build();
     }
         
+    @SuppressWarnings("unchecked")
     @Override
     public Response viewKeywords(String orcid) {
         Keywords keywords = keywordsManager.getKeywordsV2(orcid);
+        List<Keyword> allKeywords = keywords.getKeywords();
+        List<Keyword> filterdKeywords = (List<Keyword>) visibilityFilter.filter(allKeywords);
+        keywords.setKeywords(filterdKeywords);
         return Response.ok(keywords).build();
     }
 
