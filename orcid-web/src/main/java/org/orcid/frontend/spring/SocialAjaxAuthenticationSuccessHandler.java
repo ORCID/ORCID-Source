@@ -38,14 +38,20 @@ import org.springframework.social.google.api.plus.Person;
 
 public class SocialAjaxAuthenticationSuccessHandler extends AjaxAuthenticationSuccessHandlerBase {
 
-	@Resource
+    @Resource
     private SocialContext socialContext;
-    
+
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-        
-    	SocialType connectionType = socialContext.isSignedIn(request, response);
+        linkSocialAccount(request, response);
+        String targetUrl = getTargetUrl(request, response, authentication);
+        response.setContentType("application/json");
+        response.getWriter().println("{\"success\": true, \"url\": \"" + targetUrl.replaceAll("^/", "") + "\"}");
+    }
+
+    public void linkSocialAccount(HttpServletRequest request, HttpServletResponse response) {
+        SocialType connectionType = socialContext.isSignedIn(request, response);
         if (connectionType != null) {
-        	Map<String, String> userMap = retrieveUserDetails(connectionType);
+            Map<String, String> userMap = retrieveUserDetails(connectionType);
             String providerId = connectionType.value();
             UserconnectionEntity userConnectionEntity = userConnectionDao.findByProviderIdAndProviderUserId(userMap.get("providerUserId"), providerId);
             if (userConnectionEntity != null) {
@@ -62,16 +68,12 @@ public class SocialAjaxAuthenticationSuccessHandler extends AjaxAuthenticationSu
         } else {
             throw new UsernameNotFoundException("Could not find an orcid account associated with the email id.");
         }
-    	
-        String targetUrl = getTargetUrl(request, response, authentication);
-        response.setContentType("application/json");
-        response.getWriter().println("{\"success\": true, \"url\": \"" + targetUrl.replaceAll("^/", "") + "\"}");        
     }
-    
+
     private Map<String, String> retrieveUserDetails(SocialType connectionType) {
-        
-    	Map<String, String> userMap = new HashMap<String, String>();
-    	if (SocialType.FACEBOOK.equals(connectionType)) {
+
+        Map<String, String> userMap = new HashMap<String, String>();
+        if (SocialType.FACEBOOK.equals(connectionType)) {
             Facebook facebook = socialContext.getFacebook();
             User user = facebook.fetchObject("me", User.class, "id", "email", "name");
             userMap.put("providerUserId", user.getId());
@@ -84,7 +86,7 @@ public class SocialAjaxAuthenticationSuccessHandler extends AjaxAuthenticationSu
             userMap.put("userName", person.getDisplayName());
             userMap.put("email", person.getAccountEmail());
         }
-    	
-    	return userMap;
+
+        return userMap;
     }
 }

@@ -1,0 +1,82 @@
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2014 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+        
+    <changeSet id="ADD-PARENT-SOURCE-ID-TO-ORG-DISAMBIGUATED" author="Will Simpson">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="org_disambiguated" columnName="source_parent_id"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="org_disambiguated">
+            <column name="source_parent_id" type="VARCHAR(255)"/>
+        </addColumn>
+    </changeSet>
+    
+    <changeSet id="ORG-DISAMBIGUATED-SOURCE-PARENT-ID-IDX" author="Will Simpson">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists indexName="org_disambiguated_source_parent_id_idx" tableName="org_disambiguated" />
+            </not>
+        </preConditions>
+        <createIndex 
+            indexName="org_disambiguated_source_parent_id_idx"
+            tableName="org_disambiguated"
+            unique="false">
+            <column name="source_parent_id" />
+        </createIndex>
+    </changeSet>
+    
+     <changeSet id="ORG-DISAMBIGUATED-DESCENDENT-TYPE" author="Will Simpson" dbms="postgresql">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <sqlCheck expectedResult="1">SELECT count(*) FROM information_schema.user_defined_types WHERE user_defined_type_name = 'org_disambiguated_descendent'</sqlCheck>
+            </not>
+        </preConditions>
+        <sql>CREATE TYPE org_disambiguated_descendent AS (id BIGINT, source_id VARCHAR, source_parent_id VARCHAR, org_type VARCHAR, name VARCHAR, city VARCHAR, region VARCHAR, country VARCHAR, level INT);</sql>
+    </changeSet>
+    
+    <changeSet id="ORG-DISAMBIGUATED-DESCENDENT-FUNCTIONS" author="Will Simpson" dbms="postgresql">
+        <createProcedure>
+CREATE OR REPLACE FUNCTION find_org_disambiguated_descendents(required_source_id VARCHAR, required_source_type VARCHAR, current_level INT) RETURNS SETOF org_disambiguated_descendent
+AS $$
+DECLARE
+    current_result org_disambiguated_descendent;
+BEGIN
+FOR current_result IN SELECT p1.id, p1.source_id, p1.source_parent_id, p1.org_type, p1.name, p1.city, p1.region, p1.country, current_level AS level FROM org_disambiguated p1 WHERE p1.source_parent_id = required_source_id AND p1.source_type = required_source_type LOOP
+    RETURN NEXT current_result;
+    RETURN QUERY SELECT * FROM find_org_disambiguated_descendents(current_result.source_id, required_source_type, current_level + 1);    
+END LOOP;
+END
+$$ LANGUAGE plpgsql
+IMMUTABLE
+RETURNS NULL ON NULL INPUT;
+
+CREATE OR REPLACE FUNCTION find_org_disambiguated_descendents(source_id VARCHAR, source_type VARCHAR) RETURNS SETOF org_disambiguated_descendent
+AS $$
+SELECT * FROM find_org_disambiguated_descendents(source_id, source_type, 1)
+ORDER BY level, source_parent_id, name;
+$$ LANGUAGE SQL
+IMMUTABLE
+RETURNS NULL ON NULL INPUT;
+        </createProcedure>
+    </changeSet>
+    
+</databaseChangeLog>

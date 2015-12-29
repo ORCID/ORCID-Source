@@ -63,6 +63,8 @@ public class Registration implements ErrorsInterface, Serializable {
     private Text grecaptcha;
 
     private Text grecaptchaWidgetId;
+    
+    private String linkType;
 
     public Registration() {
         errors = new ArrayList<String>();
@@ -235,4 +237,12 @@ public class Registration implements ErrorsInterface, Serializable {
     public void setValNumClient(long valNumClient) {
         this.valNumClient = valNumClient;
     }
+
+	public String getLinkType() {
+		return linkType;
+	}
+
+	public void setLinkType(String linkType) {
+		this.linkType = linkType;
+	}
 }

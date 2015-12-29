@@ -86,12 +86,17 @@ public class ShibbolethController extends BaseController {
                 SecurityContextHolder.getContext().setAuthentication(null);
                 LOGGER.warn("User {0} should have been logged-in via Shibboleth, but was unable to due to a problem", remoteUser, e);
             }
-            return new ModelAndView("redirect:/my-orcid");
+            return new ModelAndView("redirect:" + calculateRedirectUrl(request, response));
         } else {
             // To avoid confusion, force the user to login to ORCID again
             mav.setViewName("social_link_signin");
             mav.addObject("providerId", "shibboleth");
-            mav.addObject("emailId", displayName);
+            mav.addObject("accountId", displayName);
+            mav.addObject("linkType", "shibboleth");
+
+            mav.addObject("emailId", (headers.get("eppn") == null) ? "" : headers.get("eppn"));
+            mav.addObject("firstName", (headers.get("givenName") == null) ? "" : headers.get("givenName"));
+            mav.addObject("lastName", (headers.get("sn") == null) ? "" : headers.get("sn"));
         }
         return mav;
     }
