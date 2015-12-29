@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.jaxb.model.record_2_rc2.summary;
+package org.orcid.jaxb.model.record.summary_rc2;
 
 import java.io.Serializable;
 
@@ -32,7 +32,7 @@ import org.orcid.jaxb.model.common.Organization;
 import org.orcid.jaxb.model.common.Source;
 import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.jaxb.model.common.VisibilityType;
-import org.orcid.jaxb.model.record_2_rc2.Activity;
+import org.orcid.jaxb.model.record_rc2.Activity;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "createdDate", "lastModifiedDate",  "source", "departmentName", "roleTitle", "startDate", "endDate", "organization"})

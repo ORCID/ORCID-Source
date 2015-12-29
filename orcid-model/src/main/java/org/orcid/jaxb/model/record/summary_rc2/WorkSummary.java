@@ -21,7 +21,7 @@
 // Generated on: 2012.08.09 at 01:52:56 PM BST 
 //
 
-package org.orcid.jaxb.model.record_2_rc2.summary;
+package org.orcid.jaxb.model.record.summary_rc2;
 
 import java.io.Serializable;
 
@@ -38,12 +38,12 @@ import org.orcid.jaxb.model.common.PublicationDate;
 import org.orcid.jaxb.model.common.Source;
 import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.jaxb.model.common.VisibilityType;
-import org.orcid.jaxb.model.record_2_rc2.Activity;
-import org.orcid.jaxb.model.record_2_rc2.GroupableActivity;
-import org.orcid.jaxb.model.record_2_rc2.WorkExternalIdentifiers;
-import org.orcid.jaxb.model.record_2_rc2.WorkSource;
-import org.orcid.jaxb.model.record_2_rc2.WorkTitle;
-import org.orcid.jaxb.model.record_2_rc2.WorkType;
+import org.orcid.jaxb.model.record_rc2.Activity;
+import org.orcid.jaxb.model.record_rc2.GroupableActivity;
+import org.orcid.jaxb.model.record_rc2.WorkExternalIdentifiers;
+import org.orcid.jaxb.model.record_rc2.WorkSource;
+import org.orcid.jaxb.model.record_rc2.WorkTitle;
+import org.orcid.jaxb.model.record_rc2.WorkType;
 
 /**
  * <p>

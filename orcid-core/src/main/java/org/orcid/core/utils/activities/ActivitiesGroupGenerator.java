@@ -19,7 +19,7 @@ package org.orcid.core.utils.activities;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.orcid.jaxb.model.record_2_rc1.GroupableActivity;
+import org.orcid.jaxb.model.record_rc1.GroupableActivity;
 
 public class ActivitiesGroupGenerator {    
 

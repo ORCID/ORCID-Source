@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.jaxb.model.record_2_rc2.summary;
+package org.orcid.jaxb.model.record.summary_rc2;
 
 import java.util.ArrayList;
 import java.util.List;

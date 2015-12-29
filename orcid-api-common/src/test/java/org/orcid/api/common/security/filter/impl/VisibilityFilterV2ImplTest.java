@@ -35,7 +35,7 @@ import org.junit.runner.RunWith;
 import org.orcid.core.security.visibility.filter.VisibilityFilterV2;
 import org.orcid.core.utils.SecurityContextTestUtils;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.record_2_rc1.summary.ActivitiesSummary;
+import org.orcid.jaxb.model.record.summary_rc1.ActivitiesSummary;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
 import org.xml.sax.SAXException;

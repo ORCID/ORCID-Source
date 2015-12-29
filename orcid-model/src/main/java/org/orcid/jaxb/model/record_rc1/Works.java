@@ -21,7 +21,7 @@
 // Generated on: 2012.01.18 at 10:32:14 AM GMT 
 //
 
-package org.orcid.jaxb.model.record_2_rc1;
+package org.orcid.jaxb.model.record_rc1;
 
 import java.io.Serializable;
 import java.util.ArrayList;

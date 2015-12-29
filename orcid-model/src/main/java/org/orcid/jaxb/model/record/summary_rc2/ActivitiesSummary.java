@@ -21,7 +21,7 @@
 // Generated on: 2012.01.18 at 10:32:14 AM GMT 
 //
 
-package org.orcid.jaxb.model.record_2_rc2.summary;
+package org.orcid.jaxb.model.record.summary_rc2;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -36,9 +36,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.orcid.jaxb.model.common.LastModifiedDate;
-import org.orcid.jaxb.model.record_2_rc2.ActivitiesContainer;
-import org.orcid.jaxb.model.record_2_rc2.Activity;
-import org.orcid.jaxb.model.record_2_rc2.RecordUtil;
+import org.orcid.jaxb.model.record_rc2.ActivitiesContainer;
+import org.orcid.jaxb.model.record_rc2.Activity;
+import org.orcid.jaxb.model.record_rc2.RecordUtil;
 
 /**
  * <p>

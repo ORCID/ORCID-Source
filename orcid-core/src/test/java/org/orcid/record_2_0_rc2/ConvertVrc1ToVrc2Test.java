@@ -29,12 +29,12 @@ import org.junit.Test;
 import org.orcid.core.BaseTest;
 import org.orcid.core.version.V2Convertible;
 import org.orcid.core.version.V2VersionConverter;
-import org.orcid.jaxb.model.record_2_rc1.summary.ActivitiesSummary;
-import org.orcid.jaxb.model.record_2_rc1.summary.Educations;
-import org.orcid.jaxb.model.record_2_rc1.summary.Employments;
-import org.orcid.jaxb.model.record_2_rc1.summary.Fundings;
-import org.orcid.jaxb.model.record_2_rc1.summary.PeerReviews;
-import org.orcid.jaxb.model.record_2_rc1.summary.Works;
+import org.orcid.jaxb.model.record.summary_rc1.ActivitiesSummary;
+import org.orcid.jaxb.model.record.summary_rc1.Educations;
+import org.orcid.jaxb.model.record.summary_rc1.Employments;
+import org.orcid.jaxb.model.record.summary_rc1.Fundings;
+import org.orcid.jaxb.model.record.summary_rc1.PeerReviews;
+import org.orcid.jaxb.model.record.summary_rc1.Works;
 
 public class ConvertVrc1ToVrc2Test extends BaseTest {
 
@@ -45,7 +45,7 @@ public class ConvertVrc1ToVrc2Test extends BaseTest {
     public void upgradeToVrc2Test() throws JAXBException {
 
         JAXBContext jaxbContext1 = JAXBContext.newInstance(ActivitiesSummary.class);
-        JAXBContext jaxbContext2 = JAXBContext.newInstance(org.orcid.jaxb.model.record_2_rc2.summary.ActivitiesSummary.class);
+        JAXBContext jaxbContext2 = JAXBContext.newInstance(org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary.class);
         Unmarshaller jaxbUnmarshaller = jaxbContext1.createUnmarshaller();
 
         InputStream rc1Stream = ConvertVrc1ToVrc2Test.class.getClassLoader().getResourceAsStream("test-activities-2.0_rc1.xml");
@@ -54,12 +54,12 @@ public class ConvertVrc1ToVrc2Test extends BaseTest {
         ActivitiesSummary rc1Activities = (ActivitiesSummary) jaxbUnmarshaller.unmarshal(rc1Stream);
 
         jaxbUnmarshaller = jaxbContext2.createUnmarshaller();
-        org.orcid.jaxb.model.record_2_rc2.summary.ActivitiesSummary rc2Activities1 = 
-        		(org.orcid.jaxb.model.record_2_rc2.summary.ActivitiesSummary) jaxbUnmarshaller
+        org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary rc2Activities1 = 
+        		(org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary) jaxbUnmarshaller
                 .unmarshal(rc2Stream);
 
-        org.orcid.jaxb.model.record_2_rc2.summary.ActivitiesSummary rc2Activities2 = 
-        		new org.orcid.jaxb.model.record_2_rc2.summary.ActivitiesSummary();
+        org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary rc2Activities2 = 
+        		new org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary();
         		versionConverterV2_0_rc1ToV2_0rc2.upgrade(rc2Activities2, new V2Convertible(rc1Activities, "v2_rc1"));
 
        assertEquals(rc2Activities1.toString(), rc2Activities2.toString());
@@ -69,7 +69,7 @@ public class ConvertVrc1ToVrc2Test extends BaseTest {
     public void upgradeEducationsToVrc2Test() throws JAXBException {
 
         JAXBContext jaxbContext1 = JAXBContext.newInstance(Educations.class);
-        JAXBContext jaxbContext2 = JAXBContext.newInstance(org.orcid.jaxb.model.record_2_rc2.summary.Educations.class);
+        JAXBContext jaxbContext2 = JAXBContext.newInstance(org.orcid.jaxb.model.record.summary_rc2.Educations.class);
         Unmarshaller jaxbUnmarshaller = jaxbContext1.createUnmarshaller();
 
         InputStream rc1Stream = ConvertVrc1ToVrc2Test.class.getClassLoader().getResourceAsStream("test-educations-2.0_rc1.xml");
@@ -78,12 +78,12 @@ public class ConvertVrc1ToVrc2Test extends BaseTest {
         Educations rc1Educations = (Educations) jaxbUnmarshaller.unmarshal(rc1Stream);
 
         jaxbUnmarshaller = jaxbContext2.createUnmarshaller();
-        org.orcid.jaxb.model.record_2_rc2.summary.Educations rc2Educations1 = 
-        		(org.orcid.jaxb.model.record_2_rc2.summary.Educations) jaxbUnmarshaller
+        org.orcid.jaxb.model.record.summary_rc2.Educations rc2Educations1 = 
+        		(org.orcid.jaxb.model.record.summary_rc2.Educations) jaxbUnmarshaller
                 .unmarshal(rc2Stream);
 
-        org.orcid.jaxb.model.record_2_rc2.summary.Educations rc2Educations2 = 
-        		new org.orcid.jaxb.model.record_2_rc2.summary.Educations();
+        org.orcid.jaxb.model.record.summary_rc2.Educations rc2Educations2 = 
+        		new org.orcid.jaxb.model.record.summary_rc2.Educations();
         		versionConverterV2_0_rc1ToV2_0rc2.upgrade(rc2Educations2, new V2Convertible(rc1Educations, "v2_rc1"));
 
        assertEquals(rc2Educations1.getLastModifiedDate(), rc2Educations2.getLastModifiedDate());
@@ -93,7 +93,7 @@ public class ConvertVrc1ToVrc2Test extends BaseTest {
     public void upgradeEmploymentsToVrc2Test() throws JAXBException {
 
         JAXBContext jaxbContext1 = JAXBContext.newInstance(Employments.class);
-        JAXBContext jaxbContext2 = JAXBContext.newInstance(org.orcid.jaxb.model.record_2_rc2.summary.Employments.class);
+        JAXBContext jaxbContext2 = JAXBContext.newInstance(org.orcid.jaxb.model.record.summary_rc2.Employments.class);
         Unmarshaller jaxbUnmarshaller = jaxbContext1.createUnmarshaller();
 
         InputStream rc1Stream = ConvertVrc1ToVrc2Test.class.getClassLoader().getResourceAsStream("test-employments-2.0_rc1.xml");
@@ -102,12 +102,12 @@ public class ConvertVrc1ToVrc2Test extends BaseTest {
         Employments rc1Employments = (Employments) jaxbUnmarshaller.unmarshal(rc1Stream);
 
         jaxbUnmarshaller = jaxbContext2.createUnmarshaller();
-        org.orcid.jaxb.model.record_2_rc2.summary.Employments rc2Employments1 = 
-        		(org.orcid.jaxb.model.record_2_rc2.summary.Employments) jaxbUnmarshaller
+        org.orcid.jaxb.model.record.summary_rc2.Employments rc2Employments1 = 
+        		(org.orcid.jaxb.model.record.summary_rc2.Employments) jaxbUnmarshaller
                 .unmarshal(rc2Stream);
 
-        org.orcid.jaxb.model.record_2_rc2.summary.Employments rc2Employments2 = 
-        		new org.orcid.jaxb.model.record_2_rc2.summary.Employments();
+        org.orcid.jaxb.model.record.summary_rc2.Employments rc2Employments2 = 
+        		new org.orcid.jaxb.model.record.summary_rc2.Employments();
         		versionConverterV2_0_rc1ToV2_0rc2.upgrade(rc2Employments2, new V2Convertible(rc1Employments, "v2_rc1"));
 
        assertEquals(rc2Employments1.getLastModifiedDate(), rc2Employments2.getLastModifiedDate());
@@ -117,7 +117,7 @@ public class ConvertVrc1ToVrc2Test extends BaseTest {
     public void upgradeFundingsToVrc2Test() throws JAXBException {
 
         JAXBContext jaxbContext1 = JAXBContext.newInstance(Fundings.class);
-        JAXBContext jaxbContext2 = JAXBContext.newInstance(org.orcid.jaxb.model.record_2_rc2.summary.Fundings.class);
+        JAXBContext jaxbContext2 = JAXBContext.newInstance(org.orcid.jaxb.model.record.summary_rc2.Fundings.class);
         Unmarshaller jaxbUnmarshaller = jaxbContext1.createUnmarshaller();
 
         InputStream rc1Stream = ConvertVrc1ToVrc2Test.class.getClassLoader().getResourceAsStream("test-fundings-2.0_rc1.xml");
@@ -126,12 +126,12 @@ public class ConvertVrc1ToVrc2Test extends BaseTest {
         Fundings rc1Fundings = (Fundings) jaxbUnmarshaller.unmarshal(rc1Stream);
 
         jaxbUnmarshaller = jaxbContext2.createUnmarshaller();
-        org.orcid.jaxb.model.record_2_rc2.summary.Fundings rc2Fundings1 = 
-        		(org.orcid.jaxb.model.record_2_rc2.summary.Fundings) jaxbUnmarshaller
+        org.orcid.jaxb.model.record.summary_rc2.Fundings rc2Fundings1 = 
+        		(org.orcid.jaxb.model.record.summary_rc2.Fundings) jaxbUnmarshaller
                 .unmarshal(rc2Stream);
 
-        org.orcid.jaxb.model.record_2_rc2.summary.Fundings rc2Fundings2 = 
-        		new org.orcid.jaxb.model.record_2_rc2.summary.Fundings();
+        org.orcid.jaxb.model.record.summary_rc2.Fundings rc2Fundings2 = 
+        		new org.orcid.jaxb.model.record.summary_rc2.Fundings();
         		versionConverterV2_0_rc1ToV2_0rc2.upgrade(rc2Fundings2, new V2Convertible(rc1Fundings, "v2_rc1"));
 
        assertEquals(rc2Fundings1.getLastModifiedDate(), rc2Fundings2.getLastModifiedDate());
@@ -141,7 +141,7 @@ public class ConvertVrc1ToVrc2Test extends BaseTest {
     public void upgradePeerReviewsToVrc2Test() throws JAXBException {
 
         JAXBContext jaxbContext1 = JAXBContext.newInstance(PeerReviews.class);
-        JAXBContext jaxbContext2 = JAXBContext.newInstance(org.orcid.jaxb.model.record_2_rc2.summary.PeerReviews.class);
+        JAXBContext jaxbContext2 = JAXBContext.newInstance(org.orcid.jaxb.model.record.summary_rc2.PeerReviews.class);
         Unmarshaller jaxbUnmarshaller = jaxbContext1.createUnmarshaller();
 
         InputStream rc1Stream = ConvertVrc1ToVrc2Test.class.getClassLoader().getResourceAsStream("test-peer-reviews-2.0_rc1.xml");
@@ -150,12 +150,12 @@ public class ConvertVrc1ToVrc2Test extends BaseTest {
         PeerReviews rc1PeerReviews = (PeerReviews) jaxbUnmarshaller.unmarshal(rc1Stream);
 
         jaxbUnmarshaller = jaxbContext2.createUnmarshaller();
-        org.orcid.jaxb.model.record_2_rc2.summary.PeerReviews rc2PeerReviews1 = 
-        		(org.orcid.jaxb.model.record_2_rc2.summary.PeerReviews) jaxbUnmarshaller
+        org.orcid.jaxb.model.record.summary_rc2.PeerReviews rc2PeerReviews1 = 
+        		(org.orcid.jaxb.model.record.summary_rc2.PeerReviews) jaxbUnmarshaller
                 .unmarshal(rc2Stream);
 
-        org.orcid.jaxb.model.record_2_rc2.summary.PeerReviews rc2PeerReviews2 = 
-        		new org.orcid.jaxb.model.record_2_rc2.summary.PeerReviews();
+        org.orcid.jaxb.model.record.summary_rc2.PeerReviews rc2PeerReviews2 = 
+        		new org.orcid.jaxb.model.record.summary_rc2.PeerReviews();
         		versionConverterV2_0_rc1ToV2_0rc2.upgrade(rc2PeerReviews2, new V2Convertible(rc1PeerReviews, "v2_rc1"));
 
        assertEquals(rc2PeerReviews1.getLastModifiedDate(), rc2PeerReviews2.getLastModifiedDate());
@@ -165,7 +165,7 @@ public class ConvertVrc1ToVrc2Test extends BaseTest {
     public void upgradeWorksToVrc2Test() throws JAXBException {
 
         JAXBContext jaxbContext1 = JAXBContext.newInstance(Works.class);
-        JAXBContext jaxbContext2 = JAXBContext.newInstance(org.orcid.jaxb.model.record_2_rc2.summary.Works.class);
+        JAXBContext jaxbContext2 = JAXBContext.newInstance(org.orcid.jaxb.model.record.summary_rc2.Works.class);
         Unmarshaller jaxbUnmarshaller = jaxbContext1.createUnmarshaller();
 
         InputStream rc1Stream = ConvertVrc1ToVrc2Test.class.getClassLoader().getResourceAsStream("test-works-2.0_rc1.xml");
@@ -174,12 +174,12 @@ public class ConvertVrc1ToVrc2Test extends BaseTest {
         Works rc1Works = (Works) jaxbUnmarshaller.unmarshal(rc1Stream);
 
         jaxbUnmarshaller = jaxbContext2.createUnmarshaller();
-        org.orcid.jaxb.model.record_2_rc2.summary.Works rc2Works1 = 
-        		(org.orcid.jaxb.model.record_2_rc2.summary.Works) jaxbUnmarshaller
+        org.orcid.jaxb.model.record.summary_rc2.Works rc2Works1 = 
+        		(org.orcid.jaxb.model.record.summary_rc2.Works) jaxbUnmarshaller
                 .unmarshal(rc2Stream);
 
-        org.orcid.jaxb.model.record_2_rc2.summary.Works rc2Works2 = 
-        		new org.orcid.jaxb.model.record_2_rc2.summary.Works();
+        org.orcid.jaxb.model.record.summary_rc2.Works rc2Works2 = 
+        		new org.orcid.jaxb.model.record.summary_rc2.Works();
         		versionConverterV2_0_rc1ToV2_0rc2.upgrade(rc2Works2, new V2Convertible(rc1Works, "v2_rc1"));
 
        assertEquals(rc2Works1.getLastModifiedDate(), rc2Works2.getLastModifiedDate());

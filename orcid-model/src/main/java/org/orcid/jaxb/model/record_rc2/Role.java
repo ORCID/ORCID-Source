@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.jaxb.model.record_2_rc2;
+package org.orcid.jaxb.model.record_rc2;
 
 import java.io.Serializable;
 

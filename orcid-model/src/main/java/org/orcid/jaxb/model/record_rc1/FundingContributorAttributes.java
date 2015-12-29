@@ -21,7 +21,7 @@
 // Generated on: 2012.08.02 at 04:23:52 PM BST 
 //
 
-package org.orcid.jaxb.model.record_2_rc1;
+package org.orcid.jaxb.model.record_rc1;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;

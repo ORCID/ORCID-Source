@@ -21,7 +21,7 @@
 // Generated on: 2012.08.09 at 01:52:56 PM BST 
 //
 
-package org.orcid.jaxb.model.record_2_rc1.summary;
+package org.orcid.jaxb.model.record.summary_rc1;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -34,8 +34,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.orcid.jaxb.model.record_2_rc1.Group;
-import org.orcid.jaxb.model.record_2_rc1.GroupableActivity;
+import org.orcid.jaxb.model.record_rc1.Group;
+import org.orcid.jaxb.model.record_rc1.GroupableActivity;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "identifiers", "workSummary" })

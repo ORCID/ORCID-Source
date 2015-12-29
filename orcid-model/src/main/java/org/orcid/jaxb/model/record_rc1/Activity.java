@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.jaxb.model.record_2_rc1;
+package org.orcid.jaxb.model.record_rc1;
 
 import org.orcid.jaxb.model.common.CreatedDate;
 import org.orcid.jaxb.model.common.Filterable;

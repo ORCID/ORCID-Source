@@ -28,11 +28,11 @@ import org.orcid.core.manager.ValidationManager;
 import org.orcid.core.version.OrcidMessageVersionConverterChain;
 import org.orcid.jaxb.model.groupid.GroupIdRecord;
 import org.orcid.jaxb.model.message.OrcidMessage;
-import org.orcid.jaxb.model.record_2_rc1.Education;
-import org.orcid.jaxb.model.record_2_rc1.Employment;
-import org.orcid.jaxb.model.record_2_rc1.Funding;
-import org.orcid.jaxb.model.record_2_rc1.PeerReview;
-import org.orcid.jaxb.model.record_2_rc1.Work;
+import org.orcid.jaxb.model.record_rc1.Education;
+import org.orcid.jaxb.model.record_rc1.Employment;
+import org.orcid.jaxb.model.record_rc1.Funding;
+import org.orcid.jaxb.model.record_rc1.PeerReview;
+import org.orcid.jaxb.model.record_rc1.Work;
 
 public class MemberV2ApiServiceVersionedDelegatorImpl implements MemberV2ApiServiceDelegator {
 

@@ -29,7 +29,7 @@ import org.orcid.jaxb.model.common.Source;
 import org.orcid.jaxb.model.common.SourceClientId;
 import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.record_2_rc1.Work;
+import org.orcid.jaxb.model.record_rc1.Work;
 
 /**
  * 

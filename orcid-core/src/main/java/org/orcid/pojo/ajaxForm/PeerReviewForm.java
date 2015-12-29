@@ -28,13 +28,13 @@ import org.orcid.jaxb.model.common.OrganizationAddress;
 import org.orcid.jaxb.model.common.Title;
 import org.orcid.jaxb.model.common.Url;
 import org.orcid.jaxb.model.common.Visibility;
-import org.orcid.jaxb.model.record_2_rc1.PeerReview;
-import org.orcid.jaxb.model.record_2_rc1.PeerReviewType;
-import org.orcid.jaxb.model.record_2_rc1.Relationship;
-import org.orcid.jaxb.model.record_2_rc1.Role;
-import org.orcid.jaxb.model.record_2_rc1.WorkExternalIdentifiers;
-import org.orcid.jaxb.model.record_2_rc1.WorkTitle;
-import org.orcid.jaxb.model.record_2_rc1.WorkType;
+import org.orcid.jaxb.model.record_rc1.PeerReview;
+import org.orcid.jaxb.model.record_rc1.PeerReviewType;
+import org.orcid.jaxb.model.record_rc1.Relationship;
+import org.orcid.jaxb.model.record_rc1.Role;
+import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifiers;
+import org.orcid.jaxb.model.record_rc1.WorkTitle;
+import org.orcid.jaxb.model.record_rc1.WorkType;
 
 public class PeerReviewForm implements ErrorsInterface, Serializable {
 
@@ -369,7 +369,7 @@ public class PeerReviewForm implements ErrorsInterface, Serializable {
         
         // Subject external id
         if(!PojoUtil.isEmpty(subjectExternalIdentifier)) {
-            org.orcid.jaxb.model.record_2_rc1.WorkExternalIdentifier subjectExtId = new org.orcid.jaxb.model.record_2_rc1.WorkExternalIdentifier();
+            org.orcid.jaxb.model.record_rc1.WorkExternalIdentifier subjectExtId = new org.orcid.jaxb.model.record_rc1.WorkExternalIdentifier();
             if(!PojoUtil.isEmpty(subjectExternalIdentifier.getRelationship())) {
                 subjectExtId.setRelationship(Relationship.fromValue(subjectExternalIdentifier.getRelationship().getValue()));
             }
@@ -379,11 +379,11 @@ public class PeerReviewForm implements ErrorsInterface, Serializable {
             }
             
             if(!PojoUtil.isEmpty(subjectExternalIdentifier.getWorkExternalIdentifierId())) {
-                subjectExtId.setWorkExternalIdentifierId(new org.orcid.jaxb.model.record_2_rc1.WorkExternalIdentifierId(subjectExternalIdentifier.getWorkExternalIdentifierId().getValue()));
+                subjectExtId.setWorkExternalIdentifierId(new org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierId(subjectExternalIdentifier.getWorkExternalIdentifierId().getValue()));
             }
             
             if(!PojoUtil.isEmpty(subjectExternalIdentifier.getWorkExternalIdentifierType())) {
-                subjectExtId.setWorkExternalIdentifierType(org.orcid.jaxb.model.record_2_rc1.WorkExternalIdentifierType.fromValue(subjectExternalIdentifier.getWorkExternalIdentifierType().getValue()));
+                subjectExtId.setWorkExternalIdentifierType(org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType.fromValue(subjectExternalIdentifier.getWorkExternalIdentifierType().getValue()));
             }
             
             peerReview.setSubjectExternalIdentifier(subjectExtId);
@@ -492,9 +492,9 @@ public class PeerReviewForm implements ErrorsInterface, Serializable {
 
         // External ids
         if(peerReview.getExternalIdentifiers() != null) {
-            List<org.orcid.jaxb.model.record_2_rc1.WorkExternalIdentifier> externalIdentifiers = peerReview.getExternalIdentifiers().getExternalIdentifier();
+            List<org.orcid.jaxb.model.record_rc1.WorkExternalIdentifier> externalIdentifiers = peerReview.getExternalIdentifiers().getExternalIdentifier();
             form.setExternalIdentifiers(new ArrayList<WorkExternalIdentifier>());
-            for(org.orcid.jaxb.model.record_2_rc1.WorkExternalIdentifier extId : externalIdentifiers) {                
+            for(org.orcid.jaxb.model.record_rc1.WorkExternalIdentifier extId : externalIdentifiers) {                
                 form.getExternalIdentifiers().add(WorkExternalIdentifier.valueOf(extId));
             }                                    
         }        

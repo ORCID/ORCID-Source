@@ -19,11 +19,11 @@ package org.orcid.api.memberV2.server.delegator;
 import javax.ws.rs.core.Response;
 
 import org.orcid.jaxb.model.groupid.GroupIdRecord;
-import org.orcid.jaxb.model.record_2_rc1.Education;
-import org.orcid.jaxb.model.record_2_rc1.Employment;
-import org.orcid.jaxb.model.record_2_rc1.Funding;
-import org.orcid.jaxb.model.record_2_rc1.PeerReview;
-import org.orcid.jaxb.model.record_2_rc1.Work;
+import org.orcid.jaxb.model.record_rc1.Education;
+import org.orcid.jaxb.model.record_rc1.Employment;
+import org.orcid.jaxb.model.record_rc1.Funding;
+import org.orcid.jaxb.model.record_rc1.PeerReview;
+import org.orcid.jaxb.model.record_rc1.Work;
 
 /**
  * 

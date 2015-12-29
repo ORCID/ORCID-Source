@@ -23,7 +23,7 @@ import java.util.List;
 import org.orcid.jaxb.model.message.FundingExternalIdentifier;
 import org.orcid.jaxb.model.message.FundingExternalIdentifierType;
 import org.orcid.jaxb.model.message.Url;
-import org.orcid.jaxb.model.record_2_rc1.Relationship;
+import org.orcid.jaxb.model.record_rc1.Relationship;
 
 public class FundingExternalIdentifierForm implements ErrorsInterface, Serializable {
 
@@ -98,7 +98,7 @@ public class FundingExternalIdentifierForm implements ErrorsInterface, Serializa
         return result;
     }
 
-    public static FundingExternalIdentifierForm valueOf(org.orcid.jaxb.model.record_2_rc1.FundingExternalIdentifier fundingExternalIdentifier) {
+    public static FundingExternalIdentifierForm valueOf(org.orcid.jaxb.model.record_rc1.FundingExternalIdentifier fundingExternalIdentifier) {
         FundingExternalIdentifierForm result = new FundingExternalIdentifierForm();
         if (fundingExternalIdentifier.getType() != null)
             result.setType(Text.valueOf(fundingExternalIdentifier.getType().value()));
@@ -125,10 +125,10 @@ public class FundingExternalIdentifierForm implements ErrorsInterface, Serializa
         return result;
     }
     
-    public org.orcid.jaxb.model.record_2_rc1.FundingExternalIdentifier toRecordFundingExternalIdentifier() {
-        org.orcid.jaxb.model.record_2_rc1.FundingExternalIdentifier result = new org.orcid.jaxb.model.record_2_rc1.FundingExternalIdentifier();
+    public org.orcid.jaxb.model.record_rc1.FundingExternalIdentifier toRecordFundingExternalIdentifier() {
+        org.orcid.jaxb.model.record_rc1.FundingExternalIdentifier result = new org.orcid.jaxb.model.record_rc1.FundingExternalIdentifier();
         if (!PojoUtil.isEmpty(type))
-            result.setType(org.orcid.jaxb.model.record_2_rc1.FundingExternalIdentifierType.fromValue(type.getValue()));
+            result.setType(org.orcid.jaxb.model.record_rc1.FundingExternalIdentifierType.fromValue(type.getValue()));
         if (!PojoUtil.isEmpty(url))
             result.setUrl(new org.orcid.jaxb.model.common.Url(url.getValue()));
         else

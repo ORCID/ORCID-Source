@@ -35,5 +35,5 @@
         @javax.xml.bind.annotation.XmlNs(prefix = "peer-review", namespaceURI = "http://www.orcid.org/ns/peer-review"),
         @javax.xml.bind.annotation.XmlNs(prefix = "record", namespaceURI = "http://www.orcid.org/ns/record"),
         @javax.xml.bind.annotation.XmlNs(prefix = "preferences", namespaceURI = "http://www.orcid.org/ns/preferences") }, elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
-package org.orcid.jaxb.model.record_2_rc2;
+package org.orcid.jaxb.model.record_rc2;
 

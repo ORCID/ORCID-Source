@@ -21,8 +21,8 @@ import java.util.Collection;
 import java.util.List;
 
 import org.orcid.jaxb.model.message.Visibility;
-import org.orcid.jaxb.model.record_2_rc1.PeerReview;
-import org.orcid.jaxb.model.record_2_rc1.summary.PeerReviewSummary;
+import org.orcid.jaxb.model.record.summary_rc1.PeerReviewSummary;
+import org.orcid.jaxb.model.record_rc1.PeerReview;
 import org.orcid.persistence.jpa.entities.PeerReviewEntity;
 
 public interface PeerReviewManager {

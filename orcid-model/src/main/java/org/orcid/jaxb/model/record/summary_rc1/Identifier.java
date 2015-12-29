@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.jaxb.model.record_2_rc1.summary;
+package org.orcid.jaxb.model.record.summary_rc1;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -23,8 +23,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.jsoup.helper.StringUtil;
-import org.orcid.jaxb.model.record_2_rc1.FundingExternalIdentifier;
-import org.orcid.jaxb.model.record_2_rc1.WorkExternalIdentifier;
+import org.orcid.jaxb.model.record_rc1.FundingExternalIdentifier;
+import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifier;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "externalIdentifierType", "externalIdentifierId" })

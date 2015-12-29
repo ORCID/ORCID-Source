@@ -28,10 +28,10 @@ import org.apache.commons.lang.StringUtils;
 import org.jbibtex.BibTeXDatabase;
 import org.jbibtex.ParseException;
 import org.orcid.jaxb.model.common.Contributor;
-import org.orcid.jaxb.model.record_2_rc1.CitationType;
-import org.orcid.jaxb.model.record_2_rc1.Work;
-import org.orcid.jaxb.model.record_2_rc1.WorkExternalIdentifier;
-import org.orcid.jaxb.model.record_2_rc1.WorkExternalIdentifierType;
+import org.orcid.jaxb.model.record_rc1.CitationType;
+import org.orcid.jaxb.model.record_rc1.Work;
+import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifier;
+import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType;
 import org.springframework.util.ReflectionUtils;
 
 import com.google.common.base.Joiner;

@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.jaxb.model.record_2_rc1.summary;
+package org.orcid.jaxb.model.record.summary_rc1;
 
 import java.io.Serializable;
 
@@ -31,11 +31,11 @@ import org.orcid.jaxb.model.common.LastModifiedDate;
 import org.orcid.jaxb.model.common.Source;
 import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.jaxb.model.common.VisibilityType;
-import org.orcid.jaxb.model.record_2_rc1.Activity;
-import org.orcid.jaxb.model.record_2_rc1.FundingExternalIdentifiers;
-import org.orcid.jaxb.model.record_2_rc1.FundingTitle;
-import org.orcid.jaxb.model.record_2_rc1.FundingType;
-import org.orcid.jaxb.model.record_2_rc1.GroupableActivity;
+import org.orcid.jaxb.model.record_rc1.Activity;
+import org.orcid.jaxb.model.record_rc1.FundingExternalIdentifiers;
+import org.orcid.jaxb.model.record_rc1.FundingTitle;
+import org.orcid.jaxb.model.record_rc1.FundingType;
+import org.orcid.jaxb.model.record_rc1.GroupableActivity;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "createdDate", "lastModifiedDate", "source", "title", "externalIdentifiers", "type", "startDate", "endDate" })

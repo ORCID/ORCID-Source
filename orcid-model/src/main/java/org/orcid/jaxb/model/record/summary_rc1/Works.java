@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.jaxb.model.record_2_rc1.summary;
+package org.orcid.jaxb.model.record.summary_rc1;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -27,8 +27,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.orcid.jaxb.model.record_2_rc1.Group;
-import org.orcid.jaxb.model.record_2_rc1.GroupsContainer;
+import org.orcid.jaxb.model.record_rc1.Group;
+import org.orcid.jaxb.model.record_rc1.GroupsContainer;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "workGroup" })

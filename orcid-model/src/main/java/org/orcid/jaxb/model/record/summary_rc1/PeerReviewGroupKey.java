@@ -14,10 +14,10 @@
  *
  * =============================================================================
  */
-package org.orcid.jaxb.model.record_2_rc1.summary;
+package org.orcid.jaxb.model.record.summary_rc1;
 
 import org.jsoup.helper.StringUtil;
-import org.orcid.jaxb.model.record_2_rc1.GroupKey;
+import org.orcid.jaxb.model.record_rc1.GroupKey;
 
 public class PeerReviewGroupKey implements GroupKey {    
     public static String KEY_NAME = "PEER-REVIEW"; 

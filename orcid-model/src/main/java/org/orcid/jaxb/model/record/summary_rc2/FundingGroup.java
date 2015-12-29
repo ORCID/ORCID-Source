@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.jaxb.model.record_2_rc2.summary;
+package org.orcid.jaxb.model.record.summary_rc2;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -28,8 +28,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.orcid.jaxb.model.common.LastModifiedDate;
-import org.orcid.jaxb.model.record_2_rc2.Group;
-import org.orcid.jaxb.model.record_2_rc2.GroupableActivity;
+import org.orcid.jaxb.model.record_rc2.Group;
+import org.orcid.jaxb.model.record_rc2.GroupableActivity;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "lastModifiedDate", "identifiers", "fundingSummary" })
