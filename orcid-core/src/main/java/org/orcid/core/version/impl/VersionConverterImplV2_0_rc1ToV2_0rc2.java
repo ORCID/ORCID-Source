@@ -16,15 +16,9 @@
  */
 package org.orcid.core.version.impl;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
-
-import javax.xml.datatype.XMLGregorianCalendar;
 
 import ma.glasnost.orika.CustomMapper;
 import ma.glasnost.orika.MapperFacade;
@@ -35,12 +29,12 @@ import ma.glasnost.orika.impl.DefaultMapperFactory;
 import org.orcid.core.version.V2Convertible;
 import org.orcid.core.version.V2VersionConverter;
 import org.orcid.jaxb.model.common.LastModifiedDate;
-import org.orcid.jaxb.model.record_2_rc1.ActivitiesContainer;
-import org.orcid.jaxb.model.record_2_rc1.Activity;
-import org.orcid.jaxb.model.record_2_rc1.Group;
-import org.orcid.jaxb.model.record_2_rc1.GroupableActivity;
-import org.orcid.jaxb.model.record_2_rc1.GroupsContainer;
 import org.orcid.jaxb.model.record_2_rc1.summary.ActivitiesSummary;
+import org.orcid.jaxb.model.record_2_rc1.summary.Educations;
+import org.orcid.jaxb.model.record_2_rc1.summary.Employments;
+import org.orcid.jaxb.model.record_2_rc1.summary.Fundings;
+import org.orcid.jaxb.model.record_2_rc1.summary.PeerReviews;
+import org.orcid.jaxb.model.record_2_rc1.summary.Works;
 import org.orcid.utils.DateUtils;
 
 public class VersionConverterImplV2_0_rc1ToV2_0rc2 implements V2VersionConverter {
@@ -53,79 +47,96 @@ public class VersionConverterImplV2_0_rc1ToV2_0rc2 implements V2VersionConverter
     static {
         final MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
 
-        mapperFactory.classMap(ActivitiesSummary.class, org.orcid.jaxb.model.record_2_rc2.summary.ActivitiesSummary.class).field("educations", "educations")
-                .field("employments", "employments").field("fundings.fundingGroup{identifiers}", "fundings.fundingGroup{identifiers}")
-                .field("fundings.fundingGroup{fundingSummary}", "fundings.fundingGroup{fundingSummary}")
-                .field("peerReviews.peerReviewGroup{identifiers}", "peerReviews.peerReviewGroup{identifiers}")
-                .field("peerReviews.peerReviewGroup{peerReviewSummary}", "peerReviews.peerReviewGroup{peerReviewSummary}")
-                .field("works.workGroup{identifiers}", "works.workGroup{identifiers}").field("works.workGroup{workSummary}", "works.workGroup{workSummary}")
-                .customize(new CustomMapper<ActivitiesSummary, org.orcid.jaxb.model.record_2_rc2.summary.ActivitiesSummary>() {
-                    @Override
-                    public void mapAtoB(ActivitiesSummary actSummaryRc1, org.orcid.jaxb.model.record_2_rc2.summary.ActivitiesSummary actSummaryRc2, MappingContext context) {
+        //ACTIVITY SUMMARY
+        mapperFactory.classMap(ActivitiesSummary.class, org.orcid.jaxb.model.record_2_rc2.summary.ActivitiesSummary.class)
+        .field("educations", "educations")
+        .field("employments", "employments")
+        .field("fundings.fundingGroup{identifiers}", "fundings.fundingGroup{identifiers}")
+        .field("fundings.fundingGroup{fundingSummary}", "fundings.fundingGroup{fundingSummary}")
+        .field("peerReviews.peerReviewGroup{identifiers}", "peerReviews.peerReviewGroup{identifiers}")
+        .field("peerReviews.peerReviewGroup{peerReviewSummary}", "peerReviews.peerReviewGroup{peerReviewSummary}")
+        .field("works.workGroup{identifiers}", "works.workGroup{identifiers}")
+        .field("works.workGroup{workSummary}", "works.workGroup{workSummary}")
+        .customize(new CustomMapper<ActivitiesSummary, org.orcid.jaxb.model.record_2_rc2.summary.ActivitiesSummary>() {
+            @Override
+            public void mapAtoB(ActivitiesSummary actSummaryRc1, org.orcid.jaxb.model.record_2_rc2.summary.ActivitiesSummary actSummaryRc2, MappingContext context) {
 
-                        SortedSet<Date> latestDates = new TreeSet<>();
+                SortedSet<Date> latestDates = new TreeSet<>();
 
-                        latestDates.add(calculateLatest(actSummaryRc1.getEducations(), actSummaryRc2.getEducations()));
-                        latestDates.add(calculateLatest(actSummaryRc1.getEmployments(), actSummaryRc2.getEmployments()));
-                        latestDates.add(calculateLatest(actSummaryRc1.getFundings(), actSummaryRc2.getFundings()));
-                        latestDates.add(calculateLatest(actSummaryRc1.getPeerReviews(), actSummaryRc2.getPeerReviews()));
-                        latestDates.add(calculateLatest(actSummaryRc1.getWorks(), actSummaryRc2.getWorks()));
+                latestDates.add(VersionConverterHelper.calculateLatest(actSummaryRc1.getEducations(), actSummaryRc2.getEducations()));
+                latestDates.add(VersionConverterHelper.calculateLatest(actSummaryRc1.getEmployments(), actSummaryRc2.getEmployments()));
+                latestDates.add(VersionConverterHelper.calculateLatest(actSummaryRc1.getFundings(), actSummaryRc2.getFundings()));
+                latestDates.add(VersionConverterHelper.calculateLatest(actSummaryRc1.getPeerReviews(), actSummaryRc2.getPeerReviews()));
+                latestDates.add(VersionConverterHelper.calculateLatest(actSummaryRc1.getWorks(), actSummaryRc2.getWorks()));
 
-                        actSummaryRc2.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis(latestDates.last())));
-                    }
-
-                    private Date calculateLatest(ActivitiesContainer actContainerRc1, org.orcid.jaxb.model.record_2_rc2.ActivitiesContainer actContainerRc2) {
-                        XMLGregorianCalendar latestActSummary = null;
-                        Collection<? extends Activity> activities = actContainerRc1.retrieveActivities();
-                        if (activities != null && !activities.isEmpty()) {
-                            Iterator<? extends Activity> activitiesIterator = activities.iterator();
-                            XMLGregorianCalendar latest = activitiesIterator.next().getLastModifiedDate().getValue();
-                            while (activitiesIterator.hasNext()) {
-                                Activity activity = activitiesIterator.next();
-                                if (latest.compare(activity.getLastModifiedDate().getValue()) == -1) {
-                                    latest = activity.getLastModifiedDate().getValue();
-                                }
-                            }
-                            latestActSummary = latest;
-                            actContainerRc2.setLastModifiedDate(new LastModifiedDate(latest));
-                        }
-                        return latestActSummary.toGregorianCalendar().getTime();
-                    }
-
-                    private Date calculateLatest(GroupsContainer groupsContainerRc1, org.orcid.jaxb.model.record_2_rc2.GroupsContainer groupsContainerRc2) {
-                        Date latestGrp = null;
-                        if (groupsContainerRc1.retrieveGroups() != null && !groupsContainerRc1.retrieveGroups().isEmpty()) {
-                            List<? extends Group> groupsRc1 = new ArrayList<>(groupsContainerRc1.retrieveGroups());
-                            List<org.orcid.jaxb.model.record_2_rc2.Group> groupsRc2 = new ArrayList<>(groupsContainerRc2.retrieveGroups());
-                            if (groupsRc1.get(0).getActivities() != null && !groupsRc1.get(0).getActivities().isEmpty()) {
-                                for (int index = 0; index < groupsRc1.size(); index++) {
-                                    Group grpRc1 = groupsRc1.get(index);
-                                    latestGrp = calculateLatests(grpRc1, groupsRc2.get(index));
-                                }
-                                groupsContainerRc2.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis(latestGrp)));
-                            }
-                        }
-                        return latestGrp;
-                    }
-
-                    private Date calculateLatests(Group groupRc1, org.orcid.jaxb.model.record_2_rc2.Group groupRc2) {
-                        XMLGregorianCalendar latestActSummary = null;
-                        Collection<? extends GroupableActivity> activities = groupRc1.getActivities();
-                        if (activities != null && !activities.isEmpty()) {
-                            Iterator<? extends GroupableActivity> activitiesIterator = activities.iterator();
-                            XMLGregorianCalendar latest = activitiesIterator.next().getLastModifiedDate().getValue();
-                            while (activitiesIterator.hasNext()) {
-                                GroupableActivity activity = activitiesIterator.next();
-                                if (latest.compare(activity.getLastModifiedDate().getValue()) == -1) {
-                                    latest = activity.getLastModifiedDate().getValue();
-                                }
-                            }
-                            latestActSummary = latest;
-                            groupRc2.setLastModifiedDate(new LastModifiedDate(latest));
-                        }
-                        return latestActSummary.toGregorianCalendar().getTime();
-                    }
-                }).register();
+                actSummaryRc2.setLastModifiedDate(
+                		new LastModifiedDate(DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis
+                				(latestDates.last())));
+            }
+        }).register();
+        
+        //EDUCATION SUMMARY
+        mapperFactory.classMap(Educations.class, org.orcid.jaxb.model.record_2_rc2.summary.Educations.class)
+        .field("summaries", "summaries")
+        .customize(new CustomMapper<Educations, org.orcid.jaxb.model.record_2_rc2.summary.Educations>() {
+            @Override
+            public void mapAtoB(Educations educationsRc1, org.orcid.jaxb.model.record_2_rc2.summary.Educations educationsRc2, MappingContext context) {
+            	educationsRc2.setLastModifiedDate(
+            			new LastModifiedDate(DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis
+            					(VersionConverterHelper.calculateLatest(educationsRc1, educationsRc2))));
+            }
+        }).register();
+        
+        //EMPLOYMENT SUMMARY
+        mapperFactory.classMap(Employments.class, org.orcid.jaxb.model.record_2_rc2.summary.Employments.class)
+        .field("summaries", "summaries")
+        .customize(new CustomMapper<Employments, org.orcid.jaxb.model.record_2_rc2.summary.Employments>() {
+            @Override
+            public void mapAtoB(Employments employmentsRc1, org.orcid.jaxb.model.record_2_rc2.summary.Employments employmentsRc2, MappingContext context) {
+            	employmentsRc2.setLastModifiedDate(
+            			new LastModifiedDate(DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis
+            					(VersionConverterHelper.calculateLatest(employmentsRc1, employmentsRc2))));
+            }
+        }).register();
+        
+        //FUNDINGS
+        mapperFactory.classMap(Fundings.class, org.orcid.jaxb.model.record_2_rc2.summary.Fundings.class)
+        .field("fundingGroup{identifiers}", "fundingGroup{identifiers}")
+        .field("fundingGroup{fundingSummary}", "fundingGroup{fundingSummary}")
+        .customize(new CustomMapper<Fundings, org.orcid.jaxb.model.record_2_rc2.summary.Fundings>() {
+            @Override
+            public void mapAtoB(Fundings fundingsRc1, org.orcid.jaxb.model.record_2_rc2.summary.Fundings fundingsRc2, MappingContext context) {
+            	fundingsRc2.setLastModifiedDate(
+            			new LastModifiedDate(DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis
+            					(VersionConverterHelper.calculateLatest(fundingsRc1, fundingsRc2))));
+            }
+        }).register();
+        
+        //PEER REVIEWS
+        mapperFactory.classMap(PeerReviews.class, org.orcid.jaxb.model.record_2_rc2.summary.PeerReviews.class)
+        .field("peerReviewGroup{identifiers}", "peerReviewGroup{identifiers}")
+        .field("peerReviewGroup{peerReviewSummary}", "peerReviewGroup{peerReviewSummary}")
+        .customize(new CustomMapper<PeerReviews, org.orcid.jaxb.model.record_2_rc2.summary.PeerReviews>() {
+            @Override
+            public void mapAtoB(PeerReviews peerReviewsRc1, org.orcid.jaxb.model.record_2_rc2.summary.PeerReviews peerReviewsRc2, MappingContext context) {
+            	peerReviewsRc2.setLastModifiedDate(
+            			new LastModifiedDate(DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis
+            					(VersionConverterHelper.calculateLatest(peerReviewsRc1, peerReviewsRc2))));
+            }
+        }).register();
+        
+        //WORKS
+        mapperFactory.classMap(Works.class, org.orcid.jaxb.model.record_2_rc2.summary.Works.class)
+        .field("workGroup{identifiers}", "workGroup{identifiers}")
+        .field("workGroup{workSummary}", "workGroup{workSummary}")
+        .customize(new CustomMapper<Works, org.orcid.jaxb.model.record_2_rc2.summary.Works>() {
+            @Override
+            public void mapAtoB(Works worksRc1, org.orcid.jaxb.model.record_2_rc2.summary.Works worksRc2, MappingContext context) {
+            	worksRc2.setLastModifiedDate(
+            			new LastModifiedDate(DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis
+            					(VersionConverterHelper.calculateLatest(worksRc1, worksRc2))));
+            }
+        }).register();
         mapper = mapperFactory.getMapperFacade();
     }
 
@@ -141,8 +152,8 @@ public class VersionConverterImplV2_0_rc1ToV2_0rc2 implements V2VersionConverter
 
     @Override
     public V2Convertible downgrade(Object targetObject, V2Convertible objectToDowngrade) {
-        // TODO Auto-generated method stub
-        return null;
+    	mapper.map(objectToDowngrade.getObjectToConvert(), targetObject);
+        return new V2Convertible(objectToDowngrade.getObjectToConvert(), LOWER_VERSION);
     }
 
     @Override
