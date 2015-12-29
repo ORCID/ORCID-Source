@@ -173,4 +173,5 @@
     <include file="/db/updates/add_visibility_to_external_identifiers.xml"/>
     <include file="/db/updates/set_names_visibility_to_public_on_empty_credit_names.xml" />
     <include file="/db/updates/add_id_visibility_and_source_to_keywords.xml" />
+    <include file="/db/updates/update_address_table.xml" />
 </databaseChangeLog>
