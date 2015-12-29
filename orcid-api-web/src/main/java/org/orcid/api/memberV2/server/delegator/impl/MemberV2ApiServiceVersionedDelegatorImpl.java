@@ -24,7 +24,6 @@ import javax.ws.rs.core.Response;
 
 import org.orcid.api.memberV2.server.delegator.MemberV2ApiServiceDelegator;
 import org.orcid.core.exception.OrcidDeprecatedException;
-import org.orcid.core.manager.ValidationManager;
 import org.orcid.core.version.OrcidMessageVersionConverterChain;
 import org.orcid.jaxb.model.groupid.GroupIdRecord;
 import org.orcid.jaxb.model.message.OrcidMessage;
@@ -33,6 +32,9 @@ import org.orcid.jaxb.model.record_rc1.Employment;
 import org.orcid.jaxb.model.record_rc1.Funding;
 import org.orcid.jaxb.model.record_rc1.PeerReview;
 import org.orcid.jaxb.model.record_rc1.Work;
+import org.orcid.jaxb.model.record_rc2.ExternalIdentifier;
+import org.orcid.jaxb.model.record_rc2.OtherName;
+import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 
 public class MemberV2ApiServiceVersionedDelegatorImpl implements MemberV2ApiServiceDelegator {
 
@@ -257,6 +259,113 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements MemberV2ApiServ
         }
         return response;
     }
+
+	@Override
+	public Response viewResearcherUrls(String orcid) {
+		Response response = memberV2ApiServiceDelegator.viewResearcherUrls(orcid);
+		return response;
+	}
+
+	@Override
+	public Response viewResearcherUrl(String orcid, Long putCode) {
+		Response response = memberV2ApiServiceDelegator.viewResearcherUrl(orcid, putCode);
+		return response;
+	}
+
+	@Override
+	public Response updateResearcherUrl(String orcid, Long putCode,
+			ResearcherUrl researcherUrl) {
+		Response response = memberV2ApiServiceDelegator.updateResearcherUrl(orcid, putCode, researcherUrl);
+		return response;
+	}
+
+	@Override
+	public Response createResearcherUrl(String orcid,
+			ResearcherUrl researcherUrl) {
+		Response response = memberV2ApiServiceDelegator.createResearcherUrl(orcid, researcherUrl);
+		return response;
+	}
+
+	@Override
+	public Response deleteResearcherUrl(String orcid, Long putCode) {
+		Response response = memberV2ApiServiceDelegator.deleteResearcherUrl(orcid, putCode);
+		return response;
+	}
+
+	@Override
+	public Response viewEmails(String orcid) {
+		Response response = memberV2ApiServiceDelegator.viewEmails(orcid);
+		return response;
+	}
+
+	@Override
+	public Response viewOtherNames(String orcid) {
+		Response response = memberV2ApiServiceDelegator.viewOtherNames(orcid);
+		return response;
+	}
+
+	@Override
+	public Response viewOtherName(String orcid, Long putCode) {
+		Response response = memberV2ApiServiceDelegator.viewOtherName(orcid, putCode);
+		return response;
+	}
+
+	@Override
+	public Response createOtherName(String orcid, OtherName otherName) {
+		Response response = memberV2ApiServiceDelegator.createOtherName(orcid, otherName);
+		return response;
+	}
+
+	@Override
+	public Response updateOtherName(String orcid, Long putCode,
+			OtherName otherName) {
+		Response response = memberV2ApiServiceDelegator.updateOtherName(orcid, putCode, otherName);
+		return response;
+	}
+
+	@Override
+	public Response deleteOtherName(String orcid, Long putCode) {
+		Response response = memberV2ApiServiceDelegator.deleteOtherName(orcid, putCode);
+		return response;
+	}
+
+	@Override
+	public Response viewPersonalDetails(String orcid) {
+		Response response = memberV2ApiServiceDelegator.viewPersonalDetails(orcid);
+		return response;
+	}
+
+	@Override
+	public Response viewExternalIdentifiers(String orcid) {
+		Response response = memberV2ApiServiceDelegator.viewExternalIdentifiers(orcid);
+		return response;
+	}
+
+	@Override
+	public Response viewExternalIdentifier(String orcid, Long putCode) {
+		Response response = memberV2ApiServiceDelegator.viewExternalIdentifier(orcid, putCode);
+		return response;
+	}
+
+	@Override
+	public Response updateExternalIdentifier(String orcid, Long putCode,
+			ExternalIdentifier externalIdentifier) {
+		Response response = memberV2ApiServiceDelegator.updateExternalIdentifier(orcid, putCode, externalIdentifier);
+		return response;
+	}
+
+	@Override
+	public Response createExternalIdentifier(String orcid,
+			ExternalIdentifier externalIdentifier) {
+		Response response = memberV2ApiServiceDelegator.createExternalIdentifier(orcid, externalIdentifier);
+		return response;
+	}
+
+	@Override
+	public Response deleteExternalIdentifier(String orcid, Long putCode) {
+		Response response = memberV2ApiServiceDelegator.deleteExternalIdentifier(orcid, putCode);
+		return response;
+	}
 
 	public MemberV2ApiServiceDelegator getMemberV2ApiServiceDelegator() {
 		return memberV2ApiServiceDelegator;

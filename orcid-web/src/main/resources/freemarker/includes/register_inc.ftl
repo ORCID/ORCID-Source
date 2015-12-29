@@ -17,7 +17,11 @@
 
 -->
 <#include "/common/browser-checks.ftl" />
-<div ng-controller="RegistrationCtrl" id="RegistrationCtr">
+<#if ((RequestParameters['linkRequest'])?? && (RequestParameters['firstName'])?? && (RequestParameters['lastName'])?? && (RequestParameters['emailId'])??)>
+	<div ng-controller="RegistrationCtrl" id="RegistrationCtr" ng-init="getRegister('${RequestParameters.firstName}', '${RequestParameters.lastName}', '${RequestParameters.emailId}')">
+<#else>
+	<div ng-controller="RegistrationCtrl" id="RegistrationCtr" ng-init="getRegister('', '', '')">
+</#if>
 <fn-form update-fn="postRegister()">
 	<!-- span class="orcid-error" ng-show="register.errors.length > 0">
 		<div ng-repeat='error in register.errors' ng-bind-html="error"></div>
@@ -27,9 +31,11 @@
         </label>
         <div class="relative">
         	<#if (client_name)??>
-        	<input type="hidden" name="client_name" value="${client_name}" />
-        	<input type="hidden" name="client_id" value="${client_id}" />
-        	<input type="hidden" name="client_group_name" value="${client_group_name}" />
+        	<#assign js_group_name = client_group_name?replace('"', '&quot;')?js_string>
+	        <#assign js_client_name = client_name?replace('"', '&quot;')?js_string>	        
+        	<input type="hidden" name="client_group_name" value="${js_group_name}" />
+        	<input type="hidden" name="client_name" value="${js_client_name}" />
+        	<input type="hidden" name="client_id" value="${client_id}" />        	
         	</#if>
             <input name="givenNames234" type="text" tabindex="1" class="input-xlarge" ng-model="register.givenNames.value" ng-model-onblur ng-change="serverValidate('GivenNames')"/>
             <span class="required" ng-class="isValidClass(register.givenNames)">*</span>
@@ -62,7 +68,7 @@
     <div>
         <label class="control-label">${springMacroRequestContext.getMessage("oauth_sign_up.labelemail")}</label>
         <div class="relative">
-            <input name="email234" type="email" tabindex="3" class="input-xlarge" ng-model="register.email.value" ng-model-onblur ng-change="serverValidate('Email')" />
+            <input name="email234" type="text" tabindex="3" class="input-xlarge" ng-model="register.email.value" ng-change="serverValidate('Email')" />
             <span class="required" ng-class="isValidClass(register.email)">*</span>
             <span class="orcid-error" ng-show="register.email.errors.length > 0">
 				<div ng-repeat='error in register.email.errors' ng-bind-html="error"></div>
@@ -112,36 +118,7 @@
     </div>                    
     <div>
         <div class="relative">
-            <#if RequestParameters['notifications']??>
-                <label>${springMacroRequestContext.getMessage("claim.notifications")}</label>
-                <#--
-                <label class="checkbox">
-                    <input type="checkbox" tabindex="8" name="sendOrcidNews" ng-model="register.sendMemberUpdateRequests.value"/>
-                    ${springMacroRequestContext.getMessage("register.labelsendmemberupdaterequests")}
-                </label>
-                -->
-                <label>
-                    ${springMacroRequestContext.getMessage("claim.notificationsemailfrequency")}
-                    <select id="sendEmailFrequencyDays" name="sendEmailFrequencyDays"
-                        class="input-xlarge"
-                        ng-model="register.sendEmailFrequencyDays.value"
-                        <#list sendEmailFrequencies?keys as key>
-                            <option value="${key}"
-                                ng-selected="register.sendEmailFrequencyDays.value === ${key}">${sendEmailFrequencies[key]}</option>
-                        </#list>
-                    </select>
-                </label>
-            <#else>
-                <label>${springMacroRequestContext.getMessage("claim.notificationemail")}</label>
-                <label class="checkbox">
-                    <input type="checkbox" tabindex="7" name="sendOrcidChangeNotifications" ng-model="register.sendChangeNotifications.value"/>
-                    ${springMacroRequestContext.getMessage("register.labelsendmenotifications")}
-                </label>
-                <label class="checkbox">
-                    <input type="checkbox" tabindex="8" name="sendOrcidNews" ng-model="register.sendOrcidNews.value"/>
-                    ${springMacroRequestContext.getMessage("register.labelsendinformation")}
-                </label>
-            </#if>
+            <@orcid.registrationEmailFrequencySelector angularElementName="register" />
          </div>
 	</div>
     <div>
@@ -171,7 +148,11 @@
         </div>
 	</div>   
     <div class="relative">
-          <button type="submit" tabindex="10" class="btn btn-primary" ng-click="postRegister()">${springMacroRequestContext.getMessage("header.register")}</button>
+    	<#if (RequestParameters['linkRequest'])??>
+			<button type="submit" tabindex="10" class="btn btn-primary" ng-click="postRegister('${RequestParameters.linkRequest}')">${springMacroRequestContext.getMessage("header.register")}</button>
+		<#else>
+			<button type="submit" tabindex="10" class="btn btn-primary" ng-click="postRegister(null)">${springMacroRequestContext.getMessage("header.register")}</button>
+		</#if>
     </div>  
 </fn-form>
 

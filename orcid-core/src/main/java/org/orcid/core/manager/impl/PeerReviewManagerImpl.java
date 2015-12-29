@@ -26,6 +26,7 @@ import org.orcid.core.adapter.JpaJaxbPeerReviewAdapter;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.GroupIdRecordManager;
+import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.OrgManager;
 import org.orcid.core.manager.PeerReviewManager;
@@ -35,6 +36,9 @@ import org.orcid.jaxb.model.common.Source;
 import org.orcid.jaxb.model.common.SourceClientId;
 import org.orcid.jaxb.model.common.SourceOrcid;
 import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.jaxb.model.notification.amended.AmendedSection;
+import org.orcid.jaxb.model.notification.permission.Item;
+import org.orcid.jaxb.model.notification.permission.ItemType;
 import org.orcid.jaxb.model.record.summary_rc1.PeerReviewSummary;
 import org.orcid.jaxb.model.record_rc1.PeerReview;
 import org.orcid.persistence.dao.PeerReviewDao;
@@ -76,6 +80,9 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
     @Resource
     private GroupIdRecordManager groupIdRecordManager;
 
+    @Resource
+    private NotificationManager notificationManager;
+
     @Override
     public void setSourceManager(SourceManager sourceManager) {
         this.sourceManager = sourceManager;
@@ -83,7 +90,7 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
 
     @Override
     public PeerReview getPeerReview(String orcid, Long peerReviewId) {
-        PeerReviewEntity peerReviewEntity = peerReviewDao.getPeerReview(orcid, peerReviewId);
+        PeerReviewEntity peerReviewEntity = peerReviewDao.getPeerReview(orcid, peerReviewId);                       
         return jpaJaxbPeerReviewAdapter.toPeerReview(peerReviewEntity);
     }
 
@@ -100,8 +107,7 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
 
     @Override
     public PeerReview createPeerReview(String orcid, PeerReview peerReview, boolean isApiRequest) {
-    	
-    	SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
+        SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
 
         // Set the source to the peerReview before looking for duplicates
         if (sourceEntity != null) {
@@ -116,9 +122,9 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
 
         // If request comes from the API, perform the validations
         if (isApiRequest) {
-            //Validate it have at least one ext id
-        	ActivityValidator.validatePeerReview(peerReview, sourceEntity);
-        	
+            // Validate it have at least one ext id
+            ActivityValidator.validatePeerReview(peerReview, sourceEntity);
+
             List<PeerReviewEntity> peerReviews = peerReviewDao.getByUser(orcid);
             // If it is the user adding the peer review, allow him to add
             // duplicates
@@ -126,8 +132,8 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
                 if (peerReviews != null) {
                     for (PeerReviewEntity entity : peerReviews) {
                         PeerReview existing = jpaJaxbPeerReviewAdapter.toPeerReview(entity);
-                        ActivityValidator.checkExternalIdentifiers(peerReview.getExternalIdentifiers(),
-                        		existing.getExternalIdentifiers(), existing.getSource(), sourceEntity);
+                        ActivityValidator.checkExternalIdentifiers(peerReview.getExternalIdentifiers(), existing.getExternalIdentifiers(), existing.getSource(),
+                                sourceEntity);
                     }
                 }
             }
@@ -146,24 +152,26 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
         entity.setProfile(profile);
         setIncomingPrivacy(entity, profile);
         peerReviewDao.persist(entity);
+        peerReviewDao.flush();
+        notificationManager.sendAmendEmail(orcid, AmendedSection.PEER_REVIEW, createItem(entity));
         return jpaJaxbPeerReviewAdapter.toPeerReview(entity);
     }
 
     @Override
     public PeerReview updatePeerReview(String orcid, PeerReview peerReview, boolean isApiRequest) {
-        //If request comes from the API perform validations
-        if(isApiRequest) {
+        // If request comes from the API perform validations
+        if (isApiRequest) {
             validateGroupId(peerReview);
             List<PeerReview> existingReviews = this.findPeerReviews(orcid, System.currentTimeMillis());
-            for(PeerReview existing : existingReviews) {
-                //Dont compare the updated peer review with the DB version
-                if(!existing.getPutCode().equals(peerReview.getPutCode())) {
-                	 ActivityValidator.checkExternalIdentifiers(peerReview.getExternalIdentifiers(),
-                			 existing.getExternalIdentifiers(), existing.getSource(), sourceManager.retrieveSourceEntity());
+            for (PeerReview existing : existingReviews) {
+                // Dont compare the updated peer review with the DB version
+                if (!existing.getPutCode().equals(peerReview.getPutCode())) {
+                    ActivityValidator.checkExternalIdentifiers(peerReview.getExternalIdentifiers(), existing.getExternalIdentifiers(), existing.getSource(),
+                            sourceManager.retrieveSourceEntity());
                 }
             }
         }
-        PeerReviewEntity existingEntity = peerReviewDao.getPeerReview(orcid, peerReview.getPutCode());
+        PeerReviewEntity existingEntity = peerReviewDao.getPeerReview(orcid, peerReview.getPutCode());        
         PeerReviewEntity updatedEntity = new PeerReviewEntity();
         Visibility originalVisibility = existingEntity.getVisibility();
         SourceEntity existingSource = existingEntity.getSource();
@@ -175,6 +183,8 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
         OrgEntity updatedOrganization = orgManager.getOrgEntity(peerReview);
         updatedEntity.setOrg(updatedOrganization);
         updatedEntity = peerReviewDao.merge(updatedEntity);
+        peerReviewDao.flush();
+        notificationManager.sendAmendEmail(orcid, AmendedSection.PEER_REVIEW, createItem(updatedEntity));
         return jpaJaxbPeerReviewAdapter.toPeerReview(updatedEntity);
     }
 
@@ -182,12 +192,14 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
     public boolean checkSourceAndDelete(String orcid, Long peerReviewId) {
         PeerReviewEntity pr = peerReviewDao.getPeerReview(orcid, peerReviewId);
         orcidSecurityManager.checkSource(pr.getSource());
-
-        return deletePeerReview(pr, orcid);
+        Item item = createItem(pr);
+        boolean result = deletePeerReview(pr, orcid);
+        notificationManager.sendAmendEmail(orcid, AmendedSection.PEER_REVIEW, item);
+        return result;
     }
 
     @Transactional
-    private boolean deletePeerReview(PeerReviewEntity entity, String orcid) {
+    private boolean deletePeerReview(PeerReviewEntity entity, String orcid) {        
         return peerReviewDao.removePeerReview(orcid, entity.getId());
     }
 
@@ -245,6 +257,15 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
             if (!groupIdRecordManager.exists(peerReview.getGroupId())) {
                 throw new OrcidValidationException(localeManager.resolveMessage("peer_review.group_id.not_valid"));
             }
-        }        
+        }
     }
+
+    private Item createItem(PeerReviewEntity peerReviewEntity) {
+        Item item = new Item();
+        item.setItemName(peerReviewEntity.getSubjectName());
+        item.setItemType(ItemType.PEER_REVIEW);
+        item.setPutCode(String.valueOf(peerReviewEntity.getId()));
+        return item;
+    }
+
 }

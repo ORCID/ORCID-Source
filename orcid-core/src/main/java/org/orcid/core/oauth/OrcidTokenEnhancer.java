@@ -21,10 +21,8 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.orcid.core.constants.OauthTokensConstants;
-import org.orcid.core.manager.LoadOptions;
-import org.orcid.core.manager.OrcidProfileManager;
-import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.core.constants.OrcidOauth2Constants;
+import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.persistence.dao.OrcidOauth2AuthoriziationCodeDetailDao;
 import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
@@ -33,9 +31,8 @@ import org.springframework.security.oauth2.provider.OAuth2Request;
 import org.springframework.security.oauth2.provider.token.TokenEnhancer;
 
 public class OrcidTokenEnhancer implements TokenEnhancer {
-
     @Resource
-    private OrcidProfileManager orcidProfileManager;
+    private ProfileEntityManager profileEntityManager;
 
     @Resource
     private OrcidOauth2AuthoriziationCodeDetailDao orcidOauth2AuthoriziationCodeDetailDao;
@@ -62,21 +59,20 @@ public class OrcidTokenEnhancer implements TokenEnhancer {
         // If the additional info object already contains the name info, leave
         // it
         if (!additionalInfo.containsKey("name")) {
-            if (userOrcid != null) {
-                OrcidProfile orcidProfile = orcidProfileManager.retrieveOrcidProfile(userOrcid, LoadOptions.BIO_ONLY);
-                String name = orcidProfile.getOrcidBio().getPersonalDetails().retrievePublicDisplayName();
+            if (userOrcid != null) {                
+                String name = profileEntityManager.retrivePublicDisplayName(userOrcid);
                 additionalInfo.put("name", name);
             }
         }
 
         // Overwrite token version
-        additionalInfo.put(OauthTokensConstants.TOKEN_VERSION, OauthTokensConstants.PERSISTENT_TOKEN);
+        additionalInfo.put(OrcidOauth2Constants.TOKEN_VERSION, OrcidOauth2Constants.PERSISTENT_TOKEN);
 
         // Overwrite persistent flag
         if (isPersistentTokenEnabled(authentication.getOAuth2Request())) {
-            additionalInfo.put(OauthTokensConstants.PERSISTENT, true);
+            additionalInfo.put(OrcidOauth2Constants.PERSISTENT, true);
         } else {
-            additionalInfo.put(OauthTokensConstants.PERSISTENT, false);
+            additionalInfo.put(OrcidOauth2Constants.PERSISTENT, false);
         }
 
         // Put the updated additional info object in the result
@@ -93,8 +89,8 @@ public class OrcidTokenEnhancer implements TokenEnhancer {
         if (authorizationRequest != null) {
             Map<String, String> params = authorizationRequest.getRequestParameters();
             if (params != null) {
-                if (params.containsKey(OauthTokensConstants.IS_PERSISTENT)) {
-                    String isPersistent = params.get(OauthTokensConstants.IS_PERSISTENT);
+                if (params.containsKey(OrcidOauth2Constants.IS_PERSISTENT)) {
+                    String isPersistent = params.get(OrcidOauth2Constants.IS_PERSISTENT);
                     if (Boolean.valueOf(isPersistent)) {
                         return true;
                     }

@@ -42,7 +42,12 @@ public class StatisticsGeneratorManagerImpl implements StatisticsGeneratorManage
         statistics.put(StatisticsEnum.KEY_IDS_WITH_WORKS.value(), statisticsGeneratorDao.getAccountsWithWorks());
         statistics.put(StatisticsEnum.KEY_NUMBER_OF_WORKS.value(), statisticsGeneratorDao.getNumberOfWorks());
         statistics.put(StatisticsEnum.KEY_UNIQUE_DOIS.value(), statisticsGeneratorDao.getNumberOfUniqueDOIs());
-        statistics.put(StatisticsEnum.KEY_LOCKED_RECORDS.value(), statisticsGeneratorDao.getNumberOfLockedRecords());
+        statistics.put(StatisticsEnum.KEY_NUMBER_OF_EMPLOYMENT.value(), statisticsGeneratorDao.getNumberOfEmployment());
+        statistics.put(StatisticsEnum.KEY_EMPLOYMENT_UNIQUE_ORG.value(), statisticsGeneratorDao.getNumberOfEmploymentUniqueOrg());
+        statistics.put(StatisticsEnum.KEY_NUMBER_OF_EDUCATION.value(), statisticsGeneratorDao.getNumberOfEducation());
+        statistics.put(StatisticsEnum.KEY_EDUCATION_UNIQUE_ORG.value(), statisticsGeneratorDao.getNumberOfEducationUniqueOrg());
+        statistics.put(StatisticsEnum.KEY_NUMBER_OF_FUNDING.value(), statisticsGeneratorDao.getNumberOfFunding());
+        statistics.put(StatisticsEnum.KEY_FUNDING_UNIQUE_ORG.value(), statisticsGeneratorDao.getNumberOfFundingUniqueOrg());
         
         return statistics;        
     }

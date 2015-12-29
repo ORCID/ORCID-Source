@@ -32,5 +32,7 @@
     <property name="visibility.type" value="VARCHAR(20)" dbms="postgresql"/>
     <property name="visibility.type" value="VARCHAR(25)" dbms="hsqldb"/>
 
-    <include file="/db/statistics/install.xml"/>    
+    <include file="/db/statistics/install.xml"/>
+    <include file="/db/statistics/add_statistic_values_key_id_index.xml"/>
+        
 </databaseChangeLog>

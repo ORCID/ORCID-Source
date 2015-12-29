@@ -31,13 +31,12 @@ public class NotificationValidationManagerImpl implements NotificationValidation
     public void validateNotificationPermission(NotificationPermission notification) {
         AuthorizationUrl authorizationUrl = notification.getAuthorizationUrl();
         String uriString = authorizationUrl.getUri();
-        if (StringUtils.isBlank(uriString)) {
-            throw new OrcidValidationException("Authorization uri must not be blank");
-        }
-        try {
-            new URI(uriString);
-        } catch (URISyntaxException e) {
-            throw new OrcidValidationException("Bad authorization uri", e);
+        if (StringUtils.isNotBlank(uriString)) {
+            try {
+                new URI(uriString);
+            } catch (URISyntaxException e) {
+                throw new OrcidValidationException("Bad authorization uri", e);
+            }
         }
     }
 

@@ -139,6 +139,7 @@
     <include file="/db/updates/shibboleth.xml" />
     <include file="/db/updates/set_empty_visibility_fields_to_private.xml" />
     <include file="/db/updates/drop_oauth2_authentication_key_unique_constraint.xml" />
+    
     <include file="/db/updates/move-work-data-to-work-table.xml" />
     <include file="/db/updates/new-index-for-org-disambiguated-table.xml" />
     <include file="/db/updates/external-ids-as-json.xml" />
@@ -150,8 +151,25 @@
     <include file="/db/updates/remove_profile_work_table.xml" />
     <include file="/db/updates/add_index_on_language_codes_in_activities.xml" />
     <include file="/db/updates/fix_language_codes_in_activities.xml" />
+    <include file="/db/updates/user_connection.xml" />
     <include file="/db/updates/rename_activities_tables_and_fields.xml" />
     <include file="/db/updates/add_fields_on_notifications_item_table.xml" />
     <include file="/db/updates/notifications_part3.xml" />
+    <include file="/db/updates/orcid_internal_sso.xml" />
     <include file="/db/updates/add_column_ip_to_profile.xml"/>
+    <include file="/db/updates/alter_column_last_ip.xml" />
+    <include file="/db/updates/add_column_reviewed_to_profile.xml" />
+    <include file="/db/updates/fix-notification-item-sequence.xml" />
+    <include file="/db/updates/add_source_to_researcher_url.xml"/>
+    <include file="/db/updates/change_unique_constraints_on_researcher_url.xml"/>    
+    <include file="/db/updates/drop_legacy_work_external_identifiers_table.xml"/>
+    <include file="/db/updates/delete_notification_work_entries.xml"/>
+    <include file="/db/updates/add_administrative_changes_option.xml"/>
+    <include file="/db/updates/nullify_empty_translated_titles.xml"/>
+    <include file="/db/updates/add_source_to_other_names.xml" />
+    <include file="/db/updates/rename_credit_name_visibility_to_names_visibility.xml" />    
+    <include file="/db/updates/add_read_limited.xml" />
+    <include file="/db/updates/add_parent_id_to_org_disambiguated.xml" />
+    <include file="/db/updates/add_visibility_to_external_identifiers.xml"/>
+    <include file="/db/updates/set_names_visibility_to_public_on_empty_credit_names.xml" />
 </databaseChangeLog>

@@ -21,11 +21,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -35,7 +37,9 @@ import java.util.ResourceBundle;
 import javax.annotation.Resource;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -43,18 +47,22 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.EmailManager;
+import org.orcid.core.manager.InternalSSOManager;
 import org.orcid.core.manager.OrcidProfileManager;
+import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.SourceManager;
-import org.orcid.core.manager.StatisticsManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
+import org.orcid.core.manager.impl.StatisticsCacheManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
+import org.orcid.core.utils.JsonUtils;
 import org.orcid.frontend.web.forms.LoginForm;
 import org.orcid.frontend.web.forms.validate.OrcidUrlValidator;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.SendEmailFrequency;
 import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.persistence.constants.SiteConstants;
 import org.orcid.pojo.ajaxForm.ErrorsInterface;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
@@ -68,7 +76,12 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
+import org.springframework.security.web.csrf.CsrfToken;
+import org.springframework.security.web.csrf.CsrfTokenRepository;
+import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
+import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -122,16 +135,25 @@ public class BaseController {
     protected EmailManager emailManager;
 
     @Resource
-    private StatisticsManager statisticsManager;
+    private StatisticsCacheManager statisticsCacheManager;
 
     @Resource
-    private OrcidUrlManager orcidUrlManager;
+    protected OrcidUrlManager orcidUrlManager;
 
     @Resource
     protected SourceManager sourceManager;
+    
+    @Resource
+    protected OrcidSecurityManager orcidSecurityManager;
 
     @Resource
     private ProfileEntityManager profileEntityManager;
+
+    @Resource
+    private InternalSSOManager internalSSOManager;
+
+    @Resource
+    protected CsrfTokenRepository csrfTokenRepository;
 
     protected static final String EMPTY = "empty";
 
@@ -146,7 +168,7 @@ public class BaseController {
     public void setRecaptchaWebKey(String recaptchaWebKey) {
         this.recaptchaWebKey = recaptchaWebKey;
     }
-    
+
     public LocaleManager getLocaleManager() {
         return localeManager;
     }
@@ -276,6 +298,13 @@ public class BaseController {
 
     @ModelAttribute("startupDate")
     public Date getStartupDate() {
+        // If the cdn config file is missing, we are in development env and we
+        // need to refresh the cache
+        ClassPathResource configFile = new ClassPathResource(this.cdnConfigFile);
+        if (!configFile.exists()) {
+            return new Date();
+        }
+
         return startupDate;
     }
 
@@ -293,8 +322,50 @@ public class BaseController {
         return getEffectiveUserOrcid();
     }
 
-    protected void logoutCurrentUser() {
-        SecurityContextHolder.getContext().getAuthentication().setAuthenticated(false);
+    protected void logoutCurrentUser(HttpServletRequest request, HttpServletResponse response) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (internalSSOManager.enableCookie()) {
+            Cookie[] cookies = request.getCookies();
+            // Delete cookie and token associated with that cookie
+            if (cookies != null) {
+                for (Cookie cookie : cookies) {
+                    if (InternalSSOManager.COOKIE_NAME.equals(cookie.getName())) {
+                        try {
+                            // If it is a valid cookie, extract the orcid value
+                            // and
+                            // remove the token and the cookie
+                            @SuppressWarnings("unchecked")
+                            HashMap<String, String> cookieValues = JsonUtils.readObjectFromJsonString(cookie.getValue(), HashMap.class);
+                            if (cookieValues.containsKey(InternalSSOManager.COOKIE_KEY_ORCID) && !PojoUtil.isEmpty(cookieValues.get(InternalSSOManager.COOKIE_KEY_ORCID))) {
+                                internalSSOManager.deleteToken(cookieValues.get(InternalSSOManager.COOKIE_KEY_ORCID), request, response);
+                            } else {
+                                // If it is not valid, just remove the cookie
+                                cookie.setValue(StringUtils.EMPTY);
+                                cookie.setMaxAge(0);
+                                response.addCookie(cookie);
+                            }
+                        } catch (RuntimeException re) {
+                            // If any exception happens, but, the cookie exists,
+                            // remove the cookie
+                            cookie.setValue(StringUtils.EMPTY);
+                            cookie.setMaxAge(0);
+                            response.addCookie(cookie);
+                        }
+                        break;
+                    }
+                }
+            }
+            // Delete token if exists
+            if (authentication != null && !PojoUtil.isEmpty(authentication.getName())) {
+                internalSSOManager.deleteToken(authentication.getName());
+            }
+        }
+        if (authentication != null && authentication.isAuthenticated()) {
+            new SecurityContextLogoutHandler().logout(request, response, authentication);
+        }
+        CsrfToken token = csrfTokenRepository.generateToken(request);
+        csrfTokenRepository.saveToken(token, request, response);
+        request.setAttribute("_csrf", token);
     }
 
     protected boolean isEmailOkForCurrentUser(String decryptedEmail) {
@@ -338,6 +409,11 @@ public class BaseController {
     public boolean isDelegatedByAdmin() {
         return sourceManager.isDelegatedByAnAdmin();
     }
+    
+    @ModelAttribute("isPasswordConfirmationRequired")
+    public boolean isPasswordConfirmationRequired(){
+        return orcidSecurityManager.isPasswordConfirmationRequired();
+    }
 
     @ModelAttribute("request")
     public HttpServletRequest getRequest(HttpServletRequest request) {
@@ -370,7 +446,7 @@ public class BaseController {
     protected void validateEmailAddress(String email, HttpServletRequest request, BindingResult bindingResult) {
         validateEmailAddress(email, true, false, request, bindingResult);
     }
-    
+
     protected void validateEmailAddressOnRegister(String email, HttpServletRequest request, BindingResult bindingResult) {
         validateEmailAddress(email, true, true, request, bindingResult);
     }
@@ -386,10 +462,10 @@ public class BaseController {
                 OrcidProfile orcidProfile = orcidProfileManager.retrieveOrcidProfileByEmail(email);
                 if (orcidProfile.getOrcidHistory().isClaimed()) {
                     String[] codes = null;
-                    if(isRegisterRequest) {
-                        codes = new String[]{ "orcid.frontend.verify.duplicate_email" };
+                    if (isRegisterRequest) {
+                        codes = new String[] { "orcid.frontend.verify.duplicate_email" };
                     } else {
-                        codes = new String[]{ "orcid.frontend.verify.claimed_email" };
+                        codes = new String[] { "orcid.frontend.verify.claimed_email" };
                     }
                     String[] args = { email };
                     bindingResult.addError(new FieldError("email", "email", email, false, codes, args, "Email already exists"));
@@ -479,7 +555,7 @@ public class BaseController {
 
     @ModelAttribute("liveIds")
     public String getLiveIds() {
-        return statisticsManager.getLiveIds(localeManager.getLocale());
+        return statisticsCacheManager.retrieveLiveIds(localeManager.getLocale());
     }
 
     @ModelAttribute("baseUri")
@@ -579,8 +655,10 @@ public class BaseController {
     }
 
     protected static void copyErrors(ErrorsInterface from, ErrorsInterface into) {
-        for (String s : from.getErrors()) {
-            into.getErrors().add(s);
+        if(from != null && from.getErrors() != null) {
+            for (String s : from.getErrors()) {
+                into.getErrors().add(s);
+            }
         }
     }
 
@@ -606,6 +684,10 @@ public class BaseController {
     }
 
     protected void validateUrl(Text url) {
+        validateUrl(url, SiteConstants.URL_MAX_LENGTH);
+    }
+
+    protected void validateUrl(Text url, int maxLength) {
         url.setErrors(new ArrayList<String>());
         if (!PojoUtil.isEmpty(url.getValue())) {
             // trim if required
@@ -613,8 +695,7 @@ public class BaseController {
                 url.setValue(url.getValue().trim());
 
             // check length
-            if (url.getValue().length() > 350)
-                setError(url, "manualWork.length_less_350");
+            validateNoLongerThan(maxLength, url);
 
             // add protocall if missing
             if (!urlValidator.isValid(url.getValue())) {
@@ -624,8 +705,17 @@ public class BaseController {
                     url.setValue("http://" + url.getValue());
                 else
                     setError(url, "common.invalid_url");
-
             }
+        }
+    }
+
+    protected void validateNoLongerThan(int maxLength, Text text) {
+        if (PojoUtil.isEmpty(text)) {
+            return;
+        }
+
+        if (text.getValue().length() > maxLength) {
+            setError(text, "manualWork.length_less_X", maxLength);
         }
     }
 
@@ -641,7 +731,7 @@ public class BaseController {
     protected String createSearchBaseUrl() {
         String baseUrlWithCorrectedProtocol = orcidUrlManager.getBaseUrl().replaceAll("^https?:", "");
         String baseUrlWithCorrectedContext = baseUrlWithCorrectedProtocol.replaceAll("/orcid-web$", "/orcid-pub-web");
-        return baseUrlWithCorrectedContext + "/v1.1/search/orcid-bio/";
+        return baseUrlWithCorrectedContext + "/v1.2/search/orcid-bio/";
     }
 
     @ModelAttribute("locked")
@@ -651,4 +741,32 @@ public class BaseController {
             return false;
         return profile.isLocked();
     }
+
+    protected String calculateRedirectUrl(HttpServletRequest request, HttpServletResponse response) {
+        SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
+        if (savedRequest != null) {
+            String savedUrl = savedRequest.getRedirectUrl();
+            if (savedUrl != null) {
+                try {
+                    String path = new URL(savedUrl).getPath();
+                    if (path != null && path.contains("/oauth/")) {
+                        // This redirect url is OK
+                        savedUrl = correctContext(request, savedUrl);
+                        return savedUrl;
+                    }
+                } catch (MalformedURLException e) {
+                    LOGGER.debug("Malformed saved redirect url: {}", savedUrl);
+                }
+            }
+        }
+        return getBaseUri() + "/my-orcid";
+    }
+
+    private String correctContext(HttpServletRequest request, String savedUrl) {
+        String contextPath =  request.getContextPath();
+        if (orcidUrlManager.getBasePath().equals("/") && !contextPath.equals("/"))
+            savedUrl = savedUrl.replaceFirst(contextPath.replace("/", "\\/"), "");
+        return savedUrl;
+    }
+    
 }

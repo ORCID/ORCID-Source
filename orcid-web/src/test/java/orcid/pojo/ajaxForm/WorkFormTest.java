@@ -48,6 +48,7 @@ import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifiers;
 import org.orcid.jaxb.model.record_rc1.WorkTitle;
 import org.orcid.jaxb.model.record_rc1.WorkType;
+import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.WorkForm;
 import org.orcid.utils.DateUtils;
 
@@ -66,6 +67,75 @@ public class WorkFormTest extends XMLTestCase {
         Work work = getWork();
         WorkForm workForm =  WorkForm.valueOf(work);
         MemoryEfficientByteArrayOutputStream.serialize(workForm);
+    }
+    
+    @Test
+    public void testEmptyTranslatedTitleDontGetIntoTheWork() {
+        WorkForm form = new WorkForm();
+        form.setTitle(Text.valueOf("The title"));
+        org.orcid.pojo.ajaxForm.TranslatedTitle translatedTitle = new org.orcid.pojo.ajaxForm.TranslatedTitle();
+        
+        //Test with empty values
+        translatedTitle.setContent(" ");
+        translatedTitle.setLanguageCode(" ");
+        form.setTranslatedTitle(translatedTitle);
+        
+        Work work = form.toWork();
+        assertNotNull(work);
+        assertNotNull(work.getWorkTitle());
+        assertNotNull(work.getWorkTitle().getTitle());
+        assertEquals("The title", work.getWorkTitle().getTitle().getContent());
+        assertNull(work.getWorkTitle().getTranslatedTitle());
+        
+        //Test with empty content
+        translatedTitle.setContent(" ");        
+        translatedTitle.setLanguageCode("en");
+        form.setTranslatedTitle(translatedTitle);
+        
+        work = form.toWork();
+        assertNotNull(work);
+        assertNotNull(work.getWorkTitle());
+        assertNotNull(work.getWorkTitle().getTitle());
+        assertEquals("The title", work.getWorkTitle().getTitle().getContent());
+        assertNull(work.getWorkTitle().getTranslatedTitle());
+        
+        //Test with empty strings
+        translatedTitle.setContent("");
+        translatedTitle.setLanguageCode("");
+        form.setTranslatedTitle(translatedTitle);
+        
+        work = form.toWork();
+        assertNotNull(work);
+        assertNotNull(work.getWorkTitle());
+        assertNotNull(work.getWorkTitle().getTitle());
+        assertEquals("The title", work.getWorkTitle().getTitle().getContent());
+        assertNull(work.getWorkTitle().getTranslatedTitle());
+        
+        //Test with null values
+        translatedTitle.setContent(null);
+        translatedTitle.setLanguageCode(null);
+        form.setTranslatedTitle(translatedTitle);
+        
+        work = form.toWork();
+        assertNotNull(work);
+        assertNotNull(work.getWorkTitle());
+        assertNotNull(work.getWorkTitle().getTitle());
+        assertEquals("The title", work.getWorkTitle().getTitle().getContent());
+        assertNull(work.getWorkTitle().getTranslatedTitle());
+        
+        //Test with a both values
+        translatedTitle.setContent("Translated title");
+        translatedTitle.setLanguageCode("en");
+        form.setTranslatedTitle(translatedTitle);
+        
+        work = form.toWork();
+        assertNotNull(work);
+        assertNotNull(work.getWorkTitle());
+        assertNotNull(work.getWorkTitle().getTitle());
+        assertEquals("The title", work.getWorkTitle().getTitle().getContent());
+        assertNotNull(work.getWorkTitle().getTranslatedTitle());
+        assertEquals("Translated title", work.getWorkTitle().getTranslatedTitle().getContent());
+        assertEquals("en", work.getWorkTitle().getTranslatedTitle().getLanguageCode());
     }
 
     public static Work getWork() {

@@ -21,8 +21,15 @@
     <title>${title!"ORCID"}</title>
     <meta name="description" content="">
     <meta name="author" content="ORCID">
+    <meta name="_csrf" content="${(_csrf.token)!}"/>
+    <meta name="_csrf_header" content="${(_csrf.headerName)!}"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+     <#if (noIndex)??>
+        <meta name="googlebot" content="noindex">
+        <meta name="robots" content="noindex">
+        <meta name="BaiduSpider" content="noindex">
+     </#if>
     <!-- hack in json3 to allow angular js to work in IE7 -->
     <!-- we also need this JSON parser for orcidVar -->
     <!--[if IE 7]>
@@ -33,6 +40,9 @@
 			}
 		</script>
     <![endif]-->
+    
+    <#include "/layout/google_analytics.ftl">
+    
     <script type="text/javascript">
         var orcidVar = {};
         orcidVar.recaptchaKey = '${recaptchaWebKey}';
@@ -59,6 +69,8 @@
       orcidVar.realOrcidId = '${realUserOrcid!}';
       orcidVar.jsMessages = JSON.parse("${jsMessagesJson}");
       orcidVar.searchBaseUrl = "${searchBaseUrl}";
+      orcidVar.isPasswordConfirmationRequired = ${isPasswordConfirmationRequired?string};
+      orcidVar.version = "${ver}";
     </script>    
     
     <link rel="stylesheet" href="${staticLoc}/css/fonts.css?v=${ver}"/>
@@ -72,6 +84,8 @@
         <link rel="stylesheet" href="${staticCdn}/twitter-bootstrap/3.1.0/css/bootstrap-ie7.css?v=${ver}"/>	                
     <![endif]-->
     <link rel="stylesheet" href="${staticCdn}/css/orcid.new.css?v=${ver}"/>
+    <link rel="stylesheet" type="text/css" href="${staticCdn}/css/idpselect.css" />
+
     <!--[if lt IE 8]>
     	<link rel="stylesheet" href="${staticCdn}/css/orcid-ie7.css?v=${ver}"/>
     <![endif]-->
@@ -102,8 +116,5 @@
 
     <link rel="shortcut icon" href="${staticCdn}/img/favicon.ico"/>
     <link rel="apple-touch-icon" href="${staticCdn}/img/apple-touch-icon.png" />	
-
-    <#include "/layout/google_analytics.ftl">
-
-    
+    <link rel="stylesheet" href="${staticCdn}/css/orcid-print.css?v=${ver}"/>
 </head>

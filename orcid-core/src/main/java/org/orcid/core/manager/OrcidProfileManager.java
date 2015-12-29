@@ -26,6 +26,7 @@ import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
 import org.orcid.jaxb.model.message.Preferences;
 import org.orcid.jaxb.model.message.ScopePathType;
+import org.orcid.jaxb.model.record_rc2.PersonalDetails;
 
 /**
  * @author Will Simpson
@@ -268,7 +269,7 @@ public interface OrcidProfileManager extends OrcidProfileManagerReadOnly {
 
     OrcidWorks dedupeWorks(OrcidWorks orcidWorks);
 
-    public void updateNames(OrcidProfile orcidProfile);
+    public void updateNames(String orcid, PersonalDetails personalDetails);
 
     Date updateLastModifiedDate(String orcid);
 
@@ -280,6 +281,5 @@ public interface OrcidProfileManager extends OrcidProfileManagerReadOnly {
     
     public void checkWorkExternalIdentifiersAreNotDuplicated(List<OrcidWork> newOrcidWorksList, List<OrcidWork> existingWorkList);
     
-    public void setCompareWorksUsingScopusWay(boolean compareWorksUsingScopusWay);
-
+    public void setCompareWorksUsingScopusWay(boolean compareWorksUsingScopusWay);    
 }

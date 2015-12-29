@@ -44,6 +44,8 @@
     <bean id="swaggerSerializers" class="io.swagger.jaxrs.listing.SwaggerSerializers" scope="singleton"/>    
     <bean id="apiListingResource" class="org.orcid.api.swagger.PublicSwaggerResource"/>
          
+    <bean id="acceptFilter" class="org.orcid.core.web.filters.AcceptFilter" />
+	
 	<bean id="sanitizeAuthenticationFilter" class="org.orcid.core.web.filters.SanitizeAuthenticationFilter" />
 	
 	<bean id="corsFilter" class="org.orcid.core.web.filters.CorsFilter" />
@@ -107,6 +109,10 @@
     <bean id="publicV2ApiServiceImplV2_0_rc1" class="org.orcid.api.t1.server.PublicV2ApiServiceImplV2_0_rc1">
         <property name="serviceDelegator" ref="publicV2ApiServiceDelegator"/>
     </bean>
+    
+    <bean id="publicV2ApiServiceImplV2_0_rc2" class="org.orcid.api.t1.server.PublicV2ApiServiceImplV2_0_rc2">
+        <property name="serviceDelegator" ref="publicV2ApiServiceDelegator"/>
+    </bean>    
     
     <!--  Statistics API -->
     <bean id="statsApiServiceDelegator" class="org.orcid.api.t1.stats.delegator.impl.StatsApiServiceDelegatorImpl" />

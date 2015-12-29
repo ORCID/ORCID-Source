@@ -27,7 +27,9 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
@@ -43,6 +45,7 @@ import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.orcid.api.common.WebDriverHelper;
+import org.orcid.integration.api.helper.APIRequestType;
 import org.orcid.integration.api.helper.OauthHelper;
 import org.orcid.integration.api.memberV2.MemberV2ApiClientImpl;
 import org.orcid.integration.api.pub.PublicV2ApiClientImpl;
@@ -115,10 +118,10 @@ public class PublicV2Test {
     @Resource(name = "t2OAuthClient")
     private T2OAuthAPIService<ClientResponse> t2OAuthClient;
 
-    @Resource
+    @Resource(name = "memberV2ApiClient_rc1")
     private MemberV2ApiClientImpl memberV2ApiClient;
 
-    @Resource
+    @Resource(name = "publicV2ApiClient_rc1")
     private PublicV2ApiClientImpl publicV2ApiClient;
 
     private WebDriver webDriver;
@@ -134,6 +137,8 @@ public class PublicV2Test {
 
     static List<GroupIdRecord> groupRecords = null;
     
+    static Map<String, String> publicAccessTokens = new HashMap<String, String>();
+    
     @Before
     public void before() throws JSONException, InterruptedException, URISyntaxException {
         cleanActivities();
@@ -146,8 +151,14 @@ public class PublicV2Test {
     }
 
     @Test
+    public void testCantGetTokenForInternalScopes() {
+        
+    }
+    
+    
+    @Test
     public void testPublicClientCanGetAccessToken() throws InterruptedException, JSONException {
-        String publicAccessToken = oauthHelper.getClientCredentialsAccessToken(publicClientId, publicClientSecret, ScopePathType.READ_PUBLIC, true);
+        String publicAccessToken = oauthHelper.getClientCredentialsAccessToken(publicClientId, publicClientSecret, ScopePathType.READ_PUBLIC, APIRequestType.PUBLIC);
         assertFalse(PojoUtil.isEmpty(publicAccessToken));
     }
     
@@ -170,7 +181,7 @@ public class PublicV2Test {
         
     @Test
     public void testViewWorkAndWorkSummaryUsingToken() throws JSONException, InterruptedException, URISyntaxException {
-        checkWorks(getReadPublicAccessToken());
+        checkWorks(getReadPublicAccessToken(client1ClientId, client1ClientSecret));
     }
     
     private void checkWorks(String readPublicToken) throws JSONException, InterruptedException, URISyntaxException {
@@ -193,7 +204,7 @@ public class PublicV2Test {
         assertNotNull(getWorkResponse);
         Work work = getWorkResponse.getEntity(Work.class);
         assertNotNull(work);
-        assertEquals("common:title", work.getWorkTitle().getTitle().getContent());
+        assertEquals("Current treatment of left main coronary artery disease", work.getWorkTitle().getTitle().getContent());
 
         ClientResponse getWorkSummaryResponse = null;
         
@@ -207,7 +218,7 @@ public class PublicV2Test {
         checkResponse(getWorkSummaryResponse);
         WorkSummary summary = getWorkSummaryResponse.getEntity(WorkSummary.class);
         assertNotNull(summary);
-        assertEquals("common:title", summary.getTitle().getTitle().getContent());
+        assertEquals("Current treatment of left main coronary artery disease", summary.getTitle().getTitle().getContent());
     }
 
     @Test
@@ -217,7 +228,7 @@ public class PublicV2Test {
     
     @Test
     public void testViewFundingAndFundingSummaryUsingToken() throws JSONException, InterruptedException, URISyntaxException {
-        checkFunding(getReadPublicAccessToken());
+        checkFunding(getReadPublicAccessToken(client1ClientId, client1ClientSecret));
     }
     
     private void checkFunding(String readPublicToken) throws JSONException, InterruptedException, URISyntaxException {
@@ -268,7 +279,7 @@ public class PublicV2Test {
     
     @Test
     public void testViewEmploymentAndEmploymentSummaryUsingToken() throws JSONException, InterruptedException, URISyntaxException {
-        checkEmployment(getReadPublicAccessToken());
+        checkEmployment(getReadPublicAccessToken(client1ClientId, client1ClientSecret));
     }
         
     public void checkEmployment(String readPublicToken) throws JSONException, InterruptedException, URISyntaxException {
@@ -319,7 +330,7 @@ public class PublicV2Test {
     
     @Test
     public void testViewEducationAndEducationSummaryUsingToken() throws JSONException, InterruptedException, URISyntaxException {
-        checkEducation(getReadPublicAccessToken());
+        checkEducation(getReadPublicAccessToken(client1ClientId, client1ClientSecret));
     }
         
     public void checkEducation(String readPublicToken) throws JSONException, InterruptedException, URISyntaxException {
@@ -366,7 +377,7 @@ public class PublicV2Test {
     
     @Test
     public void testViewPeerReviewAndPeerReviewSummaryUsingToken() throws JSONException, InterruptedException, URISyntaxException {
-        checkPeerReview(getReadPublicAccessToken());
+        checkPeerReview(getReadPublicAccessToken(client1ClientId, client1ClientSecret));
     }    
     
     public void checkPeerReview(String readPublicToken) throws JSONException, InterruptedException, URISyntaxException {
@@ -414,7 +425,7 @@ public class PublicV2Test {
     
     @Test
     public void testViewPublicActivitiesUsingToken() throws JSONException, InterruptedException, URISyntaxException {
-        checkPublicActivities(getReadPublicAccessToken());
+        checkPublicActivities(getReadPublicAccessToken(client1ClientId, client1ClientSecret));
     }
     
     public void checkPublicActivities(String readPublicToken) throws JSONException, InterruptedException, URISyntaxException {
@@ -510,7 +521,7 @@ public class PublicV2Test {
     @Test
     public void testViewPublicActivitiesUsingInvalidToken() throws JSONException, InterruptedException, URISyntaxException {
         createActivities();                
-        String wrongToken = getReadPublicAccessToken() + "!";
+        String wrongToken = getReadPublicAccessToken(client1ClientId, client1ClientSecret) + "!";
         ClientResponse activitiesResponse = publicV2ApiClient.viewActivities(user1OrcidId, wrongToken);
         assertNotNull(activitiesResponse);
         assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), activitiesResponse.getStatus());
@@ -526,7 +537,7 @@ public class PublicV2Test {
     
     @Test
     public void testViewLimitedWorkAndWorkSummaryUsingToken() throws JSONException, InterruptedException, URISyntaxException {
-        checkLimitedWork(getReadPublicAccessToken());
+        checkLimitedWork(getReadPublicAccessToken(client2ClientId, client2ClientSecret));
     }
          
     public void checkLimitedWork(String readPublicToken) throws JSONException, InterruptedException, URISyntaxException {
@@ -577,7 +588,7 @@ public class PublicV2Test {
     
     @Test
     public void testViewLimitedFundingAndFundingSummaryUsingToken() throws JSONException, InterruptedException, URISyntaxException {
-        checkLimitedFunding(getReadPublicAccessToken());
+        checkLimitedFunding(getReadPublicAccessToken(client2ClientId, client2ClientSecret));
     }
     
     public void checkLimitedFunding(String readPublicToken) throws JSONException, InterruptedException, URISyntaxException {
@@ -628,7 +639,7 @@ public class PublicV2Test {
     
     @Test
     public void testViewLimitedEmploymentAndEmploymentSummaryUsingToken() throws JSONException, InterruptedException, URISyntaxException {
-        checkLimitedEmployment(getReadPublicAccessToken());
+        checkLimitedEmployment(getReadPublicAccessToken(client2ClientId, client2ClientSecret));
     }
     
     public void checkLimitedEmployment(String readPublicToken) throws JSONException, InterruptedException, URISyntaxException {
@@ -667,7 +678,7 @@ public class PublicV2Test {
     
     @Test
     public void testViewLimitedEducationAndEducationSummaryUsingToken() throws JSONException, InterruptedException, URISyntaxException {
-        checkLimitedEducation(getReadPublicAccessToken());
+        checkLimitedEducation(getReadPublicAccessToken(client2ClientId, client2ClientSecret));
     }
     
     public void checkLimitedEducation(String readPublicToken) throws JSONException, InterruptedException, URISyntaxException {
@@ -715,7 +726,7 @@ public class PublicV2Test {
     
     @Test
     public void testViewLimitedPeerReviewAndPeerReviewSummaryUsingToken() throws JSONException, InterruptedException, URISyntaxException {
-        checkLimitedPeerReview(getReadPublicAccessToken());
+        checkLimitedPeerReview(getReadPublicAccessToken(client2ClientId, client2ClientSecret));
     }
     
     public void checkLimitedPeerReview(String readPublicToken) throws JSONException, InterruptedException, URISyntaxException {
@@ -762,7 +773,7 @@ public class PublicV2Test {
         assertNotNull(response);
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
         
-        response = publicV2ApiClient.viewActivities("0000-0000-0000-0000", getReadPublicAccessToken());     
+        response = publicV2ApiClient.viewActivities("0000-0000-0000-0000", getReadPublicAccessToken(client2ClientId, client2ClientSecret));     
         assertNotNull(response);
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());        
     }
@@ -964,11 +975,12 @@ public class PublicV2Test {
         }
     }
     
-    private String getReadPublicAccessToken() throws InterruptedException, JSONException {
-        if(publicAccessToken == null) {
-            publicAccessToken = oauthHelper.getClientCredentialsAccessToken(client1ClientId, client1ClientSecret, ScopePathType.READ_PUBLIC);
+    private String getReadPublicAccessToken(String clientId, String clientSecret) throws InterruptedException, JSONException {
+        if(!publicAccessTokens.containsKey(clientId)) {
+            String token = oauthHelper.getClientCredentialsAccessToken(clientId, clientSecret, ScopePathType.READ_PUBLIC);
+            publicAccessTokens.put(clientId, token);
         }
-        return publicAccessToken;                    
+        return publicAccessTokens.get(clientId);
     }
     
     public List<GroupIdRecord> createGroupIds() throws JSONException {

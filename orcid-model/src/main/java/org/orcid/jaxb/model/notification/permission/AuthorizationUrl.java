@@ -24,6 +24,7 @@
 package org.orcid.jaxb.model.notification.permission;
 
 import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -57,7 +58,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = { "uri", "path", "host" })
-@XmlRootElement(name = "authorization-url", namespace="http://www.orcid.org/ns/notification")
+@XmlRootElement(name = "authorization-url", namespace = "http://www.orcid.org/ns/notification")
 public class AuthorizationUrl implements Serializable {
 
     private final static long serialVersionUID = 1L;
@@ -68,6 +69,13 @@ public class AuthorizationUrl implements Serializable {
     protected String path;
     @XmlElement(required = true)
     protected String host;
+
+    public AuthorizationUrl() {
+    }
+
+    public AuthorizationUrl(String uri) {
+        this.uri = uri;
+    }
 
     /**
      * Gets the value of the uri property.

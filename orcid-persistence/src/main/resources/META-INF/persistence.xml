@@ -38,6 +38,7 @@
         <class>org.orcid.persistence.jpa.entities.NotificationAmendedEntity</class>
         <class>org.orcid.persistence.jpa.entities.NotificationEntity</class>
         <class>org.orcid.persistence.jpa.entities.NotificationCustomEntity</class>
+        <class>org.orcid.persistence.jpa.entities.NotificationWorkEntity</class>
         <class>org.orcid.persistence.jpa.entities.OtherNameEntity</class>
         <class>org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity</class>        
         <class>org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity</class>
@@ -57,10 +58,11 @@
         <class>org.orcid.persistence.jpa.entities.ShibbolethAccountEntity</class>
         <class>org.orcid.persistence.jpa.entities.SubjectEntity</class>
         <class>org.orcid.persistence.jpa.entities.WebhookEntity</class>
-        <class>org.orcid.persistence.jpa.entities.WorkEntity</class>
-        <class>org.orcid.persistence.jpa.entities.WorkExternalIdentifierEntity</class>
+        <class>org.orcid.persistence.jpa.entities.WorkEntity</class>        
         <class>org.orcid.persistence.jpa.entities.GroupIdRecordEntity</class>
-        <class>org.orcid.persistence.jpa.entities</class>
+        <class>org.orcid.persistence.jpa.entities.UserconnectionEntity</class>
+		<class>org.orcid.persistence.jpa.entities.UserconnectionPK</class>
+        <class>org.orcid.persistence.jpa.entities.InternalSSOEntity</class>        
 
         <!-- OAuth entities -->
         <class>org.orcid.persistence.jpa.entities.ClientDetailsEntity</class>

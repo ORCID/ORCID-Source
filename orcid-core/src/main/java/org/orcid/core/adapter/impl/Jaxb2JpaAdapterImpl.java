@@ -99,7 +99,7 @@ import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkContributors;
 import org.orcid.jaxb.model.message.WorkTitle;
 import org.orcid.jaxb.model.record_rc1.Relationship;
-import org.orcid.jaxb.model.record_rc2.WorkExternalIdentifierType;
+import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.OrgAffiliationRelationDao;
@@ -180,6 +180,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         setInternalDetails(profileEntity, profile.getOrcidInternal());
         setPreferencesDetails(profileEntity, profile.getOrcidPreferences());
         profileEntity.setUserLastIp(profile.getUserLastIp());
+        profileEntity.setReviewed(profile.isReviewed());
 
         if(profileEntity.getUsedRecaptchaOnRegistration() == null) {
             profileEntity.setUsedRecaptchaOnRegistration(false);
@@ -464,7 +465,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
 
     private void setCreditNameDetails(ProfileEntity profileEntity, CreditName creditName) {
         if (creditName != null) {
-            profileEntity.setCreditNameVisibility(creditName.getVisibility());
+            profileEntity.setNamesVisibility(creditName.getVisibility());
             profileEntity.setCreditName(creditName.getContent());
         }
     }
@@ -810,6 +811,8 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                 if (preferences.getDeveloperToolsEnabled() != null) {
                     profileEntity.setEnableDeveloperTools(preferences.getDeveloperToolsEnabled().isValue());
                 }
+                
+                profileEntity.setEnableNotifications(preferences.getNotificationsEnabled() == null ? DefaultPreferences.NOTIFICATIONS_ENABLED : preferences.getNotificationsEnabled());
             }
             if (orcidInternal.getSalesforceId() != null) {
                 profileEntity.setSalesforeId(orcidInternal.getSalesforceId().getContent());

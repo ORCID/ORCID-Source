@@ -28,9 +28,12 @@ public class OauthAuthorizeForm implements OauthForm, ErrorsInterface, Serializa
     Text userName;
     Text password;
     Text clientId;
+    Text clientName;
+    Text memberName;
     Text redirectUri;
     Text scope;
     Text responseType;
+    Text stateParam;
     boolean approved = false;
     boolean persistentTokenEnabled = false;
 
@@ -66,6 +69,22 @@ public class OauthAuthorizeForm implements OauthForm, ErrorsInterface, Serializa
 
     public void setClientId(Text clientId) {
         this.clientId = clientId;
+    }
+    
+    public Text getClientName() {
+        return clientName;
+    }
+
+    public void setClientName(Text clientName) {
+        this.clientName = clientName;
+    }
+
+    public Text getMemberName() {
+        return memberName;
+    }
+
+    public void setMemberName(Text memberName) {
+        this.memberName = memberName;
     }
 
     public Text getRedirectUri() {
@@ -107,4 +126,12 @@ public class OauthAuthorizeForm implements OauthForm, ErrorsInterface, Serializa
     public void setPersistentTokenEnabled(boolean persistentTokenEnabled) {
         this.persistentTokenEnabled = persistentTokenEnabled;
     }
+
+    public Text getStateParam() {
+        return stateParam;
+    }
+
+    public void setStateParam(Text stateParam) {
+        this.stateParam = stateParam;
+    }        
 }

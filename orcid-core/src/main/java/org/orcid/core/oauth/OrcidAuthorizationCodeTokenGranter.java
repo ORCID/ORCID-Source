@@ -23,7 +23,10 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import org.orcid.core.manager.ClientDetailsEntityCacheManager;
+import org.orcid.core.oauth.service.OrcidOAuth2RequestValidator;
 import org.orcid.persistence.dao.OrcidOauth2AuthoriziationCodeDetailDao;
+import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.OrcidOauth2AuthoriziationCodeDetail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,6 +61,12 @@ public class OrcidAuthorizationCodeTokenGranter extends AbstractTokenGranter {
     @Resource(name = "orcidOauth2AuthoriziationCodeDetailDao")
     private OrcidOauth2AuthoriziationCodeDetailDao orcidOauth2AuthoriziationCodeDetailDao;
     
+    @Resource
+    private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;    
+    
+    @Resource
+    private OrcidOAuth2RequestValidator orcidOAuth2RequestValidator;
+    
     public OrcidAuthorizationCodeTokenGranter(AuthorizationServerTokenServices tokenServices, AuthorizationCodeServices authorizationCodeServices,
             ClientDetailsService clientDetailsService, OAuth2RequestFactory oAuth2RequestFactory) {
         super(tokenServices, clientDetailsService, oAuth2RequestFactory, GRANT_TYPE);
@@ -78,6 +87,10 @@ public class OrcidAuthorizationCodeTokenGranter extends AbstractTokenGranter {
             throw new OAuth2Exception("An authorization code must be supplied.");
         }
 
+        //Validate the client is active
+        ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(tokenRequest.getClientId());                        
+        orcidOAuth2RequestValidator.validateClientIsEnabled(clientDetails);
+        
         //Validate scopes
         OrcidOauth2AuthoriziationCodeDetail codeDetails = orcidOauth2AuthoriziationCodeDetailDao.find(authorizationCode);        
         if(codeDetails == null) {
@@ -138,6 +151,5 @@ public class OrcidAuthorizationCodeTokenGranter extends AbstractTokenGranter {
         Authentication userAuth = storedAuth.getUserAuthentication();
         return new OAuth2Authentication(pendingAuthorizationRequest, userAuth);
 
-    }
-
+    }        
 }

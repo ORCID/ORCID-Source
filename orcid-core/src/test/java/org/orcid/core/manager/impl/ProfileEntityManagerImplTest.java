@@ -86,5 +86,13 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
         assertNotNull(profileEntityToDeprecate.getPrimaryRecord());
         assertEquals("4444-4444-4444-4442", profileEntityToDeprecate.getPrimaryRecord().getId());
     }
-
+    
+    @Test    
+    public void testReviewProfile() throws Exception {
+    	boolean result = profileEntityManager.reviewProfile("4444-4444-4444-4441");
+        assertTrue(result);
+    	
+    	result = profileEntityManager.unreviewProfile("4444-4444-4444-4442");
+    	assertTrue(result);
+    }
 }

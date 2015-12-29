@@ -31,6 +31,7 @@ the software.
         <jersey.version>1.18.3</jersey.version>
         <solr.version>4.10.4</solr.version>
         <aspectj.version>1.8.4</aspectj.version>
+        <jena.version>3.0.0</jena.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <servlet.port>9437</servlet.port>
@@ -51,6 +52,7 @@ the software.
         <module>orcid-test</module>
         <module>orcid-solr-web</module>
         <module>orcid-integration-test</module>
+		<module>orcid-internal-api</module>
     </modules>
 
 
@@ -114,8 +116,8 @@ the software.
                 <artifactId>maven-compiler-plugin</artifactId>
                 <inherited>true</inherited>
                 <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
+                    <source>1.8</source>
+                    <target>1.8</target>
                 </configuration>
             </plugin>
             <plugin>
@@ -240,6 +242,7 @@ the software.
                             <exclude>**/src/test/resources/org/orcid/frontend/web/forms/**</exclude>
                             <exclude>**/src/main/webapp/static/css/glyphicons.css</exclude>
                             <exclude>**/src/main/webapp/static/css/idpselect.css</exclude>
+                            <exclude>**/src/main/webapp/static/css/idpselect.old.css</exclude>
                             <exclude>**/src/test/javascript/node_modules/**</exclude>
                             <exclude>**/src/main/webapp/static/javascript/iframeResizer**</exclude>
                             <exclude>**/*.xsd</exclude>
@@ -362,7 +365,17 @@ the software.
 						</execution>
 					</executions>
 			    </plugin>
-            </plugins>
+			    <plugin>
+					<groupId>org.apache.jena</groupId>
+					<artifactId>jena-maven-tools</artifactId>
+					<version>${jena.version}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>build-helper-maven-plugin</artifactId>
+					<version>1.10</version>		
+	            </plugin>
+	        </plugins>
         </pluginManagement>
     </build>
 
@@ -679,11 +692,6 @@ the software.
                     </exclusion>
                 </exclusions>
             </dependency>
-            <dependency>
-                <groupId>org.springframework.data</groupId>
-                <artifactId>spring-data-jpa</artifactId>
-                <version>1.0.3.RELEASE</version>
-            </dependency>
 
             <dependency>
                 <groupId>com.sun.jersey.contribs</groupId>
@@ -759,36 +767,26 @@ the software.
                 <version>9.3-1101-jdbc41</version>
             </dependency>
             <dependency>
-                <groupId>org.hibernate.java-persistence</groupId>
-                <artifactId>jpa-api</artifactId>
-                <version>2.0-cr-1</version>
-            </dependency>
-            <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-entitymanager</artifactId>
-                <version>3.6.3.Final</version>
+                <version>4.3.11.Final</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-core</artifactId>
-                <version>3.6.3.Final</version>
+                <version>4.3.11.Final</version>
             </dependency>
             <dependency>
                 <groupId>org.hibernate.javax.persistence</groupId>
-                <artifactId>hibernate-jpa-2.0-api</artifactId>
+                <artifactId>hibernate-jpa-2.1-api</artifactId>
                 <version>1.0.0.Final</version>
             </dependency>
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-c3p0</artifactId>
-                <version>4.0.0.CR7</version>
+                <version>4.3.11.Final</version>
                 <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>c3p0</groupId>
-                <artifactId>c3p0</artifactId>
-                <version>0.9.1.2</version>
             </dependency>
             <dependency>
                 <groupId>org.liquibase</groupId>
@@ -880,7 +878,7 @@ the software.
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-validator</artifactId>
-                <version>4.2.0.Final</version>
+                <version>4.3.2.Final</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>
@@ -897,7 +895,7 @@ the software.
             </dependency>
             <dependency>
                 <groupId>org.jasypt</groupId>
-                <artifactId>jasypt-hibernate3</artifactId>
+                <artifactId>jasypt-hibernate4</artifactId>
                 <version>1.9.2</version>
             </dependency>
             <dependency>
@@ -918,17 +916,22 @@ the software.
             <dependency>
                 <groupId>ma.glasnost.orika</groupId>
                 <artifactId>orika-core</artifactId>
-                <version>1.4.5</version>
+                <version>1.4.6</version>
+            </dependency>
+            <dependency>
+                <groupId>xml-apis</groupId>
+                <artifactId>xml-apis</artifactId>
+                <version>1.4.01</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.jena</groupId>
-                <artifactId>jena-core</artifactId>
-                <version>2.10.1</version>
+                <artifactId>jena-arq</artifactId>
+                <version>${jena.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.bouncycastle</groupId>
-                <artifactId>bcprov-jdk16</artifactId>
-                <version>1.46</version>
+                <artifactId>bcprov-jdk15on</artifactId>
+                <version>1.53</version>
             </dependency>
             
             <!-- Test -->
@@ -986,6 +989,12 @@ the software.
                 <version>1.2.7</version>
                 <scope>test</scope>
             </dependency>
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>18.0</version>
+            </dependency>
+            
         </dependencies>
     </dependencyManagement>
 

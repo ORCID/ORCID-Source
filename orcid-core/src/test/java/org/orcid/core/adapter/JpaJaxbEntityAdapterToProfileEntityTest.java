@@ -148,7 +148,7 @@ public class JpaJaxbEntityAdapterToProfileEntityTest extends DBUnitTest {
         assertFalse(nonPrimaryEmail1.getPrimary());
         assertTrue(nonPrimaryEmail1.getCurrent());
         assertFalse(nonPrimaryEmail1.getVerified());
-        assertEquals("APP-0000000000000000", nonPrimaryEmail1.getSource().getSourceClient().getClientId());
+        assertEquals("4444-4444-4444-4446", nonPrimaryEmail1.getSource().getSourceId());
 
         Set<WorkEntity> workEntities = profileEntity.getWorks();
         assertEquals(3, workEntities.size());
@@ -214,7 +214,8 @@ public class JpaJaxbEntityAdapterToProfileEntityTest extends DBUnitTest {
         assertEquals("1111-1111-1111-1115", retrievedGivenPermissionToEntity.getReceiver().getId());
         assertEquals(DateUtils.convertToDate("2012-11-10T13:18:51"), retrievedGivenPermissionToEntity.getApprovalDate());
         assertNull(profileEntity.getGivenPermissionBy());
-
+        retrievedProfileEntity.getSource().setSourceClient(null);
+        retrievedProfileEntity.getSource().setSourceProfile(profileEntity);
         adapter.toOrcidProfile(retrievedProfileEntity);
     }
 

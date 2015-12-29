@@ -69,7 +69,7 @@ public class CustomEmailController extends BaseController {
         boolean haveErrors = false;        
         String groupId = getEffectiveUserOrcid();        
         MemberType groupType = profileEntityManager.getGroupType(groupId);        
-        if(!MemberType.PREMIUM_INSTITUTION.equals(groupType)) {
+        if(!(MemberType.PREMIUM_INSTITUTION.equals(groupType) || MemberType.BASIC_INSTITUTION.equals(groupType))) {
             haveErrors = true;
             mav.addObject("invalid_request", getMessage("manage.developer_tools.group.custom_emails.invalid_group_type"));
         } else if(!clientDetailsManager.exists(clientId)) {
@@ -116,7 +116,7 @@ public class CustomEmailController extends BaseController {
         boolean haveErrors = false;
         String groupId = getEffectiveUserOrcid();        
         MemberType groupType = profileEntityManager.getGroupType(groupId);        
-        if(!MemberType.PREMIUM_INSTITUTION.equals(groupType)) {
+        if(!(MemberType.PREMIUM_INSTITUTION.equals(groupType) || MemberType.BASIC_INSTITUTION.equals(groupType))) {
             haveErrors = true;           
         } else if(!clientDetailsManager.exists(clientId)) {
             haveErrors = true;

@@ -821,7 +821,7 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
         if (StringUtils.isNotEmpty(scopeList)) {
             scopes = OAuth2Utils.parseParameterList(scopeList);
         }
-        return orcidClientCredentialEndPointDelegator.obtainOauth2Token(clientId, clientSecret, grantType, refreshToken, code, scopes, state, redirectUri, resourceId);
+        return orcidClientCredentialEndPointDelegator.obtainOauth2Token(clientId, clientSecret, refreshToken, grantType, code, scopes, state, redirectUri, resourceId);
     }
 
     /**

@@ -22,6 +22,7 @@ import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.springframework.security.oauth2.common.exceptions.ClientAuthenticationException;
 import org.springframework.security.oauth2.common.exceptions.InvalidScopeException;
@@ -42,11 +43,9 @@ import org.springframework.web.servlet.ModelAndView;
 public class OrcidAuthorizationEndpoint extends AuthorizationEndpoint {
 
     private String redirectUriError = "forward:/oauth/error/redirect-uri-mismatch";
-    private String oauthError = "forward:/oauth/error";
-    
+    private String oauthError = "forward:/oauth/error";    
     private OrcidOAuth2RequestValidator orcidOAuth2RequestValidator;
-    
-    
+        
     @Override
     @ExceptionHandler(HttpSessionRequiredException.class)
     public ModelAndView handleHttpSessionRequiredException(HttpSessionRequiredException e, ServletWebRequest webRequest) throws Exception {
@@ -70,13 +69,22 @@ public class OrcidAuthorizationEndpoint extends AuthorizationEndpoint {
     @RequestMapping
     public ModelAndView authorize(Map<String, Object> model,
                     @RequestParam Map<String, String> requestParameters, SessionStatus sessionStatus, Principal principal) {
-        String scopes = requestParameters.get(OAuth2Utils.SCOPE);
-        scopes = trimClientCredentialScopes(scopes);
-        requestParameters.put(OAuth2Utils.SCOPE, scopes);
+        trimRequestParameters(requestParameters);
         return super.authorize(model, requestParameters, sessionStatus, principal);
     }
     
-    /**
+    private void trimRequestParameters(Map<String, String> requestParameters) {
+    	for(Map.Entry<String,String> entry : requestParameters.entrySet()) {
+    		requestParameters.put(entry.getKey(), entry.getValue().trim());
+    	}
+    	String scopes = requestParameters.get(OAuth2Utils.SCOPE);
+    	if(scopes != null) {
+    		requestParameters.put(OAuth2Utils.SCOPE, 
+        			trimClientCredentialScopes(scopes.trim().replaceAll(" +", " ")));
+    	}
+	}
+
+	/**
      * Validate if the given client have the defined scope
      * @param scopes a space or comma separated list of scopes
      * @param clientDetails
@@ -88,9 +96,7 @@ public class OrcidAuthorizationEndpoint extends AuthorizationEndpoint {
         
         //Check the user have permissions to the other scopes
         orcidOAuth2RequestValidator.validateParameters(parameters, clientDetails);
-    }
-    
-   
+    }       
     
     private URI buildRedirectUri(ServletWebRequest webRequest) throws URISyntaxException {
         String[] referers = webRequest.getHeaderValues("referer");
@@ -108,15 +114,17 @@ public class OrcidAuthorizationEndpoint extends AuthorizationEndpoint {
     private String trimClientCredentialScopes(String scopes) {
         String result = scopes;
         for (String scope : OAuth2Utils.parseParameterList(scopes)) {
-            ScopePathType scopeType = ScopePathType.fromValue(scope);
-            if (scopeType.isClientCreditalScope()) {
-                if(scopes.contains(ScopePathType.ORCID_PROFILE_CREATE.getContent()))
-                    result = scopes.replaceAll(ScopePathType.ORCID_PROFILE_CREATE.getContent(), "");
-                else if(scopes.contains(ScopePathType.READ_PUBLIC.getContent()))
-                    result = scopes.replaceAll(ScopePathType.READ_PUBLIC.getContent(), "");
-                else if(scopes.contains(ScopePathType.WEBHOOK.getContent()))
-                    result = scopes.replaceAll(ScopePathType.WEBHOOK.getContent(), "");
-            }                           
+        	if(StringUtils.isNotBlank(scope)) {
+        		ScopePathType scopeType = ScopePathType.fromValue(scope);
+                if (scopeType.isClientCreditalScope()) {
+                    if(scopes.contains(ScopePathType.ORCID_PROFILE_CREATE.getContent()))
+                        result = scopes.replaceAll(ScopePathType.ORCID_PROFILE_CREATE.getContent(), "");
+                    else if(scopes.contains(ScopePathType.READ_PUBLIC.getContent()))
+                        result = scopes.replaceAll(ScopePathType.READ_PUBLIC.getContent(), "");
+                    else if(scopes.contains(ScopePathType.WEBHOOK.getContent()))
+                        result = scopes.replaceAll(ScopePathType.WEBHOOK.getContent(), "");
+                }     
+        	}
         }
         
         return result;
@@ -128,5 +136,5 @@ public class OrcidAuthorizationEndpoint extends AuthorizationEndpoint {
 
     public void setOrcidOAuth2RequestValidator(OrcidOAuth2RequestValidator orcidOAuth2RequestValidator) {
         this.orcidOAuth2RequestValidator = orcidOAuth2RequestValidator;
-    }        
+    }            
 }

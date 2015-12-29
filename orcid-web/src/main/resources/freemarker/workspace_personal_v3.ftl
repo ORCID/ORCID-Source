@@ -17,7 +17,7 @@
 
 -->
 <#escape x as x?html>
-	<div class="biography-controller" ng-controller="BiographyCtrl">
+	<div class="biography-controller" ng-controller="BiographyCtrl" id="bio-section">
    		<div class="row">
 			<div class="col-md-9 col-sm-8 col-xs-4">
  				<h3 ng-click="toggleEdit()" class="workspace-title">${springMacroRequestContext.getMessage("manage_bio_settings.labelbiography")}</h3>		

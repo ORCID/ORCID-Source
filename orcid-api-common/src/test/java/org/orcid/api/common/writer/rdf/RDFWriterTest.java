@@ -18,15 +18,20 @@ package org.orcid.api.common.writer.rdf;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayOutputStream;
+import java.net.URI;
 import java.util.Arrays;
 
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.UriInfo;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import org.apache.jena.riot.RIOT;
 import org.junit.Before;
 import org.junit.Test;
 import org.orcid.jaxb.model.message.Address;
@@ -55,6 +60,14 @@ import org.orcid.jaxb.model.message.UrlName;
 //@ContextConfiguration(locations = { "classpath:orcid-t1-web-context.xml" })
 public class RDFWriterTest {
 
+	private static final String EXAMPLE_RDF_URI = "http://pub.orcid.example.com/experimental_rdf_v1/000-1337";
+
+
+	static { 
+		// Ensure RIOT is initialized so we get consistent RDF writers
+		RIOT.init();
+	}
+	
     private static DatatypeFactory dataTypeFactory;
     private RDFMessageBodyWriter rdfWriter = new RDFMessageBodyWriter();
 
@@ -62,6 +75,14 @@ public class RDFWriterTest {
     public void makeDataTypeFactory() throws DatatypeConfigurationException {
         dataTypeFactory = DatatypeFactory.newInstance();
     }
+    
+    @Before
+    public void injectFakeUriInfo() {  
+    	UriInfo uriInfo = mock(UriInfo.class);
+    	when(uriInfo.getAbsolutePath()).thenReturn(URI.create(EXAMPLE_RDF_URI));
+		rdfWriter.setUriInfo(uriInfo);
+    }
+    
 
     private OrcidMessage fakeBio() throws DatatypeConfigurationException {
         OrcidMessage orcidMessage = new OrcidMessage();
@@ -128,9 +149,14 @@ public class RDFWriterTest {
         assertTrue(str.contains("foaf:name>John F Doe<"));
         assertTrue(str.contains("foaf:givenName>John<"));
         assertTrue(str.contains("foaf:familyName>Doe<"));
-        assertTrue(str.contains("foaf:account"));
-        assertTrue(str.contains("http://orcid.example.com/000-1337/"));
+        assertTrue(str.contains("foaf:account"));        
+        assertTrue(str.contains("http://orcid.example.com/000-1337#orcid-id"));
+        assertTrue(str.contains(">000-1337<"));
+        // relative URI reference
+        assertTrue(str.contains(EXAMPLE_RDF_URI));
         assertFalse(str.contains("subClassOf"));
+        assertTrue(str.contains("foaf:publications"));
+        assertTrue(str.contains("http://orcid.example.com/000-1337#workspace-works"));
         assertTrue(str.contains("foaf:mbox"));
         assertTrue(str.contains("mailto:john@example.org"));
         assertTrue(str.contains("mailto:doe@example.com"));
@@ -161,12 +187,18 @@ public class RDFWriterTest {
         System.out.println(str);
         assertTrue(str.contains("<http://orcid.example.com/000-1337>"));
         assertTrue(str.contains("foaf:account"));
-        assertTrue(str.contains("<http://orcid.example.com/000-1337/>"));
+        assertTrue(str.contains("<http://orcid.example.com/000-1337#orcid-id>"));
+        assertTrue(str.contains("\"000-1337\""));
+        assertTrue(str.contains(EXAMPLE_RDF_URI));
+        assertTrue(str.contains("foaf:primaryTopic"));
         assertTrue(str.contains("foaf:Person"));
-        assertTrue(str.contains("foaf:familyName \"Doe"));
-        assertTrue(str.contains("foaf:givenName \"John"));
+        assertTrue(str.contains("foaf:familyName"));
+        assertTrue(str.contains("\"Doe\""));
+        assertTrue(str.contains("foaf:givenName"));
+        assertTrue(str.contains("\"John\""));
         // and the credit name, which here includes initial F
-        assertTrue(str.contains("foaf:name \"John F Doe"));
+        assertTrue(str.contains("foaf:name"));
+        assertTrue(str.contains("\"John F Doe\""));
         // ontology details should NOT be included
         assertFalse(str.contains("subClassOf"));
         // provenance
@@ -178,6 +210,69 @@ public class RDFWriterTest {
 
     }
 
+    @Test
+    public void writeNtriples() throws Exception {
+
+        ByteArrayOutputStream entityStream = new ByteArrayOutputStream(1024);
+        rdfWriter.writeTo(fakeBio(), OrcidMessage.class, null, null, new MediaType("application", "n-triples"), null, entityStream);
+
+        String str = entityStream.toString("utf-8");
+        System.out.println(str);
+        assertTrue(str.contains("<http://orcid.example.com/000-1337>"));
+        assertTrue(str.contains("<http://xmlns.com/foaf/0.1/account>"));
+        assertTrue(str.contains(EXAMPLE_RDF_URI));
+        assertTrue(str.contains("<http://xmlns.com/foaf/0.1/Person>"));
+        assertTrue(str.contains("<http://xmlns.com/foaf/0.1/familyName>"));
+        assertTrue(str.contains("\"Doe\""));
+        assertTrue(str.contains("<http://xmlns.com/foaf/0.1/givenName>"));
+        assertTrue(str.contains("\"John\""));
+        // and the credit name, which here includes initial F
+        assertTrue(str.contains("<http://xmlns.com/foaf/0.1/name>"));
+        assertTrue(str.contains("\"John F Doe\""));
+        // ontology details should NOT be included
+        assertFalse(str.contains("subClassOf"));
+        // provenance
+        assertTrue(str.contains("<http://purl.org/pav/lastUpdateOn>"));
+        assertTrue(str.contains("1980-12-31T23:29:29.999Z"));
+        // location
+        assertTrue(str.contains("<http://www.geonames.org/ontology#countryCode>"));
+        assertTrue(str.contains("GB"));
+
+    }
+
+    @Test
+    public void writeJsonLD() throws Exception {
+
+        ByteArrayOutputStream entityStream = new ByteArrayOutputStream(1024);
+        rdfWriter.writeTo(fakeBio(), OrcidMessage.class, null, null, new MediaType("application", "ld+json"), null, entityStream);
+
+        String str = entityStream.toString("utf-8");
+        System.out.println(str);
+        assertTrue(str.contains("\"http://orcid.example.com/000-1337\""));
+        assertTrue(str.contains("account"));
+        assertTrue(str.contains("\"http://orcid.example.com/000-1337#orcid-id\""));
+        assertTrue(str.contains("\"http://orcid.example.com/000-1337#workspace-works\""));
+        assertTrue(str.contains(EXAMPLE_RDF_URI));
+        assertTrue(str.contains("Person"));
+        assertTrue(str.contains("familyName"));
+        assertTrue(str.contains("\"Doe\""));
+        assertTrue(str.contains("givenName"));
+        assertTrue(str.contains("\"John\""));
+        // and the credit name, which here includes initial F
+        assertTrue(str.contains("name"));
+        assertTrue(str.contains("\"John F Doe\""));
+        // ontology details should NOT be included
+        assertFalse(str.contains("subClassOf"));
+        // provenance
+        assertTrue(str.contains("lastUpdateOn"));
+        assertTrue(str.contains("1980-12-31T23:29:29.999Z"));
+        // location
+        assertTrue(str.contains("countryCode"));
+        assertTrue(str.contains("GB"));
+
+    }
+
+    
     @Test
     public void missingCreditName() throws Exception {
 
@@ -192,10 +287,13 @@ public class RDFWriterTest {
         // Should NOT include a foaf:name
         assertFalse(str.contains("foaf:name"));
         // but do include a concatenation as a label
-        assertTrue(str.contains("rdfs:label \"John Doe"));
+        assertTrue(str.contains("rdfs:label"));
+        assertTrue(str.contains("\"John Doe\""));
         // And family/given
-        assertTrue(str.contains("foaf:familyName \"Doe"));
-        assertTrue(str.contains("foaf:givenName \"John"));
+        assertTrue(str.contains("foaf:familyName"));
+        assertTrue(str.contains("\"Doe\""));
+        assertTrue(str.contains("foaf:givenName"));
+        assertTrue(str.contains("\"John\""));
     }
 
 }

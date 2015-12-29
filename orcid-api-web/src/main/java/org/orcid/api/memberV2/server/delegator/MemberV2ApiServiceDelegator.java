@@ -24,6 +24,9 @@ import org.orcid.jaxb.model.record_rc1.Employment;
 import org.orcid.jaxb.model.record_rc1.Funding;
 import org.orcid.jaxb.model.record_rc1.PeerReview;
 import org.orcid.jaxb.model.record_rc1.Work;
+import org.orcid.jaxb.model.record_rc2.ExternalIdentifier;
+import org.orcid.jaxb.model.record_rc2.OtherName;
+import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 
 /**
  * 
@@ -94,4 +97,37 @@ public interface MemberV2ApiServiceDelegator {
 
     Response viewGroupIdRecords(String pageSize, String pageNum);
 
+    Response viewResearcherUrls(String orcid);
+
+    Response viewResearcherUrl(String orcid, Long putCode);
+
+    Response updateResearcherUrl(String orcid, Long putCode, ResearcherUrl researcherUrl);
+
+    Response createResearcherUrl(String orcid, ResearcherUrl researcherUrl);
+
+    Response deleteResearcherUrl(String orcid, Long putCode);
+
+    Response viewEmails(String orcid);
+
+    Response viewOtherNames(String orcid);
+
+    Response viewOtherName(String orcid, Long putCode);
+
+    Response createOtherName(String orcid, OtherName otherName);
+
+    Response updateOtherName(String orcid, Long putCode, OtherName otherName);
+
+    Response deleteOtherName(String orcid, Long putCode);
+
+    Response viewPersonalDetails(String orcid);
+    
+    Response viewExternalIdentifiers(String orcid);
+
+    Response viewExternalIdentifier(String orcid, Long putCode);
+
+    Response updateExternalIdentifier(String orcid, Long putCode, ExternalIdentifier externalIdentifier);
+
+    Response createExternalIdentifier(String orcid, ExternalIdentifier externalIdentifier);
+
+    Response deleteExternalIdentifier(String orcid, Long putCode);
 }

@@ -50,9 +50,11 @@ import org.orcid.jaxb.model.notification.Notification;
 import org.orcid.jaxb.model.notification.NotificationType;
 import org.orcid.jaxb.model.notification.amended.AmendedSection;
 import org.orcid.jaxb.model.notification.custom.NotificationCustom;
+import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.NotificationDao;
 import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.NotificationEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -89,6 +91,9 @@ public class NotificationManagerTest extends BaseTest {
 
     @Resource
     private NotificationDao notificationDao;
+    
+    @Resource
+    private ClientDetailsDao clientDetailsDao;
 
     @Before
     public void initJaxb() throws JAXBException {
@@ -145,6 +150,7 @@ public class NotificationManagerTest extends BaseTest {
         ProfileEntity testProfile = new ProfileEntity(testOrcid);
         testProfile.setEnableNotifications(true);
         profileDao.merge(testProfile);
+        createClient();
         for (Locale locale : Locale.values()) {
             NotificationEntity previousNotification = notificationDao.findLatestByOrcid(testOrcid);
             long minNotificationId = previousNotification != null ? previousNotification.getId() : -1;
@@ -158,7 +164,15 @@ public class NotificationManagerTest extends BaseTest {
         }
     }
 
-    @Test
+    private void createClient() {
+		ClientDetailsEntity clientEntity = new ClientDetailsEntity();
+		clientEntity.setId("8888-8888-8888-8880");
+		clientEntity.setGroupProfileId("4444-4444-4444-4446");
+		clientEntity.setClientName("Test Name");
+		clientDetailsDao.persist(clientEntity);
+	}
+
+	@Test
     public void testAddedDelegatesSentCorrectEmail() throws JAXBException, IOException, URISyntaxException {
         String delegateOrcid = "1234-5678-1234-5678";
         ProfileEntity delegateProfileEntity = new ProfileEntity(delegateOrcid);
@@ -201,6 +215,14 @@ public class NotificationManagerTest extends BaseTest {
         for (Locale locale : Locale.values()) {
             OrcidProfile orcidProfile = getProfile(locale);
             notificationManager.sendApiRecordCreationEmail(orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue(), orcidProfile);
+        }
+    }
+
+    @Test
+    public void testSendServiceAnnouncement_1_For_2015() throws JAXBException, IOException, URISyntaxException {
+        for (Locale locale : Locale.values()) {
+            OrcidProfile orcidProfile = getProfile(locale);
+            notificationManager.sendServiceAnnouncement_1_For_2015(orcidProfile);
         }
     }
 

@@ -124,7 +124,7 @@
 				<a id="mobile-search" class="mobile-button mobile-search" ng-click="toggleSearch()" ng-class="{'mobile-menu-active': searchVisible == true}">
 					<span class="glyphicon glyphicon-search"></span>
 				</a>
-				<a href="<@orcid.rootPath "/signin" />" id="mobile-sign-in" class="mobile-button mobile-sign-in">
+				<a href="<@orcid.rootPath " signin" />" id="mobile-sign-in" class="mobile-button mobile-sign-in">
 					<span class="glyphicon glyphicon-user"></span>
 				</a>				
 				
@@ -132,7 +132,7 @@
 				<ul class="menu" ng-show="menuVisible == true" ng-cloak resize>
 					<!-- FOR RESEARCHERS -->
 					<li class="first expanded active-trail"><a
-						href="<@orcid.rootPath " /" />" ng-click="handleMobileMenuOption($event)" title=""><@orcid.msg
+						href="<@orcid.rootPath " content/initiative" />" ng-click="handleMobileMenuOption($event)" title=""><@orcid.msg
 						'public-layout.for_researchers'/></a>
 						<ul class="menu lang-fixes">
 						<!-- Mobile view Only -->
@@ -149,7 +149,7 @@
 						<@security.authorize ifAnyGranted="ROLE_USER, ROLE_ADMIN, ROLE_BASIC, ROLE_PREMIUM, ROLE_BASIC_INSTITUTION, ROLE_PREMIUM_INSTITUTION">
 							<#if profile?? && profile.orcidInternal?? && profile.orcidInternal.preferences.notificationsEnabled?? && profile.orcidInternal.preferences.notificationsEnabled == true>
 								<li ng-controller="NotificationsAlertCtrl">
-									<a ${(nav=="notifications")?string('class="active" ', '')}href="<@orcid.rootPath "/notifications" />">${springMacroRequestContext.getMessage("workspace.notifications")} <span ng-cloak ng-hide="getUnreadCount() === 0">({{getUnreadCount()}})</span></a>
+									<a ${(nav=="notifications")?string('class="active" ', '')}href="<@orcid.rootPath "/inbox" />">${springMacroRequestContext.getMessage("workspace.notifications")} <span ng-cloak ng-hide="getUnreadCount() === 0">({{getUnreadCount()}})</span></a>
 								</li>
 							</#if>
 						</@security.authorize>
@@ -456,7 +456,7 @@
 					</@security.authorize>
 					 
 					<@security.authorize ifAnyGranted="ROLE_USER, ROLE_ADMIN, ROLE_BASIC, ROLE_PREMIUM, ROLE_BASIC_INSTITUTION, ROLE_PREMIUM_INSTITUTION">
-						<a href="<@orcid.rootPath '/signout'/>"><@orcid.msg 'public-layout.sign_out'/></a>
+						<a href="<@orcid.rootPath "/signout" />"><@orcid.msg 'public-layout.sign_out'/></a>
 					</@security.authorize>
 					
 				</li>

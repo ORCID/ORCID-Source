@@ -25,14 +25,20 @@
     </div>
     <div class="col-md-9 col-sm-12 col-xs-12" ng-controller="NotificationsCtrl" >
         <!-- <h2>${springMacroRequestContext.getMessage("notifications.title")}</h2> -->
-        <div>
+        <div class="notification-top-bar">
             <label class="checkbox pull-right">
                 <input type="checkbox" ng-model="notificationsSrvc.showArchived" ng-change="reloadNotifications()"></input>
-                ${springMacroRequestContext.getMessage("notifications.showArchived")}
+                ${springMacroRequestContext.getMessage("notifications.show_archived")}
             </label>
         </div>
-        <div ng-hide="notifications.length > 0">${springMacroRequestContext.getMessage("notifications.none")}</div>
-        <div ng-show="notifications.length > 0">            
+        <div ng-show="notificationsSrvc.loading == true" class="text-center" id="notificationsSpinner">
+            <i class="glyphicon glyphicon-refresh spin x4 green" id="spinner"></i><!-- Hidden with a CSS hack on IE 7 only -->
+            <!--[if lt IE 8]>    
+                <img src="${staticCdn}/img/spin-big.gif" width="85" height ="85"/>
+            <![endif]-->
+        </div>
+        <div ng-cloak ng-show="notificationsSrvc.loading == false && notifications.length == 0  &&!areMore()">${springMacroRequestContext.getMessage("notifications.none")}</div>
+        <div ng-cloak ng-show="notificationsSrvc.loading == false && notifications.length &gt; 0">            
             <table class="table table-responsive table-condensed notifications">
            		<thead>					
 	                <tr>
@@ -56,19 +62,24 @@
 	                </tr>
 	                <tr ng-repeat-end ng-show="displayBody[notification.putCode]" onclick="return false;">
 	                    <td colspan="4">
-	                        <iframe id="{{notification.putCode}}" ng-src="{{ '<@spring.url '/notifications'/>/' + notification.notificationType + '/' + notification.putCode + '/notification.html'}}" class="notification-iframe" frameborder="0" width="100%" scrolling="no"></iframe>
+	                        <iframe id="{{notification.putCode}}" ng-src="{{ '<@orcid.rootPath '/inbox'/>/' + notification.notificationType + '/' + notification.putCode + '/notification.html'}}" class="notification-iframe" frameborder="0" width="100%" scrolling="no"></iframe>
 	                    </td>
 	                </tr>
                 </tbody>
 
             </table>
-            
-            
-            <div ng-cloak>
-                <button ng-show="areMore()" ng-click="showMore()" class="btn" type="submit" id="show-more-button">Show more</button>
-                <br></br>
-                <br></br>
-            </div>
+        </div>
+        <div ng-cloak ng-hide="notificationsSrvc.loading == false && notifications.length &gt; 0">
+            <br/><br/>
+        </div>   
+        <div ng-cloak>
+            <button ng-show="areMore() && notificationsSrvc.loadingMore == false" ng-click="showMore()" class="btn" type="submit" id="show-more-button">${springMacroRequestContext.getMessage("notifications.show_more")}</button>
+        </div>
+        <div ng-cloak ng-show="notificationsSrvc.loadingMore == true" id="moreNotificationsSpinner">
+            <i class="glyphicon glyphicon-refresh spin x4 green" id="spinner"></i><!-- Hidden with a CSS hack on IE 7 only -->
+            <!--[if lt IE 8]>    
+                <img src="${staticCdn}/img/spin-big.gif" width="85" height ="85"/>
+            <![endif]-->
         </div>
     </div>
 </div>

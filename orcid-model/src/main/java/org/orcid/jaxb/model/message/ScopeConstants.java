@@ -32,6 +32,7 @@ final public class ScopeConstants {
 
     public static final String AUTHENTICATE = "/authenticate";
     public static final String READ_PUBLIC = "/read-public";
+    public static final String READ_LIMITED = "/read-limited";
     public static final String WEBHOOK = "/webhook";
     public static final String ORCID_BIO_READ_LIMITED = "/orcid-bio/read-limited";
     public static final String ORCID_PROFILE_READ_LIMITED = "/orcid-profile/read-limited";
@@ -63,5 +64,7 @@ final public class ScopeConstants {
     public static final String PERSON_READ_LIMITED = "/person/read-limited";
     public static final String PERSON_UPDATE = "/person/update";
     public static final String ORCID_PROFILE_CREATE = "/orcid-profile/create";
-
+    
+    // Internal API
+    public static final String INTERNAL_PERSON_LAST_MODIFIED = "/orcid-internal/person/last_modified";
 }

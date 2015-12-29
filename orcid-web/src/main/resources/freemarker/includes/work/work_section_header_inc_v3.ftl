@@ -45,8 +45,8 @@
                                     <@orcid.msg 'groups.common.add_works'/>
                                     <ul class="menu-options works">
                                     	<!-- Search & Link -->
-                                        <li>
-                                            <a class="action-option manage-button" ng-click="showWorkImportWizard()">
+                                        <li ng-show="noLinkFlag">
+                                            <a ng-show="noLinkFlag" class="action-option manage-button" ng-click="showWorkImportWizard()">
                                                 <span class="glyphicon glyphicon-cloud-upload"></span>
                                                 <@orcid.msg 'manual_orcid_record_contents.search_link'/>
                                             </a>
@@ -74,7 +74,7 @@
                     </li>
                     <!-- Search & Link -->
                     <li class="hidden-md hidden-sm visible-xs-inline">
-                        <a class="action-option manage-button" ng-click="showWorkImportWizard()">
+                        <a ng-show="noLinkFlag" class="action-option manage-button" ng-click="showWorkImportWizard()">
                             <span class="glyphicon glyphicon-cloud-upload"></span>
                             <@orcid.msg 'manual_orcid_record_contents.search_link'/>
                         </a>

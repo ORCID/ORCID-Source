@@ -16,24 +16,29 @@
  */
 package org.orcid.core.manager;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 import java.util.List;
 
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.MemberType;
+import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.record.summary_rc1.ActivitiesSummary;
+import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.pojo.ApplicationSummary;
 
 /**
- * User: Declan Newman (declan) Date: 10/02/2012
- * </p>
+ * User: Declan Newman (declan) Date: 10/02/2012 </p>
  */
 public interface ProfileEntityManager {
 
     ProfileEntity findByOrcid(String orcid);
+    
+    String findByCreditName(String creditName);
 
     boolean orcidExists(String orcid);
 
@@ -43,37 +48,49 @@ public interface ProfileEntityManager {
 
     Long getConfirmedProfileCount();
 
-    public boolean updateProfile(OrcidProfile profile);
-    
-    public boolean updateProfile(ProfileEntity profile);
-    
-    public boolean deprecateProfile(ProfileEntity deprecatedProfile, ProfileEntity primaryProfile);
-    
-    public List<ProfileEntity> findProfilesByOrcidType(OrcidType type);
-    
-    public boolean enableDeveloperTools(OrcidProfile profile);
-    
-    public boolean disableDeveloperTools(OrcidProfile profile);
-    
-    public Iso3166Country getCountry(String orcid);
-    
-    public boolean isProfileClaimed(String orcid);
-    
+    boolean updateProfile(OrcidProfile profile);
+
+    boolean updateProfile(ProfileEntity profile);
+
+    boolean deprecateProfile(ProfileEntity deprecatedProfile, ProfileEntity primaryProfile);
+
+    List<ProfileEntity> findProfilesByOrcidType(OrcidType type);
+
+    boolean enableDeveloperTools(OrcidProfile profile);
+
+    boolean disableDeveloperTools(OrcidProfile profile);
+
+    Iso3166Country getCountry(String orcid);
+
+    boolean isProfileClaimed(String orcid);
+
     ClientType getClientType(String orcid);
-    
+
     MemberType getGroupType(String orcid);
-    
-    public boolean lockProfile(String orcid);
-    
-    public boolean unlockProfile(String orcid);
-    
-    public boolean isLocked(String orcid);
-    
+
+    boolean lockProfile(String orcid);
+
+    boolean unlockProfile(String orcid);
+
+    boolean isLocked(String orcid);
+
     ActivitiesSummary getActivitiesSummary(String orcid);
-    
+
     ActivitiesSummary getPublicActivitiesSummary(String orcid);
-    
+
     Date getLastModified(String orcid);
-    
+
     boolean isDeactivated(String deactivated);
+
+    boolean unreviewProfile(String orcid);
+
+    boolean reviewProfile(String orcid);
+    
+    Visibility getResearcherUrlDefaultVisibility(String orcid);
+
+    List<ApplicationSummary> getApplications(List<OrcidOauth2TokenDetail> tokenDetails);
+    
+    String getOrcidHash(String orcid) throws NoSuchAlgorithmException;
+    
+    String retrivePublicDisplayName(String orcid);
 }

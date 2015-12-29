@@ -21,6 +21,7 @@ import java.util.Collection;
 import org.orcid.jaxb.model.common.Filterable;
 import org.orcid.jaxb.model.record.summary_rc1.ActivitiesSummary;
 import org.orcid.jaxb.model.record_rc1.Group;
+import org.orcid.jaxb.model.record_rc2.PersonalDetails;
 
 /**
  * @author Will Simpson
@@ -30,7 +31,9 @@ public interface VisibilityFilterV2 {
     ActivitiesSummary filter(ActivitiesSummary activitiesSummary);
     
     Collection<? extends Filterable> filter(Collection<? extends Filterable> filterables);
-
+        
     Collection<? extends Group> filterGroups(Collection<? extends Group> groups);
+    
+    PersonalDetails filter(PersonalDetails personalDetails);
 
 }

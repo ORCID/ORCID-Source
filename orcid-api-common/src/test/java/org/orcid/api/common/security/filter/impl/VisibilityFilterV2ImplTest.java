@@ -36,6 +36,7 @@ import org.orcid.core.security.visibility.filter.VisibilityFilterV2;
 import org.orcid.core.utils.SecurityContextTestUtils;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record.summary_rc1.ActivitiesSummary;
+import org.orcid.jaxb.model.record_rc2.PersonalDetails;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
 import org.xml.sax.SAXException;
@@ -56,7 +57,7 @@ public class VisibilityFilterV2ImplTest {
 
     @Before
     public void before() throws JAXBException {
-        JAXBContext context = JAXBContext.newInstance(ActivitiesSummary.class);
+        JAXBContext context = JAXBContext.newInstance(ActivitiesSummary.class);        
         unmarshaller = context.createUnmarshaller();
     }
 
@@ -86,8 +87,22 @@ public class VisibilityFilterV2ImplTest {
         assertEquals(expectedActivitiesSummary.toString(), activitiesSummary.toString());
     }
 
+    @Test
+    public void testFilterPersonalDetails() throws JAXBException {
+        PersonalDetails personalDetailsWithLimited = getPersonalDetails("/personal-details-protected.xml");
+        PersonalDetails personalDetailsPublic = getPersonalDetails("/personal-details-public.xml");
+        visibilityFilter.filter(personalDetailsWithLimited);
+        assertEquals(personalDetailsPublic.toString(), personalDetailsWithLimited.toString());
+    }
+    
     private ActivitiesSummary getActivitiesSummary(String path) throws JAXBException {
         return (ActivitiesSummary) unmarshaller.unmarshal(getClass().getResourceAsStream(path));
+    }
+    
+    private PersonalDetails getPersonalDetails(String path) throws JAXBException {
+        JAXBContext context = JAXBContext.newInstance(PersonalDetails.class);
+        Unmarshaller unmarshaller = context.createUnmarshaller();
+        return (PersonalDetails) unmarshaller.unmarshal(getClass().getResourceAsStream(path));
     }
 
 }

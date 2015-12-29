@@ -267,7 +267,7 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
         assertEquals(orcid, retrievedMessage.getOrcidProfile().getOrcidIdentifier().getPath());
         GivenNames givenNames = retrievedMessage.getOrcidProfile().getOrcidBio().getPersonalDetails().getGivenNames();
         assertNotNull(givenNames);
-        assertEquals("Reserved For Claim", givenNames.getContent());
+        assertEquals("Reserved For Claim", givenNames.getContent());        
     }
 
     @Test
@@ -339,7 +339,7 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
         when(mockedAuthentication.getPrincipal()).thenReturn(new ProfileEntity(userOrcid));
         Set<String> scopes = new HashSet<String>();
         scopes.add(ScopePathType.ACTIVITIES_UPDATE.value());
-        scopes.add(ScopePathType.ACTIVITIES_READ_LIMITED.value());
+        scopes.add(ScopePathType.READ_LIMITED.value());
         OAuth2Request authorizationRequest = new OAuth2Request(Collections.<String, String> emptyMap(), userOrcid,
                 Collections.<GrantedAuthority> emptyList(), true, scopes, Collections.<String> emptySet(), null, Collections.<String> emptySet(),
                 Collections.<String, Serializable> emptyMap());                
@@ -481,14 +481,14 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
         Response response = t2OrcidApiServiceDelegatorLatest.addAffiliations(mockedUriInfo, "4444-4444-4444-4446", orcidMessage);
         assertNotNull(response);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());                       
-        assertEquals(3, orgAffiliationDao.getByUserAndType("4444-4444-4444-4446", org.orcid.jaxb.model.message.AffiliationType.EDUCATION).size());        
+        assertEquals(4, orgAffiliationDao.getByUserAndType("4444-4444-4444-4446", org.orcid.jaxb.model.message.AffiliationType.EDUCATION).size());        
         
         orcidMessage = buildMessageWithAffiliation(AffiliationType.EDUCATION, "My dept", "My Role", "4444-4444-4444-4446");
         response = t2OrcidApiServiceDelegatorLatest.addAffiliations(mockedUriInfo, "4444-4444-4444-4446", orcidMessage);
         assertNotNull(response);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
         
-        assertEquals(3, orgAffiliationDao.getByUserAndType("4444-4444-4444-4446", org.orcid.jaxb.model.message.AffiliationType.EDUCATION).size());               
+        assertEquals(4, orgAffiliationDao.getByUserAndType("4444-4444-4444-4446", org.orcid.jaxb.model.message.AffiliationType.EDUCATION).size());               
     }
     
     @Test

@@ -16,13 +16,16 @@
  */
 package org.orcid.core.manager;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import org.orcid.core.exception.OrcidNotificationAlreadyReadException;
 import org.orcid.jaxb.model.message.DelegationDetails;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.notification.Notification;
+import org.orcid.jaxb.model.notification.permission.Item;
 import org.orcid.jaxb.model.notification.amended.AmendedSection;
 
 public interface NotificationManager {
@@ -42,8 +45,12 @@ public interface NotificationManager {
     public String deriveEmailFriendlyName(OrcidProfile orcidProfile);
 
     void sendNotificationToAddedDelegate(OrcidProfile grantingUser, List<DelegationDetails> delegatesGrantedByUser);
+    
+    void sendAmendEmail(String orcid, AmendedSection amendedSection, Item item);
 
     void sendAmendEmail(OrcidProfile amendedProfile, AmendedSection amendedSection);
+
+    void sendAmendEmail(OrcidProfile amendedProfile, AmendedSection amendedSection, Collection<Item> activities);
 
     void sendOrcidDeactivateEmail(OrcidProfile orcidToDeactivate);
 
@@ -68,7 +75,14 @@ public interface NotificationManager {
     public Notification createNotification(String orcid, Notification notification);
 
     public Notification flagAsArchived(String orcid, Long id) throws OrcidNotificationAlreadyReadException;
-    
-    public Notification setActionedDate(String orcid, Long id);
 
+    public Notification setActionedDate(String orcid, Long id);
+    
+    public void addMessageParams(Map<String, Object> templateParams, OrcidProfile orcidProfile);
+
+    public String getSubject(String code, OrcidProfile orcidProfile);
+    
+    public boolean sendServiceAnnouncement_1_For_2015(OrcidProfile orcidProfile);
+    
+    public String createClaimVerificationUrl(String email, String baseUri);
 }

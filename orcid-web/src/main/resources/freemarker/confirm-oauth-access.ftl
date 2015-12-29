@@ -28,11 +28,12 @@
 	<#if userId??>
 		<#assign user_id = userId>
 	</#if>
-	
+	<#assign js_group_name = client_group_name?replace('"', '&quot;')?js_string>
+	<#assign js_client_name = client_name?replace('"', '&quot;')?js_string>
 	<#assign js_scopes_string = "">                
 	<#list scopes as scope>
-       	<#assign js_scopes_string = js_scopes_string + scope.name()?replace("ORCID_", "")?js_string + " ">
-	</#list>
+		<#assign js_scopes_string = js_scopes_string + scope.name()?replace("ORCID_", "")?js_string + " ">
+	</#list>				      
 	
 	<!-- /Freemarker and GA variables -->
 	<@security.authorize ifAnyGranted="ROLE_USER">
@@ -40,7 +41,6 @@
 			<div class="col-md-4 col-sm-12 col-xs-12">
 				<div class="logo">
 		        	<h1><a href="${aboutUri}"><img src="${staticCdn}/img/orcid-logo.png" alt="ORCID logo" /></a></h1>
-		        	<!-- <p>${springMacroRequestContext.getMessage("confirm-oauth-access.connectingresearchandresearchers")}</p> -->
 		        </div>		
 			</div>
 			
@@ -50,7 +50,7 @@
 		</div>	
 		<div class="row">
 			<div class="col-md-12">	
-			<div class="app-client-name" ng-init="initGroupClientNameAndScopes('${client_group_name?js_string}','${client_name?js_string}','${js_scopes_string}')">
+			<div class="app-client-name" ng-init="initScopes('${js_scopes_string}')"> 
 				<h3 ng-click="toggleClientDescription()">${client_name}
 					<a class="glyphicon glyphicon-question-sign oauth-question-sign"></a>				
 				</h3>

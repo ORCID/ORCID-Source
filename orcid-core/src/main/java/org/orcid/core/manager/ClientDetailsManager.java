@@ -16,6 +16,7 @@
  */
 package org.orcid.core.manager;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -124,6 +125,8 @@ public interface ClientDetailsManager extends ClientDetailsService {
     List<ClientDetailsEntity> getAll();
 
     void updateLastModified(String clientId);
+    
+    Date getLastModified(String clientId);
 
     /**
      * Set a new client secret for the specific client and set the other keys as
@@ -164,5 +167,5 @@ public interface ClientDetailsManager extends ClientDetailsService {
     
     String getMemberName(String clientId);
 
-	OrcidClient toOrcidClient(ClientDetailsEntity clientEntity);
+    OrcidClient toOrcidClient(ClientDetailsEntity clientEntity);
 }

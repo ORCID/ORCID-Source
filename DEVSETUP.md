@@ -2,7 +2,9 @@
 
 ##Prerequisites 
 
-1. Install [Java](http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html). Add an environment variable JAVA_HOME. (Verify Java. Go to cmd and type "java -version". It should display the version of Java)
+1. Install [Java 8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html). Add an environment variable JAVA_HOME. (Verify Java. Go to cmd and type "java -version". It should display the version of Java)
+
+* Install [Java JCE](http://www.oracle.com/technetwork/java/javase/downloads/jce8-download-2133166.html). see: [OSX](http://stackoverflow.com/questions/12245179/how-to-install-unlimited-strength-jce-for-jre-7-in-macosx) or [Windows](http://help.boomi.com/atomsphere/GUID-D7FA3445-6483-45C5-85AD-60CA5BB15719.html)
     
 * Install [Maven](http://maven.apache.org/index.html). Add an environment variable M2_HOME. (Verify Maven. Go to cmd and type "mvn -version". It should display the version of Maven)
 
@@ -35,7 +37,7 @@ We'll set up postgres using the default settings in
     
     psql -c "CREATE USER orcidro WITH PASSWORD 'orcidro';"
     psql -c "GRANT CONNECT ON DATABASE orcid to orcidro;"
-    psql -c "GRANT SELECT ON ALL TABLES IN SCHEMA public to orcidro;" orcid
+    psql -c "GRANT SELECT ON ALL TABLES IN SCHEMA public to orcidro;"
     ```
     
 * Exit postgres user prompt
@@ -229,7 +231,7 @@ http://www.springsource.org/downloads/sts-ggts
 
 See [orcid-integration-test/README.md](https://github.com/ORCID/ORCID-Source/blob/master/orcid-integration-test/README.md)
 
-Integration tests are under ```[ORCID-Source]/orcid-integraton-test/src/test/java/org/orcid/api```.
+Integration tests are under ```[ORCID-Source]/orcid-integraton-test/src/test/java/org/orcid/integration```.
 
 In order to run them, you should have the ORCID project up and running.
 
@@ -250,7 +252,29 @@ Find the **service** element/tag and the following connector:
 	* Go to the main menu and select *Run* → *Run Configurations* 
 	* Select the JUnit run configurations
 	* Open the "*Arguments*" tab 
-	* On the "*VM arguments*" add "-Dorg.orcid.config.file=classpath:staging-persistence.properties" 
+	* On the "*VM arguments*" add the following arguments:
+		* "-Dorg.orcid.config.file=classpath:staging-persistence.properties" 
+		* "-Dorg.orcid.persistence.db.url=db connection URL e.g. jdbc:postgresql://localhost:5432/orcid"
+		* "-Dorg.orcid.persistence.db.dataSource=simpleDataSource" 
+		* "-Dorg.orcid.persistence.statistics.db.dataSource=statisticsSimpleDataSource" 
+		* "-Dorg.orcid.web.testUser1.username=Test user's email id" 
+		* "-Dorg.orcid.web.testUser1.password=Test user's password" 
+		* "-Dorg.orcid.web.testUser1.orcidId=Test user's orcid id" 
+		* "-Dorg.orcid.web.testUser2.username=Test user #2 email id"
+		* "-Dorg.orcid.web.testUser2.password=Test user #2 password"
+		* "-Dorg.orcid.web.testUser2.orcidId=Test user #2 orcid id"
+		* "-Dorg.orcid.web.testClient1.redirectUri=1st test client's redirect uri" 
+		* "-Dorg.orcid.web.testClient1.clientId=1st test client's Id" 
+		* "-Dorg.orcid.web.testClient1.clientSecret=1st test client's secret" 
+		* "-Dorg.orcid.web.testClient2.redirectUri=2nd test client's redirect uri" 
+		* "-Dorg.orcid.web.testClient2.clientId=2nd test client's Id" 
+		* "-Dorg.orcid.web.testClient2.clientSecret=2nd test client's secret"  
+		* "-Dorg.orcid.web.adminUser.username=Test admin user's email id" 
+		* "-Dorg.orcid.web.adminUser.password=Test admin user's password" 
+		* "-Dorg.orcid.web.locked.member.id=Member id to lock" 
+		* "-Dorg.orcid.web.locked.member.client.id=Client id that must belong to the member defined in the previous param" 
+		* "-Dorg.orcid.web.locked.member.client.secret=Client secret" 
+		* "-Dorg.orcid.web.locked.member.client.ruri=Client redirect URI" 
 	* Click "*Apply*" 
 	
 * Make sure you have firefox installed so selenium can run the tests.  Note sometimes firefox is out of sync with selenium support or visa versa, so pick up the version before latest.  At time of writing latest selenium 2.45 works with firefox version 37 but not 38. Archives can be found at https://https://ftp.mozilla.org/pub/mozilla.org/firefox/releases/37.0.2/

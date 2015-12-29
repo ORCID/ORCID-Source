@@ -129,30 +129,37 @@ var OrcidCookie = new function() {
     };
 };
 
-var _gaq = _gaq || [];
-
 var OrcidGA = function() {
     // test and make sure _gaq is working. disconnect.me chrome plugin has
-    // caused silent _gaq failures. This check allows us to detect that
-    // situation
-    var gaEnabled = false;
-    _gaq.push(function() {
-        gaEnabled = true;
-    });
-
     this.buildClientString = function(clientGroupName, clientName) {
         return clientGroupName + ' - ' + clientName
     };
     this.gaPush = function(trackArray) {
-        if (gaEnabled) {
-            _gaq.push(trackArray);
-            console.log("_gap.push for " + trackArray);
+        if(window.ga) {
+            if(typeof trackArray === 'function') {
+                ga(trackArray);
+            } else {
+                if(trackArray[5] == undefined) {
+                    ga(trackArray[0], trackArray[1], trackArray[2], trackArray[3], trackArray[4]);
+                } else {
+                    ga(trackArray[0], trackArray[1], trackArray[2], trackArray[3], trackArray[4], trackArray[5]);
+                }                
+                console.log("_gap.push for " + trackArray);
+            }
+            
+            setTimeout(function(){
+                if(!ga.create) {
+                    // if it's a function and _gap isn't available run (typically only
+                    // on dev)
+                    console.log("no _gap.push for " + trackArray);
+                    if (typeof trackArray === 'function')
+                        trackArray();
+                }
+            }, 200); 
         } else {
-            // if it's a function and _gap isn't available run (typically only
-            // on dev)
             console.log("no _gap.push for " + trackArray);
             if (typeof trackArray === 'function')
-                trackArray();
+                trackArray();                      
         }
     };
 
@@ -216,8 +223,8 @@ function checkOrcidLoggedIn() {
     $
             .ajax(
                     {
-                        url : getBaseUri() + '/userStatus.json?callback=?',
-                        type : 'GET',
+                        url : orcidVar.baseUri + '/userStatus.json?callback=?',
+                        type : 'POST',
                         dataType : 'json',
                         success : function(data) {
                             if (data.loggedIn == false
@@ -230,10 +237,12 @@ function checkOrcidLoggedIn() {
 
                         }
                     }).fail(
-                    function() {
-                        // something bad is happening!
-                        console.log("error with loggin check on :"
+                        // detects server is down or CSRF mismatches
+                        // do to session expiration or server bounces 
+                        function() {
+                            console.log("error with loggin check on :"
                                 + window.location.href);
+                            window.location.reload();
                     });
 
 }
@@ -270,9 +279,9 @@ function logOffReload(reload_param) {
 
 // jquery ready
 $(function() {
-
+    
     // Common
-
+    
     window.baseUrl = $('body').data('baseurl');
     window.basePath = window.location.pathname;
 
@@ -317,7 +326,7 @@ $(function() {
 
     // track when deactived people are pushed to signin page
     if (window.location.href.endsWith("signin#deactivated")) {
-        orcidGA.gaPush([ '_trackEvent', 'Disengagement', 'Deactivate_Complete',
+        orcidGA.gaPush([ 'send', 'event', 'Disengagement', 'Deactivate_Complete',
                 'Website' ]);
         showLoginError(om.get('orcid.frontend.security.orcid_deactivated'));
     }
@@ -368,6 +377,7 @@ $(function() {
     $('form#loginForm')
             .submit(
                     function() {
+                        var loginUrl = baseUrl + 'signin/auth.json';
                         if ($('form#loginForm').attr('disabled')) {
                             return false;
                         }
@@ -379,7 +389,8 @@ $(function() {
                                     'form#loginForm input[name="client_group_name"]')
                                     .val();
                             orcidGA.gaPush([
-                                    '_trackEvent',
+                                    'send',
+                                    'event',
                                     'RegGrowth',
                                     'Sign-In-Submit',
                                     'OAuth '
@@ -388,14 +399,21 @@ $(function() {
                                                             clientGroupName,
                                                             clientName) ]);
                         } else
-                            orcidGA.gaPush([ '_trackEvent', 'RegGrowth',
+                            orcidGA.gaPush([ 'send', 'event', 'RegGrowth',
                                     'Sign-In-Submit', 'Website' ]);
+                        if (basePath.startsWith(baseUrl + 'shibboleth')) {
+                            loginUrl = baseUrl + 'shibboleth/signin/auth.json';
+                        }
+                        else if (basePath.startsWith(baseUrl + 'social')) {
+                            loginUrl = baseUrl + 'social/signin/auth.json';
+                        }
                         $('form#loginForm').attr('disabled', 'disabled');
-                        $('#ajax-loader').show();
+                        $('#login-error-mess').hide();
+                        $('#ajax-loader').css('display', 'block');
                         $
                                 .ajax(
                                         {
-                                            url : baseUrl + 'signin/auth.json',
+                                            url : loginUrl,
                                             type : 'POST',
                                             data : 'userId=' + encodeURIComponent(orcidLoginFitler($('input[name=userId]').val())) + '&password=' + encodeURIComponent($('input[name=password]').val()),
                                             dataType : 'json',
@@ -415,7 +433,8 @@ $(function() {
                                                                 .val();
                                                         orcidGA
                                                                 .gaPush([
-                                                                        '_trackEvent',
+                                                                        'send',
+                                                                        'event',
                                                                         'RegGrowth',
                                                                         'Sign-In',
                                                                         'OAuth '
@@ -425,7 +444,8 @@ $(function() {
                                                                                                 clientName) ]);
                                                     } else
                                                         orcidGA.gaPush([
-                                                                '_trackEvent',
+                                                                'send',
+                                                                'event',
                                                                 'RegGrowth',
                                                                 'Sign-In',
                                                                 'Website' ]);
@@ -3757,9 +3777,6 @@ this.w3cLatexCharMap = {
 
 
 
-/* START: orcidSearchUrlJs v0.0.1 */
-/* https://github.com/ORCID/orcidSearchUrlJs */
-
 /* START: workIdLinkJs v0.0.8 */
 /* https://github.com/ORCID/workIdLinkJs */
 
@@ -3921,11 +3938,13 @@ this.w3cLatexCharMap = {
 /* END: workIdLinkJs */
 
 
+/* START: orcidSearchUrlJs v0.0.1 */
+/* https://github.com/ORCID/orcidSearchUrlJs */
 
 /* browser and NodeJs compatible */
 (function(exports) {
 
-    var baseUrl = 'https://orcid.org/v1.1/search/orcid-bio/';
+    var baseUrl = 'https://orcid.org/v1.2/search/orcid-bio/';
     var quickSearchEDisMax = '{!edismax qf="given-and-family-names^50.0 family-name^10.0 given-names^5.0 credit-name^10.0 other-names^5.0 text^1.0" pf="given-and-family-names^50.0" mm=1}';
     var orcidPathRegex = new RegExp("(\\d{4}-){3,}\\d{3}[\\dX]");
     var orcidFullRegex = new RegExp(

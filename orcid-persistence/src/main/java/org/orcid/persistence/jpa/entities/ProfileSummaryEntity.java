@@ -42,7 +42,7 @@ public class ProfileSummaryEntity extends BaseEntity<String> {
     private String givenNames;
     private String familyName;
     private String creditName;
-    private Visibility creditNameVisibility;
+    private Visibility namesVisibility;
 
     public ProfileSummaryEntity() {
         super();
@@ -92,18 +92,18 @@ public class ProfileSummaryEntity extends BaseEntity<String> {
 
     @Basic
     @Enumerated(EnumType.STRING)
-    @Column(name = "credit_name_visibility")
-    public Visibility getCreditNameVisibility() {
-        return creditNameVisibility;
+    @Column(name = "names_visibility")
+    public Visibility getNamesVisibility() {
+        return namesVisibility;
     }
 
-    public void setCreditNameVisibility(Visibility creditNameVisibility) {
-        this.creditNameVisibility = creditNameVisibility;
+    public void setNamesVisibility(Visibility namesVisibility) {
+        this.namesVisibility = namesVisibility;
     }
 
     @Transient
     public String getDisplayName() {
-        if (StringUtils.isNotBlank(creditName) && Visibility.PUBLIC.equals(creditNameVisibility)) {
+        if (StringUtils.isNotBlank(creditName) && Visibility.PUBLIC.equals(namesVisibility)) {
             return creditName;
         }
         StringBuilder builder = new StringBuilder();

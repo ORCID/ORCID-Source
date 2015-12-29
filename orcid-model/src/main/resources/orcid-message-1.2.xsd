@@ -306,11 +306,14 @@
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element name="given-names" minOccurs="1" type="orcid:non-empty-string">
+				<xs:element name="given-names" minOccurs="1">
 					<xs:annotation>
 						<xs:documentation>The given (first and middle) name(s) of the researcher or contributor.
 						</xs:documentation>
 					</xs:annotation>
+					<xs:simpleType>
+						<xs:union memberTypes="orcid:non-empty-string orcid:empty"/>
+					</xs:simpleType>
 				</xs:element>
 				<xs:element name="family-name" minOccurs="0" type="orcid:non-empty-string">
 					<xs:annotation>
@@ -909,6 +912,8 @@
 				<xs:enumeration value="ru"/>
 				<xs:enumeration value="zh_CN"/>
 				<xs:enumeration value="zh_TW"/>
+				<xs:enumeration value="it" />
+				<xs:enumeration value="ja" />
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -1990,6 +1995,7 @@
 			<xs:sequence>
 				<xs:element ref="orcid:send-email-frequency-days"/>
 				<xs:element ref="orcid:send-change-notifications"/>
+				<xs:element ref="orcid:send-administrative-change-notifications"/>
 				<xs:element ref="orcid:send-orcid-news"/>
 				<xs:element ref="orcid:send-member-update-requests"/>
 				<xs:element ref="orcid:activities-visibility-default"/>
@@ -2029,6 +2035,17 @@
 		</xs:annotation>
 	</xs:element>
 	<xs:element name="send-change-notifications">
+		<xs:annotation>
+			<xs:documentation>(FOR INTERNAL USE ONLY)
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:simpleContent>
+				<xs:extension base="xs:boolean"/>
+			</xs:simpleContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="send-administrative-change-notifications">
 		<xs:annotation>
 			<xs:documentation>(FOR INTERNAL USE ONLY)
 			</xs:documentation>

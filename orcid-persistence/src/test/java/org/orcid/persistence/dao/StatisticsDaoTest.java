@@ -21,6 +21,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -58,8 +59,7 @@ public class StatisticsDaoTest extends DBUnitTest {
 
     @AfterClass
     public static void removeDBUnitData() throws Exception {
-        removeDBUnitData(Arrays.asList("/data/WorksEntityData.xml", "/data/ProfileEntityData.xml",
-                "/data/SecurityQuestionEntityData.xml"));
+        removeDBUnitData(Arrays.asList("/data/WorksEntityData.xml", "/data/ProfileEntityData.xml", "/data/SecurityQuestionEntityData.xml"));
     }
 
     @Before
@@ -72,6 +72,7 @@ public class StatisticsDaoTest extends DBUnitTest {
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void testStatistics() {
         StatisticKeyEntity key = statisticsDao.createKey();
+        List<StatisticValuesEntity> entities = new ArrayList<StatisticValuesEntity>();
 
         StatisticValuesEntity os1 = new StatisticValuesEntity(key, "s1", 11);
         StatisticValuesEntity os2 = new StatisticValuesEntity(key, "s2", 3);
@@ -80,12 +81,13 @@ public class StatisticsDaoTest extends DBUnitTest {
         StatisticValuesEntity os5 = new StatisticValuesEntity(key, "s5", 0);
         StatisticValuesEntity os6 = new StatisticValuesEntity(key, "s6", 0);
         StatisticValuesEntity os7 = new StatisticValuesEntity(null, "s7", 0);
+        entities.add(os1);
+        entities.add(os2);
+        entities.add(os3);
+        entities.add(os4);
+        entities.add(os5);
 
-        statisticsDao.saveStatistic(os1);
-        statisticsDao.saveStatistic(os2);
-        statisticsDao.saveStatistic(os3);
-        statisticsDao.saveStatistic(os4);
-        statisticsDao.saveStatistic(os5);
+        statisticsDao.saveStatistics(entities);
 
         StatisticKeyEntity latestKey = statisticsDao.getLatestKey();
 

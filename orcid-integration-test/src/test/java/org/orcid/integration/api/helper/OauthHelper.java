@@ -28,6 +28,7 @@ import javax.ws.rs.core.MultivaluedMap;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.orcid.api.common.WebDriverHelper;
+import org.orcid.integration.api.internal.InternalOAuthAPIService;
 import org.orcid.integration.api.t1.T1OAuthAPIService;
 import org.orcid.integration.api.t2.T2OAuthAPIService;
 import org.orcid.jaxb.model.message.ScopePathType;
@@ -39,7 +40,8 @@ import com.sun.jersey.core.util.MultivaluedMapImpl;
 public class OauthHelper {
 
     private WebDriverHelper webDriverHelper;
-
+    
+    private InternalOAuthAPIService<ClientResponse> internalClient;
     private T2OAuthAPIService<ClientResponse> oauthT2Client;
     private T1OAuthAPIService<ClientResponse> oauthT1Client;        
 
@@ -65,6 +67,14 @@ public class OauthHelper {
 
     public void setOauthT2Client(T2OAuthAPIService<ClientResponse> oauthT2Client) {
         this.oauthT2Client = oauthT2Client;
+    }
+    
+    public InternalOAuthAPIService<ClientResponse> getInternalClient() {
+        return internalClient;
+    }
+
+    public void setInternalClient(InternalOAuthAPIService<ClientResponse> internalClient) {
+        this.internalClient = internalClient;
     }
 
     public String obtainAccessToken(String clientId, String clientSecret, String scopes, String email, String password, String redirectUri) throws JSONException, InterruptedException {
@@ -107,26 +117,37 @@ public class OauthHelper {
     } 
     
     public String getClientCredentialsAccessToken(String clientId, String clientSecret, ScopePathType scope) throws JSONException {
-        return getClientCredentialsAccessToken(clientId, clientSecret, scope, false);
+        return getClientCredentialsAccessToken(clientId, clientSecret, scope, APIRequestType.MEMBER);
     }
     
-    public String getClientCredentialsAccessToken(String clientId, String clientSecret, ScopePathType scope, boolean usingPublicApi) throws JSONException {
+    public String getClientCredentialsAccessToken(String clientId, String clientSecret, ScopePathType scope, APIRequestType apiRequerstType) throws JSONException {
         MultivaluedMap<String, String> params = new MultivaluedMapImpl();
         params.add("client_id", clientId);
         params.add("client_secret", clientSecret);
         params.add("grant_type", "client_credentials");
         params.add("scope", scope.value());
-        ClientResponse clientResponse = null;
-        if(!usingPublicApi) {
-            clientResponse = oauthT2Client.obtainOauth2TokenPost("client_credentials", params);
-        } else {
-            clientResponse = oauthT1Client.obtainOauth2TokenPost("client_credentials", params);
-        }
+        ClientResponse clientResponse = getResponse(params, apiRequerstType);        
         assertEquals(200, clientResponse.getStatus());
         String body = clientResponse.getEntity(String.class);
         JSONObject jsonObject = new JSONObject(body);
         String accessToken = (String) jsonObject.get("access_token");
         return accessToken;
+    }
+    
+    public ClientResponse getResponse(MultivaluedMap<String, String> params, APIRequestType apiRequerstType) {
+        ClientResponse clientResponse = null;
+        switch(apiRequerstType) {
+        case INTERNAL:
+            clientResponse = internalClient.obtainOauth2TokenPost("client_credentials", params);
+            break;
+        case MEMBER:
+            clientResponse = oauthT2Client.obtainOauth2TokenPost("client_credentials", params);
+            break;
+        case PUBLIC:
+            clientResponse = oauthT1Client.obtainOauth2TokenPost("client_credentials", params);
+            break;
+        }
+        return clientResponse;
     }
     
     public void closeWebDriver() {

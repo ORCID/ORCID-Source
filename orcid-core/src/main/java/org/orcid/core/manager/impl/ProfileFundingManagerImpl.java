@@ -26,12 +26,16 @@ import javax.annotation.Resource;
 import org.apache.commons.io.IOUtils;
 import org.orcid.core.adapter.JpaJaxbFundingAdapter;
 import org.orcid.core.locale.LocaleManager;
+import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.OrgManager;
 import org.orcid.core.manager.ProfileFundingManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.validator.ActivityValidator;
 import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.jaxb.model.notification.amended.AmendedSection;
+import org.orcid.jaxb.model.notification.permission.Item;
+import org.orcid.jaxb.model.notification.permission.ItemType;
 import org.orcid.jaxb.model.record.summary_rc1.FundingSummary;
 import org.orcid.jaxb.model.record_rc1.Funding;
 import org.orcid.persistence.dao.FundingSubTypeSolrDao;
@@ -83,6 +87,9 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
     public void setSourceManager(SourceManager sourceManager) {
         this.sourceManager = sourceManager;
     }
+    
+    @Resource
+    private NotificationManager notificationManager;
     
     /**
      * Removes the relationship that exists between a funding and a profile.
@@ -280,6 +287,8 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
         profileFundingEntity.setProfile(profile);
         setIncomingWorkPrivacy(profileFundingEntity, profile);
         profileFundingDao.persist(profileFundingEntity);
+        profileFundingDao.flush();
+        notificationManager.sendAmendEmail(orcid, AmendedSection.FUNDING, createItem(profileFundingEntity));
         return jpaJaxbFundingAdapter.toFunding(profileFundingEntity);
     }
 
@@ -330,6 +339,8 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
         pfe.setOrg(updatedOrganization);
         
         pfe = profileFundingDao.merge(pfe);
+        profileFundingDao.flush();
+        notificationManager.sendAmendEmail(orcid, AmendedSection.FUNDING, createItem(pfe));
         return jpaJaxbFundingAdapter.toFunding(pfe);
     }
     
@@ -345,8 +356,11 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
     @Transactional    
     public boolean checkSourceAndDelete(String orcid, Long fundingId) {
         ProfileFundingEntity pfe = profileFundingDao.getProfileFunding(orcid, fundingId);
-        orcidSecurityManager.checkSource(pfe.getSource());
-        return profileFundingDao.removeProfileFunding(orcid, fundingId);
+        orcidSecurityManager.checkSource(pfe.getSource());        
+        Item item = createItem(pfe);
+        boolean result = profileFundingDao.removeProfileFunding(orcid, fundingId);
+        notificationManager.sendAmendEmail(orcid, AmendedSection.FUNDING, item);
+        return result;
     }
 
     
@@ -364,4 +378,13 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
         List<ProfileFundingEntity> fundingEntities = profileFundingDao.getByUser(userOrcid);
         return jpaJaxbFundingAdapter.toFundingSummary(fundingEntities);
     }
+    
+    private Item createItem(ProfileFundingEntity profileFundingEntity) {
+        Item item = new Item();
+        item.setItemName(profileFundingEntity.getTitle());
+        item.setItemType(ItemType.FUNDING);
+        item.setPutCode(String.valueOf(profileFundingEntity.getId()));
+        return item;
+    }
+    
 }

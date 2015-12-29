@@ -57,30 +57,41 @@ public class WebDriverHelper {
     }
 
     public String obtainAuthorizationCode(String scopes, String orcid, String userId, String password) throws InterruptedException {
+        return obtainAuthorizationCode(scopes, orcid, userId, password, false);
+    }
+    
+    public String obtainAuthorizationCode(String scopes, String orcid, String userId, String password, boolean isLoggedIn) throws InterruptedException {
         String url = String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, orcid, scopes, redirectUri);        
         webDriver.get(url);
 
-        // Switch to the login form
-        try {
-            By switchFromLinkLocator = By.id("in-register-switch-form");
-            (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(switchFromLinkLocator));
-            WebElement switchFromLink = webDriver.findElement(switchFromLinkLocator);
-            switchFromLink.click();
-        } catch (Exception e) {
-            System.out.println("Unable to load URL: " + url);
-            e.printStackTrace();
-            throw e;
-        }
-
-        // Fill the form
-        By userIdElementLocator = By.id("userId");
-        (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(userIdElementLocator));
-        WebElement userIdElement = webDriver.findElement(userIdElementLocator);
-        userIdElement.sendKeys(userId);
-        WebElement passwordElement = webDriver.findElement(By.id("password"));
-        passwordElement.sendKeys(password);
-        WebElement submitButton = webDriver.findElement(By.id("authorize-button"));
-        submitButton.click();
+        if(!isLoggedIn) {
+            // Switch to the login form
+            try {
+                By switchFromLinkLocator = By.id("in-register-switch-form");
+                (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(switchFromLinkLocator));
+                WebElement switchFromLink = webDriver.findElement(switchFromLinkLocator);
+                switchFromLink.click();
+            } catch (Exception e) {
+                System.out.println("Unable to load URL: " + url);
+                e.printStackTrace();
+                throw e;
+            }
+            
+            // Fill the form
+            By userIdElementLocator = By.id("userId");
+            (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(userIdElementLocator));
+            WebElement userIdElement = webDriver.findElement(userIdElementLocator);
+            userIdElement.sendKeys(userId);
+            WebElement passwordElement = webDriver.findElement(By.id("password"));
+            passwordElement.sendKeys(password);
+            WebElement submitButton = webDriver.findElement(By.id("authorize-button"));
+            submitButton.click();
+        } else {
+            By authorizeBtn = By.id("authorize");
+            (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(authorizeBtn));
+            WebElement btn = webDriver.findElement(authorizeBtn);
+            btn.click();
+        }        
 
         (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(new ExpectedCondition<Boolean>() {
             public Boolean apply(WebDriver d) {
@@ -135,8 +146,7 @@ public class WebDriverHelper {
     public String obtainAuthorizationCode(String scopes, String orcid, String userId, String password, List<String> inputIdsToCheck, boolean markAsSelected)
             throws InterruptedException {
         webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, orcid, scopes, redirectUri));
-        webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, orcid, scopes, redirectUri));
-
+        
         // Switch to the login form
         By switchFromLinkLocator = By.id("in-register-switch-form");
         (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(switchFromLinkLocator));

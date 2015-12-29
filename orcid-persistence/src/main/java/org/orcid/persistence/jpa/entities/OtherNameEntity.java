@@ -16,8 +16,11 @@
  */
 package org.orcid.persistence.jpa.entities;
 
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -26,6 +29,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+
+import org.orcid.jaxb.model.common.Visibility;
 
 /**
  * <p>
@@ -38,13 +43,15 @@ import javax.persistence.Table;
  **/
 @Entity
 @Table(name = "other_name")
-public class OtherNameEntity extends BaseEntity<Long> implements Comparable<OtherNameEntity>, ProfileAware {
+public class OtherNameEntity extends BaseEntity<Long> implements Comparable<OtherNameEntity>, ProfileAware, SourceAware {
 
     private static final long serialVersionUID = -3227122865862310024L;
 
     private Long id;
     private String displayName;
     private ProfileEntity profile;
+    private SourceEntity source;
+    private Visibility visibility;
 
     /**
      * @return the id of the other_name
@@ -96,6 +103,24 @@ public class OtherNameEntity extends BaseEntity<Long> implements Comparable<Othe
      */
     public void setProfile(ProfileEntity profile) {
         this.profile = profile;
+    }
+    
+    public SourceEntity getSource() {
+        return source;
+    }
+
+    public void setSource(SourceEntity source) {
+        this.source = source;
+    }
+
+    @Basic
+    @Enumerated(EnumType.STRING)
+    public Visibility getVisibility() {
+        return visibility;
+    }
+
+    public void setVisibility(Visibility visibility) {
+        this.visibility = visibility;
     }
 
     @Override

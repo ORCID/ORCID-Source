@@ -54,7 +54,7 @@
             
             <#include "includes/orcid_public_record_widget.ftl"/>
             
-            
+            <#include "includes/print_record.ftl"/>
             
             <div class="qrcode-container">
                 <a href="http://qrcode.orcid.org" target="_blank"><span class="glyphicons qrcode orcid-qr"></span><@orcid.msg 'workspace.qrcode.link.text'/></a>
@@ -67,42 +67,36 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            
-	       	
+            </div>            	       	
 	       	
 	       	<!-- Also known as -->
-	       	<div ng-controller="OtherNamesCtrl" class="workspace-section other-names">
-        	   
+	       	<div ng-controller="OtherNamesCtrl" class="workspace-section other-names" id="other-names-section">        	   
         	   <div class="workspace-section-header">
         	   	   <span class="workspace-section-title"><@orcid.msg 'workspace.Alsoknownas'/></span>
 	        	   <span ng-hide="showEdit == true" ng-click="openEdit()">		        	   	  
-	        	      <span class="glyphicon glyphicon-pencil edit-other-names edit-option pull-right" title=""></span>
-	        	      <span ng-repeat="otherNames in otherNamesForm.otherNames" ng-cloak>
-	        	         {{ $last?otherNames.value:otherNames.value+ ", "}}
+	        	      <span class="glyphicon glyphicon-pencil edit-other-names edit-option pull-right" title="" id="open-edit-other-names"></span>
+	        	      <span ng-repeat="otherName in otherNamesForm.otherNames" ng-cloak>
+	        	         {{ $last?otherName.content:otherName.content + ", "}}
 	        	      </span>
 	        	   </span>
-	        	   <span class="pull-right" ng-show="showEdit == true" ng-cloak>
+	        	   <span class="pull-right" ng-show="showEdit == true" id="other-names-visibility" ng-cloak>
 		        	   <@orcid.privacyToggle3  angularModel="otherNamesForm.visibility.visibility"
 			             questionClick="toggleClickPrivacyHelp($index)"
 			             clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
 			             publicClick="setPrivacy('PUBLIC', $event)" 
 	                	     limitedClick="setPrivacy('LIMITED', $event)" 
 	                	     privateClick="setPrivacy('PRIVATE', $event)"
-	                	     elementId="$index"/>
+	                	     elementId="$index" />
                    </span>
         	   </div>
         	   
         	   <!-- Edit -->
         	   <div ng-show="showEdit == true" ng-cloak>
-        	      <div ng-repeat="otherNames in otherNamesForm.otherNames" class="icon-inside-input">
-        	          <input type="text" ng-model="otherNames.value" ng-enter="setOtherNamesForm()">
-        	          <a ng-click="deleteKeyword(otherNames)" class="glyphicon glyphicon-trash grey icon-inside"></a>
-        	          <span class="orcid-error" ng-show="otherNames.url.errors.length > 0">
-					     <div ng-repeat='error in otherNames.url.errors' ng-bind-html="error"></div>
-				      </span>
-        	          <span class="orcid-error" ng-show="otherNames.name.errors.length > 0">
-					     <div ng-repeat='error in otherNames.name.errors' ng-bind-html="error"></div>
+        	      <div ng-repeat="otherName in otherNamesForm.otherNames" class="icon-inside-input">
+        	          <input type="text" ng-model="otherName.content" ng-enter="setOtherNamesForm()">
+        	          <a ng-click="deleteKeyword(otherName)" class="glyphicon glyphicon-trash grey icon-inside"></a>
+        	          <span class="orcid-error" ng-show="otherName.errors.length > 0">
+					     <div ng-repeat='error in otherName.errors' ng-bind-html="error"></div>
 				      </span>
         	      </div>
         	      <ul class="workspace-section-toolbar">
@@ -237,16 +231,14 @@
         	   <div ng-show="showEdit == true" ng-cloak>
         	      <div ng-repeat="website in websitesForm.websites" class="mobile-box">
         	          <input type="text" ng-model="website.name.value" ng-enter="setWebsitesForm()" placeholder="${springMacroRequestContext.getMessage("manual_work_form_contents.labeldescription")}"></input>
-        	          <input type="text" ng-model="website.url.value" ng-enter="setWebsitesForm()" placeholder="${springMacroRequestContext.getMessage("common.url")}" style="padding-right: 5px;"></input>
-	        	      <a ng-click="deleteWebsite(website)"><span class="glyphicon glyphicon-trash grey pull-right"></span></a>
-	        	      
-        	          
-        	          <span class="orcid-error" ng-show="website.url.errors.length > 0">
-					     <div ng-repeat='error in website.url.errors' ng-bind-html="error"></div>
-				      </span>
         	          <span class="orcid-error" ng-show="website.name.errors.length > 0">
 					     <div ng-repeat='error in website.name.errors' ng-bind-html="error"></div>
 				      </span>
+        	          <input type="text" ng-model="website.url.value" ng-enter="setWebsitesForm()" placeholder="${springMacroRequestContext.getMessage("common.url")}" style="padding-right: 5px;"></input>
+	        	      <a ng-click="deleteWebsite(website)"><span class="glyphicon glyphicon-trash grey pull-right"></span></a>	        	              	          
+        	          <span class="orcid-error" ng-show="website.url.errors.length > 0">
+					     <div ng-repeat='error in website.url.errors' ng-bind-html="error"></div>
+				      </span>        	          
 				      <span class="dotted-bar left"></span>
         	      </div>
         	      <ul class="workspace-section-toolbar">
@@ -387,9 +379,9 @@
 				                 		<div class="justify">												
 											<p class="wizard-description" ng-class="{'ellipsis-on' : wizardDescExpanded[wtw.clientId] == false || wizardDescExpanded[wtw.clientId] == null}">
 												{{wtw.shortDescription}}													
-												<a ng-click="toggleWizardDesc(wtw.clientId)" ng-show="wizardDescExpanded[wtw.clientId] == true"><span class="glyphicon glyphicon-chevron-down wizard-chevron"></span></a>
+												<a ng-click="toggleWizardDesc(wtw.clientId)" ng-show="wizardDescExpanded[wtw.clientId] == true"><span class="glyphicon glyphicon-chevron-right wizard-chevron"></span></a>
 											</p>												
-											<a ng-click="toggleWizardDesc(wtw.clientId)" ng-show="wizardDescExpanded[wtw.clientId] == false || wizardDescExpanded[wtw.clientId] == null" class="toggle-wizard-desc"><span class="glyphicon glyphicon-chevron-right wizard-chevron"></span></a>
+											<a ng-click="toggleWizardDesc(wtw.clientId)" ng-show="wizardDescExpanded[wtw.clientId] == false || wizardDescExpanded[wtw.clientId] == null" class="toggle-wizard-desc"><span class="glyphicon glyphicon-chevron-down wizard-chevron"></span></a>
 										</div>
 					                    <hr/>
 				                	</div>
@@ -532,10 +524,11 @@
 						<#include "includes/work/body_work_inc_v3.ftl"/>						
 	            	</div>
             	</div>
-            	<#if RequestParameters['peer']??>
-               		<!-- Peer Review -->
-               		<#include "workspace_peer_review_body_list.ftl"/>
- 				</#if>
+            	<div ng-controller="PeerReviewCtrl">
+	            	<div ng-show="peerReviewSrvc.groups.length > 0" ng-cloak>
+	            		<#include "workspace_peer_review_body_list.ftl"/>
+	            	</div>
+	            </div>
             </div>
         </div>
     </div>    

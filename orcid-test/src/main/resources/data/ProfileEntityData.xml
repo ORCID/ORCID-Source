@@ -32,7 +32,7 @@
             family_name="Milligan"
             vocative_name="Spike Milligan"
             credit_name="S. Milligan"
-            credit_name_visibility="PUBLIC"
+            names_visibility="PUBLIC"
             profile_address_visibility="PRIVATE"
             external_identifiers_visibility="LIMITED"
             biography_visibility="PUBLIC"
@@ -54,6 +54,7 @@
             iso2_country="GB"
             orcid_type="CLIENT"
             client_type="PREMIUM_CREATOR"
+            reviewed="false"
             />
             
     <profile
@@ -86,7 +87,8 @@
             credentials_expiry="2013-02-01"
             biography="Michael Bentine CBE (26 January 1922[1] – 26 November 1996[2]) was a British comedian, comic actor and founding member of the Goons."
             indexing_status="DONE"
-            orcid_type="USER"            
+            orcid_type="USER"
+            reviewed="true"     
             />
 
     <profile
@@ -102,9 +104,9 @@
             family_name="Sellers"
             vocative_name="Peter Sellers"
             credit_name="P. Sellers III"            
-            credit_name_visibility="LIMITED"
+            names_visibility="LIMITED"
             external_identifiers_visibility="LIMITED"
-            biography_visibility="PUBLIC"
+            biography_visibility="LIMITED"
             keywords_visibility="LIMITED"
             other_names_visibility="PRIVATE"
             researcher_urls_visibility="PUBLIC"          
@@ -124,6 +126,7 @@
             iso2_country="GB"
             orcid_type="CLIENT"
             client_type="PREMIUM_CREATOR"
+            reviewed="false"
             />
 
     <profile
@@ -157,6 +160,7 @@
             indexing_status="DONE"
             orcid_type="CLIENT"
             client_type="PREMIUM_CREATOR"
+            reviewed="false"
             />
 
     <profile
@@ -191,6 +195,7 @@
             indexing_status="PENDING"
             orcid_type="CLIENT"
             client_type="PREMIUM_CREATOR"
+            reviewed="false"
             />
 
     <profile
@@ -225,6 +230,7 @@
             indexing_status="PENDING"
             orcid_type="GROUP"
             group_type="PREMIUM_INSTITUTION"
+            reviewed="false"
             />
 
     <profile
@@ -240,7 +246,7 @@
             family_name="Redding"
             vocative_name="Otis Redding"
             credit_name="O. Redding"
-            credit_name_visibility="PRIVATE"
+            names_visibility="PRIVATE"
             external_identifiers_visibility="LIMITED"
             biography_visibility="PUBLIC"
             keywords_visibility="REGISTERED_ONLY"
@@ -259,6 +265,7 @@
             biography="Otis Ray Redding, Jr. (September 9, 1941 – December 10, 1967) was an American soul singer-songwriter, record producer, arranger, and talent scout."
             indexing_status="DONE"
             orcid_type="USER"
+            reviewed="false"
             />
 
 	<profile
@@ -274,7 +281,7 @@
             family_name="Name"
             vocative_name="User Name"
             credit_name="U. Name"
-            credit_name_visibility="PUBLIC"
+            names_visibility="PUBLIC"
             external_identifiers_visibility="LIMITED"
             biography_visibility="PUBLIC"
             keywords_visibility="REGISTERED_ONLY"
@@ -294,6 +301,7 @@
             indexing_status="DONE"
             primary_record="4444-4444-4444-4441"
             deprecated_date="2013-08-29 15:31:00.00"
+            reviewed="false"
             />
 
 	<profile
@@ -326,7 +334,8 @@
             credentials_expiry="2013-02-01"
             biography="Admin user will be used to execute admin actions on controllers."
             indexing_status="DONE"
-            orcid_type="ADMIN"            
+            orcid_type="ADMIN" 
+            reviewed="false"          
             />            
 
 	<profile
@@ -341,7 +350,7 @@
             given_names="Michael"
             family_name="Bentine"
             vocative_name="Michael Bentine"
-            credit_name="M. Bentine"
+            credit_name="Credit Name"
             external_identifiers_visibility="LIMITED"
             biography_visibility="PUBLIC"
             keywords_visibility="REGISTERED_ONLY"
@@ -359,7 +368,8 @@
             credentials_expiry="2013-02-01"
             biography="Michael Bentine CBE (26 January 1922[1] – 26 November 1996[2]) was a British comedian, comic actor and founding member of the Goons."
             indexing_status="DONE"
-            orcid_type="USER"            
+            orcid_type="USER"
+            reviewed="false"          
             />
 
 	<profile
@@ -374,7 +384,7 @@
             given_names="Michael"
             family_name="Bentine"
             vocative_name="Michael Bentine"
-            credit_name="M. Bentine"
+            credit_name="Credit Name"
             external_identifiers_visibility="LIMITED"
             biography_visibility="PUBLIC"
             keywords_visibility="REGISTERED_ONLY"
@@ -395,6 +405,7 @@
             group_orcid="4444-4444-4444-4446"
             orcid_type="CLIENT" 
             client_type="PREMIUM_CREATOR"
+            reviewed="false"
             />
 
     <granted_authority
@@ -434,19 +445,75 @@
             />
 
     <external_identifier
+    		id="1"
             external_id_reference="d3clan"
             external_id_type="Facebook"
             orcid="4444-4444-4444-4443"
             external_id_url="http://www.facebook.com/d3clan"
             source_id="4444-4444-4444-4441"
+            visibility="PUBLIC"
+            date_created="2011-06-29 15:31:00.00"            
+            last_modified="2011-07-02 15:31:00.00"
             />
 
     <external_identifier
+    		id="2"
             external_id_reference="abc123"
             external_id_type="Facebook"
             orcid="4444-4444-4444-4442"
             external_id_url="http://www.facebook.com/abc123"
+            client_source_id="APP-5555555555555555"
+            visibility="PUBLIC"
+            date_created="2011-06-29 15:31:00.00"            
+            last_modified="2011-07-02 15:31:00.00"
+            />
+
+	<external_identifier
+			id="3"
+            external_id_reference="abc456"
+            external_id_type="Facebook"
+            orcid="4444-4444-4444-4442"
+            external_id_url="http://www.facebook.com/abc456"
+            source_id="4444-4444-4444-4442"
+            visibility="LIMITED"
+            date_created="2011-06-29 15:31:00.00"            
+            last_modified="2011-07-02 15:31:00.00"
+            />
+
+	<external_identifier
+			id="4"
+            external_id_reference="abc789"
+            external_id_type="Facebook"
+            orcid="4444-4444-4444-4442"
+            external_id_url="http://www.facebook.com/abc789"
             source_id="4444-4444-4444-4441"
+            visibility="PRIVATE"
+            date_created="2011-06-29 15:31:00.00"            
+            last_modified="2011-07-02 15:31:00.00"
+            />
+
+	<external_identifier
+			id="5"
+            external_id_reference="abc012"
+            external_id_type="Facebook"
+            orcid="4444-4444-4444-4442"
+            external_id_url="http://www.facebook.com/abc012"
+            client_source_id="APP-5555555555555555"
+            visibility="PRIVATE"
+            date_created="2011-06-29 15:31:00.00"            
+            last_modified="2011-07-02 15:31:00.00"
+            />
+
+	<external_identifier
+			id="6"
+            external_id_reference="xyz012"
+            external_id_type="Google"
+            orcid="4444-4444-4444-4444"
+            external_id_url="http://www.google.com/xyz012"
+            client_source_id="APP-5555555555555555"
+            visibility="PUBLIC"
+            date_created="2011-06-29 15:31:00.00"            
+            last_modified="2011-07-02 15:31:00.00"
             />
 
     <researcher_url
@@ -454,6 +521,10 @@
             url="www.4444-4444-4444-4441.com"
             url_name="444_1"
             orcid="4444-4444-4444-4441"
+            source_id="4444-4444-4444-4441"
+            visibility="PUBLIC"
+            last_modified="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
             />
 
     <researcher_url
@@ -461,6 +532,10 @@
             url="http://www.researcherurl2.com?id=1"
             url_name="443_1"
             orcid="4444-4444-4444-4443"
+            source_id="4444-4444-4444-4443"
+            visibility="PUBLIC"
+            last_modified="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
             />
 
     <researcher_url
@@ -468,39 +543,147 @@
             url="http://www.researcherurl2.com?id=2"
             url_name="443_2"
             orcid="4444-4444-4444-4443"
+            source_id="4444-4444-4444-4443"
+            visibility="PUBLIC"
+            last_modified="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
             />
 
     <researcher_url
             id="4"
             url="www.4444-4444-4444-4445.com"
             orcid="4444-4444-4444-4445"
+            client_source_id="APP-5555555555555555"
+            visibility="PUBLIC"
+            last_modified="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
             />  
+
+	<researcher_url
+            id="5"
+            url="http://www.researcherurl2.com?id=5"
+            url_name="443_3"
+            orcid="4444-4444-4444-4443"
+            client_source_id="APP-5555555555555555"
+            visibility="LIMITED"
+            last_modified="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
+            />
+
+	<researcher_url
+            id="6"
+            url="http://www.researcherurl2.com?id=6"
+            url_name="443_4"
+            orcid="4444-4444-4444-4443"
+            source_id="4444-4444-4444-4443"
+            visibility="PRIVATE"
+            last_modified="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
+            />            	
+
+	<researcher_url
+            id="7"
+            url="http://www.researcherurl2.com?id=7"
+            url_name="443_5"
+            orcid="4444-4444-4444-4443"
+            client_source_id="APP-5555555555555555"
+            visibility="PRIVATE"
+            last_modified="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
+            />
+
+	<researcher_url
+            id="8"
+            url="http://www.researcherurl2.com?id=8"
+            url_name="443_6"
+            orcid="4444-4444-4444-4443"
+            source_id="4444-4444-4444-4443"
+            visibility="LIMITED"
+            last_modified="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
+            />	
 
     <other_name
             other_name_id="1"
             display_name="Slibberdy Slabinah"
             orcid="4444-4444-4444-4443"
+            visibility="PUBLIC"
+            client_source_id="APP-5555555555555555"
+            last_modified="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
             />
 
     <other_name
             other_name_id="2"
             display_name="Flibberdy Flabinah"
             orcid="4444-4444-4444-4443"
+            visibility="PUBLIC"
+            source_id="4444-4444-4444-4443"
+            last_modified="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
             />
 
     <other_name
             other_name_id="3"
             display_name="Flobberdy Flip"
-            orcid="4444-4444-4444-4446"
+            orcid="4444-4444-4444-4441"
+            visibility="PUBLIC"
+            source_id="4444-4444-4444-4441"
+            last_modified="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
             />
 	
 	<other_name
             other_name_id="4"
-            display_name="Other Name"
-            orcid="4444-4444-4444-4441"
+            display_name="Other Name # 1"
+            orcid="4444-4444-4444-4446"
+            visibility="PUBLIC"
+            client_source_id="APP-5555555555555555"
+            last_modified="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
             />
 
-    <address
+	<other_name
+            other_name_id="5"
+            display_name="Other Name # 2"
+            orcid="4444-4444-4444-4446"
+            visibility="LIMITED"
+            source_id="4444-4444-4444-4446"
+            last_modified="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
+            />
+
+	<other_name
+            other_name_id="6"
+            display_name="Other Name # 3"
+            orcid="4444-4444-4444-4446"
+            visibility="PRIVATE"
+            source_id="4444-4444-4444-4446"
+            last_modified="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
+            />
+
+	<other_name
+            other_name_id="7"
+            display_name="Other Name # 4"
+            orcid="4444-4444-4444-4446"
+            visibility="PRIVATE"            
+            client_source_id="APP-5555555555555555"
+            last_modified="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
+            />
+
+	<other_name
+            other_name_id="8"
+            display_name="Other Name # 1"
+            orcid="4444-4444-4444-4447"
+            visibility="PUBLIC"            
+            client_source_id="APP-5555555555555555"
+            last_modified="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
+            />
+
+	<address
             id="1"
             address_line_1="Address 1"
             address_line_2="Address 2"
@@ -611,8 +794,28 @@
         is_primary="false"
         is_current="true"
         is_verified="false"
-        visibility="PRIVATE"
+        visibility="LIMITED"
         source_id="4444-4444-4444-4443"
+    />
+    
+    <email
+        orcid="4444-4444-4444-4443"
+        email="teddybass3public@semantico.com"
+        is_primary="false"
+        is_current="true"
+        is_verified="false"
+        visibility="PUBLIC"
+        source_id="4444-4444-4444-4443"
+    />
+    
+    <email
+        orcid="4444-4444-4444-4443"
+        email="teddybass3private@semantico.com"
+        is_primary="false"
+        is_current="true"
+        is_verified="false"
+        visibility="PRIVATE"
+        client_source_id="APP-5555555555555555"
     />
     
     <email

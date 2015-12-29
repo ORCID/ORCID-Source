@@ -10,9 +10,14 @@ function IdPSelectUIParms(){
     this.defaultLogo = 'blank.gif';  // Replace with your own logo
     this.defaultLogoWidth = 1;
     this.defaultLogoHeight = 1 ;
-    this.defaultReturn = null;       // If non null, then the default place to send users who are not
-                                     // Approaching via the Discovery Protocol for example
+    
+    this.currentLocation = window.location.href;
+    
+  	this.defaultReturn = orcidVar.baseUri + '/Shibboleth.sso/Login?SAMLDS=1&target=' + orcidVar.baseUri + '/shibboleth/signin';       // If non null, then the default place to send users who are not 
+    
+    // Approaching via the Discovery Protocol for example
     //this.defaultReturn = "https://example.org/Shibboleth.sso/DS?SAMLDS=1&target=https://example.org/secure";
+    this.ignoreURLParams = true;
     this.defaultReturnIDParam = null;
     this.helpURL = 'https://wiki.shibboleth.net/confluence/display/SHIB2/DSRoadmap';
     this.ie6Hack = null;             // An array of structures to disable when drawing the pull down (needed to 
@@ -29,39 +34,13 @@ function IdPSelectUIParms(){
     this.setFocusTextBox = true;     // Set to false to supress focus 
     this.testGUI = false;
 
-
-    //
-    // Language support. 
-    //
-    // The minified source provides "en", "de", "pt-br" and "jp".  
-    //
-    // Override any of these below, or provide your own language
-    //
-    //this.langBundles = {
-    //'en': {
-    //    'fatal.divMissing': '<div> specified  as "insertAtDiv" could not be located in the HTML',
-    //    'fatal.noXMLHttpRequest': 'Browser does not support XMLHttpRequest, unable to load IdP selection data',
-    //    'fatal.wrongProtocol' : 'Policy supplied to DS was not "urn:oasis:names:tc:SAML:profiles:SSO:idpdiscovery-protocol:single"',
-    //    'fatal.wrongEntityId' : 'entityId supplied by SP did not match configuration',
-    //    'fatal.noData' : 'Metadata download returned no data',
-    //    'fatal.loadFailed': 'Failed to download metadata from ',
-    //    'fatal.noparms' : 'No parameters to discovery session and no defaultReturn parameter configured',
-    //    'fatal.noReturnURL' : "No URL return parameter provided",
-    //    'fatal.badProtocol' : "Return request must start with https:// or http://",
-    //    'idpPreferred.label': 'Use a suggested selection:',
-    //    'idpEntry.label': 'Or enter your organization\'s name',
-    //    'idpEntry.NoPreferred.label': 'Enter your organization\'s name',
-    //    'idpList.label': 'Or select your organization from the list below',
-    //    'idpList.NoPreferred.label': 'Select your organization from the list below',
-    //    'idpList.defaultOptionLabel': 'Please select your organization...',
-    //    'idpList.showList' : 'Allow me to pick from a list',
-    //    'idpList.showSearch' : 'Allow me to specify the site',
-    //    'submitButton.label': 'Continue',
-    //    'helpText': 'Help',
-    //    'defaultLogoAlt' : 'DefaultLogo'
-    //}
-    //};
-
+    this.langBundles = {
+        // Override all lang bundles with localized messages from ORCID back end. The user will get the language they have chosen from the drop down in the ORCID UI.
+        en : orcidVar.jsMessages.messages,
+        de : orcidVar.jsMessages.messages,
+        ja : orcidVar.jsMessages.messages,
+        "pt-br" : orcidVar.jsMessages.messages
+    }
     //
     // The following should not be changed without changes to the css.  Consider them as mandatory defaults
     //

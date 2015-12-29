@@ -28,6 +28,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.persistence.NoResultException;
 import javax.ws.rs.core.Response;
+import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.orcid.api.common.delegator.OrcidApiServiceDelegator;
 import org.orcid.core.adapter.Jpa2JaxbAdapter;
@@ -192,7 +193,7 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
     @NonLocked
     public Response findFullDetailsFromPublicCache(String orcid) {
         try {
-            OrcidMessage orcidMessage = orcidSearchManager.findPublicProfileById(orcid);
+            OrcidMessage orcidMessage = orcidSearchManager.findPublicProfileById(orcid);            
             return getOrcidMessageResponse(orcidMessage, orcid);
         } catch (OrcidSearchException e) {
             LOGGER.warn("Error searching, so falling back to DB", e);
@@ -378,7 +379,6 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
      * @return
      */
     private Response getOrcidMessageResponse(OrcidProfile profile, String requestedOrcid) {
-
         if (profile == null) {
         	Map<String, String> params = new HashMap<String, String>();
         	params.put("orcid", requestedOrcid);
@@ -410,13 +410,16 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
         Response response = null;
 
         if (isProfileDeprecated) {
-        	Map<String, String> params = new HashMap<String, String>();
-        	params.put("orcid", orcidProfile.getOrcidDeprecated().getPrimaryRecord().getOrcidIdentifier().getUri());
+            Map<String, String> params = new HashMap<String, String>();
+            params.put(OrcidDeprecatedException.ORCID, orcidProfile.getOrcidDeprecated().getPrimaryRecord().getOrcidIdentifier().getUri()); 
+            if(orcidProfile.getOrcidDeprecated().getDate() != null) {
+                XMLGregorianCalendar deprecatedDate = orcidProfile.getOrcidDeprecated().getDate().getValue();
+                params.put(OrcidDeprecatedException.DEPRECATED_DATE, deprecatedDate.toString());
+            }        	
             throw new OrcidDeprecatedException(params);
         } else {
             response = Response.ok(orcidMessage).build();
-        }
-
+        }        
         return response;
     }
 

@@ -721,6 +721,8 @@
 				<xs:enumeration value="ru" />
 				<xs:enumeration value="zh_CN" />
 				<xs:enumeration value="zh_TW" />
+				<xs:enumeration value="it" />
+				<xs:enumeration value="ja" />
  			</xs:restriction>
  		</xs:simpleType>
  	</xs:element>

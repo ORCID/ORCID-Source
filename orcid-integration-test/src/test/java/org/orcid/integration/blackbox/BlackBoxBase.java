@@ -40,12 +40,15 @@ import org.orcid.integration.api.helper.OauthHelper;
 import org.orcid.integration.api.memberV2.MemberV2ApiClientImpl;
 import org.orcid.integration.api.t2.T2OAuthAPIService;
 import org.orcid.integration.blackbox.web.SigninTest;
-import org.orcid.jaxb.model.record_rc1.Activity;
+import org.orcid.jaxb.model.record_rc2.ExternalIdentifier;
 import org.orcid.jaxb.model.record_rc1.Education;
 import org.orcid.jaxb.model.record_rc1.Employment;
 import org.orcid.jaxb.model.record_rc1.Funding;
 import org.orcid.jaxb.model.record_rc1.PeerReview;
 import org.orcid.jaxb.model.record_rc1.Work;
+import org.orcid.jaxb.model.record_rc2.OtherName;
+import org.orcid.jaxb.model.record_rc2.PersonalDetails;
+import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
@@ -65,7 +68,7 @@ public class BlackBoxBase {
     @Value("${org.orcid.web.base.url:http://localhost:8080/orcid-web}")
     protected String webBaseUrl;
     @Value("${org.orcid.web.testClient1.redirectUri}")
-    protected String redirectUri;
+    protected String client1RedirectUri;
     @Value("${org.orcid.web.testClient1.clientId}")
     protected String client1ClientId;
     @Value("${org.orcid.web.testClient1.clientSecret}")
@@ -73,7 +76,9 @@ public class BlackBoxBase {
     @Value("${org.orcid.web.testClient2.clientId}")
     protected String client2ClientId;
     @Value("${org.orcid.web.testClient2.clientSecret}")
-    protected String client2ClientSecret;
+    protected String client2ClientSecret;    
+    @Value("${org.orcid.web.testClient2.redirectUri}")
+    protected String client2RedirectUri;    
     @Value("${org.orcid.web.testUser1.username}")
     protected String user1UserName;
     @Value("${org.orcid.web.testUser1.password}")
@@ -82,7 +87,7 @@ public class BlackBoxBase {
     protected String user1OrcidId;
     @Resource(name = "t2OAuthClient")
     protected T2OAuthAPIService<ClientResponse> t2OAuthClient;
-    @Resource
+    @Resource(name = "memberV2ApiClient_rc1")
     protected MemberV2ApiClientImpl memberV2ApiClient;
 
     protected WebDriver webDriver;
@@ -92,19 +97,19 @@ public class BlackBoxBase {
     @Resource
     protected OauthHelper oauthHelper;
            
-    public String getAccessToken(String scopes, String clientId, String clientSecret) throws InterruptedException, JSONException {
+    public String getAccessToken(String scopes, String clientId, String clientSecret, String clientRedirectUri) throws InterruptedException, JSONException {
         webDriver = new FirefoxDriver();
-        webDriverHelper = new WebDriverHelper(webDriver, webBaseUrl, redirectUri);
+        webDriverHelper = new WebDriverHelper(webDriver, webBaseUrl, clientRedirectUri);
         oauthHelper.setWebDriverHelper(webDriverHelper);
-        String accessToken = oauthHelper.obtainAccessToken(clientId, clientSecret, scopes, user1UserName, user1Password, redirectUri);
+        String accessToken = oauthHelper.obtainAccessToken(clientId, clientSecret, scopes, user1UserName, user1Password, clientRedirectUri);
         webDriver.quit();
         return accessToken;
     }
 
-    public Activity unmarshallFromPath(String path, Class<? extends Activity> type) {
+    public Object unmarshallFromPath(String path, Class<?> type) {
         try (Reader reader = new InputStreamReader(getClass().getResourceAsStream(path))) {
             Object obj = unmarshall(reader, type);
-            Activity result = null;
+            Object result = null;
             if (Education.class.equals(type)) {
                 result = (Education) obj;
             } else if (Employment.class.equals(type)) {
@@ -115,6 +120,14 @@ public class BlackBoxBase {
                 result = (Work) obj;
             } else if (PeerReview.class.equals(type)) {
                 result = (PeerReview) obj;
+            } else if(ResearcherUrl.class.equals(type)) {
+                result = (ResearcherUrl) obj;
+            } else if(PersonalDetails.class.equals(type)) {
+                result = (PersonalDetails) obj;
+            } else if(OtherName.class.equals(type)) {
+                result = (OtherName) obj;
+            } else if(ExternalIdentifier.class.equals(type)) {
+                result = (ExternalIdentifier) obj;
             }
             return result;
         } catch (IOException e) {
@@ -122,7 +135,7 @@ public class BlackBoxBase {
         }
     }
 
-    public Object unmarshall(Reader reader, Class<? extends Activity> type) {
+    public Object unmarshall(Reader reader, Class<?> type) {
         try {
             JAXBContext context = JAXBContext.newInstance(type);
             Unmarshaller unmarshaller = context.createUnmarshaller();
@@ -206,5 +219,46 @@ public class BlackBoxBase {
             webDriver.get(baseUrl + "/userStatus.json?logUserOut=true");
             webDriver.quit();
         }
+    }
+    
+    public void adminSignIn(String adminUserName, String adminPassword) {
+        webDriver = new FirefoxDriver();
+        webDriver.get(webBaseUrl + "/userStatus.json?logUserOut=true");
+        webDriver.get(webBaseUrl + "/admin-actions");
+        SigninTest.signIn(webDriver, adminUserName, adminPassword);
+        SigninTest.dismissVerifyEmailModal(webDriver);
+    }
+    
+    public void adminUnlockAccount(String adminUserName, String adminPassword, String orcidToUnlock) {
+        // Login Admin
+        adminSignIn(adminUserName, adminPassword);
+        // Unlock the account
+        WebDriverWait wait = new WebDriverWait(webDriver, 10);
+        WebElement unLockProfileLink = webDriver.findElement(By.linkText("Unlock profile"));
+        unLockProfileLink.click();
+        WebElement unLockProfileOrcidId = webDriver.findElement(By.id("orcid_to_unlock"));
+        unLockProfileOrcidId.sendKeys(orcidToUnlock);
+        WebElement unLockButton = webDriver.findElement(By.id("bottom-confirm-unlock-profile"));
+        unLockButton.click();
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.id("btn-unlock")));
+        WebElement confirmUnLockButton = webDriver.findElement(By.id("btn-unlock"));
+        confirmUnLockButton.click();
+        webDriver.quit();
+    }
+    
+    public void adminLockAccount(String adminUserName, String adminPassword, String orcidToLock) {
+        adminSignIn(adminUserName, adminPassword);
+        // Lock the account
+        WebDriverWait wait = new WebDriverWait(webDriver, 10);
+        WebElement lockProfileLink = webDriver.findElement(By.linkText("Lock profile"));
+        lockProfileLink.click();
+        WebElement lockProfileOrcidId = webDriver.findElement(By.id("orcid_to_lock"));
+        lockProfileOrcidId.sendKeys(orcidToLock);
+        WebElement lockButton = webDriver.findElement(By.id("bottom-confirm-lock-profile"));
+        lockButton.click();
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.id("btn-lock")));
+        WebElement confirmLockButton = webDriver.findElement(By.id("btn-lock"));
+        confirmLockButton.click();
+        webDriver.quit();
     }
 }

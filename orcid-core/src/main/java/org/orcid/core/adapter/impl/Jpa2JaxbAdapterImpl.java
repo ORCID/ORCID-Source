@@ -20,23 +20,23 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.Iterator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Resource;
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.constants.DefaultPreferences;
 import org.orcid.core.locale.LocaleManager;
+import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
+import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.security.DefaultPermissionChecker;
 import org.orcid.core.security.PermissionChecker;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
@@ -46,7 +46,104 @@ import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
 import org.orcid.jaxb.model.clientgroup.RedirectUri;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.jaxb.model.clientgroup.RedirectUris;
-import org.orcid.jaxb.model.message.*;
+import org.orcid.jaxb.model.message.ActivitiesVisibilityDefault;
+import org.orcid.jaxb.model.message.Address;
+import org.orcid.jaxb.model.message.Affiliation;
+import org.orcid.jaxb.model.message.Affiliations;
+import org.orcid.jaxb.model.message.Amount;
+import org.orcid.jaxb.model.message.ApprovalDate;
+import org.orcid.jaxb.model.message.Biography;
+import org.orcid.jaxb.model.message.Citation;
+import org.orcid.jaxb.model.message.Claimed;
+import org.orcid.jaxb.model.message.CompletionDate;
+import org.orcid.jaxb.model.message.ContactDetails;
+import org.orcid.jaxb.model.message.Contributor;
+import org.orcid.jaxb.model.message.ContributorOrcid;
+import org.orcid.jaxb.model.message.Country;
+import org.orcid.jaxb.model.message.CreatedDate;
+import org.orcid.jaxb.model.message.CreationMethod;
+import org.orcid.jaxb.model.message.CreditName;
+import org.orcid.jaxb.model.message.Day;
+import org.orcid.jaxb.model.message.DeactivationDate;
+import org.orcid.jaxb.model.message.DelegateSummary;
+import org.orcid.jaxb.model.message.Delegation;
+import org.orcid.jaxb.model.message.DelegationDetails;
+import org.orcid.jaxb.model.message.DeprecatedDate;
+import org.orcid.jaxb.model.message.DeveloperToolsEnabled;
+import org.orcid.jaxb.model.message.DisambiguatedOrganization;
+import org.orcid.jaxb.model.message.Email;
+import org.orcid.jaxb.model.message.EncryptedPassword;
+import org.orcid.jaxb.model.message.EncryptedSecurityAnswer;
+import org.orcid.jaxb.model.message.EncryptedVerificationCode;
+import org.orcid.jaxb.model.message.ExternalIdCommonName;
+import org.orcid.jaxb.model.message.ExternalIdReference;
+import org.orcid.jaxb.model.message.ExternalIdUrl;
+import org.orcid.jaxb.model.message.ExternalIdentifier;
+import org.orcid.jaxb.model.message.ExternalIdentifiers;
+import org.orcid.jaxb.model.message.FamilyName;
+import org.orcid.jaxb.model.message.Funding;
+import org.orcid.jaxb.model.message.FundingContributor;
+import org.orcid.jaxb.model.message.FundingContributors;
+import org.orcid.jaxb.model.message.FundingList;
+import org.orcid.jaxb.model.message.FundingTitle;
+import org.orcid.jaxb.model.message.FuzzyDate;
+import org.orcid.jaxb.model.message.GivenNames;
+import org.orcid.jaxb.model.message.GivenPermissionBy;
+import org.orcid.jaxb.model.message.GivenPermissionTo;
+import org.orcid.jaxb.model.message.Iso3166Country;
+import org.orcid.jaxb.model.message.Keyword;
+import org.orcid.jaxb.model.message.Keywords;
+import org.orcid.jaxb.model.message.LastModifiedDate;
+import org.orcid.jaxb.model.message.Locale;
+import org.orcid.jaxb.model.message.Month;
+import org.orcid.jaxb.model.message.OrcidActivities;
+import org.orcid.jaxb.model.message.OrcidBio;
+import org.orcid.jaxb.model.message.OrcidDeprecated;
+import org.orcid.jaxb.model.message.OrcidHistory;
+import org.orcid.jaxb.model.message.OrcidIdBase;
+import org.orcid.jaxb.model.message.OrcidIdentifier;
+import org.orcid.jaxb.model.message.OrcidInternal;
+import org.orcid.jaxb.model.message.OrcidPreferences;
+import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.jaxb.model.message.OrcidType;
+import org.orcid.jaxb.model.message.OrcidWork;
+import org.orcid.jaxb.model.message.OrcidWorks;
+import org.orcid.jaxb.model.message.Organization;
+import org.orcid.jaxb.model.message.OrganizationAddress;
+import org.orcid.jaxb.model.message.OrganizationDefinedFundingSubType;
+import org.orcid.jaxb.model.message.OtherNames;
+import org.orcid.jaxb.model.message.PersonalDetails;
+import org.orcid.jaxb.model.message.Preferences;
+import org.orcid.jaxb.model.message.PrimaryRecord;
+import org.orcid.jaxb.model.message.PublicationDate;
+import org.orcid.jaxb.model.message.ReferredBy;
+import org.orcid.jaxb.model.message.ResearcherUrl;
+import org.orcid.jaxb.model.message.ResearcherUrls;
+import org.orcid.jaxb.model.message.SalesforceId;
+import org.orcid.jaxb.model.message.ScopePathType;
+import org.orcid.jaxb.model.message.SecurityDetails;
+import org.orcid.jaxb.model.message.SecurityQuestionId;
+import org.orcid.jaxb.model.message.SendAdministrativeChangeNotifications;
+import org.orcid.jaxb.model.message.SendChangeNotifications;
+import org.orcid.jaxb.model.message.SendOrcidNews;
+import org.orcid.jaxb.model.message.Source;
+import org.orcid.jaxb.model.message.SourceClientId;
+import org.orcid.jaxb.model.message.SourceDate;
+import org.orcid.jaxb.model.message.SourceName;
+import org.orcid.jaxb.model.message.SourceOrcid;
+import org.orcid.jaxb.model.message.SubmissionDate;
+import org.orcid.jaxb.model.message.Subtitle;
+import org.orcid.jaxb.model.message.Title;
+import org.orcid.jaxb.model.message.TranslatedTitle;
+import org.orcid.jaxb.model.message.Url;
+import org.orcid.jaxb.model.message.UrlName;
+import org.orcid.jaxb.model.message.VerifiedEmail;
+import org.orcid.jaxb.model.message.VerifiedPrimaryEmail;
+import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.jaxb.model.message.WorkContributors;
+import org.orcid.jaxb.model.message.WorkExternalIdentifiers;
+import org.orcid.jaxb.model.message.WorkTitle;
+import org.orcid.jaxb.model.message.Year;
 import org.orcid.persistence.jpa.entities.BaseEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
@@ -97,8 +194,6 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     @Value("${org.orcid.core.baseUri:http://orcid.org}")
     private String baseUri = null;
 
-    private DatatypeFactory datatypeFactory = null;
-
     @Resource(name = "defaultPermissionChecker")
     private PermissionChecker permissionChecker;
 
@@ -107,18 +202,15 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
 
     @Resource
     private ProfileEntityManager profileEntityManager;
-    
+
+    @Resource
+    private OrcidOauth2TokenDetailService orcidOauth2TokenService;
+
     @Resource(name = "profileEntityCacheManager")
     ProfileEntityCacheManager profileEntityCacheManager;
-    
-    public Jpa2JaxbAdapterImpl() {
-        try {
-            datatypeFactory = DatatypeFactory.newInstance();
-        } catch (DatatypeConfigurationException e) {
-            // We're in serious trouble and can't carry on
-            throw new IllegalStateException("Cannot create new DatatypeFactory");
-        }
-    }
+
+    @Resource
+    private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
 
     @Override
     public OrcidProfile toOrcidProfile(ProfileEntity profileEntity) {
@@ -154,6 +246,10 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         profile.setGroupType(profileEntity.getGroupType());
         profile.setVerificationCode(profileEntity.getEncryptedVerificationCode());
         profile.setLocked(profileEntity.getRecordLocked());
+        profile.setReviewed(profileEntity.isReviewed());
+
+        int countTokens = orcidOauth2TokenService.findCountByUserName(profileEntity.getId());
+        profile.setCountTokens(countTokens);
         return profile;
     }
 
@@ -310,7 +406,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
 
     private OrcidWorks getOrcidWorks(ProfileEntity profileEntity) {
         LOGGER.debug("About to convert works from entity: " + profileEntity.getId());
-        Set<WorkEntity> works = profileEntity.getWorks();        
+        Set<WorkEntity> works = profileEntity.getWorks();
         if (works != null && !works.isEmpty()) {
             OrcidWorks orcidWorks = new OrcidWorks();
             for (WorkEntity workEntity : works) {
@@ -322,7 +418,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         }
         return null;
     }
-    
+
     private OrcidBio getOrcidBio(ProfileEntity profileEntity) {
         OrcidBio orcidBio = new OrcidBio();
 
@@ -332,15 +428,14 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         orcidBio.setPersonalDetails(getPersonalDetails(profileEntity));
         orcidBio.setKeywords(getKeywords(profileEntity));
         orcidBio.setBiography(getBiography(profileEntity));
-        orcidBio.setApplications(getApplications(profileEntity));
         orcidBio.setResearcherUrls(getResearcherUrls(profileEntity));
         return orcidBio;
     }
 
     private PersonalDetails getPersonalDetails(ProfileEntity profileEntity) {
-        PersonalDetails personalDetails = new PersonalDetails();
-        personalDetails.setGivenNames(getGivenNames(profileEntity.getGivenNames()));
-        personalDetails.setFamilyName(getFamilyName(profileEntity.getFamilyName()));
+        PersonalDetails personalDetails = new PersonalDetails();   
+        personalDetails.setGivenNames(getGivenNames(profileEntity));
+        personalDetails.setFamilyName(getFamilyName(profileEntity));
         personalDetails.setCreditName(getCreditName(profileEntity));
         personalDetails.setOtherNames(getOtherNames(profileEntity));
         return personalDetails;
@@ -445,13 +540,13 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
      * */
     private org.orcid.jaxb.model.message.FundingExternalIdentifiers getFundingExternalIdentifiers(ProfileFundingEntity profileFundingEntity) {
         String externalIdsJson = profileFundingEntity.getExternalIdentifiersJson();
-        if(!PojoUtil.isEmpty(externalIdsJson)) {            
+        if (!PojoUtil.isEmpty(externalIdsJson)) {
             FundingExternalIdentifiers fundingExternalIdentifiers = JsonUtils.readObjectFromJsonString(externalIdsJson, FundingExternalIdentifiers.class);
             org.orcid.jaxb.model.message.FundingExternalIdentifiers result = fundingExternalIdentifiers.toMessagePojo();
             return result;
         }
         return new org.orcid.jaxb.model.message.FundingExternalIdentifiers();
-    }    
+    }
 
     /**
      * Get the funding contributors from a profileFundingEntity
@@ -708,7 +803,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         }
         return null;
     }
-    
+
     private Source getSponsor(ProfileEntity profileEntity) {
         SourceEntity sourceEntity = profileEntity.getSource();
         if (sourceEntity != null) {
@@ -728,8 +823,9 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         return null;
     }
 
-    private Applications getApplications(ProfileEntity profileEntity) {
-        Set<OrcidOauth2TokenDetail> tokenDetails = profileEntity.getTokenDetails();
+    @Override
+    public List<org.orcid.pojo.ApplicationSummary> getApplications(List<OrcidOauth2TokenDetail> tokenDetails) {
+        List<org.orcid.pojo.ApplicationSummary> applications = new ArrayList<org.orcid.pojo.ApplicationSummary>();
 
         if (tokenDetails != null && !tokenDetails.isEmpty()) {
             // verify tokens don't need scopes removed.
@@ -738,109 +834,48 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
             for (OrcidOauth2TokenDetail tokenDetail : tokenDetails)
                 defaultPermissionChecker.removeUserGrantWriteScopePastValitity(tokenDetail);
 
-            Applications applications = new Applications();
             for (OrcidOauth2TokenDetail tokenDetail : tokenDetails) {
                 if (tokenDetail.getTokenDisabled() == null || !tokenDetail.getTokenDisabled()) {
-                    ApplicationSummary applicationSummary = new ApplicationSummary();
-                    ClientDetailsEntity acceptedClient = tokenDetail.getClientDetailsEntity();
+                    org.orcid.pojo.ApplicationSummary applicationSummary = new org.orcid.pojo.ApplicationSummary();
+                    ClientDetailsEntity acceptedClient = clientDetailsEntityCacheManager.retrieve(tokenDetail.getClientDetailsId());
 
                     if (acceptedClient != null) {
-                        applicationSummary.setApplicationOrcid(new ApplicationOrcid(getOrcidIdBase(acceptedClient.getClientId())));
-
-                        // Set the name application name
-                        applicationSummary.setApplicationName(new ApplicationName(acceptedClient.getClientName()));
-                        // Set application website
-                        applicationSummary.setApplicationWebsite(new ApplicationWebsite(acceptedClient.getClientWebsite()));
-                        applicationSummary.setApprovalDate(new ApprovalDate(DateUtils.convertToXMLGregorianCalendar(tokenDetail.getDateCreated())));
-
-                        // add group information                        
+                        OrcidIdBase idBase = getOrcidIdBase(acceptedClient.getClientId());
+                        applicationSummary.setOrcidHost(idBase.getHost());
+                        applicationSummary.setOrcidPath(idBase.getPath());
+                        applicationSummary.setOrcidUri(idBase.getUri());
+                        applicationSummary.setName(acceptedClient.getClientName());
+                        applicationSummary.setWebsiteValue(acceptedClient.getClientWebsite());
+                        applicationSummary.setApprovalDate(tokenDetail.getDateCreated());
+                        // add group information
                         if (!PojoUtil.isEmpty(acceptedClient.getGroupProfileId())) {
-                            ProfileEntity groupEntity = profileEntityCacheManager.retrieve(acceptedClient.getGroupProfileId()); 
-                            applicationSummary.setApplicationGroupOrcid(new ApplicationOrcid(groupEntity.getId()));
-                            applicationSummary.setApplicationGroupName(new ApplicationName(getGroupDisplayName(groupEntity)));
+                            ProfileEntity groupEntity = profileEntityCacheManager.retrieve(acceptedClient.getGroupProfileId());
+                            applicationSummary.setGroupOrcidPath(groupEntity.getId());
+                            applicationSummary.setGroupName(getGroupDisplayName(groupEntity));
                         }
 
                         // Scopes
                         Set<ScopePathType> scopesGrantedToClient = ScopePathType.getScopesFromSpaceSeparatedString(tokenDetail.getScope());
-                        if (scopesGrantedToClient != null && !scopesGrantedToClient.isEmpty()) {
-                            ScopePaths scopePaths = new ScopePaths();
-                            for (ScopePathType scopesForClient : scopesGrantedToClient) {
-                                scopePaths.getScopePath().add(new ScopePath(scopesForClient));
-                            }
-
-                            applicationSummary.setScopePaths(scopePaths);
-                            // Only add to list if there is a scope (if no
-                            // scopes then has been used and is defunct)
-                            //If there are several token with the same scope, add just the oldest one 
-                            checkApplicationsAndAdd(applicationSummary, applications);
+                        Map<ScopePathType, String> scopePathMap = new HashMap<ScopePathType, String>();
+                        StringBuffer tempBuffer;
+                        for (ScopePathType tempScope : scopesGrantedToClient) {
+                            tempBuffer = new StringBuffer();
+                            tempBuffer.append(tempScope.getClass().getName()).append(".").append(tempScope.toString());
+                            scopePathMap.put(tempScope, localeManager.resolveMessage(tempBuffer.toString()));
+                        }
+                        if(!scopePathMap.isEmpty()) {
+                        	applicationSummary.setScopePaths(scopePathMap);
+                        	applications.add(applicationSummary);
                         }
                     }
 
                 }
             }
-            return applications;
-        }
-        return null;
-    }
-    
-    /**
-     * Get an application and compare it to the list of existing applications,
-     * if it share the same client and scopes, keep just the oldest one
-     * 
-     * @param applicationSummary
-     *            The application that want to be added
-     * @param applications
-     *            The list of applications already evaluated
-     * */
-    private void checkApplicationsAndAdd(ApplicationSummary applicationSummary, Applications applications) {
-        if (applications == null) {
-            return;
         }
 
-        if (applications.getApplicationSummary().isEmpty()) {
-            applications.getApplicationSummary().add(applicationSummary);
-        } else {
-            boolean replaceExisting = false;
-            boolean foundExisting = false;
-            Iterator<ApplicationSummary> it = applications.getApplicationSummary().iterator();
-            while (it.hasNext()) {
-                ApplicationSummary existingSummary = it.next();
-                // Check if both apps refer to the same client
-                if (existingSummary.getApplicationOrcid().equals(applicationSummary.getApplicationOrcid())) {
-                    // Check if both apps share all scopes
-                    if (existingSummary.getScopePaths().getScopePath().containsAll(applicationSummary.getScopePaths().getScopePath())) {
-                        if (applicationSummary.getScopePaths().getScopePath().containsAll(existingSummary.getScopePaths().getScopePath())) {
-                            // If they do share the scopes, keep the oldest one
-                            if (applicationSummary.getApprovalDate() != null && applicationSummary.getApprovalDate().getValue() != null) {
-                                foundExisting = true;
-                                XMLGregorianCalendar approvalDate = applicationSummary.getApprovalDate().getValue();
-                                XMLGregorianCalendar existingApprovalDate = null;
-                                if (existingSummary.getApprovalDate() != null && existingSummary.getApprovalDate().getValue() != null) {
-                                    existingApprovalDate = existingSummary.getApprovalDate().getValue();
-                                }
+        return applications;
 
-                                if (existingApprovalDate == null) {
-                                    it.remove();
-                                    replaceExisting = true;
-                                    break;
-                                } else if (approvalDate.toGregorianCalendar().before(existingApprovalDate.toGregorianCalendar())) {
-                                    it.remove();
-                                    replaceExisting = true;
-                                    break;
-                                }
-
-                            }
-                        }
-                    }
-                }
-            }
-
-            if(!foundExisting || replaceExisting) {
-                applications.getApplicationSummary().add(applicationSummary);
-            } 
-        }
-    }
-    
+    }    
 
     private String getGroupDisplayName(ProfileEntity groupProfile) {
         String creditName = groupProfile.getCreditName();
@@ -850,8 +885,8 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                 // it regardless of privacy.
                 return creditName;
             }
-            Visibility creditNameVisibilty = groupProfile.getCreditNameVisibility();
-            if (Visibility.PUBLIC.equals(creditNameVisibilty)) {
+            Visibility namesVisibilty = groupProfile.getNamesVisibility();
+            if (Visibility.PUBLIC.equals(namesVisibilty)) {
                 return creditName;
             }
         }
@@ -861,9 +896,9 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
             displayName += " " + familyName;
         }
         return displayName;
-    }    
-    
-    public OrcidWork getOrcidWork(WorkEntity work) {        
+    }
+
+    public OrcidWork getOrcidWork(WorkEntity work) {
         if (work == null) {
             return null;
         }
@@ -909,9 +944,9 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                 return localeString.substring(0, 5);
             } else if (localeString.startsWith("zh_cn")) {
                 return "zh_CN";
-            } else if(localeString.startsWith("zh_tw")) {
+            } else if (localeString.startsWith("zh_tw")) {
                 return "zh_TW";
-            } else { 
+            } else {
                 return "zh_CN"; // bit of a gamble here :-/
             }
         }
@@ -935,17 +970,17 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         if (work.getTranslatedTitle() != null)
             workTitle.setTranslatedTitle(new TranslatedTitle(work.getTranslatedTitle(), work.getTranslatedTitleLanguageCode()));
         return workTitle;
-    }    
+    }
 
     private WorkExternalIdentifiers getWorkExternalIdentifiers(WorkEntity work) {
         WorkExternalIdentifiers extIds = new WorkExternalIdentifiers();
         String externalIdentifiersJson = work.getExternalIdentifiersJson();
-        if(!PojoUtil.isEmpty(externalIdentifiersJson)) {
+        if (!PojoUtil.isEmpty(externalIdentifiersJson)) {
             extIds = JsonUtils.readObjectFromJsonString(externalIdentifiersJson, WorkExternalIdentifiers.class);
         }
-        return extIds;        
-    }    
-    
+        return extIds;
+    }
+
     private WorkContributors getWorkContributors(WorkEntity work) {
         if (work == null) {
             return null;
@@ -1004,19 +1039,29 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         return otherNames;
     }
 
-    private GivenNames getGivenNames(String givenNames) {
-        if (StringUtils.isNotBlank(givenNames)) {
+    private GivenNames getGivenNames(ProfileEntity profileEntity) {
+        if (StringUtils.isNotBlank(profileEntity.getGivenNames())) {
             GivenNames names = new GivenNames();
-            names.setContent(givenNames);
+            names.setContent(profileEntity.getGivenNames());
+            Visibility visibility = OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility();
+            if(profileEntity.getNamesVisibility() != null) {
+            	visibility = profileEntity.getNamesVisibility();
+            } 
+            names.setVisibility(visibility);
             return names;
         }
         return null;
     }
 
-    private FamilyName getFamilyName(String familyName) {
-        if (StringUtils.isNotBlank(familyName)) {
+    private FamilyName getFamilyName(ProfileEntity profileEntity) {
+        if (StringUtils.isNotBlank(profileEntity.getFamilyName())) {
             FamilyName name = new FamilyName();
-            name.setContent(familyName);
+            name.setContent(profileEntity.getFamilyName());
+            Visibility visibility = OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility();
+            if(profileEntity.getNamesVisibility() != null) {
+            	visibility = profileEntity.getNamesVisibility();
+            } 
+            name.setVisibility(visibility);
             return name;
         }
         return null;
@@ -1027,7 +1072,11 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         if (StringUtils.isNotBlank(creditName)) {
             CreditName name = new CreditName();
             name.setContent(creditName);
-            name.setVisibility(profileEntity.getCreditNameVisibility());
+            Visibility visibility = OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility();
+            if(profileEntity.getNamesVisibility() != null) {
+            	visibility = profileEntity.getNamesVisibility();
+            } 
+            name.setVisibility(visibility);
             return name;
         }
         return null;
@@ -1059,10 +1108,14 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         preferences.setSendEmailFrequencyDays(String.valueOf(profileEntity.getSendEmailFrequencyDays()));
         preferences.setSendChangeNotifications(new SendChangeNotifications(
                 profileEntity.getSendChangeNotifications() == null ? DefaultPreferences.SEND_CHANGE_NOTIFICATIONS_DEFAULT : profileEntity.getSendChangeNotifications()));
+        preferences.setSendAdministrativeChangeNotifications(new SendAdministrativeChangeNotifications(
+                profileEntity.getSendAdministrativeChangeNotifications() == null ? preferences.getSendChangeNotifications().isValue() : profileEntity
+                        .getSendAdministrativeChangeNotifications()));
         preferences.setSendOrcidNews(new SendOrcidNews(profileEntity.getSendOrcidNews() == null ? DefaultPreferences.SEND_ORCID_NEWS_DEFAULT : profileEntity
                 .getSendOrcidNews()));
-        preferences.setSendMemberUpdateRequests(profileEntity.getSendMemberUpdateRequests() == null ? DefaultPreferences.SEND_MEMBER_UPDATE_REQUESTS
-                : profileEntity.getSendMemberUpdateRequests());
+        preferences.setSendMemberUpdateRequests(profileEntity.getSendMemberUpdateRequests() == null ? DefaultPreferences.SEND_MEMBER_UPDATE_REQUESTS : profileEntity
+                .getSendMemberUpdateRequests());
+        preferences.setNotificationsEnabled(profileEntity.getEnableNotifications() == null ? DefaultPreferences.NOTIFICATIONS_ENABLED : profileEntity.getEnableNotifications());
         // This column is constrained as not null in the DB so don't have to
         // worry about null!
         preferences.setActivitiesVisibilityDefault(new ActivitiesVisibilityDefault(profileEntity.getActivitiesVisibilityDefault()));
@@ -1082,13 +1135,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     }
 
     private XMLGregorianCalendar toXMLGregorianCalendar(Date date) {
-        if (date != null) {
-            GregorianCalendar c = new GregorianCalendar();
-            c.setTime(date);
-            return datatypeFactory.newXMLGregorianCalendar(c);
-        } else {
-            return null;
-        }
+        return DateUtils.convertToXMLGregorianCalendar(date);
     }
 
 }

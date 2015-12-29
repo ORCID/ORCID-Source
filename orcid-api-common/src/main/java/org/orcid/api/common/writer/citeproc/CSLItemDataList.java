@@ -21,6 +21,7 @@ import java.util.List;
 
 import de.undercouch.citeproc.csl.CSLItemData;
 
+@Deprecated
 public class CSLItemDataList {
 
     private List<CSLItemData> data = new ArrayList<CSLItemData>();

@@ -36,7 +36,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.core.constants.OauthTokensConstants;
+import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.oauth.OrcidOauth2ClientAuthentication;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
@@ -222,7 +222,7 @@ public class OrcidRandomValueTokenServicesTest extends DBUnitTest {
         requestParameters.put(OAuth2Utils.CLIENT_ID, clientId);
         requestParameters.put(OAuth2Utils.SCOPE, "/orcid-works/create");
         requestParameters.put("code", "code1");
-        requestParameters.put(OauthTokensConstants.IS_PERSISTENT, "true");
+        requestParameters.put(OrcidOauth2Constants.IS_PERSISTENT, "true");
         
         OAuth2Request request = new OAuth2Request(requestParameters, clientId, Collections.<GrantedAuthority> emptyList(), true, new HashSet<String>(Arrays.asList("/orcid-profile/read-limited")), Collections.<String> emptySet(), null, Collections.<String> emptySet(), Collections.<String, Serializable> emptyMap());
         ClientDetailsEntity clientDetails = clientDetailsManager.findByClientId(clientId);

@@ -27,20 +27,14 @@
         <div class="info-detail">
         	<div class="info-date">
         	        	
-	        	<span class="affiliation-date" ng-show="group.getActive().startDate && !group.getActive().endDate">
+	        	<span class="affiliation-date" ng-show="group.getActive().startDate">
 	        	    <span ng-show="group.getActive().startDate.year">{{group.getActive().startDate.year}}</span><span ng-show="group.getActive().startDate.month">-{{group.getActive().startDate.month}}</span>
 	        	    <span><@orcid.msg 'workspace_affiliations.dateSeparator'/></span>
-	        	    <@orcid.msg 'workspace_affiliations.present'/>
-	        	</span>
-	        	
-	        	<span class="affiliation-date" ng-show="group.getActive().startDate && group.getActive().endDate">
-	        		<span ng-show="group.getActive().startDate.year">{{group.getActive().startDate.year}}</span><span ng-show="group.getActive().startDate.month">-{{group.getActive().startDate.month}}</span>
-	        		<@orcid.msg 'workspace_affiliations.dateSeparator'/>
-	        		<span ng-show="group.getActive().endDate.year">{{group.getActive().endDate.year}}</span><span ng-show="group.getActive().endDate.month">-{{group.getActive().endDate.month}}</span>
+	        	    <span ng-hide="group.getActive().endDate.year"><@orcid.msg 'workspace_affiliations.present'/></span>
+	        		<span ng-show="group.getActive().endDate.year">{{group.getActive().endDate.year}}</span><span ng-show="group.getActive().endDate.month">-{{group.getActive().endDate.month}}</span><span ng-show="group.getActive().endDate.day">-{{group.getActive().endDate.day}}</span>
 	            </span>
-	            
 	            <span class="affiliation-date" ng-show="!group.getActive().startDate && group.getActive().endDate">
-	        	     <span ng-show="group.getActive().endDate.year">{{group.getActive().endDate.year}}</span><span ng-show="group.getActive().endDate.month">-{{group.getActive().endDate.month}}</span>
+	        	     <span ng-show="group.getActive().endDate.year">{{group.getActive().endDate.year}}</span><span ng-show="group.getActive().endDate.month">-{{group.getActive().endDate.month}}</span><span ng-show="group.getActive().endDate.day">-{{group.getActive().endDate.day}}</span>
 	        	</span>
 	        	        	
         	</div>
@@ -76,7 +70,7 @@
 		<div class="sources-container-header">          
 			<div class="row">
 				<div class="col-md-7 col-sm-7 col-xs-7">
-					<@orcid.msg 'groups.common.source'/>: {{group.getActive().sourceName}}	
+					<@orcid.msg 'groups.common.source'/>: {{(group.getActive().sourceName == null || group.getActive().sourceName == '') ? group.getActive().source : group.getActive().sourceName}}	
 				</div>
 				<div class="col-md-3 col-sm-3 col-xs-3">
 					<@orcid.msg 'groups.common.created'/>: <span ng-bind="group.getActive().createdDate | ajaxFormDateToISO8601"></span>

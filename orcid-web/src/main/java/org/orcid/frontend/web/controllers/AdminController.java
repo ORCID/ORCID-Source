@@ -297,8 +297,8 @@ public class AdminController extends BaseController {
         return result;
     }
 
-    @RequestMapping(value = "/find-id", method = RequestMethod.GET)
-    public @ResponseBody List<ProfileDetails> findIdByEmail(@RequestParam("csvEmails") String csvEmails) {
+    @RequestMapping(value = "/find-id.json", method = RequestMethod.POST)
+    public @ResponseBody List<ProfileDetails> findIdByEmail(@RequestBody String csvEmails) {
         Map<String, String> emailMap = findIdByEmailHelper(csvEmails);
         List<ProfileDetails> profileDetList = new ArrayList<ProfileDetails>();
         ProfileDetails tempObj;
@@ -411,9 +411,6 @@ public class AdminController extends BaseController {
     /**
      * Admin switch user
      * */
-    /**
-     * Admin switch user
-     * */
     @RequestMapping(value = "/admin-switch-user", method = RequestMethod.GET)
     public @ResponseBody Map<String, String> adminSwitchUser(@ModelAttribute("orcidOrEmail") String orcidOrEmail, RedirectAttributes redirectAttributes) {
         if (StringUtils.isNotBlank(orcidOrEmail))
@@ -450,8 +447,8 @@ public class AdminController extends BaseController {
     /**
      * Admin verify email
      * */
-    @RequestMapping(value = "/admin-verify-email", method = RequestMethod.GET)
-    public @ResponseBody String adminVerifyEmail(@RequestParam("email") String email) {
+    @RequestMapping(value = "/admin-verify-email.json", method = RequestMethod.POST)
+    public @ResponseBody String adminVerifyEmail(@RequestBody String email) {
         String result = getMessage("admin.verify_email.success", email);
         if (emailManager.emailExists(email)) {
             emailManager.verifyEmail(email);
@@ -552,7 +549,7 @@ public class AdminController extends BaseController {
             result.getErrors().add(getMessage("admin.lock_profile.error.not_found", orcidOrEmail));
             return result;
         }
-        return generateProfileDetails(orcid, true);
+        return generateProfileDetails(orcid, 1);
     }
 
     /**
@@ -574,7 +571,7 @@ public class AdminController extends BaseController {
             return result;
         }
 
-        return generateProfileDetails(orcid, false);
+        return generateProfileDetails(orcid, 2);
     }
 
     private String getOrcidFromParam(String orcidOrEmail) {
@@ -595,20 +592,46 @@ public class AdminController extends BaseController {
         return orcid;
     }
     
-    private ProfileDetails generateProfileDetails(String orcid, boolean isLockRequest) {        
+    /**
+     * @param flag
+     *            1 : lock
+     *            2 : unlock
+     *            3 : review
+     *            4 : unreview
+     * */
+    private ProfileDetails generateProfileDetails(String orcid, int flag) {        
         OrcidProfile profile = orcidProfileManager.retrieveOrcidProfile(orcid, LoadOptions.BIO_ONLY);        
-        if(isLockRequest) {
+        if(flag == 1) {
             if(profile.isLocked()) {
                 ProfileDetails result = new ProfileDetails();
                 result.setErrors(new ArrayList<String>());
                 result.getErrors().add(getMessage("admin.lock_profile.error.already_locked", orcid));
                 return result;
+            } else if(profile.isReviewed()) {
+            	ProfileDetails result = new ProfileDetails();
+                result.setErrors(new ArrayList<String>());
+                result.getErrors().add(getMessage("admin.lock_reviewed_profile.error", orcid));
+                return result;
             }
-        } else {
+        } else if(flag == 2) {
             if(!profile.isLocked()) {
                 ProfileDetails result = new ProfileDetails();
                 result.setErrors(new ArrayList<String>());
                 result.getErrors().add(getMessage("admin.unlock_profile.error.non_locked", orcid));
+                return result;
+            }
+        }else if(flag == 3) {
+            if(profile.isReviewed()) {
+                ProfileDetails result = new ProfileDetails();
+                result.setErrors(new ArrayList<String>());
+                result.getErrors().add(getMessage("admin.review_profile.error.already_reviewed", orcid));
+                return result;
+            }
+        } else if(flag == 4) {
+            if(!profile.isReviewed()) {
+                ProfileDetails result = new ProfileDetails();
+                result.setErrors(new ArrayList<String>());
+                result.getErrors().add(getMessage("admin.unreview_profile.error.non_reviewed", orcid));
                 return result;
             }
         }
@@ -671,5 +694,48 @@ public class AdminController extends BaseController {
             return getMessage("admin.unlock_profile.success", orcid);
         }
         return getMessage("admin.unlock_profile.error.couldnt_unlock_account", orcid);
+    }
+    
+    @RequestMapping(value = "/unreview-account.json", method = RequestMethod.POST)
+    public @ResponseBody String unreviewAccount(@RequestBody String orcid) {
+        if (profileEntityManager.unreviewProfile(orcid)) {
+            return getMessage("admin.unreview_profile.success", orcid);
+        }
+        return getMessage("admin.unreview_profile.error.couldnt_unreview_account", orcid);
+    }
+	
+	@RequestMapping(value = "/review-account.json", method = RequestMethod.POST)
+    public @ResponseBody String reviewAccount(@RequestBody String orcid) {
+        if (profileEntityManager.reviewProfile(orcid)) {
+            return getMessage("admin.review_profile.success", orcid);
+        }
+        return getMessage("admin.review_profile.error.couldnt_review_account", orcid);
+    }
+	
+	@RequestMapping(value = "/check-account-to-review.json", method = RequestMethod.POST)
+    public @ResponseBody ProfileDetails checkAccountToReview(@RequestBody String orcidOrEmail) {
+        String orcid = getOrcidFromParam(orcidOrEmail);
+
+        if (PojoUtil.isEmpty(orcid)) {
+            ProfileDetails result = new ProfileDetails();
+            result.setErrors(new ArrayList<String>());
+            result.getErrors().add(getMessage("admin.review_profile.error.not_found", orcidOrEmail));
+            return result;
+        }
+        return generateProfileDetails(orcid, 3);
+    }
+	
+	@RequestMapping(value = "/check-account-to-unreview.json", method = RequestMethod.POST)
+    public @ResponseBody ProfileDetails checkAccountToUnreview(@RequestBody String orcidOrEmail) {
+        String orcid = getOrcidFromParam(orcidOrEmail);
+
+        if (PojoUtil.isEmpty(orcid)) {
+            ProfileDetails result = new ProfileDetails();
+            result.setErrors(new ArrayList<String>());
+            result.getErrors().add(getMessage("admin.review_profile.error.not_found", orcidOrEmail));
+            return result;
+        }
+
+        return generateProfileDetails(orcid, 4);
     }
 }

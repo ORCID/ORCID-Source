@@ -341,17 +341,17 @@ public class WorksController extends BaseWorkspaceController {
                             if(contributorOrcid.equals(getCurrentUserOrcid())) {
                                 contributor.setCreditName(Text.valueOf(publicContributorCreditName));
                                 contributor.setCreditNameVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(Visibility.PUBLIC));
-                            } else if (profileEntity.getCreditNameVisibility() != null) {
+                            } else if (profileEntity.getNamesVisibility() != null) {
                                 contributor.setCreditName(Text.valueOf(publicContributorCreditName));
-                                contributor.setCreditNameVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(profileEntity.getCreditNameVisibility()));
+                                contributor.setCreditNameVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(profileEntity.getNamesVisibility()));
                             } else {
                                 contributor.setCreditName(Text.valueOf(publicContributorCreditName));
-                                contributor.setCreditNameVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(OrcidVisibilityDefaults.CREDIT_NAME_DEFAULT
+                                contributor.setCreditNameVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(OrcidVisibilityDefaults.NAMES_DEFAULT
                                         .getVisibility()));
                             }
                         } else {
                             if (contributor.getCreditNameVisibility() == null) {
-                                contributor.setCreditNameVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(OrcidVisibilityDefaults.CREDIT_NAME_DEFAULT
+                                contributor.setCreditNameVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(OrcidVisibilityDefaults.NAMES_DEFAULT
                                         .getVisibility()));
                             }
                         }
@@ -805,7 +805,7 @@ public class WorksController extends BaseWorkspaceController {
             for (WorkType workType : workCategory.getSubTypes()) {
                 // Dont put work type UNDEFINED
                 if (!workType.equals(WorkType.UNDEFINED)) {
-                    types.add(new KeyValue(workType.value(), getMessage(buildInternationalizationKey(WorkType.class, workType.value()))));
+                    types.add(new KeyValue(workType.value(), getMessage(new StringBuffer("org.orcid.jaxb.model.record.WorkType.").append(workType.value()).toString())));
                 }
             }
         } else {
@@ -813,7 +813,7 @@ public class WorksController extends BaseWorkspaceController {
             for (WorkType workType : WorkType.values()) {
                 // Dont put work type UNDEFINED
                 if (!workType.equals(WorkType.UNDEFINED)) {
-                    types.add(new KeyValue(workType.value(), getMessage(buildInternationalizationKey(WorkType.class, workType.value()))));
+                    types.add(new KeyValue(workType.value(), getMessage(new StringBuffer("org.orcid.jaxb.model.record.WorkType.").append(workType.value()).toString())));
                 }
             }
         }

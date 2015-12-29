@@ -47,11 +47,7 @@
             <verified-email>false</verified-email>
             <verified-primary-email>false</verified-primary-email>                                
         </orcid-history>
-        <orcid-bio scope="update">
-            <personal-details>
-                <given-names>Josiah</given-names>
-                <family-name>Carberry</family-name>
-            </personal-details>
+        <orcid-bio scope="update">            
             <researcher-urls visibility="public">
                 <researcher-url>
                     <url-name>Carberry-Hay</url-name>

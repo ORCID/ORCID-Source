@@ -16,8 +16,11 @@
  */
 package org.orcid.persistence.jpa.entities;
 
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -27,6 +30,9 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.orcid.jaxb.model.common.Visibility;
+import org.orcid.persistence.constants.SiteConstants;
+
 /**
  * orcid-entities - Dec 6, 2011 - ElectronicResourceNumTypeEntity
  * 
@@ -34,7 +40,7 @@ import javax.persistence.Transient;
  */
 @Entity
 @Table(name = "researcher_url")
-public class ResearcherUrlEntity extends BaseEntity<Long> implements Comparable<ResearcherUrlEntity>, ProfileAware {
+public class ResearcherUrlEntity extends BaseEntity<Long> implements Comparable<ResearcherUrlEntity>, ProfileAware, SourceAware {
 
     private static final long serialVersionUID = -632507196189018770L;
 
@@ -42,13 +48,10 @@ public class ResearcherUrlEntity extends BaseEntity<Long> implements Comparable<
     private String url;
     private String urlName;
     private ProfileEntity user;
+    private SourceEntity source;
+    private Visibility visibility;
 
     public ResearcherUrlEntity() {
-    }
-
-    public ResearcherUrlEntity(String url, ProfileEntity user) {
-        this.url = url;
-        this.user = user;        
     }
 
     @Override
@@ -64,7 +67,7 @@ public class ResearcherUrlEntity extends BaseEntity<Long> implements Comparable<
         this.id = id;
     }
 
-    @Column(name = "url", length = 350)
+    @Column(name = "url", length = SiteConstants.URL_MAX_LENGTH)
     public String getUrl() {
         return url;
     }
@@ -73,7 +76,7 @@ public class ResearcherUrlEntity extends BaseEntity<Long> implements Comparable<
         this.url = url;
     }
 
-    @Column(name = "url_name", length = 350)
+    @Column(name = "url_name", length = SiteConstants.URL_MAX_LENGTH)
     public String getUrlName() {
         return urlName;
     }
@@ -104,18 +107,36 @@ public class ResearcherUrlEntity extends BaseEntity<Long> implements Comparable<
     public void setUser(ProfileEntity user) {
         this.user = user;
     }
-    
+
+    public SourceEntity getSource() {
+        return source;
+    }
+
+    public void setSource(SourceEntity source) {
+        this.source = source;
+    }
+
+    @Basic
+    @Enumerated(EnumType.STRING)
+    public Visibility getVisibility() {
+        return visibility;
+    }
+
+    public void setVisibility(Visibility visibility) {
+        this.visibility = visibility;
+    }
+
     @Override
     public int compareTo(ResearcherUrlEntity other) {
         String otherUrl = other.getUrl();
         if (url == null) {
             return otherUrl == null ? 0 : -1;
         } else {
-            if(url.compareTo(otherUrl) != 0)
+            if (url.compareTo(otherUrl) != 0)
                 return url.compareTo(otherUrl);
             else {
                 return otherUrl == null ? 1 : url.compareTo(otherUrl);
-            }                       
+            }
         }
     }
 

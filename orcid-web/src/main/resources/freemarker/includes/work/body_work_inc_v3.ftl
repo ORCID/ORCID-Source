@@ -41,17 +41,9 @@
                                                 <li ng-show="bulkEditShow">
                                                     <input type="checkbox" ng-model="bulkEditMap[group.getActive().putCode.value]" class="bulk-edit-input-header ng-valid ng-dirty">
                                                 </li>
-                                            </#if>  
-                                            <#if RequestParameters['badges']??>
-                                            	<!-- Mozilla Badges -->
-			                                  	<li class="works-details">
-			                                    	 <a ng-click="showMozillaBadges(group.activePutCode)" ng-show="moreInfo[group.groupId]">
-			                                     		<span class="mozilla-badge"></span>                                     	
-			                                     	 </a>
-			                                  	</li>
-			                                </#if>  	                                                                                    
+                                            </#if>                                                                                  
                                             <li class="works-details">
-                                                <a ng-click="showDetailsMouseClick(group,$event);" ng-mouseenter="showTooltip(group.groupId+'-showHideDetails')" ng-mouseleave="hideTooltip(group.groupId+'-showHideDetails')">
+                                                <a ng-click="showDetailsMouseClick(group,$event);showMozillaBadges(group.activePutCode)" ng-mouseenter="showTooltip(group.groupId+'-showHideDetails')" ng-mouseleave="hideTooltip(group.groupId+'-showHideDetails')">
                                                     <span ng-class="(moreInfo[group.groupId] == true) ? 'glyphicons collapse_top' : 'glyphicons expand'">
                                                     </span>
                                                 </a>
@@ -92,7 +84,7 @@
                                 <span class="journaltitle" ng-show="work.journalTitle.value" ng-bind="work.journalTitle.value"></span>                                
                             </h3>                                                        
                             <div class="info-detail">
-                                <span ng-show="work.publicationDate.year">{{work.publicationDate.year}}</span><span ng-show="work.publicationDate.month">-{{work.publicationDate.month}}</span><span ng-show="work.publicationDate.year"> | </span> <span class="capitalize">{{work.workType.value}}</span>
+                                <span ng-show="work.publicationDate.year">{{work.publicationDate.year}}</span><span ng-show="work.publicationDate.month">-{{work.publicationDate.month}}</span><span ng-show="work.publicationDate.day">-{{work.publicationDate.day}}</span><span ng-show="work.publicationDate.year"> | </span> <span class="capitalize">{{work.workType.value}}</span>
                             </div>
                         </div>
 
@@ -104,18 +96,10 @@
                                       <li ng-show="bulkEditShow == true" class="bulk-checkbox-item">
                                               <input type="checkbox" ng-model="bulkEditMap[work.putCode.value]" class="bulk-edit-input ng-pristine ng-valid pull-right">       
                                       </li>
-                                  </#if>
-                                  <#if RequestParameters['badges']??>
-	                                  <!-- Mozilla Badges -->
-	                                  <li class="works-details">
-	                                     <a ng-click="showMozillaBadges(group.activePutCode)" ng-show="moreInfo[group.groupId]">
-	                                     	<span class="mozilla-badge"></span>                                     	
-	                                     </a>
-	                                  </li>
-                                  </#if>   
+                                  </#if>                                     
                                   <!-- Show/Hide Details -->
                                   <li class="works-details" ng-hide="editSources[group.groupId] == true">
-                                      <a ng-click="showDetailsMouseClick(group,$event);" ng-mouseenter="showTooltip(group.groupId+'-showHideDetails')" ng-mouseleave="hideTooltip(group.groupId+'-showHideDetails')">
+                                      <a ng-click="showDetailsMouseClick(group,$event);showMozillaBadges(group.activePutCode)" ng-mouseenter="showTooltip(group.groupId+'-showHideDetails')" ng-mouseleave="hideTooltip(group.groupId+'-showHideDetails')">
                                           <span ng-class="(moreInfo[group.groupId] == true) ? 'glyphicons collapse_top' : 'glyphicons expand'">
                                           </span>
                                       </a>
@@ -192,7 +176,7 @@
                      <!-- active row  source display -->
                       <div class="row source-line" ng-show="group.activePutCode == work.putCode.value">
                           <div class="col-md-7 col-sm-7 col-xs-7" ng-show="editSources[group.groupId] == true">
-                              {{work.sourceName}}
+                              {{(work.sourceName == null || work.sourceName == '') ? work.source : work.sourceName }}
                           </div>
                           <div class="col-md-3 col-sm-3 col-xs-3" ng-show="editSources[group.groupId] == true">
 
@@ -254,8 +238,8 @@
                     <!-- not active row && edit sources -->
                     <div ng-show="group.activePutCode != work.putCode.value" class="row source-line">
                         <div class="col-md-7 col-sm-7 col-xs-7">
-                            <a ng-click="group.activePutCode = work.putCode.value;">
-                                {{work.sourceName}}
+                            <a ng-click="group.activePutCode = work.putCode.value;;showMozillaBadges(group.activePutCode);">                                
+                                {{(work.sourceName == null || work.sourceName == '') ? work.source : work.sourceName }}
                             </a>
                         </div>
                         
@@ -312,7 +296,7 @@
                     <div class="row source-line" ng-hide="editSources[group.groupId] == true">                        
                         
                         <div class="col-md-7 col-sm-7 col-xs-7">
-                             <@orcid.msg 'groups.common.source'/>: {{work.sourceName}}
+                             <@orcid.msg 'groups.common.source'/>: {{(work.sourceName == null || work.sourceName == '') ? work.source : work.sourceName }}
                         </div>
                         
                         <div class="col-md-3 col-sm-3 col-xs-3">
@@ -393,5 +377,10 @@
     <![endif]-->
 </div>
 <div ng-show="worksSrvc.loading == false && worksSrvc.groups.length == 0" class="" ng-cloak>
-    <strong><#if (publicProfile)?? && publicProfile == true>${springMacroRequestContext.getMessage("workspace_works_body_list.Nopublicationsaddedyet")}<#else>${springMacroRequestContext.getMessage("workspace_works_body_list.havenotaddedanyworks")} <a ng-click="showWorkImportWizard()">${springMacroRequestContext.getMessage("workspace_works_body_list.addsomenow")}</a></#if></strong>
+    <strong>
+    	<#if (publicProfile)?? && publicProfile == true>${springMacroRequestContext.getMessage("workspace_works_body_list.Nopublicationsaddedyet")}<#else>${springMacroRequestContext.getMessage("workspace_works_body_list.havenotaddedanyworks")} 
+    		<a ng-show="noLinkFlag" ng-click="showWorkImportWizard()">${springMacroRequestContext.getMessage("workspace_works_body_list.addsomenow")}</a>
+    		<span ng-hide="noLinkFlag">${springMacroRequestContext.getMessage("workspace_works_body_list.addsomenow")}</span>
+    	</#if>
+    </strong>
 </div>

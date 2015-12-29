@@ -27,15 +27,13 @@ import java.util.Set;
 import javax.annotation.Resource;
 import javax.persistence.NoResultException;
 
-import org.orcid.core.constants.OauthTokensConstants;
-import org.orcid.core.manager.ClientDetailsManager;
+import org.orcid.core.constants.OrcidOauth2Constants;
+import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
-import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.oauth.OrcidOauth2AuthInfo;
 import org.orcid.core.oauth.OrcidOauth2UserAuthentication;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.persistence.dao.OrcidOauth2AuthoriziationCodeDetailDao;
-import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.OrcidOauth2AuthoriziationCodeDetail;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -67,19 +65,13 @@ public class OrcidAuthorizationCodeServiceImpl extends RandomValueAuthorizationC
     private static final String RESPONSE_TYPE = "response_type";           
 
     @Resource(name = "orcidOauth2AuthoriziationCodeDetailDao")
-    private OrcidOauth2AuthoriziationCodeDetailDao orcidOauth2AuthoriziationCodeDetailDao;
-
-    @Resource
-    private ClientDetailsManager clientDetailsManager;
-
-    @Resource(name = "profileEntityManager")
-    private ProfileEntityManager profileEntityManager;
-    
-    @Resource
-    private ProfileDao profileDao;
+    private OrcidOauth2AuthoriziationCodeDetailDao orcidOauth2AuthoriziationCodeDetailDao;              
     
     @Resource(name = "profileEntityCacheManager")
-    ProfileEntityCacheManager profileEntityCacheManager;
+    private ProfileEntityCacheManager profileEntityCacheManager;
+    
+    @Resource
+    private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
     
     private static final Logger LOGGER = LoggerFactory.getLogger(OrcidAuthorizationCodeServiceImpl.class);
 
@@ -169,9 +161,9 @@ public class OrcidAuthorizationCodeServiceImpl extends RandomValueAuthorizationC
         //Set token version to persistent token
         //TODO: As of Jan 2015 all tokens will be new tokens, so, we will have to remove the token version code and 
         //treat all tokens as new tokens
-        detail.setVersion(Long.valueOf(OauthTokensConstants.PERSISTENT_TOKEN));
-        if(requestParameters.containsKey(OauthTokensConstants.GRANT_PERSISTENT_TOKEN)) {
-            String grantPersitentToken = (String)requestParameters.get(OauthTokensConstants.GRANT_PERSISTENT_TOKEN);
+        detail.setVersion(Long.valueOf(OrcidOauth2Constants.PERSISTENT_TOKEN));
+        if(requestParameters.containsKey(OrcidOauth2Constants.GRANT_PERSISTENT_TOKEN)) {
+            String grantPersitentToken = (String)requestParameters.get(OrcidOauth2Constants.GRANT_PERSISTENT_TOKEN);
             if(Boolean.parseBoolean(grantPersitentToken)) {
                 isPersistentTokenEnabledByUser = true;                
             }
@@ -184,7 +176,7 @@ public class OrcidAuthorizationCodeServiceImpl extends RandomValueAuthorizationC
 
     private ClientDetailsEntity getClientDetails(String clientId) {
         try {
-            return clientDetailsManager.findByClientId(clientId);
+            return clientDetailsEntityCacheManager.retrieve(clientId);
         } catch (NoResultException e) {
             return null;
         }

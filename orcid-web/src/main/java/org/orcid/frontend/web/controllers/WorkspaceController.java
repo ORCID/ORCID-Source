@@ -36,10 +36,12 @@ import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ExternalIdentifierManager;
 import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.OtherNameManager;
+import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileKeywordManager;
 import org.orcid.core.manager.ResearcherUrlManager;
 import org.orcid.core.manager.ThirdPartyLinkManager;
 import org.orcid.core.manager.WorkManager;
+import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.frontend.web.util.NumberList;
 import org.orcid.frontend.web.util.YearsList;
@@ -60,8 +62,12 @@ import org.orcid.jaxb.model.record_rc1.Role;
 import org.orcid.jaxb.model.record_rc1.WorkCategory;
 import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.record_rc1.WorkType;
+import org.orcid.jaxb.model.record_rc2.OtherNames;
+import org.orcid.persistence.constants.SiteConstants;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ThirdPartyRedirect;
 import org.orcid.pojo.ajaxForm.KeywordsForm;
+import org.orcid.pojo.ajaxForm.OtherNameForm;
 import org.orcid.pojo.ajaxForm.OtherNamesForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
@@ -114,6 +120,9 @@ public class WorkspaceController extends BaseWorkspaceController {
     @Resource(name = "languagesMap")
     private LanguagesMap lm;
     
+    @Resource
+    private ProfileEntityCacheManager profileEntityCacheManager;
+    
     @RequestMapping(value = { "/workspace/retrieve-work-impor-wizards.json" }, method = RequestMethod.GET)
     public @ResponseBody List<OrcidClient> retrieveWorkImportWizards() {
         return thirdPartyLinkManager.findOrcidClientsWithPredefinedOauthScopeWorksImport();
@@ -122,6 +131,11 @@ public class WorkspaceController extends BaseWorkspaceController {
     @ModelAttribute("fundingImportWizards")
     public List<OrcidClient> retrieveFundingImportWizards() {
         return thirdPartyLinkManager.findOrcidClientsWithPredefinedOauthScopeFundingImport();
+    }
+    
+    @RequestMapping(value = { "/workspace/retrieve-peer-review-import-wizards.json" }, method = RequestMethod.GET)
+    public @ResponseBody List<OrcidClient> retrievePeerReviewImportWizards() {
+        return thirdPartyLinkManager.findOrcidClientsWithPredefinedOauthScopePeerReviewImport();
     }
 
     @ModelAttribute("affiliationTypes")
@@ -167,7 +181,7 @@ public class WorkspaceController extends BaseWorkspaceController {
         Map<String, String> workCategories = new LinkedHashMap<String, String>();
 
         for (WorkCategory workCategory : WorkCategory.values()) {
-            workCategories.put(workCategory.value(), getMessage(buildInternationalizationKey(WorkCategory.class, workCategory.value())));
+            workCategories.put(workCategory.value(), getMessage(new StringBuffer("org.orcid.jaxb.model.record.WorkCategory.").append(workCategory.value()).toString()));
         }
 
         return workCategories;
@@ -178,7 +192,7 @@ public class WorkspaceController extends BaseWorkspaceController {
         Map<String, String> citationTypes = new LinkedHashMap<String, String>();
 
         for (CitationType citationType : CitationType.values()) {
-            citationTypes.put(citationType.value(), getMessage(buildInternationalizationKey(CitationType.class, citationType.value())));
+            citationTypes.put(citationType.value(), getMessage(new StringBuffer("org.orcid.jaxb.model.record.CitationType.").append(citationType.value()).toString()));
         }
 
         return FunctionsOverCollections.sortMapsByValues(citationTypes);
@@ -238,7 +252,7 @@ public class WorkspaceController extends BaseWorkspaceController {
         Map<String, String> map = new TreeMap<String, String>();
 
         for (WorkExternalIdentifierType type : WorkExternalIdentifierType.values()) {
-            map.put(getMessage(buildInternationalizationKey(WorkExternalIdentifierType.class, type.value())), type.value());
+            map.put(getMessage(new StringBuffer("org.orcid.jaxb.model.record.WorkExternalIdentifierType.").append(type.value()).toString()), type.value());
         }
 
         return FunctionsOverCollections.sortMapsByValues(map);
@@ -284,7 +298,7 @@ public class WorkspaceController extends BaseWorkspaceController {
     public Map<String, String> retrievePeerReviewRolesAsMap() {
         Map<String, String> peerReviewRoles = new LinkedHashMap<String, String>();
         for (Role role : Role.values()) {
-            peerReviewRoles.put(role.value(), getMessage(buildInternationalizationKey(Role.class, role.name())));
+            peerReviewRoles.put(role.value(), getMessage(new StringBuffer("org.orcid.jaxb.model.record.Role.").append(role.name()).toString()));
         }
         return FunctionsOverCollections.sortMapsByValues(peerReviewRoles);
     }
@@ -293,7 +307,7 @@ public class WorkspaceController extends BaseWorkspaceController {
     public Map<String, String> retrievePeerReviewTypesAsMap() {
         Map<String, String> peerReviewTypes = new LinkedHashMap<String, String>();
         for (PeerReviewType type : PeerReviewType.values()) {
-            peerReviewTypes.put(type.value(), getMessage(buildInternationalizationKey(PeerReviewType.class, type.name())));
+            peerReviewTypes.put(type.value(), getMessage(new StringBuffer("org.orcid.jaxb.model.record.PeerReviewType.").append(type.name()).toString()));
         }
         return FunctionsOverCollections.sortMapsByValues(peerReviewTypes);
     }
@@ -302,7 +316,7 @@ public class WorkspaceController extends BaseWorkspaceController {
     public Map<String, String> retrieveWorkTypesAsMap() {
         Map<String, String> types = new LinkedHashMap<String, String>();
         for (WorkType type : WorkType.values()) {
-            types.put(type.value(), getMessage(buildInternationalizationKey(WorkType.class, type.value())));
+            types.put(type.value(), getMessage(new StringBuffer("org.orcid.jaxb.model.record.WorkType.").append(type.value()).toString()));
         }
         return FunctionsOverCollections.sortMapsByValues(types);
     }
@@ -347,30 +361,51 @@ public class WorkspaceController extends BaseWorkspaceController {
         profileKeywordManager.updateProfileKeyword(currentProfile.getOrcidIdentifier().getPath(), kf.toKeywords());
         return kf;
     }
-
     
     @RequestMapping(value = "/my-orcid/otherNamesForms.json", method = RequestMethod.GET)
     public @ResponseBody
     OtherNamesForm getOtherNamesFormJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
-        OrcidProfile currentProfile = getEffectiveProfile();
-        return OtherNamesForm.valueOf(currentProfile.getOrcidBio().getPersonalDetails().getOtherNames());
+        OtherNames otherNames = otherNameManager.getOtherNamesV2(getCurrentUserOrcid());        
+        
+        OtherNamesForm form = OtherNamesForm.valueOf(otherNames);
+        ProfileEntity entity = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
+        
+        if(entity.getOtherNamesVisibility() != null) {
+            form.setVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(entity.getOtherNamesVisibility()));
+        } else {
+            form.setVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(OrcidVisibilityDefaults.OTHER_NAMES_DEFAULT.getVisibility()));
+        }
+        
+        return form;
     }
     
     @RequestMapping(value = "/my-orcid/otherNamesForms.json", method = RequestMethod.POST)
     public @ResponseBody
-    OtherNamesForm setOtherNamesFormJson(HttpServletRequest request, @RequestBody OtherNamesForm onf) throws NoSuchRequestHandlingMethodException {
+    OtherNamesForm setOtherNamesFormJson(@RequestBody OtherNamesForm onf) throws NoSuchRequestHandlingMethodException {
         onf.setErrors(new ArrayList<String>());
-        for (int i = onf.getOtherNames().size() - 1; i > 0; i--) {
-            Text t = onf.getOtherNames().get(i);
-            if (PojoUtil.isEmpty(t))
-                onf.getOtherNames().remove(i);
-            else if (t.getValue().length() > 255)
-                t.setValue(t.getValue().substring(0,255));
+        List<OtherNameForm> validOtherNames = new ArrayList<OtherNameForm>();
+        for (int i = 0; i < onf.getOtherNames().size(); i++) {
+            boolean isInvalid = false;
+            OtherNameForm otherNameForm = onf.getOtherNames().get(i);
+            if (PojoUtil.isEmpty(otherNameForm.getContent())) {
+                //Mark it as invalid
+                isInvalid = true;
+            } else if(otherNameForm.getContent().length() > 255) {
+                otherNameForm.setContent(otherNameForm.getContent().substring(0,255));                
+            }
+            if(!isInvalid) {
+                // Set the visibility if it is null
+                otherNameForm.setVisibility(onf.getVisibility());
+                validOtherNames.add(otherNameForm);
+            }            
         }
-        if (onf.getErrors().size()>0) return onf;        
-        OrcidProfile currentProfile = getEffectiveProfile();
-        
-        otherNameManager.updateOtherNames(currentProfile.getOrcidIdentifier().getPath(), onf.toOtherNames());
+        onf.setOtherNames(validOtherNames);
+        if (onf.getErrors().size() > 0) 
+            return onf;        
+        OtherNames otherNames = onf.toOtherNames();                
+        String visibilityValue = (onf.getVisibility() == null || onf.getVisibility().getVisibility() == null) ? OrcidVisibilityDefaults.OTHER_NAMES_DEFAULT.getVisibility().value() : onf.getVisibility().getVisibility().value();                
+        org.orcid.jaxb.model.common.Visibility visibility = org.orcid.jaxb.model.common.Visibility.fromValue(visibilityValue);
+        otherNameManager.updateOtherNamesV2(getEffectiveUserOrcid(), otherNames, visibility);
         return onf;
     }
     
@@ -394,12 +429,23 @@ public class WorkspaceController extends BaseWorkspaceController {
         ws.setErrors(new ArrayList<String>());
         HashMap<String, Website> websitesHm = new HashMap<String, Website>(); 
         for (Website w:ws.getWebsites()) {
-            validateUrl(w.getUrl());
+            //Clean old errors
+            w.setErrors(new ArrayList<String>());
+            w.getUrl().setErrors(new ArrayList<String>());
+            // Name can be null
+            if(w.getName() != null) {
+                w.getName().setErrors(new ArrayList<String>());
+            }
+            
+            //Validate
+            validateUrl(w.getUrl(), SiteConstants.URL_MAX_LENGTH);
+            validateNoLongerThan(SiteConstants.URL_MAX_LENGTH, w.getName());
             if (websitesHm.containsKey(w.getUrl().getValue()))
                 setError(w.getUrl(), "common.duplicate_url");
             else
                 websitesHm.put(w.getUrl().getValue(), w);
             copyErrors(w.getUrl(), ws);
+            copyErrors(w.getName(), ws);
         }   
         if (ws.getErrors().size()>0) return ws;        
         OrcidProfile currentProfile = getEffectiveProfile();

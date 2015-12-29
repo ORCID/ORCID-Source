@@ -66,7 +66,7 @@
 									</tr>	
 									<tr ng-repeat="client in clients">
 										<td colspan="8">
-											{{client.displayName.value}} (<a href="{{client.website.value}}" target="_blank">{{client.website.value}}</a>)
+											{{client.displayName.value}} (<a href="{{getClientUrl(client)}}" target="_blank">{{client.website.value}}</a>)
 										</td>												
 										<td colspan="4" class="pull-right">										
 											<ul class="client-options">
@@ -218,7 +218,7 @@
 						<span><strong><@orcid.msg 'manage.developer_tools.group.website'/></strong></span>
 					</div>
 					<div class="col-md-9 col-sm-9 col-xs-12 dt-website">
-						<p><a href="{{clientDetails.clientWebsite.value}}">{{clientDetails.website.value}}</a></p>														
+						<p><a href="{{getClientUrl(clientDetails)}}" target="_blank">{{clientDetails.website.value}}</a></p>														
 					</div>							
 				</div>
 				<div class="row bottomBuffer">
@@ -231,7 +231,7 @@
 					</div>							
 				</div>	
 				
-				<@security.authorize ifAnyGranted="ROLE_PREMIUM_INSTITUTION">																					
+				<@security.authorize ifAnyGranted="ROLE_PREMIUM_INSTITUTION, ROLE_BASIC_INSTITUTION">																					
 					<div class="row bottomBuffer">
 						<!-- Custom Emails -->
 						<div class="col-md-3 col-sm-3 col-xs-12">

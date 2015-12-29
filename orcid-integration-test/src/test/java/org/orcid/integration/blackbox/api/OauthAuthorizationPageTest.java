@@ -43,6 +43,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.orcid.integration.api.t2.T2OAuthAPIService;
 import org.orcid.integration.blackbox.BlackBoxBase;
+import org.orcid.integration.blackbox.web.SigninTest;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -62,7 +63,7 @@ import com.sun.jersey.core.util.MultivaluedMapImpl;
 public class OauthAuthorizationPageTest extends BlackBoxBase {
 
     private static final String STATE_PARAM = "MyStateParam";
-    private static final String SCOPES = "/activities/update /activities/read-limited";
+    private static final String SCOPES = "/activities/update /read-limited";
     private static final int DEFAULT_TIMEOUT_SECONDS = 10;
     private static final Pattern AUTHORIZATION_CODE_PATTERN = Pattern.compile("code=(.+)");
     private static final Pattern STATE_PARAM_PATTERN = Pattern.compile("state=(.+)");
@@ -83,91 +84,9 @@ public class OauthAuthorizationPageTest extends BlackBoxBase {
     }
 
     @Test
-    public void testAuthorizeAndRegister() throws JSONException, InterruptedException, URISyntaxException {
-        webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, client1ClientId, SCOPES, redirectUri));
-        By registerForm = By.id("register");
-        (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(registerForm));
-
-        String time = String.valueOf(System.currentTimeMillis());
-
-        webDriver.findElement(By.id("register-form-given-names")).sendKeys(time);
-        webDriver.findElement(By.id("register-form-email")).sendKeys(time + "@" + time + ".com");
-        webDriver.findElement(By.id("register-form-confirm-email")).sendKeys(time + "@" + time + ".com");
-        webDriver.findElement(By.id("register-form-password")).sendKeys(time + "a");
-        webDriver.findElement(By.id("register-form-confirm-password")).sendKeys(time + "a");
-
-        WebElement terms = webDriver.findElement(By.id("register-form-term-box"));
-        assertNotNull(terms);
-        if (!terms.isSelected()) {
-            terms.click();
-        }
-        // Click the authorize button
-        webDriver.findElement(By.id("register-form-authorize")).click();
-
-        (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(new ExpectedCondition<Boolean>() {
-            public Boolean apply(WebDriver d) {
-                return d.getTitle().equals("ORCID Playground");
-            }
-        });
-
-        String currentUrl = webDriver.getCurrentUrl();
-        Matcher matcher = AUTHORIZATION_CODE_PATTERN.matcher(currentUrl);
-        assertTrue(matcher.find());
-        String authorizationCode = matcher.group(1);
-        assertFalse(PojoUtil.isEmpty(authorizationCode));
-
-        ClientResponse token = getClientResponse(client1ClientId, client1ClientSecret, SCOPES, redirectUri, authorizationCode);
-        assertEquals(200, token.getStatus());
-        String body = token.getEntity(String.class);
-        JSONObject jsonObject = new JSONObject(body);
-        String accessToken = (String) jsonObject.get("access_token");
-        assertNotNull(accessToken);
-
-        String scopes = (String) jsonObject.get("scope");
-        assertEquals(SCOPES, scopes);
-    }
-
-    @Test
-    public void stateParamIsPersistentAndReturnedOnRegisterTest() throws JSONException, InterruptedException, URISyntaxException {
-        webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s&state=%s", webBaseUrl, client1ClientId, SCOPES,
-                redirectUri, STATE_PARAM));
-        By registerForm = By.id("register");
-        (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(registerForm));
-
-        String time = String.valueOf(System.currentTimeMillis());
-
-        webDriver.findElement(By.id("register-form-given-names")).sendKeys(time);
-        webDriver.findElement(By.id("register-form-email")).sendKeys(time + "@" + time + ".com");
-        webDriver.findElement(By.id("register-form-confirm-email")).sendKeys(time + "@" + time + ".com");
-        webDriver.findElement(By.id("register-form-password")).sendKeys(time + "a");
-        webDriver.findElement(By.id("register-form-confirm-password")).sendKeys(time + "a");
-
-        WebElement terms = webDriver.findElement(By.id("register-form-term-box"));
-        assertNotNull(terms);
-        if (!terms.isSelected()) {
-            terms.click();
-        }
-        // Click the authorize button
-        webDriver.findElement(By.id("register-form-authorize")).click();
-
-        (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(new ExpectedCondition<Boolean>() {
-            public Boolean apply(WebDriver d) {
-                return d.getTitle().equals("ORCID Playground");
-            }
-        });
-
-        String currentUrl = webDriver.getCurrentUrl();
-        Matcher matcher = STATE_PARAM_PATTERN.matcher(currentUrl);
-        assertTrue(matcher.find());
-        String stateParam = matcher.group(1);
-        assertFalse(PojoUtil.isEmpty(stateParam));
-        assertEquals(STATE_PARAM, stateParam);
-    }
-
-    @Test
     public void stateParamIsPersistentAndReturnedOnLoginTest() throws JSONException, InterruptedException, URISyntaxException {
         webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s&state=%s", webBaseUrl, client1ClientId, SCOPES,
-                redirectUri, STATE_PARAM));
+                client1RedirectUri, STATE_PARAM));
         By switchFromLinkLocator = By.id("in-register-switch-form");
         (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(switchFromLinkLocator));
         WebElement switchFromLink = webDriver.findElement(switchFromLinkLocator);
@@ -195,6 +114,35 @@ public class OauthAuthorizationPageTest extends BlackBoxBase {
         String stateParam = matcher.group(1);
         assertFalse(PojoUtil.isEmpty(stateParam));
         assertEquals(STATE_PARAM, stateParam);
+    }
+
+    @Test
+    public void stateParamIsPersistentAndReurnedWhenAlreadyLoggedInTest() throws JSONException, InterruptedException, URISyntaxException {
+        WebDriver webDriver = new FirefoxDriver();
+        webDriver.get(webBaseUrl + "/userStatus.json?logUserOut=true");
+        webDriver.get(webBaseUrl + "/my-orcid");
+        // Sign in
+        SigninTest.signIn(webDriver, user1UserName, user1Password);
+        // Go to the authroization page
+        webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s&state=%s", webBaseUrl, client1ClientId, SCOPES,
+                client1RedirectUri, STATE_PARAM));
+        By userIdElementLocator = By.id("authorize");
+        (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(userIdElementLocator));
+        WebElement authorizeButton = webDriver.findElement(By.id("authorize"));
+        authorizeButton.click();
+        (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(new ExpectedCondition<Boolean>() {
+            public Boolean apply(WebDriver d) {
+                return d.getTitle().equals("ORCID Playground");
+            }
+        });
+
+        String currentUrl = webDriver.getCurrentUrl();
+        Matcher matcher = STATE_PARAM_PATTERN.matcher(currentUrl);
+        assertTrue(matcher.find());
+        String stateParam = matcher.group(1);
+        assertFalse(PojoUtil.isEmpty(stateParam));
+        assertEquals(STATE_PARAM, stateParam);
+        webDriver.close();
     }
 
     @Test
@@ -234,7 +182,7 @@ public class OauthAuthorizationPageTest extends BlackBoxBase {
     @Test
     public void useAuthorizationCodeWithInalidScopesTest() throws InterruptedException, JSONException {
         webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, client1ClientId,
-                ScopePathType.ORCID_WORKS_CREATE.getContent(), redirectUri));
+                ScopePathType.ORCID_WORKS_CREATE.getContent(), client1RedirectUri));
         By switchFromLinkLocator = By.id("in-register-switch-form");
         (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(switchFromLinkLocator));
         WebElement switchFromLink = webDriver.findElement(switchFromLinkLocator);
@@ -262,7 +210,7 @@ public class OauthAuthorizationPageTest extends BlackBoxBase {
         String authorizationCode = matcher.group(1);
         assertFalse(PojoUtil.isEmpty(authorizationCode));
 
-        ClientResponse tokenResponse = getClientResponse(client1ClientId, client1ClientSecret, ScopePathType.ORCID_WORKS_UPDATE.getContent(), redirectUri,
+        ClientResponse tokenResponse = getClientResponse(client1ClientId, client1ClientSecret, ScopePathType.ORCID_WORKS_UPDATE.getContent(), client1RedirectUri,
                 authorizationCode);
 
         assertEquals(401, tokenResponse.getStatus());
@@ -275,7 +223,7 @@ public class OauthAuthorizationPageTest extends BlackBoxBase {
     @Test
     public void useAuthorizationCodeWithoutScopesTest() throws InterruptedException, JSONException {
         webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, client1ClientId,
-                ScopePathType.ORCID_WORKS_CREATE.getContent(), redirectUri));
+                ScopePathType.ORCID_WORKS_CREATE.getContent(), client1RedirectUri));
         By switchFromLinkLocator = By.id("in-register-switch-form");
         (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(switchFromLinkLocator));
         WebElement switchFromLink = webDriver.findElement(switchFromLinkLocator);
@@ -303,7 +251,7 @@ public class OauthAuthorizationPageTest extends BlackBoxBase {
         String authorizationCode = matcher.group(1);
         assertFalse(PojoUtil.isEmpty(authorizationCode));
 
-        ClientResponse tokenResponse = getClientResponse(client1ClientId, client1ClientSecret, null, redirectUri, authorizationCode);
+        ClientResponse tokenResponse = getClientResponse(client1ClientId, client1ClientSecret, null, client1RedirectUri, authorizationCode);
         assertEquals(200, tokenResponse.getStatus());
         String body = tokenResponse.getEntity(String.class);
         JSONObject jsonObject = new JSONObject(body);
@@ -316,7 +264,7 @@ public class OauthAuthorizationPageTest extends BlackBoxBase {
     public void skipAuthorizationScreenIfTokenAlreadyExists() throws InterruptedException, JSONException {
         // First get the authorization code
         webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, client1ClientId,
-                ScopePathType.ORCID_BIO_UPDATE.getContent(), redirectUri));
+                ScopePathType.ORCID_BIO_UPDATE.getContent(), client1RedirectUri));
         By switchFromLinkLocator = By.id("in-register-switch-form");
         (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(switchFromLinkLocator));
         WebElement switchFromLink = webDriver.findElement(switchFromLinkLocator);
@@ -344,7 +292,7 @@ public class OauthAuthorizationPageTest extends BlackBoxBase {
         String authorizationCode = matcher.group(1);
         assertFalse(PojoUtil.isEmpty(authorizationCode));
 
-        ClientResponse tokenResponse = getClientResponse(client1ClientId, client1ClientSecret, ScopePathType.ORCID_BIO_UPDATE.getContent(), redirectUri,
+        ClientResponse tokenResponse = getClientResponse(client1ClientId, client1ClientSecret, ScopePathType.ORCID_BIO_UPDATE.getContent(), client1RedirectUri,
                 authorizationCode);
         assertEquals(200, tokenResponse.getStatus());
         String body = tokenResponse.getEntity(String.class);
@@ -356,7 +304,7 @@ public class OauthAuthorizationPageTest extends BlackBoxBase {
         // Then, ask again for the same permissions. Note that the user is
         // already logged in
         webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, client1ClientId,
-                ScopePathType.ORCID_BIO_UPDATE.getContent(), redirectUri));
+                ScopePathType.ORCID_BIO_UPDATE.getContent(), client1RedirectUri));
 
         (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(new ExpectedCondition<Boolean>() {
             public Boolean apply(WebDriver d) {
@@ -370,7 +318,7 @@ public class OauthAuthorizationPageTest extends BlackBoxBase {
         authorizationCode = matcher.group(1);
         assertFalse(PojoUtil.isEmpty(authorizationCode));
 
-        tokenResponse = getClientResponse(client1ClientId, client1ClientSecret, ScopePathType.ORCID_BIO_UPDATE.getContent(), redirectUri, authorizationCode);
+        tokenResponse = getClientResponse(client1ClientId, client1ClientSecret, ScopePathType.ORCID_BIO_UPDATE.getContent(), client1RedirectUri, authorizationCode);
         assertEquals(200, tokenResponse.getStatus());
         body = tokenResponse.getEntity(String.class);
         jsonObject = new JSONObject(body);
@@ -391,7 +339,7 @@ public class OauthAuthorizationPageTest extends BlackBoxBase {
         revokeApplicationsAccess(client1ClientId);
         // First get the authorization code
         webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, client1ClientId,
-                ScopePathType.FUNDING_CREATE.getContent(), redirectUri));
+                ScopePathType.FUNDING_CREATE.getContent(), client1RedirectUri));
         By switchFromLinkLocator = By.id("in-register-switch-form");
         (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(switchFromLinkLocator));
         WebElement switchFromLink = webDriver.findElement(switchFromLinkLocator);
@@ -419,7 +367,8 @@ public class OauthAuthorizationPageTest extends BlackBoxBase {
         String authorizationCode = matcher.group(1);
         assertFalse(PojoUtil.isEmpty(authorizationCode));
 
-        ClientResponse tokenResponse = getClientResponse(client1ClientId, client1ClientSecret, ScopePathType.FUNDING_CREATE.getContent(), redirectUri, authorizationCode);
+        ClientResponse tokenResponse = getClientResponse(client1ClientId, client1ClientSecret, ScopePathType.FUNDING_CREATE.getContent(), client1RedirectUri,
+                authorizationCode);
         assertEquals(200, tokenResponse.getStatus());
         String body = tokenResponse.getEntity(String.class);
         JSONObject jsonObject = new JSONObject(body);
@@ -429,8 +378,9 @@ public class OauthAuthorizationPageTest extends BlackBoxBase {
 
         // Then, ask again for permissions over other scopes. Note that the user
         // is already logged in
-        webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, client1ClientId,
-                ScopePathType.AFFILIATIONS_CREATE.getContent(), redirectUri));
+        String url = String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, client1ClientId,
+                ScopePathType.AFFILIATIONS_CREATE.getContent(), client1RedirectUri);
+        webDriver.get(url);
 
         By authorizeElementLocator = By.id("authorize");
         (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(authorizeElementLocator));
@@ -449,7 +399,7 @@ public class OauthAuthorizationPageTest extends BlackBoxBase {
         authorizationCode = matcher.group(1);
         assertFalse(PojoUtil.isEmpty(authorizationCode));
 
-        tokenResponse = getClientResponse(client1ClientId, client1ClientSecret, ScopePathType.AFFILIATIONS_CREATE.getContent(), redirectUri, authorizationCode);
+        tokenResponse = getClientResponse(client1ClientId, client1ClientSecret, ScopePathType.AFFILIATIONS_CREATE.getContent(), client1RedirectUri, authorizationCode);
         assertEquals(200, tokenResponse.getStatus());
         body = tokenResponse.getEntity(String.class);
         jsonObject = new JSONObject(body);
@@ -461,7 +411,7 @@ public class OauthAuthorizationPageTest extends BlackBoxBase {
 
         // Repeat the process again with other scope
         webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, client1ClientId,
-                ScopePathType.ORCID_WORKS_UPDATE.getContent(), redirectUri));
+                ScopePathType.ORCID_WORKS_UPDATE.getContent(), client1RedirectUri));
 
         authorizeElementLocator = By.id("authorize");
         (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(authorizeElementLocator));
@@ -480,7 +430,7 @@ public class OauthAuthorizationPageTest extends BlackBoxBase {
         authorizationCode = matcher.group(1);
         assertFalse(PojoUtil.isEmpty(authorizationCode));
 
-        tokenResponse = getClientResponse(client1ClientId, client1ClientSecret, ScopePathType.ORCID_WORKS_UPDATE.getContent(), redirectUri, authorizationCode);
+        tokenResponse = getClientResponse(client1ClientId, client1ClientSecret, ScopePathType.ORCID_WORKS_UPDATE.getContent(), client1RedirectUri, authorizationCode);
         assertEquals(200, tokenResponse.getStatus());
         body = tokenResponse.getEntity(String.class);
         jsonObject = new JSONObject(body);
@@ -492,7 +442,7 @@ public class OauthAuthorizationPageTest extends BlackBoxBase {
         assertFalse(otherAccessToken2.equals(otherAccessToken));
     }
 
-    public ClientResponse getClientResponse(String clientId, String clientSecret, String scopes, String redirectUri, String authorizationCode) {
+    public ClientResponse getClientResponse(String clientId, String clientSecret, String scopes, String client1RedirectUri, String authorizationCode) {
         MultivaluedMap<String, String> params = new MultivaluedMapImpl();
         params.add("client_id", clientId);
         params.add("client_secret", clientSecret);
@@ -500,7 +450,7 @@ public class OauthAuthorizationPageTest extends BlackBoxBase {
         if (scopes != null) {
             params.add("scope", scopes);
         }
-        params.add("redirect_uri", redirectUri);
+        params.add("redirect_uri", client1RedirectUri);
         params.add("code", authorizationCode);
         return t2OAuthClient.obtainOauth2TokenPost("client_credentials", params);
     }

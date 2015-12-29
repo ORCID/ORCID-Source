@@ -484,10 +484,54 @@
 				</div>
 			</div>
 			<div class="controls save-btns pull-left">
-				<span id="bottom-confirm-lock-profile" ng-click="checkProfileToUnlock()" class="btn btn-primary"><@orcid.msg 'admin.unlock_profile.btn.unlock'/></span>		
+				<span id="bottom-confirm-unlock-profile" ng-click="checkProfileToUnlock()" class="btn btn-primary"><@orcid.msg 'admin.unlock_profile.btn.unlock'/></span>		
 			</div>
 		</div>
-	</div>		
+	</div>
+	
+		<!-- Review Profile -->			
+	<a name="review-profile"></a>
+	<div ng-controller="profileReviewCtrl" class="workspace-accordion-item" ng-cloak>
+		<p>				
+			<a ng-show="showReviewModal" ng-click="toggleReviewModal()"><span class="glyphicon glyphicon-chevron-down blue"></span><@orcid.msg 'admin.review_profile' /></a>
+			<a ng-hide="showReviewModal" ng-click="toggleReviewModal()"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'admin.review_profile' /></a>
+		</p>
+		<div class="collapsible bottom-margin-small admin-modal" id="review_modal" style="display:none;">					    		
+	    	<div class="form-group">
+	    		<p ng-show="message != ''">{{message}}</p>
+				<label for="orcid_to_review"><@orcid.msg 'common.orcidOrEmail' /></label>
+				<input type="text" id="orcid_to_lock" ng-enter="checkProfileToReview()" ng-model="orcidToReview" placeholder="<@orcid.msg 'common.orcidOrEmail' />" class="input-xlarge" />
+				<div ng-show="profileDetails.errors.length">
+					<span class="orcid-error" ng-repeat="error in profileDetails.errors" ng-bind-html="error"></span><br />
+				</div>
+			</div>
+			<div class="controls save-btns pull-left">
+				<span id="bottom-confirm-review-profile" ng-click="checkProfileToReview()" class="btn btn-primary"><@orcid.msg 'admin.review_profile.btn.review'/></span>		
+			</div>
+		</div>
+	</div>
+						
+	<!-- Un Review Profile -->			
+	<a name="unreview-profile"></a>
+	<div ng-controller="profileReviewCtrl" class="workspace-accordion-item" ng-cloak>
+		<p>				
+			<a ng-show="showUnreviewModal" ng-click="toggleUnreviewModal()"><span class="glyphicon glyphicon-chevron-down blue"></span><@orcid.msg 'admin.unreview_profile' /></a>
+			<a ng-hide="showUnreviewModal" ng-click="toggleUnreviewModal()"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'admin.unreview_profile' /></a>
+		</p>
+		<div class="collapsible bottom-margin-small admin-modal" id="unreview_modal" style="display:none;">					    		
+	    	<div class="form-group">
+	    		<p ng-show="message != ''">{{message}}</p>
+				<label for="orcid_to_unreview"><@orcid.msg 'common.orcidOrEmail' /></label>
+				<input type="text" id="orcid_to_unreview" ng-enter="checkProfileToUnreview()" ng-model="orcidToUnreview" placeholder="<@orcid.msg 'common.orcidOrEmail' />" class="input-xlarge" />
+				<div ng-show="profileDetails.errors.length">
+					<span class="orcid-error" ng-repeat="error in profileDetails.errors" ng-bind-html="error"></span><br />
+				</div>
+			</div>
+			<div class="controls save-btns pull-left">
+				<span id="bottom-confirm-unreview-profile" ng-click="checkProfileToUnreview()" class="btn btn-primary"><@orcid.msg 'admin.unreview_profile.btn.unreview'/></span>		
+			</div>
+		</div>
+	</div>	
 			
 </div>
 
@@ -525,6 +569,45 @@
     			<a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel' /></a>
     			<button class="btn btn-primary" id="btn-lock" ng-click="lockAccount()" ng-show="showLockPopover"><@orcid.msg 'admin.lock_profile.btn.lock'/></button>
     			<button class="btn btn-primary" id="btn-unlock" ng-click="unlockAccount()" ng-show="!showLockPopover"><@orcid.msg 'admin.unlock_profile.btn.unlock'/></button>
+			</div>
+		</div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="review-confirm-modal">
+	<div class="lightbox-container">
+		<div class="row">
+			<div class="col-md-12 col-xs-12 col-sm-12">
+				<!-- Review profile -->
+				<h3 ng-show="showReviewPopover"><@orcid.msg 'admin.review_profile.confirm_review.title' /></h3>	
+				<p ng-show="showReviewPopover"><@orcid.msg 'admin.review_profile.confirm_review.text' /></p>	
+				
+				<!-- Unreview profile -->
+				<h3 ng-show="!showReviewPopover"><@orcid.msg 'admin.unreview_profile.confirm_unreview.title' /></h3>	
+				<p ng-show="!showReviewPopover"><@orcid.msg 'admin.unreview_profile.confirm_unreview.text' /></p>	
+				
+				<!-- Profile details-->
+				<div class="row">
+					<p class="col-md-4 col-sm-6 col-xs-12"><strong><@orcid.msg 'admin.profile_details.given_names'/></strong></p>
+					<p class="col-md-8 col-sm-6 col-xs-12">{{profileDetails.givenNames}}</p>
+				</div>
+				<div class="row">
+					<p class="col-md-4 col-sm-6 col-xs-12"><strong><@orcid.msg 'admin.profile_details.family_name'/></strong></p>
+					<p class="col-md-8 col-sm-6 col-xs-12">{{profileDetails.familyName}}</p>
+				</div>				
+				<div class="row">
+					<p class="col-md-4 col-sm-6 col-xs-12"><strong><@orcid.msg 'admin.profile_details.email'/></strong></p>
+					<p class="col-md-8 col-sm-6 col-xs-12">{{profileDetails.email}}</p>
+				</div>
+				<div class="row">
+					<p class="col-md-4 col-sm-6 col-xs-12"><strong><@orcid.msg 'admin.profile_details.orcid'/></strong></p>
+					<p class="col-md-8 col-sm-6 col-xs-12">{{profileDetails.orcid}}</p>
+				</div>
+				
+				<!-- Buttons -->
+    			<a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel' /></a>
+    			<button class="btn btn-primary" id="btn-review" ng-click="reviewAccount()" ng-show="showReviewPopover"><@orcid.msg 'admin.review_profile.btn.review'/></button>
+    			<button class="btn btn-primary" id="btn-unreview" ng-click="unreviewAccount()" ng-show="!showReviewPopover"><@orcid.msg 'admin.unreview_profile.btn.unreview'/></button>
 			</div>
 		</div>
     </div>

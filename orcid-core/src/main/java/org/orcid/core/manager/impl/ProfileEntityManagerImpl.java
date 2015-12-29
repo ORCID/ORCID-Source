@@ -16,6 +16,7 @@
  */
 package org.orcid.core.manager.impl;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -26,17 +27,20 @@ import java.util.Set;
 import javax.annotation.Resource;
 import javax.persistence.NoResultException;
 
+import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.adapter.JpaJaxbEducationAdapter;
 import org.orcid.core.adapter.JpaJaxbEmploymentAdapter;
 import org.orcid.core.adapter.JpaJaxbFundingAdapter;
 import org.orcid.core.adapter.JpaJaxbPeerReviewAdapter;
 import org.orcid.core.adapter.JpaJaxbWorkAdapter;
 import org.orcid.core.manager.AffiliationsManager;
+import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.PeerReviewManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileFundingManager;
 import org.orcid.core.manager.WorkManager;
+import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.core.utils.activities.ActivitiesGroup;
 import org.orcid.core.utils.activities.ActivitiesGroupGenerator;
 import org.orcid.jaxb.model.clientgroup.ClientType;
@@ -62,11 +66,13 @@ import org.orcid.jaxb.model.record.summary_rc1.WorkGroup;
 import org.orcid.jaxb.model.record.summary_rc1.WorkSummary;
 import org.orcid.jaxb.model.record.summary_rc1.Works;
 import org.orcid.jaxb.model.record_rc1.FundingExternalIdentifier;
-import org.orcid.jaxb.model.record_rc1.GroupKey;
+import org.orcid.jaxb.model.record_rc1.GroupAble;
 import org.orcid.jaxb.model.record_rc1.GroupableActivity;
 import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifier;
 import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.pojo.ApplicationSummary;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -94,21 +100,27 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
 
     @Resource
     private JpaJaxbWorkAdapter jpaJaxbWorkAdapter;
-
-    @Resource(name = "profileEntityCacheManager")
-    ProfileEntityCacheManager profileEntityCacheManager;
+    
+    @Resource
+    private Jpa2JaxbAdapter jpa2JaxbAdapter;    
 
     @Resource
-    AffiliationsManager affiliationsManager;
+    private AffiliationsManager affiliationsManager;
 
     @Resource
-    ProfileFundingManager fundingManager;
+    private ProfileFundingManager fundingManager;
 
     @Resource
-    PeerReviewManager peerReviewManager;
+    private PeerReviewManager peerReviewManager;
 
     @Resource
-    WorkManager workManager;
+    private ProfileEntityCacheManager profileEntityCacheManager;
+
+    @Resource        
+    private WorkManager workManager;
+    
+    @Resource
+    private EncryptionManager encryptionManager;
 
     /**
      * Fetch a ProfileEntity from the database Instead of calling this function,
@@ -119,6 +131,11 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         return profileDao.find(orcid);
     }
 
+    @Override
+    public String findByCreditName(String creditName) {
+        return profileDao.findOrcidByCreditName(creditName);
+    }
+    
     @Override
     public boolean orcidExists(String orcid) {
         return profileDao.orcidExists(orcid);
@@ -183,7 +200,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         profile.setKeywordsVisibility(orcidProfile.getOrcidBio().getKeywords().getVisibility());
         profile.setResearcherUrlsVisibility(orcidProfile.getOrcidBio().getResearcherUrls().getVisibility());
         profile.setOtherNamesVisibility(orcidProfile.getOrcidBio().getPersonalDetails().getOtherNames().getVisibility());
-        profile.setCreditNameVisibility(orcidProfile.getOrcidBio().getPersonalDetails().getCreditName().getVisibility());
+        profile.setNamesVisibility(orcidProfile.getOrcidBio().getPersonalDetails().getCreditName().getVisibility());
         profile.setProfileAddressVisibility(orcidProfile.getOrcidBio().getContactDetails().getAddress().getCountry().getVisibility());
         profile.setId(orcidProfile.getOrcidIdentifier().getPath());
         return profile;
@@ -403,11 +420,11 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         List<ActivitiesGroup> groups = groupGenerator.getGroups();
 
         for (ActivitiesGroup group : groups) {
-            Set<GroupKey> externalIdentifiers = group.getGroupKeys();
+            Set<GroupAble> externalIdentifiers = group.getGroupKeys();
             Set<GroupableActivity> activities = group.getActivities();
             WorkGroup workGroup = new WorkGroup();
             // Fill the work groups with the external identifiers
-            for (GroupKey extId : externalIdentifiers) {
+            for (GroupAble extId : externalIdentifiers) {
                 WorkExternalIdentifier workExtId = (WorkExternalIdentifier) extId;
                 workGroup.getIdentifiers().getIdentifier().add(Identifier.fromWorkExternalIdentifier(workExtId));
             }
@@ -442,12 +459,12 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         List<ActivitiesGroup> groups = groupGenerator.getGroups();
 
         for (ActivitiesGroup group : groups) {
-            Set<GroupKey> externalIdentifiers = group.getGroupKeys();
+            Set<GroupAble> externalIdentifiers = group.getGroupKeys();
             Set<GroupableActivity> activities = group.getActivities();
             FundingGroup fundingGroup = new FundingGroup();
 
             // Fill the funding groups with the external identifiers
-            for (GroupKey extId : externalIdentifiers) {
+            for (GroupAble extId : externalIdentifiers) {
                 FundingExternalIdentifier fundingExtId = (FundingExternalIdentifier) extId;
                 fundingGroup.getIdentifiers().getIdentifier().add(Identifier.fromFundingExternalIdentifier(fundingExtId));
             }
@@ -482,11 +499,11 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         List<ActivitiesGroup> groups = groupGenerator.getGroups();
 
         for (ActivitiesGroup group : groups) {
-            Set<GroupKey> groupKeys = group.getGroupKeys();
+            Set<GroupAble> groupKeys = group.getGroupKeys();
             Set<GroupableActivity> activities = group.getActivities();
             PeerReviewGroup peerReviewGroup = new PeerReviewGroup();
             // Fill the peer review groups with the external identifiers
-            for (GroupKey groupKey : groupKeys) {
+            for (GroupAble groupKey : groupKeys) {
                 PeerReviewGroupKey key = (PeerReviewGroupKey) groupKey;
                 peerReviewGroup.getIdentifiers().getIdentifier().add(Identifier.fromPeerReviewGroupKey(key));
             }
@@ -514,6 +531,55 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     public boolean isDeactivated(String orcid) {
         return profileDao.isDeactivated(orcid);
     }
+
+    @Override
+    public boolean reviewProfile(String orcid) {
+        return profileDao.reviewProfile(orcid);
+    }
+
+    @Override
+    public boolean unreviewProfile(String orcid) {
+        return profileDao.unreviewProfile(orcid);
+    }
+    
+    @Override
+    public Visibility getResearcherUrlDefaultVisibility(String orcid) {
+        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
+        Visibility result = profile.getResearcherUrlsVisibility() == null ? Visibility.fromValue(OrcidVisibilityDefaults.RESEARCHER_URLS_DEFAULT.getVisibility().value()) : Visibility.fromValue(profile.getResearcherUrlsVisibility().value()); 
+        return result;
+    }
+    
+    @Override
+    public List<ApplicationSummary> getApplications(List<OrcidOauth2TokenDetail> tokenDetails) {
+    	return jpa2JaxbAdapter.getApplications(tokenDetails);
+    }
+    
+    @Override    
+    public String getOrcidHash(String orcid) throws NoSuchAlgorithmException {     
+        if(PojoUtil.isEmpty(orcid)) {
+            return null;
+        }
+        return encryptionManager.sha256Hash(orcid);
+    }
+    
+    @Override
+    public String retrivePublicDisplayName(String orcid) {
+        String publicName = ""; 
+        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
+        if(profile != null) {
+            Visibility namesVisibility = (profile.getNamesVisibility() != null) ? Visibility.fromValue(profile.getNamesVisibility().value()) : Visibility.fromValue(OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility().value());
+            if(Visibility.PUBLIC.equals(namesVisibility)) {
+                if(!PojoUtil.isEmpty(profile.getCreditName())) {
+                    publicName = profile.getCreditName();
+                } else {
+                    publicName = PojoUtil.isEmpty(profile.getGivenNames()) ? "" : profile.getGivenNames();
+                    publicName += PojoUtil.isEmpty(profile.getFamilyName()) ? "" : " " + profile.getFamilyName();
+                }
+            }
+        }
+        return publicName;
+    }
+    
 }
 
 class GroupableActivityComparator implements Comparator<GroupableActivity> {

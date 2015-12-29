@@ -353,44 +353,63 @@
 									</div>
 								</div>
 								<div class="row">
-									<!-- Type -->						
-									<div class="col-md-6 col-sm-6 col-xs-12">
-										<select class="input-large input-xlarge-full" ng-model="rUri.type.value" ng-change="loadDefaultScopes(rUri)">
-											<#list redirectUriTypes?keys as key>
-												<option value="${key}">${redirectUriTypes[key]}</option>
-											</#list>
-										</select>
-									</div>
-									<!-- Scopes -->
-									<div class="col-md-4 col-sm-4 col-xs-12">
-										<div ng-show="rUri.type.value != 'default'">
-											<multiselect multiple="true" ng-model="rUri.scopes" options="scope as scope for scope in availableRedirectScopes"></multiselect>
-										</div>															
-									</div>
-									
-									<!-- Delete button -->
-									<div class="col-md-1 col-sm-1 col-xs-12">
-					    				<a href="" id="delete-redirect-uri" ng-click="deleteRedirectUri($index)" class="glyphicon glyphicon-trash grey"></a>
-									</div>
-									<br><br>
-									<!-- Activity Type-->
-									<div class="col-md-6 col-sm-6 col-xs-12">
-										<div ng-show="rUri.type.value == 'import-works-wizard'">
-											<multiselect multiple="true" ng-model="rUri.actType.value[rUri.type.value]" options="actType as actType for actType in importWorkWizard['actTypeList']"></multiselect>
-										</div>
-									</div>
-									
-									<!-- Geographical Area-->
-									<div class="col-md-4 col-sm-4 col-xs-12">
-										<div ng-show="rUri.type.value == 'import-works-wizard'">
-											<multiselect multiple="true" ng-model="rUri.geoArea.value[rUri.type.value]" options="geoArea as geoArea for geoArea in importWorkWizard['geoAreaList']"></multiselect>
-										</div>
-									</div>
-									
-									<!-- Add button -->
-									<div class="col-md-1 col-sm-1 col-xs-12">
-					    				<a href="" id="load-empty-redirect-uri" ng-click="addRedirectUri()" class="glyphicon glyphicon-plus grey" ng-show="$last"></a>
-									</div>
+									<table class="edit-client-table">
+										<tr>
+											<td class="edit-client-table-col">
+												<!-- Type -->
+												<div class="col-md-6 col-sm-6 col-xs-12">
+													<span class="edit-client-labels"><@orcid.msg 'manage_members.label.type'/></span><br>
+													<select class="input-large input-xlarge-full" ng-model="rUri.type.value" ng-change="loadDefaultScopes(rUri)">
+														<#list redirectUriTypes?keys as key>
+															<option value="${key}">${redirectUriTypes[key]}</option>
+														</#list>
+													</select>
+												</div>
+											</td>
+											<td class="edit-client-table-col">
+												<!-- Scopes -->
+												<div class="col-md-4 col-sm-4 col-xs-12">
+													<div ng-show="rUri.type.value != 'default'">
+														<span class="edit-client-labels"><@orcid.msg 'manage_members.label.scope'/></span><br>
+														<multiselect multiple="true" ng-model="rUri.scopes" options="scope as scope for scope in availableRedirectScopes"></multiselect>
+													</div>															
+												</div>
+											</td>
+											<td>
+												<!-- Delete button -->
+												<div class="col-md-1 col-sm-1 col-xs-12">
+													<br>
+								    				<a href="" id="delete-redirect-uri" ng-click="deleteRedirectUri($index)" class="glyphicon glyphicon-trash grey"></a>
+												</div>
+											</td>
+										</tr>
+										<tr>
+											<td class="edit-client-table-col">
+												<!-- Activity Type-->
+												<div class="col-md-6 col-sm-6 col-xs-12">
+													<div ng-show="rUri.type.value == 'import-works-wizard'">
+														<span class="edit-client-labels"><@orcid.msg 'manage_members.label.work_type'/></span><br>
+														<multiselect multiple="true" ng-model="rUri.actType.value[rUri.type.value]" options="actType as actType for actType in importWorkWizard['actTypeList']"></multiselect>
+													</div>
+												</div>
+											</td>
+											<td class="edit-client-table-col">
+												<!-- Geographical Area-->
+												<div class="col-md-4 col-sm-4 col-xs-12">
+													<div ng-show="rUri.type.value == 'import-works-wizard'">
+														<span class="edit-client-labels"><@orcid.msg 'manage_members.label.geo_area'/></span><br>
+														<multiselect multiple="true" ng-model="rUri.geoArea.value[rUri.type.value]" options="geoArea as geoArea for geoArea in importWorkWizard['geoAreaList']"></multiselect>
+													</div>
+												</div>
+											</td>
+											<td>
+												<!-- Add button -->
+												<div class="col-md-1 col-sm-1 col-xs-12">
+								    				<a href="" id="load-empty-redirect-uri" ng-click="addRedirectUri()" class="glyphicon glyphicon-plus grey" ng-show="$last"></a>
+												</div>
+											</td>
+										</tr>
+									</table>
 								</div>
 								<div class="row">
 									<!-- Errors -->

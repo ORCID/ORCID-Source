@@ -959,7 +959,6 @@ select {
 	width: 100%;
 }
 
-/* Mbile menu icon */
 .header .navigation>.mobile-button {
 	display: none;
 }
@@ -1228,6 +1227,13 @@ ul.privacyHelp li.private {
 	font-size: 1.5em;
 	font-family: 'Gill Sans W02', 'Helvetica', sans-serif;
 	font-weight: bold;
+	font-style: normal;
+	color: #939498;	 
+}
+
+#statistics span.stat-name-st{
+	font-size: 1.0em;
+	font-family: 'Gill Sans W02', 'Helvetica', sans-serif;
 	font-style: normal;
 	color: #939498;	 
 }
@@ -2191,6 +2197,14 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input{
 	right: 10px;
 }
 
+.settings-table{
+	table-layout:fixed;
+}
+
+.settings-table .editTablePadCell35{
+	margin-right: 0;
+}
+
 .settings-table .settings-table td,.settings-table th {
 	width: 50%;
 	position: relative;
@@ -2202,6 +2216,36 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input{
     padding-left: 0;
 }
 
+.settings-table.table-bordered>tbody>tr>td{
+	padding-right: 0;
+}
+
+.settings-table a{
+	word-break: normal;
+}
+
+.settings-table .table td{
+	border: none;
+}
+
+.settings-table .table td:nth-child(1),
+.settings-table .table td:nth-child(2){
+    width: 100%;
+}
+
+.settings-table .table td:nth-child(3),
+.settings-table .table td:nth-child(4){
+    width: 1%;
+}
+
+.settings-table .table>tbody>tr>td{
+	padding: 3px 5px;
+}
+
+.settings-table .table td:last-child{
+	padding: 5px 0 5px 5px;
+}
+
 .normal-width td,.normal-width th {
 	width: auto;
 }
@@ -2209,6 +2253,10 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input{
 .settings-table .popover {
 	top: 80%;
 	left: -220px;
+}
+
+.settings-table .table-responsive{
+	margin-top: 10px;
 }
 
 .popover-large {
@@ -2470,15 +2518,15 @@ input.error {
 /*
 TODO: fix up button colours in less
 */
-.btn-primary {
+.btn-primary, input[type="submit"].btn-primary {
 	background: #31789B;
 }
 
-.btn-primary:hover {
+.btn-primary:hover, input[type="submit"].btn-primary:hover {
 	background: #a6ce39;
 	text-shadow: none;
 	border-color: #A6CE39; 
-}
+} 
 
 .oauth-question-sign {
 	color: #31789B !important;
@@ -2882,31 +2930,6 @@ a.btn-primary:hover {
 	background-color: #ffcccc !important;
 }
 
-/* Login Form */
-#loginForm {
-	position: relative;
-}
-
-#loginForm #form-sign-in-button:hover {
-	border-color: #A6CE39;
-}
-
-#loginForm #userId,
-#loginForm #password {
-	width: 50%;
-}
-
-#loginForm .submit-login,
-#loginForm .submit-login div{
-	z-index: 1001;
-	height: 45px;
-	margin-top: 40px;
-}
-
-#loginForm #form-sign-in-button {
-	z-index: 1001;
-}
-
 .oauth-login #loginForm #userId,.oauth-login #loginForm #password {
 	width: 80%;
 }
@@ -2921,25 +2944,6 @@ a.btn-primary:hover {
 	width: 80%;
 	z-index: -1;
 	padding-left: 0;
-}
-
-#loginForm #form-sign-in-button {
-	margin: 10px 0;
-}
-
-#loginForm #login-reset,#loginForm #login-register {
-	padding-left: 0;
-	margin-top: 10px;
-}
-
-#loginForm #login-error-mess {
-	top: 141px;
-	position: absolute;
-	z-index: 1000;
-	height: auto;
-	overflow: hidden;
-	width: 100%;
-	padding-left: 225px;
 }
 
 /* Personal Profile */
@@ -3245,14 +3249,6 @@ ul.personal-inf-display li:last-child{
 
 .x8 {
 	font-size: 800%;	
-}
-
-#loginForm #ajax-loader{
-	vertical-align: -6px;
-}
-/*Safari Windows Hack*/
-::i-block-chrome,#loginForm #ajax-loader{
-	vertical-align: -43px;
 }
 
 #edit-affiliation #remove-disambiguated{
@@ -3892,7 +3888,6 @@ ul.sso-options li span {
 	width: 100%;
 }
 
-
 /**************/
 
 .delegation-mode-warning {
@@ -4452,7 +4447,7 @@ ul.sources-edit-list > li{
 
 .workspace-profile span.glyphicon-pencil,
 #workspace-personal span.glyphicon-pencil{
-	float: right;
+	//float: right;
 	background: #949599;
 	padding: 5px;
 	border-radius: 50%;
@@ -5250,35 +5245,42 @@ ul.workspace-private-toolbar .popover-help-container .popover{
 	clear: both;
 }
 
-.qrcode-container{
+.qrcode-container,
+.print-orcid-record{
 	display: block;
 	width: 100%;
 	float: left; 
 	margin: 10px 0; 
 }
 
-.qrcode-container .orcid-qr{
+.qrcode-container .orcid-qr,
+.print-orcid-record .glyphicons-print{
 	padding-right: 19px;
 	padding-left: 0;
 	
 }
 
-.qrcode-container .orcid-qr:before{
+.qrcode-container .orcid-qr:before,
+.print-orcid-record .glyphicons-print:before{
 	color: #338caf;
 	top: -10px;
 	font: 16px/1em 'Glyphicons Regular'
 }
 
-.qrcode-container a{
+.qrcode-container a, 
+.print-orcid-record a{
 	color: #338caf;
 }
 
 .qrcode-container a:hover,
-.qrcode-container a:hover span:before{
+.qrcode-container a:hover span:before,
+.print-orcid-record a:hover,
+.print-orcid-record a:hover span:before{
 	color: #a6ce39;
 }
 
-.qrcode-container a:focus{
+.qrcode-container a:focus,
+.print-orcid-record a:focus{
 	text-decoration: none;
 }
 
@@ -5486,8 +5488,11 @@ ul.oauth-icons li {
 	cursor: pointer;
 }
 
-
-
+.notification-top-bar{
+	display: block;
+    height: 40px;
+    width: 100%;    
+}
 
 .vertical-align-middle {
 	line-height: 0px;
@@ -6022,6 +6027,13 @@ ul.sources-edit-list > li.group-details{
     font-size: 15px;
 }
 
+.shibboleth-container{
+	max-width: 353px;
+	margin: 0 auto;	
+	padding-left: 15px;
+	padding-right: 15px; 
+}
+
 a .mozilla-badge{
 	background: url('../img/mozilla-badge.svg') transparent;
 	width: 17px;
@@ -6051,7 +6063,177 @@ a:hover .mozilla-badge{
 .padding-left-fix{
 	padding-left: 0;
 }
-	
+
+.edit-client-labels {
+	font-size: 12px;
+	white-space: nowrap;
+}
+.edit-client-table {
+	width: 100%;
+}	
+.edit-client-table-col {
+	width: 45%;
+}
+
+#old-login .login-register{
+    margin-top: 50px;
+    text-align: center;
+    font-size: 20px;
+}
+
+#old-login input{
+    width: 50%;
+}
+
+#old-login .submit-login, #old-login .submit-login div {
+    z-index: 1001;
+    height: 45px;
+    margin-top: 50px;
+}
+
+#old-login #login-register {
+    padding-left: 0;
+    margin-top: 10px;
+}
+
+
+#old-login #form-sign-in-button{
+	float: left;
+}
+
+#old-login #login-error-mess {
+    top: 141px;
+    position: absolute;
+    z-index: 1000;
+    height: auto;
+    overflow: hidden;
+    width: 100%;
+    padding-left: 225px;
+}
+
+#old-login .form-sign-in{
+	position: relative;
+}
+
+/* LOGIN v3 */
+/* Login Layout */
+
+.login{
+	padding-top: 50px;
+}
+
+.login .login-box{
+	padding: 15px 30px;
+}
+
+.login #ajax-loader{
+	text-align:center;	
+	margin-top: 15px;
+	min-height: 55px;
+}
+
+#old-login #ajax-loader{
+    margin-left: 10px;
+    margin-top: 4px;
+    min-height: auto;
+}
+
+#old-login .submit-login table{
+	min-height:55px;
+}
+
+/* Login tab buttons*/
+.login .btn-group a{
+	font-size: 18px;
+}
+
+.login .glyphicons.bank{
+	padding-left: 20px;
+}
+
+.login .glyphicons:before{
+	font: 20px/1em 'Glyphicons Regular';
+	top: -12px;	
+}
+
+.login .btn-group a:hover,
+.login .btn-group a:active{
+	background: #C9C9CA;		
+}
+
+.login .btn-group a.active{
+	background: #C9C9CA;
+	box-shadow: none;
+}
+
+
+.login .glyphicon-user{
+	font-size: 20px;
+	top: 4px;
+}
+
+.login button{
+	width: 100%;
+}
+
+
+/* Login text*/
+.login .title{
+	text-align: center;
+	font-size: 20px;
+	color: #494A4C;
+}
+
+.login #login-reset{
+	margin-top: 5px;	
+}
+
+
+/* Social Login */
+.login .social-login{
+    margin-top: 50px;
+    margin-bottom: 50px;
+}
+
+.login .social-login .btn-facebook{
+    background: url('../img/svg/fb.svg') transparent no-repeat;
+    background-size: 40px 40px;
+    width: 40px;
+    height: 40px;
+    displat: block; 
+}
+
+.login .social-login .btn-google{
+    background: url('../img/svg/google.svg') transparent no-repeat;
+    background-size: 40px 40px;
+    width: 40px;
+    height: 40px;
+    displat: block;
+}
+
+.login .social-login ul.social-icons{
+    margin: 0;
+    padding:0;
+    display: block;
+    width: 110px;
+    margin:0 auto;
+}
+
+.login .social-login ul.social-icons li{
+    display: inline-block;
+}
+
+.login .social-login ul.social-icons li:not(:first-child){
+    margin-left: 25px;
+}
+
+.login #authorize-button{
+	min-width: 100px;
+    width: auto;
+    float: left !important; /*Overwrite Bootstrap defaults*/
+    display: block;
+}
+
 
 
 /* Media Queries */
@@ -6074,9 +6256,6 @@ a:hover .mozilla-badge{
 	}
 	.main {
 		margin-top: 100px;
-	}
-	#loginForm .control-group {
-		padding-left: 15px;
 	}
 	
 	.see-more {
@@ -6370,45 +6549,8 @@ a:hover .mozilla-badge{
 		width: 100%;
 	}
 
-	/* Login Form */
-	#loginForm #login-reset{
-		margin-top: 50px;
-		padding-left: 15px;
-	}
 	
-	#loginForm #login-register{
-		margin-top: 20px;
-		padding-left: 15px;
-	}
 	
-	#loginForm .btn {
-		margin-top: 10px;
-	}	
-	
-	#loginForm #userId,
-	#loginForm #password {
-		width: 100%;
-	}	
-	
-	#loginForm #form-sign-in-button {
-		font-size: 18px;
-		height: 50px;
-		margin: 32px 0 0 0;
-		width: 100%;
-	}
-	#loginForm #login-error-mess {
-		line-height: 25px;
-		margin: 0;
-		padding: 0;
-		min-height: 30px;
-		height: 50px;
-		text-align: center;
-		top: 165px; /* Login layout top */
-	}
-	#loginForm #ajax-loader {
-		width: 100%;
-		text-align: center;
-	}
 	
 	
 	/* Registration */
@@ -6782,7 +6924,7 @@ a:hover .mozilla-badge{
 	}
 	
 	#loginForm #login-reset{
-		margin-top: 80px;
+		margin-top: 0;
 	}
 	
 	#loginForm #login-reset,
@@ -7215,6 +7357,96 @@ a:hover .mozilla-badge{
     	line-height: 25px;
 	}
 	
+	.settings-table .table td:nth-child(3){
+		min-width: 100px;
+	}
+	
+	.editTablePadCell35 .email{
+		word-break: break-all;
+		
+	}
+	
+	.login .form-sign-in input[type="text"],
+	.login .form-sign-in input[type="password"],
+	.login .form-sign-in #form-sign-in-button{
+		width: 100%;
+	}
+	
+	.login .login-left-column{
+		border-right: none;
+		border-bottom: 1px solid #C9CACB;
+		padding-bottom: 30px;
+		margin-bottom: 30px;
+	}
+	
+	
+	.login .login-left-column .or {
+	    display: block;
+	    width: 70px;
+	    height: 60px;
+	    background: #FFF;
+	    position: absolute;
+	    bottom: -30px;
+	    left: calc(50% - 35px);
+	    right: quto;
+	    top: auto;
+	    font-size: 25px;
+	    text-transform: uppercase;
+	    vertical-align: middle;
+	    padding: 15px;
+	}
+	
+	.form-social-sign-in .social-signin-btn{
+		width: 100%;
+	}
+	
+	.login .login-right-column{
+		float: left;
+	}
+	
+	
+	#loginForm #ajax-loader{
+	    width: 100%;
+	    text-align: center;
+	    margin-top: 5px;
+	}
+	
+	
+	#old-login .control-group{
+		padding-left: 15px;
+	}
+	
+	#old-login input{
+		width: 100%;
+	}
+	
+	#old-login #form-sign-in-button {
+	    font-size: 18px;
+	    height: 50px;
+	    margin: 32px 0 0 0;
+	    float: left;
+	}
+	
+	#loginForm .submit-login, #loginForm .submit-login div{
+		width: 100%;
+	}
+	
+	#loginForm #login-reset, #loginForm #login-register{
+		padding-left: 0;
+	}
+	
+	#loginForm #login-reset {
+	    margin-top: 80px;
+	}
+	
+	#old-login #login-error-mess{
+		padding-left: 0;
+	}
+	
+	#old-login #loginForm #ajax-loader{
+		width:  auto;
+		margin-top: 22px;
+	} 
 }
 
 @media (min-width : 768px) and (max-width : 991px) { /* Tablet */
@@ -7333,9 +7565,9 @@ a:hover .mozilla-badge{
 		padding-left: 15px;
 	}
 	
-	#loginForm #login-error-mess{
-		padding-left: 280px;
+	#loginForm #login-error-mess{		
 		text-align:left;
+		width: 100%;
 	}
 	
 	.oauth-login #loginForm #login-error-mess{
@@ -7344,11 +7576,7 @@ a:hover .mozilla-badge{
 	
 	#signout{
 		max-width:100px;
-	}
-	
-	#loginForm #login-reset{
-		margin-top: 25px;
-	}
+	}	
 	
 	.workspace-profile{		
 		padding: 15px;				
@@ -7384,6 +7612,56 @@ a:hover .mozilla-badge{
 	#workspace-publications{
 		padding: 0;
 	}
+	
+	.login .form-sign-in input[type="text"],
+	.login .form-sign-in input[type="password"],
+	.login .form-sign-in #form-sign-in-button{
+		width: 100%;
+	}
+	
+	.login .login-left-column{
+		border-right: none;
+		border-bottom: 1px solid #C9CACB;
+		padding-bottom: 30px;
+		margin-bottom: 30px;
+	}
+	
+	
+	.login .login-left-column .or {
+	    display: block;
+	    width: 70px;
+	    height: 60px;
+	    background: #FFF;
+	    position: absolute;
+	    bottom: -30px;
+	    left: calc(50% - 35px);
+	    right: quto;
+	    top: auto;
+	    font-size: 25px;
+	    text-transform: uppercase;
+	    vertical-align: middle;
+	    padding: 15px;
+	}
+	
+	.login .login-right-column{
+		float: left;
+	}
+	
+	#loginForm #ajax-loader{
+	    width: 100%;
+	    text-align: center;
+	    margin-top: 5px;
+	}    
+	
+	#loginForm #ajax-loader{
+		width: auto;
+		margin-top: 0;
+	}
+	
+	#old-login #login-error-mess{
+		padding-left: 170px;
+	}
+	
 }
 
 @media (min-width : 500px) and (max-width: 767px){ 
@@ -7403,6 +7681,7 @@ a:hover .mozilla-badge{
     .col-xs-offset-3-fix{
     	margin-left: 25%;
     }
+    
 }
 
 @media(min-width:1200px){

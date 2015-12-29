@@ -27,17 +27,16 @@ import java.util.Set;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
-import org.orcid.core.constants.OauthTokensConstants;
-import org.orcid.core.manager.ClientDetailsManager;
+import org.orcid.core.constants.OrcidOauth2Constants;
+import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
-import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.oauth.OrcidOAuth2Authentication;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.oauth.OrcidOauth2UserAuthentication;
-import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.common.DefaultExpiringOAuth2RefreshToken;
 import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
@@ -63,24 +62,18 @@ import org.springframework.transaction.annotation.Transactional;
 @Service("orcidTokenStore")
 public class OrcidTokenStoreServiceImpl implements TokenStore {
 
-    public static final String PERSISTENT = "persistent";
-    public static final String DATE_CREATED = "date_created";
-
     @Resource
     private OrcidOauth2TokenDetailService orcidOauthTokenDetailService;
 
-    @Resource
-    private ClientDetailsManager clientDetailsManager;
-
-    @Resource
-    private ProfileEntityManager profileEntityManager;
-
-    @Resource
-    private ProfileDao profileDao;
-    
     @Resource(name = "profileEntityCacheManager")
     ProfileEntityCacheManager profileEntityCacheManager;
+    
+    @Resource
+    ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
 
+    @Resource
+    private OrcidOAuth2RequestValidator orcidOAuth2RequestValidator;
+    
     private static final AuthenticationKeyGenerator KEY_GENERATOR = new DefaultAuthenticationKeyGenerator();
 
     /**
@@ -292,13 +285,25 @@ public class OrcidTokenStoreServiceImpl implements TokenStore {
                 }
                 token.setRefreshToken(rt);
             }
-            ProfileEntity profile = detail.getProfile();
+            ProfileEntity profile = detail.getProfile();                        
             if (profile != null) {
                 Map<String, Object> additionalInfo = new HashMap<String, Object>();
-                additionalInfo.put("orcid", profile.getId());
-                additionalInfo.put(PERSISTENT, detail.isPersistent());
-                additionalInfo.put(DATE_CREATED, detail.getDateCreated());
-                additionalInfo.put(OauthTokensConstants.TOKEN_VERSION, detail.getVersion());
+                additionalInfo.put(OrcidOauth2Constants.ORCID, profile.getId());
+                additionalInfo.put(OrcidOauth2Constants.PERSISTENT, detail.isPersistent());
+                additionalInfo.put(OrcidOauth2Constants.DATE_CREATED, detail.getDateCreated());
+                additionalInfo.put(OrcidOauth2Constants.TOKEN_VERSION, detail.getVersion());
+                token.setAdditionalInformation(additionalInfo);
+            }
+            
+            String clientId = detail.getClientDetailsId();
+            if(!PojoUtil.isEmpty(clientId)) {
+                Map<String, Object> additionalInfo = new HashMap<String, Object>(); 
+                Map<String, Object> additionalInfoInToken = token.getAdditionalInformation();
+                if(additionalInfoInToken != null && !additionalInfoInToken.isEmpty()) {
+                    additionalInfo.putAll(additionalInfoInToken);
+                } 
+                // Copy to a new one to avoid unmodifiable  
+                additionalInfo.put(OrcidOauth2Constants.CLIENT_ID, clientId);
                 token.setAdditionalInformation(additionalInfo);
             }
         }
@@ -308,10 +313,12 @@ public class OrcidTokenStoreServiceImpl implements TokenStore {
 
     private OAuth2Authentication getOAuth2AuthenticationFromDetails(OrcidOauth2TokenDetail details) {
         if (details != null) {
-            ClientDetailsEntity clientDetailsEntity = details.getClientDetailsEntity();
+            ClientDetailsEntity clientDetailsEntity = clientDetailsEntityCacheManager.retrieve(details.getClientDetailsId());
             Authentication authentication = null;
             AuthorizationRequest request = null;
             if (clientDetailsEntity != null) {
+                //Check member is not locked                
+                orcidOAuth2RequestValidator.validateClientIsEnabled(clientDetailsEntity);
                 Set<String> scopes = OAuth2Utils.parseParameterList(details.getScope());
                 request = new AuthorizationRequest(clientDetailsEntity.getClientId(), scopes);
                 request.setAuthorities(clientDetailsEntity.getAuthorities());
@@ -336,10 +343,9 @@ public class OrcidTokenStoreServiceImpl implements TokenStore {
             detail = new OrcidOauth2TokenDetail();
         }
         String clientId = authorizationRequest.getClientId();
-        ClientDetailsEntity clientDetails = clientDetailsManager.findByClientId(clientId);
         String authKey = KEY_GENERATOR.extractKey(authentication);
         detail.setAuthenticationKey(authKey);
-        detail.setClientDetailsEntity(clientDetails);
+        detail.setClientDetailsId(clientId);
 
         OAuth2RefreshToken refreshToken = token.getRefreshToken();
         if (refreshToken != null && StringUtils.isNotBlank(refreshToken.getValue())) {
@@ -367,6 +373,7 @@ public class OrcidTokenStoreServiceImpl implements TokenStore {
 
         Set<String> resourceIds = authorizationRequest.getResourceIds();
         if(resourceIds == null || resourceIds.isEmpty()) {
+            ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(clientId);
             resourceIds = clientDetails.getResourceIds();
         }
         
@@ -376,18 +383,18 @@ public class OrcidTokenStoreServiceImpl implements TokenStore {
 
         Map<String, Object> additionalInfo = token.getAdditionalInformation();
         if (additionalInfo != null) {
-            if (additionalInfo.containsKey(OauthTokensConstants.TOKEN_VERSION)) {
-                String sVersion = String.valueOf(additionalInfo.get(OauthTokensConstants.TOKEN_VERSION));
+            if (additionalInfo.containsKey(OrcidOauth2Constants.TOKEN_VERSION)) {
+                String sVersion = String.valueOf(additionalInfo.get(OrcidOauth2Constants.TOKEN_VERSION));
                 detail.setVersion(Long.valueOf(sVersion));
             } else {
                 // TODO: As of Jan 2015 all tokens will be new tokens, so, we
                 // will have to remove the token version code and
                 // treat all tokens as new tokens
-                detail.setVersion(Long.valueOf(OauthTokensConstants.PERSISTENT_TOKEN));
+                detail.setVersion(Long.valueOf(OrcidOauth2Constants.PERSISTENT_TOKEN));
             }
 
-            if (additionalInfo.containsKey(OauthTokensConstants.PERSISTENT)) {
-                boolean isPersistentKey = (Boolean) additionalInfo.get(OauthTokensConstants.PERSISTENT);
+            if (additionalInfo.containsKey(OrcidOauth2Constants.PERSISTENT)) {
+                boolean isPersistentKey = (Boolean) additionalInfo.get(OrcidOauth2Constants.PERSISTENT);
                 detail.setPersistent(isPersistentKey);
             } else {
                 detail.setPersistent(false);
@@ -409,6 +416,5 @@ public class OrcidTokenStoreServiceImpl implements TokenStore {
             }
         }
         return accessTokens;
-    }
-
+    }       
 }

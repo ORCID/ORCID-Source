@@ -16,6 +16,7 @@
  */
 package org.orcid.core.manager.impl;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -27,9 +28,11 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.codec.binary.Base64;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.EmailMessage;
 import org.orcid.core.manager.EmailMessageSender;
+import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidProfileManager;
@@ -42,6 +45,7 @@ import org.orcid.jaxb.model.notification.permission.NotificationPermission;
 import org.orcid.persistence.dao.NotificationDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
+import org.orcid.pojo.DigestEmail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
@@ -89,6 +93,9 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
     @Resource
     private OrcidUrlManager orcidUrlManager;
 
+    @Resource
+    private EncryptionManager encryptionManager;
+
     @Override
     public EmailMessage createDigest(String orcid, Collection<Notification> notifications) {
         OrcidProfile orcidProfile = orcidProfileManager.retrieveOrcidProfile(orcid, LoadOptions.BIO_AND_INTERNAL_ONLY);
@@ -104,7 +111,9 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         int amendedMessageCount = 0;
         int activityCount = 0;
         Set<String> memberIds = new HashSet<>();
+        DigestEmail digestEmail = new DigestEmail();
         for (Notification notification : notifications) {
+            digestEmail.addNotification(notification);
             totalMessageCount++;
             if (notification.getSource() == null) {
                 orcidMessageCount++;
@@ -116,8 +125,14 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
             }
             if (notification instanceof NotificationPermission) {
                 addActivitiesMessageCount++;
-                NotificationPermission addActsNotification = (NotificationPermission) notification;
-                activityCount += addActsNotification.getItems().getItems().size();
+                NotificationPermission permissionNotification = (NotificationPermission) notification;
+                activityCount += permissionNotification.getItems().getItems().size();
+                String encryptedPutCode = encryptionManager.encryptForExternalUse(String.valueOf(permissionNotification.getPutCode()));
+                try {
+                    permissionNotification.setEncryptedPutCode(Base64.encodeBase64URLSafeString(encryptedPutCode.getBytes("UTF-8")));
+                } catch (UnsupportedEncodingException e) {
+                    throw new RuntimeException("Problem base 64 encoding notification put code for notification id = " + permissionNotification.getPutCode(), e);
+                }
             }
             if (notification instanceof NotificationAmended) {
                 amendedMessageCount++;
@@ -129,7 +144,11 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         params.put("locale", locale);
         params.put("messages", messages);
         params.put("messageArgs", new Object[0]);
+        params.put("orcidProfile", orcidProfile);
         params.put("emailName", emailName);
+        params.put("digestEmail", digestEmail);
+        params.put("frequency", orcidProfile.getOrcidInternal().getPreferences().getSendEmailFrequencyDays());
+        params.put("totalMessageCount", String.valueOf(totalMessageCount));
         params.put("orcidMessageCount", orcidMessageCount);
         params.put("addActivitiesMessageCount", addActivitiesMessageCount);
         params.put("activityCount", activityCount);

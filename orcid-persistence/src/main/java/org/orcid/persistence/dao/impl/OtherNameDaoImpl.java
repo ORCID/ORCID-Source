@@ -41,12 +41,21 @@ public class OtherNameDaoImpl extends GenericDaoImpl<OtherNameEntity, Long> impl
      * */
     @Override
     @SuppressWarnings("unchecked")
-    public List<OtherNameEntity> getOtherName(String orcid) {
+    public List<OtherNameEntity> getOtherNames(String orcid) {
         Query query = entityManager.createQuery("FROM OtherNameEntity WHERE profile.id=:orcid");
         query.setParameter("orcid", orcid);
         return query.getResultList();
     }
 
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<OtherNameEntity> getOtherNames(String orcid, org.orcid.jaxb.model.common.Visibility visibility) {
+        Query query = entityManager.createQuery("FROM OtherNameEntity WHERE profile.id=:orcid AND visibility=:visibility");
+        query.setParameter("orcid", orcid);
+        query.setParameter("visibility", visibility);
+        return query.getResultList();
+    }
+    
     /**
      * Update other name entity with new values
      * @param otherName
@@ -103,4 +112,11 @@ public class OtherNameDaoImpl extends GenericDaoImpl<OtherNameEntity, Long> impl
 
     }
 
+    @Override
+    public OtherNameEntity getOtherName(String orcid, Long putCode) {
+        Query query = entityManager.createQuery("FROM OtherNameEntity WHERE profile.id=:orcid and id=:id");
+        query.setParameter("orcid", orcid);
+        query.setParameter("id", putCode);
+        return (OtherNameEntity) query.getSingleResult();
+    }
 }

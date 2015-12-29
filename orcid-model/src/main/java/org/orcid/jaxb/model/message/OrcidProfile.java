@@ -125,7 +125,13 @@ public class OrcidProfile implements Serializable {
     private boolean locked = false;
     
     @XmlTransient
-    protected String userLastIp;
+    private String userLastIp;
+    
+    @XmlTransient
+    private boolean reviewed = false;
+    
+    @XmlTransient
+    private int countTokens = 0;
 
     /**
      * Gets the value of the orcid property.
@@ -644,5 +650,21 @@ public class OrcidProfile implements Serializable {
 
 	public void setUserLastIp(String userLastIp) {
 		this.userLastIp = userLastIp;
+	}
+
+	public boolean isReviewed() {
+		return reviewed;
+	}
+
+	public void setReviewed(boolean reviewed) {
+		this.reviewed = reviewed;
+	}
+
+	public int getCountTokens() {
+		return countTokens;
+	}
+
+	public void setCountTokens(int countTokens) {
+		this.countTokens = countTokens;
 	}
 }

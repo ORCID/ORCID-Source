@@ -72,7 +72,7 @@ abstract public class Notification implements Serializable {
 
     private final static long serialVersionUID = 1L;
     @XmlAttribute(name = "put-code")
-    @ApiModelProperty(hidden = true) 
+    @ApiModelProperty(hidden = true)
     protected Long putCode;
     @XmlElement(name = "notification-type", namespace = "http://www.orcid.org/ns/notification", required = true)
     protected NotificationType notificationType;
@@ -90,6 +90,10 @@ abstract public class Notification implements Serializable {
     protected XMLGregorianCalendar archivedDate;
     @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected Source source;
+    @XmlTransient
+    protected String sourceDescription;
+    @XmlTransient
+    protected String encryptedPutCode;
 
     /**
      * Gets the value of the putCode property.
@@ -236,6 +240,22 @@ abstract public class Notification implements Serializable {
      */
     public void setSource(Source value) {
         this.source = value;
+    }
+
+    public String getSourceDescription() {
+        return sourceDescription;
+    }
+
+    public void setSourceDescription(String sourceDescription) {
+        this.sourceDescription = sourceDescription;
+    }
+
+    public String getEncryptedPutCode() {
+        return encryptedPutCode;
+    }
+
+    public void setEncryptedPutCode(String encryptedPutCode) {
+        this.encryptedPutCode = encryptedPutCode;
     }
 
 }

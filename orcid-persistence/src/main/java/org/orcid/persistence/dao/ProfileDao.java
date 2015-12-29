@@ -36,10 +36,12 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     List<ProfileEntity> retrieveSelectableSponsors();
 
     List<String> findOrcidsByName(String name);
+    
+    String findOrcidByCreditName(String creditName);
 
     public boolean exists(String orcid);
 
-    List<String> findByEventTypes(int maxResults, List<ProfileEventType> pet, Collection<String> orcidsToExclude, boolean not);
+    List<String> findByMissingEventTypes(int maxResults, List<ProfileEventType> pet, Collection<String> orcidsToExclude, boolean not);
 
     List<String> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults);
 
@@ -66,7 +68,7 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     boolean existsAndNotClaimedAndBelongsTo(String messageOrcid, String clientId);
 
     void updateIndexingStatus(String orcid, IndexingStatus indexingStatus);
-    
+
     IndexingStatus retrieveIndexingStatus(String orcid);
 
     Long getConfirmedProfileCount();
@@ -109,12 +111,12 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
 
     void updateSecurityQuestion(String orcid, Integer securityQuestionId, String encryptedSecurityAnswer);
 
-    void updatePreferences(String orcid, boolean sendChangeNotifications, boolean sendOrcidNews, boolean sendMemberUpdateRequests,
-            Visibility activitiesVisibilityDefault, boolean enableDeveloperTools, float sendEmailFrequencyDays);
+    void updatePreferences(String orcid, boolean sendChangeNotifications, boolean sendAdministrativeChangeNotifications, boolean sendOrcidNews,
+            boolean sendMemberUpdateRequests, Visibility activitiesVisibilityDefault, boolean enableDeveloperTools, float sendEmailFrequencyDays);
 
     List<ProfileEntity> findProfilesByOrcidType(OrcidType type);
 
-    public void updateNames(String orcid, String givenName, String familyName, String creditName, Visibility creditNameVisibility);
+    public void updateNames(String orcid, String givenName, String familyName, String creditName, Visibility namesVisibility);
 
     boolean updateDeveloperTools(String orcid, boolean enabled);
 
@@ -127,14 +129,18 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     MemberType getGroupType(String orcid);
 
     public boolean removeProfile(String orcid);
-    
+
     public boolean lockProfile(String orcid);
-    
+
     public boolean unlockProfile(String orcid);
-    
+
     public boolean isLocked(String orcid);
-    
+
     public boolean isDeactivated(String orcid);
-    
+
     public void updateIpAddress(String orcid, String ipAddress);
+
+    boolean reviewProfile(String orcid);
+
+    boolean unreviewProfile(String orcid);
 }

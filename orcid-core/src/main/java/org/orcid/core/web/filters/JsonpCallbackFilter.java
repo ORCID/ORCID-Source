@@ -43,42 +43,32 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 public class JsonpCallbackFilter extends OncePerRequestFilter {
 
-    private static Log log = LogFactory.getLog(JsonpCallbackFilter.class);
+	private static Log log = LogFactory.getLog(JsonpCallbackFilter.class);
 
-    @Resource
-    CrossDomainWebManger crossDomainWebManger;
-    
-    @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        HttpServletRequest httpRequest = (HttpServletRequest) request;
-        HttpServletResponse httpResponse = (HttpServletResponse) response;
-        
-        Map<String, String[]> parms = httpRequest.getParameterMap();
+	@Resource
+	CrossDomainWebManger crossDomainWebManger;
 
-        if (parms.containsKey("callback")) {
-            if(crossDomainWebManger.allowed(request)) {
-                if (log.isDebugEnabled())
-                    log.debug("Wrapping response with JSONP callback '" + parms.get("callback")[0] + "'");
+	@Override
+	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+			throws ServletException, IOException {
+		HttpServletRequest httpRequest = (HttpServletRequest) request;
+		HttpServletResponse httpResponse = (HttpServletResponse) response;
+		Map<String, String[]> parms = httpRequest.getParameterMap();
 
-                HttpServletRequestWrapper requestWrapper = new AcceptHeaderRequestWrapper(httpRequest, "application/json");
+		if (parms.containsKey("callback")) {
+			HttpServletRequestWrapper requestWrapper = new AcceptHeaderRequestWrapper(httpRequest, "application/json");
+			OutputStream out = httpResponse.getOutputStream();
+			GenericResponseWrapper responseWrapper = new GenericResponseWrapper(httpResponse);
+			filterChain.doFilter(requestWrapper, responseWrapper);
+			out.write(new String(parms.get("callback")[0] + "(").getBytes());
+			out.write(responseWrapper.getData());
+			out.write(new String(");").getBytes());
+			responseWrapper.setContentType("text/javascript;charset=UTF-8");
 
-                OutputStream out = httpResponse.getOutputStream();
-
-                GenericResponseWrapper responseWrapper = new GenericResponseWrapper(httpResponse);
-
-                filterChain.doFilter(requestWrapper, responseWrapper);
-
-                out.write(new String(parms.get("callback")[0] + "(").getBytes());
-                out.write(responseWrapper.getData());
-                out.write(new String(");").getBytes());
-
-                responseWrapper.setContentType("text/javascript;charset=UTF-8");
-
-                out.close();
-            }            
-        } else {
-            filterChain.doFilter(request, response);
-        }
-    }
+			out.close();
+		} else {
+			filterChain.doFilter(request, response);
+		}
+	}
 
 }

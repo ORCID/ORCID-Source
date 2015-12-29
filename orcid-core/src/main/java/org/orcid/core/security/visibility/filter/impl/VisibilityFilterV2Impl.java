@@ -16,6 +16,7 @@
  */
 package org.orcid.core.security.visibility.filter.impl;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -38,12 +39,14 @@ import org.orcid.jaxb.model.record.summary_rc1.WorkGroup;
 import org.orcid.jaxb.model.record.summary_rc1.Works;
 import org.orcid.jaxb.model.record_rc1.Group;
 import org.orcid.jaxb.model.record_rc1.GroupableActivity;
+import org.orcid.jaxb.model.record_rc2.OtherName;
+import org.orcid.jaxb.model.record_rc2.PersonalDetails;
 import org.springframework.stereotype.Component;
 
 /**
  * 
  * @author Will Simpson
- *
+ * 
  */
 @Component("visibilityFilterV2")
 public class VisibilityFilterV2Impl implements VisibilityFilterV2 {
@@ -122,4 +125,43 @@ public class VisibilityFilterV2Impl implements VisibilityFilterV2 {
         return groups;
     }
 
+    @Override
+    public PersonalDetails filter(PersonalDetails personalDetails) {
+        if(personalDetails.getName() != null) {
+            try {
+                orcidSecurityManager.checkVisibility(personalDetails.getName());
+            } catch(OrcidVisibilityException | OrcidUnauthorizedException e) {
+                personalDetails.setName(null);
+            }
+        }
+        
+        if(personalDetails.getBiography() != null) {
+            try {
+                orcidSecurityManager.checkVisibility(personalDetails.getBiography());
+            } catch(OrcidVisibilityException | OrcidUnauthorizedException e) {
+                personalDetails.setBiography(null);
+            }
+        }
+        
+        if(personalDetails.getOtherNames() != null) {
+            if(personalDetails.getOtherNames().getOtherNames() != null) {
+                List<OtherName> filteredOtherNames = new ArrayList<OtherName>();
+                for(OtherName otherName : personalDetails.getOtherNames().getOtherNames()) {
+                    try {
+                        orcidSecurityManager.checkVisibility(otherName);
+                        filteredOtherNames.add(otherName);
+                    } catch(OrcidVisibilityException | OrcidUnauthorizedException e) {
+                        // Client dont have permissions to see this other name
+                    }
+                }
+                if(filteredOtherNames.isEmpty()) {
+                    personalDetails.setOtherNames(null);
+                } else {
+                    personalDetails.getOtherNames().setOtherNames(filteredOtherNames);
+                }                
+            }
+        }
+        
+        return personalDetails;
+    }
 }

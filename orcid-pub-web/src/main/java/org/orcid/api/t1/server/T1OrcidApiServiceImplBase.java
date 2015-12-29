@@ -57,6 +57,7 @@ import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.lang.StringUtils;
 import org.orcid.api.common.OrcidApiService;
+import org.orcid.api.common.T2OrcidApiService;
 import org.orcid.api.common.delegator.OrcidApiServiceDelegator;
 import org.orcid.api.common.delegator.impl.OrcidApiServiceVersionedDelegatorImpl;
 import org.orcid.core.manager.impl.ValidationManagerImpl;
@@ -71,8 +72,6 @@ import com.orcid.api.common.server.delegator.OrcidClientCredentialEndPointDelega
  * @author Declan Newman (declan) Date: 01/03/2012
  */
 abstract public class T1OrcidApiServiceImplBase implements OrcidApiService<Response>, InitializingBean {
-
-    public static final String OAUTH_TOKEN = "/oauth/token";
 
     @Value("${org.orcid.core.pubBaseUri:http://orcid.org}")
     private String pubBaseUri;
@@ -182,7 +181,7 @@ abstract public class T1OrcidApiServiceImplBase implements OrcidApiService<Respo
      * 
      * @param orcid
      *            the ORCID that corresponds to the user's record
-     * @return A 307 redirect
+     * @return A 303 See Other redirect
      */
     @GET
     @Produces(value = { APPLICATION_RDFXML })
@@ -195,7 +194,7 @@ abstract public class T1OrcidApiServiceImplBase implements OrcidApiService<Respo
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        return Response.temporaryRedirect(uri).build();
+        return Response.seeOther(uri).build();
     }
 
     /**
@@ -219,7 +218,7 @@ abstract public class T1OrcidApiServiceImplBase implements OrcidApiService<Respo
      * 
      * @param orcid
      *            the ORCID that corresponds to the user's record
-     * @return A 307 redirect
+     * @return A 303 See Other redirect
      */
     @GET
     @Produces(value = { TEXT_N3, TEXT_TURTLE })
@@ -232,7 +231,7 @@ abstract public class T1OrcidApiServiceImplBase implements OrcidApiService<Respo
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        return Response.temporaryRedirect(uri).build();
+        return Response.seeOther(uri).build();
     }
 
     /**
@@ -567,7 +566,7 @@ abstract public class T1OrcidApiServiceImplBase implements OrcidApiService<Respo
      * @return
      */
     @POST
-    @Path(OAUTH_TOKEN)
+    @Path(T2OrcidApiService.OAUTH_TOKEN)
     @Produces(value = { MediaType.APPLICATION_JSON })
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public Response obtainOauth2TokenPost(@FormParam("grant_type") String grantType, MultivaluedMap<String, String> formParams) {
@@ -583,7 +582,7 @@ abstract public class T1OrcidApiServiceImplBase implements OrcidApiService<Respo
         if (StringUtils.isNotEmpty(scopeList)) {
             scopes = OAuth2Utils.parseParameterList(scopeList);
         }
-        return orcidClientCredentialEndPointDelegator.obtainOauth2Token(clientId, clientSecret, grantType, refreshToken, code, scopes, state, redirectUri, resourceId);
+        return orcidClientCredentialEndPointDelegator.obtainOauth2Token(clientId, clientSecret, refreshToken, grantType, code, scopes, state, redirectUri, resourceId);
     }
 
 }
