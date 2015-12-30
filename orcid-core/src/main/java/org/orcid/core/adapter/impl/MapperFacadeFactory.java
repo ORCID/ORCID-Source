@@ -58,11 +58,13 @@ import org.orcid.jaxb.model.record_rc1.Work;
 import org.orcid.jaxb.model.record_rc1.WorkContributors;
 import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifier;
 import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifiers;
+import org.orcid.jaxb.model.record_rc2.Address;
 import org.orcid.jaxb.model.record_rc2.ExternalIdentifier;
 import org.orcid.jaxb.model.record_rc2.Keyword;
 import org.orcid.jaxb.model.record_rc2.OtherName;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import org.orcid.persistence.dao.WorkDao;
+import org.orcid.persistence.jpa.entities.AddressEntity;
 import org.orcid.persistence.jpa.entities.CompletionDateEntity;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.EndDateEntity;
@@ -222,6 +224,19 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         keywordClassMap.field("putCode", "id");
         keywordClassMap.field("content", "keywordName");
         keywordClassMap.register();        
+        return mapperFactory.getMapperFacade();
+    }
+    
+    public MapperFacade getAddressMapperFacade() {
+        MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
+        ClassMapBuilder<Address, AddressEntity> addressClassMap = mapperFactory.classMap(Address.class, AddressEntity.class);
+        addressClassMap.byDefault();
+        addV2DateFields(addressClassMap);
+        addV2SourceMapping(mapperFactory);
+        addressClassMap.field("putCode", "id");
+        addressClassMap.field("country.value", "iso2Country");
+        addressClassMap.field("country.visibility", "visibility");
+        addressClassMap.register();        
         return mapperFactory.getMapperFacade();
     }
     

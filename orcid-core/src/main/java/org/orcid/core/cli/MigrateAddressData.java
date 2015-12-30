@@ -20,7 +20,9 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.jaxb.model.common.Iso3166Country;
+import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.persistence.dao.AddressDao;
 import org.orcid.persistence.jpa.entities.AddressEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -50,6 +52,7 @@ public class MigrateAddressData {
     private void migrate() {
         init();
         migrateAddress();
+        System.exit(0);
     }
 
     private void migrateAddress() {
@@ -61,10 +64,17 @@ public class MigrateAddressData {
             for(final Object[] addressElement : addressElements) {
                 String orcid = (String) addressElement[0];
                 String countryCode = (String) addressElement[1];
+                String visibilityValue = (String) addressElement[2];                                
                 LOG.info("Migrating address for profile: {}", orcid);
                 transactionTemplate.execute(new TransactionCallbackWithoutResult() {
                     @Override
                     protected void doInTransactionWithoutResult(TransactionStatus status) {
+                        Visibility visibility = null;                        
+                        try {
+                            visibility = Visibility.fromValue(visibilityValue);
+                        } catch(Exception e) {
+                            visibility = Visibility.fromValue(OrcidVisibilityDefaults.COUNTRY_DEFAULT.getVisibility().value());
+                        }
                         AddressEntity address = new AddressEntity();
                         address.setDateCreated(new Date());
                         address.setLastModified(new Date());
@@ -72,6 +82,7 @@ public class MigrateAddressData {
                         address.setUser(new ProfileEntity(orcid));
                         address.setIso2Country(Iso3166Country.fromValue(countryCode));
                         address.setSource(new SourceEntity(new ProfileEntity(orcid)));
+                        address.setVisibility(visibility);
                         addressDao.persist(address);
                     }
                 });
@@ -83,7 +94,7 @@ public class MigrateAddressData {
 
     @SuppressWarnings("resource")
     private void init() {
-        ApplicationContext context = new ClassPathXmlApplicationContext("orcid-core-context.xml");
+        ApplicationContext context = new ClassPathXmlApplicationContext("orcid-persistence-context.xml");
         addressDao = (AddressDao) context.getBean("addressDao");
         transactionTemplate = (TransactionTemplate) context.getBean("transactionTemplate");
     }

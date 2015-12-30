@@ -14,21 +14,21 @@
  *
  * =============================================================================
  */
-package org.orcid.persistence.dao;
+package org.orcid.core.adapter;
 
-import java.util.List;
+import java.util.Collection;
 
+import org.orcid.jaxb.model.record_rc2.Address;
+import org.orcid.jaxb.model.record_rc2.Addresses;
 import org.orcid.persistence.jpa.entities.AddressEntity;
 
-/**
- * 
- * @author Angel Montenegro
- * 
- */
-public interface AddressDao extends GenericDao<AddressEntity, Long> {
-    AddressEntity find(String orcid, Long id);
+public interface JpaJaxbAddressAdapter {
 
-    List<AddressEntity> findByOrcid(String orcid);
+    AddressEntity toAddressEntity(Address address);
 
-    List<Object[]> findAddressesToMigrate();
+    Address toAddress(AddressEntity entity);
+
+    Addresses toAddressList(Collection<AddressEntity> entities);
+
+    AddressEntity toAddressEntity(Address address, AddressEntity existing);
 }

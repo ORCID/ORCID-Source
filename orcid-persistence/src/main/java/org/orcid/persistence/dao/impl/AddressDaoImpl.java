@@ -45,8 +45,16 @@ public class AddressDaoImpl extends GenericDaoImpl<AddressEntity, Long> implemen
     @SuppressWarnings("unchecked")
     @Override
     public List<Object[]> findAddressesToMigrate() {
-        String queryString = "SELECT p.orcid, p.iso2_country FROM profile p WHERE p.iso2_country IS NOT NULL AND NOT EXISTS (SELECT a.orcid FROM address a WHERE a.orcid = p.orcid) LIMIT 10000;";                
+        String queryString = "SELECT p.orcid, p.iso2_country, p.profile_address_visibility FROM profile p WHERE p.iso2_country IS NOT NULL AND NOT EXISTS (SELECT a.orcid FROM address a WHERE a.orcid = p.orcid) LIMIT 10000;";                
         Query query = entityManager.createNativeQuery(queryString);                         
         return (List<Object[]>)query.getResultList();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<AddressEntity> findByOrcid(String orcid) {
+        Query query = entityManager.createQuery("FROM AddressEntity WHERE user.id = :orcid");
+        query.setParameter("orcid", orcid);
+        return query.getResultList();
     }
 }

@@ -29,7 +29,6 @@ import javax.transaction.Transactional;
 import org.orcid.core.adapter.JpaJaxbKeywordAdapter;
 import org.orcid.core.exception.ApplicationException;
 import org.orcid.core.exception.OrcidDuplicatedElementException;
-import org.orcid.core.exception.OtherNameNotFoundException;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.ProfileKeywordManager;
 import org.orcid.core.manager.SourceManager;
@@ -235,7 +234,7 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
 
         ProfileKeywordEntity updatedEntity = profileKeywordDao.find(putCode);
         if (updatedEntity == null) {
-            throw new OtherNameNotFoundException();
+            throw new ApplicationException();
         }
 
         Visibility originalVisibility = Visibility.fromValue(updatedEntity.getVisibility().value());
@@ -322,7 +321,7 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
         org.orcid.jaxb.model.common.Visibility incomingKeywordVisibility = entity.getVisibility();
         org.orcid.jaxb.model.common.Visibility defaultKeywordVisibility = profile.getKeywordsVisibility() == null
                 ? org.orcid.jaxb.model.common.Visibility.fromValue(OrcidVisibilityDefaults.KEYWORD_DEFAULT.getVisibility().value())
-                : org.orcid.jaxb.model.common.Visibility.fromValue(profile.getResearcherUrlsVisibility().value());
+                : org.orcid.jaxb.model.common.Visibility.fromValue(profile.getKeywordsVisibility().value());
         if (profile.getClaimed() != null && profile.getClaimed()) {
             if (defaultKeywordVisibility.isMoreRestrictiveThan(incomingKeywordVisibility)) {
                 entity.setVisibility(defaultKeywordVisibility);

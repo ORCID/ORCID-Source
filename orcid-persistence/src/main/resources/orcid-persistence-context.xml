@@ -123,7 +123,7 @@
     
     <bean id="webhookDao" class="org.orcid.persistence.dao.impl.WebhookDaoImpl" />
     
-    <bean id="AddressDao" class="org.orcid.persistence.dao.impl.AddressDaoImpl" />
+    <bean id="addressDao" class="org.orcid.persistence.dao.impl.AddressDaoImpl" />
      
     <!-- Statistics Generation DAO -->
 	<bean id="statisticsGeneratorDao" class="org.orcid.persistence.dao.impl.StatisticsGeneratorDaoImpl">

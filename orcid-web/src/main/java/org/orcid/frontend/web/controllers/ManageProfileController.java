@@ -34,6 +34,7 @@ import javax.validation.Valid;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.jetty.util.ajax.JSON;
+import org.orcid.core.manager.AddressManager;
 import org.orcid.core.manager.AdminManager;
 import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.EncryptionManager;
@@ -48,10 +49,13 @@ import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileKeywordManager;
 import org.orcid.core.manager.ResearcherUrlManager;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
+import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.frontend.web.forms.ChangePersonalInfoForm;
 import org.orcid.frontend.web.forms.ChangeSecurityQuestionForm;
 import org.orcid.frontend.web.forms.ManagePasswordOptionsForm;
 import org.orcid.frontend.web.forms.PreferencesForm;
+import org.orcid.jaxb.model.common.Country;
+import org.orcid.jaxb.model.common.Iso3166Country;
 import org.orcid.jaxb.model.message.ApprovalDate;
 import org.orcid.jaxb.model.message.CreditName;
 import org.orcid.jaxb.model.message.DelegateSummary;
@@ -73,6 +77,7 @@ import org.orcid.jaxb.model.message.Url;
 import org.orcid.jaxb.model.message.UrlName;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
+import org.orcid.jaxb.model.record_rc2.Address;
 import org.orcid.jaxb.model.record_rc2.PersonalDetails;
 import org.orcid.password.constants.OrcidPasswordConstants;
 import org.orcid.persistence.dao.EmailDao;
@@ -181,6 +186,9 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     @Resource
     OrcidSecurityManager orcidSecurityManager;
+    
+    @Resource
+    private AddressManager addressManager;
 
     public EncryptionManager getEncryptionManager() {
         return encryptionManager;
@@ -836,6 +844,32 @@ public class ManageProfileController extends BaseWorkspaceController {
         countryForm.populateProfile(currentProfile);
         // only update entity attributes
         orcidProfileManager.updateCountry(currentProfile);
+        
+        // Update also the address table
+        Address address = addressManager.getPrimaryAddress(currentProfile.getOrcidId());
+        boolean update = true;
+        if(address == null) {
+            update = false;
+            address = new Address();
+            Country country = new Country();
+            country.setValue(Iso3166Country.fromValue(countryForm.getIso2Country().getValue().value()));
+            Visibility v = countryForm.getProfileAddressVisibility() == null ? null : countryForm.getProfileAddressVisibility().getVisibility(); 
+            if(v == null) {
+                v = OrcidVisibilityDefaults.COUNTRY_DEFAULT.getVisibility();
+            }
+            address.setCountry(country);
+            address.setVisibility(org.orcid.jaxb.model.common.Visibility.fromValue(v.value()));
+            addressManager.createAddress(currentProfile.getOrcidId(), address);
+        } else {
+            address.getCountry().setValue(Iso3166Country.fromValue(countryForm.getIso2Country().getValue().value()));
+            Visibility v = countryForm.getProfileAddressVisibility() == null ? null : countryForm.getProfileAddressVisibility().getVisibility(); 
+            if(v == null) {
+                v = OrcidVisibilityDefaults.COUNTRY_DEFAULT.getVisibility();
+            }
+            address.setVisibility(org.orcid.jaxb.model.common.Visibility.fromValue(v.value()));
+            addressManager.updateAddress(currentProfile.getOrcidId(), address.getPutCode(), address, true);
+        }                        
+        
         countryForm.setCountryName(getCountryName(currentProfile));
         return countryForm;
     }
