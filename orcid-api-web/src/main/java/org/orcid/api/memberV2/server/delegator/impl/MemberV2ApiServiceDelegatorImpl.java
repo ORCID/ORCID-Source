@@ -34,6 +34,7 @@ import org.orcid.api.memberV2.server.delegator.MemberV2ApiServiceDelegator;
 import org.orcid.core.exception.MismatchedPutCodeException;
 import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.locale.LocaleManager;
+import org.orcid.core.manager.AddressManager;
 import org.orcid.core.manager.AffiliationsManager;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.EmailManager;
@@ -67,6 +68,7 @@ import org.orcid.jaxb.model.record_rc1.Employment;
 import org.orcid.jaxb.model.record_rc1.Funding;
 import org.orcid.jaxb.model.record_rc1.PeerReview;
 import org.orcid.jaxb.model.record_rc1.Work;
+import org.orcid.jaxb.model.record_rc2.Address;
 import org.orcid.jaxb.model.record_rc2.Biography;
 import org.orcid.jaxb.model.record_rc2.ExternalIdentifier;
 import org.orcid.jaxb.model.record_rc2.ExternalIdentifiers;
@@ -155,6 +157,9 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     
     @Resource
     private ProfileKeywordManager keywordsManager;
+    
+    @Resource
+    private AddressManager addressManager;
 
     @Override
     public Response viewStatusText() {
@@ -682,5 +687,40 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     public Response deleteKeyword(String orcid, Long putCode) {
         keywordsManager.deleteKeywordV2(orcid, putCode);
         return Response.noContent().build();
+    }
+
+    
+    
+    
+    
+    
+    @Override
+    public Response viewAddresses(String orcid) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Response viewAddress(String orcid, Long putCode) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Response createAddress(String orcid, Address address) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Response updateAddress(String orcid, Long putCode, Address address) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Response deleteAddress(String orcid, Long putCode) {
+        // TODO Auto-generated method stub
+        return null;
     }    
 }
