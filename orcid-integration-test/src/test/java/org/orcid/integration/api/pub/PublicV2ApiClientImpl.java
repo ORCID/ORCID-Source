@@ -36,6 +36,7 @@ import static org.orcid.core.api.OrcidApiConstants.OTHER_NAMES;
 import static org.orcid.core.api.OrcidApiConstants.EXTERNAL_IDENTIFIERS;
 import static org.orcid.core.api.OrcidApiConstants.BIOGRAPHY;
 import static org.orcid.core.api.OrcidApiConstants.KEYWORDS;
+import static org.orcid.core.api.OrcidApiConstants.ADDRESS;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -209,7 +210,17 @@ public class PublicV2ApiClientImpl {
         URI uri = UriBuilder.fromPath(KEYWORDS + PUTCODE).build(orcid, putCode);
         return getClientReponse(uri, null);
     }
-                
+             
+    public ClientResponse viewAddressesXML(String orcid) {
+        URI uri = UriBuilder.fromPath(ADDRESS).build(orcid);
+        return getClientReponse(uri, null);
+    }
+    
+    public ClientResponse viewAddressXML(String orcid, Long putCode) {
+        URI uri = UriBuilder.fromPath(ADDRESS + PUTCODE).build(orcid, putCode);
+        return getClientReponse(uri, null);
+    }
+    
     private ClientResponse getClientReponse(URI uri, String token) {
         ClientResponse result = null;
         if(PojoUtil.isEmpty(token)) {

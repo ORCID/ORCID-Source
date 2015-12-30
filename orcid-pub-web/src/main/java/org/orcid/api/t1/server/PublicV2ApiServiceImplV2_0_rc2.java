@@ -17,6 +17,7 @@
 package org.orcid.api.t1.server;
 
 import static org.orcid.core.api.OrcidApiConstants.ACTIVITIES;
+import static org.orcid.core.api.OrcidApiConstants.ADDRESS;
 import static org.orcid.core.api.OrcidApiConstants.EDUCATION;
 import static org.orcid.core.api.OrcidApiConstants.EDUCATION_SUMMARY;
 import static org.orcid.core.api.OrcidApiConstants.EMAIL;
@@ -279,6 +280,20 @@ protected PublicV2ApiServiceDelegator serviceDelegator;
     @ApiOperation(value = "Fetch keyword", hidden = true, authorizations = { @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_READ_LIMITED, description = "you need this") }) })
     public Response viewKeyword(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
         return serviceDelegator.viewKeyword(orcid, Long.valueOf(putCode));
+    }
+    
+    @GET
+    @Path(ADDRESS + PUTCODE)
+    @ApiOperation(value = "Fetch an address", hidden = true, authorizations = { @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_READ_LIMITED, description = "you need this") }) })
+    public Response viewAddress(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
+        return serviceDelegator.viewAddress(orcid, Long.valueOf(putCode));
+    }
+
+    @GET
+    @Path(ADDRESS)
+    @ApiOperation(value = "Fetch all addresses of a profile", hidden = true, authorizations = { @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_READ_LIMITED, description = "you need this") }) })
+    public Response viewAddresses(@PathParam("orcid") String orcid) {
+        return serviceDelegator.viewAddresses(orcid);
     }
     
 }

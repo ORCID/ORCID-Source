@@ -56,6 +56,8 @@ import org.orcid.jaxb.model.record_rc1.PeerReview;
 import org.orcid.jaxb.model.record_rc1.Work;
 import org.orcid.jaxb.model.record_rc2.OtherName;
 import org.orcid.jaxb.model.record_rc2.OtherNames;
+import org.orcid.jaxb.model.record_rc2.Address;
+import org.orcid.jaxb.model.record_rc2.Addresses;
 import org.orcid.jaxb.model.record_rc2.ExternalIdentifier;
 import org.orcid.jaxb.model.record_rc2.ExternalIdentifiers;
 import org.orcid.jaxb.model.record_rc2.Keyword;
@@ -94,6 +96,8 @@ public class OrcidValidationJaxbContextResolver implements ContextResolver<Unmar
         SCHEMA_FILENAME_PREFIX_BY_CLASS.put(Email.class, "record_2.0_rc2/email-");
         SCHEMA_FILENAME_PREFIX_BY_CLASS.put(OtherName.class, "record_2.0_rc2/other-name-");
         SCHEMA_FILENAME_PREFIX_BY_CLASS.put(OtherNames.class, "record_2.0_rc2/other-name-");        
+        SCHEMA_FILENAME_PREFIX_BY_CLASS.put(Address.class, "record_2.0_rc2/address-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS.put(Addresses.class, "record_2.0_rc2/address-");        
         SCHEMA_FILENAME_PREFIX_BY_CLASS.put(Name.class, "record_2.0_rc2/personal-details-");
         SCHEMA_FILENAME_PREFIX_BY_CLASS.put(ExternalIdentifier.class, "record_2.0_rc2/external-identifier-");
         SCHEMA_FILENAME_PREFIX_BY_CLASS.put(ExternalIdentifiers.class, "record_2.0_rc2/external-identifier-");

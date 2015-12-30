@@ -51,7 +51,7 @@ import io.swagger.annotations.ApiModelProperty;
 @XmlRootElement(name = "address", namespace = "http://www.orcid.org/ns/address")
 public class Address implements Filterable, Serializable {
     private final static long serialVersionUID = 1L;
-    @XmlElement(required = true)
+    @XmlElement(namespace = "http://www.orcid.org/ns/address", required = true)
     protected Country country;
     @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected Source source;

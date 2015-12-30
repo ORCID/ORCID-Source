@@ -17,6 +17,7 @@
 package org.orcid.core.manager;
 
 import org.orcid.jaxb.model.record_rc2.Address;
+import org.orcid.jaxb.model.record_rc2.Addresses;
 
 /**
  * 
@@ -26,9 +27,13 @@ import org.orcid.jaxb.model.record_rc2.Address;
 public interface AddressManager {
     Address getPrimaryAddress(String orcid);
     
-    Address getAddress(String orcid, Long putCode);
+    Addresses getAddresses(String orcid);
+    
+    Addresses getPublicAddresses(String orcid);
+    
+    Address getAddress(String orcid, Long putCode);        
 
-    Address updateAddress(String orcid, Long putCode, Address address, boolean isUserUpdating);
+    Address updateAddress(String orcid, Long putCode, Address address, boolean isApiCall);
 
     Address createAddress(String orcid, Address address);
 

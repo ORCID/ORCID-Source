@@ -69,6 +69,7 @@ import org.orcid.jaxb.model.record_rc1.Funding;
 import org.orcid.jaxb.model.record_rc1.PeerReview;
 import org.orcid.jaxb.model.record_rc1.Work;
 import org.orcid.jaxb.model.record_rc2.Address;
+import org.orcid.jaxb.model.record_rc2.Addresses;
 import org.orcid.jaxb.model.record_rc2.Biography;
 import org.orcid.jaxb.model.record_rc2.ExternalIdentifier;
 import org.orcid.jaxb.model.record_rc2.ExternalIdentifiers;
@@ -688,39 +689,46 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
         keywordsManager.deleteKeywordV2(orcid, putCode);
         return Response.noContent().build();
     }
-
-    
-    
-    
-    
-    
+                    
     @Override
     public Response viewAddresses(String orcid) {
-        // TODO Auto-generated method stub
-        return null;
+        Addresses addresses = addressManager.getAddresses(orcid);
+        return Response.ok(addresses).build();
     }
 
     @Override
     public Response viewAddress(String orcid, Long putCode) {
-        // TODO Auto-generated method stub
-        return null;
+        Address address = addressManager.getAddress(orcid, putCode);
+        orcidSecurityManager.checkVisibility(address);
+        return Response.ok(address).build();
     }
 
     @Override
     public Response createAddress(String orcid, Address address) {
-        // TODO Auto-generated method stub
-        return null;
+        address = addressManager.createAddress(orcid, address);
+        try {
+            return Response.created(new URI(String.valueOf(address.getPutCode()))).build();
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(localeManager.resolveMessage("apiError.createelement_response.exception"), e);
+        }
     }
 
     @Override
     public Response updateAddress(String orcid, Long putCode, Address address) {
-        // TODO Auto-generated method stub
-        return null;
+        if (!putCode.equals(address.getPutCode())) {
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("urlPutCode", String.valueOf(putCode));
+            params.put("bodyPutCode", String.valueOf(address.getPutCode()));
+            throw new MismatchedPutCodeException(params);
+        }
+        
+        address = addressManager.updateAddress(orcid, putCode, address, true);
+        return Response.ok(address).build();
     }
 
     @Override
     public Response deleteAddress(String orcid, Long putCode) {
-        // TODO Auto-generated method stub
-        return null;
+        addressManager.deleteAddress(orcid, putCode);
+        return Response.noContent().build();
     }    
 }

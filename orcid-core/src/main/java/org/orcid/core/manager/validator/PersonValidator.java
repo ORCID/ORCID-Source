@@ -199,7 +199,7 @@ public class PersonValidator {
             throw new OrcidValidationException(message);
         }
         
-        if(address.getCountry() == null || address.getCountry().getVisibility() == null) {
+        if(address.getVisibility() == null) {
             String message = "Visibility cannot be null";
             LOGGER.error(message);
             throw new OrcidValidationException(message);

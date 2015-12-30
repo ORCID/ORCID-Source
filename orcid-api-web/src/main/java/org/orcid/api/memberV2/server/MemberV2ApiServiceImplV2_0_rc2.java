@@ -44,6 +44,7 @@ import static org.orcid.core.api.OrcidApiConstants.FUNDING_SUMMARY;
 import static org.orcid.core.api.OrcidApiConstants.GROUP_ID_RECORD;
 import static org.orcid.core.api.OrcidApiConstants.BIOGRAPHY;
 import static org.orcid.core.api.OrcidApiConstants.KEYWORDS;
+import static org.orcid.core.api.OrcidApiConstants.ADDRESS;
 
 import java.net.URI;
 import io.swagger.annotations.Api;
@@ -87,6 +88,7 @@ import org.orcid.jaxb.model.record_rc1.Employment;
 import org.orcid.jaxb.model.record_rc1.Funding;
 import org.orcid.jaxb.model.record_rc1.PeerReview;
 import org.orcid.jaxb.model.record_rc1.Work;
+import org.orcid.jaxb.model.record_rc2.Address;
 import org.orcid.jaxb.model.record_rc2.ExternalIdentifier;
 import org.orcid.jaxb.model.record_rc2.Keyword;
 import org.orcid.jaxb.model.record_rc2.OtherName;
@@ -662,7 +664,7 @@ public class MemberV2ApiServiceImplV2_0_rc2 {
     @GET
     @Path(KEYWORDS + PUTCODE)
     @ApiOperation(value = "Fetch keyword", hidden = true, authorizations = { @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_READ_LIMITED, description = "you need this") }) })
-    public Response viewOtherKeyword(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
+    public Response viewKeyword(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
         return serviceDelegator.viewKeyword(orcid, Long.valueOf(putCode));
     }
 
@@ -696,4 +698,43 @@ public class MemberV2ApiServiceImplV2_0_rc2 {
     public Response deleteKeyword(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
         return serviceDelegator.deleteKeyword(orcid, Long.valueOf(putCode));
     }
+    
+    //Address
+    @GET
+    @Path(ADDRESS + PUTCODE)
+    @ApiOperation(value = "Fetch an address", hidden = true, authorizations = { @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_READ_LIMITED, description = "you need this") }) })
+    public Response viewAddress(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
+        return serviceDelegator.viewAddress(orcid, Long.valueOf(putCode));
+    }
+
+    @GET
+    @Path(ADDRESS)
+    @ApiOperation(value = "Fetch all addresses of a profile", hidden = true, authorizations = { @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_READ_LIMITED, description = "you need this") }) })
+    public Response viewAddresses(@PathParam("orcid") String orcid) {
+        return serviceDelegator.viewAddresses(orcid);
+    }
+    
+    @POST
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(ADDRESS)
+    @ApiOperation(value = "Add an address", hidden = true, authorizations = { @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_UPDATE, description = "you need this") }) })
+    public Response createAddress(@PathParam("orcid") String orcid, Address address) {
+        return serviceDelegator.createAddress(orcid, address);
+    }
+    
+    @PUT
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(ADDRESS + PUTCODE)
+    @ApiOperation(value = "Edit an address", hidden = true, authorizations = { @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_UPDATE, description = "you need this") }) })
+    public Response editAddress(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode, Address address) {
+        return serviceDelegator.updateAddress(orcid, Long.valueOf(putCode), address);
+    }
+    
+    @DELETE
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(ADDRESS + PUTCODE)
+    @ApiOperation(value = "Delete an address", hidden = true, authorizations = { @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_UPDATE, description = "you need this") }) })
+    public Response deleteAddress(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
+        return serviceDelegator.deleteAddress(orcid, Long.valueOf(putCode));
+    }        
 }

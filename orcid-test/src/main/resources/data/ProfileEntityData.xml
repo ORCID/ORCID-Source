@@ -709,13 +709,46 @@
             id="3"            
             iso2_country="CR"
             orcid="4444-4444-4444-4447"
-            visibility="PUBLIC"
+            visibility="LIMITED"
             is_primary="false"            
             client_source_id="APP-5555555555555555"
             last_modified="2011-07-02 15:31:00.00"
             date_created="2011-06-29 15:31:00.00"
             />
-
+        
+    <address
+            id="4"            
+            iso2_country="CR"
+            orcid="4444-4444-4444-4447"
+            visibility="PRIVATE"
+            is_primary="false"            
+            client_source_id="APP-5555555555555555"
+            last_modified="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
+            />
+    
+    <address
+            id="5"            
+            iso2_country="GB"
+            orcid="4444-4444-4444-4447"
+            visibility="PRIVATE"
+            is_primary="false"            
+            source_id="4444-4444-4444-4447"
+            last_modified="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
+            />
+    
+    <address
+            id="6"            
+            iso2_country="GB"
+            orcid="4444-4444-4444-4499"
+            visibility="PRIVATE"
+            is_primary="false"            
+            client_source_id="APP-5555555555555555"
+            last_modified="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
+            />
+    
     <given_permission_to
             given_permission_to_id="1"
             giver_orcid="4444-4444-4444-4441"

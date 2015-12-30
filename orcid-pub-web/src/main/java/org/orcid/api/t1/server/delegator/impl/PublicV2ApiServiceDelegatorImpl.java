@@ -30,6 +30,7 @@ import org.orcid.api.common.util.ElementUtils;
 import org.orcid.api.common.writer.citeproc.WorkToCiteprocTranslator;
 import org.orcid.api.t1.server.delegator.PublicV2ApiServiceDelegator;
 import org.orcid.core.exception.OrcidDeprecatedException;
+import org.orcid.core.manager.AddressManager;
 import org.orcid.core.manager.AffiliationsManager;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.EmailManager;
@@ -61,6 +62,8 @@ import org.orcid.jaxb.model.record_rc1.Employment;
 import org.orcid.jaxb.model.record_rc1.Funding;
 import org.orcid.jaxb.model.record_rc1.PeerReview;
 import org.orcid.jaxb.model.record_rc1.Work;
+import org.orcid.jaxb.model.record_rc2.Address;
+import org.orcid.jaxb.model.record_rc2.Addresses;
 import org.orcid.jaxb.model.record_rc2.Biography;
 import org.orcid.jaxb.model.record_rc2.ExternalIdentifier;
 import org.orcid.jaxb.model.record_rc2.ExternalIdentifiers;
@@ -137,6 +140,9 @@ public class PublicV2ApiServiceDelegatorImpl implements PublicV2ApiServiceDelega
     
     @Resource
     private ProfileKeywordManager keywordsManager;
+    
+    @Resource
+    private AddressManager addressManager;
         
     @Override
     public Response viewStatusText() {
@@ -355,5 +361,20 @@ public class PublicV2ApiServiceDelegatorImpl implements PublicV2ApiServiceDelega
         Keyword keyword = keywordsManager.getKeywordV2(orcid, putCode);
         orcidSecurityManager.checkVisibility(keyword);
         return Response.ok(keyword).build();
-    }        
+    }
+    
+    @Override
+    @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED, enableAnonymousAccess = true)
+    public Response viewAddresses(String orcid) {
+        Addresses addresses = addressManager.getAddresses(orcid);
+        return Response.ok(addresses).build();
+    }
+
+    @Override
+    @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED, enableAnonymousAccess = true)
+    public Response viewAddress(String orcid, Long putCode) {
+        Address address = addressManager.getAddress(orcid, putCode);
+        orcidSecurityManager.checkVisibility(address);
+        return Response.ok(address).build();
+    }
 }

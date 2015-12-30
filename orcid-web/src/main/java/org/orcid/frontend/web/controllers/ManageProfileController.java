@@ -859,7 +859,7 @@ public class ManageProfileController extends BaseWorkspaceController {
             }
             address.setCountry(country);
             address.setVisibility(org.orcid.jaxb.model.common.Visibility.fromValue(v.value()));
-            addressManager.createAddress(currentProfile.getOrcidId(), address);
+            addressManager.createAddress(getCurrentUserOrcid(), address);
         } else {
             address.getCountry().setValue(Iso3166Country.fromValue(countryForm.getIso2Country().getValue().value()));
             Visibility v = countryForm.getProfileAddressVisibility() == null ? null : countryForm.getProfileAddressVisibility().getVisibility(); 
@@ -867,7 +867,7 @@ public class ManageProfileController extends BaseWorkspaceController {
                 v = OrcidVisibilityDefaults.COUNTRY_DEFAULT.getVisibility();
             }
             address.setVisibility(org.orcid.jaxb.model.common.Visibility.fromValue(v.value()));
-            addressManager.updateAddress(currentProfile.getOrcidId(), address.getPutCode(), address, true);
+            addressManager.updateAddress(getCurrentUserOrcid(), address.getPutCode(), address, false);
         }                        
         
         countryForm.setCountryName(getCountryName(currentProfile));

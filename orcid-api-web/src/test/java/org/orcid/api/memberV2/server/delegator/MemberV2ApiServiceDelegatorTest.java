@@ -54,6 +54,7 @@ import org.orcid.jaxb.model.common.Url;
 import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.jaxb.model.groupid.GroupIdRecord;
 import org.orcid.jaxb.model.groupid.GroupIdRecords;
+import org.orcid.jaxb.model.common.Country;
 import org.orcid.jaxb.model.common.Iso3166Country;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record.summary_rc1.ActivitiesSummary;
@@ -87,6 +88,8 @@ import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifiers;
 import org.orcid.jaxb.model.record_rc1.WorkTitle;
 import org.orcid.jaxb.model.record_rc1.WorkType;
+import org.orcid.jaxb.model.record_rc2.Address;
+import org.orcid.jaxb.model.record_rc2.Addresses;
 import org.orcid.jaxb.model.record_rc2.ExternalIdentifier;
 import org.orcid.jaxb.model.record_rc2.ExternalIdentifiers;
 import org.orcid.jaxb.model.record_rc2.Keyword;
@@ -2195,6 +2198,229 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         fail();
     }
 
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    /**
+     * TEST ADDRESSES
+     */
+    @SuppressWarnings("unchecked")
+    @Test
+    public void testViewAddresses() {
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.READ_LIMITED);
+        Response response = serviceDelegator.viewAddresses("4444-4444-4444-4447");
+        assertNotNull(response);
+        Addresses addresses = (Addresses) response.getEntity();
+        assertNotNull(addresses);
+        assertNotNull(addresses.getAddress());
+        assertEquals(4, addresses.getAddress().size());
+        
+        for (Address address : addresses.getAddress()) {
+            assertThat(address.getPutCode(), anyOf(is(2L), is(3L), is(4L), is(5L)));
+            assertThat(address.getCountry().getValue(), anyOf(is(Iso3166Country.CR), is(Iso3166Country.GB), is(Iso3166Country.US)));
+            if (address.getPutCode() == 2L) {
+                assertEquals(Visibility.PUBLIC, address.getVisibility());
+                assertEquals("4444-4444-4444-4447", address.getSource().retrieveSourcePath());
+            } else if (address.getPutCode() == 3L) {
+                assertEquals(Visibility.LIMITED, address.getVisibility());
+                assertEquals("APP-5555555555555555", address.getSource().retrieveSourcePath());
+            } else if(address.getPutCode() == 4L ){
+                assertEquals(Visibility.PRIVATE, address.getVisibility());
+                assertEquals("APP-5555555555555555", address.getSource().retrieveSourcePath());
+            } else {
+                assertEquals(Visibility.PRIVATE, address.getVisibility());
+                assertEquals("4444-4444-4444-4447", address.getSource().retrieveSourcePath());
+            }
+        }
+    }
+
+    @Test
+    public void testViewPublicAddress() {
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.READ_LIMITED);
+        Response response = serviceDelegator.viewAddress("4444-4444-4444-4447", 2L);
+        assertNotNull(response);
+        Address address = (Address) response.getEntity();
+        assertNotNull(address);
+        assertEquals(Visibility.PUBLIC, address.getVisibility());
+        assertEquals("4444-4444-4444-4447", address.getSource().retrieveSourcePath());
+        assertEquals(Iso3166Country.US, address.getCountry().getValue());
+    }
+
+    @Test
+    public void testViewLimitedAddress() {
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.READ_LIMITED);
+        Response response = serviceDelegator.viewAddress("4444-4444-4444-4447", 3L);
+        assertNotNull(response);
+        Address address = (Address) response.getEntity();
+        assertNotNull(address);
+        assertEquals(Visibility.LIMITED, address.getVisibility());
+        assertEquals("APP-5555555555555555", address.getSource().retrieveSourcePath());
+        assertEquals(Iso3166Country.CR, address.getCountry().getValue());
+    }
+
+    @Test
+    public void testViewPrivateAddress() {
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.READ_LIMITED);
+        Response response = serviceDelegator.viewAddress("4444-4444-4444-4447", 4L);
+        assertNotNull(response);
+        Address address = (Address) response.getEntity();
+        assertNotNull(address);
+        assertEquals(Visibility.PRIVATE, address.getVisibility());
+        assertEquals("APP-5555555555555555", address.getSource().retrieveSourcePath());
+        assertEquals(Iso3166Country.CR, address.getCountry().getValue());
+    }
+
+    @Test(expected = OrcidVisibilityException.class)
+    public void testViewPrivateAddressWhereYouAreNotTheSource() {
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.READ_LIMITED);
+        serviceDelegator.viewAddress("4444-4444-4444-4447", 5L);
+        fail();
+    }
+
+    @Test(expected = NoResultException.class)
+    public void testViewAddressThatDontBelongToTheUser() {
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.READ_LIMITED);
+        serviceDelegator.viewAddress("4444-4444-4444-4447", 1L);
+        fail();
+    }
+
+    @SuppressWarnings("rawtypes")
+    @Test
+    public void testAddAddress() {
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.READ_LIMITED);
+        
+        Address address = new Address();
+        address.setVisibility(Visibility.PUBLIC);
+        address.setCountry(new Country(Iso3166Country.ES));
+
+        Response response = serviceDelegator.createAddress("4444-4444-4444-4442", address);
+        assertNotNull(response);
+        assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
+        Map map = response.getMetadata();
+        assertNotNull(map);
+        assertTrue(map.containsKey("Location"));
+        List resultWithPutCode = (List) map.get("Location");
+        Long putCode = Long.valueOf(String.valueOf(resultWithPutCode.get(0)));
+
+        response = serviceDelegator.viewAddress("4444-4444-4444-4442", putCode);
+        assertNotNull(response);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        Address newAddress = (Address) response.getEntity();
+        assertNotNull(newAddress);
+        assertEquals(Iso3166Country.ES, newAddress.getCountry().getValue());
+        assertEquals(Visibility.PUBLIC, newAddress.getVisibility());
+        assertNotNull(newAddress.getSource());
+        assertEquals("APP-5555555555555555", newAddress.getSource().retrieveSourcePath());
+        assertNotNull(newAddress.getCreatedDate());
+        assertNotNull(newAddress.getLastModifiedDate());
+    }
+
+    @Test
+    public void testUpdateAddress() {
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.READ_LIMITED);
+        Response response = serviceDelegator.viewAddress("4444-4444-4444-4442", 1L);
+        assertNotNull(response);
+        Address address = (Address) response.getEntity();
+        assertNotNull(address);
+        assertEquals(Iso3166Country.US, address.getCountry().getValue());
+        assertEquals(Visibility.PUBLIC, address.getVisibility());
+
+        address.getCountry().setValue(Iso3166Country.PA);
+        
+        response = serviceDelegator.updateAddress("4444-4444-4444-4442", 1L, address);
+        assertNotNull(response);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+
+        response = serviceDelegator.viewAddress("4444-4444-4444-4442", 1L);
+        assertNotNull(response);
+        address = (Address) response.getEntity();
+        assertNotNull(address);
+        assertEquals(Iso3166Country.PA, address.getCountry().getValue());
+    }
+
+    @Test(expected = WrongSourceException.class)
+    public void testUpdateAddressYouAreNotTheSourceOf() {
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.READ_LIMITED);
+        Response response = serviceDelegator.viewAddress("4444-4444-4444-4447", 2L);
+        assertNotNull(response);
+        Address address = (Address) response.getEntity();
+        assertNotNull(address);
+        assertEquals(Iso3166Country.US, address.getCountry().getValue());
+        assertEquals(Visibility.PUBLIC, address.getVisibility());
+        assertNotNull(address.getSource());
+        assertEquals("4444-4444-4444-4447", address.getSource().retrieveSourcePath());
+
+        address.getCountry().setValue(Iso3166Country.BR);
+        
+        serviceDelegator.updateAddress("4444-4444-4444-4447", 2L, address);
+        fail();
+    }
+
+    @Test
+    public void testDeleteAddress() {
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4499", ScopePathType.READ_LIMITED);
+        Response response = serviceDelegator.viewAddresses("4444-4444-4444-4499");
+        assertNotNull(response);
+        Addresses addresses = (Addresses) response.getEntity();
+        assertNotNull(addresses);
+        assertNotNull(addresses.getAddress());
+        assertEquals(1, addresses.getAddress().size());
+        response = serviceDelegator.deleteAddress("4444-4444-4444-4499", 6L);
+        assertNotNull(response);
+        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
+        response = serviceDelegator.viewAddresses("4444-4444-4444-4499");
+        assertNotNull(response);
+        addresses = (Addresses) response.getEntity();
+        assertNotNull(addresses);
+        assertNotNull(addresses.getAddress());
+        assertTrue(addresses.getAddress().isEmpty());
+    }
+
+    @Test(expected = WrongSourceException.class)
+    public void testDeleteAddressYouAreNotTheSourceOf() {
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.READ_LIMITED);
+        serviceDelegator.deleteAddress("4444-4444-4444-4447", 5L);
+        fail();
+    }
+    
     private Organization getOrganization(){
         Organization org = new Organization();
         org.setName("Org Name");

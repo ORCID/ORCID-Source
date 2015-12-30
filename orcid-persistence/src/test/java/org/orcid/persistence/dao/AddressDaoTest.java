@@ -99,6 +99,13 @@ public class AddressDaoTest extends DBUnitTest {
         assertEquals(Iso3166Country.CR, address.getIso2Country());
         assertFalse(address.getPrimary());
     }
+    
+    @Test
+    public void findByOrcidTest() {
+        List<AddressEntity> addresses = addressDao.findByOrcid("4444-4444-4444-4447");
+        assertNotNull(addresses);
+        assertEquals(4, addresses.size());
+    }
 
     @SuppressWarnings("unchecked")
     @Test

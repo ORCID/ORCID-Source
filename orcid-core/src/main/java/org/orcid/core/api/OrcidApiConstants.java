@@ -85,4 +85,5 @@ public class OrcidApiConstants {
     public static final String MEMBER_INFO = "/member-info";
     public static final String BIOGRAPHY = "/{orcid}/biography";
     public static final String KEYWORDS = "/{orcid}/keywords";
+    public static final String ADDRESS = "/{orcid}/address";
 }
