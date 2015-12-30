@@ -25,6 +25,11 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+/**
+ * 
+ * @author Angel Montenegro
+ * 
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType( propOrder = { "scopePath" })
 @XmlRootElement(name = "scope-paths", namespace = "http://www.orcid.org/ns/person")

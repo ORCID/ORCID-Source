@@ -41,6 +41,11 @@ import org.orcid.jaxb.model.common.Visibility;
 
 import io.swagger.annotations.ApiModelProperty;
 
+/**
+ * 
+ * @author Angel Montenegro
+ * 
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "country", "createdDate", "lastModifiedDate", "source" })
 @XmlRootElement(name = "address", namespace = "http://www.orcid.org/ns/address")

@@ -1,0 +1,90 @@
+/**
+ * =============================================================================
+ *
+ * ORCID (R) Open Source
+ * http://orcid.org
+ *
+ * Copyright (c) 2012-2014 ORCID, Inc.
+ * Licensed under an MIT-Style License (MIT)
+ * http://orcid.org/open-source-license
+ *
+ * This copyright and license information (including a link to the full license)
+ * shall be included in its entirety in all copies or substantial portion of
+ * the software.
+ *
+ * =============================================================================
+ */
+package org.orcid.core.cli;
+
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+
+import org.orcid.jaxb.model.common.Iso3166Country;
+import org.orcid.persistence.dao.AddressDao;
+import org.orcid.persistence.jpa.entities.AddressEntity;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.SourceEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+
+/**
+ * 
+ * @author Angel Montenegro
+ * 
+ */
+public class MigrateAddressData {
+    private static Logger LOG = LoggerFactory.getLogger(MigrateAddressData.class);
+    private AddressDao addressDao;
+    private TransactionTemplate transactionTemplate;    
+
+    public static void main(String... args) {
+        new MigrateAddressData().migrate();
+    }
+
+    private void migrate() {
+        init();
+        migrateAddress();
+    }
+
+    private void migrateAddress() {
+        LOG.debug("Starting migration process");
+        List<Object[]> addressElements = Collections.emptyList();
+        
+        do {
+            addressElements = addressDao.findAddressesToMigrate();
+            for(final Object[] addressElement : addressElements) {
+                String orcid = (String) addressElement[0];
+                String countryCode = (String) addressElement[1];
+                LOG.info("Migrating address for profile: {}", orcid);
+                transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+                    @Override
+                    protected void doInTransactionWithoutResult(TransactionStatus status) {
+                        AddressEntity address = new AddressEntity();
+                        address.setDateCreated(new Date());
+                        address.setLastModified(new Date());
+                        address.setPrimary(true);
+                        address.setUser(new ProfileEntity(orcid));
+                        address.setIso2Country(Iso3166Country.fromValue(countryCode));
+                        address.setSource(new SourceEntity(new ProfileEntity(orcid)));
+                        addressDao.persist(address);
+                    }
+                });
+            }
+        } while (addressElements != null && !addressElements.isEmpty());
+        
+        LOG.debug("Finished migration process");
+    }
+
+    @SuppressWarnings("resource")
+    private void init() {
+        ApplicationContext context = new ClassPathXmlApplicationContext("orcid-core-context.xml");
+        addressDao = (AddressDao) context.getBean("addressDao");
+        transactionTemplate = (TransactionTemplate) context.getBean("transactionTemplate");
+    }
+}

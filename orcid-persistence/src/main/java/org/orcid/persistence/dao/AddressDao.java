@@ -14,18 +14,18 @@
  *
  * =============================================================================
  */
-package org.orcid.jaxb.model.record_rc2;
+package org.orcid.persistence.dao;
 
-import javax.xml.bind.annotation.XmlRootElement;
+import java.util.List;
 
-import org.orcid.jaxb.model.common.Url;
+import org.orcid.persistence.jpa.entities.AddressEntity;
 
 /**
  * 
  * @author Angel Montenegro
  * 
  */
-@XmlRootElement(name = "application-website")
-public class ApplicationWebsite extends Url {
-    private static final long serialVersionUID = 1204251226767139535L;
+public interface AddressDao extends GenericDao<AddressEntity, Long> {
+    AddressEntity find(String orcid, Long id);
+    List<Object[]> findAddressesToMigrate();
 }

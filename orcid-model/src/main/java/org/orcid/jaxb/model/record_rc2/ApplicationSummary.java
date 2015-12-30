@@ -24,6 +24,11 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+/**
+ * 
+ * @author Angel Montenegro
+ * 
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "applicationOrcid", "applicationName", "applicationWebsite", "approvalDate", "scopePaths", "groupOrcid", "groupName" })
 @XmlRootElement(name = "application-summary", namespace = "http://www.orcid.org/ns/person")

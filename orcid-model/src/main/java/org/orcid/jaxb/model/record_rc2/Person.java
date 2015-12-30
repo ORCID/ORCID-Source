@@ -24,6 +24,11 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+/**
+ * 
+ * @author Angel Montenegro
+ * 
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "name", "otherNames", "biography", "researcherUrls", "emails", "addresses", "keywords", "externalIdentifiers", "delegation", "applications" })
 @XmlRootElement(name = "person", namespace = "http://www.orcid.org/ns/person")

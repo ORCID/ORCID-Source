@@ -27,6 +27,7 @@
         </preConditions>                
         <sql>ALTER TABLE address DROP COLUMN country;</sql> 
         <sql>ALTER TABLE address ADD orcid VARCHAR(19);</sql>
+        <sql>ALTER TABLE address ADD is_primary BOOLEAN NOT NULL DEFAULT FALSE;</sql>
         <sql>ALTER TABLE address ADD iso2_country VARCHAR(2);</sql>
         <sql>ALTER TABLE address ADD visibility VARCHAR(19);</sql>
 	    <sql>ALTER TABLE address ADD source_id VARCHAR(19)</sql>

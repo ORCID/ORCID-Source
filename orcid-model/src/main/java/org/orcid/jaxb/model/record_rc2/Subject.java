@@ -30,6 +30,11 @@ import org.orcid.jaxb.model.common.Url;
 
 import io.swagger.annotations.ApiModelProperty;
 
+/**
+ * 
+ * @author Angel Montenegro
+ * 
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = {"externalIdentifiers","type","journalTitle","title","url"})
 @XmlRootElement(name = "subject", namespace = "http://www.orcid.org/ns/peer-review")

@@ -16,6 +16,8 @@
  */
 package org.orcid.jaxb.model.record_rc2;
 
+import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -25,10 +27,17 @@ import javax.xml.bind.annotation.XmlValue;
 
 import org.orcid.jaxb.model.common.Visibility;
 
+/**
+ * 
+ * @author Angel Montenegro
+ * 
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "content" })
 @XmlRootElement(name = "biography", namespace = "http://www.orcid.org/ns/personal-details")
-public class Biography {
+public class Biography implements Serializable {    
+    private static final long serialVersionUID = 1L;
+
     @XmlValue
     protected String content;
 

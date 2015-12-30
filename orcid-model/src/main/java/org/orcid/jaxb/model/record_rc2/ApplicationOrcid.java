@@ -20,6 +20,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.orcid.jaxb.model.common.OrcidIdentifier;
 
+/**
+ * 
+ * @author Angel Montenegro
+ * 
+ */
 @XmlRootElement(name = "application-orcid")
 public class ApplicationOrcid extends OrcidIdentifier {
     private static final long serialVersionUID = -7671665742488740027L;

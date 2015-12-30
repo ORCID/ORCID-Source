@@ -28,6 +28,11 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.orcid.jaxb.model.common.Visibility;
 
+/**
+ * 
+ * @author Angel Montenegro
+ * 
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "applicationSummary" })
 @XmlRootElement(name = "applications", namespace = "http://www.orcid.org/ns/person")

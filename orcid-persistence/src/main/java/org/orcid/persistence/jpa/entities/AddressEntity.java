@@ -29,21 +29,28 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.orcid.jaxb.model.common.Visibility;
-import org.orcid.jaxb.model.message.Iso3166Country;
+import org.orcid.jaxb.model.common.Iso3166Country;
 
+/**
+ * 
+ * @author Angel Montenegro
+ * 
+ */
 @Entity
 @Table(name = "address")
-public class AddressEntity extends BaseEntity<Long> implements ProfileAware, SourceAware {    
+public class AddressEntity extends BaseEntity<Long> implements ProfileAware, SourceAware {
     private static final long serialVersionUID = -331185018871126442L;
     private Long id;
     private Iso3166Country iso2Country;
     private Visibility visibility;
-    private ProfileEntity profile;    
+    private Boolean primary = Boolean.FALSE;
+    private ProfileEntity user;
     private SourceEntity source;
 
-    @Id    
+    @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "address_seq")
     @SequenceGenerator(name = "address_seq", sequenceName = "address_seq")
@@ -65,7 +72,7 @@ public class AddressEntity extends BaseEntity<Long> implements ProfileAware, Sou
     public void setIso2Country(Iso3166Country iso2Country) {
         this.iso2Country = iso2Country;
     }
-    
+
     @Basic
     @Enumerated(EnumType.STRING)
     @Column(name = "visibility")
@@ -85,15 +92,29 @@ public class AddressEntity extends BaseEntity<Long> implements ProfileAware, Sou
         this.source = source;
     }
 
-    public void setProfile(ProfileEntity profile) {
-        this.profile = profile;
+    public void setUser(ProfileEntity user) {
+        this.user = user;
+    }
+    
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "orcid", nullable = false)
+    public ProfileEntity getUser() {
+        return user;
+    }
+    
+    @Transient
+    @Override
+    public ProfileEntity getProfile() {
+        return user;
     }
 
-    @Override
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "profile_orcid", nullable = false)
-    public ProfileEntity getProfile() {
-        return profile;
+    @Column(name = "is_primary", columnDefinition = "boolean default false")
+    public Boolean getPrimary() {
+        return primary == null ? Boolean.FALSE : primary;
+    }
+
+    public void setPrimary(Boolean primary) {
+        this.primary = primary;
     }
 
     @Override
@@ -101,8 +122,9 @@ public class AddressEntity extends BaseEntity<Long> implements ProfileAware, Sou
         final int prime = 31;
         int result = 1;
         result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + ((iso2Country == null) ? 0 : iso2Country.hashCode());        
-        result = prime * result + ((profile == null) ? 0 : profile.hashCode());
+        result = prime * result + ((iso2Country == null) ? 0 : iso2Country.hashCode());
+        result = prime * result + ((primary == null) ? 0 : primary.hashCode());
+        result = prime * result + ((user == null) ? 0 : user.hashCode());
         result = prime * result + ((source == null) ? 0 : source.hashCode());
         result = prime * result + ((visibility == null) ? 0 : visibility.hashCode());
         return result;
@@ -124,10 +146,15 @@ public class AddressEntity extends BaseEntity<Long> implements ProfileAware, Sou
             return false;
         if (iso2Country != other.iso2Country)
             return false;
-        if (profile == null) {
-            if (other.profile != null)
+        if (primary == null) {
+            if (other.primary != null)
                 return false;
-        } else if (!profile.equals(other.profile))
+        } else if (!primary.equals(other.primary))
+            return false;
+        if (user == null) {
+            if (other.user != null)
+                return false;
+        } else if (!user.equals(other.user))
             return false;
         if (source == null) {
             if (other.source != null)
@@ -138,4 +165,5 @@ public class AddressEntity extends BaseEntity<Long> implements ProfileAware, Sou
             return false;
         return true;
     }
+
 }

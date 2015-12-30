@@ -684,13 +684,36 @@
             />
 
 	<address
-            id="1"
-            address_line_1="Address 1"
-            address_line_2="Address 2"
-            city="A City"
-            postal_code="BN3 1LK"
-            state_or_province="East Sussex"
-            country="England"
+            id="1"            
+            iso2_country="US"
+            orcid="4444-4444-4444-4442"
+            visibility="PUBLIC"   
+            is_primary="true"         
+            client_source_id="APP-5555555555555555"
+            last_modified="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
+            />
+
+	<address
+            id="2"            
+            iso2_country="US"
+            orcid="4444-4444-4444-4447"
+            visibility="PUBLIC"
+            is_primary="true"            
+            source_id="4444-4444-4444-4447"
+            last_modified="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
+            />
+
+	<address
+            id="3"            
+            iso2_country="CR"
+            orcid="4444-4444-4444-4447"
+            visibility="PUBLIC"
+            is_primary="false"            
+            client_source_id="APP-5555555555555555"
+            last_modified="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
             />
 
     <given_permission_to

@@ -29,6 +29,11 @@ import org.orcid.jaxb.model.common.CreditName;
 import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.jaxb.model.common.VisibilityType;
 
+/**
+ * 
+ * @author Angel Montenegro
+ * 
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "givenNames", "familyName", "creditName" })
 @XmlRootElement(name = "name", namespace = "http://www.orcid.org/ns/personal-details")

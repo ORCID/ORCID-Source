@@ -49,10 +49,6 @@ import java.io.Serializable;
 @XmlType( propOrder = { "value" })
 @XmlRootElement(name = "approval-date", namespace = "http://www.orcid.org/ns/person")
 public class ApprovalDate implements Serializable {
-
-    /**
-     * 
-     */
     private static final long serialVersionUID = 1L;
     @XmlValue
     @XmlSchemaType(name = "dateTime")

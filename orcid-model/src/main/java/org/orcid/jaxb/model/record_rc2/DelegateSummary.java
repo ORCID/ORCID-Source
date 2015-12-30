@@ -27,6 +27,11 @@ import javax.xml.bind.annotation.XmlType;
 import org.orcid.jaxb.model.common.LastModifiedDate;
 import org.orcid.jaxb.model.common.OrcidIdentifier;
 
+/**
+ * 
+ * @author Angel Montenegro
+ * 
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "orcidIdentifier", "lastModifiedDate", "creditName" })
 @XmlRootElement(name = "delegate-summary", namespace = "http://www.orcid.org/ns/person")
