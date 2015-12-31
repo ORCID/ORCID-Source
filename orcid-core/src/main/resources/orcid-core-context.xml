@@ -610,6 +610,18 @@
 	<bean id="jpaJaxbAddressAdapter" class="org.orcid.core.adapter.impl.JpaJaxbAddressAdapterImpl">
         <property name="mapperFacade" ref="addressMapperFacade" />
     </bean>
+             
+             
+             
+	<bean id="givenPermissionToMapperFacade" factory-bean="&amp;mapperFacadeFactory" factory-method="getGivenPermissionToMapperFacade"/>
+	<bean id="jpaJaxbGivenPermissionToAdapter" class="org.orcid.core.adapter.impl.JpaJaxbGivenPermissionToAdapterImpl">
+        <property name="mapperFacade" ref="givenPermissionToMapperFacade" />
+    </bean>
+
+             
+             
+             
+             
                        
     <!-- Geonames username -->
 	<bean id="geonamesUser" class="java.lang.String">

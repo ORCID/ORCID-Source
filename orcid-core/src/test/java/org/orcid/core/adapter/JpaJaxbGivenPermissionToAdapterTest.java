@@ -16,13 +16,8 @@ import org.junit.runner.RunWith;
 import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.jaxb.model.record_rc2.Delegation;
 import org.orcid.jaxb.model.record_rc2.DelegationDetails;
-import org.orcid.jaxb.model.record_rc2.GivenPermissionTo;
-import org.orcid.jaxb.model.record_rc2.OtherName;
 import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
-import org.orcid.persistence.jpa.entities.OtherNameEntity;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileSummaryEntity;
-import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -35,7 +30,7 @@ import org.springframework.test.context.ContextConfiguration;
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
 public class JpaJaxbGivenPermissionToAdapterTest {
     @Resource
-    private JpaJaxbGivenPermissionToAdapter adapter;
+    private JpaJaxbGivenPermissionToAdapter jpaJaxbGivenPermissionToAdapter;
     
     @Test
     public void fromDelegationDetailsToGivenPermissionToEntityTest() throws JAXBException {
@@ -60,17 +55,15 @@ public class JpaJaxbGivenPermissionToAdapterTest {
         assertEquals("http://orcid.org/8888-8888-8888-8880", details.getDelegateSummary().getOrcidIdentifier().getUri());
         assertEquals("8888-8888-8888-8880", details.getDelegateSummary().getOrcidIdentifier().getPath());
         
-        GivenPermissionToEntity entity = adapter.toGivenPermissionTo(details);
+        GivenPermissionToEntity entity = jpaJaxbGivenPermissionToAdapter.toGivenPermissionTo(details);
         assertNotNull(entity);                        
         assertEquals(Long.valueOf(1), entity.getId());        
-        assertNotNull(entity.getReceiver());
-        
+        assertNotNull(entity.getReceiver());        
         assertEquals("given-to-credit-name", entity.getReceiver().getCreditName());
-        
-        
-        entity.getApprovalDate();
-        entity.getDateCreated();
-        entity.getLastModified();
+        assertEquals(org.orcid.jaxb.model.message.Visibility.PUBLIC, entity.getReceiver().getNamesVisibility());                
+        assertNotNull(entity.getApprovalDate());
+        assertNotNull(entity.getDateCreated());
+        assertNotNull(entity.getLastModified());
     }
     
     @Test
