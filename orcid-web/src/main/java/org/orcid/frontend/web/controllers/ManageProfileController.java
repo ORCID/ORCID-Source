@@ -846,11 +846,11 @@ public class ManageProfileController extends BaseWorkspaceController {
         orcidProfileManager.updateCountry(currentProfile);
         
         // Update also the address table
-        Address address = addressManager.getPrimaryAddress(currentProfile.getOrcidId());
-        boolean update = true;
-        if(address == null) {
-            update = false;
+        Address address = addressManager.getPrimaryAddress(getCurrentUserOrcid());
+        if(address == null) {            
             address = new Address();
+            //Assume the direction is primary if it is added or updated from UI
+            address.setPrimary(true);
             Country country = new Country();
             country.setValue(Iso3166Country.fromValue(countryForm.getIso2Country().getValue().value()));
             Visibility v = countryForm.getProfileAddressVisibility() == null ? null : countryForm.getProfileAddressVisibility().getVisibility(); 

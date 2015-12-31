@@ -30,6 +30,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 import org.orcid.jaxb.model.common.Country;
@@ -66,6 +67,8 @@ public class Address implements Filterable, Serializable {
     protected Visibility visibility;
     @XmlAttribute
     protected String path;
+    @XmlTransient
+    protected Boolean primary;
 
     public Country getCountry() {
         return country;
@@ -121,6 +124,14 @@ public class Address implements Filterable, Serializable {
 
     public void setPath(String path) {
         this.path = path;
+    }    
+            
+    public Boolean getPrimary() {
+        return primary;
+    }
+
+    public void setPrimary(Boolean primary) {
+        this.primary = primary;
     }
 
     @Override
