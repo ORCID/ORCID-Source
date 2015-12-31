@@ -4,7 +4,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.orcid.org/ns/person ../person-2.0_rc2.xsd ">	
 		<person:given-permission-to>
-			<person:delegation-details>
+			<person:delegation-details put-code="1">
 				<person:approval-date>2015-12-31T12:00:00</person:approval-date>
 				<person:delegate-summary>
 					<common:orcid-identifier>
@@ -13,12 +13,12 @@
 						<common:host>orcid.org</common:host>
 					</common:orcid-identifier>
 					<common:last-modified-date>2016-01-01T12:00:00</common:last-modified-date>
-					<person:credit-name visibility="public">credit-name</person:credit-name>
+					<person:credit-name visibility="public">given-to-credit-name</person:credit-name>
 				</person:delegate-summary>
 			</person:delegation-details>
 		</person:given-permission-to>
 		<person:given-permission-by>
-			<person:delegation-details>
+			<person:delegation-details  put-code="2">
 				<person:approval-date>2015-12-31T12:00:00</person:approval-date>
 				<person:delegate-summary>
 					<common:orcid-identifier>
@@ -27,7 +27,7 @@
 						<common:host>orcid.org</common:host>
 					</common:orcid-identifier>
 					<common:last-modified-date>2016-01-01T12:00:00</common:last-modified-date>
-					<person:credit-name visibility="public">credit-name</person:credit-name>
+					<person:credit-name visibility="public">given-by-credit-name</person:credit-name>
 				</person:delegate-summary>
 			</person:delegation-details>
 		</person:given-permission-by>

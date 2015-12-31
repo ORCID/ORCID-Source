@@ -20,6 +20,7 @@ import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
@@ -32,12 +33,14 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "approvalDate", "delegateSummary" })
 @XmlRootElement(name = "delegation-details", namespace = "http://www.orcid.org/ns/person")
-public class DelegationDetails implements Serializable {    
+public class DelegationDetails implements Serializable {
     private static final long serialVersionUID = 2327423760245004561L;
     @XmlElement(namespace = "http://www.orcid.org/ns/person", name = "approval-date")
     protected ApprovalDate approvalDate;
     @XmlElement(namespace = "http://www.orcid.org/ns/person", name = "delegate-summary")
     protected DelegateSummary delegateSummary;
+    @XmlAttribute(name = "put-code")
+    protected Long putCode;
 
     public ApprovalDate getApprovalDate() {
         return approvalDate;
@@ -55,12 +58,21 @@ public class DelegationDetails implements Serializable {
         this.delegateSummary = delegateSummary;
     }
 
+    public Long getPutCode() {
+        return putCode;
+    }
+
+    public void setPutCode(Long putCode) {
+        this.putCode = putCode;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((approvalDate == null) ? 0 : approvalDate.hashCode());
         result = prime * result + ((delegateSummary == null) ? 0 : delegateSummary.hashCode());
+        result = prime * result + ((putCode == null) ? 0 : putCode.hashCode());
         return result;
     }
 
@@ -82,6 +94,11 @@ public class DelegationDetails implements Serializable {
             if (other.delegateSummary != null)
                 return false;
         } else if (!delegateSummary.equals(other.delegateSummary))
+            return false;
+        if (putCode == null) {
+            if (other.putCode != null)
+                return false;
+        } else if (!putCode.equals(other.putCode))
             return false;
         return true;
     }

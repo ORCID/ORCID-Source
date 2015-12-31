@@ -149,6 +149,7 @@
 			<xs:element name="approval-date" type="person:approval-date" />
 			<xs:element name="delegate-summary" type="person:delegate-summary" />
 		</xs:sequence>
+		<xs:attribute name="put-code" type="common:put-code" use="optional" />
 	</xs:complexType>
 
 	<xs:complexType name="approval-date">

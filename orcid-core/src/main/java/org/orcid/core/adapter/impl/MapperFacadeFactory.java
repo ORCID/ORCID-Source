@@ -34,6 +34,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.jaxb.model.common.FuzzyDate;
+import org.orcid.jaxb.model.common.OrcidIdentifier;
 import org.orcid.jaxb.model.common.PublicationDate;
 import org.orcid.jaxb.model.common.SourceClientId;
 import org.orcid.jaxb.model.common.SourceOrcid;
@@ -59,6 +60,7 @@ import org.orcid.jaxb.model.record_rc1.WorkContributors;
 import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifier;
 import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifiers;
 import org.orcid.jaxb.model.record_rc2.Address;
+import org.orcid.jaxb.model.record_rc2.DelegationDetails;
 import org.orcid.jaxb.model.record_rc2.ExternalIdentifier;
 import org.orcid.jaxb.model.record_rc2.Keyword;
 import org.orcid.jaxb.model.record_rc2.OtherName;
@@ -69,6 +71,7 @@ import org.orcid.persistence.jpa.entities.CompletionDateEntity;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.EndDateEntity;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
+import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
 import org.orcid.persistence.jpa.entities.GroupIdRecordEntity;
 import org.orcid.persistence.jpa.entities.NotificationAddItemsEntity;
 import org.orcid.persistence.jpa.entities.NotificationAmendedEntity;
@@ -80,6 +83,7 @@ import org.orcid.persistence.jpa.entities.OtherNameEntity;
 import org.orcid.persistence.jpa.entities.PeerReviewEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
+import org.orcid.persistence.jpa.entities.ProfileSummaryEntity;
 import org.orcid.persistence.jpa.entities.PublicationDateEntity;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
@@ -250,7 +254,38 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         addV2SourceMapping(mapperFactory);
         emailClassMap.register();
         return mapperFactory.getMapperFacade();
+    }           
+    
+    
+    
+    
+    
+    
+    
+    public MapperFacade getGivenPermissionToMapperFacade() {
+        MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
+        ClassMapBuilder<DelegationDetails, GivenPermissionToEntity> givenPermissionToClassMap = mapperFactory.classMap(DelegationDetails.class, GivenPermissionToEntity.class);
+        givenPermissionToClassMap.byDefault();
+        givenPermissionToClassMap.field("putCode", "id");
+        givenPermissionToClassMap.field("approvalDate.value", "approvalDate");               
+        givenPermissionToClassMap.field("delegateSummary.lastModifiedDate.value", "lastModified");
+        givenPermissionToClassMap.field("delegateSummary.creditName.content", "receiver.creditName");
+        givenPermissionToClassMap.field("delegateSummary.creditName.visibility", "receiver.namesVisibility");                
+        addV2OrcidIdentifierMapping(mapperFactory);                                        
+        givenPermissionToClassMap.register();
+        return mapperFactory.getMapperFacade();
     }
+    
+    public MapperFacade getGivenPermissionByMapperFacade() {
+        return null;
+    }
+    
+    
+    
+    
+    
+    
+    
                 
     public MapperFacade getWorkMapperFacade() {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
@@ -506,6 +541,18 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         classMap.field("lastModifiedDate.value", "lastModified");
     }
 
+    private void addV2OrcidIdentifierMapping(MapperFactory mapperFactory) {
+        mapperFactory.classMap(OrcidIdentifier.class, ProfileSummaryEntity.class)
+            .fieldAToB("path", "orcid")
+            .customize(new CustomMapper<OrcidIdentifier, ProfileSummaryEntity>(){
+                @Override
+                public void mapBtoA(ProfileSummaryEntity entity, OrcidIdentifier orcidIdentifier, MappingContext context) {                                            
+                    orcidIdentifier.setHost(orcidUrlManager.getBaseHost());
+                    orcidIdentifier.setUri(orcidUrlManager.getBaseUriHttp() + "/" + entity.getId());                                          
+                }
+            }).byDefault().register();
+    }
+    
     private void addV2SourceMapping(MapperFactory mapperFactory) {
         mapperFactory.classMap(org.orcid.jaxb.model.common.Source.class, SourceEntity.class).fieldAToB("sourceOrcid.path", "sourceProfile.id")
                 .fieldAToB("sourceClientId.path", "sourceClient.id").customize(new CustomMapper<org.orcid.jaxb.model.common.Source, SourceEntity>() {
