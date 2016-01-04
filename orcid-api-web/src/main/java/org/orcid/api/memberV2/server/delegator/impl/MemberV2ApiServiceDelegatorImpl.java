@@ -90,7 +90,8 @@ import org.springframework.stereotype.Component;
  * @author Declan Newman (declan) Date: 07/03/2012
  */
 @Component("orcidT2ServiceDelegator")
-public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelegator {
+public class MemberV2ApiServiceDelegatorImpl
+        implements MemberV2ApiServiceDelegator<Education, Employment, ExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work> {
 
     @Resource
     private WorkManager workManager;

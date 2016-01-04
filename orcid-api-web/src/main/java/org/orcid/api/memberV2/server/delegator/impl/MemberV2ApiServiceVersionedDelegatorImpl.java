@@ -25,21 +25,12 @@ import javax.ws.rs.core.Response;
 import org.orcid.api.memberV2.server.delegator.MemberV2ApiServiceDelegator;
 import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.version.OrcidMessageVersionConverterChain;
-import org.orcid.jaxb.model.groupid.GroupIdRecord;
 import org.orcid.jaxb.model.message.OrcidMessage;
-import org.orcid.jaxb.model.record_rc1.Education;
-import org.orcid.jaxb.model.record_rc1.Employment;
-import org.orcid.jaxb.model.record_rc1.Funding;
-import org.orcid.jaxb.model.record_rc1.PeerReview;
-import org.orcid.jaxb.model.record_rc1.Work;
-import org.orcid.jaxb.model.record_rc2.ExternalIdentifier;
-import org.orcid.jaxb.model.record_rc2.OtherName;
-import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 
-public class MemberV2ApiServiceVersionedDelegatorImpl implements MemberV2ApiServiceDelegator {
+public class MemberV2ApiServiceVersionedDelegatorImpl implements MemberV2ApiServiceDelegator<Object, Object, Object, Object, Object, Object, Object, Object, Object> {
 
     @Resource
-    private MemberV2ApiServiceDelegator memberV2ApiServiceDelegator;
+    private MemberV2ApiServiceDelegator<Object, Object, Object, Object, Object, Object, Object, Object, Object> memberV2ApiServiceDelegator;
 
     private String externalVersion;
 
@@ -71,13 +62,13 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements MemberV2ApiServ
     }
 
     @Override
-    public Response createWork(String orcid, Work work) {
+    public Response createWork(String orcid, Object work) {
         Response response = memberV2ApiServiceDelegator.createWork(orcid, work);
         return response;
     }
 
     @Override
-    public Response updateWork(String orcid, Long putCode, Work work) {
+    public Response updateWork(String orcid, Long putCode, Object work) {
         Response response = memberV2ApiServiceDelegator.updateWork(orcid, putCode, work);
         return response;
     }
@@ -101,13 +92,13 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements MemberV2ApiServ
     }
 
     @Override
-    public Response createFunding(String orcid, Funding funding) {
+    public Response createFunding(String orcid, Object funding) {
         Response response = memberV2ApiServiceDelegator.createFunding(orcid, funding);
         return response;
     }
 
     @Override
-    public Response updateFunding(String orcid, Long putCode, Funding funding) {
+    public Response updateFunding(String orcid, Long putCode, Object funding) {
         Response response = memberV2ApiServiceDelegator.updateFunding(orcid, putCode, funding);
         return response;
     }
@@ -131,13 +122,13 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements MemberV2ApiServ
     }
 
     @Override
-    public Response createEducation(String orcid, Education education) {
+    public Response createEducation(String orcid, Object education) {
         Response response = memberV2ApiServiceDelegator.createEducation(orcid, education);
         return response;
     }
 
     @Override
-    public Response updateEducation(String orcid, Long putCode, Education education) {
+    public Response updateEducation(String orcid, Long putCode, Object education) {
         Response response = memberV2ApiServiceDelegator.updateEducation(orcid, putCode, education);
         return response;
     }
@@ -155,13 +146,13 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements MemberV2ApiServ
     }
 
     @Override
-    public Response createEmployment(String orcid, Employment employment) {
+    public Response createEmployment(String orcid, Object employment) {
         Response response = memberV2ApiServiceDelegator.createEmployment(orcid, employment);
         return response;
     }
 
     @Override
-    public Response updateEmployment(String orcid, Long putCode, Employment employment) {
+    public Response updateEmployment(String orcid, Long putCode, Object employment) {
         Response response = memberV2ApiServiceDelegator.updateEmployment(orcid, putCode, employment);
         return response;
     }
@@ -185,13 +176,13 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements MemberV2ApiServ
     }
 
     @Override
-    public Response createPeerReview(String orcid, PeerReview peerReview) {
+    public Response createPeerReview(String orcid, Object peerReview) {
         Response response = memberV2ApiServiceDelegator.createPeerReview(orcid, peerReview);
         return response;
     }
 
     @Override
-    public Response updatePeerReview(String orcid, Long putCode, PeerReview peerReview) {
+    public Response updatePeerReview(String orcid, Long putCode, Object peerReview) {
         Response response = memberV2ApiServiceDelegator.updatePeerReview(orcid, putCode, peerReview);
         return response;
     }
@@ -209,13 +200,13 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements MemberV2ApiServ
     }
 
     @Override
-    public Response createGroupIdRecord(GroupIdRecord groupIdRecord) {
+    public Response createGroupIdRecord(Object groupIdRecord) {
         Response response = memberV2ApiServiceDelegator.createGroupIdRecord(groupIdRecord);
         return response;
     }
 
     @Override
-    public Response updateGroupIdRecord(GroupIdRecord groupIdRecord, Long putCode) {
+    public Response updateGroupIdRecord(Object groupIdRecord, Long putCode) {
         Response response = memberV2ApiServiceDelegator.updateGroupIdRecord(groupIdRecord, putCode);
         return response;
     }
@@ -269,13 +260,13 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements MemberV2ApiServ
     }
 
     @Override
-    public Response updateResearcherUrl(String orcid, Long putCode, ResearcherUrl researcherUrl) {
+    public Response updateResearcherUrl(String orcid, Long putCode, Object researcherUrl) {
         Response response = memberV2ApiServiceDelegator.updateResearcherUrl(orcid, putCode, researcherUrl);
         return response;
     }
 
     @Override
-    public Response createResearcherUrl(String orcid, ResearcherUrl researcherUrl) {
+    public Response createResearcherUrl(String orcid, Object researcherUrl) {
         Response response = memberV2ApiServiceDelegator.createResearcherUrl(orcid, researcherUrl);
         return response;
     }
@@ -305,13 +296,13 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements MemberV2ApiServ
     }
 
     @Override
-    public Response createOtherName(String orcid, OtherName otherName) {
+    public Response createOtherName(String orcid, Object otherName) {
         Response response = memberV2ApiServiceDelegator.createOtherName(orcid, otherName);
         return response;
     }
 
     @Override
-    public Response updateOtherName(String orcid, Long putCode, OtherName otherName) {
+    public Response updateOtherName(String orcid, Long putCode, Object otherName) {
         Response response = memberV2ApiServiceDelegator.updateOtherName(orcid, putCode, otherName);
         return response;
     }
@@ -341,13 +332,13 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements MemberV2ApiServ
     }
 
     @Override
-    public Response updateExternalIdentifier(String orcid, Long putCode, ExternalIdentifier externalIdentifier) {
+    public Response updateExternalIdentifier(String orcid, Long putCode, Object externalIdentifier) {
         Response response = memberV2ApiServiceDelegator.updateExternalIdentifier(orcid, putCode, externalIdentifier);
         return response;
     }
 
     @Override
-    public Response createExternalIdentifier(String orcid, ExternalIdentifier externalIdentifier) {
+    public Response createExternalIdentifier(String orcid, Object externalIdentifier) {
         Response response = memberV2ApiServiceDelegator.createExternalIdentifier(orcid, externalIdentifier);
         return response;
     }
@@ -358,10 +349,7 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements MemberV2ApiServ
         return response;
     }
 
-    public MemberV2ApiServiceDelegator getMemberV2ApiServiceDelegator() {
-        return memberV2ApiServiceDelegator;
-    }
-
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public void setMemberV2ApiServiceDelegator(MemberV2ApiServiceDelegator memberV2ApiServiceDelegator) {
         this.memberV2ApiServiceDelegator = memberV2ApiServiceDelegator;
     }
