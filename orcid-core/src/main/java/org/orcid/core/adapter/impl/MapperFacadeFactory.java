@@ -270,7 +270,8 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         givenPermissionToClassMap.field("approvalDate.value", "approvalDate");               
         givenPermissionToClassMap.field("delegateSummary.lastModifiedDate.value", "lastModified");
         givenPermissionToClassMap.field("delegateSummary.creditName.content", "receiver.creditName");
-        givenPermissionToClassMap.field("delegateSummary.creditName.visibility", "receiver.namesVisibility");                
+        givenPermissionToClassMap.field("delegateSummary.creditName.visibility", "receiver.namesVisibility");        
+        givenPermissionToClassMap.field("delegateSummary.orcidIdentifier.path", "receiver.id");        
         addV2OrcidIdentifierMapping(mapperFactory);                                        
         givenPermissionToClassMap.register();
         return mapperFactory.getMapperFacade();

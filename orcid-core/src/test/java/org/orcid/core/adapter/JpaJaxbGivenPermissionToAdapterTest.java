@@ -4,7 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.InputStream;
-import java.util.Date;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 import javax.annotation.Resource;
 import javax.xml.bind.JAXBContext;
@@ -61,14 +62,31 @@ public class JpaJaxbGivenPermissionToAdapterTest {
         assertNotNull(entity.getReceiver());        
         assertEquals("given-to-credit-name", entity.getReceiver().getCreditName());
         assertEquals(org.orcid.jaxb.model.message.Visibility.PUBLIC, entity.getReceiver().getNamesVisibility());                
-        assertNotNull(entity.getApprovalDate());
-        assertNotNull(entity.getDateCreated());
+        assertNotNull(entity.getApprovalDate());        
         assertNotNull(entity.getLastModified());
     }
     
     @Test
     public void fromGivenPermissionToEntityToDelegationDetailsTest() {
-        
+        GivenPermissionToEntity entity = getGivenPermissionToEntity();
+        DelegationDetails details = jpaJaxbGivenPermissionToAdapter.toDelegationDetails(entity);
+        assertNotNull(details);
+        assertNotNull(details.getApprovalDate());
+        assertNotNull(details.getApprovalDate().getValue());
+        assertEquals(1, details.getApprovalDate().getValue().getDay());
+        assertEquals(1, details.getApprovalDate().getValue().getMonth());
+        assertEquals(2016, details.getApprovalDate().getValue().getYear());
+        assertNotNull(details.getDelegateSummary());
+        assertNotNull(details.getDelegateSummary().getCreditName());
+        assertEquals("credit-name", details.getDelegateSummary().getCreditName().getContent());
+        assertEquals(Visibility.PUBLIC, details.getDelegateSummary().getCreditName().getVisibility());
+        assertNotNull(details.getDelegateSummary().getLastModifiedDate());                
+        assertEquals(1, details.getDelegateSummary().getLastModifiedDate().getValue().getDay());
+        assertEquals(1, details.getDelegateSummary().getLastModifiedDate().getValue().getMonth());
+        assertEquals(2016, details.getDelegateSummary().getLastModifiedDate().getValue().getYear());                
+        assertNotNull(details.getDelegateSummary().getOrcidIdentifier());
+        assertEquals("9999-9999-9999-9999", details.getDelegateSummary().getOrcidIdentifier().getPath());
+        assertEquals(Long.valueOf(1), details.getPutCode());
     }
     
     private Delegation getDelegation() throws JAXBException {
@@ -81,11 +99,12 @@ public class JpaJaxbGivenPermissionToAdapterTest {
     
     private GivenPermissionToEntity getGivenPermissionToEntity() {
         GivenPermissionToEntity entity = new GivenPermissionToEntity();
-        entity.setApprovalDate(new Date());
-        entity.setDateCreated(new Date());
+        Calendar c = new GregorianCalendar(2016, 0, 1);
+        entity.setApprovalDate(c.getTime());
+        entity.setDateCreated(c.getTime());
         entity.setGiver("0000-0000-0000-0000");
         entity.setId(1L);
-        entity.setLastModified(new Date());
+        entity.setLastModified(c.getTime());
         ProfileSummaryEntity summary = new ProfileSummaryEntity();
         summary.setCreditName("credit-name");
         summary.setNamesVisibility(org.orcid.jaxb.model.message.Visibility.PUBLIC);
