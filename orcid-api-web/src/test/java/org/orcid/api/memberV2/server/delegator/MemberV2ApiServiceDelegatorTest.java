@@ -1364,7 +1364,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     @SuppressWarnings("unchecked")
     @Test
     public void testViewResearcherUrls() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.READ_LIMITED);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.PERSON_READ_LIMITED);
         Response response = serviceDelegator.viewResearcherUrls("4444-4444-4444-4443");
         assertNotNull(response);
         ResearcherUrls researcherUrls = (ResearcherUrls) response.getEntity();
@@ -1388,7 +1388,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
 
     @Test
     public void testViewPublicResearcherUrl() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.READ_LIMITED);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.PERSON_READ_LIMITED);
         Response response = serviceDelegator.viewResearcherUrl("4444-4444-4444-4443", 2L);
         assertNotNull(response);
         ResearcherUrl researcherUrl = (ResearcherUrl) response.getEntity();
@@ -1401,7 +1401,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
 
     @Test
     public void testViewLimitedResearcherUrl() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.READ_LIMITED);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.PERSON_READ_LIMITED);
         Response response = serviceDelegator.viewResearcherUrl("4444-4444-4444-4443", 8L);
         assertNotNull(response);
         ResearcherUrl researcherUrl = (ResearcherUrl) response.getEntity();
@@ -1414,7 +1414,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
 
     @Test
     public void testViewPrivateResearcherUrl() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.READ_LIMITED);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.PERSON_READ_LIMITED);
         Response response = serviceDelegator.viewResearcherUrl("4444-4444-4444-4443", 7L);
         assertNotNull(response);
         ResearcherUrl researcherUrl = (ResearcherUrl) response.getEntity();
@@ -1428,14 +1428,14 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
 
     @Test(expected = OrcidVisibilityException.class)
     public void testViewPrivateResearcherUrlWhereYouAreNotTheSource() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.READ_LIMITED);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.PERSON_READ_LIMITED);
         serviceDelegator.viewResearcherUrl("4444-4444-4444-4443", 6L);
         fail();
     }
 
     @Test(expected = NoResultException.class)
     public void testViewResearcherUrlThatDontBelongToTheUser() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.READ_LIMITED);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.PERSON_READ_LIMITED);
         serviceDelegator.viewResearcherUrl("4444-4444-4444-4443", 1L);
         fail();
     }
@@ -1443,7 +1443,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     @SuppressWarnings("rawtypes")
     @Test
     public void testAddResearcherUrl() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4441", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4441", ScopePathType.PERSON_READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
         ResearcherUrl rUrl = new ResearcherUrl();
         rUrl.setUrl(new Url("http://www.myRUrl.com"));
         rUrl.setUrlName("My researcher Url");
@@ -1497,7 +1497,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
 
     @Test(expected = WrongSourceException.class)
     public void testUpdateResearcherUrlYouAreNotTheSourceOf() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.PERSON_UPDATE, ScopePathType.READ_LIMITED);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.PERSON_UPDATE, ScopePathType.PERSON_READ_LIMITED);
         Response response = serviceDelegator.viewResearcherUrl("4444-4444-4444-4443", 8L);
         assertNotNull(response);
         ResearcherUrl researcherUrl = (ResearcherUrl) response.getEntity();
@@ -1512,7 +1512,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
 
     @Test
     public void testDeleteResearcherUrl() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4445", ScopePathType.READ_LIMITED, ScopePathType.PERSON_UPDATE);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4445", ScopePathType.PERSON_UPDATE, ScopePathType.PERSON_READ_LIMITED);
         Response response = serviceDelegator.viewResearcherUrls("4444-4444-4444-4445");
         assertNotNull(response);
         ResearcherUrls researcherUrls = (ResearcherUrls) response.getEntity();
@@ -1544,7 +1544,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
 
     @Test(expected = WrongSourceException.class)
     public void testDeleteResearcherUrlYouAreNotTheSourceOf() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.READ_LIMITED, ScopePathType.PERSON_UPDATE);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE);
         serviceDelegator.deleteResearcherUrl("4444-4444-4444-4443", 8L);
         fail();
     }
@@ -1555,7 +1555,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     @SuppressWarnings("unchecked")
     @Test
     public void testViewEmails() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.READ_LIMITED);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.PERSON_READ_LIMITED);
         Response response = serviceDelegator.viewEmails("4444-4444-4444-4443");
         assertNotNull(response);
         Emails emails = (Emails) response.getEntity();
@@ -1587,7 +1587,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     @SuppressWarnings("unchecked")
     @Test
     public void testViewOtherNames() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.PERSON_READ_LIMITED);
         Response response = serviceDelegator.viewOtherNames("4444-4444-4444-4446");
         assertNotNull(response);
         OtherNames otherNames = (OtherNames) response.getEntity();
@@ -1612,7 +1612,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
 
     @Test
     public void testViewPublicOtherName() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.PERSON_READ_LIMITED);
         Response response = serviceDelegator.viewOtherName("4444-4444-4444-4446", 4L);
         assertNotNull(response);
         OtherName otherName = (OtherName) response.getEntity();
@@ -1624,7 +1624,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
 
     @Test
     public void testViewLimitedOtherName() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.PERSON_READ_LIMITED);
         Response response = serviceDelegator.viewOtherName("4444-4444-4444-4446", 5L);
         assertNotNull(response);
         OtherName otherName = (OtherName) response.getEntity();
@@ -1636,7 +1636,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
 
     @Test
     public void testViewPrivateOtherName() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.PERSON_READ_LIMITED);
         Response response = serviceDelegator.viewOtherName("4444-4444-4444-4446", 7L);
         assertNotNull(response);
         OtherName otherName = (OtherName) response.getEntity();
@@ -1648,14 +1648,14 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
 
     @Test(expected = OrcidVisibilityException.class)
     public void testViewPrivateOtherNameWhereYouAreNotTheSource() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.PERSON_READ_LIMITED);
         serviceDelegator.viewOtherName("4444-4444-4444-4446", 6L);
         fail();
     }
 
     @Test(expected = NoResultException.class)
     public void testViewOtherNameThatDontBelongToTheUser() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.PERSON_READ_LIMITED);
         serviceDelegator.viewOtherName("4444-4444-4444-4446", 1L);
         fail();
     }
@@ -1663,7 +1663,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     @SuppressWarnings("rawtypes")
     @Test
     public void testAddOtherName() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4441", ScopePathType.READ_LIMITED);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4441", ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE);
         OtherName otherName = new OtherName();
         otherName.setContent("New Other Name");
         otherName.setVisibility(Visibility.LIMITED);
@@ -1691,7 +1691,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
 
     @Test
     public void testUpdateOtherName() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.READ_LIMITED);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.PERSON_READ_LIMITED);
         Response response = serviceDelegator.viewOtherName("4444-4444-4444-4443", 1L);
         assertNotNull(response);
         OtherName otherName = (OtherName) response.getEntity();
@@ -1717,7 +1717,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
 
     @Test(expected = WrongSourceException.class)
     public void testUpdateOtherNameYouAreNotTheSourceOf() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.READ_LIMITED);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.PERSON_READ_LIMITED);
         Response response = serviceDelegator.viewOtherName("4444-4444-4444-4443", 2L);
         assertNotNull(response);
         OtherName otherName = (OtherName) response.getEntity();
@@ -1734,7 +1734,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
 
     @Test
     public void testDeleteOtherName() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.READ_LIMITED);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE);
         Response response = serviceDelegator.viewOtherNames("4444-4444-4444-4447");
         assertNotNull(response);
         OtherNames otherNames = (OtherNames) response.getEntity();
@@ -1754,7 +1754,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
 
     @Test(expected = WrongSourceException.class)
     public void testDeleteOtherNameYouAreNotTheSourceOf() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.PERSON_UPDATE, ScopePathType.PERSON_UPDATE);
         serviceDelegator.deleteOtherName("4444-4444-4444-4446", 6L);
         fail();
     }
@@ -1765,7 +1765,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     @SuppressWarnings("unchecked")
     @Test
     public void testViewExternalIdentifiers() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.READ_LIMITED);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.PERSON_READ_LIMITED);
         Response response = serviceDelegator.viewExternalIdentifiers("4444-4444-4444-4442");
         assertNotNull(response);
         ExternalIdentifiers extIds = (ExternalIdentifiers) response.getEntity();
@@ -1797,7 +1797,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
 
     @Test
     public void testViewPublicExternalIdentifier() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.READ_LIMITED);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.PERSON_READ_LIMITED);
         Response response = serviceDelegator.viewExternalIdentifier("4444-4444-4444-4442", 2L);
         assertNotNull(response);
         ExternalIdentifier extId = (ExternalIdentifier) response.getEntity();
@@ -1817,7 +1817,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
 
     @Test
     public void testViewLimitedExternalIdentifier() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.READ_LIMITED);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.PERSON_READ_LIMITED);
         Response response = serviceDelegator.viewExternalIdentifier("4444-4444-4444-4442", 3L);
         assertNotNull(response);
         ExternalIdentifier extId = (ExternalIdentifier) response.getEntity();
@@ -1837,7 +1837,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
 
     @Test
     public void testViewPrivateExternalIdentifier() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.READ_LIMITED);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.PERSON_READ_LIMITED);
         Response response = serviceDelegator.viewExternalIdentifier("4444-4444-4444-4442", 5L);
         assertNotNull(response);
         ExternalIdentifier extId = (ExternalIdentifier) response.getEntity();
@@ -1857,14 +1857,14 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
 
     @Test(expected = OrcidVisibilityException.class)
     public void testViewPrivateExternalIdentifierWhereYouAreNotTheSource() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.READ_LIMITED);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.PERSON_READ_LIMITED);
         serviceDelegator.viewExternalIdentifier("4444-4444-4444-4442", 4L);
         fail();
     }
 
     @Test(expected = NoResultException.class)
     public void testViewExternalIdentifierThatDontBelongToTheUser() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.READ_LIMITED);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.PERSON_READ_LIMITED);
         serviceDelegator.viewExternalIdentifier("4444-4444-4444-4442", 1L);
         fail();
     }
@@ -1872,7 +1872,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     @SuppressWarnings("rawtypes")
     @Test
     public void testAddExternalIdentifier() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.READ_LIMITED, ScopePathType.PERSON_UPDATE);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE);
         Response response = serviceDelegator.viewExternalIdentifiers("4444-4444-4444-4443");
         assertNotNull(response);
         ExternalIdentifiers extIds = (ExternalIdentifiers) response.getEntity();
@@ -1927,7 +1927,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
 
     @Test
     public void testUpdateExternalIdentifier() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.READ_LIMITED, ScopePathType.PERSON_UPDATE);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE);
         Response response = serviceDelegator.viewExternalIdentifier("4444-4444-4444-4442", 2L);
         assertNotNull(response);
         ExternalIdentifier extId = (ExternalIdentifier) response.getEntity();
@@ -1962,7 +1962,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
 
     @Test(expected = WrongSourceException.class)
     public void testUpdateExaternalIdentifierYouAreNotTheSourceOf() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.READ_LIMITED, ScopePathType.PERSON_UPDATE);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE);
         Response response = serviceDelegator.viewExternalIdentifier("4444-4444-4444-4442", 3L);
         assertNotNull(response);
         ExternalIdentifier extId = (ExternalIdentifier) response.getEntity();
@@ -1980,7 +1980,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
 
     @Test
     public void testDeleteExternalIdentifier() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4444", ScopePathType.READ_LIMITED, ScopePathType.PERSON_UPDATE);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4444", ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE);
         Response response = serviceDelegator.viewExternalIdentifiers("4444-4444-4444-4444");
         assertNotNull(response);
         ExternalIdentifiers extIds = (ExternalIdentifiers) response.getEntity();
@@ -2003,7 +2003,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
 
     @Test(expected = WrongSourceException.class)
     public void testDeleteExternalIdentifierYouAreNotTheSourceOf() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.READ_LIMITED, ScopePathType.PERSON_UPDATE);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE);
         Response response = serviceDelegator.viewExternalIdentifier("4444-4444-4444-4442", 3L);
         assertNotNull(response);
         ExternalIdentifier extId = (ExternalIdentifier) response.getEntity();
@@ -2023,7 +2023,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     @SuppressWarnings("unchecked")
     @Test
     public void testViewKeywords() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.READ_LIMITED);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.PERSON_READ_LIMITED);
         Response response = serviceDelegator.viewKeywords("4444-4444-4444-4443");
         assertNotNull(response);
         Keywords keywords = (Keywords) response.getEntity();
@@ -2049,7 +2049,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
 
     @Test
     public void testViewPublicKeyword() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.READ_LIMITED);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.PERSON_READ_LIMITED);
         Response response = serviceDelegator.viewKeyword("4444-4444-4444-4443", 1L);
         assertNotNull(response);
         Keyword keyword = (Keyword) response.getEntity();
@@ -2061,7 +2061,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
 
     @Test
     public void testViewLimitedKeyword() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.READ_LIMITED);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.PERSON_READ_LIMITED);
         Response response = serviceDelegator.viewKeyword("4444-4444-4444-4443", 2L);
         assertNotNull(response);
         Keyword keyword = (Keyword) response.getEntity();
@@ -2073,7 +2073,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
 
     @Test
     public void testViewPrivateKeyword() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.READ_LIMITED);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.PERSON_READ_LIMITED);
         Response response = serviceDelegator.viewKeyword("4444-4444-4444-4443", 4L);
         assertNotNull(response);
         Keyword keyword = (Keyword) response.getEntity();
@@ -2085,14 +2085,14 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
 
     @Test(expected = OrcidVisibilityException.class)
     public void testViewPrivateKeywordWhereYouAreNotTheSource() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.READ_LIMITED);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.PERSON_READ_LIMITED);
         serviceDelegator.viewKeyword("4444-4444-4444-4443", 3L);
         fail();
     }
 
     @Test(expected = NoResultException.class)
     public void testViewKeywordThatDontBelongToTheUser() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.READ_LIMITED);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.PERSON_READ_LIMITED);
         serviceDelegator.viewOtherName("4444-4444-4444-4443", 5L);
         fail();
     }
@@ -2100,7 +2100,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     @SuppressWarnings("rawtypes")
     @Test
     public void testAddKeyword() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4441", ScopePathType.READ_LIMITED);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4441", ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE);
         Keyword keyword = new Keyword();
         keyword.setContent("New keyword");
         keyword.setVisibility(Visibility.LIMITED);
@@ -2128,7 +2128,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
 
     @Test
     public void testUpdateKeyword() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4441", ScopePathType.READ_LIMITED);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4441", ScopePathType.PERSON_READ_LIMITED);
         Response response = serviceDelegator.viewKeyword("4444-4444-4444-4441", 6L);
         assertNotNull(response);
         Keyword keyword = (Keyword) response.getEntity();
@@ -2154,7 +2154,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
 
     @Test(expected = WrongSourceException.class)
     public void testUpdateKeywordYouAreNotTheSourceOf() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.READ_LIMITED);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.PERSON_READ_LIMITED);
         Response response = serviceDelegator.viewKeyword("4444-4444-4444-4443", 2L);
         assertNotNull(response);
         Keyword keyword = (Keyword) response.getEntity();
@@ -2173,7 +2173,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
 
     @Test
     public void testDeleteKeyword() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.READ_LIMITED);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE);
         Response response = serviceDelegator.viewKeywords("4444-4444-4444-4442");
         assertNotNull(response);
         Keywords keywords = (Keywords) response.getEntity();
@@ -2193,51 +2193,10 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
 
     @Test(expected = WrongSourceException.class)
     public void testDeleteKeywordYouAreNotTheSourceOf() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.READ_LIMITED);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.PERSON_UPDATE);
         serviceDelegator.deleteKeyword("4444-4444-4444-4443", 3L);
         fail();
     }
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     
     /**
      * TEST ADDRESSES
@@ -2245,17 +2204,17 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     @SuppressWarnings("unchecked")
     @Test
     public void testViewAddresses() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.READ_LIMITED);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.PERSON_READ_LIMITED);
         Response response = serviceDelegator.viewAddresses("4444-4444-4444-4447");
         assertNotNull(response);
         Addresses addresses = (Addresses) response.getEntity();
         assertNotNull(addresses);
         assertNotNull(addresses.getAddress());
-        assertEquals(4, addresses.getAddress().size());
+        assertEquals(3, addresses.getAddress().size());
         
         for (Address address : addresses.getAddress()) {
-            assertThat(address.getPutCode(), anyOf(is(2L), is(3L), is(4L), is(5L)));
-            assertThat(address.getCountry().getValue(), anyOf(is(Iso3166Country.CR), is(Iso3166Country.GB), is(Iso3166Country.US)));
+            assertThat(address.getPutCode(), anyOf(is(2L), is(3L), is(4L)));
+            assertThat(address.getCountry().getValue(), anyOf(is(Iso3166Country.CR), is(Iso3166Country.US)));
             if (address.getPutCode() == 2L) {
                 assertEquals(Visibility.PUBLIC, address.getVisibility());
                 assertEquals("4444-4444-4444-4447", address.getSource().retrieveSourcePath());
@@ -2265,16 +2224,13 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
             } else if(address.getPutCode() == 4L ){
                 assertEquals(Visibility.PRIVATE, address.getVisibility());
                 assertEquals("APP-5555555555555555", address.getSource().retrieveSourcePath());
-            } else {
-                assertEquals(Visibility.PRIVATE, address.getVisibility());
-                assertEquals("4444-4444-4444-4447", address.getSource().retrieveSourcePath());
-            }
+            } 
         }
     }
 
     @Test
     public void testViewPublicAddress() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.READ_LIMITED);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.PERSON_READ_LIMITED);
         Response response = serviceDelegator.viewAddress("4444-4444-4444-4447", 2L);
         assertNotNull(response);
         Address address = (Address) response.getEntity();
@@ -2286,7 +2242,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
 
     @Test
     public void testViewLimitedAddress() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.READ_LIMITED);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.PERSON_READ_LIMITED);
         Response response = serviceDelegator.viewAddress("4444-4444-4444-4447", 3L);
         assertNotNull(response);
         Address address = (Address) response.getEntity();
@@ -2298,7 +2254,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
 
     @Test
     public void testViewPrivateAddress() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.READ_LIMITED);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.PERSON_READ_LIMITED);
         Response response = serviceDelegator.viewAddress("4444-4444-4444-4447", 4L);
         assertNotNull(response);
         Address address = (Address) response.getEntity();
@@ -2310,14 +2266,14 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
 
     @Test(expected = OrcidVisibilityException.class)
     public void testViewPrivateAddressWhereYouAreNotTheSource() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.READ_LIMITED);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.PERSON_READ_LIMITED);
         serviceDelegator.viewAddress("4444-4444-4444-4447", 5L);
         fail();
     }
 
     @Test(expected = NoResultException.class)
     public void testViewAddressThatDontBelongToTheUser() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.READ_LIMITED);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.PERSON_READ_LIMITED);
         serviceDelegator.viewAddress("4444-4444-4444-4447", 1L);
         fail();
     }
@@ -2396,7 +2352,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
 
     @Test
     public void testDeleteAddress() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4499", ScopePathType.READ_LIMITED);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4499", ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE);
         Response response = serviceDelegator.viewAddresses("4444-4444-4444-4499");
         assertNotNull(response);
         Addresses addresses = (Addresses) response.getEntity();
@@ -2416,9 +2372,15 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
 
     @Test(expected = WrongSourceException.class)
     public void testDeleteAddressYouAreNotTheSourceOf() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.READ_LIMITED);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.PERSON_UPDATE);
         serviceDelegator.deleteAddress("4444-4444-4444-4447", 5L);
         fail();
+    }
+    
+    @Test
+    public void testViewPerson() {
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.READ_LIMITED);
+        Response response = serviceDelegator.viewAddresses("4444-4444-4444-4442");
     }
     
     private Organization getOrganization(){

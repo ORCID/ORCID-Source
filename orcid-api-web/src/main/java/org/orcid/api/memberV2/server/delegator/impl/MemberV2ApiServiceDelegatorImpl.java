@@ -77,6 +77,7 @@ import org.orcid.jaxb.model.record_rc2.Keyword;
 import org.orcid.jaxb.model.record_rc2.Keywords;
 import org.orcid.jaxb.model.record_rc2.OtherName;
 import org.orcid.jaxb.model.record_rc2.OtherNames;
+import org.orcid.jaxb.model.record_rc2.Person;
 import org.orcid.jaxb.model.record_rc2.PersonalDetails;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
@@ -483,7 +484,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
 
     @SuppressWarnings("unchecked")
     @Override
-    @AccessControl(requiredScope = ScopePathType.READ_LIMITED)
+    @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED)
     public Response viewResearcherUrls(String orcid) {
         ResearcherUrls researcherUrls = researcherUrlManager.getResearcherUrlsV2(orcid);
         researcherUrls.setResearcherUrls((List<ResearcherUrl>) visibilityFilter.filter(researcherUrls.getResearcherUrls()));
@@ -530,7 +531,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
 
     @SuppressWarnings("unchecked")
     @Override
-    @AccessControl(requiredScope = ScopePathType.READ_LIMITED)
+    @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED)
     public Response viewEmails(String orcid) {
         Emails emails = emailManager.getEmails(orcid);
         emails.setEmails((List<Email>) visibilityFilter.filter(emails.getEmails()));
@@ -539,6 +540,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
 
     @SuppressWarnings("unchecked")
     @Override
+    @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED)
     public Response viewOtherNames(String orcid) {
         OtherNames otherNames = otherNameManager.getOtherNamesV2(orcid);
         List<OtherName> allOtherNames = otherNames.getOtherNames();
@@ -548,6 +550,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     }
 
     @Override
+    @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED)
     public Response viewOtherName(String orcid, Long putCode) {
         OtherName otherName = otherNameManager.getOtherNameV2(orcid, putCode);
         orcidSecurityManager.checkVisibility(otherName);
@@ -555,6 +558,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     }
 
     @Override
+    @AccessControl(requiredScope = ScopePathType.PERSON_UPDATE)
     public Response createOtherName(String orcid, org.orcid.jaxb.model.record_rc2.OtherName otherName) {
         otherName = otherNameManager.createOtherNameV2(orcid, otherName);
         try {
@@ -565,6 +569,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     }
 
     @Override
+    @AccessControl(requiredScope = ScopePathType.PERSON_UPDATE)
     public Response updateOtherName(String orcid, Long putCode, org.orcid.jaxb.model.record_rc2.OtherName otherName) {
         if (!putCode.equals(otherName.getPutCode())) {
             Map<String, String> params = new HashMap<String, String>();
@@ -578,13 +583,14 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     }
 
     @Override
+    @AccessControl(requiredScope = ScopePathType.PERSON_UPDATE)
     public Response deleteOtherName(String orcid, Long putCode) {
         otherNameManager.deleteOtherNameV2(orcid, putCode);
         return Response.noContent().build();
     }
 
     @Override
-    @AccessControl(requiredScope = ScopePathType.READ_LIMITED)
+    @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED)
     public Response viewPersonalDetails(String orcid) {
         PersonalDetails personalDetails = personalDetailsManager.getPersonalDetails(orcid);
         personalDetails = visibilityFilter.filter(personalDetails);
@@ -594,6 +600,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
 
     @SuppressWarnings("unchecked")
     @Override
+    @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED)
     public Response viewExternalIdentifiers(String orcid) {
         ExternalIdentifiers extIds = externalIdentifierManager.getExternalIdentifiersV2(orcid);
         List<ExternalIdentifier> allExtIds = extIds.getExternalIdentifier();
@@ -603,6 +610,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     }
 
     @Override
+    @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED)
     public Response viewExternalIdentifier(String orcid, Long putCode) {
         ExternalIdentifier extId = externalIdentifierManager.getExternalIdentifierV2(orcid, putCode);
         orcidSecurityManager.checkVisibility(extId);
@@ -610,6 +618,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     }
 
     @Override
+    @AccessControl(requiredScope = ScopePathType.PERSON_UPDATE)
     public Response updateExternalIdentifier(String orcid, Long putCode, ExternalIdentifier externalIdentifier) {
         if (!putCode.equals(externalIdentifier.getPutCode())) {
             Map<String, String> params = new HashMap<String, String>();
@@ -622,6 +631,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     }
 
     @Override
+    @AccessControl(requiredScope = ScopePathType.PERSON_UPDATE)
     public Response createExternalIdentifier(String orcid, ExternalIdentifier externalIdentifier) {
         externalIdentifier = externalIdentifierManager.createExternalIdentifierV2(orcid, externalIdentifier);
         try {
@@ -632,12 +642,14 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     }
 
     @Override
+    @AccessControl(requiredScope = ScopePathType.PERSON_UPDATE)
     public Response deleteExternalIdentifier(String orcid, Long putCode) {
         externalIdentifierManager.deleteExternalIdentifier(orcid, putCode);
         return Response.noContent().build();
     }
 
     @Override
+    @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED)
     public Response viewBiography(String orcid) {
         Biography bio = profileEntityManager.getBiography(orcid);
         orcidSecurityManager.checkVisibility(bio);
@@ -646,6 +658,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
         
     @SuppressWarnings("unchecked")
     @Override
+    @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED)
     public Response viewKeywords(String orcid) {
         Keywords keywords = keywordsManager.getKeywordsV2(orcid);
         List<Keyword> allKeywords = keywords.getKeywords();
@@ -655,6 +668,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     }
 
     @Override
+    @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED)
     public Response viewKeyword(String orcid, Long putCode) {
         Keyword keyword = keywordsManager.getKeywordV2(orcid, putCode);
         orcidSecurityManager.checkVisibility(keyword);
@@ -662,6 +676,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     }
 
     @Override
+    @AccessControl(requiredScope = ScopePathType.PERSON_UPDATE)
     public Response createKeyword(String orcid, Keyword keyword) {
         keyword = keywordsManager.createKeywordV2(orcid, keyword);
         try {
@@ -672,6 +687,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     }
 
     @Override
+    @AccessControl(requiredScope = ScopePathType.PERSON_UPDATE)
     public Response updateKeyword(String orcid, Long putCode, Keyword keyword) {
         if (!putCode.equals(keyword.getPutCode())) {
             Map<String, String> params = new HashMap<String, String>();
@@ -685,18 +701,25 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     }
 
     @Override
+    @AccessControl(requiredScope = ScopePathType.PERSON_UPDATE)
     public Response deleteKeyword(String orcid, Long putCode) {
         keywordsManager.deleteKeywordV2(orcid, putCode);
         return Response.noContent().build();
     }
                     
+    @SuppressWarnings("unchecked")
     @Override
+    @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED)
     public Response viewAddresses(String orcid) {
         Addresses addresses = addressManager.getAddresses(orcid);
+        List<Address> allAddresses = addresses.getAddress();
+        List<Address> filteredAddresses = (List<Address>) visibilityFilter.filter(allAddresses);
+        addresses.setAddress(filteredAddresses);
         return Response.ok(addresses).build();
     }
 
     @Override
+    @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED)
     public Response viewAddress(String orcid, Long putCode) {
         Address address = addressManager.getAddress(orcid, putCode);
         orcidSecurityManager.checkVisibility(address);
@@ -704,6 +727,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     }
 
     @Override
+    @AccessControl(requiredScope = ScopePathType.PERSON_UPDATE)
     public Response createAddress(String orcid, Address address) {
         address = addressManager.createAddress(orcid, address);
         try {
@@ -714,6 +738,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     }
 
     @Override
+    @AccessControl(requiredScope = ScopePathType.PERSON_UPDATE)
     public Response updateAddress(String orcid, Long putCode, Address address) {
         if (!putCode.equals(address.getPutCode())) {
             Map<String, String> params = new HashMap<String, String>();
@@ -727,8 +752,17 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     }
 
     @Override
+    @AccessControl(requiredScope = ScopePathType.PERSON_UPDATE)
     public Response deleteAddress(String orcid, Long putCode) {
         addressManager.deleteAddress(orcid, putCode);
         return Response.noContent().build();
-    }    
+    }   
+    
+    @Override
+    @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED)
+    public Response viewPerson(String orcid) {
+        Person person = profileEntityManager.getPersonDetails(orcid);
+        person = visibilityFilter.filter(person);
+        return Response.ok(person).build();
+    }
 }
