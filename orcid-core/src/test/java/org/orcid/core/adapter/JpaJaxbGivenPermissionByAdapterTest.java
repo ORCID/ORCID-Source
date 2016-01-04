@@ -33,7 +33,7 @@ import org.junit.runner.RunWith;
 import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.jaxb.model.record_rc2.Delegation;
 import org.orcid.jaxb.model.record_rc2.DelegationDetails;
-import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
+import org.orcid.persistence.jpa.entities.GivenPermissionByEntity;
 import org.orcid.persistence.jpa.entities.ProfileSummaryEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
@@ -45,9 +45,9 @@ import org.springframework.test.context.ContextConfiguration;
  */
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
-public class JpaJaxbGivenPermissionToAdapterTest {
+public class JpaJaxbGivenPermissionByAdapterTest {
     @Resource
-    private JpaJaxbGivenPermissionToAdapter jpaJaxbGivenPermissionToAdapter;
+    private JpaJaxbGivenPermissionByAdapter jpaJaxbGivenPermissionByAdapter;
     
     @Test
     public void fromDelegationDetailsToGivenPermissionToEntityTest() throws JAXBException {
@@ -58,13 +58,13 @@ public class JpaJaxbGivenPermissionToAdapterTest {
         assertNotNull(delegation.getGivenPermissionTo());
         assertNotNull(delegation.getGivenPermissionTo().getDelegationDetails());
         
-        DelegationDetails details = delegation.getGivenPermissionTo().getDelegationDetails();
-        assertEquals(Long.valueOf(1), details.getPutCode());
+        DelegationDetails details = delegation.getGivenPermissionBy().getDelegationDetails();
+        assertEquals(Long.valueOf(2), details.getPutCode());
         assertNotNull(details.getApprovalDate());
         assertNotNull(details.getApprovalDate().getValue());        
         assertNotNull(details.getDelegateSummary());
         assertNotNull(details.getDelegateSummary().getCreditName());
-        assertEquals("given-to-credit-name", details.getDelegateSummary().getCreditName().getContent());
+        assertEquals("given-by-credit-name", details.getDelegateSummary().getCreditName().getContent());
         assertEquals(Visibility.PUBLIC, details.getDelegateSummary().getCreditName().getVisibility());
         assertNotNull(details.getDelegateSummary().getLastModifiedDate());        
         assertNotNull(details.getDelegateSummary().getOrcidIdentifier());
@@ -72,20 +72,20 @@ public class JpaJaxbGivenPermissionToAdapterTest {
         assertEquals("http://orcid.org/8888-8888-8888-8880", details.getDelegateSummary().getOrcidIdentifier().getUri());
         assertEquals("8888-8888-8888-8880", details.getDelegateSummary().getOrcidIdentifier().getPath());
         
-        GivenPermissionToEntity entity = jpaJaxbGivenPermissionToAdapter.toGivenPermissionTo(details);
+        GivenPermissionByEntity entity = jpaJaxbGivenPermissionByAdapter.toGivenPermissionBy(details);
         assertNotNull(entity);                        
-        assertEquals(Long.valueOf(1), entity.getId());        
-        assertNotNull(entity.getReceiver());        
-        assertEquals("given-to-credit-name", entity.getReceiver().getCreditName());
-        assertEquals(org.orcid.jaxb.model.message.Visibility.PUBLIC, entity.getReceiver().getNamesVisibility());                
+        assertEquals(Long.valueOf(2), entity.getId());        
+        assertNotNull(entity.getGiver());        
+        assertEquals("given-by-credit-name", entity.getGiver().getCreditName());
+        assertEquals(org.orcid.jaxb.model.message.Visibility.PUBLIC, entity.getGiver().getNamesVisibility());                
         assertNotNull(entity.getApprovalDate());        
         assertNotNull(entity.getLastModified());
     }
     
     @Test
     public void fromGivenPermissionToEntityToDelegationDetailsTest() {
-        GivenPermissionToEntity entity = getGivenPermissionToEntity();
-        DelegationDetails details = jpaJaxbGivenPermissionToAdapter.toDelegationDetails(entity);
+        GivenPermissionByEntity entity = getGivenPermissionByEntity();
+        DelegationDetails details = jpaJaxbGivenPermissionByAdapter.toDelegationDetails(entity);
         assertNotNull(details);
         assertNotNull(details.getApprovalDate());
         assertNotNull(details.getApprovalDate().getValue());
@@ -115,19 +115,19 @@ public class JpaJaxbGivenPermissionToAdapterTest {
         return (Delegation) unmarshaller.unmarshal(inputStream);
     }
     
-    private GivenPermissionToEntity getGivenPermissionToEntity() {
-        GivenPermissionToEntity entity = new GivenPermissionToEntity();
+    private GivenPermissionByEntity getGivenPermissionByEntity() {
+        GivenPermissionByEntity entity = new GivenPermissionByEntity();
         Calendar c = new GregorianCalendar(2016, 0, 1);
         entity.setApprovalDate(c.getTime());
         entity.setDateCreated(c.getTime());
-        entity.setGiver("0000-0000-0000-0000");
+        entity.setReceiver("0000-0000-0000-0000");
         entity.setId(1L);
         entity.setLastModified(c.getTime());
         ProfileSummaryEntity summary = new ProfileSummaryEntity();
         summary.setCreditName("credit-name");
         summary.setNamesVisibility(org.orcid.jaxb.model.message.Visibility.PUBLIC);
         summary.setId("9999-9999-9999-9999");
-        entity.setReceiver(summary);
+        entity.setGiver(summary);
         return entity;
     }
 }

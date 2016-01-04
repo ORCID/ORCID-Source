@@ -613,8 +613,9 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         person.setEmails(null);
 
         // TODO: implement
-        person.setApplications(null);
         person.setDelegation(null);
+        person.setApplications(null);
+        
 
         return person;
     }
