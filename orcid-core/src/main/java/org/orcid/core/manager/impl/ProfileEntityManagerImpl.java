@@ -28,6 +28,8 @@ import javax.annotation.Resource;
 import javax.persistence.NoResultException;
 
 import org.orcid.core.adapter.Jpa2JaxbAdapter;
+import org.orcid.core.adapter.JpaJaxbGivenPermissionByAdapter;
+import org.orcid.core.adapter.JpaJaxbGivenPermissionToAdapter;
 import org.orcid.core.manager.AddressManager;
 import org.orcid.core.manager.AffiliationsManager;
 import org.orcid.core.manager.EncryptionManager;
@@ -71,8 +73,14 @@ import org.orcid.jaxb.model.record_rc1.GroupAble;
 import org.orcid.jaxb.model.record_rc1.GroupableActivity;
 import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifier;
 import org.orcid.jaxb.model.record_rc2.Biography;
+import org.orcid.jaxb.model.record_rc2.Delegation;
+import org.orcid.jaxb.model.record_rc2.DelegationDetails;
+import org.orcid.jaxb.model.record_rc2.GivenPermissionBy;
+import org.orcid.jaxb.model.record_rc2.GivenPermissionTo;
 import org.orcid.jaxb.model.record_rc2.Person;
 import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.persistence.jpa.entities.GivenPermissionByEntity;
+import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ApplicationSummary;
@@ -127,7 +135,13 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
 
     @Resource
     private ResearcherUrlManager researcherUrlManager;
+    
+    @Resource
+    private JpaJaxbGivenPermissionToAdapter jpaJaxbGivenPermissionToAdapter;
 
+    @Resource
+    private JpaJaxbGivenPermissionByAdapter jpaJaxbGivenPermissionByAdapter;
+    
     /**
      * Fetch a ProfileEntity from the database Instead of calling this function,
      * use the cache profileEntityCacheManager whenever is possible
@@ -609,16 +623,49 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         person.setOtherNames(otherNameManager.getOtherNamesV2(orcid));
         person.setResearcherUrls(researcherUrlManager.getResearcherUrlsV2(orcid));
 
-        // TODO: add mapper to get the latest version
-        person.setEmails(null);
-
+        
+        //The rest should come from the ProfileEntity object
+        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);       
+        Delegation delegation = null;
+        Set<GivenPermissionToEntity> givenPermissionTo = profile.getGivenPermissionTo();
+        Set<GivenPermissionByEntity> givenPermissionBy = profile.getGivenPermissionBy();
+        
+        if(givenPermissionTo != null || givenPermissionBy != null) {
+            delegation = new Delegation();
+            if(givenPermissionTo != null) {
+                List<DelegationDetails> detailsList = jpaJaxbGivenPermissionToAdapter.toDelegationDetailsList(givenPermissionTo);
+                List<GivenPermissionTo> givenPermissionToList = new ArrayList<GivenPermissionTo>();
+                for(DelegationDetails details : detailsList) {
+                    GivenPermissionTo to = new GivenPermissionTo();
+                    to.setDelegationDetails(details);
+                    givenPermissionToList.add(to);
+                }
+                delegation.setGivenPermissionTo(givenPermissionToList);
+            }
+            
+            if(givenPermissionBy != null) {
+                List<DelegationDetails> detailsList = jpaJaxbGivenPermissionByAdapter.toDelegationDetailsList(givenPermissionBy);
+                List<GivenPermissionBy> givenPermissionByList = new ArrayList<GivenPermissionBy>();
+                for(DelegationDetails details : detailsList) {
+                    GivenPermissionBy by = new GivenPermissionBy();
+                    by.setDelegationDetails(details);
+                    givenPermissionByList.add(by);
+                }
+                delegation.setGivenPermissionBy(givenPermissionByList);
+            }            
+        }
+        
+        person.setDelegation(delegation);
+                                
         // TODO: implement
-        person.setDelegation(null);
         person.setApplications(null);
         
-
+        // TODO: add mapper to get the latest version
+        person.setEmails(null);
+        
         return person;
     }
+            
 }
 
 class GroupableActivityComparator implements Comparator<GroupableActivity> {

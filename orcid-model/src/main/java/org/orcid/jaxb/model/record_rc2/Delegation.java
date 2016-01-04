@@ -17,6 +17,7 @@
 package org.orcid.jaxb.model.record_rc2;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -33,25 +34,25 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(propOrder = { "givenPermissionTo", "givenPermissionBy" })
 @XmlRootElement(name = "delegation", namespace = "http://www.orcid.org/ns/person")
 public class Delegation implements Serializable {
-    private static final long serialVersionUID = 1646402749205402278L;
+    private static final long serialVersionUID = 1646402749205402278L;        
     @XmlElement(namespace = "http://www.orcid.org/ns/person", name = "given-permission-to")
-    protected GivenPermissionTo givenPermissionTo;
+    protected List<GivenPermissionTo> givenPermissionTo;
     @XmlElement(namespace = "http://www.orcid.org/ns/person", name = "given-permission-by")
-    protected GivenPermissionBy givenPermissionBy;
+    protected List<GivenPermissionBy> givenPermissionBy;
 
-    public GivenPermissionTo getGivenPermissionTo() {
+    public List<GivenPermissionTo> getGivenPermissionTo() {
         return givenPermissionTo;
     }
 
-    public void setGivenPermissionTo(GivenPermissionTo givenPermissionTo) {
+    public void setGivenPermissionTo(List<GivenPermissionTo> givenPermissionTo) {
         this.givenPermissionTo = givenPermissionTo;
     }
 
-    public GivenPermissionBy getGivenPermissionBy() {
+    public List<GivenPermissionBy> getGivenPermissionBy() {
         return givenPermissionBy;
     }
 
-    public void setGivenPermissionBy(GivenPermissionBy givenPermissionBy) {
+    public void setGivenPermissionBy(List<GivenPermissionBy> givenPermissionBy) {
         this.givenPermissionBy = givenPermissionBy;
     }
 

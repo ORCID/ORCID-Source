@@ -53,12 +53,14 @@ public class JpaJaxbGivenPermissionToAdapterTest {
     public void fromDelegationDetailsToGivenPermissionToEntityTest() throws JAXBException {
         Delegation delegation = getDelegation();
         assertNotNull(delegation);
-        assertNotNull(delegation.getGivenPermissionBy());        
-        assertNotNull(delegation.getGivenPermissionBy().getDelegationDetails());
+        assertNotNull(delegation.getGivenPermissionBy());
+        assertNotNull(delegation.getGivenPermissionBy().get(0));
+        assertNotNull(delegation.getGivenPermissionBy().get(0).getDelegationDetails());
         assertNotNull(delegation.getGivenPermissionTo());
-        assertNotNull(delegation.getGivenPermissionTo().getDelegationDetails());
+        assertNotNull(delegation.getGivenPermissionTo().get(0));
+        assertNotNull(delegation.getGivenPermissionTo().get(0).getDelegationDetails());
         
-        DelegationDetails details = delegation.getGivenPermissionTo().getDelegationDetails();
+        DelegationDetails details = delegation.getGivenPermissionTo().get(0).getDelegationDetails();
         assertEquals(Long.valueOf(1), details.getPutCode());
         assertNotNull(details.getApprovalDate());
         assertNotNull(details.getApprovalDate().getValue());        

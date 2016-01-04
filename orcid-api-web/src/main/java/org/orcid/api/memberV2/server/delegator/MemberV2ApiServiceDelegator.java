@@ -154,4 +154,6 @@ public interface MemberV2ApiServiceDelegator {
     Response updateAddress(String orcid, Long putCode, Address address);
 
     Response deleteAddress(String orcid, Long putCode);
+    
+    Response viewPerson(String orcid);
 }
