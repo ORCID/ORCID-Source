@@ -127,6 +127,13 @@ var OrcidCookie = new function() {
                 + ((exdays == null) ? "" : "; expires=" + exdate.toUTCString());
         document.cookie = c_name + "=" + c_value + ";path=/";
     };
+    
+    this.checkIfCookiesEnabled = function() {
+    	this.setCookie("cookieTest", "test", 1);
+    	var result = this.getCookie("cookieTest");
+    	this.setCookie("cookieTest", "test", -1);
+        return result;
+    };
 };
 
 var OrcidGA = function() {
@@ -221,7 +228,7 @@ function myTest() {
 
 function checkOrcidLoggedIn() {
     
-	if (checkIfCookiesEnabled()) {
+	if (OrcidCookie.checkIfCookiesEnabled()) {
 		$.ajax(
 		    {
 		        url : orcidVar.baseUri + '/userStatus.json?callback=?',
@@ -336,7 +343,7 @@ $(function() {
     if (basePath.startsWith(baseUrl + 'register')
             || basePath.startsWith(baseUrl + 'signin')
             || basePath.startsWith(baseUrl + 'oauth/signin')) {
-        if (!checkIfCookiesEnabled()) {
+        if (!OrcidCookie.checkIfCookiesEnabled()) {
             $('#cookie-check-msg').css("display", "inline");
         }
     }
@@ -4103,10 +4110,3 @@ function isIndexOf(needle) {
     }
     return indexOf.call(this, needle);
 };
-
-function checkIfCookiesEnabled() {
-	OrcidCookie.setCookie("cookieTest", "test", 1);
-	var result = OrcidCookie.getCookie("cookieTest");
-    OrcidCookie.setCookie("cookieTest", "test", -1);
-    return result;
-}
