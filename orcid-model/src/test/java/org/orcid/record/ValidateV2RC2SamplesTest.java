@@ -304,7 +304,7 @@ public class ValidateV2RC2SamplesTest {
         assertEquals(31, delegation.getGivenPermissionBy().getDelegationDetails().getApprovalDate().getValue().getDay());
         assertNotNull(delegation.getGivenPermissionBy().getDelegationDetails().getDelegateSummary());
         assertNotNull(delegation.getGivenPermissionBy().getDelegationDetails().getDelegateSummary().getCreditName());
-        assertEquals("credit-name", delegation.getGivenPermissionBy().getDelegationDetails().getDelegateSummary().getCreditName().getContent());
+        assertEquals("given-by-credit-name", delegation.getGivenPermissionBy().getDelegationDetails().getDelegateSummary().getCreditName().getContent());
         assertEquals(Visibility.PUBLIC, delegation.getGivenPermissionBy().getDelegationDetails().getDelegateSummary().getCreditName().getVisibility());
         assertNotNull(delegation.getGivenPermissionBy().getDelegationDetails().getDelegateSummary().getLastModifiedDate());
         assertNotNull(delegation.getGivenPermissionBy().getDelegationDetails().getDelegateSummary().getLastModifiedDate().getValue());
@@ -322,7 +322,7 @@ public class ValidateV2RC2SamplesTest {
         assertEquals(31, delegation.getGivenPermissionTo().getDelegationDetails().getApprovalDate().getValue().getDay());
         assertNotNull(delegation.getGivenPermissionTo().getDelegationDetails().getDelegateSummary());
         assertNotNull(delegation.getGivenPermissionTo().getDelegationDetails().getDelegateSummary().getCreditName());
-        assertEquals("credit-name", delegation.getGivenPermissionTo().getDelegationDetails().getDelegateSummary().getCreditName().getContent());
+        assertEquals("given-to-credit-name", delegation.getGivenPermissionTo().getDelegationDetails().getDelegateSummary().getCreditName().getContent());
         assertEquals(Visibility.PUBLIC, delegation.getGivenPermissionTo().getDelegationDetails().getDelegateSummary().getCreditName().getVisibility());
         assertNotNull(delegation.getGivenPermissionTo().getDelegationDetails().getDelegateSummary().getLastModifiedDate());
         assertNotNull(delegation.getGivenPermissionTo().getDelegationDetails().getDelegateSummary().getLastModifiedDate().getValue());
