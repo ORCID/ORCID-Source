@@ -42,7 +42,13 @@ public class OrcidOAuth2RequestValidator extends DefaultOAuth2RequestValidator {
             if (clientDetails.isScoped()) {
                 Set<String> validScope = clientDetails.getScope();
                 for (String scope : OAuth2Utils.parseParameterList(parameters.get("scope"))) {
-                    ScopePathType scopeType = ScopePathType.fromValue(scope);
+                	ScopePathType scopeType = null;
+                	try {
+                    	scopeType = ScopePathType.fromValue(scope);
+                    } catch(Exception e) {
+                    	throw new InvalidScopeException("Invalid scope: " + scope);
+                    }
+                	
                     if (scopeType.isClientCreditalScope())
                         throw new InvalidScopeException("Invalid scope: " + scope);
                     if (!validScope.contains(scope))
