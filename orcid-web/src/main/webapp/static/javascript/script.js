@@ -220,31 +220,39 @@ function myTest() {
 }
 
 function checkOrcidLoggedIn() {
-    $
-            .ajax(
-                    {
-                        url : orcidVar.baseUri + '/userStatus.json?callback=?',
-                        type : 'POST',
-                        dataType : 'json',
-                        success : function(data) {
-                            if (data.loggedIn == false
-                                    && (basePath.startsWith(baseUrl
-                                            + 'my-orcid') || basePath
-                                            .startsWith(baseUrl + 'account'))) {
-                                console.log("loggedOutRedir " + data);
-                                window.location.href = baseUrl + "signin";
-                            }
+	
+	//Test if cookies are enabled
+	OrcidCookie.setCookie("cookieTest", "test", 1);
+    if (OrcidCookie.getCookie("cookieTest")) {
+        // delete test cookie
+        OrcidCookie.setCookie("cookieTest", "test", -1);
+        
+        $.ajax(
+            {
+                url : orcidVar.baseUri + '/userStatus.json?callback=?',
+                type : 'POST',
+                dataType : 'json',
+                success : function(data) {
+                    if (data.loggedIn == false
+                            && (basePath.startsWith(baseUrl
+                                    + 'my-orcid') || basePath
+                                    .startsWith(baseUrl + 'account'))) {
+                        console.log("loggedOutRedir " + data);
+                        window.location.href = baseUrl + "signin";
+                    }
 
-                        }
-                    }).fail(
-                        // detects server is down or CSRF mismatches
-                        // do to session expiration or server bounces 
-                        function() {
-                            console.log("error with loggin check on :"
-                                + window.location.href);
-                            window.location.reload();
-                    });
-
+                }
+            }).fail(
+                // detects server is down or CSRF mismatches
+                // do to session expiration or server bounces 
+                function() {
+                    console.log("error with loggin check on :"
+                        + window.location.href);
+                    window.location.reload();
+            });
+    } else {
+        $('#cookie-check-msg').css("display", "inline");
+    }
 }
 
 var OM = OrcidMessage;
