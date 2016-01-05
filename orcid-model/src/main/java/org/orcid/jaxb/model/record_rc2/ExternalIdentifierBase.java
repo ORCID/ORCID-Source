@@ -23,10 +23,12 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.orcid.jaxb.model.common.Url;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "url", "relationship" })
-public class ExternalIdentifierBase implements GroupKey {
+public abstract class ExternalIdentifierBase implements GroupAble { 
     @XmlElement(name="relationship", namespace = "http://www.orcid.org/ns/common")
     protected Relationship relationship;
     @XmlElement(name="external-identifier-url", namespace = "http://www.orcid.org/ns/common")
@@ -46,11 +48,11 @@ public class ExternalIdentifierBase implements GroupKey {
     }
     
     @Override
-    public boolean passGroupingValidation() {
+    @JsonIgnore
+    public boolean isGroupAble() {
         //Dont group if it is a part-of identifier
         if(Relationship.PART_OF.equals(relationship))
             return false;
-        
         return true;
     }
     
@@ -80,4 +82,5 @@ public class ExternalIdentifierBase implements GroupKey {
             return false;
         return true;
     }
+    
 }

@@ -16,6 +16,7 @@
  */
 package org.orcid.jaxb.model.record_rc2;
 
-public interface GroupKey {
-    boolean passGroupingValidation();
+public interface GroupAble {
+    boolean isGroupAble();
+    String getGroupId();
 }

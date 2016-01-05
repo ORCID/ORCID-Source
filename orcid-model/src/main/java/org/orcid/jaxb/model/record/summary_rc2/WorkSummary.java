@@ -41,7 +41,6 @@ import org.orcid.jaxb.model.common.VisibilityType;
 import org.orcid.jaxb.model.record_rc2.Activity;
 import org.orcid.jaxb.model.record_rc2.GroupableActivity;
 import org.orcid.jaxb.model.record_rc2.WorkExternalIdentifiers;
-import org.orcid.jaxb.model.record_rc2.WorkSource;
 import org.orcid.jaxb.model.record_rc2.WorkTitle;
 import org.orcid.jaxb.model.record_rc2.WorkType;
 

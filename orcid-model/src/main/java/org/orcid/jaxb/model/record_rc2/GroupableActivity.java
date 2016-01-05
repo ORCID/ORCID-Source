@@ -17,6 +17,7 @@
 package org.orcid.jaxb.model.record_rc2;
 
 import org.orcid.jaxb.model.common.Filterable;
+import org.orcid.jaxb.model.common.LastModifiedDate;
 
 public interface GroupableActivity extends Filterable {
 
@@ -25,4 +26,6 @@ public interface GroupableActivity extends Filterable {
     String getDisplayIndex();
 
     int compareTo(GroupableActivity activity);
+
+	LastModifiedDate getLastModifiedDate();
 }

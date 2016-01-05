@@ -506,12 +506,12 @@ public class Work implements VisibilityType, Activity, Serializable {
             if (this.getWorkExternalIdentifiers().getExternalIdentifier() != null && !this.getWorkExternalIdentifiers().getExternalIdentifier().isEmpty())
                 return false;
         } else {
-            List<? extends GroupKey> otherExternalIdentifiers = other.getWorkExternalIdentifiers().getExternalIdentifier();
-            List<? extends GroupKey> thisExternalIdentifiers = this.getWorkExternalIdentifiers().getExternalIdentifier();
+            List<? extends GroupAble> otherExternalIdentifiers = other.getWorkExternalIdentifiers().getExternalIdentifier();
+            List<? extends GroupAble> thisExternalIdentifiers = this.getWorkExternalIdentifiers().getExternalIdentifier();
             boolean sharedExtId = false;
 
-            start: for (GroupKey thisId : thisExternalIdentifiers) {
-                for (GroupKey otherId : otherExternalIdentifiers) {
+            start: for (GroupAble thisId : thisExternalIdentifiers) {
+                for (GroupAble otherId : otherExternalIdentifiers) {
                     if (thisId.equals(otherId)) {
                         sharedExtId = true;
                         break start;

@@ -21,5 +21,5 @@ import java.util.List;
 
 
 public interface ExternalIdentifiersContainer {
-    List<? extends GroupKey> getExternalIdentifier();
+    List<? extends GroupAble> getExternalIdentifier();
 }

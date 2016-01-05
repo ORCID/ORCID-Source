@@ -17,9 +17,9 @@
 package org.orcid.jaxb.model.record.summary_rc2;
 
 import org.jsoup.helper.StringUtil;
-import org.orcid.jaxb.model.record_rc2.GroupKey;
+import org.orcid.jaxb.model.record_rc2.GroupAble;
 
-public class PeerReviewGroupKey implements GroupKey {    
+public class PeerReviewGroupKey implements GroupAble {    
     public static String KEY_NAME = "PEER-REVIEW"; 
     protected String groupId;
     
@@ -32,7 +32,7 @@ public class PeerReviewGroupKey implements GroupKey {
     } 
     
     @Override
-    public boolean passGroupingValidation() {
+    public boolean isGroupAble() {
         if(StringUtil.isBlank(groupId))
             return false;
         return true;
