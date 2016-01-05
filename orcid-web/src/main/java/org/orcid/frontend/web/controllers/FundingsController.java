@@ -46,8 +46,8 @@ import org.orcid.jaxb.model.message.FundingList;
 import org.orcid.jaxb.model.message.FundingType;
 import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.jaxb.model.record_rc1.FundingExternalIdentifier;
-import org.orcid.jaxb.model.record_rc1.Relationship;
+import org.orcid.jaxb.model.record_rc2.FundingExternalIdentifier;
+import org.orcid.jaxb.model.record_rc2.Relationship;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
 import org.orcid.persistence.dao.OrgDisambiguatedSolrDao;
 import org.orcid.persistence.dao.ProfileDao;
@@ -247,7 +247,7 @@ public class FundingsController extends BaseWorkspaceController {
                     ProfileFundingEntity profileFunding = profileFundingManager.getProfileFundingEntity(Long.valueOf(funding.getPutCode()));
                     if(!PojoUtil.isEmpty(profileFunding.getExternalIdentifiersJson())) {
                         FundingExternalIdentifiers extIdsPojo = JsonUtils.readObjectFromJsonString(profileFunding.getExternalIdentifiersJson(), FundingExternalIdentifiers.class);
-                        org.orcid.jaxb.model.record_rc1.FundingExternalIdentifiers fundingExternalIdentifiers = extIdsPojo.toRecordPojo();
+                        org.orcid.jaxb.model.record_rc2.FundingExternalIdentifiers fundingExternalIdentifiers = extIdsPojo.toRecordPojo();
                         enhanceExternalIdentifiers(form, fundingExternalIdentifiers);
                     }
                     
@@ -323,7 +323,7 @@ public class FundingsController extends BaseWorkspaceController {
         //XXX: Enhance the external identifiers with the new relationship field
         if(!PojoUtil.isEmpty(profileFunding.getExternalIdentifiersJson())) {
             FundingExternalIdentifiers extIdsPojo = JsonUtils.readObjectFromJsonString(profileFunding.getExternalIdentifiersJson(), FundingExternalIdentifiers.class);
-            org.orcid.jaxb.model.record_rc1.FundingExternalIdentifiers fundingExternalIdentifiers = extIdsPojo.toRecordPojo();
+            org.orcid.jaxb.model.record_rc2.FundingExternalIdentifiers fundingExternalIdentifiers = extIdsPojo.toRecordPojo();
             enhanceExternalIdentifiers(form, fundingExternalIdentifiers);
         }        
         if (funding.getType() != null) {
@@ -957,9 +957,9 @@ public class FundingsController extends BaseWorkspaceController {
      * */
     private void enhanceExternalIdentifiers(ProfileFundingEntity profileFunding, FundingForm funding) {
         if(funding != null && funding.getExternalIdentifiers() != null && !funding.getExternalIdentifiers().isEmpty()) {
-            org.orcid.jaxb.model.record_rc1.FundingExternalIdentifiers extIds = new org.orcid.jaxb.model.record_rc1.FundingExternalIdentifiers();
+            org.orcid.jaxb.model.record_rc2.FundingExternalIdentifiers extIds = new org.orcid.jaxb.model.record_rc2.FundingExternalIdentifiers();
             for(FundingExternalIdentifierForm extIdForm : funding.getExternalIdentifiers()) {
-                org.orcid.jaxb.model.record_rc1.FundingExternalIdentifier extId = extIdForm.toRecordFundingExternalIdentifier();
+                org.orcid.jaxb.model.record_rc2.FundingExternalIdentifier extId = extIdForm.toRecordFundingExternalIdentifier();
                 extIds.getExternalIdentifier().add(extId);
             }            
             
@@ -978,7 +978,7 @@ public class FundingsController extends BaseWorkspaceController {
      * @param extIds
      *          The external identifiers used to enhance funding object          
      * */
-    private void enhanceExternalIdentifiers(FundingForm funding, org.orcid.jaxb.model.record_rc1.FundingExternalIdentifiers extIds) {
+    private void enhanceExternalIdentifiers(FundingForm funding, org.orcid.jaxb.model.record_rc2.FundingExternalIdentifiers extIds) {
         List<FundingExternalIdentifierForm> fundingExternalIdentifiers = new ArrayList<FundingExternalIdentifierForm>();
         if(extIds != null && !extIds.getExternalIdentifier().isEmpty()) {
             for(FundingExternalIdentifier extId : extIds.getExternalIdentifier()) {

@@ -25,9 +25,9 @@ import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.jaxb.model.common.Url;
-import org.orcid.jaxb.model.record_rc1.Relationship;
-import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifier;
-import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifiers;
+import org.orcid.jaxb.model.record_rc2.Relationship;
+import org.orcid.jaxb.model.record_rc2.WorkExternalIdentifier;
+import org.orcid.jaxb.model.record_rc2.WorkExternalIdentifiers;
 import org.orcid.persistence.dao.PeerReviewDao;
 import org.orcid.persistence.dao.ProfileFundingDao;
 import org.orcid.persistence.dao.WorkDao;
@@ -162,10 +162,10 @@ public class AddRelationshipFieldToExistingActivitiesExternalIds {
                     WorkEntity work = workDao.find(workId.longValue());
                     org.orcid.jaxb.model.message.WorkExternalIdentifiers oldExtIds = JsonUtils.readObjectFromJsonString(work.getExternalIdentifiersJson(),
                             org.orcid.jaxb.model.message.WorkExternalIdentifiers.class);
-                    org.orcid.jaxb.model.record_rc1.WorkExternalIdentifiers newExtIds = new org.orcid.jaxb.model.record_rc1.WorkExternalIdentifiers();
+                    org.orcid.jaxb.model.record_rc2.WorkExternalIdentifiers newExtIds = new org.orcid.jaxb.model.record_rc2.WorkExternalIdentifiers();
                     if (oldExtIds != null) {
                         for (org.orcid.jaxb.model.message.WorkExternalIdentifier oldExtId : oldExtIds.getWorkExternalIdentifier()) {
-                            org.orcid.jaxb.model.record_rc1.WorkExternalIdentifier newExtId = org.orcid.jaxb.model.record_rc1.WorkExternalIdentifier.fromMessageExtId(oldExtId);
+                            org.orcid.jaxb.model.record_rc2.WorkExternalIdentifier newExtId = org.orcid.jaxb.model.record_rc2.WorkExternalIdentifier.fromMessageExtId(oldExtId);
                             // Set the part_of field
                             if (org.orcid.jaxb.model.message.WorkExternalIdentifierType.ISSN.equals(oldExtId.getWorkExternalIdentifierType())) {
                                 if (org.orcid.jaxb.model.message.WorkType.BOOK.equals(work.getWorkType())) {
