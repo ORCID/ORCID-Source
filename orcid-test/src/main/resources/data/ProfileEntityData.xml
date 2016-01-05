@@ -684,6 +684,36 @@
             date_created="2011-06-29 15:31:00.00"
             />
 
+	<other_name
+            other_name_id="9"
+            display_name="Other Name # 1"
+            orcid="4444-4444-4444-4442"
+            visibility="PUBLIC"            
+            client_source_id="APP-5555555555555555"
+            last_modified="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
+            />
+
+	<other_name
+            other_name_id="10"
+            display_name="Other Name # 2"
+            orcid="4444-4444-4444-4442"
+            visibility="PRIVATE"            
+            client_source_id="APP-5555555555555555"
+            last_modified="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
+            />
+
+	<other_name
+            other_name_id="11"
+            display_name="Other Name # 3"
+            orcid="4444-4444-4444-4442"
+            visibility="PRIVATE"            
+            source_id="4444-4444-4444-4442"
+            last_modified="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
+            />
+
 	<address
             id="1"            
             iso2_country="US"

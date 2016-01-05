@@ -68,8 +68,8 @@ import org.orcid.jaxb.model.record.summary_rc1.WorkSummary;
 import org.orcid.jaxb.model.record.summary_rc1.Works;
 import org.orcid.jaxb.model.record_rc1.Citation;
 import org.orcid.jaxb.model.record_rc1.Education;
-import org.orcid.jaxb.model.record_rc1.Email;
-import org.orcid.jaxb.model.record_rc1.Emails;
+import org.orcid.jaxb.model.record_rc2.Email;
+import org.orcid.jaxb.model.record_rc2.Emails;
 import org.orcid.jaxb.model.record_rc1.Employment;
 import org.orcid.jaxb.model.record_rc1.Funding;
 import org.orcid.jaxb.model.record_rc1.FundingExternalIdentifier;
@@ -2378,6 +2378,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         fail();
     }
     
+    @SuppressWarnings("unchecked")
     @Test
     public void testViewPerson() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.PERSON_READ_LIMITED);
@@ -2462,6 +2463,43 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         }
         
         assertTrue(found2 && found3 && found5);
+        
+        assertNotNull(person.getKeywords());
+        assertNotNull(person.getKeywords().getKeywords());
+        assertEquals(1, person.getKeywords().getKeywords().size());
+        assertEquals("My keyword", person.getKeywords().getKeywords().get(0).getContent());
+        assertEquals(Long.valueOf(7), person.getKeywords().getKeywords().get(0).getPutCode());
+        assertEquals("APP-5555555555555555", person.getKeywords().getKeywords().get(0).getSource().retrieveSourcePath());
+        assertEquals("http://testserver.orcid.org/client/APP-5555555555555555", person.getKeywords().getKeywords().get(0).getSource().retriveSourceUri());
+        assertEquals(Visibility.PUBLIC, person.getKeywords().getKeywords().get(0).getVisibility());
+        assertNotNull(person.getKeywords().getKeywords().get(0).getCreatedDate());
+        assertNotNull(person.getKeywords().getKeywords().get(0).getLastModifiedDate());
+                        
+        assertNotNull(person.getOtherNames());
+        assertNotNull(person.getOtherNames().getOtherNames());
+        assertEquals(2, person.getOtherNames().getOtherNames().size());
+        
+        boolean found9 = false, found10 = false;
+        
+        for(OtherName otherName : person.getOtherNames().getOtherNames()) {
+            assertThat(otherName.getPutCode(), anyOf(is(9L), is(10L)));
+            assertNotNull(otherName.getSource());
+            assertEquals("APP-5555555555555555", otherName.getSource().retrieveSourcePath());
+            assertEquals("http://testserver.orcid.org/client/APP-5555555555555555", otherName.getSource().retriveSourceUri());
+            if(otherName.getPutCode() == 9L) {
+                assertEquals("Other Name # 1", otherName.getContent());
+                assertEquals(Visibility.PUBLIC, otherName.getVisibility());
+                found9 = true;
+            } else {
+                assertEquals("Other Name # 2", otherName.getContent());
+                assertEquals(Visibility.PRIVATE, otherName.getVisibility());
+                found10 = true;
+            }
+        }
+        
+        assertTrue(found9 && found10);
+        
+        assertNotNull(person.getResearcherUrls());
         //TODO: TEST PERSON
     }
     
