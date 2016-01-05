@@ -168,12 +168,26 @@ public class VisibilityFilterV2Impl implements VisibilityFilterV2 {
 
     @Override
     public Person filter(Person person) {
-        filter(person.getAddresses().getAddress());
-        filter(person.getEmails().getEmails());
-        filter(person.getExternalIdentifiers().getExternalIdentifier());
-        filter(person.getKeywords().getKeywords());
-        filter(person.getOtherNames().getOtherNames());
-        filter(person.getResearcherUrls().getResearcherUrls());
+        if(person.getAddresses() != null) {
+            filter(person.getAddresses().getAddress());
+        }
+        if(person.getEmails() != null) {
+            filter(person.getEmails().getEmails());
+        }
+        if(person.getExternalIdentifiers() != null) {
+            filter(person.getExternalIdentifiers().getExternalIdentifier());
+        }
+        if(person.getKeywords() != null) {
+            filter(person.getKeywords().getKeywords());
+        }
+        
+        if(person.getOtherNames() != null) {
+            filter(person.getOtherNames().getOtherNames());
+        }
+        
+        if(person.getResearcherUrls() != null) {
+            filter(person.getResearcherUrls().getResearcherUrls());
+        }        
 
         // If it is private
         try {

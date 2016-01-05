@@ -88,7 +88,8 @@
             biography="Michael Bentine CBE (26 January 1922[1] – 26 November 1996[2]) was a British comedian, comic actor and founding member of the Goons."
             indexing_status="DONE"
             orcid_type="USER"
-            reviewed="true"     
+            reviewed="true"
+            names_visibility="PUBLIC"     
             />
 
     <profile
@@ -820,8 +821,10 @@
         is_primary="true"
         is_current="true"
         is_verified="true"
-        visibility="PRIVATE"
+        visibility="LIMITED"
         source_id="4444-4444-4444-4442"
+        last_modified="2011-07-02 15:31:00.00"
+		date_created="2011-06-29 15:31:00.00"
     />
     
     <email

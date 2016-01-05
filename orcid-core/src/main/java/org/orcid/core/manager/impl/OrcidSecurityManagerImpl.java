@@ -40,13 +40,14 @@ import org.orcid.jaxb.model.record.summary_rc1.FundingSummary;
 import org.orcid.jaxb.model.record.summary_rc1.PeerReviewSummary;
 import org.orcid.jaxb.model.record.summary_rc1.WorkSummary;
 import org.orcid.jaxb.model.record_rc1.Education;
-import org.orcid.jaxb.model.record_rc1.Email;
+import org.orcid.jaxb.model.record_rc2.Email;
 import org.orcid.jaxb.model.record_rc1.Employment;
 import org.orcid.jaxb.model.record_rc1.Funding;
 import org.orcid.jaxb.model.record_rc1.PeerReview;
 import org.orcid.jaxb.model.record_rc1.Work;
 import org.orcid.jaxb.model.record_rc2.Address;
 import org.orcid.jaxb.model.record_rc2.Biography;
+import org.orcid.jaxb.model.record_rc2.Emails;
 import org.orcid.jaxb.model.record_rc2.ExternalIdentifier;
 import org.orcid.jaxb.model.record_rc2.Keyword;
 import org.orcid.jaxb.model.record_rc2.Name;
@@ -208,7 +209,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
             readLimitedScopes.add(ScopePathType.AFFILIATIONS_READ_LIMITED.value());
         } else if (filterable instanceof PeerReview || filterable instanceof PeerReviewSummary) {
             readLimitedScopes.add(ScopePathType.PEER_REVIEW_READ_LIMITED.value());
-        } else if (filterable instanceof ResearcherUrl || filterable instanceof Email || filterable instanceof Address || filterable instanceof ExternalIdentifier
+        } else if (filterable instanceof ResearcherUrl || filterable instanceof Email || filterable instanceof Emails || filterable instanceof Address || filterable instanceof ExternalIdentifier
                 || filterable instanceof Keyword || filterable instanceof OtherName || filterable instanceof Person || filterable instanceof Name || filterable instanceof Biography ) {
             readLimitedScopes.add(ScopePathType.PERSON_READ_LIMITED.value());
         }

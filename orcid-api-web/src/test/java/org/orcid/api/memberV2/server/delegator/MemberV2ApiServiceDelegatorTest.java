@@ -96,6 +96,7 @@ import org.orcid.jaxb.model.record_rc2.Keyword;
 import org.orcid.jaxb.model.record_rc2.Keywords;
 import org.orcid.jaxb.model.record_rc2.OtherName;
 import org.orcid.jaxb.model.record_rc2.OtherNames;
+import org.orcid.jaxb.model.record_rc2.Person;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -2379,8 +2380,89 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     
     @Test
     public void testViewPerson() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.READ_LIMITED);
-        Response response = serviceDelegator.viewAddresses("4444-4444-4444-4442");
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.PERSON_READ_LIMITED);
+        Response response = serviceDelegator.viewPerson("4444-4444-4444-4442");
+        assertNotNull(response);
+        Person person = (Person) response.getEntity();
+        assertNotNull(person);
+        assertNotNull(person.getName());
+        assertEquals(Visibility.PUBLIC, person.getName().getVisibility());
+        assertEquals("M. Bentine", person.getName().getCreditName().getContent());
+        assertEquals("Bentine", person.getName().getFamilyName().getContent());
+        assertEquals("Michael", person.getName().getGivenNames().getContent());
+
+        assertNotNull(person.getAddresses());
+        assertNotNull(person.getAddresses().getAddress());
+        assertEquals(1, person.getAddresses().getAddress().size());
+        assertNotNull(person.getAddresses().getAddress().get(0).getCreatedDate());
+        assertNotNull(person.getAddresses().getAddress().get(0).getLastModifiedDate());
+        assertNotNull(person.getAddresses().getAddress().get(0).getCountry());
+        assertEquals(Iso3166Country.US, person.getAddresses().getAddress().get(0).getCountry().getValue());        
+        assertTrue(person.getAddresses().getAddress().get(0).getPrimary());
+        assertEquals(Long.valueOf(1), person.getAddresses().getAddress().get(0).getPutCode());
+        assertNotNull(person.getAddresses().getAddress().get(0).getSource());
+        assertEquals("APP-5555555555555555", person.getAddresses().getAddress().get(0).getSource().retrieveSourcePath());
+        assertEquals("http://testserver.orcid.org/client/APP-5555555555555555", person.getAddresses().getAddress().get(0).getSource().retriveSourceUri());
+        assertEquals(Visibility.PUBLIC, person.getAddresses().getAddress().get(0).getVisibility());
+        
+        assertNotNull(person.getBiography());
+        assertEquals("Michael Bentine CBE (26 January 1922[1] – 26 November 1996[2]) was a British comedian, comic actor and founding member of the Goons.", person.getBiography().getContent());
+        assertEquals(Visibility.PUBLIC, person.getBiography().getVisibility());
+        
+        assertNotNull(person.getEmails());
+        assertNotNull(person.getEmails().getEmails());
+        assertEquals(1, person.getEmails().getEmails().size());
+        assertEquals("michael@bentine.com", person.getEmails().getEmails().get(0).getEmail());
+        assertEquals(Visibility.LIMITED, person.getEmails().getEmails().get(0).getVisibility());
+        assertNotNull(person.getEmails().getEmails().get(0).getSource());
+        assertEquals("4444-4444-4444-4442", person.getEmails().getEmails().get(0).getSource().retrieveSourcePath());
+        assertEquals("http://testserver.orcid.org/4444-4444-4444-4442", person.getEmails().getEmails().get(0).getSource().retriveSourceUri());        
+        assertNull(person.getEmails().getEmails().get(0).getPutCode());
+        assertNotNull(person.getEmails().getEmails().get(0).getLastModifiedDate());
+        assertNotNull(person.getEmails().getEmails().get(0).getCreatedDate());
+        
+        
+        assertNotNull(person.getExternalIdentifiers());
+        assertNotNull(person.getExternalIdentifiers().getExternalIdentifier());
+        assertEquals(3, person.getExternalIdentifiers().getExternalIdentifier().size());
+        
+        boolean found2 = false, found3 = false, found5 = false;
+        
+        List<ExternalIdentifier> extIds = person.getExternalIdentifiers().getExternalIdentifier();
+        for(ExternalIdentifier extId : extIds) {
+            assertThat(extId.getPutCode(), anyOf(is(2L), is(3L), is(5L)));
+            assertNotNull(extId.getCreatedDate());
+            assertNotNull(extId.getLastModifiedDate());
+            assertNotNull(extId.getSource());
+            if(extId.getPutCode() == 2L ) {
+                assertEquals("Facebook", extId.getCommonName());                
+                assertEquals("abc123", extId.getReference());                
+                assertEquals("http://www.facebook.com/abc123", extId.getUrl().getValue());
+                assertEquals(Visibility.PUBLIC, extId.getVisibility());
+                assertEquals("APP-5555555555555555", extId.getSource().retrieveSourcePath());
+                assertEquals("http://testserver.orcid.org/client/APP-5555555555555555", extId.getSource().retriveSourceUri());
+                found2 = true;
+            } else if(extId.getPutCode() == 3L ) {
+                assertEquals("Facebook", extId.getCommonName());                
+                assertEquals("abc456", extId.getReference());                
+                assertEquals("http://www.facebook.com/abc456", extId.getUrl().getValue());
+                assertEquals(Visibility.LIMITED, extId.getVisibility());
+                assertEquals("4444-4444-4444-4442", extId.getSource().retrieveSourcePath());
+                assertEquals("http://testserver.orcid.org/4444-4444-4444-4442", extId.getSource().retriveSourceUri());
+                found3 = true;
+            } else {
+                assertEquals("Facebook", extId.getCommonName());                
+                assertEquals("abc012", extId.getReference());                
+                assertEquals("http://www.facebook.com/abc012", extId.getUrl().getValue());
+                assertEquals(Visibility.PRIVATE, extId.getVisibility());
+                assertEquals("APP-5555555555555555", extId.getSource().retrieveSourcePath());
+                assertEquals("http://testserver.orcid.org/client/APP-5555555555555555", extId.getSource().retriveSourceUri());
+                found5 = true;
+            }            
+        }
+        
+        assertTrue(found2 && found3 && found5);
+        //TODO: TEST PERSON
     }
     
     private Organization getOrganization(){

@@ -32,6 +32,7 @@ import org.orcid.core.adapter.JpaJaxbGivenPermissionByAdapter;
 import org.orcid.core.adapter.JpaJaxbGivenPermissionToAdapter;
 import org.orcid.core.manager.AddressManager;
 import org.orcid.core.manager.AffiliationsManager;
+import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ExternalIdentifierManager;
 import org.orcid.core.manager.OtherNameManager;
@@ -135,6 +136,9 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
 
     @Resource
     private ResearcherUrlManager researcherUrlManager;
+    
+    @Resource
+    private EmailManager emailManager;
     
     @Resource
     private JpaJaxbGivenPermissionToAdapter jpaJaxbGivenPermissionToAdapter;
@@ -613,6 +617,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     }
 
     @Override
+    @Transactional
     public Person getPersonDetails(String orcid) {
         Person person = new Person();
         person.setBiography(getBiography(orcid));
@@ -622,7 +627,9 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         person.setName(personalDetailsManager.getName(orcid));
         person.setOtherNames(otherNameManager.getOtherNamesV2(orcid));
         person.setResearcherUrls(researcherUrlManager.getResearcherUrlsV2(orcid));
-
+        
+        // TODO: add mapper to get the latest version        
+        person.setEmails(emailManager.getEmails(orcid));
         
         //The rest should come from the ProfileEntity object
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);       
@@ -659,10 +666,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
                                 
         // TODO: implement
         person.setApplications(null);
-        
-        // TODO: add mapper to get the latest version
-        person.setEmails(null);
-        
+              
         return person;
     }
             
