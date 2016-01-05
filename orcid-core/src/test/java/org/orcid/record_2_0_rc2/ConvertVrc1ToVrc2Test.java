@@ -54,17 +54,15 @@ public class ConvertVrc1ToVrc2Test extends BaseTest {
         ActivitiesSummary rc1Activities = (ActivitiesSummary) jaxbUnmarshaller.unmarshal(rc1Stream);
 
         jaxbUnmarshaller = jaxbContext2.createUnmarshaller();
-        org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary rc2Activities1 = 
-        		(org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary) jaxbUnmarshaller
+        org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary rc2Activities1 = (org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary) jaxbUnmarshaller
                 .unmarshal(rc2Stream);
 
-        org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary rc2Activities2 = 
-        		new org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary();
-        		versionConverterV2_0_rc1ToV2_0rc2.upgrade(rc2Activities2, new V2Convertible(rc1Activities, "v2_rc1"));
+        org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary rc2Activities2 = new org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary();
+        versionConverterV2_0_rc1ToV2_0rc2.upgrade(rc2Activities2, new V2Convertible(rc1Activities, "v2_rc1"));
 
-       assertEquals(rc2Activities1.toString(), rc2Activities2.toString());
+        assertEquals(rc2Activities1.toString(), rc2Activities2.toString());
     }
-    
+
     @Test
     public void upgradeEducationsToVrc2Test() throws JAXBException {
 
@@ -78,17 +76,14 @@ public class ConvertVrc1ToVrc2Test extends BaseTest {
         Educations rc1Educations = (Educations) jaxbUnmarshaller.unmarshal(rc1Stream);
 
         jaxbUnmarshaller = jaxbContext2.createUnmarshaller();
-        org.orcid.jaxb.model.record.summary_rc2.Educations rc2Educations1 = 
-        		(org.orcid.jaxb.model.record.summary_rc2.Educations) jaxbUnmarshaller
-                .unmarshal(rc2Stream);
+        org.orcid.jaxb.model.record.summary_rc2.Educations rc2Educations1 = (org.orcid.jaxb.model.record.summary_rc2.Educations) jaxbUnmarshaller.unmarshal(rc2Stream);
 
-        org.orcid.jaxb.model.record.summary_rc2.Educations rc2Educations2 = 
-        		new org.orcid.jaxb.model.record.summary_rc2.Educations();
-        		versionConverterV2_0_rc1ToV2_0rc2.upgrade(rc2Educations2, new V2Convertible(rc1Educations, "v2_rc1"));
+        org.orcid.jaxb.model.record.summary_rc2.Educations rc2Educations2 = new org.orcid.jaxb.model.record.summary_rc2.Educations();
+        versionConverterV2_0_rc1ToV2_0rc2.upgrade(rc2Educations2, new V2Convertible(rc1Educations, "v2_rc1"));
 
-       assertEquals(rc2Educations1.getLastModifiedDate(), rc2Educations2.getLastModifiedDate());
+        assertEquals(rc2Educations1.getLastModifiedDate(), rc2Educations2.getLastModifiedDate());
     }
-    
+
     @Test
     public void upgradeEmploymentsToVrc2Test() throws JAXBException {
 
@@ -102,17 +97,14 @@ public class ConvertVrc1ToVrc2Test extends BaseTest {
         Employments rc1Employments = (Employments) jaxbUnmarshaller.unmarshal(rc1Stream);
 
         jaxbUnmarshaller = jaxbContext2.createUnmarshaller();
-        org.orcid.jaxb.model.record.summary_rc2.Employments rc2Employments1 = 
-        		(org.orcid.jaxb.model.record.summary_rc2.Employments) jaxbUnmarshaller
-                .unmarshal(rc2Stream);
+        org.orcid.jaxb.model.record.summary_rc2.Employments rc2Employments1 = (org.orcid.jaxb.model.record.summary_rc2.Employments) jaxbUnmarshaller.unmarshal(rc2Stream);
 
-        org.orcid.jaxb.model.record.summary_rc2.Employments rc2Employments2 = 
-        		new org.orcid.jaxb.model.record.summary_rc2.Employments();
-        		versionConverterV2_0_rc1ToV2_0rc2.upgrade(rc2Employments2, new V2Convertible(rc1Employments, "v2_rc1"));
+        org.orcid.jaxb.model.record.summary_rc2.Employments rc2Employments2 = new org.orcid.jaxb.model.record.summary_rc2.Employments();
+        versionConverterV2_0_rc1ToV2_0rc2.upgrade(rc2Employments2, new V2Convertible(rc1Employments, "v2_rc1"));
 
-       assertEquals(rc2Employments1.getLastModifiedDate(), rc2Employments2.getLastModifiedDate());
+        assertEquals(rc2Employments1.getLastModifiedDate(), rc2Employments2.getLastModifiedDate());
     }
-    
+
     @Test
     public void upgradeFundingsToVrc2Test() throws JAXBException {
 
@@ -126,17 +118,14 @@ public class ConvertVrc1ToVrc2Test extends BaseTest {
         Fundings rc1Fundings = (Fundings) jaxbUnmarshaller.unmarshal(rc1Stream);
 
         jaxbUnmarshaller = jaxbContext2.createUnmarshaller();
-        org.orcid.jaxb.model.record.summary_rc2.Fundings rc2Fundings1 = 
-        		(org.orcid.jaxb.model.record.summary_rc2.Fundings) jaxbUnmarshaller
-                .unmarshal(rc2Stream);
+        org.orcid.jaxb.model.record.summary_rc2.Fundings rc2Fundings1 = (org.orcid.jaxb.model.record.summary_rc2.Fundings) jaxbUnmarshaller.unmarshal(rc2Stream);
 
-        org.orcid.jaxb.model.record.summary_rc2.Fundings rc2Fundings2 = 
-        		new org.orcid.jaxb.model.record.summary_rc2.Fundings();
-        		versionConverterV2_0_rc1ToV2_0rc2.upgrade(rc2Fundings2, new V2Convertible(rc1Fundings, "v2_rc1"));
+        org.orcid.jaxb.model.record.summary_rc2.Fundings rc2Fundings2 = new org.orcid.jaxb.model.record.summary_rc2.Fundings();
+        versionConverterV2_0_rc1ToV2_0rc2.upgrade(rc2Fundings2, new V2Convertible(rc1Fundings, "v2_rc1"));
 
-       assertEquals(rc2Fundings1.getLastModifiedDate(), rc2Fundings2.getLastModifiedDate());
+        assertEquals(rc2Fundings1.getLastModifiedDate(), rc2Fundings2.getLastModifiedDate());
     }
-    
+
     @Test
     public void upgradePeerReviewsToVrc2Test() throws JAXBException {
 
@@ -150,17 +139,14 @@ public class ConvertVrc1ToVrc2Test extends BaseTest {
         PeerReviews rc1PeerReviews = (PeerReviews) jaxbUnmarshaller.unmarshal(rc1Stream);
 
         jaxbUnmarshaller = jaxbContext2.createUnmarshaller();
-        org.orcid.jaxb.model.record.summary_rc2.PeerReviews rc2PeerReviews1 = 
-        		(org.orcid.jaxb.model.record.summary_rc2.PeerReviews) jaxbUnmarshaller
-                .unmarshal(rc2Stream);
+        org.orcid.jaxb.model.record.summary_rc2.PeerReviews rc2PeerReviews1 = (org.orcid.jaxb.model.record.summary_rc2.PeerReviews) jaxbUnmarshaller.unmarshal(rc2Stream);
 
-        org.orcid.jaxb.model.record.summary_rc2.PeerReviews rc2PeerReviews2 = 
-        		new org.orcid.jaxb.model.record.summary_rc2.PeerReviews();
-        		versionConverterV2_0_rc1ToV2_0rc2.upgrade(rc2PeerReviews2, new V2Convertible(rc1PeerReviews, "v2_rc1"));
+        org.orcid.jaxb.model.record.summary_rc2.PeerReviews rc2PeerReviews2 = new org.orcid.jaxb.model.record.summary_rc2.PeerReviews();
+        versionConverterV2_0_rc1ToV2_0rc2.upgrade(rc2PeerReviews2, new V2Convertible(rc1PeerReviews, "v2_rc1"));
 
-       assertEquals(rc2PeerReviews1.getLastModifiedDate(), rc2PeerReviews2.getLastModifiedDate());
+        assertEquals(rc2PeerReviews1.getLastModifiedDate(), rc2PeerReviews2.getLastModifiedDate());
     }
-    
+
     @Test
     public void upgradeWorksToVrc2Test() throws JAXBException {
 
@@ -174,14 +160,11 @@ public class ConvertVrc1ToVrc2Test extends BaseTest {
         Works rc1Works = (Works) jaxbUnmarshaller.unmarshal(rc1Stream);
 
         jaxbUnmarshaller = jaxbContext2.createUnmarshaller();
-        org.orcid.jaxb.model.record.summary_rc2.Works rc2Works1 = 
-        		(org.orcid.jaxb.model.record.summary_rc2.Works) jaxbUnmarshaller
-                .unmarshal(rc2Stream);
+        org.orcid.jaxb.model.record.summary_rc2.Works rc2Works1 = (org.orcid.jaxb.model.record.summary_rc2.Works) jaxbUnmarshaller.unmarshal(rc2Stream);
 
-        org.orcid.jaxb.model.record.summary_rc2.Works rc2Works2 = 
-        		new org.orcid.jaxb.model.record.summary_rc2.Works();
-        		versionConverterV2_0_rc1ToV2_0rc2.upgrade(rc2Works2, new V2Convertible(rc1Works, "v2_rc1"));
+        org.orcid.jaxb.model.record.summary_rc2.Works rc2Works2 = new org.orcid.jaxb.model.record.summary_rc2.Works();
+        versionConverterV2_0_rc1ToV2_0rc2.upgrade(rc2Works2, new V2Convertible(rc1Works, "v2_rc1"));
 
-       assertEquals(rc2Works1.getLastModifiedDate(), rc2Works2.getLastModifiedDate());
+        assertEquals(rc2Works1.getLastModifiedDate(), rc2Works2.getLastModifiedDate());
     }
 }
