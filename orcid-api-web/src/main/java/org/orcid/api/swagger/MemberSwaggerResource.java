@@ -68,18 +68,12 @@ public class MemberSwaggerResource extends SwaggerJSONResource {
         oauth.scope(ScopePathType.GROUP_ID_RECORD_UPDATE.value(), "Update groups");
         s.securityDefinition("orcid_auth", oauth);
 
-        /*
-         * OAuth2Definition oauthTwoLegs = new OAuth2Definition();
-         * oauthTwoLegs.application(this.tokenEndPoint);
-         * oauthTwoLegs.scope(ScopePathType.PREMIUM_NOTIFICATION.value(),
-         * "Notifications");
-         * s.securityDefinition("orcid_two_legs",oauthTwoLegs);
-         */
+        OAuth2Definition oauthTwoLegs = new OAuth2Definition();
+        oauthTwoLegs.application(this.tokenEndPoint);
+        oauthTwoLegs.scope(ScopePathType.PREMIUM_NOTIFICATION.value(), "Notifications");
+        oauthTwoLegs.scope(ScopePathType.READ_PUBLIC.value(), "Read Public record");
+        s.securityDefinition("orcid_two_legs", oauthTwoLegs);
 
-        // TODO: fix swagger UI to recognize two legged auth flow.
-        // or we can put bearer tokens in as implicit params...
-        // s.securityDefinition("bearer_token", new
-        // ApiKeyAuthDefinition("bearer_token", In.HEADER));
         return s;
     }
 
