@@ -34,7 +34,7 @@ import org.orcid.utils.DateUtils;
 
 public class VersionConverterHelper {
 
-	public static Date calculateLatest(ActivitiesContainer actContainerRc1, org.orcid.jaxb.model.record_rc2.ActivitiesContainer actContainerRc2) {
+    public static Date calculateLatest(ActivitiesContainer actContainerRc1, org.orcid.jaxb.model.record_rc2.ActivitiesContainer actContainerRc2) {
         XMLGregorianCalendar latestActSummary = null;
         Collection<? extends Activity> activities = actContainerRc1.retrieveActivities();
         if (activities != null && !activities.isEmpty()) {
@@ -52,7 +52,7 @@ public class VersionConverterHelper {
         return latestActSummary.toGregorianCalendar().getTime();
     }
 
-	public static Date calculateLatest(GroupsContainer groupsContainerRc1, org.orcid.jaxb.model.record_rc2.GroupsContainer groupsContainerRc2) {
+    public static Date calculateLatest(GroupsContainer groupsContainerRc1, org.orcid.jaxb.model.record_rc2.GroupsContainer groupsContainerRc2) {
         Date latestGrp = null;
         if (groupsContainerRc1.retrieveGroups() != null && !groupsContainerRc1.retrieveGroups().isEmpty()) {
             List<? extends Group> groupsRc1 = new ArrayList<>(groupsContainerRc1.retrieveGroups());
@@ -68,7 +68,7 @@ public class VersionConverterHelper {
         return latestGrp;
     }
 
-	public static Date calculateLatests(Group groupRc1, org.orcid.jaxb.model.record_rc2.Group groupRc2) {
+    public static Date calculateLatests(Group groupRc1, org.orcid.jaxb.model.record_rc2.Group groupRc2) {
         XMLGregorianCalendar latestActSummary = null;
         Collection<? extends GroupableActivity> activities = groupRc1.getActivities();
         if (activities != null && !activities.isEmpty()) {
