@@ -228,9 +228,7 @@ public class ActivitiesSummary implements Serializable, ActivitiesContainer {
 
     @Override
     public List<? extends Activity> retrieveActivities() {
-        List<Activity> activities = new ArrayList<Activity>();
-
-        return activities;
+       return new ArrayList<>(retrieveActivitiesAsMap().values());
     }
 
 	public LastModifiedDate getLastModifiedDate() {

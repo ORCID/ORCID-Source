@@ -43,6 +43,7 @@ import org.orcid.core.manager.WorkManager;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.core.utils.activities.ActivitiesGroup;
 import org.orcid.core.utils.activities.ActivitiesGroupGenerator;
+import org.orcid.core.version.impl.LastModifiedDatesHelper;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.common.Visibility;
@@ -401,6 +402,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         Works works = groupWorks(workSummaries, justPublic);
         activities.setWorks(works);
 
+        LastModifiedDatesHelper.calculateLatest(activities);
         return activities;
     }
 
@@ -437,10 +439,8 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
 
             // Sort the works
             Collections.sort(workGroup.getWorkSummary(), new GroupableActivityComparator());
-
             result.getWorkGroup().add(workGroup);
         }
-
         return result;
     }
 

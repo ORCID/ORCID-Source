@@ -61,11 +61,11 @@ public class VersionConverterImplV2_0_rc1ToV2_0rc2 implements V2VersionConverter
 
                         SortedSet<Date> latestDates = new TreeSet<>();
 
-                        latestDates.add(VersionConverterHelper.calculateLatest(actSummaryRc1.getEducations(), actSummaryRc2.getEducations()));
-                        latestDates.add(VersionConverterHelper.calculateLatest(actSummaryRc1.getEmployments(), actSummaryRc2.getEmployments()));
-                        latestDates.add(VersionConverterHelper.calculateLatest(actSummaryRc1.getFundings(), actSummaryRc2.getFundings()));
-                        latestDates.add(VersionConverterHelper.calculateLatest(actSummaryRc1.getPeerReviews(), actSummaryRc2.getPeerReviews()));
-                        latestDates.add(VersionConverterHelper.calculateLatest(actSummaryRc1.getWorks(), actSummaryRc2.getWorks()));
+                        latestDates.add(LastModifiedDatesHelper.calculateLatest(actSummaryRc2.getEducations()));
+                        latestDates.add(LastModifiedDatesHelper.calculateLatest(actSummaryRc2.getEmployments()));
+                        latestDates.add(LastModifiedDatesHelper.calculateLatest(actSummaryRc2.getFundings()));
+                        latestDates.add(LastModifiedDatesHelper.calculateLatest(actSummaryRc2.getPeerReviews()));
+                        latestDates.add(LastModifiedDatesHelper.calculateLatest(actSummaryRc2.getWorks()));
 
                         actSummaryRc2.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis(latestDates.last())));
                     }
@@ -77,7 +77,7 @@ public class VersionConverterImplV2_0_rc1ToV2_0rc2 implements V2VersionConverter
                     @Override
                     public void mapAtoB(Educations educationsRc1, org.orcid.jaxb.model.record.summary_rc2.Educations educationsRc2, MappingContext context) {
                         educationsRc2.setLastModifiedDate(new LastModifiedDate(
-                                DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis(VersionConverterHelper.calculateLatest(educationsRc1, educationsRc2))));
+                                DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis(LastModifiedDatesHelper.calculateLatest(educationsRc2))));
                     }
                 }).register();
 
@@ -87,7 +87,7 @@ public class VersionConverterImplV2_0_rc1ToV2_0rc2 implements V2VersionConverter
                     @Override
                     public void mapAtoB(Employments employmentsRc1, org.orcid.jaxb.model.record.summary_rc2.Employments employmentsRc2, MappingContext context) {
                         employmentsRc2.setLastModifiedDate(new LastModifiedDate(
-                                DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis(VersionConverterHelper.calculateLatest(employmentsRc1, employmentsRc2))));
+                                DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis(LastModifiedDatesHelper.calculateLatest(employmentsRc2))));
                     }
                 }).register();
 
@@ -98,7 +98,7 @@ public class VersionConverterImplV2_0_rc1ToV2_0rc2 implements V2VersionConverter
                     @Override
                     public void mapAtoB(Fundings fundingsRc1, org.orcid.jaxb.model.record.summary_rc2.Fundings fundingsRc2, MappingContext context) {
                         fundingsRc2.setLastModifiedDate(new LastModifiedDate(
-                                DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis(VersionConverterHelper.calculateLatest(fundingsRc1, fundingsRc2))));
+                                DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis(LastModifiedDatesHelper.calculateLatest(fundingsRc2))));
                     }
                 }).register();
 
@@ -109,7 +109,7 @@ public class VersionConverterImplV2_0_rc1ToV2_0rc2 implements V2VersionConverter
                     @Override
                     public void mapAtoB(PeerReviews peerReviewsRc1, org.orcid.jaxb.model.record.summary_rc2.PeerReviews peerReviewsRc2, MappingContext context) {
                         peerReviewsRc2.setLastModifiedDate(new LastModifiedDate(
-                                DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis(VersionConverterHelper.calculateLatest(peerReviewsRc1, peerReviewsRc2))));
+                                DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis(LastModifiedDatesHelper.calculateLatest(peerReviewsRc2))));
                     }
                 }).register();
 
@@ -119,7 +119,7 @@ public class VersionConverterImplV2_0_rc1ToV2_0rc2 implements V2VersionConverter
                     @Override
                     public void mapAtoB(Works worksRc1, org.orcid.jaxb.model.record.summary_rc2.Works worksRc2, MappingContext context) {
                         worksRc2.setLastModifiedDate(new LastModifiedDate(
-                                DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis(VersionConverterHelper.calculateLatest(worksRc1, worksRc2))));
+                                DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis(LastModifiedDatesHelper.calculateLatest(worksRc2))));
                     }
                 }).register();
         mapper = mapperFactory.getMapperFacade();
