@@ -45,6 +45,7 @@ import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_JSON;
 import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_XML;
 import static org.orcid.core.api.OrcidApiConstants.WORK;
 import static org.orcid.core.api.OrcidApiConstants.WORK_SUMMARY;
+import static org.orcid.core.api.OrcidApiConstants.PERSON;
 
 import java.net.URI;
 
@@ -807,7 +808,7 @@ public class MemberV2ApiServiceImplV2_0_rc2 {
 
     // Person
     @GET
-    @Path(ADDRESS)
+    @Path(PERSON)
     @ApiOperation(value = "Fetch person details", hidden = true, authorizations = {
             @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_READ_LIMITED, description = "you need this") }) })
     public Response viewPerson(@PathParam("orcid") String orcid) {

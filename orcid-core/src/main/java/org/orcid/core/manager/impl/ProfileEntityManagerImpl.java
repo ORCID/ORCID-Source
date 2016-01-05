@@ -78,6 +78,7 @@ import org.orcid.jaxb.model.record_rc2.Delegation;
 import org.orcid.jaxb.model.record_rc2.DelegationDetails;
 import org.orcid.jaxb.model.record_rc2.GivenPermissionBy;
 import org.orcid.jaxb.model.record_rc2.GivenPermissionTo;
+import org.orcid.jaxb.model.record_rc2.Name;
 import org.orcid.jaxb.model.record_rc2.Person;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.GivenPermissionByEntity;
@@ -626,10 +627,69 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         person.setKeywords(profileKeywordManager.getKeywordsV2(orcid));
         person.setName(personalDetailsManager.getName(orcid));
         person.setOtherNames(otherNameManager.getOtherNamesV2(orcid));
-        person.setResearcherUrls(researcherUrlManager.getResearcherUrlsV2(orcid));
-        
-        // TODO: add mapper to get the latest version        
+        person.setResearcherUrls(researcherUrlManager.getResearcherUrlsV2(orcid));             
         person.setEmails(emailManager.getEmails(orcid));
+        
+        //The rest should come from the ProfileEntity object
+        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);       
+        Delegation delegation = null;
+        Set<GivenPermissionToEntity> givenPermissionTo = profile.getGivenPermissionTo();
+        Set<GivenPermissionByEntity> givenPermissionBy = profile.getGivenPermissionBy();
+        
+        if(givenPermissionTo != null || givenPermissionBy != null) {
+            delegation = new Delegation();
+            if(givenPermissionTo != null) {
+                List<DelegationDetails> detailsList = jpaJaxbGivenPermissionToAdapter.toDelegationDetailsList(givenPermissionTo);
+                List<GivenPermissionTo> givenPermissionToList = new ArrayList<GivenPermissionTo>();
+                for(DelegationDetails details : detailsList) {
+                    GivenPermissionTo to = new GivenPermissionTo();
+                    to.setDelegationDetails(details);
+                    givenPermissionToList.add(to);
+                }
+                delegation.setGivenPermissionTo(givenPermissionToList);
+            }
+            
+            if(givenPermissionBy != null) {
+                List<DelegationDetails> detailsList = jpaJaxbGivenPermissionByAdapter.toDelegationDetailsList(givenPermissionBy);
+                List<GivenPermissionBy> givenPermissionByList = new ArrayList<GivenPermissionBy>();
+                for(DelegationDetails details : detailsList) {
+                    GivenPermissionBy by = new GivenPermissionBy();
+                    by.setDelegationDetails(details);
+                    givenPermissionByList.add(by);
+                }
+                delegation.setGivenPermissionBy(givenPermissionByList);
+            }            
+        }
+        
+        person.setDelegation(delegation);
+                                
+        // TODO: implement
+        person.setApplications(null);
+              
+        return person;
+    }
+
+    @Override
+    @Transactional
+    public Person getPublicPersonDetails(String orcid) {
+        Person person = new Person();
+        
+        Biography bio = getBiography(orcid);
+        if(Visibility.PUBLIC.equals(bio.getVisibility())) {
+            person.setBiography(bio);
+        }
+        
+        Name name = personalDetailsManager.getName(orcid);
+        if(Visibility.PUBLIC.equals(name.getVisibility())) {
+            person.setName(name);
+        }
+        
+        person.setAddresses(addressManager.getPublicAddresses(orcid));
+        person.setExternalIdentifiers(externalIdentifierManager.getPublicExternalIdentifiersV2(orcid));
+        person.setKeywords(profileKeywordManager.getPublicKeywordsV2(orcid));
+        person.setOtherNames(otherNameManager.getPublicOtherNamesV2(orcid));
+        person.setResearcherUrls(researcherUrlManager.getPublicResearcherUrlsV2(orcid));             
+        person.setEmails(emailManager.getPublicEmails(orcid));
         
         //The rest should come from the ProfileEntity object
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);       

@@ -49,7 +49,7 @@ import org.orcid.core.manager.WorkManager;
 import org.orcid.core.security.visibility.aop.AccessControl;
 import org.orcid.core.security.visibility.filter.VisibilityFilterV2;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.jaxb.model.record.summary_rc1.ActivitiesSummary;
 import org.orcid.jaxb.model.record.summary_rc1.EducationSummary;
 import org.orcid.jaxb.model.record.summary_rc1.EmploymentSummary;
@@ -71,6 +71,7 @@ import org.orcid.jaxb.model.record_rc2.Keyword;
 import org.orcid.jaxb.model.record_rc2.Keywords;
 import org.orcid.jaxb.model.record_rc2.OtherName;
 import org.orcid.jaxb.model.record_rc2.OtherNames;
+import org.orcid.jaxb.model.record_rc2.Person;
 import org.orcid.jaxb.model.record_rc2.PersonalDetails;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
@@ -186,7 +187,7 @@ public class PublicV2ApiServiceDelegatorImpl implements PublicV2ApiServiceDelega
         Work w = (Work) this.viewWork(orcid, putCode).getEntity();
         ProfileEntity entity = profileEntityManager.findByOrcid(orcid);
         String creditName = null;
-        if (!entity.getNamesVisibility().isMoreRestrictiveThan(Visibility.PUBLIC)){
+        if (!entity.getNamesVisibility().isMoreRestrictiveThan(org.orcid.jaxb.model.message.Visibility.PUBLIC)){
             creditName = entity.getCreditName();
         }
         WorkToCiteprocTranslator tran = new  WorkToCiteprocTranslator();
@@ -376,5 +377,12 @@ public class PublicV2ApiServiceDelegatorImpl implements PublicV2ApiServiceDelega
         Address address = addressManager.getAddress(orcid, putCode);
         orcidSecurityManager.checkVisibility(address);
         return Response.ok(address).build();
+    }
+    
+    @Override
+    @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED, enableAnonymousAccess = true)
+    public Response viewPerson(String orcid) {
+        Person person = profileEntityManager.getPublicPersonDetails(orcid);
+        return Response.ok(person).build();
     }
 }

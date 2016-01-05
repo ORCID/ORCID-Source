@@ -99,4 +99,6 @@ public interface ProfileEntityManager {
     Biography getBiography(String orcid); 
     
     Person getPersonDetails(String orcid);
+    
+    Person getPublicPersonDetails(String orcid);
 }

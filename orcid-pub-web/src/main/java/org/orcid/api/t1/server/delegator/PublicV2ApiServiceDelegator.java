@@ -71,4 +71,6 @@ public interface PublicV2ApiServiceDelegator {
     Response viewAddresses(String orcid);
     
     Response viewAddress(String orcid, Long putCode);
+    
+    Response viewPerson(String orcid);
 }

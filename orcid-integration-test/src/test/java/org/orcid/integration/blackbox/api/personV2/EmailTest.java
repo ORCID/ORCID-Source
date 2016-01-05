@@ -36,8 +36,8 @@ import org.orcid.integration.api.t2.T2OAuthAPIService;
 import org.orcid.integration.blackbox.BlackBoxBase;
 import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.record_rc1.Email;
-import org.orcid.jaxb.model.record_rc1.Emails;
+import org.orcid.jaxb.model.record_rc2.Email;
+import org.orcid.jaxb.model.record_rc2.Emails;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -123,7 +123,7 @@ public class EmailTest extends BlackBoxBase {
         assertListContainsEmail("limited@email.com", Visibility.LIMITED, emails);
     }
     
-    private void assertListContainsEmail(String emailString, Visibility visibility, Emails emails) {
+    public static void assertListContainsEmail(String emailString, Visibility visibility, Emails emails) {
         assertNotNull(emails);
         assertNotNull(emails.getEmails());
         assertFalse(emails.getEmails().isEmpty());        

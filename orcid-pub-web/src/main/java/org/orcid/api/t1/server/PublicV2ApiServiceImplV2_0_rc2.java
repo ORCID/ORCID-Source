@@ -32,6 +32,7 @@ import static org.orcid.core.api.OrcidApiConstants.ORCID_XML;
 import static org.orcid.core.api.OrcidApiConstants.OTHER_NAMES;
 import static org.orcid.core.api.OrcidApiConstants.PEER_REVIEW;
 import static org.orcid.core.api.OrcidApiConstants.PEER_REVIEW_SUMMARY;
+import static org.orcid.core.api.OrcidApiConstants.PERSON;
 import static org.orcid.core.api.OrcidApiConstants.PUTCODE;
 import static org.orcid.core.api.OrcidApiConstants.RESEARCHER_URLS;
 import static org.orcid.core.api.OrcidApiConstants.STATUS_PATH;
@@ -40,6 +41,8 @@ import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_XML;
 import static org.orcid.core.api.OrcidApiConstants.WORK;
 import static org.orcid.core.api.OrcidApiConstants.WORK_SUMMARY;
 import static org.orcid.core.api.OrcidApiConstants.KEYWORDS;
+import static org.orcid.core.api.OrcidApiConstants.BIOGRAPHY;
+
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
@@ -290,10 +293,19 @@ protected PublicV2ApiServiceDelegator serviceDelegator;
     }
 
     @GET
-    @Path(ADDRESS)
-    @ApiOperation(value = "Fetch all addresses of a profile", hidden = true, authorizations = { @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_READ_LIMITED, description = "you need this") }) })
-    public Response viewAddresses(@PathParam("orcid") String orcid) {
-        return serviceDelegator.viewAddresses(orcid);
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(BIOGRAPHY)
+    @ApiOperation(value = "Get biography details", hidden = true, authorizations = {
+            @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_READ_LIMITED, description = "you need this") }) })
+    public Response viewBiography(@PathParam("orcid") String orcid) {
+        return serviceDelegator.viewBiography(orcid);
     }
     
+    @GET
+    @Path(PERSON)
+    @ApiOperation(value = "Fetch person details", hidden = true, authorizations = {
+            @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_READ_LIMITED, description = "you need this") }) })
+    public Response viewPerson(@PathParam("orcid") String orcid) {
+        return serviceDelegator.viewPerson(orcid);
+    }            
 }

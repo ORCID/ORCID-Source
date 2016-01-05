@@ -37,6 +37,7 @@ import static org.orcid.core.api.OrcidApiConstants.EXTERNAL_IDENTIFIERS;
 import static org.orcid.core.api.OrcidApiConstants.BIOGRAPHY;
 import static org.orcid.core.api.OrcidApiConstants.KEYWORDS;
 import static org.orcid.core.api.OrcidApiConstants.ADDRESS;
+import static org.orcid.core.api.OrcidApiConstants.PERSON;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -218,6 +219,11 @@ public class PublicV2ApiClientImpl {
     
     public ClientResponse viewAddressXML(String orcid, Long putCode) {
         URI uri = UriBuilder.fromPath(ADDRESS + PUTCODE).build(orcid, putCode);
+        return getClientReponse(uri, null);
+    }
+    
+    public ClientResponse viewPersonXML(String orcid) {
+        URI uri = UriBuilder.fromPath(PERSON).build(orcid);
         return getClientReponse(uri, null);
     }
     
