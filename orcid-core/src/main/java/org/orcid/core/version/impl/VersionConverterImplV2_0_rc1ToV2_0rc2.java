@@ -137,8 +137,9 @@ public class VersionConverterImplV2_0_rc1ToV2_0rc2 implements V2VersionConverter
 
     @Override
     public V2Convertible downgrade(Object targetObject, V2Convertible objectToDowngrade) {
-        mapper.map(objectToDowngrade.getObjectToConvert(), targetObject);
-        return new V2Convertible(objectToDowngrade.getObjectToConvert(), LOWER_VERSION);
+        ActivitiesSummary targetObject2 = new ActivitiesSummary();
+        mapper.map(objectToDowngrade.getObjectToConvert(), targetObject2);
+        return new V2Convertible(targetObject2, LOWER_VERSION);
     }
 
     @Override

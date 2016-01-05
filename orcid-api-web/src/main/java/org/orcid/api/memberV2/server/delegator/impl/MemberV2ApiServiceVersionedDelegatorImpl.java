@@ -25,6 +25,8 @@ import javax.ws.rs.core.Response;
 import org.orcid.api.memberV2.server.delegator.MemberV2ApiServiceDelegator;
 import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.version.OrcidMessageVersionConverterChain;
+import org.orcid.core.version.V2Convertible;
+import org.orcid.core.version.V2VersionConverterChain;
 import org.orcid.jaxb.model.message.OrcidMessage;
 
 public class MemberV2ApiServiceVersionedDelegatorImpl implements MemberV2ApiServiceDelegator<Object, Object, Object, Object, Object, Object, Object, Object, Object> {
@@ -35,7 +37,7 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements MemberV2ApiServ
     private String externalVersion;
 
     @Resource
-    private OrcidMessageVersionConverterChain orcidMessageVersionConverterChain;
+    private V2VersionConverterChain v2VersionConverterChain;
 
     @Override
     public Response viewStatusText() {
@@ -46,6 +48,7 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements MemberV2ApiServ
     @Override
     public Response viewActivities(String orcid) {
         Response response = memberV2ApiServiceDelegator.viewActivities(orcid);
+        response = downgradeResponse(response);
         return response;
     }
 
@@ -230,11 +233,12 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements MemberV2ApiServ
     }
 
     private Response downgradeResponse(Response response) {
-        OrcidMessage orcidMessage = (OrcidMessage) response.getEntity();
-        if (orcidMessage != null) {
-            orcidMessageVersionConverterChain.downgradeMessage(orcidMessage, externalVersion);
+        Object entity = response.getEntity();
+        V2Convertible result = null;
+        if (entity != null) {
+            result = v2VersionConverterChain.downgrade(new V2Convertible(entity, MemberV2ApiServiceDelegator.LATEST_V2_VERSION), externalVersion);
         }
-        return Response.fromResponse(response).entity(orcidMessage).build();
+        return Response.fromResponse(response).entity(result.getObjectToConvert()).build();
     }
 
     protected Response checkProfileStatus(Response response) {
