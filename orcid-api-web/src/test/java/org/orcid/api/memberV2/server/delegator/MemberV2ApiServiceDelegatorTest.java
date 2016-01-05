@@ -2174,17 +2174,17 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
 
     @Test
     public void testDeleteKeyword() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE);
-        Response response = serviceDelegator.viewKeywords("4444-4444-4444-4442");
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4499", ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE);
+        Response response = serviceDelegator.viewKeywords("4444-4444-4444-4499");
         assertNotNull(response);
         Keywords keywords = (Keywords) response.getEntity();
         assertNotNull(keywords);
         assertNotNull(keywords.getKeywords());
         assertEquals(1, keywords.getKeywords().size());
-        response = serviceDelegator.deleteKeyword("4444-4444-4444-4442", 7L);
+        response = serviceDelegator.deleteKeyword("4444-4444-4444-4499", 8L);
         assertNotNull(response);
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
-        response = serviceDelegator.viewKeywords("4444-4444-4444-4442");
+        response = serviceDelegator.viewKeywords("4444-4444-4444-4499");
         assertNotNull(response);
         keywords = (Keywords) response.getEntity();
         assertNotNull(keywords);
@@ -2282,7 +2282,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     @SuppressWarnings("rawtypes")
     @Test
     public void testAddAddress() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.READ_LIMITED);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE);
         
         Address address = new Address();
         address.setVisibility(Visibility.PUBLIC);
@@ -2308,11 +2308,16 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals("APP-5555555555555555", newAddress.getSource().retrieveSourcePath());
         assertNotNull(newAddress.getCreatedDate());
         assertNotNull(newAddress.getLastModifiedDate());
+        
+        //Remove it
+        response = serviceDelegator.deleteAddress("4444-4444-4444-4442", putCode);
+        assertNotNull(response);
+        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
     }
 
     @Test
     public void testUpdateAddress() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.READ_LIMITED);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.PERSON_READ_LIMITED);
         Response response = serviceDelegator.viewAddress("4444-4444-4444-4442", 1L);
         assertNotNull(response);
         Address address = (Address) response.getEntity();
@@ -2331,11 +2336,17 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         address = (Address) response.getEntity();
         assertNotNull(address);
         assertEquals(Iso3166Country.PA, address.getCountry().getValue());
+        
+        //Set it back to US again
+        address.getCountry().setValue(Iso3166Country.US);
+        response = serviceDelegator.updateAddress("4444-4444-4444-4442", 1L, address);
+        assertNotNull(response);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
     }
 
     @Test(expected = WrongSourceException.class)
     public void testUpdateAddressYouAreNotTheSourceOf() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.READ_LIMITED);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.PERSON_READ_LIMITED);
         Response response = serviceDelegator.viewAddress("4444-4444-4444-4447", 2L);
         assertNotNull(response);
         Address address = (Address) response.getEntity();
@@ -2500,7 +2511,46 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertTrue(found9 && found10);
         
         assertNotNull(person.getResearcherUrls());
-        //TODO: TEST PERSON
+        assertNotNull(person.getResearcherUrls().getResearcherUrls());
+        assertEquals(3, person.getResearcherUrls().getResearcherUrls().size());
+        
+        found9 = false;
+        found10 = false;
+        boolean found12 = false;
+        
+        for(ResearcherUrl rUrl : person.getResearcherUrls().getResearcherUrls()) {
+            assertNotNull(rUrl.getCreatedDate());
+            assertNotNull(rUrl.getLastModifiedDate());
+            assertNotNull(rUrl.getSource());
+            assertThat(rUrl.getPutCode(), anyOf(is(9L), is(10L), is(12L)));
+            assertNotNull(rUrl.getUrl());
+            if(rUrl.getPutCode().equals(9L)) {
+                assertEquals("4444-4444-4444-4442", rUrl.getSource().retrieveSourcePath());
+                assertEquals("http://testserver.orcid.org/4444-4444-4444-4442", rUrl.getSource().retriveSourceUri());                
+                assertEquals("http://www.researcherurl.com?id=9", rUrl.getUrl().getValue());
+                assertEquals("1", rUrl.getUrlName());
+                assertEquals(Visibility.PUBLIC, rUrl.getVisibility());
+                found9 = true;
+            } else if(rUrl.getPutCode().equals(10L)) {
+                assertEquals("4444-4444-4444-4442", rUrl.getSource().retrieveSourcePath());
+                assertEquals("http://testserver.orcid.org/4444-4444-4444-4442", rUrl.getSource().retriveSourceUri());                
+                assertEquals("http://www.researcherurl.com?id=10", rUrl.getUrl().getValue());
+                assertEquals("2", rUrl.getUrlName());
+                assertEquals(Visibility.LIMITED, rUrl.getVisibility());
+                found10 = true;
+            } else {
+                assertEquals(Long.valueOf(12), rUrl.getPutCode());
+                assertEquals("APP-5555555555555555", rUrl.getSource().retrieveSourcePath());
+                assertEquals("http://testserver.orcid.org/client/APP-5555555555555555", rUrl.getSource().retriveSourceUri());                
+                assertEquals("http://www.researcherurl.com?id=12", rUrl.getUrl().getValue());
+                assertEquals("4", rUrl.getUrlName());
+                assertEquals(Visibility.PRIVATE, rUrl.getVisibility());
+                found12 = true;
+            }
+        }
+        
+        assertTrue(found9 && found10 && found12);
+        //TODO: TEST APPLICATIONS AND DELEGATION
     }
     
     private Organization getOrganization(){

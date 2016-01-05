@@ -604,6 +604,50 @@
             date_created="2011-06-29 15:31:00.00"
             />	
 
+	<researcher_url
+            id="9"
+            url="http://www.researcherurl.com?id=9"
+            url_name="1"
+            orcid="4444-4444-4444-4442"
+            source_id="4444-4444-4444-4442"
+            visibility="PUBLIC"
+            last_modified="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
+            />	
+
+	<researcher_url
+            id="10"
+            url="http://www.researcherurl.com?id=10"
+            url_name="2"
+            orcid="4444-4444-4444-4442"
+            source_id="4444-4444-4444-4442"
+            visibility="LIMITED"
+            last_modified="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
+            />
+
+	<researcher_url
+            id="11"
+            url="http://www.researcherurl.com?id=11"
+            url_name="3"
+            orcid="4444-4444-4444-4442"
+            source_id="4444-4444-4444-4442"
+            visibility="PRIVATE"
+            last_modified="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
+            />
+
+	<researcher_url
+            id="12"
+            url="http://www.researcherurl.com?id=12"
+            url_name="4"
+            orcid="4444-4444-4444-4442"
+            client_source_id="APP-5555555555555555"
+            visibility="PRIVATE"
+            last_modified="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
+            />
+
     <other_name
             other_name_id="1"
             display_name="Slibberdy Slabinah"
@@ -1059,6 +1103,16 @@
     <profile_keyword 
     	id="7"
         profile_orcid="4444-4444-4444-4442"
+        keywords_name="My keyword"
+        visibility="PUBLIC"            
+        client_source_id="APP-5555555555555555"
+        last_modified="2011-07-02 15:31:00.00"
+		date_created="2011-06-29 15:31:00.00"
+    />
+    
+    <profile_keyword 
+    	id="8"
+        profile_orcid="4444-4444-4444-4499"
         keywords_name="My keyword"
         visibility="PUBLIC"            
         client_source_id="APP-5555555555555555"
