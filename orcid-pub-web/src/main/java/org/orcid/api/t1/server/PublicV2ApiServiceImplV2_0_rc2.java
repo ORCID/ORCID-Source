@@ -34,6 +34,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.orcid.core.api.OrcidApiConstants;
 import org.orcid.jaxb.model.message.ScopeConstants;
 
 import io.swagger.annotations.Api;
@@ -75,7 +76,6 @@ public class PublicV2ApiServiceImplV2_0_rc2 extends PublicV2ApiServiceImplBase {
         return serviceDelegator.viewEmails(orcid);
     }
     
-
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(PERSONAL_DETAILS)
@@ -110,5 +110,5 @@ public class PublicV2ApiServiceImplV2_0_rc2 extends PublicV2ApiServiceImplBase {
     @ApiOperation(value = "Fetch external identifier", hidden = true, authorizations = { @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_READ_LIMITED, description = "you need this") }) })
     public Response viewExternalIdentifier(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
         return serviceDelegator.viewExternalIdentifier(orcid, Long.valueOf(putCode));
-    }        
+    }      
 }

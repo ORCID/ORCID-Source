@@ -85,7 +85,7 @@ public class PublicV2ApiServiceImplBase {
     @Path("/")
     @ApiOperation(value = "Fetch the HTML swagger UI interface", hidden = true)
     public Response viewSwagger() {
-        return new SwaggerUIBuilder().buildSwaggerHTML(baseUri, pubBaseUri,false);
+        return new SwaggerUIBuilder().buildSwaggerHTML(baseUri, pubBaseUri,true);
     }
     
     @GET

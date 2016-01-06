@@ -19,9 +19,11 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <meta charset="UTF-8">
   <title>ORCID Swagger UI</title>
   <link rel="icon" type="image/png" href="${swaggerBaseUrl}images/favicon-32x32.png" sizes="32x32" />
   <link rel="icon" type="image/png" href="${swaggerBaseUrl}images/favicon-16x16.png" sizes="16x16" />
+  <link href='${swaggerBaseUrl}css/typography.css' media='screen' rel='stylesheet' type='text/css'/>
   <link href='${swaggerBaseUrl}css/reset.css' media='screen' rel='stylesheet' type='text/css'/>
   <link href='${swaggerBaseUrl}css/screen.css' media='screen' rel='stylesheet' type='text/css'/>
   <link href='${swaggerBaseUrl}css/reset.css' media='print' rel='stylesheet' type='text/css'/>
@@ -35,8 +37,15 @@
   <script src='${swaggerBaseUrl}lib/backbone-min.js' type='text/javascript'></script>
   <script src='${swaggerBaseUrl}swagger-ui.js' type='text/javascript'></script>
   <script src='${swaggerBaseUrl}lib/highlight.7.3.pack.js' type='text/javascript'></script>
+  <script src='${swaggerBaseUrl}lib/jsoneditor.min.js' type='text/javascript'></script>
   <script src='${swaggerBaseUrl}lib/marked.js' type='text/javascript'></script>
   <script src='${swaggerBaseUrl}lib/swagger-oauth.js' type='text/javascript'></script>
+
+  <!-- Some basic translations -->
+  <!-- <script src='${swaggerBaseUrl}lang/translator.js' type='text/javascript'></script> -->
+  <!-- <script src='${swaggerBaseUrl}lang/ru.js' type='text/javascript'></script> -->
+  <!-- <script src='${swaggerBaseUrl}lang/en.js' type='text/javascript'></script> -->
+
 
   <script type="text/javascript">
     $(function () {
@@ -48,6 +57,10 @@
             
       url = "${swaggerJsonUrl}";
       
+      // Pre load translate...
+      if(window.SwaggerTranslator) {
+        window.SwaggerTranslator.translate();
+      }
       window.swaggerUi = new SwaggerUi({
         url: url,
         dom_id: "swagger-ui-container",
@@ -58,8 +71,14 @@
               clientId: "unknown",
               clientSecret: "unknown",
               realm: "your-realms",
-              appName: "your-app-name"
+              appName: "your-app-name",
+              scopeSeparator: ",",
+              additionalQueryStringParams: {}
             });
+          }
+
+          if(window.SwaggerTranslator) {
+            window.SwaggerTranslator.translate();
           }
 
           $('pre code').each(function(i, e) {
@@ -70,7 +89,9 @@
           log("Unable to Load SwaggerUI");
         },
         docExpansion: "none",
+        jsonEditor: false,
         apisSorter: "alpha",
+        defaultModelRendering: 'schema',
         showRequestHeaders: false
       });
 
@@ -107,7 +128,7 @@
   </div>
 </div>
 
-<div id="message-bar" class="swagger-ui-wrap">&nbsp;</div>
+<div id="message-bar" class="swagger-ui-wrap" data-sw-translate>&nbsp;</div>
 <div id="swagger-ui-container" class="swagger-ui-wrap"></div>
 
 </body>

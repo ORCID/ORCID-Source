@@ -147,6 +147,12 @@
         <property name="serviceDelegator" ref="memberV2ApiServiceDelegator"/>
         <property name="notificationsServiceDelegator" ref="notificationsApiServiceDelegator"/>
     </bean>
+    
+    <!--  CERIF API -->
+    <bean id="memberCerifApiServiceDelegator" class="org.orcid.api.t2.cerif.delegator.impl.MemberCerifApiServiceDelegatorImpl" />
+    <bean id="memberCerifApiServiceImpl" class="org.orcid.api.t2.cerif.MemberCerifApiServiceImpl">
+        <property name="serviceDelegator" ref="memberCerifApiServiceDelegator"/>
+    </bean>
 
 
 </beans>
