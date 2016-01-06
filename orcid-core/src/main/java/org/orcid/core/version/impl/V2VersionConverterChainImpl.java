@@ -32,18 +32,26 @@ import org.orcid.core.version.V2VersionConverterChain;
 public class V2VersionConverterChainImpl implements V2VersionConverterChain {
 
     private List<V2VersionConverter> converters;
-    private List<V2VersionConverter> reversedConverters;
+    private List<V2VersionConverter> descendingConverters;
+    private ArrayList<String> versionIndex;
 
     public void setConverters(List<V2VersionConverter> converters) {
         this.converters = converters;
-        this.reversedConverters = new ArrayList<>(converters);
-        Collections.reverse(this.reversedConverters);
+        this.descendingConverters = new ArrayList<>(converters);
+        Collections.reverse(this.descendingConverters);
+        versionIndex = new ArrayList<String>();
+        for (int i = 0; i < converters.size(); i++) {
+            if (i == 0) {
+                versionIndex.add(converters.get(i).getLowerVersion());
+            }
+            versionIndex.add(converters.get(i).getUpperVersion());
+        }
     }
 
     @Override
     public V2Convertible downgrade(V2Convertible objectToDowngrade, String requiredVersion) {
-        for (V2VersionConverter converter : reversedConverters) {
-            if (converter.getLowerVersion().compareTo(requiredVersion) > -1) {
+        for (V2VersionConverter converter : descendingConverters) {
+            if (compareVersion(converter.getLowerVersion(), requiredVersion) > -1) {
                 objectToDowngrade = converter.downgrade(objectToDowngrade);
             } else {
                 return objectToDowngrade;
@@ -55,13 +63,22 @@ public class V2VersionConverterChainImpl implements V2VersionConverterChain {
     @Override
     public V2Convertible uprade(V2Convertible objectToUpgrade, String requiredVersion) {
         for (V2VersionConverter converter : converters) {
-            if (converter.getUpperVersion().compareTo(requiredVersion) < 1) {
+            if (compareVersion(converter.getUpperVersion(), requiredVersion) < 1) {
                 objectToUpgrade = converter.upgrade(objectToUpgrade);
             } else {
                 return objectToUpgrade;
             }
         }
         return objectToUpgrade;
+    }
+
+    private int compareVersion(String v1, String v2) {
+        if (versionIndex.indexOf(v1) < versionIndex.indexOf(v2)) {
+            return -1;
+        } else if (versionIndex.indexOf(v1) > versionIndex.indexOf(v2)) {
+            return 1;
+        }
+        return 0;
     }
 
 }
