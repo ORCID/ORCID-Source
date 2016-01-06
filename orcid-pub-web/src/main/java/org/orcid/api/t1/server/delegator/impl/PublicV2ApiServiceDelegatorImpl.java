@@ -378,7 +378,7 @@ public class PublicV2ApiServiceDelegatorImpl implements PublicV2ApiServiceDelega
     @Override
     @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewAddresses(String orcid) {
-        Addresses addresses = addressManager.getAddresses(orcid);
+        Addresses addresses = addressManager.getPublicAddresses(orcid);
         ElementUtils.setPathToAddresses(addresses, orcid);
         return Response.ok(addresses).build();
     }

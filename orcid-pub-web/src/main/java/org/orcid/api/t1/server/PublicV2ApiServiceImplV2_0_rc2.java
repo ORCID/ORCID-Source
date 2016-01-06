@@ -294,6 +294,19 @@ public class PublicV2ApiServiceImplV2_0_rc2 {
         return serviceDelegator.viewKeyword(orcid, Long.valueOf(putCode));
     }
 
+    
+    
+    
+    @GET
+    @Path(ADDRESS)
+    @ApiOperation(value = "Fetch all addresses", hidden = true, authorizations = {
+            @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_READ_LIMITED, description = "you need this") }) })
+    public Response viewAddresses(@PathParam("orcid") String orcid) {
+        return serviceDelegator.viewAddresses(orcid);
+    }
+    
+    
+    
     @GET
     @Path(ADDRESS + PUTCODE)
     @ApiOperation(value = "Fetch an address", hidden = true, authorizations = {
