@@ -46,6 +46,7 @@ import javax.ws.rs.core.Response;
 import org.orcid.api.common.swagger.SwaggerUIBuilder;
 import org.orcid.api.publicV2.server.delegator.PublicV2ApiServiceDelegator;
 import org.orcid.core.api.OrcidApiConstants;
+import org.orcid.jaxb.model.groupid.GroupIdRecord;
 import org.orcid.jaxb.model.record.summary_rc1.ActivitiesSummary;
 import org.orcid.jaxb.model.record.summary_rc1.EducationSummary;
 import org.orcid.jaxb.model.record.summary_rc1.EmploymentSummary;
@@ -72,7 +73,7 @@ import io.swagger.annotations.ApiResponses;
 @Api("Public API v2.0_rc1")
 @Path("/v2.0_rc1")
 public class PublicV2ApiServiceImplV2_0_rc1 {
-    protected PublicV2ApiServiceDelegator serviceDelegator;
+    protected PublicV2ApiServiceDelegator<Education, Employment, ?, Funding, GroupIdRecord, ?, PeerReview, ?, Work> serviceDelegator;
 
     @Value("${org.orcid.core.baseUri}")
     protected String baseUri;
@@ -80,7 +81,8 @@ public class PublicV2ApiServiceImplV2_0_rc1 {
     @Value("${org.orcid.core.pubBaseUri}")
     protected String pubBaseUri;
 
-    public void setServiceDelegator(PublicV2ApiServiceDelegator serviceDelegator) {
+    public void setServiceDelegator(
+            PublicV2ApiServiceDelegator<Education, Employment, ?, Funding, GroupIdRecord, ?, PeerReview, ?, Work> serviceDelegator) {
         this.serviceDelegator = serviceDelegator;
     }
 
