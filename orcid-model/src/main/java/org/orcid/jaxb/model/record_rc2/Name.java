@@ -39,17 +39,18 @@ import org.orcid.jaxb.model.common.VisibilityType;
 @XmlRootElement(name = "name", namespace = "http://www.orcid.org/ns/personal-details")
 public class Name implements Serializable, VisibilityType {
     private static final long serialVersionUID = -7946486981092688675L;
-    
+
     @XmlElement(name = "given-names", namespace = "http://www.orcid.org/ns/personal-details")
     private GivenNames givenNames;
     @XmlElement(name = "family-name", namespace = "http://www.orcid.org/ns/personal-details")
     private FamilyName familyName;
     @XmlElement(name = "credit-name", namespace = "http://www.orcid.org/ns/personal-details")
-    private CreditName creditName;    
+    private CreditName creditName;
     @XmlAttribute
     protected Visibility visibility;
-    
-    
+    @XmlAttribute
+    protected String path;
+
     public GivenNames getGivenNames() {
         return givenNames;
     }
@@ -73,13 +74,21 @@ public class Name implements Serializable, VisibilityType {
     public void setCreditName(CreditName creditName) {
         this.creditName = creditName;
     }
-    
+
     public Visibility getVisibility() {
         return visibility;
     }
 
     public void setVisibility(Visibility visibility) {
         this.visibility = visibility;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
     }
 
     @Override
@@ -89,6 +98,7 @@ public class Name implements Serializable, VisibilityType {
         result = prime * result + ((creditName == null) ? 0 : creditName.hashCode());
         result = prime * result + ((familyName == null) ? 0 : familyName.hashCode());
         result = prime * result + ((givenNames == null) ? 0 : givenNames.hashCode());
+        result = prime * result + ((path == null) ? 0 : path.hashCode());
         result = prime * result + ((visibility == null) ? 0 : visibility.hashCode());
         return result;
     }
@@ -116,12 +126,14 @@ public class Name implements Serializable, VisibilityType {
             if (other.givenNames != null)
                 return false;
         } else if (!givenNames.equals(other.givenNames))
-            return false;        
-        if (visibility == null) {
-            if (other.visibility != null)
+            return false;
+        if (path == null) {
+            if (other.path != null)
                 return false;
-        } else if (!visibility.equals(other.visibility))
-            return false;        
+        } else if (!path.equals(other.path))
+            return false;
+        if (visibility != other.visibility)
+            return false;
         return true;
     }
 }

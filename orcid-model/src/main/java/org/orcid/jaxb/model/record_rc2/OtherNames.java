@@ -21,6 +21,7 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
@@ -40,6 +41,9 @@ public class OtherNames implements Serializable {
     @XmlElement(name = "other-name", namespace = "http://www.orcid.org/ns/other-name")
     List<OtherName> otherNames;
 
+    @XmlAttribute
+    protected String path;
+    
     public List<OtherName> getOtherNames() {
         return otherNames;
     }
@@ -48,11 +52,20 @@ public class OtherNames implements Serializable {
         this.otherNames = otherNames;
     }
 
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((otherNames == null) ? 0 : otherNames.hashCode());
+        result = prime * result + ((path == null) ? 0 : path.hashCode());
         return result;
     }
 
@@ -69,6 +82,11 @@ public class OtherNames implements Serializable {
             if (other.otherNames != null)
                 return false;
         } else if (!otherNames.equals(other.otherNames))
+            return false;
+        if (path == null) {
+            if (other.path != null)
+                return false;
+        } else if (!path.equals(other.path))
             return false;
         return true;
     }	 

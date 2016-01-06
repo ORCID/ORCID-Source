@@ -20,6 +20,7 @@ import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
@@ -32,7 +33,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "name", "otherNames", "biography", "researcherUrls", "emails", "addresses", "keywords", "externalIdentifiers", "delegation", "applications" })
 @XmlRootElement(name = "person", namespace = "http://www.orcid.org/ns/person")
-public class Person implements Serializable {    
+public class Person implements Serializable {
     private static final long serialVersionUID = 2200160976598223346L;
     @XmlElement(name = "name", namespace = "http://www.orcid.org/ns/person")
     Name name;
@@ -54,6 +55,9 @@ public class Person implements Serializable {
     Delegation delegation;
     @XmlElement(name = "applications", namespace = "http://www.orcid.org/ns/person")
     Applications applications;
+
+    @XmlAttribute
+    protected String path;
 
     public Name getName() {
         return name;
@@ -135,6 +139,14 @@ public class Person implements Serializable {
         this.applications = applications;
     }
 
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -148,6 +160,7 @@ public class Person implements Serializable {
         result = prime * result + ((keywords == null) ? 0 : keywords.hashCode());
         result = prime * result + ((name == null) ? 0 : name.hashCode());
         result = prime * result + ((otherNames == null) ? 0 : otherNames.hashCode());
+        result = prime * result + ((path == null) ? 0 : path.hashCode());
         result = prime * result + ((researcherUrls == null) ? 0 : researcherUrls.hashCode());
         return result;
     }
@@ -205,6 +218,11 @@ public class Person implements Serializable {
             if (other.otherNames != null)
                 return false;
         } else if (!otherNames.equals(other.otherNames))
+            return false;
+        if (path == null) {
+            if (other.path != null)
+                return false;
+        } else if (!path.equals(other.path))
             return false;
         if (researcherUrls == null) {
             if (other.researcherUrls != null)

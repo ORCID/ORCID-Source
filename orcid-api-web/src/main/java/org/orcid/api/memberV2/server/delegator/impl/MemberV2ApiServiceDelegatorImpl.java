@@ -495,6 +495,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     public Response viewResearcherUrl(String orcid, Long putCode) {
         ResearcherUrl researcherUrl = researcherUrlManager.getResearcherUrlV2(orcid, putCode);
         orcidSecurityManager.checkVisibility(researcherUrl);
+        ElementUtils.setPathToResearcherUrl(researcherUrl, orcid);
         return Response.ok(researcherUrl).build();
     }
 
@@ -508,6 +509,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
             throw new MismatchedPutCodeException(params);
         }
         ResearcherUrl updatedResearcherUrl = researcherUrlManager.updateResearcherUrlV2(orcid, researcherUrl);
+        ElementUtils.setPathToResearcherUrl(updatedResearcherUrl, orcid);
         return Response.ok(updatedResearcherUrl).build();
     }
 
@@ -535,6 +537,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     public Response viewEmails(String orcid) {
         Emails emails = emailManager.getEmails(orcid);
         emails.setEmails((List<Email>) visibilityFilter.filter(emails.getEmails()));
+        ElementUtils.setPathToEmail(emails, orcid);
         return Response.ok(emails).build();
     }
 
@@ -546,6 +549,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
         List<OtherName> allOtherNames = otherNames.getOtherNames();
         List<OtherName> filterdOtherNames = (List<OtherName>) visibilityFilter.filter(allOtherNames);
         otherNames.setOtherNames(filterdOtherNames);
+        ElementUtils.setPathToOtherNames(otherNames, orcid);
         return Response.ok(otherNames).build();
     }
 
@@ -554,6 +558,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     public Response viewOtherName(String orcid, Long putCode) {
         OtherName otherName = otherNameManager.getOtherNameV2(orcid, putCode);
         orcidSecurityManager.checkVisibility(otherName);
+        ElementUtils.setPathToOtherName(otherName, orcid);
         return Response.ok(otherName).build();
     }
 
@@ -578,7 +583,8 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
             throw new MismatchedPutCodeException(params);
         }
 
-        org.orcid.jaxb.model.record_rc2.OtherName updatedOtherName = otherNameManager.updateOtherNameV2(orcid, putCode, otherName);
+        OtherName updatedOtherName = otherNameManager.updateOtherNameV2(orcid, putCode, otherName);
+        ElementUtils.setPathToOtherName(updatedOtherName, orcid);
         return Response.ok(updatedOtherName).build();
     }
 
@@ -606,6 +612,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
         List<ExternalIdentifier> allExtIds = extIds.getExternalIdentifier();
         List<ExternalIdentifier> filteredExtIds = (List<ExternalIdentifier>) visibilityFilter.filter(allExtIds);
         extIds.setExternalIdentifiers(filteredExtIds);
+        ElementUtils.setPathToExternalIdentifiers(extIds, orcid);
         return Response.ok(extIds).build();
     }
 
@@ -614,6 +621,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     public Response viewExternalIdentifier(String orcid, Long putCode) {
         ExternalIdentifier extId = externalIdentifierManager.getExternalIdentifierV2(orcid, putCode);
         orcidSecurityManager.checkVisibility(extId);
+        ElementUtils.setPathToExternalIdentifier(extId, orcid);
         return Response.ok(extId).build();
     }
 
@@ -627,6 +635,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
             throw new MismatchedPutCodeException(params);
         }
         ExternalIdentifier extId = externalIdentifierManager.updateExternalIdentifierV2(orcid, externalIdentifier);
+        ElementUtils.setPathToExternalIdentifier(extId, orcid);
         return Response.ok(extId).build();
     }
 
@@ -653,6 +662,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     public Response viewBiography(String orcid) {
         Biography bio = profileEntityManager.getBiography(orcid);
         orcidSecurityManager.checkVisibility(bio);
+        ElementUtils.setPathToBiography(bio, orcid);
         return Response.ok(bio).build();
     }
         
@@ -664,6 +674,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
         List<Keyword> allKeywords = keywords.getKeywords();
         List<Keyword> filterdKeywords = (List<Keyword>) visibilityFilter.filter(allKeywords);
         keywords.setKeywords(filterdKeywords);
+        ElementUtils.setPathToKeywords(keywords, orcid);
         return Response.ok(keywords).build();
     }
 
@@ -672,6 +683,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     public Response viewKeyword(String orcid, Long putCode) {
         Keyword keyword = keywordsManager.getKeywordV2(orcid, putCode);
         orcidSecurityManager.checkVisibility(keyword);
+        ElementUtils.setPathToKeyword(keyword, orcid);
         return Response.ok(keyword).build();
     }
 
@@ -696,7 +708,8 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
             throw new MismatchedPutCodeException(params);
         }
 
-        keyword = keywordsManager.updateKeywordV2(orcid, putCode, keyword);        
+        keyword = keywordsManager.updateKeywordV2(orcid, putCode, keyword);      
+        ElementUtils.setPathToKeyword(keyword, orcid);
         return Response.ok(keyword).build();
     }
 
@@ -715,6 +728,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
         List<Address> allAddresses = addresses.getAddress();
         List<Address> filteredAddresses = (List<Address>) visibilityFilter.filter(allAddresses);
         addresses.setAddress(filteredAddresses);
+        ElementUtils.setPathToAddresses(addresses, orcid);
         return Response.ok(addresses).build();
     }
 
@@ -723,6 +737,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     public Response viewAddress(String orcid, Long putCode) {
         Address address = addressManager.getAddress(orcid, putCode);
         orcidSecurityManager.checkVisibility(address);
+        ElementUtils.setPathToAddress(address, orcid);
         return Response.ok(address).build();
     }
 
@@ -748,6 +763,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
         }
         
         address = addressManager.updateAddress(orcid, putCode, address, true);
+        ElementUtils.setPathToAddress(address, orcid);
         return Response.ok(address).build();
     }
 
@@ -763,6 +779,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     public Response viewPerson(String orcid) {
         Person person = profileEntityManager.getPersonDetails(orcid);
         person = visibilityFilter.filter(person);
+        ElementUtils.setPathToPerson(person, orcid);
         return Response.ok(person).build();
     }
 }

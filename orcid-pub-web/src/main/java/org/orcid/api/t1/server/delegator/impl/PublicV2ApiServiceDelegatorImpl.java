@@ -290,13 +290,15 @@ public class PublicV2ApiServiceDelegatorImpl implements PublicV2ApiServiceDelega
     public Response viewResearcherUrl(String orcid, Long putCode) {
         ResearcherUrl researcherUrl = researcherUrlManager.getResearcherUrlV2(orcid, Long.valueOf(putCode));
         orcidSecurityManager.checkVisibility(researcherUrl);
+        ElementUtils.setPathToResearcherUrl(researcherUrl, orcid);
         return Response.ok(researcherUrl).build();
     }
     
     @Override
     @AccessControl(requiredScope = ScopePathType.READ_LIMITED, enableAnonymousAccess = true)
     public Response viewEmails(String orcid) {
-        Emails emails = emailManager.getPublicEmails(orcid);        
+        Emails emails = emailManager.getPublicEmails(orcid);
+        ElementUtils.setPathToEmail(emails, orcid);
         return Response.ok(emails).build();
     }
     
@@ -304,6 +306,7 @@ public class PublicV2ApiServiceDelegatorImpl implements PublicV2ApiServiceDelega
     @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewPersonalDetails(String orcid) {
         PersonalDetails personalDetails = personalDetailsManager.getPublicPersonalDetails(orcid);
+        ElementUtils.setPathToPersonalDetails(personalDetails, orcid);
         return Response.ok(personalDetails).build();
     }    
 
@@ -311,6 +314,7 @@ public class PublicV2ApiServiceDelegatorImpl implements PublicV2ApiServiceDelega
     @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewOtherNames(String orcid) {
         OtherNames otherNames = otherNameManager.getPublicOtherNamesV2(orcid);
+        ElementUtils.setPathToOtherNames(otherNames, orcid);
         return Response.ok(otherNames).build();
     }
 
@@ -319,13 +323,15 @@ public class PublicV2ApiServiceDelegatorImpl implements PublicV2ApiServiceDelega
     public Response viewOtherName(String orcid, Long putCode) {
         OtherName otherName = otherNameManager.getOtherNameV2(orcid, putCode);
         orcidSecurityManager.checkVisibility(otherName);
+        ElementUtils.setPathToOtherName(otherName, orcid);
         return Response.ok(otherName).build();
     }
 
     @Override
     @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewExternalIdentifiers(String orcid) {
-        ExternalIdentifiers extIds = externalIdentifierManager.getPublicExternalIdentifiersV2(orcid);        
+        ExternalIdentifiers extIds = externalIdentifierManager.getPublicExternalIdentifiersV2(orcid);  
+        ElementUtils.setPathToExternalIdentifiers(extIds, orcid);
         return Response.ok(extIds).build();
     }
 
@@ -334,6 +340,7 @@ public class PublicV2ApiServiceDelegatorImpl implements PublicV2ApiServiceDelega
     public Response viewExternalIdentifier(String orcid, Long putCode) {
         ExternalIdentifier extId = externalIdentifierManager.getExternalIdentifierV2(orcid, putCode);        
         orcidSecurityManager.checkVisibility(extId);
+        ElementUtils.setPathToExternalIdentifier(extId, orcid);
         return Response.ok(extId).build();
     }    
     
@@ -346,6 +353,7 @@ public class PublicV2ApiServiceDelegatorImpl implements PublicV2ApiServiceDelega
                 bio.setContent("");
             }
         }
+        ElementUtils.setPathToBiography(bio, orcid);
         return Response.ok(bio).build();
     }
             
@@ -353,6 +361,7 @@ public class PublicV2ApiServiceDelegatorImpl implements PublicV2ApiServiceDelega
     @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewKeywords(String orcid) {
         Keywords keywords = keywordsManager.getPublicKeywordsV2(orcid);
+        ElementUtils.setPathToKeywords(keywords, orcid);
         return Response.ok(keywords).build();
     }
 
@@ -361,6 +370,7 @@ public class PublicV2ApiServiceDelegatorImpl implements PublicV2ApiServiceDelega
     public Response viewKeyword(String orcid, Long putCode) {
         Keyword keyword = keywordsManager.getKeywordV2(orcid, putCode);
         orcidSecurityManager.checkVisibility(keyword);
+        ElementUtils.setPathToKeyword(keyword, orcid);
         return Response.ok(keyword).build();
     }
     
@@ -368,6 +378,7 @@ public class PublicV2ApiServiceDelegatorImpl implements PublicV2ApiServiceDelega
     @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewAddresses(String orcid) {
         Addresses addresses = addressManager.getAddresses(orcid);
+        ElementUtils.setPathToAddresses(addresses, orcid);
         return Response.ok(addresses).build();
     }
 
@@ -376,6 +387,7 @@ public class PublicV2ApiServiceDelegatorImpl implements PublicV2ApiServiceDelega
     public Response viewAddress(String orcid, Long putCode) {
         Address address = addressManager.getAddress(orcid, putCode);
         orcidSecurityManager.checkVisibility(address);
+        ElementUtils.setPathToAddress(address, orcid);
         return Response.ok(address).build();
     }
     
@@ -383,6 +395,7 @@ public class PublicV2ApiServiceDelegatorImpl implements PublicV2ApiServiceDelega
     @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewPerson(String orcid) {
         Person person = profileEntityManager.getPublicPersonDetails(orcid);
+        ElementUtils.setPathToPerson(person, orcid);
         return Response.ok(person).build();
     }
 }
