@@ -24,7 +24,6 @@ import javax.ws.rs.core.Response;
 
 import org.orcid.api.memberV2.server.delegator.MemberV2ApiServiceDelegator;
 import org.orcid.core.exception.OrcidDeprecatedException;
-import org.orcid.core.version.OrcidMessageVersionConverterChain;
 import org.orcid.core.version.V2Convertible;
 import org.orcid.core.version.V2VersionConverterChain;
 import org.orcid.jaxb.model.message.OrcidMessage;
