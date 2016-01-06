@@ -65,7 +65,7 @@
 		</xs:annotation>
 		<xs:complexType>
 			<xs:complexContent>
-				<xs:extension base="personal-details:name"></xs:extension>
+				<xs:extension base="personal-details:name" />
 			</xs:complexContent>			
 		</xs:complexType>
 	</xs:element>
@@ -148,7 +148,8 @@
 				</xs:complexType>
 			</xs:element>
 		</xs:sequence>
-		<xs:attribute name="visibility" type="common:visibility" />
+		<xs:attribute name="visibility" type="common:visibility"  use="optional"/>
+		<xs:attribute name="path" type="common:person-path" use="optional" />
 	</xs:complexType>
 
 	<xs:complexType name="biography">
@@ -161,7 +162,8 @@
 		</xs:annotation>
 		<xs:simpleContent>
 			<xs:extension base="xs:string">
-				<xs:attribute name="visibility" type="common:visibility" />
+				<xs:attribute name="visibility" type="common:visibility" use="optional"/>
+				<xs:attribute name="path" type="common:person-path" use="optional" />
 			</xs:extension>
 		</xs:simpleContent>
 	</xs:complexType>
@@ -169,7 +171,7 @@
 	<xs:complexType name="credit-name">
 		<xs:simpleContent>
 			<xs:extension base="common:non-empty-string">
-				<xs:attribute name="visibility" type="common:visibility" />
+				<xs:attribute name="visibility" type="common:visibility"  use="optional"/>
 			</xs:extension>
 		</xs:simpleContent>
 	</xs:complexType>

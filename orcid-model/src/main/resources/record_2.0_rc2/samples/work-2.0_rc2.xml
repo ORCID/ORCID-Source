@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<work:work xmlns:common="http://www.orcid.org/ns/common"
+	xmlns:work="http://www.orcid.org/ns/work" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<work:title>
+		<common:title>Current treatment of left main coronary artery disease</common:title>
+	</work:title>
+	<work:journal-title>Cor et Vasa</work:journal-title>
+	<work:type>journal-article</work:type>
+	<common:publication-date>
+		<common:year>2015</common:year>
+		<common:month>06</common:month>
+		<common:day>01</common:day>
+	</common:publication-date>
+	<work:external-identifiers>
+		<work:work-external-identifier>
+			<common:external-identifier-url></common:external-identifier-url>
+			<common:relationship>self</common:relationship>
+			<work:external-identifier-type>doi</work:external-identifier-type>
+			<work:external-identifier-id>10.1016/j.crvasa.2015.05.007</work:external-identifier-id>
+		</work:work-external-identifier>
+	</work:external-identifiers>
+</work:work>

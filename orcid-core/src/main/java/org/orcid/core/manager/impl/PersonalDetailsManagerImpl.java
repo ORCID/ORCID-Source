@@ -46,9 +46,8 @@ public class PersonalDetailsManagerImpl implements PersonalDetailsManager {
     
     
     @Override
-    public PersonalDetails getPersonalDetails(String orcid) {
-        PersonalDetails personalDetails = new PersonalDetails();
-        ProfileEntity profileEntity = profileEntityCacheManager.retrieve(orcid);                        
+    public Name getName(String orcid) {
+        ProfileEntity profileEntity = profileEntityCacheManager.retrieve(orcid);    
         Name name = new Name();
         if (profileEntity != null) {
             Visibility nameVisibility = Visibility.fromValue(OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility().value());
@@ -66,6 +65,14 @@ public class PersonalDetailsManagerImpl implements PersonalDetailsManager {
                 name.setGivenNames(new GivenNames(profileEntity.getGivenNames()));
             }                        
         }
+        return name;
+    }
+    
+    @Override
+    public PersonalDetails getPersonalDetails(String orcid) {
+        PersonalDetails personalDetails = new PersonalDetails();
+        ProfileEntity profileEntity = profileEntityCacheManager.retrieve(orcid);                        
+        Name name = getName(orcid);
         Biography bio = new Biography();
         if(!PojoUtil.isEmpty(profileEntity.getBiography())) {
             bio.setContent(profileEntity.getBiography());

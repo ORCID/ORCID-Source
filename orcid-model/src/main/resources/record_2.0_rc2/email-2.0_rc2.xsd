@@ -46,6 +46,21 @@
 			<xs:attribute name="path" type="common:person-path" use="optional" />
 		</xs:complexType>
 	</xs:element>
+	
+	
+	<xs:element name="email">
+		<xs:annotation>
+			<xs:documentation>Email element.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="email:email"></xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	
+	
 	<xs:complexType name="email">
 		<xs:annotation>
 			<xs:documentation>Email container
@@ -59,6 +74,8 @@
 				maxOccurs="1" />
 			<xs:element ref="common:source" minOccurs="0" maxOccurs="1" />
 		</xs:sequence>
+		<xs:attribute name="path" type="common:person-path" use="optional" />
 		<xs:attribute name="visibility" type="common:visibility" />
+		<xs:attribute name="put-code" type="common:put-code" use="optional" />
 	</xs:complexType>
 </xs:schema>	

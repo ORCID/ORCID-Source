@@ -33,6 +33,11 @@ import org.orcid.jaxb.model.common.LastModifiedDate;
 import org.orcid.jaxb.model.common.Source;
 import org.orcid.jaxb.model.common.Visibility;
 
+/**
+ * 
+ * @author Angel Montenegro
+ * 
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "content", "createdDate", "lastModifiedDate", "source" })
 @XmlRootElement(name = "other-name", namespace = "http://www.orcid.org/ns/other-name")

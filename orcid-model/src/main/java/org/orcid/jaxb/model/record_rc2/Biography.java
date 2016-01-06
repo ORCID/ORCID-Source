@@ -16,6 +16,8 @@
  */
 package org.orcid.jaxb.model.record_rc2;
 
+import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -25,20 +27,30 @@ import javax.xml.bind.annotation.XmlValue;
 
 import org.orcid.jaxb.model.common.Visibility;
 
+/**
+ * 
+ * @author Angel Montenegro
+ * 
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "content" })
 @XmlRootElement(name = "biography", namespace = "http://www.orcid.org/ns/personal-details")
-public class Biography {
+public class Biography implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     @XmlValue
     protected String content;
 
     @XmlAttribute
     protected Visibility visibility;
 
+    @XmlAttribute
+    protected String path;
+
     public Biography() {
-        
+
     }
-    
+
     public Biography(String content) {
         this.content = content;
     }
@@ -64,37 +76,46 @@ public class Biography {
         this.visibility = visibility;
     }
 
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((content == null) ? 0 : content.hashCode());
+        result = prime * result + ((path == null) ? 0 : path.hashCode());
         result = prime * result + ((visibility == null) ? 0 : visibility.hashCode());
         return result;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
+        if (this == obj)
             return true;
-        }
-        if (obj == null) {
+        if (obj == null)
             return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (getClass() != obj.getClass())
             return false;
-        }
         Biography other = (Biography) obj;
         if (content == null) {
-            if (other.content != null) {
+            if (other.content != null)
                 return false;
-            }
-        } else if (!content.equals(other.content)) {
+        } else if (!content.equals(other.content))
             return false;
-        }
-        if (visibility != other.visibility) {
+        if (path == null) {
+            if (other.path != null)
+                return false;
+        } else if (!path.equals(other.path))
             return false;
-        }
+        if (visibility != other.visibility)
+            return false;
         return true;
     }
+
 }

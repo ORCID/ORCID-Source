@@ -100,7 +100,7 @@ abstract public class MemberV2ApiServiceImplBase {
 
     protected MemberV2ApiServiceDelegator serviceDelegator;
 
-    private NotificationsApiServiceDelegator notificationsServiceDelegator;
+    protected NotificationsApiServiceDelegator notificationsServiceDelegator;
 
     public void setServiceDelegator(MemberV2ApiServiceDelegator serviceDelegator) {
         this.serviceDelegator = serviceDelegator;

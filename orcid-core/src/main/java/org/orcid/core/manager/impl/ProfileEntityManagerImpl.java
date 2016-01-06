@@ -28,17 +28,21 @@ import javax.annotation.Resource;
 import javax.persistence.NoResultException;
 
 import org.orcid.core.adapter.Jpa2JaxbAdapter;
-import org.orcid.core.adapter.JpaJaxbEducationAdapter;
-import org.orcid.core.adapter.JpaJaxbEmploymentAdapter;
-import org.orcid.core.adapter.JpaJaxbFundingAdapter;
-import org.orcid.core.adapter.JpaJaxbPeerReviewAdapter;
-import org.orcid.core.adapter.JpaJaxbWorkAdapter;
+import org.orcid.core.adapter.JpaJaxbGivenPermissionByAdapter;
+import org.orcid.core.adapter.JpaJaxbGivenPermissionToAdapter;
+import org.orcid.core.manager.AddressManager;
 import org.orcid.core.manager.AffiliationsManager;
+import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.EncryptionManager;
+import org.orcid.core.manager.ExternalIdentifierManager;
+import org.orcid.core.manager.OtherNameManager;
 import org.orcid.core.manager.PeerReviewManager;
+import org.orcid.core.manager.PersonalDetailsManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileFundingManager;
+import org.orcid.core.manager.ProfileKeywordManager;
+import org.orcid.core.manager.ResearcherUrlManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.core.utils.activities.ActivitiesGroup;
@@ -69,7 +73,16 @@ import org.orcid.jaxb.model.record_rc1.FundingExternalIdentifier;
 import org.orcid.jaxb.model.record_rc1.GroupAble;
 import org.orcid.jaxb.model.record_rc1.GroupableActivity;
 import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifier;
+import org.orcid.jaxb.model.record_rc2.Biography;
+import org.orcid.jaxb.model.record_rc2.Delegation;
+import org.orcid.jaxb.model.record_rc2.DelegationDetails;
+import org.orcid.jaxb.model.record_rc2.GivenPermissionBy;
+import org.orcid.jaxb.model.record_rc2.GivenPermissionTo;
+import org.orcid.jaxb.model.record_rc2.Name;
+import org.orcid.jaxb.model.record_rc2.Person;
 import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.persistence.jpa.entities.GivenPermissionByEntity;
+import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ApplicationSummary;
@@ -87,22 +100,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     private ProfileDao profileDao;
 
     @Resource
-    private JpaJaxbEducationAdapter jpaJaxbEducationAdapter;
-
-    @Resource
-    private JpaJaxbEmploymentAdapter jpaJaxbEmploymentAdapter;
-
-    @Resource
-    private JpaJaxbFundingAdapter jpaJaxbFundingAdapter;
-
-    @Resource
-    private JpaJaxbPeerReviewAdapter jpaJaxbPeerReviewAdapter;
-
-    @Resource
-    private JpaJaxbWorkAdapter jpaJaxbWorkAdapter;
-    
-    @Resource
-    private Jpa2JaxbAdapter jpa2JaxbAdapter;    
+    private Jpa2JaxbAdapter jpa2JaxbAdapter;
 
     @Resource
     private AffiliationsManager affiliationsManager;
@@ -116,16 +114,43 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
 
-    @Resource        
+    @Resource
     private WorkManager workManager;
-    
+
     @Resource
     private EncryptionManager encryptionManager;
 
+    @Resource
+    private AddressManager addressManager;
+
+    @Resource
+    private ExternalIdentifierManager externalIdentifierManager;
+
+    @Resource
+    private ProfileKeywordManager profileKeywordManager;
+
+    @Resource
+    private PersonalDetailsManager personalDetailsManager;
+
+    @Resource
+    private OtherNameManager otherNameManager;
+
+    @Resource
+    private ResearcherUrlManager researcherUrlManager;
+    
+    @Resource
+    private EmailManager emailManager;
+    
+    @Resource
+    private JpaJaxbGivenPermissionToAdapter jpaJaxbGivenPermissionToAdapter;
+
+    @Resource
+    private JpaJaxbGivenPermissionByAdapter jpaJaxbGivenPermissionByAdapter;
+    
     /**
      * Fetch a ProfileEntity from the database Instead of calling this function,
      * use the cache profileEntityCacheManager whenever is possible
-     * */
+     */
     @Override
     public ProfileEntity findByOrcid(String orcid) {
         return profileDao.find(orcid);
@@ -135,7 +160,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     public String findByCreditName(String creditName) {
         return profileDao.findOrcidByCreditName(creditName);
     }
-    
+
     @Override
     public boolean orcidExists(String orcid) {
         return profileDao.orcidExists(orcid);
@@ -162,7 +187,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
      *            The object that will be used to update the database profile
      * @return true if the profile was successfully updated on database, false
      *         otherwise
-     * */
+     */
     @Override
     public boolean updateProfile(OrcidProfile orcidProfile) {
         ProfileEntity profile = generateProfileEntityWithBio(orcidProfile);
@@ -175,7 +200,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
      * @param profile
      *            The profile object to update
      * @return true if the profile was successfully updated.
-     * */
+     */
     @Override
     public boolean updateProfile(ProfileEntity profile) {
         return profileDao.updateProfile(profile);
@@ -188,7 +213,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
      * @param orcidProfile
      * @return A Profile Entity containing the bio information that comes in the
      *         OrcidProfile parameter
-     * */
+     */
     private ProfileEntity generateProfileEntityWithBio(OrcidProfile orcidProfile) {
         ProfileEntity profile = new ProfileEntity();
         profile.setCreditName(orcidProfile.getOrcidBio().getPersonalDetails().getCreditName().getContent());
@@ -214,7 +239,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
      * @param primaryProfile
      *            The primary profile for the deprecated profile
      * @return true if the account was successfully deprecated, false otherwise
-     * */
+     */
     @Override
     public boolean deprecateProfile(ProfileEntity deprecatedProfile, ProfileEntity primaryProfile) {
         return profileDao.deprecateProfile(deprecatedProfile.getId(), primaryProfile.getId());
@@ -226,7 +251,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
      * @param type
      *            OrcidType that indicates the profile type we want to fetch
      * @return the list of profiles that belongs to the specified type
-     * */
+     */
     @Override
     public List<ProfileEntity> findProfilesByOrcidType(OrcidType type) {
         if (type == null)
@@ -240,7 +265,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
      * @param profile
      *            The profile to update
      * @return true if the developer tools where enabled on that profile
-     * */
+     */
     @Override
     public boolean enableDeveloperTools(OrcidProfile profile) {
         boolean result = profileDao.updateDeveloperTools(profile.getOrcidIdentifier().getPath(), true);
@@ -253,7 +278,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
      * @param profile
      *            The profile to update
      * @return true if the developer tools where disabeled on that profile
-     * */
+     */
     @Override
     public boolean disableDeveloperTools(OrcidProfile profile) {
         boolean result = profileDao.updateDeveloperTools(profile.getOrcidIdentifier().getPath(), false);
@@ -276,7 +301,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
      * @param orcid
      *            The profile to look for
      * @return the client type, null if it is not a client
-     * */
+     */
     @Override
     public ClientType getClientType(String orcid) {
         return profileDao.getClientType(orcid);
@@ -288,7 +313,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
      * @param orcid
      *            The profile to look for
      * @return the group type, null if it is not a client
-     * */
+     */
     @Override
     public MemberType getGroupType(String orcid) {
         return profileDao.getGroupType(orcid);
@@ -300,7 +325,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
      * @param orcid
      *            the id of the profile that should be locked
      * @return true if the account was locked
-     * */
+     */
     @Override
     public boolean lockProfile(String orcid) {
         return profileDao.lockProfile(orcid);
@@ -312,7 +337,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
      * @param orcid
      *            the id of the profile that should be unlocked
      * @return true if the account was unlocked
-     * */
+     */
     @Override
     public boolean unlockProfile(String orcid) {
         return profileDao.unlockProfile(orcid);
@@ -324,7 +349,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
      * @param orcid
      *            the id of the profile to check
      * @return true if the account is locked
-     * */
+     */
     @Override
     public boolean isLocked(String orcid) {
         if (PojoUtil.isEmpty(orcid))
@@ -541,35 +566,37 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     public boolean unreviewProfile(String orcid) {
         return profileDao.unreviewProfile(orcid);
     }
-    
+
     @Override
     public Visibility getResearcherUrlDefaultVisibility(String orcid) {
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
-        Visibility result = profile.getResearcherUrlsVisibility() == null ? Visibility.fromValue(OrcidVisibilityDefaults.RESEARCHER_URLS_DEFAULT.getVisibility().value()) : Visibility.fromValue(profile.getResearcherUrlsVisibility().value()); 
+        Visibility result = profile.getResearcherUrlsVisibility() == null ? Visibility.fromValue(OrcidVisibilityDefaults.RESEARCHER_URLS_DEFAULT.getVisibility().value())
+                : Visibility.fromValue(profile.getResearcherUrlsVisibility().value());
         return result;
     }
-    
+
     @Override
     public List<ApplicationSummary> getApplications(List<OrcidOauth2TokenDetail> tokenDetails) {
-    	return jpa2JaxbAdapter.getApplications(tokenDetails);
+        return jpa2JaxbAdapter.getApplications(tokenDetails);
     }
-    
-    @Override    
-    public String getOrcidHash(String orcid) throws NoSuchAlgorithmException {     
-        if(PojoUtil.isEmpty(orcid)) {
+
+    @Override
+    public String getOrcidHash(String orcid) throws NoSuchAlgorithmException {
+        if (PojoUtil.isEmpty(orcid)) {
             return null;
         }
         return encryptionManager.sha256Hash(orcid);
     }
-    
+
     @Override
     public String retrivePublicDisplayName(String orcid) {
-        String publicName = ""; 
+        String publicName = "";
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
-        if(profile != null) {
-            Visibility namesVisibility = (profile.getNamesVisibility() != null) ? Visibility.fromValue(profile.getNamesVisibility().value()) : Visibility.fromValue(OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility().value());
-            if(Visibility.PUBLIC.equals(namesVisibility)) {
-                if(!PojoUtil.isEmpty(profile.getCreditName())) {
+        if (profile != null) {
+            Visibility namesVisibility = (profile.getNamesVisibility() != null) ? Visibility.fromValue(profile.getNamesVisibility().value())
+                    : Visibility.fromValue(OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility().value());
+            if (Visibility.PUBLIC.equals(namesVisibility)) {
+                if (!PojoUtil.isEmpty(profile.getCreditName())) {
                     publicName = profile.getCreditName();
                 } else {
                     publicName = PojoUtil.isEmpty(profile.getGivenNames()) ? "" : profile.getGivenNames();
@@ -579,7 +606,130 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         }
         return publicName;
     }
-    
+
+    @Override
+    public Biography getBiography(String orcid) {
+        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
+        Biography bio = new Biography();
+        bio.setVisibility(Visibility.fromValue(
+                profile.getBiographyVisibility() == null ? OrcidVisibilityDefaults.BIOGRAPHY_DEFAULT.getVisibility().value() : profile.getBiographyVisibility().value()));
+        bio.setContent(profile.getBiography());
+        return bio;
+    }
+
+    @Override
+    @Transactional
+    public Person getPersonDetails(String orcid) {
+        Person person = new Person();
+        person.setBiography(getBiography(orcid));
+        person.setAddresses(addressManager.getAddresses(orcid));
+        person.setExternalIdentifiers(externalIdentifierManager.getExternalIdentifiersV2(orcid));
+        person.setKeywords(profileKeywordManager.getKeywordsV2(orcid));
+        person.setName(personalDetailsManager.getName(orcid));
+        person.setOtherNames(otherNameManager.getOtherNamesV2(orcid));
+        person.setResearcherUrls(researcherUrlManager.getResearcherUrlsV2(orcid));             
+        person.setEmails(emailManager.getEmails(orcid));
+        
+        //The rest should come from the ProfileEntity object
+        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);       
+        Delegation delegation = null;
+        Set<GivenPermissionToEntity> givenPermissionTo = profile.getGivenPermissionTo();
+        Set<GivenPermissionByEntity> givenPermissionBy = profile.getGivenPermissionBy();
+        
+        if(givenPermissionTo != null || givenPermissionBy != null) {
+            delegation = new Delegation();
+            if(givenPermissionTo != null) {
+                List<DelegationDetails> detailsList = jpaJaxbGivenPermissionToAdapter.toDelegationDetailsList(givenPermissionTo);
+                List<GivenPermissionTo> givenPermissionToList = new ArrayList<GivenPermissionTo>();
+                for(DelegationDetails details : detailsList) {
+                    GivenPermissionTo to = new GivenPermissionTo();
+                    to.setDelegationDetails(details);
+                    givenPermissionToList.add(to);
+                }
+                delegation.setGivenPermissionTo(givenPermissionToList);
+            }
+            
+            if(givenPermissionBy != null) {
+                List<DelegationDetails> detailsList = jpaJaxbGivenPermissionByAdapter.toDelegationDetailsList(givenPermissionBy);
+                List<GivenPermissionBy> givenPermissionByList = new ArrayList<GivenPermissionBy>();
+                for(DelegationDetails details : detailsList) {
+                    GivenPermissionBy by = new GivenPermissionBy();
+                    by.setDelegationDetails(details);
+                    givenPermissionByList.add(by);
+                }
+                delegation.setGivenPermissionBy(givenPermissionByList);
+            }            
+        }
+        
+        person.setDelegation(delegation);
+                                
+        // TODO: implement
+        person.setApplications(null);
+              
+        return person;
+    }
+
+    @Override
+    @Transactional
+    public Person getPublicPersonDetails(String orcid) {
+        Person person = new Person();
+        
+        Biography bio = getBiography(orcid);
+        if(Visibility.PUBLIC.equals(bio.getVisibility())) {
+            person.setBiography(bio);
+        }
+        
+        Name name = personalDetailsManager.getName(orcid);
+        if(Visibility.PUBLIC.equals(name.getVisibility())) {
+            person.setName(name);
+        }
+        
+        person.setAddresses(addressManager.getPublicAddresses(orcid));
+        person.setExternalIdentifiers(externalIdentifierManager.getPublicExternalIdentifiersV2(orcid));
+        person.setKeywords(profileKeywordManager.getPublicKeywordsV2(orcid));
+        person.setOtherNames(otherNameManager.getPublicOtherNamesV2(orcid));
+        person.setResearcherUrls(researcherUrlManager.getPublicResearcherUrlsV2(orcid));             
+        person.setEmails(emailManager.getPublicEmails(orcid));
+        
+        //The rest should come from the ProfileEntity object
+        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);       
+        Delegation delegation = null;
+        Set<GivenPermissionToEntity> givenPermissionTo = profile.getGivenPermissionTo();
+        Set<GivenPermissionByEntity> givenPermissionBy = profile.getGivenPermissionBy();
+        
+        if(givenPermissionTo != null || givenPermissionBy != null) {
+            delegation = new Delegation();
+            if(givenPermissionTo != null) {
+                List<DelegationDetails> detailsList = jpaJaxbGivenPermissionToAdapter.toDelegationDetailsList(givenPermissionTo);
+                List<GivenPermissionTo> givenPermissionToList = new ArrayList<GivenPermissionTo>();
+                for(DelegationDetails details : detailsList) {
+                    GivenPermissionTo to = new GivenPermissionTo();
+                    to.setDelegationDetails(details);
+                    givenPermissionToList.add(to);
+                }
+                delegation.setGivenPermissionTo(givenPermissionToList);
+            }
+            
+            if(givenPermissionBy != null) {
+                List<DelegationDetails> detailsList = jpaJaxbGivenPermissionByAdapter.toDelegationDetailsList(givenPermissionBy);
+                List<GivenPermissionBy> givenPermissionByList = new ArrayList<GivenPermissionBy>();
+                for(DelegationDetails details : detailsList) {
+                    GivenPermissionBy by = new GivenPermissionBy();
+                    by.setDelegationDetails(details);
+                    givenPermissionByList.add(by);
+                }
+                delegation.setGivenPermissionBy(givenPermissionByList);
+            }            
+        }
+        
+        person.setDelegation(delegation);
+                                
+        // TODO: implement
+        person.setApplications(null);
+              
+        return person;
+    }
+            
 }
 
 class GroupableActivityComparator implements Comparator<GroupableActivity> {
