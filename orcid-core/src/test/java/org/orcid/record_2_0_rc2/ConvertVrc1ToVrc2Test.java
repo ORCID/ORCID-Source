@@ -57,8 +57,9 @@ public class ConvertVrc1ToVrc2Test extends BaseTest {
         org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary rc2Activities1 = (org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary) jaxbUnmarshaller
                 .unmarshal(rc2Stream);
 
-        org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary rc2Activities2 = new org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary();
-        versionConverterV2_0_rc1ToV2_0rc2.upgrade(rc2Activities2, new V2Convertible(rc1Activities, "v2_rc1"));
+        V2Convertible result = versionConverterV2_0_rc1ToV2_0rc2.upgrade(new V2Convertible(rc1Activities, "v2_rc1"));
+        org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary rc2Activities2 = (org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary) result
+                .getObjectToConvert();
 
         assertEquals(rc2Activities1.toString(), rc2Activities2.toString());
     }
@@ -78,8 +79,8 @@ public class ConvertVrc1ToVrc2Test extends BaseTest {
         jaxbUnmarshaller = jaxbContext2.createUnmarshaller();
         org.orcid.jaxb.model.record.summary_rc2.Educations rc2Educations1 = (org.orcid.jaxb.model.record.summary_rc2.Educations) jaxbUnmarshaller.unmarshal(rc2Stream);
 
-        org.orcid.jaxb.model.record.summary_rc2.Educations rc2Educations2 = new org.orcid.jaxb.model.record.summary_rc2.Educations();
-        versionConverterV2_0_rc1ToV2_0rc2.upgrade(rc2Educations2, new V2Convertible(rc1Educations, "v2_rc1"));
+        V2Convertible result = versionConverterV2_0_rc1ToV2_0rc2.upgrade(new V2Convertible(rc1Educations, "v2_rc1"));
+        org.orcid.jaxb.model.record.summary_rc2.Educations rc2Educations2 = (org.orcid.jaxb.model.record.summary_rc2.Educations) result.getObjectToConvert();
 
         assertEquals(rc2Educations1.getLastModifiedDate(), rc2Educations2.getLastModifiedDate());
     }
@@ -99,8 +100,8 @@ public class ConvertVrc1ToVrc2Test extends BaseTest {
         jaxbUnmarshaller = jaxbContext2.createUnmarshaller();
         org.orcid.jaxb.model.record.summary_rc2.Employments rc2Employments1 = (org.orcid.jaxb.model.record.summary_rc2.Employments) jaxbUnmarshaller.unmarshal(rc2Stream);
 
-        org.orcid.jaxb.model.record.summary_rc2.Employments rc2Employments2 = new org.orcid.jaxb.model.record.summary_rc2.Employments();
-        versionConverterV2_0_rc1ToV2_0rc2.upgrade(rc2Employments2, new V2Convertible(rc1Employments, "v2_rc1"));
+        V2Convertible result = versionConverterV2_0_rc1ToV2_0rc2.upgrade(new V2Convertible(rc1Employments, "v2_rc1"));
+        org.orcid.jaxb.model.record.summary_rc2.Employments rc2Employments2 = (org.orcid.jaxb.model.record.summary_rc2.Employments) result.getObjectToConvert();
 
         assertEquals(rc2Employments1.getLastModifiedDate(), rc2Employments2.getLastModifiedDate());
     }
@@ -120,8 +121,8 @@ public class ConvertVrc1ToVrc2Test extends BaseTest {
         jaxbUnmarshaller = jaxbContext2.createUnmarshaller();
         org.orcid.jaxb.model.record.summary_rc2.Fundings rc2Fundings1 = (org.orcid.jaxb.model.record.summary_rc2.Fundings) jaxbUnmarshaller.unmarshal(rc2Stream);
 
-        org.orcid.jaxb.model.record.summary_rc2.Fundings rc2Fundings2 = new org.orcid.jaxb.model.record.summary_rc2.Fundings();
-        versionConverterV2_0_rc1ToV2_0rc2.upgrade(rc2Fundings2, new V2Convertible(rc1Fundings, "v2_rc1"));
+        V2Convertible result = versionConverterV2_0_rc1ToV2_0rc2.upgrade(new V2Convertible(rc1Fundings, "v2_rc1"));
+        org.orcid.jaxb.model.record.summary_rc2.Fundings rc2Fundings2 = (org.orcid.jaxb.model.record.summary_rc2.Fundings) result.getObjectToConvert();
 
         assertEquals(rc2Fundings1.getLastModifiedDate(), rc2Fundings2.getLastModifiedDate());
     }
@@ -141,8 +142,8 @@ public class ConvertVrc1ToVrc2Test extends BaseTest {
         jaxbUnmarshaller = jaxbContext2.createUnmarshaller();
         org.orcid.jaxb.model.record.summary_rc2.PeerReviews rc2PeerReviews1 = (org.orcid.jaxb.model.record.summary_rc2.PeerReviews) jaxbUnmarshaller.unmarshal(rc2Stream);
 
-        org.orcid.jaxb.model.record.summary_rc2.PeerReviews rc2PeerReviews2 = new org.orcid.jaxb.model.record.summary_rc2.PeerReviews();
-        versionConverterV2_0_rc1ToV2_0rc2.upgrade(rc2PeerReviews2, new V2Convertible(rc1PeerReviews, "v2_rc1"));
+        V2Convertible result = versionConverterV2_0_rc1ToV2_0rc2.upgrade(new V2Convertible(rc1PeerReviews, "v2_rc1"));
+        org.orcid.jaxb.model.record.summary_rc2.PeerReviews rc2PeerReviews2 = (org.orcid.jaxb.model.record.summary_rc2.PeerReviews) result.getObjectToConvert();
 
         assertEquals(rc2PeerReviews1.getLastModifiedDate(), rc2PeerReviews2.getLastModifiedDate());
     }
@@ -162,8 +163,8 @@ public class ConvertVrc1ToVrc2Test extends BaseTest {
         jaxbUnmarshaller = jaxbContext2.createUnmarshaller();
         org.orcid.jaxb.model.record.summary_rc2.Works rc2Works1 = (org.orcid.jaxb.model.record.summary_rc2.Works) jaxbUnmarshaller.unmarshal(rc2Stream);
 
-        org.orcid.jaxb.model.record.summary_rc2.Works rc2Works2 = new org.orcid.jaxb.model.record.summary_rc2.Works();
-        versionConverterV2_0_rc1ToV2_0rc2.upgrade(rc2Works2, new V2Convertible(rc1Works, "v2_rc1"));
+        V2Convertible result = versionConverterV2_0_rc1ToV2_0rc2.upgrade(new V2Convertible(rc1Works, "v2_rc1"));
+        org.orcid.jaxb.model.record.summary_rc2.Works rc2Works2 = (org.orcid.jaxb.model.record.summary_rc2.Works) result.getObjectToConvert();
 
         assertEquals(rc2Works1.getLastModifiedDate(), rc2Works2.getLastModifiedDate());
     }

@@ -607,6 +607,8 @@
 	<bean id="jpaJaxbExternalIdentifierAdapter" class="org.orcid.core.adapter.impl.JpaJaxbExternalIdentifierAdapterImpl">
         <property name="mapperFacade" ref="externalIdentifierMapperFacade" />
     </bean>
+    
+    <bean id="v2VersionObjectFactory" class="org.orcid.core.version.impl.V2VersionObjectFactoryImpl" />
             
     <!-- Geonames username -->
 	<bean id="geonamesUser" class="java.lang.String">

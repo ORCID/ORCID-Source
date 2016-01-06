@@ -20,6 +20,8 @@ import java.util.Date;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import javax.annotation.Resource;
+
 import ma.glasnost.orika.CustomMapper;
 import ma.glasnost.orika.MapperFacade;
 import ma.glasnost.orika.MapperFactory;
@@ -28,6 +30,7 @@ import ma.glasnost.orika.impl.DefaultMapperFactory;
 
 import org.orcid.core.version.V2Convertible;
 import org.orcid.core.version.V2VersionConverter;
+import org.orcid.core.version.V2VersionObjectFactory;
 import org.orcid.jaxb.model.common.LastModifiedDate;
 import org.orcid.jaxb.model.record.summary_rc1.ActivitiesSummary;
 import org.orcid.jaxb.model.record.summary_rc1.Educations;
@@ -76,8 +79,8 @@ public class VersionConverterImplV2_0_rc1ToV2_0rc2 implements V2VersionConverter
                 .customize(new CustomMapper<Educations, org.orcid.jaxb.model.record.summary_rc2.Educations>() {
                     @Override
                     public void mapAtoB(Educations educationsRc1, org.orcid.jaxb.model.record.summary_rc2.Educations educationsRc2, MappingContext context) {
-                        educationsRc2.setLastModifiedDate(new LastModifiedDate(
-                                DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis(LastModifiedDatesHelper.calculateLatest(educationsRc2))));
+                        educationsRc2.setLastModifiedDate(
+                                new LastModifiedDate(DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis(LastModifiedDatesHelper.calculateLatest(educationsRc2))));
                     }
                 }).register();
 
@@ -86,8 +89,8 @@ public class VersionConverterImplV2_0_rc1ToV2_0rc2 implements V2VersionConverter
                 .customize(new CustomMapper<Employments, org.orcid.jaxb.model.record.summary_rc2.Employments>() {
                     @Override
                     public void mapAtoB(Employments employmentsRc1, org.orcid.jaxb.model.record.summary_rc2.Employments employmentsRc2, MappingContext context) {
-                        employmentsRc2.setLastModifiedDate(new LastModifiedDate(
-                                DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis(LastModifiedDatesHelper.calculateLatest(employmentsRc2))));
+                        employmentsRc2.setLastModifiedDate(
+                                new LastModifiedDate(DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis(LastModifiedDatesHelper.calculateLatest(employmentsRc2))));
                     }
                 }).register();
 
@@ -97,8 +100,8 @@ public class VersionConverterImplV2_0_rc1ToV2_0rc2 implements V2VersionConverter
                 .customize(new CustomMapper<Fundings, org.orcid.jaxb.model.record.summary_rc2.Fundings>() {
                     @Override
                     public void mapAtoB(Fundings fundingsRc1, org.orcid.jaxb.model.record.summary_rc2.Fundings fundingsRc2, MappingContext context) {
-                        fundingsRc2.setLastModifiedDate(new LastModifiedDate(
-                                DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis(LastModifiedDatesHelper.calculateLatest(fundingsRc2))));
+                        fundingsRc2.setLastModifiedDate(
+                                new LastModifiedDate(DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis(LastModifiedDatesHelper.calculateLatest(fundingsRc2))));
                     }
                 }).register();
 
@@ -108,8 +111,8 @@ public class VersionConverterImplV2_0_rc1ToV2_0rc2 implements V2VersionConverter
                 .customize(new CustomMapper<PeerReviews, org.orcid.jaxb.model.record.summary_rc2.PeerReviews>() {
                     @Override
                     public void mapAtoB(PeerReviews peerReviewsRc1, org.orcid.jaxb.model.record.summary_rc2.PeerReviews peerReviewsRc2, MappingContext context) {
-                        peerReviewsRc2.setLastModifiedDate(new LastModifiedDate(
-                                DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis(LastModifiedDatesHelper.calculateLatest(peerReviewsRc2))));
+                        peerReviewsRc2.setLastModifiedDate(
+                                new LastModifiedDate(DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis(LastModifiedDatesHelper.calculateLatest(peerReviewsRc2))));
                     }
                 }).register();
 
@@ -118,12 +121,15 @@ public class VersionConverterImplV2_0_rc1ToV2_0rc2 implements V2VersionConverter
                 .field("workGroup{workSummary}", "workGroup{workSummary}").customize(new CustomMapper<Works, org.orcid.jaxb.model.record.summary_rc2.Works>() {
                     @Override
                     public void mapAtoB(Works worksRc1, org.orcid.jaxb.model.record.summary_rc2.Works worksRc2, MappingContext context) {
-                        worksRc2.setLastModifiedDate(new LastModifiedDate(
-                                DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis(LastModifiedDatesHelper.calculateLatest(worksRc2))));
+                        worksRc2.setLastModifiedDate(
+                                new LastModifiedDate(DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis(LastModifiedDatesHelper.calculateLatest(worksRc2))));
                     }
                 }).register();
         mapper = mapperFactory.getMapperFacade();
     }
+
+    @Resource
+    private V2VersionObjectFactory v2VersionObjectFactory;
 
     @Override
     public String getLowerVersion() {
@@ -136,16 +142,19 @@ public class VersionConverterImplV2_0_rc1ToV2_0rc2 implements V2VersionConverter
     }
 
     @Override
-    public V2Convertible downgrade(Object targetObject, V2Convertible objectToDowngrade) {
-        ActivitiesSummary targetObject2 = new ActivitiesSummary();
-        mapper.map(objectToDowngrade.getObjectToConvert(), targetObject2);
-        return new V2Convertible(targetObject2, LOWER_VERSION);
+    public V2Convertible downgrade(V2Convertible objectToDowngrade) {
+        Object objectToConvert = objectToDowngrade.getObjectToConvert();
+        Object targetObject = v2VersionObjectFactory.createEquivalentInstance(objectToConvert, LOWER_VERSION);
+        mapper.map(objectToConvert, targetObject);
+        return new V2Convertible(targetObject, LOWER_VERSION);
     }
 
     @Override
-    public V2Convertible upgrade(Object targetObject, V2Convertible objectToUpgrade) {
+    public V2Convertible upgrade(V2Convertible objectToUpgrade) {
+        Object objectToConvert = objectToUpgrade.getObjectToConvert();
+        Object targetObject = v2VersionObjectFactory.createEquivalentInstance(objectToConvert, UPPER_VERSION);
         mapper.map(objectToUpgrade.getObjectToConvert(), targetObject);
-        return new V2Convertible(objectToUpgrade.getObjectToConvert(), UPPER_VERSION);
+        return new V2Convertible(targetObject, UPPER_VERSION);
     }
 
 }

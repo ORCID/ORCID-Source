@@ -82,14 +82,14 @@ public class V2VersionConverterChainTest extends BaseTest {
         }
 
         @Override
-        public V2Convertible downgrade(Object targetObject, V2Convertible objectToDowngrade) {
+        public V2Convertible downgrade(V2Convertible objectToDowngrade) {
             Version1 version1 = new Version1();
             version1.setRetainedValue(((Version2) objectToDowngrade.getObjectToConvert()).getRetainedValue());
             return new V2Convertible(version1, "1");
         }
 
         @Override
-        public V2Convertible upgrade(Object targetObject, V2Convertible objectToUpgrade) {
+        public V2Convertible upgrade(V2Convertible objectToUpgrade) {
             Version2 version2 = new Version2();
             version2.setRetainedValue(((Version1) objectToUpgrade.getObjectToConvert()).getRetainedValue());
             return new V2Convertible(version2, "2");
@@ -110,14 +110,14 @@ public class V2VersionConverterChainTest extends BaseTest {
         }
 
         @Override
-        public V2Convertible downgrade(Object targetObject, V2Convertible objectToDowngrade) {
+        public V2Convertible downgrade(V2Convertible objectToDowngrade) {
             Version2 version2 = new Version2();
             version2.setRetainedValue(((Version3) objectToDowngrade.getObjectToConvert()).getRetainedValue());
             return new V2Convertible(version2, "2");
         }
 
         @Override
-        public V2Convertible upgrade(Object targetObject, V2Convertible objectToUpgrade) {
+        public V2Convertible upgrade(V2Convertible objectToUpgrade) {
             Version3 version3 = new Version3();
             version3.setRetainedValue(((Version2) objectToUpgrade.getObjectToConvert()).getRetainedValue());
             return new V2Convertible(version3, "3");

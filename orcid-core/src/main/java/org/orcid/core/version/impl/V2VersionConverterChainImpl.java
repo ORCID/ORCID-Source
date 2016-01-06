@@ -44,7 +44,7 @@ public class V2VersionConverterChainImpl implements V2VersionConverterChain {
     public V2Convertible downgrade(V2Convertible objectToDowngrade, String requiredVersion) {
         for (V2VersionConverter converter : reversedConverters) {
             if (converter.getLowerVersion().compareTo(requiredVersion) > -1) {
-                objectToDowngrade = converter.downgrade(null, objectToDowngrade);
+                objectToDowngrade = converter.downgrade(objectToDowngrade);
             } else {
                 return objectToDowngrade;
             }
@@ -56,7 +56,7 @@ public class V2VersionConverterChainImpl implements V2VersionConverterChain {
     public V2Convertible uprade(V2Convertible objectToUpgrade, String requiredVersion) {
         for (V2VersionConverter converter : converters) {
             if (converter.getUpperVersion().compareTo(requiredVersion) < 1) {
-                objectToUpgrade = converter.upgrade(null, objectToUpgrade);
+                objectToUpgrade = converter.upgrade(objectToUpgrade);
             } else {
                 return objectToUpgrade;
             }
