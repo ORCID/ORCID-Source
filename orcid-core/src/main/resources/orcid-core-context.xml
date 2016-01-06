@@ -67,8 +67,10 @@
 	
 	<bean id="orcidTokenEnhancer" class="org.orcid.core.oauth.OrcidTokenEnhancer" />
 	
+	<!-- 
 	<bean id="serviceAnnouncement_1_For_2015" class="org.orcid.core.profileEvent.ServiceAnnouncement_1_For_2015" scope="prototype" />	
-	
+	 -->
+	 
 	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
 		<property name="host" value="localhost" />
 	</bean>
@@ -631,5 +633,11 @@
 		<constructor-arg value="http://api.geonames.org/getJSON"/>
 	</bean>	
 	
-	<bean id="crossDomainWebManger" class="org.orcid.core.web.filters.CrossDomainWebManger" />		
+	<bean id="crossDomainWebManger" class="org.orcid.core.web.filters.CrossDomainWebManger" />
+	
+	<!-- Need to create a bean for this, so can access in Jersey filter -->
+	<bean id="v1xDisabled" class="java.lang.Boolean">
+		<constructor-arg value="${org.orcid.core.v1_x.disabled}"/>
+	</bean>
+
 </beans>

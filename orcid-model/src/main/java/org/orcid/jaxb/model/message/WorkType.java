@@ -17,8 +17,11 @@
 package org.orcid.jaxb.model.message;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlEnumValue;
+
+import com.google.common.collect.Lists;
 
 public enum WorkType implements Serializable {
     @XmlEnumValue("artistic-performance")
@@ -119,4 +122,29 @@ public enum WorkType implements Serializable {
         }
         throw new IllegalArgumentException(v);
     }
+    
+    /** Return true if type is in the Publications section of the CASRAI dictionary
+     * See publication section: http://members.orcid.org/api/supported-work-types
+     * 
+     * @return
+     */
+    public boolean isPublication(){
+        return publications.contains(this);
+    }
+    
+    /** Return true if type is in the Conference section of the CASRAI dictionary
+     * See publication section: http://members.orcid.org/api/supported-work-types
+     * 
+     * @return
+     */
+    public boolean isConference(){
+        return conferences.contains(this);
+    }
+    
+    private static List<WorkType> publications = Lists.newArrayList(BOOK, BOOK_CHAPTER, BOOK_REVIEW, DICTIONARY_ENTRY, 
+            DISSERTATION, ENCYCLOPEDIA_ENTRY, EDITED_BOOK, JOURNAL_ARTICLE, JOURNAL_ISSUE, MAGAZINE_ARTICLE, MANUAL,
+            ONLINE_RESOURCE, NEWSLETTER_ARTICLE, NEWSPAPER_ARTICLE, REPORT, RESEARCH_TOOL,SUPERVISED_STUDENT_PUBLICATION,
+            TEST, TRANSLATION, WEBSITE, WORKING_PAPER);
+    
+    private static List<WorkType> conferences = Lists.newArrayList(CONFERENCE_PAPER, CONFERENCE_ABSTRACT, CONFERENCE_POSTER);
 }
