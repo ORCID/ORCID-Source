@@ -14,51 +14,63 @@
  *
  * =============================================================================
  */
-package org.orcid.api.t1.server.delegator;
+package org.orcid.api.publicV2.server.delegator;
 
 import javax.ws.rs.core.Response;
 
-public interface PublicV2ApiServiceDelegator {
-    
+/**
+ * 
+ * @author Will Simpson
+ * 
+ */
+public interface PublicV2ApiServiceDelegator<EDUCATION, EMPLOYMENT, EXTERNAL_IDENTIFIER, FUNDING, GROUP_ID_RECORD, OTHER_NAME, PEER_REVIEW, RESEARCHER_URL, WORK> {
+
+    static final String LATEST_V2_VERSION = "2.0_rc2";
+
     Response viewStatusText();
-    
+
     Response viewActivities(String orcid);
-    
+
     Response viewWork(String orcid, Long putCode);
     
+    Response viewWorkCitation(String orcid, Long putCode);
+
     Response viewWorkSummary(String orcid, Long putCode);
-    
+
     Response viewFunding(String orcid, Long putCode);
-    
+
     Response viewFundingSummary(String orcid, Long putCode);
-    
+
     Response viewEducation(String orcid, Long putCode);
-    
+
     Response viewEducationSummary(String orcid, Long putCode);
-    
+
     Response viewEmployment(String orcid, Long putCode);
-    
-    Response viewEmploymentSummary(String orcid, Long putCode);    
-    
+
+    Response viewEmploymentSummary(String orcid, Long putCode);
+
     Response viewPeerReview(String orcid, Long putCode);
-    
+
     Response viewPeerReviewSummary(String orcid, Long putCode);
 
-    Response viewWorkCitation(String orcid, Long putCode);  
-    
-    Response viewResearcherUrl(String orcid, Long putCode);
-    
+    Response viewGroupIdRecord(Long putCode);
+
+    Response viewGroupIdRecords(String pageSize, String pageNum);
+
     Response viewResearcherUrls(String orcid);
-    
+
+    Response viewResearcherUrl(String orcid, Long putCode);
+
     Response viewEmails(String orcid);
-            
-    Response viewPersonalDetails(String orcid);
-    
+
     Response viewOtherNames(String orcid);
-    
+
     Response viewOtherName(String orcid, Long putCode);
-    
+
+    Response viewPersonalDetails(String orcid);
+
     Response viewExternalIdentifiers(String orcid);
 
     Response viewExternalIdentifier(String orcid, Long putCode);
+
 }
