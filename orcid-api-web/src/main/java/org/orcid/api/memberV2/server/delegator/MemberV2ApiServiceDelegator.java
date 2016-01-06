@@ -24,7 +24,9 @@ import org.orcid.jaxb.model.record_rc1.Employment;
 import org.orcid.jaxb.model.record_rc1.Funding;
 import org.orcid.jaxb.model.record_rc1.PeerReview;
 import org.orcid.jaxb.model.record_rc1.Work;
+import org.orcid.jaxb.model.record_rc2.Address;
 import org.orcid.jaxb.model.record_rc2.ExternalIdentifier;
+import org.orcid.jaxb.model.record_rc2.Keyword;
 import org.orcid.jaxb.model.record_rc2.OtherName;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 
@@ -130,4 +132,28 @@ public interface MemberV2ApiServiceDelegator {
     Response createExternalIdentifier(String orcid, ExternalIdentifier externalIdentifier);
 
     Response deleteExternalIdentifier(String orcid, Long putCode);
+    
+    Response viewBiography(String orcid);
+    
+    Response viewKeywords(String orcid);
+
+    Response viewKeyword(String orcid, Long putCode);
+
+    Response createKeyword(String orcid, Keyword keyword);
+
+    Response updateKeyword(String orcid, Long putCode, Keyword keyword);
+
+    Response deleteKeyword(String orcid, Long putCode);
+            
+    Response viewAddresses(String orcid);
+
+    Response viewAddress(String orcid, Long putCode);
+
+    Response createAddress(String orcid, Address address);
+
+    Response updateAddress(String orcid, Long putCode, Address address);
+
+    Response deleteAddress(String orcid, Long putCode);
+    
+    Response viewPerson(String orcid);
 }

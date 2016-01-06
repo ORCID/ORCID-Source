@@ -40,6 +40,7 @@ import org.orcid.jaxb.model.record.summary_rc1.Works;
 import org.orcid.jaxb.model.record_rc1.Group;
 import org.orcid.jaxb.model.record_rc1.GroupableActivity;
 import org.orcid.jaxb.model.record_rc2.OtherName;
+import org.orcid.jaxb.model.record_rc2.Person;
 import org.orcid.jaxb.model.record_rc2.PersonalDetails;
 import org.springframework.stereotype.Component;
 
@@ -163,5 +164,48 @@ public class VisibilityFilterV2Impl implements VisibilityFilterV2 {
         }
         
         return personalDetails;
+    }
+
+    @Override
+    public Person filter(Person person) {
+        if(person.getAddresses() != null) {
+            filter(person.getAddresses().getAddress());
+        }
+        if(person.getEmails() != null) {
+            filter(person.getEmails().getEmails());
+        }
+        if(person.getExternalIdentifiers() != null) {
+            filter(person.getExternalIdentifiers().getExternalIdentifier());
+        }
+        if(person.getKeywords() != null) {
+            filter(person.getKeywords().getKeywords());
+        }
+        
+        if(person.getOtherNames() != null) {
+            filter(person.getOtherNames().getOtherNames());
+        }
+        
+        if(person.getResearcherUrls() != null) {
+            filter(person.getResearcherUrls().getResearcherUrls());
+        }        
+
+        // If it is private
+        try {
+            if (person.getBiography() != null) {
+                orcidSecurityManager.checkVisibility(person.getBiography());
+            }
+        } catch (OrcidVisibilityException | OrcidUnauthorizedException e) {
+            person.setBiography(null);
+        }
+
+        try {
+            if (person.getName() != null) {
+                orcidSecurityManager.checkVisibility(person.getName());
+            }
+        } catch (OrcidVisibilityException | OrcidUnauthorizedException e) {
+            person.setName(null);
+        }
+
+        return person;
     }
 }

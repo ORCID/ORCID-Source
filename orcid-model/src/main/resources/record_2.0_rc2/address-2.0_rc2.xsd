@@ -43,8 +43,21 @@
 				<xs:element name="address" type="address:address" minOccurs="1"
 					maxOccurs="unbounded" />
 			</xs:sequence>
+			<xs:attribute name="path" type="common:person-path" use="optional" />
 		</xs:complexType>
 	</xs:element>	
+
+	<xs:element name="address">
+		<xs:annotation>
+			<xs:documentation>Address element
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="address:address"></xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
 
 	<xs:complexType name="address">
 		<xs:sequence>

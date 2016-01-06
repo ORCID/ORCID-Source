@@ -34,6 +34,11 @@ import org.orcid.jaxb.model.common.Visibility;
 
 import io.swagger.annotations.ApiModelProperty;
 
+/**
+ * 
+ * @author Angel Montenegro
+ * 
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "commonName", "reference", "url", "createdDate", "lastModifiedDate", "source" })
 @XmlRootElement(name = "external-identifier", namespace = "http://www.orcid.org/ns/external-identifier")

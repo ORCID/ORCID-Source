@@ -36,6 +36,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.persistence.jpa.entities.OtherNameEntity;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
@@ -91,6 +93,15 @@ public class OtherNameDaoTest extends DBUnitTest {
         assertEquals(true, result);
         assertEquals(2, otherNameDao.getOtherNames("4444-4444-4444-4441").size());
         assertFalse("Profile last modified date should have been updated", profileLastModifiedOrig.after(profileDao.retrieveLastModifiedDate("4444-4444-4444-4441")));
+        
+        
+        OtherNameEntity entity = new OtherNameEntity();
+        entity.setDisplayName("The other name");
+        entity.setProfile(new ProfileEntity("4444-4444-4444-4441"));
+        entity.setSource(new SourceEntity(new ProfileEntity("4444-4444-4444-4441")));
+        entity.setVisibility(Visibility.PUBLIC);
+        otherNameDao.persist(entity);
+        assertEquals(3, otherNameDao.getOtherNames("4444-4444-4444-4441").size());
     }
 
     @Test    

@@ -85,6 +85,29 @@
 		</xs:complexType>
 	</xs:element>
 
+	<xs:element name="delegation">
+		<xs:annotation>
+			<xs:documentation>TBD</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="person:delegation" />
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="applications">
+		<xs:annotation>
+			<xs:documentation>TBD</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="person:applications" />
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+
+
 	<xs:complexType name="delegation">
 		<xs:annotation>
 			<xs:documentation>Delegation
@@ -126,6 +149,7 @@
 			<xs:element name="approval-date" type="person:approval-date" />
 			<xs:element name="delegate-summary" type="person:delegate-summary" />
 		</xs:sequence>
+		<xs:attribute name="put-code" type="common:put-code" use="optional" />
 	</xs:complexType>
 
 	<xs:complexType name="approval-date">
