@@ -38,6 +38,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.RedirectView;
 
 @RequestMapping(value = "/oauth/authorize")
 public class OrcidAuthorizationEndpoint extends AuthorizationEndpoint {
@@ -69,11 +70,25 @@ public class OrcidAuthorizationEndpoint extends AuthorizationEndpoint {
     @RequestMapping
     public ModelAndView authorize(Map<String, Object> model,
                     @RequestParam Map<String, String> requestParameters, SessionStatus sessionStatus, Principal principal) {
-        trimRequestParameters(requestParameters);
+        try {
+        	trimRequestParameters(requestParameters);
+        } catch (InvalidScopeException ise) {
+        	String redirectUri = requestParameters.get("redirect_uri");
+        	String redirectUriWithParams = "";
+        	if(redirectUri != null) {
+        		redirectUriWithParams = redirectUri;
+        	}
+            redirectUriWithParams += "?error=invalid_scope&error_description=" + ise.getMessage();
+            RedirectView rView = new RedirectView(redirectUriWithParams);
+
+            ModelAndView error = new ModelAndView();
+            error.setView(rView);
+            return error;
+        }
         return super.authorize(model, requestParameters, sessionStatus, principal);
     }
     
-    private void trimRequestParameters(Map<String, String> requestParameters) {
+    private void trimRequestParameters(Map<String, String> requestParameters) throws InvalidScopeException {
     	for(Map.Entry<String,String> entry : requestParameters.entrySet()) {
     		requestParameters.put(entry.getKey(), entry.getValue().trim());
     	}
@@ -111,11 +126,16 @@ public class OrcidAuthorizationEndpoint extends AuthorizationEndpoint {
         return new URI(uri);
     } 
     
-    private String trimClientCredentialScopes(String scopes) {
+    private String trimClientCredentialScopes(String scopes) throws InvalidScopeException {
         String result = scopes;
         for (String scope : OAuth2Utils.parseParameterList(scopes)) {
         	if(StringUtils.isNotBlank(scope)) {
-        		ScopePathType scopeType = ScopePathType.fromValue(scope);
+        		ScopePathType scopeType = null;
+            	try {
+                	scopeType = ScopePathType.fromValue(scope);
+                } catch(Exception e) {
+                	throw new InvalidScopeException("Invalid scope: " + scope);
+                }
                 if (scopeType.isClientCreditalScope()) {
                     if(scopes.contains(ScopePathType.ORCID_PROFILE_CREATE.getContent()))
                         result = scopes.replaceAll(ScopePathType.ORCID_PROFILE_CREATE.getContent(), "");
