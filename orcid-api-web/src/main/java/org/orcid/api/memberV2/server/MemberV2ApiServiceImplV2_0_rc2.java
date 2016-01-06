@@ -111,11 +111,12 @@ public class MemberV2ApiServiceImplV2_0_rc2 {
     @Value("${org.orcid.core.apiBaseUri}")
     protected String apiBaseUri;
 
-    protected MemberV2ApiServiceDelegator serviceDelegator;
+    protected MemberV2ApiServiceDelegator<Education, Employment, ExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work> serviceDelegator;
 
     private NotificationsApiServiceDelegator notificationsServiceDelegator;
 
-    public void setServiceDelegator(MemberV2ApiServiceDelegator serviceDelegator) {
+    public void setServiceDelegator(
+            MemberV2ApiServiceDelegator<Education, Employment, ExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work> serviceDelegator) {
         this.serviceDelegator = serviceDelegator;
     }
 

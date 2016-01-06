@@ -63,17 +63,20 @@ import org.orcid.jaxb.model.groupid.GroupIdRecords;
 import org.orcid.jaxb.model.message.ScopeConstants;
 import org.orcid.jaxb.model.notification.Notification;
 import org.orcid.jaxb.model.notification.permission.NotificationPermission;
-import org.orcid.jaxb.model.record.summary_rc1.ActivitiesSummary;
-import org.orcid.jaxb.model.record.summary_rc1.EducationSummary;
-import org.orcid.jaxb.model.record.summary_rc1.EmploymentSummary;
-import org.orcid.jaxb.model.record.summary_rc1.FundingSummary;
-import org.orcid.jaxb.model.record.summary_rc1.PeerReviewSummary;
-import org.orcid.jaxb.model.record.summary_rc1.WorkSummary;
-import org.orcid.jaxb.model.record_rc1.Education;
-import org.orcid.jaxb.model.record_rc1.Employment;
-import org.orcid.jaxb.model.record_rc1.Funding;
-import org.orcid.jaxb.model.record_rc1.PeerReview;
-import org.orcid.jaxb.model.record_rc1.Work;
+import org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary;
+import org.orcid.jaxb.model.record.summary_rc2.EducationSummary;
+import org.orcid.jaxb.model.record.summary_rc2.EmploymentSummary;
+import org.orcid.jaxb.model.record.summary_rc2.FundingSummary;
+import org.orcid.jaxb.model.record.summary_rc2.PeerReviewSummary;
+import org.orcid.jaxb.model.record.summary_rc2.WorkSummary;
+import org.orcid.jaxb.model.record_rc2.Education;
+import org.orcid.jaxb.model.record_rc2.Employment;
+import org.orcid.jaxb.model.record_rc2.Funding;
+import org.orcid.jaxb.model.record_rc2.PeerReview;
+import org.orcid.jaxb.model.record_rc2.Work;
+import org.orcid.jaxb.model.record_rc2.ExternalIdentifier;
+import org.orcid.jaxb.model.record_rc2.OtherName;
+import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import org.springframework.beans.factory.annotation.Value;
 
 import io.swagger.annotations.Api;
@@ -102,11 +105,12 @@ public class MemberV2ApiServiceImplV2_0_rc1 {
     @Value("${org.orcid.core.apiBaseUri}")
     protected String apiBaseUri;
 
-    protected MemberV2ApiServiceDelegator serviceDelegator;
+    protected MemberV2ApiServiceDelegator<Education, Employment, ExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work> serviceDelegator;
 
     private NotificationsApiServiceDelegator notificationsServiceDelegator;
 
-    public void setServiceDelegator(MemberV2ApiServiceDelegator serviceDelegator) {
+    public void setServiceDelegator(
+            MemberV2ApiServiceDelegator<Education, Employment, ExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work> serviceDelegator) {
         this.serviceDelegator = serviceDelegator;
     }
 
