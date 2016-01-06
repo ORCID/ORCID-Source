@@ -6234,6 +6234,18 @@ a:hover .mozilla-badge{
     display: block;
 }
 
+.edit-aka{	
+	width: 600px;
+	height:300px;
+}
+
+.edit-aka .fixed-area{
+	width: 100%;
+	height: 250px;
+	overflow-y: scroll;
+	border: 1px solid #939598; 	
+}
+
 
 
 /* Media Queries */

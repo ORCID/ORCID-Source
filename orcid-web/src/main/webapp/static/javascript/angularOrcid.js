@@ -2524,7 +2524,31 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile',function ($scope
     $scope.setPrivacy = function(priv, $event) {
         $event.preventDefault();
         $scope.otherNamesForm.visibility.visibility = priv;
-    };        
+    };
+    
+    
+    $scope.openEditModal = function(){
+        $.colorbox({
+            scrolling: true,
+            html: $compile($('#edit-aka').html())($scope),
+            onLoad: function() {$('#cboxClose').remove();},
+            // start the colorbox off with the correct width
+            width: formColorBoxResize(),
+            onComplete: function() {
+                    
+            },
+            onClosed: function() {
+                //
+            }            
+        });
+        $.colorbox.resize();
+    }
+    
+    $scope.closeEditModal = function(){
+        $.colorbox.close();
+    }
+    
+    
 
     $scope.getOtherNamesForm();
 }]);

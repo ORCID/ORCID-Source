@@ -70,49 +70,71 @@
             </div>            	       	
 	       	
 	       	<!-- Also known as -->
-	       	<div ng-controller="OtherNamesCtrl" class="workspace-section other-names" id="other-names-section">        	   
-        	   <div class="workspace-section-header">
-        	   	   <span class="workspace-section-title"><@orcid.msg 'workspace.Alsoknownas'/></span>
-	        	   <span ng-hide="showEdit == true" ng-click="openEdit()">		        	   	  
-	        	      <span class="glyphicon glyphicon-pencil edit-other-names edit-option pull-right" title="" id="open-edit-other-names"></span>
-	        	      <span ng-repeat="otherName in otherNamesForm.otherNames" ng-cloak>
-	        	         {{ $last?otherName.content:otherName.content + ", "}}
-	        	      </span>
-	        	   </span>
-	        	   <span class="pull-right" ng-show="showEdit == true" id="other-names-visibility" ng-cloak>
-		        	   <@orcid.privacyToggle3  angularModel="otherNamesForm.visibility.visibility"
-			             questionClick="toggleClickPrivacyHelp($index)"
-			             clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
-			             publicClick="setPrivacy('PUBLIC', $event)" 
-	                	     limitedClick="setPrivacy('LIMITED', $event)" 
-	                	     privateClick="setPrivacy('PRIVATE', $event)"
-	                	     elementId="$index" />
-                   </span>
-        	   </div>
-        	   
-        	   <!-- Edit -->
-        	   <div ng-show="showEdit == true" ng-cloak>
-        	      <div ng-repeat="otherName in otherNamesForm.otherNames" class="icon-inside-input">
-        	          <input type="text" ng-model="otherName.content" ng-enter="setOtherNamesForm()">
-        	          <a ng-click="deleteKeyword(otherName)" class="glyphicon glyphicon-trash grey icon-inside"></a>
-        	          <span class="orcid-error" ng-show="otherName.errors.length > 0">
-					     <div ng-repeat='error in otherName.errors' ng-bind-html="error"></div>
-				      </span>
-        	      </div>
-        	      <ul class="workspace-section-toolbar">
-        	      	<li>
-        	      		<a ng-click="addNew()"><span class="glyphicon glyphicon-plus"></span></a>
-        	      	</li>
-        	      	<li class="pull-right">
-        	      		<button class="btn btn-primary" ng-click="setOtherNamesForm()"><@spring.message "freemarker.btnsavechanges"/></button>
-        	      	</li>
-        	      	<li class="pull-right">
-        	      		<a class="cancel-option" ng-click="close()"><@spring.message "freemarker.btncancel"/></a>
-        	      	</li>
-        	      </ul>
-        	   </div>
-	       	</div>
-            
+	       	<#if RequestParameters['v2modal']??>
+	       		<div ng-controller="OtherNamesCtrl" class="workspace-section other-names" id="other-names-section">        	   
+	        	   <div class="workspace-section-header">
+	        	   	   <span class="workspace-section-title"><@orcid.msg 'workspace.Alsoknownas'/></span>
+		        	   <span ng-hide="showEdit == true" ng-click="openEditModal()">		        	   	  
+		        	      <span class="glyphicon glyphicon-pencil edit-other-names edit-option pull-right" title="" id="open-edit-other-names"></span>
+		        	      <span ng-repeat="otherName in otherNamesForm.otherNames" ng-cloak>
+		        	         {{ $last?otherName.content:otherName.content + ", "}}
+		        	      </span>
+		        	   </span>
+		        	   <span class="pull-right" ng-show="showEdit == true" id="other-names-visibility" ng-cloak>
+			        	   <@orcid.privacyToggle3  angularModel="otherNamesForm.visibility.visibility"
+				             questionClick="toggleClickPrivacyHelp($index)"
+				             clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
+				             publicClick="setPrivacy('PUBLIC', $event)" 
+		                	     limitedClick="setPrivacy('LIMITED', $event)" 
+		                	     privateClick="setPrivacy('PRIVATE', $event)"
+		                	     elementId="$index" />
+	                   </span>
+	        	   </div>
+	        	</div>
+	       	<#else>	       	
+		       	<div ng-controller="OtherNamesCtrl" class="workspace-section other-names" id="other-names-section">        	   
+	        	   <div class="workspace-section-header">
+	        	   	   <span class="workspace-section-title"><@orcid.msg 'workspace.Alsoknownas'/></span>
+		        	   <span ng-hide="showEdit == true" ng-click="openEdit()">		        	   	  
+		        	      <span class="glyphicon glyphicon-pencil edit-other-names edit-option pull-right" title="" id="open-edit-other-names"></span>
+		        	      <span ng-repeat="otherName in otherNamesForm.otherNames" ng-cloak>
+		        	         {{ $last?otherName.content:otherName.content + ", "}}
+		        	      </span>
+		        	   </span>
+		        	   <span class="pull-right" ng-show="showEdit == true" id="other-names-visibility" ng-cloak>
+			        	   <@orcid.privacyToggle3  angularModel="otherNamesForm.visibility.visibility"
+				             questionClick="toggleClickPrivacyHelp($index)"
+				             clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
+				             publicClick="setPrivacy('PUBLIC', $event)" 
+		                	     limitedClick="setPrivacy('LIMITED', $event)" 
+		                	     privateClick="setPrivacy('PRIVATE', $event)"
+		                	     elementId="$index" />
+	                   </span>
+	        	   </div>
+	        	   
+	        	   <!-- Edit -->
+	        	   <div ng-show="showEdit == true" ng-cloak>
+	        	      <div ng-repeat="otherName in otherNamesForm.otherNames" class="icon-inside-input">
+	        	          <input type="text" ng-model="otherName.content" ng-enter="setOtherNamesForm()">
+	        	          <a ng-click="deleteKeyword(otherName)" class="glyphicon glyphicon-trash grey icon-inside"></a>
+	        	          <span class="orcid-error" ng-show="otherName.errors.length > 0">
+						     <div ng-repeat='error in otherName.errors' ng-bind-html="error"></div>
+					      </span>
+	        	      </div>
+	        	      <ul class="workspace-section-toolbar">
+	        	      	<li>
+	        	      		<a ng-click="addNew()"><span class="glyphicon glyphicon-plus"></span></a>
+	        	      	</li>
+	        	      	<li class="pull-right">
+	        	      		<button class="btn btn-primary" ng-click="setOtherNamesForm()"><@spring.message "freemarker.btnsavechanges"/></button>
+	        	      	</li>
+	        	      	<li class="pull-right">
+	        	      		<a class="cancel-option" ng-click="close()"><@spring.message "freemarker.btncancel"/></a>
+	        	      	</li>
+	        	      </ul>
+	        	   </div>
+		       	</div>
+            </#if>
             
             <!-- Country -->
             <div ng-controller="CountryCtrl" class="workspace-section country">
@@ -754,5 +776,64 @@
 		</div>
 	</#if>
 </script>
+
+<script type="text/ng-template" id="edit-aka">	
+	<div class="lightbox-container">
+		<div class="edit-aka">
+			<!-- Title -->
+			<div class="row">			
+				<div class="col-md-9 col-sm-8 col-xs-9">	
+					<h1 class="lightbox-title pull-left">
+						<!-- <@orcid.msg ''/> -->
+						Edit also known as
+					</h1>
+				</div>			
+			</div>
+			<div class="row">
+				<div class="col-md-12 col-xs-12 col-sm-12">
+					
+					<div class="fixed-area">
+						<div class="scroll-area">		
+	        	      		<div class="col-md-6">
+								<div class="aka">
+									<span>S.M. Garcia</span>
+									<input type="text" />
+								</div>
+								<div class="source">Source: Sofia María Hernandez Garcia</div>
+							</div>							
+							<div class="col-md-6">
+								<ul>
+									<li><!-- Move Up -->
+										<span></span>
+									</li>
+									<li><!-- Move Down -->
+										<span></span>	
+									</li>
+									<li><!-- Delete -->
+										<span></span>	
+									</li>
+									<li>
+										Privacy Settings	
+									</li>
+
+								</ul>
+							</div>
+						</div>
+						<div class="">
+							<a ng-click="addNew()"><span class="glyphicon glyphicon-plus"></span></a>	        	      		
+			        	    <button class="btn btn-primary" ng-click="setOtherNamesForm()"><@spring.message "freemarker.btnsavechanges"/></button>	        	      		
+			        	    <a class="cancel-option" ng-click="closeEditModal()"><@spring.message "freemarker.btncancel"/></a>
+						</div>
+					</div>
+					
+					
+					
+					
+				</div>
+			</div>
+		</div>
+	</div>		
+</script>
+
 
 </@protected>
