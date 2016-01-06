@@ -93,5 +93,5 @@ public class OrcidApiConstants {
     public static final String BIOGRAPHY = "/{orcid}/biography";
     public static final String KEYWORDS = "/{orcid}/keywords";
     public static final String ADDRESS = "/{orcid}/address";
-    public static final String PERSON = "/{orcid}/PERSON";
+    public static final String PERSON = "/{orcid}/person";
 }
