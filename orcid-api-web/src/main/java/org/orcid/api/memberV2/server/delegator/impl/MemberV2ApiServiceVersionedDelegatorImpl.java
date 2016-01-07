@@ -28,10 +28,10 @@ import org.orcid.core.version.V2Convertible;
 import org.orcid.core.version.V2VersionConverterChain;
 import org.orcid.jaxb.model.message.OrcidMessage;
 
-public class MemberV2ApiServiceVersionedDelegatorImpl implements MemberV2ApiServiceDelegator<Object, Object, Object, Object, Object, Object, Object, Object, Object> {
+public class MemberV2ApiServiceVersionedDelegatorImpl implements MemberV2ApiServiceDelegator<Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object> {
 
     @Resource
-    private MemberV2ApiServiceDelegator<Object, Object, Object, Object, Object, Object, Object, Object, Object> memberV2ApiServiceDelegator;
+    private MemberV2ApiServiceDelegator<Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object> memberV2ApiServiceDelegator;
 
     private String externalVersion;
 
@@ -363,5 +363,77 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements MemberV2ApiServ
 
     public void setExternalVersion(String externalVersion) {
         this.externalVersion = externalVersion;
+    }
+
+    @Override
+    public Response viewBiography(String orcid) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Response viewKeywords(String orcid) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Response viewKeyword(String orcid, Long putCode) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Response createKeyword(String orcid, Object keyword) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Response updateKeyword(String orcid, Long putCode, Object keyword) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Response deleteKeyword(String orcid, Long putCode) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Response viewAddresses(String orcid) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Response viewAddress(String orcid, Long putCode) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Response createAddress(String orcid, Object address) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Response updateAddress(String orcid, Long putCode, Object address) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Response deleteAddress(String orcid, Long putCode) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Response viewPerson(String orcid) {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

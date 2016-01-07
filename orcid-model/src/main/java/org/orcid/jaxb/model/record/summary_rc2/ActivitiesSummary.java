@@ -37,7 +37,6 @@ import javax.xml.bind.annotation.XmlType;
 import org.orcid.jaxb.model.common.LastModifiedDate;
 import org.orcid.jaxb.model.record_rc2.ActivitiesContainer;
 import org.orcid.jaxb.model.record_rc2.Activity;
-import org.orcid.jaxb.model.record_rc2.RecordUtil;
 
 /**
  * <p>
@@ -166,7 +165,7 @@ public class ActivitiesSummary implements Serializable, ActivitiesContainer {
 
     @Override
     public String toString() {
-        return RecordUtil.convertToString(this);
+        return org.orcid.jaxb.model.record.util.RecordUtil.convertToString(this);
     }
 
     @Override
