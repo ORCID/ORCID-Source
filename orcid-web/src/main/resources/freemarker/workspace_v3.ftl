@@ -871,13 +871,13 @@
 								</div>
 								<div class="col-md-6">
 									<ul class="record-settings pull-right">
-										<li><!-- Move Up -->												
+										<li>												
 											<span class="glyphicon glyphicon-arrow-up circle" ng-click=""></span>											
 										</li>
-										<li><!-- Move Down -->																						
+										<li>																						
 											<span class="glyphicon glyphicon-arrow-down circle" ng-click=""></span>											
 										</li>
-										<li><!-- Del -->										
+										<li>										
 											<span class="glyphicon glyphicon-trash" ng-click=""></span>											
 										</li>
 										<li>
