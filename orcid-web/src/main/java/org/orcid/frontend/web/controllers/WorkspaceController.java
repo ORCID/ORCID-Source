@@ -62,15 +62,17 @@ import org.orcid.jaxb.model.record_rc1.Role;
 import org.orcid.jaxb.model.record_rc1.WorkCategory;
 import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.record_rc1.WorkType;
+import org.orcid.jaxb.model.record_rc2.Keywords;
 import org.orcid.jaxb.model.record_rc2.OtherNames;
 import org.orcid.persistence.constants.SiteConstants;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ThirdPartyRedirect;
+import org.orcid.pojo.ajaxForm.KeywordForm;
 import org.orcid.pojo.ajaxForm.KeywordsForm;
 import org.orcid.pojo.ajaxForm.OtherNameForm;
 import org.orcid.pojo.ajaxForm.OtherNamesForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
-import org.orcid.pojo.ajaxForm.Text;
+import org.orcid.pojo.ajaxForm.Visibility;
 import org.orcid.pojo.ajaxForm.Website;
 import org.orcid.pojo.ajaxForm.WebsitesForm;
 import org.orcid.utils.FunctionsOverCollections;
@@ -338,29 +340,81 @@ public class WorkspaceController extends BaseWorkspaceController {
     }
 
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     @RequestMapping(value = "/my-orcid/keywordsForms.json", method = RequestMethod.GET)
     public @ResponseBody
-    KeywordsForm getKeywordsFormJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
-        OrcidProfile currentProfile = getEffectiveProfile();
-        return KeywordsForm.valueOf(currentProfile.getOrcidBio().getKeywords());
+    KeywordsForm getKeywordsFormJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {        
+        Keywords keywords = profileKeywordManager.getKeywordsV2(getCurrentUserOrcid());        
+        KeywordsForm form = KeywordsForm.valueOf(keywords);                
+        ProfileEntity profileEntity = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
+        //Set the default visibility since we still need it in the front end
+        Visibility defaultVisibility = profileEntity.getKeywordsVisibility() == null ? Visibility.valueOf(OrcidVisibilityDefaults.KEYWORD_DEFAULT.getVisibility()) : Visibility.valueOf(profileEntity.getKeywordsVisibility());
+        form.setVisibility(defaultVisibility);        
+        return form;
     }
     
     @RequestMapping(value = "/my-orcid/keywordsForms.json", method = RequestMethod.POST)
     public @ResponseBody
     KeywordsForm setKeywordsFormJson(HttpServletRequest request, @RequestBody KeywordsForm kf) throws NoSuchRequestHandlingMethodException {
         kf.setErrors(new ArrayList<String>());
-    	for (int i = kf.getKeywords().size() - 1; i >= 0; i--) {
-            Text t = kf.getKeywords().get(i);
-            if (PojoUtil.isEmpty(t))
-                kf.getKeywords().remove(i);
-            else if (t.getValue().length() > 100)
-                t.setValue(t.getValue().substring(0,100));
+        
+        if(kf != null && kf.getKeywords() != null && !kf.getKeywords().isEmpty()) {
+            Iterator<KeywordForm> it = kf.getKeywords().iterator();            
+            while (it.hasNext()) {
+                KeywordForm k = it.next();
+                if(!PojoUtil.isEmpty(k.getContent())) {
+                    if (k.getContent().length() > SiteConstants.KEYWORD_MAX_LENGTH) {
+                        k.setContent(k.getContent().substring(0,SiteConstants.KEYWORD_MAX_LENGTH));
+                    }                    
+                } else {
+                    it.remove();
+                }            
+            }
+                        
+            ProfileEntity profileEntity = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
+            Visibility defaultVisibility = profileEntity.getKeywordsVisibility() == null ? Visibility.valueOf(OrcidVisibilityDefaults.KEYWORD_DEFAULT.getVisibility()) : Visibility.valueOf(profileEntity.getKeywordsVisibility());
+            profileKeywordManager.updateKeywordsV2(getCurrentUserOrcid(), kf.toKeywords(), org.orcid.jaxb.model.common.Visibility.fromValue(defaultVisibility.getVisibility().value()));
         }
-        if (kf.getErrors().size()>0) return kf;        
-        OrcidProfile currentProfile = getEffectiveProfile();
-        profileKeywordManager.updateProfileKeyword(currentProfile.getOrcidIdentifier().getPath(), kf.toKeywords());
+            	                
+        
         return kf;
     }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     @RequestMapping(value = "/my-orcid/otherNamesForms.json", method = RequestMethod.GET)
     public @ResponseBody

@@ -183,7 +183,7 @@
 	        	   <span ng-hide="showEdit == true">
 	        	   	  <span class="glyphicon glyphicon-pencil edit-keywords edit-option pull-right" ng-click="openEdit()" title=""></span>	
 	        	      <span ng-repeat="keyword in keywordsForm.keywords" ng-cloak>
-	        	         {{ $last?keyword.value:keyword.value+ ", "}}
+	        	         {{ $last?keyword.keywordForm.content:keyword.keywordForm.content+ ", "}}
 	        	      </span>
 	        	   </span>
 	        	   <span class="pull-right" ng-show="showEdit == true" ng-cloak>
@@ -201,15 +201,11 @@
         	   <div ng-show="showEdit == true" ng-cloak>
         	      <div ng-repeat="keyword in keywordsForm.keywords">
         	      	  <div class="icon-inside-input">
-	        	          <input type="text" ng-model="keyword.value" ng-enter="setKeywordsForm()"></input>
+	        	          <input type="text" ng-model="keyword.content" ng-enter="setKeywordsForm()"></input>
 	        	          <a ng-click="deleteKeyword(keyword)" class="glyphicon glyphicon-trash grey icon-inside"></a>
-        	          </div>
-        	          <span class="orcid-error" ng-show="keyword.url.errors.length > 0">
-					     <div ng-repeat='error in keyword.url.errors' ng-bind-html="error"></div>
-				      </span>
-				      
-        	          <span class="orcid-error" ng-show="keyword.name.errors.length > 0">
-					     <div ng-repeat='error in keyword.name.errors' ng-bind-html="error"></div>
+        	          </div>        	          
+        	          <span class="orcid-error" ng-show="keyword.errors.length > 0">
+					     <div ng-repeat='error in keyword.errors' ng-bind-html="error"></div>
 				      </span>
         	      </div>
         	      <ul class="workspace-section-toolbar">

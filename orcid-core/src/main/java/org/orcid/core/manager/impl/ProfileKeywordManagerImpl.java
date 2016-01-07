@@ -168,6 +168,12 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
     }
 
     @Override
+    public boolean updateKeywordsVisibility(String orcid, Visibility defaultVisiblity) {
+        org.orcid.jaxb.model.message.Visibility v = (defaultVisiblity == null) ? org.orcid.jaxb.model.message.Visibility.fromValue(OrcidVisibilityDefaults.KEYWORD_DEFAULT.getVisibility().value()) : org.orcid.jaxb.model.message.Visibility.fromValue(defaultVisiblity.value());
+        return profileKeywordDao.updateKeywordsVisibility(orcid, v);
+    }
+    
+    @Override
     public Keyword getKeywordV2(String orcid, Long putCode) {
         ProfileKeywordEntity entity = profileKeywordDao.getProfileKeyword(orcid, putCode);
         return adapter.toKeyword(entity);
@@ -298,8 +304,10 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
             }
         }
 
-        if (defaultVisiblity != null)
-            profileKeywordDao.updateKeywordsVisibility(orcid, org.orcid.jaxb.model.message.Visibility.fromValue(defaultVisiblity.value()));
+        if (defaultVisiblity != null) {
+            updateKeywordsVisibility(orcid, defaultVisiblity);
+        }
+            
 
         return keywords;
     }
