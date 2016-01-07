@@ -24,10 +24,9 @@ import org.apache.commons.lang.StringUtils;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.dao.ProfileKeywordDao;
 import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
-import org.orcid.persistence.jpa.entities.keys.ProfileKeywordEntityPk;
 import org.springframework.transaction.annotation.Transactional;
 
-public class ProfileKeywordDaoImpl extends GenericDaoImpl<ProfileKeywordEntity, ProfileKeywordEntityPk> implements ProfileKeywordDao {
+public class ProfileKeywordDaoImpl extends GenericDaoImpl<ProfileKeywordEntity, Long> implements ProfileKeywordDao {
 
     public ProfileKeywordDaoImpl() {
         super(ProfileKeywordEntity.class);
@@ -57,7 +56,7 @@ public class ProfileKeywordDaoImpl extends GenericDaoImpl<ProfileKeywordEntity, 
     @Override
     @Transactional
     public boolean deleteProfileKeyword(String orcid, String keyword) {
-        Query query = entityManager.createQuery("DELETE FROM ProfileKeywordEntity WHERE profile.id = :orcid AND keyword = :keyword");
+        Query query = entityManager.createQuery("DELETE FROM ProfileKeywordEntity WHERE profile.id = :orcid AND keywordName = :keyword");
         query.setParameter("orcid", orcid);
         query.setParameter("keyword", keyword);
         return query.executeUpdate() > 0 ? true : false;
@@ -82,11 +81,29 @@ public class ProfileKeywordDaoImpl extends GenericDaoImpl<ProfileKeywordEntity, 
      * */
     @Override
     @Transactional
-    public boolean addProfileKeyword(String orcid, String keyword) {
+    public boolean addProfileKeyword(String orcid, String keyword, String sourceId, String clientSourceId) {
         Query query = entityManager
-                .createNativeQuery("INSERT INTO profile_keyword (date_created, last_modified, profile_orcid, keywords_name) VALUES (now(), now(), :orcid, :keywords_name)");
+                .createNativeQuery("INSERT INTO profile_keyword (id, date_created, last_modified, profile_orcid, keywords_name, source_id, client_source_id) VALUES (nextval('keyword_seq'), now(), now(), :orcid, :keywords_name, :source_id, :client_source_id)");
         query.setParameter("orcid", orcid);
         query.setParameter("keywords_name", keyword);
+        query.setParameter("source_id", sourceId);
+        query.setParameter("client_source_id", clientSourceId);
+        return query.executeUpdate() > 0 ? true : false;
+    }
+
+    @Override
+    public ProfileKeywordEntity getProfileKeyword(String orcid, Long putCode) {
+        Query query = entityManager.createQuery("FROM ProfileKeywordEntity WHERE profile.id=:orcid and id=:id");
+        query.setParameter("orcid", orcid);
+        query.setParameter("id", putCode);
+        return (ProfileKeywordEntity) query.getSingleResult();
+    }
+
+    @Override
+    @Transactional
+    public boolean deleteProfileKeyword(ProfileKeywordEntity entity) {        
+        Query query = entityManager.createQuery("DELETE FROM ProfileKeywordEntity WHERE id=:id");
+        query.setParameter("id", entity.getId());
         return query.executeUpdate() > 0 ? true : false;
     }
 

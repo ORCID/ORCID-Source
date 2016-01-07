@@ -35,7 +35,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-
 import org.orcid.jaxb.model.common.LastModifiedDate;
 
 /**
@@ -139,7 +138,6 @@ public class FundingList implements ActivitiesContainer, Serializable {
     @Override
     public void setLastModifiedDate(LastModifiedDate lastModifiedDate) {
         // TODO Auto-generated method stub
-        
-    }
 
+    }
 }

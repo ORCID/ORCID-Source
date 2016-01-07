@@ -645,7 +645,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
             Keywords keywords = new Keywords();
             keywords.setVisibility(profileEntity.getKeywordsVisibility());
             for (ProfileKeywordEntity keywordEntity : profileEntityKeywords) {
-                keywords.getKeyword().add(new Keyword(keywordEntity.getKeyword()));
+                keywords.getKeyword().add(new Keyword(keywordEntity.getKeywordName()));
             }
             return keywords;
         }

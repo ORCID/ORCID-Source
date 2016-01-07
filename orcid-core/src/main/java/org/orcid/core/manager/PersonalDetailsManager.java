@@ -16,9 +16,11 @@
  */
 package org.orcid.core.manager;
 
+import org.orcid.jaxb.model.record_rc2.Name;
 import org.orcid.jaxb.model.record_rc2.PersonalDetails;
 
 public interface PersonalDetailsManager {
     PersonalDetails getPersonalDetails(String orcid);
     PersonalDetails getPublicPersonalDetails(String orcid);
+    Name getName(String orcid);
 }

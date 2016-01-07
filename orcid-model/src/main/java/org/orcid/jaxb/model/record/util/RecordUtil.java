@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.jaxb.model.record_rc2;
+package org.orcid.jaxb.model.record.util;
 
 import java.io.StringWriter;
 

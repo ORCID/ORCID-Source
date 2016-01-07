@@ -24,9 +24,13 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.orcid.jaxb.model.record.util.RecordUtil;
 
-import org.orcid.jaxb.model.record_rc2.RecordUtil;
-
+/**
+ * 
+ * @author Angel Montenegro
+ * 
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "name", "otherNames", "biography" })
 @XmlRootElement(name = "personal-details", namespace = "http://www.orcid.org/ns/personal-details")

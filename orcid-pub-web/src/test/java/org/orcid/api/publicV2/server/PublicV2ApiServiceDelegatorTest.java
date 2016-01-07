@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.api.t1.server;
+package org.orcid.api.publicV2.server;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -57,7 +57,7 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
             "/data/ClientDetailsEntityData.xml", "/data/Oauth2TokenDetailsData.xml", "/data/OrgsEntityData.xml", "/data/ProfileFundingEntityData.xml", "/data/OrgAffiliationEntityData.xml");
     
     @Resource(name = "publicV2ApiServiceDelegator")
-    PublicV2ApiServiceDelegator serviceDelegator;
+    PublicV2ApiServiceDelegator<?, ?, ?, ?, ?, ?, ?, ?, ?> serviceDelegator;
     
     @BeforeClass
     public static void initDBUnitData() throws Exception {

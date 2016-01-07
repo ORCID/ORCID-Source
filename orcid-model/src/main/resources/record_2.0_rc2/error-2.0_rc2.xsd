@@ -29,7 +29,7 @@
 		</xs:documentation>
 		<xs:appinfo>
 			<sch:title>Schematron validation</sch:title>
-			<sch:ns prefix="orcid" uri="http://www.orcid.org/ns/orcid" />
+			<sch:ns prefix="error" uri="http://www.orcid.org/ns/error" />
 		</xs:appinfo>
 	</xs:annotation>
 

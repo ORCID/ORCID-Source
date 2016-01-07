@@ -19,8 +19,6 @@ package org.orcid.core.adapter.impl;
 import java.util.Collection;
 import java.util.List;
 
-import javax.xml.datatype.XMLGregorianCalendar;
-
 import org.orcid.core.adapter.JpaJaxbOtherNameAdapter;
 import org.orcid.jaxb.model.record_rc2.OtherName;
 import org.orcid.jaxb.model.record_rc2.OtherNames;
@@ -58,20 +56,8 @@ public class JpaJaxbOtherNameAdapterImpl implements JpaJaxbOtherNameAdapter {
             return null;
         }
         List<OtherName> otherNameList = mapperFacade.mapAsList(entities, OtherName.class);
-
-        OtherNames otherNames = new OtherNames();
-        XMLGregorianCalendar tempDate = null;
+        OtherNames otherNames = new OtherNames();        
         otherNames.setOtherNames(otherNameList);
-
-        if (otherNameList != null && !otherNameList.isEmpty()) {
-            tempDate = otherNameList.get(0).getLastModifiedDate().getValue();
-            for (OtherName otherName : otherNameList) {
-                if (tempDate.compare(otherName.getLastModifiedDate().getValue()) == -1) {
-                    tempDate = otherName.getLastModifiedDate().getValue();
-                }
-            }
-        }
-
         return otherNames;
     }
 

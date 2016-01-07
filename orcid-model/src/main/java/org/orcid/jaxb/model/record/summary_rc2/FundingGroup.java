@@ -26,7 +26,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-
 import org.orcid.jaxb.model.common.LastModifiedDate;
 import org.orcid.jaxb.model.record_rc2.Group;
 import org.orcid.jaxb.model.record_rc2.GroupableActivity;
@@ -36,8 +35,8 @@ import org.orcid.jaxb.model.record_rc2.GroupableActivity;
 @XmlRootElement(name = "funding-group", namespace = "http://www.orcid.org/ns/activities")
 public class FundingGroup implements Group, Serializable {
     private static final long serialVersionUID = 1L;
-    
-    @XmlElement(name="last-modified-date", namespace = "http://www.orcid.org/ns/common")
+
+    @XmlElement(name = "last-modified-date", namespace = "http://www.orcid.org/ns/common")
     protected LastModifiedDate lastModifiedDate;
     @XmlElement(name = "identifiers", namespace = "http://www.orcid.org/ns/activities")
     private Identifiers identifiers;
@@ -55,7 +54,7 @@ public class FundingGroup implements Group, Serializable {
             fundingSummary = new ArrayList<FundingSummary>();
         return fundingSummary;
     }
-    
+
     @Override
     public Collection<? extends GroupableActivity> getActivities() {
         return getFundingSummary();
@@ -92,12 +91,12 @@ public class FundingGroup implements Group, Serializable {
         return true;
     }
 
-	public LastModifiedDate getLastModifiedDate() {
-		return lastModifiedDate;
-	}
+    public LastModifiedDate getLastModifiedDate() {
+        return lastModifiedDate;
+    }
 
-	public void setLastModifiedDate(LastModifiedDate lastModifiedDate) {
-		this.lastModifiedDate = lastModifiedDate;
-	}
+    public void setLastModifiedDate(LastModifiedDate lastModifiedDate) {
+        this.lastModifiedDate = lastModifiedDate;
+    }
 
 }

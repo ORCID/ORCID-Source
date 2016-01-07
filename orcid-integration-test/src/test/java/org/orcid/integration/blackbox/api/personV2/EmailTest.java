@@ -51,7 +51,7 @@ import com.sun.jersey.api.client.ClientResponse;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-publicV2-context.xml" })
-public class EmailTests extends BlackBoxBase {
+public class EmailTest extends BlackBoxBase {
     protected static Map<String, String> accessTokens = new HashMap<String, String>();
 
     @Value("${org.orcid.web.base.url:http://localhost:8080/orcid-web}")
@@ -123,7 +123,7 @@ public class EmailTests extends BlackBoxBase {
         assertListContainsEmail("limited@email.com", Visibility.LIMITED, emails);
     }
     
-    private void assertListContainsEmail(String emailString, Visibility visibility, Emails emails) {
+    public static void assertListContainsEmail(String emailString, Visibility visibility, Emails emails) {
         assertNotNull(emails);
         assertNotNull(emails.getEmails());
         assertFalse(emails.getEmails().isEmpty());        

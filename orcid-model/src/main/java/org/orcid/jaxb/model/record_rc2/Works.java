@@ -34,7 +34,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-
 import org.orcid.jaxb.model.common.LastModifiedDate;
 
 /**
@@ -131,8 +130,6 @@ public class Works implements Serializable, ActivitiesContainer {
 
     @Override
     public void setLastModifiedDate(LastModifiedDate lastModifiedDate) {
-        // TODO Auto-generated method stub
-        
+        // TODO Auto-generated method stub        
     }
-
 }

@@ -42,6 +42,7 @@ import org.orcid.jaxb.model.common.Title;
 import org.orcid.jaxb.model.common.Url;
 import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.jaxb.model.common.VisibilityType;
+import org.orcid.jaxb.model.record.util.RecordUtil;
 
 import io.swagger.annotations.ApiModelProperty;
 
@@ -57,11 +58,10 @@ import io.swagger.annotations.ApiModelProperty;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "createdDate", "lastModifiedDate", "source", "putCode", "path", "title", "journalTitle", "shortDescription", "citation", "type",
-        "publicationDate", "externalIdentifiers", "url", "contributors", "languageCode", "country" })
+@XmlType(propOrder = { "createdDate", "lastModifiedDate", "source", "putCode", "path", "title", "journalTitle", "shortDescription", "citation", "type", "publicationDate",
+        "externalIdentifiers", "url", "contributors", "languageCode", "country" })
 @XmlRootElement(name = "work", namespace = "http://www.orcid.org/ns/work")
 public class Work implements VisibilityType, Activity, Serializable {
-
     private static final long serialVersionUID = 1L;
     @XmlElement(namespace = "http://www.orcid.org/ns/work")
     protected WorkTitle title;
@@ -84,14 +84,11 @@ public class Work implements VisibilityType, Activity, Serializable {
     @XmlElement(name = "language-code", namespace = "http://www.orcid.org/ns/common")
     protected String languageCode;
     @XmlElement(namespace = "http://www.orcid.org/ns/common")
-    protected Country country;
-    /*
-     * @deprecated replaced with source in 1.2_rc6 and greater
-     */
+    protected Country country;    
     @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected Source source;
     @XmlAttribute(name = "put-code")
-    @ApiModelProperty(hidden = true) 
+    @ApiModelProperty(hidden = true)
     protected Long putCode;
     @XmlAttribute
     protected Visibility visibility;

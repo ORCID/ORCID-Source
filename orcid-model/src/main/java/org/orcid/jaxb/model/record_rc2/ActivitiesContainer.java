@@ -18,7 +18,6 @@ package org.orcid.jaxb.model.record_rc2;
 
 import java.util.Collection;
 import java.util.Map;
-
 import org.orcid.jaxb.model.common.LastModifiedDate;
 
 /**
@@ -33,5 +32,4 @@ public interface ActivitiesContainer {
     Collection<? extends Activity> retrieveActivities();
 
     void setLastModifiedDate(LastModifiedDate lastModifiedDate);
-
 }

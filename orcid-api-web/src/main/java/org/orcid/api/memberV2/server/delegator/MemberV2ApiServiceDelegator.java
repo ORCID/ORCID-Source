@@ -23,7 +23,7 @@ import javax.ws.rs.core.Response;
  * @author Will Simpson
  * 
  */
-public interface MemberV2ApiServiceDelegator<EDUCATION, EMPLOYMENT, EXTERNAL_IDENTIFIER, FUNDING, GROUP_ID_RECORD, OTHER_NAME, PEER_REVIEW, RESEARCHER_URL, WORK> {
+public interface MemberV2ApiServiceDelegator<EDUCATION, EMPLOYMENT, EXTERNAL_IDENTIFIER, FUNDING, GROUP_ID_RECORD, OTHER_NAME, PEER_REVIEW, RESEARCHER_URL, WORK, ADDRESS, KEYWORD> {
 
     static final String LATEST_V2_VERSION = "2.0_rc2";
 
@@ -122,4 +122,28 @@ public interface MemberV2ApiServiceDelegator<EDUCATION, EMPLOYMENT, EXTERNAL_IDE
     Response createExternalIdentifier(String orcid, EXTERNAL_IDENTIFIER externalIdentifier);
 
     Response deleteExternalIdentifier(String orcid, Long putCode);
+    
+    Response viewBiography(String orcid);
+    
+    Response viewKeywords(String orcid);
+
+    Response viewKeyword(String orcid, Long putCode);
+
+    Response createKeyword(String orcid, KEYWORD keyword);
+
+    Response updateKeyword(String orcid, Long putCode, KEYWORD keyword);
+
+    Response deleteKeyword(String orcid, Long putCode);
+            
+    Response viewAddresses(String orcid);
+
+    Response viewAddress(String orcid, Long putCode);
+
+    Response createAddress(String orcid, ADDRESS address);
+
+    Response updateAddress(String orcid, Long putCode, ADDRESS address);
+
+    Response deleteAddress(String orcid, Long putCode);
+    
+    Response viewPerson(String orcid);
 }

@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -44,7 +43,7 @@ public class Educations implements ActivitiesContainer, Serializable {
     private List<EducationSummary> summaries;
 
     public List<EducationSummary> getSummaries() {
-        if(summaries == null)
+        if (summaries == null)
             summaries = new ArrayList<>();
         return summaries;
     }

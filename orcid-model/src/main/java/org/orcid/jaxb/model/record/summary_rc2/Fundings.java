@@ -20,13 +20,11 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-
 import org.orcid.jaxb.model.common.LastModifiedDate;
 import org.orcid.jaxb.model.record_rc2.Group;
 import org.orcid.jaxb.model.record_rc2.GroupsContainer;
@@ -35,10 +33,10 @@ import org.orcid.jaxb.model.record_rc2.GroupsContainer;
 @XmlType(propOrder = { "lastModifiedDate", "fundingGroup" })
 @XmlRootElement(name = "fundings", namespace = "http://www.orcid.org/ns/activities")
 public class Fundings implements GroupsContainer, Serializable {
-
     private static final long serialVersionUID = -1446924819201177350L;
     @XmlElement(name = "last-modified-date", namespace = "http://www.orcid.org/ns/common")
     protected LastModifiedDate lastModifiedDate;
+
     @XmlElement(name = "group", namespace = "http://www.orcid.org/ns/activities")
     List<FundingGroup> fundingGroup;
 
@@ -48,7 +46,6 @@ public class Fundings implements GroupsContainer, Serializable {
         return fundingGroup;
     }
 
-    @Override
     public Collection<? extends Group> retrieveGroups() {
         return getFundingGroup();
     }
@@ -85,5 +82,4 @@ public class Fundings implements GroupsContainer, Serializable {
     public void setLastModifiedDate(LastModifiedDate lastModifiedDate) {
         this.lastModifiedDate = lastModifiedDate;
     }
-
 }

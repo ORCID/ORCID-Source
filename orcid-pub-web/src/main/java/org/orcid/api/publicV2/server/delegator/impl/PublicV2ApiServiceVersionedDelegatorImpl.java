@@ -215,4 +215,40 @@ public class PublicV2ApiServiceVersionedDelegatorImpl implements PublicV2ApiServ
         this.externalVersion = externalVersion;
     }
 
+    @Override
+    public Response viewBiography(String orcid) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Response viewKeywords(String orcid) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Response viewKeyword(String orcid, Long putCode) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Response viewAddresses(String orcid) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Response viewAddress(String orcid, Long putCode) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Response viewPerson(String orcid) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 }

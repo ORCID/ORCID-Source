@@ -53,7 +53,7 @@ import com.sun.jersey.api.client.ClientResponse;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-publicV2-context.xml" })
-public class ResearcherUrlsTests extends BlackBoxBase {
+public class ResearcherUrlsTest extends BlackBoxBase {
 
     protected static Map<String, String> accessTokens = new HashMap<String, String>();
 
@@ -229,7 +229,13 @@ public class ResearcherUrlsTests extends BlackBoxBase {
             ClientResponse theRUrl = publicV2ApiClient.viewResearcherUrlXML(user1OrcidId, String.valueOf(rUrl.getPutCode()));
             assertNotNull(theRUrl);
             ResearcherUrl researcherUrl = theRUrl.getEntity(ResearcherUrl.class);
-            assertEquals(researcherUrl, rUrl);
+            assertEquals(researcherUrl.getCreatedDate(), rUrl.getCreatedDate());
+            assertEquals(researcherUrl.getLastModifiedDate(), rUrl.getLastModifiedDate());
+            assertEquals(researcherUrl.getPutCode(), rUrl.getPutCode());
+            assertEquals(researcherUrl.getSource(), rUrl.getSource());
+            assertEquals(researcherUrl.getUrl(), rUrl.getUrl());
+            assertEquals(researcherUrl.getUrlName(), rUrl.getUrlName());
+            assertEquals(researcherUrl.getVisibility(), rUrl.getVisibility());
         }
     }
 

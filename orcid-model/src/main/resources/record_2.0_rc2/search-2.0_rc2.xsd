@@ -4,7 +4,7 @@
 	targetNamespace="http://www.orcid.org/ns/search" xmlns:search="http://www.orcid.org/ns/search"
 	xmlns:common="http://www.orcid.org/ns/common" xmlns:record="http://www.orcid.org/ns/record">
 	<xs:annotation>
-		<xs:documentation>
+		<xs:documentation> 
 			=============================================================================
 
 			ORCID (R) Open Source
@@ -33,7 +33,7 @@
 		</xs:appinfo>
 	</xs:annotation>
     <xs:import namespace="http://www.orcid.org/ns/common"
-        schemaLocation="../common_2.0_rc1/common-2.0_rc1.xsd" />
+        schemaLocation="../common_2.0_rc2/common-2.0_rc2.xsd" />
 	<xs:import namespace="http://www.orcid.org/ns/record"
 		schemaLocation="record-2.0_rc2.xsd" />
 

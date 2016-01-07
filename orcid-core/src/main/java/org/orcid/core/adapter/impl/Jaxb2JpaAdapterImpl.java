@@ -500,7 +500,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         Map<String, ProfileKeywordEntity> map = new HashMap<>();
         if (profileKeywordEntities != null) {
             for (ProfileKeywordEntity entity : profileKeywordEntities) {
-                String keyword = entity.getKeyword();
+                String keyword = entity.getKeywordName();
                 map.put(keyword, entity);
             }
         }
@@ -513,7 +513,12 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         if (existingProfileKeywordEntity != null) {
             return existingProfileKeywordEntity;
         }
-        return new ProfileKeywordEntity(profileEntity, keywordContent);
+        
+        ProfileKeywordEntity entity = new ProfileKeywordEntity();
+        entity.setProfile(profileEntity);
+        entity.setKeywordName(keywordContent);
+        
+        return entity;
     }
 
     private void setExternalIdentifiers(ProfileEntity profileEntity, ExternalIdentifiers externalIdentifiers) {

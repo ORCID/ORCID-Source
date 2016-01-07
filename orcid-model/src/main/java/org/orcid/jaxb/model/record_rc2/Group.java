@@ -17,7 +17,6 @@
 package org.orcid.jaxb.model.record_rc2;
 
 import java.util.Collection;
-
 import org.orcid.jaxb.model.common.LastModifiedDate;
 
 /**
@@ -29,6 +28,5 @@ public interface Group {
 
     Collection<? extends GroupableActivity> getActivities();
 
-	void setLastModifiedDate(LastModifiedDate lastModifiedDate);
-    
+    void setLastModifiedDate(LastModifiedDate lastModifiedDate);
 }

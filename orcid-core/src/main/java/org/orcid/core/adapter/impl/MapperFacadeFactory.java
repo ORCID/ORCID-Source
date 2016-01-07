@@ -21,19 +21,11 @@ import java.net.URISyntaxException;
 
 import javax.annotation.Resource;
 
-import ma.glasnost.orika.CustomMapper;
-import ma.glasnost.orika.MapperFacade;
-import ma.glasnost.orika.MapperFactory;
-import ma.glasnost.orika.MappingContext;
-import ma.glasnost.orika.converter.ConverterFactory;
-import ma.glasnost.orika.impl.DefaultMapperFactory;
-import ma.glasnost.orika.metadata.ClassMapBuilder;
-import ma.glasnost.orika.metadata.TypeFactory;
-
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.jaxb.model.common.FuzzyDate;
+import org.orcid.jaxb.model.common.OrcidIdentifier;
 import org.orcid.jaxb.model.common.PublicationDate;
 import org.orcid.jaxb.model.common.SourceClientId;
 import org.orcid.jaxb.model.common.SourceOrcid;
@@ -43,11 +35,14 @@ import org.orcid.jaxb.model.notification.custom.NotificationCustom;
 import org.orcid.jaxb.model.notification.permission.AuthorizationUrl;
 import org.orcid.jaxb.model.notification.permission.Item;
 import org.orcid.jaxb.model.notification.permission.NotificationPermission;
+
 import org.orcid.jaxb.model.record.summary_rc2.EducationSummary;
 import org.orcid.jaxb.model.record.summary_rc2.EmploymentSummary;
 import org.orcid.jaxb.model.record.summary_rc2.FundingSummary;
 import org.orcid.jaxb.model.record.summary_rc2.PeerReviewSummary;
 import org.orcid.jaxb.model.record.summary_rc2.WorkSummary;
+import org.orcid.jaxb.model.record_rc2.Address;
+import org.orcid.jaxb.model.record_rc2.DelegationDetails;
 import org.orcid.jaxb.model.record_rc2.Education;
 import org.orcid.jaxb.model.record_rc2.Email;
 import org.orcid.jaxb.model.record_rc2.Employment;
@@ -59,13 +54,17 @@ import org.orcid.jaxb.model.record_rc2.WorkContributors;
 import org.orcid.jaxb.model.record_rc2.WorkExternalIdentifier;
 import org.orcid.jaxb.model.record_rc2.WorkExternalIdentifiers;
 import org.orcid.jaxb.model.record_rc2.ExternalIdentifier;
+import org.orcid.jaxb.model.record_rc2.Keyword;
 import org.orcid.jaxb.model.record_rc2.OtherName;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import org.orcid.persistence.dao.WorkDao;
+import org.orcid.persistence.jpa.entities.AddressEntity;
 import org.orcid.persistence.jpa.entities.CompletionDateEntity;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.EndDateEntity;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
+import org.orcid.persistence.jpa.entities.GivenPermissionByEntity;
+import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
 import org.orcid.persistence.jpa.entities.GroupIdRecordEntity;
 import org.orcid.persistence.jpa.entities.NotificationAddItemsEntity;
 import org.orcid.persistence.jpa.entities.NotificationAmendedEntity;
@@ -76,6 +75,7 @@ import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.OtherNameEntity;
 import org.orcid.persistence.jpa.entities.PeerReviewEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
+import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
 import org.orcid.persistence.jpa.entities.PublicationDateEntity;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
@@ -84,6 +84,15 @@ import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.custom.MinimizedWorkEntity;
 import org.orcid.utils.OrcidStringUtils;
 import org.springframework.beans.factory.FactoryBean;
+
+import ma.glasnost.orika.CustomMapper;
+import ma.glasnost.orika.MapperFacade;
+import ma.glasnost.orika.MapperFactory;
+import ma.glasnost.orika.MappingContext;
+import ma.glasnost.orika.converter.ConverterFactory;
+import ma.glasnost.orika.impl.DefaultMapperFactory;
+import ma.glasnost.orika.metadata.ClassMapBuilder;
+import ma.glasnost.orika.metadata.TypeFactory;
 
 /**
  * 
@@ -211,6 +220,32 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         return mapperFactory.getMapperFacade();
     }
     
+    public MapperFacade getKeywordMapperFacade() {
+        MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
+        ClassMapBuilder<Keyword, ProfileKeywordEntity> keywordClassMap = mapperFactory.classMap(Keyword.class, ProfileKeywordEntity.class);
+        keywordClassMap.byDefault();
+        addV2DateFields(keywordClassMap);
+        addV2SourceMapping(mapperFactory);
+        keywordClassMap.field("putCode", "id");
+        keywordClassMap.field("content", "keywordName");
+        keywordClassMap.register();        
+        return mapperFactory.getMapperFacade();
+    }
+    
+    public MapperFacade getAddressMapperFacade() {
+        MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
+        ClassMapBuilder<Address, AddressEntity> addressClassMap = mapperFactory.classMap(Address.class, AddressEntity.class);
+        addressClassMap.byDefault();
+        addV2DateFields(addressClassMap);
+        addV2SourceMapping(mapperFactory);
+        addressClassMap.field("putCode", "id");
+        addressClassMap.field("country.value", "iso2Country");
+        addressClassMap.field("visibility", "visibility");
+        addressClassMap.field("primary", "primary");
+        addressClassMap.register();        
+        return mapperFactory.getMapperFacade();
+    }
+    
     public MapperFacade getEmailMapperFacade() {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
         ClassMapBuilder<Email, EmailEntity> emailClassMap = mapperFactory.classMap(Email.class, EmailEntity.class);
@@ -219,6 +254,52 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         addV2DateFields(emailClassMap);
         addV2SourceMapping(mapperFactory);
         emailClassMap.register();
+        return mapperFactory.getMapperFacade();
+    }
+    
+    public MapperFacade getGivenPermissionToMapperFacade() {
+        MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
+        ClassMapBuilder<DelegationDetails, GivenPermissionToEntity> givenPermissionToClassMap = mapperFactory.classMap(DelegationDetails.class, GivenPermissionToEntity.class);
+        givenPermissionToClassMap.byDefault();
+        givenPermissionToClassMap.field("putCode", "id");
+        givenPermissionToClassMap.field("approvalDate.value", "approvalDate");               
+        givenPermissionToClassMap.field("delegateSummary.lastModifiedDate.value", "lastModified");
+        givenPermissionToClassMap.field("delegateSummary.creditName.content", "receiver.creditName");
+        givenPermissionToClassMap.field("delegateSummary.creditName.visibility", "receiver.namesVisibility");                               
+        
+        givenPermissionToClassMap.field("delegateSummary.orcidIdentifier.path", "receiver.id").customize(new CustomMapper<DelegationDetails, GivenPermissionToEntity>(){
+            @Override
+            public void mapBtoA(GivenPermissionToEntity entity, DelegationDetails details, MappingContext context) {
+                OrcidIdentifier orcidIdentifier = details.getDelegateSummary().getOrcidIdentifier(); 
+                orcidIdentifier.setHost(orcidUrlManager.getBaseHost());
+                orcidIdentifier.setUri(orcidUrlManager.getBaseUriHttp() + "/" + entity.getReceiver().getId());    
+            }
+        });
+        
+        givenPermissionToClassMap.register();
+        return mapperFactory.getMapperFacade();
+    }    
+    
+    public MapperFacade getGivenPermissionByMapperFacade() {
+        MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
+        ClassMapBuilder<DelegationDetails, GivenPermissionByEntity> givenPermissionByClassMap = mapperFactory.classMap(DelegationDetails.class, GivenPermissionByEntity.class);
+        givenPermissionByClassMap.byDefault();
+        givenPermissionByClassMap.field("putCode", "id");
+        givenPermissionByClassMap.field("approvalDate.value", "approvalDate");               
+        givenPermissionByClassMap.field("delegateSummary.lastModifiedDate.value", "lastModified");
+        givenPermissionByClassMap.field("delegateSummary.creditName.content", "giver.creditName");
+        givenPermissionByClassMap.field("delegateSummary.creditName.visibility", "giver.namesVisibility");                               
+        
+        givenPermissionByClassMap.field("delegateSummary.orcidIdentifier.path", "giver.id").customize(new CustomMapper<DelegationDetails, GivenPermissionByEntity>(){
+            @Override
+            public void mapBtoA(GivenPermissionByEntity entity, DelegationDetails details, MappingContext context) {
+                OrcidIdentifier orcidIdentifier = details.getDelegateSummary().getOrcidIdentifier(); 
+                orcidIdentifier.setHost(orcidUrlManager.getBaseHost());
+                orcidIdentifier.setUri(orcidUrlManager.getBaseUriHttp() + "/" + entity.getGiver().getId());    
+            }
+        });
+        
+        givenPermissionByClassMap.register();
         return mapperFactory.getMapperFacade();
     }
                 
@@ -474,8 +555,8 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     private void addV2DateFields(ClassMapBuilder<?, ?> classMap) {
         classMap.field("createdDate.value", "dateCreated");
         classMap.field("lastModifiedDate.value", "lastModified");
-    }
-
+    }    
+    
     private void addV2SourceMapping(MapperFactory mapperFactory) {
         mapperFactory.classMap(org.orcid.jaxb.model.common.Source.class, SourceEntity.class).fieldAToB("sourceOrcid.path", "sourceProfile.id")
                 .fieldAToB("sourceClientId.path", "sourceClient.id").customize(new CustomMapper<org.orcid.jaxb.model.common.Source, SourceEntity>() {

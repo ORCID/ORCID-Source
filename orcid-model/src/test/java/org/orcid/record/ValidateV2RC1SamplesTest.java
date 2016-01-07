@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.record_2_0_rc1;
+package org.orcid.record;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,9 +31,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
-public class ValidateV2Samples {
+public class ValidateV2RC1SamplesTest {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ValidateV2Samples.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ValidateV2RC1SamplesTest.class);
 
     String[] sampleNames = { "activities", "deprecated", "education", "employment", "error", "funding", "history", "person", "preferences", "record", "search", "work" };
 

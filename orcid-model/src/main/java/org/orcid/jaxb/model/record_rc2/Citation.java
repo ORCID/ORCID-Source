@@ -33,18 +33,17 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * Element to contain a citation of a given type
  * <p/>
- * <p>Java class for citation complex type.
+ * <p>
+ * Java class for citation complex type.
  * <p/>
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  * <p/>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "citation", propOrder = { "citationType", "citation" })
 public class Citation implements Serializable {
-
-    /**
-     * 
-     */
     private static final long serialVersionUID = 1L;
     @XmlElement(name = "citation-type", required = true, defaultValue = "formatted-unspecified", namespace = "http://www.orcid.org/ns/work")
     protected CitationType citationType = CitationType.FORMATTED_UNSPECIFIED;
@@ -66,8 +65,7 @@ public class Citation implements Serializable {
     /**
      * Gets the value of the workCitationType property.
      *
-     * @return possible object is
-     *         {@link CitationType }
+     * @return possible object is {@link CitationType }
      */
     public CitationType getWorkCitationType() {
         return citationType;
@@ -77,8 +75,7 @@ public class Citation implements Serializable {
      * Sets the value of the workCitationType property.
      *
      * @param value
-     *         allowed object is
-     *         {@link CitationType }
+     *            allowed object is {@link CitationType }
      */
     public void setWorkCitationType(CitationType value) {
         this.citationType = value;
@@ -87,8 +84,7 @@ public class Citation implements Serializable {
     /**
      * Gets the value of the citation property.
      *
-     * @return possible object is
-     *         {@link Citation }
+     * @return possible object is {@link Citation }
      */
     public String getCitation() {
         return citation;
@@ -98,8 +94,7 @@ public class Citation implements Serializable {
      * Sets the value of the citation property.
      *
      * @param value
-     *         allowed object is
-     *         {@link Citation }
+     *            allowed object is {@link Citation }
      */
     public void setCitation(String value) {
         this.citation = value;

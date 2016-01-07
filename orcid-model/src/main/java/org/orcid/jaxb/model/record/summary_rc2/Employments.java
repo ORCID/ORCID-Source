@@ -21,13 +21,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-
 import org.orcid.jaxb.model.common.LastModifiedDate;
 import org.orcid.jaxb.model.record_rc2.ActivitiesContainer;
 import org.orcid.jaxb.model.record_rc2.Activity;
@@ -40,12 +38,14 @@ public class Employments implements ActivitiesContainer, Serializable {
     private static final long serialVersionUID = 3293976926416154039L;
     @XmlElement(name = "last-modified-date", namespace = "http://www.orcid.org/ns/common")
     protected LastModifiedDate lastModifiedDate;
+
     @XmlElement(name = "employment-summary", namespace = "http://www.orcid.org/ns/employment")
     private List<EmploymentSummary> summaries;
 
     public List<EmploymentSummary> getSummaries() {
-        if (summaries == null)
+        if (summaries == null) {
             summaries = new ArrayList<>();
+        }
         return summaries;
     }
 

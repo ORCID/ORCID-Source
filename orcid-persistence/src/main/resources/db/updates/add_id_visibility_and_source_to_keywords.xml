@@ -1,0 +1,73 @@
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2014 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">	
+	            
+    <changeSet id="ADD-FIELDS-TO-KEYWORDS" author="Angel Montenegro">
+    	<preConditions onFail="MARK_RAN">
+			<not>
+				<columnExists tableName="profile_keyword" columnName="id"/>
+			</not>
+		</preConditions>
+		<sql>ALTER TABLE profile_keyword ADD id bigint;</sql>
+		<sql>ALTER TABLE profile_keyword ADD visibility VARCHAR(19);</sql>
+	    <sql>ALTER TABLE profile_keyword ADD source_id VARCHAR(19)</sql>
+		<sql>ALTER TABLE profile_keyword ADD client_source_id VARCHAR(20)</sql>
+		<sql>ALTER TABLE profile_keyword ADD CONSTRAINT keyword_source_id_fk FOREIGN KEY (source_id) REFERENCES profile(orcid)</sql>
+		<sql>ALTER TABLE profile_keyword ADD CONSTRAINT keyword_client_source_id_fk FOREIGN KEY (client_source_id) REFERENCES client_details(client_details_id)</sql>
+    </changeSet>
+    
+    <changeSet id="ADD-KEYWORD-SEQUENCES" author="Angel Montenegro">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<sequenceExists sequenceName="keyword_seq"/>
+			</not>
+		</preConditions>
+        <createSequence sequenceName="keyword_seq" startValue="1000" />        
+    </changeSet>                 
+    
+    <changeSet id="CREATE-AUTOCOLS" author="Angel Montenegro" dbms="hsqldb">    	
+        <addAutoIncrement tableName="profile_keyword" columnName="id" columnDataType="bigint"/>        
+    </changeSet>
+    
+    <changeSet id="SET-ID-TO-KEYWORDS" author="Angel Montenegro">
+    	<sql>UPDATE profile_keyword SET id=nextval('keyword_seq') WHERE id IS NULL;</sql>
+    </changeSet>
+    
+    <changeSet id="SET-KEYWORDS-VISIBILITY" author="Angel Montenegro">
+    	<sql>UPDATE profile_keyword k SET visibility = (SELECT keywords_visibility FROM profile p WHERE k.profile_orcid = p.orcid) WHERE k.visibility is null;</sql>
+    </changeSet>
+    
+    <changeSet id="SET-SOURCE-TO-KEYWORDS" author="Angel Montenegro">
+    	<sql>UPDATE profile_keyword a 
+				SET source_id = (Select source_id from profile b where a.profile_orcid = b.orcid and b.claimed=true), 
+				client_source_id = (Select client_source_id from profile b where a.profile_orcid = b.orcid and b.claimed=false)
+				WHERE a.source_id is null and a.client_source_id is null</sql>
+    </changeSet>
+                       
+    <changeSet id="SET-ID-AS-PRIMARY-KEY-ON-KEYWORDS" author="Angel Montenegro">   
+    	<preConditions>
+  			<primaryKeyExists tableName="profile_keyword" primaryKeyName="profile_keyword_pkey"/>
+		</preConditions>
+		<dropPrimaryKey tableName="profile_keyword" constraintName="profile_keyword_pkey" />
+    	<addPrimaryKey tableName="profile_keyword" columnNames="id" constraintName="profile_keyword_numeric_pkey"/>
+    </changeSet>
+      
+</databaseChangeLog>

@@ -210,7 +210,7 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
         ExternalIdentifiers externalIdentifiers = orcidMessage1.getOrcidProfile().getOrcidBio().getExternalIdentifiers();
         assertNotNull(externalIdentifiers);
         assertEquals(Visibility.LIMITED, externalIdentifiers.getVisibility());
-        assertEquals(1, externalIdentifiers.getExternalIdentifier().size());
+        assertEquals(4, externalIdentifiers.getExternalIdentifier().size());
 
         ClientResponse bioResponse2 = oauthT2Client.viewBioDetailsJson("4444-4444-4444-4443", accessToken);
         assertEquals(403, bioResponse2.getStatus());

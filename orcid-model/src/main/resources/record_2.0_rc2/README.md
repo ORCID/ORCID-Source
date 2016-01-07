@@ -8,58 +8,65 @@ undetected into the code during the previous development period. Release candida
 ## XSDs and current state (none stable)
 - [activities-2.0_rc2.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/activities-2.0_rc2.xsd) 
 **not stable**, developement ongoing
+- [address-2.0_rc2.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/address-2.0_rc2.xsd)
+**not stable**, developement ongoing
 - [common-2.0_rc2.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/common_2.0_rc2/common-2.0_rc2.xsd)
 **not stable**, developement ongoing
 - [education-2.0_rc2.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/education-2.0_rc2.xsd)
+**not stable**, developement ongoing
+- [email-2.0_rc2.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/email-2.0_rc2.xsd)
 **not stable**, developement ongoing
 - [employment-2.0_rc2.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/employment-2.0_rc2.xsd)
 **not stable**, developement ongoing
 - [error-2.0_rc2.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/error-2.0_rc2.xsd)
 **not stable**, developement ongoing
+- [external-identifier-2.0_rc2.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/external-identifier-2.0_rc2.xsd)
+**not stable**, developement ongoing
 - [funding-2.0_rc2.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/funding-2.0_rc2.xsd)
+**not stable**, developement ongoing
+- [keyword-2.0_rc2.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/keyword-2.0_rc2.xsd)
+**not stable**, developement ongoing
+- [other-names-2.0_rc2.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/other-name-2.0_rc2.xsd)
 **not stable**, developement ongoing
 - [peer-review-2.0_rc2.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/peer-review-2.0_rc2.xsd)
 **not stable**, developement ongoing
-- [work-2.0_rc2.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/work-2.0_rc2.xsd)
+- [person-2.0_rc2.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/person-2.0_rc2.xsd)
 **not stable**, developement ongoing
-- [email-2.0_rc2.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/email-2.0_rc2.xsd)
+- [personal-details-2.0_rc2.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/personal-details-2.0_rc2.xsd)
 **not stable**, developement ongoing
 - [researcher-url-2.0_rc2.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/researcher-url-2.0_rc2.xsd)
 **not stable**, developement ongoing
-- [other-names-2.0_rc2.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/other-names-2.0_rc2.xsd)
+- [work-2.0_rc2.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/work-2.0_rc2.xsd)
 **not stable**, developement ongoing
-- [person-2.0_rc2.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/person-2.0_rc2.xsd)
-**not stable**, developement ongoing
-
 
 
 ## Sample XML files:
 
 - [activities-2.0_rc2.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/samples/activities-2.0_rc2.xml)
-- [education-2.0_rc2.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/samples/education-2.0_rc2.xml)
-- [employment-2.0_rc2.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/samples/employment-2.0_rc2.xml)
-- [error-2.0_rc2.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/samples/error-2.0_rc2.xml)
-- [funding-2.0_rc2.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/samples/funding-2.0_rc2.xml)
-- [peer-review-2.0_rc2.xml ] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/samples/peer-review-2.0_rc2.xml )
-- [work-2.0_rc2.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/samples/work-2.0_rc2.xml)
-- [email-2.0_rc2.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/samples/email-2.0_rc2.xml)
-- [researcher-url-2.0_rc2.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/samples/researcher-url-2.0_rc2.xml)
-- [other-names-2.0_rc2.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/samples/other-names-2.0_rc2.xml)
-- [person-2.0_rc2.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/samples/person-2.0_rc2.xml)
 - [address-2.0_rc2.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/samples/address-2.0_rc2.xml)
 - [biography-2.0_rc2.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/samples/biography-2.0_rc2.xml)
 - [credit-name-2.0_rc2.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/samples/credit-name-2.0_rc2.xml)
+- [education-2.0_rc2.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/samples/education-2.0_rc2.xml)
+- [email-2.0_rc2.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/samples/email-2.0_rc2.xml)
 - [emails-2.0_rc2.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/samples/emails-2.0_rc2.xml)
+- [employment-2.0_rc2.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/samples/employment-2.0_rc2.xml)
+- [error-2.0_rc2.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/samples/error-2.0_rc2.xml)
 - [external-identifier-2.0_rc2.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/samples/external-identifier-2.0_rc2.xml)
 - [external-identifiers-2.0_rc2.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/samples/external-identifiers-2.0_rc2.xml)
+- [funding-2.0_rc2.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/samples/funding-2.0_rc2.xml)
 - [keyword-2.0_rc2.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/samples/keyword-2.0_rc2.xml)
 - [keywords-2.0_rc2.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/samples/keywords-2.0_rc2.xml)
 - [name-2.0_rc2.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/samples/name-2.0_rc2.xml)
 - [other-name-2.0_rc2.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/samples/other-name-2.0_rc2.xml)
 - [other-names-2.0_rc2.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/samples/other-names-2.0_rc2.xml)
+- [other-names-2.0_rc2.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/samples/other-names-2.0_rc2.xml)
+- [peer-review-2.0_rc2.xml ] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/samples/peer-review-2.0_rc2.xml )
+- [person-2.0_rc2.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/samples/person-2.0_rc2.xml)
 - [personal-details-2.0_rc2.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/samples/personal-details-2.0_rc2.xml)
 - [researcher-url-2.0_rc2.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/samples/researcher-url-2.0_rc2.xml)
+- [researcher-url-2.0_rc2.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/samples/researcher-url-2.0_rc2.xml)
 - [researcher-urls-2.0_rc2.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/samples/researcher-url-2.0_rc2.xml)
+- [work-2.0_rc2.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/samples/work-2.0_rc2.xml)
 
 **Note:** These files contain system-generated elements/attributes that are returned when reading items from ORCID, but should not be included when posting items to ORCID
 - put-code (exception: include put-code when updating items using the PUT method)

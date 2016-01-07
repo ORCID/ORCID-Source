@@ -25,7 +25,9 @@ import org.orcid.jaxb.model.record.summary_rc2.Employments;
 import org.orcid.jaxb.model.record.summary_rc2.FundingGroup;
 import org.orcid.jaxb.model.record.summary_rc2.FundingSummary;
 import org.orcid.jaxb.model.record.summary_rc2.Fundings;
+import org.orcid.jaxb.model.record.summary_rc2.PeerReviewGroup;
 import org.orcid.jaxb.model.record.summary_rc2.PeerReviewSummary;
+import org.orcid.jaxb.model.record.summary_rc2.PeerReviews;
 import org.orcid.jaxb.model.record.summary_rc2.WorkGroup;
 import org.orcid.jaxb.model.record.summary_rc2.WorkSummary;
 import org.orcid.jaxb.model.record.summary_rc2.Works;
@@ -80,6 +82,7 @@ public class ActivityUtils {
         Employments employments = activitiesSummary.getEmployments();
         Fundings fundings = activitiesSummary.getFundings();
         Works works = activitiesSummary.getWorks();
+        PeerReviews peerReviews = activitiesSummary.getPeerReviews();
 
         if (educations != null && !educations.getSummaries().isEmpty()) {
             for (EducationSummary summary : educations.getSummaries()) {
@@ -107,6 +110,16 @@ public class ActivityUtils {
             for (WorkGroup group : works.getWorkGroup()) {
                 if (!group.getWorkSummary().isEmpty()) {
                     for (WorkSummary summary : group.getWorkSummary()) {
+                        ActivityUtils.setPathToActivity(summary, orcid);
+                    }
+                }
+            }
+        }
+        
+        if(!peerReviews.getPeerReviewGroup().isEmpty()) {
+            for(PeerReviewGroup group : peerReviews.getPeerReviewGroup()) {
+                if(!group.getPeerReviewSummary().isEmpty()) {
+                    for(PeerReviewSummary summary : group.getPeerReviewSummary()) {
                         ActivityUtils.setPathToActivity(summary, orcid);
                     }
                 }

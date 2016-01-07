@@ -20,13 +20,11 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-
 import org.orcid.jaxb.model.common.LastModifiedDate;
 import org.orcid.jaxb.model.record_rc2.Group;
 import org.orcid.jaxb.model.record_rc2.GroupsContainer;
@@ -85,5 +83,4 @@ public class PeerReviews implements GroupsContainer, Serializable {
     public void setLastModifiedDate(LastModifiedDate lastModifiedDate) {
         this.lastModifiedDate = lastModifiedDate;
     }
-
 }

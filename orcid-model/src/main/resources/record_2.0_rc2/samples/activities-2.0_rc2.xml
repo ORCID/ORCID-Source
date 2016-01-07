@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?> 
 <activities:activities-summary
-	xmlns:activities="http://www.orcid.org/ns/activities"
+	xmlns:activities="http://www.orcid.org/ns/activities" 
 	xmlns:affiliation="http://www.orcid.org/ns/employment" xmlns:common="http://www.orcid.org/ns/common"
 	xmlns:education="http://www.orcid.org/ns/education" xmlns:funding="http://www.orcid.org/ns/funding"
 	xmlns:work="http://www.orcid.org/ns/work" xmlns:peer-review="http://www.orcid.org/ns/peer-review"

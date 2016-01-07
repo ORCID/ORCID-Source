@@ -33,7 +33,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-
 import org.orcid.jaxb.model.common.LastModifiedDate;
 
 /**
@@ -75,8 +74,8 @@ public class Educations implements Serializable, ActivitiesContainer {
      * 
      * 
      * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Education }
+     * Objects of the following type(s) are allowed in the list {@link Education
+     * }
      * 
      * 
      */
@@ -131,7 +130,5 @@ public class Educations implements Serializable, ActivitiesContainer {
     @Override
     public void setLastModifiedDate(LastModifiedDate lastModifiedDate) {
         // TODO Auto-generated method stub
-        
     }
-
 }

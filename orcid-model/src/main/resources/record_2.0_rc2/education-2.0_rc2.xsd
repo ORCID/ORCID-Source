@@ -34,7 +34,7 @@
 	</xs:annotation>
 
 	<xs:import namespace="http://www.orcid.org/ns/common"
-		schemaLocation="../common_2.0_rc1/common-2.0_rc1.xsd" />
+		schemaLocation="../common_2.0_rc2/common-2.0_rc2.xsd" />
 
 	<xs:element name="education">
 		<xs:annotation>

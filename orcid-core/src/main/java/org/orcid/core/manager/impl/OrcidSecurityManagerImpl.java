@@ -45,9 +45,14 @@ import org.orcid.jaxb.model.record_rc2.Employment;
 import org.orcid.jaxb.model.record_rc2.Funding;
 import org.orcid.jaxb.model.record_rc2.PeerReview;
 import org.orcid.jaxb.model.record_rc2.Work;
+import org.orcid.jaxb.model.record_rc2.Address;
 import org.orcid.jaxb.model.record_rc2.Biography;
+import org.orcid.jaxb.model.record_rc2.Emails;
+import org.orcid.jaxb.model.record_rc2.ExternalIdentifier;
+import org.orcid.jaxb.model.record_rc2.Keyword;
 import org.orcid.jaxb.model.record_rc2.Name;
 import org.orcid.jaxb.model.record_rc2.OtherName;
+import org.orcid.jaxb.model.record_rc2.Person;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -84,16 +89,17 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
             readLimitedScopes = getReadLimitedScopesThatTheClientHas(authorizationRequest, filterable);
             updateScopes = getUpdateScopesThatTheClientHas(authorizationRequest, filterable);
         }
-            
-        //If we are using a read-limited or update scope and the client is the source of the object, we should not worry about the visibility
-        if(!readLimitedScopes.isEmpty() || !updateScopes.isEmpty()) {
-            if(!PojoUtil.isEmpty(filterable.retrieveSourcePath())) {
-                if(filterable.retrieveSourcePath().equals(clientId)) {
+
+        // If we are using a read-limited or update scope and the client is the
+        // source of the object, we should not worry about the visibility
+        if (!readLimitedScopes.isEmpty() || !updateScopes.isEmpty()) {
+            if (!PojoUtil.isEmpty(filterable.retrieveSourcePath())) {
+                if (filterable.retrieveSourcePath().equals(clientId)) {
                     return;
                 }
             }
-        }        
-        
+        }
+
         if (readLimitedScopes.isEmpty()) {
             // This client only has permission for read public
             if ((visibility == null || Visibility.PRIVATE.equals(visibility)) && clientId != null && !clientId.equals(filterable.retrieveSourcePath())) {
@@ -109,56 +115,56 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
             }
         }
     }
-    
+
     @Override
-    public void checkVisibility(Name name) {         
-        if(Visibility.PRIVATE.equals(name.getVisibility())) {                       
+    public void checkVisibility(Name name) {
+        if (Visibility.PRIVATE.equals(name.getVisibility())) {
             throw new OrcidVisibilityException();
         }
-        boolean hasReadLimitedScope = hasScope(ScopePathType.READ_LIMITED);
-        if(!hasReadLimitedScope) {
-            if(Visibility.LIMITED.equals(name.getVisibility())) {
+        boolean hasReadLimitedScope = hasScope(ScopePathType.PERSON_READ_LIMITED);
+        if (!hasReadLimitedScope) {
+            if (Visibility.LIMITED.equals(name.getVisibility())) {
                 throw new OrcidUnauthorizedException("You dont have permissions to view this element");
             }
         }
     }
-    
+
     @Override
     public void checkVisibility(Biography biography) {
-        if(Visibility.PRIVATE.equals(biography.getVisibility())) {            
+        if (Visibility.PRIVATE.equals(biography.getVisibility())) {
             throw new OrcidVisibilityException();
         }
-        boolean hasReadLimitedScope = hasScope(ScopePathType.READ_LIMITED);
-        if(!hasReadLimitedScope) {
-            if(Visibility.LIMITED.equals(biography.getVisibility())) {
+        boolean hasReadLimitedScope = hasScope(ScopePathType.PERSON_READ_LIMITED);
+        if (!hasReadLimitedScope) {
+            if (Visibility.LIMITED.equals(biography.getVisibility())) {
                 throw new OrcidUnauthorizedException("You dont have permissions to view this element");
             }
         }
     }
-    
+
     @Override
     public void checkVisibility(OtherName otherName) {
-        if(Visibility.PRIVATE.equals(otherName.getVisibility())) {
+        if (Visibility.PRIVATE.equals(otherName.getVisibility())) {
             OAuth2Authentication oAuth2Authentication = getOAuth2Authentication();
             String clientId = null;
 
             if (oAuth2Authentication != null) {
                 OAuth2Request authorizationRequest = oAuth2Authentication.getOAuth2Request();
-                clientId = authorizationRequest.getClientId();         
+                clientId = authorizationRequest.getClientId();
             }
 
-            if(clientId == null || otherName.getSource() == null || !clientId.equals(otherName.getSource().retrieveSourcePath())) {
+            if (clientId == null || otherName.getSource() == null || !clientId.equals(otherName.getSource().retrieveSourcePath())) {
                 throw new OrcidVisibilityException();
             }
         }
-        boolean hasReadLimitedScope = hasScope(ScopePathType.READ_LIMITED);
-        if(!hasReadLimitedScope) {
-            if(Visibility.LIMITED.equals(otherName.getVisibility())) {
+        boolean hasReadLimitedScope = hasScope(ScopePathType.PERSON_READ_LIMITED);
+        if (!hasReadLimitedScope) {
+            if (Visibility.LIMITED.equals(otherName.getVisibility())) {
                 throw new OrcidUnauthorizedException("You dont have permissions to view this element");
             }
         }
     }
-    
+
     @Override
     public void checkSource(SourceEntity existingSource) {
         String sourceIdOfUpdater = sourceManager.retrieveSourceOrcid();
@@ -198,11 +204,13 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
             readLimitedScopes.add(ScopePathType.ORCID_WORKS_READ_LIMITED.value());
         } else if (filterable instanceof Funding || filterable instanceof FundingSummary) {
             readLimitedScopes.add(ScopePathType.FUNDING_READ_LIMITED.value());
-        } else if (filterable instanceof Education || filterable instanceof Employment || filterable instanceof EducationSummary || filterable instanceof EmploymentSummary) {
+        } else if (filterable instanceof Education || filterable instanceof Employment || filterable instanceof EducationSummary
+                || filterable instanceof EmploymentSummary) {
             readLimitedScopes.add(ScopePathType.AFFILIATIONS_READ_LIMITED.value());
         } else if (filterable instanceof PeerReview || filterable instanceof PeerReviewSummary) {
             readLimitedScopes.add(ScopePathType.PEER_REVIEW_READ_LIMITED.value());
-        } else if (filterable instanceof ResearcherUrl || filterable instanceof Email) {
+        } else if (filterable instanceof ResearcherUrl || filterable instanceof Email || filterable instanceof Emails || filterable instanceof Address || filterable instanceof ExternalIdentifier
+                || filterable instanceof Keyword || filterable instanceof OtherName || filterable instanceof Person || filterable instanceof Name || filterable instanceof Biography ) {
             readLimitedScopes.add(ScopePathType.PERSON_READ_LIMITED.value());
         }
         readLimitedScopes.retainAll(requestedScopes);
@@ -218,18 +226,19 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
             updateScopes.add(ScopePathType.ORCID_WORKS_UPDATE.value());
         } else if (filterable instanceof Funding || filterable instanceof FundingSummary) {
             updateScopes.add(ScopePathType.FUNDING_UPDATE.value());
-        } else if (filterable instanceof Education || filterable instanceof Employment || filterable instanceof EducationSummary || filterable instanceof EmploymentSummary) {
+        } else if (filterable instanceof Education || filterable instanceof Employment || filterable instanceof EducationSummary
+                || filterable instanceof EmploymentSummary) {
             updateScopes.add(ScopePathType.AFFILIATIONS_UPDATE.value());
         } else if (filterable instanceof PeerReview || filterable instanceof PeerReviewSummary) {
             updateScopes.add(ScopePathType.PEER_REVIEW_UPDATE.value());
-        } else if (filterable instanceof ResearcherUrl || filterable instanceof Email) {
+        } else if (filterable instanceof ResearcherUrl || filterable instanceof Email || filterable instanceof Address || filterable instanceof ExternalIdentifier
+                || filterable instanceof Keyword || filterable instanceof OtherName || filterable instanceof Person || filterable instanceof Name || filterable instanceof Biography) {
             updateScopes.add(ScopePathType.PERSON_UPDATE.value());
         }
         updateScopes.retainAll(requestedScopes);
-        return updateScopes;        
+        return updateScopes;
     }
 
-    
     private OAuth2Authentication getOAuth2Authentication() {
         SecurityContext context = SecurityContextHolder.getContext();
         Authentication authentication = context.getAuthentication();
@@ -264,17 +273,17 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         }
         return null;
     }
-    
+
     private boolean hasScope(ScopePathType scope) {
         OAuth2Authentication oAuth2Authentication = getOAuth2Authentication();
-        if(oAuth2Authentication != null) {
+        if (oAuth2Authentication != null) {
             OAuth2Request authorizationRequest = oAuth2Authentication.getOAuth2Request();
             Set<String> requestedScopes = ScopePathType.getCombinedScopesFromStringsAsStrings(authorizationRequest.getScope());
-            if(requestedScopes.contains(scope.value())) {
+            if (requestedScopes.contains(scope.value())) {
                 return true;
             }
         }
-        
+
         return false;
     }
 
