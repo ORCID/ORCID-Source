@@ -6234,15 +6234,10 @@ a:hover .mozilla-badge{
     display: block;
 }
 
-/* Edit Also Known as */
 
-.edit-aka{	
-	width: 600px;
-	height: 400px;
-	padding: 15px 0 15px 15px;
-}
+/* EDIT PROFILE */
 
-.edit-aka .fixed-area{
+.fixed-area{ /* Global class for edit profile */
 	width: 100%;
 	height: 250px;
 	overflow-y: scroll;	
@@ -6250,64 +6245,96 @@ a:hover .mozilla-badge{
 	margin-top: 30px; 	
 }
 
-.edit-aka .col-md-12{
+.record-buttons{
+	margin-top: 30px;
+	height: 35px;
+	width: 100%;	
+}
+
+/* Edit Also Known as */
+
+.edit-record{	
+	width: 600px;
+	height: 400px;
+	padding: 15px 0 15px 15px;
+}
+
+.fixed-area .scroll-area input,
+.fixed-area .scroll-area select{
+	width: 100%;
+}
+
+.fixed-area .col-md-12{
 	padding-right: 0;
 }
 
-.edit-aka .aka-row{
+.aka-row{
 	margin-bottom: 25px;
 }
 
-.edit-aka .fixed-area .aka{
+.fixed-area .aka{
 	color: #494A4C;
 	font-size: 24px;
 }
 
-.edit-aka .fixed-area .created-date{
+.fixed-area .created-date{
 	margin-right: 15px;
 	font-size: 12px;
 }
 
-.edit-aka .fixed-area ul.aka-settings{
+.fixed-area ul.record-settings{
 	margin-right: 15px;
+	padding-left: 0;
 }
 
 
-.edit-aka .fixed-area ul.aka-settings .privacyToggle{
-	height: 22px;
+.fixed-area ul.record-settings .privacyToggle{
+	height: 29px;
 	margin-left: 5px;
 }
 
-.edit-aka .fixed-area ul.aka-settings li{
+.fixed-area ul.record-settings>li{
 	display: inline-block;
+	vertical-align: middle;
 }
 
-.edit-aka .aka-settings span{
+.fixed-area ul.record-settings li .glyphicon-trash{
+    margin-top: 5px;
+    font-size: 18px;
+    color: #C9C9CA;
+}
+
+.record-settings span{
 	margin: 0 5px;
 	cursor: pointer;
 }
 
-.edit-aka .aka-settings span.circle{
+.record-settings span.circle{
 	background: #C9C9CA;
     padding: 5px;
     border-radius: 50%;
     color: #FFF;        
 }
 
-.edit-aka .aka-buttons{
-	margin-top: 30px;
-	height: 35px;
-}
-
-.edit-aka .aka-buttons .cancel-option{
+.record-buttons .cancel-option{
 	margin: 5px 15px 0 0;
 }
 
-.edit-aka .aka-buttons .glyphicon-plus{
+.record-buttons .glyphicon-plus{
 	background: #31789B;
     padding: 5px;
     border-radius: 50%;
     color: #FFF; 
+}
+
+.fixed-area .scroll-area .popover-help-container{
+	position: absolute;
+	top: 0;
+	width: 100%;
+}
+
+.fixed-area .scroll-area .popover-help-container .popover{
+	top: -143px;
 }
 	
 

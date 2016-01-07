@@ -79,16 +79,7 @@
 		        	      <span ng-repeat="otherName in otherNamesForm.otherNames" ng-cloak>
 		        	         {{ $last?otherName.content:otherName.content + ", "}}
 		        	      </span>
-		        	   </span>
-		        	   <span class="pull-right" ng-show="showEdit == true" id="other-names-visibility" ng-cloak>
-			        	   <@orcid.privacyToggle3  angularModel="otherNamesForm.visibility.visibility"
-				             questionClick="toggleClickPrivacyHelp($index)"
-				             clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
-				             publicClick="setPrivacy('PUBLIC', $event)" 
-		                	     limitedClick="setPrivacy('LIMITED', $event)" 
-		                	     privateClick="setPrivacy('PRIVATE', $event)"
-		                	     elementId="$index" />
-	                   </span>
+		        	   </span>		        	   
 	        	   </div>
 	        	</div>
 	       	<#else>	       	
@@ -137,42 +128,55 @@
             </#if>
             
             <!-- Country -->
-            <div ng-controller="CountryCtrl" class="workspace-section country">
-            	<div class="workspace-section-header">
-		        	<span class="workspace-section-title"><@orcid.msg 'public_profile.labelCountry'/></span>
-		            <span class="glyphicon glyphicon-pencil edit-country edit-option pull-right" ng-click="openEdit()" title="" ng-hide="showEdit == true"></span>
-		            <span ng-hide="showEdit == true" ng-click="toggleEdit()">	                
-		            	<span ng-show="countryForm != null && countryForm.countryName != null" ng-bind="countryForm.countryName" ng-hide="showEdit == true"></span>
-		            </span>
-		            <span class="pull-right" ng-show="showEdit == true" ng-cloak>
-		            	<@orcid.privacyToggle3  angularModel="countryForm.profileAddressVisibility.visibility"
-			         		questionClick="toggleClickPrivacyHelp($index)"
-			         		clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
-			         		publicClick="setPrivacy('PUBLIC', $event)" 
-                 	     	limitedClick="setPrivacy('LIMITED', $event)" 
-                 	     	privateClick="setPrivacy('PRIVATE', $event)"
-                 	      	elementId="$index"/>
-		            </span>
+            <#if RequestParameters['v2modal']??>
+            	<div ng-controller="CountryCtrl" class="workspace-section country">
+	            	<div class="workspace-section-header">
+			        	<span class="workspace-section-title"><@orcid.msg 'public_profile.labelCountry'/></span>
+			            <span class="glyphicon glyphicon-pencil edit-country edit-option pull-right" ng-click="openEditModal()" title="" ng-hide="showEdit == true"></span>
+			            <span ng-hide="showEdit == true" ng-click="toggleEdit()">	                
+			            	<span ng-show="countryForm != null && countryForm.countryName != null" ng-bind="countryForm.countryName" ng-hide="showEdit == true"></span>
+			            </span>			            
+		            </div>
+		        </div>
+            <#else>            
+            	<div ng-controller="CountryCtrl" class="workspace-section country">
+	            	<div class="workspace-section-header">
+			        	<span class="workspace-section-title"><@orcid.msg 'public_profile.labelCountry'/></span>
+			            <span class="glyphicon glyphicon-pencil edit-country edit-option pull-right" ng-click="openEdit()" title="" ng-hide="showEdit == true"></span>
+			            <span ng-hide="showEdit == true" ng-click="toggleEdit()">	                
+			            	<span ng-show="countryForm != null && countryForm.countryName != null" ng-bind="countryForm.countryName" ng-hide="showEdit == true"></span>
+			            </span>
+			            <span class="pull-right" ng-show="showEdit == true" ng-cloak>
+			            	<@orcid.privacyToggle3  angularModel="countryForm.profileAddressVisibility.visibility"
+				         		questionClick="toggleClickPrivacyHelp($index)"
+				         		clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
+				         		publicClick="setPrivacy('PUBLIC', $event)" 
+	                 	     	limitedClick="setPrivacy('LIMITED', $event)" 
+	                 	     	privateClick="setPrivacy('PRIVATE', $event)"
+	                 	      	elementId="$index"/>
+			            </span>
+		            </div>
+	                <!-- Edit -->
+	                <div ng-show="showEdit == true" ng-cloak>
+	                  
+		                 <select id="country" name="country" ng-model="countryForm.iso2Country.value">
+			    			 <option value=""><@orcid.msg 'org.orcid.persistence.jpa.entities.CountryIsoEntity.empty' /></option>
+							 <#list isoCountries?keys as key>
+							     <option value="${key}">${isoCountries[key]}</option>
+						 	 </#list>
+						 </select>
+						 <ul class="workspace-section-toolbar">
+	        	      		<li class="pull-right">
+			             		<button class="btn btn-primary" ng-click="setCountryForm()"><@spring.message "freemarker.btnsavechanges"/></button>
+			             	</li>
+			             	<li class="pull-right">
+				         		<a class="cancel-option" ng-click="close()"><@spring.message "freemarker.btncancel"/></a>
+				         	</li>
+				         </ul>
+					</div>
 	            </div>
-                <!-- Edit -->
-                <div ng-show="showEdit == true" ng-cloak>
-                  
-	                 <select id="country" name="country" ng-model="countryForm.iso2Country.value">
-		    			 <option value=""><@orcid.msg 'org.orcid.persistence.jpa.entities.CountryIsoEntity.empty' /></option>
-						 <#list isoCountries?keys as key>
-						     <option value="${key}">${isoCountries[key]}</option>
-					 	 </#list>
-					 </select>
-					 <ul class="workspace-section-toolbar">
-        	      		<li class="pull-right">
-		             		<button class="btn btn-primary" ng-click="setCountryForm()"><@spring.message "freemarker.btnsavechanges"/></button>
-		             	</li>
-		             	<li class="pull-right">
-			         		<a class="cancel-option" ng-click="close()"><@spring.message "freemarker.btncancel"/></a>
-			         	</li>
-			         </ul>
-				</div>
-            </div>
+            </#if>
+            
             
               
 	       	<!-- Keywords -->
@@ -779,7 +783,7 @@
 
 <script type="text/ng-template" id="edit-aka">	
 	<div class="lightbox-container">
-		<div class="edit-aka">
+		<div class="edit-record edit-aka">
 			<!-- Title -->
 			<div class="row">			
 				<div class="col-md-12 col-sm-12 col-xs-12">	
@@ -803,14 +807,14 @@
 									<div class="source">Source: Sofia Mar&iacute;a Hernandez Garc&iacute;a</div>
 								</div>							
 								<div class="col-md-6">
-									<ul class="aka-settings pull-right">
-										<li><!-- Move Up -->												
+									<ul class="record-settings pull-right">
+										<li>												
 											<span class="glyphicon glyphicon-arrow-up circle" ng-click=""></span>											
 										</li>
-										<li><!-- Move Down -->																						
+										<li>																						
 											<span class="glyphicon glyphicon-arrow-down circle" ng-click=""></span>											
 										</li>
-										<li><!-- Del -->										
+										<li>										
 											<span class="glyphicon glyphicon-trash" ng-click=""></span>											
 										</li>
 										<li>
@@ -826,19 +830,47 @@
 									<span class="created-date pull-right">Created: 2014-06-30</span>
 								</div>
 							</div>
+						</div>						
+					</div>
+					<div class="record-buttons">
+						<a ng-click="addNew()"><span class="glyphicon glyphicon-plus pull-left"></span></a>	        	      		
+			            <button class="btn btn-primary pull-right" ng-click="setOtherNamesForm()"><@spring.message "freemarker.btnsavechanges"/></button>	        	      		
+			            <a class="cancel-option pull-right" ng-click="closeEditModal()"><@spring.message "freemarker.btncancel"/></a>
+					</div>
+					
+				</div>
+			</div>
+		</div>
+	</div>		
+</script>
 
-
+<script type="text/ng-template" id="edit-country">
+	<div class="lightbox-container">
+		<div class="edit-record edit-country">
+			<!-- Title -->
+			<div class="row">			
+				<div class="col-md-12 col-sm-12 col-xs-12">	
+					<h1 class="lightbox-title pull-left">
+						<!-- <@orcid.msg ''/> -->
+						Edit Country
+					</h1>
+				</div>			
+			</div>
+			<div class="row">
+				<div class="col-md-12 col-xs-12 col-sm-12">
+					<div class="fixed-area">
+						<div class="scroll-area">		
 							<div class="row"><!-- ng-repeat="" -->
-								<!-- 2nd demo with input -->
 								<div class="col-md-6">
-									<div class="aka">
-										<span ng-show="">S.M. Garc&iacute;a</span>
-										<input type="text" value="S.M. Garc&iacute;a" />
-									</div>
-									<div class="source" ng-show="">Source: Sofia Mar&iacute;a Hernandez Garc&iacute;a</div>
-								</div>							
+								<select id="country" name="country" ng-model="countryForm.iso2Country.value">
+			    			 		<option value=""><@orcid.msg 'org.orcid.persistence.jpa.entities.CountryIsoEntity.empty' /></option>
+						 			<#list isoCountries?keys as key>
+							     		<option value="${key}">${isoCountries[key]}</option>
+					 	 			</#list>
+					 			</select>
+								</div>
 								<div class="col-md-6">
-									<ul class="aka-settings pull-right">
+									<ul class="record-settings pull-right">
 										<li><!-- Move Up -->												
 											<span class="glyphicon glyphicon-arrow-up circle" ng-click=""></span>											
 										</li>
@@ -849,33 +881,29 @@
 											<span class="glyphicon glyphicon-trash" ng-click=""></span>											
 										</li>
 										<li>
-											<@orcid.privacyToggle3  angularModel="otherNamesForm.visibility.visibility"
-				             					questionClick="toggleClickPrivacyHelp($index)"
-				             					clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
-				             					publicClick="setPrivacy('PUBLIC', $event)" 
-		                	     				limitedClick="setPrivacy('LIMITED', $event)" 
-		                	     				privateClick="setPrivacy('PRIVATE', $event)"
-		                	     				elementId="$index" />	
+											<@orcid.privacyToggle3  angularModel="countryForm.profileAddressVisibility.visibility"
+				         						questionClick="toggleClickPrivacyHelp($index)"
+				         						clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
+				         						publicClick="setPrivacy('PUBLIC', $event)" 
+	                 	     					limitedClick="setPrivacy('LIMITED', $event)" 
+	                 	     					privateClick="setPrivacy('PRIVATE', $event)"
+	                 	      					elementId="$index"/>	
 										</li>
 									</ul>
-									<span class="created-date pull-right" ng-show="">Created: 2014-06-30</span>
-								</div>
-
-
-
-							</div>
-						</div>						
+									<span class="created-date pull-right">Created: 2014-06-30</span>
+								</div>					 				
+							</div>											
+						</div>
 					</div>
-					<div class="aka-buttons">
-						<a ng-click="addNew()"><span class="glyphicon glyphicon-plus pull-left"></span></a>	        	      		
-			            <button class="btn btn-primary pull-right" ng-click="setOtherNamesForm()"><@spring.message "freemarker.btnsavechanges"/></button>	        	      		
-			            <a class="cancel-option pull-right" ng-click="closeEditModal()"><@spring.message "freemarker.btncancel"/></a>
+					<div class="record-buttons">						
+						<a ng-click="addNew()"><span class="glyphicon glyphicon-plus pull-left"></span></a>	        	    		
+		            	<button class="btn btn-primary pull-right" ng-click="setCountryForm()"><@spring.message "freemarker.btnsavechanges"/></button>
+		            	<a class="cancel-option pull-right" ng-click="closeEditModal()"><@spring.message "freemarker.btncancel"/></a>
 					</div>
-					
 				</div>
 			</div>
 		</div>
-	</div>		
+	</div>	
 </script>
 
 
