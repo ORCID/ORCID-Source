@@ -6254,27 +6254,62 @@ a:hover .mozilla-badge{
 	padding-right: 0;
 }
 
+.edit-aka .aka-row{
+	margin-bottom: 25px;
+}
+
+.edit-aka .fixed-area .aka{
+	color: #494A4C;
+	font-size: 24px;
+}
+
+.edit-aka .fixed-area .created-date{
+	margin-right: 15px;
+	font-size: 12px;
+}
+
+.edit-aka .fixed-area ul.aka-settings{
+	margin-right: 15px;
+}
+
+
+.edit-aka .fixed-area ul.aka-settings .privacyToggle{
+	height: 22px;
+	margin-left: 5px;
+}
+
+.edit-aka .fixed-area ul.aka-settings li{
+	display: inline-block;
+}
+
+.edit-aka .aka-settings span{
+	margin: 0 5px;
+	cursor: pointer;
+}
+
+.edit-aka .aka-settings span.circle{
+	background: #C9C9CA;
+    padding: 5px;
+    border-radius: 50%;
+    color: #FFF;        
+}
+
 .edit-aka .aka-buttons{
 	margin-top: 30px;
+	height: 35px;
 }
 
 .edit-aka .aka-buttons .cancel-option{
 	margin: 5px 15px 0 0;
 }
 
-.edit-aka .fixed-area .aka{
-	color: #494A4C;
-	font-size: 20px;
+.edit-aka .aka-buttons .glyphicon-plus{
+	background: #31789B;
+    padding: 5px;
+    border-radius: 50%;
+    color: #FFF; 
 }
-
-.edit-aka .fixed-area .created-date{
-	margin-right: 15px;
-}
-
-.edit-aka .fixed-area ul.aka-settings li{
-	display: inline;
-}
-
+	
 
 
 

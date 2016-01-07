@@ -794,24 +794,24 @@
 					
 					<div class="fixed-area">
 						<div class="scroll-area">		
-	        	      	    <div class="row"><!-- ng-repeat="" -->						
+	        	      	   <div class="row aka-row"><!-- ng-repeat="" --> 								
 								<div class="col-md-6">
 									<div class="aka">
-										<span>S.M. Garcia</span>
+										<span>S.M. Garc&iacute;a</span>
 										<input type="text" ng-show=""/>
 									</div>
-									<div class="source">Source: Sofia María Hernandez Garcia</div>
+									<div class="source">Source: Sofia Mar&iacute;a Hernandez Garc&iacute;a</div>
 								</div>							
 								<div class="col-md-6">
-									<ul class="aka-settings">
-										<li><!-- Move Up -->
-											<span>Up</span>
+									<ul class="aka-settings pull-right">
+										<li><!-- Move Up -->												
+											<span class="glyphicon glyphicon-arrow-up circle" ng-click=""></span>											
 										</li>
-										<li><!-- Move Down -->
-											<span>Down</span>	
+										<li><!-- Move Down -->																						
+											<span class="glyphicon glyphicon-arrow-down circle" ng-click=""></span>											
 										</li>
-										<li><!-- Del -->
-											<span>Delete</span>	
+										<li><!-- Del -->										
+											<span class="glyphicon glyphicon-trash" ng-click=""></span>											
 										</li>
 										<li>
 											<@orcid.privacyToggle3  angularModel="otherNamesForm.visibility.visibility"
@@ -825,6 +825,44 @@
 									</ul>
 									<span class="created-date pull-right">Created: 2014-06-30</span>
 								</div>
+							</div>
+
+
+							<div class="row"><!-- ng-repeat="" -->
+								<!-- 2nd demo with input -->
+								<div class="col-md-6">
+									<div class="aka">
+										<span ng-show="">S.M. Garc&iacute;a</span>
+										<input type="text" value="S.M. Garc&iacute;a" />
+									</div>
+									<div class="source" ng-show="">Source: Sofia Mar&iacute;a Hernandez Garc&iacute;a</div>
+								</div>							
+								<div class="col-md-6">
+									<ul class="aka-settings pull-right">
+										<li><!-- Move Up -->												
+											<span class="glyphicon glyphicon-arrow-up circle" ng-click=""></span>											
+										</li>
+										<li><!-- Move Down -->																						
+											<span class="glyphicon glyphicon-arrow-down circle" ng-click=""></span>											
+										</li>
+										<li><!-- Del -->										
+											<span class="glyphicon glyphicon-trash" ng-click=""></span>											
+										</li>
+										<li>
+											<@orcid.privacyToggle3  angularModel="otherNamesForm.visibility.visibility"
+				             					questionClick="toggleClickPrivacyHelp($index)"
+				             					clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
+				             					publicClick="setPrivacy('PUBLIC', $event)" 
+		                	     				limitedClick="setPrivacy('LIMITED', $event)" 
+		                	     				privateClick="setPrivacy('PRIVATE', $event)"
+		                	     				elementId="$index" />	
+										</li>
+									</ul>
+									<span class="created-date pull-right" ng-show="">Created: 2014-06-30</span>
+								</div>
+
+
+
 							</div>
 						</div>						
 					</div>
