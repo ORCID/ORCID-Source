@@ -782,7 +782,7 @@
 		<div class="edit-aka">
 			<!-- Title -->
 			<div class="row">			
-				<div class="col-md-9 col-sm-8 col-xs-9">	
+				<div class="col-md-12 col-sm-12 col-xs-12">	
 					<h1 class="lightbox-title pull-left">
 						<!-- <@orcid.msg ''/> -->
 						Edit also known as
@@ -794,40 +794,45 @@
 					
 					<div class="fixed-area">
 						<div class="scroll-area">		
-	        	      		<div class="col-md-6">
-								<div class="aka">
-									<span>S.M. Garcia</span>
-									<input type="text" />
+	        	      	    <div class="row"><!-- ng-repeat="" -->						
+								<div class="col-md-6">
+									<div class="aka">
+										<span>S.M. Garcia</span>
+										<input type="text" ng-show=""/>
+									</div>
+									<div class="source">Source: Sofia María Hernandez Garcia</div>
+								</div>							
+								<div class="col-md-6">
+									<ul class="aka-settings">
+										<li><!-- Move Up -->
+											<span>Up</span>
+										</li>
+										<li><!-- Move Down -->
+											<span>Down</span>	
+										</li>
+										<li><!-- Del -->
+											<span>Delete</span>	
+										</li>
+										<li>
+											<@orcid.privacyToggle3  angularModel="otherNamesForm.visibility.visibility"
+				             					questionClick="toggleClickPrivacyHelp($index)"
+				             					clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
+				             					publicClick="setPrivacy('PUBLIC', $event)" 
+		                	     				limitedClick="setPrivacy('LIMITED', $event)" 
+		                	     				privateClick="setPrivacy('PRIVATE', $event)"
+		                	     				elementId="$index" />	
+										</li>
+									</ul>
+									<span class="created-date pull-right">Created: 2014-06-30</span>
 								</div>
-								<div class="source">Source: Sofia María Hernandez Garcia</div>
-							</div>							
-							<div class="col-md-6">
-								<ul>
-									<li><!-- Move Up -->
-										<span></span>
-									</li>
-									<li><!-- Move Down -->
-										<span></span>	
-									</li>
-									<li><!-- Delete -->
-										<span></span>	
-									</li>
-									<li>
-										Privacy Settings	
-									</li>
-
-								</ul>
 							</div>
-						</div>
-						<div class="">
-							<a ng-click="addNew()"><span class="glyphicon glyphicon-plus"></span></a>	        	      		
-			        	    <button class="btn btn-primary" ng-click="setOtherNamesForm()"><@spring.message "freemarker.btnsavechanges"/></button>	        	      		
-			        	    <a class="cancel-option" ng-click="closeEditModal()"><@spring.message "freemarker.btncancel"/></a>
-						</div>
+						</div>						
 					</div>
-					
-					
-					
+					<div class="aka-buttons">
+						<a ng-click="addNew()"><span class="glyphicon glyphicon-plus pull-left"></span></a>	        	      		
+			            <button class="btn btn-primary pull-right" ng-click="setOtherNamesForm()"><@spring.message "freemarker.btnsavechanges"/></button>	        	      		
+			            <a class="cancel-option pull-right" ng-click="closeEditModal()"><@spring.message "freemarker.btncancel"/></a>
+					</div>
 					
 				</div>
 			</div>
