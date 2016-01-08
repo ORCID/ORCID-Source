@@ -43,7 +43,7 @@ public class OrcidUrlManager {
 
     @Value("${org.orcid.core.internalApiBaseUri}")
     private String internalApiBaseUrl;
-    
+
     public String getBaseUrl() {
         return baseUrl;
     }
@@ -67,8 +67,8 @@ public class OrcidUrlManager {
             return "/";
         return fileNameMatcher.group(1) + "/";
     }
-    
-    /** 
+
+    /**
      * 
      * @return the path, without additional trailing slash
      */
@@ -79,8 +79,8 @@ public class OrcidUrlManager {
             return "/";
         return fileNameMatcher.group(1);
     }
-    
-    /** 
+
+    /**
      * 
      * @return the path, without additional trailing slash
      */
@@ -91,8 +91,8 @@ public class OrcidUrlManager {
             return "/";
         return fileNameMatcher.group(1);
     }
-    
-    /** 
+
+    /**
      * 
      * @return the path, without additional trailing slash
      */
@@ -104,7 +104,6 @@ public class OrcidUrlManager {
         return fileNameMatcher.group(1);
     }
 
-    
     public String getBaseHost() {
         try {
             return new URI(this.baseUrl).getHost();
@@ -112,34 +111,34 @@ public class OrcidUrlManager {
             throw new RuntimeException("Problem parsing base URI: " + this.baseUrl, e);
         }
     }
-    
+
     public String getApiHostWithPort() {
         try {
             URI uri = new URI(this.apiBaseUrl);
             if (uri.getPort() >= 0)
-                return uri.getHost() + ":"+uri.getPort();
+                return uri.getHost() + ":" + uri.getPort();
             return uri.getHost();
         } catch (URISyntaxException e) {
             throw new RuntimeException("Problem parsing base URI: " + this.apiBaseUrl, e);
         }
     }
-    
+
     public String getInternalApiHostWithPort() {
         try {
             URI uri = new URI(this.internalApiBaseUrl);
             if (uri.getPort() >= 0)
-                return uri.getHost() + ":"+uri.getPort();
+                return uri.getHost() + ":" + uri.getPort();
             return uri.getHost();
         } catch (URISyntaxException e) {
             throw new RuntimeException("Problem parsing base URI: " + this.apiBaseUrl, e);
         }
     }
-    
+
     public String getPubHostWithPort() {
         try {
             URI uri = new URI(this.pubBaseUrl);
             if (uri.getPort() >= 0)
-                return uri.getHost() + ":"+uri.getPort();
+                return uri.getHost() + ":" + uri.getPort();
             return uri.getHost();
         } catch (URISyntaxException e) {
             throw new RuntimeException("Problem parsing base URI: " + this.pubBaseUrl, e);
@@ -161,7 +160,7 @@ public class OrcidUrlManager {
     public String getInternalApiBaseUrl() {
         return internalApiBaseUrl;
     }
-    
+
     public void setApiBaseUrl(String apiBaseUrl) {
         this.apiBaseUrl = apiBaseUrl;
     }
@@ -173,14 +172,14 @@ public class OrcidUrlManager {
         StringBuilder sb = new StringBuilder();
 
         if (scheme.equals("https"))
-        	sb.append(getBaseUrl());
+            sb.append(getBaseUrl());
         else
-        	sb.append(getBaseUriHttp());
+            sb.append(getBaseUriHttp());
         return sb.toString();
     }
-    
+
     public static String getPathWithoutContextPath(HttpServletRequest request) {
         return request.getRequestURI().substring(request.getContextPath().length());
     }
-    
+
 }
