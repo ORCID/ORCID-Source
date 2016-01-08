@@ -24,6 +24,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.CountryManager;
@@ -118,12 +119,15 @@ public class BaseWorkspaceController extends BaseController {
 
     @ModelAttribute("orcidIdHash")
     String getOrcidHash(HttpServletRequest request) throws Exception {
-        String hash = (String) request.getSession().getAttribute(ORCID_ID_HASH);
+        HttpSession session = request.getSession(false);
+        String hash = session != null ? (String) session.getAttribute(ORCID_ID_HASH) : null;
         if (!PojoUtil.isEmpty(hash)) {
             return hash;
         }
         hash = profileEntityManager.getOrcidHash(getEffectiveUserOrcid());
-        request.getSession().setAttribute(ORCID_ID_HASH, hash);
+        if (session != null) {
+            request.getSession().setAttribute(ORCID_ID_HASH, hash);
+        }
         return hash;
     }
 
