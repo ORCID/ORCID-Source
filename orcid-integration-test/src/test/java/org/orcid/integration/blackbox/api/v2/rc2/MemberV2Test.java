@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
 
 import org.codehaus.jettison.json.JSONException;
@@ -38,6 +39,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.orcid.integration.api.memberV2.MemberV2ApiClientImpl;
 import org.orcid.integration.blackbox.BlackBoxBase;
 import org.orcid.jaxb.model.common.Day;
 import org.orcid.jaxb.model.common.FuzzyDate;
@@ -88,6 +90,8 @@ public class MemberV2Test extends BlackBoxBase {
     
     static List<GroupIdRecord> groupRecords = null;
     
+    @Resource(name = "memberV2ApiClient_rc2")
+    protected MemberV2ApiClientImpl memberV2ApiClient;
     
     @BeforeClass
     public static void beforeClass() {
@@ -131,7 +135,7 @@ public class MemberV2Test extends BlackBoxBase {
     @Test
     public void createViewUpdateAndDeleteWork() throws JSONException, InterruptedException, URISyntaxException {
         long time = System.currentTimeMillis();
-        Work workToCreate = (Work) unmarshallFromPath("/record_2.0_rc1/samples/work-2.0_rc1.xml", Work.class);
+        Work workToCreate = (Work) unmarshallFromPath("/record_2.0_rc2/samples/work-2.0_rc2.xml", Work.class);
         workToCreate.setPutCode(null);
         workToCreate.getExternalIdentifiers().getExternalIdentifier().clear();
         WorkExternalIdentifier wExtId = new WorkExternalIdentifier();
@@ -144,7 +148,7 @@ public class MemberV2Test extends BlackBoxBase {
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         String locationPath = postResponse.getLocation().getPath();
-        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v2.0_rc1/" + user1OrcidId + "/work/\\d+"));
+        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v2.0_rc2/" + user1OrcidId + "/work/\\d+"));
         ClientResponse getResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
         Work gotWork = getResponse.getEntity(Work.class);
@@ -163,7 +167,7 @@ public class MemberV2Test extends BlackBoxBase {
     @Test
     public void testUpdateWorkWithProfileCreationTokenWhenClaimedAndNotSource() throws JSONException, InterruptedException, URISyntaxException {
         long time = System.currentTimeMillis();
-        Work workToCreate = (Work) unmarshallFromPath("/record_2.0_rc1/samples/work-2.0_rc1.xml", Work.class);
+        Work workToCreate = (Work) unmarshallFromPath("/record_2.0_rc2/samples/work-2.0_rc2.xml", Work.class);
         workToCreate.setPutCode(null);
         workToCreate.setVisibility(Visibility.PUBLIC);
         workToCreate.getExternalIdentifiers().getExternalIdentifier().clear();
@@ -177,7 +181,7 @@ public class MemberV2Test extends BlackBoxBase {
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         String locationPath = postResponse.getLocation().getPath();
-        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v2.0_rc1/" + user1OrcidId + "/work/\\d+"));
+        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v2.0_rc2/" + user1OrcidId + "/work/\\d+"));
         ClientResponse getResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
         Work gotWork = getResponse.getEntity(Work.class);
@@ -196,7 +200,7 @@ public class MemberV2Test extends BlackBoxBase {
 
     @Test
     public void createViewUpdateAndDeleteEducation() throws JSONException, InterruptedException, URISyntaxException {
-        Education education = (Education) unmarshallFromPath("/record_2.0_rc1/samples/education-2.0_rc1.xml", Education.class);
+        Education education = (Education) unmarshallFromPath("/record_2.0_rc2/samples/education-2.0_rc2.xml", Education.class);
         education.setPutCode(null);
         education.setVisibility(Visibility.PUBLIC);
         String accessToken = getAccessToken(this.client1ClientId, this.client1ClientSecret, this.client1RedirectUri);
@@ -204,7 +208,7 @@ public class MemberV2Test extends BlackBoxBase {
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         String locationPath = postResponse.getLocation().getPath();
-        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v2.0_rc1/" + user1OrcidId + "/education/\\d+"));
+        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v2.0_rc2/" + user1OrcidId + "/education/\\d+"));
         ClientResponse getResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
         Education gotEducation = getResponse.getEntity(Education.class);
@@ -225,7 +229,7 @@ public class MemberV2Test extends BlackBoxBase {
 
     @Test
     public void testUpdateEducationWithProfileCreationTokenWhenClaimedAndNotSource() throws JSONException, InterruptedException, URISyntaxException {
-        Education education = (Education) unmarshallFromPath("/record_2.0_rc1/samples/education-2.0_rc1.xml", Education.class);
+        Education education = (Education) unmarshallFromPath("/record_2.0_rc2/samples/education-2.0_rc2.xml", Education.class);
         education.setPutCode(null);
         education.setVisibility(Visibility.PUBLIC);
         String accessToken = getAccessToken(this.client1ClientId, this.client1ClientSecret, this.client1RedirectUri);
@@ -233,7 +237,7 @@ public class MemberV2Test extends BlackBoxBase {
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         String locationPath = postResponse.getLocation().getPath();
-        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v2.0_rc1/" + user1OrcidId + "/education/\\d+"));
+        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v2.0_rc2/" + user1OrcidId + "/education/\\d+"));
         ClientResponse getResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
         Education gotEducation = getResponse.getEntity(Education.class);
@@ -255,7 +259,7 @@ public class MemberV2Test extends BlackBoxBase {
 
     @Test
     public void createViewUpdateAndDeleteEmployment() throws JSONException, InterruptedException, URISyntaxException {
-        Employment employment = (Employment) unmarshallFromPath("/record_2.0_rc1/samples/employment-2.0_rc1.xml", Employment.class);
+        Employment employment = (Employment) unmarshallFromPath("/record_2.0_rc2/samples/employment-2.0_rc2.xml", Employment.class);
         employment.setPutCode(null);
         employment.setVisibility(Visibility.PUBLIC);
         String accessToken = getAccessToken(this.client1ClientId, this.client1ClientSecret, this.client1RedirectUri);
@@ -263,7 +267,7 @@ public class MemberV2Test extends BlackBoxBase {
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         String locationPath = postResponse.getLocation().getPath();
-        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v2.0_rc1/" + user1OrcidId + "/employment/\\d+"));
+        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v2.0_rc2/" + user1OrcidId + "/employment/\\d+"));
         ClientResponse getResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
         Employment gotEmployment = getResponse.getEntity(Employment.class);
@@ -284,7 +288,7 @@ public class MemberV2Test extends BlackBoxBase {
 
     @Test
     public void testUpdateEmploymentWithProfileCreationTokenWhenClaimedAndNotSource() throws JSONException, InterruptedException, URISyntaxException {
-        Employment employment = (Employment) unmarshallFromPath("/record_2.0_rc1/samples/employment-2.0_rc1.xml", Employment.class);
+        Employment employment = (Employment) unmarshallFromPath("/record_2.0_rc2/samples/employment-2.0_rc2.xml", Employment.class);
         employment.setPutCode(null);
         employment.setVisibility(Visibility.PUBLIC);
         String accessToken = getAccessToken(this.client1ClientId, this.client1ClientSecret, this.client1RedirectUri);
@@ -292,7 +296,7 @@ public class MemberV2Test extends BlackBoxBase {
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         String locationPath = postResponse.getLocation().getPath();
-        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v2.0_rc1/" + user1OrcidId + "/employment/\\d+"));
+        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v2.0_rc2/" + user1OrcidId + "/employment/\\d+"));
         ClientResponse getResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
         Employment gotEmployment = getResponse.getEntity(Employment.class);
@@ -315,7 +319,7 @@ public class MemberV2Test extends BlackBoxBase {
     @Test
     public void createViewUpdateAndDeleteFunding() throws JSONException, InterruptedException, URISyntaxException {
         long time = System.currentTimeMillis();
-        Funding funding = (Funding) unmarshallFromPath("/record_2.0_rc1/samples/funding-2.0_rc1.xml", Funding.class);
+        Funding funding = (Funding) unmarshallFromPath("/record_2.0_rc2/samples/funding-2.0_rc2.xml", Funding.class);
         funding.setPutCode(null);
         funding.setVisibility(Visibility.PUBLIC);
         funding.getExternalIdentifiers().getExternalIdentifier().clear();
@@ -329,7 +333,7 @@ public class MemberV2Test extends BlackBoxBase {
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         String locationPath = postResponse.getLocation().getPath();
-        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v2.0_rc1/" + user1OrcidId + "/funding/\\d+"));
+        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v2.0_rc2/" + user1OrcidId + "/funding/\\d+"));
         ClientResponse getResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
         Funding gotFunding = getResponse.getEntity(Funding.class);
@@ -354,7 +358,7 @@ public class MemberV2Test extends BlackBoxBase {
     @Test
     public void testUpdateFundingWithProfileCreationTokenWhenClaimedAndNotSource() throws JSONException, InterruptedException, URISyntaxException {
         long time = System.currentTimeMillis();
-        Funding funding = (Funding) unmarshallFromPath("/record_2.0_rc1/samples/funding-2.0_rc1.xml", Funding.class);
+        Funding funding = (Funding) unmarshallFromPath("/record_2.0_rc2/samples/funding-2.0_rc2.xml", Funding.class);
         funding.setPutCode(null);
         funding.setVisibility(Visibility.PUBLIC);
         funding.getExternalIdentifiers().getExternalIdentifier().clear();
@@ -368,7 +372,7 @@ public class MemberV2Test extends BlackBoxBase {
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         String locationPath = postResponse.getLocation().getPath();
-        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v2.0_rc1/" + user1OrcidId + "/funding/\\d+"));
+        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v2.0_rc2/" + user1OrcidId + "/funding/\\d+"));
         ClientResponse getResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
         Funding gotFunding = getResponse.getEntity(Funding.class);
@@ -394,7 +398,7 @@ public class MemberV2Test extends BlackBoxBase {
     @Test
     public void createViewUpdateAndDeletePeerReview() throws JSONException, InterruptedException, URISyntaxException {
         long time = System.currentTimeMillis();
-        PeerReview peerReviewToCreate = (PeerReview) unmarshallFromPath("/record_2.0_rc1/samples/peer-review-2.0_rc1.xml", PeerReview.class);
+        PeerReview peerReviewToCreate = (PeerReview) unmarshallFromPath("/record_2.0_rc2/samples/peer-review-2.0_rc2.xml", PeerReview.class);
         peerReviewToCreate.setPutCode(null);
         peerReviewToCreate.setGroupId(groupRecords.get(0).getGroupId());
         peerReviewToCreate.getExternalIdentifiers().getExternalIdentifier().clear();
@@ -409,7 +413,7 @@ public class MemberV2Test extends BlackBoxBase {
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         String locationPath = postResponse.getLocation().getPath();
-        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v2.0_rc1/" + user1OrcidId + "/peer-review/\\d+"));
+        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v2.0_rc2/" + user1OrcidId + "/peer-review/\\d+"));
         ClientResponse getResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
         PeerReview gotPeerReview = getResponse.getEntity(PeerReview.class);
@@ -433,7 +437,7 @@ public class MemberV2Test extends BlackBoxBase {
     @Test
     public void testUpdatePeerReviewWithProfileCreationTokenWhenClaimedAndNotSource() throws JSONException, InterruptedException, URISyntaxException {
         long time = System.currentTimeMillis();
-        PeerReview peerReviewToCreate = (PeerReview) unmarshallFromPath("/record_2.0_rc1/samples/peer-review-2.0_rc1.xml", PeerReview.class);
+        PeerReview peerReviewToCreate = (PeerReview) unmarshallFromPath("/record_2.0_rc2/samples/peer-review-2.0_rc2.xml", PeerReview.class);
         peerReviewToCreate.setPutCode(null);
         peerReviewToCreate.setGroupId(groupRecords.get(0).getGroupId());
         peerReviewToCreate.setVisibility(Visibility.PUBLIC);
@@ -449,7 +453,7 @@ public class MemberV2Test extends BlackBoxBase {
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         String locationPath = postResponse.getLocation().getPath();
-        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v2.0_rc1/" + user1OrcidId + "/peer-review/\\d+"));
+        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v2.0_rc2/" + user1OrcidId + "/peer-review/\\d+"));
         ClientResponse getResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
         PeerReview gotPeerReview = getResponse.getEntity(PeerReview.class);
@@ -473,15 +477,15 @@ public class MemberV2Test extends BlackBoxBase {
         String accessTokenForClient1 = getAccessToken(this.client1ClientId, this.client1ClientSecret, this.client1RedirectUri);
         String accessTokenForClient2 = getAccessToken(this.client2ClientId, this.client2ClientSecret, this.client2RedirectUri);
         
-        Education education = (Education) unmarshallFromPath("/record_2.0_rc1/samples/education-2.0_rc1.xml", Education.class);
+        Education education = (Education) unmarshallFromPath("/record_2.0_rc2/samples/education-2.0_rc2.xml", Education.class);
         education.setPutCode(null);
         education.setVisibility(Visibility.PUBLIC);
 
-        Employment employment = (Employment) unmarshallFromPath("/record_2.0_rc1/samples/employment-2.0_rc1.xml", Employment.class);
+        Employment employment = (Employment) unmarshallFromPath("/record_2.0_rc2/samples/employment-2.0_rc2.xml", Employment.class);
         employment.setPutCode(null);
         employment.setVisibility(Visibility.PUBLIC);
 
-        Funding funding = (Funding) unmarshallFromPath("/record_2.0_rc1/samples/funding-2.0_rc1.xml", Funding.class);
+        Funding funding = (Funding) unmarshallFromPath("/record_2.0_rc2/samples/funding-2.0_rc2.xml", Funding.class);
         funding.setPutCode(null);
         funding.setVisibility(Visibility.PUBLIC);
         funding.getExternalIdentifiers().getExternalIdentifier().clear();
@@ -491,7 +495,7 @@ public class MemberV2Test extends BlackBoxBase {
         fExtId.setRelationship(Relationship.SELF);
         funding.getExternalIdentifiers().getExternalIdentifier().add(fExtId);
                 
-        Work work = (Work) unmarshallFromPath("/record_2.0_rc1/samples/work-2.0_rc1.xml", Work.class);
+        Work work = (Work) unmarshallFromPath("/record_2.0_rc2/samples/work-2.0_rc2.xml", Work.class);
         work.setPutCode(null);
         work.setVisibility(Visibility.PUBLIC);
         work.getExternalIdentifiers().getExternalIdentifier().clear();
@@ -501,7 +505,7 @@ public class MemberV2Test extends BlackBoxBase {
         wExtId.setRelationship(Relationship.SELF);
         work.getExternalIdentifiers().getWorkExternalIdentifier().add(wExtId);
 
-        PeerReview peerReview = (PeerReview) unmarshallFromPath("/record_2.0_rc1/samples/peer-review-2.0_rc1.xml", PeerReview.class);
+        PeerReview peerReview = (PeerReview) unmarshallFromPath("/record_2.0_rc2/samples/peer-review-2.0_rc2.xml", PeerReview.class);
         peerReview.setPutCode(null);
         peerReview.setVisibility(Visibility.PUBLIC);
         peerReview.setGroupId(groupRecords.get(0).getGroupId());
@@ -755,7 +759,7 @@ public class MemberV2Test extends BlackBoxBase {
     
     @Test
     public void testPeerReviewMustHaveAtLeastOneExtId() throws JSONException, InterruptedException, URISyntaxException {
-        PeerReview peerReview = (PeerReview) unmarshallFromPath("/record_2.0_rc1/samples/peer-review-2.0_rc1.xml", PeerReview.class);
+        PeerReview peerReview = (PeerReview) unmarshallFromPath("/record_2.0_rc2/samples/peer-review-2.0_rc2.xml", PeerReview.class);
         peerReview.setPutCode(null);
         peerReview.setGroupId(groupRecords.get(0).getGroupId());
         peerReview.getExternalIdentifiers().getExternalIdentifier().clear();        
@@ -773,7 +777,7 @@ public class MemberV2Test extends BlackBoxBase {
         String accessTokenForClient1 = getAccessToken(this.client1ClientId, this.client1ClientSecret, this.client1RedirectUri);
         String accessTokenForClient2 = getAccessToken(this.client2ClientId, this.client2ClientSecret, this.client2RedirectUri);
         
-        Work work1 = (Work) unmarshallFromPath("/record_2.0_rc1/samples/work-2.0_rc1.xml", Work.class);
+        Work work1 = (Work) unmarshallFromPath("/record_2.0_rc2/samples/work-2.0_rc2.xml", Work.class);
         work1.setPutCode(null);
         work1.setVisibility(Visibility.PUBLIC);
         work1.getExternalIdentifiers().getExternalIdentifier().clear();
@@ -788,7 +792,7 @@ public class MemberV2Test extends BlackBoxBase {
         work1.getExternalIdentifiers().getWorkExternalIdentifier().clear();
         work1.getExternalIdentifiers().getWorkExternalIdentifier().add(wExtId1);
 
-        Work work2 = (Work) unmarshallFromPath("/record_2.0_rc1/samples/work-2.0_rc1.xml", Work.class);
+        Work work2 = (Work) unmarshallFromPath("/record_2.0_rc2/samples/work-2.0_rc2.xml", Work.class);
         work2.setPutCode(null);
         work2.setVisibility(Visibility.PUBLIC);
         org.orcid.jaxb.model.record_rc2.WorkTitle title2 = new org.orcid.jaxb.model.record_rc2.WorkTitle();
@@ -803,7 +807,7 @@ public class MemberV2Test extends BlackBoxBase {
         work2.getExternalIdentifiers().getWorkExternalIdentifier().clear();
         work2.getExternalIdentifiers().getWorkExternalIdentifier().add(wExtId2);
         
-        Work work3 = (Work) unmarshallFromPath("/record_2.0_rc1/samples/work-2.0_rc1.xml", Work.class);
+        Work work3 = (Work) unmarshallFromPath("/record_2.0_rc2/samples/work-2.0_rc2.xml", Work.class);
         work3.setPutCode(null);
         work3.setVisibility(Visibility.PUBLIC);
         org.orcid.jaxb.model.record_rc2.WorkTitle title3 = new org.orcid.jaxb.model.record_rc2.WorkTitle();
@@ -884,7 +888,7 @@ public class MemberV2Test extends BlackBoxBase {
     public void testTokenWorksOnlyForTheScopeItWasIssued() throws JSONException, InterruptedException, URISyntaxException {
         long time = System.currentTimeMillis();
         String accessToken =  getAccessToken(ScopePathType.FUNDING_CREATE, this.client1ClientId, this.client1ClientSecret, this.client1RedirectUri);
-        Work work1 = (Work) unmarshallFromPath("/record_2.0_rc1/samples/work-2.0_rc1.xml", Work.class);
+        Work work1 = (Work) unmarshallFromPath("/record_2.0_rc2/samples/work-2.0_rc2.xml", Work.class);
         work1.setPutCode(null);
         work1.getExternalIdentifiers().getExternalIdentifier().clear();
         org.orcid.jaxb.model.record_rc2.WorkTitle title1 = new org.orcid.jaxb.model.record_rc2.WorkTitle();
@@ -904,7 +908,7 @@ public class MemberV2Test extends BlackBoxBase {
         assertNotNull(postResponse);
         assertEquals(Response.Status.FORBIDDEN.getStatusCode(), postResponse.getStatus());
         
-        Funding funding = (Funding) unmarshallFromPath("/record_2.0_rc1/samples/funding-2.0_rc1.xml", Funding.class);
+        Funding funding = (Funding) unmarshallFromPath("/record_2.0_rc2/samples/funding-2.0_rc2.xml", Funding.class);
         funding.setPutCode(null);
         funding.setVisibility(Visibility.PUBLIC);
         funding.getExternalIdentifiers().getExternalIdentifier().clear();
@@ -922,7 +926,7 @@ public class MemberV2Test extends BlackBoxBase {
     
     @Test
     public void testAddPeerReviewWithInvalidGroupingId() throws JSONException, InterruptedException, URISyntaxException {
-        PeerReview peerReview = (PeerReview) unmarshallFromPath("/record_2.0_rc1/samples/peer-review-2.0_rc1.xml", PeerReview.class);
+        PeerReview peerReview = (PeerReview) unmarshallFromPath("/record_2.0_rc2/samples/peer-review-2.0_rc2.xml", PeerReview.class);
         peerReview.setPutCode(null);
         peerReview.setGroupId("Invalid group id " + System.currentTimeMillis());
         peerReview.getExternalIdentifiers().getExternalIdentifier().clear();        
@@ -1022,12 +1026,12 @@ public class MemberV2Test extends BlackBoxBase {
         
         ClientResponse r1 = memberV2ApiClient.createGroupIdRecord(g1, token);
         
-        String r1LocationPutCode = r1.getLocation().getPath().replace("/orcid-api-web/v2.0_rc1/group-id-record/", "");
+        String r1LocationPutCode = r1.getLocation().getPath().replace("/orcid-api-web/v2.0_rc2/group-id-record/", "");
         g1.setPutCode(Long.valueOf(r1LocationPutCode));
         groups.add(g1);
         
         ClientResponse r2 = memberV2ApiClient.createGroupIdRecord(g2, token);
-        String r2LocationPutCode = r2.getLocation().getPath().replace("/orcid-api-web/v2.0_rc1/group-id-record/", "");
+        String r2LocationPutCode = r2.getLocation().getPath().replace("/orcid-api-web/v2.0_rc2/group-id-record/", "");
         g2.setPutCode(Long.valueOf(r2LocationPutCode));
         groups.add(g2);
         

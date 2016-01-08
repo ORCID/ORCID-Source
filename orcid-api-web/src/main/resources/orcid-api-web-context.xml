@@ -143,8 +143,11 @@
     </bean>
     
     <!--  Member_2 API RC2-->
+    <bean id="memberV2ApiServiceDelegatorRc2" class="org.orcid.api.memberV2.server.delegator.impl.MemberV2ApiServiceVersionedDelegatorImpl">
+        <property name="externalVersion" value="2.0_rc2" />
+    </bean>
     <bean id="memberV2ApiServiceImplV2_0_rc2" class="org.orcid.api.memberV2.server.MemberV2ApiServiceImplV2_0_rc2">    	
-        <property name="serviceDelegator" ref="memberV2ApiServiceDelegator"/>
+        <property name="serviceDelegator" ref="memberV2ApiServiceDelegatorRc2"/>
         <property name="notificationsServiceDelegator" ref="notificationsApiServiceDelegator"/>
     </bean>
     
