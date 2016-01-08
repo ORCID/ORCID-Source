@@ -14,13 +14,10 @@
  *
  * =============================================================================
  */
-package org.orcid.integration.blackbox.api.personV2;
+package org.orcid.integration.blackbox.api.v2.rc2;
 
-import static org.hamcrest.core.AnyOf.anyOf;
-import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.util.HashMap;
@@ -36,10 +33,12 @@ import org.junit.runner.RunWith;
 import org.orcid.integration.api.memberV2.MemberV2ApiClientImpl;
 import org.orcid.integration.api.pub.PublicV2ApiClientImpl;
 import org.orcid.integration.blackbox.BlackBoxBase;
+import org.orcid.jaxb.model.common.Country;
+import org.orcid.jaxb.model.common.Iso3166Country;
 import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.record_rc2.Keyword;
-import org.orcid.jaxb.model.record_rc2.Keywords;
+import org.orcid.jaxb.model.record_rc2.Address;
+import org.orcid.jaxb.model.record_rc2.Addresses;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -53,7 +52,7 @@ import com.sun.jersey.api.client.ClientResponse;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-publicV2-context.xml" })
-public class KeywordsTest extends BlackBoxBase {
+public class AddressTest extends BlackBoxBase {
     protected static Map<String, String> accessTokens = new HashMap<String, String>();
 
     @Value("${org.orcid.web.base.url:http://localhost:8080/orcid-web}")
@@ -82,29 +81,25 @@ public class KeywordsTest extends BlackBoxBase {
 
     @Resource(name = "publicV2ApiClient_rc2")
     private PublicV2ApiClientImpl publicV2ApiClient;
-
+    
     /**
-     * PRECONDITIONS: The user should have two public keywords "keyword-1"
-     * and "keyword-2"
+     * PRECONDITIONS: The user should have one public address US
      * 
      * @throws JSONException
      * @throws InterruptedException
      */
-    @SuppressWarnings("unchecked")
     @Test
-    public void testGetKeywordsWihtMembersAPI() throws InterruptedException, JSONException {
+    public void testGetAddressWithMembersAPI() throws InterruptedException, JSONException {
         String accessToken = getAccessToken(this.client1ClientId, this.client1ClientSecret, this.client1RedirectUri);
         assertNotNull(accessToken);
-        ClientResponse response = memberV2ApiClient.viewKeywords(user1OrcidId, accessToken);
+        ClientResponse response = memberV2ApiClient.viewAddresses(user1OrcidId, accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        Keywords keywords = response.getEntity(Keywords.class);
-        assertNotNull(keywords);
-        assertNotNull(keywords.getKeywords());
-        assertEquals(2, keywords.getKeywords().size());
-        assertThat(keywords.getKeywords().get(0).getContent(), anyOf(is("keyword-1"), is("keyword-2")));
-        assertThat(keywords.getKeywords().get(1).getContent(), anyOf(is("keyword-1"), is("keyword-2")));
-        assertEquals(Visibility.PUBLIC, keywords.getKeywords().get(0).getVisibility());
-        assertEquals(Visibility.PUBLIC, keywords.getKeywords().get(1).getVisibility());
+        Addresses addresses = response.getEntity(Addresses.class);
+        assertNotNull(addresses);
+        assertNotNull(addresses.getAddress());
+        assertEquals(1, addresses.getAddress().size());
+        assertEquals(Visibility.PUBLIC, addresses.getAddress().get(0).getVisibility());
+        assertEquals(Iso3166Country.US, addresses.getAddress().get(0).getCountry().getValue());
     }
 
     @SuppressWarnings({ "deprecation", "rawtypes" })
@@ -112,11 +107,12 @@ public class KeywordsTest extends BlackBoxBase {
     public void testCreateGetUpdateAndDeleteKeyword() throws InterruptedException, JSONException {
         String accessToken = getAccessToken(this.client1ClientId, this.client1ClientSecret, this.client1RedirectUri);
         assertNotNull(accessToken);
-        Keyword keyword = new Keyword();
-        keyword.setContent("keyword-3");
-        keyword.setVisibility(Visibility.PUBLIC);
+
+        Address address = new Address();       
+        address.setCountry(new Country(Iso3166Country.CR));
+        address.setVisibility(Visibility.PUBLIC);
         //Create
-        ClientResponse response = memberV2ApiClient.createKeyword(user1OrcidId, keyword, accessToken);
+        ClientResponse response = memberV2ApiClient.createAddress(user1OrcidId, address, accessToken);
         assertNotNull(response);
         assertEquals(ClientResponse.Status.CREATED.getStatusCode(), response.getStatus());
         Map map = response.getMetadata();
@@ -127,86 +123,80 @@ public class KeywordsTest extends BlackBoxBase {
         Long putCode = Long.valueOf(location.substring(location.lastIndexOf('/') + 1));
         
         //Get all and verify
-        response = memberV2ApiClient.viewKeywords(user1OrcidId, accessToken);
+        response = memberV2ApiClient.viewAddresses(user1OrcidId, accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        Keywords keywords = response.getEntity(Keywords.class);
-        assertNotNull(keywords);
-        assertNotNull(keywords.getKeywords());
-        assertEquals(3, keywords.getKeywords().size());
+        Addresses addresses = response.getEntity(Addresses.class);
+        assertNotNull(addresses);
+        assertNotNull(addresses.getAddress());
+        assertEquals(2, addresses.getAddress().size());
+                
+        boolean foundUS = false;
+        boolean foundCR = false;
         
-        
-        boolean found1 = false;
-        boolean found2 = false;
-        boolean found3 = false;
-        
-        for(Keyword existingKeyword : keywords.getKeywords()) {
-            assertEquals(Visibility.PUBLIC, existingKeyword.getVisibility());
-            if(existingKeyword.getContent().equals("keyword-1")) {
-                found1 = true;
-            } else if(existingKeyword.getContent().equals("keyword-2")) {
-                found2 = true;
-            } else {
-                assertEquals("keyword-3", existingKeyword.getContent());
-                assertEquals(client1ClientId, existingKeyword.getSource().retrieveSourcePath());
-                found3 = true;
+        for(Address add : addresses.getAddress()) {
+            assertEquals(Visibility.PUBLIC, add.getVisibility());
+            assertNotNull(add.getCountry());
+            assertNotNull(add.getCountry().getValue());
+            if(add.getCountry().getValue().equals(Iso3166Country.US)) {
+                foundUS = true;
+            } else if(add.getCountry().getValue().equals(Iso3166Country.CR)) {
+                foundCR = true;
             }
         }
         
-        assertTrue(found1);
-        assertTrue(found2);
-        assertTrue(found3);
+        assertTrue(foundUS);
+        assertTrue(foundCR);
                
         //Get it
-        response = memberV2ApiClient.viewKeyword(user1OrcidId, putCode, accessToken);
+        response = memberV2ApiClient.viewAddress(user1OrcidId, putCode, accessToken);
         assertNotNull(response);
-        keyword = response.getEntity(Keyword.class);
-        assertNotNull(keyword);
-        assertNotNull(keyword.getSource());
-        assertEquals(client1ClientId, keyword.getSource().retrieveSourcePath());
-        assertEquals("keyword-3", keyword.getContent());
-        assertEquals(Visibility.PUBLIC, keyword.getVisibility());
+        address = response.getEntity(Address.class);
+        assertNotNull(address);
+        assertNotNull(address.getSource());
+        assertEquals(client1ClientId, address.getSource().retrieveSourcePath());
+        assertNotNull(address.getCountry());
+        assertNotNull(address.getCountry().getValue());        
+        assertEquals(Iso3166Country.CR, address.getCountry().getValue());
+        assertEquals(Visibility.PUBLIC, address.getVisibility());
         
         //Update 
-        keyword.setContent("keyword-3-updated");
-        response = memberV2ApiClient.updateKeyword(user1OrcidId, keyword, accessToken);
+        address.getCountry().setValue(Iso3166Country.PA);
+        response = memberV2ApiClient.updateAddress(user1OrcidId, address, accessToken);
         assertNotNull(response);
         assertEquals(ClientResponse.Status.OK.getStatusCode(), response.getStatus());
-        response = memberV2ApiClient.viewKeyword(user1OrcidId, putCode, accessToken);
+        response = memberV2ApiClient.viewAddress(user1OrcidId, putCode, accessToken);
         assertNotNull(response);
-        Keyword updatedKeyword = response.getEntity(Keyword.class);
-        assertNotNull(updatedKeyword);
-        assertEquals("keyword-3-updated", updatedKeyword.getContent());
-        assertEquals(keyword.getPutCode(), updatedKeyword.getPutCode());
+        Address updatedAddress = response.getEntity(Address.class);
+        assertNotNull(updatedAddress);
+        assertNotNull(updatedAddress.getCountry());
+        assertEquals(Iso3166Country.PA, updatedAddress.getCountry().getValue());
+        assertEquals(address.getPutCode(), updatedAddress.getPutCode());
                 
         //Delete
-        response = memberV2ApiClient.deleteKeyword(user1OrcidId, putCode, accessToken);
+        response = memberV2ApiClient.deleteAddress(user1OrcidId, putCode, accessToken);
         assertNotNull(response);
         assertEquals(ClientResponse.Status.NO_CONTENT.getStatusCode(), response.getStatus());
         
         //Check it was deleted
-        testGetKeywordsWihtMembersAPI();
+        testGetAddressWithMembersAPI();
     }
 
     /**
-     * PRECONDITIONS: The user should have two public keywords "keyword-1"
-     * and "keyword-2"
+     * PRECONDITIONS: The user should have one public address US
      * 
      * @throws JSONException
      * @throws InterruptedException
      */
-    @SuppressWarnings("unchecked")
     @Test
-    public void testGetKeywordWithPublicAPI() throws InterruptedException, JSONException {
-        ClientResponse response = publicV2ApiClient.viewKeywordsXML(user1OrcidId);
+    public void testGetAddressWithPublicAPI() throws InterruptedException, JSONException {
+        ClientResponse response = publicV2ApiClient.viewAddressesXML(user1OrcidId);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        Keywords keywords = response.getEntity(Keywords.class);
-        assertNotNull(keywords);
-        assertNotNull(keywords.getKeywords());
-        assertEquals(2, keywords.getKeywords().size());
-        assertThat(keywords.getKeywords().get(0).getContent(), anyOf(is("keyword-1"), is("keyword-2")));
-        assertThat(keywords.getKeywords().get(1).getContent(), anyOf(is("keyword-1"), is("keyword-2")));
-        assertEquals(Visibility.PUBLIC, keywords.getKeywords().get(0).getVisibility());
-        assertEquals(Visibility.PUBLIC, keywords.getKeywords().get(1).getVisibility());
+        Addresses addresses = response.getEntity(Addresses.class);
+        assertNotNull(addresses);
+        assertNotNull(addresses.getAddress());
+        assertEquals(1, addresses.getAddress().size());
+        assertEquals(Visibility.PUBLIC, addresses.getAddress().get(0).getVisibility());
+        assertEquals(Iso3166Country.US, addresses.getAddress().get(0).getCountry().getValue());
     }
 
     public String getAccessToken(String clientId, String clientSecret, String redirectUri) throws InterruptedException, JSONException {
@@ -218,5 +208,4 @@ public class KeywordsTest extends BlackBoxBase {
         accessTokens.put(clientId, accessToken);
         return accessToken;
     }
-
 }

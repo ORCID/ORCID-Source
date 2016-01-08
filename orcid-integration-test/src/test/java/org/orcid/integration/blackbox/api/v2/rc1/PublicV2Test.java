@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.integration.blackbox.api;
+package org.orcid.integration.blackbox.api.v2.rc1;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;

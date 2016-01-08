@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.integration.blackbox.api;
+package org.orcid.integration.blackbox.api.v2.rc2;
 
 import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.assertEquals;

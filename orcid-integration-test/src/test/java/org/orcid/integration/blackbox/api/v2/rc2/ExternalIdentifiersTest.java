@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.integration.blackbox.api.personV2;
+package org.orcid.integration.blackbox.api.v2.rc2;
 
 import static org.junit.Assert.*;
 

@@ -33,11 +33,21 @@ import org.orcid.core.version.V2VersionConverter;
 import org.orcid.core.version.V2VersionObjectFactory;
 import org.orcid.jaxb.model.common.LastModifiedDate;
 import org.orcid.jaxb.model.record.summary_rc1.ActivitiesSummary;
+import org.orcid.jaxb.model.record.summary_rc1.EducationSummary;
 import org.orcid.jaxb.model.record.summary_rc1.Educations;
+import org.orcid.jaxb.model.record.summary_rc1.EmploymentSummary;
 import org.orcid.jaxb.model.record.summary_rc1.Employments;
+import org.orcid.jaxb.model.record.summary_rc1.FundingSummary;
 import org.orcid.jaxb.model.record.summary_rc1.Fundings;
+import org.orcid.jaxb.model.record.summary_rc1.PeerReviewSummary;
 import org.orcid.jaxb.model.record.summary_rc1.PeerReviews;
+import org.orcid.jaxb.model.record.summary_rc1.WorkSummary;
 import org.orcid.jaxb.model.record.summary_rc1.Works;
+import org.orcid.jaxb.model.record_rc1.Education;
+import org.orcid.jaxb.model.record_rc1.Employment;
+import org.orcid.jaxb.model.record_rc1.Funding;
+import org.orcid.jaxb.model.record_rc1.PeerReview;
+import org.orcid.jaxb.model.record_rc1.Work;
 import org.orcid.utils.DateUtils;
 
 public class VersionConverterImplV2_0_rc1ToV2_0rc2 implements V2VersionConverter {
@@ -125,6 +135,28 @@ public class VersionConverterImplV2_0_rc1ToV2_0rc2 implements V2VersionConverter
                                 new LastModifiedDate(DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis(LastModifiedDatesHelper.calculateLatest(worksRc2))));
                     }
                 }).register();
+        
+        
+        // WORK 
+        mapperFactory.classMap(Work.class, org.orcid.jaxb.model.record_rc2.Work.class).byDefault().register();
+        mapperFactory.classMap(WorkSummary.class, org.orcid.jaxb.model.record.summary_rc2.WorkSummary.class).byDefault().register();
+        
+        //FUNDING
+        mapperFactory.classMap(Funding.class, org.orcid.jaxb.model.record_rc2.Funding.class).byDefault().register();
+        mapperFactory.classMap(FundingSummary.class, org.orcid.jaxb.model.record.summary_rc2.FundingSummary.class).byDefault().register();
+        
+        //EDUCATION
+        mapperFactory.classMap(Education.class, org.orcid.jaxb.model.record_rc2.Education.class).byDefault().register();
+        mapperFactory.classMap(EducationSummary.class, org.orcid.jaxb.model.record.summary_rc2.EducationSummary.class).byDefault().register();
+        
+        //EMPLOYMENT
+        mapperFactory.classMap(Employment.class, org.orcid.jaxb.model.record_rc2.Employment.class).byDefault().register();
+        mapperFactory.classMap(EmploymentSummary.class, org.orcid.jaxb.model.record.summary_rc2.EmploymentSummary.class).byDefault().register();
+        
+        //PEER REVIEW
+        mapperFactory.classMap(PeerReview.class, org.orcid.jaxb.model.record_rc2.PeerReview.class).byDefault().register();        
+        mapperFactory.classMap(PeerReviewSummary.class, org.orcid.jaxb.model.record.summary_rc2.PeerReviewSummary.class).byDefault().register();
+        
         mapper = mapperFactory.getMapperFacade();
     }
 

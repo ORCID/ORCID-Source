@@ -54,23 +54,27 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements MemberV2ApiServ
     @Override
     public Response viewWork(String orcid, Long putCode) {
         Response response = memberV2ApiServiceDelegator.viewWork(orcid, putCode);
+        response = downgradeResponse(response);
         return response;
     }
 
     @Override
     public Response viewWorkSummary(String orcid, Long putCode) {
         Response response = memberV2ApiServiceDelegator.viewWorkSummary(orcid, putCode);
+        response = downgradeResponse(response);
         return response;
     }
 
     @Override
     public Response createWork(String orcid, Object work) {
+        work = upgradeObject(work);
         Response response = memberV2ApiServiceDelegator.createWork(orcid, work);
         return response;
     }
 
     @Override
     public Response updateWork(String orcid, Long putCode, Object work) {
+        work = upgradeObject(work);
         Response response = memberV2ApiServiceDelegator.updateWork(orcid, putCode, work);
         return response;
     }
@@ -84,23 +88,27 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements MemberV2ApiServ
     @Override
     public Response viewFunding(String orcid, Long putCode) {
         Response response = memberV2ApiServiceDelegator.viewFunding(orcid, putCode);
+        response = downgradeResponse(response);
         return response;
     }
 
     @Override
     public Response viewFundingSummary(String orcid, Long putCode) {
         Response response = memberV2ApiServiceDelegator.viewFundingSummary(orcid, putCode);
+        response = downgradeResponse(response);
         return response;
     }
 
     @Override
     public Response createFunding(String orcid, Object funding) {
+        funding = upgradeObject(funding);
         Response response = memberV2ApiServiceDelegator.createFunding(orcid, funding);
         return response;
     }
 
     @Override
     public Response updateFunding(String orcid, Long putCode, Object funding) {
+        funding = upgradeObject(funding);
         Response response = memberV2ApiServiceDelegator.updateFunding(orcid, putCode, funding);
         return response;
     }
@@ -114,23 +122,27 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements MemberV2ApiServ
     @Override
     public Response viewEducation(String orcid, Long putCode) {
         Response response = memberV2ApiServiceDelegator.viewEducation(orcid, putCode);
+        response = downgradeResponse(response);
         return response;
     }
 
     @Override
     public Response viewEducationSummary(String orcid, Long putCode) {
         Response response = memberV2ApiServiceDelegator.viewEducationSummary(orcid, putCode);
+        response = downgradeResponse(response);
         return response;
     }
 
     @Override
     public Response createEducation(String orcid, Object education) {
+        education = upgradeObject(education);
         Response response = memberV2ApiServiceDelegator.createEducation(orcid, education);
         return response;
     }
 
     @Override
     public Response updateEducation(String orcid, Long putCode, Object education) {
+        education = upgradeObject(education);
         Response response = memberV2ApiServiceDelegator.updateEducation(orcid, putCode, education);
         return response;
     }
@@ -138,53 +150,61 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements MemberV2ApiServ
     @Override
     public Response viewEmployment(String orcid, Long putCode) {
         Response response = memberV2ApiServiceDelegator.viewEmployment(orcid, putCode);
+        response = downgradeResponse(response);
         return response;
     }
 
     @Override
     public Response viewEmploymentSummary(String orcid, Long putCode) {
         Response response = memberV2ApiServiceDelegator.viewEmploymentSummary(orcid, putCode);
+        response = downgradeResponse(response);
         return response;
     }
 
     @Override
     public Response createEmployment(String orcid, Object employment) {
+        employment = upgradeObject(employment);
         Response response = memberV2ApiServiceDelegator.createEmployment(orcid, employment);
         return response;
     }
 
     @Override
     public Response updateEmployment(String orcid, Long putCode, Object employment) {
+        employment = upgradeObject(employment);
         Response response = memberV2ApiServiceDelegator.updateEmployment(orcid, putCode, employment);
         return response;
     }
 
     @Override
     public Response deleteAffiliation(String orcid, Long putCode) {
-        Response response = memberV2ApiServiceDelegator.deleteAffiliation(orcid, putCode);
+        Response response = memberV2ApiServiceDelegator.deleteAffiliation(orcid, putCode);        
         return response;
     }
 
     @Override
     public Response viewPeerReview(String orcid, Long putCode) {
         Response response = memberV2ApiServiceDelegator.viewPeerReview(orcid, putCode);
+        response = downgradeResponse(response);
         return response;
     }
 
     @Override
     public Response viewPeerReviewSummary(String orcid, Long putCode) {
         Response response = memberV2ApiServiceDelegator.viewPeerReviewSummary(orcid, putCode);
+        response = downgradeResponse(response);
         return response;
     }
 
     @Override
     public Response createPeerReview(String orcid, Object peerReview) {
+        peerReview = upgradeObject(peerReview);
         Response response = memberV2ApiServiceDelegator.createPeerReview(orcid, peerReview);
         return response;
     }
 
     @Override
     public Response updatePeerReview(String orcid, Long putCode, Object peerReview) {
+        peerReview = upgradeObject(peerReview);
         Response response = memberV2ApiServiceDelegator.updatePeerReview(orcid, putCode, peerReview);
         return response;
     }
@@ -198,6 +218,7 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements MemberV2ApiServ
     @Override
     public Response viewGroupIdRecord(Long putCode) {
         Response response = memberV2ApiServiceDelegator.viewGroupIdRecord(putCode);
+        response = downgradeResponse(response);
         return response;
     }
 
@@ -240,6 +261,15 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements MemberV2ApiServ
         return Response.fromResponse(response).entity(result.getObjectToConvert()).build();
     }
 
+    private Object upgradeObject(Object entity) {
+        V2Convertible result = null;
+        if (entity != null) {
+            result = v2VersionConverterChain.upgrade(new V2Convertible(entity, externalVersion), MemberV2ApiServiceDelegator.LATEST_V2_VERSION);
+        }
+        return result.getObjectToConvert();
+    }
+    
+    
     protected Response checkProfileStatus(Response response) {
         OrcidMessage orcidMessage = (OrcidMessage) response.getEntity();
         if (orcidMessage != null && orcidMessage.getOrcidProfile() != null && orcidMessage.getOrcidProfile().getOrcidDeprecated() != null) {

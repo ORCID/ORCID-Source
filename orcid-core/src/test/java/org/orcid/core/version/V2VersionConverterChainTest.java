@@ -44,13 +44,13 @@ public class V2VersionConverterChainTest extends BaseTest {
 
         // Upgrade from 1 to 3
         Version1 version1 = new Version1();
-        Object upgradeResult = chain.uprade(new V2Convertible(version1, "1"), "3").getObjectToConvert();
+        Object upgradeResult = chain.upgrade(new V2Convertible(version1, "1"), "3").getObjectToConvert();
         assertNotNull(upgradeResult);
         assertTrue(upgradeResult instanceof Version3);
         assertEquals("3", ((Version3) (upgradeResult)).getMyVersion());
 
         // Upgrade from 1 to 2
-        upgradeResult = chain.uprade(new V2Convertible(version1, "1"), "2").getObjectToConvert();
+        upgradeResult = chain.upgrade(new V2Convertible(version1, "1"), "2").getObjectToConvert();
         assertNotNull(upgradeResult);
         assertTrue(upgradeResult instanceof Version2);
         assertEquals("2", ((Version2) (upgradeResult)).getMyVersion());
