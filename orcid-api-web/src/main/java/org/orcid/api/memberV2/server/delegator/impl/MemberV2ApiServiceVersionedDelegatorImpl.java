@@ -181,7 +181,7 @@ public class MemberV2ApiServiceVersionedDelegatorImpl
 
     @Override
     public Response viewGroupIdRecord(Long putCode) {
-        return downgradeResponse(memberV2ApiServiceDelegator.viewGroupIdRecord(putCode));
+        return memberV2ApiServiceDelegator.viewGroupIdRecord(putCode);
     }
 
     @Override
@@ -207,13 +207,11 @@ public class MemberV2ApiServiceVersionedDelegatorImpl
     @Override
     public Response viewResearcherUrls(String orcid) {
         return downgradeResponse(memberV2ApiServiceDelegator.viewResearcherUrls(orcid));
-
     }
 
     @Override
     public Response viewResearcherUrl(String orcid, Long putCode) {
         return downgradeResponse(memberV2ApiServiceDelegator.viewResearcherUrl(orcid, putCode));
-
     }
 
     @Override

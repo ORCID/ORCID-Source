@@ -40,93 +40,147 @@ public class PublicV2ApiServiceVersionedDelegatorImpl implements PublicV2ApiServ
 
     @Override
     public Response viewStatusText() {
-        Response response = publicV2ApiServiceDelegator.viewStatusText();
-        return response;
+        return downgradeResponse(publicV2ApiServiceDelegator.viewStatusText());
     }
 
     @Override
-    public Response viewActivities(String orcid) {
-        Response response = publicV2ApiServiceDelegator.viewActivities(orcid);
-        response = downgradeResponse(response);
-        return response;
+    public Response viewActivities(String orcid) {        
+        return downgradeResponse(publicV2ApiServiceDelegator.viewActivities(orcid));
     }
 
     @Override
     public Response viewWork(String orcid, Long putCode) {
-        Response response = publicV2ApiServiceDelegator.viewWork(orcid, putCode);
-        return response;
+        return downgradeResponse(publicV2ApiServiceDelegator.viewWork(orcid, putCode));
     }
 
     @Override
     public Response viewWorkCitation(String orcid, Long putCode) {
-        Response response = publicV2ApiServiceDelegator.viewWorkCitation(orcid, putCode);
-        return response;
+        return downgradeResponse(publicV2ApiServiceDelegator.viewWorkCitation(orcid, putCode));
     }
 
     @Override
     public Response viewWorkSummary(String orcid, Long putCode) {
-        Response response = publicV2ApiServiceDelegator.viewWorkSummary(orcid, putCode);
-        return response;
+        return downgradeResponse(publicV2ApiServiceDelegator.viewWorkSummary(orcid, putCode));
     }
 
     @Override
     public Response viewFunding(String orcid, Long putCode) {
-        Response response = publicV2ApiServiceDelegator.viewFunding(orcid, putCode);
-        return response;
+        return downgradeResponse(publicV2ApiServiceDelegator.viewFunding(orcid, putCode));
     }
 
     @Override
     public Response viewFundingSummary(String orcid, Long putCode) {
-        Response response = publicV2ApiServiceDelegator.viewFundingSummary(orcid, putCode);
-        return response;
+        return downgradeResponse(publicV2ApiServiceDelegator.viewFundingSummary(orcid, putCode));
     }
 
     @Override
     public Response viewEducation(String orcid, Long putCode) {
-        Response response = publicV2ApiServiceDelegator.viewEducation(orcid, putCode);
-        return response;
+        return downgradeResponse(publicV2ApiServiceDelegator.viewEducation(orcid, putCode));
     }
 
     @Override
     public Response viewEducationSummary(String orcid, Long putCode) {
-        Response response = publicV2ApiServiceDelegator.viewEducationSummary(orcid, putCode);
-        return response;
+        return downgradeResponse(publicV2ApiServiceDelegator.viewEducationSummary(orcid, putCode));
     }
 
     @Override
     public Response viewEmployment(String orcid, Long putCode) {
-        Response response = publicV2ApiServiceDelegator.viewEmployment(orcid, putCode);
-        return response;
+        return downgradeResponse(publicV2ApiServiceDelegator.viewEmployment(orcid, putCode));
     }
 
     @Override
     public Response viewEmploymentSummary(String orcid, Long putCode) {
-        Response response = publicV2ApiServiceDelegator.viewEmploymentSummary(orcid, putCode);
-        return response;
+        return downgradeResponse(publicV2ApiServiceDelegator.viewEmploymentSummary(orcid, putCode));
     }
 
     @Override
     public Response viewPeerReview(String orcid, Long putCode) {
-        Response response = publicV2ApiServiceDelegator.viewPeerReview(orcid, putCode);
-        return response;
+        return downgradeResponse(publicV2ApiServiceDelegator.viewPeerReview(orcid, putCode));
     }
 
     @Override
     public Response viewPeerReviewSummary(String orcid, Long putCode) {
-        Response response = publicV2ApiServiceDelegator.viewPeerReviewSummary(orcid, putCode);
-        return response;
+        return downgradeResponse(publicV2ApiServiceDelegator.viewPeerReviewSummary(orcid, putCode));
     }
 
     @Override
     public Response viewGroupIdRecord(Long putCode) {
-        Response response = publicV2ApiServiceDelegator.viewGroupIdRecord(putCode);
-        return response;
+        return publicV2ApiServiceDelegator.viewGroupIdRecord(putCode);
     }
 
     @Override
     public Response viewGroupIdRecords(String pageSize, String pageNum) {
-        Response response = publicV2ApiServiceDelegator.viewGroupIdRecords(pageSize, pageNum);
-        return response;
+        return publicV2ApiServiceDelegator.viewGroupIdRecords(pageSize, pageNum);
+    }
+
+    @Override
+    public Response viewResearcherUrls(String orcid) {
+        return downgradeResponse(publicV2ApiServiceDelegator.viewResearcherUrls(orcid));
+    }
+
+    @Override
+    public Response viewResearcherUrl(String orcid, Long putCode) {
+        return downgradeResponse(publicV2ApiServiceDelegator.viewResearcherUrl(orcid, putCode));
+    }
+
+    @Override
+    public Response viewEmails(String orcid) {
+        return downgradeResponse(publicV2ApiServiceDelegator.viewEmails(orcid));
+    }
+
+    @Override
+    public Response viewOtherNames(String orcid) {
+        return downgradeResponse(publicV2ApiServiceDelegator.viewOtherNames(orcid));
+    }
+
+    @Override
+    public Response viewOtherName(String orcid, Long putCode) {
+        return downgradeResponse(publicV2ApiServiceDelegator.viewOtherName(orcid, putCode));
+    }
+
+    @Override
+    public Response viewPersonalDetails(String orcid) {
+        return downgradeResponse(publicV2ApiServiceDelegator.viewPersonalDetails(orcid));
+    }
+
+    @Override
+    public Response viewExternalIdentifiers(String orcid) {
+        return downgradeResponse(publicV2ApiServiceDelegator.viewExternalIdentifiers(orcid));
+    }
+
+    @Override
+    public Response viewExternalIdentifier(String orcid, Long putCode) {
+        return downgradeResponse(publicV2ApiServiceDelegator.viewExternalIdentifier(orcid, putCode));
+    }
+
+    @Override
+    public Response viewBiography(String orcid) {       
+        return downgradeResponse(publicV2ApiServiceDelegator.viewBiography(orcid));
+    }
+
+    @Override
+    public Response viewKeywords(String orcid) {
+        return downgradeResponse(publicV2ApiServiceDelegator.viewKeywords(orcid));
+    }
+
+    @Override
+    public Response viewKeyword(String orcid, Long putCode) {
+        return downgradeResponse(publicV2ApiServiceDelegator.viewKeyword(orcid, putCode));
+    }
+
+    @Override
+    public Response viewAddresses(String orcid) {
+        return downgradeResponse(publicV2ApiServiceDelegator.viewAddresses(orcid));
+    }
+
+    @Override
+    public Response viewAddress(String orcid, Long putCode) {
+        return downgradeResponse(publicV2ApiServiceDelegator.viewAddress(orcid, putCode));
+    }
+
+    @Override
+    public Response viewPerson(String orcid) {
+        return downgradeResponse(publicV2ApiServiceDelegator.viewPerson(orcid));
     }
 
     private Response downgradeAndValidateResponse(Response response) {
@@ -154,54 +208,6 @@ public class PublicV2ApiServiceVersionedDelegatorImpl implements PublicV2ApiServ
         return response;
     }
 
-    @Override
-    public Response viewResearcherUrls(String orcid) {
-        Response response = publicV2ApiServiceDelegator.viewResearcherUrls(orcid);
-        return response;
-    }
-
-    @Override
-    public Response viewResearcherUrl(String orcid, Long putCode) {
-        Response response = publicV2ApiServiceDelegator.viewResearcherUrl(orcid, putCode);
-        return response;
-    }
-
-    @Override
-    public Response viewEmails(String orcid) {
-        Response response = publicV2ApiServiceDelegator.viewEmails(orcid);
-        return response;
-    }
-
-    @Override
-    public Response viewOtherNames(String orcid) {
-        Response response = publicV2ApiServiceDelegator.viewOtherNames(orcid);
-        return response;
-    }
-
-    @Override
-    public Response viewOtherName(String orcid, Long putCode) {
-        Response response = publicV2ApiServiceDelegator.viewOtherName(orcid, putCode);
-        return response;
-    }
-
-    @Override
-    public Response viewPersonalDetails(String orcid) {
-        Response response = publicV2ApiServiceDelegator.viewPersonalDetails(orcid);
-        return response;
-    }
-
-    @Override
-    public Response viewExternalIdentifiers(String orcid) {
-        Response response = publicV2ApiServiceDelegator.viewExternalIdentifiers(orcid);
-        return response;
-    }
-
-    @Override
-    public Response viewExternalIdentifier(String orcid, Long putCode) {
-        Response response = publicV2ApiServiceDelegator.viewExternalIdentifier(orcid, putCode);
-        return response;
-    }
-
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public void setMemberV2ApiServiceDelegator(PublicV2ApiServiceDelegator memberV2ApiServiceDelegator) {
         this.publicV2ApiServiceDelegator = memberV2ApiServiceDelegator;
@@ -214,41 +220,4 @@ public class PublicV2ApiServiceVersionedDelegatorImpl implements PublicV2ApiServ
     public void setExternalVersion(String externalVersion) {
         this.externalVersion = externalVersion;
     }
-
-    @Override
-    public Response viewBiography(String orcid) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public Response viewKeywords(String orcid) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public Response viewKeyword(String orcid, Long putCode) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public Response viewAddresses(String orcid) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public Response viewAddress(String orcid, Long putCode) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public Response viewPerson(String orcid) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
 }
