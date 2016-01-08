@@ -586,11 +586,15 @@ public class BaseController {
      * @return the path to the static content on local project
      */
     @ModelAttribute("staticLoc")
-    public String getStaticContentPath() {
+    public String getStaticContentPath(HttpServletRequest request) {
         if (StringUtils.isBlank(this.staticContentPath)) {
-            this.staticContentPath = orcidUrlManager.getBaseUrl() + STATIC_FOLDER_PATH;
-            this.staticContentPath = this.staticContentPath.replace("https:", "");
-            this.staticContentPath = this.staticContentPath.replace("http:", "");
+            String generatedStaticContentPath = orcidUrlManager.getBaseUrl();
+            generatedStaticContentPath = generatedStaticContentPath.replace("https:", "");
+            generatedStaticContentPath = generatedStaticContentPath.replace("http:", "");
+            if (!request.isSecure()) {
+                generatedStaticContentPath = generatedStaticContentPath.replace(":8443", ":8080");
+            }
+            return generatedStaticContentPath + STATIC_FOLDER_PATH;
         }
         return this.staticContentPath;
     }
@@ -604,9 +608,9 @@ public class BaseController {
      */
     @ModelAttribute("staticCdn")
     @Cacheable("staticContent")
-    public String getStaticCdnPath() {
+    public String getStaticCdnPath(HttpServletRequest request) {
         if (StringUtils.isEmpty(this.cdnConfigFile)) {
-            return getStaticContentPath();
+            return getStaticContentPath(request);
         }
 
         ClassPathResource configFile = new ClassPathResource(this.cdnConfigFile);
@@ -621,7 +625,7 @@ public class BaseController {
         }
 
         if (StringUtils.isBlank(this.staticCdnPath))
-            this.staticCdnPath = this.getStaticContentPath();
+            return getStaticContentPath(request);
         return staticCdnPath;
     }
 
