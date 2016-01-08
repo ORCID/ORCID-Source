@@ -30,6 +30,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -147,7 +148,10 @@ public class PublicProfileController extends BaseWorkspaceController {
 
         boolean isProfileEmtpy = true;
 
-        request.getSession().removeAttribute(PUBLIC_WORKS_RESULTS_ATTRIBUTE);
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.removeAttribute(PUBLIC_WORKS_RESULTS_ATTRIBUTE);
+        }
 
         mav.addObject("profile", profile);
 
