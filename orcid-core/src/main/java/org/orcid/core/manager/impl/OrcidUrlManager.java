@@ -57,7 +57,7 @@ public class OrcidUrlManager {
     }
 
     public String getBaseUriHttp() {
-        return this.baseUrl.replace("https", "http");
+        return this.baseUrl.replace("https", "http").replace(":8443", ":8080");
     }
 
     @ModelAttribute("basePath")
