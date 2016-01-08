@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?> 
 <search:search num-found="0"
 	xmlns:activities="http://www.orcid.org/ns/activities"
 	xmlns:personal-details="http://www.orcid.org/ns/personal-details"
@@ -217,7 +217,9 @@
 				</person:applications>								
 			</person:person>
 			<activities:activities-summary>
+				<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
 				<activities:educations>
+					<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
 					<education:education-summary put-code="0"
 						visibility="private">
 						<common:created-date>2001-12-31T12:00:00</common:created-date>
@@ -258,6 +260,7 @@
 					</education:education-summary>
 				</activities:educations>
 				<activities:employments>
+					<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
 					<affiliation:employment-summary
 						put-code="0" visibility="private">
 						<common:created-date>2001-12-31T12:00:00</common:created-date>
@@ -298,7 +301,9 @@
 					</affiliation:employment-summary>
 				</activities:employments>
 				<activities:fundings>
+					<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
 					<activities:group>
+						<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
 						<activities:identifiers>
 							<activities:identifier>
 								<activities:external-identifier-type>agr</activities:external-identifier-type>
@@ -344,7 +349,9 @@
 					</activities:group>
 				</activities:fundings>
 				<activities:works>
+					<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
 					<activities:group>
+						<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
 						<activities:identifiers>
 							<activities:identifier>
 								<activities:external-identifier-type>agr</activities:external-identifier-type>

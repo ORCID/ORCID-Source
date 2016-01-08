@@ -34,8 +34,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-
-import org.orcid.jaxb.model.record.util.RecordUtil;
+import org.orcid.jaxb.model.common.LastModifiedDate;
 import org.orcid.jaxb.model.record_rc2.ActivitiesContainer;
 import org.orcid.jaxb.model.record_rc2.Activity;
 
@@ -51,11 +50,13 @@ import org.orcid.jaxb.model.record_rc2.Activity;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "educations", "employments", "fundings", "peerReviews", "works" })
+@XmlType(propOrder = { "lastModifiedDate", "educations", "employments", "fundings", "peerReviews", "works" })
 @XmlRootElement(name = "activities-summary", namespace = "http://www.orcid.org/ns/activities")
 public class ActivitiesSummary implements Serializable, ActivitiesContainer {
 
     private static final long serialVersionUID = 1L;
+    @XmlElement(name = "last-modified-date", namespace = "http://www.orcid.org/ns/common")
+    protected LastModifiedDate lastModifiedDate;
     @XmlElement(name = "educations", namespace = "http://www.orcid.org/ns/activities")
     protected Educations educations;
     @XmlElement(name = "employments", namespace = "http://www.orcid.org/ns/activities")
@@ -84,7 +85,7 @@ public class ActivitiesSummary implements Serializable, ActivitiesContainer {
     }
 
     public PeerReviews getPeerReviews() {
-        if(peerReviews == null)
+        if (peerReviews == null)
             peerReviews = new PeerReviews();
         return peerReviews;
     }
@@ -148,12 +149,12 @@ public class ActivitiesSummary implements Serializable, ActivitiesContainer {
             if (other.fundings != null)
                 return false;
         } else if (!fundings.equals(other.fundings))
-            return false;                        
+            return false;
         if (peerReviews == null) {
             if (other.peerReviews != null)
                 return false;
         } else if (!peerReviews.equals(other.peerReviews))
-            return false;                        
+            return false;
         if (works == null) {
             if (other.works != null)
                 return false;
@@ -164,7 +165,7 @@ public class ActivitiesSummary implements Serializable, ActivitiesContainer {
 
     @Override
     public String toString() {
-        return RecordUtil.convertToString(this);
+        return org.orcid.jaxb.model.record.util.RecordUtil.convertToString(this);
     }
 
     @Override
@@ -181,21 +182,21 @@ public class ActivitiesSummary implements Serializable, ActivitiesContainer {
                     }
                 }
             }
-        } 
-        
-        //Set peer reviews
-        if(peerReviews != null){
+        }
+
+        // Set peer reviews
+        if (peerReviews != null) {
             List<PeerReviewGroup> groups = peerReviews.getPeerReviewGroup();
-            for(PeerReviewGroup peerReview : groups) {
-                if(peerReview != null) {
+            for (PeerReviewGroup peerReview : groups) {
+                if (peerReview != null) {
                     List<PeerReviewSummary> summaries = peerReview.getPeerReviewSummary();
-                    for(PeerReviewSummary summary : summaries) {
+                    for (PeerReviewSummary summary : summaries) {
                         activities.put(summary.getPutCode(), summary);
                     }
                 }
             }
         }
-        
+
         // Set funding
         if (fundings != null) {
             List<FundingGroup> groups = fundings.getFundingGroup();
@@ -225,8 +226,15 @@ public class ActivitiesSummary implements Serializable, ActivitiesContainer {
 
     @Override
     public List<? extends Activity> retrieveActivities() {
-        List<Activity> activities = new ArrayList<Activity>();
 
-        return activities;
+        return new ArrayList<>(retrieveActivitiesAsMap().values());
+    }
+
+    public LastModifiedDate getLastModifiedDate() {
+        return lastModifiedDate;
+    }
+
+    public void setLastModifiedDate(LastModifiedDate lastModifiedDate) {
+        this.lastModifiedDate = lastModifiedDate;
     }
 }

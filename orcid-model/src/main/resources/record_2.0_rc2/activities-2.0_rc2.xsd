@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
 	xmlns:sch="http://purl.oclc.org/dsdl/schematron" elementFormDefault="qualified"
-	targetNamespace="http://www.orcid.org/ns/activities" xmlns:activities="http://www.orcid.org/ns/activities"
-	xmlns:common="http://www.orcid.org/ns/common" xmlns:work="http://www.orcid.org/ns/work"
-	xmlns:funding="http://www.orcid.org/ns/funding" xmlns:education="http://www.orcid.org/ns/education"
+	targetNamespace="http://www.orcid.org/ns/activities" 
+	xmlns:activities="http://www.orcid.org/ns/activities"
+	xmlns:common="http://www.orcid.org/ns/common" 
+	xmlns:work="http://www.orcid.org/ns/work"
+	xmlns:funding="http://www.orcid.org/ns/funding" 
+	xmlns:education="http://www.orcid.org/ns/education"
 	xmlns:employment="http://www.orcid.org/ns/employment"
 	xmlns:peer-review="http://www.orcid.org/ns/peer-review">
-	<xs:annotation> 
+	<xs:annotation>
 		<xs:documentation>
 			=============================================================================
 
@@ -52,6 +55,7 @@
 	<xs:element name="activities-summary">
 		<xs:complexType>
 			<xs:sequence>
+				<xs:element ref="common:last-modified-date" minOccurs="1" maxOccurs="1" />
 				<xs:element name="educations" minOccurs="0" maxOccurs="1">
 					<xs:annotation>
 						<xs:documentation>Container for the list of educations associated
@@ -61,6 +65,7 @@
 					</xs:annotation>
 					<xs:complexType>
 						<xs:sequence>
+							<xs:element ref="common:last-modified-date" minOccurs="1" maxOccurs="1" />
 							<xs:element maxOccurs="unbounded" minOccurs="0"
 								ref="education:education-summary" />
 						</xs:sequence>
@@ -75,6 +80,7 @@
 					</xs:annotation>
 					<xs:complexType>
 						<xs:sequence>
+							<xs:element ref="common:last-modified-date" minOccurs="1" maxOccurs="1" />
 							<xs:element maxOccurs="unbounded" minOccurs="0"
 								ref="employment:employment-summary" />
 						</xs:sequence>
@@ -88,6 +94,7 @@
 					</xs:annotation>
 					<xs:complexType>
 						<xs:sequence>
+							<xs:element ref="common:last-modified-date" minOccurs="1" maxOccurs="1" />
 							<xs:element maxOccurs="unbounded" minOccurs="0" name="group"
 								type="activities:funding-group" />
 						</xs:sequence>
@@ -101,6 +108,7 @@
 					</xs:annotation>
 					<xs:complexType>
 						<xs:sequence>
+							<xs:element ref="common:last-modified-date" minOccurs="1" maxOccurs="1" />
 							<xs:element maxOccurs="unbounded" minOccurs="0" name="group"
 								type="activities:peer-review-group" />
 						</xs:sequence>
@@ -116,6 +124,7 @@
 					</xs:annotation>
 					<xs:complexType>
 						<xs:sequence>
+							<xs:element ref="common:last-modified-date" minOccurs="1" maxOccurs="1" />
 							<xs:element maxOccurs="unbounded" minOccurs="0" name="group"
 								type="activities:work-group" />
 						</xs:sequence>
@@ -127,6 +136,7 @@
 
 	<xs:complexType name="work-group">
 		<xs:sequence>
+			<xs:element ref="common:last-modified-date" minOccurs="1" maxOccurs="1" />
 			<xs:element name="identifiers" type="activities:identifiers"></xs:element>
 			<xs:sequence>
 				<xs:element maxOccurs="unbounded" minOccurs="0"
@@ -137,6 +147,7 @@
 
 	<xs:complexType name="funding-group">
 		<xs:sequence>
+			<xs:element ref="common:last-modified-date" minOccurs="1" maxOccurs="1" />
 			<xs:element name="identifiers" type="activities:identifiers"></xs:element>
 			<xs:sequence>
 				<xs:element maxOccurs="unbounded" minOccurs="0"
@@ -147,6 +158,7 @@
 
 	<xs:complexType name="peer-review-group">
 		<xs:sequence>
+			<xs:element ref="common:last-modified-date" minOccurs="1" maxOccurs="1" />
 			<xs:element name="identifiers" type="activities:identifiers"></xs:element>
 			<xs:sequence>
 				<xs:element maxOccurs="unbounded" minOccurs="0"

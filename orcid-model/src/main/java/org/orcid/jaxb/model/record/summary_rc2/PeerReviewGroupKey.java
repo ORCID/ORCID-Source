@@ -61,5 +61,6 @@ public class PeerReviewGroupKey implements GroupAble {
         } else if (!groupId.equals(other.groupId))
             return false;
         return true;
-    }
+
+    }        
 }

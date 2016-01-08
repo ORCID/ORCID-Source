@@ -43,11 +43,11 @@ import javax.ws.rs.core.UriBuilder;
 
 import org.orcid.api.common.OrcidClientHelper;
 import org.orcid.jaxb.model.groupid.GroupIdRecord;
-import org.orcid.jaxb.model.record_rc1.Education;
-import org.orcid.jaxb.model.record_rc1.Employment;
-import org.orcid.jaxb.model.record_rc1.Funding;
-import org.orcid.jaxb.model.record_rc1.PeerReview;
-import org.orcid.jaxb.model.record_rc1.Work;
+import org.orcid.jaxb.model.record_rc2.Education;
+import org.orcid.jaxb.model.record_rc2.Employment;
+import org.orcid.jaxb.model.record_rc2.Funding;
+import org.orcid.jaxb.model.record_rc2.PeerReview;
+import org.orcid.jaxb.model.record_rc2.Work;
 import org.orcid.jaxb.model.record_rc2.Address;
 import org.orcid.jaxb.model.record_rc2.ExternalIdentifier;
 import org.orcid.jaxb.model.record_rc2.Keyword;

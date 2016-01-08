@@ -35,7 +35,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(propOrder = { "emails" })
 @XmlRootElement(name = "emails", namespace = "http://www.orcid.org/ns/email")
 public class Emails implements Serializable {
-    
+
     private static final long serialVersionUID = -4412096758081316953L;
     @XmlElement(name = "email", namespace = "http://www.orcid.org/ns/email")
     List<Email> emails;
