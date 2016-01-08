@@ -49,10 +49,10 @@ public class BaseWorkspaceController extends BaseController {
     protected static final String PUBLIC_WORKS_RESULTS_ATTRIBUTE = "public_works_results_attribute";
 
     protected static final String ORCID_ID_HASH = "orcid_hash";
-    
+
     @Resource
     protected SponsorManager sponsorManager;
-    
+
     @Resource
     private EncryptionManager encryptionManager;
 
@@ -61,7 +61,7 @@ public class BaseWorkspaceController extends BaseController {
 
     @Resource
     protected CrossRefManager crossRefManager;
-    
+
     @Resource
     private LocaleManager localeManager;
 
@@ -70,7 +70,7 @@ public class BaseWorkspaceController extends BaseController {
 
     @Resource
     private ProfileEntityManager profileEntityManager;
-    
+
     @Resource(name = "visibilityFilter")
     protected VisibilityFilter visibilityFilter;
 
@@ -84,7 +84,7 @@ public class BaseWorkspaceController extends BaseController {
         Map<String, String> countriesWithId = new LinkedHashMap<String, String>();
         List<String> countries = countryManager.retrieveCountries();
         countriesWithId.put("", "Select a country");
-        for (String countryName : countries) { 
+        for (String countryName : countries) {
             countriesWithId.put(countryName, countryName);
         }
         return countriesWithId;
@@ -115,26 +115,27 @@ public class BaseWorkspaceController extends BaseController {
         }
         return map;
     }
-    
+
     @ModelAttribute("orcidIdHash")
-    String getOrcidHash(HttpServletRequest request) throws Exception {   
-        String hash = (String)request.getSession().getAttribute(ORCID_ID_HASH);
-        if(!PojoUtil.isEmpty(hash)) {
+    String getOrcidHash(HttpServletRequest request) throws Exception {
+        String hash = (String) request.getSession().getAttribute(ORCID_ID_HASH);
+        if (!PojoUtil.isEmpty(hash)) {
             return hash;
         }
         hash = profileEntityManager.getOrcidHash(getEffectiveUserOrcid());
         request.getSession().setAttribute(ORCID_ID_HASH, hash);
         return hash;
     }
-    
+
     public String getCountryName(OrcidProfile profile) {
         return getCountryName(profile, false);
     }
-    
-    public String getCountryName(OrcidProfile profile, boolean checkVisibility) {        
-        if(profile.getOrcidBio() != null && profile.getOrcidBio().getContactDetails() != null && profile.getOrcidBio().getContactDetails().getAddress() != null && profile.getOrcidBio().getContactDetails().getAddress().getCountry() != null) {
-            if(checkVisibility) {
-                if(!Visibility.PUBLIC.equals(profile.getOrcidBio().getContactDetails().getAddress().getCountry().getVisibility()))
+
+    public String getCountryName(OrcidProfile profile, boolean checkVisibility) {
+        if (profile.getOrcidBio() != null && profile.getOrcidBio().getContactDetails() != null && profile.getOrcidBio().getContactDetails().getAddress() != null
+                && profile.getOrcidBio().getContactDetails().getAddress().getCountry() != null) {
+            if (checkVisibility) {
+                if (!Visibility.PUBLIC.equals(profile.getOrcidBio().getContactDetails().getAddress().getCountry().getVisibility()))
                     return null;
             }
             Map<String, String> countries = retrieveIsoCountries();
@@ -142,5 +143,5 @@ public class BaseWorkspaceController extends BaseController {
         }
         return null;
     }
-    
+
 }

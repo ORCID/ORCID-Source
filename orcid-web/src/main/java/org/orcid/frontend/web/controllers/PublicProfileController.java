@@ -118,7 +118,7 @@ public class PublicProfileController extends BaseWorkspaceController {
 
     @Resource
     private GroupIdRecordManager groupIdRecordManager;
-    
+
     public static int ORCID_HASH_LENGTH = 8;
 
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[x]}")
@@ -242,46 +242,45 @@ public class PublicProfileController extends BaseWorkspaceController {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        
-        if(!profile.isReviewed()) {
-        	if(isProfileValidForIndex(profile)) {
-            	if(profile.isLocked() || profile.getCountTokens() == 0
-                		|| (!CreationMethod.WEBSITE.equals(profile.getOrcidHistory().getCreationMethod()) 
-                				&& !CreationMethod.DIRECT.equals(profile.getOrcidHistory().getCreationMethod()))) {
-                	mav.addObject("noIndex", true);
+
+        if (!profile.isReviewed()) {
+            if (isProfileValidForIndex(profile)) {
+                if (profile.isLocked() || profile.getCountTokens() == 0 || (!CreationMethod.WEBSITE.equals(profile.getOrcidHistory().getCreationMethod())
+                        && !CreationMethod.DIRECT.equals(profile.getOrcidHistory().getCreationMethod()))) {
+                    mav.addObject("noIndex", true);
                 }
             } else {
-            	mav.addObject("noIndex", true);
+                mav.addObject("noIndex", true);
             }
         }
-        
+
         return mav;
     }
 
     private boolean isProfileValidForIndex(OrcidProfile profile) {
-    	String orcid = profile.getOrcidIdentifier().getPath();
-    	if(orcid != null) {
-        	int validAge = 3 + (Character.getNumericValue(orcid.charAt(orcid.length() - 2))) / 2;
-        	if(profile.getOrcidHistory() != null && profile.getOrcidHistory().getSubmissionDate() != null
-        			&& profile.getOrcidHistory().getSubmissionDate().getValue() != null) {
-        		Date profileCreationDate = profile.getOrcidHistory().getSubmissionDate().getValue().toGregorianCalendar().getTime();
-            	Date currentDate = new Date();
-            	
-            	Calendar temp = Calendar.getInstance(); 
-            	temp.setTime(profileCreationDate); 
-            	temp.add(Calendar.DATE, validAge);
-            	profileCreationDate = temp.getTime();
-            	if(profileCreationDate.before(currentDate)) {
-            		return true;
-            	}
-        	}
-    	}
-		return false;
-	}
+        String orcid = profile.getOrcidIdentifier().getPath();
+        if (orcid != null) {
+            int validAge = 3 + (Character.getNumericValue(orcid.charAt(orcid.length() - 2))) / 2;
+            if (profile.getOrcidHistory() != null && profile.getOrcidHistory().getSubmissionDate() != null
+                    && profile.getOrcidHistory().getSubmissionDate().getValue() != null) {
+                Date profileCreationDate = profile.getOrcidHistory().getSubmissionDate().getValue().toGregorianCalendar().getTime();
+                Date currentDate = new Date();
 
-	@RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/affiliations.json")
-    public @ResponseBody
-    List<AffiliationForm> getAffiliationsJson(HttpServletRequest request, @PathVariable("orcid") String orcid, @RequestParam(value = "affiliationIds") String workIdsStr) {
+                Calendar temp = Calendar.getInstance();
+                temp.setTime(profileCreationDate);
+                temp.add(Calendar.DATE, validAge);
+                profileCreationDate = temp.getTime();
+                if (profileCreationDate.before(currentDate)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/affiliations.json")
+    public @ResponseBody List<AffiliationForm> getAffiliationsJson(HttpServletRequest request, @PathVariable("orcid") String orcid,
+            @RequestParam(value = "affiliationIds") String workIdsStr) {
         List<AffiliationForm> affs = new ArrayList<AffiliationForm>();
         Map<Long, Affiliation> affMap = affiliationMap(orcid);
         String[] affIds = workIdsStr.split(",");
@@ -299,8 +298,8 @@ public class PublicProfileController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/fundings.json")
-    public @ResponseBody
-    List<FundingForm> getFundingsJson(HttpServletRequest request, @PathVariable("orcid") String orcid, @RequestParam(value = "fundingIds") String fundingIdsStr) {
+    public @ResponseBody List<FundingForm> getFundingsJson(HttpServletRequest request, @PathVariable("orcid") String orcid,
+            @RequestParam(value = "fundingIds") String fundingIdsStr) {
         Map<String, String> languages = lm.buildLanguageMap(localeManager.getLocale(), false);
         List<FundingForm> fundings = new ArrayList<FundingForm>();
         Map<Long, Funding> fundingMap = fundingMap(orcid);
@@ -332,8 +331,7 @@ public class PublicProfileController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/works.json")
-    public @ResponseBody
-    List<WorkForm> getWorkJson(HttpServletRequest request, @PathVariable("orcid") String orcid, @RequestParam(value = "workIds") String workIdsStr) {
+    public @ResponseBody List<WorkForm> getWorkJson(HttpServletRequest request, @PathVariable("orcid") String orcid, @RequestParam(value = "workIds") String workIdsStr) {
         Map<String, String> countries = retrieveIsoCountries();
         Map<String, String> languages = lm.buildLanguageMap(localeManager.getLocale(), false);
 
@@ -374,10 +372,9 @@ public class PublicProfileController extends BaseWorkspaceController {
      * @param workId
      *            The id of the work
      * @return the content of that work
-     * */
+     */
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/getWorkInfo.json", method = RequestMethod.GET)
-    public @ResponseBody
-    WorkForm getWorkInfo(@PathVariable("orcid") String orcid, @RequestParam(value = "workId") Long workId) {
+    public @ResponseBody WorkForm getWorkInfo(@PathVariable("orcid") String orcid, @RequestParam(value = "workId") Long workId) {
         Map<String, String> countries = retrieveIsoCountries();
         Map<String, String> languages = lm.buildLanguageMap(localeManager.getLocale(), false);
         if (workId == null)
@@ -415,13 +412,11 @@ public class PublicProfileController extends BaseWorkspaceController {
                                 contributor.setCreditNameVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(profileEntity.getNamesVisibility()));
                             } else {
                                 contributor.setCreditName(Text.valueOf(publicContributorCreditName));
-                                contributor.setCreditNameVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(OrcidVisibilityDefaults.NAMES_DEFAULT
-                                        .getVisibility()));
+                                contributor.setCreditNameVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility()));
                             }
                         } else {
                             if (contributor.getCreditNameVisibility() == null) {
-                                contributor.setCreditNameVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(OrcidVisibilityDefaults.NAMES_DEFAULT
-                                        .getVisibility()));
+                                contributor.setCreditNameVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility()));
                             }
                         }
                     }
@@ -435,8 +430,7 @@ public class PublicProfileController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/peer-reviews.json")
-    public @ResponseBody
-    List<PeerReviewForm> getPeerReviewsJson(HttpServletRequest request, @PathVariable("orcid") String orcid,
+    public @ResponseBody List<PeerReviewForm> getPeerReviewsJson(HttpServletRequest request, @PathVariable("orcid") String orcid,
             @RequestParam(value = "peerReviewIds") String peerReviewIdsStr) {
         Map<String, String> languages = lm.buildLanguageMap(localeManager.getLocale(), false);
         List<PeerReviewForm> peerReviews = new ArrayList<PeerReviewForm>();
@@ -462,8 +456,8 @@ public class PublicProfileController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = "/public_widgets/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/{orcidHash}/info.json")
-    public @ResponseBody
-    OrcidInfo getInfo(@PathVariable("orcid") String orcid, @PathVariable("orcidHash") String orcidHash, @RequestParam(value = "locale", required = false) String localeParam) throws Exception {
+    public @ResponseBody OrcidInfo getInfo(@PathVariable("orcid") String orcid, @PathVariable("orcidHash") String orcidHash,
+            @RequestParam(value = "locale", required = false) String localeParam) throws Exception {
         // Light weight security check. To keep copy and paste from easily
         // generating
         // the widget with out the user being logged in. Anyone that figures out
@@ -495,82 +489,95 @@ public class PublicProfileController extends BaseWorkspaceController {
         }
 
         Locale locale = null;
-        if(!StringUtil.isBlank(localeParam)) {            
+        if (!StringUtil.isBlank(localeParam)) {
             locale = new Locale(localeParam);
         } else {
             locale = Locale.US;
         }
-                
+
         ActivitiesSummary actSummary = profileEntManager.getPublicActivitiesSummary(orcid);
 
         boolean haveActivities = false;
-        
+
         if (actSummary != null) {
-            if (actSummary.getFundings() != null && actSummary.getFundings().getFundingGroup() != null && actSummary.getFundings().getFundingGroup().size() > 0) {                
-                String fundingsLabel = localeManager.resolveMessage("widget.labels.funding", locale, new Object(){});
-                result.setValue(fundingsLabel, String.valueOf(actSummary.getFundings().getFundingGroup().size()));                
-                haveActivities = true;                
+            if (actSummary.getFundings() != null && actSummary.getFundings().getFundingGroup() != null && actSummary.getFundings().getFundingGroup().size() > 0) {
+                String fundingsLabel = localeManager.resolveMessage("widget.labels.funding", locale, new Object() {
+                });
+                result.setValue(fundingsLabel, String.valueOf(actSummary.getFundings().getFundingGroup().size()));
+                haveActivities = true;
             } else {
-                String fundingsLabel = localeManager.resolveMessage("widget.labels.funding", locale, new Object(){});
-                result.setValue(fundingsLabel, String.valueOf(0)); 
-            }            
-            
-            if (actSummary.getWorks() != null && actSummary.getWorks().getWorkGroup() != null && actSummary.getWorks().getWorkGroup().size() > 0) {
-                String worksLabel = localeManager.resolveMessage("widget.labels.works", locale, new Object(){});
-                result.setValue(worksLabel, String.valueOf(actSummary.getWorks().getWorkGroup().size()));                
-                haveActivities = true;                
-            } else {
-                String worksLabel = localeManager.resolveMessage("widget.labels.works", locale, new Object(){});
-                result.setValue(worksLabel, String.valueOf(0));  
+                String fundingsLabel = localeManager.resolveMessage("widget.labels.funding", locale, new Object() {
+                });
+                result.setValue(fundingsLabel, String.valueOf(0));
             }
-            
-            if (actSummary.getPeerReviews() != null && actSummary.getPeerReviews().getPeerReviewGroup() != null && actSummary.getPeerReviews().getPeerReviewGroup().size() > 0) {
-                String peerReviewsLabel = localeManager.resolveMessage("widget.labels.peer_review", locale, new Object(){});
-                result.setValue(peerReviewsLabel, String.valueOf(actSummary.getPeerReviews().getPeerReviewGroup().size()));
-                haveActivities = true;                
+
+            if (actSummary.getWorks() != null && actSummary.getWorks().getWorkGroup() != null && actSummary.getWorks().getWorkGroup().size() > 0) {
+                String worksLabel = localeManager.resolveMessage("widget.labels.works", locale, new Object() {
+                });
+                result.setValue(worksLabel, String.valueOf(actSummary.getWorks().getWorkGroup().size()));
+                haveActivities = true;
             } else {
-                String peerReviewsLabel = localeManager.resolveMessage("widget.labels.peer_review", locale, new Object(){});
+                String worksLabel = localeManager.resolveMessage("widget.labels.works", locale, new Object() {
+                });
+                result.setValue(worksLabel, String.valueOf(0));
+            }
+
+            if (actSummary.getPeerReviews() != null && actSummary.getPeerReviews().getPeerReviewGroup() != null
+                    && actSummary.getPeerReviews().getPeerReviewGroup().size() > 0) {
+                String peerReviewsLabel = localeManager.resolveMessage("widget.labels.peer_review", locale, new Object() {
+                });
+                result.setValue(peerReviewsLabel, String.valueOf(actSummary.getPeerReviews().getPeerReviewGroup().size()));
+                haveActivities = true;
+            } else {
+                String peerReviewsLabel = localeManager.resolveMessage("widget.labels.peer_review", locale, new Object() {
+                });
                 result.setValue(peerReviewsLabel, String.valueOf(0));
             }
-            
+
             if (actSummary.getEducations() != null && actSummary.getEducations().getSummaries() != null && actSummary.getEducations().getSummaries().size() > 0) {
-                String educationsLabel = localeManager.resolveMessage("widget.labels.educations", locale, new Object(){});
+                String educationsLabel = localeManager.resolveMessage("widget.labels.educations", locale, new Object() {
+                });
                 result.setValue(educationsLabel, String.valueOf(actSummary.getEducations().getSummaries().size()));
                 haveActivities = true;
             } else {
-                String educationsLabel = localeManager.resolveMessage("widget.labels.educations", locale, new Object(){});
+                String educationsLabel = localeManager.resolveMessage("widget.labels.educations", locale, new Object() {
+                });
                 result.setValue(educationsLabel, String.valueOf(0));
             }
-            
+
             if (actSummary.getEmployments() != null && actSummary.getEmployments().getSummaries() != null && actSummary.getEmployments().getSummaries().size() > 0) {
-                String employmentsLabel = localeManager.resolveMessage("widget.labels.employments", locale, new Object(){});
+                String employmentsLabel = localeManager.resolveMessage("widget.labels.employments", locale, new Object() {
+                });
                 result.setValue(employmentsLabel, String.valueOf(actSummary.getEmployments().getSummaries().size()));
                 haveActivities = true;
             } else {
-                String employmentsLabel = localeManager.resolveMessage("widget.labels.employments", locale, new Object(){});
+                String employmentsLabel = localeManager.resolveMessage("widget.labels.employments", locale, new Object() {
+                });
                 result.setValue(employmentsLabel, String.valueOf(0));
             }
         }
-        
-        if(!haveActivities) {
-            //Set the no activities label
-            result.setValue("no_activities", localeManager.resolveMessage("widget.labels.no_activties", locale, new Object(){}));
+
+        if (!haveActivities) {
+            // Set the no activities label
+            result.setValue("no_activities", localeManager.resolveMessage("widget.labels.no_activties", locale, new Object() {
+            }));
         }
-        
-        //Set the what is label
-        result.setValue("what_is", localeManager.resolveMessage("widget.labels.what_is", locale, new Object(){}));
-                
+
+        // Set the what is label
+        result.setValue("what_is", localeManager.resolveMessage("widget.labels.what_is", locale, new Object() {
+        }));
+
         return result;
     }
 
     /**
      * Get group information based on the group id
-     * */
+     */
     @RequestMapping(value = "/public/group/{groupId}", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
-    public @ResponseBody GroupIdRecord getGroupInformation(@PathVariable("groupId") String groupId) {        
+    public @ResponseBody GroupIdRecord getGroupInformation(@PathVariable("groupId") String groupId) {
         return groupIdRecordManager.findByGroupId(groupId);
     }
-    
+
     public LinkedHashMap<Long, Funding> fundingMap(String orcid) {
         OrcidProfile profile = orcidProfileCacheManager.retrievePublic(orcid);
         if (profile == null)
@@ -604,7 +611,7 @@ public class PublicProfileController extends BaseWorkspaceController {
      * @param bigDecimal
      * @param currencyCode
      * @return a string with the number formatted based on the locale
-     * */
+     */
     private String formatAmountString(BigDecimal bigDecimal) {
         NumberFormat numberFormat = NumberFormat.getNumberInstance(localeManager.getLocale());
         return numberFormat.format(bigDecimal);
@@ -614,7 +621,7 @@ public class PublicProfileController extends BaseWorkspaceController {
 class OrcidInfo {
     public String orcid = "";
     public String name = "";
-    public HashMap<String, String> values = new HashMap<String, String>();    
+    public HashMap<String, String> values = new HashMap<String, String>();
 
     public String getOrcid() {
         return orcid;
@@ -632,10 +639,10 @@ class OrcidInfo {
         this.name = name;
     }
 
-    public void setValue(String name, String value){
+    public void setValue(String name, String value) {
         values.put(name, value);
     }
-    
+
     public String getValue(String name) {
         return values.get(name);
     }
