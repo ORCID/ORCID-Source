@@ -2391,6 +2391,28 @@ orcidNgModule.controller('KeywordsCtrl', ['$scope', '$compile', function ($scope
     $scope.hideTooltip = function(elem){
     	$scope.showElement[elem] = false;
     }
+    
+    $scope.openEditModal = function(){
+        $.colorbox({
+            scrolling: true,
+            html: $compile($('#edit-keyword').html())($scope),
+            onLoad: function() {$('#cboxClose').remove();},
+            // start the colorbox off with the correct width
+            width: formColorBoxResize(),
+            onComplete: function() {
+                    
+            },
+            onClosed: function() {
+                //
+            }            
+        });
+        $.colorbox.resize();
+    }
+    
+    $scope.closeEditModal = function(){
+        $.colorbox.close();
+    }
+    
 
     $scope.getKeywordsForm();
 }]);

@@ -180,43 +180,57 @@
             
               
 	       	<!-- Keywords -->
-	       	<div ng-controller="KeywordsCtrl" class="workspace-section keywords">
-	        	<div class="workspace-section-header">
-	        	   <span class="workspace-section-title"><@orcid.msg 'public_profile.labelKeywords'/></span>
+	       	<#if RequestParameters['v2modal']??>
+	       		<div ng-controller="KeywordsCtrl" class="workspace-section keywords">
+		        	<div class="workspace-section-header">
+	        	   		<span class="workspace-section-title"><@orcid.msg 'public_profile.labelKeywords'/></span>
+		        	   
+	        	   		<span>
+		        	   	  	<span class="glyphicon glyphicon-pencil edit-keywords edit-option pull-right" ng-click="openEditModal()" title=""></span>	
+	        	      		<span ng-repeat="keyword in keywordsForm.keywords" ng-cloak>
+		        	         	{{ $last?keyword.value:keyword.value+ ", "}}
+	        	      		</span>
+	        	   		</span>
+	        	   	</div>
+	       		</div>
+	       	<#else>
+	       		<div ng-controller="KeywordsCtrl" class="workspace-section keywords">
+		        	<div class="workspace-section-header">
+	        	   	<span class="workspace-section-title"><@orcid.msg 'public_profile.labelKeywords'/></span>
+		        	   
+	        	   	<span ng-hide="showEdit == true">
+	        	   	  	<span class="glyphicon glyphicon-pencil edit-keywords edit-option pull-right" ng-click="openEdit()" title=""></span>	
+	        	      	<span ng-repeat="keyword in keywordsForm.keywords" ng-cloak>
+	        	         	{{ $last?keyword.value:keyword.value+ ", "}}
+	        	      	</span>
+	        	   	</span>
+	        	   	<span class="pull-right" ng-show="showEdit == true" ng-cloak>
+	        	   			<@orcid.privacyToggle3  angularModel="keywordsForm.visibility.visibility"
+		             	  	questionClick="toggleClickPrivacyHelp($index)"
+		             	  	clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
+		             	  	publicClick="setPrivacy('PUBLIC', $event)" 
+                	      	limitedClick="setPrivacy('LIMITED', $event)" 
+                	      	privateClick="setPrivacy('PRIVATE', $event)"
+                	      	elementId="$index"/>
+	        	   	</span>
+	        	 	</div>
 	        	   
-	        	   <span ng-hide="showEdit == true">
-	        	   	  <span class="glyphicon glyphicon-pencil edit-keywords edit-option pull-right" ng-click="openEdit()" title=""></span>	
-	        	      <span ng-repeat="keyword in keywordsForm.keywords" ng-cloak>
-	        	         {{ $last?keyword.value:keyword.value+ ", "}}
-	        	      </span>
-	        	   </span>
-	        	   <span class="pull-right" ng-show="showEdit == true" ng-cloak>
-	        	   		<@orcid.privacyToggle3  angularModel="keywordsForm.visibility.visibility"
-		             	  questionClick="toggleClickPrivacyHelp($index)"
-		             	  clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
-		             	  publicClick="setPrivacy('PUBLIC', $event)" 
-                	      limitedClick="setPrivacy('LIMITED', $event)" 
-                	      privateClick="setPrivacy('PRIVATE', $event)"
-                	      elementId="$index"/>
-	        	   </span>
-	        	 </div>
 	        	   
-	        	   
-        	   <div ng-show="showEdit == true" ng-cloak>
-        	      <div ng-repeat="keyword in keywordsForm.keywords">
-        	      	  <div class="icon-inside-input">
-	        	          <input type="text" ng-model="keyword.value" ng-enter="setKeywordsForm()"></input>
-	        	          <a ng-click="deleteKeyword(keyword)" class="glyphicon glyphicon-trash grey icon-inside"></a>
-        	          </div>
-        	          <span class="orcid-error" ng-show="keyword.url.errors.length > 0">
-					     <div ng-repeat='error in keyword.url.errors' ng-bind-html="error"></div>
-				      </span>
+        	   		<div ng-show="showEdit == true" ng-cloak>
+        	      		<div ng-repeat="keyword in keywordsForm.keywords">
+        	      	  		<div class="icon-inside-input">
+	        	          		<input type="text" ng-model="keyword.value" ng-enter="setKeywordsForm()"></input>
+	        	          	<a ng-click="deleteKeyword(keyword)" class="glyphicon glyphicon-trash grey icon-inside"></a>
+        	          	</div>
+        	          	<span class="orcid-error" ng-show="keyword.url.errors.length > 0">
+					     	<div ng-repeat='error in keyword.url.errors' ng-bind-html="error"></div>
+				      	</span>
 				      
-        	          <span class="orcid-error" ng-show="keyword.name.errors.length > 0">
-					     <div ng-repeat='error in keyword.name.errors' ng-bind-html="error"></div>
-				      </span>
-        	      </div>
-        	      <ul class="workspace-section-toolbar">
+        	          	<span class="orcid-error" ng-show="keyword.name.errors.length > 0">
+					     	<div ng-repeat='error in keyword.name.errors' ng-bind-html="error"></div>
+				      	</span>
+        	      	</div>
+        	      	<ul class="workspace-section-toolbar">
         	      		<li>
         	      			<a ng-click="addNew()"><span class="glyphicon glyphicon-plus"></span></a>
         	      		</li>
@@ -227,10 +241,9 @@
 	        	      		<a class="cancel-option" ng-click="close()"><@spring.message "freemarker.btncancel"/></a>
 	        	      	</li>
 	        	   </ul>
-        	   </div> 
-	         
+        	   </div>
 	       	</div>
-	       
+	       </#if>
 	       	
 	      	<!-- Websites  -->
 	       	<div ng-controller="WebsitesCtrl" class="workspace-section websites">
@@ -862,12 +875,12 @@
 						<div class="scroll-area">		
 							<div class="row"><!-- ng-repeat="" -->
 								<div class="col-md-6">
-								<select id="country" name="country" ng-model="countryForm.iso2Country.value">
-			    			 		<option value=""><@orcid.msg 'org.orcid.persistence.jpa.entities.CountryIsoEntity.empty' /></option>
-						 			<#list isoCountries?keys as key>
-							     		<option value="${key}">${isoCountries[key]}</option>
-					 	 			</#list>
-					 			</select>
+									<select id="country" name="country" ng-model="countryForm.iso2Country.value">
+			    			 			<option value=""><@orcid.msg 'org.orcid.persistence.jpa.entities.CountryIsoEntity.empty' /></option>
+						 				<#list isoCountries?keys as key>
+								     		<option value="${key}">${isoCountries[key]}</option>
+					 	 				</#list>
+					 				</select>
 								</div>
 								<div class="col-md-6">
 									<ul class="record-settings pull-right">
@@ -907,4 +920,63 @@
 </script>
 
 
-</@protected>
+<script type="text/ng-template" id="edit-keyword">
+	<div class="lightbox-container">
+		<div class="edit-record edit-keyword">
+			<!-- Title -->
+			<div class="row">			
+				<div class="col-md-12 col-sm-12 col-xs-12">	
+					<h1 class="lightbox-title pull-left">
+						<!-- <@orcid.msg ''/> -->
+						Edit Keywords
+					</h1>
+				</div>			
+			</div>
+			<div class="row">
+				<div class="col-md-12 col-xs-12 col-sm-12">
+					<div class="fixed-area">
+						<div class="scroll-area">		
+							<div class="row"><!-- ng-repeat="" -->
+								<div class="col-md-6">
+									<input type="text" ng-model="keyword.value" ng-enter="setKeywordsForm()"></input>
+								</div>
+								<div class="col-md-6">
+									<ul class="record-settings pull-right">
+										<li>												
+											<span class="glyphicon glyphicon-arrow-up circle" ng-click=""></span>											
+										</li>
+										<li>																						
+											<span class="glyphicon glyphicon-arrow-down circle" ng-click=""></span>											
+										</li>
+										<li>										
+											<span class="glyphicon glyphicon-trash" ng-click=""></span>											
+										</li>
+										<li>
+											<@orcid.privacyToggle3  angularModel="keywordsForm.visibility.visibility"
+		             	  						questionClick="toggleClickPrivacyHelp($index)"
+		             	  						clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
+		             	  						publicClick="setPrivacy('PUBLIC', $event)" 
+                	      						limitedClick="setPrivacy('LIMITED', $event)" 
+                	      						privateClick="setPrivacy('PRIVATE', $event)"
+                	      						elementId="$index"/>	
+										</li>
+									</ul>
+									<span class="created-date pull-right">Created: 2014-06-30</span>
+								</div>					 				
+							</div>											
+						</div>
+					</div>
+					<div class="record-buttons">						
+						<a ng-click="addNew()"><span class="glyphicon glyphicon-plus pull-left"></span></a>	        	    		
+		            	<button class="btn btn-primary pull-right" ng-click="setCountryForm()"><@spring.message "freemarker.btnsavechanges"/></button>
+		            	<a class="cancel-option pull-right" ng-click="closeEditModal()"><@spring.message "freemarker.btncancel"/></a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+</script>
+
+
+</@protected>  
