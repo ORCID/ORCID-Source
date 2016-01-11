@@ -57,6 +57,7 @@ import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.SequenceType;
 import org.orcid.jaxb.model.message.Source;
 import org.orcid.jaxb.model.record_rc2.Keywords;
+import org.orcid.jaxb.model.record_rc2.OtherName;
 import org.orcid.jaxb.model.record_rc2.CitationType;
 import org.orcid.jaxb.model.record_rc2.Keyword;
 import org.orcid.jaxb.model.record_rc2.PeerReviewType;
@@ -340,24 +341,6 @@ public class WorkspaceController extends BaseWorkspaceController {
         return mav;
     }
 
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     @RequestMapping(value = "/my-orcid/keywordsForms.json", method = RequestMethod.GET)
     public @ResponseBody
     KeywordsForm getKeywordsFormJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {        
@@ -400,18 +383,11 @@ public class WorkspaceController extends BaseWorkspaceController {
                 ProfileEntity profileEntity = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
                 defaultVisibility = profileEntity.getKeywordsVisibility() == null ? Visibility.valueOf(OrcidVisibilityDefaults.KEYWORD_DEFAULT.getVisibility()) : Visibility.valueOf(profileEntity.getKeywordsVisibility());
             }
-                        
+                                    
             profileKeywordManager.updateKeywordsV2(getCurrentUserOrcid(), updatedKeywords, org.orcid.jaxb.model.common.Visibility.fromValue(defaultVisibility.getVisibility().value()));
         }
         return kf;
     }
-    
-    
-    
-    
-    
-    
-    
     
     
     
@@ -466,12 +442,49 @@ public class WorkspaceController extends BaseWorkspaceController {
         onf.setOtherNames(validOtherNames);
         if (onf.getErrors().size() > 0) 
             return onf;        
+        
         OtherNames otherNames = onf.toOtherNames();                
-        String visibilityValue = (onf.getVisibility() == null || onf.getVisibility().getVisibility() == null) ? OrcidVisibilityDefaults.OTHER_NAMES_DEFAULT.getVisibility().value() : onf.getVisibility().getVisibility().value();                
-        org.orcid.jaxb.model.common.Visibility visibility = org.orcid.jaxb.model.common.Visibility.fromValue(visibilityValue);
-        otherNameManager.updateOtherNamesV2(getEffectiveUserOrcid(), otherNames, visibility);
+        Visibility defaultVisibility = onf.getVisibility();
+        
+        if(defaultVisibility != null && defaultVisibility.getVisibility() != null) {
+            //If the default visibility is null, then, the user changed the default visibility, so, change the visibility for all items
+            for(OtherName o : otherNames.getOtherNames()) {
+                o.setVisibility(org.orcid.jaxb.model.common.Visibility.fromValue(defaultVisibility.getVisibility().value()));
+            }
+        } else {
+            ProfileEntity profileEntity = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
+            defaultVisibility = profileEntity.getOtherNamesVisibility() == null ? Visibility.valueOf(OrcidVisibilityDefaults.OTHER_NAMES_DEFAULT.getVisibility()) : Visibility.valueOf(profileEntity.getOtherNamesVisibility());
+        }
+        
+        otherNameManager.updateOtherNamesV2(getEffectiveUserOrcid(), otherNames, org.orcid.jaxb.model.common.Visibility.fromValue(defaultVisibility.getVisibility().value()));
         return onf;
     }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     /**
      * Retrieve all external identifiers as a json string
