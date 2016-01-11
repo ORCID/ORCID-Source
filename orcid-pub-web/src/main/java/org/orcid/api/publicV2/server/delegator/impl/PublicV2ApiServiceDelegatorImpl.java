@@ -354,7 +354,7 @@ public class PublicV2ApiServiceDelegatorImpl
     @Override
     @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewOtherNames(String orcid) {
-        OtherNames otherNames = otherNameManager.getPublicOtherNamesV2(orcid);
+        OtherNames otherNames = otherNameManager.getPublicOtherNames(orcid);
         ElementUtils.setPathToOtherNames(otherNames, orcid);
         return Response.ok(otherNames).build();
     }
@@ -362,7 +362,7 @@ public class PublicV2ApiServiceDelegatorImpl
     @Override
     @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewOtherName(String orcid, Long putCode) {
-        OtherName otherName = otherNameManager.getOtherNameV2(orcid, putCode);
+        OtherName otherName = otherNameManager.getOtherName(orcid, putCode);
         orcidSecurityManager.checkVisibility(otherName);
         ElementUtils.setPathToOtherName(otherName, orcid);
         return Response.ok(otherName).build();

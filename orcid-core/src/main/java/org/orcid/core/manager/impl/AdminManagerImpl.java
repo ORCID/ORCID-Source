@@ -45,8 +45,8 @@ import org.orcid.core.manager.WorkManager;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.jaxb.model.message.Keywords;
 import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.jaxb.model.message.OtherNames;
-import org.orcid.jaxb.model.message.ResearcherUrls;
+import org.orcid.jaxb.model.record_rc2.OtherNames;
+import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.dao.GivenPermissionToDao;
 import org.orcid.persistence.dao.OrgAffiliationRelationDao;
@@ -176,16 +176,14 @@ public class AdminManagerImpl implements AdminManager {
 
                         // Remove researcher urls
                         if(deprecated.getResearcherUrls() != null) {                                   
-                            ResearcherUrls rUrls = new ResearcherUrls();
-                            rUrls.setVisibility(OrcidVisibilityDefaults.RESEARCHER_URLS_DEFAULT.getVisibility());
-                            researcherUrlManager.updateResearcherUrls(deprecatedOrcid, rUrls);                            
+                            ResearcherUrls rUrls = new ResearcherUrls();                            
+                            researcherUrlManager.updateResearcherUrls(deprecatedOrcid, rUrls, org.orcid.jaxb.model.common.Visibility.fromValue(OrcidVisibilityDefaults.RESEARCHER_URLS_DEFAULT.getVisibility().value()));                            
                         }
                         
                         // Remove other names
                         if(deprecated.getOtherNames() != null) {
-                            OtherNames otherNames = new OtherNames();
-                            otherNames.setVisibility(Visibility.PRIVATE);
-                            otherNamesManager.updateOtherNames(deprecatedOrcid, otherNames);
+                            OtherNames otherNames = new OtherNames();                            
+                            otherNamesManager.updateOtherNames(deprecatedOrcid, otherNames, org.orcid.jaxb.model.common.Visibility.fromValue(OrcidVisibilityDefaults.OTHER_NAMES_DEFAULT.getVisibility().value()));
                         }
                         
                         // Remove keywords

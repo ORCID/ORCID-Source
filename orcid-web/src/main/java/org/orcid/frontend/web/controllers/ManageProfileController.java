@@ -66,15 +66,11 @@ import org.orcid.jaxb.model.message.EncryptedSecurityAnswer;
 import org.orcid.jaxb.model.message.Keywords;
 import org.orcid.jaxb.model.message.OrcidIdentifier;
 import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.jaxb.model.message.OtherNames;
 import org.orcid.jaxb.model.message.Preferences;
-import org.orcid.jaxb.model.message.ResearcherUrl;
 import org.orcid.jaxb.model.message.ResearcherUrls;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.message.SecurityDetails;
 import org.orcid.jaxb.model.message.SecurityQuestionId;
-import org.orcid.jaxb.model.message.Url;
-import org.orcid.jaxb.model.message.UrlName;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.record_rc2.Address;
@@ -89,7 +85,6 @@ import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileSummaryEntity;
-import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 import org.orcid.persistence.jpa.entities.UserconnectionEntity;
 import org.orcid.pojo.ApplicationSummary;
 import org.orcid.pojo.ChangePassword;
@@ -956,55 +951,15 @@ public class ManageProfileController extends BaseWorkspaceController {
         // Update profile on database
         profileEntityManager.updateProfile(profile);
 
-        String orcid = profile.getOrcidIdentifier().getPath();
-
-        // Update other names on database
-        OtherNames otherNames = profile.getOrcidBio().getPersonalDetails().getOtherNames();
-        otherNameManager.updateOtherNames(orcid, otherNames);
+        String orcid = profile.getOrcidIdentifier().getPath();        
 
         // Update keywords on database
         Keywords keywords = profile.getOrcidBio().getKeywords();
-        profileKeywordManager.updateProfileKeyword(orcid, keywords);
-
-        // Update researcher urls on database
-        ResearcherUrls researcherUrls = profile.getOrcidBio().getResearcherUrls();
-        boolean hasErrors = researcherUrlManager.updateResearcherUrls(orcid, researcherUrls);
-        // TODO: The researcherUrlManager will not store any duplicated
-        // researcher url on database,
-        // however there is no way to tell the controller that some of the
-        // researcher urls were not
-        // saved, so, if an error occurs, we need to reload researcher ids from
-        // database and update
-        // cached profile. A more efficient way to fix this might be used.
-        if (hasErrors) {
-            ResearcherUrls upToDateResearcherUrls = getUpToDateResearcherUrls(orcid, researcherUrls.getVisibility());
-            profile.getOrcidBio().setResearcherUrls(upToDateResearcherUrls);
-        }
+        profileKeywordManager.updateProfileKeyword(orcid, keywords);        
 
         redirectAttributes.addFlashAttribute("changesSaved", true);
         return manageBioView;
-    }
-
-    /**
-     * Generate an up to date ResearcherUrls object.
-     * 
-     * @param orcid
-     * @param visibility
-     * */
-    private ResearcherUrls getUpToDateResearcherUrls(String orcid, Visibility visibility) {
-        ResearcherUrls upTodateResearcherUrls = new ResearcherUrls();
-        upTodateResearcherUrls.setVisibility(visibility);
-        List<ResearcherUrlEntity> upToDateResearcherUrls = researcherUrlManager.getResearcherUrls(orcid);
-
-        for (ResearcherUrlEntity researcherUrlEntity : upToDateResearcherUrls) {
-            ResearcherUrl newResearcherUrl = new ResearcherUrl();
-            newResearcherUrl.setUrl(new Url(researcherUrlEntity.getUrl()));
-            newResearcherUrl.setUrlName(new UrlName(researcherUrlEntity.getUrlName()));
-            upTodateResearcherUrls.getResearcherUrl().add(newResearcherUrl);
-        }
-
-        return upTodateResearcherUrls;
-    }
+    }    
 
     /**
      * Check if the user have twitter enabled

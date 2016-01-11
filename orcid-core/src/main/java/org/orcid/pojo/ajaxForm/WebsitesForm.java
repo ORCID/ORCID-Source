@@ -20,8 +20,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.orcid.jaxb.model.message.ResearcherUrl;
-import org.orcid.jaxb.model.message.ResearcherUrls;
+import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
+import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
 
 public class WebsitesForm implements ErrorsInterface, Serializable {
 
@@ -35,14 +35,11 @@ public class WebsitesForm implements ErrorsInterface, Serializable {
 
     public static WebsitesForm valueOf(ResearcherUrls researcherUrls) {
         WebsitesForm w = new WebsitesForm();
-        if (researcherUrls.getResearcherUrl() != null)
-            for (ResearcherUrl ru : researcherUrls.getResearcherUrl()) {
+        if (researcherUrls.getResearcherUrls() != null) {
+            for (ResearcherUrl ru : researcherUrls.getResearcherUrls()) {
                 w.websites.add(Website.valueOf(ru));
-            }
-        if (researcherUrls == null || researcherUrls.getVisibility() == null)
-            w.setVisibility(new Visibility());
-        else
-            w.setVisibility(Visibility.valueOf(researcherUrls.getVisibility()));
+            }        
+        }
         return w;
     }
 
@@ -52,9 +49,7 @@ public class WebsitesForm implements ErrorsInterface, Serializable {
         for (Website website : websites) {
             ruList.add(website.toResearcherUrl());
         }
-        researcherUrls.setResearcherUrl(ruList);
-        if (visibility!= null)
-            researcherUrls.setVisibility(visibility.getVisibility());
+        researcherUrls.setResearcherUrls(ruList);
         return researcherUrls;
     }
 

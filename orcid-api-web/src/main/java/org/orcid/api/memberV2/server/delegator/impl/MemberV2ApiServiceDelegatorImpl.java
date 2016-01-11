@@ -546,7 +546,7 @@ public class MemberV2ApiServiceDelegatorImpl
     @Override
     @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED)
     public Response viewOtherNames(String orcid) {
-        OtherNames otherNames = otherNameManager.getOtherNamesV2(orcid);
+        OtherNames otherNames = otherNameManager.getOtherNames(orcid);
         List<OtherName> allOtherNames = otherNames.getOtherNames();
         List<OtherName> filterdOtherNames = (List<OtherName>) visibilityFilter.filter(allOtherNames);
         otherNames.setOtherNames(filterdOtherNames);
@@ -557,7 +557,7 @@ public class MemberV2ApiServiceDelegatorImpl
     @Override
     @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED)
     public Response viewOtherName(String orcid, Long putCode) {
-        OtherName otherName = otherNameManager.getOtherNameV2(orcid, putCode);
+        OtherName otherName = otherNameManager.getOtherName(orcid, putCode);
         orcidSecurityManager.checkVisibility(otherName);
         ElementUtils.setPathToOtherName(otherName, orcid);
         return Response.ok(otherName).build();
@@ -566,7 +566,7 @@ public class MemberV2ApiServiceDelegatorImpl
     @Override
     @AccessControl(requiredScope = ScopePathType.PERSON_UPDATE)
     public Response createOtherName(String orcid, org.orcid.jaxb.model.record_rc2.OtherName otherName) {
-        otherName = otherNameManager.createOtherNameV2(orcid, otherName);
+        otherName = otherNameManager.createOtherName(orcid, otherName);
         try {
             return Response.created(new URI(String.valueOf(otherName.getPutCode()))).build();
         } catch (URISyntaxException e) {
@@ -584,7 +584,7 @@ public class MemberV2ApiServiceDelegatorImpl
             throw new MismatchedPutCodeException(params);
         }
 
-        OtherName updatedOtherName = otherNameManager.updateOtherNameV2(orcid, putCode, otherName);
+        OtherName updatedOtherName = otherNameManager.updateOtherName(orcid, putCode, otherName);
         ElementUtils.setPathToOtherName(updatedOtherName, orcid);
         return Response.ok(updatedOtherName).build();
     }
@@ -592,7 +592,7 @@ public class MemberV2ApiServiceDelegatorImpl
     @Override
     @AccessControl(requiredScope = ScopePathType.PERSON_UPDATE)
     public Response deleteOtherName(String orcid, Long putCode) {
-        otherNameManager.deleteOtherNameV2(orcid, putCode);
+        otherNameManager.deleteOtherName(orcid, putCode);
         return Response.noContent().build();
     }
 

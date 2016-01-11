@@ -61,6 +61,8 @@ import org.orcid.jaxb.model.record_rc2.OtherName;
 import org.orcid.jaxb.model.record_rc2.CitationType;
 import org.orcid.jaxb.model.record_rc2.Keyword;
 import org.orcid.jaxb.model.record_rc2.PeerReviewType;
+import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
+import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
 import org.orcid.jaxb.model.record_rc2.Role;
 import org.orcid.jaxb.model.record_rc2.WorkCategory;
 import org.orcid.jaxb.model.record_rc2.WorkExternalIdentifierType;
@@ -389,23 +391,10 @@ public class WorkspaceController extends BaseWorkspaceController {
         return kf;
     }
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     @RequestMapping(value = "/my-orcid/otherNamesForms.json", method = RequestMethod.GET)
     public @ResponseBody
     OtherNamesForm getOtherNamesFormJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
-        OtherNames otherNames = otherNameManager.getOtherNamesV2(getCurrentUserOrcid());        
+        OtherNames otherNames = otherNameManager.getOtherNames(getCurrentUserOrcid());        
         
         OtherNamesForm form = OtherNamesForm.valueOf(otherNames);
         ProfileEntity entity = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
@@ -456,35 +445,9 @@ public class WorkspaceController extends BaseWorkspaceController {
             defaultVisibility = profileEntity.getOtherNamesVisibility() == null ? Visibility.valueOf(OrcidVisibilityDefaults.OTHER_NAMES_DEFAULT.getVisibility()) : Visibility.valueOf(profileEntity.getOtherNamesVisibility());
         }
         
-        otherNameManager.updateOtherNamesV2(getEffectiveUserOrcid(), otherNames, org.orcid.jaxb.model.common.Visibility.fromValue(defaultVisibility.getVisibility().value()));
+        otherNameManager.updateOtherNames(getEffectiveUserOrcid(), otherNames, org.orcid.jaxb.model.common.Visibility.fromValue(defaultVisibility.getVisibility().value()));
         return onf;
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     
     /**
      * Retrieve all external identifiers as a json string
@@ -492,9 +455,18 @@ public class WorkspaceController extends BaseWorkspaceController {
     @RequestMapping(value = "/my-orcid/websitesForms.json", method = RequestMethod.GET)
     public @ResponseBody
     WebsitesForm getWebsitesFormJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
-        OrcidProfile currentProfile = getEffectiveProfile();
-        WebsitesForm wf = WebsitesForm.valueOf(currentProfile.getOrcidBio().getResearcherUrls());
-        return wf;
+        ResearcherUrls rUrls = researcherUrlManager.getResearcherUrlsV2(getCurrentUserOrcid());        
+        
+        WebsitesForm form = WebsitesForm.valueOf(rUrls);
+        ProfileEntity entity = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
+        
+        if(entity.getResearcherUrlsVisibility() != null) {
+            form.setVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(entity.getResearcherUrlsVisibility()));
+        } else {
+            form.setVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(OrcidVisibilityDefaults.RESEARCHER_URLS_DEFAULT.getVisibility()));
+        }
+        
+        return form;
     }
     
     /**
@@ -504,32 +476,61 @@ public class WorkspaceController extends BaseWorkspaceController {
     public @ResponseBody
     WebsitesForm setWebsitesFormJson(HttpServletRequest request, @RequestBody WebsitesForm ws) throws NoSuchRequestHandlingMethodException {
         ws.setErrors(new ArrayList<String>());
-        HashMap<String, Website> websitesHm = new HashMap<String, Website>(); 
         for (Website w:ws.getWebsites()) {
             //Clean old errors
             w.setErrors(new ArrayList<String>());
-            w.getUrl().setErrors(new ArrayList<String>());
-            // Name can be null
-            if(w.getName() != null) {
-                w.getName().setErrors(new ArrayList<String>());
-            }
             
             //Validate
-            validateUrl(w.getUrl(), SiteConstants.URL_MAX_LENGTH);
-            validateNoLongerThan(SiteConstants.URL_MAX_LENGTH, w.getName());
-            if (websitesHm.containsKey(w.getUrl().getValue()))
-                setError(w.getUrl(), "common.duplicate_url");
-            else
-                websitesHm.put(w.getUrl().getValue(), w);
-            copyErrors(w.getUrl(), ws);
-            copyErrors(w.getName(), ws);
+            if(!validateUrl(w.getUrl())) {
+                w.getErrors().add(getMessage("common.invalid_url"));                
+            }
+            if(isLongerThan(w.getUrlName(), SiteConstants.URL_MAX_LENGTH)) {
+                w.getErrors().add(getMessage("manualWork.length_less_X"));
+            }                        
         }   
-        if (ws.getErrors().size()>0) return ws;        
-        OrcidProfile currentProfile = getEffectiveProfile();
-        researcherUrlManager.updateResearcherUrls(currentProfile.getOrcidIdentifier().getPath(), ws.toResearcherUrls());
+        if (ws.getErrors().size()>0) return ws;   
+        
+        ResearcherUrls rUrls = ws.toResearcherUrls();
+        Visibility defaultVisibility = ws.getVisibility();
+        
+        if(defaultVisibility != null && defaultVisibility.getVisibility() != null) {
+            //If the default visibility is null, then, the user changed the default visibility, so, change the visibility for all items
+            for(ResearcherUrl rUrl : rUrls.getResearcherUrls()) {
+                rUrl.setVisibility(org.orcid.jaxb.model.common.Visibility.fromValue(defaultVisibility.getVisibility().value()));
+            }
+        } else {
+            ProfileEntity profileEntity = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
+            defaultVisibility = profileEntity.getResearcherUrlsVisibility() == null ? Visibility.valueOf(OrcidVisibilityDefaults.RESEARCHER_URLS_DEFAULT.getVisibility()) : Visibility.valueOf(profileEntity.getResearcherUrlsVisibility());
+        }
+                
+        researcherUrlManager.updateResearcherUrls(getCurrentUserOrcid(), rUrls, org.orcid.jaxb.model.common.Visibility.fromValue(defaultVisibility.getVisibility().value()));
         return ws;
     }
 
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     /**
      * Retrieve all external identifiers as a json string
      * */
