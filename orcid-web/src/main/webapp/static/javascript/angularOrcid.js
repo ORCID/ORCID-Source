@@ -2686,13 +2686,17 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
                 $scope.countryForm = data;
                 $scope.close();
                 $scope.$apply();
+                $.colorbox.close();
             }
         }).fail(function() {
             // something bad is happening!
             console.log("CountryCtrl.serverValidate() error");
         });
     };
-
+    
+    $scope.closeModal = function(){
+        $.colorbox.close();
+    }
 
     $scope.setPrivacy = function(priv, $event) {
         $event.preventDefault();
@@ -2705,6 +2709,27 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
 
     $scope.hideTooltip = function(elem){
     	$scope.showElement[elem] = false;	
+    }
+    
+    $scope.openEditModal = function() {
+        $.colorbox({
+            scrolling: true,
+            html: $compile($('#edit-country').html())($scope),
+            onLoad: function() {$('#cboxClose').remove();},
+ 
+            width: formColorBoxResize(),
+            onComplete: function() {
+                    
+            },
+            onClosed: function() {
+                //
+            }            
+        });
+        $.colorbox.resize();
+    }
+    
+    $scope.closeEditModal = function(){
+        $.colorbox.close();
     }
 
     $scope.getCountryForm();
