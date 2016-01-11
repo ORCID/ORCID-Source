@@ -222,5 +222,4 @@
 	<xs:simpleType name="application-group-name">
 		<xs:restriction base="xs:string" />
 	</xs:simpleType>
-
 </xs:schema>

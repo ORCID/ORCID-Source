@@ -31,7 +31,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.orcid.integration.api.memberV2.MemberV2ApiClientImpl;
 import org.orcid.integration.blackbox.BlackBoxBase;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.record_rc1.Emails;
+import org.orcid.jaxb.model.record_rc2.Emails;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
 	xmlns:sch="http://purl.oclc.org/dsdl/schematron" elementFormDefault="qualified"
-	targetNamespace="http://www.orcid.org/ns/peer-review" xmlns:activities="http://www.orcid.org/ns/activities"
-	xmlns:common="http://www.orcid.org/ns/common" xmlns:work="http://www.orcid.org/ns/work"
-	xmlns:funding="http://www.orcid.org/ns/funding" xmlns:education="http://www.orcid.org/ns/education"
-	xmlns:employment="http://www.orcid.org/ns/employment"
+	targetNamespace="http://www.orcid.org/ns/peer-review" 
+	xmlns:common="http://www.orcid.org/ns/common" 
+	xmlns:work="http://www.orcid.org/ns/work"
+	
 	xmlns:peer-review="http://www.orcid.org/ns/peer-review">
 	<xs:annotation> 
 		<xs:documentation>

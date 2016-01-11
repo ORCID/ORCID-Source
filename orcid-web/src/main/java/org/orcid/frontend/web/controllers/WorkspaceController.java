@@ -56,13 +56,14 @@ import org.orcid.jaxb.model.message.FundingType;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.SequenceType;
 import org.orcid.jaxb.model.message.Source;
-import org.orcid.jaxb.model.record_rc1.CitationType;
-import org.orcid.jaxb.model.record_rc1.PeerReviewType;
-import org.orcid.jaxb.model.record_rc1.Role;
-import org.orcid.jaxb.model.record_rc1.WorkCategory;
-import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType;
-import org.orcid.jaxb.model.record_rc1.WorkType;
 import org.orcid.jaxb.model.record_rc2.Keywords;
+import org.orcid.jaxb.model.record_rc2.CitationType;
+import org.orcid.jaxb.model.record_rc2.Keyword;
+import org.orcid.jaxb.model.record_rc2.PeerReviewType;
+import org.orcid.jaxb.model.record_rc2.Role;
+import org.orcid.jaxb.model.record_rc2.WorkCategory;
+import org.orcid.jaxb.model.record_rc2.WorkExternalIdentifierType;
+import org.orcid.jaxb.model.record_rc2.WorkType;
 import org.orcid.jaxb.model.record_rc2.OtherNames;
 import org.orcid.persistence.constants.SiteConstants;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -386,13 +387,22 @@ public class WorkspaceController extends BaseWorkspaceController {
                     it.remove();
                 }            
             }
+
+            Keywords updatedKeywords = kf.toKeywords();
+            Visibility defaultVisibility = kf.getVisibility();
+            
+            if(defaultVisibility != null && defaultVisibility.getVisibility() != null) {
+                //If the default visibility is null, then, the user changed the default visibility, so, change the visibility for all items
+                for(Keyword k : updatedKeywords.getKeywords()) {
+                    k.setVisibility(org.orcid.jaxb.model.common.Visibility.fromValue(defaultVisibility.getVisibility().value()));
+                }
+            } else {
+                ProfileEntity profileEntity = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
+                defaultVisibility = profileEntity.getKeywordsVisibility() == null ? Visibility.valueOf(OrcidVisibilityDefaults.KEYWORD_DEFAULT.getVisibility()) : Visibility.valueOf(profileEntity.getKeywordsVisibility());
+            }
                         
-            ProfileEntity profileEntity = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
-            Visibility defaultVisibility = profileEntity.getKeywordsVisibility() == null ? Visibility.valueOf(OrcidVisibilityDefaults.KEYWORD_DEFAULT.getVisibility()) : Visibility.valueOf(profileEntity.getKeywordsVisibility());
-            profileKeywordManager.updateKeywordsV2(getCurrentUserOrcid(), kf.toKeywords(), org.orcid.jaxb.model.common.Visibility.fromValue(defaultVisibility.getVisibility().value()));
+            profileKeywordManager.updateKeywordsV2(getCurrentUserOrcid(), updatedKeywords, org.orcid.jaxb.model.common.Visibility.fromValue(defaultVisibility.getVisibility().value()));
         }
-            	                
-        
         return kf;
     }
     

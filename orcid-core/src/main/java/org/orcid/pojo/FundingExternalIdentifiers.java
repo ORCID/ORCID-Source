@@ -71,8 +71,8 @@ public class FundingExternalIdentifiers implements Serializable {
         return result;
     }
 
-    public org.orcid.jaxb.model.record_rc1.FundingExternalIdentifiers toRecordPojo() {
-        org.orcid.jaxb.model.record_rc1.FundingExternalIdentifiers result = new org.orcid.jaxb.model.record_rc1.FundingExternalIdentifiers();
+    public org.orcid.jaxb.model.record_rc2.FundingExternalIdentifiers toRecordPojo() {
+        org.orcid.jaxb.model.record_rc2.FundingExternalIdentifiers result = new org.orcid.jaxb.model.record_rc2.FundingExternalIdentifiers();
         if (!this.getFundingExternalIdentifier().isEmpty()) {
             for (FundingExternalIdentifier fei : this.getFundingExternalIdentifier()) {
                 result.getExternalIdentifier().add(fei.toRecordPojo());
@@ -94,12 +94,12 @@ public class FundingExternalIdentifiers implements Serializable {
         return result;
     }
 
-    public static FundingExternalIdentifiers fromRecordPojo(org.orcid.jaxb.model.record_rc1.FundingExternalIdentifiers recordPojo) {
+    public static FundingExternalIdentifiers fromRecordPojo(org.orcid.jaxb.model.record_rc2.FundingExternalIdentifiers recordPojo) {
         if (recordPojo == null)
             return null;
         FundingExternalIdentifiers result = new FundingExternalIdentifiers();
         if (!recordPojo.getExternalIdentifier().isEmpty()) {
-            for (org.orcid.jaxb.model.record_rc1.FundingExternalIdentifier recordEi : recordPojo.getExternalIdentifier()) {                               
+            for (org.orcid.jaxb.model.record_rc2.FundingExternalIdentifier recordEi : recordPojo.getExternalIdentifier()) {                               
                 result.getFundingExternalIdentifier().add(FundingExternalIdentifier.fromRecordPojo(recordEi));
             }
         }

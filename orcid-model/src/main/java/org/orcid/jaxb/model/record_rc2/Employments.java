@@ -33,6 +33,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.orcid.jaxb.model.common.LastModifiedDate;
 
 /**
  * <p>
@@ -83,7 +84,7 @@ public class Employments implements Serializable, ActivitiesContainer {
             employment = new ArrayList<Employment>();
         }
         return this.employment;
-    }    
+    }
 
     @Override
     public Map<Long, Employment> retrieveActivitiesAsMap() {
@@ -126,4 +127,9 @@ public class Employments implements Serializable, ActivitiesContainer {
         return employment != null ? employment.hashCode() : 0;
     }
 
+    @Override
+    public void setLastModifiedDate(LastModifiedDate lastModifiedDate) {
+        // TODO Auto-generated method stub
+
+    }
 }

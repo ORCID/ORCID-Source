@@ -393,6 +393,15 @@
 	        </list>
 	    </property>
 	</bean>
+	
+	<bean id="v2VersionConverterChain" class="org.orcid.core.version.impl.V2VersionConverterChainImpl">
+	    <property name="converters">
+            <list>
+	            <ref bean="versionConverterV2_0_rc1ToV2_0rc2" />
+	        </list>
+	    </property>
+	</bean>
+    <bean id="versionConverterV2_0_rc1ToV2_0rc2" class="org.orcid.core.version.impl.VersionConverterImplV2_0_rc1ToV2_0rc2"/>
 
 	<cache:annotation-driven cache-manager="springCoreCacheManager"/>
 	
@@ -622,12 +631,14 @@
 	<bean id="jpaJaxbGivenPermissionByAdapter" class="org.orcid.core.adapter.impl.JpaJaxbGivenPermissionByAdapterImpl">
         <property name="mapperFacade" ref="givenPermissionByMapperFacade" />
     </bean>
-             
+    
+    <bean id="v2VersionObjectFactory" class="org.orcid.core.version.impl.V2VersionObjectFactoryImpl" />
+            
     <!-- Geonames username -->
 	<bean id="geonamesUser" class="java.lang.String">
 		<constructor-arg value="orcid"/>
 	</bean>
-	
+	 
 	<!-- Geonames API -->
 	<bean id="geonamesApiUrl" class="java.lang.String">
 		<constructor-arg value="http://api.geonames.org/getJSON"/>

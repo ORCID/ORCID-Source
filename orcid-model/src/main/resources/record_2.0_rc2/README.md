@@ -68,13 +68,11 @@ undetected into the code during the previous development period. Release candida
 - [researcher-urls-2.0_rc2.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/samples/researcher-url-2.0_rc2.xml)
 - [work-2.0_rc2.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/samples/work-2.0_rc2.xml)
 
-
 **Note:** These files contain system-generated elements/attributes that are returned when reading items from ORCID, but should not be included when posting items to ORCID
 - put-code (exception: include put-code when updating items using the PUT method)
 - source
 - created-date
 - last-modified-date
-
 
 ## REST API Reference
 

@@ -187,7 +187,7 @@
 	        	   <span ng-hide="showEdit == true">
 	        	   	  <span class="glyphicon glyphicon-pencil edit-keywords edit-option pull-right" ng-click="openEdit()" title=""></span>	
 	        	      <span ng-repeat="keyword in keywordsForm.keywords" ng-cloak>
-	        	         {{ $last?keyword.keywordForm.content:keyword.keywordForm.content+ ", "}}
+	        	         {{ $last?keyword.content:keyword.content+ ", "}}
 	        	      </span>
 	        	   </span>
 	        	   <span class="pull-right" ng-show="showEdit == true" ng-cloak>

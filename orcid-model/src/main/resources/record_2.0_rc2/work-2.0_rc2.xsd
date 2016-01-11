@@ -3,7 +3,7 @@
 	xmlns:sch="http://purl.oclc.org/dsdl/schematron" elementFormDefault="qualified"
 	targetNamespace="http://www.orcid.org/ns/work" xmlns:work="http://www.orcid.org/ns/work"
 	xmlns:common="http://www.orcid.org/ns/common">
-	<xs:annotation>
+	<xs:annotation> 
 		<xs:documentation>
 			=============================================================================
 

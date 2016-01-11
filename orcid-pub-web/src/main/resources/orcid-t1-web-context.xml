@@ -105,12 +105,16 @@
     </bean>
     
     <!--  Public_2 API -->
-    <bean id="publicV2ApiServiceDelegator" class="org.orcid.api.t1.server.delegator.impl.PublicV2ApiServiceDelegatorImpl" />
-    <bean id="publicV2ApiServiceImplV2_0_rc1" class="org.orcid.api.t1.server.PublicV2ApiServiceImplV2_0_rc1">
-        <property name="serviceDelegator" ref="publicV2ApiServiceDelegator"/>
+    <bean id="publicV2ApiServiceDelegator" class="org.orcid.api.publicV2.server.delegator.impl.PublicV2ApiServiceDelegatorImpl" />
+    
+    <bean id="publicV2ApiServiceDelegatorRc1" class="org.orcid.api.publicV2.server.delegator.impl.PublicV2ApiServiceVersionedDelegatorImpl">
+        <property name="externalVersion" value="2.0_rc1" />
+    </bean>
+    <bean id="publicV2ApiServiceImplV2_0_rc1" class="org.orcid.api.publicV2.server.PublicV2ApiServiceImplV2_0_rc1">
+        <property name="serviceDelegator" ref="publicV2ApiServiceDelegatorRc1"/>
     </bean>
     
-    <bean id="publicV2ApiServiceImplV2_0_rc2" class="org.orcid.api.t1.server.PublicV2ApiServiceImplV2_0_rc2">
+    <bean id="publicV2ApiServiceImplV2_0_rc2" class="org.orcid.api.publicV2.server.PublicV2ApiServiceImplV2_0_rc2">
         <property name="serviceDelegator" ref="publicV2ApiServiceDelegator"/>
     </bean>    
     

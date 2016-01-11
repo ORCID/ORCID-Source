@@ -30,7 +30,6 @@ import org.orcid.jaxb.model.common.Filterable;
 import org.orcid.jaxb.model.common.LastModifiedDate;
 import org.orcid.jaxb.model.common.Source;
 import org.orcid.jaxb.model.common.Visibility;
-
 import io.swagger.annotations.ApiModelProperty;
 
 /**
