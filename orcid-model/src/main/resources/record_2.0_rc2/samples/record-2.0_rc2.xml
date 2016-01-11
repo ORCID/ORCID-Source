@@ -211,12 +211,11 @@
 			<person:application-group-name>application-group-name</person:application-group-name>
 		</person:application-summary>
 	</person:applications>
-
-
-
 	</person:person>
 	<activities:activities-summary>
+		<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
 		<activities:educations>
+			<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
 			<education:education-summary put-code="0"
 				visibility="private">
 				<common:created-date>2001-12-31T12:00:00</common:created-date>
@@ -257,6 +256,7 @@
 			</education:education-summary>
 		</activities:educations>
 		<activities:employments>
+			<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
 			<affiliation:employment-summary
 				put-code="0" visibility="private">
 				<common:created-date>2001-12-31T12:00:00</common:created-date>
@@ -298,7 +298,9 @@
 		</activities:employments>
 
 		<activities:fundings>
+			<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
 			<activities:group>
+				<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
 				<activities:identifiers>
 					<activities:identifier>
 						<activities:external-identifier-type>agr</activities:external-identifier-type>
@@ -343,7 +345,9 @@
 			</activities:group>
 		</activities:fundings>
 		<activities:works>
+			<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
 			<activities:group>
+				<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
 				<activities:identifiers>
 					<activities:identifier>
 						<activities:external-identifier-type>agr</activities:external-identifier-type>

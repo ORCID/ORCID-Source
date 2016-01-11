@@ -26,15 +26,18 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-
+import org.orcid.jaxb.model.common.LastModifiedDate;
 import org.orcid.jaxb.model.record_rc2.Group;
 import org.orcid.jaxb.model.record_rc2.GroupableActivity;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "identifiers", "peerReviewSummary" })
+@XmlType(propOrder = { "lastModifiedDate", "identifiers", "peerReviewSummary" })
 @XmlRootElement(name = "peer-review-group", namespace = "http://www.orcid.org/ns/activities")
 public class PeerReviewGroup implements Group, Serializable {
     private static final long serialVersionUID = 1L;
+
+    @XmlElement(name = "last-modified-date", namespace = "http://www.orcid.org/ns/common")
+    protected LastModifiedDate lastModifiedDate;
     @XmlElement(name = "identifiers", namespace = "http://www.orcid.org/ns/activities")
     private Identifiers identifiers;
     @XmlElement(name = "summary", namespace = "http://www.orcid.org/ns/peer-review")
@@ -51,7 +54,7 @@ public class PeerReviewGroup implements Group, Serializable {
             peerReviewSummary = new ArrayList<PeerReviewSummary>();
         return peerReviewSummary;
     }
-    
+
     @Override
     public Collection<? extends GroupableActivity> getActivities() {
         return getPeerReviewSummary();
@@ -88,4 +91,11 @@ public class PeerReviewGroup implements Group, Serializable {
         return true;
     }
 
+    public LastModifiedDate getLastModifiedDate() {
+        return lastModifiedDate;
+    }
+
+    public void setLastModifiedDate(LastModifiedDate lastModifiedDate) {
+        this.lastModifiedDate = lastModifiedDate;
+    }
 }

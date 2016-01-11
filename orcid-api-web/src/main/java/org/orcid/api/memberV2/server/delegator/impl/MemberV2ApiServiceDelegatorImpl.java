@@ -55,19 +55,19 @@ import org.orcid.core.security.visibility.filter.VisibilityFilterV2;
 import org.orcid.jaxb.model.groupid.GroupIdRecord;
 import org.orcid.jaxb.model.groupid.GroupIdRecords;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.record.summary_rc1.ActivitiesSummary;
-import org.orcid.jaxb.model.record.summary_rc1.EducationSummary;
-import org.orcid.jaxb.model.record.summary_rc1.EmploymentSummary;
-import org.orcid.jaxb.model.record.summary_rc1.FundingSummary;
-import org.orcid.jaxb.model.record.summary_rc1.PeerReviewSummary;
-import org.orcid.jaxb.model.record.summary_rc1.WorkSummary;
-import org.orcid.jaxb.model.record_rc1.Education;
+import org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary;
+import org.orcid.jaxb.model.record.summary_rc2.EducationSummary;
+import org.orcid.jaxb.model.record.summary_rc2.EmploymentSummary;
+import org.orcid.jaxb.model.record.summary_rc2.FundingSummary;
+import org.orcid.jaxb.model.record.summary_rc2.PeerReviewSummary;
+import org.orcid.jaxb.model.record.summary_rc2.WorkSummary;
+import org.orcid.jaxb.model.record_rc2.Education;
 import org.orcid.jaxb.model.record_rc2.Email;
 import org.orcid.jaxb.model.record_rc2.Emails;
-import org.orcid.jaxb.model.record_rc1.Employment;
-import org.orcid.jaxb.model.record_rc1.Funding;
-import org.orcid.jaxb.model.record_rc1.PeerReview;
-import org.orcid.jaxb.model.record_rc1.Work;
+import org.orcid.jaxb.model.record_rc2.Employment;
+import org.orcid.jaxb.model.record_rc2.Funding;
+import org.orcid.jaxb.model.record_rc2.PeerReview;
+import org.orcid.jaxb.model.record_rc2.Work;
 import org.orcid.jaxb.model.record_rc2.Address;
 import org.orcid.jaxb.model.record_rc2.Addresses;
 import org.orcid.jaxb.model.record_rc2.Biography;
@@ -98,7 +98,8 @@ import org.springframework.stereotype.Component;
  * @author Declan Newman (declan) Date: 07/03/2012
  */
 @Component("orcidT2ServiceDelegator")
-public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelegator {
+public class MemberV2ApiServiceDelegatorImpl
+        implements MemberV2ApiServiceDelegator<Education, Employment, ExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work, Address, Keyword> {
 
     @Resource
     private WorkManager workManager;
@@ -545,7 +546,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     @Override
     @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED)
     public Response viewOtherNames(String orcid) {
-        OtherNames otherNames = otherNameManager.getOtherNamesV2(orcid);
+        OtherNames otherNames = otherNameManager.getOtherNames(orcid);
         List<OtherName> allOtherNames = otherNames.getOtherNames();
         List<OtherName> filterdOtherNames = (List<OtherName>) visibilityFilter.filter(allOtherNames);
         otherNames.setOtherNames(filterdOtherNames);
@@ -556,7 +557,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     @Override
     @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED)
     public Response viewOtherName(String orcid, Long putCode) {
-        OtherName otherName = otherNameManager.getOtherNameV2(orcid, putCode);
+        OtherName otherName = otherNameManager.getOtherName(orcid, putCode);
         orcidSecurityManager.checkVisibility(otherName);
         ElementUtils.setPathToOtherName(otherName, orcid);
         return Response.ok(otherName).build();
@@ -565,7 +566,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     @Override
     @AccessControl(requiredScope = ScopePathType.PERSON_UPDATE)
     public Response createOtherName(String orcid, org.orcid.jaxb.model.record_rc2.OtherName otherName) {
-        otherName = otherNameManager.createOtherNameV2(orcid, otherName);
+        otherName = otherNameManager.createOtherName(orcid, otherName);
         try {
             return Response.created(new URI(String.valueOf(otherName.getPutCode()))).build();
         } catch (URISyntaxException e) {
@@ -583,7 +584,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
             throw new MismatchedPutCodeException(params);
         }
 
-        OtherName updatedOtherName = otherNameManager.updateOtherNameV2(orcid, putCode, otherName);
+        OtherName updatedOtherName = otherNameManager.updateOtherName(orcid, putCode, otherName);
         ElementUtils.setPathToOtherName(updatedOtherName, orcid);
         return Response.ok(updatedOtherName).build();
     }
@@ -591,7 +592,7 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
     @Override
     @AccessControl(requiredScope = ScopePathType.PERSON_UPDATE)
     public Response deleteOtherName(String orcid, Long putCode) {
-        otherNameManager.deleteOtherNameV2(orcid, putCode);
+        otherNameManager.deleteOtherName(orcid, putCode);
         return Response.noContent().build();
     }
 

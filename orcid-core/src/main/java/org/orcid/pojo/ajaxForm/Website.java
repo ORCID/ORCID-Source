@@ -20,36 +20,73 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.orcid.jaxb.model.message.ResearcherUrl;
-import org.orcid.jaxb.model.message.Url;
-import org.orcid.jaxb.model.message.UrlName;
+import org.orcid.jaxb.model.common.Source;
+import org.orcid.jaxb.model.common.Url;
+import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 
 public class Website implements ErrorsInterface, Serializable {
 
     private static final long serialVersionUID = 1L;
 
     private List<String> errors = new ArrayList<String>();
-
-    private Text name;
-
-    private Text url;
+    private String url;
+    private String urlName;
+    private String putCode;
+    private Visibility visibility;
+    private String source;
+    private String sourceName;
 
     public static Website valueOf(ResearcherUrl researcherUrl) {
-        Website w = new Website();
-        if (!PojoUtil.isEmpty(researcherUrl.getUrl()))
-            w.setUrl(Text.valueOf(researcherUrl.getUrl().getValue()));
-        if (!PojoUtil.isEmpty(researcherUrl.getUrlName()))
-            w.setName(Text.valueOf(researcherUrl.getUrlName().getContent()));
-        return w;
+        Website form = new Website();
+
+        if (researcherUrl != null) {
+            if (!PojoUtil.isEmpty(researcherUrl.getUrl())) {
+                form.setUrl(researcherUrl.getUrl().getValue());
+            }
+
+            if (!PojoUtil.isEmpty(researcherUrl.getUrlName())) {
+                form.setUrl(researcherUrl.getUrlName());
+            }
+
+            if (researcherUrl.getVisibility() != null) {
+                form.setVisibility(Visibility.valueOf(researcherUrl.getVisibility()));
+            }
+
+            if (researcherUrl.getPutCode() != null) {
+                form.setPutCode(String.valueOf(researcherUrl.getPutCode()));
+            }
+
+            if (researcherUrl.getSource() != null) {
+                // Set source
+                form.setSource(researcherUrl.getSource().retrieveSourcePath());
+                if (researcherUrl.getSource().getSourceName() != null) {
+                    form.setSourceName(researcherUrl.getSource().getSourceName().getContent());
+                }
+            }
+        }
+        return form;
     }
 
     public ResearcherUrl toResearcherUrl() {
-        ResearcherUrl ru = new ResearcherUrl();
-        if (!PojoUtil.isEmpty(url))
-            ru.setUrl(new Url(url.getValue()));
-        if (!PojoUtil.isEmpty(name))
-            ru.setUrlName(new UrlName(name.getValue()));
-        return ru;
+        ResearcherUrl researcherUrl = new ResearcherUrl();
+        if (!PojoUtil.isEmpty(this.getUrl())) {
+            researcherUrl.setUrl(new Url(this.getUrl()));
+        }
+
+        if (!PojoUtil.isEmpty(this.getUrlName())) {
+            researcherUrl.setUrlName(this.getUrlName());
+        }
+
+        if (this.visibility != null && this.visibility.getVisibility() != null) {
+            researcherUrl.setVisibility(org.orcid.jaxb.model.common.Visibility.fromValue(this.getVisibility().getVisibility().value()));
+        }
+
+        if (!PojoUtil.isEmpty(this.getPutCode())) {
+            researcherUrl.setPutCode(Long.valueOf(this.getPutCode()));
+        }
+
+        researcherUrl.setSource(new Source(source));
+        return researcherUrl;
     }
 
     public List<String> getErrors() {
@@ -60,20 +97,51 @@ public class Website implements ErrorsInterface, Serializable {
         this.errors = errors;
     }
 
-    public Text getName() {
-        return name;
-    }
-
-    public void setName(Text name) {
-        this.name = name;
-    }
-
-    public Text getUrl() {
+    public String getUrl() {
         return url;
     }
 
-    public void setUrl(Text url) {
+    public void setUrl(String url) {
         this.url = url;
     }
 
+    public String getUrlName() {
+        return urlName;
+    }
+
+    public void setUrlName(String urlName) {
+        this.urlName = urlName;
+    }
+
+    public String getPutCode() {
+        return putCode;
+    }
+
+    public void setPutCode(String putCode) {
+        this.putCode = putCode;
+    }
+
+    public Visibility getVisibility() {
+        return visibility;
+    }
+
+    public void setVisibility(Visibility visibility) {
+        this.visibility = visibility;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
+
+    public String getSourceName() {
+        return sourceName;
+    }
+
+    public void setSourceName(String sourceName) {
+        this.sourceName = sourceName;
+    }
 }

@@ -2332,7 +2332,7 @@ orcidNgModule.controller('KeywordsCtrl', ['$scope', '$compile', function ($scope
     };
 
     $scope.addNew = function() {
-        $scope.keywordsForm.keywords.push({value: ""});
+        $scope.keywordsForm.keywords.push({content: ""});
     };
 
     $scope.getKeywordsForm = function(){
@@ -2341,8 +2341,8 @@ orcidNgModule.controller('KeywordsCtrl', ['$scope', '$compile', function ($scope
             dataType: 'json',
             success: function(data) {
                 $scope.keywordsForm = data;
-                var keywords = $scope.keywordsForm.keywords;
                 $scope.$apply();
+                console.log(angular.toJson(data));
             }
         }).fail(function(){
             // something bad is happening!

@@ -142,7 +142,7 @@ public class BaseController {
 
     @Resource
     protected SourceManager sourceManager;
-    
+
     @Resource
     protected OrcidSecurityManager orcidSecurityManager;
 
@@ -336,7 +336,8 @@ public class BaseController {
                             // remove the token and the cookie
                             @SuppressWarnings("unchecked")
                             HashMap<String, String> cookieValues = JsonUtils.readObjectFromJsonString(cookie.getValue(), HashMap.class);
-                            if (cookieValues.containsKey(InternalSSOManager.COOKIE_KEY_ORCID) && !PojoUtil.isEmpty(cookieValues.get(InternalSSOManager.COOKIE_KEY_ORCID))) {
+                            if (cookieValues.containsKey(InternalSSOManager.COOKIE_KEY_ORCID)
+                                    && !PojoUtil.isEmpty(cookieValues.get(InternalSSOManager.COOKIE_KEY_ORCID))) {
                                 internalSSOManager.deleteToken(cookieValues.get(InternalSSOManager.COOKIE_KEY_ORCID), request, response);
                             } else {
                                 // If it is not valid, just remove the cookie
@@ -409,9 +410,9 @@ public class BaseController {
     public boolean isDelegatedByAdmin() {
         return sourceManager.isDelegatedByAnAdmin();
     }
-    
+
     @ModelAttribute("isPasswordConfirmationRequired")
-    public boolean isPasswordConfirmationRequired(){
+    public boolean isPasswordConfirmationRequired() {
         return orcidSecurityManager.isPasswordConfirmationRequired();
     }
 
@@ -486,7 +487,7 @@ public class BaseController {
      *            The string to evaluate
      * @return true if the provided string matches an email address pattern,
      *         false otherwise.
-     * */
+     */
     protected boolean validateEmailAddress(String email) {
         if (StringUtils.isNotBlank(email)) {
             try {
@@ -572,7 +573,7 @@ public class BaseController {
      * 
      * CDN Configuration
      * 
-     * */
+     */
     public String getCdnConfigFile() {
         return this.cdnConfigFile;
     }
@@ -583,13 +584,17 @@ public class BaseController {
 
     /**
      * @return the path to the static content on local project
-     * */
+     */
     @ModelAttribute("staticLoc")
-    public String getStaticContentPath() {
+    public String getStaticContentPath(HttpServletRequest request) {
         if (StringUtils.isBlank(this.staticContentPath)) {
-            this.staticContentPath = orcidUrlManager.getBaseUrl() + STATIC_FOLDER_PATH;
-            this.staticContentPath = this.staticContentPath.replace("https:", "");
-            this.staticContentPath = this.staticContentPath.replace("http:", "");
+            String generatedStaticContentPath = orcidUrlManager.getBaseUrl();
+            generatedStaticContentPath = generatedStaticContentPath.replace("https:", "");
+            generatedStaticContentPath = generatedStaticContentPath.replace("http:", "");
+            if (!request.isSecure()) {
+                generatedStaticContentPath = generatedStaticContentPath.replace(":8443", ":8080");
+            }
+            return generatedStaticContentPath + STATIC_FOLDER_PATH;
         }
         return this.staticContentPath;
     }
@@ -600,12 +605,12 @@ public class BaseController {
      * return a reference to the static folder "/static"
      * 
      * @return the path to the CDN or the path to the local static content
-     * */
+     */
     @ModelAttribute("staticCdn")
     @Cacheable("staticContent")
-    public String getStaticCdnPath() {
+    public String getStaticCdnPath(HttpServletRequest request) {
         if (StringUtils.isEmpty(this.cdnConfigFile)) {
-            return getStaticContentPath();
+            return getStaticContentPath(request);
         }
 
         ClassPathResource configFile = new ClassPathResource(this.cdnConfigFile);
@@ -620,7 +625,7 @@ public class BaseController {
         }
 
         if (StringUtils.isBlank(this.staticCdnPath))
-            this.staticCdnPath = this.getStaticContentPath();
+            return getStaticContentPath(request);
         return staticCdnPath;
     }
 
@@ -648,14 +653,14 @@ public class BaseController {
      * @param theClass
      * @param key
      * @return a String of the form full.class.name.with.package.key
-     * */
+     */
     @SuppressWarnings("rawtypes")
     protected String buildInternationalizationKey(Class theClass, String key) {
         return theClass.getName() + '.' + key;
     }
 
     protected static void copyErrors(ErrorsInterface from, ErrorsInterface into) {
-        if(from != null && from.getErrors() != null) {
+        if (from != null && from.getErrors() != null) {
             for (String s : from.getErrors()) {
                 into.getErrors().add(s);
             }
@@ -683,6 +688,8 @@ public class BaseController {
         }
     }
 
+    
+    
     protected void validateUrl(Text url) {
         validateUrl(url, SiteConstants.URL_MAX_LENGTH);
     }
@@ -698,15 +705,19 @@ public class BaseController {
             validateNoLongerThan(maxLength, url);
 
             // add protocall if missing
-            if (!urlValidator.isValid(url.getValue())) {
+            if (!validateUrl(url.getValue())) {
                 String tempUrl = "http://" + url.getValue();
                 // test validity again
-                if (urlValidator.isValid(tempUrl))
+                if (validateUrl(tempUrl))
                     url.setValue("http://" + url.getValue());
                 else
                     setError(url, "common.invalid_url");
             }
         }
+    }
+    
+    protected boolean validateUrl(String url) {
+        return urlValidator.isValid(url);
     }
 
     protected void validateNoLongerThan(int maxLength, Text text) {
@@ -717,6 +728,12 @@ public class BaseController {
         if (text.getValue().length() > maxLength) {
             setError(text, "manualWork.length_less_X", maxLength);
         }
+    }
+    
+    protected boolean isLongerThan(String value, int maxLength) {
+        if(value == null)
+            return false;
+        return (value.length() > maxLength);
     }
 
     void givenNameValidate(Text givenName) {
@@ -763,10 +780,10 @@ public class BaseController {
     }
 
     private String correctContext(HttpServletRequest request, String savedUrl) {
-        String contextPath =  request.getContextPath();
+        String contextPath = request.getContextPath();
         if (orcidUrlManager.getBasePath().equals("/") && !contextPath.equals("/"))
             savedUrl = savedUrl.replaceFirst(contextPath.replace("/", "\\/"), "");
         return savedUrl;
     }
-    
+
 }

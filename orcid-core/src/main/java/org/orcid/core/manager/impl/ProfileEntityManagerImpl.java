@@ -47,32 +47,33 @@ import org.orcid.core.manager.WorkManager;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.core.utils.activities.ActivitiesGroup;
 import org.orcid.core.utils.activities.ActivitiesGroupGenerator;
+import org.orcid.core.version.impl.LastModifiedDatesHelper;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidType;
-import org.orcid.jaxb.model.record.summary_rc1.ActivitiesSummary;
-import org.orcid.jaxb.model.record.summary_rc1.EducationSummary;
-import org.orcid.jaxb.model.record.summary_rc1.Educations;
-import org.orcid.jaxb.model.record.summary_rc1.EmploymentSummary;
-import org.orcid.jaxb.model.record.summary_rc1.Employments;
-import org.orcid.jaxb.model.record.summary_rc1.FundingGroup;
-import org.orcid.jaxb.model.record.summary_rc1.FundingSummary;
-import org.orcid.jaxb.model.record.summary_rc1.Fundings;
-import org.orcid.jaxb.model.record.summary_rc1.Identifier;
-import org.orcid.jaxb.model.record.summary_rc1.PeerReviewGroup;
-import org.orcid.jaxb.model.record.summary_rc1.PeerReviewGroupKey;
-import org.orcid.jaxb.model.record.summary_rc1.PeerReviewSummary;
-import org.orcid.jaxb.model.record.summary_rc1.PeerReviews;
-import org.orcid.jaxb.model.record.summary_rc1.WorkGroup;
-import org.orcid.jaxb.model.record.summary_rc1.WorkSummary;
-import org.orcid.jaxb.model.record.summary_rc1.Works;
-import org.orcid.jaxb.model.record_rc1.FundingExternalIdentifier;
-import org.orcid.jaxb.model.record_rc1.GroupAble;
-import org.orcid.jaxb.model.record_rc1.GroupableActivity;
-import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifier;
+import org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary;
+import org.orcid.jaxb.model.record.summary_rc2.EducationSummary;
+import org.orcid.jaxb.model.record.summary_rc2.Educations;
+import org.orcid.jaxb.model.record.summary_rc2.EmploymentSummary;
+import org.orcid.jaxb.model.record.summary_rc2.Employments;
+import org.orcid.jaxb.model.record.summary_rc2.FundingGroup;
+import org.orcid.jaxb.model.record.summary_rc2.FundingSummary;
+import org.orcid.jaxb.model.record.summary_rc2.Fundings;
+import org.orcid.jaxb.model.record.summary_rc2.Identifier;
+import org.orcid.jaxb.model.record.summary_rc2.PeerReviewGroup;
+import org.orcid.jaxb.model.record.summary_rc2.PeerReviewGroupKey;
+import org.orcid.jaxb.model.record.summary_rc2.PeerReviewSummary;
+import org.orcid.jaxb.model.record.summary_rc2.PeerReviews;
+import org.orcid.jaxb.model.record.summary_rc2.WorkGroup;
+import org.orcid.jaxb.model.record.summary_rc2.WorkSummary;
+import org.orcid.jaxb.model.record.summary_rc2.Works;
+import org.orcid.jaxb.model.record_rc2.FundingExternalIdentifier;
+import org.orcid.jaxb.model.record_rc2.GroupAble;
+import org.orcid.jaxb.model.record_rc2.GroupableActivity;
+import org.orcid.jaxb.model.record_rc2.WorkExternalIdentifier;
 import org.orcid.jaxb.model.record_rc2.Biography;
 import org.orcid.jaxb.model.record_rc2.Delegation;
 import org.orcid.jaxb.model.record_rc2.DelegationDetails;
@@ -426,6 +427,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         Works works = groupWorks(workSummaries, justPublic);
         activities.setWorks(works);
 
+        LastModifiedDatesHelper.calculateLatest(activities);
         return activities;
     }
 
@@ -462,10 +464,8 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
 
             // Sort the works
             Collections.sort(workGroup.getWorkSummary(), new GroupableActivityComparator());
-
             result.getWorkGroup().add(workGroup);
         }
-
         return result;
     }
 
@@ -626,7 +626,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         person.setExternalIdentifiers(externalIdentifierManager.getExternalIdentifiersV2(orcid));
         person.setKeywords(profileKeywordManager.getKeywordsV2(orcid));
         person.setName(personalDetailsManager.getName(orcid));
-        person.setOtherNames(otherNameManager.getOtherNamesV2(orcid));
+        person.setOtherNames(otherNameManager.getOtherNames(orcid));
         person.setResearcherUrls(researcherUrlManager.getResearcherUrlsV2(orcid));             
         person.setEmails(emailManager.getEmails(orcid));
         
@@ -687,7 +687,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         person.setAddresses(addressManager.getPublicAddresses(orcid));
         person.setExternalIdentifiers(externalIdentifierManager.getPublicExternalIdentifiersV2(orcid));
         person.setKeywords(profileKeywordManager.getPublicKeywordsV2(orcid));
-        person.setOtherNames(otherNameManager.getPublicOtherNamesV2(orcid));
+        person.setOtherNames(otherNameManager.getPublicOtherNames(orcid));
         person.setResearcherUrls(researcherUrlManager.getPublicResearcherUrlsV2(orcid));             
         person.setEmails(emailManager.getPublicEmails(orcid));
         

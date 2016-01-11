@@ -17,13 +17,13 @@
 package org.orcid.api.common.writer.citeproc;
 
 import org.junit.Test;
-import org.orcid.jaxb.model.record_rc1.Citation;
-import org.orcid.jaxb.model.record_rc1.CitationType;
-import org.orcid.jaxb.model.record_rc1.Work;
-import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifier;
-import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierId;
-import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType;
-import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifiers;
+import org.orcid.jaxb.model.record_rc2.Citation;
+import org.orcid.jaxb.model.record_rc2.CitationType;
+import org.orcid.jaxb.model.record_rc2.Work;
+import org.orcid.jaxb.model.record_rc2.WorkExternalIdentifier;
+import org.orcid.jaxb.model.record_rc2.WorkExternalIdentifierId;
+import org.orcid.jaxb.model.record_rc2.WorkExternalIdentifierType;
+import org.orcid.jaxb.model.record_rc2.WorkExternalIdentifiers;
 
 import de.undercouch.citeproc.csl.CSLItemData;
 import junit.framework.Assert;

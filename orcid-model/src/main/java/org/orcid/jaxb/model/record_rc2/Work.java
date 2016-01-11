@@ -432,7 +432,7 @@ public class Work implements VisibilityType, Activity, Serializable {
      * 
      * @return true if the two works are duplicated according to ORCID
      *         requirements
-     */
+     * */
     public boolean isDuplicatedLegacyMode(Object obj) {
         if (this == obj)
             return true;
@@ -476,7 +476,7 @@ public class Work implements VisibilityType, Activity, Serializable {
      * 
      * @return true if the two works are duplicated according to ORCID
      *         requirements
-     */
+     * */
     public boolean isDuplicated(Object obj) {
         if (this == obj)
             return true;

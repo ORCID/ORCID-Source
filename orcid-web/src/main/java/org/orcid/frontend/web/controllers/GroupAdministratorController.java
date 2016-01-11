@@ -151,11 +151,7 @@ public class GroupAdministratorController extends BaseWorkspaceController {
         return emptyClient;
     }
 
-    private boolean validateUrl(String url) {
-        return validateUrl(url, false);
-    }
-    
-    private boolean validateUrl(String url, boolean checkProtocol) {
+   private boolean validateUrl(String url, boolean checkProtocol) {
         String urlToCheck = null;
         if (PojoUtil.isEmpty(url))
             return false;

@@ -18,6 +18,7 @@ package org.orcid.core.manager;
 
 import java.util.List;
 
+import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.jaxb.model.record_rc2.Keywords;
 import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
 
@@ -72,10 +73,12 @@ public interface ProfileKeywordManager {
     org.orcid.jaxb.model.record_rc2.Keyword getKeywordV2(String orcid, Long putCode);
 
     boolean deleteKeywordV2(String orcid, Long putCode);
+    
+    boolean updateKeywordsVisibility(String orcid, Visibility defaultVisiblity);
 
     org.orcid.jaxb.model.record_rc2.Keyword createKeywordV2(String orcid, org.orcid.jaxb.model.record_rc2.Keyword keyword);
 
     org.orcid.jaxb.model.record_rc2.Keyword updateKeywordV2(String orcid, Long putCode, org.orcid.jaxb.model.record_rc2.Keyword keyword);
 
-    org.orcid.jaxb.model.record_rc2.Keywords updateKeywordsV2(String orcid, org.orcid.jaxb.model.record_rc2.Keywords keywords, org.orcid.jaxb.model.common.Visibility defaultVisiblity);
+    org.orcid.jaxb.model.record_rc2.Keywords updateKeywordsV2(String orcid, org.orcid.jaxb.model.record_rc2.Keywords keywords, Visibility defaultVisiblity);
 }
