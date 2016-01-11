@@ -71,11 +71,13 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
     private OrcidSecurityManager orcidSecurityManager;
 
     @Override
-    public boolean deleteResearcherUrl(String orcid, Long id) {
+    public boolean deleteResearcherUrl(String orcid, Long id, boolean checkSource) {
         boolean result = true;        
-        ResearcherUrlEntity toDelete = researcherUrlDao.getResearcherUrl(orcid, id);  
-        SourceEntity existingSource = toDelete.getSource();
-        orcidSecurityManager.checkSource(existingSource);
+        ResearcherUrlEntity toDelete = researcherUrlDao.getResearcherUrl(orcid, id);          
+        if(checkSource) {
+            SourceEntity existingSource = toDelete.getSource();
+            orcidSecurityManager.checkSource(existingSource);
+        }
         
         try {            
             researcherUrlDao.deleteResearcherUrl(orcid, id);

@@ -401,7 +401,7 @@ public class PublicV2ApiServiceDelegatorImpl
     @Override
     @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewKeywords(String orcid) {
-        Keywords keywords = keywordsManager.getPublicKeywordsV2(orcid);
+        Keywords keywords = keywordsManager.getPublicKeywords(orcid);
         ElementUtils.setPathToKeywords(keywords, orcid);
         return Response.ok(keywords).build();
     }
@@ -409,7 +409,7 @@ public class PublicV2ApiServiceDelegatorImpl
     @Override
     @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewKeyword(String orcid, Long putCode) {
-        Keyword keyword = keywordsManager.getKeywordV2(orcid, putCode);
+        Keyword keyword = keywordsManager.getKeyword(orcid, putCode);
         orcidSecurityManager.checkVisibility(keyword);
         ElementUtils.setPathToKeyword(keyword, orcid);
         return Response.ok(keyword).build();

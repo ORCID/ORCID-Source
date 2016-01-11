@@ -42,11 +42,7 @@ import org.orcid.core.manager.ProfileFundingManager;
 import org.orcid.core.manager.ProfileKeywordManager;
 import org.orcid.core.manager.ResearcherUrlManager;
 import org.orcid.core.manager.WorkManager;
-import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
-import org.orcid.jaxb.model.message.Keywords;
 import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.jaxb.model.record_rc2.OtherNames;
-import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.dao.GivenPermissionToDao;
 import org.orcid.persistence.dao.OrgAffiliationRelationDao;
@@ -54,8 +50,11 @@ import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
+import org.orcid.persistence.jpa.entities.OtherNameEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
+import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
+import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.pojo.AdminDelegatesRequest;
 import org.orcid.pojo.ProfileDeprecationRequest;
@@ -170,27 +169,29 @@ public class AdminManagerImpl implements AdminManager {
                         // Remove external identifiers
                         if (deprecated.getExternalIdentifiers() != null) {
                             for (ExternalIdentifierEntity externalIdentifier : deprecated.getExternalIdentifiers()) {
-                                externalIdentifierManager.removeExternalIdentifier(deprecated.getId(), externalIdentifier.getExternalIdReference());
+                                externalIdentifierManager.deleteExternalIdentifier(deprecated.getId(), externalIdentifier.getId(), false);
                             }
                         }
 
                         // Remove researcher urls
-                        if(deprecated.getResearcherUrls() != null) {                                   
-                            ResearcherUrls rUrls = new ResearcherUrls();                            
-                            researcherUrlManager.updateResearcherUrls(deprecatedOrcid, rUrls, org.orcid.jaxb.model.common.Visibility.fromValue(OrcidVisibilityDefaults.RESEARCHER_URLS_DEFAULT.getVisibility().value()));                            
+                        if(deprecated.getResearcherUrls() != null) {
+                            for(ResearcherUrlEntity rUrl : deprecated.getResearcherUrls()) {
+                                researcherUrlManager.deleteResearcherUrl(deprecatedOrcid, rUrl.getId(), false);
+                            }
                         }
                         
                         // Remove other names
                         if(deprecated.getOtherNames() != null) {
-                            OtherNames otherNames = new OtherNames();                            
-                            otherNamesManager.updateOtherNames(deprecatedOrcid, otherNames, org.orcid.jaxb.model.common.Visibility.fromValue(OrcidVisibilityDefaults.OTHER_NAMES_DEFAULT.getVisibility().value()));
+                            for(OtherNameEntity otherName : deprecated.getOtherNames()) {
+                                otherNamesManager.deleteOtherName(deprecatedOrcid, otherName.getId(), false);
+                            }                            
                         }
                         
                         // Remove keywords
                         if(deprecated.getKeywords() != null) {
-                            Keywords keywords = new Keywords();
-                            keywords.setVisibility(Visibility.PRIVATE);
-                            profileKeywordManager.updateProfileKeyword(deprecatedOrcid, keywords);
+                            for(ProfileKeywordEntity keyword : deprecated.getKeywords()) {
+                                profileKeywordManager.deleteKeyword(deprecatedOrcid, keyword.getId(), false);
+                            }                                                        
                         }
                         
                         // Update deprecated profile

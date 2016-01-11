@@ -28,7 +28,7 @@ public interface OtherNameManager {
     
     OtherName getOtherName(String orcid, Long putCode);
 
-    boolean deleteOtherName(String orcid, Long putCode);
+    boolean deleteOtherName(String orcid, Long putCode, boolean checkSource);
 
     OtherName createOtherName(String orcid, OtherName otherName);
 

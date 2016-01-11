@@ -16,7 +16,6 @@
  */
 package org.orcid.core.manager.impl;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -55,99 +54,16 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
     private JpaJaxbKeywordAdapter adapter;
 
     @Resource
-    private OrcidSecurityManager orcidSecurityManager;
-
-    /**
-     * Return the list of keywords associated to a specific profile
-     * 
-     * @param orcid
-     * @return the list of keywords associated with the orcid profile
-     */
-    @Override
-    public List<ProfileKeywordEntity> getProfileKeywors(String orcid) {
-        return profileKeywordDao.getProfileKeywors(orcid);
-    }
-
-    /**
-     * Deleted a keyword from database
-     * 
-     * @param orcid
-     * @param keyword
-     * @return true if the keyword was successfully deleted
-     */
-    @Override
-    public boolean deleteProfileKeyword(String orcid, String keyword) {
-        return profileKeywordDao.deleteProfileKeyword(orcid, keyword);
-    }
-
-    /**
-     * Adds a keyword to a specific profile
-     * 
-     * @param orcid
-     * @param keyword
-     * @return true if the keyword was successfully created on database
-     */
-    @Override
-    public void addProfileKeyword(String orcid, String keyword) {
-        SourceEntity source = sourceManager.retrieveSourceEntity();
-        String sourceId = null;
-        String clientSourceId = null;
-        if (source.getSourceProfile() != null) {
-            sourceId = source.getSourceProfile().getId();
-        }
-
-        if (source.getSourceClient() != null) {
-            clientSourceId = source.getSourceClient().getId();
-        }
-        profileKeywordDao.addProfileKeyword(orcid, keyword, sourceId, clientSourceId);
-    }
-
-    /**
-     * Update the list of keywords associated with a specific account
-     * 
-     * @param orcid
-     * @param keywords
-     */
-    @Override
-    public void updateProfileKeyword(String orcid, org.orcid.jaxb.model.message.Keywords keywords) {
-        List<ProfileKeywordEntity> currentKeywords = this.getProfileKeywors(orcid);
-        Iterator<ProfileKeywordEntity> currentIt = currentKeywords.iterator();
-        ArrayList<String> newKeywords = new ArrayList<String>(keywords.getKeywordsAsStrings());
-
-        while (currentIt.hasNext()) {
-            ProfileKeywordEntity existingKeyword = currentIt.next();
-            // Delete non modified other names from the parameter list
-            if (newKeywords.contains(existingKeyword.getKeywordName())) {
-                newKeywords.remove(existingKeyword.getKeywordName());
-            } else {
-                // Delete other names deleted by user
-                profileKeywordDao.deleteProfileKeyword(orcid, existingKeyword.getKeywordName());
-            }
-        }
-
-        // At this point, only new other names are in the parameter list
-        // otherNames
-        // Insert all these other names on database
-        for (String newKeyword : newKeywords) {
-            ProfileKeywordEntity entity = new ProfileKeywordEntity();
-            entity.setProfile(new ProfileEntity(orcid));
-            entity.setSource(new SourceEntity(new ProfileEntity(orcid)));
-            entity.setKeywordName(newKeyword);
-            entity.setVisibility(Visibility.fromValue(keywords.getVisibility() == null ? OrcidVisibilityDefaults.KEYWORD_DEFAULT.getVisibility().value() : keywords.getVisibility().value()));
-            profileKeywordDao.persist(entity);
-        }
-        if (keywords.getVisibility() != null)
-            profileKeywordDao.updateKeywordsVisibility(orcid, keywords.getVisibility());
-    }
+    private OrcidSecurityManager orcidSecurityManager;    
 
     @Override
-    public Keywords getKeywordsV2(String orcid) {
+    public Keywords getKeywords(String orcid) {
         List<ProfileKeywordEntity> entities = getProfileKeywordEntitys(orcid, null);
         return adapter.toKeywords(entities);
     }
 
     @Override
-    public Keywords getPublicKeywordsV2(String orcid) {
+    public Keywords getPublicKeywords(String orcid) {
         List<ProfileKeywordEntity> entities = getProfileKeywordEntitys(orcid, Visibility.PUBLIC);
         return adapter.toKeywords(entities);
     }
@@ -174,16 +90,19 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
     }
     
     @Override
-    public Keyword getKeywordV2(String orcid, Long putCode) {
+    public Keyword getKeyword(String orcid, Long putCode) {
         ProfileKeywordEntity entity = profileKeywordDao.getProfileKeyword(orcid, putCode);
         return adapter.toKeyword(entity);
     }
 
     @Override
-    public boolean deleteKeywordV2(String orcid, Long putCode) {
+    public boolean deleteKeyword(String orcid, Long putCode, boolean checkSource) {
         ProfileKeywordEntity entity = profileKeywordDao.getProfileKeyword(orcid, putCode);
-        SourceEntity existingSource = entity.getSource();
-        orcidSecurityManager.checkSource(existingSource);
+                
+        if(checkSource) {
+            SourceEntity existingSource = entity.getSource();
+            orcidSecurityManager.checkSource(existingSource);
+        }
 
         try {
             profileKeywordDao.deleteProfileKeyword(entity);
@@ -195,7 +114,7 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
 
     @Override
     @Transactional
-    public Keyword createKeywordV2(String orcid, Keyword keyword) {
+    public Keyword createKeyword(String orcid, Keyword keyword) {
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
         // Validate the keyword
         PersonValidator.validateKeyword(keyword, sourceEntity, true);
@@ -222,7 +141,7 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
 
     @Override
     @Transactional
-    public Keyword updateKeywordV2(String orcid, Long putCode, Keyword keyword) {
+    public Keyword updateKeyword(String orcid, Long putCode, Keyword keyword) {
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
 
         // Validate the keyword
@@ -256,7 +175,7 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
 
     @Override
     @Transactional
-    public Keywords updateKeywordsV2(String orcid, Keywords keywords, Visibility defaultVisiblity) {
+    public Keywords updateKeywords(String orcid, Keywords keywords, Visibility defaultVisiblity) {
         List<ProfileKeywordEntity> existingKeywordsList = profileKeywordDao.getProfileKeywors(orcid);
         // Delete the deleted ones
         for (ProfileKeywordEntity existing : existingKeywordsList) {

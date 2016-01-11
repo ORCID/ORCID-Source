@@ -528,7 +528,7 @@ public class MemberV2ApiServiceDelegatorImpl
     @Override
     @AccessControl(requiredScope = ScopePathType.PERSON_UPDATE)
     public Response deleteResearcherUrl(String orcid, Long putCode) {
-        researcherUrlManager.deleteResearcherUrl(orcid, putCode);
+        researcherUrlManager.deleteResearcherUrl(orcid, putCode, true);
         return Response.noContent().build();
     }
 
@@ -592,7 +592,7 @@ public class MemberV2ApiServiceDelegatorImpl
     @Override
     @AccessControl(requiredScope = ScopePathType.PERSON_UPDATE)
     public Response deleteOtherName(String orcid, Long putCode) {
-        otherNameManager.deleteOtherName(orcid, putCode);
+        otherNameManager.deleteOtherName(orcid, putCode, true);
         return Response.noContent().build();
     }
 
@@ -654,7 +654,7 @@ public class MemberV2ApiServiceDelegatorImpl
     @Override
     @AccessControl(requiredScope = ScopePathType.PERSON_UPDATE)
     public Response deleteExternalIdentifier(String orcid, Long putCode) {
-        externalIdentifierManager.deleteExternalIdentifier(orcid, putCode);
+        externalIdentifierManager.deleteExternalIdentifier(orcid, putCode, true);
         return Response.noContent().build();
     }
 
@@ -671,7 +671,7 @@ public class MemberV2ApiServiceDelegatorImpl
     @Override
     @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED)
     public Response viewKeywords(String orcid) {
-        Keywords keywords = keywordsManager.getKeywordsV2(orcid);
+        Keywords keywords = keywordsManager.getKeywords(orcid);
         List<Keyword> allKeywords = keywords.getKeywords();
         List<Keyword> filterdKeywords = (List<Keyword>) visibilityFilter.filter(allKeywords);
         keywords.setKeywords(filterdKeywords);
@@ -682,7 +682,7 @@ public class MemberV2ApiServiceDelegatorImpl
     @Override
     @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED)
     public Response viewKeyword(String orcid, Long putCode) {
-        Keyword keyword = keywordsManager.getKeywordV2(orcid, putCode);
+        Keyword keyword = keywordsManager.getKeyword(orcid, putCode);
         orcidSecurityManager.checkVisibility(keyword);
         ElementUtils.setPathToKeyword(keyword, orcid);
         return Response.ok(keyword).build();
@@ -691,7 +691,7 @@ public class MemberV2ApiServiceDelegatorImpl
     @Override
     @AccessControl(requiredScope = ScopePathType.PERSON_UPDATE)
     public Response createKeyword(String orcid, Keyword keyword) {
-        keyword = keywordsManager.createKeywordV2(orcid, keyword);
+        keyword = keywordsManager.createKeyword(orcid, keyword);
         try {
             return Response.created(new URI(String.valueOf(keyword.getPutCode()))).build();
         } catch (URISyntaxException e) {
@@ -709,7 +709,7 @@ public class MemberV2ApiServiceDelegatorImpl
             throw new MismatchedPutCodeException(params);
         }
 
-        keyword = keywordsManager.updateKeywordV2(orcid, putCode, keyword);      
+        keyword = keywordsManager.updateKeyword(orcid, putCode, keyword);      
         ElementUtils.setPathToKeyword(keyword, orcid);
         return Response.ok(keyword).build();
     }
@@ -717,7 +717,7 @@ public class MemberV2ApiServiceDelegatorImpl
     @Override
     @AccessControl(requiredScope = ScopePathType.PERSON_UPDATE)
     public Response deleteKeyword(String orcid, Long putCode) {
-        keywordsManager.deleteKeywordV2(orcid, putCode);
+        keywordsManager.deleteKeyword(orcid, putCode, true);
         return Response.noContent().build();
     }
                     

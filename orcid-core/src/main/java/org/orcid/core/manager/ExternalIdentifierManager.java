@@ -20,19 +20,7 @@ import org.orcid.jaxb.model.record_rc2.ExternalIdentifier;
 import org.orcid.jaxb.model.record_rc2.ExternalIdentifiers;
 
 public interface ExternalIdentifierManager {
-
-    /**
-     * Removes an external identifier from database based on his ID. The ID for
-     * external identifiers consists of the "orcid" of the owner and the
-     * "externalIdReference" which is an identifier of the external id.
-     * 
-     * @param orcid
-     *            The orcid of the owner
-     * @param externalIdReference
-     *            Identifier of the external id.
-     */
-    void removeExternalIdentifier(String orcid, String externalIdReference);
-
+    
     /**
      * Return the list of public external identifiers associated to a specific
      * profile
@@ -85,5 +73,5 @@ public interface ExternalIdentifierManager {
      * @param orcid
      * @param id
      */
-    boolean deleteExternalIdentifier(String orcid, Long id);
+    boolean deleteExternalIdentifier(String orcid, Long id, boolean checkSource);
 }
