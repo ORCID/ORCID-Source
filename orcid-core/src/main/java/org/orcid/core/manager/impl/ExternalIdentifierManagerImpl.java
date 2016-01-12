@@ -52,22 +52,7 @@ public class ExternalIdentifierManagerImpl implements ExternalIdentifierManager 
 
     @Resource
     private OrcidSecurityManager orcidSecurityManager;
-
-    /**
-     * Removes an external identifier from database based on his ID. The ID for
-     * external identifiers consists of the "orcid" of the owner and the
-     * "externalIdReference" which is an identifier of the external id.
-     * 
-     * @param orcid
-     *            The orcid of the owner
-     * @param externalIdReference
-     *            Identifier of the external id.
-     */
-    @Override
-    public void removeExternalIdentifier(String orcid, String externalIdReference) {
-        externalIdentifierDao.removeExternalIdentifier(orcid, externalIdReference);
-    }
-
+    
     @Override
     public ExternalIdentifiers getPublicExternalIdentifiersV2(String orcid) {
         return getExternalIdentifiesV2(orcid, Visibility.PUBLIC);
@@ -179,14 +164,21 @@ public class ExternalIdentifierManagerImpl implements ExternalIdentifierManager 
     }    
 
     @Override
-    public boolean deleteExternalIdentifier(String orcid, Long id) {
+    public boolean deleteExternalIdentifier(String orcid, Long id, boolean checkSource) {
         ExternalIdentifierEntity extIdEntity = externalIdentifierDao.getExternalIdentifierEntity(orcid, id);
         if (extIdEntity == null) {
             return false;
+        }        
+        if(checkSource) {
+            SourceEntity existingSource = extIdEntity.getSource();
+            orcidSecurityManager.checkSource(existingSource);
         }
-        SourceEntity existingSource = extIdEntity.getSource();
-        orcidSecurityManager.checkSource(existingSource);
-        return externalIdentifierDao.removeExternalIdentifier(orcid, id);        
+        try {
+            externalIdentifierDao.removeExternalIdentifier(orcid, id);
+        } catch (Exception e) {
+            return false;
+        }
+        return true;    
     }
 
 }

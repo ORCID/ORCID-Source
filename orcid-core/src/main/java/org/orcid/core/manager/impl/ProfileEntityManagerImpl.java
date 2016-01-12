@@ -624,7 +624,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         person.setBiography(getBiography(orcid));
         person.setAddresses(addressManager.getAddresses(orcid));
         person.setExternalIdentifiers(externalIdentifierManager.getExternalIdentifiersV2(orcid));
-        person.setKeywords(profileKeywordManager.getKeywordsV2(orcid));
+        person.setKeywords(profileKeywordManager.getKeywords(orcid));
         person.setName(personalDetailsManager.getName(orcid));
         person.setOtherNames(otherNameManager.getOtherNames(orcid));
         person.setResearcherUrls(researcherUrlManager.getResearcherUrlsV2(orcid));             
@@ -686,7 +686,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         
         person.setAddresses(addressManager.getPublicAddresses(orcid));
         person.setExternalIdentifiers(externalIdentifierManager.getPublicExternalIdentifiersV2(orcid));
-        person.setKeywords(profileKeywordManager.getPublicKeywordsV2(orcid));
+        person.setKeywords(profileKeywordManager.getPublicKeywords(orcid));
         person.setOtherNames(otherNameManager.getPublicOtherNames(orcid));
         person.setResearcherUrls(researcherUrlManager.getPublicResearcherUrlsV2(orcid));             
         person.setEmails(emailManager.getPublicEmails(orcid));

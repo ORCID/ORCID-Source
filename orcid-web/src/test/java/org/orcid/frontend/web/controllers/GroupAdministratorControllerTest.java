@@ -142,7 +142,7 @@ public class GroupAdministratorControllerTest extends BaseControllerTest {
         client = controller.getClient();
         client.setDisplayName(Text.valueOf("Name"));
         client.setShortDescription(Text.valueOf("Description"));        
-        client.setWebsite(Text.valueOf("mysite.com"));
+        client.setWebsite(Text.valueOf("http://mysite.com"));
         
         List<RedirectUri> redirectUris = new ArrayList<RedirectUri>();
         RedirectUri one = new RedirectUri();

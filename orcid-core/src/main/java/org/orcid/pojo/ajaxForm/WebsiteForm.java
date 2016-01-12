@@ -24,7 +24,7 @@ import org.orcid.jaxb.model.common.Source;
 import org.orcid.jaxb.model.common.Url;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 
-public class Website implements ErrorsInterface, Serializable {
+public class WebsiteForm implements ErrorsInterface, Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -36,8 +36,8 @@ public class Website implements ErrorsInterface, Serializable {
     private String source;
     private String sourceName;
 
-    public static Website valueOf(ResearcherUrl researcherUrl) {
-        Website form = new Website();
+    public static WebsiteForm valueOf(ResearcherUrl researcherUrl) {
+        WebsiteForm form = new WebsiteForm();
 
         if (researcherUrl != null) {
             if (!PojoUtil.isEmpty(researcherUrl.getUrl())) {

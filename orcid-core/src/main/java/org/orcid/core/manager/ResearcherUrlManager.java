@@ -27,9 +27,10 @@ public interface ResearcherUrlManager {
      * Delete a researcher url
      * @param orcid
      * @param id
+     * @param checkSource
      * @return true if the researcher url was deleted
      * */
-    boolean deleteResearcherUrl(String orcid, Long id);      
+    boolean deleteResearcherUrl(String orcid, Long id, boolean checkSource);      
     
     /**
      * Return the list of public researcher urls associated to a specific profile

@@ -82,10 +82,13 @@ public class OtherNameManagerImpl implements OtherNameManager {
     }
 
     @Override
-    public boolean deleteOtherName(String orcid, Long putCode) {        
+    public boolean deleteOtherName(String orcid, Long putCode, boolean checkSource) {        
         OtherNameEntity otherNameEntity = otherNameDao.getOtherName(orcid, putCode);        
-        SourceEntity existingSource = otherNameEntity.getSource();
-        orcidSecurityManager.checkSource(existingSource);
+        
+        if(checkSource) {
+            SourceEntity existingSource = otherNameEntity.getSource();
+            orcidSecurityManager.checkSource(existingSource);
+        }        
 
         try {
             otherNameDao.deleteOtherName(otherNameEntity);

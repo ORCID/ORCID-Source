@@ -953,10 +953,6 @@ public class ManageProfileController extends BaseWorkspaceController {
 
         String orcid = profile.getOrcidIdentifier().getPath();        
 
-        // Update keywords on database
-        Keywords keywords = profile.getOrcidBio().getKeywords();
-        profileKeywordManager.updateProfileKeyword(orcid, keywords);        
-
         redirectAttributes.addFlashAttribute("changesSaved", true);
         return manageBioView;
     }    
