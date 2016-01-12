@@ -129,10 +129,31 @@ public enum ScopePathType implements Serializable {
 
     ScopePathType(String value, ScopePathType... inherited) {
         this.value = value;
-        this.combined = new HashSet<ScopePathType>(Arrays.asList(inherited));
+        if(this.combined == null) {
+            this.combined = new HashSet<ScopePathType>();
+        }
+        for(ScopePathType scope : inherited) {
+            this.combine(scope);
+        }
         this.combined.add(this);
+    }    
+    
+    private void combine(ScopePathType scope) {
+        Set<ScopePathType> toCombine = scope.combined();
+        if(toCombine != null){
+            for(ScopePathType other : toCombine) {
+                if(!other.equals(scope)) {
+                    if(other.combined() != null && !other.combined().isEmpty()) {
+                        for(ScopePathType childScope : other.combined()) {
+                            combine(childScope);
+                        }                    
+                    }
+                }
+            }            
+        }        
+        this.combined.add(scope);
     }
-
+    
     public String value() {
         return value;
     }
