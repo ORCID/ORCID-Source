@@ -29,7 +29,7 @@ public class WebsitesForm implements ErrorsInterface, Serializable {
 
     private List<String> errors = new ArrayList<String>();
 
-    private List<Website> websites = new ArrayList<Website>();
+    private List<WebsiteForm> websites = new ArrayList<WebsiteForm>();
     
     private Visibility visibility;
 
@@ -37,7 +37,7 @@ public class WebsitesForm implements ErrorsInterface, Serializable {
         WebsitesForm w = new WebsitesForm();
         if (researcherUrls.getResearcherUrls() != null) {
             for (ResearcherUrl ru : researcherUrls.getResearcherUrls()) {
-                w.websites.add(Website.valueOf(ru));
+                w.websites.add(WebsiteForm.valueOf(ru));
             }        
         }
         return w;
@@ -46,18 +46,18 @@ public class WebsitesForm implements ErrorsInterface, Serializable {
     public ResearcherUrls toResearcherUrls() {
         ResearcherUrls researcherUrls = new ResearcherUrls();
         List<ResearcherUrl> ruList = new ArrayList<ResearcherUrl>();
-        for (Website website : websites) {
+        for (WebsiteForm website : websites) {
             ruList.add(website.toResearcherUrl());
         }
         researcherUrls.setResearcherUrls(ruList);
         return researcherUrls;
     }
 
-    public List<Website> getWebsites() {
+    public List<WebsiteForm> getWebsites() {
         return websites;
     }
 
-    public void setWebsites(List<Website> websites) {
+    public void setWebsites(List<WebsiteForm> websites) {
         this.websites = websites;
     }
 

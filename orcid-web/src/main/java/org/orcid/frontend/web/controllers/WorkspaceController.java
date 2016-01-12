@@ -27,7 +27,6 @@ import java.util.TreeMap;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang.StringUtils;
 import org.jsoup.helper.StringUtil;
 import org.orcid.core.adapter.Jaxb2JpaAdapter;
 import org.orcid.core.adapter.Jpa2JaxbAdapter;
@@ -48,14 +47,13 @@ import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.RedirectUri;
 import org.orcid.jaxb.model.message.AffiliationType;
 import org.orcid.jaxb.model.message.ContributorRole;
-import org.orcid.jaxb.model.message.ExternalIdentifier;
-import org.orcid.jaxb.model.message.ExternalIdentifiers;
 import org.orcid.jaxb.model.message.FundingContributorRole;
 import org.orcid.jaxb.model.message.FundingType;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.SequenceType;
 import org.orcid.jaxb.model.message.Source;
 import org.orcid.jaxb.model.record_rc2.CitationType;
+import org.orcid.jaxb.model.record_rc2.ExternalIdentifiers;
 import org.orcid.jaxb.model.record_rc2.Keyword;
 import org.orcid.jaxb.model.record_rc2.Keywords;
 import org.orcid.jaxb.model.record_rc2.OtherName;
@@ -70,13 +68,15 @@ import org.orcid.jaxb.model.record_rc2.WorkType;
 import org.orcid.persistence.constants.SiteConstants;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ThirdPartyRedirect;
+import org.orcid.pojo.ajaxForm.ExternalIdentifierForm;
+import org.orcid.pojo.ajaxForm.ExternalIdentifiersForm;
 import org.orcid.pojo.ajaxForm.KeywordForm;
 import org.orcid.pojo.ajaxForm.KeywordsForm;
 import org.orcid.pojo.ajaxForm.OtherNameForm;
 import org.orcid.pojo.ajaxForm.OtherNamesForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Visibility;
-import org.orcid.pojo.ajaxForm.Website;
+import org.orcid.pojo.ajaxForm.WebsiteForm;
 import org.orcid.pojo.ajaxForm.WebsitesForm;
 import org.orcid.utils.FunctionsOverCollections;
 import org.springframework.stereotype.Controller;
@@ -475,7 +475,7 @@ public class WorkspaceController extends BaseWorkspaceController {
     public @ResponseBody
     WebsitesForm setWebsitesFormJson(HttpServletRequest request, @RequestBody WebsitesForm ws) throws NoSuchRequestHandlingMethodException {
         ws.setErrors(new ArrayList<String>());
-        for (Website w:ws.getWebsites()) {
+        for (WebsiteForm w:ws.getWebsites()) {
             //Clean old errors
             w.setErrors(new ArrayList<String>());
             
@@ -505,45 +505,29 @@ public class WorkspaceController extends BaseWorkspaceController {
         researcherUrlManager.updateResearcherUrls(getCurrentUserOrcid(), rUrls, org.orcid.jaxb.model.common.Visibility.fromValue(defaultVisibility.getVisibility().value()));
         return ws;
     }
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     
     /**
      * Retrieve all external identifiers as a json string
-     * */
-    @SuppressWarnings("unchecked")
+     * */    
     @RequestMapping(value = "/my-orcid/externalIdentifiers.json", method = RequestMethod.GET)
     public @ResponseBody
-    org.orcid.pojo.ExternalIdentifiers getExternalIdentifiersJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
-        OrcidProfile currentProfile = getEffectiveProfile();
-        org.orcid.pojo.ExternalIdentifiers externalIdentifiers = new org.orcid.pojo.ExternalIdentifiers();
-        externalIdentifiers.setExternalIdentifiers((List<org.orcid.pojo.ExternalIdentifier>) (Object) currentProfile.getOrcidBio().getExternalIdentifiers()
-                .getExternalIdentifier());
-        return externalIdentifiers;
+    ExternalIdentifiersForm getExternalIdentifiersJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
+        ExternalIdentifiers extIds = externalIdentifierManager.getExternalIdentifiersV2(getCurrentUserOrcid());        
+        return ExternalIdentifiersForm.valueOf(extIds);
     }
 
+    /**
+     * Updates the list of external identifiers assigned to a user
+     * */
+    @RequestMapping(value = "/my-orcid/externalIdentifiers.json", method = RequestMethod.DELETE)
+    public @ResponseBody
+    ExternalIdentifierForm removeExternalIdentifierJson(HttpServletRequest request, @RequestBody ExternalIdentifierForm externalIdentifier) {
+        if(externalIdentifier != null && externalIdentifier.getPutCode() != null) {
+            externalIdentifierManager.deleteExternalIdentifier(getCurrentUserOrcid(), Long.valueOf(externalIdentifier.getPutCode()), false);
+        }       
+        return externalIdentifier;
+    }
+    
     @RequestMapping(value = "/my-orcid/sourceGrantReadWizard.json", method = RequestMethod.GET)
     public @ResponseBody
     ThirdPartyRedirect getSourceGrantReadWizard() {
@@ -588,44 +572,5 @@ public class WorkspaceController extends BaseWorkspaceController {
             return true;
         }
         return false;
-    }
-
-    /**
-     * Updates the list of external identifiers assigned to a user
-     * */
-    @RequestMapping(value = "/my-orcid/externalIdentifiers.json", method = RequestMethod.DELETE)
-    public @ResponseBody
-    org.orcid.pojo.ExternalIdentifier removeExternalIdentifierJson(HttpServletRequest request, @RequestBody org.orcid.pojo.ExternalIdentifier externalIdentifier) {
-        List<String> errors = new ArrayList<String>();
-
-        // If the external identifier is blank, add an error
-        if (externalIdentifier.getExternalIdReference() == null || StringUtils.isBlank(externalIdentifier.getExternalIdReference().getContent())) {
-            errors.add(getMessage("ExternalIdentifier.externalIdReference"));
-        }
-        // Set errors to the external
-        externalIdentifier.setErrors(errors);
-
-        if (errors.isEmpty()) {
-            // Get cached profile
-            OrcidProfile currentProfile = getEffectiveProfile();
-            ExternalIdentifiers externalIdentifiers = currentProfile.getOrcidBio().getExternalIdentifiers();
-            List<ExternalIdentifier> externalIdentifiersList = externalIdentifiers.getExternalIdentifier();
-            Iterator<ExternalIdentifier> externalIdentifierIterator = externalIdentifiersList.iterator();
-            // Remove external identifier from the cached profile
-            while (externalIdentifierIterator.hasNext()) {
-                ExternalIdentifier existingExternalIdentifier = externalIdentifierIterator.next();
-                if (existingExternalIdentifier.equals(externalIdentifier)) {
-                    externalIdentifierIterator.remove();
-                }
-            }
-            // Update cached profile
-            currentProfile.getOrcidBio().setExternalIdentifiers(externalIdentifiers);
-            // Remove external identifier
-            //TODO!
-            //externalIdentifierManager.deleteExternalIdentifier(currentProfile.getOrcidIdentifier().getPath(), , false);
-        }
-
-        return externalIdentifier;
-    }
-
+    }    
 }
