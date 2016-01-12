@@ -374,7 +374,7 @@ public class ManageMembersControllerTest extends DBUnitTest {
         assertNotNull(client_0002);
         RedirectUri rUri = new RedirectUri();
         rUri.setType(Text.valueOf("default"));
-        rUri.setValue(Text.valueOf("1.com"));
+        rUri.setValue(Text.valueOf("http://1.com"));
         
         client_0002.getRedirectUris().add(rUri);
         
