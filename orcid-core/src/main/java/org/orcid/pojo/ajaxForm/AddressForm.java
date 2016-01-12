@@ -25,7 +25,7 @@ import org.orcid.jaxb.model.message.ContactDetails;
 import org.orcid.jaxb.model.message.OrcidBio;
 import org.orcid.jaxb.model.message.OrcidProfile;
 
-public class CountryForm implements ErrorsInterface, Serializable {
+public class AddressForm implements ErrorsInterface, Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -39,8 +39,8 @@ public class CountryForm implements ErrorsInterface, Serializable {
 
     private String countryName;
     
-    public static CountryForm valueOf(OrcidProfile op) {
-        CountryForm pf = new CountryForm();
+    public static AddressForm valueOf(OrcidProfile op) {
+        AddressForm pf = new AddressForm();
         pf.setProfileAddressVisibility(new Visibility()); // always start off with public
         if (op.getOrcidBio() != null) {
             OrcidBio ob = op.getOrcidBio();

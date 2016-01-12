@@ -92,7 +92,7 @@ import org.orcid.pojo.ManageDelegate;
 import org.orcid.pojo.ManageSocialAccount;
 import org.orcid.pojo.SecurityQuestion;
 import org.orcid.pojo.ajaxForm.BiographyForm;
-import org.orcid.pojo.ajaxForm.CountryForm;
+import org.orcid.pojo.ajaxForm.AddressForm;
 import org.orcid.pojo.ajaxForm.Emails;
 import org.orcid.pojo.ajaxForm.Errors;
 import org.orcid.pojo.ajaxForm.NamesForm;
@@ -820,9 +820,9 @@ public class ManageProfileController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = "/countryForm.json", method = RequestMethod.GET)
-    public @ResponseBody CountryForm getProfileCountryJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
+    public @ResponseBody AddressForm getProfileCountryJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
         OrcidProfile currentProfile = getEffectiveProfile();
-        CountryForm countryForm = CountryForm.valueOf(currentProfile);
+        AddressForm countryForm = AddressForm.valueOf(currentProfile);
         // Set country name
         if (countryForm != null && countryForm.getIso2Country() != null) {
             Map<String, String> countries = retrieveIsoCountries();
@@ -834,7 +834,7 @@ public class ManageProfileController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = "/countryForm.json", method = RequestMethod.POST)
-    public @ResponseBody CountryForm setProfileCountryJson(HttpServletRequest request, @RequestBody CountryForm countryForm) throws NoSuchRequestHandlingMethodException {
+    public @ResponseBody AddressForm setProfileCountryJson(HttpServletRequest request, @RequestBody AddressForm countryForm) throws NoSuchRequestHandlingMethodException {
         OrcidProfile currentProfile = getEffectiveProfile();
         countryForm.populateProfile(currentProfile);
         // only update entity attributes
