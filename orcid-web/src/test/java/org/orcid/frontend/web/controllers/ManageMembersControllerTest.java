@@ -323,7 +323,7 @@ public class ManageMembersControllerTest extends DBUnitTest {
         assertEquals("Client # 2", client_0002.getDisplayName().getValue());
         assertNotNull(client_0002.getRedirectUris());
         assertEquals(1, client_0002.getRedirectUris().size());
-        assertEquals("http://www.APP-0000000000000002.com/redirect/oauth", client_0002.getRedirectUris().get(0).getValue().getValue());
+        assertEquals("http://www.google.com/APP-0000000000000002/redirect/oauth", client_0002.getRedirectUris().get(0).getValue().getValue());
         
         //Client with redirect uri not default
         Client client_0003 = manageMembers.findClient("APP-0000000000000003");
@@ -334,12 +334,12 @@ public class ManageMembersControllerTest extends DBUnitTest {
         assertEquals(2, client_0003.getRedirectUris().size());
         
         RedirectUri rUri1 = client_0003.getRedirectUris().get(0);
-        if("http://www.APP-0000000000000003.com/redirect/oauth".equals(rUri1.getValue().getValue())) {
+        if("http://www.google.com/APP-0000000000000003/redirect/oauth".equals(rUri1.getValue().getValue())) {
             assertNotNull(rUri1.getType());
             assertEquals("default", rUri1.getType().getValue());
             assertNotNull(rUri1.getScopes());
             assertEquals(0, rUri1.getScopes().size());
-        } else if ("http://www.APP-0000000000000003.com/redirect/oauth/grant_read_wizard".equals(rUri1.getValue().getValue())) {
+        } else if ("http://www.google.com/APP-0000000000000003/redirect/oauth/grant_read_wizard".equals(rUri1.getValue().getValue())) {
             assertNotNull(rUri1.getType());
             assertEquals("grant-read-wizard", rUri1.getType().getValue());
             assertNotNull(rUri1.getScopes());
@@ -350,13 +350,13 @@ public class ManageMembersControllerTest extends DBUnitTest {
         }
         
         RedirectUri rUri2 = client_0003.getRedirectUris().get(1);
-        if("http://www.APP-0000000000000003.com/redirect/oauth".equals(rUri2.getValue().getValue())) {
+        if("http://www.google.com/APP-0000000000000003/redirect/oauth".equals(rUri2.getValue().getValue())) {
             assertNotNull(rUri2.getType());
             assertEquals("default", rUri2.getType().getValue());
             assertNotNull(rUri2.getScopes());
             assertEquals(1, rUri2.getScopes().size());
             assertEquals("", rUri2.getScopes().get(0));
-        } else if ("http://www.APP-0000000000000003.com/redirect/oauth/grant_read_wizard".equals(rUri2.getValue().getValue())) {
+        } else if ("http://www.google.com/APP-0000000000000003/redirect/oauth/grant_read_wizard".equals(rUri2.getValue().getValue())) {
             assertNotNull(rUri2.getType());
             assertEquals("grant-read-wizard", rUri2.getType().getValue());
             assertNotNull(rUri2.getScopes());
@@ -374,7 +374,7 @@ public class ManageMembersControllerTest extends DBUnitTest {
         assertNotNull(client_0002);
         RedirectUri rUri = new RedirectUri();
         rUri.setType(Text.valueOf("default"));
-        rUri.setValue(Text.valueOf("http://1.com"));
+        rUri.setValue(Text.valueOf("1.com"));
         
         client_0002.getRedirectUris().add(rUri);
         
