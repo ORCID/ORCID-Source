@@ -65,7 +65,7 @@ import com.sun.jersey.api.client.ClientResponse;
 @ContextConfiguration(locations = { "classpath:test-memberV2-context.xml" })
 public class BlackBoxBase {
 
-    @Value("${org.orcid.web.base.url:http://localhost:8080/orcid-web}")
+    @Value("${org.orcid.web.base.url:https://localhost:8443/orcid-web}")
     protected String webBaseUrl;
     @Value("${org.orcid.web.testClient1.redirectUri}")
     protected String client1RedirectUri;
@@ -159,7 +159,7 @@ public class BlackBoxBase {
 
         String userName = System.getProperty("org.orcid.web.testUser1.username");
         String password = System.getProperty("org.orcid.web.testUser1.password");
-        String baseUrl = "http://localhost:8080/orcid-web";
+        String baseUrl = "https://localhost:8443/orcid-web";
         if (!PojoUtil.isEmpty(System.getProperty("org.orcid.web.base.url"))) {
             baseUrl = System.getProperty("org.orcid.web.base.url");
         }
