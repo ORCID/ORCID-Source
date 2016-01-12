@@ -220,29 +220,29 @@
         	      		<div ng-repeat="keyword in keywordsForm.keywords">
         	      	  		<div class="icon-inside-input">
 	        	          		<input type="text" ng-model="keyword.value" ng-enter="setKeywordsForm()"></input>
-	        	          	<a ng-click="deleteKeyword(keyword)" class="glyphicon glyphicon-trash grey icon-inside"></a>
-        	          	</div>
-        	          	<span class="orcid-error" ng-show="keyword.url.errors.length > 0">
-					     	<div ng-repeat='error in keyword.url.errors' ng-bind-html="error"></div>
-				      	</span>
-				      
-        	          	<span class="orcid-error" ng-show="keyword.name.errors.length > 0">
-					     	<div ng-repeat='error in keyword.name.errors' ng-bind-html="error"></div>
-				      	</span>
-        	      	</div>
-        	      	<ul class="workspace-section-toolbar">
-        	      		<li>
-        	      			<a ng-click="addNew()"><span class="glyphicon glyphicon-plus"></span></a>
-        	      		</li>
-        	      		<li class="pull-right">
-        	      			<button class="btn btn-primary" ng-click="setKeywordsForm()"><@spring.message "freemarker.btnsavechanges"/></button>
-        	      		</li>
-        	      		<li class="pull-right">
-	        	      		<a class="cancel-option" ng-click="close()"><@spring.message "freemarker.btncancel"/></a>
-	        	      	</li>
-	        	   </ul>
-        	   </div>
-	       	</div>
+		        	          	<a ng-click="deleteKeyword(keyword)" class="glyphicon glyphicon-trash grey icon-inside"></a>
+	        	          	</div>
+	        	          	<span class="orcid-error" ng-show="keyword.url.errors.length > 0">
+						     	<div ng-repeat='error in keyword.url.errors' ng-bind-html="error"></div>
+					      	</span>
+					      
+	        	          	<span class="orcid-error" ng-show="keyword.name.errors.length > 0">
+						     	<div ng-repeat='error in keyword.name.errors' ng-bind-html="error"></div>
+					      	</span>
+	        	      	</div>
+	        	      	<ul class="workspace-section-toolbar">
+	        	      		<li>
+	        	      			<a ng-click="addNew()"><span class="glyphicon glyphicon-plus"></span></a>
+	        	      		</li>
+	        	      		<li class="pull-right">
+	        	      			<button class="btn btn-primary" ng-click="setKeywordsForm()"><@spring.message "freemarker.btnsavechanges"/></button>
+	        	      		</li>
+	        	      		<li class="pull-right">
+		        	      		<a class="cancel-option" ng-click="close()"><@spring.message "freemarker.btncancel"/></a>
+		        	      	</li>
+	        	   		</ul>
+        	   		</div>
+	       		</div>
 	       </#if>
 	       	
 	      	<!-- Websites  -->
