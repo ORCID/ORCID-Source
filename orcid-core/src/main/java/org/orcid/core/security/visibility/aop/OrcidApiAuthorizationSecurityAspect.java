@@ -273,6 +273,7 @@ public class OrcidApiAuthorizationSecurityAspect {
         case ORCID_PROFILE_READ_LIMITED:
         case ORCID_WORKS_READ_LIMITED:
         case ORCID_WORKS_UPDATE:
+        case READ_LIMITED:
             return true;
         default:
             return false;
