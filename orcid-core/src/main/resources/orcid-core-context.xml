@@ -67,8 +67,10 @@
 	
 	<bean id="orcidTokenEnhancer" class="org.orcid.core.oauth.OrcidTokenEnhancer" />
 	
+	<!-- 
 	<bean id="serviceAnnouncement_1_For_2015" class="org.orcid.core.profileEvent.ServiceAnnouncement_1_For_2015" scope="prototype" />	
-	
+	 -->
+	 
 	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
 		<property name="host" value="localhost" />
 	</bean>
@@ -368,6 +370,8 @@
 	
 	<bean id="personalDetailsManager" class="org.orcid.core.manager.impl.PersonalDetailsManagerImpl" />
 
+	<bean id="addressManager" class="org.orcid.core.manager.impl.AddressManagerImpl" />
+
 	<bean id="messageSource"
 		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
 		<property name="basenames" value="classpath:i18n/api,classpath:i18n/email,classpath:i18n/javascript,classpath:i18n/messages" />
@@ -389,6 +393,15 @@
 	        </list>
 	    </property>
 	</bean>
+	
+	<bean id="v2VersionConverterChain" class="org.orcid.core.version.impl.V2VersionConverterChainImpl">
+	    <property name="converters">
+            <list>
+	            <ref bean="versionConverterV2_0_rc1ToV2_0rc2" />
+	        </list>
+	    </property>
+	</bean>
+    <bean id="versionConverterV2_0_rc1ToV2_0rc2" class="org.orcid.core.version.impl.VersionConverterImplV2_0_rc1ToV2_0rc2"/>
 
 	<cache:annotation-driven cache-manager="springCoreCacheManager"/>
 	
@@ -594,15 +607,48 @@
         <property name="mapperFacade" ref="otherNameUrlMapperFacade" />
     </bean>
     
+    <bean id="externalIdentifierMapperFacade" factory-bean="&amp;mapperFacadeFactory" factory-method="getExternalIdentifierMapperFacade"/>
+	<bean id="jpaJaxbExternalIdentifierAdapter" class="org.orcid.core.adapter.impl.JpaJaxbExternalIdentifierAdapterImpl">
+        <property name="mapperFacade" ref="externalIdentifierMapperFacade" />
+    </bean>        
+    
+    <bean id="keywordMapperFacade" factory-bean="&amp;mapperFacadeFactory" factory-method="getKeywordMapperFacade"/>
+	<bean id="jpaJaxbKeywordAdapter" class="org.orcid.core.adapter.impl.JpaJaxbKeywordAdapterImpl">
+        <property name="mapperFacade" ref="keywordMapperFacade" />
+    </bean>
+        
+    <bean id="addressMapperFacade" factory-bean="&amp;mapperFacadeFactory" factory-method="getAddressMapperFacade"/>
+	<bean id="jpaJaxbAddressAdapter" class="org.orcid.core.adapter.impl.JpaJaxbAddressAdapterImpl">
+        <property name="mapperFacade" ref="addressMapperFacade" />
+    </bean>
+             
+	<bean id="givenPermissionToMapperFacade" factory-bean="&amp;mapperFacadeFactory" factory-method="getGivenPermissionToMapperFacade"/>
+	<bean id="jpaJaxbGivenPermissionToAdapter" class="org.orcid.core.adapter.impl.JpaJaxbGivenPermissionToAdapterImpl">
+        <property name="mapperFacade" ref="givenPermissionToMapperFacade" />
+    </bean>
+     
+    <bean id="givenPermissionByMapperFacade" factory-bean="&amp;mapperFacadeFactory" factory-method="getGivenPermissionByMapperFacade"/>
+	<bean id="jpaJaxbGivenPermissionByAdapter" class="org.orcid.core.adapter.impl.JpaJaxbGivenPermissionByAdapterImpl">
+        <property name="mapperFacade" ref="givenPermissionByMapperFacade" />
+    </bean>
+    
+    <bean id="v2VersionObjectFactory" class="org.orcid.core.version.impl.V2VersionObjectFactoryImpl" />
+            
     <!-- Geonames username -->
 	<bean id="geonamesUser" class="java.lang.String">
 		<constructor-arg value="orcid"/>
 	</bean>
-	
+	 
 	<!-- Geonames API -->
 	<bean id="geonamesApiUrl" class="java.lang.String">
 		<constructor-arg value="http://api.geonames.org/getJSON"/>
 	</bean>	
 	
-	<bean id="crossDomainWebManger" class="org.orcid.core.web.filters.CrossDomainWebManger" />		
+	<bean id="crossDomainWebManger" class="org.orcid.core.web.filters.CrossDomainWebManger" />
+	
+	<!-- Need to create a bean for this, so can access in Jersey filter -->
+	<bean id="v1xDisabled" class="java.lang.Boolean">
+		<constructor-arg value="${org.orcid.core.v1_x.disabled}"/>
+	</bean>
+
 </beans>

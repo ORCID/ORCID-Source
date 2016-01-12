@@ -117,6 +117,7 @@
 	<sec:http pattern="/not-found" security="none" />
 	<sec:http pattern="/favicon.ico" security="none" />
 	<sec:http pattern="/static/**" security="none" />
+	<sec:http path-type="regex" pattern="/(\d{4}-){3,}\d{3}[\dX](\?.*)?" security="none" create-session="stateless" />
 
     <!-- Authenticate the client before reaching the token endpoint -->
     <sec:http pattern="/oauth/token" create-session="stateless" authentication-manager-ref="clientAuthenticationManager">
@@ -172,6 +173,8 @@
 		<sec:csrf token-repository-ref="csrfTokenRepo"/>
 		<sec:intercept-url pattern="/shibboleth/signin(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/shibboleth/registerConfirm.json(\?.*)?"
+            access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/shibboleth/.*" access="ROLE_USER" />		
 		<sec:form-login login-processing-url="/shibboleth/signin/auth.json"
 			login-page="${org.orcid.core.baseUri}/shibboleth/signin" authentication-success-handler-ref="ajaxAuthenticationSuccessHandlerShibboleth"
@@ -213,8 +216,6 @@
 		<sec:intercept-url pattern="/notifications/frequencies/[^\/\?#:]*(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/notifications/frequencies/[^\/\?#:]*/email-frequencies.json(\?.*)?"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX](\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/public_widgets/(\d{4}-){3,}\d{3}[\dX]/(.*)/info.json(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />	

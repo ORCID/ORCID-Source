@@ -28,18 +28,19 @@ import org.orcid.core.exception.OrcidVisibilityException;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.security.visibility.filter.VisibilityFilterV2;
 import org.orcid.jaxb.model.common.Filterable;
-import org.orcid.jaxb.model.record.summary_rc1.ActivitiesSummary;
-import org.orcid.jaxb.model.record.summary_rc1.EducationSummary;
-import org.orcid.jaxb.model.record.summary_rc1.Educations;
-import org.orcid.jaxb.model.record.summary_rc1.EmploymentSummary;
-import org.orcid.jaxb.model.record.summary_rc1.Employments;
-import org.orcid.jaxb.model.record.summary_rc1.FundingGroup;
-import org.orcid.jaxb.model.record.summary_rc1.Fundings;
-import org.orcid.jaxb.model.record.summary_rc1.WorkGroup;
-import org.orcid.jaxb.model.record.summary_rc1.Works;
-import org.orcid.jaxb.model.record_rc1.Group;
-import org.orcid.jaxb.model.record_rc1.GroupableActivity;
+import org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary;
+import org.orcid.jaxb.model.record.summary_rc2.EducationSummary;
+import org.orcid.jaxb.model.record.summary_rc2.Educations;
+import org.orcid.jaxb.model.record.summary_rc2.EmploymentSummary;
+import org.orcid.jaxb.model.record.summary_rc2.Employments;
+import org.orcid.jaxb.model.record.summary_rc2.FundingGroup;
+import org.orcid.jaxb.model.record.summary_rc2.Fundings;
+import org.orcid.jaxb.model.record.summary_rc2.WorkGroup;
+import org.orcid.jaxb.model.record.summary_rc2.Works;
+import org.orcid.jaxb.model.record_rc2.Group;
+import org.orcid.jaxb.model.record_rc2.GroupableActivity;
 import org.orcid.jaxb.model.record_rc2.OtherName;
+import org.orcid.jaxb.model.record_rc2.Person;
 import org.orcid.jaxb.model.record_rc2.PersonalDetails;
 import org.springframework.stereotype.Component;
 
@@ -163,5 +164,48 @@ public class VisibilityFilterV2Impl implements VisibilityFilterV2 {
         }
         
         return personalDetails;
+    }
+
+    @Override
+    public Person filter(Person person) {
+        if(person.getAddresses() != null) {
+            filter(person.getAddresses().getAddress());
+        }
+        if(person.getEmails() != null) {
+            filter(person.getEmails().getEmails());
+        }
+        if(person.getExternalIdentifiers() != null) {
+            filter(person.getExternalIdentifiers().getExternalIdentifier());
+        }
+        if(person.getKeywords() != null) {
+            filter(person.getKeywords().getKeywords());
+        }
+        
+        if(person.getOtherNames() != null) {
+            filter(person.getOtherNames().getOtherNames());
+        }
+        
+        if(person.getResearcherUrls() != null) {
+            filter(person.getResearcherUrls().getResearcherUrls());
+        }        
+
+        // If it is private
+        try {
+            if (person.getBiography() != null) {
+                orcidSecurityManager.checkVisibility(person.getBiography());
+            }
+        } catch (OrcidVisibilityException | OrcidUnauthorizedException e) {
+            person.setBiography(null);
+        }
+
+        try {
+            if (person.getName() != null) {
+                orcidSecurityManager.checkVisibility(person.getName());
+            }
+        } catch (OrcidVisibilityException | OrcidUnauthorizedException e) {
+            person.setName(null);
+        }
+
+        return person;
     }
 }

@@ -30,7 +30,7 @@ import org.orcid.core.adapter.JpaJaxbEmailAdapter;
 import org.orcid.core.manager.EmailManager;
 import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.jaxb.model.message.Email;
-import org.orcid.jaxb.model.record_rc1.Emails;
+import org.orcid.jaxb.model.record_rc2.Emails;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -155,7 +155,7 @@ public class EmailManagerImpl implements EmailManager {
     public Emails getEmails(String orcid) {
         List<EmailEntity> entities = emailDao.findByOrcid(orcid);
         if(entities != null) {
-            List<org.orcid.jaxb.model.record_rc1.Email> emailList = jpaJaxbEmailAdapter.toEmailList(entities);
+            List<org.orcid.jaxb.model.record_rc2.Email> emailList = jpaJaxbEmailAdapter.toEmailList(entities);
             Emails emails = new Emails();
             emails.setEmails(emailList);
             return emails;
@@ -167,7 +167,7 @@ public class EmailManagerImpl implements EmailManager {
     public Emails getPublicEmails(String orcid) {
         List<EmailEntity> entities = emailDao.findByOrcid(orcid, Visibility.PUBLIC);
         if(entities != null) {            
-            List<org.orcid.jaxb.model.record_rc1.Email> emailList = jpaJaxbEmailAdapter.toEmailList(entities);
+            List<org.orcid.jaxb.model.record_rc2.Email> emailList = jpaJaxbEmailAdapter.toEmailList(entities);
             Emails emails = new Emails();
             emails.setEmails(emailList);
             return emails;

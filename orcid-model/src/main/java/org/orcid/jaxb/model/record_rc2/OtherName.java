@@ -33,11 +33,16 @@ import org.orcid.jaxb.model.common.LastModifiedDate;
 import org.orcid.jaxb.model.common.Source;
 import org.orcid.jaxb.model.common.Visibility;
 
+/**
+ * 
+ * @author Angel Montenegro
+ * 
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "content", "createdDate", "lastModifiedDate", "source" })
 @XmlRootElement(name = "other-name", namespace = "http://www.orcid.org/ns/other-name")
 public class OtherName implements Filterable, Serializable {
-    private static final long serialVersionUID = 1047027166285177589L;    
+    private static final long serialVersionUID = 1047027166285177589L;
     @XmlElement(name = "content", namespace = "http://www.orcid.org/ns/other-name")
     protected String content;
     @XmlElement(namespace = "http://www.orcid.org/ns/common")
@@ -144,11 +149,11 @@ public class OtherName implements Filterable, Serializable {
         return null;
     }
 
-	public String getContent() {
-		return content;
-	}
+    public String getContent() {
+        return content;
+    }
 
-	public void setContent(String content) {
-		this.content = content;
-	}    
+    public void setContent(String content) {
+        this.content = content;
+    }
 }

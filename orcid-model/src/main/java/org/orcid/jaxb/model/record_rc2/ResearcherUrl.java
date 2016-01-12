@@ -34,6 +34,11 @@ import org.orcid.jaxb.model.common.Source;
 import org.orcid.jaxb.model.common.Url;
 import org.orcid.jaxb.model.common.Visibility;
 
+/**
+ * 
+ * @author Angel Montenegro
+ * 
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "urlName", "url", "createdDate", "lastModifiedDate", "source" })
 @XmlRootElement(name = "researcher-url", namespace = "http://www.orcid.org/ns/researcher-url")

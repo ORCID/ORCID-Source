@@ -36,8 +36,8 @@ import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.notification.amended.AmendedSection;
 import org.orcid.jaxb.model.notification.permission.Item;
 import org.orcid.jaxb.model.notification.permission.ItemType;
-import org.orcid.jaxb.model.record.summary_rc1.FundingSummary;
-import org.orcid.jaxb.model.record_rc1.Funding;
+import org.orcid.jaxb.model.record.summary_rc2.FundingSummary;
+import org.orcid.jaxb.model.record_rc2.Funding;
 import org.orcid.persistence.dao.FundingSubTypeSolrDao;
 import org.orcid.persistence.dao.FundingSubTypeToIndexDao;
 import org.orcid.persistence.dao.ProfileDao;
@@ -356,7 +356,7 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
     @Transactional    
     public boolean checkSourceAndDelete(String orcid, Long fundingId) {
         ProfileFundingEntity pfe = profileFundingDao.getProfileFunding(orcid, fundingId);
-        orcidSecurityManager.checkSource(pfe.getSource());
+        orcidSecurityManager.checkSource(pfe.getSource());        
         Item item = createItem(pfe);
         boolean result = profileFundingDao.removeProfileFunding(orcid, fundingId);
         notificationManager.sendAmendEmail(orcid, AmendedSection.FUNDING, item);

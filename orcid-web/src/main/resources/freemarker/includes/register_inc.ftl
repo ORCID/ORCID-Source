@@ -17,7 +17,11 @@
 
 -->
 <#include "/common/browser-checks.ftl" />
-<div ng-controller="RegistrationCtrl" id="RegistrationCtr">
+<#if ((RequestParameters['linkRequest'])?? && (RequestParameters['firstName'])?? && (RequestParameters['lastName'])?? && (RequestParameters['emailId'])??)>
+	<div ng-controller="RegistrationCtrl" id="RegistrationCtr" ng-init="getRegister('${RequestParameters.firstName}', '${RequestParameters.lastName}', '${RequestParameters.emailId}')">
+<#else>
+	<div ng-controller="RegistrationCtrl" id="RegistrationCtr" ng-init="getRegister('', '', '')">
+</#if>
 <fn-form update-fn="postRegister()">
 	<!-- span class="orcid-error" ng-show="register.errors.length > 0">
 		<div ng-repeat='error in register.errors' ng-bind-html="error"></div>
@@ -144,7 +148,11 @@
         </div>
 	</div>   
     <div class="relative">
-          <button type="submit" tabindex="10" class="btn btn-primary" ng-click="postRegister()">${springMacroRequestContext.getMessage("header.register")}</button>
+    	<#if (RequestParameters['linkRequest'])??>
+			<button type="submit" tabindex="10" class="btn btn-primary" ng-click="postRegister('${RequestParameters.linkRequest}')">${springMacroRequestContext.getMessage("header.register")}</button>
+		<#else>
+			<button type="submit" tabindex="10" class="btn btn-primary" ng-click="postRegister(null)">${springMacroRequestContext.getMessage("header.register")}</button>
+		</#if>
     </div>  
 </fn-form>
 

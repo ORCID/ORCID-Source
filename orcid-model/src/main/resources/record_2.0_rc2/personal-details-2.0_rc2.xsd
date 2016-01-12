@@ -35,9 +35,8 @@
 
 	<xs:import namespace="http://www.orcid.org/ns/common"
 		schemaLocation="../common_2.0_rc2/common-2.0_rc2.xsd" />
-
 	<xs:import namespace="http://www.orcid.org/ns/other-name"
-		schemaLocation="../record_2.0_rc2/other-names-2.0_rc2.xsd" />
+		schemaLocation="../record_2.0_rc2/other-name-2.0_rc2.xsd" />
 
 	<xs:element name="personal-details">
 		<xs:annotation>
@@ -47,12 +46,12 @@
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref="personal-details:name" minOccurs="0"
-					maxOccurs="1" />
+				<xs:element name="name" type="personal-details:name"
+					minOccurs="0" maxOccurs="1" />
 				<xs:element ref="other-name:other-names" minOccurs="0"
 					maxOccurs="1" />
-				<xs:element ref="personal-details:biography" minOccurs="0"
-					maxOccurs="1" />
+				<xs:element name="biography" type="personal-details:biography"
+					minOccurs="0" maxOccurs="1" />
 			</xs:sequence>
 			<xs:attribute name="path" type="common:person-path" use="optional" />
 		</xs:complexType>
@@ -60,59 +59,100 @@
 
 	<xs:element name="name">
 		<xs:annotation>
+			<xs:documentation>Container for the
+				researcher or contributor name.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="personal-details:name" />
+			</xs:complexContent>			
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="credit-name">
+		<xs:annotation>
+			<xs:documentation>Container for the
+				researcher or contributor credit name.
+			</xs:documentation>
+		</xs:annotation>		
+		<xs:complexType>
+			<xs:simpleContent>
+				<xs:extension base="personal-details:credit-name" />
+			</xs:simpleContent>			
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="biography">
+		<xs:annotation>
+			<xs:documentation>Container for the
+				researcher or contributor biography.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:simpleContent>
+				<xs:extension base="personal-details:biography" />
+			</xs:simpleContent>			
+		</xs:complexType>
+	</xs:element>
+
+
+	<xs:complexType name="name">
+		<xs:annotation>
 			<xs:documentation>Container for the names of the
 				researcher or
 				contributor.
 			</xs:documentation>
 		</xs:annotation>
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element name="given-names" minOccurs="0" maxOccurs="1">
-					<xs:annotation>
-						<xs:documentation>The given (first and middle) name(s) of the
-							researcher or contributor.
-						</xs:documentation>
-					</xs:annotation>
-					<xs:complexType>
-						<xs:simpleContent>
-							<xs:extension base="common:non-empty-string" />
-						</xs:simpleContent>
-					</xs:complexType>
-				</xs:element>
-				<xs:element name="family-name" minOccurs="0" maxOccurs="1">
-					<xs:annotation>
-						<xs:documentation>The family (last) name of the researcher or
-							contributor. This element is optional, because some cultures only
-							use given names.
-						</xs:documentation>
-					</xs:annotation>
-					<xs:complexType>
-						<xs:simpleContent>
-							<xs:extension base="common:non-empty-string" />
-						</xs:simpleContent>
-					</xs:complexType>
-				</xs:element>
-				<xs:element name="credit-name" minOccurs="0" maxOccurs="1">
-					<xs:annotation>
-						<xs:documentation>The full name of the researcher or contributor
-							as it generally appears on their published works. (see element
-							for more details.) The visibility attribute (private, limited or
-							public) can be set at record creation, and indicates who can see
-							this section of information.
-						</xs:documentation>
-					</xs:annotation>
-					<xs:complexType>
-						<xs:simpleContent>
-							<xs:extension base="common:non-empty-string" />
-						</xs:simpleContent>
-					</xs:complexType>
-				</xs:element>
-			</xs:sequence>
-			<xs:attribute name="visibility" type="common:visibility" />
-		</xs:complexType>
-	</xs:element>
+		<xs:sequence>
+			<xs:element name="given-names" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The given (first and middle) name(s) of the
+						researcher or contributor.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="common:non-empty-string" />
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="family-name" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The family (last) name of the researcher or
+						contributor. This element is optional, because some cultures only
+						use given names.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="common:non-empty-string" />
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="credit-name" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The full name of the researcher or contributor
+						as
+						it generally appears on their published works. (see element
+						for
+						more details.) The visibility attribute (private, limited or
+						public) can be set at record creation, and indicates who can see
+						this section of information.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="personal-details:credit-name" />
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="visibility" type="common:visibility"  use="optional"/>
+		<xs:attribute name="path" type="common:person-path" use="optional" />
+	</xs:complexType>
 
-	<xs:element name="biography">
+	<xs:complexType name="biography">
 		<xs:annotation>
 			<xs:documentation>Description of the researcher's professional
 				career. The visibility attribute (private, limited or public) can be
@@ -120,12 +160,19 @@
 				information.
 			</xs:documentation>
 		</xs:annotation>
-		<xs:complexType>
-			<xs:simpleContent>
-				<xs:extension base="xs:string">
-					<xs:attribute name="visibility" type="common:visibility" />
-				</xs:extension>
-			</xs:simpleContent>
-		</xs:complexType>
-	</xs:element>
-</xs:schema>	
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="visibility" type="common:visibility" use="optional"/>
+				<xs:attribute name="path" type="common:person-path" use="optional" />
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+
+	<xs:complexType name="credit-name">
+		<xs:simpleContent>
+			<xs:extension base="common:non-empty-string">
+				<xs:attribute name="visibility" type="common:visibility"  use="optional"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+</xs:schema>

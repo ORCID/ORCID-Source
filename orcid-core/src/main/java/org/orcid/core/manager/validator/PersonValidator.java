@@ -22,6 +22,9 @@ import java.util.Map;
 import org.orcid.core.exception.InvalidPutCodeException;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.exception.PutCodeRequiredException;
+import org.orcid.jaxb.model.record_rc2.Address;
+import org.orcid.jaxb.model.record_rc2.ExternalIdentifier;
+import org.orcid.jaxb.model.record_rc2.Keyword;
 import org.orcid.jaxb.model.record_rc2.OtherName;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import org.orcid.persistence.constants.SiteConstants;
@@ -92,6 +95,114 @@ public class PersonValidator {
                 Map<String, String> params = new HashMap<String, String>();                
                 throw new PutCodeRequiredException(params);
             }
+        }
+    }
+    
+    public static void validateExternalIdentifier(ExternalIdentifier externalIdentifier, SourceEntity sourceEntity, boolean createFlag) {
+        //Validate common name not empty
+        if(PojoUtil.isEmpty(externalIdentifier.getCommonName())) {
+            String message = "Common name field must not be empty";
+            LOGGER.error(message);
+            throw new OrcidValidationException(message);
+        } else {
+            if(SiteConstants.MAX_LENGTH_255 < externalIdentifier.getCommonName().length()) {
+                String message = "Common name field must not be longer than " + SiteConstants.MAX_LENGTH_255 + " characters";
+                LOGGER.error(message);
+                throw new OrcidValidationException(message);
+            }
+        }
+                
+        //Validate reference not empty
+        if(PojoUtil.isEmpty(externalIdentifier.getReference())) {
+            String message = "Reference field must not be empty";
+            LOGGER.error(message);
+            throw new OrcidValidationException(message);
+        } else {
+            if(SiteConstants.MAX_LENGTH_255 < externalIdentifier.getReference().length()) {
+                String message = "Reference field must not be longer than " + SiteConstants.MAX_LENGTH_255 + " characters";
+                LOGGER.error(message);
+                throw new OrcidValidationException(message);
+            }
+        }
+        
+        //Validate url not empty        
+        if(PojoUtil.isEmpty(externalIdentifier.getUrl())) {
+            String message = "Reference field must not be empty";
+            LOGGER.error(message);
+            throw new OrcidValidationException(message);
+        } else {
+            if(SiteConstants.URL_MAX_LENGTH < externalIdentifier.getUrl().getValue().length()) {
+                String message = "Url must not be longer than " + SiteConstants.URL_MAX_LENGTH + " characters";
+                LOGGER.error(message);
+                throw new OrcidValidationException(message);
+            }
+        }
+        
+        if(createFlag) {
+            if(externalIdentifier.getPutCode() != null) {
+                Map<String, String> params = new HashMap<String, String>();
+                if (sourceEntity != null) {
+                    params.put("clientName", sourceEntity.getSourceName());
+                }
+                throw new InvalidPutCodeException(params);
+            }                        
+        } else {
+            if(externalIdentifier.getPutCode() == null) {
+                Map<String, String> params = new HashMap<String, String>();                
+                throw new PutCodeRequiredException(params);
+            }
+        }
+    }
+    
+    public static void validateKeyword(Keyword keyword, SourceEntity sourceEntity, boolean createFlag) {
+        if(createFlag) {
+            if(keyword.getPutCode() != null) {
+                Map<String, String> params = new HashMap<String, String>();
+                if (sourceEntity != null) {
+                    params.put("clientName", sourceEntity.getSourceName());
+                }
+                throw new InvalidPutCodeException(params);
+            }                        
+        } else {
+            if(keyword.getPutCode() == null) {
+                Map<String, String> params = new HashMap<String, String>();                
+                throw new PutCodeRequiredException(params);
+            }
+        }
+        
+        if(PojoUtil.isEmpty(keyword.getContent())) {
+            String message = "Keyword cannot be null";
+            LOGGER.error(message);
+            throw new OrcidValidationException(message);
+        }
+    }
+    
+    public static void validateAddress(Address address, SourceEntity sourceEntity, boolean createFlag) {
+        if(createFlag) {
+            if(address.getPutCode() != null) {
+                Map<String, String> params = new HashMap<String, String>();
+                if (sourceEntity != null) {
+                    params.put("clientName", sourceEntity.getSourceName());
+                }
+                throw new InvalidPutCodeException(params);
+            }                        
+        } else {
+            if(address.getPutCode() == null) {
+                Map<String, String> params = new HashMap<String, String>();                
+                throw new PutCodeRequiredException(params);
+            }
+        }
+        
+        if(address.getCountry() == null || address.getCountry().getValue() == null) {
+            String message = "Country cannot be null";
+            LOGGER.error(message);
+            throw new OrcidValidationException(message);
+        }
+        
+        if(address.getVisibility() == null) {
+            String message = "Visibility cannot be null";
+            LOGGER.error(message);
+            throw new OrcidValidationException(message);
         }
     }
 

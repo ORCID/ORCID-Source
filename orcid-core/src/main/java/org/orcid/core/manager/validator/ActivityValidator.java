@@ -22,22 +22,23 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.exception.ActivityIdentifierValidationException;
 import org.orcid.core.exception.ActivityTitleValidationException;
+import org.orcid.core.exception.ActivityTypeValidationException;
 import org.orcid.core.exception.InvalidPutCodeException;
 import org.orcid.core.exception.OrcidDuplicatedActivityException;
 import org.orcid.jaxb.model.common.Source;
 import org.orcid.jaxb.model.groupid.GroupIdRecord;
-import org.orcid.jaxb.model.record_rc1.Education;
-import org.orcid.jaxb.model.record_rc1.Employment;
-import org.orcid.jaxb.model.record_rc1.Funding;
-import org.orcid.jaxb.model.record_rc1.FundingExternalIdentifier;
-import org.orcid.jaxb.model.record_rc1.FundingExternalIdentifiers;
-import org.orcid.jaxb.model.record_rc1.FundingTitle;
-import org.orcid.jaxb.model.record_rc1.PeerReview;
-import org.orcid.jaxb.model.record_rc1.Relationship;
-import org.orcid.jaxb.model.record_rc1.Work;
-import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifier;
-import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifiers;
-import org.orcid.jaxb.model.record_rc1.WorkTitle;
+import org.orcid.jaxb.model.record_rc2.Education;
+import org.orcid.jaxb.model.record_rc2.Employment;
+import org.orcid.jaxb.model.record_rc2.Funding;
+import org.orcid.jaxb.model.record_rc2.FundingExternalIdentifier;
+import org.orcid.jaxb.model.record_rc2.FundingExternalIdentifiers;
+import org.orcid.jaxb.model.record_rc2.FundingTitle;
+import org.orcid.jaxb.model.record_rc2.PeerReview;
+import org.orcid.jaxb.model.record_rc2.Relationship;
+import org.orcid.jaxb.model.record_rc2.Work;
+import org.orcid.jaxb.model.record_rc2.WorkExternalIdentifier;
+import org.orcid.jaxb.model.record_rc2.WorkExternalIdentifiers;
+import org.orcid.jaxb.model.record_rc2.WorkTitle;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 
 public class ActivityValidator {
@@ -111,6 +112,10 @@ public class ActivityValidator {
             Map<String, String> params = new HashMap<String, String>();
             params.put("clientName", sourceEntity.getSourceName());
             throw new InvalidPutCodeException(params);
+        }
+        
+        if(peerReview.getType() == null) {
+            throw new ActivityTypeValidationException();
         }
     }
 

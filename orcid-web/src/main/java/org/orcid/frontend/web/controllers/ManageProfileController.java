@@ -34,6 +34,7 @@ import javax.validation.Valid;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.jetty.util.ajax.JSON;
+import org.orcid.core.manager.AddressManager;
 import org.orcid.core.manager.AdminManager;
 import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.EncryptionManager;
@@ -48,10 +49,13 @@ import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileKeywordManager;
 import org.orcid.core.manager.ResearcherUrlManager;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
+import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.frontend.web.forms.ChangePersonalInfoForm;
 import org.orcid.frontend.web.forms.ChangeSecurityQuestionForm;
 import org.orcid.frontend.web.forms.ManagePasswordOptionsForm;
 import org.orcid.frontend.web.forms.PreferencesForm;
+import org.orcid.jaxb.model.common.Country;
+import org.orcid.jaxb.model.common.Iso3166Country;
 import org.orcid.jaxb.model.message.ApprovalDate;
 import org.orcid.jaxb.model.message.CreditName;
 import org.orcid.jaxb.model.message.DelegateSummary;
@@ -73,6 +77,7 @@ import org.orcid.jaxb.model.message.Url;
 import org.orcid.jaxb.model.message.UrlName;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
+import org.orcid.jaxb.model.record_rc2.Address;
 import org.orcid.jaxb.model.record_rc2.PersonalDetails;
 import org.orcid.password.constants.OrcidPasswordConstants;
 import org.orcid.persistence.dao.EmailDao;
@@ -96,6 +101,7 @@ import org.orcid.pojo.ajaxForm.CountryForm;
 import org.orcid.pojo.ajaxForm.Emails;
 import org.orcid.pojo.ajaxForm.Errors;
 import org.orcid.pojo.ajaxForm.NamesForm;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.utils.DateUtils;
 import org.springframework.stereotype.Controller;
@@ -180,6 +186,9 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     @Resource
     OrcidSecurityManager orcidSecurityManager;
+    
+    @Resource
+    private AddressManager addressManager;
 
     public EncryptionManager getEncryptionManager() {
         return encryptionManager;
@@ -835,6 +844,32 @@ public class ManageProfileController extends BaseWorkspaceController {
         countryForm.populateProfile(currentProfile);
         // only update entity attributes
         orcidProfileManager.updateCountry(currentProfile);
+        
+        // Update also the address table
+        Address address = addressManager.getPrimaryAddress(getCurrentUserOrcid());
+        if(address == null) {            
+            address = new Address();
+            //Assume the direction is primary if it is added or updated from UI
+            address.setPrimary(true);
+            Country country = new Country();
+            country.setValue(Iso3166Country.fromValue(countryForm.getIso2Country().getValue().value()));
+            Visibility v = countryForm.getProfileAddressVisibility() == null ? null : countryForm.getProfileAddressVisibility().getVisibility(); 
+            if(v == null) {
+                v = OrcidVisibilityDefaults.COUNTRY_DEFAULT.getVisibility();
+            }
+            address.setCountry(country);
+            address.setVisibility(org.orcid.jaxb.model.common.Visibility.fromValue(v.value()));
+            addressManager.createAddress(getCurrentUserOrcid(), address);
+        } else {
+            address.getCountry().setValue(Iso3166Country.fromValue(countryForm.getIso2Country().getValue().value()));
+            Visibility v = countryForm.getProfileAddressVisibility() == null ? null : countryForm.getProfileAddressVisibility().getVisibility(); 
+            if(v == null) {
+                v = OrcidVisibilityDefaults.COUNTRY_DEFAULT.getVisibility();
+            }
+            address.setVisibility(org.orcid.jaxb.model.common.Visibility.fromValue(v.value()));
+            addressManager.updateAddress(getCurrentUserOrcid(), address.getPutCode(), address, false);
+        }                        
+        
         countryForm.setCountryName(getCountryName(currentProfile));
         return countryForm;
     }
@@ -861,22 +896,24 @@ public class ManageProfileController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = "/biographyForm.json", method = RequestMethod.GET)
-    public @ResponseBody BiographyForm getBiographyForm(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
+    public @ResponseBody BiographyForm getBiographyForm() {
         OrcidProfile currentProfile = getEffectiveProfile();
         BiographyForm bf = BiographyForm.valueOf(currentProfile);
         return bf;
     }
 
     @RequestMapping(value = "/biographyForm.json", method = RequestMethod.POST)
-    public @ResponseBody BiographyForm setBiographyFormJson(HttpServletRequest request, @RequestBody BiographyForm bf) throws NoSuchRequestHandlingMethodException {
+    public @ResponseBody BiographyForm setBiographyFormJson(@RequestBody BiographyForm bf) {
         bf.setErrors(new ArrayList<String>());
-        validateBiography(bf.getBiography());
-        copyErrors(bf.getBiography(), bf);
-        if (bf.getErrors().size() > 0)
-            return bf;
-        OrcidProfile currentProfile = getEffectiveProfile();
-        bf.populateProfile(currentProfile);
-        orcidProfileManager.updateBiography(currentProfile);
+        if (!PojoUtil.isEmpty(bf.getBiography())) {
+            validateBiography(bf.getBiography());
+            copyErrors(bf.getBiography(), bf);
+            if (bf.getErrors().size() > 0)
+                return bf;
+            OrcidProfile currentProfile = getEffectiveProfile();
+            bf.populateProfile(currentProfile);
+            orcidProfileManager.updateBiography(currentProfile);
+        }
         return bf;
     }
 

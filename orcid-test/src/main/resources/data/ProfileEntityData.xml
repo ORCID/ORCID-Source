@@ -88,7 +88,8 @@
             biography="Michael Bentine CBE (26 January 1922[1] – 26 November 1996[2]) was a British comedian, comic actor and founding member of the Goons."
             indexing_status="DONE"
             orcid_type="USER"
-            reviewed="true"     
+            reviewed="true"
+            names_visibility="PUBLIC"     
             />
 
     <profile
@@ -445,19 +446,75 @@
             />
 
     <external_identifier
+    		id="1"
             external_id_reference="d3clan"
             external_id_type="Facebook"
             orcid="4444-4444-4444-4443"
             external_id_url="http://www.facebook.com/d3clan"
             source_id="4444-4444-4444-4441"
+            visibility="PUBLIC"
+            date_created="2011-06-29 15:31:00.00"            
+            last_modified="2011-07-02 15:31:00.00"
             />
 
     <external_identifier
+    		id="2"
             external_id_reference="abc123"
             external_id_type="Facebook"
             orcid="4444-4444-4444-4442"
             external_id_url="http://www.facebook.com/abc123"
+            client_source_id="APP-5555555555555555"
+            visibility="PUBLIC"
+            date_created="2011-06-29 15:31:00.00"            
+            last_modified="2011-07-02 15:31:00.00"
+            />
+
+	<external_identifier
+			id="3"
+            external_id_reference="abc456"
+            external_id_type="Facebook"
+            orcid="4444-4444-4444-4442"
+            external_id_url="http://www.facebook.com/abc456"
+            source_id="4444-4444-4444-4442"
+            visibility="LIMITED"
+            date_created="2011-06-29 15:31:00.00"            
+            last_modified="2011-07-02 15:31:00.00"
+            />
+
+	<external_identifier
+			id="4"
+            external_id_reference="abc789"
+            external_id_type="Facebook"
+            orcid="4444-4444-4444-4442"
+            external_id_url="http://www.facebook.com/abc789"
             source_id="4444-4444-4444-4441"
+            visibility="PRIVATE"
+            date_created="2011-06-29 15:31:00.00"            
+            last_modified="2011-07-02 15:31:00.00"
+            />
+
+	<external_identifier
+			id="5"
+            external_id_reference="abc012"
+            external_id_type="Facebook"
+            orcid="4444-4444-4444-4442"
+            external_id_url="http://www.facebook.com/abc012"
+            client_source_id="APP-5555555555555555"
+            visibility="PRIVATE"
+            date_created="2011-06-29 15:31:00.00"            
+            last_modified="2011-07-02 15:31:00.00"
+            />
+
+	<external_identifier
+			id="6"
+            external_id_reference="xyz012"
+            external_id_type="Google"
+            orcid="4444-4444-4444-4444"
+            external_id_url="http://www.google.com/xyz012"
+            client_source_id="APP-5555555555555555"
+            visibility="PUBLIC"
+            date_created="2011-06-29 15:31:00.00"            
+            last_modified="2011-07-02 15:31:00.00"
             />
 
     <researcher_url
@@ -547,44 +604,226 @@
             date_created="2011-06-29 15:31:00.00"
             />	
 
+	<researcher_url
+            id="9"
+            url="http://www.researcherurl.com?id=9"
+            url_name="1"
+            orcid="4444-4444-4444-4442"
+            source_id="4444-4444-4444-4442"
+            visibility="PUBLIC"
+            last_modified="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
+            />	
+
+	<researcher_url
+            id="10"
+            url="http://www.researcherurl.com?id=10"
+            url_name="2"
+            orcid="4444-4444-4444-4442"
+            source_id="4444-4444-4444-4442"
+            visibility="LIMITED"
+            last_modified="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
+            />
+
+	<researcher_url
+            id="11"
+            url="http://www.researcherurl.com?id=11"
+            url_name="3"
+            orcid="4444-4444-4444-4442"
+            source_id="4444-4444-4444-4442"
+            visibility="PRIVATE"
+            last_modified="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
+            />
+
+	<researcher_url
+            id="12"
+            url="http://www.researcherurl.com?id=12"
+            url_name="4"
+            orcid="4444-4444-4444-4442"
+            client_source_id="APP-5555555555555555"
+            visibility="PRIVATE"
+            last_modified="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
+            />
+
     <other_name
             other_name_id="1"
             display_name="Slibberdy Slabinah"
             orcid="4444-4444-4444-4443"
             visibility="PUBLIC"
+            client_source_id="APP-5555555555555555"
+            last_modified="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
             />
 
     <other_name
             other_name_id="2"
             display_name="Flibberdy Flabinah"
             orcid="4444-4444-4444-4443"
-            visibility="LIMITED"
+            visibility="PUBLIC"
+            source_id="4444-4444-4444-4443"
+            last_modified="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
             />
 
     <other_name
             other_name_id="3"
             display_name="Flobberdy Flip"
-            orcid="4444-4444-4444-4446"
+            orcid="4444-4444-4444-4441"
             visibility="PUBLIC"
+            source_id="4444-4444-4444-4441"
+            last_modified="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
             />
 	
 	<other_name
             other_name_id="4"
-            display_name="Other Name"
-            orcid="4444-4444-4444-4441"
+            display_name="Other Name # 1"
+            orcid="4444-4444-4444-4446"
             visibility="PUBLIC"
+            client_source_id="APP-5555555555555555"
+            last_modified="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
             />
 
+	<other_name
+            other_name_id="5"
+            display_name="Other Name # 2"
+            orcid="4444-4444-4444-4446"
+            visibility="LIMITED"
+            source_id="4444-4444-4444-4446"
+            last_modified="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
+            />
+
+	<other_name
+            other_name_id="6"
+            display_name="Other Name # 3"
+            orcid="4444-4444-4444-4446"
+            visibility="PRIVATE"
+            source_id="4444-4444-4444-4446"
+            last_modified="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
+            />
+
+	<other_name
+            other_name_id="7"
+            display_name="Other Name # 4"
+            orcid="4444-4444-4444-4446"
+            visibility="PRIVATE"            
+            client_source_id="APP-5555555555555555"
+            last_modified="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
+            />
+
+	<other_name
+            other_name_id="8"
+            display_name="Other Name # 1"
+            orcid="4444-4444-4444-4447"
+            visibility="PUBLIC"            
+            client_source_id="APP-5555555555555555"
+            last_modified="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
+            />
+
+	<other_name
+            other_name_id="9"
+            display_name="Other Name # 1"
+            orcid="4444-4444-4444-4442"
+            visibility="PUBLIC"            
+            client_source_id="APP-5555555555555555"
+            last_modified="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
+            />
+
+	<other_name
+            other_name_id="10"
+            display_name="Other Name # 2"
+            orcid="4444-4444-4444-4442"
+            visibility="PRIVATE"            
+            client_source_id="APP-5555555555555555"
+            last_modified="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
+            />
+
+	<other_name
+            other_name_id="11"
+            display_name="Other Name # 3"
+            orcid="4444-4444-4444-4442"
+            visibility="PRIVATE"            
+            source_id="4444-4444-4444-4442"
+            last_modified="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
+            />
+
+	<address
+            id="1"            
+            iso2_country="US"
+            orcid="4444-4444-4444-4442"
+            visibility="PUBLIC"   
+            is_primary="true"         
+            client_source_id="APP-5555555555555555"
+            last_modified="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
+            />
+
+	<address
+            id="2"            
+            iso2_country="US"
+            orcid="4444-4444-4444-4447"
+            visibility="PUBLIC"
+            is_primary="true"            
+            source_id="4444-4444-4444-4447"
+            last_modified="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
+            />
+
+	<address
+            id="3"            
+            iso2_country="CR"
+            orcid="4444-4444-4444-4447"
+            visibility="LIMITED"
+            is_primary="false"            
+            client_source_id="APP-5555555555555555"
+            last_modified="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
+            />
+        
     <address
-            id="1"
-            address_line_1="Address 1"
-            address_line_2="Address 2"
-            city="A City"
-            postal_code="BN3 1LK"
-            state_or_province="East Sussex"
-            country="England"
+            id="4"            
+            iso2_country="CR"
+            orcid="4444-4444-4444-4447"
+            visibility="PRIVATE"
+            is_primary="false"            
+            client_source_id="APP-5555555555555555"
+            last_modified="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
             />
-
+    
+    <address
+            id="5"            
+            iso2_country="GB"
+            orcid="4444-4444-4444-4447"
+            visibility="PRIVATE"
+            is_primary="false"            
+            source_id="4444-4444-4444-4447"
+            last_modified="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
+            />
+    
+    <address
+            id="6"            
+            iso2_country="GB"
+            orcid="4444-4444-4444-4499"
+            visibility="PRIVATE"
+            is_primary="false"            
+            client_source_id="APP-5555555555555555"
+            last_modified="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
+            />
+    
     <given_permission_to
             given_permission_to_id="1"
             giver_orcid="4444-4444-4444-4441"
@@ -656,8 +895,10 @@
         is_primary="true"
         is_current="true"
         is_verified="true"
-        visibility="PRIVATE"
+        visibility="LIMITED"
         source_id="4444-4444-4444-4442"
+        last_modified="2011-07-02 15:31:00.00"
+		date_created="2011-06-29 15:31:00.00"
     />
     
     <email
@@ -802,21 +1043,81 @@
     />        
       
     <profile_keyword 
+    	id="1"            
         profile_orcid="4444-4444-4444-4443"
         keywords_name="tea making"
+        visibility="PUBLIC"            
+        client_source_id="APP-5555555555555555"
+        last_modified="2011-07-02 15:31:00.00"
+		date_created="2011-06-29 15:31:00.00"
     />
-     <profile_keyword 
+     <profile_keyword
+     	id="2" 
         profile_orcid="4444-4444-4444-4443"
         keywords_name="coffee making"
+        visibility="LIMITED"            
+        source_id="4444-4444-4444-4443"
+        last_modified="2011-07-02 15:31:00.00"
+		date_created="2011-06-29 15:31:00.00"
+    />
+    
+    <profile_keyword
+    	id="3" 
+        profile_orcid="4444-4444-4444-4443"
+        keywords_name="chocolat making"
+        visibility="PRIVATE"            
+        source_id="4444-4444-4444-4443"
+        last_modified="2011-07-02 15:31:00.00"
+		date_created="2011-06-29 15:31:00.00"
+    />
+    
+    <profile_keyword
+    	id="4" 
+        profile_orcid="4444-4444-4444-4443"
+        keywords_name="what else can we make?"
+        visibility="PRIVATE"                    
+        client_source_id="APP-5555555555555555"
+        last_modified="2011-07-02 15:31:00.00"
+		date_created="2011-06-29 15:31:00.00"
+    />
+    
+    <profile_keyword
+    	id="5" 
+        profile_orcid="4444-4444-4444-4441"
+        keywords_name="key 1"
+        visibility="PUBLIC"            
+        client_source_id="APP-5555555555555555"
+        last_modified="2011-07-02 15:31:00.00"
+		date_created="2011-06-29 15:31:00.00"
+    />
+    <profile_keyword 
+    	id="6"
+        profile_orcid="4444-4444-4444-4441"
+        keywords_name="key 2"
+        visibility="PUBLIC"            
+        client_source_id="APP-5555555555555555"
+        last_modified="2011-07-02 15:31:00.00"
+		date_created="2011-06-29 15:31:00.00"
     />
     
     <profile_keyword 
-        profile_orcid="4444-4444-4444-4441"
-        keywords_name="key 1"
+    	id="7"
+        profile_orcid="4444-4444-4444-4442"
+        keywords_name="My keyword"
+        visibility="PUBLIC"            
+        client_source_id="APP-5555555555555555"
+        last_modified="2011-07-02 15:31:00.00"
+		date_created="2011-06-29 15:31:00.00"
     />
+    
     <profile_keyword 
-        profile_orcid="4444-4444-4444-4441"
-        keywords_name="key 2"
+    	id="8"
+        profile_orcid="4444-4444-4444-4499"
+        keywords_name="My keyword"
+        visibility="PUBLIC"            
+        client_source_id="APP-5555555555555555"
+        last_modified="2011-07-02 15:31:00.00"
+		date_created="2011-06-29 15:31:00.00"
     />
     
 </dataset>

@@ -17,24 +17,26 @@
 package org.orcid.api.common.util;
 
 import org.orcid.core.api.OrcidApiConstants;
-import org.orcid.jaxb.model.record.summary_rc1.ActivitiesSummary;
-import org.orcid.jaxb.model.record.summary_rc1.EducationSummary;
-import org.orcid.jaxb.model.record.summary_rc1.Educations;
-import org.orcid.jaxb.model.record.summary_rc1.EmploymentSummary;
-import org.orcid.jaxb.model.record.summary_rc1.Employments;
-import org.orcid.jaxb.model.record.summary_rc1.FundingGroup;
-import org.orcid.jaxb.model.record.summary_rc1.FundingSummary;
-import org.orcid.jaxb.model.record.summary_rc1.Fundings;
-import org.orcid.jaxb.model.record.summary_rc1.PeerReviewSummary;
-import org.orcid.jaxb.model.record.summary_rc1.WorkGroup;
-import org.orcid.jaxb.model.record.summary_rc1.WorkSummary;
-import org.orcid.jaxb.model.record.summary_rc1.Works;
-import org.orcid.jaxb.model.record_rc1.Activity;
-import org.orcid.jaxb.model.record_rc1.Education;
-import org.orcid.jaxb.model.record_rc1.Employment;
-import org.orcid.jaxb.model.record_rc1.Funding;
-import org.orcid.jaxb.model.record_rc1.PeerReview;
-import org.orcid.jaxb.model.record_rc1.Work;
+import org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary;
+import org.orcid.jaxb.model.record.summary_rc2.EducationSummary;
+import org.orcid.jaxb.model.record.summary_rc2.Educations;
+import org.orcid.jaxb.model.record.summary_rc2.EmploymentSummary;
+import org.orcid.jaxb.model.record.summary_rc2.Employments;
+import org.orcid.jaxb.model.record.summary_rc2.FundingGroup;
+import org.orcid.jaxb.model.record.summary_rc2.FundingSummary;
+import org.orcid.jaxb.model.record.summary_rc2.Fundings;
+import org.orcid.jaxb.model.record.summary_rc2.PeerReviewGroup;
+import org.orcid.jaxb.model.record.summary_rc2.PeerReviewSummary;
+import org.orcid.jaxb.model.record.summary_rc2.PeerReviews;
+import org.orcid.jaxb.model.record.summary_rc2.WorkGroup;
+import org.orcid.jaxb.model.record.summary_rc2.WorkSummary;
+import org.orcid.jaxb.model.record.summary_rc2.Works;
+import org.orcid.jaxb.model.record_rc2.Activity;
+import org.orcid.jaxb.model.record_rc2.Education;
+import org.orcid.jaxb.model.record_rc2.Employment;
+import org.orcid.jaxb.model.record_rc2.Funding;
+import org.orcid.jaxb.model.record_rc2.PeerReview;
+import org.orcid.jaxb.model.record_rc2.Work;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 
 public class ActivityUtils {
@@ -80,6 +82,7 @@ public class ActivityUtils {
         Employments employments = activitiesSummary.getEmployments();
         Fundings fundings = activitiesSummary.getFundings();
         Works works = activitiesSummary.getWorks();
+        PeerReviews peerReviews = activitiesSummary.getPeerReviews();
 
         if (educations != null && !educations.getSummaries().isEmpty()) {
             for (EducationSummary summary : educations.getSummaries()) {
@@ -107,6 +110,16 @@ public class ActivityUtils {
             for (WorkGroup group : works.getWorkGroup()) {
                 if (!group.getWorkSummary().isEmpty()) {
                     for (WorkSummary summary : group.getWorkSummary()) {
+                        ActivityUtils.setPathToActivity(summary, orcid);
+                    }
+                }
+            }
+        }
+        
+        if(!peerReviews.getPeerReviewGroup().isEmpty()) {
+            for(PeerReviewGroup group : peerReviews.getPeerReviewGroup()) {
+                if(!group.getPeerReviewSummary().isEmpty()) {
+                    for(PeerReviewSummary summary : group.getPeerReviewSummary()) {
                         ActivityUtils.setPathToActivity(summary, orcid);
                     }
                 }

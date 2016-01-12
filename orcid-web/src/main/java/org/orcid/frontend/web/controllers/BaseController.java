@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -79,6 +80,8 @@ import org.springframework.security.web.authentication.logout.SecurityContextLog
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
+import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
+import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -139,7 +142,7 @@ public class BaseController {
 
     @Resource
     protected SourceManager sourceManager;
-    
+
     @Resource
     protected OrcidSecurityManager orcidSecurityManager;
 
@@ -333,7 +336,8 @@ public class BaseController {
                             // remove the token and the cookie
                             @SuppressWarnings("unchecked")
                             HashMap<String, String> cookieValues = JsonUtils.readObjectFromJsonString(cookie.getValue(), HashMap.class);
-                            if (cookieValues.containsKey(InternalSSOManager.COOKIE_KEY_ORCID) && !PojoUtil.isEmpty(cookieValues.get(InternalSSOManager.COOKIE_KEY_ORCID))) {
+                            if (cookieValues.containsKey(InternalSSOManager.COOKIE_KEY_ORCID)
+                                    && !PojoUtil.isEmpty(cookieValues.get(InternalSSOManager.COOKIE_KEY_ORCID))) {
                                 internalSSOManager.deleteToken(cookieValues.get(InternalSSOManager.COOKIE_KEY_ORCID), request, response);
                             } else {
                                 // If it is not valid, just remove the cookie
@@ -406,9 +410,9 @@ public class BaseController {
     public boolean isDelegatedByAdmin() {
         return sourceManager.isDelegatedByAnAdmin();
     }
-    
+
     @ModelAttribute("isPasswordConfirmationRequired")
-    public boolean isPasswordConfirmationRequired(){
+    public boolean isPasswordConfirmationRequired() {
         return orcidSecurityManager.isPasswordConfirmationRequired();
     }
 
@@ -483,7 +487,7 @@ public class BaseController {
      *            The string to evaluate
      * @return true if the provided string matches an email address pattern,
      *         false otherwise.
-     * */
+     */
     protected boolean validateEmailAddress(String email) {
         if (StringUtils.isNotBlank(email)) {
             try {
@@ -569,7 +573,7 @@ public class BaseController {
      * 
      * CDN Configuration
      * 
-     * */
+     */
     public String getCdnConfigFile() {
         return this.cdnConfigFile;
     }
@@ -580,13 +584,17 @@ public class BaseController {
 
     /**
      * @return the path to the static content on local project
-     * */
+     */
     @ModelAttribute("staticLoc")
-    public String getStaticContentPath() {
+    public String getStaticContentPath(HttpServletRequest request) {
         if (StringUtils.isBlank(this.staticContentPath)) {
-            this.staticContentPath = orcidUrlManager.getBaseUrl() + STATIC_FOLDER_PATH;
-            this.staticContentPath = this.staticContentPath.replace("https:", "");
-            this.staticContentPath = this.staticContentPath.replace("http:", "");
+            String generatedStaticContentPath = orcidUrlManager.getBaseUrl();
+            generatedStaticContentPath = generatedStaticContentPath.replace("https:", "");
+            generatedStaticContentPath = generatedStaticContentPath.replace("http:", "");
+            if (!request.isSecure()) {
+                generatedStaticContentPath = generatedStaticContentPath.replace(":8443", ":8080");
+            }
+            return generatedStaticContentPath + STATIC_FOLDER_PATH;
         }
         return this.staticContentPath;
     }
@@ -597,12 +605,12 @@ public class BaseController {
      * return a reference to the static folder "/static"
      * 
      * @return the path to the CDN or the path to the local static content
-     * */
+     */
     @ModelAttribute("staticCdn")
     @Cacheable("staticContent")
-    public String getStaticCdnPath() {
+    public String getStaticCdnPath(HttpServletRequest request) {
         if (StringUtils.isEmpty(this.cdnConfigFile)) {
-            return getStaticContentPath();
+            return getStaticContentPath(request);
         }
 
         ClassPathResource configFile = new ClassPathResource(this.cdnConfigFile);
@@ -617,7 +625,7 @@ public class BaseController {
         }
 
         if (StringUtils.isBlank(this.staticCdnPath))
-            this.staticCdnPath = this.getStaticContentPath();
+            return getStaticContentPath(request);
         return staticCdnPath;
     }
 
@@ -645,14 +653,14 @@ public class BaseController {
      * @param theClass
      * @param key
      * @return a String of the form full.class.name.with.package.key
-     * */
+     */
     @SuppressWarnings("rawtypes")
     protected String buildInternationalizationKey(Class theClass, String key) {
         return theClass.getName() + '.' + key;
     }
 
     protected static void copyErrors(ErrorsInterface from, ErrorsInterface into) {
-        if(from != null && from.getErrors() != null) {
+        if (from != null && from.getErrors() != null) {
             for (String s : from.getErrors()) {
                 into.getErrors().add(s);
             }
@@ -738,4 +746,32 @@ public class BaseController {
             return false;
         return profile.isLocked();
     }
+
+    protected String calculateRedirectUrl(HttpServletRequest request, HttpServletResponse response) {
+        SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
+        if (savedRequest != null) {
+            String savedUrl = savedRequest.getRedirectUrl();
+            if (savedUrl != null) {
+                try {
+                    String path = new URL(savedUrl).getPath();
+                    if (path != null && path.contains("/oauth/")) {
+                        // This redirect url is OK
+                        savedUrl = correctContext(request, savedUrl);
+                        return savedUrl;
+                    }
+                } catch (MalformedURLException e) {
+                    LOGGER.debug("Malformed saved redirect url: {}", savedUrl);
+                }
+            }
+        }
+        return getBaseUri() + "/my-orcid";
+    }
+
+    private String correctContext(HttpServletRequest request, String savedUrl) {
+        String contextPath = request.getContextPath();
+        if (orcidUrlManager.getBasePath().equals("/") && !contextPath.equals("/"))
+            savedUrl = savedUrl.replaceFirst(contextPath.replace("/", "\\/"), "");
+        return savedUrl;
+    }
+
 }

@@ -36,7 +36,7 @@
         <property name="version" value="Latest" />
         <property name="host" value="#{ orcidUrlManager.pubHostWithPort }" />
         <property name="basePath" value="#{ orcidUrlManager.pubPath }"/>
-        <property name="resourcePackage" value="org.orcid.api.t1.server,org.orcid.api.t1.stats"/>
+        <property name="resourcePackage" value="org.orcid.api.t1.server,org.orcid.api.t1.stats,org.orcid.api.t1.cerif"/>
         <property name="scan" value="true"/>
         <property name="prettyPrint" value="true"/>        
     </bean>
@@ -44,6 +44,8 @@
     <bean id="swaggerSerializers" class="io.swagger.jaxrs.listing.SwaggerSerializers" scope="singleton"/>    
     <bean id="apiListingResource" class="org.orcid.api.swagger.PublicSwaggerResource"/>
          
+    <bean id="acceptFilter" class="org.orcid.core.web.filters.AcceptFilter" />
+	
 	<bean id="sanitizeAuthenticationFilter" class="org.orcid.core.web.filters.SanitizeAuthenticationFilter" />
 	
 	<bean id="corsFilter" class="org.orcid.core.web.filters.CorsFilter" />
@@ -103,12 +105,16 @@
     </bean>
     
     <!--  Public_2 API -->
-    <bean id="publicV2ApiServiceDelegator" class="org.orcid.api.t1.server.delegator.impl.PublicV2ApiServiceDelegatorImpl" />
-    <bean id="publicV2ApiServiceImplV2_0_rc1" class="org.orcid.api.t1.server.PublicV2ApiServiceImplV2_0_rc1">
-        <property name="serviceDelegator" ref="publicV2ApiServiceDelegator"/>
+    <bean id="publicV2ApiServiceDelegator" class="org.orcid.api.publicV2.server.delegator.impl.PublicV2ApiServiceDelegatorImpl" />
+    
+    <bean id="publicV2ApiServiceDelegatorRc1" class="org.orcid.api.publicV2.server.delegator.impl.PublicV2ApiServiceVersionedDelegatorImpl">
+        <property name="externalVersion" value="2.0_rc1" />
+    </bean>
+    <bean id="publicV2ApiServiceImplV2_0_rc1" class="org.orcid.api.publicV2.server.PublicV2ApiServiceImplV2_0_rc1">
+        <property name="serviceDelegator" ref="publicV2ApiServiceDelegatorRc1"/>
     </bean>
     
-    <bean id="publicV2ApiServiceImplV2_0_rc2" class="org.orcid.api.t1.server.PublicV2ApiServiceImplV2_0_rc2">
+    <bean id="publicV2ApiServiceImplV2_0_rc2" class="org.orcid.api.publicV2.server.PublicV2ApiServiceImplV2_0_rc2">
         <property name="serviceDelegator" ref="publicV2ApiServiceDelegator"/>
     </bean>    
     
@@ -116,6 +122,12 @@
     <bean id="statsApiServiceDelegator" class="org.orcid.api.t1.stats.delegator.impl.StatsApiServiceDelegatorImpl" />
     <bean id="statsApiServiceImplV2_0_rc1" class="org.orcid.api.t1.stats.StatsApiServiceImplV2_0_rc1">
         <property name="serviceDelegator" ref="statsApiServiceDelegator"/>
+    </bean>
+    
+    <!--  CERIF API -->
+    <bean id="cerifApiServiceDelegator" class="org.orcid.api.t1.cerif.delegator.impl.PublicCerifApiServiceDelegatorImpl" />
+    <bean id="cerifApiServiceImpl" class="org.orcid.api.t1.cerif.PublicCerifApiServiceImpl">
+        <property name="serviceDelegator" ref="cerifApiServiceDelegator"/>
     </bean>
     
 </beans>

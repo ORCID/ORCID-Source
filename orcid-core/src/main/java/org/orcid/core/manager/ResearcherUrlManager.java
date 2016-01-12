@@ -44,7 +44,7 @@ public interface ResearcherUrlManager {
      * @param id
      * @return true if the researcher url was deleted
      * */
-    public boolean deleteResearcherUrl(String orcid, String id);
+    public boolean deleteResearcherUrl(String orcid, Long id);
 
     /**
      * Retrieve a researcher url from database

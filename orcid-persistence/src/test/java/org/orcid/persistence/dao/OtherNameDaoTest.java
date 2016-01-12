@@ -27,19 +27,20 @@ import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
+import javax.persistence.NoResultException;
 
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.persistence.jpa.entities.OtherNameEntity;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-persistence-context.xml" })
@@ -68,17 +69,13 @@ public class OtherNameDaoTest extends DBUnitTest {
     }
 
     @Test
-    @Rollback(true)
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void testfindOtherNameByOrcid() {
-        List<OtherNameEntity> otherNames = otherNameDao.getOtherName("4444-4444-4444-4443");
+        List<OtherNameEntity> otherNames = otherNameDao.getOtherNames("4444-4444-4444-4446");
         assertNotNull(otherNames);
-        assertEquals(2, otherNames.size());
+        assertEquals(4, otherNames.size());
     }
 
     @Test
-    @Rollback(true)
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void testUpdateOtherName() {
         try {
             otherNameDao.updateOtherName(null);
@@ -89,32 +86,50 @@ public class OtherNameDaoTest extends DBUnitTest {
     }
 
     @Test
-    @Rollback(true)
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void testAddOtherName() {
-        Date profileLastModifiedOrig = profileDao.retrieveLastModifiedDate("4444-4444-4444-4443");
-        assertEquals(2, otherNameDao.getOtherName("4444-4444-4444-4443").size());
-        boolean result = otherNameDao.addOtherName("4444-4444-4444-4443", "OtherName");
+        Date profileLastModifiedOrig = profileDao.retrieveLastModifiedDate("4444-4444-4444-4441");
+        assertEquals(1, otherNameDao.getOtherNames("4444-4444-4444-4441").size());
+        boolean result = otherNameDao.addOtherName("4444-4444-4444-4441", "OtherName");
         assertEquals(true, result);
-        assertEquals(3, otherNameDao.getOtherName("4444-4444-4444-4443").size());
-        assertFalse("Profile last modified date should have been updated", profileLastModifiedOrig.after(profileDao.retrieveLastModifiedDate("4444-4444-4444-4443")));
+        assertEquals(2, otherNameDao.getOtherNames("4444-4444-4444-4441").size());
+        assertFalse("Profile last modified date should have been updated", profileLastModifiedOrig.after(profileDao.retrieveLastModifiedDate("4444-4444-4444-4441")));
+        
+        
+        OtherNameEntity entity = new OtherNameEntity();
+        entity.setDisplayName("The other name");
+        entity.setProfile(new ProfileEntity("4444-4444-4444-4441"));
+        entity.setSource(new SourceEntity(new ProfileEntity("4444-4444-4444-4441")));
+        entity.setVisibility(Visibility.PUBLIC);
+        otherNameDao.persist(entity);
+        assertEquals(3, otherNameDao.getOtherNames("4444-4444-4444-4441").size());
     }
 
-    @Test
-    @Rollback(true)
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Test    
     public void testDeleteOtherName() {
         Date now = new Date();
         Date justBeforeStart = new Date(now.getTime() - 1000);
-        List<OtherNameEntity> otherNames = otherNameDao.getOtherName("4444-4444-4444-4443");
+        List<OtherNameEntity> otherNames = otherNameDao.getOtherNames("4444-4444-4444-4443");
         assertNotNull(otherNames);
         assertEquals(2, otherNames.size());
         OtherNameEntity otherName = otherNames.get(0);
         assertTrue(otherNameDao.deleteOtherName(otherName));
-        List<OtherNameEntity> updatedOtherNames = otherNameDao.getOtherName("4444-4444-4444-4443");
+        List<OtherNameEntity> updatedOtherNames = otherNameDao.getOtherNames("4444-4444-4444-4443");
         assertNotNull(updatedOtherNames);
         assertEquals(1, updatedOtherNames.size());
         assertTrue("Profile last modified date should have been updated", justBeforeStart.before(profileDao.retrieveLastModifiedDate("4444-4444-4444-4443")));
     }
+    
+    @Test
+    public void testGetOtherName() {
+        OtherNameEntity otherName = otherNameDao.getOtherName("4444-4444-4444-4443", 2L);
+        assertNotNull(otherName);
+        assertEquals("Flibberdy Flabinah", otherName.getDisplayName());
+        assertEquals(Visibility.PUBLIC, otherName.getVisibility());
+    }
 
+    @Test(expected = NoResultException.class)
+    public void testGetInvalidOtherName() {
+        otherNameDao.getOtherName("4444-4444-4444-4443", 100L);
+        fail();
+    }
 }

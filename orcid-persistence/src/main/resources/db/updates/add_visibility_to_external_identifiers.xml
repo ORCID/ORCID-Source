@@ -1,0 +1,36 @@
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2014 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+	<changeSet author="Angel Montenegro" id="ADD-VISIBILITY-TO-EXTERNAL-IDENTIFIERS">
+		<preConditions>
+			<not>
+				<columnExists tableName="external_identifier" columnName="visibility"/>
+			</not>
+		</preConditions>
+	    <sql>ALTER TABLE external_identifier ADD visibility VARCHAR(19);</sql>		
+    </changeSet>
+    
+    <changeSet id="SET-EXTERNAL-IDENTIFIERS-VISIBILITY" author="Angel Montenegro">
+    	<sql>UPDATE external_identifier e SET visibility = (SELECT external_identifiers_visibility FROM profile p WHERE e.orcid = p.orcid) WHERE e.visibility is null;</sql>
+    </changeSet>
+    
+</databaseChangeLog>

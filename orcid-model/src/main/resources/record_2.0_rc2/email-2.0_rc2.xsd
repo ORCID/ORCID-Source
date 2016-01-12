@@ -24,7 +24,7 @@
 
 			=============================================================================
 			The schema describes the message format used for ORCID API requests
-			and responses.			
+			and responses.
 		</xs:documentation>
 		<xs:appinfo>
 			<sch:title>Schematron validation</sch:title>
@@ -40,26 +40,42 @@
 				</xs:documentation>
 			</xs:annotation>
 			<xs:sequence>
-				<xs:element ref="email:email" minOccurs="1" maxOccurs="unbounded"/>
+				<xs:element name="email" type="email:email" minOccurs="1"
+					maxOccurs="unbounded" />
 			</xs:sequence>
 			<xs:attribute name="path" type="common:person-path" use="optional" />
 		</xs:complexType>
 	</xs:element>
+	
+	
 	<xs:element name="email">
+		<xs:annotation>
+			<xs:documentation>Email element.
+			</xs:documentation>
+		</xs:annotation>
 		<xs:complexType>
-			<xs:annotation>
-				<xs:documentation>Email container
-				</xs:documentation>
-			</xs:annotation>
-			<xs:sequence>
-				<xs:element name="email" type="common:email"/>
-				<xs:element ref="common:created-date" minOccurs="0"
-					maxOccurs="1" />
-				<xs:element ref="common:last-modified-date" minOccurs="0"
-					maxOccurs="1" />
-				<xs:element ref="common:source" minOccurs="0" maxOccurs="1" />	
-			</xs:sequence>
-			<xs:attribute name="visibility" type="common:visibility" />
+			<xs:complexContent>
+				<xs:extension base="email:email"></xs:extension>
+			</xs:complexContent>
 		</xs:complexType>
 	</xs:element>
+	
+	
+	<xs:complexType name="email">
+		<xs:annotation>
+			<xs:documentation>Email container
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="email" type="common:email" />
+			<xs:element ref="common:created-date" minOccurs="0"
+				maxOccurs="1" />
+			<xs:element ref="common:last-modified-date" minOccurs="0"
+				maxOccurs="1" />
+			<xs:element ref="common:source" minOccurs="0" maxOccurs="1" />
+		</xs:sequence>
+		<xs:attribute name="path" type="common:person-path" use="optional" />
+		<xs:attribute name="visibility" type="common:visibility" />
+		<xs:attribute name="put-code" type="common:put-code" use="optional" />
+	</xs:complexType>
 </xs:schema>	

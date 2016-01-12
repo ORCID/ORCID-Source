@@ -21,24 +21,29 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.orcid.jaxb.model.common.LastModifiedDate;
 
-
+/**
+ * 
+ * @author Angel Montenegro
+ * 
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType( propOrder = { "lastModifiedDate", "otherNames" })
+@XmlType( propOrder = { "otherNames" })
 @XmlRootElement(name = "other-names", namespace = "http://www.orcid.org/ns/other-name")
 public class OtherNames implements Serializable {        
     private static final long serialVersionUID = 6312730308815255894L;
     
     @XmlElement(name = "other-name", namespace = "http://www.orcid.org/ns/other-name")
     List<OtherName> otherNames;
-    @XmlElement(name="last-modified-date", namespace = "http://www.orcid.org/ns/common")
-    protected LastModifiedDate lastModifiedDate;
 
+    @XmlAttribute
+    protected String path;
+    
     public List<OtherName> getOtherNames() {
         return otherNames;
     }
@@ -47,11 +52,20 @@ public class OtherNames implements Serializable {
         this.otherNames = otherNames;
     }
 
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((otherNames == null) ? 0 : otherNames.hashCode());
+        result = prime * result + ((path == null) ? 0 : path.hashCode());
         return result;
     }
 
@@ -69,14 +83,11 @@ public class OtherNames implements Serializable {
                 return false;
         } else if (!otherNames.equals(other.otherNames))
             return false;
+        if (path == null) {
+            if (other.path != null)
+                return false;
+        } else if (!path.equals(other.path))
+            return false;
         return true;
-    }
-
-	public LastModifiedDate getLastModifiedDate() {
-		return lastModifiedDate;
-	}
-
-	public void setLastModifiedDate(LastModifiedDate lastModifiedDate) {
-		this.lastModifiedDate = lastModifiedDate;
-	}       
+    }	 
 }

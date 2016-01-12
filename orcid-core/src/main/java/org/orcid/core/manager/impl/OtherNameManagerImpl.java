@@ -28,12 +28,12 @@ import javax.annotation.Resource;
 import org.orcid.core.adapter.JpaJaxbOtherNameAdapter;
 import org.orcid.core.exception.ApplicationException;
 import org.orcid.core.exception.OrcidDuplicatedElementException;
-import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.exception.OtherNameNotFoundException;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.OtherNameManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.validator.PersonValidator;
+import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.jaxb.model.message.OtherNames;
 import org.orcid.persistence.dao.OtherNameDao;
@@ -65,7 +65,7 @@ public class OtherNameManagerImpl implements OtherNameManager {
      * */
     @Override
     public List<OtherNameEntity> getOtherName(String orcid) {
-        return otherNameDao.getOtherName(orcid);
+        return otherNameDao.getOtherNames(orcid);
     }
 
     /**
@@ -159,34 +159,32 @@ public class OtherNameManagerImpl implements OtherNameManager {
 
     @Override
     public org.orcid.jaxb.model.record_rc2.OtherNames getOtherNamesV2(String orcid) {
-        List<OtherNameEntity> otherNameEntityList = otherNameDao.getOtherName(orcid);
+        List<OtherNameEntity> otherNameEntityList = otherNameDao.getOtherNames(orcid);
+        return jpaJaxbOtherNameAdapter.toOtherNameList(otherNameEntityList);
+    }
+    
+    @Override
+    public org.orcid.jaxb.model.record_rc2.OtherNames getPublicOtherNamesV2(String orcid) {
+        List<OtherNameEntity> otherNameEntityList = otherNameDao.getOtherNames(orcid, Visibility.PUBLIC);
         return jpaJaxbOtherNameAdapter.toOtherNameList(otherNameEntityList);
     }
     
     @Override
     public org.orcid.jaxb.model.record_rc2.OtherNames getMinimizedOtherNamesV2(String orcid) {
-        List<OtherNameEntity> otherNameEntityList = otherNameDao.getOtherName(orcid);
+        List<OtherNameEntity> otherNameEntityList = otherNameDao.getOtherNames(orcid);
         return jpaJaxbOtherNameAdapter.toMinimizedOtherNameList(otherNameEntityList);
     }
     
 
     @Override
-    public org.orcid.jaxb.model.record_rc2.OtherName getOtherNameV2(String orcid, String putCode) {
-        long putCodeNum = convertToLong(putCode);
-        OtherNameEntity otherNameEntity = otherNameDao.find(putCodeNum);
-        if (otherNameEntity == null) {
-            throw new OtherNameNotFoundException();
-        }
+    public org.orcid.jaxb.model.record_rc2.OtherName getOtherNameV2(String orcid, Long putCode) {        
+        OtherNameEntity otherNameEntity = otherNameDao.getOtherName(orcid, putCode);
         return jpaJaxbOtherNameAdapter.toOtherName(otherNameEntity);
     }
 
     @Override
-    public boolean deleteOtherNameV2(String orcid, String putCode) {
-        long putCodeNum = convertToLong(putCode);
-        OtherNameEntity otherNameEntity = otherNameDao.find(putCodeNum);
-        if (otherNameEntity == null) {
-            throw new OtherNameNotFoundException();
-        }
+    public boolean deleteOtherNameV2(String orcid, Long putCode) {        
+        OtherNameEntity otherNameEntity = otherNameDao.getOtherName(orcid, putCode);        
         SourceEntity existingSource = otherNameEntity.getSource();
         orcidSecurityManager.checkSource(existingSource);
 
@@ -204,7 +202,7 @@ public class OtherNameManagerImpl implements OtherNameManager {
         // Validate the otherName
         PersonValidator.validateOtherName(otherName, sourceEntity, true);
         // Validate it is not duplicated
-        List<OtherNameEntity> existingOtherNames = otherNameDao.getOtherName(orcid);
+        List<OtherNameEntity> existingOtherNames = otherNameDao.getOtherNames(orcid);
         for (OtherNameEntity existing : existingOtherNames) {
             if (isDuplicated(existing, otherName, sourceEntity)) {
                 Map<String, String> params = new HashMap<String, String>();
@@ -225,14 +223,14 @@ public class OtherNameManagerImpl implements OtherNameManager {
     }
 
     @Override
-    public org.orcid.jaxb.model.record_rc2.OtherName updateOtherNameV2(String orcid, String putCode, org.orcid.jaxb.model.record_rc2.OtherName otherName) {
+    public org.orcid.jaxb.model.record_rc2.OtherName updateOtherNameV2(String orcid, Long putCode, org.orcid.jaxb.model.record_rc2.OtherName otherName) {
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
 
         // Validate the other name
         PersonValidator.validateOtherName(otherName, sourceEntity, false);
 
         // Validate it is not duplicated
-        List<OtherNameEntity> existingOtherNames = otherNameDao.getOtherName(orcid);
+        List<OtherNameEntity> existingOtherNames = otherNameDao.getOtherNames(orcid);
         for (OtherNameEntity existing : existingOtherNames) {
             if (isDuplicated(existing, otherName, sourceEntity)) {
                 Map<String, String> params = new HashMap<String, String>();
@@ -241,8 +239,8 @@ public class OtherNameManagerImpl implements OtherNameManager {
                 throw new OrcidDuplicatedElementException(params);
             }
         }
-        long putCodeNum = convertToLong(putCode);
-        OtherNameEntity updatedOtherNameEntity = otherNameDao.find(putCodeNum);
+       
+        OtherNameEntity updatedOtherNameEntity = otherNameDao.find(putCode);
         if (updatedOtherNameEntity == null) {
             throw new OtherNameNotFoundException();
         }
@@ -261,7 +259,7 @@ public class OtherNameManagerImpl implements OtherNameManager {
     @Override
     @Transactional
     public org.orcid.jaxb.model.record_rc2.OtherNames updateOtherNamesV2(String orcid, org.orcid.jaxb.model.record_rc2.OtherNames otherNames, org.orcid.jaxb.model.common.Visibility defaultVisiblity) {
-        List<OtherNameEntity> existingOtherNamesEntityList = otherNameDao.getOtherName(orcid);
+        List<OtherNameEntity> existingOtherNamesEntityList = otherNameDao.getOtherNames(orcid);
         //Delete the deleted ones
         for(OtherNameEntity existingOtherName : existingOtherNamesEntityList) {
             boolean deleteMe = true;
@@ -328,25 +326,15 @@ public class OtherNameManagerImpl implements OtherNameManager {
     }
 
     private void setIncomingPrivacy(OtherNameEntity entity, ProfileEntity profile) {
-        org.orcid.jaxb.model.common.Visibility incomingWorkVisibility = entity.getVisibility();
-        org.orcid.jaxb.model.common.Visibility defaultOtherNamesVisibility = profile.getOtherNamesVisibility() == null ? org.orcid.jaxb.model.common.Visibility.PRIVATE
-                : org.orcid.jaxb.model.common.Visibility.fromValue(profile.getResearcherUrlsVisibility().value());
+        org.orcid.jaxb.model.common.Visibility incomingOtherNameVisibility = entity.getVisibility();
+        org.orcid.jaxb.model.common.Visibility defaultOtherNamesVisibility = profile.getOtherNamesVisibility() == null ? org.orcid.jaxb.model.common.Visibility.fromValue(OrcidVisibilityDefaults.OTHER_NAMES_DEFAULT.getVisibility().value())
+                : org.orcid.jaxb.model.common.Visibility.fromValue(profile.getOtherNamesVisibility().value());
         if (profile.getClaimed() != null && profile.getClaimed()) {
-            if (defaultOtherNamesVisibility.isMoreRestrictiveThan(incomingWorkVisibility)) {
+            if (defaultOtherNamesVisibility.isMoreRestrictiveThan(incomingOtherNameVisibility)) {
                 entity.setVisibility(defaultOtherNamesVisibility);
             }
-        } else if (incomingWorkVisibility == null) {
+        } else if (incomingOtherNameVisibility == null) {
             entity.setVisibility(org.orcid.jaxb.model.common.Visibility.PRIVATE);
         }
-    }
-
-    private long convertToLong(String param) {
-        long returnVal = 0;
-        try {
-            returnVal = Long.valueOf(param);
-        } catch (NumberFormatException e) {
-            throw new OrcidValidationException();
-        }
-        return returnVal;
     }
 }

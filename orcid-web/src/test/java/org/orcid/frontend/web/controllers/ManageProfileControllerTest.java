@@ -19,6 +19,7 @@ package org.orcid.frontend.web.controllers;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.mock;
@@ -32,6 +33,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
 import org.junit.After;
@@ -61,6 +63,8 @@ import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SecurityQuestionEntity;
 import org.orcid.pojo.ManageDelegate;
+import org.orcid.pojo.ajaxForm.BiographyForm;
+import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Propagation;
@@ -195,7 +199,6 @@ public class ManageProfileControllerTest extends BaseControllerTest {
 
     @Test
     public void testUnchangedEmailDoesNotInvokeNotificationManager() throws Exception {
-
         controller.setNotificationManager(mockNotificationManager);
         controller.setProfileKeywordManager(mock(ProfileKeywordManager.class));
         controller.setOtherNameManager(mock(OtherNameManager.class));
@@ -222,7 +225,6 @@ public class ManageProfileControllerTest extends BaseControllerTest {
 
     @Test
     public void testChangeSecurityDetailsSuccess() throws Exception {
-
         BindingResult bindingResult = mock(BindingResult.class);
         ChangeSecurityQuestionForm changeSecurityQuestionForm = new ChangeSecurityQuestionForm();
         changeSecurityQuestionForm.setSecurityQuestionId(1);
@@ -233,12 +235,10 @@ public class ManageProfileControllerTest extends BaseControllerTest {
         assertEquals("change_security_question", modelAndView.getViewName());
         Boolean updatedSuccess = (Boolean) modelAndView.getModel().get("securityQuestionSaved");
         assertEquals(Boolean.TRUE, updatedSuccess);
-
     }
 
     @Test
     public void testChangeSecurityDetailsFailedValidation() throws Exception {
-
         BindingResult bindingResult = mock(BindingResult.class);
         ChangeSecurityQuestionForm changeSecurityQuestionForm = new ChangeSecurityQuestionForm();
         changeSecurityQuestionForm.setSecurityQuestionId(1);
@@ -263,6 +263,28 @@ public class ManageProfileControllerTest extends BaseControllerTest {
         controller.addDelegate(addDelegate);
         verify(mockNotificationManager, times(1)).sendNotificationToAddedDelegate(any(OrcidProfile.class), (argThat(onlyNewDelegateAdded())));
     }   
+    
+    @Test
+    public void testValidateBiography() {
+        BiographyForm bf = new BiographyForm();
+        //No NPE exception on empty bio
+        controller.setBiographyFormJson(bf);
+        assertNotNull(bf.getErrors());
+        assertTrue(bf.getErrors().isEmpty());
+        String bio = StringUtils.repeat('a', 5001);
+        bf.setBiography(Text.valueOf(bio));
+        controller.setBiographyFormJson(bf);
+        assertEquals(1, bf.getErrors().size());        
+        assertEquals(controller.getMessage("Length.changePersonalInfoForm.biography"), bf.getErrors().get(0));
+        bio = StringUtils.repeat('a', 5000);
+        bf.setBiography(Text.valueOf(bio));        
+        controller.setBiographyFormJson(bf);
+        assertTrue(bf.getErrors().isEmpty());
+        BiographyForm updatedBf = controller.getBiographyForm();
+        assertNotNull(updatedBf);
+        assertNotNull(updatedBf.getBiography());
+        assertEquals(bio, updatedBf.getBiography().getValue());
+    }
     
     public static TypeSafeMatcher<List<DelegationDetails>> onlyNewDelegateAdded() {
         return new TypeSafeMatcher<List<DelegationDetails>>() {

@@ -34,9 +34,11 @@ import org.orcid.api.memberV2.server.delegator.MemberV2ApiServiceDelegator;
 import org.orcid.core.exception.MismatchedPutCodeException;
 import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.locale.LocaleManager;
+import org.orcid.core.manager.AddressManager;
 import org.orcid.core.manager.AffiliationsManager;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.EmailManager;
+import org.orcid.core.manager.ExternalIdentifierManager;
 import org.orcid.core.manager.GroupIdRecordManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.OtherNameManager;
@@ -44,6 +46,7 @@ import org.orcid.core.manager.PeerReviewManager;
 import org.orcid.core.manager.PersonalDetailsManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileFundingManager;
+import org.orcid.core.manager.ProfileKeywordManager;
 import org.orcid.core.manager.ResearcherUrlManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.WorkManager;
@@ -52,19 +55,29 @@ import org.orcid.core.security.visibility.filter.VisibilityFilterV2;
 import org.orcid.jaxb.model.groupid.GroupIdRecord;
 import org.orcid.jaxb.model.groupid.GroupIdRecords;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.record.summary_rc1.ActivitiesSummary;
-import org.orcid.jaxb.model.record.summary_rc1.EducationSummary;
-import org.orcid.jaxb.model.record.summary_rc1.EmploymentSummary;
-import org.orcid.jaxb.model.record.summary_rc1.FundingSummary;
-import org.orcid.jaxb.model.record.summary_rc1.PeerReviewSummary;
-import org.orcid.jaxb.model.record.summary_rc1.WorkSummary;
-import org.orcid.jaxb.model.record_rc1.Education;
-import org.orcid.jaxb.model.record_rc1.Email;
-import org.orcid.jaxb.model.record_rc1.Emails;
-import org.orcid.jaxb.model.record_rc1.Employment;
-import org.orcid.jaxb.model.record_rc1.Funding;
-import org.orcid.jaxb.model.record_rc1.PeerReview;
-import org.orcid.jaxb.model.record_rc1.Work;
+import org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary;
+import org.orcid.jaxb.model.record.summary_rc2.EducationSummary;
+import org.orcid.jaxb.model.record.summary_rc2.EmploymentSummary;
+import org.orcid.jaxb.model.record.summary_rc2.FundingSummary;
+import org.orcid.jaxb.model.record.summary_rc2.PeerReviewSummary;
+import org.orcid.jaxb.model.record.summary_rc2.WorkSummary;
+import org.orcid.jaxb.model.record_rc2.Education;
+import org.orcid.jaxb.model.record_rc2.Email;
+import org.orcid.jaxb.model.record_rc2.Emails;
+import org.orcid.jaxb.model.record_rc2.Employment;
+import org.orcid.jaxb.model.record_rc2.Funding;
+import org.orcid.jaxb.model.record_rc2.PeerReview;
+import org.orcid.jaxb.model.record_rc2.Work;
+import org.orcid.jaxb.model.record_rc2.Address;
+import org.orcid.jaxb.model.record_rc2.Addresses;
+import org.orcid.jaxb.model.record_rc2.Biography;
+import org.orcid.jaxb.model.record_rc2.ExternalIdentifier;
+import org.orcid.jaxb.model.record_rc2.ExternalIdentifiers;
+import org.orcid.jaxb.model.record_rc2.Keyword;
+import org.orcid.jaxb.model.record_rc2.Keywords;
+import org.orcid.jaxb.model.record_rc2.OtherName;
+import org.orcid.jaxb.model.record_rc2.OtherNames;
+import org.orcid.jaxb.model.record_rc2.Person;
 import org.orcid.jaxb.model.record_rc2.PersonalDetails;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
@@ -85,7 +98,8 @@ import org.springframework.stereotype.Component;
  * @author Declan Newman (declan) Date: 07/03/2012
  */
 @Component("orcidT2ServiceDelegator")
-public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelegator {
+public class MemberV2ApiServiceDelegatorImpl
+        implements MemberV2ApiServiceDelegator<Education, Employment, ExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work, Address, Keyword> {
 
     @Resource
     private WorkManager workManager;
@@ -125,22 +139,31 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
 
     @Resource
     private LocaleManager localeManager;
-    
+
     @Resource
     private ResearcherUrlManager researcherUrlManager;
 
     @Resource
     private OtherNameManager otherNameManager;
-    
+
     @Resource
     private EmailManager emailManager;
-    
+
+    @Resource
+    private ExternalIdentifierManager externalIdentifierManager;
+
     @Value("${org.orcid.core.baseUri}")
     private String baseUrl;
 
     @Resource
     private PersonalDetailsManager personalDetailsManager;
     
+    @Resource
+    private ProfileKeywordManager keywordsManager;
+    
+    @Resource
+    private AddressManager addressManager;
+
     @Override
     public Response viewStatusText() {
         return Response.ok(STATUS_OK_MESSAGE).build();
@@ -164,10 +187,10 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
             StringBuffer primary = new StringBuffer(baseUrl).append("/").append(entity.getPrimaryRecord().getId());
             Map<String, String> params = new HashMap<String, String>();
             params.put(OrcidDeprecatedException.ORCID, primary.toString());
-            if(entity.getDeprecatedDate() != null) {
+            if (entity.getDeprecatedDate() != null) {
                 XMLGregorianCalendar calendar = DateUtils.convertToXMLGregorianCalendar(entity.getDeprecatedDate());
                 params.put(OrcidDeprecatedException.DEPRECATED_DATE, calendar.toString());
-            } 
+            }
             throw new OrcidDeprecatedException(params);
         }
         ActivitiesSummary as = visibilityFilter.filter(profileEntityManager.getActivitiesSummary(orcid));
@@ -459,105 +482,305 @@ public class MemberV2ApiServiceDelegatorImpl implements MemberV2ApiServiceDelega
         GroupIdRecords records = groupIdRecordManager.getGroupIdRecords(pageSize, pageNum);
         return Response.ok(records).build();
     }
-    
+
     @SuppressWarnings("unchecked")
     @Override
-    @AccessControl(requiredScope = ScopePathType.READ_LIMITED)
+    @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED)
     public Response viewResearcherUrls(String orcid) {
-        ResearcherUrls researcherUrls = researcherUrlManager.getResearcherUrlsV2(orcid);        
+        ResearcherUrls researcherUrls = researcherUrlManager.getResearcherUrlsV2(orcid);
         researcherUrls.setResearcherUrls((List<ResearcherUrl>) visibilityFilter.filter(researcherUrls.getResearcherUrls()));
         ElementUtils.setPathToResearcherUrls(researcherUrls, orcid);
         return Response.ok(researcherUrls).build();
     }
-        
-    public Response viewResearcherUrl(String orcid, String putCode) {
-        ResearcherUrl researcherUrl = researcherUrlManager.getResearcherUrlV2(orcid, Long.valueOf(putCode));
+
+    public Response viewResearcherUrl(String orcid, Long putCode) {
+        ResearcherUrl researcherUrl = researcherUrlManager.getResearcherUrlV2(orcid, putCode);
         orcidSecurityManager.checkVisibility(researcherUrl);
+        ElementUtils.setPathToResearcherUrl(researcherUrl, orcid);
         return Response.ok(researcherUrl).build();
     }
-    
+
     @Override
     @AccessControl(requiredScope = ScopePathType.PERSON_UPDATE)
-    public Response updateResearcherUrl(String orcid, String putCode, ResearcherUrl researcherUrl) {
+    public Response updateResearcherUrl(String orcid, Long putCode, ResearcherUrl researcherUrl) {
+        if (!putCode.equals(researcherUrl.getPutCode())) {
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("urlPutCode", String.valueOf(putCode));
+            params.put("bodyPutCode", String.valueOf(researcherUrl.getPutCode()));
+            throw new MismatchedPutCodeException(params);
+        }
         ResearcherUrl updatedResearcherUrl = researcherUrlManager.updateResearcherUrlV2(orcid, researcherUrl);
+        ElementUtils.setPathToResearcherUrl(updatedResearcherUrl, orcid);
         return Response.ok(updatedResearcherUrl).build();
     }
-    
+
     @Override
     @AccessControl(requiredScope = ScopePathType.PERSON_UPDATE)
     public Response createResearcherUrl(String orcid, ResearcherUrl researcherUrl) {
-        researcherUrl = researcherUrlManager.createResearcherUrlV2(orcid, researcherUrl);        
+        researcherUrl = researcherUrlManager.createResearcherUrlV2(orcid, researcherUrl);
         try {
             return Response.created(new URI(String.valueOf(researcherUrl.getPutCode()))).build();
         } catch (URISyntaxException e) {
             throw new RuntimeException(localeManager.resolveMessage("apiError.createelement_response.exception"), e);
-        }       
+        }
     }
-    
+
     @Override
     @AccessControl(requiredScope = ScopePathType.PERSON_UPDATE)
-    public Response deleteResearcherUrl(String orcid, String putCode) {
+    public Response deleteResearcherUrl(String orcid, Long putCode) {
         researcherUrlManager.deleteResearcherUrl(orcid, putCode);
         return Response.noContent().build();
-    }    
-    
+    }
+
     @SuppressWarnings("unchecked")
     @Override
-    @AccessControl(requiredScope = ScopePathType.READ_LIMITED)
+    @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED)
     public Response viewEmails(String orcid) {
         Emails emails = emailManager.getEmails(orcid);
         emails.setEmails((List<Email>) visibilityFilter.filter(emails.getEmails()));
+        ElementUtils.setPathToEmail(emails, orcid);
         return Response.ok(emails).build();
     }
 
-	@Override
-	public Response viewOtherNames(String orcid) {
-		org.orcid.jaxb.model.record_rc2.OtherNames otherNames = otherNameManager.getOtherNamesV2(orcid);
-        return Response.ok(otherNames).build();
-	}
-    
+    @SuppressWarnings("unchecked")
     @Override
-	public Response viewOtherName(String orcid, String putCode) {
-		org.orcid.jaxb.model.record_rc2.OtherName otherName = otherNameManager.getOtherNameV2(orcid, putCode);
-        return Response.ok(otherName).build();
-	}
+    @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED)
+    public Response viewOtherNames(String orcid) {
+        OtherNames otherNames = otherNameManager.getOtherNamesV2(orcid);
+        List<OtherName> allOtherNames = otherNames.getOtherNames();
+        List<OtherName> filterdOtherNames = (List<OtherName>) visibilityFilter.filter(allOtherNames);
+        otherNames.setOtherNames(filterdOtherNames);
+        ElementUtils.setPathToOtherNames(otherNames, orcid);
+        return Response.ok(otherNames).build();
+    }
 
-	@Override
-	public Response createOtherName(String orcid, org.orcid.jaxb.model.record_rc2.OtherName otherName) {
-		otherName = otherNameManager.createOtherNameV2(orcid, otherName);        
+    @Override
+    @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED)
+    public Response viewOtherName(String orcid, Long putCode) {
+        OtherName otherName = otherNameManager.getOtherNameV2(orcid, putCode);
+        orcidSecurityManager.checkVisibility(otherName);
+        ElementUtils.setPathToOtherName(otherName, orcid);
+        return Response.ok(otherName).build();
+    }
+
+    @Override
+    @AccessControl(requiredScope = ScopePathType.PERSON_UPDATE)
+    public Response createOtherName(String orcid, org.orcid.jaxb.model.record_rc2.OtherName otherName) {
+        otherName = otherNameManager.createOtherNameV2(orcid, otherName);
         try {
             return Response.created(new URI(String.valueOf(otherName.getPutCode()))).build();
         } catch (URISyntaxException e) {
             throw new RuntimeException(localeManager.resolveMessage("apiError.createelement_response.exception"), e);
-        }   
-	}
+        }
+    }
 
-	@Override
-	public Response updateOtherName(String orcid, String putCode,
-			org.orcid.jaxb.model.record_rc2.OtherName otherName) {
-		if (!putCode.equals(String.valueOf(otherName.getPutCode()))) {
+    @Override
+    @AccessControl(requiredScope = ScopePathType.PERSON_UPDATE)
+    public Response updateOtherName(String orcid, Long putCode, org.orcid.jaxb.model.record_rc2.OtherName otherName) {
+        if (!putCode.equals(otherName.getPutCode())) {
             Map<String, String> params = new HashMap<String, String>();
             params.put("urlPutCode", String.valueOf(putCode));
             params.put("bodyPutCode", String.valueOf(otherName.getPutCode()));
             throw new MismatchedPutCodeException(params);
         }
 
-		org.orcid.jaxb.model.record_rc2.OtherName updatedOtherName = otherNameManager.updateOtherNameV2(orcid, putCode, otherName);
-		return Response.ok(updatedOtherName).build();
-	}
+        OtherName updatedOtherName = otherNameManager.updateOtherNameV2(orcid, putCode, otherName);
+        ElementUtils.setPathToOtherName(updatedOtherName, orcid);
+        return Response.ok(updatedOtherName).build();
+    }
 
-	@Override
-	public Response deleteOtherName(String orcid, String putCode) {
-		otherNameManager.deleteOtherNameV2(orcid, putCode);
-        return Response.noContent().build();
-	}
-	
     @Override
-    @AccessControl(requiredScope = ScopePathType.READ_LIMITED)
+    @AccessControl(requiredScope = ScopePathType.PERSON_UPDATE)
+    public Response deleteOtherName(String orcid, Long putCode) {
+        otherNameManager.deleteOtherNameV2(orcid, putCode);
+        return Response.noContent().build();
+    }
+
+    @Override
+    @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED)
     public Response viewPersonalDetails(String orcid) {
         PersonalDetails personalDetails = personalDetailsManager.getPersonalDetails(orcid);
         personalDetails = visibilityFilter.filter(personalDetails);
         ElementUtils.setPathToPersonalDetails(personalDetails, orcid);
         return Response.ok(personalDetails).build();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED)
+    public Response viewExternalIdentifiers(String orcid) {
+        ExternalIdentifiers extIds = externalIdentifierManager.getExternalIdentifiersV2(orcid);
+        List<ExternalIdentifier> allExtIds = extIds.getExternalIdentifier();
+        List<ExternalIdentifier> filteredExtIds = (List<ExternalIdentifier>) visibilityFilter.filter(allExtIds);
+        extIds.setExternalIdentifiers(filteredExtIds);
+        ElementUtils.setPathToExternalIdentifiers(extIds, orcid);
+        return Response.ok(extIds).build();
+    }
+
+    @Override
+    @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED)
+    public Response viewExternalIdentifier(String orcid, Long putCode) {
+        ExternalIdentifier extId = externalIdentifierManager.getExternalIdentifierV2(orcid, putCode);
+        orcidSecurityManager.checkVisibility(extId);
+        ElementUtils.setPathToExternalIdentifier(extId, orcid);
+        return Response.ok(extId).build();
+    }
+
+    @Override
+    @AccessControl(requiredScope = ScopePathType.PERSON_UPDATE)
+    public Response updateExternalIdentifier(String orcid, Long putCode, ExternalIdentifier externalIdentifier) {
+        if (!putCode.equals(externalIdentifier.getPutCode())) {
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("urlPutCode", String.valueOf(putCode));
+            params.put("bodyPutCode", String.valueOf(externalIdentifier.getPutCode()));
+            throw new MismatchedPutCodeException(params);
+        }
+        ExternalIdentifier extId = externalIdentifierManager.updateExternalIdentifierV2(orcid, externalIdentifier);
+        ElementUtils.setPathToExternalIdentifier(extId, orcid);
+        return Response.ok(extId).build();
+    }
+
+    @Override
+    @AccessControl(requiredScope = ScopePathType.PERSON_UPDATE)
+    public Response createExternalIdentifier(String orcid, ExternalIdentifier externalIdentifier) {
+        externalIdentifier = externalIdentifierManager.createExternalIdentifierV2(orcid, externalIdentifier);
+        try {
+            return Response.created(new URI(String.valueOf(externalIdentifier.getPutCode()))).build();
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(localeManager.resolveMessage("apiError.createelement_response.exception"), e);
+        }
+    }
+
+    @Override
+    @AccessControl(requiredScope = ScopePathType.PERSON_UPDATE)
+    public Response deleteExternalIdentifier(String orcid, Long putCode) {
+        externalIdentifierManager.deleteExternalIdentifier(orcid, putCode);
+        return Response.noContent().build();
+    }
+
+    @Override
+    @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED)
+    public Response viewBiography(String orcid) {
+        Biography bio = profileEntityManager.getBiography(orcid);
+        orcidSecurityManager.checkVisibility(bio);
+        ElementUtils.setPathToBiography(bio, orcid);
+        return Response.ok(bio).build();
+    }
+        
+    @SuppressWarnings("unchecked")
+    @Override
+    @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED)
+    public Response viewKeywords(String orcid) {
+        Keywords keywords = keywordsManager.getKeywordsV2(orcid);
+        List<Keyword> allKeywords = keywords.getKeywords();
+        List<Keyword> filterdKeywords = (List<Keyword>) visibilityFilter.filter(allKeywords);
+        keywords.setKeywords(filterdKeywords);
+        ElementUtils.setPathToKeywords(keywords, orcid);
+        return Response.ok(keywords).build();
+    }
+
+    @Override
+    @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED)
+    public Response viewKeyword(String orcid, Long putCode) {
+        Keyword keyword = keywordsManager.getKeywordV2(orcid, putCode);
+        orcidSecurityManager.checkVisibility(keyword);
+        ElementUtils.setPathToKeyword(keyword, orcid);
+        return Response.ok(keyword).build();
+    }
+
+    @Override
+    @AccessControl(requiredScope = ScopePathType.PERSON_UPDATE)
+    public Response createKeyword(String orcid, Keyword keyword) {
+        keyword = keywordsManager.createKeywordV2(orcid, keyword);
+        try {
+            return Response.created(new URI(String.valueOf(keyword.getPutCode()))).build();
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(localeManager.resolveMessage("apiError.createelement_response.exception"), e);
+        }
+    }
+
+    @Override
+    @AccessControl(requiredScope = ScopePathType.PERSON_UPDATE)
+    public Response updateKeyword(String orcid, Long putCode, Keyword keyword) {
+        if (!putCode.equals(keyword.getPutCode())) {
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("urlPutCode", String.valueOf(putCode));
+            params.put("bodyPutCode", String.valueOf(keyword.getPutCode()));
+            throw new MismatchedPutCodeException(params);
+        }
+
+        keyword = keywordsManager.updateKeywordV2(orcid, putCode, keyword);      
+        ElementUtils.setPathToKeyword(keyword, orcid);
+        return Response.ok(keyword).build();
+    }
+
+    @Override
+    @AccessControl(requiredScope = ScopePathType.PERSON_UPDATE)
+    public Response deleteKeyword(String orcid, Long putCode) {
+        keywordsManager.deleteKeywordV2(orcid, putCode);
+        return Response.noContent().build();
+    }
+                    
+    @SuppressWarnings("unchecked")
+    @Override
+    @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED)
+    public Response viewAddresses(String orcid) {
+        Addresses addresses = addressManager.getAddresses(orcid);
+        List<Address> allAddresses = addresses.getAddress();
+        List<Address> filteredAddresses = (List<Address>) visibilityFilter.filter(allAddresses);
+        addresses.setAddress(filteredAddresses);
+        ElementUtils.setPathToAddresses(addresses, orcid);
+        return Response.ok(addresses).build();
+    }
+
+    @Override
+    @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED)
+    public Response viewAddress(String orcid, Long putCode) {
+        Address address = addressManager.getAddress(orcid, putCode);
+        orcidSecurityManager.checkVisibility(address);
+        ElementUtils.setPathToAddress(address, orcid);
+        return Response.ok(address).build();
+    }
+
+    @Override
+    @AccessControl(requiredScope = ScopePathType.PERSON_UPDATE)
+    public Response createAddress(String orcid, Address address) {
+        address = addressManager.createAddress(orcid, address);
+        try {
+            return Response.created(new URI(String.valueOf(address.getPutCode()))).build();
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(localeManager.resolveMessage("apiError.createelement_response.exception"), e);
+        }
+    }
+
+    @Override
+    @AccessControl(requiredScope = ScopePathType.PERSON_UPDATE)
+    public Response updateAddress(String orcid, Long putCode, Address address) {
+        if (!putCode.equals(address.getPutCode())) {
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("urlPutCode", String.valueOf(putCode));
+            params.put("bodyPutCode", String.valueOf(address.getPutCode()));
+            throw new MismatchedPutCodeException(params);
+        }
+        
+        address = addressManager.updateAddress(orcid, putCode, address, true);
+        ElementUtils.setPathToAddress(address, orcid);
+        return Response.ok(address).build();
+    }
+
+    @Override
+    @AccessControl(requiredScope = ScopePathType.PERSON_UPDATE)
+    public Response deleteAddress(String orcid, Long putCode) {
+        addressManager.deleteAddress(orcid, putCode);
+        return Response.noContent().build();
+    }   
+    
+    @Override
+    @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED)
+    public Response viewPerson(String orcid) {
+        Person person = profileEntityManager.getPersonDetails(orcid);
+        person = visibilityFilter.filter(person);
+        ElementUtils.setPathToPerson(person, orcid);
+        return Response.ok(person).build();
     }
 }

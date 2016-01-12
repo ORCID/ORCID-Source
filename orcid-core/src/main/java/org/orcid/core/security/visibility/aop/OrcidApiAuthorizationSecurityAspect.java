@@ -41,7 +41,7 @@ import org.orcid.jaxb.model.message.PersonalDetails;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.notification.Notification;
-import org.orcid.jaxb.model.record_rc1.Activity;
+import org.orcid.jaxb.model.record_rc2.Activity;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
