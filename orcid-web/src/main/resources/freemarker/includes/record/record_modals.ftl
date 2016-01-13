@@ -37,7 +37,7 @@
 	        	      	   <div class="row aka-row" ng-repeat="otherName in otherNamesForm.otherNames" ng-cloak> 								
 								<div class="col-md-6">
 									<div class="aka">
-										<input type="text" ng-model="otherName.content" ng-show="otherName.source == orcidId || otherName.source == null"/>
+										<input type="text" ng-model="otherName.content" ng-show="otherName.source == orcidId || otherName.source == null"  focus-me="newInput"/>
 										<span ng-bind="otherName.content" ng-show="otherName.source != orcidId && otherName.sourceName"></span>										
 									</div>
 									<div class="source" ng-show="otherName.sourceName">Source: {{otherName.sourceName}}</div>

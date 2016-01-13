@@ -2502,6 +2502,7 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile',function ($scope
     
     $scope.addNewModal = function() {
         $scope.otherNamesForm.otherNames.push({"errors":[],"content":"","putCode":null,"visibility":{"visibility":"PUBLIC"}});
+        $scope.newInput = true; 
     };
 
     $scope.getOtherNamesForm = function(){
@@ -2578,7 +2579,7 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile',function ($scope
     };
     
     $scope.openEditModal = function(){
-        $scope.addNewModal();
+        //$scope.addNewModal();
         
         $.colorbox({
             scrolling: true,
@@ -10073,3 +10074,20 @@ orcidNgModule.directive('bindHtmlCompile', ['$compile', function ($compile) {
         }
     };
 }]);
+
+orcidNgModule.directive('focusMe', function($timeout) {
+    return {
+      scope: { trigger: '=focusMe' },
+      link: function(scope, element) {
+        scope.$watch('trigger', function(value) {
+          if(value === true) { 
+            //console.log('trigger',value);
+            //$timeout(function() {
+              element[0].focus();
+              scope.trigger = false;
+            //});
+          }
+        });
+      }
+    };
+  });
