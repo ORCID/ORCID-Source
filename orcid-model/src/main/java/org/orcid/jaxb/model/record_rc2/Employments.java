@@ -31,8 +31,10 @@ import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+
 import org.orcid.jaxb.model.common.LastModifiedDate;
 
 /**
@@ -46,7 +48,7 @@ import org.orcid.jaxb.model.common.LastModifiedDate;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "employment" })
+@XmlType(propOrder = { "lastModifiedDate", "employment" })
 @XmlRootElement(name = "employments")
 public class Employments implements Serializable, ActivitiesContainer {
 
@@ -54,6 +56,8 @@ public class Employments implements Serializable, ActivitiesContainer {
      * 
      */
     private static final long serialVersionUID = 1L;
+    @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "last-modified-date")
+    protected LastModifiedDate lastModifiedDate;
     protected List<Employment> employment;
 
     /**

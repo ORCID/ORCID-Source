@@ -125,6 +125,7 @@
 	<xs:element name="group-id-records">
 		<xs:complexType>
 			<xs:sequence>
+				<xs:element ref="common:last-modified-date" minOccurs="0" maxOccurs="1" />
 				<xs:element name="total" type="xs:integer"></xs:element>
 				<xs:element name="page" type="xs:integer"></xs:element>
 				<xs:element name="page-size" type="xs:integer"></xs:element>

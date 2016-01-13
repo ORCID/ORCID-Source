@@ -42,7 +42,7 @@ import java.net.URISyntaxException;
 import javax.ws.rs.core.UriBuilder;
 
 import org.orcid.api.common.OrcidClientHelper;
-import org.orcid.jaxb.model.groupid.GroupIdRecord;
+import org.orcid.jaxb.model.groupid_rc2.GroupIdRecord;
 import org.orcid.jaxb.model.record_rc2.Education;
 import org.orcid.jaxb.model.record_rc2.Employment;
 import org.orcid.jaxb.model.record_rc2.Funding;
@@ -57,7 +57,7 @@ import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 
-/**
+/**`
  * 
  * @author Will Simpson
  *
