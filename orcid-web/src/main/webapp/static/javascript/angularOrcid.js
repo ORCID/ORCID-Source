@@ -2248,8 +2248,7 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$compile', function Website
             url: getBaseUri() + '/my-orcid/websitesForms.json',
             dataType: 'json',
             success: function(data) {
-                $scope.websitesForm = data;
-                console.log(angular.toJson(data));
+                $scope.websitesForm = data;                
                 var websites = $scope.websitesForm.websites;
                 var len = websites.length;
                 while (len--) {
@@ -2304,6 +2303,11 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$compile', function Website
         $scope.websitesForm.visibility.visibility = priv;
     };
     
+    $scope.setPrivacyModal = function(priv, $event) {
+        $event.preventDefault();
+        $scope.websitesForm.visibility.visibility = priv;
+    };
+    
     $scope.showTooltip = function(elem){
     	$scope.showElement[elem] = true;
     }
@@ -2343,7 +2347,6 @@ orcidNgModule.controller('KeywordsCtrl', ['$scope', '$compile', function ($scope
             success: function(data) {
                 $scope.keywordsForm = data;
                 $scope.$apply();
-                //console.log(angular.toJson(data));
             }
         }).fail(function(){
             // something bad is happening!
@@ -2393,12 +2396,14 @@ orcidNgModule.controller('KeywordsCtrl', ['$scope', '$compile', function ($scope
     	$scope.showElement[elem] = false;
     }
     
-    $scope.openEditModal = function(){
+    $scope.openEditModal = function(){        
         $.colorbox({
             scrolling: true,
             html: $compile($('#edit-keyword').html())($scope),
-            onLoad: function() {$('#cboxClose').remove();},
-            // start the colorbox off with the correct width
+            onLoad: function() {
+                $('#cboxClose').remove();
+                
+            },
             width: formColorBoxResize(),
             onComplete: function() {
                     
@@ -2494,6 +2499,10 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile',function ($scope
     $scope.addNew = function() {
         $scope.otherNamesForm.otherNames.push({"errors":[],"content":"","putCode":null,"visibility":null});
     };
+    
+    $scope.addNewModal = function() {
+        $scope.otherNamesForm.otherNames.push({"errors":[],"content":"","putCode":null,"visibility":{"visibility":"PUBLIC"}});
+    };
 
     $scope.getOtherNamesForm = function(){
         $.ajax({
@@ -2501,8 +2510,8 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile',function ($scope
             dataType: 'json',
             success: function(data) {            	
                 $scope.otherNamesForm = data;
-                $scope.$apply();
-                console.log(angular.toJson(data));                
+                console.log(angular.toJson($scope.otherNamesForm));
+                $scope.$apply();                                
             }
         }).fail(function(){
             // something bad is happening!
@@ -2519,14 +2528,18 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile',function ($scope
         }
     };
 
-    $scope.setOtherNamesForm = function(){
+    $scope.setOtherNamesForm = function(v2){        
+
+        if(v2) //Remove once V2 API functionality is live
+            $scope.otherNamesForm.visibility.visibility = null;        
+   
         $.ajax({
             url: getBaseUri() + '/my-orcid/otherNamesForms.json',
             type: 'POST',
             data:  angular.toJson($scope.otherNamesForm),
             contentType: 'application/json;charset=UTF-8',
             dataType: 'json',
-            success: function(data) {
+            success: function(data) {                
                 $scope.otherNamesForm = data;
                 if(data.errors.length == 0)
                    $scope.close();
@@ -2551,13 +2564,27 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile',function ($scope
         $scope.otherNamesForm.visibility.visibility = priv;
     };
     
+    $scope.setPrivacyModal = function(priv, $event, otherName) {
+        $event.preventDefault();
+        var otherNames = $scope.otherNamesForm.otherNames;        
+        var len = otherNames.length;
+        
+        while (len--) {
+            if (otherNames[len] == otherName)                
+                otherNames[len].visibility.visibility = priv;
+                $scope.otherNamesForm.otherNames = otherNames;
+        }
+    };
     
     $scope.openEditModal = function(){
+        $scope.addNewModal();
+        
         $.colorbox({
             scrolling: true,
             html: $compile($('#edit-aka').html())($scope),
-            onLoad: function() {$('#cboxClose').remove();},
-            // start the colorbox off with the correct width
+            onLoad: function() {
+                $('#cboxClose').remove(); 
+            },
             width: formColorBoxResize(),
             onComplete: function() {
                     
@@ -2570,7 +2597,9 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile',function ($scope
     }
     
     $scope.closeEditModal = function(){
+        $scope.getOtherNamesForm();
         $.colorbox.close();
+        
     }
     
     
@@ -2684,8 +2713,7 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
             dataType: 'json',
             success: function(data) {
                 $scope.countryForm = data;
-                $scope.$apply();
-                console.log(angular.toJson(data));
+                $scope.$apply();                
             }
         }).fail(function(){
             // something bad is happening!

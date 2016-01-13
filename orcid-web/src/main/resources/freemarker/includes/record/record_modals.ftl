@@ -37,10 +37,10 @@
 	        	      	   <div class="row aka-row" ng-repeat="otherName in otherNamesForm.otherNames" ng-cloak> 								
 								<div class="col-md-6">
 									<div class="aka">
-										<input type="text" ng-model="otherName.content" ng-show="otherName.source == orcidId"/>
-										<span ng-bind="otherName.content" ng-show="otherName.source != orcidId"></span>										
+										<input type="text" ng-model="otherName.content" ng-show="otherName.source == orcidId || otherName.source == null"/>
+										<span ng-bind="otherName.content" ng-show="otherName.source != orcidId && otherName.sourceName"></span>										
 									</div>
-									<div class="source">Source: {{otherName.sourceName}}</div>
+									<div class="source" ng-show="otherName.sourceName">Source: {{otherName.sourceName}}</div>
 								</div>							
 								<div class="col-md-6">
 									<ul class="record-settings pull-right">
@@ -53,24 +53,24 @@
 										<li>										
 											<span class="glyphicon glyphicon-trash" ng-click="deleteKeyword(otherName)"></span>											
 										</li>
-										<li>
-											<@orcid.privacyToggle3  angularModel="otherNamesForm.visibility.visibility"
+										<li>											
+											<@orcid.privacyToggle3  angularModel="otherName.visibility.visibility"
 				             					questionClick="toggleClickPrivacyHelp($index)"
 				             					clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
-				             					publicClick="setPrivacy('PUBLIC', $event)" 
-		                	     				limitedClick="setPrivacy('LIMITED', $event)" 
-		                	     				privateClick="setPrivacy('PRIVATE', $event)"
+				             					publicClick="setPrivacyModal('PUBLIC', $event, otherName)" 
+		                	     				limitedClick="setPrivacyModal('LIMITED', $event, otherName)" 
+		                	     				privateClick="setPrivacyModal('PRIVATE', $event, otherName)"
 		                	     				elementId="$index" />	
 										</li>
 									</ul>
-									<span class="created-date pull-right">Created: {{otherNamesForm.otherNames}}</span>
+									<span class="created-date pull-right" ng-show="otherName.createdDate">Created: {{otherName.createdDate.year + '-' + otherName.createdDate.month + '-' + otherName.createdDate.day}}</span>
 								</div>
 							</div>
 						</div>						
 					</div>
 					<div class="record-buttons">
-						<a ng-click="addNew()"><span class="glyphicon glyphicon-plus pull-left"></span></a>	        	      		
-			            <button class="btn btn-primary pull-right" ng-click="setOtherNamesForm()"><@spring.message "freemarker.btnsavechanges"/></button>	        	      		
+						<a ng-click="addNewModal()"><span class="glyphicon glyphicon-plus pull-left"></span></a>	        	      		
+			            <button class="btn btn-primary pull-right" ng-click="setOtherNamesForm(true)"><@spring.message "freemarker.btnsavechanges"/></button>	        	      		
 			            <a class="cancel-option pull-right" ng-click="closeEditModal()"><@spring.message "freemarker.btncancel"/></a>
 					</div>
 					
