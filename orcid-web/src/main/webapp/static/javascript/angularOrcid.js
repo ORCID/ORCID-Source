@@ -2249,6 +2249,7 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$compile', function Website
             dataType: 'json',
             success: function(data) {
                 $scope.websitesForm = data;
+                console.log(angular.toJson(data));
                 var websites = $scope.websitesForm.websites;
                 var len = websites.length;
                 while (len--) {
@@ -2478,6 +2479,7 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile',function ($scope
     $scope.otherNamesForm = null;
     $scope.privacyHelp = false;
     $scope.showElement = {};
+    $scope.orcidId = orcidVar.orcidId; 
 
     $scope.openEdit = function() {
         $scope.addNew();
@@ -2500,7 +2502,7 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile',function ($scope
             success: function(data) {            	
                 $scope.otherNamesForm = data;
                 $scope.$apply();
-                console.log(angular.toJson(data));
+                console.log(angular.toJson(data));                
             }
         }).fail(function(){
             // something bad is happening!
@@ -2683,6 +2685,7 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
             success: function(data) {
                 $scope.countryForm = data;
                 $scope.$apply();
+                console.log(angular.toJson(data));
             }
         }).fail(function(){
             // something bad is happening!
