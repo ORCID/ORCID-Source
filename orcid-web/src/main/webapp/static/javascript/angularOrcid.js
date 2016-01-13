@@ -2826,7 +2826,7 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
 
     $scope.setPrivacy = function(priv, $event) {
         $event.preventDefault();
-        $scope.countryForm.profileAddressVisibility.visibility = priv;
+        $scope.countryForm.visibility.visibility = priv;
     };
     
     $scope.showTooltip = function(elem){
