@@ -212,9 +212,6 @@ public class AddressManagerImpl implements AddressManager {
     @Override
     public Addresses updateAddresses(String orcid, Addresses addresses, Visibility defaultVisibility) {
         List<AddressEntity> existingAddressList = addressDao.findByOrcid(orcid);
-        if(defaultVisibility == null) {
-            defaultVisibility = Visibility.fromValue(OrcidVisibilityDefaults.COUNTRY_DEFAULT.getVisibility().value());
-        }
         //Delete the deleted ones
         for(AddressEntity existingAddress : existingAddressList) {
             boolean deleteMe = true;
@@ -241,7 +238,7 @@ public class AddressManagerImpl implements AddressManager {
                    for(AddressEntity existingAddress : existingAddressList) {
                        if(existingAddress.getId().equals(updatedOrNew.getPutCode())) {
                            existingAddress.setLastModified(new Date());
-                           existingAddress.setVisibility(Visibility.fromValue(defaultVisibility.value()));
+                           existingAddress.setVisibility(updatedOrNew.getVisibility());
                            existingAddress.setIso2Country(updatedOrNew.getCountry().getValue());
                            existingAddress.setPrimary(updatedOrNew.getPrimary());
                            addressDao.merge(existingAddress);
@@ -255,7 +252,7 @@ public class AddressManagerImpl implements AddressManager {
                     newAddress.setUser(profile);
                     newAddress.setDateCreated(new Date());
                     newAddress.setSource(sourceEntity);
-                    newAddress.setVisibility(Visibility.fromValue(defaultVisibility.value()));
+                    newAddress.setVisibility(updatedOrNew.getVisibility());
                     addressDao.persist(newAddress);
                     
                 }

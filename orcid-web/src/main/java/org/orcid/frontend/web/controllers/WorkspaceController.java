@@ -380,12 +380,13 @@ public class WorkspaceController extends BaseWorkspaceController {
                 for(Keyword k : updatedKeywords.getKeywords()) {
                     k.setVisibility(org.orcid.jaxb.model.common.Visibility.fromValue(defaultVisibility.getVisibility().value()));
                 }
+            } 
+                         
+            if(defaultVisibility != null) {
+                profileKeywordManager.updateKeywords(getCurrentUserOrcid(), updatedKeywords, org.orcid.jaxb.model.common.Visibility.fromValue(defaultVisibility.getVisibility().value()));
             } else {
-                ProfileEntity profileEntity = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
-                defaultVisibility = profileEntity.getKeywordsVisibility() == null ? Visibility.valueOf(OrcidVisibilityDefaults.KEYWORD_DEFAULT.getVisibility()) : Visibility.valueOf(profileEntity.getKeywordsVisibility());
+                profileKeywordManager.updateKeywords(getCurrentUserOrcid(), updatedKeywords, null);
             }
-                                    
-            profileKeywordManager.updateKeywords(getCurrentUserOrcid(), updatedKeywords, org.orcid.jaxb.model.common.Visibility.fromValue(defaultVisibility.getVisibility().value()));
         }
         return kf;
     }
@@ -411,26 +412,23 @@ public class WorkspaceController extends BaseWorkspaceController {
     public @ResponseBody
     OtherNamesForm setOtherNamesFormJson(@RequestBody OtherNamesForm onf) throws NoSuchRequestHandlingMethodException {
         onf.setErrors(new ArrayList<String>());
-        List<OtherNameForm> validOtherNames = new ArrayList<OtherNameForm>();
-        for (int i = 0; i < onf.getOtherNames().size(); i++) {
-            boolean isInvalid = false;
-            OtherNameForm otherNameForm = onf.getOtherNames().get(i);
-            if (PojoUtil.isEmpty(otherNameForm.getContent())) {
-                //Mark it as invalid
-                isInvalid = true;
-            } else if(otherNameForm.getContent().length() > 255) {
-                otherNameForm.setContent(otherNameForm.getContent().substring(0,255));                
+        if(onf.getOtherNames() != null) {
+            Iterator<OtherNameForm> it = onf.getOtherNames().iterator();
+            while(it.hasNext()) {
+                OtherNameForm form = it.next();
+                if(PojoUtil.isEmpty(form.getContent())) {
+                   it.remove();    
+                } 
+                if(form.getContent().length() > 255) {
+                    form.getErrors().add(getMessage("common.lenght_less_255"));
+                }
+                copyErrors(form, onf);
             }
-            if(!isInvalid) {
-                // Set the visibility if it is null
-                otherNameForm.setVisibility(onf.getVisibility());
-                validOtherNames.add(otherNameForm);
-            }            
+                    
+            if (onf.getErrors().size() > 0) 
+                return onf;   
         }
-        onf.setOtherNames(validOtherNames);
-        if (onf.getErrors().size() > 0) 
-            return onf;        
-        
+                     
         OtherNames otherNames = onf.toOtherNames();                
         Visibility defaultVisibility = onf.getVisibility();
         
@@ -439,12 +437,14 @@ public class WorkspaceController extends BaseWorkspaceController {
             for(OtherName o : otherNames.getOtherNames()) {
                 o.setVisibility(org.orcid.jaxb.model.common.Visibility.fromValue(defaultVisibility.getVisibility().value()));
             }
+        } 
+        
+        if(defaultVisibility != null) {
+            otherNameManager.updateOtherNames(getEffectiveUserOrcid(), otherNames, org.orcid.jaxb.model.common.Visibility.fromValue(defaultVisibility.getVisibility().value()));
         } else {
-            ProfileEntity profileEntity = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
-            defaultVisibility = profileEntity.getOtherNamesVisibility() == null ? Visibility.valueOf(OrcidVisibilityDefaults.OTHER_NAMES_DEFAULT.getVisibility()) : Visibility.valueOf(profileEntity.getOtherNamesVisibility());
+            otherNameManager.updateOtherNames(getEffectiveUserOrcid(), otherNames, null);
         }
         
-        otherNameManager.updateOtherNames(getEffectiveUserOrcid(), otherNames, org.orcid.jaxb.model.common.Visibility.fromValue(defaultVisibility.getVisibility().value()));
         return onf;
     }
     
@@ -498,12 +498,14 @@ public class WorkspaceController extends BaseWorkspaceController {
             for(ResearcherUrl rUrl : rUrls.getResearcherUrls()) {
                 rUrl.setVisibility(org.orcid.jaxb.model.common.Visibility.fromValue(defaultVisibility.getVisibility().value()));
             }
-        } else {
-            ProfileEntity profileEntity = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
-            defaultVisibility = profileEntity.getResearcherUrlsVisibility() == null ? Visibility.valueOf(OrcidVisibilityDefaults.RESEARCHER_URLS_DEFAULT.getVisibility()) : Visibility.valueOf(profileEntity.getResearcherUrlsVisibility());
         }
-                
-        researcherUrlManager.updateResearcherUrls(getCurrentUserOrcid(), rUrls, org.orcid.jaxb.model.common.Visibility.fromValue(defaultVisibility.getVisibility().value()));
+        
+        if(defaultVisibility != null) {
+            researcherUrlManager.updateResearcherUrls(getCurrentUserOrcid(), rUrls, org.orcid.jaxb.model.common.Visibility.fromValue(defaultVisibility.getVisibility().value()));
+        } else {
+            researcherUrlManager.updateResearcherUrls(getCurrentUserOrcid(), rUrls, null);
+        }
+        
         return ws;
     }
     

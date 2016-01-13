@@ -162,9 +162,6 @@ public class OtherNameManagerImpl implements OtherNameManager {
     @Transactional
     public OtherNames updateOtherNames(String orcid, OtherNames otherNames, org.orcid.jaxb.model.common.Visibility defaultVisibility) {
         List<OtherNameEntity> existingOtherNamesEntityList = otherNameDao.getOtherNames(orcid);
-        if(defaultVisibility == null) {
-            defaultVisibility = Visibility.fromValue(OrcidVisibilityDefaults.OTHER_NAMES_DEFAULT.getVisibility().value());
-        }
         //Delete the deleted ones
         for(OtherNameEntity existingOtherName : existingOtherNamesEntityList) {
             boolean deleteMe = true;
@@ -191,7 +188,7 @@ public class OtherNameManagerImpl implements OtherNameManager {
                    for(OtherNameEntity existingOtherName : existingOtherNamesEntityList) {
                        if(existingOtherName.getId().equals(updatedOrNew.getPutCode())) {
                            existingOtherName.setLastModified(new Date());
-                           existingOtherName.setVisibility(Visibility.fromValue(defaultVisibility.value()));
+                           existingOtherName.setVisibility(updatedOrNew.getVisibility());
                            existingOtherName.setDisplayName(updatedOrNew.getContent());
                            otherNameDao.merge(existingOtherName);
                        }
@@ -204,7 +201,7 @@ public class OtherNameManagerImpl implements OtherNameManager {
                     newOtherName.setProfile(profile);
                     newOtherName.setDateCreated(new Date());
                     newOtherName.setSource(sourceEntity);
-                    newOtherName.setVisibility(Visibility.fromValue(defaultVisibility.value()));
+                    newOtherName.setVisibility(updatedOrNew.getVisibility());
                     otherNameDao.persist(newOtherName);
                     
                 }

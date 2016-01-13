@@ -31,7 +31,6 @@ import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ResearcherUrlManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.validator.PersonValidator;
-import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
@@ -95,10 +94,6 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
     @Transactional
     public ResearcherUrls updateResearcherUrls(String orcid, ResearcherUrls researcherUrls, Visibility defaultVisibility) {
         List<ResearcherUrlEntity> existingEntities = researcherUrlDao.getResearcherUrls(orcid);
-        if(defaultVisibility == null) {
-            defaultVisibility = Visibility.fromValue(OrcidVisibilityDefaults.RESEARCHER_URLS_DEFAULT.getVisibility().value());
-        }
-        
         //Delete the deleted ones
         for(ResearcherUrlEntity existingEntity : existingEntities) {
             boolean deleteMe = true;
@@ -126,7 +121,7 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
                    for(ResearcherUrlEntity existingEntity : existingEntities) {
                        if(existingEntity.getId().equals(updatedOrNew.getPutCode())) {
                            existingEntity.setLastModified(new Date());
-                           existingEntity.setVisibility((updatedOrNew.getVisibility() == null) ?  Visibility.fromValue(defaultVisibility.value()) : updatedOrNew.getVisibility());                           
+                           existingEntity.setVisibility(updatedOrNew.getVisibility());                           
                            existingEntity.setUrl(updatedOrNew.getUrl().getValue());
                            existingEntity.setUrlName(updatedOrNew.getUrlName());
                            researcherUrlDao.merge(existingEntity);
@@ -141,7 +136,7 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
                     newResearcherUrl.setDateCreated(new Date());
                     newResearcherUrl.setLastModified(new Date());
                     newResearcherUrl.setSource(sourceEntity);
-                    newResearcherUrl.setVisibility(Visibility.fromValue(defaultVisibility.value()));
+                    newResearcherUrl.setVisibility(updatedOrNew.getVisibility());
                     researcherUrlDao.persist(newResearcherUrl);                    
                 }
             }
