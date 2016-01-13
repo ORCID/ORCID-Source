@@ -54,7 +54,7 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
     private JpaJaxbKeywordAdapter adapter;
 
     @Resource
-    private OrcidSecurityManager orcidSecurityManager;    
+    private OrcidSecurityManager orcidSecurityManager;
 
     @Override
     public Keywords getKeywords(String orcid) {
@@ -85,10 +85,12 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
 
     @Override
     public boolean updateKeywordsVisibility(String orcid, Visibility defaultVisiblity) {
-        org.orcid.jaxb.model.message.Visibility v = (defaultVisiblity == null) ? org.orcid.jaxb.model.message.Visibility.fromValue(OrcidVisibilityDefaults.KEYWORD_DEFAULT.getVisibility().value()) : org.orcid.jaxb.model.message.Visibility.fromValue(defaultVisiblity.value());
+        org.orcid.jaxb.model.message.Visibility v = (defaultVisiblity == null)
+                ? org.orcid.jaxb.model.message.Visibility.fromValue(OrcidVisibilityDefaults.KEYWORD_DEFAULT.getVisibility().value())
+                : org.orcid.jaxb.model.message.Visibility.fromValue(defaultVisiblity.value());
         return profileKeywordDao.updateKeywordsVisibility(orcid, v);
     }
-    
+
     @Override
     public Keyword getKeyword(String orcid, Long putCode) {
         ProfileKeywordEntity entity = profileKeywordDao.getProfileKeyword(orcid, putCode);
@@ -98,8 +100,8 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
     @Override
     public boolean deleteKeyword(String orcid, Long putCode, boolean checkSource) {
         ProfileKeywordEntity entity = profileKeywordDao.getProfileKeyword(orcid, putCode);
-                
-        if(checkSource) {
+
+        if (checkSource) {
             SourceEntity existingSource = entity.getSource();
             orcidSecurityManager.checkSource(existingSource);
         }
@@ -177,7 +179,7 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
     @Transactional
     public Keywords updateKeywords(String orcid, Keywords keywords, Visibility defaultVisibility) {
         List<ProfileKeywordEntity> existingKeywordsList = profileKeywordDao.getProfileKeywors(orcid);
-        if(defaultVisibility == null) {
+        if (defaultVisibility == null) {
             defaultVisibility = Visibility.fromValue(OrcidVisibilityDefaults.KEYWORD_DEFAULT.getVisibility().value());
         }
         // Delete the deleted ones
@@ -202,7 +204,7 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
         if (keywords != null && keywords.getKeywords() != null) {
             for (Keyword updatedOrNew : keywords.getKeywords()) {
                 if (updatedOrNew.getPutCode() != null) {
-                    // Update the existing ones or create new ones
+                    // Update the existing ones
                     for (ProfileKeywordEntity existingKeyword : existingKeywordsList) {
                         if (existingKeyword.getId().equals(updatedOrNew.getPutCode())) {
                             existingKeyword.setLastModified(new Date());
@@ -229,7 +231,6 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
         if (defaultVisibility != null) {
             updateKeywordsVisibility(orcid, defaultVisibility);
         }
-            
 
         return keywords;
     }

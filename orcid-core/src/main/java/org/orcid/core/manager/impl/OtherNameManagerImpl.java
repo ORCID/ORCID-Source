@@ -187,7 +187,7 @@ public class OtherNameManagerImpl implements OtherNameManager {
         if(otherNames != null && otherNames.getOtherNames() != null) {
             for(OtherName updatedOrNew : otherNames.getOtherNames()) {
                 if(updatedOrNew.getPutCode() != null) {
-                    //Update the existing ones or create new ones
+                    //Update the existing ones
                    for(OtherNameEntity existingOtherName : existingOtherNamesEntityList) {
                        if(existingOtherName.getId().equals(updatedOrNew.getPutCode())) {
                            existingOtherName.setLastModified(new Date());
