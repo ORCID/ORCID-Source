@@ -24,18 +24,17 @@ import javax.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.manager.impl.OrcidUrlManager;
-import org.orcid.jaxb.model.common.FuzzyDate;
-import org.orcid.jaxb.model.common.OrcidIdentifier;
-import org.orcid.jaxb.model.common.PublicationDate;
-import org.orcid.jaxb.model.common.SourceClientId;
-import org.orcid.jaxb.model.common.SourceOrcid;
+import org.orcid.jaxb.model.common_rc2.FuzzyDate;
+import org.orcid.jaxb.model.common_rc2.OrcidIdentifier;
+import org.orcid.jaxb.model.common_rc2.PublicationDate;
+import org.orcid.jaxb.model.common_rc2.SourceClientId;
+import org.orcid.jaxb.model.common_rc2.SourceOrcid;
 import org.orcid.jaxb.model.groupid.GroupIdRecord;
 import org.orcid.jaxb.model.notification.amended.NotificationAmended;
 import org.orcid.jaxb.model.notification.custom.NotificationCustom;
 import org.orcid.jaxb.model.notification.permission.AuthorizationUrl;
 import org.orcid.jaxb.model.notification.permission.Item;
 import org.orcid.jaxb.model.notification.permission.NotificationPermission;
-
 import org.orcid.jaxb.model.record.summary_rc2.EducationSummary;
 import org.orcid.jaxb.model.record.summary_rc2.EmploymentSummary;
 import org.orcid.jaxb.model.record.summary_rc2.FundingSummary;
@@ -558,10 +557,10 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     }    
     
     private void addV2SourceMapping(MapperFactory mapperFactory) {
-        mapperFactory.classMap(org.orcid.jaxb.model.common.Source.class, SourceEntity.class).fieldAToB("sourceOrcid.path", "sourceProfile.id")
-                .fieldAToB("sourceClientId.path", "sourceClient.id").customize(new CustomMapper<org.orcid.jaxb.model.common.Source, SourceEntity>() {
+        mapperFactory.classMap(org.orcid.jaxb.model.common_rc2.Source.class, SourceEntity.class).fieldAToB("sourceOrcid.path", "sourceProfile.id")
+                .fieldAToB("sourceClientId.path", "sourceClient.id").customize(new CustomMapper<org.orcid.jaxb.model.common_rc2.Source, SourceEntity>() {
                     @Override
-                    public void mapBtoA(SourceEntity sourceEntity, org.orcid.jaxb.model.common.Source source, MappingContext context) {
+                    public void mapBtoA(SourceEntity sourceEntity, org.orcid.jaxb.model.common_rc2.Source source, MappingContext context) {
                         String sourceId = sourceEntity.getSourceId();
                         if (OrcidStringUtils.isClientId(sourceId)) {
                             SourceClientId sourceClientId = new SourceClientId(sourceId);

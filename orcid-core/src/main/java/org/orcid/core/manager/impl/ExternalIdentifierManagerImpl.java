@@ -30,7 +30,7 @@ import org.orcid.core.manager.ExternalIdentifierManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.validator.PersonValidator;
-import org.orcid.jaxb.model.common.Visibility;
+import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.record_rc2.ExternalIdentifier;
 import org.orcid.jaxb.model.record_rc2.ExternalIdentifiers;
 import org.orcid.persistence.dao.ExternalIdentifierDao;
@@ -166,15 +166,15 @@ public class ExternalIdentifierManagerImpl implements ExternalIdentifierManager 
     }
 
     private void setIncomingPrivacy(ExternalIdentifierEntity entity, ProfileEntity profile) {
-        org.orcid.jaxb.model.common.Visibility incomingExternalIdentifierVisibility = entity.getVisibility();
-        org.orcid.jaxb.model.common.Visibility defaultExternalIdentifierVisibility = profile.getExternalIdentifiersVisibility() == null
-                ? org.orcid.jaxb.model.common.Visibility.PRIVATE : org.orcid.jaxb.model.common.Visibility.fromValue(profile.getExternalIdentifiersVisibility().value());
+        org.orcid.jaxb.model.common_rc2.Visibility incomingExternalIdentifierVisibility = entity.getVisibility();
+        org.orcid.jaxb.model.common_rc2.Visibility defaultExternalIdentifierVisibility = profile.getExternalIdentifiersVisibility() == null
+                ? org.orcid.jaxb.model.common_rc2.Visibility.PRIVATE : org.orcid.jaxb.model.common_rc2.Visibility.fromValue(profile.getExternalIdentifiersVisibility().value());
         if (profile.getClaimed() != null && profile.getClaimed()) {
             if (defaultExternalIdentifierVisibility.isMoreRestrictiveThan(incomingExternalIdentifierVisibility)) {
                 entity.setVisibility(defaultExternalIdentifierVisibility);
             }
         } else if (incomingExternalIdentifierVisibility == null) {
-            entity.setVisibility(org.orcid.jaxb.model.common.Visibility.PRIVATE);
+            entity.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PRIVATE);
         }
     }    
 

@@ -62,7 +62,7 @@ public class SwaggerModelConverter implements ModelConverter {
         JavaType _type = Json.mapper().constructType(type);
         if (_type != null) {
             Class<?> cls = _type.getRawClass();
-            if (org.orcid.jaxb.model.common.Visibility.class.isAssignableFrom(cls)) {
+            if (org.orcid.jaxb.model.common_rc2.Visibility.class.isAssignableFrom(cls)) {
                 return context.resolveProperty(Visibility.class, null);
             }
         }

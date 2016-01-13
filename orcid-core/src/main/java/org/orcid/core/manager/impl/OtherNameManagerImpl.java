@@ -34,7 +34,7 @@ import org.orcid.core.manager.OtherNameManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.validator.PersonValidator;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
-import org.orcid.jaxb.model.common.Visibility;
+import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.message.OtherNames;
 import org.orcid.persistence.dao.OtherNameDao;
 import org.orcid.persistence.jpa.entities.OtherNameEntity;
@@ -258,7 +258,7 @@ public class OtherNameManagerImpl implements OtherNameManager {
     
     @Override
     @Transactional
-    public org.orcid.jaxb.model.record_rc2.OtherNames updateOtherNamesV2(String orcid, org.orcid.jaxb.model.record_rc2.OtherNames otherNames, org.orcid.jaxb.model.common.Visibility defaultVisiblity) {
+    public org.orcid.jaxb.model.record_rc2.OtherNames updateOtherNamesV2(String orcid, org.orcid.jaxb.model.record_rc2.OtherNames otherNames, org.orcid.jaxb.model.common_rc2.Visibility defaultVisiblity) {
         List<OtherNameEntity> existingOtherNamesEntityList = otherNameDao.getOtherNames(orcid);
         //Delete the deleted ones
         for(OtherNameEntity existingOtherName : existingOtherNamesEntityList) {
@@ -326,15 +326,15 @@ public class OtherNameManagerImpl implements OtherNameManager {
     }
 
     private void setIncomingPrivacy(OtherNameEntity entity, ProfileEntity profile) {
-        org.orcid.jaxb.model.common.Visibility incomingOtherNameVisibility = entity.getVisibility();
-        org.orcid.jaxb.model.common.Visibility defaultOtherNamesVisibility = profile.getOtherNamesVisibility() == null ? org.orcid.jaxb.model.common.Visibility.fromValue(OrcidVisibilityDefaults.OTHER_NAMES_DEFAULT.getVisibility().value())
-                : org.orcid.jaxb.model.common.Visibility.fromValue(profile.getOtherNamesVisibility().value());
+        org.orcid.jaxb.model.common_rc2.Visibility incomingOtherNameVisibility = entity.getVisibility();
+        org.orcid.jaxb.model.common_rc2.Visibility defaultOtherNamesVisibility = profile.getOtherNamesVisibility() == null ? org.orcid.jaxb.model.common_rc2.Visibility.fromValue(OrcidVisibilityDefaults.OTHER_NAMES_DEFAULT.getVisibility().value())
+                : org.orcid.jaxb.model.common_rc2.Visibility.fromValue(profile.getOtherNamesVisibility().value());
         if (profile.getClaimed() != null && profile.getClaimed()) {
             if (defaultOtherNamesVisibility.isMoreRestrictiveThan(incomingOtherNameVisibility)) {
                 entity.setVisibility(defaultOtherNamesVisibility);
             }
         } else if (incomingOtherNameVisibility == null) {
-            entity.setVisibility(org.orcid.jaxb.model.common.Visibility.PRIVATE);
+            entity.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PRIVATE);
         }
     }
 }

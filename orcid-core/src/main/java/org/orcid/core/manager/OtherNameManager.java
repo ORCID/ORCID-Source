@@ -77,5 +77,5 @@ public interface OtherNameManager {
 
     org.orcid.jaxb.model.record_rc2.OtherName updateOtherNameV2(String orcid, Long putCode, org.orcid.jaxb.model.record_rc2.OtherName otherName);
     
-    org.orcid.jaxb.model.record_rc2.OtherNames updateOtherNamesV2(String orcid, org.orcid.jaxb.model.record_rc2.OtherNames otherNames, org.orcid.jaxb.model.common.Visibility defaultVisiblity);
+    org.orcid.jaxb.model.record_rc2.OtherNames updateOtherNamesV2(String orcid, org.orcid.jaxb.model.record_rc2.OtherNames otherNames, org.orcid.jaxb.model.common_rc2.Visibility defaultVisiblity);
 }

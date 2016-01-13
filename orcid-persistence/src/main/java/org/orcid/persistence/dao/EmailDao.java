@@ -59,5 +59,5 @@ public interface EmailDao extends GenericDao<EmailEntity, String> {
     
     List<EmailEntity> findByOrcid(String orcid);
     
-    List<EmailEntity> findByOrcid(String orcid, org.orcid.jaxb.model.common.Visibility visibility);
+    List<EmailEntity> findByOrcid(String orcid, org.orcid.jaxb.model.common_rc2.Visibility visibility);
 }

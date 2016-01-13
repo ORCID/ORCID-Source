@@ -20,14 +20,14 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.orcid.jaxb.model.common.DisambiguatedOrganization;
-import org.orcid.jaxb.model.common.FuzzyDate;
-import org.orcid.jaxb.model.common.Iso3166Country;
-import org.orcid.jaxb.model.common.Organization;
-import org.orcid.jaxb.model.common.OrganizationAddress;
-import org.orcid.jaxb.model.common.Title;
-import org.orcid.jaxb.model.common.Url;
-import org.orcid.jaxb.model.common.Visibility;
+import org.orcid.jaxb.model.common_rc2.DisambiguatedOrganization;
+import org.orcid.jaxb.model.common_rc2.FuzzyDate;
+import org.orcid.jaxb.model.common_rc2.Iso3166Country;
+import org.orcid.jaxb.model.common_rc2.Organization;
+import org.orcid.jaxb.model.common_rc2.OrganizationAddress;
+import org.orcid.jaxb.model.common_rc2.Title;
+import org.orcid.jaxb.model.common_rc2.Url;
+import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.record_rc2.PeerReview;
 import org.orcid.jaxb.model.record_rc2.PeerReviewType;
 import org.orcid.jaxb.model.record_rc2.Relationship;
@@ -408,7 +408,7 @@ public class PeerReviewForm implements ErrorsInterface, Serializable {
             }
             
             if(translatedSubjectName != null) {
-                org.orcid.jaxb.model.common.TranslatedTitle tTitle = new org.orcid.jaxb.model.common.TranslatedTitle();
+                org.orcid.jaxb.model.common_rc2.TranslatedTitle tTitle = new org.orcid.jaxb.model.common_rc2.TranslatedTitle();
                 if(!PojoUtil.isEmpty(translatedSubjectName.getContent())) {
                     tTitle.setContent(translatedSubjectName.getContent());
                 }

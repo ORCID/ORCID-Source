@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.orcid.jaxb.model.common.Url;
+import org.orcid.jaxb.model.common_rc2.Url;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 

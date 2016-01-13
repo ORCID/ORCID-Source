@@ -404,7 +404,7 @@ public class WorkspaceController extends BaseWorkspaceController {
             return onf;        
         OtherNames otherNames = onf.toOtherNames();                
         String visibilityValue = (onf.getVisibility() == null || onf.getVisibility().getVisibility() == null) ? OrcidVisibilityDefaults.OTHER_NAMES_DEFAULT.getVisibility().value() : onf.getVisibility().getVisibility().value();                
-        org.orcid.jaxb.model.common.Visibility visibility = org.orcid.jaxb.model.common.Visibility.fromValue(visibilityValue);
+        org.orcid.jaxb.model.common_rc2.Visibility visibility = org.orcid.jaxb.model.common_rc2.Visibility.fromValue(visibilityValue);
         otherNameManager.updateOtherNamesV2(getEffectiveUserOrcid(), otherNames, visibility);
         return onf;
     }

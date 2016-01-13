@@ -29,10 +29,10 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.orcid.jaxb.model.common.ContributorAttributes;
-import org.orcid.jaxb.model.common.ContributorEmail;
-import org.orcid.jaxb.model.common.ContributorOrcid;
-import org.orcid.jaxb.model.common.CreditName;
+import org.orcid.jaxb.model.common_rc1.ContributorAttributes;
+import org.orcid.jaxb.model.common_rc1.ContributorEmail;
+import org.orcid.jaxb.model.common_rc1.ContributorOrcid;
+import org.orcid.jaxb.model.common_rc1.CreditName;
 
 import java.io.Serializable;
 

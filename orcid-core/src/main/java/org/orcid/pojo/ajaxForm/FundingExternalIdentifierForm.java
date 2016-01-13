@@ -130,9 +130,9 @@ public class FundingExternalIdentifierForm implements ErrorsInterface, Serializa
         if (!PojoUtil.isEmpty(type))
             result.setType(org.orcid.jaxb.model.record_rc2.FundingExternalIdentifierType.fromValue(type.getValue()));
         if (!PojoUtil.isEmpty(url))
-            result.setUrl(new org.orcid.jaxb.model.common.Url(url.getValue()));
+            result.setUrl(new org.orcid.jaxb.model.common_rc2.Url(url.getValue()));
         else
-            result.setUrl(new org.orcid.jaxb.model.common.Url());
+            result.setUrl(new org.orcid.jaxb.model.common_rc2.Url());
         if (!PojoUtil.isEmpty(value))
             result.setValue(value.getValue());
         if(!PojoUtil.isEmpty(relationship))

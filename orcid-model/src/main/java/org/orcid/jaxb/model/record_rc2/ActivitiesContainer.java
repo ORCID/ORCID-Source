@@ -18,7 +18,8 @@ package org.orcid.jaxb.model.record_rc2;
 
 import java.util.Collection;
 import java.util.Map;
-import org.orcid.jaxb.model.common.LastModifiedDate;
+
+import org.orcid.jaxb.model.common_rc2.LastModifiedDate;
 
 /**
  * 

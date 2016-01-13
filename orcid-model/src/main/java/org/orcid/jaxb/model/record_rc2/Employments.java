@@ -33,7 +33,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import org.orcid.jaxb.model.common.LastModifiedDate;
+
+import org.orcid.jaxb.model.common_rc2.LastModifiedDate;
 
 /**
  * <p>

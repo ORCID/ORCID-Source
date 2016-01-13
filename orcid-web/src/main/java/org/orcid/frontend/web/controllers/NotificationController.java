@@ -31,7 +31,7 @@ import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.TemplateManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
-import org.orcid.jaxb.model.common.Source;
+import org.orcid.jaxb.model.common_rc2.Source;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.Preferences;
 import org.orcid.jaxb.model.notification.Notification;

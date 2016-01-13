@@ -28,7 +28,7 @@ import java.io.Serializable;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.orcid.jaxb.model.common.OrcidIdBase;
+import org.orcid.jaxb.model.common_rc1.OrcidIdBase;
 
 @Deprecated
 @XmlRootElement(name = "source")

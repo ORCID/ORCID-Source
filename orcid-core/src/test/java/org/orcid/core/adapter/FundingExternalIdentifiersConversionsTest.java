@@ -82,19 +82,19 @@ public class FundingExternalIdentifiersConversionsTest {
         org.orcid.jaxb.model.record_rc2.FundingExternalIdentifiers recordFei = new org.orcid.jaxb.model.record_rc2.FundingExternalIdentifiers();
         org.orcid.jaxb.model.record_rc2.FundingExternalIdentifier f1 = new org.orcid.jaxb.model.record_rc2.FundingExternalIdentifier();
         f1.setType(org.orcid.jaxb.model.record_rc2.FundingExternalIdentifierType.GRANT_NUMBER);
-        f1.setUrl(new org.orcid.jaxb.model.common.Url("www.f1.com"));
+        f1.setUrl(new org.orcid.jaxb.model.common_rc2.Url("www.f1.com"));
         f1.setValue("f1");
         recordFei.getExternalIdentifier().add(f1);
 
         org.orcid.jaxb.model.record_rc2.FundingExternalIdentifier f2 = new org.orcid.jaxb.model.record_rc2.FundingExternalIdentifier();
         f2.setType(org.orcid.jaxb.model.record_rc2.FundingExternalIdentifierType.GRANT_NUMBER);
-        f2.setUrl(new org.orcid.jaxb.model.common.Url("www.f2.com"));
+        f2.setUrl(new org.orcid.jaxb.model.common_rc2.Url("www.f2.com"));
         f2.setValue("f2");
         recordFei.getExternalIdentifier().add(f2);
 
         org.orcid.jaxb.model.record_rc2.FundingExternalIdentifier f3 = new org.orcid.jaxb.model.record_rc2.FundingExternalIdentifier();
         f3.setType(org.orcid.jaxb.model.record_rc2.FundingExternalIdentifierType.GRANT_NUMBER);
-        f3.setUrl(new org.orcid.jaxb.model.common.Url("www.f3.com"));
+        f3.setUrl(new org.orcid.jaxb.model.common_rc2.Url("www.f3.com"));
         f3.setValue("f3");
         recordFei.getExternalIdentifier().add(f3);
 

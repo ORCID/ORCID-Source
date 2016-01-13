@@ -26,8 +26,8 @@ import javax.annotation.Resource;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.jaxb.model.common.Source;
-import org.orcid.jaxb.model.common.SourceClientId;
+import org.orcid.jaxb.model.common_rc2.Source;
+import org.orcid.jaxb.model.common_rc2.SourceClientId;
 import org.orcid.jaxb.model.notification.Notification;
 import org.orcid.jaxb.model.notification.NotificationType;
 import org.orcid.jaxb.model.notification.amended.NotificationAmended;

@@ -77,5 +77,5 @@ public interface ProfileKeywordManager {
 
     org.orcid.jaxb.model.record_rc2.Keyword updateKeywordV2(String orcid, Long putCode, org.orcid.jaxb.model.record_rc2.Keyword keyword);
 
-    org.orcid.jaxb.model.record_rc2.Keywords updateKeywordsV2(String orcid, org.orcid.jaxb.model.record_rc2.Keywords keywords, org.orcid.jaxb.model.common.Visibility defaultVisiblity);
+    org.orcid.jaxb.model.record_rc2.Keywords updateKeywordsV2(String orcid, org.orcid.jaxb.model.record_rc2.Keywords keywords, org.orcid.jaxb.model.common_rc2.Visibility defaultVisiblity);
 }

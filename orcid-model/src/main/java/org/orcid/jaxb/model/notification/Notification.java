@@ -33,7 +33,7 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.datatype.XMLGregorianCalendar;
 
-import org.orcid.jaxb.model.common.Source;
+import org.orcid.jaxb.model.common_rc2.Source;
 import org.orcid.jaxb.model.notification.NotificationType;
 
 import io.swagger.annotations.ApiModelProperty;

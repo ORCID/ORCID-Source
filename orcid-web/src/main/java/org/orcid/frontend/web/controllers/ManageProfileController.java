@@ -54,8 +54,8 @@ import org.orcid.frontend.web.forms.ChangePersonalInfoForm;
 import org.orcid.frontend.web.forms.ChangeSecurityQuestionForm;
 import org.orcid.frontend.web.forms.ManagePasswordOptionsForm;
 import org.orcid.frontend.web.forms.PreferencesForm;
-import org.orcid.jaxb.model.common.Country;
-import org.orcid.jaxb.model.common.Iso3166Country;
+import org.orcid.jaxb.model.common_rc2.Country;
+import org.orcid.jaxb.model.common_rc2.Iso3166Country;
 import org.orcid.jaxb.model.message.ApprovalDate;
 import org.orcid.jaxb.model.message.CreditName;
 import org.orcid.jaxb.model.message.DelegateSummary;
@@ -858,7 +858,7 @@ public class ManageProfileController extends BaseWorkspaceController {
                 v = OrcidVisibilityDefaults.COUNTRY_DEFAULT.getVisibility();
             }
             address.setCountry(country);
-            address.setVisibility(org.orcid.jaxb.model.common.Visibility.fromValue(v.value()));
+            address.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(v.value()));
             addressManager.createAddress(getCurrentUserOrcid(), address);
         } else {
             address.getCountry().setValue(Iso3166Country.fromValue(countryForm.getIso2Country().getValue().value()));
@@ -866,7 +866,7 @@ public class ManageProfileController extends BaseWorkspaceController {
             if(v == null) {
                 v = OrcidVisibilityDefaults.COUNTRY_DEFAULT.getVisibility();
             }
-            address.setVisibility(org.orcid.jaxb.model.common.Visibility.fromValue(v.value()));
+            address.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(v.value()));
             addressManager.updateAddress(getCurrentUserOrcid(), address.getPutCode(), address, false);
         }                        
         

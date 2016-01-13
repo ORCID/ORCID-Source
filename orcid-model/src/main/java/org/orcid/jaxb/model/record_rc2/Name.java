@@ -25,9 +25,9 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.orcid.jaxb.model.common.CreditName;
-import org.orcid.jaxb.model.common.Visibility;
-import org.orcid.jaxb.model.common.VisibilityType;
+import org.orcid.jaxb.model.common_rc2.CreditName;
+import org.orcid.jaxb.model.common_rc2.Visibility;
+import org.orcid.jaxb.model.common_rc2.VisibilityType;
 
 /**
  * 

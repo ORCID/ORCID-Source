@@ -24,7 +24,7 @@ import java.util.List;
 
 import javax.xml.datatype.XMLGregorianCalendar;
 
-import org.orcid.jaxb.model.common.LastModifiedDate;
+import org.orcid.jaxb.model.common_rc2.LastModifiedDate;
 import org.orcid.jaxb.model.record_rc2.Activity;
 import org.orcid.jaxb.model.record_rc2.Group;
 import org.orcid.jaxb.model.record_rc2.GroupableActivity;
