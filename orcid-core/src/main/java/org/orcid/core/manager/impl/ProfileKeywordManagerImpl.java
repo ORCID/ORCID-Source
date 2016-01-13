@@ -175,8 +175,11 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
 
     @Override
     @Transactional
-    public Keywords updateKeywords(String orcid, Keywords keywords, Visibility defaultVisiblity) {
+    public Keywords updateKeywords(String orcid, Keywords keywords, Visibility defaultVisibility) {
         List<ProfileKeywordEntity> existingKeywordsList = profileKeywordDao.getProfileKeywors(orcid);
+        if(defaultVisibility == null) {
+            defaultVisibility = Visibility.fromValue(OrcidVisibilityDefaults.KEYWORD_DEFAULT.getVisibility().value());
+        }
         // Delete the deleted ones
         for (ProfileKeywordEntity existing : existingKeywordsList) {
             boolean deleteMe = true;
@@ -203,7 +206,7 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
                     for (ProfileKeywordEntity existingKeyword : existingKeywordsList) {
                         if (existingKeyword.getId().equals(updatedOrNew.getPutCode())) {
                             existingKeyword.setLastModified(new Date());
-                            existingKeyword.setVisibility(Visibility.fromValue(defaultVisiblity.value()));
+                            existingKeyword.setVisibility(Visibility.fromValue(defaultVisibility.value()));
                             existingKeyword.setKeywordName(updatedOrNew.getContent());
                             profileKeywordDao.merge(existingKeyword);
                         }
@@ -216,15 +219,15 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
                     newKeyword.setProfile(profile);
                     newKeyword.setDateCreated(new Date());
                     newKeyword.setSource(sourceEntity);
-                    newKeyword.setVisibility(Visibility.fromValue(defaultVisiblity.value()));
+                    newKeyword.setVisibility(Visibility.fromValue(defaultVisibility.value()));
                     profileKeywordDao.persist(newKeyword);
 
                 }
             }
         }
 
-        if (defaultVisiblity != null) {
-            updateKeywordsVisibility(orcid, defaultVisiblity);
+        if (defaultVisibility != null) {
+            updateKeywordsVisibility(orcid, defaultVisibility);
         }
             
 

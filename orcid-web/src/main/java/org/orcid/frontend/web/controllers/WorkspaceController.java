@@ -485,7 +485,8 @@ public class WorkspaceController extends BaseWorkspaceController {
             }
             if(isLongerThan(w.getUrlName(), SiteConstants.URL_MAX_LENGTH)) {
                 w.getErrors().add(getMessage("manualWork.length_less_X"));
-            }                        
+            }         
+            copyErrors(w, ws);
         }   
         if (ws.getErrors().size()>0) return ws;   
         

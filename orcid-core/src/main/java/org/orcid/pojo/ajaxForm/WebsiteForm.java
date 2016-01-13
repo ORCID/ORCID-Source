@@ -33,6 +33,8 @@ public class WebsiteForm implements ErrorsInterface, Serializable {
     private String urlName;
     private String putCode;
     private Visibility visibility;
+    private Date createdDate;
+    private Date lastModified;
     private String source;
     private String sourceName;
 
@@ -45,7 +47,7 @@ public class WebsiteForm implements ErrorsInterface, Serializable {
             }
 
             if (!PojoUtil.isEmpty(researcherUrl.getUrlName())) {
-                form.setUrl(researcherUrl.getUrlName());
+                form.setUrlName(researcherUrl.getUrlName());
             }
 
             if (researcherUrl.getVisibility() != null) {
@@ -56,6 +58,22 @@ public class WebsiteForm implements ErrorsInterface, Serializable {
                 form.setPutCode(String.valueOf(researcherUrl.getPutCode()));
             }
 
+            if (researcherUrl.getCreatedDate() != null) {
+                Date createdDate = new Date();
+                createdDate.setYear(String.valueOf(researcherUrl.getCreatedDate().getValue().getYear()));
+                createdDate.setMonth(String.valueOf(researcherUrl.getCreatedDate().getValue().getMonth()));
+                createdDate.setDay(String.valueOf(researcherUrl.getCreatedDate().getValue().getDay()));
+                form.setCreatedDate(createdDate);
+            }
+
+            if (researcherUrl.getLastModifiedDate() != null) {
+                Date lastModifiedDate = new Date();
+                lastModifiedDate.setYear(String.valueOf(researcherUrl.getLastModifiedDate().getValue().getYear()));
+                lastModifiedDate.setMonth(String.valueOf(researcherUrl.getLastModifiedDate().getValue().getMonth()));
+                lastModifiedDate.setDay(String.valueOf(researcherUrl.getLastModifiedDate().getValue().getDay()));
+                form.setLastModified(lastModifiedDate);
+            }
+            
             if (researcherUrl.getSource() != null) {
                 // Set source
                 form.setSource(researcherUrl.getSource().retrieveSourcePath());
@@ -144,4 +162,20 @@ public class WebsiteForm implements ErrorsInterface, Serializable {
     public void setSourceName(String sourceName) {
         this.sourceName = sourceName;
     }
+    
+    public Date getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(Date createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public Date getLastModified() {
+        return lastModified;
+    }
+
+    public void setLastModified(Date lastModified) {
+        this.lastModified = lastModified;
+    }  
 }

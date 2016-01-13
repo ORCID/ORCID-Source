@@ -2278,7 +2278,7 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$compile', function Website
         var websites = $scope.websitesForm.websites;
         var len = websites.length;
         while (len--) {
-            if (websites[len].url.value == null || websites[len].url.value.trim() == '')
+            if (websites[len].url == null || websites[len].url.trim() == '')
                 websites.splice(len,1);
         }
         $.ajax({
