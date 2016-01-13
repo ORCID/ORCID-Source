@@ -16,25 +16,22 @@
  */
 package org.orcid.core.manager.impl;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
-import javax.persistence.PersistenceException;
 
-import org.hibernate.exception.ConstraintViolationException;
 import org.orcid.core.adapter.JpaJaxbResearcherUrlAdapter;
+import org.orcid.core.exception.ApplicationException;
 import org.orcid.core.exception.OrcidDuplicatedElementException;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ResearcherUrlManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.validator.PersonValidator;
-import org.orcid.jaxb.model.common.Url;
+import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
@@ -95,75 +92,65 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
      * @param researcherUrls
      * */
     @Override
-    public boolean updateResearcherUrls(String orcid, ResearcherUrls researcherUrls, Visibility defaultVisibility) {
-        boolean hasErrors = false;
-        List<ResearcherUrlEntity> currentResearcherUrls = researcherUrlDao.getResearcherUrls(orcid);
-        Iterator<ResearcherUrlEntity> currentIterator = currentResearcherUrls.iterator();
-        ArrayList<ResearcherUrl> newResearcherUrls = new ArrayList<ResearcherUrl>(researcherUrls.getResearcherUrls());
-
-        while (currentIterator.hasNext()) {
-            ResearcherUrlEntity existingResearcherUrl = currentIterator.next();
-            ResearcherUrl researcherUrl = new ResearcherUrl();
-            researcherUrl.setUrl(new Url(existingResearcherUrl.getUrl()));
-            researcherUrl.setUrlName(existingResearcherUrl.getUrlName());
-            
-            // Delete non modified researcher urls from the parameter list
-            if (newResearcherUrls.contains(researcherUrl)) {
-                newResearcherUrls.remove(researcherUrl);
-            } else {
-                // Delete researcher urls deleted by user
-                researcherUrlDao.deleteResearcherUrl(orcid, existingResearcherUrl.getId());
-            }
+    @Transactional
+    public ResearcherUrls updateResearcherUrls(String orcid, ResearcherUrls researcherUrls, Visibility defaultVisibility) {
+        List<ResearcherUrlEntity> existingEntities = researcherUrlDao.getResearcherUrls(orcid);
+        if(defaultVisibility == null) {
+            defaultVisibility = Visibility.fromValue(OrcidVisibilityDefaults.RESEARCHER_URLS_DEFAULT.getVisibility().value());
         }
-
-        SourceEntity source = sourceManager.retrieveSourceEntity();
-
-        // Init null fields
-        initNullSafeValues(newResearcherUrls);
-        // At this point, only new researcher urls are in the list
-        // newResearcherUrls
-        // Insert all these researcher urls on database
-        for (ResearcherUrl newResearcherUrl : newResearcherUrls) {
-            try {
-                ResearcherUrlEntity entity = new ResearcherUrlEntity();
-                Date date = new Date();
-                entity.setDateCreated(date);
-                entity.setLastModified(date);
-                entity.setSource(source);
-                entity.setUrl(newResearcherUrl.getUrl().getValue());
-                entity.setUrlName(newResearcherUrl.getUrlName());
-                entity.setUser(new ProfileEntity(orcid));
-                entity.setVisibility(profileEntityManager.getResearcherUrlDefaultVisibility(orcid));
-                researcherUrlDao.merge(entity);
-            } catch (PersistenceException e) {
-                // If the researcher url was duplicated, log the error
-                if (e.getCause() != null && e.getCause().getClass().isAssignableFrom(ConstraintViolationException.class)) {
-                    LOGGER.warn("Duplicated researcher url was found, the url {} already exists for {}", newResearcherUrl.getUrl().getValue(), orcid);
-                    hasErrors = true;
-                } else {
-                    // If the error is not a duplicated error, something else
-                    // happened, so, log the error and throw an exception
-                    LOGGER.warn("Error inserting new researcher url {} for {}", newResearcherUrl.getUrl().getValue(), orcid);
-                    throw new IllegalArgumentException("Unable to create Researcher Url", e);
+        
+        //Delete the deleted ones
+        for(ResearcherUrlEntity existingEntity : existingEntities) {
+            boolean deleteMe = true;
+            for(ResearcherUrl updatedOrNew : researcherUrls.getResearcherUrls()) {
+                if(existingEntity.getId().equals(updatedOrNew.getPutCode())) {
+                    deleteMe = false;
+                    break;
+                }
+            }
+            
+            if(deleteMe) {
+                try {
+                    researcherUrlDao.deleteResearcherUrl(existingEntity.getProfile().getId(), existingEntity.getId());
+                } catch (Exception e) {
+                    throw new ApplicationException("Unable to delete researcher url " + existingEntity.getId(), e);
                 }
             }
         }
+        
+        // Update or create new
+        if(researcherUrls != null && researcherUrls.getResearcherUrls() != null) {
+            for(ResearcherUrl updatedOrNew : researcherUrls.getResearcherUrls()) {
+                if(updatedOrNew.getPutCode() != null) {
+                    //Update the existing ones
+                   for(ResearcherUrlEntity existingEntity : existingEntities) {
+                       if(existingEntity.getId().equals(updatedOrNew.getPutCode())) {
+                           existingEntity.setLastModified(new Date());
+                           existingEntity.setVisibility((updatedOrNew.getVisibility() == null) ?  Visibility.fromValue(defaultVisibility.value()) : updatedOrNew.getVisibility());                           
+                           existingEntity.setUrl(updatedOrNew.getUrl().getValue());
+                           existingEntity.setUrlName(updatedOrNew.getUrlName());
+                           researcherUrlDao.merge(existingEntity);
+                       }
+                   }
+                } else {
+                    //Add the new ones
+                    ResearcherUrlEntity newResearcherUrl = jpaJaxbResearcherUrlAdapter.toResearcherUrlEntity(updatedOrNew);
+                    SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
+                    ProfileEntity profile = new ProfileEntity(orcid);
+                    newResearcherUrl.setUser(profile);
+                    newResearcherUrl.setDateCreated(new Date());
+                    newResearcherUrl.setLastModified(new Date());
+                    newResearcherUrl.setSource(sourceEntity);
+                    newResearcherUrl.setVisibility(Visibility.fromValue(defaultVisibility.value()));
+                    researcherUrlDao.persist(newResearcherUrl);                    
+                }
+            }
+        }
+        
         if(defaultVisibility != null) {
             profileDao.updateResearcherUrlsVisibility(orcid, org.orcid.jaxb.model.message.Visibility.fromValue(defaultVisibility.value()));
         }
-        return hasErrors;
-    }
-
-    /**
-     * Init null safe values for researcher urls
-     * 
-     * @param researcherUrls
-     * */
-    private void initNullSafeValues(ArrayList<ResearcherUrl> newResearcherUrls) {
-        for (ResearcherUrl researcherUrl : newResearcherUrls) {
-            if (researcherUrl.getUrl() == null)
-                researcherUrl.setUrl(new Url(new String()));            
-        }
+        return researcherUrls;
     }
 
     /**

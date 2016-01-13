@@ -71,5 +71,5 @@ public interface ResearcherUrlManager {
      * */
     ResearcherUrl updateResearcherUrlV2(String orcid, ResearcherUrl researcherUrl);        
     
-    boolean updateResearcherUrls(String orcid, ResearcherUrls researcherUrls, Visibility defaultVisibility);
+    ResearcherUrls updateResearcherUrls(String orcid, ResearcherUrls researcherUrls, Visibility defaultVisibility);
 }

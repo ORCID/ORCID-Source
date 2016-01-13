@@ -160,8 +160,11 @@ public class OtherNameManagerImpl implements OtherNameManager {
     
     @Override
     @Transactional
-    public OtherNames updateOtherNames(String orcid, OtherNames otherNames, org.orcid.jaxb.model.common.Visibility defaultVisiblity) {
+    public OtherNames updateOtherNames(String orcid, OtherNames otherNames, org.orcid.jaxb.model.common.Visibility defaultVisibility) {
         List<OtherNameEntity> existingOtherNamesEntityList = otherNameDao.getOtherNames(orcid);
+        if(defaultVisibility == null) {
+            defaultVisibility = Visibility.fromValue(OrcidVisibilityDefaults.OTHER_NAMES_DEFAULT.getVisibility().value());
+        }
         //Delete the deleted ones
         for(OtherNameEntity existingOtherName : existingOtherNamesEntityList) {
             boolean deleteMe = true;
@@ -188,7 +191,7 @@ public class OtherNameManagerImpl implements OtherNameManager {
                    for(OtherNameEntity existingOtherName : existingOtherNamesEntityList) {
                        if(existingOtherName.getId().equals(updatedOrNew.getPutCode())) {
                            existingOtherName.setLastModified(new Date());
-                           existingOtherName.setVisibility(Visibility.fromValue(defaultVisiblity.value()));
+                           existingOtherName.setVisibility(Visibility.fromValue(defaultVisibility.value()));
                            existingOtherName.setDisplayName(updatedOrNew.getContent());
                            otherNameDao.merge(existingOtherName);
                        }
@@ -201,15 +204,15 @@ public class OtherNameManagerImpl implements OtherNameManager {
                     newOtherName.setProfile(profile);
                     newOtherName.setDateCreated(new Date());
                     newOtherName.setSource(sourceEntity);
-                    newOtherName.setVisibility(Visibility.fromValue(defaultVisiblity.value()));
+                    newOtherName.setVisibility(Visibility.fromValue(defaultVisibility.value()));
                     otherNameDao.persist(newOtherName);
                     
                 }
             }
         }
         
-        if (defaultVisiblity != null)
-            otherNameDao.updateOtherNamesVisibility(orcid, org.orcid.jaxb.model.message.Visibility.fromValue(defaultVisiblity.value()));
+        if (defaultVisibility != null)
+            otherNameDao.updateOtherNamesVisibility(orcid, org.orcid.jaxb.model.message.Visibility.fromValue(defaultVisibility.value()));
         
         return otherNames;
     }
