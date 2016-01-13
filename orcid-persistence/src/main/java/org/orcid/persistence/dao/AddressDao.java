@@ -18,6 +18,7 @@ package org.orcid.persistence.dao;
 
 import java.util.List;
 
+import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.persistence.jpa.entities.AddressEntity;
 
 /**
@@ -31,4 +32,8 @@ public interface AddressDao extends GenericDao<AddressEntity, Long> {
     List<AddressEntity> findByOrcid(String orcid);
 
     List<Object[]> findAddressesToMigrate();
+    
+    boolean deleteAddress(String orcid, Long putCode);
+    
+    boolean updateAddressVisibility(String orcid, Visibility visibility);
 }

@@ -208,4 +208,63 @@ public class AddressManagerImpl implements AddressManager {
         }
         return addresses;
     }
+    
+    @Override
+    public Addresses updateAddresses(String orcid, Addresses addresses, Visibility defaultVisibility) {
+        List<AddressEntity> existingAddressList = addressDao.findByOrcid(orcid);
+        if(defaultVisibility == null) {
+            defaultVisibility = Visibility.fromValue(OrcidVisibilityDefaults.COUNTRY_DEFAULT.getVisibility().value());
+        }
+        //Delete the deleted ones
+        for(AddressEntity existingAddress : existingAddressList) {
+            boolean deleteMe = true;
+            for(Address updatedOrNew : addresses.getAddress()) {
+                if(existingAddress.getId().equals(updatedOrNew.getPutCode())) {
+                    deleteMe = false;
+                    break;
+                }
+            }
+            
+            if(deleteMe) {
+                try {
+                    addressDao.deleteAddress(orcid, existingAddress.getId());
+                } catch (Exception e) {
+                    throw new ApplicationException("Unable to delete address " + existingAddress.getId(), e);
+                }
+            }
+        }
+        
+        if(addresses != null && addresses.getAddress() != null) {
+            for(Address updatedOrNew : addresses.getAddress()) {
+                if(updatedOrNew.getPutCode() != null) {
+                    //Update the existing ones
+                   for(AddressEntity existingAddress : existingAddressList) {
+                       if(existingAddress.getId().equals(updatedOrNew.getPutCode())) {
+                           existingAddress.setLastModified(new Date());
+                           existingAddress.setVisibility(Visibility.fromValue(defaultVisibility.value()));
+                           existingAddress.setIso2Country(updatedOrNew.getCountry().getValue());
+                           existingAddress.setPrimary(updatedOrNew.getPrimary());
+                           addressDao.merge(existingAddress);
+                       }
+                   }
+                } else {
+                    //Add the new ones
+                    AddressEntity newAddress = adapter.toAddressEntity(updatedOrNew);
+                    SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
+                    ProfileEntity profile = new ProfileEntity(orcid);
+                    newAddress.setUser(profile);
+                    newAddress.setDateCreated(new Date());
+                    newAddress.setSource(sourceEntity);
+                    newAddress.setVisibility(Visibility.fromValue(defaultVisibility.value()));
+                    addressDao.persist(newAddress);
+                    
+                }
+            }
+        }
+        
+        if (defaultVisibility != null)
+            addressDao.updateAddressVisibility(orcid, defaultVisibility);
+        
+        return addresses;
+    }
 }

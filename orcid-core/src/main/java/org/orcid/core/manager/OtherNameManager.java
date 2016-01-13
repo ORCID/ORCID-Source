@@ -16,6 +16,7 @@
  */
 package org.orcid.core.manager;
 
+import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.jaxb.model.record_rc2.OtherName;
 import org.orcid.jaxb.model.record_rc2.OtherNames;
 
@@ -34,5 +35,5 @@ public interface OtherNameManager {
 
     OtherName updateOtherName(String orcid, Long putCode, OtherName otherName);
     
-    OtherNames updateOtherNames(String orcid, OtherNames otherNames, org.orcid.jaxb.model.common.Visibility defaultVisiblity);
+    OtherNames updateOtherNames(String orcid, OtherNames otherNames, Visibility defaultVisiblity);
 }
