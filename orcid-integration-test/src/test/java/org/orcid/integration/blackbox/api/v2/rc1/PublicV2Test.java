@@ -54,7 +54,7 @@ import org.orcid.jaxb.model.common.Day;
 import org.orcid.jaxb.model.common.Month;
 import org.orcid.jaxb.model.common.Year;
 import org.orcid.jaxb.model.error.OrcidError;
-import org.orcid.jaxb.model.groupid.GroupIdRecord;
+import org.orcid.jaxb.model.groupid_rc2.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary;
 import org.orcid.jaxb.model.record.summary_rc2.EducationSummary;

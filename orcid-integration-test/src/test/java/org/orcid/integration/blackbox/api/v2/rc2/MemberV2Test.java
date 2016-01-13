@@ -22,6 +22,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -48,7 +49,7 @@ import org.orcid.jaxb.model.common.Title;
 import org.orcid.jaxb.model.common.Url;
 import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.jaxb.model.common.Year;
-import org.orcid.jaxb.model.groupid.GroupIdRecord;
+import org.orcid.jaxb.model.groupid_rc2.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary;
 import org.orcid.jaxb.model.record.summary_rc2.EducationSummary;
@@ -152,7 +153,7 @@ public class MemberV2Test extends BlackBoxBase {
         ClientResponse getResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
         Work gotWork = getResponse.getEntity(Work.class);
-        assertEquals("Current treatment of left main coronary artery disease", gotWork.getWorkTitle().getTitle().getContent());
+        assertEquals("common:title", gotWork.getWorkTitle().getTitle().getContent());
         gotWork.getWorkTitle().getTitle().setContent("updated title");
         ClientResponse putResponse = memberV2ApiClient.updateLocationXml(postResponse.getLocation(), accessToken, gotWork);
         assertEquals(Response.Status.OK.getStatusCode(), putResponse.getStatus());
@@ -185,7 +186,7 @@ public class MemberV2Test extends BlackBoxBase {
         ClientResponse getResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
         Work gotWork = getResponse.getEntity(Work.class);
-        assertEquals("Current treatment of left main coronary artery disease", gotWork.getWorkTitle().getTitle().getContent());
+        assertEquals("common:title", gotWork.getWorkTitle().getTitle().getContent());
         gotWork.getWorkTitle().getTitle().setContent("updated title");
         String profileCreateToken = oauthHelper.getClientCredentialsAccessToken(client2ClientId, client2ClientSecret, ScopePathType.ORCID_PROFILE_CREATE);
         ClientResponse putResponse = memberV2ApiClient.updateLocationXml(postResponse.getLocation(), profileCreateToken, gotWork);
@@ -193,7 +194,7 @@ public class MemberV2Test extends BlackBoxBase {
         ClientResponse getAfterUpdateResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), getAfterUpdateResponse.getStatus());
         Work gotAfterUpdateWork = getAfterUpdateResponse.getEntity(Work.class);
-        assertEquals("Current treatment of left main coronary artery disease", gotAfterUpdateWork.getWorkTitle().getTitle().getContent());
+        assertEquals("common:title", gotAfterUpdateWork.getWorkTitle().getTitle().getContent());
         ClientResponse deleteResponse = memberV2ApiClient.deleteWorkXml(user1OrcidId, gotWork.getPutCode(), accessToken);
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), deleteResponse.getStatus());
     }
@@ -724,13 +725,15 @@ public class MemberV2Test extends BlackBoxBase {
         found1 = found2 = found3 = false;
         for (WorkGroup group : activities.getWorks().getWorkGroup()) {
             for(WorkSummary summary : group.getWorkSummary()) {
-                if(summary.getTitle().getTitle().getContent().equals("Current treatment of left main coronary artery disease")) {
+                if(summary.getTitle().getTitle().getContent().equals("common:title")) {
                     found1 = true;
                 } else if(summary.getTitle().getTitle().getContent().equals("Work # 2")) {
                     found2 = true;
                 } else if(summary.getTitle().getTitle().getContent().equals("Work # 3")) {
                     found3 = true;
-                } 
+                } else {
+                    fail("Couldnt find work with title: " + summary.getTitle().getTitle().getContent());
+                }
             }
         }
         

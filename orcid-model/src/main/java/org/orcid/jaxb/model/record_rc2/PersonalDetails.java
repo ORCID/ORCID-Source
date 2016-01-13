@@ -24,6 +24,8 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+
+import org.orcid.jaxb.model.common.LastModifiedDate;
 import org.orcid.jaxb.model.record.util.RecordUtil;
 
 /**
@@ -32,10 +34,13 @@ import org.orcid.jaxb.model.record.util.RecordUtil;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "name", "otherNames", "biography" })
+@XmlType(propOrder = { "lastModifiedDate", "name", "otherNames", "biography" })
 @XmlRootElement(name = "personal-details", namespace = "http://www.orcid.org/ns/personal-details")
 public class PersonalDetails implements Serializable {
     private static final long serialVersionUID = 8496158434601501884L;
+    
+    @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "last-modified-date")
+    protected LastModifiedDate lastModifiedDate;
     @XmlElement(name = "name", namespace = "http://www.orcid.org/ns/personal-details")
     private Name name;
     @XmlElement(name = "other-names", namespace = "http://www.orcid.org/ns/other-name")

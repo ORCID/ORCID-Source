@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.jaxb.model.groupid;
+package org.orcid.jaxb.model.groupid_rc1;
 
 import java.util.ArrayList;
 import java.util.List;

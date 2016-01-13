@@ -85,6 +85,7 @@
 				</xs:documentation>
 			</xs:annotation>
 			<xs:sequence>
+				<xs:element ref="common:last-modified-date" minOccurs="0" maxOccurs="1" />
 				<xs:element ref="common:orcid-identifier" minOccurs="0"
 					maxOccurs="1" />
 				<xs:element ref="deprecated:deprecated" minOccurs="0"

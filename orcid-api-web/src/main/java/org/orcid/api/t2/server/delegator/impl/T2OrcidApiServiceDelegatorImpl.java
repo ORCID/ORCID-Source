@@ -156,7 +156,7 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
      *         {@link org.orcid.jaxb.model.message.OrcidMessage} within it
      */
     @Override
-    @AccessControl(requiredScope = ScopePathType.ORCID_PROFILE_READ_LIMITED)
+    @AccessControl(requiredScope = ScopePathType.READ_LIMITED)
     @NonLocked
     public Response findFullDetails(String orcid) {
         OrcidProfile profile = orcidProfileManager.retrieveClaimedOrcidProfile(orcid);

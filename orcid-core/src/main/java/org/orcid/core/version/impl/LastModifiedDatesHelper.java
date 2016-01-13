@@ -47,6 +47,9 @@ public class LastModifiedDatesHelper {
             latestActSummary = latest;
             actContainerRc2.setLastModifiedDate(new LastModifiedDate(latest));
         }
+        if(latestActSummary == null) {
+            return null;
+        }
         return latestActSummary.toGregorianCalendar().getTime();
     }
 

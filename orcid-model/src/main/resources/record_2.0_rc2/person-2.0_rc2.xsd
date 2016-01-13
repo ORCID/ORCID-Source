@@ -146,6 +146,7 @@
 			<xs:documentation>Delegation details</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
+			<xs:element ref="common:last-modified-date" minOccurs="0" maxOccurs="1" />
 			<xs:element name="approval-date" type="person:approval-date" />
 			<xs:element name="delegate-summary" type="person:delegate-summary" />
 		</xs:sequence>

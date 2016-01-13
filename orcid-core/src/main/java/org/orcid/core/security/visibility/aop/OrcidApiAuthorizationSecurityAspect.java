@@ -182,7 +182,7 @@ public class OrcidApiAuthorizationSecurityAspect {
                     // doesnt have the read permissions, check if it have the
                     // update permissions
                     ScopePathType equivalentUpdateScope = getEquivalentUpdateScope(requiredScope);
-                    if (requiredScope.equals(ScopePathType.ORCID_PROFILE_READ_LIMITED)) {
+                    if (requiredScope.equals(ScopePathType.READ_LIMITED)) {
                         if (hasScopeEnabled(clientId, userOrcid, ScopePathType.ORCID_WORKS_READ_LIMITED.getContent(), ScopePathType.ORCID_WORKS_UPDATE.getContent()))
                             allowWorks = true;
                         if (hasScopeEnabled(clientId, userOrcid, ScopePathType.FUNDING_READ_LIMITED.getContent(), ScopePathType.FUNDING_UPDATE.getContent()))
@@ -271,6 +271,7 @@ public class OrcidApiAuthorizationSecurityAspect {
         case ORCID_PATENTS_READ_LIMITED:
         case ORCID_PATENTS_UPDATE:
         case ORCID_PROFILE_READ_LIMITED:
+        case READ_LIMITED: 
         case ORCID_WORKS_READ_LIMITED:
         case ORCID_WORKS_UPDATE:
             return true;

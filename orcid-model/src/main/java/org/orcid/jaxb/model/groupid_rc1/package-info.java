@@ -25,5 +25,5 @@
 		@javax.xml.bind.annotation.XmlNs(prefix = "group-id", namespaceURI = "http://www.orcid.org/ns/group-id"),
 		@javax.xml.bind.annotation.XmlNs(prefix = "common", namespaceURI = "http://www.orcid.org/ns/common"),},
 		elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
-package org.orcid.jaxb.model.groupid;
+package org.orcid.jaxb.model.groupid_rc1;
 
