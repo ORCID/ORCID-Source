@@ -2228,6 +2228,7 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$compile', function Website
     $scope.websitesForm = null;
     $scope.privacyHelp = false;
     $scope.showElement = {};
+    $scope.orcidId = orcidVar.orcidId;
 
     $scope.openEdit = function() {
         $scope.addNew();
@@ -2242,13 +2243,18 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$compile', function Website
     $scope.addNew = function() {
         $scope.websitesForm.websites.push({ url: "", urlName: "" });
     };
+    
+    $scope.addNewModal = function() {
+        $scope.websitesForm.websites.push({"errors":[],"content":"","putCode":null,"visibility":{"visibility":"PUBLIC"}});
+        $scope.newInput = true; 
+    };
 
     $scope.getWebsitesForm = function(){
         $.ajax({
             url: getBaseUri() + '/my-orcid/websitesForms.json',
             dataType: 'json',
             success: function(data) {
-                $scope.websitesForm = data;                
+                $scope.websitesForm = data;
                 var websites = $scope.websitesForm.websites;
                 var len = websites.length;
                 while (len--) {
@@ -2276,7 +2282,11 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$compile', function Website
         }
     };
 
-    $scope.setWebsitesForm = function(){
+    $scope.setWebsitesForm = function(v2){
+        
+        if(v2)
+            $scope.websitesForm.visibility = null;
+        
         var websites = $scope.websitesForm.websites;
         var len = websites.length;
         while (len--) {
@@ -2292,7 +2302,8 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$compile', function Website
             success: function(data) {
                 $scope.websitesForm = data;
                 if(data.errors.length == 0)
-                   $scope.close();
+                    $scope.close();
+                    $.colorbox.close();
                 $scope.$apply();
             }
         }).fail(function() {
@@ -2306,9 +2317,17 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$compile', function Website
         $scope.websitesForm.visibility.visibility = priv;
     };
     
-    $scope.setPrivacyModal = function(priv, $event) {
+    $scope.setPrivacyModal = function(priv, $event, website) {        
         $event.preventDefault();
-        $scope.websitesForm.visibility.visibility = priv;
+        
+        var websites = $scope.websitesForm.websites;        
+        var len = websites.length;
+        
+        while (len--) {
+            if (websites[len] == website)                
+                websites[len].visibility.visibility = priv;
+                $scope.websitesForm.websites = websites;
+        }
     };
     
     $scope.showTooltip = function(elem){
@@ -2317,6 +2336,30 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$compile', function Website
     
     $scope.hideTooltip = function(elem){
     	$scope.showElement[elem] = false;
+    }
+    
+    
+    $scope.openEditModal = function(){        
+        $.colorbox({
+            scrolling: true,
+            html: $compile($('#edit-websites').html())($scope),
+            onLoad: function() {
+                $('#cboxClose').remove();
+                
+            },
+            width: formColorBoxResize(),
+            onComplete: function() {
+                    
+            },
+            onClosed: function() {
+                //
+            }            
+        });
+        $.colorbox.resize();
+    }
+    
+    $scope.closeEditModal = function(){
+        $.colorbox.close();
     }
 
     $scope.getWebsitesForm();
@@ -2327,6 +2370,8 @@ orcidNgModule.controller('KeywordsCtrl', ['$scope', '$compile', function ($scope
     $scope.keywordsForm = null;
     $scope.privacyHelp = false;
     $scope.showElement = {};
+    $scope.orcidId = orcidVar.orcidId;
+   
 
     $scope.openEdit = function() {
         $scope.addNew();
@@ -2341,6 +2386,11 @@ orcidNgModule.controller('KeywordsCtrl', ['$scope', '$compile', function ($scope
 
     $scope.addNew = function() {
         $scope.keywordsForm.keywords.push({content: ""});
+    };
+    
+    $scope.addNewModal = function() {
+        $scope.keywordsForm.keywords.push({"errors":[],"content":"","putCode":null,"visibility":{"visibility":"PUBLIC"}});
+        $scope.newInput = true; 
     };
 
     $scope.getKeywordsForm = function(){
@@ -2366,7 +2416,12 @@ orcidNgModule.controller('KeywordsCtrl', ['$scope', '$compile', function ($scope
         }
     };
 
-    $scope.setKeywordsForm = function(){
+    $scope.setKeywordsForm = function(v2){
+        if (v2)
+            $scope.keywordsForm.visibility = null;
+            
+        
+        
         var keywords = $scope.keywordsForm.keywords;
         $.ajax({
             url: getBaseUri() + '/my-orcid/keywordsForms.json',
@@ -2378,17 +2433,31 @@ orcidNgModule.controller('KeywordsCtrl', ['$scope', '$compile', function ($scope
                 $scope.keywordsForm = data;
                 if(data.errors.length == 0)
                    $scope.close();
+                   $.colorbox.close();
                 $scope.$apply();
             }
         }).fail(function() {
             // something bad is happening!
-            console.log("WebsiteCtrl.serverValidate() error");
+            console.log("KeywordsCtrl.serverValidate() error");
         });
     };
 
     $scope.setPrivacy = function(priv, $event) {
         $event.preventDefault();
         $scope.keywordsForm.visibility.visibility = priv;
+    };
+    
+    $scope.setPrivacyModal = function(priv, $event, keyword) {        
+        $event.preventDefault();
+        
+        var keywords = $scope.keywordsForm.keywords;        
+        var len = keywords.length;
+        
+        while (len--) {
+            if (keywords[len] == keyword)                
+                keywords[len].visibility.visibility = priv;
+                $scope.keywordsForm.keywords = keywords;
+        }
     };
     
     $scope.showTooltip = function(elem){
@@ -2513,8 +2582,7 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile',function ($scope
             url: getBaseUri() + '/my-orcid/otherNamesForms.json',
             dataType: 'json',
             success: function(data) {            	
-                $scope.otherNamesForm = data;
-                console.log(angular.toJson($scope.otherNamesForm));
+                $scope.otherNamesForm = data;                
                 $scope.$apply();                                
             }
         }).fail(function(){
@@ -2581,8 +2649,7 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile',function ($scope
         }
     };
     
-    $scope.openEditModal = function(){
-        //$scope.addNewModal();
+    $scope.openEditModal = function(){        
         
         $.colorbox({
             scrolling: true,
@@ -2717,6 +2784,7 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
             dataType: 'json',
             success: function(data) {
                 $scope.countryForm = data;
+                console.log(angular.toJson(data));
                 $scope.$apply();                
             }
         }).fail(function(){
@@ -2731,9 +2799,9 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
     };
 
     $scope.setCountryForm = function(){
-
-        if ($scope.countryForm.iso2Country.value == '')
-           $scope.countryForm.iso2Country = null;
+        
+        //if ($scope.countryForm.iso2Country.value == '')
+        //   $scope.countryForm.iso2Country = null;
         $.ajax({
             url: getBaseUri() + '/account/countryForm.json',
             type: 'POST',
@@ -2741,9 +2809,9 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
             contentType: 'application/json;charset=UTF-8',
             dataType: 'json',
             success: function(data) {
-                $scope.countryForm = data;
+                $scope.countryForm = data;                
                 $scope.close();
-                $scope.$apply();
+                $scope.$apply();                
                 $.colorbox.close();
             }
         }).fail(function() {
