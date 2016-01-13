@@ -54,7 +54,7 @@ import com.sun.jersey.api.client.ClientResponse;
 public class KeywordsTest extends BlackBoxBase {
     protected static Map<String, String> accessTokens = new HashMap<String, String>();
 
-    @Value("${org.orcid.web.base.url:http://localhost:8080/orcid-web}")
+    @Value("${org.orcid.web.base.url:https://localhost:8443/orcid-web}")
     private String webBaseUrl;
     @Value("${org.orcid.web.testClient1.redirectUri}")
     private String client1RedirectUri;

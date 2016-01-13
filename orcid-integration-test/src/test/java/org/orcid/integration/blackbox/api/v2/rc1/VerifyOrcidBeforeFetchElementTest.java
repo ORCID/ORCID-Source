@@ -72,7 +72,7 @@ public class VerifyOrcidBeforeFetchElementTest extends BlackBoxBase {
 
     private static final String SCOPES = ScopePathType.ACTIVITIES_UPDATE.value();
     
-    @Value("${org.orcid.web.base.url:http://localhost:8080/orcid-web}")
+    @Value("${org.orcid.web.base.url:https://localhost:8443/orcid-web}")
     private String webBaseUrl;
     @Value("${org.orcid.web.testClient1.redirectUri}")
     private String client1RedirectUri;
