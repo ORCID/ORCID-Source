@@ -188,7 +188,7 @@
 	        	   		<span>
 		        	   	  	<span class="glyphicon glyphicon-pencil edit-keywords edit-option pull-right" ng-click="openEditModal()" title=""></span>	
 	        	      		<span ng-repeat="keyword in keywordsForm.keywords" ng-cloak>
-		        	         	{{ $last?keyword.value:keyword.value+ ", "}}
+		        	         	{{ $last?keyword.value:keyword.content+ ", "}}
 	        	      		</span>
 	        	   		</span>
 	        	   	</div>
@@ -201,7 +201,7 @@
 		        	   	<span ng-hide="showEdit == true">
 		        	   	  	<span class="glyphicon glyphicon-pencil edit-keywords edit-option pull-right" ng-click="openEdit()" title=""></span>	
 		        	      	<span ng-repeat="keyword in keywordsForm.keywords" ng-cloak>
-		        	         	{{ $last?keyword.value:keyword.value+ ", "}}
+		        	         	{{ $last?keyword.content:keyword.content+ ", "}}
 		        	      	</span>
 		        	   	</span>
 		        	   	<span class="pull-right" ng-show="showEdit == true" ng-cloak>
@@ -215,20 +215,15 @@
 		        	   	</span>
 	        	 	</div>
 	        	   
-	        	   
         	   		<div ng-show="showEdit == true" ng-cloak>
         	      		<div ng-repeat="keyword in keywordsForm.keywords">
         	      	  		<div class="icon-inside-input">
-	        	          		<input type="text" ng-model="keyword.value" ng-enter="setKeywordsForm()"></input>
+	        	          		<input type="text" ng-model="keyword.content" ng-enter="setKeywordsForm()"></input>
 		        	          	<a ng-click="deleteKeyword(keyword)" class="glyphicon glyphicon-trash grey icon-inside"></a>
 	        	          	</div>
-	        	          	<span class="orcid-error" ng-show="keyword.url.errors.length > 0">
-						     	<div ng-repeat='error in keyword.url.errors' ng-bind-html="error"></div>
-					      	</span>
-					      
-	        	          	<span class="orcid-error" ng-show="keyword.name.errors.length > 0">
-						     	<div ng-repeat='error in keyword.name.errors' ng-bind-html="error"></div>
-					      	</span>
+	        	          	<span class="orcid-error" ng-show="keyword.errors.length > 0">
+						     	<div ng-repeat='error in keyword.errors' ng-bind-html="error"></div>
+					      	</span>					      
 	        	      	</div>
 	        	      	<ul class="workspace-section-toolbar">
 	        	      		<li>
@@ -252,7 +247,7 @@
 	        	   <span ng-hide="showEdit == true">
 	        	      <span class="glyphicon glyphicon-pencil edit-websites edit-option pull-right" ng-click="openEdit()" title=""></span><br />
 	        	      <div ng-repeat="website in websitesForm.websites" ng-cloak class="wrap">
-	        	         <a href="{{website.url.value}}" target="_blank" rel="me nofollow">{{website.name.value != null? website.name.value : website.url.value}}</a>
+	        	         <a href="{{website.url}}" target="_blank" rel="me nofollow">{{website.urlName != null? website.urlName : website.url}}</a>
 	        	      </div>
 	        	   </span>	
 	        	   <span class="pull-right" ng-show="showEdit == true" ng-cloak>
@@ -269,14 +264,11 @@
 
         	   <div ng-show="showEdit == true" ng-cloak>
         	      <div ng-repeat="website in websitesForm.websites" class="mobile-box">
-        	          <input type="text" ng-model="website.name.value" ng-enter="setWebsitesForm()" placeholder="${springMacroRequestContext.getMessage("manual_work_form_contents.labeldescription")}"></input>
-        	          <span class="orcid-error" ng-show="website.name.errors.length > 0">
-					     <div ng-repeat='error in website.name.errors' ng-bind-html="error"></div>
-				      </span>
-        	          <input type="text" ng-model="website.url.value" ng-enter="setWebsitesForm()" placeholder="${springMacroRequestContext.getMessage("common.url")}" style="padding-right: 5px;"></input>
+        	          <input type="text" ng-model="website.urlName" ng-enter="setWebsitesForm()" placeholder="${springMacroRequestContext.getMessage("manual_work_form_contents.labeldescription")}"></input>        	          
+        	          <input type="text" ng-model="website.url" ng-enter="setWebsitesForm()" placeholder="${springMacroRequestContext.getMessage("common.url")}" style="padding-right: 5px;"></input>
 	        	      <a ng-click="deleteWebsite(website)"><span class="glyphicon glyphicon-trash grey pull-right"></span></a>	        	              	          
-        	          <span class="orcid-error" ng-show="website.url.errors.length > 0">
-					     <div ng-repeat='error in website.url.errors' ng-bind-html="error"></div>
+        	          <span class="orcid-error" ng-show="website.errors.length > 0">
+					     <div ng-repeat='error in website.errors' ng-bind-html="error"></div>
 				      </span>        	          
 				      <span class="dotted-bar left"></span>
         	      </div>

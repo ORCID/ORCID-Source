@@ -2240,7 +2240,7 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$compile', function Website
     };
 
     $scope.addNew = function() {
-        $scope.websitesForm.websites.push({ name: {value: ""}, url: {value: ""} });
+        $scope.websitesForm.websites.push({ url: "", urlName: "" });
     };
 
     $scope.getWebsitesForm = function(){
