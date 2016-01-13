@@ -2252,8 +2252,11 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$compile', function Website
                 var websites = $scope.websitesForm.websites;
                 var len = websites.length;
                 while (len--) {
-                    if (!websites[len].url.value.toLowerCase().startsWith('http'))
-                        websites[len].url.value = 'http://' + websites[len].url.value;
+                    if(websites[len].url != null) {
+                        if (!websites[len].url.toLowerCase().startsWith('http')) {
+                            websites[len].url = 'http://' + websites[len].url;
+                        }                            
+                    }                    
                 }
                 $scope.$apply();
             }
@@ -2532,7 +2535,7 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile',function ($scope
     $scope.setOtherNamesForm = function(v2){        
         
         if(v2) //Remove once V2 API functionality is live
-            $scope.otherNamesForm.visibility.visibility = null;        
+            $scope.otherNamesForm.visibility = null;        
    
         $.ajax({
             url: getBaseUri() + '/my-orcid/otherNamesForms.json',

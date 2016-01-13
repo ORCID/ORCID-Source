@@ -178,10 +178,7 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
     @Override
     @Transactional
     public Keywords updateKeywords(String orcid, Keywords keywords, Visibility defaultVisibility) {
-        List<ProfileKeywordEntity> existingKeywordsList = profileKeywordDao.getProfileKeywors(orcid);
-        if (defaultVisibility == null) {
-            defaultVisibility = Visibility.fromValue(OrcidVisibilityDefaults.KEYWORD_DEFAULT.getVisibility().value());
-        }
+        List<ProfileKeywordEntity> existingKeywordsList = profileKeywordDao.getProfileKeywors(orcid);        
         // Delete the deleted ones
         for (ProfileKeywordEntity existing : existingKeywordsList) {
             boolean deleteMe = true;
@@ -208,7 +205,7 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
                     for (ProfileKeywordEntity existingKeyword : existingKeywordsList) {
                         if (existingKeyword.getId().equals(updatedOrNew.getPutCode())) {
                             existingKeyword.setLastModified(new Date());
-                            existingKeyword.setVisibility(Visibility.fromValue(defaultVisibility.value()));
+                            existingKeyword.setVisibility(updatedOrNew.getVisibility());
                             existingKeyword.setKeywordName(updatedOrNew.getContent());
                             profileKeywordDao.merge(existingKeyword);
                         }
@@ -221,7 +218,7 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
                     newKeyword.setProfile(profile);
                     newKeyword.setDateCreated(new Date());
                     newKeyword.setSource(sourceEntity);
-                    newKeyword.setVisibility(Visibility.fromValue(defaultVisibility.value()));
+                    newKeyword.setVisibility(updatedOrNew.getVisibility());
                     profileKeywordDao.persist(newKeyword);
 
                 }
