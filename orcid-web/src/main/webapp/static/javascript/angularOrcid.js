@@ -2529,7 +2529,7 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile',function ($scope
     };
 
     $scope.setOtherNamesForm = function(v2){        
-
+        
         if(v2) //Remove once V2 API functionality is live
             $scope.otherNamesForm.visibility.visibility = null;        
    
@@ -2542,7 +2542,8 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile',function ($scope
             success: function(data) {                
                 $scope.otherNamesForm = data;
                 if(data.errors.length == 0)
-                   $scope.close();
+                    $scope.close();
+                    $.colorbox.close();
                 $scope.$apply();
             }
         }).fail(function() {
@@ -2599,7 +2600,6 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile',function ($scope
     $scope.closeEditModal = function(){
         $scope.getOtherNamesForm();
         $.colorbox.close();
-        
     }
     
     
