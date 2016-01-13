@@ -26,17 +26,21 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.orcid.jaxb.model.common.LastModifiedDate;
+
 /**
  * 
  * @author Angel Montenegro
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "researcherUrls" })
+@XmlType(propOrder = { "lastModifiedDate", "researcherUrls" })
 @XmlRootElement(name = "researcher-urls", namespace = "http://www.orcid.org/ns/researcher-url")
 public class ResearcherUrls implements Serializable {
     private static final long serialVersionUID = 6312730308815255894L;
 
+    @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "last-modified-date")
+    protected LastModifiedDate lastModifiedDate;
     @XmlElement(name = "researcher-url", namespace = "http://www.orcid.org/ns/researcher-url")
     List<ResearcherUrl> researcherUrls;
     @XmlAttribute

@@ -48,7 +48,7 @@ public class ApiVersionCheckFilter implements ContainerRequestFilter {
             version = matcher.group(1);
         }
 
-        if (version != null && version.startsWith("1.1") && v1xDisabled) {
+        if ((version == null || (version != null && version.startsWith("1.1"))) && v1xDisabled) {
             throw new OrcidBadRequestException(localeManager.resolveMessage("apiError.badrequest_version_disabled.exception"));
         }
 

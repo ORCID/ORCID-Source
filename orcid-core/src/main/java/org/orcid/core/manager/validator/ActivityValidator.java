@@ -26,7 +26,7 @@ import org.orcid.core.exception.ActivityTypeValidationException;
 import org.orcid.core.exception.InvalidPutCodeException;
 import org.orcid.core.exception.OrcidDuplicatedActivityException;
 import org.orcid.jaxb.model.common.Source;
-import org.orcid.jaxb.model.groupid.GroupIdRecord;
+import org.orcid.jaxb.model.groupid_rc1.GroupIdRecord;
 import org.orcid.jaxb.model.record_rc2.Education;
 import org.orcid.jaxb.model.record_rc2.Employment;
 import org.orcid.jaxb.model.record_rc2.Funding;

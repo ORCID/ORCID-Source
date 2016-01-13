@@ -21,7 +21,7 @@
 // Generated on: 2012.04.23 at 12:45:35 PM BST 
 //
 
-package org.orcid.jaxb.model.groupid;
+package org.orcid.jaxb.model.groupid_rc1;
 
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlElementDecl;

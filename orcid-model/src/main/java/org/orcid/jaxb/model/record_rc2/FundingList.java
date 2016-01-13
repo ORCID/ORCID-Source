@@ -49,7 +49,7 @@ import org.orcid.jaxb.model.common.LastModifiedDate;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "fundings" })
+@XmlType(propOrder = { "lastModifiedDate", "fundings" })
 @XmlRootElement(name = "fundingList")
 public class FundingList implements ActivitiesContainer, Serializable {
 
@@ -57,6 +57,8 @@ public class FundingList implements ActivitiesContainer, Serializable {
      * 
      */
     private static final long serialVersionUID = 1L;
+    @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "last-modified-date")
+    protected LastModifiedDate lastModifiedDate;
     @XmlElement
     protected List<Funding> fundings;
 

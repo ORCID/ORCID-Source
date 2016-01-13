@@ -55,7 +55,7 @@
 	<xs:element name="activities-summary">
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref="common:last-modified-date" minOccurs="1" maxOccurs="1" />
+				<xs:element ref="common:last-modified-date" minOccurs="0" maxOccurs="1" />
 				<xs:element name="educations" minOccurs="0" maxOccurs="1">
 					<xs:annotation>
 						<xs:documentation>Container for the list of educations associated
@@ -65,7 +65,7 @@
 					</xs:annotation>
 					<xs:complexType>
 						<xs:sequence>
-							<xs:element ref="common:last-modified-date" minOccurs="1" maxOccurs="1" />
+							<xs:element ref="common:last-modified-date" minOccurs="0" maxOccurs="1" />
 							<xs:element maxOccurs="unbounded" minOccurs="0"
 								ref="education:education-summary" />
 						</xs:sequence>
@@ -80,7 +80,7 @@
 					</xs:annotation>
 					<xs:complexType>
 						<xs:sequence>
-							<xs:element ref="common:last-modified-date" minOccurs="1" maxOccurs="1" />
+							<xs:element ref="common:last-modified-date" minOccurs="0" maxOccurs="1" />
 							<xs:element maxOccurs="unbounded" minOccurs="0"
 								ref="employment:employment-summary" />
 						</xs:sequence>
@@ -94,7 +94,7 @@
 					</xs:annotation>
 					<xs:complexType>
 						<xs:sequence>
-							<xs:element ref="common:last-modified-date" minOccurs="1" maxOccurs="1" />
+							<xs:element ref="common:last-modified-date" minOccurs="0" maxOccurs="1" />
 							<xs:element maxOccurs="unbounded" minOccurs="0" name="group"
 								type="activities:funding-group" />
 						</xs:sequence>
@@ -108,7 +108,7 @@
 					</xs:annotation>
 					<xs:complexType>
 						<xs:sequence>
-							<xs:element ref="common:last-modified-date" minOccurs="1" maxOccurs="1" />
+							<xs:element ref="common:last-modified-date" minOccurs="0" maxOccurs="1" />
 							<xs:element maxOccurs="unbounded" minOccurs="0" name="group"
 								type="activities:peer-review-group" />
 						</xs:sequence>
@@ -124,7 +124,7 @@
 					</xs:annotation>
 					<xs:complexType>
 						<xs:sequence>
-							<xs:element ref="common:last-modified-date" minOccurs="1" maxOccurs="1" />
+							<xs:element ref="common:last-modified-date" minOccurs="0" maxOccurs="1" />
 							<xs:element maxOccurs="unbounded" minOccurs="0" name="group"
 								type="activities:work-group" />
 						</xs:sequence>
@@ -136,7 +136,7 @@
 
 	<xs:complexType name="work-group">
 		<xs:sequence>
-			<xs:element ref="common:last-modified-date" minOccurs="1" maxOccurs="1" />
+			<xs:element ref="common:last-modified-date" minOccurs="0" maxOccurs="1" />
 			<xs:element name="identifiers" type="activities:identifiers"></xs:element>
 			<xs:sequence>
 				<xs:element maxOccurs="unbounded" minOccurs="0"
@@ -147,7 +147,7 @@
 
 	<xs:complexType name="funding-group">
 		<xs:sequence>
-			<xs:element ref="common:last-modified-date" minOccurs="1" maxOccurs="1" />
+			<xs:element ref="common:last-modified-date" minOccurs="0" maxOccurs="1" />
 			<xs:element name="identifiers" type="activities:identifiers"></xs:element>
 			<xs:sequence>
 				<xs:element maxOccurs="unbounded" minOccurs="0"
@@ -158,7 +158,7 @@
 
 	<xs:complexType name="peer-review-group">
 		<xs:sequence>
-			<xs:element ref="common:last-modified-date" minOccurs="1" maxOccurs="1" />
+			<xs:element ref="common:last-modified-date" minOccurs="0" maxOccurs="1" />
 			<xs:element name="identifiers" type="activities:identifiers"></xs:element>
 			<xs:sequence>
 				<xs:element maxOccurs="unbounded" minOccurs="0"

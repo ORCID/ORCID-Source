@@ -44,7 +44,7 @@ import org.orcid.core.api.OrcidApiConstants;
 import org.orcid.core.exception.OrcidBadRequestException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.web.filters.ApiVersionFilter;
-import org.orcid.jaxb.model.groupid.GroupIdRecord;
+import org.orcid.jaxb.model.groupid_rc1.GroupIdRecord;
 import org.orcid.jaxb.model.message.ErrorDesc;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.notification.permission.NotificationPermission;
