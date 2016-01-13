@@ -80,6 +80,6 @@
 	<bean id="initializeDataHelper" class="org.orcid.integration.api.helper.InitializeDataHelper" />
 	
 	<bean id="webBaseUrl" class="java.lang.String">
-		<constructor-arg value="${org.orcid.web.base.url:http://localhost:8080/orcid-web}"/>
+		<constructor-arg value="${org.orcid.web.base.url:https://localhost:8443/orcid-web}"/>
 	</bean>	
 </beans>

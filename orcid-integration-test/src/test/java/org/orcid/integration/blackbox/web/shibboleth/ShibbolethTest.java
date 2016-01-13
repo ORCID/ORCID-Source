@@ -44,7 +44,7 @@ public class ShibbolethTest {
 
     private WebDriver webDriver;
 
-    @Value("${org.orcid.web.baseUri}")
+    @Value("${org.orcid.web.baseUri:https://localhost:8443/orcid-web}")
     public String baseUri;
     @Value("${org.orcid.web.testUser1.username}")
     public String user1UserName;

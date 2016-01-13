@@ -69,7 +69,7 @@ public class LockedClientsTest extends BlackBoxBase {
     public String lockedClientSecret;
     @Value("${org.orcid.web.locked.member.client.ruri}")
     public String lockedClientRedirectUri;
-    @Resource(name = "memberV2ApiClient_rc2")
+    @Resource(name = "memberV2ApiClient_rc1")
     private MemberV2ApiClientImpl memberV2ApiClient;
 
     @Test
