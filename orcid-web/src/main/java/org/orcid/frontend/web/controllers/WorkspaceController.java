@@ -369,7 +369,7 @@ public class WorkspaceController extends BaseWorkspaceController {
                     }                    
                 } else {
                     it.remove();
-                }            
+                }                      
             }
 
             Keywords updatedKeywords = kf.toKeywords();
@@ -412,37 +412,33 @@ public class WorkspaceController extends BaseWorkspaceController {
     public @ResponseBody
     OtherNamesForm setOtherNamesFormJson(@RequestBody OtherNamesForm onf) throws NoSuchRequestHandlingMethodException {
         onf.setErrors(new ArrayList<String>());
-        if(onf.getOtherNames() != null) {
+        if(onf != null && onf.getOtherNames() != null && !onf.getOtherNames().isEmpty()) {
             Iterator<OtherNameForm> it = onf.getOtherNames().iterator();
             while(it.hasNext()) {
                 OtherNameForm form = it.next();
                 if(PojoUtil.isEmpty(form.getContent())) {
                    it.remove();    
                 } 
-                if(form.getContent().length() > 255) {
-                    form.getErrors().add(getMessage("common.lenght_less_255"));
+                if(form.getContent().length() > SiteConstants.MAX_LENGTH_255) {
+                    form.setContent(form.getContent().substring(0, SiteConstants.MAX_LENGTH_255));
                 }
-                copyErrors(form, onf);
             }
                     
-            if (onf.getErrors().size() > 0) 
-                return onf;   
-        }
-                     
-        OtherNames otherNames = onf.toOtherNames();                
-        Visibility defaultVisibility = onf.getVisibility();
-        
-        if(defaultVisibility != null && defaultVisibility.getVisibility() != null) {
-            //If the default visibility is null, then, the user changed the default visibility, so, change the visibility for all items
-            for(OtherName o : otherNames.getOtherNames()) {
-                o.setVisibility(org.orcid.jaxb.model.common.Visibility.fromValue(defaultVisibility.getVisibility().value()));
+            OtherNames otherNames = onf.toOtherNames();                
+            Visibility defaultVisibility = onf.getVisibility();
+            
+            if(defaultVisibility != null && defaultVisibility.getVisibility() != null) {
+                //If the default visibility is null, then, the user changed the default visibility, so, change the visibility for all items
+                for(OtherName o : otherNames.getOtherNames()) {
+                    o.setVisibility(org.orcid.jaxb.model.common.Visibility.fromValue(defaultVisibility.getVisibility().value()));
+                }
+            } 
+            
+            if(defaultVisibility != null) {
+                otherNameManager.updateOtherNames(getEffectiveUserOrcid(), otherNames, org.orcid.jaxb.model.common.Visibility.fromValue(defaultVisibility.getVisibility().value()));
+            } else {
+                otherNameManager.updateOtherNames(getEffectiveUserOrcid(), otherNames, null);
             }
-        } 
-        
-        if(defaultVisibility != null) {
-            otherNameManager.updateOtherNames(getEffectiveUserOrcid(), otherNames, org.orcid.jaxb.model.common.Visibility.fromValue(defaultVisibility.getVisibility().value()));
-        } else {
-            otherNameManager.updateOtherNames(getEffectiveUserOrcid(), otherNames, null);
         }
         
         return onf;
@@ -475,35 +471,41 @@ public class WorkspaceController extends BaseWorkspaceController {
     public @ResponseBody
     WebsitesForm setWebsitesFormJson(HttpServletRequest request, @RequestBody WebsitesForm ws) throws NoSuchRequestHandlingMethodException {
         ws.setErrors(new ArrayList<String>());
-        for (WebsiteForm w:ws.getWebsites()) {
-            //Clean old errors
-            w.setErrors(new ArrayList<String>());
+        
+        if(ws != null && ws.getWebsites() != null && !ws.getWebsites().isEmpty()) {        
+            for (WebsiteForm w : ws.getWebsites()) {
+                //Clean old errors
+                w.setErrors(new ArrayList<String>());
+                
+                //Validate
+                if(!validateUrl(w.getUrl())) {
+                    w.getErrors().add(getMessage("common.invalid_url"));                
+                }
+                if(isLongerThan(w.getUrlName(), SiteConstants.URL_MAX_LENGTH)) {
+                    w.getErrors().add(getMessage("manualWork.length_less_X"));
+                }         
+                copyErrors(w, ws);
+            }   
             
-            //Validate
-            if(!validateUrl(w.getUrl())) {
-                w.getErrors().add(getMessage("common.invalid_url"));                
+            if (ws.getErrors().size()>0) {
+                return ws;   
             }
-            if(isLongerThan(w.getUrlName(), SiteConstants.URL_MAX_LENGTH)) {
-                w.getErrors().add(getMessage("manualWork.length_less_X"));
-            }         
-            copyErrors(w, ws);
-        }   
-        if (ws.getErrors().size()>0) return ws;   
-        
-        ResearcherUrls rUrls = ws.toResearcherUrls();
-        Visibility defaultVisibility = ws.getVisibility();
-        
-        if(defaultVisibility != null && defaultVisibility.getVisibility() != null) {
-            //If the default visibility is null, then, the user changed the default visibility, so, change the visibility for all items
-            for(ResearcherUrl rUrl : rUrls.getResearcherUrls()) {
-                rUrl.setVisibility(org.orcid.jaxb.model.common.Visibility.fromValue(defaultVisibility.getVisibility().value()));
+            
+            ResearcherUrls rUrls = ws.toResearcherUrls();
+            Visibility defaultVisibility = ws.getVisibility();
+            
+            if(defaultVisibility != null && defaultVisibility.getVisibility() != null) {
+                //If the default visibility is null, then, the user changed the default visibility, so, change the visibility for all items
+                for(ResearcherUrl rUrl : rUrls.getResearcherUrls()) {
+                    rUrl.setVisibility(org.orcid.jaxb.model.common.Visibility.fromValue(defaultVisibility.getVisibility().value()));
+                }
             }
-        }
-        
-        if(defaultVisibility != null) {
-            researcherUrlManager.updateResearcherUrls(getCurrentUserOrcid(), rUrls, org.orcid.jaxb.model.common.Visibility.fromValue(defaultVisibility.getVisibility().value()));
-        } else {
-            researcherUrlManager.updateResearcherUrls(getCurrentUserOrcid(), rUrls, null);
+            
+            if(defaultVisibility != null) {
+                researcherUrlManager.updateResearcherUrls(getCurrentUserOrcid(), rUrls, org.orcid.jaxb.model.common.Visibility.fromValue(defaultVisibility.getVisibility().value()));
+            } else {
+                researcherUrlManager.updateResearcherUrls(getCurrentUserOrcid(), rUrls, null);
+            }
         }
         
         return ws;
