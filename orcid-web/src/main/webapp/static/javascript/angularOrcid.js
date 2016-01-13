@@ -2342,7 +2342,7 @@ orcidNgModule.controller('KeywordsCtrl', ['$scope', '$compile', function ($scope
             success: function(data) {
                 $scope.keywordsForm = data;
                 $scope.$apply();
-                console.log(angular.toJson(data));
+                //console.log(angular.toJson(data));
             }
         }).fail(function(){
             // something bad is happening!
@@ -2500,6 +2500,7 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile',function ($scope
             success: function(data) {            	
                 $scope.otherNamesForm = data;
                 $scope.$apply();
+                console.log(angular.toJson(data));
             }
         }).fail(function(){
             // something bad is happening!

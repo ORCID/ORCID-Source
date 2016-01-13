@@ -196,23 +196,23 @@
 	       	<#else>
 	       		<div ng-controller="KeywordsCtrl" class="workspace-section keywords">
 		        	<div class="workspace-section-header">
-	        	   	<span class="workspace-section-title"><@orcid.msg 'public_profile.labelKeywords'/></span>
-		        	   
-	        	   	<span ng-hide="showEdit == true">
-	        	   	  	<span class="glyphicon glyphicon-pencil edit-keywords edit-option pull-right" ng-click="openEdit()" title=""></span>	
-	        	      	<span ng-repeat="keyword in keywordsForm.keywords" ng-cloak>
-	        	         	{{ $last?keyword.value:keyword.value+ ", "}}
-	        	      	</span>
-	        	   	</span>
-	        	   	<span class="pull-right" ng-show="showEdit == true" ng-cloak>
-	        	   			<@orcid.privacyToggle3  angularModel="keywordsForm.visibility.visibility"
-		             	  	questionClick="toggleClickPrivacyHelp($index)"
-		             	  	clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
-		             	  	publicClick="setPrivacy('PUBLIC', $event)" 
-                	      	limitedClick="setPrivacy('LIMITED', $event)" 
-                	      	privateClick="setPrivacy('PRIVATE', $event)"
-                	      	elementId="$index"/>
-	        	   	</span>
+		        	   	<span class="workspace-section-title"><@orcid.msg 'public_profile.labelKeywords'/></span>
+			        	   
+		        	   	<span ng-hide="showEdit == true">
+		        	   	  	<span class="glyphicon glyphicon-pencil edit-keywords edit-option pull-right" ng-click="openEdit()" title=""></span>	
+		        	      	<span ng-repeat="keyword in keywordsForm.keywords" ng-cloak>
+		        	         	{{ $last?keyword.value:keyword.value+ ", "}}
+		        	      	</span>
+		        	   	</span>
+		        	   	<span class="pull-right" ng-show="showEdit == true" ng-cloak>
+		        	   			<@orcid.privacyToggle3  angularModel="keywordsForm.visibility.visibility"
+			             	  	questionClick="toggleClickPrivacyHelp($index)"
+			             	  	clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
+			             	  	publicClick="setPrivacy('PUBLIC', $event)" 
+	                	      	limitedClick="setPrivacy('LIMITED', $event)" 
+	                	      	privateClick="setPrivacy('PRIVATE', $event)"
+	                	      	elementId="$index"/>
+		        	   	</span>
 	        	 	</div>
 	        	   
 	        	   
@@ -811,13 +811,12 @@
 					
 					<div class="fixed-area">
 						<div class="scroll-area">		
-	        	      	   <div class="row aka-row"><!-- ng-repeat="" --> 								
+	        	      	   <div class="row aka-row" ng-repeat="otherName in otherNamesForm.otherNames" ng-cloak> 								
 								<div class="col-md-6">
-									<div class="aka">
-										<span>S.M. Garc&iacute;a</span>
-										<input type="text" ng-show=""/>
+									<div class="aka">										
+										<input type="text" ng-model="otherName.content"/>
 									</div>
-									<div class="source">Source: Sofia Mar&iacute;a Hernandez Garc&iacute;a</div>
+									<div class="source">Source: {{otherName.sourceName}}</div>
 								</div>							
 								<div class="col-md-6">
 									<ul class="record-settings pull-right">
