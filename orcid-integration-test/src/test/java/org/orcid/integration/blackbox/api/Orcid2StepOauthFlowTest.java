@@ -29,7 +29,7 @@ import org.codehaus.jettison.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.integration.api.t2.T2OAuthAPIService;
-import org.orcid.integration.blackbox.BlackBoxBase;
+import org.orcid.integration.blackbox.api.v2.rc1.BlackBoxBase;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 

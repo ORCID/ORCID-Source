@@ -852,12 +852,14 @@ public class ManageProfileController extends BaseWorkspaceController {
     @RequestMapping(value = "/countryForm.json", method = RequestMethod.POST)
     public @ResponseBody AddressesForm setProfileCountryJson(HttpServletRequest request, @RequestBody AddressesForm addressesForm) throws NoSuchRequestHandlingMethodException {
         addressesForm.setErrors(new ArrayList<String>());
+        Map<String, String> countries = retrieveIsoCountries();
         if(addressesForm != null) {
             if(addressesForm.getAddresses() != null) {
                 for(AddressForm form : addressesForm.getAddresses()) {
                     if(form.getIso2Country() == null || form.getIso2Country().getValue() == null) {
                         form.getErrors().add(getMessage("common.invalid_country"));
                     }
+                    form.setCountryName(countries.get(form.getIso2Country().getValue().name()));
                     copyErrors(form, addressesForm);
                 }                
             }
@@ -878,8 +880,7 @@ public class ManageProfileController extends BaseWorkspaceController {
                 defaultVisibility = profileEntity.getResearcherUrlsVisibility() == null ? org.orcid.pojo.ajaxForm.Visibility.valueOf(OrcidVisibilityDefaults.COUNTRY_DEFAULT.getVisibility()) : org.orcid.pojo.ajaxForm.Visibility.valueOf(profileEntity.getProfileAddressVisibility());
             }
                     
-            addressManager.updateAddresses(getCurrentUserOrcid(), addresses, org.orcid.jaxb.model.common.Visibility.fromValue(defaultVisibility.getVisibility().value()));
-            
+            addressManager.updateAddresses(getCurrentUserOrcid(), addresses, org.orcid.jaxb.model.common.Visibility.fromValue(defaultVisibility.getVisibility().value()));            
         }
         return addressesForm;
     }
