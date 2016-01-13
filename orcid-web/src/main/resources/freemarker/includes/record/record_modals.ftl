@@ -96,14 +96,15 @@
 				<div class="col-md-12 col-xs-12 col-sm-12">
 					<div class="fixed-area">
 						<div class="scroll-area">		
-							<div class="row"><!-- ng-repeat="" -->
+							<div class="row" ng-repeat="country in countryForm.addresses">
 								<div class="col-md-6">
-									<select id="country" name="country" ng-model="countryForm.iso2Country.value">
-			    			 			<option value=""><@orcid.msg 'org.orcid.persistence.jpa.entities.CountryIsoEntity.empty' /></option>
-						 				<#list isoCountries?keys as key>
+			                 		<select id="country" name="country" ng-model="country.iso2Country.value" ng-show="country.primary">
+				    			 		<option value=""><@orcid.msg 'org.orcid.persistence.jpa.entities.CountryIsoEntity.empty' /></option>
+								 		<#list isoCountries?keys as key>
 								     		<option value="${key}">${isoCountries[key]}</option>
-					 	 				</#list>
-					 				</select>
+							 	 		</#list>
+							 		</select>
+						 			<div class="source" ng-show="country.sourceName">Source: {{country.sourceName}}</div>
 								</div>
 								<div class="col-md-6">
 									<ul class="record-settings pull-right">
@@ -114,19 +115,19 @@
 											<span class="glyphicon glyphicon-arrow-down circle" ng-click=""></span>											
 										</li>
 										<li>										
-											<span class="glyphicon glyphicon-trash" ng-click=""></span>											
+											<span class="glyphicon glyphicon-trash" ng-click="deleteCountry(country)"></span>											
 										</li>
 										<li>
-											<@orcid.privacyToggle3  angularModel="countryForm.profileAddressVisibility.visibility"
+											<@orcid.privacyToggle3  angularModel="country.visibility.visibility"
 				         						questionClick="toggleClickPrivacyHelp($index)"
 				         						clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
-				         						publicClick="setPrivacy('PUBLIC', $event)" 
-	                 	     					limitedClick="setPrivacy('LIMITED', $event)" 
-	                 	     					privateClick="setPrivacy('PRIVATE', $event)"
+				         						publicClick="setPrivacyModal('PUBLIC', $event, country)" 
+	                 	     					limitedClick="setPrivacyModal('LIMITED', $event, country)" 
+	                 	     					privateClick="setPrivacyModal('PRIVATE', $event, country)"
 	                 	      					elementId="$index"/>	
 										</li>
 									</ul>
-									<span class="created-date pull-right">Created: 2014-06-30</span>
+									<span class="created-date pull-right" ng-show="country.createdDate">Created: {{country.createdDate.year + '-' + country.createdDate.month + '-' + country.createdDate.day}}</span>
 								</div>					 				
 							</div>											
 						</div>

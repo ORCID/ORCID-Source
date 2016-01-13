@@ -2829,6 +2829,18 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
         $scope.countryForm.visibility.visibility = priv;
     };
     
+    $scope.setPrivacyModal = function(priv, $event, country) {
+        $event.preventDefault();
+        var countries = $scope.countryForm.addresses;        
+        var len = countries.length;
+        
+        while (len--) {
+            if (countries[len] == country)                
+                countries[len].visibility.visibility = priv;
+                $scope.countryForm.addresses = countries;
+        }
+    };
+    
     $scope.showTooltip = function(elem){
     	$scope.showElement[elem] = true;
     }
@@ -2857,6 +2869,16 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
     $scope.closeEditModal = function(){
         $.colorbox.close();
     }
+    
+    
+    $scope.deleteCountry = function(country){
+        var countries = $scope.countryForm.addresses;
+        var len = countries.length;
+        while (len--) {
+            if (countries[len] == country)
+                countries.splice(len,1);
+        }
+    };
 
     $scope.getCountryForm();
 
