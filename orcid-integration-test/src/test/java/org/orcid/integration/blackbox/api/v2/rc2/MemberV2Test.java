@@ -40,8 +40,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.integration.api.memberV2.MemberV2ApiClientImpl;
-import org.orcid.integration.blackbox.BlackBoxBase;
 import org.orcid.jaxb.model.common.Day;
 import org.orcid.jaxb.model.common.FuzzyDate;
 import org.orcid.jaxb.model.common.Month;
@@ -1027,7 +1025,7 @@ public class MemberV2Test extends BlackBoxBase {
         g2.setName("Group # 2");
         g2.setType("publisher");                
         
-        ClientResponse r1 = memberV2ApiClient.createGroupIdRecord(g1, token);
+        ClientResponse r1 = memberV2ApiClient.createGroupIdRecord(g1, token); 
         
         String r1LocationPutCode = r1.getLocation().getPath().replace("/orcid-api-web/v2.0_rc2/group-id-record/", "");
         g1.setPutCode(Long.valueOf(r1LocationPutCode));

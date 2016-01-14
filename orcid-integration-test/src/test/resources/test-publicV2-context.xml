@@ -38,12 +38,12 @@
         <constructor-arg ref="jerseyClient"/>
     </bean>
     
-    <bean id="memberV2ApiClient_rc1" class="org.orcid.integration.api.memberV2.MemberV2ApiClientImpl">
+    <bean id="memberV2ApiClient_rc1" class="org.orcid.integration.blackbox.api.v2.rc1.MemberV2ApiClientImpl">
         <constructor-arg value="${org.orcid.api.baseUri}/v2.0_rc1"/>
         <constructor-arg ref="jerseyClient"/>
     </bean>
     
-    <bean id="memberV2ApiClient_rc2" class="org.orcid.integration.api.memberV2.MemberV2ApiClientImpl">
+    <bean id="memberV2ApiClient_rc2" class="org.orcid.integration.blackbox.api.v2.rc2.MemberV2ApiClientImpl">
         <constructor-arg value="${org.orcid.api.baseUri}/v2.0_rc2"/>
         <constructor-arg ref="jerseyClient"/>
     </bean>

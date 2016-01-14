@@ -20,8 +20,11 @@ import java.util.List;
 
 import javax.persistence.Query;
 
+import org.apache.commons.lang.StringUtils;
+import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.persistence.dao.AddressDao;
 import org.orcid.persistence.jpa.entities.AddressEntity;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 
@@ -56,5 +59,25 @@ public class AddressDaoImpl extends GenericDaoImpl<AddressEntity, Long> implemen
         Query query = entityManager.createQuery("FROM AddressEntity WHERE user.id = :orcid");
         query.setParameter("orcid", orcid);
         return query.getResultList();
+    }
+
+    @Override
+    @Transactional
+    public boolean deleteAddress(String orcid, Long putCode) {
+        Query query = entityManager.createQuery("DELETE FROM AddressEntity WHERE id=:id and user.id = :orcid");
+        query.setParameter("id", putCode);
+        query.setParameter("orcid", orcid);
+        return query.executeUpdate() > 0 ? true : false;
+    }
+    
+    @Override
+    @Transactional
+    public boolean updateAddressVisibility(String orcid, Visibility visibility) {
+        Query query = entityManager
+                .createNativeQuery("update profile set last_modified=now(), profile_address_visibility=:address_visibility, indexing_status='PENDING' where orcid=:orcid");
+        query.setParameter("address_visibility", StringUtils.upperCase(visibility.value()));
+        query.setParameter("orcid", orcid);
+        boolean result = query.executeUpdate() > 0 ? true : false;
+        return result;
     }
 }

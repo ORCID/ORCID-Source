@@ -16,6 +16,8 @@
  */
 package org.orcid.jaxb.model.groupid_rc2;
 
+import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -77,8 +79,8 @@ import io.swagger.annotations.ApiModelProperty;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "name", "groupId", "description", "type", "source", "lastModifiedDate", "createdDate", "putCode" })
 @XmlRootElement(name = "group-id-record", namespace = "http://www.orcid.org/ns/group-id")
-public class GroupIdRecord {
-
+public class GroupIdRecord implements Serializable {
+    private static final long serialVersionUID = 1516751098639982549L;
     @XmlElement(namespace = "http://www.orcid.org/ns/group-id", required = true)
     protected String name;
     @XmlElement(name = "group-id", namespace = "http://www.orcid.org/ns/group-id", required = true)

@@ -2228,6 +2228,7 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$compile', function Website
     $scope.websitesForm = null;
     $scope.privacyHelp = false;
     $scope.showElement = {};
+    $scope.orcidId = orcidVar.orcidId;
 
     $scope.openEdit = function() {
         $scope.addNew();
@@ -2240,7 +2241,12 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$compile', function Website
     };
 
     $scope.addNew = function() {
-        $scope.websitesForm.websites.push({ name: {value: ""}, url: {value: ""} });
+        $scope.websitesForm.websites.push({ url: "", urlName: "" });
+    };
+    
+    $scope.addNewModal = function() {
+        $scope.websitesForm.websites.push({"errors":[],"content":"","putCode":null,"visibility":{"visibility":"PUBLIC"}});
+        $scope.newInput = true; 
     };
 
     $scope.getWebsitesForm = function(){
@@ -2252,8 +2258,11 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$compile', function Website
                 var websites = $scope.websitesForm.websites;
                 var len = websites.length;
                 while (len--) {
-                    if (!websites[len].url.value.toLowerCase().startsWith('http'))
-                        websites[len].url.value = 'http://' + websites[len].url.value;
+                    if(websites[len].url != null) {
+                        if (!websites[len].url.toLowerCase().startsWith('http')) {
+                            websites[len].url = 'http://' + websites[len].url;
+                        }                            
+                    }                    
                 }
                 $scope.$apply();
             }
@@ -2273,11 +2282,15 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$compile', function Website
         }
     };
 
-    $scope.setWebsitesForm = function(){
+    $scope.setWebsitesForm = function(v2){
+        
+        if(v2)
+            $scope.websitesForm.visibility = null;
+        
         var websites = $scope.websitesForm.websites;
         var len = websites.length;
         while (len--) {
-            if (websites[len].url.value == null || websites[len].url.value.trim() == '')
+            if (websites[len].url == null || websites[len].url.trim() == '')
                 websites.splice(len,1);
         }
         $.ajax({
@@ -2289,7 +2302,8 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$compile', function Website
             success: function(data) {
                 $scope.websitesForm = data;
                 if(data.errors.length == 0)
-                   $scope.close();
+                    $scope.close();
+                    $.colorbox.close();
                 $scope.$apply();
             }
         }).fail(function() {
@@ -2303,12 +2317,49 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$compile', function Website
         $scope.websitesForm.visibility.visibility = priv;
     };
     
+    $scope.setPrivacyModal = function(priv, $event, website) {        
+        $event.preventDefault();
+        
+        var websites = $scope.websitesForm.websites;        
+        var len = websites.length;
+        
+        while (len--) {
+            if (websites[len] == website)                
+                websites[len].visibility.visibility = priv;
+                $scope.websitesForm.websites = websites;
+        }
+    };
+    
     $scope.showTooltip = function(elem){
     	$scope.showElement[elem] = true;
     }
     
     $scope.hideTooltip = function(elem){
     	$scope.showElement[elem] = false;
+    }
+    
+    
+    $scope.openEditModal = function(){        
+        $.colorbox({
+            scrolling: true,
+            html: $compile($('#edit-websites').html())($scope),
+            onLoad: function() {
+                $('#cboxClose').remove();
+                
+            },
+            width: formColorBoxResize(),
+            onComplete: function() {
+                    
+            },
+            onClosed: function() {
+                //
+            }            
+        });
+        $.colorbox.resize();
+    }
+    
+    $scope.closeEditModal = function(){
+        $.colorbox.close();
     }
 
     $scope.getWebsitesForm();
@@ -2319,6 +2370,8 @@ orcidNgModule.controller('KeywordsCtrl', ['$scope', '$compile', function ($scope
     $scope.keywordsForm = null;
     $scope.privacyHelp = false;
     $scope.showElement = {};
+    $scope.orcidId = orcidVar.orcidId;
+   
 
     $scope.openEdit = function() {
         $scope.addNew();
@@ -2332,7 +2385,12 @@ orcidNgModule.controller('KeywordsCtrl', ['$scope', '$compile', function ($scope
     };
 
     $scope.addNew = function() {
-        $scope.keywordsForm.keywords.push({value: ""});
+        $scope.keywordsForm.keywords.push({content: ""});
+    };
+    
+    $scope.addNewModal = function() {
+        $scope.keywordsForm.keywords.push({"errors":[],"content":"","putCode":null,"visibility":{"visibility":"PUBLIC"}});
+        $scope.newInput = true; 
     };
 
     $scope.getKeywordsForm = function(){
@@ -2341,7 +2399,6 @@ orcidNgModule.controller('KeywordsCtrl', ['$scope', '$compile', function ($scope
             dataType: 'json',
             success: function(data) {
                 $scope.keywordsForm = data;
-                var keywords = $scope.keywordsForm.keywords;
                 $scope.$apply();
             }
         }).fail(function(){
@@ -2359,7 +2416,12 @@ orcidNgModule.controller('KeywordsCtrl', ['$scope', '$compile', function ($scope
         }
     };
 
-    $scope.setKeywordsForm = function(){
+    $scope.setKeywordsForm = function(v2){
+        if (v2)
+            $scope.keywordsForm.visibility = null;
+            
+        
+        
         var keywords = $scope.keywordsForm.keywords;
         $.ajax({
             url: getBaseUri() + '/my-orcid/keywordsForms.json',
@@ -2371,17 +2433,31 @@ orcidNgModule.controller('KeywordsCtrl', ['$scope', '$compile', function ($scope
                 $scope.keywordsForm = data;
                 if(data.errors.length == 0)
                    $scope.close();
+                   $.colorbox.close();
                 $scope.$apply();
             }
         }).fail(function() {
             // something bad is happening!
-            console.log("WebsiteCtrl.serverValidate() error");
+            console.log("KeywordsCtrl.serverValidate() error");
         });
     };
 
     $scope.setPrivacy = function(priv, $event) {
         $event.preventDefault();
         $scope.keywordsForm.visibility.visibility = priv;
+    };
+    
+    $scope.setPrivacyModal = function(priv, $event, keyword) {        
+        $event.preventDefault();
+        
+        var keywords = $scope.keywordsForm.keywords;        
+        var len = keywords.length;
+        
+        while (len--) {
+            if (keywords[len] == keyword)                
+                keywords[len].visibility.visibility = priv;
+                $scope.keywordsForm.keywords = keywords;
+        }
     };
     
     $scope.showTooltip = function(elem){
@@ -2391,6 +2467,30 @@ orcidNgModule.controller('KeywordsCtrl', ['$scope', '$compile', function ($scope
     $scope.hideTooltip = function(elem){
     	$scope.showElement[elem] = false;
     }
+    
+    $scope.openEditModal = function(){        
+        $.colorbox({
+            scrolling: true,
+            html: $compile($('#edit-keyword').html())($scope),
+            onLoad: function() {
+                $('#cboxClose').remove();
+                
+            },
+            width: formColorBoxResize(),
+            onComplete: function() {
+                    
+            },
+            onClosed: function() {
+                //
+            }            
+        });
+        $.colorbox.resize();
+    }
+    
+    $scope.closeEditModal = function(){
+        $.colorbox.close();
+    }
+    
 
     $scope.getKeywordsForm();
 }]);
@@ -2456,6 +2556,7 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile',function ($scope
     $scope.otherNamesForm = null;
     $scope.privacyHelp = false;
     $scope.showElement = {};
+    $scope.orcidId = orcidVar.orcidId; 
 
     $scope.openEdit = function() {
         $scope.addNew();
@@ -2470,14 +2571,19 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile',function ($scope
     $scope.addNew = function() {
         $scope.otherNamesForm.otherNames.push({"errors":[],"content":"","putCode":null,"visibility":null});
     };
+    
+    $scope.addNewModal = function() {
+        $scope.otherNamesForm.otherNames.push({"errors":[],"content":"","putCode":null,"visibility":{"visibility":"PUBLIC"}});
+        $scope.newInput = true; 
+    };
 
     $scope.getOtherNamesForm = function(){
         $.ajax({
             url: getBaseUri() + '/my-orcid/otherNamesForms.json',
             dataType: 'json',
             success: function(data) {            	
-                $scope.otherNamesForm = data;
-                $scope.$apply();
+                $scope.otherNamesForm = data;                
+                $scope.$apply();                                
             }
         }).fail(function(){
             // something bad is happening!
@@ -2494,17 +2600,22 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile',function ($scope
         }
     };
 
-    $scope.setOtherNamesForm = function(){
+    $scope.setOtherNamesForm = function(v2){        
+        
+        if(v2) //Remove once V2 API functionality is live
+            $scope.otherNamesForm.visibility = null;        
+   
         $.ajax({
             url: getBaseUri() + '/my-orcid/otherNamesForms.json',
             type: 'POST',
             data:  angular.toJson($scope.otherNamesForm),
             contentType: 'application/json;charset=UTF-8',
             dataType: 'json',
-            success: function(data) {
+            success: function(data) {                
                 $scope.otherNamesForm = data;
                 if(data.errors.length == 0)
-                   $scope.close();
+                    $scope.close();
+                    $.colorbox.close();
                 $scope.$apply();
             }
         }).fail(function() {
@@ -2524,7 +2635,45 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile',function ($scope
     $scope.setPrivacy = function(priv, $event) {
         $event.preventDefault();
         $scope.otherNamesForm.visibility.visibility = priv;
-    };        
+    };
+    
+    $scope.setPrivacyModal = function(priv, $event, otherName) {
+        $event.preventDefault();
+        var otherNames = $scope.otherNamesForm.otherNames;        
+        var len = otherNames.length;
+        
+        while (len--) {
+            if (otherNames[len] == otherName)                
+                otherNames[len].visibility.visibility = priv;
+                $scope.otherNamesForm.otherNames = otherNames;
+        }
+    };
+    
+    $scope.openEditModal = function(){        
+        
+        $.colorbox({
+            scrolling: true,
+            html: $compile($('#edit-aka').html())($scope),
+            onLoad: function() {
+                $('#cboxClose').remove(); 
+            },
+            width: formColorBoxResize(),
+            onComplete: function() {
+                    
+            },
+            onClosed: function() {
+                //
+            }            
+        });
+        $.colorbox.resize();
+    }
+    
+    $scope.closeEditModal = function(){
+        $scope.getOtherNamesForm();
+        $.colorbox.close();
+    }
+    
+    
 
     $scope.getOtherNamesForm();
 }]);
@@ -2619,7 +2768,7 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
     $scope.countryForm = null;
     $scope.privacyHelp = false;
     $scope.showElement = {};
-
+    
     $scope.openEdit = function() {
         $scope.showEdit = true;
     };
@@ -2628,14 +2777,13 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
         $scope.showEdit = false;
     };
 
-
     $scope.getCountryForm = function(){
         $.ajax({
             url: getBaseUri() + '/account/countryForm.json',
             dataType: 'json',
             success: function(data) {
-                $scope.countryForm = data;
-                $scope.$apply();
+                $scope.countryForm = data;                        
+                $scope.$apply();                
             }
         }).fail(function(){
             // something bad is happening!
@@ -2648,10 +2796,10 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
             $scope.privacyHelp=!$scope.privacyHelp;
     };
 
-    $scope.setCountryForm = function(){
-
-        if ($scope.countryForm.iso2Country.value == '')
-           $scope.countryForm.iso2Country = null;
+    $scope.setCountryForm = function(v2){        
+        if(v2)
+            $scope.countryForm.visibility = null; 
+            
         $.ajax({
             url: getBaseUri() + '/account/countryForm.json',
             type: 'POST',
@@ -2659,20 +2807,39 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
             contentType: 'application/json;charset=UTF-8',
             dataType: 'json',
             success: function(data) {
-                $scope.countryForm = data;
+                $scope.countryForm = data; 
                 $scope.close();
-                $scope.$apply();
+                $scope.$apply();                
+                $.colorbox.close();
             }
         }).fail(function() {
             // something bad is happening!
             console.log("CountryCtrl.serverValidate() error");
         });
     };
-
+    
+    $scope.closeModal = function(){
+        $.colorbox.close();
+    }
 
     $scope.setPrivacy = function(priv, $event) {
         $event.preventDefault();
-        $scope.countryForm.profileAddressVisibility.visibility = priv;
+        $scope.countryForm.visibility.visibility = priv;
+    };
+    
+    $scope.setPrivacyModal = function(priv, $event, country) {
+        $event.preventDefault();
+        var countries = $scope.countryForm.addresses;
+        
+        console.log(countries);
+        
+        var len = countries.length;
+        
+        while (len--) {
+            if (countries[len] == country)                
+                countries[len].visibility.visibility = priv;
+                $scope.countryForm.addresses = countries;
+        }
     };
     
     $scope.showTooltip = function(elem){
@@ -2682,6 +2849,42 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
     $scope.hideTooltip = function(elem){
     	$scope.showElement[elem] = false;	
     }
+    
+    $scope.openEditModal = function() {
+        $.colorbox({
+            scrolling: true,
+            html: $compile($('#edit-country').html())($scope),
+            onLoad: function() {$('#cboxClose').remove();},
+ 
+            width: formColorBoxResize(),
+            onComplete: function() {
+                    
+            },
+            onClosed: function() {
+                //
+            }            
+        });
+        $.colorbox.resize();
+    }
+    
+    $scope.closeEditModal = function(){
+        $.colorbox.close();
+    }
+    
+    
+    $scope.deleteCountry = function(country){
+        var countries = $scope.countryForm.addresses;
+        var len = countries.length;
+        while (len--) {
+            if (countries[len] == country)
+                countries.splice(len,1);
+        }
+    };
+    
+    $scope.addNewModal = function() {
+        $scope.countryForm.addresses.push({"errors":[],"addresses":null, "visibility":{"visibility":"PUBLIC"}});
+        $scope.newInput = true; 
+    };
 
     $scope.getCountryForm();
 
@@ -9970,3 +10173,20 @@ orcidNgModule.directive('bindHtmlCompile', ['$compile', function ($compile) {
         }
     };
 }]);
+
+orcidNgModule.directive('focusMe', function($timeout) {
+    return {
+      scope: { trigger: '=focusMe' },
+      link: function(scope, element) {
+        scope.$watch('trigger', function(value) {
+          if(value === true) { 
+            //console.log('trigger',value);
+            //$timeout(function() {
+              element[0].focus();
+              scope.trigger = false;
+            //});
+          }
+        });
+      }
+    };
+  });

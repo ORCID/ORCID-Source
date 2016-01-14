@@ -30,7 +30,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.orcid.api.common.T2OrcidApiService;
 import org.orcid.integration.api.pub.PublicV1ApiClientImpl;
-import org.orcid.integration.blackbox.BlackBoxBase;
+import org.orcid.integration.blackbox.api.v2.rc1.BlackBoxBase;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;

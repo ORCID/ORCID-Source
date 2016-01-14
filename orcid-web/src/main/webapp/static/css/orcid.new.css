@@ -6235,6 +6235,110 @@ a:hover .mozilla-badge{
 }
 
 
+/* EDIT PROFILE */
+
+.fixed-area{ /* Global class for edit profile */
+	width: 100%;
+	height: 250px;
+	overflow-y: scroll;	
+	overflow-x: hidden;
+	margin-top: 30px; 	
+}
+
+.record-buttons{
+	margin-top: 30px;
+	height: 35px;
+	width: 100%;	
+}
+
+/* Edit Also Known as */
+
+.edit-record{	
+	width: 600px;
+	height: 400px;
+	padding: 15px 0 15px 15px;
+}
+
+.fixed-area .scroll-area input,
+.fixed-area .scroll-area select{
+	width: 100%;
+}
+
+.fixed-area .col-md-12{
+	padding-right: 0;
+}
+
+.aka-row{
+	margin-bottom: 25px;
+}
+
+.fixed-area .aka{
+	color: #494A4C;
+	font-size: 24px;
+}
+
+.fixed-area .created-date{
+	margin-right: 15px;
+	font-size: 12px;
+}
+
+.fixed-area ul.record-settings{
+	margin-right: 15px;
+	padding-left: 0;
+}
+
+
+.fixed-area ul.record-settings .privacyToggle{
+	height: 29px;
+	margin-left: 5px;
+}
+
+.fixed-area ul.record-settings>li{
+	display: inline-block;
+	vertical-align: middle;
+}
+
+.fixed-area ul.record-settings li .glyphicon-trash{
+    margin-top: 5px;
+    font-size: 18px;
+    color: #C9C9CA;
+}
+
+.record-settings span{
+	margin: 0 5px;
+	cursor: pointer;
+}
+
+.record-settings span.circle{
+	background: #C9C9CA;
+    padding: 5px;
+    border-radius: 50%;
+    color: #FFF;        
+}
+
+.record-buttons .cancel-option{
+	margin: 5px 15px 0 0;
+}
+
+.record-buttons .glyphicon-plus{
+	background: #31789B;
+    padding: 5px;
+    border-radius: 50%;
+    color: #FFF; 
+}
+
+.fixed-area .scroll-area .popover-help-container{
+	position: absolute;
+	top: 0;
+	width: 100%;
+}
+
+.fixed-area .scroll-area .popover-help-container .popover{
+	top: -143px;
+}
+	
+
+
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */

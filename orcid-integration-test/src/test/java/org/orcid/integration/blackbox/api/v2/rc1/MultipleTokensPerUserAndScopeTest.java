@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.integration.blackbox.api;
+package org.orcid.integration.blackbox.api.v2.rc1;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -28,10 +28,9 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.integration.blackbox.BlackBoxBase;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary;
-import org.orcid.jaxb.model.record_rc2.Work;
+import org.orcid.jaxb.model.record.summary_rc1.ActivitiesSummary;
+import org.orcid.jaxb.model.record_rc1.Work;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;

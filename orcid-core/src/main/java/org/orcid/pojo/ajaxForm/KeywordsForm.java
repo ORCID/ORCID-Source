@@ -20,8 +20,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.orcid.jaxb.model.message.Keyword;
-import org.orcid.jaxb.model.message.Keywords;
+import org.orcid.jaxb.model.record_rc2.Keyword;
+import org.orcid.jaxb.model.record_rc2.Keywords;
 
 public class KeywordsForm implements ErrorsInterface, Serializable {
 
@@ -29,58 +29,56 @@ public class KeywordsForm implements ErrorsInterface, Serializable {
 
     private List<String> errors = new ArrayList<String>();
 
-    private List<Text> keywords = new ArrayList<Text>();
-    
+    private List<KeywordForm> keywords = new ArrayList<KeywordForm>();
+
     private Visibility visibility;
 
     public static KeywordsForm valueOf(Keywords keywords) {
         KeywordsForm kf = new KeywordsForm();
-        if (keywords ==  null) {
-            kf.setVisibility(new Visibility());
-            return kf;
+        
+        if (keywords.getKeywords() != null) {
+            for (Keyword keyword : keywords.getKeywords()) {
+                if (keyword.getContent() != null) {
+                    kf.getKeywords().add(KeywordForm.valueOf(keyword));
+                }
+            }
         }
-        if (keywords.getKeyword() != null) {
-            for (Keyword keyword:keywords.getKeyword())
-                if (keyword.getContent() != null)
-                    kf.getKeywords().add(Text.valueOf(keyword.getContent()));
-        }
-        kf.setVisibility(Visibility.valueOf(keywords.getVisibility()));
+
         return kf;
     }
 
     public Keywords toKeywords() {
         Keywords keywords = new Keywords();
         List<Keyword> kList = new ArrayList<Keyword>();
-        for (Text text : this.keywords) 
-            kList.add(text.toKeyword());
-        keywords.setKeyword(kList);
-        keywords.setVisibility(this.getVisibility().getVisibility());
+        for (KeywordForm form : this.keywords) {
+            kList.add(form.toKeyword());
+        }
+        keywords.setKeywords(kList);
         return keywords;
     }
 
-    
-    public Visibility getVisibility() {
-        return visibility;
-    }
-
-    public void setVisibility(Visibility visibility) {
-        this.visibility = visibility;
-    }
-
-    public List<Text> getKeywords() {
-        return keywords;
-    }
-
-    public void setKeywords(List<Text> keywords) {
-        this.keywords = keywords;
-    }
-    
     public List<String> getErrors() {
         return errors;
     }
 
     public void setErrors(List<String> errors) {
         this.errors = errors;
+    }
+
+    public List<KeywordForm> getKeywords() {
+        return keywords;
+    }
+
+    public void setKeywords(List<KeywordForm> keywords) {
+        this.keywords = keywords;
+    }
+
+    public Visibility getVisibility() {
+        return visibility;
+    }
+
+    public void setVisibility(Visibility visibility) {
+        this.visibility = visibility;
     }
 
 }

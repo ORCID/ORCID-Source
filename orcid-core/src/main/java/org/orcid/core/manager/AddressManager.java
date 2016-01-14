@@ -16,6 +16,7 @@
  */
 package org.orcid.core.manager;
 
+import org.orcid.jaxb.model.common.Visibility;
 import org.orcid.jaxb.model.record_rc2.Address;
 import org.orcid.jaxb.model.record_rc2.Addresses;
 
@@ -38,4 +39,6 @@ public interface AddressManager {
     Address createAddress(String orcid, Address address);
 
     boolean deleteAddress(String orcid, Long putCode);
+    
+    Addresses updateAddresses(String orcid, Addresses addresses, Visibility defaultVisibility);
 }

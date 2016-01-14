@@ -78,6 +78,10 @@ public class DateUtils {
     public static XMLGregorianCalendar convertToXMLGregorianCalendar(long time) {
         GregorianCalendar gregorianCalendar = new GregorianCalendar();
         gregorianCalendar.setTimeInMillis(time);
+        return convertToXMLGregorianCalendar(gregorianCalendar);
+    }
+    
+    public static XMLGregorianCalendar convertToXMLGregorianCalendar(GregorianCalendar gregorianCalendar) {
         return createDataTypeFactory().newXMLGregorianCalendar(gregorianCalendar);
     }
 

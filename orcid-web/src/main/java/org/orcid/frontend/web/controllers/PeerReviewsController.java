@@ -32,7 +32,7 @@ import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.GroupIdRecordManager;
 import org.orcid.core.manager.PeerReviewManager;
 import org.orcid.frontend.web.util.LanguagesMap;
-import org.orcid.jaxb.model.groupid_rc1.GroupIdRecord;
+import org.orcid.jaxb.model.groupid_rc2.GroupIdRecord;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.record_rc2.PeerReview;

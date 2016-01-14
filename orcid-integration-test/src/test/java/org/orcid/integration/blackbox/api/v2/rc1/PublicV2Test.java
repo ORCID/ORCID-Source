@@ -47,36 +47,35 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.orcid.api.common.WebDriverHelper;
 import org.orcid.integration.api.helper.APIRequestType;
 import org.orcid.integration.api.helper.OauthHelper;
-import org.orcid.integration.api.memberV2.MemberV2ApiClientImpl;
 import org.orcid.integration.api.pub.PublicV2ApiClientImpl;
 import org.orcid.integration.api.t2.T2OAuthAPIService;
 import org.orcid.jaxb.model.common.Day;
 import org.orcid.jaxb.model.common.Month;
 import org.orcid.jaxb.model.common.Year;
 import org.orcid.jaxb.model.error.OrcidError;
-import org.orcid.jaxb.model.groupid_rc2.GroupIdRecord;
+import org.orcid.jaxb.model.groupid_rc1.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary;
-import org.orcid.jaxb.model.record.summary_rc2.EducationSummary;
-import org.orcid.jaxb.model.record.summary_rc2.EmploymentSummary;
-import org.orcid.jaxb.model.record.summary_rc2.FundingGroup;
-import org.orcid.jaxb.model.record.summary_rc2.FundingSummary;
-import org.orcid.jaxb.model.record.summary_rc2.PeerReviewGroup;
-import org.orcid.jaxb.model.record.summary_rc2.PeerReviewSummary;
-import org.orcid.jaxb.model.record.summary_rc2.WorkGroup;
-import org.orcid.jaxb.model.record.summary_rc2.WorkSummary;
-import org.orcid.jaxb.model.record_rc2.Activity;
-import org.orcid.jaxb.model.record_rc2.Education;
-import org.orcid.jaxb.model.record_rc2.Employment;
-import org.orcid.jaxb.model.record_rc2.Funding;
-import org.orcid.jaxb.model.record_rc2.FundingExternalIdentifier;
-import org.orcid.jaxb.model.record_rc2.FundingExternalIdentifierType;
-import org.orcid.jaxb.model.record_rc2.PeerReview;
-import org.orcid.jaxb.model.record_rc2.Relationship;
-import org.orcid.jaxb.model.record_rc2.Work;
-import org.orcid.jaxb.model.record_rc2.WorkExternalIdentifier;
-import org.orcid.jaxb.model.record_rc2.WorkExternalIdentifierId;
-import org.orcid.jaxb.model.record_rc2.WorkExternalIdentifierType;
+import org.orcid.jaxb.model.record.summary_rc1.ActivitiesSummary;
+import org.orcid.jaxb.model.record.summary_rc1.EducationSummary;
+import org.orcid.jaxb.model.record.summary_rc1.EmploymentSummary;
+import org.orcid.jaxb.model.record.summary_rc1.FundingGroup;
+import org.orcid.jaxb.model.record.summary_rc1.FundingSummary;
+import org.orcid.jaxb.model.record.summary_rc1.PeerReviewGroup;
+import org.orcid.jaxb.model.record.summary_rc1.PeerReviewSummary;
+import org.orcid.jaxb.model.record.summary_rc1.WorkGroup;
+import org.orcid.jaxb.model.record.summary_rc1.WorkSummary;
+import org.orcid.jaxb.model.record_rc1.Activity;
+import org.orcid.jaxb.model.record_rc1.Education;
+import org.orcid.jaxb.model.record_rc1.Employment;
+import org.orcid.jaxb.model.record_rc1.Funding;
+import org.orcid.jaxb.model.record_rc1.FundingExternalIdentifier;
+import org.orcid.jaxb.model.record_rc1.FundingExternalIdentifierType;
+import org.orcid.jaxb.model.record_rc1.PeerReview;
+import org.orcid.jaxb.model.record_rc1.Relationship;
+import org.orcid.jaxb.model.record_rc1.Work;
+import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifier;
+import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierId;
+import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
@@ -92,7 +91,7 @@ import com.sun.jersey.api.client.ClientResponse;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-publicV2-context.xml" })
 public class PublicV2Test {
-    @Value("${org.orcid.web.base.url:http://localhost:8080/orcid-web}")
+    @Value("${org.orcid.web.base.url:https://localhost:8443/orcid-web}")
     private String webBaseUrl;
     @Value("${org.orcid.web.testClient1.redirectUri}")
     private String redirectUri;

@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.integration.blackbox;
+package org.orcid.integration.blackbox.api.v2.rc1;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -37,18 +37,13 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.orcid.api.common.WebDriverHelper;
 import org.orcid.integration.api.helper.OauthHelper;
-import org.orcid.integration.api.memberV2.MemberV2ApiClientImpl;
 import org.orcid.integration.api.t2.T2OAuthAPIService;
 import org.orcid.integration.blackbox.web.SigninTest;
-import org.orcid.jaxb.model.record_rc2.ExternalIdentifier;
-import org.orcid.jaxb.model.record_rc2.Education;
-import org.orcid.jaxb.model.record_rc2.Employment;
-import org.orcid.jaxb.model.record_rc2.Funding;
-import org.orcid.jaxb.model.record_rc2.PeerReview;
-import org.orcid.jaxb.model.record_rc2.Work;
-import org.orcid.jaxb.model.record_rc2.OtherName;
-import org.orcid.jaxb.model.record_rc2.PersonalDetails;
-import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
+import org.orcid.jaxb.model.record_rc1.Education;
+import org.orcid.jaxb.model.record_rc1.Employment;
+import org.orcid.jaxb.model.record_rc1.Funding;
+import org.orcid.jaxb.model.record_rc1.PeerReview;
+import org.orcid.jaxb.model.record_rc1.Work;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
@@ -120,15 +115,7 @@ public class BlackBoxBase {
                 result = (Work) obj;
             } else if (PeerReview.class.equals(type)) {
                 result = (PeerReview) obj;
-            } else if(ResearcherUrl.class.equals(type)) {
-                result = (ResearcherUrl) obj;
-            } else if(PersonalDetails.class.equals(type)) {
-                result = (PersonalDetails) obj;
-            } else if(OtherName.class.equals(type)) {
-                result = (OtherName) obj;
-            } else if(ExternalIdentifier.class.equals(type)) {
-                result = (ExternalIdentifier) obj;
-            }
+            } 
             return result;
         } catch (IOException e) {
             throw new RuntimeException("Error reading notification from classpath", e);

@@ -33,6 +33,7 @@ import org.orcid.core.version.V2VersionConverter;
 import org.orcid.core.version.V2VersionObjectFactory;
 import org.orcid.jaxb.model.common.LastModifiedDate;
 import org.orcid.jaxb.model.groupid_rc1.GroupIdRecord;
+import org.orcid.jaxb.model.groupid_rc1.GroupIdRecords;
 import org.orcid.jaxb.model.record.summary_rc1.ActivitiesSummary;
 import org.orcid.jaxb.model.record.summary_rc1.EducationSummary;
 import org.orcid.jaxb.model.record.summary_rc1.Educations;
@@ -136,6 +137,10 @@ public class VersionConverterImplV2_0_rc1ToV2_0rc2 implements V2VersionConverter
                                 new LastModifiedDate(DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis(LastModifiedDatesHelper.calculateLatest(worksRc2))));
                     }
                 }).register();
+        
+        //Group ID
+        mapperFactory.classMap(GroupIdRecord.class, org.orcid.jaxb.model.groupid_rc2.GroupIdRecord.class).byDefault().register();        
+        mapperFactory.classMap(GroupIdRecords.class, org.orcid.jaxb.model.groupid_rc2.GroupIdRecords.class).byDefault().register();
         
         // WORK 
         mapperFactory.classMap(Work.class, org.orcid.jaxb.model.record_rc2.Work.class).byDefault().register();
