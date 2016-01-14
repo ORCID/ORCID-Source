@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
+import org.orcid.core.api.OrcidApiConstants;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.LoadOptions;
@@ -43,7 +44,6 @@ import org.orcid.persistence.dao.NotificationDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.NotificationAddItemsEntity;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -117,7 +117,7 @@ public class NotificationController extends BaseController {
         return notificationDao.getUnreadCount(currentOrcid);
     }
 
-    @RequestMapping(value = "/CUSTOM/{id}/notification.html", produces = "text/html; charset=UTF-8")
+    @RequestMapping(value = "/CUSTOM/{id}/notification.html", produces = OrcidApiConstants.HTML_UTF)
     public @ResponseBody String getCustomNotificationHtml(@PathVariable("id") String id) {
         Notification notification = notificationManager.findByOrcidAndId(getCurrentUserOrcid(), Long.valueOf(id));
         if (notification instanceof NotificationCustom) {
@@ -127,7 +127,7 @@ public class NotificationController extends BaseController {
         }
     }
 
-    @RequestMapping(value = "/PERMISSION/{id}/notification.html", produces = "text/html; charset=UTF-8")
+    @RequestMapping(value = "/PERMISSION/{id}/notification.html", produces = OrcidApiConstants.HTML_UTF)
     public ModelAndView getPermissionNotificationHtml(@PathVariable("id") String id) {
         ModelAndView mav = new ModelAndView();
         Notification notification = notificationManager.findByOrcidAndId(getCurrentUserOrcid(), Long.valueOf(id));
@@ -137,7 +137,7 @@ public class NotificationController extends BaseController {
         return mav;
     }
 
-    @RequestMapping(value = "/AMENDED/{id}/notification.html", produces = "text/html; charset=UTF-8")
+    @RequestMapping(value = "/AMENDED/{id}/notification.html", produces = OrcidApiConstants.HTML_UTF)
     public ModelAndView getAmendedNotificationHtml(@PathVariable("id") String id) {
         ModelAndView mav = new ModelAndView();
         Notification notification = notificationManager.findByOrcidAndId(getCurrentUserOrcid(), Long.valueOf(id));
