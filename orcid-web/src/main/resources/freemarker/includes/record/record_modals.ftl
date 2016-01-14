@@ -96,16 +96,18 @@
 				<div class="col-md-12 col-xs-12 col-sm-12">
 					<div class="fixed-area">
 						<div class="scroll-area">		
-							<div class="row" ng-repeat="country in countryForm.addresses">
+							<div class="row aka-row" ng-repeat="country in countryForm.addresses">
 								<div class="col-md-6">
-			                 		<select id="country" name="country" ng-model="country.iso2Country.value" ng-show="country.primary">
-				    			 		<option value=""><@orcid.msg 'org.orcid.persistence.jpa.entities.CountryIsoEntity.empty' /></option>
-								 		<#list isoCountries?keys as key>
-								     		<option value="${key}">${isoCountries[key]}</option>
-							 	 		</#list>
-							 		</select>
+									<div class="aka">
+			                 			<select id="country" name="country" ng-model="country.iso2Country.value">
+				    			 			<option value=""><@orcid.msg 'org.orcid.persistence.jpa.entities.CountryIsoEntity.empty' /></option>
+								 			<#list isoCountries?keys as key>
+								     			<option value="${key}">${isoCountries[key]}</option>
+							 	 			</#list>
+							 			</select>
+									</div> 
 						 			<div class="source" ng-show="country.sourceName">Source: {{country.sourceName}}</div>
-								</div>
+								</div> 
 								<div class="col-md-6">
 									<ul class="record-settings pull-right">
 										<li>												
@@ -133,8 +135,8 @@
 						</div>
 					</div>
 					<div class="record-buttons">						
-						<a ng-click="addNew()"><span class="glyphicon glyphicon-plus pull-left"></span></a>	        	    		
-		            	<button class="btn btn-primary pull-right" ng-click="setCountryForm()"><@spring.message "freemarker.btnsavechanges"/></button>
+						<a ng-click="addNewModal()"><span class="glyphicon glyphicon-plus pull-left"></span></a>	        	    		
+		            	<button class="btn btn-primary pull-right" ng-click="setCountryForm(true)"><@spring.message "freemarker.btnsavechanges"/></button>
 		            	<a class="cancel-option pull-right" ng-click="closeEditModal()"><@spring.message "freemarker.btncancel"/></a>
 					</div>
 				</div>

@@ -2784,7 +2784,7 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
             dataType: 'json',
             success: function(data) {
                 $scope.countryForm = data;
-                console.log(angular.toJson(data));
+                //console.log(angular.toJson(data));
                 $scope.$apply();                
             }
         }).fail(function(){
@@ -2798,7 +2798,14 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
             $scope.privacyHelp=!$scope.privacyHelp;
     };
 
-    $scope.setCountryForm = function(){
+    $scope.setCountryForm = function(v2){
+        
+        if(v2)
+            $scope.countryForm.visibility = null; 
+            
+            
+        console.log('=============SENT====================');
+        console.log($scope.countryForm);
         
         //if ($scope.countryForm.iso2Country.value == '')
         //   $scope.countryForm.iso2Country = null;
@@ -2809,7 +2816,9 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
             contentType: 'application/json;charset=UTF-8',
             dataType: 'json',
             success: function(data) {
-                $scope.countryForm = data;                
+                $scope.countryForm = data; 
+                console.log('=============FROM SERVER====================');
+                console.log($scope.countryForm);
                 $scope.close();
                 $scope.$apply();                
                 $.colorbox.close();
@@ -2831,7 +2840,10 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
     
     $scope.setPrivacyModal = function(priv, $event, country) {
         $event.preventDefault();
-        var countries = $scope.countryForm.addresses;        
+        var countries = $scope.countryForm.addresses;
+        
+        console.log(countries);
+        
         var len = countries.length;
         
         while (len--) {
@@ -2878,6 +2890,11 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
             if (countries[len] == country)
                 countries.splice(len,1);
         }
+    };
+    
+    $scope.addNewModal = function() {
+        $scope.countryForm.addresses.push({"errors":[],"addresses":null, "visibility":{"visibility":"PUBLIC"}});
+        $scope.newInput = true; 
     };
 
     $scope.getCountryForm();
