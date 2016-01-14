@@ -291,6 +291,13 @@ public class MemberV2ApiServiceDelegatorImpl
         Funding f = profileFundingManager.updateFunding(orcid, funding);
         return Response.ok(f).build();
     }
+    
+    @Override
+    @AccessControl(requiredScope = ScopePathType.FUNDING_UPDATE)
+    public Response deleteFunding(String orcid, Long putCode) {
+        profileFundingManager.checkSourceAndDelete(orcid, putCode);
+        return Response.noContent().build();
+    }
 
     @Override
     @AccessControl(requiredScope = ScopePathType.AFFILIATIONS_READ_LIMITED)
@@ -380,14 +387,7 @@ public class MemberV2ApiServiceDelegatorImpl
     public Response deleteAffiliation(String orcid, Long putCode) {
         affiliationsManager.checkSourceAndDelete(orcid, putCode);
         return Response.noContent().build();
-    }
-
-    @Override
-    @AccessControl(requiredScope = ScopePathType.FUNDING_UPDATE)
-    public Response deleteFunding(String orcid, Long putCode) {
-        profileFundingManager.checkSourceAndDelete(orcid, putCode);
-        return Response.noContent().build();
-    }
+    }    
 
     @Override
     @AccessControl(requiredScope = ScopePathType.PEER_REVIEW_READ_LIMITED)
@@ -485,7 +485,7 @@ public class MemberV2ApiServiceDelegatorImpl
 
     @SuppressWarnings("unchecked")
     @Override
-    @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED)
+    @AccessControl(requiredScope = ScopePathType.ORCID_BIO_READ_LIMITED)
     public Response viewResearcherUrls(String orcid) {
         ResearcherUrls researcherUrls = researcherUrlManager.getResearcherUrlsV2(orcid);
         researcherUrls.setResearcherUrls((List<ResearcherUrl>) visibilityFilter.filter(researcherUrls.getResearcherUrls()));
@@ -501,7 +501,7 @@ public class MemberV2ApiServiceDelegatorImpl
     }
 
     @Override
-    @AccessControl(requiredScope = ScopePathType.PERSON_UPDATE)
+    @AccessControl(requiredScope = ScopePathType.ORCID_BIO_UPDATE)
     public Response updateResearcherUrl(String orcid, Long putCode, ResearcherUrl researcherUrl) {
         if (!putCode.equals(researcherUrl.getPutCode())) {
             Map<String, String> params = new HashMap<String, String>();
@@ -515,7 +515,7 @@ public class MemberV2ApiServiceDelegatorImpl
     }
 
     @Override
-    @AccessControl(requiredScope = ScopePathType.PERSON_UPDATE)
+    @AccessControl(requiredScope = ScopePathType.ORCID_BIO_UPDATE)
     public Response createResearcherUrl(String orcid, ResearcherUrl researcherUrl) {
         researcherUrl = researcherUrlManager.createResearcherUrlV2(orcid, researcherUrl);
         try {
@@ -526,7 +526,7 @@ public class MemberV2ApiServiceDelegatorImpl
     }
 
     @Override
-    @AccessControl(requiredScope = ScopePathType.PERSON_UPDATE)
+    @AccessControl(requiredScope = ScopePathType.ORCID_BIO_UPDATE)
     public Response deleteResearcherUrl(String orcid, Long putCode) {
         researcherUrlManager.deleteResearcherUrl(orcid, putCode, true);
         return Response.noContent().build();
@@ -534,7 +534,7 @@ public class MemberV2ApiServiceDelegatorImpl
 
     @SuppressWarnings("unchecked")
     @Override
-    @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED)
+    @AccessControl(requiredScope = ScopePathType.ORCID_BIO_READ_LIMITED)
     public Response viewEmails(String orcid) {
         Emails emails = emailManager.getEmails(orcid);
         emails.setEmails((List<Email>) visibilityFilter.filter(emails.getEmails()));
@@ -544,7 +544,7 @@ public class MemberV2ApiServiceDelegatorImpl
 
     @SuppressWarnings("unchecked")
     @Override
-    @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED)
+    @AccessControl(requiredScope = ScopePathType.ORCID_BIO_READ_LIMITED)
     public Response viewOtherNames(String orcid) {
         OtherNames otherNames = otherNameManager.getOtherNames(orcid);
         List<OtherName> allOtherNames = otherNames.getOtherNames();
@@ -555,7 +555,7 @@ public class MemberV2ApiServiceDelegatorImpl
     }
 
     @Override
-    @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED)
+    @AccessControl(requiredScope = ScopePathType.ORCID_BIO_READ_LIMITED)
     public Response viewOtherName(String orcid, Long putCode) {
         OtherName otherName = otherNameManager.getOtherName(orcid, putCode);
         orcidSecurityManager.checkVisibility(otherName);
@@ -564,7 +564,7 @@ public class MemberV2ApiServiceDelegatorImpl
     }
 
     @Override
-    @AccessControl(requiredScope = ScopePathType.PERSON_UPDATE)
+    @AccessControl(requiredScope = ScopePathType.ORCID_BIO_UPDATE)
     public Response createOtherName(String orcid, org.orcid.jaxb.model.record_rc2.OtherName otherName) {
         otherName = otherNameManager.createOtherName(orcid, otherName);
         try {
@@ -575,7 +575,7 @@ public class MemberV2ApiServiceDelegatorImpl
     }
 
     @Override
-    @AccessControl(requiredScope = ScopePathType.PERSON_UPDATE)
+    @AccessControl(requiredScope = ScopePathType.ORCID_BIO_UPDATE)
     public Response updateOtherName(String orcid, Long putCode, org.orcid.jaxb.model.record_rc2.OtherName otherName) {
         if (!putCode.equals(otherName.getPutCode())) {
             Map<String, String> params = new HashMap<String, String>();
@@ -590,14 +590,14 @@ public class MemberV2ApiServiceDelegatorImpl
     }
 
     @Override
-    @AccessControl(requiredScope = ScopePathType.PERSON_UPDATE)
+    @AccessControl(requiredScope = ScopePathType.ORCID_BIO_UPDATE)
     public Response deleteOtherName(String orcid, Long putCode) {
         otherNameManager.deleteOtherName(orcid, putCode, true);
         return Response.noContent().build();
     }
 
     @Override
-    @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED)
+    @AccessControl(requiredScope = ScopePathType.ORCID_BIO_READ_LIMITED)
     public Response viewPersonalDetails(String orcid) {
         PersonalDetails personalDetails = personalDetailsManager.getPersonalDetails(orcid);
         personalDetails = visibilityFilter.filter(personalDetails);
@@ -607,7 +607,7 @@ public class MemberV2ApiServiceDelegatorImpl
 
     @SuppressWarnings("unchecked")
     @Override
-    @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED)
+    @AccessControl(requiredScope = ScopePathType.ORCID_BIO_READ_LIMITED)
     public Response viewExternalIdentifiers(String orcid) {
         ExternalIdentifiers extIds = externalIdentifierManager.getExternalIdentifiersV2(orcid);
         List<ExternalIdentifier> allExtIds = extIds.getExternalIdentifier();
@@ -618,7 +618,7 @@ public class MemberV2ApiServiceDelegatorImpl
     }
 
     @Override
-    @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED)
+    @AccessControl(requiredScope = ScopePathType.ORCID_BIO_READ_LIMITED)
     public Response viewExternalIdentifier(String orcid, Long putCode) {
         ExternalIdentifier extId = externalIdentifierManager.getExternalIdentifierV2(orcid, putCode);
         orcidSecurityManager.checkVisibility(extId);
@@ -627,7 +627,7 @@ public class MemberV2ApiServiceDelegatorImpl
     }
 
     @Override
-    @AccessControl(requiredScope = ScopePathType.PERSON_UPDATE)
+    @AccessControl(requiredScope = ScopePathType.ORCID_BIO_UPDATE)
     public Response updateExternalIdentifier(String orcid, Long putCode, ExternalIdentifier externalIdentifier) {
         if (!putCode.equals(externalIdentifier.getPutCode())) {
             Map<String, String> params = new HashMap<String, String>();
@@ -641,7 +641,7 @@ public class MemberV2ApiServiceDelegatorImpl
     }
 
     @Override
-    @AccessControl(requiredScope = ScopePathType.PERSON_UPDATE)
+    @AccessControl(requiredScope = ScopePathType.ORCID_BIO_UPDATE)
     public Response createExternalIdentifier(String orcid, ExternalIdentifier externalIdentifier) {
         externalIdentifier = externalIdentifierManager.createExternalIdentifierV2(orcid, externalIdentifier);
         try {
@@ -652,14 +652,14 @@ public class MemberV2ApiServiceDelegatorImpl
     }
 
     @Override
-    @AccessControl(requiredScope = ScopePathType.PERSON_UPDATE)
+    @AccessControl(requiredScope = ScopePathType.ORCID_BIO_UPDATE)
     public Response deleteExternalIdentifier(String orcid, Long putCode) {
         externalIdentifierManager.deleteExternalIdentifier(orcid, putCode, true);
         return Response.noContent().build();
     }
 
     @Override
-    @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED)
+    @AccessControl(requiredScope = ScopePathType.ORCID_BIO_READ_LIMITED)
     public Response viewBiography(String orcid) {
         Biography bio = profileEntityManager.getBiography(orcid);
         orcidSecurityManager.checkVisibility(bio);
@@ -669,7 +669,7 @@ public class MemberV2ApiServiceDelegatorImpl
         
     @SuppressWarnings("unchecked")
     @Override
-    @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED)
+    @AccessControl(requiredScope = ScopePathType.ORCID_BIO_READ_LIMITED)
     public Response viewKeywords(String orcid) {
         Keywords keywords = keywordsManager.getKeywords(orcid);
         List<Keyword> allKeywords = keywords.getKeywords();
@@ -680,7 +680,7 @@ public class MemberV2ApiServiceDelegatorImpl
     }
 
     @Override
-    @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED)
+    @AccessControl(requiredScope = ScopePathType.ORCID_BIO_READ_LIMITED)
     public Response viewKeyword(String orcid, Long putCode) {
         Keyword keyword = keywordsManager.getKeyword(orcid, putCode);
         orcidSecurityManager.checkVisibility(keyword);
@@ -689,7 +689,7 @@ public class MemberV2ApiServiceDelegatorImpl
     }
 
     @Override
-    @AccessControl(requiredScope = ScopePathType.PERSON_UPDATE)
+    @AccessControl(requiredScope = ScopePathType.ORCID_BIO_UPDATE)
     public Response createKeyword(String orcid, Keyword keyword) {
         keyword = keywordsManager.createKeyword(orcid, keyword);
         try {
@@ -700,7 +700,7 @@ public class MemberV2ApiServiceDelegatorImpl
     }
 
     @Override
-    @AccessControl(requiredScope = ScopePathType.PERSON_UPDATE)
+    @AccessControl(requiredScope = ScopePathType.ORCID_BIO_UPDATE)
     public Response updateKeyword(String orcid, Long putCode, Keyword keyword) {
         if (!putCode.equals(keyword.getPutCode())) {
             Map<String, String> params = new HashMap<String, String>();
@@ -715,7 +715,7 @@ public class MemberV2ApiServiceDelegatorImpl
     }
 
     @Override
-    @AccessControl(requiredScope = ScopePathType.PERSON_UPDATE)
+    @AccessControl(requiredScope = ScopePathType.ORCID_BIO_UPDATE)
     public Response deleteKeyword(String orcid, Long putCode) {
         keywordsManager.deleteKeyword(orcid, putCode, true);
         return Response.noContent().build();
@@ -723,7 +723,7 @@ public class MemberV2ApiServiceDelegatorImpl
                     
     @SuppressWarnings("unchecked")
     @Override
-    @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED)
+    @AccessControl(requiredScope = ScopePathType.ORCID_BIO_READ_LIMITED)
     public Response viewAddresses(String orcid) {
         Addresses addresses = addressManager.getAddresses(orcid);
         List<Address> allAddresses = addresses.getAddress();
@@ -734,7 +734,7 @@ public class MemberV2ApiServiceDelegatorImpl
     }
 
     @Override
-    @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED)
+    @AccessControl(requiredScope = ScopePathType.ORCID_BIO_READ_LIMITED)
     public Response viewAddress(String orcid, Long putCode) {
         Address address = addressManager.getAddress(orcid, putCode);
         orcidSecurityManager.checkVisibility(address);
@@ -743,7 +743,7 @@ public class MemberV2ApiServiceDelegatorImpl
     }
 
     @Override
-    @AccessControl(requiredScope = ScopePathType.PERSON_UPDATE)
+    @AccessControl(requiredScope = ScopePathType.ORCID_BIO_UPDATE)
     public Response createAddress(String orcid, Address address) {
         address = addressManager.createAddress(orcid, address);
         try {
@@ -754,7 +754,7 @@ public class MemberV2ApiServiceDelegatorImpl
     }
 
     @Override
-    @AccessControl(requiredScope = ScopePathType.PERSON_UPDATE)
+    @AccessControl(requiredScope = ScopePathType.ORCID_BIO_UPDATE)
     public Response updateAddress(String orcid, Long putCode, Address address) {
         if (!putCode.equals(address.getPutCode())) {
             Map<String, String> params = new HashMap<String, String>();
@@ -769,14 +769,14 @@ public class MemberV2ApiServiceDelegatorImpl
     }
 
     @Override
-    @AccessControl(requiredScope = ScopePathType.PERSON_UPDATE)
+    @AccessControl(requiredScope = ScopePathType.ORCID_BIO_UPDATE)
     public Response deleteAddress(String orcid, Long putCode) {
         addressManager.deleteAddress(orcid, putCode);
         return Response.noContent().build();
     }   
     
     @Override
-    @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED)
+    @AccessControl(requiredScope = ScopePathType.ORCID_BIO_READ_LIMITED)
     public Response viewPerson(String orcid) {
         Person person = profileEntityManager.getPersonDetails(orcid);
         person = visibilityFilter.filter(person);
