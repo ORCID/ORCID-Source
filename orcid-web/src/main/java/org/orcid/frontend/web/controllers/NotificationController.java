@@ -117,7 +117,7 @@ public class NotificationController extends BaseController {
         return notificationDao.getUnreadCount(currentOrcid);
     }
 
-    @RequestMapping(value = "/CUSTOM/{id}/notification.html", produces = MediaType.TEXT_HTML_VALUE)
+    @RequestMapping(value = "/CUSTOM/{id}/notification.html", produces = "text/html; charset=UTF-8")
     public @ResponseBody String getCustomNotificationHtml(@PathVariable("id") String id) {
         Notification notification = notificationManager.findByOrcidAndId(getCurrentUserOrcid(), Long.valueOf(id));
         if (notification instanceof NotificationCustom) {
@@ -127,7 +127,7 @@ public class NotificationController extends BaseController {
         }
     }
 
-    @RequestMapping(value = "/PERMISSION/{id}/notification.html", produces = MediaType.TEXT_HTML_VALUE)
+    @RequestMapping(value = "/PERMISSION/{id}/notification.html", produces = "text/html; charset=UTF-8")
     public ModelAndView getPermissionNotificationHtml(@PathVariable("id") String id) {
         ModelAndView mav = new ModelAndView();
         Notification notification = notificationManager.findByOrcidAndId(getCurrentUserOrcid(), Long.valueOf(id));
@@ -137,7 +137,7 @@ public class NotificationController extends BaseController {
         return mav;
     }
 
-    @RequestMapping(value = "/AMENDED/{id}/notification.html", produces = MediaType.TEXT_HTML_VALUE)
+    @RequestMapping(value = "/AMENDED/{id}/notification.html", produces = "text/html; charset=UTF-8")
     public ModelAndView getAmendedNotificationHtml(@PathVariable("id") String id) {
         ModelAndView mav = new ModelAndView();
         Notification notification = notificationManager.findByOrcidAndId(getCurrentUserOrcid(), Long.valueOf(id));
