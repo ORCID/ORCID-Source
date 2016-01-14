@@ -140,7 +140,7 @@
 		            </div>
 		        </div>
             <#else>            
-            	<div ng-controller="CountryCtrl" class="workspace-section country">
+            	<div ng-controller="CountryCtrl" class="workspace-section country"> 
 	            	<div class="workspace-section-header">
 			        	<span class="workspace-section-title"><@orcid.msg 'public_profile.labelCountry'/></span>
 			            <span class="glyphicon glyphicon-pencil edit-country edit-option pull-right" ng-click="openEdit()" title="" ng-hide="showEdit == true"></span>
@@ -162,7 +162,7 @@
 	                <!-- Edit -->
 	                <div ng-show="showEdit == true" ng-cloak>
 	                  	 <div ng-repeat="country in countryForm.addresses">	
-			                 <select id="country" name="country" ng-model="country.iso2Country.value" ng-show="country.primary">
+			                 <select id="country" ng-model="primaryEmail.iso2Country.value">
 				    			 <option value=""><@orcid.msg 'org.orcid.persistence.jpa.entities.CountryIsoEntity.empty' /></option>
 								 <#list isoCountries?keys as key>
 								     <option value="${key}">${isoCountries[key]}</option>
