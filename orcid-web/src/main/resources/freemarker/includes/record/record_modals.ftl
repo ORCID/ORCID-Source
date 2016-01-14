@@ -100,7 +100,7 @@
 							<div class="row aka-row" ng-repeat="country in countryForm.addresses">
 								<div class="col-md-6">
 									<div class="aka">
-			                 			<select id="country" name="country" ng-model="country.iso2Country.value" ng-disabled="{{country.source != orcidId && country.source != null}}" ng-class="{'not-allowed': country.source != orcidId && country.source != null}">
+			                 			<select id="country" name="country" ng-model="country.iso2Country.value" ng-disabled="{{country.source != orcidId && country.source != null}}" ng-class="{'not-allowed': country.source != orcidId && country.source != null}" focus-me="newInput">
 				    			 			<option value=""><@orcid.msg 'org.orcid.persistence.jpa.entities.CountryIsoEntity.empty' /></option>
 								 			<#list isoCountries?keys as key>
 								     			<option value="${key}">${isoCountries[key]}</option>

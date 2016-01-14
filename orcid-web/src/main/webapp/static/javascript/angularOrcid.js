@@ -2352,7 +2352,7 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$compile', function Website
                     
             },
             onClosed: function() {
-                //
+                $scope.getWebsitesForm();
             }            
         });
         $.colorbox.resize();
@@ -2481,13 +2481,13 @@ orcidNgModule.controller('KeywordsCtrl', ['$scope', '$compile', function ($scope
                     
             },
             onClosed: function() {
-                //
+                $scope.getKeywordsForm();
             }            
         });
         $.colorbox.resize();
     }
     
-    $scope.closeEditModal = function(){
+    $scope.closeEditModal = function(){        
         $.colorbox.close();
     }
     
@@ -2666,14 +2666,13 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile',function ($scope
                     
             },
             onClosed: function() {
-                //
+                $scope.getOtherNamesForm();
             }            
         });
         $.colorbox.resize();
     }
     
-    $scope.closeEditModal = function(){
-        $scope.getOtherNamesForm();
+    $scope.closeEditModal = function(){        
         $.colorbox.close();
     }
     
@@ -2773,10 +2772,10 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
     $scope.privacyHelp = false;
     $scope.showElement = {};
     $scope.orcidId = orcidVar.orcidId;
+    $scope.newInput = false;
     
     $scope.openEdit = function() {
         $scope.addNewModal();
-        console.log($scope.countryForm);
         $scope.showEdit = true;        
     };
 
@@ -2807,10 +2806,6 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
         if(v2)
             $scope.countryForm.visibility = null;
         
-        
-        console.log('===============SENT===============');
-        console.log(angular.toJson($scope.countryForm));
-            
         $.ajax({
             url: getBaseUri() + '/account/countryForm.json',
             type: 'POST',
@@ -2878,7 +2873,7 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
                     
             },
             onClosed: function() {
-                //
+                $scope.getCountryForm();
             }            
         });
         $.colorbox.resize();
@@ -2887,7 +2882,6 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
     $scope.closeEditModal = function(){
         $.colorbox.close();
     }
-    
     
     $scope.deleteCountry = function(country){
         var countries = $scope.countryForm.addresses;
@@ -2903,10 +2897,7 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
             $scope.countryForm.addresses.push({"errors":[],"addresses":[{"iso2Country" : {"errors":[],"value":null}}], "visibility":{"visibility":"PUBLIC"}, "primary": true});
         }else{
             $scope.countryForm.addresses.push({"errors":[],"addresses":[{"iso2Country" : {"errors":[],"value":null}}], "visibility":{"visibility":"PUBLIC"}, "primary": false});
-        }
-        
-        console.log('=============NEW===========')
-        console.log($scope.countryForm.addresses);
+        }        
         
         $scope.newInput = true; 
     };
