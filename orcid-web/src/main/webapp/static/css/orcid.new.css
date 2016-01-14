@@ -6336,6 +6336,10 @@ a:hover .mozilla-badge{
 .fixed-area .scroll-area .popover-help-container .popover{
 	top: -143px;
 }
+
+.not-allowed{
+	cursor:not-allowed;
+}
 	
 
 

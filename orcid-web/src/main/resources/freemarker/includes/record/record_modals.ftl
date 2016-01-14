@@ -18,6 +18,7 @@
 -->
 
 <script type="text/ng-template" id="edit-aka">	
+	<!-- Other Names -->
 	<div class="lightbox-container">
 		<div class="edit-record edit-aka">
 			<!-- Title -->
@@ -31,7 +32,6 @@
 			</div>
 			<div class="row">
 				<div class="col-md-12 col-xs-12 col-sm-12">
-					
 					<div class="fixed-area">
 						<div class="scroll-area">		
 	        	      	   <div class="row aka-row" ng-repeat="otherName in otherNamesForm.otherNames" ng-cloak> 								
@@ -66,7 +66,7 @@
 									<span class="created-date pull-right" ng-show="otherName.createdDate">Created: {{otherName.createdDate.year + '-' + otherName.createdDate.month + '-' + otherName.createdDate.day}}</span>
 								</div>
 							</div>
-						</div>						
+						</div>
 					</div>
 					<div class="record-buttons">
 						<a ng-click="addNewModal()"><span class="glyphicon glyphicon-plus pull-left"></span></a>	        	      		
@@ -81,6 +81,7 @@
 </script>
 
 <script type="text/ng-template" id="edit-country">
+	<!-- Country -->
 	<div class="lightbox-container">
 		<div class="edit-record edit-country">
 			<!-- Title -->
@@ -99,7 +100,7 @@
 							<div class="row aka-row" ng-repeat="country in countryForm.addresses">
 								<div class="col-md-6">
 									<div class="aka">
-			                 			<select id="country" name="country" ng-model="country.iso2Country.value">
+			                 			<select id="country" name="country" ng-model="country.iso2Country.value" ng-disabled="{{country.source != orcidId && country.source != null}}" ng-class="{'not-allowed': country.source != orcidId && country.source != null}">
 				    			 			<option value=""><@orcid.msg 'org.orcid.persistence.jpa.entities.CountryIsoEntity.empty' /></option>
 								 			<#list isoCountries?keys as key>
 								     			<option value="${key}">${isoCountries[key]}</option>

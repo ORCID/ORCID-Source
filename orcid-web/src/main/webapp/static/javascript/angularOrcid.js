@@ -2581,8 +2581,8 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile',function ($scope
         $.ajax({
             url: getBaseUri() + '/my-orcid/otherNamesForms.json',
             dataType: 'json',
-            success: function(data) {            	
-                $scope.otherNamesForm = data;                
+            success: function(data) {                
+                $scope.otherNamesForm = data;
                 $scope.$apply();                                
             }
         }).fail(function(){
@@ -2655,7 +2655,11 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile',function ($scope
             scrolling: true,
             html: $compile($('#edit-aka').html())($scope),
             onLoad: function() {
-                $('#cboxClose').remove(); 
+                $('#cboxClose').remove();
+                if ($scope.otherNamesForm.otherNames.length == 0){
+                    $scope.addNewModal();
+                    $scope.newInput = true;
+                }    
             },
             width: formColorBoxResize(),
             onComplete: function() {
@@ -2768,9 +2772,12 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
     $scope.countryForm = null;
     $scope.privacyHelp = false;
     $scope.showElement = {};
+    $scope.orcidId = orcidVar.orcidId;
     
     $scope.openEdit = function() {
-        $scope.showEdit = true;
+        $scope.addNewModal();
+        console.log($scope.countryForm);
+        $scope.showEdit = true;        
     };
 
     $scope.close = function() {
@@ -2782,7 +2789,7 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
             url: getBaseUri() + '/account/countryForm.json',
             dataType: 'json',
             success: function(data) {
-                $scope.countryForm = data;                        
+                $scope.countryForm = data;                
                 $scope.$apply();                
             }
         }).fail(function(){
@@ -2798,7 +2805,11 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
 
     $scope.setCountryForm = function(v2){        
         if(v2)
-            $scope.countryForm.visibility = null; 
+            $scope.countryForm.visibility = null;
+        
+        
+        console.log('===============SENT===============');
+        console.log(angular.toJson($scope.countryForm));
             
         $.ajax({
             url: getBaseUri() + '/account/countryForm.json',
@@ -2828,6 +2839,7 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
     };
     
     $scope.setPrivacyModal = function(priv, $event, country) {
+        
         $event.preventDefault();
         var countries = $scope.countryForm.addresses;
         
@@ -2854,7 +2866,12 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
         $.colorbox({
             scrolling: true,
             html: $compile($('#edit-country').html())($scope),
-            onLoad: function() {$('#cboxClose').remove();},
+            onLoad: function() {
+                $('#cboxClose').remove();
+                if ($scope.countryForm.addresses.length == 0){
+                    $scope.addNewModal();
+                }
+            },
  
             width: formColorBoxResize(),
             onComplete: function() {
@@ -2881,8 +2898,16 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
         }
     };
     
-    $scope.addNewModal = function() {
-        $scope.countryForm.addresses.push({"errors":[],"addresses":null, "visibility":{"visibility":"PUBLIC"}});
+    $scope.addNewModal = function() {        
+        if ($scope.countryForm.addresses.length == 0){
+            $scope.countryForm.addresses.push({"errors":[],"addresses":[{"iso2Country" : {"errors":[],"value":null}}], "visibility":{"visibility":"PUBLIC"}, "primary": true});
+        }else{
+            $scope.countryForm.addresses.push({"errors":[],"addresses":[{"iso2Country" : {"errors":[],"value":null}}], "visibility":{"visibility":"PUBLIC"}, "primary": false});
+        }
+        
+        console.log('=============NEW===========')
+        console.log($scope.countryForm.addresses);
+        
         $scope.newInput = true; 
     };
 

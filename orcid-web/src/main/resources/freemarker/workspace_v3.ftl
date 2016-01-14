@@ -160,16 +160,16 @@
 			            </span>
 		            </div>
 	                <!-- Edit -->
-	                <div ng-show="showEdit == true" ng-cloak>
-	                  	 <div ng-repeat="country in countryForm.addresses">	
-			                 <select id="country" ng-model="country.iso2Country.value" ng-show="country.primary == true">
+	                <div ng-show="showEdit == true" ng-cloak>	                	
+	                  	 
+	                  	 <div ng-repeat="country in countryForm.addresses">
+			                 <select id="country" ng-model="country.iso2Country.value" ng-show="country.primary == true" ng-disabled="{{country.source != orcidId}}">
 				    			 <option value=""><@orcid.msg 'org.orcid.persistence.jpa.entities.CountryIsoEntity.empty' /></option>
 								 <#list isoCountries?keys as key>
 								     <option value="${key}">${isoCountries[key]}</option>
 							 	 </#list>
-							 </select>
+							 </select>							 
 						 </div>
-						 
 						 <ul class="workspace-section-toolbar">
 	        	      		<li class="pull-right">
 			             		<button class="btn btn-primary" ng-click="setCountryForm()"><@spring.message "freemarker.btnsavechanges"/></button>
