@@ -214,18 +214,13 @@ public class AddressManagerImpl implements AddressManager {
         List<AddressEntity> existingAddressList = addressDao.findByOrcid(orcid);
         //Delete the deleted ones
         for(AddressEntity existingAddress : existingAddressList) {
-            boolean deleteMe = true;
-            if(addresses.getAddress() == null || addresses.getAddress().isEmpty()) {
-                deleteMe = true;
-            } else {
-                for(Address updatedOrNew : addresses.getAddress()) {
-                    if(existingAddress.getId().equals(updatedOrNew.getPutCode())) {
-                        deleteMe = false;
-                        break;
-                    }
+            boolean deleteMe = true;            
+            for(Address updatedOrNew : addresses.getAddress()) {
+                if(existingAddress.getId().equals(updatedOrNew.getPutCode())) {
+                    deleteMe = false;
+                    break;
                 }
-            }            
-            
+            }                                   
             if(deleteMe) {
                 try {
                     addressDao.deleteAddress(orcid, existingAddress.getId());

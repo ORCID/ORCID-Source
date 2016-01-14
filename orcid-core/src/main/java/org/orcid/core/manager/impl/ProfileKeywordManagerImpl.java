@@ -182,12 +182,14 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
         // Delete the deleted ones
         for (ProfileKeywordEntity existing : existingKeywordsList) {
             boolean deleteMe = true;
-            for (Keyword updatedOrNew : keywords.getKeywords()) {
-                if (existing.getId().equals(updatedOrNew.getPutCode())) {
-                    deleteMe = false;
-                    break;
+            if(keywords.getKeywords() != null) {
+                for (Keyword updatedOrNew : keywords.getKeywords()) {
+                    if (existing.getId().equals(updatedOrNew.getPutCode())) {
+                        deleteMe = false;
+                        break;
+                    }
                 }
-            }
+            }            
 
             if (deleteMe) {
                 try {
