@@ -853,15 +853,22 @@ public class ManageProfileController extends BaseWorkspaceController {
     public @ResponseBody AddressesForm setProfileCountryJson(HttpServletRequest request, @RequestBody AddressesForm addressesForm) throws NoSuchRequestHandlingMethodException {
         addressesForm.setErrors(new ArrayList<String>());
         Map<String, String> countries = retrieveIsoCountries();
+        boolean foundPrimary = false;
         if(addressesForm != null) {
             if(addressesForm.getAddresses() != null) {
                 for(AddressForm form : addressesForm.getAddresses()) {
+                    if(form.getPrimary()) {
+                        foundPrimary = true;
+                    }
                     if(form.getIso2Country() == null || form.getIso2Country().getValue() == null) {
                         form.getErrors().add(getMessage("common.invalid_country"));
                     }
                     form.setCountryName(countries.get(form.getIso2Country().getValue().name()));
                     copyErrors(form, addressesForm);
-                }                
+                } 
+                if(!addressesForm.getAddresses().isEmpty() && !foundPrimary) {
+                    addressesForm.getErrors().add(getMessage("common.set_primary_email"));
+                }
             }
             if(!addressesForm.getErrors().isEmpty()) {
                 return addressesForm;
