@@ -2768,8 +2768,7 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
     $scope.countryForm = null;
     $scope.privacyHelp = false;
     $scope.showElement = {};
-    $scope.primaryEmail = null
-
+    
     $scope.openEdit = function() {
         $scope.showEdit = true;
     };
@@ -2778,21 +2777,12 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
         $scope.showEdit = false;
     };
 
-
     $scope.getCountryForm = function(){
         $.ajax({
             url: getBaseUri() + '/account/countryForm.json',
             dataType: 'json',
             success: function(data) {
-                $scope.countryForm = data;
-                console.log(angular.toJson($scope.countryForm));
-                if($scope.countryForm != null && $scope.countryForm.addresses != null) {
-                    for(i in $scope.countryForm.addresses) {
-                        if ($scope.countryForm.addresses[i].primary) {
-                            $scope.primaryEmail = $scope.countryForm.addresses[i];
-                        }
-                    }
-                }                
+                $scope.countryForm = data;                        
                 $scope.$apply();                
             }
         }).fail(function(){
@@ -2806,17 +2796,10 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
             $scope.privacyHelp=!$scope.privacyHelp;
     };
 
-    $scope.setCountryForm = function(v2){
-        
+    $scope.setCountryForm = function(v2){        
         if(v2)
             $scope.countryForm.visibility = null; 
             
-            
-        console.log('=============SENT====================');
-        console.log($scope.countryForm);
-        
-        //if ($scope.countryForm.iso2Country.value == '')
-        //   $scope.countryForm.iso2Country = null;
         $.ajax({
             url: getBaseUri() + '/account/countryForm.json',
             type: 'POST',
@@ -2825,8 +2808,6 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
             dataType: 'json',
             success: function(data) {
                 $scope.countryForm = data; 
-                console.log('=============FROM SERVER====================');
-                console.log($scope.countryForm);
                 $scope.close();
                 $scope.$apply();                
                 $.colorbox.close();

@@ -146,7 +146,7 @@
 			            <span class="glyphicon glyphicon-pencil edit-country edit-option pull-right" ng-click="openEdit()" title="" ng-hide="showEdit == true"></span>
 			            <span ng-hide="showEdit == true" ng-click="toggleEdit()">
 			            	<span ng-repeat="country in countryForm.addresses">			            				            	
-			            		<span ng-show="country != null && country.countryName != null && country.primary" ng-bind="country.countryName" ng-hide="showEdit == true"></span>
+			            		<span ng-show="showEdit == false && country != null && country.countryName != null && country.primary == true" ng-bind="country.countryName" ></span>			            		
 			            	</span>			            	
 			            </span>
 			            <span class="pull-right" ng-show="showEdit == true" ng-cloak>
@@ -162,7 +162,7 @@
 	                <!-- Edit -->
 	                <div ng-show="showEdit == true" ng-cloak>
 	                  	 <div ng-repeat="country in countryForm.addresses">	
-			                 <select id="country" ng-model="primaryEmail.iso2Country.value">
+			                 <select id="country" ng-model="country.iso2Country.value" ng-show="country.primary == true">
 				    			 <option value=""><@orcid.msg 'org.orcid.persistence.jpa.entities.CountryIsoEntity.empty' /></option>
 								 <#list isoCountries?keys as key>
 								     <option value="${key}">${isoCountries[key]}</option>
