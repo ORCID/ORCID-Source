@@ -2511,13 +2511,34 @@ orcidNgModule.controller('KeywordsCtrl', ['$scope', '$compile', function ($scope
                 }                
             }
             
-            keywords[arrayNewIdx].displayIndex = keywords[arrayNewIdx].displayIndex - 1;
-            keywords[arrayOldIdx].displayIndex = keywords[arrayNewIdx].displayIndex + 1;
+            keywords[arrayNewIdx].displayIndex--;
+            keywords[arrayOldIdx].displayIndex++;
             $scope.keywordsForm.keywords = keywords;
         }
     }
     
-    $scope.setPriorityDown = function(index){
+    $scope.setPriorityDown = function(displayIndex){
+        var keywords = $scope.keywordsForm.keywords;
+        var len = keywords.length;        
+        if (displayIndex < len) {            
+            var arrayNewIdx = null;  
+            var arrayOldIdx = null;
+            
+            while (len--) {
+                //Find first array idx for the current displayIndex value
+                if (keywords[len].displayIndex == displayIndex){
+                    arrayNewIdx = len;                
+                }
+                //Find first array idx for the element up to it 
+                if (keywords[len].displayIndex == displayIndex + 1){
+                    arrayOldIdx = len;                
+                }                
+            }
+            
+            keywords[arrayNewIdx].displayIndex++;
+            keywords[arrayOldIdx].displayIndex--;
+            $scope.keywordsForm.keywords = keywords;
+        }
        
     }
     
