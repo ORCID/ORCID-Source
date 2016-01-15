@@ -345,7 +345,8 @@ public class WorkspaceController extends BaseWorkspaceController {
     @RequestMapping(value = "/my-orcid/keywordsForms.json", method = RequestMethod.GET)
     public @ResponseBody
     KeywordsForm getKeywordsFormJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {        
-        Keywords keywords = profileKeywordManager.getKeywords(getCurrentUserOrcid());        
+        Keywords keywords = profileKeywordManager.getKeywords(getCurrentUserOrcid());
+        keywords.updateIndexingStatusOnChilds();
         KeywordsForm form = KeywordsForm.valueOf(keywords);                
         ProfileEntity profileEntity = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
         //Set the default visibility since we still need it in the front end

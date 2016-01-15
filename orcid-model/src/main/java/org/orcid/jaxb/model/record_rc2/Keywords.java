@@ -19,7 +19,6 @@ package org.orcid.jaxb.model.record_rc2;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -97,39 +96,6 @@ public class Keywords implements Serializable {
         return true;
     }
 
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     public void updateIndexingStatusOnChilds() {
         if (this.getKeywords() != null && !this.getKeywords().isEmpty()) {
             List<Keyword> sortedKeywords = new ArrayList<Keyword>();
@@ -154,80 +120,6 @@ public class Keywords implements Serializable {
                 }
             }
         }
-    }
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    public static void main(String[] args) {
-        List<Keyword> unsorted = new ArrayList<Keyword>();
-        int index = 0;
-
-        for (int i = 0; i < 15; i++) {
-            Keyword k = new Keyword();
-            k.setContent(String.valueOf(i));            
-            k.setDisplayIndex(Long.valueOf(-1));
-            unsorted.add(k);
-        }
-
-        Keywords ks = new Keywords();
-        ks.setKeywords(unsorted);
-        ks.updateIndexingStatusOnChilds();
-
-        for (Keyword key : ks.getKeywords()) {
-            System.out.println(key.getContent() + " (" + key.getDisplayIndex() + ")");
-        }
-        
-       
-
     }
 
 }
