@@ -63,6 +63,9 @@ public class ExternalIdentifier implements Serializable, Filterable {
     protected Visibility visibility;
     @XmlAttribute
     protected String path;
+    @XmlAttribute(name = "display-index")
+    protected String displayIndex;
+    
     public String getCommonName() {
         return commonName;
     }
@@ -117,6 +120,15 @@ public class ExternalIdentifier implements Serializable, Filterable {
     public void setPath(String path) {
         this.path = path;
     }
+
+    public String getDisplayIndex() {
+        return displayIndex;
+    }
+
+    public void setDisplayIndex(String displayIndex) {
+        this.displayIndex = displayIndex;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;

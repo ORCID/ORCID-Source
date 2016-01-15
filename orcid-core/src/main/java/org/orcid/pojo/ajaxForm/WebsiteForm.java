@@ -33,6 +33,7 @@ public class WebsiteForm implements ErrorsInterface, Serializable {
     private String urlName;
     private String putCode;
     private Visibility visibility;
+    private String displayIndex;
     private Date createdDate;
     private Date lastModified;
     private String source;
@@ -73,13 +74,19 @@ public class WebsiteForm implements ErrorsInterface, Serializable {
                 lastModifiedDate.setDay(String.valueOf(researcherUrl.getLastModifiedDate().getValue().getDay()));
                 form.setLastModified(lastModifiedDate);
             }
-            
+
             if (researcherUrl.getSource() != null) {
                 // Set source
                 form.setSource(researcherUrl.getSource().retrieveSourcePath());
                 if (researcherUrl.getSource().getSourceName() != null) {
                     form.setSourceName(researcherUrl.getSource().getSourceName().getContent());
                 }
+            }
+
+            if (!PojoUtil.isEmpty(researcherUrl.getDisplayIndex())) {
+                form.setDisplayIndex(researcherUrl.getDisplayIndex());
+            } else {
+                form.setDisplayIndex("0");
             }
         }
         return form;
@@ -101,6 +108,12 @@ public class WebsiteForm implements ErrorsInterface, Serializable {
 
         if (!PojoUtil.isEmpty(this.getPutCode())) {
             researcherUrl.setPutCode(Long.valueOf(this.getPutCode()));
+        }
+
+        if (!PojoUtil.isEmpty(displayIndex)) {
+            researcherUrl.setDisplayIndex(displayIndex);
+        } else {
+            researcherUrl.setDisplayIndex("0");
         }
 
         researcherUrl.setSource(new Source(source));
@@ -162,7 +175,7 @@ public class WebsiteForm implements ErrorsInterface, Serializable {
     public void setSourceName(String sourceName) {
         this.sourceName = sourceName;
     }
-    
+
     public Date getCreatedDate() {
         return createdDate;
     }
@@ -177,5 +190,13 @@ public class WebsiteForm implements ErrorsInterface, Serializable {
 
     public void setLastModified(Date lastModified) {
         this.lastModified = lastModified;
-    }  
+    }
+
+    public String getDisplayIndex() {
+        return displayIndex;
+    }
+
+    public void setDisplayIndex(String displayIndex) {
+        this.displayIndex = displayIndex;
+    }
 }

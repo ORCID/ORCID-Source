@@ -27,9 +27,10 @@ public class OtherNameForm implements ErrorsInterface, Serializable {
 
     private static final long serialVersionUID = 1L;
     private List<String> errors = new ArrayList<String>();
-    private String content;    
-    private String putCode;    
+    private String content;
+    private String putCode;
     private Visibility visibility;
+    private String displayIndex;
     private Date createdDate;
     private Date lastModified;
     private String source;
@@ -37,19 +38,19 @@ public class OtherNameForm implements ErrorsInterface, Serializable {
 
     public static OtherNameForm valueOf(OtherName otherName) {
         OtherNameForm form = new OtherNameForm();
-        if(otherName != null) {
-            if(!PojoUtil.isEmpty(otherName.getContent())) {
+        if (otherName != null) {
+            if (!PojoUtil.isEmpty(otherName.getContent())) {
                 form.setContent(otherName.getContent());
             }
-            
-            if(otherName.getVisibility() != null) {
+
+            if (otherName.getVisibility() != null) {
                 form.setVisibility(Visibility.valueOf(otherName.getVisibility()));
             }
-            
-            if(otherName.getPutCode() != null) {
+
+            if (otherName.getPutCode() != null) {
                 form.setPutCode(String.valueOf(otherName.getPutCode()));
             }
-            
+
             if (otherName.getCreatedDate() != null) {
                 Date createdDate = new Date();
                 createdDate.setYear(String.valueOf(otherName.getCreatedDate().getValue().getYear()));
@@ -65,7 +66,7 @@ public class OtherNameForm implements ErrorsInterface, Serializable {
                 lastModifiedDate.setDay(String.valueOf(otherName.getLastModifiedDate().getValue().getDay()));
                 form.setLastModified(lastModifiedDate);
             }
-            
+
             if (otherName.getSource() != null) {
                 // Set source
                 form.setSource(otherName.getSource().retrieveSourcePath());
@@ -73,30 +74,41 @@ public class OtherNameForm implements ErrorsInterface, Serializable {
                     form.setSourceName(otherName.getSource().getSourceName().getContent());
                 }
             }
+
+            if (!PojoUtil.isEmpty(otherName.getDisplayIndex())) {
+                form.setDisplayIndex(otherName.getDisplayIndex());
+            } else {
+                form.setDisplayIndex("0");
+            }
         }
         return form;
     }
-    
+
     public OtherName toOtherName() {
         OtherName otherName = new OtherName();
-        if(!PojoUtil.isEmpty(this.getContent())) {
+        if (!PojoUtil.isEmpty(this.getContent())) {
             otherName.setContent(this.getContent());
         }
-        
-        if(this.visibility != null && this.visibility.getVisibility() != null) {
+
+        if (this.visibility != null && this.visibility.getVisibility() != null) {
             otherName.setVisibility(org.orcid.jaxb.model.common.Visibility.fromValue(this.getVisibility().getVisibility().value()));
         }
-        
-        if(!PojoUtil.isEmpty(this.getPutCode())) {
+
+        if (!PojoUtil.isEmpty(this.getPutCode())) {
             otherName.setPutCode(Long.valueOf(this.getPutCode()));
         }
-        
+
+        if (!PojoUtil.isEmpty(displayIndex)) {
+            otherName.setDisplayIndex(displayIndex);
+        } else {
+            otherName.setDisplayIndex("0");
+        }
+
         otherName.setSource(new Source(source));
-        
+
         return otherName;
     }
 
-    
     public Visibility getVisibility() {
         return visibility;
     }
@@ -159,5 +171,13 @@ public class OtherNameForm implements ErrorsInterface, Serializable {
 
     public void setLastModified(Date lastModified) {
         this.lastModified = lastModified;
-    }          
+    }
+
+    public String getDisplayIndex() {
+        return displayIndex;
+    }
+
+    public void setDisplayIndex(String displayIndex) {
+        this.displayIndex = displayIndex;
+    }
 }

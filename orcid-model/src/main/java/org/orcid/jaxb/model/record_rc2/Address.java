@@ -69,7 +69,9 @@ public class Address implements Filterable, Serializable {
     protected String path;
     @XmlTransient
     protected Boolean primary;
-
+    @XmlAttribute(name = "display-index")
+    protected String displayIndex;
+    
     public Country getCountry() {
         return country;
     }
@@ -132,6 +134,14 @@ public class Address implements Filterable, Serializable {
 
     public void setPrimary(Boolean primary) {
         this.primary = primary;
+    }
+
+    public String getDisplayIndex() {
+        return displayIndex;
+    }
+
+    public void setDisplayIndex(String displayIndex) {
+        this.displayIndex = displayIndex;
     }
 
     @Override

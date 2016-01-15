@@ -87,8 +87,8 @@ public class KeywordForm implements ErrorsInterface, Serializable {
                 form.setSourceName(keyword.getSource().getSourceName().getContent());
             }
         }
-        
-        if(!PojoUtil.isEmpty(keyword.getDisplayIndex())) {
+
+        if (!PojoUtil.isEmpty(keyword.getDisplayIndex())) {
             form.setDisplayIndex(keyword.getDisplayIndex());
         } else {
             form.setDisplayIndex("0");
@@ -121,8 +121,8 @@ public class KeywordForm implements ErrorsInterface, Serializable {
         if (lastModified != null) {
             keyword.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(lastModified.toCalendar())));
         }
-        
-        if(!PojoUtil.isEmpty(displayIndex)) {
+
+        if (!PojoUtil.isEmpty(displayIndex)) {
             keyword.setDisplayIndex(displayIndex);
         } else {
             keyword.setDisplayIndex("0");
@@ -202,5 +202,5 @@ public class KeywordForm implements ErrorsInterface, Serializable {
 
     public void setDisplayIndex(String displayIndex) {
         this.displayIndex = displayIndex;
-    }       
+    }
 }

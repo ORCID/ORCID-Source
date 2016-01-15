@@ -61,7 +61,8 @@ public class ResearcherUrl implements Filterable, Serializable {
     protected Visibility visibility;
     @XmlAttribute
     protected String path;
-    
+    @XmlAttribute(name = "display-index")
+    protected String displayIndex;    
     
     public Url getUrl() {
         return url;
@@ -125,6 +126,14 @@ public class ResearcherUrl implements Filterable, Serializable {
 
     public void setPath(String path) {
         this.path = path;
+    }
+
+    public String getDisplayIndex() {
+        return displayIndex;
+    }
+
+    public void setDisplayIndex(String displayIndex) {
+        this.displayIndex = displayIndex;
     }
 
     @Override

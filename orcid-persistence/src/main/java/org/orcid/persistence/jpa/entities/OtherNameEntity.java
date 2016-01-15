@@ -52,6 +52,7 @@ public class OtherNameEntity extends BaseEntity<Long> implements Comparable<Othe
     private ProfileEntity profile;
     private SourceEntity source;
     private Visibility visibility;
+    private Long displayIndex;
 
     /**
      * @return the id of the other_name
@@ -123,6 +124,15 @@ public class OtherNameEntity extends BaseEntity<Long> implements Comparable<Othe
         this.visibility = visibility;
     }
 
+    @Column(name = "display_index", updatable=false, insertable=false)
+    public Long getDisplayIndex() {
+        return displayIndex;
+    }
+
+    public void setDisplayIndex(Long displayIndex) {
+        this.displayIndex = displayIndex;
+    }
+    
     @Override
     public int compareTo(OtherNameEntity otherNameEntity) {
         if (displayName != null && otherNameEntity != null) {
