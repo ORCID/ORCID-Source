@@ -47,9 +47,12 @@ public class AcceptFilter extends OncePerRequestFilter {
         String accept = request.getHeader("accept");
         String contentType = request.getHeader("Content-Type");
         
-        if ((accept == null 
-                || accept.equals("*/*")) && isValidAcceptType(contentType)) {
-            HttpServletRequestWrapper requestWrapper = new AcceptHeaderRequestWrapper(request, contentType);
+        if (accept == null || accept.equals("*/*")) {
+            HttpServletRequestWrapper requestWrapper = null;
+            if (isValidAcceptType(contentType))
+                requestWrapper = new AcceptHeaderRequestWrapper(request, contentType);
+            else
+                requestWrapper = new AcceptHeaderRequestWrapper(request, VND_ORCID_XML);
             filterChain.doFilter(requestWrapper, response);
         } else {
              filterChain.doFilter(request, response);
