@@ -42,7 +42,7 @@ import org.orcid.jaxb.model.common.Visibility;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "urlName", "url", "createdDate", "lastModifiedDate", "source" })
 @XmlRootElement(name = "researcher-url", namespace = "http://www.orcid.org/ns/researcher-url")
-public class ResearcherUrl implements Filterable, Serializable {
+public class ResearcherUrl implements Filterable, Serializable, Comparable<ResearcherUrl> {
     private static final long serialVersionUID = 1047027166285177589L;    
     @XmlElement(name = "url-name", namespace = "http://www.orcid.org/ns/researcher-url")
     protected String urlName;
@@ -182,5 +182,31 @@ public class ResearcherUrl implements Filterable, Serializable {
             return source.retrieveSourcePath();
         }
         return null;
+    }
+
+    @Override
+    public int compareTo(ResearcherUrl o) {
+        if(o == null || o.getUrlName() == null) {
+            return 1;
+        }
+                
+        if(getUrlName() == null) {
+            return -1;
+        }
+        int urlNameComp = this.getUrlName().compareTo(o.getUrlName());
+        
+        if(urlNameComp == 0) {
+            if(o.getUrl() == null) {
+                return 1;
+            }
+                    
+            if(this.getUrl() == null) {
+                return -1;
+            }
+            
+            return this.getUrl().compareTo(o.getUrl());
+        }
+        
+        return 0;
     }    
 }

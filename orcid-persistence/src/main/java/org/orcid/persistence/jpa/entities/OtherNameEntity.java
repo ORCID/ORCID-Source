@@ -124,7 +124,7 @@ public class OtherNameEntity extends BaseEntity<Long> implements Comparable<Othe
         this.visibility = visibility;
     }
 
-    @Column(name = "display_index", updatable=false, insertable=false)
+    @Column(name = "display_index")
     public Long getDisplayIndex() {
         return displayIndex;
     }

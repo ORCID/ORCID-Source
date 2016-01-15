@@ -192,6 +192,7 @@ public class OtherNameManagerImpl implements OtherNameManager {
                            existingOtherName.setLastModified(new Date());
                            existingOtherName.setVisibility(updatedOrNew.getVisibility());
                            existingOtherName.setDisplayName(updatedOrNew.getContent());
+                           existingOtherName.setDisplayIndex(updatedOrNew.getDisplayIndex());
                            otherNameDao.merge(existingOtherName);
                        }
                    }
@@ -204,6 +205,7 @@ public class OtherNameManagerImpl implements OtherNameManager {
                     newOtherName.setDateCreated(new Date());
                     newOtherName.setSource(sourceEntity);
                     newOtherName.setVisibility(updatedOrNew.getVisibility());
+                    newOtherName.setDisplayIndex(updatedOrNew.getDisplayIndex());
                     otherNameDao.persist(newOtherName);
                     
                 }

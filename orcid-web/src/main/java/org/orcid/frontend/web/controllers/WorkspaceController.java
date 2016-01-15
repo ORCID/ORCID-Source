@@ -451,6 +451,7 @@ public class WorkspaceController extends BaseWorkspaceController {
     public @ResponseBody
     WebsitesForm getWebsitesFormJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
         ResearcherUrls rUrls = researcherUrlManager.getResearcherUrlsV2(getCurrentUserOrcid());        
+        rUrls.updateIndexingStatusOnChilds();
         
         WebsitesForm form = WebsitesForm.valueOf(rUrls);
         ProfileEntity entity = profileEntityCacheManager.retrieve(getCurrentUserOrcid());

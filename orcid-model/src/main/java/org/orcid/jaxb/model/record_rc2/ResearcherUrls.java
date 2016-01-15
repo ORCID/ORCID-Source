@@ -17,6 +17,8 @@
 package org.orcid.jaxb.model.record_rc2;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -91,5 +93,31 @@ public class ResearcherUrls implements Serializable {
         } else if (!researcherUrls.equals(other.researcherUrls))
             return false;
         return true;
+    }
+    
+    public void updateIndexingStatusOnChilds() {
+        if (this.getResearcherUrls() != null && !this.getResearcherUrls().isEmpty()) {
+            List<ResearcherUrl> sorted = new ArrayList<ResearcherUrl>();
+            List<ResearcherUrl> unsorted = new ArrayList<ResearcherUrl>();
+            Long maxDisplayIndex = 0L;
+            for(ResearcherUrl o : this.getResearcherUrls()) {
+                if(Long.valueOf(-1).equals(o.getDisplayIndex())) {
+                    unsorted.add(o);
+                } else {
+                    if(o.getDisplayIndex() > maxDisplayIndex) {
+                        maxDisplayIndex = o.getDisplayIndex();
+                    }
+                    sorted.add(o);
+                }                
+            }      
+            
+            if(!unsorted.isEmpty()) {
+                Collections.sort(unsorted);
+                for(ResearcherUrl o : unsorted) {
+                    o.setDisplayIndex((maxDisplayIndex++) + 1);
+                    sorted.add(o);
+                }
+            }
+        }
     }
 }

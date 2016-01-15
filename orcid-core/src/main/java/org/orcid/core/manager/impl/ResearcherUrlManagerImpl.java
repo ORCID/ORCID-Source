@@ -126,6 +126,7 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
                            existingEntity.setVisibility(updatedOrNew.getVisibility());                           
                            existingEntity.setUrl(updatedOrNew.getUrl().getValue());
                            existingEntity.setUrlName(updatedOrNew.getUrlName());
+                           existingEntity.setDisplayIndex(updatedOrNew.getDisplayIndex());
                            researcherUrlDao.merge(existingEntity);
                        }
                    }
@@ -139,6 +140,7 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
                     newResearcherUrl.setLastModified(new Date());
                     newResearcherUrl.setSource(sourceEntity);
                     newResearcherUrl.setVisibility(updatedOrNew.getVisibility());
+                    newResearcherUrl.setDisplayIndex(updatedOrNew.getDisplayIndex());
                     researcherUrlDao.persist(newResearcherUrl);                    
                 }
             }
