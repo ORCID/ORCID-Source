@@ -47,7 +47,8 @@ public class ProfileKeywordEntity extends BaseEntity<Long> implements Comparable
     private ProfileEntity profile;
     private String keywordName;
     private Visibility visibility;
-    private SourceEntity source;       
+    private SourceEntity source;
+    private Long displayIndex;
 
     /**
      * @return the id of the other_name
@@ -119,6 +120,15 @@ public class ProfileKeywordEntity extends BaseEntity<Long> implements Comparable
         this.source = source;
     }
     
+    @Column(name = "display_index", updatable=false, insertable=false)
+    public Long getDisplayIndex() {
+        return displayIndex;
+    }
+
+    public void setDisplayIndex(Long displayIndex) {
+        this.displayIndex = displayIndex;
+    }
+    
     @Override
     public int compareTo(ProfileKeywordEntity profileKeywordEntity) {
         if (keywordName != null && profileKeywordEntity != null) {
@@ -132,6 +142,7 @@ public class ProfileKeywordEntity extends BaseEntity<Long> implements Comparable
     public int hashCode() {
         final int prime = 31;
         int result = 1;
+        result = prime * result + ((displayIndex == null) ? 0 : displayIndex.hashCode());
         result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + ((keywordName == null) ? 0 : keywordName.hashCode());
         result = prime * result + ((profile == null) ? 0 : profile.hashCode());
@@ -149,6 +160,11 @@ public class ProfileKeywordEntity extends BaseEntity<Long> implements Comparable
         if (getClass() != obj.getClass())
             return false;
         ProfileKeywordEntity other = (ProfileKeywordEntity) obj;
+        if (displayIndex == null) {
+            if (other.displayIndex != null)
+                return false;
+        } else if (!displayIndex.equals(other.displayIndex))
+            return false;
         if (id == null) {
             if (other.id != null)
                 return false;
@@ -172,5 +188,5 @@ public class ProfileKeywordEntity extends BaseEntity<Long> implements Comparable
         if (visibility != other.visibility)
             return false;
         return true;
-    }        
+    }   
 }
