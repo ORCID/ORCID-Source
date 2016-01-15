@@ -2399,6 +2399,7 @@ orcidNgModule.controller('KeywordsCtrl', ['$scope', '$compile', function ($scope
             dataType: 'json',
             success: function(data) {
                 $scope.keywordsForm = data;
+                //$scope.setTmpDisplayIndexes();
                 console.log(angular.toJson($scope.keywordsForm));
                 $scope.$apply();
             }
@@ -2432,6 +2433,7 @@ orcidNgModule.controller('KeywordsCtrl', ['$scope', '$compile', function ($scope
             dataType: 'json',
             success: function(data) {
                 $scope.keywordsForm = data;
+                
                 if(data.errors.length == 0)
                    $scope.close();
                    $.colorbox.close();
@@ -2490,6 +2492,33 @@ orcidNgModule.controller('KeywordsCtrl', ['$scope', '$compile', function ($scope
     
     $scope.closeEditModal = function(){        
         $.colorbox.close();
+    }
+    
+    $scope.setPriorityUp = function(displayIndex){        
+        if (displayIndex > 1) {
+            var keywords = $scope.keywordsForm.keywords;
+            var arrayNewIdx = null;  
+            var arrayOldIdx = null;
+            var len = keywords.length;
+            while (len--) {
+                //Find first array idx for the current displayIndex value
+                if (keywords[len].displayIndex == displayIndex){
+                    arrayNewIdx = len;                
+                }
+                //Find first array idx for the element up to it 
+                if (keywords[len].displayIndex == displayIndex - 1){
+                    arrayOldIdx = len;                
+                }                
+            }
+            
+            keywords[arrayNewIdx].displayIndex = keywords[arrayNewIdx].displayIndex - 1;
+            keywords[arrayOldIdx].displayIndex = keywords[arrayNewIdx].displayIndex + 1;
+            $scope.keywordsForm.keywords = keywords;
+        }
+    }
+    
+    $scope.setPriorityDown = function(index){
+       
     }
     
 

@@ -156,6 +156,7 @@
 
 
 <script type="text/ng-template" id="edit-keyword">
+	<!-- Keywords -->
 	<div class="lightbox-container">
 		<div class="edit-record edit-keyword">
 			<!-- Title -->
@@ -171,7 +172,7 @@
 				<div class="col-md-12 col-xs-12 col-sm-12">
 					<div class="fixed-area">
 						<div class="scroll-area">		
-							<div class="row aka-row" ng-repeat="keyword in keywordsForm.keywords">
+							<div class="row aka-row" ng-repeat="keyword in keywordsForm.keywords | orderBy:'displayIndex'">		
 								<div class="col-md-6">
 									<div class="aka">
 										<input type="text" ng-model="keyword.content" ng-show="keyword.source == orcidId || keyword.source == null" focus-me="newInput"></input>
@@ -183,10 +184,10 @@
 								<div class="col-md-6">
 									<ul class="record-settings pull-right">
 										<li>												
-											<span class="glyphicon glyphicon-arrow-up circle" ng-click=""></span>											
+											<span class="glyphicon glyphicon-arrow-up circle" ng-click="setPriorityUp(keyword.displayIndex)"></span>
 										</li>
 										<li>																						
-											<span class="glyphicon glyphicon-arrow-down circle" ng-click=""></span>											
+											<span class="glyphicon glyphicon-arrow-down circle" ng-click="setPriorityDown(keyword.displayIndex)"></span>											
 										</li>
 										<li>										
 											<span class="glyphicon glyphicon-trash" ng-click="deleteKeyword(keyword)"></span>											
