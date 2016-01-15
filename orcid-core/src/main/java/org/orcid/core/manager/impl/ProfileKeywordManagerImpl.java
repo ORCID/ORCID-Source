@@ -209,6 +209,7 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
                             existingKeyword.setLastModified(new Date());
                             existingKeyword.setVisibility(updatedOrNew.getVisibility());
                             existingKeyword.setKeywordName(updatedOrNew.getContent());
+                            existingKeyword.setDisplayIndex(updatedOrNew.getDisplayIndex());
                             profileKeywordDao.merge(existingKeyword);
                         }
                     }
@@ -221,6 +222,7 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
                     newKeyword.setDateCreated(new Date());
                     newKeyword.setSource(sourceEntity);
                     newKeyword.setVisibility(updatedOrNew.getVisibility());
+                    newKeyword.setDisplayIndex(updatedOrNew.getDisplayIndex());
                     profileKeywordDao.persist(newKeyword);
 
                 }

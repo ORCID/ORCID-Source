@@ -120,7 +120,7 @@ public class ProfileKeywordEntity extends BaseEntity<Long> implements Comparable
         this.source = source;
     }
     
-    @Column(name = "display_index", updatable=false, insertable=false)
+    @Column(name = "display_index")
     public Long getDisplayIndex() {
         return displayIndex;
     }
