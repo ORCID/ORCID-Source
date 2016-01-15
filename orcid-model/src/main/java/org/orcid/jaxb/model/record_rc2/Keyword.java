@@ -124,6 +124,7 @@ public class Keyword implements Filterable, Serializable, Comparable<Keyword> {
         result = prime * result + ((path == null) ? 0 : path.hashCode());
         result = prime * result + ((content == null) ? 0 : content.hashCode());
         result = prime * result + ((visibility == null) ? 0 : visibility.hashCode());
+        result = prime * result + ((putCode == null) ? 0 : putCode.hashCode());
         return result;
     }
 
@@ -145,7 +146,17 @@ public class Keyword implements Filterable, Serializable, Comparable<Keyword> {
             if (other.content != null)
                 return false;
         } else if (!content.equals(other.content))
-            return false;
+            return false;                
+        if (putCode == null) {
+            if (other.content != null)
+                return false;
+        } else if (!putCode.equals(other.putCode))
+            return false;        
+        if (displayIndex == null) {
+            if (other.displayIndex != null)
+                return false;
+        } else if (!displayIndex.equals(other.displayIndex))
+            return false;        
         if (visibility != other.visibility)
             return false;
         return true;

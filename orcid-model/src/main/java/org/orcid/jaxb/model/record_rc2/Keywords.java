@@ -17,6 +17,9 @@
 package org.orcid.jaxb.model.record_rc2;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -28,18 +31,17 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.orcid.jaxb.model.common.LastModifiedDate;
 
-
 /**
  * 
  * @author Angel Montenegro
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType( propOrder = { "lastModifiedDate", "keywords" })
+@XmlType(propOrder = { "lastModifiedDate", "keywords" })
 @XmlRootElement(name = "keywords", namespace = "http://www.orcid.org/ns/keyword")
-public class Keywords implements Serializable {            
+public class Keywords implements Serializable {
     private static final long serialVersionUID = 8977681069375479763L;
-    
+
     @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "last-modified-date")
     protected LastModifiedDate lastModifiedDate;
     @XmlElement(name = "keyword", namespace = "http://www.orcid.org/ns/keyword")
@@ -47,7 +49,7 @@ public class Keywords implements Serializable {
 
     @XmlAttribute
     protected String path;
-    
+
     public List<Keyword> getKeywords() {
         return keywords;
     }
@@ -93,5 +95,139 @@ public class Keywords implements Serializable {
         } else if (!path.equals(other.path))
             return false;
         return true;
-    }	 
+    }
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    public void updateIndexingStatusOnChilds() {
+        if (this.getKeywords() != null && !this.getKeywords().isEmpty()) {
+            List<Keyword> sortedKeywords = new ArrayList<Keyword>();
+            List<Keyword> unsortedKeywords = new ArrayList<Keyword>();
+            Long maxDisplayIndex = 0L;
+            for(Keyword k : this.getKeywords()) {
+                if(Long.valueOf(-1).equals(k.getDisplayIndex())) {
+                    unsortedKeywords.add(k);
+                } else {
+                    if(k.getDisplayIndex() > maxDisplayIndex) {
+                        maxDisplayIndex = k.getDisplayIndex();
+                    }
+                    sortedKeywords.add(k);
+                }                
+            }      
+            
+            if(!unsortedKeywords.isEmpty()) {
+                Collections.sort(unsortedKeywords);
+                for(Keyword k : unsortedKeywords) {
+                    k.setDisplayIndex((maxDisplayIndex++) + 1);
+                    sortedKeywords.add(k);
+                }
+            }
+        }
+    }
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    public static void main(String[] args) {
+        List<Keyword> unsorted = new ArrayList<Keyword>();
+        int index = 0;
+
+        for (int i = 0; i < 15; i++) {
+            Keyword k = new Keyword();
+            k.setContent(String.valueOf(i));            
+            k.setDisplayIndex(Long.valueOf(-1));
+            unsorted.add(k);
+        }
+
+        Keywords ks = new Keywords();
+        ks.setKeywords(unsorted);
+        ks.updateIndexingStatusOnChilds();
+
+        for (Keyword key : ks.getKeywords()) {
+            System.out.println(key.getContent() + " (" + key.getDisplayIndex() + ")");
+        }
+        
+       
+
+    }
+
 }
