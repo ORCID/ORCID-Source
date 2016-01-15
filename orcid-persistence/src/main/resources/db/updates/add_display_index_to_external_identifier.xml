@@ -26,6 +26,6 @@
 				<columnExists tableName="external_identifier" columnName="display_index"/>
 			</not>
 		</preConditions>
-		<sql>ALTER TABLE external_identifier ADD researcher_url bigint default 0;</sql>		
+		<sql>ALTER TABLE external_identifier ADD display_index bigint default 0;</sql>		
     </changeSet>             
 </databaseChangeLog>
