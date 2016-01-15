@@ -819,14 +819,6 @@ public class ManageProfileController extends BaseWorkspaceController {
         return emails;
     }
 
-    
-    
-    
-    
-    
-    
-    
-    
     @RequestMapping(value = "/countryForm.json", method = RequestMethod.GET)
     public @ResponseBody AddressesForm getProfileCountryJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
         AddressesForm form = AddressesForm.valueOf(addressManager.getAddresses(getCurrentUserOrcid()));
@@ -891,74 +883,6 @@ public class ManageProfileController extends BaseWorkspaceController {
         }
         return addressesForm;
     }
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     
     @RequestMapping(value = "/nameForm.json", method = RequestMethod.GET)
     public @ResponseBody NamesForm getNameForm(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {

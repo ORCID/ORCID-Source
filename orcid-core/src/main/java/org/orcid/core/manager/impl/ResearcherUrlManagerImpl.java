@@ -97,12 +97,14 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
         //Delete the deleted ones
         for(ResearcherUrlEntity existingEntity : existingEntities) {
             boolean deleteMe = true;
-            for(ResearcherUrl updatedOrNew : researcherUrls.getResearcherUrls()) {
-                if(existingEntity.getId().equals(updatedOrNew.getPutCode())) {
-                    deleteMe = false;
-                    break;
+            if(researcherUrls.getResearcherUrls() != null) {
+                for(ResearcherUrl updatedOrNew : researcherUrls.getResearcherUrls()) {
+                    if(existingEntity.getId().equals(updatedOrNew.getPutCode())) {
+                        deleteMe = false;
+                        break;
+                    }
                 }
-            }
+            }            
             
             if(deleteMe) {
                 try {

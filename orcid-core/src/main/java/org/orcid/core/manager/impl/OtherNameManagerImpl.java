@@ -165,12 +165,14 @@ public class OtherNameManagerImpl implements OtherNameManager {
         //Delete the deleted ones
         for(OtherNameEntity existingOtherName : existingOtherNamesEntityList) {
             boolean deleteMe = true;
-            for(OtherName updatedOrNew : otherNames.getOtherNames()) {
-                if(existingOtherName.getId().equals(updatedOrNew.getPutCode())) {
-                    deleteMe = false;
-                    break;
+            if(otherNames.getOtherNames() != null) {
+                for(OtherName updatedOrNew : otherNames.getOtherNames()) {
+                    if(existingOtherName.getId().equals(updatedOrNew.getPutCode())) {
+                        deleteMe = false;
+                        break;
+                    }
                 }
-            }
+            }            
             
             if(deleteMe) {
                 try {
