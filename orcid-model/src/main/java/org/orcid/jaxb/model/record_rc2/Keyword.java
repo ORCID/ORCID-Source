@@ -58,6 +58,8 @@ public class Keyword implements Filterable, Serializable {
     protected Visibility visibility;
     @XmlAttribute
     protected String path;
+    @XmlAttribute(name = "display-index")
+    protected String displayIndex;
 
     public Source getSource() {
         return source;
@@ -105,6 +107,14 @@ public class Keyword implements Filterable, Serializable {
 
     public void setPath(String path) {
         this.path = path;
+    }    
+    
+    public String getDisplayIndex() {
+        return displayIndex;
+    }
+
+    public void setDisplayIndex(String displayIndex) {
+        this.displayIndex = displayIndex;
     }
 
     @Override

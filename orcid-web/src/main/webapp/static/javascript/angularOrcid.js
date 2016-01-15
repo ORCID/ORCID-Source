@@ -2399,6 +2399,7 @@ orcidNgModule.controller('KeywordsCtrl', ['$scope', '$compile', function ($scope
             dataType: 'json',
             success: function(data) {
                 $scope.keywordsForm = data;
+                console.log(angular.toJson($scope.keywordsForm));
                 $scope.$apply();
             }
         }).fail(function(){
