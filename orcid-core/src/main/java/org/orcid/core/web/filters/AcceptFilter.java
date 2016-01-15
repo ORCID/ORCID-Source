@@ -39,7 +39,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 public class AcceptFilter extends OncePerRequestFilter {
 
     private static Log log = LogFactory.getLog(AcceptFilter.class);
-    private static String [] accpetTypesArray = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON };
+    private static String[] accpetTypesArray = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON, TEXT_TURTLE,
+            TEXT_N3, N_TRIPLES, JSON_LD, APPLICATION_RDFXML };
     
     
     @Override
