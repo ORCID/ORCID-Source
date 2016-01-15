@@ -2399,8 +2399,6 @@ orcidNgModule.controller('KeywordsCtrl', ['$scope', '$compile', function ($scope
             dataType: 'json',
             success: function(data) {
                 $scope.keywordsForm = data;
-                //$scope.setTmpDisplayIndexes();
-                console.log(angular.toJson($scope.keywordsForm));
                 $scope.$apply();
             }
         }).fail(function(){
@@ -2505,7 +2503,7 @@ orcidNgModule.controller('KeywordsCtrl', ['$scope', '$compile', function ($scope
                 if (keywords[len].displayIndex == displayIndex){
                     arrayNewIdx = len;                
                 }
-                //Find first array idx for the element up to it 
+                //Find first array idx for the element above to it 
                 if (keywords[len].displayIndex == displayIndex - 1){
                     arrayOldIdx = len;                
                 }                
@@ -2529,7 +2527,7 @@ orcidNgModule.controller('KeywordsCtrl', ['$scope', '$compile', function ($scope
                 if (keywords[len].displayIndex == displayIndex){
                     arrayNewIdx = len;                
                 }
-                //Find first array idx for the element up to it 
+                //Find first array idx for the element below to it 
                 if (keywords[len].displayIndex == displayIndex + 1){
                     arrayOldIdx = len;                
                 }                
@@ -2634,6 +2632,7 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile',function ($scope
             dataType: 'json',
             success: function(data) {                
                 $scope.otherNamesForm = data;
+                console.log(angular.toJson($scope.otherNamesForm));
                 $scope.$apply();                                
             }
         }).fail(function(){
@@ -2725,6 +2724,57 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile',function ($scope
     
     $scope.closeEditModal = function(){        
         $.colorbox.close();
+    }
+    
+    $scope.setPriorityUp = function(displayIndex){
+        
+        console.log(displayIndex);
+        
+        if (displayIndex > 1) {
+            var otherNames = $scope.otherNamesForm.otherNames;
+            var arrayNewIdx = null;  
+            var arrayOldIdx = null;
+            var len = otherNames.length;
+            while (len--) {
+                //Find first array idx for the current displayIndex value
+                if (otherNames[len].displayIndex == displayIndex){
+                    arrayNewIdx = len;                
+                }
+                //Find first array idx for the element above to it 
+                if (otherNames[len].displayIndex == displayIndex - 1){
+                    arrayOldIdx = len;                
+                }                
+            }
+            
+            otherNames[arrayNewIdx].displayIndex--;
+            otherNames[arrayOldIdx].displayIndex++;
+            $scope.otherNamesForm.otherNames = otherNames;
+        }
+    }
+    
+    $scope.setPriorityDown = function(displayIndex){
+        var otherNames = $scope.otherNamesForm.otherNames;
+        var len = otherNames.length;        
+        if (displayIndex < len) {            
+            var arrayNewIdx = null;  
+            var arrayOldIdx = null;
+            
+            while (len--) {
+                //Find first array idx for the current displayIndex value
+                if (otherNames[len].displayIndex == displayIndex){
+                    arrayNewIdx = len;                
+                }
+                //Find first array idx for the element below to it 
+                if (otherNames[len].displayIndex == displayIndex + 1){
+                    arrayOldIdx = len;                
+                }                
+            }
+            
+            otherNames[arrayNewIdx].displayIndex++;
+            otherNames[arrayOldIdx].displayIndex--;
+            $scope.otherNamesForm.otherNames = otherNames;
+        }
+       
     }
     
     

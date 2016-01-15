@@ -34,7 +34,7 @@
 				<div class="col-md-12 col-xs-12 col-sm-12">
 					<div class="fixed-area">
 						<div class="scroll-area">		
-	        	      	   <div class="row aka-row" ng-repeat="otherName in otherNamesForm.otherNames" ng-cloak> 								
+	        	      	   <div class="row aka-row" ng-repeat="otherName in otherNamesForm.otherNames | orderBy : 'displayIndex'" ng-cloak> 								
 								<div class="col-md-6">
 									<div class="aka">
 										<input type="text" ng-model="otherName.content" ng-show="otherName.source == orcidId || otherName.source == null"  focus-me="newInput"/>
@@ -45,10 +45,10 @@
 								<div class="col-md-6">
 									<ul class="record-settings pull-right">
 										<li>												
-											<span class="glyphicon glyphicon-arrow-up circle" ng-click=""></span>											
+											<span class="glyphicon glyphicon-arrow-up circle" ng-click="setPriorityUp(otherName.displayIndex)"></span>											
 										</li>
 										<li>																						
-											<span class="glyphicon glyphicon-arrow-down circle" ng-click=""></span>											
+											<span class="glyphicon glyphicon-arrow-down circle" ng-click="setPriorityDown(otherName.displayIndex)"></span>											
 										</li>
 										<li>										
 											<span class="glyphicon glyphicon-trash" ng-click="deleteKeyword(otherName)"></span>											
