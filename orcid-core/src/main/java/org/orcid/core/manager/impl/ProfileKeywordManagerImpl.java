@@ -85,9 +85,9 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
 
     @Override
     public boolean updateKeywordsVisibility(String orcid, Visibility defaultVisiblity) {
-        org.orcid.jaxb.model.message.Visibility v = (defaultVisiblity == null)
-                ? org.orcid.jaxb.model.message.Visibility.fromValue(OrcidVisibilityDefaults.KEYWORD_DEFAULT.getVisibility().value())
-                : org.orcid.jaxb.model.message.Visibility.fromValue(defaultVisiblity.value());
+        Visibility v = (defaultVisiblity == null)
+                ? Visibility.fromValue(OrcidVisibilityDefaults.KEYWORD_DEFAULT.getVisibility().value())
+                : defaultVisiblity;
         return profileKeywordDao.updateKeywordsVisibility(orcid, v);
     }
 

@@ -1898,8 +1898,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
             }
 
             if (profileEntity.getNamesVisibility() == null) {
-                profileEntity.setNamesVisibility(useMemberDefaults ? OrcidVisibilityDefaults.CREATED_BY_MEMBER_DEFAULT.getVisibility()
-                        : OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility());
+                profileEntity.setNamesVisibility(OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility());
             }
 
             if (profileEntity.getOtherNamesVisibility() == null) {
