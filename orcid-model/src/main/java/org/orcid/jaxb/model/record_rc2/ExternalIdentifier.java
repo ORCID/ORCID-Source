@@ -64,7 +64,7 @@ public class ExternalIdentifier implements Serializable, Filterable {
     @XmlAttribute
     protected String path;
     @XmlAttribute(name = "display-index")
-    protected String displayIndex;
+    protected Long displayIndex;
     
     public String getCommonName() {
         return commonName;
@@ -121,11 +121,11 @@ public class ExternalIdentifier implements Serializable, Filterable {
         this.path = path;
     }
 
-    public String getDisplayIndex() {
+    public Long getDisplayIndex() {
         return displayIndex;
     }
 
-    public void setDisplayIndex(String displayIndex) {
+    public void setDisplayIndex(Long displayIndex) {
         this.displayIndex = displayIndex;
     }
 

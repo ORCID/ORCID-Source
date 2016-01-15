@@ -354,6 +354,10 @@ public class WorkspaceController extends BaseWorkspaceController {
         return form;
     }
     
+    private void updateDisplayIndex() {
+        
+    }
+    
     @RequestMapping(value = "/my-orcid/keywordsForms.json", method = RequestMethod.POST)
     public @ResponseBody
     KeywordsForm setKeywordsFormJson(HttpServletRequest request, @RequestBody KeywordsForm kf) throws NoSuchRequestHandlingMethodException {

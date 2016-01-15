@@ -32,7 +32,7 @@ public class ExternalIdentifierForm implements ErrorsInterface, Serializable {
     private String source;
     private String sourceName;
     private Visibility visibility;
-    private String displayIndex;
+    private Long displayIndex;
     private String putCode;
 
     public static ExternalIdentifierForm valueOf(ExternalIdentifier extId) {
@@ -56,10 +56,10 @@ public class ExternalIdentifierForm implements ErrorsInterface, Serializable {
             }
         }
 
-        if (!PojoUtil.isEmpty(extId.getDisplayIndex())) {
+        if (extId.getDisplayIndex() != null) {
             form.setDisplayIndex(extId.getDisplayIndex());
         } else {
-            form.setDisplayIndex("0");
+            form.setDisplayIndex(Long.valueOf(-1));
         }
         return form;
     }
@@ -128,11 +128,11 @@ public class ExternalIdentifierForm implements ErrorsInterface, Serializable {
         this.putCode = putCode;
     }
 
-    public String getDisplayIndex() {
+    public Long getDisplayIndex() {
         return displayIndex;
     }
 
-    public void setDisplayIndex(String displayIndex) {
+    public void setDisplayIndex(Long displayIndex) {
         this.displayIndex = displayIndex;
     }
 }

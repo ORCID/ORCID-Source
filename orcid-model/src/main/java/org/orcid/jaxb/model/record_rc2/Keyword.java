@@ -41,7 +41,7 @@ import org.orcid.jaxb.model.common.Visibility;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "content", "createdDate", "lastModifiedDate", "source" })
 @XmlRootElement(name = "keyword", namespace = "http://www.orcid.org/ns/keyword")
-public class Keyword implements Filterable, Serializable {
+public class Keyword implements Filterable, Serializable, Comparable<Keyword> {
     private static final long serialVersionUID = -6506745436549656971L;
     @XmlElement(name = "content", namespace = "http://www.orcid.org/ns/keyword")
     protected String content;
@@ -59,7 +59,7 @@ public class Keyword implements Filterable, Serializable {
     @XmlAttribute
     protected String path;
     @XmlAttribute(name = "display-index")
-    protected String displayIndex;
+    protected Long displayIndex;
 
     public Source getSource() {
         return source;
@@ -109,11 +109,11 @@ public class Keyword implements Filterable, Serializable {
         this.path = path;
     }    
     
-    public String getDisplayIndex() {
+    public Long getDisplayIndex() {
         return displayIndex;
     }
 
-    public void setDisplayIndex(String displayIndex) {
+    public void setDisplayIndex(Long displayIndex) {
         this.displayIndex = displayIndex;
     }
 
@@ -165,5 +165,18 @@ public class Keyword implements Filterable, Serializable {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    @Override
+    public int compareTo(Keyword o) {
+        if(o == null || o.getContent() == null) {
+            return 1;
+        }
+                
+        if(getContent() == null) {
+            return -1;
+        }
+        
+        return this.getContent().compareTo(o.getContent());
     }
 }

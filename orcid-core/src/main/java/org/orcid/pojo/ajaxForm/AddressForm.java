@@ -31,7 +31,7 @@ public class AddressForm implements ErrorsInterface, Serializable {
     private String countryName;
     private String putCode;
     private Visibility visibility;
-    private String displayIndex;
+    private Long displayIndex;
     private Date createdDate;
     private Date lastModified;
     private String source;
@@ -80,10 +80,10 @@ public class AddressForm implements ErrorsInterface, Serializable {
                 form.setSourceName(address.getSource().getSourceName().getContent());
             }
         }
-        if (!PojoUtil.isEmpty(address.getDisplayIndex())) {
+        if (address.getDisplayIndex() != null) {
             form.setDisplayIndex(address.getDisplayIndex());
         } else {
-            form.setDisplayIndex("0");
+            form.setDisplayIndex(Long.valueOf(-1));
         }
 
         return form;
@@ -110,10 +110,10 @@ public class AddressForm implements ErrorsInterface, Serializable {
             address.setPutCode(Long.valueOf(this.getPutCode()));
         }
 
-        if (!PojoUtil.isEmpty(displayIndex)) {
+        if (displayIndex != null) {
             address.setDisplayIndex(displayIndex);
         } else {
-            address.setDisplayIndex("0");
+            address.setDisplayIndex(Long.valueOf(-1));
         }
 
         address.setSource(new Source(source));
@@ -201,11 +201,11 @@ public class AddressForm implements ErrorsInterface, Serializable {
         this.primary = primary;
     }
 
-    public String getDisplayIndex() {
+    public Long getDisplayIndex() {
         return displayIndex;
     }
 
-    public void setDisplayIndex(String displayIndex) {
+    public void setDisplayIndex(Long displayIndex) {
         this.displayIndex = displayIndex;
     }
 }

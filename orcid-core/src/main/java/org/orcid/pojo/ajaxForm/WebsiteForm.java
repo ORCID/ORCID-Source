@@ -33,7 +33,7 @@ public class WebsiteForm implements ErrorsInterface, Serializable {
     private String urlName;
     private String putCode;
     private Visibility visibility;
-    private String displayIndex;
+    private Long displayIndex;
     private Date createdDate;
     private Date lastModified;
     private String source;
@@ -83,10 +83,10 @@ public class WebsiteForm implements ErrorsInterface, Serializable {
                 }
             }
 
-            if (!PojoUtil.isEmpty(researcherUrl.getDisplayIndex())) {
+            if (researcherUrl.getDisplayIndex() != null) {
                 form.setDisplayIndex(researcherUrl.getDisplayIndex());
             } else {
-                form.setDisplayIndex("0");
+                form.setDisplayIndex(Long.valueOf(-1));
             }
         }
         return form;
@@ -110,10 +110,10 @@ public class WebsiteForm implements ErrorsInterface, Serializable {
             researcherUrl.setPutCode(Long.valueOf(this.getPutCode()));
         }
 
-        if (!PojoUtil.isEmpty(displayIndex)) {
+        if (displayIndex != null) {
             researcherUrl.setDisplayIndex(displayIndex);
         } else {
-            researcherUrl.setDisplayIndex("0");
+            researcherUrl.setDisplayIndex(Long.valueOf(-1));
         }
 
         researcherUrl.setSource(new Source(source));
@@ -192,11 +192,11 @@ public class WebsiteForm implements ErrorsInterface, Serializable {
         this.lastModified = lastModified;
     }
 
-    public String getDisplayIndex() {
+    public Long getDisplayIndex() {
         return displayIndex;
     }
 
-    public void setDisplayIndex(String displayIndex) {
+    public void setDisplayIndex(Long displayIndex) {
         this.displayIndex = displayIndex;
     }
 }

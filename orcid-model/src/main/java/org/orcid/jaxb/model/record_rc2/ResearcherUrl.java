@@ -62,7 +62,7 @@ public class ResearcherUrl implements Filterable, Serializable {
     @XmlAttribute
     protected String path;
     @XmlAttribute(name = "display-index")
-    protected String displayIndex;    
+    protected Long displayIndex;    
     
     public Url getUrl() {
         return url;
@@ -128,11 +128,11 @@ public class ResearcherUrl implements Filterable, Serializable {
         this.path = path;
     }
 
-    public String getDisplayIndex() {
+    public Long getDisplayIndex() {
         return displayIndex;
     }
 
-    public void setDisplayIndex(String displayIndex) {
+    public void setDisplayIndex(Long displayIndex) {
         this.displayIndex = displayIndex;
     }
 

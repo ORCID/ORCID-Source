@@ -30,7 +30,7 @@ public class OtherNameForm implements ErrorsInterface, Serializable {
     private String content;
     private String putCode;
     private Visibility visibility;
-    private String displayIndex;
+    private Long displayIndex;
     private Date createdDate;
     private Date lastModified;
     private String source;
@@ -75,10 +75,10 @@ public class OtherNameForm implements ErrorsInterface, Serializable {
                 }
             }
 
-            if (!PojoUtil.isEmpty(otherName.getDisplayIndex())) {
+            if (otherName.getDisplayIndex() != null) {
                 form.setDisplayIndex(otherName.getDisplayIndex());
             } else {
-                form.setDisplayIndex("0");
+                form.setDisplayIndex(Long.valueOf(-1));
             }
         }
         return form;
@@ -98,10 +98,10 @@ public class OtherNameForm implements ErrorsInterface, Serializable {
             otherName.setPutCode(Long.valueOf(this.getPutCode()));
         }
 
-        if (!PojoUtil.isEmpty(displayIndex)) {
+        if (displayIndex != null) {
             otherName.setDisplayIndex(displayIndex);
         } else {
-            otherName.setDisplayIndex("0");
+            otherName.setDisplayIndex(Long.valueOf(-1));
         }
 
         otherName.setSource(new Source(source));
@@ -173,11 +173,11 @@ public class OtherNameForm implements ErrorsInterface, Serializable {
         this.lastModified = lastModified;
     }
 
-    public String getDisplayIndex() {
+    public Long getDisplayIndex() {
         return displayIndex;
     }
 
-    public void setDisplayIndex(String displayIndex) {
+    public void setDisplayIndex(Long displayIndex) {
         this.displayIndex = displayIndex;
     }
 }
