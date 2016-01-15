@@ -112,9 +112,9 @@
 								<div class="col-md-6">
 									<ul class="record-settings pull-right">
 										<li>
-											<input name="priority" type="radio" ng-model="country.primary" ng-checked="country.primary">
+											<input name="priority" type="radio" ng-model="primary" ng-value="country.primary" ng-click="setPrimary(country)">
 										</li>										
-										<li>												
+										<li ng-init="">												
 											<span class="glyphicon glyphicon-arrow-up circle" ng-click=""></span>											
 										</li>
 										<li>																						

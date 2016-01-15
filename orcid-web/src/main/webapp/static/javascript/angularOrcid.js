@@ -2773,6 +2773,7 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
     $scope.showElement = {};
     $scope.orcidId = orcidVar.orcidId;
     $scope.newInput = false;
+    $scope.primary = true;
     
     $scope.openEdit = function() {
         $scope.addNewModal();
@@ -2915,6 +2916,21 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
         
         $scope.newInput = true; 
     };
+    
+    $scope.setPrimary = function(country){
+        var countries = $scope.countryForm.addresses;
+        
+        var len = countries.length;
+        
+        while (len--) {
+            if (countries[len] == country){
+                countries[len].primary = true;
+                $scope.countryForm.addresses = countries;
+            }else{
+                countries[len].primary = false;
+            }
+        }
+    }
 
     $scope.getCountryForm();
 
