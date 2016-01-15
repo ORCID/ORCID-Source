@@ -2804,7 +2804,8 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
 
     $scope.setCountryForm = function(v2){        
         if(v2)
-            $scope.countryForm.visibility = null;
+            $scope.countryForm.visibility = null;        
+         
         
         $.ajax({
             url: getBaseUri() + '/account/countryForm.json',
@@ -2813,10 +2814,17 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
             contentType: 'application/json;charset=UTF-8',
             dataType: 'json',
             success: function(data) {
-                $scope.countryForm = data; 
-                $scope.close();
-                $scope.$apply();                
-                $.colorbox.close();
+                $scope.countryForm = data;   
+                console.log($scope.countryForm.errors.length);
+                if ($scope.countryForm.errors.length == 0){
+                    $scope.close();
+                    $scope.getCountryForm();                
+                    $.colorbox.close();
+                }else{
+                    console.log($scope.countryForm.errors);
+                }
+                
+                $scope.$apply();
             }
         }).fail(function() {
             // something bad is happening!
@@ -2826,6 +2834,10 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
     
     $scope.closeModal = function(){
         $.colorbox.close();
+    }
+    
+    $scope.changePriority = function(country){
+        console.log(angular.toJson(country));
     }
 
     $scope.setPrivacy = function(priv, $event) {
@@ -2889,7 +2901,9 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
         while (len--) {
             if (countries[len] == country)
                 countries.splice(len,1);
+                $scope.countryForm.addresses = countries;
         }
+        
     };
     
     $scope.addNewModal = function() {        

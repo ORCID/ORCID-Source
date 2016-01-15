@@ -6259,7 +6259,7 @@ a:hover .mozilla-badge{
 	padding: 15px 0 15px 15px;
 }
 
-.fixed-area .scroll-area input,
+.fixed-area .scroll-area input[type="textbox"],
 .fixed-area .scroll-area select{
 	width: 100%;
 }

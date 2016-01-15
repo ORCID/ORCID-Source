@@ -111,12 +111,15 @@
 								</div> 
 								<div class="col-md-6">
 									<ul class="record-settings pull-right">
+										<li>
+											<input name="priority" type="radio" ng-model="country.primary" ng-checked="country.primary">
+										</li>										
 										<li>												
 											<span class="glyphicon glyphicon-arrow-up circle" ng-click=""></span>											
 										</li>
 										<li>																						
 											<span class="glyphicon glyphicon-arrow-down circle" ng-click=""></span>											
-										</li>
+										</li>										
 										<li>										
 											<span class="glyphicon glyphicon-trash" ng-click="deleteCountry(country)"></span>											
 										</li>
@@ -134,7 +137,12 @@
 								</div>					 				
 							</div>											
 						</div>
-					</div>
+						<div>
+							<div ng-repeat="error in countryForm.errors">
+								<span ng-bind="error" class="red"></span>
+							</div>
+						</div>
+					</div>					
 					<div class="record-buttons">						
 						<a ng-click="addNewModal()"><span class="glyphicon glyphicon-plus pull-left"></span></a>	        	    		
 		            	<button class="btn btn-primary pull-right" ng-click="setCountryForm(true)"><@spring.message "freemarker.btnsavechanges"/></button>
