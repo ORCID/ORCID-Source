@@ -6166,10 +6166,14 @@ orcidNgModule.controller('DelegatesCtrl',['$scope', '$compile', function Delegat
     $scope.getDisplayName = function(result){
         var personalDetails = result['orcid-profile']['orcid-bio']['personal-details'];
         var creditName = personalDetails['credit-name'];
-        if(creditName !== undefined){
+        if(creditName != null){
             return creditName.value;
         }
-        return personalDetails['given-names'].value + ' ' + personalDetails['family-name'].value;
+        var name = personalDetails['given-names'].value;
+        if(personalDetails['family-name'] != null) {
+        	name = name + ' ' + personalDetails['family-name'].value;
+        }
+        return name;
     };
 
     $scope.confirmAddDelegateByEmail = function(emailSearchResult){
