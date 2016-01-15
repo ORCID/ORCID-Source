@@ -358,8 +358,7 @@ public class WorkspaceController extends BaseWorkspaceController {
     @RequestMapping(value = "/my-orcid/keywordsForms.json", method = RequestMethod.POST)
     public @ResponseBody
     KeywordsForm setKeywordsFormJson(HttpServletRequest request, @RequestBody KeywordsForm kf) throws NoSuchRequestHandlingMethodException {
-        kf.setErrors(new ArrayList<String>());
-        
+        kf.setErrors(new ArrayList<String>());        
         if(kf != null) {
             Iterator<KeywordForm> it = kf.getKeywords().iterator();            
             while (it.hasNext()) {
@@ -396,7 +395,7 @@ public class WorkspaceController extends BaseWorkspaceController {
     public @ResponseBody
     OtherNamesForm getOtherNamesFormJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
         OtherNames otherNames = otherNameManager.getOtherNames(getCurrentUserOrcid());        
-        
+        otherNames.updateIndexingStatusOnChilds();
         OtherNamesForm form = OtherNamesForm.valueOf(otherNames);
         ProfileEntity entity = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
         

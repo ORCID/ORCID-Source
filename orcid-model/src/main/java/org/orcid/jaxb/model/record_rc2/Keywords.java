@@ -98,28 +98,27 @@ public class Keywords implements Serializable {
 
     public void updateIndexingStatusOnChilds() {
         if (this.getKeywords() != null && !this.getKeywords().isEmpty()) {
-            List<Keyword> sortedKeywords = new ArrayList<Keyword>();
-            List<Keyword> unsortedKeywords = new ArrayList<Keyword>();
+            List<Keyword> sorted = new ArrayList<Keyword>();
+            List<Keyword> unsorted = new ArrayList<Keyword>();
             Long maxDisplayIndex = 0L;
             for(Keyword k : this.getKeywords()) {
                 if(Long.valueOf(-1).equals(k.getDisplayIndex())) {
-                    unsortedKeywords.add(k);
+                    unsorted.add(k);
                 } else {
                     if(k.getDisplayIndex() > maxDisplayIndex) {
                         maxDisplayIndex = k.getDisplayIndex();
                     }
-                    sortedKeywords.add(k);
+                    sorted.add(k);
                 }                
             }      
             
-            if(!unsortedKeywords.isEmpty()) {
-                Collections.sort(unsortedKeywords);
-                for(Keyword k : unsortedKeywords) {
+            if(!unsorted.isEmpty()) {
+                Collections.sort(unsorted);
+                for(Keyword k : unsorted) {
                     k.setDisplayIndex((maxDisplayIndex++) + 1);
-                    sortedKeywords.add(k);
+                    sorted.add(k);
                 }
             }
         }
     }
-
 }
