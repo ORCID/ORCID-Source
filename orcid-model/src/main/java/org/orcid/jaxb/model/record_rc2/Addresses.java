@@ -100,7 +100,7 @@ public class Addresses implements Serializable {
             List<Address> unsorted = new ArrayList<Address>();
             Long maxDisplayIndex = 0L;
             for(Address a : this.getAddress()) {
-                if(Long.valueOf(-1).equals(a.getDisplayIndex())) {
+                if(a.getDisplayIndex() == null || Long.valueOf(-1).equals(a.getDisplayIndex())) {
                     unsorted.add(a);
                 } else {
                     if(a.getDisplayIndex() > maxDisplayIndex) {

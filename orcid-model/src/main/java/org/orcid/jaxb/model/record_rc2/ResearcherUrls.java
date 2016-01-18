@@ -101,7 +101,7 @@ public class ResearcherUrls implements Serializable {
             List<ResearcherUrl> unsorted = new ArrayList<ResearcherUrl>();
             Long maxDisplayIndex = 0L;
             for(ResearcherUrl o : this.getResearcherUrls()) {
-                if(Long.valueOf(-1).equals(o.getDisplayIndex())) {
+                if(o.getDisplayIndex() == null || Long.valueOf(-1).equals(o.getDisplayIndex())) {
                     unsorted.add(o);
                 } else {
                     if(o.getDisplayIndex() > maxDisplayIndex) {

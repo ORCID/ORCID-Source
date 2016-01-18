@@ -103,7 +103,7 @@ public class OtherNames implements Serializable {
             List<OtherName> unsorted = new ArrayList<OtherName>();
             Long maxDisplayIndex = 0L;
             for(OtherName o : this.getOtherNames()) {
-                if(Long.valueOf(-1).equals(o.getDisplayIndex())) {
+                if(o.getDisplayIndex() == null || Long.valueOf(-1).equals(o.getDisplayIndex())) {
                     unsorted.add(o);
                 } else {
                     if(o.getDisplayIndex() > maxDisplayIndex) {
