@@ -649,12 +649,15 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             address.setDisplayIndex(-1L);
             address.setVisibility(org.orcid.jaxb.model.common.Visibility.fromValue(OrcidVisibilityDefaults.COUNTRY_DEFAULT.getVisibility().value()));
             address.setUser(profileEntity);
-            String amenderOrcid = sourceManager.retrieveSourceOrcid();            
-            if (OrcidStringUtils.isValidOrcid(amenderOrcid)) {
-                address.setSource(new SourceEntity(new ProfileEntity(amenderOrcid)));
-            } else {
-                address.setSource(new SourceEntity(new ClientDetailsEntity(amenderOrcid)));
+            String amenderOrcid = sourceManager.retrieveSourceOrcid();  
+            if(!PojoUtil.isEmpty(amenderOrcid)) {
+                if (OrcidStringUtils.isValidOrcid(amenderOrcid)) {
+                    address.setSource(new SourceEntity(new ProfileEntity(amenderOrcid)));
+                } else {
+                    address.setSource(new SourceEntity(new ClientDetailsEntity(amenderOrcid)));
+                }
             }
+            
             HashSet<AddressEntity> addresses = new HashSet<AddressEntity>();
             addresses.add(address);
             profileEntity.setAddresses(addresses);

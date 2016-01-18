@@ -123,7 +123,7 @@ public class JpaJaxbEntityAdapterToProfileEntityTest extends DBUnitTest {
         ProfileEntity profileEntity = adapter.toProfileEntity(orcidMessage.getOrcidProfile());
         assertNotNull(profileEntity);
         profileDao.persist(profileEntity);
-
+        
         ProfileEntity retrievedProfileEntity = profileDao.find(orcidMessage.getOrcidProfile().getOrcidIdentifier().getPath());
         assertNotNull(retrievedProfileEntity);
         assertEquals("Josiah", retrievedProfileEntity.getGivenNames());
