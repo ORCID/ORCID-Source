@@ -6114,6 +6114,13 @@ orcidNgModule.controller('DelegatesCtrl',['$scope', '$compile', function Delegat
                     $scope.numFound = resultsContainer['num-found'];
                     $scope.results = $scope.results.concat(resultsContainer['orcid-search-result']);
                 }
+                var tempResults = $scope.results;
+                for(var index = 0; index < tempResults.length; index ++) {
+                	if($scope.results[index]['orcid-profile']['orcid-bio']['personal-details'] == null) {
+                		$scope.results.splice(index, 1);
+                	} 
+                }
+                $scope.numFound = $scope.results.length;
                 if(!$scope.numFound){
                     $('#no-results-alert').fadeIn(1200);
                 }
@@ -6165,13 +6172,16 @@ orcidNgModule.controller('DelegatesCtrl',['$scope', '$compile', function Delegat
 
     $scope.getDisplayName = function(result){
         var personalDetails = result['orcid-profile']['orcid-bio']['personal-details'];
-        var creditName = personalDetails['credit-name'];
-        if(creditName != null){
-            return creditName.value;
-        }
-        var name = personalDetails['given-names'].value;
-        if(personalDetails['family-name'] != null) {
-        	name = name + ' ' + personalDetails['family-name'].value;
+        var name = "";
+        if(personalDetails != null) {
+        	var creditName = personalDetails['credit-name'];
+            if(creditName != null){
+                return creditName.value;
+            }
+            name = personalDetails['given-names'].value;
+            if(personalDetails['family-name'] != null) {
+            	name = name + ' ' + personalDetails['family-name'].value;
+            }
         }
         return name;
     };
@@ -7387,7 +7397,6 @@ orcidNgModule.controller('manageMembersCtrl',['$scope', '$compile', function man
     			$scope.client.redirectUris[i].actType.value = {"import-works-wizard" : ["Articles"]};
     			$scope.client.redirectUris[i].geoArea.value = {"import-works-wizard" : ["Global"]};
     		}
-    		console.log($scope.client.redirectUris[i].actType.value);
     		$scope.client.redirectUris[i].actType.value = JSON.stringify($scope.client.redirectUris[i].actType.value);
     		$scope.client.redirectUris[i].geoArea.value = JSON.stringify($scope.client.redirectUris[i].geoArea.value);
     	}
