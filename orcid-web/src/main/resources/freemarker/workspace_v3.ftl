@@ -163,7 +163,7 @@
 	                <div ng-show="showEdit == true" ng-cloak>	                	
 	                  	 
 	                  	 <div ng-repeat="country in countryForm.addresses">
-			                 <select id="country" ng-model="country.iso2Country.value" ng-show="country.primary == true" ng-disabled="{{country.source != orcidId}}">
+			                 <select id="country" ng-model="country.iso2Country.value" ng-show="country.primary == true" ng-disabled="{{country.length == 0 && country.source != orcidId}}">
 				    			 <option value=""><@orcid.msg 'org.orcid.persistence.jpa.entities.CountryIsoEntity.empty' /></option>
 								 <#list isoCountries?keys as key>
 								     <option value="${key}">${isoCountries[key]}</option>
