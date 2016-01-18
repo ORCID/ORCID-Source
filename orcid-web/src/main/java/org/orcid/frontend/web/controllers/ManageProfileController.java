@@ -856,8 +856,10 @@ public class ManageProfileController extends BaseWorkspaceController {
                     }
                     if(form.getIso2Country() == null || form.getIso2Country().getValue() == null) {
                         form.getErrors().add(getMessage("common.invalid_country"));
+                    } else {
+                        form.setCountryName(countries.get(form.getIso2Country().getValue().name()));
                     }
-                    form.setCountryName(countries.get(form.getIso2Country().getValue().name()));
+                                                                                
                     copyErrors(form, addressesForm);
                 } 
                 if(!addressesForm.getAddresses().isEmpty() && !foundPrimary) {
