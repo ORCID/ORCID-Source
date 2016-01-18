@@ -39,7 +39,13 @@ public class JpaJaxbOtherNameAdapterImpl implements JpaJaxbOtherNameAdapter {
         if (otherName == null) {
             return null;
         }
-        return mapperFacade.map(otherName, OtherNameEntity.class);
+        OtherNameEntity result = mapperFacade.map(otherName, OtherNameEntity.class);
+        
+        if(result.getDisplayIndex() == null) {
+            result.setDisplayIndex(-1L);
+        }
+        
+        return result;
     }
 
     @Override

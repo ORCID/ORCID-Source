@@ -2938,8 +2938,7 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
     $scope.newInput = false;
     $scope.primary = true;
     
-    $scope.openEdit = function() {
-        $scope.addNewModal();
+    $scope.openEdit = function() {        
         $scope.showEdit = true;        
     };
 
@@ -2968,8 +2967,7 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
 
     $scope.setCountryForm = function(v2){        
         if(v2)
-            $scope.countryForm.visibility = null;        
-         
+            $scope.countryForm.visibility = null;         
         
         $.ajax({
             url: getBaseUri() + '/account/countryForm.json',

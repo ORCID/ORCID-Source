@@ -39,7 +39,13 @@ public class JpaJaxbResearcherUrlAdapterImpl implements JpaJaxbResearcherUrlAdap
         if (researcherUrl == null) {
             return null;
         }
-        return mapperFacade.map(researcherUrl, ResearcherUrlEntity.class);
+        ResearcherUrlEntity result = mapperFacade.map(researcherUrl, ResearcherUrlEntity.class);
+        
+        if(result.getDisplayIndex() == null) {
+            result.setDisplayIndex(-1L);
+        }
+        
+        return result;
     }
 
     @Override

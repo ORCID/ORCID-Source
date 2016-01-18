@@ -345,8 +345,7 @@ public class WorkspaceController extends BaseWorkspaceController {
     @RequestMapping(value = "/my-orcid/keywordsForms.json", method = RequestMethod.GET)
     public @ResponseBody
     KeywordsForm getKeywordsFormJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {        
-        Keywords keywords = profileKeywordManager.getKeywords(getCurrentUserOrcid());
-        keywords.updateIndexingStatusOnChilds();
+        Keywords keywords = profileKeywordManager.getKeywords(getCurrentUserOrcid());        
         KeywordsForm form = KeywordsForm.valueOf(keywords);                
         ProfileEntity profileEntity = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
         //Set the default visibility since we still need it in the front end
@@ -394,8 +393,7 @@ public class WorkspaceController extends BaseWorkspaceController {
     @RequestMapping(value = "/my-orcid/otherNamesForms.json", method = RequestMethod.GET)
     public @ResponseBody
     OtherNamesForm getOtherNamesFormJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
-        OtherNames otherNames = otherNameManager.getOtherNames(getCurrentUserOrcid());        
-        otherNames.updateIndexingStatusOnChilds();
+        OtherNames otherNames = otherNameManager.getOtherNames(getCurrentUserOrcid());                
         OtherNamesForm form = OtherNamesForm.valueOf(otherNames);
         ProfileEntity entity = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
         
@@ -450,8 +448,7 @@ public class WorkspaceController extends BaseWorkspaceController {
     @RequestMapping(value = "/my-orcid/websitesForms.json", method = RequestMethod.GET)
     public @ResponseBody
     WebsitesForm getWebsitesFormJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
-        ResearcherUrls rUrls = researcherUrlManager.getResearcherUrlsV2(getCurrentUserOrcid());        
-        rUrls.updateIndexingStatusOnChilds();        
+        ResearcherUrls rUrls = researcherUrlManager.getResearcherUrls(getCurrentUserOrcid());                 
         WebsitesForm form = WebsitesForm.valueOf(rUrls);
         ProfileEntity entity = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
         

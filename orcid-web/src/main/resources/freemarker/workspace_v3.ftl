@@ -160,8 +160,7 @@
 			            </span>
 		            </div>
 	                <!-- Edit -->
-	                <div ng-show="showEdit == true" ng-cloak>	                	
-	                  	 
+	                <div ng-show="showEdit == true" ng-cloak>	                		                  	 
 	                  	 <div ng-repeat="country in countryForm.addresses">
 			                 <select id="country" ng-model="country.iso2Country.value" ng-show="country.primary == true">
 				    			 <option value=""><@orcid.msg 'org.orcid.persistence.jpa.entities.CountryIsoEntity.empty' /></option>
