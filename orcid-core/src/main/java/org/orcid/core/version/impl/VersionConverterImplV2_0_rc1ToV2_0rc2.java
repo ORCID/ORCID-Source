@@ -31,7 +31,6 @@ import ma.glasnost.orika.impl.DefaultMapperFactory;
 import org.orcid.core.version.V2Convertible;
 import org.orcid.core.version.V2VersionConverter;
 import org.orcid.core.version.V2VersionObjectFactory;
-import org.orcid.jaxb.model.common_rc1.FuzzyDate;
 import org.orcid.jaxb.model.common_rc2.LastModifiedDate;
 import org.orcid.jaxb.model.record.summary_rc1.ActivitiesSummary;
 import org.orcid.jaxb.model.record.summary_rc1.EducationSummary;
@@ -156,11 +155,6 @@ public class VersionConverterImplV2_0_rc1ToV2_0rc2 implements V2VersionConverter
         //PEER REVIEW
         mapperFactory.classMap(PeerReview.class, org.orcid.jaxb.model.record_rc2.PeerReview.class).byDefault().register();        
         mapperFactory.classMap(PeerReviewSummary.class, org.orcid.jaxb.model.record.summary_rc2.PeerReviewSummary.class).byDefault().register();
-        mapperFactory.classMap(FuzzyDate.class, org.orcid.jaxb.model.common_rc2.FuzzyDate.class)
-        .field("year", "year")
-        .field("month", "month")
-        .field("day", "day")
-        .byDefault().register();
         mapper = mapperFactory.getMapperFacade();
     }
 
