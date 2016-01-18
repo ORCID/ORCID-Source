@@ -144,6 +144,7 @@ import org.orcid.jaxb.model.message.WorkContributors;
 import org.orcid.jaxb.model.message.WorkExternalIdentifiers;
 import org.orcid.jaxb.model.message.WorkTitle;
 import org.orcid.jaxb.model.message.Year;
+import org.orcid.persistence.jpa.entities.AddressEntity;
 import org.orcid.persistence.jpa.entities.BaseEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
@@ -753,6 +754,18 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
 
     private void setCountry(ProfileEntity profileEntity, ContactDetails contactDetails) {
         Iso3166Country iso2Country = profileEntity.getIso2Country();
+        
+        if(profileEntity.getAddresses() != null && !profileEntity.getAddresses().isEmpty()) {
+            for(AddressEntity address : profileEntity.getAddresses()) {
+                if(address.getPrimary() != null && address.getPrimary()) {
+                    if(address.getIso2Country() != null) {
+                        iso2Country = Iso3166Country.fromValue(address.getIso2Country().value());
+                        break;
+                    }                    
+                }
+            }
+        }
+        
         if (iso2Country != null) {
             Address address = new Address();
             Country country = new Country(iso2Country);
@@ -762,6 +775,8 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
 
         }
     }
+    
+    
 
     private void setEmails(ProfileEntity profileEntity, ContactDetails contactDetails) {
         // The new way of doing emails.
