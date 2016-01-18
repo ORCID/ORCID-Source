@@ -2890,7 +2890,8 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
             url: getBaseUri() + '/account/countryForm.json',
             dataType: 'json',
             success: function(data) {
-                $scope.countryForm = data;                
+                $scope.countryForm = data;
+                console.log(angular.toJson(data));
                 $scope.$apply();                
             }
         }).fail(function(){

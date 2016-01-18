@@ -821,7 +821,9 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     @RequestMapping(value = "/countryForm.json", method = RequestMethod.GET)
     public @ResponseBody AddressesForm getProfileCountryJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
-        AddressesForm form = AddressesForm.valueOf(addressManager.getAddresses(getCurrentUserOrcid()));
+        Addresses addresses = addressManager.getAddresses(getCurrentUserOrcid());
+        addresses.updateIndexingStatusOnChilds();
+        AddressesForm form = AddressesForm.valueOf(addresses);
         // Set country name
         if(form != null && form.getAddresses() != null) {
             Map<String, String> countries = retrieveIsoCountries();
