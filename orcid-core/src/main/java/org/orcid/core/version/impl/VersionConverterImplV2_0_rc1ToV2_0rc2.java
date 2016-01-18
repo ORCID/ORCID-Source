@@ -31,6 +31,7 @@ import ma.glasnost.orika.impl.DefaultMapperFactory;
 import org.orcid.core.version.V2Convertible;
 import org.orcid.core.version.V2VersionConverter;
 import org.orcid.core.version.V2VersionObjectFactory;
+import org.orcid.jaxb.model.common_rc1.Year;
 import org.orcid.jaxb.model.common_rc2.LastModifiedDate;
 import org.orcid.jaxb.model.record.summary_rc1.ActivitiesSummary;
 import org.orcid.jaxb.model.record.summary_rc1.EducationSummary;
@@ -155,6 +156,22 @@ public class VersionConverterImplV2_0_rc1ToV2_0rc2 implements V2VersionConverter
         //PEER REVIEW
         mapperFactory.classMap(PeerReview.class, org.orcid.jaxb.model.record_rc2.PeerReview.class).byDefault().register();        
         mapperFactory.classMap(PeerReviewSummary.class, org.orcid.jaxb.model.record.summary_rc2.PeerReviewSummary.class).byDefault().register();
+        mapperFactory.classMap(Year.class, Integer.class)
+        .customize(new CustomMapper<Year, Integer>() {
+                    @Override
+                    public void mapAtoB(Year year, Integer obj2, MappingContext context) {
+                        if(year != null) {
+                        	obj2 = (year == null ? null : Integer.parseInt(year.getValue()));
+                        }
+                    }
+                    
+                    @Override
+                    public void mapBtoA(Integer obj2, Year year, MappingContext context) {
+                        if(obj2 != null) {
+                        	year.setValue(obj2 == null ? null : String.valueOf(obj2));
+                        }
+                    }
+                }).register();
         mapper = mapperFactory.getMapperFacade();
     }
 
