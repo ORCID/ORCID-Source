@@ -26,6 +26,6 @@
 				<columnExists tableName="profile_keyword" columnName="display_index"/>
 			</not>
 		</preConditions>
-		<sql>ALTER TABLE profile_keyword ADD display_index bigint default -1;</sql>		
+		<sql>ALTER TABLE profile_keyword ADD display_index bigint NOT NULL default -1;</sql>		
     </changeSet>             
 </databaseChangeLog>

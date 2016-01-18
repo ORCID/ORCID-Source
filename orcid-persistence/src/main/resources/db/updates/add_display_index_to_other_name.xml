@@ -26,6 +26,6 @@
 				<columnExists tableName="other_name" columnName="display_index"/>
 			</not>
 		</preConditions>
-		<sql>ALTER TABLE other_name ADD display_index bigint default -1;</sql>		
+		<sql>ALTER TABLE other_name ADD display_index bigint NOT NULL default -1;</sql>		
     </changeSet>             
 </databaseChangeLog>

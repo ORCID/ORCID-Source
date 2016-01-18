@@ -26,6 +26,6 @@
 				<columnExists tableName="external_identifier" columnName="display_index"/>
 			</not>
 		</preConditions>
-		<sql>ALTER TABLE external_identifier ADD display_index bigint default -1;</sql>		
+		<sql>ALTER TABLE external_identifier ADD display_index bigint NOT NULL default -1;</sql>		
     </changeSet>             
 </databaseChangeLog>
