@@ -2245,7 +2245,7 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$compile', function Website
     };
     
     $scope.addNewModal = function() {
-        $scope.websitesForm.websites.push({"errors":[],"content":"","putCode":null,"visibility":{"visibility":"PUBLIC"}});
+        $scope.websitesForm.websites.push({"errors":[],"websites":[{"errors":[],"url":null,"urlName":null,"putCode":null,"visibility":{"errors":[],"required":true,"getRequiredMessage":null,"visibility":"PUBLIC"},"source":null,"sourceName":null}],"visibility":{"errors":[],"required":true,"getRequiredMessage":null,"visibility":"PUBLIC"}});
         $scope.newInput = true; 
     };
 
@@ -2255,6 +2255,7 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$compile', function Website
             dataType: 'json',
             success: function(data) {
                 $scope.websitesForm = data;
+                
                 var websites = $scope.websitesForm.websites;
                 var len = websites.length;
                 while (len--) {
@@ -2300,6 +2301,9 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$compile', function Website
             contentType: 'application/json;charset=UTF-8',
             dataType: 'json',
             success: function(data) {
+                
+                console.table(data);
+                
                 $scope.websitesForm = data;
                 if(data.errors.length == 0)
                     $scope.close();
@@ -2345,6 +2349,9 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$compile', function Website
             html: $compile($('#edit-websites').html())($scope),
             onLoad: function() {
                 $('#cboxClose').remove();
+                if ($scope.websitesForm.websites.length == 0){
+                    $scope.addNewModal();
+                }
                 
             },
             width: formColorBoxResize(),
@@ -2361,6 +2368,62 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$compile', function Website
     $scope.closeEditModal = function(){
         $.colorbox.close();
     }
+    
+    $scope.setPriorityUp = function(displayIndex){        
+        
+        if (displayIndex > 1) {
+            var websites = $scope.websitesForm.websites;
+            var arrayNewIdx = null;  
+            var arrayOldIdx = null;
+            var len = websites.length;
+            while (len--) {
+                //Find first array idx for the current displayIndex value
+                if (websites[len].displayIndex == displayIndex){
+                    arrayNewIdx = len;                
+                }
+                //Find first array idx for the element above to it 
+                if (websites[len].displayIndex == displayIndex - 1){
+                    arrayOldIdx = len;                
+                }                
+            }
+            
+            websites[arrayNewIdx].displayIndex--;
+            websites[arrayOldIdx].displayIndex++;
+            $scope.websitesForm.websites = websites;
+        }
+    };
+    
+    $scope.setPriorityDown = function(displayIndex){
+        var websites = $scope.websitesForm.websites;
+        var len = websites.length;
+        
+        if (displayIndex < len) {            
+            var arrayNewIdx = null;  
+            var arrayOldIdx = null;
+            
+            while (len--) {
+                //Find first array idx for the current displayIndex value
+                if (websites[len].displayIndex == displayIndex){
+                    arrayNewIdx = len;                
+                }
+                //Find first array idx for the element below to it 
+                if (websites[len].displayIndex == displayIndex + 1){
+                    arrayOldIdx = len;                
+                }                
+            }
+            
+            websites[arrayNewIdx].displayIndex++;
+            websites[arrayOldIdx].displayIndex--;
+            
+            $scope.websitesForm.websites = websites;
+        }
+   };
+    
+    
+    
+    
+    
+    
 
     $scope.getWebsitesForm();
 }]);
@@ -2631,8 +2694,7 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile',function ($scope
             url: getBaseUri() + '/my-orcid/otherNamesForms.json',
             dataType: 'json',
             success: function(data) {                
-                $scope.otherNamesForm = data;
-                console.log(angular.toJson($scope.otherNamesForm));
+                $scope.otherNamesForm = data;                
                 $scope.$apply();                                
             }
         }).fail(function(){
@@ -2890,8 +2952,7 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
             url: getBaseUri() + '/account/countryForm.json',
             dataType: 'json',
             success: function(data) {
-                $scope.countryForm = data;
-                console.log(angular.toJson(data));
+                $scope.countryForm = data;                
                 $scope.$apply();                
             }
         }).fail(function(){
