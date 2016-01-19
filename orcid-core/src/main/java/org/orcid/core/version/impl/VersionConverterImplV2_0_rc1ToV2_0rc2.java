@@ -31,6 +31,8 @@ import ma.glasnost.orika.impl.DefaultMapperFactory;
 import org.orcid.core.version.V2Convertible;
 import org.orcid.core.version.V2VersionConverter;
 import org.orcid.core.version.V2VersionObjectFactory;
+import org.orcid.jaxb.model.common_rc1.Day;
+import org.orcid.jaxb.model.common_rc1.Month;
 import org.orcid.jaxb.model.common_rc1.Year;
 import org.orcid.jaxb.model.common_rc2.LastModifiedDate;
 import org.orcid.jaxb.model.record.summary_rc1.ActivitiesSummary;
@@ -87,8 +89,19 @@ public class VersionConverterImplV2_0_rc1ToV2_0rc2 implements V2VersionConverter
                     }
                 }).register();
 
+        mapperFactory.classMap(Year.class, org.orcid.jaxb.model.common_rc2.Year.class).field("value", "value").register();
+        mapperFactory.classMap(Month.class, org.orcid.jaxb.model.common_rc2.Month.class).field("value", "value").register();
+        mapperFactory.classMap(Day.class, org.orcid.jaxb.model.common_rc2.Day.class).field("value", "value").register();
+        
         // EDUCATION SUMMARY
-        mapperFactory.classMap(Educations.class, org.orcid.jaxb.model.record.summary_rc2.Educations.class).byDefault().register();
+        mapperFactory.classMap(Educations.class, org.orcid.jaxb.model.record.summary_rc2.Educations.class).field("summaries", "summaries")
+                .customize(new CustomMapper<Educations, org.orcid.jaxb.model.record.summary_rc2.Educations>() {
+                    @Override
+                    public void mapAtoB(Educations educationsRc1, org.orcid.jaxb.model.record.summary_rc2.Educations educationsRc2, MappingContext context) {
+                        educationsRc2.setLastModifiedDate(
+                                new LastModifiedDate(DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis(LastModifiedDatesHelper.calculateLatest(educationsRc2))));
+                    }
+                }).register();
 
         // EMPLOYMENT SUMMARY
         mapperFactory.classMap(Employments.class, org.orcid.jaxb.model.record.summary_rc2.Employments.class).field("summaries", "summaries")
@@ -98,7 +111,7 @@ public class VersionConverterImplV2_0_rc1ToV2_0rc2 implements V2VersionConverter
                         employmentsRc2.setLastModifiedDate(
                                 new LastModifiedDate(DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis(LastModifiedDatesHelper.calculateLatest(employmentsRc2))));
                     }
-                }).byDefault().register();
+                }).register();
 
         // FUNDINGS
         mapperFactory.classMap(Fundings.class, org.orcid.jaxb.model.record.summary_rc2.Fundings.class).field("fundingGroup{identifiers}", "fundingGroup{identifiers}")
@@ -109,7 +122,7 @@ public class VersionConverterImplV2_0_rc1ToV2_0rc2 implements V2VersionConverter
                         fundingsRc2.setLastModifiedDate(
                                 new LastModifiedDate(DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis(LastModifiedDatesHelper.calculateLatest(fundingsRc2))));
                     }
-                }).byDefault().register();
+                }).register();
 
         // PEER REVIEWS
         mapperFactory.classMap(PeerReviews.class, org.orcid.jaxb.model.record.summary_rc2.PeerReviews.class)
@@ -120,7 +133,7 @@ public class VersionConverterImplV2_0_rc1ToV2_0rc2 implements V2VersionConverter
                         peerReviewsRc2.setLastModifiedDate(
                                 new LastModifiedDate(DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis(LastModifiedDatesHelper.calculateLatest(peerReviewsRc2))));
                     }
-                }).byDefault().register();
+                }).register();
 
         // WORKS
         mapperFactory.classMap(Works.class, org.orcid.jaxb.model.record.summary_rc2.Works.class).field("workGroup{identifiers}", "workGroup{identifiers}")
@@ -130,7 +143,7 @@ public class VersionConverterImplV2_0_rc1ToV2_0rc2 implements V2VersionConverter
                         worksRc2.setLastModifiedDate(
                                 new LastModifiedDate(DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis(LastModifiedDatesHelper.calculateLatest(worksRc2))));
                     }
-                }).byDefault().register();
+                }).register();
         
         // WORK 
         mapperFactory.classMap(Work.class, org.orcid.jaxb.model.record_rc2.Work.class).byDefault().register();
