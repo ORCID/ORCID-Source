@@ -2453,7 +2453,8 @@ orcidNgModule.controller('KeywordsCtrl', ['$scope', '$compile', function ($scope
     
     $scope.addNewModal = function() {
         $scope.keywordsForm.keywords.push({"errors":[],"content":"","putCode":null,"visibility":{"visibility":"PUBLIC"}});
-        $scope.newInput = true; 
+        $scope.newInput = true;
+        console.log($scope.keywordsForm.keywords);
     };
 
     $scope.getKeywordsForm = function(){
@@ -2685,8 +2686,16 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile',function ($scope
     };
     
     $scope.addNewModal = function() {
-        $scope.otherNamesForm.otherNames.push({"errors":[],"content":"","putCode":null,"visibility":{"visibility":"PUBLIC"}});
-        $scope.newInput = true; 
+        
+        var idx = $scope.getLastDisplayIndex();        
+        
+        var tmpObj = {"errors":[],"content":"","putCode":null,"visibility":{"errors":[],"required":true,"getRequiredMessage":null,"visibility":"PUBLIC"},"displayIndex":1,"source":null,"sourceName":null};
+        tmpObj['displayIndex'] = idx + 1;
+        $scope.otherNamesForm.otherNames.push(tmpObj);
+        
+        $scope.newInput = true;        
+        
+        console.log($scope.otherNamesForm.otherNames);
     };
 
     $scope.getOtherNamesForm = function(){
@@ -2706,10 +2715,13 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile',function ($scope
     $scope.deleteKeyword = function(otherName){
         var otherNames = $scope.otherNamesForm.otherNames;
         var len = otherNames.length;
-        while (len--) {
-            if (otherNames[len] == otherName)
+        while (len--) {            
+            if (otherNames[len] == otherName){                
                 otherNames.splice(len,1);
+            }
         }
+        $scope.otherNamesForm.otherNames = otherNames;
+        console.log($scope.otherNamesForm.otherNames);
     };
 
     $scope.setOtherNamesForm = function(v2){        
@@ -2755,9 +2767,10 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile',function ($scope
         var len = otherNames.length;
         
         while (len--) {
-            if (otherNames[len] == otherName)                
+            if (otherNames[len] == otherName){
                 otherNames[len].visibility.visibility = priv;
                 $scope.otherNamesForm.otherNames = otherNames;
+            }
         }
     };
     
@@ -2788,55 +2801,70 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile',function ($scope
         $.colorbox.close();
     }
     
-    $scope.setPriorityUp = function(displayIndex){
-        
-        console.log(displayIndex);
-        
-        if (displayIndex > 1) {
-            var otherNames = $scope.otherNamesForm.otherNames;
-            var arrayNewIdx = null;  
-            var arrayOldIdx = null;
-            var len = otherNames.length;
-            while (len--) {
-                //Find first array idx for the current displayIndex value
-                if (otherNames[len].displayIndex == displayIndex){
-                    arrayNewIdx = len;                
-                }
-                //Find first array idx for the element above to it 
-                if (otherNames[len].displayIndex == displayIndex - 1){
-                    arrayOldIdx = len;                
-                }                
-            }
-            
-            otherNames[arrayNewIdx].displayIndex--;
-            otherNames[arrayOldIdx].displayIndex++;
-            $scope.otherNamesForm.otherNames = otherNames;
-        }
-    }
+    $scope.swap = function(idxA, valueA, idxB, valueB){        
+       $scope.otherNamesForm.otherNames[idxA].displayIndex = valueB;
+       $scope.otherNamesForm.otherNames[idxB].displayIndex = valueA;
+    }    
     
-    $scope.setPriorityDown = function(displayIndex){
+    $scope.setPriorityUp = function(displayIndex){        
         var otherNames = $scope.otherNamesForm.otherNames;
         var len = otherNames.length;        
-        if (displayIndex < len) {            
-            var arrayNewIdx = null;  
-            var arrayOldIdx = null;
-            
-            while (len--) {
-                //Find first array idx for the current displayIndex value
-                if (otherNames[len].displayIndex == displayIndex){
-                    arrayNewIdx = len;                
-                }
-                //Find first array idx for the element below to it 
-                if (otherNames[len].displayIndex == displayIndex + 1){
-                    arrayOldIdx = len;                
-                }                
+        
+        var current = 0;
+        var valueB = 0;
+        var idxB = 0;
+        var first = 0;
+        
+        while (len--) {
+            if (otherNames[len].displayIndex == displayIndex){
+                var idxA = len;  
             }
-            
-            otherNames[arrayNewIdx].displayIndex++;
-            otherNames[arrayOldIdx].displayIndex--;
-            $scope.otherNamesForm.otherNames = otherNames;
+            if (otherNames[len].displayIndex < displayIndex){
+                current = otherNames[len].displayIndex;
+                if (current > valueB){
+                    valueB = current;
+                    idxB = len;
+                }
+            }
         }
-       
+        $scope.swap(idxA, displayIndex, idxB, valueB);
+    }
+    
+    $scope.setPriorityDown = function(displayIndex){        
+        var otherNames = $scope.otherNamesForm.otherNames;
+        var len = otherNames.length;
+        var current = 0;
+        var valueB = $scope.getLastDisplayIndex();        
+        var idxB = 0;
+        var first = 0;
+        while (len--) {
+            if (otherNames[len].displayIndex == displayIndex){
+                var idxA = len;  
+            }
+            if (otherNames[len].displayIndex > displayIndex){
+                current = otherNames[len].displayIndex;
+                if (current <= valueB){
+                    valueB = current;
+                    idxB = len;
+                }
+            }
+        }
+        $scope.swap(idxA, displayIndex, idxB, valueB);
+    }
+    
+    $scope.getLastDisplayIndex = function(){        
+        var last = 0;
+        var current = 0;
+        
+        var otherNames = $scope.otherNamesForm.otherNames;
+        var len = otherNames.length;
+        while (len--) {            
+            current = otherNames[len].displayIndex;
+            if (current > last){
+                last = otherNames[len].displayIndex;
+            }
+        }       
+        return last;
     }
     
     
@@ -2978,8 +3006,8 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
             contentType: 'application/json;charset=UTF-8',
             dataType: 'json',
             success: function(data) {
-                $scope.countryForm = data;   
-                console.log($scope.countryForm.errors.length);
+                $scope.countryForm = data;  
+                
                 if ($scope.countryForm.errors.length == 0){
                     $scope.close();
                     $scope.getCountryForm();                
@@ -3093,6 +3121,54 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
                 countries[len].primary = false;
             }
         }
+    };
+    
+    $scope.setPriorityUp = function(displayIndex){        
+        if (displayIndex > 1) {
+            var countries = $scope.countryForm.addresses;
+            var arrayNewIdx = null;  
+            var arrayOldIdx = null;
+            var len = countries.length;
+            while (len--) {
+                //Find first array idx for the current displayIndex value
+                if (countries[len].displayIndex == displayIndex){
+                    arrayNewIdx = len;                
+                }
+                //Find first array idx for the element above to it 
+                if (countries[len].displayIndex == displayIndex - 1){
+                    arrayOldIdx = len;                
+                }                
+            }
+            
+            countries[arrayNewIdx].displayIndex--;
+            countries[arrayOldIdx].displayIndex++;
+            $scope.countryForm.addresses = countries;
+        }
+    }
+    
+    $scope.setPriorityDown = function(displayIndex){
+        var countries = $scope.countryForm.addresses;
+        var len = countries.length;        
+        if (displayIndex < len) {            
+            var arrayNewIdx = null;  
+            var arrayOldIdx = null;
+            
+            while (len--) {
+                //Find first array idx for the current displayIndex value
+                if (countries[len].displayIndex == displayIndex){
+                    arrayNewIdx = len;                
+                }
+                //Find first array idx for the element below to it 
+                if (countries[len].displayIndex == displayIndex + 1){
+                    arrayOldIdx = len;                
+                }                
+            }
+            
+            countries[arrayNewIdx].displayIndex++;
+            countries[arrayOldIdx].displayIndex--;
+            $scope.countryForm.addresses = countries;
+        }
+       
     }
 
     $scope.getCountryForm();

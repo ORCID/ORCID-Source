@@ -45,10 +45,11 @@
 								<div class="col-md-6">
 									<ul class="record-settings pull-right">
 										<li>												
-											<span class="glyphicon glyphicon-arrow-up circle" ng-click="setPriorityUp(otherName.displayIndex)"></span>											
+											<span class="glyphicon glyphicon-arrow-up circle" ng-click="$first || setPriorityUp(otherName.displayIndex)"></span>										
+											
 										</li>
 										<li>																						
-											<span class="glyphicon glyphicon-arrow-down circle" ng-click="setPriorityDown(otherName.displayIndex)"></span>											
+											<span class="glyphicon glyphicon-arrow-down circle" ng-click="$last || setPriorityDown(otherName.displayIndex)"></span>											
 										</li>
 										<li>										
 											<span class="glyphicon glyphicon-trash" ng-click="deleteKeyword(otherName)"></span>											
@@ -97,7 +98,7 @@
 				<div class="col-md-12 col-xs-12 col-sm-12">
 					<div class="fixed-area">
 						<div class="scroll-area">		
-							<div class="row aka-row" ng-repeat="country in countryForm.addresses">
+							<div class="row aka-row" ng-repeat="country in countryForm.addresses | orderBy: 'displayIndex'">
 								<div class="col-md-6">
 									<div class="aka">
 			                 			<select id="country" name="country" ng-model="country.iso2Country.value" ng-disabled="{{country.source != orcidId && country.source != null}}" ng-class="{'not-allowed': country.source != orcidId && country.source != null}" focus-me="newInput">
@@ -115,12 +116,12 @@
 											<input name="priority" type="radio" ng-model="primary" ng-value="country.primary" ng-click="setPrimary(country)">
 										</li>										
 										<li ng-init="">												
-											<span class="glyphicon glyphicon-arrow-up circle" ng-click=""></span>											
+											<span class="glyphicon glyphicon-arrow-up circle" ng-click="setPriorityUp(country.displayIndex)"></span>											
 										</li>
-										<li>																						
-											<span class="glyphicon glyphicon-arrow-down circle" ng-click=""></span>											
-										</li>										
-										<li>										
+										<li>
+											<span class="glyphicon glyphicon-arrow-down circle" ng-click="setPriorityDown(country.displayIndex)"></span>
+										</li>
+										<li>
 											<span class="glyphicon glyphicon-trash" ng-click="deleteCountry(country)"></span>											
 										</li>
 										<li>
@@ -137,7 +138,7 @@
 								</div>					 				
 							</div>											
 						</div>
-						<div>
+						<div ng-show="countryForm.errors.length > 0">
 							<div ng-repeat="error in countryForm.errors">
 								<span ng-bind="error" class="red"></span>
 							</div>
@@ -272,6 +273,7 @@
 							</div>											
 						</div>
 					</div>
+					
 					<div class="record-buttons">						
 						<a ng-click="addNewModal()"><span class="glyphicon glyphicon-plus pull-left"></span></a>	        	    		
 		            	<button class="btn btn-primary pull-right" ng-click="setWebsitesForm(true)"><@spring.message "freemarker.btnsavechanges"/></button>

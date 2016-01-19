@@ -76,7 +76,7 @@
 	        	   	   <span class="workspace-section-title"><@orcid.msg 'workspace.Alsoknownas'/></span>
 		        	   <span ng-hide="showEdit == true" ng-click="openEditModal()">		        	   	  
 		        	      <span class="glyphicon glyphicon-pencil edit-other-names edit-option pull-right" title="" id="open-edit-other-names"></span>
-		        	      <span ng-repeat="otherName in otherNamesForm.otherNames" ng-cloak>
+		        	      <span ng-repeat="otherName in otherNamesForm.otherNames | orderBy: 'displayIndex'" ng-cloak>
 		        	         {{ $last?otherName.content:otherName.content + ", "}}
 		        	      </span>
 		        	   </span>		        	   
@@ -134,7 +134,7 @@
 			        	<span class="workspace-section-title"><@orcid.msg 'public_profile.labelCountry'/></span>
 			            <span class="glyphicon glyphicon-pencil edit-country edit-option pull-right" ng-click="openEditModal()" title=""></span>
 			            
-			            <span ng-repeat="country in countryForm.addresses">			            				            	
+			            <span ng-repeat="country in countryForm.addresses | orderBy: 'displayIndex'">			            				            	
 			            	<span ng-show="country != null && country.countryName != null" ng-bind="country.countryName"></span>
 			            </span>			            
 		            </div>
@@ -191,7 +191,7 @@
 	        	   		<span class="workspace-section-title"><@orcid.msg 'public_profile.labelKeywords'/></span>
 		        	   	<span>
 		        	   	  	<span class="glyphicon glyphicon-pencil edit-keywords edit-option pull-right" ng-click="openEditModal()" title=""></span>	
-		        	      	<span ng-repeat="keyword in keywordsForm.keywords" ng-cloak>
+		        	      	<span ng-repeat="keyword in keywordsForm.keywords | orderBy: 'displayIndex'" ng-cloak>
 		        	         	{{ $last?keyword.content:keyword.content+ ", "}}
 		        	      	</span>
 		        	   	</span>
@@ -251,7 +251,7 @@
 		        	   <span class="workspace-section-title"><@orcid.msg 'public_profile.labelWebsites'/></span>
 		        	   <span>
 		        	      <span class="glyphicon glyphicon-pencil edit-websites edit-option pull-right" ng-click="openEditModal()" title=""></span><br />
-		        	      <div ng-repeat="website in websitesForm.websites" ng-cloak class="wrap">
+		        	      <div ng-repeat="website in websitesForm.websites | orderBy: 'displayIndex'" ng-cloak class="wrap">
 		        	         <a href="{{website.url}}" target="_blank" rel="me nofollow">{{website.urlName != null? website.urlName : website.url}}</a>
 		        	      </div>
 		        	   </span>
