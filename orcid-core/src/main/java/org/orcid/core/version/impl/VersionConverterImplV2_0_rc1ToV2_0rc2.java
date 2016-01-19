@@ -88,14 +88,7 @@ public class VersionConverterImplV2_0_rc1ToV2_0rc2 implements V2VersionConverter
                 }).register();
 
         // EDUCATION SUMMARY
-        mapperFactory.classMap(Educations.class, org.orcid.jaxb.model.record.summary_rc2.Educations.class).field("summaries", "summaries")
-                .customize(new CustomMapper<Educations, org.orcid.jaxb.model.record.summary_rc2.Educations>() {
-                    @Override
-                    public void mapAtoB(Educations educationsRc1, org.orcid.jaxb.model.record.summary_rc2.Educations educationsRc2, MappingContext context) {
-                        educationsRc2.setLastModifiedDate(
-                                new LastModifiedDate(DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis(LastModifiedDatesHelper.calculateLatest(educationsRc2))));
-                    }
-                }).byDefault().register();
+        mapperFactory.classMap(Educations.class, org.orcid.jaxb.model.record.summary_rc2.Educations.class).byDefault().register();
 
         // EMPLOYMENT SUMMARY
         mapperFactory.classMap(Employments.class, org.orcid.jaxb.model.record.summary_rc2.Employments.class).field("summaries", "summaries")
