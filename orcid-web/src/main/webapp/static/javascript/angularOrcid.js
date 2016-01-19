@@ -2808,13 +2808,10 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile',function ($scope
     
     $scope.setPriorityUp = function(displayIndex){        
         var otherNames = $scope.otherNamesForm.otherNames;
-        var len = otherNames.length;        
-        
+        var len = otherNames.length;
         var current = 0;
         var valueB = 0;
         var idxB = 0;
-        var first = 0;
-        
         while (len--) {
             if (otherNames[len].displayIndex == displayIndex){
                 var idxA = len;  
@@ -2835,8 +2832,7 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile',function ($scope
         var len = otherNames.length;
         var current = 0;
         var valueB = $scope.getLastDisplayIndex();        
-        var idxB = 0;
-        var first = 0;
+        var idxB = 0;        
         while (len--) {
             if (otherNames[len].displayIndex == displayIndex){
                 var idxA = len;  
