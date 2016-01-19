@@ -102,7 +102,7 @@ public class Keywords implements Serializable {
             List<Keyword> unsorted = new ArrayList<Keyword>();
             Long maxDisplayIndex = 0L;
             for(Keyword k : this.getKeywords()) {
-                if(Long.valueOf(-1).equals(k.getDisplayIndex())) {
+                if(k.getDisplayIndex() == null || Long.valueOf(-1).equals(k.getDisplayIndex())) {
                     unsorted.add(k);
                 } else {
                     if(k.getDisplayIndex() > maxDisplayIndex) {

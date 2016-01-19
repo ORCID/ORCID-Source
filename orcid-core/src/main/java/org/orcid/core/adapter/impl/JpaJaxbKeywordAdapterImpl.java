@@ -39,7 +39,12 @@ public class JpaJaxbKeywordAdapterImpl implements JpaJaxbKeywordAdapter {
         if (keyword == null) {
             return null;
         }
-        return mapperFacade.map(keyword, ProfileKeywordEntity.class);
+        ProfileKeywordEntity result =   mapperFacade.map(keyword, ProfileKeywordEntity.class);
+        if(result.getDisplayIndex() == null) {
+            result.setDisplayIndex(-1L);
+        }
+        
+        return result;
     }
 
     @Override

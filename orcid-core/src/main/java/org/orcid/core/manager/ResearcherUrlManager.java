@@ -38,7 +38,7 @@ public interface ResearcherUrlManager {
      * @return 
      *          the list of public researcher urls associated with the orcid profile
      * */
-    ResearcherUrls getPublicResearcherUrlsV2(String orcid);
+    ResearcherUrls getPublicResearcherUrls(String orcid);
     
     /**
      * Return the list of researcher urls associated to a specific profile
@@ -46,14 +46,14 @@ public interface ResearcherUrlManager {
      * @return 
      *          the list of researcher urls associated with the orcid profile
      * */
-    ResearcherUrls getResearcherUrlsV2(String orcid);
+    ResearcherUrls getResearcherUrls(String orcid);
     
     /**
      * Retrieve a researcher url from database
      * @param id
      * @return the ResearcherUrlEntity associated with the parameter id
      * */
-    ResearcherUrl getResearcherUrlV2(String orcid, long id);
+    ResearcherUrl getResearcherUrl(String orcid, long id);
     
     /**
      * Add a new researcher url to a specific profile
@@ -61,7 +61,7 @@ public interface ResearcherUrlManager {
      * @param researcherUrl
      * @return true if the researcher url was successfully created on database
      * */
-    ResearcherUrl createResearcherUrlV2(String orcid, ResearcherUrl researcherUrl);  
+    ResearcherUrl createResearcherUrl(String orcid, ResearcherUrl researcherUrl);  
     
     /**
      * Updates an existing researcher url
@@ -69,7 +69,7 @@ public interface ResearcherUrlManager {
      * @param researcherUrl
      * @return the updated researcher url
      * */
-    ResearcherUrl updateResearcherUrlV2(String orcid, ResearcherUrl researcherUrl);        
+    ResearcherUrl updateResearcherUrl(String orcid, ResearcherUrl researcherUrl);        
     
     ResearcherUrls updateResearcherUrls(String orcid, ResearcherUrls researcherUrls, Visibility defaultVisibility);
 }

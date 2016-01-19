@@ -39,7 +39,13 @@ public class JpaJaxbExternalIdentifierAdapterImpl implements JpaJaxbExternalIden
         if (externalIdentifier == null) {
             return null;
         }
-        return mapperFacade.map(externalIdentifier, ExternalIdentifierEntity.class);
+        
+        ExternalIdentifierEntity result = mapperFacade.map(externalIdentifier, ExternalIdentifierEntity.class);
+        if(result.getDisplayIndex() == null) {
+            result.setDisplayIndex(-1L);
+        }
+        
+        return result;
     }
 
     @Override

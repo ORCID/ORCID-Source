@@ -59,13 +59,17 @@ public class OtherNameManagerImpl implements OtherNameManager {
     @Override
     public OtherNames getOtherNames(String orcid) {
         List<OtherNameEntity> otherNameEntityList = otherNameDao.getOtherNames(orcid);
-        return jpaJaxbOtherNameAdapter.toOtherNameList(otherNameEntityList);
+        OtherNames result = jpaJaxbOtherNameAdapter.toOtherNameList(otherNameEntityList);
+        result.updateIndexingStatusOnChilds();
+        return result;
     }
     
     @Override
     public OtherNames getPublicOtherNames(String orcid) {
         List<OtherNameEntity> otherNameEntityList = otherNameDao.getOtherNames(orcid, Visibility.PUBLIC);
-        return jpaJaxbOtherNameAdapter.toOtherNameList(otherNameEntityList);
+        OtherNames result = jpaJaxbOtherNameAdapter.toOtherNameList(otherNameEntityList);
+        result.updateIndexingStatusOnChilds();
+        return result;
     }
     
     @Override

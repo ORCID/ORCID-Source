@@ -487,14 +487,14 @@ public class MemberV2ApiServiceDelegatorImpl
     @Override
     @AccessControl(requiredScope = ScopePathType.ORCID_BIO_READ_LIMITED)
     public Response viewResearcherUrls(String orcid) {
-        ResearcherUrls researcherUrls = researcherUrlManager.getResearcherUrlsV2(orcid);
+        ResearcherUrls researcherUrls = researcherUrlManager.getResearcherUrls(orcid);
         researcherUrls.setResearcherUrls((List<ResearcherUrl>) visibilityFilter.filter(researcherUrls.getResearcherUrls()));
         ElementUtils.setPathToResearcherUrls(researcherUrls, orcid);
         return Response.ok(researcherUrls).build();
     }
 
     public Response viewResearcherUrl(String orcid, Long putCode) {
-        ResearcherUrl researcherUrl = researcherUrlManager.getResearcherUrlV2(orcid, putCode);
+        ResearcherUrl researcherUrl = researcherUrlManager.getResearcherUrl(orcid, putCode);
         orcidSecurityManager.checkVisibility(researcherUrl);
         ElementUtils.setPathToResearcherUrl(researcherUrl, orcid);
         return Response.ok(researcherUrl).build();
@@ -509,7 +509,7 @@ public class MemberV2ApiServiceDelegatorImpl
             params.put("bodyPutCode", String.valueOf(researcherUrl.getPutCode()));
             throw new MismatchedPutCodeException(params);
         }
-        ResearcherUrl updatedResearcherUrl = researcherUrlManager.updateResearcherUrlV2(orcid, researcherUrl);
+        ResearcherUrl updatedResearcherUrl = researcherUrlManager.updateResearcherUrl(orcid, researcherUrl);
         ElementUtils.setPathToResearcherUrl(updatedResearcherUrl, orcid);
         return Response.ok(updatedResearcherUrl).build();
     }
@@ -517,7 +517,7 @@ public class MemberV2ApiServiceDelegatorImpl
     @Override
     @AccessControl(requiredScope = ScopePathType.ORCID_BIO_UPDATE)
     public Response createResearcherUrl(String orcid, ResearcherUrl researcherUrl) {
-        researcherUrl = researcherUrlManager.createResearcherUrlV2(orcid, researcherUrl);
+        researcherUrl = researcherUrlManager.createResearcherUrl(orcid, researcherUrl);
         try {
             return Response.created(new URI(String.valueOf(researcherUrl.getPutCode()))).build();
         } catch (URISyntaxException e) {

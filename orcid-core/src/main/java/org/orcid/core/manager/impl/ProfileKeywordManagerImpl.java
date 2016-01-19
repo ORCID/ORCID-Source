@@ -59,13 +59,17 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
     @Override
     public Keywords getKeywords(String orcid) {
         List<ProfileKeywordEntity> entities = getProfileKeywordEntitys(orcid, null);
-        return adapter.toKeywords(entities);
+        Keywords result = adapter.toKeywords(entities);
+        result.updateIndexingStatusOnChilds();
+        return result;
     }
 
     @Override
     public Keywords getPublicKeywords(String orcid) {
         List<ProfileKeywordEntity> entities = getProfileKeywordEntitys(orcid, Visibility.PUBLIC);
-        return adapter.toKeywords(entities);
+        Keywords result = adapter.toKeywords(entities);
+        result.updateIndexingStatusOnChilds();
+        return result;
     }
 
     private List<ProfileKeywordEntity> getProfileKeywordEntitys(String orcid, Visibility visibility) {

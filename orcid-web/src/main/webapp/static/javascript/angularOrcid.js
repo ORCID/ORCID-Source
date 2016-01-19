@@ -2966,8 +2966,10 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
     $scope.newInput = false;
     $scope.primary = true;
     
-    $scope.openEdit = function() {
-        $scope.addNewModal();
+    $scope.openEdit = function() {   
+        if ($scope.countryForm == null || $scope.countryForm.addresses == null || $scope.countryForm.addresses.length == 0){
+            $scope.countryForm.addresses.push({"errors":[],"addresses":[{"iso2Country" : {"errors":[],"value":null}}], "visibility":{"visibility":"PUBLIC"}, "primary": true});
+        }
         $scope.showEdit = true;        
     };
 
@@ -2996,8 +2998,7 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
 
     $scope.setCountryForm = function(v2){        
         if(v2)
-            $scope.countryForm.visibility = null;        
-         
+            $scope.countryForm.visibility = null;         
         
         $.ajax({
             url: getBaseUri() + '/account/countryForm.json',

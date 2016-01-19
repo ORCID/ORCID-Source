@@ -159,8 +159,8 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
      * @return the list of public researcher urls associated with the orcid profile
      * */
     @Override
-    public org.orcid.jaxb.model.record_rc2.ResearcherUrls getPublicResearcherUrlsV2(String orcid) {
-        return getResearcherUrlsV2(orcid, Visibility.PUBLIC);
+    public org.orcid.jaxb.model.record_rc2.ResearcherUrls getPublicResearcherUrls(String orcid) {
+        return getResearcherUrls(orcid, Visibility.PUBLIC);
     }
     
     /**
@@ -170,8 +170,8 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
      * @return the list of researcher urls associated with the orcid profile
      * */
     @Override
-    public org.orcid.jaxb.model.record_rc2.ResearcherUrls getResearcherUrlsV2(String orcid) {
-        return getResearcherUrlsV2(orcid, null);
+    public org.orcid.jaxb.model.record_rc2.ResearcherUrls getResearcherUrls(String orcid) {
+        return getResearcherUrls(orcid, null);
     }
     
     /**
@@ -180,7 +180,7 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
      * @param orcid
      * @return the list of researcher urls associated with the orcid profile
      * */
-    private org.orcid.jaxb.model.record_rc2.ResearcherUrls getResearcherUrlsV2(String orcid, Visibility visibility) {
+    private ResearcherUrls getResearcherUrls(String orcid, Visibility visibility) {
         List<ResearcherUrlEntity> researcherUrlEntities = null; 
         if(visibility == null) {
             researcherUrlEntities = researcherUrlDao.getResearcherUrls(orcid);
@@ -188,18 +188,20 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
             researcherUrlEntities = researcherUrlDao.getResearcherUrls(orcid, visibility);
         }       
         
-        return jpaJaxbResearcherUrlAdapter.toResearcherUrlList(researcherUrlEntities);
+        ResearcherUrls rUrls = jpaJaxbResearcherUrlAdapter.toResearcherUrlList(researcherUrlEntities);
+        rUrls.updateIndexingStatusOnChilds();
+        return rUrls;
     }
 
     @Override
-    public org.orcid.jaxb.model.record_rc2.ResearcherUrl getResearcherUrlV2(String orcid, long id) {
+    public org.orcid.jaxb.model.record_rc2.ResearcherUrl getResearcherUrl(String orcid, long id) {
         ResearcherUrlEntity researcherUrlEntity = researcherUrlDao.getResearcherUrl(orcid, id);        
         return jpaJaxbResearcherUrlAdapter.toResearcherUrl(researcherUrlEntity);
     }
 
     @Override
     @Transactional
-    public org.orcid.jaxb.model.record_rc2.ResearcherUrl updateResearcherUrlV2(String orcid, org.orcid.jaxb.model.record_rc2.ResearcherUrl researcherUrl) {
+    public ResearcherUrl updateResearcherUrl(String orcid, ResearcherUrl researcherUrl) {
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();                
         // Validate the researcher url
         PersonValidator.validateResearcherUrl(researcherUrl, sourceEntity, false);        
@@ -228,7 +230,7 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
     }
 
     @Override
-    public org.orcid.jaxb.model.record_rc2.ResearcherUrl createResearcherUrlV2(String orcid, org.orcid.jaxb.model.record_rc2.ResearcherUrl researcherUrl) {
+    public ResearcherUrl createResearcherUrl(String orcid, ResearcherUrl researcherUrl) {
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
         // Validate the researcher url
         PersonValidator.validateResearcherUrl(researcherUrl, sourceEntity, true);
@@ -253,7 +255,7 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
         return jpaJaxbResearcherUrlAdapter.toResearcherUrl(newEntity);
     }
 
-    private boolean isDuplicated(ResearcherUrlEntity existing, org.orcid.jaxb.model.record_rc2.ResearcherUrl newResearcherUrl, SourceEntity source) {
+    private boolean isDuplicated(ResearcherUrlEntity existing, ResearcherUrl newResearcherUrl, SourceEntity source) {
         if (!existing.getId().equals(newResearcherUrl.getPutCode())) {
             if (existing.getSource() != null) {
                 // If they have the same source

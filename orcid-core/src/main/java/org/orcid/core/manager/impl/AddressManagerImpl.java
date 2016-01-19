@@ -186,13 +186,17 @@ public class AddressManagerImpl implements AddressManager {
     @Override
     public Addresses getAddresses(String orcid) {
         List<AddressEntity> addressList = getAddresses(orcid, null);        
-        return adapter.toAddressList(addressList);
+        Addresses result = adapter.toAddressList(addressList);
+        result.updateIndexingStatusOnChilds();
+        return result;
     }
 
     @Override
     public Addresses getPublicAddresses(String orcid) {
         List<AddressEntity> addressList = getAddresses(orcid, null);
-        return adapter.toAddressList(addressList);
+        Addresses result = adapter.toAddressList(addressList);
+        result.updateIndexingStatusOnChilds();
+        return result;
     }
     
     private List<AddressEntity> getAddresses(String orcid, Visibility visibility) {

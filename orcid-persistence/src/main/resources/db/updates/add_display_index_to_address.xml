@@ -26,6 +26,6 @@
 				<columnExists tableName="address" columnName="display_index"/>
 			</not>
 		</preConditions>
-		<sql>ALTER TABLE address ADD display_index bigint NOT NULL default -1;</sql>		
+		<sql>ALTER TABLE address ADD display_index bigint default -1;</sql>		
     </changeSet>             
 </databaseChangeLog>
