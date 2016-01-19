@@ -65,7 +65,7 @@ public class FuzzyDate implements Serializable {
 
     public static FuzzyDate valueOf(Integer year, Integer month, Integer day) {
         FuzzyDate fuzzyDate = new FuzzyDate();
-        fuzzyDate.year = year != null ? Year.valueOf(year) : null;
+        fuzzyDate.year = year != null ? new Year(year) : null;
         fuzzyDate.month = month != null ? new Month(month) : null;
         fuzzyDate.day = day != null ? new Day(day) : null;
         return fuzzyDate;

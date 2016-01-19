@@ -138,7 +138,7 @@ public class WorkFormTest {
         date.setYear("2015");
         calendar = date.toCalendar();
         work.setLastModifiedDate(new LastModifiedDate(datatypeFactory.newXMLGregorianCalendar(calendar)));
-        work.setPublicationDate(new PublicationDate(Year.valueOf(2015), new Month(3), new Day(3)));
+        work.setPublicationDate(new PublicationDate(new Year(2015), new Month(3), new Day(3)));
         org.orcid.jaxb.model.record_rc2.WorkContributors contributors = new org.orcid.jaxb.model.record_rc2.WorkContributors();
         org.orcid.jaxb.model.common_rc2.Contributor contributor = new org.orcid.jaxb.model.common_rc2.Contributor();
         org.orcid.jaxb.model.common_rc2.ContributorAttributes attributes = new org.orcid.jaxb.model.common_rc2.ContributorAttributes();

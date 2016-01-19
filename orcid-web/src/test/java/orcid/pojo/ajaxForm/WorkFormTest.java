@@ -145,7 +145,7 @@ public class WorkFormTest extends XMLTestCase {
         work.setCreatedDate(new CreatedDate(DateUtils.convertToXMLGregorianCalendar(date)));
         work.setJournalTitle(new Title("Journal Title"));
         work.setLanguageCode("EN");
-        work.setPublicationDate(new PublicationDate(Year.valueOf(2015), new Month(1), new Day(1)));
+        work.setPublicationDate(new PublicationDate(new Year(2015), new Month(1), new Day(1)));
         work.setPutCode(Long.valueOf("12345"));
         work.setShortDescription("Short description");
         work.setUrl(new Url("http://test.com"));

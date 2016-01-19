@@ -487,7 +487,7 @@ public class WorkForm implements ErrorsInterface, Serializable {
             org.orcid.jaxb.model.common_rc2.Month month = null;
             org.orcid.jaxb.model.common_rc2.Day day = null;
             if(yearInteger != null) {
-                year = org.orcid.jaxb.model.common_rc2.Year.valueOf(yearInteger);
+                year = new org.orcid.jaxb.model.common_rc2.Year(yearInteger);
             }
             if(monthInteger != null) {
                 month = new org.orcid.jaxb.model.common_rc2.Month(monthInteger);
