@@ -95,7 +95,7 @@ public class VersionConverterImplV2_0_rc1ToV2_0rc2 implements V2VersionConverter
                         educationsRc2.setLastModifiedDate(
                                 new LastModifiedDate(DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis(LastModifiedDatesHelper.calculateLatest(educationsRc2))));
                     }
-                }).register();
+                }).byDefault().register();
 
         // EMPLOYMENT SUMMARY
         mapperFactory.classMap(Employments.class, org.orcid.jaxb.model.record.summary_rc2.Employments.class).field("summaries", "summaries")
@@ -105,7 +105,7 @@ public class VersionConverterImplV2_0_rc1ToV2_0rc2 implements V2VersionConverter
                         employmentsRc2.setLastModifiedDate(
                                 new LastModifiedDate(DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis(LastModifiedDatesHelper.calculateLatest(employmentsRc2))));
                     }
-                }).register();
+                }).byDefault().register();
 
         // FUNDINGS
         mapperFactory.classMap(Fundings.class, org.orcid.jaxb.model.record.summary_rc2.Fundings.class).field("fundingGroup{identifiers}", "fundingGroup{identifiers}")
@@ -116,7 +116,7 @@ public class VersionConverterImplV2_0_rc1ToV2_0rc2 implements V2VersionConverter
                         fundingsRc2.setLastModifiedDate(
                                 new LastModifiedDate(DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis(LastModifiedDatesHelper.calculateLatest(fundingsRc2))));
                     }
-                }).register();
+                }).byDefault().register();
 
         // PEER REVIEWS
         mapperFactory.classMap(PeerReviews.class, org.orcid.jaxb.model.record.summary_rc2.PeerReviews.class)
@@ -127,7 +127,7 @@ public class VersionConverterImplV2_0_rc1ToV2_0rc2 implements V2VersionConverter
                         peerReviewsRc2.setLastModifiedDate(
                                 new LastModifiedDate(DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis(LastModifiedDatesHelper.calculateLatest(peerReviewsRc2))));
                     }
-                }).register();
+                }).byDefault().register();
 
         // WORKS
         mapperFactory.classMap(Works.class, org.orcid.jaxb.model.record.summary_rc2.Works.class).field("workGroup{identifiers}", "workGroup{identifiers}")
@@ -137,7 +137,7 @@ public class VersionConverterImplV2_0_rc1ToV2_0rc2 implements V2VersionConverter
                         worksRc2.setLastModifiedDate(
                                 new LastModifiedDate(DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis(LastModifiedDatesHelper.calculateLatest(worksRc2))));
                     }
-                }).register();
+                }).byDefault().register();
         
         // WORK 
         mapperFactory.classMap(Work.class, org.orcid.jaxb.model.record_rc2.Work.class).byDefault().register();
