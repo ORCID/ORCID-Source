@@ -433,7 +433,7 @@
         <property name="cacheName" value="public-profile" />
         <property name="cacheManager" ref="coreCacheManager" />
         <property name="maxElementsInMemory" value="500" />
-        <property name="timeToLiveSeconds" value="0" />
+        <property name="timeToLiveSeconds" value="604800" />
         <property name="timeToIdleSeconds" value="86400" />
         <property name="maxElementsOnDisk" value="500000" />
         <property name="strategy" value="LOCALTEMPSWAP" />
