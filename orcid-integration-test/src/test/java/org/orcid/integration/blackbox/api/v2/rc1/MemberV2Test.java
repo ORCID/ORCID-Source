@@ -598,7 +598,7 @@ public class MemberV2Test extends BlackBoxBase {
         peerReview.getSubjectName().getTitle().setContent("PeerReview # 2");
         peerReview.getCompletionDate().setDay(new Day(2));
         peerReview.getCompletionDate().setMonth(new Month(2));
-        peerReview.getCompletionDate().setYear(new Year(2016));
+        peerReview.getCompletionDate().setYear(Year.valueOf(2016));
         peerReview.setUrl(new Url("http://peer_review/2"));
         WorkExternalIdentifier pExtId2 = new WorkExternalIdentifier();
         pExtId2.setWorkExternalIdentifierType(WorkExternalIdentifierType.DOI);
@@ -621,7 +621,7 @@ public class MemberV2Test extends BlackBoxBase {
         peerReview.getSubjectName().getTitle().setContent("PeerReview # 3");
         peerReview.getCompletionDate().setDay(new Day(3));
         peerReview.getCompletionDate().setMonth(new Month(3));
-        peerReview.getCompletionDate().setYear(new Year(2017));
+        peerReview.getCompletionDate().setYear(Year.valueOf(2017));
         peerReview.setUrl(new Url("http://peer_review/3"));
         WorkExternalIdentifier pExtId3 = new WorkExternalIdentifier();
         pExtId3.setWorkExternalIdentifierType(WorkExternalIdentifierType.EID);
@@ -638,7 +638,7 @@ public class MemberV2Test extends BlackBoxBase {
         peerReview.getSubjectName().getTitle().setContent("PeerReview # 4");
         peerReview.getCompletionDate().setDay(new Day(4));
         peerReview.getCompletionDate().setMonth(new Month(4));
-        peerReview.getCompletionDate().setYear(new Year(2018));
+        peerReview.getCompletionDate().setYear(Year.valueOf(2018));
         peerReview.setUrl(new Url("http://peer_review/4"));
         
         WorkExternalIdentifier pExtId4 = new WorkExternalIdentifier();

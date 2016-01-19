@@ -64,7 +64,7 @@ public class FuzzyDate implements Serializable {
     }
 
     public FuzzyDate(Integer year, Integer month, Integer day) {
-        this.year = year != null ? new Year(year) : null;
+        this.year = year != null ? Year.valueOf(year) : null;
         this.month = month != null ? new Month(month) : null;
         this.day = day != null ? new Day(day) : null;
     }

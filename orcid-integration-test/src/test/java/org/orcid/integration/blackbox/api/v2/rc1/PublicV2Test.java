@@ -909,7 +909,7 @@ public class PublicV2Test {
             peerReviewToCreate.getSubjectName().getTitle().setContent("PeerReview # " + i);
             peerReviewToCreate.getCompletionDate().setDay(new Day(i + 1));
             peerReviewToCreate.getCompletionDate().setMonth(new Month(i + 1));
-            peerReviewToCreate.getCompletionDate().setYear(new Year((i + 1) * 1000));
+            peerReviewToCreate.getCompletionDate().setYear(Year.valueOf((i + 1) * 1000));
             peerReviewToCreate.getExternalIdentifiers().getExternalIdentifier().get(0).getWorkExternalIdentifierId().setContent("extId-" + (i + 1));
             if (i == 0 || i == 3) {
                 peerReviewToCreate.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC);

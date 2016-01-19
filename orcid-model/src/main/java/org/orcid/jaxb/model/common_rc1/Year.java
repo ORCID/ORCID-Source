@@ -55,8 +55,10 @@ public class Year implements Serializable {
     public Year() {
     }
     
-    public Year(Integer value) {
-        this.value = Integer.toString(value);
+    public static Year valueOf(Integer value) {
+        Year year = new Year();
+        year.setValue(Integer.toString(value));
+        return year;
     }    
     
     /**
