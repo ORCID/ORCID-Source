@@ -2451,10 +2451,12 @@ orcidNgModule.controller('KeywordsCtrl', ['$scope', '$compile', function ($scope
         $scope.keywordsForm.keywords.push({content: ""});
     };
     
-    $scope.addNewModal = function() {
-        $scope.keywordsForm.keywords.push({"errors":[],"content":"","putCode":null,"visibility":{"visibility":"PUBLIC"}});
+    $scope.addNewModal = function() {        
+        var idx = $scope.getLastDisplayIndex();
+        var tmpObj = {"errors":[],"putCode":null,"content":"","visibility":{"errors":[],"required":true,"getRequiredMessage":null,"visibility":"PUBLIC"},"displayIndex":0,"source":null,"sourceName":null};
+        tmpObj['displayIndex'] = idx + 1;
+        $scope.keywordsForm.keywords.push(tmpObj);
         $scope.newInput = true;
-        console.log($scope.keywordsForm.keywords);
     };
 
     $scope.getKeywordsForm = function(){
@@ -2463,6 +2465,7 @@ orcidNgModule.controller('KeywordsCtrl', ['$scope', '$compile', function ($scope
             dataType: 'json',
             success: function(data) {
                 $scope.keywordsForm = data;
+                //console.log(angular.toJson(data));
                 $scope.$apply();
             }
         }).fail(function(){
@@ -2483,8 +2486,6 @@ orcidNgModule.controller('KeywordsCtrl', ['$scope', '$compile', function ($scope
     $scope.setKeywordsForm = function(v2){
         if (v2)
             $scope.keywordsForm.visibility = null;
-            
-        
         
         var keywords = $scope.keywordsForm.keywords;
         $.ajax({
@@ -2556,52 +2557,66 @@ orcidNgModule.controller('KeywordsCtrl', ['$scope', '$compile', function ($scope
         $.colorbox.close();
     }
     
-    $scope.setPriorityUp = function(displayIndex){        
-        if (displayIndex > 1) {
-            var keywords = $scope.keywordsForm.keywords;
-            var arrayNewIdx = null;  
-            var arrayOldIdx = null;
-            var len = keywords.length;
-            while (len--) {
-                //Find first array idx for the current displayIndex value
-                if (keywords[len].displayIndex == displayIndex){
-                    arrayNewIdx = len;                
-                }
-                //Find first array idx for the element above to it 
-                if (keywords[len].displayIndex == displayIndex - 1){
-                    arrayOldIdx = len;                
-                }                
-            }
-            
-            keywords[arrayNewIdx].displayIndex--;
-            keywords[arrayOldIdx].displayIndex++;
-            $scope.keywordsForm.keywords = keywords;
-        }
+    $scope.swap = function(idxA, valueA, idxB, valueB){        
+        $scope.keywordsForm.keywords[idxA].displayIndex = valueB;
+        $scope.keywordsForm.keywords[idxB].displayIndex = valueA;
     }
     
-    $scope.setPriorityDown = function(displayIndex){
+    $scope.setPriorityUp = function(displayIndex){        
         var keywords = $scope.keywordsForm.keywords;
-        var len = keywords.length;        
-        if (displayIndex < len) {            
-            var arrayNewIdx = null;  
-            var arrayOldIdx = null;
-            
-            while (len--) {
-                //Find first array idx for the current displayIndex value
-                if (keywords[len].displayIndex == displayIndex){
-                    arrayNewIdx = len;                
-                }
-                //Find first array idx for the element below to it 
-                if (keywords[len].displayIndex == displayIndex + 1){
-                    arrayOldIdx = len;                
-                }                
+        var len = keywords.length;
+        var current = 0;
+        var valueB = 0;
+        var idxB = 0;
+        while (len--) {
+            if (keywords[len].displayIndex == displayIndex){
+                var idxA = len;  
             }
-            
-            keywords[arrayNewIdx].displayIndex++;
-            keywords[arrayOldIdx].displayIndex--;
-            $scope.keywordsForm.keywords = keywords;
+            if (keywords[len].displayIndex < displayIndex){
+                current = keywords[len].displayIndex;
+                if (current > valueB){
+                    valueB = current;
+                    idxB = len;
+                }
+            }
         }
-       
+        $scope.swap(idxA, displayIndex, idxB, valueB);
+    }
+    
+    $scope.setPriorityDown = function(displayIndex){        
+        var keywords = $scope.keywordsForm.keywords;
+        var len = keywords.length;
+        var current = 0;
+        var valueB = $scope.getLastDisplayIndex();        
+        var idxB = 0;        
+        while (len--) {
+            if (keywords[len].displayIndex == displayIndex){
+                var idxA = len;  
+            }
+            if (keywords[len].displayIndex > displayIndex){
+                current = keywords[len].displayIndex;
+                if (current <= valueB){
+                    valueB = current;
+                    idxB = len;
+                }
+            }
+        }
+        $scope.swap(idxA, displayIndex, idxB, valueB);
+    }
+    
+    $scope.getLastDisplayIndex = function(){        
+        var last = 0;
+        var current = 0;
+        
+        var keywords = $scope.keywordsForm.keywords;
+        var len = keywords.length;
+        while (len--) {            
+            current = keywords[len].displayIndex;
+            if (current > last){
+                last = keywords[len].displayIndex;
+            }
+        }       
+        return last;
     }
     
 
