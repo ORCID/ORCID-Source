@@ -2693,9 +2693,8 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile',function ($scope
         tmpObj['displayIndex'] = idx + 1;
         $scope.otherNamesForm.otherNames.push(tmpObj);
         
-        $scope.newInput = true;        
+        $scope.newInput = true;
         
-        console.log($scope.otherNamesForm.otherNames);
     };
 
     $scope.getOtherNamesForm = function(){
@@ -2978,7 +2977,10 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
             url: getBaseUri() + '/account/countryForm.json',
             dataType: 'json',
             success: function(data) {
-                $scope.countryForm = data;                
+                $scope.countryForm = data;
+                
+                //console.log(angular.toJson(data));
+                
                 $scope.$apply();                
             }
         }).fail(function(){
@@ -3003,7 +3005,9 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
             contentType: 'application/json;charset=UTF-8',
             dataType: 'json',
             success: function(data) {
-                $scope.countryForm = data;  
+                $scope.countryForm = data;
+                
+                console.log(angular.toJson(data));
                 
                 if ($scope.countryForm.errors.length == 0){
                     $scope.close();
@@ -3038,8 +3042,6 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
         
         $event.preventDefault();
         var countries = $scope.countryForm.addresses;
-        
-        console.log(countries);
         
         var len = countries.length;
         
@@ -3088,20 +3090,29 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
         var countries = $scope.countryForm.addresses;
         var len = countries.length;
         while (len--) {
-            if (countries[len] == country)
+            if (countries[len] == country){
                 countries.splice(len,1);
                 $scope.countryForm.addresses = countries;
+            }       
         }
-        
     };
     
-    $scope.addNewModal = function() {        
-        if ($scope.countryForm.addresses.length == 0){
-            $scope.countryForm.addresses.push({"errors":[],"addresses":[{"iso2Country" : {"errors":[],"value":null}}], "visibility":{"visibility":"PUBLIC"}, "primary": true});
-        }else{
-            $scope.countryForm.addresses.push({"errors":[],"addresses":[{"iso2Country" : {"errors":[],"value":null}}], "visibility":{"visibility":"PUBLIC"}, "primary": false});
-        }        
+    $scope.addNewModal = function() {
+        var tmpObj = {"errors":[],"iso2Country":{"errors":[],"required":true,"getRequiredMessage":null,"value":null},"countryName":null,"putCode":null,"visibility":{"errors":[],"required":true,"getRequiredMessage":null,"visibility":"PUBLIC"},"displayIndex":0,"source":null,"sourceName":null,"primary":false};
+        var idx = $scope.getLastDisplayIndex() + 1;
         
+        console.log('Last Display Index: ' + idx);
+        
+        tmpObj['displayIndex'] = idx;
+        
+        console.log('Arrat length: ' + $scope.countryForm.addresses.length);
+        
+        if ($scope.countryForm.addresses.length == 0){
+            tmpObj['primary'] = true;
+            $scope.countryForm.addresses.push(tmpObj);
+        }else{
+            $scope.countryForm.addresses.push(tmpObj);
+        }
         $scope.newInput = true; 
     };
     
@@ -3120,53 +3131,66 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
         }
     };
     
+    $scope.swap = function(idxA, valueA, idxB, valueB){        
+        $scope.countryForm.addresses[idxA].displayIndex = valueB;
+        $scope.countryForm.addresses[idxB].displayIndex = valueA;
+    };    
+     
     $scope.setPriorityUp = function(displayIndex){        
-        if (displayIndex > 1) {
-            var countries = $scope.countryForm.addresses;
-            var arrayNewIdx = null;  
-            var arrayOldIdx = null;
-            var len = countries.length;
-            while (len--) {
-                //Find first array idx for the current displayIndex value
-                if (countries[len].displayIndex == displayIndex){
-                    arrayNewIdx = len;                
-                }
-                //Find first array idx for the element above to it 
-                if (countries[len].displayIndex == displayIndex - 1){
-                    arrayOldIdx = len;                
-                }                
-            }
-            
-            countries[arrayNewIdx].displayIndex--;
-            countries[arrayOldIdx].displayIndex++;
-            $scope.countryForm.addresses = countries;
-        }
-    }
-    
-    $scope.setPriorityDown = function(displayIndex){
-        var countries = $scope.countryForm.addresses;
-        var len = countries.length;        
-        if (displayIndex < len) {            
-            var arrayNewIdx = null;  
-            var arrayOldIdx = null;
-            
-            while (len--) {
-                //Find first array idx for the current displayIndex value
-                if (countries[len].displayIndex == displayIndex){
-                    arrayNewIdx = len;                
-                }
-                //Find first array idx for the element below to it 
-                if (countries[len].displayIndex == displayIndex + 1){
-                    arrayOldIdx = len;                
-                }                
-            }
-            
-            countries[arrayNewIdx].displayIndex++;
-            countries[arrayOldIdx].displayIndex--;
-            $scope.countryForm.addresses = countries;
-        }
-       
-    }
+         var countries = $scope.countryForm.addresses;
+         var len = countries.length;
+         var current = 0;
+         var valueB = 0;
+         var idxB = 0;
+         while (len--) {
+             if (countries[len].displayIndex == displayIndex){
+                 var idxA = len;  
+             }
+             if (countries[len].displayIndex < displayIndex){
+                 current = countries[len].displayIndex;
+                 if (current > valueB){
+                     valueB = current;
+                     idxB = len;
+                 }
+             }
+         }
+         $scope.swap(idxA, displayIndex, idxB, valueB);
+     };
+     
+     $scope.setPriorityDown = function(displayIndex){        
+         var countries = $scope.countryForm.addresses;
+         var len = countries.length;
+         var current = 0;
+         var valueB = $scope.getLastDisplayIndex();        
+         var idxB = 0;        
+         while (len--) {
+             if (countries[len].displayIndex == displayIndex){
+                 var idxA = len;  
+             }
+             if (countries[len].displayIndex > displayIndex){
+                 current = countries[len].displayIndex;
+                 if (current <= valueB){
+                     valueB = current;
+                     idxB = len;
+                 }
+             }
+         }
+         $scope.swap(idxA, displayIndex, idxB, valueB);
+     };
+     
+     $scope.getLastDisplayIndex = function(){        
+         var last = 0;
+         var current = 0;
+         var countries = $scope.countryForm.addresses;
+         var len = countries.length;
+         while (len--) {            
+             current = countries[len].displayIndex;
+             if (current > last){
+                 last = countries[len].displayIndex;
+             }
+         }       
+         return last;
+    };
 
     $scope.getCountryForm();
 
@@ -3276,7 +3300,6 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
     $scope.model = {
     	key: orcidVar.recaptchaKey
     };
-    
     
     var loadDate = new Date();
     $scope.loadTime = loadDate.getTime();

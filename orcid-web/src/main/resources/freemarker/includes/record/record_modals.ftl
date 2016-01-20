@@ -116,10 +116,10 @@
 											<input name="priority" type="radio" ng-model="primary" ng-value="country.primary" ng-click="setPrimary(country)">
 										</li>										
 										<li ng-init="">												
-											<span class="glyphicon glyphicon-arrow-up circle" ng-click="setPriorityUp(country.displayIndex)"></span>											
+											<span class="glyphicon glyphicon-arrow-up circle" ng-click="$first || setPriorityUp(country.displayIndex)"></span>											
 										</li>
 										<li>
-											<span class="glyphicon glyphicon-arrow-down circle" ng-click="setPriorityDown(country.displayIndex)"></span>
+											<span class="glyphicon glyphicon-arrow-down circle" ng-click="$last || setPriorityDown(country.displayIndex)"></span>
 										</li>
 										<li>
 											<span class="glyphicon glyphicon-trash" ng-click="deleteCountry(country)"></span>											
