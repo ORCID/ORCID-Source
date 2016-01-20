@@ -250,10 +250,10 @@
 								<div class="col-md-6">
 									<ul class="record-settings pull-right">
 										<li>												
-											<span class="glyphicon glyphicon-arrow-up circle" ng-click="setPriorityUp(website.displayIndex)"></span>											
+											<span class="glyphicon glyphicon-arrow-up circle" ng-click="$first || setPriorityUp(website.displayIndex)"></span>											
 										</li>
 										<li>																						
-											<span class="glyphicon glyphicon-arrow-down circle" ng-click="setPriorityDown(website.displayIndex)"></span>											
+											<span class="glyphicon glyphicon-arrow-down circle" ng-click="$last || setPriorityDown(website.displayIndex)"></span>											
 										</li>
 										<li>										
 											<span class="glyphicon glyphicon-trash" ng-click="deleteWebsite(website)"></span>											
