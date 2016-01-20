@@ -47,36 +47,35 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.orcid.api.common.WebDriverHelper;
 import org.orcid.integration.api.helper.APIRequestType;
 import org.orcid.integration.api.helper.OauthHelper;
-import org.orcid.integration.api.memberV2.MemberV2ApiClientImpl;
 import org.orcid.integration.api.pub.PublicV2ApiClientImpl;
 import org.orcid.integration.api.t2.T2OAuthAPIService;
-import org.orcid.jaxb.model.common_rc2.Day;
-import org.orcid.jaxb.model.common_rc2.Month;
-import org.orcid.jaxb.model.common_rc2.Year;
+import org.orcid.jaxb.model.common_rc1.Day;
+import org.orcid.jaxb.model.common_rc1.Month;
+import org.orcid.jaxb.model.common_rc1.Year;
 import org.orcid.jaxb.model.error.OrcidError;
-import org.orcid.jaxb.model.groupid.GroupIdRecord;
+import org.orcid.jaxb.model.groupid_rc1.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary;
-import org.orcid.jaxb.model.record.summary_rc2.EducationSummary;
-import org.orcid.jaxb.model.record.summary_rc2.EmploymentSummary;
-import org.orcid.jaxb.model.record.summary_rc2.FundingGroup;
-import org.orcid.jaxb.model.record.summary_rc2.FundingSummary;
-import org.orcid.jaxb.model.record.summary_rc2.PeerReviewGroup;
-import org.orcid.jaxb.model.record.summary_rc2.PeerReviewSummary;
-import org.orcid.jaxb.model.record.summary_rc2.WorkGroup;
-import org.orcid.jaxb.model.record.summary_rc2.WorkSummary;
-import org.orcid.jaxb.model.record_rc2.Activity;
-import org.orcid.jaxb.model.record_rc2.Education;
-import org.orcid.jaxb.model.record_rc2.Employment;
-import org.orcid.jaxb.model.record_rc2.Funding;
-import org.orcid.jaxb.model.record_rc2.FundingExternalIdentifier;
-import org.orcid.jaxb.model.record_rc2.FundingExternalIdentifierType;
-import org.orcid.jaxb.model.record_rc2.PeerReview;
-import org.orcid.jaxb.model.record_rc2.Relationship;
-import org.orcid.jaxb.model.record_rc2.Work;
-import org.orcid.jaxb.model.record_rc2.WorkExternalIdentifier;
-import org.orcid.jaxb.model.record_rc2.WorkExternalIdentifierId;
-import org.orcid.jaxb.model.record_rc2.WorkExternalIdentifierType;
+import org.orcid.jaxb.model.record.summary_rc1.ActivitiesSummary;
+import org.orcid.jaxb.model.record.summary_rc1.EducationSummary;
+import org.orcid.jaxb.model.record.summary_rc1.EmploymentSummary;
+import org.orcid.jaxb.model.record.summary_rc1.FundingGroup;
+import org.orcid.jaxb.model.record.summary_rc1.FundingSummary;
+import org.orcid.jaxb.model.record.summary_rc1.PeerReviewGroup;
+import org.orcid.jaxb.model.record.summary_rc1.PeerReviewSummary;
+import org.orcid.jaxb.model.record.summary_rc1.WorkGroup;
+import org.orcid.jaxb.model.record.summary_rc1.WorkSummary;
+import org.orcid.jaxb.model.record_rc1.Activity;
+import org.orcid.jaxb.model.record_rc1.Education;
+import org.orcid.jaxb.model.record_rc1.Employment;
+import org.orcid.jaxb.model.record_rc1.Funding;
+import org.orcid.jaxb.model.record_rc1.FundingExternalIdentifier;
+import org.orcid.jaxb.model.record_rc1.FundingExternalIdentifierType;
+import org.orcid.jaxb.model.record_rc1.PeerReview;
+import org.orcid.jaxb.model.record_rc1.Relationship;
+import org.orcid.jaxb.model.record_rc1.Work;
+import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifier;
+import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierId;
+import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
@@ -92,7 +91,7 @@ import com.sun.jersey.api.client.ClientResponse;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-publicV2-context.xml" })
 public class PublicV2Test {
-    @Value("${org.orcid.web.base.url:http://localhost:8080/orcid-web}")
+    @Value("${org.orcid.web.base.url:https://localhost:8443/orcid-web}")
     private String webBaseUrl;
     @Value("${org.orcid.web.testClient1.redirectUri}")
     private String redirectUri;
@@ -187,7 +186,7 @@ public class PublicV2Test {
     private void checkWorks(String readPublicToken) throws JSONException, InterruptedException, URISyntaxException {
         Work workToCreate = (Work) unmarshallFromPath("/record_2.0_rc1/samples/work-2.0_rc1.xml", Work.class);
         workToCreate.setPutCode(null);
-        workToCreate.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC);
+        workToCreate.setVisibility(org.orcid.jaxb.model.common_rc1.Visibility.PUBLIC);
         String accessToken = getAccessToken();
         ClientResponse postResponse = memberV2ApiClient.createWorkXml(user1OrcidId, workToCreate, accessToken);
         assertNotNull(postResponse);
@@ -234,7 +233,7 @@ public class PublicV2Test {
     private void checkFunding(String readPublicToken) throws JSONException, InterruptedException, URISyntaxException {
         Funding fundingToCreate = (Funding) unmarshallFromPath("/record_2.0_rc1/samples/funding-2.0_rc1.xml", Funding.class);
         fundingToCreate.setPutCode(null);
-        fundingToCreate.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC);
+        fundingToCreate.setVisibility(org.orcid.jaxb.model.common_rc1.Visibility.PUBLIC);
 
         String accessToken = getAccessToken();
         ClientResponse postResponse = memberV2ApiClient.createFundingXml(user1OrcidId, fundingToCreate, accessToken);
@@ -285,7 +284,7 @@ public class PublicV2Test {
     public void checkEmployment(String readPublicToken) throws JSONException, InterruptedException, URISyntaxException {
         Employment employmentToCreate = (Employment) unmarshallFromPath("/record_2.0_rc1/samples/employment-2.0_rc1.xml", Employment.class);
         employmentToCreate.setPutCode(null);
-        employmentToCreate.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC);
+        employmentToCreate.setVisibility(org.orcid.jaxb.model.common_rc1.Visibility.PUBLIC);
 
         String accessToken = getAccessToken();
         ClientResponse postResponse = memberV2ApiClient.createEmploymentXml(user1OrcidId, employmentToCreate, accessToken);
@@ -336,7 +335,7 @@ public class PublicV2Test {
     public void checkEducation(String readPublicToken) throws JSONException, InterruptedException, URISyntaxException {
         Education educationToCreate = (Education) unmarshallFromPath("/record_2.0_rc1/samples/education-2.0_rc1.xml", Education.class);
         educationToCreate.setPutCode(null);
-        educationToCreate.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC);
+        educationToCreate.setVisibility(org.orcid.jaxb.model.common_rc1.Visibility.PUBLIC);
 
         String accessToken = getAccessToken();
         ClientResponse postResponse = memberV2ApiClient.createEducationXml(user1OrcidId, educationToCreate, accessToken);
@@ -384,7 +383,7 @@ public class PublicV2Test {
         PeerReview peerReviewToCreate = (PeerReview) unmarshallFromPath("/record_2.0_rc1/samples/peer-review-2.0_rc1.xml", PeerReview.class);
         peerReviewToCreate.setPutCode(null);
         peerReviewToCreate.setGroupId(groupRecords.get(0).getGroupId());
-        peerReviewToCreate.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC);
+        peerReviewToCreate.setVisibility(org.orcid.jaxb.model.common_rc1.Visibility.PUBLIC);
 
         String accessToken = getAccessToken();
         ClientResponse postResponse = memberV2ApiClient.createPeerReviewXml(user1OrcidId, peerReviewToCreate, accessToken);
@@ -543,7 +542,7 @@ public class PublicV2Test {
     public void checkLimitedWork(String readPublicToken) throws JSONException, InterruptedException, URISyntaxException {
         Work workToCreate = (Work) unmarshallFromPath("/record_2.0_rc1/samples/work-2.0_rc1.xml", Work.class);
         workToCreate.setPutCode(null);
-        workToCreate.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.LIMITED);
+        workToCreate.setVisibility(org.orcid.jaxb.model.common_rc1.Visibility.LIMITED);
         String accessToken = getAccessToken();
         ClientResponse postResponse = memberV2ApiClient.createWorkXml(user1OrcidId, workToCreate, accessToken);
         assertNotNull(postResponse);
@@ -594,7 +593,7 @@ public class PublicV2Test {
     public void checkLimitedFunding(String readPublicToken) throws JSONException, InterruptedException, URISyntaxException {
         Funding fundingToCreate = (Funding) unmarshallFromPath("/record_2.0_rc1/samples/funding-2.0_rc1.xml", Funding.class);
         fundingToCreate.setPutCode(null);
-        fundingToCreate.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.LIMITED);
+        fundingToCreate.setVisibility(org.orcid.jaxb.model.common_rc1.Visibility.LIMITED);
 
         String accessToken = getAccessToken();
         ClientResponse postResponse = memberV2ApiClient.createFundingXml(user1OrcidId, fundingToCreate, accessToken);
@@ -645,7 +644,7 @@ public class PublicV2Test {
     public void checkLimitedEmployment(String readPublicToken) throws JSONException, InterruptedException, URISyntaxException {
         Employment employmentToCreate = (Employment) unmarshallFromPath("/record_2.0_rc1/samples/employment-2.0_rc1.xml", Employment.class);
         employmentToCreate.setPutCode(null);
-        employmentToCreate.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.LIMITED);
+        employmentToCreate.setVisibility(org.orcid.jaxb.model.common_rc1.Visibility.LIMITED);
 
         String accessToken = getAccessToken();
         ClientResponse postResponse = memberV2ApiClient.createEmploymentXml(user1OrcidId, employmentToCreate, accessToken);
@@ -684,7 +683,7 @@ public class PublicV2Test {
     public void checkLimitedEducation(String readPublicToken) throws JSONException, InterruptedException, URISyntaxException {
         Education educationToCreate = (Education) unmarshallFromPath("/record_2.0_rc1/samples/education-2.0_rc1.xml", Education.class);
         educationToCreate.setPutCode(null);
-        educationToCreate.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.LIMITED);
+        educationToCreate.setVisibility(org.orcid.jaxb.model.common_rc1.Visibility.LIMITED);
 
         String accessToken = getAccessToken();
         ClientResponse postResponse = memberV2ApiClient.createEducationXml(user1OrcidId, educationToCreate, accessToken);
@@ -733,7 +732,7 @@ public class PublicV2Test {
         PeerReview peerReviewToCreate = (PeerReview) unmarshallFromPath("/record_2.0_rc1/samples/peer-review-2.0_rc1.xml", PeerReview.class);
         peerReviewToCreate.setPutCode(null);
         peerReviewToCreate.setGroupId(groupRecords.get(0).getGroupId());
-        peerReviewToCreate.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.LIMITED);
+        peerReviewToCreate.setVisibility(org.orcid.jaxb.model.common_rc1.Visibility.LIMITED);
 
         String accessToken = getAccessToken();
         ClientResponse postResponse = memberV2ApiClient.createPeerReviewXml(user1OrcidId, peerReviewToCreate, accessToken);
@@ -836,11 +835,11 @@ public class PublicV2Test {
             wExtId.setRelationship(Relationship.SELF);
             workToCreate.getExternalIdentifiers().getExternalIdentifier().add(wExtId);
             if (i == 0 || i == 3)
-                workToCreate.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC);
+                workToCreate.setVisibility(org.orcid.jaxb.model.common_rc1.Visibility.PUBLIC);
             else if (i == 1)
-                workToCreate.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.LIMITED);
+                workToCreate.setVisibility(org.orcid.jaxb.model.common_rc1.Visibility.LIMITED);
             else
-                workToCreate.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PRIVATE);
+                workToCreate.setVisibility(org.orcid.jaxb.model.common_rc1.Visibility.PRIVATE);
 
             ClientResponse postResponse = memberV2ApiClient.createWorkXml(user1OrcidId, workToCreate, accessToken);
             assertNotNull(postResponse);
@@ -858,11 +857,11 @@ public class PublicV2Test {
             fExtId.setRelationship(Relationship.SELF);
             fundingToCreate.getExternalIdentifiers().getExternalIdentifier().add(fExtId);
             if (i == 0 || i == 3)
-                fundingToCreate.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC);
+                fundingToCreate.setVisibility(org.orcid.jaxb.model.common_rc1.Visibility.PUBLIC);
             else if (i == 1)
-                fundingToCreate.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.LIMITED);
+                fundingToCreate.setVisibility(org.orcid.jaxb.model.common_rc1.Visibility.LIMITED);
             else
-                fundingToCreate.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PRIVATE);
+                fundingToCreate.setVisibility(org.orcid.jaxb.model.common_rc1.Visibility.PRIVATE);
 
             ClientResponse postResponse = memberV2ApiClient.createFundingXml(user1OrcidId, fundingToCreate, accessToken);
             assertNotNull(postResponse);
@@ -874,11 +873,11 @@ public class PublicV2Test {
             employmentToCreate.setPutCode(null);
             employmentToCreate.setRoleTitle("Employment # " + i);
             if (i == 0 || i == 3)
-                employmentToCreate.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC);
+                employmentToCreate.setVisibility(org.orcid.jaxb.model.common_rc1.Visibility.PUBLIC);
             else if (i == 1)
-                employmentToCreate.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.LIMITED);
+                employmentToCreate.setVisibility(org.orcid.jaxb.model.common_rc1.Visibility.LIMITED);
             else
-                employmentToCreate.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PRIVATE);
+                employmentToCreate.setVisibility(org.orcid.jaxb.model.common_rc1.Visibility.PRIVATE);
 
             ClientResponse postResponse = memberV2ApiClient.createEmploymentXml(user1OrcidId, employmentToCreate, accessToken);
             assertNotNull(postResponse);
@@ -890,11 +889,11 @@ public class PublicV2Test {
             educationToCreate.setPutCode(null);
             educationToCreate.setRoleTitle("Education # " + i);
             if (i == 0 || i == 3)
-                educationToCreate.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC);
+                educationToCreate.setVisibility(org.orcid.jaxb.model.common_rc1.Visibility.PUBLIC);
             else if (i == 1)
-                educationToCreate.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.LIMITED);
+                educationToCreate.setVisibility(org.orcid.jaxb.model.common_rc1.Visibility.LIMITED);
             else
-                educationToCreate.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PRIVATE);
+                educationToCreate.setVisibility(org.orcid.jaxb.model.common_rc1.Visibility.PRIVATE);
 
             ClientResponse postResponse = memberV2ApiClient.createEducationXml(user1OrcidId, educationToCreate, accessToken);
             assertNotNull(postResponse);
@@ -912,11 +911,11 @@ public class PublicV2Test {
             peerReviewToCreate.getCompletionDate().setYear(new Year((i + 1) * 1000));
             peerReviewToCreate.getExternalIdentifiers().getExternalIdentifier().get(0).getWorkExternalIdentifierId().setContent("extId-" + (i + 1));
             if (i == 0 || i == 3) {
-                peerReviewToCreate.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC);
+                peerReviewToCreate.setVisibility(org.orcid.jaxb.model.common_rc1.Visibility.PUBLIC);
             } else if (i == 1) {
-                peerReviewToCreate.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.LIMITED);
+                peerReviewToCreate.setVisibility(org.orcid.jaxb.model.common_rc1.Visibility.LIMITED);
             } else {
-                peerReviewToCreate.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PRIVATE);
+                peerReviewToCreate.setVisibility(org.orcid.jaxb.model.common_rc1.Visibility.PRIVATE);
             }              
 
             ClientResponse postResponse = memberV2ApiClient.createPeerReviewXml(user1OrcidId, peerReviewToCreate, accessToken);

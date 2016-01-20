@@ -48,11 +48,14 @@ import org.orcid.jaxb.model.common_rc2.LastModifiedDate;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "work" })
+@XmlType(propOrder = { "lastModifiedDate", "work" })
 @XmlRootElement(name = "works")
 public class Works implements Serializable, ActivitiesContainer {
 
     private static final long serialVersionUID = 1L;
+    
+    @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "last-modified-date")
+    protected LastModifiedDate lastModifiedDate;
     @XmlElement(name = "work")
     protected List<Work> works;
 

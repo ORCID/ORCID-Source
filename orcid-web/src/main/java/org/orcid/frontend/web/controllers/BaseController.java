@@ -688,6 +688,8 @@ public class BaseController {
         }
     }
 
+    
+    
     protected void validateUrl(Text url) {
         validateUrl(url, SiteConstants.URL_MAX_LENGTH);
     }
@@ -703,15 +705,19 @@ public class BaseController {
             validateNoLongerThan(maxLength, url);
 
             // add protocall if missing
-            if (!urlValidator.isValid(url.getValue())) {
+            if (!validateUrl(url.getValue())) {
                 String tempUrl = "http://" + url.getValue();
                 // test validity again
-                if (urlValidator.isValid(tempUrl))
+                if (validateUrl(tempUrl))
                     url.setValue("http://" + url.getValue());
                 else
                     setError(url, "common.invalid_url");
             }
         }
+    }
+    
+    protected boolean validateUrl(String url) {
+        return urlValidator.isValid(url);
     }
 
     protected void validateNoLongerThan(int maxLength, Text text) {
@@ -722,6 +728,12 @@ public class BaseController {
         if (text.getValue().length() > maxLength) {
             setError(text, "manualWork.length_less_X", maxLength);
         }
+    }
+    
+    protected boolean isLongerThan(String value, int maxLength) {
+        if(value == null)
+            return false;
+        return (value.length() > maxLength);
     }
 
     void givenNameValidate(Text givenName) {

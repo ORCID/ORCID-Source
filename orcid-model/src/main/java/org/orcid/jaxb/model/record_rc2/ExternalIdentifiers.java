@@ -26,11 +26,16 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.orcid.jaxb.model.common_rc2.LastModifiedDate;
+
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "externalIdentifiers" })
+@XmlType(propOrder = { "lastModifiedDate", "externalIdentifiers" })
 @XmlRootElement(name = "external-identifiers", namespace = "http://www.orcid.org/ns/external-identifier")
 public class ExternalIdentifiers implements Serializable {
     private static final long serialVersionUID = -9182106466010694574L;
+    
+    @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "last-modified-date")
+    protected LastModifiedDate lastModifiedDate;
     @XmlElement(name = "external-identifier", namespace = "http://www.orcid.org/ns/external-identifier")
     List<ExternalIdentifier> externalIdentifiers;
     @XmlAttribute

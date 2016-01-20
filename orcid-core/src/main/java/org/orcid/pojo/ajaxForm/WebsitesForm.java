@@ -20,8 +20,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.orcid.jaxb.model.message.ResearcherUrl;
-import org.orcid.jaxb.model.message.ResearcherUrls;
+import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
+import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
 
 public class WebsitesForm implements ErrorsInterface, Serializable {
 
@@ -29,40 +29,35 @@ public class WebsitesForm implements ErrorsInterface, Serializable {
 
     private List<String> errors = new ArrayList<String>();
 
-    private List<Website> websites = new ArrayList<Website>();
+    private List<WebsiteForm> websites = new ArrayList<WebsiteForm>();
     
     private Visibility visibility;
 
     public static WebsitesForm valueOf(ResearcherUrls researcherUrls) {
         WebsitesForm w = new WebsitesForm();
-        if (researcherUrls.getResearcherUrl() != null)
-            for (ResearcherUrl ru : researcherUrls.getResearcherUrl()) {
-                w.websites.add(Website.valueOf(ru));
-            }
-        if (researcherUrls == null || researcherUrls.getVisibility() == null)
-            w.setVisibility(new Visibility());
-        else
-            w.setVisibility(Visibility.valueOf(researcherUrls.getVisibility()));
+        if (researcherUrls.getResearcherUrls() != null) {
+            for (ResearcherUrl ru : researcherUrls.getResearcherUrls()) {
+                w.websites.add(WebsiteForm.valueOf(ru));
+            }        
+        }
         return w;
     }
 
     public ResearcherUrls toResearcherUrls() {
         ResearcherUrls researcherUrls = new ResearcherUrls();
         List<ResearcherUrl> ruList = new ArrayList<ResearcherUrl>();
-        for (Website website : websites) {
+        for (WebsiteForm website : websites) {
             ruList.add(website.toResearcherUrl());
         }
-        researcherUrls.setResearcherUrl(ruList);
-        if (visibility!= null)
-            researcherUrls.setVisibility(visibility.getVisibility());
+        researcherUrls.setResearcherUrls(ruList);
         return researcherUrls;
     }
 
-    public List<Website> getWebsites() {
+    public List<WebsiteForm> getWebsites() {
         return websites;
     }
 
-    public void setWebsites(List<Website> websites) {
+    public void setWebsites(List<WebsiteForm> websites) {
         this.websites = websites;
     }
 

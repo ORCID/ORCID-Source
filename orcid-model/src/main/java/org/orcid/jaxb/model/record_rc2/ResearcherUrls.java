@@ -17,6 +17,8 @@
 package org.orcid.jaxb.model.record_rc2;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -26,17 +28,21 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.orcid.jaxb.model.common_rc2.LastModifiedDate;
+
 /**
  * 
  * @author Angel Montenegro
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "researcherUrls" })
+@XmlType(propOrder = { "lastModifiedDate", "researcherUrls" })
 @XmlRootElement(name = "researcher-urls", namespace = "http://www.orcid.org/ns/researcher-url")
 public class ResearcherUrls implements Serializable {
     private static final long serialVersionUID = 6312730308815255894L;
 
+    @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "last-modified-date")
+    protected LastModifiedDate lastModifiedDate;
     @XmlElement(name = "researcher-url", namespace = "http://www.orcid.org/ns/researcher-url")
     List<ResearcherUrl> researcherUrls;
     @XmlAttribute
@@ -87,5 +93,31 @@ public class ResearcherUrls implements Serializable {
         } else if (!researcherUrls.equals(other.researcherUrls))
             return false;
         return true;
+    }
+    
+    public void updateIndexingStatusOnChilds() {
+        if (this.getResearcherUrls() != null && !this.getResearcherUrls().isEmpty()) {
+            List<ResearcherUrl> sorted = new ArrayList<ResearcherUrl>();
+            List<ResearcherUrl> unsorted = new ArrayList<ResearcherUrl>();
+            Long maxDisplayIndex = 0L;
+            for(ResearcherUrl o : this.getResearcherUrls()) {
+                if(o.getDisplayIndex() == null || Long.valueOf(-1).equals(o.getDisplayIndex())) {
+                    unsorted.add(o);
+                } else {
+                    if(o.getDisplayIndex() > maxDisplayIndex) {
+                        maxDisplayIndex = o.getDisplayIndex();
+                    }
+                    sorted.add(o);
+                }                
+            }      
+            
+            if(!unsorted.isEmpty()) {
+                Collections.sort(unsorted);
+                for(ResearcherUrl o : unsorted) {
+                    o.setDisplayIndex((maxDisplayIndex++) + 1);
+                    sorted.add(o);
+                }
+            }
+        }
     }
 }

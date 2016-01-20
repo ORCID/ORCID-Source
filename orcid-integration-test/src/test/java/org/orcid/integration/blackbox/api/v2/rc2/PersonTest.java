@@ -32,11 +32,11 @@ import org.codehaus.jettison.json.JSONException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.integration.api.helper.OauthHelper;
-import org.orcid.integration.api.memberV2.MemberV2ApiClientImpl;
 import org.orcid.integration.api.pub.PublicV2ApiClientImpl;
-import org.orcid.integration.blackbox.BlackBoxBase;
 import org.orcid.jaxb.model.common_rc2.Iso3166Country;
 import org.orcid.jaxb.model.common_rc2.Visibility;
+import org.orcid.integration.blackbox.api.v2.rc2.BlackBoxBase;
+import org.orcid.integration.blackbox.api.v2.rc2.MemberV2ApiClientImpl;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record_rc2.Biography;
 import org.orcid.jaxb.model.record_rc2.ExternalIdentifier;
@@ -57,7 +57,7 @@ import com.sun.jersey.api.client.ClientResponse;
 public class PersonTest extends BlackBoxBase {
     protected static Map<String, String> accessTokens = new HashMap<String, String>();
 
-    @Value("${org.orcid.web.base.url:http://localhost:8080/orcid-web}")
+    @Value("${org.orcid.web.base.url:https://localhost:8443/orcid-web}")
     private String webBaseUrl;
     @Value("${org.orcid.web.testClient1.redirectUri}")
     private String client1RedirectUri;

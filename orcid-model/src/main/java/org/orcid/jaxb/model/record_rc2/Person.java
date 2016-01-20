@@ -25,16 +25,19 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.orcid.jaxb.model.common_rc2.LastModifiedDate;
+
 /**
  * 
  * @author Angel Montenegro
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "name", "otherNames", "biography", "researcherUrls", "emails", "addresses", "keywords", "externalIdentifiers", "delegation", "applications" })
+@XmlType(propOrder = { "lastModifiedDate", "name", "otherNames", "biography", "researcherUrls", "emails", "addresses", "keywords", "externalIdentifiers", "delegation", "applications" })
 @XmlRootElement(name = "person", namespace = "http://www.orcid.org/ns/person")
 public class Person implements Serializable {
     private static final long serialVersionUID = 2200160976598223346L;
+    
     @XmlElement(name = "name", namespace = "http://www.orcid.org/ns/person")
     Name name;
     @XmlElement(name = "other-names", namespace = "http://www.orcid.org/ns/other-name")
@@ -55,6 +58,8 @@ public class Person implements Serializable {
     Delegation delegation;
     @XmlElement(name = "applications", namespace = "http://www.orcid.org/ns/person")
     Applications applications;
+    @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "last-modified-date")
+    protected LastModifiedDate lastModifiedDate;
 
     @XmlAttribute
     protected String path;

@@ -17,6 +17,8 @@
 package org.orcid.jaxb.model.record_rc2;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -26,16 +28,20 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.orcid.jaxb.model.common_rc2.LastModifiedDate;
+
 /**
  * 
  * @author Angel Montenegro
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "address" })
+@XmlType(propOrder = { "lastModifiedDate", "address" })
 @XmlRootElement(name = "addresses", namespace = "http://www.orcid.org/ns/address")
 public class Addresses implements Serializable {
     private static final long serialVersionUID = -128015751933210030L;
+    @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "last-modified-date")
+    protected LastModifiedDate lastModifiedDate;
     @XmlElement(name = "address", namespace = "http://www.orcid.org/ns/address")
     List<Address> address;
     @XmlAttribute
@@ -86,5 +92,31 @@ public class Addresses implements Serializable {
         } else if (!path.equals(other.path))
             return false;
         return true;
+    }
+    
+    public void updateIndexingStatusOnChilds() {
+        if (this.getAddress() != null && !this.getAddress().isEmpty()) {
+            List<Address> sorted = new ArrayList<Address>();
+            List<Address> unsorted = new ArrayList<Address>();
+            Long maxDisplayIndex = 0L;
+            for(Address a : this.getAddress()) {
+                if(a.getDisplayIndex() == null || Long.valueOf(-1).equals(a.getDisplayIndex())) {
+                    unsorted.add(a);
+                } else {
+                    if(a.getDisplayIndex() > maxDisplayIndex) {
+                        maxDisplayIndex = a.getDisplayIndex();
+                    }
+                    sorted.add(a);
+                }                
+            }      
+            
+            if(!unsorted.isEmpty()) {
+                Collections.sort(unsorted);
+                for(Address a : unsorted) {
+                    a.setDisplayIndex((maxDisplayIndex++) + 1);
+                    sorted.add(a);
+                }
+            }
+        }
     }
 }

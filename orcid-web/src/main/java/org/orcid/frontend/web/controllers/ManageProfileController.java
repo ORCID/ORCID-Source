@@ -54,8 +54,7 @@ import org.orcid.frontend.web.forms.ChangePersonalInfoForm;
 import org.orcid.frontend.web.forms.ChangeSecurityQuestionForm;
 import org.orcid.frontend.web.forms.ManagePasswordOptionsForm;
 import org.orcid.frontend.web.forms.PreferencesForm;
-import org.orcid.jaxb.model.common_rc2.Country;
-import org.orcid.jaxb.model.common_rc2.Iso3166Country;
+import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.message.ApprovalDate;
 import org.orcid.jaxb.model.message.CreditName;
 import org.orcid.jaxb.model.message.DelegateSummary;
@@ -63,21 +62,16 @@ import org.orcid.jaxb.model.message.Delegation;
 import org.orcid.jaxb.model.message.DelegationDetails;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.EncryptedSecurityAnswer;
-import org.orcid.jaxb.model.message.Keywords;
 import org.orcid.jaxb.model.message.OrcidIdentifier;
 import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.jaxb.model.message.OtherNames;
 import org.orcid.jaxb.model.message.Preferences;
-import org.orcid.jaxb.model.message.ResearcherUrl;
 import org.orcid.jaxb.model.message.ResearcherUrls;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.message.SecurityDetails;
 import org.orcid.jaxb.model.message.SecurityQuestionId;
-import org.orcid.jaxb.model.message.Url;
-import org.orcid.jaxb.model.message.UrlName;
-import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.record_rc2.Address;
+import org.orcid.jaxb.model.record_rc2.Addresses;
 import org.orcid.jaxb.model.record_rc2.PersonalDetails;
 import org.orcid.password.constants.OrcidPasswordConstants;
 import org.orcid.persistence.dao.EmailDao;
@@ -89,7 +83,6 @@ import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileSummaryEntity;
-import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 import org.orcid.persistence.jpa.entities.UserconnectionEntity;
 import org.orcid.pojo.ApplicationSummary;
 import org.orcid.pojo.ChangePassword;
@@ -97,7 +90,8 @@ import org.orcid.pojo.ManageDelegate;
 import org.orcid.pojo.ManageSocialAccount;
 import org.orcid.pojo.SecurityQuestion;
 import org.orcid.pojo.ajaxForm.BiographyForm;
-import org.orcid.pojo.ajaxForm.CountryForm;
+import org.orcid.pojo.ajaxForm.AddressForm;
+import org.orcid.pojo.ajaxForm.AddressesForm;
 import org.orcid.pojo.ajaxForm.Emails;
 import org.orcid.pojo.ajaxForm.Errors;
 import org.orcid.pojo.ajaxForm.NamesForm;
@@ -825,55 +819,74 @@ public class ManageProfileController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = "/countryForm.json", method = RequestMethod.GET)
-    public @ResponseBody CountryForm getProfileCountryJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
-        OrcidProfile currentProfile = getEffectiveProfile();
-        CountryForm countryForm = CountryForm.valueOf(currentProfile);
+    public @ResponseBody AddressesForm getProfileCountryJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
+        Addresses addresses = addressManager.getAddresses(getCurrentUserOrcid());
+        AddressesForm form = AddressesForm.valueOf(addresses);
         // Set country name
-        if (countryForm != null && countryForm.getIso2Country() != null) {
+        if(form != null && form.getAddresses() != null) {
             Map<String, String> countries = retrieveIsoCountries();
-            if (countries != null)
-                countryForm.setCountryName(countries.get(countryForm.getIso2Country().getValue().name()));
+            for(AddressForm addressForm : form.getAddresses()) {
+                addressForm.setCountryName(countries.get(addressForm.getIso2Country().getValue().name()));
+            }
+        }        
+        
+        ProfileEntity entity = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
+        
+        if(entity.getProfileAddressVisibility() != null) {
+            form.setVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(entity.getProfileAddressVisibility()));
+        } else {
+            form.setVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(OrcidVisibilityDefaults.COUNTRY_DEFAULT.getVisibility()));
         }
 
-        return countryForm;
+        return form;
     }
-
+    
     @RequestMapping(value = "/countryForm.json", method = RequestMethod.POST)
-    public @ResponseBody CountryForm setProfileCountryJson(HttpServletRequest request, @RequestBody CountryForm countryForm) throws NoSuchRequestHandlingMethodException {
-        OrcidProfile currentProfile = getEffectiveProfile();
-        countryForm.populateProfile(currentProfile);
-        // only update entity attributes
-        orcidProfileManager.updateCountry(currentProfile);
-        
-        // Update also the address table
-        Address address = addressManager.getPrimaryAddress(getCurrentUserOrcid());
-        if(address == null) {            
-            address = new Address();
-            //Assume the direction is primary if it is added or updated from UI
-            address.setPrimary(true);
-            Country country = new Country();
-            country.setValue(Iso3166Country.fromValue(countryForm.getIso2Country().getValue().value()));
-            Visibility v = countryForm.getProfileAddressVisibility() == null ? null : countryForm.getProfileAddressVisibility().getVisibility(); 
-            if(v == null) {
-                v = OrcidVisibilityDefaults.COUNTRY_DEFAULT.getVisibility();
+    public @ResponseBody AddressesForm setProfileCountryJson(HttpServletRequest request, @RequestBody AddressesForm addressesForm) throws NoSuchRequestHandlingMethodException {
+        addressesForm.setErrors(new ArrayList<String>());
+        Map<String, String> countries = retrieveIsoCountries();
+        boolean foundPrimary = false;
+        if(addressesForm != null) {
+            if(addressesForm.getAddresses() != null) {
+                for(AddressForm form : addressesForm.getAddresses()) {
+                    if(form.getPrimary()) {
+                        foundPrimary = true;
+                    }
+                    if(form.getIso2Country() == null || form.getIso2Country().getValue() == null) {
+                        form.getErrors().add(getMessage("common.invalid_country"));
+                    } else {
+                        form.setCountryName(countries.get(form.getIso2Country().getValue().name()));
+                    }
+                                                                                
+                    copyErrors(form, addressesForm);
+                } 
+                if(!addressesForm.getAddresses().isEmpty() && !foundPrimary) {
+                    addressesForm.getErrors().add(getMessage("common.set_primary_email"));
+                }
             }
-            address.setCountry(country);
-            address.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(v.value()));
-            addressManager.createAddress(getCurrentUserOrcid(), address);
-        } else {
-            address.getCountry().setValue(Iso3166Country.fromValue(countryForm.getIso2Country().getValue().value()));
-            Visibility v = countryForm.getProfileAddressVisibility() == null ? null : countryForm.getProfileAddressVisibility().getVisibility(); 
-            if(v == null) {
-                v = OrcidVisibilityDefaults.COUNTRY_DEFAULT.getVisibility();
-            }
-            address.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(v.value()));
-            addressManager.updateAddress(getCurrentUserOrcid(), address.getPutCode(), address, false);
-        }                        
-        
-        countryForm.setCountryName(getCountryName(currentProfile));
-        return countryForm;
-    }
 
+            if(!addressesForm.getErrors().isEmpty()) {
+                return addressesForm;
+            }
+            
+            Addresses addresses = addressesForm.toAddresses();
+            org.orcid.pojo.ajaxForm.Visibility defaultVisibility = addressesForm.getVisibility();
+            
+            if(defaultVisibility != null && defaultVisibility.getVisibility() != null) {
+                //If the default visibility is null, then, the user changed the default visibility, so, change the visibility for all items
+                for(Address address : addresses.getAddress()) {
+                    address.setVisibility(Visibility.fromValue(defaultVisibility.getVisibility().value()));
+                }
+            } else {
+                ProfileEntity profileEntity = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
+                defaultVisibility = profileEntity.getResearcherUrlsVisibility() == null ? org.orcid.pojo.ajaxForm.Visibility.valueOf(OrcidVisibilityDefaults.COUNTRY_DEFAULT.getVisibility()) : org.orcid.pojo.ajaxForm.Visibility.valueOf(profileEntity.getProfileAddressVisibility());
+            }
+                    
+            addressManager.updateAddresses(getCurrentUserOrcid(), addresses, Visibility.fromValue(defaultVisibility.getVisibility().value()));            
+        }
+        return addressesForm;
+    }
+    
     @RequestMapping(value = "/nameForm.json", method = RequestMethod.GET)
     public @ResponseBody NamesForm getNameForm(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
         PersonalDetails personalDetails = personalDetailsManager.getPersonalDetails(getCurrentUserOrcid());
@@ -956,55 +969,9 @@ public class ManageProfileController extends BaseWorkspaceController {
         // Update profile on database
         profileEntityManager.updateProfile(profile);
 
-        String orcid = profile.getOrcidIdentifier().getPath();
-
-        // Update other names on database
-        OtherNames otherNames = profile.getOrcidBio().getPersonalDetails().getOtherNames();
-        otherNameManager.updateOtherNames(orcid, otherNames);
-
-        // Update keywords on database
-        Keywords keywords = profile.getOrcidBio().getKeywords();
-        profileKeywordManager.updateProfileKeyword(orcid, keywords);
-
-        // Update researcher urls on database
-        ResearcherUrls researcherUrls = profile.getOrcidBio().getResearcherUrls();
-        boolean hasErrors = researcherUrlManager.updateResearcherUrls(orcid, researcherUrls);
-        // TODO: The researcherUrlManager will not store any duplicated
-        // researcher url on database,
-        // however there is no way to tell the controller that some of the
-        // researcher urls were not
-        // saved, so, if an error occurs, we need to reload researcher ids from
-        // database and update
-        // cached profile. A more efficient way to fix this might be used.
-        if (hasErrors) {
-            ResearcherUrls upToDateResearcherUrls = getUpToDateResearcherUrls(orcid, researcherUrls.getVisibility());
-            profile.getOrcidBio().setResearcherUrls(upToDateResearcherUrls);
-        }
-
         redirectAttributes.addFlashAttribute("changesSaved", true);
         return manageBioView;
-    }
-
-    /**
-     * Generate an up to date ResearcherUrls object.
-     * 
-     * @param orcid
-     * @param visibility
-     * */
-    private ResearcherUrls getUpToDateResearcherUrls(String orcid, Visibility visibility) {
-        ResearcherUrls upTodateResearcherUrls = new ResearcherUrls();
-        upTodateResearcherUrls.setVisibility(visibility);
-        List<ResearcherUrlEntity> upToDateResearcherUrls = researcherUrlManager.getResearcherUrls(orcid);
-
-        for (ResearcherUrlEntity researcherUrlEntity : upToDateResearcherUrls) {
-            ResearcherUrl newResearcherUrl = new ResearcherUrl();
-            newResearcherUrl.setUrl(new Url(researcherUrlEntity.getUrl()));
-            newResearcherUrl.setUrlName(new UrlName(researcherUrlEntity.getUrlName()));
-            upTodateResearcherUrls.getResearcherUrl().add(newResearcherUrl);
-        }
-
-        return upTodateResearcherUrls;
-    }
+    }    
 
     /**
      * Check if the user have twitter enabled

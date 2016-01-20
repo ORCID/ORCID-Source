@@ -44,7 +44,7 @@ import org.orcid.core.api.OrcidApiConstants;
 import org.orcid.core.exception.OrcidBadRequestException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.web.filters.ApiVersionFilter;
-import org.orcid.jaxb.model.groupid.GroupIdRecord;
+import org.orcid.jaxb.model.groupid_rc1.GroupIdRecord;
 import org.orcid.jaxb.model.message.ErrorDesc;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.notification.permission.NotificationPermission;
@@ -79,7 +79,7 @@ public class OrcidValidationJaxbContextResolver implements ContextResolver<Unmar
     
     private static final Map<Class<?>, String> SCHEMA_FILENAME_PREFIX_BY_CLASS_RC2 = new HashMap<>();
     static {
-        SCHEMA_FILENAME_PREFIX_BY_CLASS_RC2.put(GroupIdRecord.class, "group-id-2.0_rc2/group-id-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_RC2.put(org.orcid.jaxb.model.groupid_rc2.GroupIdRecord.class, "group-id-2.0_rc2/group-id-");
         SCHEMA_FILENAME_PREFIX_BY_CLASS_RC2.put(NotificationPermission.class, "notification_2.0_rc1/notification-permission-");
         SCHEMA_FILENAME_PREFIX_BY_CLASS_RC2.put(OrcidMessage.class, "orcid-message-");
         SCHEMA_FILENAME_PREFIX_BY_CLASS_RC2.put(org.orcid.jaxb.model.record_rc2.Address.class, "record_2.0_rc2/address-");

@@ -68,7 +68,7 @@ public class MemberV2ApiServiceVersionedDelegatorImpl
     @Override
     public Response updateWork(String orcid, Long putCode, Object work) {
         work = upgradeObject(work);
-        return memberV2ApiServiceDelegator.updateWork(orcid, putCode, work);
+        return downgradeResponse(memberV2ApiServiceDelegator.updateWork(orcid, putCode, work));
     }
 
     @Override
@@ -95,7 +95,7 @@ public class MemberV2ApiServiceVersionedDelegatorImpl
     @Override
     public Response updateFunding(String orcid, Long putCode, Object funding) {
         funding = upgradeObject(funding);
-        return memberV2ApiServiceDelegator.updateFunding(orcid, putCode, funding);
+        return downgradeResponse(memberV2ApiServiceDelegator.updateFunding(orcid, putCode, funding));
     }
 
     @Override
@@ -122,7 +122,7 @@ public class MemberV2ApiServiceVersionedDelegatorImpl
     @Override
     public Response updateEducation(String orcid, Long putCode, Object education) {
         education = upgradeObject(education);
-        return memberV2ApiServiceDelegator.updateEducation(orcid, putCode, education);
+        return downgradeResponse(memberV2ApiServiceDelegator.updateEducation(orcid, putCode, education));
     }
 
     @Override
@@ -144,7 +144,7 @@ public class MemberV2ApiServiceVersionedDelegatorImpl
     @Override
     public Response updateEmployment(String orcid, Long putCode, Object employment) {
         employment = upgradeObject(employment);
-        return memberV2ApiServiceDelegator.updateEmployment(orcid, putCode, employment);
+        return downgradeResponse(memberV2ApiServiceDelegator.updateEmployment(orcid, putCode, employment));
     }
 
     @Override
@@ -171,7 +171,7 @@ public class MemberV2ApiServiceVersionedDelegatorImpl
     @Override
     public Response updatePeerReview(String orcid, Long putCode, Object peerReview) {
         peerReview = upgradeObject(peerReview);
-        return memberV2ApiServiceDelegator.updatePeerReview(orcid, putCode, peerReview);
+        return downgradeResponse(memberV2ApiServiceDelegator.updatePeerReview(orcid, putCode, peerReview));
     }
 
     @Override
@@ -181,17 +181,19 @@ public class MemberV2ApiServiceVersionedDelegatorImpl
 
     @Override
     public Response viewGroupIdRecord(Long putCode) {
-        return memberV2ApiServiceDelegator.viewGroupIdRecord(putCode);
+        return downgradeResponse(memberV2ApiServiceDelegator.viewGroupIdRecord(putCode));
     }
 
     @Override
     public Response createGroupIdRecord(Object groupIdRecord) {
+        groupIdRecord = upgradeObject(groupIdRecord);
         return memberV2ApiServiceDelegator.createGroupIdRecord(groupIdRecord);
     }
 
     @Override
     public Response updateGroupIdRecord(Object groupIdRecord, Long putCode) {
-        return memberV2ApiServiceDelegator.updateGroupIdRecord(groupIdRecord, putCode);
+        groupIdRecord = upgradeObject(groupIdRecord);
+        return downgradeResponse(memberV2ApiServiceDelegator.updateGroupIdRecord(groupIdRecord, putCode));
     }
 
     @Override
@@ -201,7 +203,7 @@ public class MemberV2ApiServiceVersionedDelegatorImpl
 
     @Override
     public Response viewGroupIdRecords(String pageSize, String pageNum) {
-        return memberV2ApiServiceDelegator.viewGroupIdRecords(pageSize, pageNum);
+        return downgradeResponse(memberV2ApiServiceDelegator.viewGroupIdRecords(pageSize, pageNum));
     }
 
     @Override
@@ -216,7 +218,7 @@ public class MemberV2ApiServiceVersionedDelegatorImpl
 
     @Override
     public Response updateResearcherUrl(String orcid, Long putCode, Object researcherUrl) {
-        return memberV2ApiServiceDelegator.updateResearcherUrl(orcid, putCode, researcherUrl);
+        return downgradeResponse(memberV2ApiServiceDelegator.updateResearcherUrl(orcid, putCode, researcherUrl));
     }
 
     @Override
@@ -251,7 +253,7 @@ public class MemberV2ApiServiceVersionedDelegatorImpl
 
     @Override
     public Response updateOtherName(String orcid, Long putCode, Object otherName) {
-        return memberV2ApiServiceDelegator.updateOtherName(orcid, putCode, otherName);
+        return downgradeResponse(memberV2ApiServiceDelegator.updateOtherName(orcid, putCode, otherName));
     }
 
     @Override
@@ -276,7 +278,7 @@ public class MemberV2ApiServiceVersionedDelegatorImpl
 
     @Override
     public Response updateExternalIdentifier(String orcid, Long putCode, Object externalIdentifier) {
-        return memberV2ApiServiceDelegator.updateExternalIdentifier(orcid, putCode, externalIdentifier);
+        return downgradeResponse(memberV2ApiServiceDelegator.updateExternalIdentifier(orcid, putCode, externalIdentifier));
     }
 
     @Override
@@ -326,7 +328,7 @@ public class MemberV2ApiServiceVersionedDelegatorImpl
     @Override
     public Response updateKeyword(String orcid, Long putCode, Object keyword) {
         keyword = upgradeObject(keyword);
-        return memberV2ApiServiceDelegator.updateKeyword(orcid, putCode, keyword);
+        return downgradeResponse(memberV2ApiServiceDelegator.updateKeyword(orcid, putCode, keyword));
     }
 
     @Override
@@ -353,7 +355,7 @@ public class MemberV2ApiServiceVersionedDelegatorImpl
     @Override
     public Response updateAddress(String orcid, Long putCode, Object address) {
         address = upgradeObject(address);
-        return memberV2ApiServiceDelegator.updateAddress(orcid, putCode, address);
+        return downgradeResponse(memberV2ApiServiceDelegator.updateAddress(orcid, putCode, address));
     }
 
     @Override

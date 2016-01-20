@@ -18,7 +18,6 @@ package org.orcid.frontend.web.controllers;
 
 import java.util.ArrayList;
 import java.util.Currency;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -28,7 +27,6 @@ import java.util.TreeMap;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang.StringUtils;
 import org.jsoup.helper.StringUtil;
 import org.orcid.core.adapter.Jaxb2JpaAdapter;
 import org.orcid.core.adapter.Jpa2JaxbAdapter;
@@ -49,29 +47,36 @@ import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.RedirectUri;
 import org.orcid.jaxb.model.message.AffiliationType;
 import org.orcid.jaxb.model.message.ContributorRole;
-import org.orcid.jaxb.model.message.ExternalIdentifier;
-import org.orcid.jaxb.model.message.ExternalIdentifiers;
 import org.orcid.jaxb.model.message.FundingContributorRole;
 import org.orcid.jaxb.model.message.FundingType;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.SequenceType;
 import org.orcid.jaxb.model.message.Source;
 import org.orcid.jaxb.model.record_rc2.CitationType;
+import org.orcid.jaxb.model.record_rc2.ExternalIdentifiers;
+import org.orcid.jaxb.model.record_rc2.Keyword;
+import org.orcid.jaxb.model.record_rc2.Keywords;
+import org.orcid.jaxb.model.record_rc2.OtherName;
+import org.orcid.jaxb.model.record_rc2.OtherNames;
 import org.orcid.jaxb.model.record_rc2.PeerReviewType;
+import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
+import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
 import org.orcid.jaxb.model.record_rc2.Role;
 import org.orcid.jaxb.model.record_rc2.WorkCategory;
 import org.orcid.jaxb.model.record_rc2.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.record_rc2.WorkType;
-import org.orcid.jaxb.model.record_rc2.OtherNames;
 import org.orcid.persistence.constants.SiteConstants;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ThirdPartyRedirect;
+import org.orcid.pojo.ajaxForm.ExternalIdentifierForm;
+import org.orcid.pojo.ajaxForm.ExternalIdentifiersForm;
+import org.orcid.pojo.ajaxForm.KeywordForm;
 import org.orcid.pojo.ajaxForm.KeywordsForm;
 import org.orcid.pojo.ajaxForm.OtherNameForm;
 import org.orcid.pojo.ajaxForm.OtherNamesForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
-import org.orcid.pojo.ajaxForm.Text;
-import org.orcid.pojo.ajaxForm.Website;
+import org.orcid.pojo.ajaxForm.Visibility;
+import org.orcid.pojo.ajaxForm.WebsiteForm;
 import org.orcid.pojo.ajaxForm.WebsitesForm;
 import org.orcid.utils.FunctionsOverCollections;
 import org.springframework.stereotype.Controller;
@@ -337,36 +342,58 @@ public class WorkspaceController extends BaseWorkspaceController {
         return mav;
     }
 
-    
     @RequestMapping(value = "/my-orcid/keywordsForms.json", method = RequestMethod.GET)
     public @ResponseBody
-    KeywordsForm getKeywordsFormJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
-        OrcidProfile currentProfile = getEffectiveProfile();
-        return KeywordsForm.valueOf(currentProfile.getOrcidBio().getKeywords());
+    KeywordsForm getKeywordsFormJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {        
+        Keywords keywords = profileKeywordManager.getKeywords(getCurrentUserOrcid());        
+        KeywordsForm form = KeywordsForm.valueOf(keywords);                
+        ProfileEntity profileEntity = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
+        //Set the default visibility since we still need it in the front end
+        Visibility defaultVisibility = profileEntity.getKeywordsVisibility() == null ? Visibility.valueOf(OrcidVisibilityDefaults.KEYWORD_DEFAULT.getVisibility()) : Visibility.valueOf(profileEntity.getKeywordsVisibility());
+        form.setVisibility(defaultVisibility);        
+        return form;
     }
     
     @RequestMapping(value = "/my-orcid/keywordsForms.json", method = RequestMethod.POST)
     public @ResponseBody
     KeywordsForm setKeywordsFormJson(HttpServletRequest request, @RequestBody KeywordsForm kf) throws NoSuchRequestHandlingMethodException {
-        kf.setErrors(new ArrayList<String>());
-    	for (int i = kf.getKeywords().size() - 1; i >= 0; i--) {
-            Text t = kf.getKeywords().get(i);
-            if (PojoUtil.isEmpty(t))
-                kf.getKeywords().remove(i);
-            else if (t.getValue().length() > 100)
-                t.setValue(t.getValue().substring(0,100));
+        kf.setErrors(new ArrayList<String>());        
+        if(kf != null) {
+            Iterator<KeywordForm> it = kf.getKeywords().iterator();            
+            while (it.hasNext()) {
+                KeywordForm k = it.next();
+                if(!PojoUtil.isEmpty(k.getContent())) {
+                    if (k.getContent().length() > SiteConstants.KEYWORD_MAX_LENGTH) {
+                        k.setContent(k.getContent().substring(0,SiteConstants.KEYWORD_MAX_LENGTH));
+                    }                    
+                } else {
+                    it.remove();
+                }                      
+            }
+
+            Keywords updatedKeywords = kf.toKeywords();
+            Visibility defaultVisibility = kf.getVisibility();
+            
+            if(defaultVisibility != null && defaultVisibility.getVisibility() != null) {
+                //If the default visibility is null, then, the user changed the default visibility, so, change the visibility for all items
+                for(Keyword k : updatedKeywords.getKeywords()) {
+                    k.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(defaultVisibility.getVisibility().value()));
+                }
+            } 
+                         
+            if(defaultVisibility != null) {
+                profileKeywordManager.updateKeywords(getCurrentUserOrcid(), updatedKeywords, org.orcid.jaxb.model.common_rc2.Visibility.fromValue(defaultVisibility.getVisibility().value()));
+            } else {
+                profileKeywordManager.updateKeywords(getCurrentUserOrcid(), updatedKeywords, null);
+            }
         }
-        if (kf.getErrors().size()>0) return kf;        
-        OrcidProfile currentProfile = getEffectiveProfile();
-        profileKeywordManager.updateProfileKeyword(currentProfile.getOrcidIdentifier().getPath(), kf.toKeywords());
         return kf;
     }
     
     @RequestMapping(value = "/my-orcid/otherNamesForms.json", method = RequestMethod.GET)
     public @ResponseBody
     OtherNamesForm getOtherNamesFormJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
-        OtherNames otherNames = otherNameManager.getOtherNamesV2(getCurrentUserOrcid());        
-        
+        OtherNames otherNames = otherNameManager.getOtherNames(getCurrentUserOrcid());                
         OtherNamesForm form = OtherNamesForm.valueOf(otherNames);
         ProfileEntity entity = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
         
@@ -383,29 +410,35 @@ public class WorkspaceController extends BaseWorkspaceController {
     public @ResponseBody
     OtherNamesForm setOtherNamesFormJson(@RequestBody OtherNamesForm onf) throws NoSuchRequestHandlingMethodException {
         onf.setErrors(new ArrayList<String>());
-        List<OtherNameForm> validOtherNames = new ArrayList<OtherNameForm>();
-        for (int i = 0; i < onf.getOtherNames().size(); i++) {
-            boolean isInvalid = false;
-            OtherNameForm otherNameForm = onf.getOtherNames().get(i);
-            if (PojoUtil.isEmpty(otherNameForm.getContent())) {
-                //Mark it as invalid
-                isInvalid = true;
-            } else if(otherNameForm.getContent().length() > 255) {
-                otherNameForm.setContent(otherNameForm.getContent().substring(0,255));                
+        if(onf != null) {
+            Iterator<OtherNameForm> it = onf.getOtherNames().iterator();
+            while(it.hasNext()) {
+                OtherNameForm form = it.next();
+                if(PojoUtil.isEmpty(form.getContent())) {
+                   it.remove();    
+                } 
+                if(form.getContent().length() > SiteConstants.MAX_LENGTH_255) {
+                    form.setContent(form.getContent().substring(0, SiteConstants.MAX_LENGTH_255));
+                }
             }
-            if(!isInvalid) {
-                // Set the visibility if it is null
-                otherNameForm.setVisibility(onf.getVisibility());
-                validOtherNames.add(otherNameForm);
-            }            
+                    
+            OtherNames otherNames = onf.toOtherNames();                
+            Visibility defaultVisibility = onf.getVisibility();
+            
+            if(defaultVisibility != null && defaultVisibility.getVisibility() != null) {
+                //If the default visibility is null, then, the user changed the default visibility, so, change the visibility for all items
+                for(OtherName o : otherNames.getOtherNames()) {
+                    o.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(defaultVisibility.getVisibility().value()));
+                }
+            } 
+            
+            if(defaultVisibility != null) {
+                otherNameManager.updateOtherNames(getEffectiveUserOrcid(), otherNames, org.orcid.jaxb.model.common_rc2.Visibility.fromValue(defaultVisibility.getVisibility().value()));
+            } else {
+                otherNameManager.updateOtherNames(getEffectiveUserOrcid(), otherNames, null);
+            }
         }
-        onf.setOtherNames(validOtherNames);
-        if (onf.getErrors().size() > 0) 
-            return onf;        
-        OtherNames otherNames = onf.toOtherNames();                
-        String visibilityValue = (onf.getVisibility() == null || onf.getVisibility().getVisibility() == null) ? OrcidVisibilityDefaults.OTHER_NAMES_DEFAULT.getVisibility().value() : onf.getVisibility().getVisibility().value();                
-        org.orcid.jaxb.model.common_rc2.Visibility visibility = org.orcid.jaxb.model.common_rc2.Visibility.fromValue(visibilityValue);
-        otherNameManager.updateOtherNamesV2(getEffectiveUserOrcid(), otherNames, visibility);
+
         return onf;
     }
     
@@ -415,9 +448,17 @@ public class WorkspaceController extends BaseWorkspaceController {
     @RequestMapping(value = "/my-orcid/websitesForms.json", method = RequestMethod.GET)
     public @ResponseBody
     WebsitesForm getWebsitesFormJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
-        OrcidProfile currentProfile = getEffectiveProfile();
-        WebsitesForm wf = WebsitesForm.valueOf(currentProfile.getOrcidBio().getResearcherUrls());
-        return wf;
+        ResearcherUrls rUrls = researcherUrlManager.getResearcherUrls(getCurrentUserOrcid());                 
+        WebsitesForm form = WebsitesForm.valueOf(rUrls);
+        ProfileEntity entity = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
+        
+        if(entity.getResearcherUrlsVisibility() != null) {
+            form.setVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(entity.getResearcherUrlsVisibility()));
+        } else {
+            form.setVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(OrcidVisibilityDefaults.RESEARCHER_URLS_DEFAULT.getVisibility()));
+        }
+        
+        return form;
     }
     
     /**
@@ -427,46 +468,68 @@ public class WorkspaceController extends BaseWorkspaceController {
     public @ResponseBody
     WebsitesForm setWebsitesFormJson(HttpServletRequest request, @RequestBody WebsitesForm ws) throws NoSuchRequestHandlingMethodException {
         ws.setErrors(new ArrayList<String>());
-        HashMap<String, Website> websitesHm = new HashMap<String, Website>(); 
-        for (Website w:ws.getWebsites()) {
-            //Clean old errors
-            w.setErrors(new ArrayList<String>());
-            w.getUrl().setErrors(new ArrayList<String>());
-            // Name can be null
-            if(w.getName() != null) {
-                w.getName().setErrors(new ArrayList<String>());
+        
+        if(ws != null) {        
+            for (WebsiteForm w : ws.getWebsites()) {
+                //Clean old errors
+                w.setErrors(new ArrayList<String>());
+                
+                //Validate
+                if(!validateUrl(w.getUrl())) {
+                    w.getErrors().add(getMessage("common.invalid_url"));                
+                }
+                if(isLongerThan(w.getUrlName(), SiteConstants.URL_MAX_LENGTH)) {
+                    w.getErrors().add(getMessage("manualWork.length_less_X"));
+                }         
+                copyErrors(w, ws);
+            }   
+            
+            if (ws.getErrors().size()>0) {
+                return ws;   
             }
             
-            //Validate
-            validateUrl(w.getUrl(), SiteConstants.URL_MAX_LENGTH);
-            validateNoLongerThan(SiteConstants.URL_MAX_LENGTH, w.getName());
-            if (websitesHm.containsKey(w.getUrl().getValue()))
-                setError(w.getUrl(), "common.duplicate_url");
-            else
-                websitesHm.put(w.getUrl().getValue(), w);
-            copyErrors(w.getUrl(), ws);
-            copyErrors(w.getName(), ws);
-        }   
-        if (ws.getErrors().size()>0) return ws;        
-        OrcidProfile currentProfile = getEffectiveProfile();
-        researcherUrlManager.updateResearcherUrls(currentProfile.getOrcidIdentifier().getPath(), ws.toResearcherUrls());
+            ResearcherUrls rUrls = ws.toResearcherUrls();
+            Visibility defaultVisibility = ws.getVisibility();
+            
+            if(defaultVisibility != null && defaultVisibility.getVisibility() != null) {
+                //If the default visibility is null, then, the user changed the default visibility, so, change the visibility for all items
+                for(ResearcherUrl rUrl : rUrls.getResearcherUrls()) {
+                    rUrl.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(defaultVisibility.getVisibility().value()));
+                }
+            }
+            
+            if(defaultVisibility != null) {
+                researcherUrlManager.updateResearcherUrls(getCurrentUserOrcid(), rUrls, org.orcid.jaxb.model.common_rc2.Visibility.fromValue(defaultVisibility.getVisibility().value()));
+            } else {
+                researcherUrlManager.updateResearcherUrls(getCurrentUserOrcid(), rUrls, null);
+            }
+        }
+        
         return ws;
+    }
+    
+    /**
+     * Retrieve all external identifiers as a json string
+     * */    
+    @RequestMapping(value = "/my-orcid/externalIdentifiers.json", method = RequestMethod.GET)
+    public @ResponseBody
+    ExternalIdentifiersForm getExternalIdentifiersJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
+        ExternalIdentifiers extIds = externalIdentifierManager.getExternalIdentifiersV2(getCurrentUserOrcid());        
+        return ExternalIdentifiersForm.valueOf(extIds);
     }
 
     /**
-     * Retrieve all external identifiers as a json string
+     * Updates the list of external identifiers assigned to a user
      * */
-    @SuppressWarnings("unchecked")
-    @RequestMapping(value = "/my-orcid/externalIdentifiers.json", method = RequestMethod.GET)
+    @RequestMapping(value = "/my-orcid/externalIdentifiers.json", method = RequestMethod.DELETE)
     public @ResponseBody
-    org.orcid.pojo.ExternalIdentifiers getExternalIdentifiersJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
-        OrcidProfile currentProfile = getEffectiveProfile();
-        org.orcid.pojo.ExternalIdentifiers externalIdentifiers = new org.orcid.pojo.ExternalIdentifiers();
-        externalIdentifiers.setExternalIdentifiers((List<org.orcid.pojo.ExternalIdentifier>) (Object) currentProfile.getOrcidBio().getExternalIdentifiers()
-                .getExternalIdentifier());
-        return externalIdentifiers;
+    ExternalIdentifierForm removeExternalIdentifierJson(HttpServletRequest request, @RequestBody ExternalIdentifierForm externalIdentifier) {
+        if(externalIdentifier != null && externalIdentifier.getPutCode() != null) {
+            externalIdentifierManager.deleteExternalIdentifier(getCurrentUserOrcid(), Long.valueOf(externalIdentifier.getPutCode()), false);
+        }       
+        return externalIdentifier;
     }
-
+    
     @RequestMapping(value = "/my-orcid/sourceGrantReadWizard.json", method = RequestMethod.GET)
     public @ResponseBody
     ThirdPartyRedirect getSourceGrantReadWizard() {
@@ -511,43 +574,5 @@ public class WorkspaceController extends BaseWorkspaceController {
             return true;
         }
         return false;
-    }
-
-    /**
-     * Updates the list of external identifiers assigned to a user
-     * */
-    @RequestMapping(value = "/my-orcid/externalIdentifiers.json", method = RequestMethod.DELETE)
-    public @ResponseBody
-    org.orcid.pojo.ExternalIdentifier removeExternalIdentifierJson(HttpServletRequest request, @RequestBody org.orcid.pojo.ExternalIdentifier externalIdentifier) {
-        List<String> errors = new ArrayList<String>();
-
-        // If the external identifier is blank, add an error
-        if (externalIdentifier.getExternalIdReference() == null || StringUtils.isBlank(externalIdentifier.getExternalIdReference().getContent())) {
-            errors.add(getMessage("ExternalIdentifier.externalIdReference"));
-        }
-        // Set errors to the external
-        externalIdentifier.setErrors(errors);
-
-        if (errors.isEmpty()) {
-            // Get cached profile
-            OrcidProfile currentProfile = getEffectiveProfile();
-            ExternalIdentifiers externalIdentifiers = currentProfile.getOrcidBio().getExternalIdentifiers();
-            List<ExternalIdentifier> externalIdentifiersList = externalIdentifiers.getExternalIdentifier();
-            Iterator<ExternalIdentifier> externalIdentifierIterator = externalIdentifiersList.iterator();
-            // Remove external identifier from the cached profile
-            while (externalIdentifierIterator.hasNext()) {
-                ExternalIdentifier existingExternalIdentifier = externalIdentifierIterator.next();
-                if (existingExternalIdentifier.equals(externalIdentifier)) {
-                    externalIdentifierIterator.remove();
-                }
-            }
-            // Update cached profile
-            currentProfile.getOrcidBio().setExternalIdentifiers(externalIdentifiers);
-            // Remove external identifier
-            externalIdentifierManager.removeExternalIdentifier(currentProfile.getOrcidIdentifier().getPath(), externalIdentifier.getExternalIdReference().getContent());
-        }
-
-        return externalIdentifier;
-    }
-
+    }    
 }

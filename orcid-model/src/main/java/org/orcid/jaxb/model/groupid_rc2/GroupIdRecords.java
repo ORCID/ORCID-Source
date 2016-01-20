@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.jaxb.model.groupid;
+package org.orcid.jaxb.model.groupid_rc2;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +24,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+
+import org.orcid.jaxb.model.common_rc2.LastModifiedDate;
 
 
 /**
@@ -49,10 +51,12 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = {"total", "page", "pageSize", "groupIdRecord"})
+@XmlType(propOrder = {"lastModifiedDate", "total", "page", "pageSize", "groupIdRecord"})
 @XmlRootElement(name = "group-id", namespace = "http://www.orcid.org/ns/group-id")
 public class GroupIdRecords {
 
+    @XmlElement(name = "last-modified-date", namespace = "http://www.orcid.org/ns/common")    
+    protected LastModifiedDate lastModifiedDate;
     @XmlElement(required = true, namespace = "http://www.orcid.org/ns/group-id")
     protected int total;
     @XmlElement(required = true, namespace = "http://www.orcid.org/ns/group-id")

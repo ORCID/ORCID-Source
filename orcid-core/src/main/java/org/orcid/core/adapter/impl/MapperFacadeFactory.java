@@ -29,7 +29,7 @@ import org.orcid.jaxb.model.common_rc2.OrcidIdentifier;
 import org.orcid.jaxb.model.common_rc2.PublicationDate;
 import org.orcid.jaxb.model.common_rc2.SourceClientId;
 import org.orcid.jaxb.model.common_rc2.SourceOrcid;
-import org.orcid.jaxb.model.groupid.GroupIdRecord;
+import org.orcid.jaxb.model.groupid_rc2.GroupIdRecord;
 import org.orcid.jaxb.model.notification.amended.NotificationAmended;
 import org.orcid.jaxb.model.notification.custom.NotificationCustom;
 import org.orcid.jaxb.model.notification.permission.AuthorizationUrl;

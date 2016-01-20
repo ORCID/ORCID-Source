@@ -83,7 +83,7 @@ public class PersonalDetailsManagerImpl implements PersonalDetailsManager {
             bio.setVisibility(bioVisibility);
         }
         
-        OtherNames otherNames = otherNameManager.getMinimizedOtherNamesV2(orcid);
+        OtherNames otherNames = otherNameManager.getMinimizedOtherNames(orcid);
         
         if(bio != null) {
             personalDetails.setBiography(bio);

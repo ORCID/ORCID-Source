@@ -42,7 +42,7 @@ import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.orcid.integration.api.t2.T2OAuthAPIService;
-import org.orcid.integration.blackbox.BlackBoxBase;
+import org.orcid.integration.blackbox.api.v2.rc1.BlackBoxBase;
 import org.orcid.integration.blackbox.web.SigninTest;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.ScopePathType;

@@ -63,9 +63,9 @@
         source_id="5555-5555-5555-0000"
     />
             
-	<client_details client_type="PREMIUM_CREATOR" client_details_id="APP-0000000000000001" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2012-04-25" last_modified="2012-04-25" client_name="Client # 1" client_description="Client # 1 description." client_website="www.APP-0000000000000001.com" group_orcid="5555-5555-5555-0000" persistent_tokens_enabled="true"/>
-	<client_details client_type="PREMIUM_CREATOR" client_details_id="APP-0000000000000002" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2012-04-25" last_modified="2012-04-25" client_name="Client # 2" client_description="Client # 2 description." client_website="www.APP-0000000000000002.com" group_orcid="5555-5555-5555-0000" persistent_tokens_enabled="true"/>
-	<client_details client_type="PREMIUM_CREATOR" client_details_id="APP-0000000000000003" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2012-04-25" last_modified="2012-04-25" client_name="Client # 3" client_description="Client # 3 description." client_website="www.APP-0000000000000003.com" group_orcid="5555-5555-5555-0000" persistent_tokens_enabled="true"/>
+	<client_details client_type="PREMIUM_CREATOR" client_details_id="APP-0000000000000001" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2012-04-25" last_modified="2012-04-25" client_name="Client # 1" client_description="Client # 1 description." client_website="http://www.google.com/APP-0000000000000001" group_orcid="5555-5555-5555-0000" persistent_tokens_enabled="true"/>
+	<client_details client_type="PREMIUM_CREATOR" client_details_id="APP-0000000000000002" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2012-04-25" last_modified="2012-04-25" client_name="Client # 2" client_description="Client # 2 description." client_website="http://www.google.com/APP-0000000000000002" group_orcid="5555-5555-5555-0000" persistent_tokens_enabled="true"/>
+	<client_details client_type="PREMIUM_CREATOR" client_details_id="APP-0000000000000003" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2012-04-25" last_modified="2012-04-25" client_name="Client # 3" client_description="Client # 3 description." client_website="http://www.google.com/APP-0000000000000003" group_orcid="5555-5555-5555-0000" persistent_tokens_enabled="true"/>
 	
 	<client_authorised_grant_type client_details_id="APP-0000000000000001" grant_type="authorization_code" />
     <client_authorised_grant_type client_details_id="APP-0000000000000001" grant_type="refresh_token" />
@@ -83,10 +83,10 @@
     <client_granted_authority client_details_id="APP-0000000000000002" granted_authority="ROLE_CLIENT"/>
     <client_granted_authority client_details_id="APP-0000000000000003" granted_authority="ROLE_CLIENT"/>
 	
-	<client_redirect_uri client_details_id="APP-0000000000000001" redirect_uri="http://www.APP-0000000000000001.com/redirect/oauth" redirect_uri_type="default"/>
-    <client_redirect_uri client_details_id="APP-0000000000000002" redirect_uri="http://www.APP-0000000000000002.com/redirect/oauth" redirect_uri_type="default"/>
-	<client_redirect_uri client_details_id="APP-0000000000000003" redirect_uri="http://www.APP-0000000000000003.com/redirect/oauth" redirect_uri_type="default"/>
-	<client_redirect_uri client_details_id="APP-0000000000000003" redirect_uri="http://www.APP-0000000000000003.com/redirect/oauth/grant_read_wizard" redirect_uri_type="grant-read-wizard" predefined_client_redirect_scope="/funding/read-limited"/>
+	<client_redirect_uri client_details_id="APP-0000000000000001" redirect_uri="http://www.google.com/APP-0000000000000001/redirect/oauth" redirect_uri_type="default"/>
+    <client_redirect_uri client_details_id="APP-0000000000000002" redirect_uri="http://www.google.com/APP-0000000000000002/redirect/oauth" redirect_uri_type="default"/>
+	<client_redirect_uri client_details_id="APP-0000000000000003" redirect_uri="http://www.google.com/APP-0000000000000003/redirect/oauth" redirect_uri_type="default"/>
+	<client_redirect_uri client_details_id="APP-0000000000000003" redirect_uri="http://www.google.com/APP-0000000000000003/redirect/oauth/grant_read_wizard" redirect_uri_type="grant-read-wizard" predefined_client_redirect_scope="/funding/read-limited"/>
 	
 	<client_resource_id client_details_id="APP-0000000000000001" resource_id="orcid"/>
     <client_resource_id client_details_id="APP-0000000000000002" resource_id="orcid"/>

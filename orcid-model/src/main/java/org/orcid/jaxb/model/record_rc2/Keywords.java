@@ -17,6 +17,8 @@
 package org.orcid.jaxb.model.record_rc2;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -26,6 +28,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.orcid.jaxb.model.common_rc2.LastModifiedDate;
 
 /**
  * 
@@ -33,16 +36,19 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType( propOrder = { "keywords" })
+@XmlType(propOrder = { "lastModifiedDate", "keywords" })
 @XmlRootElement(name = "keywords", namespace = "http://www.orcid.org/ns/keyword")
-public class Keywords implements Serializable {            
+public class Keywords implements Serializable {
     private static final long serialVersionUID = 8977681069375479763L;
+
+    @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "last-modified-date")
+    protected LastModifiedDate lastModifiedDate;
     @XmlElement(name = "keyword", namespace = "http://www.orcid.org/ns/keyword")
     List<Keyword> keywords;
 
     @XmlAttribute
     protected String path;
-    
+
     public List<Keyword> getKeywords() {
         return keywords;
     }
@@ -88,5 +94,31 @@ public class Keywords implements Serializable {
         } else if (!path.equals(other.path))
             return false;
         return true;
-    }	 
+    }
+
+    public void updateIndexingStatusOnChilds() {
+        if (this.getKeywords() != null && !this.getKeywords().isEmpty()) {
+            List<Keyword> sorted = new ArrayList<Keyword>();
+            List<Keyword> unsorted = new ArrayList<Keyword>();
+            Long maxDisplayIndex = 0L;
+            for(Keyword k : this.getKeywords()) {
+                if(k.getDisplayIndex() == null || Long.valueOf(-1).equals(k.getDisplayIndex())) {
+                    unsorted.add(k);
+                } else {
+                    if(k.getDisplayIndex() > maxDisplayIndex) {
+                        maxDisplayIndex = k.getDisplayIndex();
+                    }
+                    sorted.add(k);
+                }                
+            }      
+            
+            if(!unsorted.isEmpty()) {
+                Collections.sort(unsorted);
+                for(Keyword k : unsorted) {
+                    k.setDisplayIndex((maxDisplayIndex++) + 1);
+                    sorted.add(k);
+                }
+            }
+        }
+    }
 }

@@ -39,6 +39,7 @@ import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.OrgManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileFundingManager;
+import org.orcid.core.manager.SourceManager;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.core.utils.Triplet;
@@ -104,6 +105,7 @@ import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.OrgAffiliationRelationDao;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
+import org.orcid.persistence.jpa.entities.AddressEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.EndDateEntity;
@@ -159,6 +161,9 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
 
     @Resource
     private ClientDetailsDao clientDetailsDao;
+    
+    @Resource
+    protected SourceManager sourceManager;
 
     @Override
     public ProfileEntity toProfileEntity(OrcidProfile profile, ProfileEntity existingProfileEntity) {
@@ -635,6 +640,28 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         Iso3166Country country = contactCountry != null ? contactCountry.getValue() : null;
         profileEntity.setProfileAddressVisibility(contactCountry != null ? contactCountry.getVisibility() : null);
         profileEntity.setIso2Country(country);
+        
+        //Set the info in the address table
+        if(country != null) {
+            AddressEntity address = new AddressEntity();
+            address.setIso2Country(org.orcid.jaxb.model.common_rc2.Iso3166Country.fromValue(country.value()));
+            address.setPrimary(true);
+            address.setDisplayIndex(-1L);
+            address.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(OrcidVisibilityDefaults.COUNTRY_DEFAULT.getVisibility().value()));
+            address.setUser(profileEntity);
+            String amenderOrcid = sourceManager.retrieveSourceOrcid();  
+            if(!PojoUtil.isEmpty(amenderOrcid)) {
+                if (OrcidStringUtils.isValidOrcid(amenderOrcid)) {
+                    address.setSource(new SourceEntity(new ProfileEntity(amenderOrcid)));
+                } else {
+                    address.setSource(new SourceEntity(new ClientDetailsEntity(amenderOrcid)));
+                }
+            }
+            
+            HashSet<AddressEntity> addresses = new HashSet<AddressEntity>();
+            addresses.add(address);
+            profileEntity.setAddresses(addresses);
+        }        
     }
 
     private void setEmails(ProfileEntity profileEntity, ContactDetails contactDetails) {

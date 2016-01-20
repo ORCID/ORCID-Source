@@ -644,27 +644,27 @@ public class OrcidProfile implements Serializable {
         this.locked = locked;
     }
 
-	public String getUserLastIp() {
-		return userLastIp;
-	}
+    public String getUserLastIp() {
+        return userLastIp;
+    }
 
-	public void setUserLastIp(String userLastIp) {
-		this.userLastIp = userLastIp;
-	}
+    public void setUserLastIp(String userLastIp) {
+        this.userLastIp = userLastIp;
+    }
 
-	public boolean isReviewed() {
-		return reviewed;
-	}
+    public boolean isReviewed() {
+        return reviewed;
+    }
 
-	public void setReviewed(boolean reviewed) {
-		this.reviewed = reviewed;
-	}
+    public void setReviewed(boolean reviewed) {
+        this.reviewed = reviewed;
+    }
 
-	public int getCountTokens() {
-		return countTokens;
-	}
+    public int getCountTokens() {
+        return countTokens;
+    }
 
-	public void setCountTokens(int countTokens) {
-		this.countTokens = countTokens;
-	}
+    public void setCountTokens(int countTokens) {
+        this.countTokens = countTokens;
+    }
 }

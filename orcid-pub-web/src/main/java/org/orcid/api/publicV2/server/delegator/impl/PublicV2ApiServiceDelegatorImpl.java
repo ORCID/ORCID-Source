@@ -49,8 +49,8 @@ import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.core.security.visibility.aop.AccessControl;
 import org.orcid.core.security.visibility.filter.VisibilityFilterV2;
-import org.orcid.jaxb.model.groupid.GroupIdRecord;
-import org.orcid.jaxb.model.groupid.GroupIdRecords;
+import org.orcid.jaxb.model.groupid_rc2.GroupIdRecord;
+import org.orcid.jaxb.model.groupid_rc2.GroupIdRecords;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary;
@@ -321,7 +321,7 @@ public class PublicV2ApiServiceDelegatorImpl
     @Override
     @AccessControl(requiredScope = ScopePathType.READ_LIMITED, enableAnonymousAccess = true)
     public Response viewResearcherUrls(String orcid) {
-        ResearcherUrls researcherUrls = researcherUrlManager.getPublicResearcherUrlsV2(orcid);
+        ResearcherUrls researcherUrls = researcherUrlManager.getPublicResearcherUrls(orcid);
         ElementUtils.setPathToResearcherUrls(researcherUrls, orcid);
         return Response.ok(researcherUrls).build();
     }
@@ -329,7 +329,7 @@ public class PublicV2ApiServiceDelegatorImpl
     @Override
     @AccessControl(requiredScope = ScopePathType.READ_LIMITED, enableAnonymousAccess = true)
     public Response viewResearcherUrl(String orcid, Long putCode) {
-        ResearcherUrl researcherUrl = researcherUrlManager.getResearcherUrlV2(orcid, putCode);
+        ResearcherUrl researcherUrl = researcherUrlManager.getResearcherUrl(orcid, putCode);
         orcidSecurityManager.checkVisibility(researcherUrl);
         ElementUtils.setPathToResearcherUrl(researcherUrl, orcid);
         return Response.ok(researcherUrl).build();
@@ -354,7 +354,7 @@ public class PublicV2ApiServiceDelegatorImpl
     @Override
     @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewOtherNames(String orcid) {
-        OtherNames otherNames = otherNameManager.getPublicOtherNamesV2(orcid);
+        OtherNames otherNames = otherNameManager.getPublicOtherNames(orcid);
         ElementUtils.setPathToOtherNames(otherNames, orcid);
         return Response.ok(otherNames).build();
     }
@@ -362,7 +362,7 @@ public class PublicV2ApiServiceDelegatorImpl
     @Override
     @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewOtherName(String orcid, Long putCode) {
-        OtherName otherName = otherNameManager.getOtherNameV2(orcid, putCode);
+        OtherName otherName = otherNameManager.getOtherName(orcid, putCode);
         orcidSecurityManager.checkVisibility(otherName);
         ElementUtils.setPathToOtherName(otherName, orcid);
         return Response.ok(otherName).build();
@@ -401,7 +401,7 @@ public class PublicV2ApiServiceDelegatorImpl
     @Override
     @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewKeywords(String orcid) {
-        Keywords keywords = keywordsManager.getPublicKeywordsV2(orcid);
+        Keywords keywords = keywordsManager.getPublicKeywords(orcid);
         ElementUtils.setPathToKeywords(keywords, orcid);
         return Response.ok(keywords).build();
     }
@@ -409,7 +409,7 @@ public class PublicV2ApiServiceDelegatorImpl
     @Override
     @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewKeyword(String orcid, Long putCode) {
-        Keyword keyword = keywordsManager.getKeywordV2(orcid, putCode);
+        Keyword keyword = keywordsManager.getKeyword(orcid, putCode);
         orcidSecurityManager.checkVisibility(keyword);
         ElementUtils.setPathToKeyword(keyword, orcid);
         return Response.ok(keyword).build();

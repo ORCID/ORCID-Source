@@ -186,13 +186,17 @@ public class AddressManagerImpl implements AddressManager {
     @Override
     public Addresses getAddresses(String orcid) {
         List<AddressEntity> addressList = getAddresses(orcid, null);        
-        return adapter.toAddressList(addressList);
+        Addresses result = adapter.toAddressList(addressList);
+        result.updateIndexingStatusOnChilds();
+        return result;
     }
 
     @Override
     public Addresses getPublicAddresses(String orcid) {
         List<AddressEntity> addressList = getAddresses(orcid, null);
-        return adapter.toAddressList(addressList);
+        Addresses result = adapter.toAddressList(addressList);
+        result.updateIndexingStatusOnChilds();
+        return result;
     }
     
     private List<AddressEntity> getAddresses(String orcid, Visibility visibility) {
@@ -206,6 +210,61 @@ public class AddressManagerImpl implements AddressManager {
                 }
             }
         }
+        return addresses;
+    }
+    
+    @Override
+    public Addresses updateAddresses(String orcid, Addresses addresses, Visibility defaultVisibility) {
+        List<AddressEntity> existingAddressList = addressDao.findByOrcid(orcid);
+        //Delete the deleted ones
+        for(AddressEntity existingAddress : existingAddressList) {
+            boolean deleteMe = true;            
+            for(Address updatedOrNew : addresses.getAddress()) {
+                if(existingAddress.getId().equals(updatedOrNew.getPutCode())) {
+                    deleteMe = false;
+                    break;
+                }
+            }                                   
+            if(deleteMe) {
+                try {
+                    addressDao.deleteAddress(orcid, existingAddress.getId());
+                } catch (Exception e) {
+                    throw new ApplicationException("Unable to delete address " + existingAddress.getId(), e);
+                }
+            }
+        }
+        
+        if(addresses != null && addresses.getAddress() != null) {
+            for(Address updatedOrNew : addresses.getAddress()) {
+                if(updatedOrNew.getPutCode() != null) {
+                    //Update the existing ones
+                   for(AddressEntity existingAddress : existingAddressList) {
+                       if(existingAddress.getId().equals(updatedOrNew.getPutCode())) {
+                           existingAddress.setLastModified(new Date());
+                           existingAddress.setVisibility(updatedOrNew.getVisibility());
+                           existingAddress.setIso2Country(updatedOrNew.getCountry().getValue());
+                           existingAddress.setPrimary(updatedOrNew.getPrimary());
+                           addressDao.merge(existingAddress);
+                       }
+                   }
+                } else {
+                    //Add the new ones
+                    AddressEntity newAddress = adapter.toAddressEntity(updatedOrNew);
+                    SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
+                    ProfileEntity profile = new ProfileEntity(orcid);
+                    newAddress.setUser(profile);
+                    newAddress.setDateCreated(new Date());
+                    newAddress.setSource(sourceEntity);
+                    newAddress.setVisibility(updatedOrNew.getVisibility());
+                    addressDao.persist(newAddress);
+                    
+                }
+            }
+        }
+        
+        if (defaultVisibility != null)
+            addressDao.updateAddressVisibility(orcid, defaultVisibility);
+        
         return addresses;
     }
 }

@@ -175,4 +175,9 @@
     <include file="/db/updates/enable_persistent_tokens_on_public_clients.xml" />     
     <include file="/db/updates/add_id_visibility_and_source_to_keywords.xml" />
     <include file="/db/updates/update_address_table.xml" />
+    <include file="/db/updates/add_display_index_to_keywords.xml" />
+    <include file="/db/updates/add_display_index_to_address.xml" />
+    <include file="/db/updates/add_display_index_to_other_name.xml" />
+    <include file="/db/updates/add_display_index_to_researcher_url.xml" />
+    <include file="/db/updates/add_display_index_to_external_identifier.xml" />
 </databaseChangeLog>

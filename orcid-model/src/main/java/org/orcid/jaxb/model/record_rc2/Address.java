@@ -50,7 +50,7 @@ import io.swagger.annotations.ApiModelProperty;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "country", "createdDate", "lastModifiedDate", "source" })
 @XmlRootElement(name = "address", namespace = "http://www.orcid.org/ns/address")
-public class Address implements Filterable, Serializable {
+public class Address implements Filterable, Serializable, Comparable<Address> {
     private final static long serialVersionUID = 1L;
     @XmlElement(namespace = "http://www.orcid.org/ns/address", required = true)
     protected Country country;
@@ -69,7 +69,9 @@ public class Address implements Filterable, Serializable {
     protected String path;
     @XmlTransient
     protected Boolean primary;
-
+    @XmlAttribute(name = "display-index")
+    protected Long displayIndex;
+    
     public Country getCountry() {
         return country;
     }
@@ -132,6 +134,14 @@ public class Address implements Filterable, Serializable {
 
     public void setPrimary(Boolean primary) {
         this.primary = primary;
+    }
+
+    public Long getDisplayIndex() {
+        return displayIndex;
+    }
+
+    public void setDisplayIndex(Long displayIndex) {
+        this.displayIndex = displayIndex;
     }
 
     @Override
@@ -198,5 +208,18 @@ public class Address implements Filterable, Serializable {
             return source.retrieveSourcePath();
         }
         return null;
+    }
+    
+    @Override
+    public int compareTo(Address o) {
+        if(o == null || o.getCountry() == null) {
+            return 1;
+        }
+                
+        if(getCountry() == null) {
+            return -1;
+        }
+        
+        return this.getCountry().compareTo(o.getCountry());
     }
 }

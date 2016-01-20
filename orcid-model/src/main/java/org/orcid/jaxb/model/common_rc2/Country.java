@@ -50,7 +50,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType( propOrder = { "value" })
 @XmlRootElement(name = "country")
-public class Country implements Serializable, VisibilityType {
+public class Country implements Serializable, VisibilityType, Comparable<Country> {
 
     private final static long serialVersionUID = 1L;
     @XmlValue
@@ -145,6 +145,18 @@ public class Country implements Serializable, VisibilityType {
         if (visibility != other.visibility)
             return false;
         return true;
+    }
+    
+    @Override
+    public int compareTo(Country o) {
+    	if(o == null || o.getValue() == null) {
+    		return 1;
+    	}
+                
+   		if(getValue() == null) {
+   			return -1;
+    	}       
+    	return this.getValue().compareTo(o.getValue());
     }
 
 }

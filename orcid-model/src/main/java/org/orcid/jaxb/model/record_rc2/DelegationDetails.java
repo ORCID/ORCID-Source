@@ -25,16 +25,21 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.orcid.jaxb.model.common_rc2.LastModifiedDate;
+
 /**
  * 
  * @author Angel Montenegro
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "approvalDate", "delegateSummary" })
+@XmlType(propOrder = { "lastModifiedDate", "approvalDate", "delegateSummary" })
 @XmlRootElement(name = "delegation-details", namespace = "http://www.orcid.org/ns/person")
 public class DelegationDetails implements Serializable {
     private static final long serialVersionUID = 2327423760245004561L;
+    
+    @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "last-modified-date")
+    protected LastModifiedDate lastModifiedDate;
     @XmlElement(namespace = "http://www.orcid.org/ns/person", name = "approval-date")
     protected ApprovalDate approvalDate;
     @XmlElement(namespace = "http://www.orcid.org/ns/person", name = "delegate-summary")
