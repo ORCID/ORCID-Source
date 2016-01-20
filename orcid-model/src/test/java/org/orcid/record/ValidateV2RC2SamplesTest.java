@@ -21,6 +21,7 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -33,6 +34,8 @@ import javax.xml.bind.Unmarshaller;
 import org.junit.Test;
 import org.orcid.jaxb.model.common_rc2.Iso3166Country;
 import org.orcid.jaxb.model.common_rc2.Visibility;
+import org.orcid.jaxb.model.message.CreationMethod;
+import org.orcid.jaxb.model.message.Locale;
 import org.orcid.jaxb.model.record_rc2.Address;
 import org.orcid.jaxb.model.record_rc2.Addresses;
 import org.orcid.jaxb.model.record_rc2.ApplicationSummary;
@@ -44,6 +47,7 @@ import org.orcid.jaxb.model.record_rc2.Email;
 import org.orcid.jaxb.model.record_rc2.Emails;
 import org.orcid.jaxb.model.record_rc2.ExternalIdentifier;
 import org.orcid.jaxb.model.record_rc2.ExternalIdentifiers;
+import org.orcid.jaxb.model.record_rc2.History;
 import org.orcid.jaxb.model.record_rc2.Keyword;
 import org.orcid.jaxb.model.record_rc2.Keywords;
 import org.orcid.jaxb.model.record_rc2.Name;
@@ -51,9 +55,11 @@ import org.orcid.jaxb.model.record_rc2.OtherName;
 import org.orcid.jaxb.model.record_rc2.OtherNames;
 import org.orcid.jaxb.model.record_rc2.Person;
 import org.orcid.jaxb.model.record_rc2.PersonalDetails;
+import org.orcid.jaxb.model.record_rc2.Preferences;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
 import org.orcid.jaxb.model.record_rc2.ScopePath;
+import org.orcid.jaxb.model.record_rc2.Deprecated;
 
 public class ValidateV2RC2SamplesTest {
     @Test
@@ -552,6 +558,67 @@ public class ValidateV2RC2SamplesTest {
         assertEquals("application-group-name", application.getGroupName());
     }
 
+    
+    
+    @Test
+    public void testUnmarshallDeprecated() {
+        Deprecated deprecated = (Deprecated) unmarshallFromPath("/record_2.0_rc2/samples/deprecated-2.0_rc2.xml", Deprecated.class);
+        assertNotNull(deprecated);
+        assertNotNull(deprecated.getPrimaryRecord());
+        assertNotNull(deprecated.getPrimaryRecord().getOrcidIdentifier());
+        assertEquals("http://orcid.org/8888-8888-8888-8880", deprecated.getPrimaryRecord().getOrcidIdentifier().getUri());
+        assertEquals("8888-8888-8888-8880", deprecated.getPrimaryRecord().getOrcidIdentifier().getPath());
+        assertEquals("orcid.org", deprecated.getPrimaryRecord().getOrcidIdentifier().getHost());
+        assertNotNull(deprecated.getDeprecatedDate());
+        assertEquals(2001, deprecated.getDeprecatedDate().getValue().getYear());
+        assertEquals(12, deprecated.getDeprecatedDate().getValue().getMonth());
+        assertEquals(31, deprecated.getDeprecatedDate().getValue().getDay());        
+    }
+    
+    @Test
+    public void testUnmarshallPreferences() {
+        Preferences preferences = (Preferences) unmarshallFromPath("/record_2.0_rc2/samples/preferences-2.0_rc2.xml", Preferences.class);
+        assertNotNull(preferences);   
+        assertNotNull(preferences.getLocale());
+        assertEquals(Locale.EN, preferences.getLocale());
+    }
+    
+    @Test
+    public void testUnmarshallHistory() {
+        History history = (History) unmarshallFromPath("/record_2.0_rc2/samples/history-2.0_rc2.xml", History.class);
+        assertNotNull(history);           
+        assertNotNull(history.getSource());
+        assertEquals("http://orcid.org/8888-8888-8888-8880", history.getSource().retriveSourceUri());
+        assertNotNull(history.getCreationMethod());
+        assertEquals(CreationMethod.API, history.getCreationMethod());
+        assertNotNull(history.getClaimed());
+        assertTrue(history.getClaimed());
+        assertNotNull(history.isVerifiedEmail());
+        assertTrue(history.isVerifiedEmail());
+        assertNotNull(history.isVerifiedPrimaryEmail());
+        assertTrue(history.isVerifiedPrimaryEmail());        
+        assertNotNull(history.getCompletionDate());         
+        assertNotNull(history.getCompletionDate().getValue());
+        assertEquals(2001, history.getCompletionDate().getValue().getYear());
+        assertEquals(12, history.getCompletionDate().getValue().getMonth());
+        assertEquals(31, history.getCompletionDate().getValue().getDay());                
+        assertNotNull(history.getDeactivationDate());
+        assertNotNull(history.getDeactivationDate().getValue());
+        assertEquals(2001, history.getDeactivationDate().getValue().getYear());
+        assertEquals(12, history.getDeactivationDate().getValue().getMonth());
+        assertEquals(31, history.getDeactivationDate().getValue().getDay());        
+        assertNotNull(history.getLastModifiedDate()); 
+        assertNotNull(history.getLastModifiedDate().getValue());
+        assertEquals(2001, history.getLastModifiedDate().getValue().getYear());
+        assertEquals(12, history.getLastModifiedDate().getValue().getMonth());
+        assertEquals(31, history.getLastModifiedDate().getValue().getDay());        
+        assertNotNull(history.getSubmissionDate());
+        assertNotNull(history.getSubmissionDate().getValue());
+        assertEquals(2001, history.getSubmissionDate().getValue().getYear());
+        assertEquals(12, history.getSubmissionDate().getValue().getMonth());
+        assertEquals(31, history.getSubmissionDate().getValue().getDay());        
+    }
+    
     private Object unmarshallFromPath(String path, Class<?> type) {
         try (Reader reader = new InputStreamReader(getClass().getResourceAsStream(path))) {
             Object obj = unmarshall(reader, type);
@@ -594,6 +661,12 @@ public class ValidateV2RC2SamplesTest {
                 result = (Applications) obj;
             } else if (Person.class.equals(type)) {
                 result = (Person) obj;
+            } else if (Deprecated.class.equals(type)) {
+                result = (Deprecated) obj;
+            } else if (Preferences.class.equals(type)) {
+                result = (Preferences) obj;
+            } else if (History.class.equals(type)) {
+                result = (History) obj;
             }
             return result;
         } catch (IOException e) {

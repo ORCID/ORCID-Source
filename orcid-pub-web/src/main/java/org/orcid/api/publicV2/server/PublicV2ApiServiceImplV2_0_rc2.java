@@ -35,6 +35,7 @@ import static org.orcid.core.api.OrcidApiConstants.PEER_REVIEW;
 import static org.orcid.core.api.OrcidApiConstants.PEER_REVIEW_SUMMARY;
 import static org.orcid.core.api.OrcidApiConstants.PERSON;
 import static org.orcid.core.api.OrcidApiConstants.PERSONAL_DETAILS;
+import static org.orcid.core.api.OrcidApiConstants.PROFILE_ROOT_PATH;
 import static org.orcid.core.api.OrcidApiConstants.PUTCODE;
 import static org.orcid.core.api.OrcidApiConstants.RESEARCHER_URLS;
 import static org.orcid.core.api.OrcidApiConstants.STATUS_PATH;
@@ -79,6 +80,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import io.swagger.annotations.Authorization;
 import io.swagger.annotations.AuthorizationScope;
+import io.swagger.annotations.ExternalDocs;
 
 /**
  * 
@@ -102,6 +104,17 @@ public class PublicV2ApiServiceImplV2_0_rc2 {
         this.serviceDelegator = serviceDelegator;
     }
 
+    @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(PROFILE_ROOT_PATH)
+    @ApiOperation(value = "Fetch record", response = ActivitiesSummary.class, authorizations = {
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
+    @ExternalDocs(value = "Activities XML Schema", url = "https://raw.githubusercontent.com/ORCID/ORCID-Source/master/orcid-model/src/main/resources/record_2.0_rc2/activities-2.0_rc2.xsd")
+    public Response viewRecord(@PathParam("orcid") String orcid) {
+        //TODO
+        return null;
+    }
+    
     /**
      * Serves the Swagger UI HTML page
      * 
