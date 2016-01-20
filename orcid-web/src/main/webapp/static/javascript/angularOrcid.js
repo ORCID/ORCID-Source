@@ -2987,10 +2987,7 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
     $scope.newInput = false;
     $scope.primary = true;
     
-    $scope.openEdit = function() {   
-        if ($scope.countryForm == null || $scope.countryForm.addresses == null || $scope.countryForm.addresses.length == 0){
-            $scope.countryForm.addresses.push({"errors":[],"addresses":[{"iso2Country" : {"errors":[],"value":null}}], "visibility":{"visibility":"PUBLIC"}, "primary": true});
-        }
+    $scope.openEdit = function() {
         $scope.showEdit = true;        
     };
 
@@ -3003,10 +3000,7 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
             url: getBaseUri() + '/account/countryForm.json',
             dataType: 'json',
             success: function(data) {
-                $scope.countryForm = data;
-                
-                //console.log(angular.toJson(data));
-                
+                $scope.countryForm = data;                
                 $scope.$apply();                
             }
         }).fail(function(){
@@ -3032,9 +3026,6 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
             dataType: 'json',
             success: function(data) {
                 $scope.countryForm = data;
-                
-                console.log(angular.toJson(data));
-                
                 if ($scope.countryForm.errors.length == 0){
                     $scope.close();
                     $scope.getCountryForm();                
@@ -3124,22 +3115,11 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
     };
     
     $scope.addNewModal = function() {
-        var tmpObj = {"errors":[],"iso2Country":{"errors":[],"required":true,"getRequiredMessage":null,"value":null},"countryName":null,"putCode":null,"visibility":{"errors":[],"required":true,"getRequiredMessage":null,"visibility":"PUBLIC"},"displayIndex":0,"source":null,"sourceName":null,"primary":false};
-        var idx = $scope.getLastDisplayIndex() + 1;
-        
-        console.log('Last Display Index: ' + idx);
-        
+        var tmpObj = {"errors":[],"iso2Country": null,"countryName":null,"putCode":null,"visibility":{"errors":[],"required":true,"getRequiredMessage":null,"visibility":"PUBLIC"},"displayIndex":0,"source":null,"sourceName":null,"primary":false};
+        var idx = $scope.getLastDisplayIndex() + 1;        
         tmpObj['displayIndex'] = idx;
-        
-        console.log('Arrat length: ' + $scope.countryForm.addresses.length);
-        
-        if ($scope.countryForm.addresses.length == 0){
-            tmpObj['primary'] = true;
-            $scope.countryForm.addresses.push(tmpObj);
-        }else{
-            $scope.countryForm.addresses.push(tmpObj);
-        }
-        $scope.newInput = true; 
+        $scope.countryForm.addresses.push(tmpObj);        
+        $scope.newInput = true;
     };
     
     $scope.setPrimary = function(country){
@@ -3162,7 +3142,7 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
         $scope.countryForm.addresses[idxB].displayIndex = valueA;
     };    
      
-    $scope.setPriorityUp = function(displayIndex){        
+    $scope.setPriorityUp = function(displayIndex){
          var countries = $scope.countryForm.addresses;
          var len = countries.length;
          var current = 0;
@@ -3174,8 +3154,8 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
              }
              if (countries[len].displayIndex < displayIndex){
                  current = countries[len].displayIndex;
-                 if (current > valueB){
-                     valueB = current;
+                 if (current >= valueB){
+                     valueB = current;                     
                      idxB = len;
                  }
              }
@@ -3208,13 +3188,13 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
          var last = 0;
          var current = 0;
          var countries = $scope.countryForm.addresses;
-         var len = countries.length;
+         var len = countries.length;         
          while (len--) {            
              current = countries[len].displayIndex;
              if (current > last){
                  last = countries[len].displayIndex;
              }
-         }       
+         }         
          return last;
     };
 
