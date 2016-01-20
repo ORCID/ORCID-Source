@@ -357,9 +357,8 @@ public class WorkspaceController extends BaseWorkspaceController {
     @RequestMapping(value = "/my-orcid/keywordsForms.json", method = RequestMethod.POST)
     public @ResponseBody
     KeywordsForm setKeywordsFormJson(HttpServletRequest request, @RequestBody KeywordsForm kf) throws NoSuchRequestHandlingMethodException {
-        kf.setErrors(new ArrayList<String>());
-        
-        if(kf != null && kf.getKeywords() != null && !kf.getKeywords().isEmpty()) {
+        kf.setErrors(new ArrayList<String>());        
+        if(kf != null) {
             Iterator<KeywordForm> it = kf.getKeywords().iterator();            
             while (it.hasNext()) {
                 KeywordForm k = it.next();
@@ -394,8 +393,7 @@ public class WorkspaceController extends BaseWorkspaceController {
     @RequestMapping(value = "/my-orcid/otherNamesForms.json", method = RequestMethod.GET)
     public @ResponseBody
     OtherNamesForm getOtherNamesFormJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
-        OtherNames otherNames = otherNameManager.getOtherNames(getCurrentUserOrcid());        
-        
+        OtherNames otherNames = otherNameManager.getOtherNames(getCurrentUserOrcid());                
         OtherNamesForm form = OtherNamesForm.valueOf(otherNames);
         ProfileEntity entity = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
         
@@ -412,7 +410,7 @@ public class WorkspaceController extends BaseWorkspaceController {
     public @ResponseBody
     OtherNamesForm setOtherNamesFormJson(@RequestBody OtherNamesForm onf) throws NoSuchRequestHandlingMethodException {
         onf.setErrors(new ArrayList<String>());
-        if(onf != null && onf.getOtherNames() != null && !onf.getOtherNames().isEmpty()) {
+        if(onf != null) {
             Iterator<OtherNameForm> it = onf.getOtherNames().iterator();
             while(it.hasNext()) {
                 OtherNameForm form = it.next();
@@ -450,8 +448,7 @@ public class WorkspaceController extends BaseWorkspaceController {
     @RequestMapping(value = "/my-orcid/websitesForms.json", method = RequestMethod.GET)
     public @ResponseBody
     WebsitesForm getWebsitesFormJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
-        ResearcherUrls rUrls = researcherUrlManager.getResearcherUrlsV2(getCurrentUserOrcid());        
-        
+        ResearcherUrls rUrls = researcherUrlManager.getResearcherUrls(getCurrentUserOrcid());                 
         WebsitesForm form = WebsitesForm.valueOf(rUrls);
         ProfileEntity entity = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
         
@@ -472,7 +469,7 @@ public class WorkspaceController extends BaseWorkspaceController {
     WebsitesForm setWebsitesFormJson(HttpServletRequest request, @RequestBody WebsitesForm ws) throws NoSuchRequestHandlingMethodException {
         ws.setErrors(new ArrayList<String>());
         
-        if(ws != null && ws.getWebsites() != null && !ws.getWebsites().isEmpty()) {        
+        if(ws != null) {        
             for (WebsiteForm w : ws.getWebsites()) {
                 //Clean old errors
                 w.setErrors(new ArrayList<String>());

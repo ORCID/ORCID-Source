@@ -59,13 +59,17 @@ public class OtherNameManagerImpl implements OtherNameManager {
     @Override
     public OtherNames getOtherNames(String orcid) {
         List<OtherNameEntity> otherNameEntityList = otherNameDao.getOtherNames(orcid);
-        return jpaJaxbOtherNameAdapter.toOtherNameList(otherNameEntityList);
+        OtherNames result = jpaJaxbOtherNameAdapter.toOtherNameList(otherNameEntityList);
+        result.updateIndexingStatusOnChilds();
+        return result;
     }
     
     @Override
     public OtherNames getPublicOtherNames(String orcid) {
         List<OtherNameEntity> otherNameEntityList = otherNameDao.getOtherNames(orcid, Visibility.PUBLIC);
-        return jpaJaxbOtherNameAdapter.toOtherNameList(otherNameEntityList);
+        OtherNames result = jpaJaxbOtherNameAdapter.toOtherNameList(otherNameEntityList);
+        result.updateIndexingStatusOnChilds();
+        return result;
     }
     
     @Override
@@ -165,12 +169,14 @@ public class OtherNameManagerImpl implements OtherNameManager {
         //Delete the deleted ones
         for(OtherNameEntity existingOtherName : existingOtherNamesEntityList) {
             boolean deleteMe = true;
-            for(OtherName updatedOrNew : otherNames.getOtherNames()) {
-                if(existingOtherName.getId().equals(updatedOrNew.getPutCode())) {
-                    deleteMe = false;
-                    break;
+            if(otherNames.getOtherNames() != null) {
+                for(OtherName updatedOrNew : otherNames.getOtherNames()) {
+                    if(existingOtherName.getId().equals(updatedOrNew.getPutCode())) {
+                        deleteMe = false;
+                        break;
+                    }
                 }
-            }
+            }            
             
             if(deleteMe) {
                 try {
@@ -190,6 +196,7 @@ public class OtherNameManagerImpl implements OtherNameManager {
                            existingOtherName.setLastModified(new Date());
                            existingOtherName.setVisibility(updatedOrNew.getVisibility());
                            existingOtherName.setDisplayName(updatedOrNew.getContent());
+                           existingOtherName.setDisplayIndex(updatedOrNew.getDisplayIndex());
                            otherNameDao.merge(existingOtherName);
                        }
                    }
@@ -202,6 +209,7 @@ public class OtherNameManagerImpl implements OtherNameManager {
                     newOtherName.setDateCreated(new Date());
                     newOtherName.setSource(sourceEntity);
                     newOtherName.setVisibility(updatedOrNew.getVisibility());
+                    newOtherName.setDisplayIndex(updatedOrNew.getDisplayIndex());
                     otherNameDao.persist(newOtherName);
                     
                 }

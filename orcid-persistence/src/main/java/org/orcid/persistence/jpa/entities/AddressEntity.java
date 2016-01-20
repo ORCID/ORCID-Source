@@ -49,6 +49,7 @@ public class AddressEntity extends BaseEntity<Long> implements ProfileAware, Sou
     private Boolean primary = Boolean.FALSE;
     private ProfileEntity user;
     private SourceEntity source;
+    private Long displayIndex;
 
     @Id
     @Column(name = "id")
@@ -117,6 +118,15 @@ public class AddressEntity extends BaseEntity<Long> implements ProfileAware, Sou
         this.primary = primary;
     }
 
+    @Column(name = "display_index")
+    public Long getDisplayIndex() {
+        return displayIndex;
+    }
+
+    public void setDisplayIndex(Long displayIndex) {
+        this.displayIndex = displayIndex;
+    }
+    
     @Override
     public int hashCode() {
         final int prime = 31;

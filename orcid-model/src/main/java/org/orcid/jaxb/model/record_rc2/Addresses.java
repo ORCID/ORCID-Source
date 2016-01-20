@@ -17,6 +17,8 @@
 package org.orcid.jaxb.model.record_rc2;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -90,5 +92,31 @@ public class Addresses implements Serializable {
         } else if (!path.equals(other.path))
             return false;
         return true;
+    }
+    
+    public void updateIndexingStatusOnChilds() {
+        if (this.getAddress() != null && !this.getAddress().isEmpty()) {
+            List<Address> sorted = new ArrayList<Address>();
+            List<Address> unsorted = new ArrayList<Address>();
+            Long maxDisplayIndex = 0L;
+            for(Address a : this.getAddress()) {
+                if(a.getDisplayIndex() == null || Long.valueOf(-1).equals(a.getDisplayIndex())) {
+                    unsorted.add(a);
+                } else {
+                    if(a.getDisplayIndex() > maxDisplayIndex) {
+                        maxDisplayIndex = a.getDisplayIndex();
+                    }
+                    sorted.add(a);
+                }                
+            }      
+            
+            if(!unsorted.isEmpty()) {
+                Collections.sort(unsorted);
+                for(Address a : unsorted) {
+                    a.setDisplayIndex((maxDisplayIndex++) + 1);
+                    sorted.add(a);
+                }
+            }
+        }
     }
 }

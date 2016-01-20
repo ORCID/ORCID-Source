@@ -626,8 +626,8 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         person.setExternalIdentifiers(externalIdentifierManager.getExternalIdentifiersV2(orcid));
         person.setKeywords(profileKeywordManager.getKeywords(orcid));
         person.setName(personalDetailsManager.getName(orcid));
-        person.setOtherNames(otherNameManager.getOtherNames(orcid));
-        person.setResearcherUrls(researcherUrlManager.getResearcherUrlsV2(orcid));             
+        person.setOtherNames(otherNameManager.getOtherNames(orcid)); 
+        person.setResearcherUrls(researcherUrlManager.getResearcherUrls(orcid));             
         person.setEmails(emailManager.getEmails(orcid));
         
         //The rest should come from the ProfileEntity object
@@ -688,7 +688,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         person.setExternalIdentifiers(externalIdentifierManager.getPublicExternalIdentifiersV2(orcid));
         person.setKeywords(profileKeywordManager.getPublicKeywords(orcid));
         person.setOtherNames(otherNameManager.getPublicOtherNames(orcid));
-        person.setResearcherUrls(researcherUrlManager.getPublicResearcherUrlsV2(orcid));             
+        person.setResearcherUrls(researcherUrlManager.getPublicResearcherUrls(orcid));             
         person.setEmails(emailManager.getPublicEmails(orcid));
         
         //The rest should come from the ProfileEntity object

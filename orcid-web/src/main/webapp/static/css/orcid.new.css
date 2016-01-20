@@ -6259,7 +6259,8 @@ a:hover .mozilla-badge{
 	padding: 15px 0 15px 15px;
 }
 
-.fixed-area .scroll-area input,
+.fixed-area .scroll-area input[type="textbox"],
+.fixed-area .scroll-area input[type="text"],
 .fixed-area .scroll-area select{
 	width: 100%;
 }
@@ -6316,6 +6317,17 @@ a:hover .mozilla-badge{
     color: #FFF;        
 }
 
+.record-settings span.circle:hover{
+	background: #a6ce39;    
+    color: #FFF;
+}
+
+.fixed-area ul.record-settings li .glyphicon-trash:hover{
+	color: #a6ce39;
+}
+
+
+
 .record-buttons .cancel-option{
 	margin: 5px 15px 0 0;
 }
@@ -6335,6 +6347,10 @@ a:hover .mozilla-badge{
 
 .fixed-area .scroll-area .popover-help-container .popover{
 	top: -143px;
+}
+
+.not-allowed{
+	cursor:not-allowed;
 }
 	
 

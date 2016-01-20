@@ -59,13 +59,17 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
     @Override
     public Keywords getKeywords(String orcid) {
         List<ProfileKeywordEntity> entities = getProfileKeywordEntitys(orcid, null);
-        return adapter.toKeywords(entities);
+        Keywords result = adapter.toKeywords(entities);
+        result.updateIndexingStatusOnChilds();
+        return result;
     }
 
     @Override
     public Keywords getPublicKeywords(String orcid) {
         List<ProfileKeywordEntity> entities = getProfileKeywordEntitys(orcid, Visibility.PUBLIC);
-        return adapter.toKeywords(entities);
+        Keywords result = adapter.toKeywords(entities);
+        result.updateIndexingStatusOnChilds();
+        return result;
     }
 
     private List<ProfileKeywordEntity> getProfileKeywordEntitys(String orcid, Visibility visibility) {
@@ -85,9 +89,9 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
 
     @Override
     public boolean updateKeywordsVisibility(String orcid, Visibility defaultVisiblity) {
-        org.orcid.jaxb.model.message.Visibility v = (defaultVisiblity == null)
-                ? org.orcid.jaxb.model.message.Visibility.fromValue(OrcidVisibilityDefaults.KEYWORD_DEFAULT.getVisibility().value())
-                : org.orcid.jaxb.model.message.Visibility.fromValue(defaultVisiblity.value());
+        Visibility v = (defaultVisiblity == null)
+                ? Visibility.fromValue(OrcidVisibilityDefaults.KEYWORD_DEFAULT.getVisibility().value())
+                : defaultVisiblity;
         return profileKeywordDao.updateKeywordsVisibility(orcid, v);
     }
 
@@ -182,12 +186,14 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
         // Delete the deleted ones
         for (ProfileKeywordEntity existing : existingKeywordsList) {
             boolean deleteMe = true;
-            for (Keyword updatedOrNew : keywords.getKeywords()) {
-                if (existing.getId().equals(updatedOrNew.getPutCode())) {
-                    deleteMe = false;
-                    break;
+            if(keywords.getKeywords() != null) {
+                for (Keyword updatedOrNew : keywords.getKeywords()) {
+                    if (existing.getId().equals(updatedOrNew.getPutCode())) {
+                        deleteMe = false;
+                        break;
+                    }
                 }
-            }
+            }            
 
             if (deleteMe) {
                 try {
@@ -207,6 +213,7 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
                             existingKeyword.setLastModified(new Date());
                             existingKeyword.setVisibility(updatedOrNew.getVisibility());
                             existingKeyword.setKeywordName(updatedOrNew.getContent());
+                            existingKeyword.setDisplayIndex(updatedOrNew.getDisplayIndex());
                             profileKeywordDao.merge(existingKeyword);
                         }
                     }
@@ -219,6 +226,7 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
                     newKeyword.setDateCreated(new Date());
                     newKeyword.setSource(sourceEntity);
                     newKeyword.setVisibility(updatedOrNew.getVisibility());
+                    newKeyword.setDisplayIndex(updatedOrNew.getDisplayIndex());
                     profileKeywordDao.persist(newKeyword);
 
                 }

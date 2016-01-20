@@ -95,5 +95,6 @@
 		<xs:attribute name="path" type="common:person-path" use="optional" />
 		<xs:attribute name="visibility" type="common:visibility" />
 		<xs:attribute name="put-code" type="common:put-code" use="optional" />
+		<xs:attribute name="display-index" type="xs:string" use="optional" />
 	</xs:complexType>
 </xs:schema>

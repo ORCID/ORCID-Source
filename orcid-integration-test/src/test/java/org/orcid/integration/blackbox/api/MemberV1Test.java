@@ -86,7 +86,7 @@ public class MemberV1Test {
         assertEquals(OrcidVisibilityDefaults.CREATED_BY_MEMBER_DEFAULT.getVisibility().value(), newProfile.getOrcidBio().getExternalIdentifiers().getVisibility().value());
         assertEquals(OrcidVisibilityDefaults.CREATED_BY_MEMBER_DEFAULT.getVisibility().value(), newProfile.getOrcidBio().getKeywords().getVisibility().value());
         assertEquals(OrcidVisibilityDefaults.CREATED_BY_MEMBER_DEFAULT.getVisibility().value(), newProfile.getOrcidBio().getResearcherUrls().getVisibility().value());
-        assertEquals(OrcidVisibilityDefaults.CREATED_BY_MEMBER_DEFAULT.getVisibility().value(), newProfile.getOrcidBio().getPersonalDetails().getCreditName().getVisibility().value());
+        assertEquals(OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility().value(), newProfile.getOrcidBio().getPersonalDetails().getCreditName().getVisibility().value());
         assertEquals(OrcidVisibilityDefaults.CREATED_BY_MEMBER_DEFAULT.getVisibility().value(), newProfile.getOrcidBio().getPersonalDetails().getOtherNames().getVisibility().value());
         assertEquals(OrcidVisibilityDefaults.CREATED_BY_MEMBER_DEFAULT.getVisibility().value(), newProfile.getOrcidBio().getContactDetails().getAddress().getCountry().getVisibility().value());
         assertEquals(OrcidVisibilityDefaults.CREATED_BY_MEMBER_DEFAULT.getVisibility().value(), newProfile.getOrcidInternal().getPreferences().getActivitiesVisibilityDefault().getValue().value());

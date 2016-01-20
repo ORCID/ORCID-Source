@@ -38,6 +38,7 @@ public class KeywordForm implements ErrorsInterface, Serializable {
     private String putCode;
     private String content;
     private Visibility visibility;
+    private Long displayIndex;
     private Date createdDate;
     private Date lastModified;
     private String source;
@@ -87,6 +88,12 @@ public class KeywordForm implements ErrorsInterface, Serializable {
             }
         }
 
+        if (keyword.getDisplayIndex() != null) {
+            form.setDisplayIndex(keyword.getDisplayIndex());
+        } else {
+            form.setDisplayIndex(Long.valueOf(-1));
+        }
+
         return form;
     }
 
@@ -113,6 +120,12 @@ public class KeywordForm implements ErrorsInterface, Serializable {
 
         if (lastModified != null) {
             keyword.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(lastModified.toCalendar())));
+        }
+
+        if (displayIndex != null) {
+            keyword.setDisplayIndex(displayIndex);
+        } else {
+            keyword.setDisplayIndex(Long.valueOf(-1));
         }
 
         keyword.setSource(new Source(source));
@@ -183,4 +196,11 @@ public class KeywordForm implements ErrorsInterface, Serializable {
         this.sourceName = sourceName;
     }
 
+    public Long getDisplayIndex() {
+        return displayIndex;
+    }
+
+    public void setDisplayIndex(Long displayIndex) {
+        this.displayIndex = displayIndex;
+    }
 }

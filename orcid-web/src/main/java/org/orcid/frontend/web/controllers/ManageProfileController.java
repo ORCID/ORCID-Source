@@ -819,17 +819,10 @@ public class ManageProfileController extends BaseWorkspaceController {
         return emails;
     }
 
-    
-    
-    
-    
-    
-    
-    
-    
     @RequestMapping(value = "/countryForm.json", method = RequestMethod.GET)
     public @ResponseBody AddressesForm getProfileCountryJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
-        AddressesForm form = AddressesForm.valueOf(addressManager.getAddresses(getCurrentUserOrcid()));
+        Addresses addresses = addressManager.getAddresses(getCurrentUserOrcid());
+        AddressesForm form = AddressesForm.valueOf(addresses);
         // Set country name
         if(form != null && form.getAddresses() != null) {
             Map<String, String> countries = retrieveIsoCountries();
@@ -853,15 +846,24 @@ public class ManageProfileController extends BaseWorkspaceController {
     public @ResponseBody AddressesForm setProfileCountryJson(HttpServletRequest request, @RequestBody AddressesForm addressesForm) throws NoSuchRequestHandlingMethodException {
         addressesForm.setErrors(new ArrayList<String>());
         Map<String, String> countries = retrieveIsoCountries();
+        boolean foundPrimary = false;
         if(addressesForm != null) {
             if(addressesForm.getAddresses() != null) {
                 for(AddressForm form : addressesForm.getAddresses()) {
+                    if(form.getPrimary()) {
+                        foundPrimary = true;
+                    }
                     if(form.getIso2Country() == null || form.getIso2Country().getValue() == null) {
                         form.getErrors().add(getMessage("common.invalid_country"));
+                    } else {
+                        form.setCountryName(countries.get(form.getIso2Country().getValue().name()));
                     }
-                    form.setCountryName(countries.get(form.getIso2Country().getValue().name()));
+                                                                                
                     copyErrors(form, addressesForm);
-                }                
+                } 
+                if(!addressesForm.getAddresses().isEmpty() && !foundPrimary) {
+                    addressesForm.getErrors().add(getMessage("common.set_primary_email"));
+                }
             }
             if(!addressesForm.getErrors().isEmpty()) {
                 return addressesForm;
@@ -884,74 +886,6 @@ public class ManageProfileController extends BaseWorkspaceController {
         }
         return addressesForm;
     }
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     
     @RequestMapping(value = "/nameForm.json", method = RequestMethod.GET)
     public @ResponseBody NamesForm getNameForm(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {

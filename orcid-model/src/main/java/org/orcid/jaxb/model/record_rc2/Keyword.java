@@ -41,7 +41,7 @@ import org.orcid.jaxb.model.common.Visibility;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "content", "createdDate", "lastModifiedDate", "source" })
 @XmlRootElement(name = "keyword", namespace = "http://www.orcid.org/ns/keyword")
-public class Keyword implements Filterable, Serializable {
+public class Keyword implements Filterable, Serializable, Comparable<Keyword> {
     private static final long serialVersionUID = -6506745436549656971L;
     @XmlElement(name = "content", namespace = "http://www.orcid.org/ns/keyword")
     protected String content;
@@ -58,6 +58,8 @@ public class Keyword implements Filterable, Serializable {
     protected Visibility visibility;
     @XmlAttribute
     protected String path;
+    @XmlAttribute(name = "display-index")
+    protected Long displayIndex;
 
     public Source getSource() {
         return source;
@@ -105,6 +107,14 @@ public class Keyword implements Filterable, Serializable {
 
     public void setPath(String path) {
         this.path = path;
+    }    
+    
+    public Long getDisplayIndex() {
+        return displayIndex;
+    }
+
+    public void setDisplayIndex(Long displayIndex) {
+        this.displayIndex = displayIndex;
     }
 
     @Override
@@ -114,6 +124,7 @@ public class Keyword implements Filterable, Serializable {
         result = prime * result + ((path == null) ? 0 : path.hashCode());
         result = prime * result + ((content == null) ? 0 : content.hashCode());
         result = prime * result + ((visibility == null) ? 0 : visibility.hashCode());
+        result = prime * result + ((putCode == null) ? 0 : putCode.hashCode());
         return result;
     }
 
@@ -135,7 +146,17 @@ public class Keyword implements Filterable, Serializable {
             if (other.content != null)
                 return false;
         } else if (!content.equals(other.content))
-            return false;
+            return false;                
+        if (putCode == null) {
+            if (other.content != null)
+                return false;
+        } else if (!putCode.equals(other.putCode))
+            return false;        
+        if (displayIndex == null) {
+            if (other.displayIndex != null)
+                return false;
+        } else if (!displayIndex.equals(other.displayIndex))
+            return false;        
         if (visibility != other.visibility)
             return false;
         return true;
@@ -155,5 +176,18 @@ public class Keyword implements Filterable, Serializable {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    @Override
+    public int compareTo(Keyword o) {
+        if(o == null || o.getContent() == null) {
+            return 1;
+        }
+                
+        if(getContent() == null) {
+            return -1;
+        }
+        
+        return this.getContent().compareTo(o.getContent());
     }
 }

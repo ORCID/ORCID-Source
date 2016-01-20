@@ -186,13 +186,17 @@ public class AddressManagerImpl implements AddressManager {
     @Override
     public Addresses getAddresses(String orcid) {
         List<AddressEntity> addressList = getAddresses(orcid, null);        
-        return adapter.toAddressList(addressList);
+        Addresses result = adapter.toAddressList(addressList);
+        result.updateIndexingStatusOnChilds();
+        return result;
     }
 
     @Override
     public Addresses getPublicAddresses(String orcid) {
         List<AddressEntity> addressList = getAddresses(orcid, null);
-        return adapter.toAddressList(addressList);
+        Addresses result = adapter.toAddressList(addressList);
+        result.updateIndexingStatusOnChilds();
+        return result;
     }
     
     private List<AddressEntity> getAddresses(String orcid, Visibility visibility) {
@@ -214,14 +218,13 @@ public class AddressManagerImpl implements AddressManager {
         List<AddressEntity> existingAddressList = addressDao.findByOrcid(orcid);
         //Delete the deleted ones
         for(AddressEntity existingAddress : existingAddressList) {
-            boolean deleteMe = true;
+            boolean deleteMe = true;            
             for(Address updatedOrNew : addresses.getAddress()) {
                 if(existingAddress.getId().equals(updatedOrNew.getPutCode())) {
                     deleteMe = false;
                     break;
                 }
-            }
-            
+            }                                   
             if(deleteMe) {
                 try {
                     addressDao.deleteAddress(orcid, existingAddress.getId());

@@ -51,7 +51,8 @@ public class ExternalIdentifierEntity extends BaseEntity<Long> implements Compar
     private SourceEntity source;
     private Long id;
     private Visibility visibility;
-
+    private Long displayIndex;
+    
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "external_identifier_id_seq")
     @SequenceGenerator(name = "external_identifier_id_seq", sequenceName = "external_identifier_id_seq")
@@ -130,6 +131,15 @@ public class ExternalIdentifierEntity extends BaseEntity<Long> implements Compar
 
     public void setVisibility(Visibility visibility) {
         this.visibility = visibility;
+    }
+    
+    @Column(name = "display_index", updatable=false, insertable=false)
+    public Long getDisplayIndex() {
+        return displayIndex;
+    }
+
+    public void setDisplayIndex(Long displayIndex) {
+        this.displayIndex = displayIndex;
     }
     
     @Override

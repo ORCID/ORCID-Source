@@ -50,6 +50,7 @@ public class ResearcherUrlEntity extends BaseEntity<Long> implements Comparable<
     private ProfileEntity user;
     private SourceEntity source;
     private Visibility visibility;
+    private Long displayIndex;
 
     public ResearcherUrlEntity() {
     }
@@ -126,6 +127,15 @@ public class ResearcherUrlEntity extends BaseEntity<Long> implements Comparable<
         this.visibility = visibility;
     }
 
+    @Column(name = "display_index")
+    public Long getDisplayIndex() {
+        return displayIndex;
+    }
+
+    public void setDisplayIndex(Long displayIndex) {
+        this.displayIndex = displayIndex;
+    }
+    
     @Override
     public int compareTo(ResearcherUrlEntity other) {
         String otherUrl = other.getUrl();

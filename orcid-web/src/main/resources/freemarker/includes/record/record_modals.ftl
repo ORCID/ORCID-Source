@@ -18,6 +18,7 @@
 -->
 
 <script type="text/ng-template" id="edit-aka">	
+	<!-- Other Names -->
 	<div class="lightbox-container">
 		<div class="edit-record edit-aka">
 			<!-- Title -->
@@ -31,10 +32,9 @@
 			</div>
 			<div class="row">
 				<div class="col-md-12 col-xs-12 col-sm-12">
-					
 					<div class="fixed-area">
 						<div class="scroll-area">		
-	        	      	   <div class="row aka-row" ng-repeat="otherName in otherNamesForm.otherNames" ng-cloak> 								
+	        	      	   <div class="row aka-row" ng-repeat="otherName in otherNamesForm.otherNames | orderBy : 'displayIndex'" ng-cloak> 								
 								<div class="col-md-6">
 									<div class="aka">
 										<input type="text" ng-model="otherName.content" ng-show="otherName.source == orcidId || otherName.source == null"  focus-me="newInput"/>
@@ -45,10 +45,11 @@
 								<div class="col-md-6">
 									<ul class="record-settings pull-right">
 										<li>												
-											<span class="glyphicon glyphicon-arrow-up circle" ng-click=""></span>											
+											<span class="glyphicon glyphicon-arrow-up circle" ng-click="$first || setPriorityUp(otherName.displayIndex)"></span>										
+											
 										</li>
 										<li>																						
-											<span class="glyphicon glyphicon-arrow-down circle" ng-click=""></span>											
+											<span class="glyphicon glyphicon-arrow-down circle" ng-click="$last || setPriorityDown(otherName.displayIndex)"></span>											
 										</li>
 										<li>										
 											<span class="glyphicon glyphicon-trash" ng-click="deleteKeyword(otherName)"></span>											
@@ -66,7 +67,7 @@
 									<span class="created-date pull-right" ng-show="otherName.createdDate">Created: {{otherName.createdDate.year + '-' + otherName.createdDate.month + '-' + otherName.createdDate.day}}</span>
 								</div>
 							</div>
-						</div>						
+						</div>
 					</div>
 					<div class="record-buttons">
 						<a ng-click="addNewModal()"><span class="glyphicon glyphicon-plus pull-left"></span></a>	        	      		
@@ -81,6 +82,7 @@
 </script>
 
 <script type="text/ng-template" id="edit-country">
+	<!-- Country -->
 	<div class="lightbox-container">
 		<div class="edit-record edit-country">
 			<!-- Title -->
@@ -96,10 +98,10 @@
 				<div class="col-md-12 col-xs-12 col-sm-12">
 					<div class="fixed-area">
 						<div class="scroll-area">		
-							<div class="row aka-row" ng-repeat="country in countryForm.addresses">
+							<div class="row aka-row" ng-repeat="country in countryForm.addresses | orderBy: 'displayIndex'">
 								<div class="col-md-6">
 									<div class="aka">
-			                 			<select id="country" name="country" ng-model="country.iso2Country.value">
+			                 			<select id="country" name="country" ng-model="country.iso2Country.value" ng-disabled="{{country.source != orcidId && country.source != null}}" ng-class="{'not-allowed': country.source != orcidId && country.source != null}" focus-me="newInput">
 				    			 			<option value=""><@orcid.msg 'org.orcid.persistence.jpa.entities.CountryIsoEntity.empty' /></option>
 								 			<#list isoCountries?keys as key>
 								     			<option value="${key}">${isoCountries[key]}</option>
@@ -110,13 +112,16 @@
 								</div> 
 								<div class="col-md-6">
 									<ul class="record-settings pull-right">
-										<li>												
-											<span class="glyphicon glyphicon-arrow-up circle" ng-click=""></span>											
+										<li>
+											<input name="priority" type="radio" ng-model="primary" ng-value="country.primary" ng-click="setPrimary(country)">
+										</li>										
+										<li ng-init="">												
+											<span class="glyphicon glyphicon-arrow-up circle" ng-click="setPriorityUp(country.displayIndex)"></span>											
 										</li>
-										<li>																						
-											<span class="glyphicon glyphicon-arrow-down circle" ng-click=""></span>											
+										<li>
+											<span class="glyphicon glyphicon-arrow-down circle" ng-click="setPriorityDown(country.displayIndex)"></span>
 										</li>
-										<li>										
+										<li>
 											<span class="glyphicon glyphicon-trash" ng-click="deleteCountry(country)"></span>											
 										</li>
 										<li>
@@ -133,7 +138,12 @@
 								</div>					 				
 							</div>											
 						</div>
-					</div>
+						<div ng-show="countryForm.errors.length > 0">
+							<div ng-repeat="error in countryForm.errors">
+								<span ng-bind="error" class="red"></span>
+							</div>
+						</div>
+					</div>					
 					<div class="record-buttons">						
 						<a ng-click="addNewModal()"><span class="glyphicon glyphicon-plus pull-left"></span></a>	        	    		
 		            	<button class="btn btn-primary pull-right" ng-click="setCountryForm(true)"><@spring.message "freemarker.btnsavechanges"/></button>
@@ -147,6 +157,7 @@
 
 
 <script type="text/ng-template" id="edit-keyword">
+	<!-- Keywords -->
 	<div class="lightbox-container">
 		<div class="edit-record edit-keyword">
 			<!-- Title -->
@@ -162,7 +173,7 @@
 				<div class="col-md-12 col-xs-12 col-sm-12">
 					<div class="fixed-area">
 						<div class="scroll-area">		
-							<div class="row aka-row" ng-repeat="keyword in keywordsForm.keywords">
+							<div class="row aka-row" ng-repeat="keyword in keywordsForm.keywords | orderBy:'displayIndex'">		
 								<div class="col-md-6">
 									<div class="aka">
 										<input type="text" ng-model="keyword.content" ng-show="keyword.source == orcidId || keyword.source == null" focus-me="newInput"></input>
@@ -174,10 +185,10 @@
 								<div class="col-md-6">
 									<ul class="record-settings pull-right">
 										<li>												
-											<span class="glyphicon glyphicon-arrow-up circle" ng-click=""></span>											
+											<span class="glyphicon glyphicon-arrow-up circle" ng-click="setPriorityUp(keyword.displayIndex)"></span>
 										</li>
 										<li>																						
-											<span class="glyphicon glyphicon-arrow-down circle" ng-click=""></span>											
+											<span class="glyphicon glyphicon-arrow-down circle" ng-click="setPriorityDown(keyword.displayIndex)"></span>											
 										</li>
 										<li>										
 											<span class="glyphicon glyphicon-trash" ng-click="deleteKeyword(keyword)"></span>											
@@ -226,9 +237,9 @@
 				<div class="col-md-12 col-xs-12 col-sm-12">
 					<div class="fixed-area">
 						<div class="scroll-area">		
-							<div class="row aka-row" ng-repeat="website in websitesForm.websites">
+							<div class="row aka-row" ng-repeat="website in websitesForm.websites | orderBy:'displayIndex'">
 								<div class="col-md-6">
-									<div class="aka">
+									<div class="aka">										
 										<input type="text" ng-model="website.urlName" ng-show="website.source == orcidId || website.source == null" focus-me="newInput" placeholder="${springMacroRequestContext.getMessage('manual_work_form_contents.labeldescription')}"></input>
 										<input type="text" ng-model="website.url" ng-show="website.source == orcidId || website.source == null" placeholder="${springMacroRequestContext.getMessage('common.url')}"></input>
 										<span ng-bind="otherName.content" ng-show="keyword.source != orcidId && keyword.sourceName"></span>
@@ -239,10 +250,10 @@
 								<div class="col-md-6">
 									<ul class="record-settings pull-right">
 										<li>												
-											<span class="glyphicon glyphicon-arrow-up circle" ng-click=""></span>											
+											<span class="glyphicon glyphicon-arrow-up circle" ng-click="setPriorityUp(website.displayIndex)"></span>											
 										</li>
 										<li>																						
-											<span class="glyphicon glyphicon-arrow-down circle" ng-click=""></span>											
+											<span class="glyphicon glyphicon-arrow-down circle" ng-click="setPriorityDown(website.displayIndex)"></span>											
 										</li>
 										<li>										
 											<span class="glyphicon glyphicon-trash" ng-click="deleteWebsite(website)"></span>											
@@ -262,6 +273,7 @@
 							</div>											
 						</div>
 					</div>
+					
 					<div class="record-buttons">						
 						<a ng-click="addNewModal()"><span class="glyphicon glyphicon-plus pull-left"></span></a>	        	    		
 		            	<button class="btn btn-primary pull-right" ng-click="setWebsitesForm(true)"><@spring.message "freemarker.btnsavechanges"/></button>
