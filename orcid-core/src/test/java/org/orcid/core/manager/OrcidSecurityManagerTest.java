@@ -283,12 +283,10 @@ public class OrcidSecurityManagerTest extends BaseTest {
     @Test
     public void testCheckPermissionsOnEveryScope() {
         String userOrcid = "4444-4444-4444-4441";
-
         for (ScopePathType scopeToTest : ScopePathType.values()) {
             SecurityContextTestUtils.setUpSecurityContext(userOrcid, scopeToTest);
             checkScopes(userOrcid, scopeToTest);
         }
-
     }
 
     public void checkScopes(String userOrcid, ScopePathType scopeThatShouldWork) {
@@ -296,18 +294,25 @@ public class OrcidSecurityManagerTest extends BaseTest {
             System.out.println("Debug here");
         }
         for (ScopePathType scope : ScopePathType.values()) {
-            // TODO: check if we still want this behavior
-            // Why (scopeThatShouldWork.isReadOnlyScope() &&
-            // scope.isReadOnlyScope())? Check at the
-            // DefaultPermissionsChecker.hasRequiredScope, if the client have
-            // any read only scope and the request is for other read only scope,
-            // it will allow the request and will delegate filtering the result
-            // to others
-            if (scopeThatShouldWork.combined().contains(scope) || (scopeThatShouldWork.isReadOnlyScope() && scope.isReadOnlyScope())) {
+            if (scopeThatShouldWork.combined().contains(scope)) {
                 try {
                     orcidSecurityManager.checkPermissions(scope, userOrcid);
                 } catch (Exception e) {
                     fail("Testing scope '" + scopeThatShouldWork.value() + "' scope '" + scope.value() + "' should work");
+                }
+            } else if (scope.isReadOnlyScope()) {
+                // TODO: check if we still want this behavior
+                // Check at the DefaultPermissionsChecker.hasRequiredScope, if
+                // the client have the READ_PUBLIC scope and the
+                // request requires a read only scope, the
+                // DefaultPermissionsChecker will allow the request and
+                // delegate filtering the result to others code
+                if (ScopePathType.hasStringScope(scopeThatShouldWork.getContent(), ScopePathType.READ_PUBLIC)) {
+                    try {
+                        orcidSecurityManager.checkPermissions(scope, userOrcid);
+                    } catch (Exception e) {
+                        fail("Testing scope '" + scopeThatShouldWork.value() + "' scope '" + scope.value() + "' should work");
+                    }
                 }
             } else {
                 try {
