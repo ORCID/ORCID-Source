@@ -2531,9 +2531,10 @@ orcidNgModule.controller('KeywordsCtrl', ['$scope', '$compile', function ($scope
         var len = keywords.length;
         
         while (len--) {
-            if (keywords[len] == keyword)                
+            if (keywords[len] == keyword){
                 keywords[len].visibility.visibility = priv;
                 $scope.keywordsForm.keywords = keywords;
+            }
         }
     };
     
@@ -2737,7 +2738,7 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile',function ($scope
         });
     };
 
-    $scope.deleteKeyword = function(otherName){
+    $scope.deleteOtherName = function(otherName){
         var otherNames = $scope.otherNamesForm.otherNames;
         var len = otherNames.length;
         while (len--) {            
@@ -3063,9 +3064,10 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
         var len = countries.length;
         
         while (len--) {
-            if (countries[len] == country)                
+            if (countries[len] == country){            
                 countries[len].visibility.visibility = priv;
                 $scope.countryForm.addresses = countries;
+            }
         }
     };
     

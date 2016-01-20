@@ -52,7 +52,7 @@
 											<span class="glyphicon glyphicon-arrow-down circle" ng-click="$last || setPriorityDown(otherName.displayIndex)"></span>											
 										</li>
 										<li>										
-											<span class="glyphicon glyphicon-trash" ng-click="deleteKeyword(otherName)"></span>											
+											<span class="glyphicon glyphicon-trash" ng-click="deleteOtherName(otherName)"></span>											
 										</li>
 										<li>											
 											<@orcid.privacyToggle3  angularModel="otherName.visibility.visibility"
