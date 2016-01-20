@@ -25,12 +25,12 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.orcid.jaxb.model.common.CreatedDate;
-import org.orcid.jaxb.model.common.Filterable;
-import org.orcid.jaxb.model.common.LastModifiedDate;
-import org.orcid.jaxb.model.common.Source;
-import org.orcid.jaxb.model.common.Url;
-import org.orcid.jaxb.model.common.Visibility;
+import org.orcid.jaxb.model.common_rc2.CreatedDate;
+import org.orcid.jaxb.model.common_rc2.Filterable;
+import org.orcid.jaxb.model.common_rc2.LastModifiedDate;
+import org.orcid.jaxb.model.common_rc2.Source;
+import org.orcid.jaxb.model.common_rc2.Url;
+import org.orcid.jaxb.model.common_rc2.Visibility;
 
 import io.swagger.annotations.ApiModelProperty;
 

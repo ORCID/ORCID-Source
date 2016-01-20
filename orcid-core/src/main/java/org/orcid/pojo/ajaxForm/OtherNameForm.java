@@ -20,7 +20,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.orcid.jaxb.model.common.Source;
+import org.orcid.jaxb.model.common_rc2.Source;
 import org.orcid.jaxb.model.record_rc2.OtherName;
 
 public class OtherNameForm implements ErrorsInterface, Serializable {
@@ -91,7 +91,7 @@ public class OtherNameForm implements ErrorsInterface, Serializable {
         }
 
         if (this.visibility != null && this.visibility.getVisibility() != null) {
-            otherName.setVisibility(org.orcid.jaxb.model.common.Visibility.fromValue(this.getVisibility().getVisibility().value()));
+            otherName.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(this.getVisibility().getVisibility().value()));
         }
 
         if (!PojoUtil.isEmpty(this.getPutCode())) {

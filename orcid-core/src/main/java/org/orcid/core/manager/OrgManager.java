@@ -20,7 +20,7 @@ import java.io.Writer;
 import java.util.List;
 
 import org.orcid.jaxb.model.message.Organization;
-import org.orcid.jaxb.model.common.OrganizationHolder;
+import org.orcid.jaxb.model.common_rc2.OrganizationHolder;
 import org.orcid.persistence.jpa.entities.AmbiguousOrgEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
 

@@ -63,7 +63,7 @@ public class ActivityCacheManagerImpl extends Object implements ActivityCacheMan
         if (peerReviews != null) {
             if (!peerReviews.isEmpty()) {                
                 for(PeerReview peerReview : peerReviews) {
-                    if(peerReview.getVisibility().equals(org.orcid.jaxb.model.common.Visibility.PUBLIC)) {
+                    if(peerReview.getVisibility().equals(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC)) {
                         peerReviewMap.put(peerReview.getPutCode(), peerReview);
                     }
                 }

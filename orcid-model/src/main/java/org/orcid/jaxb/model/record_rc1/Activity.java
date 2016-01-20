@@ -16,9 +16,9 @@
  */
 package org.orcid.jaxb.model.record_rc1;
 
-import org.orcid.jaxb.model.common.CreatedDate;
-import org.orcid.jaxb.model.common.Filterable;
-import org.orcid.jaxb.model.common.LastModifiedDate;
+import org.orcid.jaxb.model.common_rc1.CreatedDate;
+import org.orcid.jaxb.model.common_rc1.Filterable;
+import org.orcid.jaxb.model.common_rc1.LastModifiedDate;
 
 /**
  * 

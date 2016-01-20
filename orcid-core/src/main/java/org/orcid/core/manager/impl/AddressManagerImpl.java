@@ -33,7 +33,7 @@ import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.validator.PersonValidator;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
-import org.orcid.jaxb.model.common.Visibility;
+import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.record_rc2.Address;
 import org.orcid.jaxb.model.record_rc2.Addresses;
 import org.orcid.persistence.dao.AddressDao;
@@ -173,13 +173,13 @@ public class AddressManagerImpl implements AddressManager {
         Visibility incomingCountryVisibility = entity.getVisibility();
         Visibility defaultCountryVisibility = profile.getProfileAddressVisibility() == null
                 ? Visibility.fromValue(OrcidVisibilityDefaults.COUNTRY_DEFAULT.getVisibility().value())
-                : org.orcid.jaxb.model.common.Visibility.fromValue(profile.getProfileAddressVisibility().value());
+                : org.orcid.jaxb.model.common_rc2.Visibility.fromValue(profile.getProfileAddressVisibility().value());
         if (profile.getClaimed() != null && profile.getClaimed()) {
             if (defaultCountryVisibility.isMoreRestrictiveThan(incomingCountryVisibility)) {
                 entity.setVisibility(defaultCountryVisibility);
             }
         } else if (incomingCountryVisibility == null) {
-            entity.setVisibility(org.orcid.jaxb.model.common.Visibility.PRIVATE);
+            entity.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PRIVATE);
         }
     }
 

@@ -377,12 +377,12 @@ public class WorkspaceController extends BaseWorkspaceController {
             if(defaultVisibility != null && defaultVisibility.getVisibility() != null) {
                 //If the default visibility is null, then, the user changed the default visibility, so, change the visibility for all items
                 for(Keyword k : updatedKeywords.getKeywords()) {
-                    k.setVisibility(org.orcid.jaxb.model.common.Visibility.fromValue(defaultVisibility.getVisibility().value()));
+                    k.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(defaultVisibility.getVisibility().value()));
                 }
             } 
                          
             if(defaultVisibility != null) {
-                profileKeywordManager.updateKeywords(getCurrentUserOrcid(), updatedKeywords, org.orcid.jaxb.model.common.Visibility.fromValue(defaultVisibility.getVisibility().value()));
+                profileKeywordManager.updateKeywords(getCurrentUserOrcid(), updatedKeywords, org.orcid.jaxb.model.common_rc2.Visibility.fromValue(defaultVisibility.getVisibility().value()));
             } else {
                 profileKeywordManager.updateKeywords(getCurrentUserOrcid(), updatedKeywords, null);
             }
@@ -428,17 +428,17 @@ public class WorkspaceController extends BaseWorkspaceController {
             if(defaultVisibility != null && defaultVisibility.getVisibility() != null) {
                 //If the default visibility is null, then, the user changed the default visibility, so, change the visibility for all items
                 for(OtherName o : otherNames.getOtherNames()) {
-                    o.setVisibility(org.orcid.jaxb.model.common.Visibility.fromValue(defaultVisibility.getVisibility().value()));
+                    o.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(defaultVisibility.getVisibility().value()));
                 }
             } 
             
             if(defaultVisibility != null) {
-                otherNameManager.updateOtherNames(getEffectiveUserOrcid(), otherNames, org.orcid.jaxb.model.common.Visibility.fromValue(defaultVisibility.getVisibility().value()));
+                otherNameManager.updateOtherNames(getEffectiveUserOrcid(), otherNames, org.orcid.jaxb.model.common_rc2.Visibility.fromValue(defaultVisibility.getVisibility().value()));
             } else {
                 otherNameManager.updateOtherNames(getEffectiveUserOrcid(), otherNames, null);
             }
         }
-        
+
         return onf;
     }
     
@@ -494,12 +494,12 @@ public class WorkspaceController extends BaseWorkspaceController {
             if(defaultVisibility != null && defaultVisibility.getVisibility() != null) {
                 //If the default visibility is null, then, the user changed the default visibility, so, change the visibility for all items
                 for(ResearcherUrl rUrl : rUrls.getResearcherUrls()) {
-                    rUrl.setVisibility(org.orcid.jaxb.model.common.Visibility.fromValue(defaultVisibility.getVisibility().value()));
+                    rUrl.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(defaultVisibility.getVisibility().value()));
                 }
             }
             
             if(defaultVisibility != null) {
-                researcherUrlManager.updateResearcherUrls(getCurrentUserOrcid(), rUrls, org.orcid.jaxb.model.common.Visibility.fromValue(defaultVisibility.getVisibility().value()));
+                researcherUrlManager.updateResearcherUrls(getCurrentUserOrcid(), rUrls, org.orcid.jaxb.model.common_rc2.Visibility.fromValue(defaultVisibility.getVisibility().value()));
             } else {
                 researcherUrlManager.updateResearcherUrls(getCurrentUserOrcid(), rUrls, null);
             }

@@ -16,6 +16,8 @@
  */
 package org.orcid.jaxb.model.groupid_rc1;
 
+import io.swagger.annotations.ApiModelProperty;
+
 import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -25,13 +27,11 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.orcid.jaxb.model.common.CreatedDate;
-import org.orcid.jaxb.model.common.LastModifiedDate;
-import org.orcid.jaxb.model.common.Source;
+import org.orcid.jaxb.model.common_rc1.CreatedDate;
+import org.orcid.jaxb.model.common_rc1.LastModifiedDate;
+import org.orcid.jaxb.model.common_rc1.Source;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import io.swagger.annotations.ApiModelProperty;
 
 /**
  * <p>

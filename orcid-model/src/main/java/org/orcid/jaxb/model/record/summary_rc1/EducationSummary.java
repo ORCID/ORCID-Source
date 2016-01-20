@@ -25,13 +25,13 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.orcid.jaxb.model.common.CreatedDate;
-import org.orcid.jaxb.model.common.Filterable;
-import org.orcid.jaxb.model.common.FuzzyDate;
-import org.orcid.jaxb.model.common.LastModifiedDate;
-import org.orcid.jaxb.model.common.Organization;
-import org.orcid.jaxb.model.common.Source;
-import org.orcid.jaxb.model.common.Visibility;
+import org.orcid.jaxb.model.common_rc1.CreatedDate;
+import org.orcid.jaxb.model.common_rc1.Filterable;
+import org.orcid.jaxb.model.common_rc1.FuzzyDate;
+import org.orcid.jaxb.model.common_rc1.LastModifiedDate;
+import org.orcid.jaxb.model.common_rc1.Organization;
+import org.orcid.jaxb.model.common_rc1.Source;
+import org.orcid.jaxb.model.common_rc1.Visibility;
 import org.orcid.jaxb.model.record_rc1.Activity;
 
 @XmlAccessorType(XmlAccessType.FIELD)

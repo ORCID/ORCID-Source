@@ -62,7 +62,7 @@ public class PojoUtil {
         return false;
     }
 
-    public static boolean isEmpty(org.orcid.jaxb.model.common.Url url) {
+    public static boolean isEmpty(org.orcid.jaxb.model.common_rc2.Url url) {
         if (url == null || url.getValue() == null || url.getValue().trim().isEmpty()) return true;
         return false;
     }
@@ -119,7 +119,7 @@ public class PojoUtil {
         return true;
     }
     
-    public static boolean isEmpty(org.orcid.jaxb.model.common.FuzzyDate date) {
+    public static boolean isEmpty(org.orcid.jaxb.model.common_rc2.FuzzyDate date) {
         if (date == null) return true;
         if (!isEmpty(date.getDay()))
             return false;
@@ -145,17 +145,17 @@ public class PojoUtil {
         return isEmpty(month.getValue());
     }
 
-    public static boolean isEmpty(org.orcid.jaxb.model.common.Year year) {
+    public static boolean isEmpty(org.orcid.jaxb.model.common_rc2.Year year) {
         if (year==null) return true;
         return isEmpty(year.getValue());
     }
     
-    public static boolean isEmpty(org.orcid.jaxb.model.common.Day day) {
+    public static boolean isEmpty(org.orcid.jaxb.model.common_rc2.Day day) {
         if (day==null) return true;
         return isEmpty(day.getValue());
     }
 
-    public static boolean isEmpty(org.orcid.jaxb.model.common.Month month) {
+    public static boolean isEmpty(org.orcid.jaxb.model.common_rc2.Month month) {
         if (month==null) return true;
         return isEmpty(month.getValue());
     }
@@ -173,7 +173,7 @@ public class PojoUtil {
         return isEmpty(contributorOrcid.getPath());
     }
 
-    public static boolean isEmpty(org.orcid.jaxb.model.common.ContributorOrcid contributorOrcid) {
+    public static boolean isEmpty(org.orcid.jaxb.model.common_rc2.ContributorOrcid contributorOrcid) {
         if(contributorOrcid == null) return true;
         return isEmpty(contributorOrcid.getPath());
     }

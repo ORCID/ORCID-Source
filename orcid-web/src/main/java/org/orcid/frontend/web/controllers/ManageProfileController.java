@@ -54,7 +54,7 @@ import org.orcid.frontend.web.forms.ChangePersonalInfoForm;
 import org.orcid.frontend.web.forms.ChangeSecurityQuestionForm;
 import org.orcid.frontend.web.forms.ManagePasswordOptionsForm;
 import org.orcid.frontend.web.forms.PreferencesForm;
-import org.orcid.jaxb.model.common.Visibility;
+import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.message.ApprovalDate;
 import org.orcid.jaxb.model.message.CreditName;
 import org.orcid.jaxb.model.message.DelegateSummary;
@@ -69,7 +69,6 @@ import org.orcid.jaxb.model.message.ResearcherUrls;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.message.SecurityDetails;
 import org.orcid.jaxb.model.message.SecurityQuestionId;
-
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.record_rc2.Address;
 import org.orcid.jaxb.model.record_rc2.Addresses;
@@ -865,6 +864,7 @@ public class ManageProfileController extends BaseWorkspaceController {
                     addressesForm.getErrors().add(getMessage("common.set_primary_email"));
                 }
             }
+
             if(!addressesForm.getErrors().isEmpty()) {
                 return addressesForm;
             }
@@ -875,14 +875,14 @@ public class ManageProfileController extends BaseWorkspaceController {
             if(defaultVisibility != null && defaultVisibility.getVisibility() != null) {
                 //If the default visibility is null, then, the user changed the default visibility, so, change the visibility for all items
                 for(Address address : addresses.getAddress()) {
-                    address.setVisibility(org.orcid.jaxb.model.common.Visibility.fromValue(defaultVisibility.getVisibility().value()));
+                    address.setVisibility(Visibility.fromValue(defaultVisibility.getVisibility().value()));
                 }
             } else {
                 ProfileEntity profileEntity = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
                 defaultVisibility = profileEntity.getResearcherUrlsVisibility() == null ? org.orcid.pojo.ajaxForm.Visibility.valueOf(OrcidVisibilityDefaults.COUNTRY_DEFAULT.getVisibility()) : org.orcid.pojo.ajaxForm.Visibility.valueOf(profileEntity.getProfileAddressVisibility());
             }
                     
-            addressManager.updateAddresses(getCurrentUserOrcid(), addresses, org.orcid.jaxb.model.common.Visibility.fromValue(defaultVisibility.getVisibility().value()));            
+            addressManager.updateAddresses(getCurrentUserOrcid(), addresses, Visibility.fromValue(defaultVisibility.getVisibility().value()));            
         }
         return addressesForm;
     }

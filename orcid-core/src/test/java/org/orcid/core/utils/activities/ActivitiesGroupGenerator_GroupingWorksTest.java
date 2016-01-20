@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.Test;
-import org.orcid.jaxb.model.common.Title;
+import org.orcid.jaxb.model.common_rc2.Title;
 import org.orcid.jaxb.model.record.summary_rc2.WorkSummary;
 import org.orcid.jaxb.model.record_rc2.WorkExternalIdentifier;
 import org.orcid.jaxb.model.record_rc2.WorkExternalIdentifierId;
