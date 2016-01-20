@@ -244,6 +244,7 @@ public class AddressManagerImpl implements AddressManager {
                            existingAddress.setVisibility(updatedOrNew.getVisibility());
                            existingAddress.setIso2Country(updatedOrNew.getCountry().getValue());
                            existingAddress.setPrimary(updatedOrNew.getPrimary());
+                           existingAddress.setDisplayIndex(updatedOrNew.getDisplayIndex());
                            addressDao.merge(existingAddress);
                        }
                    }
@@ -256,6 +257,7 @@ public class AddressManagerImpl implements AddressManager {
                     newAddress.setDateCreated(new Date());
                     newAddress.setSource(sourceEntity);
                     newAddress.setVisibility(updatedOrNew.getVisibility());
+                    newAddress.setDisplayIndex(updatedOrNew.getDisplayIndex());
                     addressDao.persist(newAddress);
                     
                 }

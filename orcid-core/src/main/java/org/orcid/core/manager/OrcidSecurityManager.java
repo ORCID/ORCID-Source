@@ -17,6 +17,7 @@
 package org.orcid.core.manager;
 
 import org.orcid.jaxb.model.common.Filterable;
+import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record_rc2.Biography;
 import org.orcid.jaxb.model.record_rc2.Name;
 import org.orcid.jaxb.model.record_rc2.OtherName;
@@ -44,4 +45,6 @@ public interface OrcidSecurityManager {
     boolean isPasswordConfirmationRequired();
 
     String getClientIdFromAPIRequest();
+    
+    void checkPermissions(ScopePathType requiredScope);
 }
