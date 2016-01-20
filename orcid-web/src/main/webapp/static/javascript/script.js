@@ -250,7 +250,8 @@ function checkOrcidLoggedIn() {
 		        function() {
 		            console.log("error with loggin check on :"
 		                + window.location.href);
-		            window.location.reload();
+		            if ($("meta[name='_csrf']").attr("content")!='')
+		               window.location.reload();
 		    });
 	}
 }
