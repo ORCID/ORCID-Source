@@ -58,7 +58,7 @@ public class Year implements Serializable {
     public Year(Integer value) {
         this.value = Integer.toString(value);
     }
-
+    
     /**
      * Gets the value of the value property.
      * 

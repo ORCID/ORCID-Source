@@ -680,8 +680,8 @@ public class MemberV2Test extends BlackBoxBase {
         for(EducationSummary summary : activities.getEducations().getSummaries()) {
             if(summary.getRoleTitle() != null && summary.getRoleTitle().equals("education:role-title")) {                
                 assertEquals("education:department-name", summary.getDepartmentName());
-                assertEquals(new FuzzyDate(1848, 2, 2), summary.getStartDate());
-                assertEquals(new FuzzyDate(1848, 2, 2), summary.getEndDate());
+                assertEquals(FuzzyDate.valueOf(1848, 2, 2), summary.getStartDate());
+                assertEquals(FuzzyDate.valueOf(1848, 2, 2), summary.getEndDate());
                 found = true;
                 break;
             }
@@ -694,8 +694,8 @@ public class MemberV2Test extends BlackBoxBase {
         for(EmploymentSummary summary : activities.getEmployments().getSummaries()) {
             if(summary.getRoleTitle() != null && summary.getRoleTitle().equals("affiliation:role-title")) {
                 assertEquals("affiliation:department-name", summary.getDepartmentName());
-                assertEquals(new FuzzyDate(1848, 2, 2), summary.getStartDate());
-                assertEquals(new FuzzyDate(1848, 2, 2), summary.getEndDate());
+                assertEquals(FuzzyDate.valueOf(1848, 2, 2), summary.getStartDate());
+                assertEquals(FuzzyDate.valueOf(1848, 2, 2), summary.getEndDate());
                 found = true;
                 break;
             }

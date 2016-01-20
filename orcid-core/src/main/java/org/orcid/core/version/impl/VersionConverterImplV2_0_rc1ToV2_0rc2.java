@@ -160,7 +160,8 @@ public class VersionConverterImplV2_0_rc1ToV2_0rc2 implements V2VersionConverter
         
         //PEER REVIEW
         mapperFactory.classMap(PeerReview.class, org.orcid.jaxb.model.record_rc2.PeerReview.class).byDefault().register();        
-        mapperFactory.classMap(PeerReviewSummary.class, org.orcid.jaxb.model.record.summary_rc2.PeerReviewSummary.class).byDefault().register();
+        mapperFactory.classMap(PeerReviewSummary.class, org.orcid.jaxb.model.record.summary_rc2.PeerReviewSummary.class).byDefault().register();                
+        
         mapper = mapperFactory.getMapperFacade();
     }
 
