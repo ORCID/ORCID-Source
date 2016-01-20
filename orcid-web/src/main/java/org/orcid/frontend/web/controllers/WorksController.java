@@ -40,7 +40,7 @@ import org.orcid.jaxb.model.record_rc2.Relationship;
 import org.orcid.jaxb.model.record_rc2.Work;
 import org.orcid.jaxb.model.record_rc2.WorkCategory;
 import org.orcid.jaxb.model.record_rc2.WorkType;
-import org.orcid.jaxb.model.common.Visibility;
+import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.KeyValue;
 import org.orcid.pojo.ajaxForm.Citation;

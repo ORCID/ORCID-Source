@@ -37,7 +37,7 @@ import org.junit.runner.RunWith;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.orcid.api.common.WebDriverHelper;
 import org.orcid.integration.api.pub.PublicV2ApiClientImpl;
-import org.orcid.jaxb.model.common.Visibility;
+import org.orcid.jaxb.model.common_rc1.Visibility;
 import org.orcid.jaxb.model.error.OrcidError;
 import org.orcid.jaxb.model.groupid_rc1.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopePathType;

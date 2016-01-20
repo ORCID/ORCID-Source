@@ -644,10 +644,10 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         //Set the info in the address table
         if(country != null) {
             AddressEntity address = new AddressEntity();
-            address.setIso2Country(org.orcid.jaxb.model.common.Iso3166Country.fromValue(country.value()));
+            address.setIso2Country(org.orcid.jaxb.model.common_rc2.Iso3166Country.fromValue(country.value()));
             address.setPrimary(true);
             address.setDisplayIndex(-1L);
-            address.setVisibility(org.orcid.jaxb.model.common.Visibility.fromValue(OrcidVisibilityDefaults.COUNTRY_DEFAULT.getVisibility().value()));
+            address.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(OrcidVisibilityDefaults.COUNTRY_DEFAULT.getVisibility().value()));
             address.setUser(profileEntity);
             String amenderOrcid = sourceManager.retrieveSourceOrcid();  
             if(!PojoUtil.isEmpty(amenderOrcid)) {

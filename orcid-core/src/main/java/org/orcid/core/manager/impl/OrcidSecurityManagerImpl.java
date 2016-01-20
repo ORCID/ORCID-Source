@@ -24,7 +24,6 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.lang.StringUtils;
 import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.exception.OrcidVisibilityException;
 import org.orcid.core.exception.WrongSourceException;
@@ -32,8 +31,8 @@ import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.PermissionChecker;
-import org.orcid.jaxb.model.common.Filterable;
-import org.orcid.jaxb.model.common.Visibility;
+import org.orcid.jaxb.model.common_rc2.Filterable;
+import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record.summary_rc2.EducationSummary;

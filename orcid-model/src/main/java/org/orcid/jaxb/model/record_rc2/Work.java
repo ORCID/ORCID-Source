@@ -33,15 +33,15 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.orcid.jaxb.model.common.Country;
-import org.orcid.jaxb.model.common.CreatedDate;
-import org.orcid.jaxb.model.common.LastModifiedDate;
-import org.orcid.jaxb.model.common.PublicationDate;
-import org.orcid.jaxb.model.common.Source;
-import org.orcid.jaxb.model.common.Title;
-import org.orcid.jaxb.model.common.Url;
-import org.orcid.jaxb.model.common.Visibility;
-import org.orcid.jaxb.model.common.VisibilityType;
+import org.orcid.jaxb.model.common_rc2.Country;
+import org.orcid.jaxb.model.common_rc2.CreatedDate;
+import org.orcid.jaxb.model.common_rc2.LastModifiedDate;
+import org.orcid.jaxb.model.common_rc2.PublicationDate;
+import org.orcid.jaxb.model.common_rc2.Source;
+import org.orcid.jaxb.model.common_rc2.Title;
+import org.orcid.jaxb.model.common_rc2.Url;
+import org.orcid.jaxb.model.common_rc2.Visibility;
+import org.orcid.jaxb.model.common_rc2.VisibilityType;
 import org.orcid.jaxb.model.record.util.RecordUtil;
 
 import io.swagger.annotations.ApiModelProperty;

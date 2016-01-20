@@ -41,7 +41,7 @@ import org.orcid.integration.api.pub.PublicV2ApiClientImpl;
 import org.orcid.integration.blackbox.api.v2.rc2.BlackBoxBase;
 import org.orcid.integration.blackbox.api.v2.rc2.MemberV2ApiClientImpl;
 import org.orcid.integration.blackbox.web.SigninTest;
-import org.orcid.jaxb.model.common.Visibility;
+import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record_rc2.PersonalDetails;
 import org.springframework.beans.factory.annotation.Value;

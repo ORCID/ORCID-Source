@@ -27,7 +27,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jbibtex.BibTeXDatabase;
 import org.jbibtex.ParseException;
-import org.orcid.jaxb.model.common.Contributor;
+import org.orcid.jaxb.model.common_rc2.Contributor;
 import org.orcid.jaxb.model.record_rc2.CitationType;
 import org.orcid.jaxb.model.record_rc2.Work;
 import org.orcid.jaxb.model.record_rc2.WorkExternalIdentifier;

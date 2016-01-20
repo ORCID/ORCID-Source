@@ -21,8 +21,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
-import org.orcid.jaxb.model.common.Iso3166Country;
-import org.orcid.jaxb.model.common.Visibility;
+import org.orcid.jaxb.model.common_rc2.Iso3166Country;
+import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.persistence.dao.AddressDao;
 import org.orcid.persistence.jpa.entities.AddressEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;

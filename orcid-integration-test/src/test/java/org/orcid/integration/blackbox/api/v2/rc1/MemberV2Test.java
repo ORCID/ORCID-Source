@@ -38,13 +38,13 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.jaxb.model.common.Day;
-import org.orcid.jaxb.model.common.FuzzyDate;
-import org.orcid.jaxb.model.common.Month;
-import org.orcid.jaxb.model.common.Title;
-import org.orcid.jaxb.model.common.Url;
-import org.orcid.jaxb.model.common.Visibility;
-import org.orcid.jaxb.model.common.Year;
+import org.orcid.jaxb.model.common_rc1.Day;
+import org.orcid.jaxb.model.common_rc1.FuzzyDate;
+import org.orcid.jaxb.model.common_rc1.Month;
+import org.orcid.jaxb.model.common_rc1.Title;
+import org.orcid.jaxb.model.common_rc1.Url;
+import org.orcid.jaxb.model.common_rc1.Visibility;
+import org.orcid.jaxb.model.common_rc1.Year;
 import org.orcid.jaxb.model.groupid_rc1.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record.summary_rc1.ActivitiesSummary;
@@ -675,8 +675,8 @@ public class MemberV2Test extends BlackBoxBase {
         for(EducationSummary summary : activities.getEducations().getSummaries()) {
             if(summary.getRoleTitle() != null && summary.getRoleTitle().equals("education:role-title")) {                
                 assertEquals("education:department-name", summary.getDepartmentName());
-                assertEquals(new FuzzyDate(1848, 2, 2), summary.getStartDate());
-                assertEquals(new FuzzyDate(1848, 2, 2), summary.getEndDate());
+                assertEquals(FuzzyDate.valueOf(1848, 2, 2), summary.getStartDate());
+                assertEquals(FuzzyDate.valueOf(1848, 2, 2), summary.getEndDate());
                 found = true;
                 break;
             }
@@ -689,8 +689,8 @@ public class MemberV2Test extends BlackBoxBase {
         for(EmploymentSummary summary : activities.getEmployments().getSummaries()) {
             if(summary.getRoleTitle() != null && summary.getRoleTitle().equals("affiliation:role-title")) {
                 assertEquals("affiliation:department-name", summary.getDepartmentName());
-                assertEquals(new FuzzyDate(1848, 2, 2), summary.getStartDate());
-                assertEquals(new FuzzyDate(1848, 2, 2), summary.getEndDate());
+                assertEquals(FuzzyDate.valueOf(1848, 2, 2), summary.getStartDate());
+                assertEquals(FuzzyDate.valueOf(1848, 2, 2), summary.getEndDate());
                 found = true;
                 break;
             }

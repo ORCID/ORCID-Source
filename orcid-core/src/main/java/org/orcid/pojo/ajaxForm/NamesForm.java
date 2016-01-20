@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
-import org.orcid.jaxb.model.common.CreditName;
+import org.orcid.jaxb.model.common_rc2.CreditName;
 import org.orcid.jaxb.model.record_rc2.FamilyName;
 import org.orcid.jaxb.model.record_rc2.GivenNames;
 import org.orcid.jaxb.model.record_rc2.Name;
@@ -80,9 +80,9 @@ public class NamesForm implements ErrorsInterface, Serializable {
         }
         
         if(namesVisibility != null && namesVisibility.getVisibility() != null) {
-            personalDetails.getName().setVisibility(org.orcid.jaxb.model.common.Visibility.fromValue(namesVisibility.getVisibility().value()));
+            personalDetails.getName().setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(namesVisibility.getVisibility().value()));
         } else {
-            personalDetails.getName().setVisibility(org.orcid.jaxb.model.common.Visibility.fromValue(OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility().value()));
+            personalDetails.getName().setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility().value()));
         }
         
         return personalDetails;

@@ -25,8 +25,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.orcid.jaxb.model.common.Title;
-import org.orcid.jaxb.model.common.Url;
+import org.orcid.jaxb.model.common_rc1.Title;
+import org.orcid.jaxb.model.common_rc1.Url;
 
 import io.swagger.annotations.ApiModelProperty;
 

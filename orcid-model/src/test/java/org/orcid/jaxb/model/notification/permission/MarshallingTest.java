@@ -32,8 +32,8 @@ import org.apache.commons.io.IOUtils;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Test;
-import org.orcid.jaxb.model.notification.NotificationType;
-import org.orcid.jaxb.model.notification.permission.NotificationPermission;
+import org.orcid.jaxb.model.notification.permission_rc2.NotificationPermission;
+import org.orcid.jaxb.model.notification_rc2.NotificationType;
 import org.xml.sax.SAXException;
 
 /**
@@ -44,7 +44,7 @@ import org.xml.sax.SAXException;
 
 public class MarshallingTest {
 
-    private static final String SAMPLE_PATH = "/notification_2.0_rc1/samples/notification-permission-2.0_rc1.xml";
+    private static final String SAMPLE_PATH = "/notification_2.0_rc2/samples/notification-permission-2.0_rc2.xml";
 
     @Test
     public void testMarshalling() throws JAXBException, IOException, SAXException {
@@ -58,10 +58,10 @@ public class MarshallingTest {
         String expected = IOUtils.toString(getClass().getResourceAsStream(SAMPLE_PATH), "UTF-8");
         Pattern pattern = Pattern.compile("<!--.*?-->\\s*", Pattern.DOTALL);
         expected = pattern.matcher(expected).replaceAll("");
-        JAXBContext context = JAXBContext.newInstance("org.orcid.jaxb.model.notification.permission");
+        JAXBContext context = JAXBContext.newInstance("org.orcid.jaxb.model.notification.permission_rc2");
         Marshaller marshaller = context.createMarshaller();
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-        marshaller.setProperty(Marshaller.JAXB_SCHEMA_LOCATION, "http://www.orcid.org/ns/notification ../notification-permission-2.0_rc1.xsd");
+        marshaller.setProperty(Marshaller.JAXB_SCHEMA_LOCATION, "http://www.orcid.org/ns/notification ../notification-permission-2.0_rc2.xsd");
         StringWriter writer = new StringWriter();
         marshaller.marshal(notification, writer);
         XMLUnit.setIgnoreWhitespace(true);
@@ -70,7 +70,7 @@ public class MarshallingTest {
     }
 
     private NotificationPermission getNotification() throws JAXBException {
-        JAXBContext context = JAXBContext.newInstance("org.orcid.jaxb.model.notification.permission");
+        JAXBContext context = JAXBContext.newInstance("org.orcid.jaxb.model.notification.permission_rc2");
         Unmarshaller unmarshaller = context.createUnmarshaller();
         InputStream inputStream = MarshallingTest.class.getResourceAsStream(SAMPLE_PATH);
         return (NotificationPermission) unmarshaller.unmarshal(inputStream);

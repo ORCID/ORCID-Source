@@ -49,7 +49,7 @@ public class Contributor implements ErrorsInterface, Serializable {
 
     private Visibility creditNameVisibility;    
     
-    public static Contributor valueOf(org.orcid.jaxb.model.common.Contributor contributor) {
+    public static Contributor valueOf(org.orcid.jaxb.model.common_rc2.Contributor contributor) {
         Contributor c = new Contributor();
         if (contributor != null) {
             if (contributor.getContributorAttributes() != null) {

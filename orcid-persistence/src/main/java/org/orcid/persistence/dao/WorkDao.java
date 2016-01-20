@@ -19,7 +19,7 @@ package org.orcid.persistence.dao;
 import java.math.BigInteger;
 import java.util.List;
 
-import org.orcid.jaxb.model.common.Visibility;
+import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.custom.MinimizedWorkEntity;
 

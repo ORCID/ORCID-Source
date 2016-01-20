@@ -31,8 +31,8 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.orcid.jaxb.model.common.Visibility;
-import org.orcid.jaxb.model.common.Iso3166Country;
+import org.orcid.jaxb.model.common_rc2.Iso3166Country;
+import org.orcid.jaxb.model.common_rc2.Visibility;
 
 /**
  * 

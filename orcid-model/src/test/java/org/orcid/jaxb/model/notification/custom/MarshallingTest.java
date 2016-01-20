@@ -26,7 +26,8 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
 import org.junit.Test;
-import org.orcid.jaxb.model.notification.NotificationType;
+import org.orcid.jaxb.model.notification.custom_rc2.NotificationCustom;
+import org.orcid.jaxb.model.notification_rc2.NotificationType;
 
 /**
  * 
@@ -49,9 +50,9 @@ public class MarshallingTest {
     }
 
     private NotificationCustom getNotification() throws JAXBException {
-        JAXBContext context = JAXBContext.newInstance("org.orcid.jaxb.model.notification.custom");
+        JAXBContext context = JAXBContext.newInstance("org.orcid.jaxb.model.notification.custom_rc2");
         Unmarshaller unmarshaller = context.createUnmarshaller();
-        InputStream inputStream = MarshallingTest.class.getResourceAsStream("/notification_2.0_rc1/samples/notification-custom-2.0_rc1.xml");
+        InputStream inputStream = MarshallingTest.class.getResourceAsStream("/notification_2.0_rc2/samples/notification-custom-2.0_rc2.xml");
         return (NotificationCustom) unmarshaller.unmarshal(inputStream);
     }
 

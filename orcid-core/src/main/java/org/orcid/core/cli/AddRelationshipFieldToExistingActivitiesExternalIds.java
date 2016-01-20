@@ -24,7 +24,7 @@ import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 import org.orcid.core.utils.JsonUtils;
-import org.orcid.jaxb.model.common.Url;
+import org.orcid.jaxb.model.common_rc2.Url;
 import org.orcid.jaxb.model.record_rc2.Relationship;
 import org.orcid.jaxb.model.record_rc2.WorkExternalIdentifier;
 import org.orcid.jaxb.model.record_rc2.WorkExternalIdentifiers;

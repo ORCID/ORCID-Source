@@ -145,7 +145,7 @@ public class Cerif16Builder {
         pub.getCfTitleOrCfAbstrOrCfKeyw().add(objectFactory.createCfResPublTypeCfTitle(titleString));
 
         if (ws.getTitle().getTranslatedTitle() != null) {
-            org.orcid.jaxb.model.common.TranslatedTitle trans = ws.getTitle().getTranslatedTitle();
+            org.orcid.jaxb.model.common_rc2.TranslatedTitle trans = ws.getTitle().getTranslatedTitle();
             CfMLangStringType transTitle = objectFactory.createCfMLangStringType();
             titleString.setValue(trans.getContent());
             titleString.setCfLangCode(trans.getLanguageCode());
@@ -196,7 +196,7 @@ public class Cerif16Builder {
         prod.getCfNameOrCfDescrOrCfKeyw().add(objectFactory.createCfResProdTypeCfName(titleString));
 
         if (ws.getTitle().getTranslatedTitle() != null) {
-            org.orcid.jaxb.model.common.TranslatedTitle trans = ws.getTitle().getTranslatedTitle();
+            org.orcid.jaxb.model.common_rc2.TranslatedTitle trans = ws.getTitle().getTranslatedTitle();
             CfMLangStringType transTitle = objectFactory.createCfMLangStringType();
             titleString.setValue(trans.getContent());
             titleString.setCfLangCode(trans.getLanguageCode());

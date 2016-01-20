@@ -16,8 +16,8 @@
  */
 package org.orcid.core.manager;
 
-import org.orcid.jaxb.model.common.Filterable;
 import org.orcid.jaxb.model.message.ScopePathType;
+import org.orcid.jaxb.model.common_rc2.Filterable;
 import org.orcid.jaxb.model.record_rc2.Biography;
 import org.orcid.jaxb.model.record_rc2.Name;
 import org.orcid.jaxb.model.record_rc2.OtherName;

@@ -18,7 +18,7 @@ package org.orcid.core.manager;
 
 import java.util.List;
 
-import org.orcid.jaxb.model.common.Visibility;
+import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.record.summary_rc2.WorkSummary;
 import org.orcid.jaxb.model.record_rc2.Work;
 

@@ -18,7 +18,7 @@ package org.orcid.jaxb.model.record_rc2;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.orcid.jaxb.model.common.Url;
+import org.orcid.jaxb.model.common_rc2.Url;
 
 /**
  * 

@@ -28,7 +28,7 @@ import javax.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.adapter.JpaJaxbEmailAdapter;
 import org.orcid.core.manager.EmailManager;
-import org.orcid.jaxb.model.common.Visibility;
+import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.record_rc2.Emails;
 import org.orcid.persistence.dao.EmailDao;

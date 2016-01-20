@@ -121,7 +121,7 @@ public class JpaJaxbWorkAdapterTest {
         assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(w.getCreatedDate().getValue()));
         assertNotNull(w.getLastModifiedDate());
         assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(w.getLastModifiedDate().getValue()));
-        assertEquals(org.orcid.jaxb.model.common.Iso3166Country.CR.value(), w.getCountry().getValue().value());
+        assertEquals(org.orcid.jaxb.model.common_rc2.Iso3166Country.CR.value(), w.getCountry().getValue().value());
         assertEquals("work:citation", w.getWorkCitation().getCitation());
         assertEquals("work:description", w.getShortDescription());
         assertEquals("work:journalTitle", w.getJournalTitle().getContent());
