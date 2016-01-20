@@ -344,7 +344,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         extId.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
         extId.setWorkExternalIdentifierId(new WorkExternalIdentifierId("ext-id-" + System.currentTimeMillis()));
         extId.setUrl(new Url("http://thisIsANewUrl.com"));
-        
+
         extIds.getExternalIdentifier().add(extId);
         work.setWorkExternalIdentifiers(extIds);
         response = serviceDelegator.createWork("4444-4444-4444-4445", work);
@@ -563,7 +563,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         fExtId.setValue("new-funding-ext-id");
         FundingExternalIdentifiers fExtIds = new FundingExternalIdentifiers();
         fExtIds.getExternalIdentifier().add(fExtId);
-        newFunding.setExternalIdentifiers(fExtIds);        
+        newFunding.setExternalIdentifiers(fExtIds);
         newFunding.setOrganization(getOrganization());
 
         response = serviceDelegator.createFunding("4444-4444-4444-4447", newFunding);
@@ -754,7 +754,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         education.setDepartmentName("My department name");
         education.setRoleTitle("My Role");
         education.setOrganization(getOrganization());
-        
+
         response = serviceDelegator.createEducation("4444-4444-4444-4442", education);
         assertNotNull(response);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
@@ -837,17 +837,17 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     }
 
     @Test(expected = NoResultException.class)
-    public void testDeleteEducation() {        
+    public void testDeleteEducation() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
         Response response = serviceDelegator.viewEducation("4444-4444-4444-4447", 12L);
         assertNotNull(response);
         Education education = (Education) response.getEntity();
         assertNotNull(education);
-        
+
         response = serviceDelegator.deleteAffiliation("4444-4444-4444-4447", 12L);
         assertNotNull(response);
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
-        
+
         serviceDelegator.viewEducation("4444-4444-4444-4447", 12L);
     }
 
@@ -931,7 +931,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         employment.setDepartmentName("My department name");
         employment.setRoleTitle("My Role");
         employment.setOrganization(getOrganization());
-        
+
         response = serviceDelegator.createEmployment("4444-4444-4444-4447", employment);
         assertNotNull(response);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
@@ -1014,17 +1014,17 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     }
 
     @Test(expected = NoResultException.class)
-    public void testDeleteEmployment() {        
+    public void testDeleteEmployment() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4444", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
         Response response = serviceDelegator.viewEmployment("4444-4444-4444-4444", 14L);
         assertNotNull(response);
         Employment employment = (Employment) response.getEntity();
         assertNotNull(employment);
-        
+
         response = serviceDelegator.deleteAffiliation("4444-4444-4444-4444", 14L);
         assertNotNull(response);
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
-        
+
         serviceDelegator.viewEmployment("4444-4444-4444-4444", 14L);
     }
 
@@ -1034,7 +1034,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         serviceDelegator.deleteAffiliation("4444-4444-4444-4446", 11L);
         fail();
     }
-    
+
     /**
      * TEST PEER REVIEWS
      */
@@ -1175,7 +1175,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals("http://peer_review.com/2", peerReview.getUrl().getValue());
         assertEquals("APP-6666666666666666", peerReview.getSource().retrieveSourcePath());
     }
-    
+
     @SuppressWarnings({ "unused", "rawtypes" })
     @Test
     public void testAddPeerReview() {
@@ -1186,12 +1186,12 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(summary);
         assertNotNull(summary.getPeerReviews());
         assertNotNull(summary.getPeerReviews().getPeerReviewGroup());
-        assertEquals(1, summary.getPeerReviews().getPeerReviewGroup().size());        
+        assertEquals(1, summary.getPeerReviews().getPeerReviewGroup().size());
         assertNotNull(summary.getPeerReviews().getPeerReviewGroup().get(0));
         assertNotNull(summary.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary());
         assertNotNull(summary.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0));
         assertEquals("issn:0000001", summary.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getGroupId());
-        
+
         PeerReview peerReview = new PeerReview();
         WorkExternalIdentifiers weis = new WorkExternalIdentifiers();
         WorkExternalIdentifier wei1 = new WorkExternalIdentifier();
@@ -1201,17 +1201,17 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         wei1.setWorkExternalIdentifierType(WorkExternalIdentifierType.DOI);
         weis.getExternalIdentifier().add(wei1);
         peerReview.setExternalIdentifiers(weis);
-        peerReview.setGroupId("issn:0000003");                
+        peerReview.setGroupId("issn:0000003");
         peerReview.setOrganization(getOrganization());
         peerReview.setRole(Role.CHAIR);
-        peerReview.setSubjectContainerName(new Title("subject-container-name"));                        
+        peerReview.setSubjectContainerName(new Title("subject-container-name"));
         peerReview.setSubjectExternalIdentifier(wei1);
         WorkTitle workTitle = new WorkTitle();
         workTitle.setTitle(new Title("work-title"));
         peerReview.setSubjectName(workTitle);
         peerReview.setSubjectType(WorkType.DATA_SET);
         peerReview.setType(PeerReviewType.EVALUATION);
-        
+
         response = serviceDelegator.createPeerReview("4444-4444-4444-4444", peerReview);
         assertNotNull(response);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
@@ -1220,7 +1220,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertTrue(map.containsKey("Location"));
         List resultWithPutCode = (List) map.get("Location");
         Long putCode = Long.valueOf(String.valueOf(resultWithPutCode.get(0)));
-        
+
         response = serviceDelegator.viewActivities("4444-4444-4444-4444");
         assertNotNull(response);
         summary = (ActivitiesSummary) response.getEntity();
@@ -1228,19 +1228,19 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(summary.getPeerReviews());
         assertNotNull(summary.getPeerReviews().getPeerReviewGroup());
         assertEquals(2, summary.getPeerReviews().getPeerReviewGroup().size());
-        
+
         boolean haveOld = false;
         boolean haveNew = false;
-        
-        for(PeerReviewGroup group : summary.getPeerReviews().getPeerReviewGroup()) {
-            if("issn:0000001".equals(group.getPeerReviewSummary().get(0).getGroupId())) {
+
+        for (PeerReviewGroup group : summary.getPeerReviews().getPeerReviewGroup()) {
+            if ("issn:0000001".equals(group.getPeerReviewSummary().get(0).getGroupId())) {
                 haveOld = true;
             } else {
                 assertEquals("issn:0000003", group.getPeerReviewSummary().get(0).getGroupId());
                 haveNew = true;
-            }            
+            }
         }
-        
+
         assertTrue(haveOld);
         assertTrue(haveNew);
     }
@@ -1255,11 +1255,11 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(review.getSubjectName());
         assertNotNull(review.getSubjectName().getTitle());
         assertEquals("Peer Review # 3", review.getSubjectName().getTitle().getContent());
-        
+
         response = serviceDelegator.deletePeerReview("4444-4444-4444-4443", 8L);
         assertNotNull(response);
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
-        
+
     }
 
     @Test(expected = WrongSourceException.class)
@@ -1444,7 +1444,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     @SuppressWarnings("rawtypes")
     @Test
     public void testAddResearcherUrl() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4441", ScopePathType.PERSON_READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4441", ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE);
         ResearcherUrl rUrl = new ResearcherUrl();
         rUrl.setUrl(new Url("http://www.myRUrl.com"));
         rUrl.setUrlName("My researcher Url");
@@ -1692,7 +1692,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
 
     @Test
     public void testUpdateOtherName() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.PERSON_READ_LIMITED);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE);
         Response response = serviceDelegator.viewOtherName("4444-4444-4444-4443", 1L);
         assertNotNull(response);
         OtherName otherName = (OtherName) response.getEntity();
@@ -1718,7 +1718,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
 
     @Test(expected = WrongSourceException.class)
     public void testUpdateOtherNameYouAreNotTheSourceOf() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.PERSON_READ_LIMITED);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE);
         Response response = serviceDelegator.viewOtherName("4444-4444-4444-4443", 2L);
         assertNotNull(response);
         OtherName otherName = (OtherName) response.getEntity();
@@ -2017,7 +2017,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         serviceDelegator.deleteExternalIdentifier("4444-4444-4444-4442", 3L);
         fail();
     }
-    
+
     /**
      * TEST KEYWORDS
      */
@@ -2031,7 +2031,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(keywords);
         assertNotNull(keywords.getKeywords());
         assertEquals(3, keywords.getKeywords().size());
-        
+
         for (Keyword keyword : keywords.getKeywords()) {
             assertThat(keyword.getPutCode(), anyOf(is(1L), is(2L), is(4L)));
             assertThat(keyword.getContent(), anyOf(is("tea making"), is("coffee making"), is("what else can we make?")));
@@ -2129,7 +2129,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
 
     @Test
     public void testUpdateKeyword() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4441", ScopePathType.PERSON_READ_LIMITED);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4441", ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE);
         Response response = serviceDelegator.viewKeyword("4444-4444-4444-4441", 6L);
         assertNotNull(response);
         Keyword keyword = (Keyword) response.getEntity();
@@ -2155,7 +2155,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
 
     @Test(expected = WrongSourceException.class)
     public void testUpdateKeywordYouAreNotTheSourceOf() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.PERSON_READ_LIMITED);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE);
         Response response = serviceDelegator.viewKeyword("4444-4444-4444-4443", 2L);
         assertNotNull(response);
         Keyword keyword = (Keyword) response.getEntity();
@@ -2198,7 +2198,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         serviceDelegator.deleteKeyword("4444-4444-4444-4443", 3L);
         fail();
     }
-    
+
     /**
      * TEST ADDRESSES
      */
@@ -2212,7 +2212,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(addresses);
         assertNotNull(addresses.getAddress());
         assertEquals(3, addresses.getAddress().size());
-        
+
         for (Address address : addresses.getAddress()) {
             assertThat(address.getPutCode(), anyOf(is(2L), is(3L), is(4L)));
             assertThat(address.getCountry().getValue(), anyOf(is(Iso3166Country.CR), is(Iso3166Country.US)));
@@ -2222,10 +2222,10 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
             } else if (address.getPutCode() == 3L) {
                 assertEquals(Visibility.LIMITED, address.getVisibility());
                 assertEquals("APP-5555555555555555", address.getSource().retrieveSourcePath());
-            } else if(address.getPutCode() == 4L ){
+            } else if (address.getPutCode() == 4L) {
                 assertEquals(Visibility.PRIVATE, address.getVisibility());
                 assertEquals("APP-5555555555555555", address.getSource().retrieveSourcePath());
-            } 
+            }
         }
     }
 
@@ -2283,7 +2283,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     @Test
     public void testAddAddress() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE);
-        
+
         Address address = new Address();
         address.setVisibility(Visibility.PUBLIC);
         address.setCountry(new Country(Iso3166Country.ES));
@@ -2308,8 +2308,8 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals("APP-5555555555555555", newAddress.getSource().retrieveSourcePath());
         assertNotNull(newAddress.getCreatedDate());
         assertNotNull(newAddress.getLastModifiedDate());
-        
-        //Remove it
+
+        // Remove it
         response = serviceDelegator.deleteAddress("4444-4444-4444-4442", putCode);
         assertNotNull(response);
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
@@ -2317,7 +2317,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
 
     @Test
     public void testUpdateAddress() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.PERSON_READ_LIMITED);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE);
         Response response = serviceDelegator.viewAddress("4444-4444-4444-4442", 1L);
         assertNotNull(response);
         Address address = (Address) response.getEntity();
@@ -2326,7 +2326,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals(Visibility.PUBLIC, address.getVisibility());
 
         address.getCountry().setValue(Iso3166Country.PA);
-        
+
         response = serviceDelegator.updateAddress("4444-4444-4444-4442", 1L, address);
         assertNotNull(response);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
@@ -2336,8 +2336,8 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         address = (Address) response.getEntity();
         assertNotNull(address);
         assertEquals(Iso3166Country.PA, address.getCountry().getValue());
-        
-        //Set it back to US again
+
+        // Set it back to US again
         address.getCountry().setValue(Iso3166Country.US);
         response = serviceDelegator.updateAddress("4444-4444-4444-4442", 1L, address);
         assertNotNull(response);
@@ -2346,7 +2346,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
 
     @Test(expected = WrongSourceException.class)
     public void testUpdateAddressYouAreNotTheSourceOf() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.PERSON_READ_LIMITED);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE);
         Response response = serviceDelegator.viewAddress("4444-4444-4444-4447", 2L);
         assertNotNull(response);
         Address address = (Address) response.getEntity();
@@ -2357,7 +2357,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals("4444-4444-4444-4447", address.getSource().retrieveSourcePath());
 
         address.getCountry().setValue(Iso3166Country.BR);
-        
+
         serviceDelegator.updateAddress("4444-4444-4444-4447", 2L, address);
         fail();
     }
@@ -2388,7 +2388,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         serviceDelegator.deleteAddress("4444-4444-4444-4447", 5L);
         fail();
     }
-    
+
     @SuppressWarnings("unchecked")
     @Test
     public void testViewPerson() {
@@ -2409,18 +2409,19 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(person.getAddresses().getAddress().get(0).getCreatedDate());
         assertNotNull(person.getAddresses().getAddress().get(0).getLastModifiedDate());
         assertNotNull(person.getAddresses().getAddress().get(0).getCountry());
-        assertEquals(Iso3166Country.US, person.getAddresses().getAddress().get(0).getCountry().getValue());        
+        assertEquals(Iso3166Country.US, person.getAddresses().getAddress().get(0).getCountry().getValue());
         assertTrue(person.getAddresses().getAddress().get(0).getPrimary());
         assertEquals(Long.valueOf(1), person.getAddresses().getAddress().get(0).getPutCode());
         assertNotNull(person.getAddresses().getAddress().get(0).getSource());
         assertEquals("APP-5555555555555555", person.getAddresses().getAddress().get(0).getSource().retrieveSourcePath());
         assertEquals("http://testserver.orcid.org/client/APP-5555555555555555", person.getAddresses().getAddress().get(0).getSource().retriveSourceUri());
         assertEquals(Visibility.PUBLIC, person.getAddresses().getAddress().get(0).getVisibility());
-        
+
         assertNotNull(person.getBiography());
-        assertEquals("Michael Bentine CBE (26 January 1922[1] – 26 November 1996[2]) was a British comedian, comic actor and founding member of the Goons.", person.getBiography().getContent());
+        assertEquals("Michael Bentine CBE (26 January 1922[1] – 26 November 1996[2]) was a British comedian, comic actor and founding member of the Goons.",
+                person.getBiography().getContent());
         assertEquals(Visibility.PUBLIC, person.getBiography().getVisibility());
-        
+
         assertNotNull(person.getEmails());
         assertNotNull(person.getEmails().getEmails());
         assertEquals(1, person.getEmails().getEmails().size());
@@ -2428,53 +2429,52 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals(Visibility.LIMITED, person.getEmails().getEmails().get(0).getVisibility());
         assertNotNull(person.getEmails().getEmails().get(0).getSource());
         assertEquals("4444-4444-4444-4442", person.getEmails().getEmails().get(0).getSource().retrieveSourcePath());
-        assertEquals("http://testserver.orcid.org/4444-4444-4444-4442", person.getEmails().getEmails().get(0).getSource().retriveSourceUri());        
+        assertEquals("http://testserver.orcid.org/4444-4444-4444-4442", person.getEmails().getEmails().get(0).getSource().retriveSourceUri());
         assertNull(person.getEmails().getEmails().get(0).getPutCode());
         assertNotNull(person.getEmails().getEmails().get(0).getLastModifiedDate());
         assertNotNull(person.getEmails().getEmails().get(0).getCreatedDate());
-        
-        
+
         assertNotNull(person.getExternalIdentifiers());
         assertNotNull(person.getExternalIdentifiers().getExternalIdentifier());
         assertEquals(3, person.getExternalIdentifiers().getExternalIdentifier().size());
-        
+
         boolean found2 = false, found3 = false, found5 = false;
-        
+
         List<ExternalIdentifier> extIds = person.getExternalIdentifiers().getExternalIdentifier();
-        for(ExternalIdentifier extId : extIds) {
+        for (ExternalIdentifier extId : extIds) {
             assertThat(extId.getPutCode(), anyOf(is(2L), is(3L), is(5L)));
             assertNotNull(extId.getCreatedDate());
             assertNotNull(extId.getLastModifiedDate());
             assertNotNull(extId.getSource());
-            if(extId.getPutCode() == 2L ) {
-                assertEquals("Facebook", extId.getCommonName());                
-                assertEquals("abc123", extId.getReference());                
+            if (extId.getPutCode() == 2L) {
+                assertEquals("Facebook", extId.getCommonName());
+                assertEquals("abc123", extId.getReference());
                 assertEquals("http://www.facebook.com/abc123", extId.getUrl().getValue());
                 assertEquals(Visibility.PUBLIC, extId.getVisibility());
                 assertEquals("APP-5555555555555555", extId.getSource().retrieveSourcePath());
                 assertEquals("http://testserver.orcid.org/client/APP-5555555555555555", extId.getSource().retriveSourceUri());
                 found2 = true;
-            } else if(extId.getPutCode() == 3L ) {
-                assertEquals("Facebook", extId.getCommonName());                
-                assertEquals("abc456", extId.getReference());                
+            } else if (extId.getPutCode() == 3L) {
+                assertEquals("Facebook", extId.getCommonName());
+                assertEquals("abc456", extId.getReference());
                 assertEquals("http://www.facebook.com/abc456", extId.getUrl().getValue());
                 assertEquals(Visibility.LIMITED, extId.getVisibility());
                 assertEquals("4444-4444-4444-4442", extId.getSource().retrieveSourcePath());
                 assertEquals("http://testserver.orcid.org/4444-4444-4444-4442", extId.getSource().retriveSourceUri());
                 found3 = true;
             } else {
-                assertEquals("Facebook", extId.getCommonName());                
-                assertEquals("abc012", extId.getReference());                
+                assertEquals("Facebook", extId.getCommonName());
+                assertEquals("abc012", extId.getReference());
                 assertEquals("http://www.facebook.com/abc012", extId.getUrl().getValue());
                 assertEquals(Visibility.PRIVATE, extId.getVisibility());
                 assertEquals("APP-5555555555555555", extId.getSource().retrieveSourcePath());
                 assertEquals("http://testserver.orcid.org/client/APP-5555555555555555", extId.getSource().retriveSourceUri());
                 found5 = true;
-            }            
+            }
         }
-        
+
         assertTrue(found2 && found3 && found5);
-        
+
         assertNotNull(person.getKeywords());
         assertNotNull(person.getKeywords().getKeywords());
         assertEquals(1, person.getKeywords().getKeywords().size());
@@ -2485,19 +2485,19 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals(Visibility.PUBLIC, person.getKeywords().getKeywords().get(0).getVisibility());
         assertNotNull(person.getKeywords().getKeywords().get(0).getCreatedDate());
         assertNotNull(person.getKeywords().getKeywords().get(0).getLastModifiedDate());
-                        
+
         assertNotNull(person.getOtherNames());
         assertNotNull(person.getOtherNames().getOtherNames());
         assertEquals(2, person.getOtherNames().getOtherNames().size());
-        
+
         boolean found9 = false, found10 = false;
-        
-        for(OtherName otherName : person.getOtherNames().getOtherNames()) {
+
+        for (OtherName otherName : person.getOtherNames().getOtherNames()) {
             assertThat(otherName.getPutCode(), anyOf(is(9L), is(10L)));
             assertNotNull(otherName.getSource());
             assertEquals("APP-5555555555555555", otherName.getSource().retrieveSourcePath());
             assertEquals("http://testserver.orcid.org/client/APP-5555555555555555", otherName.getSource().retriveSourceUri());
-            if(otherName.getPutCode() == 9L) {
+            if (otherName.getPutCode() == 9L) {
                 assertEquals("Other Name # 1", otherName.getContent());
                 assertEquals(Visibility.PUBLIC, otherName.getVisibility());
                 found9 = true;
@@ -2507,33 +2507,33 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
                 found10 = true;
             }
         }
-        
+
         assertTrue(found9 && found10);
-        
+
         assertNotNull(person.getResearcherUrls());
         assertNotNull(person.getResearcherUrls().getResearcherUrls());
         assertEquals(3, person.getResearcherUrls().getResearcherUrls().size());
-        
+
         found9 = false;
         found10 = false;
         boolean found12 = false;
-        
-        for(ResearcherUrl rUrl : person.getResearcherUrls().getResearcherUrls()) {
+
+        for (ResearcherUrl rUrl : person.getResearcherUrls().getResearcherUrls()) {
             assertNotNull(rUrl.getCreatedDate());
             assertNotNull(rUrl.getLastModifiedDate());
             assertNotNull(rUrl.getSource());
             assertThat(rUrl.getPutCode(), anyOf(is(9L), is(10L), is(12L)));
             assertNotNull(rUrl.getUrl());
-            if(rUrl.getPutCode().equals(9L)) {
+            if (rUrl.getPutCode().equals(9L)) {
                 assertEquals("4444-4444-4444-4442", rUrl.getSource().retrieveSourcePath());
-                assertEquals("http://testserver.orcid.org/4444-4444-4444-4442", rUrl.getSource().retriveSourceUri());                
+                assertEquals("http://testserver.orcid.org/4444-4444-4444-4442", rUrl.getSource().retriveSourceUri());
                 assertEquals("http://www.researcherurl.com?id=9", rUrl.getUrl().getValue());
                 assertEquals("1", rUrl.getUrlName());
                 assertEquals(Visibility.PUBLIC, rUrl.getVisibility());
                 found9 = true;
-            } else if(rUrl.getPutCode().equals(10L)) {
+            } else if (rUrl.getPutCode().equals(10L)) {
                 assertEquals("4444-4444-4444-4442", rUrl.getSource().retrieveSourcePath());
-                assertEquals("http://testserver.orcid.org/4444-4444-4444-4442", rUrl.getSource().retriveSourceUri());                
+                assertEquals("http://testserver.orcid.org/4444-4444-4444-4442", rUrl.getSource().retriveSourceUri());
                 assertEquals("http://www.researcherurl.com?id=10", rUrl.getUrl().getValue());
                 assertEquals("2", rUrl.getUrlName());
                 assertEquals(Visibility.LIMITED, rUrl.getVisibility());
@@ -2541,19 +2541,19 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
             } else {
                 assertEquals(Long.valueOf(12), rUrl.getPutCode());
                 assertEquals("APP-5555555555555555", rUrl.getSource().retrieveSourcePath());
-                assertEquals("http://testserver.orcid.org/client/APP-5555555555555555", rUrl.getSource().retriveSourceUri());                
+                assertEquals("http://testserver.orcid.org/client/APP-5555555555555555", rUrl.getSource().retriveSourceUri());
                 assertEquals("http://www.researcherurl.com?id=12", rUrl.getUrl().getValue());
                 assertEquals("4", rUrl.getUrlName());
                 assertEquals(Visibility.PRIVATE, rUrl.getVisibility());
                 found12 = true;
             }
         }
-        
+
         assertTrue(found9 && found10 && found12);
-        //TODO: TEST APPLICATIONS AND DELEGATION
+        // TODO: TEST APPLICATIONS AND DELEGATION
     }
-    
-    private Organization getOrganization(){
+
+    private Organization getOrganization() {
         Organization org = new Organization();
         org.setName("Org Name");
         OrganizationAddress add = new OrganizationAddress();

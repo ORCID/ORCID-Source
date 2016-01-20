@@ -166,14 +166,14 @@ public class MemberV2ApiServiceImplV2_0_rc2 {
     @ApiOperation(value = "Check the server status", hidden = true)
     public Response viewStatusText() {
         return serviceDelegator.viewStatusText();
-    }
-
+    }    
+    
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(ACTIVITIES)
     @ApiOperation(value = "Fetch all activities", response = ActivitiesSummary.class, authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
-    @ExternalDocs(value = "Activities XML Schema", url = "https://raw.githubusercontent.com/ORCID/ORCID-Source/master/orcid-model/src/main/resources/record_2.0_rc1/activities-2.0_rc1.xsd")
+    @ExternalDocs(value = "Activities XML Schema", url = "https://raw.githubusercontent.com/ORCID/ORCID-Source/master/orcid-model/src/main/resources/record_2.0_rc2/activities-2.0_rc2.xsd")
     public Response viewActivities(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewActivities(orcid);
     }

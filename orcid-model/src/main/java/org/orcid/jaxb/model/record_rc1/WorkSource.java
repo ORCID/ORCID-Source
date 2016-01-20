@@ -31,7 +31,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.orcid.jaxb.model.common_rc1.OrcidIdBase;
 
 @Deprecated
-@XmlRootElement(name = "source")
+@XmlRootElement(name = "source") 
 public class WorkSource extends OrcidIdBase implements Serializable {
 
     // This field indicates that the source is null on database

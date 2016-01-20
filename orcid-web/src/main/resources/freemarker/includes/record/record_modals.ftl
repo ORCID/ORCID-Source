@@ -52,7 +52,7 @@
 											<span class="glyphicon glyphicon-arrow-down circle" ng-click="$last || setPriorityDown(otherName.displayIndex)"></span>											
 										</li>
 										<li>										
-											<span class="glyphicon glyphicon-trash" ng-click="deleteKeyword(otherName)"></span>											
+											<span class="glyphicon glyphicon-trash" ng-click="deleteOtherName(otherName)"></span>											
 										</li>
 										<li>											
 											<@orcid.privacyToggle3  angularModel="otherName.visibility.visibility"
@@ -116,10 +116,10 @@
 											<input name="priority" type="radio" ng-model="primary" ng-value="country.primary" ng-click="setPrimary(country)">
 										</li>										
 										<li ng-init="">												
-											<span class="glyphicon glyphicon-arrow-up circle" ng-click="setPriorityUp(country.displayIndex)"></span>											
+											<span class="glyphicon glyphicon-arrow-up circle" ng-click="$first || setPriorityUp(country.displayIndex)"></span>											
 										</li>
 										<li>
-											<span class="glyphicon glyphicon-arrow-down circle" ng-click="setPriorityDown(country.displayIndex)"></span>
+											<span class="glyphicon glyphicon-arrow-down circle" ng-click="$last || setPriorityDown(country.displayIndex)"></span>
 										</li>
 										<li>
 											<span class="glyphicon glyphicon-trash" ng-click="deleteCountry(country)"></span>											
@@ -185,10 +185,10 @@
 								<div class="col-md-6">
 									<ul class="record-settings pull-right">
 										<li>												
-											<span class="glyphicon glyphicon-arrow-up circle" ng-click="setPriorityUp(keyword.displayIndex)"></span>
+											<span class="glyphicon glyphicon-arrow-up circle" ng-click="$first || setPriorityUp(keyword.displayIndex)"></span>
 										</li>
 										<li>																						
-											<span class="glyphicon glyphicon-arrow-down circle" ng-click="setPriorityDown(keyword.displayIndex)"></span>											
+											<span class="glyphicon glyphicon-arrow-down circle" ng-click="$last || setPriorityDown(keyword.displayIndex)"></span>											
 										</li>
 										<li>										
 											<span class="glyphicon glyphicon-trash" ng-click="deleteKeyword(keyword)"></span>											
@@ -250,10 +250,10 @@
 								<div class="col-md-6">
 									<ul class="record-settings pull-right">
 										<li>												
-											<span class="glyphicon glyphicon-arrow-up circle" ng-click="setPriorityUp(website.displayIndex)"></span>											
+											<span class="glyphicon glyphicon-arrow-up circle" ng-click="$first || setPriorityUp(website.displayIndex)"></span>											
 										</li>
 										<li>																						
-											<span class="glyphicon glyphicon-arrow-down circle" ng-click="setPriorityDown(website.displayIndex)"></span>											
+											<span class="glyphicon glyphicon-arrow-down circle" ng-click="$last || setPriorityDown(website.displayIndex)"></span>											
 										</li>
 										<li>										
 											<span class="glyphicon glyphicon-trash" ng-click="deleteWebsite(website)"></span>											

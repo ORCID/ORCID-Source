@@ -30,6 +30,7 @@ import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
+import org.orcid.core.security.PermissionChecker;
 import org.orcid.jaxb.model.common_rc2.Filterable;
 import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.message.OrcidType;
@@ -39,21 +40,21 @@ import org.orcid.jaxb.model.record.summary_rc2.EmploymentSummary;
 import org.orcid.jaxb.model.record.summary_rc2.FundingSummary;
 import org.orcid.jaxb.model.record.summary_rc2.PeerReviewSummary;
 import org.orcid.jaxb.model.record.summary_rc2.WorkSummary;
-import org.orcid.jaxb.model.record_rc2.Education;
-import org.orcid.jaxb.model.record_rc2.Email;
-import org.orcid.jaxb.model.record_rc2.Employment;
-import org.orcid.jaxb.model.record_rc2.Funding;
-import org.orcid.jaxb.model.record_rc2.PeerReview;
-import org.orcid.jaxb.model.record_rc2.Work;
 import org.orcid.jaxb.model.record_rc2.Address;
 import org.orcid.jaxb.model.record_rc2.Biography;
+import org.orcid.jaxb.model.record_rc2.Education;
+import org.orcid.jaxb.model.record_rc2.Email;
 import org.orcid.jaxb.model.record_rc2.Emails;
+import org.orcid.jaxb.model.record_rc2.Employment;
 import org.orcid.jaxb.model.record_rc2.ExternalIdentifier;
+import org.orcid.jaxb.model.record_rc2.Funding;
 import org.orcid.jaxb.model.record_rc2.Keyword;
 import org.orcid.jaxb.model.record_rc2.Name;
 import org.orcid.jaxb.model.record_rc2.OtherName;
+import org.orcid.jaxb.model.record_rc2.PeerReview;
 import org.orcid.jaxb.model.record_rc2.Person;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
+import org.orcid.jaxb.model.record_rc2.Work;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.security.core.Authentication;
@@ -73,6 +74,9 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
     @Resource
     private SourceManager sourceManager;
 
+    @Resource(name = "defaultPermissionChecker")
+    private PermissionChecker permissionChecker;
+    
     @Override
     public void checkVisibility(Filterable filterable) {
         OAuth2Authentication oAuth2Authentication = getOAuth2Authentication();
@@ -176,9 +180,8 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
     }
 
     @Override
-    public boolean isAdmin() {
-        SecurityContext securityContext = SecurityContextHolder.getContext();
-        Authentication authentication = securityContext.getAuthentication();
+    public boolean isAdmin() {        
+        Authentication authentication = getAuthentication();
         if (authentication != null) {
             Object principal = authentication.getPrincipal();
             if (principal instanceof OrcidProfileUserDetails) {
@@ -240,8 +243,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
     }
 
     private OAuth2Authentication getOAuth2Authentication() {
-        SecurityContext context = SecurityContextHolder.getContext();
-        Authentication authentication = context.getAuthentication();
+        Authentication authentication = getAuthentication();
         // if authentication is null, it might be a call from the public api,
         // so, return null
         if (authentication == null)
@@ -287,4 +289,16 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         return false;
     }
 
+    public void checkPermissions(ScopePathType requiredScope, String orcid) {        
+        permissionChecker.checkPermissions(getAuthentication(), requiredScope, orcid);
+    } 
+        
+    private Authentication getAuthentication() {
+        SecurityContext context = SecurityContextHolder.getContext();
+        if (context != null && context.getAuthentication() != null) {
+            return context.getAuthentication();
+        } else {
+            throw new IllegalStateException("No security context found. This is bad!");
+        }
+    }
 }
