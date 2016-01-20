@@ -180,7 +180,7 @@ public class MemberV2ApiServiceDelegatorImpl
      */
     @Override
     public Response viewActivities(String orcid) {
-        orcidSecurityManager.checkPermissions(ScopePathType.READ_LIMITED);
+        orcidSecurityManager.checkPermissions(ScopePathType.READ_LIMITED, orcid);
         ProfileEntity entity = profileEntityManager.findByOrcid(orcid);
         if (profileDao.isProfileDeprecated(orcid)) {
             StringBuffer primary = new StringBuffer(baseUrl).append("/").append(entity.getPrimaryRecord().getId());
@@ -200,7 +200,7 @@ public class MemberV2ApiServiceDelegatorImpl
 
     @Override
     public Response viewWork(String orcid, Long putCode) {
-        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_WORKS_READ_LIMITED);
+        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_WORKS_READ_LIMITED, orcid);
         Work w = workManager.getWork(orcid, putCode);
         ActivityUtils.cleanEmptyFields(w);
         orcidSecurityManager.checkVisibility(w);
@@ -210,7 +210,7 @@ public class MemberV2ApiServiceDelegatorImpl
 
     @Override
     public Response viewWorkSummary(String orcid, Long putCode) {
-        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_WORKS_READ_LIMITED);
+        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_WORKS_READ_LIMITED, orcid);
         WorkSummary ws = workManager.getWorkSummary(orcid, putCode);
         ActivityUtils.cleanEmptyFields(ws);
         orcidSecurityManager.checkVisibility(ws);
@@ -220,7 +220,7 @@ public class MemberV2ApiServiceDelegatorImpl
 
     @Override
     public Response createWork(String orcid, Work work) {
-        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_WORKS_CREATE);
+        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_WORKS_CREATE, orcid);
         Work w = workManager.createWork(orcid, work, true);
         try {
             return Response.created(new URI(String.valueOf(w.getPutCode()))).build();
@@ -231,7 +231,7 @@ public class MemberV2ApiServiceDelegatorImpl
 
     @Override
     public Response updateWork(String orcid, Long putCode, Work work) {
-        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_WORKS_UPDATE);
+        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_WORKS_UPDATE, orcid);
         if (!putCode.equals(work.getPutCode())) {
             Map<String, String> params = new HashMap<String, String>();
             params.put("urlPutCode", String.valueOf(putCode));
@@ -244,14 +244,14 @@ public class MemberV2ApiServiceDelegatorImpl
 
     @Override
     public Response deleteWork(String orcid, Long putCode) {
-        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_WORKS_UPDATE);
+        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_WORKS_UPDATE, orcid);
         workManager.checkSourceAndRemoveWork(orcid, putCode);
         return Response.noContent().build();
     }
 
     @Override
     public Response viewFunding(String orcid, Long putCode) {
-        orcidSecurityManager.checkPermissions(ScopePathType.FUNDING_READ_LIMITED);
+        orcidSecurityManager.checkPermissions(ScopePathType.FUNDING_READ_LIMITED, orcid);
         Funding f = profileFundingManager.getFunding(orcid, putCode);
         orcidSecurityManager.checkVisibility(f);
         ActivityUtils.setPathToActivity(f, orcid);
@@ -260,7 +260,7 @@ public class MemberV2ApiServiceDelegatorImpl
 
     @Override    
     public Response viewFundingSummary(String orcid, Long putCode) {
-        orcidSecurityManager.checkPermissions(ScopePathType.FUNDING_READ_LIMITED);
+        orcidSecurityManager.checkPermissions(ScopePathType.FUNDING_READ_LIMITED, orcid);
         FundingSummary fs = profileFundingManager.getSummary(orcid, putCode);
         orcidSecurityManager.checkVisibility(fs);
         ActivityUtils.setPathToActivity(fs, orcid);
@@ -269,7 +269,7 @@ public class MemberV2ApiServiceDelegatorImpl
 
     @Override
     public Response createFunding(String orcid, Funding funding) {
-        orcidSecurityManager.checkPermissions(ScopePathType.FUNDING_CREATE);
+        orcidSecurityManager.checkPermissions(ScopePathType.FUNDING_CREATE, orcid);
         Funding f = profileFundingManager.createFunding(orcid, funding);
         try {
             return Response.created(new URI(String.valueOf(f.getPutCode()))).build();
@@ -280,7 +280,7 @@ public class MemberV2ApiServiceDelegatorImpl
 
     @Override    
     public Response updateFunding(String orcid, Long putCode, Funding funding) {
-        orcidSecurityManager.checkPermissions(ScopePathType.FUNDING_UPDATE);
+        orcidSecurityManager.checkPermissions(ScopePathType.FUNDING_UPDATE, orcid);
         if (!putCode.equals(funding.getPutCode())) {
             Map<String, String> params = new HashMap<String, String>();
             params.put("urlPutCode", String.valueOf(putCode));
@@ -293,14 +293,14 @@ public class MemberV2ApiServiceDelegatorImpl
     
     @Override
     public Response deleteFunding(String orcid, Long putCode) {
-        orcidSecurityManager.checkPermissions(ScopePathType.FUNDING_UPDATE);
+        orcidSecurityManager.checkPermissions(ScopePathType.FUNDING_UPDATE, orcid);
         profileFundingManager.checkSourceAndDelete(orcid, putCode);
         return Response.noContent().build();
     }
 
     @Override
     public Response viewEducation(String orcid, Long putCode) {
-        orcidSecurityManager.checkPermissions(ScopePathType.AFFILIATIONS_READ_LIMITED);
+        orcidSecurityManager.checkPermissions(ScopePathType.AFFILIATIONS_READ_LIMITED, orcid);
         Education e = affiliationsManager.getEducationAffiliation(orcid, putCode);
         orcidSecurityManager.checkVisibility(e);
         ActivityUtils.setPathToActivity(e, orcid);
@@ -309,7 +309,7 @@ public class MemberV2ApiServiceDelegatorImpl
 
     @Override
     public Response viewEducationSummary(String orcid, Long putCode) {
-        orcidSecurityManager.checkPermissions(ScopePathType.AFFILIATIONS_READ_LIMITED);
+        orcidSecurityManager.checkPermissions(ScopePathType.AFFILIATIONS_READ_LIMITED, orcid);
         EducationSummary es = affiliationsManager.getEducationSummary(orcid, putCode);
         orcidSecurityManager.checkVisibility(es);
         ActivityUtils.setPathToActivity(es, orcid);
@@ -318,7 +318,7 @@ public class MemberV2ApiServiceDelegatorImpl
 
     @Override
     public Response createEducation(String orcid, Education education) {
-        orcidSecurityManager.checkPermissions(ScopePathType.AFFILIATIONS_CREATE);
+        orcidSecurityManager.checkPermissions(ScopePathType.AFFILIATIONS_CREATE, orcid);
         Education e = affiliationsManager.createEducationAffiliation(orcid, education);
         try {
             return Response.created(new URI(String.valueOf(e.getPutCode()))).build();
@@ -329,7 +329,7 @@ public class MemberV2ApiServiceDelegatorImpl
 
     @Override
     public Response updateEducation(String orcid, Long putCode, Education education) {
-        orcidSecurityManager.checkPermissions(ScopePathType.AFFILIATIONS_UPDATE);
+        orcidSecurityManager.checkPermissions(ScopePathType.AFFILIATIONS_UPDATE, orcid);
         if (!putCode.equals(education.getPutCode())) {
             Map<String, String> params = new HashMap<String, String>();
             params.put("urlPutCode", String.valueOf(putCode));
@@ -342,7 +342,7 @@ public class MemberV2ApiServiceDelegatorImpl
 
     @Override
     public Response viewEmployment(String orcid, Long putCode) {
-        orcidSecurityManager.checkPermissions(ScopePathType.AFFILIATIONS_READ_LIMITED);
+        orcidSecurityManager.checkPermissions(ScopePathType.AFFILIATIONS_READ_LIMITED, orcid);
         Employment e = affiliationsManager.getEmploymentAffiliation(orcid, putCode);
         orcidSecurityManager.checkVisibility(e);
         ActivityUtils.setPathToActivity(e, orcid);
@@ -351,7 +351,7 @@ public class MemberV2ApiServiceDelegatorImpl
 
     @Override
     public Response viewEmploymentSummary(String orcid, Long putCode) {
-        orcidSecurityManager.checkPermissions(ScopePathType.AFFILIATIONS_READ_LIMITED);
+        orcidSecurityManager.checkPermissions(ScopePathType.AFFILIATIONS_READ_LIMITED, orcid);
         EmploymentSummary es = affiliationsManager.getEmploymentSummary(orcid, putCode);
         orcidSecurityManager.checkVisibility(es);
         ActivityUtils.setPathToActivity(es, orcid);
@@ -360,7 +360,7 @@ public class MemberV2ApiServiceDelegatorImpl
 
     @Override
     public Response createEmployment(String orcid, Employment employment) {
-        orcidSecurityManager.checkPermissions(ScopePathType.AFFILIATIONS_CREATE);
+        orcidSecurityManager.checkPermissions(ScopePathType.AFFILIATIONS_CREATE, orcid);
         Employment e = affiliationsManager.createEmploymentAffiliation(orcid, employment);
         try {
             return Response.created(new URI(String.valueOf(e.getPutCode()))).build();
@@ -371,7 +371,7 @@ public class MemberV2ApiServiceDelegatorImpl
 
     @Override
     public Response updateEmployment(String orcid, Long putCode, Employment employment) {
-        orcidSecurityManager.checkPermissions(ScopePathType.AFFILIATIONS_UPDATE);
+        orcidSecurityManager.checkPermissions(ScopePathType.AFFILIATIONS_UPDATE, orcid);
         if (!putCode.equals(employment.getPutCode())) {
             Map<String, String> params = new HashMap<String, String>();
             params.put("urlPutCode", String.valueOf(putCode));
@@ -384,14 +384,14 @@ public class MemberV2ApiServiceDelegatorImpl
 
     @Override
     public Response deleteAffiliation(String orcid, Long putCode) {
-        orcidSecurityManager.checkPermissions(ScopePathType.AFFILIATIONS_UPDATE);
+        orcidSecurityManager.checkPermissions(ScopePathType.AFFILIATIONS_UPDATE, orcid);
         affiliationsManager.checkSourceAndDelete(orcid, putCode);
         return Response.noContent().build();
     }    
 
     @Override
     public Response viewPeerReview(String orcid, Long putCode) {
-        orcidSecurityManager.checkPermissions(ScopePathType.PEER_REVIEW_READ_LIMITED);
+        orcidSecurityManager.checkPermissions(ScopePathType.PEER_REVIEW_READ_LIMITED, orcid);
         PeerReview peerReview = peerReviewManager.getPeerReview(orcid, putCode);
         orcidSecurityManager.checkVisibility(peerReview);
         ActivityUtils.setPathToActivity(peerReview, orcid);
@@ -400,7 +400,7 @@ public class MemberV2ApiServiceDelegatorImpl
 
     @Override
     public Response viewPeerReviewSummary(String orcid, Long putCode) {
-        orcidSecurityManager.checkPermissions(ScopePathType.PEER_REVIEW_READ_LIMITED);
+        orcidSecurityManager.checkPermissions(ScopePathType.PEER_REVIEW_READ_LIMITED, orcid);
         PeerReviewSummary summary = peerReviewManager.getPeerReviewSummary(orcid, putCode);
         orcidSecurityManager.checkVisibility(summary);
         ActivityUtils.setPathToActivity(summary, orcid);
@@ -409,7 +409,7 @@ public class MemberV2ApiServiceDelegatorImpl
 
     @Override
     public Response createPeerReview(String orcid, PeerReview peerReview) {
-        orcidSecurityManager.checkPermissions(ScopePathType.PEER_REVIEW_CREATE);
+        orcidSecurityManager.checkPermissions(ScopePathType.PEER_REVIEW_CREATE, orcid);
         PeerReview newPeerReview = peerReviewManager.createPeerReview(orcid, peerReview, true);
         try {
             return Response.created(new URI(String.valueOf(newPeerReview.getPutCode()))).build();
@@ -420,7 +420,7 @@ public class MemberV2ApiServiceDelegatorImpl
 
     @Override
     public Response updatePeerReview(String orcid, Long putCode, PeerReview peerReview) {
-        orcidSecurityManager.checkPermissions(ScopePathType.PEER_REVIEW_UPDATE);
+        orcidSecurityManager.checkPermissions(ScopePathType.PEER_REVIEW_UPDATE, orcid);
         if (!putCode.equals(peerReview.getPutCode())) {
             Map<String, String> params = new HashMap<String, String>();
             params.put("urlPutCode", String.valueOf(putCode));
@@ -433,21 +433,21 @@ public class MemberV2ApiServiceDelegatorImpl
 
     @Override
     public Response deletePeerReview(String orcid, Long putCode) {
-        orcidSecurityManager.checkPermissions(ScopePathType.PEER_REVIEW_UPDATE);
+        orcidSecurityManager.checkPermissions(ScopePathType.PEER_REVIEW_UPDATE, orcid);
         peerReviewManager.checkSourceAndDelete(orcid, putCode);
         return Response.noContent().build();
     }
 
     @Override
     public Response viewGroupIdRecord(Long putCode) {
-        orcidSecurityManager.checkPermissions(ScopePathType.GROUP_ID_RECORD_READ);
+        orcidSecurityManager.checkPermissions(ScopePathType.GROUP_ID_RECORD_READ, null);
         GroupIdRecord record = groupIdRecordManager.getGroupIdRecord(putCode);
         return Response.ok(record).build();
     }
 
     @Override
     public Response createGroupIdRecord(GroupIdRecord groupIdRecord) {
-        orcidSecurityManager.checkPermissions(ScopePathType.GROUP_ID_RECORD_UPDATE);
+        orcidSecurityManager.checkPermissions(ScopePathType.GROUP_ID_RECORD_UPDATE, null);
         GroupIdRecord newRecord = groupIdRecordManager.createGroupIdRecord(groupIdRecord);
         try {
             return Response.created(new URI(String.valueOf(newRecord.getPutCode()))).build();
@@ -458,7 +458,7 @@ public class MemberV2ApiServiceDelegatorImpl
 
     @Override
     public Response updateGroupIdRecord(GroupIdRecord groupIdRecord, Long putCode) {
-        orcidSecurityManager.checkPermissions(ScopePathType.GROUP_ID_RECORD_UPDATE);
+        orcidSecurityManager.checkPermissions(ScopePathType.GROUP_ID_RECORD_UPDATE, null);
         if (!putCode.equals(groupIdRecord.getPutCode())) {
             Map<String, String> params = new HashMap<String, String>();
             params.put("urlPutCode", String.valueOf(putCode));
@@ -471,14 +471,14 @@ public class MemberV2ApiServiceDelegatorImpl
 
     @Override
     public Response deleteGroupIdRecord(Long putCode) {
-        orcidSecurityManager.checkPermissions(ScopePathType.GROUP_ID_RECORD_UPDATE);
+        orcidSecurityManager.checkPermissions(ScopePathType.GROUP_ID_RECORD_UPDATE, null);
         groupIdRecordManager.deleteGroupIdRecord(putCode);
         return Response.noContent().build();
     }
 
     @Override
     public Response viewGroupIdRecords(String pageSize, String pageNum) {
-        orcidSecurityManager.checkPermissions(ScopePathType.GROUP_ID_RECORD_READ);
+        orcidSecurityManager.checkPermissions(ScopePathType.GROUP_ID_RECORD_READ, null);
         GroupIdRecords records = groupIdRecordManager.getGroupIdRecords(pageSize, pageNum);
         return Response.ok(records).build();
     }
@@ -486,7 +486,7 @@ public class MemberV2ApiServiceDelegatorImpl
     @SuppressWarnings("unchecked")
     @Override
     public Response viewResearcherUrls(String orcid) {
-        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_READ_LIMITED);
+        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_READ_LIMITED, orcid);
         ResearcherUrls researcherUrls = researcherUrlManager.getResearcherUrls(orcid);
         researcherUrls.setResearcherUrls((List<ResearcherUrl>) visibilityFilter.filter(researcherUrls.getResearcherUrls()));
         ElementUtils.setPathToResearcherUrls(researcherUrls, orcid);
@@ -494,7 +494,7 @@ public class MemberV2ApiServiceDelegatorImpl
     }
 
     public Response viewResearcherUrl(String orcid, Long putCode) {
-        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_READ_LIMITED);
+        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_READ_LIMITED, orcid);
         ResearcherUrl researcherUrl = researcherUrlManager.getResearcherUrl(orcid, putCode);
         orcidSecurityManager.checkVisibility(researcherUrl);
         ElementUtils.setPathToResearcherUrl(researcherUrl, orcid);
@@ -503,7 +503,7 @@ public class MemberV2ApiServiceDelegatorImpl
 
     @Override
     public Response updateResearcherUrl(String orcid, Long putCode, ResearcherUrl researcherUrl) {
-        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_UPDATE);
+        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_UPDATE, orcid);
         if (!putCode.equals(researcherUrl.getPutCode())) {
             Map<String, String> params = new HashMap<String, String>();
             params.put("urlPutCode", String.valueOf(putCode));
@@ -517,7 +517,7 @@ public class MemberV2ApiServiceDelegatorImpl
 
     @Override
     public Response createResearcherUrl(String orcid, ResearcherUrl researcherUrl) {
-        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_UPDATE);
+        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_UPDATE, orcid);
         researcherUrl = researcherUrlManager.createResearcherUrl(orcid, researcherUrl);
         try {
             return Response.created(new URI(String.valueOf(researcherUrl.getPutCode()))).build();
@@ -528,7 +528,7 @@ public class MemberV2ApiServiceDelegatorImpl
 
     @Override
     public Response deleteResearcherUrl(String orcid, Long putCode) {
-        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_UPDATE);
+        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_UPDATE, orcid);
         researcherUrlManager.deleteResearcherUrl(orcid, putCode, true);
         return Response.noContent().build();
     }
@@ -536,7 +536,7 @@ public class MemberV2ApiServiceDelegatorImpl
     @SuppressWarnings("unchecked")
     @Override
     public Response viewEmails(String orcid) {
-        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_READ_LIMITED);
+        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_READ_LIMITED, orcid);
         Emails emails = emailManager.getEmails(orcid);
         emails.setEmails((List<Email>) visibilityFilter.filter(emails.getEmails()));
         ElementUtils.setPathToEmail(emails, orcid);
@@ -546,7 +546,7 @@ public class MemberV2ApiServiceDelegatorImpl
     @SuppressWarnings("unchecked")
     @Override
     public Response viewOtherNames(String orcid) {
-        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_READ_LIMITED);
+        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_READ_LIMITED, orcid);
         OtherNames otherNames = otherNameManager.getOtherNames(orcid);
         List<OtherName> allOtherNames = otherNames.getOtherNames();
         List<OtherName> filterdOtherNames = (List<OtherName>) visibilityFilter.filter(allOtherNames);
@@ -557,7 +557,7 @@ public class MemberV2ApiServiceDelegatorImpl
 
     @Override
     public Response viewOtherName(String orcid, Long putCode) {
-        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_READ_LIMITED);
+        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_READ_LIMITED, orcid);
         OtherName otherName = otherNameManager.getOtherName(orcid, putCode);
         orcidSecurityManager.checkVisibility(otherName);
         ElementUtils.setPathToOtherName(otherName, orcid);
@@ -566,7 +566,7 @@ public class MemberV2ApiServiceDelegatorImpl
 
     @Override
     public Response createOtherName(String orcid, OtherName otherName) {
-        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_UPDATE);
+        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_UPDATE, orcid);
         otherName = otherNameManager.createOtherName(orcid, otherName);
         try {
             return Response.created(new URI(String.valueOf(otherName.getPutCode()))).build();
@@ -577,7 +577,7 @@ public class MemberV2ApiServiceDelegatorImpl
 
     @Override
     public Response updateOtherName(String orcid, Long putCode, OtherName otherName) {
-        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_UPDATE);
+        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_UPDATE, orcid);
         if (!putCode.equals(otherName.getPutCode())) {
             Map<String, String> params = new HashMap<String, String>();
             params.put("urlPutCode", String.valueOf(putCode));
@@ -592,14 +592,14 @@ public class MemberV2ApiServiceDelegatorImpl
 
     @Override
     public Response deleteOtherName(String orcid, Long putCode) {
-        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_UPDATE);
+        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_UPDATE, orcid);
         otherNameManager.deleteOtherName(orcid, putCode, true);
         return Response.noContent().build();
     }
 
     @Override    
     public Response viewPersonalDetails(String orcid) {
-        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_READ_LIMITED);
+        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_READ_LIMITED, orcid);
         PersonalDetails personalDetails = personalDetailsManager.getPersonalDetails(orcid);
         personalDetails = visibilityFilter.filter(personalDetails);
         ElementUtils.setPathToPersonalDetails(personalDetails, orcid);
@@ -609,7 +609,7 @@ public class MemberV2ApiServiceDelegatorImpl
     @SuppressWarnings("unchecked")
     @Override
     public Response viewExternalIdentifiers(String orcid) {
-        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_READ_LIMITED);
+        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_READ_LIMITED, orcid);
         ExternalIdentifiers extIds = externalIdentifierManager.getExternalIdentifiersV2(orcid);
         List<ExternalIdentifier> allExtIds = extIds.getExternalIdentifier();
         List<ExternalIdentifier> filteredExtIds = (List<ExternalIdentifier>) visibilityFilter.filter(allExtIds);
@@ -620,7 +620,7 @@ public class MemberV2ApiServiceDelegatorImpl
 
     @Override
     public Response viewExternalIdentifier(String orcid, Long putCode) {
-        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_READ_LIMITED);
+        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_READ_LIMITED, orcid);
         ExternalIdentifier extId = externalIdentifierManager.getExternalIdentifierV2(orcid, putCode);
         orcidSecurityManager.checkVisibility(extId);
         ElementUtils.setPathToExternalIdentifier(extId, orcid);
@@ -630,7 +630,7 @@ public class MemberV2ApiServiceDelegatorImpl
     @Override
     public Response updateExternalIdentifier(String orcid, Long putCode, ExternalIdentifier externalIdentifier) {
         if (!putCode.equals(externalIdentifier.getPutCode())) {
-            orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_UPDATE);
+            orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_UPDATE, orcid);
             Map<String, String> params = new HashMap<String, String>();
             params.put("urlPutCode", String.valueOf(putCode));
             params.put("bodyPutCode", String.valueOf(externalIdentifier.getPutCode()));
@@ -643,7 +643,7 @@ public class MemberV2ApiServiceDelegatorImpl
 
     @Override
     public Response createExternalIdentifier(String orcid, ExternalIdentifier externalIdentifier) {
-        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_UPDATE);
+        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_UPDATE, orcid);
         externalIdentifier = externalIdentifierManager.createExternalIdentifierV2(orcid, externalIdentifier);
         try {
             return Response.created(new URI(String.valueOf(externalIdentifier.getPutCode()))).build();
@@ -654,14 +654,14 @@ public class MemberV2ApiServiceDelegatorImpl
 
     @Override
     public Response deleteExternalIdentifier(String orcid, Long putCode) {
-        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_UPDATE);
+        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_UPDATE, orcid);
         externalIdentifierManager.deleteExternalIdentifier(orcid, putCode, true);
         return Response.noContent().build();
     }
 
     @Override
     public Response viewBiography(String orcid) {
-        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_READ_LIMITED);
+        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_READ_LIMITED, orcid);
         Biography bio = profileEntityManager.getBiography(orcid);
         orcidSecurityManager.checkVisibility(bio);
         ElementUtils.setPathToBiography(bio, orcid);
@@ -671,7 +671,7 @@ public class MemberV2ApiServiceDelegatorImpl
     @SuppressWarnings("unchecked")
     @Override
     public Response viewKeywords(String orcid) {
-        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_READ_LIMITED);
+        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_READ_LIMITED, orcid);
         Keywords keywords = keywordsManager.getKeywords(orcid);
         List<Keyword> allKeywords = keywords.getKeywords();
         List<Keyword> filterdKeywords = (List<Keyword>) visibilityFilter.filter(allKeywords);
@@ -682,7 +682,7 @@ public class MemberV2ApiServiceDelegatorImpl
 
     @Override
     public Response viewKeyword(String orcid, Long putCode) {
-        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_READ_LIMITED);
+        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_READ_LIMITED, orcid);
         Keyword keyword = keywordsManager.getKeyword(orcid, putCode);
         orcidSecurityManager.checkVisibility(keyword);
         ElementUtils.setPathToKeyword(keyword, orcid);
@@ -691,7 +691,7 @@ public class MemberV2ApiServiceDelegatorImpl
 
     @Override    
     public Response createKeyword(String orcid, Keyword keyword) {
-        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_UPDATE);
+        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_UPDATE, orcid);
         keyword = keywordsManager.createKeyword(orcid, keyword);
         try {
             return Response.created(new URI(String.valueOf(keyword.getPutCode()))).build();
@@ -702,7 +702,7 @@ public class MemberV2ApiServiceDelegatorImpl
 
     @Override
     public Response updateKeyword(String orcid, Long putCode, Keyword keyword) {
-        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_UPDATE);
+        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_UPDATE, orcid);
         if (!putCode.equals(keyword.getPutCode())) {
             Map<String, String> params = new HashMap<String, String>();
             params.put("urlPutCode", String.valueOf(putCode));
@@ -717,7 +717,7 @@ public class MemberV2ApiServiceDelegatorImpl
 
     @Override
     public Response deleteKeyword(String orcid, Long putCode) {
-        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_UPDATE);
+        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_UPDATE, orcid);
         keywordsManager.deleteKeyword(orcid, putCode, true);
         return Response.noContent().build();
     }
@@ -725,7 +725,7 @@ public class MemberV2ApiServiceDelegatorImpl
     @SuppressWarnings("unchecked")
     @Override
     public Response viewAddresses(String orcid) {
-        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_READ_LIMITED);
+        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_READ_LIMITED, orcid);
         Addresses addresses = addressManager.getAddresses(orcid);
         List<Address> allAddresses = addresses.getAddress();
         List<Address> filteredAddresses = (List<Address>) visibilityFilter.filter(allAddresses);
@@ -736,7 +736,7 @@ public class MemberV2ApiServiceDelegatorImpl
 
     @Override
     public Response viewAddress(String orcid, Long putCode) {
-        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_READ_LIMITED);
+        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_READ_LIMITED, orcid);
         Address address = addressManager.getAddress(orcid, putCode);
         orcidSecurityManager.checkVisibility(address);
         ElementUtils.setPathToAddress(address, orcid);
@@ -745,7 +745,7 @@ public class MemberV2ApiServiceDelegatorImpl
 
     @Override
     public Response createAddress(String orcid, Address address) {
-        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_UPDATE);
+        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_UPDATE, orcid);
         address = addressManager.createAddress(orcid, address);
         try {
             return Response.created(new URI(String.valueOf(address.getPutCode()))).build();
@@ -756,7 +756,7 @@ public class MemberV2ApiServiceDelegatorImpl
 
     @Override
     public Response updateAddress(String orcid, Long putCode, Address address) {
-        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_UPDATE);
+        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_UPDATE, orcid);
         if (!putCode.equals(address.getPutCode())) {
             Map<String, String> params = new HashMap<String, String>();
             params.put("urlPutCode", String.valueOf(putCode));
@@ -771,14 +771,14 @@ public class MemberV2ApiServiceDelegatorImpl
 
     @Override
     public Response deleteAddress(String orcid, Long putCode) {
-        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_UPDATE);
+        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_UPDATE, orcid);
         addressManager.deleteAddress(orcid, putCode);
         return Response.noContent().build();
     }   
     
     @Override
     public Response viewPerson(String orcid) {
-        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_READ_LIMITED);
+        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_READ_LIMITED, orcid);
         Person person = profileEntityManager.getPersonDetails(orcid);
         person = visibilityFilter.filter(person);
         ElementUtils.setPathToPerson(person, orcid);

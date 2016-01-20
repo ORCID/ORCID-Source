@@ -290,8 +290,8 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         return false;
     }
 
-    public void checkPermissions(ScopePathType requiredScope) {
-        permissionChecker.checkPermissions(getAuthentication(), requiredScope, StringUtils.EMPTY);
+    public void checkPermissions(ScopePathType requiredScope, String orcid) {        
+        permissionChecker.checkPermissions(getAuthentication(), requiredScope, orcid);
     } 
         
     private Authentication getAuthentication() {

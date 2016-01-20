@@ -46,5 +46,5 @@ public interface OrcidSecurityManager {
 
     String getClientIdFromAPIRequest();
     
-    void checkPermissions(ScopePathType requiredScope);
+    void checkPermissions(ScopePathType requiredScope, String orcid);
 }
