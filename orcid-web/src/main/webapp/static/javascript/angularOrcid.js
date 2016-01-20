@@ -2245,7 +2245,10 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$compile', function Website
     };
     
     $scope.addNewModal = function() {
-        $scope.websitesForm.websites.push({"errors":[],"websites":[{"errors":[],"url":null,"urlName":null,"putCode":null,"visibility":{"errors":[],"required":true,"getRequiredMessage":null,"visibility":"PUBLIC"},"source":null,"sourceName":null}],"visibility":{"errors":[],"required":true,"getRequiredMessage":null,"visibility":"PUBLIC"}});
+        var idx = $scope.getLastDisplayIndex();        
+        var tmpObj = {"errors":[],"url":null,"urlName":null,"putCode":null,"visibility":{"errors":[],"required":true,"getRequiredMessage":null,"visibility":"PUBLIC"},"source":null,"sourceName":null, "displayIndex": 0};
+        tmpObj['displayIndex'] = idx + 1;
+        $scope.websitesForm.websites.push(tmpObj);
         $scope.newInput = true; 
     };
 
@@ -2328,9 +2331,10 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$compile', function Website
         var len = websites.length;
         
         while (len--) {
-            if (websites[len] == website)                
+            if (websites[len] == website){
                 websites[len].visibility.visibility = priv;
                 $scope.websitesForm.websites = websites;
+            }   
         }
     };
     
@@ -2369,60 +2373,67 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$compile', function Website
         $.colorbox.close();
     }
     
+    $scope.swap = function(idxA, valueA, idxB, valueB){        
+        $scope.websitesForm.websites[idxA].displayIndex = valueB;
+        $scope.websitesForm.websites[idxB].displayIndex = valueA;
+    }    
+    
     $scope.setPriorityUp = function(displayIndex){        
-        
-        if (displayIndex > 1) {
-            var websites = $scope.websitesForm.websites;
-            var arrayNewIdx = null;  
-            var arrayOldIdx = null;
-            var len = websites.length;
-            while (len--) {
-                //Find first array idx for the current displayIndex value
-                if (websites[len].displayIndex == displayIndex){
-                    arrayNewIdx = len;                
-                }
-                //Find first array idx for the element above to it 
-                if (websites[len].displayIndex == displayIndex - 1){
-                    arrayOldIdx = len;                
-                }                
+        var websites = $scope.websitesForm.websites;
+        var len = websites.length;
+        var current = 0;
+        var valueB = 0;
+        var idxB = 0;
+        while (len--) {
+            if (websites[len].displayIndex == displayIndex){
+                var idxA = len;  
             }
-            
-            websites[arrayNewIdx].displayIndex--;
-            websites[arrayOldIdx].displayIndex++;
-            $scope.websitesForm.websites = websites;
+            if (websites[len].displayIndex < displayIndex){
+                current = websites[len].displayIndex;
+                if (current > valueB){
+                    valueB = current;
+                    idxB = len;
+                }
+            }
         }
+        $scope.swap(idxA, displayIndex, idxB, valueB);
     };
     
     $scope.setPriorityDown = function(displayIndex){
         var websites = $scope.websitesForm.websites;
         var len = websites.length;
-        
-        if (displayIndex < len) {            
-            var arrayNewIdx = null;  
-            var arrayOldIdx = null;
-            
-            while (len--) {
-                //Find first array idx for the current displayIndex value
-                if (websites[len].displayIndex == displayIndex){
-                    arrayNewIdx = len;                
-                }
-                //Find first array idx for the element below to it 
-                if (websites[len].displayIndex == displayIndex + 1){
-                    arrayOldIdx = len;                
-                }                
+        var current = 0;
+        var valueB = $scope.getLastDisplayIndex();        
+        var idxB = 0;        
+        while (len--) {
+            if (websites[len].displayIndex == displayIndex){
+                var idxA = len;  
             }
-            
-            websites[arrayNewIdx].displayIndex++;
-            websites[arrayOldIdx].displayIndex--;
-            
-            $scope.websitesForm.websites = websites;
+            if (websites[len].displayIndex > displayIndex){
+                current = websites[len].displayIndex;
+                if (current <= valueB){
+                    valueB = current;
+                    idxB = len;
+                }
+            }
         }
-   };
+        $scope.swap(idxA, displayIndex, idxB, valueB);
+    };
     
-    
-    
-    
-    
+    $scope.getLastDisplayIndex = function(){        
+        var last = 0;
+        var current = 0;
+        
+        var websites = $scope.websitesForm.websites;
+        var len = websites.length;
+        while (len--) {            
+            current = websites[len].displayIndex;
+            if (current > last){
+                last = websites[len].displayIndex;
+            }
+        }       
+        return last;
+    };
     
 
     $scope.getWebsitesForm();
