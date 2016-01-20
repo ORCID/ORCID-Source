@@ -838,6 +838,19 @@ public class ManageProfileController extends BaseWorkspaceController {
             form.setVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(OrcidVisibilityDefaults.COUNTRY_DEFAULT.getVisibility()));
         }
 
+        //Return an empty country in case we dont have any
+        if(form.getAddresses() == null){
+           form.setAddresses(new ArrayList<AddressForm>()); 
+        }
+        
+        if(form.getAddresses().isEmpty()) {
+            AddressForm address = new AddressForm();
+            address.setDisplayIndex(0L);
+            address.setPrimary(false);
+            address.setVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(OrcidVisibilityDefaults.COUNTRY_DEFAULT.getVisibility()));
+            form.getAddresses().add(address);
+        }
+        
         return form;
     }
     
