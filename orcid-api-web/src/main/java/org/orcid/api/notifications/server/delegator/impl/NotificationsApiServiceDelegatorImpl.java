@@ -40,8 +40,8 @@ import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.security.visibility.aop.AccessControl;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.notification.Notification;
-import org.orcid.jaxb.model.notification.permission.NotificationPermission;
+import org.orcid.jaxb.model.notification.permission_rc2.NotificationPermission;
+import org.orcid.jaxb.model.notification_rc2.Notification;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.springframework.stereotype.Component;
 

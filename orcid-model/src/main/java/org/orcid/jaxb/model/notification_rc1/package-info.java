@@ -21,38 +21,6 @@
 // Generated on: 2014.07.22 at 06:46:00 PM BST 
 //
 
-package org.orcid.jaxb.model.notification;
+@javax.xml.bind.annotation.XmlSchema(namespace = "http://www.orcid.org/ns/notification", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED, xmlns = { @javax.xml.bind.annotation.XmlNs(prefix = "common", namespaceURI = "http://www.orcid.org/ns/common"), })
+package org.orcid.jaxb.model.notification_rc1;
 
-import javax.xml.bind.annotation.XmlEnum;
-import javax.xml.bind.annotation.XmlEnumValue;
-import javax.xml.bind.annotation.XmlType;
-
-/**
- * <p>
- * Java class for null.
- * 
- * <p>
- * The following schema fragment specifies the expected content contained within
- * this class.
- * <p>
- * 
- */
-@XmlType(name = "")
-@XmlEnum
-public enum NotificationType {
-
-    //@formatter:off
-    @XmlEnumValue("custom") CUSTOM,
-    @XmlEnumValue("permission")PERMISSION,
-    @XmlEnumValue("amended") AMENDED;
-    //@formatter:on
-
-    public String value() {
-        return name();
-    }
-
-    public static NotificationType fromValue(String v) {
-        return valueOf(v);
-    }
-
-}

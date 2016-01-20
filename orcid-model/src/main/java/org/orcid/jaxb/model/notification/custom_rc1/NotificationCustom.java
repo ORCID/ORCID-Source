@@ -21,7 +21,7 @@
 // Generated on: 2014.07.22 at 06:46:00 PM BST 
 //
 
-package org.orcid.jaxb.model.notification.custom;
+package org.orcid.jaxb.model.notification.custom_rc1;
 
 import java.io.Serializable;
 
@@ -32,8 +32,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.orcid.jaxb.model.notification.Notification;
-import org.orcid.jaxb.model.notification.NotificationType;
+import org.orcid.jaxb.model.notification_rc1.Notification;
+import org.orcid.jaxb.model.notification_rc1.NotificationType;
 
 /**
  * <p>

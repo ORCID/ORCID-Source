@@ -21,7 +21,7 @@
 // Generated on: 2014.11.24 at 04:27:39 PM GMT 
 //
 
-package org.orcid.jaxb.model.notification.amended;
+package org.orcid.jaxb.model.notification.amended_rc1;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -30,9 +30,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
-import org.orcid.jaxb.model.notification.Notification;
-import org.orcid.jaxb.model.notification.NotificationType;
-import org.orcid.jaxb.model.notification.permission.Items;
+import org.orcid.jaxb.model.notification.permission_rc1.Items;
+import org.orcid.jaxb.model.notification_rc1.Notification;
+import org.orcid.jaxb.model.notification_rc1.NotificationType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = { "putCode", "notificationType", "amendedSection", "createdDate", "sentDate", "readDate", "archivedDate", "source" })

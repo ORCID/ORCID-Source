@@ -21,7 +21,7 @@
 // Generated on: 2014.07.22 at 06:46:00 PM BST 
 //
 
-package org.orcid.jaxb.model.notification;
+package org.orcid.jaxb.model.notification_rc1;
 
 import java.io.Serializable;
 
@@ -33,8 +33,8 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.datatype.XMLGregorianCalendar;
 
-import org.orcid.jaxb.model.common_rc2.Source;
-import org.orcid.jaxb.model.notification.NotificationType;
+import org.orcid.jaxb.model.common_rc1.Source;
+import org.orcid.jaxb.model.notification_rc1.NotificationType;
 
 import io.swagger.annotations.ApiModelProperty;
 

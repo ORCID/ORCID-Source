@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.orcid.jaxb.model.common_rc2.Source;
-import org.orcid.jaxb.model.notification.Notification;
+import org.orcid.jaxb.model.notification_rc2.Notification;
 
 /**
  * 

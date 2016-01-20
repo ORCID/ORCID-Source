@@ -21,7 +21,7 @@
 // Generated on: 2014.07.22 at 06:46:00 PM BST 
 //
 
-package org.orcid.jaxb.model.notification.custom;
+package org.orcid.jaxb.model.notification.custom_rc1;
 
 import javax.xml.bind.annotation.XmlRegistry;
 

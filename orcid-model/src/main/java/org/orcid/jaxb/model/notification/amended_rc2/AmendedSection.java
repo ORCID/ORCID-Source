@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.jaxb.model.notification.amended;
+package org.orcid.jaxb.model.notification.amended_rc2;
 
 import javax.xml.bind.annotation.XmlEnum;
 

@@ -21,7 +21,7 @@
 // Generated on: 2014.11.24 at 04:27:39 PM GMT 
 //
 
-package org.orcid.jaxb.model.notification.permission;
+package org.orcid.jaxb.model.notification.permission_rc1;
 
 import java.io.Serializable;
 import java.util.ArrayList;

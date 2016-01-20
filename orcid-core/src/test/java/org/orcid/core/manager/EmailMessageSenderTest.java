@@ -40,16 +40,16 @@ import org.orcid.jaxb.model.message.OrcidInternal;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.PersonalDetails;
 import org.orcid.jaxb.model.message.Preferences;
-import org.orcid.jaxb.model.notification.Notification;
-import org.orcid.jaxb.model.notification.amended.AmendedSection;
-import org.orcid.jaxb.model.notification.amended.NotificationAmended;
-import org.orcid.jaxb.model.notification.custom.NotificationCustom;
-import org.orcid.jaxb.model.notification.permission.AuthorizationUrl;
-import org.orcid.jaxb.model.notification.permission.ExternalIdentifier;
-import org.orcid.jaxb.model.notification.permission.Item;
-import org.orcid.jaxb.model.notification.permission.ItemType;
-import org.orcid.jaxb.model.notification.permission.Items;
-import org.orcid.jaxb.model.notification.permission.NotificationPermission;
+import org.orcid.jaxb.model.notification.amended_rc2.AmendedSection;
+import org.orcid.jaxb.model.notification.amended_rc2.NotificationAmended;
+import org.orcid.jaxb.model.notification.custom_rc2.NotificationCustom;
+import org.orcid.jaxb.model.notification.permission_rc2.AuthorizationUrl;
+import org.orcid.jaxb.model.notification.permission_rc2.ExternalIdentifier;
+import org.orcid.jaxb.model.notification.permission_rc2.Item;
+import org.orcid.jaxb.model.notification.permission_rc2.ItemType;
+import org.orcid.jaxb.model.notification.permission_rc2.Items;
+import org.orcid.jaxb.model.notification.permission_rc2.NotificationPermission;
+import org.orcid.jaxb.model.notification_rc2.Notification;
 import org.orcid.utils.DateUtils;
 
 /**

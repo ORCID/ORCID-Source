@@ -26,7 +26,8 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
 import org.junit.Test;
-import org.orcid.jaxb.model.notification.NotificationType;
+import org.orcid.jaxb.model.notification.custom_rc2.NotificationCustom;
+import org.orcid.jaxb.model.notification_rc2.NotificationType;
 
 /**
  * 

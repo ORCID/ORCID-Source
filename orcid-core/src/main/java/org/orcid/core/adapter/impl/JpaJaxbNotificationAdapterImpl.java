@@ -24,10 +24,10 @@ import java.util.Map;
 import ma.glasnost.orika.MapperFacade;
 
 import org.orcid.core.adapter.JpaJaxbNotificationAdapter;
-import org.orcid.jaxb.model.notification.Notification;
-import org.orcid.jaxb.model.notification.amended.NotificationAmended;
-import org.orcid.jaxb.model.notification.custom.NotificationCustom;
-import org.orcid.jaxb.model.notification.permission.NotificationPermission;
+import org.orcid.jaxb.model.notification.amended_rc2.NotificationAmended;
+import org.orcid.jaxb.model.notification.custom_rc2.NotificationCustom;
+import org.orcid.jaxb.model.notification.permission_rc2.NotificationPermission;
+import org.orcid.jaxb.model.notification_rc2.Notification;
 import org.orcid.persistence.jpa.entities.NotificationAddItemsEntity;
 import org.orcid.persistence.jpa.entities.NotificationAmendedEntity;
 import org.orcid.persistence.jpa.entities.NotificationCustomEntity;

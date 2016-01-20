@@ -32,8 +32,8 @@ import org.apache.commons.io.IOUtils;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Test;
-import org.orcid.jaxb.model.notification.NotificationType;
-import org.orcid.jaxb.model.notification.permission.NotificationPermission;
+import org.orcid.jaxb.model.notification.permission_rc2.NotificationPermission;
+import org.orcid.jaxb.model.notification_rc2.NotificationType;
 import org.xml.sax.SAXException;
 
 /**
