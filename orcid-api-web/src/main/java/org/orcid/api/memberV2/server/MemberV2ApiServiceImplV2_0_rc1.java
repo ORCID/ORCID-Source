@@ -61,8 +61,8 @@ import org.orcid.core.exception.OrcidNotificationAlreadyReadException;
 import org.orcid.jaxb.model.groupid_rc1.GroupIdRecord;
 import org.orcid.jaxb.model.groupid_rc1.GroupIdRecords;
 import org.orcid.jaxb.model.message.ScopeConstants;
-import org.orcid.jaxb.model.notification.permission_rc2.NotificationPermission;
-import org.orcid.jaxb.model.notification_rc2.Notification;
+import org.orcid.jaxb.model.notification.permission_rc1.NotificationPermission;
+import org.orcid.jaxb.model.notification_rc1.Notification;
 import org.orcid.jaxb.model.record.summary_rc1.ActivitiesSummary;
 import org.orcid.jaxb.model.record.summary_rc1.EducationSummary;
 import org.orcid.jaxb.model.record.summary_rc1.EmploymentSummary;
@@ -107,14 +107,14 @@ public class MemberV2ApiServiceImplV2_0_rc1 {
 
     protected MemberV2ApiServiceDelegator<Education, Employment, ExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work, ?, ?> serviceDelegator;
 
-    private NotificationsApiServiceDelegator notificationsServiceDelegator;
+    private NotificationsApiServiceDelegator<NotificationPermission> notificationsServiceDelegator;
 
     public void setServiceDelegator(
             MemberV2ApiServiceDelegator<Education, Employment, ExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work, ?, ?> serviceDelegator) {
         this.serviceDelegator = serviceDelegator;
     }
 
-    public void setNotificationsServiceDelegator(NotificationsApiServiceDelegator notificationsServiceDelegator) {
+    public void setNotificationsServiceDelegator(NotificationsApiServiceDelegator<NotificationPermission> notificationsServiceDelegator) {
         this.notificationsServiceDelegator = notificationsServiceDelegator;
     }
 

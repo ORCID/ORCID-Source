@@ -51,7 +51,7 @@ import org.springframework.stereotype.Component;
  *
  */
 @Component
-public class NotificationsApiServiceDelegatorImpl implements NotificationsApiServiceDelegator {
+public class NotificationsApiServiceDelegatorImpl implements NotificationsApiServiceDelegator<NotificationPermission> {
 
     @Resource
     private NotificationManager notificationManager;

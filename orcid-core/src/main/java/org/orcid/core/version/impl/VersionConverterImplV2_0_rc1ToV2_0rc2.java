@@ -34,6 +34,7 @@ import org.orcid.core.version.V2VersionObjectFactory;
 import org.orcid.jaxb.model.common_rc2.LastModifiedDate;
 import org.orcid.jaxb.model.groupid_rc1.GroupIdRecord;
 import org.orcid.jaxb.model.groupid_rc1.GroupIdRecords;
+import org.orcid.jaxb.model.notification.permission_rc1.NotificationPermission;
 import org.orcid.jaxb.model.record.summary_rc1.ActivitiesSummary;
 import org.orcid.jaxb.model.record.summary_rc1.EducationSummary;
 import org.orcid.jaxb.model.record.summary_rc1.Educations;
@@ -161,6 +162,9 @@ public class VersionConverterImplV2_0_rc1ToV2_0rc2 implements V2VersionConverter
         //PEER REVIEW
         mapperFactory.classMap(PeerReview.class, org.orcid.jaxb.model.record_rc2.PeerReview.class).byDefault().register();        
         mapperFactory.classMap(PeerReviewSummary.class, org.orcid.jaxb.model.record.summary_rc2.PeerReviewSummary.class).byDefault().register();                
+        
+        //NOTIFICATIONS
+        mapperFactory.classMap(NotificationPermission.class, org.orcid.jaxb.model.notification.permission_rc2.NotificationPermission.class).byDefault().register();;
         
         mapper = mapperFactory.getMapperFacade();
     }

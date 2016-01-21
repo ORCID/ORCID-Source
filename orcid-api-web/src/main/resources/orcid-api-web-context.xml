@@ -130,6 +130,15 @@
 
     <!--  Notifications -->
     <bean id="notificationsApiServiceDelegator" class="org.orcid.api.notifications.server.delegator.impl.NotificationsApiServiceDelegatorImpl" />
+    
+    <bean id="notificationsApiServiceDelegatorRc1" class="org.orcid.api.notifications.server.delegator.impl.NotificationsApiServiceVersionedDelegatorImpl">
+    	<property name="externalVersion" value="2.0_rc1" />
+    </bean>
+    
+    <bean id="notificationsApiServiceDelegatorRc2" class="org.orcid.api.notifications.server.delegator.impl.NotificationsApiServiceVersionedDelegatorImpl">
+    	<property name="externalVersion" value="2.0_rc2" />
+    </bean>
+    
 
     <bean id="memberV2ApiServiceDelegator" class="org.orcid.api.memberV2.server.delegator.impl.MemberV2ApiServiceDelegatorImpl" />
     
@@ -139,7 +148,7 @@
     </bean>
     <bean id="memberV2ApiServiceImplV2_0_rc1" class="org.orcid.api.memberV2.server.MemberV2ApiServiceImplV2_0_rc1">
         <property name="serviceDelegator" ref="memberV2ApiServiceDelegatorRc1"/>
-        <property name="notificationsServiceDelegator" ref="notificationsApiServiceDelegator"/>
+        <property name="notificationsServiceDelegator" ref="notificationsApiServiceDelegatorRc1"/>
     </bean>
     
     <!--  Member_2 API RC2-->
@@ -148,7 +157,7 @@
     </bean>
     <bean id="memberV2ApiServiceImplV2_0_rc2" class="org.orcid.api.memberV2.server.MemberV2ApiServiceImplV2_0_rc2">    	
         <property name="serviceDelegator" ref="memberV2ApiServiceDelegatorRc2"/>
-        <property name="notificationsServiceDelegator" ref="notificationsApiServiceDelegator"/>
+        <property name="notificationsServiceDelegator" ref="notificationsApiServiceDelegatorRc2"/>
     </bean>
     
     <!--  CERIF API -->
