@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.integration.blackbox.api;
+package org.orcid.integration.blackbox.api.v2.rc1;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -39,8 +39,8 @@ import org.orcid.integration.api.helper.OauthHelper;
 import org.orcid.integration.api.notifications.NotificationsApiClientImpl;
 import org.orcid.integration.api.t2.T2OAuthAPIService;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.notification.permission_rc2.AuthorizationUrl;
-import org.orcid.jaxb.model.notification.permission_rc2.NotificationPermission;
+import org.orcid.jaxb.model.notification.permission_rc1.AuthorizationUrl;
+import org.orcid.jaxb.model.notification.permission_rc1.NotificationPermission;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -66,8 +66,8 @@ public class NotificationsTest {
     @Resource(name = "t2OAuthClient")
     private T2OAuthAPIService<ClientResponse> t2OAuthClient;
 
-    @Resource
-    private NotificationsApiClientImpl notificationsClient;
+    @Resource(name = "notificationsClient_rc1")
+    private NotificationsApiClientImpl<org.orcid.jaxb.model.notification.permission_rc1.NotificationPermission> notificationsClient;
 
     @Resource
     private OauthHelper oauthHelper;

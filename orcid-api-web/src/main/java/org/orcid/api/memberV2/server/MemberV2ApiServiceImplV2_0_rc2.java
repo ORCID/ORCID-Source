@@ -120,14 +120,14 @@ public class MemberV2ApiServiceImplV2_0_rc2 {
 
     protected MemberV2ApiServiceDelegator<Education, Employment, ExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work, Address, Keyword> serviceDelegator;
 
-    private NotificationsApiServiceDelegator notificationsServiceDelegator;
+    private NotificationsApiServiceDelegator<NotificationPermission> notificationsServiceDelegator;
 
     public void setServiceDelegator(
             MemberV2ApiServiceDelegator<Education, Employment, ExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work, Address, Keyword> serviceDelegator) {
         this.serviceDelegator = serviceDelegator;
     }
 
-    public void setNotificationsServiceDelegator(NotificationsApiServiceDelegator notificationsServiceDelegator) {
+    public void setNotificationsServiceDelegator(NotificationsApiServiceDelegator<NotificationPermission> notificationsServiceDelegator) {
         this.notificationsServiceDelegator = notificationsServiceDelegator;
     }
 

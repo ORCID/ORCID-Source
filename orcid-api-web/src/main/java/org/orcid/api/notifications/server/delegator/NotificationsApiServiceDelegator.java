@@ -20,14 +20,13 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.orcid.core.exception.OrcidNotificationAlreadyReadException;
-import org.orcid.jaxb.model.notification.permission_rc2.NotificationPermission;
 
 /**
  * 
  * @author Will Simpson
  *
  */
-public interface NotificationsApiServiceDelegator {
+public interface NotificationsApiServiceDelegator<NOTIFICATIONPERMISSION> {
 
     Response viewStatusText();
 
@@ -37,6 +36,6 @@ public interface NotificationsApiServiceDelegator {
     
     Response flagNotificationAsArchived(String orcid, Long id) throws OrcidNotificationAlreadyReadException;
 
-    Response addPermissionNotification(UriInfo uriInfo, String orcid, NotificationPermission notification);
+    Response addPermissionNotification(UriInfo uriInfo, String orcid, NOTIFICATIONPERMISSION notification);
 
 }

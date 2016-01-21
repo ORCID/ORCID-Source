@@ -28,7 +28,6 @@ import javax.ws.rs.core.UriBuilder;
 
 import org.orcid.api.common.OrcidClientHelper;
 import org.orcid.core.exception.OrcidNotificationAlreadyReadException;
-import org.orcid.jaxb.model.notification.permission_rc2.NotificationPermission;
 
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
@@ -38,7 +37,7 @@ import com.sun.jersey.api.client.ClientResponse;
  * @author Will Simpson
  *
  */
-public class NotificationsApiClientImpl {
+public class NotificationsApiClientImpl<NOTIFICATION> {
 
     private OrcidClientHelper orcidClientHelper;
 
@@ -77,11 +76,11 @@ public class NotificationsApiClientImpl {
         return orcidClientHelper.deleteClientResponseWithToken(UriBuilder.fromPath(PERMISSIONS_VIEW_PATH).build(orcid, id), VND_ORCID_JSON, accessToken);
     }
 
-    public ClientResponse addPermissionNotificationXml(String orcid, NotificationPermission notification, String accessToken) {
+    public ClientResponse addPermissionNotificationXml(String orcid, NOTIFICATION notification, String accessToken) {
         return orcidClientHelper.postClientResponseWithToken(UriBuilder.fromPath(PERMISSIONS_PATH).build(orcid), VND_ORCID_XML, notification, accessToken);
     }
 
-    public ClientResponse addPermissionNotificationJson(String orcid, NotificationPermission notification, String accessToken) {
+    public ClientResponse addPermissionNotificationJson(String orcid, NOTIFICATION notification, String accessToken) {
         return orcidClientHelper.postClientResponseWithToken(UriBuilder.fromPath(PERMISSIONS_PATH).build(orcid), VND_ORCID_JSON, notification, accessToken);
     }
 
