@@ -20,8 +20,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.security.AccessControlException;
-import java.util.ArrayList;
-import java.util.Arrays;
 
 import javax.annotation.Resource;
 
@@ -35,15 +33,12 @@ import org.orcid.jaxb.model.common_rc2.Source;
 import org.orcid.jaxb.model.common_rc2.SourceClientId;
 import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.record_rc2.Work;
-
-import com.sun.tools.javac.util.List;
-
 import org.orcid.jaxb.model.record_rc2.Biography;
 import org.orcid.jaxb.model.record_rc2.FamilyName;
 import org.orcid.jaxb.model.record_rc2.GivenNames;
 import org.orcid.jaxb.model.record_rc2.Name;
 import org.orcid.jaxb.model.record_rc2.OtherName;
+import org.orcid.jaxb.model.record_rc2.Work;
 
 /**
  * 
@@ -296,27 +291,13 @@ public class OrcidSecurityManagerTest extends BaseTest {
         for (ScopePathType scope : ScopePathType.values()) {
             if (scopeThatShouldWork.combined().contains(scope)) {
                 try {
-                    orcidSecurityManager.checkPermissions(scope, userOrcid);
+                    orcidSecurityManager.checkPermissions(scope);
                 } catch (Exception e) {
                     fail("Testing scope '" + scopeThatShouldWork.value() + "' scope '" + scope.value() + "' should work");
                 }
-            } else if (scope.isReadOnlyScope()) {
-                // TODO: check if we still want this behavior
-                // Check at the DefaultPermissionsChecker.hasRequiredScope, if
-                // the client have the READ_PUBLIC scope and the
-                // request requires a read only scope, the
-                // DefaultPermissionsChecker will allow the request and
-                // delegate filtering the result to others code
-                if (ScopePathType.hasStringScope(scopeThatShouldWork.getContent(), ScopePathType.READ_PUBLIC)) {
-                    try {
-                        orcidSecurityManager.checkPermissions(scope, userOrcid);
-                    } catch (Exception e) {
-                        fail("Testing scope '" + scopeThatShouldWork.value() + "' scope '" + scope.value() + "' should work");
-                    }
-                }
             } else {
                 try {
-                    orcidSecurityManager.checkPermissions(scope, userOrcid);
+                    orcidSecurityManager.checkPermissions(scope);
                     fail("Testing scope '" + scopeThatShouldWork.value() + "' scope '" + scope.value() + "' should fail");
                 } catch (AccessControlException ace) {
 
