@@ -17,8 +17,11 @@
 package org.orcid.core.manager.impl;
 
 import java.security.AccessControlException;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -29,8 +32,9 @@ import org.orcid.core.exception.OrcidVisibilityException;
 import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.SourceManager;
+import org.orcid.core.oauth.OrcidOAuth2Authentication;
+import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
-import org.orcid.core.security.PermissionChecker;
 import org.orcid.jaxb.model.common_rc2.Filterable;
 import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.message.OrcidType;
@@ -55,12 +59,15 @@ import org.orcid.jaxb.model.record_rc2.PeerReview;
 import org.orcid.jaxb.model.record_rc2.Person;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import org.orcid.jaxb.model.record_rc2.Work;
+import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.common.util.OAuth2Utils;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.OAuth2Request;
 
@@ -69,14 +76,17 @@ import org.springframework.security.oauth2.provider.OAuth2Request;
  * @author Will Simpson
  *
  */
-public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
+public class OrcidSecurityManagerImpl implements OrcidSecurityManager { 
 
     @Resource
     private SourceManager sourceManager;
 
-    @Resource(name = "defaultPermissionChecker")
-    private PermissionChecker permissionChecker;
-    
+    @Resource
+    private OrcidOauth2TokenDetailService orcidOauthTokenDetailService;
+
+    @Value("${org.orcid.core.token.write_validity_seconds:3600}")
+    private int writeValiditySeconds;
+
     @Override
     public void checkVisibility(Filterable filterable) {
         OAuth2Authentication oAuth2Authentication = getOAuth2Authentication();
@@ -180,8 +190,8 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
     }
 
     @Override
-    public boolean isAdmin() {        
-        Authentication authentication = getAuthentication();
+    public boolean isAdmin() {
+        Authentication authentication = getOAuth2Authentication();
         if (authentication != null) {
             Object principal = authentication.getPrincipal();
             if (principal instanceof OrcidProfileUserDetails) {
@@ -212,9 +222,11 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
             readLimitedScopes.add(ScopePathType.AFFILIATIONS_READ_LIMITED.value());
         } else if (filterable instanceof PeerReview || filterable instanceof PeerReviewSummary) {
             readLimitedScopes.add(ScopePathType.PEER_REVIEW_READ_LIMITED.value());
-        } else if (filterable instanceof ResearcherUrl || filterable instanceof Email || filterable instanceof Emails || filterable instanceof Address || filterable instanceof ExternalIdentifier
-                || filterable instanceof Keyword || filterable instanceof OtherName || filterable instanceof Person || filterable instanceof Name || filterable instanceof Biography ) {
+        } else if (filterable instanceof ResearcherUrl || filterable instanceof Email || filterable instanceof Emails || filterable instanceof Address
+                || filterable instanceof ExternalIdentifier || filterable instanceof Keyword || filterable instanceof OtherName || filterable instanceof Person
+                || filterable instanceof Name || filterable instanceof Biography) {
             readLimitedScopes.add(ScopePathType.PERSON_READ_LIMITED.value());
+            readLimitedScopes.add(ScopePathType.ORCID_BIO_READ_LIMITED.value());
         }
         readLimitedScopes.retainAll(requestedScopes);
         return readLimitedScopes;
@@ -235,45 +247,57 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         } else if (filterable instanceof PeerReview || filterable instanceof PeerReviewSummary) {
             updateScopes.add(ScopePathType.PEER_REVIEW_UPDATE.value());
         } else if (filterable instanceof ResearcherUrl || filterable instanceof Email || filterable instanceof Address || filterable instanceof ExternalIdentifier
-                || filterable instanceof Keyword || filterable instanceof OtherName || filterable instanceof Person || filterable instanceof Name || filterable instanceof Biography) {
+                || filterable instanceof Keyword || filterable instanceof OtherName || filterable instanceof Person || filterable instanceof Name
+                || filterable instanceof Biography) {
             updateScopes.add(ScopePathType.PERSON_UPDATE.value());
+            updateScopes.add(ScopePathType.ORCID_BIO_UPDATE.value());
+            if(filterable instanceof ExternalIdentifier) {
+                updateScopes.add(ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE.value());
+            }
         }
         updateScopes.retainAll(requestedScopes);
         return updateScopes;
     }
 
     private OAuth2Authentication getOAuth2Authentication() {
-        Authentication authentication = getAuthentication();
-        // if authentication is null, it might be a call from the public api,
-        // so, return null
-        if (authentication == null)
-            return null;
-        if (OAuth2Authentication.class.isAssignableFrom(authentication.getClass())) {
-            OAuth2Authentication oAuth2Authentication = (OAuth2Authentication) authentication;
-            return oAuth2Authentication;
-        } else {
-            for (GrantedAuthority grantedAuth : authentication.getAuthorities()) {
-                if ("ROLE_ANONYMOUS".equals(grantedAuth.getAuthority())) {
-                    // Assume that anonymous authority is like not having
-                    // authority at all
-                    return null;
+        SecurityContext context = SecurityContextHolder.getContext();
+        if (context != null && context.getAuthentication() != null) {
+            Authentication authentication = context.getAuthentication();
+            // if authentication is null, it might be a call from the public
+            // api,
+            // so, return null
+            if (authentication == null)
+                return null;
+            if (OAuth2Authentication.class.isAssignableFrom(authentication.getClass())) {
+                OAuth2Authentication oAuth2Authentication = (OAuth2Authentication) authentication;
+                return oAuth2Authentication;
+            } else {
+                for (GrantedAuthority grantedAuth : authentication.getAuthorities()) {
+                    if ("ROLE_ANONYMOUS".equals(grantedAuth.getAuthority())) {
+                        // Assume that anonymous authority is like not having
+                        // authority at all
+                        return null;
+                    }
                 }
+
+                throw new AccessControlException(
+                        "Cannot access method with authentication type " + authentication != null ? authentication.toString() : ", as it's null!");
             }
 
-            throw new AccessControlException("Cannot access method with authentication type " + authentication != null ? authentication.toString() : ", as it's null!");
+        } else {
+            throw new IllegalStateException("No security context found. This is bad!");
         }
+
     }
 
     @Override
     public String getClientIdFromAPIRequest() {
-        SecurityContext context = SecurityContextHolder.getContext();
-        Authentication authentication = context.getAuthentication();
-        if (OAuth2Authentication.class.isAssignableFrom(authentication.getClass())) {
-            OAuth2Authentication oAuth2Authentication = (OAuth2Authentication) authentication;
-            OAuth2Request request = oAuth2Authentication.getOAuth2Request();
-            return request.getClientId();
+        OAuth2Authentication oAuth2Authentication = getOAuth2Authentication();
+        if (oAuth2Authentication == null) {
+            return null;
         }
-        return null;
+        OAuth2Request request = oAuth2Authentication.getOAuth2Request();
+        return request.getClientId();
     }
 
     private boolean hasScope(ScopePathType scope) {
@@ -289,16 +313,57 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         return false;
     }
 
-    public void checkPermissions(ScopePathType requiredScope, String orcid) {        
-        permissionChecker.checkPermissions(getAuthentication(), requiredScope, orcid);
-    } 
-        
-    private Authentication getAuthentication() {
-        SecurityContext context = SecurityContextHolder.getContext();
-        if (context != null && context.getAuthentication() != null) {
-            return context.getAuthentication();
-        } else {
-            throw new IllegalStateException("No security context found. This is bad!");
+    public void checkPermissions(ScopePathType requiredScope) {
+        checkScopes(requiredScope);
+    }
+
+    private void checkScopes(ScopePathType requiredScope) {
+        OAuth2Authentication oAuth2Authentication = getOAuth2Authentication();
+        OAuth2Request authorizationRequest = oAuth2Authentication.getOAuth2Request();
+        Set<String> requestedScopes = authorizationRequest.getScope();
+        if (requiredScope.isUserGrantWriteScope()) {
+            OrcidOAuth2Authentication orcidOauth2Authentication = (OrcidOAuth2Authentication) oAuth2Authentication;
+            String activeToken = orcidOauth2Authentication.getActiveToken();
+            if (activeToken != null) {
+                OrcidOauth2TokenDetail tokenDetail = orcidOauthTokenDetailService.findNonDisabledByTokenValue(activeToken);
+                if (removeUserGrantWriteScopePastValitity(tokenDetail)) {
+                    throw new AccessControlException("Write scopes for this token have expired ");
+                }
+            }
         }
+        if (!hasScope(requiredScope)) {
+            throw new AccessControlException("Insufficient or wrong scope " + requestedScopes);
+        }
+    }
+
+    public boolean removeUserGrantWriteScopePastValitity(OrcidOauth2TokenDetail tokenDetail) {
+        boolean scopeRemoved = false;
+        if (tokenDetail != null && tokenDetail.getScope() != null) {
+            // Clean the scope if it is not a persistent token
+            if (!tokenDetail.isPersistent()) {
+                Set<String> scopes = OAuth2Utils.parseParameterList(tokenDetail.getScope());
+                List<String> removeScopes = new ArrayList<String>();
+                for (String scope : scopes) {
+                    if (scope != null && !scope.isEmpty()) {
+                        ScopePathType scopePathType = ScopePathType.fromValue(scope);
+                        if (scopePathType.isUserGrantWriteScope()) {
+                            Date now = new Date();
+                            if (now.getTime() > tokenDetail.getDateCreated().getTime() + (writeValiditySeconds * 1000)) {
+                                removeScopes.add(scope);
+                                scopeRemoved = true;
+                            }
+                        }
+                    }
+                }
+                if (scopeRemoved) {
+                    for (String scope : removeScopes)
+                        scopes.remove(scope);
+                    tokenDetail.setScope(OAuth2Utils.formatParameterList(scopes));
+                    orcidOauthTokenDetailService.saveOrUpdate(tokenDetail);
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }
