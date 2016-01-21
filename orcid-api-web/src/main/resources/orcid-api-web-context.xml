@@ -44,7 +44,7 @@
     <bean id="apiListingResource" class="org.orcid.api.swagger.MemberSwaggerResource"/>
      
     <bean id="t2OrcidApiServiceImplRoot" class="org.orcid.api.t2.server.T2OrcidApiServiceImplRoot">
-        <property name="serviceDelegator" ref="t2OrcidApiServiceDelegatorV1_1"/>
+        <property name="serviceDelegator" ref="t2OrcidApiServiceDelegatorRoot"/>
     </bean>
     
     <bean id="orcidT2ServiceDelegator" class="org.orcid.api.t2.server.delegator.impl.T2OrcidApiServiceDelegatorImpl">
@@ -65,6 +65,12 @@
         <property name="externalVersion" value="1.1"/>
         <property name="incomingValidationManager" ref="incomingValidationManagerV1_1"/>
         <property name="outgoingValidationManager" ref="outgoingValidationManagerV1_1"/>
+    </bean>
+    
+    <bean id="t2OrcidApiServiceDelegatorRoot" class="org.orcid.api.t2.server.delegator.impl.T2OrcidApiServiceVersionedDelegatorImpl">
+        <property name="externalVersion" value="${org.orcid.core.default_api}"/>
+        <property name="incomingValidationManager" ref="incomingValidationManagerRoot"/>
+        <property name="outgoingValidationManager" ref="outgoingValidationManagerRoot"/>
     </bean>
     
     <bean id="t2OrcidApiServiceImplV1_2_rc1" class="org.orcid.api.t2.server.T2OrcidApiServiceImplV1_2_rc1">
