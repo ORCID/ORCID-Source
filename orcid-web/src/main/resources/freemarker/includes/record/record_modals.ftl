@@ -270,8 +270,13 @@
 										</li>
 									</ul>
 									<span class="created-date pull-right" ng-show="website.createdDate">Created: {{website.createdDate.year + '-' + website.createdDate.month + '-' + website.createdDate.day}}</span>
+								</div>								
+								<div ng-show="website.errors.length > 0" class="col-md-12">									
+									<div ng-repeat="error in website.errors">
+										<span ng-bind="error" class="red"></span>
+									</div>
 								</div>					 				
-							</div>											
+							</div>																								
 						</div>
 					</div>
 					

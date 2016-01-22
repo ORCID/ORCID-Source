@@ -2286,8 +2286,7 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$compile', function Website
         }
     };
 
-    $scope.setWebsitesForm = function(v2){
-        
+    $scope.setWebsitesForm = function(v2){        
         if(v2)
             $scope.websitesForm.visibility = null;
         
@@ -2308,9 +2307,10 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$compile', function Website
                 console.table(data);
                 
                 $scope.websitesForm = data;
-                if(data.errors.length == 0)
+                if(data.errors.length == 0) {
                     $scope.close();
                     $.colorbox.close();
+                }                    
                 $scope.$apply();
             }
         }).fail(function() {
