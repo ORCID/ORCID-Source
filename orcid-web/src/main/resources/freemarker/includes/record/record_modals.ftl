@@ -242,7 +242,7 @@
 									<div class="aka">										
 										<input type="text" ng-model="website.urlName" ng-show="website.source == orcidId || website.source == null" focus-me="newInput" placeholder="${springMacroRequestContext.getMessage('manual_work_form_contents.labeldescription')}"></input>
 										<input type="text" ng-model="website.url" ng-show="website.source == orcidId || website.source == null" placeholder="${springMacroRequestContext.getMessage('common.url')}"></input>
-										<span ng-bind="website.urlName" ng-show="website.source != orcidId && website.sourceName"></span>
+										<span ng-bind="website.urlName" ng-show="website.source != orcidId && website.sourceName"></span><br />
 										<span ng-bind="website.url" ng-show="website.source != orcidId && website.sourceName"></span>
 									</div>
 									<div class="source" ng-show="website.sourceName">Source: {{website.sourceName}}</div>										
