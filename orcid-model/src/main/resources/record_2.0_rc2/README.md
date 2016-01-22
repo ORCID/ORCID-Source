@@ -110,16 +110,10 @@ undetected into the code during the previous development period. Release candida
 | Researcher URL     | /read-limited            | /orcid-bio/read-limited   						|```curl -i -H "Accept: application/orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'http://api.sandbox.orcid.org/v2.0_rc2/0000-0002-1306-4180/researcher-urls'```|
 | Email     		| /read-limited            | /orcid-bio/read-limited   						|```curl -i -H "Accept: application/orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'http://api.sandbox.orcid.org/v2.0_rc2/0000-0002-1306-4180/email'```|
 | Other names     	| /read-limited            | /orcid-bio/read-limited   						|```curl -i -H "Accept: application/orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'http://api.sandbox.orcid.org/v2.0_rc2/0000-0002-1306-4180/other-names'```|
-
-
 | Personal details	| /read-limited            | /orcid-bio/read-limited   						|```curl -i -H "Accept: application/orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'http://api.sandbox.orcid.org/v2.0_rc2/0000-0002-1306-4180/personal-details'```|
-
 | Keywords     	| /read-limited            | /orcid-bio/read-limited   						|```curl -i -H "Accept: application/orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'http://api.sandbox.orcid.org/v2.0_rc2/0000-0002-1306-4180/keywords'```|
-
 | External Identifiers	| /read-limited            | /orcid-bio/read-limited   						|```curl -i -H "Accept: application/orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'http://api.sandbox.orcid.org/v2.0_rc2/0000-0002-1306-4180/external-identifiers'```|
-
 | Address	| /read-limited            | /orcid-bio/read-limited   						|```curl -i -H "Accept: application/orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'http://api.sandbox.orcid.org/v2.0_rc2/0000-0002-1306-4180/address'```|
-
 | Person	| /read-limited            | /orcid-bio/read-limited   						|```curl -i -H "Accept: application/orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'http://api.sandbox.orcid.org/v2.0_rc2/0000-0002-1306-4180/person'```|
 
 
@@ -133,7 +127,9 @@ undetected into the code during the previous development period. Release candida
 |Work  |/activities/update|  /orcid-works/create  |```curl -i -H 'Content-type: application/orcid+xml’ -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/work.xml' -X POST 'http://api.sandbox.orcid.org/v2.0_rc2/0000-0002-1306-4180/work'```|
 |Researcher URL  |/person/update|  NONE  |```curl -i -H 'Content-type: application/orcid+xml’ -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/researcher-url.xml' -X POST 'http://api.sandbox.orcid.org/v2.0_rc2/0000-0002-1306-4180/researcher-urls'```|
 |Other names  |/person/update|  NONE |```curl -i -H 'Content-type: application/orcid+xml’ -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/other-name.xml' -X POST 'http://api.sandbox.orcid.org/v2.0_rc2/0000-0002-1306-4180/other-names'```|
-
+| Keywords     	|/person/update            | /orcid-bio/update   		|```curl -i -H 'Content-type: application/orcid+xml’ -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/keyword.xml' -X POST 'http://api.sandbox.orcid.org/v2.0_rc2/0000-0002-1306-4180/keywords```|
+| External Identifiers	| /person/update            | /orcid-bio/update 	|```curl -i -H 'Content-type: application/orcid+xml’ -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/external_identifier.xml' -X POST 'http://api.sandbox.orcid.org/v2.0_rc2/0000-0002-1306-4180/external-identifiers```|
+| Address	|/person/update           | /orcid-bio/update   			|```curl -i -H 'Content-type: application/orcid+xml’ -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/address.xml' -X POST 'http://api.sandbox.orcid.org/v2.0_rc2/0000-0002-1306-4180/address```|
 
 ### Update Record Items
 |Item  |v2.0 Scope  |v1.2 Scope (deprecated)| Example cURL Statement  |
@@ -145,6 +141,9 @@ undetected into the code during the previous development period. Release candida
 |Work  |/activities/update|  /orcid-works/update  |```curl -i -H 'Content-type: application/orcid+xml’ -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/work-updated.xml' -X PUT 'http://api.sandbox.orcid.org/v2.0_rc2/0000-0002-1306-4180/work/[PUT-CODE]'```|
 |Researcher URL  |/person/update|  NONE |```curl -i -H 'Content-type: application/orcid+xml’ -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/researcher-url.xml' -X PUT 'http://api.sandbox.orcid.org/v2.0_rc2/0000-0002-1306-4180/researcher-urls/[PUT-CODE]'```|
 |Other names  |/person/update|  NONE  |```curl -i -H 'Content-type: application/orcid+xml’ -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/other-name.xml' -X PUT 'http://api.sandbox.orcid.org/v2.0_rc2/0000-0002-1306-4180/other-names/[PUT-CODE]'```|
+| Keywords     	|/person/update            | /orcid-bio/update   		|```curl -i -H 'Content-type: application/orcid+xml’ -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/keyword.xml' -X PUT 'http://api.sandbox.orcid.org/v2.0_rc2/0000-0002-1306-4180/keywords/[PUT-CODE]```|
+| External Identifiers	|/person/update            | /orcid-bio/update 	|```curl -i -H 'Content-type: application/orcid+xml’ -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/external_identifier.xml' -X PUT 'http://api.sandbox.orcid.org/v2.0_rc2/0000-0002-1306-4180/external-identifiers/[PUT-CODE]```|
+| Address	|/person/update            | /orcid-bio/update   			|```curl -i -H 'Content-type: application/orcid+xml’ -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/address.xml' -X PUT 'http://api.sandbox.orcid.org/v2.0_rc2/0000-0002-1306-4180/address/[PUT-CODE]```|
 
 When updating a record item, include the put code as an attribute in the root element, ex:
 <education:education put-code="14775" xmlns:common="http://www.orcid.org/ns/common" xmlns:education="http://www.orcid.org/ns/education" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.orcid.org/ns/education ../education-2.0_rc2.xsd ">
@@ -159,3 +158,7 @@ When updating a record item, include the put code as an attribute in the root el
 |Work  |/activities/update|  /orcid-works/update  |```curl -i -H 'Content-type: application/orcid+xml’ -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -X DELETE 'http://api.sandbox.orcid.org/v2.0_rc2/0000-0002-1306-4180/work/[PUT-CODE]'```|
 |Researcher URL  |/person/update|  NONE  |```curl -i -H 'Content-type: application/orcid+xml’ -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -X DELETE 'http://api.sandbox.orcid.org/v2.0_rc2/0000-0002-1306-4180/researcher-urls/[PUT-CODE]'```|
 |Other names  |/person/update|  NONE  |```curl -i -H 'Content-type: application/orcid+xml’ -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -X DELETE 'http://api.sandbox.orcid.org/v2.0_rc2/0000-0002-1306-4180/researcher-urls/[PUT-CODE]'```|
+| Keywords     	| /read-limited            | /orcid-bio/update 	|```curl -i -H 'Content-type: application/orcid+xml’ -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -X DELETE 'http://api.sandbox.orcid.org/v2.0_rc2/0000-0002-1306-4180/keywords/[PUT-CODE]```|
+| External Identifiers	| /read-limited    | /orcid-bio/update 	|```curl -i -H 'Content-type: application/orcid+xml’ -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -X DELETE 'http://api.sandbox.orcid.org/v2.0_rc2/0000-0002-1306-4180/external-identifiers/[PUT-CODE]```|
+| Address	| /read-limited            | /orcid-bio/update   	|```curl -i -H 'Content-type: application/orcid+xml’ -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -X DELETE 'http://api.sandbox.orcid.org/v2.0_rc2/0000-0002-1306-4180/address/[PUT-CODE]```|
+
