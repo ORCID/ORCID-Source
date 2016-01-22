@@ -40,7 +40,7 @@ import org.orcid.jaxb.model.record.summary_rc1.Works;
 public class ConvertVrc1ToVrc2Test extends BaseTest {
 
     @Resource
-    private V2VersionConverter versionConverterV2_0_rc1ToV2_0rc2;
+    private V2VersionConverter versionConverterV2_0_rc1ToV2_0rc2; 
 
     @Test
     public void upgradeToVrc2Test() throws JAXBException {
