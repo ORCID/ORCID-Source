@@ -59,10 +59,15 @@
     <bean id="t1OrcidApiServiceDelegatorLatest" class="org.orcid.api.common.delegator.impl.OrcidApiServiceVersionedDelegatorImpl"/>
     
     <bean id="t1OrcidApiServiceImplRoot" class="org.orcid.api.t1.server.T1OrcidApiServiceImplRoot">
-        <property name="orcidApiServiceDelegator" ref="t1OrcidApiServiceDelegatorV1_1"/>
+        <property name="orcidApiServiceDelegator" ref="t1OrcidApiServiceDelegatorRoot"/>
     </bean>
     
     <bean id="t1OrcidApiServiceDelegatorPrototype" class="org.orcid.api.common.delegator.impl.OrcidApiServiceVersionedDelegatorImpl" scope="prototype"/>
+    
+    <bean id="t1OrcidApiServiceDelegatorRoot" class="org.orcid.api.common.delegator.impl.OrcidApiServiceVersionedDelegatorImpl">
+        <property name="externalVersion" value="${org.orcid.core.default_api}"/>
+        <property name="outgoingValidationManager" ref="outgoingValidationManagerRoot"/>
+    </bean>
     
     <bean id="t1OrcidApiServiceImplV1_1" class="org.orcid.api.t1.server.T1OrcidApiServiceImplV1_1">
         <property name="orcidApiServiceDelegator" ref="t1OrcidApiServiceDelegatorV1_1"/>
