@@ -1,0 +1,43 @@
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2014 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+	<changeSet id="SET-DEFAULT-VISIBILITY-TO-EXTERNAL-IDENTIFIERS" author="Angel Montenegro">
+    	<sql>UPDATE external_identifier e SET visibility = (SELECT activities_visibility_default FROM profile p WHERE e.orcid = p.orcid) WHERE visibility is null;</sql>
+    </changeSet>
+    
+    <changeSet id="SET-DEFAULT-VISIBILITY-TO-KEYWORDS" author="Angel Montenegro">
+    	<sql>UPDATE profile_keyword k SET visibility = (SELECT activities_visibility_default FROM profile p WHERE k.profile_orcid = p.orcid) WHERE visibility is null;</sql>
+    </changeSet>
+    
+    <changeSet id="SET-DEFAULT-VISIBILITY-TO-RESEARCHER-URL" author="Angel Montenegro">
+    	<sql>UPDATE researcher_url r SET visibility = (SELECT activities_visibility_default FROM profile p WHERE r.orcid = p.orcid) WHERE visibility is null;</sql>
+    </changeSet>
+    
+    <changeSet id="SET-DEFAULT-VISIBILITY-TO-ADDRESS" author="Angel Montenegro">
+    	<sql>UPDATE address a SET visibility = (SELECT profile_address_visibility FROM profile p WHERE a.orcid = p.orcid) WHERE a.visibility is null;</sql>
+    	<sql>UPDATE address a SET visibility = (SELECT activities_visibility_default FROM profile p WHERE a.orcid = p.orcid) WHERE visibility is null;</sql>
+    </changeSet>
+    
+    <changeSet id="SET-DEFAULT-VISIBILITY-TO-OTHER-NAMES" author="Angel Montenegro">
+    	<sql>UPDATE other_name o SET visibility = (SELECT activities_visibility_default FROM profile p WHERE o.orcid = p.orcid) WHERE visibility is null;</sql>
+    </changeSet>        
+</databaseChangeLog>
