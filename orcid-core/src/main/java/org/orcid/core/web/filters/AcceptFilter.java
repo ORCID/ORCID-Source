@@ -19,6 +19,8 @@ package org.orcid.core.web.filters;
 import static org.orcid.core.api.OrcidApiConstants.*;
 
 import java.io.IOException;
+
+import javax.annotation.Resource;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -26,6 +28,7 @@ import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.MediaType;
 
+import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 /**
@@ -50,7 +53,7 @@ public class AcceptFilter extends OncePerRequestFilter {
             if (isValidAcceptType(contentType))
                 requestWrapper = new AcceptHeaderRequestWrapper(request, contentType);
             else
-                if (path.startsWith("/oauth/"))
+                if (OrcidUrlManager.getPathWithoutContextPath(request).startsWith("/oauth/"))
                     requestWrapper = new AcceptHeaderRequestWrapper(request, MediaType.APPLICATION_JSON);
                 else
                     requestWrapper = new AcceptHeaderRequestWrapper(request, VND_ORCID_XML);
