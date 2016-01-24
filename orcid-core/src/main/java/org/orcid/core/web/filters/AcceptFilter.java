@@ -42,6 +42,7 @@ public class AcceptFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String accept = request.getHeader("accept");
+        String path = ((HttpServletRequest) request).getRequestURI();
         String contentType = request.getHeader("Content-Type");
 
         if (accept == null || accept.equals("*/*")) {
@@ -49,7 +50,10 @@ public class AcceptFilter extends OncePerRequestFilter {
             if (isValidAcceptType(contentType))
                 requestWrapper = new AcceptHeaderRequestWrapper(request, contentType);
             else
-                requestWrapper = new AcceptHeaderRequestWrapper(request, VND_ORCID_XML);
+                if (path.startsWith("/oauth/"))
+                    requestWrapper = new AcceptHeaderRequestWrapper(request, MediaType.APPLICATION_JSON);
+                else
+                    requestWrapper = new AcceptHeaderRequestWrapper(request, VND_ORCID_XML);
             filterChain.doFilter(requestWrapper, response);
         } else {
             filterChain.doFilter(request, response);
