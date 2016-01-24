@@ -44,7 +44,5 @@ public interface OrcidSecurityManager {
 
     boolean isPasswordConfirmationRequired();
 
-    String getClientIdFromAPIRequest();
-    
-    void checkPermissions(ScopePathType requiredScope);
+    String getClientIdFromAPIRequest();      
 }
