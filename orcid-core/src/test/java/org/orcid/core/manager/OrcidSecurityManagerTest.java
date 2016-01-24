@@ -273,41 +273,8 @@ public class OrcidSecurityManagerTest extends BaseTest {
         } catch (Exception e) {
             fail();
         }
-    }
-
-    @Test
-    public void testCheckPermissionsOnEveryScope() {
-        String userOrcid = "4444-4444-4444-4441";
-        for (ScopePathType scopeToTest : ScopePathType.values()) {
-            SecurityContextTestUtils.setUpSecurityContext(userOrcid, scopeToTest);
-            checkScopes(userOrcid, scopeToTest);
-        }
-    }
-
-    public void checkScopes(String userOrcid, ScopePathType scopeThatShouldWork) {
-        if (ScopePathType.READ_PUBLIC.equals(scopeThatShouldWork)) {
-            System.out.println("Debug here");
-        }
-        for (ScopePathType scope : ScopePathType.values()) {
-            if (scopeThatShouldWork.combined().contains(scope)) {
-                try {
-                    orcidSecurityManager.checkPermissions(scope);
-                } catch (Exception e) {
-                    fail("Testing scope '" + scopeThatShouldWork.value() + "' scope '" + scope.value() + "' should work");
-                }
-            } else {
-                try {
-                    orcidSecurityManager.checkPermissions(scope);
-                    fail("Testing scope '" + scopeThatShouldWork.value() + "' scope '" + scope.value() + "' should fail");
-                } catch (AccessControlException ace) {
-
-                } catch (Exception e) {
-                    fail("Testing scope '" + scopeThatShouldWork.value() + "' Invalid exception thrown for scope '" + scope.value());
-                }
-            }
-        }
-    }
-
+    }    
+    
     private Name createName() {
         Name name = new Name();
         name.setCreditName(new CreditName("Credit Name"));
