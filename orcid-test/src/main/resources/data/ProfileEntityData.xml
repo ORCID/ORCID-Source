@@ -944,6 +944,8 @@
         is_verified="false"
         visibility="PRIVATE"
         source_id="4444-4444-4444-4443"
+        last_modified="2011-07-02 15:31:00.00"
+		date_created="2011-06-29 15:31:00.00"
     />
     
     <email
@@ -954,6 +956,8 @@
         is_verified="false"
         visibility="PRIVATE"
         source_id="4444-4444-4444-4443"
+        last_modified="2011-07-02 15:31:00.00"
+		date_created="2011-06-29 15:31:00.00"
     />
     
     <email
@@ -964,6 +968,8 @@
         is_verified="false"
         visibility="LIMITED"
         source_id="4444-4444-4444-4443"
+        last_modified="2011-07-02 15:31:00.00"
+		date_created="2011-06-29 15:31:00.00"
     />
     
     <email
@@ -974,6 +980,8 @@
         is_verified="false"
         visibility="PUBLIC"
         source_id="4444-4444-4444-4443"
+        last_modified="2011-07-02 15:31:00.00"
+		date_created="2011-06-29 15:31:00.00"
     />
     
     <email
@@ -984,6 +992,8 @@
         is_verified="false"
         visibility="PRIVATE"
         client_source_id="APP-5555555555555555"
+        last_modified="2011-07-02 15:31:00.00"
+		date_created="2011-06-29 15:31:00.00"
     />
     
     <email
@@ -1014,6 +1024,8 @@
         is_verified="true"
         visibility="PRIVATE"
         source_id="4444-4444-4444-4441"
+        last_modified="2011-07-02 15:31:00.00"
+		date_created="2011-06-29 15:31:00.00"
     />
     
     
