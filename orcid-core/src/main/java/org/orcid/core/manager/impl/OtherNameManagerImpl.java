@@ -32,6 +32,7 @@ import org.orcid.core.manager.OtherNameManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.validator.PersonValidator;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
+import org.orcid.core.version.impl.LastModifiedDatesHelper;
 import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.record_rc2.OtherName;
 import org.orcid.jaxb.model.record_rc2.OtherNames;
@@ -61,6 +62,7 @@ public class OtherNameManagerImpl implements OtherNameManager {
         List<OtherNameEntity> otherNameEntityList = otherNameDao.getOtherNames(orcid);
         OtherNames result = jpaJaxbOtherNameAdapter.toOtherNameList(otherNameEntityList);
         result.updateIndexingStatusOnChilds();
+        LastModifiedDatesHelper.calculateLatest(result);
         return result;
     }
     
@@ -69,6 +71,7 @@ public class OtherNameManagerImpl implements OtherNameManager {
         List<OtherNameEntity> otherNameEntityList = otherNameDao.getOtherNames(orcid, Visibility.PUBLIC);
         OtherNames result = jpaJaxbOtherNameAdapter.toOtherNameList(otherNameEntityList);
         result.updateIndexingStatusOnChilds();
+        LastModifiedDatesHelper.calculateLatest(result);
         return result;
     }
     

@@ -33,6 +33,7 @@ import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.validator.PersonValidator;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
+import org.orcid.core.version.impl.LastModifiedDatesHelper;
 import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.record_rc2.Address;
 import org.orcid.jaxb.model.record_rc2.Addresses;
@@ -188,6 +189,7 @@ public class AddressManagerImpl implements AddressManager {
         List<AddressEntity> addressList = getAddresses(orcid, null);        
         Addresses result = adapter.toAddressList(addressList);
         result.updateIndexingStatusOnChilds();
+        LastModifiedDatesHelper.calculateLatest(result);
         return result;
     }
 
@@ -196,6 +198,7 @@ public class AddressManagerImpl implements AddressManager {
         List<AddressEntity> addressList = getAddresses(orcid, null);
         Addresses result = adapter.toAddressList(addressList);
         result.updateIndexingStatusOnChilds();
+        LastModifiedDatesHelper.calculateLatest(result);
         return result;
     }
     

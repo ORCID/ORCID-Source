@@ -33,6 +33,7 @@ import org.orcid.core.manager.ProfileKeywordManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.validator.PersonValidator;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
+import org.orcid.core.version.impl.LastModifiedDatesHelper;
 import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.record_rc2.Keyword;
 import org.orcid.jaxb.model.record_rc2.Keywords;
@@ -61,6 +62,7 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
         List<ProfileKeywordEntity> entities = getProfileKeywordEntitys(orcid, null);
         Keywords result = adapter.toKeywords(entities);
         result.updateIndexingStatusOnChilds();
+        LastModifiedDatesHelper.calculateLatest(result);
         return result;
     }
 
@@ -69,6 +71,7 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
         List<ProfileKeywordEntity> entities = getProfileKeywordEntitys(orcid, Visibility.PUBLIC);
         Keywords result = adapter.toKeywords(entities);
         result.updateIndexingStatusOnChilds();
+        LastModifiedDatesHelper.calculateLatest(result);
         return result;
     }
 
