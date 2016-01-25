@@ -20,6 +20,7 @@ import static org.orcid.core.api.OrcidApiConstants.STATUS_OK_MESSAGE;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -163,6 +164,11 @@ public class MemberV2ApiServiceDelegatorImpl
     @Resource
     private AddressManager addressManager;
 
+    private long getLastModifiedTime(String orcid) {
+        Date lastModified = profileEntityManager.getLastModified(orcid);
+        return (lastModified == null) ? 0 : lastModified.getTime();        
+    }
+    
     @Override
     public Response viewStatusText() {
         return Response.ok(STATUS_OK_MESSAGE).build();
@@ -201,7 +207,8 @@ public class MemberV2ApiServiceDelegatorImpl
     @Override
     public Response viewWork(String orcid, Long putCode) {
         orcidSecurityManager.checkPermissions(ScopePathType.ORCID_WORKS_READ_LIMITED);
-        Work w = workManager.getWork(orcid, putCode);
+        long lastModifiedTime = getLastModifiedTime(orcid);
+        Work w = workManager.getWork(orcid, putCode, lastModifiedTime);
         ActivityUtils.cleanEmptyFields(w);
         orcidSecurityManager.checkVisibility(w);
         ActivityUtils.setPathToActivity(w, orcid);
@@ -211,7 +218,8 @@ public class MemberV2ApiServiceDelegatorImpl
     @Override
     public Response viewWorkSummary(String orcid, Long putCode) {
         orcidSecurityManager.checkPermissions(ScopePathType.ORCID_WORKS_READ_LIMITED);
-        WorkSummary ws = workManager.getWorkSummary(orcid, putCode);
+        long lastModifiedTime = getLastModifiedTime(orcid);
+        WorkSummary ws = workManager.getWorkSummary(orcid, putCode, lastModifiedTime);
         ActivityUtils.cleanEmptyFields(ws);
         orcidSecurityManager.checkVisibility(ws);
         ActivityUtils.setPathToActivity(ws, orcid);
@@ -672,7 +680,8 @@ public class MemberV2ApiServiceDelegatorImpl
     @Override
     public Response viewKeywords(String orcid) {
         orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_READ_LIMITED);
-        Keywords keywords = keywordsManager.getKeywords(orcid);
+        long lastModifiedTime = getLastModifiedTime(orcid);
+        Keywords keywords = keywordsManager.getKeywords(orcid, lastModifiedTime);
         List<Keyword> allKeywords = keywords.getKeywords();
         List<Keyword> filterdKeywords = (List<Keyword>) visibilityFilter.filter(allKeywords);
         keywords.setKeywords(filterdKeywords);

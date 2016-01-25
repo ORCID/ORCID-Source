@@ -27,6 +27,7 @@ import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.custom.MinimizedWorkEntity;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
 
 public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements WorkDao {
@@ -93,7 +94,8 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
      * @return the list of works associated to the specific user
      * */
     @SuppressWarnings("unchecked")
-    public List<MinimizedWorkEntity> findWorks(String orcid) {
+    @Cacheable(value = "dao-works", key = "#orcid.concat('-').concat(#lastModified)")
+    public List<MinimizedWorkEntity> findWorks(String orcid, long lastModified) {
 
         Query query = entityManager
                 .createQuery("select NEW org.orcid.persistence.jpa.entities.custom.MinimizedWorkEntity(w.id, w.title, w.subtitle, w.journalTitle, w.description, w.publicationDate.day, w.publicationDate.month, w.publicationDate.year, w.visibility, w.externalIdentifiersJson, w.displayIndex, w.source, w.dateCreated, w.lastModified, w.workType, w.languageCode, w.translatedTitleLanguageCode, w.translatedTitle, w.workUrl) "
@@ -113,7 +115,8 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
      * @return the list of works associated to the specific user
      * */
     @SuppressWarnings("unchecked")
-    public List<MinimizedWorkEntity> findPublicWorks(String orcid) {
+    @Cacheable(value = "dao-public-works", key = "#orcid.concat('-').concat(#lastModified)")
+    public List<MinimizedWorkEntity> findPublicWorks(String orcid, long lastModified) {
         Query query = entityManager
                 .createQuery("select NEW org.orcid.persistence.jpa.entities.custom.MinimizedWorkEntity(w.id, w.title, w.subtitle, w.journalTitle, w.description, w.publicationDate.day, w.publicationDate.month, w.publicationDate.year, w.visibility, w.externalIdentifiersJson, w.displayIndex, w.source, w.dateCreated, w.lastModified, w.workType, w.languageCode, w.translatedTitleLanguageCode, w.translatedTitle, w.workUrl) "
                         + "from WorkEntity w "

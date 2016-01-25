@@ -42,7 +42,7 @@ public interface WorkManager {
      * 		the Id of the user
      * @return the list of works associated to the specific user 
      * */
-    List<Work> findPublicWorks(String orcid);
+    List<Work> findPublicWorks(String orcid, long lastModified);
     
     /**
      * Updates the visibility of an existing work
@@ -84,9 +84,9 @@ public interface WorkManager {
      * @param workId
      *          The work id             
      * */
-    Work getWork(String orcid, Long workId);
+    Work getWork(String orcid, Long workId, long lastModified);
     
-    WorkSummary getWorkSummary(String orcid, Long workId);
+    WorkSummary getWorkSummary(String orcid, Long workId, long lastModified);
     
     /**
      * Add a new work to the work table

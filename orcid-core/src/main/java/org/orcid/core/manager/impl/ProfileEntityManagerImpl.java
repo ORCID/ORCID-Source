@@ -620,11 +620,13 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     @Override
     @Transactional
     public Person getPersonDetails(String orcid) {
+        Date lastModified = getLastModified(orcid);
+        long lastModifiedTime = (lastModified == null) ? 0 : lastModified.getTime();
         Person person = new Person();
         person.setBiography(getBiography(orcid));
         person.setAddresses(addressManager.getAddresses(orcid));
         person.setExternalIdentifiers(externalIdentifierManager.getExternalIdentifiersV2(orcid));
-        person.setKeywords(profileKeywordManager.getKeywords(orcid));
+        person.setKeywords(profileKeywordManager.getKeywords(orcid, lastModifiedTime));
         person.setName(personalDetailsManager.getName(orcid));
         person.setOtherNames(otherNameManager.getOtherNames(orcid)); 
         person.setResearcherUrls(researcherUrlManager.getResearcherUrls(orcid));             
@@ -684,9 +686,12 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
             person.setName(name);
         }
         
+        Date lastModified = getLastModified(orcid);
+        long lastModifiedTime = (lastModified == null) ? 0 : lastModified.getTime();
+        
         person.setAddresses(addressManager.getPublicAddresses(orcid));
         person.setExternalIdentifiers(externalIdentifierManager.getPublicExternalIdentifiersV2(orcid));
-        person.setKeywords(profileKeywordManager.getPublicKeywords(orcid));
+        person.setKeywords(profileKeywordManager.getPublicKeywords(orcid, lastModifiedTime));
         person.setOtherNames(otherNameManager.getPublicOtherNames(orcid));
         person.setResearcherUrls(researcherUrlManager.getPublicResearcherUrls(orcid));             
         person.setEmails(emailManager.getPublicEmails(orcid));

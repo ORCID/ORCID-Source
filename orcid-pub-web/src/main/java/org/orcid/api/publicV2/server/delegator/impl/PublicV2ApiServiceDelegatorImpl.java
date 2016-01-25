@@ -18,6 +18,7 @@ package org.orcid.api.publicV2.server.delegator.impl;
 
 import static org.orcid.core.api.OrcidApiConstants.STATUS_OK_MESSAGE;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -164,6 +165,11 @@ public class PublicV2ApiServiceDelegatorImpl
     @Resource
     private AddressManager addressManager;
         
+    private long getLastModifiedTime(String orcid) {
+        Date lastModified = profileEntityManager.getLastModified(orcid);
+        return (lastModified == null) ? 0 : lastModified.getTime();        
+    }
+    
     @Override
     public Response viewStatusText() {
         return Response.ok(STATUS_OK_MESSAGE).build();
@@ -202,7 +208,9 @@ public class PublicV2ApiServiceDelegatorImpl
     @Override
     @AccessControl(requiredScope = ScopePathType.ORCID_WORKS_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewWork(String orcid, Long putCode) {
-        Work w = workManager.getWork(orcid, putCode);
+        Date lastModified = profileEntityManager.getLastModified(orcid);
+        long lastModifiedTime = (lastModified == null) ? 0 : lastModified.getTime();
+        Work w = workManager.getWork(orcid, putCode, lastModifiedTime);
         ActivityUtils.cleanEmptyFields(w);
         orcidSecurityManager.checkVisibility(w);
         ActivityUtils.setPathToActivity(w, orcid);
@@ -226,7 +234,8 @@ public class PublicV2ApiServiceDelegatorImpl
     @Override
     @AccessControl(requiredScope = ScopePathType.ORCID_WORKS_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewWorkSummary(String orcid, Long putCode) {
-        WorkSummary ws = workManager.getWorkSummary(orcid, putCode);
+        long lastModifiedTime = getLastModifiedTime(orcid);
+        WorkSummary ws = workManager.getWorkSummary(orcid, putCode, lastModifiedTime);
         ActivityUtils.cleanEmptyFields(ws);
         orcidSecurityManager.checkVisibility(ws);
         ActivityUtils.setPathToActivity(ws, orcid);
@@ -401,7 +410,8 @@ public class PublicV2ApiServiceDelegatorImpl
     @Override
     @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewKeywords(String orcid) {
-        Keywords keywords = keywordsManager.getPublicKeywords(orcid);
+        long lastModifiedTime = getLastModifiedTime(orcid);
+        Keywords keywords = keywordsManager.getPublicKeywords(orcid, lastModifiedTime);
         ElementUtils.setPathToKeywords(keywords, orcid);
         return Response.ok(keywords).build();
     }

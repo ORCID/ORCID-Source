@@ -41,6 +41,7 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.springframework.cache.annotation.Cacheable;
 
 public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
 
@@ -57,7 +58,8 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
     private OrcidSecurityManager orcidSecurityManager;
 
     @Override
-    public Keywords getKeywords(String orcid) {
+    @Cacheable(value = "keywords", key = "#orcid.concat('-').concat(#lastModified)")
+    public Keywords getKeywords(String orcid, long lastModified) {
         List<ProfileKeywordEntity> entities = getProfileKeywordEntitys(orcid, null);
         Keywords result = adapter.toKeywords(entities);
         result.updateIndexingStatusOnChilds();
@@ -65,7 +67,8 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
     }
 
     @Override
-    public Keywords getPublicKeywords(String orcid) {
+    @Cacheable(value = "public-keywords", key = "#orcid.concat('-').concat(#lastModified)")
+    public Keywords getPublicKeywords(String orcid, long lastModified) {
         List<ProfileKeywordEntity> entities = getProfileKeywordEntitys(orcid, Visibility.PUBLIC);
         Keywords result = adapter.toKeywords(entities);
         result.updateIndexingStatusOnChilds();

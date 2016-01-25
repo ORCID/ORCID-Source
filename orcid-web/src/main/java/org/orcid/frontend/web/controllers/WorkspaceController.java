@@ -18,6 +18,7 @@ package org.orcid.frontend.web.controllers;
 
 import java.util.ArrayList;
 import java.util.Currency;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -35,6 +36,7 @@ import org.orcid.core.manager.ExternalIdentifierManager;
 import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.OtherNameManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
+import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileKeywordManager;
 import org.orcid.core.manager.ResearcherUrlManager;
 import org.orcid.core.manager.ThirdPartyLinkManager;
@@ -127,6 +129,9 @@ public class WorkspaceController extends BaseWorkspaceController {
     
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
+    
+    @Resource
+    private ProfileEntityManager profileEntityManager;
     
     @RequestMapping(value = { "/workspace/retrieve-work-impor-wizards.json" }, method = RequestMethod.GET)
     public @ResponseBody List<OrcidClient> retrieveWorkImportWizards() {
@@ -344,8 +349,10 @@ public class WorkspaceController extends BaseWorkspaceController {
 
     @RequestMapping(value = "/my-orcid/keywordsForms.json", method = RequestMethod.GET)
     public @ResponseBody
-    KeywordsForm getKeywordsFormJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {        
-        Keywords keywords = profileKeywordManager.getKeywords(getCurrentUserOrcid());        
+    KeywordsForm getKeywordsFormJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {     
+        Date lastModified = profileEntityManager.getLastModified(getCurrentUserOrcid());
+        long lastModifiedTime = (lastModified == null) ? 0 : lastModified.getTime();
+        Keywords keywords = profileKeywordManager.getKeywords(getCurrentUserOrcid(), lastModifiedTime);        
         KeywordsForm form = KeywordsForm.valueOf(keywords);                
         ProfileEntity profileEntity = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
         //Set the default visibility since we still need it in the front end
