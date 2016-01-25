@@ -81,7 +81,7 @@ public class ExternalIdentifierDaoTest extends DBUnitTest {
     @SuppressWarnings("unchecked")
     @Test
     public void testGetExternalIdentifiers() {
-        List<ExternalIdentifierEntity> extIds = externalIdentifierDao.getExternalIdentifiers("4444-4444-4444-4442");
+        List<ExternalIdentifierEntity> extIds = externalIdentifierDao.getExternalIdentifiers("4444-4444-4444-4442", 0L);
         assertNotNull(extIds);
         assertEquals(4, extIds.size());
         for(ExternalIdentifierEntity extId : extIds) {

@@ -67,6 +67,11 @@ public class CerifApiServiceDelegatorImpl implements CerifApiServiceDelgator {
 
     private CerifTypeTranslator translator = new CerifTypeTranslator();
 
+    private long getLastModifiedTime(String orcid) {
+        Date lastModified = profileEntityManager.getLastModified(orcid);
+        return (lastModified == null) ? 0 : lastModified.getTime();
+    }
+    
     /**
      * Visibility filtered profile
      * 
@@ -87,7 +92,7 @@ public class CerifApiServiceDelegatorImpl implements CerifApiServiceDelgator {
         Optional<String> family = (personalDetails.getName() != null && personalDetails.getName().getFamilyName() != null)
                 ? Optional.fromNullable(personalDetails.getName().getFamilyName().getContent()) : Optional.absent();
 
-        List<ExternalIdentifier> allExtIds = externalIdentifierManager.getExternalIdentifiersV2(orcid).getExternalIdentifier();
+        List<ExternalIdentifier> allExtIds = externalIdentifierManager.getExternalIdentifiers(orcid, getLastModifiedTime(orcid)).getExternalIdentifier();
         @SuppressWarnings("unchecked")
         List<ExternalIdentifier> filteredExtIds = (List<ExternalIdentifier>) visibilityFilter.filter(allExtIds);
 
@@ -101,8 +106,7 @@ public class CerifApiServiceDelegatorImpl implements CerifApiServiceDelgator {
 
     @Override
     public Response getPublication(String orcid, Long id) {
-        Date lastModified = profileEntityManager.getLastModified(orcid);
-        long lastModifiedTime = (lastModified == null) ? 0 : lastModified.getTime();
+        long lastModifiedTime = getLastModifiedTime(orcid);
         WorkSummary ws = workManager.getWorkSummary(orcid, id, lastModifiedTime);
         ActivityUtils.cleanEmptyFields(ws);
         orcidSecurityManager.checkVisibility(ws);

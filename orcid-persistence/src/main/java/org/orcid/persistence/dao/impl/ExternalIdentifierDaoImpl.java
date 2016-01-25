@@ -23,6 +23,7 @@ import javax.persistence.Query;
 import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.persistence.dao.ExternalIdentifierDao;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
 
 public class ExternalIdentifierDaoImpl extends GenericDaoImpl<ExternalIdentifierEntity, Long> implements ExternalIdentifierDao {
@@ -52,7 +53,8 @@ public class ExternalIdentifierDaoImpl extends GenericDaoImpl<ExternalIdentifier
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<ExternalIdentifierEntity> getExternalIdentifiers(String orcid) {
+    @Cacheable(value = "dao-external-identifiers", key = "#orcid.concat('-').concat(#lastModified)")
+    public List<ExternalIdentifierEntity> getExternalIdentifiers(String orcid, long lastModified) {
         Query query = entityManager.createQuery("FROM ExternalIdentifierEntity WHERE owner.id = :orcid");
         query.setParameter("orcid", orcid);
         return query.getResultList();

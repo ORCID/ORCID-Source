@@ -29,7 +29,7 @@ public interface ExternalIdentifierManager {
      * @return the list of public external identifiers associated with the orcid
      *         profile
      */
-    ExternalIdentifiers getPublicExternalIdentifiersV2(String orcid);
+    ExternalIdentifiers getPublicExternalIdentifiers(String orcid, long lastModified);
 
     /**
      * Return the list of external identifiers associated to a specific profile
@@ -38,7 +38,7 @@ public interface ExternalIdentifierManager {
      * @return the list of external identifiers associated with the orcid
      *         profile
      */
-    ExternalIdentifiers getExternalIdentifiersV2(String orcid);
+    ExternalIdentifiers getExternalIdentifiers(String orcid, long lastModified);
 
     /**
      * Retrieve a external identifier from database
@@ -46,7 +46,7 @@ public interface ExternalIdentifierManager {
      * @param id
      * @return the externalIdentifierEntity associated with the parameter id
      */
-    ExternalIdentifier getExternalIdentifierV2(String orcid, Long id);
+    ExternalIdentifier getExternalIdentifier(String orcid, Long id);
 
     /**
      * Add a new external identifier to a specific profile
@@ -56,7 +56,7 @@ public interface ExternalIdentifierManager {
      * @return true if the external identifier was successfully created on
      *         database
      */
-    ExternalIdentifier createExternalIdentifierV2(String orcid, org.orcid.jaxb.model.record_rc2.ExternalIdentifier externalIdentifier);
+    ExternalIdentifier createExternalIdentifier(String orcid, ExternalIdentifier externalIdentifier);
 
     /**
      * Updates an existing external identifier
@@ -65,7 +65,7 @@ public interface ExternalIdentifierManager {
      * @param externalIdentifier
      * @return the updated external identifier
      */
-    ExternalIdentifier updateExternalIdentifierV2(String orcid, org.orcid.jaxb.model.record_rc2.ExternalIdentifier externalIdentifier);
+    ExternalIdentifier updateExternalIdentifier(String orcid, ExternalIdentifier externalIdentifier);
 
     /**
      * Deletes an external identifier
