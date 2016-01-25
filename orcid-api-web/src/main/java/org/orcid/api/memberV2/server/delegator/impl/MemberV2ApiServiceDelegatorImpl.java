@@ -41,10 +41,12 @@ import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.ExternalIdentifierManager;
 import org.orcid.core.manager.GroupIdRecordManager;
+import org.orcid.core.manager.OrcidProfileManagerReadOnly;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.OtherNameManager;
 import org.orcid.core.manager.PeerReviewManager;
 import org.orcid.core.manager.PersonalDetailsManager;
+import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileFundingManager;
 import org.orcid.core.manager.ProfileKeywordManager;
@@ -111,9 +113,6 @@ public class MemberV2ApiServiceDelegatorImpl
     private ClientDetailsManager clientDetailsManager;
 
     @Resource
-    private ProfileEntityManager profileEntityManager;
-
-    @Resource
     private AffiliationsManager affiliationsManager;
 
     @Resource
@@ -164,8 +163,17 @@ public class MemberV2ApiServiceDelegatorImpl
     @Resource
     private AddressManager addressManager;
 
+    @Resource
+    private OrcidProfileManagerReadOnly orcidProfileManagerReadOnly;
+    
+    @Resource
+    private ProfileEntityCacheManager profileEntityCacheManager;
+    
+    @Resource
+    private ProfileEntityManager profileEntityManager;
+    
     private long getLastModifiedTime(String orcid) {
-        Date lastModified = profileEntityManager.getLastModified(orcid);
+        Date lastModified = orcidProfileManagerReadOnly.retrieveLastModifiedDate(orcid);
         return (lastModified == null) ? 0 : lastModified.getTime();        
     }
     
@@ -186,9 +194,9 @@ public class MemberV2ApiServiceDelegatorImpl
      */
     @Override
     public Response viewActivities(String orcid) {
-        orcidSecurityManager.checkPermissions(ScopePathType.ACTIVITIES_READ_LIMITED);
-        ProfileEntity entity = profileEntityManager.findByOrcid(orcid);
+        orcidSecurityManager.checkPermissions(ScopePathType.ACTIVITIES_READ_LIMITED);        
         if (profileDao.isProfileDeprecated(orcid)) {
+            ProfileEntity entity = profileEntityCacheManager.retrieve(orcid);
             StringBuffer primary = new StringBuffer(baseUrl).append("/").append(entity.getPrimaryRecord().getId());
             Map<String, String> params = new HashMap<String, String>();
             params.put(OrcidDeprecatedException.ORCID, primary.toString());

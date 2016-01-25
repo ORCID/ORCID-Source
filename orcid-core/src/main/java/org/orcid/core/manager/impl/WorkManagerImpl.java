@@ -24,9 +24,9 @@ import javax.annotation.Resource;
 import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.adapter.JpaJaxbWorkAdapter;
 import org.orcid.core.manager.NotificationManager;
+import org.orcid.core.manager.OrcidProfileManagerReadOnly;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
-import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.core.manager.validator.ActivityValidator;
@@ -66,10 +66,7 @@ public class WorkManagerImpl implements WorkManager {
     private SourceManager sourceManager;
 
     @Resource
-    private OrcidSecurityManager orcidSecurityManager;
-
-    @Resource
-    private ProfileEntityManager profileEntityManager;
+    private OrcidSecurityManager orcidSecurityManager;    
     
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;        
@@ -77,6 +74,9 @@ public class WorkManagerImpl implements WorkManager {
     @Resource
     private NotificationManager notificationManager;
 
+    @Resource
+    private OrcidProfileManagerReadOnly orcidProfileManagerReadOnly;
+    
     @Override
     public void setSourceManager(SourceManager sourceManager) {
         this.sourceManager = sourceManager;
@@ -186,7 +186,7 @@ public class WorkManagerImpl implements WorkManager {
 
         if (applyValidations) {                                   
             ActivityValidator.validateWork(work, true, sourceEntity);
-            Date lastModified = profileEntityManager.getLastModified(orcid);
+            Date lastModified = orcidProfileManagerReadOnly.retrieveLastModifiedDate(orcid);
             long lastModifiedTime = (lastModified == null) ? 0 : lastModified.getTime();
             List<MinimizedWorkEntity> works = workDao.findWorks(orcid, lastModifiedTime);
             // If it is the user adding the peer review, allow him to add

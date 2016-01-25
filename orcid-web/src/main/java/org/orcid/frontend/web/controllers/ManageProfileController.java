@@ -39,6 +39,7 @@ import org.orcid.core.manager.AdminManager;
 import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.NotificationManager;
+import org.orcid.core.manager.OrcidProfileManagerReadOnly;
 import org.orcid.core.manager.OrcidSearchManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.OrcidSocialManager;
@@ -131,6 +132,9 @@ public class ManageProfileController extends BaseWorkspaceController {
     public static String CHECK_EMAIL_VALIDATED = "CHECK_EMAIL_VALIDATED";
 
     @Resource
+    private ProfileEntityManager profileEntityManager;
+    
+    @Resource
     private OrcidSearchManager orcidSearchManager;
 
     @Resource
@@ -147,9 +151,6 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     @Resource
     private OtherNameManager otherNameManager;
-
-    @Resource
-    private ProfileEntityManager profileEntityManager;
 
     @Resource
     private ProfileDao profileDao;
@@ -184,6 +185,9 @@ public class ManageProfileController extends BaseWorkspaceController {
     @Resource
     private AddressManager addressManager;
 
+    @Resource
+    private OrcidProfileManagerReadOnly orcidProfileManagerReadOnly;
+    
     public EncryptionManager getEncryptionManager() {
         return encryptionManager;
     }
@@ -820,7 +824,7 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     @RequestMapping(value = "/countryForm.json", method = RequestMethod.GET)
     public @ResponseBody AddressesForm getProfileCountryJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {        
-        Date lastModified = profileEntityManager.getLastModified(getCurrentUserOrcid());
+        Date lastModified = orcidProfileManagerReadOnly.retrieveLastModifiedDate(getCurrentUserOrcid());
         long lastModifiedTime = (lastModified == null) ? 0 : lastModified.getTime();
         
         Addresses addresses = addressManager.getAddresses(getCurrentUserOrcid(), lastModifiedTime);

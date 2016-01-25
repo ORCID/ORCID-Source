@@ -38,10 +38,12 @@ import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.ExternalIdentifierManager;
 import org.orcid.core.manager.GroupIdRecordManager;
+import org.orcid.core.manager.OrcidProfileManagerReadOnly;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.OtherNameManager;
 import org.orcid.core.manager.PeerReviewManager;
 import org.orcid.core.manager.PersonalDetailsManager;
+import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileFundingManager;
 import org.orcid.core.manager.ProfileKeywordManager;
@@ -108,10 +110,7 @@ public class PublicV2ApiServiceDelegatorImpl
     private ProfileFundingManager profileFundingManager;
 
     @Resource
-    private ClientDetailsManager clientDetailsManager;
-
-    @Resource
-    private ProfileEntityManager profileEntityManager;
+    private ClientDetailsManager clientDetailsManager;    
 
     @Resource
     private AffiliationsManager affiliationsManager;
@@ -157,16 +156,24 @@ public class PublicV2ApiServiceDelegatorImpl
 
     @Resource
     private PersonalDetailsManager personalDetailsManager;
-
     
     @Resource
     private ProfileKeywordManager keywordsManager;
     
     @Resource
     private AddressManager addressManager;
-        
+
+    @Resource
+    private OrcidProfileManagerReadOnly orcidProfileManagerReadOnly;
+    
+    @Resource
+    private ProfileEntityCacheManager profileEntityCacheManager;
+    
+    @Resource
+    private ProfileEntityManager profileEntityManager;
+    
     private long getLastModifiedTime(String orcid) {
-        Date lastModified = profileEntityManager.getLastModified(orcid);
+        Date lastModified = orcidProfileManagerReadOnly.retrieveLastModifiedDate(orcid);
         return (lastModified == null) ? 0 : lastModified.getTime();        
     }
     
@@ -188,7 +195,7 @@ public class PublicV2ApiServiceDelegatorImpl
     @Override
     @AccessControl(requiredScope = ScopePathType.READ_LIMITED, enableAnonymousAccess = true)
     public Response viewActivities(String orcid) {
-        ProfileEntity entity = profileEntityManager.findByOrcid(orcid);
+        ProfileEntity entity = profileEntityCacheManager.retrieve(orcid);
         if (profileDao.isProfileDeprecated(orcid)) {
             StringBuffer primary = new StringBuffer(baseUrl).append("/").append(entity.getPrimaryRecord().getId());
             Map<String, String> params = new HashMap<String, String>();
@@ -208,8 +215,7 @@ public class PublicV2ApiServiceDelegatorImpl
     @Override
     @AccessControl(requiredScope = ScopePathType.ORCID_WORKS_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewWork(String orcid, Long putCode) {
-        Date lastModified = profileEntityManager.getLastModified(orcid);
-        long lastModifiedTime = (lastModified == null) ? 0 : lastModified.getTime();
+        long lastModifiedTime = getLastModifiedTime(orcid);
         Work w = workManager.getWork(orcid, putCode, lastModifiedTime);
         ActivityUtils.cleanEmptyFields(w);
         orcidSecurityManager.checkVisibility(w);
@@ -221,7 +227,7 @@ public class PublicV2ApiServiceDelegatorImpl
     @AccessControl(requiredScope = ScopePathType.READ_PUBLIC, enableAnonymousAccess = true)
     public Response viewWorkCitation(String orcid, Long putCode) { 
         Work w = (Work) this.viewWork(orcid, putCode).getEntity();
-        ProfileEntity entity = profileEntityManager.findByOrcid(orcid);
+        ProfileEntity entity = profileEntityCacheManager.retrieve(orcid);
         String creditName = null;
         if (!entity.getNamesVisibility().isMoreRestrictiveThan(org.orcid.jaxb.model.message.Visibility.PUBLIC)){
             creditName = entity.getCreditName();

@@ -29,6 +29,7 @@ import org.orcid.api.common.cerif.CerifTypeTranslator;
 import org.orcid.api.common.delegator.CerifApiServiceDelgator;
 import org.orcid.api.common.util.ActivityUtils;
 import org.orcid.core.manager.ExternalIdentifierManager;
+import org.orcid.core.manager.OrcidProfileManagerReadOnly;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.PersonalDetailsManager;
 import org.orcid.core.manager.ProfileEntityManager;
@@ -52,9 +53,6 @@ import com.google.common.base.Optional;
 public class CerifApiServiceDelegatorImpl implements CerifApiServiceDelgator {
 
     @Resource
-    private ProfileEntityManager profileEntityManager;
-
-    @Resource
     private PersonalDetailsManager personalDetailsManager;
     @Resource
     private ExternalIdentifierManager externalIdentifierManager;
@@ -65,10 +63,16 @@ public class CerifApiServiceDelegatorImpl implements CerifApiServiceDelgator {
     @Resource
     private OrcidSecurityManager orcidSecurityManager;
 
+    @Resource
+    private ProfileEntityManager profileEntityManager;
+    
     private CerifTypeTranslator translator = new CerifTypeTranslator();
 
+    @Resource
+    private OrcidProfileManagerReadOnly orcidProfileManagerReadOnly;
+    
     private long getLastModifiedTime(String orcid) {
-        Date lastModified = profileEntityManager.getLastModified(orcid);
+        Date lastModified = orcidProfileManagerReadOnly.retrieveLastModifiedDate(orcid);
         return (lastModified == null) ? 0 : lastModified.getTime();
     }
     
@@ -118,8 +122,7 @@ public class CerifApiServiceDelegatorImpl implements CerifApiServiceDelgator {
 
     @Override
     public Response getProduct(String orcid, Long id) {
-        Date lastModified = profileEntityManager.getLastModified(orcid);
-        long lastModifiedTime = (lastModified == null) ? 0 : lastModified.getTime();
+        long lastModifiedTime = getLastModifiedTime(orcid);
         WorkSummary ws = workManager.getWorkSummary(orcid, id, lastModifiedTime);
         ActivityUtils.cleanEmptyFields(ws);
         orcidSecurityManager.checkVisibility(ws);

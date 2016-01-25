@@ -27,8 +27,8 @@ import javax.annotation.Resource;
 import org.orcid.core.adapter.JpaJaxbExternalIdentifierAdapter;
 import org.orcid.core.exception.OrcidDuplicatedElementException;
 import org.orcid.core.manager.ExternalIdentifierManager;
+import org.orcid.core.manager.OrcidProfileManagerReadOnly;
 import org.orcid.core.manager.OrcidSecurityManager;
-import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.validator.PersonValidator;
 import org.orcid.jaxb.model.common_rc2.Visibility;
@@ -56,10 +56,10 @@ public class ExternalIdentifierManagerImpl implements ExternalIdentifierManager 
     private OrcidSecurityManager orcidSecurityManager;
     
     @Resource
-    private ProfileEntityManager profileEntityManager;
+    private OrcidProfileManagerReadOnly orcidProfileManagerReadOnly;
     
     private long getLastModified(String orcid) {
-        Date lastModified = profileEntityManager.getLastModified(orcid);
+        Date lastModified = orcidProfileManagerReadOnly.retrieveLastModifiedDate(orcid);
         return (lastModified == null) ? 0 : lastModified.getTime();
     }
     

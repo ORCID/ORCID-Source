@@ -27,9 +27,9 @@ import org.orcid.core.adapter.JpaJaxbOtherNameAdapter;
 import org.orcid.core.exception.ApplicationException;
 import org.orcid.core.exception.OrcidDuplicatedElementException;
 import org.orcid.core.exception.OtherNameNotFoundException;
+import org.orcid.core.manager.OrcidProfileManagerReadOnly;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.OtherNameManager;
-import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.validator.PersonValidator;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
@@ -59,10 +59,10 @@ public class OtherNameManagerImpl implements OtherNameManager {
     private SourceManager sourceManager;
     
     @Resource
-    private ProfileEntityManager profileEntityManager;
+    private OrcidProfileManagerReadOnly orcidProfileManagerReadOnly;
     
     private long getLastModified(String orcid) {
-        Date lastModified = profileEntityManager.getLastModified(orcid);
+        Date lastModified = orcidProfileManagerReadOnly.retrieveLastModifiedDate(orcid);
         return (lastModified == null) ? 0 : lastModified.getTime();
     }
     
