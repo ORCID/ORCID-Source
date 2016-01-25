@@ -384,7 +384,11 @@ public class PublicProfileController extends BaseWorkspaceController {
         if (workId == null)
             return null;
 
-        Work workObj = workManager.getWork(orcid, workId);
+        OrcidProfile userPubProfile = orcidProfileCacheManager.retrievePublic(orcid);
+        java.util.Date lastModified = userPubProfile.getOrcidHistory().getLastModifiedDate().getValue().toGregorianCalendar().getTime();
+        long lastModifiedTime = (lastModified == null) ? 0 : lastModified.getTime();
+        
+        Work workObj = workManager.getWork(orcid, workId, lastModifiedTime);
 
         if (workObj != null) {
             WorkForm work = WorkForm.valueOf(workObj);

@@ -20,6 +20,7 @@ import static org.orcid.core.api.OrcidApiConstants.STATUS_OK_MESSAGE;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -201,7 +202,9 @@ public class MemberV2ApiServiceDelegatorImpl
     @Override
     public Response viewWork(String orcid, Long putCode) {
         orcidSecurityManager.checkPermissions(ScopePathType.ORCID_WORKS_READ_LIMITED);
-        Work w = workManager.getWork(orcid, putCode);
+        Date lastModified = profileEntityManager.getLastModified(orcid);
+        long lastModifiedTime = (lastModified == null) ? 0 : lastModified.getTime();
+        Work w = workManager.getWork(orcid, putCode, lastModifiedTime);
         ActivityUtils.cleanEmptyFields(w);
         orcidSecurityManager.checkVisibility(w);
         ActivityUtils.setPathToActivity(w, orcid);
@@ -211,7 +214,9 @@ public class MemberV2ApiServiceDelegatorImpl
     @Override
     public Response viewWorkSummary(String orcid, Long putCode) {
         orcidSecurityManager.checkPermissions(ScopePathType.ORCID_WORKS_READ_LIMITED);
-        WorkSummary ws = workManager.getWorkSummary(orcid, putCode);
+        Date lastModified = profileEntityManager.getLastModified(orcid);
+        long lastModifiedTime = (lastModified == null) ? 0 : lastModified.getTime();
+        WorkSummary ws = workManager.getWorkSummary(orcid, putCode, lastModifiedTime);
         ActivityUtils.cleanEmptyFields(ws);
         orcidSecurityManager.checkVisibility(ws);
         ActivityUtils.setPathToActivity(ws, orcid);

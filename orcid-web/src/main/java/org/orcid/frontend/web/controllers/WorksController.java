@@ -297,7 +297,9 @@ public class WorksController extends BaseWorkspaceController {
         if (workId == null)
             return null;
 
-        Work work = workManager.getWork(this.getCurrentUserOrcid(), workId);
+        java.util.Date lastModified = profileEntityManager.getLastModified(getEffectiveUserOrcid());
+        long lastModifiedTime = (lastModified == null) ? 0 : lastModified.getTime();
+        Work work = workManager.getWork(this.getCurrentUserOrcid(), workId, lastModifiedTime);
 
         if (work != null) {
             WorkForm workForm = WorkForm.valueOf(work);

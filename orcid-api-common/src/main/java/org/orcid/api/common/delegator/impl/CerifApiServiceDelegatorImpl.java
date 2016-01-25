@@ -16,6 +16,7 @@
  */
 package org.orcid.api.common.delegator.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -100,7 +101,9 @@ public class CerifApiServiceDelegatorImpl implements CerifApiServiceDelgator {
 
     @Override
     public Response getPublication(String orcid, Long id) {
-        WorkSummary ws = workManager.getWorkSummary(orcid, id);
+        Date lastModified = profileEntityManager.getLastModified(orcid);
+        long lastModifiedTime = (lastModified == null) ? 0 : lastModified.getTime();
+        WorkSummary ws = workManager.getWorkSummary(orcid, id, lastModifiedTime);
         ActivityUtils.cleanEmptyFields(ws);
         orcidSecurityManager.checkVisibility(ws);
         if (ws == null || !translator.isPublication(ws.getType()))
@@ -111,7 +114,9 @@ public class CerifApiServiceDelegatorImpl implements CerifApiServiceDelgator {
 
     @Override
     public Response getProduct(String orcid, Long id) {
-        WorkSummary ws = workManager.getWorkSummary(orcid, id);
+        Date lastModified = profileEntityManager.getLastModified(orcid);
+        long lastModifiedTime = (lastModified == null) ? 0 : lastModified.getTime();
+        WorkSummary ws = workManager.getWorkSummary(orcid, id, lastModifiedTime);
         ActivityUtils.cleanEmptyFields(ws);
         orcidSecurityManager.checkVisibility(ws);
         if (ws == null || !translator.isProduct(ws.getType()))

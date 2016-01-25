@@ -99,7 +99,7 @@ public class WorkManagerImpl implements WorkManager {
      * @return the list of works associated to the specific user
      * */
     @Cacheable(value = "public-works", key = "#orcid.concat('-').concat(#lastModified)")
-    public List<Work> findPublicWorks(String orcid) {
+    public List<Work> findPublicWorks(String orcid, long lastModified) {
         List<MinimizedWorkEntity> minimizedWorks = workDao.findPublicWorks(orcid);
         return jpaJaxbWorkAdapter.toMinimizedWork(minimizedWorks);
     }
@@ -153,13 +153,15 @@ public class WorkManagerImpl implements WorkManager {
      *            The work id
      * */
     @Override
-    public Work getWork(String orcid, Long workId) {
+    @Cacheable(value = "single-work", key = "#orcid.concat('-').concat(#lastModified)")
+    public Work getWork(String orcid, Long workId, long lastModified) {
         WorkEntity work = workDao.getWork(orcid, workId);
         return jpaJaxbWorkAdapter.toWork(work);
     }
 
     @Override
-    public WorkSummary getWorkSummary(String orcid, Long workId) {
+    @Cacheable(value = "single-work-summary", key = "#orcid.concat('-').concat(#lastModified)")
+    public WorkSummary getWorkSummary(String orcid, Long workId, long lastModified) {
         WorkEntity work = workDao.getWork(orcid, workId);
         return jpaJaxbWorkAdapter.toWorkSummary(work);
     }
