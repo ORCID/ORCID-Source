@@ -25,6 +25,8 @@ import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.adapter.JpaJaxbWorkAdapter;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidSecurityManager;
+import org.orcid.core.manager.ProfileEntityCacheManager;
+import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.core.manager.validator.ActivityValidator;
@@ -37,7 +39,6 @@ import org.orcid.jaxb.model.notification.permission_rc2.Item;
 import org.orcid.jaxb.model.notification.permission_rc2.ItemType;
 import org.orcid.jaxb.model.record.summary_rc2.WorkSummary;
 import org.orcid.jaxb.model.record_rc2.Work;
-import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
@@ -68,7 +69,10 @@ public class WorkManagerImpl implements WorkManager {
     private OrcidSecurityManager orcidSecurityManager;
 
     @Resource
-    private ProfileDao profileDao;
+    private ProfileEntityManager profileEntityManager;
+    
+    @Resource
+    private ProfileEntityCacheManager profileEntityCacheManager;        
 
     @Resource
     private NotificationManager notificationManager;
@@ -87,7 +91,7 @@ public class WorkManagerImpl implements WorkManager {
      * */
     @Cacheable(value = "works", key = "#orcid.concat('-').concat(#lastModified)")
     public List<Work> findWorks(String orcid, long lastModified) {
-        List<MinimizedWorkEntity> minimizedWorks = workDao.findWorks(orcid);
+        List<MinimizedWorkEntity> minimizedWorks = workDao.findWorks(orcid, lastModified);
         return jpaJaxbWorkAdapter.toMinimizedWork(minimizedWorks);
     }
 
@@ -100,7 +104,7 @@ public class WorkManagerImpl implements WorkManager {
      * */
     @Cacheable(value = "public-works", key = "#orcid.concat('-').concat(#lastModified)")
     public List<Work> findPublicWorks(String orcid, long lastModified) {
-        List<MinimizedWorkEntity> minimizedWorks = workDao.findPublicWorks(orcid);
+        List<MinimizedWorkEntity> minimizedWorks = workDao.findPublicWorks(orcid, lastModified);
         return jpaJaxbWorkAdapter.toMinimizedWork(minimizedWorks);
     }
 
@@ -153,14 +157,14 @@ public class WorkManagerImpl implements WorkManager {
      *            The work id
      * */
     @Override
-    @Cacheable(value = "single-work", key = "#orcid.concat('-').concat(#lastModified)")
+    @Cacheable(value = "single-work", key = "#orcid.concat('-').concat(#workId).concat('-').concat(#lastModified)")
     public Work getWork(String orcid, Long workId, long lastModified) {
         WorkEntity work = workDao.getWork(orcid, workId);
         return jpaJaxbWorkAdapter.toWork(work);
     }
 
     @Override
-    @Cacheable(value = "single-work-summary", key = "#orcid.concat('-').concat(#lastModified)")
+    @Cacheable(value = "single-work-summary", key = "#orcid.concat('-').concat(#workId).concat('-').concat(#lastModified)")
     public WorkSummary getWorkSummary(String orcid, Long workId, long lastModified) {
         WorkEntity work = workDao.getWork(orcid, workId);
         return jpaJaxbWorkAdapter.toWorkSummary(work);
@@ -180,9 +184,11 @@ public class WorkManagerImpl implements WorkManager {
             work.setSource(source);
         }
 
-        if (applyValidations) {
+        if (applyValidations) {                                   
             ActivityValidator.validateWork(work, true, sourceEntity);
-            List<MinimizedWorkEntity> works = workDao.findWorks(orcid);
+            Date lastModified = profileEntityManager.getLastModified(orcid);
+            long lastModifiedTime = (lastModified == null) ? 0 : lastModified.getTime();
+            List<MinimizedWorkEntity> works = workDao.findWorks(orcid, lastModifiedTime);
             // If it is the user adding the peer review, allow him to add
             // duplicates
             if (!sourceEntity.getSourceId().equals(orcid)) {
@@ -196,7 +202,7 @@ public class WorkManagerImpl implements WorkManager {
         }
 
         WorkEntity workEntity = jpaJaxbWorkAdapter.toWorkEntity(work);
-        ProfileEntity profile = profileDao.find(orcid);
+        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         workEntity.setProfile(profile);
         workEntity.setAddedToProfileDate(new Date());
         setIncomingWorkPrivacy(workEntity, profile);
@@ -274,7 +280,7 @@ public class WorkManagerImpl implements WorkManager {
     @Override
     @Cacheable(value = "works-summaries", key = "#orcid.concat('-').concat(#lastModified)")
     public List<WorkSummary> getWorksSummaryList(String orcid, long lastModified) {
-        List<MinimizedWorkEntity> works = workDao.findWorks(orcid);
+        List<MinimizedWorkEntity> works = workDao.findWorks(orcid, lastModified);
         return jpaJaxbWorkAdapter.toWorkSummaryFromMinimized(works);
     }
 
