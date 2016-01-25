@@ -363,7 +363,8 @@ public class PublicV2ApiServiceDelegatorImpl
     @Override
     @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewOtherNames(String orcid) {
-        OtherNames otherNames = otherNameManager.getPublicOtherNames(orcid);
+        long lastModifiedTime = getLastModifiedTime(orcid);
+        OtherNames otherNames = otherNameManager.getPublicOtherNames(orcid, lastModifiedTime);
         ElementUtils.setPathToOtherNames(otherNames, orcid);
         return Response.ok(otherNames).build();
     }
@@ -428,7 +429,7 @@ public class PublicV2ApiServiceDelegatorImpl
     @Override
     @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewAddresses(String orcid) {
-        Addresses addresses = addressManager.getPublicAddresses(orcid);
+        Addresses addresses = addressManager.getPublicAddresses(orcid, getLastModifiedTime(orcid));
         ElementUtils.setPathToAddresses(addresses, orcid);
         return Response.ok(addresses).build();
     }

@@ -624,11 +624,11 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         long lastModifiedTime = (lastModified == null) ? 0 : lastModified.getTime();
         Person person = new Person();
         person.setBiography(getBiography(orcid));
-        person.setAddresses(addressManager.getAddresses(orcid));
+        person.setAddresses(addressManager.getAddresses(orcid, lastModifiedTime));
         person.setExternalIdentifiers(externalIdentifierManager.getExternalIdentifiersV2(orcid));
         person.setKeywords(profileKeywordManager.getKeywords(orcid, lastModifiedTime));
         person.setName(personalDetailsManager.getName(orcid));
-        person.setOtherNames(otherNameManager.getOtherNames(orcid)); 
+        person.setOtherNames(otherNameManager.getOtherNames(orcid, lastModifiedTime)); 
         person.setResearcherUrls(researcherUrlManager.getResearcherUrls(orcid));             
         person.setEmails(emailManager.getEmails(orcid));
         
@@ -689,10 +689,10 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         Date lastModified = getLastModified(orcid);
         long lastModifiedTime = (lastModified == null) ? 0 : lastModified.getTime();
         
-        person.setAddresses(addressManager.getPublicAddresses(orcid));
+        person.setAddresses(addressManager.getPublicAddresses(orcid, lastModifiedTime));
         person.setExternalIdentifiers(externalIdentifierManager.getPublicExternalIdentifiersV2(orcid));
         person.setKeywords(profileKeywordManager.getPublicKeywords(orcid, lastModifiedTime));
-        person.setOtherNames(otherNameManager.getPublicOtherNames(orcid));
+        person.setOtherNames(otherNameManager.getPublicOtherNames(orcid, lastModifiedTime));
         person.setResearcherUrls(researcherUrlManager.getPublicResearcherUrls(orcid));             
         person.setEmails(emailManager.getPublicEmails(orcid));
         

@@ -24,6 +24,7 @@ import org.apache.commons.lang.StringUtils;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.dao.OtherNameDao;
 import org.orcid.persistence.jpa.entities.OtherNameEntity;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
@@ -41,7 +42,8 @@ public class OtherNameDaoImpl extends GenericDaoImpl<OtherNameEntity, Long> impl
      * */
     @Override
     @SuppressWarnings("unchecked")
-    public List<OtherNameEntity> getOtherNames(String orcid) {
+    @Cacheable(value = "minimized-other-names", key = "#orcid.concat('-').concat(#lastModified)")
+    public List<OtherNameEntity> getOtherNames(String orcid, long lastModified) {
         Query query = entityManager.createQuery("FROM OtherNameEntity WHERE profile.id=:orcid");
         query.setParameter("orcid", orcid);
         return query.getResultList();

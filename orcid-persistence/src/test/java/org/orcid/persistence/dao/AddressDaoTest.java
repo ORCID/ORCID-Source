@@ -102,7 +102,7 @@ public class AddressDaoTest extends DBUnitTest {
     
     @Test
     public void findByOrcidTest() {
-        List<AddressEntity> addresses = addressDao.findByOrcid("4444-4444-4444-4447");
+        List<AddressEntity> addresses = addressDao.findByOrcid("4444-4444-4444-4447", 0L);
         assertNotNull(addresses);
         assertEquals(4, addresses.size());
     }

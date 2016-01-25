@@ -555,7 +555,8 @@ public class MemberV2ApiServiceDelegatorImpl
     @Override
     public Response viewOtherNames(String orcid) {
         orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_READ_LIMITED);
-        OtherNames otherNames = otherNameManager.getOtherNames(orcid);
+        long lastModifiedTime = getLastModifiedTime(orcid);
+        OtherNames otherNames = otherNameManager.getOtherNames(orcid, lastModifiedTime);
         List<OtherName> allOtherNames = otherNames.getOtherNames();
         List<OtherName> filterdOtherNames = (List<OtherName>) visibilityFilter.filter(allOtherNames);
         otherNames.setOtherNames(filterdOtherNames);
@@ -735,7 +736,7 @@ public class MemberV2ApiServiceDelegatorImpl
     @Override
     public Response viewAddresses(String orcid) {
         orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_READ_LIMITED);
-        Addresses addresses = addressManager.getAddresses(orcid);
+        Addresses addresses = addressManager.getAddresses(orcid, getLastModifiedTime(orcid));
         List<Address> allAddresses = addresses.getAddress();
         List<Address> filteredAddresses = (List<Address>) visibilityFilter.filter(allAddresses);
         addresses.setAddress(filteredAddresses);
