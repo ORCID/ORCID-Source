@@ -98,6 +98,7 @@ public class WorkManagerImpl implements WorkManager {
      *            the Id of the user
      * @return the list of works associated to the specific user
      * */
+    @Cacheable(value = "public-works", key = "#orcid.concat('-').concat(#lastModified)")
     public List<Work> findPublicWorks(String orcid) {
         List<MinimizedWorkEntity> minimizedWorks = workDao.findPublicWorks(orcid);
         return jpaJaxbWorkAdapter.toMinimizedWork(minimizedWorks);
