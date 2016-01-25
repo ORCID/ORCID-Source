@@ -624,12 +624,12 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         long lastModifiedTime = (lastModified == null) ? 0 : lastModified.getTime();
         Person person = new Person();
         person.setBiography(getBiography(orcid));
-        person.setAddresses(addressManager.getAddresses(orcid));
-        person.setExternalIdentifiers(externalIdentifierManager.getExternalIdentifiersV2(orcid));
+        person.setAddresses(addressManager.getAddresses(orcid, lastModifiedTime));
+        person.setExternalIdentifiers(externalIdentifierManager.getExternalIdentifiers(orcid, lastModifiedTime));
         person.setKeywords(profileKeywordManager.getKeywords(orcid, lastModifiedTime));
         person.setName(personalDetailsManager.getName(orcid));
-        person.setOtherNames(otherNameManager.getOtherNames(orcid)); 
-        person.setResearcherUrls(researcherUrlManager.getResearcherUrls(orcid));             
+        person.setOtherNames(otherNameManager.getOtherNames(orcid, lastModifiedTime)); 
+        person.setResearcherUrls(researcherUrlManager.getResearcherUrls(orcid, lastModifiedTime));             
         person.setEmails(emailManager.getEmails(orcid));
         
         //The rest should come from the ProfileEntity object
@@ -689,11 +689,11 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         Date lastModified = getLastModified(orcid);
         long lastModifiedTime = (lastModified == null) ? 0 : lastModified.getTime();
         
-        person.setAddresses(addressManager.getPublicAddresses(orcid));
-        person.setExternalIdentifiers(externalIdentifierManager.getPublicExternalIdentifiersV2(orcid));
+        person.setAddresses(addressManager.getPublicAddresses(orcid, lastModifiedTime));
+        person.setExternalIdentifiers(externalIdentifierManager.getPublicExternalIdentifiers(orcid, lastModifiedTime));
         person.setKeywords(profileKeywordManager.getPublicKeywords(orcid, lastModifiedTime));
-        person.setOtherNames(otherNameManager.getPublicOtherNames(orcid));
-        person.setResearcherUrls(researcherUrlManager.getPublicResearcherUrls(orcid));             
+        person.setOtherNames(otherNameManager.getPublicOtherNames(orcid, lastModifiedTime));
+        person.setResearcherUrls(researcherUrlManager.getPublicResearcherUrls(orcid, lastModifiedTime));             
         person.setEmails(emailManager.getPublicEmails(orcid));
         
         //The rest should come from the ProfileEntity object

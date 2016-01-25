@@ -133,6 +133,11 @@ public class WorkspaceController extends BaseWorkspaceController {
     @Resource
     private ProfileEntityManager profileEntityManager;
     
+    private long getLastModifiedTime(String orcid) {
+        Date lastModified = profileEntityManager.getLastModified(orcid);
+        return (lastModified == null) ? 0 : lastModified.getTime();
+    }
+    
     @RequestMapping(value = { "/workspace/retrieve-work-impor-wizards.json" }, method = RequestMethod.GET)
     public @ResponseBody List<OrcidClient> retrieveWorkImportWizards() {
         return thirdPartyLinkManager.findOrcidClientsWithPredefinedOauthScopeWorksImport();
@@ -350,8 +355,7 @@ public class WorkspaceController extends BaseWorkspaceController {
     @RequestMapping(value = "/my-orcid/keywordsForms.json", method = RequestMethod.GET)
     public @ResponseBody
     KeywordsForm getKeywordsFormJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {     
-        Date lastModified = profileEntityManager.getLastModified(getCurrentUserOrcid());
-        long lastModifiedTime = (lastModified == null) ? 0 : lastModified.getTime();
+        long lastModifiedTime = getLastModifiedTime(getCurrentUserOrcid());
         Keywords keywords = profileKeywordManager.getKeywords(getCurrentUserOrcid(), lastModifiedTime);        
         KeywordsForm form = KeywordsForm.valueOf(keywords);                
         ProfileEntity profileEntity = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
@@ -400,7 +404,8 @@ public class WorkspaceController extends BaseWorkspaceController {
     @RequestMapping(value = "/my-orcid/otherNamesForms.json", method = RequestMethod.GET)
     public @ResponseBody
     OtherNamesForm getOtherNamesFormJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
-        OtherNames otherNames = otherNameManager.getOtherNames(getCurrentUserOrcid());                
+        long lastModifiedTime = getLastModifiedTime(getCurrentUserOrcid());
+        OtherNames otherNames = otherNameManager.getOtherNames(getCurrentUserOrcid(), lastModifiedTime);                
         OtherNamesForm form = OtherNamesForm.valueOf(otherNames);
         ProfileEntity entity = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
         
@@ -455,7 +460,7 @@ public class WorkspaceController extends BaseWorkspaceController {
     @RequestMapping(value = "/my-orcid/websitesForms.json", method = RequestMethod.GET)
     public @ResponseBody
     WebsitesForm getWebsitesFormJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
-        ResearcherUrls rUrls = researcherUrlManager.getResearcherUrls(getCurrentUserOrcid());                 
+        ResearcherUrls rUrls = researcherUrlManager.getResearcherUrls(getCurrentUserOrcid(), getLastModifiedTime(getCurrentUserOrcid()));                 
         WebsitesForm form = WebsitesForm.valueOf(rUrls);
         ProfileEntity entity = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
         
@@ -521,7 +526,7 @@ public class WorkspaceController extends BaseWorkspaceController {
     @RequestMapping(value = "/my-orcid/externalIdentifiers.json", method = RequestMethod.GET)
     public @ResponseBody
     ExternalIdentifiersForm getExternalIdentifiersJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
-        ExternalIdentifiers extIds = externalIdentifierManager.getExternalIdentifiersV2(getCurrentUserOrcid());        
+        ExternalIdentifiers extIds = externalIdentifierManager.getExternalIdentifiers(getCurrentUserOrcid(), getLastModifiedTime(getCurrentUserOrcid()));        
         return ExternalIdentifiersForm.valueOf(extIds);
     }
 

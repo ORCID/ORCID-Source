@@ -29,7 +29,7 @@ public interface OtherNameDao extends GenericDao<OtherNameEntity, Long> {
      * @return
      * The list of other names related with the specified orcid profile
      * */
-    List<OtherNameEntity> getOtherNames(String orcid);
+    List<OtherNameEntity> getOtherNames(String orcid, long lastModified);
 
     /**
      * Get other names for an specific orcid account and with the specific visibility

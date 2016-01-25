@@ -24,6 +24,7 @@ import javax.persistence.TypedQuery;
 import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.persistence.dao.ResearcherUrlDao;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
 
 public class ResearcherUrlDaoImpl extends GenericDaoImpl<ResearcherUrlEntity, Long> implements ResearcherUrlDao {
@@ -40,7 +41,8 @@ public class ResearcherUrlDaoImpl extends GenericDaoImpl<ResearcherUrlEntity, Lo
      * */
     @Override
     @SuppressWarnings("unchecked")
-    public List<ResearcherUrlEntity> getResearcherUrls(String orcid) {
+    @Cacheable(value = "dao-researcher-urls", key = "#orcid.concat('-').concat(#lastModified)")
+    public List<ResearcherUrlEntity> getResearcherUrls(String orcid, long lastModified) {
         Query query = entityManager.createQuery("FROM ResearcherUrlEntity WHERE orcid = :orcid");
         query.setParameter("orcid", orcid);
         return query.getResultList();

@@ -17,6 +17,7 @@
 package org.orcid.core.manager.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -83,7 +84,10 @@ public class PersonalDetailsManagerImpl implements PersonalDetailsManager {
             bio.setVisibility(bioVisibility);
         }
         
-        OtherNames otherNames = otherNameManager.getMinimizedOtherNames(orcid);
+        Date lastModified = profileEntity.getLastModified();
+        long lastMofieiedTime = (lastModified == null) ? 0 : lastModified.getTime();
+        
+        OtherNames otherNames = otherNameManager.getMinimizedOtherNames(orcid, lastMofieiedTime);
         
         if(bio != null) {
             personalDetails.setBiography(bio);

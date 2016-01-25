@@ -29,7 +29,7 @@ public interface ProfileKeywordDao extends GenericDao<ProfileKeywordEntity, Long
      * @return 
      *          the list of keywords associated with the orcid profile
      * */
-    List<ProfileKeywordEntity> getProfileKeywors(String orcid);
+    List<ProfileKeywordEntity> getProfileKeywors(String orcid, long lastModified);
 
     /**
      * Deleted a keyword from database

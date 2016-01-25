@@ -21,11 +21,11 @@ import org.orcid.jaxb.model.record_rc2.OtherName;
 import org.orcid.jaxb.model.record_rc2.OtherNames;
 
 public interface OtherNameManager {
-    OtherNames getOtherNames(String orcid);
+    OtherNames getOtherNames(String orcid, long lastModified);
     
-    OtherNames getPublicOtherNames(String orcid);
+    OtherNames getPublicOtherNames(String orcid, long lastModified);
     
-    OtherNames getMinimizedOtherNames(String orcid);
+    OtherNames getMinimizedOtherNames(String orcid, long lastModified);
     
     OtherName getOtherName(String orcid, Long putCode);
 
