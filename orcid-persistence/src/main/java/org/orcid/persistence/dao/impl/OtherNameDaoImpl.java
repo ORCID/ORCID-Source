@@ -42,7 +42,7 @@ public class OtherNameDaoImpl extends GenericDaoImpl<OtherNameEntity, Long> impl
      * */
     @Override
     @SuppressWarnings("unchecked")
-    @Cacheable(value = "minimized-other-names", key = "#orcid.concat('-').concat(#lastModified)")
+    @Cacheable(value = "dao-other-names", key = "#orcid.concat('-').concat(#lastModified)")
     public List<OtherNameEntity> getOtherNames(String orcid, long lastModified) {
         Query query = entityManager.createQuery("FROM OtherNameEntity WHERE profile.id=:orcid");
         query.setParameter("orcid", orcid);
