@@ -27,7 +27,7 @@ public interface ProfileKeywordManager {
      * @return 
      *          the list of keywords associated with the orcid profile
      * */
-    Keywords getKeywords(String orcid);
+    Keywords getKeywords(String orcid, long lastModified);
     
     /**
      * Return the list of public keywords associated to a specific profile
@@ -35,7 +35,7 @@ public interface ProfileKeywordManager {
      * @return 
      *          the list of keywords associated with the orcid profile
      * */
-    Keywords getPublicKeywords(String orcid);
+    Keywords getPublicKeywords(String orcid, long lastModified);
     
     Keyword getKeyword(String orcid, Long putCode);
 
