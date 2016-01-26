@@ -57,7 +57,6 @@ import io.swagger.annotations.ResponseHeader;
 
 import java.net.URI;
 
-import javax.annotation.Resource;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -76,7 +75,6 @@ import org.orcid.api.common.swagger.SwaggerUIBuilder;
 import org.orcid.api.memberV2.server.delegator.MemberV2ApiServiceDelegator;
 import org.orcid.api.notifications.server.delegator.NotificationsApiServiceDelegator;
 import org.orcid.core.exception.OrcidNotificationAlreadyReadException;
-import org.orcid.core.manager.SourceManager;
 import org.orcid.jaxb.model.groupid_rc2.GroupIdRecord;
 import org.orcid.jaxb.model.groupid_rc2.GroupIdRecords;
 import org.orcid.jaxb.model.message.ScopeConstants;
@@ -118,9 +116,6 @@ public class MemberV2ApiServiceImplV2_0_rc2 extends MemberV2ApiServiceImplHelper
 
     @Value("${org.orcid.core.apiBaseUri}")
     protected String apiBaseUri;
-    
-    @Resource
-    private SourceManager sourceManager;
 
     protected MemberV2ApiServiceDelegator<Education, Employment, ExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work, Address, Keyword> serviceDelegator;
 
