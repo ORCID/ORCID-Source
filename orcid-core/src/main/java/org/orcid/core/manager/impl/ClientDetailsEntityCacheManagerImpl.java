@@ -111,9 +111,9 @@ public class ClientDetailsEntityCacheManagerImpl implements ClientDetailsEntityC
     static public boolean needsFresh(Date dbDate, ClientDetailsEntity clientDetailsEntity) {
         if (clientDetailsEntity == null)
             return true;
-        if (!clientDetailsEntity.getLastModified().equals(dbDate))
-            return true;
         if (dbDate == null) // not sure when this happens?
+            return true;
+        if (clientDetailsEntity.getLastModified().getTime() != dbDate.getTime())
             return true;
         return false;
     }
