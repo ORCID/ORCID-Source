@@ -819,8 +819,11 @@ public class ManageProfileController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = "/countryForm.json", method = RequestMethod.GET)
-    public @ResponseBody AddressesForm getProfileCountryJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
-        Addresses addresses = addressManager.getAddresses(getCurrentUserOrcid());
+    public @ResponseBody AddressesForm getProfileCountryJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {        
+        Date lastModified = profileEntityManager.getLastModified(getCurrentUserOrcid());
+        long lastModifiedTime = (lastModified == null) ? 0 : lastModified.getTime();
+        
+        Addresses addresses = addressManager.getAddresses(getCurrentUserOrcid(), lastModifiedTime);
         AddressesForm form = AddressesForm.valueOf(addresses);
         // Set country name
         if(form != null && form.getAddresses() != null) {

@@ -18,6 +18,7 @@ package org.orcid.frontend.web.controllers;
 
 import java.util.ArrayList;
 import java.util.Currency;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -35,6 +36,7 @@ import org.orcid.core.manager.ExternalIdentifierManager;
 import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.OtherNameManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
+import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileKeywordManager;
 import org.orcid.core.manager.ResearcherUrlManager;
 import org.orcid.core.manager.ThirdPartyLinkManager;
@@ -127,6 +129,14 @@ public class WorkspaceController extends BaseWorkspaceController {
     
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
+    
+    @Resource
+    private ProfileEntityManager profileEntityManager;
+    
+    private long getLastModifiedTime(String orcid) {
+        Date lastModified = profileEntityManager.getLastModified(orcid);
+        return (lastModified == null) ? 0 : lastModified.getTime();
+    }
     
     @RequestMapping(value = { "/workspace/retrieve-work-impor-wizards.json" }, method = RequestMethod.GET)
     public @ResponseBody List<OrcidClient> retrieveWorkImportWizards() {
@@ -344,8 +354,9 @@ public class WorkspaceController extends BaseWorkspaceController {
 
     @RequestMapping(value = "/my-orcid/keywordsForms.json", method = RequestMethod.GET)
     public @ResponseBody
-    KeywordsForm getKeywordsFormJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {        
-        Keywords keywords = profileKeywordManager.getKeywords(getCurrentUserOrcid());        
+    KeywordsForm getKeywordsFormJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {     
+        long lastModifiedTime = getLastModifiedTime(getCurrentUserOrcid());
+        Keywords keywords = profileKeywordManager.getKeywords(getCurrentUserOrcid(), lastModifiedTime);        
         KeywordsForm form = KeywordsForm.valueOf(keywords);                
         ProfileEntity profileEntity = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
         //Set the default visibility since we still need it in the front end
@@ -393,7 +404,8 @@ public class WorkspaceController extends BaseWorkspaceController {
     @RequestMapping(value = "/my-orcid/otherNamesForms.json", method = RequestMethod.GET)
     public @ResponseBody
     OtherNamesForm getOtherNamesFormJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
-        OtherNames otherNames = otherNameManager.getOtherNames(getCurrentUserOrcid());                
+        long lastModifiedTime = getLastModifiedTime(getCurrentUserOrcid());
+        OtherNames otherNames = otherNameManager.getOtherNames(getCurrentUserOrcid(), lastModifiedTime);                
         OtherNamesForm form = OtherNamesForm.valueOf(otherNames);
         ProfileEntity entity = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
         
@@ -448,7 +460,7 @@ public class WorkspaceController extends BaseWorkspaceController {
     @RequestMapping(value = "/my-orcid/websitesForms.json", method = RequestMethod.GET)
     public @ResponseBody
     WebsitesForm getWebsitesFormJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
-        ResearcherUrls rUrls = researcherUrlManager.getResearcherUrls(getCurrentUserOrcid());                 
+        ResearcherUrls rUrls = researcherUrlManager.getResearcherUrls(getCurrentUserOrcid(), getLastModifiedTime(getCurrentUserOrcid()));                 
         WebsitesForm form = WebsitesForm.valueOf(rUrls);
         ProfileEntity entity = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
         
@@ -514,7 +526,7 @@ public class WorkspaceController extends BaseWorkspaceController {
     @RequestMapping(value = "/my-orcid/externalIdentifiers.json", method = RequestMethod.GET)
     public @ResponseBody
     ExternalIdentifiersForm getExternalIdentifiersJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
-        ExternalIdentifiers extIds = externalIdentifierManager.getExternalIdentifiersV2(getCurrentUserOrcid());        
+        ExternalIdentifiers extIds = externalIdentifierManager.getExternalIdentifiers(getCurrentUserOrcid(), getLastModifiedTime(getCurrentUserOrcid()));        
         return ExternalIdentifiersForm.valueOf(extIds);
     }
 

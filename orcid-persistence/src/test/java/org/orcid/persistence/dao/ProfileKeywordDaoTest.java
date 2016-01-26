@@ -68,17 +68,17 @@ public class ProfileKeywordDaoTest extends DBUnitTest {
 
     @Test    
     public void testfindProfileKeywords() {
-        List<ProfileKeywordEntity> keywords = profileKeywordDao.getProfileKeywors("4444-4444-4444-4441");
+        List<ProfileKeywordEntity> keywords = profileKeywordDao.getProfileKeywors("4444-4444-4444-4441", 0L);
         assertNotNull(keywords);
         assertEquals(2, keywords.size());
     }
 
     @Test    
     public void testAddProfileKeyword() {
-        assertEquals(4, profileKeywordDao.getProfileKeywors("4444-4444-4444-4443").size());
+        assertEquals(4, profileKeywordDao.getProfileKeywors("4444-4444-4444-4443", 0L).size());
         boolean result = profileKeywordDao.addProfileKeyword("4444-4444-4444-4443", "new_keyword", "4444-4444-4444-4443", null);
         assertTrue(result);    
-        assertEquals(5, profileKeywordDao.getProfileKeywors("4444-4444-4444-4443").size());
+        assertEquals(5, profileKeywordDao.getProfileKeywors("4444-4444-4444-4443", 0L).size());
         
         ProfileKeywordEntity entity = new ProfileKeywordEntity();
         entity.setKeywordName("this is my keyword");
@@ -87,13 +87,13 @@ public class ProfileKeywordDaoTest extends DBUnitTest {
         entity.setVisibility(Visibility.PUBLIC);        
         
         profileKeywordDao.persist(entity);        
-        assertEquals(6, profileKeywordDao.getProfileKeywors("4444-4444-4444-4443").size());
+        assertEquals(6, profileKeywordDao.getProfileKeywors("4444-4444-4444-4443", 0L).size());
     }
         
     @Test
     public void testDeleteProfileKeyword() {
-        assertEquals(1, profileKeywordDao.getProfileKeywors("4444-4444-4444-4442").size());
+        assertEquals(1, profileKeywordDao.getProfileKeywors("4444-4444-4444-4442", 0L).size());
         profileKeywordDao.deleteProfileKeyword("4444-4444-4444-4442", "My keyword");
-        assertEquals(0, profileKeywordDao.getProfileKeywors("4444-4444-4444-4442").size());
+        assertEquals(0, profileKeywordDao.getProfileKeywors("4444-4444-4444-4442", 0L).size());
     }
 }

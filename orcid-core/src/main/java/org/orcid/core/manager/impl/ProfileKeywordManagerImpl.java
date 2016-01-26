@@ -29,6 +29,7 @@ import org.orcid.core.adapter.JpaJaxbKeywordAdapter;
 import org.orcid.core.exception.ApplicationException;
 import org.orcid.core.exception.OrcidDuplicatedElementException;
 import org.orcid.core.manager.OrcidSecurityManager;
+import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileKeywordManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.validator.PersonValidator;
@@ -42,6 +43,7 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.springframework.cache.annotation.Cacheable;
 
 public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
 
@@ -56,9 +58,18 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
 
     @Resource
     private OrcidSecurityManager orcidSecurityManager;
+    
+    @Resource
+    private ProfileEntityManager profileEntityManager;
 
+    private long getLastModified(String orcid) {
+        Date lastModified = profileEntityManager.getLastModified(orcid);
+        return (lastModified == null) ? 0 : lastModified.getTime();
+    }
+    
     @Override
-    public Keywords getKeywords(String orcid) {
+    @Cacheable(value = "keywords", key = "#orcid.concat('-').concat(#lastModified)")
+    public Keywords getKeywords(String orcid, long lastModified) {
         List<ProfileKeywordEntity> entities = getProfileKeywordEntitys(orcid, null);
         Keywords result = adapter.toKeywords(entities);
         result.updateIndexingStatusOnChilds();
@@ -67,7 +78,8 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
     }
 
     @Override
-    public Keywords getPublicKeywords(String orcid) {
+    @Cacheable(value = "public-keywords", key = "#orcid.concat('-').concat(#lastModified)")
+    public Keywords getPublicKeywords(String orcid, long lastModified) {
         List<ProfileKeywordEntity> entities = getProfileKeywordEntitys(orcid, Visibility.PUBLIC);
         Keywords result = adapter.toKeywords(entities);
         result.updateIndexingStatusOnChilds();
@@ -76,7 +88,7 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
     }
 
     private List<ProfileKeywordEntity> getProfileKeywordEntitys(String orcid, Visibility visibility) {
-        List<ProfileKeywordEntity> keywords = profileKeywordDao.getProfileKeywors(orcid);
+        List<ProfileKeywordEntity> keywords = profileKeywordDao.getProfileKeywors(orcid, getLastModified(orcid));
         if (visibility != null) {
             Iterator<ProfileKeywordEntity> it = keywords.iterator();
             while (it.hasNext()) {
@@ -128,7 +140,7 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
         // Validate the keyword
         PersonValidator.validateKeyword(keyword, sourceEntity, true);
         // Validate it is not duplicated
-        List<ProfileKeywordEntity> existingKeywords = profileKeywordDao.getProfileKeywors(orcid);
+        List<ProfileKeywordEntity> existingKeywords = profileKeywordDao.getProfileKeywors(orcid, getLastModified(orcid));
         for (ProfileKeywordEntity existing : existingKeywords) {
             if (isDuplicated(existing, keyword, sourceEntity)) {
                 Map<String, String> params = new HashMap<String, String>();
@@ -156,7 +168,7 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
         // Validate the keyword
         PersonValidator.validateKeyword(keyword, sourceEntity, false);
         // Validate it is not duplicated
-        List<ProfileKeywordEntity> existingKeywords = profileKeywordDao.getProfileKeywors(orcid);
+        List<ProfileKeywordEntity> existingKeywords = profileKeywordDao.getProfileKeywors(orcid, getLastModified(orcid));
         for (ProfileKeywordEntity existing : existingKeywords) {
             if (isDuplicated(existing, keyword, sourceEntity)) {
                 Map<String, String> params = new HashMap<String, String>();
@@ -185,7 +197,7 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
     @Override
     @Transactional
     public Keywords updateKeywords(String orcid, Keywords keywords, Visibility defaultVisibility) {
-        List<ProfileKeywordEntity> existingKeywordsList = profileKeywordDao.getProfileKeywors(orcid);        
+        List<ProfileKeywordEntity> existingKeywordsList = profileKeywordDao.getProfileKeywors(orcid, getLastModified(orcid));        
         // Delete the deleted ones
         for (ProfileKeywordEntity existing : existingKeywordsList) {
             boolean deleteMe = true;

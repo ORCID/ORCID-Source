@@ -624,26 +624,28 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     @Override
     @Transactional
     public Person getPersonDetails(String orcid) {
+        Date lastModified = getLastModified(orcid);
+        long lastModifiedTime = (lastModified == null) ? 0 : lastModified.getTime();
         Person person = new Person();
         person.setBiography(getBiography(orcid));
-        person.setAddresses(addressManager.getAddresses(orcid));
+		person.setAddresses(addressManager.getAddresses(orcid, lastModifiedTime));
         LastModifiedDate latest = person.getAddresses().getLastModifiedDate();
         
-        person.setExternalIdentifiers(externalIdentifierManager.getExternalIdentifiersV2(orcid));
+        person.setExternalIdentifiers(externalIdentifierManager.getExternalIdentifiers(orcid, lastModifiedTime));
         LastModifiedDate temp = person.getExternalIdentifiers().getLastModifiedDate();
         latest = LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
         
-        person.setKeywords(profileKeywordManager.getKeywords(orcid));
+        person.setKeywords(profileKeywordManager.getKeywords(orcid, lastModifiedTime));
         temp = person.getKeywords().getLastModifiedDate();
         latest = LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
         
         person.setName(personalDetailsManager.getName(orcid));
         
-        person.setOtherNames(otherNameManager.getOtherNames(orcid)); 
+        person.setOtherNames(otherNameManager.getOtherNames(orcid, lastModifiedTime));
         temp = person.getOtherNames().getLastModifiedDate();
         latest = LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
         
-        person.setResearcherUrls(researcherUrlManager.getResearcherUrls(orcid));
+        person.setResearcherUrls(researcherUrlManager.getResearcherUrls(orcid, lastModifiedTime));  
         temp = person.getResearcherUrls().getLastModifiedDate();
         latest = LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
         
@@ -651,20 +653,28 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         temp = person.getEmails().getLastModifiedDate();
         latest = LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
         
-        person.setLastModifiedDate(latest);
         //The rest should come from the ProfileEntity object
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);       
         Delegation delegation = null;
         Set<GivenPermissionToEntity> givenPermissionTo = profile.getGivenPermissionTo();
         Set<GivenPermissionByEntity> givenPermissionBy = profile.getGivenPermissionBy();
         
+        LastModifiedDate delLastModified = null;
         if(givenPermissionTo != null || givenPermissionBy != null) {
             delegation = new Delegation();
+            LastModifiedDate temp1 = null;
             if(givenPermissionTo != null) {
                 List<DelegationDetails> detailsList = jpaJaxbGivenPermissionToAdapter.toDelegationDetailsList(givenPermissionTo);
                 List<GivenPermissionTo> givenPermissionToList = new ArrayList<GivenPermissionTo>();
+                if(!detailsList.isEmpty()) {
+                	delLastModified = detailsList.get(0).getDelegateSummary().getLastModifiedDate();
+                }
                 for(DelegationDetails details : detailsList) {
                     GivenPermissionTo to = new GivenPermissionTo();
+                    temp1 = details.getDelegateSummary().getLastModifiedDate();
+                    details.setLastModifiedDate(temp1);
+                    to.setLastModifiedDate(temp1);
+                    delLastModified = LastModifiedDatesHelper.returnLatestLastModifiedDate(delLastModified, temp1);
                     to.setDelegationDetails(details);
                     givenPermissionToList.add(to);
                 }
@@ -674,20 +684,27 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
             if(givenPermissionBy != null) {
                 List<DelegationDetails> detailsList = jpaJaxbGivenPermissionByAdapter.toDelegationDetailsList(givenPermissionBy);
                 List<GivenPermissionBy> givenPermissionByList = new ArrayList<GivenPermissionBy>();
+                
                 for(DelegationDetails details : detailsList) {
                     GivenPermissionBy by = new GivenPermissionBy();
+                    temp1 = details.getDelegateSummary().getLastModifiedDate();
+                    details.setLastModifiedDate(temp1);
+                    by.setLastModifiedDate(temp1);
+                    delLastModified = LastModifiedDatesHelper.returnLatestLastModifiedDate(delLastModified, temp1);
                     by.setDelegationDetails(details);
                     givenPermissionByList.add(by);
                 }
                 delegation.setGivenPermissionBy(givenPermissionByList);
-            }            
+            }
+            delegation.setLastModifiedDate(delLastModified);
         }
-        
+        latest = LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, delLastModified);
         person.setDelegation(delegation);
-                                
+        
         // TODO: implement
         person.setApplications(null);
-              
+        
+        person.setLastModifiedDate(latest);    
         return person;
     }
 
@@ -705,45 +722,54 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         if(Visibility.PUBLIC.equals(name.getVisibility())) {
             person.setName(name);
         }
-        
-        person.setAddresses(addressManager.getPublicAddresses(orcid));
+		
+		Date lastModified = getLastModified(orcid);
+		long lastModifiedTime = (lastModified == null) ? 0 : lastModified.getTime();
+
+		person.setAddresses(addressManager.getPublicAddresses(orcid, lastModifiedTime));
         LastModifiedDate latest = person.getAddresses().getLastModifiedDate();
         
-        person.setExternalIdentifiers(externalIdentifierManager.getPublicExternalIdentifiersV2(orcid));
+        person.setExternalIdentifiers(externalIdentifierManager.getPublicExternalIdentifiers(orcid, lastModifiedTime));
         LastModifiedDate temp = person.getExternalIdentifiers().getLastModifiedDate();
         latest = LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
         
-        person.setKeywords(profileKeywordManager.getPublicKeywords(orcid));
+        person.setKeywords(profileKeywordManager.getPublicKeywords(orcid, lastModifiedTime));
         temp = person.getKeywords().getLastModifiedDate();
         latest = LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
         
-        person.setOtherNames(otherNameManager.getPublicOtherNames(orcid));
+        person.setOtherNames(otherNameManager.getPublicOtherNames(orcid, lastModifiedTime));
         temp = person.getOtherNames().getLastModifiedDate();
         latest = LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
         
-        person.setResearcherUrls(researcherUrlManager.getPublicResearcherUrls(orcid));             
+        person.setResearcherUrls(researcherUrlManager.getPublicResearcherUrls(orcid, lastModifiedTime));
         temp = person.getResearcherUrls().getLastModifiedDate();
         latest = LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
-        
+
         person.setEmails(emailManager.getPublicEmails(orcid));
         temp = person.getEmails().getLastModifiedDate();
         latest = LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
-        
-        person.setLastModifiedDate(latest);
         
         //The rest should come from the ProfileEntity object
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);       
         Delegation delegation = null;
         Set<GivenPermissionToEntity> givenPermissionTo = profile.getGivenPermissionTo();
         Set<GivenPermissionByEntity> givenPermissionBy = profile.getGivenPermissionBy();
-        
+        LastModifiedDate delLastModified = null;
         if(givenPermissionTo != null || givenPermissionBy != null) {
             delegation = new Delegation();
+            LastModifiedDate temp1 = null;
             if(givenPermissionTo != null) {
                 List<DelegationDetails> detailsList = jpaJaxbGivenPermissionToAdapter.toDelegationDetailsList(givenPermissionTo);
                 List<GivenPermissionTo> givenPermissionToList = new ArrayList<GivenPermissionTo>();
+                if(!detailsList.isEmpty()) {
+                	delLastModified = detailsList.get(0).getDelegateSummary().getLastModifiedDate();
+                }
                 for(DelegationDetails details : detailsList) {
-                    GivenPermissionTo to = new GivenPermissionTo();
+                	GivenPermissionTo to = new GivenPermissionTo();
+                    temp1 = details.getDelegateSummary().getLastModifiedDate();
+                    details.setLastModifiedDate(temp1);
+                    to.setLastModifiedDate(temp1);
+                    delLastModified = LastModifiedDatesHelper.returnLatestLastModifiedDate(delLastModified, temp1);
                     to.setDelegationDetails(details);
                     givenPermissionToList.add(to);
                 }
@@ -754,19 +780,24 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
                 List<DelegationDetails> detailsList = jpaJaxbGivenPermissionByAdapter.toDelegationDetailsList(givenPermissionBy);
                 List<GivenPermissionBy> givenPermissionByList = new ArrayList<GivenPermissionBy>();
                 for(DelegationDetails details : detailsList) {
-                    GivenPermissionBy by = new GivenPermissionBy();
+                	GivenPermissionBy by = new GivenPermissionBy();
+                    temp1 = details.getDelegateSummary().getLastModifiedDate();
+                    details.setLastModifiedDate(temp1);
+                    by.setLastModifiedDate(temp1);
+                    delLastModified = LastModifiedDatesHelper.returnLatestLastModifiedDate(delLastModified, temp1);
                     by.setDelegationDetails(details);
                     givenPermissionByList.add(by);
                 }
                 delegation.setGivenPermissionBy(givenPermissionByList);
-            }            
+            }
+            delegation.setLastModifiedDate(delLastModified);
         }
-        
+        latest = LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, delLastModified);
         person.setDelegation(delegation);
                                 
         // TODO: implement
         person.setApplications(null);
-              
+        person.setLastModifiedDate(latest);
         return person;
     }
             

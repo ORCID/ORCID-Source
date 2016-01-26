@@ -70,7 +70,7 @@ public class OtherNameDaoTest extends DBUnitTest {
 
     @Test
     public void testfindOtherNameByOrcid() {
-        List<OtherNameEntity> otherNames = otherNameDao.getOtherNames("4444-4444-4444-4446");
+        List<OtherNameEntity> otherNames = otherNameDao.getOtherNames("4444-4444-4444-4446", 0L);
         assertNotNull(otherNames);
         assertEquals(4, otherNames.size());
     }
@@ -88,10 +88,10 @@ public class OtherNameDaoTest extends DBUnitTest {
     @Test
     public void testAddOtherName() {
         Date profileLastModifiedOrig = profileDao.retrieveLastModifiedDate("4444-4444-4444-4441");
-        assertEquals(1, otherNameDao.getOtherNames("4444-4444-4444-4441").size());
+        assertEquals(1, otherNameDao.getOtherNames("4444-4444-4444-4441", 0L).size());
         boolean result = otherNameDao.addOtherName("4444-4444-4444-4441", "OtherName");
         assertEquals(true, result);
-        assertEquals(2, otherNameDao.getOtherNames("4444-4444-4444-4441").size());
+        assertEquals(2, otherNameDao.getOtherNames("4444-4444-4444-4441", 0L).size());
         assertFalse("Profile last modified date should have been updated", profileLastModifiedOrig.after(profileDao.retrieveLastModifiedDate("4444-4444-4444-4441")));
         
         
@@ -101,19 +101,19 @@ public class OtherNameDaoTest extends DBUnitTest {
         entity.setSource(new SourceEntity(new ProfileEntity("4444-4444-4444-4441")));
         entity.setVisibility(Visibility.PUBLIC);
         otherNameDao.persist(entity);
-        assertEquals(3, otherNameDao.getOtherNames("4444-4444-4444-4441").size());
+        assertEquals(3, otherNameDao.getOtherNames("4444-4444-4444-4441", 0L).size());
     }
 
     @Test    
     public void testDeleteOtherName() {
         Date now = new Date();
         Date justBeforeStart = new Date(now.getTime() - 1000);
-        List<OtherNameEntity> otherNames = otherNameDao.getOtherNames("4444-4444-4444-4443");
+        List<OtherNameEntity> otherNames = otherNameDao.getOtherNames("4444-4444-4444-4443", 0L);
         assertNotNull(otherNames);
         assertEquals(2, otherNames.size());
         OtherNameEntity otherName = otherNames.get(0);
         assertTrue(otherNameDao.deleteOtherName(otherName));
-        List<OtherNameEntity> updatedOtherNames = otherNameDao.getOtherNames("4444-4444-4444-4443");
+        List<OtherNameEntity> updatedOtherNames = otherNameDao.getOtherNames("4444-4444-4444-4443", 0L);
         assertNotNull(updatedOtherNames);
         assertEquals(1, updatedOtherNames.size());
         assertTrue("Profile last modified date should have been updated", justBeforeStart.before(profileDao.retrieveLastModifiedDate("4444-4444-4444-4443")));

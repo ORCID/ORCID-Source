@@ -24,16 +24,20 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.orcid.jaxb.model.common_rc2.LastModifiedDate;
+
 /**
  * 
  * @author Angel Montenegro
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "delegationDetails" })
+@XmlType(propOrder = { "lastModifiedDate", "delegationDetails" })
 @XmlRootElement(name = "given-permission-by", namespace = "http://www.orcid.org/ns/person")
 public class GivenPermissionBy implements Serializable {
     private static final long serialVersionUID = 4364407407203629185L;
+    @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "last-modified-date")
+    protected LastModifiedDate lastModifiedDate;
     @XmlElement(namespace = "http://www.orcid.org/ns/person", name = "delegation-details")
     protected DelegationDetails delegationDetails;
 
@@ -69,4 +73,12 @@ public class GivenPermissionBy implements Serializable {
             return false;
         return true;
     }
+    
+	public LastModifiedDate getLastModifiedDate() {
+		return lastModifiedDate;
+	}
+
+	public void setLastModifiedDate(LastModifiedDate lastModifiedDate) {
+		this.lastModifiedDate = lastModifiedDate;
+	}
 }
