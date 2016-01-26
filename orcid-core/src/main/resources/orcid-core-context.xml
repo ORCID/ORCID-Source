@@ -467,7 +467,7 @@
     </bean>
 
     <bean id="profileBioAndInternalCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
-        <property name="cacheName" value="public-profile" />
+        <property name="cacheName" value="profile-bio-and-internal" />
         <property name="cacheManager" ref="coreCacheManager" />
         <property name="maxElementsInMemory" value="500" />
         <property name="timeToLiveSeconds" value="604800" />
