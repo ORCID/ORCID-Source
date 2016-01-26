@@ -1,0 +1,50 @@
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2014 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">	
+	            
+    <changeSet id="ORCID-IDX-ON-ADDRESS" author="Angel Montenegro">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<indexExists indexName="address_orcid_idx" tableName="address" />
+			</not>
+		</preConditions>
+		<sql>create index address_orcid_idx on address(orcid);</sql>
+	</changeSet>
+	
+	<changeSet id="ORCID-IDX-ON-RESEARCHER-URL" author="Angel Montenegro">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<indexExists indexName="researcher_url_orcid_idx" tableName="researcher_url" />
+			</not>
+		</preConditions>
+		<sql>create index researcher_url_orcid_idx on researcher_url(orcid);</sql>
+	</changeSet>
+	
+	<changeSet id="ORCID-IDX-ON-EXTERNAL-IDENTIFIER" author="Angel Montenegro">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<indexExists indexName="external_identifier_orcid_idx" tableName="external_identifier" />
+			</not>
+		</preConditions>
+		<sql>create index external_identifier_orcid_idx on external_identifier(orcid);</sql>
+	</changeSet>
+	
+</databaseChangeLog>
