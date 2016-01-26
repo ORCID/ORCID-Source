@@ -136,6 +136,8 @@ public class OrcidProfileManagerReadOnlyImpl implements OrcidProfileManagerReadO
     public OrcidProfile retrieveOrcidProfile(String orcid, LoadOptions loadOptions) {
         if (LoadOptions.ALL.equals(loadOptions))
             return orcidProfileCacheManager.retrieve(orcid);
+        if (LoadOptions.BIO_AND_INTERNAL_ONLY.equals(loadOptions))
+            return orcidProfileCacheManager.retrieveProfileBioAndInternal(orcid);
         return retrieveFreshOrcidProfile(orcid, loadOptions);
     }
 
