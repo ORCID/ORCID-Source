@@ -62,6 +62,7 @@ import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.exception.OrcidVisibilityException;
 import org.orcid.core.exception.OrcidWebhookNotFoundException;
 import org.orcid.core.exception.OtherNameNotFoundException;
+import org.orcid.core.exception.PutCodeFormatException;
 import org.orcid.core.exception.PutCodeRequiredException;
 import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.locale.LocaleManager;
@@ -134,6 +135,7 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(ActivityIdentifierValidationException.class, new ImmutablePair<>(Response.Status.BAD_REQUEST, 9023));
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(GroupIdRecordNotFoundException.class, new ImmutablePair<>(Response.Status.BAD_REQUEST, 9026));
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OtherNameNotFoundException.class, new ImmutablePair<>(Response.Status.BAD_REQUEST, 9033));
+        HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(PutCodeFormatException.class, new ImmutablePair<>(Response.Status.BAD_REQUEST, 9034));
         
         // 401
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(AuthenticationException.class, new ImmutablePair<>(Response.Status.UNAUTHORIZED, 9002));
