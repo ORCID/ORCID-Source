@@ -155,9 +155,9 @@ public class OrcidProfileCacheManagerImpl implements OrcidProfileCacheManager {
     static public boolean needsFresh(Date dbDate, OrcidProfile orcidProfile) {
         if (orcidProfile == null)
             return true;
-        if (!orcidProfile.extractLastModifiedDate().equals(dbDate))
-            return true;
         if (dbDate == null) // not sure when this happens?
+            return true;
+        if (orcidProfile.extractLastModifiedDate().getTime() != dbDate.getTime())
             return true;
         return false;
     }
