@@ -42,7 +42,11 @@ public class OrcidProfileCacheManagerImpl implements OrcidProfileCacheManager {
 
     @Resource(name = "profileCache")
     private Cache profileCache;
-    LockerObjectsManager lockers = new LockerObjectsManager();
+    LockerObjectsManager profileLockers = new LockerObjectsManager();
+
+    @Resource(name = "profileBioAndInternalCache")
+    private Cache profileBioAndInternalCache;
+    LockerObjectsManager profileBioAndInternalLockers = new LockerObjectsManager();
 
     private String releaseName = ReleaseNameUtils.getReleaseName();
 
@@ -73,13 +77,33 @@ public class OrcidProfileCacheManagerImpl implements OrcidProfileCacheManager {
     }
 
     @Override
+    public OrcidProfile retrieveProfileBioAndInternal(String orcid) {
+        Object key = new OrcidCacheKey(orcid, releaseName);
+        Date dbDate = retrieveLastModifiedDate(orcid);
+        OrcidProfile op = toOrcidProfile(profileBioAndInternalCache.get(key));
+        if (needsFresh(dbDate, op))
+            try {
+                synchronized (profileBioAndInternalLockers.obtainLock(orcid)) {
+                    op = toOrcidProfile(profileBioAndInternalCache.get(orcid));
+                    if (needsFresh(dbDate, op)) {
+                        op = orcidProfileManager.retrieveFreshOrcidProfile(orcid, LoadOptions.ALL);
+                        profileBioAndInternalCache.put(new Element(key, op));
+                    }
+                }
+            } finally {
+                profileBioAndInternalLockers.releaseLock(orcid);
+            }
+        return op;
+    }
+    
+    @Override
     public OrcidProfile retrieve(String orcid) {
         Object key = new OrcidCacheKey(orcid, releaseName);
         Date dbDate = retrieveLastModifiedDate(orcid);
         OrcidProfile op = toOrcidProfile(profileCache.get(key));
         if (needsFresh(dbDate, op))
             try {
-                synchronized (lockers.obtainLock(orcid)) {
+                synchronized (profileLockers.obtainLock(orcid)) {
                     op = toOrcidProfile(profileCache.get(orcid));
                     if (needsFresh(dbDate, op)) {
                         op = orcidProfileManager.retrieveFreshOrcidProfile(orcid, LoadOptions.ALL);
@@ -87,7 +111,7 @@ public class OrcidProfileCacheManagerImpl implements OrcidProfileCacheManager {
                     }
                 }
             } finally {
-                lockers.releaseLock(orcid);
+                profileLockers.releaseLock(orcid);
             }
         return op;
     }
@@ -108,11 +132,11 @@ public class OrcidProfileCacheManagerImpl implements OrcidProfileCacheManager {
 
     public void put(String orcid, OrcidProfile orcidProfile) {
         try {
-            synchronized (lockers.obtainLock(orcid)) {
+            synchronized (profileLockers.obtainLock(orcid)) {
                 profileCache.put(new Element(new OrcidCacheKey(orcid, releaseName), orcidProfile));
             }
         } finally {
-            lockers.releaseLock(orcid);
+            profileLockers.releaseLock(orcid);
         }
     }
 

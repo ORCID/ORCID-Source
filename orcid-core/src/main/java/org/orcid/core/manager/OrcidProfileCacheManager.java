@@ -24,6 +24,8 @@ public interface OrcidProfileCacheManager {
     
     public OrcidProfile retrieve(String orcid);
     
+    public OrcidProfile retrieveProfileBioAndInternal(String orcid);
+    
     @Deprecated 
     public void put(String orcid, OrcidProfile orcidProfile);
     
