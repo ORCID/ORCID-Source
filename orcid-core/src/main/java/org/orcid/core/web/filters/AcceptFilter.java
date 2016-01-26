@@ -16,11 +16,18 @@
  */
 package org.orcid.core.web.filters;
 
-import static org.orcid.core.api.OrcidApiConstants.*;
+import static org.orcid.core.api.OrcidApiConstants.APPLICATION_RDFXML;
+import static org.orcid.core.api.OrcidApiConstants.JSON_LD;
+import static org.orcid.core.api.OrcidApiConstants.N_TRIPLES;
+import static org.orcid.core.api.OrcidApiConstants.ORCID_JSON;
+import static org.orcid.core.api.OrcidApiConstants.ORCID_XML;
+import static org.orcid.core.api.OrcidApiConstants.TEXT_N3;
+import static org.orcid.core.api.OrcidApiConstants.TEXT_TURTLE;
+import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_JSON;
+import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_XML;
 
 import java.io.IOException;
 
-import javax.annotation.Resource;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -53,10 +60,13 @@ public class AcceptFilter extends OncePerRequestFilter {
             if (isValidAcceptType(contentType))
                 requestWrapper = new AcceptHeaderRequestWrapper(request, contentType);
             else
-                if (OrcidUrlManager.getPathWithoutContextPath(request).startsWith("/oauth/"))
+                if (OrcidUrlManager.getPathWithoutContextPath(request).startsWith("/oauth/")) {
                     requestWrapper = new AcceptHeaderRequestWrapper(request, MediaType.APPLICATION_JSON);
-                else
+                } else if(path != null && path.startsWith("/orcid-internal-api/")) {
+                    requestWrapper = new HttpServletRequestWrapper(request);
+                } else {
                     requestWrapper = new AcceptHeaderRequestWrapper(request, VND_ORCID_XML);
+                }                    
             filterChain.doFilter(requestWrapper, response);
         } else {
             filterChain.doFilter(request, response);
